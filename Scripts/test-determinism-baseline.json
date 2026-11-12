@@ -23,15 +23,5 @@
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseSearchFilterTests.swift": {
     "exhaustivity off": 6
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/MacAuditCoverageTests.swift": {
-    "exhaustivity off": 5
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/MacDownloadTests.swift": {
-    "exhaustivity off": 1
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/MacSecondPassTests.swift": {
-    "exhaustivity off": 3,
-    "skipReceivedActions": 1
   }
 }

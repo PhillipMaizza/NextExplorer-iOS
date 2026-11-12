@@ -3,366 +3,430 @@ import CoreModels
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseTabFeatureTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private let serverURL = BrowseTestSupport.serverURL
+    private let readOnlyAccess = BrowseTestSupport.readOnlyAccess
 
-    // MARK: Happy path
-
-    @Test
-    func openingAFolderFromTheRootPushesItOntoThePathStack() async {
-        let item = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
-            BrowseTabFeature()
-        }
-
-        await store.send(.root(.delegate(.openFolder(item)))) {
-            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: item.id, title: item.name))
-        }
+    private func screen(_ path: String, title: String? = nil) -> BrowseFeature.State {
+        BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: title ?? (path as NSString).lastPathComponent)
     }
 
-    @Test
-    func openingAFolderFromAPushedScreenPushesAnotherLevel() async {
-        let root = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+    private func makeState(pushing paths: [String] = []) -> BrowseTabFeature.State {
         var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: root.id, title: root.name))
-        let nested = FileItem(name: "Vacation", path: "Photos", dateModified: MockDate.date, size: 0, kind: "directory")
-
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
+        for path in paths {
+            state.path.append(screen(path))
         }
-
-        await store.send(.path(.element(id: 0, action: .delegate(.openFolder(nested))))) {
-            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: nested.id, title: nested.name))
-        }
+        return state
     }
 
-    @Test
-    func navigatingToANonEmptyPathReplacesTheEntirePathStack() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A"))
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B", title: "B"))
-
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
-        }
-
-        await store.send(.navigateToDirectory(path: "Photos", title: "Photos")) {
-            $0.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")])
-        }
-    }
-
-    private func pasteScenario(listsCopyAfterFetches lag: Int) -> (BrowseTabFeature.State, TestStoreOf<BrowseTabFeature>, LockIsolated<Int>) {
-        let misc = FileItem(name: "Misc", path: "Docs", dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "directory")
-        let copy = FileItem(name: "Misc (2)", path: "Docs", dateModified: Date(timeIntervalSince1970: 2), size: 0, kind: "directory")
-        let access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
-        var docs = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
-        docs.items = [misc]
-        docs.phase = .loaded
-        docs.access = access
-        docs.$clipboard.withLock { $0 = FileClipboard(items: [misc], operation: .copy) }
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(docs)
-        let didCopy = LockIsolated(false)
-        let fetchesAfterCopy = LockIsolated(0)
-
-        let store = TestStore(initialState: state) {
+    private func makeStore(
+        _ state: BrowseTabFeature.State? = nil,
+        configure: (inout DependencyValues) -> Void = { _ in }
+    ) -> TestStoreOf<BrowseTabFeature> {
+        TestStore(initialState: state ?? makeState()) {
             BrowseTabFeature()
         } withDependencies: {
-            $0.filesClient.transferItems = { _, _, destination, _ in
-                didCopy.setValue(true)
-                return TransferResult(destination: destination, items: [.init(from: "Docs/Misc", to: "Docs/Misc (2)")])
-            }
-            $0.filesClient.browse = { _, path in
-                guard path == "Docs" else { return BrowseResult(items: [], access: access, path: path) }
-                guard didCopy.value else { return BrowseResult(items: [misc], access: access, path: path) }
-                fetchesAfterCopy.withValue { $0 += 1 }
-                let listed = fetchesAfterCopy.value > lag
-                return BrowseResult(items: listed ? [misc, copy] : [misc], access: access, path: path)
-            }
-            $0.filesClient.favorites = { _ in [] }
-            $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
-            $0.directoryCacheStore.remove = { _, _ in }
-            $0.continuousClock = ImmediateClock()
-            $0.date = .constant(Date(timeIntervalSince1970: 3))
+            $0.date = .constant(MockDate.date)
+            configure(&$0)
         }
-        store.exhaustivity = .off
-        return (state, store, fetchesAfterCopy)
     }
 
-    @Test
-    func pastingAFolderIntoItsOwnFolderShowsTheCopyWithoutARefresh() async {
-        let (_, store, _) = pasteScenario(listsCopyAfterFetches: 0)
-
-        await store.send(.path(.element(id: 0, action: .pasteTapped(keepItemsAfterCopy: false))))
-        await store.finish(timeout: .seconds(10))
-        await store.skipReceivedActions()
-        #expect(store.state.path[id: 0]?.items.map(\.name) == ["Misc", "Misc (2)"])
-        #expect(store.state.path[id: 0]?.awaitedArrivalIDs.isEmpty == true)
+    /// The load of a screen that answers with an empty listing: it asks for the folder, then for favorites.
+    private func finishRootLoad(_ store: TestStoreOf<BrowseTabFeature>, listing: AsyncGate) async {
+        listing.open()
+        await store.receive(\.root.itemsResponse.success) {
+            $0.root.phase = .loaded
+            $0.root.access = readOnlyAccess
+        }
+        await store.receive(\.root.favoritesResponse) {
+            $0.root.hasLoadedFavorites = true
+        }
     }
 
-    // MARK: Edge cases
+    private func finishPathLoad(_ store: TestStoreOf<BrowseTabFeature>, id: StackElementID, listing: AsyncGate) async {
+        listing.open()
+        await store.receive(\.path[id: id].itemsResponse.success) {
+            $0.path[id: id]?.phase = .loaded
+            $0.path[id: id]?.access = readOnlyAccess
+        }
+        await store.receive(\.path[id: id].favoritesResponse) {
+            $0.path[id: id]?.hasLoadedFavorites = true
+        }
+    }
 
-    @Test
+    // MARK: Navigation
+
+    @Test("Opening a folder from the root pushes it onto the path stack")
+    func openingAFolderFromTheRootPushesItOntoThePathStack() async {
+        let item = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let store = makeStore()
+
+        await store.send(.root(.delegate(.openFolder(item)))) {
+            $0.path.append(screen("Photos"))
+        }
+    }
+
+    @Test("Opening a folder from a pushed screen pushes another level")
+    func openingAFolderFromAPushedScreenPushesAnotherLevel() async {
+        let nested = FileItem(name: "Vacation", path: "Photos", dateModified: MockDate.date, size: 0, kind: "directory")
+        let state = makeState(pushing: ["Photos"])
+        let store = makeStore(state)
+
+        await store.send(.path(.element(id: state.path.ids[0], action: .delegate(.openFolder(nested))))) {
+            $0.path.append(screen("Photos/Vacation"))
+        }
+    }
+
+    @Test("Opening a folder drops what Forward would have reopened")
+    func openingAFolderClearsTheForwardStack() async {
+        var state = makeState()
+        state.forwardStack = [screen("Old")]
+        let item = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let store = makeStore(state)
+
+        await store.send(.root(.delegate(.openFolder(item)))) {
+            $0.forwardStack = []
+            $0.path.append(screen("Photos"))
+        }
+    }
+
+    @Test("Navigating to a path replaces the entire stack with that folder, also when it is already open")
+    func navigatingToANonEmptyPathReplacesTheEntirePathStack() async {
+        let store = makeStore(makeState(pushing: ["A", "A/B"]))
+
+        await store.send(.navigateToDirectory(path: "Photos", title: "Photos")) {
+            $0.path = StackState([screen("Photos")])
+        }
+        await store.send(.navigateToDirectory(path: "Photos", title: "Photos")) {
+            $0.path = StackState([screen("Photos")])
+        }
+    }
+
+    @Test("Navigating to the empty path clears the stack and stays on the root")
     func navigatingToAnEmptyPathClearsTheStackAndStaysOnRoot() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A"))
-
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
-        }
+        let store = makeStore(makeState(pushing: ["A"]))
 
         await store.send(.navigateToDirectory(path: "", title: "Home")) {
             $0.path = StackState()
         }
     }
 
-    @Test
+    @Test("An open path request from the root is forwarded to navigateToDirectory")
     func openPathDelegateFromTheRootForwardsToNavigateToDirectory() async {
-        // Exhaustivity off: the pushed `BrowseFeature.State` gets a fresh `StackElementID`
-        // whose exact value isn't reproducible in a `receive`-triggered assertion closure
-        // (unlike `send`, TCA's test generator snapshotting doesn't line the two up here):
-        // asserting the resulting path's content is what actually matters.
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
-            BrowseTabFeature()
-        }
-        store.exhaustivity = .off
+        let store = makeStore()
 
         await store.send(.root(.delegate(.openPath(path: "Photos", title: "Photos"))))
-        await store.receive(\.navigateToDirectory)
-
-        #expect(store.state.path.map(\.directoryPath) == ["Photos"])
-        #expect(store.state.path.map(\.title) == ["Photos"])
+        await store.receive(\.navigateToDirectory) {
+            $0.path[id: 0] = screen("Photos")
+        }
     }
 
-    @Test
+    @Test("An open path request from a pushed screen is forwarded to navigateToDirectory")
     func openPathDelegateFromAPushedScreenForwardsToNavigateToDirectory() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A"))
+        let state = makeState(pushing: ["A"])
+        let store = makeStore(state)
 
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
-        }
-
-        await store.send(.path(.element(id: 0, action: .delegate(.openPath(path: "", title: "Home")))))
+        await store.send(.path(.element(id: state.path.ids[0], action: .delegate(.openPath(path: "", title: "Home")))))
         await store.receive(.navigateToDirectory(path: "", title: "Home")) {
             $0.path = StackState()
         }
     }
 
-    @Test
-    func navigatingToTheSamePathTwiceStillReplacesTheStackWithAFreshBrowseFeatureState() async {
-        // Regression guard: a breadcrumb re-tap on the currently-open folder should still
-        // reset the stack to a single fresh element, not leave stale nested screens behind.
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Old", title: "Old"))
+    // MARK: Delegates bubbling up
 
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
+    struct Bubble: Sendable, CustomTestStringConvertible {
+        let fromScreen: BrowseFeature.Action.Delegate
+        let upward: BrowseTabFeature.Action.Delegate
+
+        var testDescription: String { "\(upward)" }
+    }
+
+    private nonisolated static let upload = PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: "a.txt", destination: "Docs")
+    private nonisolated static let item = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+    private nonisolated static let saveRequest = DownloadSaveRequest(item: item, target: .into(URL(fileURLWithPath: "/tmp")))
+
+    @Test(
+        "What a screen asks of the app shell bubbles up, from the root and from a pushed screen alike",
+        arguments: [
+            Bubble(fromScreen: .favoritesChanged, upward: .favoritesChanged),
+            Bubble(fromScreen: .openDownloadsTapped, upward: .openDownloadsTapped),
+            Bubble(fromScreen: .goToSharedTab, upward: .goToSharedTab),
+            Bubble(fromScreen: .uploadRequested([upload]), upward: .uploadRequested([upload])),
+            Bubble(fromScreen: .downloadRequested([item]), upward: .downloadRequested([item])),
+            Bubble(fromScreen: .saveRequested([saveRequest]), upward: .saveRequested([saveRequest])),
+        ]
+    )
+    func delegatesBubbleUp(_ bubble: Bubble) async {
+        let state = makeState(pushing: ["Photos"])
+        let store = makeStore(state)
+
+        await store.send(.root(.delegate(bubble.fromScreen)))
+        await store.receive(.delegate(bubble.upward))
+        await store.send(.path(.element(id: state.path.ids[0], action: .delegate(bubble.fromScreen))))
+        await store.receive(.delegate(bubble.upward))
+    }
+
+    // MARK: Pasting
+
+    @Test("Pasting a folder into its own folder shows the copy at once, and the refresh that follows confirms it")
+    func pastingAFolderIntoItsOwnFolderShowsTheCopyWithoutARefresh() async throws {
+        let now = MockDate.date.addingTimeInterval(100)
+        let misc = FileItem(name: "Misc", path: "Docs", dateModified: MockDate.date, size: 0, kind: "directory")
+        let copy = FileItem(name: "Misc (2)", path: "Docs", dateModified: now, size: 0, kind: "directory")
+        let full = BrowseTestSupport.fullAccess
+        var docs = screen("Docs")
+        docs.items = [misc]
+        docs.phase = .loaded
+        docs.access = full
+        docs.$clipboard.withLock { $0 = FileClipboard(items: [misc], operation: .copy) }
+        var state = makeState()
+        state.path.append(docs)
+        let id = state.path.ids[0]
+
+        let transfer = AsyncGate()
+        let rootListing = AsyncGate()
+        let docsListing = AsyncGate()
+        let favoritesCalls = NumberedCalls(capacity: 2)
+        let transferred = LockIsolated<[String]>([])
+        let store = makeStore(state) {
+            $0.date = .constant(now)
+            $0.filesClient.transferItems = { _, items, destination, operation in
+                transferred.withValue { $0.append("\(items.map(\.id)) \(destination) \(operation)") }
+                try await transfer.wait()
+                return TransferResult(destination: destination, items: [.init(from: "Docs/Misc", to: "Docs/Misc (2)")])
+            }
+            $0.filesClient.browse = { _, path in
+                if path == "Docs" {
+                    try await docsListing.wait()
+                    return BrowseResult(items: [misc, copy], access: full, path: path)
+                }
+                try await rootListing.wait()
+                return BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path)
+            }
+            $0.filesClient.favorites = { _ in
+                try await favoritesCalls.park()
+                return []
+            }
+            $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
         }
 
-        await store.send(.navigateToDirectory(path: "Photos", title: "Photos")) {
-            $0.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")])
+        await store.send(.path(.element(id: id, action: .pasteTapped(keepItemsAfterCopy: false)))) {
+            $0.path[id: id]?.isPerformingFileAction = true
+            $0.path[id: id]?.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.path[id: id]?.pendingTransferRetry = BrowseFeature.TransferRetry(
+                items: [misc], destination: "Docs", operation: .copy, clearClipboard: true, resolution: .keepBoth, itemsToReplace: []
+            )
         }
+        transfer.open()
+        await store.receive(\.path[id: id].transferResponse.success) {
+            $0.path[id: id]?.isPerformingFileAction = false
+            $0.path[id: id]?.fileActionProgressMessage = nil
+            $0.path[id: id]?.pendingTransferRetry = nil
+            $0.path[id: id]?.$clipboard.withLock { $0 = nil }
+            $0.path[id: id]?.transferSuccessMessage = L10n.Browse.transferCopied(1)
+            $0.path[id: id]?.items = [misc, copy]
+            $0.path[id: id]?.$undoStack.withLock { $0 = [FileUndoEntry(.created([copy]))] }
+            $0.path[id: id]?.awaitedArrivalIDs = ["Docs/Misc (2)"]
+            $0.path[id: id]?.arrivalChecksLeft = 3
+        }
+        await store.receive(.path(.element(id: id, action: .delegate(.directoryContentsChanged))))
+        await store.receive(\.syncPathStack)
+        await store.receive(\.root.refreshButtonTapped) {
+            $0.root.phase = .loading
+        }
+        await store.receive(\.path[id: id].refreshButtonTapped) {
+            $0.path[id: id]?.phase = .loading
+        }
+        rootListing.open()
+        await store.receive(\.root.itemsResponse.success) {
+            $0.root.phase = .loaded
+            $0.root.access = readOnlyAccess
+        }
+        try await favoritesCalls.arrival(0)
+        favoritesCalls.release(0)
+        await store.receive(\.root.favoritesResponse) {
+            $0.root.hasLoadedFavorites = true
+        }
+        docsListing.open()
+        await store.receive(\.path[id: id].itemsResponse.success) {
+            $0.path[id: id]?.phase = .loaded
+            $0.path[id: id]?.awaitedArrivalIDs = []
+            $0.path[id: id]?.arrivalChecksLeft = 0
+        }
+        await store.receive(\.path[id: id].offlineAvailabilityComputed)
+        try await favoritesCalls.arrival(1)
+        favoritesCalls.release(1)
+        await store.receive(\.path[id: id].favoritesResponse) {
+            $0.path[id: id]?.hasLoadedFavorites = true
+        }
+
+        #expect(transferred.value == ["[\"Docs/Misc\"] Docs copy"])
     }
 
     // MARK: Sync on app open
 
-    @Test
+    @Test("Syncing refreshes only the root when no folder is pushed")
     func syncPathStackRefreshesOnlyTheRootWhenNoFolderIsPushed() async {
-        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
-            BrowseTabFeature()
-        } withDependencies: {
-            $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
-            }
-            $0.filesClient.favorites = { _ in [] }
-        }
-        store.exhaustivity = .off
+        let listing = AsyncGate()
+        let store = makeStore { $0.holdFolderListings(["": listing]) }
 
         await store.send(.syncPathStack)
         await store.receive(\.root.refreshButtonTapped) {
             $0.root.phase = .loading
         }
+        await finishRootLoad(store, listing: listing)
     }
 
-    @Test
+    @Test("Syncing refreshes the root and every pushed subfolder")
     func syncPathStackRefreshesTheRootAndEveryPushedSubfolder() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Old", title: "Old"))
-        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
-
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
-        } withDependencies: {
-            $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
-            }
-            $0.filesClient.favorites = { _ in [] }
-        }
-        store.exhaustivity = .off
-        let pathIDs = state.path.ids
+        let state = makeState(pushing: ["Photos", "Photos/Old"])
+        let ids = state.path.ids
+        let gates = ["": AsyncGate(), "Photos": AsyncGate(), "Photos/Old": AsyncGate()]
+        let store = makeStore(state) { $0.holdFolderListings(gates) }
 
         await store.send(.syncPathStack)
         await store.receive(\.root.refreshButtonTapped) {
             $0.root.phase = .loading
         }
-        await store.receive(\.path[id: pathIDs[0]].refreshButtonTapped) {
-            $0.path[id: pathIDs[0]]?.phase = .loading
+        await store.receive(\.path[id: ids[0]].refreshButtonTapped) {
+            $0.path[id: ids[0]]?.phase = .loading
         }
-        await store.receive(\.path[id: pathIDs[1]].refreshButtonTapped) {
-            $0.path[id: pathIDs[1]]?.phase = .loading
+        await store.receive(\.path[id: ids[1]].refreshButtonTapped) {
+            $0.path[id: ids[1]]?.phase = .loading
         }
+        await finishRootLoad(store, listing: gates[""] ?? AsyncGate())
+        await finishPathLoad(store, id: ids[0], listing: gates["Photos"] ?? AsyncGate())
+        await finishPathLoad(store, id: ids[1], listing: gates["Photos/Old"] ?? AsyncGate())
     }
 
-    @Test
+    @Test("A change reported by a pushed screen resyncs the whole stack")
     func directoryContentsChangedFromAPushedScreenReSyncsTheWholeStack() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
-        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let state = makeState(pushing: ["Photos"])
+        let id = state.path.ids[0]
+        let gates = ["": AsyncGate(), "Photos": AsyncGate()]
+        let store = makeStore(state) { $0.holdFolderListings(gates) }
 
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
-        } withDependencies: {
-            $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true), path: "")
-            }
-            $0.filesClient.favorites = { _ in [] }
-        }
-        store.exhaustivity = .off
-        let pathIDs = state.path.ids
-
-        await store.send(.path(.element(id: pathIDs[0], action: .delegate(.directoryContentsChanged))))
+        await store.send(.path(.element(id: id, action: .delegate(.directoryContentsChanged))))
         await store.receive(\.syncPathStack)
-        await store.receive(\.root.refreshButtonTapped)
-        await store.receive(\.path[id: pathIDs[0]].refreshButtonTapped)
+        await store.receive(\.root.refreshButtonTapped) {
+            $0.root.phase = .loading
+        }
+        await store.receive(\.path[id: id].refreshButtonTapped) {
+            $0.path[id: id]?.phase = .loading
+        }
+        await finishRootLoad(store, listing: gates[""] ?? AsyncGate())
+        await finishPathLoad(store, id: id, listing: gates["Photos"] ?? AsyncGate())
     }
 
-    // MARK: Favorites-changed delegate bubbling
+    @Test("A change reported by the root resyncs the whole stack")
+    func directoryContentsChangedFromTheRootReSyncsTheWholeStack() async {
+        let state = makeState(pushing: ["Photos"])
+        let id = state.path.ids[0]
+        let gates = ["": AsyncGate(), "Photos": AsyncGate()]
+        let store = makeStore(state) { $0.holdFolderListings(gates) }
 
-    @Test
-    func favoritesChangedFromTheRootBubblesUpAsADelegate() async {
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
-            BrowseTabFeature()
+        await store.send(.root(.delegate(.directoryContentsChanged)))
+        await store.receive(\.syncPathStack)
+        await store.receive(\.root.refreshButtonTapped) {
+            $0.root.phase = .loading
         }
-
-        await store.send(.root(.delegate(.favoritesChanged)))
-        await store.receive(.delegate(.favoritesChanged))
+        await store.receive(\.path[id: id].refreshButtonTapped) {
+            $0.path[id: id]?.phase = .loading
+        }
+        await finishRootLoad(store, listing: gates[""] ?? AsyncGate())
+        await finishPathLoad(store, id: id, listing: gates["Photos"] ?? AsyncGate())
     }
 
-    @Test
-    func favoritesChangedFromAPushedScreenAlsoBubblesUpAsADelegate() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+    @Test("Refreshing one path reloads only the screen showing it, and the empty path is the root")
+    func refreshDirectoryReloadsOnlyTheScreensShowingThatPath() async {
+        let state = makeState(pushing: ["Photos", "Docs"])
+        let ids = state.path.ids
+        let gates = ["": AsyncGate(), "Photos": AsyncGate()]
+        let store = makeStore(state) { $0.holdFolderListings(gates) }
 
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
+        await store.send(.refreshDirectory(path: "Photos"))
+        await store.receive(\.path[id: ids[0]].refreshButtonTapped) {
+            $0.path[id: ids[0]]?.phase = .loading
         }
-
-        await store.send(.path(.element(id: 0, action: .delegate(.favoritesChanged))))
-        await store.receive(.delegate(.favoritesChanged))
-    }
-
-    // MARK: Open-downloads delegate bubbling
-
-    @Test
-    func openDownloadsTappedFromTheRootBubblesUpAsADelegate() async {
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
-            BrowseTabFeature()
+        await finishPathLoad(store, id: ids[0], listing: gates["Photos"] ?? AsyncGate())
+        await store.send(.refreshDirectory(path: ""))
+        await store.receive(\.root.refreshButtonTapped) {
+            $0.root.phase = .loading
         }
-
-        await store.send(.root(.delegate(.openDownloadsTapped)))
-        await store.receive(.delegate(.openDownloadsTapped))
-    }
-
-    @Test
-    func openDownloadsTappedFromAPushedScreenAlsoBubblesUpAsADelegate() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
-
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
-        }
-
-        await store.send(.path(.element(id: 0, action: .delegate(.openDownloadsTapped))))
-        await store.receive(.delegate(.openDownloadsTapped))
-    }
-
-    @Test
-    func goToSharedTabBubblesUpAsADelegate() async {
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
-            BrowseTabFeature()
-        }
-
-        await store.send(.root(.delegate(.goToSharedTab)))
-        await store.receive(.delegate(.goToSharedTab))
+        await finishRootLoad(store, listing: gates[""] ?? AsyncGate())
+        await store.send(.refreshDirectory(path: "Nowhere"))
     }
 
     // MARK: Menu bar commands
 
-    private nonisolated static let readOnlyAccess = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
-
-    @Test
+    @Test("Refresh reloads the root when nothing is pushed")
     func refreshVisibleFolderRefreshesTheRootWhenNothingIsPushed() async {
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
-            BrowseTabFeature()
-        } withDependencies: {
-            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: Self.readOnlyAccess, path: "") }
-            $0.filesClient.favorites = { _ in [] }
-        }
-        // The forwarded refresh then runs the whole load cycle, covered by BrowseFeatureTests.
-        store.exhaustivity = .off
+        let listing = AsyncGate()
+        let store = makeStore { $0.holdFolderListings(["": listing]) }
 
         await store.send(.refreshVisibleFolder)
-        await store.receive(\.root.refreshButtonTapped)
-        await store.skipReceivedActions()
+        await store.receive(\.root.refreshButtonTapped) {
+            $0.root.phase = .loading
+        }
+        await finishRootLoad(store, listing: listing)
     }
 
-    @Test
+    @Test("Refresh reloads the top pushed folder and leaves the folders under it alone")
     func refreshVisibleFolderRefreshesTheTopPushedFolder() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A"))
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B", title: "B"))
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
-        } withDependencies: {
-            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: Self.readOnlyAccess, path: "A/B") }
-            $0.filesClient.favorites = { _ in [] }
-        }
-        store.exhaustivity = .off
+        let state = makeState(pushing: ["A", "A/B"])
+        let id = state.path.ids[1]
+        let listing = AsyncGate()
+        let store = makeStore(state) { $0.holdFolderListings(["A/B": listing]) }
 
         await store.send(.refreshVisibleFolder)
-        await store.receive(\.path[id: 1].refreshButtonTapped)
-        await store.skipReceivedActions()
+        await store.receive(\.path[id: id].refreshButtonTapped) {
+            $0.path[id: id]?.phase = .loading
+        }
+        await finishPathLoad(store, id: id, listing: listing)
     }
 
-    @Test
+    @Test("New Folder opens the sheet on the top pushed folder")
     func newFolderInVisibleFolderOpensTheSheetOnTheTopPushedFolder() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A"))
-        let store = TestStore(initialState: state) {
-            BrowseTabFeature()
-        }
+        let state = makeState(pushing: ["A"])
+        let id = state.path.ids[0]
+        let store = makeStore(state)
 
         await store.send(.newFolderInVisibleFolder)
-        await store.receive(\.path[id: 0].newFolderTapped) {
-            $0.path[id: 0]?.isNewFolderSheetPresented = true
+        await store.receive(\.path[id: id].newFolderTapped) {
+            $0.path[id: id]?.isNewFolderSheetPresented = true
         }
     }
 
-    @Test
+    @Test("New Folder does nothing at the root, which is not a writable folder")
     func newFolderInVisibleFolderDoesNothingAtTheRoot() async {
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
-            BrowseTabFeature()
-        }
+        let store = makeStore()
 
         await store.send(.newFolderInVisibleFolder)
+    }
+
+    @Test("New File does nothing at the root, which is not a writable folder")
+    func newFileInVisibleFolderDoesNothingAtTheRoot() async {
+        let store = makeStore()
+
+        await store.send(.newFileInVisibleFolder)
+    }
+
+    @Test("New File opens the sheet on the top pushed folder and asks the server for its editor extensions")
+    func newFileInVisibleFolderOpensTheSheetOnTheTopPushedFolder() async {
+        let state = makeState(pushing: ["A"])
+        let id = state.path.ids[0]
+        let store = makeStore(state) { $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline } }
+
+        await store.send(.newFileInVisibleFolder)
+        await store.receive(\.path[id: id].newFileTapped) {
+            $0.path[id: id]?.isNewFileSheetPresented = true
+        }
+        await store.finish()
     }
 }
