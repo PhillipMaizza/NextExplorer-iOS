@@ -19,21 +19,16 @@ Tests must give the same result on every run, on any machine. Scans Packages/*/T
   a test file over 600 lines          split it into cohesive files, one suite per behavior area
   TestStore in a file without .isolatedDependencies   add @Suite(.isolatedDependencies) (TestUtils): fresh dependencies and @Shared in memory storage for every test
 
-Existing uses are recorded in Scripts/test-determinism-baseline.json (file -> pattern -> count).
-A count may go down but never up, and a file not in the baseline may use none. Fixing a use and
-rerunning with --update lowers the baseline.
+Every use fails the check: there is no baseline and no allow list. When a test truly needs a banned
+pattern, it is the wrong test; fix it.
 
   python3 Scripts/check-test-determinism.py            check (CI)
-  python3 Scripts/check-test-determinism.py --update   rewrite the baseline from the tests
 """
-import argparse
-import json
 import pathlib
 import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-BASELINE = pathlib.Path(__file__).resolve().parent / "test-determinism-baseline.json"
 
 PATTERNS = {
     "Date()": r"(?<![A-Za-z0-9_.])Date\(\)",
@@ -88,35 +83,22 @@ def scan(root):
     return result
 
 
-def violations(current, baseline):
-    """Lines describing every count above its baseline."""
-    problems = []
-    for path, counts in current.items():
-        allowed = baseline.get(path, {})
-        for name, count in counts.items():
-            if count > allowed.get(name, 0):
-                problems.append(f"{path}: {name} x{count} (allowed {allowed.get(name, 0)})")
-    return problems
+def violations(current):
+    """One line per use: every use is a failure."""
+    return [
+        f"{path}: {name} x{count}"
+        for path, counts in current.items()
+        for name, count in counts.items()
+    ]
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--update", action="store_true")
-    args = parser.parse_args()
-    current = scan(ROOT)
-    if args.update:
-        BASELINE.write_text(json.dumps(current, indent=2, sort_keys=True) + "\n")
-        total = sum(sum(c.values()) for c in current.values())
-        print(f"Baseline rewritten: {total} uses in {len(current)} files")
-        return 0
-    baseline = json.loads(BASELINE.read_text()) if BASELINE.exists() else {}
-    problems = violations(current, baseline)
+    problems = violations(scan(ROOT))
     if problems:
         print("Nondeterministic test code (see the header of Scripts/check-test-determinism.py):")
         print("\n".join(problems))
         return 1
-    total = sum(sum(c.values()) for c in current.values())
-    print(f"Test determinism: {total} baseline uses in {len(current)} files, none new")
+    print("Test determinism: no banned patterns in any test")
     return 0
 
 

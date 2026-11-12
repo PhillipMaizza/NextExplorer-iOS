@@ -56,7 +56,7 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 
 ## Deterministic tests
 
-A test gives the same result on every run, on every machine, under any load. CI enforces it with `Scripts/check-test-determinism.py`: a new use of a banned pattern fails the build, and the baseline in `Scripts/test-determinism-baseline.json` can only go down.
+A test gives the same result on every run, on every machine, under any load. CI enforces it with `Scripts/check-test-determinism.py`: any use of a banned pattern fails the build (there is no baseline or allow list).
 
 | Instead of | Use |
 |---|---|

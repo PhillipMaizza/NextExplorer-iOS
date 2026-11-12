@@ -56,20 +56,14 @@ class CountTests(unittest.TestCase):
 
 
 class ViolationTests(unittest.TestCase):
-    def test_a_count_at_the_baseline_passes(self):
-        self.assertEqual(check.violations({"A.swift": {"Date()": 2}}, {"A.swift": {"Date()": 2}}), [])
+    def test_no_uses_means_no_violations(self):
+        self.assertEqual(check.violations({}), [])
 
-    def test_a_count_below_the_baseline_passes(self):
-        self.assertEqual(check.violations({"A.swift": {"Date()": 1}}, {"A.swift": {"Date()": 2}}), [])
-
-    def test_a_count_above_the_baseline_fails(self):
-        self.assertEqual(len(check.violations({"A.swift": {"Date()": 3}}, {"A.swift": {"Date()": 2}})), 1)
-
-    def test_a_new_file_may_use_none(self):
-        self.assertEqual(len(check.violations({"New.swift": {"UUID()": 1}}, {"A.swift": {"UUID()": 9}})), 1)
-
-    def test_a_new_kind_of_use_in_a_known_file_fails(self):
-        self.assertEqual(len(check.violations({"A.swift": {"Date()": 1, "Task.sleep": 1}}, {"A.swift": {"Date()": 1}})), 1)
+    def test_every_use_is_a_violation(self):
+        self.assertEqual(
+            check.violations({"A.swift": {"Date()": 2, "Task.sleep": 1}, "B.swift": {"UUID()": 1}}),
+            ["A.swift: Date() x2", "A.swift: Task.sleep x1", "B.swift: UUID() x1"],
+        )
 
 
 if __name__ == "__main__":

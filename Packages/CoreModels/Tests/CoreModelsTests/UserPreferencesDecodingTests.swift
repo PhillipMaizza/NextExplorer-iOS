@@ -1,6 +1,7 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("UserPreferences decoding")
 struct UserPreferencesDecodingTests {
@@ -41,19 +42,17 @@ struct UserPreferencesDecodingTests {
     @Test("share expiration resolves to a calendar date, respecting the unit")
     func shareExpirationResolvesToADate() {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "UTC")!
-        // Literal epochs on purpose: the expected dates depend on the calendar (January has 31 days), so the
-        // start is a fixed, known calendar day and the offsets below are the answer, not a copy of the code.
-        let now = Date(timeIntervalSince1970: 0) // 1970-01-01
+        calendar.timeZone = .gmt
+        let now = MockDate.date // 2023-11-14T22:13:20Z, so one month is November's 30 days
 
         let inThreeDays = UserPreferences.ShareExpiration(value: 3, unit: .days).expirationDate(from: now, calendar: calendar)
-        #expect(inThreeDays == Date(timeIntervalSince1970: 3 * 86_400))
+        #expect(inThreeDays == now.addingTimeInterval(3 * 86_400))
 
         let inTwoWeeks = UserPreferences.ShareExpiration(value: 2, unit: .weeks).expirationDate(from: now, calendar: calendar)
-        #expect(inTwoWeeks == Date(timeIntervalSince1970: 14 * 86_400))
+        #expect(inTwoWeeks == now.addingTimeInterval(14 * 86_400))
 
         let inOneMonth = UserPreferences.ShareExpiration(value: 1, unit: .months).expirationDate(from: now, calendar: calendar)
-        #expect(inOneMonth == Date(timeIntervalSince1970: 31 * 86_400)) // January has 31 days
+        #expect(inOneMonth == now.addingTimeInterval(30 * 86_400)) // November has 30 days
 
         #expect(UserPreferences.ShareExpiration(value: 0, unit: .days).expirationDate(from: now, calendar: calendar) == nil)
     }
