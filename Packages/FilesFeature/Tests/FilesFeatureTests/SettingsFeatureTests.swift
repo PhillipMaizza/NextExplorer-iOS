@@ -1,259 +1,200 @@
+import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
 import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import NetworkClient
 import Testing
 import TestUtils
 
 @Suite(.dependencies)
 @MainActor
 struct SettingsFeatureTests {
-    private let serverURL = URL(string: "https://example.com")!
-    private let user = User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+    private typealias Store = TestStoreOf<SettingsFeature>
 
-    private func makeState() -> SettingsFeature.State {
-        var state = SettingsFeature.State(serverURL: serverURL, user: user)
-        // `.inMemory` shared state is a process-wide registry keyed by string, so every test
-        // resets to a known value first rather than assuming a clean default.
+    private let serverURL = SettingsTestSupport.serverURL
+    private let user = User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+    private let admin = User(id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin])
+
+    private func makeState(user: User? = nil) -> SettingsFeature.State {
+        let state = SettingsFeature.State(serverURL: serverURL, user: user ?? self.user)
+        // `.inMemory` shared state is keyed by string, so every test starts from a known value
+        // rather than assuming a clean default.
         state.$preferences.withLock { $0 = UserPreferences() }
         state.$branding.withLock { $0 = Branding() }
         return state
     }
 
+    private func makeStore(state: SettingsFeature.State? = nil) -> Store {
+        TestStore(initialState: state ?? makeState()) { SettingsFeature() }
+    }
+
+    // MARK: Presenting a screen
+
+    struct PresentCase: Sendable, CustomStringConvertible {
+        let description: String
+        let tap: SettingsFeature.Action
+        let dismiss: SettingsFeature.Action
+        let present: @Sendable (inout SettingsFeature.State, URL) -> Void
+        let clear: @Sendable (inout SettingsFeature.State) -> Void
+    }
+
+    @Test(arguments: [
+        PresentCase(
+            description: "user management",
+            tap: .userManagementButtonTapped,
+            dismiss: .userManagement(.dismiss),
+            present: { $0.userManagement = UserManagementFeature.State(serverURL: $1, currentUserID: "1") },
+            clear: { $0.userManagement = nil }
+        ),
+        PresentCase(
+            description: "change password",
+            tap: .changePasswordButtonTapped,
+            dismiss: .changePassword(.dismiss),
+            present: { $0.changePassword = ChangePasswordFeature.State(serverURL: $1) },
+            clear: { $0.changePassword = nil }
+        ),
+        PresentCase(
+            description: "two factor",
+            tap: .twoFactorButtonTapped,
+            dismiss: .twoFactor(.dismiss),
+            present: { $0.twoFactor = TwoFactorFeature.State(serverURL: $1) },
+            clear: { $0.twoFactor = nil }
+        ),
+        PresentCase(
+            description: "api tokens",
+            tap: .apiTokensButtonTapped,
+            dismiss: .apiTokens(.dismiss),
+            present: { $0.apiTokens = APITokensFeature.State(serverURL: $1, requiresPassword: true) },
+            clear: { $0.apiTokens = nil }
+        ),
+    ])
+    func tappingARowPresentsItAndDismissingClearsIt(_ testCase: PresentCase) async {
+        let store = makeStore()
+
+        await store.send(testCase.tap) { testCase.present(&$0, serverURL) }
+        await store.send(testCase.dismiss) { testCase.clear(&$0) }
+    }
+
     @Test
-    func tappingUserManagementPresentsItSeededFromTheSession() async {
-        var state = SettingsFeature.State(serverURL: serverURL, user: User(
-            id: "admin-1", username: "boss", email: "boss@example.com", roles: ["admin"]
-        ))
-        state.$preferences.withLock { $0 = UserPreferences() }
-        let store = TestStore(initialState: state) { SettingsFeature() }
-        store.exhaustivity = .off
+    func userManagementIsSeededFromTheSession() async {
+        let store = makeStore(state: makeState(user: User(id: "admin-1", username: "boss", email: "boss@example.com", roles: ["admin"])))
 
         await store.send(.userManagementButtonTapped) {
             $0.userManagement = UserManagementFeature.State(serverURL: serverURL, currentUserID: "admin-1")
         }
-        await store.send(.userManagement(.dismiss)) {
-            $0.userManagement = nil
+    }
+
+    // MARK: Password rows
+
+    struct MethodsCase: Sendable {
+        let result: Result<[SignInMethod], FilesClientError>
+        let expected: SettingsFeature.PasswordStatus?
+    }
+
+    @Test(arguments: [
+        MethodsCase(result: .success([SignInMethod(id: "m1", type: "local_password", provider: "Password")]), expected: .present),
+        MethodsCase(result: .success([SignInMethod(id: "m2", type: "oidc", provider: "PocketID")]), expected: .absent),
+        MethodsCase(result: .success([]), expected: .absent),
+        MethodsCase(result: .failure(.server(statusCode: 500)), expected: nil),
+    ])
+    func theSignInMethodsDecideWhetherTheAccountHasAPassword(_ testCase: MethodsCase) async {
+        let store = makeStore()
+
+        if let expected = testCase.expected {
+            await store.send(.authMethodsResponse(testCase.result)) { $0.passwordStatus = expected }
+        } else {
+            await store.send(.authMethodsResponse(testCase.result))
+            #expect(store.state.passwordStatus == .unknown)
         }
     }
 
-    @Test
-    func tappingChangePasswordPresentsIt() async {
-        let store = TestStore(initialState: makeState()) { SettingsFeature() }
-        store.exhaustivity = .off
-
-        await store.send(.changePasswordButtonTapped) {
-            $0.changePassword = ChangePasswordFeature.State(serverURL: serverURL)
-        }
-        await store.send(.changePassword(.dismiss)) {
-            $0.changePassword = nil
-        }
+    struct StatusCase: Sendable {
+        let result: Result<AuthStatus, FilesClientError>
+        let expected: SettingsFeature.LocalSignInStatus?
     }
 
-    @Test
-    func tappingTwoFactorPresentsItAndDismissingClearsIt() async {
-        let store = TestStore(initialState: makeState()) { SettingsFeature() }
-        store.exhaustivity = .off
+    @Test(arguments: [
+        StatusCase(result: .success(AuthStatus(localEnabled: true, oidcEnabled: false)), expected: .enabled),
+        StatusCase(result: .success(AuthStatus(localEnabled: false, oidcEnabled: true)), expected: .disabled),
+        StatusCase(result: .failure(.server(statusCode: 500)), expected: nil),
+    ])
+    func theServerStatusDecidesWhetherPasswordSignInIsOn(_ testCase: StatusCase) async {
+        let store = makeStore()
 
-        await store.send(.twoFactorButtonTapped) {
-            $0.twoFactor = TwoFactorFeature.State(serverURL: serverURL)
-        }
-        await store.send(.twoFactor(.dismiss)) {
-            $0.twoFactor = nil
+        if let expected = testCase.expected {
+            await store.send(.authStatusResponse(testCase.result)) { $0.localSignInStatus = expected }
+        } else {
+            await store.send(.authStatusResponse(testCase.result))
+            #expect(store.state.localSignInStatus == .unknown)
         }
     }
 
-    @Test
-    func tappingAPITokensPresentsItAndDismissingClearsIt() async {
-        let store = TestStore(initialState: makeState()) { SettingsFeature() }
-        store.exhaustivity = .off
-
-        await store.send(.apiTokensButtonTapped)
-        #expect(store.state.apiTokens?.serverURL == serverURL)
-        await store.send(.apiTokens(.dismiss)) { $0.apiTokens = nil }
+    struct RowsCase: Sendable {
+        let signIn: SettingsFeature.LocalSignInStatus
+        let password: SettingsFeature.PasswordStatus
+        let showsPassword: Bool
+        let showsTwoFactor: Bool
     }
 
-    @Test
-    func aSingleSignOnAccountIsNotAskedForAPasswordToMakeATokenButOthersAre() async {
-        let sso = methodsStore { [SignInMethod(id: "m2", type: "oidc", provider: "PocketID")] }
-        await sso.send(.onAppear)
-        await sso.skipReceivedActions()
-        await sso.send(.apiTokensButtonTapped)
-        #expect(sso.state.apiTokens?.requiresPassword == false)
+    @Test(arguments: [
+        RowsCase(signIn: .unknown, password: .unknown, showsPassword: true, showsTwoFactor: true),
+        RowsCase(signIn: .unknown, password: .present, showsPassword: true, showsTwoFactor: true),
+        RowsCase(signIn: .unknown, password: .absent, showsPassword: true, showsTwoFactor: false),
+        RowsCase(signIn: .enabled, password: .present, showsPassword: true, showsTwoFactor: true),
+        RowsCase(signIn: .enabled, password: .absent, showsPassword: true, showsTwoFactor: false),
+        RowsCase(signIn: .disabled, password: .present, showsPassword: false, showsTwoFactor: false),
+        RowsCase(signIn: .disabled, password: .absent, showsPassword: false, showsTwoFactor: false),
+    ])
+    func thePasswordAndTwoFactorRowsFollowTheServerAndTheAccount(_ testCase: RowsCase) {
+        var state = makeState()
+        state.localSignInStatus = testCase.signIn
+        state.passwordStatus = testCase.password
 
-        let local = methodsStore { [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")] }
-        await local.send(.onAppear)
-        await local.skipReceivedActions()
-        await local.send(.apiTokensButtonTapped)
-        #expect(local.state.apiTokens?.requiresPassword == true)
-
-        let unknown = methodsStore { throw FilesClientError.server(statusCode: 500) }
-        await unknown.send(.onAppear)
-        await unknown.skipReceivedActions()
-        await unknown.send(.apiTokensButtonTapped)
-        #expect(unknown.state.apiTokens?.requiresPassword == true)
-    }
-
-    // MARK: Password rows (`GET /api/auth/methods`)
-
-    private func methodsStore(
-        state: SettingsFeature.State? = nil,
-        status: @escaping @Sendable () throws -> AuthStatus = { AuthStatus(localEnabled: true, oidcEnabled: false) },
-        methods: @escaping @Sendable () throws -> [SignInMethod]
-    ) -> TestStoreOf<SettingsFeature> {
-        let store = TestStore(initialState: state ?? makeState()) {
-            SettingsFeature()
-        } withDependencies: {
-            $0.filesClient.fetchAuthMethods = { _ in try methods() }
-            $0.filesClient.fetchAuthStatus = { _ in try status() }
-            $0.filesClient.fetchPreferences = { _ in UserPreferences() }
-            $0.filesClient.fetchBranding = { _ in Branding() }
-            $0.filesClient.serverFeatures = { _ in ServerFeatures() }
-            $0.localDownloadStore.list = { _ in [] }
-            $0.previewCacheStore.size = { 0 }
-        }
-        store.exhaustivity = .off
-        return store
-    }
-
-    @Test
-    func anAccountWithAPasswordKeepsTheChangePasswordRow() async {
-        let store = methodsStore { [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")] }
-
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-        #expect(store.state.passwordStatus == .present)
-
-        await store.send(.changePasswordButtonTapped)
-        #expect(store.state.changePassword?.mode == .change)
-    }
-
-    @Test
-    func aSingleSignOnAccountIsOfferedAddPassword() async {
-        let store = methodsStore { [SignInMethod(id: "m2", type: "oidc", provider: "PocketID")] }
-
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-        #expect(store.state.passwordStatus == .absent)
-
-        await store.send(.changePasswordButtonTapped)
-        #expect(store.state.changePassword?.mode == .add)
-    }
-
-    @Test
-    func whenTheMethodsCannotBeFetchedTheRowStaysChangePassword() async {
-        let store = methodsStore { throw FilesClientError.server(statusCode: 500) }
-
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-        #expect(store.state.passwordStatus == .unknown)
-
-        await store.send(.changePasswordButtonTapped)
-        #expect(store.state.changePassword?.mode == .change)
-    }
-
-    // MARK: Password and two factor rows on a server with password sign in off (`GET /api/auth/status`)
-
-    @Test
-    func aServerWithPasswordSignInOffHidesTheRows() async {
-        let store = methodsStore(status: { AuthStatus(localEnabled: false, oidcEnabled: true) }) {
-            [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")]
-        }
-
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-
-        #expect(store.state.localSignInStatus == .disabled)
-        #expect(!store.state.showsPasswordRow)
-        #expect(!store.state.showsTwoFactorRow)
-    }
-
-    @Test
-    func aServerWithPasswordSignInOnKeepsBothRowsForAnAccountWithAPassword() async {
-        let store = methodsStore {
-            [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")]
-        }
-
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-
-        #expect(store.state.localSignInStatus == .enabled)
-        #expect(store.state.showsPasswordRow)
-        #expect(store.state.showsTwoFactorRow)
-    }
-
-    @Test
-    func aSingleSignOnAccountOnAServerWithPasswordSignInOnIsOfferedAddPasswordButNoTwoFactor() async {
-        let store = methodsStore {
-            [SignInMethod(id: "m2", type: "oidc", provider: "PocketID")]
-        }
-
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-
-        #expect(store.state.showsPasswordRow)
-        #expect(!store.state.showsTwoFactorRow)
-    }
-
-    @Test
-    func whenTheStatusCannotBeFetchedTheRowsStayVisible() async {
-        let store = methodsStore(status: { throw FilesClientError.server(statusCode: 500) }) {
-            [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")]
-        }
-
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-
-        #expect(store.state.localSignInStatus == .unknown)
-        #expect(store.state.showsPasswordRow)
-        #expect(store.state.showsTwoFactorRow)
+        #expect(state.showsPasswordRow == testCase.showsPassword)
+        #expect(state.showsTwoFactorRow == testCase.showsTwoFactor)
     }
 
     @Test
     func theRowsStayVisibleUntilTheStatusArrives() {
         let state = makeState()
 
+        #expect(state.passwordStatus == .unknown)
         #expect(state.localSignInStatus == .unknown)
         #expect(state.showsPasswordRow)
         #expect(state.showsTwoFactorRow)
     }
 
-    // MARK: Admin settings pages stay admin only
+    @Test(arguments: [
+        (SettingsFeature.PasswordStatus.present, ChangePasswordFeature.Mode.change),
+        (.absent, .add),
+        (.unknown, .change),
+    ])
+    func theChangePasswordScreenOpensInTheModeTheAccountNeeds(status: SettingsFeature.PasswordStatus, mode: ChangePasswordFeature.Mode) async {
+        var state = makeState()
+        state.passwordStatus = status
+        let store = makeStore(state: state)
 
-    @Test
-    func aNonAdminCannotOpenAnyAdminSettingsPage() async {
-        let store = TestStore(initialState: makeState()) { SettingsFeature() }
-
-        await store.send(.uploadSettingsButtonTapped)
-        await store.send(.ffmpegSettingsButtonTapped)
-        await store.send(.searchIndexSettingsButtonTapped)
-        await store.send(.folderSizeSettingsButtonTapped)
-        await store.send(.activityLogButtonTapped)
-        await store.send(.trashSettingsButtonTapped)
-        await store.send(.versionedFilesButtonTapped)
-
-        #expect(store.state.activityLog == nil)
-        #expect(store.state.trashSettings == nil)
-        #expect(store.state.versionedFiles == nil)
-        #expect(store.state.uploadSettings == nil)
-        #expect(store.state.ffmpegSettings == nil)
-        #expect(store.state.searchIndexSettings == nil)
-        #expect(store.state.folderSizeSettings == nil)
+        await store.send(.changePasswordButtonTapped) {
+            $0.changePassword = ChangePasswordFeature.State(serverURL: serverURL, mode: mode)
+        }
     }
 
-    @Test
-    func anAdminOpensEachAdminSettingsPage() async {
-        let admin = User(id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin])
+    @Test(arguments: [
+        (SettingsFeature.PasswordStatus.present, true),
+        (.absent, false),
+        (.unknown, true),
+    ])
+    func aSingleSignOnAccountIsNotAskedForAPasswordToMakeAToken(status: SettingsFeature.PasswordStatus, requiresPassword: Bool) async {
         var state = makeState()
-        state.user = admin
-        let store = TestStore(initialState: state) { SettingsFeature() }
+        state.passwordStatus = status
+        let store = makeStore(state: state)
 
-        await store.send(.uploadSettingsButtonTapped) { $0.uploadSettings = UploadSettingsFeature.State(serverURL: serverURL) }
-        await store.send(.ffmpegSettingsButtonTapped) { $0.ffmpegSettings = FFmpegSettingsFeature.State(serverURL: serverURL) }
-        await store.send(.searchIndexSettingsButtonTapped) { $0.searchIndexSettings = SearchIndexSettingsFeature.State(serverURL: serverURL) }
-        await store.send(.folderSizeSettingsButtonTapped) { $0.folderSizeSettings = FolderSizeSettingsFeature.State(serverURL: serverURL) }
+        await store.send(.apiTokensButtonTapped) {
+            $0.apiTokens = APITokensFeature.State(serverURL: serverURL, requiresPassword: requiresPassword)
+        }
     }
 
     @Test
@@ -261,163 +202,235 @@ struct SettingsFeatureTests {
         var state = makeState()
         state.passwordStatus = .absent
         state.changePassword = ChangePasswordFeature.State(serverURL: serverURL, mode: .add)
-        let store = methodsStore(state: state) { [] }
+        let store = makeStore(state: state)
 
-        await store.send(.changePassword(.presented(.delegate(.passwordAdded))))
+        await store.send(.changePassword(.presented(.delegate(.passwordAdded)))) {
+            $0.passwordStatus = .present
+            $0.changePassword = nil
+        }
+    }
 
-        #expect(store.state.passwordStatus == .present)
-        #expect(store.state.changePassword == nil)
+    // MARK: Appearing
+
+    // `onAppear` starts about ten effects at once, several of them synchronous reads (downloads,
+    // caches, certificate) whose actions arrive in no fixed order, and ordering them would need the
+    // process wide serial executor. So each answer it delivers is sent directly instead.
+
+    @Test
+    func theDownloadsCheckAnswersSetTheirState() async {
+        let store = makeStore()
+
+        await store.send(.hasDownloadsResponse(false)) { $0.hasDownloads = false }
+        await store.send(.downloadsSizeResponse(30)) { $0.downloadsSize = 30 }
     }
 
     @Test
-    func openingSettingsAgainRefreshesTheStatus() async {
-        var state = makeState()
-        state.passwordStatus = .absent
-        let store = methodsStore(state: state) { [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")] }
+    func theCacheAndOfflineSizeAnswersSetTheirState() async {
+        let store = makeStore()
 
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-
-        #expect(store.state.passwordStatus == .present)
+        await store.send(.cacheSizeResponse(4096)) { $0.cacheSize = 4096 }
+        await store.send(.offlineSizeResponse(2048)) { $0.offlineSize = 2048 }
     }
 
     @Test
-    func onAppearFetchesPreferencesSuccessfully() async {
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        } withDependencies: {
-            $0.filesClient.fetchAuthMethods = { _ in [] }
-            $0.filesClient.fetchAuthStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: false) }
-            $0.filesClient.fetchPreferences = { _ in UserPreferences(showHiddenFiles: true, showThumbnails: false) }
-            $0.filesClient.fetchBranding = { _ in Branding() }
-            $0.filesClient.serverFeatures = { _ in ServerFeatures() }
-            $0.localDownloadStore.list = { _ in [] }
-            $0.previewCacheStore.size = { 0 }
-        }
-        // `onAppear` merges three independent effects (preferences fetch, downloads check,
-        // cache-size check): their completion order isn't guaranteed, so this asserts final
-        // state rather than a specific receive order.
-        store.exhaustivity = .off
+    func theClientCertificateAnswerShowsOnTheRow() async {
+        let store = makeStore()
+        let summary = ClientCertificateSummary(subject: "Dev Client")
 
-        await store.send(.onAppear) {
-            $0.isLoadingPreferences = true
-        }
-        await store.skipReceivedActions()
-
-        #expect(store.state.isLoadingPreferences == false)
-        #expect(store.state.hasDownloads == false)
-        #expect(store.state.preferences == UserPreferences(showHiddenFiles: true, showThumbnails: false))
+        await store.send(.clientCertificateStatusLoaded(nil)) { $0.clientCertificateStatus = .empty }
+        await store.send(.clientCertificateStatusLoaded(summary)) { $0.clientCertificateStatus = .installed(summary) }
     }
 
     @Test
-    func onAppearSurfacesAFetchFailureWithoutCrashing() async {
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        } withDependencies: {
-            $0.filesClient.fetchAuthMethods = { _ in [] }
-            $0.filesClient.fetchAuthStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: false) }
-            $0.filesClient.fetchPreferences = { _ in throw FilesClientError.sessionExpired }
-            $0.filesClient.fetchBranding = { _ in Branding() }
-            $0.filesClient.serverFeatures = { _ in ServerFeatures() }
-            $0.localDownloadStore.list = { _ in [] }
-            $0.previewCacheStore.size = { 0 }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.onAppear) {
-            $0.isLoadingPreferences = true
-        }
-        await store.skipReceivedActions()
-
-        #expect(store.state.isLoadingPreferences == false)
-        #expect(store.state.hasDownloads == false)
-    }
-
-    @Test
-    func onAppearIsANoOpWhilePreferencesAreAlreadyLoading() async {
+    func theLoadedPreferencesReplaceTheSharedOnes() async {
         var state = makeState()
         state.isLoadingPreferences = true
+        let store = makeStore(state: state)
 
-        let store = TestStore(initialState: state) {
-            SettingsFeature()
-        } withDependencies: {
-            $0.localDownloadStore.list = { _ in [] }
-            $0.previewCacheStore.size = { 0 }
+        await store.send(.preferencesResponse(.success(UserPreferences(showHiddenFiles: true, showThumbnails: false)))) {
+            $0.isLoadingPreferences = false
+            $0.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: true, showThumbnails: false) }
         }
-        // No `filesClient` dependency overridden: a network call here would crash with
-        // "Unimplemented", proving the guard really does skip a concurrent preferences fetch
-        // (the downloads/cache checks aren't guarded the same way, since they're cheap and
-        // local: their receive order isn't guaranteed, so assert final state instead).
-        store.exhaustivity = .off
-
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
-
-        #expect(store.state.hasDownloads == false)
-        #expect(store.state.cacheSize == 0)
     }
+
+    @Test
+    func aFailedPreferencesLoadKeepsTheSharedOnes() async {
+        var state = makeState()
+        state.isLoadingPreferences = true
+        let store = makeStore(state: state)
+
+        await store.send(.preferencesResponse(.failure(.sessionExpired))) { $0.isLoadingPreferences = false }
+
+        #expect(store.state.preferences == UserPreferences())
+    }
+
+    // MARK: Server usage
 
     @Test
     func serverUsageStaysHiddenWhenTheFeatureIsOff() async {
+        let volumeReads = LockIsolated(0)
         let store = TestStore(initialState: makeState()) {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.volumes = { _ in
-                Issue.record("volumes should not be fetched when volumeUsage is disabled")
+                volumeReads.withValue { $0 += 1 }
                 return []
             }
         }
 
         await store.send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: false)))
-        #expect(store.state.isVolumeUsageEnabled == false)
+
+        #expect(!store.state.isVolumeUsageEnabled)
         #expect(store.state.serverUsage.isEmpty)
+        #expect(volumeReads.value == 0)
     }
 
     @Test
     func serverUsageLoadsAVolumeListThenFillsInEachBar() async {
+        let homeGate = AsyncGate()
+        let media = Volume(name: "media", path: "media")
+        let home = Volume(name: "home", path: "home")
+        let mediaUsage = StorageUsage(path: "media", size: 40, free: 60, total: 100)
+        let homeUsage = StorageUsage(path: "home", size: 0, free: 0, total: 0)
         let store = TestStore(initialState: makeState()) {
             SettingsFeature()
         } withDependencies: {
-            $0.filesClient.volumes = { _ in
-                [Volume(name: "media", path: "media"), Volume(name: "home", path: "home")]
-            }
+            $0.filesClient.volumes = { _ in [media, home] }
             $0.filesClient.fetchUsage = { _, path in
-                path == "media"
-                    ? StorageUsage(path: "media", size: 40, free: 60, total: 100)
-                    : StorageUsage(path: "home", size: 0, free: 0, total: 0)
+                if path == "home" {
+                    try await homeGate.wait()
+                    return homeUsage
+                }
+                return mediaUsage
             }
         }
-        store.exhaustivity = .off
 
-        await store.send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: true)))
-        await store.skipReceivedActions()
+        await store.send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: true))) { $0.isVolumeUsageEnabled = true }
+        await store.receive(\.volumesResponse) {
+            $0.serverUsage = [
+                SettingsFeature.VolumeUsage(volume: media, usage: nil),
+                SettingsFeature.VolumeUsage(volume: home, usage: nil),
+            ]
+        }
+        await store.receive(\.serverUsageResponse) { $0.serverUsage[id: "media"]?.usage = mediaUsage }
+        homeGate.open()
+        await store.receive(\.serverUsageResponse) { $0.serverUsage[id: "home"]?.usage = homeUsage }
 
-        #expect(store.state.isVolumeUsageEnabled)
-        #expect(store.state.serverUsage.map(\.volume.path) == ["media", "home"])
-        #expect(store.state.serverUsage[id: "media"]?.usage?.used == 40)
         // `home` came back all zeros: still stored, the view decides not to draw a bar.
         #expect(store.state.serverUsage[id: "home"]?.usage?.isMeaningful == false)
+        #expect(store.state.serverUsage[id: "media"]?.usage?.used == 40)
     }
 
     @Test
-    func serverDetailsIsAdminOnly() async {
-        let store = TestStore(initialState: makeState()) { SettingsFeature() }
-        store.exhaustivity = .off
+    func aVolumeWhoseUsageFailsKeepsItsRowWithoutABar() async {
+        let media = Volume(name: "media", path: "media")
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.filesClient.volumes = { _ in [media] }
+            $0.filesClient.fetchUsage = { _, _ in throw FilesClientError.offline }
+        }
 
-        // Non-admin (the default `user`): the tap does nothing.
-        await store.send(.serverDetailsButtonTapped)
-        #expect(store.state.serverDetails == nil)
+        await store.send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: true))) { $0.isVolumeUsageEnabled = true }
+        await store.receive(\.volumesResponse) { $0.serverUsage = [SettingsFeature.VolumeUsage(volume: media, usage: nil)] }
+        await store.receive(\.serverUsageResponse)
+
+        #expect(store.state.serverUsage[id: "media"]?.usage == nil)
+    }
+
+    // MARK: Admin settings pages stay admin only
+
+    struct AdminPageCase: Sendable, CustomStringConvertible {
+        let description: String
+        let tap: SettingsFeature.Action
+        let isOpen: @Sendable (SettingsFeature.State) -> Bool
+        let open: @Sendable (inout SettingsFeature.State, URL) -> Void
+    }
+
+    nonisolated static let adminPages = [
+        AdminPageCase(
+            description: "server details",
+            tap: .serverDetailsButtonTapped,
+            isOpen: { $0.serverDetails != nil },
+            open: { $0.serverDetails = ServerDetailsFeature.State(serverURL: $1, branding: Branding()) }
+        ),
+        AdminPageCase(
+            description: "thumbnails",
+            tap: .thumbnailSettingsButtonTapped,
+            isOpen: { $0.thumbnailSettings != nil },
+            open: { $0.thumbnailSettings = ThumbnailSettingsFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
+            description: "access rules",
+            tap: .accessRulesButtonTapped,
+            isOpen: { $0.accessRules != nil },
+            open: { $0.accessRules = AccessRulesFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
+            description: "uploads",
+            tap: .uploadSettingsButtonTapped,
+            isOpen: { $0.uploadSettings != nil },
+            open: { $0.uploadSettings = UploadSettingsFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
+            description: "ffmpeg",
+            tap: .ffmpegSettingsButtonTapped,
+            isOpen: { $0.ffmpegSettings != nil },
+            open: { $0.ffmpegSettings = FFmpegSettingsFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
+            description: "search index",
+            tap: .searchIndexSettingsButtonTapped,
+            isOpen: { $0.searchIndexSettings != nil },
+            open: { $0.searchIndexSettings = SearchIndexSettingsFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
+            description: "folder size",
+            tap: .folderSizeSettingsButtonTapped,
+            isOpen: { $0.folderSizeSettings != nil },
+            open: { $0.folderSizeSettings = FolderSizeSettingsFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
+            description: "activity log",
+            tap: .activityLogButtonTapped,
+            isOpen: { $0.activityLog != nil },
+            open: { $0.activityLog = ActivityLogFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
+            description: "trash",
+            tap: .trashSettingsButtonTapped,
+            isOpen: { $0.trashSettings != nil },
+            open: { $0.trashSettings = TrashSettingsFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
+            description: "versioned files",
+            tap: .versionedFilesButtonTapped,
+            isOpen: { $0.versionedFiles != nil },
+            open: { $0.versionedFiles = VersionedFilesFeature.State(serverURL: $1) }
+        ),
+    ]
+
+    @Test(arguments: adminPages)
+    func aNonAdminCannotOpenAnAdminSettingsPage(_ page: AdminPageCase) async {
+        let store = makeStore()
+
+        await store.send(page.tap)
+
+        #expect(!page.isOpen(store.state))
+    }
+
+    @Test(arguments: adminPages)
+    func anAdminOpensAnAdminSettingsPage(_ page: AdminPageCase) async {
+        let store = makeStore(state: makeState(user: admin))
+
+        await store.send(page.tap) { page.open(&$0, serverURL) }
     }
 
     @Test
-    func serverDetailsOpensForAnAdminSeededFromTheSharedBranding() async {
-        var state = SettingsFeature.State(serverURL: serverURL, user: User(
-            id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin]
-        ))
-        state.$preferences.withLock { $0 = UserPreferences() }
+    func serverDetailsOpensSeededFromTheSharedBranding() async {
+        let state = makeState(user: admin)
         state.$branding.withLock { $0 = Branding(appName: "Rivendell", appLogoUrl: Branding.defaultLogoPath) }
-        let store = TestStore(initialState: state) { SettingsFeature() }
-        store.exhaustivity = .off
+        let store = makeStore(state: state)
 
         await store.send(.serverDetailsButtonTapped) {
             $0.serverDetails = ServerDetailsFeature.State(
@@ -427,82 +440,40 @@ struct SettingsFeatureTests {
         }
     }
 
-    @Test
-    func thumbnailAndAccessRuleScreensAreAdminOnly() async {
-        let store = TestStore(initialState: makeState()) { SettingsFeature() }
-        store.exhaustivity = .off
+    // MARK: Preferences
 
-        await store.send(.thumbnailSettingsButtonTapped)
-        #expect(store.state.thumbnailSettings == nil)
-        await store.send(.accessRulesButtonTapped)
-        #expect(store.state.accessRules == nil)
+    struct ToggleCase: Sendable {
+        let action: SettingsFeature.Action
+        let key: UserPreferenceKey
+        let value: Bool
+        let expected: UserPreferences
     }
 
-    @Test
-    func anAdminOpensTheThumbnailAndAccessRuleScreens() async {
-        var state = SettingsFeature.State(serverURL: serverURL, user: User(
-            id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin]
-        ))
-        state.$preferences.withLock { $0 = UserPreferences() }
-        let store = TestStore(initialState: state) { SettingsFeature() }
-        store.exhaustivity = .off
-
-        await store.send(.thumbnailSettingsButtonTapped) {
-            $0.thumbnailSettings = ThumbnailSettingsFeature.State(serverURL: serverURL)
-        }
-        await store.send(.accessRulesButtonTapped) {
-            $0.accessRules = AccessRulesFeature.State(serverURL: serverURL)
-        }
-    }
-
-    @Test
-    func setShowHiddenFilesUpdatesSharedPreferencesAndPersistsOptimistically() async {
-        let recordedKey = LockIsolated<UserPreferenceKey?>(nil)
-        let recordedValue = LockIsolated<Bool?>(nil)
+    @Test(arguments: [
+        ToggleCase(action: .setShowHiddenFiles(true), key: .showHiddenFiles, value: true, expected: UserPreferences(showHiddenFiles: true, showThumbnails: true)),
+        ToggleCase(action: .setShowThumbnails(false), key: .showThumbnails, value: false, expected: UserPreferences(showHiddenFiles: false, showThumbnails: false)),
+    ])
+    func aToggleUpdatesTheSharedPreferencesAndPersistsOptimistically(_ testCase: ToggleCase) async {
+        let recorded = LockIsolated<[String]>([])
         let store = TestStore(initialState: makeState()) {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.updatePreference = { _, key, value in
-                recordedKey.setValue(key)
-                recordedValue.setValue(value)
+                recorded.withValue { $0.append("\(key.rawValue)=\(value)") }
             }
         }
 
-        await store.send(.setShowHiddenFiles(true)) { state in
-            state.$preferences.withLock { prefs in prefs = UserPreferences(showHiddenFiles: true, showThumbnails: prefs.showThumbnails) }
+        await store.send(testCase.action) { state in
+            state.$preferences.withLock { $0 = testCase.expected }
         }
         await store.receive(\.updatePreferenceResponse)
 
-        #expect(recordedKey.value == .showHiddenFiles)
-        #expect(recordedValue.value == true)
-    }
-
-    @Test
-    func setShowThumbnailsUpdatesSharedPreferencesAndPersistsOptimistically() async {
-        let recordedKey = LockIsolated<UserPreferenceKey?>(nil)
-        let recordedValue = LockIsolated<Bool?>(nil)
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        } withDependencies: {
-            $0.filesClient.updatePreference = { _, key, value in
-                recordedKey.setValue(key)
-                recordedValue.setValue(value)
-            }
-        }
-
-        await store.send(.setShowThumbnails(false)) { state in
-            state.$preferences.withLock { prefs in prefs = UserPreferences(showHiddenFiles: prefs.showHiddenFiles, showThumbnails: false) }
-        }
-        await store.receive(\.updatePreferenceResponse)
-
-        #expect(recordedKey.value == .showThumbnails)
-        #expect(recordedValue.value == false)
+        #expect(recorded.value == ["\(testCase.key.rawValue)=\(testCase.value)"])
     }
 
     @Test
     func aFailedPersistLeavesTheOptimisticToggleInPlace() async {
-        // Fire-and-forget by design: a failed PATCH doesn't roll the switch back, it just
-        // means the server is out of sync until the next successful toggle.
+        // Fire and forget by design: a failed PATCH does not roll the switch back.
         let store = TestStore(initialState: makeState()) {
             SettingsFeature()
         } withDependencies: {
@@ -510,43 +481,92 @@ struct SettingsFeatureTests {
         }
 
         await store.send(.setShowHiddenFiles(true)) { state in
-            state.$preferences.withLock { prefs in prefs = UserPreferences(showHiddenFiles: true, showThumbnails: prefs.showThumbnails) }
+            state.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: true, showThumbnails: true) }
         }
         await store.receive(\.updatePreferenceResponse)
 
-        #expect(store.state.preferences.showHiddenFiles == true)
+        #expect(store.state.preferences.showHiddenFiles)
+    }
+
+    @Test
+    func aSecondToggleOfTheSameSwitchReplacesTheSaveStillInFlight() async throws {
+        let firstStarted = AsyncGate()
+        let hold = AsyncGate()
+        let calls = LockIsolated<[Bool]>([])
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.filesClient.updatePreference = { _, _, value in
+                let isFirst = calls.withValue { calls -> Bool in
+                    calls.append(value)
+                    return calls.count == 1
+                }
+                if isFirst {
+                    firstStarted.open()
+                    try await hold.wait()
+                }
+            }
+        }
+
+        await store.send(.setShowHiddenFiles(true)) { state in
+            state.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: true, showThumbnails: true) }
+        }
+        try await firstStarted.wait()
+        await store.send(.setShowHiddenFiles(false)) { state in
+            state.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: false, showThumbnails: true) }
+        }
+        await store.receive(\.updatePreferenceResponse)
+        await store.finish()
+
+        #expect(calls.value == [true, false])
+    }
+
+    // MARK: Signing out
+
+    @Test
+    func theSignOutButtonAsksFirstAndCancelWithdrawsTheQuestion() async {
+        let store = makeStore()
+
+        await store.send(.signOutButtonTapped) { $0.isConfirmingSignOut = true }
+        await store.send(.cancelSignOutTapped) { $0.isConfirmingSignOut = false }
     }
 
     @Test
     func confirmSignOutTappedKeepsTheSheetUpAndDelegatesTheActualSignOut() async {
         var state = makeState()
         state.isConfirmingSignOut = true
+        let store = makeStore(state: state)
 
-        let store = TestStore(initialState: state) {
-            SettingsFeature()
-        }
-
-        // The sheet stays presented so its confirm button can show the spinner the parent
-        // drives via `isSigningOut`; the whole scope is torn down once sign out completes.
+        // The sheet stays presented so its confirm button can show the spinner the parent drives
+        // through `isSigningOut`; the whole scope is torn down once sign out completes.
         await store.send(.confirmSignOutTapped)
-        await store.receive(\.delegate)
+        await store.receive(\.delegate, .signOutButtonTapped)
+
+        #expect(store.state.isConfirmingSignOut)
+    }
+
+    // MARK: Downloads and cache
+
+    private func download(_ name: String, location: DownloadLocation, size: Int64) -> LocalDownload {
+        LocalDownload(url: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, location: location, size: size, modifiedDate: MockDate.date)
     }
 
     @Test
-    func removeAllDownloadsConfirmedDeletesEveryDownloadAndDelegatesUpward() async {
+    func removeAllDownloadsConfirmedDeletesEveryDownloadOfThisAccountAndDelegatesUpward() async {
         var state = makeState()
         state.removeAllDownloadsConfirmationIsPresented = true
         state.downloadsSize = 30
-        let downloads = [
-            LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/a.pdf"), fileName: "a.pdf", location: .documents, size: 10, modifiedDate: MockDate.date),
-            LocalDownload(url: URL(fileURLWithPath: "/tmp/Caches/Downloads/b.jpg"), fileName: "b.jpg", location: .cache, size: 20, modifiedDate: MockDate.date),
-        ]
-
+        state.$downloadScope.withLock { $0 = "account-a" }
+        let downloads = [download("a.pdf", location: .documents, size: 10), download("b.jpg", location: .cache, size: 20)]
+        let listedScopes = LockIsolated<[String]>([])
         let deletedURLs = LockIsolated<[URL]>([])
         let store = TestStore(initialState: state) {
             SettingsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { _ in downloads }
+            $0.localDownloadStore.list = { scope in
+                listedScopes.withValue { $0.append(scope) }
+                return downloads
+            }
             $0.localDownloadStore.delete = { url in deletedURLs.withValue { $0.append(url) } }
         }
 
@@ -559,24 +579,28 @@ struct SettingsFeatureTests {
             $0.hasDownloads = false
             $0.downloadsSize = 0
         }
-        await store.receive(\.delegate)
+        await store.receive(\.delegate, .allDownloadsRemoved)
 
-        #expect(deletedURLs.value == downloads.map(\.url))
+        #expect(listedScopes.value == ["account-a"])
+        #expect(deletedURLs.value == [URL(fileURLWithPath: "/tmp/a.pdf"), URL(fileURLWithPath: "/tmp/b.jpg")])
     }
 
     @Test
     func removeAllDownloadsConfirmedIsBestEffortWhenOneFileFailsToDelete() async {
         var state = makeState()
         state.removeAllDownloadsConfirmationIsPresented = true
-        let downloads = [
-            LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/a.pdf"), fileName: "a.pdf", location: .documents, size: 10, modifiedDate: MockDate.date),
-        ]
-
+        let downloads = [download("a.pdf", location: .documents, size: 10), download("b.jpg", location: .cache, size: 20)]
+        let attempted = LockIsolated<[URL]>([])
         let store = TestStore(initialState: state) {
             SettingsFeature()
         } withDependencies: {
             $0.localDownloadStore.list = { _ in downloads }
-            $0.localDownloadStore.delete = { _ in throw FilesClientError.network("permission denied") }
+            $0.localDownloadStore.delete = { url in
+                attempted.withValue { $0.append(url) }
+                if url.lastPathComponent == "a.pdf" {
+                    throw FilesClientError.network("permission denied")
+                }
+            }
         }
 
         await store.send(.removeAllDownloadsConfirmed) {
@@ -586,22 +610,27 @@ struct SettingsFeatureTests {
         await store.receive(\.removeAllDownloadsResponse) {
             $0.isRemovingAllDownloads = false
             $0.hasDownloads = false
-            $0.downloadsSize = 0
         }
-        await store.receive(\.delegate)
+        await store.receive(\.delegate, .allDownloadsRemoved)
+
+        #expect(attempted.value == [URL(fileURLWithPath: "/tmp/a.pdf"), URL(fileURLWithPath: "/tmp/b.jpg")])
     }
 
-    @Test
-    func clearCacheConfirmedClearsTheCacheAndResetsTheSize() async {
+    @Test(arguments: [false, true])
+    func clearCacheConfirmedClearsTheCacheAndResetsTheSizeEvenWhenClearingFails(clearFails: Bool) async {
         var state = makeState()
         state.clearCacheConfirmationIsPresented = true
-        state.cacheSize = 4_096
-
-        let didClear = LockIsolated(false)
+        state.cacheSize = 4096
+        let clears = LockIsolated(0)
         let store = TestStore(initialState: state) {
             SettingsFeature()
         } withDependencies: {
-            $0.previewCacheStore.clear = { didClear.setValue(true) }
+            $0.previewCacheStore.clear = {
+                clears.withValue { $0 += 1 }
+                if clearFails {
+                    throw FilesClientError.network("permission denied")
+                }
+            }
         }
 
         await store.send(.clearCacheConfirmed) {
@@ -613,28 +642,6 @@ struct SettingsFeatureTests {
             $0.cacheSize = 0
         }
 
-        #expect(didClear.value)
-    }
-
-    @Test
-    func clearCacheConfirmedStillSucceedsWhenClearingFails() async {
-        var state = makeState()
-        state.clearCacheConfirmationIsPresented = true
-        state.cacheSize = 4_096
-
-        let store = TestStore(initialState: state) {
-            SettingsFeature()
-        } withDependencies: {
-            $0.previewCacheStore.clear = { throw FilesClientError.network("permission denied") }
-        }
-
-        await store.send(.clearCacheConfirmed) {
-            $0.clearCacheConfirmationIsPresented = false
-            $0.isClearingCache = true
-        }
-        await store.receive(\.clearCacheResponse) {
-            $0.isClearingCache = false
-            $0.cacheSize = 0
-        }
+        #expect(clears.value == 1)
     }
 }
