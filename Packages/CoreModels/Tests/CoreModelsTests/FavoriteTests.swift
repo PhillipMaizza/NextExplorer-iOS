@@ -1,6 +1,7 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Favorite")
 struct FavoriteTests {
@@ -12,8 +13,8 @@ struct FavoriteTests {
             icon: "folder",
             color: nil,
             position: 0,
-            createdAt: Date(),
-            updatedAt: Date()
+            createdAt: MockDate.date,
+            updatedAt: MockDate.date
         )
     }
 

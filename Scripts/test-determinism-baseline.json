@@ -30,12 +30,6 @@
   "Packages/ClientCertificateFeature/Tests/ClientCertificateFeatureTests/ClientCertificateFeatureTests.swift": {
     "UUID()": 1
   },
-  "Packages/CoreModels/Tests/CoreModelsTests/FavoriteTests.swift": {
-    "Date()": 2
-  },
-  "Packages/CoreModels/Tests/CoreModelsTests/FileItemDecodingTests.swift": {
-    "Date()": 21
-  },
   "Packages/DesignSystem/Tests/DesignSystemTests/DSToastPresenterTests.swift": {
     "UUID()": 7
   },

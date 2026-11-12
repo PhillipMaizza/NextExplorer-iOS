@@ -54,6 +54,28 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 - The app ships 30 languages. A new key is added to the string catalog for every language, with placeholder validation intact.
 - Do not hand-edit the generated catalog. Edit the source and regenerate with the scripts below.
 
+## Deterministic tests
+
+A test gives the same result on every run, on every machine, under any load. CI enforces it with `Scripts/check-test-determinism.py`: a new use of a banned pattern fails the build, and the baseline in `Scripts/test-determinism-baseline.json` can only go down.
+
+| Instead of | Use |
+|---|---|
+| `Date()`, `Date.now` | `MockDate.date` from `TestUtils` (a fixed `Date(timeIntervalSince1970:)`), plus offsets such as `MockDate.date.addingTimeInterval(600)` |
+| `UUID()` | `UUID(0)`, `UUID(1)`, or the `.incrementing` dependency |
+| `Task.sleep`, `Thread.sleep`, a real clock | inject `continuousClock`, drive a `TestClock` and `await clock.advance(by:)` (or `ImmediateClock`) |
+| polling with a time budget, `XCTWaiter` | `await store.receive(...)`, `await store.finish()`, or await the task |
+| `exhaustivity = .off`, `skipReceivedActions()` | assert every state change and receive every action |
+| `Int.random`, `shuffled()` | a seeded generator |
+| `URLSession.shared` | an injected client |
+
+Also:
+
+- Expected values are literals, never computed from the code under test.
+- Work that must overlap is held and released with explicit gates, never a timing window.
+- Each test owns its state: a unique temporary directory or `UserDefaults` suite per test.
+- A test that fails only on CI has a race. Fix the race. Do not add a retry or a longer timeout.
+- When you edit a test file, remove its existing uses of the patterns above in the same change.
+
 ## Scripts
 
 Helpers under `Scripts/`. Two drive localization; the others keep dependency pins aligned and build release notes. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.
