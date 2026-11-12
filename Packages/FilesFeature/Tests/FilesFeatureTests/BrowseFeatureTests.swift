@@ -1095,7 +1095,7 @@ struct BrowseFeatureTests {
     func rapidFavoriteDoubleTapFiresASingleRequest() async {
         let serverURL = URL(string: "https://example.com")!
         let dir = FileItem(name: "Vacation", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
-        let clock = TestClock()
+        let gate = AsyncGate()
         let completions = LockIsolated(0)
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.hasLoadedFavorites = true
@@ -1104,7 +1104,7 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.addFavorite = { _, path in
-                try await clock.sleep(for: .seconds(1))
+                try await gate.wait()
                 completions.withValue { $0 += 1 }
                 return Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: MockDate.date, updatedAt: MockDate.date)
             }
@@ -1114,7 +1114,7 @@ struct BrowseFeatureTests {
         // Two taps on the same star before the first resolves: the second supersedes the first.
         await store.send(.favoriteToggleButtonTapped(dir))
         await store.send(.favoriteToggleButtonTapped(dir))
-        await clock.advance(by: .seconds(2))
+        gate.open()
         await store.receive(\.favoriteToggleResponse.success)
 
         #expect(completions.value == 1)

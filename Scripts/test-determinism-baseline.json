@@ -21,9 +21,6 @@
   "Packages/AuthFeature/Tests/AuthFeatureTests/LoginSecondFactorTests.swift": {
     "exhaustivity off": 1
   },
-  "Packages/FilesClient/Tests/FilesClientTests/PreviewDownloadCoordinatorTests.swift": {
-    "Task.sleep": 3
-  },
   "Packages/FilesFeature/Tests/FilesFeatureTests/APITokensFeatureTests.swift": {
     "exhaustivity off": 6
   },
@@ -114,7 +111,6 @@
     "skipReceivedActions": 1
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/OfflineDownloadsFeatureTests.swift": {
-    "Task.sleep": 1,
     "exhaustivity off": 21
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/OfflineManageFeatureTests.swift": {
@@ -122,9 +118,6 @@
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/OfflineSelectionFeatureTests.swift": {
     "exhaustivity off": 5
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/PDFThumbnailStoreTests.swift": {
-    "Task.sleep": 2
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/PermissionsFeatureTests.swift": {
     "exhaustivity off": 2

@@ -181,14 +181,14 @@ struct FavoritesFeatureTests {
         let favorite = makeFavorite(id: "1", path: "Documents")
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.favorites = [favorite]
-        let clock = TestClock()
+        let gate = AsyncGate()
         let completions = LockIsolated(0)
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
         } withDependencies: {
             $0.filesClient.removeFavorite = { _, _ in
-                try await clock.sleep(for: .seconds(1))
+                try await gate.wait()
                 completions.withValue { $0 += 1 }
             }
         }
@@ -196,7 +196,7 @@ struct FavoritesFeatureTests {
 
         await store.send(.removeTapped(favorite))
         await store.send(.removeTapped(favorite))
-        await clock.advance(by: .seconds(2))
+        gate.open()
         await store.receive(\.removeResponse)
 
         #expect(completions.value == 1)

@@ -631,7 +631,6 @@ struct ShareUploadFeatureTests {
     func cancellingMidPreparationStopsTheLoadAndDiscardsTheHalfStagedBatch() async {
         let calls = Calls()
         let wasCancelled = LockIsolated(false)
-        let neverAdvanced = TestClock()
         let (entered, signalEntered) = AsyncStream.makeStream(of: Void.self)
         let store = TestStore(initialState: ShareUploadFeature.State()) {
             ShareUploadFeature()
@@ -640,7 +639,7 @@ struct ShareUploadFeatureTests {
             $0.sharedItems.prepare = { _, _, _, _ in
                 signalEntered.yield()
                 do {
-                    try await neverAdvanced.sleep(for: .seconds(1))
+                    try await suspendUntilCancelled()
                 } catch {
                     wasCancelled.setValue(true)
                     throw error
@@ -958,7 +957,7 @@ struct ShareUploadFeatureTests {
     @Test
     func uploadIsIgnoredWhileTheServerIsBeingChecked() async {
         let calls = Calls()
-        let serverClock = TestClock()
+        let gate = AsyncGate()
         let store = TestStore(initialState: ShareUploadFeature.State()) {
             ShareUploadFeature()
         } withDependencies: {
@@ -970,7 +969,7 @@ struct ShareUploadFeatureTests {
             $0.authClient.loadSession = { .preview }
             $0.authClient.listSessions = { [.preview] }
             $0.authClient.me = { _ in
-                try await serverClock.sleep(for: .seconds(1))
+                try await gate.wait()
                 throw AuthClientError.clientCertificateRequired
             }
             $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos")])
@@ -984,7 +983,7 @@ struct ShareUploadFeatureTests {
         }
         await store.send(.uploadTapped)
         #expect(store.state.phase == .checking)
-        await serverClock.advance(by: .seconds(1))
+        gate.open()
         await store.receive(\.connectionChecked) { $0.phase = .certificateRequired }
         #expect(calls.all.isEmpty)
     }

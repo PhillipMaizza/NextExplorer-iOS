@@ -6,6 +6,7 @@ import Foundation
 import Localization
 import NetworkClient
 import Testing
+import TestUtils
 
 // Serialized: every store shares the sync effect's cancel id, so parallel tests would cancel each other.
 @Suite(.serialized)
@@ -206,7 +207,7 @@ struct OfflineDownloadsFeatureTests {
             }
             // A cancellable hang, so the run is still in flight when the cancel arrives.
             $0.filesClient.offlineDownloadFile = { _, item, _ in
-                try await Task.sleep(for: .seconds(3600))
+                try await suspendUntilCancelled()
                 return URL(fileURLWithPath: "/tmp/\(item.name)")
             }
         }

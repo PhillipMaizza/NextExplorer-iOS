@@ -5,6 +5,7 @@ import CoreModels
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
 @MainActor
 // Serialized: every TestStore.receive keeps yielding while it waits, so dozens of these running at
@@ -732,6 +733,7 @@ struct LoginFormFeatureTests {
     @Test("edge case: rapid double-submit cancels the first in-flight login instead of firing two network calls")
     func doubleSubmitCancelsFirstInFlightLogin() async {
         let clock = TestClock()
+        let gate = AsyncGate()
         // Each `authClient.login` invocation records its own call index into `completedCalls`
         // only if it runs to completion: a cancelled invocation never appends. Two flat booleans
         // would be indistinguishable between the first and second call since both share this one
@@ -753,7 +755,7 @@ struct LoginFormFeatureTests {
                     defer { count += 1 }
                     return count
                 }
-                try await clock.sleep(for: .seconds(5))
+                try await gate.wait()
                 completedCalls.withValue { $0.append(callIndex) }
                 return user
             }
@@ -769,6 +771,7 @@ struct LoginFormFeatureTests {
         // Second tap before the first call resolves cancels it in favor of a fresh attempt.
         await store.send(.continueButtonTapped)
 
+        gate.open()
         await clock.advance(by: .seconds(10))
         await store.receive(\.submitSucceeded) {
             $0.submitPhase = .success

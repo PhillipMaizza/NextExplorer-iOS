@@ -35,6 +35,7 @@ PATTERNS = {
     "Date.now": r"\bDate\.now\b",
     "UUID()": r"(?<![A-Za-z0-9_.])UUID\(\)",
     "Task.sleep": r"\bTask\.sleep\b",
+    "clock.sleep": r"(?<!Task)(?<!Thread)\.sleep\(",
     "Thread.sleep": r"\bThread\.sleep\b|\busleep\(",
     "ContinuousClock()": r"\bContinuousClock\(\)|\bSuspendingClock\(\)",
     "asyncAfter": r"\basyncAfter\b",

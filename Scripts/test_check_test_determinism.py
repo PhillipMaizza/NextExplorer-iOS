@@ -27,6 +27,9 @@ class CountTests(unittest.TestCase):
         counts = check.count_in("try await Task.sleep(for: .seconds(1))\nThread.sleep(forTimeInterval: 1)\nusleep(5)\n")
         self.assertEqual(counts, {"Task.sleep": 1, "Thread.sleep": 2})
 
+    def test_a_clock_sleep_is_found_too(self):
+        self.assertEqual(check.count_in("try await clock.sleep(for: .seconds(1))\n"), {"clock.sleep": 1})
+
     def test_real_clocks_are_found_but_test_clocks_are_not(self):
         self.assertEqual(check.count_in("let a = ContinuousClock()\nlet b = TestClock()\nlet c = ImmediateClock()\n"), {"ContinuousClock()": 1})
 

@@ -35,22 +35,16 @@ struct PDFThumbnailStoreTests {
     private func load(
         _ store: PDFThumbnailStore, key: String, item: FileItem,
         client: FilesClient, cache: PDFThumbnailCache
-    ) -> PDFThumbnailStore.Entry {
+    ) -> (entry: PDFThumbnailStore.Entry, task: Task<Void, Never>?) {
         let entry = store.entry(forKey: key)
-        store.load(
+        let task = store.load(
             entry: entry, key: key, item: item,
             serverURL: URL(string: "https://example.com")!, filesClient: client, cache: cache
         )
-        return entry
+        return (entry, task)
     }
 
-    private func waitForReady(_ entry: PDFThumbnailStore.Entry) async -> PlatformImage? {
-        for _ in 0 ..< 40 {
-            if case let .ready(image) = entry.state {
-                return image
-            }
-            try? await Task.sleep(for: .milliseconds(50))
-        }
+    private func readyImage(_ entry: PDFThumbnailStore.Entry) -> PlatformImage? {
         if case let .ready(image) = entry.state {
             return image
         }
@@ -82,10 +76,11 @@ struct PDFThumbnailStoreTests {
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
 
         // Two overlapping loads for the same key: one fetch, one render.
-        let entry = load(store, key: key, item: file, client: client, cache: cache)
+        let (entry, task) = load(store, key: key, item: file, client: client, cache: cache)
         _ = load(store, key: key, item: file, client: client, cache: cache)
 
-        let image = await waitForReady(entry)
+        await task?.value
+        let image = readyImage(entry)
         #expect(image != nil)
         #expect(fetchCount.value == 1)
     }
@@ -104,7 +99,7 @@ struct PDFThumbnailStoreTests {
         let (cache, cacheDirectory) = isolatedCache()
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
 
-        let entry = load(store, key: key, item: huge, client: client, cache: cache)
+        let entry = load(store, key: key, item: huge, client: client, cache: cache).entry
 
         #expect(isUnavailable(entry))
         #expect(fetchCount.value == 0)
@@ -125,11 +120,9 @@ struct PDFThumbnailStoreTests {
         let (cache, cacheDirectory) = isolatedCache()
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
 
-        let entry = load(store, key: key, item: file, client: client, cache: cache)
+        let (entry, task) = load(store, key: key, item: file, client: client, cache: cache)
 
-        for _ in 0 ..< 40 where !isUnavailable(entry) {
-            try? await Task.sleep(for: .milliseconds(50))
-        }
+        await task?.value
         #expect(isUnavailable(entry))
     }
 

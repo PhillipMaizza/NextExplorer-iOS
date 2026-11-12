@@ -77,13 +77,13 @@ struct SharedFeatureTests {
     @Test
     func rapidRefreshSupersedesTheInFlightLoadInsteadOfRacingIt() async {
         let share = makeShare()
-        let clock = TestClock()
+        let gate = AsyncGate()
         let completions = LockIsolated(0)
         let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
             SharedFeature()
         } withDependencies: {
             $0.filesClient.mySharedLinks = { _ in
-                try await clock.sleep(for: .seconds(1))
+                try await gate.wait()
                 completions.withValue { $0 += 1 }
                 return [share]
             }
@@ -95,7 +95,7 @@ struct SharedFeatureTests {
         // so a slow stale response can't land after (and clobber) the newer one.
         await store.send(.refreshRequested)
         await store.send(.refreshRequested)
-        await clock.advance(by: .seconds(2))
+        gate.open()
         await store.receive(\.sharesResponse)
 
         #expect(completions.value == 1)

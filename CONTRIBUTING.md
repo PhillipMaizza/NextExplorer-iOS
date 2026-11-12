@@ -62,7 +62,7 @@ A test gives the same result on every run, on every machine, under any load. CI 
 |---|---|
 | `Date()`, `Date.now` | `MockDate.date` from `TestUtils` (a fixed `Date(timeIntervalSince1970:)`), plus offsets such as `MockDate.date.addingTimeInterval(600)` |
 | `UUID()` | `UUID(0)`, `UUID(1)`, the `.incrementing` dependency, or `TestID.uuid()` / `TestID.name()` for unique names |
-| `Task.sleep`, `Thread.sleep`, a real clock | inject `continuousClock`, drive a `TestClock` and `await clock.advance(by:)` (or `ImmediateClock`) |
+| `Task.sleep`, `Thread.sleep`, `clock.sleep`, a mock that sleeps | `AsyncGate` / `suspendUntilCancelled()` from `TestUtils`, opened by the test. Never sleep in a test. Production delays use the injected `continuousClock`, advanced with `TestClock`. Never a real clock: | inject `continuousClock`, drive a `TestClock` and `await clock.advance(by:)` (or `ImmediateClock`) |
 | polling with a time budget, `XCTWaiter` | `await store.receive(...)`, `await store.finish()`, or await the task |
 | `exhaustivity = .off`, `skipReceivedActions()` | assert every state change and receive every action |
 | `Int.random`, `shuffled()` | a seeded generator |

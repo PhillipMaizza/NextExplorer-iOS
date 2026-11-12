@@ -2,6 +2,7 @@ import Dependencies
 @testable import FilesClient
 import Foundation
 import Testing
+import TestUtils
 
 struct PreviewDownloadCoordinatorTests {
     private let fileA = URL(fileURLWithPath: "/tmp/preview-cache/a/preview.pdf")
@@ -12,17 +13,25 @@ struct PreviewDownloadCoordinatorTests {
         let coordinator = PreviewDownloadCoordinator()
         let runs = LockIsolated(0)
         let target = fileA
+        let gate = AsyncGate()
         let work: @Sendable () async throws -> URL = {
             runs.withValue { $0 += 1 }
-            try await Task.sleep(for: .milliseconds(50))
+            try await gate.wait()
             return target
         }
 
-        async let first = coordinator.run(forFileAt: target, work)
-        async let second = coordinator.run(forFileAt: target, work)
-        let results = try await [first, second]
+        let results = LockIsolated<[URL]>([])
+        try await withMainSerialExecutor {
+            let first = Task { try await coordinator.run(forFileAt: target, work) }
+            let second = Task { try await coordinator.run(forFileAt: target, work) }
+            await Task.yield()
+            gate.open()
+            let firstValue = try await first.value
+            let secondValue = try await second.value
+            results.setValue([firstValue, secondValue])
+        }
 
-        #expect(results == [target, target])
+        #expect(results.value == [target, target])
         #expect(runs.value == 1)
     }
 
@@ -46,17 +55,27 @@ struct PreviewDownloadCoordinatorTests {
     func keepsDistinctFilePathsIndependent() async throws {
         let coordinator = PreviewDownloadCoordinator()
         let runs = LockIsolated(0)
+        let gate = AsyncGate()
         func work(returning url: URL) -> @Sendable () async throws -> URL {
             { @Sendable in
                 runs.withValue { $0 += 1 }
-                try await Task.sleep(for: .milliseconds(20))
+                try await gate.wait()
                 return url
             }
         }
 
-        async let a = coordinator.run(forFileAt: fileA, work(returning: fileA))
-        async let b = coordinator.run(forFileAt: fileB, work(returning: fileB))
-        _ = try await [a, b]
+        let outcome = LockIsolated<[URL]>([])
+        try await withMainSerialExecutor { [fileA, fileB] in
+            let a = Task { try await coordinator.run(forFileAt: fileA, work(returning: fileA)) }
+            let b = Task { try await coordinator.run(forFileAt: fileB, work(returning: fileB)) }
+            await Task.yield()
+            gate.open()
+            let aValue = try await a.value
+            let bValue = try await b.value
+            outcome.setValue([aValue, bValue])
+        }
+
+        #expect(outcome.value == [fileA, fileB])
 
         #expect(runs.value == 2)
     }
@@ -66,16 +85,25 @@ struct PreviewDownloadCoordinatorTests {
         let coordinator = PreviewDownloadCoordinator()
         let runs = LockIsolated(0)
         struct Boom: Error {}
+        let gate = AsyncGate()
         let failing: @Sendable () async throws -> URL = {
             runs.withValue { $0 += 1 }
-            try await Task.sleep(for: .milliseconds(20))
+            try await gate.wait()
             throw Boom()
         }
 
-        let first = Task { try await coordinator.run(forFileAt: fileA, failing) }
-        let second = Task { try await coordinator.run(forFileAt: fileA, failing) }
-        let firstResult = await first.result
-        let secondResult = await second.result
+        let outcomes = LockIsolated<[Result<URL, any Error>]>([])
+        await withMainSerialExecutor { [fileA] in
+            let first = Task { try await coordinator.run(forFileAt: fileA, failing) }
+            let second = Task { try await coordinator.run(forFileAt: fileA, failing) }
+            await Task.yield()
+            gate.open()
+            let firstOutcome = await first.result
+            let secondOutcome = await second.result
+            outcomes.setValue([firstOutcome, secondOutcome])
+        }
+        let firstResult = outcomes.value[0]
+        let secondResult = outcomes.value[1]
 
         #expect(throws: Boom.self) { try firstResult.get() }
         #expect(throws: Boom.self) { try secondResult.get() }
