@@ -129,6 +129,12 @@ public struct AppView: View {
         .task {
             await TipTransactionObserver.run()
         }
+        // Tapping an "upload finished" notification opens the folder the files went to.
+        .task {
+            for await tap in UploadNotificationTaps.taps {
+                store.send(.uploadNotificationTapped(tap))
+            }
+        }
         .onChange(of: store.sessionDidExpire) { _, didExpire in
             guard didExpire else { return }
             store.send(.sessionExpiryDetected)
