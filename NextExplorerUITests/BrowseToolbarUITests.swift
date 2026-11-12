@@ -47,7 +47,7 @@
             XCTAssertTrue(precedesInReadingOrder(photos, documents), "Name descending should place Photos before Documents")
         }
 
-        func testPullToRefreshRaisesSyncToast() {
+        func testPullToRefreshKeepsTheListingWithoutAToast() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
             let documents = browse.item(Fixture.folder)
@@ -55,20 +55,14 @@
 
             // A held coordinate drag downward trips the refresh control where a plain swipeDown only
             // catches it intermittently. The terminal hold (not the drag speed) is what pushes
-            // `.refreshable` past its threshold, so the drag runs at `.default` velocity: `.slow` over a
-            // long distance takes many seconds per attempt and, under the parallel clone CI load, stalls
-            // the whole test past its timeout. The gesture is still occasionally dropped, so retry it (as
-            // the suite does for tab/menu gestures) until the "Sync completed" toast the refresh raises
-            // appears.
-            let toast = browse.syncCompletedToast
-            var hasPulled = false
-            for _ in 0 ..< 5 where !hasPulled {
-                let start = app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
-                let end = start.withOffset(CGVector(dx: 0, dy: 500))
-                start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .default, thenHoldForDuration: 0.4)
-                hasPulled = toast.appears(within: UITestTimeout.short)
-            }
-            XCTAssertTrue(hasPulled, "Pull to refresh should raise the sync completed toast")
+            // `.refreshable` past its threshold, so the drag runs at `.default` velocity.
+            let start = app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
+            let end = start.withOffset(CGVector(dx: 0, dy: 500))
+            start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .default, thenHoldForDuration: 0.4)
+
+            // iOS confirms a refresh with a haptic only; the listing stays and no toast covers it.
+            XCTAssertTrue(documents.waitToAppear(), "The listing should still be there after a refresh")
+            XCTAssertFalse(browse.syncCompletedToast.appears(within: UITestTimeout.short), "iOS no longer raises a sync toast")
         }
 
         /// Whether `a` comes before `b` in reading order: higher on screen, or same row and further

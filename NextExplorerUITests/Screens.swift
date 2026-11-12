@@ -239,7 +239,7 @@ struct BrowseScreen {
         app.labeledButton(L10n.Common.close)
     }
 
-    /// The transient "Sync completed" toast a successful pull to refresh raises.
+    /// The "Sync completed" toast, raised on the Mac only; iOS confirms a refresh with a haptic.
     var syncCompletedToast: XCUIElement {
         app.staticTexts[L10n.Common.syncCompleted]
     }
