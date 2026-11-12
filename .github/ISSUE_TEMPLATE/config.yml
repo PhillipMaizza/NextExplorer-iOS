@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Server problem (also in the web interface)
+    url: https://github.com/nxzai/NextExplorer/issues
+    about: If the same problem happens in the NextExplorer web interface, it is a server issue. Please report it to the server project.
