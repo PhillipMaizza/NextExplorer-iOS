@@ -1,0 +1,299 @@
+{
+  "Packages/AppFeature/Tests/AppFeatureTests/AccountBoundaryTests.swift": {
+    "exhaustivity off": 12
+  },
+  "Packages/AppFeature/Tests/AppFeatureTests/AccountCacheWipeTests.swift": {
+    "UUID()": 1
+  },
+  "Packages/AppFeature/Tests/AppFeatureTests/AppFeatureTests.swift": {
+    "exhaustivity off": 13,
+    "skipReceivedActions": 1
+  },
+  "Packages/AppFeature/Tests/AppFeatureTests/AuthenticatedFeatureTests.swift": {
+    "exhaustivity off": 6
+  },
+  "Packages/AppFeature/Tests/AppFeatureTests/LegacyCacheCleanupTests.swift": {
+    "UUID()": 2
+  },
+  "Packages/AppFeature/Tests/AppFeatureTests/SessionBoundaryWipeTests.swift": {
+    "exhaustivity off": 6
+  },
+  "Packages/AuthFeature/Tests/AuthFeatureTests/LoginClientCertificateTests.swift": {
+    "exhaustivity off": 5
+  },
+  "Packages/AuthFeature/Tests/AuthFeatureTests/LoginFormFeatureTests.swift": {
+    "exhaustivity off": 4
+  },
+  "Packages/AuthFeature/Tests/AuthFeatureTests/LoginSecondFactorTests.swift": {
+    "exhaustivity off": 1
+  },
+  "Packages/ClientCertificateFeature/Tests/ClientCertificateFeatureTests/ClientCertificateFeatureTests.swift": {
+    "UUID()": 1
+  },
+  "Packages/CoreModels/Tests/CoreModelsTests/FavoriteTests.swift": {
+    "Date()": 2
+  },
+  "Packages/CoreModels/Tests/CoreModelsTests/FileItemDecodingTests.swift": {
+    "Date()": 21
+  },
+  "Packages/DesignSystem/Tests/DesignSystemTests/DSToastPresenterTests.swift": {
+    "UUID()": 7
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/AccountScopedCacheTests.swift": {
+    "UUID()": 4
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/CacheFileNameTests.swift": {
+    "UUID()": 9
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/DirectoryCacheStoreTests.swift": {
+    "Date()": 11,
+    "UUID()": 2
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/FilesClientTests.swift": {
+    "Date()": 24,
+    "UUID()": 17
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/PreviewDownloadCoordinatorTests.swift": {
+    "Task.sleep": 3
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/SessionScratchStoreTests.swift": {
+    "UUID()": 5
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/UploadRequestTests.swift": {
+    "UUID()": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/APITokensFeatureTests.swift": {
+    "exhaustivity off": 6
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/AccessRulesFeatureTests.swift": {
+    "exhaustivity off": 3
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/ActivityLogFeatureTests.swift": {
+    "exhaustivity off": 1,
+    "skipReceivedActions": 16
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/ArrivalRecheckTests.swift": {
+    "exhaustivity off": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseDropTests.swift": {
+    "UUID()": 9,
+    "exhaustivity off": 4,
+    "skipReceivedActions": 4
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseFeatureTests.swift": {
+    "Date()": 118,
+    "exhaustivity off": 34,
+    "skipReceivedActions": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseKeyboardActionsTests.swift": {
+    "exhaustivity off": 7,
+    "skipReceivedActions": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseQAFixesTests.swift": {
+    "exhaustivity off": 19
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseReviewFixTests.swift": {
+    "exhaustivity off": 8
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseRoundThreeTests.swift": {
+    "exhaustivity off": 10
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseSearchFilterTests.swift": {
+    "Date()": 1,
+    "exhaustivity off": 6
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseTabFeatureTests.swift": {
+    "Date()": 6,
+    "exhaustivity off": 7,
+    "skipReceivedActions": 3
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/CacheScopeCaptureTests.swift": {
+    "exhaustivity off": 2
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/ChangePasswordFeatureTests.swift": {
+    "exhaustivity off": 2
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/DownloadQueueFeatureTests.swift": {
+    "UUID()": 1,
+    "exhaustivity off": 7,
+    "skipReceivedActions": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/DownloadsFeatureTests.swift": {
+    "Date()": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/FFmpegSettingsFeatureTests.swift": {
+    "exhaustivity off": 2,
+    "skipReceivedActions": 7
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/FavoriteEditFeatureTests.swift": {
+    "Date()": 2
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/FavoritesFeatureTests.swift": {
+    "Date()": 7,
+    "exhaustivity off": 11,
+    "skipReceivedActions": 4
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/FileUndoTests.swift": {
+    "exhaustivity off": 3
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/FolderSizeSettingsFeatureTests.swift": {
+    "exhaustivity off": 1,
+    "skipReceivedActions": 11
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/FolderWindowFeatureTests.swift": {
+    "Date()": 1,
+    "exhaustivity off": 2
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/InspectorFollowsItemTests.swift": {
+    "Date()": 6,
+    "exhaustivity off": 3
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/LocalDownloadStoreTests.swift": {
+    "UUID()": 19
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/MacAuditCoverageTests.swift": {
+    "Date()": 7,
+    "UUID()": 3,
+    "exhaustivity off": 5
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/MacDownloadTests.swift": {
+    "Date()": 20,
+    "UUID()": 2,
+    "exhaustivity off": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/MacFolderWindowSyncTests.swift": {
+    "Date()": 2,
+    "exhaustivity off": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/MacSecondPassTests.swift": {
+    "Date()": 5,
+    "UUID()": 2,
+    "exhaustivity off": 3,
+    "skipReceivedActions": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/MacVersionsModelTests.swift": {
+    "Date()": 3
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/MainTabFeatureTests.swift": {
+    "Date()": 7,
+    "exhaustivity off": 16,
+    "skipReceivedActions": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/OfflineDownloadsFeatureTests.swift": {
+    "Task.sleep": 1,
+    "exhaustivity off": 21
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/OfflineManageFeatureTests.swift": {
+    "exhaustivity off": 2
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/OfflineSelectionFeatureTests.swift": {
+    "exhaustivity off": 5
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/PDFThumbnailCacheTests.swift": {
+    "UUID()": 4
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/PDFThumbnailStoreTests.swift": {
+    "Task.sleep": 2,
+    "UUID()": 4
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/PermissionsFeatureTests.swift": {
+    "Date()": 1,
+    "exhaustivity off": 2
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/SearchIndexSettingsFeatureTests.swift": {
+    "exhaustivity off": 1,
+    "skipReceivedActions": 12
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/SettingsClientCertificateTests.swift": {
+    "exhaustivity off": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/SettingsFeatureTests.swift": {
+    "Date()": 3,
+    "exhaustivity off": 13,
+    "skipReceivedActions": 15
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/SharedFeatureTests.swift": {
+    "Date()": 5,
+    "exhaustivity off": 3
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/SharedFileInboxTests.swift": {
+    "Date()": 1,
+    "UUID()": 1,
+    "exhaustivity off": 7
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/ThumbnailCacheTests.swift": {
+    "UUID()": 4
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/ThumbnailSettingsFeatureTests.swift": {
+    "exhaustivity off": 3
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/TrashSettingsFeatureTests.swift": {
+    "exhaustivity off": 1,
+    "skipReceivedActions": 19
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/TwoFactorFeatureTests.swift": {
+    "exhaustivity off": 3
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/UploadReviewFeatureTests.swift": {
+    "exhaustivity off": 5
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/UploadSettingsFeatureTests.swift": {
+    "exhaustivity off": 2,
+    "skipReceivedActions": 11
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/UploadStagingClientTests.swift": {
+    "UUID()": 5
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/UploadStagingFolderTests.swift": {
+    "UUID()": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/UploadsFeatureTests.swift": {
+    "UUID()": 4,
+    "exhaustivity off": 18,
+    "skipReceivedActions": 2
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/UserManagementFeatureTests.swift": {
+    "exhaustivity off": 2
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/VersionedFilesFeatureTests.swift": {
+    "exhaustivity off": 1,
+    "skipReceivedActions": 20
+  },
+  "Packages/FolderPickerFeature/Tests/FolderPickerFeatureTests/DestinationPickerFeatureTests.swift": {
+    "exhaustivity off": 6
+  },
+  "Packages/Keychain/Tests/KeychainTests/KeychainClientTests.swift": {
+    "UUID()": 3
+  },
+  "Packages/NetworkClient/Tests/NetworkClientTests/NetworkClientTimeoutTests.swift": {
+    "UUID()": 1
+  },
+  "Packages/ShareExtensionFeature/Tests/ShareExtensionFeatureTests/ShareUploadFeatureTests.swift": {
+    "UUID()": 2,
+    "exhaustivity off": 1
+  },
+  "Packages/ShareExtensionFeature/Tests/ShareExtensionFeatureTests/SharedItemsClientLiveTests.swift": {
+    "UUID()": 3
+  },
+  "Packages/ShareUploads/Tests/ShareUploadsTests/BackgroundUploaderEventsTests.swift": {
+    "UUID()": 3
+  },
+  "Packages/ShareUploads/Tests/ShareUploadsTests/BackgroundUploaderRecoveryTests.swift": {
+    "UUID()": 1
+  },
+  "Packages/ShareUploads/Tests/ShareUploadsTests/BackgroundUploaderTests.swift": {
+    "UUID()": 5
+  },
+  "Packages/ShareUploads/Tests/ShareUploadsTests/ShareUploadsTests.swift": {
+    "UUID()": 3
+  },
+  "Packages/ShareUploads/Tests/ShareUploadsTests/SharedItemLoaderStagingTests.swift": {
+    "UUID()": 2
+  },
+  "Packages/ShareUploads/Tests/ShareUploadsTests/TestSupport.swift": {
+    "UUID()": 3
+  },
+  "Packages/ShareUploads/Tests/ShareUploadsTests/UploadStagingFailureTests.swift": {
+    "UUID()": 1
+  }
+}

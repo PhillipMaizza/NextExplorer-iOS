@@ -40,6 +40,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check the tests are deterministic
+        run: |
+          python3 Scripts/test_check_test_determinism.py
+          python3 Scripts/check-test-determinism.py
+
       - name: Compare
         id: diff
         env:
