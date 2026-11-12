@@ -235,6 +235,22 @@ public struct BrowseFeature {
         public var isShowingCachePaint = false
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
+
+        /// How far below the root this folder sits: 0 at the root, 1 for a top level location.
+        var folderDepth: Int {
+            directoryPath.split(separator: "/").count
+        }
+
+        /// A search inside a folder stays in that folder and can be widened to everywhere; the
+        /// root already searches everywhere.
+        public var canWidenSearch: Bool {
+            folderDepth > 0 && searchScope == .thisFolder
+        }
+
+        /// The scope a search actually runs with.
+        public var effectiveSearchScope: SearchScope {
+            folderDepth == 0 ? .everywhere : searchScope
+        }
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
         /// True while a recursive backend search (either scope) is in flight, so the UI can show a
         /// spinner over the instant client side pre-fill until the authoritative results land.

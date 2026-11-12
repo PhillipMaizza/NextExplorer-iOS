@@ -8,20 +8,28 @@ import SwiftUI
 /// a term too short for the server, a search stopped at its time limit, or a full first page
 /// with Show More to widen it.
 struct SearchStatusFooter: View {
-    let message: String
+    let message: String?
     let canShowMore: Bool
     let onShowMore: () -> Void
+    /// Set when the search is inside a folder and can be widened to everywhere.
+    var onSearchEverywhere: (() -> Void)?
 
     var body: some View {
         #if os(macOS)
             HStack(spacing: .space8) {
-                Text(message)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                if let message {
+                    Text(message)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
                 Spacer(minLength: .space8)
                 if canShowMore {
                     Button(L10n.Browse.searchShowMore, action: onShowMore)
+                        .controlSize(.small)
+                }
+                if let onSearchEverywhere {
+                    Button(L10n.Browse.searchEverywhere, action: onSearchEverywhere)
                         .controlSize(.small)
                 }
             }
@@ -29,11 +37,18 @@ struct SearchStatusFooter: View {
             .padding(.vertical, .space8)
         #else
             VStack(alignment: .leading, spacing: .space8) {
-                Text(message)
-                    .type(.body3(.regular), style: .secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                if let message {
+                    Text(message)
+                        .type(.body3(.regular), style: .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
                 if canShowMore {
                     Button(L10n.Browse.searchShowMore, action: onShowMore)
+                        .type(.body3(.semibold), style: .link)
+                        .buttonStyle(.borderless)
+                }
+                if let onSearchEverywhere {
+                    Button(L10n.Browse.searchEverywhere, action: onSearchEverywhere)
                         .type(.body3(.semibold), style: .link)
                         .buttonStyle(.borderless)
                 }
