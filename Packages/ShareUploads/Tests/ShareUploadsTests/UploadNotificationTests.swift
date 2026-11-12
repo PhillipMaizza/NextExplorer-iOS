@@ -9,7 +9,7 @@ import UserNotifications
 struct UploadNotificationTests {
     private func outcome(uploaded: Int, failures: [FailedUpload] = [], destination: String = TestPath.photos2026) -> BatchOutcome {
         BatchOutcome(
-            batchID: TestUpload.batchID, accountID: "https://files.example.com|phillip", host: TestHost.server,
+            batchID: TestUpload.batchID, accountID: TestUpload.accountID, host: TestHost.server,
             destination: destination, uploaded: uploaded, failures: failures
         )
     }
@@ -110,15 +110,17 @@ struct UploadNotificationTests {
         }
     }
 
-    @Test("The user info carries only the batch id, nothing about the files or the server")
+    @Test("The user info carries the batch, its account and its folder, never file names or the server")
     func userInfo() {
         let failures = [FailedUpload(name: TestFile.aPhoto, cause: .serverFull)]
         let failed = UploadNotification(outcome: outcome(uploaded: 1, failures: failures)).userInfo
         let clean = UploadNotification(outcome: outcome(uploaded: 1)).userInfo
-        #expect(failed.count == 1)
-        #expect(failed[UploadNotificationKey.batchID] as? String == TestUpload.batchID)
-        #expect(clean.count == 1)
-        #expect(clean[UploadNotificationKey.batchID] as? String == TestUpload.batchID)
+        for info in [failed, clean] {
+            #expect(info.count == 3)
+            #expect(info[UploadNotificationKey.batchID] as? String == TestUpload.batchID)
+            #expect(info[UploadNotificationKey.accountID] as? String == TestUpload.accountID)
+            #expect(info[UploadNotificationKey.destination] as? String == TestPath.photos2026)
+        }
     }
 
     @Test("Both categories hide the body behind a placeholder when previews are hidden")
@@ -169,7 +171,7 @@ struct UploadNotificationTests {
         #expect(requests[0].content.title == "Some files didn't upload")
         #expect(requests[0].content.categoryIdentifier == UploadNotificationIdentifier.failedCategory)
         #expect(requests[0].content.subtitle == TestHost.server)
-        #expect(requests[0].content.threadIdentifier == "https://files.example.com|phillip")
+        #expect(requests[0].content.threadIdentifier == TestUpload.accountID)
         #expect(requests[0].content.userInfo[UploadNotificationKey.batchID] as? String == TestUpload.batchID)
         #expect(requests[1].content.title == "Upload finished")
         #expect(requests[1].content.body == "2 files uploaded to “2026”.")
@@ -195,16 +197,29 @@ struct UploadNotificationTests {
 
     // MARK: Delegate
 
-    @Test("Retry restarts the batch; a dismissal and a tap do nothing, so no file is ever deleted by them")
+    @Test("Retry restarts the batch, a tap opens the folder, a dismissal does nothing; no file is deleted by any")
     func decisions() {
-        let info: [AnyHashable: Any] = [UploadNotificationKey.batchID: TestUpload.batchID]
+        let info: [AnyHashable: Any] = [
+            UploadNotificationKey.batchID: TestUpload.batchID,
+            UploadNotificationKey.accountID: TestUpload.accountID,
+            UploadNotificationKey.destination: TestPath.filesDocuments,
+        ]
         #expect(
             UploadNotificationHandler.decision(actionIdentifier: UploadNotificationIdentifier.retryAction, userInfo: info)
                 == .retry(batchID: TestUpload.batchID)
         )
+        #expect(
+            UploadNotificationHandler.decision(actionIdentifier: UNNotificationDefaultActionIdentifier, userInfo: info)
+                == .open(accountID: TestUpload.accountID, folder: TestPath.filesDocuments)
+        )
         #expect(UploadNotificationHandler.decision(actionIdentifier: UNNotificationDismissActionIdentifier, userInfo: info) == .ignore)
-        #expect(UploadNotificationHandler.decision(actionIdentifier: UNNotificationDefaultActionIdentifier, userInfo: info) == .ignore)
         #expect(UploadNotificationHandler.decision(actionIdentifier: "other", userInfo: info) == .ignore)
+    }
+
+    @Test("A notification posted before folders were included only opens the app")
+    func olderNotificationOnlyOpens() {
+        let info: [AnyHashable: Any] = [UploadNotificationKey.batchID: TestUpload.batchID]
+        #expect(UploadNotificationHandler.decision(actionIdentifier: UNNotificationDefaultActionIdentifier, userInfo: info) == .ignore)
     }
 
     @Test("A notification without its batch id is ignored")
@@ -268,5 +283,15 @@ struct UploadNotificationTests {
         let requests = Requests()
         await UploadNotifier.requestPermission(using: authorization(status: .notDetermined, fullFails: true, requests: requests))
         #expect(requests.options == [[.alert, .sound], [.alert, .provisional]])
+    }
+
+    @Test("A system completion handler called from a background thread still runs on the main thread")
+    func completionRunsOnMain() async {
+        let ranOnMain = await withCheckedContinuation { continuation in
+            DispatchQueue.global().async {
+                MainThreadCompletion { continuation.resume(returning: Thread.isMainThread) }.call()
+            }
+        }
+        #expect(ranOnMain)
     }
 }

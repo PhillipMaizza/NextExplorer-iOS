@@ -11,20 +11,28 @@ struct UploadNotification: Equatable {
     var batchID: String
     var accountID: String
     var failedNames: [String]
+    /// The folder the files went to, for a tap to open the app there.
+    var destination: String
 
     var hasFailures: Bool {
         !failedNames.isEmpty
     }
 
-    /// Only the batch id: the account, names and cause are looked up from the batch's manifest
-    /// when needed, so nothing about the files or the server rides in the notification itself.
+    /// The batch id, plus the account and folder a tap opens. File names, causes and the server
+    /// are looked up from the batch's manifest when needed, so they never ride in the notification.
     var userInfo: [String: Any] {
-        [UploadNotificationKey.batchID: batchID]
+        [
+            UploadNotificationKey.batchID: batchID,
+            UploadNotificationKey.accountID: accountID,
+            UploadNotificationKey.destination: destination,
+        ]
     }
 }
 
 enum UploadNotificationKey {
     static let batchID = "batchID"
+    static let accountID = "accountID"
+    static let destination = "destination"
 }
 
 enum UploadNotificationIdentifier {
@@ -42,6 +50,7 @@ extension UploadNotification {
         let folder = (outcome.destination as NSString).lastPathComponent
         batchID = outcome.batchID
         accountID = outcome.accountID
+        destination = outcome.destination
         subtitle = outcome.host
         failedNames = outcome.failedNames
         if outcome.failures.isEmpty {
@@ -223,8 +232,14 @@ public enum UploadNotifications {
     /// Makes the app the notification center's delegate (banners while it is frontmost, the Retry
     /// button) and registers the failure category. Call once at launch, before the
     /// app finishes launching, so a notification action that starts the app is delivered.
-    public static func install(retry: @escaping @Sendable (_ batchID: String) async -> Void) {
-        let handler = UploadNotificationHandler(retry: retry)
+    ///
+    /// `open` is called on the main thread when the user taps a notification, with the batch's
+    /// account and the folder its files went to.
+    public static func install(
+        retry: @escaping @Sendable (_ batchID: String) async -> Void,
+        open: @escaping @Sendable (_ accountID: String, _ folder: String) -> Void
+    ) {
+        let handler = UploadNotificationHandler(retry: retry, open: open)
         UploadNotificationHandler.retain(handler)
         UNUserNotificationCenter.current().delegate = handler
         UploadNotifier.registerCategories()

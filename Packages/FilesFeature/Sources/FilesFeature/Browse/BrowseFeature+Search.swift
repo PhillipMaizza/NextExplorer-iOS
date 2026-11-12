@@ -17,6 +17,7 @@ extension BrowseFeature {
             state.isSearchingRemotely = false
             state.searchShortfall = nil
             state.selectedSearchCategories = []
+            state.searchScope = .thisFolder
             return .cancel(id: CancelID.search)
         }
 
@@ -49,7 +50,7 @@ extension BrowseFeature {
         // Both scopes hit the same recursive, content aware backend endpoint; only the base path
         // differs. "This Folder" scopes to the current directory (its whole subtree); "Everywhere"
         // searches from the root.
-        let scopePath = state.searchScope == .everywhere ? "" : state.directoryPath
+        let scopePath = state.effectiveSearchScope == .everywhere ? "" : state.directoryPath
         let serverURL = state.serverURL
         let filesClient = filesClient
         let clock = clock
@@ -70,7 +71,7 @@ extension BrowseFeature {
     /// the moment it is typed instead of after the backend answers. Favorites are folders (the
     /// Favorites tab opens every one as a directory), unless the loaded folder says otherwise.
     static func favoriteMatches(_ state: State, query: String) -> [SearchResultItem] {
-        let scope = state.searchScope == .everywhere ? "" : state.directoryPath
+        let scope = state.effectiveSearchScope == .everywhere ? "" : state.directoryPath
         return state.favoritePaths.compactMap { favoritePath in
             guard scope.isEmpty || favoritePath.hasPrefix(scope + "/") else { return nil }
             let name = (favoritePath as NSString).lastPathComponent

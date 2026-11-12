@@ -143,9 +143,13 @@ public enum TestAPIToken {
 public enum TestUpload {
     /// The identifier of a staged upload batch.
     public static let batchID = "BATCH"
+    /// The account a batch belongs to, as the notification carries it.
+    public static let accountID = "https://files.example.com|phillip"
 }
 
 public enum TestPath {
+    /// A folder two levels below the root.
+    public static let filesDocuments = "Files/Documents"
     /// The Docs folder as a lowercase cache path.
     public static let docsLowercase = "docs"
     /// A note inside Docs.
