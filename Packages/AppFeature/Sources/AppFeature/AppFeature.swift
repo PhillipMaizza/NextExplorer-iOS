@@ -380,13 +380,9 @@ public struct AppFeature {
                 // mount the new account without clearing caches, so both accounts' caches survive.
                 return .merge(.send(.activateAccount(credentials)), prune)
 
-            case let .uploadNotificationTapped(tap):
-                state.pendingUploadFolder = PendingUploadFolder(tap: tap)
-                return openPendingUploadFolder(&state)
-
-            case .destination(.authenticated(.mainTab(.observeConnectivity))):
-                // The tab shell just mounted (any sign in or account switch ends here).
-                return openPendingUploadFolder(&state)
+            case .uploadNotificationTapped:
+                // UploadFolderRouting opens the folder.
+                return .none
 
             case .destination:
                 return .none
@@ -444,6 +440,8 @@ public struct AppFeature {
         .ifLet(\.$addAccount, action: \.addAccount) {
             LoginFormFeature()
         }
+
+        UploadFolderRouting()
     }
 
     /// Removes the client certificates of servers no remaining account is signed in to, so an
