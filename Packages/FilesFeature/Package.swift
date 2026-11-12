@@ -146,6 +146,7 @@ let package = Package(
                 .product(name: "ShareUploads", package: "ShareUploads"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
+                .product(name: "ZIPFoundation", package: "ZIPFoundation"),
             ],
             resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]

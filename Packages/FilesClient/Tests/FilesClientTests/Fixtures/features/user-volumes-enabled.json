@@ -1,0 +1,20 @@
+{
+  "userVolumes": {
+    "enabled": true
+  },
+  "volumeUsage": {
+    "enabled": false
+  },
+  "personal": {
+    "enabled": true
+  },
+  "editor": {
+    "extensions": [
+      "TXT",
+      "Md"
+    ]
+  },
+  "uploads": {
+    "maxChunkSizeBytes": 5242880
+  }
+}

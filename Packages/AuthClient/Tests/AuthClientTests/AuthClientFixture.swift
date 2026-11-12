@@ -6,6 +6,7 @@ enum AuthClientFixture: String, FixtureFile {
 
     // MARK: common
     case commonEmptyObject = "common/empty-object"
+    case commonMalformedJson = "common/malformed-json"
 
     // MARK: second-factor
     case secondFactorErrorInvalidCode = "second-factor/error-invalid-code"

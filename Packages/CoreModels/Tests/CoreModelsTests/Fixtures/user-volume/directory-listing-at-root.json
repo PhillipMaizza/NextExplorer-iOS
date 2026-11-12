@@ -1,0 +1,8 @@
+{
+  "current": "/mnt",
+  "parent": null,
+  "directories": [
+    {"name": "archive", "path": "/mnt/archive"},
+    {"name": "media", "path": "/mnt/media"}
+  ]
+}

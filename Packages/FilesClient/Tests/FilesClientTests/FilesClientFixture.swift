@@ -4,6 +4,16 @@ import TestUtils
 enum FilesClientFixture: String, FixtureFile {
     static let bundle = Bundle.module
 
+    // MARK: admin-users
+    case adminUsersListTwo = "admin-users/list-two"
+    case adminUsersSingle = "admin-users/single"
+    case adminUsersVolumesTwo = "admin-users/volumes-two"
+    case adminUsersVolumeSingle = "admin-users/volume-single"
+    case adminUsersDirectoryListing = "admin-users/directory-listing"
+    case adminUsersDirectoryRoot = "admin-users/directory-root"
+    case adminUsersErrorEmailInUse = "admin-users/error-email-in-use"
+    case adminUsersErrorLastAdmin = "admin-users/error-last-admin"
+
     // MARK: activity-log
     case activityLogClearedTwelve = "activity-log/cleared-twelve"
     case activityLogDisabledEmpty = "activity-log/disabled-empty"
@@ -22,6 +32,12 @@ enum FilesClientFixture: String, FixtureFile {
     // MARK: auth-status
     case authStatusLocalAndOidc = "auth-status/local-and-oidc"
     case authStatusOidcOnly = "auth-status/oidc-only"
+
+    // MARK: branding
+    case brandingGetCustom = "branding/get-custom"
+    case brandingSettingsCustom = "branding/settings-custom"
+    case brandingLogoUploaded = "branding/logo-uploaded"
+    case brandingErrorLogoRejected = "branding/error-logo-rejected"
 
     // MARK: browse
     case browseDocsDirectory = "browse/docs-directory"
@@ -44,7 +60,13 @@ enum FilesClientFixture: String, FixtureFile {
     case editorContentTheirs = "editor/content-theirs"
 
     // MARK: favorite
+    case favoriteErrorOrderMismatch = "favorite/error-order-mismatch"
+    case favoriteListTwo = "favorite/list-two"
     case favoriteStar = "favorite/star"
+    case favoriteUpdated = "favorite/updated"
+
+    // MARK: features
+    case featuresUserVolumesEnabled = "features/user-volumes-enabled"
 
     // MARK: item-mutation
     case itemMutationArchiveStartLine = "item-mutation/archive-start-line"
@@ -66,11 +88,20 @@ enum FilesClientFixture: String, FixtureFile {
     case metadataHashTagDirectory = "metadata/hash-tag-directory"
     case metadataPlainFile = "metadata/plain-file"
 
+    // MARK: offline
+    case offlineCorruptManifest = "offline/corrupt-manifest"
+    case offlineLegacyManifest = "offline/legacy-manifest"
+
     // MARK: password
     case passwordAddedMessage = "password/added-message"
     case passwordErrorAlreadyExists = "password/error-already-exists"
     case passwordErrorCurrentIncorrect = "password/error-current-incorrect"
     case passwordErrorTooShort = "password/error-too-short"
+
+    // MARK: permissions
+    case permissionsFile644 = "permissions/file-644"
+    case permissionsErrorDenied = "permissions/error-denied"
+    case permissionsErrorInvalidMode = "permissions/error-invalid-mode"
 
     // MARK: preferences
     case preferencesEmptyBranding = "preferences/empty-branding"
@@ -86,8 +117,13 @@ enum FilesClientFixture: String, FixtureFile {
     case searchSingleDirectory = "search/single-directory"
 
     // MARK: share
+    case shareCreated = "share/created"
+    case shareErrorExpiryInPast = "share/error-expiry-in-past"
+    case shareErrorNotFound = "share/error-not-found"
     case shareFull = "share/full"
     case shareInfoQ3Report = "share/info-q3-report"
+    case shareListTwo = "share/list-two"
+    case shareShareableUsers = "share/shareable-users"
 
     // MARK: sign-in-method
     case signInMethodEmpty = "sign-in-method/empty"

@@ -31,8 +31,15 @@ enum CoreModelsFixture: String, FixtureFile {
     case browseResultDirectoryWithAccess = "browse-result/directory-with-access"
     case browseResultEmptyDirectory = "browse-result/empty-directory"
 
+    // MARK: cached-directory
+    case cachedDirectoryStaleSchemaWithoutEtag = "cached-directory/stale-schema-without-etag"
+
     // MARK: common
     case emptyObject = "common/empty-object"
+
+    // MARK: delete-impact
+    case deleteImpactMissingShareCount = "delete-impact/missing-share-count"
+    case deleteImpactTwoLinks = "delete-impact/two-links"
 
     // MARK: favorite
     case favoriteFullRow = "favorite/full-row"
@@ -43,6 +50,10 @@ enum CoreModelsFixture: String, FixtureFile {
     case fileAccessReadOnlyGrant = "file-access/read-only-grant"
     case fileAccessWithCreateFlags = "file-access/with-create-flags"
     case fileAccessWithoutCreateFlags = "file-access/without-create-flags"
+
+    // MARK: file-version
+    case fileVersionHistoryFull = "file-version/history-full"
+    case fileVersionHistoryMissingRights = "file-version/history-missing-rights"
 
     // MARK: file-item
     case fileItemDirectoryWithThumbnail = "file-item/directory-with-thumbnail"
@@ -84,6 +95,13 @@ enum CoreModelsFixture: String, FixtureFile {
     case serverSettingsSystemSettingsFourBackgroundSections = "server-settings/system-settings-four-background-sections"
     case serverSettingsSystemSettingsUserOnly = "server-settings/system-settings-user-only"
 
+    // MARK: share
+    case shareAnyoneOwnerString = "share/anyone-owner-string"
+    case shareCreatedMissingUrls = "share/created-missing-urls"
+    case shareCreatedWithUrls = "share/created-with-urls"
+    case shareMissingShareToken = "share/missing-share-token"
+    case shareUsersOwnerIntegerMinimal = "share/users-owner-integer-minimal"
+
     // MARK: share-info
     case shareInfoInfoEndpointShape = "share-info/info-endpoint-shape"
     case shareInfoMinimalExpiredUsersShare = "share-info/minimal-expired-users-share"
@@ -108,6 +126,8 @@ enum CoreModelsFixture: String, FixtureFile {
     case transferResultMoveWithSkippedItem = "transfer-result/move-with-skipped-item"
 
     // MARK: trash-admin
+    case trashAdminEventIntegerId = "trash-admin/event-integer-id"
+    case trashAdminEventStringId = "trash-admin/event-string-id"
     case trashAdminSystemSettingsTrashAndVersions = "trash-admin/system-settings-trash-and-versions"
     case trashAdminVerificationEmptyViolations = "trash-admin/verification-empty-violations"
     case trashAdminVerificationMissingViolations = "trash-admin/verification-missing-violations"
@@ -123,6 +143,10 @@ enum CoreModelsFixture: String, FixtureFile {
     case twoFactorPendingNeverConfirmed = "two-factor/pending-never-confirmed"
     case twoFactorSetup = "two-factor/setup"
     case twoFactorWithoutConfirmedDate = "two-factor/without-confirmed-date"
+
+    // MARK: user-volume
+    case userVolumeDirectoryListingAtRoot = "user-volume/directory-listing-at-root"
+    case userVolumeVolume = "user-volume/volume"
 
     // MARK: user-preferences
     case userPreferencesEmptyObject = "user-preferences/empty-object"

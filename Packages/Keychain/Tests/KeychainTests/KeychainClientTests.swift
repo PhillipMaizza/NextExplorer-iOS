@@ -6,7 +6,7 @@ import TestUtils
 @Suite("KeychainClient live implementation")
 struct KeychainClientTests {
     private func makeClient() -> KeychainClient {
-        .live(configuration: KeychainConfiguration(service: "app.nextplorer.tests.\(TestID.name())"))
+        .live(configuration: .unique())
     }
 
     @Test("save then load round-trips the same data")
@@ -64,8 +64,8 @@ struct KeychainClientTests {
 
     @Test("edge case: keys are scoped per service: the same account key in a different service does not collide")
     func keysAreScopedPerService() throws {
-        let serviceA = KeychainConfiguration(service: "app.nextplorer.tests.\(TestID.name())")
-        let serviceB = KeychainConfiguration(service: "app.nextplorer.tests.\(TestID.name())")
+        let serviceA = KeychainConfiguration.unique()
+        let serviceB = KeychainConfiguration.unique()
         let clientA = KeychainClient.live(configuration: serviceA)
         let clientB = KeychainClient.live(configuration: serviceB)
 

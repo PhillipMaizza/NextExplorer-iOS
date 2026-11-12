@@ -1,0 +1,24 @@
+{
+  "enabled": true,
+  "totalBytes": 3000000000,
+  "rights": {"see": true, "download": true, "restore": false, "remove": true},
+  "versions": [
+    {
+      "id": "v2",
+      "size": 2000000000,
+      "modifiedAt": "2023-11-14T22:13:20Z",
+      "capturedAt": "2023-11-14T22:23:20Z",
+      "author": {"label": "alice"},
+      "label": "Before refactor",
+      "pinned": true,
+      "available": false
+    },
+    {
+      "id": "v1",
+      "size": 1000000000,
+      "modifiedAt": "2023-11-14T21:13:20Z",
+      "capturedAt": "2023-11-14T21:23:20Z",
+      "pinned": false
+    }
+  ]
+}
