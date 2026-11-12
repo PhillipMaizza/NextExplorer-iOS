@@ -202,6 +202,13 @@
                 // Offline: a folder's estimate and a per file "download" that completes instantly, so
                 // the offline picker + download flow is exercisable without a backend or disk writes.
                 client.fetchUsage = { _, path in StorageUsage(path: path, size: 12_000_000, free: 0, total: 0) }
+                client.fetchMetadata = { _, path in
+                    FileMetadata(
+                        path: path, name: (path as NSString).lastPathComponent, kind: FileItem.directoryKind, size: 0,
+                        dateModified: Date(), dateCreated: Date(),
+                        directory: FileMetadata.DirectorySummary(totalSize: 12_000_000, fileCount: 2, dirCount: 0, truncated: false)
+                    )
+                }
                 client.offlineDownloadFile = { _, item, onProgress in
                     onProgress(1)
                     return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(item.name)
