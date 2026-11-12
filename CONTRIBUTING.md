@@ -79,8 +79,10 @@ Also:
 - Work that must overlap is held and released with explicit gates, never a timing window.
 - Each test owns its state: a unique temporary directory or `UserDefaults` suite per test.
 - A test that fails only on CI has a race. Fix the race. Do not add a retry or a longer timeout.
+- Turn off password AutoFill on the simulator you run UI tests on, as CI does: `xcrun simctl spawn <udid> defaults write com.apple.WebUI AutoFillPasswords -bool NO`. Otherwise iOS offers to save the password after each sign in, in a sheet that takes the next tap (`LoginScreen.signIn` declines it when it does show).
 - UI tests in CI rerun a failed test once, on its own (`Scripts/ci-ui-tests.py`). A test that passes only on that rerun is flagged on the pull request as flaky: fix it like any other failure. UI tests run on `main`, from "Run workflow" on a branch, and on a pull request labelled `ui-tests` (from the next push after labelling).
 - When you edit a test file, remove its existing uses of the patterns above in the same change.
+- UI tests (`NextExplorerUITests`) drive a real app, so they wait on a condition with a timeout (`waitToAppear`, `waitToVanish`, `isFocused(within:)`, `waitUntil(_:on:)` in `UITestCase.swift`). They never sleep for a fixed time: the guard fails `Thread.sleep`, `usleep`, `Task.sleep`, a clock sleep and `asyncAfter` there too.
 
 ## Scripts
 
@@ -106,7 +108,7 @@ Helpers under `Scripts/`. Two drive localization; the others keep dependency pin
   xcodebuild test -workspace PackageTests.xcworkspace -scheme PackageTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
   xcodebuild test -workspace PackageTests.xcworkspace -scheme PackageTests -destination 'platform=macOS'
   ```
-  `bundle exec fastlane unit_tests` runs the first. The XCUITest suites run from the **NextExplorer** scheme (`fastlane ui_tests` on iOS; `-only-testing:NextExplorerUITests/MacCriticalPathUITests` with `-destination 'platform=macOS'` on the Mac, which drives the real pointer and keyboard).
+  `bundle exec fastlane unit_tests` runs the first. The XCUITest suites run from the **NextExplorer** scheme (`fastlane ui_tests` on iOS; `-only-testing:NextExplorerUITests` with `-destination 'platform=macOS'` on the Mac, where only the `Mac*UITests` suites compile, which drives the real pointer and keyboard).
 - Lint as CI does (its Lint job gates `main`): `swiftformat . --lint` and `swiftlint`, with the versions CI pins (SwiftFormat 0.64.4, SwiftLint 0.65.1) and the repo's `.swiftformat` and `.swiftlint.yml`. Imports are sorted, so a new import goes in its alphabetical slot.
 - Confirm strings are localized, there are no magic numbers, and the app builds cleanly for both iOS and the Mac before opening the PR.
 
@@ -135,7 +137,7 @@ Uploads carry the version's `gen-changelog.py` notes as TestFlight's "What to Te
 Mac only lanes (`bundle exec fastlane mac <lane>`):
 
 - `unit_tests`: every package's tests on the Mac.
-- `ui_tests`: the Mac XCUITest suite (`MacCriticalPathUITests`). It drives the real app, so leave the Mac alone while it runs.
+- `ui_tests`: the Mac XCUITest suites (`Mac*UITests`, on `MacUITestCase`). It drives the real app, so leave the Mac alone while it runs.
 - `beta`: the upcoming version as a Mac App Store package, uploaded to TestFlight for macOS.
 - `release_dry_run`: Mac unit tests and the Mac App Store package, nothing uploaded.
 

@@ -10,30 +10,63 @@ extension XCUIApplication {
     /// carry icon derived identifiers (e.g. "checkmark.circle"), so the `app.buttons["Label"]`
     /// subscript, which matches identifiers, misses them.
     func labeledButton(_ label: String) -> XCUIElement {
-        buttons.matching(NSPredicate(format: "label == %@", label)).firstMatch
+        buttons.labeled(label)
+    }
+}
+
+/// Text based matches, so a test never spells out an `NSPredicate` for the common cases. The
+/// subscript (`query["x"]`) matches identifiers, which many controls and menu items lack.
+extension XCUIElementQuery {
+    /// The first element whose label is exactly `text`.
+    func labeled(_ text: String) -> XCUIElement {
+        matching(NSPredicate(format: "label == %@", text)).firstMatch
+    }
+
+    /// The first element showing `text` as its label or its value (table cells expose their text
+    /// as a value).
+    func showing(_ text: String) -> XCUIElement {
+        matching(NSPredicate(format: "label == %@ OR value == %@", text, text)).firstMatch
+    }
+
+    /// The first element titled `text`, by label or title (AppKit menu items, windows and radio
+    /// buttons expose their text as a title).
+    func titled(_ text: String) -> XCUIElement {
+        matching(NSPredicate(format: "label == %@ OR title == %@", text, text)).firstMatch
+    }
+
+    /// The first element whose label contains `text`, ignoring case.
+    func containing(_ text: String) -> XCUIElement {
+        matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
     }
 }
 
 struct TabBar {
     let app: XCUIApplication
     var browse: XCUIElement {
-        app.buttons[AccessibilityIdentifiers.Tab.browse]
+        tab(AccessibilityIdentifiers.Tab.browse, title: L10n.Tab.browse)
     }
 
     var favorites: XCUIElement {
-        app.buttons[AccessibilityIdentifiers.Tab.favorites]
+        tab(AccessibilityIdentifiers.Tab.favorites, title: L10n.Tab.favorites)
     }
 
     var shared: XCUIElement {
-        app.buttons[AccessibilityIdentifiers.Tab.shared]
+        tab(AccessibilityIdentifiers.Tab.shared, title: L10n.Tab.shared)
     }
 
     var downloads: XCUIElement {
-        app.buttons[AccessibilityIdentifiers.Tab.downloads]
+        tab(AccessibilityIdentifiers.Tab.downloads, title: L10n.Tab.downloads)
     }
 
     var settings: XCUIElement {
-        app.buttons[AccessibilityIdentifiers.Tab.settings]
+        tab(AccessibilityIdentifiers.Tab.settings, title: L10n.Tab.settings)
+    }
+
+    /// A tab by its identifier, or by its title when the tab bar built its items without one:
+    /// SwiftUI only hands a tab label's identifier to the bar's button when the tab view is rebuilt
+    /// on screen, which a fast launch can miss. An untagged button with the tab's title is a tab.
+    private func tab(_ identifier: String, title: String) -> XCUIElement {
+        app.buttons.matching(NSPredicate(format: "identifier == %@ OR (identifier == '' AND label == %@)", identifier, title)).firstMatch
     }
 }
 
@@ -73,6 +106,78 @@ struct LoginScreen {
 
     var diagnosticsButton: XCUIElement {
         app.buttons[AccessibilityIdentifiers.Login.diagnosticsButton]
+    }
+
+    /// Enters the server, continues to the credentials page and submits the sign in, the steps
+    /// every sign in test shares. What follows (the app, a code page, an error) is the test's.
+    func signIn(
+        host: String = UITestCase.Fixture.serverHost,
+        identifier: String = UITestCase.Fixture.accountIdentifier,
+        password: String = UITestCase.Fixture.accountPassword,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        enterServer(host, file: file, line: line)
+        submitCredentials(identifier: identifier, password: password, file: file, line: line)
+        declineSavePassword()
+    }
+
+    /// After an accepted password iOS may offer to save it, in a sheet inside the app that takes the
+    /// next tap (a 2FA test tapped it instead of "Use a recovery code"). XCUITest's interruption
+    /// monitors only see other processes, so it is declined here, waiting a short while for it.
+    private func declineSavePassword() {
+        #if os(iOS)
+            let notNow = app.sheets.buttons[Self.notNowButton]
+            guard notNow.appears(within: UITestTimeout.short) else { return }
+            // A page that focuses a field (the 2FA code boxes) raises the keyboard under the sheet
+            // first and moves the sheet above it only once the keyboard is up: tapping before that
+            // hits the keyboard. So let the keyboard settle, then the sheet, then tap; once more if
+            // it is still up a moment later.
+            let keyboard = app.keyboards.firstMatch
+            if keyboard.exists {
+                keyboard.waitForFrameToSettle()
+            }
+            notNow.waitForFrameToSettle()
+            notNow.tap()
+            if !notNow.waitToVanish(UITestTimeout.short) {
+                notNow.waitForFrameToSettle()
+                notNow.tap()
+            }
+            XCTAssertTrue(notNow.waitToVanish(), "The Save Password sheet should close")
+        #endif
+    }
+
+    /// The button iOS's Save Password sheet offers to decline it (the simulator runs in English).
+    private static let notNowButton = "Not Now"
+
+    /// Enters the server address and continues to the credentials page.
+    func enterServer(_ host: String = UITestCase.Fixture.serverHost, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertTrue(hostField.waitToAppear(file: file, line: line))
+        hostField.clearAndType(host)
+        press(testConnectionButton)
+        XCTAssertTrue(identifierField.waitToAppear(UITestTimeout.standard, "Test connection should advance to the credentials page", file: file, line: line))
+    }
+
+    /// Fills the credentials page and submits it.
+    func submitCredentials(
+        identifier: String = UITestCase.Fixture.accountIdentifier,
+        password: String = UITestCase.Fixture.accountPassword,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        identifierField.clearAndType(identifier)
+        XCTAssertTrue(passwordField.waitToAppear(file: file, line: line))
+        passwordField.clearAndType(password)
+        press(submitButton)
+    }
+
+    /// A click on the Mac, a tap on iPhone and iPad.
+    private func press(_ element: XCUIElement) {
+        #if os(macOS)
+            element.click()
+        #else
+            element.tap()
+        #endif
     }
 }
 
@@ -117,7 +222,7 @@ struct BrowseScreen {
     /// The tappable/long-pressable row button (its label bundles name + metadata, so match on a
     /// substring). Long press this, not the name label, to open the row's context menu.
     func row(_ name: String) -> XCUIElement {
-        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
+        app.buttons.containing(name)
     }
 
     /// New folder flow. Menu and sheet buttons are matched by label (icon identifiers shadow them).
@@ -231,7 +336,7 @@ struct BrowseScreen {
     /// The SortSheet's "Descending" direction radio row. Its button label aggregates the icon,
     /// title and radio, so match on the title substring.
     var sortDescendingOption: XCUIElement {
-        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", L10n.Sort.descending)).firstMatch
+        app.buttons.containing(L10n.Sort.descending)
     }
 
     /// SortSheet's circular close button (DSSheetHeader).
@@ -481,7 +586,7 @@ struct SettingsScreen {
     /// label (the row folds its name/host into one element, so the host isn't a separate static
     /// text).
     func accountRow(host: String) -> XCUIElement {
-        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", host)).firstMatch
+        app.buttons.containing(host)
     }
 
     /// Admin section row that pushes the thumbnail settings screen.
@@ -496,7 +601,7 @@ struct SettingsScreen {
     /// The version footer's "buy me a coffee" button, matched on the coffee substring since the
     /// label is a two part attributed string.
     var tipButton: XCUIElement {
-        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", L10n.Settings.creditsBuyCoffee)).firstMatch
+        app.buttons.containing(L10n.Settings.creditsBuyCoffee)
     }
 
     var tipJarTitle: XCUIElement {

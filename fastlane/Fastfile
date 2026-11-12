@@ -363,7 +363,8 @@ platform :mac do
       project: PROJECT,
       scheme: SCHEME,
       destination: "platform=macOS",
-      only_testing: ["NextExplorerUITests/MacCriticalPathUITests"],
+      # The whole target: on the Mac only the Mac suites (`#if os(macOS)`) are compiled.
+      only_testing: ["NextExplorerUITests"],
       result_bundle: true,
       output_directory: "build/fastlane/mac-ui-tests",
       parallel_testing: false

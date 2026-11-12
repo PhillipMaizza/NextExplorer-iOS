@@ -27,19 +27,23 @@ private enum Constants {
 /// maximum is `Constants.maxOnScreen`, after which it clears regardless.
 public struct SplashView: View {
     private let isReady: Bool
+    private let timeScale: Double
     private let onExitStarted: () -> Void
     private let onFinished: () -> Void
 
     /// `onExitStarted` fires the instant the splash commits to leaving, while it still fully
     /// covers the screen: the moment for the caller to mount whatever is behind it, so the
     /// wing-opening reveal uncovers real content rather than a blank frame. `onFinished`
-    /// fires once it has cleared.
+    /// fires once it has cleared. `timeScale` scales the flourish and the exit (0 runs them
+    /// instantly, for UI tests); the safety net keeps real time.
     public init(
         isReady: Bool,
+        timeScale: Double = 1,
         onExitStarted: @escaping () -> Void = {},
         onFinished: @escaping () -> Void
     ) {
         self.isReady = isReady
+        self.timeScale = timeScale
         self.onExitStarted = onExitStarted
         self.onFinished = onFinished
     }
@@ -101,13 +105,13 @@ public struct SplashView: View {
     }
 
     private func run() async {
-        try? await Task.sleep(for: .seconds(Constants.hold))
+        await pause(Constants.hold)
 
         withAnimation(.easeInOut(duration: Constants.spinDuration)) { spin = 1 }
-        try? await Task.sleep(for: .seconds(Constants.spinDuration))
+        await pause(Constants.spinDuration)
 
         withAnimation(.easeInOut(duration: Constants.shineDuration)) { shine = 1 }
-        try? await Task.sleep(for: .seconds(Constants.shineDuration))
+        await pause(Constants.shineDuration)
 
         didSettle = true
         maybeExit()
@@ -119,6 +123,12 @@ public struct SplashView: View {
         }
     }
 
+    /// Waits a step of the flourish or exit, scaled by `timeScale`.
+    private func pause(_ seconds: Double) async {
+        guard timeScale > 0 else { return }
+        try? await Task.sleep(for: .seconds(seconds * timeScale))
+    }
+
     private func maybeExit() {
         guard didSettle, readyLatch, !isExiting else { return }
         isExiting = true
@@ -126,16 +136,16 @@ public struct SplashView: View {
 
         Task { @MainActor in
             withAnimation(.easeInOut(duration: Constants.flapStep)) { flap = 0.8 }
-            try? await Task.sleep(for: .seconds(Constants.flapStep))
+            await pause(Constants.flapStep)
             withAnimation(.easeInOut(duration: Constants.flapStep)) { flap = -0.45 }
-            try? await Task.sleep(for: .seconds(Constants.flapStep))
+            await pause(Constants.flapStep)
             withAnimation(.easeInOut(duration: Constants.flapStep)) { flap = 0 }
 
             withAnimation(.easeIn(duration: Constants.partDuration)) {
                 part = 1
                 fade = 0
             }
-            try? await Task.sleep(for: .seconds(Constants.partDuration))
+            await pause(Constants.partDuration)
             onFinished()
         }
     }

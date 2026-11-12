@@ -36,6 +36,22 @@ class FailedTestsTests(unittest.TestCase):
         self.assertEqual(ui.failed_tests({"testFailures": [{"failureText": "crash"}]}), [])
 
 
+class ParseTests(unittest.TestCase):
+    def test_the_mac_job_arguments_parse(self):
+        result, selection, arguments = ui.parse([
+            "--result", "MacTestResults", "--select=-only-testing:NextExplorerUITests", "--",
+            "test", "-scheme", "NextExplorer", "CODE_SIGN_ENTITLEMENTS=",
+        ])
+        self.assertEqual(result, "MacTestResults")
+        self.assertEqual(selection, ["-only-testing:NextExplorerUITests"])
+        self.assertEqual(arguments, ["test", "-scheme", "NextExplorer", "CODE_SIGN_ENTITLEMENTS="])
+
+    def test_a_shard_selection_of_several_arguments_splits(self):
+        shard = "-only-testing:NextExplorerUITests\n-skip-testing:NextExplorerUITests/FileActionsUITests"
+        _, selection, _ = ui.parse(["--result", "TestResults", f"--select={shard}", "--", "test-without-building"])
+        self.assertEqual(selection, ["-only-testing:NextExplorerUITests", "-skip-testing:NextExplorerUITests/FileActionsUITests"])
+
+
 class ReportTests(unittest.TestCase):
     def test_a_test_passing_only_on_the_rerun_is_a_warning(self):
         lines, summary = ui.report(["T/C/flaky"], [])
