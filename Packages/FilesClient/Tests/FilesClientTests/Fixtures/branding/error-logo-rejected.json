@@ -1,0 +1,6 @@
+{
+  "error": {
+    "message": "Logo must be an image.",
+    "statusCode": 400
+  }
+}

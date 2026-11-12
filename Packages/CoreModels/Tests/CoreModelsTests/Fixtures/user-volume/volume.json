@@ -1,0 +1,8 @@
+{
+  "id": "uv1",
+  "userId": "u1",
+  "label": "Archive",
+  "path": "/mnt/archive",
+  "accessMode": "readonly",
+  "createdAt": "2023-11-14T22:13:20Z"
+}

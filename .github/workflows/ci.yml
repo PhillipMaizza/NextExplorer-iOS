@@ -9,9 +9,11 @@ name: CI
 # The iPhone suite is built once and split across three runners that only run it.
 
 on:
+  # No branch filter, so a pull request stacked on another branch gets its checks too. "edited"
+  # also fires when GitHub retargets a stacked pull request to main after its base was merged,
+  # which would otherwise leave the required check missing.
   pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened, labeled, edited]
   push:
     branches: [main]
   # Manual trigger so the heavier UI test job can be run on any branch on demand.
@@ -37,6 +39,11 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+
+      - name: Check the tests are deterministic
+        run: |
+          python3 Scripts/test_check_test_determinism.py
+          python3 Scripts/check-test-determinism.py
 
       - name: Compare
         id: diff

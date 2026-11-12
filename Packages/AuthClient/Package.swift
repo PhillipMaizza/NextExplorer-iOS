@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "AuthClient", targets: ["AuthClient"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../CoreModels"),
         .package(path: "../Keychain"),
         .package(path: "../NetworkClient"),
@@ -27,7 +28,8 @@ let package = Package(
         ),
         .testTarget(
             name: "AuthClientTests",
-            dependencies: ["AuthClient"],
+            dependencies: ["AuthClient", "TestUtils"],
+            resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

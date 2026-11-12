@@ -4,13 +4,14 @@ import Dependencies
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// `updateSystemSettings` through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: both share `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     @Suite("System settings patch")
     struct SystemSettingsPatchRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -21,18 +22,18 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         @Test
         func patchSendsOnlyTheSectionsSetAndDecodesTheEcho() async throws {
-            stub(statusCode: 200, body: #"{"searchIndex":{"enabled":true,"excludedPaths":["a"],"environmentExcludedPaths":[]}}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.systemSettingsSearchIndex.string())
 
             let echoed = try await makeClient().updateSystemSettings(serverURL, SystemSettingsPatch(searchIndex: .init(enabled: true)))
 
             #expect(echoed.searchIndex?.isEnabled == true)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "PATCH")
+            #expect(request.httpMethod == HTTPMethod.patch.rawValue)
             #expect(request.url?.path == "/api/settings")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [String: Bool]])
@@ -41,7 +42,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aNonAdminPatchSurfacesTheServersMessage() async throws {
-            stub(statusCode: 403, body: #"{"error":"Admin access required."}"#)
+            try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().updateSystemSettings(serverURL, SystemSettingsPatch(ffmpeg: .init(ffmpegPath: "/a")))
@@ -50,7 +51,7 @@ extension FilesClientLiveTests {
 
         @Test
         func theUploadsEchoCarriesTheSavedChunkSize() async throws {
-            stub(statusCode: 200, body: #"{"uploads":{"chunkedEnabled":true,"chunkedAutoFallback":false,"chunkSizeBytes":33554432}}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.systemSettingsUploadsChunked.string())
 
             let echoed = try await makeClient().updateSystemSettings(
                 serverURL, SystemSettingsPatch(uploads: UploadSettings(isChunkedEnabled: true, chunkSizeBytes: 33_554_432))
@@ -65,7 +66,7 @@ extension FilesClientLiveTests {
 extension FilesClientLiveTests {
     @Suite("Activity log routes")
     struct ActivityRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -76,12 +77,12 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         @Test
         func fetchSendsOnlyTheFiltersThatAreSetAndEncodesTheSearch() async throws {
-            stub(statusCode: 200, body: #"{"events":[],"nextBefore":null,"enabled":true,"actions":[]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.activityLogEnabledEmpty.string())
 
             _ = try await makeClient().fetchActivity(
                 serverURL, ActivityFilter(action: "file.delete", outcome: .refused, query: " a+b&c "), "2026-11-11T07:10:00.000Z"
@@ -100,7 +101,7 @@ extension FilesClientLiveTests {
 
         @Test
         func anEmptyFilterSendsOnlyTheLimit() async throws {
-            stub(statusCode: 200, body: #"{"events":[],"nextBefore":null,"enabled":false,"actions":[]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.activityLogDisabledEmpty.string())
 
             _ = try await makeClient().fetchActivity(serverURL, ActivityFilter(), nil)
 
@@ -110,7 +111,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aNonAdminFetchFails() async throws {
-            stub(statusCode: 403, body: #"{"error":"Admin access required."}"#)
+            try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().fetchActivity(serverURL, ActivityFilter(), nil)
@@ -119,12 +120,12 @@ extension FilesClientLiveTests {
 
         @Test
         func clearIssuesADeleteToTheActivityRoute() async throws {
-            stub(statusCode: 200, body: #"{"removed":12}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.activityLogClearedTwelve.string())
 
             try await makeClient().clearActivity(serverURL)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "DELETE")
+            #expect(request.httpMethod == HTTPMethod.delete.rawValue)
             #expect(request.url?.path == "/api/activity")
         }
 
@@ -142,7 +143,7 @@ extension FilesClientLiveTests {
 extension FilesClientLiveTests {
     @Suite("Trash admin routes")
     struct TrashAdminRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -153,24 +154,24 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         @Test
         func zonesAreReadFromTheZonesRoute() async throws {
-            stub(statusCode: 200, body: #"{"zones":[{"id":"z1","kind":"volume","name":"files","available":true,"usedBytes":10}]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.trashZonesOneVolume.string())
 
             let zones = try await makeClient().fetchTrashZones(serverURL)
 
             #expect(zones.map(\.id) == ["z1"])
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/trash/zones")
         }
 
         @Test
         func aNonAdminZonesRequestFails() async throws {
-            stub(statusCode: 403, body: #"{"error":"Admin access required."}"#)
+            try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().fetchTrashZones(serverURL)
@@ -179,24 +180,24 @@ extension FilesClientLiveTests {
 
         @Test
         func verifyPostsAndReadsEachZonesViolations() async throws {
-            stub(statusCode: 200, body: #"{"zones":[{"zoneId":"z1","violations":[{"invariant":"I1","itemId":"i1","detail":"content missing"},{"invariant":"I4","itemId":"i2","detail":"left in state x"}]},{"zoneId":"z2","violations":[]}]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.trashVerificationViolations.string())
 
             let results = try await makeClient().verifyTrash(serverURL)
 
             #expect(results.map(\.violationCount) == [2, 0])
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/trash/verify")
         }
 
         @Test
         func maintenancePostsToTheMaintenanceRoute() async throws {
-            stub(statusCode: 200, body: #"{"zones":[]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.trashZonesEmpty.string())
 
             try await makeClient().runTrashMaintenance(serverURL)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/trash/maintenance")
         }
 
@@ -211,7 +212,7 @@ extension FilesClientLiveTests {
 
         @Test
         func theTrashAndVersionsSectionsGoOutInOnePatch() async throws {
-            stub(statusCode: 200, body: #"{"trash":{"enabled":true,"retentionDays":7,"maxPercent":10,"maxBytes":null},"versions":{"enabled":false}}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.trashTrashAndVersionsSettings.string())
 
             let echoed = try await makeClient().updateSystemSettings(
                 serverURL,
@@ -232,7 +233,7 @@ extension FilesClientLiveTests {
 extension FilesClientLiveTests {
     @Suite("Versions admin routes")
     struct VersionsAdminRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -243,7 +244,7 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         private func queryItems() throws -> [String: String] {
@@ -254,7 +255,7 @@ extension FilesClientLiveTests {
 
         @Test
         func theListSendsTheFiltersTheSortAndThePage() async throws {
-            stub(statusCode: 200, body: #"{"files":[],"total":0,"totalBytes":0,"totalVersions":0,"limit":25,"offset":50,"zones":[]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.versionedFilesPageEmpty.string())
 
             _ = try await makeClient().fetchVersionedFiles(
                 serverURL,
@@ -275,7 +276,7 @@ extension FilesClientLiveTests {
 
         @Test
         func theFirstPageSendsNoOffsetAndNoEmptyFilters() async throws {
-            stub(statusCode: 200, body: #"{"files":[]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.versionedFilesFilesEmpty.string())
 
             _ = try await makeClient().fetchVersionedFiles(serverURL, VersionedFilesFilter(), 0, 25)
 
@@ -289,7 +290,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aNonAdminListFails() async throws {
-            stub(statusCode: 403, body: #"{"error":"Admin access required."}"#)
+            try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().fetchVersionedFiles(serverURL, VersionedFilesFilter(), 0, 25)
@@ -298,33 +299,33 @@ extension FilesClientLiveTests {
 
         @Test
         func oneHistoryIsReadByItsID() async throws {
-            stub(statusCode: 200, body: #"{"versions":[],"totalBytes":0}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.versionsEmptyWithTotals.string())
 
             _ = try await makeClient().fetchVersionedFile(serverURL, "f1")
 
             #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/admin/files/f1")
-            #expect(StubURLProtocol.capturedRequest?.httpMethod == "GET")
+            #expect(StubURLProtocol.capturedRequest?.httpMethod == HTTPMethod.get.rawValue)
         }
 
         @Test
         func deletingNamedVersionsPostsTheirIDs() async throws {
-            stub(statusCode: 200, body: #"{"items":[],"deleted":2,"remaining":1}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.versionsDeletionRemainingOne.string())
 
-            let outcome = try await makeClient().deleteVersionsOfFile(serverURL, "f1", ["v1", "v2"])
+            let outcome = try await makeClient().deleteVersionsOfFile(serverURL, "f1", [TestETag.first, TestETag.second])
 
             #expect(outcome == VersionsDeletion(deleted: 2, remaining: 1))
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/versions/admin/files/f1/delete")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
-            #expect(json["ids"] as? [String] == ["v1", "v2"])
+            #expect(json["ids"] as? [String] == [TestETag.first, TestETag.second])
             #expect(json["all"] == nil)
         }
 
         @Test
         func deletingEveryVersionPostsAllTrueAndNoIDs() async throws {
-            stub(statusCode: 200, body: #"{"items":[],"deleted":3,"remaining":0}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.versionsDeletionRemainingZero.string())
 
             _ = try await makeClient().deleteVersionsOfFile(serverURL, "f1", nil)
 
@@ -336,7 +337,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aFailedDeletionSurfacesTheMessage() async throws {
-            stub(statusCode: 404, body: #"{"error":"This history does not exist."}"#)
+            try stub(statusCode: 404, body: FilesClientFixture.versionsErrorHistoryMissing.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().deleteVersionsOfFile(serverURL, "gone", nil)
@@ -345,7 +346,7 @@ extension FilesClientLiveTests {
 
         @Test
         func anIDWithASlashStaysOneSegmentOfTheRoute() async throws {
-            stub(statusCode: 200, body: #"{"versions":[],"totalBytes":0}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.versionsEmptyWithTotals.string())
 
             _ = try await makeClient().fetchVersionedFile(serverURL, "a/../b")
 

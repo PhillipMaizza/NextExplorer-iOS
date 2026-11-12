@@ -1,0 +1,23 @@
+{
+  "items": [
+    {
+      "name": "zeta.txt",
+      "path": "Docs",
+      "kind": "file",
+      "matchedName": true,
+      "matchedContent": false
+    },
+    {
+      "name": "alpha.txt",
+      "path": "Docs",
+      "kind": "file",
+      "matchLine": "zeta here",
+      "matchLineNumber": 4,
+      "matchedName": false,
+      "matchedContent": true
+    }
+  ],
+  "truncated": false,
+  "limit": 2,
+  "complete": false
+}

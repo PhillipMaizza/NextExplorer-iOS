@@ -6,8 +6,7 @@ import Testing
 struct SearchResultItemDecodingTests {
     @Test("happy path: a filename match decodes without match line fields")
     func decodesFilenameMatch() throws {
-        let json = #"{"name": "report.pdf", "path": "Home/Docs", "kind": "pdf"}"#
-        let item = try JSONDecoder().decode(SearchResultItem.self, from: Data(json.utf8))
+        let item = try CoreModelsFixture.searchResultItemFilenameMatch.decode(SearchResultItem.self)
         #expect(item.matchLine == nil)
         #expect(item.matchLineNumber == nil)
         #expect(item.isDirectory == false)
@@ -15,16 +14,14 @@ struct SearchResultItemDecodingTests {
 
     @Test("happy path: a content match includes the matching line and its number")
     func decodesContentMatch() throws {
-        let json = #"{"name": "notes.txt", "path": "Home", "kind": "txt", "matchLine": "TODO: fix this", "matchLineNumber": 42}"#
-        let item = try JSONDecoder().decode(SearchResultItem.self, from: Data(json.utf8))
+        let item = try CoreModelsFixture.searchResultItemContentMatch.decode(SearchResultItem.self)
         #expect(item.matchLine == "TODO: fix this")
         #expect(item.matchLineNumber == 42)
     }
 
     @Test("edge case: kind \"dir\" marks the result as a directory")
     func dirKindIsDirectory() throws {
-        let json = #"{"name": "Docs", "path": "Home", "kind": "dir"}"#
-        let item = try JSONDecoder().decode(SearchResultItem.self, from: Data(json.utf8))
+        let item = try CoreModelsFixture.searchResultItemDirectoryKind.decode(SearchResultItem.self)
         #expect(item.isDirectory == true)
     }
 

@@ -1,0 +1,6 @@
+{
+  "strategies": {
+    "local": true,
+    "oidc": true
+  }
+}

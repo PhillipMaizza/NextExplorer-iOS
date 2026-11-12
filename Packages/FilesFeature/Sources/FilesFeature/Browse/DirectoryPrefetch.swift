@@ -18,13 +18,11 @@ enum DirectoryPrefetch {
     static func run(
         paths: [String],
         limit: Int,
+        now: Date,
         serverURL: URL,
         filesClient: FilesClient,
         directoryCacheStore: DirectoryCacheStore
     ) async {
-        // A background cache warm: an approximate freshness check against the wall clock is fine
-        // here, so this reads `Date()` directly rather than taking a date dependency.
-        let now = Date()
         let stale = Array(paths.filter { path in
             guard !path.isEmpty else { return false }
             guard let writtenAt = directoryCacheStore.lastWrittenAt(serverURL: serverURL, path: path) else { return true }

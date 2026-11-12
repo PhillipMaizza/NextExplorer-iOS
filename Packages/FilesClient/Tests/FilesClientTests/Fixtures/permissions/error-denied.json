@@ -1,0 +1,6 @@
+{
+  "error": {
+    "message": "Access denied by rule.",
+    "statusCode": 403
+  }
+}

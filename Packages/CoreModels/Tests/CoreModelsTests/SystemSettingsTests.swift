@@ -1,21 +1,12 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 struct SystemSettingsTests {
     @Test
     func decodesTheFullAdminShape() throws {
-        let json = """
-        {
-            "branding": { "appName": "X" },
-            "user": { "showHiddenFiles": true },
-            "thumbnails": { "enabled": false, "size": 512, "quality": 90, "concurrency": 4 },
-            "access": { "rules": [
-                { "id": "r1", "path": "Documents/Reports", "recursive": true, "permissions": "ro" },
-                { "id": "r2", "path": "Private", "recursive": false, "permissions": "hidden" }
-            ] }
-        }
-        """.data(using: .utf8)!
+        let json = try CoreModelsFixture.systemSettingsFullAdminShape.data()
 
         let settings = try JSONDecoder().decode(SystemSettings.self, from: json)
 
@@ -32,9 +23,7 @@ struct SystemSettingsTests {
 
     @Test
     func aNonAdminShapeHasNoThumbnailsOrRules() throws {
-        let json = """
-        { "branding": { "appName": "X" }, "user": {} }
-        """.data(using: .utf8)!
+        let json = try CoreModelsFixture.systemSettingsNonAdminShape.data()
 
         let settings = try JSONDecoder().decode(SystemSettings.self, from: json)
         #expect(settings.thumbnails == nil)
@@ -43,7 +32,7 @@ struct SystemSettingsTests {
 
     @Test
     func thumbnailSettingsFillsMissingKeysFromServerDefaults() throws {
-        let settings = try JSONDecoder().decode(ThumbnailSettings.self, from: Data("{}".utf8))
+        let settings = try CoreModelsFixture.emptyObject.decode(ThumbnailSettings.self)
         #expect(settings.isEnabled)
         #expect(settings.size == 200)
         #expect(settings.quality == 70)

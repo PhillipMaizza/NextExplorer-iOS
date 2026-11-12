@@ -1,17 +1,17 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct EditShareFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
-    private let fixedNow = Date(timeIntervalSince1970: 1_800_000_000)
+    private let fixedNow = MockDate.date.addingTimeInterval(100_000_000)
 
     private nonisolated func share(
         label: String? = "Report",
@@ -27,14 +27,14 @@ struct EditShareFeatureTests {
             accessMode: accessMode, sharingType: target, hasPassword: hasPassword,
             expiresAt: expiresAt, label: label, downloadCount: 2, lastAccessedAt: nil,
             permittedUserIds: permittedUserIds,
-            createdAt: Date(timeIntervalSince1970: 1_700_000_000),
-            updatedAt: Date(timeIntervalSince1970: 1_700_000_000)
+            createdAt: MockDate.date,
+            updatedAt: MockDate.date
         )
     }
 
     @Test
     func seedsEveryFieldFromTheShare() {
-        let expiry = Date(timeIntervalSince1970: 1_900_000_000)
+        let expiry = MockDate.date.addingTimeInterval(200_000_000)
         let state = EditShareFeature.State(
             serverURL: serverURL,
             share: share(label: "Bills", accessMode: .readwrite, target: .users, hasPassword: true,
@@ -54,8 +54,8 @@ struct EditShareFeatureTests {
         var state = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: true))
         #expect(state.passwordChange == .keep) // on, blank
 
-        state.newPassword = "hunter2"
-        #expect(state.passwordChange == .set("hunter2"))
+        state.newPassword = TestAccount.password
+        #expect(state.passwordChange == .set(TestAccount.password))
 
         state.newPassword = ""
         state.wantsPassword = false
@@ -102,6 +102,7 @@ struct EditShareFeatureTests {
         let updated = share(label: "Renamed", accessMode: .readwrite)
 
         let recorded = LockIsolated<UpdateShareRequest?>(nil)
+        let gate = AsyncGate()
         let store = TestStore(initialState: initial) {
             EditShareFeature()
         } withDependencies: {
@@ -109,11 +110,13 @@ struct EditShareFeatureTests {
             $0.filesClient.updateShareLink = { _, id, request in
                 #expect(id == "s1")
                 recorded.setValue(request)
+                try await gate.wait()
                 return updated
             }
         }
 
         await store.send(.saveTapped) { $0.isSaving = true }
+        gate.open()
         await store.receive(\.saveResponse.success) {
             $0.isSaving = false
             $0.$shareLinksRevision.withLock { $0 = 1 }

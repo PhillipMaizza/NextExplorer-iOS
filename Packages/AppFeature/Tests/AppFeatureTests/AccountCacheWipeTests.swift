@@ -6,6 +6,7 @@ import FilesClient
 import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Account cache wipe")
 struct AccountCacheWipeTests {
@@ -13,8 +14,8 @@ struct AccountCacheWipeTests {
         static let account = "https://files.example.com|alice"
         static let otherAccount = "https://files.example.com|bob"
         static let server = URL(fileURLWithPath: "/")
-        static let path = "Docs"
-        static let fetchedAt = Date(timeIntervalSince1970: 100)
+        static let path = TestFolder.docs
+        static let fetchedAt = MockDate.date
         static let defaultsSuitePrefix = "account-cache-wipe-"
     }
 
@@ -77,7 +78,7 @@ struct AccountCacheWipeTests {
 
     @Test("an account left pending by a killed run is wiped by the next launch's pass")
     func pendingAccountSurvivesARestart() throws {
-        let suite = "\(Fixture.defaultsSuitePrefix)\(UUID().uuidString)"
+        let suite = "\(Fixture.defaultsSuitePrefix)\(TestID.name())"
         let defaults = try #require(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
         let directory = DirectoryCacheStore.inMemory()
@@ -164,9 +165,9 @@ struct AccountCacheWipeTests {
         return SessionCredentials(
             serverBaseURL: URL(string: parts[0]) ?? Fixture.server,
             authMode: .local,
-            cookieName: "connect.sid",
+            cookieName: TestSession.cookieName,
             cookieValue: "v",
-            cookieDomain: "files.example.com",
+            cookieDomain: TestHost.server,
             cookiePath: "/",
             cookieIsSecure: true,
             expiresAt: nil,

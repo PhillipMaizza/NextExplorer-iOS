@@ -1,0 +1,22 @@
+{
+  "path": "Home/vacation.jpg",
+  "name": "vacation.jpg",
+  "kind": "jpg",
+  "size": 2400000,
+  "dateModified": 1800000000,
+  "dateCreated": 1700000000,
+  "image": {
+    "width": 4032,
+    "height": 3024,
+    "orientation": 1,
+    "cameraMake": "Apple",
+    "cameraModel": "iPhone 15 Pro",
+    "lensModel": null,
+    "software": "17.0",
+    "dateTaken": 1750000000,
+    "gps": {
+      "lat": 37.3349,
+      "lon": -122.009
+    }
+  }
+}

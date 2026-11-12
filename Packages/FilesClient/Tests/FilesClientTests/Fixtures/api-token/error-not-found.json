@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "error": {
+    "message": "There is no such token on this account.",
+    "statusCode": 404
+  }
+}

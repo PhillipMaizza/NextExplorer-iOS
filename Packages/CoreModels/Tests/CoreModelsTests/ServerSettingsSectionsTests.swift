@@ -3,10 +3,6 @@ import Foundation
 import Testing
 
 struct ServerSettingsSectionsTests {
-    private func decode<T: Decodable>(_ type: T.Type, _ json: String) throws -> T {
-        try JSONDecoder().decode(type, from: Data(json.utf8))
-    }
-
     private func encoded(_ value: some Encodable) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         return try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
@@ -16,24 +12,17 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func systemSettingsDecodesTheFourBackgroundSections() throws {
-        let settings = try decode(SystemSettings.self, """
-        {
-            "uploads": { "chunkedEnabled": true, "chunkedAutoFallback": false, "chunkSizeBytes": 16777216 },
-            "ffmpeg": { "ffmpegPath": "/usr/bin/ffmpeg", "ffprobePath": null },
-            "searchIndex": { "enabled": true, "excludedPaths": ["Backups"], "environmentExcludedPaths": ["tmp"] },
-            "folderSize": { "mode": "shallow", "excludedPaths": ["docker"], "environmentExcludedPaths": [] }
-        }
-        """)
+        let settings = try CoreModelsFixture.serverSettingsSystemSettingsFourBackgroundSections.decode(SystemSettings.self)
 
         #expect(settings.uploads == UploadSettings(isChunkedEnabled: true, isChunkedAutoFallback: false, chunkSizeBytes: 16 * 1024 * 1024))
-        #expect(settings.ffmpeg == FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: ""))
+        #expect(settings.ffmpeg == FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: ""))
         #expect(settings.searchIndex == SearchIndexSettings(isEnabled: true, excluded: ExcludedPaths(paths: ["Backups"], environmentPaths: ["tmp"])))
         #expect(settings.folderSize == FolderSizeSettings(mode: .shallow, excluded: ExcludedPaths(paths: ["docker"])))
     }
 
     @Test
     func aNonAdminResponseHasNoBackgroundSections() throws {
-        let settings = try decode(SystemSettings.self, #"{ "user": { "showHiddenFiles": true } }"#)
+        let settings = try CoreModelsFixture.serverSettingsSystemSettingsUserOnly.decode(SystemSettings.self)
 
         #expect(settings.uploads == nil)
         #expect(settings.ffmpeg == nil)
@@ -43,17 +32,17 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func anUnknownFolderSizeModeFallsBackToOff() throws {
-        let folderSize = try decode(FolderSizeSettings.self, #"{ "mode": "everything" }"#)
+        let folderSize = try CoreModelsFixture.serverSettingsFolderSizeUnknownMode.decode(FolderSizeSettings.self)
 
         #expect(folderSize.mode == .off)
     }
 
     @Test
     func emptySectionsTakeTheirDefaults() throws {
-        #expect(try decode(UploadSettings.self, "{}") == UploadSettings())
-        #expect(try decode(FFmpegSettings.self, "{}") == FFmpegSettings())
-        #expect(try decode(SearchIndexSettings.self, "{}") == SearchIndexSettings())
-        #expect(try decode(FolderSizeSettings.self, "{}") == FolderSizeSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(UploadSettings.self) == UploadSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(FFmpegSettings.self) == FFmpegSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(SearchIndexSettings.self) == SearchIndexSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(FolderSizeSettings.self) == FolderSizeSettings())
     }
 
     // MARK: Chunk size
@@ -76,7 +65,7 @@ struct ServerSettingsSectionsTests {
 
     @Test(arguments: [
         ("", "", true),
-        ("/usr/bin/ffmpeg", "", true),
+        (Constants.ffmpegPath, "", true),
         ("", "/usr/bin/ffprobe", true),
         ("/a", "/b", true),
         ("ffmpeg", "", false),
@@ -89,9 +78,9 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func anEmptyFFmpegPathIsSentAsNullToClearTheOverride() throws {
-        let json = try encoded(FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: ""))
+        let json = try encoded(FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: ""))
 
-        #expect(json["ffmpegPath"] as? String == "/usr/bin/ffmpeg")
+        #expect(json["ffmpegPath"] as? String == Constants.ffmpegPath)
         #expect(json["ffprobePath"] is NSNull)
     }
 
@@ -99,17 +88,17 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func addingAPathDropsLeadingSlashesAndKeepsTheListSorted() {
-        let excluded = ExcludedPaths(paths: ["Zeta", "alpha"])
+        let excluded = ExcludedPaths(paths: ["Zeta", Constants.alphaPath])
 
-        #expect(excluded.adding("/Backups/2024") == ["alpha", "Backups/2024", "Zeta"])
-        #expect(excluded.adding("///Mid") == ["alpha", "Mid", "Zeta"])
+        #expect(excluded.adding("/Backups/2024") == [Constants.alphaPath, "Backups/2024", "Zeta"])
+        #expect(excluded.adding("///Mid") == [Constants.alphaPath, "Mid", "Zeta"])
     }
 
     @Test(arguments: ["", "   ", "/", "///", "alpha", "/alpha", "  alpha  ", "tmp"])
     func addingABlankDuplicateOrEnvironmentPathChangesNothing(raw: String) {
-        let excluded = ExcludedPaths(paths: ["alpha"], environmentPaths: ["tmp"])
+        let excluded = ExcludedPaths(paths: [Constants.alphaPath], environmentPaths: ["tmp"])
 
-        #expect(excluded.adding(raw) == ["alpha"])
+        #expect(excluded.adding(raw) == [Constants.alphaPath])
     }
 
     // MARK: Patch
@@ -151,13 +140,7 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func serverFeaturesReadTheCeilingAndTheLocks() throws {
-        let features = try decode(ServerFeatures.self, """
-        {
-            "uploads": { "maxChunkSizeBytes": 67108864 },
-            "search": { "index": { "enabled": true, "lockedBy": "SEARCH_INDEX" } },
-            "folderSize": { "mode": "full", "enabled": true, "lockedBy": "FOLDER_SIZE_MODE" }
-        }
-        """)
+        let features = try CoreModelsFixture.serverSettingsServerFeaturesCeilingAndLocks.decode(ServerFeatures.self)
 
         #expect(features.maxUploadChunkSizeBytes == 67_108_864)
         #expect(features.isSearchIndexEnabled)
@@ -168,7 +151,7 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func serverFeaturesWithoutThoseSectionsAreUnlockedAndOff() throws {
-        let features = try decode(ServerFeatures.self, "{}")
+        let features = try CoreModelsFixture.emptyObject.decode(ServerFeatures.self)
 
         #expect(features.maxUploadChunkSizeBytes == nil)
         #expect(!features.isSearchIndexEnabled)
@@ -189,4 +172,9 @@ struct ServerSettingsSectionsTests {
         #expect(try json(.init(ffprobePath: ""))["ffprobePath"] is NSNull)
         #expect(try json(.init()).isEmpty)
     }
+}
+
+private enum Constants {
+    static let alphaPath = "alpha"
+    static let ffmpegPath = "/usr/bin/ffmpeg"
 }

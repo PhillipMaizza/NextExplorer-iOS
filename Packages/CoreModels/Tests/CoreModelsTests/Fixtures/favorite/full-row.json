@@ -1,0 +1,10 @@
+{
+  "id": "f1",
+  "path": "Home/Docs",
+  "label": "Docs",
+  "icon": "folder",
+  "color": "#FF0000",
+  "position": 2,
+  "createdAt": 1800000000,
+  "updatedAt": 1800100000
+}

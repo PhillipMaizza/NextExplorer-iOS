@@ -1,0 +1,14 @@
+[
+  {
+    "name": "center-projekt",
+    "path": "center-projekt",
+    "kind": "volume",
+    "accessMode": "readwrite"
+  },
+  {
+    "name": "k9",
+    "path": "k9",
+    "kind": "volume",
+    "accessMode": "readonly"
+  }
+]

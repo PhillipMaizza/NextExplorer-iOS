@@ -3,26 +3,27 @@ import CryptoKit
 @testable import FilesClient
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Account scoped cache clearing")
 struct AccountScopedCacheTests {
-    private let serverURL = URL(string: "https://example.com") ?? URL(fileURLWithPath: "/")
+    private let serverURL = URL(string: TestHost.exampleURLString) ?? URL(fileURLWithPath: "/")
     private let accountA = "https://example.com|alice"
     private let accountB = "https://example.com|bob"
-    private let fetchedAt = Date(timeIntervalSince1970: 1_000)
+    private let fetchedAt = MockDate.date.addingTimeInterval(1000)
 
     private func makeRoot() -> URL {
-        FileManager.default.temporaryDirectory.appendingPathComponent("scoped-cache-\(UUID().uuidString)")
+        FileManager.default.temporaryDirectory.appendingPathComponent("scoped-cache-\(TestID.name())")
     }
 
     private func listing(_ name: String) -> BrowseResult {
         BrowseResult(
-            items: [FileItem(name: name, path: "docs", dateModified: fetchedAt, size: 1, kind: "txt")],
+            items: [FileItem(name: name, path: TestPath.docsLowercase, dateModified: fetchedAt, size: 1, kind: TestKind.text)],
             access: FileAccess(
                 canRead: true, canWrite: false, canUpload: false,
                 canDelete: false, canShare: false, canDownload: true
             ),
-            path: "docs"
+            path: TestPath.docsLowercase
         )
     }
 
@@ -31,13 +32,13 @@ struct AccountScopedCacheTests {
         let root = makeRoot()
         defer { try? FileManager.default.removeItem(at: root) }
         let store = DirectoryCacheStore.onDisk(rootDirectory: root)
-        store.bound(to: accountA).write(serverURL: serverURL, path: "docs", result: listing("a"), etag: nil, fetchedAt: fetchedAt)
-        store.bound(to: accountB).write(serverURL: serverURL, path: "docs", result: listing("b"), etag: nil, fetchedAt: fetchedAt)
+        store.bound(to: accountA).write(serverURL: serverURL, path: TestPath.docsLowercase, result: listing("a"), etag: nil, fetchedAt: fetchedAt)
+        store.bound(to: accountB).write(serverURL: serverURL, path: TestPath.docsLowercase, result: listing("b"), etag: nil, fetchedAt: fetchedAt)
 
         store.clear(scope: accountA)
 
-        #expect(store.bound(to: accountA).read(serverURL: serverURL, path: "docs") == nil)
-        #expect(store.bound(to: accountB).read(serverURL: serverURL, path: "docs")?.items.map(\.name) == ["b"])
+        #expect(store.bound(to: accountA).read(serverURL: serverURL, path: TestPath.docsLowercase) == nil)
+        #expect(store.bound(to: accountB).read(serverURL: serverURL, path: TestPath.docsLowercase)?.items.map(\.name) == ["b"])
     }
 
     @Test("DirectoryCacheStore on disk: clearing a scope with no entries is a no op")
@@ -45,12 +46,12 @@ struct AccountScopedCacheTests {
         let root = makeRoot()
         defer { try? FileManager.default.removeItem(at: root) }
         let store = DirectoryCacheStore.onDisk(rootDirectory: root)
-        store.bound(to: accountB).write(serverURL: serverURL, path: "docs", result: listing("b"), etag: nil, fetchedAt: fetchedAt)
+        store.bound(to: accountB).write(serverURL: serverURL, path: TestPath.docsLowercase, result: listing("b"), etag: nil, fetchedAt: fetchedAt)
 
         store.clear(scope: "unknown")
         store.clear(scope: "")
 
-        #expect(store.bound(to: accountB).read(serverURL: serverURL, path: "docs") != nil)
+        #expect(store.bound(to: accountB).read(serverURL: serverURL, path: TestPath.docsLowercase) != nil)
     }
 
     @Test("DirectoryCacheStore on disk: a bound store writes its own scope regardless of the global scope")
@@ -60,22 +61,22 @@ struct AccountScopedCacheTests {
         let store = DirectoryCacheStore.onDisk(rootDirectory: root)
         let pinned = store.bound(to: accountA)
 
-        pinned.write(serverURL: serverURL, path: "docs", result: listing("a"), etag: "\"v1\"", fetchedAt: fetchedAt)
+        pinned.write(serverURL: serverURL, path: TestPath.docsLowercase, result: listing("a"), etag: "\"v1\"", fetchedAt: fetchedAt)
 
-        #expect(store.bound(to: accountA).read(serverURL: serverURL, path: "docs")?.etag == "\"v1\"")
-        #expect(store.bound(to: accountB).read(serverURL: serverURL, path: "docs") == nil)
+        #expect(store.bound(to: accountA).read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v1\"")
+        #expect(store.bound(to: accountB).read(serverURL: serverURL, path: TestPath.docsLowercase) == nil)
     }
 
     @Test("DirectoryCacheStore in memory: clear(scope:) keeps other accounts")
     func directoryInMemoryClearScope() {
         let store = DirectoryCacheStore.inMemory()
-        store.bound(to: accountA).write(serverURL: serverURL, path: "docs", result: listing("a"), etag: nil, fetchedAt: fetchedAt)
-        store.bound(to: accountB).write(serverURL: serverURL, path: "docs", result: listing("b"), etag: nil, fetchedAt: fetchedAt)
+        store.bound(to: accountA).write(serverURL: serverURL, path: TestPath.docsLowercase, result: listing("a"), etag: nil, fetchedAt: fetchedAt)
+        store.bound(to: accountB).write(serverURL: serverURL, path: TestPath.docsLowercase, result: listing("b"), etag: nil, fetchedAt: fetchedAt)
 
         store.clear(scope: accountA)
 
-        #expect(store.bound(to: accountA).read(serverURL: serverURL, path: "docs") == nil)
-        #expect(store.bound(to: accountB).read(serverURL: serverURL, path: "docs") != nil)
+        #expect(store.bound(to: accountA).read(serverURL: serverURL, path: TestPath.docsLowercase) == nil)
+        #expect(store.bound(to: accountB).read(serverURL: serverURL, path: TestPath.docsLowercase) != nil)
     }
 
     @Test("JSONCacheStore on disk: clear(scope:) removes only that account's payloads")
@@ -83,15 +84,15 @@ struct AccountScopedCacheTests {
         let root = makeRoot()
         defer { try? FileManager.default.removeItem(at: root) }
         let store = JSONCacheStore.onDisk(rootDirectory: root)
-        store.bound(to: accountA).write(key: "favorites", data: Data("a".utf8))
+        store.bound(to: accountA).write(key: TestCacheKey.favorites, data: Data("a".utf8))
         store.bound(to: accountA).write(key: "shares.byMe", data: Data("a2".utf8))
-        store.bound(to: accountB).write(key: "favorites", data: Data("b".utf8))
+        store.bound(to: accountB).write(key: TestCacheKey.favorites, data: Data("b".utf8))
 
         store.clear(scope: accountA)
 
-        #expect(store.bound(to: accountA).read(key: "favorites") == nil)
+        #expect(store.bound(to: accountA).read(key: TestCacheKey.favorites) == nil)
         #expect(store.bound(to: accountA).read(key: "shares.byMe") == nil)
-        #expect(store.bound(to: accountB).read(key: "favorites")?.data == Data("b".utf8))
+        #expect(store.bound(to: accountB).read(key: TestCacheKey.favorites)?.data == Data("b".utf8))
     }
 
     @Test("JSONCacheStore on disk: a bound store writes its own scope, not the one active at write time")
@@ -100,22 +101,22 @@ struct AccountScopedCacheTests {
         defer { try? FileManager.default.removeItem(at: root) }
         let store = JSONCacheStore.onDisk(rootDirectory: root)
 
-        store.bound(to: accountA).write(key: "favorites", data: Data("a".utf8))
+        store.bound(to: accountA).write(key: TestCacheKey.favorites, data: Data("a".utf8))
 
-        #expect(store.bound(to: accountA).read(key: "favorites") != nil)
-        #expect(store.bound(to: accountB).read(key: "favorites") == nil)
+        #expect(store.bound(to: accountA).read(key: TestCacheKey.favorites) != nil)
+        #expect(store.bound(to: accountB).read(key: TestCacheKey.favorites) == nil)
     }
 
     @Test("JSONCacheStore in memory: clear(scope:) keeps other accounts")
     func jsonInMemoryClearScope() {
         let store = JSONCacheStore.inMemory()
-        store.bound(to: accountA).write(key: "favorites", data: Data("a".utf8))
-        store.bound(to: accountB).write(key: "favorites", data: Data("b".utf8))
+        store.bound(to: accountA).write(key: TestCacheKey.favorites, data: Data("a".utf8))
+        store.bound(to: accountB).write(key: TestCacheKey.favorites, data: Data("b".utf8))
 
         store.clear(scope: accountA)
 
-        #expect(store.bound(to: accountA).read(key: "favorites") == nil)
-        #expect(store.bound(to: accountB).read(key: "favorites") != nil)
+        #expect(store.bound(to: accountA).read(key: TestCacheKey.favorites) == nil)
+        #expect(store.bound(to: accountB).read(key: TestCacheKey.favorites) != nil)
     }
 
     @Test("clearAll still removes every scope")
@@ -123,20 +124,20 @@ struct AccountScopedCacheTests {
         let root = makeRoot()
         defer { try? FileManager.default.removeItem(at: root) }
         let store = JSONCacheStore.onDisk(rootDirectory: root)
-        store.bound(to: accountA).write(key: "favorites", data: Data("a".utf8))
-        store.bound(to: accountB).write(key: "favorites", data: Data("b".utf8))
+        store.bound(to: accountA).write(key: TestCacheKey.favorites, data: Data("a".utf8))
+        store.bound(to: accountB).write(key: TestCacheKey.favorites, data: Data("b".utf8))
 
         store.clearAll()
 
-        #expect(store.bound(to: accountA).read(key: "favorites") == nil)
-        #expect(store.bound(to: accountB).read(key: "favorites") == nil)
+        #expect(store.bound(to: accountA).read(key: TestCacheKey.favorites) == nil)
+        #expect(store.bound(to: accountB).read(key: TestCacheKey.favorites) == nil)
     }
 
     @Test("Preview cache: clearPreviewCache(scope:) removes only that account's slots in both namespaces")
     func previewClearScope() throws {
         let caches = makeRoot()
         defer { try? FileManager.default.removeItem(at: caches) }
-        let item = FileItem(name: "a.txt", path: "docs", dateModified: fetchedAt, size: 1, kind: "txt")
+        let item = FileItem(name: TestFile.aText, path: TestPath.docsLowercase, dateModified: fetchedAt, size: 1, kind: TestKind.text)
         var slotsByScope: [String: [URL]] = [:]
         for namespace in [FilesService.previewCacheNamespace, FilesService.rawDownloadCacheNamespace] {
             for scope in [accountA, accountB] {
@@ -160,7 +161,7 @@ struct AccountScopedCacheTests {
 
     @Test("Preview cache: an explicit scope decides the slot, not the process wide scope")
     func previewSlotFollowsTheCapturedScope() {
-        let item = FileItem(name: "a.txt", path: "docs", dateModified: fetchedAt, size: 1, kind: "txt")
+        let item = FileItem(name: TestFile.aText, path: TestPath.docsLowercase, dateModified: fetchedAt, size: 1, kind: TestKind.text)
         let slotA = FilesService.previewCacheDirectory(for: item, namespace: FilesService.previewCacheNamespace, scope: accountA)
         let slotB = FilesService.previewCacheDirectory(for: item, namespace: FilesService.previewCacheNamespace, scope: accountB)
 
@@ -170,10 +171,10 @@ struct AccountScopedCacheTests {
 
     @Test("Offline cache: a slot is stored under the scope captured at start, not the current one")
     func offlineStoreUsesTheCapturedScope() throws {
-        let scope = "offline-captured-\(UUID().uuidString)"
-        let item = FileItem(name: "a.txt", path: "docs", dateModified: fetchedAt, size: 1, kind: "txt")
+        let scope = "offline-captured-\(TestID.name())"
+        let item = FileItem(name: TestFile.aText, path: TestPath.docsLowercase, dateModified: fetchedAt, size: 1, kind: TestKind.text)
         defer { OfflineCache.removeScope(scope) }
-        let downloaded = FileManager.default.temporaryDirectory.appendingPathComponent("offline-src-\(UUID().uuidString)")
+        let downloaded = FileManager.default.temporaryDirectory.appendingPathComponent("offline-src-\(TestID.name())")
         try Data("x".utf8).write(to: downloaded)
 
         _ = try OfflineCache.store(downloadedURL: downloaded, item: item, scope: scope)
@@ -209,7 +210,7 @@ struct AccountScopedCacheTests {
 
     @Test("Offline files: removeScope deletes the named account's directory and keeps another's")
     func offlineRemoveScope() throws {
-        let unique = UUID().uuidString
+        let unique = TestID.name()
         let removed = "offline-test-removed-\(unique)"
         let kept = "offline-test-kept-\(unique)"
         func directory(for scope: String) throws -> URL {

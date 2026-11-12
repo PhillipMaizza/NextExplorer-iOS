@@ -1,11 +1,12 @@
 import CoreModels
 import Foundation
 @testable import ShareUploads
+import TestUtils
 import UserNotifications
 
 enum TestClock {
     /// A fixed moment; tests move the clock with offsets from it.
-    static let reference = Date(timeIntervalSince1970: 1_800_000_000)
+    static let reference = MockDate.date.addingTimeInterval(100_000_000)
 }
 
 final class RecordingNotifier: @unchecked Sendable {
@@ -165,9 +166,9 @@ struct Harness {
         availableCapacity: @escaping @Sendable (URL) -> Int64? = { _ in nil },
         removeEnvelope: @escaping @Sendable (URL) -> Void = { try? FileManager.default.removeItem(at: $0) }
     ) throws {
-        root = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsHarness-\(UUID().uuidString)")
+        root = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsHarness-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
-        suite = "ShareUploadsHarness-\(UUID().uuidString)"
+        suite = "ShareUploadsHarness-\(TestID.uuid().uuidString)"
         guard let suiteDefaults = UserDefaults(suiteName: suite) else { throw CocoaError(.fileReadUnknown) }
         defaults = suiteDefaults
         let clock = clock
@@ -191,25 +192,25 @@ struct Harness {
     }
 
     static let credentials = SessionCredentials(
-        serverBaseURL: URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/"),
+        serverBaseURL: URL(string: TestHost.serverURLString) ?? URL(fileURLWithPath: "/"),
         authMode: .local,
-        cookieName: "connect.sid",
-        cookieValue: "secret",
-        cookieDomain: "files.example.com",
+        cookieName: TestSession.cookieName,
+        cookieValue: TestSession.uploadCookieValue,
+        cookieDomain: TestHost.server,
         cookiePath: "/",
         cookieIsSecure: true,
         expiresAt: nil,
-        username: "phillip"
+        username: TestAccount.username
     )
 
     /// A started batch of `names` on disk: manifest, one envelope per file, no results yet.
     @discardableResult
     func makeBatch(
-        names: [String] = ["a.jpg", "b.jpg"],
+        names: [String] = [TestFile.aPhoto, TestFile.bPhoto],
         accountID: String = Harness.credentials.accountID,
         startedAt: Date = TestClock.reference
     ) throws -> (id: String, directory: URL, manifest: Manifest) {
-        let id = UUID().uuidString
+        let id = TestID.uuid().uuidString
         let directory = root.appendingPathComponent(id, isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let envelopes = names.indices.map { "\($0).multipart" }
@@ -218,7 +219,7 @@ struct Harness {
         }
         let manifest = Manifest(
             accountID: accountID,
-            destination: "Photos/2026",
+            destination: TestPath.photos2026,
             fileNames: names,
             envelopes: envelopes,
             contentTypes: names.map { _ in "multipart/form-data; boundary=B" },

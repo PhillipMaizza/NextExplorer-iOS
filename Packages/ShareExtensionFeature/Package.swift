@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "ShareExtensionFeature", targets: ["ShareExtensionFeature"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../AuthClient"),
         .package(path: "../CoreModels"),
         .package(path: "../DesignSystem"),
@@ -37,10 +38,12 @@ let package = Package(
         .testTarget(
             name: "ShareExtensionFeatureTests",
             dependencies: [
+                "TestUtils",
                 "ShareExtensionFeature",
                 .product(name: "NetworkClient", package: "NetworkClient"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
+            resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

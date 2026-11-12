@@ -1,6 +1,7 @@
 @testable import FilesClient
 import Foundation
 import Testing
+import TestUtils
 
 struct TextDecodingTests {
     private func bytes(_ values: [UInt8]) -> Data {
@@ -9,8 +10,8 @@ struct TextDecodingTests {
 
     @Test
     func aUTF8ByteOrderMarkIsStripped() {
-        let data = bytes([0xEF, 0xBB, 0xBF]) + Data("héllo".utf8)
-        #expect(FilesService.decodeText(data) == "héllo")
+        let data = bytes([0xEF, 0xBB, 0xBF]) + Data(Constants.accentedText.utf8)
+        #expect(FilesService.decodeText(data) == Constants.accentedText)
     }
 
     @Test
@@ -21,32 +22,32 @@ struct TextDecodingTests {
 
     @Test
     func aUTF16BigEndianFileWithAMarkDecodes() throws {
-        let body = try #require("héllo".data(using: .utf16BigEndian))
-        #expect(FilesService.decodeText(bytes([0xFE, 0xFF]) + body) == "héllo")
+        let body = try #require(Constants.accentedText.data(using: .utf16BigEndian))
+        #expect(FilesService.decodeText(bytes([0xFE, 0xFF]) + body) == Constants.accentedText)
     }
 
     @Test
     func aUTF32LittleEndianMarkIsNotMistakenForUTF16() throws {
-        let body = try #require("héllo".data(using: .utf32LittleEndian))
-        #expect(FilesService.decodeText(bytes([0xFF, 0xFE, 0x00, 0x00]) + body) == "héllo")
+        let body = try #require(Constants.accentedText.data(using: .utf32LittleEndian))
+        #expect(FilesService.decodeText(bytes([0xFF, 0xFE, 0x00, 0x00]) + body) == Constants.accentedText)
     }
 
     @Test
     func aUTF32BigEndianFileDecodes() throws {
-        let body = try #require("héllo".data(using: .utf32BigEndian))
-        #expect(FilesService.decodeText(bytes([0x00, 0x00, 0xFE, 0xFF]) + body) == "héllo")
+        let body = try #require(Constants.accentedText.data(using: .utf32BigEndian))
+        #expect(FilesService.decodeText(bytes([0x00, 0x00, 0xFE, 0xFF]) + body) == Constants.accentedText)
     }
 
     @Test
     func aMarklessUTF16LittleEndianASCIIFileDecodesInsteadOfBecomingNulSeparatedText() throws {
-        let data = try #require("hello world".data(using: .utf16LittleEndian))
-        #expect(FilesService.decodeText(data) == "hello world")
+        let data = try #require(Constants.greeting.data(using: .utf16LittleEndian))
+        #expect(FilesService.decodeText(data) == Constants.greeting)
     }
 
     @Test
     func aMarklessUTF16BigEndianASCIIFileDecodes() throws {
-        let data = try #require("hello world".data(using: .utf16BigEndian))
-        #expect(FilesService.decodeText(data) == "hello world")
+        let data = try #require(Constants.greeting.data(using: .utf16BigEndian))
+        #expect(FilesService.decodeText(data) == Constants.greeting)
     }
 
     @Test
@@ -145,18 +146,7 @@ struct TextDecodingTests {
     }
 }
 
-private struct SplitMix64 {
-    private var state: UInt64
-
-    init(seed: UInt64) {
-        state = seed
-    }
-
-    mutating func next() -> UInt64 {
-        state &+= 0x9E37_79B9_7F4A_7C15
-        var value = state
-        value = (value ^ (value >> 30)) &* 0xBF58_476D_1CE4_E5B9
-        value = (value ^ (value >> 27)) &* 0x94D0_49BB_1331_11EB
-        return value ^ (value >> 31)
-    }
+private enum Constants {
+    static let greeting = "hello world"
+    static let accentedText = "héllo"
 }

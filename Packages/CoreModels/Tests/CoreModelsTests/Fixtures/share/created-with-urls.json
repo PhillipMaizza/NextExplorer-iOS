@@ -1,0 +1,14 @@
+{
+  "id": "s5",
+  "shareToken": "tok5",
+  "ownerId": "u-owner",
+  "sourcePath": "Docs/a.txt",
+  "isDirectory": false,
+  "accessMode": "readonly",
+  "sharingType": "anyone",
+  "hasPassword": false,
+  "createdAt": "2023-11-14T22:03:20Z",
+  "updatedAt": "2023-11-14T22:13:20Z",
+  "shareUrl": "https://files.example.com/share/tok5",
+  "directFileUrl": "https://files.example.com/api/share/tok5/file"
+}

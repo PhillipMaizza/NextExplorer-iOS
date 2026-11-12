@@ -2,19 +2,20 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
+import TestUtils
 import UniformTypeIdentifiers
 
 @Suite("Shared item staging")
 struct SharedItemLoaderStagingTests {
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingTests-\(UUID().uuidString)")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingTests-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
 
     private func batch(in root: URL) throws -> UploadBatch {
         let uploader = BackgroundUploader(root: root, notifier: UploadNotifier { _ in }, defaults: .standard)
-        return try uploader.makeBatch(credentials: Harness.credentials, destination: "Photos")
+        return try uploader.makeBatch(credentials: Harness.credentials, destination: TestFolder.photos)
     }
 
     private func envelopeText(_ file: UploadBatch.StagedFile) throws -> String {
@@ -59,8 +60,8 @@ struct SharedItemLoaderStagingTests {
 
     @Test("The paired movie takes the still's name with the movie's extension")
     func pairedName() {
-        #expect(SharedItemLoader.pairedMovieName(stillName: "IMG_0042.HEIC", movieType: .quickTimeMovie) == "IMG_0042.mov")
-        #expect(SharedItemLoader.pairedMovieName(stillName: "IMG_0042", movieType: .mpeg4Movie) == "IMG_0042.mp4")
+        #expect(SharedItemLoader.pairedMovieName(stillName: ShareUploadsTestValue.heicName, movieType: .quickTimeMovie) == Constants.lowercaseMovieName)
+        #expect(SharedItemLoader.pairedMovieName(stillName: ShareUploadsTestValue.imageBaseName, movieType: .mpeg4Movie) == "IMG_0042.mp4")
         #expect(SharedItemLoader.pairedMovieName(stillName: "a.b.heic", movieType: .quickTimeMovie) == "a.b.mov")
     }
 
@@ -70,8 +71,8 @@ struct SharedItemLoaderStagingTests {
     func stagesTheRealFile() async throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let source = root.appendingPathComponent("Report.pdf")
-        try Data("real file bytes".utf8).write(to: source)
+        let source = root.appendingPathComponent(ShareUploadsTestValue.reportName)
+        try Data(Constants.fileBytes.utf8).write(to: source)
         let provider = NSItemProvider()
         provider.registerItem(forTypeIdentifier: UTType.fileURL.identifier) { completion, _, _ in
             completion?(source as NSURL, nil)
@@ -80,9 +81,9 @@ struct SharedItemLoaderStagingTests {
 
         let staged = try await SharedItemLoader.stageAll(provider, in: batch(in: root))
 
-        #expect(staged.map(\.fileName) == ["Report.pdf"])
+        #expect(staged.map(\.fileName) == [ShareUploadsTestValue.reportName])
         let text = try envelopeText(#require(staged.first))
-        #expect(text.contains("real file bytes"))
+        #expect(text.contains(Constants.fileBytes))
         #expect(!text.contains("file:///"), "the URL's text is not what is uploaded")
     }
 
@@ -140,8 +141,8 @@ struct SharedItemLoaderStagingTests {
     func representationReportsProgress() async throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let source = root.appendingPathComponent("Doc.pdf")
-        try Data("pdf bytes".utf8).write(to: source)
+        let source = root.appendingPathComponent(Constants.documentName)
+        try Data(Constants.pdfBytes.utf8).write(to: source)
         let batch = try batch(in: root)
         let read = FakeRead()
         read.progress.completedUnitCount = 50
@@ -165,8 +166,8 @@ struct SharedItemLoaderStagingTests {
         completion(source, false, nil)
 
         let file = try await staging.value
-        #expect(file.fileName == "Doc.pdf")
-        #expect(try envelopeText(file).contains("pdf bytes"))
+        #expect(file.fileName == Constants.documentName)
+        #expect(try envelopeText(file).contains(Constants.pdfBytes))
     }
 
     @Test("Cancelling a representation read cancels the provider's progress and stages nothing, even if the copy still finishes")
@@ -213,10 +214,10 @@ struct SharedItemLoaderStagingTests {
     func stagesLivePhotoPair() async throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let still = root.appendingPathComponent("IMG_0042.HEIC")
+        let still = root.appendingPathComponent(ShareUploadsTestValue.heicName)
         let movie = root.appendingPathComponent("0F3A.mov")
-        try Data("still bytes".utf8).write(to: still)
-        try Data("movie bytes".utf8).write(to: movie)
+        try Data(Constants.stillBytes.utf8).write(to: still)
+        try Data(Constants.movieBytes.utf8).write(to: movie)
         let provider = NSItemProvider()
         provider.registerFileRepresentation(forTypeIdentifier: UTType.heic.identifier, fileOptions: [], visibility: .all) { completion in
             completion(still, false, nil)
@@ -233,17 +234,17 @@ struct SharedItemLoaderStagingTests {
 
         let staged = try await SharedItemLoader.stageAll(provider, in: batch(in: root))
 
-        #expect(staged.map(\.fileName) == ["IMG_0042.HEIC", "IMG_0042.mov"])
+        #expect(staged.map(\.fileName) == [ShareUploadsTestValue.heicName, Constants.lowercaseMovieName])
         let texts = try staged.map(envelopeText)
-        #expect(texts[0].contains("still bytes"))
-        #expect(texts[1].contains("movie bytes"))
+        #expect(texts[0].contains(Constants.stillBytes))
+        #expect(texts[1].contains(Constants.movieBytes))
     }
 
     @Test("A plain image provider stages just the one file")
     func plainImage() async throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let image = root.appendingPathComponent("photo.jpg")
+        let image = root.appendingPathComponent(TestFile.photo)
         try Data("jpeg bytes".utf8).write(to: image)
         let provider = NSItemProvider()
         provider.registerFileRepresentation(forTypeIdentifier: UTType.jpeg.identifier, fileOptions: [], visibility: .all) { completion in
@@ -253,7 +254,7 @@ struct SharedItemLoaderStagingTests {
 
         let staged = try await SharedItemLoader.stageAll(provider, in: batch(in: root))
 
-        #expect(staged.map(\.fileName) == ["photo.jpg"])
+        #expect(staged.map(\.fileName) == [TestFile.photo])
     }
 
     // MARK: iCloud placeholders
@@ -262,7 +263,7 @@ struct SharedItemLoaderStagingTests {
     func downloadBeforeRead() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let file = root.appendingPathComponent("doc.txt")
+        let file = root.appendingPathComponent(Constants.textName)
         try Data("body".utf8).write(to: file)
         let downloads = LockedList()
 
@@ -280,7 +281,7 @@ struct SharedItemLoaderStagingTests {
 
     @Test("A failed download request stops the read and the error is passed on")
     func downloadFailure() throws {
-        let file = FileManager.default.temporaryDirectory.appendingPathComponent("x-\(UUID().uuidString)")
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent("x-\(TestID.uuid().uuidString)")
         let access = FileAccess(ubiquityStatus: { _ in .notDownloaded }, startDownload: { _ in throw CocoaError(.fileReadNoPermission) })
         #expect(throws: CocoaError.self) {
             try access.read(file) { $0 }
@@ -291,7 +292,7 @@ struct SharedItemLoaderStagingTests {
     func bodyErrorPropagates() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let file = root.appendingPathComponent("doc.txt")
+        let file = root.appendingPathComponent(Constants.textName)
         try Data("body".utf8).write(to: file)
 
         #expect(throws: ShareUploadError.insufficientSpace) {
@@ -305,16 +306,16 @@ struct SharedItemLoaderStagingTests {
     func stagingDownloadsPlaceholders() async throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let file = root.appendingPathComponent("Cloud.pdf")
-        try Data("cloud bytes".utf8).write(to: file)
+        let file = root.appendingPathComponent(Constants.cloudName)
+        try Data(Constants.cloudBytes.utf8).write(to: file)
         let downloads = LockedList()
         let access = FileAccess(ubiquityStatus: { _ in .notDownloaded }, startDownload: { downloads.add($0) })
 
         let staged = try await SharedItemLoader.stageFile(at: file, in: batch(in: root), access: access)
 
         #expect(downloads.items == [file])
-        #expect(try envelopeText(staged).contains("cloud bytes"))
-        #expect(staged.fileName == "Cloud.pdf")
+        #expect(try envelopeText(staged).contains(Constants.cloudBytes))
+        #expect(staged.fileName == Constants.cloudName)
     }
 }
 
@@ -329,4 +330,16 @@ final class LockedList: @unchecked Sendable {
     func add(_ url: URL) {
         lock.withLock { stored.append(url) }
     }
+}
+
+private enum Constants {
+    static let cloudBytes = "cloud bytes"
+    static let cloudName = "Cloud.pdf"
+    static let documentName = "Doc.pdf"
+    static let fileBytes = "real file bytes"
+    static let lowercaseMovieName = "IMG_0042.mov"
+    static let movieBytes = "movie bytes"
+    static let pdfBytes = "pdf bytes"
+    static let stillBytes = "still bytes"
+    static let textName = "doc.txt"
 }

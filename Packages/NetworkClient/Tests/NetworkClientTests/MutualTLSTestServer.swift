@@ -8,15 +8,12 @@ import Security
 enum MutualTLSFixtures {
     static let passphrase = "nextexplorer"
 
-    static func data(_ name: String, _ ext: String) throws -> Data {
-        guard let url = Bundle.module.url(forResource: name, withExtension: ext, subdirectory: "Fixtures") else {
-            throw CocoaError(.fileNoSuchFile)
-        }
-        return try Data(contentsOf: url)
+    static func data(_ file: NetworkClientFixture) throws -> Data {
+        try file.data()
     }
 
     static func certificateAuthority() throws -> SecCertificate {
-        guard let certificate = try SecCertificateCreateWithData(nil, data("ca", "der") as CFData) else {
+        guard let certificate = try SecCertificateCreateWithData(nil, data(.certificateAuthority) as CFData) else {
             throw CocoaError(.fileReadCorruptFile)
         }
         return certificate
@@ -74,7 +71,7 @@ final class MutualTLSTestServer: @unchecked Sendable {
         self.mode = mode
         self.keepsConnectionsOpen = keepsConnectionsOpen
         let serverIdentity = try PKCS12Identity.decode(
-            MutualTLSFixtures.data("server", "p12"), passphrase: MutualTLSFixtures.passphrase
+            MutualTLSFixtures.data(.serverIdentity), passphrase: MutualTLSFixtures.passphrase
         )
         let anchor = try MutualTLSFixtures.certificateAuthority()
         self.anchor = anchor

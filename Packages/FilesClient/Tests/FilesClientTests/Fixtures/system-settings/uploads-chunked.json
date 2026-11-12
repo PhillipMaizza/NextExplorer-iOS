@@ -1,0 +1,7 @@
+{
+  "uploads": {
+    "chunkedEnabled": true,
+    "chunkedAutoFallback": false,
+    "chunkSizeBytes": 33554432
+  }
+}

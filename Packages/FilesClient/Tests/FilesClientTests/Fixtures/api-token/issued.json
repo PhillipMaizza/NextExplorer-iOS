@@ -1,0 +1,12 @@
+{
+  "token": {
+    "id": "t1",
+    "name": "backup",
+    "scope": "read",
+    "createdAt": "2026-11-10T07:00:00.000Z",
+    "expiresAt": null,
+    "lastUsedAt": null,
+    "lastUsedIp": null
+  },
+  "secret": "nxt_abc.def"
+}
