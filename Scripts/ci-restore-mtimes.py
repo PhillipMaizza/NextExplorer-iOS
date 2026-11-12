@@ -10,7 +10,8 @@ checkout, on main where the cache is saved as well as on pull requests where it 
 A merge commit counts as touching every file it changes against its first parent. Without that,
 git log lists no files for a merge, so a file last changed by a merge (a conflict resolution, or
 the pull request merge CI checks out) kept an older commit's time, matched the cached build, and
-Xcode linked the stale object.
+Xcode linked the stale object. Paths are read unquoted, so a file name with accents or emoji is
+stamped like any other instead of failing.
 
   python3 Scripts/ci-restore-mtimes.py
 """
@@ -22,13 +23,13 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 def restore(root):
     """Stamps each tracked file under `root` and returns how many were stamped and tracked."""
     log = subprocess.run(
-        ["git", "-C", str(root), "log", "--format=%x00%ct", "--name-only", "--no-renames", "--diff-merges=first-parent"],
+        ["git", "-C", str(root), "-c", "core.quotePath=false", "log", "--format=%x00%ct", "--name-only", "--no-renames", "--diff-merges=first-parent"],
         check=True,
         capture_output=True,
         text=True,
     ).stdout
     tracked = set(
-        subprocess.run(["git", "-C", str(root), "ls-files"], check=True, capture_output=True, text=True).stdout.splitlines()
+        subprocess.run(["git", "-C", str(root), "-c", "core.quotePath=false", "ls-files"], check=True, capture_output=True, text=True).stdout.splitlines()
     )
     stamped = set()
     # Newest commit first, so the first time a path shows up is its last change.

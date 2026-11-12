@@ -50,6 +50,12 @@ class RestoreTests(unittest.TestCase):
         self.assertEqual(self.mtime("a.swift"), BASE + 100)
         self.assertEqual(self.mtime("b.swift"), BASE)
 
+    def test_a_file_name_with_accents_is_stamped(self):
+        self.commit({"café ☕.json": "1"}, BASE)
+
+        self.assertEqual(mtimes.restore(self.root), (1, 1))
+        self.assertEqual(self.mtime("café ☕.json"), BASE)
+
     def test_a_file_last_changed_by_a_merge_gets_the_merge_time(self):
         self.commit({"shared.swift": "base", "other.swift": "1"}, BASE)
         self.git("checkout", "-q", "-b", "side")
