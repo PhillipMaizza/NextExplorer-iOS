@@ -10,6 +10,11 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct OfflineSelectionFeatureTests {
+    private enum Constants {
+        static let folderBytes: Int64 = 5000
+        static let volumeBytes: Int64 = 16_000_000_000_000
+    }
+
     private typealias Store = TestStoreOf<OfflineSelectionFeature>
 
     private let serverURL = URL(fileURLWithPath: "/")
@@ -85,11 +90,15 @@ struct OfflineSelectionFeatureTests {
 
     @Test
     func selectingAFolderFetchesItsRecursiveSizeForTheEstimate() async {
-        let usagePaths = LockIsolated<[String]>([])
+        let metadataPaths = LockIsolated<[String]>([])
         let store = makeStore {
             $0.filesClient.fetchUsage = { _, path in
-                usagePaths.withValue { $0.append(path) }
-                return StorageUsage(path: path, size: 5000, free: 0, total: 0)
+                Issue.record("the estimate must not read the volume usage of \(path)")
+                return StorageUsage(path: path, size: Constants.volumeBytes, free: 0, total: 0)
+            }
+            $0.filesClient.fetchMetadata = { _, path in
+                metadataPaths.withValue { $0.append(path) }
+                return Self.folderMetadata(path, totalSize: Constants.folderBytes)
             }
         }
         let docs = folder(TestFolder.docs)
@@ -99,34 +108,35 @@ struct OfflineSelectionFeatureTests {
             $0.estimatingPaths = [TestFolder.docs]
         }
         #expect(store.state.isEstimating)
-        await store.receive(\.usageResponse) {
+        await store.receive(\.folderSizeResponse) {
             $0.estimatingPaths = []
             $0.folderSizes[TestFolder.docs] = 5000
         }
         #expect(store.state.estimatedBytes == 5000)
-        #expect(usagePaths.value == [TestFolder.docs])
+        #expect(metadataPaths.value == [TestFolder.docs])
     }
 
     @Test
     func aFolderWhoseSizeCannotBeFetchedStopsCalculatingAndCountsAsZero() async {
-        let store = makeStore { $0.filesClient.fetchUsage = { _, _ in throw FilesClientError.server(statusCode: 500) } }
+        let store = makeStore { $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.server(statusCode: 500) } }
         let docs = folder(TestFolder.docs)
 
         await store.send(.selectionToggled(docs)) {
             $0.selection[docs.id] = docs
             $0.estimatingPaths = [TestFolder.docs]
         }
-        await store.receive(\.usageResponse) { $0.estimatingPaths = [] }
+        await store.receive(\.folderSizeResponse) { $0.estimatingPaths = [] }
         #expect(!store.state.isEstimating)
         #expect(store.state.estimatedBytes == 0)
+        #expect(store.state.canConfirm)
     }
 
     @Test
     func deselectingAFolderWhileItsSizeIsPendingCancelsTheLookup() async {
         let store = makeStore {
-            $0.filesClient.fetchUsage = { _, _ in
+            $0.filesClient.fetchMetadata = { _, path in
                 try await suspendUntilCancelled()
-                return StorageUsage(path: TestFolder.docs, size: 5000, free: 0, total: 0)
+                return Self.folderMetadata(path, totalSize: Constants.folderBytes)
             }
         }
         let docs = folder(TestFolder.docs)
@@ -141,6 +151,24 @@ struct OfflineSelectionFeatureTests {
         }
         await store.finish()
         #expect(store.state.folderSizes.isEmpty)
+    }
+
+    @Test
+    func aSizeThatLandsAfterTheFolderWasDeselectedIsIgnored() async {
+        let store = makeStore()
+        let docs = folder(TestFolder.docs)
+
+        await store.send(.folderSizeResponse(path: docs.id, .success(9000)))
+        #expect(store.state.folderSizes.isEmpty)
+        #expect(store.state.estimatedBytes == 0)
+    }
+
+    private nonisolated static func folderMetadata(_ path: String, totalSize: Int64) -> FileMetadata {
+        FileMetadata(
+            path: path, name: path, kind: FileItem.directoryKind, size: 4096,
+            dateModified: MockDate.date, dateCreated: MockDate.date,
+            directory: FileMetadata.DirectorySummary(totalSize: totalSize, fileCount: 3, dirCount: 1, truncated: false)
+        )
     }
 
     @Test
