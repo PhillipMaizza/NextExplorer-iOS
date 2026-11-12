@@ -24,12 +24,14 @@ class RestoreTests(unittest.TestCase):
     def tearDown(self):
         self.directory.cleanup()
 
-    def git(self, *args, at=None):
-        env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.com",
+    def git(self, *args, at=None, check=True):
+        # The machine's git config never applies, so the run is the same on a laptop and on CI.
+        env = dict(os.environ, GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1",
+                   GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.com",
                    GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@example.com")
         if at is not None:
             env["GIT_AUTHOR_DATE"] = env["GIT_COMMITTER_DATE"] = f"@{at} +0000"
-        subprocess.run(["git", "-C", str(self.root), *args], check=True, capture_output=True, env=env)
+        return subprocess.run(["git", "-C", str(self.root), *args], check=check, capture_output=True, env=env)
 
     def commit(self, files, at):
         for name, text in files.items():
@@ -54,8 +56,8 @@ class RestoreTests(unittest.TestCase):
         self.commit({"shared.swift": "side"}, BASE + 100)
         self.git("checkout", "-q", "main")
         self.commit({"shared.swift": "main"}, BASE + 200)
-        merge = subprocess.run(["git", "-C", str(self.root), "merge", "-q", "side"], capture_output=True)
-        self.assertNotEqual(merge.returncode, 0, "the edits conflict")
+        self.git("merge", "-q", "side", check=False)
+        self.assertTrue((self.root / ".git" / "MERGE_HEAD").exists(), "the edits conflict and wait for a resolution")
         # The resolution exists only in the merge commit.
         (self.root / "shared.swift").write_text("resolved")
         self.git("add", "-A")
