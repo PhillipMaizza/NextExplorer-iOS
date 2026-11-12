@@ -1,0 +1,11 @@
+{
+  "zones": [
+    {
+      "id": "z1",
+      "kind": "volume",
+      "name": "files",
+      "available": true,
+      "usedBytes": 10
+    }
+  ]
+}

@@ -3,14 +3,16 @@ import CoreModels
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct SettingsPagesTests {
-    private let user = User(id: "1", username: "jdoe", email: "jane@example.com", displayName: "Jane", roles: [])
+    private let user = User(id: "1", username: TestUser.jane, email: nil, roles: [])
 
     @Test
     func theOpenPagesLiveInTheReducerSoTheyOutliveTheView() async {
-        let store = TestStore(initialState: SettingsFeature.State(serverURL: URL(string: "https://example.com")!, user: user)) {
+        let store = TestStore(initialState: SettingsFeature.State(serverURL: SettingsTestSupport.serverURL, user: user)) {
             SettingsFeature()
         }
 
@@ -34,7 +36,7 @@ struct SettingsPagesTests {
 extension SettingsPagesTests {
     @Test
     func offlineEarnsAPageOnlyOnceSomethingIsDownloaded() {
-        var state = SettingsFeature.State(serverURL: URL(string: "https://example.com")!, user: user)
+        var state = SettingsFeature.State(serverURL: SettingsTestSupport.serverURL, user: user)
         state.offlineSize = 0
         #expect(!state.isOfflineOnItsOwnPage)
         state.$offlineProgress.withLock { $0.phase = .preparing }

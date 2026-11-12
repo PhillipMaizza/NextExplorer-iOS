@@ -1,0 +1,47 @@
+{
+  "enabled": true,
+  "file": {
+    "name": "notes.txt",
+    "path": "Docs/notes.txt",
+    "size": 20,
+    "modifiedAt": "2026-10-28T10:00:00.000Z",
+    "author": null,
+    "source": null
+  },
+  "versions": [
+    {
+      "id": "v2",
+      "size": 18,
+      "modifiedAt": "2026-10-27T09:30:00.000Z",
+      "capturedAt": "2026-10-27T09:31:00.000Z",
+      "author": {
+        "id": "u1",
+        "label": "Phillip"
+      },
+      "source": "editor",
+      "label": null,
+      "pinned": false,
+      "aside": false,
+      "available": true
+    },
+    {
+      "id": "v1",
+      "size": 12,
+      "modifiedAt": "2026-10-20T08:00:00Z",
+      "capturedAt": "2026-10-20T08:00:05Z",
+      "author": null,
+      "source": "upload",
+      "label": "Draft",
+      "pinned": true,
+      "aside": false,
+      "available": false
+    }
+  ],
+  "totalBytes": 30,
+  "rights": {
+    "see": true,
+    "download": true,
+    "restore": false,
+    "remove": false
+  }
+}

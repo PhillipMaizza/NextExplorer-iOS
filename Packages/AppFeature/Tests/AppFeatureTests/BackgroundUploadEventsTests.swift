@@ -5,15 +5,16 @@ import CoreModels
 import Foundation
 import ShareUploads
 import Testing
+import TestUtils
 
-@Suite("Background upload events", .serialized)
+@Suite("Background upload events")
 struct BackgroundUploadEventsTests {
-    private let server = URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/")
+    private let server = URL(string: TestHost.serverURLString) ?? URL(fileURLWithPath: "/")
 
     private func credentials(username: String) -> SessionCredentials {
         SessionCredentials(
-            serverBaseURL: server, authMode: .local, cookieName: "connect.sid", cookieValue: "abc",
-            cookieDomain: "files.example.com", cookiePath: "/", cookieIsSecure: true, expiresAt: nil, username: username
+            serverBaseURL: server, authMode: .local, cookieName: TestSession.cookieName, cookieValue: TestSession.cookieValue,
+            cookieDomain: TestHost.server, cookiePath: "/", cookieIsSecure: true, expiresAt: nil, username: username
         )
     }
 
@@ -43,11 +44,11 @@ struct BackgroundUploadEventsTests {
         )
     }
 
-    private let user = User(id: "1", username: "phillip", email: nil, roles: [])
+    private let user = User(id: "1", username: TestAccount.username, email: nil, roles: [])
 
     @Test("A flagged active account whose session the server still rejects trips the session expired path")
     func rejectedSessionExpires() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let cleared = LockIsolated<[String]>([])
         let expired = LockIsolated(0)
 
@@ -63,8 +64,8 @@ struct BackgroundUploadEventsTests {
 
     @Test("A session the server still rejects, or cannot answer for, retries nothing")
     func noRetryWithoutAWorkingSession() async {
-        let account = credentials(username: "phillip")
-        for failure in [AuthClientError.sessionExpired, .network("offline")] {
+        let account = credentials(username: TestAccount.username)
+        for failure in [AuthClientError.sessionExpired, .network(TestFailure.offline)] {
             let retried = LockIsolated<[SessionCredentials]>([])
 
             await BackgroundUploadEvents.checkRefusedSessions(
@@ -79,7 +80,7 @@ struct BackgroundUploadEventsTests {
 
     @Test("A 401 from the server counts as a rejected session too")
     func serverFourOhOneExpires() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let expired = LockIsolated(0)
 
         await BackgroundUploadEvents.checkRefusedSessions(
@@ -93,7 +94,7 @@ struct BackgroundUploadEventsTests {
 
     @Test("A stale flag (the session works again) is cleared without signing the user out")
     func staleFlagIsCleared() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let cleared = LockIsolated<[String]>([])
         let retried = LockIsolated<[SessionCredentials]>([])
         let expired = LockIsolated(0)
@@ -112,13 +113,13 @@ struct BackgroundUploadEventsTests {
 
     @Test("A server that cannot be reached neither signs out nor forgets the flag")
     func unreachableServerKeepsTheFlag() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let cleared = LockIsolated<[String]>([])
         let expired = LockIsolated(0)
 
         await BackgroundUploadEvents.checkRefusedSessions(
             shareUploads: shareUploads(flagged: [account.accountID], cleared: cleared),
-            authClient: authClient(active: account.accountID, sessions: [account], me: { _ in throw AuthClientError.network("offline") }),
+            authClient: authClient(active: account.accountID, sessions: [account], me: { _ in throw AuthClientError.network(TestFailure.offline) }),
             expireSession: { expired.withValue { $0 += 1 } }
         )
 
@@ -128,7 +129,7 @@ struct BackgroundUploadEventsTests {
 
     @Test("A flag for another account, or no flag, does nothing")
     func otherAccountIsIgnored() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let asked = LockIsolated(0)
         let expired = LockIsolated(0)
         let signedIn = user
@@ -159,7 +160,7 @@ struct BackgroundUploadEventsTests {
     ) async {
         let signedIn = user
         await BackgroundUploadEvents.retry(
-            batchID: "BATCH",
+            batchID: TestUpload.batchID,
             authClient: authClient(active: nil, sessions: sessions, me: { _ in signedIn }),
             accountID: { _ in accountID },
             retryFailed: { batchID, credentials in
@@ -172,14 +173,14 @@ struct BackgroundUploadEventsTests {
 
     @Test("Retry resends with the batch account's current credentials and stays quiet")
     func retryUsesCurrentCredentials() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let received = LockIsolated<[(String, SessionCredentials)]>([])
         let notices = LockIsolated<[UploadNotifications.RetryFailure]>([])
 
         await retry(accountID: account.accountID, sessions: [account], retried: 1, received: received, notices: notices)
 
         #expect(received.value.count == 1)
-        #expect(received.value.first?.0 == "BATCH")
+        #expect(received.value.first?.0 == TestUpload.batchID)
         #expect(received.value.first?.1 == account)
         #expect(notices.value.isEmpty)
     }
@@ -197,7 +198,7 @@ struct BackgroundUploadEventsTests {
 
     @Test("Retry tells the user when the batch is gone, so no account can be found for it")
     func retryWithoutABatch() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let received = LockIsolated<[(String, SessionCredentials)]>([])
         let notices = LockIsolated<[UploadNotifications.RetryFailure]>([])
 
@@ -209,7 +210,7 @@ struct BackgroundUploadEventsTests {
 
     @Test("Retry tells the user when no failed file was left to send")
     func retrySendingNothing() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let notices = LockIsolated<[UploadNotifications.RetryFailure]>([])
 
         await retry(accountID: account.accountID, sessions: [account], retried: 0, notices: notices)
@@ -239,7 +240,7 @@ struct BackgroundUploadEventsTests {
 
     @Test("A pending batch is reconnected with the signed in sessions")
     func pendingReconnectsWithSessions() async {
-        let account = credentials(username: "phillip")
+        let account = credentials(username: TestAccount.username)
         let received = LockIsolated<[[SessionCredentials]]>([])
 
         await BackgroundUploadEvents.reconnectPending(

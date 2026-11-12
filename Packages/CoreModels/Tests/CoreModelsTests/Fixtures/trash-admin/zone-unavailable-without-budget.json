@@ -1,0 +1,8 @@
+{
+  "id": "z2",
+  "kind": "user-volume",
+  "name": "media",
+  "available": false,
+  "reason": "replaced",
+  "budgetBytes": null
+}

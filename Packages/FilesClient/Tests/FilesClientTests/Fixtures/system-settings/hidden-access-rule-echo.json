@@ -1,0 +1,15 @@
+{
+  "branding": {
+    "appName": "X"
+  },
+  "access": {
+    "rules": [
+      {
+        "id": "srv1",
+        "path": "Docs",
+        "recursive": false,
+        "permissions": "hidden"
+      }
+    ]
+  }
+}

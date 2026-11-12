@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "name": "Docs",
+      "path": "Home",
+      "dateModified": 1800000000,
+      "size": 0,
+      "kind": "directory"
+    }
+  ],
+  "access": {
+    "canRead": true,
+    "canWrite": false,
+    "canUpload": false,
+    "canDelete": false,
+    "canShare": true,
+    "canDownload": true
+  },
+  "path": "Home"
+}

@@ -1,3 +1,4 @@
+import TestUtils
 #if os(macOS)
     import CoreModels
     import Dependencies
@@ -8,20 +9,20 @@
 
     @MainActor
     struct MacVersionsModelTests {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         /// One version whose id is the file's path, so a history says which file it belongs to.
         private nonisolated static func history(for path: String) -> FileVersionHistory {
             FileVersionHistory(
                 isEnabled: true,
-                versions: [FileVersion(id: path, size: 1, modifiedAt: Date(), capturedAt: Date())],
+                versions: [FileVersion(id: path, size: 1, modifiedAt: MockDate.date, capturedAt: MockDate.date)],
                 totalBytes: 1,
                 rights: .init(canSee: true, canDownload: true, canRestore: true, canRemove: true)
             )
         }
 
         private static func file(_ name: String) -> FileItem {
-            FileItem(name: name, path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+            FileItem(name: name, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
         }
 
         @Test
@@ -37,8 +38,8 @@
             } operation: {
                 MacVersionsModel()
             }
-            let first = Self.file("a.txt")
-            let second = Self.file("b.txt")
+            let first = Self.file(TestFile.aText)
+            let second = Self.file(TestFile.bText)
 
             await model.load(item: first, serverURL: serverURL)
             let version = try #require(model.history?.versions.first)
@@ -61,7 +62,7 @@
                 MacVersionsModel()
             }
             model.onFilesChanged = { didChangeFiles.setValue(true) }
-            let item = Self.file("a.txt")
+            let item = Self.file(TestFile.aText)
 
             await model.load(item: item, serverURL: serverURL)
             let version = try #require(model.history?.versions.first)

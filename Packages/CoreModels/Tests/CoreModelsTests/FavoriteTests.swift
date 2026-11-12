@@ -1,6 +1,7 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Favorite")
 struct FavoriteTests {
@@ -12,14 +13,14 @@ struct FavoriteTests {
             icon: "folder",
             color: nil,
             position: 0,
-            createdAt: Date(),
-            updatedAt: Date()
+            createdAt: MockDate.date,
+            updatedAt: MockDate.date
         )
     }
 
     @Test("happy path: displayName uses the custom label when present")
     func displayNameUsesLabel() {
-        let favorite = makeFavorite(path: "Home/Docs", label: "My Documents")
+        let favorite = makeFavorite(path: TestPath.homeDocs, label: "My Documents")
         #expect(favorite.displayName == "My Documents")
     }
 
@@ -37,11 +38,8 @@ struct FavoriteTests {
 
     @Test("decodes a full favorites row")
     func decodesFullRow() throws {
-        let json = #"""
-        {"id": "f1", "path": "Home/Docs", "label": "Docs", "icon": "folder", "color": "#FF0000", "position": 2, "createdAt": 1800000000, "updatedAt": 1800100000}
-        """#
-        let favorite = try JSONDecoder().decode(Favorite.self, from: Data(json.utf8))
-        #expect(favorite.label == "Docs")
+        let favorite = try CoreModelsFixture.favoriteFullRow.decode(Favorite.self)
+        #expect(favorite.label == TestFolder.docs)
         #expect(favorite.color == "#FF0000")
         #expect(favorite.position == 2)
     }

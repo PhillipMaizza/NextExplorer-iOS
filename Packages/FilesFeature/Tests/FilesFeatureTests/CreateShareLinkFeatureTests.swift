@@ -1,23 +1,23 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct CreateShareLinkFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
-    private let now = Date(timeIntervalSince1970: 1_700_000_000)
+    private let now = MockDate.date
 
     private func makeState() -> CreateShareLinkFeature.State {
         CreateShareLinkFeature.State(
             serverURL: serverURL,
-            itemName: "Report.pdf",
-            itemPath: "Documents",
+            itemName: FilesFeatureTestValue.reportName,
+            itemPath: TestFolder.documents,
             isDirectory: false,
             now: now
         )
@@ -41,6 +41,7 @@ struct CreateShareLinkFeatureTests {
     @Test
     func creatingASharePutsTheResultIntoTheCreatedPhase() async {
         let created = makeCreated()
+        let gate = AsyncGate()
         let store = TestStore(initialState: makeState()) {
             CreateShareLinkFeature()
         } withDependencies: {
@@ -49,12 +50,14 @@ struct CreateShareLinkFeatureTests {
                 #expect(url == serverURL)
                 #expect(request.sourcePath == "Documents/Report.pdf")
                 #expect(request.accessMode == .readonly)
+                try await gate.wait()
                 return created
             }
         }
 
         await store.send(.accessModeChanged(.readonly))
         await store.send(.createTapped) { $0.isCreating = true }
+        gate.open()
         await store.receive(\.createResponse.success) {
             $0.isCreating = false
             $0.createdShare = created
@@ -69,7 +72,7 @@ struct CreateShareLinkFeatureTests {
         await store.send(.labelChanged("Bills")) { $0.label = "Bills" }
         await store.send(.accessModeChanged(.readwrite)) { $0.accessMode = .readwrite }
         await store.send(.passwordEnabledChanged(true)) { $0.isPasswordEnabled = true }
-        await store.send(.passwordChanged("hunter2")) { $0.password = "hunter2" }
+        await store.send(.passwordChanged(TestAccount.password)) { $0.password = TestAccount.password }
         await store.send(.expiryEnabledChanged(true)) {
             $0.isExpiryEnabled = true
             $0.hasTouchedExpiry = true
@@ -149,6 +152,7 @@ struct CreateShareLinkFeatureTests {
         state.shareableUsers = [jamie]
         state.selectedUserIDs = [jamie.id]
 
+        let gate = AsyncGate()
         let store = TestStore(initialState: state) {
             CreateShareLinkFeature()
         } withDependencies: {
@@ -156,11 +160,13 @@ struct CreateShareLinkFeatureTests {
             $0.filesClient.createShareLink = { _, request in
                 #expect(request.target == .users)
                 #expect(request.userIds == ["u2"])
+                try await gate.wait()
                 return created
             }
         }
 
         await store.send(.createTapped) { $0.isCreating = true }
+        gate.open()
         await store.receive(\.createResponse.success) {
             $0.isCreating = false
             $0.createdShare = created

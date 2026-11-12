@@ -1,13 +1,13 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct ServerDetailsFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
@@ -23,13 +23,18 @@ struct ServerDetailsFeatureTests {
     @Test
     func onAppearRefreshesBrandingAndFollowsTheUntouchedNameDraft() async {
         let fetched = Branding(appName: "Rivendell", appLogoUrl: "/static/logos/custom-logo.png")
+        let gate = AsyncGate()
         let store = TestStore(initialState: makeState()) {
             ServerDetailsFeature()
         } withDependencies: {
-            $0.filesClient.fetchBranding = { _ in fetched }
+            $0.filesClient.fetchBranding = { _ in
+                try await gate.wait()
+                return fetched
+            }
         }
 
         await store.send(.onAppear)
+        gate.open()
         await store.receive(\.brandingResponse.success) {
             $0.branding = fetched
             $0.nameDraft = "Rivendell"
@@ -42,13 +47,18 @@ struct ServerDetailsFeatureTests {
         var state = makeState()
         state.nameDraft = "My Server"
         let fetched = Branding(appName: "Rivendell", appLogoUrl: Branding.defaultLogoPath)
+        let gate = AsyncGate()
         let store = TestStore(initialState: state) {
             ServerDetailsFeature()
         } withDependencies: {
-            $0.filesClient.fetchBranding = { _ in fetched }
+            $0.filesClient.fetchBranding = { _ in
+                try await gate.wait()
+                return fetched
+            }
         }
 
         await store.send(.onAppear)
+        gate.open()
         await store.receive(\.brandingResponse.success) {
             $0.branding = fetched
             $0.$sharedBranding.withLock { $0 = fetched }
@@ -77,6 +87,7 @@ struct ServerDetailsFeatureTests {
         var state = makeState()
         state.nameDraft = "Rivendell"
         let saved = Branding(appName: "Rivendell", appLogoUrl: Branding.defaultLogoPath)
+        let gate = AsyncGate()
         let store = TestStore(initialState: state) {
             ServerDetailsFeature()
         } withDependencies: {
@@ -87,11 +98,13 @@ struct ServerDetailsFeatureTests {
             $0.filesClient.updateBranding = { _, name, logoPath in
                 #expect(name == "Rivendell")
                 #expect(logoPath == Branding.defaultLogoPath)
+                try await gate.wait()
                 return saved
             }
         }
 
         await store.send(.updateTapped) { $0.isSaving = true }
+        gate.open()
         await store.receive(\.saveResponse.success) {
             $0.isSaving = false
             $0.branding = saved
@@ -106,6 +119,7 @@ struct ServerDetailsFeatureTests {
         var state = makeState()
         state.pendingLogoData = Data([0xFF, 0xD8, 0xFF])
         let saved = Branding(appName: "Explorer", appLogoUrl: "/static/logos/custom-logo.jpg")
+        let gate = AsyncGate()
         let store = TestStore(initialState: state) {
             ServerDetailsFeature()
         } withDependencies: {
@@ -115,11 +129,13 @@ struct ServerDetailsFeatureTests {
             }
             $0.filesClient.updateBranding = { _, _, logoPath in
                 #expect(logoPath == "/static/logos/custom-logo.jpg")
+                try await gate.wait()
                 return saved
             }
         }
 
         await store.send(.updateTapped) { $0.isSaving = true }
+        gate.open()
         await store.receive(\.saveResponse.success) {
             $0.isSaving = false
             $0.branding = saved
@@ -153,8 +169,8 @@ struct ServerDetailsFeatureTests {
         state.pendingLogoData = Data([0xFF, 0xD8, 0xFF]) // dirty, so only the name gates the save
         let store = TestStore(initialState: state) { ServerDetailsFeature() }
 
-        await store.send(.nameChanged("   ")) {
-            $0.nameDraft = "   "
+        await store.send(.nameChanged(TestValue.blank)) {
+            $0.nameDraft = TestValue.blank
         }
         #expect(store.state.nameError == .empty)
         #expect(store.state.isSaveEnabled == false)

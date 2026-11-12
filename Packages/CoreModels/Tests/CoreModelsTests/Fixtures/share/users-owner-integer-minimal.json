@@ -1,0 +1,13 @@
+{
+  "id": "s2",
+  "shareToken": "tok2",
+  "ownerId": 42,
+  "sourceName": "photo.jpg",
+  "isDirectory": false,
+  "accessMode": "readonly",
+  "sharingType": "users",
+  "hasPassword": false,
+  "permittedUserIds": ["u1", "u2"],
+  "createdAt": "2023-11-14T22:03:20Z",
+  "updatedAt": "2023-11-14T22:13:20Z"
+}

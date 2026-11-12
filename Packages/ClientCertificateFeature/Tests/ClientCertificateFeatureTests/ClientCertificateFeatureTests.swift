@@ -3,13 +3,14 @@ import ComposableArchitecture
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 @MainActor
-@Suite("ClientCertificateFeature")
+@Suite("ClientCertificateFeature", .isolatedDependencies)
 struct ClientCertificateFeatureTests {
-    private let origin = ClientCertificateOrigin(host: "files.example.com", port: 8443)
-    private let summary = ClientCertificateSummary(subject: "Dev Client", issuer: "Dev CA", expiresAt: nil)
-    private let file = ClientCertificateFeature.PendingFile(name: "dev.p12", data: Data([1, 2, 3]))
+    private let origin = ClientCertificateOrigin(host: TestHost.server, port: 8443)
+    private let summary = ClientCertificateSummary(subject: TestCertificate.subject, issuer: "Dev CA", expiresAt: nil)
+    private let file = ClientCertificateFeature.PendingFile(name: Constants.certificateFileName, data: Data([1, 2, 3]))
 
     @Test("Appearing loads what is installed")
     func loadsStatus() async {
@@ -57,8 +58,8 @@ struct ClientCertificateFeatureTests {
         await store.send(.fileLoaded(file)) {
             $0.pendingFile = file
         }
-        await store.send(.passphraseChanged("secret")) {
-            $0.passphrase = "secret"
+        await store.send(.passphraseChanged(Constants.passphrase)) {
+            $0.passphrase = Constants.passphrase
         }
         await store.send(.installTapped) {
             $0.importPhase = .importing
@@ -71,14 +72,14 @@ struct ClientCertificateFeatureTests {
         }
         await store.receive(\.delegate, .installed(summary))
         #expect(installed.value?.0 == file.data)
-        #expect(installed.value?.1 == "secret")
+        #expect(installed.value?.1 == Constants.passphrase)
         #expect(installed.value?.2 == origin)
     }
 
     @Test("A wrong password keeps the file and clears once the user edits it")
     func wrongPassword() async {
         let store = TestStore(
-            initialState: ClientCertificateFeature.State(origin: origin, status: .empty, pendingFile: file, passphrase: "nope")
+            initialState: ClientCertificateFeature.State(origin: origin, status: .empty, pendingFile: file, passphrase: TestAccount.rejectedPassword)
         ) {
             ClientCertificateFeature()
         } withDependencies: {
@@ -93,8 +94,8 @@ struct ClientCertificateFeatureTests {
         }
         #expect(store.state.pendingFile == file)
         #expect(store.state.canInstall)
-        await store.send(.passphraseChanged("nope2")) {
-            $0.passphrase = "nope2"
+        await store.send(.passphraseChanged(Constants.secondRejectedPassphrase)) {
+            $0.passphrase = Constants.secondRejectedPassphrase
             $0.importPhase = .idle
         }
     }
@@ -222,22 +223,28 @@ struct ClientCertificateFeatureTests {
 
     @Test("Reading a real file keeps its name and bytes, and a huge one is refused")
     func readFile() throws {
-        let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        let directory = FileManager.default.temporaryDirectory.appending(path: TestID.name())
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let small = directory.appending(path: "dev.p12")
+        let small = directory.appending(path: Constants.certificateFileName)
         try Data([9, 8, 7]).write(to: small)
         let huge = directory.appending(path: "huge.p12")
         try Data(count: 2 * 1024 * 1024).write(to: huge)
 
-        #expect(ClientCertificateFeature.readFile(at: small) == .init(name: "dev.p12", data: Data([9, 8, 7])))
+        #expect(ClientCertificateFeature.readFile(at: small) == .init(name: Constants.certificateFileName, data: Data([9, 8, 7])))
         #expect(ClientCertificateFeature.readFile(at: huge) == nil)
         #expect(ClientCertificateFeature.readFile(at: directory.appending(path: "missing.p12")) == nil)
     }
 
     @Test("The server name hides the default port")
     func serverName() {
-        #expect(ClientCertificateFeature.State(origin: .init(host: "a.com", port: 443)).serverName == "a.com")
-        #expect(ClientCertificateFeature.State(origin: origin).serverName == "files.example.com:8443")
+        #expect(ClientCertificateFeature.State(origin: .init(host: TestHost.shortHost, port: 443)).serverName == TestHost.shortHost)
+        #expect(ClientCertificateFeature.State(origin: origin).serverName == TestHost.serverWithPort)
     }
+}
+
+private enum Constants {
+    static let certificateFileName = "dev.p12"
+    static let passphrase = "secret"
+    static let secondRejectedPassphrase = "nope2"
 }
