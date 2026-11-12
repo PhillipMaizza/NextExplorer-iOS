@@ -1,7 +1,6 @@
 import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 @testable import FilesFeature
 import Foundation
 import Localization
@@ -9,7 +8,7 @@ import NetworkClient
 import TestUtils
 import Testing
 
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct SettingsClientCertificateTests {
     private let serverURL: URL

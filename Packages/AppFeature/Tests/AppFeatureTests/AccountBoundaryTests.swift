@@ -15,7 +15,7 @@ extension AppSuites {
     /// account that is active now, and the record that lets a killed wipe finish is written before the
     /// session goes.
     @MainActor
-    @Suite("Account boundary")
+    @Suite("Account boundary", .isolatedDependencies)
     struct AccountBoundaryTests {
         private typealias Store = TestStore<AppFeature.State, AppFeature.Action>
         private typealias AuthenticatedStore = TestStore<AuthenticatedFeature.State, AuthenticatedFeature.Action>

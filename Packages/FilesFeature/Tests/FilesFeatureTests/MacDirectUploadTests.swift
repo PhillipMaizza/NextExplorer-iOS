@@ -5,7 +5,9 @@
     import Foundation
     import Localization
     import Testing
-
+    import TestUtils
+    
+    @Suite(.isolatedDependencies)
     @MainActor
     struct MacDirectUploadTests {
         private let serverURL = URL(string: "https://example.com")!

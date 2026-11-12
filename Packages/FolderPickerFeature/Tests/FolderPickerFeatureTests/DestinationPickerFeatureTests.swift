@@ -5,7 +5,9 @@ import FilesClient
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct DestinationPickerFeatureTests {
     private let serverURL = URL(string: "https://example.com")!

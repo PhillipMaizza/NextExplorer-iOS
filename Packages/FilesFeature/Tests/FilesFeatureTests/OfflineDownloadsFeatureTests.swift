@@ -9,7 +9,7 @@ import Testing
 import TestUtils
 
 // Serialized: every store shares the sync effect's cancel id, so parallel tests would cancel each other.
-@Suite(.serialized)
+@Suite(.serialized, .isolatedDependencies)
 @MainActor
 struct OfflineDownloadsFeatureTests {
     private let serverURL = URL(string: "https://example.com")!

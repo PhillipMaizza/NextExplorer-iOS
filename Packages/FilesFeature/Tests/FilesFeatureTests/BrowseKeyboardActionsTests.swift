@@ -1,14 +1,14 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
 /// The selection driven actions behind the Mac file table's keyboard and Edit menu commands.
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct BrowseKeyboardActionsTests {
     private let serverURL = URL(string: "https://example.com")!

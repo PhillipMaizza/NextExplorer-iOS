@@ -1,6 +1,5 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 @testable import FilesFeature
 import Foundation
 import ShareUploads
@@ -9,7 +8,7 @@ import TestUtils
 
 /// Files opened in the app from another app's share sheet: the inbox drains into an upload review
 /// on the Browse tab's topmost screen.
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct SharedFileInboxTests {
     private let serverURL = URL(string: "https://example.com")!

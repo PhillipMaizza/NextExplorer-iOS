@@ -12,7 +12,9 @@ Tests must give the same result on every run, on any machine. Scans Packages/*/T
   XCTWaiter                    await the result instead of waiting for time to pass
   URLSession.shared            inject a client
   Int.random, shuffled(), randomElement()   seed a generator (SplitMix64)
-  exhaustivity = .off, skipReceivedActions   assert every state change and every effect
+  exhaustivity = .off, skipReceivedActions, skipInFlightEffects   assert every state change and every effect
+  withMainSerialExecutor       process wide switch, races parallel suites: gate effects with AsyncGate
+  TestStore in a file without .isolatedDependencies   add @Suite(.isolatedDependencies) (TestUtils): fresh dependencies and @Shared in memory storage for every test
 
 Existing uses are recorded in Scripts/test-determinism-baseline.json (file -> pattern -> count).
 A count may go down but never up, and a file not in the baseline may use none. Fixing a use and
@@ -44,7 +46,12 @@ PATTERNS = {
     "random": r"\b(Int|UInt|Double|Float|CGFloat|Bool)\.random\(|\.randomElement\(|\.shuffled\(\)|SystemRandomNumberGenerator",
     "exhaustivity off": r"exhaustivity\s*=\s*\.off",
     "skipReceivedActions": r"\bskipReceivedActions\b",
+    "skipInFlightEffects": r"\bskipInFlightEffects\b",
+    "withMainSerialExecutor": r"\bwithMainSerialExecutor\b",
 }
+
+# A file that builds a TestStore must opt its suites into isolated dependencies and @Shared storage.
+ISOLATION = "TestStore without .isolatedDependencies"
 
 
 def count_in(text):
@@ -55,6 +62,8 @@ def count_in(text):
             found = len(re.findall(pattern, code))
             if found:
                 counts[name] = counts.get(name, 0) + found
+    if "TestStore(" in text and "@Test" in text and not re.search(r"@Suite\([^)]*\.isolatedDependencies", text):
+        counts[ISOLATION] = 1
     return counts
 
 

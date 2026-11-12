@@ -1,6 +1,5 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
@@ -8,7 +7,7 @@ import Testing
 import TestUtils
 
 @MainActor
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 struct InspectorFollowsItemTests {
     private let serverURL = URL(string: "https://example.com")!
 

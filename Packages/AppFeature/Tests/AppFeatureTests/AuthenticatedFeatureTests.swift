@@ -9,7 +9,7 @@ import TestUtils
 
 extension AppSuites {
     @MainActor
-    @Suite("AuthenticatedFeature")
+    @Suite("AuthenticatedFeature", .isolatedDependencies)
     struct AuthenticatedFeatureTests {
         private typealias Store = TestStore<AuthenticatedFeature.State, AuthenticatedFeature.Action>
 

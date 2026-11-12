@@ -7,9 +7,10 @@ import Foundation
 import Localization
 import NetworkClient
 import Testing
+import TestUtils
 
 @MainActor
-@Suite("LoginFormFeature client certificates")
+@Suite("LoginFormFeature client certificates", .isolatedDependencies)
 struct LoginClientCertificateTests {
     private typealias Store = TestStore<LoginFormFeature.State, LoginFormFeature.Action>
 

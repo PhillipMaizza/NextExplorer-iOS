@@ -5,6 +5,7 @@ import Foundation
 import Testing
 import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct BrowseSearchFilterTests {
     private let serverURL = URL(string: "https://cloud.example.com")!

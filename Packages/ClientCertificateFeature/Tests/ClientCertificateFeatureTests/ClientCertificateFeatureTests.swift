@@ -6,7 +6,7 @@ import Testing
 import TestUtils
 
 @MainActor
-@Suite("ClientCertificateFeature")
+@Suite("ClientCertificateFeature", .isolatedDependencies)
 struct ClientCertificateFeatureTests {
     private let origin = ClientCertificateOrigin(host: "files.example.com", port: 8443)
     private let summary = ClientCertificateSummary(subject: "Dev Client", issuer: "Dev CA", expiresAt: nil)

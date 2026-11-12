@@ -2,14 +2,13 @@ import TestUtils
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
-    import DependenciesTestSupport
-    import FilesClient
+        import FilesClient
     @testable import FilesFeature
     import Foundation
     import Testing
 
     @MainActor
-    @Suite(.dependencies)
+    @Suite(.isolatedDependencies)
     struct MacSecondPassTests {
         private let serverURL = URL(string: "https://example.com")!
         private let access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
@@ -90,7 +89,12 @@ import TestUtils
             }
             await store.receive(.delegate(.goToSharedTab))
         }
+    }
 
+    /// `MacOpenWithCopy.make` writes under the shared `Library/Caches/PreviewCache`, which
+    /// `PreviewCacheStoreTests` wipes, so these tests join the same serialized gate.
+    @Suite(.serialized, SerializedPreviewCacheAccess())
+    struct MacOpenWithCopyTests {
         @Test
         func openWithCopiesOlderThanADayAreRemoved() throws {
             let root = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)

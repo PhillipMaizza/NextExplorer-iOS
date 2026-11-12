@@ -7,6 +7,7 @@ import Localization
 import Testing
 import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct MainTabFeatureTests {
     private let serverURL = URL(string: "https://example.com")!

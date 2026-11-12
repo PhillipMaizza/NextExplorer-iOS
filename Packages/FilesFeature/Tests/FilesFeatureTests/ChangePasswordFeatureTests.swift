@@ -4,7 +4,9 @@ import FilesClient
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct ChangePasswordFeatureTests {
     private typealias Store = TestStoreOf<ChangePasswordFeature>

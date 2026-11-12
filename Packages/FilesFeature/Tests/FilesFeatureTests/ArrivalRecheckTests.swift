@@ -4,10 +4,12 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 /// After a copy or move into the folder on screen, the listing is refetched a few times until the
 /// server lists what was created. Driven on one `BrowseFeature` with a `TestClock`, so every
 /// refetch happens exactly when the test advances time and nothing else reloads the folder.
+@Suite(.isolatedDependencies)
 @MainActor
 struct ArrivalRecheckTests {
     private let serverURL = URL(string: "https://example.com")!

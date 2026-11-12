@@ -6,6 +6,7 @@ import Foundation
 import Testing
 import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct BrowseTabFeatureTests {
     private let serverURL = URL(string: "https://example.com")!

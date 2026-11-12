@@ -5,7 +5,9 @@ import FilesClient
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct FolderSizeSettingsFeatureTests {
     private typealias Store = TestStoreOf<FolderSizeSettingsFeature>

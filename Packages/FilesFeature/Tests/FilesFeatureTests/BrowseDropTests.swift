@@ -1,6 +1,5 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
@@ -220,7 +219,7 @@ struct BrowseDropRouterTests {
     }
 }
 
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct BrowseDropReducerTests {
     private let access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)

@@ -15,7 +15,7 @@ extension AppSuites {
     /// session boundary. Runs on iOS and macOS, so the Mac sign in path is covered by the same
     /// assertions as the phone's.
     @MainActor
-    @Suite("Session boundary wipe")
+    @Suite("Session boundary wipe", .isolatedDependencies)
     struct SessionBoundaryWipeTests {
         private typealias Store = TestStore<AppFeature.State, AppFeature.Action>
 

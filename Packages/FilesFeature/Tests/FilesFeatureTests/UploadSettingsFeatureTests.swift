@@ -5,7 +5,9 @@ import FilesClient
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct UploadSettingsFeatureTests {
     private typealias Store = TestStoreOf<UploadSettingsFeature>

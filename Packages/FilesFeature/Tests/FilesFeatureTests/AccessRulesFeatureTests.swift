@@ -4,7 +4,9 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct AccessRulesFeatureTests {
     private typealias Store = TestStoreOf<AccessRulesFeature>

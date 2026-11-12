@@ -5,6 +5,7 @@ import Foundation
 import Testing
 import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct DownloadsFeatureTests {
     private func makeDownload(fileName: String = "report.pdf", location: DownloadLocation = .documents) -> LocalDownload {

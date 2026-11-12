@@ -4,7 +4,9 @@ import CoreModels
 import FolderPickerFeature
 import Foundation
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct UploadReviewFeatureTests {
     private typealias Store = TestStoreOf<UploadReviewFeature>

@@ -1,13 +1,13 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct EditShareFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
@@ -102,6 +102,7 @@ struct EditShareFeatureTests {
         let updated = share(label: "Renamed", accessMode: .readwrite)
 
         let recorded = LockIsolated<UpdateShareRequest?>(nil)
+        let gate = AsyncGate()
         let store = TestStore(initialState: initial) {
             EditShareFeature()
         } withDependencies: {
@@ -109,11 +110,13 @@ struct EditShareFeatureTests {
             $0.filesClient.updateShareLink = { _, id, request in
                 #expect(id == "s1")
                 recorded.setValue(request)
+                try await gate.wait()
                 return updated
             }
         }
 
         await store.send(.saveTapped) { $0.isSaving = true }
+        gate.open()
         await store.receive(\.saveResponse.success) {
             $0.isSaving = false
             $0.$shareLinksRevision.withLock { $0 = 1 }

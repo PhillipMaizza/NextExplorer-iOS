@@ -7,7 +7,14 @@ let package = Package(
     products: [
         .library(name: "TestUtils", targets: ["TestUtils"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.0"),
+    ],
     targets: [
-        .target(name: "TestUtils", swiftSettings: [.swiftLanguageMode(.v6)]),
+        .target(
+            name: "TestUtils",
+            dependencies: [.product(name: "Dependencies", package: "swift-dependencies")],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
     ]
 )

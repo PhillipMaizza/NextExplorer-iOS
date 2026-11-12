@@ -3,7 +3,9 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct OfflineManageFeatureTests {
     @Test

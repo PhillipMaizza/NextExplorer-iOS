@@ -7,6 +7,7 @@ import Localization
 import TestUtils
 import Testing
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct VersionedFilesFeatureTests {
     private typealias Store = TestStoreOf<VersionedFilesFeature>

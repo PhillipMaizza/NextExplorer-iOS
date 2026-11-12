@@ -6,7 +6,8 @@ import TestUtils
     @testable import FilesFeature
     import Foundation
     import Testing
-
+    
+    @Suite(.isolatedDependencies)
     @MainActor
     struct FolderWindowFeatureTests {
         private let serverURL = URL(string: "https://example.com")!

@@ -11,7 +11,7 @@ import TestUtils
 
 extension AppSuites {
     @MainActor
-    @Suite("AppFeature routing")
+    @Suite("AppFeature routing", .isolatedDependencies)
     struct AppFeatureTests {
         private typealias Store = TestStore<AppFeature.State, AppFeature.Action>
 

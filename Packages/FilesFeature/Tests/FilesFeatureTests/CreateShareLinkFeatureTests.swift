@@ -1,13 +1,13 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct CreateShareLinkFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
@@ -41,6 +41,7 @@ struct CreateShareLinkFeatureTests {
     @Test
     func creatingASharePutsTheResultIntoTheCreatedPhase() async {
         let created = makeCreated()
+        let gate = AsyncGate()
         let store = TestStore(initialState: makeState()) {
             CreateShareLinkFeature()
         } withDependencies: {
@@ -49,12 +50,14 @@ struct CreateShareLinkFeatureTests {
                 #expect(url == serverURL)
                 #expect(request.sourcePath == "Documents/Report.pdf")
                 #expect(request.accessMode == .readonly)
+                try await gate.wait()
                 return created
             }
         }
 
         await store.send(.accessModeChanged(.readonly))
         await store.send(.createTapped) { $0.isCreating = true }
+        gate.open()
         await store.receive(\.createResponse.success) {
             $0.isCreating = false
             $0.createdShare = created
@@ -149,6 +152,7 @@ struct CreateShareLinkFeatureTests {
         state.shareableUsers = [jamie]
         state.selectedUserIDs = [jamie.id]
 
+        let gate = AsyncGate()
         let store = TestStore(initialState: state) {
             CreateShareLinkFeature()
         } withDependencies: {
@@ -156,11 +160,13 @@ struct CreateShareLinkFeatureTests {
             $0.filesClient.createShareLink = { _, request in
                 #expect(request.target == .users)
                 #expect(request.userIds == ["u2"])
+                try await gate.wait()
                 return created
             }
         }
 
         await store.send(.createTapped) { $0.isCreating = true }
+        gate.open()
         await store.receive(\.createResponse.success) {
             $0.isCreating = false
             $0.createdShare = created

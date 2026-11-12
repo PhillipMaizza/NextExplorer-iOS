@@ -1,15 +1,15 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 /// A late response after an account switch must land in the account that asked for it. The scope
 /// source is injected and flipped between creating a feature and its response; the process wide
 /// `CacheAccountScope` is never touched.
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct CacheScopeCaptureTests {
     private enum Fixture {

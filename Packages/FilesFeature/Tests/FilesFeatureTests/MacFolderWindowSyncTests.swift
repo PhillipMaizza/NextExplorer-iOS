@@ -2,15 +2,14 @@ import TestUtils
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
-    import DependenciesTestSupport
-    import FilesClient
+        import FilesClient
     @testable import FilesFeature
     import Foundation
     import Localization
     import Testing
 
     @MainActor
-    @Suite(.dependencies)
+    @Suite(.isolatedDependencies)
     struct MacFolderWindowSyncTests {
         private let serverURL = URL(string: "https://example.com")!
         private let user = User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])

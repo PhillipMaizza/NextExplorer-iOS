@@ -1,10 +1,15 @@
 {
-  "Packages/FilesFeature/Tests/FilesFeatureTests/AccessRulesFeatureTests.swift": {
-    "exhaustivity off": 3
+  "Packages/AppFeature/Tests/AppFeatureTests/AccountBoundaryTests.swift": {
+    "withMainSerialExecutor": 9
   },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/ActivityLogFeatureTests.swift": {
-    "exhaustivity off": 1,
-    "skipReceivedActions": 16
+  "Packages/AppFeature/Tests/AppFeatureTests/AppFeatureTests.swift": {
+    "withMainSerialExecutor": 12
+  },
+  "Packages/AppFeature/Tests/AppFeatureTests/SessionBoundaryWipeTests.swift": {
+    "withMainSerialExecutor": 4
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/PreviewDownloadCoordinatorTests.swift": {
+    "withMainSerialExecutor": 3
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/ArrivalRecheckTests.swift": {
     "exhaustivity off": 1
@@ -15,6 +20,7 @@
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseFeatureTests.swift": {
     "exhaustivity off": 34,
+    "skipInFlightEffects": 1,
     "skipReceivedActions": 1
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseKeyboardActionsTests.swift": {
@@ -38,9 +44,6 @@
     "skipReceivedActions": 3
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/CacheScopeCaptureTests.swift": {
-    "exhaustivity off": 2
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/ChangePasswordFeatureTests.swift": {
     "exhaustivity off": 2
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/DownloadQueueFeatureTests.swift": {
@@ -86,33 +89,10 @@
   "Packages/FilesFeature/Tests/FilesFeatureTests/OfflineSelectionFeatureTests.swift": {
     "exhaustivity off": 5
   },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/PermissionsFeatureTests.swift": {
-    "exhaustivity off": 2
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/SettingsClientCertificateTests.swift": {
-    "exhaustivity off": 1
-  },
   "Packages/FilesFeature/Tests/FilesFeatureTests/SharedFeatureTests.swift": {
     "exhaustivity off": 3
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/SharedFileInboxTests.swift": {
     "exhaustivity off": 7
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/TwoFactorFeatureTests.swift": {
-    "exhaustivity off": 3
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/UploadReviewFeatureTests.swift": {
-    "exhaustivity off": 5
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/UploadsFeatureTests.swift": {
-    "exhaustivity off": 18,
-    "skipReceivedActions": 2
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/UserManagementFeatureTests.swift": {
-    "exhaustivity off": 2
-  },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/VersionedFilesFeatureTests.swift": {
-    "exhaustivity off": 1,
-    "skipReceivedActions": 20
   }
 }

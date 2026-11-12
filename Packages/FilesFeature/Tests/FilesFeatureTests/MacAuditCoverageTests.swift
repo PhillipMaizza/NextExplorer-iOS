@@ -3,8 +3,7 @@ import TestUtils
     import AppKit
     import ComposableArchitecture
     import CoreModels
-    import DependenciesTestSupport
-    import FilesClient
+        import FilesClient
     @testable import FilesFeature
     import Foundation
     import Localization
@@ -13,7 +12,7 @@ import TestUtils
 
     /// The smaller fixes of the Mac audit, each pinned by a test.
     @MainActor
-    @Suite(.dependencies)
+    @Suite(.isolatedDependencies)
     struct MacAuditCoverageTests {
         private let serverURL = URL(string: "https://example.com")!
 

@@ -6,6 +6,7 @@ import Foundation
 import Testing
 import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct SharedFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!

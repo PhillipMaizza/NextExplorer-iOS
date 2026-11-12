@@ -1,14 +1,14 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
 import NetworkClient
 import Testing
+import TestUtils
 
-@Suite(.dependencies)
+@Suite(.isolatedDependencies)
 @MainActor
 struct BrowseQAFixesTests {
     private let serverURL = URL(string: "https://example.com") ?? URL(fileURLWithPath: "/")
