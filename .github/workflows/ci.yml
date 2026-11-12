@@ -26,14 +26,19 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Whether anything that can change a build or a test changed. A change to docs, screenshots or
-  # the fastlane store text skips every macOS job; a job skipped by its condition reports success,
-  # so the required check still passes (a workflow level paths filter would leave it pending).
+  # Whether anything that can change a build or a test changed, and for which platform. A change
+  # to docs, screenshots or the fastlane store text skips every macOS job; one made only of files
+  # wrapped in `#if os(macOS)` skips the iPhone jobs, and one only of `#if os(iOS)` files skips the
+  # Mac jobs (Scripts/ci-platforms.py). Pushes to main always run both. A job skipped by its
+  # condition reports success, so the required check still passes (a workflow level paths filter
+  # would leave it pending).
   changes:
     name: Changes
     runs-on: ubuntu-latest
     outputs:
       code: ${{ steps.diff.outputs.code }}
+      ios: ${{ steps.diff.outputs.ios }}
+      mac: ${{ steps.diff.outputs.mac }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -44,6 +49,9 @@ jobs:
         run: |
           python3 Scripts/test_check_test_determinism.py
           python3 Scripts/check-test-determinism.py
+
+      - name: Self check the platform filter
+        run: python3 Scripts/test_ci_platforms.py
 
       - name: Compare
         id: diff
@@ -60,24 +68,31 @@ jobs:
           esac
           if [ -z "${BASE}" ] || ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
             echo "No base to compare against; running everything"
-            echo "code=true" >> "${GITHUB_OUTPUT}"
+            printf 'code=true\nios=true\nmac=true\n' >> "${GITHUB_OUTPUT}"
             exit 0
           fi
           CHANGED=$(git diff --name-only "${BASE}" "${GITHUB_SHA}")
           echo "Changed files:"
           echo "${CHANGED}"
           CODE=$(echo "${CHANGED}" | grep -vE '\.md$|^LICENSE$|^Screenshots/|^fastlane/|^Gemfile|^\.ruby-version$' || true)
-          if [ -n "${CODE}" ]; then
-            echo "code=true" >> "${GITHUB_OUTPUT}"
-          else
+          if [ -z "${CODE}" ]; then
             echo "Only docs, screenshots or store text changed; skipping the macOS jobs"
-            echo "code=false" >> "${GITHUB_OUTPUT}"
+            printf 'code=false\nios=false\nmac=false\n' >> "${GITHUB_OUTPUT}"
+            exit 0
           fi
+          echo "code=true" >> "${GITHUB_OUTPUT}"
+          if [ "${EVENT}" != "pull_request" ]; then
+            printf 'ios=true\nmac=true\n' >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          PLATFORMS=$(echo "${CODE}" | python3 Scripts/ci-platforms.py --ref "${GITHUB_SHA}")
+          echo "${PLATFORMS}"
+          echo "${PLATFORMS}" >> "${GITHUB_OUTPUT}"
 
   build-and-test:
     name: Build and test
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.ios == 'true'
     # GitHub's Xcode 27 image (macOS 27): matches local development and builds TCA's macros with
     # Apple's prebuilt swift-syntax instead of compiling it on every run.
     runs-on: xcode-27
@@ -230,7 +245,7 @@ jobs:
   mac-build-and-test:
     name: Mac build and test
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.mac == 'true'
     runs-on: xcode-27
     timeout-minutes: 60
 
@@ -322,7 +337,7 @@ jobs:
     name: UI test build
     needs: changes
     if: >-
-      needs.changes.outputs.code == 'true' && (
+      needs.changes.outputs.ios == 'true' && (
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests')))
@@ -407,7 +422,7 @@ jobs:
     needs: [changes, ui-test-build]
     # Merges to main, manual runs from the Actions tab, and pull requests labelled `ui-tests`.
     if: >-
-      needs.changes.outputs.code == 'true' && (
+      needs.changes.outputs.ios == 'true' && (
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests')))
@@ -536,7 +551,7 @@ jobs:
     needs: changes
     # Same triggers as the iPhone UI tests.
     if: >-
-      needs.changes.outputs.code == 'true' && (
+      needs.changes.outputs.mac == 'true' && (
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests')))
