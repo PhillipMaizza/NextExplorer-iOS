@@ -777,6 +777,7 @@ apiTokens.expiryYear	Om 1 år
 apiTokens.expiryNever	Aldri
 apiTokens.fieldPassword	Passordet ditt
 apiTokens.passwordHint	Skriv inn passordet ditt for å opprette et token.
+apiTokens.noPasswordWarning	Kontoen din har ikke passord, så tokener opprettes uten å spørre om det. Legg til et passord på kontoen for å beskytte opprettelse av tokener.
 apiTokens.createSubmit	Opprett token
 apiTokens.issuedTitle	Kopier tokenet ditt
 apiTokens.issuedIntro	Dette er den eneste gangen det vises. Oppbevar det på et trygt sted. Hvis du mister det, må du trekke det tilbake og opprette et nytt.

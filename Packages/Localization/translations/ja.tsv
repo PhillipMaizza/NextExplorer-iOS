@@ -1071,6 +1071,7 @@ apiTokens.neverExpires	無期限
 apiTokens.neverUsed	未使用
 apiTokens.newButton	新規トークン
 apiTokens.passwordHint	トークンを作成するにはパスワードを入力してください。
+apiTokens.noPasswordWarning	アカウントにパスワードがないため、トークンはパスワードなしで作成されます。トークンの作成を保護するには、アカウントにパスワードを追加してください。
 apiTokens.renameAction	名称変更
 apiTokens.renameSave	保存
 apiTokens.renameTitle	トークンの名称変更

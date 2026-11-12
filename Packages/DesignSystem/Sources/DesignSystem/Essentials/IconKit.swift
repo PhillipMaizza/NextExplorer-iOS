@@ -61,6 +61,7 @@ public enum IconKit {
     public static let starFill = Image(systemName: "star.fill")
     public static let help = Image(systemName: "questionmark.circle")
     public static let gearshape = Image(systemName: "gearshape")
+    public static let paintbrush = Image(systemName: "paintbrush")
     // `.forward`, not `.right`: the semantic variant auto mirrors under a right to left layout
     // (Arabic) so disclosure and breadcrumb chevrons point into the content the correct way.
     public static let chevronRight = Image(systemName: "chevron.forward")

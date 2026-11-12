@@ -16836,6 +16836,191 @@
         }
       }
     },
+    "apiTokens.noPasswordWarning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your account has no password, so tokens are created without asking for one. Add a password to your account to protect token creation."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد كلمة سر لحسابك، لذلك تُنشأ الرموز دون طلب كلمة السر. أضف كلمة سر إلى حسابك لحماية إنشاء الرموز."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Váš účet nemá heslo, takže se tokeny vytvářejí bez jeho zadání. Přidejte k účtu heslo, abyste vytváření tokenů ochránili."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Din konto har ingen adgangskode, så tokens oprettes uden at spørge om en. Tilføj en adgangskode til din konto for at beskytte oprettelsen af tokens."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Konto hat kein Passwort, daher werden Tokens ohne Passwortabfrage erstellt. Füge deinem Konto ein Passwort hinzu, um das Erstellen von Tokens zu schützen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ο λογαριασμός σας δεν έχει κωδικό πρόσβασης, οπότε τα διακριτικά δημιουργούνται χωρίς να ζητείται. Προσθέστε κωδικό πρόσβασης στον λογαριασμό σας για να προστατεύσετε τη δημιουργία διακριτικών."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu cuenta no tiene contraseña, así que los tokens se crean sin pedirla. Añade una contraseña a tu cuenta para proteger la creación de tokens."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tililläsi ei ole salasanaa, joten tunnuksia luodaan kysymättä sitä. Lisää tilillesi salasana suojataksesi tunnusten luomisen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre compte n’a pas de mot de passe : les jetons sont donc créés sans en demander. Ajoutez un mot de passe à votre compte pour protéger la création de jetons."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "לחשבון שלכם אין סיסמה, ולכן אסימונים נוצרים בלי לבקש אותה. הוסיפו סיסמה לחשבון כדי להגן על יצירת אסימונים."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "आपके खाते में कोई पासवर्ड नहीं है, इसलिए टोकन बिना पासवर्ड पूछे बनाए जाते हैं। टोकन बनाने को सुरक्षित करने के लिए अपने खाते में पासवर्ड जोड़ें।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A fiókjának nincs jelszava, így a tokenek jelszó kérése nélkül jönnek létre. Adjon jelszót a fiókjához a tokenek létrehozásának védelméhez."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akun Anda tidak memiliki kata sandi, jadi token dibuat tanpa memintanya. Tambahkan kata sandi ke akun Anda untuk melindungi pembuatan token."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il tuo account non ha una password, quindi i token vengono creati senza richiederla. Aggiungi una password al tuo account per proteggere la creazione dei token."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アカウントにパスワードがないため、トークンはパスワードなしで作成されます。トークンの作成を保護するには、アカウントにパスワードを追加してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계정에 비밀번호가 없어 토큰이 비밀번호 확인 없이 생성됩니다. 토큰 생성을 보호하려면 계정에 비밀번호를 추가하세요."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kontoen din har ikke passord, så tokener opprettes uten å spørre om det. Legg til et passord på kontoen for å beskytte opprettelse av tokener."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je account heeft geen wachtwoord, dus tokens worden gemaakt zonder erom te vragen. Voeg een wachtwoord toe aan je account om het maken van tokens te beveiligen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoje konto nie ma hasła, więc tokeny są tworzone bez jego podawania. Dodaj hasło do konta, aby chronić tworzenie tokenów."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua conta não tem palavra-passe, por isso os tokens são criados sem a pedir. Adicione uma palavra-passe à sua conta para proteger a criação de tokens."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua conta não tem senha, então os tokens são criados sem pedir uma. Adicione uma senha à sua conta para proteger a criação de tokens."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contul tău nu are parolă, așa că tokenurile sunt create fără a o cere. Adaugă o parolă contului pentru a proteja crearea tokenurilor."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У вашей учётной записи нет пароля, поэтому токены создаются без его запроса. Добавьте пароль к учётной записи, чтобы защитить создание токенов."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ditt konto har inget lösenord, så token skapas utan att fråga efter ett. Lägg till ett lösenord på kontot för att skydda skapandet av token."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บัญชีของคุณไม่มีรหัสผ่าน จึงสร้างโทเคนได้โดยไม่ต้องใส่รหัสผ่าน เพิ่มรหัสผ่านให้บัญชีเพื่อปกป้องการสร้างโทเคน"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesabınızın parolası yok, bu yüzden belirteçler parola sorulmadan oluşturulur. Belirteç oluşturmayı korumak için hesabınıza bir parola ekleyin."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваш обліковий запис не має пароля, тому токени створюються без його запиту. Додайте пароль до облікового запису, щоб захистити створення токенів."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tài khoản của bạn không có mật khẩu, nên token được tạo mà không cần hỏi mật khẩu. Hãy thêm mật khẩu vào tài khoản để bảo vệ việc tạo token."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您的账户没有密码，因此创建令牌时不会要求输入密码。请为账户添加密码以保护令牌的创建。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您的帳號沒有密碼，因此建立權杖時不會要求輸入密碼。請為帳號加入密碼以保護權杖的建立。"
+          }
+        }
+      }
+    },
     "apiTokens.passwordHint": {
       "extractionState": "manual",
       "localizations": {

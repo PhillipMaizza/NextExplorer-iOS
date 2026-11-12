@@ -106,6 +106,17 @@ public struct SettingsFeature {
         public var hasDownloads = true
         public var downloadsSize: Int64 = 0
         public var cacheSize: Int64 = 0
+        /// The section pages open over the root (General, Display, ...). Held here rather than in
+        /// the view so the open page survives the tab bar rebuilding its views.
+        public var pages: [SettingsPage] = []
+
+        /// Offline is one row (Download Files for Offline Use) until something is downloaded or a
+        /// run is showing its progress; only then does it earn a page of its own. Until then its
+        /// menu row opens the picker straight away.
+        public var isOfflineOnItsOwnPage: Bool {
+            offlineSize > 0 || offlineProgress.phase != .idle
+        }
+
         public var isClearingCache = false
         public var clearCacheConfirmationIsPresented = false
         /// Durable offline store size for this account, read from `OfflineFileStore` on appear and
@@ -153,6 +164,7 @@ public struct SettingsFeature {
 
     public enum Action: Sendable {
         case onAppear
+        case pagesChanged([SettingsPage])
         case userManagementButtonTapped
         case userManagement(PresentationAction<UserManagementFeature.Action>)
         case changePasswordButtonTapped
@@ -476,6 +488,10 @@ public struct SettingsFeature {
 
         case .tipJarButtonTapped:
             state.tipJar = TipJarFeature.State()
+            return .none
+
+        case let .pagesChanged(pages):
+            state.pages = pages
             return .none
 
         case .tipJar(.presented(.delegate(.tipped))):

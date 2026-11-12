@@ -777,6 +777,7 @@ apiTokens.expiryYear	Sau 1 năm
 apiTokens.expiryNever	Không bao giờ
 apiTokens.fieldPassword	Mật khẩu của bạn
 apiTokens.passwordHint	Nhập mật khẩu để tạo token.
+apiTokens.noPasswordWarning	Tài khoản của bạn không có mật khẩu, nên token được tạo mà không cần hỏi mật khẩu. Hãy thêm mật khẩu vào tài khoản để bảo vệ việc tạo token.
 apiTokens.createSubmit	Tạo token
 apiTokens.issuedTitle	Sao chép token của bạn
 apiTokens.issuedIntro	Token chỉ hiển thị một lần này. Hãy lưu ở nơi an toàn. Nếu mất, hãy thu hồi và tạo token mới.

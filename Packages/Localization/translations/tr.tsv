@@ -777,6 +777,7 @@ apiTokens.expiryYear	1 yıl sonra
 apiTokens.expiryNever	Asla
 apiTokens.fieldPassword	Parolanız
 apiTokens.passwordHint	Belirteç oluşturmak için parolanızı girin.
+apiTokens.noPasswordWarning	Hesabınızın parolası yok, bu yüzden belirteçler parola sorulmadan oluşturulur. Belirteç oluşturmayı korumak için hesabınıza bir parola ekleyin.
 apiTokens.createSubmit	Belirteç Oluştur
 apiTokens.issuedTitle	Belirtecinizi kopyalayın
 apiTokens.issuedIntro	Yalnızca bu kez gösterilir. Güvenli bir yerde saklayın. Kaybederseniz geçersiz kılıp yenisini oluşturun.

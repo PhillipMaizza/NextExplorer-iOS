@@ -101,6 +101,7 @@ public enum L10n {
         public static var neverExpires: String { tr("apiTokens.neverExpires") }  // "Never expires"
         public static var neverUsed: String { tr("apiTokens.neverUsed") }  // "Never used"
         public static var newButton: String { tr("apiTokens.newButton") }  // "New Token"
+        public static var noPasswordWarning: String { tr("apiTokens.noPasswordWarning") }
         public static var passwordHint: String { tr("apiTokens.passwordHint") }  // "Enter your password to create a token."
         public static var renameAction: String { tr("apiTokens.renameAction") }  // "Rename"
         public static var renameSave: String { tr("apiTokens.renameSave") }  // "Save"

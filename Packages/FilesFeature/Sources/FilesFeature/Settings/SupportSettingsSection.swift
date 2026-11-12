@@ -35,8 +35,7 @@ struct SupportSettingsSection: View {
                     }
                 }
             } header: {
-                DSFieldLabel(L10n.Settings.sectionSupport)
-                    .accessibilityAddTraits(.isHeader)
+                SettingsSectionHeader(L10n.Settings.sectionSupport)
             }
             .listRowBackground(Color.backgroundSecondary)
         }

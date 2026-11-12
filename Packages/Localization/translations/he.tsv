@@ -777,6 +777,7 @@ apiTokens.expiryYear	בעוד שנה
 apiTokens.expiryNever	לעולם לא
 apiTokens.fieldPassword	הסיסמה שלכם
 apiTokens.passwordHint	הזינו את הסיסמה כדי ליצור אסימון.
+apiTokens.noPasswordWarning	לחשבון שלכם אין סיסמה, ולכן אסימונים נוצרים בלי לבקש אותה. הוסיפו סיסמה לחשבון כדי להגן על יצירת אסימונים.
 apiTokens.createSubmit	יצירת אסימון
 apiTokens.issuedTitle	העתיקו את האסימון שלכם
 apiTokens.issuedIntro	זו הפעם היחידה שהוא מוצג. שמרו אותו במקום בטוח. אם תאבדו אותו, בטלו אותו וצרו חדש.

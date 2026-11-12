@@ -1071,6 +1071,7 @@ apiTokens.neverExpires	만료 안 됨
 apiTokens.neverUsed	사용 안 함
 apiTokens.newButton	새 토큰
 apiTokens.passwordHint	토큰을 만들려면 비밀번호를 입력하세요.
+apiTokens.noPasswordWarning	계정에 비밀번호가 없어 토큰이 비밀번호 확인 없이 생성됩니다. 토큰 생성을 보호하려면 계정에 비밀번호를 추가하세요.
 apiTokens.renameAction	이름 변경
 apiTokens.renameSave	저장
 apiTokens.renameTitle	토큰 이름 변경

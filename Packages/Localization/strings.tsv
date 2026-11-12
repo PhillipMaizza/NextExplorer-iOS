@@ -876,6 +876,7 @@ apiTokens.expiryYear	In 1 year
 apiTokens.expiryNever	Never
 apiTokens.fieldPassword	Your password
 apiTokens.passwordHint	Enter your password to create a token.
+apiTokens.noPasswordWarning	Your account has no password, so tokens are created without asking for one. Add a password to your account to protect token creation.
 apiTokens.createSubmit	Create Token
 apiTokens.issuedTitle	Copy your token
 apiTokens.issuedIntro	This is the only time it is shown. Store it somewhere safe. If you lose it, revoke it and create a new one.
