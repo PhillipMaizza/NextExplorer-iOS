@@ -111,19 +111,19 @@
                     MacSettingsRow(L10n.ChangePassword.fieldCurrentPassword) {
                         SecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
                             .labelsHidden()
-                            .textContentType(.password)
+                            .credentialContentType(.password)
                     }
                 }
                 MacSettingsRow(L10n.ChangePassword.fieldNewPasswordLabel) {
                     SecureField(L10n.ChangePassword.fieldNewPasswordLabel, text: $store.newPassword.sending(\.newPasswordChanged), prompt: Text(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength)))
                         .labelsHidden()
-                        .textContentType(.newPassword)
+                        .credentialContentType(.newPassword)
                     MacFieldError(message: newPasswordError)
                 }
                 MacSettingsRow(L10n.ChangePassword.fieldConfirmPasswordLabel) {
                     SecureField(L10n.ChangePassword.fieldConfirmPasswordLabel, text: $store.confirmPassword.sending(\.confirmPasswordChanged), prompt: Text(L10n.ChangePassword.fieldConfirmPassword))
                         .labelsHidden()
-                        .textContentType(.newPassword)
+                        .credentialContentType(.newPassword)
                     MacFieldError(message: confirmError)
                 }
                 if store.didSucceed {

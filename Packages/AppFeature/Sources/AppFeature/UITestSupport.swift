@@ -32,10 +32,10 @@
     ///                                 simulator ignores `XCUIDevice` rotation; only foldables (and
     ///                                 media viewers) allow landscape, so elsewhere it is a no op.
     public enum UITestSupport {
-        public static let mockFlag = "UITEST_MOCK"
+        public static let mockFlag = UITestEnvironment.mockKey
         public static let authKey = "UITEST_AUTH"
         public static let scenarioKey = "UITEST_SCENARIO"
-        public static let disableAnimationsFlag = "UITEST_DISABLE_ANIMATIONS"
+        public static let disableAnimationsFlag = UITestEnvironment.disableAnimationsKey
         public static let animationSpeedKey = "UITEST_ANIM_SPEED"
         public static let orientationKey = "UITEST_ORIENTATION"
 
