@@ -113,6 +113,7 @@ private extension APIToken.Scope {
     }
 }
 
+@MainActor
 private func createSheetPreview(requiresPassword: Bool, configure: (inout APITokensFeature.State) -> Void = { _ in }) -> some View {
     var state = APITokensFeature.State(
         serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),

@@ -338,11 +338,12 @@ struct LegalSettingsSection: View {
     }
 }
 
-// MARK: Licenses
+// MARK: Version footer
 
-struct LicensesSettingsSection: View {
-    @Bindable var store: StoreOf<SettingsFeature>
-    let filter: SettingsSearchFilter
+/// The bottom of the Settings root: the logo and version (compact only), the credits and the tip
+/// prompt.
+struct SettingsVersionFooter: View {
+    let store: StoreOf<SettingsFeature>
     @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     private var appVersionText: String {
@@ -360,61 +361,35 @@ struct LicensesSettingsSection: View {
     }
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.rowOpenSourceLicenses]) {
-            Section {
-                if filter.matches(L10n.Settings.rowOpenSourceLicenses) {
-                    NavigationLink {
-                        LicensesView()
-                    } label: {
-                        Label {
-                            Text(L10n.Settings.rowOpenSourceLicenses).type(.body2(.regular), style: .primaryOnSurface)
-                        } icon: {
-                            IconKit.document
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        }
-                        .fullRowHitArea()
-                    }
-                }
-            } header: {
-                SettingsSectionHeader(L10n.Settings.sectionLicenses)
-            } footer: {
-                if !filter.isActive {
-                    VStack(spacing: .space16) {
-                        // On iPad the logo + version live in the sidebar footer instead, so this
-                        // section only carries the credits there; compact keeps the full block.
-                        if !isSplitViewDetail {
-                            VStack(spacing: Constants.versionLogoSpacing) {
-                                IconKit.logo
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: Constants.versionLogoSize, height: Constants.versionLogoSize)
-                                Text(appVersionText)
-                                    .type(.label4, style: .tertiary)
-                            }
-                        }
-                        VStack(spacing: .space4) {
-                            // `.body3(.regular)` is the same 14pt/subheadline metrics as label4 but
-                            // regular weight (label4 is semibold, and `.type` bakes that weight in
-                            // too close to the Text for an outer `.fontWeight` to override).
-                            Text(L10n.Settings.creditsMadeBy)
-                                .type(.body3(.regular), style: .tertiary)
-                            Button {
-                                store.send(.tipJarButtonTapped)
-                            } label: {
-                                tipPrompt.type(.label4, style: .tertiary)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, Constants.footerTopPadding)
+        VStack(spacing: .space16) {
+            // On iPad the logo + version live in the sidebar footer instead, so this
+            // section only carries the credits there; compact keeps the full block.
+            if !isSplitViewDetail {
+                VStack(spacing: Constants.versionLogoSpacing) {
+                    IconKit.logo
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Constants.versionLogoSize, height: Constants.versionLogoSize)
+                    Text(appVersionText)
+                        .type(.label4, style: .tertiary)
                 }
             }
-            .listRowBackground(Color.backgroundSecondary)
+            VStack(spacing: .space4) {
+                // `.body3(.regular)` is the same 14pt/subheadline metrics as label4 but
+                // regular weight (label4 is semibold, and `.type` bakes that weight in
+                // too close to the Text for an outer `.fontWeight` to override).
+                Text(L10n.Settings.creditsMadeBy)
+                    .type(.body3(.regular), style: .tertiary)
+                Button {
+                    store.send(.tipJarButtonTapped)
+                } label: {
+                    tipPrompt.type(.label4, style: .tertiary)
+                }
+                .buttonStyle(.plain)
+            }
         }
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+        .padding(.top, Constants.footerTopPadding)
     }
 }

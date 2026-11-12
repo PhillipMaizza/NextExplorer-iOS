@@ -109,6 +109,14 @@ public struct SettingsFeature {
         /// The section pages open over the root (General, Display, ...). Held here rather than in
         /// the view so the open page survives the tab bar rebuilding its views.
         public var pages: [SettingsPage] = []
+
+        /// Offline is one row (Download Files for Offline Use) until something is downloaded or a
+        /// run is showing its progress; only then does it earn a page of its own. Until then its
+        /// menu row opens the picker straight away.
+        public var isOfflineOnItsOwnPage: Bool {
+            offlineSize > 0 || offlineProgress.phase != .idle
+        }
+
         public var isClearingCache = false
         public var clearCacheConfirmationIsPresented = false
         /// Durable offline store size for this account, read from `OfflineFileStore` on appear and

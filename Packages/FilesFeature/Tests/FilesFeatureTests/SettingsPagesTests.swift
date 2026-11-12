@@ -23,8 +23,24 @@ struct SettingsPagesTests {
     }
 
     @Test
-    func everyPageIsNamedAfterItsSection() {
-        #expect(SettingsPage.allCases.map(\.title).allSatisfy { !$0.isEmpty })
-        #expect(Set(SettingsPage.allCases.map(\.title)).count == SettingsPage.allCases.count)
+    func everyMenuRowIsNamedAfterItsOwnSection() {
+        let titles = SettingsMenuEntry.allCases.map(\.title)
+        #expect(titles.allSatisfy { !$0.isEmpty })
+        #expect(Set(titles).count == titles.count)
+        #expect(SettingsMenuEntry.allCases.filter(\.isAdminOnly) == [.administration, .users])
+    }
+}
+
+extension SettingsPagesTests {
+    @Test
+    func offlineEarnsAPageOnlyOnceSomethingIsDownloaded() {
+        var state = SettingsFeature.State(serverURL: URL(string: "https://example.com")!, user: user)
+        state.offlineSize = 0
+        #expect(!state.isOfflineOnItsOwnPage)
+        state.$offlineProgress.withLock { $0.phase = .preparing }
+        #expect(state.isOfflineOnItsOwnPage, "a run in progress shows on the page")
+        state.$offlineProgress.withLock { $0.phase = .idle }
+        state.offlineSize = 1024
+        #expect(state.isOfflineOnItsOwnPage)
     }
 }

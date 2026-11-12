@@ -95,26 +95,12 @@ struct SettingsView: View {
                 windowChrome(
                     userManagementDestination(serverDetailsDestination(apiTokensDestinationView(twoFactorDestinationView(changePasswordDestinationView(
                         settingsList {
-                            if !filter.isActive {
-                                SettingsAccountsSection(store: store)
-                                SettingsProfileSection(store: store)
-                                SettingsMenuSection(store: store) { store.send(.pagesChanged(store.pages + [$0])) }
+                            SettingsAccountsSection(store: store)
+                            SettingsProfileSection(store: store)
+                            SettingsServerStorageSection(store: store)
+                            SettingsMenuSection(store: store) { store.send(.pagesChanged(store.pages + [$0])) } footer: {
+                                SettingsVersionFooter(store: store)
                             }
-
-                            SettingsUploadDefaultsSection(
-                                store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults),
-                                filter: filter
-                            )
-
-                            if !filter.isActive {
-                                SettingsUsersSection(store: store)
-                                SettingsServerStorageSection(store: store)
-                                SettingsAPITokensSection(store: store)
-                            }
-
-                            SupportSettingsSection(filter: filter)
-                            LegalSettingsSection(filter: filter)
-                            LicensesSettingsSection(store: store, filter: filter)
                         }
                         .navigationDestination(for: SettingsPage.self) { page in
                             subpage(page)
@@ -203,6 +189,16 @@ struct SettingsView: View {
             offlineDestination(SettingsSubpage(title: page.title) { OfflineSettingsSection(store: store, filter: filter) })
         case .administration:
             adminDestinations(SettingsSubpage(title: page.title) { SettingsServerAdminSection(store: store) })
+        case .sharedFiles:
+            SettingsSubpage(title: page.title) {
+                SettingsUploadDefaultsSection(store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults), filter: filter)
+            }
+        case .support:
+            SettingsSubpage(title: page.title) { SupportSettingsSection(filter: filter) }
+        case .legal:
+            SettingsSubpage(title: page.title) { LegalSettingsSection(filter: filter) }
+        case .licenses:
+            LicensesView()
         }
     }
 
