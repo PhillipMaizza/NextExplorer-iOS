@@ -194,8 +194,11 @@ struct GridCellView: View {
                 .foregroundStyle(customIconTint ?? Color.accent)
                 .frame(width: iconSize, height: iconSize)
         } else if isEligibleForThumbnail, let serverURL, let itemID {
-            ThumbnailImage(serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
-                .frame(width: iconSize, height: iconSize)
+            ThumbnailImage(
+                serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
+                iconTint: Color.secondaryDS, fileSize: file?.size, modified: file?.dateModified
+            )
+            .frame(width: iconSize, height: iconSize)
         } else if isEligibleForPDFThumbnail, let serverURL, let file {
             PDFThumbnailImage(serverURL: serverURL, item: file)
                 .frame(width: iconSize, height: iconSize)

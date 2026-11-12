@@ -100,32 +100,13 @@ extension JSONCacheStore: DependencyKey {
             self.maxTotalBytes = maxTotalBytes
         }
 
-        private lazy var directory: URL? = {
-            let base: URL
-            if let rootOverride {
-                base = rootOverride
-            } else if let appSupport = try? fileManager.url(
-                for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true
-            ) {
-                base = appSupport
-            } else {
-                return nil
-            }
-            let url = base.appendingPathComponent(Constants.directoryName, isDirectory: true)
-            do {
-                try fileManager.createDirectory(at: url, withIntermediateDirectories: true)
-            } catch {
-                return nil
-            }
-            var mutableURL = url
-            var resourceValues = URLResourceValues()
-            resourceValues.isExcludedFromBackup = true
-            try? mutableURL.setResourceValues(resourceValues)
-            try? fileManager.setAttributes(
-                [.protectionKey: FileProtectionType.completeUnlessOpen], ofItemAtPath: url.path
-            )
-            return url
-        }()
+        private lazy var cacheDirectory = ProtectedCacheDirectory(
+            name: Constants.directoryName, base: rootOverride, fileExtension: Constants.fileExtension
+        )
+
+        private var directory: URL? {
+            cacheDirectory?.url
+        }
 
         private func fileURL(scope: String, key: String) -> URL? {
             guard let directory else { return nil }
@@ -160,7 +141,7 @@ extension JSONCacheStore: DependencyKey {
                 return
             }
             try? encoded.write(to: fileURL, options: .atomic)
-            evictIfNeeded()
+            cacheDirectory?.evict(maxEntries: maxEntries, maxTotalBytes: maxTotalBytes)
         }
 
         func remove(scope: String, key: String) {
@@ -173,60 +154,19 @@ extension JSONCacheStore: DependencyKey {
         func clearAll() {
             lock.lock()
             defer { lock.unlock() }
-            guard let directory else { return }
-            let entries = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
-            for entry in entries {
-                try? fileManager.removeItem(at: entry)
-            }
+            cacheDirectory?.removeAll()
         }
 
         func clear(scope: String) {
             lock.lock()
             defer { lock.unlock() }
-            let prefix = CacheAccountScope.namePrefix(for: scope)
-            for entry in entriesByAge() where entry.url.lastPathComponent.hasPrefix(prefix) {
-                try? fileManager.removeItem(at: entry.url)
-            }
+            cacheDirectory?.removeEntries(withPrefix: CacheAccountScope.namePrefix(for: scope))
         }
 
         func totalSizeBytes() -> Int64 {
             lock.lock()
             defer { lock.unlock() }
-            return entriesByAge().reduce(0) { $0 + $1.size }
-        }
-
-        private struct Entry {
-            let url: URL
-            let modified: Date
-            let size: Int64
-        }
-
-        private func entriesByAge() -> [Entry] {
-            guard let directory else { return [] }
-            let keys: Set<URLResourceKey> = [.contentModificationDateKey, .fileSizeKey]
-            let urls = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: Array(keys))) ?? []
-            return urls
-                .filter { $0.pathExtension == Constants.fileExtension }
-                .map { url in
-                    let values = try? url.resourceValues(forKeys: keys)
-                    return Entry(
-                        url: url,
-                        modified: values?.contentModificationDate ?? .distantPast,
-                        size: Int64(values?.fileSize ?? 0)
-                    )
-                }
-                .sorted { $0.modified < $1.modified }
-        }
-
-        private func evictIfNeeded() {
-            let entries = entriesByAge()
-            var totalBytes = entries.reduce(0) { $0 + $1.size }
-            var index = 0
-            while index < entries.count, entries.count - index > maxEntries || totalBytes > maxTotalBytes {
-                try? fileManager.removeItem(at: entries[index].url)
-                totalBytes -= entries[index].size
-                index += 1
-            }
+            return cacheDirectory?.totalSizeBytes() ?? 0
         }
 
         func asStore(scope pinnedScope: String? = nil) -> JSONCacheStore {

@@ -96,7 +96,7 @@ extension AppSuites {
 
             #expect(
                 recorder.events.value == [
-                    .directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared,
+                    .directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared, .uploadThumbnailsCleared,
                     .previewCacheCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers),
                 ] + WipeRecorder.prune(origins: [AppFixtures.originA], accounts: []),
                 "scratch files keep active transfers and the certificate the sign in just used survives"

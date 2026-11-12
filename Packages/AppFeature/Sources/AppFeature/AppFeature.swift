@@ -103,6 +103,7 @@ public struct AppFeature {
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.textEditorETagStore) var textEditorETagStore
+    @Dependency(\.localThumbnailStore) var localThumbnailStore
     @Dependency(\.pendingAccountWipes) var pendingAccountWipes
     @Dependency(\.sessionScratchStore) var sessionScratchStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
@@ -112,15 +113,7 @@ public struct AppFeature {
     public init() {}
 
     private var accountCacheWipe: AccountCacheWipe {
-        AccountCacheWipe(
-            directoryCacheStore: directoryCacheStore,
-            jsonCacheStore: jsonCacheStore,
-            previewCacheStore: previewCacheStore,
-            offlineFileStore: offlineFileStore,
-            thumbnailCache: thumbnailCache,
-            textEditorETagStore: textEditorETagStore,
-            pendingWipes: pendingAccountWipes
-        )
+        .fromDependencies
     }
 
     /// The second pass of an account wipe, run once the account's screens are gone.
@@ -340,6 +333,7 @@ public struct AppFeature {
                 jsonCacheStore.clearAll()
                 thumbnailCache.clearMemory()
                 textEditorETagStore.clearAll()
+                localThumbnailStore.clearAll()
                 state.didAuthenticateFromLogin = true
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
@@ -510,6 +504,7 @@ public struct AppFeature {
         let offlineFileStore = offlineFileStore
         let sessionScratchStore = sessionScratchStore
         let textEditorETagStore = textEditorETagStore
+        let localThumbnailStore = localThumbnailStore
         let pendingAccountWipes = pendingAccountWipes
         let clientCertificateClient = clientCertificateClient
         let uploadDefaults = uploadDefaults
@@ -524,6 +519,7 @@ public struct AppFeature {
                 try? previewCacheStore.clear()
                 thumbnailCache.clearMemory()
                 textEditorETagStore.clearAll()
+                localThumbnailStore.clearAll()
                 offlineFileStore.removeAll()
                 sessionScratchStore.purge(.everything)
                 for accountID in pendingAccountWipes.accounts() {

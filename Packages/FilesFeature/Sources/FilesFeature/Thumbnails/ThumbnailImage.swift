@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import ShareUploads
 import SwiftUI
 #if os(iOS)
     import UIKit
@@ -55,11 +56,17 @@ struct ThumbnailImage: View {
     /// decoding the server bytes (which can be a full size preview fallback) at full resolution
     /// is wasted memory and a main thread decode. Downsampled to this on a background task.
     var maxPixelDimension: CGFloat = 512
+    /// The file's size and modification date, when the caller has the file: a picture just
+    /// shared into the app shows its seeded thumbnail (`LocalThumbnailStore`) until the server's
+    /// own is in, but only if these say it is the file that was uploaded.
+    var fileSize: Int64?
+    var modified: Date?
 
     @State private var uiImage: PlatformImage?
     @State private var didResolve = false
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.thumbnailCache) private var thumbnailCache
+    @Dependency(\.localThumbnailStore) private var localThumbnailStore
 
     var body: some View {
         Group {
@@ -75,6 +82,11 @@ struct ThumbnailImage: View {
         }
         .task(id: "\(path)\u{0}\(signature)") {
             guard uiImage == nil else { return }
+            let seeded = await seededImage()
+            if Task.isCancelled {
+                return
+            }
+            uiImage = seeded
             let thumbnailURL = await thumbnailCache.resolvedURL(path, signature) {
                 try? await filesClient.thumbnailURL(serverURL, path)
             }
@@ -117,10 +129,29 @@ struct ThumbnailImage: View {
                     forKey: thumbnailURL as NSURL,
                     cost: ThumbnailMemoryCache.decodedByteCost(of: decoded)
                 )
+                if seeded != nil {
+                    let localThumbnailStore = localThumbnailStore
+                    let path = path
+                    Task.detached(priority: .utility) { localThumbnailStore.remove(path) }
+                }
             }
-            uiImage = decoded
+            uiImage = decoded ?? seeded
             didResolve = true
         }
+    }
+
+    /// The seeded thumbnail of a file just shared into the app, read and decoded off the main
+    /// actor; `nil` without the file's size and date or when no seed matches them.
+    private func seededImage() async -> PlatformImage? {
+        guard let fileSize, let modified else { return nil }
+        let localThumbnailStore = localThumbnailStore
+        let path = path
+        let target = maxPixelDimension
+        return await Task.detached(priority: .userInitiated) {
+            localThumbnailStore.thumbnail(path, fileSize, modified).flatMap {
+                ImageDownsampling.image(from: $0, maxPixelDimension: target)
+            }
+        }.value
     }
 
     private var fallbackImage: some View {

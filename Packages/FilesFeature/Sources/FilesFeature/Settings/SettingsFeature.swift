@@ -6,6 +6,7 @@ import FolderPickerFeature
 import Foundation
 import Localization
 import NetworkClient
+import ShareUploads
 
 /// Account info, the two `user_settings` preferences that affect anything this app has
 /// built (`showHiddenFiles`, `showThumbnails`, see `UserPreferences`), and sign out.
@@ -270,6 +271,7 @@ public struct SettingsFeature {
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
+    @Dependency(\.localThumbnailStore) var localThumbnailStore
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
@@ -579,9 +581,12 @@ public struct SettingsFeature {
             }
             let directoryCacheStore = directoryCacheStore
             let jsonCacheStore = jsonCacheStore
+            let localThumbnailStore = localThumbnailStore
             let checkCacheSize = Effect<Action>.run { send in
                 let size = (try? previewCacheStore.size()) ?? 0
-                await send(.cacheSizeResponse(size + directoryCacheStore.totalSizeBytes() + jsonCacheStore.totalSizeBytes()))
+                await send(.cacheSizeResponse(
+                    size + directoryCacheStore.totalSizeBytes() + jsonCacheStore.totalSizeBytes() + localThumbnailStore.totalSizeBytes()
+                ))
             }
             let offlineFileStore = offlineFileStore
             let checkOfflineSize = Effect<Action>.run { send in
@@ -741,11 +746,13 @@ public struct SettingsFeature {
             let directoryCacheStore = directoryCacheStore
             let jsonCacheStore = jsonCacheStore
             let thumbnailCache = thumbnailCache
+            let localThumbnailStore = localThumbnailStore
             return .run { send in
                 try? previewCacheStore.clear()
                 directoryCacheStore.clearAll()
                 jsonCacheStore.clearAll()
                 thumbnailCache.clearMemory()
+                localThumbnailStore.clearAll()
                 await send(.clearCacheResponse)
             }
 

@@ -226,8 +226,11 @@ struct FileRowView: View {
                 .foregroundStyle(customIconTint ?? Color.accent)
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isEligibleForThumbnail, let serverURL, let itemID {
-            ThumbnailImage(serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
-                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+            ThumbnailImage(
+                serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
+                iconTint: Color.secondaryDS, fileSize: file?.size, modified: file?.dateModified
+            )
+            .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isEligibleForPDFThumbnail, let serverURL, let file {
             PDFThumbnailImage(serverURL: serverURL, item: file)
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)

@@ -188,7 +188,7 @@ extension AppSuites {
 
             #expect(
                 recorder.events.value == [
-                    .directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared,
+                    .directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared, .uploadThumbnailsCleared,
                     .previewCacheCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers),
                 ] + WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA]),
                 "the sign in wipes every store, then the pruning keeps only the accounts that remain"
@@ -417,6 +417,7 @@ extension AppSuites {
                 .directoryAccountCleared(AppFixtures.accountA),
                 .previewAccountCleared(AppFixtures.accountA),
                 .offlineAccountCleared(AppFixtures.accountA),
+                .uploadThumbnailsAccountCleared(AppFixtures.accountA),
                 .thumbnailMemoryCleared,
             ]
             #expect(

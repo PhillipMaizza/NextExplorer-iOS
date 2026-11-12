@@ -283,7 +283,8 @@ struct ImageGalleryPage: View {
             if showsPlaceholder {
                 ThumbnailImage(
                     serverURL: serverURL, path: item.id, signature: item.cacheSignature,
-                    fallbackIcon: IconKit.document, iconTint: Color.secondaryDS
+                    fallbackIcon: IconKit.document, iconTint: Color.secondaryDS,
+                    fileSize: item.size, modified: item.dateModified
                 )
                 .blur(radius: Constants.placeholderBlur)
                 .clipped()
