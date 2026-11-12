@@ -23,18 +23,10 @@ extension BrowseFeature {
             return .cancel(id: CancelID.search)
         }
 
-        // Instant client side pre-fill from the already loaded folder, so results appear the
-        // moment the user types while the recursive backend search runs. These are name matches
-        // in the current folder only: a subset of what either scope's backend search returns, so
-        // the authoritative response only ever adds to them (subfolders + content matches).
-        // Deliberately does NOT prune `selectedSearchCategories`: the pre-fill sees only this
+        // Deliberately does NOT prune `selectedSearchCategories`: the prefill sees only this
         // folder, so a selected category the backend subtree contains but this folder lacks would
         // be wrongly cleared. Pruning happens against the authoritative response instead.
-        let preliminary = state.items
-            .filter { SearchMatch.matches(query: query, in: $0.name) }
-            .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file") }
-        let results = preliminary + Self.favoriteMatches(state, query: query)
-        state.searchResults = IdentifiedArray(Self.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
+        state.searchResults = Self.instantMatches(state, query: query)
         // The server only searches from three characters on; until then the instant matches stand.
         guard term.isSearchable else {
             state.isSearchingRemotely = false
@@ -45,7 +37,37 @@ extension BrowseFeature {
         return fetchSearchResults(state, isDebounced: isDebounced)
     }
 
-    /// The server search on its own, without the instant pre-fill: Show more widens the answer
+    /// Instant client side matches from the already loaded folder and the favorites, so results
+    /// appear the moment the user types while the recursive backend search runs. Name matches
+    /// only: a subset of what either scope's backend search returns, so the authoritative
+    /// response only ever adds to them (subfolders and content matches).
+    static func instantMatches(_ state: State, query: String) -> IdentifiedArrayOf<SearchResultItem> {
+        let inFolder = state.items
+            .filter { SearchMatch.matches(query: query, in: $0.name) }
+            .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file") }
+        let results = inFolder + favoriteMatches(state, query: query)
+        return IdentifiedArray(sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
+    }
+
+    /// A listing of the folder on screen landed (live, the saved copy, a refresh, a failure that
+    /// cleared it). It feeds only the instant matches a term too short for the server shows. A
+    /// server search is left alone: its recursive answer is not this listing, and running it again
+    /// reset the results to the local matches and restarted the wait with nothing typed.
+    func listingChanged(_ state: inout State) {
+        let term = SearchTerm(state.searchQuery)
+        guard term.isTooShort else { return }
+        state.searchResults = Self.instantMatches(state, query: term.text)
+    }
+
+    /// An explicit refresh while searching (pull to refresh, the toolbar, Retry) refreshes what is
+    /// on screen, the results: at once, without the typing wait, keeping them meanwhile.
+    func refreshSearch(_ state: inout State) -> Effect<Action> {
+        guard SearchTerm(state.searchQuery).isSearchable else { return .none }
+        state.isSearchingRemotely = true
+        return fetchSearchResults(state, isDebounced: false)
+    }
+
+    /// The server search on its own, without the instant prefill: Show more widens the answer
     /// already on screen rather than starting over from the local matches.
     func fetchSearchResults(_ state: State, isDebounced: Bool) -> Effect<Action> {
         let query = SearchTerm(state.searchQuery).text

@@ -658,7 +658,7 @@ public struct BrowseFeature {
                 return load(&state)
 
             case .refreshButtonTapped:
-                return load(&state)
+                return .merge(load(&state), refreshSearch(&state))
 
             case .computeOfflineAvailability:
                 return computeOfflineAvailability(&state)
@@ -673,9 +673,9 @@ public struct BrowseFeature {
                 state.isShowingCachePaint = false
                 state.items = IdentifiedArray(Self.sortedAlphabetically(result.items), id: \.id, uniquingIDsWith: { first, _ in first })
                 state.access = result.access
+                listingChanged(&state)
                 return .merge(
                     recheckArrivals(&state),
-                    search(&state),
                     computeOfflineAvailability(&state),
                     prefetch(
                         serverURL: state.serverURL,
@@ -710,11 +710,12 @@ public struct BrowseFeature {
                     state.items = IdentifiedArray(Self.sortedAlphabetically(cached.items), id: \.id, uniquingIDsWith: { first, _ in first })
                     state.access = cached.access
                     state.dataSource = .cached(fetchedAt: cached.fetchedAt)
-                    return .merge(search(&state), computeOfflineAvailability(&state))
+                    listingChanged(&state)
+                    return computeOfflineAvailability(&state)
                 } else if !state.items.isEmpty {
                     state.phase = .loaded
                     state.dataSource = .cached(fetchedAt: date.now)
-                    return .merge(search(&state), computeOfflineAvailability(&state))
+                    return computeOfflineAvailability(&state)
                 }
                 return failItemsLoad(&state, error)
 
@@ -723,6 +724,7 @@ public struct BrowseFeature {
                 state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
                 state.access = cached.access
                 state.isShowingCachePaint = true
+                listingChanged(&state)
                 return .none
 
             case let .serverFeaturesResponse(features):

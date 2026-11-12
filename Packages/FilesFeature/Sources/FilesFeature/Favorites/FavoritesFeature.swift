@@ -210,7 +210,7 @@ public struct FavoritesFeature {
                 return .merge(load(&state), availability)
 
             case .refreshButtonTapped:
-                return load(&state)
+                return .merge(load(&state), refreshSearch(&state))
 
             case .computeOfflineAvailability:
                 return computeOfflineAvailability(&state)
@@ -222,9 +222,9 @@ public struct FavoritesFeature {
             case let .favoritesResponse(.success(favorites)):
                 state.phase = .loaded
                 state.dataSource = .live
-                state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+                let search = replaceFavorites(favorites, in: &state)
                 syncCache(state)
-                return computeOfflineAvailability(&state)
+                return .merge(search, computeOfflineAvailability(&state))
 
             case let .favoritesResponse(.failure(error)):
                 // Offline with a saved copy: show it under a banner rather than an error screen.
@@ -241,14 +241,12 @@ public struct FavoritesFeature {
             case let .offlineFavoritesResolved(cached, fetchedAt, error):
                 guard let cached, let fetchedAt else { return failLoad(&state, error) }
                 state.phase = .loaded
-                state.favorites = IdentifiedArray(cached.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                 state.dataSource = .cached(fetchedAt: fetchedAt)
-                return computeOfflineAvailability(&state)
+                return .merge(replaceFavorites(cached, in: &state), computeOfflineAvailability(&state))
 
             case let .cachedFavoritesPainted(cached):
                 guard state.phase == .loading, state.favorites.isEmpty else { return .none }
-                state.favorites = IdentifiedArray(cached.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
-                return .none
+                return replaceFavorites(cached, in: &state)
 
             case let .rowTapped(favorite):
                 state.forwardStack = []
@@ -306,9 +304,9 @@ public struct FavoritesFeature {
                 .cancellable(id: CancelID.reorder, cancelInFlight: true)
 
             case let .reorderResponse(.success(favorites)):
-                state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+                let search = replaceFavorites(favorites, in: &state)
                 syncCache(state)
-                return .send(.delegate(.favoritesChanged))
+                return .merge(search, .send(.delegate(.favoritesChanged)))
 
             case .reorderResponse(.failure):
                 state.actionErrorMessage = L10n.Favorites.reorderFailed
@@ -573,6 +571,23 @@ public struct FavoritesFeature {
     /// favorite (each searches that folder's whole subtree), merged and de duped. Tolerant per
     /// favorite so a since deleted favorite can't fail the whole search; results are still
     /// authoritative for the ones that answered.
+    /// Replaces the list (a fetch, the saved copy, a reorder answer), sorted by position. A search
+    /// already typed ran against the folders it had: when they changed (typed before the list
+    /// loaded, or a favorite added or removed elsewhere) it searches the new ones at once.
+    private func replaceFavorites(_ favorites: [Favorite], in state: inout State) -> Effect<Action> {
+        let searchedPaths = Set(state.favorites.map(\.path))
+        state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+        guard Set(state.favorites.map(\.path)) != searchedPaths else { return .none }
+        return refreshSearch(&state)
+    }
+
+    /// Searches the typed term again at once, keeping the results on screen: a refresh while
+    /// searching refreshes what is on screen. Nothing happens under three characters.
+    private func refreshSearch(_ state: inout State) -> Effect<Action> {
+        guard SearchTerm(state.searchQuery).isSearchable else { return .none }
+        return favoriteSearch(&state, isDebounced: false)
+    }
+
     /// Typing is debounced; Retry is a decision already made and asks at once.
     private func favoriteSearch(_ state: inout State, isDebounced: Bool = true) -> Effect<Action> {
         let term = SearchTerm(state.searchQuery)

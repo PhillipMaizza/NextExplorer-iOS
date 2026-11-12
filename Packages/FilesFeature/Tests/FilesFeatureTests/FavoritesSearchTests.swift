@@ -188,4 +188,89 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         }
         #expect(queries.value == [Constants.term])
     }
+
+    /// A store whose search waits on `gate`, records each term and answers `hit`; the favorites
+    /// fetch answers `Bills`.
+    private func heldSearchStore(_ state: FavoritesFeature.State, gate: AsyncGate, queries: LockIsolated<[String]>) -> TestStoreOf<FavoritesFeature> {
+        let hit = hit
+        let bills = makeFavorite(id: "1", path: "Bills")
+        return TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.continuousClock = TestClock()
+            $0.filesClient.favorites = { _ in [bills] }
+            $0.filesClient.search = { _, _, query, _ in
+                queries.withValue { $0.append(query) }
+                try await gate.wait()
+                return [hit]
+            }
+        }
+    }
+
+    @Test("A term typed before the favorites loaded searches them as soon as they land")
+    func aTermTypedBeforeTheListLoadedSearchesItWhenItLands() async {
+        let bills = makeFavorite(id: "1", path: "Bills")
+        let gate = AsyncGate()
+        let queries = LockIsolated<[String]>([])
+        let store = heldSearchStore(FavoritesFeature.State(serverURL: serverURL), gate: gate, queries: queries)
+
+        // No favorites yet: nothing to search, so nothing is asked.
+        await store.send(.searchQueryChanged(Constants.term)) {
+            $0.searchQuery = Constants.term
+            $0.fileSearchResults = []
+            $0.searchPhase = .loaded
+        }
+        await store.send(.favoritesResponse(.success([bills]))) {
+            $0.phase = .loaded
+            $0.favorites = [bills]
+        }
+        await store.receive(\.offlineAvailabilityComputed)
+        gate.open()
+        await store.receive(\.fileSearchResponse.success) {
+            $0.fileSearchResults = [hit]
+        }
+        #expect(queries.value == [Constants.term])
+    }
+
+    @Test("The same favorites fetched again leave the results alone and ask nothing")
+    func theSameFavoritesAgainLeaveTheResultsAlone() async {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [makeFavorite(id: "1", path: "Bills")]
+        state.phase = .loaded
+        state.searchQuery = Constants.term
+        state.fileSearchResults = [hit]
+        state.searchPhase = .loaded
+        let queries = LockIsolated<[String]>([])
+        let store = heldSearchStore(state, gate: AsyncGate(), queries: queries)
+
+        await store.send(.favoritesResponse(.success([makeFavorite(id: "1", path: "Bills")])))
+        await store.receive(\.offlineAvailabilityComputed)
+        #expect(queries.value.isEmpty)
+    }
+
+    @Test("Refreshing while searching searches again at once and keeps the results on screen meanwhile")
+    func refreshingWhileSearchingSearchesAgain() async {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [makeFavorite(id: "1", path: "Bills")]
+        state.phase = .loaded
+        state.searchQuery = Constants.term
+        state.fileSearchResults = []
+        state.searchPhase = .loaded
+        let gate = AsyncGate()
+        let queries = LockIsolated<[String]>([])
+        let store = heldSearchStore(state, gate: gate, queries: queries)
+
+        await store.send(.refreshButtonTapped) {
+            $0.phase = .loading
+        }
+        await store.receive(\.favoritesResponse.success) {
+            $0.phase = .loaded
+        }
+        await store.receive(\.offlineAvailabilityComputed)
+        gate.open()
+        await store.receive(\.fileSearchResponse.success) {
+            $0.fileSearchResults = [hit]
+        }
+        #expect(queries.value == [Constants.term])
+    }
 }

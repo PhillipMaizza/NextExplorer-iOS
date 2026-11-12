@@ -124,12 +124,13 @@ extension BrowseFeature {
             state.items = []
             state.access = nil
             state.phase = .failed(error.userMessage)
+            listingChanged(&state)
             return .none
         }
         if !state.items.isEmpty {
             state.phase = .loaded
             state.fileActionErrorMessage = error.userMessage
-            return .merge(search(&state), computeOfflineAvailability(&state))
+            return computeOfflineAvailability(&state)
         }
         state.phase = .failed(error.userMessage)
         return .none
