@@ -21,10 +21,6 @@ extension AppSuites {
 
         private let recorder = WipeRecorder()
 
-        init() {
-            AppSuites.resetSharedState()
-        }
-
         private func makeStore(
             _ state: AppFeature.State,
             configure: (inout DependencyValues) -> Void = { _ in }
@@ -49,7 +45,8 @@ extension AppSuites {
             .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
         }
 
-        /// Switches to `next` while `me` is held, so the strict store sees the remount before the confirmation.
+        /// Switches to `next` while `me` and the account list are held, so the strict store sees the remount,
+        /// then the refreshed list, then the confirmation, in that order.
         private func switchToAccount(
             _ store: Store,
             next: SessionCredentials,
@@ -57,44 +54,51 @@ extension AppSuites {
             serverURL: URL,
             downloadScope: String,
             leaving: String,
+            accountList: AsyncGate,
             confirmation: AsyncGate
         ) async {
-            await withMainSerialExecutor {
-                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(next)))))
-                await store.receive(\.activateAccount) {
-                    $0.destination = optimistic(serverURL, username: next.username ?? "")
-                }
-                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, leaving)
-                await store.receive(\.accountsRefreshed)
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse) {
-                    $0.$downloadScope.withLock { $0 = downloadScope }
-                    $0.destination = confirmed(serverURL, user)
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(next)))))
+            await store.receive(\.activateAccount) {
+                $0.destination = optimistic(serverURL, username: next.username ?? "")
             }
+            await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, leaving)
+            accountList.open()
+            await store.receive(\.accountsRefreshed)
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse) {
+                $0.$downloadScope.withLock { $0 = downloadScope }
+                $0.destination = confirmed(serverURL, user)
+            }
+            await store.receive(\.accountsRefreshed)
         }
 
         @Test("A fresh sign in from the login screen wipes every store and keeps only the certificates of servers with an account")
         func freshSignIn() async {
-            let store = makeStore(AppFeature.State(destination: .unauthenticated(.init())))
-
-            await withMainSerialExecutor {
-                await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                    $0.didAuthenticateFromLogin = true
-                    $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+            let wipeFinished = AsyncGate()
+            let store = makeStore(AppFeature.State(destination: .unauthenticated(.init()))) {
+                $0.authClient.listSessionsOrThrow = {
+                    try await wipeFinished.wait()
+                    return []
                 }
-                await store.receive(\.accountsRefreshed)
+                $0.sessionScratchStore.purge = { [recorder] scope in
+                    recorder.record(.scratchPurged(scope))
+                    wipeFinished.open()
+                }
             }
 
-            #expect(recorder.events.value.prefix(3) == [.directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared])
+            await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                $0.didAuthenticateFromLogin = true
+                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+            }
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
+
             #expect(
-                WipeRecorder.areSame(
-                    Array(recorder.events.value.dropFirst(3)),
-                    [.previewCacheCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers)]
-                        + WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [])
-                ),
+                recorder.events.value == [
+                    .directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared,
+                    .previewCacheCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers),
+                ] + WipeRecorder.prune(origins: [AppFixtures.originA], accounts: []),
                 "scratch files keep active transfers and the certificate the sign in just used survives"
             )
         }
@@ -103,12 +107,12 @@ extension AppSuites {
         func lastSignOut() async {
             let store = makeStore(signedIn(AppFixtures.serverA, AppFixtures.userA))
 
-            await withMainSerialExecutor {
-                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(nil))))) {
-                    $0.destination = .unauthenticated(.init())
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(nil))))) {
+                $0.destination = .unauthenticated(.init())
             }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(recorder.events.value == WipeRecorder.fullTeardown + WipeRecorder.lastSignOutCredentialWipe)
         }
@@ -119,14 +123,14 @@ extension AppSuites {
                 $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.sessionExpiryDetected)
-                await store.receive(\.sessionExpiryConfirmed)
-                await store.receive(\.activeAccountTornDown) {
-                    $0.destination = .unauthenticated(.init())
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.sessionExpiryDetected)
+            await store.receive(\.sessionExpiryConfirmed)
+            await store.receive(\.activeAccountTornDown) {
+                $0.destination = .unauthenticated(.init())
             }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(
                 recorder.events.value == [.activeSessionCleared] + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown,
@@ -139,7 +143,12 @@ extension AppSuites {
             let remainingServer = try #require(URL(string: "https://b.example.com:8443"))
             let remaining = AppFixtures.credentials(remainingServer, "bob")
             let confirmation = AsyncGate()
+            let accountList = AsyncGate()
             let store = makeStore(signedIn(AppFixtures.serverA, AppFixtures.userA)) {
+                $0.authClient.listSessions = {
+                    try? await accountList.wait()
+                    return []
+                }
                 $0.authClient.listSessionsOrThrow = { [remaining] in [remaining] }
                 $0.authClient.me = { _ in
                     try await confirmation.wait()
@@ -154,6 +163,7 @@ extension AppSuites {
                 serverURL: remainingServer,
                 downloadScope: "f3431ef88b6625ded950bbeb20ea9249",
                 leaving: AppFixtures.accountA,
+                accountList: accountList,
                 confirmation: confirmation
             )
 
@@ -168,10 +178,15 @@ extension AppSuites {
         @Test("Certificates are not pruned while Add Account is open, so its new certificate survives")
         func noPruneWhileAddingAccount() async {
             let confirmation = AsyncGate()
+            let accountList = AsyncGate()
             var state = signedIn(AppFixtures.serverA, AppFixtures.userA)
             state.addAccount = LoginFormFeature.State()
             let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
             let store = makeStore(state) {
+                $0.authClient.listSessions = {
+                    try? await accountList.wait()
+                    return []
+                }
                 $0.authClient.me = { _ in
                     try await confirmation.wait()
                     return AppFixtures.userB
@@ -185,6 +200,7 @@ extension AppSuites {
                 serverURL: AppFixtures.serverB,
                 downloadScope: AppFixtures.downloadScopeB,
                 leaving: AppFixtures.accountA,
+                accountList: accountList,
                 confirmation: confirmation
             )
 

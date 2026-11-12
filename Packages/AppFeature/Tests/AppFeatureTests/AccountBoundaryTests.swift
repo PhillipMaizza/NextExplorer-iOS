@@ -29,10 +29,6 @@ extension AppSuites {
         private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
         private let recorder = WipeRecorder()
 
-        init() {
-            AppSuites.resetSharedState()
-        }
-
         private func listing() -> BrowseResult {
             BrowseResult(
                 items: [],
@@ -167,14 +163,14 @@ extension AppSuites {
                 $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.sessionExpiryDetected)
-                await store.receive(\.sessionExpiryConfirmed)
-                await store.receive(\.activeAccountTornDown) {
-                    $0.destination = .unauthenticated(.init())
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.sessionExpiryDetected)
+            await store.receive(\.sessionExpiryConfirmed)
+            await store.receive(\.activeAccountTornDown) {
+                $0.destination = .unauthenticated(.init())
             }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(
                 recorder.events.value == [.pendingAdded(AppFixtures.accountA), .activeSessionCleared]
@@ -188,13 +184,13 @@ extension AppSuites {
                 recorder.installPendingLog(into: &$0)
             }
 
-            await withMainSerialExecutor {
-                await store.send(.sessionValidationResponse(.failure(.sessionExpired), credentialsA))
-                await store.receive(\.activeAccountTornDown) {
-                    $0.destination = .unauthenticated(.init())
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.sessionValidationResponse(.failure(.sessionExpired), credentialsA))
+            await store.receive(\.activeAccountTornDown) {
+                $0.destination = .unauthenticated(.init())
             }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(
                 recorder.events.value == [.pendingAdded(AppFixtures.accountA), .activeSessionCleared]
@@ -214,6 +210,8 @@ extension AppSuites {
             await clock.advance(by: .seconds(0.4))
             await store.receive(\.delegate.activeAccountChanged, nil)
 
+            await store.finish()
+
             #expect(
                 recorder.events.value == [.pendingAdded(AppFixtures.accountA), .accountRemoved(AppFixtures.accountA)]
                     + WipeRecorder.accountWipe(AppFixtures.accountA)
@@ -229,6 +227,8 @@ extension AppSuites {
             await store.receive(\.accountChangeResolved, nil)
             await clock.advance(by: .seconds(0.4))
             await store.receive(\.delegate.activeAccountChanged, nil)
+
+            await store.finish()
 
             #expect(
                 recorder.events.value == [.pendingAdded(AppFixtures.accountB), .accountRemoved(AppFixtures.accountB)]
@@ -270,31 +270,29 @@ extension AppSuites {
                 $0.authClient.activeAccountID = { AppFixtures.accountB }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.sessionExpiryDetected)
-                await store.receive(\.sessionExpiryConfirmed)
-                await store.receive(\.activeAccountTornDown)
-                await store.receive(\.activateAccount) {
-                    $0.destination = optimistic(AppFixtures.serverB, username: "bob")
-                }
-                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
-                accountList.open()
-                await store.receive(\.accountsRefreshed) {
-                    $0.$accounts.withLock { $0 = [AppFixtures.summaryB] }
-                }
-
-                directory.bound(to: AppFixtures.accountA).write(
-                    serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil, fetchedAt: MockDate.date
-                )
-                secondPass.open()
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                    $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
-                }
-                await store.receive(\.accountsRefreshed)
-                await store.finish()
+            await store.send(.sessionExpiryDetected)
+            await store.receive(\.sessionExpiryConfirmed)
+            await store.receive(\.activeAccountTornDown)
+            await store.receive(\.activateAccount) {
+                $0.destination = optimistic(AppFixtures.serverB, username: "bob")
             }
+            await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            accountList.open()
+            await store.receive(\.accountsRefreshed) {
+                $0.$accounts.withLock { $0 = [AppFixtures.summaryB] }
+            }
+
+            directory.bound(to: AppFixtures.accountA).write(
+                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil, fetchedAt: MockDate.date
+            )
+            secondPass.open()
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
+                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+            }
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
 
             #expect(pending.accounts().isEmpty, "the second pass never ran for \(pending.accounts())")
             #expect(
@@ -338,23 +336,21 @@ extension AppSuites {
                 $0.authClient.activeAccountID = { AppFixtures.accountA }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.activateAccount(credentialsA)) {
-                    $0.destination = optimistic(AppFixtures.serverA, username: "alice")
-                }
-                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountB)
-                accountList.open()
-                await store.receive(\.accountsRefreshed) {
-                    $0.$accounts.withLock { $0 = [AppFixtures.summaryA] }
-                }
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                    $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
-                }
-                await store.receive(\.accountsRefreshed)
-                await store.finish()
+            await store.send(.activateAccount(credentialsA)) {
+                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
             }
+            await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountB)
+            accountList.open()
+            await store.receive(\.accountsRefreshed) {
+                $0.$accounts.withLock { $0 = [AppFixtures.summaryA] }
+            }
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+            }
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
 
             #expect(pending.accounts().isEmpty)
             #expect(directory.bound(to: AppFixtures.accountA).read(serverURL: AppFixtures.serverA, path: Fixture.path) != nil)
@@ -386,22 +382,20 @@ extension AppSuites {
                 $0.authClient.activeAccountID = { AppFixtures.accountA }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.sessionRestoreResponse(credentialsA)) {
-                    $0.destination = optimistic(AppFixtures.serverA, username: "alice")
-                }
-                accountList.open()
-                await store.receive(\.accountsRefreshed) {
-                    $0.$accounts.withLock { $0 = [AppFixtures.summaryA] }
-                }
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                    $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
-                }
-                await store.receive(\.accountsRefreshed)
-                await store.finish()
+            await store.send(.sessionRestoreResponse(credentialsA)) {
+                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
             }
+            accountList.open()
+            await store.receive(\.accountsRefreshed) {
+                $0.$accounts.withLock { $0 = [AppFixtures.summaryA] }
+            }
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+            }
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
 
             #expect(pending.accounts().isEmpty)
             #expect(directory.bound(to: AppFixtures.accountA).read(serverURL: AppFixtures.serverA, path: Fixture.path) != nil)
@@ -416,15 +410,13 @@ extension AppSuites {
                 $0.pendingAccountWipes = pending
             }
 
-            await withMainSerialExecutor {
-                await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                    $0.didAuthenticateFromLogin = true
-                    $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
-                }
-                await store.receive(\.accountsRefreshed)
-                await store.finish()
+            await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                $0.didAuthenticateFromLogin = true
+                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
             }
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
 
             #expect(pending.accounts().isEmpty)
         }
@@ -451,19 +443,17 @@ extension AppSuites {
                 $0.authClient.activeAccountID = { AppFixtures.accountB }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.addAccountSheetDismissed) {
-                    $0.pendingAddedAccount = nil
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                    $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
-                }
-                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
-                accountList.open()
-                await store.receive(\.accountsRefreshed) {
-                    $0.$accounts.withLock { $0 = [AppFixtures.summaryB] }
-                }
-                await store.finish()
+            await store.send(.addAccountSheetDismissed) {
+                $0.pendingAddedAccount = nil
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
+                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
+            await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            accountList.open()
+            await store.receive(\.accountsRefreshed) {
+                $0.$accounts.withLock { $0 = [AppFixtures.summaryB] }
+            }
+            await store.finish()
 
             #expect(pending.accounts().isEmpty)
             #expect(directory.bound(to: AppFixtures.accountB).read(serverURL: AppFixtures.serverB, path: Fixture.path) != nil)
@@ -481,11 +471,9 @@ extension AppSuites {
                 $0.authClient.listSessionsOrThrow = { throw AuthClientError.keychain(Fixture.keychainFailure) }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsA)))))
-                await store.receive(\.accountsRefreshed)
-                await store.finish()
-            }
+            await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsA)))))
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
 
             #expect(recorder.events.value.isEmpty, "pruned \(recorder.events.value) on a keychain that could not be read")
         }
@@ -496,11 +484,9 @@ extension AppSuites {
                 $0.authClient.listSessionsOrThrow = { [credentialsA] in [credentialsA] }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsA)))))
-                await store.receive(\.accountsRefreshed)
-                await store.finish()
-            }
+            await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsA)))))
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
 
             #expect(recorder.events.value == WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA]))
         }

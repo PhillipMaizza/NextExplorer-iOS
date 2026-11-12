@@ -19,10 +19,6 @@ extension AppSuites {
         private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
         private let recorder = WipeRecorder()
 
-        init() {
-            AppSuites.resetSharedState()
-        }
-
         private func makeStore(
             _ state: AppFeature.State = AppFeature.State(),
             configure: (inout DependencyValues) -> Void = { _ in }
@@ -71,22 +67,22 @@ extension AppSuites {
                 $0.authClient.activeAccountID = { AppFixtures.accountA }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.onAppear)
-                await store.receive(\.sessionRestoreResponse) {
-                    $0.destination = optimistic(AppFixtures.serverA, username: "alice")
-                }
-                accountList.open()
-                await store.receive(\.accountsRefreshed) {
-                    $0.$accounts.withLock { $0 = [AppFixtures.summaryA] }
-                }
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                    $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.onAppear)
+            await store.receive(\.sessionRestoreResponse) {
+                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
             }
+            accountList.open()
+            await store.receive(\.accountsRefreshed) {
+                $0.$accounts.withLock { $0 = [AppFixtures.summaryA] }
+            }
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+            }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(recorder.events.value.isEmpty, "a valid session wipes nothing")
         }
@@ -102,19 +98,19 @@ extension AppSuites {
                 }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.onAppear)
-                await store.receive(\.sessionRestoreResponse) {
-                    $0.destination = optimistic(AppFixtures.serverA, username: "alice")
-                }
-                await store.receive(\.accountsRefreshed)
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse)
-                await store.receive(\.activeAccountTornDown) {
-                    $0.destination = .unauthenticated(.init())
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.onAppear)
+            await store.receive(\.sessionRestoreResponse) {
+                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
             }
+            await store.receive(\.accountsRefreshed)
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse)
+            await store.receive(\.activeAccountTornDown) {
+                $0.destination = .unauthenticated(.init())
+            }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(
                 recorder.events.value == [.activeSessionCleared] + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
@@ -136,15 +132,15 @@ extension AppSuites {
                 }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.onAppear)
-                await store.receive(\.sessionRestoreResponse) {
-                    $0.destination = optimistic(AppFixtures.serverA, username: "alice")
-                }
-                await store.receive(\.accountsRefreshed)
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse)
+            await store.send(.onAppear)
+            await store.receive(\.sessionRestoreResponse) {
+                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
             }
+            await store.receive(\.accountsRefreshed)
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse)
+
+            await store.finish()
 
             #expect(recorder.events.value.isEmpty)
         }
@@ -155,13 +151,13 @@ extension AppSuites {
                 $0.authClient.restoreSession = { nil }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.onAppear)
-                await store.receive(\.sessionRestoreResponse) {
-                    $0.destination = .unauthenticated(.init())
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.onAppear)
+            await store.receive(\.sessionRestoreResponse) {
+                $0.destination = .unauthenticated(.init())
             }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(recorder.events.value.isEmpty)
         }
@@ -170,27 +166,32 @@ extension AppSuites {
 
         @Test("Signing in from the login flow switches to the authenticated destination after wiping every cache")
         func authenticatingSwitchesDestination() async {
+            let wipeFinished = AsyncGate()
             let store = makeStore(AppFeature.State(destination: .unauthenticated(.init()))) {
-                $0.authClient.listSessionsOrThrow = { [credentialsA] in [credentialsA] }
-            }
-
-            await withMainSerialExecutor {
-                await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                    $0.didAuthenticateFromLogin = true
-                    $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                $0.authClient.listSessionsOrThrow = { [credentialsA] in
+                    try await wipeFinished.wait()
+                    return [credentialsA]
                 }
-                await store.receive(\.accountsRefreshed)
+                $0.sessionScratchStore.purge = { [recorder] scope in
+                    recorder.record(.scratchPurged(scope))
+                    wipeFinished.open()
+                }
             }
 
-            #expect(recorder.events.value.prefix(3) == [.directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared])
+            await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                $0.didAuthenticateFromLogin = true
+                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+            }
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
+
             #expect(
-                WipeRecorder.areSame(
-                    Array(recorder.events.value.dropFirst(3)),
-                    [.previewCacheCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers)]
-                        + WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA])
-                ),
-                "the effects that finish the wipe run in no fixed order"
+                recorder.events.value == [
+                    .directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared,
+                    .previewCacheCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers),
+                ] + WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA]),
+                "the sign in wipes every store, then the pruning keeps only the accounts that remain"
             )
         }
 
@@ -198,12 +199,12 @@ extension AppSuites {
         func signOutLastAccountSwitchesToLogin() async {
             let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA))
 
-            await withMainSerialExecutor {
-                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(nil))))) {
-                    $0.destination = .unauthenticated(.init())
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(nil))))) {
+                $0.destination = .unauthenticated(.init())
             }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(recorder.events.value == WipeRecorder.fullTeardown + WipeRecorder.lastSignOutCredentialWipe)
         }
@@ -211,28 +212,34 @@ extension AppSuites {
         @Test("Switching to another account remounts the authenticated UI, stops the left account's offline work and wipes no cache")
         func switchingAccountRemountsWithoutClearingCache() async {
             let confirmation = AsyncGate()
+            let accountList = AsyncGate()
             let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA)) {
                 $0.authClient.me = { _ in
                     try await confirmation.wait()
                     return AppFixtures.userB
                 }
+                $0.authClient.listSessions = {
+                    try? await accountList.wait()
+                    return []
+                }
                 $0.authClient.listSessionsOrThrow = { [credentialsA, credentialsB] in [credentialsA, credentialsB] }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsB)))))
-                await store.receive(\.activateAccount) {
-                    $0.destination = optimistic(AppFixtures.serverB, username: "bob")
-                }
-                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
-                await store.receive(\.accountsRefreshed)
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                    $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsB)))))
+            await store.receive(\.activateAccount) {
+                $0.destination = optimistic(AppFixtures.serverB, username: "bob")
             }
+            await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            accountList.open()
+            await store.receive(\.accountsRefreshed)
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
+                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+            }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(
                 recorder.events.value == WipeRecorder.prune(
@@ -248,10 +255,10 @@ extension AppSuites {
                 $0.authClient.listSessionsOrThrow = { [credentialsA] in [credentialsA] }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsA)))))
-                await store.receive(\.accountsRefreshed)
-            }
+            await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsA)))))
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(recorder.events.value == WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA]))
         }
@@ -283,30 +290,30 @@ extension AppSuites {
                 }
             }
 
-            await withMainSerialExecutor {
-                // The tab shell drains the inbox before the store compares, so the append and the drain net to no change.
-                await store.send(.incomingFiles([scan])) {
-                    $0.$sharedFileInbox.withLock { $0 = [] }
-                }
-                await store.receive(\.destination.authenticated.mainTab.sharedFilesArrived)
-                await store.receive(\.destination.authenticated.mainTab.browse.receiveSharedFiles)
-                await store.receive(\.destination.authenticated.mainTab.browse.root.receiveSharedFiles)
-                await store.receive(\.destination.authenticated.mainTab.browse.root.reviewSharedFiles) {
-                    updateReview(&$0) {
-                        $0 = UploadReviewFeature.State(serverURL: AppFixtures.serverA, startingDestination: "")
-                    }
-                }
-                await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.stage) {
-                    updateReview(&$0) { $0?.preparingCount = 1 }
-                }
-                await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.filePrepared) {
-                    updateReview(&$0) {
-                        $0?.files = [prepared]
-                        $0?.preparingCount = 0
-                    }
-                }
-                await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.stagingBatchFinished)
+            // The tab shell drains the inbox before the store compares, so the append and the drain net to no change.
+            await store.send(.incomingFiles([scan])) {
+                $0.$sharedFileInbox.withLock { $0 = [] }
             }
+            await store.receive(\.destination.authenticated.mainTab.sharedFilesArrived)
+            await store.receive(\.destination.authenticated.mainTab.browse.receiveSharedFiles)
+            await store.receive(\.destination.authenticated.mainTab.browse.root.receiveSharedFiles)
+            await store.receive(\.destination.authenticated.mainTab.browse.root.reviewSharedFiles) {
+                updateReview(&$0) {
+                    $0 = UploadReviewFeature.State(serverURL: AppFixtures.serverA, startingDestination: "")
+                }
+            }
+            await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.stage) {
+                updateReview(&$0) { $0?.preparingCount = 1 }
+            }
+            await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.filePrepared) {
+                updateReview(&$0) {
+                    $0?.files = [prepared]
+                    $0?.preparingCount = 0
+                }
+            }
+            await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.stagingBatchFinished)
+
+            await store.finish()
 
             #expect(stagedURLs.value == [scan])
         }
@@ -325,25 +332,31 @@ extension AppSuites {
         func addAccountAdoptsWithoutClearingCache() async {
             var state = authenticated(AppFixtures.serverA, AppFixtures.userA)
             state.addAccount = LoginFormFeature.State()
+            let accountList = AsyncGate()
             let store = makeStore(state) {
+                $0.authClient.listSessions = {
+                    try? await accountList.wait()
+                    return []
+                }
                 $0.authClient.listSessionsOrThrow = { [credentialsA, credentialsB] in [credentialsA, credentialsB] }
             }
 
-            await withMainSerialExecutor {
-                await store.send(.addAccount(.presented(.delegate(.authenticated(AppFixtures.userB, AppFixtures.serverB))))) {
-                    $0.addAccount = nil
-                    $0.pendingAddedAccount = AppFeature.AddedAccount(user: AppFixtures.userB, serverURL: AppFixtures.serverB)
-                }
-                #expect(recorder.events.value.isEmpty, "nothing is adopted or wiped while the sheet is still dismissing")
-
-                await store.send(.addAccountSheetDismissed) {
-                    $0.pendingAddedAccount = nil
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                    $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
-                }
-                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
-                await store.receive(\.accountsRefreshed)
+            await store.send(.addAccount(.presented(.delegate(.authenticated(AppFixtures.userB, AppFixtures.serverB))))) {
+                $0.addAccount = nil
+                $0.pendingAddedAccount = AppFeature.AddedAccount(user: AppFixtures.userB, serverURL: AppFixtures.serverB)
             }
+
+            #expect(recorder.events.value.isEmpty, "nothing is adopted or wiped while the sheet is still dismissing")
+
+            await store.send(.addAccountSheetDismissed) {
+                $0.pendingAddedAccount = nil
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
+                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+            }
+            await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            accountList.open()
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
 
             #expect(
                 recorder.events.value == WipeRecorder.prune(
@@ -379,24 +392,24 @@ extension AppSuites {
             }
             store.state.$sessionDidExpire.withLock { $0 = true }
 
-            await withMainSerialExecutor {
-                await store.send(.sessionExpiryDetected) {
-                    $0.$sessionDidExpire.withLock { $0 = false }
-                }
-                await store.receive(\.sessionExpiryConfirmed)
-                await store.receive(\.activeAccountTornDown)
-                await store.receive(\.activateAccount) {
-                    $0.destination = optimistic(AppFixtures.serverB, username: "bob")
-                }
-                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
-                await store.receive(\.accountsRefreshed)
-                confirmation.open()
-                await store.receive(\.sessionValidationResponse) {
-                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                    $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.sessionExpiryDetected) {
+                $0.$sessionDidExpire.withLock { $0 = false }
             }
+            await store.receive(\.sessionExpiryConfirmed)
+            await store.receive(\.activeAccountTornDown)
+            await store.receive(\.activateAccount) {
+                $0.destination = optimistic(AppFixtures.serverB, username: "bob")
+            }
+            await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.accountsRefreshed)
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
+                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+            }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(json.bound(to: AppFixtures.accountA).read(key: "favorites") == nil)
             #expect(json.bound(to: AppFixtures.accountB).read(key: "favorites") != nil)
@@ -420,16 +433,16 @@ extension AppSuites {
             }
             store.state.$sessionDidExpire.withLock { $0 = true }
 
-            await withMainSerialExecutor {
-                await store.send(.sessionExpiryDetected) {
-                    $0.$sessionDidExpire.withLock { $0 = false }
-                }
-                await store.receive(\.sessionExpiryConfirmed)
-                await store.receive(\.activeAccountTornDown) {
-                    $0.destination = .unauthenticated(.init())
-                }
-                await store.receive(\.accountsRefreshed)
+            await store.send(.sessionExpiryDetected) {
+                $0.$sessionDidExpire.withLock { $0 = false }
             }
+            await store.receive(\.sessionExpiryConfirmed)
+            await store.receive(\.activeAccountTornDown) {
+                $0.destination = .unauthenticated(.init())
+            }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
 
             #expect(
                 recorder.events.value == [.activeSessionCleared] + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
@@ -449,6 +462,8 @@ extension AppSuites {
             await store.send(.sessionExpiryDetected) {
                 $0.$sessionDidExpire.withLock { $0 = false }
             }
+
+            await store.finish()
 
             #expect(recorder.events.value.isEmpty)
         }

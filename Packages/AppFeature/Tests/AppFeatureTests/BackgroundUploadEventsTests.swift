@@ -6,7 +6,7 @@ import Foundation
 import ShareUploads
 import Testing
 
-@Suite("Background upload events", .serialized)
+@Suite("Background upload events")
 struct BackgroundUploadEventsTests {
     private let server = URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/")
 

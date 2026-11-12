@@ -63,16 +63,6 @@ final class WipeRecorder: Sendable {
         [.certificatesKept(origins), .uploadDefaultsRetained(accounts), .shareUploadsKept(accounts)]
     }
 
-    /// Same events, same counts, in any order.
-    static func areSame(_ actual: [Event], _ expected: [Event]) -> Bool {
-        var remaining = expected
-        for event in actual {
-            guard let index = remaining.firstIndex(of: event) else { return false }
-            remaining.remove(at: index)
-        }
-        return remaining.isEmpty
-    }
-
     let events = LockIsolated<[Event]>([])
 
     func record(_ event: Event) {
@@ -114,23 +104,10 @@ final class WipeRecorder: Sendable {
     }
 }
 
-/// Parent of every AppFeature suite that drives merged effects. They run on the main serial executor,
-/// a process wide switch, so the suites run one at a time and never flip it under each other.
-@Suite("AppFeature", .serialized)
-enum AppSuites {
-    /// The in memory shared values are process wide, so each test starts from the same blank state.
-    @MainActor
-    static func resetSharedState() {
-        @Shared(.inMemory(DownloadAccountScope.sharedKey)) var downloadScope = ""
-        $downloadScope.withLock { $0 = "" }
-        @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
-        $accounts.withLock { $0 = [] }
-        @Shared(.inMemory(SessionExpiry.sharedKey)) var sessionDidExpire = false
-        $sessionDidExpire.withLock { $0 = false }
-        @Shared(.inMemory(SharedFileInbox.sharedKey)) var inbox: [URL] = []
-        $inbox.withLock { $0 = [] }
-    }
-}
+/// Parent of every AppFeature suite that drives the app reducer. Each suite uses `.isolatedDependencies`,
+/// so every test has its own dependencies and its own in memory shared values.
+@Suite("AppFeature")
+enum AppSuites {}
 
 enum AppFixtures {
     static let serverA = URL(string: "https://a.example.com") ?? URL(fileURLWithPath: "/")

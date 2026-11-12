@@ -20,10 +20,6 @@ extension AppSuites {
         private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
         private let recorder = WipeRecorder()
 
-        init() {
-            AppSuites.resetSharedState()
-        }
-
         private func makeStore(
             _ state: AuthenticatedFeature.State = AuthenticatedFeature.State(serverURL: AppFixtures.serverA, user: AppFixtures.userA),
             clock: TestClock<Duration> = TestClock(),
