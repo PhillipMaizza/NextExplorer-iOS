@@ -4,32 +4,51 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
+/// Which subtree a search runs over: the root searches everywhere, a folder at any depth searches
+/// itself and can be widened to everywhere until the search is cleared or a folder is opened.
+@Suite(.isolatedDependencies)
 @MainActor
 struct SearchScopeDepthTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private enum Constants {
+        static let query = "tax"
+        static let taxesFolder = "Files/Documents/Taxes"
+        static let otherFolder = "Files/Other"
+        static let taxes = "Taxes"
+    }
 
     private func state(_ path: String, scope: BrowseFeature.SearchScope = .thisFolder) -> BrowseFeature.State {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: "T")
+        var state = BrowseFixtures.state(path)
         state.searchScope = scope
         return state
     }
 
-    private func searchedPath(from initial: BrowseFeature.State, actions: (TestStoreOf<BrowseFeature>, TestClock<Duration>) async -> Void) async -> String? {
-        let clock = TestClock()
-        let scopePath = LockIsolated<String?>(nil)
-        let store = TestStore(initialState: initial) {
-            BrowseFeature()
-        } withDependencies: {
+    private func searchingStore(
+        _ initial: BrowseFeature.State,
+        clock: TestClock<Duration>,
+        searchedPaths: LockIsolated<[String]>
+    ) -> TestStoreOf<BrowseFeature> {
+        BrowseFixtures.store(initial) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, path, _, _ in
-                scopePath.setValue(path)
+                searchedPaths.withValue { $0.append(path) }
                 return []
             }
         }
-        store.exhaustivity = .off
-        await actions(store, clock)
-        return scopePath.value
+    }
+
+    /// Types the query and lets the debounced server search answer with nothing.
+    private func searchForQuery(_ store: TestStoreOf<BrowseFeature>, clock: TestClock<Duration>) async {
+        await store.send(.searchQueryChanged(Constants.query)) {
+            $0.searchQuery = Constants.query
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+        }
     }
 
     @Test
@@ -38,13 +57,13 @@ struct SearchScopeDepthTests {
         #expect(state("").effectiveSearchScope == .everywhere)
     }
 
-    @Test(arguments: ["Files", "Files/Documents", "Files/Documents/Taxes"])
+    @Test(arguments: [TestFolder.files, TestPath.filesDocuments, Constants.taxesFolder])
     func aFolderAtAnyDepthSearchesItselfAndCanBeWidened(path: String) {
         #expect(state(path).effectiveSearchScope == .thisFolder)
         #expect(state(path).canWidenSearch)
     }
 
-    @Test(arguments: ["Files", "Files/Documents/Taxes"])
+    @Test(arguments: [TestFolder.files, Constants.taxesFolder])
     func aWidenedSearchRunsEverywhereAndOffersNoFurtherWidening(path: String) {
         let widened = state(path, scope: .everywhere)
         #expect(widened.effectiveSearchScope == .everywhere)
@@ -53,61 +72,65 @@ struct SearchScopeDepthTests {
 
     @Test
     func aFolderSearchRequestsItsOwnSubtree() async {
-        let path = await searchedPath(from: state("Files/Documents")) { store, clock in
-            await store.send(.searchQueryChanged("tax"))
-            await clock.advance(by: .seconds(1))
-            await store.receive(\.searchResultsResponse.success)
-        }
-        #expect(path == "Files/Documents")
+        let clock = TestClock()
+        let searchedPaths = LockIsolated<[String]>([])
+        let store = searchingStore(state(TestPath.filesDocuments), clock: clock, searchedPaths: searchedPaths)
+
+        await searchForQuery(store, clock: clock)
+        #expect(searchedPaths.value == [TestPath.filesDocuments])
     }
 
     @Test
     func wideningRequestsFromTheRoot() async {
-        let path = await searchedPath(from: state("Files/Documents")) { store, clock in
-            await store.send(.searchQueryChanged("tax"))
-            await clock.advance(by: .seconds(1))
-            await store.receive(\.searchResultsResponse.success)
-            await store.send(.searchScopeChanged(.everywhere))
-            await clock.advance(by: .seconds(1))
-            await store.receive(\.searchResultsResponse.success)
+        let clock = TestClock()
+        let searchedPaths = LockIsolated<[String]>([])
+        let store = searchingStore(state(TestPath.filesDocuments), clock: clock, searchedPaths: searchedPaths)
+
+        await searchForQuery(store, clock: clock)
+        await store.send(.searchScopeChanged(.everywhere)) {
+            $0.searchScope = .everywhere
+            $0.isSearchingRemotely = true
         }
-        #expect(path == "")
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+        }
+        #expect(searchedPaths.value == [TestPath.filesDocuments, ""])
     }
 
     @Test
     func theRootRequestsFromTheTop() async {
-        let path = await searchedPath(from: state("")) { store, clock in
-            await store.send(.searchQueryChanged("tax"))
-            await clock.advance(by: .seconds(1))
-            await store.receive(\.searchResultsResponse.success)
-        }
-        #expect(path == "")
+        let clock = TestClock()
+        let searchedPaths = LockIsolated<[String]>([])
+        let store = searchingStore(state(""), clock: clock, searchedPaths: searchedPaths)
+
+        await searchForQuery(store, clock: clock)
+        #expect(searchedPaths.value == [""])
     }
 
     @Test
     func clearingTheSearchReturnsAWidenedFolderToItsOwnScope() async {
-        var initial = state("Files/Documents", scope: .everywhere)
-        initial.searchQuery = "tax"
-        let store = TestStore(initialState: initial) {
-            BrowseFeature()
-        }
-        store.exhaustivity = .off
+        var initial = state(TestPath.filesDocuments, scope: .everywhere)
+        initial.searchQuery = Constants.query
+        let store = BrowseFixtures.store(initial)
 
-        await store.send(.searchQueryChanged(""))
-        #expect(store.state.searchScope == .thisFolder)
+        await store.send(.searchQueryChanged("")) {
+            $0.searchQuery = ""
+            $0.searchScope = .thisFolder
+        }
         #expect(store.state.canWidenSearch)
     }
 
     @Test
     func openingAFolderFromWidenedResultsEndsTheWidening() async {
-        var initial = state("Files/Documents", scope: .everywhere)
-        initial.searchQuery = "tax"
-        let store = TestStore(initialState: initial) {
-            BrowseFeature()
-        }
-        store.exhaustivity = .off
+        var initial = state(TestPath.filesDocuments, scope: .everywhere)
+        initial.searchQuery = Constants.query
+        let store = BrowseFixtures.store(initial)
 
-        await store.send(.searchResultTapped(SearchResultItem(name: "Taxes", path: "Files/Other", kind: "dir")))
-        #expect(store.state.searchScope == .thisFolder)
+        await store.send(.searchResultTapped(SearchResultItem(name: Constants.taxes, path: Constants.otherFolder, kind: "dir"))) {
+            $0.searchQuery = ""
+            $0.searchScope = .thisFolder
+        }
+        await store.receive(\.delegate, .openPath(path: "Files/Other/Taxes", title: Constants.taxes))
     }
 }
