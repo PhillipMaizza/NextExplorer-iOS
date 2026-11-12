@@ -11,15 +11,18 @@ import TestUtils
 @MainActor
 @Suite(.isolatedDependencies)
 struct DownloadQueueFeatureTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private let serverURL = URL(fileURLWithPath: "/")
 
     private nonisolated func file(_ name: String, size: Int64 = 10) -> FileItem {
-        FileItem(name: name, path: "Files", dateModified: Date(timeIntervalSince1970: 1), size: size, kind: (name as NSString).pathExtension)
+        FileItem(name: name, path: "Files", dateModified: MockDate.date, size: size, kind: (name as NSString).pathExtension)
     }
 
     private nonisolated func folder(_ name: String) -> FileItem {
-        FileItem(name: name, path: "Files", dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "directory")
+        FileItem(name: name, path: "Files", dateModified: MockDate.date, size: 0, kind: "directory")
     }
+
+    private typealias Job = DownloadQueueFeature.DownloadJob
+    private typealias Summary = DownloadQueueFeature.FinishSummary
 
     private nonisolated func temporaryFile() -> URL {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name())
@@ -27,45 +30,63 @@ struct DownloadQueueFeatureTests {
         return url
     }
 
+    /// A store whose downloads answer from the closures given, with ids and the clock fixed.
+    private func makeStore(
+        _ state: DownloadQueueFeature.State? = nil,
+        configure: (inout DependencyValues) -> Void = { _ in }
+    ) -> TestStoreOf<DownloadQueueFeature> {
+        TestStore(initialState: state ?? DownloadQueueFeature.State(serverURL: serverURL)) {
+            DownloadQueueFeature()
+        } withDependencies: {
+            $0.uuid = .incrementing
+            $0.date = .constant(MockDate.date)
+            $0.filesClient.flushDownloadConnections = {}
+            $0.localDownloadStore.save = { source, _, _, _ in source }
+            configure(&$0)
+        }
+    }
+
+    /// Receives the start of the next queued job: it turns to downloading and records when it began.
+    private func receiveStart(_ store: TestStoreOf<DownloadQueueFeature>, id: Int) async {
+        await store.receive(\.startNextIfIdle) {
+            $0.jobs[id: UUID(id)]?.status = .downloading
+            $0.jobs[id: UUID(id)]?.startedAt = MockDate.date
+        }
+    }
+
     @Test
     func itemsDownloadOneAtATimeIntoDownloadsAndTheQueueFinishes() async {
         let requested = LockIsolated<[String]>([])
         let saved = LockIsolated<[String]>([])
         let flushes = LockIsolated(0)
-        let store = TestStore(initialState: DownloadQueueFeature.State(serverURL: serverURL)) {
-            DownloadQueueFeature()
-        } withDependencies: {
-            $0.uuid = .incrementing
-            $0.date = .constant(Date(timeIntervalSince1970: 0))
+        let store = makeStore {
             $0.filesClient.flushDownloadConnections = { flushes.withValue { $0 += 1 } }
             $0.filesClient.downloadItem = { _, item, _ in
                 requested.withValue { $0.append(item.id) }
                 return temporaryFile()
             }
             $0.localDownloadStore.save = { source, name, location, _ in
-                #expect(location == .documents)
-                saved.withValue { $0.append(name) }
+                saved.withValue { $0.append("\(name) \(location)") }
                 return source
             }
         }
-        store.exhaustivity = .off
 
-        await store.send(.enqueue([file("movie.mkv"), folder("Photos")]))
-        await store.receive(\.startNextIfIdle) {
-            $0.jobs[id: UUID(0)]?.status = .downloading
+        await store.send(.enqueue([file("movie.mkv"), folder("Photos")])) {
+            $0.jobs = [
+                Job(id: UUID(0), item: file("movie.mkv"), status: .queued),
+                Job(id: UUID(1), item: folder("Photos"), status: .queued),
+            ]
         }
-        #expect(store.state.jobs[id: UUID(1)]?.status == .queued)
-        await store.receive(\.downloadResponse) {
-            $0.jobs[id: UUID(0)]?.status = .completed
-        }
+        await receiveStart(store, id: 0)
+        await store.receive(\.downloadResponse) { $0.jobs[id: UUID(0)]?.status = .completed }
         await store.receive(.delegate(.itemSaved))
-        await store.receive(\.startNextIfIdle)
-        await store.receive(\.downloadResponse)
+        await receiveStart(store, id: 1)
+        await store.receive(\.downloadResponse) { $0.jobs[id: UUID(1)]?.status = .completed }
         await store.receive(.delegate(.itemSaved))
-        await store.receive(.delegate(.queueFinished(DownloadQueueFeature.FinishSummary(savedCount: 2, failedCount: 0))))
+        await store.receive(.delegate(.queueFinished(Summary(savedCount: 2, failedCount: 0))))
 
         #expect(requested.value == ["Files/movie.mkv", "Files/Photos"])
-        #expect(saved.value == ["movie.mkv", "Photos.zip"])
+        #expect(saved.value == ["movie.mkv documents", "Photos.zip documents"])
         #expect(flushes.value == 2)
         #expect(store.state.isActive == false)
         #expect(store.state.isBarVisible == false)
@@ -73,38 +94,37 @@ struct DownloadQueueFeatureTests {
 
     @Test
     func aFailedItemStaysOnTheFailedBarWhileTheRestFinish() async {
-        let store = TestStore(initialState: DownloadQueueFeature.State(serverURL: serverURL)) {
-            DownloadQueueFeature()
-        } withDependencies: {
-            $0.uuid = .incrementing
-            $0.date = .constant(Date(timeIntervalSince1970: 0))
-            $0.filesClient.flushDownloadConnections = {}
+        let store = makeStore {
             $0.filesClient.downloadItem = { _, item, _ in
                 if item.name == "broken.bin" {
                     throw FilesClientError.network("timed out")
                 }
                 return temporaryFile()
             }
-            $0.localDownloadStore.save = { source, _, _, _ in source }
         }
-        store.exhaustivity = .off
+        let failure = FilesClientError.network("timed out").userMessage
 
-        await store.send(.enqueue([file("broken.bin"), file("ok.txt")]))
-        await store.receive(.delegate(.queueFinished(DownloadQueueFeature.FinishSummary(savedCount: 1, failedCount: 1))))
+        await store.send(.enqueue([file("broken.bin"), file("ok.txt")])) {
+            $0.jobs = [
+                Job(id: UUID(0), item: file("broken.bin"), status: .queued),
+                Job(id: UUID(1), item: file("ok.txt"), status: .queued),
+            ]
+        }
+        await receiveStart(store, id: 0)
+        await store.receive(\.downloadResponse) { $0.jobs[id: UUID(0)]?.status = .failed(failure) }
+        await receiveStart(store, id: 1)
+        await store.receive(\.downloadResponse) { $0.jobs[id: UUID(1)]?.status = .completed }
+        await store.receive(.delegate(.itemSaved))
+        await store.receive(.delegate(.queueFinished(Summary(savedCount: 1, failedCount: 1))))
+
         #expect(store.state.failedCount == 1)
         #expect(store.state.isBarVisible)
-        #expect(store.state.jobs[id: UUID(0)]?.status == .failed(FilesClientError.network("timed out").userMessage))
     }
 
     @Test
     func retryRequeuesAFailedItem() async {
         let attempts = LockIsolated(0)
-        let store = TestStore(initialState: DownloadQueueFeature.State(serverURL: serverURL)) {
-            DownloadQueueFeature()
-        } withDependencies: {
-            $0.uuid = .incrementing
-            $0.date = .constant(Date(timeIntervalSince1970: 0))
-            $0.filesClient.flushDownloadConnections = {}
+        let store = makeStore {
             $0.filesClient.downloadItem = { _, _, _ in
                 let attempt = attempts.withValue { $0 += 1; return $0 }
                 if attempt == 1 {
@@ -112,23 +132,64 @@ struct DownloadQueueFeatureTests {
                 }
                 return temporaryFile()
             }
-            $0.localDownloadStore.save = { source, _, _, _ in source }
         }
-        store.exhaustivity = .off
+        let failure = FilesClientError.offline.userMessage
 
-        await store.send(.enqueue([file("movie.mkv")]))
-        await store.receive(.delegate(.queueFinished(DownloadQueueFeature.FinishSummary(savedCount: 0, failedCount: 1))))
+        await store.send(.enqueue([file("movie.mkv")])) {
+            $0.jobs = [Job(id: UUID(0), item: file("movie.mkv"), status: .queued)]
+        }
+        await receiveStart(store, id: 0)
+        await store.receive(\.downloadResponse) { $0.jobs[id: UUID(0)]?.status = .failed(failure) }
+        await store.receive(.delegate(.queueFinished(Summary(savedCount: 0, failedCount: 1))))
 
         await store.send(.retryAllFailedTapped) {
             $0.jobs[id: UUID(0)]?.status = .queued
+            $0.jobs[id: UUID(0)]?.startedAt = nil
         }
-        await store.receive(.delegate(.queueFinished(DownloadQueueFeature.FinishSummary(savedCount: 1, failedCount: 0))))
+        await receiveStart(store, id: 0)
+        await store.receive(\.downloadResponse) { $0.jobs[id: UUID(0)]?.status = .completed }
+        await store.receive(.delegate(.itemSaved))
+        await store.receive(.delegate(.queueFinished(Summary(savedCount: 1, failedCount: 0))))
         #expect(attempts.value == 2)
     }
 
     @Test
+    func retryingASingleFailedItemRequeuesOnlyThatOne() async {
+        var failed = Job(id: UUID(0), item: file("a.mkv"), status: .failed("boom"))
+        failed.startedAt = MockDate.date
+        var state = DownloadQueueFeature.State(serverURL: serverURL)
+        state.jobs = [failed, Job(id: UUID(1), item: file("b.mkv"), status: .failed("boom"))]
+        let store = makeStore(state) {
+            $0.filesClient.downloadItem = { _, _, _ in
+                try await suspendUntilCancelled()
+                return URL(fileURLWithPath: "/tmp/never")
+            }
+        }
+
+        await store.send(.retryTapped(id: UUID(0))) {
+            $0.jobs[id: UUID(0)]?.status = .queued
+            $0.jobs[id: UUID(0)]?.startedAt = nil
+        }
+        await receiveStart(store, id: 0)
+        await store.send(.cancelJobTapped(id: UUID(0))) { $0.jobs.remove(id: UUID(0)) }
+        await store.receive(\.startNextIfIdle)
+        await store.finish()
+        #expect(store.state.jobs[id: UUID(1)]?.status == .failed("boom"))
+    }
+
+    @Test
+    func retryingAnItemThatDidNotFailDoesNothing() async {
+        var state = DownloadQueueFeature.State(serverURL: serverURL)
+        state.jobs = [Job(id: UUID(0), item: file("a.mkv"), status: .completed)]
+        let store = makeStore(state)
+
+        await store.send(.retryTapped(id: UUID(0)))
+        await store.send(.retryAllFailedTapped)
+    }
+
+    @Test
     func progressTracksBytesAndDerivesARateAndTimeLeft() async {
-        let start = Date(timeIntervalSince1970: 1_000)
+        let start = MockDate.date
         let now = LockIsolated(start)
         var running = DownloadQueueFeature.DownloadJob(id: UUID(0), item: file("a.mkv"), status: .downloading)
         running.startedAt = start
@@ -182,15 +243,10 @@ struct DownloadQueueFeatureTests {
     @Test
     func cancelAllStopsTheTransferAndClearsTheQueue() async {
         let started = AsyncStream<Void>.makeStream()
-        let store = TestStore(initialState: DownloadQueueFeature.State(serverURL: serverURL)) {
-            DownloadQueueFeature()
-        } withDependencies: {
-            $0.uuid = .incrementing
-            $0.date = .constant(Date(timeIntervalSince1970: 0))
-            $0.filesClient.flushDownloadConnections = {}
+        let store = makeStore {
             $0.filesClient.downloadItem = { _, _, _ in
                 started.continuation.yield()
-                try await Task.never()
+                try await suspendUntilCancelled()
                 return URL(fileURLWithPath: "/tmp/never")
             }
             $0.localDownloadStore.save = { _, _, _, _ in
@@ -198,17 +254,18 @@ struct DownloadQueueFeatureTests {
                 return URL(fileURLWithPath: "/tmp/x")
             }
         }
-        store.exhaustivity = .off
 
-        await store.send(.enqueue([file("movie.mkv"), file("other.mkv")]))
-        await store.receive(\.startNextIfIdle)
+        await store.send(.enqueue([file("movie.mkv"), file("other.mkv")])) {
+            $0.jobs = [
+                Job(id: UUID(0), item: file("movie.mkv"), status: .queued),
+                Job(id: UUID(1), item: file("other.mkv"), status: .queued),
+            ]
+        }
+        await receiveStart(store, id: 0)
         var iterator = started.stream.makeAsyncIterator()
         await iterator.next()
 
-        await store.send(.cancelAllTapped) {
-            $0.jobs = []
-            $0.isSheetPresented = false
-        }
+        await store.send(.cancelAllTapped) { $0.jobs = [] }
         await store.finish()
         #expect(store.state.isBarVisible == false)
     }
@@ -217,58 +274,53 @@ struct DownloadQueueFeatureTests {
     func cancellingTheLastPendingDownloadAfterSomeSavedStillReportsTheSavedItems() async {
         var state = DownloadQueueFeature.State(serverURL: serverURL)
         state.jobs = [
-            DownloadQueueFeature.DownloadJob(id: UUID(0), item: file("a.mkv"), status: .completed),
-            DownloadQueueFeature.DownloadJob(id: UUID(1), item: file("b.mkv"), status: .downloading),
+            Job(id: UUID(0), item: file("a.mkv"), status: .completed),
+            Job(id: UUID(1), item: file("b.mkv"), status: .downloading),
         ]
-        let store = TestStore(initialState: state) { DownloadQueueFeature() }
-        store.exhaustivity = .off
+        let store = makeStore(state)
 
-        await store.send(.cancelJobTapped(id: UUID(1)))
-        await store.receive(.delegate(.queueFinished(DownloadQueueFeature.FinishSummary(savedCount: 1, failedCount: 0))))
+        await store.send(.cancelJobTapped(id: UUID(1))) { $0.jobs.remove(id: UUID(1)) }
+        await store.receive(\.startNextIfIdle)
+        await store.receive(.delegate(.queueFinished(Summary(savedCount: 1, failedCount: 0))))
     }
 
     @Test
     func cancellingADownloadWhileOthersAreStillQueuedDoesNotAnnounceTheQueueFinished() async {
         var state = DownloadQueueFeature.State(serverURL: serverURL)
         state.jobs = [
-            DownloadQueueFeature.DownloadJob(id: UUID(0), item: file("a.mkv"), status: .completed),
-            DownloadQueueFeature.DownloadJob(id: UUID(1), item: file("b.mkv"), status: .downloading),
-            DownloadQueueFeature.DownloadJob(id: UUID(2), item: file("c.mkv"), status: .queued),
+            Job(id: UUID(0), item: file("a.mkv"), status: .completed),
+            Job(id: UUID(1), item: file("b.mkv"), status: .downloading),
+            Job(id: UUID(2), item: file("c.mkv"), status: .queued),
         ]
-        let store = TestStore(initialState: state) {
-            DownloadQueueFeature()
-        } withDependencies: {
-            $0.date = .constant(Date(timeIntervalSince1970: 0))
-            $0.filesClient.flushDownloadConnections = {}
-            $0.filesClient.downloadItem = { _, _, _ in try await Task.never() }
+        let store = makeStore(state) {
+            $0.filesClient.downloadItem = { _, _, _ in
+                try await suspendUntilCancelled()
+                return URL(fileURLWithPath: "/tmp/never")
+            }
         }
-        store.exhaustivity = .off
 
-        await store.send(.cancelJobTapped(id: UUID(1)))
-        await store.receive(\.startNextIfIdle)
-        await store.send(.cancelAllTapped)
-        await store.skipReceivedActions()
+        await store.send(.cancelJobTapped(id: UUID(1))) { $0.jobs.remove(id: UUID(1)) }
+        await receiveStart(store, id: 2)
+        await store.send(.cancelAllTapped) { $0.jobs = [] }
+        await store.receive(.delegate(.queueFinished(Summary(savedCount: 1, failedCount: 0))))
+        await store.finish()
     }
 
     @Test
     func cancelAllAfterSomeSavedReportsThemButClearingAFinishedQueueDoesNot() async {
         var state = DownloadQueueFeature.State(serverURL: serverURL)
         state.jobs = [
-            DownloadQueueFeature.DownloadJob(id: UUID(0), item: file("a.mkv"), status: .completed),
-            DownloadQueueFeature.DownloadJob(id: UUID(1), item: file("b.mkv"), status: .downloading),
+            Job(id: UUID(0), item: file("a.mkv"), status: .completed),
+            Job(id: UUID(1), item: file("b.mkv"), status: .downloading),
         ]
-        let store = TestStore(initialState: state) { DownloadQueueFeature() }
-        store.exhaustivity = .off
-        await store.send(.cancelAllTapped)
-        await store.receive(.delegate(.queueFinished(DownloadQueueFeature.FinishSummary(savedCount: 1, failedCount: 0))))
+        let store = makeStore(state)
+        await store.send(.cancelAllTapped) { $0.jobs = [] }
+        await store.receive(.delegate(.queueFinished(Summary(savedCount: 1, failedCount: 0))))
 
         var finished = DownloadQueueFeature.State(serverURL: serverURL)
-        finished.jobs = [DownloadQueueFeature.DownloadJob(id: UUID(2), item: file("c.mkv"), status: .completed)]
-        let finishedStore = TestStore(initialState: finished) { DownloadQueueFeature() }
-        await finishedStore.send(.cancelAllTapped) {
-            $0.jobs = []
-            $0.isSheetPresented = false
-        }
+        finished.jobs = [Job(id: UUID(2), item: file("c.mkv"), status: .completed)]
+        let finishedStore = makeStore(finished)
+        await finishedStore.send(.cancelAllTapped) { $0.jobs = [] }
     }
 
     @Test

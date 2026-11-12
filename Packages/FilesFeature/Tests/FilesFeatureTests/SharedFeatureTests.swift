@@ -9,9 +9,9 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct SharedFeatureTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private let serverURL = URL(fileURLWithPath: "/")
 
-    private func makeShare(id: String = "1", byMe: Bool = true) -> Share {
+    private func makeShare(id: String = "1", byMe: Bool = true, expiresAt: Date? = nil) -> Share {
         Share(
             id: id,
             shareToken: "tok\(id)",
@@ -22,6 +22,7 @@ struct SharedFeatureTests {
             accessMode: .readonly,
             sharingType: .anyone,
             hasPassword: false,
+            expiresAt: expiresAt,
             createdAt: MockDate.date,
             updatedAt: MockDate.date
         )
@@ -50,29 +51,58 @@ struct SharedFeatureTests {
 
     @Test
     func offlineFallsBackToTheSavedCopyForTheSegment() async throws {
-        let cache = JSONCacheStore.inMemory()
         let share = makeShare(id: "s1")
-        try cache.write(key: ListCache.key("shares.byMe", serverURL: serverURL), data: JSONEncoder().encode([share]))
+        let fetchGate = AsyncGate()
+        let usersGate = AsyncGate()
+        let cache = try JSONCacheStore.seeded([share], forKey: ListCache.key("shares.byMe", serverURL: serverURL), fetchedAt: MockDate.date)
 
         let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
             SharedFeature()
         } withDependencies: {
             $0.jsonCacheStore = cache
-            $0.filesClient.mySharedLinks = { _ in throw FilesClientError.offline }
-            $0.filesClient.shareableUsers = { _ in [] }
+            $0.filesClient.mySharedLinks = { _ in
+                try await fetchGate.wait()
+                throw FilesClientError.offline
+            }
+            $0.filesClient.shareableUsers = { _ in
+                try await usersGate.wait()
+                return []
+            }
         }
-        store.exhaustivity = .off
 
-        await store.send(.onAppear)
+        await store.send(.onAppear) { $0.phases[.byMe] = .loading }
+        // The saved copy paints first, then the failed fetch resolves to it under the offline banner.
+        await store.receive(\.cachedSharesPainted) { $0.byMe = [share] }
+        fetchGate.open()
         await store.receive(\.sharesResponse)
-        await store.receive(\.offlineSharesResolved)
-
-        #expect(store.state.byMe.map(\.id) == ["s1"])
-        #expect(store.state.phases[.byMe] == .loaded)
-        guard case .cached = store.state.dataSources[.byMe] else {
-            Issue.record("expected a cached data source offline")
-            return
+        await store.receive(\.offlineSharesResolved) {
+            $0.phases[.byMe] = .loaded
+            $0.dataSources[.byMe] = .cached(fetchedAt: MockDate.date)
         }
+        usersGate.open()
+        await store.receive(\.usersResponse)
+    }
+
+    @Test
+    func offlineWithNoSavedCopyShowsTheErrorInstead() async {
+        let usersGate = AsyncGate()
+        let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
+            SharedFeature()
+        } withDependencies: {
+            $0.filesClient.mySharedLinks = { _ in throw FilesClientError.offline }
+            $0.filesClient.shareableUsers = { _ in
+                try await usersGate.wait()
+                return []
+            }
+        }
+
+        await store.send(.onAppear) { $0.phases[.byMe] = .loading }
+        await store.receive(\.sharesResponse)
+        await store.receive(\.offlineSharesResolved) {
+            $0.phases[.byMe] = .failed(FilesClientError.offline.userMessage)
+        }
+        usersGate.open()
+        await store.receive(\.usersResponse)
     }
 
     @Test
@@ -90,14 +120,20 @@ struct SharedFeatureTests {
             }
             $0.filesClient.shareableUsers = { _ in [] }
         }
-        store.exhaustivity = .off
 
         // Two refreshes before the first byMe load resolves: the second supersedes the first,
         // so a slow stale response can't land after (and clobber) the newer one.
+        await store.send(.refreshRequested) { $0.phases[.byMe] = .loading }
         await store.send(.refreshRequested)
-        await store.send(.refreshRequested)
+        // Cancelling the first load lets its chained users fetch run.
+        await store.receive(\.usersResponse)
         gate.open()
-        await store.receive(\.sharesResponse)
+        await store.receive(\.sharesResponse) {
+            $0.phases[.byMe] = .loaded
+            $0.dataSources[.byMe] = .live
+            $0.byMe = [share]
+        }
+        await store.receive(\.usersResponse)
 
         #expect(completions.value == 1)
     }
@@ -138,15 +174,16 @@ struct SharedFeatureTests {
 
     @Test
     func editTappedPresentsTheSheetSeededFromTheShareAndAnUpdateSwapsTheRow() async {
-        let share = makeShare(id: "s1")
+        // The sheet's default expiry reads the real clock when a share has none, so this share has one.
+        let share = makeShare(id: "s1", expiresAt: MockDate.date.addingTimeInterval(3_600))
         var state = SharedFeature.State(serverURL: serverURL)
         state.byMe = [share]
         state.phases[.byMe] = .loaded
         let store = TestStore(initialState: state) { SharedFeature() }
-        store.exhaustivity = .off
 
-        await store.send(.editTapped(share))
-        #expect(store.state.editSheet?.share == share)
+        await store.send(.editTapped(share)) {
+            $0.editSheet = EditShareFeature.State(serverURL: serverURL, share: share)
+        }
 
         let updated = Share(
             id: "s1", shareToken: share.shareToken, ownerId: "me",
@@ -154,9 +191,10 @@ struct SharedFeatureTests {
             accessMode: .readwrite, sharingType: .anyone, hasPassword: true,
             expiresAt: nil, label: "Q3 Report", createdAt: share.createdAt, updatedAt: MockDate.date
         )
-        await store.send(.editSheet(.presented(.delegate(.updated(updated)))))
-        #expect(store.state.byMe[id: "s1"] == updated)
-        #expect(store.state.editSheet == nil)
+        await store.send(.editSheet(.presented(.delegate(.updated(updated))))) {
+            $0.byMe[id: "s1"] = updated
+            $0.editSheet = nil
+        }
     }
 
     @Test
@@ -212,12 +250,12 @@ struct SharedFeatureTests {
         let alpha = Share(
             id: "a", shareToken: "a", ownerId: "me", sourcePath: "Alpha", sourceName: nil,
             isDirectory: true, accessMode: .readonly, sharingType: .anyone, hasPassword: false,
-            label: "Alpha", createdAt: Date(timeIntervalSince1970: 100), updatedAt: MockDate.date
+            label: "Alpha", createdAt: MockDate.date.addingTimeInterval(100), updatedAt: MockDate.date
         )
         let zulu = Share(
             id: "z", shareToken: "z", ownerId: "me", sourcePath: "Zulu", sourceName: nil,
             isDirectory: true, accessMode: .readonly, sharingType: .anyone, hasPassword: false,
-            label: "Zulu", createdAt: Date(timeIntervalSince1970: 200), updatedAt: MockDate.date
+            label: "Zulu", createdAt: MockDate.date.addingTimeInterval(200), updatedAt: MockDate.date
         )
         var state = SharedFeature.State(serverURL: serverURL)
         state.byMe = [alpha, zulu]
@@ -236,7 +274,7 @@ struct SharedFeatureTests {
 
     @Test
     func theFirstExpiryTickSetsTheClockBeforeAnySharesLoad() async {
-        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let now = MockDate.date.addingTimeInterval(1_000)
         let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
             SharedFeature()
         }

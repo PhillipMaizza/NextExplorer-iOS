@@ -16,7 +16,7 @@ struct CacheScopeCaptureTests {
         static let accountA = "https://files.example.com|alice"
         static let accountB = "https://files.example.com|bob"
         static let server = URL(fileURLWithPath: "/")
-        static let timestamp = Date(timeIntervalSince1970: 100)
+        static let timestamp = MockDate.date
         static let path = "Docs"
     }
 
@@ -59,10 +59,13 @@ struct CacheScopeCaptureTests {
             $0.cacheScope = scopeSource(box)
             $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.offline }
         }
-        store.exhaustivity = .off
 
         box.value = Fixture.accountB
-        await store.send(.favoritesResponse(.success([favorite()])))
+        await store.send(.favoritesResponse(.success([favorite()]))) {
+            $0.phase = .loaded
+            $0.favorites = [favorite()]
+        }
+        await store.receive(\.offlineAvailabilityComputed)
 
         let key = ListCache.key(FavoritesFeature.cacheNamespace, serverURL: Fixture.server)
         #expect(jsonStore.bound(to: Fixture.accountA).read(key: key) != nil)
@@ -82,10 +85,12 @@ struct CacheScopeCaptureTests {
             $0.jsonCacheStore = jsonStore
             $0.cacheScope = scopeSource(box)
         }
-        store.exhaustivity = .off
 
         box.value = Fixture.accountB
-        await store.send(.sharesResponse(.byMe, .success([])))
+        await store.send(.sharesResponse(.byMe, .success([]))) {
+            $0.phases[.byMe] = .loaded
+            $0.dataSources[.byMe] = .live
+        }
 
         let key = ListCache.key(SharedFeature.cacheNamespace(.byMe), serverURL: Fixture.server)
         #expect(jsonStore.bound(to: Fixture.accountA).read(key: key) != nil)

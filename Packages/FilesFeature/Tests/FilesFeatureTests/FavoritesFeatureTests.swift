@@ -10,7 +10,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct FavoritesFeatureTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private let serverURL = URL(fileURLWithPath: "/")
 
     private func makeFavorite(id: String = "1", path: String = "Documents", label: String? = nil, position: Int = 0) -> Favorite {
         Favorite(id: id, path: path, label: label, icon: "folder", color: nil, position: position, createdAt: MockDate.date, updatedAt: MockDate.date)
@@ -86,27 +86,44 @@ struct FavoritesFeatureTests {
 
     @Test
     func offlineFallsBackToTheSavedCopyUnderTheBanner() async throws {
-        let cache = JSONCacheStore.inMemory()
         let fav = makeFavorite(id: "1", path: "Docs")
-        try cache.write(key: ListCache.key("favorites", serverURL: serverURL), data: JSONEncoder().encode([fav]))
+        let cache = try JSONCacheStore.seeded([fav], forKey: ListCache.key("favorites", serverURL: serverURL), fetchedAt: MockDate.date)
+        let gate = AsyncGate()
 
         let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
             FavoritesFeature()
         } withDependencies: {
             $0.jsonCacheStore = cache
+            $0.filesClient.favorites = { _ in
+                try await gate.wait()
+                throw FilesClientError.offline
+            }
+        }
+
+        // The state already holds the saved copy, painted when it was built inside the dependency context.
+        await store.send(.onAppear) { $0.phase = .loading }
+        await store.receive(\.offlineAvailabilityComputed)
+        gate.open()
+        await store.receive(\.favoritesResponse.failure)
+        await store.receive(\.offlineFavoritesResolved) {
+            $0.phase = .loaded
+            $0.dataSource = .cached(fetchedAt: MockDate.date)
+        }
+        await store.receive(\.offlineAvailabilityComputed)
+    }
+
+    @Test
+    func offlineWithNoSavedCopyShowsTheErrorInstead() async {
+        let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
+            FavoritesFeature()
+        } withDependencies: {
             $0.filesClient.favorites = { _ in throw FilesClientError.offline }
         }
-        store.exhaustivity = .off
 
-        await store.send(.onAppear)
+        await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.favoritesResponse.failure)
-        await store.receive(\.offlineFavoritesResolved)
-
-        #expect(store.state.favorites.map(\.id) == ["1"])
-        #expect(store.state.phase == .loaded)
-        guard case .cached = store.state.dataSource else {
-            Issue.record("expected a cached data source offline")
-            return
+        await store.receive(\.offlineFavoritesResolved) {
+            $0.phase = .failed(FilesClientError.offline.userMessage)
         }
     }
 
@@ -135,9 +152,9 @@ struct FavoritesFeatureTests {
     func offlineAvailabilityFlagsPinnedRootsAndTheirSubfolders() async {
         let offline = OfflineFileStore.inMemory()
         offline.setPinnedRoots([OfflinePinnedRoot(path: "Docs", isDirectory: true)])
-        let root = makeFavorite(id: "A", path: "Docs")
-        let subfolder = makeFavorite(id: "B", path: "Docs/Reports")
-        let unrelated = makeFavorite(id: "C", path: "Photos")
+        let root = makeFavorite(id: "A", path: "Docs", position: 0)
+        let subfolder = makeFavorite(id: "B", path: "Docs/Reports", position: 1)
+        let unrelated = makeFavorite(id: "C", path: "Photos", position: 2)
 
         let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
             FavoritesFeature()
@@ -145,15 +162,15 @@ struct FavoritesFeatureTests {
             $0.offlineFileStore = offline
             $0.filesClient.favorites = { _ in [root, subfolder, unrelated] }
         }
-        store.exhaustivity = .off
 
-        await store.send(.refreshButtonTapped)
-        await store.receive(\.favoritesResponse.success)
-        await store.receive(\.offlineAvailabilityComputed)
-
+        await store.send(.refreshButtonTapped) { $0.phase = .loading }
+        await store.receive(\.favoritesResponse.success) {
+            $0.phase = .loaded
+            $0.favorites = [root, subfolder, unrelated]
+        }
         // The pinned root and the favorite that sits under it are both flagged; the unrelated one
         // is not.
-        #expect(store.state.offlineFavoriteIDs == ["A", "B"])
+        await store.receive(\.offlineAvailabilityComputed) { $0.offlineFavoriteIDs = ["A", "B"] }
     }
 
     @Test
@@ -166,10 +183,13 @@ struct FavoritesFeatureTests {
             $0.jsonCacheStore = cache
             $0.filesClient.favorites = { _ in [fav] }
         }
-        store.exhaustivity = .off
 
-        await store.send(.onAppear)
-        await store.receive(\.favoritesResponse.success)
+        await store.send(.onAppear) { $0.phase = .loading }
+        await store.receive(\.favoritesResponse.success) {
+            $0.phase = .loaded
+            $0.favorites = [fav]
+        }
+        await store.receive(\.offlineAvailabilityComputed)
 
         #expect(store.state.dataSource == .live)
         let cached = try #require(cache.read(key: ListCache.key("favorites", serverURL: serverURL)))
@@ -193,12 +213,12 @@ struct FavoritesFeatureTests {
                 completions.withValue { $0 += 1 }
             }
         }
-        store.exhaustivity = .off
 
+        // The second tap cancels the first request, so only one reaches the end of the gate.
         await store.send(.removeTapped(favorite))
         await store.send(.removeTapped(favorite))
         gate.open()
-        await store.receive(\.removeResponse)
+        await store.receive(\.removeResponse) { $0.favorites = [] }
 
         #expect(completions.value == 1)
     }
@@ -220,22 +240,18 @@ struct FavoritesFeatureTests {
 
     @Test
     func openPathDelegateFromAPushedScreenForwardsToNavigateToDirectory() async {
-        // Exhaustivity off: the freshly-pushed `BrowseFeature.State` gets a `StackElementID`
-        // that isn't reproducible from inside a `receive`-triggered assertion closure (`send`
-        // gets special generator snapshotting from TCA, `receive` doesn't): asserting the
-        // resulting path's content is what actually matters here.
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
         }
-        store.exhaustivity = .off
 
-        await store.send(.path(.element(id: 0, action: .delegate(.openPath(path: "Music", title: "Music")))))
-        await store.receive(\.navigateToDirectory)
-
-        #expect(store.state.path.map(\.directoryPath) == ["Music"])
+        // An empty path, because a pushed screen's stack id comes from a generator that a `receive`
+        // assertion cannot rewind. What the stack holds after a jump to a real path is covered by
+        // navigateToDirectoryReplacesThePathStackWithASingleLevel.
+        await store.send(.path(.element(id: 0, action: .delegate(.openPath(path: "", title: "Home")))))
+        await store.receive(\.navigateToDirectory) { $0.path = StackState() }
     }
 
     @Test
@@ -311,17 +327,22 @@ struct FavoritesFeatureTests {
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/2020", title: "2020"))
         let pathIDs = state.path.ids
-        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let refreshed = FileItem(name: "New.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+        let access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
+        let firstGate = AsyncGate()
+        let secondGate = AsyncGate()
+        let browsed = LockIsolated<[String]>([])
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
         } withDependencies: {
-            $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
+            $0.filesClient.browse = { _, path in
+                browsed.withValue { $0.append(path) }
+                try await (path == "Photos" ? firstGate : secondGate).wait()
+                return BrowseResult(items: [refreshed], access: access, path: path)
             }
-            $0.filesClient.favorites = { _ in [] }
+            $0.filesClient.favorites = { _ in throw FilesClientError.offline }
         }
-        store.exhaustivity = .off
 
         await store.send(.syncPathStack)
         await store.receive(\.path[id: pathIDs[0]].refreshButtonTapped) {
@@ -330,6 +351,19 @@ struct FavoritesFeatureTests {
         await store.receive(\.path[id: pathIDs[1]].refreshButtonTapped) {
             $0.path[id: pathIDs[1]]?.phase = .loading
         }
+        // Each screen's answer is released in turn so its follow up actions arrive in a fixed order.
+        for (index, gate) in [firstGate, secondGate].enumerated() {
+            gate.open()
+            await store.receive(\.path[id: pathIDs[index]].itemsResponse.success) {
+                $0.path[id: pathIDs[index]]?.phase = .loaded
+                $0.path[id: pathIDs[index]]?.items = [refreshed]
+                $0.path[id: pathIDs[index]]?.access = access
+            }
+            await store.receive(\.path[id: pathIDs[index]].offlineAvailabilityComputed)
+        }
+        await store.finish()
+
+        #expect(Set(browsed.value) == ["Photos", "Photos/2020"])
     }
 
     @Test
@@ -355,15 +389,20 @@ struct FavoritesFeatureTests {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, _, _ in [] }
         }
-        store.exhaustivity = .off
 
         // The name filter over the favorite folders still applies (a query also kicks off the
         // recursive file search fan out, exercised in its own test).
-        await store.send(.searchQueryChanged("vaca"))
+        await store.send(.searchQueryChanged("vaca")) {
+            $0.searchQuery = "vaca"
+            $0.searchPhase = .loading
+        }
         #expect(store.state.displayedFavorites == [vacation])
 
         await clock.advance(by: .seconds(1))
-        await store.skipReceivedActions()
+        await store.receive(\.fileSearchResponse.success) {
+            $0.fileSearchResults = []
+            $0.searchPhase = .loaded
+        }
     }
 
     @Test
@@ -375,10 +414,13 @@ struct FavoritesFeatureTests {
         } withDependencies: {
             $0.filesClient.favorites = { _ in [second, first] }
         }
-        store.exhaustivity = .off
 
-        await store.send(.onAppear)
-        await store.skipReceivedActions()
+        await store.send(.onAppear) { $0.phase = .loading }
+        await store.receive(\.favoritesResponse.success) {
+            $0.phase = .loaded
+            $0.favorites = [first, second]
+        }
+        await store.receive(\.offlineAvailabilityComputed)
 
         #expect(store.state.displayedFavorites == [first, second])
     }
@@ -388,6 +430,11 @@ struct FavoritesFeatureTests {
         let a = makeFavorite(id: "a", path: "A", position: 0)
         let b = makeFavorite(id: "b", path: "B", position: 1)
         let c = makeFavorite(id: "c", path: "C", position: 2)
+        let reordered = [
+            makeFavorite(id: "c", path: "C", position: 0),
+            makeFavorite(id: "a", path: "A", position: 1),
+            makeFavorite(id: "b", path: "B", position: 2),
+        ]
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.favorites = [a, b, c]
 
@@ -397,20 +444,16 @@ struct FavoritesFeatureTests {
         } withDependencies: {
             $0.filesClient.reorderFavorites = { _, ids in
                 recorded.setValue(ids)
-                return ids.enumerated().map { index, id in
-                    Favorite(id: id, path: id, label: nil, icon: "folder", color: nil, position: index, createdAt: MockDate.date, updatedAt: MockDate.date)
-                }
+                return reordered
             }
         }
-        store.exhaustivity = .off
 
         // Move C to the front.
-        await store.send(.favoritesMoved(IndexSet(integer: 2), 0))
-        #expect(store.state.favorites.map(\.id) == ["c", "a", "b"])
+        await store.send(.favoritesMoved(IndexSet(integer: 2), 0)) { $0.favorites = [c, a, b] }
+        await store.receive(\.reorderResponse.success) { $0.favorites = IdentifiedArray(uniqueElements: reordered) }
+        await store.receive(.delegate(.favoritesChanged))
 
-        await store.skipReceivedActions()
         #expect(recorded.value == ["c", "a", "b"])
-        #expect(store.state.favorites.map(\.id) == ["c", "a", "b"])
     }
 
     @Test
@@ -426,13 +469,17 @@ struct FavoritesFeatureTests {
             $0.filesClient.reorderFavorites = { _, _ in throw FilesClientError.network("offline") }
             $0.filesClient.favorites = { _ in [a, b] }
         }
-        store.exhaustivity = .off
 
-        await store.send(.favoritesMoved(IndexSet(integer: 1), 0))
-        await store.skipReceivedActions()
-
-        #expect(store.state.actionErrorMessage == L10n.Favorites.reorderFailed)
-        #expect(store.state.favorites.map(\.id) == ["a", "b"])
+        await store.send(.favoritesMoved(IndexSet(integer: 1), 0)) { $0.favorites = [b, a] }
+        await store.receive(\.reorderResponse.failure) {
+            $0.actionErrorMessage = L10n.Favorites.reorderFailed
+            $0.phase = .loading
+        }
+        await store.receive(\.favoritesResponse.success) {
+            $0.phase = .loaded
+            $0.favorites = [a, b]
+        }
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     @Test
@@ -695,7 +742,7 @@ struct FavoritesFeatureTests {
         state.favorites = [makeFavorite(id: "1", path: "Bills"), makeFavorite(id: "2", path: "Photos")]
 
         let billsHit = SearchResultItem(name: "internet.pdf", path: "Bills", kind: "file")
-        let photosHit = SearchResultItem(name: "internet-plan.png", path: "Photos", kind: "file")
+        let photosHit = SearchResultItem(name: "photos-internet.png", path: "Photos", kind: "file")
         let clock = TestClock()
         let searchedPaths = LockIsolated<Set<String>>([])
 
@@ -712,19 +759,20 @@ struct FavoritesFeatureTests {
                 }
             }
         }
-        store.exhaustivity = .off
 
         await store.send(.searchQueryChanged("internet")) {
             $0.searchQuery = "internet"
             $0.searchPhase = .loading
         }
         await clock.advance(by: .seconds(1))
-        await store.receive(\.fileSearchResponse.success)
+        // Both hits merged into the results, alphabetically.
+        await store.receive(\.fileSearchResponse.success) {
+            $0.fileSearchResults = [billsHit, photosHit]
+            $0.searchPhase = .loaded
+        }
 
-        // One backend search per favorite, and both hits merged into the results.
+        // One backend search per favorite.
         #expect(searchedPaths.value == ["Bills", "Photos"])
-        #expect(Set(store.state.fileSearchResults?.ids ?? []) == [billsHit.id, photosHit.id])
-        #expect(store.state.searchPhase == .loaded)
     }
 
     @Test

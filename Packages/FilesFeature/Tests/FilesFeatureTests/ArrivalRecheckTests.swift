@@ -12,41 +12,56 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct ArrivalRecheckTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private typealias Store = TestStoreOf<BrowseFeature>
+
+    private let serverURL = URL(fileURLWithPath: "/")
     private let access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
+    private let recheckDelay = Duration.milliseconds(700)
 
     private nonisolated func file(_ name: String) -> FileItem {
-        FileItem(name: name, path: "Docs", dateModified: Date(timeIntervalSince1970: 1), size: 1, kind: "txt")
+        FileItem(name: name, path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
     }
 
+    /// The favorites fetch fails on purpose: production sends nothing for a failed fetch, which keeps
+    /// the action stream to the listing refetches this suite is about.
     private func store(
         listing: LockIsolated<[FileItem]>,
         fetches: LockIsolated<Int>,
         clock: TestClock<Duration>
-    ) -> TestStoreOf<BrowseFeature> {
+    ) -> Store {
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
         state.phase = .loaded
         state.access = access
         state.awaitedArrivalIDs = ["Docs/report (2).txt"]
         state.arrivalChecksLeft = 3
         let access = access
-        let store = TestStore(initialState: state) {
+        return TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.browse = { _, path in
                 fetches.withValue { $0 += 1 }
                 return BrowseResult(items: listing.value, access: access, path: path)
             }
-            $0.filesClient.favorites = { _ in [] }
+            $0.filesClient.favorites = { _ in throw FilesClientError.offline }
             $0.continuousClock = clock
-            $0.date = .constant(Date(timeIntervalSince1970: 3))
+            $0.date = .constant(MockDate.date)
         }
-        store.exhaustivity = .off
-        return store
     }
 
     private func listed(_ items: [FileItem]) -> BrowseResult {
         BrowseResult(items: items, access: access, path: "Docs")
+    }
+
+    /// Advances to the next recheck and receives the refetch it starts, up to the offline availability pass.
+    private func recheck(_ store: Store, clock: TestClock<Duration>, expectingItems items: [FileItem], then update: @escaping (inout BrowseFeature.State) -> Void) async {
+        await clock.advance(by: recheckDelay)
+        await store.receive(\.refreshButtonTapped) { $0.phase = .loading }
+        await store.receive(\.itemsResponse.success) {
+            $0.phase = .loaded
+            $0.items = IdentifiedArray(uniqueElements: items)
+            update(&$0)
+        }
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     @Test
@@ -58,19 +73,20 @@ struct ArrivalRecheckTests {
         let clock = TestClock<Duration>()
         let store = store(listing: listing, fetches: fetches, clock: clock)
 
-        await store.send(.itemsResponse(.success(listed([report]))))
-        #expect(store.state.awaitedArrivalIDs == ["Docs/report (2).txt"])
-        #expect(store.state.arrivalChecksLeft == 2)
+        await store.send(.itemsResponse(.success(listed([report])))) {
+            $0.items = IdentifiedArray(uniqueElements: [report])
+            $0.arrivalChecksLeft = 2
+        }
+        await store.receive(\.offlineAvailabilityComputed)
         #expect(fetches.value == 0)
 
         listing.setValue([report, copy])
-        await clock.advance(by: .seconds(1))
-        await store.receive(\.refreshButtonTapped)
-        await store.receive(\.itemsResponse.success)
+        await recheck(store, clock: clock, expectingItems: [copy, report]) {
+            $0.awaitedArrivalIDs = []
+            $0.arrivalChecksLeft = 0
+        }
         await store.finish()
 
-        #expect(store.state.items.map(\.name) == ["report (2).txt", "report.txt"])
-        #expect(store.state.awaitedArrivalIDs.isEmpty)
         #expect(fetches.value == 1)
     }
 
@@ -82,18 +98,17 @@ struct ArrivalRecheckTests {
         let clock = TestClock<Duration>()
         let store = store(listing: listing, fetches: fetches, clock: clock)
 
-        await store.send(.itemsResponse(.success(listed([report]))))
-        for _ in 0 ..< 3 {
-            await clock.advance(by: .seconds(1))
-            await store.receive(\.refreshButtonTapped)
-            await store.receive(\.itemsResponse.success)
+        await store.send(.itemsResponse(.success(listed([report])))) {
+            $0.items = IdentifiedArray(uniqueElements: [report])
+            $0.arrivalChecksLeft = 2
         }
+        await store.receive(\.offlineAvailabilityComputed)
+        await recheck(store, clock: clock, expectingItems: [report]) { $0.arrivalChecksLeft = 1 }
+        await recheck(store, clock: clock, expectingItems: [report]) { $0.arrivalChecksLeft = 0 }
+        await recheck(store, clock: clock, expectingItems: [report]) { $0.awaitedArrivalIDs = [] }
         await store.finish()
 
         #expect(fetches.value == 3)
-        #expect(store.state.awaitedArrivalIDs.isEmpty)
-        #expect(store.state.arrivalChecksLeft == 0)
-        #expect(store.state.items.map(\.name) == ["report.txt"])
     }
 
     @Test
@@ -104,11 +119,14 @@ struct ArrivalRecheckTests {
         let clock = TestClock<Duration>()
         let store = store(listing: LockIsolated([report, copy]), fetches: fetches, clock: clock)
 
-        await store.send(.itemsResponse(.success(listed([report, copy]))))
+        await store.send(.itemsResponse(.success(listed([report, copy])))) {
+            $0.items = IdentifiedArray(uniqueElements: [copy, report])
+            $0.awaitedArrivalIDs = []
+            $0.arrivalChecksLeft = 0
+        }
+        await store.receive(\.offlineAvailabilityComputed)
         await store.finish()
 
-        #expect(store.state.awaitedArrivalIDs.isEmpty)
-        #expect(store.state.arrivalChecksLeft == 0)
         #expect(fetches.value == 0)
     }
 }

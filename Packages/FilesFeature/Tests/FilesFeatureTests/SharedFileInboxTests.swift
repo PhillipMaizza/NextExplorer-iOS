@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 @testable import FilesFeature
 import Foundation
+import Localization
 import ShareUploads
 import Testing
 import TestUtils
@@ -11,17 +12,23 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct SharedFileInboxTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private typealias Review = UploadReviewFeature.State
+
+    private let serverURL = URL(fileURLWithPath: "/")
     private let user = User(id: "1", username: "jdoe", email: nil, roles: [])
     private let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
     private let receipt = URL(fileURLWithPath: "/tmp/Receipt.jpg")
 
-    private nonisolated static func staging(_ names: [String]) -> UploadStagingClient {
+    private nonisolated static func picked(_ name: String) -> PickedFile {
+        PickedFile(id: TestID.uuid(), fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: 10)
+    }
+
+    private nonisolated static func staging(_ files: [PickedFile]) -> UploadStagingClient {
         UploadStagingClient(
             stageDocuments: { _ in
                 AsyncStream<PickedFile> { continuation in
-                    for name in names {
-                        continuation.yield(PickedFile(id: TestID.uuid(), fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: 10))
+                    for file in files {
+                        continuation.yield(file)
                     }
                     continuation.finish()
                 }
@@ -33,19 +40,44 @@ struct SharedFileInboxTests {
         )
     }
 
+    private func browseStore(
+        directoryPath: String = "Documents",
+        title: String = "Documents",
+        state configure: (inout BrowseFeature.State) -> Void = { _ in },
+        dependencies: (inout DependencyValues) -> Void
+    ) -> TestStoreOf<BrowseFeature> {
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: directoryPath, title: title)
+        configure(&state)
+        return TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            dependencies(&$0)
+        }
+    }
+
+    /// Receives a batch of one file staged into the open review: counted as preparing, landing, then drained.
+    private func receiveStaging(_ store: TestStoreOf<BrowseFeature>, _ file: PickedFile) async {
+        await store.receive(\.uploadReview.presented.stage) { $0.uploadReview?.preparingCount = 1 }
+        await store.receive(\.uploadReview.presented.filePrepared) {
+            $0.uploadReview?.files = [file]
+            $0.uploadReview?.preparingCount = 0
+        }
+        await store.receive(\.uploadReview.presented.stagingBatchFinished)
+    }
+
     // MARK: Happy path
 
     @Test
     func sharedFilesDrainIntoAnUploadReviewOnTheBrowseTab() async {
+        let file = Self.picked("Scan.pdf")
         var state = MainTabFeature.State(serverURL: serverURL, user: user)
         state.selectedTab = .settings
         state.$sharedFileInbox.withLock { $0 = [scan] }
         let store = TestStore(initialState: state) {
             MainTabFeature()
         } withDependencies: {
-            $0.uploadStaging = Self.staging(["Scan.pdf"])
+            $0.uploadStaging = Self.staging([file])
         }
-        store.exhaustivity = .off
 
         await store.send(.sharedFilesArrived) {
             $0.selectedTab = .browse
@@ -54,44 +86,56 @@ struct SharedFileInboxTests {
         await store.receive(\.browse.receiveSharedFiles)
         await store.receive(\.browse.root.receiveSharedFiles)
         // Finder or Files hands over no folder, so they go to the review sheet.
-        await store.receive(\.browse.root.reviewSharedFiles)
+        await store.receive(\.browse.root.reviewSharedFiles) {
+            $0.browse.root.uploadReview = Review(serverURL: serverURL, startingDestination: "")
+        }
+        await store.receive(\.browse.root.uploadReview.presented.stage) {
+            $0.browse.root.uploadReview?.preparingCount = 1
+        }
+        await store.receive(\.browse.root.uploadReview.presented.filePrepared) {
+            $0.browse.root.uploadReview?.files = [file]
+            $0.browse.root.uploadReview?.preparingCount = 0
+        }
         await store.receive(\.browse.root.uploadReview.presented.stagingBatchFinished)
-        #expect(store.state.browse.root.uploadReview?.files.map(\.fileName) == ["Scan.pdf"])
     }
 
     @Test
     func sharedFilesGoToTheTopmostPushedScreen() async {
+        let file = Self.picked("Scan.pdf")
         var state = BrowseTabFeature.State(serverURL: serverURL)
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents"))
         let store = TestStore(initialState: state) {
             BrowseTabFeature()
         } withDependencies: {
-            $0.uploadStaging = Self.staging(["Scan.pdf"])
+            $0.uploadStaging = Self.staging([file])
         }
-        store.exhaustivity = .off
 
         await store.send(.receiveSharedFiles([scan]))
         await store.receive(\.path[id: 0].receiveSharedFiles)
+        await store.receive(\.path[id: 0].reviewSharedFiles) {
+            $0.path[id: 0]?.uploadReview = Review(serverURL: serverURL, startingDestination: "Documents")
+        }
+        await store.receive(\.path[id: 0].uploadReview.presented.stage) {
+            $0.path[id: 0]?.uploadReview?.preparingCount = 1
+        }
+        await store.receive(\.path[id: 0].uploadReview.presented.filePrepared) {
+            $0.path[id: 0]?.uploadReview?.files = [file]
+            $0.path[id: 0]?.uploadReview?.preparingCount = 0
+        }
         await store.receive(\.path[id: 0].uploadReview.presented.stagingBatchFinished)
         #expect(store.state.root.uploadReview == nil)
-        #expect(store.state.path[id: 0]?.uploadReview?.destination == "Documents")
     }
 
     @Test
     func moreSharedFilesJoinTheReviewAlreadyOpen() async {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")
-        state.uploadReview = UploadReviewFeature.State(serverURL: serverURL, startingDestination: "Documents")
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.uploadStaging = Self.staging(["Receipt.jpg"])
-        }
-        store.exhaustivity = .off
+        let file = Self.picked("Receipt.jpg")
+        let store = browseStore(
+            state: { $0.uploadReview = Review(serverURL: serverURL, startingDestination: "Documents") },
+            dependencies: { $0.uploadStaging = Self.staging([file]) }
+        )
 
         await store.send(.receiveSharedFiles([receipt]))
-        await store.receive(\.uploadReview.presented.stage)
-        await store.receive(\.uploadReview.presented.stagingBatchFinished)
-        #expect(store.state.uploadReview?.files.map(\.fileName) == ["Receipt.jpg"])
+        await receiveStaging(store, file)
     }
 
     // MARK: Edge cases
@@ -107,74 +151,90 @@ struct SharedFileInboxTests {
 
     @Test
     func anOpenPreviewClosesBeforeTheReviewOpens() async {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.previewItem = FileItem(name: "Notes.txt", path: "", dateModified: MockDate.date, size: 1, kind: "txt")
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.uploadStaging = Self.staging(["Scan.pdf"])
-        }
-        store.exhaustivity = .off
+        let file = Self.picked("Scan.pdf")
+        let store = browseStore(
+            directoryPath: "",
+            title: "Browse",
+            state: { $0.previewItem = FileItem(name: "Notes.txt", path: "", dateModified: MockDate.date, size: 1, kind: "txt") },
+            dependencies: { $0.uploadStaging = Self.staging([file]) }
+        )
 
         await store.send(.receiveSharedFiles([scan]))
-        await store.receive(\.previewDismissed) {
-            $0.previewItem = nil
+        await store.receive(\.previewDismissed) { $0.previewItem = nil }
+        await store.receive(\.reviewSharedFiles) {
+            $0.uploadReview = Review(serverURL: serverURL, startingDestination: "")
         }
-        await store.receive(\.reviewSharedFiles)
-        #expect(store.state.uploadReview != nil)
+        await receiveStaging(store, file)
     }
 
     // MARK: Settings > Shared Files
 
     @Test
     func theReviewStartsInTheDefaultFolder() async {
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.uploadStaging = Self.staging(["Scan.pdf"])
+        let file = Self.picked("Scan.pdf")
+        let store = browseStore {
+            $0.uploadStaging = Self.staging([file])
             $0.uploadDefaults = .inMemory(["account": UploadDefaults(folderPath: "Inbox/Scans")], activeAccountID: "account")
         }
-        store.exhaustivity = .off
 
         await store.send(.receiveSharedFiles([scan]))
-        await store.receive(\.reviewSharedFiles)
-        #expect(store.state.uploadReview?.destination == "Inbox/Scans")
+        await store.receive(\.reviewSharedFiles) {
+            $0.uploadReview = Review(serverURL: serverURL, startingDestination: "Inbox/Scans")
+        }
+        await receiveStaging(store, file)
     }
 
     @Test
     func uploadWithoutAskingSkipsTheReview() async {
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.uploadStaging = Self.staging(["Scan.pdf"])
+        let file = Self.picked("Scan.pdf")
+        let store = browseStore {
+            $0.uploadStaging = Self.staging([file])
             $0.uploadDefaults = .inMemory(
                 ["account": UploadDefaults(folderPath: "Inbox/Scans", shouldUploadWithoutAsking: true)],
                 activeAccountID: "account"
             )
         }
-        store.exhaustivity = .off
 
         await store.send(.receiveSharedFiles([scan]))
         await store.receive(\.directUploadStaged)
-        await store.receive(\.delegate)
+        await store.receive(.delegate(.uploadRequested([
+            PendingUpload(id: file.id, fileURL: file.fileURL, fileName: "Scan.pdf", destination: "Inbox/Scans"),
+        ])))
+        #expect(store.state.uploadReview == nil)
+    }
+
+    @Test
+    func uploadWithoutAskingReportsAnErrorWhenNothingCouldBeStaged() async {
+        let store = browseStore {
+            $0.uploadStaging = Self.staging([])
+            $0.uploadDefaults = .inMemory(
+                ["account": UploadDefaults(folderPath: "Inbox/Scans", shouldUploadWithoutAsking: true)],
+                activeAccountID: "account"
+            )
+        }
+
+        await store.send(.receiveSharedFiles([scan]))
+        await store.receive(\.directUploadStaged) {
+            $0.fileActionErrorMessage = L10n.Uploads.stagingFailed
+        }
         #expect(store.state.uploadReview == nil)
     }
 
     @Test
     func anotherAccountsDefaultFolderIsNeverUsed() async {
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.uploadStaging = Self.staging(["Scan.pdf"])
+        let file = Self.picked("Scan.pdf")
+        let store = browseStore {
+            $0.uploadStaging = Self.staging([file])
             $0.uploadDefaults = .inMemory(
                 ["someone else": UploadDefaults(folderPath: "Theirs", shouldUploadWithoutAsking: true)],
                 activeAccountID: "me"
             )
         }
-        store.exhaustivity = .off
 
         await store.send(.receiveSharedFiles([scan]))
-        await store.receive(\.reviewSharedFiles)
-        #expect(store.state.uploadReview?.destination == "Documents")
+        await store.receive(\.reviewSharedFiles) {
+            $0.uploadReview = Review(serverURL: serverURL, startingDestination: "Documents")
+        }
+        await receiveStaging(store, file)
     }
 }
