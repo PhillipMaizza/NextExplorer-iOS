@@ -54,7 +54,7 @@ struct VersionedFilesTests {
     func aDetailDecodesItsVersionsAndTotal() throws {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let detail = try decoder.decode(VersionedFileDetail.self, from: try CoreModelsFixture.versionedFilesDetailWithPinnedUnavailableVersion.data())
+        let detail = try decoder.decode(VersionedFileDetail.self, from: CoreModelsFixture.versionedFilesDetailWithPinnedUnavailableVersion.data())
 
         #expect(detail.versions.map(\.id) == [TestETag.first])
         #expect(detail.versions.first?.isPinned == true)

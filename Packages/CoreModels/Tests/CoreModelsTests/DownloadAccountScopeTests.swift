@@ -11,7 +11,7 @@ struct DownloadAccountScopeTests {
         let expected: String
     }
 
-    // Each expected value is the first 16 bytes of SHA256("<server url>\n<user id>") in hex.
+    /// Each expected value is the first 16 bytes of SHA256("<server url>\n<user id>") in hex.
     private static let cases = [
         Case(serverURL: TestHost.serverURLString, userID: TestAccount.username, expected: "436be0c9b422c8fbf1109c9b784d62ae"),
         Case(serverURL: TestHost.serverURLString, userID: TestUser.alice, expected: "ca3a7aa61f638c98c6cf60832296a577"),
@@ -39,5 +39,4 @@ struct DownloadAccountScopeTests {
         #expect(identifier.count == 32)
         #expect(identifier.allSatisfy { "0123456789abcdef".contains($0) })
     }
-
 }

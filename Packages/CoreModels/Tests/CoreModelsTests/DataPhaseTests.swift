@@ -29,5 +29,4 @@ struct DataPhaseTests {
         #expect(testCase.phase.errorMessage == testCase.errorMessage)
         #expect(testCase.phase.shouldLoadOnAppear == testCase.shouldLoadOnAppear)
     }
-
 }

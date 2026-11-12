@@ -129,13 +129,13 @@ struct SharedGroupKeychainStoreFailureTests {
 private struct KeyListingUnsupportedStore: KeychainStore {
     let items: [String: Data]
 
-    func save(key: String, data: Data) throws {}
+    func save(key _: String, data _: Data) throws {}
 
     func load(key: String) throws -> Data? {
         items[key]
     }
 
-    func delete(key: String) throws {}
+    func delete(key _: String) throws {}
 }
 
 private enum Constants {

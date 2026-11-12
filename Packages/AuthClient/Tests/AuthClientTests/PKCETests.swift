@@ -1,6 +1,6 @@
+@testable import AuthClient
 import CryptoKit
 import Foundation
-@testable import AuthClient
 import Testing
 
 @Suite("PKCE")

@@ -2,8 +2,8 @@ import Foundation
 import Localization
 @testable import ShareUploads
 import Testing
-import UserNotifications
 import TestUtils
+import UserNotifications
 
 @Suite("Upload notifications")
 struct UploadNotificationTests {

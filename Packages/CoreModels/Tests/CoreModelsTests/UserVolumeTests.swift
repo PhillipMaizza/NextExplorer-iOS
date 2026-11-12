@@ -29,5 +29,4 @@ struct UserVolumeTests {
             AdminDirectory(name: "media", path: "/mnt/media"),
         ])
     }
-
 }

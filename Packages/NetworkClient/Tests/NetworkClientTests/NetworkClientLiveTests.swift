@@ -12,7 +12,7 @@ struct NetworkClientLiveTests {
 
     @Test("returns the response body and HTTPURLResponse on success")
     func successReturnsBodyAndResponse() async throws {
-        StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: try NetworkClientFixture.responseOkTrue.data())
+        StubURLProtocol.stub = try .init(statusCode: 200, headers: [:], body: NetworkClientFixture.responseOkTrue.data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
         let request = URLRequest(url: URL(string: Constants.statusURLString)!)

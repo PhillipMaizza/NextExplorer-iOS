@@ -76,7 +76,9 @@ struct NetworkClientNonHTTPTests {
     @Test("a non URLError is kept as a transport failure with its own description")
     func nonURLErrorIsTransport() {
         struct Failure: LocalizedError {
-            var errorDescription: String? { TestFailure.offline }
+            var errorDescription: String? {
+                TestFailure.offline
+            }
         }
         #expect(NetworkError.from(Failure()) == .transport(TestFailure.offline))
     }

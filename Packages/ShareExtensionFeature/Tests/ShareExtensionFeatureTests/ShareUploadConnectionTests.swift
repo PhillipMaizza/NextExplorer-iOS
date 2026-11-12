@@ -23,7 +23,7 @@ extension ShareUploadFeatureTests {
         ) -> Store {
             let cookies = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(TestID.name())")
             cookies.cookieAcceptPolicy = .always
-            let store = TestStore(initialState: ShareUploadFeature.State()) {
+            return TestStore(initialState: ShareUploadFeature.State()) {
                 ShareUploadFeature()
             } withDependencies: {
                 $0.sharedItems.count = { 1 }
@@ -46,7 +46,6 @@ extension ShareUploadFeatureTests {
                 ])
                 $0.cookieStorage = cookies
             }
-            return store
         }
 
         @Test(arguments: [

@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
@@ -95,7 +95,7 @@ struct TrashSettingsValidationTests: TrashSettingsTestSupport {
         let store = store(state: loadedState())
 
         await store.send(.versionFieldChanged(testCase.field, testCase.text)) {
-            self.settingText(testCase.text, on: testCase.field, in: &$0.versionsDraft)
+            settingText(testCase.text, on: testCase.field, in: &$0.versionsDraft)
         }
 
         #expect(store.state.isVersionsInvalid)

@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
@@ -26,7 +26,7 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
         let store = store(
             settings: { SystemSettings(trash: trash, versions: versions) },
             zones: {
-                try await self.zonesGate.wait()
+                try await zonesGate.wait()
                 return [zone]
             }
         )
@@ -68,7 +68,7 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
     ])
     func aResponseWithoutBothSectionsIsUnavailable(_ response: SystemSettings) async {
         let store = store(settings: { response }, zones: {
-            try await self.zonesGate.wait()
+            try await zonesGate.wait()
             return []
         })
 
@@ -89,7 +89,7 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
     @Test
     func aSettingsFailureIsTheFailedPhase() async {
         let store = store(settings: { throw FilesClientError.server(statusCode: 500) }, zones: {
-            try await self.zonesGate.wait()
+            try await zonesGate.wait()
             return []
         })
 
@@ -107,7 +107,7 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
         let store = store(settings: {
             SystemSettings(trash: TrashSettings(), versions: VersionsSettings())
         }, zones: {
-            try await self.zonesGate.wait()
+            try await zonesGate.wait()
             throw FilesClientError.offline
         })
 
@@ -134,7 +134,7 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
         let store = store(state: state, settings: {
             SystemSettings(trash: TrashSettings(retentionDays: 7), versions: VersionsSettings(maxPerFile: 5))
         }, zones: {
-            try await self.zonesGate.wait()
+            try await zonesGate.wait()
             return []
         })
 

@@ -9,7 +9,6 @@ import TestUtils
 /// a dead session, a rate limit and no connection. Nested in `FilesClientLiveTests` so it inherits `.serialized`:
 /// every live client suite shares `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientRouteFailureTests: FilesClientLiveHarness {
         enum Route: CaseIterable, Sendable {
             private static let userID = "u1"

@@ -7,7 +7,7 @@ import TestUtils
     import Localization
     import Testing
     import TestUtils
-    
+
     @Suite(.isolatedDependencies)
     @MainActor
     struct MacDirectUploadTests {

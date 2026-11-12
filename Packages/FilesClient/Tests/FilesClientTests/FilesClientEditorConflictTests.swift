@@ -9,7 +9,6 @@ import TestUtils
 /// Editor ETag conflict detection (HEAD preflight, overwrite, ETag bookkeeping) through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientEditorConflictTests: FilesClientLiveHarness {
         @Test
         func savingAnUnchangedFileRevalidatesWithTheOpenETagThenWrites() async throws {

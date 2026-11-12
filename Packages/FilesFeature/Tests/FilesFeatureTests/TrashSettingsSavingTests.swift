@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
@@ -126,7 +126,7 @@ struct TrashSettingsSavingTests: TrashSettingsTestSupport {
         let store = store(
             state: loadedState(),
             settings: {
-                try await self.settingsGate.wait()
+                try await settingsGate.wait()
                 return SystemSettings(trash: TrashSettings(retentionDays: 1), versions: VersionsSettings())
             },
             update: { _ in SystemSettings(trash: echoed, versions: VersionsSettings()) }

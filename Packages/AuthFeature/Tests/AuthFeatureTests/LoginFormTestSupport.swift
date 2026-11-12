@@ -47,7 +47,7 @@ enum LoginFormTestSupport {
         await clock.advance(by: .seconds(0.25))
         await store.receive(\.submitSucceeded) { $0.submitPhase = .success }
         await clock.advance(by: .seconds(0.5))
-        await store.receive(.delegate(.authenticated(user, try url(serverURL))))
+        try await store.receive(.delegate(.authenticated(user, url(serverURL))))
     }
 
     /// Waits out the failure beat and the error dismissal of a failed sign in.

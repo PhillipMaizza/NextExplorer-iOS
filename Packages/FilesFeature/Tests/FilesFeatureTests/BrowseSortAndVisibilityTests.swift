@@ -32,7 +32,9 @@ struct BrowseSortAndVisibilityTests {
         let items: [FileItem]
         let expected: [String]
 
-        var testDescription: String { "\(option) \(direction)" }
+        var testDescription: String {
+            "\(option) \(direction)"
+        }
     }
 
     private nonisolated static let older = BrowseFixtures.file("older.txt", modified: MockDate.date)
@@ -98,7 +100,9 @@ struct BrowseSortAndVisibilityTests {
         let showHiddenFiles: Bool
         let expected: Set<String>
 
-        var testDescription: String { "showHiddenFiles \(showHiddenFiles)" }
+        var testDescription: String {
+            "showHiddenFiles \(showHiddenFiles)"
+        }
     }
 
     private nonisolated static let hiddenCases = [

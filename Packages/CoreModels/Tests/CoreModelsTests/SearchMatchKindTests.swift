@@ -39,5 +39,4 @@ struct SearchMatchKindTests {
         )
         #expect(item.matchKind == testCase.expected)
     }
-
 }

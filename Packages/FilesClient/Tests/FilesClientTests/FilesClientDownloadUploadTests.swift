@@ -9,7 +9,6 @@ import TestUtils
 /// Raw download, item download and multipart upload through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientDownloadUploadTests: FilesClientLiveHarness {
         func makeTempFile(_ name: String, contents: String) throws -> URL {
             let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name())-\(name)")

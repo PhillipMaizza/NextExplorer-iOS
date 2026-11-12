@@ -17,7 +17,9 @@ struct BrowsePrefetchTests {
     struct FreshnessCase: Sendable, CustomTestStringConvertible {
         let freshCount: Int
         let warmed: ClosedRange<Int>
-        var testDescription: String { "\(freshCount) fresh folders" }
+        var testDescription: String {
+            "\(freshCount) fresh folders"
+        }
     }
 
     private nonisolated static let freshnessCases = [
@@ -64,7 +66,9 @@ struct BrowsePrefetchTests {
                 $0.directoryCacheStore = directoryCacheStore
             } else {
                 $0.directoryCacheStore.lastWrittenAt = { _, path in
-                    if let age = cacheAges[path] { return MockDate.date.addingTimeInterval(-age) }
+                    if let age = cacheAges[path] {
+                        return MockDate.date.addingTimeInterval(-age)
+                    }
                     return freshPaths.contains(path) ? Date.distantFuture : Date.distantPast
                 }
             }

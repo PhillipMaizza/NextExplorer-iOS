@@ -7,7 +7,7 @@ extension FilesClientLiveHarness {
     /// Clears every stub and capture, then installs one answer for the next request.
     func prepare(statusCode: Int, fixture: FilesClientFixture) throws {
         resetStubs()
-        stub(statusCode: statusCode, body: try fixture.data())
+        try stub(statusCode: statusCode, body: fixture.data())
     }
 
     /// Clears every stub and capture, then installs an empty answer (a 204 style reply).

@@ -53,5 +53,4 @@ struct FileItemKindFlagsTests {
         #expect(item(kind: TestKind.text, size: 42).cacheSignature == "1700000000.0|42")
         #expect(item(kind: TestKind.text, dateModified: MockDate.date.addingTimeInterval(0.5), size: 0).cacheSignature == "1700000000.5|0")
     }
-
 }

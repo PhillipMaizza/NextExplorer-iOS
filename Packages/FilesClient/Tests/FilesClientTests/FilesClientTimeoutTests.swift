@@ -9,7 +9,6 @@ import TestUtils
 /// Timeout budgets and how timeouts are told apart from being offline, through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientTimeoutTests: FilesClientLiveHarness {
         @Test
         func aTimedOutMutationSurfacesAsTimedOutNotOffline() async {

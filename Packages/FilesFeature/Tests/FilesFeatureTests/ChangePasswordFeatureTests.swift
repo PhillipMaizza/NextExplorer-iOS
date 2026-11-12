@@ -262,7 +262,9 @@ struct ChangePasswordFeatureTests {
     func resubmittingAfterAFailureClearsTheOldError() async {
         let attempts = LockIsolated(0)
         let store = makeStore(change: {
-            if attempts.withValue({ $0 += 1; return $0 }) == 1 { throw FilesClientError.rateLimited }
+            if attempts.withValue({ $0 += 1; return $0 }) == 1 {
+                throw FilesClientError.rateLimited
+            }
         })
         await fillChange(store)
 

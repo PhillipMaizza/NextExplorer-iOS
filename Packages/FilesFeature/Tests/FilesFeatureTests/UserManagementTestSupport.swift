@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 enum UserManagementCall: Equatable, Sendable {
     case updateUser(id: String, request: UpdateUserRequest)
@@ -31,10 +31,17 @@ extension UserManagementTestSupport {
 
     typealias Call = UserManagementCall
 
-    var serverURL: URL { SettingsTestSupport.serverURL }
+    var serverURL: URL {
+        SettingsTestSupport.serverURL
+    }
 
-    var projects: UserVolume { UserVolume(id: TestETag.first, userId: "2", label: "Projects", path: "/srv/projects", accessMode: .readwrite) }
-    var media: UserVolume { UserVolume(id: "v9", userId: "2", label: TestFolder.media, path: "/srv/media", accessMode: .readonly) }
+    var projects: UserVolume {
+        UserVolume(id: TestETag.first, userId: "2", label: "Projects", path: "/srv/projects", accessMode: .readwrite)
+    }
+
+    var media: UserVolume {
+        UserVolume(id: "v9", userId: "2", label: TestFolder.media, path: "/srv/media", accessMode: .readonly)
+    }
 
     func makeUser(id: String, admin: Bool = false, password: Bool = true, oidc: Bool = false) -> User {
         var methods: [AuthMethod] = []

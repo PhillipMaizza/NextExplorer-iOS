@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @MainActor
 protocol TrashSettingsTestSupport {
@@ -22,8 +22,13 @@ extension TrashSettingsTestSupport {
     typealias Store = TestStoreOf<TrashSettingsFeature>
     typealias Field = TrashSettingsFeature.VersionField
 
-    var serverURL: URL { SettingsTestSupport.serverURL }
-    var gib: Int { 1_073_741_824 }
+    var serverURL: URL {
+        SettingsTestSupport.serverURL
+    }
+
+    var gib: Int {
+        1_073_741_824
+    }
 
     /// The settings and the volumes load side by side, so a test that loads both holds the
     /// answer it receives second until the first has been received.

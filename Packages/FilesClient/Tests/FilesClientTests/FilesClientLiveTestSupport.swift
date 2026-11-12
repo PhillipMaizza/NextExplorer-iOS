@@ -51,6 +51,6 @@ extension FilesClientLiveHarness {
         if let etag {
             headers[HTTPHeaderField.etag] = etag
         }
-        return .init(statusCode: statusCode, headers: headers, body: try fixture.data())
+        return try .init(statusCode: statusCode, headers: headers, body: fixture.data())
     }
 }

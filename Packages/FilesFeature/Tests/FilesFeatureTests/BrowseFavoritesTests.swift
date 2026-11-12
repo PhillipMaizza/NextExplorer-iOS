@@ -258,7 +258,9 @@ struct BrowseFavoritesTests {
         state.selectedItemIDs = [works.id, broken.id]
         let store = BrowseFixtures.store(state) {
             $0.filesClient.addFavorite = { _, path in
-                if path == "Broken" { throw FilesClientError.server(statusCode: 500) }
+                if path == "Broken" {
+                    throw FilesClientError.server(statusCode: 500)
+                }
                 return BrowseFixtures.favorite(path)
             }
         }

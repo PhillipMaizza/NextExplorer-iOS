@@ -8,7 +8,6 @@ import TestUtils
 /// The admin user management routes through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientAdminUserTests: FilesClientLiveHarness {
         private enum Constants {
             static let volumeID = "v1"
@@ -347,6 +346,5 @@ extension FilesClientLiveTests {
             #expect(features.editorExtensions == ["txt", "md"])
             #expect(features.maxUploadChunkSizeBytes == 5_242_880)
         }
-
     }
 }

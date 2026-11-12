@@ -28,7 +28,7 @@ struct ImageDownsamplingTests {
 
     @Test
     func theLongestSideIsScaledDownToTheRequestedPixelsKeepingTheAspectRatio() throws {
-        let image = ImageDownsampling.image(from: try sourceImageData(), maxPixelDimension: 50)
+        let image = try ImageDownsampling.image(from: sourceImageData(), maxPixelDimension: 50)
 
         #expect(try pixelSize(image) == CGSize(width: 50, height: 25))
     }

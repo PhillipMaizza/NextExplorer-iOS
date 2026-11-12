@@ -1,6 +1,6 @@
 import ComposableArchitecture
-import FolderPickerFeature
 @testable import FilesFeature
+import FolderPickerFeature
 import Foundation
 import ShareUploads
 import Testing

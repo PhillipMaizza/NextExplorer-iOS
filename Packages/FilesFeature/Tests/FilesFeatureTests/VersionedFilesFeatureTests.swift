@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
@@ -288,7 +288,9 @@ struct VersionedFilesFeatureTests {
         let attempts = LockIsolated(0)
         let detail = VersionedFileDetail(versions: [Self.version(TestETag.first)])
         let store = makeStore(loadedState(files: [file("f1")]), detail: { _ in
-            if attempts.withValue({ $0 += 1; return $0 }) == 1 { throw FilesClientError.offline }
+            if attempts.withValue({ $0 += 1; return $0 }) == 1 {
+                throw FilesClientError.offline
+            }
             return detail
         })
 

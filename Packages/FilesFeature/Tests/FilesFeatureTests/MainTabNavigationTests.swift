@@ -14,7 +14,9 @@ struct MainTabNavigationTests: MainTabTestSupport {
         let fromSettings: SettingsFeature.Action.Delegate
         let upward: MainTabFeature.Action.Delegate
 
-        var testDescription: String { "\(upward)" }
+        var testDescription: String {
+            "\(upward)"
+        }
     }
 
     @Test(

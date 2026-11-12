@@ -9,18 +9,17 @@ import TestUtils
 /// User preferences and admin system settings through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientPreferencesTests: FilesClientLiveHarness {
         @Test
         func fetchPreferencesFallsBackToDefaultsWhenUserKeyIsMissing() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.preferencesEmptyBranding.data())
+            try stub(statusCode: 200, body: FilesClientFixture.preferencesEmptyBranding.data())
             let preferences = try await makeClient().fetchPreferences(serverURL)
             #expect(preferences == UserPreferences())
         }
 
         @Test
         func fetchPreferencesFallsBackPerFieldWhenOnlyOneKeyIsPresent() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.preferencesShowHiddenFiles.data())
+            try stub(statusCode: 200, body: FilesClientFixture.preferencesShowHiddenFiles.data())
             let preferences = try await makeClient().fetchPreferences(serverURL)
             #expect(preferences == UserPreferences(showHiddenFiles: true, showThumbnails: true))
         }
@@ -39,7 +38,7 @@ extension FilesClientLiveTests {
 
         @Test
         func fetchSystemSettingsExtractsThumbnailsAndAccessRules() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.systemSettingsThumbnailsAndAccessRules.data())
+            try stub(statusCode: 200, body: FilesClientFixture.systemSettingsThumbnailsAndAccessRules.data())
 
             let settings = try await makeClient().fetchSystemSettings(serverURL)
 
@@ -52,7 +51,7 @@ extension FilesClientLiveTests {
 
         @Test
         func updateThumbnailSettingsPatchesTheThumbnailsObjectAndDecodesTheEcho() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.systemSettingsThumbnailsDisabledEcho.data())
+            try stub(statusCode: 200, body: FilesClientFixture.systemSettingsThumbnailsDisabledEcho.data())
             StubURLProtocol.capturedRequest = nil
 
             let echoed = try await makeClient().updateThumbnailSettings(
@@ -71,7 +70,7 @@ extension FilesClientLiveTests {
 
         @Test
         func updateAccessRulesSendsTheWholeArrayUnderAccessRules() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.systemSettingsHiddenAccessRuleEcho.data())
+            try stub(statusCode: 200, body: FilesClientFixture.systemSettingsHiddenAccessRuleEcho.data())
             StubURLProtocol.capturedRequest = nil
 
             let rules = [AccessRule(id: "local1", path: TestFolder.docs, isRecursive: false, permission: .hidden)]
@@ -89,7 +88,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aNonAdminSettingsPatchSurfacesThe403Message() async throws {
-            stub(statusCode: 403, body: try FilesClientFixture.systemSettingsErrorAdminRequired.data())
+            try stub(statusCode: 403, body: FilesClientFixture.systemSettingsErrorAdminRequired.data())
             await #expect(throws: FilesClientError.forbidden(message: "Admin access required for system settings.")) {
                 _ = try await makeClient().updateAccessRules(serverURL, [])
             }

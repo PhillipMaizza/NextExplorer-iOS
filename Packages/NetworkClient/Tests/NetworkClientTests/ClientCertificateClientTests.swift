@@ -46,7 +46,7 @@ struct ClientCertificateClientTests {
     }
 
     @Test("two default test clients never share installed certificates")
-    func testValueIsFreshEachTime() async throws {
+    func valueIsFreshEachTime() async throws {
         let one = ClientCertificateClient.testValue
         let other = ClientCertificateClient.testValue
         _ = try await one.install(Data(), "", first)

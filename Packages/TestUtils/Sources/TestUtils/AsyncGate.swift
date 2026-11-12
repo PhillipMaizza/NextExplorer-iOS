@@ -22,8 +22,12 @@ public final class AsyncGate: Sendable {
             try await withCheckedThrowingContinuation { continuation in
                 enum Outcome { case resume, cancel, park }
                 let outcome = state.withLock { state -> Outcome in
-                    if state.isOpen { return .resume }
-                    if Task.isCancelled { return .cancel }
+                    if state.isOpen {
+                        return .resume
+                    }
+                    if Task.isCancelled {
+                        return .cancel
+                    }
                     state.waiters[id] = continuation
                     return .park
                 }
@@ -45,7 +49,9 @@ public final class AsyncGate: Sendable {
             defer { state.waiters = [:] }
             return Array(state.waiters.values)
         }
-        for waiter in waiters { waiter.resume() }
+        for waiter in waiters {
+            waiter.resume()
+        }
     }
 }
 

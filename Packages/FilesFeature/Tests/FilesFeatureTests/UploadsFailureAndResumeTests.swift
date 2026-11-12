@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
@@ -20,11 +20,13 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     func aFailedUploadReportsNoChangedPathsAndCanBeRetried() async {
         let attempts = LockIsolated(0)
         let store = makeStore(state(), upload: { call, _ in
-            if attempts.withValue({ $0 += 1; return $0 }) == 1 { throw FilesClientError.server(statusCode: 500) }
+            if attempts.withValue({ $0 += 1; return $0 }) == 1 {
+                throw FilesClientError.server(statusCode: 500)
+            }
             return FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
         })
 
-        await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [self.job(TestFile.aText, 0, .queued)] }
+        await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Uploads.failedGeneric) }
         await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
@@ -42,12 +44,14 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     func failuresKeepTheBarUpAndRetryAllRequeuesThem() async {
         let failedOnce = LockIsolated<Set<String>>([])
         let store = makeStore(state(), upload: { call, _ in
-            if failedOnce.withValue({ $0.insert(call.fileName).inserted }) { throw FilesClientError.server(statusCode: 500) }
+            if failedOnce.withValue({ $0.insert(call.fileName).inserted }) {
+                throw FilesClientError.server(statusCode: 500)
+            }
             return FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0), pending(TestFile.bText, 1)])) {
-            $0.jobs = [self.job(TestFile.aText, 0, .queued), self.job(TestFile.bText, 1, .queued)]
+            $0.jobs = [job(TestFile.aText, 0, .queued), job(TestFile.bText, 1, .queued)]
         }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Uploads.failedGeneric) }
@@ -74,7 +78,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
 
     @Test
     func retryingAJobThatDidNotFailDoesNothing() async {
-        let store = makeStore(state([self.job(TestFile.aText, 0, .completed), self.job(TestFile.bText, 1, .queued)]))
+        let store = makeStore(state([job(TestFile.aText, 0, .completed), job(TestFile.bText, 1, .queued)]))
 
         await store.send(.retryTapped(id: UUID(0)))
         await store.send(.retryTapped(id: UUID(1)))
@@ -86,7 +90,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     @Test
     func manualRetryResetsTheAutomaticRetryCounter() async {
         let store = makeStore(
-            state([self.job(TestFile.aText, 0, .failed(TestFailure.offline), isTransportFailure: true, autoRetryCount: 3)]),
+            state([job(TestFile.aText, 0, .failed(TestFailure.offline), isTransportFailure: true, autoRetryCount: 3)]),
             upload: { _, _ in
                 try await suspendUntilCancelled()
                 throw CancellationError()
@@ -124,7 +128,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
         let error = testCase.error
         let store = makeStore(state(), upload: { _, _ in throw error })
 
-        await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [self.job(TestFile.aText, 0, .queued)] }
+        await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, testCase.message) }
         await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
@@ -139,7 +143,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     func aSessionExpiredUploadTripsTheAppWideExpiryFlag() async {
         @Shared(.inMemory(SessionExpiry.sharedKey)) var sessionDidExpire = false
         $sessionDidExpire.withLock { $0 = false }
-        let store = makeStore(state([self.job(TestFile.aText, 0, .queued)]), upload: { _, _ in throw FilesClientError.sessionExpired })
+        let store = makeStore(state([job(TestFile.aText, 0, .queued)]), upload: { _, _ in throw FilesClientError.sessionExpired })
 
         await store.send(.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Error.sessionExpired) }
@@ -152,11 +156,13 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     func appResumedRequeuesTransportFailuresAndTheRetryCanSucceed(_ error: FilesClientError) async {
         let attempts = LockIsolated(0)
         let store = makeStore(state(), upload: { call, _ in
-            if attempts.withValue({ $0 += 1; return $0 }) == 1 { throw error }
+            if attempts.withValue({ $0 += 1; return $0 }) == 1 {
+                throw error
+            }
             return FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
         })
 
-        await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [self.job(TestFile.aText, 0, .queued)] }
+        await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Uploads.failedGeneric, isTransportFailure: true) }
         await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
@@ -176,10 +182,10 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     @Test
     func appResumedRequeuesFailedJobsAndLeavesActiveUploadsAlone() async {
         let store = makeStore(state([
-            self.job(TestFile.aText, 0, .uploading),
-            self.job(TestFile.bText, 1, .failed("connection lost"), isTransportFailure: true),
-            self.job("c.txt", 2, .completed),
-            self.job("d.txt", 3, .queued),
+            job(TestFile.aText, 0, .uploading),
+            job(TestFile.bText, 1, .failed("connection lost"), isTransportFailure: true),
+            job("c.txt", 2, .completed),
+            job("d.txt", 3, .queued),
         ]))
 
         await store.send(.appResumed) {
@@ -200,7 +206,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     func appResumedRestartsAnUploadThatWedgedWellPastAPlausibleTransferTime() async {
         let wedgedAt = now.addingTimeInterval(-600)
         let store = makeStore(
-            state([self.job(TestFile.aText, 0, .uploading, startedAt: wedgedAt), self.job(TestFile.bText, 1, .queued)]),
+            state([job(TestFile.aText, 0, .uploading, startedAt: wedgedAt), job(TestFile.bText, 1, .queued)]),
             upload: { _, _ in
                 try await suspendUntilCancelled()
                 throw CancellationError()
@@ -218,7 +224,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
 
     @Test
     func anUploadJustUnderTheWedgeAgeIsLeftAlone() async {
-        let store = makeStore(state([self.job(TestFile.aText, 0, .uploading, startedAt: now.addingTimeInterval(-299))]))
+        let store = makeStore(state([job(TestFile.aText, 0, .uploading, startedAt: now.addingTimeInterval(-299))]))
 
         await store.send(.appResumed)
         await store.finish()
@@ -228,7 +234,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     @Test
     func appResumedDoesNotRequeueAJobWhoseSourceWasDeleted() async {
         let store = makeStore(
-            state([self.job("gone.txt", 0, .failed(TestFailure.offline), isTransportFailure: true)]),
+            state([job("gone.txt", 0, .failed(TestFailure.offline), isTransportFailure: true)]),
             isSourcePresent: false
         )
 
@@ -242,11 +248,13 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     func aTimedOutUploadWaitsForAManualRetryBecauseTheServerMayHaveStoredIt() async {
         let attempts = LockIsolated(0)
         let store = makeStore(state(), upload: { call, _ in
-            if attempts.withValue({ $0 += 1; return $0 }) == 1 { throw FilesClientError.timedOut }
+            if attempts.withValue({ $0 += 1; return $0 }) == 1 {
+                throw FilesClientError.timedOut
+            }
             return FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
         })
 
-        await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [self.job(TestFile.aText, 0, .queued)] }
+        await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Uploads.failedGeneric) }
         await store.receive(\.delegate)
@@ -264,7 +272,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
 
     @Test
     func aWedgedUploadAtTheRetryCapFailsAndAnnouncesTheDrainedQueue() async {
-        let store = makeStore(state([self.job(TestFile.aText, 0, .uploading, autoRetryCount: 3, startedAt: now.addingTimeInterval(-600))]))
+        let store = makeStore(state([job(TestFile.aText, 0, .uploading, autoRetryCount: 3, startedAt: now.addingTimeInterval(-600))]))
 
         await store.send(.appResumed) { markFailed(&$0, 0, L10n.Uploads.failedGeneric) }
         await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
@@ -275,7 +283,7 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     @Test
     func aFailedJobAtTheRetryCapKeepsItsRealError() async {
         let store = makeStore(state([
-            self.job(TestFile.aText, 0, .failed("Quota exceeded"), isTransportFailure: true, autoRetryCount: 3),
+            job(TestFile.aText, 0, .failed("Quota exceeded"), isTransportFailure: true, autoRetryCount: 3),
         ]))
 
         await store.send(.appResumed) { $0.jobs[id: UUID(0)]?.isTransportFailure = false }

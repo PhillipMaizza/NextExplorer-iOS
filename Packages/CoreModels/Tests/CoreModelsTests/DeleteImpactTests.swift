@@ -17,5 +17,4 @@ struct DeleteImpactTests {
             try CoreModelsFixture.deleteImpactMissingShareCount.decode(DeleteImpact.self)
         }
     }
-
 }

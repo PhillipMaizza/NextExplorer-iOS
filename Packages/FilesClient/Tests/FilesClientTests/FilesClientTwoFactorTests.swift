@@ -32,7 +32,7 @@ extension FilesClientLiveTests {
 
         @Test
         func statusIsReadFromTheTotpRoute() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.twoFactorStatusEnabled.string())
+            try stub(statusCode: 200, body: FilesClientFixture.twoFactorStatusEnabled.string())
 
             let status = try await makeClient().fetchTwoFactorStatus(serverURL)
 
@@ -45,7 +45,7 @@ extension FilesClientLiveTests {
 
         @Test
         func beginningSetupPostsAnEmptyObjectAndDecodesTheSecret() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.twoFactorSetupSecret.string())
+            try stub(statusCode: 200, body: FilesClientFixture.twoFactorSetupSecret.string())
 
             let setup = try await makeClient().beginTwoFactorSetup(serverURL)
 
@@ -58,7 +58,7 @@ extension FilesClientLiveTests {
 
         @Test
         func beginningSetupWithoutAPasswordSessionSurfacesTheMessage() async throws {
-            stub(statusCode: 403, body: try FilesClientFixture.twoFactorErrorPasswordRequired.string())
+            try stub(statusCode: 403, body: FilesClientFixture.twoFactorErrorPasswordRequired.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 403, message: "Sign in with your password")) {
                 try await makeClient().beginTwoFactorSetup(serverURL)
@@ -67,7 +67,7 @@ extension FilesClientLiveTests {
 
         @Test
         func beginningSetupWhenAlreadyOnIsAConflict() async throws {
-            stub(statusCode: 409, body: try FilesClientFixture.twoFactorErrorAlreadyEnabled.string())
+            try stub(statusCode: 409, body: FilesClientFixture.twoFactorErrorAlreadyEnabled.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 409, message: "Already enabled")) {
                 try await makeClient().beginTwoFactorSetup(serverURL)
@@ -76,7 +76,7 @@ extension FilesClientLiveTests {
 
         @Test
         func confirmingPostsTheCodeAndReturnsTheRecoveryCodes() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.twoFactorRecoveryCodesTwo.string())
+            try stub(statusCode: 200, body: FilesClientFixture.twoFactorRecoveryCodesTwo.string())
 
             let codes = try await makeClient().confirmTwoFactorSetup(serverURL, TestAccount.totpCode)
 
@@ -89,7 +89,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aWrongCodeIsAnErrorWithTheServersMessageNotAnExpiredSession() async throws {
-            stub(statusCode: 401, body: try FilesClientFixture.twoFactorErrorInvalidCode.string())
+            try stub(statusCode: 401, body: FilesClientFixture.twoFactorErrorInvalidCode.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "Invalid code")) {
                 try await makeClient().confirmTwoFactorSetup(serverURL, TestAccount.invalidTotpCode)
@@ -98,7 +98,7 @@ extension FilesClientLiveTests {
 
         @Test
         func anUnreadableConfirmationIsADecodingError() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonUnexpectedKeyUnexpected.string())
+            try stub(statusCode: 200, body: FilesClientFixture.commonUnexpectedKeyUnexpected.string())
 
             await #expect(throws: FilesClientError.self) {
                 try await makeClient().confirmTwoFactorSetup(serverURL, TestAccount.totpCode)
@@ -107,7 +107,7 @@ extension FilesClientLiveTests {
 
         @Test
         func replacingRecoveryCodesPostsThePassword() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.twoFactorRecoveryCodesOne.string())
+            try stub(statusCode: 200, body: FilesClientFixture.twoFactorRecoveryCodesOne.string())
 
             let codes = try await makeClient().replaceRecoveryCodes(serverURL, TestAccount.password)
 
@@ -132,7 +132,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aWrongPasswordWhenDisablingSurfacesTheMessage() async throws {
-            stub(statusCode: 401, body: try FilesClientFixture.twoFactorErrorIncorrectPassword.string())
+            try stub(statusCode: 401, body: FilesClientFixture.twoFactorErrorIncorrectPassword.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "Incorrect password")) {
                 try await makeClient().disableTwoFactor(serverURL, TestAccount.rejectedPassword)

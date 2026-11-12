@@ -36,7 +36,9 @@ import TestUtils
             let action: BrowseFeature.Action
             let expected: FolderContentsChange?
 
-            var testDescription: String { name }
+            var testDescription: String {
+                name
+            }
         }
 
         private nonisolated static let item = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)

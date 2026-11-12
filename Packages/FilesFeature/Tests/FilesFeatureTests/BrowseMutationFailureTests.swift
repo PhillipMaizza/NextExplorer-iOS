@@ -14,7 +14,9 @@ struct BrowseMutationFailureTests {
     struct AmbiguityCase: Sendable, CustomTestStringConvertible {
         let error: FilesClientError
         let isAmbiguous: Bool
-        var testDescription: String { "\(error)" }
+        var testDescription: String {
+            "\(error)"
+        }
     }
 
     private nonisolated static let ambiguityCases: [AmbiguityCase] =
@@ -24,19 +26,19 @@ struct BrowseMutationFailureTests {
                 AmbiguityCase(error: .serverMessage(statusCode: status, message: "Gateway"), isAmbiguous: true),
             ]
         }
-            + [400, 401, 403, 404, 409, 413, 415, 429, 500, 501].flatMap { status in
-                [
-                    AmbiguityCase(error: .server(statusCode: status), isAmbiguous: false),
-                    AmbiguityCase(error: .serverMessage(statusCode: status, message: "No"), isAmbiguous: false),
-                ]
-            }
-            + [
-                AmbiguityCase(error: .timedOut, isAmbiguous: true),
-                AmbiguityCase(error: .offline, isAmbiguous: false),
-                AmbiguityCase(error: .sessionExpired, isAmbiguous: false),
-                AmbiguityCase(error: .rateLimited, isAmbiguous: false),
-                AmbiguityCase(error: .changedOnServer, isAmbiguous: false),
+        + [400, 401, 403, 404, 409, 413, 415, 429, 500, 501].flatMap { status in
+            [
+                AmbiguityCase(error: .server(statusCode: status), isAmbiguous: false),
+                AmbiguityCase(error: .serverMessage(statusCode: status, message: "No"), isAmbiguous: false),
             ]
+        }
+        + [
+            AmbiguityCase(error: .timedOut, isAmbiguous: true),
+            AmbiguityCase(error: .offline, isAmbiguous: false),
+            AmbiguityCase(error: .sessionExpired, isAmbiguous: false),
+            AmbiguityCase(error: .rateLimited, isAmbiguous: false),
+            AmbiguityCase(error: .changedOnServer, isAmbiguous: false),
+        ]
 
     private nonisolated static let ambiguousErrors: [FilesClientError] = [
         .timedOut,

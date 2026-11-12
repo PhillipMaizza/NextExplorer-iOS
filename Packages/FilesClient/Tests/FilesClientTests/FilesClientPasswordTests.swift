@@ -29,7 +29,7 @@ extension FilesClientLiveTests {
 
         @Test
         func addOwnPasswordPostsOnlyThePasswordToTheAddRoute() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.passwordAddedMessage.string())
+            try stub(statusCode: 200, body: FilesClientFixture.passwordAddedMessage.string())
 
             try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
 
@@ -43,7 +43,7 @@ extension FilesClientLiveTests {
 
         @Test
         func anAccountThatAlreadyHasAPasswordSurfacesTheServersMessage() async throws {
-            stub(statusCode: 409, body: try FilesClientFixture.passwordErrorAlreadyExists.string())
+            try stub(statusCode: 409, body: FilesClientFixture.passwordErrorAlreadyExists.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 409, message: "You already have password authentication.")) {
                 try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
@@ -52,7 +52,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aTooShortPasswordSurfacesTheServersMessage() async throws {
-            stub(statusCode: 400, body: try FilesClientFixture.passwordErrorTooShort.string())
+            try stub(statusCode: 400, body: FilesClientFixture.passwordErrorTooShort.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Password must be at least 6 characters long.")) {
                 try await makeClient().addOwnPassword(serverURL, "abc")
@@ -81,7 +81,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aWrongCurrentPasswordIsItsMessageNotASessionExpiry() async throws {
-            stub(statusCode: 401, body: try FilesClientFixture.passwordErrorCurrentIncorrect.string())
+            try stub(statusCode: 401, body: FilesClientFixture.passwordErrorCurrentIncorrect.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "Current password is incorrect.")) {
                 try await makeClient().changeOwnPassword(serverURL, TestAccount.wrongPassword, Constants.newPassword)
@@ -92,7 +92,7 @@ extension FilesClientLiveTests {
 
         @Test
         func authMethodsDecodesTheEnvelope() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.signInMethodLocalPassword.string())
+            try stub(statusCode: 200, body: FilesClientFixture.signInMethodLocalPassword.string())
 
             let methods = try await makeClient().fetchAuthMethods(serverURL)
 
@@ -104,7 +104,7 @@ extension FilesClientLiveTests {
 
         @Test
         func authMethodsOfASingleSignOnAccountHaveNoPassword() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.signInMethodOidcPocketId.string())
+            try stub(statusCode: 200, body: FilesClientFixture.signInMethodOidcPocketId.string())
 
             let methods = try await makeClient().fetchAuthMethods(serverURL)
 
@@ -113,7 +113,7 @@ extension FilesClientLiveTests {
 
         @Test
         func authMethodsWithAnEmptyListIsNoPassword() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.signInMethodEmpty.string())
+            try stub(statusCode: 200, body: FilesClientFixture.signInMethodEmpty.string())
 
             #expect(try await makeClient().fetchAuthMethods(serverURL).isEmpty)
         }
@@ -122,7 +122,7 @@ extension FilesClientLiveTests {
 
         @Test
         func authStatusReadsWhetherPasswordSignInIsOn() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.authStatusOidcOnly.string())
+            try stub(statusCode: 200, body: FilesClientFixture.authStatusOidcOnly.string())
 
             let status = try await makeClient().fetchAuthStatus(serverURL)
 
@@ -135,14 +135,14 @@ extension FilesClientLiveTests {
 
         @Test
         func authStatusWithPasswordSignInOnIsLocalEnabled() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.authStatusLocalAndOidc.string())
+            try stub(statusCode: 200, body: FilesClientFixture.authStatusLocalAndOidc.string())
 
             #expect(try await makeClient().fetchAuthStatus(serverURL).isLocalEnabled)
         }
 
         @Test
         func authStatusWithAMalformedBodyIsADecodingError() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonUnexpectedKeyNope.string())
+            try stub(statusCode: 200, body: FilesClientFixture.commonUnexpectedKeyNope.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().fetchAuthStatus(serverURL)

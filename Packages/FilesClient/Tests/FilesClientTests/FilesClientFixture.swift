@@ -5,6 +5,7 @@ enum FilesClientFixture: String, FixtureFile {
     static let bundle = Bundle.module
 
     // MARK: admin-users
+
     case adminUsersListTwo = "admin-users/list-two"
     case adminUsersSingle = "admin-users/single"
     case adminUsersVolumesTwo = "admin-users/volumes-two"
@@ -15,11 +16,13 @@ enum FilesClientFixture: String, FixtureFile {
     case adminUsersErrorLastAdmin = "admin-users/error-last-admin"
 
     // MARK: activity-log
+
     case activityLogClearedTwelve = "activity-log/cleared-twelve"
     case activityLogDisabledEmpty = "activity-log/disabled-empty"
     case activityLogEnabledEmpty = "activity-log/enabled-empty"
 
     // MARK: api-token
+
     case apiTokenErrorLimitReached = "api-token/error-limit-reached"
     case apiTokenErrorNoAccounts = "api-token/error-no-accounts"
     case apiTokenErrorNotFound = "api-token/error-not-found"
@@ -30,22 +33,26 @@ enum FilesClientFixture: String, FixtureFile {
     case apiTokenSingle = "api-token/single"
 
     // MARK: auth-status
+
     case authStatusLocalAndOidc = "auth-status/local-and-oidc"
     case authStatusOidcOnly = "auth-status/oidc-only"
 
     // MARK: branding
+
     case brandingGetCustom = "branding/get-custom"
     case brandingSettingsCustom = "branding/settings-custom"
     case brandingLogoUploaded = "branding/logo-uploaded"
     case brandingErrorLogoRejected = "branding/error-logo-rejected"
 
     // MARK: browse
+
     case browseDocsDirectory = "browse/docs-directory"
     case browseEmptyDocsWithAccess = "browse/empty-docs-with-access"
     case browseErrorVolumeAccessDenied = "browse/error-volume-access-denied"
     case browseVolumesList = "browse/volumes-list"
 
     // MARK: common
+
     case commonEmptyArray = "common/empty-array"
     case commonEmptyObject = "common/empty-object"
     case commonErrorAdminRequired = "common/error-admin-required"
@@ -56,19 +63,23 @@ enum FilesClientFixture: String, FixtureFile {
     case commonUnexpectedKeyUnexpected = "common/unexpected-key-unexpected"
 
     // MARK: editor
+
     case editorContentHi = "editor/content-hi"
     case editorContentTheirs = "editor/content-theirs"
 
     // MARK: favorite
+
     case favoriteErrorOrderMismatch = "favorite/error-order-mismatch"
     case favoriteListTwo = "favorite/list-two"
     case favoriteStar = "favorite/star"
     case favoriteUpdated = "favorite/updated"
 
     // MARK: features
+
     case featuresUserVolumesEnabled = "features/user-volumes-enabled"
 
     // MARK: item-mutation
+
     case itemMutationArchiveStartLine = "item-mutation/archive-start-line"
     case itemMutationCompressedBundleDirectory = "item-mutation/compressed-bundle-directory"
     case itemMutationCompressedDocumentsZip = "item-mutation/compressed-documents-zip"
@@ -84,39 +95,47 @@ enum FilesClientFixture: String, FixtureFile {
     case itemMutationTransferToOther = "item-mutation/transfer-to-other"
 
     // MARK: metadata
+
     case metadataDirectorySummary = "metadata/directory-summary"
     case metadataHashTagDirectory = "metadata/hash-tag-directory"
     case metadataPlainFile = "metadata/plain-file"
 
     // MARK: offline
+
     case offlineCorruptManifest = "offline/corrupt-manifest"
     case offlineLegacyManifest = "offline/legacy-manifest"
 
     // MARK: password
+
     case passwordAddedMessage = "password/added-message"
     case passwordErrorAlreadyExists = "password/error-already-exists"
     case passwordErrorCurrentIncorrect = "password/error-current-incorrect"
     case passwordErrorTooShort = "password/error-too-short"
 
     // MARK: permissions
+
     case permissionsFile644 = "permissions/file-644"
     case permissionsErrorDenied = "permissions/error-denied"
     case permissionsErrorInvalidMode = "permissions/error-invalid-mode"
 
     // MARK: preferences
+
     case preferencesEmptyBranding = "preferences/empty-branding"
     case preferencesShowHiddenFiles = "preferences/show-hidden-files"
 
     // MARK: preview
+
     case previewThumbnailEmpty = "preview/thumbnail-empty"
     case previewThumbnailPreviewQuery = "preview/thumbnail-preview-query"
     case previewThumbnailStaticPath = "preview/thumbnail-static-path"
 
     // MARK: search
+
     case searchMixedMatches = "search/mixed-matches"
     case searchSingleDirectory = "search/single-directory"
 
     // MARK: share
+
     case shareCreated = "share/created"
     case shareErrorExpiryInPast = "share/error-expiry-in-past"
     case shareErrorNotFound = "share/error-not-found"
@@ -126,11 +145,13 @@ enum FilesClientFixture: String, FixtureFile {
     case shareShareableUsers = "share/shareable-users"
 
     // MARK: sign-in-method
+
     case signInMethodEmpty = "sign-in-method/empty"
     case signInMethodLocalPassword = "sign-in-method/local-password"
     case signInMethodOidcPocketId = "sign-in-method/oidc-pocket-id"
 
     // MARK: system-settings
+
     case systemSettingsErrorAdminRequired = "system-settings/error-admin-required"
     case systemSettingsHiddenAccessRuleEcho = "system-settings/hidden-access-rule-echo"
     case systemSettingsSearchIndex = "system-settings/search-index"
@@ -139,15 +160,18 @@ enum FilesClientFixture: String, FixtureFile {
     case systemSettingsUploadsChunked = "system-settings/uploads-chunked"
 
     // MARK: text-content
+
     case textContentHelloWorld = "text-content/hello-world"
 
     // MARK: trash
+
     case trashTrashAndVersionsSettings = "trash/trash-and-versions-settings"
     case trashVerificationViolations = "trash/verification-violations"
     case trashZonesEmpty = "trash/zones-empty"
     case trashZonesOneVolume = "trash/zones-one-volume"
 
     // MARK: two-factor
+
     case twoFactorErrorAlreadyEnabled = "two-factor/error-already-enabled"
     case twoFactorErrorIncorrectPassword = "two-factor/error-incorrect-password"
     case twoFactorErrorInvalidCode = "two-factor/error-invalid-code"
@@ -158,15 +182,18 @@ enum FilesClientFixture: String, FixtureFile {
     case twoFactorStatusEnabled = "two-factor/status-enabled"
 
     // MARK: upload
+
     case uploadErrorForbidden = "upload/error-forbidden"
     case uploadRenamedNotesCopy = "upload/renamed-notes-copy"
     case uploadRenamedWeirdName = "upload/renamed-weird-name"
 
     // MARK: versioned-files
+
     case versionedFilesFilesEmpty = "versioned-files/files-empty"
     case versionedFilesPageEmpty = "versioned-files/page-empty"
 
     // MARK: versions
+
     case versionsDeletionRemainingOne = "versions/deletion-remaining-one"
     case versionsDeletionRemainingZero = "versions/deletion-remaining-zero"
     case versionsDeletionResult = "versions/deletion-result"

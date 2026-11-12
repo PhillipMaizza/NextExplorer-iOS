@@ -395,7 +395,7 @@ struct LoginFormFeatureTests {
         await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
         await store.receive(\.oidcResponse) { $0.oidcPhase = .success }
         await clock.advance(by: .seconds(0.5))
-        await store.receive(.delegate(.authenticated(ssoUser, try Support.url(LoginFormConstants.ssoURLString))))
+        try await store.receive(.delegate(.authenticated(ssoUser, Support.url(LoginFormConstants.ssoURLString))))
 
         #expect(requested.value == [LoginFormConstants.ssoURLString])
     }

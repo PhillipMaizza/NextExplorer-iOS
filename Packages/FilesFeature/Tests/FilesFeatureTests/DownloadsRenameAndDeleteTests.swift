@@ -162,7 +162,9 @@ struct DownloadsRenameAndDeleteTests {
         } withDependencies: {
             $0.localDownloadStore.delete = { url in
                 deleted.withValue { $0.append(url) }
-                if url == stuck.url { throw CocoaError(.fileWriteNoPermission) }
+                if url == stuck.url {
+                    throw CocoaError(.fileWriteNoPermission)
+                }
             }
         }
 

@@ -144,7 +144,9 @@ struct BrowseTabFeatureTests {
         let fromScreen: BrowseFeature.Action.Delegate
         let upward: BrowseTabFeature.Action.Delegate
 
-        var testDescription: String { "\(upward)" }
+        var testDescription: String {
+            "\(upward)"
+        }
     }
 
     private nonisolated static let upload = PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: TestFile.aText, destination: TestFolder.docs)

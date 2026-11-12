@@ -45,8 +45,7 @@ struct OfflineDownloadsRun {
 }
 
 @MainActor
-protocol OfflineDownloadsTestSupport {
-}
+protocol OfflineDownloadsTestSupport {}
 
 extension OfflineDownloadsTestSupport {
     typealias State = OfflineDownloadsFeature.State
@@ -55,7 +54,9 @@ extension OfflineDownloadsTestSupport {
     typealias BrowseHold = OfflineDownloadsBrowseHold
     typealias Run = OfflineDownloadsRun
 
-    var serverURL: URL { URL(fileURLWithPath: "/") }
+    var serverURL: URL {
+        URL(fileURLWithPath: "/")
+    }
 
     nonisolated func folder(_ name: String, path: String = "") -> FileItem {
         FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)

@@ -9,7 +9,6 @@ import TestUtils
 /// Preview, thumbnail and preview cache behavior through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientPreviewTests: FilesClientLiveHarness {
         /// A distinct name per call (`UUID`-suffixed) keeps each test's cache slot
         /// (`Library/Caches/PreviewCache/<item.id>`) isolated from every other test and from any
@@ -50,28 +49,28 @@ extension FilesClientLiveTests {
 
         @Test
         func thumbnailURLResolvesAStaticCachedPathAgainstTheServerURL() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.previewThumbnailStaticPath.data())
+            try stub(statusCode: 200, body: FilesClientFixture.previewThumbnailStaticPath.data())
             let url = try await makeClient().thumbnailURL(serverURL, Constants.vacationPhoto)
             #expect(url == URL(string: "https://example.com/static/thumbnails/abc123.webp"))
         }
 
         @Test
         func thumbnailURLResolvesThePreviewFallbackPath() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.previewThumbnailPreviewQuery.data())
+            try stub(statusCode: 200, body: FilesClientFixture.previewThumbnailPreviewQuery.data())
             let url = try await makeClient().thumbnailURL(serverURL, Constants.vacationPhoto)
             #expect(url?.absoluteString == "https://example.com/api/preview?path=Photos%2Fvacation.jpg")
         }
 
         @Test
         func thumbnailURLReturnsNilForAnEmptyThumbnailStringRatherThanAnError() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.previewThumbnailEmpty.data())
+            try stub(statusCode: 200, body: FilesClientFixture.previewThumbnailEmpty.data())
             let url = try await makeClient().thumbnailURL(serverURL, TestFile.notes)
             #expect(url == nil)
         }
 
         @Test
         func thumbnailURLPercentEncodesEachPathSegment() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.previewThumbnailEmpty.data())
+            try stub(statusCode: 200, body: FilesClientFixture.previewThumbnailEmpty.data())
             StubURLProtocol.capturedRequest = nil
             _ = try await makeClient().thumbnailURL(serverURL, "My Docs/#tag.jpg")
             let url = try #require(StubURLProtocol.capturedRequest?.url)

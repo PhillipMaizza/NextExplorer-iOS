@@ -8,7 +8,6 @@ import TestUtils
 /// Share link and favorites routes through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientShareRouteTests: FilesClientLiveHarness {
         private enum Constants {
             static let firstFavoriteID = "f1"

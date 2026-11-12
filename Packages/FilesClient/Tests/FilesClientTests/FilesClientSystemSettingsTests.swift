@@ -27,7 +27,7 @@ extension FilesClientLiveTests {
 
         @Test
         func patchSendsOnlyTheSectionsSetAndDecodesTheEcho() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.systemSettingsSearchIndex.string())
+            try stub(statusCode: 200, body: FilesClientFixture.systemSettingsSearchIndex.string())
 
             let echoed = try await makeClient().updateSystemSettings(serverURL, SystemSettingsPatch(searchIndex: .init(enabled: true)))
 
@@ -42,7 +42,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aNonAdminPatchSurfacesTheServersMessage() async throws {
-            stub(statusCode: 403, body: try FilesClientFixture.commonErrorAdminRequired.string())
+            try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().updateSystemSettings(serverURL, SystemSettingsPatch(ffmpeg: .init(ffmpegPath: "/a")))
@@ -51,7 +51,7 @@ extension FilesClientLiveTests {
 
         @Test
         func theUploadsEchoCarriesTheSavedChunkSize() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.systemSettingsUploadsChunked.string())
+            try stub(statusCode: 200, body: FilesClientFixture.systemSettingsUploadsChunked.string())
 
             let echoed = try await makeClient().updateSystemSettings(
                 serverURL, SystemSettingsPatch(uploads: UploadSettings(isChunkedEnabled: true, chunkSizeBytes: 33_554_432))
@@ -82,7 +82,7 @@ extension FilesClientLiveTests {
 
         @Test
         func fetchSendsOnlyTheFiltersThatAreSetAndEncodesTheSearch() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.activityLogEnabledEmpty.string())
+            try stub(statusCode: 200, body: FilesClientFixture.activityLogEnabledEmpty.string())
 
             _ = try await makeClient().fetchActivity(
                 serverURL, ActivityFilter(action: "file.delete", outcome: .refused, query: " a+b&c "), "2026-11-11T07:10:00.000Z"
@@ -101,7 +101,7 @@ extension FilesClientLiveTests {
 
         @Test
         func anEmptyFilterSendsOnlyTheLimit() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.activityLogDisabledEmpty.string())
+            try stub(statusCode: 200, body: FilesClientFixture.activityLogDisabledEmpty.string())
 
             _ = try await makeClient().fetchActivity(serverURL, ActivityFilter(), nil)
 
@@ -111,7 +111,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aNonAdminFetchFails() async throws {
-            stub(statusCode: 403, body: try FilesClientFixture.commonErrorAdminRequired.string())
+            try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().fetchActivity(serverURL, ActivityFilter(), nil)
@@ -120,7 +120,7 @@ extension FilesClientLiveTests {
 
         @Test
         func clearIssuesADeleteToTheActivityRoute() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.activityLogClearedTwelve.string())
+            try stub(statusCode: 200, body: FilesClientFixture.activityLogClearedTwelve.string())
 
             try await makeClient().clearActivity(serverURL)
 
@@ -159,7 +159,7 @@ extension FilesClientLiveTests {
 
         @Test
         func zonesAreReadFromTheZonesRoute() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.trashZonesOneVolume.string())
+            try stub(statusCode: 200, body: FilesClientFixture.trashZonesOneVolume.string())
 
             let zones = try await makeClient().fetchTrashZones(serverURL)
 
@@ -171,7 +171,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aNonAdminZonesRequestFails() async throws {
-            stub(statusCode: 403, body: try FilesClientFixture.commonErrorAdminRequired.string())
+            try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().fetchTrashZones(serverURL)
@@ -180,7 +180,7 @@ extension FilesClientLiveTests {
 
         @Test
         func verifyPostsAndReadsEachZonesViolations() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.trashVerificationViolations.string())
+            try stub(statusCode: 200, body: FilesClientFixture.trashVerificationViolations.string())
 
             let results = try await makeClient().verifyTrash(serverURL)
 
@@ -192,7 +192,7 @@ extension FilesClientLiveTests {
 
         @Test
         func maintenancePostsToTheMaintenanceRoute() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.trashZonesEmpty.string())
+            try stub(statusCode: 200, body: FilesClientFixture.trashZonesEmpty.string())
 
             try await makeClient().runTrashMaintenance(serverURL)
 
@@ -212,7 +212,7 @@ extension FilesClientLiveTests {
 
         @Test
         func theTrashAndVersionsSectionsGoOutInOnePatch() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.trashTrashAndVersionsSettings.string())
+            try stub(statusCode: 200, body: FilesClientFixture.trashTrashAndVersionsSettings.string())
 
             let echoed = try await makeClient().updateSystemSettings(
                 serverURL,
@@ -255,7 +255,7 @@ extension FilesClientLiveTests {
 
         @Test
         func theListSendsTheFiltersTheSortAndThePage() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionedFilesPageEmpty.string())
+            try stub(statusCode: 200, body: FilesClientFixture.versionedFilesPageEmpty.string())
 
             _ = try await makeClient().fetchVersionedFiles(
                 serverURL,
@@ -276,7 +276,7 @@ extension FilesClientLiveTests {
 
         @Test
         func theFirstPageSendsNoOffsetAndNoEmptyFilters() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionedFilesFilesEmpty.string())
+            try stub(statusCode: 200, body: FilesClientFixture.versionedFilesFilesEmpty.string())
 
             _ = try await makeClient().fetchVersionedFiles(serverURL, VersionedFilesFilter(), 0, 25)
 
@@ -290,7 +290,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aNonAdminListFails() async throws {
-            stub(statusCode: 403, body: try FilesClientFixture.commonErrorAdminRequired.string())
+            try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().fetchVersionedFiles(serverURL, VersionedFilesFilter(), 0, 25)
@@ -299,7 +299,7 @@ extension FilesClientLiveTests {
 
         @Test
         func oneHistoryIsReadByItsID() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionsEmptyWithTotals.string())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsEmptyWithTotals.string())
 
             _ = try await makeClient().fetchVersionedFile(serverURL, "f1")
 
@@ -309,7 +309,7 @@ extension FilesClientLiveTests {
 
         @Test
         func deletingNamedVersionsPostsTheirIDs() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionsDeletionRemainingOne.string())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsDeletionRemainingOne.string())
 
             let outcome = try await makeClient().deleteVersionsOfFile(serverURL, "f1", [TestETag.first, TestETag.second])
 
@@ -325,7 +325,7 @@ extension FilesClientLiveTests {
 
         @Test
         func deletingEveryVersionPostsAllTrueAndNoIDs() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionsDeletionRemainingZero.string())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsDeletionRemainingZero.string())
 
             _ = try await makeClient().deleteVersionsOfFile(serverURL, "f1", nil)
 
@@ -337,7 +337,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aFailedDeletionSurfacesTheMessage() async throws {
-            stub(statusCode: 404, body: try FilesClientFixture.versionsErrorHistoryMissing.string())
+            try stub(statusCode: 404, body: FilesClientFixture.versionsErrorHistoryMissing.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().deleteVersionsOfFile(serverURL, "gone", nil)
@@ -346,7 +346,7 @@ extension FilesClientLiveTests {
 
         @Test
         func anIDWithASlashStaysOneSegmentOfTheRoute() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionsEmptyWithTotals.string())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsEmptyWithTotals.string())
 
             _ = try await makeClient().fetchVersionedFile(serverURL, "a/../b")
 

@@ -12,16 +12,22 @@ struct MainTabSource: Sendable, CustomTestStringConvertible {
     let name: String
     let action: MainTabFeature.Action
 
-    var testDescription: String { name }
+    var testDescription: String {
+        name
+    }
 }
 
 @MainActor
-protocol MainTabTestSupport {
-}
+protocol MainTabTestSupport {}
 
 extension MainTabTestSupport {
-    var serverURL: URL { BrowseTestSupport.serverURL }
-    var user: User { User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: []) }
+    var serverURL: URL {
+        BrowseTestSupport.serverURL
+    }
+
+    var user: User {
+        User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+    }
 
     func makeState(_ mutate: (inout MainTabFeature.State) -> Void = { _ in }) -> MainTabFeature.State {
         var state = MainTabFeature.State(serverURL: serverURL, user: user)

@@ -96,7 +96,9 @@ import TestUtils
             let destination: String
             let canWrite: Bool
 
-            var testDescription: String { name }
+            var testDescription: String {
+                name
+            }
         }
 
         @Test(

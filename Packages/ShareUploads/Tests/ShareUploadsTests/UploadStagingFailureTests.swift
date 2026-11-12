@@ -2,8 +2,8 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
-import UniformTypeIdentifiers
 import TestUtils
+import UniformTypeIdentifiers
 
 @Suite("Staging failures leave nothing behind")
 struct UploadStagingFailureTests {

@@ -32,7 +32,7 @@ extension FilesClientLiveTests {
 
         @Test
         func listReadsTheTokensEnvelope() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.apiTokenListOne.string())
+            try stub(statusCode: 200, body: FilesClientFixture.apiTokenListOne.string())
 
             let tokens = try await makeClient().fetchAPITokens(serverURL)
 
@@ -44,13 +44,13 @@ extension FilesClientLiveTests {
 
         @Test
         func listOfNoTokensIsEmpty() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.apiTokenListEmpty.string())
+            try stub(statusCode: 200, body: FilesClientFixture.apiTokenListEmpty.string())
             #expect(try await makeClient().fetchAPITokens(serverURL).isEmpty)
         }
 
         @Test
         func aTokenCallerOrAnInstallationWithoutAccountsSurfacesTheMessage() async throws {
-            stub(statusCode: 403, body: try FilesClientFixture.apiTokenErrorNoAccounts.string())
+            try stub(statusCode: 403, body: FilesClientFixture.apiTokenErrorNoAccounts.string())
 
             await #expect(throws: FilesClientError.self) {
                 try await makeClient().fetchAPITokens(serverURL)
@@ -59,7 +59,7 @@ extension FilesClientLiveTests {
 
         @Test
         func createSendsEveryFieldAndReturnsTheSecret() async throws {
-            stub(statusCode: 201, body: try FilesClientFixture.apiTokenIssued.string())
+            try stub(statusCode: 201, body: FilesClientFixture.apiTokenIssued.string())
 
             let issued = try await makeClient().createAPIToken(serverURL, Constants.tokenName, .write, 30, TestAccount.password)
 
@@ -76,7 +76,7 @@ extension FilesClientLiveTests {
 
         @Test
         func createOmitsThePasswordAndTheExpiryWhenThereAreNone() async throws {
-            stub(statusCode: 201, body: try FilesClientFixture.apiTokenIssued.string())
+            try stub(statusCode: 201, body: FilesClientFixture.apiTokenIssued.string())
 
             _ = try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, nil)
 
@@ -86,7 +86,7 @@ extension FilesClientLiveTests {
 
         @Test
         func aWrongPasswordIsAMessageNotAnExpiredSession() async throws {
-            stub(statusCode: 401, body: try FilesClientFixture.apiTokenErrorWrongPassword.string())
+            try stub(statusCode: 401, body: FilesClientFixture.apiTokenErrorWrongPassword.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "That password is not right.")) {
                 try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, TestAccount.rejectedPassword)
@@ -95,7 +95,7 @@ extension FilesClientLiveTests {
 
         @Test
         func tooManyTokensSurfacesTheServersMessage() async throws {
-            stub(statusCode: 400, body: try FilesClientFixture.apiTokenErrorLimitReached.string())
+            try stub(statusCode: 400, body: FilesClientFixture.apiTokenErrorLimitReached.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "This account already holds 50 tokens. Revoke one before issuing another.")) {
                 try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, nil)
@@ -104,7 +104,7 @@ extension FilesClientLiveTests {
 
         @Test
         func anUnreadableCreateReplyIsADecodingError() async throws {
-            stub(statusCode: 201, body: try FilesClientFixture.commonUnexpectedKeyUnexpected.string())
+            try stub(statusCode: 201, body: FilesClientFixture.commonUnexpectedKeyUnexpected.string())
 
             await #expect(throws: FilesClientError.self) {
                 try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, nil)
@@ -113,7 +113,7 @@ extension FilesClientLiveTests {
 
         @Test
         func renamePatchesTheNameOnTheTokensRoute() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.apiTokenSingle.string())
+            try stub(statusCode: 200, body: FilesClientFixture.apiTokenSingle.string())
 
             let token = try await makeClient().renameAPIToken(serverURL, TestAPIToken.id, Constants.nightlyTokenName)
 
@@ -126,7 +126,7 @@ extension FilesClientLiveTests {
 
         @Test
         func renamingATokenThatIsGoneSurfacesNotFound() async throws {
-            stub(statusCode: 404, body: try FilesClientFixture.apiTokenErrorNotFound.string())
+            try stub(statusCode: 404, body: FilesClientFixture.apiTokenErrorNotFound.string())
 
             await #expect(throws: FilesClientError.self) {
                 try await makeClient().renameAPIToken(serverURL, "gone", "x")
@@ -147,7 +147,7 @@ extension FilesClientLiveTests {
 
         @Test
         func revokingATokenThatIsGoneSurfacesTheMessage() async throws {
-            stub(statusCode: 404, body: try FilesClientFixture.apiTokenErrorNotFound.string())
+            try stub(statusCode: 404, body: FilesClientFixture.apiTokenErrorNotFound.string())
 
             await #expect(throws: FilesClientError.self) {
                 try await makeClient().revokeAPIToken(serverURL, "gone")

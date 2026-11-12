@@ -7,7 +7,9 @@ import Testing
 /// so the tests of one suite still share them and race each other on process wide in memory state while
 /// Swift Testing runs them in parallel. This trait scopes each test case instead.
 public struct IsolatedDependenciesTrait: SuiteTrait, TestTrait, TestScoping {
-    public var isRecursive: Bool { true }
+    public var isRecursive: Bool {
+        true
+    }
 
     public init() {}
 
@@ -29,5 +31,7 @@ public struct IsolatedDependenciesTrait: SuiteTrait, TestTrait, TestScoping {
 }
 
 public extension Trait where Self == IsolatedDependenciesTrait {
-    static var isolatedDependencies: Self { Self() }
+    static var isolatedDependencies: Self {
+        Self()
+    }
 }

@@ -9,7 +9,6 @@ import TestUtils
 /// Text content reads and writes, including offline reads of a pinned copy, through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientTextContentTests: FilesClientLiveHarness {
         func pinnedTextClient(scope: String, bytes: Data) throws -> FilesClient {
             let pinned = FileItem(name: "n.txt", path: TestFolder.docs, dateModified: MockDate.date, size: Int64(bytes.count), kind: TestKind.text)
@@ -26,7 +25,7 @@ extension FilesClientLiveTests {
 
         @Test
         func fetchTextContentDecodesTheContentFieldAndSendsTheFullPath() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.textContentHelloWorld.data())
+            try stub(statusCode: 200, body: FilesClientFixture.textContentHelloWorld.data())
             StubURLProtocol.capturedRequest = nil
 
             let content = try await makeClient().fetchTextContent(serverURL, Constants.docsMarkdown)
@@ -57,7 +56,7 @@ extension FilesClientLiveTests {
 
         @Test
         func saveTextContentSendsThePathAndContentAsAPUTBody() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonSuccessTrue.data())
+            try stub(statusCode: 200, body: FilesClientFixture.commonSuccessTrue.data())
             StubURLProtocol.capturedRequest = nil
 
             try await makeClient().saveTextContent(serverURL, Constants.docsMarkdown, Constants.updatedContent)
@@ -80,7 +79,7 @@ extension FilesClientLiveTests {
 
         @Test
         func saveTextContentWithEmptyContentStillSendsTheRequest() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonSuccessTrue.data())
+            try stub(statusCode: 200, body: FilesClientFixture.commonSuccessTrue.data())
             StubURLProtocol.capturedRequest = nil
 
             try await makeClient().saveTextContent(serverURL, "Docs/empty.txt", "")

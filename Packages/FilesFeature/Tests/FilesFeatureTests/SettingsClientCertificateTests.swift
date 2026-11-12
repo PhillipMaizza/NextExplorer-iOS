@@ -5,8 +5,8 @@ import CoreModels
 import Foundation
 import Localization
 import NetworkClient
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor

@@ -9,11 +9,10 @@ import TestUtils
 /// `browse`, conditional GET, prefetch and `search` through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientBrowseTests: FilesClientLiveHarness {
         @Test
         func browseDecodesASuccessfulResponse() async throws {
-            stub(statusCode: 200, body: try browseResultJSON)
+            try stub(statusCode: 200, body: browseResultJSON)
             let result = try await makeClient().browse(serverURL, "")
             #expect(result.items.map(\.name) == [TestFolder.docs])
             #expect(result.access.canRead == true)
@@ -21,7 +20,7 @@ extension FilesClientLiveTests {
 
         @Test
         func browsePreservesListingWhenAnOutsideSymlinkHasNullSize() async throws {
-            var body = try #require(JSONSerialization.jsonObject(with: try browseResultJSON) as? [String: Any])
+            var body = try #require(try JSONSerialization.jsonObject(with: browseResultJSON) as? [String: Any])
             var items = try #require(body["items"] as? [[String: Any]])
             var entry = try #require(items.first)
             entry["name"] = "outside-link"
@@ -41,7 +40,7 @@ extension FilesClientLiveTests {
 
         @Test
         func browseDecodesFractionalSecondISO8601Dates() async throws {
-            stub(statusCode: 200, body: try browseResultJSON)
+            try stub(statusCode: 200, body: browseResultJSON)
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
             let result = try await makeClient().browse(serverURL, "")
@@ -104,7 +103,7 @@ extension FilesClientLiveTests {
 
         @Test
         func browseWritesResultThroughToTheDirectoryCache() async throws {
-            stub(statusCode: 200, body: try browseResultJSON)
+            try stub(statusCode: 200, body: browseResultJSON)
             let store = DirectoryCacheStore.inMemory()
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
@@ -120,7 +119,7 @@ extension FilesClientLiveTests {
 
         @Test
         func lateResponseWritesTheScopeCapturedAtRequestStart() async throws {
-            stub(statusCode: 200, body: try browseResultJSON)
+            try stub(statusCode: 200, body: browseResultJSON)
             let root = FileManager.default.temporaryDirectory.appendingPathComponent("late-write-\(TestID.name())")
             defer { try? FileManager.default.removeItem(at: root) }
             let store = DirectoryCacheStore.onDisk(rootDirectory: root)
@@ -163,12 +162,12 @@ extension FilesClientLiveTests {
                 now: { MockDate.date.addingTimeInterval(1) }
             )
 
-            stub(statusCode: 200, body: try browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v1\""])
+            try stub(statusCode: 200, body: browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v1\""])
             _ = try await client.browse(serverURL, TestPath.docsLowercase)
             #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v1\"")
 
             StubURLProtocol.capturedRequest = nil
-            stub(statusCode: 200, body: try browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v2\""])
+            try stub(statusCode: 200, body: browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v2\""])
             _ = try await client.browse(serverURL, TestPath.docsLowercase)
             #expect(StubURLProtocol.capturedRequest?.value(forHTTPHeaderField: HTTPHeaderField.ifNoneMatch) == "\"v1\"")
             #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v2\"")
@@ -205,7 +204,7 @@ extension FilesClientLiveTests {
 
         @Test
         func prefetchDirectoryWritesThroughOverTheLowPrioritySession() async throws {
-            stub(statusCode: 200, body: try browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"pf\""])
+            try stub(statusCode: 200, body: browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"pf\""])
             let store = DirectoryCacheStore.inMemory()
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
@@ -237,7 +236,7 @@ extension FilesClientLiveTests {
 
         @Test
         func browsePercentEncodesPathSegmentsWithSpecialCharacters() async throws {
-            stub(statusCode: 200, body: try browseResultJSON)
+            try stub(statusCode: 200, body: browseResultJSON)
             StubURLProtocol.capturedRequest = nil
             _ = try await makeClient().browse(serverURL, "My Docs/#tag/日本語")
             let url = try #require(StubURLProtocol.capturedRequest?.url)
@@ -248,7 +247,7 @@ extension FilesClientLiveTests {
 
         @Test
         func browseOfAnEmptyPathHitsTheRootBrowseEndpointWithATrailingSlash() async throws {
-            stub(statusCode: 200, body: try browseResultJSON)
+            try stub(statusCode: 200, body: browseResultJSON)
             StubURLProtocol.capturedRequest = nil
             _ = try await makeClient().browse(serverURL, "")
             let url = try #require(StubURLProtocol.capturedRequest?.url)
@@ -290,7 +289,7 @@ extension FilesClientLiveTests {
 
         @Test
         func searchOmitsPathAndLimitQueryItemsWhenNotProvided() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonItemsEmpty.data())
+            try stub(statusCode: 200, body: FilesClientFixture.commonItemsEmpty.data())
             StubURLProtocol.capturedRequest = nil
             _ = try await makeClient().search(serverURL, "", "vacation", nil)
             let url = try #require(StubURLProtocol.capturedRequest?.url)
@@ -302,7 +301,7 @@ extension FilesClientLiveTests {
 
         @Test
         func searchIncludesPathAndLimitWhenProvided() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonItemsEmpty.data())
+            try stub(statusCode: 200, body: FilesClientFixture.commonItemsEmpty.data())
             StubURLProtocol.capturedRequest = nil
             _ = try await makeClient().search(serverURL, TestFolder.photos, "vacation", 50)
             let url = try #require(StubURLProtocol.capturedRequest?.url)
@@ -325,7 +324,7 @@ extension FilesClientLiveTests {
 
         @Test
         func searchFromAnOlderServerReadsAsComplete() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.searchSingleDirectory.data())
+            try stub(statusCode: 200, body: FilesClientFixture.searchSingleDirectory.data())
             let page = try await makeClient().search(serverURL, "", "abc", nil)
             #expect(page.isComplete)
             #expect(!page.isTruncated)

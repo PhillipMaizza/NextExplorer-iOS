@@ -1,7 +1,7 @@
 import Foundation
 
-/// Plain values that many tests share, defined once so a name or credential is never retyped.
-/// Only strings and URLs live here: TestUtils must not depend on the app's models.
+// Plain values that many tests share, defined once so a name or credential is never retyped.
+// Only strings and URLs live here: TestUtils must not depend on the app's models.
 
 public enum TestFolder {
     public static let docs = "Docs"
@@ -69,7 +69,9 @@ public enum TestHost {
     /// A short host used where only the shape of the address matters.
     public static let shortHost = "a.com"
 
-    public static var serverURL: URL { httpsURL(server) }
+    public static var serverURL: URL {
+        httpsURL(server)
+    }
 
     private static func httpsURL(_ host: String) -> URL {
         var components = URLComponents()

@@ -11,7 +11,7 @@ struct ConnectivityClientTests {
     }
 
     @Test("the test and preview clients assume an unmetered online connection")
-    func testValueAssumesOnline() {
+    func valueAssumesOnline() {
         for client in [ConnectivityClient.testValue, .previewValue] {
             #expect(client.isOnline())
             #expect(!client.isMetered())

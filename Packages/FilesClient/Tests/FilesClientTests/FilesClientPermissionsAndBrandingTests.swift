@@ -8,7 +8,6 @@ import TestUtils
 /// The permission and branding routes through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientPermissionsAndBrandingTests: FilesClientLiveHarness {
         private enum Constants {
             static let appName = "Acme Files"
@@ -204,7 +203,7 @@ extension FilesClientLiveTests {
             let contentType = try #require(request.value(forHTTPHeaderField: HTTPHeaderField.contentType))
             let boundary = try #require(contentType.components(separatedBy: "boundary=").last)
             #expect(contentType == MIMEType.multipartFormData(boundary: boundary))
-            let body = String(decoding: try #require(StubURLProtocol.capturedRequestBody), as: UTF8.self)
+            let body = try String(decoding: #require(StubURLProtocol.capturedRequestBody), as: UTF8.self)
             let expected = "--\(boundary)\r\n"
                 + "Content-Disposition: form-data; name=\"logo\"; filename=\"logo.jpg\"\r\n"
                 + "Content-Type: image/jpeg\r\n\r\n"

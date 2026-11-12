@@ -9,7 +9,6 @@ import TestUtils
 /// File version history routes through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientVersionsTests: FilesClientLiveHarness {
         func capturedJSON() throws -> [String: Any] {
             let body = try #require(StubURLProtocol.capturedRequestBody)
@@ -19,7 +18,7 @@ extension FilesClientLiveTests {
         @Test
         func fetchVersionsSendsThePathAsAQueryAndDecodesTheHistory() async throws {
             // Shape of `listVersions` in backend/src/services/versions/index.js.
-            stub(statusCode: 200, body: try FilesClientFixture.versionsListNotesTwoVersions.data())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsListNotesTwoVersions.data())
             StubURLProtocol.capturedRequest = nil
             let history = try await makeClient().fetchVersions(serverURL, TestPath.docsNotes)
             let requestURL = try #require(StubURLProtocol.capturedRequest?.url)
@@ -35,7 +34,7 @@ extension FilesClientLiveTests {
 
         @Test
         func restoreVersionPostsThePathToTheVersionRoute() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionsRestoreResult.data())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsRestoreResult.data())
             StubURLProtocol.capturedRequest = nil
             try await makeClient().restoreVersion(serverURL, TestPath.docsNotes, TestETag.first)
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -45,7 +44,7 @@ extension FilesClientLiveTests {
 
         @Test
         func copyVersionPostsTheDestinationAndReturnsTheNewPath() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionsSaveAsCopyResult.data())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsSaveAsCopyResult.data())
             let newPath = try await makeClient().copyVersion(serverURL, TestPath.docsNotes, TestETag.first, TestFolder.docs)
             #expect(newPath == "Docs/notes (v1).txt")
             #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/v1/copy")
@@ -56,7 +55,7 @@ extension FilesClientLiveTests {
 
         @Test
         func updateVersionLeavesOutTheFieldsNotBeingChanged() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionsVersionPinned.data())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsVersionPinned.data())
             let updated = try await makeClient().updateVersion(serverURL, TestPath.docsNotes, TestETag.first, nil, true)
             #expect(updated.isPinned)
             #expect(StubURLProtocol.capturedRequest?.httpMethod == HTTPMethod.patch.rawValue)
@@ -67,7 +66,7 @@ extension FilesClientLiveTests {
 
         @Test
         func deleteAllVersionsSendsAllWithoutIDs() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.versionsDeletionResult.data())
+            try stub(statusCode: 200, body: FilesClientFixture.versionsDeletionResult.data())
             try await makeClient().deleteVersions(serverURL, TestPath.docsNotes, [], true)
             #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/delete")
             let json = try capturedJSON()

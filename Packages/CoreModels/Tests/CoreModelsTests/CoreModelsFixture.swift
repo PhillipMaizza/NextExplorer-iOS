@@ -5,6 +5,7 @@ enum CoreModelsFixture: String, FixtureFile {
     static let bundle = Bundle.module
 
     // MARK: activity-log
+
     case activityLogEmptyPage = "activity-log/empty-page"
     case activityLogNumericEventId = "activity-log/numeric-event-id"
     case activityLogPageWithEvents = "activity-log/page-with-events"
@@ -15,6 +16,7 @@ enum CoreModelsFixture: String, FixtureFile {
     case activityLogUnparseableTimestamp = "activity-log/unparseable-timestamp"
 
     // MARK: api-token
+
     case apiTokenFull = "api-token/full"
     case apiTokenIssuedWithSecret = "api-token/issued-with-secret"
     case apiTokenIssuedWithShortSecret = "api-token/issued-with-short-secret"
@@ -22,29 +24,37 @@ enum CoreModelsFixture: String, FixtureFile {
     case apiTokenUnknownScope = "api-token/unknown-scope"
 
     // MARK: auth-status
+
     case authStatusLocalEnabledOidcDisabled = "auth-status/local-enabled-oidc-disabled"
 
     // MARK: branding
+
     case brandingFullObject = "branding/full-object"
 
     // MARK: browse-result
+
     case browseResultDirectoryWithAccess = "browse-result/directory-with-access"
     case browseResultEmptyDirectory = "browse-result/empty-directory"
 
     // MARK: cached-directory
+
     case cachedDirectoryStaleSchemaWithoutEtag = "cached-directory/stale-schema-without-etag"
 
     // MARK: common
+
     case emptyObject = "common/empty-object"
 
     // MARK: delete-impact
+
     case deleteImpactMissingShareCount = "delete-impact/missing-share-count"
     case deleteImpactTwoLinks = "delete-impact/two-links"
 
     // MARK: favorite
+
     case favoriteFullRow = "favorite/full-row"
 
     // MARK: file-access
+
     case fileAccessFullGrant = "file-access/full-grant"
     case fileAccessMissingRequiredFields = "file-access/missing-required-fields"
     case fileAccessReadOnlyGrant = "file-access/read-only-grant"
@@ -52,10 +62,12 @@ enum CoreModelsFixture: String, FixtureFile {
     case fileAccessWithoutCreateFlags = "file-access/without-create-flags"
 
     // MARK: file-version
+
     case fileVersionHistoryFull = "file-version/history-full"
     case fileVersionHistoryMissingRights = "file-version/history-missing-rights"
 
     // MARK: file-item
+
     case fileItemDirectoryWithThumbnail = "file-item/directory-with-thumbnail"
     case fileItemMissingRequiredFields = "file-item/missing-required-fields"
     case fileItemMissingSupportsThumbnail = "file-item/missing-supports-thumbnail"
@@ -64,6 +76,7 @@ enum CoreModelsFixture: String, FixtureFile {
     case fileItemSizeNull = "file-item/size-null"
 
     // MARK: file-metadata
+
     case fileMetadataDirectorySummary = "file-metadata/directory-summary"
     case fileMetadataImageDimensionsOnly = "file-metadata/image-dimensions-only"
     case fileMetadataImageWithGps = "file-metadata/image-with-gps"
@@ -71,31 +84,37 @@ enum CoreModelsFixture: String, FixtureFile {
     case fileMetadataVideo = "file-metadata/video"
 
     // MARK: file-permissions
+
     case filePermissionsBackendShape = "file-permissions/backend-shape"
 
     // MARK: google-docs-pointer
+
     case googleDocsPointerDriveStub = "google-docs-pointer/drive-stub"
     case googleDocsPointerMissingUrl = "google-docs-pointer/missing-url"
     case googleDocsPointerNonHttpLink = "google-docs-pointer/non-http-link"
     case googleDocsPointerNotJson = "google-docs-pointer/not-json"
 
     // MARK: search-result-item
+
     case searchResultItemContentMatch = "search-result-item/content-match"
     case searchResultItemDirectoryKind = "search-result-item/directory-kind"
     case searchResultItemFilenameMatch = "search-result-item/filename-match"
 
     // MARK: server-features
+
     case serverFeaturesEditorExtensions = "server-features/editor-extensions"
     case serverFeaturesPersonalEnabled = "server-features/personal-enabled"
     case serverFeaturesVolumeUsageEnabledUserVolumesDisabled = "server-features/volume-usage-enabled-user-volumes-disabled"
 
     // MARK: server-settings
+
     case serverSettingsFolderSizeUnknownMode = "server-settings/folder-size-unknown-mode"
     case serverSettingsServerFeaturesCeilingAndLocks = "server-settings/server-features-ceiling-and-locks"
     case serverSettingsSystemSettingsFourBackgroundSections = "server-settings/system-settings-four-background-sections"
     case serverSettingsSystemSettingsUserOnly = "server-settings/system-settings-user-only"
 
     // MARK: share
+
     case shareAnyoneOwnerString = "share/anyone-owner-string"
     case shareCreatedMissingUrls = "share/created-missing-urls"
     case shareCreatedWithUrls = "share/created-with-urls"
@@ -103,14 +122,17 @@ enum CoreModelsFixture: String, FixtureFile {
     case shareUsersOwnerIntegerMinimal = "share/users-owner-integer-minimal"
 
     // MARK: share-info
+
     case shareInfoInfoEndpointShape = "share-info/info-endpoint-shape"
     case shareInfoMinimalExpiredUsersShare = "share-info/minimal-expired-users-share"
 
     // MARK: sign-in-method
+
     case signInMethodListWithoutDates = "sign-in-method/list-without-dates"
     case signInMethodPasswordAndOidcList = "sign-in-method/password-and-oidc-list"
 
     // MARK: storage-usage
+
     case storageUsageDeniedAllZero = "storage-usage/denied-all-zero"
     case storageUsageFortyOfHundred = "storage-usage/forty-of-hundred"
     case storageUsageNoTotalReported = "storage-usage/no-total-reported"
@@ -118,14 +140,17 @@ enum CoreModelsFixture: String, FixtureFile {
     case storageUsageUsedExceedsCapacity = "storage-usage/used-exceeds-capacity"
 
     // MARK: system-settings
+
     case systemSettingsFullAdminShape = "system-settings/full-admin-shape"
     case systemSettingsNonAdminShape = "system-settings/non-admin-shape"
 
     // MARK: transfer-result
+
     case transferResultMissingSkipped = "transfer-result/missing-skipped"
     case transferResultMoveWithSkippedItem = "transfer-result/move-with-skipped-item"
 
     // MARK: trash-admin
+
     case trashAdminEventIntegerId = "trash-admin/event-integer-id"
     case trashAdminEventStringId = "trash-admin/event-string-id"
     case trashAdminSystemSettingsTrashAndVersions = "trash-admin/system-settings-trash-and-versions"
@@ -138,6 +163,7 @@ enum CoreModelsFixture: String, FixtureFile {
     case trashAdminZoneWithLastPassAndEvents = "trash-admin/zone-with-last-pass-and-events"
 
     // MARK: two-factor
+
     case twoFactorEnabled = "two-factor/enabled"
     case twoFactorMissingRequiredKeys = "two-factor/missing-required-keys"
     case twoFactorPendingNeverConfirmed = "two-factor/pending-never-confirmed"
@@ -145,10 +171,12 @@ enum CoreModelsFixture: String, FixtureFile {
     case twoFactorWithoutConfirmedDate = "two-factor/without-confirmed-date"
 
     // MARK: user-volume
+
     case userVolumeDirectoryListingAtRoot = "user-volume/directory-listing-at-root"
     case userVolumeVolume = "user-volume/volume"
 
     // MARK: user-preferences
+
     case userPreferencesEmptyObject = "user-preferences/empty-object"
     case userPreferencesExplicitValues = "user-preferences/explicit-values"
     case userPreferencesPartialObject = "user-preferences/partial-object"
@@ -156,6 +184,7 @@ enum CoreModelsFixture: String, FixtureFile {
     case userPreferencesShareExpirationWeeks = "user-preferences/share-expiration-weeks"
 
     // MARK: user
+
     case userAdminWithAuthMethods = "user/admin-with-auth-methods"
     case userAdminWithEmail = "user/admin-with-email"
     case userGarbageTimestamp = "user/garbage-timestamp"
@@ -167,6 +196,7 @@ enum CoreModelsFixture: String, FixtureFile {
     case userNullUsername = "user/null-username"
 
     // MARK: versioned-files
+
     case versionedFilesDeletionWithFailures = "versioned-files/deletion-with-failures"
     case versionedFilesDeletionWithRemaining = "versioned-files/deletion-with-remaining"
     case versionedFilesDetailWithPinnedUnavailableVersion = "versioned-files/detail-with-pinned-unavailable-version"
@@ -174,6 +204,7 @@ enum CoreModelsFixture: String, FixtureFile {
     case versionedFilesUnknownStateAndZoneKind = "versioned-files/unknown-state-and-zone-kind"
 
     // MARK: volume
+
     case volumeWithAccessMode = "volume/with-access-mode"
     case volumeWithoutAccessMode = "volume/without-access-mode"
 }

@@ -34,5 +34,4 @@ struct UserEncodingTests {
         #expect(json["roles"] as? [String] == [])
         #expect(json["emailVerified"] as? Bool == false)
     }
-
 }

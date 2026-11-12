@@ -46,7 +46,6 @@ struct ShareDecodingTests {
             try CoreModelsFixture.shareMissingShareToken.decodeISO(Share.self)
         }
     }
-
 }
 
 @Suite("Share display and expiry")
@@ -146,14 +145,13 @@ struct CreatedShareTests {
     @Test("a mode replaces an existing query rather than stacking")
     func directLinkReplacesQuery() throws {
         let share = try CoreModelsFixture.shareCreatedWithUrls.decodeISO(Share.self)
-        let value = CreatedShare(
+        let value = try CreatedShare(
             share: share,
             shareUrl: TestHost.serverURL,
-            directFileUrl: try #require(URL(string: "https://files.example.com/file?mode=raw&x=1"))
+            directFileUrl: #require(URL(string: "https://files.example.com/file?mode=raw&x=1"))
         )
         #expect(value.directLink(mode: .download).absoluteString == "https://files.example.com/file?mode=download")
     }
-
 }
 
 private enum Constants {

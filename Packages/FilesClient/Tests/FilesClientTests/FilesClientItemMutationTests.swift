@@ -9,7 +9,6 @@ import TestUtils
 /// File and folder mutations (create, rename, delete, transfer, compress, extract) and metadata through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientItemMutationTests: FilesClientLiveHarness {
         @Test
         func createFilePostsTheParentAndNameAndDecodesTheItem() async throws {
@@ -56,7 +55,7 @@ extension FilesClientLiveTests {
 
         @Test
         func deleteItemsSendsPathNameAndKindForEveryItem() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonSuccessNoItems.data())
+            try stub(statusCode: 200, body: FilesClientFixture.commonSuccessNoItems.data())
             StubURLProtocol.capturedRequest = nil
             let first = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 0, kind: TestKind.text)
             let second = FileItem(name: TestFolder.photos, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
@@ -82,7 +81,7 @@ extension FilesClientLiveTests {
 
         @Test
         func deleteItemsWithAnEmptyArrayStillSendsTheRequest() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonSuccessNoItems.data())
+            try stub(statusCode: 200, body: FilesClientFixture.commonSuccessNoItems.data())
             StubURLProtocol.capturedRequest = nil
             try await makeClient().deleteItems(serverURL, [])
             let body = try #require(StubURLProtocol.capturedRequestBody)
@@ -112,7 +111,7 @@ extension FilesClientLiveTests {
 
         @Test
         func transferItemsMovePostsToMoveEndpoint() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.itemMutationTransferToArchive.data())
+            try stub(statusCode: 200, body: FilesClientFixture.itemMutationTransferToArchive.data())
             StubURLProtocol.capturedRequest = nil
             let item = FileItem(name: TestValue.outdated, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
             _ = try await makeClient().transferItems(serverURL, [item], TestFolder.archive, .move)
@@ -121,9 +120,9 @@ extension FilesClientLiveTests {
 
         @Test
         func transferItemsSurfacesAValidationMessageFromTheServer() async throws {
-            stub(
+            try stub(
                 statusCode: 500,
-                body: try FilesClientFixture.itemMutationErrorTransferToRoot.data()
+                body: FilesClientFixture.itemMutationErrorTransferToRoot.data()
             )
             let item = FileItem(name: TestFile.aText, path: TestFolder.inbox, dateModified: MockDate.date, size: 0, kind: TestKind.text)
             await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Cannot copy or move items to the root path.")) {
@@ -159,7 +158,7 @@ extension FilesClientLiveTests {
 
         @Test
         func fetchMetadataPercentEncodesEachPathSegment() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.metadataHashTagDirectory.data())
+            try stub(statusCode: 200, body: FilesClientFixture.metadataHashTagDirectory.data())
             StubURLProtocol.capturedRequest = nil
             _ = try await makeClient().fetchMetadata(serverURL, "My Docs/#tag")
             let url = try #require(StubURLProtocol.capturedRequest?.url)
@@ -235,7 +234,7 @@ extension FilesClientLiveTests {
 
         @Test
         func compressItemDecodesTheDoneLineOfAnNDJSONProgressStream() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonCompressDone.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson; charset=utf-8"])
+            try stub(statusCode: 200, body: FilesClientFixture.itemMutationNdjsonCompressDone.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson; charset=utf-8"])
             let item = FileItem(name: TestFolder.documents, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
 
             let compressed = try await makeClient().compressItem(serverURL, item)
@@ -246,7 +245,7 @@ extension FilesClientLiveTests {
 
         @Test
         func compressItemSurfacesTheErrorLineOfAnNDJSONStream() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonCompressError.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson"])
+            try stub(statusCode: 200, body: FilesClientFixture.itemMutationNdjsonCompressError.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson"])
             let item = FileItem(name: TestFolder.documents, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
             await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Disk full")) {
                 _ = try await makeClient().compressItem(serverURL, item)
@@ -255,7 +254,7 @@ extension FilesClientLiveTests {
 
         @Test
         func extractZipDecodesTheDoneLineOfAnNDJSONProgressStream() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonExtractDone.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson"])
+            try stub(statusCode: 200, body: FilesClientFixture.itemMutationNdjsonExtractDone.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson"])
             let archive = FileItem(name: "photos.zip", path: TestFolder.files, dateModified: MockDate.date, size: 10, kind: "zip")
 
             let extracted = try await makeClient().extractZip(serverURL, archive)

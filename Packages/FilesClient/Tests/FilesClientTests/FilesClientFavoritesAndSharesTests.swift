@@ -9,10 +9,9 @@ import TestUtils
 /// Favorites and share links through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
-    @Suite
     struct FilesClientFavoritesAndSharesTests: FilesClientLiveHarness {
         func updateBody(_ request: UpdateShareRequest) async throws -> [String: Any] {
-            stub(statusCode: 200, body: try FilesClientFixture.shareFull.data())
+            try stub(statusCode: 200, body: FilesClientFixture.shareFull.data())
             StubURLProtocol.capturedRequest = nil
             _ = try await makeClient().updateShareLink(serverURL, "s1", request)
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -46,7 +45,7 @@ extension FilesClientLiveTests {
 
         @Test
         func removeFavoriteSendsThePathInTheDELETEBody() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.commonEmptyArray.data())
+            try stub(statusCode: 200, body: FilesClientFixture.commonEmptyArray.data())
             StubURLProtocol.capturedRequest = nil
             try await makeClient().removeFavorite(serverURL, TestFolder.photos)
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -102,7 +101,7 @@ extension FilesClientLiveTests {
 
         @Test
         func resolveShareLinkHitsTheInfoEndpointAndDecodes() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.shareInfoQ3Report.data())
+            try stub(statusCode: 200, body: FilesClientFixture.shareInfoQ3Report.data())
             StubURLProtocol.capturedRequest = nil
 
             let info = try await makeClient().resolveShareLink(serverURL, "AbC123xyz0")

@@ -24,7 +24,9 @@ struct BrowsePreviewTests {
         let name: String
         let reason: String
 
-        var testDescription: String { "\(name) (\(reason))" }
+        var testDescription: String {
+            "\(name) (\(reason))"
+        }
     }
 
     @Test(
@@ -85,7 +87,9 @@ struct BrowsePreviewTests {
         let endpoint: String
         let fileURL: URL
 
-        var testDescription: String { "\(name) via \(endpoint)" }
+        var testDescription: String {
+            "\(name) via \(endpoint)"
+        }
     }
 
     @Test(
@@ -279,7 +283,9 @@ struct BrowsePreviewTests {
         let action: BrowseFeature.Action
         let delegate: BrowseFeature.Action.Delegate
 
-        var testDescription: String { "\(delegate)" }
+        var testDescription: String {
+            "\(delegate)"
+        }
     }
 
     @Test(

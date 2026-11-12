@@ -25,12 +25,16 @@ public protocol FixtureFile: RawRepresentable, CaseIterable, Sendable where RawV
 public enum Fixture {
     public struct Missing: Error, CustomStringConvertible {
         let path: String
-        public var description: String { "Missing test fixture Fixtures/\(path)" }
+        public var description: String {
+            "Missing test fixture Fixtures/\(path)"
+        }
     }
 }
 
 public extension FixtureFile {
-    var fileExtension: String { "json" }
+    var fileExtension: String {
+        "json"
+    }
 
     func data() throws -> Data {
         let path = rawValue as NSString
@@ -43,7 +47,7 @@ public extension FixtureFile {
     }
 
     func string() throws -> String {
-        String(decoding: try data(), as: UTF8.self)
+        try String(decoding: data(), as: UTF8.self)
     }
 
     func decode<Value: Decodable>(_ type: Value.Type = Value.self, using decoder: JSONDecoder = JSONDecoder()) throws -> Value {
@@ -58,7 +62,8 @@ public extension FixtureFile {
         let named = Set(allCases.map { "\($0.rawValue).\($0.fileExtension)" })
         var onDisk: [String] = []
         if let root = bundle.resourceURL?.appendingPathComponent("Fixtures"),
-           let walker = FileManager.default.enumerator(at: root, includingPropertiesForKeys: [.isRegularFileKey]) {
+           let walker = FileManager.default.enumerator(at: root, includingPropertiesForKeys: [.isRegularFileKey])
+        {
             for case let url as URL in walker where (try? url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true {
                 onDisk.append(String(url.path.dropFirst(root.path.count + 1)))
             }

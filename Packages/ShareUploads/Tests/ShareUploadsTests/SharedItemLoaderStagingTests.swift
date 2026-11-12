@@ -2,8 +2,8 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
-import UniformTypeIdentifiers
 import TestUtils
+import UniformTypeIdentifiers
 
 @Suite("Shared item staging")
 struct SharedItemLoaderStagingTests {

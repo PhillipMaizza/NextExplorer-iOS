@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
@@ -90,7 +90,9 @@ struct TwoFactorFeatureTests {
     func aFailedLoadShowsTheMessageAndRetryLoadsAgain() async {
         let attempts = LockIsolated(0)
         let store = makeStore(status: {
-            if attempts.withValue({ $0 += 1; return $0 }) == 1 { throw FilesClientError.rateLimited }
+            if attempts.withValue({ $0 += 1; return $0 }) == 1 {
+                throw FilesClientError.rateLimited
+            }
             return TwoFactorStatus(isEnabled: true, recoveryCodesLeft: 3)
         })
 

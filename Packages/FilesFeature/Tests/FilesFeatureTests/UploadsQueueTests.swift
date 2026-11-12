@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
@@ -21,7 +21,7 @@ struct UploadsQueueTests: UploadsTestSupport {
         let store = makeStore(state())
 
         await store.send(.enqueue([pending(TestFile.aText, 0), pending(TestFile.bText, 1)])) {
-            $0.jobs = [self.job(TestFile.aText, 0, .queued), self.job(TestFile.bText, 1, .queued)]
+            $0.jobs = [job(TestFile.aText, 0, .queued), job(TestFile.bText, 1, .queued)]
         }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         #expect(store.state.jobs[id: UUID(1)]?.status == .queued)
@@ -52,10 +52,10 @@ struct UploadsQueueTests: UploadsTestSupport {
 
     @Test
     func aFreshBatchDropsTheFinishedRowsOfThePreviousOne() async {
-        let store = makeStore(state([self.job("old.txt", 0, .completed), self.job("bad.txt", 1, .failed(TestAccount.rejectedPassword))]))
+        let store = makeStore(state([job("old.txt", 0, .completed), job("bad.txt", 1, .failed(TestAccount.rejectedPassword))]))
 
         await store.send(.enqueue([pending("new.txt", 2)])) {
-            $0.jobs = [self.job("new.txt", 2, .queued)]
+            $0.jobs = [job("new.txt", 2, .queued)]
         }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 2) }
         await store.receive(\.uploadResponse) { markCompleted(&$0, 2) }
@@ -65,13 +65,13 @@ struct UploadsQueueTests: UploadsTestSupport {
 
     @Test
     func enqueueingWhileBusyKeepsTheRunningJobAndAppendsTheNewOnes() async {
-        let store = makeStore(state([self.job(TestFile.aText, 0, .uploading, startedAt: MockDate.date)]), upload: { _, _ in
+        let store = makeStore(state([job(TestFile.aText, 0, .uploading, startedAt: MockDate.date)]), upload: { _, _ in
             try await suspendUntilCancelled()
             throw CancellationError()
         })
 
         await store.send(.enqueue([pending(TestFile.bText, 1)])) {
-            $0.jobs.append(self.job(TestFile.bText, 1, .queued))
+            $0.jobs.append(job(TestFile.bText, 1, .queued))
         }
         await store.receive(\.startNextIfIdle)
         #expect(uploadCalls.value.isEmpty)
@@ -82,7 +82,7 @@ struct UploadsQueueTests: UploadsTestSupport {
 
     @Test
     func progressIsThrottledToTwoPercentStepsAndAlwaysReportsCompletion() async {
-        let store = makeStore(state([self.job(TestFile.aText, 0, .queued)]), upload: { _, progress in
+        let store = makeStore(state([job(TestFile.aText, 0, .queued)]), upload: { _, progress in
             progress(0.01)
             progress(0.5)
             progress(0.51)
@@ -100,7 +100,7 @@ struct UploadsQueueTests: UploadsTestSupport {
 
     @Test
     func aResponseForAJobThatIsGoneIsIgnored() async {
-        let store = makeStore(state([self.job(TestFile.aText, 0, .completed)]))
+        let store = makeStore(state([job(TestFile.aText, 0, .completed)]))
 
         await store.send(.uploadResponse(id: UUID(7), .success(uploaded("ghost.txt"))))
         #expect(discarded.value.isEmpty)
@@ -116,9 +116,9 @@ struct UploadsQueueTests: UploadsTestSupport {
             pending("c.txt", 2, destination: TestFolder.archive),
         ])) {
             $0.jobs = [
-                self.job(TestFile.aText, 0, .queued, destination: TestFolder.inbox),
-                self.job(TestFile.bText, 1, .queued, destination: TestFolder.inbox),
-                self.job("c.txt", 2, .queued, destination: TestFolder.archive),
+                job(TestFile.aText, 0, .queued, destination: TestFolder.inbox),
+                job(TestFile.bText, 1, .queued, destination: TestFolder.inbox),
+                job("c.txt", 2, .queued, destination: TestFolder.archive),
             ]
         }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }

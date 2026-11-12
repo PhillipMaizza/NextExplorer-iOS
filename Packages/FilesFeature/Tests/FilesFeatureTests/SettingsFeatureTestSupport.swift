@@ -9,15 +9,22 @@ import Testing
 import TestUtils
 
 @MainActor
-protocol SettingsFeatureTestSupport {
-}
+protocol SettingsFeatureTestSupport {}
 
 extension SettingsFeatureTestSupport {
     typealias Store = TestStoreOf<SettingsFeature>
 
-    var serverURL: URL { SettingsTestSupport.serverURL }
-    var user: User { User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: []) }
-    var admin: User { User(id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin]) }
+    var serverURL: URL {
+        SettingsTestSupport.serverURL
+    }
+
+    var user: User {
+        User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+    }
+
+    var admin: User {
+        User(id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin])
+    }
 
     func makeState(user: User? = nil) -> SettingsFeature.State {
         let state = SettingsFeature.State(serverURL: serverURL, user: user ?? self.user)

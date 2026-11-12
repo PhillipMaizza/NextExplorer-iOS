@@ -27,9 +27,17 @@ struct DownloadsListTests {
     }
 
     /// Zebra is the biggest and oldest, Apple the smallest and newest, Mango sits between on both.
-    private var zebra: LocalDownload { download(Constants.zebra, size: 900, modifiedOffset: 0) }
-    private var apple: LocalDownload { download(Constants.apple, size: 100, modifiedOffset: 200) }
-    private var mango: LocalDownload { download(Constants.mango, size: 500, modifiedOffset: 100) }
+    private var zebra: LocalDownload {
+        download(Constants.zebra, size: 900, modifiedOffset: 0)
+    }
+
+    private var apple: LocalDownload {
+        download(Constants.apple, size: 100, modifiedOffset: 200)
+    }
+
+    private var mango: LocalDownload {
+        download(Constants.mango, size: 500, modifiedOffset: 100)
+    }
 
     private func state(searchQuery: String = "") -> DownloadsFeature.State {
         var state = DownloadsFeature.State()

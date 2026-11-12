@@ -38,5 +38,4 @@ struct AccountSummaryTests {
         #expect(summary(url: TestHost.serverURL).displayName == TestAccount.username)
         #expect(summary(url: TestHost.serverURL, username: "").displayName == TestHost.server)
     }
-
 }

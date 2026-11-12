@@ -16,5 +16,4 @@ struct TrashEventTests {
         let event = try CoreModelsFixture.trashAdminEventStringId.decode(TrashEvent.self)
         #expect(event == TrashEvent(id: "evt-9", kind: "purged", itemName: "a.txt", createdAt: "2023-11-14T22:13:20Z"))
     }
-
 }

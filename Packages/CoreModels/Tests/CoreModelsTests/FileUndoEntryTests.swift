@@ -50,7 +50,6 @@ struct FileUndoEntryTests {
         stack.record(entry(25))
         #expect(stack == (6 ... 25).map(entry))
     }
-
 }
 
 private enum Constants {

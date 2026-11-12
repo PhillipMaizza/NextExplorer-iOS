@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 struct UploadsUploadCall: Equatable, Sendable {
     let fileURL: URL
@@ -27,8 +27,13 @@ extension UploadsTestSupport {
 
     typealias UploadCall = UploadsUploadCall
 
-    var serverURL: URL { SettingsTestSupport.serverURL }
-    var now: Date { MockDate.date }
+    var serverURL: URL {
+        SettingsTestSupport.serverURL
+    }
+
+    var now: Date {
+        MockDate.date
+    }
 
     nonisolated func pending(_ name: String, _ id: Int, destination: String = TestFolder.inbox) -> PendingUpload {
         PendingUpload(id: UUID(id), fileURL: URL(fileURLWithPath: "/staging/\(name)"), fileName: name, destination: destination)

@@ -5,8 +5,8 @@ import Localization
 @testable import ShareExtensionFeature
 import ShareUploads
 import Testing
-import UniformTypeIdentifiers
 import TestUtils
+import UniformTypeIdentifiers
 
 /// The live client against real `NSItemProvider`s, staged into a temporary batch that is never
 /// started, so nothing reaches a background session.

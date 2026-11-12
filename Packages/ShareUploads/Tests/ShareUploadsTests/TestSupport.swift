@@ -1,8 +1,8 @@
 import CoreModels
 import Foundation
 @testable import ShareUploads
-import UserNotifications
 import TestUtils
+import UserNotifications
 
 enum TestClock {
     /// A fixed moment; tests move the clock with offsets from it.

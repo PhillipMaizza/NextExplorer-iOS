@@ -4,8 +4,8 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
-import TestUtils
 import Testing
+import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
@@ -215,7 +215,7 @@ struct ActivityLogFeatureTests {
         await store.send(.loadMoreTapped) { $0.isLoadingMore = true }
         await store.receive(.pageResponse(.success(page), isMore: true)) {
             $0.isLoadingMore = false
-            $0.events = [self.event("1"), second]
+            $0.events = [event("1"), second]
             $0.isLogEnabled = true
             $0.nextBefore = nil
         }
@@ -273,7 +273,7 @@ struct ActivityLogFeatureTests {
         await store.send(.loadMoreTapped) { $0.isLoadingMore = true }
         await store.receive(.pageResponse(.success(page), isMore: true)) {
             $0.isLoadingMore = false
-            $0.events = [self.event("1"), second]
+            $0.events = [event("1"), second]
             $0.isLogEnabled = true
             $0.nextBefore = nil
         }
@@ -413,7 +413,7 @@ struct ActivityLogFeatureTests {
             $0.isSavingSettings = false
             $0.loadedSettings = echoed
         }
-        await store.receive(.pageResponse(.success(reloaded), isMore: false)) { $0.events = [self.event("fresh")] }
+        await store.receive(.pageResponse(.success(reloaded), isMore: false)) { $0.events = [event("fresh")] }
 
         #expect(patches.value == [SystemSettingsPatch(activity: ActivitySettings(isEnabled: false, retentionDays: 14))])
         #expect(!store.state.isSettingsDirty)

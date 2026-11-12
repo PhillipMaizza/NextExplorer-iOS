@@ -27,5 +27,4 @@ struct AuthStatusEncodingTests {
         #expect(!decoded.redirectsToHTTPS)
         #expect(decoded.redirectedPort == nil)
     }
-
 }
