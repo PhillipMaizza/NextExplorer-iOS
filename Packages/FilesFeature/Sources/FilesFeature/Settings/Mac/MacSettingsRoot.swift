@@ -42,7 +42,7 @@
             case .storage: L10n.Settings.sectionStorage
             case .apiTokens: L10n.ApiTokens.navigationTitle
             case .server: L10n.Settings.rowServer
-            case .users: L10n.Settings.sectionUsers
+            case .users: L10n.Settings.rowUserManagement
             case .thumbnails: L10n.Settings.rowThumbnails
             case .accessRules: L10n.Settings.rowAccessRules
             case .uploads: L10n.UploadSettings.navigationTitle
@@ -100,7 +100,7 @@
                         ForEach(MacSettingsCategory.everyone) { sidebarRow($0) }
                     }
                     if store.user.isAdmin {
-                        Section {
+                        Section(L10n.Settings.sectionAdmin) {
                             ForEach(MacSettingsCategory.admin) { sidebarRow($0) }
                         }
                     }
