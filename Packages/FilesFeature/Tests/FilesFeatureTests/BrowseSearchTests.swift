@@ -31,7 +31,7 @@ struct BrowseSearchTests {
             $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: "file")]
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [deepHit]
@@ -56,7 +56,7 @@ struct BrowseSearchTests {
             $0.searchQuery = "pa"
             $0.searchResults = [SearchResultItem(name: "Payslips", path: "", kind: "dir")]
         }
-        await clock.advance(by: .seconds(2))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.finish()
         #expect(calls.value == 0)
     }
@@ -77,7 +77,7 @@ struct BrowseSearchTests {
             $0.searchResults = [SearchResultItem(name: "Vacation 2024", path: "Photos/Trips", kind: "dir")]
             $0.isSearchingRemotely = true
         }
-        // "Everywhere": every matching favorite.
+        // "Everywhere": every matching favorite. A tap asks at once, replacing the pending search.
         await store.send(.searchScopeChanged(.everywhere)) {
             $0.searchScope = .everywhere
             $0.searchResults = [
@@ -85,7 +85,6 @@ struct BrowseSearchTests {
                 SearchResultItem(name: "Vacation Plans", path: FilesFeatureTestValue.workFolder, kind: "dir"),
             ]
         }
-        await clock.advance(by: .seconds(1))
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = []
@@ -110,14 +109,14 @@ struct BrowseSearchTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [deepHit]
         }
         // A focus change or keyboard dismiss re-sends the same text through the binding.
         await store.send(.searchQueryChanged("vac"))
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.finish()
         #expect(calls.value == 1)
     }
@@ -137,7 +136,7 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged(TestValue.blank)) {
             $0.searchQuery = TestValue.blank
         }
-        await clock.advance(by: .seconds(2))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.finish()
         #expect(calls.value == 0)
     }
@@ -163,7 +162,7 @@ struct BrowseSearchTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [result]
@@ -193,7 +192,7 @@ struct BrowseSearchTests {
             $0.searchResults = nil
             $0.isSearchingRemotely = false
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.finish()
         #expect(calls.value == 0)
     }
@@ -221,7 +220,7 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vaca")) {
             $0.searchQuery = "vaca"
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [result]
@@ -243,7 +242,7 @@ struct BrowseSearchTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.failure) {
             $0.isSearchingRemotely = false
             $0.searchResults = []
@@ -251,7 +250,7 @@ struct BrowseSearchTests {
         }
     }
 
-    @Test("Switching to Everywhere with a query already typed starts a server search")
+    @Test("Switching to Everywhere with a query already typed searches at once, without the typing wait")
     func changingScopeToEverywhereWithAnExistingQueryTriggersANetworkSearch() async {
         var state = BrowseFixtures.state()
         state.searchQuery = "vac"
@@ -267,7 +266,6 @@ struct BrowseSearchTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [result]
@@ -300,7 +298,7 @@ struct BrowseSearchTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [closest, content]
@@ -327,7 +325,7 @@ struct BrowseSearchTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [closest, content]
@@ -352,7 +350,7 @@ struct BrowseSearchTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [hit]

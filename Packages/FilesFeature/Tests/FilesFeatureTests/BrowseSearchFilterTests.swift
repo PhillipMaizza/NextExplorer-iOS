@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
@@ -99,7 +100,7 @@ struct BrowseSearchFilterTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: BrowseFeature.Constants.searchDebounce)
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
             $0.searchResults = [videoHit]

@@ -284,7 +284,7 @@ struct DestinationPickerFeatureTests {
             $0.searchQuery = "sum"
             $0.isSearching = true
         }
-        await clock.advance(by: .milliseconds(250))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
             $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir")]
@@ -301,9 +301,69 @@ struct DestinationPickerFeatureTests {
         }
         await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.photos, path: TestFolder.media)]) }
     }
+
+    /// A picker in `Media` whose search records each term it was asked and answers `Summer`.
+    private func searchingStore(clock: TestClock<Duration>, queries: LockIsolated<[String]>) -> TestStoreOf<DestinationPickerFeature> {
+        TestStore(
+            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.media)])
+        ) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, query, _ in
+                queries.withValue { $0.append(query) }
+                return [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: "dir")]
+            }
+        }
+    }
+
+    @Test("Typing waits 350 ms before searching folders, and not a moment less")
+    func searchWaitsOutTheDebounceExactly() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await store.send(.searchQueryChanged(Constants.searchTerm)) {
+            $0.searchQuery = Constants.searchTerm
+            $0.isSearching = true
+        }
+        await clock.advance(by: TestSearchTiming.justBeforeDebounce)
+        #expect(queries.value.isEmpty)
+
+        await clock.advance(by: TestSearchTiming.lastMoment)
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearching = false
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: "dir")]
+        }
+        #expect(queries.value == [Constants.searchTerm])
+    }
+
+    @Test("A typed space leaves the server's term unchanged, so the pending search keeps its wait")
+    func aTypedSpaceKeepsThePendingSearch() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await store.send(.searchQueryChanged(Constants.searchTerm)) {
+            $0.searchQuery = Constants.searchTerm
+            $0.isSearching = true
+        }
+        await clock.advance(by: TestSearchTiming.partOfDebounce)
+        await store.send(.searchQueryChanged(Constants.searchTermWithSpace)) {
+            $0.searchQuery = Constants.searchTermWithSpace
+        }
+        await clock.advance(by: TestSearchTiming.restOfDebounce)
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearching = false
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: "dir")]
+        }
+        #expect(queries.value == [Constants.searchTerm])
+    }
 }
 
 private enum Constants {
+    static let searchTerm = "sum"
+    static let searchTermWithSpace = "sum "
     static let summerFolder = "Summer"
     static let workFolder = "Work"
     static let childFolder = "Child"

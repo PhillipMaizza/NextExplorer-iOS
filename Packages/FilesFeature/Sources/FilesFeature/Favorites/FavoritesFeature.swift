@@ -90,7 +90,7 @@ public struct FavoritesFeature {
 
         /// True while a query is active, so the view swaps the favorites list for file results.
         public var isSearching: Bool {
-            !searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            !SearchTerm(searchQuery).isEmpty
         }
 
         /// File search results with hidden entries dropped unless the preference is on.
@@ -178,7 +178,6 @@ public struct FavoritesFeature {
     private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability }
 
     private enum Constants {
-        static let searchDebounce: Duration = .seconds(1)
         static let searchLimit = 100
     }
 
@@ -318,11 +317,12 @@ public struct FavoritesFeature {
                 return load(&state)
 
             case let .searchQueryChanged(query):
-                // A focus change or keyboard dismiss can re-send the same text through the
-                // field's binding; re-running the search would flash the results. Only act on a
-                // real text change.
-                guard query != state.searchQuery else { return .none }
+                // A focus change or keyboard dismiss resends the same text through the field's
+                // binding, and a typed space leaves the term the server reads unchanged; searching
+                // again would flash the results. Only a new term searches again.
+                let isNewTerm = SearchTerm(query) != SearchTerm(state.searchQuery)
                 state.searchQuery = query
+                guard isNewTerm else { return .none }
                 return favoriteSearch(&state)
 
             case let .fileSearchResponse(.success(results)):
@@ -344,7 +344,7 @@ public struct FavoritesFeature {
                 return .none
 
             case .searchRetryTapped:
-                return favoriteSearch(&state)
+                return favoriteSearch(&state, isDebounced: false)
 
             case let .searchResultTapped(result):
                 // A directory result navigates into that folder (push). A file result opens directly
@@ -573,10 +573,12 @@ public struct FavoritesFeature {
     /// favorite (each searches that folder's whole subtree), merged and de duped. Tolerant per
     /// favorite so a since deleted favorite can't fail the whole search; results are still
     /// authoritative for the ones that answered.
-    private func favoriteSearch(_ state: inout State) -> Effect<Action> {
-        let query = state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+    /// Typing is debounced; Retry is a decision already made and asks at once.
+    private func favoriteSearch(_ state: inout State, isDebounced: Bool = true) -> Effect<Action> {
+        let term = SearchTerm(state.searchQuery)
+        let query = term.text
         // The server only searches from three characters on.
-        guard query.count >= FilesClient.minimumSearchTermLength else {
+        guard term.isSearchable else {
             state.fileSearchResults = nil
             state.searchPhase = .idle
             return .cancel(id: CancelID.search)
@@ -594,7 +596,9 @@ public struct FavoritesFeature {
         let filesClient = filesClient
         let clock = clock
         return .run { send in
-            try await clock.sleep(for: Constants.searchDebounce)
+            if isDebounced {
+                try await clock.sleep(for: FilesClient.searchDebounce)
+            }
             let outcomes = try await withThrowingTaskGroup(of: Result<[SearchResultItem], FilesClientError>.self) { group in
                 for path in favoritePaths {
                     group.addTask {

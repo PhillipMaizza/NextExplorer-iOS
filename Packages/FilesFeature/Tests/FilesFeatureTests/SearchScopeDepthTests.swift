@@ -45,7 +45,7 @@ struct SearchScopeDepthTests {
             $0.searchResults = []
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
         }
@@ -91,7 +91,6 @@ struct SearchScopeDepthTests {
             $0.searchScope = .everywhere
             $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .seconds(1))
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearchingRemotely = false
         }

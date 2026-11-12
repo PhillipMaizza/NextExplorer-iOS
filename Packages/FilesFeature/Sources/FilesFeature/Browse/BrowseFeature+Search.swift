@@ -5,14 +5,16 @@ import FolderPickerFeature
 import Foundation
 
 extension BrowseFeature {
-    /// Both scopes run a recursive, content aware `/api/search` (only the base path differs),
-    /// debounced so a burst of keystrokes fires one request. A client side pre-fill from the
-    /// already-loaded folder paints instantly while that request is in flight.
-    func search(_ state: inout State) -> Effect<Action> {
-        // Trim like the backend does before its own empty check, so an all-whitespace query is
+    /// Both scopes run a recursive, content aware `/api/search` (only the base path differs).
+    /// Typing is debounced so a burst of keystrokes fires one request; a tap (scope) is a
+    /// decision already made and asks at once. A client side prefill from the already loaded
+    /// folder paints instantly while that request is in flight.
+    func search(_ state: inout State, isDebounced: Bool = true) -> Effect<Action> {
+        // Trim like the backend does before its own empty check, so an all whitespace query is
         // treated as empty rather than pre-filling everything and 400ing on a blank `q`.
-        let query = state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else {
+        let term = SearchTerm(state.searchQuery)
+        let query = term.text
+        guard !term.isEmpty else {
             state.searchResults = nil
             state.isSearchingRemotely = false
             state.searchShortfall = nil
@@ -34,19 +36,19 @@ extension BrowseFeature {
         let results = preliminary + Self.favoriteMatches(state, query: query)
         state.searchResults = IdentifiedArray(Self.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
         // The server only searches from three characters on; until then the instant matches stand.
-        guard query.count >= FilesClient.minimumSearchTermLength else {
+        guard term.isSearchable else {
             state.isSearchingRemotely = false
             state.searchShortfall = nil
             return .cancel(id: CancelID.search)
         }
         state.isSearchingRemotely = true
-        return fetchSearchResults(state, isDebounced: true)
+        return fetchSearchResults(state, isDebounced: isDebounced)
     }
 
     /// The server search on its own, without the instant pre-fill: Show more widens the answer
     /// already on screen rather than starting over from the local matches.
     func fetchSearchResults(_ state: State, isDebounced: Bool) -> Effect<Action> {
-        let query = state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let query = SearchTerm(state.searchQuery).text
         // Both scopes hit the same recursive, content aware backend endpoint; only the base path
         // differs. "This Folder" scopes to the current directory (its whole subtree); "Everywhere"
         // searches from the root.
@@ -58,7 +60,7 @@ extension BrowseFeature {
 
         return .run { send in
             if isDebounced {
-                try await clock.sleep(for: Constants.searchDebounce)
+                try await clock.sleep(for: FilesClient.searchDebounce)
             }
             try await send(.searchResultsResponse(apiResult {
                 try await filesClient.search(serverURL, scopePath, query, limit)

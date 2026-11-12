@@ -12,7 +12,6 @@ import Localization
 @Reducer
 public struct DestinationPickerFeature {
     private enum Constants {
-        static let searchDebounce: Duration = .milliseconds(250)
         static let searchLimit = 50
     }
 
@@ -133,7 +132,11 @@ public struct DestinationPickerFeature {
                 return .none
 
             case let .searchQueryChanged(query):
+                // A typed space or a resent binding leaves the term unchanged: the pending
+                // search keeps its debounce instead of starting over.
+                let isNewTerm = SearchTerm(query) != SearchTerm(state.searchQuery)
                 state.searchQuery = query
+                guard isNewTerm else { return .none }
                 return search(&state)
 
             case let .searchResultsResponse(.success(results)):
@@ -222,8 +225,9 @@ public struct DestinationPickerFeature {
 
     /// Recursive folder search scoped to the subtree under `directoryPath`, debounced.
     private func search(_ state: inout State) -> Effect<Action> {
+        let term = SearchTerm(state.searchQuery)
         // The server only searches from three characters on.
-        guard state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count >= FilesClient.minimumSearchTermLength else {
+        guard term.isSearchable else {
             state.searchResults = nil
             state.isSearching = false
             return .cancel(id: CancelID.search)
@@ -231,11 +235,11 @@ public struct DestinationPickerFeature {
         state.isSearching = true
         let serverURL = state.serverURL
         let scope = state.directoryPath
-        let query = state.searchQuery
+        let query = term.text
         let filesClient = filesClient
         let clock = clock
         return .run { send in
-            try await clock.sleep(for: Constants.searchDebounce)
+            try await clock.sleep(for: FilesClient.searchDebounce)
             try await send(.searchResultsResponse(apiResult {
                 try await filesClient.search(serverURL, scope, query, Constants.searchLimit).items
             }))

@@ -190,3 +190,16 @@ public enum TestKind {
     public static let photo = "jpg"
     public static let video = "mp4"
 }
+
+/// Points in the 350 ms search debounce (`FilesClient.searchDebounce`), so a test proves the wait
+/// is exactly that long and that a keystroke inside it keeps or restarts it.
+public enum TestSearchTiming {
+    /// One millisecond short of the debounce: nothing may be asked yet.
+    public static let justBeforeDebounce: Duration = .milliseconds(349)
+    /// The last millisecond of the debounce.
+    public static let lastMoment: Duration = .milliseconds(1)
+    /// Part way into the debounce, where the next keystroke lands.
+    public static let partOfDebounce: Duration = .milliseconds(200)
+    /// What is left of the debounce after `partOfDebounce`.
+    public static let restOfDebounce: Duration = .milliseconds(150)
+}

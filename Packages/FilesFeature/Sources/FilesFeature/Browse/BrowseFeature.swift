@@ -18,11 +18,6 @@ public struct BrowseFeature {
     /// Effect timing/limits shared by `body` and the extracted `BrowseFeature+*.swift` effect
     /// helpers. Nested (not a file private top level enum) so those extensions can see it.
     enum Constants {
-        /// Gate before the recursive backend search fires, so a burst of keystrokes collapses to one
-        /// request (superseded ones are cancelled). 1s, matching the web client: the backend recurses
-        /// and scans file contents with ripgrep, which is expensive, so this deliberately throttles
-        /// how often it runs. The instant client side pre-fill covers perceived latency in the gap.
-        static let searchDebounce: Duration = .seconds(1)
         /// After a copy or move into the folder on screen, how many extra refetches wait for the
         /// new items to be listed, and how far apart. A server that finishes the copy after
         /// answering (or a listing fetched a moment too early) otherwise leaves the new
@@ -402,8 +397,7 @@ public struct BrowseFeature {
 
         /// Typed, but too short for the server to search; only the instant matches show.
         public var isSearchTermTooShort: Bool {
-            let count = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count
-            return count > 0 && count < FilesClient.minimumSearchTermLength
+            SearchTerm(searchQuery).isTooShort
         }
 
         public var canShowMoreSearchResults: Bool {
@@ -786,18 +780,21 @@ public struct BrowseFeature {
                 return .send(.delegate(.openFolder(item)))
 
             case let .searchQueryChanged(query):
-                // A focus change or keyboard dismiss can re-send the same text through the
-                // field's binding; re-running `search` would reset results to the local pre-fill
-                // and refetch, flashing the list. Only act on a real text change.
-                guard query != state.searchQuery else { return .none }
+                // A focus change or keyboard dismiss resends the same text through the field's
+                // binding, and a typed space leaves the term the server reads unchanged; rerunning
+                // `search` would reset results to the local prefill and refetch, flashing the
+                // list. Only a new term searches again; the pending one keeps its debounce.
+                let isNewTerm = SearchTerm(query) != SearchTerm(state.searchQuery)
                 state.searchQuery = query
+                guard isNewTerm else { return .none }
                 state.searchLimit = FilesClient.searchLimitSteps[0]
                 return search(&state)
 
             case let .searchScopeChanged(scope):
+                guard scope != state.searchScope else { return .none }
                 state.searchScope = scope
                 state.searchLimit = FilesClient.searchLimitSteps[0]
-                return search(&state)
+                return search(&state, isDebounced: false)
 
             case .searchShowMoreTapped:
                 guard state.canShowMoreSearchResults else { return .none }
