@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "ClientCertificateFeature", targets: ["ClientCertificateFeature"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../NetworkClient"),
         .package(path: "../DesignSystem"),
         .package(path: "../Localization"),
@@ -27,6 +28,7 @@ let package = Package(
         .testTarget(
             name: "ClientCertificateFeatureTests",
             dependencies: [
+                "TestUtils",
                 "ClientCertificateFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],

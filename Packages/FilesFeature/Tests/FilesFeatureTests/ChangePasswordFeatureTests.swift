@@ -2,154 +2,124 @@ import ComposableArchitecture
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct ChangePasswordFeatureTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private typealias Store = TestStoreOf<ChangePasswordFeature>
 
-    private func store(
-        configure: (inout DependencyValues) -> Void = { _ in }
-    ) -> TestStoreOf<ChangePasswordFeature> {
-        let store = TestStore(initialState: ChangePasswordFeature.State(serverURL: serverURL)) {
-            ChangePasswordFeature()
-        } withDependencies: { configure(&$0) }
-        store.exhaustivity = .off
-        return store
+    struct ChangeCall: Equatable, Sendable {
+        let current: String
+        let new: String
     }
 
-    private func addStore(
-        configure: (inout DependencyValues) -> Void = { _ in }
-    ) -> TestStoreOf<ChangePasswordFeature> {
-        let store = TestStore(initialState: ChangePasswordFeature.State(serverURL: serverURL, mode: .add)) {
+    private let serverURL = SettingsTestSupport.serverURL
+    private let changeCalls = LockIsolated<[ChangeCall]>([])
+    private let addCalls = LockIsolated<[String]>([])
+
+    private func makeStore(
+        mode: ChangePasswordFeature.Mode = .change,
+        change: @escaping @Sendable () async throws -> Void = { throw FilesClientError.offline },
+        add: @escaping @Sendable () async throws -> Void = { throw FilesClientError.offline }
+    ) -> Store {
+        let changeCalls = changeCalls
+        let addCalls = addCalls
+        return TestStore(initialState: ChangePasswordFeature.State(serverURL: serverURL, mode: mode)) {
             ChangePasswordFeature()
-        } withDependencies: { configure(&$0) }
-        store.exhaustivity = .off
-        return store
+        } withDependencies: {
+            $0.filesClient.changeOwnPassword = { _, current, new in
+                changeCalls.withValue { $0.append(ChangeCall(current: current, new: new)) }
+                try await change()
+            }
+            $0.filesClient.addOwnPassword = { _, password in
+                addCalls.withValue { $0.append(password) }
+                try await add()
+            }
+        }
+    }
+
+    private func fillNew(_ store: Store, _ password: String, confirm: String? = nil) async {
+        let confirmation = confirm ?? password
+        if store.state.newPassword != password {
+            await store.send(.newPasswordChanged(password)) { $0.newPassword = password }
+        }
+        if store.state.confirmPassword != confirmation {
+            await store.send(.confirmPasswordChanged(confirmation)) { $0.confirmPassword = confirmation }
+        }
+    }
+
+    private func fillChange(_ store: Store, current: String = "old-pass", new: String = "the-new-one") async {
+        await store.send(.currentPasswordChanged(current)) { $0.currentPassword = current }
+        await fillNew(store, new)
     }
 
     // MARK: Add mode (an account with no password yet)
 
     @Test
     func addModeNeedsNoCurrentPassword() async {
-        let store = addStore()
-        #expect(store.state.isSubmitEnabled == false)
+        let store = makeStore(mode: .add)
+        #expect(!store.state.isSubmitEnabled)
 
-        await store.send(.newPasswordChanged("brand-new"))
-        await store.send(.confirmPasswordChanged("brand-new"))
+        await fillNew(store, Constants.newPassword)
 
         #expect(store.state.currentPassword.isEmpty)
-        #expect(store.state.isSubmitEnabled == true)
+        #expect(store.state.isSubmitEnabled)
     }
 
     @Test
     func addModeStillChecksLengthAndMatch() async {
-        let store = addStore()
+        let store = makeStore(mode: .add)
 
-        await store.send(.newPasswordChanged("short"))
-        await store.send(.confirmPasswordChanged("short"))
-        #expect(store.state.isSubmitEnabled == false)
+        await fillNew(store, "short")
+        #expect(!store.state.isSubmitEnabled)
 
-        await store.send(.newPasswordChanged("brand-new"))
+        await store.send(.newPasswordChanged(Constants.newPassword)) { $0.newPassword = Constants.newPassword }
         #expect(store.state.confirmError == .mismatch)
-        #expect(store.state.isSubmitEnabled == false)
+        #expect(!store.state.isSubmitEnabled)
     }
 
     @Test
     func addModeSendsOnlyTheNewPasswordToTheAddRouteAndReportsIt() async {
-        let sent = LockIsolated<String?>(nil)
-        let store = addStore {
-            $0.filesClient.addOwnPassword = { _, password in sent.setValue(password) }
-            $0.filesClient.changeOwnPassword = { _, _, _ in Issue.record("add mode must not call the change route") }
+        let store = makeStore(mode: .add, add: {})
+        await fillNew(store, Constants.newPassword)
+
+        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.receive(\.response.success) {
+            $0.isSubmitting = false
+            $0.newPassword = ""
+            $0.confirmPassword = ""
+            $0.didSucceed = true
         }
-        await store.send(.newPasswordChanged("brand-new"))
-        await store.send(.confirmPasswordChanged("brand-new"))
+        await store.receive(.delegate(.passwordAdded))
 
-        await store.send(.submitTapped)
-        await store.receive(\.response)
-        await store.receive(\.delegate)
-
-        #expect(sent.value == "brand-new")
-        #expect(store.state.newPassword.isEmpty)
-        #expect(store.state.isSubmitting == false)
+        #expect(addCalls.value == [Constants.newPassword])
+        #expect(changeCalls.value.isEmpty)
     }
 
     @Test
     func addModeSurfacesAnAlreadyHasPasswordError() async {
-        let store = addStore {
-            $0.filesClient.addOwnPassword = { _, _ in
-                throw FilesClientError.serverMessage(statusCode: 409, message: "You already have password authentication.")
-            }
+        let store = makeStore(mode: .add, add: {
+            throw FilesClientError.serverMessage(statusCode: 409, message: "You already have password authentication.")
+        })
+        await fillNew(store, Constants.newPassword)
+
+        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.receive(\.response.failure) {
+            $0.isSubmitting = false
+            $0.errorMessage = "You already have password authentication."
         }
-        await store.send(.newPasswordChanged("brand-new"))
-        await store.send(.confirmPasswordChanged("brand-new"))
-
-        await store.send(.submitTapped)
-        await store.receive(\.response)
-
-        #expect(store.state.errorMessage == "You already have password authentication.")
-        #expect(store.state.didSucceed == false)
+        #expect(!store.state.didSucceed)
+        #expect(store.state.newPassword == Constants.newPassword)
     }
 
     @Test
     func changeModeNeverReportsAnAddedPassword() async {
-        let store = store {
-            $0.filesClient.changeOwnPassword = { _, _, _ in }
-        }
-        await store.send(.currentPasswordChanged("old-pass"))
-        await store.send(.newPasswordChanged("brand-new"))
-        await store.send(.confirmPasswordChanged("brand-new"))
+        let store = makeStore(change: {})
+        await fillChange(store)
 
-        await store.send(.submitTapped)
-        await store.receive(\.response)
-
-        #expect(store.state.didSucceed == true)
-    }
-
-    // MARK: Validation
-
-    @Test
-    func submitIsGatedOnAllThreeFields() async {
-        let store = store()
-        #expect(store.state.isSubmitEnabled == false)
-
-        await store.send(.currentPasswordChanged("old-pass"))
-        await store.send(.newPasswordChanged("short"))
-        #expect(store.state.newPasswordError == .tooShort(minimum: 6))
-        #expect(store.state.isSubmitEnabled == false)
-
-        await store.send(.newPasswordChanged("brand-new"))
-        await store.send(.confirmPasswordChanged("brand-neW"))
-        #expect(store.state.confirmError == .mismatch)
-        #expect(store.state.isSubmitEnabled == false)
-
-        await store.send(.confirmPasswordChanged("brand-new"))
-        #expect(store.state.confirmError == nil)
-        #expect(store.state.isSubmitEnabled == true)
-    }
-
-    @Test
-    func aGuardedSubmitDoesNothing() async {
-        let store = store {
-            $0.filesClient.changeOwnPassword = { _, _, _ in Issue.record("must not call the server") }
-        }
-        await store.send(.submitTapped) // nothing filled in
-        #expect(store.state.isSubmitting == false)
-    }
-
-    // MARK: Happy path
-
-    @Test
-    func aSuccessfulChangeClearsTheFormAndShowsSuccess() async {
-        let store = store {
-            $0.filesClient.changeOwnPassword = { _, current, new in
-                #expect(current == "old-pass")
-                #expect(new == "the-new-one")
-            }
-        }
-        await store.send(.currentPasswordChanged("old-pass"))
-        await store.send(.newPasswordChanged("the-new-one"))
-        await store.send(.confirmPasswordChanged("the-new-one"))
         await store.send(.submitTapped) { $0.isSubmitting = true }
         await store.receive(\.response.success) {
             $0.isSubmitting = false
@@ -158,55 +128,166 @@ struct ChangePasswordFeatureTests {
             $0.confirmPassword = ""
             $0.didSucceed = true
         }
+        await store.finish()
+        #expect(addCalls.value.isEmpty)
+    }
+
+    // MARK: Validation
+
+    struct LengthCase: Sendable {
+        let password: String
+        let error: ChangePasswordFeature.NewPasswordError?
+        let isSubmittable: Bool
+    }
+
+    @Test(
+        "The new password needs at least six characters, and an empty field is not yet an error",
+        arguments: [
+            LengthCase(password: "", error: nil, isSubmittable: false),
+            LengthCase(password: "a", error: .tooShort(minimum: 6), isSubmittable: false),
+            LengthCase(password: "12345", error: .tooShort(minimum: 6), isSubmittable: false),
+            LengthCase(password: TestAccount.totpCode, error: nil, isSubmittable: true),
+            LengthCase(password: "a much longer passphrase", error: nil, isSubmittable: true),
+        ]
+    )
+    func newPasswordLengthBoundary(_ testCase: LengthCase) async {
+        let store = makeStore()
+        await fillChange(store, new: testCase.password)
+
+        #expect(store.state.newPasswordError == testCase.error)
+        #expect(store.state.isSubmitEnabled == testCase.isSubmittable)
     }
 
     @Test
-    func typingAgainClearsAStaleSuccessMessage() async {
-        let store = store {
-            $0.filesClient.changeOwnPassword = { _, _, _ in }
-        }
-        await store.send(.currentPasswordChanged("old-pass"))
-        await store.send(.newPasswordChanged("the-new-one"))
-        await store.send(.confirmPasswordChanged("the-new-one"))
-        await store.send(.submitTapped)
-        await store.receive(\.response.success)
-        #expect(store.state.didSucceed)
+    func submitIsGatedOnAllThreeFields() async {
+        let store = makeStore()
+        #expect(!store.state.isSubmitEnabled)
 
-        await store.send(.currentPasswordChanged("x")) { $0.didSucceed = false }
+        await fillNew(store, Constants.newPassword)
+        #expect(!store.state.isSubmitEnabled)
+
+        await store.send(.currentPasswordChanged("old-pass")) { $0.currentPassword = "old-pass" }
+        #expect(store.state.isSubmitEnabled)
+
+        await store.send(.confirmPasswordChanged("brand-neW")) { $0.confirmPassword = "brand-neW" }
+        #expect(store.state.confirmError == .mismatch)
+        #expect(!store.state.isSubmitEnabled)
+
+        await store.send(.confirmPasswordChanged(Constants.newPassword)) { $0.confirmPassword = Constants.newPassword }
+        #expect(store.state.confirmError == nil)
+        #expect(store.state.isSubmitEnabled)
+    }
+
+    @Test
+    func aGuardedSubmitDoesNothing() async {
+        let store = makeStore(change: {})
+
+        await store.send(.submitTapped)
+        #expect(changeCalls.value.isEmpty)
+        #expect(addCalls.value.isEmpty)
+    }
+
+    // MARK: Happy path
+
+    @Test
+    func aSuccessfulChangeSendsBothPasswordsAndClearsTheForm() async {
+        let store = makeStore(change: {})
+        await fillChange(store)
+
+        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.receive(\.response.success) {
+            $0.isSubmitting = false
+            $0.currentPassword = ""
+            $0.newPassword = ""
+            $0.confirmPassword = ""
+            $0.didSucceed = true
+        }
+        #expect(changeCalls.value == [ChangeCall(current: "old-pass", new: "the-new-one")])
+    }
+
+    @Test(
+        "Typing in any field again clears a stale success message",
+        arguments: [
+            ChangePasswordFeature.Action.currentPasswordChanged("x"),
+            .newPasswordChanged("x"),
+            .confirmPasswordChanged("x"),
+        ]
+    )
+    func typingAgainClearsAStaleSuccessMessage(_ action: ChangePasswordFeature.Action) async {
+        var state = ChangePasswordFeature.State(serverURL: serverURL)
+        state.didSucceed = true
+        let store = TestStore(initialState: state) { ChangePasswordFeature() }
+
+        await store.send(action) {
+            switch action {
+            case .currentPasswordChanged: $0.currentPassword = "x"
+            case .newPasswordChanged: $0.newPassword = "x"
+            default: $0.confirmPassword = "x"
+            }
+            $0.didSucceed = false
+        }
     }
 
     // MARK: Error paths
 
     @Test
-    func aWrongCurrentPasswordSurfacesTheServerMessage() async {
-        let store = store {
-            $0.filesClient.changeOwnPassword = { _, _, _ in
-                throw FilesClientError.serverMessage(statusCode: 401, message: "Current password is incorrect.")
-            }
-        }
-        await store.send(.currentPasswordChanged("nope"))
-        await store.send(.newPasswordChanged("the-new-one"))
-        await store.send(.confirmPasswordChanged("the-new-one"))
+    func aWrongCurrentPasswordSurfacesTheServerMessageAndKeepsTheForm() async {
+        let store = makeStore(change: {
+            throw FilesClientError.serverMessage(statusCode: 401, message: "Current password is incorrect.")
+        })
+        await fillChange(store, current: TestAccount.rejectedPassword)
+
         await store.send(.submitTapped) { $0.isSubmitting = true }
         await store.receive(\.response.failure) {
             $0.isSubmitting = false
             $0.errorMessage = "Current password is incorrect."
         }
-        #expect(store.state.currentPassword == "nope") // form is kept for a retry
+        #expect(store.state.currentPassword == TestAccount.rejectedPassword)
+        #expect(store.state.newPassword == "the-new-one")
     }
 
     @Test
     func aRateLimitIsSurfaced() async {
-        let store = store {
-            $0.filesClient.changeOwnPassword = { _, _, _ in throw FilesClientError.rateLimited }
-        }
-        await store.send(.currentPasswordChanged("old-pass"))
-        await store.send(.newPasswordChanged("the-new-one"))
-        await store.send(.confirmPasswordChanged("the-new-one"))
-        await store.send(.submitTapped)
+        let store = makeStore(change: { throw FilesClientError.rateLimited })
+        await fillChange(store)
+
+        await store.send(.submitTapped) { $0.isSubmitting = true }
         await store.receive(\.response.failure) {
             $0.isSubmitting = false
-            $0.errorMessage = FilesClientError.rateLimited.userMessage
+            $0.errorMessage = L10n.Error.rateLimited
         }
     }
+
+    @Test
+    func resubmittingAfterAFailureClearsTheOldError() async {
+        let attempts = LockIsolated(0)
+        let store = makeStore(change: {
+            if attempts.withValue({ $0 += 1; return $0 }) == 1 {
+                throw FilesClientError.rateLimited
+            }
+        })
+        await fillChange(store)
+
+        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.receive(\.response.failure) {
+            $0.isSubmitting = false
+            $0.errorMessage = L10n.Error.rateLimited
+        }
+        await store.send(.submitTapped) {
+            $0.isSubmitting = true
+            $0.errorMessage = nil
+        }
+        await store.receive(\.response.success) {
+            $0.isSubmitting = false
+            $0.currentPassword = ""
+            $0.newPassword = ""
+            $0.confirmPassword = ""
+            $0.didSucceed = true
+        }
+        #expect(attempts.value == 2)
+    }
+}
+
+private enum Constants {
+    static let newPassword = "brand-new"
 }

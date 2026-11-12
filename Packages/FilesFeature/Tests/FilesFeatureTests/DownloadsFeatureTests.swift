@@ -3,16 +3,18 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct DownloadsFeatureTests {
-    private func makeDownload(fileName: String = "report.pdf", location: DownloadLocation = .documents) -> LocalDownload {
+    private func makeDownload(fileName: String = TestFile.report, location: DownloadLocation = .documents) -> LocalDownload {
         LocalDownload(
             url: URL(fileURLWithPath: "/tmp/\(location.title)/Downloads/\(fileName)"),
             fileName: fileName,
             location: location,
             size: 1_024,
-            modifiedDate: Date()
+            modifiedDate: MockDate.date
         )
     }
 

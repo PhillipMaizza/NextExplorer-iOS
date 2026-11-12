@@ -1,0 +1,14 @@
+{
+  "path": "Photos",
+  "name": "Photos",
+  "kind": "directory",
+  "size": 4096,
+  "dateModified": "2024-01-01T00:00:00.000Z",
+  "dateCreated": "2024-01-01T00:00:00.000Z",
+  "directory": {
+    "totalSize": 10485760,
+    "fileCount": 42,
+    "dirCount": 3,
+    "truncated": false
+  }
+}

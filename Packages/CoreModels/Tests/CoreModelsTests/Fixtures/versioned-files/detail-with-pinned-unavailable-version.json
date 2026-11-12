@@ -1,0 +1,21 @@
+{
+  "file": {
+    "id": "f1",
+    "name": "a.txt"
+  },
+  "versions": [
+    {
+      "id": "v1",
+      "size": 100,
+      "modifiedAt": "2026-11-11T07:00:00Z",
+      "capturedAt": "2026-11-11T07:01:00Z",
+      "author": {
+        "label": "alice"
+      },
+      "label": "before edit",
+      "pinned": true,
+      "available": false
+    }
+  ],
+  "totalBytes": 100
+}

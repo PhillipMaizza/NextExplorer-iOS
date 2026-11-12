@@ -1,0 +1,16 @@
+{
+  "trash": {
+    "enabled": false,
+    "retentionDays": 14,
+    "maxPercent": 25,
+    "maxBytes": 5368709120
+  },
+  "versions": {
+    "enabled": true,
+    "keepAllHours": 12,
+    "hourlyDays": 3,
+    "dailyDays": 20,
+    "maxPerFile": 80,
+    "sessionCheckpointMinutes": 5
+  }
+}

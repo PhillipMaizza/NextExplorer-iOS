@@ -1,0 +1,27 @@
+{
+  "id": "z1",
+  "kind": "personal",
+  "name": "alice",
+  "available": true,
+  "reason": null,
+  "itemCount": 3,
+  "usedBytes": 1000,
+  "versionCount": 2,
+  "versionBytes": 500,
+  "budgetBytes": 10000,
+  "freeBytes": 99999,
+  "lastPass": {
+    "zoneId": "z1",
+    "at": "2026-11-11T07:00:00.000Z",
+    "purged": 4
+  },
+  "events": [
+    {
+      "id": 7,
+      "zoneId": "z1",
+      "kind": "version-evicted",
+      "itemName": "a.txt",
+      "createdAt": "2026-11-11T06:00:00.000Z"
+    }
+  ]
+}

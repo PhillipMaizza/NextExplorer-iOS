@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "DesignSystem", targets: ["DesignSystem"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../AppStorageKeys"),
         .package(path: "../Localization"),
     ],
@@ -22,6 +23,6 @@ let package = Package(
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
-        .testTarget(name: "DesignSystemTests", dependencies: ["DesignSystem"], swiftSettings: [.swiftLanguageMode(.v6)]),
+        .testTarget(name: "DesignSystemTests", dependencies: ["TestUtils", "DesignSystem"], swiftSettings: [.swiftLanguageMode(.v6)]),
     ]
 )

@@ -1,6 +1,7 @@
 import Foundation
 @testable import Keychain
 import Testing
+import TestUtils
 
 @Suite("Keychain migration gate")
 struct KeychainMigrationGateTests {
@@ -26,7 +27,7 @@ struct KeychainMigrationGateTests {
         gate.begin()
         let reader = Task.detached {
             signalReader.yield()
-            return try? client.load("storedSessions")
+            return try? client.load(TestStorageKey.storedSessions)
         }
         for await _ in readerStarted {
             break
@@ -39,17 +40,23 @@ struct KeychainMigrationGateTests {
     }
 
     @Test("nothing waits when no migration was begun", .timeLimit(.minutes(1)))
-    func noMigrationNoWait() {
+    func noMigrationNoWait() async {
         let gate = KeychainMigrationGate()
-        gate.waitUntilFinished(maxWait: Constants.neverEnding)
+        await confirmation("the wait returned instead of blocking") { returned in
+            gate.waitUntilFinished(maxWait: Constants.neverEnding)
+            returned()
+        }
     }
 
     @Test("a finished migration lets later reads straight through", .timeLimit(.minutes(1)))
-    func finishedMigrationNoWait() {
+    func finishedMigrationNoWait() async {
         let gate = KeychainMigrationGate()
         gate.begin()
         gate.finish()
-        gate.waitUntilFinished(maxWait: Constants.neverEnding)
+        await confirmation("the wait returned instead of blocking") { returned in
+            gate.waitUntilFinished(maxWait: Constants.neverEnding)
+            returned()
+        }
     }
 
     @Test("a migration that never finishes releases the read once the maximum wait is spent", .timeLimit(.minutes(1)))
@@ -59,22 +66,5 @@ struct KeychainMigrationGateTests {
         gate.waitUntilFinished(maxWait: 0)
         gate.finish()
         gate.waitUntilFinished(maxWait: Constants.neverEnding)
-    }
-}
-
-private final class LockIsolated<Value>: @unchecked Sendable {
-    private let lock = NSLock()
-    private var stored: Value
-
-    init(_ value: Value) {
-        stored = value
-    }
-
-    var value: Value {
-        lock.withLock { stored }
-    }
-
-    func withValue(_ change: (inout Value) -> Void) {
-        lock.withLock { change(&stored) }
     }
 }

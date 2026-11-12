@@ -3,67 +3,64 @@ import CoreModels
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
+/// The file type filter over search results: which categories are offered, how toggling narrows the
+/// list, and when a selected category is dropped.
+@Suite(.isolatedDependencies)
 @MainActor
 struct BrowseSearchFilterTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private let image = SearchResultItem(name: TestFile.photo, path: "", kind: "file")
+    private let document = SearchResultItem(name: TestFile.report, path: "", kind: "file")
+    private let video = SearchResultItem(name: "clip.mp4", path: "", kind: "file")
 
     private func searchingState(_ results: [SearchResultItem]) -> BrowseFeature.State {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Files")
+        var state = BrowseFixtures.state("", title: TestFolder.files)
         state.searchQuery = "a"
         state.searchResults = IdentifiedArray(uniqueElements: results)
         return state
     }
 
-    private let image = SearchResultItem(name: "photo.jpg", path: "", kind: "file")
-    private let document = SearchResultItem(name: "report.pdf", path: "", kind: "file")
-    private let video = SearchResultItem(name: "clip.mp4", path: "", kind: "file")
-
-    @Test
+    @Test("The categories offered are only the kinds present in the results, in display order")
     func availableCategoriesReflectOnlyTheKindsPresentInResults() {
         let state = searchingState([image, document, video])
-        // allCases display order is folder, image, video, audio, document, archive, other.
+
         #expect(state.availableSearchCategories == [.image, .video, .document])
     }
 
-    @Test
+    @Test("Toggling a category narrows the displayed results, and a second category adds to it")
     func togglingACategoryNarrowsTheDisplayedResults() async {
-        let store = TestStore(initialState: searchingState([image, document, video])) {
-            BrowseFeature()
-        }
-        store.exhaustivity = .off
+        let store = BrowseFixtures.store(searchingState([image, document, video]))
 
         await store.send(.searchCategoryToggled(.image)) {
             $0.selectedSearchCategories = [.image]
         }
         #expect(store.state.displayedSearchResults?.map(\.id) == [image.id])
 
-        // A second category is additive (multi-select).
         await store.send(.searchCategoryToggled(.video)) {
             $0.selectedSearchCategories = [.image, .video]
         }
         #expect(Set(store.state.displayedSearchResults?.map(\.id) ?? []) == [image.id, video.id])
     }
 
-    @Test
+    @Test("Toggling the same category twice shows every result again")
     func togglingTheSameCategoryTwiceReturnsToAll() async {
-        let store = TestStore(initialState: searchingState([image, document, video])) {
-            BrowseFeature()
-        }
-        store.exhaustivity = .off
+        let store = BrowseFixtures.store(searchingState([image, document, video]))
 
-        await store.send(.searchCategoryToggled(.image))
-        await store.send(.searchCategoryToggled(.image))
-        #expect(store.state.selectedSearchCategories.isEmpty)
+        await store.send(.searchCategoryToggled(.image)) {
+            $0.selectedSearchCategories = [.image]
+        }
+        await store.send(.searchCategoryToggled(.image)) {
+            $0.selectedSearchCategories = []
+        }
         #expect(store.state.displayedSearchResults?.count == 3)
     }
 
-    @Test
+    @Test("Clearing the filter shows every result again")
     func clearingTheFilterResetsToAll() async {
         var state = searchingState([image, document, video])
         state.selectedSearchCategories = [.image]
-        let store = TestStore(initialState: state) { BrowseFeature() }
-        store.exhaustivity = .off
+        let store = BrowseFixtures.store(state)
 
         await store.send(.searchFilterCleared) {
             $0.selectedSearchCategories = []
@@ -71,12 +68,11 @@ struct BrowseSearchFilterTests {
         #expect(store.state.displayedSearchResults?.count == 3)
     }
 
-    @Test
+    @Test("Clearing the search query also clears the type filter")
     func clearingTheSearchQueryAlsoClearsTheTypeFilter() async {
         var state = searchingState([image, document])
         state.selectedSearchCategories = [.image]
-        let store = TestStore(initialState: state) { BrowseFeature() }
-        store.exhaustivity = .off
+        let store = BrowseFixtures.store(state)
 
         await store.send(.searchQueryChanged("")) {
             $0.searchQuery = ""
@@ -85,42 +81,44 @@ struct BrowseSearchFilterTests {
         }
     }
 
-    @Test
+    @Test("The instant pre-fill keeps a selected category the current folder lacks, and so does the server answer")
     func theInstantPreFillDoesNotDropASelectedCategoryTheCurrentFolderLacks() async {
-        // Regression: the pre-fill only sees the current folder, so pruning the selection against
-        // it would wrongly clear a category the backend subtree contains but this folder doesn't.
+        // The pre-fill only sees the current folder, so pruning the selection against it would
+        // wrongly clear a category that the server's subtree contains and this folder does not.
         let videoHit = SearchResultItem(name: "clip.mp4", path: "Photos/Trips", kind: "file")
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
-        state.items = [FileItem(name: "report.pdf", path: "Photos", dateModified: Date(), size: 0, kind: "pdf")]
-        state.searchResults = IdentifiedArray(uniqueElements: [videoHit])
+        var state = BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos, items: [BrowseFixtures.file(TestFile.report, in: TestFolder.photos)])
         state.selectedSearchCategories = [.video]
         let clock = TestClock()
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
+        let store = BrowseFixtures.store(state) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, _, _ in [videoHit] }
         }
-        store.exhaustivity = .off
 
-        await store.send(.searchQueryChanged("clip"))
-        // The Video filter survives the pre-fill (this folder has only a PDF).
+        await store.send(.searchQueryChanged("clip")) {
+            $0.searchQuery = "clip"
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await clock.advance(by: BrowseFeature.Constants.searchDebounce)
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [videoHit]
+        }
         #expect(store.state.selectedSearchCategories == [.video])
-        // Cancel the pending debounced request.
-        await store.send(.searchQueryChanged(""))
+        #expect(store.state.displayedSearchResults?.map(\.id) == [videoHit.id])
     }
 
-    @Test
+    @Test("A new result set drops the selected categories it no longer contains")
     func aNewResultSetPrunesSelectedCategoriesNoLongerPresent() async {
         var state = searchingState([image, video])
         state.selectedSearchCategories = [.image, .video]
-        let store = TestStore(initialState: state) { BrowseFeature() }
-        store.exhaustivity = .off
+        let store = BrowseFixtures.store(state)
 
-        // The refreshed results contain only a document, so image/video are pruned from the
-        // selection instead of stranding the list on an empty, unofferable filter.
-        await store.send(.searchResultsResponse(.success([document])))
-        #expect(store.state.selectedSearchCategories.isEmpty)
+        // Image and video are pruned instead of stranding the list on an empty, unofferable filter.
+        await store.send(.searchResultsResponse(.success([document]))) {
+            $0.searchResults = [document]
+            $0.selectedSearchCategories = []
+        }
         #expect(store.state.availableSearchCategories == [.document])
         #expect(store.state.displayedSearchResults?.map(\.id) == [document.id])
     }

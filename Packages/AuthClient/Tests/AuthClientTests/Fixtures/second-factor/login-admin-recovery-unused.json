@@ -1,0 +1,11 @@
+{
+  "user": {
+    "id": "1",
+    "username": "asmith",
+    "roles": [
+      "admin"
+    ]
+  },
+  "usedRecoveryCode": false,
+  "recoveryCodesLeft": null
+}

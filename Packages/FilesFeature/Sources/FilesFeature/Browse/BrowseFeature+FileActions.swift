@@ -150,9 +150,8 @@ extension BrowseFeature {
     /// shouldn't block toggling the rest.
     func startBulkFavorite(_ state: inout State) -> Effect<Action> {
         guard !state.isBulkActionInFlight else { return .none }
-        let targets = state.selectedItemIDs
-            .compactMap { state.items[id: $0] }
-            .filter(\.isDirectory)
+        // Listing order, not Set order: the server sees the favorites in the order the user sees the rows.
+        let targets = state.items.filter { state.selectedItemIDs.contains($0.id) && $0.isDirectory }
         guard !targets.isEmpty else { return .none }
         state.isBulkActionInFlight = true
         let serverURL = state.serverURL

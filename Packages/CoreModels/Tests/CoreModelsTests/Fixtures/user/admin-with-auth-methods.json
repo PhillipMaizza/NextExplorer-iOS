@@ -1,0 +1,16 @@
+{
+  "id": "1",
+  "username": "phillip",
+  "roles": [
+    "admin"
+  ],
+  "authMethods": [
+    {
+      "method": "local_password"
+    },
+    {
+      "method": "oidc",
+      "provider": "Authentik"
+    }
+  ]
+}

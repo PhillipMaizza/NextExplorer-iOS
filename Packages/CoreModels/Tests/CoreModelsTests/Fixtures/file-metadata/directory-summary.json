@@ -1,0 +1,14 @@
+{
+  "path": "Home/Photos",
+  "name": "Photos",
+  "kind": "directory",
+  "size": 4096,
+  "dateModified": 1800000000,
+  "dateCreated": 1700000000,
+  "directory": {
+    "totalSize": 10485760,
+    "fileCount": 42,
+    "dirCount": 3,
+    "truncated": false
+  }
+}

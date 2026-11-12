@@ -1,0 +1,16 @@
+{
+  "uploads": {
+    "maxChunkSizeBytes": 67108864
+  },
+  "search": {
+    "index": {
+      "enabled": true,
+      "lockedBy": "SEARCH_INDEX"
+    }
+  },
+  "folderSize": {
+    "mode": "full",
+    "enabled": true,
+    "lockedBy": "FOLDER_SIZE_MODE"
+  }
+}

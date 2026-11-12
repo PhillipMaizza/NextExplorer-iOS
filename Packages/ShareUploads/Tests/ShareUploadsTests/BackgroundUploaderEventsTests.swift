@@ -2,6 +2,7 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
+import TestUtils
 
 @Suite("Background uploader wake ups, late events and races")
 struct BackgroundUploaderEventsTests {
@@ -13,7 +14,7 @@ struct BackgroundUploaderEventsTests {
     }
 
     private func identifier() -> String {
-        BackgroundUploader.identifierPrefix + UUID().uuidString
+        BackgroundUploader.identifierPrefix + TestID.uuid().uuidString
     }
 
     // MARK: Wake up completion handlers
@@ -106,23 +107,23 @@ struct BackgroundUploaderEventsTests {
     func freshManifestlessBatchSurvivesCancel() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let staging = harness.root.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let staging = harness.root.appendingPathComponent(TestID.uuid().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
-        try Data("half".utf8).write(to: staging.appendingPathComponent("x.multipart"))
+        try Data("half".utf8).write(to: staging.appendingPathComponent(ShareUploadsTestValue.xEnvelope))
         try FileManager.default.setAttributes(
             [.modificationDate: TestClock.reference.addingTimeInterval(-Constants.freshAge)], ofItemAtPath: staging.path
         )
 
         harness.uploader.cancel(keepingAccounts: [])
 
-        #expect(harness.exists(staging.appendingPathComponent("x.multipart")))
+        #expect(harness.exists(staging.appendingPathComponent(ShareUploadsTestValue.xEnvelope)))
     }
 
     @Test("A stale batch without a manifest is a leftover that cancelling removes")
     func staleManifestlessBatchIsCancelled() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let staging = harness.root.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let staging = harness.root.appendingPathComponent(TestID.uuid().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
         try FileManager.default.setAttributes(
             [.modificationDate: TestClock.reference.addingTimeInterval(-BackgroundUploader.staleAge - Constants.staleMargin)],
@@ -168,10 +169,10 @@ struct BackgroundUploaderEventsTests {
     func startingTouchesTheManifest() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let source = harness.root.appendingPathComponent("source.jpg")
+        let source = harness.root.appendingPathComponent(ShareUploadsTestValue.sourcePhoto)
         try Data("photo".utf8).write(to: source)
-        var batch = try harness.uploader.makeBatch(credentials: Harness.credentials, destination: "Photos")
-        try batch.add(batch.envelope(for: source, fileName: "one.jpg"))
+        var batch = try harness.uploader.makeBatch(credentials: Harness.credentials, destination: TestFolder.photos)
+        try batch.add(batch.envelope(for: source, fileName: ShareUploadsTestValue.firstPhoto))
         harness.clock.advance(by: BackgroundUploader.staleAge)
 
         try harness.uploader.start(batch)
@@ -186,7 +187,7 @@ struct BackgroundUploaderEventsTests {
     func abandonedIsRecordedDistinctly() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg", "b.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto])
         Manifest.record(index: 0, result: .success, in: batch.directory)
 
         harness.uploader.abandonOutstanding(batchID: batch.id)
@@ -198,10 +199,10 @@ struct BackgroundUploaderEventsTests {
     func lateSuccessCorrectsTheReport() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg", "b.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto])
         Manifest.record(index: 0, result: .success, in: batch.directory)
         harness.uploader.abandonOutstanding(batchID: batch.id)
-        #expect(harness.recorder.outcomes.last?.failures.map(\.name) == ["b.jpg"])
+        #expect(harness.recorder.outcomes.last?.failures.map(\.name) == [TestFile.bPhoto])
 
         harness.uploader.complete(batchID: batch.id, index: 1, result: .success)
 
@@ -216,7 +217,7 @@ struct BackgroundUploaderEventsTests {
     func lateSuccessKeepsTheOthersFailed() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg", "b.jpg", "c.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto, TestFile.cPhoto])
         harness.uploader.abandonOutstanding(batchID: batch.id)
 
         harness.uploader.complete(batchID: batch.id, index: 1, result: .success)
@@ -224,7 +225,7 @@ struct BackgroundUploaderEventsTests {
         let corrected = try #require(harness.recorder.outcomes.last)
         #expect(harness.recorder.outcomes.count == 2)
         #expect(corrected.uploaded == 1)
-        #expect(corrected.failures.map(\.name) == ["a.jpg", "c.jpg"])
+        #expect(corrected.failures.map(\.name) == [TestFile.aPhoto, TestFile.cPhoto])
         #expect(Manifest.results(in: batch.directory)[1] == .success)
     }
 
@@ -232,7 +233,7 @@ struct BackgroundUploaderEventsTests {
     func lateFailureStaysQuiet() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto])
         harness.uploader.abandonOutstanding(batchID: batch.id)
 
         harness.uploader.complete(batchID: batch.id, index: 0, result: .failure(.network))
@@ -245,7 +246,7 @@ struct BackgroundUploaderEventsTests {
     func retrySkipsSucceededFiles() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg", "b.jpg", "c.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto, TestFile.cPhoto])
         Manifest.record(index: 0, result: .success, in: batch.directory)
         harness.uploader.abandonOutstanding(batchID: batch.id)
         Manifest.record(index: 1, result: .success, in: batch.directory)
@@ -271,7 +272,7 @@ struct BackgroundUploaderEventsTests {
         let uploaders = [harness.uploader, second]
 
         for _ in 0 ..< Constants.racedBatches {
-            let batch = try harness.makeBatch(names: ["a.jpg", "b.jpg"])
+            let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto])
             DispatchQueue.concurrentPerform(iterations: Constants.concurrentIterations) { iteration in
                 uploaders[iteration % uploaders.count].finishBatch(id: batch.id, manifest: batch.manifest)
             }
@@ -293,7 +294,7 @@ struct BackgroundUploaderEventsTests {
         )
 
         for _ in 0 ..< Constants.racedBatches {
-            let batch = try harness.makeBatch(names: ["a.jpg", "b.jpg"])
+            let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto])
             DispatchQueue.concurrentPerform(iterations: 2) { index in
                 (index == 0 ? harness.uploader : second).complete(batchID: batch.id, index: index, result: .failure(.network))
             }

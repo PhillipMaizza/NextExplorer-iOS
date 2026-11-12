@@ -5,6 +5,7 @@ import Localization
 @testable import ShareExtensionFeature
 import ShareUploads
 import Testing
+import TestUtils
 import UniformTypeIdentifiers
 
 /// The live client against real `NSItemProvider`s, staged into a temporary batch that is never
@@ -13,7 +14,7 @@ struct SharedItemsClientLiveTests {
     private let credentials = SessionCredentials.preview
 
     private func temporaryFile(named name: String, contents: String = "contents") throws -> URL {
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let url = directory.appendingPathComponent(name)
         try Data(contents.utf8).write(to: url)
@@ -49,23 +50,23 @@ struct SharedItemsClientLiveTests {
     func anUnreadableItemDoesNotCostTheBatch() async throws {
         let providers = try [
             readableProvider(named: "first.pdf"),
-            failingProvider(named: "broken.pdf"),
+            failingProvider(named: Constants.brokenName),
             readableProvider(named: "third.pdf"),
         ]
         let client = client(providers)
 
-        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
 
         #expect(report.stagedCount == 2)
-        #expect(report.failures == [ItemFailure(index: 1, name: "broken.pdf", cause: .cannotRead)])
+        #expect(report.failures == [ItemFailure(index: 1, name: Constants.brokenName, cause: .cannotRead)])
         client.discard()
     }
 
     @Test("a failing item without a name is still identified by its position")
     func anUnnamedFailureGetsAPositionName() async throws {
-        let client = try client([readableProvider(named: "a.pdf"), failingProvider(named: nil)])
+        let client = try client([readableProvider(named: TestFile.aPDF), failingProvider(named: nil)])
 
-        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
 
         let failure = try #require(report.failures.first)
         #expect(failure.index == 1)
@@ -77,7 +78,7 @@ struct SharedItemsClientLiveTests {
     func aFullDeviceIsNamedAsTheCause() async throws {
         let client = client([failingProvider(named: "big.mov", error: CocoaError(.fileWriteOutOfSpace))])
 
-        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
 
         #expect(report.stagedCount == 0)
         #expect(report.failures.map(\.cause) == [.notEnoughSpace])
@@ -88,8 +89,8 @@ struct SharedItemsClientLiveTests {
     func aRetryAddsToTheSameBatch() async throws {
         let failsOnce = LockIsolated(true)
         let flaky = NSItemProvider()
-        flaky.suggestedName = "flaky.pdf"
-        let file = try temporaryFile(named: "flaky.pdf")
+        flaky.suggestedName = Constants.flakyName
+        let file = try temporaryFile(named: Constants.flakyName)
         flaky.registerFileRepresentation(for: .pdf, visibility: .all, openInPlace: false) { completion in
             if failsOnce.withValue({ value -> Bool in
                 defer { value = false }
@@ -103,11 +104,11 @@ struct SharedItemsClientLiveTests {
         }
         let client = try client([readableProvider(named: "ok.pdf"), flaky])
 
-        let first = try await client.prepare(credentials, "Photos", nil) { _ in }
+        let first = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
         #expect(first.stagedCount == 1)
         #expect(first.failures.map(\.index) == [1])
 
-        let second = try await client.prepare(credentials, "Photos", [1]) { _ in }
+        let second = try await client.prepare(credentials, TestFolder.photos, [1]) { _ in }
         #expect(second.stagedCount == 2, "the earlier file is still staged")
         #expect(second.failures.isEmpty)
         client.discard()
@@ -115,10 +116,10 @@ struct SharedItemsClientLiveTests {
 
     @Test("an item with no file, such as a link, is skipped quietly")
     func aLinkIsNotAFailure() async throws {
-        let link = try NSItemProvider(object: #require(URL(string: "https://example.com")) as NSURL)
+        let link = try NSItemProvider(object: #require(URL(string: TestHost.exampleURLString)) as NSURL)
         let client = client([link])
 
-        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
 
         #expect(report.stagedCount == 0)
         #expect(report.failures.isEmpty)
@@ -128,9 +129,9 @@ struct SharedItemsClientLiveTests {
     @Test("progress reports the finished items and ends complete")
     func progressEndsComplete() async throws {
         let seen = LockIsolated<[PreparationProgress]>([])
-        let client = try client([readableProvider(named: "a.pdf"), readableProvider(named: "b.pdf")])
+        let client = try client([readableProvider(named: TestFile.aPDF), readableProvider(named: "b.pdf")])
 
-        _ = try await client.prepare(credentials, "Photos", nil) { progress in
+        _ = try await client.prepare(credentials, TestFolder.photos, nil) { progress in
             seen.withValue { $0.append(progress) }
         }
 
@@ -192,7 +193,7 @@ struct SharedItemsClientLiveTests {
         let client = client([provider])
 
         let task = Task {
-            try await client.prepare(credentials, "Photos", nil) { reported in
+            try await client.prepare(credentials, TestFolder.photos, nil) { reported in
                 report.yield(reported.fraction)
             }
         }
@@ -222,7 +223,7 @@ struct SharedItemsClientLiveTests {
         let client = client([provider])
 
         let task = Task {
-            try await client.prepare(credentials, "Photos", nil) { _ in }
+            try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
         }
         var iterator = started.makeAsyncIterator()
         await iterator.next()
@@ -237,36 +238,36 @@ struct SharedItemsClientLiveTests {
 
     @Test("a folder shared next to a file is named as a folder and the file still stages")
     func aFolderIsReportedNotSkipped() async throws {
-        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let folderProvider = NSItemProvider()
-        folderProvider.suggestedName = "Holiday"
+        folderProvider.suggestedName = Constants.holidayFolder
         folderProvider.registerItem(forTypeIdentifier: UTType.fileURL.identifier) { completion, _, _ in
             completion?(folder as NSURL, nil)
         }
-        let client = try client([readableProvider(named: "a.pdf"), folderProvider])
+        let client = try client([readableProvider(named: TestFile.aPDF), folderProvider])
 
-        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
 
         #expect(report.stagedCount == 1)
-        #expect(report.failures == [ItemFailure(index: 1, name: "Holiday", cause: .folder)])
+        #expect(report.failures == [ItemFailure(index: 1, name: Constants.holidayFolder, cause: .folder)])
         client.discard()
     }
 
     @Test("a file URL with nothing behind it is a read failure, not a silent skip")
     func aMissingFileIsReported() async throws {
-        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name()).txt")
         let provider = NSItemProvider()
-        provider.suggestedName = "gone.txt"
+        provider.suggestedName = Constants.goneName
         provider.registerItem(forTypeIdentifier: UTType.fileURL.identifier) { completion, _, _ in
             completion?(missing as NSURL, nil)
         }
         let client = client([provider])
 
-        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
 
         #expect(report.stagedCount == 0)
-        #expect(report.failures == [ItemFailure(index: 0, name: "gone.txt", cause: .cannotRead)])
+        #expect(report.failures == [ItemFailure(index: 0, name: Constants.goneName, cause: .cannotRead)])
         client.discard()
     }
 
@@ -292,8 +293,8 @@ struct SharedItemsClientLiveTests {
 
     @Test("discarding drops the staged batch once, and a second discard changes nothing")
     func discardDropsTheBatchOnce() async throws {
-        let client = try client([readableProvider(named: "a.pdf")])
-        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+        let client = try client([readableProvider(named: TestFile.aPDF)])
+        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
         #expect(report.stagedCount == 1)
 
         client.discard()
@@ -306,7 +307,7 @@ struct SharedItemsClientLiveTests {
     @Test("a batch is handed to exactly one taker, so a start and a discard never both act on it")
     func aBatchIsTakenOnce() throws {
         let pending = PendingBatch()
-        let batch = try BackgroundUploader.shared.makeBatch(credentials: credentials, destination: "Photos")
+        let batch = try BackgroundUploader.shared.makeBatch(credentials: credentials, destination: TestFolder.photos)
         pending.batch = batch
 
         #expect(pending.take()?.id == batch.id)
@@ -357,8 +358,15 @@ struct ProviderStagerTests {
 
     @Test("a failure line names the file and the cause")
     func failureLineNamesTheFile() {
-        let failure = ItemFailure(index: 3, name: "IMG_0042.MOV", cause: .notEnoughSpace)
-        #expect(failure.line.contains("IMG_0042.MOV"))
+        let failure = ItemFailure(index: 3, name: ShareExtensionFeatureTestValue.movieName, cause: .notEnoughSpace)
+        #expect(failure.line.contains(ShareExtensionFeatureTestValue.movieName))
         #expect(failure.line.contains(ItemFailureCause.notEnoughSpace.message))
     }
+}
+
+private enum Constants {
+    static let brokenName = "broken.pdf"
+    static let flakyName = "flaky.pdf"
+    static let goneName = "gone.txt"
+    static let holidayFolder = "Holiday"
 }

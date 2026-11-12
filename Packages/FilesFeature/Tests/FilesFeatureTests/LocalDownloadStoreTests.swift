@@ -1,6 +1,7 @@
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 /// Exercises `LocalDownloadStore.liveValue` against the real filesystem (the simulator's own
 /// sandboxed Documents/Caches directories): same spirit as `KeychainClientTests` hitting the
@@ -15,7 +16,7 @@ struct LocalDownloadStoreTests {
     private let store = LocalDownloadStore.liveValue
     /// A fake per-account scope so tests exercise the scoped `Downloads/<scope>/` folder and
     /// stay isolated from any real account subfolder on the simulator.
-    private let scope = "test-\(UUID().uuidString)"
+    private let scope = "test-\(TestID.name())"
 
     private func makeSourceFile(named name: String, contents: String = "hello") throws -> URL {
         let sourceURL = FileManager.default.temporaryDirectory.appendingPathComponent(name)
@@ -27,7 +28,7 @@ struct LocalDownloadStoreTests {
 
     @Test
     func saveWritesToTheDocumentsDownloadsSubfolder() throws {
-        let fileName = "\(UUID().uuidString).txt"
+        let fileName = "\(TestID.name()).txt"
         let sourceURL = try makeSourceFile(named: fileName)
         defer { try? FileManager.default.removeItem(at: sourceURL) }
 
@@ -41,7 +42,7 @@ struct LocalDownloadStoreTests {
 
     @Test
     func saveWritesToTheCachesDownloadsSubfolder() throws {
-        let fileName = "\(UUID().uuidString).txt"
+        let fileName = "\(TestID.name()).txt"
         let sourceURL = try makeSourceFile(named: fileName)
         defer { try? FileManager.default.removeItem(at: sourceURL) }
 
@@ -57,12 +58,12 @@ struct LocalDownloadStoreTests {
 
     @Test
     func saveDisambiguatesAnExistingNameRatherThanOverwriting() throws {
-        let fileName = "\(UUID().uuidString).txt"
+        let fileName = "\(TestID.name()).txt"
         let firstSource = try makeSourceFile(named: fileName, contents: "first")
         let firstDestination = try store.save(firstSource, fileName, .documents, scope)
         try? FileManager.default.removeItem(at: firstSource)
 
-        let secondSourceName = "\(UUID().uuidString).txt"
+        let secondSourceName = "\(TestID.name()).txt"
         let secondSource = try makeSourceFile(named: secondSourceName, contents: "second")
         defer {
             try? FileManager.default.removeItem(at: secondSource)
@@ -81,7 +82,7 @@ struct LocalDownloadStoreTests {
 
     @Test
     func saveThrowsWhenTheSourceFileDoesNotExist() {
-        let missingSource = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        let missingSource = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name()).txt")
 
         #expect(throws: Error.self) {
             try store.save(missingSource, "whatever.txt", .documents, scope)
@@ -90,7 +91,7 @@ struct LocalDownloadStoreTests {
 
     @Test
     func saveKeepsATraversingServerNameInsideTheDownloadsFolder() throws {
-        let sourceName = "\(UUID().uuidString).txt"
+        let sourceName = "\(TestID.name()).txt"
         let sourceURL = try makeSourceFile(named: sourceName)
         defer { try? FileManager.default.removeItem(at: sourceURL) }
 
@@ -107,12 +108,12 @@ struct LocalDownloadStoreTests {
 
     @Test
     func renameChangesTheFileNameInPlace() throws {
-        let original = "\(UUID().uuidString).txt"
+        let original = "\(TestID.name()).txt"
         let sourceURL = try makeSourceFile(named: original)
         let saved = try store.save(sourceURL, original, .documents, scope)
         try? FileManager.default.removeItem(at: sourceURL)
 
-        let renamed = try store.rename(saved, "renamed-\(UUID().uuidString).txt")
+        let renamed = try store.rename(saved, "renamed-\(TestID.name()).txt")
         defer { try? FileManager.default.removeItem(at: renamed) }
 
         #expect(renamed.deletingLastPathComponent() == saved.deletingLastPathComponent())
@@ -122,7 +123,7 @@ struct LocalDownloadStoreTests {
 
     @Test
     func renameRejectsATypedNameThatCarriesAPath() throws {
-        let original = "\(UUID().uuidString).txt"
+        let original = "\(TestID.name()).txt"
         let sourceURL = try makeSourceFile(named: original)
         let saved = try store.save(sourceURL, original, .documents, scope)
         defer {
@@ -141,8 +142,8 @@ struct LocalDownloadStoreTests {
 
     @Test
     func listIncludesFilesSavedToBothDocumentsAndCache() throws {
-        let documentsFileName = "\(UUID().uuidString).txt"
-        let cacheFileName = "\(UUID().uuidString).txt"
+        let documentsFileName = "\(TestID.name()).txt"
+        let cacheFileName = "\(TestID.name()).txt"
         let documentsSource = try makeSourceFile(named: documentsFileName)
         let cacheSource = try makeSourceFile(named: cacheFileName)
         defer {
@@ -165,7 +166,7 @@ struct LocalDownloadStoreTests {
 
     @Test
     func listReflectsTheActualFileSize() throws {
-        let fileName = "\(UUID().uuidString).txt"
+        let fileName = "\(TestID.name()).txt"
         let sourceURL = try makeSourceFile(named: fileName, contents: "hello")
         defer { try? FileManager.default.removeItem(at: sourceURL) }
         let destinationURL = try store.save(sourceURL, fileName, .documents, scope)
@@ -181,7 +182,7 @@ struct LocalDownloadStoreTests {
 
     @Test
     func deleteRemovesTheFileFromDisk() throws {
-        let fileName = "\(UUID().uuidString).txt"
+        let fileName = "\(TestID.name()).txt"
         let sourceURL = try makeSourceFile(named: fileName)
         let destinationURL = try store.save(sourceURL, fileName, .documents, scope)
         try? FileManager.default.removeItem(at: sourceURL)
@@ -193,7 +194,7 @@ struct LocalDownloadStoreTests {
 
     @Test
     func deleteThrowsWhenTheFileDoesNotExist() {
-        let missingURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        let missingURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name()).txt")
 
         #expect(throws: Error.self) {
             try store.delete(missingURL)
@@ -204,8 +205,8 @@ struct LocalDownloadStoreTests {
 
     @Test
     func listIsScopedPerAccountAndDoesNotLeakAcrossScopes() throws {
-        let otherScope = "test-\(UUID().uuidString)"
-        let fileName = "\(UUID().uuidString).txt"
+        let otherScope = "test-\(TestID.name())"
+        let fileName = "\(TestID.name()).txt"
         let source = try makeSourceFile(named: fileName)
         defer { try? FileManager.default.removeItem(at: source) }
 
@@ -218,8 +219,8 @@ struct LocalDownloadStoreTests {
 
     @Test
     func listMigratesLegacyUnscopedDownloadsIntoTheCurrentScope() throws {
-        let migrationScope = "test-\(UUID().uuidString)"
-        let fileName = "\(UUID().uuidString).txt"
+        let migrationScope = "test-\(TestID.name())"
+        let fileName = "\(TestID.name()).txt"
         let documentsURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let legacyRoot = documentsURL.appendingPathComponent("Downloads", isDirectory: true)
         try FileManager.default.createDirectory(at: legacyRoot, withIntermediateDirectories: true)
