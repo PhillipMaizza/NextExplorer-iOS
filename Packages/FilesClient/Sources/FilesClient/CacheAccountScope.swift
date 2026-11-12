@@ -27,7 +27,9 @@ public enum CacheAccountScope {
 
     /// Runs `operation` (and every child task it starts) under `scope`, so work that began for one
     /// account keeps reading and writing that account's caches after the active account changes.
-    public static func withPinned<T>(_ scope: String, operation: () async throws -> T) async rethrows -> T {
+    public nonisolated(nonsending) static func withPinned<T>(
+        _ scope: String, operation: nonisolated(nonsending) () async throws -> T
+    ) async rethrows -> T {
         try await $pinnedScope.withValue(scope, operation: operation)
     }
 
