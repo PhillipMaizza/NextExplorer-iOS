@@ -1,0 +1,11 @@
+{
+  "methods": [
+    {
+      "id": "m2",
+      "type": "oidc",
+      "provider": "PocketID",
+      "lastUsedAt": null,
+      "createdAt": null
+    }
+  ]
+}

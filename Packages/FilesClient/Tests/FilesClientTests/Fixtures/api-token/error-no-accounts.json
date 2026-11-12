@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "error": {
+    "message": "This installation runs without accounts, so it issues no tokens.",
+    "statusCode": 403
+  }
+}

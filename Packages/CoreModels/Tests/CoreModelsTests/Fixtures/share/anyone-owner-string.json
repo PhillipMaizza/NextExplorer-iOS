@@ -1,0 +1,16 @@
+{
+  "id": "s1",
+  "shareToken": "tok1",
+  "ownerId": "u-owner",
+  "sourcePath": "Docs/Reports",
+  "isDirectory": true,
+  "accessMode": "readwrite",
+  "sharingType": "anyone",
+  "hasPassword": true,
+  "expiresAt": "2023-11-14T22:13:20Z",
+  "label": "Quarterly",
+  "downloadCount": 7,
+  "lastAccessedAt": "2023-11-14T22:23:20Z",
+  "createdAt": "2023-11-14T22:03:20Z",
+  "updatedAt": "2023-11-14T22:13:20Z"
+}

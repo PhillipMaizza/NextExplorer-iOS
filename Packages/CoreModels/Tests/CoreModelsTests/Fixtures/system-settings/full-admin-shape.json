@@ -1,0 +1,30 @@
+{
+  "branding": {
+    "appName": "X"
+  },
+  "user": {
+    "showHiddenFiles": true
+  },
+  "thumbnails": {
+    "enabled": false,
+    "size": 512,
+    "quality": 90,
+    "concurrency": 4
+  },
+  "access": {
+    "rules": [
+      {
+        "id": "r1",
+        "path": "Documents/Reports",
+        "recursive": true,
+        "permissions": "ro"
+      },
+      {
+        "id": "r2",
+        "path": "Private",
+        "recursive": false,
+        "permissions": "hidden"
+      }
+    ]
+  }
+}

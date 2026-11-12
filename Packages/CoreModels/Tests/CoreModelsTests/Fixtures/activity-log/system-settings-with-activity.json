@@ -1,0 +1,6 @@
+{
+  "activity": {
+    "enabled": true,
+    "retentionDays": 14
+  }
+}

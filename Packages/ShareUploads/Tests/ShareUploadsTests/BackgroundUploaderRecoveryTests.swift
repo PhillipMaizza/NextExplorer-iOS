@@ -2,13 +2,14 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
+import TestUtils
 
 @Suite("Background uploader recovery")
 struct BackgroundUploaderRecoveryTests {
     private func tombstone(in harness: Harness, modifiedSecondsAgo: TimeInterval) throws -> URL {
-        let url = harness.root.appendingPathComponent(".removing-\(UUID().uuidString)", isDirectory: true)
+        let url = harness.root.appendingPathComponent(".removing-\(TestID.uuid().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-        try Data("leftover".utf8).write(to: url.appendingPathComponent("0.multipart"))
+        try Data("leftover".utf8).write(to: url.appendingPathComponent(ShareUploadsTestValue.firstEnvelope))
         try FileManager.default.setAttributes(
             [.modificationDate: TestClock.reference.addingTimeInterval(-modifiedSecondsAgo)], ofItemAtPath: url.path
         )
@@ -16,7 +17,7 @@ struct BackgroundUploaderRecoveryTests {
     }
 
     /// A batch nobody has heard from for longer than the stale age.
-    private func oldBatch(in harness: Harness, names: [String] = ["a.jpg", "b.jpg"]) throws -> (id: String, directory: URL, manifest: Manifest) {
+    private func oldBatch(in harness: Harness, names: [String] = [TestFile.aPhoto, TestFile.bPhoto]) throws -> (id: String, directory: URL, manifest: Manifest) {
         let batch = try harness.makeBatch(
             names: names, startedAt: TestClock.reference.addingTimeInterval(-BackgroundUploader.staleAge - 60)
         )
@@ -30,10 +31,10 @@ struct BackgroundUploaderRecoveryTests {
     func cancelRemovesNotifications() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let leaving = try harness.makeBatch(names: ["a.jpg"], accountID: "left")
-        _ = try harness.makeBatch(names: ["a.jpg"], accountID: "stays")
+        let leaving = try harness.makeBatch(names: [TestFile.aPhoto], accountID: ShareUploadsTestValue.leavingAccount)
+        _ = try harness.makeBatch(names: [TestFile.aPhoto], accountID: ShareUploadsTestValue.stayingAccount)
 
-        harness.uploader.cancel(keepingAccounts: ["stays"])
+        harness.uploader.cancel(keepingAccounts: [ShareUploadsTestValue.stayingAccount])
 
         #expect(harness.center.removedIdentifiers == [[leaving.id]])
     }
@@ -42,9 +43,9 @@ struct BackgroundUploaderRecoveryTests {
     func cancelWithNothingToDelete() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        _ = try harness.makeBatch(names: ["a.jpg"], accountID: "stays")
+        _ = try harness.makeBatch(names: [TestFile.aPhoto], accountID: ShareUploadsTestValue.stayingAccount)
 
-        harness.uploader.cancel(keepingAccounts: ["stays"])
+        harness.uploader.cancel(keepingAccounts: [ShareUploadsTestValue.stayingAccount])
 
         #expect(harness.center.removedIdentifiers.isEmpty)
     }
@@ -53,10 +54,10 @@ struct BackgroundUploaderRecoveryTests {
     func retryRemovesTheNotification() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto])
         harness.uploader.complete(batchID: batch.id, index: 0, result: .failure(.network))
         var other = Harness.credentials
-        other.username = "someone else"
+        other.username = TestUser.someoneElse
 
         #expect(harness.uploader.retryFailed(batchID: batch.id, credentials: other) == 0)
         #expect(harness.center.removedIdentifiers.isEmpty)
@@ -68,7 +69,7 @@ struct BackgroundUploaderRecoveryTests {
     func retentionRemovesTheNotification() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto])
         harness.uploader.complete(batchID: batch.id, index: 0, result: .failure(.network))
         try FileManager.default.setAttributes(
             [.modificationDate: TestClock.reference], ofItemAtPath: batch.directory.appendingPathComponent("finished").path
@@ -133,7 +134,7 @@ struct BackgroundUploaderRecoveryTests {
             try? FileManager.default.removeItem(at: url)
         })
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto])
 
         harness.uploader.complete(batchID: batch.id, index: 0, result: .success)
 
@@ -144,7 +145,7 @@ struct BackgroundUploaderRecoveryTests {
     func failedDeletionKeepsTheResult() throws {
         let harness = try Harness(removeEnvelope: { _ in })
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg", "b.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto])
 
         harness.uploader.complete(batchID: batch.id, index: 0, result: .success)
 
@@ -173,7 +174,7 @@ struct BackgroundUploaderRecoveryTests {
         #expect(specs(harness) == [[3]])
         let started = try #require(harness.starter.started.first)
         #expect(started.identifier == BackgroundUploader.identifierPrefix + batch.id)
-        #expect(started.specs.first?.request.value(forHTTPHeaderField: "Cookie") == "connect.sid=secret")
+        #expect(started.specs.first?.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=secret")
         #expect(harness.recorder.outcomes.isEmpty, "nothing is abandoned while files can still go out")
         #expect(harness.events.scheduledDelays.isEmpty)
     }
@@ -196,7 +197,7 @@ struct BackgroundUploaderRecoveryTests {
         defer { harness.tearDown() }
         let batch = try oldBatch(in: harness)
         var other = Harness.credentials
-        other.username = "someone else"
+        other.username = TestUser.someoneElse
 
         harness.uploader.reconnectPending(sessions: [other])
 
@@ -207,8 +208,8 @@ struct BackgroundUploaderRecoveryTests {
         harness.events.fireTimers()
 
         let outcome = try #require(harness.recorder.outcomes.first)
-        #expect(outcome.failures.map(\.name) == ["a.jpg", "b.jpg"])
-        #expect(harness.exists(batch.directory.appendingPathComponent("0.multipart")), "kept for a retry")
+        #expect(outcome.failures.map(\.name) == [TestFile.aPhoto, TestFile.bPhoto])
+        #expect(harness.exists(batch.directory.appendingPathComponent(ShareUploadsTestValue.firstEnvelope)), "kept for a retry")
     }
 
     @Test("A batch with a live task is neither resent nor abandoned")
@@ -262,18 +263,18 @@ struct BackgroundUploaderRecoveryTests {
     func retryRefusedSendsOnlyUnauthorized() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let batch = try harness.makeBatch(names: ["a.jpg", "b.jpg", "c.jpg"])
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto, TestFile.cPhoto])
         harness.uploader.complete(batchID: batch.id, index: 0, result: .failure(.unauthorized))
         harness.uploader.complete(batchID: batch.id, index: 1, result: .failure(.network))
         harness.uploader.complete(batchID: batch.id, index: 2, result: .success)
         var fresh = Harness.credentials
-        fresh.cookieValue = "fresh"
+        fresh.cookieValue = TestSession.refreshedCookieValue
 
         let count = harness.uploader.retryRefused(credentials: fresh)
 
         #expect(count == 1)
         #expect(specs(harness) == [[0]])
-        #expect(harness.starter.started.first?.specs.first?.request.value(forHTTPHeaderField: "Cookie") == "connect.sid=fresh")
+        #expect(harness.starter.started.first?.specs.first?.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=fresh")
         #expect(harness.uploader.retryRefused(credentials: fresh) == 0, "a second look finds nothing refused left")
     }
 
@@ -281,9 +282,9 @@ struct BackgroundUploaderRecoveryTests {
     func retryRefusedGuards() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let running = try harness.makeBatch(names: ["a.jpg", "b.jpg"])
+        let running = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto])
         Manifest.record(index: 0, result: .failure(.unauthorized), in: running.directory)
-        let other = try harness.makeBatch(names: ["a.jpg"], accountID: "someone|else")
+        let other = try harness.makeBatch(names: [TestFile.aPhoto], accountID: "someone|else")
         harness.uploader.complete(batchID: other.id, index: 0, result: .failure(.unauthorized))
 
         #expect(harness.uploader.retryRefused(credentials: Harness.credentials) == 0)

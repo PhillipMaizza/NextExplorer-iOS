@@ -1,0 +1,6 @@
+{
+  "error": {
+    "message": "Mode must be three octal digits.",
+    "statusCode": 400
+  }
+}

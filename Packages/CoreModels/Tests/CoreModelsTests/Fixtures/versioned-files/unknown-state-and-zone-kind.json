@@ -1,0 +1,10 @@
+{
+  "id": "f",
+  "name": "x",
+  "state": "weird",
+  "zone": {
+    "id": "z",
+    "kind": "other",
+    "name": "n"
+  }
+}

@@ -1,6 +1,7 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 struct ServerSettingsFuzzTests {
     private static let digitHeavy: [Character] = Array("0123456789..,,  e-+")

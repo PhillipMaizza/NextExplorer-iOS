@@ -1,0 +1,22 @@
+[
+  {
+    "id": "f1",
+    "path": "Photos",
+    "label": null,
+    "icon": "star",
+    "color": null,
+    "position": 0,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "f2",
+    "path": "Docs",
+    "label": "Work",
+    "icon": "folder",
+    "color": "red",
+    "position": 1,
+    "createdAt": "2024-01-02T00:00:00.000Z",
+    "updatedAt": "2024-01-02T00:00:00.000Z"
+  }
+]

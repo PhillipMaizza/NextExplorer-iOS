@@ -1,0 +1,8 @@
+{
+  "strategies": {
+    "local": false,
+    "oidc": true,
+    "passkey": false
+  },
+  "authMode": "oidc"
+}

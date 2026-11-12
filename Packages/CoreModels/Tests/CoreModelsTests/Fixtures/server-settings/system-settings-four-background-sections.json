@@ -1,0 +1,27 @@
+{
+  "uploads": {
+    "chunkedEnabled": true,
+    "chunkedAutoFallback": false,
+    "chunkSizeBytes": 16777216
+  },
+  "ffmpeg": {
+    "ffmpegPath": "/usr/bin/ffmpeg",
+    "ffprobePath": null
+  },
+  "searchIndex": {
+    "enabled": true,
+    "excludedPaths": [
+      "Backups"
+    ],
+    "environmentExcludedPaths": [
+      "tmp"
+    ]
+  },
+  "folderSize": {
+    "mode": "shallow",
+    "excludedPaths": [
+      "docker"
+    ],
+    "environmentExcludedPaths": []
+  }
+}

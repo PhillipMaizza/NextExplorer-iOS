@@ -4,16 +4,9 @@ import Testing
 
 @Suite("SignInMethod")
 struct SignInMethodTests {
-    private let json = Data(#"""
-    [
-      {"id":"m1","type":"local_password","provider":"Password","lastUsedAt":"2026-11-10T07:00:00.000Z","createdAt":"2026-11-01T10:00:00.000Z"},
-      {"id":"m2","type":"oidc","provider":"PocketID","lastUsedAt":null,"createdAt":"2026-11-02T10:00:00.000Z"}
-    ]
-    """#.utf8)
-
     @Test("decodes the methods the server lists, with dates that may be null")
     func decodes() throws {
-        let methods = try JSONDecoder().decode([SignInMethod].self, from: json)
+        let methods = try CoreModelsFixture.signInMethodPasswordAndOidcList.decode([SignInMethod].self)
         #expect(methods.map(\.id) == ["m1", "m2"])
         #expect(methods[1].provider == "PocketID")
         #expect(methods[1].lastUsedAt == nil)
@@ -21,7 +14,7 @@ struct SignInMethodTests {
 
     @Test("an account with a password method has a password")
     func hasPassword() throws {
-        let methods = try JSONDecoder().decode([SignInMethod].self, from: json)
+        let methods = try CoreModelsFixture.signInMethodPasswordAndOidcList.decode([SignInMethod].self)
         #expect(methods.hasPassword)
     }
 
@@ -44,8 +37,7 @@ struct SignInMethodTests {
 
     @Test("edge case: a server that omits the dates still decodes")
     func decodesWithoutDates() throws {
-        let data = Data(#"[{"id":"m4","type":"local_password","provider":"Password"}]"#.utf8)
-        let methods = try JSONDecoder().decode([SignInMethod].self, from: data)
+        let methods = try CoreModelsFixture.signInMethodListWithoutDates.decode([SignInMethod].self)
         #expect(methods.first?.lastUsedAt == nil)
         #expect(methods.hasPassword)
     }

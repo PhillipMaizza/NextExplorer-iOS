@@ -1,13 +1,14 @@
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 struct UploadStagingClientTests {
     @Test
     func discardDeletesStagedFilesAndIgnoresMissingOnes() async throws {
         let directory = UploadStagingLocation.directory
-        let present = directory.appendingPathComponent("\(UUID().uuidString)-present.txt")
-        let missing = directory.appendingPathComponent("\(UUID().uuidString)-missing.txt")
+        let present = directory.appendingPathComponent("\(TestID.name())-present.txt")
+        let missing = directory.appendingPathComponent("\(TestID.name())-missing.txt")
         try Data("x".utf8).write(to: present)
 
         await UploadStagingClient.liveValue.discard([present, missing])
@@ -18,8 +19,8 @@ struct UploadStagingClientTests {
     @Test
     func sweepStaleDeletesOldStagedFilesButKeepsRecentOnes() async throws {
         let directory = UploadStagingLocation.directory
-        let old = directory.appendingPathComponent("\(UUID().uuidString)-old.txt")
-        let fresh = directory.appendingPathComponent("\(UUID().uuidString)-fresh.txt")
+        let old = directory.appendingPathComponent("\(TestID.name())-old.txt")
+        let fresh = directory.appendingPathComponent("\(TestID.name())-fresh.txt")
         try Data("x".utf8).write(to: old)
         try Data("x".utf8).write(to: fresh)
         try FileManager.default.setAttributes(
@@ -36,7 +37,7 @@ struct UploadStagingClientTests {
     @Test
     func stageCameraCaptureWrapsAnAlreadyWrittenFileWithItsSize() async throws {
         let directory = UploadStagingLocation.directory
-        let url = directory.appendingPathComponent("\(UUID().uuidString)-Photo.jpg")
+        let url = directory.appendingPathComponent("\(TestID.name())-Photo.jpg")
         try Data(count: 128).write(to: url)
         defer { try? FileManager.default.removeItem(at: url) }
 

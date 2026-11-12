@@ -1,0 +1,6 @@
+{
+  "error": {
+    "message": "Order must list every favorite once.",
+    "statusCode": 400
+  }
+}

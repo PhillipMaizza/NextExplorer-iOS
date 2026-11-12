@@ -1,0 +1,6 @@
+{
+  "error": {
+    "message": "Email already in use.",
+    "statusCode": 409
+  }
+}
