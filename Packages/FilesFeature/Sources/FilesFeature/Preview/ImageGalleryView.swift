@@ -105,7 +105,28 @@ struct ImageGalleryView: View {
                         .tag(item.id)
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: items.count > 1 && !areControlsHidden ? .always : .never))
+            // The page style's own dots sit on the home indicator once the pager ignores the safe
+            // area, so the gallery draws its own above the bottom bar instead.
+            .tabViewStyle(.page(indexDisplayMode: .never))
+        }
+
+        private var pageIndex: Binding<Int> {
+            Binding(
+                get: { items.firstIndex { $0.id == selection } ?? 0 },
+                set: { index in
+                    guard items.indices.contains(index) else { return }
+                    selection = items[index].id
+                }
+            )
+        }
+
+        @ViewBuilder
+        private var pageDots: some View {
+            if items.count > 1, !areControlsHidden {
+                GalleryPageControl(numberOfPages: items.count, currentPage: pageIndex)
+                    .padding(.bottom, .space8)
+                    .transition(.opacity)
+            }
         }
     #endif
 
@@ -116,6 +137,9 @@ struct ImageGalleryView: View {
             // while the chrome fades, matching the Photos viewer.
             pager
                 .ignoresSafeArea()
+            #if os(iOS)
+                .overlay(alignment: .bottom) { pageDots }
+            #endif
                 // A rename changes the current image's id (it's path derived); deleting one drops
                 // it. Close if that emptied the gallery, otherwise hold the same slot so a dangling
                 // `selection` lands on the neighbour.
