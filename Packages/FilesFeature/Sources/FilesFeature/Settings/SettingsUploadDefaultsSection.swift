@@ -32,7 +32,7 @@ struct SettingsUploadDefaultsSection: View {
                         .type(.body2(.regular), style: .secondary)
                 }
             } header: {
-                DSFieldLabel(L10n.Settings.uploadDefaultsRow).accessibilityAddTraits(.isHeader)
+                SettingsSectionHeader(L10n.Settings.uploadDefaultsRow)
             } footer: {
                 Text(L10n.Settings.uploadDefaultsFooter).type(.body3(.regular), style: .secondary)
             }

@@ -777,6 +777,7 @@ apiTokens.expiryYear	Через 1 рік
 apiTokens.expiryNever	Ніколи
 apiTokens.fieldPassword	Ваш пароль
 apiTokens.passwordHint	Введіть пароль, щоб створити токен.
+apiTokens.noPasswordWarning	Ваш обліковий запис не має пароля, тому токени створюються без його запиту. Додайте пароль до облікового запису, щоб захистити створення токенів.
 apiTokens.createSubmit	Створити токен
 apiTokens.issuedTitle	Скопіюйте токен
 apiTokens.issuedIntro	Його показано лише один раз. Збережіть у надійному місці. Якщо ви його втратите, відкличте його й створіть новий.

@@ -98,8 +98,7 @@ struct OfflineSettingsSection: View {
                     }
                 }
             } header: {
-                DSFieldLabel(L10n.Offline.sectionTitle)
-                    .accessibilityAddTraits(.isHeader)
+                SettingsSectionHeader(L10n.Offline.sectionTitle)
             } footer: {
                 if !filter.isActive {
                     VStack(alignment: .leading, spacing: .space2) {

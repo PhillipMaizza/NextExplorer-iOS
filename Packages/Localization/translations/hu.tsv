@@ -777,6 +777,7 @@ apiTokens.expiryYear	1 év múlva
 apiTokens.expiryNever	Soha
 apiTokens.fieldPassword	Az Ön jelszava
 apiTokens.passwordHint	Adja meg a jelszavát a token létrehozásához.
+apiTokens.noPasswordWarning	A fiókjának nincs jelszava, így a tokenek jelszó kérése nélkül jönnek létre. Adjon jelszót a fiókjához a tokenek létrehozásának védelméhez.
 apiTokens.createSubmit	Token létrehozása
 apiTokens.issuedTitle	Másolja ki a tokent
 apiTokens.issuedIntro	Ez az egyetlen alkalom, amikor megjelenik. Őrizze meg biztonságos helyen. Ha elveszíti, vonja vissza, és hozzon létre újat.

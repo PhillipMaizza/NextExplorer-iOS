@@ -777,6 +777,7 @@ apiTokens.expiryYear	ใน 1 ปี
 apiTokens.expiryNever	ไม่เคย
 apiTokens.fieldPassword	รหัสผ่านของคุณ
 apiTokens.passwordHint	ป้อนรหัสผ่านของคุณเพื่อสร้างโทเคน
+apiTokens.noPasswordWarning	บัญชีของคุณไม่มีรหัสผ่าน จึงสร้างโทเคนได้โดยไม่ต้องใส่รหัสผ่าน เพิ่มรหัสผ่านให้บัญชีเพื่อปกป้องการสร้างโทเคน
 apiTokens.createSubmit	สร้างโทเคน
 apiTokens.issuedTitle	คัดลอกโทเคนของคุณ
 apiTokens.issuedIntro	นี่เป็นครั้งเดียวที่โทเคนจะแสดง เก็บไว้ในที่ปลอดภัย หากทำหาย ให้เพิกถอนแล้วสร้างใหม่

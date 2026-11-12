@@ -1071,6 +1071,7 @@ apiTokens.neverExpires	永不过期
 apiTokens.neverUsed	从未使用
 apiTokens.newButton	新建令牌
 apiTokens.passwordHint	输入您的密码以创建令牌。
+apiTokens.noPasswordWarning	您的账户没有密码，因此创建令牌时不会要求输入密码。请为账户添加密码以保护令牌的创建。
 apiTokens.renameAction	重命名
 apiTokens.renameSave	保存
 apiTokens.renameTitle	重命名令牌

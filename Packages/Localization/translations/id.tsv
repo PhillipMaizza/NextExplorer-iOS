@@ -777,6 +777,7 @@ apiTokens.expiryYear	Dalam 1 tahun
 apiTokens.expiryNever	Tidak pernah
 apiTokens.fieldPassword	Kata sandi Anda
 apiTokens.passwordHint	Masukkan kata sandi Anda untuk membuat token.
+apiTokens.noPasswordWarning	Akun Anda tidak memiliki kata sandi, jadi token dibuat tanpa memintanya. Tambahkan kata sandi ke akun Anda untuk melindungi pembuatan token.
 apiTokens.createSubmit	Buat Token
 apiTokens.issuedTitle	Salin token Anda
 apiTokens.issuedIntro	Ini hanya ditampilkan sekali. Simpan di tempat aman. Jika hilang, cabut lalu buat yang baru.

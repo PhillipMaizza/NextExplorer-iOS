@@ -1089,6 +1089,7 @@ apiTokens.neverExpires	Nigdy nie wygasa
 apiTokens.neverUsed	Nigdy nie użyty
 apiTokens.newButton	Nowy token
 apiTokens.passwordHint	Wpisz hasło, aby utworzyć token.
+apiTokens.noPasswordWarning	Twoje konto nie ma hasła, więc tokeny są tworzone bez jego podawania. Dodaj hasło do konta, aby chronić tworzenie tokenów.
 apiTokens.renameAction	Zmień nazwę
 apiTokens.renameSave	Zapisz
 apiTokens.renameTitle	Zmień nazwę tokenu
