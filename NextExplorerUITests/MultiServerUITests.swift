@@ -12,7 +12,7 @@
 
             XCTAssertTrue(settings.accountsSectionHeader.waitToAppear(), "Settings should show an Accounts section")
             XCTAssertTrue(settings.addAccountRow.exists, "The switcher should offer an Add Account row")
-            XCTAssertTrue(settings.accountRow(host: "nextexplorer.example.com").exists, "The active account should be listed")
+            XCTAssertTrue(settings.accountRow(host: Fixture.serverHost).exists, "The active account should be listed")
         }
 
         func testAddingSecondServerListsBothAccounts() {
@@ -23,23 +23,14 @@
             XCTAssertTrue(settings.addAccountRow.waitToAppear())
             settings.addAccountRow.tap()
 
-            let login = LoginScreen(app: app)
-            XCTAssertTrue(login.hostField.waitToAppear())
-            login.hostField.clearAndType("other.example.com")
-            login.testConnectionButton.tap()
-
-            XCTAssertTrue(login.identifierField.waitToAppear(), "Test connection should advance to the credentials page")
-            login.identifierField.clearAndType("phillip@example.com")
-            XCTAssertTrue(login.passwordField.waitToAppear())
-            login.passwordField.clearAndType("hunter2")
-            login.submitButton.tap()
+            LoginScreen(app: app).signIn(host: Fixture.otherServerHost)
 
             // Adding a server adopts it as active and remounts the app on the new account.
             XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "Adding an account should reveal the app on the new account")
 
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
-            XCTAssertTrue(settings.accountRow(host: "other.example.com").waitToAppear(), "The newly added server should be listed")
-            XCTAssertTrue(settings.accountRow(host: "nextexplorer.example.com").exists, "The original account should still be listed")
+            XCTAssertTrue(settings.accountRow(host: Fixture.otherServerHost).waitToAppear(), "The newly added server should be listed")
+            XCTAssertTrue(settings.accountRow(host: Fixture.serverHost).exists, "The original account should still be listed")
         }
     }
 #endif

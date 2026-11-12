@@ -7,8 +7,11 @@ Here a test that passes only on its rerun keeps the job green but is reported as
 annotation and a line in the job summary), so it gets fixed instead of hidden. A run that fails
 without a test failure (a build error, a crash before the results) is never rerun.
 
-  python3 Scripts/ci-ui-tests.py --result TestResults --select "<-only-testing/-skip-testing args>" \\
+  python3 Scripts/ci-ui-tests.py --result TestResults --select="<-only-testing/-skip-testing args>" \\
       -- <xcodebuild arguments without a selection or -resultBundlePath>
+
+--select takes its value after "=": the selection starts with a dash, which argparse would
+otherwise read as the next option.
 """
 import argparse
 import json
@@ -57,23 +60,29 @@ def summary_of(result):
     return json.loads(output.stdout) if output.returncode == 0 and output.stdout else {}
 
 
-def main():
+def parse(argv):
+    """(result bundle name, selection arguments, xcodebuild arguments) from the command line."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--result", required=True, help="result bundle name, without .xcresult")
-    parser.add_argument("--select", default="", help="the -only-testing / -skip-testing arguments")
+    parser.add_argument("--select", default="", help="the -only-testing / -skip-testing arguments, after =")
     parser.add_argument("arguments", nargs=argparse.REMAINDER)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     arguments = args.arguments[1:] if args.arguments[:1] == ["--"] else args.arguments
+    return args.result, shlex.split(args.select), arguments
 
-    if xcodebuild(arguments, shlex.split(args.select), args.result) == 0:
+
+def main():
+    result, selection, arguments = parse(sys.argv[1:])
+
+    if xcodebuild(arguments, selection, result) == 0:
         return 0
-    failed = failed_tests(summary_of(args.result))
+    failed = failed_tests(summary_of(result))
     if not failed:
         print("::error::The run failed without a test failure (build error or crash); not rerunning")
         return 1
 
     print(f"Rerunning {len(failed)} failed test(s) once: {', '.join(failed)}")
-    retry = f"{args.result}-rerun"
+    retry = f"{result}-rerun"
     passed_on_rerun = xcodebuild(arguments, [f"-only-testing:{test}" for test in failed], retry) == 0
     still_failing = [] if passed_on_rerun else failed_tests(summary_of(retry)) or failed
     flaky = [test for test in failed if test not in still_failing]

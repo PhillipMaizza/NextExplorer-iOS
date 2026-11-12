@@ -21,20 +21,7 @@
 
         func testFullLocalLoginJourney() {
             let app = launchApp(auth: .loggedOut)
-            let login = LoginScreen(app: app)
-
-            XCTAssertTrue(login.hostField.waitToAppear())
-            login.hostField.clearAndType("nextexplorer.example.com")
-
-            login.testConnectionButton.tap()
-
-            XCTAssertTrue(login.identifierField.waitToAppear(), "Test connection should advance to the credentials page")
-            login.identifierField.clearAndType("phillip@example.com")
-
-            XCTAssertTrue(login.passwordField.waitToAppear())
-            login.passwordField.clearAndType("hunter2")
-
-            login.submitButton.tap()
+            LoginScreen(app: app).signIn()
 
             XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "A successful login should reveal the app")
         }
@@ -60,16 +47,10 @@
         func testSignInLogIsOfferedOnlyAfterAFailedSignIn() {
             let app = launchApp(auth: .loggedOut)
             let login = LoginScreen(app: app)
-            XCTAssertTrue(login.hostField.waitToAppear())
-            login.hostField.clearAndType("nextexplorer.example.com")
-            login.testConnectionButton.tap()
-
-            XCTAssertTrue(login.identifierField.waitToAppear())
+            login.enterServer()
             XCTAssertFalse(login.diagnosticsButton.appears(), "The sign in log stays hidden until something fails")
 
-            login.identifierField.clearAndType(Fixture.rejectedIdentifier)
-            login.passwordField.clearAndType("wrong")
-            login.submitButton.tap()
+            login.submitCredentials(identifier: Fixture.rejectedIdentifier, password: Fixture.wrongPassword)
 
             XCTAssertTrue(login.diagnosticsButton.waitToAppear(), "A refused sign in should offer the sign in log at the bottom of the page")
         }
