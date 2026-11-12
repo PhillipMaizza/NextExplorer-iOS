@@ -106,7 +106,7 @@ Helpers under `Scripts/`. Two drive localization; the others keep dependency pin
   xcodebuild test -workspace PackageTests.xcworkspace -scheme PackageTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
   xcodebuild test -workspace PackageTests.xcworkspace -scheme PackageTests -destination 'platform=macOS'
   ```
-  `bundle exec fastlane unit_tests` runs the first. The XCUITest suites run from the **NextExplorer** scheme (`fastlane ui_tests` on iOS; `-only-testing:NextExplorerUITests/MacCriticalPathUITests` with `-destination 'platform=macOS'` on the Mac, which drives the real pointer and keyboard).
+  `bundle exec fastlane unit_tests` runs the first. The XCUITest suites run from the **NextExplorer** scheme (`fastlane ui_tests` on iOS; `-only-testing:NextExplorerUITests` with `-destination 'platform=macOS'` on the Mac, where only the `Mac*UITests` suites compile, which drives the real pointer and keyboard).
 - Lint as CI does (its Lint job gates `main`): `swiftformat . --lint` and `swiftlint`, with the versions CI pins (SwiftFormat 0.64.4, SwiftLint 0.65.1) and the repo's `.swiftformat` and `.swiftlint.yml`. Imports are sorted, so a new import goes in its alphabetical slot.
 - Confirm strings are localized, there are no magic numbers, and the app builds cleanly for both iOS and the Mac before opening the PR.
 
@@ -135,7 +135,7 @@ Uploads carry the version's `gen-changelog.py` notes as TestFlight's "What to Te
 Mac only lanes (`bundle exec fastlane mac <lane>`):
 
 - `unit_tests`: every package's tests on the Mac.
-- `ui_tests`: the Mac XCUITest suite (`MacCriticalPathUITests`). It drives the real app, so leave the Mac alone while it runs.
+- `ui_tests`: the Mac XCUITest suites (`Mac*UITests`, on `MacUITestCase`). It drives the real app, so leave the Mac alone while it runs.
 - `beta`: the upcoming version as a Mac App Store package, uploaded to TestFlight for macOS.
 - `release_dry_run`: Mac unit tests and the Mac App Store package, nothing uploaded.
 

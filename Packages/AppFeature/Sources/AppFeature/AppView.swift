@@ -22,6 +22,16 @@ private struct AuthenticatedIdentity: Hashable {
 }
 
 public struct AppView: View {
+    // UI tests with animations off run the splash at a twentieth of its speed: its own timeline
+    // is about 2.5 s of real time per launch. It still runs with real pauses (not skipped, not at
+    // zero), since the authenticated tree mounting under the splash and remounting once it has
+    // left is what gives the tab bar items their identifiers.
+    #if DEBUG
+        private static let splashTimeScale: Double = UITestSupport.disablesAnimations ? 0.05 : 1
+    #else
+        private static let splashTimeScale: Double = 1
+    #endif
+
     @Bindable var store: StoreOf<AppFeature>
     /// The launch splash sits on top of `destinationContent` and removes itself once its own
     /// animation has cleared: the reducer flips `destination` the moment auth resolves, the
@@ -89,6 +99,7 @@ public struct AppView: View {
             if isSplashPresented {
                 SplashView(
                     isReady: store.destination != .loading,
+                    timeScale: Self.splashTimeScale,
                     onExitStarted: { splashIsExiting = true }
                 ) {
                     isSplashPresented = false

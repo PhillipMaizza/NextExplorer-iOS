@@ -35,6 +35,11 @@ class UITestCase: XCTestCase {
         static let validRecoveryCode = "AAAAA-BBBBB"
         /// The password the mocked account routes accept (mirrors `UITestSupport.accountPassword`).
         static let accountPassword = "hunter2"
+        /// The server address and sign in name the mocked login accepts.
+        static let serverHost = "nextexplorer.example.com"
+        static let accountIdentifier = "phillip@example.com"
+        /// A second server, for adding another account.
+        static let otherServerHost = "other.example.com"
         static let wrongPassword = "not-the-password"
     }
 
@@ -141,10 +146,22 @@ class UITestCase: XCTestCase {
 
     /// Launches the app with the mock graph enabled. `auth` picks the session state the app
     /// restores on cold launch, `scenario` picks the shape of the mocked file data.
-    /// Default CoreAnimation speed multiplier for the suite. Scales every UIKit and SwiftUI
-    /// animation (flood/focus/zoom/comet included) uniformly, so transition code still runs but
-    /// finishes near instantly. Real time is 1.0; 0 hard freezes UIKit animations.
+    /// Default CoreAnimation speed multiplier for the suite's SwiftUI animations (flood, focus,
+    /// zoom), so their code still runs but finishes near instantly. 0 leaves them at real time.
     static let fastAnimationSpeed: Double = 12
+
+    /// The launch environment the app's `UITestSupport` reads (mirrors its keys).
+    private enum LaunchKey {
+        static let mock = "UITEST_MOCK"
+        static let auth = "UITEST_AUTH"
+        static let scenario = "UITEST_SCENARIO"
+        static let animationSpeed = "UITEST_ANIM_SPEED"
+        static let disableAnimations = "UITEST_DISABLE_ANIMATIONS"
+        static let orientation = "UITEST_ORIENTATION"
+        static let on = "1"
+        static let landscape = "landscape"
+    }
+
     /// How far one `scrollTo` step scrolls on the Mac, which has no swipe.
     static let macScrollStep: CGFloat = 300
 
@@ -156,24 +173,30 @@ class UITestCase: XCTestCase {
         landscape: Bool = false
     ) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchEnvironment["UITEST_MOCK"] = "1"
-        app.launchEnvironment["UITEST_AUTH"] = auth.rawValue
-        app.launchEnvironment["UITEST_SCENARIO"] = scenario.rawValue
-        // A speed multiplier keeps transitions running (so their code is exercised) but collapses
-        // their duration; 0 falls back to hard freezing UIKit animations. iPhone Duo (two screens)
-        // always freezes: there a sped up layer left XCUITest's pre event idle wait hanging on
-        // roughly one test in five.
+        app.launchEnvironment[LaunchKey.mock] = LaunchKey.on
+        app.launchEnvironment[LaunchKey.auth] = auth.rawValue
+        app.launchEnvironment[LaunchKey.scenario] = scenario.rawValue
+        // UIKit animations (pushes, sheets, alerts, context menus) are always off. A context menu
+        // animating beside a sped up window never reported done, so XCUITest waited its full
+        // minute for the app to idle on every menu open and close (146 s for a rename test, 25 s
+        // now). SwiftUI animations still run, sped up, so their code is exercised. iPhone Duo (two
+        // screens) skips the speed up: there a sped up layer left the idle wait hanging too.
+        app.launchEnvironment[LaunchKey.disableAnimations] = LaunchKey.on
         if animationSpeed > 0, XCUIScreen.screens.count < 2 {
-            app.launchEnvironment["UITEST_ANIM_SPEED"] = String(animationSpeed)
-        } else {
-            app.launchEnvironment["UITEST_DISABLE_ANIMATIONS"] = "1"
+            app.launchEnvironment[LaunchKey.animationSpeed] = String(animationSpeed)
         }
         if landscape {
-            app.launchEnvironment["UITEST_ORIENTATION"] = "landscape"
+            app.launchEnvironment[LaunchKey.orientation] = LaunchKey.landscape
         }
         // Force English so localized visible text the tests match on is deterministic.
         app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
+        #if os(macOS)
+            // On a CI runner the launched app is not always frontmost, and an inactive app closes a
+            // popover at once and can drop a right click: bring it forward before any test acts.
+            app.activate()
+            XCTAssertTrue(waitUntil(NSPredicate(format: "state == %d", XCUIApplication.State.runningForeground.rawValue), on: app), "The app should be frontmost")
+        #endif
         return app
     }
 }
@@ -235,6 +258,23 @@ extension XCUIElement {
     /// Returns whether the element is enabled within the budget, without asserting.
     func isEnabled(within timeout: TimeInterval = UITestTimeout.standard) -> Bool {
         waitUntil(NSPredicate(format: "isEnabled == true"), on: self, timeout: timeout)
+    }
+
+    /// Waits until the element is hittable and its frame stays the same between two checks, so a
+    /// tap does not land while it is still sliding in (a system sheet animates even with the
+    /// app's animations off). Returns whether it settled, without asserting.
+    @discardableResult
+    func waitForFrameToSettle(_ timeout: TimeInterval = UITestTimeout.standard) -> Bool {
+        var lastFrame = CGRect.null
+        let settled = NSPredicate { object, _ in
+            guard let element = object as? XCUIElement, element.exists, element.isHittable else {
+                lastFrame = .null
+                return false
+            }
+            defer { lastFrame = element.frame }
+            return element.frame == lastFrame
+        }
+        return waitUntil(settled, on: self, timeout: timeout)
     }
 
     /// Waits for the element to become hittable, failing otherwise.

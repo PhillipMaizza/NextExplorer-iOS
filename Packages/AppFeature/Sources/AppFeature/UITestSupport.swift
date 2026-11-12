@@ -6,6 +6,7 @@
     import FilesClient
     import FilesFeature
     import Foundation
+    import SwiftUI
     #if os(iOS)
         import UIKit
     #elseif os(macOS)
@@ -22,7 +23,9 @@
     /// * `UITEST_MOCK=1`            enables the whole path (nothing below runs without it).
     /// * `UITEST_AUTH`             `loggedOut` (default) / `loggedIn` / `expired`.
     /// * `UITEST_SCENARIO`        `normal` (default) / `empty` / `error`.
-    /// * `UITEST_DISABLE_ANIMATIONS=1` freezes UIKit animations so flood/focus transitions can't flake a tap.
+    /// * `UITEST_DISABLE_ANIMATIONS=1` turns off UIKit animations and every SwiftUI animation
+    ///                                 (`disablesAnimationsUnderUITest`), so no transition flakes a tap
+    ///                                 or keeps XCUITest waiting for the app to idle.
     /// * `UITEST_ANIM_SPEED=<n>`      runs every CoreAnimation (UIKit + SwiftUI) at n× so transitions
     ///                                 still play but collapse in duration.
     /// * `UITEST_ORIENTATION=landscape`  rotates the window to landscape after launch. The iPhone Duo
@@ -35,6 +38,13 @@
         public static let disableAnimationsFlag = "UITEST_DISABLE_ANIMATIONS"
         public static let animationSpeedKey = "UITEST_ANIM_SPEED"
         public static let orientationKey = "UITEST_ORIENTATION"
+
+        /// Whether this launch runs under XCUITest with animations off.
+        public static let disablesAnimations: Bool = {
+            let environment = ProcessInfo.processInfo.environment
+            return environment[mockFlag] == "1" && environment[disableAnimationsFlag] == "1"
+        }()
+
         /// How long the hinge needs to unlock rotation on a foldable before landscape is requested.
         private static let orientationDelay: TimeInterval = 1
 
@@ -420,6 +430,20 @@
                 $0.previewCacheStore = .testValue
                 $0.thumbnailCache = .testValue
                 $0.offlineFileStore = .inMemory()
+            }
+        }
+    }
+
+    public extension View {
+        /// Under XCUITest with animations off, no SwiftUI animation runs, explicit `withAnimation`
+        /// included: every transaction through the root view loses its animation.
+        func disablesAnimationsUnderUITest() -> some View {
+            transaction { transaction in
+                guard UITestSupport.disablesAnimations else { return }
+                transaction.animation = nil
+                #if os(iOS)
+                    transaction.disablesAnimations = true
+                #endif
             }
         }
     }
