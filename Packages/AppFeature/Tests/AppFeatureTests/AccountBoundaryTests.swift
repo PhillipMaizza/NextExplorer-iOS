@@ -21,12 +21,12 @@ extension AppSuites {
         private typealias AuthenticatedStore = TestStore<AuthenticatedFeature.State, AuthenticatedFeature.Action>
 
         private enum Fixture {
-            static let path = "Docs"
+            static let path = TestFolder.docs
             static let keychainFailure = "keychain unreadable"
         }
 
-        private let credentialsA = AppFixtures.credentials(AppFixtures.serverA, "alice")
-        private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
+        private let credentialsA = AppFixtures.credentials(AppFixtures.serverA, TestUser.alice)
+        private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, TestUser.bob)
         private let recorder = WipeRecorder()
 
         private func listing() -> BrowseResult {
@@ -105,7 +105,7 @@ extension AppSuites {
         @Test("A network error while confirming an expiry leaves the session in place")
         func unconfirmedExpiryIsIgnored() async {
             let store = makeStore(activeState(AppFixtures.serverA, AppFixtures.userA)) {
-                $0.authClient.me = { _ in throw AuthClientError.network("offline") }
+                $0.authClient.me = { _ in throw AuthClientError.network(TestFailure.offline) }
                 $0.authClient.clearActiveSession = {
                     Issue.record("an unreachable server does not prove the session is gone")
                     return nil
@@ -274,7 +274,7 @@ extension AppSuites {
             await store.receive(\.sessionExpiryConfirmed)
             await store.receive(\.activeAccountTornDown)
             await store.receive(\.activateAccount) {
-                $0.destination = optimistic(AppFixtures.serverB, username: "bob")
+                $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             accountList.open()
@@ -337,7 +337,7 @@ extension AppSuites {
             }
 
             await store.send(.activateAccount(credentialsA)) {
-                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
+                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountB)
             accountList.open()
@@ -383,7 +383,7 @@ extension AppSuites {
             }
 
             await store.send(.sessionRestoreResponse(credentialsA)) {
-                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
+                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             accountList.open()
             await store.receive(\.accountsRefreshed) {

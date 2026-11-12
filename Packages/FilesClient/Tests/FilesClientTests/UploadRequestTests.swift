@@ -23,9 +23,9 @@ struct UploadRequestTests {
     private func envelope(fileName: String, destination: String, bytes: Data = Data("payload".utf8)) throws -> Data {
         let directory = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
-        let source = directory.appendingPathComponent("source.bin")
+        let source = directory.appendingPathComponent(Constants.sourceName)
         try bytes.write(to: source)
-        let envelopeURL = directory.appendingPathComponent("envelope.multipart")
+        let envelopeURL = directory.appendingPathComponent(Constants.envelopeName)
         try UploadRequest.writeEnvelope(to: envelopeURL, boundary: boundary, fileURL: source, fileName: fileName, destination: destination)
         return try Data(contentsOf: envelopeURL)
     }
@@ -48,9 +48,9 @@ struct UploadRequestTests {
 
     @Test("A plain name and destination are written as is")
     func plain() throws {
-        let parts = try parse(envelope(fileName: "IMG_1.jpg", destination: "Photos/2026"))
-        #expect(parts.destination == "Photos/2026")
-        #expect(parts.relativePath == "IMG_1.jpg")
+        let parts = try parse(envelope(fileName: Constants.numberedPhoto, destination: TestPath.photos2026))
+        #expect(parts.destination == TestPath.photos2026)
+        #expect(parts.relativePath == Constants.numberedPhoto)
         #expect(parts.header.contains("filename=\"IMG_1.jpg\""))
     }
 
@@ -69,7 +69,7 @@ struct UploadRequestTests {
 
     @Test("A quote cannot close the filename header early")
     func quoteIsReplacedInTheHeaderOnly() throws {
-        let parts = try parse(envelope(fileName: "my \"best\" photo.jpg", destination: "Photos"))
+        let parts = try parse(envelope(fileName: "my \"best\" photo.jpg", destination: TestFolder.photos))
         #expect(parts.header.contains("filename=\"my 'best' photo.jpg\""))
         #expect(parts.relativePath == "my \"best\" photo.jpg", "the stored name comes from the field, quotes intact")
     }
@@ -78,11 +78,11 @@ struct UploadRequestTests {
     func nulIsRefused() throws {
         let directory = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
-        let source = directory.appendingPathComponent("source.bin")
+        let source = directory.appendingPathComponent(Constants.sourceName)
         try Data("x".utf8).write(to: source)
-        let envelopeURL = directory.appendingPathComponent("envelope.multipart")
+        let envelopeURL = directory.appendingPathComponent(Constants.envelopeName)
 
-        for (name, destination) in [("a\0b.jpg", "Photos"), ("a.jpg", "Pho\0tos")] {
+        for (name, destination) in [("a\0b.jpg", TestFolder.photos), (TestFile.aPhoto, "Pho\0tos")] {
             #expect(throws: UploadRequest.EnvelopeError.self) {
                 try UploadRequest.writeEnvelope(to: envelopeURL, boundary: boundary, fileURL: source, fileName: name, destination: destination)
             }
@@ -96,7 +96,7 @@ struct UploadRequestTests {
         let composed = "Caf\u{00E9} 🙂 日本語.txt"
         let long = String(repeating: "あ", count: 4000) + ".txt"
         for name in [decomposed, composed, long] {
-            let data = try envelope(fileName: name, destination: "Docs")
+            let data = try envelope(fileName: name, destination: TestFolder.docs)
             let text = try #require(String(data: data, encoding: .utf8))
             #expect(text.contains("name=\"relativePath\"\r\n\r\n\(name)\r\n"), "the name is not normalised or truncated")
             #expect(text.components(separatedBy: "--\(boundary)").count == 5)
@@ -106,8 +106,14 @@ struct UploadRequestTests {
     @Test("The file bytes are streamed between the header and the closing marker, whatever they contain")
     func bodyIsOpaque() throws {
         let bytes = Data("--\(boundary)\r\nnot a part".utf8) + Data([0, 1, 2, 255])
-        let data = try envelope(fileName: "blob.bin", destination: "Docs", bytes: bytes)
+        let data = try envelope(fileName: "blob.bin", destination: TestFolder.docs, bytes: bytes)
         #expect(data.range(of: bytes) != nil)
         #expect(data.suffix("\r\n--\(boundary)--\r\n".utf8.count) == Data("\r\n--\(boundary)--\r\n".utf8))
     }
+}
+
+private enum Constants {
+    static let envelopeName = "envelope.multipart"
+    static let sourceName = "source.bin"
+    static let numberedPhoto = "IMG_1.jpg"
 }

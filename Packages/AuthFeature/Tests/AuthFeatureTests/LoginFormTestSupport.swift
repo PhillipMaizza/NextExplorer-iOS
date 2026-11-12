@@ -12,8 +12,8 @@ import TestUtils
 enum LoginFormTestSupport {
     typealias Store = TestStore<LoginFormFeature.State, LoginFormFeature.Action>
 
-    nonisolated static let host = "nextexplorer.example.com"
-    nonisolated static let serverURL = "https://nextexplorer.example.com"
+    nonisolated static let host = TestHost.nextExplorer
+    nonisolated static let serverURL = TestHost.nextExplorerURLString
     nonisolated static let passwordOnly = AuthStatus(localEnabled: true, oidcEnabled: false)
 
     static func makeStore(
@@ -31,7 +31,7 @@ enum LoginFormTestSupport {
     }
 
     /// The credentials page of a server that was tested and offers password sign in.
-    static func credentialsState(identifier: String = "asmith", password: String = "hunter2") -> LoginFormFeature.State {
+    static func credentialsState(identifier: String = TestUser.asmith, password: String = TestAccount.password) -> LoginFormFeature.State {
         LoginFormFeature.State(
             currentPage: .credentials,
             host: host,

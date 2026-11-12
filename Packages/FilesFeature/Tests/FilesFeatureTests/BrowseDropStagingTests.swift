@@ -102,7 +102,7 @@ struct BrowseDropStagingTests {
     func theStaleSweepRemovesOldDropCopiesAndKeepsFreshOnes() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("sweep-\(TestID.name())", isDirectory: true)
         defer { try? FileManager.default.removeItem(at: root) }
-        let old = root.appendingPathComponent("old", isDirectory: true)
+        let old = root.appendingPathComponent(TestValue.outdated, isDirectory: true)
         let fresh = root.appendingPathComponent("fresh", isDirectory: true)
         for url in [old, fresh] {
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)

@@ -10,14 +10,14 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct DestinationPickerFeatureTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private let serverURL = URL(string: TestHost.exampleURLString)!
 
     private nonisolated func folder(_ name: String, path: String = "") -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: "directory")
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
     }
 
     private nonisolated func file(_ name: String, path: String = "") -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: "txt")
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: TestKind.text)
     }
 
     private nonisolated func access() -> FileAccess {
@@ -33,17 +33,17 @@ struct DestinationPickerFeatureTests {
     @Test
     func onAppearLoadsFoldersOnlyDroppingFiles() async {
         let store = TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Inbox")])
+            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
         ) {
             DestinationPickerFeature()
         } withDependencies: {
             $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [folder("Documents"), file("readme.txt")], access: access(), path: "")
+                BrowseResult(items: [folder(TestFolder.documents), file("readme.txt")], access: access(), path: "")
             }
         }
 
         await store.send(.onAppear) { $0.phase = .loading }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Documents")]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.documents)]) }
     }
 
     @Test
@@ -52,8 +52,8 @@ struct DestinationPickerFeatureTests {
         #expect(atRoot.purpose == .upload)
         #expect(atRoot.canConfirm == false)
 
-        var inFolder = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "Documents")
-        #expect(inFolder.directoryPath == "Documents")
+        var inFolder = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: TestFolder.documents)
+        #expect(inFolder.directoryPath == TestFolder.documents)
         #expect(inFolder.canConfirm == false) // access not loaded yet
 
         inFolder.currentAccess = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
@@ -65,41 +65,41 @@ struct DestinationPickerFeatureTests {
 
     @Test
     func uploadModeConfirmEmitsTheChosenDestination() async {
-        var state = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "Documents")
-        state.directoryPath = "Documents/Reports"
+        var state = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: TestFolder.documents)
+        state.directoryPath = Constants.documentsReports
         state.currentAccess = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
 
         let store = TestStore(initialState: state) { DestinationPickerFeature() }
 
         await store.send(.confirmTapped)
-        await store.receive(.delegate(.confirmed(destination: "Documents/Reports")))
+        await store.receive(.delegate(.confirmed(destination: Constants.documentsReports)))
     }
 
     @Test
     func folderTappedDrillsIntoTheChild() async {
         let store = TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Inbox")])
+            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
         ) {
             DestinationPickerFeature()
         } withDependencies: {
             $0.filesClient.browse = { _, path in
                 BrowseResult(
-                    items: path == "Documents" ? [folder("Work", path: "Documents")] : [folder("Documents")],
+                    items: path == TestFolder.documents ? [folder(Constants.workFolder, path: TestFolder.documents)] : [folder(TestFolder.documents)],
                     access: access(), path: path
                 )
             }
         }
 
         await store.send(.onAppear) { $0.phase = .loading }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Documents")]) }
-        await store.send(.folderTapped(folder("Documents"))) {
-            $0.directoryPath = "Documents"
-            $0.navigationHistory = ["Inbox"]
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.documents)]) }
+        await store.send(.folderTapped(folder(TestFolder.documents))) {
+            $0.directoryPath = TestFolder.documents
+            $0.navigationHistory = [TestFolder.inbox]
             $0.phase = .loading
             $0.currentAccess = nil
         }
         await store.receive(\.foldersResponse.success) {
-            finishLoad(&$0, folders: [folder("Work", path: "Documents")])
+            finishLoad(&$0, folders: [folder(Constants.workFolder, path: TestFolder.documents)])
         }
     }
 
@@ -111,36 +111,36 @@ struct DestinationPickerFeatureTests {
             DestinationPickerFeature()
         } withDependencies: {
             $0.filesClient.browse = { _, path in
-                BrowseResult(items: [folder("Child", path: path)], access: access(), path: path)
+                BrowseResult(items: [folder(Constants.childFolder, path: path)], access: access(), path: path)
             }
         }
 
         #expect(store.state.canNavigateBack == false)
 
-        await store.send(.folderTapped(folder("Documents"))) {
-            $0.directoryPath = "Documents"
+        await store.send(.folderTapped(folder(TestFolder.documents))) {
+            $0.directoryPath = TestFolder.documents
             $0.navigationHistory = [""]
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Child", path: "Documents")]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(Constants.childFolder, path: TestFolder.documents)]) }
         #expect(store.state.canNavigateBack == true)
 
-        await store.send(.folderTapped(folder("Reports", path: "Documents"))) {
-            $0.directoryPath = "Documents/Reports"
-            $0.navigationHistory = ["", "Documents"]
+        await store.send(.folderTapped(folder("Reports", path: TestFolder.documents))) {
+            $0.directoryPath = Constants.documentsReports
+            $0.navigationHistory = ["", TestFolder.documents]
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Child", path: "Documents/Reports")]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(Constants.childFolder, path: Constants.documentsReports)]) }
 
         await store.send(.backTapped) {
-            $0.directoryPath = "Documents"
+            $0.directoryPath = TestFolder.documents
             $0.navigationHistory = [""]
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Child", path: "Documents")]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(Constants.childFolder, path: TestFolder.documents)]) }
 
         await store.send(.backTapped) {
             $0.directoryPath = ""
@@ -148,7 +148,7 @@ struct DestinationPickerFeatureTests {
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Child", path: "")]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(Constants.childFolder, path: "")]) }
         #expect(store.state.canNavigateBack == false)
     }
 
@@ -175,8 +175,8 @@ struct DestinationPickerFeatureTests {
 
     @Test
     func breadcrumbTappedJumpsStraightToThatPath() async {
-        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Inbox")])
-        state.directoryPath = "Documents/Work"
+        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+        state.directoryPath = TestPath.documentsWork
 
         let store = TestStore(initialState: state) {
             DestinationPickerFeature()
@@ -184,8 +184,8 @@ struct DestinationPickerFeatureTests {
             $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: access(), path: "") }
         }
 
-        await store.send(.breadcrumbTapped(path: "Documents")) {
-            $0.directoryPath = "Documents"
+        await store.send(.breadcrumbTapped(path: TestFolder.documents)) {
+            $0.directoryPath = TestFolder.documents
             $0.phase = .loading
             $0.currentAccess = nil
         }
@@ -195,7 +195,7 @@ struct DestinationPickerFeatureTests {
     @Test
     func loadFailureSurfacesAReadableErrorAndRetryReloads() async {
         let store = TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Inbox")])
+            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
         ) {
             DestinationPickerFeature()
         } withDependencies: {
@@ -214,33 +214,33 @@ struct DestinationPickerFeatureTests {
 
     @Test
     func confirmTappedEmitsTheChosenDestination() async {
-        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Inbox")])
-        state.directoryPath = "Documents"
+        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+        state.directoryPath = TestFolder.documents
 
         let store = TestStore(initialState: state) { DestinationPickerFeature() }
 
         await store.send(.confirmTapped)
-        await store.receive(.delegate(.confirmed(destination: "Documents")))
+        await store.receive(.delegate(.confirmed(destination: TestFolder.documents)))
     }
 
     @Test
     func confirmIsBlockedIntoTheItemsOwnParentAndIntoItself() {
-        var parent = DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Inbox")])
-        parent.directoryPath = "Inbox"
+        var parent = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+        parent.directoryPath = TestFolder.inbox
         #expect(parent.canConfirm == false)
 
-        var intoItself = DestinationPickerFeature.State(serverURL: serverURL, items: [folder("Photos", path: "Media")])
-        intoItself.directoryPath = "Media/Photos/2024"
+        var intoItself = DestinationPickerFeature.State(serverURL: serverURL, items: [folder(TestFolder.photos, path: TestFolder.media)])
+        intoItself.directoryPath = TestPath.mediaPhotos2024
         #expect(intoItself.canConfirm == false)
 
-        var ok = DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Inbox")])
-        ok.directoryPath = "Documents"
+        var ok = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+        ok.directoryPath = TestFolder.documents
         #expect(ok.canConfirm == true)
     }
 
     @Test
     func rootIsNeverAValidDestination() {
-        let state = DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "")])
+        let state = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: "")])
         #expect(state.directoryPath == "")
         #expect(state.canConfirm == false)
     }
@@ -248,9 +248,9 @@ struct DestinationPickerFeatureTests {
     @Test
     func opensInTheFolderTheItemsAlreadyLiveIn() {
         let state = DestinationPickerFeature.State(
-            serverURL: serverURL, items: [file("a.txt", path: "Documents/Reports")]
+            serverURL: serverURL, items: [file(TestFile.aText, path: Constants.documentsReports)]
         )
-        #expect(state.directoryPath == "Documents/Reports")
+        #expect(state.directoryPath == Constants.documentsReports)
         // Confirming right here would be a no-op move into the item's own parent.
         #expect(state.canConfirm == false)
     }
@@ -260,25 +260,25 @@ struct DestinationPickerFeatureTests {
         let clock = TestClock()
         let searchScope = LockIsolated<String?>(nil)
         let store = TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Media")])
+            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.media)])
         ) {
             DestinationPickerFeature()
         } withDependencies: {
             $0.continuousClock = clock
             $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [folder("Photos", path: "Media")], access: access(), path: "Media")
+                BrowseResult(items: [folder(TestFolder.photos, path: TestFolder.media)], access: access(), path: TestFolder.media)
             }
             $0.filesClient.search = { _, path, _, _ in
                 searchScope.setValue(path)
                 return [
-                    SearchResultItem(name: "Summer", path: "Media/Photos/2024", kind: "dir"),
-                    SearchResultItem(name: "notes.txt", path: "Media/Photos", kind: "txt"),
+                    SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir"),
+                    SearchResultItem(name: TestFile.notes, path: TestPath.mediaPhotos, kind: TestKind.text),
                 ]
             }
         }
 
         await store.send(.onAppear) { $0.phase = .loading }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Photos", path: "Media")]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.photos, path: TestFolder.media)]) }
 
         await store.send(.searchQueryChanged("sum")) {
             $0.searchQuery = "sum"
@@ -287,18 +287,25 @@ struct DestinationPickerFeatureTests {
         await clock.advance(by: .milliseconds(250))
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
-            $0.searchResults = [SearchResultItem(name: "Summer", path: "Media/Photos/2024", kind: "dir")]
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir")]
         }
-        #expect(searchScope.value == "Media")
+        #expect(searchScope.value == TestFolder.media)
 
-        await store.send(.searchResultTapped(SearchResultItem(name: "Summer", path: "Media/Photos/2024", kind: "dir"))) {
+        await store.send(.searchResultTapped(SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir"))) {
             $0.directoryPath = "Media/Photos/2024/Summer"
             $0.searchQuery = ""
             $0.searchResults = nil
-            $0.navigationHistory = ["Media"]
+            $0.navigationHistory = [TestFolder.media]
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Photos", path: "Media")]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.photos, path: TestFolder.media)]) }
     }
+}
+
+private enum Constants {
+    static let summerFolder = "Summer"
+    static let workFolder = "Work"
+    static let childFolder = "Child"
+    static let documentsReports = "Documents/Reports"
 }

@@ -8,8 +8,8 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct OfflineManageFeatureTests {
-    private let docs = OfflinePinnedRoot(path: "Docs", isDirectory: true)
-    private let photo = OfflinePinnedRoot(path: "a.jpg", isDirectory: false)
+    private let docs = OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true)
+    private let photo = OfflinePinnedRoot(path: TestFile.aPhoto, isDirectory: false)
 
     private func usages() -> [OfflinePinnedRootUsage] {
         [OfflinePinnedRootUsage(root: docs, sizeBytes: 100), OfflinePinnedRootUsage(root: photo, sizeBytes: 50)]
@@ -35,8 +35,8 @@ struct OfflineManageFeatureTests {
         await store.send(.onAppear)
         await store.receive(\.usagesLoaded) {
             $0.usages = [
-                OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: "Docs", isDirectory: true), sizeBytes: 100),
-                OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: "a.jpg", isDirectory: false), sizeBytes: 50),
+                OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true), sizeBytes: 100),
+                OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: TestFile.aPhoto, isDirectory: false), sizeBytes: 50),
             ]
         }
         #expect(store.state.totalBytes == 150)
@@ -68,13 +68,13 @@ struct OfflineManageFeatureTests {
             $0.offlineFileStore = offline
         }
 
-        await store.send(.removeTapped(path: "Docs")) {
-            $0.usages.remove(id: "Docs")
+        await store.send(.removeTapped(path: TestFolder.docs)) {
+            $0.usages.remove(id: TestFolder.docs)
         }
         await store.receive(.delegate(.changed))
         await store.finish()
 
-        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "a.jpg", isDirectory: false)])
+        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: TestFile.aPhoto, isDirectory: false)])
         #expect(store.state.totalBytes == 50)
     }
 }

@@ -17,7 +17,7 @@ extension AppSuites {
             static let promptDismissDuration: Duration = .seconds(0.4)
         }
 
-        private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
+        private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, TestUser.bob)
         private let recorder = WipeRecorder()
 
         private func makeStore(
@@ -106,7 +106,7 @@ extension AppSuites {
             )
             for id in [AppFixtures.accountA, AppFixtures.accountB] {
                 directory.bound(to: id).write(serverURL: AppFixtures.serverA, path: "", result: browse, etag: nil, fetchedAt: MockDate.date)
-                json.bound(to: id).write(key: "favorites", data: Data(id.utf8))
+                json.bound(to: id).write(key: TestCacheKey.favorites, data: Data(id.utf8))
             }
             let store = makeStore {
                 $0.authClient.removeAccount = { [recorder, credentialsB] id in
@@ -127,8 +127,8 @@ extension AppSuites {
 
             #expect(directory.bound(to: AppFixtures.accountA).read(serverURL: AppFixtures.serverA, path: "") == nil)
             #expect(directory.bound(to: AppFixtures.accountB).read(serverURL: AppFixtures.serverA, path: "") != nil)
-            #expect(json.bound(to: AppFixtures.accountA).read(key: "favorites") == nil)
-            #expect(json.bound(to: AppFixtures.accountB).read(key: "favorites") != nil)
+            #expect(json.bound(to: AppFixtures.accountA).read(key: TestCacheKey.favorites) == nil)
+            #expect(json.bound(to: AppFixtures.accountB).read(key: TestCacheKey.favorites) != nil)
             #expect(
                 recorder.events.value == [
                     .accountRemoved(AppFixtures.accountA),

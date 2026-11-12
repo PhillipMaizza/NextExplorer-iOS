@@ -14,8 +14,8 @@ import TestUtils
 struct LoginClientCertificateTests {
     private typealias Store = TestStore<LoginFormFeature.State, LoginFormFeature.Action>
 
-    private let origin = ClientCertificateOrigin(host: "files.example.com", port: 8443)
-    private let summary = ClientCertificateSummary(subject: "Dev Client")
+    private let origin = ClientCertificateOrigin(host: TestHost.server, port: 8443)
+    private let summary = ClientCertificateSummary(subject: TestCertificate.subject)
     private let passwordOnly = AuthStatus(localEnabled: true, oidcEnabled: false)
 
     private func makeStore(
@@ -62,7 +62,7 @@ struct LoginClientCertificateTests {
     func certificateFailureOffersSheet(_ failure: CertificateFailure) async {
         let clock = TestClock()
         let store = makeStore(
-            LoginFormFeature.State(host: "files.example.com:8443"),
+            LoginFormFeature.State(host: TestHost.serverWithPort),
             clock: clock,
             fetchStatus: { _ in throw failure.error }
         )
@@ -89,7 +89,7 @@ struct LoginClientCertificateTests {
         let clock = TestClock()
         let store = makeStore(
             LoginFormFeature.State(
-                host: "files.example.com:8443",
+                host: TestHost.serverWithPort,
                 certificatePrompt: .init(origin: origin, isRejected: false),
                 clientCertificate: ClientCertificateFeature.State(origin: origin, status: .empty)
             ),
@@ -117,7 +117,7 @@ struct LoginClientCertificateTests {
         let store = makeStore(
             LoginFormFeature.State(
                 connectionPhase: .testing,
-                host: "files.example.com:8443",
+                host: TestHost.serverWithPort,
                 certificatePrompt: .init(origin: origin, isRejected: false)
             ),
             clock: clock
@@ -140,14 +140,14 @@ struct LoginClientCertificateTests {
     @Test(
         "A redirect to https carries the answered port, not the typed one",
         arguments: [
-            RedirectCase(typed: "files.example.com:8080", answeredPort: nil, expected: "files.example.com"),
-            RedirectCase(typed: "files.example.com:8080", answeredPort: 9443, expected: "files.example.com:9443"),
-            RedirectCase(typed: "files.example.com:8443", answeredPort: 8443, expected: "files.example.com:8443"),
-            RedirectCase(typed: "files.example.com", answeredPort: nil, expected: "files.example.com"),
-            RedirectCase(typed: "files.example.com", answeredPort: 8443, expected: "files.example.com:8443"),
-            RedirectCase(typed: "http://files.example.com:8080/path", answeredPort: nil, expected: "files.example.com"),
+            RedirectCase(typed: Constants.serverWithOtherPort, answeredPort: nil, expected: TestHost.server),
+            RedirectCase(typed: Constants.serverWithOtherPort, answeredPort: 9443, expected: "files.example.com:9443"),
+            RedirectCase(typed: TestHost.serverWithPort, answeredPort: 8443, expected: TestHost.serverWithPort),
+            RedirectCase(typed: TestHost.server, answeredPort: nil, expected: TestHost.server),
+            RedirectCase(typed: TestHost.server, answeredPort: 8443, expected: TestHost.serverWithPort),
+            RedirectCase(typed: "http://files.example.com:8080/path", answeredPort: nil, expected: TestHost.server),
             RedirectCase(typed: "[::1]:8080", answeredPort: 9443, expected: "[::1]:9443"),
-            RedirectCase(typed: "192.168.1.5:3000", answeredPort: nil, expected: "192.168.1.5"),
+            RedirectCase(typed: Constants.lanHostWithPort, answeredPort: nil, expected: Constants.lanHost),
         ]
     )
     func httpRedirectCarriesThePort(_ testCase: RedirectCase) async {
@@ -172,7 +172,7 @@ struct LoginClientCertificateTests {
         let clock = TestClock()
         let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: false, redirectedPort: 9443)
         let store = makeStore(
-            LoginFormFeature.State(connectionPhase: .testing, scheme: .http, host: "files.example.com:8080"),
+            LoginFormFeature.State(connectionPhase: .testing, scheme: .http, host: Constants.serverWithOtherPort),
             clock: clock
         )
 
@@ -188,7 +188,7 @@ struct LoginClientCertificateTests {
         let clock = TestClock()
         let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: true, redirectedPort: 9443)
         let store = makeStore(
-            LoginFormFeature.State(connectionPhase: .testing, scheme: .http, host: "not a host"),
+            LoginFormFeature.State(connectionPhase: .testing, scheme: .http, host: AuthFeatureTestValue.invalidHost),
             clock: clock
         )
 
@@ -204,7 +204,7 @@ struct LoginClientCertificateTests {
     func certificateInUseAndChange() async {
         let clock = TestClock()
         let store = makeStore(
-            LoginFormFeature.State(host: "files.example.com:8443"),
+            LoginFormFeature.State(host: TestHost.serverWithPort),
             clock: clock,
             certificates: [origin: summary],
             fetchStatus: { [passwordOnly] _ in passwordOnly }
@@ -230,7 +230,7 @@ struct LoginClientCertificateTests {
     func hostChangeClearsPrompt() async {
         let store = makeStore(
             LoginFormFeature.State(
-                host: "files.example.com:8443",
+                host: TestHost.serverWithPort,
                 certificatePrompt: .init(origin: origin, isRejected: false),
                 certificateInUse: summary
             ),
@@ -248,13 +248,13 @@ struct LoginClientCertificateTests {
     func unchangedHostKeepsPrompt() async {
         let store = makeStore(
             LoginFormFeature.State(
-                host: "files.example.com:8443",
+                host: TestHost.serverWithPort,
                 certificatePrompt: .init(origin: origin, isRejected: false)
             ),
             clock: TestClock()
         )
 
-        await store.send(.hostChanged("files.example.com:8443"))
+        await store.send(.hostChanged(TestHost.serverWithPort))
     }
 
     struct PromptCase: Sendable {
@@ -267,30 +267,36 @@ struct LoginClientCertificateTests {
     @Test(
         "Only certificate failures on a valid address offer a certificate, keyed by the lowercased host and port",
         arguments: [
-            PromptCase(error: .network("x"), scheme: .https, host: "a.com", expected: nil),
-            PromptCase(error: .rateLimited, scheme: .https, host: "a.com", expected: nil),
-            PromptCase(error: .clientCertificateRequired, scheme: .https, host: "not a host", expected: nil),
+            PromptCase(error: .network("x"), scheme: .https, host: TestHost.shortHost, expected: nil),
+            PromptCase(error: .rateLimited, scheme: .https, host: TestHost.shortHost, expected: nil),
+            PromptCase(error: .clientCertificateRequired, scheme: .https, host: AuthFeatureTestValue.invalidHost, expected: nil),
             PromptCase(
                 error: .clientCertificateRequired,
                 scheme: .https,
                 host: "A.com",
-                expected: .init(origin: .init(host: "a.com", port: 443), isRejected: false)
+                expected: .init(origin: .init(host: TestHost.shortHost, port: 443), isRejected: false)
             ),
             PromptCase(
                 error: .clientCertificateRejected,
                 scheme: .https,
-                host: "a.com",
-                expected: .init(origin: .init(host: "a.com", port: 443), isRejected: true)
+                host: TestHost.shortHost,
+                expected: .init(origin: .init(host: TestHost.shortHost, port: 443), isRejected: true)
             ),
             PromptCase(
                 error: .clientCertificateRequired,
                 scheme: .http,
-                host: "192.168.1.5:3000",
-                expected: .init(origin: .init(host: "192.168.1.5", port: 3000), isRejected: false)
+                host: Constants.lanHostWithPort,
+                expected: .init(origin: .init(host: Constants.lanHost, port: 3000), isRejected: false)
             ),
         ]
     )
     func certificatePrompt(_ testCase: PromptCase) {
         #expect(LoginFormFeature.certificatePrompt(for: testCase.error, scheme: testCase.scheme, host: testCase.host) == testCase.expected)
     }
+}
+
+private enum Constants {
+    static let lanHost = "192.168.1.5"
+    static let lanHostWithPort = "192.168.1.5:3000"
+    static let serverWithOtherPort = "files.example.com:8080"
 }

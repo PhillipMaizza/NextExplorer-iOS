@@ -3,12 +3,13 @@ import Localization
 @testable import ShareUploads
 import Testing
 import UserNotifications
+import TestUtils
 
 @Suite("Upload notifications")
 struct UploadNotificationTests {
-    private func outcome(uploaded: Int, failures: [FailedUpload] = [], destination: String = "Photos/2026") -> BatchOutcome {
+    private func outcome(uploaded: Int, failures: [FailedUpload] = [], destination: String = TestPath.photos2026) -> BatchOutcome {
         BatchOutcome(
-            batchID: "BATCH", accountID: "https://files.example.com|phillip", host: "files.example.com",
+            batchID: TestUpload.batchID, accountID: "https://files.example.com|phillip", host: TestHost.server,
             destination: destination, uploaded: uploaded, failures: failures
         )
     }
@@ -25,12 +26,12 @@ struct UploadNotificationTests {
         #expect(one.body == "1 file uploaded to “2026”.")
         #expect(many.body == "3 files uploaded to “2026”.")
         #expect(!many.hasFailures)
-        #expect(many.subtitle == "files.example.com")
+        #expect(many.subtitle == TestHost.server)
     }
 
     @Test("The title says some files failed only when others succeeded, and all failed when none did")
     func titles() {
-        let failure = [FailedUpload(name: "a.jpg", cause: .network)]
+        let failure = [FailedUpload(name: TestFile.aPhoto, cause: .network)]
         let some = english { UploadNotification(outcome: outcome(uploaded: 2, failures: failure)) }
         let none = english { UploadNotification(outcome: outcome(uploaded: 0, failures: failure)) }
         #expect(some.title == "Some files didn't upload")
@@ -54,9 +55,9 @@ struct UploadNotificationTests {
     @Test("Mixed causes get one line each and a long name list is cut with a count")
     func mixedCauses() {
         let failures = [
-            FailedUpload(name: "a.jpg", cause: .network),
-            FailedUpload(name: "b.jpg", cause: .unauthorized),
-            FailedUpload(name: "c.jpg", cause: .network),
+            FailedUpload(name: TestFile.aPhoto, cause: .network),
+            FailedUpload(name: TestFile.bPhoto, cause: .unauthorized),
+            FailedUpload(name: TestFile.cPhoto, cause: .network),
             FailedUpload(name: "d.jpg", cause: .network),
             FailedUpload(name: "e.jpg", cause: .network),
         ]
@@ -104,20 +105,20 @@ struct UploadNotificationTests {
     func arabicQuotes() {
         for count in [0, 1, 2, 3, 11, 100] {
             let text = LocalizationOverride.withLanguage("ar") { L10n.ShareUpload.notificationDoneBody(count, "Photos") }
-            #expect(text.contains("«") && text.contains("»") && text.contains("Photos"), Comment(rawValue: text))
+            #expect(text.contains("«") && text.contains("»") && text.contains(TestFolder.photos), Comment(rawValue: text))
             #expect(!text.contains("”") && !text.contains("“"), Comment(rawValue: text))
         }
     }
 
     @Test("The user info carries only the batch id, nothing about the files or the server")
     func userInfo() {
-        let failures = [FailedUpload(name: "a.jpg", cause: .serverFull)]
+        let failures = [FailedUpload(name: TestFile.aPhoto, cause: .serverFull)]
         let failed = UploadNotification(outcome: outcome(uploaded: 1, failures: failures)).userInfo
         let clean = UploadNotification(outcome: outcome(uploaded: 1)).userInfo
         #expect(failed.count == 1)
-        #expect(failed[UploadNotificationKey.batchID] as? String == "BATCH")
+        #expect(failed[UploadNotificationKey.batchID] as? String == TestUpload.batchID)
         #expect(clean.count == 1)
-        #expect(clean[UploadNotificationKey.batchID] as? String == "BATCH")
+        #expect(clean[UploadNotificationKey.batchID] as? String == TestUpload.batchID)
     }
 
     @Test("Both categories hide the body behind a placeholder when previews are hidden")
@@ -158,18 +159,18 @@ struct UploadNotificationTests {
     @Test("A finished batch is posted under its batch id, so a retry's result replaces the earlier notification")
     func postsOneRequestPerBatch() {
         let center = RecordingCenter()
-        let failures = [FailedUpload(name: "a.jpg", cause: .network)]
+        let failures = [FailedUpload(name: TestFile.aPhoto, cause: .network)]
 
         english { UploadNotifier.posting(to: center.center).batchFinished(outcome(uploaded: 1, failures: failures)) }
         english { UploadNotifier.posting(to: center.center).batchFinished(outcome(uploaded: 2)) }
 
         let requests = center.requests
-        #expect(requests.map(\.identifier) == ["BATCH", "BATCH"])
+        #expect(requests.map(\.identifier) == [TestUpload.batchID, TestUpload.batchID])
         #expect(requests[0].content.title == "Some files didn't upload")
         #expect(requests[0].content.categoryIdentifier == UploadNotificationIdentifier.failedCategory)
-        #expect(requests[0].content.subtitle == "files.example.com")
+        #expect(requests[0].content.subtitle == TestHost.server)
         #expect(requests[0].content.threadIdentifier == "https://files.example.com|phillip")
-        #expect(requests[0].content.userInfo[UploadNotificationKey.batchID] as? String == "BATCH")
+        #expect(requests[0].content.userInfo[UploadNotificationKey.batchID] as? String == TestUpload.batchID)
         #expect(requests[1].content.title == "Upload finished")
         #expect(requests[1].content.body == "2 files uploaded to “2026”.")
         #expect(requests[1].content.categoryIdentifier == UploadNotificationIdentifier.doneCategory)
@@ -196,10 +197,10 @@ struct UploadNotificationTests {
 
     @Test("Retry restarts the batch; a dismissal and a tap do nothing, so no file is ever deleted by them")
     func decisions() {
-        let info: [AnyHashable: Any] = [UploadNotificationKey.batchID: "BATCH"]
+        let info: [AnyHashable: Any] = [UploadNotificationKey.batchID: TestUpload.batchID]
         #expect(
             UploadNotificationHandler.decision(actionIdentifier: UploadNotificationIdentifier.retryAction, userInfo: info)
-                == .retry(batchID: "BATCH")
+                == .retry(batchID: TestUpload.batchID)
         )
         #expect(UploadNotificationHandler.decision(actionIdentifier: UNNotificationDismissActionIdentifier, userInfo: info) == .ignore)
         #expect(UploadNotificationHandler.decision(actionIdentifier: UNNotificationDefaultActionIdentifier, userInfo: info) == .ignore)

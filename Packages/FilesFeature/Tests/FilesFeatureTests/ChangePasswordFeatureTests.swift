@@ -63,7 +63,7 @@ struct ChangePasswordFeatureTests {
         let store = makeStore(mode: .add)
         #expect(!store.state.isSubmitEnabled)
 
-        await fillNew(store, "brand-new")
+        await fillNew(store, Constants.newPassword)
 
         #expect(store.state.currentPassword.isEmpty)
         #expect(store.state.isSubmitEnabled)
@@ -76,7 +76,7 @@ struct ChangePasswordFeatureTests {
         await fillNew(store, "short")
         #expect(!store.state.isSubmitEnabled)
 
-        await store.send(.newPasswordChanged("brand-new")) { $0.newPassword = "brand-new" }
+        await store.send(.newPasswordChanged(Constants.newPassword)) { $0.newPassword = Constants.newPassword }
         #expect(store.state.confirmError == .mismatch)
         #expect(!store.state.isSubmitEnabled)
     }
@@ -84,7 +84,7 @@ struct ChangePasswordFeatureTests {
     @Test
     func addModeSendsOnlyTheNewPasswordToTheAddRouteAndReportsIt() async {
         let store = makeStore(mode: .add, add: {})
-        await fillNew(store, "brand-new")
+        await fillNew(store, Constants.newPassword)
 
         await store.send(.submitTapped) { $0.isSubmitting = true }
         await store.receive(\.response.success) {
@@ -95,7 +95,7 @@ struct ChangePasswordFeatureTests {
         }
         await store.receive(.delegate(.passwordAdded))
 
-        #expect(addCalls.value == ["brand-new"])
+        #expect(addCalls.value == [Constants.newPassword])
         #expect(changeCalls.value.isEmpty)
     }
 
@@ -104,7 +104,7 @@ struct ChangePasswordFeatureTests {
         let store = makeStore(mode: .add, add: {
             throw FilesClientError.serverMessage(statusCode: 409, message: "You already have password authentication.")
         })
-        await fillNew(store, "brand-new")
+        await fillNew(store, Constants.newPassword)
 
         await store.send(.submitTapped) { $0.isSubmitting = true }
         await store.receive(\.response.failure) {
@@ -112,7 +112,7 @@ struct ChangePasswordFeatureTests {
             $0.errorMessage = "You already have password authentication."
         }
         #expect(!store.state.didSucceed)
-        #expect(store.state.newPassword == "brand-new")
+        #expect(store.state.newPassword == Constants.newPassword)
     }
 
     @Test
@@ -146,7 +146,7 @@ struct ChangePasswordFeatureTests {
             LengthCase(password: "", error: nil, isSubmittable: false),
             LengthCase(password: "a", error: .tooShort(minimum: 6), isSubmittable: false),
             LengthCase(password: "12345", error: .tooShort(minimum: 6), isSubmittable: false),
-            LengthCase(password: "123456", error: nil, isSubmittable: true),
+            LengthCase(password: TestAccount.totpCode, error: nil, isSubmittable: true),
             LengthCase(password: "a much longer passphrase", error: nil, isSubmittable: true),
         ]
     )
@@ -163,7 +163,7 @@ struct ChangePasswordFeatureTests {
         let store = makeStore()
         #expect(!store.state.isSubmitEnabled)
 
-        await fillNew(store, "brand-new")
+        await fillNew(store, Constants.newPassword)
         #expect(!store.state.isSubmitEnabled)
 
         await store.send(.currentPasswordChanged("old-pass")) { $0.currentPassword = "old-pass" }
@@ -173,7 +173,7 @@ struct ChangePasswordFeatureTests {
         #expect(store.state.confirmError == .mismatch)
         #expect(!store.state.isSubmitEnabled)
 
-        await store.send(.confirmPasswordChanged("brand-new")) { $0.confirmPassword = "brand-new" }
+        await store.send(.confirmPasswordChanged(Constants.newPassword)) { $0.confirmPassword = Constants.newPassword }
         #expect(store.state.confirmError == nil)
         #expect(store.state.isSubmitEnabled)
     }
@@ -235,14 +235,14 @@ struct ChangePasswordFeatureTests {
         let store = makeStore(change: {
             throw FilesClientError.serverMessage(statusCode: 401, message: "Current password is incorrect.")
         })
-        await fillChange(store, current: "nope")
+        await fillChange(store, current: TestAccount.rejectedPassword)
 
         await store.send(.submitTapped) { $0.isSubmitting = true }
         await store.receive(\.response.failure) {
             $0.isSubmitting = false
             $0.errorMessage = "Current password is incorrect."
         }
-        #expect(store.state.currentPassword == "nope")
+        #expect(store.state.currentPassword == TestAccount.rejectedPassword)
         #expect(store.state.newPassword == "the-new-one")
     }
 
@@ -284,4 +284,8 @@ struct ChangePasswordFeatureTests {
         }
         #expect(attempts.value == 2)
     }
+}
+
+private enum Constants {
+    static let newPassword = "brand-new"
 }

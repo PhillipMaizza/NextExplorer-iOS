@@ -13,17 +13,17 @@ import TestUtils
 struct BrowseOfflineCacheTests {
     private let access = BrowseTestSupport.readOnlyAccess
     private let fetchedAt = MockDate.date.addingTimeInterval(1_000)
-    private let cachedItem = BrowseFixtures.file("Saved.txt", in: "docs", size: 1)
+    private let cachedItem = BrowseFixtures.file("Saved.txt", in: TestPath.docsLowercase, size: 1)
 
     private func docsStore(
-        state: BrowseFeature.State = BrowseFixtures.state("docs", title: "Docs"),
+        state: BrowseFeature.State = BrowseFixtures.state(TestPath.docsLowercase, title: TestFolder.docs),
         configure: (inout DependencyValues) -> Void
     ) -> TestStoreOf<BrowseFeature> {
         BrowseFixtures.store(state) { configure(&$0) }
     }
 
     private func cachedListing(_ items: [FileItem]) -> CachedDirectory {
-        CachedDirectory(path: "docs", items: items, access: access, fetchedAt: fetchedAt)
+        CachedDirectory(path: TestPath.docsLowercase, items: items, access: access, fetchedAt: fetchedAt)
     }
 
     @Test("Offline with a saved copy paints it first, then keeps it under the saved copy banner")
@@ -88,10 +88,10 @@ struct BrowseOfflineCacheTests {
 
     @Test("A saved copy shows at once without the offline banner, and fresh data replaces it")
     func cacheFirstPaintShowsSavedItemsWithoutTheOfflineBannerThenFreshDataReplacesThem() async {
-        let fresh = BrowseFixtures.file("New.txt", in: "docs", size: 2)
+        let fresh = BrowseFixtures.file("New.txt", in: TestPath.docsLowercase, size: 2)
         let browse = AsyncGate()
         let favorites = AsyncGate()
-        let cached = cachedListing([BrowseFixtures.file("Old.txt", in: "docs", size: 1)])
+        let cached = cachedListing([BrowseFixtures.file("Old.txt", in: TestPath.docsLowercase, size: 1)])
         let store = docsStore {
             $0.serveEmptyFolders()
             $0.filesClient.browse = { _, path in
@@ -106,7 +106,7 @@ struct BrowseOfflineCacheTests {
             $0.phase = .loading
         }
         await store.receive(\.cachedListingPainted) {
-            $0.items = [BrowseFixtures.file("Old.txt", in: "docs", size: 1)]
+            $0.items = [BrowseFixtures.file("Old.txt", in: TestPath.docsLowercase, size: 1)]
             $0.access = access
             $0.isShowingCachePaint = true
         }
@@ -125,8 +125,8 @@ struct BrowseOfflineCacheTests {
 
     @Test("A successful browse warms the immediate subfolders only, not files")
     func aSuccessfulBrowsePrefetchesImmediateSubfoldersOnly() async {
-        let folder = BrowseFixtures.folder("Photos", in: "docs")
-        let file = BrowseFixtures.file("a.txt", in: "docs", size: 1)
+        let folder = BrowseFixtures.folder(TestFolder.photos, in: TestPath.docsLowercase)
+        let file = BrowseFixtures.file(TestFile.aText, in: TestPath.docsLowercase, size: 1)
         let favorites = AsyncGate()
         let prefetched = LockIsolated<[String]>([])
         let store = docsStore {
@@ -156,9 +156,9 @@ struct BrowseOfflineCacheTests {
 
     @Test("Offline while items are on screen replaces them with the saved copy read in an effect")
     func anOfflineFailureReadsTheSavedListingInAnEffectAndThenShowsIt() async {
-        let live = BrowseFixtures.file("Live.txt", in: "docs", size: 1)
+        let live = BrowseFixtures.file("Live.txt", in: TestPath.docsLowercase, size: 1)
         let cached = cachedListing([cachedItem])
-        let store = docsStore(state: BrowseFixtures.loadedState("docs", items: [live])) {
+        let store = docsStore(state: BrowseFixtures.loadedState(TestPath.docsLowercase, items: [live])) {
             $0.directoryCacheStore.read = { _, _ in cached }
         }
 
@@ -173,8 +173,8 @@ struct BrowseOfflineCacheTests {
 
     @Test("A saved copy that arrives after the live listing is dropped")
     func aPaintThatArrivesAfterTheLiveListingIsDropped() async {
-        let live = BrowseFixtures.file("Live.txt", in: "docs", size: 1)
-        let store = docsStore(state: BrowseFixtures.loadedState("docs", items: [live])) { _ in }
+        let live = BrowseFixtures.file("Live.txt", in: TestPath.docsLowercase, size: 1)
+        let store = docsStore(state: BrowseFixtures.loadedState(TestPath.docsLowercase, items: [live])) { _ in }
 
         await store.send(.cachedListingPainted(cachedListing([cachedItem])))
     }
@@ -219,7 +219,7 @@ struct BrowseOfflineCacheTests {
     @Test("A server error on a refresh of the offline saved copy shows the error, not the stale list")
     func aServerErrorOnARefreshOfAnOfflineSavedCopyShowsTheErrorNotTheStaleList() async {
         let error = FilesClientError.server(statusCode: 404)
-        var state = BrowseFixtures.loadedState("docs", items: [cachedItem], access: access)
+        var state = BrowseFixtures.loadedState(TestPath.docsLowercase, items: [cachedItem], access: access)
         state.dataSource = .cached(fetchedAt: fetchedAt)
         let store = docsStore(state: state) {
             $0.serveEmptyFolders()

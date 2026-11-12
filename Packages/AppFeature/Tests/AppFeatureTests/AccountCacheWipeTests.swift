@@ -14,7 +14,7 @@ struct AccountCacheWipeTests {
         static let account = "https://files.example.com|alice"
         static let otherAccount = "https://files.example.com|bob"
         static let server = URL(fileURLWithPath: "/")
-        static let path = "Docs"
+        static let path = TestFolder.docs
         static let fetchedAt = MockDate.date
         static let defaultsSuitePrefix = "account-cache-wipe-"
     }
@@ -165,9 +165,9 @@ struct AccountCacheWipeTests {
         return SessionCredentials(
             serverBaseURL: URL(string: parts[0]) ?? Fixture.server,
             authMode: .local,
-            cookieName: "connect.sid",
+            cookieName: TestSession.cookieName,
             cookieValue: "v",
-            cookieDomain: "files.example.com",
+            cookieDomain: TestHost.server,
             cookiePath: "/",
             cookieIsSecure: true,
             expiresAt: nil,

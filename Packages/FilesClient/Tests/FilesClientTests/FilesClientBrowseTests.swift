@@ -15,7 +15,7 @@ extension FilesClientLiveTests {
         func browseDecodesASuccessfulResponse() async throws {
             stub(statusCode: 200, body: try browseResultJSON)
             let result = try await makeClient().browse(serverURL, "")
-            #expect(result.items.map(\.name) == ["Docs"])
+            #expect(result.items.map(\.name) == [TestFolder.docs])
             #expect(result.access.canRead == true)
         }
 
@@ -34,7 +34,7 @@ extension FilesClientLiveTests {
 
             let result = try await makeClient().browse(serverURL, "Home")
 
-            #expect(result.items.map(\.name) == ["Docs", "outside-link"])
+            #expect(result.items.map(\.name) == [TestFolder.docs, "outside-link"])
             #expect(result.items.last?.size == 0)
             #expect(result.access.canRead)
         }
@@ -74,7 +74,7 @@ extension FilesClientLiveTests {
 
         @Test
         func browseMapsMalformedJSONToADecodingError() async throws {
-            stub(statusCode: 200, body: "not json".data(using: .utf8)!)
+            stub(statusCode: 200, body: Data("not json".utf8))
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().browse(serverURL, "")
             }
@@ -109,13 +109,13 @@ extension FilesClientLiveTests {
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
                 directoryCacheStore: store,
-                now: { Date(timeIntervalSince1970: 42) }
+                now: { MockDate.date.addingTimeInterval(42) }
             )
-            let result = try await client.browse(serverURL, "docs")
+            let result = try await client.browse(serverURL, TestPath.docsLowercase)
 
-            let cached = store.read(serverURL: serverURL, path: "docs")
+            let cached = store.read(serverURL: serverURL, path: TestPath.docsLowercase)
             #expect(cached?.items.map(\.name) == result.items.map(\.name))
-            #expect(cached?.fetchedAt == Date(timeIntervalSince1970: 42))
+            #expect(cached?.fetchedAt == MockDate.date.addingTimeInterval(42))
         }
 
         @Test
@@ -124,21 +124,21 @@ extension FilesClientLiveTests {
             let root = FileManager.default.temporaryDirectory.appendingPathComponent("late-write-\(TestID.name())")
             defer { try? FileManager.default.removeItem(at: root) }
             let store = DirectoryCacheStore.onDisk(rootDirectory: root)
-            let activeScope = LockIsolated("account-a")
+            let activeScope = LockIsolated(Constants.accountA)
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
                 directoryCacheStore: store,
                 now: {
-                    activeScope.setValue("account-b")
-                    return Date(timeIntervalSince1970: 7)
+                    activeScope.setValue(Constants.accountB)
+                    return MockDate.date.addingTimeInterval(7)
                 },
                 activeScope: { activeScope.value }
             )
 
-            _ = try await client.browse(serverURL, "docs")
+            _ = try await client.browse(serverURL, TestPath.docsLowercase)
 
-            #expect(store.bound(to: "account-a").read(serverURL: serverURL, path: "docs") != nil)
-            #expect(store.bound(to: "account-b").read(serverURL: serverURL, path: "docs") == nil)
+            #expect(store.bound(to: Constants.accountA).read(serverURL: serverURL, path: TestPath.docsLowercase) != nil)
+            #expect(store.bound(to: Constants.accountB).read(serverURL: serverURL, path: TestPath.docsLowercase) == nil)
         }
 
         @Test
@@ -150,8 +150,8 @@ extension FilesClientLiveTests {
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
                 directoryCacheStore: store
             )
-            _ = try? await client.browse(serverURL, "docs")
-            #expect(store.read(serverURL: serverURL, path: "docs") == nil)
+            _ = try? await client.browse(serverURL, TestPath.docsLowercase)
+            #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase) == nil)
         }
 
         @Test
@@ -160,65 +160,65 @@ extension FilesClientLiveTests {
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
                 directoryCacheStore: store,
-                now: { Date(timeIntervalSince1970: 1) }
+                now: { MockDate.date.addingTimeInterval(1) }
             )
 
-            stub(statusCode: 200, body: try browseResultJSON, headers: ["Content-Type": "application/json", "ETag": "\"v1\""])
-            _ = try await client.browse(serverURL, "docs")
-            #expect(store.read(serverURL: serverURL, path: "docs")?.etag == "\"v1\"")
+            stub(statusCode: 200, body: try browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v1\""])
+            _ = try await client.browse(serverURL, TestPath.docsLowercase)
+            #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v1\"")
 
             StubURLProtocol.capturedRequest = nil
-            stub(statusCode: 200, body: try browseResultJSON, headers: ["Content-Type": "application/json", "ETag": "\"v2\""])
-            _ = try await client.browse(serverURL, "docs")
-            #expect(StubURLProtocol.capturedRequest?.value(forHTTPHeaderField: "If-None-Match") == "\"v1\"")
-            #expect(store.read(serverURL: serverURL, path: "docs")?.etag == "\"v2\"")
+            stub(statusCode: 200, body: try browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v2\""])
+            _ = try await client.browse(serverURL, TestPath.docsLowercase)
+            #expect(StubURLProtocol.capturedRequest?.value(forHTTPHeaderField: HTTPHeaderField.ifNoneMatch) == "\"v1\"")
+            #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v2\"")
         }
 
         @Test
         func browseReturnsTheCachedListingOnA304() async throws {
             let store = DirectoryCacheStore.inMemory()
-            let cachedItem = FileItem(name: "Saved", path: "docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+            let cachedItem = FileItem(name: "Saved", path: TestPath.docsLowercase, dateModified: MockDate.date, size: 1, kind: TestKind.text)
             store.write(
-                serverURL: serverURL, path: "docs",
+                serverURL: serverURL, path: TestPath.docsLowercase,
                 result: BrowseResult(
                     items: [cachedItem],
                     access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
-                    path: "docs"
+                    path: TestPath.docsLowercase
                 ),
                 etag: "\"v1\"",
-                fetchedAt: Date(timeIntervalSince1970: 0)
+                fetchedAt: MockDate.date
             )
 
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
                 directoryCacheStore: store,
-                now: { Date(timeIntervalSince1970: 500) }
+                now: { MockDate.date.addingTimeInterval(500) }
             )
-            stub(statusCode: 304, body: Data(), headers: ["ETag": "\"v1\""])
+            stub(statusCode: 304, body: Data(), headers: [HTTPHeaderField.etag: "\"v1\""])
 
-            let result = try await client.browse(serverURL, "docs")
+            let result = try await client.browse(serverURL, TestPath.docsLowercase)
             #expect(result.items.map(\.name) == ["Saved"])
             // The 304 refreshes the entry's timestamp so a prefetch freshness check sees it as current.
-            #expect(store.read(serverURL: serverURL, path: "docs")?.fetchedAt == Date(timeIntervalSince1970: 500))
-            #expect(store.read(serverURL: serverURL, path: "docs")?.etag == "\"v1\"")
+            #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.fetchedAt == MockDate.date.addingTimeInterval(500))
+            #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v1\"")
         }
 
         @Test
         func prefetchDirectoryWritesThroughOverTheLowPrioritySession() async throws {
-            stub(statusCode: 200, body: try browseResultJSON, headers: ["Content-Type": "application/json", "ETag": "\"pf\""])
+            stub(statusCode: 200, body: try browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"pf\""])
             let store = DirectoryCacheStore.inMemory()
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
                 directoryCacheStore: store,
-                now: { Date(timeIntervalSince1970: 7) }
+                now: { MockDate.date.addingTimeInterval(7) }
             )
 
-            await client.prefetchDirectory(serverURL, "docs/sub")
+            await client.prefetchDirectory(serverURL, Constants.docsSubPath)
 
-            let cached = store.read(serverURL: serverURL, path: "docs/sub")
-            #expect(cached?.items.map(\.name) == ["Docs"])
+            let cached = store.read(serverURL: serverURL, path: Constants.docsSubPath)
+            #expect(cached?.items.map(\.name) == [TestFolder.docs])
             #expect(cached?.etag == "\"pf\"")
-            #expect(cached?.fetchedAt == Date(timeIntervalSince1970: 7))
+            #expect(cached?.fetchedAt == MockDate.date.addingTimeInterval(7))
         }
 
         @Test
@@ -231,8 +231,8 @@ extension FilesClientLiveTests {
                 directoryCacheStore: store
             )
 
-            await client.prefetchDirectory(serverURL, "docs/sub")
-            #expect(store.read(serverURL: serverURL, path: "docs/sub") == nil)
+            await client.prefetchDirectory(serverURL, Constants.docsSubPath)
+            #expect(store.read(serverURL: serverURL, path: Constants.docsSubPath) == nil)
         }
 
         @Test
@@ -263,8 +263,8 @@ extension FilesClientLiveTests {
             StubURLProtocol.failure = nil
             StubURLProtocol.stub = nil
             StubURLProtocol.pathStubs = [
-                "/api/browse": .init(statusCode: 404, headers: ["Content-Type": "application/json"], body: notFound),
-                "/api/volumes": .init(statusCode: 200, headers: ["Content-Type": "application/json"], body: volumesJSON),
+                "/api/browse": .init(statusCode: 404, headers: [HTTPHeaderField.contentType: MIMEType.json], body: notFound),
+                "/api/volumes": .init(statusCode: 200, headers: [HTTPHeaderField.contentType: MIMEType.json], body: volumesJSON),
             ]
             let store = DirectoryCacheStore.inMemory()
             let client = FilesClient.live(
@@ -304,17 +304,17 @@ extension FilesClientLiveTests {
         func searchIncludesPathAndLimitWhenProvided() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.commonItemsEmpty.data())
             StubURLProtocol.capturedRequest = nil
-            _ = try await makeClient().search(serverURL, "Photos", "vacation", 50)
+            _ = try await makeClient().search(serverURL, TestFolder.photos, "vacation", 50)
             let url = try #require(StubURLProtocol.capturedRequest?.url)
             let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
-            #expect(queryItems.contains(URLQueryItem(name: "path", value: "Photos")))
+            #expect(queryItems.contains(URLQueryItem(name: "path", value: TestFolder.photos)))
             #expect(queryItems.contains(URLQueryItem(name: "limit", value: "50")))
         }
 
         @Test
         func searchKeepsTheServerOrderAndSaysWhyItFallsShort() async throws {
             let body = try FilesClientFixture.searchMixedMatches.string()
-            stub(statusCode: 200, body: body.data(using: .utf8)!)
+            stub(statusCode: 200, body: Data(body.utf8))
             let page = try await makeClient().search(serverURL, "", "zeta", 2)
             #expect(page.items.map(\.name) == ["zeta.txt", "alpha.txt"])
             #expect(page.items.map(\.matchKind) == [.name, .contents])
@@ -332,4 +332,10 @@ extension FilesClientLiveTests {
             #expect(page.items.first?.matchKind == nil)
         }
     }
+}
+
+private enum Constants {
+    static let accountA = "account-a"
+    static let accountB = "account-b"
+    static let docsSubPath = "docs/sub"
 }

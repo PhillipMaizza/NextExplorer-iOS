@@ -12,11 +12,11 @@ struct FavoriteEditFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
 
     private nonisolated func favorite(
-        label: String? = "Docs", icon: String = "outline:StarIcon", color: String? = nil
+        label: String? = TestFolder.docs, icon: String = "outline:StarIcon", color: String? = nil
     ) -> Favorite {
         Favorite(
-            id: "f1", path: "Documents", label: label, icon: icon, color: color,
-            position: 0, createdAt: Date(timeIntervalSince1970: 1_800_000_000), updatedAt: MockDate.date
+            id: "f1", path: TestFolder.documents, label: label, icon: icon, color: color,
+            position: 0, createdAt: MockDate.date.addingTimeInterval(100_000_000), updatedAt: MockDate.date
         )
     }
 
@@ -26,7 +26,7 @@ struct FavoriteEditFeatureTests {
             serverURL: serverURL,
             favorite: favorite(icon: "solid:BriefcaseIcon", color: "#009cff")
         )
-        #expect(state.nameDraft == "Docs")
+        #expect(state.nameDraft == TestFolder.docs)
         #expect(state.nameError == nil)
         #expect(state.iconDraft == "BriefcaseIcon")
         #expect(state.iconStyleDraft == .solid)
@@ -71,7 +71,7 @@ struct FavoriteEditFeatureTests {
         initial.colorDraft = "#0bd336"
 
         let updated = Favorite(
-            id: "f1", path: "Documents", label: "Projects", icon: "BriefcaseIcon", color: "#0bd336",
+            id: "f1", path: TestFolder.documents, label: "Projects", icon: "BriefcaseIcon", color: "#0bd336",
             position: 0, createdAt: initial.favorite.createdAt, updatedAt: MockDate.date
         )
         let store = TestStore(initialState: initial) {
@@ -97,7 +97,7 @@ struct FavoriteEditFeatureTests {
         initial.iconDraft = "BriefcaseIcon" // dirty, so only the name gates the save
         let store = TestStore(initialState: initial) { FavoriteEditFeature() }
 
-        await store.send(.nameChanged("   ")) { $0.nameDraft = "   " }
+        await store.send(.nameChanged(TestValue.blank)) { $0.nameDraft = TestValue.blank }
         #expect(store.state.nameError == .empty)
         #expect(store.state.isSaveEnabled == false)
 

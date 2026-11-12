@@ -124,7 +124,7 @@ struct VersionedFilesFeatureTests {
     @Test
     func appearingAgainAfterAFailedFirstLoadTriesAgain() async {
         var state = State(serverURL: serverURL)
-        state.phase = .failed("offline")
+        state.phase = .failed(TestFailure.offline)
         let page = VersionedFilesPage(files: [VersionedFile(id: "f1", name: "a")], total: 1)
         let store = makeStore(state, page: { _, _ in page })
 
@@ -150,9 +150,9 @@ struct VersionedFilesFeatureTests {
     @Test
     func aPageThatDropsAFileAlsoDropsItsHistoryAndSelection() async {
         var state = loadedState(files: [file("f1"), file("f2")])
-        let detail = VersionedFileDetail(versions: [Self.version("v1")])
-        state.details = ["f1": detail, "f2": VersionedFileDetail(versions: [Self.version("v2")])]
-        state.selection = ["f1": ["v1"], "f2": ["v2"]]
+        let detail = VersionedFileDetail(versions: [Self.version(TestETag.first)])
+        state.details = ["f1": detail, "f2": VersionedFileDetail(versions: [Self.version(TestETag.second)])]
+        state.selection = ["f1": [TestETag.first], "f2": [TestETag.second]]
         let page = VersionedFilesPage(files: [file("f1")], total: 1)
         let store = makeStore(state, page: { _, _ in page })
 
@@ -161,7 +161,7 @@ struct VersionedFilesFeatureTests {
             $0.isReloading = false
             $0.page = page
             $0.details = ["f1": detail]
-            $0.selection = ["f1": ["v1"]]
+            $0.selection = ["f1": [TestETag.first]]
         }
     }
 
@@ -272,7 +272,7 @@ struct VersionedFilesFeatureTests {
 
     @Test
     func openingARowLoadsItsVersionsOnce() async {
-        let detail = VersionedFileDetail(versions: [Self.version("v1")], totalBytes: 10)
+        let detail = VersionedFileDetail(versions: [Self.version(TestETag.first)], totalBytes: 10)
         let store = makeStore(loadedState(files: [file("f1")]), detail: { _ in detail })
 
         await store.send(.fileToggled("f1")) { $0.expanded = ["f1"] }
@@ -286,7 +286,7 @@ struct VersionedFilesFeatureTests {
     @Test
     func aFailedHistoryReadShowsTheErrorUnderTheRowAndRetriesOnReopen() async {
         let attempts = LockIsolated(0)
-        let detail = VersionedFileDetail(versions: [Self.version("v1")])
+        let detail = VersionedFileDetail(versions: [Self.version(TestETag.first)])
         let store = makeStore(loadedState(files: [file("f1")]), detail: { _ in
             if attempts.withValue({ $0 += 1; return $0 }) == 1 { throw FilesClientError.offline }
             return detail
@@ -311,24 +311,24 @@ struct VersionedFilesFeatureTests {
     func versionsAreTickedAndUntickedPerFile() async {
         let store = makeStore(loadedState(files: [file("f1"), file("f2")]))
 
-        await store.send(.versionToggled(fileID: "f1", versionID: "v1")) { $0.selection["f1"] = ["v1"] }
-        await store.send(.versionToggled(fileID: "f1", versionID: "v2")) { $0.selection["f1"] = ["v1", "v2"] }
+        await store.send(.versionToggled(fileID: "f1", versionID: TestETag.first)) { $0.selection["f1"] = [TestETag.first] }
+        await store.send(.versionToggled(fileID: "f1", versionID: TestETag.second)) { $0.selection["f1"] = [TestETag.first, TestETag.second] }
         await store.send(.versionToggled(fileID: "f2", versionID: "v9")) { $0.selection["f2"] = ["v9"] }
 
-        await store.send(.versionToggled(fileID: "f1", versionID: "v1")) { $0.selection["f1"] = ["v2"] }
-        await store.send(.versionToggled(fileID: "f1", versionID: "v2")) { $0.selection["f1"] = nil }
+        await store.send(.versionToggled(fileID: "f1", versionID: TestETag.first)) { $0.selection["f1"] = [TestETag.second] }
+        await store.send(.versionToggled(fileID: "f1", versionID: TestETag.second)) { $0.selection["f1"] = nil }
         #expect(store.state.selection == ["f2": ["v9"]])
     }
 
     @Test
     func deletingSelectedAsksFirstWithTheTickedVersionsInOrder() async {
         var state = loadedState(files: [file("f1")])
-        state.details["f1"] = VersionedFileDetail(versions: [Self.version("v1"), Self.version("v2"), Self.version("v3")])
-        state.selection["f1"] = ["v3", "v1"]
+        state.details["f1"] = VersionedFileDetail(versions: [Self.version(TestETag.first), Self.version(TestETag.second), Self.version("v3")])
+        state.selection["f1"] = ["v3", TestETag.first]
         let store = makeStore(state)
 
         await store.send(.deleteSelectedTapped(fileID: "f1")) {
-            $0.confirmation = .selected(fileID: "f1", versionIDs: ["v1", "v3"])
+            $0.confirmation = .selected(fileID: "f1", versionIDs: [TestETag.first, "v3"])
         }
         #expect(deleteCalls.value.isEmpty)
     }
@@ -336,7 +336,7 @@ struct VersionedFilesFeatureTests {
     @Test
     func deletingSelectedWithNothingTickedDoesNothing() async {
         var state = loadedState(files: [file("f1")])
-        state.details["f1"] = VersionedFileDetail(versions: [Self.version("v1")])
+        state.details["f1"] = VersionedFileDetail(versions: [Self.version(TestETag.first)])
         let store = makeStore(state)
 
         await store.send(.deleteSelectedTapped(fileID: "f1"))
@@ -345,7 +345,7 @@ struct VersionedFilesFeatureTests {
     @Test
     func aTickedVersionThatNoLongerExistsIsNotOffered() async {
         var state = loadedState(files: [file("f1")])
-        state.details["f1"] = VersionedFileDetail(versions: [Self.version("v1")])
+        state.details["f1"] = VersionedFileDetail(versions: [Self.version(TestETag.first)])
         state.selection["f1"] = ["ghost"]
         let store = makeStore(state)
 
@@ -374,8 +374,8 @@ struct VersionedFilesFeatureTests {
     func confirmingDeleteAllSendsNoIDsThenReloadsTheListAndTheOpenHistory() async {
         var state = loadedState(files: [file("f1")])
         state.expanded = ["f1"]
-        state.details["f1"] = VersionedFileDetail(versions: [Self.version("v1")])
-        state.selection["f1"] = ["v1"]
+        state.details["f1"] = VersionedFileDetail(versions: [Self.version(TestETag.first)])
+        state.selection["f1"] = [TestETag.first]
         state.confirmation = .all(fileID: "f1")
         let newPage = VersionedFilesPage(files: [VersionedFile(id: "f1", name: "f1.txt", versions: 1)], total: 1)
         let newDetail = VersionedFileDetail(versions: [Self.version("v9")])
@@ -406,9 +406,9 @@ struct VersionedFilesFeatureTests {
     @Test
     func confirmingDeleteSelectedSendsTheTickedIDsAndDropsAClosedRowsHistory() async {
         var state = loadedState(files: [file("f1")])
-        state.details["f1"] = VersionedFileDetail(versions: [Self.version("v1"), Self.version("v2"), Self.version("v3")])
-        state.selection["f1"] = ["v1", "v3"]
-        state.confirmation = .selected(fileID: "f1", versionIDs: ["v1", "v3"])
+        state.details["f1"] = VersionedFileDetail(versions: [Self.version(TestETag.first), Self.version(TestETag.second), Self.version("v3")])
+        state.selection["f1"] = [TestETag.first, "v3"]
+        state.confirmation = .selected(fileID: "f1", versionIDs: [TestETag.first, "v3"])
         let newPage = VersionedFilesPage(files: [VersionedFile(id: "f1", name: "f1.txt", versions: 1)], total: 1)
         let store = makeStore(state, page: { _, _ in newPage }, delete: { _, _ in VersionsDeletion(deleted: 2, remaining: 1) })
 
@@ -424,7 +424,7 @@ struct VersionedFilesFeatureTests {
         }
         await receivePage(store, newPage)
 
-        #expect(deleteCalls.value == [DeleteCall(fileID: "f1", versionIDs: ["v1", "v3"])])
+        #expect(deleteCalls.value == [DeleteCall(fileID: "f1", versionIDs: [TestETag.first, "v3"])])
         #expect(detailCalls.value.isEmpty)
     }
 
@@ -432,7 +432,7 @@ struct VersionedFilesFeatureTests {
     func deletingEverythingClosesTheRowInsteadOfReadingAHistoryThatMayBeGone() async {
         var state = loadedState(files: [file("f1", state: .orphaned)])
         state.expanded = ["f1"]
-        state.details["f1"] = VersionedFileDetail(versions: [Self.version("v1")])
+        state.details["f1"] = VersionedFileDetail(versions: [Self.version(TestETag.first)])
         state.confirmation = .all(fileID: "f1")
         let empty = VersionedFilesPage()
         let store = makeStore(state, page: { _, _ in empty }, delete: { _, _ in VersionsDeletion(deleted: 1, remaining: 0) })
@@ -456,8 +456,8 @@ struct VersionedFilesFeatureTests {
     @Test
     func aFailedDeletionKeepsTheSelectionAndShowsTheError() async {
         var state = loadedState(files: [file("f1")])
-        state.selection["f1"] = ["v1"]
-        state.confirmation = .selected(fileID: "f1", versionIDs: ["v1"])
+        state.selection["f1"] = [TestETag.first]
+        state.confirmation = .selected(fileID: "f1", versionIDs: [TestETag.first])
         let store = makeStore(state, delete: { _, _ in throw FilesClientError.serverMessage(statusCode: 500, message: "Could not delete.") })
 
         await store.send(.confirmationConfirmed) {
@@ -468,7 +468,7 @@ struct VersionedFilesFeatureTests {
             $0.isWorking = false
             $0.listError = "Could not delete."
         }
-        #expect(store.state.selection["f1"] == ["v1"])
+        #expect(store.state.selection["f1"] == [TestETag.first])
     }
 
     @Test
@@ -524,7 +524,7 @@ struct VersionedFilesFeatureTests {
     func refreshingReadsTheListAndTheOpenHistoriesAgain() async {
         var state = loadedState(files: [file("f1")])
         state.expanded = ["f1"]
-        state.details = ["f1": VersionedFileDetail(versions: [Self.version("old")])]
+        state.details = ["f1": VersionedFileDetail(versions: [Self.version(TestValue.outdated)])]
         let page = VersionedFilesPage(files: [VersionedFile(id: "f1", name: "a")], total: 1)
         let fresh = VersionedFileDetail(versions: [Self.version("new")])
         let store = makeStore(state, page: gatedPage(page), detail: { _ in fresh })

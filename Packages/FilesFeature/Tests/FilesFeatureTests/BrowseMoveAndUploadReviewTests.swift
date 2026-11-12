@@ -13,10 +13,10 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseMoveAndUploadReviewTests {
-    private let incoming = BrowseFixtures.file("a.txt", in: "Inbox")
+    private let incoming = BrowseFixtures.file(TestFile.aText, in: TestFolder.inbox)
 
     private func makeState() -> BrowseFeature.State {
-        BrowseFixtures.state("Documents", title: "Docs", access: BrowseFixtures.writableAccess)
+        BrowseFixtures.state(TestFolder.documents, title: TestFolder.docs, access: BrowseFixtures.writableAccess)
     }
 
     private func picked(_ name: String, id: UUID) -> PickedFile {
@@ -36,8 +36,8 @@ struct BrowseMoveAndUploadReviewTests {
 
     @Test("Bulk move presents the picker with the selection in listing order and leaves select mode")
     func bulkMovePresentsThePickerWithTheSelectionAndExitsSelectMode() async {
-        let first = BrowseFixtures.file("a.txt", in: "Documents")
-        let second = BrowseFixtures.file("b.txt", in: "Documents")
+        let first = BrowseFixtures.file(TestFile.aText, in: TestFolder.documents)
+        let second = BrowseFixtures.file(TestFile.bText, in: TestFolder.documents)
         var state = makeState()
         state.items = [first, second]
         state.isSelecting = true
@@ -77,7 +77,7 @@ struct BrowseMoveAndUploadReviewTests {
             $0.transferSuccessMessage = message
             $0.$undoStack.withLock {
                 $0.record(FileUndoEntry(.moved(moved.map {
-                    FileUndoEntry.MovedItem(item: BrowseFixtures.file($0, in: "Archive"), originalParent: "Inbox")
+                    FileUndoEntry.MovedItem(item: BrowseFixtures.file($0, in: TestFolder.archive), originalParent: TestFolder.inbox)
                 })))
             }
         }
@@ -87,7 +87,7 @@ struct BrowseMoveAndUploadReviewTests {
     @Test("Confirming the picker moves the items to the chosen folder and leaves the copy clipboard alone")
     func destinationPickerConfirmRunsAMoveTransfer() async {
         var state = makeState()
-        state.$clipboard.withLock { $0 = FileClipboard(items: [BrowseFixtures.file("copied.txt", in: "Inbox")], operation: .copy) }
+        state.$clipboard.withLock { $0 = FileClipboard(items: [BrowseFixtures.file("copied.txt", in: TestFolder.inbox)], operation: .copy) }
         state.destinationPicker = DestinationPickerFeature.State(serverURL: BrowseTestSupport.serverURL, items: [incoming])
         let gate = AsyncGate()
         let events = LockIsolated<[String]>([])
@@ -103,12 +103,12 @@ struct BrowseMoveAndUploadReviewTests {
             }
         }
 
-        await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: "Archive"))))) {
+        await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: TestFolder.archive))))) {
             $0.destinationPicker = nil
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressMoving
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: "Archive", operation: .move, clearClipboard: false
+                items: [incoming], destination: TestFolder.archive, operation: .move, clearClipboard: false
             )
         }
         await receiveMoveToArchive(store, moved: ["a.txt"], message: L10n.Browse.transferMoved(1), gate: gate)
@@ -117,8 +117,8 @@ struct BrowseMoveAndUploadReviewTests {
 
     @Test("The move message reports how many items the server skipped")
     func moveViaPickerSuccessMessageReportsSkippedItems() async {
-        let second = BrowseFixtures.file("b.txt", in: "Inbox")
-        let third = BrowseFixtures.file("c.txt", in: "Inbox")
+        let second = BrowseFixtures.file(TestFile.bText, in: TestFolder.inbox)
+        let third = BrowseFixtures.file("c.txt", in: TestFolder.inbox)
         var state = makeState()
         state.destinationPicker = DestinationPickerFeature.State(serverURL: BrowseTestSupport.serverURL, items: [incoming, second, third])
         let gate = AsyncGate()
@@ -130,12 +130,12 @@ struct BrowseMoveAndUploadReviewTests {
             }
         }
 
-        await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: "Archive"))))) {
+        await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: TestFolder.archive))))) {
             $0.destinationPicker = nil
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressMoving
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming, second, third], destination: "Archive", operation: .move, clearClipboard: false
+                items: [incoming, second, third], destination: TestFolder.archive, operation: .move, clearClipboard: false
             )
         }
         await receiveMoveToArchive(store, moved: ["a.txt", "b.txt"], message: L10n.Browse.transferMovedWithSkipped(2, 1), gate: gate)
@@ -146,16 +146,16 @@ struct BrowseMoveAndUploadReviewTests {
     @Test("Confirming the review sheet hands the files to the upload queue with the chosen destination")
     func confirmingTheReviewSheetEnqueuesWithTheChosenDestination() async {
         var state = makeState()
-        let files = [picked("a.jpg", id: UUID(0)), picked("b.txt", id: UUID(1))]
-        state.uploadReview = UploadReviewFeature.State(serverURL: BrowseTestSupport.serverURL, files: files, startingDestination: "Documents")
+        let files = [picked(TestFile.aPhoto, id: UUID(0)), picked(TestFile.bText, id: UUID(1))]
+        state.uploadReview = UploadReviewFeature.State(serverURL: BrowseTestSupport.serverURL, files: files, startingDestination: TestFolder.documents)
         let store = BrowseFixtures.store(state)
 
         await store.send(.uploadReview(.presented(.delegate(.confirmed(files: files, destination: "Documents/Trips"))))) {
             $0.uploadReview = nil
         }
         await store.receive(.delegate(.uploadRequested([
-            PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg", destination: "Documents/Trips"),
-            PendingUpload(id: UUID(1), fileURL: URL(fileURLWithPath: "/tmp/b.txt"), fileName: "b.txt", destination: "Documents/Trips"),
+            PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: TestFile.aPhoto, destination: "Documents/Trips"),
+            PendingUpload(id: UUID(1), fileURL: URL(fileURLWithPath: "/tmp/b.txt"), fileName: TestFile.bText, destination: "Documents/Trips"),
         ])))
     }
 
@@ -163,7 +163,7 @@ struct BrowseMoveAndUploadReviewTests {
     func cancellingTheUploadReviewSheetClosesIt() async {
         var state = makeState()
         state.uploadReview = UploadReviewFeature.State(
-            serverURL: BrowseTestSupport.serverURL, startingDestination: "Documents", preparingCount: 1
+            serverURL: BrowseTestSupport.serverURL, startingDestination: TestFolder.documents, preparingCount: 1
         )
         // No uploadStaging override: a discard fails the test as unimplemented.
         let store = BrowseFixtures.store(state)
@@ -176,8 +176,8 @@ struct BrowseMoveAndUploadReviewTests {
     @Test("Cancelling a review discards the files staging already copied")
     func cancellingTheUploadReviewSheetDiscardsTheStagedFiles() async {
         var state = makeState()
-        let files = [picked("a.jpg", id: UUID(0)), picked("b.txt", id: UUID(1))]
-        state.uploadReview = UploadReviewFeature.State(serverURL: BrowseTestSupport.serverURL, files: files, startingDestination: "Documents")
+        let files = [picked(TestFile.aPhoto, id: UUID(0)), picked(TestFile.bText, id: UUID(1))]
+        state.uploadReview = UploadReviewFeature.State(serverURL: BrowseTestSupport.serverURL, files: files, startingDestination: TestFolder.documents)
         let discarded = LockIsolated<[[URL]]>([])
         let store = BrowseFixtures.store(state) {
             $0.uploadStaging.discard = { urls in discarded.withValue { $0.append(urls) } }
@@ -194,8 +194,8 @@ struct BrowseMoveAndUploadReviewTests {
         @Test("Beginning an upload opens the review sheet and stages every file into it")
         func beginningUploadOpensTheReviewSheetAndStartsStaging() async {
             let urls = [URL(fileURLWithPath: "/tmp/a.jpg"), URL(fileURLWithPath: "/tmp/b.jpg")]
-            let first = picked("a.jpg", id: UUID(0))
-            let second = picked("b.jpg", id: UUID(1))
+            let first = picked(TestFile.aPhoto, id: UUID(0))
+            let second = picked(TestFile.bPhoto, id: UUID(1))
             let store = BrowseFixtures.store(makeState()) {
                 $0.uploadStaging.stageDocuments = { _ in
                     AsyncStream<PickedFile> { continuation in
@@ -207,7 +207,7 @@ struct BrowseMoveAndUploadReviewTests {
             }
 
             await store.send(.beginUpload(.documents(urls))) {
-                $0.uploadReview = UploadReviewFeature.State(serverURL: BrowseTestSupport.serverURL, startingDestination: "Documents")
+                $0.uploadReview = UploadReviewFeature.State(serverURL: BrowseTestSupport.serverURL, startingDestination: TestFolder.documents)
             }
             await store.receive(\.uploadReview.presented.stage) {
                 $0.uploadReview?.preparingCount = 2

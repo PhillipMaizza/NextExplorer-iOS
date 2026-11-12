@@ -13,7 +13,7 @@ struct LoginFormFeatureTests {
     private typealias Support = LoginFormTestSupport
     private typealias Store = LoginFormTestSupport.Store
 
-    private let user = User(id: "1", username: "phillip", email: nil, roles: [])
+    private let user = User(id: "1", username: TestAccount.username, email: nil, roles: [])
 
     /// A form that was tested, signed in on the second factor page and then failed, with every field
     /// a reset has to clear set to something.
@@ -22,11 +22,11 @@ struct LoginFormFeatureTests {
             currentPage: .secondFactor,
             connectionPhase: .success,
             host: Support.host,
-            code: "123456",
+            code: TestAccount.totpCode,
             codeMode: .recovery,
             submitPhase: .failure,
             oidcPhase: .success,
-            errorMessage: "old",
+            errorMessage: TestValue.outdated,
             invalidFieldsScope: .identifierAndPassword,
             authStatus: Support.passwordOnly
         )
@@ -51,17 +51,17 @@ struct LoginFormFeatureTests {
     @Test(
         "A typed address is reduced to scheme, host and port only",
         arguments: [
-            AcceptedAddress(scheme: .https, typed: "nextexplorer.example.com", expected: "https://nextexplorer.example.com"),
-            AcceptedAddress(scheme: .https, typed: "nextexplorer.example.com///", expected: "https://nextexplorer.example.com"),
-            AcceptedAddress(scheme: .http, typed: "  192.168.1.50:3000  ", expected: "http://192.168.1.50:3000"),
-            AcceptedAddress(scheme: .http, typed: "https://nextexplorer.example.com", expected: "http://nextexplorer.example.com"),
-            AcceptedAddress(scheme: .https, typed: "example.com/files/photos?sort=name#top", expected: "https://example.com"),
-            AcceptedAddress(scheme: .http, typed: "192.168.1.50:3000/inbox", expected: "http://192.168.1.50:3000"),
+            AcceptedAddress(scheme: .https, typed: TestHost.nextExplorer, expected: TestHost.nextExplorerURLString),
+            AcceptedAddress(scheme: .https, typed: "nextexplorer.example.com///", expected: TestHost.nextExplorerURLString),
+            AcceptedAddress(scheme: .http, typed: "  192.168.1.50:3000  ", expected: LoginFormConstants.lanURLString),
+            AcceptedAddress(scheme: .http, typed: TestHost.nextExplorerURLString, expected: "http://nextexplorer.example.com"),
+            AcceptedAddress(scheme: .https, typed: "example.com/files/photos?sort=name#top", expected: TestHost.exampleURLString),
+            AcceptedAddress(scheme: .http, typed: "192.168.1.50:3000/inbox", expected: LoginFormConstants.lanURLString),
             AcceptedAddress(scheme: .http, typed: "admin:hunter2@box.local:3000", expected: "http://box.local:3000"),
             AcceptedAddress(scheme: .http, typed: "[::1]:3000", expected: "http://[::1]:3000"),
             AcceptedAddress(scheme: .https, typed: "[2001:db8::1]", expected: "https://[2001:db8::1]"),
-            AcceptedAddress(scheme: .http, typed: "nas", expected: "http://nas"),
-            AcceptedAddress(scheme: .http, typed: "box.local:8080", expected: "http://box.local:8080"),
+            AcceptedAddress(scheme: .http, typed: LoginFormConstants.nasHost, expected: "http://nas"),
+            AcceptedAddress(scheme: .http, typed: LoginFormConstants.boxHostWithPort, expected: LoginFormConstants.boxURLString),
         ]
     )
     func normalizedURLAcceptsAndReduces(_ address: AcceptedAddress) {
@@ -71,7 +71,7 @@ struct LoginFormFeatureTests {
     @Test(
         "An address that is not a plausible server is rejected before any network call",
         arguments: [
-            "   ", "box.local:99999", "box.local:0", "box.local:-1", "box.local:abc", "!!!!", "..", "foo bar",
+            TestValue.blank, "box.local:99999", "box.local:0", "box.local:-1", "box.local:abc", "!!!!", "..", "foo bar",
             "http://", "https://", "-lead.example.com", "exam ple.com", "fe80::1",
         ]
     )
@@ -129,8 +129,8 @@ struct LoginFormFeatureTests {
     @Test(
         "A server with a sign in method shows the checkmark, then advances to the credentials page",
         arguments: [
-            ConnectCase(host: "nextexplorer.example.com", status: AuthStatus(localEnabled: true, oidcEnabled: false), requestedURL: "https://nextexplorer.example.com"),
-            ConnectCase(host: "sso.example.com", status: AuthStatus(localEnabled: false, oidcEnabled: true), requestedURL: "https://sso.example.com"),
+            ConnectCase(host: TestHost.nextExplorer, status: AuthStatus(localEnabled: true, oidcEnabled: false), requestedURL: TestHost.nextExplorerURLString),
+            ConnectCase(host: LoginFormConstants.ssoHost, status: AuthStatus(localEnabled: false, oidcEnabled: true), requestedURL: LoginFormConstants.ssoURLString),
             ConnectCase(host: "both.example.com", status: AuthStatus(localEnabled: true, oidcEnabled: true), requestedURL: "https://both.example.com"),
         ]
     )
@@ -198,7 +198,7 @@ struct LoginFormFeatureTests {
     func connectionErrorDismissesAfterFourSeconds() async {
         let clock = TestClock()
         let store = Support.makeStore(LoginFormFeature.State(host: Support.host), clock: clock) {
-            $0.authClient.fetchStatus = { _ in throw AuthClientError.network("offline") }
+            $0.authClient.fetchStatus = { _ in throw AuthClientError.network(TestFailure.offline) }
         }
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
@@ -230,7 +230,7 @@ struct LoginFormFeatureTests {
         "The scheme picker follows what is typed: a digit means http, a hostname means https, a typed prefix wins",
         arguments: [
             SchemeCase(initial: .https, typed: "192.168.1.50:3000", expected: .http),
-            SchemeCase(initial: .http, typed: "nextexplorer.example.com", expected: .https),
+            SchemeCase(initial: .http, typed: TestHost.nextExplorer, expected: .https),
             SchemeCase(initial: .https, typed: "http://box.local", expected: .http),
             SchemeCase(initial: .http, typed: "https://box.local", expected: .https),
             SchemeCase(initial: .https, typed: "  HTTP://box.local", expected: .http),
@@ -254,16 +254,16 @@ struct LoginFormFeatureTests {
             $0.scheme = .http
             $0.schemeWasSetByUser = true
         }
-        await store.send(.hostChanged("nas")) { $0.host = "nas" }
-        await store.send(.hostChanged("nas.local")) { $0.host = "nas.local" }
+        await store.send(.hostChanged(LoginFormConstants.nasHost)) { $0.host = LoginFormConstants.nasHost }
+        await store.send(.hostChanged(LoginFormConstants.nasLocalHost)) { $0.host = LoginFormConstants.nasLocalHost }
 
         // Clearing the field drops the override, so inference takes over again.
         await store.send(.hostChanged("")) {
             $0.host = ""
             $0.schemeWasSetByUser = false
         }
-        await store.send(.hostChanged("example.com")) {
-            $0.host = "example.com"
+        await store.send(.hostChanged(TestHost.example)) {
+            $0.host = TestHost.example
             $0.scheme = .https
         }
     }
@@ -287,12 +287,12 @@ struct LoginFormFeatureTests {
     func switchingSchemeDropsTypedPrefix() async {
         let store = Support.makeStore(LoginFormFeature.State(), clock: TestClock())
 
-        await store.send(.hostChanged("http://box.local:8080")) {
-            $0.host = "http://box.local:8080"
+        await store.send(.hostChanged(LoginFormConstants.boxURLString)) {
+            $0.host = LoginFormConstants.boxURLString
             $0.scheme = .http
         }
         await store.send(.schemeChanged(.https)) {
-            $0.host = "box.local:8080"
+            $0.host = LoginFormConstants.boxHostWithPort
             $0.scheme = .https
             $0.schemeWasSetByUser = true
         }
@@ -306,8 +306,8 @@ struct LoginFormFeatureTests {
     @Test(
         "Editing the address or pressing back starts the handshake over",
         arguments: [
-            ResetCase(action: .hostChanged("nextexplorer.example.com/changed"), expectedHost: "nextexplorer.example.com/changed"),
-            ResetCase(action: .backButtonTapped, expectedHost: "nextexplorer.example.com"),
+            ResetCase(action: .hostChanged(LoginFormConstants.changedHostPath), expectedHost: LoginFormConstants.changedHostPath),
+            ResetCase(action: .backButtonTapped, expectedHost: TestHost.nextExplorer),
         ]
     )
     func addressEditOrBackResetsTheForm(_ testCase: ResetCase) async {
@@ -359,8 +359,8 @@ struct LoginFormFeatureTests {
         }
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
-        await store.send(.hostChanged("new.example.com")) {
-            $0.host = "new.example.com"
+        await store.send(.hostChanged(LoginFormConstants.newHost)) {
+            $0.host = LoginFormConstants.newHost
             $0.connectionPhase = .idle
         }
 
@@ -381,7 +381,7 @@ struct LoginFormFeatureTests {
             LoginFormFeature.State(
                 currentPage: .credentials,
                 connectionPhase: .success,
-                host: "sso.example.com",
+                host: LoginFormConstants.ssoHost,
                 authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)
             ),
             clock: clock
@@ -395,9 +395,9 @@ struct LoginFormFeatureTests {
         await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
         await store.receive(\.oidcResponse) { $0.oidcPhase = .success }
         await clock.advance(by: .seconds(0.5))
-        await store.receive(.delegate(.authenticated(ssoUser, try Support.url("https://sso.example.com"))))
+        await store.receive(.delegate(.authenticated(ssoUser, try Support.url(LoginFormConstants.ssoURLString))))
 
-        #expect(requested.value == ["https://sso.example.com"])
+        #expect(requested.value == [LoginFormConstants.ssoURLString])
     }
 
     struct SSOFailureCase: Sendable {
@@ -418,7 +418,7 @@ struct LoginFormFeatureTests {
             LoginFormFeature.State(
                 currentPage: .credentials,
                 connectionPhase: .success,
-                host: "sso.example.com",
+                host: LoginFormConstants.ssoHost,
                 authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)
             ),
             clock: clock
@@ -456,10 +456,10 @@ struct LoginFormFeatureTests {
     @Test(
         "Continue trims the identifier and sends the password untouched, then delegates authentication",
         arguments: [
-            LoginCase(identifier: "  phillip@example.com  ", password: "hunter2", sentIdentifier: "phillip@example.com", sentPassword: "hunter2"),
-            LoginCase(identifier: "phillip", password: "hunter2", sentIdentifier: "phillip", sentPassword: "hunter2"),
+            LoginCase(identifier: "  phillip@example.com  ", password: TestAccount.password, sentIdentifier: LoginFormConstants.phillipEmail, sentPassword: TestAccount.password),
+            LoginCase(identifier: TestAccount.username, password: TestAccount.password, sentIdentifier: TestAccount.username, sentPassword: TestAccount.password),
             // The reducer has no client side password check: the server decides what a valid password is.
-            LoginCase(identifier: "phillip@example.com", password: "   ", sentIdentifier: "phillip@example.com", sentPassword: "   "),
+            LoginCase(identifier: LoginFormConstants.phillipEmail, password: TestValue.blank, sentIdentifier: LoginFormConstants.phillipEmail, sentPassword: TestValue.blank),
         ]
     )
     func localLoginSendsTheCredentials(_ testCase: LoginCase) async throws {
@@ -489,14 +489,14 @@ struct LoginFormFeatureTests {
     @Test(
         "Continue does nothing unless password sign in was confirmed for a valid address",
         arguments: [
-            IgnoredContinueCase(host: "nextexplorer.example.com", authStatus: nil),
-            IgnoredContinueCase(host: "nextexplorer.example.com", authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)),
-            IgnoredContinueCase(host: "not a host", authStatus: AuthStatus(localEnabled: true, oidcEnabled: false)),
+            IgnoredContinueCase(host: TestHost.nextExplorer, authStatus: nil),
+            IgnoredContinueCase(host: TestHost.nextExplorer, authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)),
+            IgnoredContinueCase(host: AuthFeatureTestValue.invalidHost, authStatus: AuthStatus(localEnabled: true, oidcEnabled: false)),
         ]
     )
     func continueIsIgnoredWithoutConfirmedPasswordSignIn(_ testCase: IgnoredContinueCase) async {
         let calls = LockIsolated(0)
-        let state = LoginFormFeature.State(host: testCase.host, identifier: "phillip", password: "x", authStatus: testCase.authStatus)
+        let state = LoginFormFeature.State(host: testCase.host, identifier: TestAccount.username, password: "x", authStatus: testCase.authStatus)
         let store = Support.makeStore(state, clock: TestClock()) { [user] in
             $0.authClient.login = { _, _, _ in
                 calls.withValue { $0 += 1 }
@@ -527,7 +527,7 @@ struct LoginFormFeatureTests {
     )
     func loginFailureShowsMessage(_ testCase: LoginFailureCase) async {
         let clock = TestClock()
-        let store = Support.makeStore(Support.credentialsState(identifier: "phillip@example.com"), clock: clock) {
+        let store = Support.makeStore(Support.credentialsState(identifier: LoginFormConstants.phillipEmail), clock: clock) {
             $0.authClient.login = { [error = testCase.error] _, _, _ in throw error }
         }
 
@@ -544,7 +544,7 @@ struct LoginFormFeatureTests {
     @Test("regression: sessionCookieMissing does not auto dismiss, because it is a real failure and not a typo to retry")
     func sessionCookieMissingDoesNotAutoDismiss() async {
         let clock = TestClock()
-        let store = Support.makeStore(Support.credentialsState(identifier: "phillip@example.com"), clock: clock) {
+        let store = Support.makeStore(Support.credentialsState(identifier: LoginFormConstants.phillipEmail), clock: clock) {
             $0.authClient.login = { _, _, _ in throw AuthClientError.sessionCookieMissing }
         }
 
@@ -569,7 +569,7 @@ struct LoginFormFeatureTests {
         let gate = AsyncGate()
         let startedCalls = LockIsolated(0)
         let completedCalls = LockIsolated<[Int]>([])
-        let store = Support.makeStore(Support.credentialsState(identifier: "phillip@example.com"), clock: clock) { [user] in
+        let store = Support.makeStore(Support.credentialsState(identifier: LoginFormConstants.phillipEmail), clock: clock) { [user] in
             $0.authClient.login = { _, _, _ in
                 let callIndex = startedCalls.withValue { count -> Int in
                     defer { count += 1 }

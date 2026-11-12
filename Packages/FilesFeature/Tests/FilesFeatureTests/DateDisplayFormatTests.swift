@@ -5,6 +5,7 @@ import Testing
 struct DateDisplayFormatTests {
     /// Noon UTC, not midnight: keeps the calendar day stable across any reasonable local
     /// time zone the test machine might run in.
+    // A literal on purpose: the expected text below names this exact instant.
     private let date = Date(timeIntervalSince1970: 1_735_819_200) // 2025-01-02T12:00:00Z
 
     @Test

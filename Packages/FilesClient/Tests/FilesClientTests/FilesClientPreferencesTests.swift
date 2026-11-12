@@ -31,7 +31,7 @@ extension FilesClientLiveTests {
             StubURLProtocol.capturedRequest = nil
             try await makeClient().updatePreference(serverURL, .showHiddenFiles, true)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "PATCH")
+            #expect(request.httpMethod == HTTPMethod.patch.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [String: Bool]])
             #expect(json["user"]?["showHiddenFiles"] == true)
@@ -62,7 +62,7 @@ extension FilesClientLiveTests {
             #expect(echoed.isEnabled == false)
             #expect(echoed.size == 128)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "PATCH")
+            #expect(request.httpMethod == HTTPMethod.patch.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [String: Int]])
             #expect(json["thumbnails"]?["size"] == 128)
@@ -74,10 +74,10 @@ extension FilesClientLiveTests {
             stub(statusCode: 200, body: try FilesClientFixture.systemSettingsHiddenAccessRuleEcho.data())
             StubURLProtocol.capturedRequest = nil
 
-            let rules = [AccessRule(id: "local1", path: "Docs", isRecursive: false, permission: .hidden)]
+            let rules = [AccessRule(id: "local1", path: TestFolder.docs, isRecursive: false, permission: .hidden)]
             let echoed = try await makeClient().updateAccessRules(serverURL, rules)
 
-            #expect(echoed == [AccessRule(id: "srv1", path: "Docs", isRecursive: false, permission: .hidden)])
+            #expect(echoed == [AccessRule(id: "srv1", path: TestFolder.docs, isRecursive: false, permission: .hidden)])
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
             let access = try #require(json["access"] as? [String: Any])

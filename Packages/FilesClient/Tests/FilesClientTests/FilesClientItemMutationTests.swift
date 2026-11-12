@@ -16,16 +16,16 @@ extension FilesClientLiveTests {
             let body = try FilesClientFixture.itemMutationCreatedNotesTxt.data()
             stub(statusCode: 201, body: body)
 
-            let item = try await makeClient().createFile(serverURL, "Docs", "notes.txt")
+            let item = try await makeClient().createFile(serverURL, TestFolder.docs, TestFile.notes)
 
-            #expect(item.name == "notes.txt")
-            #expect(item.path == "Docs")
+            #expect(item.name == TestFile.notes)
+            #expect(item.path == TestFolder.docs)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/files/file")
             let sent = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(JSONSerialization.jsonObject(with: sent) as? [String: String])
-            #expect(json == ["path": "Docs", "name": "notes.txt"])
+            #expect(json == ["path": TestFolder.docs, "name": TestFile.notes])
         }
 
         @Test
@@ -33,22 +33,22 @@ extension FilesClientLiveTests {
             let renameJSON = try FilesClientFixture.itemMutationRenameVacation.data()
             stub(statusCode: 200, body: renameJSON)
             StubURLProtocol.capturedRequest = nil
-            let item = FileItem(name: "vacation.jpg", path: "Photos", dateModified: MockDate.date, size: 1024, kind: "jpg")
-            let renamed = try await makeClient().renameItem(serverURL, item, "vacation-2024.jpg")
-            #expect(renamed.name == "vacation-2024.jpg")
+            let item = FileItem(name: TestFile.vacationPhoto, path: TestFolder.photos, dateModified: MockDate.date, size: 1024, kind: TestKind.photo)
+            let renamed = try await makeClient().renameItem(serverURL, item, Constants.vacationFile)
+            #expect(renamed.name == Constants.vacationFile)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json["path"] == "Photos")
-            #expect(json["name"] == "vacation.jpg")
-            #expect(json["newName"] == "vacation-2024.jpg")
+            #expect(json["path"] == TestFolder.photos)
+            #expect(json["name"] == TestFile.vacationPhoto)
+            #expect(json["newName"] == Constants.vacationFile)
         }
 
         @Test
         func renameItemMapsAConflictingNameToAServerError() async throws {
             stub(statusCode: 409, body: Data())
-            let item = FileItem(name: "vacation.jpg", path: "Photos", dateModified: MockDate.date, size: 0, kind: "jpg")
+            let item = FileItem(name: TestFile.vacationPhoto, path: TestFolder.photos, dateModified: MockDate.date, size: 0, kind: TestKind.photo)
             await #expect(throws: FilesClientError.server(statusCode: 409)) {
                 _ = try await makeClient().renameItem(serverURL, item, "taken.jpg")
             }
@@ -58,23 +58,23 @@ extension FilesClientLiveTests {
         func deleteItemsSendsPathNameAndKindForEveryItem() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.commonSuccessNoItems.data())
             StubURLProtocol.capturedRequest = nil
-            let first = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 0, kind: "txt")
-            let second = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            let first = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 0, kind: TestKind.text)
+            let second = FileItem(name: TestFolder.photos, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
             try await makeClient().deleteItems(serverURL, [first, second])
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "DELETE")
+            #expect(request.httpMethod == HTTPMethod.delete.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [[String: String]]])
             let items = try #require(json["items"])
             #expect(items.count == 2)
-            #expect(items[0]["name"] == "a.txt")
+            #expect(items[0]["name"] == TestFile.aText)
             #expect(items[1]["kind"] == "directory")
         }
 
         @Test
         func deleteItemsMapsAForbiddenResponseToAServerError() async throws {
             stub(statusCode: 403, body: Data())
-            let item = FileItem(name: "readonly.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+            let item = FileItem(name: "readonly.txt", path: "", dateModified: MockDate.date, size: 0, kind: TestKind.text)
             await #expect(throws: FilesClientError.forbidden(message: nil)) {
                 try await makeClient().deleteItems(serverURL, [item])
             }
@@ -95,27 +95,27 @@ extension FilesClientLiveTests {
             let json = try FilesClientFixture.itemMutationTransferCopyToDocuments.data()
             stub(statusCode: 200, body: json)
             StubURLProtocol.capturedRequest = nil
-            let item = FileItem(name: "a.txt", path: "Inbox", dateModified: MockDate.date, size: 0, kind: "txt")
-            let result = try await makeClient().transferItems(serverURL, [item], "Documents", .copy)
-            #expect(result.destination == "Documents")
+            let item = FileItem(name: TestFile.aText, path: TestFolder.inbox, dateModified: MockDate.date, size: 0, kind: TestKind.text)
+            let result = try await makeClient().transferItems(serverURL, [item], TestFolder.documents, .copy)
+            #expect(result.destination == TestFolder.documents)
             #expect(result.movedCount == 1)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/files/copy")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let object = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
-            #expect(object["destination"] as? String == "Documents")
+            #expect(object["destination"] as? String == TestFolder.documents)
             let items = try #require(object["items"] as? [[String: String]])
-            #expect(items.first?["path"] == "Inbox")
-            #expect(items.first?["name"] == "a.txt")
+            #expect(items.first?["path"] == TestFolder.inbox)
+            #expect(items.first?["name"] == TestFile.aText)
         }
 
         @Test
         func transferItemsMovePostsToMoveEndpoint() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.itemMutationTransferToArchive.data())
             StubURLProtocol.capturedRequest = nil
-            let item = FileItem(name: "old", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
-            _ = try await makeClient().transferItems(serverURL, [item], "Archive", .move)
+            let item = FileItem(name: TestValue.outdated, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+            _ = try await makeClient().transferItems(serverURL, [item], TestFolder.archive, .move)
             #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/files/move")
         }
 
@@ -125,7 +125,7 @@ extension FilesClientLiveTests {
                 statusCode: 500,
                 body: try FilesClientFixture.itemMutationErrorTransferToRoot.data()
             )
-            let item = FileItem(name: "a.txt", path: "Inbox", dateModified: MockDate.date, size: 0, kind: "txt")
+            let item = FileItem(name: TestFile.aText, path: TestFolder.inbox, dateModified: MockDate.date, size: 0, kind: TestKind.text)
             await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Cannot copy or move items to the root path.")) {
                 _ = try await makeClient().transferItems(serverURL, [item], "", .move)
             }
@@ -134,9 +134,9 @@ extension FilesClientLiveTests {
         @Test
         func transferItemsMapsA401ToSessionExpired() async throws {
             stub(statusCode: 401, body: Data())
-            let item = FileItem(name: "a.txt", path: "Inbox", dateModified: MockDate.date, size: 0, kind: "txt")
+            let item = FileItem(name: TestFile.aText, path: TestFolder.inbox, dateModified: MockDate.date, size: 0, kind: TestKind.text)
             await #expect(throws: FilesClientError.sessionExpired) {
-                _ = try await makeClient().transferItems(serverURL, [item], "Documents", .copy)
+                _ = try await makeClient().transferItems(serverURL, [item], TestFolder.documents, .copy)
             }
         }
 
@@ -144,8 +144,8 @@ extension FilesClientLiveTests {
         func fetchMetadataDecodesAPlainFileWithNoNestedMetadata() async throws {
             let json = try FilesClientFixture.metadataPlainFile.data()
             stub(statusCode: 200, body: json)
-            let metadata = try await makeClient().fetchMetadata(serverURL, "Docs/notes.txt")
-            #expect(metadata.name == "notes.txt")
+            let metadata = try await makeClient().fetchMetadata(serverURL, TestPath.docsNotes)
+            #expect(metadata.name == TestFile.notes)
             #expect(metadata.image == nil)
         }
 
@@ -153,7 +153,7 @@ extension FilesClientLiveTests {
         func fetchMetadataDecodesADirectorySummary() async throws {
             let json = try FilesClientFixture.metadataDirectorySummary.data()
             stub(statusCode: 200, body: json)
-            let metadata = try await makeClient().fetchMetadata(serverURL, "Photos")
+            let metadata = try await makeClient().fetchMetadata(serverURL, TestFolder.photos)
             #expect(metadata.directory?.fileCount == 42)
         }
 
@@ -180,19 +180,19 @@ extension FilesClientLiveTests {
             // `POST /api/files/zip/extract` (zip.js's own route path, mounted at plain `/api`):
             // easy to get subtly wrong the same way `downloadRawFile` originally was.
             let json = try FilesClientFixture.itemMutationCompressedBundleDirectory.string()
-            stub(statusCode: 201, body: json.data(using: .utf8)!)
+            stub(statusCode: 201, body: Data(json.utf8))
             StubURLProtocol.capturedRequest = nil
-            let item = FileItem(name: "bundle.zip", path: "", dateModified: MockDate.date, size: 0, kind: "zip")
+            let item = FileItem(name: FilesClientTestValue.bundleName, path: "", dateModified: MockDate.date, size: 0, kind: "zip")
 
             let extracted = try await makeClient().extractZip(serverURL, item)
 
             #expect(extracted.name == "bundle")
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/files/zip/extract")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let bodyJSON = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(bodyJSON["path"] == "bundle.zip")
+            #expect(bodyJSON["path"] == FilesClientTestValue.bundleName)
         }
 
         @Test
@@ -207,27 +207,27 @@ extension FilesClientLiveTests {
         @Test
         func compressItemSendsItemsAndDestinationAndDecodesTheNewArchive() async throws {
             let json = try FilesClientFixture.itemMutationCompressedDocumentsZip.string()
-            stub(statusCode: 201, body: json.data(using: .utf8)!)
+            stub(statusCode: 201, body: Data(json.utf8))
             StubURLProtocol.capturedRequest = nil
-            let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            let item = FileItem(name: TestFolder.documents, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
 
             let compressed = try await makeClient().compressItem(serverURL, item)
 
-            #expect(compressed.name == "Documents.zip")
+            #expect(compressed.name == Constants.documentsArchive)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/files/zip/compress")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let bodyJSON = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
             #expect(bodyJSON["destination"] as? String == "")
             let items = try #require(bodyJSON["items"] as? [[String: String]])
-            #expect(items == [["name": "Documents", "path": ""]])
+            #expect(items == [["name": TestFolder.documents, "path": ""]])
         }
 
         @Test
         func compressItemMapsReadOnlyDestinationToAServerError() async throws {
             stub(statusCode: 403, body: Data())
-            let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            let item = FileItem(name: TestFolder.documents, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
             await #expect(throws: FilesClientError.forbidden(message: nil)) {
                 _ = try await makeClient().compressItem(serverURL, item)
             }
@@ -235,19 +235,19 @@ extension FilesClientLiveTests {
 
         @Test
         func compressItemDecodesTheDoneLineOfAnNDJSONProgressStream() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonCompressDone.data(), headers: ["Content-Type": "application/x-ndjson; charset=utf-8"])
-            let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonCompressDone.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson; charset=utf-8"])
+            let item = FileItem(name: TestFolder.documents, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
 
             let compressed = try await makeClient().compressItem(serverURL, item)
 
-            #expect(compressed.name == "Documents.zip")
+            #expect(compressed.name == Constants.documentsArchive)
             #expect(compressed.size == 157)
         }
 
         @Test
         func compressItemSurfacesTheErrorLineOfAnNDJSONStream() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonCompressError.data(), headers: ["Content-Type": "application/x-ndjson"])
-            let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonCompressError.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson"])
+            let item = FileItem(name: TestFolder.documents, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
             await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Disk full")) {
                 _ = try await makeClient().compressItem(serverURL, item)
             }
@@ -255,8 +255,8 @@ extension FilesClientLiveTests {
 
         @Test
         func extractZipDecodesTheDoneLineOfAnNDJSONProgressStream() async throws {
-            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonExtractDone.data(), headers: ["Content-Type": "application/x-ndjson"])
-            let archive = FileItem(name: "photos.zip", path: "Files", dateModified: MockDate.date, size: 10, kind: "zip")
+            stub(statusCode: 200, body: try FilesClientFixture.itemMutationNdjsonExtractDone.data(), headers: [HTTPHeaderField.contentType: "application/x-ndjson"])
+            let archive = FileItem(name: "photos.zip", path: TestFolder.files, dateModified: MockDate.date, size: 10, kind: "zip")
 
             let extracted = try await makeClient().extractZip(serverURL, archive)
 
@@ -272,4 +272,9 @@ extension FilesClientLiveTests {
             }
         }
     }
+}
+
+private enum Constants {
+    static let documentsArchive = "Documents.zip"
+    static let vacationFile = "vacation-2024.jpg"
 }

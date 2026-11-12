@@ -4,13 +4,14 @@ import Dependencies
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// The API token routes through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: both share `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     @Suite("API token routes")
     struct APITokenRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -21,7 +22,7 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         private func sentJSON() throws -> [String: Any] {
@@ -35,9 +36,9 @@ extension FilesClientLiveTests {
 
             let tokens = try await makeClient().fetchAPITokens(serverURL)
 
-            #expect(tokens.map(\.id) == ["t1"])
+            #expect(tokens.map(\.id) == [TestAPIToken.id])
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/auth/tokens")
         }
 
@@ -60,24 +61,24 @@ extension FilesClientLiveTests {
         func createSendsEveryFieldAndReturnsTheSecret() async throws {
             stub(statusCode: 201, body: try FilesClientFixture.apiTokenIssued.string())
 
-            let issued = try await makeClient().createAPIToken(serverURL, "backup", .write, 30, "hunter2")
+            let issued = try await makeClient().createAPIToken(serverURL, Constants.tokenName, .write, 30, TestAccount.password)
 
-            #expect(issued.secret == "nxt_abc.def")
+            #expect(issued.secret == TestAPIToken.secret)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/auth/tokens")
             let json = try sentJSON()
-            #expect(json["name"] as? String == "backup")
+            #expect(json["name"] as? String == Constants.tokenName)
             #expect(json["scope"] as? String == "write")
             #expect(json["expiresInDays"] as? Int == 30)
-            #expect(json["password"] as? String == "hunter2")
+            #expect(json["password"] as? String == TestAccount.password)
         }
 
         @Test
         func createOmitsThePasswordAndTheExpiryWhenThereAreNone() async throws {
             stub(statusCode: 201, body: try FilesClientFixture.apiTokenIssued.string())
 
-            _ = try await makeClient().createAPIToken(serverURL, "backup", .read, nil, nil)
+            _ = try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, nil)
 
             let json = try sentJSON()
             #expect(Set(json.keys) == ["name", "scope"])
@@ -88,7 +89,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 401, body: try FilesClientFixture.apiTokenErrorWrongPassword.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "That password is not right.")) {
-                try await makeClient().createAPIToken(serverURL, "backup", .read, nil, "nope")
+                try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, TestAccount.rejectedPassword)
             }
         }
 
@@ -97,7 +98,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 400, body: try FilesClientFixture.apiTokenErrorLimitReached.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "This account already holds 50 tokens. Revoke one before issuing another.")) {
-                try await makeClient().createAPIToken(serverURL, "backup", .read, nil, nil)
+                try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, nil)
             }
         }
 
@@ -106,7 +107,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 201, body: try FilesClientFixture.commonUnexpectedKeyUnexpected.string())
 
             await #expect(throws: FilesClientError.self) {
-                try await makeClient().createAPIToken(serverURL, "backup", .read, nil, nil)
+                try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, nil)
             }
         }
 
@@ -114,13 +115,13 @@ extension FilesClientLiveTests {
         func renamePatchesTheNameOnTheTokensRoute() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.apiTokenSingle.string())
 
-            let token = try await makeClient().renameAPIToken(serverURL, "t1", "nightly")
+            let token = try await makeClient().renameAPIToken(serverURL, TestAPIToken.id, Constants.nightlyTokenName)
 
-            #expect(token.id == "t1")
+            #expect(token.id == TestAPIToken.id)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "PATCH")
+            #expect(request.httpMethod == HTTPMethod.patch.rawValue)
             #expect(request.url?.path == "/api/auth/tokens/t1")
-            #expect(try sentJSON() as? [String: String] == ["name": "nightly"])
+            #expect(try sentJSON() as? [String: String] == ["name": Constants.nightlyTokenName])
         }
 
         @Test
@@ -136,10 +137,10 @@ extension FilesClientLiveTests {
         func revokeDeletesWithoutABody() async throws {
             stub(statusCode: 204)
 
-            try await makeClient().revokeAPIToken(serverURL, "t1")
+            try await makeClient().revokeAPIToken(serverURL, TestAPIToken.id)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "DELETE")
+            #expect(request.httpMethod == HTTPMethod.delete.rawValue)
             #expect(request.url?.path == "/api/auth/tokens/t1")
             #expect(StubURLProtocol.capturedRequestBody == nil || StubURLProtocol.capturedRequestBody?.isEmpty == true)
         }
@@ -158,8 +159,13 @@ extension FilesClientLiveTests {
             stub(statusCode: 429)
 
             await #expect(throws: FilesClientError.rateLimited) {
-                try await makeClient().createAPIToken(serverURL, "backup", .read, nil, "x")
+                try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, "x")
             }
         }
     }
+}
+
+private enum Constants {
+    static let nightlyTokenName = "nightly"
+    static let tokenName = "backup"
 }

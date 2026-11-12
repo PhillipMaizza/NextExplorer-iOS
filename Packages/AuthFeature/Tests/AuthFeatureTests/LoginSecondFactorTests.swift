@@ -13,10 +13,10 @@ struct LoginSecondFactorTests {
     private typealias Support = LoginFormTestSupport
     private typealias Store = LoginFormTestSupport.Store
 
-    private static let identifier = "asmith"
-    private static let password = "hunter2"
+    private static let identifier = TestUser.asmith
+    private static let password = TestAccount.password
 
-    private let user = User(id: "1", username: "asmith", email: nil, roles: [])
+    private let user = User(id: "1", username: TestUser.asmith, email: nil, roles: [])
 
     private func secondFactorState(
         code: String = "",
@@ -87,9 +87,9 @@ struct LoginSecondFactorTests {
     @Test(
         "The trimmed code is sent as typed and the user is handed to the app",
         arguments: [
-            CodeSignInCase(mode: .authenticator, typed: "  123456 ", sentCode: "123456", sendingLog: "code: sending, 6 digits"),
-            CodeSignInCase(mode: .recovery, typed: "2HSMP-G9ZSJ", sentCode: "2HSMP-G9ZSJ", sendingLog: "code: sending, other, 11 characters"),
-            CodeSignInCase(mode: .recovery, typed: " 2HSMP-G9ZSJ ", sentCode: "2HSMP-G9ZSJ", sendingLog: "code: sending, other, 11 characters"),
+            CodeSignInCase(mode: .authenticator, typed: "  123456 ", sentCode: TestAccount.totpCode, sendingLog: "code: sending, 6 digits"),
+            CodeSignInCase(mode: .recovery, typed: TestAccount.recoveryCode, sentCode: TestAccount.recoveryCode, sendingLog: "code: sending, other, 11 characters"),
+            CodeSignInCase(mode: .recovery, typed: " 2HSMP-G9ZSJ ", sentCode: TestAccount.recoveryCode, sendingLog: "code: sending, other, 11 characters"),
         ]
     )
     func codeSignsIn(_ testCase: CodeSignInCase) async throws {
@@ -152,12 +152,12 @@ struct LoginSecondFactorTests {
             ),
             CodeFailureCase(
                 mode: .authenticator, code: "123456", error: .rateLimited, message: L10n.Login.errorRateLimited,
-                page: .secondFactor, expectedCode: "123456", expectedMode: .authenticator,
+                page: .secondFactor, expectedCode: TestAccount.totpCode, expectedMode: .authenticator,
                 sendingLog: "code: sending, 6 digits", resultLog: "code: server answered 429, too many attempts or account locked"
             ),
             CodeFailureCase(
                 mode: .authenticator, code: "123456", error: .network("offline"), message: L10n.Login.errorUnreachable,
-                page: .secondFactor, expectedCode: "123456", expectedMode: .authenticator,
+                page: .secondFactor, expectedCode: TestAccount.totpCode, expectedMode: .authenticator,
                 sendingLog: "code: sending, 6 digits", resultLog: "code: network error: offline"
             ),
         ]
@@ -195,9 +195,9 @@ struct LoginSecondFactorTests {
         "A blank code, or a code submitted outside the code page, is never sent",
         arguments: [
             BlockedSubmitCase(page: .secondFactor, code: ""),
-            BlockedSubmitCase(page: .secondFactor, code: "   "),
+            BlockedSubmitCase(page: .secondFactor, code: TestValue.blank),
             BlockedSubmitCase(page: .secondFactor, code: "\n"),
-            BlockedSubmitCase(page: .credentials, code: "123456"),
+            BlockedSubmitCase(page: .credentials, code: TestAccount.totpCode),
         ]
     )
     func blockedSubmitIsIgnored(_ testCase: BlockedSubmitCase) async {
@@ -221,7 +221,7 @@ struct LoginSecondFactorTests {
     func doubleTapSendsOnce() async throws {
         let clock = TestClock()
         let calls = LockIsolated<[TOTPCall]>([])
-        let store = Support.makeStore(secondFactorState(code: "123456"), clock: clock) { [user] in
+        let store = Support.makeStore(secondFactorState(code: TestAccount.totpCode), clock: clock) { [user] in
             $0.authClient.loginTOTP = { url, code in
                 calls.withValue { $0.append(TOTPCall(url: url.absoluteString, code: code)) }
                 return user
@@ -232,7 +232,7 @@ struct LoginSecondFactorTests {
         await store.send(.codeSubmitButtonTapped)
         try await Support.finishSuccessfulSubmit(store, clock: clock, user: user)
 
-        #expect(calls.value == [TOTPCall(url: Support.serverURL, code: "123456")])
+        #expect(calls.value == [TOTPCall(url: Support.serverURL, code: TestAccount.totpCode)])
     }
 
     // MARK: - The field
@@ -252,7 +252,7 @@ struct LoginSecondFactorTests {
             CodeInput(mode: .authenticator, typed: "abc", expected: ""),
             CodeInput(mode: .authenticator, typed: "\u{0663}\u{0664}5", expected: "5"),
             CodeInput(mode: .authenticator, typed: String(repeating: "1", count: 500), expected: "111111"),
-            CodeInput(mode: .recovery, typed: "2HSMP-G9ZSJ", expected: "2HSMP-G9ZSJ"),
+            CodeInput(mode: .recovery, typed: TestAccount.recoveryCode, expected: TestAccount.recoveryCode),
             CodeInput(mode: .recovery, typed: String(repeating: "A", count: 500), expected: String(repeating: "A", count: 32)),
         ]
     )
@@ -278,11 +278,11 @@ struct LoginSecondFactorTests {
         await store.send(.codeChanged("12345")) { $0.code = "12345" }
         #expect(calls.value.isEmpty)
 
-        await store.send(.codeChanged("123456")) { $0.code = "123456" }
+        await store.send(.codeChanged(TestAccount.totpCode)) { $0.code = TestAccount.totpCode }
         await store.receive(.codeSubmitButtonTapped) { $0.submitPhase = .submitting }
         try await Support.finishSuccessfulSubmit(store, clock: clock, user: user)
 
-        #expect(calls.value == [TOTPCall(url: Support.serverURL, code: "123456")])
+        #expect(calls.value == [TOTPCall(url: Support.serverURL, code: TestAccount.totpCode)])
     }
 
     struct NoAutoSubmitCase: Sendable {
@@ -294,8 +294,8 @@ struct LoginSecondFactorTests {
     @Test(
         "Typing never sends a recovery code, and never sends a second check while one is running",
         arguments: [
-            NoAutoSubmitCase(mode: .recovery, phase: .idle, typed: "2HSMP-G9ZSJ"),
-            NoAutoSubmitCase(mode: .authenticator, phase: .submitting, typed: "123456"),
+            NoAutoSubmitCase(mode: .recovery, phase: .idle, typed: TestAccount.recoveryCode),
+            NoAutoSubmitCase(mode: .authenticator, phase: .submitting, typed: TestAccount.totpCode),
         ]
     )
     func typingDoesNotSend(_ testCase: NoAutoSubmitCase) async {
@@ -315,7 +315,7 @@ struct LoginSecondFactorTests {
     @Test("The toggle swaps between the authenticator code and a recovery code, clearing what was typed and any error")
     func toggleCodeMode() async {
         var state = secondFactorState(code: "123")
-        state.errorMessage = "old"
+        state.errorMessage = TestValue.outdated
         let store = Support.makeStore(state, clock: TestClock())
 
         await store.send(.toggleCodeModeTapped) {
@@ -329,7 +329,7 @@ struct LoginSecondFactorTests {
     @Test("Toggling the mode cancels the pending dismissal of the error it cleared")
     func toggleCancelsErrorDismissal() async {
         let clock = TestClock()
-        let store = Support.makeStore(secondFactorState(code: "000000"), clock: clock) {
+        let store = Support.makeStore(secondFactorState(code: TestAccount.invalidTotpCode), clock: clock) {
             $0.authClient.loginTOTP = { _, _ in throw AuthClientError.invalidCode }
         }
 
@@ -357,7 +357,7 @@ struct LoginSecondFactorTests {
     @Test("Back from the code page returns to the password page, clears the code and keeps the password")
     func backReturnsToCredentials() async {
         var state = secondFactorState(code: "123", mode: .recovery, submitPhase: .failure)
-        state.errorMessage = "old"
+        state.errorMessage = TestValue.outdated
         state.invalidFieldsScope = .identifierAndPassword
         let store = Support.makeStore(state, clock: TestClock())
 
@@ -374,7 +374,7 @@ struct LoginSecondFactorTests {
     @Test("cancellation: a code check still running when the user goes back never lands on the screen")
     func backCancelsInFlightCheck() async {
         let clock = TestClock()
-        let store = Support.makeStore(secondFactorState(code: "123456"), clock: clock) { [user] in
+        let store = Support.makeStore(secondFactorState(code: TestAccount.totpCode), clock: clock) { [user] in
             $0.authClient.loginTOTP = { _, _ in user }
         }
 
@@ -395,7 +395,7 @@ struct LoginSecondFactorTests {
     @Test("the log of a whole 2FA sign in holds no password, name, code or address")
     func logNeverHoldsWhatWasTyped() async {
         let clock = TestClock()
-        let store = Support.makeStore(secondFactorState(code: "2HSMP-G9ZSJ", mode: .recovery), clock: clock) {
+        let store = Support.makeStore(secondFactorState(code: TestAccount.recoveryCode, mode: .recovery), clock: clock) {
             $0.authClient.loginTOTP = { _, _ in throw AuthClientError.network("Could not connect to \(Support.host)") }
         }
 

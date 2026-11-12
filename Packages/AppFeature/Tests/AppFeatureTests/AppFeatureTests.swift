@@ -15,8 +15,8 @@ extension AppSuites {
     struct AppFeatureTests {
         private typealias Store = TestStore<AppFeature.State, AppFeature.Action>
 
-        private let credentialsA = AppFixtures.credentials(AppFixtures.serverA, "alice")
-        private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
+        private let credentialsA = AppFixtures.credentials(AppFixtures.serverA, TestUser.alice)
+        private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, TestUser.bob)
         private let recorder = WipeRecorder()
 
         private func makeStore(
@@ -69,7 +69,7 @@ extension AppSuites {
 
             await store.send(.onAppear)
             await store.receive(\.sessionRestoreResponse) {
-                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
+                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             accountList.open()
             await store.receive(\.accountsRefreshed) {
@@ -100,7 +100,7 @@ extension AppSuites {
 
             await store.send(.onAppear)
             await store.receive(\.sessionRestoreResponse) {
-                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
+                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             await store.receive(\.accountsRefreshed)
             confirmation.open()
@@ -124,7 +124,7 @@ extension AppSuites {
                 $0.authClient.restoreSession = { [credentialsA] in credentialsA }
                 $0.authClient.me = { _ in
                     try await confirmation.wait()
-                    throw AuthClientError.network("offline")
+                    throw AuthClientError.network(TestFailure.offline)
                 }
                 $0.authClient.clearActiveSession = {
                     Issue.record("an unreachable server does not prove the session is gone")
@@ -134,7 +134,7 @@ extension AppSuites {
 
             await store.send(.onAppear)
             await store.receive(\.sessionRestoreResponse) {
-                $0.destination = optimistic(AppFixtures.serverA, username: "alice")
+                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             await store.receive(\.accountsRefreshed)
             confirmation.open()
@@ -227,7 +227,7 @@ extension AppSuites {
 
             await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsB)))))
             await store.receive(\.activateAccount) {
-                $0.destination = optimistic(AppFixtures.serverB, username: "bob")
+                $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             accountList.open()
@@ -267,7 +267,7 @@ extension AppSuites {
 
         @Test("Files shared in while signed out wait in the inbox")
         func incomingFilesWhileSignedOutAreQueued() async {
-            let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
+            let scan = URL(fileURLWithPath: Constants.scanPath)
             let store = makeStore(AppFeature.State(destination: .unauthenticated(.init())))
 
             await store.send(.incomingFiles([scan])) {
@@ -277,7 +277,7 @@ extension AppSuites {
 
         @Test("Files shared in while signed in go straight to the tab shell, which drains the inbox and stages them for review")
         func incomingFilesWhileSignedInAreHandedOver() async {
-            let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
+            let scan = URL(fileURLWithPath: Constants.scanPath)
             let prepared = PickedFile(id: TestID.uuid(), fileURL: scan, fileName: "Scan.pdf", size: 10)
             let stagedURLs = LockIsolated<[URL]>([])
             let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA)) {
@@ -370,8 +370,8 @@ extension AppSuites {
         @Test("A mid session 401 with another account signed in wipes only the expired account, twice, and switches to the next")
         func midSessionExpiryFallsThroughToNextAccount() async {
             let json = JSONCacheStore.inMemory()
-            json.bound(to: AppFixtures.accountA).write(key: "favorites", data: Data("a".utf8))
-            json.bound(to: AppFixtures.accountB).write(key: "favorites", data: Data("b".utf8))
+            json.bound(to: AppFixtures.accountA).write(key: TestCacheKey.favorites, data: Data("a".utf8))
+            json.bound(to: AppFixtures.accountB).write(key: TestCacheKey.favorites, data: Data("b".utf8))
             let pending = PendingAccountWipes.inMemory()
             let confirmation = AsyncGate()
             let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA)) {
@@ -398,7 +398,7 @@ extension AppSuites {
             await store.receive(\.sessionExpiryConfirmed)
             await store.receive(\.activeAccountTornDown)
             await store.receive(\.activateAccount) {
-                $0.destination = optimistic(AppFixtures.serverB, username: "bob")
+                $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             await store.receive(\.accountsRefreshed)
@@ -411,8 +411,8 @@ extension AppSuites {
 
             await store.finish()
 
-            #expect(json.bound(to: AppFixtures.accountA).read(key: "favorites") == nil)
-            #expect(json.bound(to: AppFixtures.accountB).read(key: "favorites") != nil)
+            #expect(json.bound(to: AppFixtures.accountA).read(key: TestCacheKey.favorites) == nil)
+            #expect(json.bound(to: AppFixtures.accountB).read(key: TestCacheKey.favorites) != nil)
             let expiredAccountWipe: [WipeRecorder.Event] = [
                 .directoryAccountCleared(AppFixtures.accountA),
                 .previewAccountCleared(AppFixtures.accountA),
@@ -468,4 +468,8 @@ extension AppSuites {
             #expect(recorder.events.value.isEmpty)
         }
     }
+}
+
+private enum Constants {
+    static let scanPath = "/tmp/Scan.pdf"
 }

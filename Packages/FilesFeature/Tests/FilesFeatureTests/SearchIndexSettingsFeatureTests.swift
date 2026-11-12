@@ -343,10 +343,10 @@ struct SearchIndexSettingsFeatureTests {
 
     @Test
     func displayedPathsMergeServerAndDraftSorted() {
-        var state = loadedState(settings(paths: ["Zeta", "alpha"]))
-        state.draftPaths = ["alpha", "Mid"]
+        var state = loadedState(settings(paths: ["Zeta", Constants.alphaPath]))
+        state.draftPaths = [Constants.alphaPath, "Mid"]
 
-        #expect(state.displayedPaths == ["alpha", "Mid", "Zeta"])
+        #expect(state.displayedPaths == [Constants.alphaPath, "Mid", "Zeta"])
     }
 
     @Test
@@ -409,4 +409,8 @@ struct SearchIndexSettingsFeatureTests {
             $0.errorMessage = L10n.Error.decoding
         }
     }
+}
+
+private enum Constants {
+    static let alphaPath = "alpha"
 }

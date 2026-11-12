@@ -18,7 +18,7 @@ struct UploadStagingFolderTests {
     @Test
     func aDroppedFolderExpandsIntoItsFilesWithRelativeNames() throws {
         let source = try temporaryFolder().appendingPathComponent("Trip", isDirectory: true)
-        try write("a", to: source.appendingPathComponent("a.txt"))
+        try write("a", to: source.appendingPathComponent(TestFile.aText))
         try write("b", to: source.appendingPathComponent("Day 1/b.txt"))
         try write("hidden", to: source.appendingPathComponent(".DS_Store"))
         let staging = try temporaryFolder()
@@ -35,11 +35,11 @@ struct UploadStagingFolderTests {
     @Test
     func aSingleFileKeepsItsPlainName() throws {
         let folder = try temporaryFolder()
-        let file = folder.appendingPathComponent("report.pdf")
+        let file = folder.appendingPathComponent(TestFile.report)
         try write("pdf", to: file)
 
         let files = try UploadStagingLocation.stage(file, into: temporaryFolder())
 
-        #expect(files.map(\.fileName) == ["report.pdf"])
+        #expect(files.map(\.fileName) == [TestFile.report])
     }
 }

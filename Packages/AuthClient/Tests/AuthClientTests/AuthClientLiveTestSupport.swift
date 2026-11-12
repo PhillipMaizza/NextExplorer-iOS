@@ -4,6 +4,7 @@ import Foundation
 import Keychain
 import NetworkClient
 import Testing
+import TestUtils
 
 func makeUniqueServerURL() -> URL {
     URL(string: "http://test-\(UUID().uuidString.lowercased()).invalid:3000") ?? URL(fileURLWithPath: "/")
@@ -43,12 +44,12 @@ extension AuthClientLiveHarness {
             serverBaseURL: serverURL,
             authMode: .local,
             cookieName: AuthClientConfiguration.CookieName.local,
-            cookieValue: "abc123",
+            cookieValue: TestSession.loginCookieValue,
             cookieDomain: #require(serverURL.host),
             cookiePath: "/",
             cookieIsSecure: false,
             expiresAt: nil,
-            username: "phillip"
+            username: TestAccount.username
         )
     }
 

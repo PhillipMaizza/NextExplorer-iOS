@@ -15,7 +15,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: try NetworkClientFixture.responseOkTrue.data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
+        let request = URLRequest(url: URL(string: Constants.statusURLString)!)
         let (data, response) = try await client.send(request)
 
         #expect(response.statusCode == 200)
@@ -39,7 +39,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.failure = URLError(.cannotConnectToHost)
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
+        let request = URLRequest(url: URL(string: Constants.statusURLString)!)
         await #expect(throws: NetworkError.self) {
             _ = try await client.send(request)
         }
@@ -61,7 +61,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 500, headers: [:], body: Data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
+        let request = URLRequest(url: URL(string: Constants.statusURLString)!)
         let (_, response) = try await client.send(request)
 
         #expect(response.statusCode == 500)
@@ -84,7 +84,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: Data(repeating: 0x7A, count: 4096))
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self], maxInMemoryResponseBytes: 1024)
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/browse")!)
+        let request = URLRequest(url: URL(string: NetworkClientTestValue.browseURLString)!)
         await #expect(throws: NetworkError.responseTooLarge) {
             _ = try await client.send(request)
         }
@@ -96,7 +96,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: payload)
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self], maxInMemoryResponseBytes: 1024)
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/browse")!)
+        let request = URLRequest(url: URL(string: NetworkClientTestValue.browseURLString)!)
         let (data, response) = try await client.send(request)
 
         #expect(data == payload)
@@ -190,4 +190,8 @@ private final class LockIsolatedBox<Value>: @unchecked Sendable {
         lock.lock(); defer { lock.unlock() }
         mutate(&stored)
     }
+}
+
+private enum Constants {
+    static let statusURLString = "https://example.com/api/auth/status"
 }

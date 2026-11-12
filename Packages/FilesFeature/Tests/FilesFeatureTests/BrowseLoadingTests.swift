@@ -14,7 +14,7 @@ struct BrowseLoadingTests {
 
     @Test("Appearing loads the listing, then the favorites, then which items are available offline")
     func onAppearLoadsRootItems() async {
-        let item = BrowseFixtures.folder("Docs")
+        let item = BrowseFixtures.folder(TestFolder.docs)
         let favorites = AsyncGate()
         let store = BrowseFixtures.store {
             $0.serveEmptyFolders()
@@ -114,9 +114,9 @@ struct BrowseLoadingTests {
 
     @Test("A failed refresh of a folder that shows items keeps them and reports the error as a toast")
     func aFailedRefreshKeepsTheListAndShowsAToast() async {
-        let items = [BrowseFixtures.file("a.txt", in: "docs"), BrowseFixtures.file("b.txt", in: "docs")]
+        let items = [BrowseFixtures.file(TestFile.aText, in: TestPath.docsLowercase), BrowseFixtures.file(TestFile.bText, in: TestPath.docsLowercase)]
         let favorites = AsyncGate()
-        let store = BrowseFixtures.store(BrowseFixtures.loadedState("docs", items: items)) {
+        let store = BrowseFixtures.store(BrowseFixtures.loadedState(TestPath.docsLowercase, items: items)) {
             $0.serveEmptyFolders()
             $0.filesClient.browse = { _, _ in throw FilesClientError.server(statusCode: 500) }
             $0.holdFavorites(favorites)
@@ -138,7 +138,7 @@ struct BrowseLoadingTests {
 
     @Test("Loading the root asks the server for its features and shows My Files when personal space is on")
     func rootLoadFetchesServerFeaturesAndShowsThePersonalSpace() async {
-        let volume = BrowseFixtures.folder("Files")
+        let volume = BrowseFixtures.folder(TestFolder.files)
         let features = AsyncGate()
         let listing = AsyncGate()
         let favorites = AsyncGate()
@@ -181,7 +181,7 @@ struct BrowseLoadingTests {
 
     @Test("A subfolder load never asks for server features")
     func subfolderLoadNeverAsksForServerFeatures() async {
-        let store = BrowseFixtures.store(BrowseFixtures.state("Files", title: "Files")) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(TestFolder.files, title: TestFolder.files)) {
             $0.serveEmptyFolders()
             $0.filesClient.serverFeatures = { _ in
                 Issue.record("only the root screen offers the personal space")
@@ -229,7 +229,7 @@ struct BrowseLoadingTests {
         let subfolder = withDependencies {
             $0.jsonCacheStore = cache
         } operation: {
-            BrowseFixtures.state("Files", title: "Files")
+            BrowseFixtures.state(TestFolder.files, title: TestFolder.files)
         }
         #expect(!subfolder.isPersonalSpaceEnabled)
     }

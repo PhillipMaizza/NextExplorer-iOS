@@ -26,7 +26,7 @@ struct BrowsePrefetchTests {
     ]
 
     private func folders(_ count: Int) -> [FileItem] {
-        (0 ..< count).map { BrowseFixtures.folder(String(format: "F%02d", $0), in: "docs") }
+        (0 ..< count).map { BrowseFixtures.folder(String(format: "F%02d", $0), in: TestPath.docsLowercase) }
     }
 
     private func path(_ index: Int) -> String {
@@ -40,6 +40,7 @@ struct BrowsePrefetchTests {
         pinned: [String] = [],
         isMetered: Bool = false,
         freshPaths: Set<String> = [],
+        cacheAges: [String: TimeInterval] = [:],
         capturedScope: String? = nil,
         directoryCacheStore: DirectoryCacheStore? = nil
     ) async -> [String] {
@@ -49,7 +50,7 @@ struct BrowsePrefetchTests {
                 $0.cacheScope = CacheScopeSource(current: { capturedScope })
             }
         } operation: {
-            BrowseFixtures.state("docs", title: "Docs")
+            BrowseFixtures.state(TestPath.docsLowercase, title: TestFolder.docs)
         }
         state.favoritePaths = favoritePaths
         let offline = OfflineFileStore.inMemory()
@@ -57,17 +58,19 @@ struct BrowsePrefetchTests {
         let store = BrowseFixtures.store(state) {
             $0.connectivity = ConnectivityClient(isOnline: { true }, events: { AsyncStream { _ in } }, isMetered: { isMetered })
             $0.offlineFileStore = offline
+            $0.date = .constant(MockDate.date)
             $0.filesClient.prefetchDirectory = { _, path in prefetched.withValue { $0.append(path) } }
             if let directoryCacheStore {
                 $0.directoryCacheStore = directoryCacheStore
             } else {
                 $0.directoryCacheStore.lastWrittenAt = { _, path in
-                    freshPaths.contains(path) ? Date.distantFuture : Date.distantPast
+                    if let age = cacheAges[path] { return MockDate.date.addingTimeInterval(-age) }
+                    return freshPaths.contains(path) ? Date.distantFuture : Date.distantPast
                 }
             }
         }
 
-        await store.send(.itemsResponse(.success(BrowseResult(items: directories, access: access, path: "docs")))) {
+        await store.send(.itemsResponse(.success(BrowseResult(items: directories, access: access, path: TestPath.docsLowercase)))) {
             $0.phase = .loaded
             $0.items = IdentifiedArray(uniqueElements: directories)
             $0.access = access
@@ -85,6 +88,17 @@ struct BrowsePrefetchTests {
     }
 
     // MARK: Subfolders
+
+    @Test("A folder is warmed again exactly when its cache is as old as the freshness window")
+    func theFreshnessWindowBoundaryIsExact() async {
+        let window = DirectoryPrefetch.freshnessWindow
+        let directories = folders(3)
+        let warmed = await prefetchRun(
+            directories: directories,
+            cacheAges: [path(0): window - 1, path(1): window, path(2): window + 1]
+        )
+        #expect(Set(warmed) == [path(1), path(2)])
+    }
 
     @Test("The prefetch is capped and takes the nearest folders first")
     func prefetchIsCappedAndTakesTheNearestFoldersFirst() async {
@@ -130,7 +144,7 @@ struct BrowsePrefetchTests {
     @Test("The freshness check reads the scope the state captured, not another account's")
     func theFreshnessCheckReadsTheScopeTheStateCapturedNotAnotherAccounts() async {
         let store = DirectoryCacheStore.inMemory()
-        let listing = BrowseResult(items: [], access: access, path: "docs")
+        let listing = BrowseResult(items: [], access: access, path: TestPath.docsLowercase)
         store.bound(to: "scope-alice").write(serverURL: BrowseTestSupport.serverURL, path: path(0), result: listing, etag: nil, fetchedAt: Date.distantFuture)
         store.bound(to: "scope-bob").write(serverURL: BrowseTestSupport.serverURL, path: path(1), result: listing, etag: nil, fetchedAt: Date.distantFuture)
 
@@ -142,14 +156,14 @@ struct BrowsePrefetchTests {
     @Test("A listing with no folders never reads the pinned roots")
     func aSuccessfulBrowseOfAnEmptyFolderNeverReadsThePinnedRoots() async {
         let calls = LockIsolated(0)
-        let store = BrowseFixtures.store(BrowseFixtures.state("docs", title: "Docs")) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(TestPath.docsLowercase, title: TestFolder.docs)) {
             $0.offlineFileStore.pinnedRoots = {
                 calls.withValue { $0 += 1 }
                 return []
             }
         }
 
-        await store.send(.itemsResponse(.success(BrowseResult(items: [], access: access, path: "docs")))) {
+        await store.send(.itemsResponse(.success(BrowseResult(items: [], access: access, path: TestPath.docsLowercase)))) {
             $0.phase = .loaded
             $0.access = access
         }
@@ -182,7 +196,7 @@ struct BrowsePrefetchTests {
     @Test("A favorite the listing shows as a file is dropped, a known folder or an unknown kind is kept")
     func favoriteFolderPathsKeepsUnknownKindsAndDropsKnownFiles() {
         let known = IdentifiedArray(uniqueElements: [
-            BrowseFixtures.file(TestFile.aText, in: "docs"), BrowseFixtures.folder("Known", in: "docs"),
+            BrowseFixtures.file(TestFile.aText, in: TestPath.docsLowercase), BrowseFixtures.folder("Known", in: TestPath.docsLowercase),
         ])
 
         let paths = BrowseFeature.favoriteFolderPaths(

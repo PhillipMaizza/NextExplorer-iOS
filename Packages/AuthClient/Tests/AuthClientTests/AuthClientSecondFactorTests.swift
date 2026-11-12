@@ -4,6 +4,7 @@ import Foundation
 import Keychain
 import NetworkClient
 import Testing
+import TestUtils
 
 @Suite("AuthClient second factor")
 struct AuthClientSecondFactorTests: AuthClientLiveHarness {
@@ -18,9 +19,9 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.secondFactorRequired) {
-            _ = try await client.login(serverURL, "asmith", "hunter2")
+            _ = try await client.login(serverURL, TestUser.asmith, TestAccount.password)
         }
-        #expect(try keychainClient.load("storedSessions") == nil)
+        #expect(try keychainClient.load(TestStorageKey.storedSessions) == nil)
     }
 
     @Test("login edge case: a 200 with neither a user nor totpRequired is a decoding error, not invalid credentials")
@@ -31,7 +32,7 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.decoding("sign in response had no user")) {
-            _ = try await client.login(serverURL, "asmith", "hunter2")
+            _ = try await client.login(serverURL, TestUser.asmith, TestAccount.password)
         }
     }
 
@@ -43,7 +44,7 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
             if let host = url.host {
                 let cookie = try #require(HTTPCookie(properties: [
                     .name: AuthClientConfiguration.CookieName.local,
-                    .value: "abc123",
+                    .value: TestSession.loginCookieValue,
                     .domain: host,
                     .path: "/",
                 ]))
@@ -53,8 +54,8 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
             return try (body, response(statusCode: 200, url: url))
         }
 
-        let user = try await client.login(serverURL, "phillip", "hunter2")
-        #expect(user.username == "phillip")
+        let user = try await client.login(serverURL, TestAccount.username, TestAccount.password)
+        #expect(user.username == TestAccount.username)
     }
 
     @Test("loginTOTP happy path posts the code to the totp route, returns the user and persists the session cookie")
@@ -67,7 +68,7 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
             #expect(request.httpMethod == "POST")
             let body = try #require(request.httpBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json == ["code": "123456"])
+            #expect(json == ["code": TestAccount.totpCode])
             if let host = url.host {
                 let cookie = try #require(HTTPCookie(properties: [
                     .name: AuthClientConfiguration.CookieName.local,
@@ -81,10 +82,10 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
             return try (responseBody, response(statusCode: 200, url: url))
         }
 
-        let user = try await client.loginTOTP(serverURL, "123456")
-        #expect(user.username == "asmith")
+        let user = try await client.loginTOTP(serverURL, TestAccount.totpCode)
+        #expect(user.username == TestUser.asmith)
 
-        let stored = try #require(try keychainClient.load("storedSessions"))
+        let stored = try #require(try keychainClient.load(TestStorageKey.storedSessions))
         let sessions = try JSONDecoder().decode(StoredSessions.self, from: stored)
         let credentials = try #require(sessions.active)
         #expect(credentials.cookieValue == "second-step-done")
@@ -98,11 +99,11 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
             let url = try #require(request.url)
             let body = try #require(request.httpBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json["code"] == "2HSMP-G9ZSJ")
+            #expect(json["code"] == TestAccount.recoveryCode)
             if let host = url.host {
                 let cookie = try #require(HTTPCookie(properties: [
                     .name: AuthClientConfiguration.CookieName.local,
-                    .value: "abc123",
+                    .value: TestSession.loginCookieValue,
                     .domain: host,
                     .path: "/",
                 ]))
@@ -112,7 +113,7 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
             return try (responseBody, response(statusCode: 200, url: url))
         }
 
-        _ = try await client.loginTOTP(serverURL, "2HSMP-G9ZSJ")
+        _ = try await client.loginTOTP(serverURL, TestAccount.recoveryCode)
     }
 
     @Test("loginTOTP error path: a 401 carrying AUTH_INVALID_TOTP_CODE is invalidCode, nothing persisted")
@@ -125,9 +126,9 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.invalidCode) {
-            _ = try await client.loginTOTP(serverURL, "000000")
+            _ = try await client.loginTOTP(serverURL, TestAccount.invalidTotpCode)
         }
-        #expect(try keychainClient.load("storedSessions") == nil)
+        #expect(try keychainClient.load(TestStorageKey.storedSessions) == nil)
     }
 
     @Test("loginTOTP error path: a 401 for a sign in no longer waiting is secondFactorExpired")
@@ -139,7 +140,7 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.secondFactorExpired) {
-            _ = try await client.loginTOTP(serverURL, "123456")
+            _ = try await client.loginTOTP(serverURL, TestAccount.totpCode)
         }
     }
 
@@ -151,7 +152,7 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.secondFactorExpired) {
-            _ = try await client.loginTOTP(serverURL, "123456")
+            _ = try await client.loginTOTP(serverURL, TestAccount.totpCode)
         }
     }
 
@@ -163,7 +164,7 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.rateLimited) {
-            _ = try await client.loginTOTP(serverURL, "123456")
+            _ = try await client.loginTOTP(serverURL, TestAccount.totpCode)
         }
     }
 
@@ -175,7 +176,7 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.server(statusCode: 500)) {
-            _ = try await client.loginTOTP(serverURL, "123456")
+            _ = try await client.loginTOTP(serverURL, TestAccount.totpCode)
         }
     }
 
@@ -187,18 +188,18 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.decoding("code response had no user")) {
-            _ = try await client.loginTOTP(serverURL, "123456")
+            _ = try await client.loginTOTP(serverURL, TestAccount.totpCode)
         }
     }
 
     @Test("loginTOTP error path: a transport failure is wrapped as network")
     func loginTOTPTransportFailure() async throws {
         let client = makeClient(cookieStorage: makeCookieStorage()) { _ in
-            throw NetworkError.transport("offline")
+            throw NetworkError.transport(TestFailure.offline)
         }
 
         await #expect(throws: AuthClientError.self) {
-            _ = try await client.loginTOTP(serverURL, "123456")
+            _ = try await client.loginTOTP(serverURL, TestAccount.totpCode)
         }
     }
 }

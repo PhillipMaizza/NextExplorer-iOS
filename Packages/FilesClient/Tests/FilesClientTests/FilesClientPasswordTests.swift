@@ -4,13 +4,14 @@ import Dependencies
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// The password routes through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: both share `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     @Suite("Password routes")
     struct PasswordRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -21,7 +22,7 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         // MARK: addOwnPassword
@@ -30,14 +31,14 @@ extension FilesClientLiveTests {
         func addOwnPasswordPostsOnlyThePasswordToTheAddRoute() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.passwordAddedMessage.string())
 
-            try await makeClient().addOwnPassword(serverURL, "brand-new")
+            try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/auth/password/add")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json == ["password": "brand-new"])
+            #expect(json == ["password": Constants.newPassword])
         }
 
         @Test
@@ -45,7 +46,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 409, body: try FilesClientFixture.passwordErrorAlreadyExists.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 409, message: "You already have password authentication.")) {
-                try await makeClient().addOwnPassword(serverURL, "brand-new")
+                try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
             }
         }
 
@@ -63,7 +64,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 429)
 
             await #expect(throws: FilesClientError.rateLimited) {
-                try await makeClient().addOwnPassword(serverURL, "brand-new")
+                try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
             }
         }
 
@@ -72,7 +73,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 502, body: "<html>bad gateway</html>")
 
             await #expect(throws: FilesClientError.server(statusCode: 502)) {
-                try await makeClient().addOwnPassword(serverURL, "brand-new")
+                try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
             }
         }
 
@@ -83,7 +84,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 401, body: try FilesClientFixture.passwordErrorCurrentIncorrect.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "Current password is incorrect.")) {
-                try await makeClient().changeOwnPassword(serverURL, "wrong", "brand-new")
+                try await makeClient().changeOwnPassword(serverURL, TestAccount.wrongPassword, Constants.newPassword)
             }
         }
 
@@ -97,7 +98,7 @@ extension FilesClientLiveTests {
 
             #expect(methods.hasPassword)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/auth/methods")
         }
 
@@ -128,7 +129,7 @@ extension FilesClientLiveTests {
             #expect(!status.isLocalEnabled)
             #expect(status.isOIDCEnabled)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/auth/status")
         }
 
@@ -166,4 +167,8 @@ extension FilesClientLiveTests {
             }
         }
     }
+}
+
+private enum Constants {
+    static let newPassword = "brand-new"
 }

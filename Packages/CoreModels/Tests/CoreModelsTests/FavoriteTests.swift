@@ -20,7 +20,7 @@ struct FavoriteTests {
 
     @Test("happy path: displayName uses the custom label when present")
     func displayNameUsesLabel() {
-        let favorite = makeFavorite(path: "Home/Docs", label: "My Documents")
+        let favorite = makeFavorite(path: TestPath.homeDocs, label: "My Documents")
         #expect(favorite.displayName == "My Documents")
     }
 
@@ -39,7 +39,7 @@ struct FavoriteTests {
     @Test("decodes a full favorites row")
     func decodesFullRow() throws {
         let favorite = try CoreModelsFixture.favoriteFullRow.decode(Favorite.self)
-        #expect(favorite.label == "Docs")
+        #expect(favorite.label == TestFolder.docs)
         #expect(favorite.color == "#FF0000")
         #expect(favorite.position == 2)
     }

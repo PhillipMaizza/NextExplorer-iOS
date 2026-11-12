@@ -9,7 +9,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseInfoAndPermissionsTests {
-    private let photos = BrowseFixtures.folder("Photos")
+    private let photos = BrowseFixtures.folder(TestFolder.photos)
 
     private func metadata(_ item: FileItem, size: Int64 = 0) -> FileMetadata {
         FileMetadata(
@@ -27,7 +27,7 @@ struct BrowseInfoAndPermissionsTests {
     @Test("Info on a folder fetches its metadata and the server's disk usage for its path")
     func infoTappedOnAFolderFetchesMetadataAndServerDiskUsage() async {
         let photosMetadata = metadata(photos, size: 4_096)
-        let usage = StorageUsage(path: "Photos", size: 30, free: 70, total: 100)
+        let usage = StorageUsage(path: TestFolder.photos, size: 30, free: 70, total: 100)
         let usageGate = AsyncGate()
         let usagePaths = LockIsolated<[String]>([])
         let store = BrowseFixtures.store {
@@ -51,12 +51,12 @@ struct BrowseInfoAndPermissionsTests {
         await store.receive(\.infoUsageResponse.success) {
             $0.infoUsage = usage
         }
-        #expect(usagePaths.value == ["Photos"])
+        #expect(usagePaths.value == [TestFolder.photos])
     }
 
     @Test("Info on a file fetches its metadata and skips the disk usage")
     func infoTappedOnAFileSkipsTheUsageFetch() async {
-        let notes = BrowseFixtures.file("notes.txt", size: 12)
+        let notes = BrowseFixtures.file(TestFile.notes, size: 12)
         let notesMetadata = metadata(notes, size: 12)
         let store = BrowseFixtures.store {
             $0.filesClient.fetchMetadata = { _, _ in notesMetadata }
@@ -82,14 +82,14 @@ struct BrowseInfoAndPermissionsTests {
         state.infoUsage = StorageUsage(path: "x", size: 1, free: 1, total: 2)
         let store = BrowseFixtures.store(state)
 
-        await store.send(.infoUsageResponse(.success(StorageUsage(path: "Photos", size: 0, free: 0, total: 0)))) {
+        await store.send(.infoUsageResponse(.success(StorageUsage(path: TestFolder.photos, size: 0, free: 0, total: 0)))) {
             $0.infoUsage = nil
         }
     }
 
     @Test("A failed metadata fetch shows a readable message")
     func infoTappedFailureSurfacesAReadableErrorMessage() async {
-        let notes = BrowseFixtures.file("notes.txt")
+        let notes = BrowseFixtures.file(TestFile.notes)
         let store = BrowseFixtures.store {
             $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.server(statusCode: 403) }
         }
@@ -105,12 +105,12 @@ struct BrowseInfoAndPermissionsTests {
 
     @Test("Info on another item replaces the one showing, dropping its metadata, usage and error")
     func infoTappedOnADifferentItemWhileOneIsAlreadyShowingReplacesIt() async {
-        let documents = BrowseFixtures.folder("Documents")
+        let documents = BrowseFixtures.folder(TestFolder.documents)
         let documentsMetadata = metadata(documents)
         var state = BrowseFixtures.state()
         state.infoItem = photos
         state.infoMetadata = metadata(photos)
-        state.infoUsage = StorageUsage(path: "Photos", size: 1, free: 1, total: 2)
+        state.infoUsage = StorageUsage(path: TestFolder.photos, size: 1, free: 1, total: 2)
         state.infoPhase = .failed("stale error")
         let usageGate = AsyncGate()
         let store = BrowseFixtures.store(state) {
@@ -141,7 +141,7 @@ struct BrowseInfoAndPermissionsTests {
         var state = BrowseFixtures.state()
         state.infoItem = photos
         state.infoMetadata = metadata(photos)
-        state.infoUsage = StorageUsage(path: "Photos", size: 1, free: 1, total: 2)
+        state.infoUsage = StorageUsage(path: TestFolder.photos, size: 1, free: 1, total: 2)
         state.infoPhase = .failed("some error")
         let store = BrowseFixtures.store(state)
 
@@ -157,7 +157,7 @@ struct BrowseInfoAndPermissionsTests {
 
     @Test("Permissions presents the sheet for the item, and dismissing it clears it")
     func permissionsTappedPresentsTheSheetSeededFromTheItemAndDismissClearsIt() async {
-        let report = BrowseFixtures.file("report.pdf", in: "Documents", size: 10)
+        let report = BrowseFixtures.file(TestFile.report, in: TestFolder.documents, size: 10)
         let store = BrowseFixtures.store()
 
         await store.send(.permissionsTapped(report)) {

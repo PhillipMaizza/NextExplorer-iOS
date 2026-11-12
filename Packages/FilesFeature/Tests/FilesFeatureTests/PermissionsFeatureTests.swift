@@ -28,7 +28,7 @@ struct PermissionsFeatureTests {
     private let chmodCalls = LockIsolated<[ChmodCall]>([])
     private let chownCalls = LockIsolated<[ChownCall]>([])
 
-    private func file(_ name: String = "report.pdf", path: String = "Documents", kind: String = "pdf") -> FileItem {
+    private func file(_ name: String = TestFile.report, path: String = TestFolder.documents, kind: String = "pdf") -> FileItem {
         FileItem(name: name, path: path, dateModified: MockDate.date, size: 10, kind: kind)
     }
 
@@ -36,7 +36,7 @@ struct PermissionsFeatureTests {
     private nonisolated func permissions(
         path: String = "Documents/report.pdf",
         mode: Int = 0o100_755,
-        owner: String = "phillip",
+        owner: String = TestAccount.username,
         group: String = "staff",
         isDirectory: Bool = false
     ) -> FilePermissions {
@@ -88,7 +88,7 @@ struct PermissionsFeatureTests {
             $0.phase = .loaded
             $0.permissions = perms
             $0.grid = [.owner: [.read, .write, .execute], .group: [.read, .execute], .others: [.read, .execute]]
-            $0.ownerDraft = "phillip"
+            $0.ownerDraft = TestAccount.username
             $0.groupDraft = "staff"
         }
         #expect(store.state.octalString == "755")
@@ -125,7 +125,7 @@ struct PermissionsFeatureTests {
 
     private func stateShowingAnError() -> PermissionsFeature.State {
         var state = loadedState(permissions())
-        state.actionError = "old"
+        state.actionError = TestValue.outdated
         return state
     }
 
@@ -171,7 +171,7 @@ struct PermissionsFeatureTests {
     func applyModeOnAFolderSendsTheOctalStringAndRecursiveFlagThenReloadsWhatStuck() async {
         let before = permissions(path: "Projects", mode: 0o40_755, isDirectory: true)
         let stuck = permissions(path: "Projects", mode: 0o40_754, isDirectory: true)
-        var state = loadedState(before, item: file("Projects", path: "", kind: "directory"))
+        var state = loadedState(before, item: file("Projects", path: "", kind: FileItem.directoryKind))
         state.recursive = true
         let store = makeStore(state, fetch: { stuck }, chmod: {})
 
@@ -258,7 +258,7 @@ struct PermissionsFeatureTests {
         "Ownership sends only the fields that changed, trimmed",
         arguments: [
             OwnershipCase(owner: "root", group: "staff", sentOwner: "root", sentGroup: nil),
-            OwnershipCase(owner: "phillip", group: "wheel", sentOwner: nil, sentGroup: "wheel"),
+            OwnershipCase(owner: TestAccount.username, group: "wheel", sentOwner: nil, sentGroup: "wheel"),
             OwnershipCase(owner: "root", group: "wheel", sentOwner: "root", sentGroup: "wheel"),
             OwnershipCase(owner: "  root  ", group: "staff", sentOwner: "root", sentGroup: nil),
             OwnershipCase(owner: "", group: "wheel", sentOwner: nil, sentGroup: "wheel"),
@@ -275,7 +275,7 @@ struct PermissionsFeatureTests {
         await store.receive(\.onAppear) { $0.phase = .loading }
         await store.receive(\.permissionsResponse.success) {
             $0.phase = .loaded
-            $0.ownerDraft = "phillip"
+            $0.ownerDraft = TestAccount.username
             $0.groupDraft = "staff"
         }
 
@@ -284,7 +284,7 @@ struct PermissionsFeatureTests {
 
     @Test(
         "Ownership does nothing when no draft differs from the file",
-        arguments: [("phillip", "staff"), ("  phillip ", "staff"), ("", ""), ("   ", "staff")]
+        arguments: [(TestAccount.username, "staff"), ("  phillip ", "staff"), ("", ""), (TestValue.blank, "staff")]
     )
     func applyOwnershipIsANoOpWhenNeitherDraftChanged(owner: String, group: String) async {
         var state = loadedState(permissions())

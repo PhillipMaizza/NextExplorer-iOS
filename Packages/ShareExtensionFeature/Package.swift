@@ -43,6 +43,7 @@ let package = Package(
                 .product(name: "NetworkClient", package: "NetworkClient"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
+            resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

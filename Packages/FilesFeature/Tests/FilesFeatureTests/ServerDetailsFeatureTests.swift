@@ -169,8 +169,8 @@ struct ServerDetailsFeatureTests {
         state.pendingLogoData = Data([0xFF, 0xD8, 0xFF]) // dirty, so only the name gates the save
         let store = TestStore(initialState: state) { ServerDetailsFeature() }
 
-        await store.send(.nameChanged("   ")) {
-            $0.nameDraft = "   "
+        await store.send(.nameChanged(TestValue.blank)) {
+            $0.nameDraft = TestValue.blank
         }
         #expect(store.state.nameError == .empty)
         #expect(store.state.isSaveEnabled == false)

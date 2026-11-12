@@ -1,13 +1,14 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("FileMetadata decoding")
 struct FileMetadataDecodingTests {
     @Test("decodes a plain file with no image/video/directory payload")
     func decodesAPlainFile() throws {
         let metadata = try CoreModelsFixture.fileMetadataPlainFile.decode(FileMetadata.self)
-        #expect(metadata.name == "notes.txt")
+        #expect(metadata.name == TestFile.notes)
         #expect(metadata.isDirectory == false)
         #expect(metadata.directory == nil)
         #expect(metadata.image == nil)

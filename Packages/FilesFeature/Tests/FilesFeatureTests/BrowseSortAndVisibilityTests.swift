@@ -39,22 +39,22 @@ struct BrowseSortAndVisibilityTests {
     private nonisolated static let newer = BrowseFixtures.file("newer.txt", modified: MockDate.date.addingTimeInterval(1_000))
     private nonisolated static let small = BrowseFixtures.file("small.txt", size: 10)
     private nonisolated static let large = BrowseFixtures.file("large.txt", size: 1_000)
-    private nonisolated static let photo = BrowseFixtures.file("photo.jpg")
-    private nonisolated static let notes = BrowseFixtures.file("notes.txt")
-    private nonisolated static let fileA = BrowseFixtures.file("a.txt")
-    private nonisolated static let fileB = BrowseFixtures.file("b.txt")
+    private nonisolated static let photo = BrowseFixtures.file(TestFile.photo)
+    private nonisolated static let notes = BrowseFixtures.file(TestFile.notes)
+    private nonisolated static let fileA = BrowseFixtures.file(TestFile.aText)
+    private nonisolated static let fileB = BrowseFixtures.file(TestFile.bText)
 
     @Test(
         "Files sort within their group by the chosen option and direction",
         arguments: [
-            SortCase(option: .name, direction: .ascending, items: [fileB, fileA], expected: ["a.txt", "b.txt"]),
-            SortCase(option: .name, direction: .descending, items: [fileA, fileB], expected: ["b.txt", "a.txt"]),
+            SortCase(option: .name, direction: .ascending, items: [fileB, fileA], expected: [TestFile.aText, TestFile.bText]),
+            SortCase(option: .name, direction: .descending, items: [fileA, fileB], expected: [TestFile.bText, TestFile.aText]),
             SortCase(option: .size, direction: .ascending, items: [large, small], expected: ["small.txt", "large.txt"]),
             SortCase(option: .size, direction: .descending, items: [small, large], expected: ["large.txt", "small.txt"]),
             SortCase(option: .dateModified, direction: .ascending, items: [newer, older], expected: ["older.txt", "newer.txt"]),
             SortCase(option: .dateModified, direction: .descending, items: [older, newer], expected: ["newer.txt", "older.txt"]),
-            SortCase(option: .kind, direction: .ascending, items: [notes, photo], expected: ["photo.jpg", "notes.txt"]),
-            SortCase(option: .kind, direction: .descending, items: [photo, notes], expected: ["notes.txt", "photo.jpg"]),
+            SortCase(option: .kind, direction: .ascending, items: [notes, photo], expected: [TestFile.photo, TestFile.notes]),
+            SortCase(option: .kind, direction: .descending, items: [photo, notes], expected: [TestFile.notes, TestFile.photo]),
         ]
     )
     func filesSortWithinTheirGroup(_ sort: SortCase) {
@@ -85,10 +85,10 @@ struct BrowseSortAndVisibilityTests {
         let state = makeState(
             sortOption: .size,
             sortDirection: .descending,
-            items: [BrowseFixtures.file("a.txt", size: 100), BrowseFixtures.file("b.txt", size: 100)]
+            items: [BrowseFixtures.file(TestFile.aText, size: 100), BrowseFixtures.file(TestFile.bText, size: 100)]
         )
 
-        #expect(Set(state.displayedItems.map(\.name)) == ["a.txt", "b.txt"])
+        #expect(Set(state.displayedItems.map(\.name)) == [TestFile.aText, TestFile.bText])
         #expect(state.displayedItems.count == 2)
     }
 
@@ -110,7 +110,7 @@ struct BrowseSortAndVisibilityTests {
     func hiddenFilesFollowThePreference(_ hidden: HiddenCase) {
         let state = makeState(
             showHiddenFiles: hidden.showHiddenFiles,
-            items: [BrowseFixtures.file("visible.txt"), BrowseFixtures.file(".hidden", kind: "txt")]
+            items: [BrowseFixtures.file("visible.txt"), BrowseFixtures.file(".hidden", kind: TestKind.text)]
         )
 
         #expect(Set(state.displayedItems.map(\.name)) == hidden.expected)
@@ -121,8 +121,8 @@ struct BrowseSortAndVisibilityTests {
     func displayedSearchResultsFollowThePreference(_ hidden: HiddenCase) {
         var state = makeState(showHiddenFiles: hidden.showHiddenFiles)
         state.searchResults = [
-            SearchResultItem(name: "visible.txt", path: "", kind: "txt"),
-            SearchResultItem(name: ".hidden", path: "", kind: "txt"),
+            SearchResultItem(name: "visible.txt", path: "", kind: TestKind.text),
+            SearchResultItem(name: ".hidden", path: "", kind: TestKind.text),
         ]
 
         #expect(Set(state.displayedSearchResults?.map(\.name) ?? []) == hidden.expected)

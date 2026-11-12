@@ -49,7 +49,7 @@ struct FFmpegSettingsFeatureTests {
 
     @Test
     func loadingSeedsTheDraft() async {
-        let ffmpeg = FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: "/usr/bin/ffprobe")
+        let ffmpeg = FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: "/usr/bin/ffprobe")
         let store = store(settings: { SystemSettings(ffmpeg: ffmpeg) })
 
         await store.send(.onAppear) { $0.phase = .loading }
@@ -125,7 +125,7 @@ struct FFmpegSettingsFeatureTests {
         await store.send(.ffmpegPathChanged("  /usr/bin/ffmpeg ")) { $0.draft.ffmpegPath = "  /usr/bin/ffmpeg " }
         await store.send(.ffprobePathChanged("\t/usr/bin/ffprobe")) { $0.draft.ffprobePath = "\t/usr/bin/ffprobe" }
 
-        #expect(store.state.trimmedDraft == FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: "/usr/bin/ffprobe"))
+        #expect(store.state.trimmedDraft == FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: "/usr/bin/ffprobe"))
     }
 
     @Test
@@ -165,7 +165,7 @@ struct FFmpegSettingsFeatureTests {
 
     @Test
     func emptyPathsAreValidSoAnOverrideCanBeCleared() async {
-        let store = store(state: loadedState(FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg")))
+        let store = store(state: loadedState(FFmpegSettings(ffmpegPath: Constants.ffmpegPath)))
 
         await store.send(.ffmpegPathChanged("")) { $0.draft.ffmpegPath = "" }
 
@@ -240,7 +240,7 @@ struct FFmpegSettingsFeatureTests {
     }
 
     @Test(arguments: [
-        TrimCase(draft: FFmpegSettings(ffmpegPath: "  /usr/bin/ffmpeg ", ffprobePath: ""), trimmed: FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: "")),
+        TrimCase(draft: FFmpegSettings(ffmpegPath: "  /usr/bin/ffmpeg ", ffprobePath: ""), trimmed: FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: "")),
         TrimCase(draft: FFmpegSettings(ffmpegPath: "/a", ffprobePath: "\t/b\t"), trimmed: FFmpegSettings(ffmpegPath: "/a", ffprobePath: "/b")),
         TrimCase(draft: FFmpegSettings(ffmpegPath: " /opt/my tools/ffmpeg", ffprobePath: ""), trimmed: FFmpegSettings(ffmpegPath: "/opt/my tools/ffmpeg", ffprobePath: "")),
     ])
@@ -266,7 +266,7 @@ struct FFmpegSettingsFeatureTests {
             patch: SystemSettingsPatch.FFmpegPatch(ffprobePath: "/opt/ffprobe")
         ),
         PatchCase(
-            loaded: FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: ""),
+            loaded: FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: ""),
             draft: FFmpegSettings(ffmpegPath: "", ffprobePath: ""),
             patch: SystemSettingsPatch.FFmpegPatch(ffmpegPath: "")
         ),
@@ -277,4 +277,8 @@ struct FFmpegSettingsFeatureTests {
 
         #expect(state.patch == testCase.patch)
     }
+}
+
+private enum Constants {
+    static let ffmpegPath = "/usr/bin/ffmpeg"
 }

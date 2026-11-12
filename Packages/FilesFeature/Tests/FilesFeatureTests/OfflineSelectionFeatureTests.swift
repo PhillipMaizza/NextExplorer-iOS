@@ -15,11 +15,11 @@ struct OfflineSelectionFeatureTests {
     private let serverURL = URL(fileURLWithPath: "/")
 
     private nonisolated func folder(_ name: String, path: String = "") -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: "directory")
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
     }
 
     private nonisolated func file(_ name: String, path: String = "", size: Int64 = 100) -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date, size: size, kind: "txt")
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: size, kind: TestKind.text)
     }
 
     private nonisolated func listing(_ items: [FileItem], path: String = "") -> BrowseResult {
@@ -43,8 +43,8 @@ struct OfflineSelectionFeatureTests {
 
     @Test
     func onAppearLoadsFoldersBeforeFiles() async {
-        let docs = folder("Docs")
-        let note = file("a.txt")
+        let docs = folder(TestFolder.docs)
+        let note = file(TestFile.aText)
         let result = listing([note, docs])
         let store = makeStore { $0.filesClient.browse = { _, _ in result } }
 
@@ -59,7 +59,7 @@ struct OfflineSelectionFeatureTests {
     func onAppearDoesNotReloadAScreenThatAlreadyLoaded() async {
         var state = OfflineSelectionFeature.State(serverURL: serverURL)
         state.phase = .loaded
-        state.items = [file("a.txt")]
+        state.items = [file(TestFile.aText)]
         let store = makeStore(state)
 
         await store.send(.onAppear)
@@ -68,7 +68,7 @@ struct OfflineSelectionFeatureTests {
     @Test
     func selectingAFileAddsItsOwnSizeToTheEstimate() async {
         let store = makeStore()
-        let target = file("a.txt", size: 250)
+        let target = file(TestFile.aText, size: 250)
 
         await store.send(.selectionToggled(target)) {
             $0.selection[target.id] = target
@@ -92,29 +92,29 @@ struct OfflineSelectionFeatureTests {
                 return StorageUsage(path: path, size: 5000, free: 0, total: 0)
             }
         }
-        let docs = folder("Docs")
+        let docs = folder(TestFolder.docs)
 
         await store.send(.selectionToggled(docs)) {
             $0.selection[docs.id] = docs
-            $0.estimatingPaths = ["Docs"]
+            $0.estimatingPaths = [TestFolder.docs]
         }
         #expect(store.state.isEstimating)
         await store.receive(\.usageResponse) {
             $0.estimatingPaths = []
-            $0.folderSizes["Docs"] = 5000
+            $0.folderSizes[TestFolder.docs] = 5000
         }
         #expect(store.state.estimatedBytes == 5000)
-        #expect(usagePaths.value == ["Docs"])
+        #expect(usagePaths.value == [TestFolder.docs])
     }
 
     @Test
     func aFolderWhoseSizeCannotBeFetchedStopsCalculatingAndCountsAsZero() async {
         let store = makeStore { $0.filesClient.fetchUsage = { _, _ in throw FilesClientError.server(statusCode: 500) } }
-        let docs = folder("Docs")
+        let docs = folder(TestFolder.docs)
 
         await store.send(.selectionToggled(docs)) {
             $0.selection[docs.id] = docs
-            $0.estimatingPaths = ["Docs"]
+            $0.estimatingPaths = [TestFolder.docs]
         }
         await store.receive(\.usageResponse) { $0.estimatingPaths = [] }
         #expect(!store.state.isEstimating)
@@ -126,14 +126,14 @@ struct OfflineSelectionFeatureTests {
         let store = makeStore {
             $0.filesClient.fetchUsage = { _, _ in
                 try await suspendUntilCancelled()
-                return StorageUsage(path: "Docs", size: 5000, free: 0, total: 0)
+                return StorageUsage(path: TestFolder.docs, size: 5000, free: 0, total: 0)
             }
         }
-        let docs = folder("Docs")
+        let docs = folder(TestFolder.docs)
 
         await store.send(.selectionToggled(docs)) {
             $0.selection[docs.id] = docs
-            $0.estimatingPaths = ["Docs"]
+            $0.estimatingPaths = [TestFolder.docs]
         }
         await store.send(.selectionToggled(docs)) {
             $0.selection[docs.id] = nil
@@ -146,7 +146,7 @@ struct OfflineSelectionFeatureTests {
     @Test
     func anAlreadyPinnedFileCannotBeSelectedOrReQueued() async {
         var state = OfflineSelectionFeature.State(serverURL: serverURL)
-        let cached = file("a.txt", size: 100)
+        let cached = file(TestFile.aText, size: 100)
         state.alreadyOfflineIDs = [cached.id]
         let store = makeStore(state)
 
@@ -158,29 +158,29 @@ struct OfflineSelectionFeatureTests {
     @Test
     func loadMarksFilesAlreadyDownloadedForOffline() async {
         let cachedURL = URL(fileURLWithPath: "/tmp/a.txt")
-        let first = file("a.txt")
-        let second = file("b.txt")
+        let first = file(TestFile.aText)
+        let second = file(TestFile.bText)
         let result = listing([first, second])
         let store = makeStore {
             $0.filesClient.browse = { _, _ in result }
-            $0.offlineFileStore = .inMemory(localURLs: ["a.txt": cachedURL])
+            $0.offlineFileStore = .inMemory(localURLs: [TestFile.aText: cachedURL])
         }
 
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.itemsResponse.success) {
             $0.phase = .loaded
             $0.items = IdentifiedArray(uniqueElements: [first, second])
-            $0.alreadyOfflineIDs = ["a.txt"]
+            $0.alreadyOfflineIDs = [TestFile.aText]
         }
     }
 
     @Test
     func loadMarksPinnedFoldersAndTheirDescendantsAsDownloaded() async {
         let offline = OfflineFileStore.inMemory()
-        offline.setPinnedRoots([OfflinePinnedRoot(path: "Docs", isDirectory: true)])
-        let inside = folder("Sub", path: "Docs")
+        offline.setPinnedRoots([OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true)])
+        let inside = folder("Sub", path: TestFolder.docs)
         let outside = folder("Other", path: "Docs2")
-        let result = listing([inside, outside], path: "Docs")
+        let result = listing([inside, outside], path: TestFolder.docs)
         let store = makeStore {
             $0.filesClient.browse = { _, _ in result }
             $0.offlineFileStore = offline
@@ -197,8 +197,8 @@ struct OfflineSelectionFeatureTests {
     @Test
     func loadMarksAPinnedRootFolderAsDownloaded() async {
         let offline = OfflineFileStore.inMemory()
-        offline.setPinnedRoots([OfflinePinnedRoot(path: "Docs", isDirectory: true)])
-        let docs = folder("Docs")
+        offline.setPinnedRoots([OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true)])
+        let docs = folder(TestFolder.docs)
         let other = folder("Other")
         let result = listing([docs, other])
         let store = makeStore {
@@ -210,25 +210,25 @@ struct OfflineSelectionFeatureTests {
         await store.receive(\.itemsResponse.success) {
             $0.phase = .loaded
             $0.items = IdentifiedArray(uniqueElements: [docs, other])
-            $0.alreadyOfflineIDs = ["Docs"]
+            $0.alreadyOfflineIDs = [TestFolder.docs]
         }
     }
 
     @Test
     func openingAFolderLoadsItAndBackReturnsToTheParent() async {
-        let docs = folder("Docs")
-        let note = file("n.txt", path: "Docs")
+        let docs = folder(TestFolder.docs)
+        let note = file("n.txt", path: TestFolder.docs)
         let browsed = LockIsolated<[String]>([])
         let store = makeStore {
             $0.filesClient.browse = { _, path in
                 browsed.withValue { $0.append(path) }
-                return listing(path == "Docs" ? [note] : [docs], path: path)
+                return listing(path == TestFolder.docs ? [note] : [docs], path: path)
             }
         }
 
         await store.send(.folderTapped(docs)) {
             $0.navigationHistory = [""]
-            $0.directoryPath = "Docs"
+            $0.directoryPath = TestFolder.docs
             $0.phase = .loading
         }
         await store.receive(\.itemsResponse.success) {
@@ -244,13 +244,13 @@ struct OfflineSelectionFeatureTests {
             $0.phase = .loaded
             $0.items = [docs]
         }
-        #expect(browsed.value == ["Docs", ""])
+        #expect(browsed.value == [TestFolder.docs, ""])
     }
 
     @Test
     func confirmEmitsTheSelectedRoots() async {
         var state = OfflineSelectionFeature.State(serverURL: serverURL)
-        let docs = folder("Docs")
+        let docs = folder(TestFolder.docs)
         state.selection = [docs.id: docs]
         let store = makeStore(state)
 

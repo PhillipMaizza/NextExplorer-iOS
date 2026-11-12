@@ -1,6 +1,7 @@
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 /// Exercises `PreviewCacheStore.liveValue` against the real filesystem, same spirit as
 /// `LocalDownloadStoreTests`: the whole point is verifying actual on-disk behavior.
@@ -32,15 +33,15 @@ struct PreviewCacheStoreTests {
         try? FileManager.default.removeItem(at: cacheDirectory)
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
 
-        _ = try writeFile(named: "a.txt", contents: "12345", in: "preview/one")
-        _ = try writeFile(named: "b.txt", contents: "1234567890", in: "download/two")
+        _ = try writeFile(named: TestFile.aText, contents: "12345", in: "preview/one")
+        _ = try writeFile(named: TestFile.bText, contents: "1234567890", in: "download/two")
 
         #expect(try store.size() == 15)
     }
 
     @Test
     func clearRemovesTheWholeCacheDirectory() throws {
-        _ = try writeFile(named: "a.txt", contents: "hello", in: "preview/one")
+        _ = try writeFile(named: TestFile.aText, contents: "hello", in: "preview/one")
 
         try store.clear()
 
@@ -61,7 +62,9 @@ struct PreviewCacheStoreTests {
     func clearIsANoOpWhenTheCacheDirectoryDoesNotExist() throws {
         try? FileManager.default.removeItem(at: cacheDirectory)
 
-        // Should not throw even though there's nothing to remove.
         try store.clear()
+        try store.clear()
+
+        #expect(!FileManager.default.fileExists(atPath: cacheDirectory.path))
     }
 }

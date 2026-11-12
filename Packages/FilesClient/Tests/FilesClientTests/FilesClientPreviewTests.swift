@@ -22,8 +22,8 @@ extension FilesClientLiveTests {
         @Test
         func previewFileLowPriorityFetchesFromPreviewThenSharesTheCacheSlotWithPreviewFile() async throws {
             let item = FileItem(
-                name: "\(TestID.name()).pdf", path: "Docs",
-                dateModified: Date(timeIntervalSince1970: 1), size: 3, kind: "pdf"
+                name: "\(TestID.name()).pdf", path: TestFolder.docs,
+                dateModified: MockDate.date.addingTimeInterval(1), size: 3, kind: TestKind.pdf
             )
             stub(statusCode: 200, body: Data("PDF".utf8))
             let client = makeClient()
@@ -51,21 +51,21 @@ extension FilesClientLiveTests {
         @Test
         func thumbnailURLResolvesAStaticCachedPathAgainstTheServerURL() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.previewThumbnailStaticPath.data())
-            let url = try await makeClient().thumbnailURL(serverURL, "Photos/vacation.jpg")
+            let url = try await makeClient().thumbnailURL(serverURL, Constants.vacationPhoto)
             #expect(url == URL(string: "https://example.com/static/thumbnails/abc123.webp"))
         }
 
         @Test
         func thumbnailURLResolvesThePreviewFallbackPath() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.previewThumbnailPreviewQuery.data())
-            let url = try await makeClient().thumbnailURL(serverURL, "Photos/vacation.jpg")
+            let url = try await makeClient().thumbnailURL(serverURL, Constants.vacationPhoto)
             #expect(url?.absoluteString == "https://example.com/api/preview?path=Photos%2Fvacation.jpg")
         }
 
         @Test
         func thumbnailURLReturnsNilForAnEmptyThumbnailStringRatherThanAnError() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.previewThumbnailEmpty.data())
-            let url = try await makeClient().thumbnailURL(serverURL, "notes.txt")
+            let url = try await makeClient().thumbnailURL(serverURL, TestFile.notes)
             #expect(url == nil)
         }
 
@@ -82,7 +82,7 @@ extension FilesClientLiveTests {
         func thumbnailURLMapsSessionExpiredOn401() async throws {
             stub(statusCode: 401, body: Data())
             await #expect(throws: FilesClientError.sessionExpired) {
-                _ = try await makeClient().thumbnailURL(serverURL, "Photos/vacation.jpg")
+                _ = try await makeClient().thumbnailURL(serverURL, Constants.vacationPhoto)
             }
         }
 
@@ -90,7 +90,7 @@ extension FilesClientLiveTests {
         func previewFileWritesTheResponseBodyToALocalFileNamedAfterTheItem() async throws {
             let body = Data("hello world".utf8)
             stub(statusCode: 200, body: body)
-            let item = uniquePreviewItem(name: "notes.txt")
+            let item = uniquePreviewItem(name: TestFile.notes)
 
             let fileURL = try await makeClient().previewFile(serverURL, item)
 
@@ -114,7 +114,7 @@ extension FilesClientLiveTests {
         func previewFileSendsTheFullPathAsAQueryParameter() async throws {
             stub(statusCode: 200, body: Data())
             StubURLProtocol.capturedRequest = nil
-            let item = uniquePreviewItem(name: "notes.txt", path: "Docs")
+            let item = uniquePreviewItem(name: TestFile.notes, path: TestFolder.docs)
 
             let fileURL = try await makeClient().previewFile(serverURL, item)
 
@@ -127,7 +127,7 @@ extension FilesClientLiveTests {
         @Test
         func previewFileReusesTheCachedFileForAnUnchangedItemWithoutHittingTheNetworkAgain() async throws {
             stub(statusCode: 200, body: Data("first".utf8))
-            let item = uniquePreviewItem(name: "notes.txt")
+            let item = uniquePreviewItem(name: TestFile.notes)
             let firstURL = try await makeClient().previewFile(serverURL, item)
 
             // A second stub with different content: if the cache weren't reused, the returned
@@ -143,7 +143,7 @@ extension FilesClientLiveTests {
         @Test
         func previewFileRedownloadsWhenDateModifiedChangesEvenAtTheSamePath() async throws {
             stub(statusCode: 200, body: Data("first".utf8))
-            let original = uniquePreviewItem(name: "notes.txt")
+            let original = uniquePreviewItem(name: TestFile.notes)
             let firstURL = try await makeClient().previewFile(serverURL, original)
 
             stub(statusCode: 200, body: Data("second".utf8))
@@ -173,7 +173,7 @@ extension FilesClientLiveTests {
             // A hostile directory listing returns a name that would climb out of the cache dir.
             let item = FileItem(
                 name: "../../../../\(TestID.name())-escape.txt",
-                path: "Docs/\(TestID.name())", dateModified: MockDate.date, size: 0, kind: "txt"
+                path: "Docs/\(TestID.name())", dateModified: MockDate.date, size: 0, kind: TestKind.text
             )
 
             let fileURL = try await makeClient().previewFile(serverURL, item).standardizedFileURL
@@ -224,4 +224,8 @@ extension FilesClientLiveTests {
             #expect(!FileManager.default.fileExists(atPath: fileURL.path))
         }
     }
+}
+
+private enum Constants {
+    static let vacationPhoto = "Photos/vacation.jpg"
 }

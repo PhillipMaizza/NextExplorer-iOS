@@ -22,29 +22,29 @@ extension ShareUploadFeatureTests {
             } withDependencies: {
                 $0.sharedItems.count = { 2 }
                 $0.sharedItems.prepare = { _, _, indexes, _ in
-                    calls.record(indexes: indexes, folder: "Photos")
+                    calls.record(indexes: indexes, folder: TestFolder.photos)
                     if let error = firstError() {
                         throw error
                     }
                     return PreparationReport(stagedCount: 2, failures: [])
                 }
                 $0.sharedItems.start = {
-                    calls.record("start")
+                    calls.record(ShareExtensionFeatureTestValue.startCall)
                     return 2
                 }
-                $0.sharedItems.discard = { calls.record("discard") }
+                $0.sharedItems.discard = { calls.record(ShareExtensionFeatureTestValue.discardCall) }
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in Self.user }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos")])
+                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
                 $0.continuousClock = TestClock()
             }
         }
 
         @Test
         func theHandOffHasItsOwnPhaseSoClosingDoesNotCountAsHavingStagedFiles() async {
-            let store = store(defaults: UploadDefaults(folderPath: "Photos"))
-            await becomeReady(store, folder: "Photos")
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos))
+            await becomeReady(store, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 3
@@ -63,14 +63,14 @@ extension ShareUploadFeatureTests {
         func oneUnreadableItemDoesNotDiscardTheRest() async {
             let calls = Calls()
             let announcements = LockIsolated<[String]>([])
-            let failures = [ItemFailure(index: 1, name: "IMG_0042.MOV", cause: .cannotRead)]
+            let failures = [ItemFailure(index: 1, name: ShareExtensionFeatureTestValue.movieName, cause: .cannotRead)]
             let store = store(
-                defaults: UploadDefaults(folderPath: "Photos"),
+                defaults: UploadDefaults(folderPath: TestFolder.photos),
                 calls: calls,
                 report: PreparationReport(stagedCount: 2, failures: failures),
                 announcements: announcements
             )
-            await becomeReady(store, folder: "Photos")
+            await becomeReady(store, folder: TestFolder.photos)
 
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
@@ -82,8 +82,8 @@ extension ShareUploadFeatureTests {
                 $0.failures = failures
             }
             await store.finish()
-            #expect(calls.all == ["prepare"], "nothing is sent and nothing is discarded while the user decides")
-            #expect(store.state.failures.map(\.name) == ["IMG_0042.MOV"], "the file is named")
+            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall], "nothing is sent and nothing is discarded while the user decides")
+            #expect(store.state.failures.map(\.name) == [ShareExtensionFeatureTestValue.movieName], "the file is named")
             #expect(announcements.value == [L10n.ShareUpload.failedItemsHeader])
 
             await store.send(.uploadReadyTapped) {
@@ -91,7 +91,7 @@ extension ShareUploadFeatureTests {
                 $0.progress = PreparationProgress(completed: 3)
             }
             await store.receive(\.uploadResponse.success) { $0.phase = .started }
-            #expect(calls.all == ["prepare", "start"])
+            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.startCall])
             await store.send(.viewDisappeared)
         }
 
@@ -103,8 +103,8 @@ extension ShareUploadFeatureTests {
                 ItemFailure(index: 4, name: "b.pdf", cause: .notEnoughSpace),
             ]
             let report = PreparationReport(stagedCount: 4, failures: failures)
-            let store = store(count: 6, defaults: UploadDefaults(folderPath: "Photos"), calls: calls, report: report)
-            await becomeReady(store, count: 6, folder: "Photos")
+            let store = store(count: 6, defaults: UploadDefaults(folderPath: TestFolder.photos), calls: calls, report: report)
+            await becomeReady(store, count: 6, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 6
@@ -143,23 +143,23 @@ extension ShareUploadFeatureTests {
                         value += 1
                         return value
                     }
-                    calls.record("prepare")
+                    calls.record(ShareExtensionFeatureTestValue.prepareCall)
                     return pass == 1
                         ? PreparationReport(stagedCount: 2, failures: failed)
                         : PreparationReport(stagedCount: 3, failures: [])
                 }
                 $0.sharedItems.start = {
-                    calls.record("start")
+                    calls.record(ShareExtensionFeatureTestValue.startCall)
                     return 3
                 }
-                $0.sharedItems.discard = { calls.record("discard") }
+                $0.sharedItems.discard = { calls.record(ShareExtensionFeatureTestValue.discardCall) }
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in Self.user }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos")])
+                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
                 $0.continuousClock = TestClock()
             }
-            await becomeReady(store, folder: "Photos")
+            await becomeReady(store, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 3
@@ -179,7 +179,7 @@ extension ShareUploadFeatureTests {
                 $0.phase = .handingOff
             }
             await store.receive(\.uploadResponse.success) { $0.phase = .started }
-            #expect(calls.all == ["prepare", "prepare", "start"])
+            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.startCall])
             await store.send(.viewDisappeared)
         }
 
@@ -192,11 +192,11 @@ extension ShareUploadFeatureTests {
             let calls = Calls()
             let store = store(
                 count: 2,
-                defaults: UploadDefaults(folderPath: "Photos"),
+                defaults: UploadDefaults(folderPath: TestFolder.photos),
                 calls: calls,
                 report: PreparationReport(stagedCount: 0, failures: failures)
             )
-            await becomeReady(store, count: 2, folder: "Photos")
+            await becomeReady(store, count: 2, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 2
@@ -207,7 +207,7 @@ extension ShareUploadFeatureTests {
             }
             await store.finish()
             #expect(store.state.failures.map(\.cause) == [.cannotRead, .notEnoughSpace])
-            #expect(!calls.all.contains("start"))
+            #expect(!calls.all.contains(ShareExtensionFeatureTestValue.startCall))
         }
 
         @Test
@@ -215,7 +215,7 @@ extension ShareUploadFeatureTests {
             let calls = Calls()
             let shouldFail = LockIsolated(true)
             let store = failingFirstPassStore(calls: calls) { shouldFail.value ? CocoaError(.fileWriteUnknown) : nil }
-            await becomeReady(store, count: 2, folder: "Photos")
+            await becomeReady(store, count: 2, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 2
@@ -237,7 +237,7 @@ extension ShareUploadFeatureTests {
             await store.receive(\.uploadResponse.success) { $0.phase = .started }
             #expect(calls.preparedIndexes.last == .some(nil), "no named failures: every item is read again")
             #expect(
-                calls.all == ["prepare", "discard", "discard", "prepare", "start"],
+                calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall, ShareExtensionFeatureTestValue.discardCall, ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.startCall],
                 "the old batch is dropped before the new pass creates its own, never after"
             )
             await store.send(.viewDisappeared)
@@ -247,7 +247,7 @@ extension ShareUploadFeatureTests {
         func aPassThatGivesUpOnItsOwnIsAFailureNotAnEndlessPreparing() async {
             let calls = Calls()
             let store = failingFirstPassStore(calls: calls) { CancellationError() }
-            await becomeReady(store, count: 2, folder: "Photos")
+            await becomeReady(store, count: 2, folder: TestFolder.photos)
 
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
@@ -256,25 +256,25 @@ extension ShareUploadFeatureTests {
             await store.receive(\.preparationFinished.failure) { $0.phase = .failed }
             await store.finish()
 
-            #expect(calls.all == ["prepare", "discard"])
+            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall])
         }
 
         @Test
         func aBatchWithNothingInItIsNothingToUpload() async {
             let calls = Calls()
             let store = store(
-                defaults: UploadDefaults(folderPath: "Photos"),
+                defaults: UploadDefaults(folderPath: TestFolder.photos),
                 calls: calls,
                 report: PreparationReport(stagedCount: 0, failures: [])
             )
-            await becomeReady(store, folder: "Photos")
+            await becomeReady(store, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 3
             }
             await store.receive(\.preparationFinished) { $0.phase = .nothingToUpload }
             await store.finish()
-            #expect(calls.all == ["prepare", "discard"])
+            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall])
         }
 
         @Test

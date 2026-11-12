@@ -4,13 +4,14 @@ import Dependencies
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// The second factor routes through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: both share `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     @Suite("Two factor routes")
     struct TwoFactorRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -21,7 +22,7 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         private func sentJSON() throws -> [String: String] {
@@ -38,7 +39,7 @@ extension FilesClientLiveTests {
             #expect(status.isEnabled)
             #expect(status.recoveryCodesLeft == 5)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/auth/totp")
         }
 
@@ -48,9 +49,9 @@ extension FilesClientLiveTests {
 
             let setup = try await makeClient().beginTwoFactorSetup(serverURL)
 
-            #expect(setup.secret == "JBSWY3DPEHPK3PXP")
+            #expect(setup.secret == TestAccount.totpSecret)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/auth/totp/start")
             #expect(try sentJSON().isEmpty)
         }
@@ -77,13 +78,13 @@ extension FilesClientLiveTests {
         func confirmingPostsTheCodeAndReturnsTheRecoveryCodes() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.twoFactorRecoveryCodesTwo.string())
 
-            let codes = try await makeClient().confirmTwoFactorSetup(serverURL, "123456")
+            let codes = try await makeClient().confirmTwoFactorSetup(serverURL, TestAccount.totpCode)
 
             #expect(codes == ["AAAAA-BBBBB", "CCCCC-DDDDD"])
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/auth/totp/confirm")
-            #expect(try sentJSON() == ["code": "123456"])
+            #expect(try sentJSON() == ["code": TestAccount.totpCode])
         }
 
         @Test
@@ -91,7 +92,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 401, body: try FilesClientFixture.twoFactorErrorInvalidCode.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "Invalid code")) {
-                try await makeClient().confirmTwoFactorSetup(serverURL, "000000")
+                try await makeClient().confirmTwoFactorSetup(serverURL, TestAccount.invalidTotpCode)
             }
         }
 
@@ -100,7 +101,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 200, body: try FilesClientFixture.commonUnexpectedKeyUnexpected.string())
 
             await #expect(throws: FilesClientError.self) {
-                try await makeClient().confirmTwoFactorSetup(serverURL, "123456")
+                try await makeClient().confirmTwoFactorSetup(serverURL, TestAccount.totpCode)
             }
         }
 
@@ -108,25 +109,25 @@ extension FilesClientLiveTests {
         func replacingRecoveryCodesPostsThePassword() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.twoFactorRecoveryCodesOne.string())
 
-            let codes = try await makeClient().replaceRecoveryCodes(serverURL, "hunter2")
+            let codes = try await makeClient().replaceRecoveryCodes(serverURL, TestAccount.password)
 
             #expect(codes == ["EEEEE-FFFFF"])
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/auth/totp/recovery-codes")
-            #expect(try sentJSON() == ["password": "hunter2"])
+            #expect(try sentJSON() == ["password": TestAccount.password])
         }
 
         @Test
         func disablingSendsADeleteWithThePasswordInTheBody() async throws {
             stub(statusCode: 204)
 
-            try await makeClient().disableTwoFactor(serverURL, "hunter2")
+            try await makeClient().disableTwoFactor(serverURL, TestAccount.password)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "DELETE")
+            #expect(request.httpMethod == HTTPMethod.delete.rawValue)
             #expect(request.url?.path == "/api/auth/totp")
-            #expect(try sentJSON() == ["password": "hunter2"])
+            #expect(try sentJSON() == ["password": TestAccount.password])
         }
 
         @Test
@@ -134,7 +135,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 401, body: try FilesClientFixture.twoFactorErrorIncorrectPassword.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "Incorrect password")) {
-                try await makeClient().disableTwoFactor(serverURL, "nope")
+                try await makeClient().disableTwoFactor(serverURL, TestAccount.rejectedPassword)
             }
         }
 
@@ -143,7 +144,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 429)
 
             await #expect(throws: FilesClientError.rateLimited) {
-                try await makeClient().confirmTwoFactorSetup(serverURL, "123456")
+                try await makeClient().confirmTwoFactorSetup(serverURL, TestAccount.totpCode)
             }
         }
     }

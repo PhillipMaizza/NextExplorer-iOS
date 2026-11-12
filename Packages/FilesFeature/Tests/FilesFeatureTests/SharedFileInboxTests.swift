@@ -41,8 +41,8 @@ struct SharedFileInboxTests {
     }
 
     private func browseStore(
-        directoryPath: String = "Documents",
-        title: String = "Documents",
+        directoryPath: String = TestFolder.documents,
+        title: String = TestFolder.documents,
         state configure: (inout BrowseFeature.State) -> Void = { _ in },
         dependencies: (inout DependencyValues) -> Void
     ) -> TestStoreOf<BrowseFeature> {
@@ -103,7 +103,7 @@ struct SharedFileInboxTests {
     func sharedFilesGoToTheTopmostPushedScreen() async {
         let file = Self.picked("Scan.pdf")
         var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents"))
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.documents, title: TestFolder.documents))
         let store = TestStore(initialState: state) {
             BrowseTabFeature()
         } withDependencies: {
@@ -113,7 +113,7 @@ struct SharedFileInboxTests {
         await store.send(.receiveSharedFiles([scan]))
         await store.receive(\.path[id: 0].receiveSharedFiles)
         await store.receive(\.path[id: 0].reviewSharedFiles) {
-            $0.path[id: 0]?.uploadReview = Review(serverURL: serverURL, startingDestination: "Documents")
+            $0.path[id: 0]?.uploadReview = Review(serverURL: serverURL, startingDestination: TestFolder.documents)
         }
         await store.receive(\.path[id: 0].uploadReview.presented.stage) {
             $0.path[id: 0]?.uploadReview?.preparingCount = 1
@@ -130,7 +130,7 @@ struct SharedFileInboxTests {
     func moreSharedFilesJoinTheReviewAlreadyOpen() async {
         let file = Self.picked("Receipt.jpg")
         let store = browseStore(
-            state: { $0.uploadReview = Review(serverURL: serverURL, startingDestination: "Documents") },
+            state: { $0.uploadReview = Review(serverURL: serverURL, startingDestination: TestFolder.documents) },
             dependencies: { $0.uploadStaging = Self.staging([file]) }
         )
 
@@ -155,7 +155,7 @@ struct SharedFileInboxTests {
         let store = browseStore(
             directoryPath: "",
             title: "Browse",
-            state: { $0.previewItem = FileItem(name: "Notes.txt", path: "", dateModified: MockDate.date, size: 1, kind: "txt") },
+            state: { $0.previewItem = FileItem(name: "Notes.txt", path: "", dateModified: MockDate.date, size: 1, kind: TestKind.text) },
             dependencies: { $0.uploadStaging = Self.staging([file]) }
         )
 
@@ -233,7 +233,7 @@ struct SharedFileInboxTests {
 
         await store.send(.receiveSharedFiles([scan]))
         await store.receive(\.reviewSharedFiles) {
-            $0.uploadReview = Review(serverURL: serverURL, startingDestination: "Documents")
+            $0.uploadReview = Review(serverURL: serverURL, startingDestination: TestFolder.documents)
         }
         await receiveStaging(store, file)
     }

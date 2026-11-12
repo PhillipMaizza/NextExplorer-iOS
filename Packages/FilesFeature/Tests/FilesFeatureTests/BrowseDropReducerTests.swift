@@ -185,13 +185,13 @@ struct BrowseDropReducerTests {
     func droppedFilesUploadIntoTheTargetFolder() async {
         let url = URL(fileURLWithPath: "/tmp/a.jpg")
         let store = BrowseFixtures.store(state(items: [archive])) {
-            $0.uploadStaging = staging([stagedFile("a.jpg")])
+            $0.uploadStaging = staging([stagedFile(TestFile.aPhoto)])
         }
 
         await store.send(.filesDroppedOnFolder([url], folder: archive))
         await store.receive(\.directUploadStaged)
         await store.receive(.delegate(.uploadRequested([
-            PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg", destination: "Docs/Archive"),
+            PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: TestFile.aPhoto, destination: "Docs/Archive"),
         ])))
     }
 

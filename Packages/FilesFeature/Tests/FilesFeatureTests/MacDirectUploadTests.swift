@@ -1,3 +1,4 @@
+import TestUtils
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
@@ -10,10 +11,10 @@
     @Suite(.isolatedDependencies)
     @MainActor
     struct MacDirectUploadTests {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func state(directoryPath: String) -> BrowseFeature.State {
-            BrowseFeature.State(serverURL: serverURL, directoryPath: directoryPath, title: "Docs")
+            BrowseFeature.State(serverURL: serverURL, directoryPath: directoryPath, title: TestFolder.docs)
         }
 
         private nonisolated func picked(_ name: String, id: UUID) -> PickedFile {
@@ -39,8 +40,8 @@
 
         @Test
         func droppedFilesUploadToTheFolderOnScreenWithoutTheReviewSheet() async {
-            let files = [picked("a.jpg", id: UUID(0)), picked("b.txt", id: UUID(1))]
-            let store = TestStore(initialState: state(directoryPath: "Documents")) {
+            let files = [picked(TestFile.aPhoto, id: UUID(0)), picked(TestFile.bText, id: UUID(1))]
+            let store = TestStore(initialState: state(directoryPath: TestFolder.documents)) {
                 BrowseFeature()
             } withDependencies: {
                 $0.uploadStaging = staging(files)
@@ -54,7 +55,7 @@
 
         @Test
         func nothingStagedShowsTheStagingError() async {
-            let store = TestStore(initialState: state(directoryPath: "Documents")) {
+            let store = TestStore(initialState: state(directoryPath: TestFolder.documents)) {
                 BrowseFeature()
             } withDependencies: {
                 $0.uploadStaging = staging([])

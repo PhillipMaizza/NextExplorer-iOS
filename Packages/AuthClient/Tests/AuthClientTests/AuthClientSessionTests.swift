@@ -4,6 +4,7 @@ import Foundation
 import Keychain
 import NetworkClient
 import Testing
+import TestUtils
 
 @Suite("AuthClient sessions")
 struct AuthClientSessionTests: AuthClientLiveHarness {
@@ -17,7 +18,7 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
             return try (body, response(statusCode: 200, url: url))
         }
         let user = try await client.me(serverURL)
-        #expect(user.username == "phillip")
+        #expect(user.username == TestAccount.username)
         #expect(user.isAdmin == true)
     }
 
@@ -50,31 +51,31 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
             serverBaseURL: serverURL,
             authMode: .local,
             cookieName: AuthClientConfiguration.CookieName.local,
-            cookieValue: "restored-value",
+            cookieValue: Constants.restoredValue,
             cookieDomain: #require(serverURL.host),
             cookiePath: "/",
             cookieIsSecure: false,
             expiresAt: nil,
-            username: "phillip"
+            username: TestAccount.username
         )
-        try keychainClient.save("currentSession", JSONEncoder().encode(credentials))
+        try keychainClient.save(TestStorageKey.legacySession, JSONEncoder().encode(credentials))
 
         let cookieStorage = makeCookieStorage()
         let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { _ in
-            throw NetworkError.transport("should not be called")
+            throw NetworkError.transport(Constants.unexpectedCallMessage)
         }
 
         let restored = try #require(await client.restoreSession())
-        #expect(restored.cookieValue == "restored-value")
+        #expect(restored.cookieValue == Constants.restoredValue)
 
         let installedCookies = try #require(cookieStorage.cookies(for: serverURL))
-        #expect(installedCookies.contains { $0.value == "restored-value" })
+        #expect(installedCookies.contains { $0.value == Constants.restoredValue })
     }
 
     @Test("restoreSession edge case: nothing persisted returns nil")
     func restoreSessionNothingPersisted() async {
         let client = makeClient(cookieStorage: makeCookieStorage()) { _ in
-            throw NetworkError.transport("should not be called")
+            throw NetworkError.transport(Constants.unexpectedCallMessage)
         }
         let restored = await client.restoreSession()
         #expect(restored == nil)
@@ -83,13 +84,13 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
     @Test("clearAllSessions removes the persisted credentials")
     func clearAllSessionsRemovesPersisted() async throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("storedSessions", Data("placeholder".utf8))
+        try keychainClient.save(TestStorageKey.storedSessions, Data("placeholder".utf8))
 
         let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { _ in
-            throw NetworkError.transport("should not be called")
+            throw NetworkError.transport(Constants.unexpectedCallMessage)
         }
         await client.clearAllSessions()
-        #expect(try keychainClient.load("storedSessions") == nil)
+        #expect(try keychainClient.load(TestStorageKey.storedSessions) == nil)
     }
 
     @Test("logout edge case: server unreachable is swallowed (best-effort) and the local session is left to removeAccount")
@@ -102,7 +103,7 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
         let attempts = RecordedPaths()
         let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { request in
             attempts.add(request.url?.path ?? "")
-            throw NetworkError.transport("offline")
+            throw NetworkError.transport(TestFailure.offline)
         }
 
         try await client.logout(serverURL)
@@ -120,7 +121,7 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
         let store = SessionCookieStore(keychainClient: keychainClient, cookieStorage: cookieStorage)
         try store.persist(credentials)
         let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { _ in
-            throw NetworkError.transport("offline")
+            throw NetworkError.transport(TestFailure.offline)
         }
 
         let next = await client.removeAccount(credentials.accountID)
@@ -197,7 +198,7 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
     @Test("loadSession throws when the stored blob can't be decoded")
     func loadSessionCorruptBlob() async throws {
         let keychain = KeychainClient.inMemory()
-        try keychain.save("storedSessions", Data("not json".utf8))
+        try keychain.save(TestStorageKey.storedSessions, Data("not json".utf8))
         let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychain, handler: okHandler())
 
         await #expect(throws: AuthClientError.self) {
@@ -218,4 +219,9 @@ private final class RecordedPaths: @unchecked Sendable {
     func add(_ path: String) {
         lock.withLock { stored.append(path) }
     }
+}
+
+private enum Constants {
+    static let restoredValue = "restored-value"
+    static let unexpectedCallMessage = "should not be called"
 }

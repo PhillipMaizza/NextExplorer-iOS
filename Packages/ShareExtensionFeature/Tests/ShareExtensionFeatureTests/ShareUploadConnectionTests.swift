@@ -41,8 +41,8 @@ extension ShareUploadFeatureTests {
                 $0.authClient.me = { _ in Self.user }
                 $0.filesClient.browse = browse
                 $0.uploadDefaults = .inMemory([
-                    SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true),
-                    SessionCredentials.previewSecond.accountID: UploadDefaults(folderPath: "Family"),
+                    SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true),
+                    SessionCredentials.previewSecond.accountID: UploadDefaults(folderPath: Constants.familyFolder),
                 ])
                 $0.cookieStorage = cookies
             }
@@ -66,13 +66,13 @@ extension ShareUploadFeatureTests {
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in throw error }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true)])
+                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true)])
             }
             await store.send(.onAppear) { $0.itemCount = 1 }
             await store.receive(\.accountsLoaded) { $0.accounts = [.preview] }
             await store.receive(\.sessionLoaded) {
                 $0.credentials = .preview
-                $0.destination = "Photos"
+                $0.destination = TestFolder.photos
                 $0.shouldUploadWithoutAsking = true
                 $0.phase = .checking
             }
@@ -116,7 +116,7 @@ extension ShareUploadFeatureTests {
             var state = ShareUploadFeature.State()
             state.phase = .checking
             state.credentials = .previewSecond
-            state.destination = "Family"
+            state.destination = Constants.familyFolder
             let store = TestStore(initialState: state) { ShareUploadFeature() }
             let stale = SessionCredentials.preview.accountID
 
@@ -146,16 +146,16 @@ extension ShareUploadFeatureTests {
                 $0.sharedItems.start = { 1 }
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
-                $0.authClient.me = { _ in throw AuthClientError.network("offline") }
+                $0.authClient.me = { _ in throw AuthClientError.network(TestFailure.offline) }
                 $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true)])
+                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true)])
                 $0.continuousClock = ImmediateClock()
             }
             await store.send(.onAppear) { $0.itemCount = 1 }
             await store.receive(\.accountsLoaded) { $0.accounts = [.preview] }
             await store.receive(\.sessionLoaded) {
                 $0.credentials = .preview
-                $0.destination = "Photos"
+                $0.destination = TestFolder.photos
                 $0.shouldUploadWithoutAsking = true
                 $0.phase = .checking
             }
@@ -171,7 +171,7 @@ extension ShareUploadFeatureTests {
             }
             await store.receive(\.uploadResponse.success) { $0.phase = .started }
             await store.receive(.delegate(.close(completed: true)))
-            #expect(calls.folders == ["Photos"], "the background upload waits for the network")
+            #expect(calls.folders == [TestFolder.photos], "the background upload waits for the network")
         }
 
         @Test
@@ -192,13 +192,13 @@ extension ShareUploadFeatureTests {
                     try await gate.wait()
                     throw AuthClientError.clientCertificateRequired
                 }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos")])
+                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
             }
             await store.send(.onAppear) { $0.itemCount = 1 }
             await store.receive(\.accountsLoaded) { $0.accounts = [.preview] }
             await store.receive(\.sessionLoaded) {
                 $0.credentials = .preview
-                $0.destination = "Photos"
+                $0.destination = TestFolder.photos
                 $0.phase = .checking
             }
             await store.send(.uploadTapped)
@@ -220,8 +220,8 @@ extension ShareUploadFeatureTests {
                 $0.authClient.listSessions = { [.preview, .previewSecond] }
                 $0.authClient.me = { _ in Self.user }
                 $0.uploadDefaults = .inMemory([
-                    SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos"),
-                    SessionCredentials.previewSecond.accountID: UploadDefaults(folderPath: "Family", shouldUploadWithoutAsking: true),
+                    SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos),
+                    SessionCredentials.previewSecond.accountID: UploadDefaults(folderPath: Constants.familyFolder, shouldUploadWithoutAsking: true),
                 ])
                 $0.cookieStorage = cookies
             }
@@ -229,7 +229,7 @@ extension ShareUploadFeatureTests {
             await store.receive(\.accountsLoaded) { $0.accounts = [.preview, .previewSecond] }
             await store.receive(\.sessionLoaded) {
                 $0.credentials = .preview
-                $0.destination = "Photos"
+                $0.destination = TestFolder.photos
                 $0.phase = .checking
             }
             await store.receive(\.connectionChecked) { $0.phase = .ready }
@@ -237,7 +237,7 @@ extension ShareUploadFeatureTests {
 
             await store.send(.accountSelected(SessionCredentials.previewSecond.accountID)) {
                 $0.credentials = .previewSecond
-                $0.destination = "Family"
+                $0.destination = Constants.familyFolder
                 $0.phase = .checking
             }
             await store.receive(\.connectionChecked) { $0.phase = .ready }
@@ -256,7 +256,7 @@ extension ShareUploadFeatureTests {
             }
             await store.receive(\.connectionChecked) { $0.phase = .ready }
             #expect(!store.state.canChooseAccount)
-            await store.send(.accountSelected("someone else"))
+            await store.send(.accountSelected(TestUser.someoneElse))
             #expect(store.state.credentials == .preview)
         }
 
@@ -272,7 +272,7 @@ extension ShareUploadFeatureTests {
             await store.receive(\.accountsLoaded) { $0.accounts = [.preview, .previewSecond] }
             await store.receive(\.sessionLoaded) {
                 $0.credentials = .preview
-                $0.destination = "Photos"
+                $0.destination = TestFolder.photos
                 $0.shouldUploadWithoutAsking = true
                 $0.phase = .checking
             }
@@ -280,7 +280,7 @@ extension ShareUploadFeatureTests {
 
             await store.send(.accountSelected(SessionCredentials.previewSecond.accountID)) {
                 $0.credentials = .previewSecond
-                $0.destination = "Family"
+                $0.destination = Constants.familyFolder
                 $0.shouldUploadWithoutAsking = false
             }
             gate.open()
@@ -290,7 +290,7 @@ extension ShareUploadFeatureTests {
             #expect(calls.all.isEmpty, "the first account's folder result must not start an upload to the second")
             #expect(store.state.phase == .ready)
             #expect(store.state.credentials == .previewSecond)
-            #expect(store.state.destination == "Family")
+            #expect(store.state.destination == Constants.familyFolder)
         }
 
         @Test
@@ -298,13 +298,13 @@ extension ShareUploadFeatureTests {
             var state = ShareUploadFeature.State()
             state.phase = .checking
             state.credentials = .previewSecond
-            state.destination = "Family"
+            state.destination = Constants.familyFolder
             let checking = TestStore(initialState: state) { ShareUploadFeature() }
 
             await checking.send(.defaultFolderChecked(accountID: SessionCredentials.preview.accountID, .usable))
             await checking.send(.defaultFolderChecked(accountID: SessionCredentials.preview.accountID, .unavailable))
             await checking.send(.defaultFolderChecked(accountID: SessionCredentials.preview.accountID, .signedOut))
-            #expect(checking.state.destination == "Family", "another account's missing folder never wipes this one's")
+            #expect(checking.state.destination == Constants.familyFolder, "another account's missing folder never wipes this one's")
             #expect(checking.state.folderPicker == nil)
             #expect(checking.state.phase == .checking)
 
@@ -313,4 +313,8 @@ extension ShareUploadFeatureTests {
             }
         }
     }
+}
+
+private enum Constants {
+    static let familyFolder = "Family"
 }

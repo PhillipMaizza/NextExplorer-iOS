@@ -13,7 +13,7 @@ struct BrowsePreviewTests {
 
     @Test("Tapping a folder asks the screen above to open it")
     func rowTappedOnDirectoryEmitsOpenFolderDelegate() async {
-        let item = BrowseFixtures.folder("Docs")
+        let item = BrowseFixtures.folder(TestFolder.docs)
         let store = BrowseFixtures.store()
 
         await store.send(.rowTapped(item))
@@ -34,7 +34,7 @@ struct BrowsePreviewTests {
             ViewerCase(name: "clip.webm", reason: "streamable but not natively playable"),
             ViewerCase(name: "bundle.7z", reason: "an archive the app cannot list"),
             ViewerCase(name: "clip.mp4", reason: "streamable media plays live"),
-            ViewerCase(name: "bundle.zip", reason: "a browsable archive lists itself"),
+            ViewerCase(name: FilesFeatureTestValue.bundleName, reason: "a browsable archive lists itself"),
         ]
     )
     func rowTappedOnAFileThatNeedsNoFetchSetsOnlyThePreviewItem(_ viewer: ViewerCase) async {
@@ -49,7 +49,7 @@ struct BrowsePreviewTests {
 
     @Test("A text file shows its viewer at once and fetches the text, without any delegate")
     func rowTappedOnATextFileFetchesItsContentAndEmitsNoDelegate() async {
-        let file = BrowseFixtures.file("notes.txt", size: 10)
+        let file = BrowseFixtures.file(TestFile.notes, size: 10)
         let store = BrowseFixtures.store {
             $0.filesClient.fetchTextContent = { _, _ in "hello world" }
         }
@@ -66,7 +66,7 @@ struct BrowsePreviewTests {
 
     @Test("A text file that fails to fetch shows a readable message")
     func rowTappedOnATextFileFailingToFetchSurfacesAReadableErrorMessage() async {
-        let file = BrowseFixtures.file("notes.txt", size: 10)
+        let file = BrowseFixtures.file(TestFile.notes, size: 10)
         let store = BrowseFixtures.store {
             $0.filesClient.fetchTextContent = { _, _ in throw FilesClientError.server(statusCode: 500) }
         }
@@ -91,7 +91,7 @@ struct BrowsePreviewTests {
     @Test(
         "A previewable document or an SVG downloads through the preview endpoint, a Word document through the unrestricted download",
         arguments: [
-            DownloadCase(name: "report.pdf", endpoint: "previewFile", fileURL: URL(fileURLWithPath: "/tmp/report.pdf")),
+            DownloadCase(name: TestFile.report, endpoint: "previewFile", fileURL: URL(fileURLWithPath: "/tmp/report.pdf")),
             DownloadCase(name: "logo.svg", endpoint: "previewFile", fileURL: URL(fileURLWithPath: "/tmp/logo.svg")),
             DownloadCase(name: "report.docx", endpoint: "downloadRawFile", fileURL: URL(fileURLWithPath: "/tmp/report.docx")),
         ]
@@ -123,7 +123,7 @@ struct BrowsePreviewTests {
 
     @Test("A failed preview download shows a readable message")
     func aFailedPreviewDownloadSurfacesAReadableErrorMessage() async {
-        let file = BrowseFixtures.file("report.pdf", size: 10)
+        let file = BrowseFixtures.file(TestFile.report, size: 10)
         let store = BrowseFixtures.store {
             $0.filesClient.previewFile = { _, _ in throw FilesClientError.server(statusCode: 415) }
         }
@@ -140,7 +140,7 @@ struct BrowsePreviewTests {
     @Test("Dismissing the preview clears every part of its state")
     func previewDismissedClearsAllPreviewState() async {
         var state = BrowseFixtures.state()
-        state.previewItem = BrowseFixtures.file("notes.txt", size: 10)
+        state.previewItem = BrowseFixtures.file(TestFile.notes, size: 10)
         state.previewFileURL = URL(fileURLWithPath: "/tmp/notes.txt")
         state.previewPhase = .failed("some error")
         let store = BrowseFixtures.store(state)
@@ -223,7 +223,7 @@ struct BrowsePreviewTests {
             }
         }
 
-        await store.send(.openInBrowserTapped(BrowseFixtures.file("notes.txt", size: 4)))
+        await store.send(.openInBrowserTapped(BrowseFixtures.file(TestFile.notes, size: 4)))
     }
 
     // MARK: Saving text
@@ -231,7 +231,7 @@ struct BrowsePreviewTests {
     @Test("Saving text sends it to the server and shows it as the new content")
     func textSaveTappedSavesContentAndUpdatesState() async {
         var state = BrowseFixtures.state()
-        state.previewItem = BrowseFixtures.file("notes.txt", size: 10)
+        state.previewItem = BrowseFixtures.file(TestFile.notes, size: 10)
         state.textContent = "hello"
         let saved = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
@@ -239,7 +239,7 @@ struct BrowsePreviewTests {
         }
 
         await store.send(.textSaveTapped("hello world")) {
-            $0.savingTexts = ["notes.txt": "hello world"]
+            $0.savingTexts = [TestFile.notes: "hello world"]
         }
         await store.receive(\.textSaveResponse) {
             $0.savingTexts = [:]
@@ -251,14 +251,14 @@ struct BrowsePreviewTests {
     @Test("A failed save shows a readable message and keeps the old content")
     func textSaveTappedFailureSurfacesAReadableErrorMessage() async {
         var state = BrowseFixtures.state()
-        state.previewItem = BrowseFixtures.file("notes.txt", size: 10)
+        state.previewItem = BrowseFixtures.file(TestFile.notes, size: 10)
         state.textContent = "hello"
         let store = BrowseFixtures.store(state) {
             $0.filesClient.saveTextContent = { _, _, _ in throw FilesClientError.server(statusCode: 500) }
         }
 
         await store.send(.textSaveTapped("hello world")) {
-            $0.savingTexts = ["notes.txt": "hello world"]
+            $0.savingTexts = [TestFile.notes: "hello world"]
         }
         await store.receive(\.textSaveResponse) {
             $0.savingTexts = [:]

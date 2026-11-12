@@ -19,7 +19,7 @@ struct ArrivalRecheckTests {
     private let recheckDelay = Duration.milliseconds(700)
 
     private nonisolated func file(_ name: String) -> FileItem {
-        FileItem(name: name, path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+        FileItem(name: name, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
     }
 
     /// The favorites fetch fails on purpose: production sends nothing for a failed fetch, which keeps
@@ -29,7 +29,7 @@ struct ArrivalRecheckTests {
         fetches: LockIsolated<Int>,
         clock: TestClock<Duration>
     ) -> Store {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
         state.phase = .loaded
         state.access = access
         state.awaitedArrivalIDs = ["Docs/report (2).txt"]
@@ -49,7 +49,7 @@ struct ArrivalRecheckTests {
     }
 
     private func listed(_ items: [FileItem]) -> BrowseResult {
-        BrowseResult(items: items, access: access, path: "Docs")
+        BrowseResult(items: items, access: access, path: TestFolder.docs)
     }
 
     /// Advances to the next recheck and receives the refetch it starts, up to the offline availability pass.

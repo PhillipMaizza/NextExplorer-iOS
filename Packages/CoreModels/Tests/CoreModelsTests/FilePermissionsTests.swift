@@ -10,7 +10,7 @@ struct FilePermissionsTests {
 
         let perms = try JSONDecoder().decode(FilePermissions.self, from: json)
         #expect(perms.mode == 33261)
-        #expect(perms.owner == "phillip")
+        #expect(perms.owner == TestAccount.username)
         #expect(!perms.isDirectory)
     }
 

@@ -9,7 +9,7 @@ struct VersionedFilesTests {
         let page = try CoreModelsFixture.versionedFilesPageWithRowsTotalsAndVolumes.decode(VersionedFilesPage.self)
 
         #expect(page.files.count == 2)
-        #expect(page.files[0].folder == "Docs")
+        #expect(page.files[0].folder == TestFolder.docs)
         #expect(page.files[0].zone?.kind == .volume)
         #expect(page.files[1].state == .orphaned)
         #expect(page.files[1].path == nil)
@@ -56,7 +56,7 @@ struct VersionedFilesTests {
         decoder.dateDecodingStrategy = .iso8601
         let detail = try decoder.decode(VersionedFileDetail.self, from: try CoreModelsFixture.versionedFilesDetailWithPinnedUnavailableVersion.data())
 
-        #expect(detail.versions.map(\.id) == ["v1"])
+        #expect(detail.versions.map(\.id) == [TestETag.first])
         #expect(detail.versions.first?.isPinned == true)
         #expect(detail.versions.first?.isAvailable == false)
         #expect(detail.totalBytes == 100)

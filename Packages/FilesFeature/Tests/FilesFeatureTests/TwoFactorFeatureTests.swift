@@ -181,28 +181,28 @@ struct TwoFactorFeatureTests {
     func theSixthDigitConfirmsAndSendsTheCode() async {
         let store = makeStore(phase: .enrolling(setup), confirm: { [codes] in codes })
 
-        await store.send(.codeChanged("123456")) { $0.code = "123456" }
+        await store.send(.codeChanged(TestAccount.totpCode)) { $0.code = TestAccount.totpCode }
         await store.receive(\.confirmTapped) { $0.isWorking = true }
         await store.receive(\.confirmResponse.success) {
             $0.isWorking = false
             $0.code = ""
             $0.phase = .showingRecoveryCodes(codes)
         }
-        #expect(confirmCalls.value == ["123456"])
+        #expect(confirmCalls.value == [TestAccount.totpCode])
     }
 
     @Test
     func pastingMoreThanSixDigitsConfirmsTheFirstSix() async {
         let store = makeStore(phase: .enrolling(setup), confirm: { [codes] in codes })
 
-        await store.send(.codeChanged("1234567890")) { $0.code = "123456" }
+        await store.send(.codeChanged("1234567890")) { $0.code = TestAccount.totpCode }
         await store.receive(\.confirmTapped) { $0.isWorking = true }
         await store.receive(\.confirmResponse.success) {
             $0.isWorking = false
             $0.code = ""
             $0.phase = .showingRecoveryCodes(codes)
         }
-        #expect(confirmCalls.value == ["123456"])
+        #expect(confirmCalls.value == [TestAccount.totpCode])
     }
 
     @Test
@@ -237,7 +237,7 @@ struct TwoFactorFeatureTests {
     func aCodeTypedWhileAConfirmationIsInFlightIsNotSentTwice() async {
         let store = makeStore(phase: .enrolling(setup), confirm: { [codes] in codes }, initial: { $0.isWorking = true })
 
-        await store.send(.codeChanged("123456")) { $0.code = "123456" }
+        await store.send(.codeChanged(TestAccount.totpCode)) { $0.code = TestAccount.totpCode }
         await store.send(.confirmTapped)
         #expect(confirmCalls.value.isEmpty)
     }
@@ -246,7 +246,7 @@ struct TwoFactorFeatureTests {
     func theCodeFieldDoesNothingOutsideSetup() async {
         let store = makeStore(phase: .off, confirm: { [codes] in codes })
 
-        await store.send(.codeChanged("123456")) { $0.code = "123456" }
+        await store.send(.codeChanged(TestAccount.totpCode)) { $0.code = TestAccount.totpCode }
         #expect(confirmCalls.value.isEmpty)
     }
 
@@ -272,7 +272,7 @@ struct TwoFactorFeatureTests {
             return codes
         })
 
-        await store.send(.codeChanged("123456")) { $0.code = "123456" }
+        await store.send(.codeChanged(TestAccount.totpCode)) { $0.code = TestAccount.totpCode }
         await store.receive(\.confirmTapped) { $0.isWorking = true }
         await store.send(.cancelSetupTapped) {
             $0.phase = .off
@@ -280,7 +280,7 @@ struct TwoFactorFeatureTests {
             $0.isWorking = false
         }
         await store.finish()
-        #expect(confirmCalls.value == ["123456"])
+        #expect(confirmCalls.value == [TestAccount.totpCode])
     }
 
     // MARK: Recovery codes
@@ -316,14 +316,14 @@ struct TwoFactorFeatureTests {
         let store = makeStore(phase: .on(recoveryCodesLeft: 1), replace: { [codes] in codes })
 
         await store.send(.newRecoveryCodesTapped) { $0.passwordPrompt = .init(action: .newRecoveryCodes) }
-        await store.send(.passwordChanged("hunter2")) { $0.passwordPrompt?.password = "hunter2" }
+        await store.send(.passwordChanged(TestAccount.password)) { $0.passwordPrompt?.password = TestAccount.password }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
         await store.receive(\.recoveryCodesResponse.success) {
             $0.isWorking = false
             $0.passwordPrompt = nil
             $0.phase = .showingRecoveryCodes(codes)
         }
-        #expect(replaceCalls.value == ["hunter2"])
+        #expect(replaceCalls.value == [TestAccount.password])
         #expect(disableCalls.value.isEmpty)
     }
 
@@ -333,13 +333,13 @@ struct TwoFactorFeatureTests {
         let store = makeStore(phase: .on(recoveryCodesLeft: 1), replace: { throw failure })
 
         await store.send(.newRecoveryCodesTapped) { $0.passwordPrompt = .init(action: .newRecoveryCodes) }
-        await store.send(.passwordChanged("nope")) { $0.passwordPrompt?.password = "nope" }
+        await store.send(.passwordChanged(TestAccount.rejectedPassword)) { $0.passwordPrompt?.password = TestAccount.rejectedPassword }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
         await store.receive(\.recoveryCodesResponse.failure) {
             $0.isWorking = false
             $0.errorMessage = "Incorrect password"
         }
-        #expect(store.state.passwordPrompt?.password == "nope")
+        #expect(store.state.passwordPrompt?.password == TestAccount.rejectedPassword)
         #expect(store.state.phase == .on(recoveryCodesLeft: 1))
     }
 
@@ -348,14 +348,14 @@ struct TwoFactorFeatureTests {
         let store = makeStore(phase: .on(recoveryCodesLeft: 4), disable: {})
 
         await store.send(.turnOffTapped) { $0.passwordPrompt = .init(action: .turnOff) }
-        await store.send(.passwordChanged("hunter2")) { $0.passwordPrompt?.password = "hunter2" }
+        await store.send(.passwordChanged(TestAccount.password)) { $0.passwordPrompt?.password = TestAccount.password }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
         await store.receive(\.disableResponse.success) {
             $0.isWorking = false
             $0.passwordPrompt = nil
             $0.phase = .off
         }
-        #expect(disableCalls.value == ["hunter2"])
+        #expect(disableCalls.value == [TestAccount.password])
         #expect(replaceCalls.value.isEmpty)
     }
 
@@ -365,7 +365,7 @@ struct TwoFactorFeatureTests {
         let store = makeStore(phase: .on(recoveryCodesLeft: 4), disable: { throw failure })
 
         await store.send(.turnOffTapped) { $0.passwordPrompt = .init(action: .turnOff) }
-        await store.send(.passwordChanged("nope")) { $0.passwordPrompt?.password = "nope" }
+        await store.send(.passwordChanged(TestAccount.rejectedPassword)) { $0.passwordPrompt?.password = TestAccount.rejectedPassword }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
         await store.receive(\.disableResponse.failure) {
             $0.isWorking = false
@@ -393,7 +393,7 @@ struct TwoFactorFeatureTests {
         let store = makeStore(phase: .on(recoveryCodesLeft: 4), disable: { try await gate.wait() })
 
         await store.send(.turnOffTapped) { $0.passwordPrompt = .init(action: .turnOff) }
-        await store.send(.passwordChanged("hunter2")) { $0.passwordPrompt?.password = "hunter2" }
+        await store.send(.passwordChanged(TestAccount.password)) { $0.passwordPrompt?.password = TestAccount.password }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
         await store.send(.passwordPromptCancelled) {
             $0.passwordPrompt = nil

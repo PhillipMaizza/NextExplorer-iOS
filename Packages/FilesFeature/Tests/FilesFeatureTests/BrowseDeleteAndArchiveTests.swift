@@ -9,7 +9,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseDeleteAndArchiveTests {
-    private let photo = BrowseFixtures.file("vacation.jpg")
+    private let photo = BrowseFixtures.file(TestFile.vacationPhoto)
 
     // MARK: Share impact of a delete
 
@@ -30,13 +30,13 @@ struct BrowseDeleteAndArchiveTests {
         await store.receive(\.deleteImpactResponse.success) {
             $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 2))
         }
-        #expect(checked.value == [["vacation.jpg"]])
+        #expect(checked.value == [[TestFile.vacationPhoto]])
     }
 
     @Test("A failed share impact check is shown as unavailable and does not block the delete")
     func deleteTappedTreatsAFailedShareImpactCheckAsUnavailable() async {
         let store = BrowseFixtures.store {
-            $0.filesClient.deleteImpact = { _, _ in throw FilesClientError.network("offline") }
+            $0.filesClient.deleteImpact = { _, _ in throw FilesClientError.network(TestFailure.offline) }
         }
 
         await store.send(.deleteTapped(photo)) {
@@ -83,7 +83,7 @@ struct BrowseDeleteAndArchiveTests {
             $0.favoritePaths = []
         }
         await store.receive(.delegate(.favoritesChanged))
-        #expect(deleted.value == [["vacation.jpg"]])
+        #expect(deleted.value == [[TestFile.vacationPhoto]])
     }
 
     @Test("Deleting an item that is not a favorite does not tell the Favorites tab to refresh")
@@ -153,7 +153,7 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("Extracting a zip adds the extracted folder beside it")
     func extractZipTappedAddsTheExtractedFolderOnSuccess() async {
-        let archive = BrowseFixtures.file("bundle.zip")
+        let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
         let extracted = BrowseFixtures.folder("bundle")
         let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive])) {
             $0.filesClient.extractZip = { _, _ in extracted }
@@ -176,7 +176,7 @@ struct BrowseDeleteAndArchiveTests {
             $0.filesClient.extractZip = { _, _ in throw FilesClientError.server(statusCode: 415) }
         }
 
-        await store.send(.extractZipTapped(BrowseFixtures.file("bundle.zip"))) {
+        await store.send(.extractZipTapped(BrowseFixtures.file(FilesFeatureTestValue.bundleName))) {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = "Extracting…"
         }
@@ -189,7 +189,7 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("Compressing adds the new archive, then reloads the listing so it carries the server's metadata")
     func compressTappedAddsTheNewArchiveOnSuccess() async {
-        let folder = BrowseFixtures.folder("Documents")
+        let folder = BrowseFixtures.folder(TestFolder.documents)
         let archive = BrowseFixtures.file("Documents.zip")
         let favorites = AsyncGate()
         let store = BrowseFixtures.store(BrowseFixtures.state(items: [folder])) {
@@ -227,7 +227,7 @@ struct BrowseDeleteAndArchiveTests {
             $0.filesClient.compressItem = { _, _ in throw FilesClientError.server(statusCode: 403) }
         }
 
-        await store.send(.compressTapped(BrowseFixtures.folder("Documents"))) {
+        await store.send(.compressTapped(BrowseFixtures.folder(TestFolder.documents))) {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = "Compressing…"
         }

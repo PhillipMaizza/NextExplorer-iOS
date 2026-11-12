@@ -7,6 +7,7 @@ import FilesFeature
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// Records, in order, every store wipe and session teardown the app performs, so a test can assert
 /// exactly what was wiped and when. Each store's closures only append an event: nothing is wiped.
@@ -110,24 +111,24 @@ final class WipeRecorder: Sendable {
 enum AppSuites {}
 
 enum AppFixtures {
-    static let serverA = URL(string: "https://a.example.com") ?? URL(fileURLWithPath: "/")
-    static let serverB = URL(string: "https://b.example.com") ?? URL(fileURLWithPath: "/")
-    static let userA = User(id: "1", username: "alice", email: nil, roles: [])
-    static let userB = User(id: "2", username: "bob", email: nil, roles: [])
+    static let serverA = URL(string: TestHost.firstServerURLString) ?? URL(fileURLWithPath: "/")
+    static let serverB = URL(string: TestHost.secondServerURLString) ?? URL(fileURLWithPath: "/")
+    static let userA = User(id: "1", username: TestUser.alice, email: nil, roles: [])
+    static let userB = User(id: "2", username: TestUser.bob, email: nil, roles: [])
     static let accountA = "https://a.example.com|alice"
     static let accountB = "https://b.example.com|bob"
     static let downloadScopeA = "afedf24dbf2fc23413b9282ff0b95bae"
     static let downloadScopeB = "c7934fa255b1a9cb66884b5a6730585e"
-    static let originA = ClientCertificateOrigin(host: "a.example.com", port: 443)
-    static let originB = ClientCertificateOrigin(host: "b.example.com", port: 443)
-    static let summaryA = AccountSummary(id: accountA, username: "alice", serverURL: serverA, isActive: true)
-    static let summaryB = AccountSummary(id: accountB, username: "bob", serverURL: serverB, isActive: true)
+    static let originA = ClientCertificateOrigin(host: TestHost.firstServer, port: 443)
+    static let originB = ClientCertificateOrigin(host: TestHost.secondServer, port: 443)
+    static let summaryA = AccountSummary(id: accountA, username: TestUser.alice, serverURL: serverA, isActive: true)
+    static let summaryB = AccountSummary(id: accountB, username: TestUser.bob, serverURL: serverB, isActive: true)
 
     static func credentials(_ serverURL: URL, _ username: String) -> SessionCredentials {
         SessionCredentials(
             serverBaseURL: serverURL,
             authMode: .local,
-            cookieName: "connect.sid",
+            cookieName: TestSession.cookieName,
             cookieValue: "v",
             cookieDomain: serverURL.host ?? "",
             cookiePath: "/",

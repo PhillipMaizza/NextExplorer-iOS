@@ -10,16 +10,16 @@ import TestUtils
 @Suite(.isolatedDependencies)
 struct InspectorFollowsItemTests {
     private let serverURL = URL(fileURLWithPath: "/")
-    private let report = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 1, kind: "pdf")
-    private let notes = FileItem(name: "notes.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
-    private let renamed = FileItem(name: "final.pdf", path: "Docs", dateModified: MockDate.date, size: 1, kind: "pdf")
+    private let report = FileItem(name: TestFile.report, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.pdf)
+    private let notes = FileItem(name: TestFile.notes, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+    private let renamed = FileItem(name: "final.pdf", path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.pdf)
 
     private func makeStore(
         showing item: FileItem,
         among items: [FileItem],
         configure: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStoreOf<BrowseFeature> {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
         state.items = IdentifiedArray(uniqueElements: items)
         state.phase = .loaded
         state.infoItem = item
@@ -46,7 +46,7 @@ struct InspectorFollowsItemTests {
     func removingAnotherItemKeepsTheInspectorOpen() async {
         let store = makeStore(showing: report, among: [report, notes])
 
-        await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(itemID: "Docs/notes.txt")))) {
+        await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(itemID: TestPath.docsNotes)))) {
             $0.items = [report]
         }
     }
@@ -54,7 +54,7 @@ struct InspectorFollowsItemTests {
     @Test("Renaming the inspected item repoints the inspector and loads the new path")
     func renamingTheInspectedItemRepointsTheInspector() async {
         let fetched = LockIsolated<[String]>([])
-        let metadata = FileMetadata(path: "Docs/final.pdf", name: "final.pdf", kind: "pdf", size: 1, dateModified: MockDate.date, dateCreated: MockDate.date)
+        let metadata = FileMetadata(path: "Docs/final.pdf", name: "final.pdf", kind: TestKind.pdf, size: 1, dateModified: MockDate.date, dateCreated: MockDate.date)
         let store = makeStore(showing: report, among: [report]) {
             $0.filesClient.fetchMetadata = { _, path in
                 fetched.withValue { $0.append(path) }
@@ -64,7 +64,7 @@ struct InspectorFollowsItemTests {
 
         await store.send(.renameResponse(.success(BrowseFeature.RenameResult(originalID: "Docs/report.pdf", renamed: renamed)))) {
             $0.items = [renamed]
-            $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamed, previousName: "report.pdf"))] }
+            $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamed, previousName: TestFile.report))] }
             $0.infoItem = renamed
             $0.infoPhase = .loading
         }
@@ -78,11 +78,11 @@ struct InspectorFollowsItemTests {
     @Test("Renaming an item the inspector is not showing leaves the inspector alone")
     func renamingAnotherItemKeepsTheInspector() async {
         let store = makeStore(showing: report, among: [report, notes])
-        let renamedNotes = FileItem(name: "todo.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+        let renamedNotes = FileItem(name: "todo.txt", path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
 
-        await store.send(.renameResponse(.success(BrowseFeature.RenameResult(originalID: "Docs/notes.txt", renamed: renamedNotes)))) {
+        await store.send(.renameResponse(.success(BrowseFeature.RenameResult(originalID: TestPath.docsNotes, renamed: renamedNotes)))) {
             $0.items = [report, renamedNotes]
-            $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedNotes, previousName: "notes.txt"))] }
+            $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedNotes, previousName: TestFile.notes))] }
         }
     }
 
@@ -115,12 +115,12 @@ struct InspectorFollowsItemTests {
             $0.infoPhase = .loaded
             $0.infoMetadata = metadata(of: notes)
         }
-        #expect(fetched.value == ["Docs/notes.txt"])
+        #expect(fetched.value == [TestPath.docsNotes])
     }
 
     @Test("Quick selection changes only load the row the selection settles on")
     func anInspectorFollowingQuickSelectionChangesOnlyLoadsTheRowItSettlesOn() async {
-        let draft = FileItem(name: "draft.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+        let draft = FileItem(name: "draft.txt", path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
         let clock = TestClock()
         let fetched = LockIsolated<[String]>([])
         let store = makeStore(showing: report, among: [report, notes, draft]) {
@@ -150,7 +150,7 @@ struct InspectorFollowsItemTests {
 
     @Test("A closed inspector stays closed when the selection moves")
     func aClosedInspectorStaysClosedWhenTheSelectionMoves() async {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
         state.items = [report, notes]
         state.selectedItemIDs = [report.id]
         let store = TestStore(initialState: state) {

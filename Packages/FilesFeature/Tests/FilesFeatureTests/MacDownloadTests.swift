@@ -30,9 +30,9 @@ import TestUtils
 
         @Test("Cancelling the save panel queues nothing")
         func cancellingTheSavePanelQueuesNothing() async {
-            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 10, kind: "pdf")
+            let item = FileItem(name: TestFile.report, path: TestFolder.docs, dateModified: MockDate.date, size: 10, kind: TestKind.pdf)
             let suggested = LockIsolated<[String]>([])
-            let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")) {
+            let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)) {
                 BrowseFeature()
             } withDependencies: {
                 $0.saveLocationPicker.chooseFile = { name in
@@ -44,14 +44,14 @@ import TestUtils
             await store.send(.downloadTapped(item))
             await store.finish()
 
-            #expect(suggested.value == ["report.pdf"])
+            #expect(suggested.value == [TestFile.report])
         }
 
         @Test("A chosen place goes to the download queue without blocking file actions")
         func aChosenPlaceGoesToTheDownloadQueueWithoutBlockingFileActions() async throws {
-            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 10, kind: "pdf")
+            let item = FileItem(name: TestFile.report, path: TestFolder.docs, dateModified: MockDate.date, size: 10, kind: TestKind.pdf)
             let target = try temporaryFolder().appendingPathComponent("Saved report.pdf")
-            let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")) {
+            let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)) {
                 BrowseFeature()
             } withDependencies: {
                 $0.saveLocationPicker.chooseFile = { _ in target }
@@ -63,10 +63,10 @@ import TestUtils
 
         @Test("Several items go into the picked folder")
         func severalItemsGoIntoThePickedFolder() async throws {
-            let first = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
-            let second = FileItem(name: "b.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+            let first = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+            let second = FileItem(name: TestFile.bText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
             let folder = try temporaryFolder()
-            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
             state.items = [first, second]
             state.isSelecting = true
             state.selectedItemIDs = [first.id, second.id]
@@ -88,9 +88,9 @@ import TestUtils
 
         @Test("A file lands at the chosen place, replacing what was there")
         func aFileLandsAtTheChosenPlaceReplacingWhatWasThere() async throws {
-            let item = FileItem(name: "report.txt", path: "Docs", dateModified: MockDate.date, size: 5, kind: "txt")
+            let item = FileItem(name: "report.txt", path: TestFolder.docs, dateModified: MockDate.date, size: 5, kind: TestKind.text)
             let target = try temporaryFolder().appendingPathComponent("Saved report.txt")
-            try Data("old".utf8).write(to: target)
+            try Data(TestValue.outdated.utf8).write(to: target)
             let client = FilesClient().with { $0.downloadItem = { _, _, _ in try Self.downloadedFile("hello") } }
 
             let saved = try await MacDownloadSaving.save(
@@ -104,9 +104,9 @@ import TestUtils
         @Test("Saving into a folder never overwrites and never escapes it")
         func intoAFolderNeverOverwritesAndNeverEscapesIt() async throws {
             let folder = try temporaryFolder()
-            try Data("mine".utf8).write(to: folder.appendingPathComponent("a.txt"))
-            let clashing = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
-            let hostile = FileItem(name: "../../escape.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+            try Data("mine".utf8).write(to: folder.appendingPathComponent(TestFile.aText))
+            let clashing = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+            let hostile = FileItem(name: "../../escape.txt", path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
             let client = FilesClient().with { $0.downloadItem = { _, _, _ in try Self.downloadedFile("new") } }
 
             let renamed = try await MacDownloadSaving.save(
@@ -117,17 +117,17 @@ import TestUtils
             ) { _ in }
 
             #expect(renamed.lastPathComponent == "a 2.txt")
-            #expect(try String(contentsOf: folder.appendingPathComponent("a.txt"), encoding: .utf8) == "mine")
+            #expect(try String(contentsOf: folder.appendingPathComponent(TestFile.aText), encoding: .utf8) == "mine")
             #expect(contained.deletingLastPathComponent().standardizedFileURL == folder.standardizedFileURL)
             #expect(contained.lastPathComponent == "escape.txt")
         }
 
         @Test("A folder is recreated as a real folder tree with byte progress")
         func aFolderIsRecreatedAsARealFolderTreeWithByteProgress() async throws {
-            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
-            let photo = FileItem(name: "a.jpg", path: "Trip", dateModified: MockDate.date, size: 6, kind: "jpg")
-            let nested = FileItem(name: "Day1", path: "Trip", dateModified: MockDate.date, size: 0, kind: "directory")
-            let note = FileItem(name: "note.txt", path: "Trip/Day1", dateModified: MockDate.date, size: 4, kind: "txt")
+            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+            let photo = FileItem(name: TestFile.aPhoto, path: "Trip", dateModified: MockDate.date, size: 6, kind: TestKind.photo)
+            let nested = FileItem(name: "Day1", path: "Trip", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+            let note = FileItem(name: "note.txt", path: "Trip/Day1", dateModified: MockDate.date, size: 4, kind: TestKind.text)
             let target = try temporaryFolder().appendingPathComponent("Trip")
             let access = access
             let client = FilesClient().with {
@@ -138,7 +138,7 @@ import TestUtils
                     default: BrowseResult(items: [], access: access, path: path)
                     }
                 }
-                $0.downloadItem = { _, item, _ in try Self.downloadedFile(item.name == "a.jpg" ? "photo" : "note") }
+                $0.downloadItem = { _, item, _ in try Self.downloadedFile(item.name == TestFile.aPhoto ? "photo" : "note") }
             }
             let reported = LockIsolated<[TransferProgress]>([])
 
@@ -146,15 +146,15 @@ import TestUtils
                 DownloadSaveRequest(item: folder, target: .replacing(target)), serverURL: serverURL, filesClient: client
             ) { update in reported.withValue { $0.append(update) } }
 
-            #expect(try String(contentsOf: target.appendingPathComponent("a.jpg"), encoding: .utf8) == "photo")
+            #expect(try String(contentsOf: target.appendingPathComponent(TestFile.aPhoto), encoding: .utf8) == "photo")
             #expect(try String(contentsOf: target.appendingPathComponent("Day1/note.txt"), encoding: .utf8) == "note")
             #expect(reported.value.last == TransferProgress(receivedBytes: 10, expectedBytes: 10))
         }
 
         @Test("A failed folder save keeps the folder already there")
         func aFailedFolderSaveKeepsTheFolderAlreadyThere() async throws {
-            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
-            let photo = FileItem(name: "a.jpg", path: "Trip", dateModified: MockDate.date, size: 1, kind: "jpg")
+            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+            let photo = FileItem(name: TestFile.aPhoto, path: "Trip", dateModified: MockDate.date, size: 1, kind: TestKind.photo)
             let target = try temporaryFolder().appendingPathComponent("Trip")
             try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
             let kept = target.appendingPathComponent("keep.txt")
@@ -175,8 +175,8 @@ import TestUtils
 
         @Test("An unreadable subfolder fails the save instead of leaving files out")
         func anUnreadableSubfolderFailsTheSaveInsteadOfLeavingFilesOut() async throws {
-            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
-            let nested = FileItem(name: "Locked", path: "Trip", dateModified: MockDate.date, size: 0, kind: "directory")
+            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+            let nested = FileItem(name: "Locked", path: "Trip", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
             let target = try temporaryFolder().appendingPathComponent("Trip")
             let access = access
             let client = FilesClient().with {
@@ -196,7 +196,7 @@ import TestUtils
 
         @Test("The queue saves in Finder, reports byte progress and remembers where the file landed")
         func theQueueSavesInFinderAndRemembersWhere() async throws {
-            let item = FileItem(name: "report.txt", path: "Docs", dateModified: MockDate.date, size: 5, kind: "txt")
+            let item = FileItem(name: "report.txt", path: TestFolder.docs, dateModified: MockDate.date, size: 5, kind: TestKind.text)
             let target = try temporaryFolder().appendingPathComponent("report.txt")
             let jobID = UUID(0)
             let store = TestStore(initialState: DownloadQueueFeature.State(serverURL: serverURL)) {
@@ -234,14 +234,14 @@ import TestUtils
 
         @Test("A disk failure during a save reads as a local problem, not a network one")
         func aDiskFailureDuringASaveReadsAsALocalProblem() async throws {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 4, kind: "txt")
+            let item = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 4, kind: TestKind.text)
             let blocker = try temporaryFolder().appendingPathComponent("blocker")
             try Data("not a folder".utf8).write(to: blocker)
             let client = FilesClient().with { $0.downloadItem = { _, _, _ in try Self.downloadedFile("data") } }
 
             await #expect {
                 try await MacDownloadSaving.save(
-                    DownloadSaveRequest(item: item, target: .replacing(blocker.appendingPathComponent("a.txt"))),
+                    DownloadSaveRequest(item: item, target: .replacing(blocker.appendingPathComponent(TestFile.aText))),
                     serverURL: self.serverURL, filesClient: client
                 ) { _ in }
             } throws: { error in
@@ -252,7 +252,7 @@ import TestUtils
 
         @Test("A saved folder keeps its own name in the queue, a zip download gets the zip name")
         func aSavedFolderKeepsItsOwnNameInTheQueue() {
-            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
             let save = DownloadQueueFeature.DownloadJob(id: UUID(0), item: folder, status: .queued, saveTarget: .into(URL(fileURLWithPath: "/tmp")))
             let zip = DownloadQueueFeature.DownloadJob(id: UUID(1), item: folder, status: .queued)
 
@@ -263,8 +263,8 @@ import TestUtils
         @Test("Space refuses archives and large files unless saved offline")
         func spaceRefusesArchivesAndLargeFilesUnlessSavedOffline() {
             let archive = FileItem(name: "backup.7z", path: "", dateModified: MockDate.date, size: 10, kind: "7z")
-            let movie = FileItem(name: "movie.mp4", path: "", dateModified: MockDate.date, size: MacQuickLookPolicy.byteLimit + 1, kind: "mp4")
-            let photo = FileItem(name: "a.jpg", path: "", dateModified: MockDate.date, size: 1_000, kind: "jpg")
+            let movie = FileItem(name: "movie.mp4", path: "", dateModified: MockDate.date, size: MacQuickLookPolicy.byteLimit + 1, kind: TestKind.video)
+            let photo = FileItem(name: TestFile.aPhoto, path: "", dateModified: MockDate.date, size: 1_000, kind: TestKind.photo)
 
             #expect(MacQuickLookPolicy.refusal(for: archive, isSavedOffline: false) == L10n.Browse.quickLookUnavailable)
             #expect(MacQuickLookPolicy.refusal(for: movie, isSavedOffline: false) == L10n.Browse.quickLookTooLarge)

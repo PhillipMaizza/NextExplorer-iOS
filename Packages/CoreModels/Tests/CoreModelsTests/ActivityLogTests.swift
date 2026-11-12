@@ -1,6 +1,7 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 struct ActivityLogTests {
     @Test
@@ -8,7 +9,7 @@ struct ActivityLogTests {
         let page = try CoreModelsFixture.activityLogPageWithEvents.decode(ActivityPage.self)
 
         #expect(page.events.count == 2)
-        #expect(page.events[0].actor == "phillip")
+        #expect(page.events[0].actor == TestAccount.username)
         #expect(page.events[0].target == nil)
         #expect(page.events[0].ip == "10.0.0.2")
         #expect(page.events[1].outcome == .refused)

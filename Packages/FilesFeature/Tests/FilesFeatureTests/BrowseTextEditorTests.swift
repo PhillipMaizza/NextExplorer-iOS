@@ -17,7 +17,7 @@ struct BrowseTextEditorTests {
     private func editingState() -> BrowseFeature.State {
         var state = BrowseFixtures.loadedState(TestFolder.docs, items: [notes, other])
         state.previewItem = notes
-        state.textContent = "old"
+        state.textContent = TestValue.outdated
         state.textPhase = .loaded
         return state
     }
@@ -172,7 +172,7 @@ struct BrowseTextEditorTests {
         await store.receive(\.textSaveResponse) {
             $0.savingTexts = [:]
         }
-        #expect(Set(saved.value) == ["Docs/notes.txt", "Docs/other.txt"])
+        #expect(Set(saved.value) == [TestPath.docsNotes, "Docs/other.txt"])
     }
 
     @Test("Opening another file never cancels the save of the first")

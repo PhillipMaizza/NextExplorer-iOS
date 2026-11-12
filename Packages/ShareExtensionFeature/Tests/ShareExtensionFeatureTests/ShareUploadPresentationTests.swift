@@ -62,9 +62,9 @@ extension ShareUploadFeatureTests {
             #expect(ShareUploadFeature.State.name(for: .preview) == L10n.ShareUpload.accountSummary("phillip", "files.example.com"))
             var anonymous = SessionCredentials.preview
             anonymous.username = nil
-            #expect(ShareUploadFeature.State.name(for: anonymous) == "files.example.com")
+            #expect(ShareUploadFeature.State.name(for: anonymous) == TestHost.server)
             anonymous.username = ""
-            #expect(ShareUploadFeature.State.name(for: anonymous) == "files.example.com")
+            #expect(ShareUploadFeature.State.name(for: anonymous) == TestHost.server)
         }
 
         @Test
@@ -81,8 +81,8 @@ extension ShareUploadFeatureTests {
         func theResultIsAnnouncedAndTheSheetClosesAfterTheShortDelay() async {
             let announcements = LockIsolated<[String]>([])
             let clock = TestClock()
-            let store = store(defaults: UploadDefaults(folderPath: "Photos"), clock: clock, announcements: announcements)
-            await becomeReady(store, folder: "Photos")
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos), clock: clock, announcements: announcements)
+            await becomeReady(store, folder: TestFolder.photos)
             await uploadCleanly(store)
 
             #expect(announcements.value == [L10n.ShareUpload.started])
@@ -94,8 +94,8 @@ extension ShareUploadFeatureTests {
         func withVoiceOverTheSheetStaysOpenLongerThanTheShortDelay() async {
             let announcements = LockIsolated<[String]>([])
             let clock = TestClock()
-            let store = store(defaults: UploadDefaults(folderPath: "Photos"), clock: clock, isAssistive: true, announcements: announcements)
-            await becomeReady(store, folder: "Photos")
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos), clock: clock, isAssistive: true, announcements: announcements)
+            await becomeReady(store, folder: TestFolder.photos)
             await uploadCleanly(store)
 
             await clock.advance(by: .seconds(2))

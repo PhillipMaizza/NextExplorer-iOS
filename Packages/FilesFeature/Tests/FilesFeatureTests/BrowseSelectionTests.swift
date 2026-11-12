@@ -147,8 +147,8 @@ struct BrowseSelectionTests {
     #if os(iOS)
         @Test("Downloading hands the item to the app download queue")
         func downloadTappedHandsTheItemToTheAppDownloadQueue() async {
-            let item = BrowseFixtures.file("movie.mkv", in: "Files", size: 1_600_000_000)
-            let store = BrowseFixtures.store(BrowseFixtures.state("Files", title: "Files"))
+            let item = BrowseFixtures.file("movie.mkv", in: TestFolder.files, size: 1_600_000_000)
+            let store = BrowseFixtures.store(BrowseFixtures.state(TestFolder.files, title: TestFolder.files))
 
             await store.send(.downloadTapped(item))
             await store.receive(.delegate(.downloadRequested([item])))
@@ -156,8 +156,8 @@ struct BrowseSelectionTests {
 
         @Test("Downloading from a preview also confirms with a toast")
         func downloadTappedFromAPreviewAlsoConfirmsWithAToast() async {
-            let item = BrowseFixtures.file("movie.mkv", in: "Files")
-            var state = BrowseFixtures.state("Files", title: "Files")
+            let item = BrowseFixtures.file("movie.mkv", in: TestFolder.files)
+            var state = BrowseFixtures.state(TestFolder.files, title: TestFolder.files)
             state.previewItem = item
             let store = BrowseFixtures.store(state)
 
@@ -169,10 +169,10 @@ struct BrowseSelectionTests {
 
         @Test("Bulk download queues the selection in listing order and leaves select mode")
         func bulkDownloadTappedQueuesTheSelectionInListingOrderAndLeavesSelectMode() async {
-            let photos = BrowseFixtures.folder("Photos", in: "Files")
-            let notes = BrowseFixtures.file("notes.txt", in: "Files", size: 1)
-            let skipped = BrowseFixtures.file("skip.txt", in: "Files", size: 1)
-            var state = BrowseFixtures.state("Files", title: "Files", items: [photos, notes, skipped])
+            let photos = BrowseFixtures.folder(TestFolder.photos, in: TestFolder.files)
+            let notes = BrowseFixtures.file(TestFile.notes, in: TestFolder.files, size: 1)
+            let skipped = BrowseFixtures.file("skip.txt", in: TestFolder.files, size: 1)
+            var state = BrowseFixtures.state(TestFolder.files, title: TestFolder.files, items: [photos, notes, skipped])
             state.isSelecting = true
             state.selectedItemIDs = [notes.id, photos.id]
             let store = BrowseFixtures.store(state)

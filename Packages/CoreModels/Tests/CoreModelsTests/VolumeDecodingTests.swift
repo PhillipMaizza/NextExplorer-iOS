@@ -1,13 +1,14 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Volume decoding")
 struct VolumeDecodingTests {
     @Test("happy path: decodes name, path and accessMode")
     func decodesFullVolume() throws {
         let volume = try CoreModelsFixture.volumeWithAccessMode.decode(Volume.self)
-        #expect(volume.name == "Media")
+        #expect(volume.name == TestFolder.media)
         #expect(volume.id == "/mnt/media")
         #expect(volume.accessMode == "readOnly")
     }

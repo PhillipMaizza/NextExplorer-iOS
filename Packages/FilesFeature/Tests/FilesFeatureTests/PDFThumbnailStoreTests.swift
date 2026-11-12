@@ -27,8 +27,8 @@ struct PDFThumbnailStoreTests {
 
     private func item(size: Int64) -> FileItem {
         FileItem(
-            name: "\(TestID.name()).pdf", path: "Docs",
-            dateModified: Date(timeIntervalSince1970: 2), size: size, kind: "pdf"
+            name: "\(TestID.name()).pdf", path: TestFolder.docs,
+            dateModified: MockDate.date.addingTimeInterval(2), size: size, kind: TestKind.pdf
         )
     }
 
@@ -39,7 +39,7 @@ struct PDFThumbnailStoreTests {
         let entry = store.entry(forKey: key)
         let task = store.load(
             entry: entry, key: key, item: item,
-            serverURL: URL(string: "https://example.com")!, filesClient: client, cache: cache
+            serverURL: URL(string: TestHost.exampleURLString)!, filesClient: client, cache: cache
         )
         return (entry, task)
     }
@@ -110,7 +110,7 @@ struct PDFThumbnailStoreTests {
         let store = PDFThumbnailStore()
         let notPDF = FileManager.default.temporaryDirectory
             .appendingPathComponent("not-a-pdf-\(TestID.name())")
-        try Data("nope".utf8).write(to: notPDF)
+        try Data(TestAccount.rejectedPassword.utf8).write(to: notPDF)
         defer { try? FileManager.default.removeItem(at: notPDF) }
 
         var client = FilesClient.previewValue

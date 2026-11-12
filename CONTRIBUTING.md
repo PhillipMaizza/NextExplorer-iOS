@@ -73,6 +73,7 @@ Also:
 - Tests take milliseconds: nothing waits on real time, and a whole package runs in a few seconds.
 - Unique temp folder names and store scopes come from `TestID.name()` / `TestID.uuid()` in `TestUtils`, never `UUID()`.
 - Split large tests: keep a test file under about 600 lines, one suite per behavior area, shared fixtures in a support file. CI fails bigger files (existing ones can only shrink).
+- Constants, not literals: Test data is a constant, never a retyped literal: a value used in 2+ files lives once in `TestUtils` (`TestFolder`, `TestFile`, `TestPath`, `TestKind`, `TestAccount`, `TestUser`, `TestHost`, `TestSession`, `TestStorageKey` ...), a value repeated inside one file is in that file's `private enum Constants`, and where production already has a typed constant or enum (`HTTPMethod`, `HTTPHeaderField`, `MIMEType`, `FileItem.directoryKind`) the test uses that. Only a wire value or decode input that IS the point of the test stays a literal.
 - Share test data: names and credentials used by several tests live once in `TestUtils` (`TestFolder`, `TestFile`, `TestAccount`, `TestHost`). No inline JSON in a test (`Data("{...}".utf8)`, raw strings, interpolated payloads): JSON bodies are `.json` files under `Tests/<Target>/Fixtures/`, named by one `FixtureFile` enum per target with an audit test (see `CoreModelsFixture`).
 - Expected values are literals, never computed from the code under test.
 - Work that must overlap is held and released with explicit gates, never a timing window.

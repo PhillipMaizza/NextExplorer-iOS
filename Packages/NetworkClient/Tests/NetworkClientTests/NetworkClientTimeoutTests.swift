@@ -5,7 +5,7 @@ import TestUtils
 
 @Suite("NetworkClient timeout policy")
 struct NetworkClientTimeoutTests {
-    private let url = URL(string: "https://example.com/api/files/transfer") ?? URL(filePath: "/")
+    private let url = URL(string: Constants.transferURLString) ?? URL(filePath: "/")
 
     @Test
     func aTimedOutMarkedMutationIsNotMappedToOffline() {
@@ -45,7 +45,7 @@ struct NetworkClientTimeoutTests {
 
 extension NetworkClientLiveTests {
     private var requestURL: URL {
-        URL(string: "https://example.com/api/files/transfer") ?? URL(filePath: "/")
+        URL(string: Constants.transferURLString) ?? URL(filePath: "/")
     }
 
     @Test
@@ -101,4 +101,8 @@ extension NetworkClientLiveTests {
         }
         #expect(StubURLProtocol.lastRequest?.timeoutInterval == NetworkClient.mutationRequestTimeout)
     }
+}
+
+private enum Constants {
+    static let transferURLString = "https://example.com/api/files/transfer"
 }

@@ -47,7 +47,7 @@ struct BrowseMutationFailureTests {
         .serverMessage(statusCode: 504, message: "Gateway Timeout"),
     ]
 
-    private let kept = BrowseFixtures.file("a.txt", in: "docs")
+    private let kept = BrowseFixtures.file(TestFile.aText, in: TestPath.docsLowercase)
 
     /// The refetch that follows an ambiguous failure: the listing is loaded again and the favorites follow.
     private func receiveRefetch(
@@ -71,7 +71,7 @@ struct BrowseMutationFailureTests {
     func anAmbiguousDeleteFailureRefetchesTheFolder(error: FilesClientError) async {
         let browseCalls = LockIsolated(0)
         let favorites = AsyncGate()
-        let store = BrowseFixtures.store(BrowseFixtures.loadedState("docs", items: [kept])) {
+        let store = BrowseFixtures.store(BrowseFixtures.loadedState(TestPath.docsLowercase, items: [kept])) {
             $0.serveEmptyFolders()
             $0.filesClient.browse = { _, path in
                 browseCalls.withValue { $0 += 1 }
@@ -90,10 +90,10 @@ struct BrowseMutationFailureTests {
 
     @Test("A transfer that may have applied refetches the folder and shows what the server holds", arguments: ambiguousErrors)
     func anAmbiguousTransferFailureRefetchesTheFolder(error: FilesClientError) async {
-        let copy = BrowseFixtures.file("a (2).txt", in: "docs")
+        let copy = BrowseFixtures.file("a (2).txt", in: TestPath.docsLowercase)
         let browseCalls = LockIsolated(0)
         let favorites = AsyncGate()
-        let store = BrowseFixtures.store(BrowseFixtures.loadedState("docs", items: [kept])) {
+        let store = BrowseFixtures.store(BrowseFixtures.loadedState(TestPath.docsLowercase, items: [kept])) {
             $0.serveEmptyFolders()
             $0.filesClient.browse = { _, path in
                 browseCalls.withValue { $0 += 1 }
@@ -114,7 +114,7 @@ struct BrowseMutationFailureTests {
     @Test("An ordinary server failure on a delete is shown without a refetch")
     func anOrdinaryServerFailureDoesNotRefetch() async {
         // No filesClient override: a refetch fails the test as unimplemented.
-        let store = BrowseFixtures.store(BrowseFixtures.loadedState("docs", items: [kept]))
+        let store = BrowseFixtures.store(BrowseFixtures.loadedState(TestPath.docsLowercase, items: [kept]))
 
         await store.send(.deleteResponse(.failure(.server(statusCode: 500)))) {
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 500).userMessage

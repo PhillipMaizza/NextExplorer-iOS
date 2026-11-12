@@ -52,7 +52,7 @@ PATTERNS = {
     "skipReceivedActions": r"\bskipReceivedActions\b",
     "skipInFlightEffects": r"\bskipInFlightEffects\b",
     "withMainSerialExecutor": r"\bwithMainSerialExecutor\b",
-    "inline JSON": r"Data\(#*\"+[\{\[]|#\"[\{\[]|\"[\{\[]\\\"",
+    "inline JSON": r"Data\(#*\"{3}|Data\(#*\"+[\{\[]|#\"[\{\[]|\"[\{\[]\\\"",
 }
 
 # A file that builds a TestStore must opt its suites into isolated dependencies and @Shared storage.

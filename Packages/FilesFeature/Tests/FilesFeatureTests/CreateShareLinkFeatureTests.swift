@@ -11,13 +11,13 @@ import TestUtils
 @MainActor
 struct CreateShareLinkFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
-    private let now = Date(timeIntervalSince1970: 1_700_000_000)
+    private let now = MockDate.date
 
     private func makeState() -> CreateShareLinkFeature.State {
         CreateShareLinkFeature.State(
             serverURL: serverURL,
-            itemName: "Report.pdf",
-            itemPath: "Documents",
+            itemName: FilesFeatureTestValue.reportName,
+            itemPath: TestFolder.documents,
             isDirectory: false,
             now: now
         )
@@ -72,7 +72,7 @@ struct CreateShareLinkFeatureTests {
         await store.send(.labelChanged("Bills")) { $0.label = "Bills" }
         await store.send(.accessModeChanged(.readwrite)) { $0.accessMode = .readwrite }
         await store.send(.passwordEnabledChanged(true)) { $0.isPasswordEnabled = true }
-        await store.send(.passwordChanged("hunter2")) { $0.password = "hunter2" }
+        await store.send(.passwordChanged(TestAccount.password)) { $0.password = TestAccount.password }
         await store.send(.expiryEnabledChanged(true)) {
             $0.isExpiryEnabled = true
             $0.hasTouchedExpiry = true

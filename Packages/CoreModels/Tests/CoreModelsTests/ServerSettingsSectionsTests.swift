@@ -15,7 +15,7 @@ struct ServerSettingsSectionsTests {
         let settings = try CoreModelsFixture.serverSettingsSystemSettingsFourBackgroundSections.decode(SystemSettings.self)
 
         #expect(settings.uploads == UploadSettings(isChunkedEnabled: true, isChunkedAutoFallback: false, chunkSizeBytes: 16 * 1024 * 1024))
-        #expect(settings.ffmpeg == FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: ""))
+        #expect(settings.ffmpeg == FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: ""))
         #expect(settings.searchIndex == SearchIndexSettings(isEnabled: true, excluded: ExcludedPaths(paths: ["Backups"], environmentPaths: ["tmp"])))
         #expect(settings.folderSize == FolderSizeSettings(mode: .shallow, excluded: ExcludedPaths(paths: ["docker"])))
     }
@@ -65,7 +65,7 @@ struct ServerSettingsSectionsTests {
 
     @Test(arguments: [
         ("", "", true),
-        ("/usr/bin/ffmpeg", "", true),
+        (Constants.ffmpegPath, "", true),
         ("", "/usr/bin/ffprobe", true),
         ("/a", "/b", true),
         ("ffmpeg", "", false),
@@ -78,9 +78,9 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func anEmptyFFmpegPathIsSentAsNullToClearTheOverride() throws {
-        let json = try encoded(FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: ""))
+        let json = try encoded(FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: ""))
 
-        #expect(json["ffmpegPath"] as? String == "/usr/bin/ffmpeg")
+        #expect(json["ffmpegPath"] as? String == Constants.ffmpegPath)
         #expect(json["ffprobePath"] is NSNull)
     }
 
@@ -88,17 +88,17 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func addingAPathDropsLeadingSlashesAndKeepsTheListSorted() {
-        let excluded = ExcludedPaths(paths: ["Zeta", "alpha"])
+        let excluded = ExcludedPaths(paths: ["Zeta", Constants.alphaPath])
 
-        #expect(excluded.adding("/Backups/2024") == ["alpha", "Backups/2024", "Zeta"])
-        #expect(excluded.adding("///Mid") == ["alpha", "Mid", "Zeta"])
+        #expect(excluded.adding("/Backups/2024") == [Constants.alphaPath, "Backups/2024", "Zeta"])
+        #expect(excluded.adding("///Mid") == [Constants.alphaPath, "Mid", "Zeta"])
     }
 
     @Test(arguments: ["", "   ", "/", "///", "alpha", "/alpha", "  alpha  ", "tmp"])
     func addingABlankDuplicateOrEnvironmentPathChangesNothing(raw: String) {
-        let excluded = ExcludedPaths(paths: ["alpha"], environmentPaths: ["tmp"])
+        let excluded = ExcludedPaths(paths: [Constants.alphaPath], environmentPaths: ["tmp"])
 
-        #expect(excluded.adding(raw) == ["alpha"])
+        #expect(excluded.adding(raw) == [Constants.alphaPath])
     }
 
     // MARK: Patch
@@ -172,4 +172,9 @@ struct ServerSettingsSectionsTests {
         #expect(try json(.init(ffprobePath: ""))["ffprobePath"] is NSNull)
         #expect(try json(.init()).isEmpty)
     }
+}
+
+private enum Constants {
+    static let alphaPath = "alpha"
+    static let ffmpegPath = "/usr/bin/ffmpeg"
 }

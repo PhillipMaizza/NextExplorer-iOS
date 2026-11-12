@@ -42,6 +42,8 @@ struct UserPreferencesDecodingTests {
     func shareExpirationResolvesToADate() {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "UTC")!
+        // Literal epochs on purpose: the expected dates depend on the calendar (January has 31 days), so the
+        // start is a fixed, known calendar day and the offsets below are the answer, not a copy of the code.
         let now = Date(timeIntervalSince1970: 0) // 1970-01-01
 
         let inThreeDays = UserPreferences.ShareExpiration(value: 3, unit: .days).expirationDate(from: now, calendar: calendar)

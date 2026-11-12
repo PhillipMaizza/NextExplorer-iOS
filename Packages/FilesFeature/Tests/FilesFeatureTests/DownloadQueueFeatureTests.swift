@@ -14,11 +14,11 @@ struct DownloadQueueFeatureTests {
     private let serverURL = URL(fileURLWithPath: "/")
 
     private nonisolated func file(_ name: String, size: Int64 = 10) -> FileItem {
-        FileItem(name: name, path: "Files", dateModified: MockDate.date, size: size, kind: (name as NSString).pathExtension)
+        FileItem(name: name, path: TestFolder.files, dateModified: MockDate.date, size: size, kind: (name as NSString).pathExtension)
     }
 
     private nonisolated func folder(_ name: String) -> FileItem {
-        FileItem(name: name, path: "Files", dateModified: MockDate.date, size: 0, kind: "directory")
+        FileItem(name: name, path: TestFolder.files, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
     }
 
     private typealias Job = DownloadQueueFeature.DownloadJob
@@ -71,10 +71,10 @@ struct DownloadQueueFeatureTests {
             }
         }
 
-        await store.send(.enqueue([file("movie.mkv"), folder("Photos")])) {
+        await store.send(.enqueue([file("movie.mkv"), folder(TestFolder.photos)])) {
             $0.jobs = [
                 Job(id: UUID(0), item: file("movie.mkv"), status: .queued),
-                Job(id: UUID(1), item: folder("Photos"), status: .queued),
+                Job(id: UUID(1), item: folder(TestFolder.photos), status: .queued),
             ]
         }
         await receiveStart(store, id: 0)
@@ -223,7 +223,7 @@ struct DownloadQueueFeatureTests {
 
     @Test
     func aStreamedFolderZipReportsBytesWithoutATotal() {
-        var job = DownloadQueueFeature.DownloadJob(id: UUID(0), item: folder("Photos"), status: .downloading)
+        var job = DownloadQueueFeature.DownloadJob(id: UUID(0), item: folder(TestFolder.photos), status: .downloading)
         job.receivedBytes = 312_000_000
         job.bytesPerSecond = 1_000_000
         #expect(job.progress == nil)

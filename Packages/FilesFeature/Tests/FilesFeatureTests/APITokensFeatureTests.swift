@@ -25,8 +25,8 @@ struct APITokensFeatureTests {
     }
 
     private let serverURL = SettingsTestSupport.serverURL
-    private let backup = APIToken(id: "t1", name: "backup", scope: .read, createdAt: "2026-11-10T07:00:00.000Z")
-    private let nightly = APIToken(id: "t2", name: "nightly", scope: .write, createdAt: "2026-11-11T07:00:00.000Z", expiresAt: "2027-01-01T00:00:00.000Z")
+    private let backup = APIToken(id: Constants.id, name: "backup", scope: .read, createdAt: "2026-11-10T07:00:00.000Z")
+    private let nightly = APIToken(id: "t2", name: Constants.nightlyTokenName, scope: .write, createdAt: "2026-11-11T07:00:00.000Z", expiresAt: "2027-01-01T00:00:00.000Z")
     private let wrongPassword = FilesClientError.serverMessage(statusCode: 401, message: "That password is not right.")
     private let createCalls = LockIsolated<[CreateCall]>([])
     private let renameCalls = LockIsolated<[RenameCall]>([])
@@ -134,7 +134,7 @@ struct APITokensFeatureTests {
 
     @Test
     func openingTheFormClearsAShownError() async {
-        let store = makeStore(initial: { $0.errorMessage = "old" })
+        let store = makeStore(initial: { $0.errorMessage = TestValue.outdated })
 
         await store.send(.newTokenTapped) {
             $0.createForm = APITokensFeature.CreateForm()
@@ -175,7 +175,7 @@ struct APITokensFeatureTests {
         await store.send(.nameChanged("ci")) { $0.createForm?.name = "ci" }
         #expect(!store.state.isCreateEnabled)
 
-        await store.send(.passwordChanged("hunter2")) { $0.createForm?.password = "hunter2" }
+        await store.send(.passwordChanged(TestAccount.password)) { $0.createForm?.password = TestAccount.password }
         #expect(store.state.isCreateEnabled)
     }
 
@@ -218,7 +218,7 @@ struct APITokensFeatureTests {
         await store.send(.nameChanged("  nightly  ")) { $0.createForm?.name = "  nightly  " }
         await store.send(.scopeChanged(.write)) { $0.createForm?.scope = .write }
         await store.send(.expiryChanged(.never)) { $0.createForm?.expiry = .never }
-        await store.send(.passwordChanged("hunter2")) { $0.createForm?.password = "hunter2" }
+        await store.send(.passwordChanged(TestAccount.password)) { $0.createForm?.password = TestAccount.password }
         await store.send(.createSubmitted) { $0.isWorking = true }
         await store.receive(\.createResponse.success) {
             $0.isWorking = false
@@ -227,7 +227,7 @@ struct APITokensFeatureTests {
             $0.issued = issued
         }
 
-        #expect(createCalls.value == [CreateCall(name: "nightly", scope: .write, days: nil, password: "hunter2")])
+        #expect(createCalls.value == [CreateCall(name: Constants.nightlyTokenName, scope: .write, days: nil, password: TestAccount.password)])
     }
 
     @Test
@@ -251,7 +251,7 @@ struct APITokensFeatureTests {
     func aWrongPasswordKeepsTheFormClearsThePasswordAndShowsTheMessage() async {
         let store = makeStore(create: { throw wrongPassword })
 
-        await openedForm(store, password: "nope")
+        await openedForm(store, password: TestAccount.rejectedPassword)
         await store.send(.createSubmitted) { $0.isWorking = true }
         await store.receive(\.createResponse.failure) {
             $0.isWorking = false
@@ -276,14 +276,14 @@ struct APITokensFeatureTests {
     func anyOtherFailureKeepsThePassword(_ testCase: KeepsPasswordCase) async {
         let store = makeStore(create: { throw testCase.error })
 
-        await openedForm(store, password: "hunter2")
+        await openedForm(store, password: TestAccount.password)
         await store.send(.createSubmitted) { $0.isWorking = true }
         await store.receive(\.createResponse.failure) {
             $0.isWorking = false
             $0.errorMessage = testCase.message
         }
 
-        #expect(store.state.createForm?.password == "hunter2")
+        #expect(store.state.createForm?.password == TestAccount.password)
     }
 
     @Test
@@ -302,7 +302,7 @@ struct APITokensFeatureTests {
     func submittingAnInvalidFormSendsNothing() async {
         let store = makeStore()
 
-        await openedForm(store, name: "   ", password: "hunter2")
+        await openedForm(store, name: TestValue.blank, password: TestAccount.password)
         await store.send(.createSubmitted)
 
         #expect(createCalls.value.isEmpty)
@@ -328,7 +328,7 @@ struct APITokensFeatureTests {
             throw FilesClientError.offline
         })
 
-        await openedForm(store, password: "hunter2")
+        await openedForm(store, password: TestAccount.password)
         await store.send(.createSubmitted) { $0.isWorking = true }
         await store.send(.createCancelled) {
             $0.createForm = nil
@@ -350,10 +350,10 @@ struct APITokensFeatureTests {
 
     @Test
     func renameStartsFromTheCurrentNameAndReplacesTheTokenInPlace() async {
-        let renamed = APIToken(id: "t1", name: "weekly", scope: .read, createdAt: backup.createdAt)
+        let renamed = APIToken(id: Constants.id, name: "weekly", scope: .read, createdAt: backup.createdAt)
         let store = makeStore(tokens: [backup, nightly], rename: { renamed })
 
-        await store.send(.renameTapped(backup)) { $0.rename = .init(id: "t1", name: "backup") }
+        await store.send(.renameTapped(backup)) { $0.rename = .init(id: Constants.id, name: "backup") }
         await store.send(.renameNameChanged("  weekly ")) { $0.rename?.name = "  weekly " }
         await store.send(.renameSubmitted) { $0.isWorking = true }
         await store.receive(\.renameResponse.success) {
@@ -362,7 +362,7 @@ struct APITokensFeatureTests {
             $0.tokens = [renamed, nightly]
         }
 
-        #expect(renameCalls.value == [RenameCall(id: "t1", name: "weekly")])
+        #expect(renameCalls.value == [RenameCall(id: Constants.id, name: "weekly")])
     }
 
     @Test
@@ -377,7 +377,7 @@ struct APITokensFeatureTests {
     func renameIsRefusedForABlankName() async {
         let store = makeStore()
 
-        await store.send(.renameTapped(backup)) { $0.rename = .init(id: "t1", name: "backup") }
+        await store.send(.renameTapped(backup)) { $0.rename = .init(id: Constants.id, name: "backup") }
         await store.send(.renameNameChanged("  ")) { $0.rename?.name = "  " }
         await store.send(.renameSubmitted)
 
@@ -388,7 +388,7 @@ struct APITokensFeatureTests {
     func aFailedRenameShowsTheMessageAndKeepsTheOldName() async {
         let store = makeStore(rename: { throw FilesClientError.serverMessage(statusCode: 404, message: "There is no such token on this account.") })
 
-        await store.send(.renameTapped(backup)) { $0.rename = .init(id: "t1", name: "backup") }
+        await store.send(.renameTapped(backup)) { $0.rename = .init(id: Constants.id, name: "backup") }
         await store.send(.renameNameChanged("x")) { $0.rename?.name = "x" }
         await store.send(.renameSubmitted) { $0.isWorking = true }
         await store.receive(\.renameResponse.failure) {
@@ -403,8 +403,8 @@ struct APITokensFeatureTests {
     @Test
     func cancellingARenameClearsItAndTheError() async {
         let store = makeStore(initial: {
-            $0.rename = .init(id: "t1", name: "x")
-            $0.errorMessage = "old"
+            $0.rename = .init(id: Constants.id, name: "x")
+            $0.errorMessage = TestValue.outdated
         })
 
         await store.send(.renameCancelled) {
@@ -448,7 +448,7 @@ struct APITokensFeatureTests {
             $0.tokens = [nightly]
         }
 
-        #expect(revokeCalls.value == ["t1"])
+        #expect(revokeCalls.value == [Constants.id])
     }
 
     @Test
@@ -476,4 +476,9 @@ struct APITokensFeatureTests {
 
         #expect(revokeCalls.value.isEmpty)
     }
+}
+
+private enum Constants {
+    static let id = "t1"
+    static let nightlyTokenName = "nightly"
 }

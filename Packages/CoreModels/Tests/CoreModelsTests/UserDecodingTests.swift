@@ -1,6 +1,7 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("User decoding")
 struct UserDecodingTests {
@@ -8,7 +9,7 @@ struct UserDecodingTests {
     func decodesFullUser() throws {
         let user = try CoreModelsFixture.userAdminWithEmail.decode(User.self)
         #expect(user.id == "1")
-        #expect(user.username == "phillip")
+        #expect(user.username == TestAccount.username)
         #expect(user.email == "p@example.com")
         #expect(user.isAdmin == true)
     }
@@ -36,7 +37,7 @@ struct UserDecodingTests {
     @Test("regression: ISO-string createdAt/updatedAt decode through a plain decoder (login response)")
     func isoTimestampsDoNotBreakAPlainDecode() throws {
         let user = try CoreModelsFixture.userLoginResponseIsoTimestamps.decode(User.self)
-        #expect(user.username == "phillip")
+        #expect(user.username == TestAccount.username)
         #expect(user.emailVerified == true)
         #expect(user.createdAt != nil)
         #expect(user.updatedAt != nil)

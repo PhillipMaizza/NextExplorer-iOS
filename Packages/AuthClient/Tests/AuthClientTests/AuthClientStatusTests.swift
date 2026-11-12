@@ -4,6 +4,7 @@ import Foundation
 import Keychain
 import NetworkClient
 import Testing
+import TestUtils
 
 @Suite("AuthClient fetchStatus")
 struct AuthClientStatusTests: AuthClientLiveHarness {
@@ -49,7 +50,7 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
     @Test("fetchStatus unexpected error: transport failure is wrapped, not propagated raw")
     func fetchStatusTransportFailure() async throws {
         let client = makeClient(cookieStorage: makeCookieStorage()) { _ in
-            throw NetworkError.transport("offline")
+            throw NetworkError.transport(TestFailure.offline)
         }
         await #expect(throws: AuthClientError.self) {
             _ = try await client.fetchStatus(serverURL)
@@ -58,22 +59,22 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
 
     @Test("Only an http address answered from https on the same host counts as upgraded")
     func redirectToHTTPS() {
-        let http = URL(string: "http://files.example.com/api/auth/status")!
-        #expect(LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: "https://files.example.com/api/auth/status")))
+        let http = URL(string: Constants.statusURLString)!
+        #expect(LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: Constants.authStatusURL)))
         #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: http))
         #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: "https://elsewhere.example.com/api/auth/status")))
-        #expect(!LocalAuthService.redirectsToHTTPS(requested: URL(string: "https://files.example.com")!, answered: URL(string: "https://files.example.com")))
+        #expect(!LocalAuthService.redirectsToHTTPS(requested: URL(string: TestHost.serverURLString)!, answered: URL(string: TestHost.serverURLString)))
         #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: nil))
     }
 
     @Test(
         "The port the server answered on is kept only when it is not the default https port",
         arguments: [
-            ("http://files.example.com:8080/api/auth/status", "https://files.example.com/api/auth/status", nil as Int?),
-            ("http://files.example.com:8080/api/auth/status", "https://files.example.com:443/api/auth/status", nil as Int?),
-            ("http://files.example.com:8080/api/auth/status", "https://files.example.com:9443/api/auth/status", 9443),
+            (Constants.authStatusURLWithPort, Constants.authStatusURL, nil as Int?),
+            (Constants.authStatusURLWithPort, "https://files.example.com:443/api/auth/status", nil as Int?),
+            (Constants.authStatusURLWithPort, "https://files.example.com:9443/api/auth/status", 9443),
             ("http://files.example.com:8443/api/auth/status", "https://files.example.com:8443/api/auth/status", 8443),
-            ("http://files.example.com/api/auth/status", "https://files.example.com/api/auth/status", nil as Int?),
+            (Constants.statusURLString, Constants.authStatusURL, nil as Int?),
         ]
     )
     func redirectedPort(requested: String, answered: String, expected: Int?) throws {
@@ -114,4 +115,10 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
         #expect(!status.redirectsToHTTPS)
         #expect(status.redirectedPort == nil)
     }
+}
+
+private enum Constants {
+    static let statusURLString = "http://files.example.com/api/auth/status"
+    static let authStatusURL = "https://files.example.com/api/auth/status"
+    static let authStatusURLWithPort = "http://files.example.com:8080/api/auth/status"
 }

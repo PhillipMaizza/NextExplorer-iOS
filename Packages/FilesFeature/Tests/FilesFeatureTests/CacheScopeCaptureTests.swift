@@ -17,7 +17,7 @@ struct CacheScopeCaptureTests {
         static let accountB = "https://files.example.com|bob"
         static let server = URL(fileURLWithPath: "/")
         static let timestamp = MockDate.date
-        static let path = "Docs"
+        static let path = TestFolder.docs
     }
 
     private final class ScopeBox: @unchecked Sendable {

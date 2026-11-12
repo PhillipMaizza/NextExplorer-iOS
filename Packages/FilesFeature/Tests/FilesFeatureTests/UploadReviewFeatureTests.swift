@@ -21,7 +21,7 @@ struct UploadReviewFeatureTests {
         PickedFile(id: UUID(id), fileURL: URL(fileURLWithPath: "/staging/\(name)"), fileName: name, size: size)
     }
 
-    private func state(files: [PickedFile] = [], destination: String = "Inbox", preparingCount: Int = 0) -> State {
+    private func state(files: [PickedFile] = [], destination: String = TestFolder.inbox, preparingCount: Int = 0) -> State {
         State(serverURL: serverURL, files: files, startingDestination: destination, preparingCount: preparingCount)
     }
 
@@ -73,11 +73,11 @@ struct UploadReviewFeatureTests {
     @Test(
         "Upload needs files, a destination, and nothing still preparing",
         arguments: [
-            GateCase(fileSizes: [100, 25], destination: "Documents", preparingCount: 0, canUpload: true, totalSize: 125, totalCount: 2),
+            GateCase(fileSizes: [100, 25], destination: TestFolder.documents, preparingCount: 0, canUpload: true, totalSize: 125, totalCount: 2),
             GateCase(fileSizes: [100, 25], destination: "", preparingCount: 0, canUpload: false, totalSize: 125, totalCount: 2),
-            GateCase(fileSizes: [100], destination: "Documents", preparingCount: 1, canUpload: false, totalSize: 100, totalCount: 2),
-            GateCase(fileSizes: [], destination: "Documents", preparingCount: 0, canUpload: false, totalSize: 0, totalCount: 0),
-            GateCase(fileSizes: [], destination: "Documents", preparingCount: 3, canUpload: false, totalSize: 0, totalCount: 3),
+            GateCase(fileSizes: [100], destination: TestFolder.documents, preparingCount: 1, canUpload: false, totalSize: 100, totalCount: 2),
+            GateCase(fileSizes: [], destination: TestFolder.documents, preparingCount: 0, canUpload: false, totalSize: 0, totalCount: 0),
+            GateCase(fileSizes: [], destination: TestFolder.documents, preparingCount: 3, canUpload: false, totalSize: 0, totalCount: 3),
         ]
     )
     func totalsAndUploadGate(_ testCase: GateCase) {
@@ -94,7 +94,7 @@ struct UploadReviewFeatureTests {
 
     @Test
     func pickingAFolderSetsTheDestinationAndPopsThePicker() async {
-        let store = makeStore(state(files: [file("a.jpg", id: 0, size: 1)], destination: ""))
+        let store = makeStore(state(files: [file(TestFile.aPhoto, id: 0, size: 1)], destination: ""))
 
         await store.send(.pathTapped) {
             $0.folderPicker = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "")
@@ -108,32 +108,32 @@ struct UploadReviewFeatureTests {
 
     @Test
     func cancellingTheFolderPickerKeepsTheDestination() async {
-        let store = makeStore(state(files: [file("a.jpg", id: 0, size: 1)], destination: "Inbox"))
+        let store = makeStore(state(files: [file(TestFile.aPhoto, id: 0, size: 1)], destination: TestFolder.inbox))
 
         await store.send(.pathTapped) {
-            $0.folderPicker = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "Inbox")
+            $0.folderPicker = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: TestFolder.inbox)
         }
         await store.send(.folderPicker(.presented(.delegate(.cancelled)))) { $0.folderPicker = nil }
-        #expect(store.state.destination == "Inbox")
+        #expect(store.state.destination == TestFolder.inbox)
     }
 
     // MARK: Upload
 
     @Test
     func uploadConfirmsWithFilesAndDestination() async {
-        let files = [file("a.jpg", id: 0, size: 1), file("b.txt", id: 1, size: 2)]
-        let store = makeStore(state(files: files, destination: "Inbox"))
+        let files = [file(TestFile.aPhoto, id: 0, size: 1), file(TestFile.bText, id: 1, size: 2)]
+        let store = makeStore(state(files: files, destination: TestFolder.inbox))
 
         await store.send(.uploadTapped)
-        await store.receive(.delegate(.confirmed(files: files, destination: "Inbox")))
+        await store.receive(.delegate(.confirmed(files: files, destination: TestFolder.inbox)))
     }
 
     @Test(
         "Upload does nothing without a destination or while files are still preparing",
-        arguments: [("", 0), ("Inbox", 1)]
+        arguments: [("", 0), (TestFolder.inbox, 1)]
     )
     func uploadIsGuarded(destination: String, preparingCount: Int) async {
-        let store = makeStore(state(files: [file("a.jpg", id: 0, size: 1)], destination: destination, preparingCount: preparingCount))
+        let store = makeStore(state(files: [file(TestFile.aPhoto, id: 0, size: 1)], destination: destination, preparingCount: preparingCount))
 
         await store.send(.uploadTapped)
     }
@@ -142,8 +142,8 @@ struct UploadReviewFeatureTests {
 
     @Test
     func stagingStreamsFilesInAndUnlocksUploadWhenDone() async {
-        let a = file("a.jpg", id: 0, size: 10)
-        let b = file("b.txt", id: 1, size: 5)
+        let a = file(TestFile.aPhoto, id: 0, size: 10)
+        let b = file(TestFile.bText, id: 1, size: 5)
         let urls = [URL(fileURLWithPath: "/picked/a.jpg"), URL(fileURLWithPath: "/picked/b.txt")]
         let store = makeStore(state(), documents: [a, b])
 
@@ -166,8 +166,8 @@ struct UploadReviewFeatureTests {
 
     @Test
     func addingMoreWhilePreparingAccumulates() async {
-        let a = file("a.jpg", id: 0, size: 10)
-        let b = file("b.txt", id: 1, size: 5)
+        let a = file(TestFile.aPhoto, id: 0, size: 10)
+        let b = file(TestFile.bText, id: 1, size: 5)
         let store = makeStore(state(files: [a]), documents: [b])
         #expect(store.state.canUpload)
 
@@ -225,8 +225,8 @@ struct UploadReviewFeatureTests {
 
     @Test
     func aPartiallyStagedBatchCountsTheSkippedFilesAndStillUnlocksUpload() async {
-        let a = file("a.jpg", id: 0, size: 10)
-        let b = file("b.txt", id: 1, size: 5)
+        let a = file(TestFile.aPhoto, id: 0, size: 10)
+        let b = file(TestFile.bText, id: 1, size: 5)
         let urls = (0 ..< 3).map { URL(fileURLWithPath: "/picked/\($0)") }
         let store = makeStore(state(), documents: [a, b])
 
@@ -249,7 +249,7 @@ struct UploadReviewFeatureTests {
 
     @Test
     func aFailedBatchOnTopOfExistingFilesKeepsThemWithoutAnError() async {
-        let a = file("a.jpg", id: 0, size: 10)
+        let a = file(TestFile.aPhoto, id: 0, size: 10)
         let store = makeStore(state(files: [a]), documents: [])
 
         await store.send(.stage(.documents([URL(fileURLWithPath: "/picked/b.txt")]))) { $0.preparingCount = 1 }
@@ -265,7 +265,7 @@ struct UploadReviewFeatureTests {
     func aNewPickClearsAPreviousStagingError() async {
         var failed = state()
         failed.stagingFailed = true
-        let a = file("a.jpg", id: 0, size: 10)
+        let a = file(TestFile.aPhoto, id: 0, size: 10)
         let store = makeStore(failed, documents: [a])
 
         await store.send(.stage(.documents([URL(fileURLWithPath: "/picked/a.jpg")]))) {
@@ -299,7 +299,7 @@ struct UploadReviewFeatureTests {
 
     @Test
     func closingWithStagedFilesRaisesTheDiscardConfirmationThenCancels() async {
-        let store = makeStore(state(files: [file("a.jpg", id: 0, size: 1)]))
+        let store = makeStore(state(files: [file(TestFile.aPhoto, id: 0, size: 1)]))
 
         await store.send(.cancelTapped) { $0.isConfirmingCancel = true }
         await store.send(.confirmCancelTapped) { $0.isConfirmingCancel = false }
@@ -308,7 +308,7 @@ struct UploadReviewFeatureTests {
 
     @Test
     func dismissingTheDiscardConfirmationKeepsTheSheet() async {
-        let store = makeStore(state(files: [file("a.jpg", id: 0, size: 1)]))
+        let store = makeStore(state(files: [file(TestFile.aPhoto, id: 0, size: 1)]))
 
         await store.send(.cancelTapped) { $0.isConfirmingCancel = true }
         await store.send(.cancelConfirmationDismissed) { $0.isConfirmingCancel = false }
@@ -325,7 +325,7 @@ struct UploadReviewFeatureTests {
 
     @Test
     func removingTheLastFileCancelsAndDiscardsIt() async {
-        let a = file("a.jpg", id: 0, size: 1)
+        let a = file(TestFile.aPhoto, id: 0, size: 1)
         let store = makeStore(state(files: [a]))
 
         await store.send(.removeFileTapped(id: UUID(0))) { $0.files = [] }
@@ -336,8 +336,8 @@ struct UploadReviewFeatureTests {
 
     @Test
     func removingOneOfSeveralFilesDiscardsOnlyThatOneAndKeepsTheSheet() async {
-        let a = file("a.jpg", id: 0, size: 1)
-        let b = file("b.jpg", id: 1, size: 2)
+        let a = file(TestFile.aPhoto, id: 0, size: 1)
+        let b = file(TestFile.bPhoto, id: 1, size: 2)
         let store = makeStore(state(files: [a, b]))
 
         await store.send(.removeFileTapped(id: UUID(0))) { $0.files = [b] }
@@ -347,7 +347,7 @@ struct UploadReviewFeatureTests {
 
     @Test
     func removingTheLastFileWhileMoreArePreparingKeepsTheSheetOpen() async {
-        let a = file("a.jpg", id: 0, size: 1)
+        let a = file(TestFile.aPhoto, id: 0, size: 1)
         let store = makeStore(state(files: [a], preparingCount: 1))
 
         await store.send(.removeFileTapped(id: UUID(0))) { $0.files = [] }
@@ -357,7 +357,7 @@ struct UploadReviewFeatureTests {
 
     @Test
     func removingAnUnknownFileChangesNothingAndDiscardsNothing() async {
-        let store = makeStore(state(files: [file("a.jpg", id: 0, size: 1)]))
+        let store = makeStore(state(files: [file(TestFile.aPhoto, id: 0, size: 1)]))
 
         await store.send(.removeFileTapped(id: UUID(5)))
         await store.finish()

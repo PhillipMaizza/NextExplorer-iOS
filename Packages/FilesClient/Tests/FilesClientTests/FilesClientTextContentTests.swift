@@ -12,7 +12,7 @@ extension FilesClientLiveTests {
     @Suite
     struct FilesClientTextContentTests: FilesClientLiveHarness {
         func pinnedTextClient(scope: String, bytes: Data) throws -> FilesClient {
-            let pinned = FileItem(name: "n.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: Int64(bytes.count), kind: "txt")
+            let pinned = FileItem(name: "n.txt", path: TestFolder.docs, dateModified: MockDate.date, size: Int64(bytes.count), kind: TestKind.text)
             let source = FileManager.default.temporaryDirectory.appendingPathComponent("pin-text-\(TestID.name())")
             try bytes.write(to: source)
             _ = try OfflineCache.store(downloadedURL: source, item: pinned, scope: scope)
@@ -29,14 +29,14 @@ extension FilesClientLiveTests {
             stub(statusCode: 200, body: try FilesClientFixture.textContentHelloWorld.data())
             StubURLProtocol.capturedRequest = nil
 
-            let content = try await makeClient().fetchTextContent(serverURL, "Docs/notes.md")
+            let content = try await makeClient().fetchTextContent(serverURL, Constants.docsMarkdown)
 
             #expect(content == "hello\nworld")
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json["path"] == "Docs/notes.md")
+            #expect(json["path"] == Constants.docsMarkdown)
         }
 
         @Test
@@ -60,14 +60,14 @@ extension FilesClientLiveTests {
             stub(statusCode: 200, body: try FilesClientFixture.commonSuccessTrue.data())
             StubURLProtocol.capturedRequest = nil
 
-            try await makeClient().saveTextContent(serverURL, "Docs/notes.md", "updated content")
+            try await makeClient().saveTextContent(serverURL, Constants.docsMarkdown, Constants.updatedContent)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "PUT")
+            #expect(request.httpMethod == HTTPMethod.put.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json["path"] == "Docs/notes.md")
-            #expect(json["content"] == "updated content")
+            #expect(json["path"] == Constants.docsMarkdown)
+            #expect(json["content"] == Constants.updatedContent)
         }
 
         @Test
@@ -95,9 +95,9 @@ extension FilesClientLiveTests {
             resetStubs()
             let scope = "offline-text-\(TestID.name())"
             defer { OfflineCache.removeScope(scope) }
-            let client = try pinnedTextClient(scope: scope, bytes: Data("pinned text".utf8))
+            let client = try pinnedTextClient(scope: scope, bytes: Data(Constants.pinnedText.utf8))
 
-            #expect(try await client.fetchTextContent(serverURL, "Docs/n.txt") == "pinned text")
+            #expect(try await client.fetchTextContent(serverURL, TestPath.docsNote) == Constants.pinnedText)
             resetStubs()
         }
 
@@ -110,7 +110,7 @@ extension FilesClientLiveTests {
             let client = try pinnedTextClient(scope: scope, bytes: Data(repeating: UInt8(ascii: "a"), count: cap + 1))
 
             await #expect(throws: FilesClientError.offline) {
-                _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+                _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
             }
             resetStubs()
         }
@@ -123,7 +123,7 @@ extension FilesClientLiveTests {
             let cap = FilesService.EditorLimits.maxFileSizeBytes
             let client = try pinnedTextClient(scope: scope, bytes: Data(repeating: UInt8(ascii: "a"), count: cap))
 
-            #expect(try await client.fetchTextContent(serverURL, "Docs/n.txt").utf8.count == cap)
+            #expect(try await client.fetchTextContent(serverURL, TestPath.docsNote).utf8.count == cap)
             resetStubs()
         }
 
@@ -135,7 +135,7 @@ extension FilesClientLiveTests {
             let client = try pinnedTextClient(scope: scope, bytes: Data([0x89, 0x50, 0x4E, 0x47, 0x00, 0x01, 0x02, 0x00, 0xFF]))
 
             await #expect(throws: FilesClientError.offline) {
-                _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+                _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
             }
             resetStubs()
         }
@@ -146,11 +146,11 @@ extension FilesClientLiveTests {
             let scope = "scope-seeded"
             let store = DirectoryCacheStore.inMemory(scope: scope)
             let seeded = BrowseResult(
-                items: [FileItem(name: "cached.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")],
+                items: [FileItem(name: Constants.cachedName, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)],
                 access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
-                path: "Docs"
+                path: TestFolder.docs
             )
-            store.write(serverURL: serverURL, path: "Docs", result: seeded, etag: #"W/"v1""#, fetchedAt: Date(timeIntervalSince1970: 0))
+            store.write(serverURL: serverURL, path: TestFolder.docs, result: seeded, etag: #"W/"v1""#, fetchedAt: MockDate.date)
             StubURLProtocol.stub = .init(statusCode: 304, headers: [:], body: Data())
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
@@ -158,10 +158,17 @@ extension FilesClientLiveTests {
                 activeScope: { scope }
             )
 
-            let browsed = try await client.browse(serverURL, "Docs")
+            let browsed = try await client.browse(serverURL, TestFolder.docs)
 
-            #expect(browsed.items.map(\.name) == ["cached.txt"])
+            #expect(browsed.items.map(\.name) == [Constants.cachedName])
             resetStubs()
         }
     }
+}
+
+private enum Constants {
+    static let cachedName = "cached.txt"
+    static let pinnedText = "pinned text"
+    static let updatedContent = "updated content"
+    static let docsMarkdown = "Docs/notes.md"
 }

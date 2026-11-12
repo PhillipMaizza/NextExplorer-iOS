@@ -9,7 +9,7 @@ import TestUtils
 /// Fixtures the Browse tab and app shell tests share.
 enum BrowseTestSupport {
     static let serverURL: URL = {
-        guard let url = URL(string: "https://example.com") else {
+        guard let url = URL(string: TestHost.exampleURLString) else {
             preconditionFailure("The test server URL literal is valid")
         }
         return url

@@ -30,12 +30,12 @@ extension ShareUploadFeatureTests {
             let calls = Calls()
             let announcements = LockIsolated<[String]>([])
             let store = store(
-                defaults: UploadDefaults(folderPath: "Gone", shouldUploadWithoutAsking: true),
+                defaults: UploadDefaults(folderPath: Constants.missingFolder, shouldUploadWithoutAsking: true),
                 calls: calls,
                 browse: { _, _ in throw FilesClientError.server(statusCode: 404) },
                 announcements: announcements
             )
-            await startAutomatic(store, folder: "Gone")
+            await startAutomatic(store, folder: Constants.missingFolder)
             await folderGone(store)
             await store.finish()
             #expect(calls.all.isEmpty, "nothing is uploaded to a folder that is gone")
@@ -52,11 +52,11 @@ extension ShareUploadFeatureTests {
         func aFolderTheServerDeniesOrCannotFindIsGone(error: FilesClientError) async {
             let calls = Calls()
             let store = store(
-                defaults: UploadDefaults(folderPath: "Gone", shouldUploadWithoutAsking: true),
+                defaults: UploadDefaults(folderPath: Constants.missingFolder, shouldUploadWithoutAsking: true),
                 calls: calls,
                 browse: { _, _ in throw error }
             )
-            await startAutomatic(store, folder: "Gone")
+            await startAutomatic(store, folder: Constants.missingFolder)
             await folderGone(store)
             await store.finish()
             #expect(calls.all.isEmpty, "\(error) must not start an upload that would fail file by file")
@@ -77,7 +77,7 @@ extension ShareUploadFeatureTests {
         func anErrorThatSaysNothingAboutTheFolderStillUploads(error: FilesClientError) async {
             let calls = Calls()
             let store = store(
-                defaults: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true),
+                defaults: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true),
                 calls: calls,
                 browse: { _, _ in throw error }
             )
@@ -99,10 +99,10 @@ extension ShareUploadFeatureTests {
         @Test
         func aDefaultFolderTheAccountCanNoLongerUploadToIsTreatedAsGone() async {
             let store = store(
-                defaults: UploadDefaults(folderPath: "ReadOnly", shouldUploadWithoutAsking: true),
+                defaults: UploadDefaults(folderPath: Constants.readOnlyFolder, shouldUploadWithoutAsking: true),
                 browse: { _, _ in Self.listing(canUpload: false) }
             )
-            await startAutomatic(store, folder: "ReadOnly")
+            await startAutomatic(store, folder: Constants.readOnlyFolder)
             await folderGone(store)
             #expect(store.state.notice == .defaultFolderUnavailable)
             #expect(store.state.folderPicker != nil)
@@ -111,14 +111,14 @@ extension ShareUploadFeatureTests {
         @Test
         func choosingAnotherFolderClearsTheMessageAndAllowsTheUpload() async {
             let store = store(
-                defaults: UploadDefaults(folderPath: "Gone", shouldUploadWithoutAsking: true),
+                defaults: UploadDefaults(folderPath: Constants.missingFolder, shouldUploadWithoutAsking: true),
                 browse: { _, _ in throw FilesClientError.server(statusCode: 404) }
             )
-            await startAutomatic(store, folder: "Gone")
+            await startAutomatic(store, folder: Constants.missingFolder)
             await folderGone(store)
 
-            await store.send(.folderPicker(.presented(.delegate(.confirmed(destination: "Docs"))))) {
-                $0.destination = "Docs"
+            await store.send(.folderPicker(.presented(.delegate(.confirmed(destination: TestFolder.docs))))) {
+                $0.destination = TestFolder.docs
                 $0.folderPicker = nil
                 $0.notice = nil
             }
@@ -129,13 +129,13 @@ extension ShareUploadFeatureTests {
         func theDefaultFolderIsCheckedOnceBeforeTheAutomaticUpload() async {
             let browsed = LockIsolated<[String]>([])
             let store = store(
-                defaults: UploadDefaults(folderPath: "Photos/2026", shouldUploadWithoutAsking: true),
+                defaults: UploadDefaults(folderPath: TestPath.photos2026, shouldUploadWithoutAsking: true),
                 browse: { _, path in
                     browsed.withValue { $0.append(path) }
                     return Self.listing()
                 }
             )
-            await startAutomatic(store, folder: "Photos/2026")
+            await startAutomatic(store, folder: TestPath.photos2026)
             await store.receive(\.defaultFolderChecked) { $0.phase = .ready }
             await store.receive(\.uploadTapped) {
                 $0.phase = .preparing
@@ -147,14 +147,14 @@ extension ShareUploadFeatureTests {
             }
             await store.receive(\.uploadResponse.success) { $0.phase = .started }
             await store.send(.viewDisappeared)
-            #expect(browsed.value == ["Photos/2026"])
+            #expect(browsed.value == [TestPath.photos2026])
         }
 
         @Test
         func anExpiredSessionFoundWhileCheckingTheDefaultFolderShowsSignedOut() async {
             let calls = Calls()
             let store = store(
-                defaults: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true),
+                defaults: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true),
                 calls: calls,
                 browse: { _, _ in throw FilesClientError.sessionExpired }
             )
@@ -167,15 +167,20 @@ extension ShareUploadFeatureTests {
         func aFolderPathIsNotCheckedWhenTheUploadWaitsForATap() async {
             let browsed = LockIsolated(0)
             let store = store(
-                defaults: UploadDefaults(folderPath: "Photos"),
+                defaults: UploadDefaults(folderPath: TestFolder.photos),
                 browse: { _, _ in
                     browsed.withValue { $0 += 1 }
                     return Self.listing()
                 }
             )
-            await becomeReady(store, folder: "Photos")
+            await becomeReady(store, folder: TestFolder.photos)
             await store.finish()
             #expect(browsed.value == 0)
         }
     }
+}
+
+private enum Constants {
+    static let readOnlyFolder = "ReadOnly"
+    static let missingFolder = "Gone"
 }

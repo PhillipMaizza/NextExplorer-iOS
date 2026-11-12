@@ -33,7 +33,7 @@ struct TwoFactorTests {
     @Test("decodes the setup the server draws")
     func decodesSetup() throws {
         let setup = try CoreModelsFixture.twoFactorSetup.decode(TwoFactorSetup.self)
-        #expect(setup.secret == "JBSWY3DPEHPK3PXP")
+        #expect(setup.secret == TestAccount.totpSecret)
         #expect(setup.uri.hasPrefix("otpauth://"))
     }
 }

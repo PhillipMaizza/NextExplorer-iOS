@@ -13,12 +13,12 @@ struct BrowseSearchTests {
 
     @Test("Searching this folder fills in matches from the loaded items at once, then asks the server scoped to the folder")
     func thisFolderSearchPreFillsFromLoadedItemsThenHitsTheBackendScopedToTheCurrentDirectory() async {
-        let loadedMatch = BrowseFixtures.file("vacation.jpg", in: "Photos")
-        let loadedNonMatch = BrowseFixtures.file("notes.txt", in: "Photos")
+        let loadedMatch = BrowseFixtures.file(TestFile.vacationPhoto, in: TestFolder.photos)
+        let loadedNonMatch = BrowseFixtures.file(TestFile.notes, in: TestFolder.photos)
         let deepHit = SearchResultItem(name: "vacation-2.jpg", path: "Photos/Trips", kind: "file")
         let clock = TestClock()
         let scopePath = LockIsolated<[String]>([])
-        let store = BrowseFixtures.store(BrowseFixtures.state("Photos", title: "Photos", items: [loadedMatch, loadedNonMatch])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos, items: [loadedMatch, loadedNonMatch])) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, path, _, _ in
                 scopePath.withValue { $0.append(path) }
@@ -28,7 +28,7 @@ struct BrowseSearchTests {
 
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
-            $0.searchResults = [SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file")]
+            $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: "file")]
             $0.isSearchingRemotely = true
         }
         await clock.advance(by: .seconds(1))
@@ -36,14 +36,14 @@ struct BrowseSearchTests {
             $0.isSearchingRemotely = false
             $0.searchResults = [deepHit]
         }
-        #expect(scopePath.value == ["Photos"])
+        #expect(scopePath.value == [TestFolder.photos])
     }
 
     @Test("A query shorter than the server minimum keeps the instant matches and never asks the server")
     func queriesShorterThanTheServerMinimumKeepTheInstantMatchesWithoutASearchRequest() async {
         let clock = TestClock()
         let calls = LockIsolated(0)
-        let store = BrowseFixtures.store(BrowseFixtures.state(title: "Files", items: [BrowseFixtures.folder("Payslips")])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(title: TestFolder.files, items: [BrowseFixtures.folder("Payslips")])) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, _, _ in
                 calls.withValue { $0 += 1 }
@@ -63,7 +63,7 @@ struct BrowseSearchTests {
 
     @Test("Favorites matching the query show at once within the scope, before the server answers")
     func matchingFavoritesShowInstantlyWithinTheScope() async {
-        var state = BrowseFixtures.state("Photos", title: "Photos")
+        var state = BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos)
         state.favoritePaths = ["Photos/Trips/Vacation 2024", "Work/Vacation Plans", "Photos/Album"]
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {
@@ -82,7 +82,7 @@ struct BrowseSearchTests {
             $0.searchScope = .everywhere
             $0.searchResults = [
                 SearchResultItem(name: "Vacation 2024", path: "Photos/Trips", kind: "dir"),
-                SearchResultItem(name: "Vacation Plans", path: "Work", kind: "dir"),
+                SearchResultItem(name: "Vacation Plans", path: FilesFeatureTestValue.workFolder, kind: "dir"),
             ]
         }
         await clock.advance(by: .seconds(1))
@@ -97,7 +97,7 @@ struct BrowseSearchTests {
         let deepHit = SearchResultItem(name: "vacation-2.jpg", path: "Photos/Trips", kind: "file")
         let clock = TestClock()
         let calls = LockIsolated(0)
-        let store = BrowseFixtures.store(BrowseFixtures.state("Photos", title: "Photos")) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos)) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, _, _ in
                 calls.withValue { $0 += 1 }
@@ -134,8 +134,8 @@ struct BrowseSearchTests {
             }
         }
 
-        await store.send(.searchQueryChanged("   ")) {
-            $0.searchQuery = "   "
+        await store.send(.searchQueryChanged(TestValue.blank)) {
+            $0.searchQuery = TestValue.blank
         }
         await clock.advance(by: .seconds(2))
         await store.finish()
@@ -144,9 +144,9 @@ struct BrowseSearchTests {
 
     @Test("Searching everywhere asks the server from the root, whatever folder is open")
     func everywhereSearchHitsTheBackendFromTheRoot() async {
-        var state = BrowseFixtures.state("Photos", title: "Photos")
+        var state = BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos)
         state.searchScope = .everywhere
-        let result = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file")
+        let result = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: "file")
         let clock = TestClock()
         let scopePath = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
@@ -175,7 +175,7 @@ struct BrowseSearchTests {
     func clearingTheSearchQueryCancelsAnInFlightSearchAndClearsResults() async {
         let clock = TestClock()
         let calls = LockIsolated(0)
-        let store = BrowseFixtures.store(BrowseFixtures.state(items: [BrowseFixtures.file("vacation.jpg")])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [BrowseFixtures.file(TestFile.vacationPhoto)])) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, _, _ in
                 calls.withValue { $0 += 1 }
@@ -185,7 +185,7 @@ struct BrowseSearchTests {
 
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
-            $0.searchResults = [SearchResultItem(name: "vacation.jpg", path: "", kind: "file")]
+            $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: "", kind: "file")]
             $0.isSearchingRemotely = true
         }
         await store.send(.searchQueryChanged("")) {
@@ -204,7 +204,7 @@ struct BrowseSearchTests {
         let result = SearchResultItem(name: "vacation-2.jpg", path: "Trips", kind: "file")
         let clock = TestClock()
         let queries = LockIsolated<[String]>([])
-        let store = BrowseFixtures.store(BrowseFixtures.state(items: [BrowseFixtures.file("vacation.jpg")])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [BrowseFixtures.file(TestFile.vacationPhoto)])) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, query, _ in
                 queries.withValue { $0.append(query) }
@@ -215,7 +215,7 @@ struct BrowseSearchTests {
         // Both at least the server's three characters, so both would really be sent.
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
-            $0.searchResults = [SearchResultItem(name: "vacation.jpg", path: "", kind: "file")]
+            $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: "", kind: "file")]
             $0.isSearchingRemotely = true
         }
         await store.send(.searchQueryChanged("vaca")) {
@@ -255,7 +255,7 @@ struct BrowseSearchTests {
     func changingScopeToEverywhereWithAnExistingQueryTriggersANetworkSearch() async {
         var state = BrowseFixtures.state()
         state.searchQuery = "vac"
-        let result = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file")
+        let result = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: "file")
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {
             $0.continuousClock = clock
@@ -281,8 +281,8 @@ struct BrowseSearchTests {
         var state = BrowseFixtures.state()
         state.searchScope = .everywhere
         let closest = SearchResultItem(name: "zeta", path: "", kind: "dir", isNameMatch: true)
-        let content = SearchResultItem(name: "alpha.txt", path: "Docs", kind: "file", matchLine: "zeta", matchLineNumber: 3, isContentMatch: true)
-        let more = SearchResultItem(name: "beta.txt", path: "Docs", kind: "file", isContentMatch: true)
+        let content = SearchResultItem(name: "alpha.txt", path: TestFolder.docs, kind: "file", matchLine: "zeta", matchLineNumber: 3, isContentMatch: true)
+        let more = SearchResultItem(name: "beta.txt", path: TestFolder.docs, kind: "file", isContentMatch: true)
         let limits = LockIsolated<[Int?]>([])
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {
@@ -340,7 +340,7 @@ struct BrowseSearchTests {
     func aSearchStoppedAtItsTimeLimitSaysSo() async {
         var state = BrowseFixtures.state()
         state.searchScope = .everywhere
-        let hit = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file", isNameMatch: true)
+        let hit = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: "file", isNameMatch: true)
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {
             $0.continuousClock = clock
@@ -395,16 +395,16 @@ struct BrowseSearchTests {
     func searchResultTappedOnADirectoryAtTheRootBuildsThePathFromAnEmptyParent() async {
         let store = BrowseFixtures.store()
 
-        await store.send(.searchResultTapped(SearchResultItem(name: "Docs", path: "", kind: "dir")))
-        await store.receive(.delegate(.openPath(path: "Docs", title: "Docs")))
+        await store.send(.searchResultTapped(SearchResultItem(name: TestFolder.docs, path: "", kind: "dir")))
+        await store.receive(.delegate(.openPath(path: TestFolder.docs, title: TestFolder.docs)))
     }
 
     @Test("A file result opens its preview as a tapped row, with the type taken from its name")
     func searchResultTappedOnAFileOpensThePreviewViaRowTapped() async {
         let store = BrowseFixtures.store()
-        let opened = FileItem(name: "clip.mp4", path: "Media", dateModified: MockDate.date, size: 0, kind: "mp4")
+        let opened = FileItem(name: "clip.mp4", path: TestFolder.media, dateModified: MockDate.date, size: 0, kind: TestKind.video)
 
-        await store.send(.searchResultTapped(SearchResultItem(name: "clip.mp4", path: "Media", kind: "file")))
+        await store.send(.searchResultTapped(SearchResultItem(name: "clip.mp4", path: TestFolder.media, kind: "file")))
         await store.receive(.rowTapped(opened)) {
             $0.previewItem = opened
         }

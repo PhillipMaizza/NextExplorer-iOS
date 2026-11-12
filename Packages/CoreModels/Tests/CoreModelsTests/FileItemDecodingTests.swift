@@ -23,7 +23,7 @@ struct FileItemDecodingTests {
     @Test("decodes a full directory listing entry")
     func decodesFullEntry() throws {
         let item = try CoreModelsFixture.fileItemDirectoryWithThumbnail.decode(FileItem.self)
-        #expect(item.name == "Photos")
+        #expect(item.name == TestFolder.photos)
         #expect(item.isDirectory == true)
         #expect(item.supportsThumbnail == true)
     }
@@ -37,13 +37,13 @@ struct FileItemDecodingTests {
 
     @Test("edge case: id joins path and name when path is non-empty")
     func idJoinsPathAndName() {
-        let item = FileItem(name: "file.txt", path: "Home/Docs", dateModified: MockDate.date, size: 0, kind: "txt")
+        let item = FileItem(name: "file.txt", path: TestPath.homeDocs, dateModified: MockDate.date, size: 0, kind: TestKind.text)
         #expect(item.id == "Home/Docs/file.txt")
     }
 
     @Test("edge case: id is just the name when path is empty (root level)")
     func idIsNameAtRoot() {
-        let item = FileItem(name: "Volume", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let item = FileItem(name: "Volume", path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
         #expect(item.id == "Volume")
     }
 
@@ -82,7 +82,7 @@ struct FileItemDecodingTests {
     @Test("edge case: only RAW camera extensions report isRawImage, not regular images")
     func rawImageIsDistinctFromRegularImage() {
         let raw = FileItem(name: "photo.nef", path: "", dateModified: MockDate.date, size: 0, kind: "nef")
-        let jpeg = FileItem(name: "photo.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
+        let jpeg = FileItem(name: TestFile.photo, path: "", dateModified: MockDate.date, size: 0, kind: TestKind.photo)
         #expect(raw.isRawImage)
         #expect(!jpeg.isRawImage)
         #expect(jpeg.isImage)
@@ -157,7 +157,7 @@ struct FileItemDecodingTests {
 
     @Test("edge case: directories are never unsupported (they're not previewed at all, but the flag shouldn't claim they are)")
     func directoryIsNotUnsupportedForPreview() {
-        let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let item = FileItem(name: TestFolder.documents, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
         #expect(!item.isUnsupportedForPreview)
     }
 
@@ -205,11 +205,11 @@ struct FileItemDecodingTests {
     @Test("round-trips through Codable")
     func codableRoundTrip() throws {
         let original = FileItem(
-            name: "report.pdf",
-            path: "Home/Docs",
-            dateModified: Date(timeIntervalSince1970: 1800000000),
+            name: TestFile.report,
+            path: TestPath.homeDocs,
+            dateModified: MockDate.date,
             size: 2048,
-            kind: "pdf",
+            kind: TestKind.pdf,
             supportsThumbnail: true
         )
         let data = try JSONEncoder().encode(original)

@@ -1,14 +1,15 @@
 import Foundation
 
-/// A tiny deterministic RNG (SplitMix64) so the monkey tests explore the same garbage on every
-/// run. Seedable, unlike `SystemRandomNumberGenerator`, which keeps a fuzz failure reproducible.
-struct SplitMix64: RandomNumberGenerator {
+/// A tiny deterministic RNG (SplitMix64): the monkey tests explore the same input on every run, and a
+/// fuzz failure reproduces from its seed. Never `SystemRandomNumberGenerator`.
+public struct SplitMix64: RandomNumberGenerator {
     private var state: UInt64
-    init(seed: UInt64) {
+
+    public init(seed: UInt64) {
         state = seed
     }
 
-    mutating func next() -> UInt64 {
+    public mutating func next() -> UInt64 {
         state &+= 0x9E37_79B9_7F4A_7C15
         var z = state
         z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
@@ -17,14 +18,13 @@ struct SplitMix64: RandomNumberGenerator {
     }
 }
 
-/// Builds hostile strings from a character set full of the things that break naive parsers:
-/// path/authority separators, whitespace, control bytes, unicode and emoji.
-enum FuzzStrings {
+/// Hostile strings: path separators, whitespace, control bytes, unicode and emoji.
+public enum FuzzStrings {
     private static let alphabet: [Character] = Array(
         "abcXYZ0123./\\:@-_ !#?%&=+[]().," + "\u{0}\n\t" + "éñ🙂🔥"
     )
 
-    static func random(using rng: inout SplitMix64, maxLength: Int) -> String {
+    public static func random(using rng: inout SplitMix64, maxLength: Int) -> String {
         let length = Int(rng.next() % UInt64(maxLength + 1))
         var out = ""
         out.reserveCapacity(length)

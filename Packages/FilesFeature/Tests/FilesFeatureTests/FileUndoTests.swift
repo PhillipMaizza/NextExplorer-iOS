@@ -15,7 +15,7 @@ struct FileUndoTests {
     private let now = MockDate.date.addingTimeInterval(100)
 
     private func folder(_ name: String, in path: String) -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: "directory")
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
     }
 
     private func state(_ path: String, items: [FileItem]) -> BrowseFeature.State {
@@ -42,10 +42,10 @@ struct FileUndoTests {
     /// until the test has asserted the send that started them.
     @Test
     func aDuplicateShowsInTheListingAtOnceAndUndoDeletesIt() async {
-        let misc = folder("Misc", in: "Docs")
-        var initial = state("Docs", items: [misc])
+        let misc = folder("Misc", in: TestFolder.docs)
+        var initial = state(TestFolder.docs, items: [misc])
         initial.selectedItemIDs = [misc.id]
-        let copy = FileItem(name: "Misc (2)", path: "Docs", dateModified: now, size: 0, kind: "directory")
+        let copy = FileItem(name: "Misc (2)", path: TestFolder.docs, dateModified: now, size: 0, kind: FileItem.directoryKind)
         let deleted = LockIsolated<[FileItem]>([])
         let gate = AsyncGate()
 
@@ -61,7 +61,7 @@ struct FileUndoTests {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [misc], destination: "Docs", operation: .copy, clearClipboard: false,
+                items: [misc], destination: TestFolder.docs, operation: .copy, clearClipboard: false,
                 resolution: .keepBoth, itemsToReplace: []
             )
         }
@@ -91,15 +91,15 @@ struct FileUndoTests {
 
     @Test
     func undoingAMoveMovesTheItemsBackToWhereTheyCameFrom() async {
-        let report = FileItem(name: "report.pdf", path: "Docs", dateModified: now, size: 10, kind: "pdf")
-        let archive = folder("Archive", in: "Docs")
-        let movedReport = FileItem(name: "report.pdf", path: "Docs/Archive", dateModified: now, size: 10, kind: "pdf")
+        let report = FileItem(name: TestFile.report, path: TestFolder.docs, dateModified: now, size: 10, kind: TestKind.pdf)
+        let archive = folder(TestFolder.archive, in: TestFolder.docs)
+        let movedReport = FileItem(name: TestFile.report, path: "Docs/Archive", dateModified: now, size: 10, kind: TestKind.pdf)
         let moves = LockIsolated<[[String]]>([])
         let destinations = LockIsolated<[String]>([])
         let gate = AsyncGate()
         let access = access
 
-        let store = store(state("Docs", items: [report, archive])) {
+        let store = store(state(TestFolder.docs, items: [report, archive])) {
             $0.filesClient.browse = { _, path in BrowseResult(items: [], access: access, path: path) }
             $0.filesClient.transferItems = { _, items, destination, _ in
                 try await gate.wait()
@@ -130,7 +130,7 @@ struct FileUndoTests {
             $0.transferSuccessMessage = L10n.Browse.transferMoved(1)
             $0.items = IdentifiedArray(uniqueElements: [archive])
             $0.$undoStack.withLock {
-                $0 = [FileUndoEntry(.moved([FileUndoEntry.MovedItem(item: movedReport, originalParent: "Docs")]))]
+                $0 = [FileUndoEntry(.moved([FileUndoEntry.MovedItem(item: movedReport, originalParent: TestFolder.docs)]))]
             }
         }
         await store.receive(.delegate(.directoryContentsChanged))
@@ -144,14 +144,14 @@ struct FileUndoTests {
         await store.finish()
 
         #expect(moves.value == [["Docs/report.pdf"], ["Docs/Archive/report.pdf"]])
-        #expect(destinations.value == ["Docs/Archive", "Docs"])
+        #expect(destinations.value == ["Docs/Archive", TestFolder.docs])
     }
 
     @Test
     func undoingARenameRestoresTheOldName() async {
-        let original = FileItem(name: "vacation.jpg", path: "Photos", dateModified: now, size: 0, kind: "jpg")
-        let renamedItem = FileItem(name: "beach.jpg", path: "Photos", dateModified: now, size: 0, kind: "jpg")
-        var initial = state("Photos", items: [original])
+        let original = FileItem(name: TestFile.vacationPhoto, path: TestFolder.photos, dateModified: now, size: 0, kind: TestKind.photo)
+        let renamedItem = FileItem(name: "beach.jpg", path: TestFolder.photos, dateModified: now, size: 0, kind: TestKind.photo)
+        var initial = state(TestFolder.photos, items: [original])
         initial.renameSheetItem = original
         let renames = LockIsolated<[String]>([])
         let gate = AsyncGate()
@@ -170,7 +170,7 @@ struct FileUndoTests {
             $0.isPerformingFileAction = false
             $0.renameSheetItem = nil
             $0.items = IdentifiedArray(uniqueElements: [renamedItem])
-            $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedItem, previousName: "vacation.jpg"))] }
+            $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedItem, previousName: TestFile.vacationPhoto))] }
         }
 
         await store.send(.undoTapped) {
@@ -186,7 +186,7 @@ struct FileUndoTests {
 
     @Test
     func nothingToUndoDoesNothing() async {
-        let store = store(state("Docs", items: [])) { _ in }
+        let store = store(state(TestFolder.docs, items: [])) { _ in }
         await store.send(.undoTapped)
     }
 }

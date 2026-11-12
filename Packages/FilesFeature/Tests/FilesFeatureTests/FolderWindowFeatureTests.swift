@@ -30,7 +30,7 @@ import TestUtils
         func delegatesAreForwardedToTheMainWindow() async {
             let forwarded = LockIsolated<[FolderWindowFeature.Forwarded]>([])
             let store = makeStore(forwarded: forwarded)
-            let upload = PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: "a.txt", destination: "Docs")
+            let upload = PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: TestFile.aText, destination: TestFolder.docs)
 
             await store.send(.browse(.delegate(.uploadRequested([upload]))))
             await store.send(.browse(.delegate(.favoritesChanged)))
@@ -42,7 +42,7 @@ import TestUtils
         @Test("A folder created here is handed to the main window as a change to its folder")
         func aFinishedChangeHereIsHandedToTheMainWindow() async {
             let forwarded = LockIsolated<[FolderWindowFeature.Forwarded]>([])
-            let folder = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            let folder = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
             let store = makeStore(forwarded: forwarded)
 
             await store.send(.browse(.root(.newFolderResponse(.success(folder))))) {
@@ -72,8 +72,8 @@ import TestUtils
             let forwarded = LockIsolated<[FolderWindowFeature.Forwarded]>([])
             let store = makeStore(forwarded: forwarded)
 
-            await store.send(.browse(.navigateToDirectory(path: "Photos", title: "Photos"))) {
-                $0.browse.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")])
+            await store.send(.browse(.navigateToDirectory(path: TestFolder.photos, title: TestFolder.photos))) {
+                $0.browse.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos)])
             }
             await store.finish()
 
@@ -85,12 +85,12 @@ import TestUtils
         @Test("Another window's change reloads the folders shown here that it touched, and only those")
         func anotherWindowsChangeReloadsTheFoldersShownHere() async {
             var state = FolderWindowFeature.State(serverURL: serverURL)
-            state.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+            state.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
             let id = state.browse.path.ids[0]
             let listing = AsyncGate()
-            let store = makeStore(state) { $0.holdFolderListings(["Photos": listing]) }
+            let store = makeStore(state) { $0.holdFolderListings([TestFolder.photos: listing]) }
 
-            await store.send(.otherWindowChanged(.folders(["Photos", "Elsewhere"])))
+            await store.send(.otherWindowChanged(.folders([TestFolder.photos, "Elsewhere"])))
             await store.receive(\.browse.refreshDirectory)
             await store.receive(\.browse.refreshDirectory)
             await store.receive(\.browse.path[id: id].refreshButtonTapped) {
@@ -109,9 +109,9 @@ import TestUtils
         @Test("A move or an undo elsewhere reloads the root and every pushed folder shown here")
         func aMoveOrUndoReloadsEveryFolderInTheOtherWindows() async {
             var state = FolderWindowFeature.State(serverURL: serverURL)
-            state.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+            state.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
             let id = state.browse.path.ids[0]
-            let gates = ["": AsyncGate(), "Photos": AsyncGate()]
+            let gates = ["": AsyncGate(), TestFolder.photos: AsyncGate()]
             let store = makeStore(state) { $0.holdFolderListings(gates) }
 
             await store.send(.otherWindowChanged(.everything))
@@ -130,7 +130,7 @@ import TestUtils
             await store.receive(\.browse.root.favoritesResponse) {
                 $0.browse.root.hasLoadedFavorites = true
             }
-            gates["Photos"]?.open()
+            gates[TestFolder.photos]?.open()
             await store.receive(\.browse.path[id: id].itemsResponse.success) {
                 $0.browse.path[id: id]?.phase = .loaded
                 $0.browse.path[id: id]?.access = BrowseTestSupport.readOnlyAccess

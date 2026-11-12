@@ -29,18 +29,18 @@ struct BrowseFavoritesTests {
             $0.directoryCacheStore.lastWrittenAt = { _, _ in nil }
         }
 
-        await store.send(.favoritesResponse([BrowseFixtures.favorite("Documents")])) {
-            $0.favoritePaths = ["Documents"]
+        await store.send(.favoritesResponse([BrowseFixtures.favorite(TestFolder.documents)])) {
+            $0.favoritePaths = [TestFolder.documents]
             $0.hasLoadedFavorites = true
         }
         await store.finish()
-        #expect(prefetched.value == ["Documents"])
+        #expect(prefetched.value == [TestFolder.documents])
     }
 
     @Test("An empty favorites answer clears the favorite paths and warms nothing")
     func favoritesResponseWithNoFavoritesClearsFavoritePaths() async {
         var state = BrowseFixtures.state()
-        state.favoritePaths = ["Documents"]
+        state.favoritePaths = [TestFolder.documents]
         // No prefetchDirectory override: a prefetch fails the test as unimplemented.
         let store = BrowseFixtures.store(state)
 
@@ -59,30 +59,30 @@ struct BrowseFavoritesTests {
             $0.directoryCacheStore.lastWrittenAt = { _, _ in nil }
         }
 
-        await store.send(.favoritesResponse([BrowseFixtures.favorite("Work"), BrowseFixtures.favorite("Trips", position: 1)])) {
-            $0.favoritePaths = ["Work", "Trips"]
+        await store.send(.favoritesResponse([BrowseFixtures.favorite(FilesFeatureTestValue.workFolder), BrowseFixtures.favorite("Trips", position: 1)])) {
+            $0.favoritePaths = [FilesFeatureTestValue.workFolder, "Trips"]
             $0.hasLoadedFavorites = true
         }
         await store.finish()
         // The folders are warmed side by side, so their order is not fixed.
-        #expect(Set(prefetched.value) == ["Work", "Trips"])
+        #expect(Set(prefetched.value) == [FilesFeatureTestValue.workFolder, "Trips"])
         #expect(prefetched.value.count == 2)
     }
 
     @Test("A favorite that the listing shows as a file is not warmed")
     func favoritesResponseSkipsAFavoriteTheListingShowsAsAFile() async {
         let prefetched = LockIsolated<[String]>([])
-        let store = BrowseFixtures.store(BrowseFixtures.state(items: [BrowseFixtures.file("notes.txt")])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [BrowseFixtures.file(TestFile.notes)])) {
             $0.filesClient.prefetchDirectory = { _, path in prefetched.withValue { $0.append(path) } }
             $0.directoryCacheStore.lastWrittenAt = { _, _ in nil }
         }
 
-        await store.send(.favoritesResponse([BrowseFixtures.favorite("notes.txt"), BrowseFixtures.favorite("Work", position: 1)])) {
-            $0.favoritePaths = ["notes.txt", "Work"]
+        await store.send(.favoritesResponse([BrowseFixtures.favorite(TestFile.notes), BrowseFixtures.favorite(FilesFeatureTestValue.workFolder, position: 1)])) {
+            $0.favoritePaths = [TestFile.notes, FilesFeatureTestValue.workFolder]
             $0.hasLoadedFavorites = true
         }
         await store.finish()
-        #expect(prefetched.value == ["Work"])
+        #expect(prefetched.value == [FilesFeatureTestValue.workFolder])
     }
 
     // MARK: Toggling one folder
@@ -116,7 +116,7 @@ struct BrowseFavoritesTests {
         // The server rejects anything that is not a directory, so this mirrors it without a round trip.
         let store = BrowseFixtures.store(favoritesLoadedState())
 
-        await store.send(.favoriteToggleButtonTapped(BrowseFixtures.file("vacation.jpg")))
+        await store.send(.favoriteToggleButtonTapped(BrowseFixtures.file(TestFile.vacationPhoto)))
     }
 
     @Test("Tapping a star before the favorites have loaded does nothing")
@@ -176,9 +176,9 @@ struct BrowseFavoritesTests {
 
     @Test("Bulk favorite removes the selected favorites, adds the other selected folders, and skips files")
     func bulkFavoriteTappedTogglesEachSelectedDirectory() async {
-        let folder = BrowseFixtures.folder("Photos")
-        let alreadyFavorited = BrowseFixtures.folder("Documents")
-        let file = BrowseFixtures.file("notes.txt")
+        let folder = BrowseFixtures.folder(TestFolder.photos)
+        let alreadyFavorited = BrowseFixtures.folder(TestFolder.documents)
+        let file = BrowseFixtures.file(TestFile.notes)
         var state = favoritesLoadedState([alreadyFavorited.id])
         state.items = [folder, alreadyFavorited, file]
         state.isSelecting = true
@@ -198,18 +198,46 @@ struct BrowseFavoritesTests {
         }
         await store.receive(\.bulkFavoriteResponse) {
             $0.isBulkActionInFlight = false
-            $0.favoritePaths = ["Photos"]
+            $0.favoritePaths = [TestFolder.photos]
             $0.isSelecting = false
             $0.selectedItemIDs = []
         }
         await store.receive(.delegate(.favoritesChanged))
-        #expect(addedPaths.value == ["Photos"])
-        #expect(removedPaths.value == ["Documents"])
+        #expect(addedPaths.value == [TestFolder.photos])
+        #expect(removedPaths.value == [TestFolder.documents])
+    }
+
+    @Test("Bulk favorite sends its requests in listing order, whatever the order of the selection")
+    func bulkFavoriteFollowsTheListingOrder() async {
+        let folders = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"].map { BrowseFixtures.folder($0) }
+        var state = favoritesLoadedState([])
+        state.items = IdentifiedArray(uniqueElements: folders)
+        state.isSelecting = true
+        state.selectedItemIDs = Set(folders.reversed().map(\.id))
+        let addedPaths = LockIsolated<[String]>([])
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.addFavorite = { _, path in
+                addedPaths.withValue { $0.append(path) }
+                return BrowseFixtures.favorite(path)
+            }
+        }
+
+        await store.send(.bulkFavoriteTapped) {
+            $0.isBulkActionInFlight = true
+        }
+        await store.receive(\.bulkFavoriteResponse) {
+            $0.isBulkActionInFlight = false
+            $0.favoritePaths = Set(folders.map(\.id))
+            $0.isSelecting = false
+            $0.selectedItemIDs = []
+        }
+        await store.receive(.delegate(.favoritesChanged))
+        #expect(addedPaths.value == folders.map(\.id))
     }
 
     @Test("Bulk favorite with a selection that holds no folders does nothing")
     func bulkFavoriteTappedWithNoDirectoriesSelectedDoesNothing() async {
-        let file = BrowseFixtures.file("notes.txt")
+        let file = BrowseFixtures.file(TestFile.notes)
         var state = favoritesLoadedState()
         state.items = [file]
         state.isSelecting = true
@@ -288,7 +316,7 @@ struct BrowseFavoritesTests {
         hasLoadedFavorites: Bool,
         configure: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStoreOf<BrowseFeature> {
-        var state = BrowseFixtures.state("docs", items: [vacation])
+        var state = BrowseFixtures.state(TestPath.docsLowercase, items: [vacation])
         state.favoritePaths = favoritePaths
         state.hasLoadedFavorites = hasLoadedFavorites
         return BrowseFixtures.store(state) {

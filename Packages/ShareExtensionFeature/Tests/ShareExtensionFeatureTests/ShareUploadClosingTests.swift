@@ -25,7 +25,7 @@ extension ShareUploadFeatureTests {
             return TestStore(initialState: state) {
                 ShareUploadFeature()
             } withDependencies: {
-                $0.sharedItems.discard = { calls.record("discard") }
+                $0.sharedItems.discard = { calls.record(ShareExtensionFeatureTestValue.discardCall) }
                 $0.continuousClock = TestClock()
             }
         }
@@ -62,14 +62,14 @@ extension ShareUploadFeatureTests {
                     }
                     return PreparationReport(stagedCount: 2, failures: [])
                 }
-                $0.sharedItems.discard = { calls.record("discard") }
+                $0.sharedItems.discard = { calls.record(ShareExtensionFeatureTestValue.discardCall) }
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in Self.user }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos")])
+                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
                 $0.continuousClock = TestClock()
             }
-            await becomeReady(store, count: 2, folder: "Photos")
+            await becomeReady(store, count: 2, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 2
@@ -81,7 +81,7 @@ extension ShareUploadFeatureTests {
             await store.receive(.delegate(.close(completed: false)))
             await store.finish()
             #expect(wasCancelled.value, "the in flight preparation was cancelled, not left running")
-            #expect(calls.all == ["discard"], "the half staged batch is dropped at once")
+            #expect(calls.all == [ShareExtensionFeatureTestValue.discardCall], "the half staged batch is dropped at once")
         }
 
         @Test
@@ -89,11 +89,11 @@ extension ShareUploadFeatureTests {
             let calls = Calls()
             let failures = [ItemFailure(index: 1, name: "x", cause: .other)]
             let store = store(
-                defaults: UploadDefaults(folderPath: "Photos"),
+                defaults: UploadDefaults(folderPath: TestFolder.photos),
                 calls: calls,
                 report: PreparationReport(stagedCount: 1, failures: failures)
             )
-            await becomeReady(store, folder: "Photos")
+            await becomeReady(store, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 3
@@ -106,7 +106,7 @@ extension ShareUploadFeatureTests {
             await store.send(.cancelTapped)
             await store.receive(.delegate(.close(completed: false)))
             await store.finish()
-            #expect(calls.all == ["prepare", "discard"])
+            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall])
         }
 
         @Test
@@ -114,11 +114,11 @@ extension ShareUploadFeatureTests {
             let calls = Calls()
             let failures = [ItemFailure(index: 1, name: "x", cause: .other)]
             let store = store(
-                defaults: UploadDefaults(folderPath: "Photos"),
+                defaults: UploadDefaults(folderPath: TestFolder.photos),
                 calls: calls,
                 report: PreparationReport(stagedCount: 1, failures: failures)
             )
-            await becomeReady(store, folder: "Photos")
+            await becomeReady(store, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
                 $0.preparingTotal = 3
@@ -131,7 +131,7 @@ extension ShareUploadFeatureTests {
 
             await store.send(.viewDisappeared)
             await store.finish()
-            #expect(calls.all == ["prepare", "discard"])
+            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall])
         }
 
         @Test
@@ -197,7 +197,7 @@ extension ShareUploadFeatureTests {
                     isAssistiveTechnologyRunning: { false },
                     announce: { message in announcements.withValue { $0.append(message) } }
                 )
-                $0.sharedItems.discard = { calls.record("discard") }
+                $0.sharedItems.discard = { calls.record(ShareExtensionFeatureTestValue.discardCall) }
             }
 
             await store.send(.uploadResponse(.failure(.init()))) { $0.phase = .failed }
@@ -210,19 +210,19 @@ extension ShareUploadFeatureTests {
         @Test
         func theSheetDisappearingAfterTheUploadStartedLeavesItAlone() async {
             let calls = Calls()
-            let store = store(defaults: UploadDefaults(folderPath: "Photos"), calls: calls)
-            await becomeReady(store, folder: "Photos")
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos), calls: calls)
+            await becomeReady(store, folder: TestFolder.photos)
             await uploadCleanly(store)
 
             await store.send(.viewDisappeared)
             await store.finish()
-            #expect(calls.all == ["prepare", "start"], "once started the uploads belong to the system")
+            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.startCall], "once started the uploads belong to the system")
         }
 
         @Test
         func closingAfterTheUploadStartedReportsCompleted() async {
-            let store = store(defaults: UploadDefaults(folderPath: "Photos"))
-            await becomeReady(store, folder: "Photos")
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos))
+            await becomeReady(store, folder: TestFolder.photos)
             await uploadCleanly(store)
             await store.send(.cancelTapped)
             await store.receive(.delegate(.close(completed: true)))
@@ -231,8 +231,8 @@ extension ShareUploadFeatureTests {
         @Test
         func cancellingAfterTheUploadStartedStopsTheCloseTimerSoTheSheetClosesOnce() async {
             let clock = TestClock()
-            let store = store(defaults: UploadDefaults(folderPath: "Photos"), clock: clock)
-            await becomeReady(store, folder: "Photos")
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos), clock: clock)
+            await becomeReady(store, folder: TestFolder.photos)
             await uploadCleanly(store)
 
             await store.send(.cancelTapped)
@@ -244,8 +244,8 @@ extension ShareUploadFeatureTests {
         @Test
         func theSheetDisappearingAfterTheUploadStartedStopsTheCloseTimer() async {
             let clock = TestClock()
-            let store = store(defaults: UploadDefaults(folderPath: "Photos"), clock: clock)
-            await becomeReady(store, folder: "Photos")
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos), clock: clock)
+            await becomeReady(store, folder: TestFolder.photos)
             await uploadCleanly(store)
 
             await store.send(.viewDisappeared)

@@ -18,13 +18,13 @@ extension ShareUploadFeatureTests {
         @Test
         func startsInTheDefaultFolderAndWaitsForUpload() async {
             let calls = Calls()
-            let store = store(defaults: UploadDefaults(folderPath: "Photos"), calls: calls)
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos), calls: calls)
 
             await store.send(.onAppear) { $0.itemCount = 3 }
             await store.receive(\.accountsLoaded) { $0.accounts = [credentials] }
             await store.receive(\.sessionLoaded) {
                 $0.credentials = credentials
-                $0.destination = "Photos"
+                $0.destination = TestFolder.photos
                 $0.phase = .checking
             }
             #expect(!store.state.canUpload, "no upload before the server has answered")
@@ -38,7 +38,7 @@ extension ShareUploadFeatureTests {
         func uploadsStraightAwayWhenTheDefaultFolderSaysSo() async {
             let calls = Calls()
             let clock = TestClock()
-            let store = store(defaults: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true), calls: calls, clock: clock)
+            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true), calls: calls, clock: clock)
 
             await startAutomatic(store)
             await store.receive(\.defaultFolderChecked) { $0.phase = .ready }
@@ -54,7 +54,7 @@ extension ShareUploadFeatureTests {
             await clock.advance(by: .seconds(2))
             await store.receive(.delegate(.close(completed: true)))
             #expect(calls.all == ["prepare", "start"])
-            #expect(calls.folders == ["Photos"])
+            #expect(calls.folders == [TestFolder.photos])
         }
 
         @Test
@@ -70,8 +70,8 @@ extension ShareUploadFeatureTests {
             await store.send(.chooseFolderTapped) {
                 $0.folderPicker = .init(serverURL: credentials.serverBaseURL, uploadStartingAt: "")
             }
-            await store.send(.folderPicker(.presented(.delegate(.confirmed(destination: "Docs"))))) {
-                $0.destination = "Docs"
+            await store.send(.folderPicker(.presented(.delegate(.confirmed(destination: TestFolder.docs))))) {
+                $0.destination = TestFolder.docs
                 $0.folderPicker = nil
             }
             #expect(store.state.canUpload)

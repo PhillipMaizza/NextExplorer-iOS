@@ -4,6 +4,7 @@ import Foundation
 import Keychain
 import NetworkClient
 import Testing
+import TestUtils
 
 @Suite("AuthClient login")
 struct AuthClientLoginTests: AuthClientLiveHarness {
@@ -19,7 +20,7 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
             if let host = url.host {
                 let cookie = try #require(HTTPCookie(properties: [
                     .name: AuthClientConfiguration.CookieName.local,
-                    .value: "abc123",
+                    .value: TestSession.loginCookieValue,
                     .domain: host,
                     .path: "/",
                 ]))
@@ -29,13 +30,13 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
             return try (body, response(statusCode: 200, url: url))
         }
 
-        let user = try await client.login(serverURL, "phillip", "hunter2")
-        #expect(user.username == "phillip")
+        let user = try await client.login(serverURL, TestAccount.username, TestAccount.password)
+        #expect(user.username == TestAccount.username)
 
-        let stored = try #require(try keychainClient.load("storedSessions"))
+        let stored = try #require(try keychainClient.load(TestStorageKey.storedSessions))
         let sessions = try JSONDecoder().decode(StoredSessions.self, from: stored)
         let credentials = try #require(sessions.active)
-        #expect(credentials.cookieValue == "abc123")
+        #expect(credentials.cookieValue == TestSession.loginCookieValue)
         #expect(credentials.authMode == .local)
     }
 
@@ -48,9 +49,9 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.invalidCredentials) {
-            _ = try await client.login(serverURL, "phillip", "wrong")
+            _ = try await client.login(serverURL, TestAccount.username, TestAccount.wrongPassword)
         }
-        #expect(try keychainClient.load("storedSessions") == nil)
+        #expect(try keychainClient.load(TestStorageKey.storedSessions) == nil)
     }
 
     @Test("regression: login request body sends the identifier as `email`, matching the real server's field name")
@@ -60,12 +61,12 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
             let url = try #require(request.url)
             let body = try #require(request.httpBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json["email"] == "phillip")
+            #expect(json["email"] == TestAccount.username)
             #expect(json["identifier"] == nil)
             if let host = url.host {
                 let cookie = try #require(HTTPCookie(properties: [
                     .name: AuthClientConfiguration.CookieName.local,
-                    .value: "abc123",
+                    .value: TestSession.loginCookieValue,
                     .domain: host,
                     .path: "/",
                 ]))
@@ -75,7 +76,7 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
             return try (responseBody, response(statusCode: 200, url: url))
         }
 
-        _ = try await client.login(serverURL, "phillip", "hunter2")
+        _ = try await client.login(serverURL, TestAccount.username, TestAccount.password)
     }
 
     @Test("regression: 429 from the login route surfaces as AuthClientError.rateLimited")
@@ -86,7 +87,7 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.rateLimited) {
-            _ = try await client.login(serverURL, "phillip", "hunter2")
+            _ = try await client.login(serverURL, TestAccount.username, TestAccount.password)
         }
     }
 
@@ -99,7 +100,7 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
         }
 
         await #expect(throws: AuthClientError.sessionCookieMissing) {
-            _ = try await client.login(serverURL, "phillip", "hunter2")
+            _ = try await client.login(serverURL, TestAccount.username, TestAccount.password)
         }
     }
 
@@ -110,7 +111,7 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
             return try (Data("not json".utf8), response(statusCode: 200, url: url))
         }
         await #expect(throws: AuthClientError.self) {
-            _ = try await client.login(serverURL, "phillip", "hunter2")
+            _ = try await client.login(serverURL, TestAccount.username, TestAccount.password)
         }
     }
 
@@ -129,7 +130,7 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
             if let host = url.host {
                 let cookie = try #require(HTTPCookie(properties: [
                     .name: AuthClientConfiguration.CookieName.local,
-                    .value: "abc123",
+                    .value: TestSession.loginCookieValue,
                     .domain: host,
                     .path: "/",
                 ]))
@@ -140,7 +141,7 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
         }
 
         do {
-            _ = try await client.login(serverURL, "phillip", "hunter2")
+            _ = try await client.login(serverURL, TestAccount.username, TestAccount.password)
             Issue.record("expected login to throw")
         } catch AuthClientError.keychain {
             // expected

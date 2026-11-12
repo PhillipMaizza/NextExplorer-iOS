@@ -86,7 +86,7 @@ struct BrowseSearchFilterTests {
         // The pre-fill only sees the current folder, so pruning the selection against it would
         // wrongly clear a category that the server's subtree contains and this folder does not.
         let videoHit = SearchResultItem(name: "clip.mp4", path: "Photos/Trips", kind: "file")
-        var state = BrowseFixtures.state("Photos", title: "Photos", items: [BrowseFixtures.file(TestFile.report, in: "Photos")])
+        var state = BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos, items: [BrowseFixtures.file(TestFile.report, in: TestFolder.photos)])
         state.selectedSearchCategories = [.video]
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {

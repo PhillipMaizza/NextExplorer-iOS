@@ -4,13 +4,14 @@ import Dependencies
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// `updateSystemSettings` through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: both share `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     @Suite("System settings patch")
     struct SystemSettingsPatchRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -21,7 +22,7 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         @Test
@@ -32,7 +33,7 @@ extension FilesClientLiveTests {
 
             #expect(echoed.searchIndex?.isEnabled == true)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "PATCH")
+            #expect(request.httpMethod == HTTPMethod.patch.rawValue)
             #expect(request.url?.path == "/api/settings")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [String: Bool]])
@@ -65,7 +66,7 @@ extension FilesClientLiveTests {
 extension FilesClientLiveTests {
     @Suite("Activity log routes")
     struct ActivityRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -76,7 +77,7 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         @Test
@@ -124,7 +125,7 @@ extension FilesClientLiveTests {
             try await makeClient().clearActivity(serverURL)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "DELETE")
+            #expect(request.httpMethod == HTTPMethod.delete.rawValue)
             #expect(request.url?.path == "/api/activity")
         }
 
@@ -142,7 +143,7 @@ extension FilesClientLiveTests {
 extension FilesClientLiveTests {
     @Suite("Trash admin routes")
     struct TrashAdminRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -153,7 +154,7 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         @Test
@@ -164,7 +165,7 @@ extension FilesClientLiveTests {
 
             #expect(zones.map(\.id) == ["z1"])
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/trash/zones")
         }
 
@@ -185,7 +186,7 @@ extension FilesClientLiveTests {
 
             #expect(results.map(\.violationCount) == [2, 0])
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/trash/verify")
         }
 
@@ -196,7 +197,7 @@ extension FilesClientLiveTests {
             try await makeClient().runTrashMaintenance(serverURL)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/trash/maintenance")
         }
 
@@ -232,7 +233,7 @@ extension FilesClientLiveTests {
 extension FilesClientLiveTests {
     @Suite("Versions admin routes")
     struct VersionsAdminRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -243,7 +244,7 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         private func queryItems() throws -> [String: String] {
@@ -303,22 +304,22 @@ extension FilesClientLiveTests {
             _ = try await makeClient().fetchVersionedFile(serverURL, "f1")
 
             #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/admin/files/f1")
-            #expect(StubURLProtocol.capturedRequest?.httpMethod == "GET")
+            #expect(StubURLProtocol.capturedRequest?.httpMethod == HTTPMethod.get.rawValue)
         }
 
         @Test
         func deletingNamedVersionsPostsTheirIDs() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.versionsDeletionRemainingOne.string())
 
-            let outcome = try await makeClient().deleteVersionsOfFile(serverURL, "f1", ["v1", "v2"])
+            let outcome = try await makeClient().deleteVersionsOfFile(serverURL, "f1", [TestETag.first, TestETag.second])
 
             #expect(outcome == VersionsDeletion(deleted: 2, remaining: 1))
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/versions/admin/files/f1/delete")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
-            #expect(json["ids"] as? [String] == ["v1", "v2"])
+            #expect(json["ids"] as? [String] == [TestETag.first, TestETag.second])
             #expect(json["all"] == nil)
         }
 

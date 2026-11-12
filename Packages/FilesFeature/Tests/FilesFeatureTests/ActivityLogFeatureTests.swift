@@ -27,7 +27,7 @@ struct ActivityLogFeatureTests {
     private let clearCalls = LockIsolated(0)
 
     private func event(_ id: String, at: String = "2026-11-11T07:00:00.000Z", action: String = "sign-in") -> ActivityEvent {
-        ActivityEvent(id: id, at: at, action: action, actor: "phillip")
+        ActivityEvent(id: id, at: at, action: action, actor: TestAccount.username)
     }
 
     /// The settings read and the first page start together, so a test that loads both holds the
@@ -285,7 +285,7 @@ struct ActivityLogFeatureTests {
     @Test
     func changingFiltersReloadsFromTheTopWithThatFilter() async {
         var state = loadedState()
-        state.events = [event("old")]
+        state.events = [event(TestValue.outdated)]
         state.nextBefore = "stale"
         let fresh = ActivityEvent(id: "new", at: "2026-11-11T07:00:00.000Z", action: "file.delete")
         let page = ActivityPage(events: [fresh], isEnabled: true)
@@ -382,7 +382,7 @@ struct ActivityLogFeatureTests {
     @Test
     func editingTheSettingsClearsAShownError() async {
         var state = loadedState()
-        state.settingsError = "old"
+        state.settingsError = TestValue.outdated
         let store = makeStore(state)
 
         await store.send(.enabledChanged(false)) {

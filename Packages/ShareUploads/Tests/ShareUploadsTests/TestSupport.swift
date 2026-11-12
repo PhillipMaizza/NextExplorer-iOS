@@ -192,21 +192,21 @@ struct Harness {
     }
 
     static let credentials = SessionCredentials(
-        serverBaseURL: URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/"),
+        serverBaseURL: URL(string: TestHost.serverURLString) ?? URL(fileURLWithPath: "/"),
         authMode: .local,
-        cookieName: "connect.sid",
-        cookieValue: "secret",
-        cookieDomain: "files.example.com",
+        cookieName: TestSession.cookieName,
+        cookieValue: TestSession.uploadCookieValue,
+        cookieDomain: TestHost.server,
         cookiePath: "/",
         cookieIsSecure: true,
         expiresAt: nil,
-        username: "phillip"
+        username: TestAccount.username
     )
 
     /// A started batch of `names` on disk: manifest, one envelope per file, no results yet.
     @discardableResult
     func makeBatch(
-        names: [String] = ["a.jpg", "b.jpg"],
+        names: [String] = [TestFile.aPhoto, TestFile.bPhoto],
         accountID: String = Harness.credentials.accountID,
         startedAt: Date = TestClock.reference
     ) throws -> (id: String, directory: URL, manifest: Manifest) {
@@ -219,7 +219,7 @@ struct Harness {
         }
         let manifest = Manifest(
             accountID: accountID,
-            destination: "Photos/2026",
+            destination: TestPath.photos2026,
             fileNames: names,
             envelopes: envelopes,
             contentTypes: names.map { _ in "multipart/form-data; boundary=B" },

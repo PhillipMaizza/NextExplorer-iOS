@@ -68,12 +68,12 @@ extension ShareUploadHarness {
                 canRead: true, canWrite: canUpload, canUpload: canUpload, canDelete: false,
                 canShare: false, canDownload: true
             ),
-            path: "Photos"
+            path: TestFolder.photos
         )
     }
 
     nonisolated static var user: User {
-        User(id: "1", username: "phillip", email: nil, roles: [])
+        User(id: "1", username: TestAccount.username, email: nil, roles: [])
     }
 
     /// A store whose fake extension records what it is asked. Exhaustive: every state change and
@@ -129,7 +129,7 @@ extension ShareUploadHarness {
 
     /// Opens the sheet with Upload Without Asking on, up to the connection check that starts the
     /// default folder check.
-    func startAutomatic(_ store: ShareUploadFeatureTests.Store, count: Int = 3, folder: String = "Photos") async {
+    func startAutomatic(_ store: ShareUploadFeatureTests.Store, count: Int = 3, folder: String = TestFolder.photos) async {
         await store.send(.onAppear) { $0.itemCount = count }
         await store.receive(\.accountsLoaded) { $0.accounts = [credentials] }
         await store.receive(\.sessionLoaded) {

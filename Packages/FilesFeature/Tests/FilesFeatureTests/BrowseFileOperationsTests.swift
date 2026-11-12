@@ -11,7 +11,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseFileOperationsTests {
-    private let original = BrowseFixtures.file("vacation.jpg")
+    private let original = BrowseFixtures.file(TestFile.vacationPhoto)
     private let renamed = BrowseFixtures.file("beach.jpg")
 
     private func renamingState(previewing: Bool = false) -> BrowseFeature.State {
@@ -27,7 +27,7 @@ struct BrowseFileOperationsTests {
 
     @Test(
         "Confirming a blank or unchanged name closes the rename sheet without calling the server",
-        arguments: ["   ", "vacation.jpg"]
+        arguments: [TestValue.blank, TestFile.vacationPhoto]
     )
     func renameConfirmedWithNothingNewClearsTheSheetWithoutCallingTheServer(_ name: String) async {
         // No filesClient override: a rename request fails the test as unimplemented.
@@ -58,7 +58,7 @@ struct BrowseFileOperationsTests {
             $0.isPerformingFileAction = false
             $0.renameSheetItem = nil
             $0.items = [renamed]
-            $0.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(renamed, previousName: "vacation.jpg"))) }
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(renamed, previousName: TestFile.vacationPhoto))) }
         }
         #expect(requested.value == ["vacation.jpg to beach.jpg"])
     }
@@ -97,7 +97,7 @@ struct BrowseFileOperationsTests {
             $0.renameSheetItem = nil
             $0.items = [renamed]
             $0.previewItem = renamed
-            $0.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(renamed, previousName: "vacation.jpg"))) }
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(renamed, previousName: TestFile.vacationPhoto))) }
         }
     }
 
@@ -105,20 +105,20 @@ struct BrowseFileOperationsTests {
 
     @Test("Confirming a blank folder name closes the sheet without calling the server")
     func newFolderConfirmedWithABlankNameClosesTheSheetWithoutCallingTheServer() async {
-        var state = BrowseFixtures.state("Docs", title: "Docs")
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)
         state.isNewFolderSheetPresented = true
         let store = BrowseFixtures.store(state)
 
-        await store.send(.newFolderConfirmed("   ")) {
+        await store.send(.newFolderConfirmed(TestValue.blank)) {
             $0.isNewFolderSheetPresented = false
         }
     }
 
     @Test("A created folder is appended to the listing, written through to the cache, and recorded for undo")
     func newFolderConfirmedAppendsTheCreatedFolderOnSuccess() async {
-        let existing = BrowseFixtures.file("old.txt", in: "Docs")
-        let created = BrowseFixtures.folder("Reports", in: "Docs")
-        var state = BrowseFixtures.state("Docs", title: "Docs", items: [existing])
+        let existing = BrowseFixtures.file("old.txt", in: TestFolder.docs)
+        let created = BrowseFixtures.folder("Reports", in: TestFolder.docs)
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs, items: [existing])
         state.isNewFolderSheetPresented = true
         let gate = AsyncGate()
         let requested = LockIsolated<[String]>([])
@@ -145,7 +145,7 @@ struct BrowseFileOperationsTests {
 
     @Test("A failed folder creation shows a readable message and keeps the sheet open for another try")
     func newFolderConfirmedFailureSurfacesAReadableErrorMessage() async {
-        var state = BrowseFixtures.state("Docs", title: "Docs")
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)
         state.isNewFolderSheetPresented = true
         let store = BrowseFixtures.store(state) {
             $0.filesClient.createFolder = { _, _, _ in throw FilesClientError.server(statusCode: 403) }
@@ -163,9 +163,9 @@ struct BrowseFileOperationsTests {
     @Test("An in place change writes the corrected listing through to the cache, with no etag")
     func anInPlaceMutationWritesTheCorrectedListingThroughToTheCache() async {
         let cache = DirectoryCacheStore.inMemory()
-        let existing = BrowseFixtures.file("Old.txt", in: "Docs")
-        let newFolder = BrowseFixtures.folder("Reports", in: "Docs")
-        let state = BrowseFixtures.state("Docs", title: "Docs", items: [existing], access: BrowseTestSupport.fullAccess)
+        let existing = BrowseFixtures.file("Old.txt", in: TestFolder.docs)
+        let newFolder = BrowseFixtures.folder("Reports", in: TestFolder.docs)
+        let state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs, items: [existing], access: BrowseTestSupport.fullAccess)
         let store = BrowseFixtures.store(state) { $0.directoryCacheStore = cache }
 
         // A create edits this folder in place; the cache must now hold the new listing so an offline
@@ -175,7 +175,7 @@ struct BrowseFileOperationsTests {
             $0.$undoStack.withLock { $0.record(FileUndoEntry(.created([newFolder]))) }
         }
 
-        let cached = cache.read(serverURL: BrowseTestSupport.serverURL, path: "Docs")
+        let cached = cache.read(serverURL: BrowseTestSupport.serverURL, path: TestFolder.docs)
         #expect(cached?.items == [existing, newFolder])
         #expect(cached?.access == BrowseTestSupport.fullAccess)
         #expect(cached?.fetchedAt == MockDate.date)
@@ -186,7 +186,7 @@ struct BrowseFileOperationsTests {
 
     @Test("Opening the new file sheet loads the server's extra editable types, and cancelling closes it")
     func newFileTappedPresentsTheSheetAndLoadsTheServersExtraFileTypes() async {
-        let store = BrowseFixtures.store(BrowseFixtures.state("Docs", title: "Docs")) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)) {
             $0.filesClient.serverFeatures = { _ in ServerFeatures(editorExtensions: ["sql"]) }
         }
 
@@ -216,8 +216,8 @@ struct BrowseFileOperationsTests {
 
     @Test("A created file is listed, recorded for undo, and opened in the editor once the sheet has closed")
     func newFileConfirmedCreatesTheFileAndOpensIt() async {
-        let created = BrowseFixtures.file("notes.txt", in: "Docs")
-        var state = BrowseFixtures.state("Docs", title: "Docs")
+        let created = BrowseFixtures.file(TestFile.notes, in: TestFolder.docs)
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)
         state.isNewFileSheetPresented = true
         let requested = LockIsolated<[String]>([])
         let gate = AsyncGate()
@@ -259,12 +259,12 @@ struct BrowseFileOperationsTests {
             $0.textPhase = .idle
             $0.textContent = nil
         }
-        #expect(requested.value == ["Docs/notes.txt"])
+        #expect(requested.value == [TestPath.docsNotes])
     }
 
     @Test("A file name the editor cannot open is refused without calling the server", arguments: ["photo.jpg", "Makefile"])
     func newFileConfirmedRefusesAFileTheEditorCannotOpen(_ name: String) async {
-        var state = BrowseFixtures.state("Docs", title: "Docs")
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)
         state.isNewFileSheetPresented = true
         let store = BrowseFixtures.store(state)
 
@@ -273,7 +273,7 @@ struct BrowseFileOperationsTests {
 
     @Test("A failed file creation shows a readable message and keeps the sheet open")
     func newFileFailureKeepsTheSheetOpenWithAReadableError() async {
-        var state = BrowseFixtures.state("Docs", title: "Docs")
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)
         state.isNewFileSheetPresented = true
         let store = BrowseFixtures.store(state) {
             $0.filesClient.createFile = { _, _, _ in throw FilesClientError.forbidden(message: nil) }

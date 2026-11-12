@@ -14,116 +14,116 @@ extension FilesClientLiveTests {
         @Test
         func savingAnUnchangedFileRevalidatesWithTheOpenETagThenWrites() async throws {
             resetStubs()
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 304)
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v2""#, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, etag: #"W/"v2""#, fixture: .commonSuccessTrue)
             let client = makeClient()
 
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
-            try await client.saveTextContent(serverURL, "Docs/n.txt", "new")
-            try await client.saveTextContent(serverURL, "Docs/n.txt", "newer")
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
+            try await client.saveTextContent(serverURL, TestPath.docsNote, "new")
+            try await client.saveTextContent(serverURL, TestPath.docsNote, "newer")
 
-            let checks = StubURLProtocol.requests.filter { $0.httpMethod == "HEAD" }
-            #expect(checks.map { $0.value(forHTTPHeaderField: "If-None-Match") } == [#"W/"v1""#, #"W/"v2""#])
+            let checks = StubURLProtocol.requests.filter { $0.httpMethod == HTTPMethod.head.rawValue }
+            #expect(checks.map { $0.value(forHTTPHeaderField: HTTPHeaderField.ifNoneMatch) } == [#"W/"v1""#, #"W/"v2""#])
             #expect(checks.first?.url?.query == "path=Docs/n.txt")
-            #expect(StubURLProtocol.requests.filter { $0.httpMethod == "PUT" }.count == 2)
+            #expect(StubURLProtocol.requests.filter { $0.httpMethod == HTTPMethod.put.rawValue }.count == 2)
             resetStubs()
         }
 
         @Test
         func savingAFileChangedOnTheServerThrowsOnceThenOverwrites() async throws {
             resetStubs()
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"other""#, fixture: .editorContentTheirs)
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 200, etag: #"W/"other""#, fixture: .editorContentTheirs)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
             let client = makeClient()
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
             await #expect(throws: FilesClientError.changedOnServer) {
-                try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+                try await client.saveTextContent(serverURL, TestPath.docsNote, FilesClientTestValue.localEdit)
             }
-            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "PUT" })
+            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == HTTPMethod.put.rawValue })
 
-            try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
-            #expect(StubURLProtocol.requests.filter { $0.httpMethod == "PUT" }.count == 1)
+            try await client.saveTextContent(serverURL, TestPath.docsNote, FilesClientTestValue.localEdit)
+            #expect(StubURLProtocol.requests.filter { $0.httpMethod == HTTPMethod.put.rawValue }.count == 1)
             resetStubs()
         }
 
         @Test
         func aFileDeletedOrRenamedOnTheServerIsAConflictThenOverwrites() async throws {
             resetStubs()
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 404)
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 404)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
             let client = makeClient()
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
             await #expect(throws: FilesClientError.changedOnServer) {
-                try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+                try await client.saveTextContent(serverURL, TestPath.docsNote, FilesClientTestValue.localEdit)
             }
-            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "PUT" })
+            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == HTTPMethod.put.rawValue })
 
-            try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
-            #expect(StubURLProtocol.requests.filter { $0.httpMethod == "PUT" }.count == 1)
+            try await client.saveTextContent(serverURL, TestPath.docsNote, FilesClientTestValue.localEdit)
+            #expect(StubURLProtocol.requests.filter { $0.httpMethod == HTTPMethod.put.rawValue }.count == 1)
             resetStubs()
         }
 
         @Test(arguments: [400, 413, 415, 422])
         func aClientErrorOnTheHeadPreflightIsInconclusiveSoItPromptsInsteadOfOverwriting(status: Int) async throws {
             resetStubs()
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: status)
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: status)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
             let client = makeClient()
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
             await #expect(throws: FilesClientError.changedOnServer) {
-                try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+                try await client.saveTextContent(serverURL, TestPath.docsNote, FilesClientTestValue.localEdit)
             }
-            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "PUT" })
+            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == HTTPMethod.put.rawValue })
             resetStubs()
         }
 
         @Test
         func aSessionExpiredOnTheHeadPreflightSurfacesAsSessionExpiredNotAConflict() async throws {
             resetStubs()
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 401)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 401)
             let client = makeClient()
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
             await #expect(throws: FilesClientError.sessionExpired) {
-                try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+                try await client.saveTextContent(serverURL, TestPath.docsNote, FilesClientTestValue.localEdit)
             }
-            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "PUT" })
+            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == HTTPMethod.put.rawValue })
             resetStubs()
         }
 
         @Test
         func aNewFileWithNoKnownETagIsSavedWithoutAPreflight() async throws {
             resetStubs()
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
 
-            try await makeClient().saveTextContent(serverURL, "Docs/new.txt", "mine")
+            try await makeClient().saveTextContent(serverURL, TestPath.docsNew, FilesClientTestValue.localEdit)
 
-            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "HEAD" })
-            #expect(StubURLProtocol.requests.filter { $0.httpMethod == "PUT" }.count == 1)
+            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == HTTPMethod.head.rawValue })
+            #expect(StubURLProtocol.requests.filter { $0.httpMethod == HTTPMethod.put.rawValue }.count == 1)
             resetStubs()
         }
 
         @Test
         func theConflictCheckIsAHeadRequestSoTheBodyIsNeverDownloaded() async throws {
             resetStubs()
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 304)
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
             let client = makeClient()
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
-            try await client.saveTextContent(serverURL, "Docs/n.txt", "new")
+            try await client.saveTextContent(serverURL, TestPath.docsNote, "new")
 
-            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "GET" })
-            #expect(StubURLProtocol.requests.contains { $0.httpMethod == "HEAD" })
+            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == HTTPMethod.get.rawValue })
+            #expect(StubURLProtocol.requests.contains { $0.httpMethod == HTTPMethod.head.rawValue })
             resetStubs()
         }
 
@@ -131,16 +131,16 @@ extension FilesClientLiveTests {
         func theBackendETagFormatIsReplayedVerbatimInIfNoneMatch() async throws {
             let backendETag = #"W/"1a2b-3c-lq9z8a1b2c3-lq9z8a9z8y7-t2""#
             resetStubs()
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: backendETag, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 304)
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, etag: backendETag, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: backendETag, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, etag: backendETag, fixture: .commonSuccessTrue)
             let client = makeClient()
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
-            try await client.saveTextContent(serverURL, "Docs/n.txt", "new")
+            try await client.saveTextContent(serverURL, TestPath.docsNote, "new")
 
-            let head = StubURLProtocol.requests.first { $0.httpMethod == "HEAD" }
-            #expect(head?.value(forHTTPHeaderField: "If-None-Match") == backendETag)
+            let head = StubURLProtocol.requests.first { $0.httpMethod == HTTPMethod.head.rawValue }
+            #expect(head?.value(forHTTPHeaderField: HTTPHeaderField.ifNoneMatch) == backendETag)
             resetStubs()
         }
 
@@ -148,15 +148,15 @@ extension FilesClientLiveTests {
         func theConflictCheckPercentEncodesPlusAmpersandHashPercentAndSpace() async throws {
             resetStubs()
             let path = "Docs/a+b & c#d%e.txt"
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 304)
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
             let client = makeClient()
             _ = try await client.fetchTextContent(serverURL, path)
 
             try await client.saveTextContent(serverURL, path, "new")
 
-            let head = StubURLProtocol.requests.first { $0.httpMethod == "HEAD" }
+            let head = StubURLProtocol.requests.first { $0.httpMethod == HTTPMethod.head.rawValue }
             #expect(head?.url?.query == "path=Docs/a%2Bb%20%26%20c%23d%25e.txt")
             resetStubs()
         }
@@ -164,22 +164,22 @@ extension FilesClientLiveTests {
         @Test
         func aSaveWithoutAnETagInTheAnswerLeavesTheNextSaveUnchecked() async throws {
             resetStubs()
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 304)
-            StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
             let client = makeClient()
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
-            try await client.saveTextContent(serverURL, "Docs/n.txt", "one")
-            try await client.saveTextContent(serverURL, "Docs/n.txt", "two")
+            try await client.saveTextContent(serverURL, TestPath.docsNote, "one")
+            try await client.saveTextContent(serverURL, TestPath.docsNote, "two")
 
-            #expect(StubURLProtocol.requests.filter { $0.httpMethod == "HEAD" }.count == 1)
+            #expect(StubURLProtocol.requests.filter { $0.httpMethod == HTTPMethod.head.rawValue }.count == 1)
             resetStubs()
         }
 
         @Test
         func renamingMovingOrDeletingForgetsTheStoredETag() async throws {
-            let item = FileItem(name: "n.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+            let item = FileItem(name: "n.txt", path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
             let serverURL = serverURL
             let cases: [(String, @Sendable (FilesClient) async throws -> Void)] = [
                 ("rename", { _ = try await $0.renameItem(serverURL, item, "m.txt") }),
@@ -188,19 +188,19 @@ extension FilesClientLiveTests {
             ]
             for (name, operation) in cases {
                 resetStubs()
-                StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+                StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
                 StubURLProtocol.methodStubs["POST /api/files/rename"] = try editorStub(statusCode: 200, fixture: .itemMutationRenameMTxt)
                 StubURLProtocol.methodStubs["POST /api/files/move"] = try editorStub(statusCode: 200, fixture: .itemMutationTransferToOther)
                 StubURLProtocol.methodStubs["DELETE /api/files"] = try editorStub(statusCode: 200, fixture: .commonEmptyObject)
-                StubURLProtocol.methodStubs["HEAD /api/editor"] = try editorStub(statusCode: 304)
-                StubURLProtocol.methodStubs["PUT /api/editor"] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
+                StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+                StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(statusCode: 200, fixture: .commonSuccessTrue)
                 let client = makeClient()
                 _ = try await client.fetchTextContent(serverURL, item.id)
 
                 try await operation(client)
                 try await client.saveTextContent(serverURL, item.id, "x")
 
-                #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "HEAD" }, "\(name) must drop the stored ETag")
+                #expect(!StubURLProtocol.requests.contains { $0.httpMethod == HTTPMethod.head.rawValue }, "\(name) must drop the stored ETag")
             }
             resetStubs()
         }
@@ -216,11 +216,11 @@ extension FilesClientLiveTests {
                 textEditorETags: store,
                 activeScope: { scopeBox.value }
             )
-            StubURLProtocol.methodStubs["POST /api/editor"] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
-            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+            StubURLProtocol.methodStubs[FilesClientTestValue.postEditor] = try editorStub(statusCode: 200, etag: #"W/"v1""#, fixture: .editorContentHi)
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
-            let keyA = TextEditorETagStore.key(scope: "scope-a", serverURL: serverURL, path: "Docs/n.txt")
-            let keyB = TextEditorETagStore.key(scope: "scope-b", serverURL: serverURL, path: "Docs/n.txt")
+            let keyA = TextEditorETagStore.key(scope: "scope-a", serverURL: serverURL, path: TestPath.docsNote)
+            let keyB = TextEditorETagStore.key(scope: "scope-b", serverURL: serverURL, path: TestPath.docsNote)
             #expect(store.etag(for: keyA) == #"W/"v1""#)
             #expect(store.etag(for: keyB) == nil)
             store.clear(scope: "scope-a")
@@ -244,3 +244,6 @@ private final class ScopeBox: @unchecked Sendable {
     }
 }
 
+private enum Constants {
+    static let headEditor = "HEAD /api/editor"
+}

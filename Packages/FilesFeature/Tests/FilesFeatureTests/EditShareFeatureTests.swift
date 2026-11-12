@@ -11,7 +11,7 @@ import TestUtils
 @MainActor
 struct EditShareFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
-    private let fixedNow = Date(timeIntervalSince1970: 1_800_000_000)
+    private let fixedNow = MockDate.date.addingTimeInterval(100_000_000)
 
     private nonisolated func share(
         label: String? = "Report",
@@ -27,14 +27,14 @@ struct EditShareFeatureTests {
             accessMode: accessMode, sharingType: target, hasPassword: hasPassword,
             expiresAt: expiresAt, label: label, downloadCount: 2, lastAccessedAt: nil,
             permittedUserIds: permittedUserIds,
-            createdAt: Date(timeIntervalSince1970: 1_700_000_000),
-            updatedAt: Date(timeIntervalSince1970: 1_700_000_000)
+            createdAt: MockDate.date,
+            updatedAt: MockDate.date
         )
     }
 
     @Test
     func seedsEveryFieldFromTheShare() {
-        let expiry = Date(timeIntervalSince1970: 1_900_000_000)
+        let expiry = MockDate.date.addingTimeInterval(200_000_000)
         let state = EditShareFeature.State(
             serverURL: serverURL,
             share: share(label: "Bills", accessMode: .readwrite, target: .users, hasPassword: true,
@@ -54,8 +54,8 @@ struct EditShareFeatureTests {
         var state = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: true))
         #expect(state.passwordChange == .keep) // on, blank
 
-        state.newPassword = "hunter2"
-        #expect(state.passwordChange == .set("hunter2"))
+        state.newPassword = TestAccount.password
+        #expect(state.passwordChange == .set(TestAccount.password))
 
         state.newPassword = ""
         state.wantsPassword = false

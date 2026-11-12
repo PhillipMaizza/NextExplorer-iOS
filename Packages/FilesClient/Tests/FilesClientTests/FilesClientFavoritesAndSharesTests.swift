@@ -16,7 +16,7 @@ extension FilesClientLiveTests {
             StubURLProtocol.capturedRequest = nil
             _ = try await makeClient().updateShareLink(serverURL, "s1", request)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "PUT")
+            #expect(request.httpMethod == HTTPMethod.put.rawValue)
             #expect(request.url?.absoluteString == "https://example.com/api/shares/s1")
             let data = try #require(StubURLProtocol.capturedRequestBody)
             return try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
@@ -27,20 +27,20 @@ extension FilesClientLiveTests {
             let favoriteJSON = try FilesClientFixture.favoriteStar.data()
             stub(statusCode: 200, body: favoriteJSON)
             StubURLProtocol.capturedRequest = nil
-            let favorite = try await makeClient().addFavorite(serverURL, "Photos")
-            #expect(favorite.path == "Photos")
+            let favorite = try await makeClient().addFavorite(serverURL, TestFolder.photos)
+            #expect(favorite.path == TestFolder.photos)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json["path"] == "Photos")
+            #expect(json["path"] == TestFolder.photos)
         }
 
         @Test
         func addFavoriteMaps401ToSessionExpired() async throws {
             stub(statusCode: 401, body: Data())
             await #expect(throws: FilesClientError.sessionExpired) {
-                _ = try await makeClient().addFavorite(serverURL, "Photos")
+                _ = try await makeClient().addFavorite(serverURL, TestFolder.photos)
             }
         }
 
@@ -48,19 +48,19 @@ extension FilesClientLiveTests {
         func removeFavoriteSendsThePathInTheDELETEBody() async throws {
             stub(statusCode: 200, body: try FilesClientFixture.commonEmptyArray.data())
             StubURLProtocol.capturedRequest = nil
-            try await makeClient().removeFavorite(serverURL, "Photos")
+            try await makeClient().removeFavorite(serverURL, TestFolder.photos)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "DELETE")
+            #expect(request.httpMethod == HTTPMethod.delete.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json["path"] == "Photos")
+            #expect(json["path"] == TestFolder.photos)
         }
 
         @Test
         func removeFavoriteMaps500ToServerErrorWithStatusCode() async throws {
             stub(statusCode: 500, body: Data())
             await #expect(throws: FilesClientError.server(statusCode: 500)) {
-                try await makeClient().removeFavorite(serverURL, "Photos")
+                try await makeClient().removeFavorite(serverURL, TestFolder.photos)
             }
         }
 
@@ -81,8 +81,8 @@ extension FilesClientLiveTests {
 
         @Test
         func updateShareLinkSendsTheStringToChangeThePassword() async throws {
-            let body = try await updateBody(UpdateShareRequest(password: .set("hunter2")))
-            #expect(body["password"] as? String == "hunter2")
+            let body = try await updateBody(UpdateShareRequest(password: .set(TestAccount.password)))
+            #expect(body["password"] as? String == TestAccount.password)
         }
 
         @Test
@@ -112,7 +112,7 @@ extension FilesClientLiveTests {
             #expect(info.sharingType == .anyone)
             let request = try #require(StubURLProtocol.capturedRequest)
             #expect(request.url?.path == "/api/share/AbC123xyz0/info")
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
         }
 
         @Test

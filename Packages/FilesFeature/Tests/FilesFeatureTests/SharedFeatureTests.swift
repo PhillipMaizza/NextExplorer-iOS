@@ -17,7 +17,7 @@ struct SharedFeatureTests {
             shareToken: "tok\(id)",
             ownerId: byMe ? "me" : "other",
             sourcePath: byMe ? "Documents/Report.pdf" : nil,
-            sourceName: byMe ? nil : "Report.pdf",
+            sourceName: byMe ? nil : FilesFeatureTestValue.reportName,
             isDirectory: false,
             accessMode: .readonly,
             sharingType: .anyone,

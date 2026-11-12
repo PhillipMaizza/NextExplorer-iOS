@@ -3,6 +3,7 @@ import CoreModels
 import Foundation
 import Keychain
 import Testing
+import TestUtils
 
 @Suite("SessionCookieStore")
 struct SessionCookieStoreTests {
@@ -24,7 +25,7 @@ struct SessionCookieStoreTests {
             serverURL: serverURL,
             authMode: .local,
             cookieName: AuthClientConfiguration.CookieName.local,
-            username: "phillip"
+            username: TestAccount.username
         )
         #expect(credentials == nil)
     }
@@ -36,7 +37,7 @@ struct SessionCookieStoreTests {
         let host = try #require(serverURL.host)
         let cookie = try #require(HTTPCookie(properties: [
             .name: "some-other-cookie",
-            .value: "abc",
+            .value: TestSession.cookieValue,
             .domain: host,
             .path: "/",
         ]))
@@ -46,7 +47,7 @@ struct SessionCookieStoreTests {
             serverURL: serverURL,
             authMode: .local,
             cookieName: AuthClientConfiguration.CookieName.local,
-            username: "phillip"
+            username: TestAccount.username
         )
         #expect(credentials == nil)
     }
@@ -70,13 +71,13 @@ struct SessionCookieStoreTests {
             serverURL: serverURL,
             authMode: .local,
             cookieName: AuthClientConfiguration.CookieName.local,
-            username: "phillip"
+            username: TestAccount.username
         ))
         #expect(credentials.cookieValue == "s%3Aabc123")
         #expect(credentials.cookieDomain == host)
         #expect(credentials.cookiePath == "/")
         #expect(credentials.cookieIsSecure == false)
-        #expect(credentials.username == "phillip")
+        #expect(credentials.username == TestAccount.username)
         #expect(credentials.authMode == .local)
         #expect(credentials.expiresAt != nil)
     }
@@ -103,14 +104,14 @@ struct SessionCookieStoreTests {
         let keychainClient = KeychainClient.inMemory()
         let store = makeStore(keychainClient: keychainClient)
         let serverURL = uniqueServerURL()
-        let creds = try credentials(serverURL: serverURL, value: "persisted-value", username: "phillip")
+        let creds = try credentials(serverURL: serverURL, value: Constants.persistedValue, username: TestAccount.username)
 
         try store.persist(creds)
 
         let loaded = try #require(store.activeCredentials())
-        #expect(loaded.cookieValue == "persisted-value")
+        #expect(loaded.cookieValue == Constants.persistedValue)
         let installedCookies = try #require(HTTPCookieStorage.shared.cookies(for: serverURL))
-        #expect(installedCookies.contains { $0.value == "persisted-value" })
+        #expect(installedCookies.contains { $0.value == Constants.persistedValue })
     }
 
     @Test("activeCredentials edge case: nothing saved returns nil")
@@ -122,7 +123,7 @@ struct SessionCookieStoreTests {
     @Test("loadStored edge case: corrupted data returns an empty set rather than throwing")
     func loadStoredCorruptedDataReturnsEmpty() throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("storedSessions", Data("not valid json".utf8))
+        try keychainClient.save(TestStorageKey.storedSessions, Data(Constants.corruptBlob.utf8))
         let store = makeStore(keychainClient: keychainClient)
         #expect(store.activeCredentials() == nil)
     }
@@ -133,45 +134,45 @@ struct SessionCookieStoreTests {
     func migratesLegacySingleSession() throws {
         let keychainClient = KeychainClient.inMemory()
         let serverURL = uniqueServerURL()
-        let legacy = try credentials(serverURL: serverURL, value: "legacy", username: "phillip")
-        try keychainClient.save("currentSession", JSONEncoder().encode(legacy))
+        let legacy = try credentials(serverURL: serverURL, value: Constants.legacyCookieValue, username: TestAccount.username)
+        try keychainClient.save(TestStorageKey.legacySession, JSONEncoder().encode(legacy))
         let store = makeStore(keychainClient: keychainClient)
 
         let active = try #require(store.activeCredentials())
-        #expect(active.cookieValue == "legacy")
+        #expect(active.cookieValue == Constants.legacyCookieValue)
         #expect(store.allSessions().count == 1)
         // The legacy key is dropped so migration only happens once.
-        #expect(try keychainClient.load("currentSession") == nil)
-        #expect(try keychainClient.load("storedSessions") != nil)
+        #expect(try keychainClient.load(TestStorageKey.legacySession) == nil)
+        #expect(try keychainClient.load(TestStorageKey.storedSessions) != nil)
     }
 
     @Test("a corrupt stored blob with no legacy session throws instead of reading as signed out")
     func corruptBlobWithoutLegacyThrows() throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("storedSessions", Data("not valid json".utf8))
+        try keychainClient.save(TestStorageKey.storedSessions, Data(Constants.corruptBlob.utf8))
         let store = makeStore(keychainClient: keychainClient)
 
         #expect(throws: (any Error).self) { try store.loadStoredOrThrow() }
-        #expect(try keychainClient.load("storedSessions") == Data("not valid json".utf8), "the blob is left as it was")
+        #expect(try keychainClient.load(TestStorageKey.storedSessions) == Data(Constants.corruptBlob.utf8), "the blob is left as it was")
     }
 
     @Test("a corrupt stored blob is replaced only by a valid legacy session")
     func corruptBlobWithValidLegacyMigrates() throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("storedSessions", Data("not valid json".utf8))
-        let legacy = try credentials(serverURL: uniqueServerURL(), value: "legacy", username: "phillip")
-        try keychainClient.save("currentSession", JSONEncoder().encode(legacy))
+        try keychainClient.save(TestStorageKey.storedSessions, Data(Constants.corruptBlob.utf8))
+        let legacy = try credentials(serverURL: uniqueServerURL(), value: Constants.legacyCookieValue, username: TestAccount.username)
+        try keychainClient.save(TestStorageKey.legacySession, JSONEncoder().encode(legacy))
         let store = makeStore(keychainClient: keychainClient)
 
-        #expect(try store.loadStoredOrThrow().active?.cookieValue == "legacy")
-        #expect(try keychainClient.load("currentSession") == nil)
+        #expect(try store.loadStoredOrThrow().active?.cookieValue == Constants.legacyCookieValue)
+        #expect(try keychainClient.load(TestStorageKey.legacySession) == nil)
     }
 
     @Test("a corrupt stored blob with a corrupt legacy session still throws")
     func corruptBlobWithCorruptLegacyThrows() throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("storedSessions", Data("not valid json".utf8))
-        try keychainClient.save("currentSession", Data("also broken".utf8))
+        try keychainClient.save(TestStorageKey.storedSessions, Data(Constants.corruptBlob.utf8))
+        try keychainClient.save(TestStorageKey.legacySession, Data("also broken".utf8))
 
         #expect(throws: (any Error).self) { try makeStore(keychainClient: keychainClient).loadStoredOrThrow() }
     }
@@ -179,14 +180,14 @@ struct SessionCookieStoreTests {
     @Test("the legacy key stays when the migrated set could not be saved")
     func legacyKeptWhenSaveFails() throws {
         let inner = KeychainClient.inMemory()
-        let legacy = try credentials(serverURL: uniqueServerURL(), value: "legacy", username: "phillip")
-        try inner.save("currentSession", JSONEncoder().encode(legacy))
+        let legacy = try credentials(serverURL: uniqueServerURL(), value: Constants.legacyCookieValue, username: TestAccount.username)
+        try inner.save(TestStorageKey.legacySession, JSONEncoder().encode(legacy))
         var failing = inner
         failing.save = { _, _ in throw CocoaError(.fileWriteUnknown) }
         let store = makeStore(keychainClient: failing)
 
-        #expect(try store.loadStoredOrThrow().active?.cookieValue == "legacy")
-        #expect(try inner.load("currentSession") != nil)
+        #expect(try store.loadStoredOrThrow().active?.cookieValue == Constants.legacyCookieValue)
+        #expect(try inner.load(TestStorageKey.legacySession) != nil)
     }
 
     // MARK: - multi-account switch / remove
@@ -196,8 +197,8 @@ struct SessionCookieStoreTests {
         let store = makeStore(keychainClient: .inMemory())
         let serverA = uniqueServerURL()
         let serverB = uniqueServerURL()
-        let credsA = try credentials(serverURL: serverA, value: "aaa", username: "phillip")
-        let credsB = try credentials(serverURL: serverB, value: "bbb", username: "jane")
+        let credsA = try credentials(serverURL: serverA, value: Constants.firstCookieValue, username: TestAccount.username)
+        let credsB = try credentials(serverURL: serverB, value: Constants.secondCookieValue, username: TestUser.jane)
 
         try store.persist(credsA)
         try store.persist(credsB)
@@ -215,8 +216,8 @@ struct SessionCookieStoreTests {
         let store = makeStore(keychainClient: .inMemory())
         let serverA = uniqueServerURL()
         let serverB = uniqueServerURL()
-        let credsA = try credentials(serverURL: serverA, value: "aaa", username: "phillip")
-        let credsB = try credentials(serverURL: serverB, value: "bbb", username: "jane")
+        let credsA = try credentials(serverURL: serverA, value: Constants.firstCookieValue, username: TestAccount.username)
+        let credsB = try credentials(serverURL: serverB, value: Constants.secondCookieValue, username: TestUser.jane)
         try store.persist(credsA)
         try store.persist(credsB) // B active
 
@@ -230,7 +231,7 @@ struct SessionCookieStoreTests {
     func removeLastReturnsNil() throws {
         let store = makeStore(keychainClient: .inMemory())
         let serverA = uniqueServerURL()
-        let credsA = try credentials(serverURL: serverA, value: "aaa", username: "phillip")
+        let credsA = try credentials(serverURL: serverA, value: Constants.firstCookieValue, username: TestAccount.username)
         try store.persist(credsA)
 
         #expect(store.remove(id: credsA.accountID) == nil)
@@ -244,12 +245,20 @@ struct SessionCookieStoreTests {
         let keychainClient = KeychainClient.inMemory()
         let store = makeStore(keychainClient: keychainClient)
         let serverA = uniqueServerURL()
-        try store.persist(credentials(serverURL: serverA, value: "aaa", username: "phillip"))
+        try store.persist(credentials(serverURL: serverA, value: Constants.firstCookieValue, username: TestAccount.username))
 
         store.clearAll()
 
-        #expect(try keychainClient.load("storedSessions") == nil)
+        #expect(try keychainClient.load(TestStorageKey.storedSessions) == nil)
         #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.isEmpty ?? true)
         #expect(store.activeCredentials() == nil)
     }
+}
+
+private enum Constants {
+    static let corruptBlob = "not valid json"
+    static let firstCookieValue = "aaa"
+    static let legacyCookieValue = "legacy"
+    static let persistedValue = "persisted-value"
+    static let secondCookieValue = "bbb"
 }

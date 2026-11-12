@@ -36,7 +36,7 @@ enum BrowseFixtures {
     }
 
     static func folder(_ name: String, in path: String = "") -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: "directory")
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
     }
 
     static func favorite(_ path: String, position: Int = 0) -> Favorite {

@@ -42,7 +42,7 @@ struct AccessRulesFeatureTests {
 
     @Test
     func onAppearSeedsDraftsFromTheServer() async {
-        let rules = [rule("1", "Docs"), rule("2", "Private", .hidden)]
+        let rules = [rule("1", TestFolder.docs), rule("2", "Private", .hidden)]
         let store = makeStore(
             AccessRulesFeature.State(serverURL: serverURL),
             fetch: { SystemSettings(thumbnails: ThumbnailSettings(), accessRules: rules) }
@@ -70,7 +70,7 @@ struct AccessRulesFeatureTests {
 
     @Test
     func aServerAnswerWithDuplicateIdsKeepsTheFirstOfEach() async {
-        let first = rule("1", "Docs")
+        let first = rule("1", TestFolder.docs)
         let duplicate = rule("1", "Other", .hidden)
         let store = makeStore(
             AccessRulesFeature.State(serverURL: serverURL),
@@ -87,7 +87,7 @@ struct AccessRulesFeatureTests {
 
     @Test
     func aReloadWhileEditingUpdatesTheBaselineButKeepsTheDrafts() async {
-        let original = rule("1", "Docs")
+        let original = rule("1", TestFolder.docs)
         var edited = original
         edited.path = "Docs/Edited"
         let refreshed = rule("1", "Docs/Server")
@@ -122,8 +122,8 @@ struct AccessRulesFeatureTests {
 
     @Test
     func editingClearsAShownSaveError() async {
-        var state = loadedState([rule("1", "Docs")])
-        state.errorMessage = "old"
+        var state = loadedState([rule("1", TestFolder.docs)])
+        state.errorMessage = TestValue.outdated
         let store = makeStore(state)
 
         await store.send(.pathChanged(id: "1", "Docs2")) {
@@ -139,7 +139,7 @@ struct AccessRulesFeatureTests {
         let store = makeStore(
             loadedState(drafts: [
                 AccessRule(id: "a", path: "  Reports  ", isRecursive: true, permission: .readOnly),
-                AccessRule(id: "b", path: "   ", isRecursive: true, permission: .readWrite),
+                AccessRule(id: "b", path: TestValue.blank, isRecursive: true, permission: .readWrite),
             ]),
             update: { rules in
                 sent.withValue { $0.append(rules) }
@@ -173,7 +173,7 @@ struct AccessRulesFeatureTests {
     @Test
     func savingWithoutChangesDoesNothing() async {
         let calls = LockIsolated(0)
-        let store = makeStore(loadedState([rule("1", "Docs")]), update: { rules in
+        let store = makeStore(loadedState([rule("1", TestFolder.docs)]), update: { rules in
             calls.withValue { $0 += 1 }
             return rules
         })

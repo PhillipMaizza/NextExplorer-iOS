@@ -18,8 +18,8 @@ import TestUtils
 
         @Test("An invalid name from an in place rename says why and asks nothing")
         func anInvalidNameFromAnInPlaceRenameSaysWhyAndAsksNothing() async {
-            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 1, kind: "pdf")
-            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+            let item = FileItem(name: TestFile.report, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.pdf)
+            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
             state.renameSheetItem = item
             let store = TestStore(initialState: state) {
                 BrowseFeature()
@@ -33,7 +33,7 @@ import TestUtils
 
         private func searchPreview() -> FavoritesFeature.State {
             var state = FavoritesFeature.State(serverURL: serverURL)
-            state.previewHost = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+            state.previewHost = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
             return state
         }
 
@@ -51,13 +51,13 @@ import TestUtils
 
         @Test("Renaming the file of a search preview keeps the preview and refreshes the results behind it")
         func renamingTheFileOfASearchPreviewRefreshesTheResults() async {
-            let renamed = FileItem(name: "b.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+            let renamed = FileItem(name: TestFile.bText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
             let store = TestStore(initialState: searchPreview()) {
                 FavoritesFeature()
             }
 
             await store.send(.previewHost(.presented(.renameResponse(.success(BrowseFeature.RenameResult(originalID: "Docs/a.txt", renamed: renamed)))))) {
-                $0.previewHost?.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamed, previousName: "a.txt"))] }
+                $0.previewHost?.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamed, previousName: TestFile.aText))] }
             }
             await store.receive(\.searchRetryTapped)
         }
@@ -179,7 +179,7 @@ import TestUtils
             let user = User(id: "1", username: "jdoe", email: nil, displayName: nil, roles: [])
             var state = MainTabFeature.State(serverURL: serverURL, user: user)
             #expect(!state.hasTransfersInFlight)
-            let item = FileItem(name: "a.txt", path: "", dateModified: MockDate.date, size: 1, kind: "txt")
+            let item = FileItem(name: TestFile.aText, path: "", dateModified: MockDate.date, size: 1, kind: TestKind.text)
             state.downloadQueue.jobs.append(DownloadQueueFeature.DownloadJob(id: UUID(0), item: item, status: .downloading))
             #expect(state.hasTransfersInFlight)
             state.downloadQueue.jobs[id: UUID(0)]?.status = .completed
@@ -207,7 +207,7 @@ import TestUtils
 
         @Test("A save requested from a search preview reaches the app shell")
         func savesFromASearchPreviewReachTheAppShell() async {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+            let item = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
             let request = DownloadSaveRequest(item: item, target: .into(URL(fileURLWithPath: "/tmp")))
             let store = TestStore(initialState: searchPreview()) { FavoritesFeature() }
 

@@ -12,17 +12,17 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseTransferConflictTests {
-    private let incoming = BrowseFixtures.file("a.txt", in: "Inbox")
-    private let existing = BrowseFixtures.file("a.txt", in: "Documents")
+    private let incoming = BrowseFixtures.file(TestFile.aText, in: TestFolder.inbox)
+    private let existing = BrowseFixtures.file(TestFile.aText, in: TestFolder.documents)
 
     private func conflictState(clipboard: [FileItem]? = nil) -> BrowseFeature.State {
-        var state = BrowseFixtures.state("Documents", title: "Docs", items: [existing], access: BrowseFixtures.writableAccess)
+        var state = BrowseFixtures.state(TestFolder.documents, title: TestFolder.docs, items: [existing], access: BrowseFixtures.writableAccess)
         state.$clipboard.withLock { $0 = FileClipboard(items: clipboard ?? [incoming], operation: .copy) }
         return state
     }
 
     private var askRetry: BrowseFeature.TransferRetry {
-        BrowseFeature.TransferRetry(items: [incoming], destination: "Documents", operation: .copy, clearClipboard: true)
+        BrowseFeature.TransferRetry(items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true)
     }
 
     private func pasteAndStopAtThePrompt(_ store: TestStoreOf<BrowseFeature>) async {
@@ -59,7 +59,7 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: "Documents", operation: .copy, clearClipboard: true,
+                items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
                 resolution: .replace, itemsToReplace: [existing]
             )
         }
@@ -78,7 +78,7 @@ struct BrowseTransferConflictTests {
             $0.filesClient.deleteItems = { _, items in Issue.record("Deleted \(items.map(\.id)) on keep both") }
             $0.filesClient.transferItems = { _, items, destination, _ in
                 try await gate.wait()
-                return BrowseFixtures.transferResult(items, to: destination, renamedTo: ["a.txt": "a 2.txt"])
+                return BrowseFixtures.transferResult(items, to: destination, renamedTo: [TestFile.aText: "a 2.txt"])
             }
         }
 
@@ -88,13 +88,13 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: "Documents", operation: .copy, clearClipboard: true, resolution: .keepBoth
+                items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true, resolution: .keepBoth
             )
         }
         gate.open()
         await BrowseFixtures.receiveCopyIntoOpenFolder(
             store,
-            listed: [BrowseFixtures.file("a 2.txt", in: "Documents")],
+            listed: [BrowseFixtures.file("a 2.txt", in: TestFolder.documents)],
             message: L10n.Browse.transferCopied(1),
             clearsClipboard: true
         )
@@ -117,7 +117,7 @@ struct BrowseTransferConflictTests {
         let store = BrowseFixtures.store(conflictState(clipboard: [existing])) {
             $0.filesClient.transferItems = { _, items, destination, _ in
                 try await gate.wait()
-                return BrowseFixtures.transferResult(items, to: destination, renamedTo: ["a.txt": "a 2.txt"])
+                return BrowseFixtures.transferResult(items, to: destination, renamedTo: [TestFile.aText: "a 2.txt"])
             }
         }
 
@@ -125,13 +125,13 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [existing], destination: "Documents", operation: .copy, clearClipboard: false, resolution: .keepBoth
+                items: [existing], destination: TestFolder.documents, operation: .copy, clearClipboard: false, resolution: .keepBoth
             )
         }
         gate.open()
         await BrowseFixtures.receiveCopyIntoOpenFolder(
             store,
-            listed: [BrowseFixtures.file("a 2.txt", in: "Documents")],
+            listed: [BrowseFixtures.file("a 2.txt", in: TestFolder.documents)],
             message: L10n.Browse.transferCopied(1),
             clearsClipboard: false
         )

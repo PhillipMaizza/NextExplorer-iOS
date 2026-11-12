@@ -9,7 +9,7 @@ struct APITokenTests {
     func decodesFull() throws {
         let token = try CoreModelsFixture.apiTokenFull.decode(APIToken.self)
         #expect(token == APIToken(
-            id: "t1", name: "backup script", scope: .write,
+            id: TestAPIToken.id, name: "backup script", scope: .write,
             createdAt: "2026-11-10T07:00:00.000Z", expiresAt: "2027-01-01T00:00:00.000Z",
             lastUsedAt: "2026-11-11T08:00:00.000Z", lastUsedIp: "10.0.0.5"
         ))
@@ -38,13 +38,13 @@ struct APITokenTests {
     @Test("the issued token carries the secret next to the token")
     func decodesIssued() throws {
         let issued = try CoreModelsFixture.apiTokenIssuedWithSecret.decode(IssuedAPIToken.self)
-        #expect(issued.secret == "nxt_abc.def")
-        #expect(issued.token.id == "t1")
+        #expect(issued.secret == TestAPIToken.secret)
+        #expect(issued.token.id == TestAPIToken.id)
     }
 
     @Test("an issued token is identified by its token, so a sheet can be driven by it")
     func issuedIsIdentifiedByItsToken() throws {
         let issued = try CoreModelsFixture.apiTokenIssuedWithShortSecret.decode(IssuedAPIToken.self)
-        #expect(issued.id == "t1")
+        #expect(issued.id == TestAPIToken.id)
     }
 }

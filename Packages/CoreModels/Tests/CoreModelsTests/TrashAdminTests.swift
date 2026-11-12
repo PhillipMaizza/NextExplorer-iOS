@@ -1,6 +1,7 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 struct TrashAdminTests {
     private func encoded(_ value: some Encodable) throws -> [String: Any] {
@@ -40,7 +41,7 @@ struct TrashAdminTests {
 
     @Test(arguments: [
         ("", Int?.none, true),
-        ("   ", nil, true),
+        (TestValue.blank, nil, true),
         ("1", TrashSettings.bytesPerGiB, true),
         ("2.5", 2_684_354_560, true),
         ("2,5", 2_684_354_560, true),
