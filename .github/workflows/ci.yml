@@ -550,7 +550,7 @@ jobs:
           SHARD_TESTS: ${{ matrix.shard.only }}
         run: |
           echo "UI test destination: platform=iOS Simulator,id=${SIM_UDID}"
-          python3 Scripts/ci-ui-tests.py --result TestResults --select "${SHARD_TESTS}" -- \
+          python3 Scripts/ci-ui-tests.py --result TestResults --select="${SHARD_TESTS}" -- \
             test-without-building \
             -xctestrun "${XCTESTRUN}" \
             -destination "platform=iOS Simulator,id=${SIM_UDID}" \
@@ -639,7 +639,7 @@ jobs:
         # build settings.
         run: |
           python3 Scripts/ci-ui-tests.py --result MacTestResults \
-            --select "-only-testing:NextExplorerUITests" -- \
+            --select="-only-testing:NextExplorerUITests" -- \
             test \
             -workspace PackageTests.xcworkspace \
             -scheme NextExplorer \
