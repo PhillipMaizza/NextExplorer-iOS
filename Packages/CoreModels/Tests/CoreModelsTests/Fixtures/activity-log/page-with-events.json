@@ -1,0 +1,31 @@
+{
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-11T07:14:33.812Z",
+      "action": "sign-in",
+      "outcome": "ok",
+      "userId": "u1",
+      "actor": "phillip",
+      "target": null,
+      "detail": null,
+      "ip": "10.0.0.2"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-11T07:10:00.000Z",
+      "action": "file.delete",
+      "outcome": "refused",
+      "actor": "guest",
+      "target": "Docs/a.txt",
+      "detail": "forbidden",
+      "ip": ""
+    }
+  ],
+  "nextBefore": "2026-11-11T07:10:00.000Z",
+  "enabled": true,
+  "actions": [
+    "sign-in",
+    "file.delete"
+  ]
+}

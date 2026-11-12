@@ -1,0 +1,13 @@
+{
+  "path": "Home/clip.mp4",
+  "name": "clip.mp4",
+  "kind": "mp4",
+  "size": 9000000,
+  "dateModified": 1800000000,
+  "dateCreated": 1700000000,
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "duration": 42.5
+  }
+}

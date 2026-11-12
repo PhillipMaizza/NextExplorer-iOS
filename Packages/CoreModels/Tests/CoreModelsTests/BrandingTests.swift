@@ -8,15 +8,14 @@ struct BrandingTests {
 
     @Test("decodes a full branding object")
     func decodesFullObject() throws {
-        let json = #"{"appName": "Rivendell", "appLogoUrl": "/static/logos/custom-logo.png", "showPoweredBy": true}"#
-        let branding = try JSONDecoder().decode(Branding.self, from: Data(json.utf8))
+        let branding = try CoreModelsFixture.brandingFullObject.decode(Branding.self)
         #expect(branding.appName == "Rivendell")
         #expect(branding.appLogoUrl == "/static/logos/custom-logo.png")
     }
 
     @Test("missing keys fall back to the server's own defaults")
     func missingKeysUseDefaults() throws {
-        let branding = try JSONDecoder().decode(Branding.self, from: Data("{}".utf8))
+        let branding = try CoreModelsFixture.emptyObject.decode(Branding.self)
         #expect(branding.appName == "Explorer")
         #expect(branding.appLogoUrl == "/logo.svg")
         #expect(branding.hasCustomLogo == false)

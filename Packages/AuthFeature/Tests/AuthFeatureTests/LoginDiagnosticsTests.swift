@@ -2,10 +2,11 @@ import AuthClient
 @testable import AuthFeature
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("LoginDiagnostics")
 struct LoginDiagnosticsTests {
-    private let timestamp = Date(timeIntervalSince1970: 1_700_000_000)
+    private let timestamp = MockDate.date
 
     private let allErrors: [AuthClientError] = [
         .invalidCredentials, .sessionExpired, .sessionCookieMissing, .network("n"), .decoding("d"),

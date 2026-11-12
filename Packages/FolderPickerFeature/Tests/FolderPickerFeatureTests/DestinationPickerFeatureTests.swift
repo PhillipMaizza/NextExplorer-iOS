@@ -13,11 +13,11 @@ struct DestinationPickerFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
 
     private nonisolated func folder(_ name: String, path: String = "") -> FileItem {
-        FileItem(name: name, path: path, dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "directory")
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: "directory")
     }
 
     private nonisolated func file(_ name: String, path: String = "") -> FileItem {
-        FileItem(name: name, path: path, dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "txt")
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: "txt")
     }
 
     private nonisolated func access() -> FileAccess {

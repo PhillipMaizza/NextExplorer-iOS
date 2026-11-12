@@ -26,10 +26,9 @@ struct EditableTextFilesTests {
 
     @Test("ServerFeatures reads the editor's extra file types, lowercased")
     func decodesEditorExtensions() throws {
-        let json = Data(#"{"editor":{"extensions":["SQL","toml"],"maxFileSizeBytes":1048576}}"#.utf8)
-        let features = try JSONDecoder().decode(ServerFeatures.self, from: json)
+        let features = try CoreModelsFixture.serverFeaturesEditorExtensions.decode(ServerFeatures.self)
         #expect(features.editorExtensions == ["sql", "toml"])
-        let none = try JSONDecoder().decode(ServerFeatures.self, from: Data("{}".utf8))
+        let none = try CoreModelsFixture.emptyObject.decode(ServerFeatures.self)
         #expect(none.editorExtensions.isEmpty)
     }
 }

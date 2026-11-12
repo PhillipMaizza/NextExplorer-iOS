@@ -12,14 +12,15 @@ struct NetworkClientLiveTests {
 
     @Test("returns the response body and HTTPURLResponse on success")
     func successReturnsBodyAndResponse() async throws {
-        StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: Data(#"{"ok":true}"#.utf8))
+        StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: try NetworkClientFixture.responseOkTrue.data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
         let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
         let (data, response) = try await client.send(request)
 
         #expect(response.statusCode == 200)
-        #expect(String(decoding: data, as: UTF8.self) == #"{"ok":true}"#)
+        let expectedBody = try NetworkClientFixture.responseOkTrue.string()
+        #expect(String(decoding: data, as: UTF8.self) == expectedBody)
     }
 
     @Test("surfaces a 401 as a plain HTTPURLResponse, not a thrown error")

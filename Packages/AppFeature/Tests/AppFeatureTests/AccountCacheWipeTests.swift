@@ -15,7 +15,7 @@ struct AccountCacheWipeTests {
         static let otherAccount = "https://files.example.com|bob"
         static let server = URL(fileURLWithPath: "/")
         static let path = "Docs"
-        static let fetchedAt = Date(timeIntervalSince1970: 100)
+        static let fetchedAt = MockDate.date
         static let defaultsSuitePrefix = "account-cache-wipe-"
     }
 

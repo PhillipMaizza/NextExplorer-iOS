@@ -1,21 +1,60 @@
 {
+  "Packages/AppFeature/Tests/AppFeatureTests/AccountCacheWipeTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/AuthFeature/Tests/AuthFeatureTests/LoginDiagnosticsTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/CoreModels/Tests/CoreModelsTests/FileClipboardTests.swift": {
+    "Date(timeIntervalSince1970:)": 3
+  },
+  "Packages/CoreModels/Tests/CoreModelsTests/FileItemDecodingTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/CoreModels/Tests/CoreModelsTests/UserPreferencesDecodingTests.swift": {
+    "Date(timeIntervalSince1970:)": 4
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/AccountScopedCacheTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/CacheFileNameTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/DirectoryCacheStoreTests.swift": {
+    "Date(timeIntervalSince1970:)": 10
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/FilesClientBrowseTests.swift": {
+    "Date(timeIntervalSince1970:)": 10
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/FilesClientEditorConflictTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/FilesClientPreviewTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/FilesClientTextContentTests.swift": {
+    "Date(timeIntervalSince1970:)": 3
+  },
+  "Packages/FilesClient/Tests/FilesClientTests/FilesClientTimeoutTests.swift": {
+    "Date(timeIntervalSince1970:)": 4
+  },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseDropTests.swift": {
+    "Date(timeIntervalSince1970:)": 1,
     "exhaustivity off": 4,
+    "lines over 600": 208,
     "skipReceivedActions": 4
   },
-  "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseFeatureTests.swift": {
-    "exhaustivity off": 34,
-    "skipInFlightEffects": 1,
-    "skipReceivedActions": 1
-  },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseKeyboardActionsTests.swift": {
+    "Date(timeIntervalSince1970:)": 6,
     "exhaustivity off": 7,
     "skipReceivedActions": 1
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseQAFixesTests.swift": {
+    "Date(timeIntervalSince1970:)": 5,
     "exhaustivity off": 19
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseReviewFixTests.swift": {
+    "Date(timeIntervalSince1970:)": 1,
     "exhaustivity off": 8
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseRoundThreeTests.swift": {
@@ -23,5 +62,50 @@
   },
   "Packages/FilesFeature/Tests/FilesFeatureTests/BrowseSearchFilterTests.swift": {
     "exhaustivity off": 6
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/CreateShareLinkFeatureTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/DateDisplayFormatTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/EditShareFeatureTests.swift": {
+    "Date(timeIntervalSince1970:)": 4
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/FavoriteEditFeatureTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/FavoritesFeatureTests.swift": {
+    "lines over 600": 220
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/MainTabFeatureTests.swift": {
+    "lines over 600": 42
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/OfflineDownloadsFeatureTests.swift": {
+    "lines over 600": 431
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/PDFThumbnailStoreTests.swift": {
+    "Date(timeIntervalSince1970:)": 1
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/SettingsFeatureTests.swift": {
+    "lines over 600": 47
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/TrashSettingsFeatureTests.swift": {
+    "lines over 600": 157
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/UploadsFeatureTests.swift": {
+    "lines over 600": 82
+  },
+  "Packages/FilesFeature/Tests/FilesFeatureTests/UserManagementFeatureTests.swift": {
+    "lines over 600": 604
+  },
+  "Packages/FolderPickerFeature/Tests/FolderPickerFeatureTests/DestinationPickerFeatureTests.swift": {
+    "Date(timeIntervalSince1970:)": 2
+  },
+  "Packages/NetworkClient/Tests/NetworkClientTests/ClientCertificateTests.swift": {
+    "Date(timeIntervalSince1970:)": 2
+  },
+  "Packages/ShareUploads/Tests/ShareUploadsTests/TestSupport.swift": {
+    "Date(timeIntervalSince1970:)": 1
   }
 }

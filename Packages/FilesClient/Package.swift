@@ -27,6 +27,7 @@ let package = Package(
         .testTarget(
             name: "FilesClientTests",
             dependencies: ["TestUtils", "FilesClient", "NetworkClient"],
+            resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

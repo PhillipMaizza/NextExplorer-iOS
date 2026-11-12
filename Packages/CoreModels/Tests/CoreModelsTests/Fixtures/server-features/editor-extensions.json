@@ -1,0 +1,9 @@
+{
+  "editor": {
+    "extensions": [
+      "SQL",
+      "toml"
+    ],
+    "maxFileSizeBytes": 1048576
+  }
+}

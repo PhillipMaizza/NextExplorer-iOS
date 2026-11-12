@@ -6,7 +6,7 @@ import TestUtils
 
 enum TestClock {
     /// A fixed moment; tests move the clock with offsets from it.
-    static let reference = Date(timeIntervalSince1970: 1_800_000_000)
+    static let reference = MockDate.date.addingTimeInterval(100_000_000)
 }
 
 final class RecordingNotifier: @unchecked Sendable {

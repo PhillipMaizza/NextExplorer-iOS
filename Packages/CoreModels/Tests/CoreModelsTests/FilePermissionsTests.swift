@@ -1,21 +1,12 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 struct FilePermissionsTests {
     @Test
     func decodesTheBackendShape() throws {
-        let json = """
-        {
-            "path": "Documents/report.pdf",
-            "mode": 33261,
-            "owner": "phillip",
-            "group": "staff",
-            "uid": 501,
-            "gid": 20,
-            "isDirectory": false
-        }
-        """.data(using: .utf8)!
+        let json = try CoreModelsFixture.filePermissionsBackendShape.data()
 
         let perms = try JSONDecoder().decode(FilePermissions.self, from: json)
         #expect(perms.mode == 33261)

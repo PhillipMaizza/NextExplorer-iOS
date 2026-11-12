@@ -1,0 +1,10 @@
+{
+  "zoneId": "z1",
+  "violations": [
+    {
+      "invariant": "I1",
+      "itemId": "i",
+      "detail": "content missing"
+    }
+  ]
+}

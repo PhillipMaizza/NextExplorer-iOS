@@ -1,29 +1,12 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 struct VersionedFilesTests {
-    private func decode<T: Decodable>(_ type: T.Type, _ json: String) throws -> T {
-        try JSONDecoder().decode(type, from: Data(json.utf8))
-    }
-
     @Test
     func aPageDecodesItsRowsTotalsAndVolumes() throws {
-        let page = try decode(VersionedFilesPage.self, """
-        {
-            "files": [
-                { "id": "f1", "name": "a.txt", "relativePath": "Docs/a.txt", "folder": "Docs", "path": "files/Docs/a.txt",
-                  "state": "live", "versions": 3, "bytes": 3000, "newest": "2026-11-11T07:00:00.000Z",
-                  "zone": { "id": "z1", "kind": "volume", "name": "files" } },
-                { "id": "f2", "name": "b.txt", "relativePath": "b.txt", "folder": "", "path": null,
-                  "state": "orphaned", "versions": 1, "bytes": 10, "newest": null,
-                  "zone": { "id": "z2", "kind": "personal", "name": "alice" } }
-            ],
-            "total": 52, "totalBytes": 99999, "totalVersions": 80, "limit": 25, "offset": 25,
-            "zones": [ { "id": "z1", "kind": "volume", "name": "files" } ],
-            "states": ["live", "trashed", "orphaned"], "sorts": ["bytes"]
-        }
-        """)
+        let page = try CoreModelsFixture.versionedFilesPageWithRowsTotalsAndVolumes.decode(VersionedFilesPage.self)
 
         #expect(page.files.count == 2)
         #expect(page.files[0].folder == "Docs")
@@ -39,7 +22,7 @@ struct VersionedFilesTests {
 
     @Test
     func anUnknownStateAndZoneKindFallBackToLiveAndVolume() throws {
-        let file = try decode(VersionedFile.self, #"{ "id": "f", "name": "x", "state": "weird", "zone": { "id": "z", "kind": "other", "name": "n" } }"#)
+        let file = try CoreModelsFixture.versionedFilesUnknownStateAndZoneKind.decode(VersionedFile.self)
 
         #expect(file.state == .live)
         #expect(file.zone?.kind == .volume)
@@ -71,16 +54,7 @@ struct VersionedFilesTests {
     func aDetailDecodesItsVersionsAndTotal() throws {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let detail = try decoder.decode(VersionedFileDetail.self, from: Data("""
-        {
-            "file": { "id": "f1", "name": "a.txt" },
-            "versions": [
-                { "id": "v1", "size": 100, "modifiedAt": "2026-11-11T07:00:00Z", "capturedAt": "2026-11-11T07:01:00Z",
-                  "author": { "label": "alice" }, "label": "before edit", "pinned": true, "available": false }
-            ],
-            "totalBytes": 100
-        }
-        """.utf8))
+        let detail = try decoder.decode(VersionedFileDetail.self, from: try CoreModelsFixture.versionedFilesDetailWithPinnedUnavailableVersion.data())
 
         #expect(detail.versions.map(\.id) == ["v1"])
         #expect(detail.versions.first?.isPinned == true)
@@ -90,15 +64,15 @@ struct VersionedFilesTests {
 
     @Test
     func aDeletionReportsWhatWasDeletedAndWhatRemains() throws {
-        let outcome = try decode(VersionsDeletion.self, #"{ "items": [ { "id": "v1", "status": "purged" } ], "deleted": 1, "remaining": 4 }"#)
+        let outcome = try CoreModelsFixture.versionedFilesDeletionWithRemaining.decode(VersionsDeletion.self)
 
         #expect(outcome == VersionsDeletion(deleted: 1, remaining: 4))
-        #expect(try decode(VersionsDeletion.self, "{}") == VersionsDeletion())
+        #expect(try CoreModelsFixture.emptyObject.decode(VersionsDeletion.self) == VersionsDeletion())
     }
 
     @Test
     func aDeletionCountsTheVersionsTheServerCouldNotDelete() throws {
-        let outcome = try decode(VersionsDeletion.self, #"{ "items": [ { "id": "a", "status": "purged" }, { "id": "b", "status": "failed" }, { "id": "c", "status": "not-found" }, { "id": "d", "status": "pending" } ], "deleted": 2, "remaining": 3 }"#)
+        let outcome = try CoreModelsFixture.versionedFilesDeletionWithFailures.decode(VersionsDeletion.self)
 
         #expect(outcome == VersionsDeletion(deleted: 2, remaining: 3, failed: 2))
     }

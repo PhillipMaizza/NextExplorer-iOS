@@ -1,0 +1,9 @@
+{
+  "destination": "A",
+  "items": [
+    {
+      "from": "x",
+      "to": "A/x"
+    }
+  ]
+}

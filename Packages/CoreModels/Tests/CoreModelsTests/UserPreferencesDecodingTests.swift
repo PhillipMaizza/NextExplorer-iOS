@@ -6,24 +6,21 @@ import Testing
 struct UserPreferencesDecodingTests {
     @Test("happy path: explicit values override the defaults")
     func decodesExplicitValues() throws {
-        let json = #"{"showHiddenFiles": true, "showThumbnails": false}"#
-        let prefs = try JSONDecoder().decode(UserPreferences.self, from: Data(json.utf8))
+        let prefs = try CoreModelsFixture.userPreferencesExplicitValues.decode(UserPreferences.self)
         #expect(prefs.showHiddenFiles == true)
         #expect(prefs.showThumbnails == false)
     }
 
     @Test("edge case: a brand-new user with no settings row decodes to client defaults")
     func decodesEmptyObjectToDefaults() throws {
-        let json = #"{}"#
-        let prefs = try JSONDecoder().decode(UserPreferences.self, from: Data(json.utf8))
+        let prefs = try CoreModelsFixture.userPreferencesEmptyObject.decode(UserPreferences.self)
         #expect(prefs.showHiddenFiles == false)
         #expect(prefs.showThumbnails == true)
     }
 
     @Test("edge case: only one key present, the other still falls back to default")
     func decodesPartialObject() throws {
-        let json = #"{"showHiddenFiles": true}"#
-        let prefs = try JSONDecoder().decode(UserPreferences.self, from: Data(json.utf8))
+        let prefs = try CoreModelsFixture.userPreferencesPartialObject.decode(UserPreferences.self)
         #expect(prefs.showHiddenFiles == true)
         #expect(prefs.showThumbnails == true)
         #expect(prefs.defaultShareExpiration == nil)
@@ -31,15 +28,13 @@ struct UserPreferencesDecodingTests {
 
     @Test("decodes a default share expiration object")
     func decodesDefaultShareExpiration() throws {
-        let json = #"{"defaultShareExpiration": {"value": 2, "unit": "weeks"}}"#
-        let prefs = try JSONDecoder().decode(UserPreferences.self, from: Data(json.utf8))
+        let prefs = try CoreModelsFixture.userPreferencesShareExpirationWeeks.decode(UserPreferences.self)
         #expect(prefs.defaultShareExpiration == UserPreferences.ShareExpiration(value: 2, unit: .weeks))
     }
 
     @Test("a null default share expiration decodes to nil")
     func decodesNullDefaultShareExpiration() throws {
-        let json = #"{"defaultShareExpiration": null}"#
-        let prefs = try JSONDecoder().decode(UserPreferences.self, from: Data(json.utf8))
+        let prefs = try CoreModelsFixture.userPreferencesShareExpirationNull.decode(UserPreferences.self)
         #expect(prefs.defaultShareExpiration == nil)
     }
 

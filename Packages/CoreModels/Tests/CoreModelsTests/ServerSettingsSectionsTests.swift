@@ -3,10 +3,6 @@ import Foundation
 import Testing
 
 struct ServerSettingsSectionsTests {
-    private func decode<T: Decodable>(_ type: T.Type, _ json: String) throws -> T {
-        try JSONDecoder().decode(type, from: Data(json.utf8))
-    }
-
     private func encoded(_ value: some Encodable) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         return try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
@@ -16,14 +12,7 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func systemSettingsDecodesTheFourBackgroundSections() throws {
-        let settings = try decode(SystemSettings.self, """
-        {
-            "uploads": { "chunkedEnabled": true, "chunkedAutoFallback": false, "chunkSizeBytes": 16777216 },
-            "ffmpeg": { "ffmpegPath": "/usr/bin/ffmpeg", "ffprobePath": null },
-            "searchIndex": { "enabled": true, "excludedPaths": ["Backups"], "environmentExcludedPaths": ["tmp"] },
-            "folderSize": { "mode": "shallow", "excludedPaths": ["docker"], "environmentExcludedPaths": [] }
-        }
-        """)
+        let settings = try CoreModelsFixture.serverSettingsSystemSettingsFourBackgroundSections.decode(SystemSettings.self)
 
         #expect(settings.uploads == UploadSettings(isChunkedEnabled: true, isChunkedAutoFallback: false, chunkSizeBytes: 16 * 1024 * 1024))
         #expect(settings.ffmpeg == FFmpegSettings(ffmpegPath: "/usr/bin/ffmpeg", ffprobePath: ""))
@@ -33,7 +22,7 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func aNonAdminResponseHasNoBackgroundSections() throws {
-        let settings = try decode(SystemSettings.self, #"{ "user": { "showHiddenFiles": true } }"#)
+        let settings = try CoreModelsFixture.serverSettingsSystemSettingsUserOnly.decode(SystemSettings.self)
 
         #expect(settings.uploads == nil)
         #expect(settings.ffmpeg == nil)
@@ -43,17 +32,17 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func anUnknownFolderSizeModeFallsBackToOff() throws {
-        let folderSize = try decode(FolderSizeSettings.self, #"{ "mode": "everything" }"#)
+        let folderSize = try CoreModelsFixture.serverSettingsFolderSizeUnknownMode.decode(FolderSizeSettings.self)
 
         #expect(folderSize.mode == .off)
     }
 
     @Test
     func emptySectionsTakeTheirDefaults() throws {
-        #expect(try decode(UploadSettings.self, "{}") == UploadSettings())
-        #expect(try decode(FFmpegSettings.self, "{}") == FFmpegSettings())
-        #expect(try decode(SearchIndexSettings.self, "{}") == SearchIndexSettings())
-        #expect(try decode(FolderSizeSettings.self, "{}") == FolderSizeSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(UploadSettings.self) == UploadSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(FFmpegSettings.self) == FFmpegSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(SearchIndexSettings.self) == SearchIndexSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(FolderSizeSettings.self) == FolderSizeSettings())
     }
 
     // MARK: Chunk size
@@ -151,13 +140,7 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func serverFeaturesReadTheCeilingAndTheLocks() throws {
-        let features = try decode(ServerFeatures.self, """
-        {
-            "uploads": { "maxChunkSizeBytes": 67108864 },
-            "search": { "index": { "enabled": true, "lockedBy": "SEARCH_INDEX" } },
-            "folderSize": { "mode": "full", "enabled": true, "lockedBy": "FOLDER_SIZE_MODE" }
-        }
-        """)
+        let features = try CoreModelsFixture.serverSettingsServerFeaturesCeilingAndLocks.decode(ServerFeatures.self)
 
         #expect(features.maxUploadChunkSizeBytes == 67_108_864)
         #expect(features.isSearchIndexEnabled)
@@ -168,7 +151,7 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func serverFeaturesWithoutThoseSectionsAreUnlockedAndOff() throws {
-        let features = try decode(ServerFeatures.self, "{}")
+        let features = try CoreModelsFixture.emptyObject.decode(ServerFeatures.self)
 
         #expect(features.maxUploadChunkSizeBytes == nil)
         #expect(!features.isSearchIndexEnabled)

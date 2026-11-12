@@ -6,13 +6,7 @@ import Testing
 struct TransferResultDecodingTests {
     @Test("decodes the move/copy response body")
     func decodesResponseBody() throws {
-        let json = #"""
-        {"success": true, "destination": "Documents/Work", "items": [
-            {"from": "Inbox/a.txt", "to": "Documents/Work/a.txt"},
-            {"from": "Inbox/b.txt", "to": "Documents/Work/b.txt", "skipped": true}
-        ]}
-        """#
-        let result = try JSONDecoder().decode(TransferResult.self, from: Data(json.utf8))
+        let result = try CoreModelsFixture.transferResultMoveWithSkippedItem.decode(TransferResult.self)
         #expect(result.destination == "Documents/Work")
         #expect(result.items.count == 2)
         #expect(result.items[0].skipped == false)
@@ -23,8 +17,7 @@ struct TransferResultDecodingTests {
 
     @Test("edge case: missing skipped defaults to false")
     func missingSkippedDefaultsFalse() throws {
-        let json = #"{"destination": "A", "items": [{"from": "x", "to": "A/x"}]}"#
-        let result = try JSONDecoder().decode(TransferResult.self, from: Data(json.utf8))
+        let result = try CoreModelsFixture.transferResultMissingSkipped.decode(TransferResult.self)
         #expect(result.items[0].skipped == false)
         #expect(result.movedCount == 1)
         #expect(result.skippedCount == 0)

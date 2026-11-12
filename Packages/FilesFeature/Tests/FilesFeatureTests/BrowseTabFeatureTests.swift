@@ -197,7 +197,7 @@ struct BrowseTabFeatureTests {
         let store = makeStore(state) {
             $0.date = .constant(now)
             $0.filesClient.transferItems = { _, items, destination, operation in
-                transferred.withValue { $0.append("\(items.map(\.id)) \(destination) \(operation)") }
+                transferred.withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)") }
                 try await transfer.wait()
                 return TransferResult(destination: destination, items: [.init(from: "Docs/Misc", to: "Docs/Misc (2)")])
             }
@@ -266,7 +266,7 @@ struct BrowseTabFeatureTests {
             $0.path[id: id]?.hasLoadedFavorites = true
         }
 
-        #expect(transferred.value == ["[\"Docs/Misc\"] Docs copy"])
+        #expect(transferred.value == ["Docs/Misc Docs copy"])
     }
 
     // MARK: Sync on app open

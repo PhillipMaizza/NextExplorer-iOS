@@ -58,7 +58,7 @@ import TestUtils
                 BrowseFeature()
             } withDependencies: {
                 $0.filesClient.transferItems = { _, items, destination, operation in
-                    transferred.withValue { $0.append("\(items.map(\.id)) \(destination) \(operation)") }
+                    transferred.withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)") }
                     try await transfer.wait()
                     return TransferResult(destination: destination, items: [.init(from: "Other/a.txt", to: "Docs/a.txt")])
                 }
@@ -87,7 +87,7 @@ import TestUtils
             }
             await store.receive(.delegate(.directoryContentsChanged))
 
-            #expect(transferred.value == ["[\"Other/a.txt\"] Docs move"])
+            #expect(transferred.value == ["Other/a.txt Docs move"])
         }
 
         struct NothingToMove: Sendable, CustomTestStringConvertible {

@@ -6,8 +6,7 @@ import Testing
 struct VolumeDecodingTests {
     @Test("happy path: decodes name, path and accessMode")
     func decodesFullVolume() throws {
-        let json = #"{"name": "Media", "path": "/mnt/media", "accessMode": "readOnly"}"#
-        let volume = try JSONDecoder().decode(Volume.self, from: Data(json.utf8))
+        let volume = try CoreModelsFixture.volumeWithAccessMode.decode(Volume.self)
         #expect(volume.name == "Media")
         #expect(volume.id == "/mnt/media")
         #expect(volume.accessMode == "readOnly")
@@ -15,8 +14,7 @@ struct VolumeDecodingTests {
 
     @Test("edge case: accessMode absent (not a per-user assignment) decodes to nil")
     func missingAccessModeDecodesNil() throws {
-        let json = #"{"name": "Media", "path": "/mnt/media"}"#
-        let volume = try JSONDecoder().decode(Volume.self, from: Data(json.utf8))
+        let volume = try CoreModelsFixture.volumeWithoutAccessMode.decode(Volume.self)
         #expect(volume.accessMode == nil)
     }
 }

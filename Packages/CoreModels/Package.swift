@@ -12,6 +12,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "CoreModels", swiftSettings: [.swiftLanguageMode(.v6)]),
-        .testTarget(name: "CoreModelsTests", dependencies: ["CoreModels", "TestUtils"], swiftSettings: [.swiftLanguageMode(.v6)]),
+        .testTarget(name: "CoreModelsTests", dependencies: ["CoreModels", "TestUtils"], resources: [.copy("Fixtures")], swiftSettings: [.swiftLanguageMode(.v6)]),
     ]
 )

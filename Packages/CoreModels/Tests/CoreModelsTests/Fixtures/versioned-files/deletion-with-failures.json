@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "id": "a",
+      "status": "purged"
+    },
+    {
+      "id": "b",
+      "status": "failed"
+    },
+    {
+      "id": "c",
+      "status": "not-found"
+    },
+    {
+      "id": "d",
+      "status": "pending"
+    }
+  ],
+  "deleted": 2,
+  "remaining": 3
+}

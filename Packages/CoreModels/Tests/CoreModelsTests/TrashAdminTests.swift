@@ -3,10 +3,6 @@ import Foundation
 import Testing
 
 struct TrashAdminTests {
-    private func decode<T: Decodable>(_ type: T.Type, _ json: String) throws -> T {
-        try JSONDecoder().decode(type, from: Data(json.utf8))
-    }
-
     private func encoded(_ value: some Encodable) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         return try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
@@ -16,12 +12,7 @@ struct TrashAdminTests {
 
     @Test
     func systemSettingsCarryTrashAndVersions() throws {
-        let settings = try decode(SystemSettings.self, """
-        {
-            "trash": { "enabled": false, "retentionDays": 14, "maxPercent": 25, "maxBytes": 5368709120 },
-            "versions": { "enabled": true, "keepAllHours": 12, "hourlyDays": 3, "dailyDays": 20, "maxPerFile": 80, "sessionCheckpointMinutes": 5 }
-        }
-        """)
+        let settings = try CoreModelsFixture.trashAdminSystemSettingsTrashAndVersions.decode(SystemSettings.self)
 
         #expect(settings.trash == TrashSettings(isEnabled: false, retentionDays: 14, maxPercent: 25, maxBytes: 5 * TrashSettings.bytesPerGiB))
         #expect(settings.versions == VersionsSettings(isEnabled: true, keepAllHours: 12, hourlyDays: 3, dailyDays: 20, maxPerFile: 80, sessionCheckpointMinutes: 5))
@@ -29,8 +20,8 @@ struct TrashAdminTests {
 
     @Test
     func emptySectionsTakeTheServersDefaults() throws {
-        #expect(try decode(TrashSettings.self, "{}") == TrashSettings())
-        #expect(try decode(VersionsSettings.self, "{}") == VersionsSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(TrashSettings.self) == TrashSettings())
+        #expect(try CoreModelsFixture.emptyObject.decode(VersionsSettings.self) == VersionsSettings())
         #expect(TrashSettings().isEnabled)
         #expect(TrashSettings().retentionDays == 30)
         #expect(TrashSettings().maxPercent == 10)
@@ -81,15 +72,7 @@ struct TrashAdminTests {
 
     @Test
     func aZoneDecodesItsSpaceLastPassAndJournal() throws {
-        let zone = try decode(TrashZone.self, """
-        {
-            "id": "z1", "kind": "personal", "name": "alice", "available": true, "reason": null,
-            "itemCount": 3, "usedBytes": 1000, "versionCount": 2, "versionBytes": 500,
-            "budgetBytes": 10000, "freeBytes": 99999,
-            "lastPass": { "zoneId": "z1", "at": "2026-11-11T07:00:00.000Z", "purged": 4 },
-            "events": [ { "id": 7, "zoneId": "z1", "kind": "version-evicted", "itemName": "a.txt", "createdAt": "2026-11-11T06:00:00.000Z" } ]
-        }
-        """)
+        let zone = try CoreModelsFixture.trashAdminZoneWithLastPassAndEvents.decode(TrashZone.self)
 
         #expect(zone.kind == .personal)
         #expect(zone.isAvailable)
@@ -102,7 +85,7 @@ struct TrashAdminTests {
 
     @Test
     func anUnavailableZoneCarriesItsReasonAndNoBudget() throws {
-        let zone = try decode(TrashZone.self, #"{ "id": "z2", "kind": "user-volume", "name": "media", "available": false, "reason": "replaced", "budgetBytes": null }"#)
+        let zone = try CoreModelsFixture.trashAdminZoneUnavailableWithoutBudget.decode(TrashZone.self)
 
         #expect(zone.kind == .userVolume)
         #expect(!zone.isAvailable)
@@ -113,7 +96,7 @@ struct TrashAdminTests {
 
     @Test
     func anUnknownZoneKindIsAPlainVolume() throws {
-        #expect(try decode(TrashZone.self, #"{ "id": "z", "kind": "other", "name": "x" }"#).kind == .volume)
+        #expect(try CoreModelsFixture.trashAdminZoneUnknownKind.decode(TrashZone.self).kind == .volume)
     }
 
     @Test(arguments: [(0, 1000, 0), (500, 1000, 50), (1000, 1000, 100), (5000, 1000, 100), (1, 1000, 0)])
@@ -130,12 +113,12 @@ struct TrashAdminTests {
 
     @Test
     func verificationCountsViolationsWhateverTheirShape() throws {
-        let result = try decode(TrashVerification.self, #"{ "zoneId": "z1", "violations": [ "orphan", { "code": "x" }, 3 ] }"#)
+        let result = try CoreModelsFixture.trashAdminVerificationMixedViolationShapes.decode(TrashVerification.self)
 
         #expect(result.zoneID == "z1")
         #expect(result.violationCount == 3)
-        #expect(try decode(TrashVerification.self, #"{ "zoneId": "z1", "violations": [] }"#).violationCount == 0)
-        #expect(try decode(TrashVerification.self, #"{ "zoneId": "z1" }"#).violationCount == 0)
+        #expect(try CoreModelsFixture.trashAdminVerificationEmptyViolations.decode(TrashVerification.self).violationCount == 0)
+        #expect(try CoreModelsFixture.trashAdminVerificationMissingViolations.decode(TrashVerification.self).violationCount == 0)
     }
 
     // MARK: Patch
@@ -166,7 +149,7 @@ extension TrashAdminTests {
 
     @Test
     func verificationKeepsEachViolationsInvariantAndDetail() throws {
-        let result = try decode(TrashVerification.self, #"{ "zoneId": "z1", "violations": [ { "invariant": "I1", "itemId": "i", "detail": "content missing" } ] }"#)
+        let result = try CoreModelsFixture.trashAdminVerificationWithInvariantAndDetail.decode(TrashVerification.self)
 
         #expect(result.violations == [.init(invariant: "I1", detail: "content missing")])
         #expect(result.violationCount == 1)

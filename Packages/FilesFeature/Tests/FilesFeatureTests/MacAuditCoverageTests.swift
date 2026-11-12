@@ -155,8 +155,9 @@ import TestUtils
         @Test("Syntax highlighting stays the same once its queries are cached")
         func syntaxHighlightingStaysTheSameOnceItsQueriesAreCached() throws {
             let language = try #require(MacSyntaxLanguage.forKind("json"))
-            let first = MacSyntaxHighlighter.spans(for: #"{"a": 1}"#, language: language)
-            let second = MacSyntaxHighlighter.spans(for: #"{"a": 1}"#, language: language)
+            let sample = try FilesFeatureFixture.highlighterSample.string()
+            let first = MacSyntaxHighlighter.spans(for: sample, language: language)
+            let second = MacSyntaxHighlighter.spans(for: sample, language: language)
             #expect(!first.isEmpty)
             #expect(first.map(\.range) == second.map(\.range))
         }

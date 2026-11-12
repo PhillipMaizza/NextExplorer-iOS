@@ -6,10 +6,7 @@ import Testing
 struct UserDecodingTests {
     @Test("decodes with email and admin role")
     func decodesFullUser() throws {
-        let json = #"""
-        {"id": "1", "username": "phillip", "email": "p@example.com", "displayName": "Phillip", "roles": ["admin", "user"]}
-        """#
-        let user = try JSONDecoder().decode(User.self, from: Data(json.utf8))
+        let user = try CoreModelsFixture.userAdminWithEmail.decode(User.self)
         #expect(user.id == "1")
         #expect(user.username == "phillip")
         #expect(user.email == "p@example.com")
@@ -18,8 +15,7 @@ struct UserDecodingTests {
 
     @Test("edge case: nil email and missing roles default to non-admin")
     func decodesMissingEmailAndRoles() throws {
-        let json = #"{"id": "2", "username": "guest"}"#
-        let user = try JSONDecoder().decode(User.self, from: Data(json.utf8))
+        let user = try CoreModelsFixture.userGuestMissingEmailAndRoles.decode(User.self)
         #expect(user.email == nil)
         #expect(user.isAdmin == false)
         #expect(user.roles == [])
@@ -27,25 +23,19 @@ struct UserDecodingTests {
 
     @Test("edge case: a non-admin role list does not grant admin")
     func nonAdminRoleIsNotAdmin() throws {
-        let json = #"{"id": "3", "username": "bob", "roles": ["user"]}"#
-        let user = try JSONDecoder().decode(User.self, from: Data(json.utf8))
+        let user = try CoreModelsFixture.userNonAdminRole.decode(User.self)
         #expect(user.isAdmin == false)
     }
 
     @Test("edge case: an integer id decodes as a string")
     func integerIDDecodesAsString() throws {
-        let json = #"{"id": 42, "username": "bob"}"#
-        let user = try JSONDecoder().decode(User.self, from: Data(json.utf8))
+        let user = try CoreModelsFixture.userIntegerId.decode(User.self)
         #expect(user.id == "42")
     }
 
     @Test("regression: ISO-string createdAt/updatedAt decode through a plain decoder (login response)")
     func isoTimestampsDoNotBreakAPlainDecode() throws {
-        let json = #"""
-        {"id": "1", "username": "phillip", "email": "p@example.com", "roles": ["user"],
-         "emailVerified": true, "createdAt": "2024-01-15T10:30:00.000Z", "updatedAt": "2024-02-20T08:00:00.000Z"}
-        """#
-        let user = try JSONDecoder().decode(User.self, from: Data(json.utf8))
+        let user = try CoreModelsFixture.userLoginResponseIsoTimestamps.decode(User.self)
         #expect(user.username == "phillip")
         #expect(user.emailVerified == true)
         #expect(user.createdAt != nil)
@@ -54,30 +44,21 @@ struct UserDecodingTests {
 
     @Test("edge case: an unparseable timestamp degrades to nil rather than throwing")
     func garbageTimestampDegradesToNil() throws {
-        let json = #"{"id": "1", "username": "x", "createdAt": "not-a-date", "updatedAt": 0}"#
-        let user = try JSONDecoder().decode(User.self, from: Data(json.utf8))
+        let user = try CoreModelsFixture.userGarbageTimestamp.decode(User.self)
         #expect(user.createdAt == nil)
     }
 
     @Test("edge case: a null or missing username degrades to empty, never throws")
     func nullUsernameDoesNotBreakTheDecode() throws {
-        let nullUsername = try JSONDecoder().decode(
-            User.self, from: Data(#"{"id": "1", "username": null, "email": "p@example.com"}"#.utf8)
-        )
+        let nullUsername = try CoreModelsFixture.userNullUsername.decode(User.self)
         #expect(nullUsername.username == "")
-        let missingUsername = try JSONDecoder().decode(
-            User.self, from: Data(#"{"id": "2", "email": "q@example.com"}"#.utf8)
-        )
+        let missingUsername = try CoreModelsFixture.userMissingUsername.decode(User.self)
         #expect(missingUsername.username == "")
     }
 
     @Test("decodes the admin list shape with authMethods")
     func decodesAuthMethods() throws {
-        let json = #"""
-        {"id": "1", "username": "phillip", "roles": ["admin"],
-         "authMethods": [{"method": "local_password"}, {"method": "oidc", "provider": "Authentik"}]}
-        """#
-        let user = try JSONDecoder().decode(User.self, from: Data(json.utf8))
+        let user = try CoreModelsFixture.userAdminWithAuthMethods.decode(User.self)
         #expect(user.hasLocalPassword)
         #expect(user.oidcMethods.first?.provider == "Authentik")
     }

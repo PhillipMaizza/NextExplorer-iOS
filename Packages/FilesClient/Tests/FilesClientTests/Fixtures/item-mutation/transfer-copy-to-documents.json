@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "destination": "Documents",
+  "items": [
+    {
+      "from": "Inbox/a.txt",
+      "to": "Documents/a.txt"
+    }
+  ]
+}

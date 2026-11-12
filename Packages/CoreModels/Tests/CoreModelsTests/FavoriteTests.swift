@@ -38,10 +38,7 @@ struct FavoriteTests {
 
     @Test("decodes a full favorites row")
     func decodesFullRow() throws {
-        let json = #"""
-        {"id": "f1", "path": "Home/Docs", "label": "Docs", "icon": "folder", "color": "#FF0000", "position": 2, "createdAt": 1800000000, "updatedAt": 1800100000}
-        """#
-        let favorite = try JSONDecoder().decode(Favorite.self, from: Data(json.utf8))
+        let favorite = try CoreModelsFixture.favoriteFullRow.decode(Favorite.self)
         #expect(favorite.label == "Docs")
         #expect(favorite.color == "#FF0000")
         #expect(favorite.position == 2)

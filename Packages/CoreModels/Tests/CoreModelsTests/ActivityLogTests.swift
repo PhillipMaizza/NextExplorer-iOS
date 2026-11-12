@@ -3,25 +3,9 @@ import Foundation
 import Testing
 
 struct ActivityLogTests {
-    private func decode<T: Decodable>(_ type: T.Type, _ json: String) throws -> T {
-        try JSONDecoder().decode(type, from: Data(json.utf8))
-    }
-
     @Test
     func aPageDecodesItsEventsCursorAndKinds() throws {
-        let page = try decode(ActivityPage.self, """
-        {
-            "events": [
-                { "id": "e1", "at": "2026-11-11T07:14:33.812Z", "action": "sign-in", "outcome": "ok",
-                  "userId": "u1", "actor": "phillip", "target": null, "detail": null, "ip": "10.0.0.2" },
-                { "id": "e2", "at": "2026-11-11T07:10:00.000Z", "action": "file.delete", "outcome": "refused",
-                  "actor": "guest", "target": "Docs/a.txt", "detail": "forbidden", "ip": "" }
-            ],
-            "nextBefore": "2026-11-11T07:10:00.000Z",
-            "enabled": true,
-            "actions": ["sign-in", "file.delete"]
-        }
-        """)
+        let page = try CoreModelsFixture.activityLogPageWithEvents.decode(ActivityPage.self)
 
         #expect(page.events.count == 2)
         #expect(page.events[0].actor == "phillip")
@@ -36,7 +20,7 @@ struct ActivityLogTests {
 
     @Test
     func anEmptyPageHasNoCursorAndTheLogOff() throws {
-        let page = try decode(ActivityPage.self, #"{ "events": [], "nextBefore": null, "enabled": false, "actions": [] }"#)
+        let page = try CoreModelsFixture.activityLogEmptyPage.decode(ActivityPage.self)
 
         #expect(page.events.isEmpty)
         #expect(page.nextBefore == nil)
@@ -45,7 +29,7 @@ struct ActivityLogTests {
 
     @Test
     func aNumericEventIDIsKeptAsText() throws {
-        let event = try decode(ActivityEvent.self, #"{ "id": 42, "at": "2026-11-11T07:14:33Z", "action": "sign-out" }"#)
+        let event = try CoreModelsFixture.activityLogNumericEventId.decode(ActivityEvent.self)
 
         #expect(event.id == "42")
         #expect(event.outcome == .ok)
@@ -53,21 +37,21 @@ struct ActivityLogTests {
 
     @Test
     func anUnknownOutcomeIsTreatedAsOk() throws {
-        let event = try decode(ActivityEvent.self, #"{ "id": "1", "at": "2026-11-11T07:14:33Z", "action": "x", "outcome": "weird" }"#)
+        let event = try CoreModelsFixture.activityLogUnknownOutcome.decode(ActivityEvent.self)
 
         #expect(event.outcome == .ok)
     }
 
-    @Test(arguments: ["2026-11-11T07:14:33.812Z", "2026-11-11T07:14:33Z"])
-    func theTimestampParsesWithAndWithoutFractionalSeconds(at: String) throws {
-        let event = try decode(ActivityEvent.self, #"{ "id": "1", "at": "\#(at)", "action": "x" }"#)
+    @Test(arguments: [CoreModelsFixture.activityLogTimestampWithFractionalSeconds, .activityLogTimestampWithoutFractionalSeconds])
+    func theTimestampParsesWithAndWithoutFractionalSeconds(fixture: CoreModelsFixture) throws {
+        let event = try fixture.decode(ActivityEvent.self)
 
         #expect(event.date != nil)
     }
 
     @Test
     func anUnparseableTimestampHasNoDateButStaysUsableAsACursor() throws {
-        let event = try decode(ActivityEvent.self, #"{ "id": "1", "at": "yesterday", "action": "x" }"#)
+        let event = try CoreModelsFixture.activityLogUnparseableTimestamp.decode(ActivityEvent.self)
 
         #expect(event.date == nil)
         #expect(event.at == "yesterday")
@@ -75,7 +59,7 @@ struct ActivityLogTests {
 
     @Test
     func settingsDefaultToOffAndNinetyDays() throws {
-        let settings = try decode(ActivitySettings.self, "{}")
+        let settings = try CoreModelsFixture.emptyObject.decode(ActivitySettings.self)
 
         #expect(!settings.isEnabled)
         #expect(settings.retentionDays == 90)
@@ -92,9 +76,9 @@ struct ActivityLogTests {
 
     @Test
     func systemSettingsCarryTheActivitySection() throws {
-        let settings = try decode(SystemSettings.self, #"{ "activity": { "enabled": true, "retentionDays": 14 } }"#)
+        let settings = try CoreModelsFixture.activityLogSystemSettingsWithActivity.decode(SystemSettings.self)
 
         #expect(settings.activity == ActivitySettings(isEnabled: true, retentionDays: 14))
-        #expect(try decode(SystemSettings.self, "{}").activity == nil)
+        #expect(try CoreModelsFixture.emptyObject.decode(SystemSettings.self).activity == nil)
     }
 }

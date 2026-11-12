@@ -5,30 +5,24 @@ import TestUtils
 
 @Suite("FileItem decoding")
 struct FileItemDecodingTests {
-    @Test("null or missing size does not prevent decoding", arguments: [#", "size": null"#, ""])
-    func unavailableSizeDefaultsToZero(sizeField: String) throws {
-        let json = """
-        {"name": "outside-link", "path": "Home", "dateModified": 1800000000, "kind": "unknown", "link": "outside"\(sizeField)}
-        """
-        let item = try JSONDecoder().decode(FileItem.self, from: Data(json.utf8))
+    @Test("null or missing size does not prevent decoding", arguments: [CoreModelsFixture.fileItemSizeNull, .fileItemSizeMissing])
+    func unavailableSizeDefaultsToZero(fixture: CoreModelsFixture) throws {
+        let item = try fixture.decode(FileItem.self)
         #expect(item.size == 0)
         #expect(item.id == "Home/outside-link")
     }
 
     @Test("invalid size types still fail to decode")
-    func invalidSizeThrows() {
-        let json = #"{"name": "entry", "path": "Home", "dateModified": 1800000000, "size": "invalid", "kind": "unknown"}"#
+    func invalidSizeThrows() throws {
+        let data = try CoreModelsFixture.fileItemSizeInvalidType.data()
         #expect(throws: DecodingError.self) {
-            _ = try JSONDecoder().decode(FileItem.self, from: Data(json.utf8))
+            _ = try JSONDecoder().decode(FileItem.self, from: data)
         }
     }
 
     @Test("decodes a full directory listing entry")
     func decodesFullEntry() throws {
-        let json = #"""
-        {"name": "Photos", "path": "Home", "dateModified": 1800000000, "size": 4096, "kind": "directory", "supportsThumbnail": true}
-        """#
-        let item = try JSONDecoder().decode(FileItem.self, from: Data(json.utf8))
+        let item = try CoreModelsFixture.fileItemDirectoryWithThumbnail.decode(FileItem.self)
         #expect(item.name == "Photos")
         #expect(item.isDirectory == true)
         #expect(item.supportsThumbnail == true)
@@ -36,10 +30,7 @@ struct FileItemDecodingTests {
 
     @Test("edge case: missing supportsThumbnail defaults to false")
     func missingSupportsThumbnailDefaultsFalse() throws {
-        let json = #"""
-        {"name": "notes.txt", "path": "Home", "dateModified": 1800000000, "size": 12, "kind": "txt"}
-        """#
-        let item = try JSONDecoder().decode(FileItem.self, from: Data(json.utf8))
+        let item = try CoreModelsFixture.fileItemMissingSupportsThumbnail.decode(FileItem.self)
         #expect(item.supportsThumbnail == false)
         #expect(item.isDirectory == false)
     }
@@ -204,10 +195,10 @@ struct FileItemDecodingTests {
     }
 
     @Test("error path: missing required field fails to decode")
-    func missingRequiredFieldThrows() {
-        let json = #"{"name": "file.txt", "path": "Home"}"#
+    func missingRequiredFieldThrows() throws {
+        let data = try CoreModelsFixture.fileItemMissingRequiredFields.data()
         #expect(throws: (any Error).self) {
-            _ = try JSONDecoder().decode(FileItem.self, from: Data(json.utf8))
+            _ = try JSONDecoder().decode(FileItem.self, from: data)
         }
     }
 
