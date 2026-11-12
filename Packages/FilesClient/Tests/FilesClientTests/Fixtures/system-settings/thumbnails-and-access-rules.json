@@ -1,0 +1,22 @@
+{
+  "branding": {
+    "appName": "X"
+  },
+  "user": {},
+  "thumbnails": {
+    "enabled": true,
+    "size": 300,
+    "quality": 80,
+    "concurrency": 6
+  },
+  "access": {
+    "rules": [
+      {
+        "id": "r1",
+        "path": "Docs",
+        "recursive": true,
+        "permissions": "ro"
+      }
+    ]
+  }
+}

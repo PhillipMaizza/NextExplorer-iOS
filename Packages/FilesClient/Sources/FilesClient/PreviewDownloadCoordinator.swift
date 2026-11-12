@@ -7,6 +7,13 @@ import Foundation
 /// `moveItem` into the shared slot, where the loser throws a spurious error.
 actor PreviewDownloadCoordinator {
     private var inFlight: [String: Task<URL, Error>] = [:]
+    private let onJoin: (@Sendable () -> Void)?
+
+    /// `onJoin` fires when a call attaches to a transfer already in flight, so tests can wait for the
+    /// join instead of guessing at scheduling.
+    init(onJoin: (@Sendable () -> Void)? = nil) {
+        self.onJoin = onJoin
+    }
 
     /// Runs `work` to produce the file at `fileURL`, unless a call for the same path is
     /// already in progress: in which case this awaits and returns that one's result.
@@ -17,6 +24,7 @@ actor PreviewDownloadCoordinator {
         let key = fileURL.path
 
         if let existing = inFlight[key] {
+            onJoin?()
             return try await existing.value
         }
 

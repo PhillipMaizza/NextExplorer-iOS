@@ -5,6 +5,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @MainActor
 @Suite(.serialized)
@@ -12,44 +13,38 @@ struct PDFThumbnailStoreTests {
     /// Isolated render-cache dir so nothing lands in the shared `PreviewCache` root.
     private func isolatedCache() -> (cache: PDFThumbnailCache, directory: URL) {
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("pdf-thumb-store-cache-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("pdf-thumb-store-cache-\(TestID.name())", isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         return (.live(renderCacheDirectory: directory), directory)
     }
 
     private func makePDF() -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("pdf-store-test-\(UUID().uuidString).pdf")
+            .appendingPathComponent("pdf-store-test-\(TestID.name()).pdf")
         PDFFixture.write(to: url, pageSize: CGSize(width: 120, height: 160), red: 0.19, green: 0.69, blue: 0.78)
         return url
     }
 
     private func item(size: Int64) -> FileItem {
         FileItem(
-            name: "\(UUID().uuidString).pdf", path: "Docs",
-            dateModified: Date(timeIntervalSince1970: 2), size: size, kind: "pdf"
+            name: "\(TestID.name()).pdf", path: TestFolder.docs,
+            dateModified: MockDate.date.addingTimeInterval(2), size: size, kind: TestKind.pdf
         )
     }
 
     private func load(
         _ store: PDFThumbnailStore, key: String, item: FileItem,
         client: FilesClient, cache: PDFThumbnailCache
-    ) -> PDFThumbnailStore.Entry {
+    ) -> (entry: PDFThumbnailStore.Entry, task: Task<Void, Never>?) {
         let entry = store.entry(forKey: key)
-        store.load(
+        let task = store.load(
             entry: entry, key: key, item: item,
-            serverURL: URL(string: "https://example.com")!, filesClient: client, cache: cache
+            serverURL: URL(string: TestHost.exampleURLString)!, filesClient: client, cache: cache
         )
-        return entry
+        return (entry, task)
     }
 
-    private func waitForReady(_ entry: PDFThumbnailStore.Entry) async -> PlatformImage? {
-        for _ in 0 ..< 40 {
-            if case let .ready(image) = entry.state {
-                return image
-            }
-            try? await Task.sleep(for: .milliseconds(50))
-        }
+    private func readyImage(_ entry: PDFThumbnailStore.Entry) -> PlatformImage? {
         if case let .ready(image) = entry.state {
             return image
         }
@@ -81,10 +76,11 @@ struct PDFThumbnailStoreTests {
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
 
         // Two overlapping loads for the same key: one fetch, one render.
-        let entry = load(store, key: key, item: file, client: client, cache: cache)
+        let (entry, task) = load(store, key: key, item: file, client: client, cache: cache)
         _ = load(store, key: key, item: file, client: client, cache: cache)
 
-        let image = await waitForReady(entry)
+        await task?.value
+        let image = readyImage(entry)
         #expect(image != nil)
         #expect(fetchCount.value == 1)
     }
@@ -103,7 +99,7 @@ struct PDFThumbnailStoreTests {
         let (cache, cacheDirectory) = isolatedCache()
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
 
-        let entry = load(store, key: key, item: huge, client: client, cache: cache)
+        let entry = load(store, key: key, item: huge, client: client, cache: cache).entry
 
         #expect(isUnavailable(entry))
         #expect(fetchCount.value == 0)
@@ -113,8 +109,8 @@ struct PDFThumbnailStoreTests {
     func loadFallsToUnavailableWhenTheDownloadIsNotAReadablePDF() async throws {
         let store = PDFThumbnailStore()
         let notPDF = FileManager.default.temporaryDirectory
-            .appendingPathComponent("not-a-pdf-\(UUID().uuidString)")
-        try Data("nope".utf8).write(to: notPDF)
+            .appendingPathComponent("not-a-pdf-\(TestID.name())")
+        try Data(TestAccount.rejectedPassword.utf8).write(to: notPDF)
         defer { try? FileManager.default.removeItem(at: notPDF) }
 
         var client = FilesClient.previewValue
@@ -124,11 +120,9 @@ struct PDFThumbnailStoreTests {
         let (cache, cacheDirectory) = isolatedCache()
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
 
-        let entry = load(store, key: key, item: file, client: client, cache: cache)
+        let (entry, task) = load(store, key: key, item: file, client: client, cache: cache)
 
-        for _ in 0 ..< 40 where !isUnavailable(entry) {
-            try? await Task.sleep(for: .milliseconds(50))
-        }
+        await task?.value
         #expect(isUnavailable(entry))
     }
 

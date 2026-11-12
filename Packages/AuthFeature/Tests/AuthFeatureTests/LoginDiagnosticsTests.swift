@@ -2,10 +2,11 @@ import AuthClient
 @testable import AuthFeature
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("LoginDiagnostics")
 struct LoginDiagnosticsTests {
-    private let timestamp = Date(timeIntervalSince1970: 1_700_000_000)
+    private let timestamp = MockDate.date
 
     private let allErrors: [AuthClientError] = [
         .invalidCredentials, .sessionExpired, .sessionCookieMissing, .network("n"), .decoding("d"),
@@ -20,14 +21,14 @@ struct LoginDiagnosticsTests {
     func emailShapedIdentifier() {
         let text = LoginDiagnostics.describe(identifier: "alice.smith@example.com")
         #expect(text == "email shaped, 23 characters")
-        #expect(!text.contains("alice"))
+        #expect(!text.contains(TestUser.alice))
     }
 
     @Test("a username shaped name is described by shape and length, not by its text")
     func usernameShapedIdentifier() {
-        let text = LoginDiagnostics.describe(identifier: "asmith")
+        let text = LoginDiagnostics.describe(identifier: TestUser.asmith)
         #expect(text == "username shaped, 6 characters")
-        #expect(!text.contains("asmith"))
+        #expect(!text.contains(TestUser.asmith))
     }
 
     @Test("edge case: surrounding whitespace is reported, because it is a real cause of a refused sign in")
@@ -44,28 +45,28 @@ struct LoginDiagnosticsTests {
 
     @Test("edge case: an empty name is described without crashing")
     func emptyIdentifier() {
-        #expect(LoginDiagnostics.describe(identifier: "   ") == "username shaped, 0 characters, surrounding whitespace removed")
+        #expect(LoginDiagnostics.describe(identifier: TestValue.blank) == "username shaped, 0 characters, surrounding whitespace removed")
     }
 
     @Test("a password is only ever empty or set")
     func passwordIsEmptyOrSet() {
         #expect(LoginDiagnostics.describe(password: "") == "empty")
-        #expect(LoginDiagnostics.describe(password: "hunter2") == "set")
+        #expect(LoginDiagnostics.describe(password: TestAccount.password) == "set")
     }
 
     @Test("a six digit code and a recovery code are told apart without printing either")
     func codeShapes() {
-        #expect(LoginDiagnostics.describe(code: "123456") == "6 digits")
+        #expect(LoginDiagnostics.describe(code: TestAccount.totpCode) == "6 digits")
         #expect(LoginDiagnostics.describe(code: " 123456 ") == "6 digits")
         #expect(LoginDiagnostics.describe(code: "12345") == "other, 5 characters")
-        #expect(LoginDiagnostics.describe(code: "2HSMP-G9ZSJ") == "other, 11 characters")
-        #expect(!LoginDiagnostics.describe(code: "2HSMP-G9ZSJ").contains("2HSMP"))
+        #expect(LoginDiagnostics.describe(code: TestAccount.recoveryCode) == "other, 11 characters")
+        #expect(!LoginDiagnostics.describe(code: TestAccount.recoveryCode).contains("2HSMP"))
     }
 
     @Test("a server address is described by scheme and port only")
     func serverDescription() throws {
         let custom = try #require(URL(string: "http://192.168.1.187:3663"))
-        let standard = try #require(URL(string: "https://files.example.com"))
+        let standard = try #require(URL(string: TestHost.serverURLString))
         #expect(LoginDiagnostics.describe(server: custom) == "http, port 3663")
         #expect(LoginDiagnostics.describe(server: standard) == "https, default port")
         #expect(!LoginDiagnostics.describe(server: custom).contains("192.168"))
@@ -84,9 +85,9 @@ struct LoginDiagnosticsTests {
     func networkErrorHostIsRedacted() {
         let text = LoginDiagnostics.describe(
             .network("Could not connect to Files.Example.com on port 443"),
-            host: "files.example.com"
+            host: TestHost.server
         )
-        #expect(!text.lowercased().contains("files.example.com"))
+        #expect(!text.lowercased().contains(TestHost.server))
         #expect(text.contains("<server>"))
     }
 

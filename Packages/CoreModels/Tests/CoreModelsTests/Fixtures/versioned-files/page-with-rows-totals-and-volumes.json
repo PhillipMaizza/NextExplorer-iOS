@@ -1,0 +1,56 @@
+{
+  "files": [
+    {
+      "id": "f1",
+      "name": "a.txt",
+      "relativePath": "Docs/a.txt",
+      "folder": "Docs",
+      "path": "files/Docs/a.txt",
+      "state": "live",
+      "versions": 3,
+      "bytes": 3000,
+      "newest": "2026-11-11T07:00:00.000Z",
+      "zone": {
+        "id": "z1",
+        "kind": "volume",
+        "name": "files"
+      }
+    },
+    {
+      "id": "f2",
+      "name": "b.txt",
+      "relativePath": "b.txt",
+      "folder": "",
+      "path": null,
+      "state": "orphaned",
+      "versions": 1,
+      "bytes": 10,
+      "newest": null,
+      "zone": {
+        "id": "z2",
+        "kind": "personal",
+        "name": "alice"
+      }
+    }
+  ],
+  "total": 52,
+  "totalBytes": 99999,
+  "totalVersions": 80,
+  "limit": 25,
+  "offset": 25,
+  "zones": [
+    {
+      "id": "z1",
+      "kind": "volume",
+      "name": "files"
+    }
+  ],
+  "states": [
+    "live",
+    "trashed",
+    "orphaned"
+  ],
+  "sorts": [
+    "bytes"
+  ]
+}

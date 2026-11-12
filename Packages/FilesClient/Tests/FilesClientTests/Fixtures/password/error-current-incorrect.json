@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "error": {
+    "message": "Current password is incorrect.",
+    "statusCode": 401
+  }
+}

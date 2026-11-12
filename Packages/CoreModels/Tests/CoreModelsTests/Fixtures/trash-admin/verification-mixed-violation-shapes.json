@@ -1,0 +1,10 @@
+{
+  "zoneId": "z1",
+  "violations": [
+    "orphan",
+    {
+      "code": "x"
+    },
+    3
+  ]
+}

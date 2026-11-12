@@ -1,5 +1,6 @@
 @testable import CoreModels
 import Testing
+import TestUtils
 
 @Suite("CredentialRules")
 struct CredentialRulesTests {
@@ -20,8 +21,8 @@ struct CredentialRulesTests {
     @Test("rejects clearly-not-an-email input")
     func rejectsMalformed() {
         #expect(!CredentialRules.isEmailShaped(""))
-        #expect(!CredentialRules.isEmailShaped("   "))
-        #expect(!CredentialRules.isEmailShaped("jane"))
+        #expect(!CredentialRules.isEmailShaped(TestValue.blank))
+        #expect(!CredentialRules.isEmailShaped(TestUser.jane))
         #expect(!CredentialRules.isEmailShaped("jane@"))
         #expect(!CredentialRules.isEmailShaped("@example.com"))
         #expect(!CredentialRules.isEmailShaped("jane@example"))
@@ -37,7 +38,7 @@ struct CredentialRulesTests {
         #expect(CredentialRules.minimumPasswordLength == 6)
         #expect(!CredentialRules.isPasswordLongEnough(""))
         #expect(!CredentialRules.isPasswordLongEnough("12345"))
-        #expect(CredentialRules.isPasswordLongEnough("123456"))
+        #expect(CredentialRules.isPasswordLongEnough(TestAccount.totpCode))
         #expect(CredentialRules.isPasswordLongEnough("a much longer passphrase"))
     }
 

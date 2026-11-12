@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "FilesClient", targets: ["FilesClient"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../CoreModels"),
         .package(path: "../NetworkClient"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.5.0"),
@@ -25,7 +26,8 @@ let package = Package(
         ),
         .testTarget(
             name: "FilesClientTests",
-            dependencies: ["FilesClient", "NetworkClient"],
+            dependencies: ["TestUtils", "FilesClient", "NetworkClient"],
+            resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

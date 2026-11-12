@@ -126,7 +126,7 @@ To try it against real data you need a compatible self-hosted server and an acco
 
 ## Contributing
 
-Contributions are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the branch and PR conventions and the architecture rules (constants, concurrency, state modelling, localization and cache safety) that every change follows.
+Contributions are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the branch and PR conventions and the architecture rules (constants, concurrency, state modelling, localization and cache safety) and the deterministic test rules (no `Date()`, `UUID()` or `Task.sleep` in tests) that every change follows.
 
 ## Privacy
 

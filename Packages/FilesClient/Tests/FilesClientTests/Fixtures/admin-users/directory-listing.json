@@ -1,0 +1,14 @@
+{
+  "current": "/srv",
+  "parent": "/",
+  "directories": [
+    {
+      "name": "projects",
+      "path": "/srv/projects"
+    },
+    {
+      "name": "archive",
+      "path": "/srv/archive"
+    }
+  ]
+}

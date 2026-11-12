@@ -1,0 +1,23 @@
+{
+  "zones": [
+    {
+      "zoneId": "z1",
+      "violations": [
+        {
+          "invariant": "I1",
+          "itemId": "i1",
+          "detail": "content missing"
+        },
+        {
+          "invariant": "I4",
+          "itemId": "i2",
+          "detail": "left in state x"
+        }
+      ]
+    },
+    {
+      "zoneId": "z2",
+      "violations": []
+    }
+  ]
+}

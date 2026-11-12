@@ -1,94 +1,112 @@
 @testable import AppFeature
-import AuthClient
 import ComposableArchitecture
 import CoreModels
 import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
-/// Tapping an "upload finished" notification opens the folder the files went to, in the account
-/// they were uploaded with.
-@MainActor
-@Suite("Upload notification tap", .serialized)
-struct UploadNotificationTapTests {
-    private let serverA = URL(string: "https://a.example.com") ?? URL(fileURLWithPath: "/")
-    private let serverB = URL(string: "https://b.example.com") ?? URL(fileURLWithPath: "/")
-    private let alice = User(id: "1", username: "alice", email: nil, roles: [])
+extension AppSuites {
+    /// Tapping an "upload finished" notification opens the folder the files went to, in the account
+    /// they were uploaded with.
+    @MainActor
+    @Suite("Upload notification tap", .isolatedDependencies)
+    struct UploadNotificationTapTests {
+        private typealias Store = TestStore<AppFeature.State, AppFeature.Action>
 
-    private var accountA: String {
-        AuthenticatedFeature.State.accountID(serverURL: serverA, username: "alice")
-    }
-
-    private var accountB: String {
-        AuthenticatedFeature.State.accountID(serverURL: serverB, username: "bob")
-    }
-
-    private func signedIn(accounts: [String]) -> AppFeature.State {
-        @Shared(.inMemory(AccountSummary.sharedKey)) var summaries: [AccountSummary] = []
-        $summaries.withLock {
-            $0 = accounts.map { AccountSummary(id: $0, username: "", serverURL: serverA, isActive: $0 == accountA) }
+        private func tap(_ accountID: String, _ folder: String = TestPath.filesDocuments) -> UploadNotificationTaps.Tap {
+            UploadNotificationTaps.Tap(accountID: accountID, folder: folder)
         }
-        return AppFeature.State(destination: .authenticated(AuthenticatedFeature.State(serverURL: serverA, user: alice)))
-    }
 
-    @Test("The active account opens the folder right away")
-    func activeAccountOpensTheFolder() async {
-        let store = TestStore(initialState: signedIn(accounts: [accountA])) { AppFeature() }
-        store.exhaustivity = .off
+        private func signedIn(
+            as user: User = AppFixtures.userA,
+            on serverURL: URL = AppFixtures.serverA,
+            accounts: [AccountSummary],
+            pending: AppFeature.PendingUploadFolder? = nil
+        ) -> AppFeature.State {
+            var state = AppFeature.State(destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user)))
+            state.$accounts.withLock { $0 = accounts }
+            state.pendingUploadFolder = pending
+            return state
+        }
 
-        await store.send(.uploadNotificationTapped(.init(accountID: accountA, folder: "Files/Documents")))
-        await store.receive(\.destination.authenticated.mainTab.goToFolderRequested)
-        #expect(store.state.pendingUploadFolder == nil)
-    }
+        private func makeStore(_ state: AppFeature.State) -> Store {
+            TestStore(initialState: state) { UploadFolderRouting() }
+        }
 
-    @Test("A tap that launches the app keeps the folder until the tabs of its account are up")
-    func coldLaunchKeepsTheFolder() async {
-        let store = TestStore(initialState: AppFeature.State()) { AppFeature() }
-        store.exhaustivity = .off
+        @Test("The active account opens the folder right away")
+        func activeAccountOpensTheFolder() async {
+            let store = makeStore(signedIn(accounts: [AppFixtures.summaryA]))
 
-        await store.send(.uploadNotificationTapped(.init(accountID: accountA, folder: "Files/Documents")))
-        #expect(store.state.pendingUploadFolder?.tap.folder == "Files/Documents")
+            await store.send(.uploadNotificationTapped(tap(AppFixtures.accountA)))
+            await store.receive(\.destination.authenticated.mainTab.goToFolderRequested, TestPath.filesDocuments)
+        }
 
-        // Signed in to that account and its tabs mounted: the folder opens.
-        store.exhaustivity = .off(showSkippedAssertions: false)
-        var state = signedIn(accounts: [accountA])
-        state.pendingUploadFolder = store.state.pendingUploadFolder
-        let mounted = TestStore(initialState: state) { AppFeature() }
-        mounted.exhaustivity = .off
-        await mounted.send(.destination(.authenticated(.mainTab(.observeConnectivity))))
-        await mounted.receive(\.destination.authenticated.mainTab.goToFolderRequested)
-        #expect(mounted.state.pendingUploadFolder == nil)
-        await mounted.skipInFlightEffects()
-    }
+        @Test("A tap that launches the app keeps the folder while no account is up")
+        func coldLaunchKeepsTheFolder() async {
+            let store = makeStore(AppFeature.State())
 
-    @Test("Another signed in account is switched to first")
-    func otherAccountIsSwitchedTo() async {
-        let requested = LockIsolated<String?>(nil)
-        let store = TestStore(initialState: signedIn(accounts: [accountA, accountB])) {
-            AppFeature()
-        } withDependencies: {
-            // The switch itself is AuthenticatedFeature's; stop it here, after it was asked for.
-            $0.continuousClock = ImmediateClock()
-            $0.authClient.switchAccount = { accountID in
-                requested.setValue(accountID)
-                return nil
+            await store.send(.uploadNotificationTapped(tap(AppFixtures.accountA))) {
+                $0.pendingUploadFolder = AppFeature.PendingUploadFolder(tap: tap(AppFixtures.accountA))
             }
         }
-        store.exhaustivity = .off
 
-        await store.send(.uploadNotificationTapped(.init(accountID: accountB, folder: "Photos")))
-        await store.receive(\.destination.authenticated.mainTab.delegate)
-        await store.finish()
-        #expect(requested.value == accountB)
-        #expect(store.state.pendingUploadFolder?.hasRequestedSwitch == true)
-    }
+        @Test("The kept folder opens once the tabs of its account are up")
+        func mountedTabsOpenTheKeptFolder() async {
+            let pending = AppFeature.PendingUploadFolder(tap: tap(AppFixtures.accountA))
+            let store = makeStore(signedIn(accounts: [AppFixtures.summaryA], pending: pending))
 
-    @Test("A signed out account just opens the app")
-    func signedOutAccountIsDropped() async {
-        let store = TestStore(initialState: signedIn(accounts: [accountA])) { AppFeature() }
-        store.exhaustivity = .off
+            await store.send(.destination(.authenticated(.mainTab(.observeConnectivity)))) {
+                $0.pendingUploadFolder = nil
+            }
+            await store.receive(\.destination.authenticated.mainTab.goToFolderRequested, TestPath.filesDocuments)
+        }
 
-        await store.send(.uploadNotificationTapped(.init(accountID: accountB, folder: "Photos")))
-        #expect(store.state.pendingUploadFolder == nil)
+        @Test("Another signed in account is switched to first, then its folder opens")
+        func otherAccountIsSwitchedToThenOpens() async {
+            let store = makeStore(signedIn(accounts: [AppFixtures.summaryA, AppFixtures.summaryB]))
+
+            await store.send(.uploadNotificationTapped(tap(AppFixtures.accountB, TestFolder.photos))) {
+                $0.pendingUploadFolder = AppFeature.PendingUploadFolder(tap: tap(AppFixtures.accountB, TestFolder.photos), hasRequestedSwitch: true)
+            }
+            await store.receive(\.destination.authenticated.mainTab.delegate, .switchAccount(AppFixtures.accountB))
+
+            let switched = makeStore(signedIn(
+                as: AppFixtures.userB,
+                on: AppFixtures.serverB,
+                accounts: [AppFixtures.summaryA, AppFixtures.summaryB],
+                pending: store.state.pendingUploadFolder
+            ))
+            await switched.send(.destination(.authenticated(.mainTab(.observeConnectivity)))) {
+                $0.pendingUploadFolder = nil
+            }
+            await switched.receive(\.destination.authenticated.mainTab.goToFolderRequested, TestFolder.photos)
+        }
+
+        @Test("A switch that lands on another account gives up instead of switching again")
+        func failedSwitchGivesUp() async {
+            let pending = AppFeature.PendingUploadFolder(tap: tap(AppFixtures.accountB), hasRequestedSwitch: true)
+            let store = makeStore(signedIn(accounts: [AppFixtures.summaryA, AppFixtures.summaryB], pending: pending))
+
+            await store.send(.destination(.authenticated(.mainTab(.observeConnectivity)))) {
+                $0.pendingUploadFolder = nil
+            }
+        }
+
+        @Test("The app reducer routes a tap through the folder routing")
+        func appFeatureRoutesTheTap() async {
+            let store = TestStore(initialState: AppFeature.State()) { AppFeature() }
+
+            await store.send(.uploadNotificationTapped(tap(AppFixtures.accountA))) {
+                $0.pendingUploadFolder = AppFeature.PendingUploadFolder(tap: tap(AppFixtures.accountA))
+            }
+        }
+
+        @Test("A signed out account just opens the app")
+        func signedOutAccountIsDropped() async {
+            let store = makeStore(signedIn(accounts: [AppFixtures.summaryA]))
+
+            await store.send(.uploadNotificationTapped(tap(AppFixtures.accountB, TestFolder.photos)))
+        }
     }
 }

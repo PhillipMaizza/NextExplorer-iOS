@@ -5,6 +5,7 @@ import FilesClient
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// `ThumbnailCache.liveValue` hits the real filesystem for its cache layer; its network leg
 /// (`URLSession.shared`) isn't mockable without a protocol seam. These tests exercise the
@@ -24,7 +25,7 @@ struct ThumbnailCacheTests {
 
     @Test
     func dataReturnsThePreCachedBytesWithoutHittingTheNetwork() async throws {
-        let url = URL(string: "https://example.com/static/thumbnails/\(UUID().uuidString).webp")!
+        let url = URL(string: "https://example.com/static/thumbnails/\(TestID.name()).webp")!
         let directory = try cacheDirectory()
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 
@@ -49,11 +50,11 @@ struct ThumbnailCacheTests {
         var network = NetworkClient()
         network.download = { request in
             requested.setValue(request.url)
-            let file = FileManager.default.temporaryDirectory.appendingPathComponent("download-\(UUID().uuidString)")
+            let file = FileManager.default.temporaryDirectory.appendingPathComponent("download-\(TestID.name())")
             try Data("thumb".utf8).write(to: file)
             return (file, HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!)
         }
-        let url = URL(string: "https://example.com/static/thumbnails/\(UUID().uuidString).webp")!
+        let url = URL(string: "https://example.com/static/thumbnails/\(TestID.name()).webp")!
 
         let data = try await ThumbnailCache.live(networkClient: network).data(url)
 
@@ -73,7 +74,7 @@ struct ThumbnailCacheTests {
 
     @Test
     func resolvedURLCallsTheResolverOnAMissAndRemembersTheResultForNextTime() async throws {
-        let path = "Photos/\(UUID().uuidString).jpg"
+        let path = "Photos/\(TestID.name()).jpg"
         defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
         let resolved = URL(string: "https://example.com/static/thumbnails/abc.webp")!
         let callCount = LockIsolated(0)
@@ -96,7 +97,7 @@ struct ThumbnailCacheTests {
 
     @Test
     func resolvedURLReResolvesWhenTheFileSignatureChanges() async throws {
-        let path = "Photos/\(UUID().uuidString).jpg"
+        let path = "Photos/\(TestID.name()).jpg"
         defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
         let old = URL(string: "https://example.com/static/thumbnails/v1.webp")!
         let new = URL(string: "https://example.com/static/thumbnails/v2.webp")!
@@ -109,7 +110,7 @@ struct ThumbnailCacheTests {
 
     @Test
     func resolvedURLRemembersANilResultSoAnUnthumbnailableFileIsNotReAsked() async throws {
-        let path = "Docs/\(UUID().uuidString).pdf"
+        let path = "Docs/\(TestID.name()).pdf"
         defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
         let callCount = LockIsolated(0)
 

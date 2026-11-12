@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 0,
+  "path": "Docs",
+  "items": [
+    {"name": "a.txt", "path": "Docs", "dateModified": 721692200, "size": 12, "kind": "txt", "supportsThumbnail": false}
+  ],
+  "access": {"canRead": true, "canWrite": true, "canUpload": true, "canDelete": false, "canShare": false, "canDownload": true},
+  "fetchedAt": 721692800
+}

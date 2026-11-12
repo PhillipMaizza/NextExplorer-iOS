@@ -1,0 +1,18 @@
+{
+  "id": "s1",
+  "shareToken": "AbC123xyz0",
+  "ownerId": "u1",
+  "sourcePath": "Docs/Report",
+  "isDirectory": true,
+  "accessMode": "readwrite",
+  "sharingType": "anyone",
+  "hasPassword": false,
+  "expiresAt": null,
+  "label": "Report",
+  "downloadCount": 0,
+  "lastAccessedAt": null,
+  "createdAt": "2027-01-15T10:00:00.000Z",
+  "updatedAt": "2027-01-16T10:00:00.000Z",
+  "shareUrl": "https://example.com/share/AbC123xyz0",
+  "directFileUrl": "https://example.com/api/share/AbC123xyz0/file"
+}

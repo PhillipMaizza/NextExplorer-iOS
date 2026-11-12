@@ -2,11 +2,15 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
+import TestUtils
 import UniformTypeIdentifiers
 
 @Suite("Staging failures leave nothing behind")
 struct UploadStagingFailureTests {
     private enum Constants {
+        static let aBinary = "a.bin"
+        static let firstBinary = "first.bin"
+        static let secondBinary = "second.bin"
         static let sourceBytes = 100
         static let spareBytes: Int64 = 150
         static let concurrentReservations = 64
@@ -16,7 +20,7 @@ struct UploadStagingFailureTests {
     }
 
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingFailure-\(UUID().uuidString)")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingFailure-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
@@ -25,7 +29,7 @@ struct UploadStagingFailureTests {
         let uploader = BackgroundUploader(
             root: root, notifier: UploadNotifier { _ in }, defaults: .standard, availableCapacity: { _ in capacity }
         )
-        return try uploader.makeBatch(credentials: Harness.credentials, destination: "Photos")
+        return try uploader.makeBatch(credentials: Harness.credentials, destination: TestFolder.photos)
     }
 
     private func source(in root: URL, name: String = "source.bin", bytes: Int = Constants.sourceBytes) throws -> URL {
@@ -57,7 +61,7 @@ struct UploadStagingFailureTests {
         batch.writeEnvelope = failingWriter(CocoaError(.fileReadCorruptFile))
 
         #expect(throws: CocoaError.self) {
-            try batch.envelope(for: source(in: root), fileName: "a.bin")
+            try batch.envelope(for: source(in: root), fileName: Constants.aBinary)
         }
         #expect(envelopes(of: batch).isEmpty)
     }
@@ -75,7 +79,7 @@ struct UploadStagingFailureTests {
             batch.writeEnvelope = failingWriter(error)
 
             #expect(throws: ShareUploadError.insufficientSpace, "\(error)") {
-                try batch.envelope(for: source(in: root), fileName: "a.bin")
+                try batch.envelope(for: source(in: root), fileName: Constants.aBinary)
             }
             #expect(envelopes(of: batch).isEmpty, "\(error)")
         }
@@ -92,7 +96,7 @@ struct UploadStagingFailureTests {
     func livePhotoMovieFailureDeletesTheStill() async throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let still = try source(in: root, name: "IMG_0042.HEIC")
+        let still = try source(in: root, name: ShareUploadsTestValue.heicName)
         let movie = try source(in: root, name: "0F3A.mov")
         let provider = NSItemProvider()
         provider.registerFileRepresentation(forTypeIdentifier: UTType.heic.identifier, fileOptions: [], visibility: .all) { completion in
@@ -138,19 +142,19 @@ struct UploadStagingFailureTests {
             release.wait()
             return try write(serverURL, fileURL, name, destination, envelopeURL)
         }
-        let first = try source(in: root, name: "first.bin")
-        let second = try source(in: root, name: "second.bin")
+        let first = try source(in: root, name: Constants.firstBinary)
+        let second = try source(in: root, name: Constants.secondBinary)
         let finished = DispatchSemaphore(value: 0)
         let staged = LockedValue<UploadBatch.StagedFile?>(nil)
         let started = batch
         DispatchQueue.global().async {
-            staged.set(try? started.envelope(for: first, fileName: "first.bin"))
+            staged.set(try? started.envelope(for: first, fileName: Constants.firstBinary))
             finished.signal()
         }
         #expect(writing.wait(timeout: .now() + Constants.waitSeconds) == .success)
 
         #expect(throws: ShareUploadError.insufficientSpace) {
-            try batch.envelope(for: second, fileName: "second.bin")
+            try batch.envelope(for: second, fileName: Constants.secondBinary)
         }
         release.signal()
         #expect(finished.wait(timeout: .now() + Constants.waitSeconds) == .success)

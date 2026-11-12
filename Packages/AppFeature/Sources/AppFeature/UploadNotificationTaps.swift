@@ -26,18 +26,38 @@ public enum UploadNotificationTaps {
     }
 }
 
-extension AppFeature {
+public extension AppFeature {
     /// A tapped notification's folder, held until the app is signed in to that account.
-    public struct PendingUploadFolder: Equatable, Sendable {
+    struct PendingUploadFolder: Equatable, Sendable {
         let tap: UploadNotificationTaps.Tap
         /// A switch to the tap's account was already asked for, so a second mismatch gives up.
         var hasRequestedSwitch = false
     }
+}
 
-    /// Opens the pending folder once the tab shell of its account is up: right away when that
-    /// account is active, after a switch when it is another signed in one, and not at all when it
-    /// is signed out (the app just opens).
-    func openPendingUploadFolder(_ state: inout State) -> Effect<Action> {
+/// Opens the folder of a tapped upload notification once the tab shell of its account is up: right
+/// away when that account is active, after a switch when it is another signed in one, and not at
+/// all when it is signed out (the app just opens).
+struct UploadFolderRouting: Reducer {
+    typealias State = AppFeature.State
+    typealias Action = AppFeature.Action
+
+    func reduce(into state: inout State, action: Action) -> Effect<Action> {
+        switch action {
+        case let .uploadNotificationTapped(tap):
+            state.pendingUploadFolder = AppFeature.PendingUploadFolder(tap: tap)
+            return openPendingFolder(&state)
+
+        case .destination(.authenticated(.mainTab(.observeConnectivity))):
+            // The tab shell just mounted (any sign in or account switch ends here).
+            return openPendingFolder(&state)
+
+        default:
+            return .none
+        }
+    }
+
+    private func openPendingFolder(_ state: inout State) -> Effect<Action> {
         guard let pending = state.pendingUploadFolder, let current = state.currentAccountID else { return .none }
         if current == pending.tap.accountID {
             state.pendingUploadFolder = nil
