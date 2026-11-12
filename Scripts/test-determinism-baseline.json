@@ -12,9 +12,6 @@
   "Packages/AppFeature/Tests/AppFeatureTests/SessionBoundaryWipeTests.swift": {
     "exhaustivity off": 6
   },
-  "Packages/AuthFeature/Tests/AuthFeatureTests/LoginClientCertificateTests.swift": {
-    "exhaustivity off": 5
-  },
   "Packages/AuthFeature/Tests/AuthFeatureTests/LoginFormFeatureTests.swift": {
     "exhaustivity off": 4
   },
@@ -166,8 +163,5 @@
   "Packages/FilesFeature/Tests/FilesFeatureTests/VersionedFilesFeatureTests.swift": {
     "exhaustivity off": 1,
     "skipReceivedActions": 20
-  },
-  "Packages/ShareExtensionFeature/Tests/ShareExtensionFeatureTests/ShareUploadFeatureTests.swift": {
-    "exhaustivity off": 1
   }
 }
