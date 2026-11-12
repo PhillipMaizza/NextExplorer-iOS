@@ -67,6 +67,7 @@ struct ThumbnailImage: View {
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.thumbnailCache) private var thumbnailCache
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
+    @Dependency(\.date) private var date
 
     var body: some View {
         Group {
@@ -102,6 +103,9 @@ struct ThumbnailImage: View {
             }
             if let cached = ThumbnailMemoryCache.shared.object(forKey: thumbnailURL as NSURL) {
                 uiImage = cached
+                if seeded != nil {
+                    dropSeed()
+                }
                 return
             }
             let data: Data
@@ -130,9 +134,7 @@ struct ThumbnailImage: View {
                     cost: ThumbnailMemoryCache.decodedByteCost(of: decoded)
                 )
                 if seeded != nil {
-                    let localThumbnailStore = localThumbnailStore
-                    let path = path
-                    Task.detached(priority: .utility) { localThumbnailStore.remove(path) }
+                    dropSeed()
                 }
             }
             uiImage = decoded ?? seeded
@@ -140,18 +142,21 @@ struct ThumbnailImage: View {
         }
     }
 
-    /// The seeded thumbnail of a file just shared into the app, read and decoded off the main
-    /// actor; `nil` without the file's size and date or when no seed matches them.
+    /// The seeded thumbnail of a file just shared into the app; `nil` without the file's size and
+    /// date or when no seed matches them.
     private func seededImage() async -> PlatformImage? {
         guard let fileSize, let modified else { return nil }
+        return await SeededThumbnail.image(
+            from: localThumbnailStore, path: path, size: fileSize, modified: modified,
+            maxPixel: maxPixelDimension, priority: .userInitiated, now: date.now
+        )
+    }
+
+    /// Drops the seed once the server's own thumbnail is showing.
+    private func dropSeed() {
         let localThumbnailStore = localThumbnailStore
         let path = path
-        let target = maxPixelDimension
-        return await Task.detached(priority: .userInitiated) {
-            localThumbnailStore.thumbnail(path, fileSize, modified).flatMap {
-                ImageDownsampling.image(from: $0, maxPixelDimension: target)
-            }
-        }.value
+        Task.detached(priority: .utility) { localThumbnailStore.remove(path) }
     }
 
     private var fallbackImage: some View {
@@ -161,6 +166,43 @@ struct ThumbnailImage: View {
             .foregroundStyle(iconTint)
     }
 }
+
+#if DEBUG
+    /// A small striped JPEG standing in for a seeded thumbnail in previews.
+    private enum PreviewSeed {
+        static let jpeg: Data? = {
+            let side = 64
+            guard let context = CGContext(
+                data: nil, width: side, height: side, bitsPerComponent: 8, bytesPerRow: 0,
+                space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
+            ) else { return nil }
+            let colors = [CGColor(red: 0.94, green: 0.55, blue: 0.12, alpha: 1), CGColor(red: 0.12, green: 0.59, blue: 0.86, alpha: 1)]
+            for band in 0 ..< 8 {
+                context.setFillColor(colors[band % colors.count])
+                context.fill(CGRect(x: 0, y: band * side / 8, width: side, height: side / 8))
+            }
+            return context.makeImage().flatMap { ThumbnailRendering.jpegData($0, quality: 0.8) }
+        }()
+    }
+
+    #Preview("Seeded from a file just shared into the app") {
+        withDependencies {
+            $0.localThumbnailStore.thumbnail = { _, _, _ in PreviewSeed.jpeg }
+        } operation: {
+            ThumbnailImage(
+                serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+                path: "Photos/beach.jpg",
+                signature: "0|0",
+                fallbackIcon: IconKit.document,
+                iconTint: .secondaryDS,
+                fileSize: 2048,
+                modified: Date()
+            )
+            .frame(width: .iconMedium, height: .iconMedium)
+            .padding(.space16)
+        }
+    }
+#endif
 
 #Preview("Falls back to icon (previewValue has no thumbnails)") {
     ThumbnailImage(

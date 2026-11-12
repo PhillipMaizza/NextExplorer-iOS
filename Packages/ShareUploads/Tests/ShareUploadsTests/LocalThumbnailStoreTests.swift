@@ -15,11 +15,11 @@ struct LocalThumbnailStoreTests {
     private enum Constants {
         static let photo = "Photos/2026/beach.png"
         static let otherAccount = "https://other.example.com|bob"
-        static let imagePixels = 64
-        static let pageSize = CGSize(width: 120, height: 160)
         static let halfHour: TimeInterval = 30 * 60
         static let twoHours: TimeInterval = 2 * 60 * 60
         static let eightDays: TimeInterval = 8 * 24 * 60 * 60
+        static let sixDays: TimeInterval = 6 * 24 * 60 * 60
+        static let largeSource: Int64 = 64 * 1024 * 1024 + 1
     }
 
     private let account = Harness.credentials.accountID
@@ -34,35 +34,6 @@ struct LocalThumbnailStoreTests {
         .onDisk(root: root, now: { now })
     }
 
-    /// A small PNG on disk, and its byte size.
-    private func png(in root: URL) throws -> (url: URL, size: Int64) {
-        let side = Constants.imagePixels
-        let context = try #require(CGContext(
-            data: nil, width: side, height: side, bitsPerComponent: 8, bytesPerRow: 0,
-            space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
-        ))
-        context.setFillColor(CGColor(red: 0.2, green: 0.6, blue: 0.9, alpha: 1))
-        context.fill(CGRect(x: 0, y: 0, width: side, height: side))
-        let image = try #require(context.makeImage())
-        let url = root.appendingPathComponent("beach.png")
-        let destination = try #require(CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil))
-        CGImageDestinationAddImage(destination, image, nil)
-        #expect(CGImageDestinationFinalize(destination))
-        return try (url, Int64(#require(try url.resourceValues(forKeys: [.fileSizeKey]).fileSize)))
-    }
-
-    private func pdf(in root: URL) throws -> URL {
-        let url = root.appendingPathComponent("scan.pdf")
-        var box = CGRect(origin: .zero, size: Constants.pageSize)
-        let context = try #require(CGContext(url as CFURL, mediaBox: &box, nil))
-        context.beginPDFPage(nil)
-        context.setFillColor(CGColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
-        context.fill(box)
-        context.endPDFPage()
-        context.closePDF()
-        return url
-    }
-
     private func read(_ store: LocalThumbnailStore, scope: String, size: Int64, modified: Date) -> Data? {
         CacheAccountScope.withPinned(scope) { store.thumbnail(Constants.photo, size, modified) }
     }
@@ -73,13 +44,13 @@ struct LocalThumbnailStoreTests {
     func aSeedReadsBackForTheUploadedFile() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         let store = store(in: root)
 
         store.seed(file, .png, Constants.photo, account, MockDate.date)
 
         let jpeg = try #require(read(store, scope: account, size: size, modified: MockDate.date))
-        #expect(ThumbnailRendering.image(from: jpeg, maxPixel: CGFloat(Constants.imagePixels)) != nil)
+        #expect(ThumbnailRendering.image(from: jpeg, maxPixel: ThumbnailFixture.imageSize.width) != nil)
         #expect(store.totalSizeBytes() > 0)
     }
 
@@ -87,7 +58,7 @@ struct LocalThumbnailStoreTests {
     func anotherSizeIsNotTheUploadedFile() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         let store = store(in: root)
         store.seed(file, .png, Constants.photo, account, MockDate.date)
 
@@ -99,7 +70,7 @@ struct LocalThumbnailStoreTests {
     func anOlderFileIsNotTheUpload() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         let store = store(in: root)
         store.seed(file, .png, Constants.photo, account, MockDate.date)
 
@@ -110,7 +81,7 @@ struct LocalThumbnailStoreTests {
     func aServerClockBehindStillMatches() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         let store = store(in: root)
         store.seed(file, .png, Constants.photo, account, MockDate.date)
 
@@ -121,7 +92,7 @@ struct LocalThumbnailStoreTests {
     func aWeekOldSeedIsDropped() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         store(in: root).seed(file, .png, Constants.photo, account, MockDate.date)
         let later = store(in: root, now: MockDate.date.addingTimeInterval(Constants.eightDays))
 
@@ -132,7 +103,7 @@ struct LocalThumbnailStoreTests {
     func removeDropsTheSeed() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         let store = store(in: root)
         store.seed(file, .png, Constants.photo, account, MockDate.date)
 
@@ -147,7 +118,7 @@ struct LocalThumbnailStoreTests {
     func onlyPicturesAndPDFsAreSeeded() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let pdf = try pdf(in: root)
+        let pdf = try ThumbnailFixture.pdf(in: root)
         let text = root.appendingPathComponent("notes.txt")
         try Data("notes".utf8).write(to: text)
         let store = store(in: root)
@@ -158,6 +129,23 @@ struct LocalThumbnailStoreTests {
         store.seed(pdf, .pdf, Constants.photo, account, MockDate.date)
         let size = try Int64(#require(try pdf.resourceValues(forKeys: [.fileSizeKey]).fileSize))
         #expect(read(store, scope: account, size: size, modified: MockDate.date) != nil)
+    }
+
+    @Test("An original over 64 MB is not seeded, to spare the share extension's time and memory")
+    func aLargeOriginalIsNotSeeded() throws {
+        let root = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let (file, size) = try ThumbnailFixture.png(in: root)
+
+        #expect(LocalThumbnailStore.jpeg(for: file, type: .png, size: size) != nil)
+        #expect(LocalThumbnailStore.jpeg(for: file, type: .png, size: Constants.largeSource) == nil)
+    }
+
+    @Test("Only files modified within about a week can have a seed, so older ones skip the lookup")
+    func onlyRecentFilesCanHaveASeed() {
+        #expect(LocalThumbnailStore.canHaveSeed(modified: MockDate.date, now: MockDate.date))
+        #expect(LocalThumbnailStore.canHaveSeed(modified: MockDate.date, now: MockDate.date.addingTimeInterval(Constants.sixDays)))
+        #expect(!LocalThumbnailStore.canHaveSeed(modified: MockDate.date, now: MockDate.date.addingTimeInterval(Constants.eightDays)))
     }
 
     @Test("A file's server path joins the folder and the name, the root being empty")
@@ -173,7 +161,7 @@ struct LocalThumbnailStoreTests {
     func seedsAreKeptPerAccount() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         let store = store(in: root)
         store.seed(file, .png, Constants.photo, account, MockDate.date)
         store.seed(file, .png, Constants.photo, Constants.otherAccount, MockDate.date)
@@ -188,7 +176,7 @@ struct LocalThumbnailStoreTests {
     func clearAllDropsEverything() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         let store = store(in: root)
         store.seed(file, .png, Constants.photo, account, MockDate.date)
         store.seed(file, .png, Constants.photo, Constants.otherAccount, MockDate.date)
@@ -203,7 +191,7 @@ struct LocalThumbnailStoreTests {
     func withoutAContainerNothingHappens() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, size) = try png(in: root)
+        let (file, size) = try ThumbnailFixture.png(in: root)
         let store = LocalThumbnailStore.onDisk(root: nil, now: { MockDate.date })
 
         store.seed(file, .png, Constants.photo, account, MockDate.date)
@@ -218,7 +206,7 @@ struct LocalThumbnailStoreTests {
     func stagingSeedsTheThumbnail() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let (file, _) = try png(in: root)
+        let (file, _) = try ThumbnailFixture.png(in: root)
         let seeds = SeedLog()
         let uploader = BackgroundUploader(root: root, notifier: UploadNotifier { _ in }, defaults: .standard, availableCapacity: { _ in nil })
         var batch = try uploader.makeBatch(credentials: Harness.credentials, destination: TestFolder.photos)
@@ -227,9 +215,24 @@ struct LocalThumbnailStoreTests {
             seeds.append("\(type?.identifier ?? "")|\(path)|\(scope)|\(startedAt == MockDate.date)")
         }
 
-        _ = try batch.envelope(for: file, fileName: "beach.png")
+        _ = try batch.envelope(for: file, fileName: ThumbnailFixture.pngName)
 
         #expect(seeds.entries == ["public.png|Photos/beach.png|\(Harness.credentials.accountID)|true"])
+    }
+
+    @Test("A file whose envelope could not be written is not seeded")
+    func aFailedEnvelopeSeedsNothing() throws {
+        let root = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let (file, _) = try ThumbnailFixture.png(in: root)
+        let seeds = SeedLog()
+        let uploader = BackgroundUploader(root: root, notifier: UploadNotifier { _ in }, defaults: .standard, availableCapacity: { _ in nil })
+        var batch = try uploader.makeBatch(credentials: Harness.credentials, destination: TestFolder.photos)
+        batch.writeEnvelope = { _, _, _, _, _ in throw CocoaError(.fileWriteOutOfSpace) }
+        batch.thumbnailStore.seed = { _, _, path, _, _ in seeds.append(path) }
+
+        #expect(throws: (any Error).self) { try batch.envelope(for: file, fileName: ThumbnailFixture.pngName) }
+        #expect(seeds.entries.isEmpty)
     }
 }
 

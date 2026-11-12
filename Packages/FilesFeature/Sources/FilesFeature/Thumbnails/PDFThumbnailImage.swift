@@ -33,6 +33,7 @@ struct PDFThumbnailImage: View {
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.pdfThumbnailCache) private var pdfThumbnailCache
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
+    @Dependency(\.date) private var date
     private let store = PDFThumbnailStore.shared
 
     private var cacheKey: String {
@@ -52,7 +53,8 @@ struct PDFThumbnailImage: View {
         .task(id: cacheKey) {
             store.load(
                 entry: entry, key: cacheKey, item: item, serverURL: serverURL,
-                filesClient: filesClient, cache: pdfThumbnailCache, localThumbnails: localThumbnailStore
+                filesClient: filesClient, cache: pdfThumbnailCache, localThumbnails: localThumbnailStore,
+                now: date.now
             )
         }
     }

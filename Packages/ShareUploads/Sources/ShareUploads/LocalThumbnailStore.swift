@@ -51,6 +51,9 @@ extension LocalThumbnailStore {
         static let maxEntries = 500
         static let maxTotalBytes: Int64 = 32 * 1024 * 1024
         static let maxEntryBytes = 512 * 1024
+        /// Larger originals are not seeded: decoding them would cost the share extension time and
+        /// memory it does not have.
+        static let maxSourceBytes: Int64 = 64 * 1024 * 1024
         static let maxAge: TimeInterval = 7 * 24 * 60 * 60
         /// The phone's and the server's clocks can disagree: a file modified up to this long
         /// before the upload started still counts as the uploaded one.
@@ -71,15 +74,22 @@ extension LocalThumbnailStore {
         }
     }
 
+    /// Whether a file modified at `modified` can have a seed at `now`: anything older than a week
+    /// (plus the clock tolerance) cannot, so callers skip the disk lookup for it.
+    public static func canHaveSeed(modified: Date, now: Date) -> Bool {
+        now.timeIntervalSince(modified) < Constants.maxAge + Constants.clockTolerance
+    }
+
     /// The server path of `fileName` uploaded into `destination` ("" is the root).
     public static func path(of fileName: String, in destination: String) -> String {
         let folder = destination.trimmingCharacters(in: CacheLayout.pathTrimCharacters)
         return folder.isEmpty ? fileName : "\(folder)/\(fileName)"
     }
 
-    /// The JPEG to seed for a local file, or `nil` when it is not an image or PDF (or fails).
-    static func jpeg(for fileURL: URL, type: UTType?) -> Data? {
-        guard let image = ThumbnailRendering.thumbnail(of: fileURL, type: type, maxPixel: Constants.maxPixel) else { return nil }
+    /// The JPEG to seed for a local file, or `nil` when it is not an image or PDF, too large, or
+    /// fails to decode.
+    static func jpeg(for fileURL: URL, type: UTType?, size: Int64) -> Data? {
+        guard size <= Constants.maxSourceBytes, let image = ThumbnailRendering.thumbnail(of: fileURL, type: type, maxPixel: Constants.maxPixel) else { return nil }
         return ThumbnailRendering.jpegData(image, quality: Constants.jpegQuality)
     }
 
@@ -154,8 +164,8 @@ extension LocalThumbnailStore {
         func asStore() -> LocalThumbnailStore {
             LocalThumbnailStore(
                 seed: { fileURL, type, path, scope, startedAt in
-                    guard let jpeg = LocalThumbnailStore.jpeg(for: fileURL, type: type) else { return }
                     let size = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize).flatMap { Int64($0) } ?? 0
+                    guard let jpeg = LocalThumbnailStore.jpeg(for: fileURL, type: type, size: size) else { return }
                     self.seed(Entry(size: size, startedAt: startedAt, jpeg: jpeg), scope: scope, path: path)
                 },
                 thumbnail: { self.thumbnail(scope: CacheAccountScope.current, path: $0, size: $1, modified: $2) },

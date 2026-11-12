@@ -41,7 +41,7 @@ struct PDFThumbnailStoreTests {
         let task = store.load(
             entry: entry, key: key, item: item,
             serverURL: URL(string: TestHost.exampleURLString)!, filesClient: client, cache: cache,
-            localThumbnails: localThumbnails
+            localThumbnails: localThumbnails, now: MockDate.date
         )
         return (entry, task)
     }

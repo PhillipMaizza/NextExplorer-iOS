@@ -272,6 +272,18 @@ public struct SettingsFeature {
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     @Dependency(\.localThumbnailStore) var localThumbnailStore
+
+    /// What "Clear Cache" frees: previews and downloads in the preview cache, the saved folder and
+    /// list copies, and the thumbnails seeded for files shared into the app.
+    static func cacheSizeBytes(
+        preview: PreviewCacheStore,
+        directories: DirectoryCacheStore,
+        lists: JSONCacheStore,
+        uploadThumbnails: LocalThumbnailStore
+    ) -> Int64 {
+        ((try? preview.size()) ?? 0) + directories.totalSizeBytes() + lists.totalSizeBytes() + uploadThumbnails.totalSizeBytes()
+    }
+
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
@@ -583,10 +595,10 @@ public struct SettingsFeature {
             let jsonCacheStore = jsonCacheStore
             let localThumbnailStore = localThumbnailStore
             let checkCacheSize = Effect<Action>.run { send in
-                let size = (try? previewCacheStore.size()) ?? 0
-                await send(.cacheSizeResponse(
-                    size + directoryCacheStore.totalSizeBytes() + jsonCacheStore.totalSizeBytes() + localThumbnailStore.totalSizeBytes()
-                ))
+                await send(.cacheSizeResponse(Self.cacheSizeBytes(
+                    preview: previewCacheStore, directories: directoryCacheStore, lists: jsonCacheStore,
+                    uploadThumbnails: localThumbnailStore
+                )))
             }
             let offlineFileStore = offlineFileStore
             let checkOfflineSize = Effect<Action>.run { send in

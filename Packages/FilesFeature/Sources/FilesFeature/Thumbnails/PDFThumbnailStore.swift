@@ -85,7 +85,8 @@ final class PDFThumbnailStore {
         serverURL: URL,
         filesClient: FilesClient,
         cache: PDFThumbnailCache,
-        localThumbnails: LocalThumbnailStore
+        localThumbnails: LocalThumbnailStore,
+        now: Date
     ) -> Task<Void, Never>? {
         switch entry.state {
         case .ready, .unavailable: return nil
@@ -103,11 +104,10 @@ final class PDFThumbnailStore {
             defer { self?.inFlight.remove(key) }
             // A PDF just shared into the app has its first page seeded from the local copy: the
             // same render, without downloading the file.
-            let seeded = await Task.detached(priority: Constants.fetchPriority) {
-                localThumbnails.thumbnail(item.id, item.size, item.dateModified).flatMap {
-                    ImageDownsampling.image(from: $0, maxPixelDimension: Constants.renderPixel)
-                }
-            }.value
+            let seeded = await SeededThumbnail.image(
+                from: localThumbnails, path: item.id, size: item.size, modified: item.dateModified,
+                maxPixel: Constants.renderPixel, priority: Constants.fetchPriority, now: now
+            )
             if let seeded {
                 entry.state = .ready(seeded)
                 return
