@@ -177,6 +177,7 @@ private enum PreviewFixture {
     static let filesDone = 5
 }
 
+@MainActor
 private func offlinePreviewStore(
     phase: OfflineDownloadProgress.Phase, offlineSize: Int64 = PreviewFixture.offlineSizeBytes
 ) -> StoreOf<SettingsFeature> {

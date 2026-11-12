@@ -303,7 +303,8 @@ private enum PreviewZones {
 
 @MainActor
 private func trashPreview(_ state: TrashSettingsFeature.State, failing: Bool = false, settings: SystemSettings? = nil) -> some View {
-    NavigationStack {
+    let zones = state.zones
+    return NavigationStack {
         TrashSettingsView(store: Store(initialState: state) { TrashSettingsFeature() } withDependencies: {
             $0.filesClient.fetchSystemSettings = { _ in
                 if failing {
@@ -311,7 +312,7 @@ private func trashPreview(_ state: TrashSettingsFeature.State, failing: Bool = f
                 }
                 return settings ?? SystemSettings(trash: TrashSettings(), versions: VersionsSettings())
             }
-            $0.filesClient.fetchTrashZones = { _ in state.zones }
+            $0.filesClient.fetchTrashZones = { _ in zones }
         })
     }
 }

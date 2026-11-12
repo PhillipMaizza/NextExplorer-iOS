@@ -176,6 +176,7 @@
         static let file = FileItem(name: "report.pdf", path: "", dateModified: .distantPast, size: 1_024, kind: "pdf")
     }
 
+    @MainActor
     private func previewRow(_ item: FileItem, canMove: Bool, canUpload: Bool) -> some View {
         Label { Text(item.name) } icon: { item.isDirectory ? IconKit.folderFill : IconKit.document }
             .modifier(IOSRowDragDrop(
