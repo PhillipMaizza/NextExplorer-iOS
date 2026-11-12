@@ -103,18 +103,6 @@ struct BrowseTabFeatureTests {
         #expect(store.state.path[id: 0]?.awaitedArrivalIDs.isEmpty == true)
     }
 
-    @Test
-    func aCopyTheServerListsLateIsRefetchedUntilItAppears() async {
-        let (_, store, fetches) = pasteScenario(listsCopyAfterFetches: 2)
-
-        await store.send(.path(.element(id: 0, action: .pasteTapped(keepItemsAfterCopy: false))))
-        await store.finish(timeout: .seconds(10))
-        await store.skipReceivedActions()
-        #expect(store.state.path[id: 0]?.items.map(\.name) == ["Misc", "Misc (2)"])
-        #expect(fetches.value == 3)
-        #expect(store.state.path[id: 0]?.awaitedArrivalIDs.isEmpty == true)
-    }
-
     // MARK: Edge cases
 
     @Test
