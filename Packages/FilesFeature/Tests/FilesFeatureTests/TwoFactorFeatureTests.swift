@@ -3,82 +3,111 @@ import CoreModels
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import Localization
+import TestUtils
 import Testing
 
 @MainActor
 struct TwoFactorFeatureTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private typealias Store = TestStoreOf<TwoFactorFeature>
+
+    private let serverURL = SettingsTestSupport.serverURL
     private let setup = TwoFactorSetup(secret: "JBSWY3DPEHPK3PXP", uri: "otpauth://totp/NextExplorer:alice?secret=JBSWY3DPEHPK3PXP")
     private let codes = ["2HSMP-G9ZSJ", "K3QWE-7RTYU"]
     private let wrongCode = FilesClientError.serverMessage(statusCode: 401, message: "Invalid code")
     private let wrongPassword = FilesClientError.serverMessage(statusCode: 401, message: "Incorrect password")
+    private let confirmCalls = LockIsolated<[String]>([])
+    private let replaceCalls = LockIsolated<[String]>([])
+    private let disableCalls = LockIsolated<[String]>([])
+    private let setupCalls = LockIsolated(0)
 
     private func makeStore(
         phase: TwoFactorFeature.Phase = .loading,
-        configure: (inout DependencyValues) -> Void = { _ in },
+        status: @escaping @Sendable () async throws -> TwoFactorStatus = { throw FilesClientError.offline },
+        beginSetup: @escaping @Sendable () async throws -> TwoFactorSetup = { throw FilesClientError.offline },
+        confirm: @escaping @Sendable () async throws -> [String] = { throw FilesClientError.offline },
+        replace: @escaping @Sendable () async throws -> [String] = { throw FilesClientError.offline },
+        disable: @escaping @Sendable () async throws -> Void = { throw FilesClientError.offline },
         initial: (inout TwoFactorFeature.State) -> Void = { _ in }
-    ) -> TestStoreOf<TwoFactorFeature> {
+    ) -> Store {
         var state = TwoFactorFeature.State(serverURL: serverURL, phase: phase)
         initial(&state)
-        let store = TestStore(initialState: state) {
+        let confirmCalls = confirmCalls
+        let replaceCalls = replaceCalls
+        let disableCalls = disableCalls
+        let setupCalls = setupCalls
+        return TestStore(initialState: state) {
             TwoFactorFeature()
-        } withDependencies: { configure(&$0) }
-        store.timeout = .seconds(10)
-        return store
+        } withDependencies: {
+            $0.filesClient.fetchTwoFactorStatus = { _ in try await status() }
+            $0.filesClient.beginTwoFactorSetup = { _ in
+                setupCalls.withValue { $0 += 1 }
+                return try await beginSetup()
+            }
+            $0.filesClient.confirmTwoFactorSetup = { _, code in
+                confirmCalls.withValue { $0.append(code) }
+                return try await confirm()
+            }
+            $0.filesClient.replaceRecoveryCodes = { _, password in
+                replaceCalls.withValue { $0.append(password) }
+                return try await replace()
+            }
+            $0.filesClient.disableTwoFactor = { _, password in
+                disableCalls.withValue { $0.append(password) }
+                try await disable()
+            }
+        }
     }
 
     // MARK: Loading
 
     @Test
     func anAccountWithoutTwoFactorLoadsAsOff() async {
-        let store = makeStore { $0.filesClient.fetchTwoFactorStatus = { _ in TwoFactorStatus(isEnabled: false) } }
+        let store = makeStore(status: { TwoFactorStatus(isEnabled: false) })
 
         await store.send(.task)
-        await store.receive(\.statusResponse) { $0.phase = .off }
+        await store.receive(\.statusResponse.success) { $0.phase = .off }
     }
 
     @Test
     func anAccountWithTwoFactorLoadsAsOnWithItsRecoveryCodesLeft() async {
-        let store = makeStore { $0.filesClient.fetchTwoFactorStatus = { _ in TwoFactorStatus(isEnabled: true, confirmedAt: "2026-11-10", recoveryCodesLeft: 7) } }
+        let store = makeStore(status: { TwoFactorStatus(isEnabled: true, confirmedAt: "2026-11-10", recoveryCodesLeft: 7) })
 
         await store.send(.task)
-        await store.receive(\.statusResponse) { $0.phase = .on(recoveryCodesLeft: 7) }
+        await store.receive(\.statusResponse.success) { $0.phase = .on(recoveryCodesLeft: 7) }
     }
 
     @Test
     func aPendingSetupThatWasNeverConfirmedIsStillOff() async {
-        let store = makeStore { $0.filesClient.fetchTwoFactorStatus = { _ in TwoFactorStatus(isEnabled: false, isPending: true) } }
+        let store = makeStore(status: { TwoFactorStatus(isEnabled: false, isPending: true) })
 
         await store.send(.task)
-        await store.receive(\.statusResponse) { $0.phase = .off }
+        await store.receive(\.statusResponse.success) { $0.phase = .off }
     }
 
     @Test
     func aFailedLoadShowsTheMessageAndRetryLoadsAgain() async {
         let attempts = LockIsolated(0)
-        let store = makeStore {
-            $0.filesClient.fetchTwoFactorStatus = { _ in
-                if attempts.withValue({ $0 += 1; return $0 }) == 1 {
-                    throw FilesClientError.rateLimited
-                }
-                return TwoFactorStatus(isEnabled: true, recoveryCodesLeft: 3)
-            }
-        }
+        let store = makeStore(status: {
+            if attempts.withValue({ $0 += 1; return $0 }) == 1 { throw FilesClientError.rateLimited }
+            return TwoFactorStatus(isEnabled: true, recoveryCodesLeft: 3)
+        })
 
         await store.send(.task)
-        await store.receive(\.statusResponse) { $0.phase = .failed(FilesClientError.rateLimited.userMessage) }
+        await store.receive(\.statusResponse.failure) { $0.phase = .failed(L10n.Error.rateLimited) }
         await store.send(.retryTapped) { $0.phase = .loading }
-        await store.receive(\.statusResponse) { $0.phase = .on(recoveryCodesLeft: 3) }
+        await store.receive(\.statusResponse.success) { $0.phase = .on(recoveryCodesLeft: 3) }
+        #expect(attempts.value == 2)
     }
 
     // MARK: Turning on
 
     @Test
     func turningOnShowsTheSecretAndAsksForACode() async {
-        let store = makeStore(phase: .off) { $0.filesClient.beginTwoFactorSetup = { _ in setup } }
+        let store = makeStore(phase: .off, beginSetup: { [setup] in setup })
 
         await store.send(.turnOnTapped) { $0.isWorking = true }
-        await store.receive(\.setupResponse) {
+        await store.receive(\.setupResponse.success) {
             $0.isWorking = false
             $0.phase = .enrolling(setup)
         }
@@ -86,128 +115,138 @@ struct TwoFactorFeatureTests {
 
     @Test
     func turningOnWithoutAPasswordSessionShowsTheServersMessageAndStaysOff() async {
-        let refusal = FilesClientError.serverMessage(statusCode: 403, message: "Sign in with your password to set this up")
-        let store = makeStore(phase: .off) { $0.filesClient.beginTwoFactorSetup = { _ in throw refusal } }
+        let store = makeStore(phase: .off, beginSetup: {
+            throw FilesClientError.serverMessage(statusCode: 403, message: "Sign in with your password to set this up")
+        })
 
         await store.send(.turnOnTapped) { $0.isWorking = true }
-        await store.receive(\.setupResponse) {
+        await store.receive(\.setupResponse.failure) {
             $0.isWorking = false
-            $0.errorMessage = refusal.userMessage
+            $0.errorMessage = "Sign in with your password to set this up"
         }
         #expect(store.state.phase == .off)
     }
 
     @Test
-    func turnOnIsIgnoredWhenAlreadyOnOrWorking() async {
-        let store = makeStore(phase: .on(recoveryCodesLeft: 1)) { $0.filesClient.beginTwoFactorSetup = { _ in Issue.record("must not start"); return setup } }
-        await store.send(.turnOnTapped)
+    func turnOnIsIgnoredWhenAlreadyOn() async {
+        let store = makeStore(phase: .on(recoveryCodesLeft: 1), beginSetup: { [setup] in setup })
 
-        let working = makeStore(
-            phase: .off,
-            configure: { $0.filesClient.beginTwoFactorSetup = { _ in Issue.record("must not start twice"); return setup } },
-            initial: { $0.isWorking = true }
-        )
-        await working.send(.turnOnTapped)
+        await store.send(.turnOnTapped)
+        #expect(setupCalls.value == 0)
+    }
+
+    @Test
+    func turnOnIsIgnoredWhileWorking() async {
+        let store = makeStore(phase: .off, beginSetup: { [setup] in setup }, initial: { $0.isWorking = true })
+
+        await store.send(.turnOnTapped)
+        #expect(setupCalls.value == 0)
     }
 
     // MARK: The code
 
-    @Test
-    func theCodeKeepsOnlyDigitsAndAtMostSix() async {
-        let store = makeStore(phase: .enrolling(setup)) { $0.filesClient.confirmTwoFactorSetup = { _, _ in [] } }
-        store.exhaustivity = .off
+    struct CodeCase: Sendable {
+        let typed: String
+        let kept: String
+    }
 
-        await store.send(.codeChanged("12 34-5")) { $0.code = "12345" }
-        await store.send(.codeChanged("abc")) { $0.code = "" }
-        await store.send(.codeChanged("١٢٣٤٥٦")) { $0.code = "" }
+    @Test(
+        "The code keeps only ASCII digits and at most six",
+        arguments: [
+            CodeCase(typed: "12 34-5", kept: "12345"),
+            CodeCase(typed: "12a3b4c5", kept: "12345"),
+            CodeCase(typed: "abc", kept: ""),
+            CodeCase(typed: "١٢٣٤٥٦", kept: ""),
+            CodeCase(typed: "", kept: ""),
+        ]
+    )
+    func theCodeKeepsOnlyDigits(_ testCase: CodeCase) async {
+        let store = makeStore(phase: .enrolling(setup), initial: { $0.code = "99" })
+
+        await store.send(.codeChanged(testCase.typed)) { $0.code = testCase.kept }
+        #expect(confirmCalls.value.isEmpty)
     }
 
     @Test
-    func fiveDigitsDoNotConfirm() async {
-        let store = makeStore(phase: .enrolling(setup)) { $0.filesClient.confirmTwoFactorSetup = { _, _ in Issue.record("too early"); return [] } }
+    func fiveDigitsDoNotConfirmEvenWhenTheButtonIsTapped() async {
+        let store = makeStore(phase: .enrolling(setup))
 
         await store.send(.codeChanged("12345")) { $0.code = "12345" }
         await store.send(.confirmTapped)
+        #expect(confirmCalls.value.isEmpty)
     }
 
     @Test
     func theSixthDigitConfirmsAndSendsTheCode() async {
-        let sent = LockIsolated<String?>(nil)
-        let store = makeStore(phase: .enrolling(setup)) {
-            $0.filesClient.confirmTwoFactorSetup = { _, code in
-                sent.setValue(code)
-                return codes
-            }
-        }
+        let store = makeStore(phase: .enrolling(setup), confirm: { [codes] in codes })
 
         await store.send(.codeChanged("123456")) { $0.code = "123456" }
         await store.receive(\.confirmTapped) { $0.isWorking = true }
-        await store.receive(\.confirmResponse) {
+        await store.receive(\.confirmResponse.success) {
             $0.isWorking = false
             $0.code = ""
             $0.phase = .showingRecoveryCodes(codes)
         }
-        #expect(sent.value == "123456")
+        #expect(confirmCalls.value == ["123456"])
     }
 
     @Test
     func pastingMoreThanSixDigitsConfirmsTheFirstSix() async {
-        let sent = LockIsolated<String?>(nil)
-        let store = makeStore(phase: .enrolling(setup)) { $0.filesClient.confirmTwoFactorSetup = { _, code in sent.setValue(code); return codes } }
-        store.exhaustivity = .off
+        let store = makeStore(phase: .enrolling(setup), confirm: { [codes] in codes })
 
-        await store.send(.codeChanged("1234567890"))
-        await store.receive(\.confirmResponse)
-        #expect(sent.value == "123456")
+        await store.send(.codeChanged("1234567890")) { $0.code = "123456" }
+        await store.receive(\.confirmTapped) { $0.isWorking = true }
+        await store.receive(\.confirmResponse.success) {
+            $0.isWorking = false
+            $0.code = ""
+            $0.phase = .showingRecoveryCodes(codes)
+        }
+        #expect(confirmCalls.value == ["123456"])
     }
 
     @Test
     func aWrongCodeIsClearedSoItCanBeTypedAgain() async {
-        let store = makeStore(phase: .enrolling(setup)) { $0.filesClient.confirmTwoFactorSetup = { _, _ in throw wrongCode } }
+        let failure = wrongCode
+        let store = makeStore(phase: .enrolling(setup), confirm: { throw failure })
 
         await store.send(.codeChanged("111111")) { $0.code = "111111" }
         await store.receive(\.confirmTapped) { $0.isWorking = true }
-        await store.receive(\.confirmResponse) {
+        await store.receive(\.confirmResponse.failure) {
             $0.isWorking = false
             $0.code = ""
-            $0.errorMessage = wrongCode.userMessage
+            $0.errorMessage = "Invalid code"
         }
         #expect(store.state.phase == .enrolling(setup))
     }
 
     @Test
     func aDroppedConnectionKeepsTheTypedCode() async {
-        let store = makeStore(phase: .enrolling(setup)) { $0.filesClient.confirmTwoFactorSetup = { _, _ in throw FilesClientError.rateLimited } }
+        let store = makeStore(phase: .enrolling(setup), confirm: { throw FilesClientError.rateLimited })
 
         await store.send(.codeChanged("111111")) { $0.code = "111111" }
         await store.receive(\.confirmTapped) { $0.isWorking = true }
-        await store.receive(\.confirmResponse) {
+        await store.receive(\.confirmResponse.failure) {
             $0.isWorking = false
-            $0.errorMessage = FilesClientError.rateLimited.userMessage
+            $0.errorMessage = L10n.Error.rateLimited
         }
         #expect(store.state.code == "111111")
     }
 
     @Test
     func aCodeTypedWhileAConfirmationIsInFlightIsNotSentTwice() async {
-        let calls = LockIsolated(0)
-        let store = makeStore(
-            phase: .enrolling(setup),
-            configure: { $0.filesClient.confirmTwoFactorSetup = { _, _ in calls.withValue { $0 += 1 }; return codes } },
-            initial: { $0.isWorking = true }
-        )
-        store.exhaustivity = .off
+        let store = makeStore(phase: .enrolling(setup), confirm: { [codes] in codes }, initial: { $0.isWorking = true })
 
-        await store.send(.codeChanged("123456"))
+        await store.send(.codeChanged("123456")) { $0.code = "123456" }
         await store.send(.confirmTapped)
-        #expect(calls.value == 0)
+        #expect(confirmCalls.value.isEmpty)
     }
 
     @Test
     func theCodeFieldDoesNothingOutsideSetup() async {
-        let store = makeStore(phase: .off) { $0.filesClient.confirmTwoFactorSetup = { _, _ in Issue.record("no setup"); return [] } }
+        let store = makeStore(phase: .off, confirm: { [codes] in codes })
 
         await store.send(.codeChanged("123456")) { $0.code = "123456" }
+        #expect(confirmCalls.value.isEmpty)
     }
 
     @Test
@@ -224,6 +263,25 @@ struct TwoFactorFeatureTests {
         }
     }
 
+    @Test
+    func cancellingSetupWhileAConfirmationIsInFlightDropsItsAnswer() async {
+        let gate = AsyncGate()
+        let store = makeStore(phase: .enrolling(setup), confirm: { [codes] in
+            try await gate.wait()
+            return codes
+        })
+
+        await store.send(.codeChanged("123456")) { $0.code = "123456" }
+        await store.receive(\.confirmTapped) { $0.isWorking = true }
+        await store.send(.cancelSetupTapped) {
+            $0.phase = .off
+            $0.code = ""
+            $0.isWorking = false
+        }
+        await store.finish()
+        #expect(confirmCalls.value == ["123456"])
+    }
+
     // MARK: Recovery codes
 
     @Test
@@ -235,48 +293,50 @@ struct TwoFactorFeatureTests {
 
     @Test
     func doneIsIgnoredWhenNoCodesAreShown() async {
-        await makeStore(phase: .off).send(.recoveryCodesDoneTapped)
+        let store = makeStore(phase: .off)
+
+        await store.send(.recoveryCodesDoneTapped)
     }
 
     // MARK: Password prompt
 
     @Test
-    func newRecoveryCodesAskForThePasswordFirst() async {
-        let store = makeStore(phase: .on(recoveryCodesLeft: 1))
+    func newRecoveryCodesAskForThePasswordFirstAndNeedOneToConfirm() async {
+        let store = makeStore(phase: .on(recoveryCodesLeft: 1), replace: { [codes] in codes })
 
         await store.send(.newRecoveryCodesTapped) { $0.passwordPrompt = .init(action: .newRecoveryCodes) }
         #expect(!store.state.isPasswordPromptConfirmEnabled)
         await store.send(.passwordPromptConfirmed)
+        #expect(replaceCalls.value.isEmpty)
     }
 
     @Test
     func newRecoveryCodesSendThePasswordAndShowTheNewCodes() async {
-        let sent = LockIsolated<String?>(nil)
-        let store = makeStore(phase: .on(recoveryCodesLeft: 1)) {
-            $0.filesClient.replaceRecoveryCodes = { _, password in sent.setValue(password); return codes }
-        }
+        let store = makeStore(phase: .on(recoveryCodesLeft: 1), replace: { [codes] in codes })
 
         await store.send(.newRecoveryCodesTapped) { $0.passwordPrompt = .init(action: .newRecoveryCodes) }
         await store.send(.passwordChanged("hunter2")) { $0.passwordPrompt?.password = "hunter2" }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
-        await store.receive(\.recoveryCodesResponse) {
+        await store.receive(\.recoveryCodesResponse.success) {
             $0.isWorking = false
             $0.passwordPrompt = nil
             $0.phase = .showingRecoveryCodes(codes)
         }
-        #expect(sent.value == "hunter2")
+        #expect(replaceCalls.value == ["hunter2"])
+        #expect(disableCalls.value.isEmpty)
     }
 
     @Test
     func aWrongPasswordKeepsThePromptOpenWithTheMessage() async {
-        let store = makeStore(phase: .on(recoveryCodesLeft: 1)) { $0.filesClient.replaceRecoveryCodes = { _, _ in throw wrongPassword } }
+        let failure = wrongPassword
+        let store = makeStore(phase: .on(recoveryCodesLeft: 1), replace: { throw failure })
 
         await store.send(.newRecoveryCodesTapped) { $0.passwordPrompt = .init(action: .newRecoveryCodes) }
         await store.send(.passwordChanged("nope")) { $0.passwordPrompt?.password = "nope" }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
-        await store.receive(\.recoveryCodesResponse) {
+        await store.receive(\.recoveryCodesResponse.failure) {
             $0.isWorking = false
-            $0.errorMessage = wrongPassword.userMessage
+            $0.errorMessage = "Incorrect password"
         }
         #expect(store.state.passwordPrompt?.password == "nope")
         #expect(store.state.phase == .on(recoveryCodesLeft: 1))
@@ -284,30 +344,31 @@ struct TwoFactorFeatureTests {
 
     @Test
     func turningOffSendsThePasswordAndLandsOnOff() async {
-        let sent = LockIsolated<String?>(nil)
-        let store = makeStore(phase: .on(recoveryCodesLeft: 4)) { $0.filesClient.disableTwoFactor = { _, password in sent.setValue(password) } }
+        let store = makeStore(phase: .on(recoveryCodesLeft: 4), disable: {})
 
         await store.send(.turnOffTapped) { $0.passwordPrompt = .init(action: .turnOff) }
         await store.send(.passwordChanged("hunter2")) { $0.passwordPrompt?.password = "hunter2" }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
-        await store.receive(\.disableResponse) {
+        await store.receive(\.disableResponse.success) {
             $0.isWorking = false
             $0.passwordPrompt = nil
             $0.phase = .off
         }
-        #expect(sent.value == "hunter2")
+        #expect(disableCalls.value == ["hunter2"])
+        #expect(replaceCalls.value.isEmpty)
     }
 
     @Test
     func aWrongPasswordWhenTurningOffLeavesItOn() async {
-        let store = makeStore(phase: .on(recoveryCodesLeft: 4)) { $0.filesClient.disableTwoFactor = { _, _ in throw wrongPassword } }
+        let failure = wrongPassword
+        let store = makeStore(phase: .on(recoveryCodesLeft: 4), disable: { throw failure })
 
         await store.send(.turnOffTapped) { $0.passwordPrompt = .init(action: .turnOff) }
         await store.send(.passwordChanged("nope")) { $0.passwordPrompt?.password = "nope" }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
-        await store.receive(\.disableResponse) {
+        await store.receive(\.disableResponse.failure) {
             $0.isWorking = false
-            $0.errorMessage = wrongPassword.userMessage
+            $0.errorMessage = "Incorrect password"
         }
         #expect(store.state.phase == .on(recoveryCodesLeft: 4))
     }
@@ -326,11 +387,34 @@ struct TwoFactorFeatureTests {
     }
 
     @Test
-    func thePromptCannotBeOpenedWhileOffOrWorking() async {
-        await makeStore(phase: .off).send(.turnOffTapped)
-        await makeStore(phase: .off).send(.newRecoveryCodesTapped)
+    func cancellingThePromptWhileTurningOffDropsTheAnswer() async {
+        let gate = AsyncGate()
+        let store = makeStore(phase: .on(recoveryCodesLeft: 4), disable: { try await gate.wait() })
 
-        let working = makeStore(phase: .on(recoveryCodesLeft: 1), initial: { $0.isWorking = true })
-        await working.send(.turnOffTapped)
+        await store.send(.turnOffTapped) { $0.passwordPrompt = .init(action: .turnOff) }
+        await store.send(.passwordChanged("hunter2")) { $0.passwordPrompt?.password = "hunter2" }
+        await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
+        await store.send(.passwordPromptCancelled) {
+            $0.passwordPrompt = nil
+            $0.isWorking = false
+        }
+        await store.finish()
+        #expect(store.state.phase == .on(recoveryCodesLeft: 4))
+    }
+
+    @Test
+    func thePromptCannotBeOpenedWhileOff() async {
+        let store = makeStore(phase: .off)
+
+        await store.send(.turnOffTapped)
+        await store.send(.newRecoveryCodesTapped)
+    }
+
+    @Test
+    func thePromptCannotBeOpenedWhileWorking() async {
+        let store = makeStore(phase: .on(recoveryCodesLeft: 1), initial: { $0.isWorking = true })
+
+        await store.send(.turnOffTapped)
+        await store.send(.newRecoveryCodesTapped)
     }
 }
