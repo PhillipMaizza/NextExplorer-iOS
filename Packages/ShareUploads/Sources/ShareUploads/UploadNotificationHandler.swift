@@ -37,20 +37,50 @@ final class UploadNotificationHandler: NSObject, UNUserNotificationCenterDelegat
         }
     }
 
+    // The completion handler forms, not the async ones: Swift resumes an async delegate method on a
+    // cooperative thread and calls UIKit's completion handler there, and UIKit asserts the main
+    // thread (tapping an upload notification crashed the app). Each handler is called on main.
+
     func userNotificationCenter(
-        _: UNUserNotificationCenter, willPresent _: UNNotification
-    ) async -> UNNotificationPresentationOptions {
-        Self.foregroundOptions
+        _: UNUserNotificationCenter,
+        willPresent _: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        MainThreadCompletion { completionHandler(Self.foregroundOptions) }.call()
     }
 
     func userNotificationCenter(
-        _: UNUserNotificationCenter, didReceive response: UNNotificationResponse
-    ) async {
+        _: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let completion = MainThreadCompletion(completionHandler)
         switch Self.decision(actionIdentifier: response.actionIdentifier, userInfo: response.notification.request.content.userInfo) {
         case let .retry(batchID):
-            await retry(batchID)
+            let retry = retry
+            Task {
+                await retry(batchID)
+                completion.call()
+            }
         case .ignore:
-            break
+            completion.call()
+        }
+    }
+}
+
+/// A system completion handler that must run on the main thread, called there from any thread.
+struct MainThreadCompletion: @unchecked Sendable {
+    private let body: () -> Void
+
+    init(_ body: @escaping () -> Void) {
+        self.body = body
+    }
+
+    func call() {
+        if Thread.isMainThread {
+            body()
+        } else {
+            DispatchQueue.main.async(execute: body)
         }
     }
 }

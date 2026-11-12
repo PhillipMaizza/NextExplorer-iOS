@@ -268,4 +268,14 @@ struct UploadNotificationTests {
         await UploadNotifier.requestPermission(using: authorization(status: .notDetermined, fullFails: true, requests: requests))
         #expect(requests.options == [[.alert, .sound], [.alert, .provisional]])
     }
+
+    @Test("A system completion handler called from a background thread still runs on the main thread")
+    func completionRunsOnMain() async {
+        let ranOnMain = await withCheckedContinuation { continuation in
+            DispatchQueue.global().async {
+                MainThreadCompletion { continuation.resume(returning: Thread.isMainThread) }.call()
+            }
+        }
+        #expect(ranOnMain)
+    }
 }
