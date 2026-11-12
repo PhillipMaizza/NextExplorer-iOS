@@ -126,9 +126,8 @@
 
             let viewMenu = app.menuBars.menuBarItems["View"]
             let zoomIn = app.menuItems[L10n.Menu.zoomIn]
-            let enabled = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isEnabled == true"), object: zoomIn)
             viewMenu.click()
-            if XCTWaiter().wait(for: [enabled], timeout: UITestTimeout.standard) != .completed {
+            if !zoomIn.isEnabled(within: UITestTimeout.standard) {
                 // The preview may still be loading the first time the menu opens.
                 app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
                 viewMenu.click()
@@ -180,8 +179,7 @@
             folder.click()
             app.typeKey(XCUIKeyboardKey.downArrow, modifierFlags: .command)
 
-            let opened = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isEnabled == true"), object: sheetBack)
-            XCTAssertEqual(XCTWaiter().wait(for: [opened], timeout: UITestTimeout.standard), .completed, "⌘↓ should open the selected folder")
+            XCTAssertTrue(sheetBack.isEnabled(within: UITestTimeout.standard), "⌘↓ should open the selected folder")
         }
 
         // MARK: File actions
@@ -229,8 +227,7 @@
             app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
             let field = app.outlines.textFields.firstMatch
             XCTAssertTrue(field.waitToAppear(), "Return should rename the selected file in place")
-            let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: field)
-            XCTAssertEqual(XCTWaiter().wait(for: [focused], timeout: UITestTimeout.short), .completed)
+            XCTAssertTrue(field.isFocused(within: UITestTimeout.short))
             app.typeKey("a", modifierFlags: .command)
             field.typeText("todo.txt")
             app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
@@ -261,11 +258,9 @@
             file.click()
             let windowsBefore = app.windows.count
             app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
-            let opened = XCTNSPredicateExpectation(predicate: NSPredicate(format: "count > %d", windowsBefore), object: app.windows)
-            XCTAssertEqual(XCTWaiter().wait(for: [opened], timeout: UITestTimeout.standard), .completed, "Space should open Quick Look")
+            XCTAssertTrue(waitUntil(NSPredicate(format: "count > %d", windowsBefore), on: app.windows), "Space should open Quick Look")
             app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
-            let closed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "count == %d", windowsBefore), object: app.windows)
-            XCTAssertEqual(XCTWaiter().wait(for: [closed], timeout: UITestTimeout.standard), .completed, "Space again should close Quick Look")
+            XCTAssertTrue(waitUntil(NSPredicate(format: "count == %d", windowsBefore), on: app.windows), "Space again should close Quick Look")
         }
 
         /// A text preview is a sheet with its own Close and Edit, and Esc closes it.
@@ -358,19 +353,13 @@
 
             app.typeKey("f", modifierFlags: .command)
             let field = app.searchFields.firstMatch
-            let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: field)
-            XCTAssertEqual(XCTWaiter().wait(for: [focused], timeout: UITestTimeout.standard), .completed, "⌘F should focus the toolbar search")
+            XCTAssertTrue(field.isFocused(within: UITestTimeout.standard), "⌘F should focus the toolbar search")
             app.typeText(Fixture.searchQuery)
-
-            // A result row carries its name on the row itself rather than a separate text.
-            let hit = app.descendants(matching: .any)
-                .matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", Fixture.searchHit, Fixture.searchHit))
-                .firstMatch
-            XCTAssertTrue(hit.waitToAppear(), "⌘F then typing should show the search results")
+            XCTAssertTrue(searchHit(in: app).waitToAppear(), "⌘F then typing should show the search results")
         }
 
-        /// Typing in the toolbar search, with pauses long enough for the search to run between
-        /// keys, keeps every keystroke in the field.
+        /// Typing in the toolbar search, letting the search run between keys, keeps every keystroke
+        /// in the field.
         func testTypingInSearchKeepsTheFieldFocused() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
@@ -379,13 +368,16 @@
             let field = app.searchFields.firstMatch
             XCTAssertTrue(field.waitToAppear())
 
-            for character in Fixture.folderAlt {
+            for (typed, character) in Fixture.folderAlt.enumerated() {
                 app.typeText(String(character))
-                // Past the search debounce, so each partial query has run before the next key.
-                Thread.sleep(forTimeInterval: 1.3)
+                // From the server minimum on, each key resets the results to the instant matches and
+                // the debounced search adds the hit back, so the hit showing again means this partial
+                // query has run before the next key.
+                if typed + 1 >= Fixture.minimumSearchLength {
+                    XCTAssertTrue(searchHit(in: app).waitToAppear(), "Each partial query should run")
+                }
             }
-            let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: field)
-            XCTAssertEqual(XCTWaiter().wait(for: [focused], timeout: UITestTimeout.short), .completed, "The search field should keep focus while typing")
+            XCTAssertTrue(field.isFocused(within: UITestTimeout.short), "The search field should keep focus while typing")
             XCTAssertEqual(field.value as? String, Fixture.folderAlt, "Every keystroke should land in the search field")
         }
 
@@ -458,8 +450,7 @@
             toggle.click()
 
             let flipped = NSPredicate(format: "value != %@", NSNumber(value: before ?? 0))
-            let expectation = XCTNSPredicateExpectation(predicate: flipped, object: toggle)
-            XCTAssertEqual(XCTWaiter().wait(for: [expectation], timeout: UITestTimeout.standard), .completed, "Clicking should flip the toggle")
+            XCTAssertTrue(waitUntil(flipped, on: toggle), "Clicking should flip the toggle")
         }
 
         /// Picking another language in Settings rebuilds the Settings window in it, not only
@@ -528,6 +519,14 @@
         /// Text on screen, matched by label or value: table cells expose their text as a value.
         private func text(_ string: String, in app: XCUIApplication) -> XCUIElement {
             app.staticTexts.matching(NSPredicate(format: "label == %@ OR value == %@", string, string)).firstMatch
+        }
+
+        /// The mocked search's fixed hit. A result row carries its name on the row itself rather
+        /// than a separate text.
+        private func searchHit(in app: XCUIApplication) -> XCUIElement {
+            app.descendants(matching: .any)
+                .matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", Fixture.searchHit, Fixture.searchHit))
+                .firstMatch
         }
 
         /// A section in the main window's sidebar, a native selectable list row on the Mac.

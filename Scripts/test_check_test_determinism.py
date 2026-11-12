@@ -55,6 +55,28 @@ class CountTests(unittest.TestCase):
         self.assertEqual(check.count_in("// Date() is not used here\nlet x = 1 // UUID()\n"), {})
 
 
+class UITestTests(unittest.TestCase):
+    def test_a_ui_test_sleep_is_found(self):
+        text = "Thread.sleep(forTimeInterval: 1)\nusleep(200_000)\ntry await Task.sleep(for: .seconds(1))\n"
+        self.assertEqual(
+            check.count_patterns(text, check.UI_PATTERNS),
+            {"Thread.sleep": 2, "Task.sleep": 1},
+        )
+
+    def test_a_ui_test_may_wait_on_a_condition(self):
+        text = "let ok = waitUntil(predicate, on: element)\nlet now = Date()\nXCTWaiter().wait(for: [e], timeout: 3)\n"
+        self.assertEqual(check.count_patterns(text, check.UI_PATTERNS), {})
+
+    def test_the_ui_tests_and_not_the_qa_harness_are_scanned(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / check.UI_TESTS / check.UI_EXCLUDED).mkdir(parents=True)
+            (root / check.UI_TESTS / "Walk.swift").write_text("usleep(1)\n")
+            (root / check.UI_TESTS / check.UI_EXCLUDED / "Harness.swift").write_text("usleep(1)\n")
+            self.assertEqual(check.scan(root), {"NextExplorerUITests/Walk.swift": {"Thread.sleep": 1}})
+
+
 class ViolationTests(unittest.TestCase):
     def test_no_uses_means_no_violations(self):
         self.assertEqual(check.violations({}), [])

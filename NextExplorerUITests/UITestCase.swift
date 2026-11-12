@@ -15,6 +15,8 @@ class UITestCase: XCTestCase {
         static let searchQuery = "vacation"
         /// Stable first hit the mocked search returns (mirrors `UITestSupport.searchHitName`).
         static let searchHit = "Quarterly Report.txt"
+        /// The shortest query the server searches (mirrors `FilesClient.minimumSearchTermLength`).
+        static let minimumSearchLength = 3
         /// Image hit the mocked search returns (mirrors `UITestSupport.imageSearchHitName`).
         static let imageSearchHit = "Beach.jpg"
         /// A folder the mocked backend rejects, driving the create failure path (mirrors
@@ -93,11 +95,12 @@ class UITestCase: XCTestCase {
     func tapCenter(of element: XCUIElement, in app: XCUIApplication = XCUIApplication(), file: StaticString = #filePath, line: UInt = #line) {
         // The frame can still be empty while the bar lays out; never fall back to `tap()`, which
         // is the hanging scroll path.
-        var frame = element.frame
-        for _ in 0 ..< 10 where frame.isEmpty || frame.isInfinite {
-            usleep(200_000)
-            frame = element.frame
+        let hasFrame = NSPredicate { object, _ in
+            guard let frame = (object as? XCUIElement)?.frame else { return false }
+            return !frame.isEmpty && !frame.isInfinite
         }
+        _ = waitUntil(hasFrame, on: element, timeout: UITestTimeout.short)
+        let frame = element.frame
         guard !frame.isEmpty, !frame.isInfinite else {
             XCTFail("\(element) has no on screen frame to tap", file: file, line: line)
             return
@@ -188,6 +191,12 @@ enum UITestTimeout {
     static let tabTapAttempts = 3
 }
 
+/// Waits until `predicate` holds for `object` (an element or a query) and returns whether it did,
+/// without asserting. Waits on a condition, never for a fixed time.
+func waitUntil(_ predicate: NSPredicate, on object: Any, timeout: TimeInterval = UITestTimeout.standard) -> Bool {
+    XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: predicate, object: object)], timeout: timeout) == .completed
+}
+
 extension XCUIElement {
     /// Waits for the element to exist, failing the test with a clear message otherwise.
     @discardableResult
@@ -215,17 +224,23 @@ extension XCUIElement {
     /// Waits for the element to stop existing (e.g. a sheet dismissing on success).
     @discardableResult
     func waitToVanish(_ timeout: TimeInterval = UITestTimeout.standard) -> Bool {
-        let gone = NSPredicate(format: "exists == false")
-        let expectation = XCTNSPredicateExpectation(predicate: gone, object: self)
-        return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+        waitUntil(NSPredicate(format: "exists == false"), on: self, timeout: timeout)
+    }
+
+    /// Returns whether the element has keyboard focus within the budget, without asserting.
+    func isFocused(within timeout: TimeInterval = UITestTimeout.standard) -> Bool {
+        waitUntil(NSPredicate(format: "hasKeyboardFocus == true"), on: self, timeout: timeout)
+    }
+
+    /// Returns whether the element is enabled within the budget, without asserting.
+    func isEnabled(within timeout: TimeInterval = UITestTimeout.standard) -> Bool {
+        waitUntil(NSPredicate(format: "isEnabled == true"), on: self, timeout: timeout)
     }
 
     /// Waits for the element to become hittable, failing otherwise.
     @discardableResult
     func waitToBeHittable(_ timeout: TimeInterval = UITestTimeout.standard, file: StaticString = #filePath, line: UInt = #line) -> Bool {
-        let hittable = NSPredicate(format: "isHittable == true")
-        let expectation = XCTNSPredicateExpectation(predicate: hittable, object: self)
-        let ok = XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+        let ok = waitUntil(NSPredicate(format: "isHittable == true"), on: self, timeout: timeout)
         XCTAssertTrue(ok, "Expected \(self) to be hittable", file: file, line: line)
         return ok
     }

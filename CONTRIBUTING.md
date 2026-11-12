@@ -80,6 +80,7 @@ Also:
 - Each test owns its state: a unique temporary directory or `UserDefaults` suite per test.
 - A test that fails only on CI has a race. Fix the race. Do not add a retry or a longer timeout.
 - When you edit a test file, remove its existing uses of the patterns above in the same change.
+- UI tests (`NextExplorerUITests`) drive a real app, so they wait on a condition with a timeout (`waitToAppear`, `waitToVanish`, `isFocused(within:)`, `waitUntil(_:on:)` in `UITestCase.swift`). They never sleep for a fixed time: the guard fails `Thread.sleep`, `usleep`, `Task.sleep`, a clock sleep and `asyncAfter` there too.
 
 ## Scripts
 
