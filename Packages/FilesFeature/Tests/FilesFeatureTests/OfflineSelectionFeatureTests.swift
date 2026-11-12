@@ -64,7 +64,17 @@ struct OfflineSelectionFeatureTests {
         let store = TestStore(initialState: OfflineSelectionFeature.State(serverURL: serverURL)) {
             OfflineSelectionFeature()
         } withDependencies: {
-            $0.filesClient.fetchUsage = { _, path in StorageUsage(path: path, size: 5000, free: 0, total: 0) }
+            $0.filesClient.fetchUsage = { _, path in
+                Issue.record("the estimate must not read the volume usage of \(path)")
+                return StorageUsage(path: path, size: 16_000_000_000_000, free: 0, total: 0)
+            }
+            $0.filesClient.fetchMetadata = { _, path in
+                FileMetadata(
+                    path: path, name: path, kind: "directory", size: 4096,
+                    dateModified: Date(timeIntervalSince1970: 1), dateCreated: Date(timeIntervalSince1970: 1),
+                    directory: FileMetadata.DirectorySummary(totalSize: 5000, fileCount: 3, dirCount: 1, truncated: false)
+                )
+            }
         }
         let docs = folder("Docs")
 
@@ -73,11 +83,42 @@ struct OfflineSelectionFeatureTests {
             $0.estimatingPaths = ["Docs"]
         }
         #expect(store.state.isEstimating)
-        await store.receive(\.usageResponse) {
+        await store.receive(\.folderSizeResponse) {
             $0.estimatingPaths = []
             $0.folderSizes["Docs"] = 5000
         }
         #expect(store.state.estimatedBytes == 5000)
+    }
+
+    @Test
+    func aFolderSizeFailureLeavesTheEstimateAtZeroAndStopsEstimating() async {
+        let store = TestStore(initialState: OfflineSelectionFeature.State(serverURL: serverURL)) {
+            OfflineSelectionFeature()
+        } withDependencies: {
+            $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.server(statusCode: 500) }
+        }
+        let docs = folder("Docs")
+
+        await store.send(.selectionToggled(docs)) {
+            $0.selection[docs.id] = docs
+            $0.estimatingPaths = ["Docs"]
+        }
+        await store.receive(\.folderSizeResponse) {
+            $0.estimatingPaths = []
+        }
+        #expect(store.state.estimatedBytes == 0)
+        #expect(store.state.canConfirm)
+    }
+
+    @Test
+    func deselectingAFolderBeforeItsSizeLandsIgnoresTheLateSize() async {
+        let store = TestStore(initialState: OfflineSelectionFeature.State(serverURL: serverURL)) {
+            OfflineSelectionFeature()
+        }
+        let docs = folder("Docs")
+        await store.send(.folderSizeResponse(path: docs.id, .success(9000)))
+        #expect(store.state.folderSizes.isEmpty)
+        #expect(store.state.estimatedBytes == 0)
     }
 
     @Test
