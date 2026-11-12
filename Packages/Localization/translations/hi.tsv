@@ -1077,6 +1077,7 @@ apiTokens.neverExpires	कभी समाप्त नहीं होता
 apiTokens.neverUsed	कभी उपयोग नहीं किया गया
 apiTokens.newButton	नया टोकन
 apiTokens.passwordHint	टोकन बनाने के लिए अपना पासवर्ड दर्ज करें।
+apiTokens.noPasswordWarning	आपके खाते में कोई पासवर्ड नहीं है, इसलिए टोकन बिना पासवर्ड पूछे बनाए जाते हैं। टोकन बनाने को सुरक्षित करने के लिए अपने खाते में पासवर्ड जोड़ें।
 apiTokens.renameAction	नाम बदलें
 apiTokens.renameSave	सहेजें
 apiTokens.renameTitle	टोकन का नाम बदलें

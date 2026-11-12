@@ -7,10 +7,10 @@ import Localization
 
 /// The "Download Files for Offline Use" chooser: navigates the same `GET /api/browse` tree as
 /// Browse, but shows files as well as folders and lets the user multi select any mix of them. A
-/// selected folder is pinned whole; its recursive size (`GET /api/usage`) is folded into the running
-/// estimate so the user sees roughly how much they are about to download before confirming. Confirm
-/// hands the chosen roots back to Settings, which forwards them to the `OfflineDownloadsFeature`
-/// engine.
+/// selected folder is pinned whole; its recursive size (`GET /api/metadata`, the `directory.totalSize`
+/// sum of every file under it) is folded into the running estimate so the user sees roughly how much
+/// they are about to download before confirming. Confirm hands the chosen roots back to Settings,
+/// which forwards them to the `OfflineDownloadsFeature` engine.
 @Reducer
 public struct OfflineSelectionFeature {
     @ObservableState
@@ -23,8 +23,8 @@ public struct OfflineSelectionFeature {
         /// Selected roots (files or folders), keyed by `FileItem.id`, across every folder the user
         /// has drilled through.
         public var selection: [String: FileItem] = [:]
-        /// Recursive byte size for each selected folder, from `fetchUsage`. Files use `item.size`
-        /// directly.
+        /// Recursive byte size for each selected folder, from its metadata directory summary. Files
+        /// use `item.size` directly. Never `GET /api/usage`: that reports the whole volume.
         public var folderSizes: [String: Int64] = [:]
         /// Folders whose size is still being fetched, so the estimate can show "calculating".
         public var estimatingPaths: Set<String> = []
@@ -50,7 +50,7 @@ public struct OfflineSelectionFeature {
         }
 
         /// Total bytes the current selection would download: each selected folder's recursive size
-        /// (0 until its usage lands) plus each selected file's own size.
+        /// (0 until its size lands) plus each selected file's own size.
         public var estimatedBytes: Int64 {
             selection.values.reduce(Int64(0)) { total, item in
                 item.isDirectory ? total + (folderSizes[item.id] ?? 0) : total + item.size
@@ -73,7 +73,7 @@ public struct OfflineSelectionFeature {
         case backTapped
         case breadcrumbTapped(path: String)
         case selectionToggled(FileItem)
-        case usageResponse(path: String, Result<StorageUsage, FilesClientError>)
+        case folderSizeResponse(path: String, Result<Int64, FilesClientError>)
         case retryTapped
         case confirmTapped
         case cancelTapped
@@ -87,7 +87,7 @@ public struct OfflineSelectionFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.offlineFileStore) var offlineFileStore
-    private enum CancelID: Hashable { case load, usage(String) }
+    private enum CancelID: Hashable { case load, folderSize(String) }
 
     public init() {}
 
@@ -150,7 +150,7 @@ public struct OfflineSelectionFeature {
                     state.selection[item.id] = nil
                     state.folderSizes[item.id] = nil
                     state.estimatingPaths.remove(item.id)
-                    return .cancel(id: CancelID.usage(item.id))
+                    return .cancel(id: CancelID.folderSize(item.id))
                 }
                 state.selection[item.id] = item
                 guard item.isDirectory else { return .none }
@@ -159,18 +159,20 @@ public struct OfflineSelectionFeature {
                 let filesClient = filesClient
                 let path = item.id
                 return .run { send in
-                    try await send(.usageResponse(path: path, apiResult { try await filesClient.fetchUsage(serverURL, path) }))
+                    try await send(.folderSizeResponse(path: path, apiResult {
+                        try await filesClient.fetchMetadata(serverURL, path).directory?.totalSize ?? 0
+                    }))
                 }
-                .cancellable(id: CancelID.usage(path), cancelInFlight: true)
+                .cancellable(id: CancelID.folderSize(path), cancelInFlight: true)
 
-            case let .usageResponse(path, .success(usage)):
+            case let .folderSizeResponse(path, .success(size)):
                 state.estimatingPaths.remove(path)
                 // Ignore a size for a folder the user has since deselected.
                 guard state.selection[path] != nil else { return .none }
-                state.folderSizes[path] = usage.size
+                state.folderSizes[path] = size
                 return .none
 
-            case let .usageResponse(path, .failure):
+            case let .folderSizeResponse(path, .failure):
                 state.estimatingPaths.remove(path)
                 return .none
 

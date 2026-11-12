@@ -1071,6 +1071,7 @@ apiTokens.neverExpires	永不過期
 apiTokens.neverUsed	從未使用
 apiTokens.newButton	新增權杖
 apiTokens.passwordHint	輸入您的密碼以建立權杖。
+apiTokens.noPasswordWarning	您的帳號沒有密碼，因此建立權杖時不會要求輸入密碼。請為帳號加入密碼以保護權杖的建立。
 apiTokens.renameAction	重新命名
 apiTokens.renameSave	儲存
 apiTokens.renameTitle	重新命名權杖

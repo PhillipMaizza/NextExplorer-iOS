@@ -1077,6 +1077,7 @@ apiTokens.neverExpires	Verloopt nooit
 apiTokens.neverUsed	Nooit gebruikt
 apiTokens.newButton	Nieuw token
 apiTokens.passwordHint	Voer je wachtwoord in om een token te maken.
+apiTokens.noPasswordWarning	Je account heeft geen wachtwoord, dus tokens worden gemaakt zonder erom te vragen. Voeg een wachtwoord toe aan je account om het maken van tokens te beveiligen.
 apiTokens.renameAction	Naam wijzigen
 apiTokens.renameSave	Bewaren
 apiTokens.renameTitle	Naam van token wijzigen

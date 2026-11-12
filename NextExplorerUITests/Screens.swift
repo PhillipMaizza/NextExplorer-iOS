@@ -333,7 +333,7 @@ struct BrowseScreen {
         app.labeledButton(L10n.Common.close)
     }
 
-    /// The transient "Sync completed" toast a successful pull to refresh raises.
+    /// The "Sync completed" toast, raised on the Mac only; iOS confirms a refresh with a haptic.
     var syncCompletedToast: XCUIElement {
         app.staticTexts[L10n.Common.syncCompleted]
     }
@@ -530,6 +530,13 @@ struct APITokensScreen {
 
 struct SettingsScreen {
     let app: XCUIApplication
+
+    /// A root row that opens one section page: "general", "display", "storage", "offline" or
+    /// "administration".
+    func pageRow(_ name: String) -> XCUIElement {
+        app.descendants(matching: .any)[AccessibilityIdentifiers.Settings.page(name)].firstMatch
+    }
+
     var languageRow: XCUIElement {
         app.staticTexts[L10n.Settings.rowLanguage]
     }

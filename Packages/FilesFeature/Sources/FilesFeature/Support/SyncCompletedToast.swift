@@ -2,10 +2,9 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// Raises a "Sync completed" toast each time a pull to refresh finishes without error. The
-/// list screens already flip a `didFinishRefreshing` toggle after their refresh effect
-/// resolves (and drive a success haptic off it); this hangs the confirmation toast on the
-/// same signal so every tab confirms a manual refresh the same way.
+/// Raises a "Sync completed" toast each time a refresh finishes without error. Mac only: it has no
+/// haptics, so the toast is the confirmation of a toolbar or ⌘R refresh. iOS confirms with the
+/// success haptic alone.
 private struct SyncCompletedToast: ViewModifier {
     let trigger: Bool
     let isErrorFree: Bool

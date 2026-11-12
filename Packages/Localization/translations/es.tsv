@@ -1077,6 +1077,7 @@ apiTokens.neverExpires	No caduca nunca
 apiTokens.neverUsed	Nunca usado
 apiTokens.newButton	Nuevo token
 apiTokens.passwordHint	Introduce tu contraseña para crear un token.
+apiTokens.noPasswordWarning	Tu cuenta no tiene contraseña, así que los tokens se crean sin pedirla. Añade una contraseña a tu cuenta para proteger la creación de tokens.
 apiTokens.renameAction	Renombrar
 apiTokens.renameSave	Guardar
 apiTokens.renameTitle	Renombrar token

@@ -1101,6 +1101,7 @@ apiTokens.neverExpires	لا تنتهي صلاحيته
 apiTokens.neverUsed	لم يُستخدم قط
 apiTokens.newButton	رمز جديد
 apiTokens.passwordHint	أدخل كلمة السر لإنشاء رمز.
+apiTokens.noPasswordWarning	لا توجد كلمة سر لحسابك، لذلك تُنشأ الرموز دون طلب كلمة السر. أضف كلمة سر إلى حسابك لحماية إنشاء الرموز.
 apiTokens.renameAction	إعادة تسمية
 apiTokens.renameSave	حفظ
 apiTokens.renameTitle	إعادة تسمية الرمز

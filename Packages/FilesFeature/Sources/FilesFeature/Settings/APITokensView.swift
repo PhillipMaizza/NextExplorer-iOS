@@ -4,13 +4,15 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum Metrics {
+enum APITokensMetrics {
     static let sectionSpacing: CGFloat = .space16
     static let horizontalPadding: CGFloat = .space16
     static let rowIconSize: CGFloat = .iconSmall
     static let sheetMinWidth: CGFloat = 420
     static let sheetMinHeight: CGFloat = 460
 }
+
+private typealias Metrics = APITokensMetrics
 
 /// Turns the server's ISO 8601 timestamps into something to read, and says whether one has passed.
 enum APITokenDates {
@@ -210,76 +212,6 @@ private struct APITokenRow: View {
     }
 }
 
-private struct APITokenCreateSheet: View {
-    @Bindable var store: StoreOf<APITokensFeature>
-    @FocusState private var isNameFocused: Bool
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Metrics.sectionSpacing) {
-                    LabeledField(L10n.ApiTokens.fieldName, uppercased: false) {
-                        DSTextField(
-                            L10n.ApiTokens.fieldName,
-                            text: Binding(get: { store.createForm?.name ?? "" }, set: { store.send(.nameChanged($0)) }),
-                            prompt: Text(L10n.ApiTokens.namePlaceholder),
-                            focused: $isNameFocused
-                        )
-                        .accessibilityIdentifier(AccessibilityIdentifiers.Settings.apiTokenNameField)
-                    }
-                    LabeledField(L10n.ApiTokens.fieldAccess, uppercased: false) {
-                        Picker(L10n.ApiTokens.fieldAccess, selection: Binding(get: { store.createForm?.scope ?? .read }, set: { store.send(.scopeChanged($0)) })) {
-                            ForEach(APIToken.Scope.allCases, id: \.self) { scope in
-                                Text(scope == .write ? L10n.ApiTokens.scopeWrite : L10n.ApiTokens.scopeRead).tag(scope)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .labelsHidden()
-                    }
-                    LabeledField(L10n.ApiTokens.fieldExpiry, uppercased: false) {
-                        Picker(L10n.ApiTokens.fieldExpiry, selection: Binding(get: { store.createForm?.expiry ?? .days90 }, set: { store.send(.expiryChanged($0)) })) {
-                            ForEach(APITokensFeature.Expiry.allCases, id: \.self) { expiry in
-                                Text(expiry.title).tag(expiry)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
-                    }
-                    if store.requiresPassword {
-                        LabeledField(L10n.ApiTokens.fieldPassword, uppercased: false) {
-                            DSSecureField(L10n.ApiTokens.fieldPassword, text: Binding(get: { store.createForm?.password ?? "" }, set: { store.send(.passwordChanged($0)) }))
-                                .textContentType(.password)
-                        }
-                        Text(L10n.ApiTokens.passwordHint).type(.body3(.regular), style: .secondary)
-                    }
-                    if let message = store.errorMessage {
-                        DSErrorCard(message)
-                    }
-                    DSButton(L10n.ApiTokens.createSubmit, style: .primary, isLoading: store.isWorking) {
-                        store.send(.createSubmitted)
-                    }
-                    .disabled(!store.isCreateEnabled)
-                    .formActionAlignment()
-                }
-                .padding(.horizontal, Metrics.horizontalPadding)
-                .padding(.vertical, Metrics.sectionSpacing)
-            }
-            .backgroundGradient()
-            .navigationTitle(L10n.ApiTokens.formTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .scrollDismissesKeyboard(.interactively)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Common.cancel) { store.send(.createCancelled) }
-                }
-            }
-        }
-        #if os(macOS)
-        .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
-        #endif
-    }
-}
-
 /// The only time the secret is on screen, so it cannot be swiped away by accident.
 private struct APITokenIssuedSheet: View {
     let issued: IssuedAPIToken
@@ -317,17 +249,6 @@ private struct APITokenIssuedSheet: View {
         #if os(macOS)
             .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
         #endif
-    }
-}
-
-private extension APITokensFeature.Expiry {
-    var title: String {
-        switch self {
-        case .days30: L10n.ApiTokens.expiry30
-        case .days90: L10n.ApiTokens.expiry90
-        case .year: L10n.ApiTokens.expiryYear
-        case .never: L10n.ApiTokens.expiryNever
-        }
     }
 }
 

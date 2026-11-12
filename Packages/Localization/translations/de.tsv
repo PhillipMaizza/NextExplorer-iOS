@@ -1077,6 +1077,7 @@ apiTokens.neverExpires	Läuft nie ab
 apiTokens.neverUsed	Nie verwendet
 apiTokens.newButton	Neuer Token
 apiTokens.passwordHint	Gib dein Passwort ein, um einen Token zu erstellen.
+apiTokens.noPasswordWarning	Dein Konto hat kein Passwort, daher werden Tokens ohne Passwortabfrage erstellt. Füge deinem Konto ein Passwort hinzu, um das Erstellen von Tokens zu schützen.
 apiTokens.renameAction	Umbenennen
 apiTokens.renameSave	Sichern
 apiTokens.renameTitle	Token umbenennen

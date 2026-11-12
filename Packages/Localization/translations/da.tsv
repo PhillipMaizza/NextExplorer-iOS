@@ -777,6 +777,7 @@ apiTokens.expiryYear	Om 1 år
 apiTokens.expiryNever	Aldrig
 apiTokens.fieldPassword	Din adgangskode
 apiTokens.passwordHint	Indtast din adgangskode for at oprette et token.
+apiTokens.noPasswordWarning	Din konto har ingen adgangskode, så tokens oprettes uden at spørge om en. Tilføj en adgangskode til din konto for at beskytte oprettelsen af tokens.
 apiTokens.createSubmit	Opret token
 apiTokens.issuedTitle	Kopiér dit token
 apiTokens.issuedIntro	Dette er den eneste gang, det vises. Opbevar det et sikkert sted. Hvis du mister det, skal du tilbagekalde det og oprette et nyt.

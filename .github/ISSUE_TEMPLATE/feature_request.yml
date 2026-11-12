@@ -1,0 +1,51 @@
+name: Feature request
+description: Suggest something new or a change to how the app works.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do, and what gets in the way today?
+      placeholder: I upload photos every day and always pick the same folder by hand.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like
+      description: How you picture it working, step by step.
+      placeholder: A default folder in Settings, so sharing to NextExplorer uploads there in one tap.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Other ways to solve it, or how you work around it today.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - iPhone
+        - iPad
+        - Mac
+        - Share extension (sharing from another app)
+    validations:
+      required: true
+
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: Screenshots, mockups, or how another app does it.
+    validations:
+      required: false
