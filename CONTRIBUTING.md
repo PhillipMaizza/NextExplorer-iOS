@@ -15,7 +15,7 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 
 ## Proposing a change
 
-1. Open an issue first for anything non-trivial, so the direction is agreed before code is written.
+1. Open an issue first for anything non-trivial, so the direction is agreed before code is written. Bug reports and feature requests use the issue forms, which ask for what a fix needs: steps to reproduce, expected and observed behavior, app, system and server versions, and how the app reaches the server.
 2. Branch from `main`. Branches are named `feature/NXTIOS-short-slug` (for example `feature/NXTIOS-grid-spacing`). No bare descriptive branch names.
 3. Keep the change on the one working branch and open a pull request against `main` when it is ready. Describe what changed and why, and reference the issue.
 
@@ -79,6 +79,7 @@ Also:
 - Work that must overlap is held and released with explicit gates, never a timing window.
 - Each test owns its state: a unique temporary directory or `UserDefaults` suite per test.
 - A test that fails only on CI has a race. Fix the race. Do not add a retry or a longer timeout.
+- UI tests in CI rerun a failed test once, on its own (`Scripts/ci-ui-tests.py`). A test that passes only on that rerun is flagged on the pull request as flaky: fix it like any other failure. UI tests run on `main`, from "Run workflow" on a branch, and on a pull request labelled `ui-tests` (from the next push after labelling).
 - When you edit a test file, remove its existing uses of the patterns above in the same change.
 
 ## Scripts
