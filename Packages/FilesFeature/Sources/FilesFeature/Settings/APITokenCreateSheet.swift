@@ -48,7 +48,7 @@ struct APITokenCreateSheet: View {
                     if store.requiresPassword {
                         LabeledField(L10n.ApiTokens.fieldPassword, uppercased: false) {
                             DSSecureField(L10n.ApiTokens.fieldPassword, text: Binding(get: { store.createForm?.password ?? "" }, set: { store.send(.passwordChanged($0)) }))
-                                .credentialContentType(.password)
+                                .textContentType(.password)
                         }
                         Text(L10n.ApiTokens.passwordHint).type(.body3(.regular), style: .secondary)
                     }

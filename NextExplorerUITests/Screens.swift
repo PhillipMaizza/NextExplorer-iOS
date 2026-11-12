@@ -119,7 +119,36 @@ struct LoginScreen {
     ) {
         enterServer(host, file: file, line: line)
         submitCredentials(identifier: identifier, password: password, file: file, line: line)
+        declineSavePassword()
     }
+
+    /// After an accepted password iOS may offer to save it, in a sheet inside the app that takes the
+    /// next tap (a 2FA test tapped it instead of "Use a recovery code"). XCUITest's interruption
+    /// monitors only see other processes, so it is declined here, waiting a short while for it.
+    private func declineSavePassword() {
+        #if os(iOS)
+            let notNow = app.sheets.buttons[Self.notNowButton]
+            guard notNow.appears(within: UITestTimeout.short) else { return }
+            // A page that focuses a field (the 2FA code boxes) raises the keyboard under the sheet
+            // first and moves the sheet above it only once the keyboard is up: tapping before that
+            // hits the keyboard. So let the keyboard settle, then the sheet, then tap; once more if
+            // it is still up a moment later.
+            let keyboard = app.keyboards.firstMatch
+            if keyboard.exists {
+                keyboard.waitForFrameToSettle()
+            }
+            notNow.waitForFrameToSettle()
+            notNow.tap()
+            if !notNow.waitToVanish(UITestTimeout.short) {
+                notNow.waitForFrameToSettle()
+                notNow.tap()
+            }
+            XCTAssertTrue(notNow.waitToVanish(), "The Save Password sheet should close")
+        #endif
+    }
+
+    /// The button iOS's Save Password sheet offers to decline it (the simulator runs in English).
+    private static let notNowButton = "Not Now"
 
     /// Enters the server address and continues to the credentials page.
     func enterServer(_ host: String = UITestCase.Fixture.serverHost, file: StaticString = #filePath, line: UInt = #line) {

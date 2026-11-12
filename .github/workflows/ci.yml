@@ -538,6 +538,9 @@ jobs:
           echo "Booting ${SIM_DEVICE} (${UDID})"
           xcrun simctl boot "${UDID}" || true
           xcrun simctl bootstatus "${UDID}" -b
+          # No "Save Password?" sheet after a sign in: inside the app it took the next tap, and on
+          # the 2FA code page the number pad covered its Not Now button.
+          xcrun simctl spawn "${UDID}" defaults write com.apple.WebUI AutoFillPasswords -bool NO
 
       - name: Run XCUITests
         # One simulator, no parallel clones: the scheme marks the UI tests parallelizable, which

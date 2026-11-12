@@ -45,18 +45,18 @@ struct ChangePasswordView: View {
                 if store.mode == .change {
                     LabeledField(L10n.ChangePassword.fieldCurrentPassword, uppercased: false) {
                         DSSecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
-                            .credentialContentType(.password)
+                            .textContentType(.password)
                     }
                 }
 
                 VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
                     LabeledField(L10n.ChangePassword.fieldNewPasswordLabel, error: newPasswordErrorText, uppercased: false) {
                         DSSecureField(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
-                            .credentialContentType(.newPassword)
+                            .textContentType(.newPassword)
                     }
                     LabeledField(L10n.ChangePassword.fieldConfirmPasswordLabel, error: confirmErrorText, uppercased: false) {
                         DSSecureField(L10n.ChangePassword.fieldConfirmPassword, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
-                            .credentialContentType(.newPassword)
+                            .textContentType(.newPassword)
                     }
                 }
 

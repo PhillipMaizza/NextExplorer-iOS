@@ -161,7 +161,7 @@ struct TwoFactorView: View {
                 .type(.body3(.regular), style: .secondary)
             LabeledField(L10n.TwoFactor.passwordField, uppercased: false) {
                 DSSecureField(L10n.TwoFactor.passwordField, text: Binding(get: { prompt.password }, set: { store.send(.passwordChanged($0)) }))
-                    .credentialContentType(.password)
+                    .textContentType(.password)
             }
             DSButton(
                 L10n.TwoFactor.passwordConfirmButton,

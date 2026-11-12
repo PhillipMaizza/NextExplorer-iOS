@@ -677,7 +677,7 @@ public struct LoginFormView: View {
             .textFieldStyle(.plain)
             .type(.body1(.regular))
             .tint(Color.accent)
-            .credentialContentType(.username)
+            .textContentType(.username)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
             .accessibilityIdentifier(AccessibilityIdentifiers.Login.identifierField)
@@ -713,7 +713,7 @@ public struct LoginFormView: View {
                     // staying mounted with the same content type makes AutoFill's
                     // username/password pairing ambiguous and it silently declines to fill
                     // either (this is what broke Bitwarden autofill).
-                    .credentialContentType(store.isPasswordVisible ? nil : .password)
+                    .textContentType(store.isPasswordVisible ? nil : .password)
 
                     TextField(
                         text: Binding(get: { store.password }, set: { store.send(.passwordChanged($0)) }),
@@ -725,7 +725,7 @@ public struct LoginFormView: View {
                     .allowsHitTesting(store.isPasswordVisible)
                     .accessibilityHidden(!store.isPasswordVisible)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Login.passwordFieldVisible)
-                    .credentialContentType(store.isPasswordVisible ? .password : nil)
+                    .textContentType(store.isPasswordVisible ? .password : nil)
                 }
                 .textFieldStyle(.plain)
                 .type(.body1(.regular))
