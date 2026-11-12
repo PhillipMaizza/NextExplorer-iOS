@@ -15,12 +15,6 @@ private enum Constants {
     static let inactiveOpacity: Double = 0.35
 }
 
-@MainActor
-private func sectionHeader(_ title: String) -> some View {
-    DSFieldLabel(title)
-        .accessibilityAddTraits(.isHeader)
-}
-
 // MARK: Accounts (multi-server switcher)
 
 /// The signed-in servers/accounts. The active account sits on top with a disclosure chevron;
@@ -56,7 +50,7 @@ struct SettingsAccountsSection: View {
             }
             addAccountRow
         } header: {
-            sectionHeader(L10n.Settings.sectionAccounts)
+            SettingsSectionHeader(L10n.Settings.sectionAccounts)
         }
         .listRowBackground(Color.backgroundSecondary)
     }
@@ -241,7 +235,7 @@ struct SettingsUsersSection: View {
                     store.send(.userManagementButtonTapped)
                 }
             } header: {
-                sectionHeader(L10n.Settings.sectionUsers)
+                SettingsSectionHeader(L10n.Settings.sectionUsers)
             }
             .listRowBackground(Color.backgroundSecondary)
         }
@@ -262,7 +256,7 @@ struct SettingsAPITokensSection: View {
             }
             .accessibilityIdentifier(AccessibilityIdentifiers.Settings.apiTokensRow)
         } header: {
-            sectionHeader(L10n.ApiTokens.sectionHeader)
+            SettingsSectionHeader(L10n.ApiTokens.sectionHeader)
         }
         .listRowBackground(Color.backgroundSecondary)
     }
@@ -306,7 +300,7 @@ struct SettingsServerAdminSection: View {
                     store.send(.activityLogButtonTapped)
                 }
             } header: {
-                sectionHeader(L10n.Settings.sectionAdmin)
+                SettingsSectionHeader(L10n.Settings.sectionAdmin)
             }
             .listRowBackground(Color.backgroundSecondary)
         }
@@ -341,7 +335,7 @@ struct SettingsServerStorageSection: View {
                     .padding(.vertical, .space4)
                 }
             } header: {
-                sectionHeader(L10n.Settings.sectionServerStorage)
+                SettingsSectionHeader(L10n.Settings.sectionServerStorage)
             }
             .listRowBackground(Color.backgroundSecondary)
         }

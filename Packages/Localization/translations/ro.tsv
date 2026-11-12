@@ -1083,6 +1083,7 @@ apiTokens.neverExpires	Nu expiră niciodată
 apiTokens.neverUsed	Niciodată folosit
 apiTokens.newButton	Token nou
 apiTokens.passwordHint	Introdu parola pentru a crea un token.
+apiTokens.noPasswordWarning	Contul tău nu are parolă, așa că tokenurile sunt create fără a o cere. Adaugă o parolă contului pentru a proteja crearea tokenurilor.
 apiTokens.renameAction	Redenumește
 apiTokens.renameSave	Salvează
 apiTokens.renameTitle	Redenumește tokenul

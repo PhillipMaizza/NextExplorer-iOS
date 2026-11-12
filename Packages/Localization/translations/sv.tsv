@@ -1077,6 +1077,7 @@ apiTokens.neverExpires	Går aldrig ut
 apiTokens.neverUsed	Aldrig använd
 apiTokens.newButton	Ny token
 apiTokens.passwordHint	Ange ditt lösenord för att skapa en token.
+apiTokens.noPasswordWarning	Ditt konto har inget lösenord, så token skapas utan att fråga efter ett. Lägg till ett lösenord på kontot för att skydda skapandet av token.
 apiTokens.renameAction	Byt namn
 apiTokens.renameSave	Spara
 apiTokens.renameTitle	Byt namn på token

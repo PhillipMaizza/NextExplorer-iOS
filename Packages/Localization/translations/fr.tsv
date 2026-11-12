@@ -1077,6 +1077,7 @@ apiTokens.neverExpires	N'expire jamais
 apiTokens.neverUsed	Jamais utilisé
 apiTokens.newButton	Nouveau jeton
 apiTokens.passwordHint	Saisissez votre mot de passe pour créer un jeton.
+apiTokens.noPasswordWarning	Votre compte n’a pas de mot de passe : les jetons sont donc créés sans en demander. Ajoutez un mot de passe à votre compte pour protéger la création de jetons.
 apiTokens.renameAction	Renommer
 apiTokens.renameSave	Enregistrer
 apiTokens.renameTitle	Renommer le jeton

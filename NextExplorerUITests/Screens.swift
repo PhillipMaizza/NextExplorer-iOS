@@ -436,6 +436,13 @@ struct APITokensScreen {
 
 struct SettingsScreen {
     let app: XCUIApplication
+
+    /// A root row that opens one section page: "general", "display", "storage", "offline" or
+    /// "administration".
+    func pageRow(_ name: String) -> XCUIElement {
+        app.descendants(matching: .any)[AccessibilityIdentifiers.Settings.page(name)].firstMatch
+    }
+
     var languageRow: XCUIElement {
         app.staticTexts[L10n.Settings.rowLanguage]
     }

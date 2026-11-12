@@ -776,6 +776,7 @@ apiTokens.expiryYear	Za 1 rok
 apiTokens.expiryNever	Nikdy
 apiTokens.fieldPassword	Vaše heslo
 apiTokens.passwordHint	Zadejte heslo, abyste vytvořili token.
+apiTokens.noPasswordWarning	Váš účet nemá heslo, takže se tokeny vytvářejí bez jeho zadání. Přidejte k účtu heslo, abyste vytváření tokenů ochránili.
 apiTokens.createSubmit	Vytvořit token
 apiTokens.issuedTitle	Zkopírujte svůj token
 apiTokens.issuedIntro	Zobrazuje se pouze jednou. Uložte ho na bezpečné místo. Pokud ho ztratíte, odvolejte ho a vytvořte nový.

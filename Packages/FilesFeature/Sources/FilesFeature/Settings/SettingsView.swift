@@ -91,36 +91,35 @@ struct SettingsView: View {
         #if os(macOS)
             windowChrome(MacSettingsRoot(store: store))
         #else
-            NavigationStack {
+            NavigationStack(path: $store.pages.sending(\.pagesChanged)) {
                 windowChrome(
-                    adminDestinations(offlineDestination(serverDetailsDestination(apiTokensDestinationView(twoFactorDestinationView(changePasswordDestinationView(
+                    userManagementDestination(serverDetailsDestination(apiTokensDestinationView(twoFactorDestinationView(changePasswordDestinationView(
                         settingsList {
                             if !filter.isActive {
                                 SettingsAccountsSection(store: store)
                                 SettingsProfileSection(store: store)
-                                SettingsAPITokensSection(store: store)
-                            }
-
-                            GeneralSettingsSection(store: store, filter: filter)
-                            DisplaySettingsSection(store: store, filter: filter)
-
-                            if !filter.isActive {
-                                SettingsUsersSection(store: store)
-                                SettingsServerAdminSection(store: store)
-                                SettingsServerStorageSection(store: store)
+                                SettingsMenuSection(store: store) { store.send(.pagesChanged(store.pages + [$0])) }
                             }
 
                             SettingsUploadDefaultsSection(
                                 store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults),
                                 filter: filter
                             )
-                            StorageSettingsSection(store: store, filter: filter)
-                            OfflineSettingsSection(store: store, filter: filter)
+
+                            if !filter.isActive {
+                                SettingsUsersSection(store: store)
+                                SettingsServerStorageSection(store: store)
+                                SettingsAPITokensSection(store: store)
+                            }
+
                             SupportSettingsSection(filter: filter)
                             LegalSettingsSection(filter: filter)
                             LicensesSettingsSection(store: store, filter: filter)
                         }
-                    ))))))
+                        .navigationDestination(for: SettingsPage.self) { page in
+                            subpage(page)
+                        }
+                    )))))
                 )
             }
         #endif
@@ -184,11 +183,31 @@ struct SettingsView: View {
         }
     }
 
+    private func userManagementDestination(_ content: some View) -> some View {
+        content.navigationDestination(item: $store.scope(state: \.userManagement, action: \.userManagement)) { userManagementStore in
+            UserManagementView(store: userManagementStore)
+        }
+    }
+
+    /// One section page, with the screens its rows push declared on it so they stack above it.
+    @ViewBuilder
+    private func subpage(_ page: SettingsPage) -> some View {
+        switch page {
+        case .general:
+            SettingsSubpage(title: page.title) { GeneralSettingsSection(store: store, filter: filter) }
+        case .display:
+            SettingsSubpage(title: page.title) { DisplaySettingsSection(store: store, filter: filter) }
+        case .storage:
+            SettingsSubpage(title: page.title) { StorageSettingsSection(store: store, filter: filter) }
+        case .offline:
+            offlineDestination(SettingsSubpage(title: page.title) { OfflineSettingsSection(store: store, filter: filter) })
+        case .administration:
+            adminDestinations(SettingsSubpage(title: page.title) { SettingsServerAdminSection(store: store) })
+        }
+    }
+
     private func adminDestinations(_ content: some View) -> some View {
         content
-            .navigationDestination(item: $store.scope(state: \.userManagement, action: \.userManagement)) { userManagementStore in
-                UserManagementView(store: userManagementStore)
-            }
             .navigationDestination(item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)) { thumbnailStore in
                 ThumbnailSettingsView(store: thumbnailStore)
             }

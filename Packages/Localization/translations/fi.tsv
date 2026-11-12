@@ -777,6 +777,7 @@ apiTokens.expiryYear	1 vuoden kuluttua
 apiTokens.expiryNever	Ei koskaan
 apiTokens.fieldPassword	Salasanasi
 apiTokens.passwordHint	Syötä salasanasi luodaksesi tunnuksen.
+apiTokens.noPasswordWarning	Tililläsi ei ole salasanaa, joten tunnuksia luodaan kysymättä sitä. Lisää tilillesi salasana suojataksesi tunnusten luomisen.
 apiTokens.createSubmit	Luo tunnus
 apiTokens.issuedTitle	Kopioi tunnuksesi
 apiTokens.issuedIntro	Tämä näytetään vain kerran. Säilytä se turvallisessa paikassa. Jos menetät sen, peru se ja luo uusi.

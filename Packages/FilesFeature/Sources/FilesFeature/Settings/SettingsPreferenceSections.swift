@@ -35,12 +35,6 @@ struct SettingsSearchFilter {
     }
 }
 
-@MainActor
-private func sectionHeader(_ title: String) -> some View {
-    DSFieldLabel(title)
-        .accessibilityAddTraits(.isHeader)
-}
-
 /// Some rows are iOS only because the Mac already covers them: its file tables show type
 /// icons with date and time columns, a copied item stays on its clipboard after pasting, and
 /// downloads are saved in Finder rather than kept in the app.
@@ -136,7 +130,7 @@ struct GeneralSettingsSection: View {
                     }
                 #endif
             } header: {
-                sectionHeader(L10n.Settings.sectionGeneral)
+                SettingsSectionHeader(L10n.Settings.sectionGeneral)
             }
             .listRowBackground(Color.backgroundSecondary)
         }
@@ -230,7 +224,7 @@ struct DisplaySettingsSection: View {
                     DSToggleRow(title: L10n.Settings.toggleShowTabLabels, icon: IconKit.tabBrowse, isOn: $showTabLabels)
                 }
             } header: {
-                sectionHeader(L10n.Settings.sectionDisplay)
+                SettingsSectionHeader(L10n.Settings.sectionDisplay)
             }
             .listRowBackground(Color.backgroundSecondary)
         }
@@ -281,7 +275,7 @@ struct StorageSettingsSection: View {
                     .opacity(store.cacheSize > 0 ? Constants.fullOpacity : Constants.disabledOpacity)
                 }
             } header: {
-                sectionHeader(L10n.Settings.sectionStorage)
+                SettingsSectionHeader(L10n.Settings.sectionStorage)
             } footer: {
                 if !filter.isActive {
                     Text(isMac ? L10n.Settings.storageFootnoteMac : L10n.Settings.storageFootnote)
@@ -310,7 +304,7 @@ struct LegalSettingsSection: View {
                     legalRow(title: L10n.Settings.rowTermsOfUse, icon: IconKit.document, link: AppLinks.terms)
                 }
             } header: {
-                sectionHeader(L10n.Settings.sectionLegal)
+                SettingsSectionHeader(L10n.Settings.sectionLegal)
             }
             .listRowBackground(Color.backgroundSecondary)
         }
@@ -385,7 +379,7 @@ struct LicensesSettingsSection: View {
                     }
                 }
             } header: {
-                sectionHeader(L10n.Settings.sectionLicenses)
+                SettingsSectionHeader(L10n.Settings.sectionLicenses)
             } footer: {
                 if !filter.isActive {
                     VStack(spacing: .space16) {

@@ -9,7 +9,9 @@
             let settings = SettingsScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-            XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be reachable")
+            XCTAssertTrue(scrollTo(settings.pageRow("general"), in: app), "General should be a row on the Settings root")
+            settings.pageRow("general").tap()
+            XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be on the General page")
             settings.languageRow.tap()
 
             XCTAssertTrue(settings.languagePickerSystemDefaultSubtitle.waitToAppear(), "Tapping Language should push its picker")
@@ -20,8 +22,9 @@
             let settings = SettingsScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-            // The admin section sits below the fold; the List only materializes it once scrolled near.
-            XCTAssertTrue(scrollTo(settings.thumbnailsRow, in: app), "Admin settings should expose the Thumbnails row")
+            XCTAssertTrue(scrollTo(settings.pageRow("administration"), in: app), "An admin should see the Admin row")
+            settings.pageRow("administration").tap()
+            XCTAssertTrue(settings.thumbnailsRow.waitToAppear(), "The Admin page should expose the Thumbnails row")
             settings.thumbnailsRow.tap()
             XCTAssertTrue(settings.thumbnailSettingsTitle.waitToAppear(), "Thumbnails should push its settings screen")
         }

@@ -1089,6 +1089,7 @@ apiTokens.neverExpires	Бессрочный
 apiTokens.neverUsed	Не использовался
 apiTokens.newButton	Новый токен
 apiTokens.passwordHint	Введите пароль, чтобы создать токен.
+apiTokens.noPasswordWarning	У вашей учётной записи нет пароля, поэтому токены создаются без его запроса. Добавьте пароль к учётной записи, чтобы защитить создание токенов.
 apiTokens.renameAction	Переименовать
 apiTokens.renameSave	Сохранить
 apiTokens.renameTitle	Переименовать токен

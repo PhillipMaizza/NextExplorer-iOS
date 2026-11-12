@@ -10,7 +10,9 @@
             let settings = SettingsScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-            XCTAssertTrue(scrollTo(settings.offlineDownloadRow, in: app))
+            XCTAssertTrue(scrollTo(settings.pageRow("offline"), in: app))
+            settings.pageRow("offline").tap()
+            XCTAssertTrue(settings.offlineDownloadRow.waitToAppear())
             settings.offlineDownloadRow.tap()
 
             let picker = OfflineSelectionScreen(app: app)
