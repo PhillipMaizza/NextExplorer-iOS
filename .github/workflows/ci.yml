@@ -5,15 +5,17 @@ name: CI
 # before anyone reviews the change.
 #
 # The XCUITest suites (iPhone on a simulator, and the Mac app) are heavier (they cold launch the
-# app per test) so they run on pushes to main, on demand, and on pull requests labelled `ui-tests`.
-# The iPhone suite is built once and split across three runners that only run it.
+# app per test) so they run on pushes to main, on demand ("Run workflow" on a branch), and on
+# pull requests labelled `ui-tests` (from the next push after labelling). The iPhone suite is
+# built once and split across three runners that only run it.
 
 on:
-  # No branch filter, so a pull request stacked on another branch gets its checks too. "edited"
-  # also fires when GitHub retargets a stacked pull request to main after its base was merged,
-  # which would otherwise leave the required check missing.
+  # No branch filter, so a pull request stacked on another branch gets its checks too, and still
+  # has them once retargeted to main. No "edited" or "labeled": editing a title or adding any label
+  # reran everything and cancelled the run in progress, and a run that skipped itself instead
+  # would report the required check as passed.
   pull_request:
-    types: [opened, synchronize, reopened, labeled, edited]
+    types: [opened, synchronize, reopened]
   push:
     branches: [main]
   # Manual trigger so the heavier UI test job can be run on any branch on demand.
@@ -26,12 +28,13 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Whether anything that can change a build or a test changed, and for which platform. A change
-  # to docs, screenshots or the fastlane store text skips every macOS job; one made only of files
-  # wrapped in `#if os(macOS)` skips the iPhone jobs, and one only of `#if os(iOS)` files skips the
-  # Mac jobs (Scripts/ci-platforms.py). Pushes to main always run both. A job skipped by its
-  # condition reports success, so the required check still passes (a workflow level paths filter
-  # would leave it pending).
+  # Whether anything that can change a build or a test changed, and for which platform
+  # (Scripts/ci-platforms.py). A change to docs, screenshots, store text or issue templates skips
+  # every macOS job. On a pull request, scripts checked here in the Changes job build nothing, one
+  # made only of files wrapped in `#if os(macOS)` skips the iPhone jobs, and one only of
+  # `#if os(iOS)` files skips the Mac jobs. Pushes to main build everything but docs. A job skipped
+  # by its condition reports success, so the required check still passes (a workflow level paths
+  # filter would leave it pending).
   changes:
     name: Changes
     runs-on: ubuntu-latest
@@ -53,6 +56,18 @@ jobs:
       - name: Self check the platform filter
         run: python3 Scripts/test_ci_platforms.py
 
+      - name: Self check the file times, dependency pin and UI test scripts
+        run: |
+          python3 Scripts/test_ci_restore_mtimes.py
+          python3 Scripts/test_sync_package_pins.py
+          python3 Scripts/test_ci_ui_tests.py
+
+      # Their scripts never build, so a change to them alone skips the macOS jobs: check them here.
+      - name: Self check the changelog and localization scripts
+        run: |
+          python3 Scripts/test_gen_changelog.py
+          python3 Scripts/test_gen_l10n.py
+
       - name: Compare
         id: diff
         env:
@@ -71,23 +86,12 @@ jobs:
             printf 'code=true\nios=true\nmac=true\n' >> "${GITHUB_OUTPUT}"
             exit 0
           fi
-          CHANGED=$(git diff --name-only "${BASE}" "${GITHUB_SHA}")
+          CHANGED=$(git -c core.quotePath=false diff --name-only "${BASE}" "${GITHUB_SHA}")
           echo "Changed files:"
           echo "${CHANGED}"
-          CODE=$(echo "${CHANGED}" | grep -vE '\.md$|^LICENSE$|^Screenshots/|^fastlane/|^Gemfile|^\.ruby-version$' || true)
-          if [ -z "${CODE}" ]; then
-            echo "Only docs, screenshots or store text changed; skipping the macOS jobs"
-            printf 'code=false\nios=false\nmac=false\n' >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          echo "code=true" >> "${GITHUB_OUTPUT}"
-          if [ "${EVENT}" != "pull_request" ]; then
-            printf 'ios=true\nmac=true\n' >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          PLATFORMS=$(echo "${CODE}" | python3 Scripts/ci-platforms.py --ref "${GITHUB_SHA}")
-          echo "${PLATFORMS}"
-          echo "${PLATFORMS}" >> "${GITHUB_OUTPUT}"
+          OUTPUTS=$(echo "${CHANGED}" | python3 Scripts/ci-platforms.py --ref "${GITHUB_SHA}" --event "${EVENT}")
+          echo "${OUTPUTS}"
+          echo "${OUTPUTS}" >> "${GITHUB_OUTPUT}"
 
   build-and-test:
     name: Build and test
@@ -151,9 +155,6 @@ jobs:
       - name: Dependency pins match the app
         run: python3 Scripts/sync-package-pins.py --check
 
-      - name: Changelog script self check
-        run: python3 Scripts/test_gen_changelog.py
-
       - name: Restore SwiftPM checkouts
         uses: actions/cache/restore@v6
         with:
@@ -161,7 +162,7 @@ jobs:
           key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
           restore-keys: spm-${{ runner.os }}-
 
-      # Same Xcode build as local development (27.1, 27A9275).
+      # CI stays on Xcode 27.1 (27A9275); 27.2 locally only adds device symbols for iOS 27.2.
       # Build output from the latest main run: only what changed recompiles. Keyed on the Xcode
       # build and the resolved dependencies; restore keys fall back to the closest older entry.
       - name: Restore DerivedData
@@ -199,6 +200,17 @@ jobs:
       # framework, which returns errSecMissingEntitlement (-34018) without an entitled app host,
       # so they run locally. Coverage is off; it only made the test host spam
       # "Failed to write file default.profraw".
+      #
+      # Every xcodebuild here builds the same way, so the cached DerivedData and the next build
+      # reuse each other instead of recompiling every module:
+      # * the PackageTests workspace, which also holds the app project: a module built through a
+      #   project gets a different -working-directory than through a workspace, and that alone
+      #   recompiles it;
+      # * -onlyUsePackageVersionsFromResolvedFile: the shared checkouts made the app re-resolve
+      #   after the packages and move swift-collections to a newer version than Package.resolved
+      #   pins, recompiling everything built on it, and building against a version the app does
+      #   not ship;
+      # * no coverage instrumentation (the app scheme turns it on by default).
       - name: Test packages
         run: |
           xcodebuild test \
@@ -207,19 +219,21 @@ jobs:
             -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
             -derivedDataPath "${DERIVED_DATA}" \
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -onlyUsePackageVersionsFromResolvedFile \
             -enableCodeCoverage NO
 
-      # Runs after the package tests, on the same DerivedData and destination, so it reuses the
-      # dependencies they compiled instead of building them again. Packages first: a package that
-      # resolves right after the app has resolved the shared checkouts can fail to resolve.
+      # Runs after the package tests, on the same DerivedData, destination and workspace, so it
+      # reuses every module they compiled and only builds the app target.
       - name: Build app
         run: |
           xcodebuild build \
-            -project NextExplorer.xcodeproj \
+            -workspace PackageTests.xcworkspace \
             -scheme NextExplorer \
             -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
             -derivedDataPath "${DERIVED_DATA}" \
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -onlyUsePackageVersionsFromResolvedFile \
+            CLANG_COVERAGE_MAPPING=NO \
             CODE_SIGNING_ALLOWED=NO
 
       # Only main saves: GitHub scopes a pull request's cache to that pull request, so a save
@@ -304,12 +318,15 @@ jobs:
             -destination 'platform=macOS' \
             -derivedDataPath "${DERIVED_DATA}" \
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -onlyUsePackageVersionsFromResolvedFile \
             -enableCodeCoverage NO
 
       # The same target also ships as a native macOS app; build it so a change can't quietly
       # break the Mac side (every Mac difference sits behind #if os(macOS)). Release, as the Mac
       # App Store archive is: code that only compiles in Debug (a DEBUG gated helper used by a
       # #Preview, which Release still compiles) once broke only the release build.
+      # Release has its own build folders, so it never shares objects with the Debug package tests;
+      # strict pins keep it on the shipped dependency versions.
       - name: Build macOS app (Release)
         run: |
           xcodebuild build \
@@ -319,6 +336,7 @@ jobs:
             -destination 'generic/platform=macOS' \
             -derivedDataPath "${DERIVED_DATA}" \
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -onlyUsePackageVersionsFromResolvedFile \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Save DerivedData
@@ -391,20 +409,25 @@ jobs:
       - name: Trust Swift package macros
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
 
+      # Built the same way as Build and test (workspace, strict pins, no coverage), so the cached
+      # DerivedData from main covers everything but the UI test target.
       - name: Build UI tests
         run: |
           set -euo pipefail
           xcodebuild build-for-testing \
-            -project NextExplorer.xcodeproj \
+            -workspace PackageTests.xcworkspace \
             -scheme NextExplorer \
             -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
             -derivedDataPath "${DERIVED_DATA}" \
-            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}"
-          # Only what the .xctestrun runs (it refers to them relative to itself), not the debug
-          # symbols and package test bundles that make the folder about a gigabyte.
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -onlyUsePackageVersionsFromResolvedFile \
+            -enableCodeCoverage NO
+          # Only what the app's .xctestrun runs (it refers to them relative to itself), not the
+          # debug symbols and package test bundles that make the folder about a gigabyte. The
+          # cached folder also holds the PackageTests .xctestrun, so the name is matched exactly.
           cd "${DERIVED_DATA}/Build/Products"
           tar -czf "${RUNNER_TEMP}/ui-test-products.tgz" \
-            ./*iphonesimulator*.xctestrun \
+            ./NextExplorer_*iphonesimulator*.xctestrun \
             Debug-iphonesimulator/NextExplorer.app \
             Debug-iphonesimulator/NextExplorerUITests-Runner.app \
             Debug-iphonesimulator/PackageFrameworks
@@ -429,41 +452,42 @@ jobs:
     runs-on: xcode-27
     timeout-minutes: 45
 
-    # Three runners, each with about a third of the suite by measured class time (about eight
-    # minutes of tests each when run one at a time). The last one runs every class the others
-    # skip, so a new test class always runs somewhere.
+    # Three runners, each with about a third of the suite by measured class time (main run of
+    # 2026-11-12: FileActions 25 min; SecondFactor, MultiSelectClipboard, Search and Shared 23;
+    # the rest 22). The last one runs every class the others skip, so a new test class always
+    # runs somewhere. Re-measure from a main run's log when a class grows.
     strategy:
       fail-fast: false
       matrix:
         shard:
           - name: 1 of 3
             only: >-
-              -only-testing:NextExplorerUITests/AuthFlowUITests
-              -only-testing:NextExplorerUITests/MutationUITests
-              -only-testing:NextExplorerUITests/SettingsUITests
+              -only-testing:NextExplorerUITests/FileActionsUITests
           - name: 2 of 3
             only: >-
-              -only-testing:NextExplorerUITests/FileActionsUITests
-              -only-testing:NextExplorerUITests/MultiServerUITests
+              -only-testing:NextExplorerUITests/SecondFactorUITests
               -only-testing:NextExplorerUITests/MultiSelectClipboardUITests
-              -only-testing:NextExplorerUITests/EditorUITests
-              -only-testing:NextExplorerUITests/DownloadsUITests
+              -only-testing:NextExplorerUITests/SearchUITests
+              -only-testing:NextExplorerUITests/SharedUITests
           - name: 3 of 3
             only: >-
               -only-testing:NextExplorerUITests
-              -skip-testing:NextExplorerUITests/AuthFlowUITests
-              -skip-testing:NextExplorerUITests/MutationUITests
-              -skip-testing:NextExplorerUITests/SettingsUITests
               -skip-testing:NextExplorerUITests/FileActionsUITests
-              -skip-testing:NextExplorerUITests/MultiServerUITests
+              -skip-testing:NextExplorerUITests/SecondFactorUITests
               -skip-testing:NextExplorerUITests/MultiSelectClipboardUITests
-              -skip-testing:NextExplorerUITests/EditorUITests
-              -skip-testing:NextExplorerUITests/DownloadsUITests
+              -skip-testing:NextExplorerUITests/SearchUITests
+              -skip-testing:NextExplorerUITests/SharedUITests
 
     env:
       SIM_DEVICE: iPhone 17
 
     steps:
+      # Only the scripts: the shard runs a prebuilt test bundle.
+      - name: Checkout scripts
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: Scripts
+
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -481,7 +505,7 @@ jobs:
           PRODUCTS="${RUNNER_TEMP}/Products"
           mkdir -p "${PRODUCTS}"
           tar -C "${PRODUCTS}" -xzf "${RUNNER_TEMP}/ui-test-products.tgz"
-          XCTESTRUN=$(find "${PRODUCTS}" -maxdepth 1 -name '*iphonesimulator*.xctestrun' | head -1)
+          XCTESTRUN=$(find "${PRODUCTS}" -maxdepth 1 -name 'NextExplorer_*iphonesimulator*.xctestrun' | head -1)
           if [ -z "${XCTESTRUN}" ]; then
             echo "No .xctestrun in the UI test build"; exit 1
           fi
@@ -518,32 +542,26 @@ jobs:
       - name: Run XCUITests
         # One simulator, no parallel clones: the scheme marks the UI tests parallelizable, which
         # suits a laptop, but clones on a runner's few cores timed out evaluating UI queries. The
-        # shards are the parallelism here. A failing test runs once more in a fresh test runner,
-        # so a launch flake is retried on its own; a real failure fails both attempts.
-        # Output runs through xcbeautify so a failing test surfaces as a GitHub annotation instead
-        # of a raw xcodebuild dump, and the .xcresult is uploaded below for offline inspection.
+        # shards are the parallelism here. Scripts/ci-ui-tests.py reruns only the failed tests,
+        # once, in a fresh test runner, and reports any test that passed only on that rerun as
+        # flaky. Output runs through xcbeautify so a failing test surfaces as a GitHub annotation,
+        # and the .xcresult bundles are uploaded below for offline inspection.
         env:
           SHARD_TESTS: ${{ matrix.shard.only }}
         run: |
-          set -o pipefail
-          DEST="platform=iOS Simulator,id=${SIM_UDID}"
-          echo "UI test destination: ${DEST}"
-          # shellcheck disable=SC2086
-          xcodebuild test-without-building \
+          echo "UI test destination: platform=iOS Simulator,id=${SIM_UDID}"
+          python3 Scripts/ci-ui-tests.py --result TestResults --select "${SHARD_TESTS}" -- \
+            test-without-building \
             -xctestrun "${XCTESTRUN}" \
-            -destination "${DEST}" \
-            -resultBundlePath TestResults.xcresult \
-            -parallel-testing-enabled NO \
-            -retry-tests-on-failure -test-iterations 2 -test-repetition-relaunch-enabled YES \
-            ${SHARD_TESTS} \
-            | xcbeautify --renderer github-actions
+            -destination "platform=iOS Simulator,id=${SIM_UDID}" \
+            -parallel-testing-enabled NO
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: uitest-results-${{ strategy.job-index }}
-          path: TestResults.xcresult
+          path: TestResults*.xcresult
           if-no-files-found: ignore
 
   mac-ui-test:
@@ -607,42 +625,37 @@ jobs:
       - name: Allow UI automation
         run: sudo automationmodetool enable-automationmode-without-authentication
 
-      - name: Resolve package dependencies
-        run: |
-          xcodebuild -project NextExplorer.xcodeproj \
-            -scheme NextExplorer \
-            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
-            -resolvePackageDependencies
-
       - name: Install xcbeautify
         run: brew install xcbeautify
 
       - name: Run Mac XCUITests
-        # Ad hoc signed: the app and its test runner only need to launch on this runner. A failing
-        # test runs once more on its own, as in the iPhone shards. No entitlements file: its App
-        # Group and keychain groups need a provisioning profile, and macOS refuses to launch an ad
-        # hoc app that claims them. The sandbox still comes from the build settings.
+        # Through the PackageTests workspace with strict pins, like the Mac package tests, so it
+        # reuses their Debug modules from the cache. Failed tests rerun once on their own, and
+        # flaky ones are reported, as in the iPhone shards (xcodebuild's own retry reran all 30
+        # tests after one failure).
+        # Ad hoc signed: the app and its test runner only need to launch on this runner. No
+        # entitlements file: its App Group and keychain groups need a provisioning profile, and
+        # macOS refuses to launch an ad hoc app that claims them. The sandbox still comes from the
+        # build settings.
         run: |
-          set -o pipefail
-          xcodebuild test \
-            -project NextExplorer.xcodeproj \
+          python3 Scripts/ci-ui-tests.py --result MacTestResults \
+            --select "-only-testing:NextExplorerUITests/MacCriticalPathUITests" -- \
+            test \
+            -workspace PackageTests.xcworkspace \
             -scheme NextExplorer \
             -destination 'platform=macOS' \
             -derivedDataPath "${DERIVED_DATA}" \
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -onlyUsePackageVersionsFromResolvedFile \
             -enableCodeCoverage NO \
-            -resultBundlePath MacTestResults.xcresult \
             -parallel-testing-enabled NO \
-            -retry-tests-on-failure -test-iterations 2 -test-repetition-relaunch-enabled YES \
-            -only-testing:NextExplorerUITests/MacCriticalPathUITests \
             CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
-            CODE_SIGN_ENTITLEMENTS= \
-            | xcbeautify --renderer github-actions
+            CODE_SIGN_ENTITLEMENTS=
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: mac-uitest-results
-          path: MacTestResults.xcresult
+          path: MacTestResults*.xcresult
           if-no-files-found: ignore
