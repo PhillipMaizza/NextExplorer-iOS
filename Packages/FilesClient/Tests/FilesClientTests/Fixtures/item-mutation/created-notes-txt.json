@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "item": {
+    "name": "notes.txt",
+    "path": "Docs",
+    "dateModified": "2024-01-01T00:00:00.000Z",
+    "size": 0,
+    "kind": "txt"
+  }
+}

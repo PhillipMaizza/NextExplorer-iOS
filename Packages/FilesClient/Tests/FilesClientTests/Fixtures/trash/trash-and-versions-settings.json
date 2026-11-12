@@ -1,0 +1,11 @@
+{
+  "trash": {
+    "enabled": true,
+    "retentionDays": 7,
+    "maxPercent": 10,
+    "maxBytes": null
+  },
+  "versions": {
+    "enabled": false
+  }
+}

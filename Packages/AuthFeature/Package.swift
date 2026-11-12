@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "AuthFeature", targets: ["AuthFeature"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../CoreModels"),
         .package(path: "../AuthClient"),
         .package(path: "../ClientCertificateFeature"),
@@ -33,6 +34,7 @@ let package = Package(
         .testTarget(
             name: "AuthFeatureTests",
             dependencies: [
+                "TestUtils",
                 "AuthFeature",
                 "ClientCertificateFeature",
                 "NetworkClient",

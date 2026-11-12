@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "destination": "Documents/Work",
+  "items": [
+    {
+      "from": "Inbox/a.txt",
+      "to": "Documents/Work/a.txt"
+    },
+    {
+      "from": "Inbox/b.txt",
+      "to": "Documents/Work/b.txt",
+      "skipped": true
+    }
+  ]
+}

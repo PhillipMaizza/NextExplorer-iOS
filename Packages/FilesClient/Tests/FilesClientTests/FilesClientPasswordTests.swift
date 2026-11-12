@@ -4,13 +4,14 @@ import Dependencies
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// The password routes through `FilesClient.live` against a stubbed `URLSession`. Nested in
 /// `FilesClientLiveTests` so it inherits `.serialized`: both share `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     @Suite("Password routes")
     struct PasswordRoutes {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = URL(string: TestHost.exampleURLString)!
 
         private func makeClient() -> FilesClient {
             .live(
@@ -21,37 +22,37 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: ["Content-Type": "application/json"], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
         }
 
         // MARK: addOwnPassword
 
         @Test
         func addOwnPasswordPostsOnlyThePasswordToTheAddRoute() async throws {
-            stub(statusCode: 200, body: #"{"message":"Password authentication added successfully."}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.passwordAddedMessage.string())
 
-            try await makeClient().addOwnPassword(serverURL, "brand-new")
+            try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
 
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "POST")
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
             #expect(request.url?.path == "/api/auth/password/add")
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
-            #expect(json == ["password": "brand-new"])
+            #expect(json == ["password": Constants.newPassword])
         }
 
         @Test
         func anAccountThatAlreadyHasAPasswordSurfacesTheServersMessage() async throws {
-            stub(statusCode: 409, body: #"{"success":false,"error":{"message":"You already have password authentication.","statusCode":409}}"#)
+            try stub(statusCode: 409, body: FilesClientFixture.passwordErrorAlreadyExists.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 409, message: "You already have password authentication.")) {
-                try await makeClient().addOwnPassword(serverURL, "brand-new")
+                try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
             }
         }
 
         @Test
         func aTooShortPasswordSurfacesTheServersMessage() async throws {
-            stub(statusCode: 400, body: #"{"success":false,"error":{"message":"Password must be at least 6 characters long.","statusCode":400}}"#)
+            try stub(statusCode: 400, body: FilesClientFixture.passwordErrorTooShort.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Password must be at least 6 characters long.")) {
                 try await makeClient().addOwnPassword(serverURL, "abc")
@@ -63,7 +64,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 429)
 
             await #expect(throws: FilesClientError.rateLimited) {
-                try await makeClient().addOwnPassword(serverURL, "brand-new")
+                try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
             }
         }
 
@@ -72,7 +73,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 502, body: "<html>bad gateway</html>")
 
             await #expect(throws: FilesClientError.server(statusCode: 502)) {
-                try await makeClient().addOwnPassword(serverURL, "brand-new")
+                try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
             }
         }
 
@@ -80,10 +81,10 @@ extension FilesClientLiveTests {
 
         @Test
         func aWrongCurrentPasswordIsItsMessageNotASessionExpiry() async throws {
-            stub(statusCode: 401, body: #"{"success":false,"error":{"message":"Current password is incorrect.","statusCode":401}}"#)
+            try stub(statusCode: 401, body: FilesClientFixture.passwordErrorCurrentIncorrect.string())
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "Current password is incorrect.")) {
-                try await makeClient().changeOwnPassword(serverURL, "wrong", "brand-new")
+                try await makeClient().changeOwnPassword(serverURL, TestAccount.wrongPassword, Constants.newPassword)
             }
         }
 
@@ -91,19 +92,19 @@ extension FilesClientLiveTests {
 
         @Test
         func authMethodsDecodesTheEnvelope() async throws {
-            stub(statusCode: 200, body: #"{"methods":[{"id":"m1","type":"local_password","provider":"Password","lastUsedAt":null,"createdAt":"2026-11-01T10:00:00.000Z"}]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.signInMethodLocalPassword.string())
 
             let methods = try await makeClient().fetchAuthMethods(serverURL)
 
             #expect(methods.hasPassword)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/auth/methods")
         }
 
         @Test
         func authMethodsOfASingleSignOnAccountHaveNoPassword() async throws {
-            stub(statusCode: 200, body: #"{"methods":[{"id":"m2","type":"oidc","provider":"PocketID","lastUsedAt":null,"createdAt":null}]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.signInMethodOidcPocketId.string())
 
             let methods = try await makeClient().fetchAuthMethods(serverURL)
 
@@ -112,7 +113,7 @@ extension FilesClientLiveTests {
 
         @Test
         func authMethodsWithAnEmptyListIsNoPassword() async throws {
-            stub(statusCode: 200, body: #"{"methods":[]}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.signInMethodEmpty.string())
 
             #expect(try await makeClient().fetchAuthMethods(serverURL).isEmpty)
         }
@@ -121,27 +122,27 @@ extension FilesClientLiveTests {
 
         @Test
         func authStatusReadsWhetherPasswordSignInIsOn() async throws {
-            stub(statusCode: 200, body: #"{"strategies":{"local":false,"oidc":true,"passkey":false},"authMode":"oidc"}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.authStatusOidcOnly.string())
 
             let status = try await makeClient().fetchAuthStatus(serverURL)
 
             #expect(!status.isLocalEnabled)
             #expect(status.isOIDCEnabled)
             let request = try #require(StubURLProtocol.capturedRequest)
-            #expect(request.httpMethod == "GET")
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/auth/status")
         }
 
         @Test
         func authStatusWithPasswordSignInOnIsLocalEnabled() async throws {
-            stub(statusCode: 200, body: #"{"strategies":{"local":true,"oidc":true}}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.authStatusLocalAndOidc.string())
 
             #expect(try await makeClient().fetchAuthStatus(serverURL).isLocalEnabled)
         }
 
         @Test
         func authStatusWithAMalformedBodyIsADecodingError() async throws {
-            stub(statusCode: 200, body: #"{"nope":true}"#)
+            try stub(statusCode: 200, body: FilesClientFixture.commonUnexpectedKeyNope.string())
 
             await #expect(throws: FilesClientError.self) {
                 _ = try await makeClient().fetchAuthStatus(serverURL)
@@ -166,4 +167,8 @@ extension FilesClientLiveTests {
             }
         }
     }
+}
+
+private enum Constants {
+    static let newPassword = "brand-new"
 }

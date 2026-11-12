@@ -6,10 +6,7 @@ import Testing
 struct AuthStatusDecodingTests {
     @Test("decodes nested strategies.local / strategies.oidc flags")
     func decodesBothEnabled() throws {
-        let json = #"""
-        {"requiresSetup": false, "strategies": {"local": true, "oidc": false}, "authEnabled": true}
-        """#
-        let status = try JSONDecoder().decode(AuthStatus.self, from: Data(json.utf8))
+        let status = try CoreModelsFixture.authStatusLocalEnabledOidcDisabled.decode(AuthStatus.self)
         #expect(status.isLocalEnabled == true)
         #expect(status.isOIDCEnabled == false)
     }

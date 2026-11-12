@@ -1,19 +1,20 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("EditableTextFiles")
 struct EditableTextFilesTests {
     @Test("Text and code files are editable, whatever the case")
     func editable() {
-        for name in ["notes.txt", "README.md", "app.js", "config.YAML", "script.sh", ".env", "styles.scss"] {
+        for name in [TestFile.notes, "README.md", "app.js", "config.YAML", "script.sh", ".env", "styles.scss"] {
             #expect(EditableTextFiles.isEditable(name: name), "\(name)")
         }
     }
 
     @Test("Images, office files, archives and names without an extension are not")
     func notEditable() {
-        for name in ["photo.jpg", "report.docx", "backup.zip", "Makefile", "notes.", "movie.mp4"] {
+        for name in [TestFile.photo, "report.docx", "backup.zip", "Makefile", "notes.", "movie.mp4"] {
             #expect(!EditableTextFiles.isEditable(name: name), "\(name)")
         }
     }
@@ -26,10 +27,9 @@ struct EditableTextFilesTests {
 
     @Test("ServerFeatures reads the editor's extra file types, lowercased")
     func decodesEditorExtensions() throws {
-        let json = Data(#"{"editor":{"extensions":["SQL","toml"],"maxFileSizeBytes":1048576}}"#.utf8)
-        let features = try JSONDecoder().decode(ServerFeatures.self, from: json)
+        let features = try CoreModelsFixture.serverFeaturesEditorExtensions.decode(ServerFeatures.self)
         #expect(features.editorExtensions == ["sql", "toml"])
-        let none = try JSONDecoder().decode(ServerFeatures.self, from: Data("{}".utf8))
+        let none = try CoreModelsFixture.emptyObject.decode(ServerFeatures.self)
         #expect(none.editorExtensions.isEmpty)
     }
 }

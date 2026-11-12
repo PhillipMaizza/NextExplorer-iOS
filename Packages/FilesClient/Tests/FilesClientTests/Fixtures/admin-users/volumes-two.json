@@ -1,0 +1,20 @@
+{
+  "volumes": [
+    {
+      "id": "v1",
+      "userId": "u1",
+      "label": "Projects",
+      "path": "/srv/projects",
+      "accessMode": "readwrite",
+      "createdAt": "2027-01-15T10:00:00.000Z",
+      "updatedAt": "2027-01-16T10:00:00.000Z"
+    },
+    {
+      "id": "v2",
+      "userId": "u1",
+      "label": "Archive",
+      "path": "/srv/archive",
+      "accessMode": "readonly"
+    }
+  ]
+}

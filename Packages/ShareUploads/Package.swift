@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "ShareUploads", targets: ["ShareUploads"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../CoreModels"),
         .package(path: "../FilesClient"),
         .package(path: "../NetworkClient"),
@@ -29,7 +30,7 @@ let package = Package(
         ),
         .testTarget(
             name: "ShareUploadsTests",
-            dependencies: ["ShareUploads"],
+            dependencies: ["TestUtils", "ShareUploads"],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

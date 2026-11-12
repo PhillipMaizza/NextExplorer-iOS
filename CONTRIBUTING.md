@@ -54,6 +54,33 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 - The app ships 30 languages. A new key is added to the string catalog for every language, with placeholder validation intact.
 - Do not hand-edit the generated catalog. Edit the source and regenerate with the scripts below.
 
+## Deterministic tests
+
+A test gives the same result on every run, on every machine, under any load. CI enforces it with `Scripts/check-test-determinism.py`: any use of a banned pattern fails the build (there is no baseline or allow list).
+
+| Instead of | Use |
+|---|---|
+| `Date()`, `Date.now`, a literal `Date(timeIntervalSince1970: N)` | `MockDate.date` from `TestUtils` (one fixed instant), plus offsets such as `MockDate.date.addingTimeInterval(600)`. A decode or format test whose expected instant must match fixture text may name an epoch, with a comment |
+| `UUID()` | `UUID(0)`, `UUID(1)`, the `.incrementing` dependency, or `TestID.uuid()` / `TestID.name()` for unique names |
+| `Task.sleep`, `Thread.sleep`, `clock.sleep`, a mock that sleeps | `AsyncGate` / `suspendUntilCancelled()` from `TestUtils`, opened by the test. Never sleep in a test. Production delays use the injected `continuousClock`, advanced with `TestClock`. Never a real clock: | inject `continuousClock`, drive a `TestClock` and `await clock.advance(by:)` (or `ImmediateClock`) |
+| polling with a time budget, `XCTWaiter` | `await store.receive(...)`, `await store.finish()`, or await the task |
+| `exhaustivity = .off`, `skipReceivedActions()` | assert every state change and receive every action |
+| `Int.random`, `shuffled()` | a seeded generator |
+| `URLSession.shared` | an injected client |
+
+Also:
+
+- Tests take milliseconds: nothing waits on real time, and a whole package runs in a few seconds.
+- Unique temp folder names and store scopes come from `TestID.name()` / `TestID.uuid()` in `TestUtils`, never `UUID()`.
+- Split large tests: keep a test file under about 600 lines, one suite per behavior area, shared fixtures in a support file. CI fails bigger files (existing ones can only shrink).
+- Constants, not literals: Test data is a constant, never a retyped literal: a value used in 2+ files lives once in `TestUtils` (`TestFolder`, `TestFile`, `TestPath`, `TestKind`, `TestAccount`, `TestUser`, `TestHost`, `TestSession`, `TestStorageKey` ...), a value repeated inside one file is in that file's `private enum Constants`, and where production already has a typed constant or enum (`HTTPMethod`, `HTTPHeaderField`, `MIMEType`, `FileItem.directoryKind`) the test uses that. Only a wire value or decode input that IS the point of the test stays a literal.
+- Share test data: names and credentials used by several tests live once in `TestUtils` (`TestFolder`, `TestFile`, `TestAccount`, `TestHost`). No inline JSON in a test (`Data("{...}".utf8)`, raw strings, interpolated payloads): JSON bodies are `.json` files under `Tests/<Target>/Fixtures/`, named by one `FixtureFile` enum per target with an audit test (see `CoreModelsFixture`).
+- Expected values are literals, never computed from the code under test.
+- Work that must overlap is held and released with explicit gates, never a timing window.
+- Each test owns its state: a unique temporary directory or `UserDefaults` suite per test.
+- A test that fails only on CI has a race. Fix the race. Do not add a retry or a longer timeout.
+- When you edit a test file, remove its existing uses of the patterns above in the same change.
+
 ## Scripts
 
 Helpers under `Scripts/`. Two drive localization; the others keep dependency pins aligned and build release notes. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.

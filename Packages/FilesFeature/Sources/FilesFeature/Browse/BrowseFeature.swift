@@ -1213,6 +1213,8 @@ public struct BrowseFeature {
             #endif
 
             case let .itemsDroppedFromOtherWindow(dropped, destination):
+                // The source folder lives in another window, so the backend enforces its canDelete. This window
+                // is the destination: canWrite is the client side guard, as the web client's paste check.
                 guard state.access?.canWrite ?? false else { return .none }
                 // Not where they already are, and never into themselves or their own subfolders.
                 let items = dropped.filter { item in
@@ -1371,6 +1373,8 @@ public struct BrowseFeature {
                 return .send(.renameTapped(items[0]))
 
             case let .itemsDroppedOnFolder(ids, folder):
+                // A move deletes the original from this folder, so the backend (prepareTransfer) asks for
+                // canDelete on the source and only read on the destination.
                 guard folder.isDirectory, state.access?.canDelete ?? false else { return .none }
                 // Never into itself or one of its own subfolders.
                 let items = state.items.filter { item in

@@ -1,0 +1,9 @@
+{
+  "shareToken": "AbC123xyz0",
+  "label": "Q3 Report",
+  "isDirectory": true,
+  "hasPassword": false,
+  "sharingType": "anyone",
+  "expiresAt": "2027-01-15T10:00:00.000Z",
+  "isExpired": false
+}

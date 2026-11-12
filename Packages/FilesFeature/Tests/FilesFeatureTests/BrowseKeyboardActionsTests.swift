@@ -1,281 +1,140 @@
 import ComposableArchitecture
 import CoreModels
-import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
-/// The selection driven actions behind the Mac file table's keyboard and Edit menu commands.
-@Suite(.dependencies)
+/// The selection driven actions behind the Mac file table's keyboard and Edit menu commands. They
+/// stage, delete, rename and inspect whatever rows the table has selected, without select mode.
+@Suite(.isolatedDependencies)
 @MainActor
 struct BrowseKeyboardActionsTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private let first = BrowseFixtures.file(TestFile.aText, in: TestFolder.docs)
+    private let second = BrowseFixtures.file(TestFile.bText, in: TestFolder.docs)
+    private let third = BrowseFixtures.file("c.txt", in: TestFolder.docs)
 
-    private nonisolated func access(canWrite: Bool = true, canDelete: Bool = true) -> FileAccess {
+    private func access(canWrite: Bool = true, canDelete: Bool = true) -> FileAccess {
         FileAccess(canRead: true, canWrite: canWrite, canUpload: true, canDelete: canDelete, canShare: false, canDownload: true)
     }
 
-    private nonisolated func item(_ name: String) -> FileItem {
-        FileItem(name: name, path: "Docs", dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "txt")
-    }
-
-    private func makeState(items: [FileItem], selected: [FileItem], access: FileAccess) -> BrowseFeature.State {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
-        state.items = IdentifiedArray(uniqueElements: items)
+    private func makeStore(
+        items: [FileItem],
+        selected: [FileItem],
+        access: FileAccess? = nil,
+        configure: (inout DependencyValues) -> Void = { _ in }
+    ) -> TestStoreOf<BrowseFeature> {
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs, items: items, access: access ?? self.access())
         state.selectedItemIDs = Set(selected.map(\.id))
-        state.access = access
-        state.$clipboard.withLock { $0 = nil }
-        return state
+        return BrowseFixtures.store(state, configure: configure)
     }
 
-    @Test
-    func tableSelectionChangedTracksTheSelectionWithoutEnteringSelectMode() async {
-        let a = item("a.txt")
-        let store = TestStore(initialState: makeState(items: [a], selected: [], access: access())) { BrowseFeature() }
+    // MARK: Selection
 
-        await store.send(.tableSelectionChanged([a.id])) {
-            $0.selectedItemIDs = [a.id]
+    @Test("The table selection is tracked without entering select mode")
+    func tableSelectionChangedTracksTheSelectionWithoutEnteringSelectMode() async {
+        let store = makeStore(items: [first], selected: [])
+
+        await store.send(.tableSelectionChanged([first.id])) {
+            $0.selectedItemIDs = [first.id]
         }
     }
 
-    @Test
+    // MARK: Clipboard
+
+    @Test("Copy stages every selected item in listing order")
     func copySelectionStagesEverySelectedItemInListOrder() async {
-        let a = item("a.txt"), b = item("b.txt"), c = item("c.txt")
-        let store = TestStore(initialState: makeState(items: [a, b, c], selected: [c, a], access: access())) { BrowseFeature() }
+        let store = makeStore(items: [first, second, third], selected: [third, first])
 
         await store.send(.copySelectionTapped) {
-            $0.$clipboard.withLock { $0 = FileClipboard(items: [a, c], operation: .copy) }
+            $0.$clipboard.withLock { $0 = FileClipboard(items: [first, third], operation: .copy) }
             $0.clipboardStagedMessage = L10n.Browse.clipboardCopiedMany(2)
         }
     }
 
-    @Test
+    @Test("Cut stages the selection as a move")
     func cutSelectionStagesAMove() async {
-        let a = item("a.txt")
-        let store = TestStore(initialState: makeState(items: [a], selected: [a], access: access())) { BrowseFeature() }
+        let store = makeStore(items: [first], selected: [first])
 
         await store.send(.cutSelectionTapped) {
-            $0.$clipboard.withLock { $0 = FileClipboard(items: [a], operation: .move) }
-            $0.clipboardStagedMessage = L10n.Browse.clipboardCutOne("a.txt")
+            $0.$clipboard.withLock { $0 = FileClipboard(items: [first], operation: .move) }
+            $0.clipboardStagedMessage = L10n.Browse.clipboardCutOne(TestFile.aText)
         }
     }
 
-    @Test
+    @Test("Cut is ignored without the right to delete")
     func cutSelectionIsIgnoredWithoutDeletePermission() async {
-        let a = item("a.txt")
-        let store = TestStore(initialState: makeState(items: [a], selected: [a], access: access(canDelete: false))) { BrowseFeature() }
+        let store = makeStore(items: [first], selected: [first], access: access(canDelete: false))
 
         await store.send(.cutSelectionTapped)
     }
 
-    @Test
+    // MARK: Delete and rename
+
+    @Test("Deleting one selected item asks to delete that item, checking its shares")
     func deleteSelectionOfOneItemRoutesToTheSingleDelete() async {
-        let a = item("a.txt")
-        let store = TestStore(initialState: makeState(items: [a], selected: [a], access: access())) {
-            BrowseFeature()
-        } withDependencies: {
+        let store = makeStore(items: [first], selected: [first]) {
             $0.filesClient.deleteImpact = { _, _ in DeleteImpact(shareCount: 0) }
         }
-        // The single delete then checks for linked shares, covered by BrowseFeatureTests.
-        store.exhaustivity = .off
 
         await store.send(.deleteSelectionTapped)
-        await store.receive(\.deleteTapped)
+        await store.receive(.deleteTapped(first)) {
+            $0.deleteConfirmationItem = first
+            $0.deleteImpactCheck = .checking
+        }
+        await store.receive(\.deleteImpactResponse.success) {
+            $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 0))
+        }
     }
 
-    @Test
+    @Test("Deleting several selected items asks to delete them together, checking their shares")
     func deleteSelectionOfSeveralItemsRoutesToTheBulkDelete() async {
-        let a = item("a.txt"), b = item("b.txt")
-        let store = TestStore(initialState: makeState(items: [a, b], selected: [a, b], access: access())) {
-            BrowseFeature()
-        } withDependencies: {
+        let store = makeStore(items: [first, second], selected: [first, second]) {
             $0.filesClient.deleteImpact = { _, _ in DeleteImpact(shareCount: 0) }
         }
-        store.exhaustivity = .off
 
         await store.send(.deleteSelectionTapped)
-        await store.receive(\.bulkDeleteTapped)
+        await store.receive(.bulkDeleteTapped) {
+            $0.bulkDeleteConfirmationIsPresented = true
+            $0.deleteImpactCheck = .checking
+        }
+        await store.receive(\.deleteImpactResponse.success) {
+            $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 0))
+        }
     }
 
-    @Test
+    @Test("Delete is ignored without the right to delete")
+    func deleteSelectionIsIgnoredWithoutDeletePermission() async {
+        let store = makeStore(items: [first], selected: [first], access: access(canDelete: false))
+
+        await store.send(.deleteSelectionTapped)
+    }
+
+    @Test("Rename needs exactly one selected item and the right to write")
     func renameSelectionNeedsExactlyOneItemAndWriteAccess() async {
-        let a = item("a.txt"), b = item("b.txt")
-        let several = TestStore(initialState: makeState(items: [a, b], selected: [a, b], access: access())) { BrowseFeature() }
+        let several = makeStore(items: [first, second], selected: [first, second])
         await several.send(.renameSelectionTapped)
 
-        let readOnly = TestStore(initialState: makeState(items: [a], selected: [a], access: access(canWrite: false))) { BrowseFeature() }
+        let readOnly = makeStore(items: [first], selected: [first], access: access(canWrite: false))
         await readOnly.send(.renameSelectionTapped)
 
-        let single = TestStore(initialState: makeState(items: [a], selected: [a], access: access())) { BrowseFeature() }
-        single.exhaustivity = .off
+        let single = makeStore(items: [first], selected: [first])
         await single.send(.renameSelectionTapped)
-        await single.receive(\.renameTapped)
-    }
-
-    @Test
-    func goToEnclosingFolderPopsTheVisibleFolder() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A"))
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B", title: "B"))
-        let store = TestStore(initialState: state) { BrowseTabFeature() }
-
-        await store.send(.goToEnclosingFolder) {
-            let left = $0.path.last
-            $0.path.removeLast()
-            $0.forwardStack = left.map { [$0] } ?? []
+        await single.receive(.renameTapped(first)) {
+            $0.renameSheetItem = first
         }
-    }
-
-    @Test
-    func forwardReopensTheFolderLeftByGoingBack() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        let folderA = BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A")
-        state.path.append(folderA)
-        let store = TestStore(initialState: state) { BrowseTabFeature() }
-
-        await store.send(.goToEnclosingFolder) {
-            $0.path.removeLast()
-            $0.forwardStack = [folderA]
-        }
-        await store.send(.goForward) {
-            $0.forwardStack = []
-            $0.path.append(folderA)
-        }
-        // Nothing left to go forward to.
-        await store.send(.goForward)
-    }
-
-    @Test
-    func navigatingSomewhereNewClearsForward() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.forwardStack = [BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A")]
-        let store = TestStore(initialState: state) { BrowseTabFeature() }
-        store.exhaustivity = .off
-
-        await store.send(.navigateToDirectory(path: "B", title: "B")) {
-            $0.forwardStack = []
-        }
-    }
-
-    @Test
-    func goToEnclosingFolderAtTheRootDoesNothing() async {
-        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) { BrowseTabFeature() }
-
-        await store.send(.goToEnclosingFolder)
-    }
-
-    @Test
-    func backLeavesTheVisibleScreenAndOffersForward() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        let deep = BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B/C", title: "C")
-        state.path.append(deep)
-        let store = TestStore(initialState: state) { BrowseTabFeature() }
-
-        await store.send(.goBack) {
-            $0.path.removeLast()
-            $0.forwardStack = [deep]
-        }
-    }
-
-    @Test
-    func enclosingFolderAfterAJumpOpensTheParentInPlace() async {
-        var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B/C", title: "C"))
-        state.forwardStack = [BrowseFeature.State(serverURL: serverURL, directoryPath: "X", title: "X")]
-        let store = TestStore(initialState: state) { BrowseTabFeature() }
-
-        await store.send(.goToEnclosingFolder) {
-            $0.path.removeLast()
-            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B", title: "B"))
-            $0.forwardStack = []
-        }
-    }
-
-    // MARK: Drag onto a folder
-
-    private nonisolated func folder(_ name: String, path: String = "Docs") -> FileItem {
-        FileItem(name: name, path: path, dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "directory")
-    }
-
-    @Test
-    func droppingWithoutDeletePermissionIsIgnored() async {
-        let a = item("a.txt"), archive = folder("Archive")
-        let store = TestStore(initialState: makeState(items: [a, archive], selected: [], access: access(canDelete: false))) {
-            BrowseFeature()
-        }
-
-        await store.send(.itemsDroppedOnFolder(ids: [a.id], folder: archive))
     }
 
     // MARK: Inspector
 
-    @Test
-    func anOpenInspectorFollowsTheSelectionToTheNewRow() async {
-        let a = item("a.txt"), b = item("b.txt")
-        var state = makeState(items: [a, b], selected: [a], access: access())
-        state.infoItem = a
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.continuousClock = ImmediateClock()
-            $0.filesClient.fetchMetadata = { _, path in
-                FileMetadata(path: path, name: "b.txt", kind: "txt", size: 0, dateModified: Date(timeIntervalSince1970: 1), dateCreated: Date(timeIntervalSince1970: 1))
-            }
-        }
-        // The metadata load itself is covered by BrowseFeatureTests.
-        store.exhaustivity = .off
-
-        await store.send(.tableSelectionChanged([b.id])) {
-            $0.selectedItemIDs = [b.id]
-            $0.infoItem = b
-        }
-        await store.skipReceivedActions()
-    }
-
-    @Test
-    func anInspectorFollowingQuickSelectionChangesOnlyLoadsTheRowItSettlesOn() async {
-        let a = item("a.txt"), b = item("b.txt"), c = item("c.txt")
-        var state = makeState(items: [a, b, c], selected: [a], access: access())
-        state.infoItem = a
-        let clock = TestClock()
-        let fetched = LockIsolated<[String]>([])
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.continuousClock = clock
-            $0.filesClient.fetchMetadata = { _, path in
-                fetched.withValue { $0.append(path) }
-                return FileMetadata(path: path, name: "c.txt", kind: "txt", size: 0, dateModified: Date(timeIntervalSince1970: 1), dateCreated: Date(timeIntervalSince1970: 1))
-            }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.tableSelectionChanged([b.id]))
-        await store.send(.tableSelectionChanged([c.id]))
-        await clock.advance(by: .seconds(1))
-        await store.receive(\.infoMetadataResponse)
-        #expect(fetched.value == [c.id])
-    }
-
-    @Test
-    func aClosedInspectorStaysClosedWhenTheSelectionMoves() async {
-        let a = item("a.txt"), b = item("b.txt")
-        let store = TestStore(initialState: makeState(items: [a, b], selected: [a], access: access())) { BrowseFeature() }
-
-        await store.send(.tableSelectionChanged([b.id])) {
-            $0.selectedItemIDs = [b.id]
-        }
-    }
-
-    @Test
+    @Test("Get Info on the item already shown closes the inspector")
     func getInfoOnTheItemAlreadyShownClosesTheInspector() async {
-        let a = item("a.txt")
-        var state = makeState(items: [a], selected: [a], access: access())
-        state.infoItem = a
-        let store = TestStore(initialState: state) { BrowseFeature() }
-        store.exhaustivity = .off
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs, items: [first], access: access())
+        state.selectedItemIDs = [first.id]
+        state.infoItem = first
+        let store = BrowseFixtures.store(state)
 
         await store.send(.infoSelectionTapped)
         await store.receive(\.infoDismissed) {

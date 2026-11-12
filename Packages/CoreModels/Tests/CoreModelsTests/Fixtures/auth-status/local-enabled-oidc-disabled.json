@@ -1,0 +1,8 @@
+{
+  "requiresSetup": false,
+  "strategies": {
+    "local": true,
+    "oidc": false
+  },
+  "authEnabled": true
+}

@@ -1,9 +1,10 @@
 @testable import CoreModels
 import Testing
+import TestUtils
 
 struct SafeFileNameTests {
     @Test func plainNamesPassThrough() {
-        #expect(SafeFileName.component("photo.jpg") == "photo.jpg")
+        #expect(SafeFileName.component(TestFile.photo) == TestFile.photo)
         #expect(SafeFileName.component("My Report (final).pdf") == "My Report (final).pdf")
         #expect(SafeFileName.component("archive.tar.gz") == "archive.tar.gz")
     }
@@ -30,7 +31,7 @@ struct SafeFileNameTests {
     }
 
     @Test func isSafeComponentRejectsAnythingThatWouldBeRewritten() {
-        #expect(SafeFileName.isSafeComponent("photo.jpg"))
+        #expect(SafeFileName.isSafeComponent(TestFile.photo))
         #expect(!SafeFileName.isSafeComponent("../photo.jpg"))
         #expect(!SafeFileName.isSafeComponent("sub/photo.jpg"))
         #expect(!SafeFileName.isSafeComponent(".."))

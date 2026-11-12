@@ -8,15 +8,14 @@ struct BrandingTests {
 
     @Test("decodes a full branding object")
     func decodesFullObject() throws {
-        let json = #"{"appName": "Rivendell", "appLogoUrl": "/static/logos/custom-logo.png", "showPoweredBy": true}"#
-        let branding = try JSONDecoder().decode(Branding.self, from: Data(json.utf8))
+        let branding = try CoreModelsFixture.brandingFullObject.decode(Branding.self)
         #expect(branding.appName == "Rivendell")
-        #expect(branding.appLogoUrl == "/static/logos/custom-logo.png")
+        #expect(branding.appLogoUrl == Constants.customLogoPath)
     }
 
     @Test("missing keys fall back to the server's own defaults")
     func missingKeysUseDefaults() throws {
-        let branding = try JSONDecoder().decode(Branding.self, from: Data("{}".utf8))
+        let branding = try CoreModelsFixture.emptyObject.decode(Branding.self)
         #expect(branding.appName == "Explorer")
         #expect(branding.appLogoUrl == "/logo.svg")
         #expect(branding.hasCustomLogo == false)
@@ -30,7 +29,7 @@ struct BrandingTests {
 
     @Test("a server-relative custom logo resolves against the server URL")
     func relativeCustomLogoResolves() {
-        let branding = Branding(appName: "X", appLogoUrl: "/static/logos/custom-logo.png")
+        let branding = Branding(appName: "X", appLogoUrl: Constants.customLogoPath)
         #expect(branding.hasCustomLogo)
         #expect(branding.resolvedLogoURL(serverURL: serverURL)?.absoluteString
             == "https://cloud.example.com/static/logos/custom-logo.png")
@@ -38,8 +37,13 @@ struct BrandingTests {
 
     @Test("an absolute custom logo URL is used as is")
     func absoluteCustomLogoIsUsedVerbatim() {
-        let branding = Branding(appName: "X", appLogoUrl: "https://cdn.example.net/logo.png")
+        let branding = Branding(appName: "X", appLogoUrl: Constants.remoteLogoURLString)
         #expect(branding.resolvedLogoURL(serverURL: serverURL)?.absoluteString
-            == "https://cdn.example.net/logo.png")
+            == Constants.remoteLogoURLString)
     }
+}
+
+private enum Constants {
+    static let customLogoPath = "/static/logos/custom-logo.png"
+    static let remoteLogoURLString = "https://cdn.example.net/logo.png"
 }

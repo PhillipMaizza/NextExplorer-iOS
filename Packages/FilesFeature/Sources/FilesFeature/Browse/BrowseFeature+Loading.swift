@@ -23,6 +23,7 @@ extension BrowseFeature {
         let paths = paths.filter { !$0.isEmpty }
         guard !paths.isEmpty else { return .none }
         let filesClient = filesClient
+        let now = date.now
         let directoryCacheStore = directoryCacheStore.bound(to: scope)
         let offlineFileStore = offlineFileStore
         return .run(priority: .background) { _ in
@@ -33,6 +34,7 @@ extension BrowseFeature {
             await DirectoryPrefetch.run(
                 paths: BrowseFeature.prefetchOrder(paths, preferred: preferred),
                 limit: limit,
+                now: now,
                 serverURL: serverURL,
                 filesClient: filesClient,
                 directoryCacheStore: directoryCacheStore

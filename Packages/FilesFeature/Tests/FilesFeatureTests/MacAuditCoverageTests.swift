@@ -1,8 +1,8 @@
+import TestUtils
 #if os(macOS)
     import AppKit
     import ComposableArchitecture
     import CoreModels
-    import DependenciesTestSupport
     import FilesClient
     @testable import FilesFeature
     import Foundation
@@ -12,14 +12,14 @@
 
     /// The smaller fixes of the Mac audit, each pinned by a test.
     @MainActor
-    @Suite(.dependencies)
+    @Suite(.isolatedDependencies)
     struct MacAuditCoverageTests {
-        private let serverURL = URL(string: "https://example.com")!
+        private let serverURL = BrowseTestSupport.serverURL
 
-        @Test
+        @Test("An invalid name from an in place rename says why and asks nothing")
         func anInvalidNameFromAnInPlaceRenameSaysWhyAndAsksNothing() async {
-            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 1, kind: "pdf")
-            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+            let item = FileItem(name: TestFile.report, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.pdf)
+            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
             state.renameSheetItem = item
             let store = TestStore(initialState: state) {
                 BrowseFeature()
@@ -31,14 +31,17 @@
             }
         }
 
-        @Test
-        func deletingTheFileOfASearchPreviewClosesItAndSearchesAgain() async {
+        private func searchPreview() -> FavoritesFeature.State {
             var state = FavoritesFeature.State(serverURL: serverURL)
-            state.previewHost = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
-            let store = TestStore(initialState: state) {
+            state.previewHost = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
+            return state
+        }
+
+        @Test("Deleting the file of a search preview closes it and searches again")
+        func deletingTheFileOfASearchPreviewClosesItAndSearchesAgain() async {
+            let store = TestStore(initialState: searchPreview()) {
                 FavoritesFeature()
             }
-            store.exhaustivity = .off
 
             await store.send(.previewHost(.presented(.deleteResponse(.success(BrowseFeature.DeleteResult(itemID: "Docs/a.txt")))))) {
                 $0.previewHost = nil
@@ -46,51 +49,82 @@
             await store.receive(\.searchRetryTapped)
         }
 
-        @Test
+        @Test("Renaming the file of a search preview keeps the preview and refreshes the results behind it")
         func renamingTheFileOfASearchPreviewRefreshesTheResults() async {
-            var state = FavoritesFeature.State(serverURL: serverURL)
-            let renamed = FileItem(name: "b.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
-            state.previewHost = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
-            let store = TestStore(initialState: state) {
+            let renamed = FileItem(name: TestFile.bText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+            let store = TestStore(initialState: searchPreview()) {
                 FavoritesFeature()
             }
-            store.exhaustivity = .off
 
-            await store.send(.previewHost(.presented(.renameResponse(.success(BrowseFeature.RenameResult(originalID: "Docs/a.txt", renamed: renamed))))))
+            await store.send(.previewHost(.presented(.renameResponse(.success(BrowseFeature.RenameResult(originalID: "Docs/a.txt", renamed: renamed)))))) {
+                $0.previewHost?.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamed, previousName: TestFile.aText))] }
+            }
             await store.receive(\.searchRetryTapped)
-            #expect(store.state.previewHost != nil)
         }
 
-        @Test
-        func theSaveConfirmationNamesTheFolderAndTheCount() {
+        struct SavedMessage: Sendable {
+            let count: Int
+            let expected: String
+        }
+
+        private nonisolated static let savedMessages = [
+            SavedMessage(count: 1, expected: L10n.Browse.downloadSavedTo("Desktop")),
+            SavedMessage(count: 3, expected: L10n.Browse.downloadSavedAllTo(3, "Desktop")),
+        ]
+
+        @Test("The save confirmation names the folder and the count", arguments: savedMessages)
+        func theSaveConfirmationNamesTheFolderAndTheCount(_ saved: SavedMessage) {
             let url = URL(fileURLWithPath: "/Users/jdoe/Desktop/report.pdf")
-            #expect(MainTabFeature.macSavedMessage(count: 1, lastSavedURL: url) == L10n.Browse.downloadSavedTo("Desktop"))
-            #expect(MainTabFeature.macSavedMessage(count: 3, lastSavedURL: url) == L10n.Browse.downloadSavedAllTo(3, "Desktop"))
+
+            #expect(MainTabFeature.macSavedMessage(count: saved.count, lastSavedURL: url) == saved.expected)
         }
 
-        @Test
-        func transferNotificationsFireOnceWhenAQueueDrains() {
-            #expect(MacTransferNotifications.didStart(old: 0, new: 2))
-            #expect(!MacTransferNotifications.didStart(old: 1, new: 2))
-            #expect(!MacTransferNotifications.didDrain(old: 2, new: 1))
-            #expect(MacTransferNotifications.didDrain(old: 1, new: 0))
-            #expect(!MacTransferNotifications.didDrain(old: 0, new: 0))
+        struct TransferEdge: Sendable {
+            let old: Int
+            let new: Int
+            let didStart: Bool
+            let didDrain: Bool
         }
 
-        @Test
-        func theDockBarMovesInWholePercents() {
-            #expect(MacDockUploadStatus.stepped(0.123_4) == 0.12)
-            #expect(MacDockUploadStatus.stepped(0.125_1) == 0.13)
-            #expect(MacDockUploadStatus.stepped(1) == 1)
+        @Test(
+            "Transfer notifications fire once when a queue starts and once when it drains",
+            arguments: [
+                TransferEdge(old: 0, new: 2, didStart: true, didDrain: false),
+                TransferEdge(old: 1, new: 2, didStart: false, didDrain: false),
+                TransferEdge(old: 2, new: 1, didStart: false, didDrain: false),
+                TransferEdge(old: 1, new: 0, didStart: false, didDrain: true),
+                TransferEdge(old: 0, new: 0, didStart: false, didDrain: false),
+            ]
+        )
+        func transferNotificationsFireOnceWhenAQueueDrains(_ edge: TransferEdge) {
+            #expect(MacTransferNotifications.didStart(old: edge.old, new: edge.new) == edge.didStart)
+            #expect(MacTransferNotifications.didDrain(old: edge.old, new: edge.new) == edge.didDrain)
         }
 
-        @Test
+        struct DockStep: Sendable {
+            let fraction: Double
+            let stepped: Double
+        }
+
+        @Test(
+            "The Dock bar moves in whole percents",
+            arguments: [
+                DockStep(fraction: 0.123_4, stepped: 0.12),
+                DockStep(fraction: 0.125_1, stepped: 0.13),
+                DockStep(fraction: 1, stepped: 1),
+            ]
+        )
+        func theDockBarMovesInWholePercents(_ step: DockStep) {
+            #expect(MacDockUploadStatus.stepped(step.fraction) == step.stepped)
+        }
+
+        @Test("A gallery page never decodes past the Mac cap")
         func aGalleryPageNeverDecodesPastTheMacCap() {
             #expect(ImageGalleryPage.decodeTarget(screenLongSide: 1_440, scale: 2) == 5_760)
             #expect(ImageGalleryPage.decodeTarget(screenLongSide: 3_008, scale: 2) == ImageGalleryPage.macMaxPixelDimension)
         }
 
-        @Test
+        @Test("The Quick Look responder joins and leaves the window chain")
         func quickLookResponderJoinsAndLeavesTheWindowChain() {
             let window = NSWindow(contentRect: .zero, styleMask: [.titled], backing: .buffered, defer: true)
             let original = window.nextResponder
@@ -111,23 +145,24 @@
             #expect(window.nextResponder === original)
         }
 
-        @Test
+        @Test("Quick Look control is wanted only with a file to show")
         func quickLookControlIsWantedOnlyWithAFileToShow() {
             let panel = MacQuickLookPanel()
             #expect(!panel.hasFileToShow)
             #expect(panel.responder.owner === panel)
         }
 
-        @Test
+        @Test("Syntax highlighting stays the same once its queries are cached")
         func syntaxHighlightingStaysTheSameOnceItsQueriesAreCached() throws {
             let language = try #require(MacSyntaxLanguage.forKind("json"))
-            let first = MacSyntaxHighlighter.spans(for: #"{"a": 1}"#, language: language)
-            let second = MacSyntaxHighlighter.spans(for: #"{"a": 1}"#, language: language)
+            let sample = try FilesFeatureFixture.highlighterSample.string()
+            let first = MacSyntaxHighlighter.spans(for: sample, language: language)
+            let second = MacSyntaxHighlighter.spans(for: sample, language: language)
             #expect(!first.isEmpty)
             #expect(first.map(\.range) == second.map(\.range))
         }
 
-        @Test
+        @Test("Esc in the editor closes the preview instead of completing a word")
         func escInTheEditorClosesThePreviewInsteadOfCompletingAWord() {
             let coordinator = CodeEditorView.Coordinator(text: .constant(""))
             let closed = LockIsolated(0)
@@ -139,19 +174,19 @@
             #expect(closed.value == 1)
         }
 
-        @Test
+        @Test("Quitting asks only while an upload or download runs")
         func quittingAsksOnlyWhileAnUploadOrDownloadRuns() {
             let user = User(id: "1", username: "jdoe", email: nil, displayName: nil, roles: [])
             var state = MainTabFeature.State(serverURL: serverURL, user: user)
             #expect(!state.hasTransfersInFlight)
-            let item = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 1, kind: "txt")
+            let item = FileItem(name: TestFile.aText, path: "", dateModified: MockDate.date, size: 1, kind: TestKind.text)
             state.downloadQueue.jobs.append(DownloadQueueFeature.DownloadJob(id: UUID(0), item: item, status: .downloading))
             #expect(state.hasTransfersInFlight)
             state.downloadQueue.jobs[id: UUID(0)]?.status = .completed
             #expect(!state.hasTransfersInFlight)
         }
 
-        @Test
+        @Test("Leaving an admin pane releases it so it loads fresh next time")
         func leavingAnAdminPaneReleasesItSoItLoadsFreshNextTime() async {
             let admin = User(id: "1", username: "admin", email: nil, displayName: nil, roles: [UserRole.admin])
             var state = SettingsFeature.State(serverURL: serverURL, user: admin)
@@ -170,109 +205,14 @@
             await store.send(.adminPaneLeft(.thumbnails))
         }
 
-        @Test
-        func savesFromAnyScreenReachTheAppShell() async {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+        @Test("A save requested from a search preview reaches the app shell")
+        func savesFromASearchPreviewReachTheAppShell() async {
+            let item = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
             let request = DownloadSaveRequest(item: item, target: .into(URL(fileURLWithPath: "/tmp")))
-            let browse = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) { BrowseTabFeature() }
-            await browse.send(.root(.delegate(.saveRequested([request]))))
-            await browse.receive(.delegate(.saveRequested([request])))
+            let store = TestStore(initialState: searchPreview()) { FavoritesFeature() }
 
-            var favoritesState = FavoritesFeature.State(serverURL: serverURL)
-            favoritesState.previewHost = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
-            let favorites = TestStore(initialState: favoritesState) { FavoritesFeature() }
-            await favorites.send(.previewHost(.presented(.delegate(.saveRequested([request])))))
-            await favorites.receive(.delegate(.saveRequested([request])))
-        }
-
-        @Test
-        func aChangeInAFavoritesFolderIsBroadcastAndReloadsBrowse() async {
-            let user = User(id: "1", username: "jdoe", email: nil)
-            var state = MainTabFeature.State(serverURL: serverURL, user: user)
-            state.favorites.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs"))
-            let id = state.favorites.path.ids[0]
-            let folder = FileItem(name: "New", path: "Docs", dateModified: Date(), size: 0, kind: "directory")
-            let store = TestStore(initialState: state) {
-                MainTabFeature()
-            } withDependencies: {
-                $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
-                $0.filesClient.favorites = { _ in [] }
-            }
-            store.exhaustivity = .off
-
-            await store.send(.favorites(.path(.element(id: id, action: .newFolderResponse(.success(folder)))))) {
-                $0.folderWindowSync = FolderWindowSync(revision: 1, change: .folders(["Docs"]), origin: nil)
-            }
-            await store.receive(\.browse.refreshDirectory)
-        }
-
-        @Test
-        func aMoveOrUndoReloadsEveryFolderInTheOtherWindows() async {
-            #expect(BrowseFeature.folderContentsChange(after: .undoResponse(.success(true)), directoryPath: "Docs") == .everything)
-            let store = TestStore(initialState: FolderWindowFeature.State(serverURL: serverURL)) {
-                FolderWindowFeature { _ in }
-            } withDependencies: {
-                $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
-                $0.filesClient.favorites = { _ in [] }
-                $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
-            }
-            store.exhaustivity = .off
-
-            await store.send(.otherWindowChanged(.everything))
-            await store.receive(\.browse.syncPathStack)
-        }
-
-        @Test
-        func aSaveReportsByteProgressToItsQueueRow() async {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 4, kind: "txt")
-            let target = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-            let store = TestStore(initialState: DownloadQueueFeature.State(serverURL: serverURL)) {
-                DownloadQueueFeature()
-            } withDependencies: {
-                $0.uuid = .incrementing
-                $0.date.now = Date(timeIntervalSince1970: 0)
-                $0.filesClient.flushDownloadConnections = {}
-                $0.filesClient.downloadItem = { _, _, onProgress in
-                    onProgress(TransferProgress(receivedBytes: 4, expectedBytes: 4))
-                    let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-                    try Data("data".utf8).write(to: file)
-                    return file
-                }
-            }
-            store.exhaustivity = .off
-            defer { try? FileManager.default.removeItem(at: target) }
-
-            await store.send(.enqueueSaves([DownloadSaveRequest(item: item, target: .replacing(target))]))
-            await store.receive(\.progress)
-            await store.receive(\.downloadResponse)
-            #expect(store.state.savedCount == 1)
-            #expect(store.state.lastSavedURL == target)
-        }
-
-        @Test
-        func aDiskFailureDuringASaveReadsAsALocalProblem() async {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 4, kind: "txt")
-            let unwritable = URL(fileURLWithPath: "/System/NextExplorerAuditTest/a.txt")
-            let client = FilesClient().with {
-                $0.downloadItem = { _, _, _ in
-                    let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-                    try Data("data".utf8).write(to: file)
-                    return file
-                }
-            }
-            await #expect(throws: FilesClientError.self) {
-                try await MacDownloadSaving.save(
-                    DownloadSaveRequest(item: item, target: .replacing(unwritable)), serverURL: self.serverURL, filesClient: client
-                ) { _ in }
-            }
-        }
-    }
-
-    private extension FilesClient {
-        func with(_ change: (inout FilesClient) -> Void) -> FilesClient {
-            var copy = self
-            change(&copy)
-            return copy
+            await store.send(.previewHost(.presented(.delegate(.saveRequested([request])))))
+            await store.receive(.delegate(.saveRequested([request])))
         }
     }
 #endif

@@ -1,0 +1,15 @@
+{
+  "user": {
+    "id": "u1",
+    "username": "alice",
+    "email": "alice@example.com",
+    "displayName": "Alice A",
+    "roles": [
+      "admin"
+    ],
+    "emailVerified": true,
+    "createdAt": "2027-01-15T10:00:00.000Z",
+    "updatedAt": "2027-01-16T10:00:00.000Z",
+    "authMethods": []
+  }
+}

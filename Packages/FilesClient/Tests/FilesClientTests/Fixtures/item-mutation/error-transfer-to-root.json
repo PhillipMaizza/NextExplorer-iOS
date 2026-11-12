@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "error": {
+    "message": "Cannot copy or move items to the root path."
+  }
+}
