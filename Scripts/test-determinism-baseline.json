@@ -167,9 +167,6 @@
     "exhaustivity off": 1,
     "skipReceivedActions": 20
   },
-  "Packages/FolderPickerFeature/Tests/FolderPickerFeatureTests/DestinationPickerFeatureTests.swift": {
-    "exhaustivity off": 6
-  },
   "Packages/ShareExtensionFeature/Tests/ShareExtensionFeatureTests/ShareUploadFeatureTests.swift": {
     "exhaustivity off": 1
   }

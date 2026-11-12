@@ -22,6 +22,12 @@ struct DestinationPickerFeatureTests {
         FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
     }
 
+    private func finishLoad(_ state: inout DestinationPickerFeature.State, folders: [FileItem]) {
+        state.phase = .loaded
+        state.currentAccess = access()
+        state.folders = IdentifiedArray(uniqueElements: folders)
+    }
+
     @Test
     func onAppearLoadsFoldersOnlyDroppingFiles() async {
         let store = TestStore(
@@ -35,11 +41,7 @@ struct DestinationPickerFeatureTests {
         }
 
         await store.send(.onAppear) { $0.phase = .loading }
-        await store.receive(\.foldersResponse.success) {
-            $0.phase = .loaded
-            $0.currentAccess = access()
-            $0.folders = [folder("Documents")]
-        }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Documents")]) }
     }
 
     @Test
@@ -85,15 +87,17 @@ struct DestinationPickerFeatureTests {
                 )
             }
         }
-        store.exhaustivity = .off
 
-        await store.send(.onAppear)
-        await store.receive(\.foldersResponse.success)
+        await store.send(.onAppear) { $0.phase = .loading }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Documents")]) }
         await store.send(.folderTapped(folder("Documents"))) {
             $0.directoryPath = "Documents"
+            $0.navigationHistory = ["Inbox"]
+            $0.phase = .loading
+            $0.currentAccess = nil
         }
         await store.receive(\.foldersResponse.success) {
-            $0.folders = [folder("Work", path: "Documents")]
+            finishLoad(&$0, folders: [folder("Work", path: "Documents")])
         }
     }
 
@@ -108,34 +112,41 @@ struct DestinationPickerFeatureTests {
                 BrowseResult(items: [folder("Child", path: path)], access: access(), path: path)
             }
         }
-        store.exhaustivity = .off
 
         #expect(store.state.canNavigateBack == false)
 
         await store.send(.folderTapped(folder("Documents"))) {
             $0.directoryPath = "Documents"
             $0.navigationHistory = [""]
+            $0.phase = .loading
+            $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success)
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Child", path: "Documents")]) }
         #expect(store.state.canNavigateBack == true)
 
         await store.send(.folderTapped(folder("Reports", path: "Documents"))) {
             $0.directoryPath = "Documents/Reports"
             $0.navigationHistory = ["", "Documents"]
+            $0.phase = .loading
+            $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success)
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Child", path: "Documents/Reports")]) }
 
         await store.send(.backTapped) {
             $0.directoryPath = "Documents"
             $0.navigationHistory = [""]
+            $0.phase = .loading
+            $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success)
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Child", path: "Documents")]) }
 
         await store.send(.backTapped) {
             $0.directoryPath = ""
             $0.navigationHistory = []
+            $0.phase = .loading
+            $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success)
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Child", path: "")]) }
         #expect(store.state.canNavigateBack == false)
     }
 
@@ -150,13 +161,14 @@ struct DestinationPickerFeatureTests {
         } withDependencies: {
             $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: access(), path: "") }
         }
-        store.exhaustivity = .off
 
         await store.send(.breadcrumbTapped(path: "A")) {
             $0.directoryPath = "A"
             $0.navigationHistory = [""]
+            $0.phase = .loading
+            $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success)
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: []) }
     }
 
     @Test
@@ -169,12 +181,13 @@ struct DestinationPickerFeatureTests {
         } withDependencies: {
             $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: access(), path: "") }
         }
-        store.exhaustivity = .off
 
         await store.send(.breadcrumbTapped(path: "Documents")) {
             $0.directoryPath = "Documents"
+            $0.phase = .loading
+            $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success)
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: []) }
     }
 
     @Test
@@ -186,14 +199,15 @@ struct DestinationPickerFeatureTests {
         } withDependencies: {
             $0.filesClient.browse = { _, _ in throw FilesClientError.server(statusCode: 500) }
         }
-        store.exhaustivity = .off
 
-        await store.send(.onAppear)
+        await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.foldersResponse.failure) {
             $0.phase = .failed(L10n.Browse.destinationPickerLoadFailed)
         }
         await store.send(.retryTapped) { $0.phase = .loading }
-        await store.receive(\.foldersResponse.failure)
+        await store.receive(\.foldersResponse.failure) {
+            $0.phase = .failed(L10n.Browse.destinationPickerLoadFailed)
+        }
     }
 
     @Test
@@ -260,10 +274,9 @@ struct DestinationPickerFeatureTests {
                 ]
             }
         }
-        store.exhaustivity = .off
 
-        await store.send(.onAppear)
-        await store.receive(\.foldersResponse.success)
+        await store.send(.onAppear) { $0.phase = .loading }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Photos", path: "Media")]) }
 
         await store.send(.searchQueryChanged("sum")) {
             $0.searchQuery = "sum"
@@ -280,6 +293,10 @@ struct DestinationPickerFeatureTests {
             $0.directoryPath = "Media/Photos/2024/Summer"
             $0.searchQuery = ""
             $0.searchResults = nil
+            $0.navigationHistory = ["Media"]
+            $0.phase = .loading
+            $0.currentAccess = nil
         }
+        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder("Photos", path: "Media")]) }
     }
 }
