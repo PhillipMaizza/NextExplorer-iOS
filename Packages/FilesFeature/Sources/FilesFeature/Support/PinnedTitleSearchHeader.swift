@@ -56,6 +56,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                     ProgressView()
                         .progressViewStyle(.linear)
                         .controlSize(.small)
+                        .tint(Color.accent)
                         .accessibilityLabel(L10n.Common.loading)
                         .allowsHitTesting(false)
                 }
@@ -116,7 +117,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .accessibilityHidden(true)
                 .overlay {
                     if isSearchPending {
-                        DSSpinner(size: .small, color: Color.secondaryDS)
+                        DSSpinner(size: .small)
                     }
                 }
             TextField(

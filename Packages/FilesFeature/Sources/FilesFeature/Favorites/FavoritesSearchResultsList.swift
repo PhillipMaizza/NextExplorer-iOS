@@ -55,6 +55,7 @@ enum FavoritesSkeleton {
     static let entries = [6, 12, 4, 9, 15, 7, 11, 5, 13, 8].map { SkeletonEntry(name: SkeletonEntry.text($0), isDirectory: true) }
 }
 
+@MainActor
 private func previewStore(results: [SearchResultItem]?, phase: DataPhase) -> StoreOf<FavoritesFeature> {
     var state = FavoritesFeature.State(serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"))
     state.searchQuery = "budget"

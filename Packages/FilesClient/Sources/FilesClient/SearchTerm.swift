@@ -105,29 +105,39 @@ public struct SearchTerm: Equatable, Sendable {
 
 /// A term with `*` (any run) or `?` (any one character), matched against a whole name, or against a
 /// whole path when it holds `/`, case insensitively. Every other character is itself: `a+b` is three
-/// characters, not an expression.
+/// characters, not an expression. The expression is compiled on the first match, once per term:
+/// computed state builds terms often, and most are never matched against anything.
 private final class Glob: @unchecked Sendable {
     let isPathPattern: Bool
-    private let expression: NSRegularExpression
+    private let pattern: String
+    private let lock = NSLock()
+    private var compiled: NSRegularExpression??
 
     init?(_ text: String) {
         guard text.contains(where: { $0 == "*" || $0 == "?" }) else { return nil }
-        let composed = text.precomposedStringWithCanonicalMapping
-        let pattern = composed.map { character -> String in
+        pattern = text.precomposedStringWithCanonicalMapping.map { character -> String in
             switch character {
             case "*": ".*"
             case "?": "."
             default: NSRegularExpression.escapedPattern(for: String(character))
             }
         }.joined()
-        guard let expression = try? NSRegularExpression(pattern: "^\(pattern)$", options: [.caseInsensitive, .dotMatchesLineSeparators]) else {
-            return nil
-        }
         isPathPattern = text.contains("/")
-        self.expression = expression
+    }
+
+    private var expression: NSRegularExpression? {
+        lock.withLock {
+            if let compiled {
+                return compiled
+            }
+            let made = try? NSRegularExpression(pattern: "^\(pattern)$", options: [.caseInsensitive, .dotMatchesLineSeparators])
+            compiled = .some(made)
+            return made
+        }
     }
 
     func fits(_ value: String) -> Bool {
+        guard let expression else { return false }
         let composed = value.precomposedStringWithCanonicalMapping
         let range = NSRange(composed.startIndex..., in: composed)
         return expression.firstMatch(in: composed, range: range) != nil

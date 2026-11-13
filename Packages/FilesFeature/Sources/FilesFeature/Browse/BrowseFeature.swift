@@ -406,7 +406,8 @@ public struct BrowseFeature {
         /// coexist, so one accessor drives the editor's error surface as before.
         public var textEditorErrorMessage: String? { textPhase.errorMessage ?? textSaveError }
 
-        public var isSearching: Bool { !searchQuery.isEmpty }
+        /// A term is typed; spaces alone are not one.
+        public var isSearching: Bool { !SearchTerm(searchQuery).isEmpty }
 
         /// A server search for the typed term is waiting out the debounce or running, whatever
         /// is on screen meanwhile.
