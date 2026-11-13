@@ -40,6 +40,11 @@ struct OfflineTabView: View {
     @Namespace private var previewTransition
     @State private var isSortSheetPresented = false
 
+    /// Pinned items and files saved earlier, the whole tab's footprint on this device.
+    private var usedBytes: Int64 {
+        offlineStore.totalBytes + store.downloads.reduce(Int64(0)) { $0 + $1.size }
+    }
+
     private var viewMode: FileListViewMode {
         #if os(macOS)
             .list
@@ -228,6 +233,11 @@ struct OfflineTabView: View {
                     noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
                     onRetry: { store.send(.refreshButtonTapped) }
                 )
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if listPhase == .content, usedBytes > 0 {
+                    OfflineStorageSummary(bytes: usedBytes)
+                }
             }
             .animation(DSMotion.contentReveal, value: listPhase)
             .featureToast(error: store.actionErrorMessage)

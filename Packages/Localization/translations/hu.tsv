@@ -1117,3 +1117,6 @@ offline.removeItemTitle	Eltávolítja a(z) „%@” elemet az offline elérhető
 offline.removeItemsTitle	Eltávolít %lld elemet az offline elérhetők közül?
 offline.removeItemMessage	Ez törli az offline használatra mentett fájlokat ezen az eszközön. A kiszolgálón lévő fájljait nem érinti.
 browse.actionRemoveFromOffline	Eltávolítás az offline közül
+offline.rowUpdating	Frissítés…
+offline.rowWaitingForNetwork	Hálózatra vár
+offline.rowUpdateFailed	A frissítés nem sikerült

@@ -1239,3 +1239,6 @@ trashSettings.environmentNote	Defaults come from TRASH_ENABLED, TRASH_RETENTION_
 trashSettings.versionsEnvironmentNote	Defaults come from VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE and VERSIONS_SESSION_CHECKPOINT_MINUTES.
 trashSettings.violation	%1$@: %2$@
 versionedFiles.refresh	Refresh
+offline.rowUpdating	Updating…
+offline.rowWaitingForNetwork	Waiting for network
+offline.rowUpdateFailed	Couldn't update

@@ -1139,3 +1139,6 @@ offline.removeItemTitle	Remover “%@” de Disponível offline?
 offline.removeItemsTitle	Remover %lld itens de Disponível offline?
 offline.removeItemMessage	Isso exclui os arquivos salvos para uso offline neste dispositivo. Seus arquivos no servidor não são afetados.
 browse.actionRemoveFromOffline	Remover de offline
+offline.rowUpdating	Atualizando…
+offline.rowWaitingForNetwork	Aguardando rede
+offline.rowUpdateFailed	Não foi possível atualizar

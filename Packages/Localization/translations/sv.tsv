@@ -1144,3 +1144,6 @@ offline.removeItemTitle	Ta bort ”%@” från Tillgängligt offline?
 offline.removeItemsTitle	Ta bort %lld objekt från Tillgängligt offline?
 offline.removeItemMessage	Detta tar bort filerna som sparats för offlineanvändning på den här enheten. Dina filer på servern påverkas inte.
 browse.actionRemoveFromOffline	Ta bort från offline
+offline.rowUpdating	Uppdaterar…
+offline.rowWaitingForNetwork	Väntar på nätverk
+offline.rowUpdateFailed	Det gick inte att uppdatera

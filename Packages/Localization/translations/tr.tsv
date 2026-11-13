@@ -1116,3 +1116,6 @@ offline.removeItemTitle	“%@” çevrimdışı kullanılabilirden kaldırılsı
 offline.removeItemsTitle	%lld öğe çevrimdışı kullanılabilirden kaldırılsın mı?
 offline.removeItemMessage	Bu işlem, bu cihazda çevrimdışı kullanım için kaydedilen dosyaları siler. Sunucudaki dosyalarınız etkilenmez.
 browse.actionRemoveFromOffline	Çevrimdışından kaldır
+offline.rowUpdating	Güncelleniyor…
+offline.rowWaitingForNetwork	Ağ bekleniyor
+offline.rowUpdateFailed	Güncellenemedi

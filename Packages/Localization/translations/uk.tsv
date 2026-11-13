@@ -1129,3 +1129,6 @@ offline.removeItemTitle	Прибрати «%@» із доступних офла
 offline.removeItemsTitle	Прибрати %lld об’єктів із доступних офлайн?
 offline.removeItemMessage	Це видалить файли, збережені для офлайн-використання на цьому пристрої. Ваші файли на сервері не зачіпаються.
 browse.actionRemoveFromOffline	Прибрати з офлайн
+offline.rowUpdating	Оновлення…
+offline.rowWaitingForNetwork	Очікування мережі
+offline.rowUpdateFailed	Не вдалося оновити

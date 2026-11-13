@@ -66,6 +66,7 @@
         var favorites: IdentifiedArrayOf<Favorite> = []
         let onPreview: (LocalDownload) -> Void
 
+        @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var progress = OfflineDownloadProgress()
         @State private var selection: Set<MacOfflineTableRow.ID> = []
         @FocusState private var isFocused: Bool
 
@@ -87,6 +88,9 @@
                                 size: MacBrowseTableMetrics.badgeSize
                             )
                             .accessibilityLabel(L10n.Offline.badgeAvailable)
+                            if let title = OfflineSyncState(phase: progress.phase).title {
+                                Text(title).type(.body3(.regular), style: .secondary)
+                            }
                         }
                     }
                     .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)

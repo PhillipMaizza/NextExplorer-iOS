@@ -1138,3 +1138,6 @@ offline.removeItemTitle	要将“%@”从“可离线使用”中移除吗？
 offline.removeItemsTitle	要将 %lld 个项目从“可离线使用”中移除吗？
 offline.removeItemMessage	这将删除此设备上为离线使用保存的文件。服务器上的文件不受影响。
 browse.actionRemoveFromOffline	从离线中移除
+offline.rowUpdating	正在更新…
+offline.rowWaitingForNetwork	等待网络
+offline.rowUpdateFailed	无法更新

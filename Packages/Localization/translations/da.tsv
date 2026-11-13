@@ -1117,3 +1117,6 @@ offline.removeItemTitle	Fjern “%@” fra tilgængeligt offline?
 offline.removeItemsTitle	Fjern %lld emner fra tilgængeligt offline?
 offline.removeItemMessage	Dette sletter de filer, der er gemt til offline brug på denne enhed. Dine filer på serveren påvirkes ikke.
 browse.actionRemoveFromOffline	Fjern fra offline
+offline.rowUpdating	Opdaterer…
+offline.rowWaitingForNetwork	Venter på netværk
+offline.rowUpdateFailed	Kunne ikke opdatere

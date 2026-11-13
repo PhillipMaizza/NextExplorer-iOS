@@ -1117,3 +1117,6 @@ offline.removeItemTitle	Fjerne «%@» fra tilgjengelig uten nett?
 offline.removeItemsTitle	Fjerne %lld objekter fra tilgjengelig uten nett?
 offline.removeItemMessage	Dette sletter filene som er lagret for frakoblet bruk på denne enheten. Filene dine på serveren påvirkes ikke.
 browse.actionRemoveFromOffline	Fjern fra uten nett
+offline.rowUpdating	Oppdaterer…
+offline.rowWaitingForNetwork	Venter på nettverk
+offline.rowUpdateFailed	Kunne ikke oppdatere

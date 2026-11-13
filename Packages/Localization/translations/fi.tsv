@@ -1117,3 +1117,6 @@ offline.removeItemTitle	Poistetaanko “%@” offline-saatavista?
 offline.removeItemsTitle	Poistetaanko %lld kohdetta offline-saatavista?
 offline.removeItemMessage	Tämä poistaa tähän laitteeseen offline-käyttöön tallennetut tiedostot. Palvelimella olevia tiedostojasi ei kosketa.
 browse.actionRemoveFromOffline	Poista offline-tilasta
+offline.rowUpdating	Päivitetään…
+offline.rowWaitingForNetwork	Odottaa verkkoa
+offline.rowUpdateFailed	Päivitys epäonnistui

@@ -1127,3 +1127,6 @@ offline.removeItemTitle	Odebrat „%@“ z dostupných offline?
 offline.removeItemsTitle	Odebrat %lld položek z dostupných offline?
 offline.removeItemMessage	Tím se smažou soubory uložené pro offline použití na tomto zařízení. Vaše soubory na serveru se nezmění.
 browse.actionRemoveFromOffline	Odebrat z offline
+offline.rowUpdating	Aktualizace…
+offline.rowWaitingForNetwork	Čeká na síť
+offline.rowUpdateFailed	Aktualizace se nezdařila

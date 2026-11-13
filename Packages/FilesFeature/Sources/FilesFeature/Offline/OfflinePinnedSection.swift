@@ -27,7 +27,8 @@ struct OfflinePinnedSection: View {
                     isFirst: index == 0,
                     isLast: index == usages.count - 1,
                     onOpen: { onOpen(usage.root) },
-                    favorite: favorites.first { $0.path == usage.root.path }
+                    favorite: favorites.first { $0.path == usage.root.path },
+                    syncState: OfflineSyncState(phase: progress.phase)
                 ) {
                     store.send(.removeTapped(path: usage.root.path), animation: .default)
                 }

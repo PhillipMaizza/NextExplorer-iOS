@@ -1150,3 +1150,6 @@ offline.removeItemTitle	Elimini „%@” din Disponibile offline?
 offline.removeItemsTitle	Elimini %lld elemente din Disponibile offline?
 offline.removeItemMessage	Aceasta șterge fișierele salvate pentru utilizare offline pe acest dispozitiv. Fișierele tale de pe server nu sunt afectate.
 browse.actionRemoveFromOffline	Elimină din offline
+offline.rowUpdating	Se actualizează…
+offline.rowWaitingForNetwork	Se așteaptă rețeaua
+offline.rowUpdateFailed	Actualizarea a eșuat

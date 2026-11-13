@@ -647,6 +647,9 @@ public enum L10n {
         public static func removeItemsTitle(_ a0: CVarArg) -> String { tr("offline.removeItemsTitle", a0) }
         public static var removeRow: String { tr("offline.removeRow") }  // "Remove Offline Files"
         public static var resyncRow: String { tr("offline.resyncRow") }  // "Update Offline Files"
+        public static var rowUpdateFailed: String { tr("offline.rowUpdateFailed") }  // "Couldn't update"
+        public static var rowUpdating: String { tr("offline.rowUpdating") }  // "Updating…"
+        public static var rowWaitingForNetwork: String { tr("offline.rowWaitingForNetwork") }  // "Waiting for network"
         public static var sectionSavedEarlier: String { tr("offline.sectionSavedEarlier") }  // "Saved earlier"
         public static var sectionTitle: String { tr("offline.sectionTitle") }  // "Offline"
         public static var selectionDownload: String { tr("offline.selectionDownload") }  // "Download"

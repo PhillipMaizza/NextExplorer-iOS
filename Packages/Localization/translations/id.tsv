@@ -1111,3 +1111,6 @@ offline.removeItemTitle	Hapus “%@” dari Tersedia Offline?
 offline.removeItemsTitle	Hapus %lld item dari Tersedia Offline?
 offline.removeItemMessage	Ini menghapus file yang disimpan untuk penggunaan offline di perangkat ini. File Anda di server tidak terpengaruh.
 browse.actionRemoveFromOffline	Hapus dari Offline
+offline.rowUpdating	Memperbarui…
+offline.rowWaitingForNetwork	Menunggu jaringan
+offline.rowUpdateFailed	Gagal memperbarui

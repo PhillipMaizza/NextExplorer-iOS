@@ -1117,3 +1117,6 @@ offline.removeItemTitle	Κατάργηση του «%@» από τα διαθέ�
 offline.removeItemsTitle	Κατάργηση %lld στοιχείων από τα διαθέσιμα εκτός σύνδεσης;
 offline.removeItemMessage	Αυτό διαγράφει τα αρχεία που έχουν αποθηκευτεί για χρήση εκτός σύνδεσης σε αυτήν τη συσκευή. Τα αρχεία σας στον διακομιστή δεν επηρεάζονται.
 browse.actionRemoveFromOffline	Κατάργηση από εκτός σύνδεσης
+offline.rowUpdating	Ενημέρωση…
+offline.rowWaitingForNetwork	Αναμονή για δίκτυο
+offline.rowUpdateFailed	Η ενημέρωση απέτυχε

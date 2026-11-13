@@ -1138,3 +1138,6 @@ offline.removeItemTitle	「%@」をオフラインで利用可能から削除し
 offline.removeItemsTitle	%lld件の項目をオフラインで利用可能から削除しますか？
 offline.removeItemMessage	この端末にオフライン用として保存されたファイルを削除します。サーバー上のファイルには影響しません。
 browse.actionRemoveFromOffline	オフラインから削除
+offline.rowUpdating	更新中…
+offline.rowWaitingForNetwork	ネットワーク待ち
+offline.rowUpdateFailed	更新できませんでした

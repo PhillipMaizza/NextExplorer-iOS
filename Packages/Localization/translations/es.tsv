@@ -1144,3 +1144,6 @@ offline.removeItemTitle	¿Quitar «%@» de disponibles sin conexión?
 offline.removeItemsTitle	¿Quitar %lld elementos de disponibles sin conexión?
 offline.removeItemMessage	Esto elimina los archivos guardados para uso sin conexión en este dispositivo. Tus archivos en el servidor no se ven afectados.
 browse.actionRemoveFromOffline	Quitar de sin conexión
+offline.rowUpdating	Actualizando…
+offline.rowWaitingForNetwork	Esperando red
+offline.rowUpdateFailed	No se pudo actualizar

@@ -1111,3 +1111,6 @@ offline.removeItemTitle	Xóa “%@” khỏi mục có sẵn ngoại tuyến?
 offline.removeItemsTitle	Xóa %lld mục khỏi mục có sẵn ngoại tuyến?
 offline.removeItemMessage	Thao tác này xóa các tệp đã lưu để dùng ngoại tuyến trên thiết bị này. Các tệp của bạn trên máy chủ không bị ảnh hưởng.
 browse.actionRemoveFromOffline	Xóa khỏi ngoại tuyến
+offline.rowUpdating	Đang cập nhật…
+offline.rowWaitingForNetwork	Đang chờ mạng
+offline.rowUpdateFailed	Không thể cập nhật

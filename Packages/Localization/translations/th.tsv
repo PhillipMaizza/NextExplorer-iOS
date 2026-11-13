@@ -1111,3 +1111,6 @@ offline.removeItemTitle	นำ “%@” ออกจากที่ใช้ง�
 offline.removeItemsTitle	นำ %lld รายการออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม
 offline.removeItemMessage	การดำเนินการนี้จะลบไฟล์ที่บันทึกไว้สำหรับใช้แบบออฟไลน์บนอุปกรณ์เครื่องนี้ ไฟล์ของคุณบนเซิร์ฟเวอร์ไม่ได้รับผลกระทบ
 browse.actionRemoveFromOffline	นำออกจากออฟไลน์
+offline.rowUpdating	กำลังอัปเดต…
+offline.rowWaitingForNetwork	รอเครือข่าย
+offline.rowUpdateFailed	อัปเดตไม่สำเร็จ

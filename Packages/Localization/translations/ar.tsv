@@ -1168,3 +1168,6 @@ offline.removeItemTitle	إزالة «%@» من المتاح دون اتصال؟
 offline.removeItemsTitle	إزالة %lld عناصر من المتاح دون اتصال؟
 offline.removeItemMessage	يؤدي هذا إلى حذف الملفات المحفوظة للاستخدام دون اتصال على هذا الجهاز. لن تتأثر ملفاتك على الخادم.
 browse.actionRemoveFromOffline	إزالة من المتاح دون اتصال
+offline.rowUpdating	جارٍ التحديث…
+offline.rowWaitingForNetwork	في انتظار الشبكة
+offline.rowUpdateFailed	تعذر التحديث

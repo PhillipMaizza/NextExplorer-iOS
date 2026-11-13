@@ -1123,3 +1123,6 @@ offline.removeItemTitle	להסיר את ״%@״ מהזמינים ללא חיבו�
 offline.removeItemsTitle	להסיר %lld פריטים מהזמינים ללא חיבור?
 offline.removeItemMessage	פעולה זו מוחקת את הקבצים ששמורים לשימוש לא מקוון במכשיר זה. הקבצים שלכם בשרת לא מושפעים.
 browse.actionRemoveFromOffline	הסרה מהזמינים ללא חיבור
+offline.rowUpdating	מעדכן…
+offline.rowWaitingForNetwork	ממתין לרשת
+offline.rowUpdateFailed	העדכון נכשל

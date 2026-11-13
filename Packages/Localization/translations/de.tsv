@@ -1144,3 +1144,6 @@ offline.removeItemTitle	„%@“ aus „Offline verfügbar“ entfernen?
 offline.removeItemsTitle	%lld Objekte aus „Offline verfügbar“ entfernen?
 offline.removeItemMessage	Dadurch werden die für die Offline-Nutzung auf diesem Gerät gespeicherten Dateien gelöscht. Deine Dateien auf dem Server sind nicht betroffen.
 browse.actionRemoveFromOffline	Aus Offline entfernen
+offline.rowUpdating	Wird aktualisiert…
+offline.rowWaitingForNetwork	Wartet auf Netzwerk
+offline.rowUpdateFailed	Aktualisierung fehlgeschlagen

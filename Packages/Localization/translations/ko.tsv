@@ -1138,3 +1138,6 @@ offline.removeItemTitle	“%@”을(를) 오프라인 사용 가능에서 제거
 offline.removeItemsTitle	%lld개 항목을 오프라인 사용 가능에서 제거할까요?
 offline.removeItemMessage	이 기기에 오프라인 사용을 위해 저장된 파일을 삭제합니다. 서버의 파일은 영향을 받지 않습니다.
 browse.actionRemoveFromOffline	오프라인에서 제거
+offline.rowUpdating	업데이트 중…
+offline.rowWaitingForNetwork	네트워크 대기 중
+offline.rowUpdateFailed	업데이트하지 못했습니다

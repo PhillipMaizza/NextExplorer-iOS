@@ -1144,3 +1144,6 @@ offline.removeItemTitle	Retirer « %@ » des éléments disponibles hors connexi
 offline.removeItemsTitle	Retirer %lld éléments des éléments disponibles hors connexion ?
 offline.removeItemMessage	Cela supprime les fichiers enregistrés pour une utilisation hors ligne sur cet appareil. Vos fichiers sur le serveur ne sont pas affectés.
 browse.actionRemoveFromOffline	Retirer du hors connexion
+offline.rowUpdating	Mise à jour…
+offline.rowWaitingForNetwork	En attente du réseau
+offline.rowUpdateFailed	Échec de la mise à jour

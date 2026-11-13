@@ -54,12 +54,14 @@ struct OfflineManageRow: View {
     /// Tapping the row opens it; nil where rows only list (Manage Offline Files).
     var onOpen: (() -> Void)?
     var favorite: Favorite?
+    var syncState = OfflineSyncState.upToDate
     let onRemove: () -> Void
 
     private var subtitle: String {
         let size = FileSizeFormat.string(usage.sizeBytes)
         let parent = usage.parentPath
-        return parent.isEmpty ? size : "\(size) \u{2022} \(parent)"
+        let parts = [size, parent.isEmpty ? nil : parent, syncState.title].compactMap(\.self)
+        return parts.joined(separator: " \u{2022} ")
     }
 
     private var removeButton: some View {
