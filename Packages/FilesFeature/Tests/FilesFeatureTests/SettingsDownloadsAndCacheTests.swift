@@ -5,6 +5,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import NetworkClient
+import ShareUploads
 import Testing
 import TestUtils
 
@@ -86,9 +87,11 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         state.clearCacheConfirmationIsPresented = true
         state.cacheSize = 4096
         let clears = LockIsolated(0)
+        let uploadThumbnailClears = LockIsolated(0)
         let store = TestStore(initialState: state) {
             SettingsFeature()
         } withDependencies: {
+            $0.localThumbnailStore.clearAll = { uploadThumbnailClears.withValue { $0 += 1 } }
             $0.previewCacheStore.clear = {
                 clears.withValue { $0 += 1 }
                 if clearFails {
@@ -107,9 +110,27 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         }
 
         #expect(clears.value == 1)
+        #expect(uploadThumbnailClears.value == 1, "the thumbnails seeded for shared files are cache too")
+    }
+
+    @Test
+    func theCacheSizeCountsThePreviewsTheSavedCopiesAndTheSeededThumbnails() {
+        var uploadThumbnails = LocalThumbnailStore.testValue
+        uploadThumbnails.totalSizeBytes = { Constants.uploadThumbnailBytes }
+
+        let size = SettingsFeature.cacheSizeBytes(
+            preview: PreviewCacheStore(size: { Constants.previewBytes }, clear: {}, clearAccount: { _ in }),
+            directories: .inMemory(),
+            lists: .inMemory(),
+            uploadThumbnails: uploadThumbnails
+        )
+
+        #expect(size == 1536)
     }
 }
 
 private enum Constants {
     static let accountA = "account-a"
+    static let previewBytes: Int64 = 1024
+    static let uploadThumbnailBytes: Int64 = 512
 }

@@ -2,6 +2,7 @@ import AuthClient
 import ComposableArchitecture
 import FilesClient
 import FilesFeature
+import ShareUploads
 
 /// Removes one account's data from every cache while other accounts stay signed in (rule #11): the
 /// disk stores, the preview and offline files, and the in memory thumbnails and text editor ETags.
@@ -19,7 +20,30 @@ struct AccountCacheWipe: Sendable {
     let offlineFileStore: OfflineFileStore
     let thumbnailCache: ThumbnailCache
     let textEditorETagStore: TextEditorETagStore
+    let localThumbnailStore: LocalThumbnailStore
     let pendingWipes: PendingAccountWipes
+
+    /// Built from the current dependencies, for every place that wipes an account.
+    static var fromDependencies: AccountCacheWipe {
+        @Dependency(\.directoryCacheStore) var directoryCacheStore
+        @Dependency(\.jsonCacheStore) var jsonCacheStore
+        @Dependency(\.previewCacheStore) var previewCacheStore
+        @Dependency(\.offlineFileStore) var offlineFileStore
+        @Dependency(\.thumbnailCache) var thumbnailCache
+        @Dependency(\.textEditorETagStore) var textEditorETagStore
+        @Dependency(\.localThumbnailStore) var localThumbnailStore
+        @Dependency(\.pendingAccountWipes) var pendingAccountWipes
+        return AccountCacheWipe(
+            directoryCacheStore: directoryCacheStore,
+            jsonCacheStore: jsonCacheStore,
+            previewCacheStore: previewCacheStore,
+            offlineFileStore: offlineFileStore,
+            thumbnailCache: thumbnailCache,
+            textEditorETagStore: textEditorETagStore,
+            localThumbnailStore: localThumbnailStore,
+            pendingWipes: pendingAccountWipes
+        )
+    }
 
     func callAsFunction(_ accountID: String) {
         markPending(accountID)
@@ -52,6 +76,7 @@ struct AccountCacheWipe: Sendable {
         previewCacheStore.clearAccount(accountID)
         offlineFileStore.removeAccount(accountID)
         textEditorETagStore.clear(scope: accountID)
+        localThumbnailStore.clearScope(accountID)
         // One cache for every account, so it is dropped whole: the active account refills it.
         thumbnailCache.clearMemory()
     }
@@ -62,21 +87,6 @@ struct AccountCacheWipe: Sendable {
 public enum PendingAccountWipeRecovery {
     public static func runAtLaunch() async {
         @Dependency(\.authClient) var authClient
-        @Dependency(\.directoryCacheStore) var directoryCacheStore
-        @Dependency(\.jsonCacheStore) var jsonCacheStore
-        @Dependency(\.previewCacheStore) var previewCacheStore
-        @Dependency(\.offlineFileStore) var offlineFileStore
-        @Dependency(\.thumbnailCache) var thumbnailCache
-        @Dependency(\.textEditorETagStore) var textEditorETagStore
-        @Dependency(\.pendingAccountWipes) var pendingAccountWipes
-        await AccountCacheWipe(
-            directoryCacheStore: directoryCacheStore,
-            jsonCacheStore: jsonCacheStore,
-            previewCacheStore: previewCacheStore,
-            offlineFileStore: offlineFileStore,
-            thumbnailCache: thumbnailCache,
-            textEditorETagStore: textEditorETagStore,
-            pendingWipes: pendingAccountWipes
-        ).finishPending(authClient: authClient)
+        await AccountCacheWipe.fromDependencies.finishPending(authClient: authClient)
     }
 }

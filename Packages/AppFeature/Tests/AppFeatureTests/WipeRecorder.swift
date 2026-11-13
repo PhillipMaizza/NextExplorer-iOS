@@ -6,6 +6,7 @@ import FilesClient
 import FilesFeature
 import Foundation
 import NetworkClient
+import ShareUploads
 import Testing
 import TestUtils
 
@@ -19,12 +20,14 @@ final class WipeRecorder: Sendable {
         case previewCacheCleared
         case thumbnailMemoryCleared
         case offlineFilesCleared
+        case uploadThumbnailsCleared
         case scratchPurged(SessionScratchStore.Scope)
         case certificatesKept(Set<ClientCertificateOrigin>)
         case directoryAccountCleared(String)
         case jsonAccountCleared(String)
         case previewAccountCleared(String)
         case offlineAccountCleared(String)
+        case uploadThumbnailsAccountCleared(String)
         case uploadDefaultsRetained(Set<String>)
         case shareUploadsKept(Set<String>)
         case activeSessionCleared
@@ -40,6 +43,7 @@ final class WipeRecorder: Sendable {
             .jsonAccountCleared(accountID),
             .previewAccountCleared(accountID),
             .offlineAccountCleared(accountID),
+            .uploadThumbnailsAccountCleared(accountID),
             .thumbnailMemoryCleared,
         ]
     }
@@ -54,6 +58,7 @@ final class WipeRecorder: Sendable {
         .jsonCacheCleared,
         .previewCacheCleared,
         .thumbnailMemoryCleared,
+        .uploadThumbnailsCleared,
         .offlineFilesCleared,
         .scratchPurged(.everything),
     ]
@@ -81,6 +86,8 @@ final class WipeRecorder: Sendable {
         values.thumbnailCache.clearMemory = { self.record(.thumbnailMemoryCleared) }
         values.offlineFileStore.removeAll = { self.record(.offlineFilesCleared) }
         values.offlineFileStore.removeAccount = { self.record(.offlineAccountCleared($0)) }
+        values.localThumbnailStore.clearAll = { self.record(.uploadThumbnailsCleared) }
+        values.localThumbnailStore.clearScope = { self.record(.uploadThumbnailsAccountCleared($0)) }
         values.sessionScratchStore.purge = { self.record(.scratchPurged($0)) }
         values.clientCertificateClient.removeAll = { self.record(.certificatesKept($0)) }
         values.uploadDefaults.retain = { self.record(.uploadDefaultsRetained($0)) }

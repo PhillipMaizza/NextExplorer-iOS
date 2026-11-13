@@ -6,6 +6,9 @@ public enum CacheLayout {
     /// Under Application Support.
     public static let directoryCacheName = "DirectoryCache"
     public static let listCacheName = "ListCache"
+    /// Thumbnails of files shared into the app, made from the local copy at upload time; in the
+    /// App Group container, since the share extension writes them.
+    public static let uploadThumbnailsName = "UploadThumbnails"
     /// Under Caches.
     public static let previewCacheName = "PreviewCache"
     /// Per item slot directories inside `previewCacheName`.

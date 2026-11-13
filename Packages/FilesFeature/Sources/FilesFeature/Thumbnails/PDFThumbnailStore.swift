@@ -3,6 +3,7 @@ import CoreModels
 import DesignSystem
 import FilesClient
 import Foundation
+import ShareUploads
 #if os(iOS)
     import UIKit
 #endif
@@ -83,7 +84,9 @@ final class PDFThumbnailStore {
         item: FileItem,
         serverURL: URL,
         filesClient: FilesClient,
-        cache: PDFThumbnailCache
+        cache: PDFThumbnailCache,
+        localThumbnails: LocalThumbnailStore,
+        now: Date
     ) -> Task<Void, Never>? {
         switch entry.state {
         case .ready, .unavailable: return nil
@@ -99,6 +102,16 @@ final class PDFThumbnailStore {
 
         return Task(priority: Constants.fetchPriority) { [weak self] in
             defer { self?.inFlight.remove(key) }
+            // A PDF just shared into the app has its first page seeded from the local copy: the
+            // same render, without downloading the file.
+            let seeded = await SeededThumbnail.image(
+                from: localThumbnails, path: item.id, size: item.size, modified: item.dateModified,
+                maxPixel: Constants.renderPixel, priority: Constants.fetchPriority, now: now
+            )
+            if let seeded {
+                entry.state = .ready(seeded)
+                return
+            }
             guard let pdfURL = try? await filesClient.previewFileLowPriority(serverURL, item) else {
                 // Cancelled or a transient network failure: leave the entry in `loading` so
                 // the next appearance of a cell with this key tries again.

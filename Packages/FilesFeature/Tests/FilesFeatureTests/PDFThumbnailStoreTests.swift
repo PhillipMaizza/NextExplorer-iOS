@@ -4,6 +4,7 @@ import DesignSystem
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import ShareUploads
 import Testing
 import TestUtils
 
@@ -34,12 +35,13 @@ struct PDFThumbnailStoreTests {
 
     private func load(
         _ store: PDFThumbnailStore, key: String, item: FileItem,
-        client: FilesClient, cache: PDFThumbnailCache
+        client: FilesClient, cache: PDFThumbnailCache, localThumbnails: LocalThumbnailStore = .testValue
     ) -> (entry: PDFThumbnailStore.Entry, task: Task<Void, Never>?) {
         let entry = store.entry(forKey: key)
         let task = store.load(
             entry: entry, key: key, item: item,
-            serverURL: URL(string: TestHost.exampleURLString)!, filesClient: client, cache: cache
+            serverURL: URL(string: TestHost.exampleURLString)!, filesClient: client, cache: cache,
+            localThumbnails: localThumbnails, now: MockDate.date
         )
         return (entry, task)
     }
@@ -56,6 +58,33 @@ struct PDFThumbnailStoreTests {
             return true
         }
         return false
+    }
+
+    @Test
+    func aPDFSharedIntoTheAppShowsItsSeededPageWithoutDownloading() async {
+        let store = PDFThumbnailStore()
+        let pdfURL = makePDF()
+        defer { try? FileManager.default.removeItem(at: pdfURL) }
+        let seed = ThumbnailRendering.firstPDFPage(at: pdfURL, maxPixel: 64).flatMap { ThumbnailRendering.jpegData($0, quality: 0.8) }
+        let fetchCount = LockIsolated(0)
+        var client = FilesClient.previewValue
+        client.previewFileLowPriority = { _, _ in
+            fetchCount.withValue { $0 += 1 }
+            return pdfURL
+        }
+        var seeds = LocalThumbnailStore.testValue
+        seeds.thumbnail = { _, _, _ in seed }
+        let file = item(size: 5)
+        let key = PDFThumbnailCache.cacheKey(id: file.id, signature: file.cacheSignature)
+        let (cache, cacheDirectory) = isolatedCache()
+        defer { try? FileManager.default.removeItem(at: cacheDirectory) }
+
+        let (entry, task) = load(store, key: key, item: file, client: client, cache: cache, localThumbnails: seeds)
+        await task?.value
+
+        #expect(seed != nil)
+        #expect(readyImage(entry) != nil)
+        #expect(fetchCount.value == 0)
     }
 
     @Test

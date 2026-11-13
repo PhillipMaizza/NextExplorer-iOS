@@ -2,6 +2,7 @@ import CoreModels
 import FilesClient
 import Foundation
 import Localization
+import UniformTypeIdentifiers
 
 /// Why a shared item could not be prepared for upload.
 public enum ShareUploadError: Error, Equatable, LocalizedError {
@@ -127,6 +128,11 @@ public struct UploadBatch: Sendable {
         )
     }
 
+    /// Seeds each staged picture's or PDF's thumbnail, so the app shows it before the server has
+    /// made its own. A seam, like `writeEnvelope`.
+    var thumbnailStore: LocalThumbnailStore = .liveValue
+    var now: @Sendable () -> Date = { Date() }
+
     let ledger = SpaceLedger()
     private(set) var staged: [StagedFile] = []
 
@@ -153,6 +159,13 @@ public struct UploadBatch: Sendable {
         let envelopeURL = directory.appendingPathComponent("\(UUID().uuidString).\(EnvelopeConstants.envelopeExtension)")
         do {
             let request = try writeEnvelope(credentials.serverBaseURL, fileURL, fileName, destination, envelopeURL)
+            thumbnailStore.seed(
+                fileURL,
+                UTType(filenameExtension: (fileName as NSString).pathExtension),
+                LocalThumbnailStore.path(of: fileName, in: destination),
+                credentials.accountID,
+                now()
+            )
             return StagedFile(fileName: fileName, envelopeURL: envelopeURL, request: request)
         } catch {
             try? FileManager.default.removeItem(at: envelopeURL)

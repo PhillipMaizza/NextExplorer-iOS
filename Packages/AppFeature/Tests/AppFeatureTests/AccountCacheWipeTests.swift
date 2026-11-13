@@ -5,6 +5,7 @@ import CoreModels
 import FilesClient
 import FilesFeature
 import Foundation
+import ShareUploads
 import Testing
 import TestUtils
 
@@ -23,6 +24,7 @@ struct AccountCacheWipeTests {
         let thumbnailClears = LockIsolated(0)
         let previewClears = LockIsolated<[String]>([])
         let offlineRemovals = LockIsolated<[String]>([])
+        let uploadThumbnailClears = LockIsolated<[String]>([])
     }
 
     private func listing() -> BrowseResult {
@@ -54,6 +56,11 @@ struct AccountCacheWipeTests {
                 clearMemory: { counters.thumbnailClears.withValue { $0 += 1 } }
             ),
             textEditorETagStore: TextEditorETagStore(),
+            localThumbnailStore: {
+                var store = LocalThumbnailStore.testValue
+                store.clearScope = { scope in counters.uploadThumbnailClears.withValue { $0.append(scope) } }
+                return store
+            }(),
             pendingWipes: pending
         )
     }
@@ -73,6 +80,7 @@ struct AccountCacheWipeTests {
         #expect(counters.thumbnailClears.value == 1)
         #expect(counters.previewClears.value == [Fixture.account])
         #expect(counters.offlineRemovals.value == [Fixture.account])
+        #expect(counters.uploadThumbnailClears.value == [Fixture.account])
         #expect(pending.accounts() == [Fixture.account])
     }
 
