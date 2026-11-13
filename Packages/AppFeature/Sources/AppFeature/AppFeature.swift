@@ -153,11 +153,14 @@ public struct AppFeature {
         return .run { _ in await accountCacheWipe.finishPending(authClient: authClient) }
     }
 
-    /// Stops the offline sync and download of the account the app is leaving, so it neither keeps
-    /// running behind the next account nor shows its progress there.
+    /// Stops the offline sync and the Save to Device queue of the account the app is leaving, so
+    /// neither keeps running behind the next account nor shows its progress there.
     private func stopOfflineWork(leaving accountID: String?) -> Effect<Action> {
         guard let accountID else { return .none }
-        return .send(.destination(.authenticated(.mainTab(.offline(.accountDeactivated(scope: accountID))))))
+        return .concatenate(
+            .send(.destination(.authenticated(.mainTab(.offline(.accountDeactivated(scope: accountID)))))),
+            .send(.destination(.authenticated(.mainTab(.downloadQueue(.accountLeft)))))
+        )
     }
 
     /// Drops the active account whose session the server rejected and wipes its caches. It is

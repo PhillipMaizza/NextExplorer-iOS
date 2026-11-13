@@ -270,6 +270,7 @@ extension AppSuites {
                 $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             accountList.open()
             await store.receive(\.accountsRefreshed)
             confirmation.open()
@@ -409,6 +410,7 @@ extension AppSuites {
                 $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             accountList.open()
             await store.receive(\.accountsRefreshed)
             await store.finish()
@@ -461,6 +463,7 @@ extension AppSuites {
                 $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             await store.receive(\.accountsRefreshed)
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {

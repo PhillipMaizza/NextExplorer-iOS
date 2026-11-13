@@ -289,6 +289,7 @@ extension AppSuites {
                 $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             accountList.open()
             await store.receive(\.accountsRefreshed) {
                 $0.$accounts.withLock { $0 = [AppFixtures.summaryB] }
@@ -357,6 +358,7 @@ extension AppSuites {
                 $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountB)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             accountList.open()
             await store.receive(\.accountsRefreshed) {
                 $0.$accounts.withLock { $0 = [AppFixtures.summaryA] }
@@ -473,6 +475,7 @@ extension AppSuites {
                 $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             accountList.open()
             await store.receive(\.accountsRefreshed) {
                 $0.$accounts.withLock { $0 = [AppFixtures.summaryB] }

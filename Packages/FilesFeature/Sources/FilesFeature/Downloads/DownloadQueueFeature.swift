@@ -145,6 +145,8 @@ public struct DownloadQueueFeature {
         case downloadResponse(id: UUID, Result<URL, FilesClientError>)
         case cancelJobTapped(id: UUID)
         case cancelAllTapped
+        /// The signed in account changed: the transfer of the account left stops and what it staged goes.
+        case accountLeft
         case retryTapped(id: UUID)
         case retryAllFailedTapped
         case clearFinishedTapped
@@ -170,7 +172,11 @@ public struct DownloadQueueFeature {
     @Dependency(\.deviceSaver) var deviceSaver
     @Dependency(\.uuid) var uuid
     @Dependency(\.date) var date
-    private enum CancelID: Hashable { case job(UUID) }
+    private enum CancelID: Hashable {
+        case job(UUID)
+        /// Every transfer of the queue, whichever account started it.
+        case transfers
+    }
 
     public init() {}
 
@@ -277,6 +283,10 @@ public struct DownloadQueueFeature {
                 state.isSheetPresented = false
                 return .merge(cancels + [finished])
 
+            case .accountLeft:
+                let deviceSaver = deviceSaver
+                return .merge(.cancel(id: CancelID.transfers), .run { _ in deviceSaver.discardAll() })
+
             case let .retryTapped(id):
                 guard state.jobs[id: id]?.status.isFailed == true else { return .none }
                 state.jobs[id: id]?.status = .queued
@@ -377,6 +387,7 @@ public struct DownloadQueueFeature {
             await send(.downloadResponse(id: job.id, result))
         } }
         .cancellable(id: CancelID.job(job.id))
+        .cancellable(id: CancelID.transfers)
     }
 
     static let activityName = "NextExplorer download"

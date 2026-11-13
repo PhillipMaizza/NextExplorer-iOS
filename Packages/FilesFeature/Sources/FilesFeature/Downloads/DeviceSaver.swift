@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import FilesClient
 import Foundation
 import Photos
 
@@ -50,7 +51,7 @@ public struct DeviceSaver: Sendable {
 }
 
 extension DeviceSaver: DependencyKey {
-    private static let stagingFolderName = "DeviceSaveStaging"
+    private static let stagingFolderName = SessionScratchLocation.deviceSaveStaging
 
     private static var stagingRoot: URL {
         FileManager.default.temporaryDirectory.appendingPathComponent(stagingFolderName, isDirectory: true)
