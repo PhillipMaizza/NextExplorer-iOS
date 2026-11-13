@@ -67,6 +67,11 @@ public struct DownloadQueueFeature {
             return max(Double(expectedBytes - receivedBytes), 0) / bytesPerSecond
         }
 
+        /// iPhone and iPad: where Save to Device puts this item.
+        public var deviceDestination: DeviceSaveDestination {
+            DeviceSaveDestination.destination(forKind: item.kind)
+        }
+
         /// What the saved file is called: folders arrive as `<name>.zip`, except a Mac save,
         /// which recreates the folder itself.
         public var fileName: String {
@@ -80,6 +85,10 @@ public struct DownloadQueueFeature {
         public var failedCount: Int
         /// Mac: the last item saved in Finder, which the confirmation names and reveals.
         public var lastSavedURL: URL?
+        /// iPhone and iPad: items that went to Photos.
+        public var photosCount = 0
+        /// iPhone and iPad: staged files waiting for the Save to Files panel.
+        public var exportURLs: [URL] = []
     }
 
     @ObservableState
@@ -158,6 +167,7 @@ public struct DownloadQueueFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.localDownloadStore) var localDownloadStore
+    @Dependency(\.deviceSaver) var deviceSaver
     @Dependency(\.uuid) var uuid
     @Dependency(\.date) var date
     private enum CancelID: Hashable { case job(UUID) }
@@ -167,7 +177,13 @@ public struct DownloadQueueFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case let .enqueue(items):
+            case let .enqueue(requested):
+                #if os(macOS)
+                    let items = requested
+                #else
+                    // Save to Device takes files only: a folder has no single file to hand to Photos or Files.
+                    let items = requested.filter { !$0.isDirectory }
+                #endif
                 guard !items.isEmpty else { return .none }
                 if !state.isActive {
                     state.jobs.removeAll { $0.status.isTerminal }
@@ -219,9 +235,15 @@ public struct DownloadQueueFeature {
                 switch result {
                 case let .success(url):
                     state.jobs[id: id]?.status = .completed
-                    if state.jobs[id: id]?.saveTarget != nil {
-                        state.jobs[id: id]?.savedURL = url
-                    }
+                    #if os(macOS)
+                        if state.jobs[id: id]?.saveTarget != nil {
+                            state.jobs[id: id]?.savedURL = url
+                        }
+                    #else
+                        if state.jobs[id: id]?.deviceDestination == .files {
+                            state.jobs[id: id]?.savedURL = url
+                        }
+                    #endif
                     saved = .send(.delegate(.itemSaved))
                 case let .failure(error):
                     state.jobs[id: id]?.status = .failed(Self.message(for: error))
@@ -232,6 +254,7 @@ public struct DownloadQueueFeature {
                 return .concatenate(saved, .send(.delegate(.queueFinished(state.finishSummary))))
 
             case let .cancelJobTapped(id):
+                discardStaged(state.jobs[id: id].map { [$0] } ?? [])
                 let wasPending = state.jobs[id: id].map { !$0.status.isTerminal } ?? false
                 state.jobs.remove(id: id)
                 if state.jobs.isEmpty {
@@ -245,6 +268,7 @@ public struct DownloadQueueFeature {
                 return .merge(.cancel(id: CancelID.job(id)), .send(.startNextIfIdle), finished)
 
             case .cancelAllTapped:
+                discardStaged(Array(state.jobs))
                 let cancels = state.jobs.map { Effect<Action>.cancel(id: CancelID.job($0.id)) }
                 let finished: Effect<Action> = state.isActive && state.savedCount > 0
                     ? .send(.delegate(.queueFinished(state.finishSummary)))
@@ -292,6 +316,7 @@ public struct DownloadQueueFeature {
     private func download(_ job: DownloadJob, serverURL: URL, scope: String) -> Effect<Action> {
         let filesClient = filesClient
         let localDownloadStore = localDownloadStore
+        let deviceSaver = deviceSaver
         return .run { send in await BackgroundActivity.whileTransferring(name: Self.activityName) {
             let (progress, continuation) = AsyncStream<TransferProgress>
                 .makeStream(bufferingPolicy: .bufferingNewest(1))
@@ -322,16 +347,24 @@ public struct DownloadQueueFeature {
                                 }
                             }
                         #endif
-                        let temporaryURL = try await filesClient.downloadItem(serverURL, job.item) { update in
-                            continuation.yield(update)
-                        }
-                        defer { try? FileManager.default.removeItem(at: temporaryURL) }
-                        try Task.checkCancellation()
-                        do {
-                            return try localDownloadStore.save(temporaryURL, job.fileName, .documents, scope)
-                        } catch {
-                            throw FilesClientError.decoding(error.localizedDescription)
-                        }
+                        #if os(macOS)
+                            let temporaryURL = try await filesClient.downloadItem(serverURL, job.item) { update in
+                                continuation.yield(update)
+                            }
+                            defer { try? FileManager.default.removeItem(at: temporaryURL) }
+                            try Task.checkCancellation()
+                            do {
+                                return try localDownloadStore.save(temporaryURL, job.fileName, scope)
+                            } catch {
+                                throw FilesClientError.decoding(error.localizedDescription)
+                            }
+                        #else
+                            return try await Self.saveToDevice(
+                                job.item, serverURL: serverURL, filesClient: filesClient, deviceSaver: deviceSaver
+                            ) { update in
+                                continuation.yield(update)
+                            }
+                        #endif
                     }
                 } catch {
                     result = nil
@@ -347,6 +380,55 @@ public struct DownloadQueueFeature {
     }
 
     static let activityName = "NextExplorer download"
+
+    #if os(iOS)
+        /// Downloads the file, stages it under its own name, and sends it where its kind belongs.
+        /// Pictures and videos go to Photos and the staged copy is dropped; anything else stays staged
+        /// for the Save to Files panel. Returns the staged URL.
+        private static func saveToDevice(
+            _ item: FileItem,
+            serverURL: URL,
+            filesClient: FilesClient,
+            deviceSaver: DeviceSaver,
+            onProgress: @escaping @Sendable (TransferProgress) -> Void
+        ) async throws -> URL {
+            let temporaryURL = try await filesClient.downloadItem(serverURL, item, onProgress)
+            guard !Task.isCancelled else {
+                try? FileManager.default.removeItem(at: temporaryURL)
+                throw CancellationError()
+            }
+            let staged: URL
+            do {
+                staged = try deviceSaver.stage(temporaryURL, item.name)
+            } catch {
+                try? FileManager.default.removeItem(at: temporaryURL)
+                throw FilesClientError.decoding(error.localizedDescription)
+            }
+            guard case let .photos(isVideo) = DeviceSaveDestination.destination(forKind: item.kind) else {
+                return staged
+            }
+            defer { deviceSaver.discard([staged]) }
+            do {
+                try await deviceSaver.saveToPhotos(staged, isVideo)
+            } catch DeviceSaveError.photosAccessDenied {
+                throw FilesClientError.serverMessage(statusCode: 0, message: L10n.DownloadQueue.photosAccessDenied)
+            } catch is CancellationError {
+                throw CancellationError()
+            } catch {
+                throw FilesClientError.serverMessage(statusCode: 0, message: L10n.DownloadQueue.photosSaveFailed)
+            }
+            return staged
+        }
+    #endif
+
+    private func discardStaged(_ jobs: [DownloadJob]) {
+        #if os(iOS)
+            let staged = jobs.compactMap { $0.deviceDestination == .files ? $0.savedURL : nil }
+            if !staged.isEmpty {
+                deviceSaver.discard(staged)
+            }
+        #endif
+    }
 
     private static func message(for error: FilesClientError) -> String {
         switch error {
@@ -367,10 +449,18 @@ private extension DownloadQueueFeature.DownloadJob {
 
 private extension DownloadQueueFeature.State {
     var finishSummary: DownloadQueueFeature.FinishSummary {
-        DownloadQueueFeature.FinishSummary(
-            savedCount: jobs.filter { $0.status == .completed }.count,
+        let completed = jobs.filter { $0.status == .completed }
+        var summary = DownloadQueueFeature.FinishSummary(
+            savedCount: completed.count,
             failedCount: jobs.filter(\.status.isFailed).count,
-            lastSavedURL: lastSavedURL
+            lastSavedURL: nil
         )
+        #if os(macOS)
+            summary.lastSavedURL = lastSavedURL
+        #else
+            summary.photosCount = completed.filter { $0.deviceDestination != .files }.count
+            summary.exportURLs = completed.compactMap { $0.deviceDestination == .files ? $0.savedURL : nil }
+        #endif
+        return summary
     }
 }

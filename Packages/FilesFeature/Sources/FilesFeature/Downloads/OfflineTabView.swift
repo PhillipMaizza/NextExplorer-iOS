@@ -2,6 +2,7 @@ import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import FilesClient
 import Localization
 import SwiftUI
 
@@ -19,20 +20,51 @@ private enum Constants {
     }
 }
 
-struct DownloadsView: View {
-    @Bindable var store: StoreOf<DownloadsFeature>
-    @AppStorage(AppStorageKeys.downloadsViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
+struct OfflineTabView: View {
+    @Bindable var store: StoreOf<OfflineTabFeature>
+    let offlineStore: StoreOf<OfflineManageFeature>
+    /// Favorites, so a pinned favorite folder keeps its icon and color.
+    var favorites: IdentifiedArrayOf<Favorite> = []
+    /// A finished offline run changes what the tab lists, so it is read again.
+    @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
+    /// The same list or grid choice as Browse and Favorites, so a folder opened from this tab keeps it.
+    @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
+    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
+
+    private var thumbnailSize: ThumbnailSize {
+        ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium
+    }
+
     @State private var previewedDownload: LocalDownload?
     /// Native `.zoom` open + swipe-to-dismiss morph between a download cell and its preview.
     @Namespace private var previewTransition
     @State private var isSortSheetPresented = false
-    /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
-    /// pull-to-refresh rubber-band instead of staying pinned.
-    @State private var pullOffset: CGFloat = 0
-    @Environment(\.openURL) private var openURL
 
     private var viewMode: FileListViewMode {
-        FileListViewMode(rawValue: viewModeRaw) ?? .list
+        #if os(macOS)
+            .list
+        #else
+            FileListViewMode(rawValue: viewModeRaw) ?? .list
+        #endif
+    }
+
+    /// The Mac lists the tab as a table once it loads, like Favorites; the skeleton list stands in before.
+    private var isMacTable: Bool {
+        #if os(macOS)
+            listPhase != .loading
+        #else
+            false
+        #endif
+    }
+
+    /// The pinned items to show: filtered by the search text and ordered like the downloads.
+    private var displayedPinned: [OfflinePinnedRootUsage] {
+        OfflineTabFeature.displayedPinned(
+            offlineStore.usages,
+            searchQuery: store.searchQuery,
+            sortOption: store.sortOption,
+            sortDirection: store.sortDirection
+        )
     }
 
     private var isAllSelected: Bool {
@@ -43,24 +75,6 @@ struct DownloadsView: View {
         store.downloads.filter { store.selectedDownloadIDs.contains($0.id) }.map(\.url)
     }
 
-    /// The whole `Documents/Downloads` folder, for the top-right menu's generic "Open in
-    /// Files" (as opposed to `filesAppURL(for:)`, which deep-links to one specific file).
-    private var documentsDownloadsFolderURL: URL? {
-        guard let documentsURL = try? FileManager.default.url(
-            for: .documentDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        ) else {
-            return nil
-        }
-        let downloadsURL = documentsURL.appendingPathComponent("Downloads", isDirectory: true)
-        try? FileManager.default.createDirectory(at: downloadsURL, withIntermediateDirectories: true)
-        guard var components = URLComponents(url: downloadsURL, resolvingAgainstBaseURL: false) else { return nil }
-        components.scheme = "shareddocuments"
-        return components.url
-    }
-
     /// The one screen state, derived from the store: skeleton until the first response lands
     /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
@@ -68,28 +82,9 @@ struct DownloadsView: View {
         .derive(
             hasError: store.errorMessage != nil,
             hasLoaded: store.phase.hasLoaded,
-            isEmpty: store.downloads.isEmpty,
-            hasNoResults: !store.searchQuery.isEmpty && store.displayedDownloads.isEmpty
+            isEmpty: store.downloads.isEmpty && offlineStore.isEmpty,
+            hasNoResults: !store.searchQuery.isEmpty && store.displayedDownloads.isEmpty && displayedPinned.isEmpty
         )
-    }
-
-    /// No op setters: each confirmation sheet is dismiss disabled and only closes through one
-    /// of `DSAlertSheet`'s own buttons, which drive the reducer directly.
-    private var deleteConfirmationBinding: Binding<Bool> {
-        Binding(get: { store.deleteConfirmationItem != nil }, set: { _ in })
-    }
-
-    private var deleteConfirmationTitle: String {
-        guard let item = store.deleteConfirmationItem else { return L10n.Downloads.deleteConfirmTitle }
-        return L10n.Downloads.deleteConfirmOne(item.fileName)
-    }
-
-    private var bulkDeleteConfirmationBinding: Binding<Bool> {
-        Binding(get: { store.bulkDeleteConfirmationIsPresented }, set: { _ in })
-    }
-
-    private var bulkDeleteConfirmationTitle: String {
-        L10n.Downloads.deleteConfirmMany(store.selectedDownloadIDs.count)
     }
 
     private var renameItemBinding: Binding<LocalDownload?> {
@@ -112,7 +107,6 @@ struct DownloadsView: View {
                 store: store,
                 download: download,
                 namespace: previewTransition,
-                openURL: openURL,
                 isFirst: download.id == firstID,
                 isLast: download.id == lastID,
                 onPreview: { previewedDownload = download }
@@ -125,13 +119,21 @@ struct DownloadsView: View {
             if listPhase == .loading {
                 SkeletonFileRows(entries: Constants.skeletonEntries)
             } else {
-                downloadRows
+                if isShowingPinned {
+                    OfflinePinnedSection(store: offlineStore, usages: displayedPinned, favorites: favorites) { path in
+                        store.send(.openFolderTapped(path: path))
+                    }
+                }
+                if isShowingPinned, !store.downloads.isEmpty {
+                    Section { downloadRows } header: { DSFieldLabel(L10n.Offline.sectionSavedEarlier) }
+                } else {
+                    downloadRows
+                }
             }
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .backgroundGradient()
-        .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
         // Only spring row diffs once the list is the content: during the skeleton→content
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone.
@@ -140,10 +142,17 @@ struct DownloadsView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
+            LazyVGrid(columns: FileGridMetrics.columns(for: thumbnailSize), spacing: FileGridMetrics.spacing) {
                 if listPhase == .loading {
                     SkeletonGridCells(entries: Constants.skeletonEntries)
                 } else {
+                    OfflinePinnedGridCells(
+                        store: offlineStore,
+                        usages: displayedPinned,
+                        favorites: favorites
+                    ) { path in
+                        store.send(.openFolderTapped(path: path))
+                    }
                     downloadCells
                 }
             }
@@ -151,8 +160,11 @@ struct DownloadsView: View {
             .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
         }
         .backgroundGradient()
-        .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
+    }
+
+    private var isShowingPinned: Bool {
+        !displayedPinned.isEmpty
     }
 
     private var downloadCells: some View {
@@ -161,16 +173,28 @@ struct DownloadsView: View {
                 store: store,
                 download: download,
                 namespace: previewTransition,
-                openURL: openURL,
                 onPreview: { previewedDownload = download }
             )
         }
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             Group {
-                if viewMode == .list {
+                if isMacTable {
+                    #if os(macOS)
+                        MacOfflineTableView(
+                            store: store,
+                            offlineStore: offlineStore,
+                            pinned: displayedPinned,
+                            saved: store.displayedDownloads,
+                            favorites: favorites,
+                            onPreview: { previewedDownload = $0 }
+                        )
+                        .backgroundGradient()
+                        .transition(.opacity)
+                    #endif
+                } else if viewMode == .list {
                     listContent
                 } else {
                     gridContent
@@ -185,14 +209,13 @@ struct DownloadsView: View {
                 PinnedTitleSearchHeader(
                     title: store.isSelecting
                         ? L10n.Common.selectedCount(store.selectedDownloadIDs.count)
-                        : L10n
-                            .Downloads.navigationTitle,
-                    searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                        : L10n.Tab.offline,
+                    searchText: $store.searchQuery.sending(\.searchQueryChanged),
+                    shouldFadeIntoContent: !isMacTable
                 )
             }
-            .syncRefreshFeedback(errorMessage: store.errorMessage) {
-                await store.send(.refreshButtonTapped).finish()
-            }
+            // No refresh control: the tab lists what is on the device, read again on appear and
+            // whenever an offline run finishes; there is nothing on the server to sync.
             // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the
             // empty/error message is an overlay fed the list's pull-to-refresh drag so it
             // rubber-bands with it. One animation cross-fades the whole state change.
@@ -200,10 +223,9 @@ struct DownloadsView: View {
                 ListStateOverlay(
                     phase: listPhase,
                     errorMessage: store.errorMessage,
-                    emptyIcon: IconKit.download,
-                    emptyMessage: L10n.Downloads.emptyList,
+                    emptyIcon: IconKit.availableOffline,
+                    emptyMessage: L10n.Offline.tabEmpty,
                     noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
-                    pullOffset: pullOffset,
                     onRetry: { store.send(.refreshButtonTapped) }
                 )
             }
@@ -224,18 +246,14 @@ struct DownloadsView: View {
                         }
                     }
                 ) {
-                    if let documentsDownloadsFolderURL {
+                    // The Mac table sorts from its column headers.
+                    #if os(iOS)
                         Button {
-                            openURL(documentsDownloadsFolderURL)
+                            isSortSheetPresented = true
                         } label: {
-                            Label { Text(L10n.Downloads.actionOpenInFiles) } icon: { IconKit.folder }
+                            Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                         }
-                    }
-                    Button {
-                        isSortSheetPresented = true
-                    } label: {
-                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
-                    }
+                    #endif
                 }
             }
             .hapticFeedback(.selection, trigger: viewModeRaw)
@@ -269,7 +287,7 @@ struct DownloadsView: View {
             }
             .dsSheet(isPresented: $isSortSheetPresented) {
                 SortSheet(
-                    options: DownloadsFeature.SortOption.allCases,
+                    options: OfflineTabFeature.SortOption.allCases,
                     directions: BrowseFeature.SortDirection.allCases,
                     sortOption: store.sortOption,
                     sortDirection: store.sortDirection,
@@ -282,36 +300,12 @@ struct DownloadsView: View {
                     onDismiss: { isSortSheetPresented = false }
                 )
             }
-            .dsAlert(isPresented: deleteConfirmationBinding) {
-                DSAlertSheet(
-                    icon: IconKit.delete,
-                    title: deleteConfirmationTitle,
-                    // Distinguishes this from every other delete confirmation in the app, which
-                    // deletes on the server: this one only ever touches the local copy.
-                    message: L10n.Downloads.deleteSingleMessage,
-                    confirmTitle: L10n.Common.delete,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.deleteConfirmed) },
-                    onDismiss: { store.send(.deleteCancelled) }
-                )
-            }
-            .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-            .dsAlert(isPresented: bulkDeleteConfirmationBinding) {
-                DSAlertSheet(
-                    icon: IconKit.delete,
-                    title: bulkDeleteConfirmationTitle,
-                    message: L10n.Downloads.deleteBulkMessage,
-                    confirmTitle: L10n.Common.delete,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.bulkDeleteConfirmed) },
-                    onDismiss: { store.send(.bulkDeleteCancelled) }
-                )
-            }
-            .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
+            .downloadDeleteAlerts(store: store)
+            .offlineRemovalAlert(
+                offlineStore.removal,
+                onConfirm: { offlineStore.send(.removeConfirmed) },
+                onCancel: { offlineStore.send(.removeCancelled) }
+            )
             .dsSheet(item: renameItemBinding) { item in
                 NameInputSheet(
                     icon: IconKit.rename,
@@ -347,55 +341,18 @@ struct DownloadsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 store.send(.onAppear)
+                offlineStore.send(.onAppear)
             }
+            .onChange(of: offlineProgress.phase) { _, phase in
+                if phase == .completed {
+                    Task { @MainActor in offlineStore.send(.onAppear) }
+                }
+            }
+        } destination: { pushed in
+            BrowseContentView(store: pushed)
+                .environment(\.showsOfflineBadges, false)
+                .navigationTitle("")
         }
         .tint(Color.accent)
     }
-}
-
-#Preview {
-    DownloadsView(
-        store: Store(initialState: DownloadsFeature.State()) {
-            DownloadsFeature()
-        } withDependencies: {
-            $0.localDownloadStore.list = { _ in
-                [
-                    LocalDownload(
-                        url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"),
-                        fileName: "report.pdf",
-                        location: .documents,
-                        size: 245_000,
-                        modifiedDate: Date()
-                    ),
-                    LocalDownload(
-                        url: URL(fileURLWithPath: "/tmp/Caches/Downloads/vacation.jpg"),
-                        fileName: "vacation.jpg",
-                        location: .cache,
-                        size: 2_400_000,
-                        modifiedDate: Date().addingTimeInterval(-86400)
-                    ),
-                ]
-            }
-        }
-    )
-}
-
-#Preview("Empty") {
-    DownloadsView(
-        store: Store(initialState: DownloadsFeature.State()) {
-            DownloadsFeature()
-        } withDependencies: {
-            $0.localDownloadStore.list = { _ in [] }
-        }
-    )
-}
-
-#Preview("Error") {
-    DownloadsView(
-        store: Store(initialState: DownloadsFeature.State()) {
-            DownloadsFeature()
-        } withDependencies: {
-            $0.localDownloadStore.list = { _ in throw NSError(domain: "test", code: 1) }
-        }
-    )
 }

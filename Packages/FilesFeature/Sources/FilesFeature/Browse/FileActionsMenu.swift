@@ -144,13 +144,31 @@ struct FileActionsMenu: View {
                 .tint(.primaryDS)
             }
         }
-        if store.access?.canDownload ?? false {
+        if store.access?.canDownload ?? false, SaveActionStyle.isAvailable(for: item.isDirectory) {
             Button {
                 store.send(.downloadTapped(item))
             } label: {
-                Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
+                Label { Text(SaveActionStyle.title) } icon: { SaveActionStyle.icon }
             }
             .tint(.primaryDS)
+        }
+        if store.access?.canDownload ?? false {
+            let isAvailableOffline = store.offlineItemIDs.contains(item.id)
+            // Offline only through a pinned parent folder: it stays on until that folder is unpinned.
+            let isCoveredByFolder = isAvailableOffline && !store.offlinePinnedItemIDs.contains(item.id)
+            Button {
+                store.send(.offlineToggleTapped(item))
+            } label: {
+                Label {
+                    Text(isAvailableOffline && !isCoveredByFolder
+                        ? L10n.Browse.actionRemoveFromOffline
+                        : L10n.Browse.actionAvailableOffline)
+                } icon: {
+                    IconKit.availableOffline
+                }
+            }
+            .tint(.primaryDS)
+            .disabled(isCoveredByFolder)
         }
         // Only folders can be favorited: the server 400s on anything else.
         if item.isDirectory {

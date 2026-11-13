@@ -10,6 +10,7 @@ public struct OfflineManageFeature {
     @ObservableState
     public struct State: Equatable {
         public var usages: IdentifiedArrayOf<OfflinePinnedRootUsage> = []
+        var removal: OfflineRemovalRequest?
 
         public init() {}
 
@@ -20,12 +21,30 @@ public struct OfflineManageFeature {
         public var isEmpty: Bool {
             usages.isEmpty
         }
+
+        /// Asks to remove the pinned items at `paths`; paths that are not listed are ignored.
+        mutating func requestRemoval(of paths: [String]) {
+            let listed = paths.compactMap { usages[id: $0] }
+            guard !listed.isEmpty else { return }
+            removal = OfflineRemovalRequest(
+                paths: listed.map(\.root.path),
+                names: listed.map { usage in
+                    let name = (usage.root.path as NSString).lastPathComponent
+                    return name.isEmpty ? usage.root.path : name
+                }
+            )
+        }
     }
 
     public enum Action: Equatable, Sendable {
         case onAppear
         case usagesLoaded([OfflinePinnedRootUsage])
+        /// Asks first: removing deletes the copy on this device.
         case removeTapped(path: String)
+        /// The Mac table removes several rows at once; one confirmation covers them all.
+        case removeSelectionTapped(paths: [String])
+        case removeConfirmed
+        case removeCancelled
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -49,10 +68,27 @@ public struct OfflineManageFeature {
                 return .none
 
             case let .removeTapped(path):
-                state.usages.remove(id: path)
+                state.requestRemoval(of: [path])
+                return .none
+
+            case let .removeSelectionTapped(paths):
+                state.requestRemoval(of: paths)
+                return .none
+
+            case .removeCancelled:
+                state.removal = nil
+                return .none
+
+            case .removeConfirmed:
+                guard let request = state.removal else { return .none }
+                state.removal = nil
+                for path in request.paths {
+                    state.usages.remove(id: path)
+                }
+                let paths = request.paths
                 let offlineFileStore = offlineFileStore
                 return .merge(
-                    .run { _ in offlineFileStore.removeRoot(path) },
+                    .run { _ in paths.forEach(offlineFileStore.removeRoot) },
                     .send(.delegate(.changed))
                 )
 

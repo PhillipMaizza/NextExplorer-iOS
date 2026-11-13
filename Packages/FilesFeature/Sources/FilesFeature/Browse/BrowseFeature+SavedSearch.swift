@@ -16,6 +16,7 @@ extension BrowseFeature {
     func loadSavedSearchItemsIfNeeded(_ state: State) -> Effect<Action> {
         guard state.mayAnswerFromSavedListings, state.searchSavedItems == nil else { return .none }
         let directoryCacheStore = directoryCacheStore.bound(to: state.cacheScope)
+        let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)
         let serverURL = state.serverURL
         let base = state.searchBasePath
         return .run { send in
@@ -25,7 +26,9 @@ extension BrowseFeature {
                     folderLimit: Self.savedSearchFoldersLimit,
                     itemLimit: Self.savedSearchItemsLimit
                 ) { path in
-                    directoryCacheStore.read(serverURL: serverURL, path: path)?.items
+                    // The listing kept with a pinned folder backs the shared cache, which evicts.
+                    (directoryCacheStore.read(serverURL: serverURL, path: path) ?? offlineFileStore.listing(path))?
+                        .items
                 }
             }
             // A search that ends or moves stops the read too, not just its answer.

@@ -59,8 +59,6 @@ directLinkMode.download	İndir
 thumbnailSize.small	Küçük
 thumbnailSize.medium	Orta
 thumbnailSize.large	Büyük
-downloadLocation.documents	Belgeler
-downloadLocation.cache	Önbellek
 dateFormat.automatic	Otomatik
 browse.navigationTitle	Gözat
 browse.scopeThisFolder	Bu Klasör
@@ -151,7 +149,6 @@ favorites.removeMessage	Bu yalnızca onları Favoriler'den kaldırır.
 favorites.removeFailedOne	Bu favori kaldırılamadı.
 favorites.removeFailedMany	Bu favoriler kaldırılamadı.
 favorites.removePartial	%2$lld öğeden %1$lld tanesi kaldırıldı.
-downloads.navigationTitle	İndirilenler
 downloads.actionOpenInFiles	Dosyalar'da Aç
 downloads.emptyList	Gözat'tan indirdiğiniz dosyalar burada görünür.
 downloads.deleteConfirmTitle	Silinsin mi?
@@ -875,7 +872,6 @@ offline.manageRow	Çevrimdışı Dosyaları Yönet
 offline.manageTitle	Çevrimdışı Dosyalar
 offline.manageEmpty	Çevrimdışı kullanım için indirilen bir şey yok.
 offline.preferOfflineToggle	İndirilen Kopyaları Oynat
-offline.pinRemoved	%@ artık sunucuda yok ve çevrimdışı dosyalardan kaldırıldı
 offline.preferOfflineSubtitle	İndirilmiş bir video varsa akış yerine onu kullan.
 offline.tunnelSpeedNote	Sunucunuza uzak bir tünel üzerinden ulaşmak indirmeleri yavaşlatabilir. Büyük dosyalar için aynı ağa bağlanın ve sunucunuzun yerel adresini kullanın.
 menu.about	NextExplorer Hakkında
@@ -918,7 +914,6 @@ appearance.dark	Koyu
 browse.myFiles	Dosyalarım
 browse.myFilesSubtitle	Yalnızca size görünür
 downloadQueue.navigationTitle	İndirme Kuyruğu
-downloadQueue.openDownloads	İndirilenleri Göster
 downloadQueue.emptyList	Devam eden indirme yok.
 downloadQueue.statusSaved	Kaydedildi
 downloadQueue.cancelAll	Tüm indirmeleri iptal et
@@ -1106,3 +1101,17 @@ serverSettings.featureOffHowTo	Açmak için %@ değerini ayarlayıp kapsayıcıy
 trashSettings.environmentNote	Varsayılan değerler TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT ve TRASH_MAX_SIZE değişkenlerinden gelir.
 trashSettings.versionsEnvironmentNote	Varsayılan değerler VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ve VERSIONS_SESSION_CHECKPOINT_MINUTES değişkenlerinden gelir.
 versionedFiles.refresh	Yenile
+browse.actionAvailableOffline	Çevrimdışı kullanılabilir
+browse.actionSaveToDevice	Aygıta Kaydet
+previewToolbar.saveToDevice	Aygıta Kaydet
+downloadQueue.savedToPhotos	Fotoğraflar’a kaydedildi
+downloadQueue.savedToDevice	Aygıtınıza kaydedildi
+downloadQueue.photosAccessDenied	Resim ve videoları kaydetmek için Ayarlar’da Fotoğraflar erişimine izin verin.
+downloadQueue.photosSaveFailed	Bu, Fotoğraflar’a eklenemedi.
+tab.offline	Çevrimdışı
+offline.sectionSavedEarlier	Daha önce kaydedilenler
+offline.tabEmpty	Henüz çevrimdışı kullanılabilir bir şey yok. Bir dosya veya klasörde “Çevrimdışı kullanılabilir” seçeneğini seçin.
+offline.removeItemTitle	“%@” çevrimdışı kullanılabilirden kaldırılsın mı?
+offline.removeItemsTitle	%lld öğe çevrimdışı kullanılabilirden kaldırılsın mı?
+offline.removeItemMessage	Bu işlem, bu cihazda çevrimdışı kullanım için kaydedilen dosyaları siler. Sunucudaki dosyalarınız etkilenmez.
+browse.actionRemoveFromOffline	Çevrimdışından kaldır

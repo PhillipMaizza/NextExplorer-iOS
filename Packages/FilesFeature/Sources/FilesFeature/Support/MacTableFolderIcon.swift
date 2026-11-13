@@ -23,7 +23,11 @@
         HStack(spacing: .space16) {
             MacTableFolderIcon(image: IconKit.folderFill, tint: Color.accent)
             MacTableFolderIcon(image: IconKit.person, tint: Color.accent)
-            MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
+            MacTableFolderIcon(
+                image: IconKit.availableOffline,
+                tint: Color.accent,
+                size: MacBrowseTableMetrics.badgeSize
+            )
         }
         .padding(.space16)
     }

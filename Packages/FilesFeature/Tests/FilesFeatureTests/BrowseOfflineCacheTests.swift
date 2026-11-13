@@ -63,6 +63,45 @@ struct BrowseOfflineCacheTests {
         }
     }
 
+    @Test("Offline, a pinned folder lists from the copy kept with its files when the cache has nothing")
+    func offlineBrowseFallsBackToTheListingKeptWithThePinnedFolder() async {
+        let browse = AsyncGate()
+        let favorites = AsyncGate()
+        let offline = OfflineFileStore.inMemory()
+        offline.saveListing(cachedListing([cachedItem]))
+        let store = docsStore {
+            $0.serveEmptyFolders()
+            $0.filesClient.browse = { _, _ in
+                try await browse.wait()
+                throw FilesClientError.offline
+            }
+            $0.holdFavorites(favorites)
+            $0.directoryCacheStore.read = { _, _ in nil }
+            $0.offlineFileStore = offline
+        }
+
+        await store.send(.onAppear) {
+            $0.phase = .loading
+        }
+        await store.receive(\.cachedListingPainted) {
+            $0.items = [cachedItem]
+            $0.access = access
+            $0.isShowingCachePaint = true
+        }
+        browse.open()
+        await store.receive(\.itemsResponse.failure)
+        await store.receive(\.offlineListingResolved) {
+            $0.isShowingCachePaint = false
+            $0.phase = .loaded
+            $0.dataSource = .cached(fetchedAt: fetchedAt)
+        }
+        await store.receive(\.offlineAvailabilityComputed)
+        favorites.open()
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
+    }
+
     @Test("Offline with nothing saved shows the offline message")
     func offlineBrowseFailureWithNoCacheShowsTheErrorMessage() async {
         let favorites = AsyncGate()

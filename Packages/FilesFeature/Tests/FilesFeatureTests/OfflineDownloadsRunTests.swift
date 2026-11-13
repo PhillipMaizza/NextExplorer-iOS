@@ -101,6 +101,28 @@ struct OfflineDownloadsRunTests: OfflineDownloadsTestSupport {
     }
 
     @Test
+    func pinningAFolderKeepsTheListingOfEveryFolderInsideIt() async {
+        let offline = OfflineFileStore.inMemory()
+        let run = makeRun(
+            offline: offline,
+            browse: { [self] path in
+                switch path {
+                case "A": listing([file(TestFile.aText, path: "A", size: 10), folder("B", path: "A")], path: path)
+                case "A/B": listing([file(TestFile.bText, path: "A/B", size: 20)], path: path)
+                default: listing([], path: path)
+                }
+            }
+        )
+
+        await run.store.send(.startDownload([folder("A")])).finish()
+
+        #expect(offline.listing("A")?.items.map(\.id) == ["A/a.txt", "A/B"])
+        #expect(offline.listing("A/B")?.items.map(\.id) == ["A/B/b.txt"])
+        #expect(offline.listing("A")?.fetchedAt == MockDate.date)
+        #expect(offline.listing("Other") == nil)
+    }
+
+    @Test
     func resyncReDownloadsThePinnedRoots() async {
         let offline = pinnedStore(["A"])
         let downloaded = LockIsolated<[String]>([])

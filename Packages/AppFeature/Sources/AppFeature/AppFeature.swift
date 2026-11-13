@@ -44,7 +44,7 @@ public struct AppFeature {
         @Shared(.inMemory(SharedFileInbox.sharedKey)) public var sharedFileInbox: [URL] = []
         /// The signed-in account's downloads scope (server + user id), so each account's saved
         /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
-        /// and expiry. Read by `BrowseFeature`/`DownloadsFeature`/`SettingsFeature`.
+        /// and expiry. Read by `BrowseFeature`/`OfflineTabFeature`/`SettingsFeature`.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// Every signed-in account, for the Settings switcher. Rebuilt after any account change.
         @Shared(.inMemory(AccountSummary.sharedKey)) public var accounts: [AccountSummary] = []
@@ -102,6 +102,7 @@ public struct AppFeature {
     @Dependency(\.previewCacheStore) var previewCacheStore
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.textEditorETagStore) var textEditorETagStore
     @Dependency(\.localThumbnailStore) var localThumbnailStore
     @Dependency(\.pendingAccountWipes) var pendingAccountWipes
@@ -114,6 +115,20 @@ public struct AppFeature {
 
     private var accountCacheWipe: AccountCacheWipe {
         .fromDependencies
+    }
+
+    /// Points the active account at its own folder of saved files and remembers it as their owner,
+    /// so removing the account removes them.
+    private func beginDownloadScope(
+        _ state: inout State,
+        accountID: String,
+        serverURL: URL,
+        userID: String
+    ) -> Effect<Action> {
+        let scope = DownloadAccountScope.identifier(serverURL: serverURL, userID: userID)
+        state.$downloadScope.withLock { $0 = scope }
+        let localDownloadStore = localDownloadStore
+        return .run { _ in localDownloadStore.recordOwner(accountID, scope) }
     }
 
     /// The second pass of an account wipe, run once the account's screens are gone.
@@ -220,18 +235,21 @@ public struct AppFeature {
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
-                state.$downloadScope.withLock {
-                    $0 = DownloadAccountScope.identifier(serverURL: credentials.serverBaseURL, userID: user.id)
-                }
+                let recordOwner = beginDownloadScope(
+                    &state,
+                    accountID: credentials.accountID,
+                    serverURL: credentials.serverBaseURL,
+                    userID: user.id
+                )
                 if case let .authenticated(current) = state.destination, current.user == user {
-                    return refreshAccounts
+                    return .merge(refreshAccounts, recordOwner)
                 }
                 withAnimation {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, user: user)
                     )
                 }
-                return refreshAccounts
+                return .merge(refreshAccounts, recordOwner)
 
             case let .sessionValidationResponse(.failure(error), credentials):
                 // Only a real auth rejection tears down the optimistic session; a network
@@ -325,9 +343,12 @@ public struct AppFeature {
                 let accountID = AuthenticatedFeature.State.accountID(serverURL: serverURL, username: user.username)
                 CacheAccountScope.set(accountID)
                 pendingAccountWipes.remove(accountID)
-                state.$downloadScope.withLock {
-                    $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id)
-                }
+                let recordOwner = beginDownloadScope(
+                    &state,
+                    accountID: accountID,
+                    serverURL: serverURL,
+                    userID: user.id
+                )
                 // A fresh sign in on the login screen means no account is currently active, so
                 // clear every cache: on a shared device this must not expose a previous account's
                 // cached listings for the same server before its own namespace takes over.
@@ -342,14 +363,19 @@ public struct AppFeature {
                 )
                 let previewCacheStore = previewCacheStore
                 let offlineFileStore = offlineFileStore
+                let localDownloadStore = localDownloadStore
                 let sessionScratchStore = sessionScratchStore
                 return .merge(
                     refreshAccounts,
                     .run { _ in
                         try? previewCacheStore.clear()
                         offlineFileStore.removeAll()
+                        // Files of accounts signed out in a version that kept them; the owner is
+                        // recorded after, so the new account starts its own empty folder.
+                        localDownloadStore.removeAll()
                         sessionScratchStore.purge(.keepingActiveTransfers)
-                    },
+                    }
+                    .concatenate(with: recordOwner),
                     // A session that ran out kept its certificate for the login screen; once
                     // someone signs in, only the servers with an account keep theirs.
                     pruneClientCertificates(keeping: serverURL)
@@ -413,9 +439,12 @@ public struct AppFeature {
                 let leavingAccountID = state.currentAccountID
                 CacheAccountScope.set(accountID)
                 pendingAccountWipes.remove(accountID)
-                state.$downloadScope.withLock {
-                    $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id)
-                }
+                let recordOwner = beginDownloadScope(
+                    &state,
+                    accountID: accountID,
+                    serverURL: serverURL,
+                    userID: user.id
+                )
                 state.didAuthenticateFromLogin = false
                 withAnimation {
                     state.destination = .authenticated(
@@ -425,6 +454,7 @@ public struct AppFeature {
                 return .merge(
                     stopOfflineWork(leaving: leavingAccountID),
                     refreshAccounts,
+                    recordOwner,
                     finishAccountWipes,
                     pruneClientCertificates(keeping: serverURL)
                 )
@@ -504,6 +534,7 @@ public struct AppFeature {
         let previewCacheStore = previewCacheStore
         let thumbnailCache = thumbnailCache
         let offlineFileStore = offlineFileStore
+        let localDownloadStore = localDownloadStore
         let sessionScratchStore = sessionScratchStore
         let textEditorETagStore = textEditorETagStore
         let localThumbnailStore = localThumbnailStore
@@ -523,6 +554,7 @@ public struct AppFeature {
                 textEditorETagStore.clearAll()
                 localThumbnailStore.clearAll()
                 offlineFileStore.removeAll()
+                localDownloadStore.removeAll()
                 sessionScratchStore.purge(.everything)
                 for accountID in pendingAccountWipes.accounts() {
                     pendingAccountWipes.remove(accountID)

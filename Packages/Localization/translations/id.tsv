@@ -59,8 +59,6 @@ directLinkMode.download	Unduh
 thumbnailSize.small	Kecil
 thumbnailSize.medium	Sedang
 thumbnailSize.large	Besar
-downloadLocation.documents	Dokumen
-downloadLocation.cache	Cache
 dateFormat.automatic	Otomatis
 browse.navigationTitle	Jelajahi
 browse.scopeThisFolder	Folder Ini
@@ -151,7 +149,6 @@ favorites.removeMessage	Ini hanya menghapusnya dari Favorit.
 favorites.removeFailedOne	Tidak dapat menghapus favorit itu.
 favorites.removeFailedMany	Tidak dapat menghapus favorit tersebut.
 favorites.removePartial	%1$lld dari %2$lld dihapus.
-downloads.navigationTitle	Unduhan
 downloads.actionOpenInFiles	Buka di File
 downloads.emptyList	File yang Anda unduh dari Jelajahi muncul di sini.
 downloads.deleteConfirmTitle	Hapus?
@@ -875,7 +872,6 @@ offline.manageRow	Kelola File Offline
 offline.manageTitle	File Offline
 offline.manageEmpty	Tidak ada yang diunduh untuk penggunaan offline.
 offline.preferOfflineToggle	Putar Salinan yang Diunduh
-offline.pinRemoved	%@ tidak ada lagi di server dan dihapus dari file offline
 offline.preferOfflineSubtitle	Gunakan video yang diunduh alih-alih streaming bila tersedia.
 offline.tunnelSpeedNote	Menjangkau server melalui terowongan jarak jauh dapat memperlambat unduhan. Untuk file besar, hubungkan ke jaringan yang sama dan gunakan alamat lokal server Anda.
 menu.about	Tentang NextExplorer
@@ -918,7 +914,6 @@ appearance.dark	Gelap
 browse.myFiles	File Saya
 browse.myFilesSubtitle	Hanya terlihat oleh Anda
 downloadQueue.navigationTitle	Antrean Unduhan
-downloadQueue.openDownloads	Tampilkan Unduhan
 downloadQueue.emptyList	Tidak ada unduhan yang sedang berlangsung.
 downloadQueue.statusSaved	Tersimpan
 downloadQueue.cancelAll	Batalkan semua unduhan
@@ -1101,3 +1096,17 @@ serverSettings.featureOffHowTo	Untuk mengaktifkannya, setel %@ lalu mulai ulang 
 trashSettings.environmentNote	Nilai default berasal dari TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT dan TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Nilai default berasal dari VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE dan VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Segarkan
+browse.actionAvailableOffline	Tersedia offline
+browse.actionSaveToDevice	Simpan ke Perangkat
+previewToolbar.saveToDevice	Simpan ke Perangkat
+downloadQueue.savedToPhotos	Disimpan ke Foto
+downloadQueue.savedToDevice	Disimpan ke perangkat Anda
+downloadQueue.photosAccessDenied	Izinkan akses ke Foto di Pengaturan untuk menyimpan gambar dan video.
+downloadQueue.photosSaveFailed	Tidak dapat menambahkan ini ke Foto.
+tab.offline	Offline
+offline.sectionSavedEarlier	Disimpan sebelumnya
+offline.tabEmpty	Belum ada yang tersedia secara offline. Pilih “Tersedia offline” pada file atau folder.
+offline.removeItemTitle	Hapus “%@” dari Tersedia Offline?
+offline.removeItemsTitle	Hapus %lld item dari Tersedia Offline?
+offline.removeItemMessage	Ini menghapus file yang disimpan untuk penggunaan offline di perangkat ini. File Anda di server tidak terpengaruh.
+browse.actionRemoveFromOffline	Hapus dari Offline

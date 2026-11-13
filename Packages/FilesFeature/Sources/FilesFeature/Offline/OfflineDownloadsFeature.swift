@@ -45,6 +45,11 @@ public struct OfflineDownloadsFeature {
         case waitingForNetwork
         case failed(String)
         case cancelTapped
+        /// Closes a failed run's pill without rolling anything back.
+        case dismissStatusTapped
+        /// Unpin one file or folder: drops it from the manifest and frees its copies unless another
+        /// pinned folder still covers them.
+        case unpinTapped(path: String)
         case removeAllOfflineTapped
         /// Manual "Update Offline Files": re-walk the pinned roots and download only the new/changed
         /// files. Shows progress and a completion even when nothing needed downloading.
@@ -55,8 +60,6 @@ public struct OfflineDownloadsFeature {
         case autoSync(force: Bool)
         /// A background sync failed; clear any progress it was showing without an error banner.
         case autoSyncFailed
-        /// Pinned folders the server confirmed gone were unpinned; tells the user which.
-        case pinsRemoved(names: [String])
         /// The app moved to another account: stop this account's sync and download and drop its
         /// progress, so it neither keeps running behind the new account nor shows up there.
         case accountDeactivated(scope: String)
@@ -84,15 +87,10 @@ public struct OfflineDownloadsFeature {
         /// run on every quick app switch. A reconnect or a manual update bypasses it.
         static let autoSyncMinInterval: TimeInterval = 300
         static let notFoundStatusCode = 404
-        /// Syncs in a row that must find a pinned folder missing, with no way to confirm it from its
-        /// parent listing, before the pin is removed. One 404 is also what an unmounted volume or a
-        /// revoked share answers.
-        static let missingSyncsBeforeRemoval = 2
         /// What the backend answers a browse 404 with when the path could not be resolved or the account
         /// may not open it. Both can pass, so they never count as the folder being gone.
         static let ambiguousNotFoundMessages: Set<String> = ["access denied", "path not found"]
         static let directoryKind = "directory"
-        static let removedNamesSeparator = ", "
     }
 
     private struct CancelID: Hashable {
@@ -114,6 +112,7 @@ public struct OfflineDownloadsFeature {
                 let serverURL = state.serverURL
                 let scope = state.scope
                 let filesClient = filesClient
+                let now = date.now
                 let existingRoots = offlineFileStore.pinnedRoots()
                 let existingPaths = Set(existingRoots.map(\.path))
                 let newRoots = roots.map { OfflinePinnedRoot(path: $0.id, isDirectory: $0.isDirectory) }
@@ -125,7 +124,10 @@ public struct OfflineDownloadsFeature {
                         // its roots and a later sync resumes the missing files instead of losing them.
                         offlineFileStore.setPinnedRoots(Self.mergedRoots(existing: existingRoots, adding: newRoots))
 
-                        let walk = try await Self.walk(roots: roots, serverURL: serverURL, filesClient: filesClient)
+                        let walk = try await Self.walk(
+                            roots: roots, serverURL: serverURL, filesClient: filesClient,
+                            onListing: Self.listingSink(offlineFileStore, fetchedAt: now)
+                        )
                         let files = walk.files
                         guard !(files.isEmpty && walk.hasIncompleteWalk) else {
                             await send(.waitingForNetwork)
@@ -187,17 +189,6 @@ public struct OfflineDownloadsFeature {
                     }
                 }
                 return syncPinnedRoots(state: &state, announceWhenNothingPending: resuming)
-
-            case let .pinsRemoved(names):
-                offlineFileStore.setInterrupted(false)
-                state.pendingPinPaths = []
-                state.$progress.withLock {
-                    $0 = OfflineDownloadProgress()
-                    $0
-                        .phase = .failed(L10n.Offline
-                            .pinRemoved(names.joined(separator: Constants.removedNamesSeparator)))
-                }
-                return .none
 
             case let .accountDeactivated(scope):
                 state.pendingPinPaths = []
@@ -277,6 +268,14 @@ public struct OfflineDownloadsFeature {
                     }
                 )
 
+            case .dismissStatusTapped:
+                state.$progress.withLock { $0 = OfflineDownloadProgress() }
+                return .none
+
+            case let .unpinTapped(path):
+                state.pendingPinPaths.remove(path)
+                return .run { _ in offlineFileStore.removeRoot(path) }
+
             case .removeAllOfflineTapped:
                 state.$progress.withLock { $0 = OfflineDownloadProgress() }
                 return .merge(
@@ -305,27 +304,17 @@ public struct OfflineDownloadsFeature {
         return .run { send in
             try await CacheAccountScope.withPinned(scope) {
                 offlineFileStore.setLastAutoSyncAt(now)
-                var walk = try await Self.walk(roots: rootItems, serverURL: serverURL, filesClient: filesClient)
-                let removedNames = try await Self.resolveMissingRoots(
-                    in: &walk, roots: roots, serverURL: serverURL, filesClient: filesClient,
-                    offlineFileStore: offlineFileStore
+                let walk = try await Self.walk(
+                    roots: rootItems, serverURL: serverURL, filesClient: filesClient,
+                    onListing: Self.listingSink(offlineFileStore, fetchedAt: now)
                 )
                 let files = walk.files
-                if walk.hasIncompleteWalk || walk.hasForbiddenFolders {
-                    // A folder that failed to list says nothing about its files, so never prune on a
-                    // partial walk: only orphans left by an unpinned root are safe to drop. A forbidden
-                    // or unconfirmed missing folder keeps its pin and its files for the same reason.
-                    offlineFileStore.reconcile(nil)
-                } else {
-                    // A complete walk of every pinned root: prune slots the server no longer lists
-                    // (deleted upstream) and any orphans left by an unpinned root.
-                    offlineFileStore.reconcile(Set(files.map(\.id)))
-                }
+                // A pinned file or folder the server no longer has stays on the device until the user
+                // removes it: only orphans left by an unpinned root are dropped, never what the server lost.
+                offlineFileStore.reconcile(nil)
                 let pending = files.filter { offlineFileStore.localURL($0) == nil }
                 guard !pending.isEmpty else {
-                    if !removedNames.isEmpty {
-                        await send(.pinsRemoved(names: removedNames))
-                    } else if walk.hasIncompleteWalk {
+                    if walk.hasIncompleteWalk {
                         if announceWhenNothingPending {
                             await send(.waitingForNetwork)
                         } else {
@@ -350,14 +339,10 @@ public struct OfflineDownloadsFeature {
                 if Task.isCancelled {
                     return
                 }
-                if !removedNames.isEmpty {
-                    await send(.pinsRemoved(names: removedNames))
-                } else {
-                    await send(walk
-                        .hasForbiddenFolders && announceWhenNothingPending
-                        ? .failed(Self.forbiddenMessage)
-                        : .completed)
-                }
+                await send(walk
+                    .hasForbiddenFolders && announceWhenNothingPending
+                    ? .failed(Self.forbiddenMessage)
+                    : .completed)
             }
         } catch: { error, send in
             guard !(error is CancellationError) else { return }
@@ -365,77 +350,6 @@ public struct OfflineDownloadsFeature {
             await send(.autoSyncFailed)
         }
         .cancellable(id: CancelID(scope: state.scope), cancelInFlight: true)
-    }
-
-    /// What the server's own listings say about a pinned folder that answered 404.
-    private enum FolderPresence {
-        case missing
-        case present
-        case unknown
-    }
-
-    /// Settles the pinned folders that answered 404. One 404 proves nothing (the backend also answers
-    /// it for an unmounted volume or a revoked share), so a folder is only unpinned once its parent
-    /// listing, from a successful browse, omits it, or once separate syncs in a row found it missing
-    /// with a message that is not one of the ambiguous ones. Every other case leaves the pin and its
-    /// files alone and marks the walk incomplete. Returns the names of the folders unpinned.
-    private static func resolveMissingRoots(
-        in walk: inout OfflineWalkResult,
-        roots: [OfflinePinnedRoot],
-        serverURL: URL,
-        filesClient: FilesClient,
-        offlineFileStore: OfflineFileStore
-    ) async throws -> [String] {
-        let pinnedPaths = Set(roots.map(\.path))
-        var removedNames: [String] = []
-        var unconfirmed: [String] = []
-        for folder in walk.goneFolders {
-            guard pinnedPaths.contains(folder) else {
-                unconfirmed.append(folder)
-                continue
-            }
-            var isConfirmedGone = false
-            switch try await presence(of: folder, serverURL: serverURL, filesClient: filesClient) {
-            case .missing:
-                isConfirmedGone = true
-            case .present:
-                offlineFileStore.clearMissingRoot(folder)
-            case .unknown:
-                if !walk.ambiguousGoneFolders.contains(folder) {
-                    isConfirmedGone = offlineFileStore.recordMissingRoot(folder) >= Constants.missingSyncsBeforeRemoval
-                }
-            }
-            if isConfirmedGone {
-                offlineFileStore.removeRoot(folder)
-                removedNames.append((folder as NSString).lastPathComponent)
-            } else {
-                unconfirmed.append(folder)
-            }
-        }
-        let unresolved = Set(walk.goneFolders + walk.failedFolders + walk.forbiddenFolders)
-        for root in roots where root.isDirectory && !unresolved.contains(root.path) {
-            offlineFileStore.clearMissingRoot(root.path)
-        }
-        walk.goneFolders = []
-        walk.ambiguousGoneFolders = []
-        walk.failedFolders += unconfirmed
-        return removedNames
-    }
-
-    private static func presence(
-        of folder: String,
-        serverURL: URL,
-        filesClient: FilesClient
-    ) async throws -> FolderPresence {
-        let parent = (folder as NSString).deletingLastPathComponent
-        do {
-            let listing = try await filesClient.browse(serverURL, parent)
-            return listing.items.contains { $0.id == folder } ? .present : .missing
-        } catch is CancellationError {
-            throw CancellationError()
-        } catch {
-            return .unknown
-        }
     }
 
     static var forbiddenMessage: String {
@@ -531,6 +445,20 @@ public struct OfflineDownloadsFeature {
         }
     }
 
+    /// Keeps every folder the walk lists with the pinned files, so each can be browsed offline.
+    private static func listingSink(
+        _ store: OfflineFileStore, fetchedAt: Date
+    ) -> @Sendable (String, BrowseResult) -> Void {
+        { path, result in
+            store.saveListing(CachedDirectory(
+                path: path,
+                items: result.items,
+                access: result.access,
+                fetchedAt: fetchedAt
+            ))
+        }
+    }
+
     /// Depth first walk of the pinned roots into a flat list of files. Directories are expanded via
     /// `browse`. A save the user asked for passes `skipsUnreadableFolders: false` and fails instead of
     /// quietly leaving files out.
@@ -546,7 +474,8 @@ public struct OfflineDownloadsFeature {
     /// fails to list is skipped, not fatal, so one unreadable subfolder doesn't sink an otherwise good
     /// run, yet the result is flagged incomplete so callers never treat it as the full server state.
     static func walk(
-        roots: [FileItem], serverURL: URL, filesClient: FilesClient, skipsUnreadableFolders: Bool = true
+        roots: [FileItem], serverURL: URL, filesClient: FilesClient, skipsUnreadableFolders: Bool = true,
+        onListing: (@Sendable (String, BrowseResult) -> Void)? = nil
     ) async throws -> OfflineWalkResult {
         var files: [FileItem] = []
         var failedFolders: [String] = []
@@ -574,10 +503,14 @@ public struct OfflineDownloadsFeature {
                 while active < Constants.maxConcurrentBrowses, let dir = queue.popLast() {
                     group.addTask {
                         guard skipsUnreadableFolders else {
-                            return try await (dir.id, .items(filesClient.browse(serverURL, dir.id).items))
+                            let result = try await filesClient.browse(serverURL, dir.id)
+                            onListing?(dir.id, result)
+                            return (dir.id, .items(result.items))
                         }
                         do {
-                            return try await (dir.id, .items(filesClient.browse(serverURL, dir.id).items))
+                            let result = try await filesClient.browse(serverURL, dir.id)
+                            onListing?(dir.id, result)
+                            return (dir.id, .items(result.items))
                         } catch is CancellationError {
                             throw CancellationError()
                         } catch {
@@ -628,9 +561,9 @@ public struct OfflineDownloadsFeature {
     }
 
     /// What listing one folder came to. Offline, a timeout, a server error or an expired session leave
-    /// the walk incomplete. A 404 is only a folder that may be gone (`resolveMissingRoots` decides),
-    /// since the backend also answers it for a revoked share or an unmounted volume; a 403 is one the
-    /// account may not read.
+    /// the walk incomplete. A 404 is only a folder that may be gone, since the backend also answers it
+    /// for a revoked share or an unmounted volume, so its pin and kept files stay until the user
+    /// removes them; a 403 is one the account may not read.
     private enum FolderOutcome: Sendable {
         case items([FileItem])
         case gone(isAmbiguous: Bool)

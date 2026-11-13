@@ -177,7 +177,10 @@ struct FavoritesLoadingTests: FavoritesTestSupport {
         }
         // The pinned root and the favorite that sits under it are both flagged; the unrelated one
         // is not.
-        await store.receive(\.offlineAvailabilityComputed) { $0.offlineFavoriteIDs = ["A", "B"] }
+        await store.receive(\.offlineAvailabilityComputed) {
+            $0.offlineFavoriteIDs = ["A", "B"]
+            $0.offlinePinnedFavoriteIDs = ["A"]
+        }
     }
 
     @Test

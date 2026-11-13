@@ -55,8 +55,6 @@ directLinkMode.download	Descarcă
 thumbnailSize.small	Mică
 thumbnailSize.medium	Medie
 thumbnailSize.large	Mare
-downloadLocation.documents	Documente
-downloadLocation.cache	Cache
 dateFormat.automatic	Automat
 browse.navigationTitle	Explorează
 browse.scopeThisFolder	Acest dosar
@@ -142,7 +140,6 @@ favorites.removeMessage	Aceasta doar le elimină de la favorite.
 favorites.removeFailedOne	Nu s-a putut elimina acel favorit.
 favorites.removeFailedMany	Nu s-au putut elimina acele favorite.
 favorites.removePartial	Eliminate %1$lld din %2$lld.
-downloads.navigationTitle	Descărcări
 downloads.actionOpenInFiles	Deschide în Fișiere
 downloads.emptyList	Fișierele descărcate din Explorează apar aici.
 downloads.deleteConfirmTitle	Ștergi?
@@ -606,7 +603,6 @@ offline.manageRow	Gestionează fișierele offline
 offline.manageTitle	Fișiere offline
 offline.manageEmpty	Nu este nimic descărcat pentru utilizare offline.
 offline.preferOfflineToggle	Redă copiile descărcate
-offline.pinRemoved	%@ nu mai există pe server și a fost eliminat din fișierele offline
 offline.preferOfflineSubtitle	Folosește un videoclip descărcat în loc de streaming când este disponibil.
 offline.tunnelSpeedNote	Accesarea serverului printr-un tunel la distanță poate încetini descărcările. Pentru fișiere mari, conectează-te la aceeași rețea și folosește adresa locală a serverului.
 menu.about	Despre NextExplorer
@@ -642,7 +638,6 @@ appearance.dark	Întunecat
 browse.myFiles	Fișierele mele
 browse.myFilesSubtitle	Vizibil doar pentru tine
 downloadQueue.navigationTitle	Coadă de descărcări
-downloadQueue.openDownloads	Afișează descărcările
 downloadQueue.emptyList	Nicio descărcare în curs.
 downloadQueue.statusSaved	Salvat
 downloadQueue.cancelAll	Anulează toate descărcările
@@ -1140,3 +1135,17 @@ twoFactor.recoveryTitle	Salvează codurile de recuperare
 twoFactor.shareCodesButton	Partajează codurile
 twoFactor.turnOffButton	Dezactivează
 twoFactor.turnOnButton	Activează
+browse.actionAvailableOffline	Disponibil offline
+browse.actionSaveToDevice	Salvează pe dispozitiv
+previewToolbar.saveToDevice	Salvează pe dispozitiv
+downloadQueue.savedToPhotos	Salvat în Fotografii
+downloadQueue.savedToDevice	Salvat pe dispozitivul tău
+downloadQueue.photosAccessDenied	Permite accesul la Fotografii în Setări pentru a salva imagini și videoclipuri.
+downloadQueue.photosSaveFailed	Nu s-a putut adăuga în Fotografii.
+tab.offline	Offline
+offline.sectionSavedEarlier	Salvate anterior
+offline.tabEmpty	Încă nu este nimic disponibil offline. Alege „Disponibil offline” pentru un fișier sau un dosar.
+offline.removeItemTitle	Elimini „%@” din Disponibile offline?
+offline.removeItemsTitle	Elimini %lld elemente din Disponibile offline?
+offline.removeItemMessage	Aceasta șterge fișierele salvate pentru utilizare offline pe acest dispozitiv. Fișierele tale de pe server nu sunt afectate.
+browse.actionRemoveFromOffline	Elimină din offline

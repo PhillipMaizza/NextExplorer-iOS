@@ -365,4 +365,120 @@ struct OfflineFileStoreDiskTests {
         #expect(store.pinned(to: other).localURL(theirs) != nil)
         #expect(store.pinned(to: other).pinnedRoots() == [root(Constants.docs)])
     }
+
+    // MARK: kept listings
+
+    private func listing(_ path: String) -> CachedDirectory {
+        CachedDirectory(
+            path: path,
+            items: [FileItem(
+                name: TestFile.aText,
+                path: path,
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            )],
+            access: FileAccess(
+                canRead: true, canWrite: false, canUpload: false,
+                canDelete: false, canShare: false, canDownload: true
+            ),
+            fetchedAt: MockDate.date
+        )
+    }
+
+    @Test
+    func aKeptListingReadsBackAndStaysWithinItsOwnAccount() {
+        let scope = makeScope()
+        let otherScope = makeScope() + "-other"
+        let store = OfflineFileStore.liveValue
+        defer {
+            store.removeAccount(scope)
+            store.removeAccount(otherScope)
+        }
+        let kept = listing(Constants.docs)
+
+        store.pinned(to: scope).saveListing(kept)
+
+        #expect(store.pinned(to: scope).listing(Constants.docs) == kept)
+        #expect(store.pinned(to: scope).listing(Constants.docsSub) == nil)
+        #expect(store.pinned(to: otherScope).listing(Constants.docs) == nil)
+    }
+
+    @Test
+    func unpinningARootDropsItsKeptListingsAndKeepsAnotherRootsListing() {
+        let scope = makeScope()
+        let store = OfflineFileStore.liveValue.pinned(to: scope)
+        defer { OfflineFileStore.liveValue.removeAccount(scope) }
+        store.setPinnedRoots([root(Constants.docs), root(Constants.docsSibling)])
+        store.saveListing(listing(Constants.docs))
+        store.saveListing(listing(Constants.docsSub))
+        store.saveListing(listing(Constants.docsSibling))
+
+        store.removeRoot(Constants.docs)
+
+        #expect(store.listing(Constants.docs) == nil)
+        #expect(store.listing(Constants.docsSub) == nil, "A subfolder goes with the root that covered it")
+        #expect(store.listing(Constants.docsSibling) == listing(Constants.docsSibling))
+    }
+
+    @Test
+    func reconcileDropsAListingNoPinnedRootCovers() {
+        let scope = makeScope()
+        let store = OfflineFileStore.liveValue.pinned(to: scope)
+        defer { OfflineFileStore.liveValue.removeAccount(scope) }
+        store.setPinnedRoots([root(Constants.docs)])
+        store.saveListing(listing(Constants.docs))
+        store.saveListing(listing(Constants.docsSibling))
+
+        store.reconcile(nil)
+
+        #expect(store.listing(Constants.docs) == listing(Constants.docs))
+        #expect(store.listing(Constants.docsSibling) == nil, "Docs2 is not under the pinned Docs")
+    }
+
+    // MARK: pinned copy metadata
+
+    @Test
+    func copyMetadataReadsBackWhatThePinnedFileWasSavedWith() throws {
+        let scope = makeScope()
+        let store = OfflineFileStore.liveValue.pinned(to: scope)
+        defer { OfflineFileStore.liveValue.removeAccount(scope) }
+        let item = try seed(TestFile.aText, in: Constants.docs, bytes: 3, scope: scope)
+
+        #expect(store.copyMetadata(item.id) == OfflineCopyMetadata(dateModified: MockDate.date, size: 3))
+        #expect(store.copyMetadata("\(Constants.docs)/missing.txt") == nil)
+    }
+
+    @Test
+    func aPlaceholderItemTakesThePinnedCopysSizeAndDateSoItMatches() throws {
+        let scope = makeScope()
+        let store = OfflineFileStore.liveValue.pinned(to: scope)
+        defer { OfflineFileStore.liveValue.removeAccount(scope) }
+        let pinned = try seed(TestFile.aText, in: Constants.docs, bytes: 3, scope: scope)
+        let hit = FileItem(
+            name: pinned.name, path: pinned.path, dateModified: MockDate.date.addingTimeInterval(500),
+            size: 0, kind: TestKind.text
+        )
+        #expect(store.localURL(hit) == nil, "A search hit knows no size or date, so it misses the strict match")
+
+        let resolved = store.matchingPinnedCopy(hit)
+
+        #expect(resolved == pinned)
+        #expect(store.localURL(resolved) != nil)
+    }
+
+    @Test
+    func anItemWithNoPinnedCopyOrAFolderIsLeftAsItIs() {
+        let scope = makeScope()
+        let store = OfflineFileStore.liveValue.pinned(to: scope)
+        let file = FileItem(
+            name: TestFile.bText, path: Constants.docs, dateModified: MockDate.date, size: 7, kind: TestKind.text
+        )
+        let folder = FileItem(
+            name: Constants.docsSub, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind
+        )
+
+        #expect(store.matchingPinnedCopy(file) == file)
+        #expect(store.matchingPinnedCopy(folder) == folder)
+    }
 }

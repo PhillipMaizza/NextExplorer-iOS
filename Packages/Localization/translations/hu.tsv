@@ -59,8 +59,6 @@ directLinkMode.download	Letöltés
 thumbnailSize.small	Kicsi
 thumbnailSize.medium	Közepes
 thumbnailSize.large	Nagy
-downloadLocation.documents	Dokumentumok
-downloadLocation.cache	Gyorsítótár
 dateFormat.automatic	Automatikus
 browse.navigationTitle	Böngészés
 browse.scopeThisFolder	Ez a mappa
@@ -151,7 +149,6 @@ favorites.removeMessage	Ez csak a Kedvencek közül távolítja el őket.
 favorites.removeFailedOne	Ezt a kedvencet nem sikerült eltávolítani.
 favorites.removeFailedMany	Ezeket a kedvenceket nem sikerült eltávolítani.
 favorites.removePartial	Eltávolítva: %1$lld / %2$lld.
-downloads.navigationTitle	Letöltések
 downloads.actionOpenInFiles	Megnyitás a Fájlokban
 downloads.emptyList	A Böngészésből letöltött fájlok itt jelennek meg.
 downloads.deleteConfirmTitle	Törli?
@@ -875,7 +872,6 @@ offline.manageRow	Offline fájlok kezelése
 offline.manageTitle	Offline fájlok
 offline.manageEmpty	Semmi sincs letöltve offline használatra.
 offline.preferOfflineToggle	Letöltött másolatok lejátszása
-offline.pinRemoved	A(z) %@ már nem létezik a kiszolgálón, ezért el lett távolítva az offline fájlokból
 offline.preferOfflineSubtitle	Használja a letöltött videót a streamelés helyett, ha elérhető.
 offline.tunnelSpeedNote	A kiszolgáló távoli alagúton keresztüli elérése lassíthatja a letöltéseket. Nagy fájlok esetén csatlakozzon ugyanahhoz a hálózathoz, és használja a kiszolgáló helyi címét.
 menu.about	A NextExplorerről
@@ -918,7 +914,6 @@ appearance.dark	Sötét
 browse.myFiles	Fájljaim
 browse.myFilesSubtitle	Csak Ön látja
 downloadQueue.navigationTitle	Letöltési sor
-downloadQueue.openDownloads	Letöltések megjelenítése
 downloadQueue.emptyList	Nincs folyamatban lévő letöltés.
 downloadQueue.statusSaved	Mentve
 downloadQueue.cancelAll	Az összes letöltés megszakítása
@@ -1107,3 +1102,17 @@ serverSettings.featureOffHowTo	A bekapcsoláshoz állítsa be a(z) %@ értékét
 trashSettings.environmentNote	Az alapértékek a következőkből származnak: TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT és TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Az alapértékek a következőkből származnak: VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE és VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Frissítés
+browse.actionAvailableOffline	Elérhető offline
+browse.actionSaveToDevice	Mentés az eszközre
+previewToolbar.saveToDevice	Mentés az eszközre
+downloadQueue.savedToPhotos	Mentve a Fotókba
+downloadQueue.savedToDevice	Mentve az eszközre
+downloadQueue.photosAccessDenied	Engedélyezze a Fotók elérését a Beállításokban a képek és videók mentéséhez.
+downloadQueue.photosSaveFailed	Nem sikerült hozzáadni a Fotókhoz.
+tab.offline	Offline
+offline.sectionSavedEarlier	Korábban mentett
+offline.tabEmpty	Még semmi sem érhető el offline. Válassza a(z) „Elérhető offline” lehetőséget egy fájlnál vagy mappánál.
+offline.removeItemTitle	Eltávolítja a(z) „%@” elemet az offline elérhetők közül?
+offline.removeItemsTitle	Eltávolít %lld elemet az offline elérhetők közül?
+offline.removeItemMessage	Ez törli az offline használatra mentett fájlokat ezen az eszközön. A kiszolgálón lévő fájljait nem érinti.
+browse.actionRemoveFromOffline	Eltávolítás az offline közül

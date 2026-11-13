@@ -89,7 +89,7 @@ public struct SettingsFeature {
         /// "Show Hidden Files" here is reflected immediately in an already-open folder.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
         /// Current account's downloads scope, so the size/existence checks count only this
-        /// account's files. Shared with `BrowseFeature`/`DownloadsFeature` under one key.
+        /// account's files. Shared with `BrowseFeature`/`OfflineTabFeature` under one key.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// Every signed-in account for the multi-server switcher, published by `AppFeature`. The
         /// actual switch / remove / add work is owned upstream (it needs `authClient`); this only

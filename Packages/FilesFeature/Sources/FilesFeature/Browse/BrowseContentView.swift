@@ -40,8 +40,15 @@ private enum Constants {
 /// render this same view, scoped to their own `BrowseFeature` store. The list/grid
 /// choice is a per-device display preference, not per-folder state, so it's stored
 /// directly here rather than threaded through `BrowseFeature.State`.
+extension EnvironmentValues {
+    /// Off for folders opened from the Offline tab, where everything is offline and a badge on each
+    /// item says nothing. Browse and Favorites keep it.
+    @Entry var showsOfflineBadges = true
+}
+
 struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
+    @Environment(\.showsOfflineBadges) private var showsOfflineBadges
     /// Observed only to refresh the offline badges when a download completes.
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
@@ -479,10 +486,23 @@ struct BrowseContentView: View {
                         }
                     }
                 }
-                if isDownloadActionVisible {
+                if isSaveActionVisible {
                     ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(icon: IconKit.download, accessibilityLabel: L10n.Browse.actionDownload) {
+                        selectionToolbarButton(icon: SaveActionStyle.icon, accessibilityLabel: SaveActionStyle.title) {
                             store.send(.bulkDownloadTapped)
+                        }
+                    }
+                }
+                if store.access?.canDownload ?? false {
+                    ToolbarItem(placement: .selectionBar) {
+                        let action = store.selectedOfflineAction
+                        selectionToolbarButton(
+                            icon: action?.icon ?? IconKit.availableOffline,
+                            tint: action == .remove ? .negative : nil,
+                            accessibilityLabel: action?.title ?? L10n.Browse.actionAvailableOffline,
+                            isDisabled: action == nil
+                        ) {
+                            store.send(.bulkOfflineTapped)
                         }
                     }
                 }
@@ -584,6 +604,11 @@ struct BrowseContentView: View {
             )
         }
         .hapticFeedback(.warning, trigger: store.transferConflict)
+        .offlineRemovalAlert(
+            store.previewItem == nil ? store.offlineRemoval : nil,
+            onConfirm: { store.send(.offlineRemovalConfirmed) },
+            onCancel: { store.send(.offlineRemovalCancelled) }
+        )
     }
 
     private var previewPresentedBinding: Binding<Bool> {
@@ -684,7 +709,7 @@ struct BrowseContentView: View {
                 visibility: sourceVisibility
             ),
             isOpening: isOpening(item),
-            isAvailableOffline: store.offlineItemIDs.contains(item.id)
+            isAvailableOffline: showsOfflineBadges && store.offlineItemIDs.contains(item.id)
         )
     }
 
@@ -857,6 +882,21 @@ struct BrowseContentView: View {
                         Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
                     }
                     .tint(.primaryDS)
+                    let offlineAction = OfflineBulkAction.resolve(
+                        selectedIDs: items.map(\.id),
+                        offlineIDs: store.offlineItemIDs,
+                        pinnedIDs: store.offlinePinnedItemIDs
+                    )
+                    Button(role: offlineAction == .remove ? .destructive : nil) {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.bulkOfflineTapped)
+                    } label: {
+                        Label { Text(offlineAction?.title ?? L10n.Browse.actionAvailableOffline) } icon: {
+                            offlineAction?.icon ?? IconKit.availableOffline
+                        }
+                    }
+                    .tint(offlineAction == .remove ? .negative : .primaryDS)
+                    .disabled(offlineAction == nil)
                 }
                 if items.allSatisfy(\.isDirectory) {
                     let isAllFavorite = items.allSatisfy { store.favoritePaths.contains($0.id) }
@@ -936,7 +976,7 @@ struct BrowseContentView: View {
                 visibility: sourceVisibility
             ),
             isOpening: isOpening(item),
-            isAvailableOffline: store.offlineItemIDs.contains(item.id)
+            isAvailableOffline: showsOfflineBadges && store.offlineItemIDs.contains(item.id)
         )
     }
 
@@ -1218,6 +1258,12 @@ struct BrowseContentView: View {
         !store.selectedItemIDs.isEmpty && (store.access?.canDownload ?? false)
     }
 
+    private var isSaveActionVisible: Bool {
+        isDownloadActionVisible && store.items.contains {
+            store.selectedItemIDs.contains($0.id) && SaveActionStyle.isAvailable(for: $0.isDirectory)
+        }
+    }
+
     private var isDeleteActionVisible: Bool {
         !store.selectedItemIDs.isEmpty && (store.access?.canDelete ?? false)
     }
@@ -1238,6 +1284,7 @@ struct BrowseContentView: View {
         role: ButtonRole? = nil,
         tint: Color? = nil,
         accessibilityLabel: String? = nil,
+        isDisabled: Bool = false,
         action: @escaping () -> Void
     ) -> some View {
         SelectionToolbarButton(
@@ -1245,6 +1292,7 @@ struct BrowseContentView: View {
             role: role,
             tint: tint,
             accessibilityLabel: accessibilityLabel,
+            isDisabled: isDisabled,
             action: action
         )
     }

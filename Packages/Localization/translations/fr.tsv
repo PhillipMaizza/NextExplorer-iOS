@@ -55,8 +55,6 @@ directLinkMode.download	Télécharger
 thumbnailSize.small	Petite
 thumbnailSize.medium	Moyenne
 thumbnailSize.large	Grande
-downloadLocation.documents	Documents
-downloadLocation.cache	Cache
 dateFormat.automatic	Automatique
 browse.navigationTitle	Explorer
 browse.scopeThisFolder	Ce dossier
@@ -142,7 +140,6 @@ favorites.removeMessage	Cela les retire uniquement des favoris.
 favorites.removeFailedOne	Impossible de retirer ce favori.
 favorites.removeFailedMany	Impossible de retirer ces favoris.
 favorites.removePartial	%1$lld sur %2$lld retirés.
-downloads.navigationTitle	Téléchargements
 downloads.actionOpenInFiles	Ouvrir dans Fichiers
 downloads.emptyList	Les fichiers que vous téléchargez depuis Explorer apparaissent ici.
 downloads.deleteConfirmTitle	Supprimer ?
@@ -606,7 +603,6 @@ offline.manageRow	Gérer les fichiers hors ligne
 offline.manageTitle	Fichiers hors ligne
 offline.manageEmpty	Rien n'est téléchargé pour une utilisation hors ligne.
 offline.preferOfflineToggle	Lire les copies téléchargées
-offline.pinRemoved	%@ n’existe plus sur le serveur et a été retiré des fichiers hors ligne
 offline.preferOfflineSubtitle	Utiliser une vidéo téléchargée au lieu de la diffuser lorsqu'elle est disponible.
 offline.tunnelSpeedNote	Accéder à votre serveur via un tunnel distant peut ralentir les téléchargements. Pour les gros fichiers, connectez-vous au même réseau et utilisez l'adresse locale de votre serveur.
 menu.about	À propos de NextExplorer
@@ -642,7 +638,6 @@ appearance.dark	Sombre
 browse.myFiles	Mes fichiers
 browse.myFilesSubtitle	Visible uniquement par vous
 downloadQueue.navigationTitle	File de téléchargement
-downloadQueue.openDownloads	Afficher les téléchargements
 downloadQueue.emptyList	Aucun téléchargement en cours.
 downloadQueue.statusSaved	Enregistré
 downloadQueue.cancelAll	Annuler tous les téléchargements
@@ -1134,3 +1129,17 @@ twoFactor.recoveryTitle	Enregistrez vos codes de récupération
 twoFactor.shareCodesButton	Partager les codes
 twoFactor.turnOffButton	Désactiver
 twoFactor.turnOnButton	Activer
+browse.actionAvailableOffline	Disponible hors ligne
+browse.actionSaveToDevice	Enregistrer sur l’appareil
+previewToolbar.saveToDevice	Enregistrer sur l’appareil
+downloadQueue.savedToPhotos	Enregistré dans Photos
+downloadQueue.savedToDevice	Enregistré sur votre appareil
+downloadQueue.photosAccessDenied	Autorisez l’accès à Photos dans Réglages pour enregistrer des images et des vidéos.
+downloadQueue.photosSaveFailed	Impossible d’ajouter ceci à Photos.
+tab.offline	Hors ligne
+offline.sectionSavedEarlier	Enregistrés précédemment
+offline.tabEmpty	Rien n’est encore disponible hors connexion. Choisissez « Disponible hors ligne » sur un fichier ou un dossier.
+offline.removeItemTitle	Retirer « %@ » des éléments disponibles hors connexion ?
+offline.removeItemsTitle	Retirer %lld éléments des éléments disponibles hors connexion ?
+offline.removeItemMessage	Cela supprime les fichiers enregistrés pour une utilisation hors ligne sur cet appareil. Vos fichiers sur le serveur ne sont pas affectés.
+browse.actionRemoveFromOffline	Retirer du hors connexion

@@ -19,6 +19,11 @@ enum FileGridMetrics {
     static var columns: [GridItem] {
         [GridItem(.adaptive(minimum: adaptiveMinimum), spacing: spacing)]
     }
+
+    /// Columns for the "Thumbnail Size" setting: a bigger size fits fewer, larger tiles per row.
+    static func columns(for size: ThumbnailSize) -> [GridItem] {
+        [GridItem(.adaptive(minimum: size.gridItemMinWidth), spacing: spacing)]
+    }
 }
 
 /// The shared shell for one row in a multi-select file listing (Favorites, Downloads): the

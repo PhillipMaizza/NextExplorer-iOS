@@ -29,11 +29,22 @@
             if store.downloadQueue.isActive {
                 return store.downloadQueue.currentJob?.progress
             }
+            if store.offlineProgress.isActive {
+                return TransferStatusBars(store: store).offlineBarProgress
+            }
             return nil
         }
 
+        private var offlineFailure: String? {
+            if case let .failed(message) = store.offlineProgress.phase {
+                message
+            } else {
+                nil
+            }
+        }
+
         private var hasFailures: Bool {
-            store.uploads.failedCount + store.downloadQueue.failedCount > 0
+            store.uploads.failedCount + store.downloadQueue.failedCount > 0 || offlineFailure != nil
         }
 
         private var accessibilityStatus: String {
@@ -46,7 +57,7 @@
             if store.downloadQueue.failedCount > 0 {
                 return TransferFailureText.downloads(store.downloadQueue.failedCount)
             }
-            return ""
+            return offlineFailure ?? ""
         }
 
         var body: some View {
@@ -117,9 +128,37 @@
                         onShowAll: { showAll(.downloadQueue(.barTapped)) }
                     )
                 }
+                if store.isOfflineBarVisible, store.uploads.isBarVisible || store.downloadQueue.isBarVisible {
+                    Divider()
+                }
+                if store.isOfflineBarVisible {
+                    offlineRow
+                }
             }
             .padding(.space16)
             .frame(width: Metrics.popoverWidth)
+        }
+
+        /// A run making files available offline, the same as the pill iOS floats over the content.
+        /// Show All opens the Offline section, which lists what the run keeps.
+        private var offlineRow: some View {
+            let progress = store.offlineProgress
+            var failure = ""
+            if case let .failed(message) = progress.phase {
+                failure = message
+            }
+            return queueRow(
+                icon: IconKit.availableOffline,
+                isActive: progress.isActive,
+                title: titles.offlineBarTitle,
+                progress: titles.offlineBarProgress,
+                failedLabel: failure,
+                cancelTitle: L10n.Common.cancel,
+                onCancel: { store.send(.offline(.cancelTapped)) },
+                onRetry: { store.send(.offline(.resyncTapped)) },
+                onClear: { store.send(.offline(.dismissStatusTapped)) },
+                onShowAll: { showAll(.tabSelected(.downloads)) }
+            )
         }
 
         /// The queue opens as a window sheet, so the popover closes first rather than hang over it.

@@ -33,7 +33,7 @@
                         Text(favorite.displayName).lineLimit(1).truncationMode(.middle)
                         if store.offlineFavoriteIDs.contains(favorite.id) {
                             MacTableFolderIcon(
-                                image: IconKit.download,
+                                image: IconKit.availableOffline,
                                 tint: Color.accent,
                                 size: MacBrowseTableMetrics.badgeSize
                             )

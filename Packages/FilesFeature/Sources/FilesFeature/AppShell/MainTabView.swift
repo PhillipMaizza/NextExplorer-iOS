@@ -90,6 +90,7 @@ public struct MainTabView: View {
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isBarVisible)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isActive)
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.isOfflineBarVisible)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
             .onChange(of: shouldShowTransferBars) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }
@@ -104,11 +105,25 @@ public struct MainTabView: View {
                 get: { store.downloadQueue.isSheetPresented },
                 set: { store.send(.downloadQueue(.sheetPresented($0))) }
             )) {
-                DownloadQueueView(
-                    store: store.scope(state: \.downloadQueue, action: \.downloadQueue),
-                    onOpenDownloads: { store.send(.openDownloadsTab) }
-                )
+                DownloadQueueView(store: store.scope(state: \.downloadQueue, action: \.downloadQueue))
             }
+        #if os(iOS)
+            .fileMover(
+                isPresented: Binding(
+                    get: { !store.pendingExportURLs.isEmpty },
+                    set: { _ in }
+                ),
+                files: store.pendingExportURLs,
+                onCompletion: { result in
+                    if case .success = result {
+                        store.send(.deviceExportFinished(didSave: true))
+                    } else {
+                        store.send(.deviceExportFinished(didSave: false))
+                    }
+                },
+                onCancellation: { store.send(.deviceExportFinished(didSave: false)) }
+            )
+        #endif
             .dsToast(Binding(
                 get: { uploadToastMessage },
                 set: {
@@ -128,7 +143,7 @@ public struct MainTabView: View {
                                 }
                             }
                         #endif
-                        return .success(message, actionTitle: L10n.Browse.open) { store.send(.openDownloadsTab) }
+                        return .success(message)
                     }
                 },
                 set: {
@@ -171,7 +186,7 @@ public struct MainTabView: View {
     }
 
     private var isAnyTransferBarVisible: Bool {
-        store.uploads.isBarVisible || store.downloadQueue.isBarVisible
+        store.uploads.isBarVisible || store.downloadQueue.isBarVisible || store.isOfflineBarVisible
     }
 
     /// The floating transfer bars; the Mac shows a toolbar activity button instead.
@@ -212,7 +227,11 @@ public struct MainTabView: View {
         case .shared:
             split { SharedView(store: store.scope(state: \.shared, action: \.shared)) }
         case .downloads:
-            split { DownloadsView(store: store.scope(state: \.downloads, action: \.downloads)) }
+            split { OfflineTabView(
+                store: store.scope(state: \.downloads, action: \.downloads),
+                offlineStore: store.scope(state: \.offlineManage, action: \.offlineManage),
+                favorites: store.favorites.favorites
+            ) }
         case .settings:
             split { SettingsView(store: store.scope(state: \.settings, action: \.settings)) }
         }
@@ -284,11 +303,15 @@ public struct MainTabView: View {
 
             Tab(value: MainTabFeature.Tab.downloads) {
                 if visitedTabs.contains(.downloads) {
-                    DownloadsView(store: store.scope(state: \.downloads, action: \.downloads))
+                    OfflineTabView(
+                        store: store.scope(state: \.downloads, action: \.downloads),
+                        offlineStore: store.scope(state: \.offlineManage, action: \.offlineManage),
+                        favorites: store.favorites.favorites
+                    )
                 }
             } label: {
                 tabLabel(
-                    L10n.Tab.downloads,
+                    L10n.Tab.offline,
                     icon: store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads,
                     smallIcon: store.selectedTab == .downloads
                         ? IconKit.tabDownloadsFillSmall

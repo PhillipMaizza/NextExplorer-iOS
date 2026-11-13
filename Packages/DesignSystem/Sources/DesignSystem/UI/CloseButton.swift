@@ -18,7 +18,7 @@ extension View {
     }
 }
 
-#if !os(macOS)
+#if os(iOS)
     private struct DSMinimumHitTargetModifier: ViewModifier {
         @State private var controlSize: CGSize = .zero
 

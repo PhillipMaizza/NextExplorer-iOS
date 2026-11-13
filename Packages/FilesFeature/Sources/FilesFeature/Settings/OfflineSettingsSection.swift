@@ -33,7 +33,6 @@ struct OfflineSettingsSection: View {
     var body: some View {
         if filter.anyMatch([
             L10n.Offline.settingsRow,
-            L10n.Offline.manageRow,
             L10n.Offline.resyncRow,
             L10n.Offline.preferOfflineToggle,
             L10n.Offline.removeRow,
@@ -43,7 +42,7 @@ struct OfflineSettingsSection: View {
                     VStack(alignment: .leading, spacing: .space4) {
                         DSNavigationRow(
                             title: L10n.Offline.settingsRow,
-                            icon: IconKit.download,
+                            icon: IconKit.availableOffline,
                             accessory: .chevron
                         ) {
                             store.send(.offlineDownloadButtonTapped)
@@ -67,15 +66,6 @@ struct OfflineSettingsSection: View {
                 }
 
                 if !progress.isActive, store.offlineSize > 0 {
-                    if filter.matches(L10n.Offline.manageRow) {
-                        DSNavigationRow(
-                            title: L10n.Offline.manageRow,
-                            icon: IconKit.cloud,
-                            accessory: .detail(FileSizeFormat.string(store.offlineSize))
-                        ) {
-                            store.send(.offlineManageButtonTapped)
-                        }
-                    }
                     if filter.matches(L10n.Offline.resyncRow) {
                         DSNavigationRow(
                             title: L10n.Offline.resyncRow,
@@ -98,7 +88,7 @@ struct OfflineSettingsSection: View {
                             title: L10n.Offline.removeRow,
                             icon: IconKit.delete,
                             accessory: .detail(FileSizeFormat.string(store.offlineSize)),
-                            role: .accent
+                            role: .destructive
                         ) {
                             store.send(.removeOfflineTapped)
                         }

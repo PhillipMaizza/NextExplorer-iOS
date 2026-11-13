@@ -43,6 +43,7 @@ struct ImageGalleryView: View {
     private let onShare: ((FileItem) -> Void)?
     private let onRename: ((FileItem) -> Void)?
     private let onDownload: ((FileItem) -> Void)?
+    private let offline: ((FileItem) -> PreviewOfflineAction?)?
     private let onDelete: ((FileItem) -> Void)?
     /// Reports the page currently on screen as the user swipes, so the caller can keep the
     /// `.zoom` transition source (and the underlying list's scroll position) on the image the
@@ -61,6 +62,7 @@ struct ImageGalleryView: View {
         onShare: ((FileItem) -> Void)? = nil,
         onRename: ((FileItem) -> Void)? = nil,
         onDownload: ((FileItem) -> Void)? = nil,
+        offline: ((FileItem) -> PreviewOfflineAction?)? = nil,
         onDelete: ((FileItem) -> Void)? = nil,
         onCurrentItemChange: @escaping (FileItem) -> Void = { _ in }
     ) {
@@ -70,6 +72,7 @@ struct ImageGalleryView: View {
         self.onShare = onShare
         self.onRename = onRename
         self.onDownload = onDownload
+        self.offline = offline
         self.onDelete = onDelete
         self.onCurrentItemChange = onCurrentItemChange
         _selection = State(initialValue: initialItem.id)
@@ -169,6 +172,7 @@ struct ImageGalleryView: View {
                     onRename: currentItemAction(onRename),
                     onDownload: currentItemAction(onDownload),
                     onDelete: currentItemAction(onDelete),
+                    offline: currentItem.flatMap { offline?($0) },
                     onClose: onDismiss
                 )
                 .hidesNavigationBar(areControlsHidden)

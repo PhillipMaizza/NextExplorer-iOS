@@ -55,8 +55,6 @@ directLinkMode.download	Ladda ner
 thumbnailSize.small	Liten
 thumbnailSize.medium	Mellan
 thumbnailSize.large	Stor
-downloadLocation.documents	Dokument
-downloadLocation.cache	Cache
 dateFormat.automatic	Automatisk
 browse.navigationTitle	Bläddra
 browse.scopeThisFolder	Den här mappen
@@ -142,7 +140,6 @@ favorites.removeMessage	Detta tar bara bort dem från favoriter.
 favorites.removeFailedOne	Det gick inte att ta bort den favoriten.
 favorites.removeFailedMany	Det gick inte att ta bort de favoriterna.
 favorites.removePartial	Tog bort %1$lld av %2$lld.
-downloads.navigationTitle	Nedladdningar
 downloads.actionOpenInFiles	Öppna i Filer
 downloads.emptyList	Filer du laddar ner från Bläddra visas här.
 downloads.deleteConfirmTitle	Radera?
@@ -606,7 +603,6 @@ offline.manageRow	Hantera offlinefiler
 offline.manageTitle	Offlinefiler
 offline.manageEmpty	Inget är hämtat för offlineanvändning.
 offline.preferOfflineToggle	Spela upp hämtade kopior
-offline.pinRemoved	%@ finns inte längre på servern och har tagits bort från offlinefiler
 offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strömma när den finns.
 offline.tunnelSpeedNote	Att nå servern via en fjärrtunnel kan göra nedladdningar långsamma. Anslut till samma nätverk och använd serverns lokala adress för stora filer.
 menu.about	Om NextExplorer
@@ -642,7 +638,6 @@ appearance.dark	Mörkt
 browse.myFiles	Mina filer
 browse.myFilesSubtitle	Syns bara för dig
 downloadQueue.navigationTitle	Nedladdningskö
-downloadQueue.openDownloads	Visa nedladdningar
 downloadQueue.emptyList	Inga pågående nedladdningar.
 downloadQueue.statusSaved	Sparad
 downloadQueue.cancelAll	Avbryt alla nedladdningar
@@ -1134,3 +1129,17 @@ twoFactor.recoveryTitle	Spara dina återställningskoder
 twoFactor.shareCodesButton	Dela koder
 twoFactor.turnOffButton	Slå av
 twoFactor.turnOnButton	Slå på
+browse.actionAvailableOffline	Tillgängligt offline
+browse.actionSaveToDevice	Spara på enheten
+previewToolbar.saveToDevice	Spara på enheten
+downloadQueue.savedToPhotos	Sparad i Bilder
+downloadQueue.savedToDevice	Sparad på din enhet
+downloadQueue.photosAccessDenied	Tillåt åtkomst till Bilder i Inställningar för att spara bilder och videor.
+downloadQueue.photosSaveFailed	Det gick inte att lägga till i Bilder.
+tab.offline	Offline
+offline.sectionSavedEarlier	Sparat tidigare
+offline.tabEmpty	Inget är tillgängligt offline än. Välj ”Tillgängligt offline” för en fil eller mapp.
+offline.removeItemTitle	Ta bort ”%@” från Tillgängligt offline?
+offline.removeItemsTitle	Ta bort %lld objekt från Tillgängligt offline?
+offline.removeItemMessage	Detta tar bort filerna som sparats för offlineanvändning på den här enheten. Dina filer på servern påverkas inte.
+browse.actionRemoveFromOffline	Ta bort från offline

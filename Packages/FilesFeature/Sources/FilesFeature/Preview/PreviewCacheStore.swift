@@ -6,7 +6,7 @@ import Foundation
 /// `FilesClient`'s `previewFile`/`downloadRawFile` already write into (see
 /// `FilesService.previewCacheDirectory`). That path convention is duplicated here rather than
 /// exposed from `FilesClient`, which is exclusively the server-communication layer: this is a
-/// local-filesystem-only concern, same reasoning as `LocalDownloadStore`.
+/// local-filesystem-only concern, same reasoning as `LegacyDownloadStore`.
 public struct PreviewCacheStore: Sendable {
     public var size: @Sendable () throws -> Int64
     public var clear: @Sendable () throws -> Void

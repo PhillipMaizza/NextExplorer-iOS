@@ -33,6 +33,7 @@ tab.browse	Browse
 tab.favorites	Favorites
 tab.shared	Shared
 tab.downloads	Downloads
+tab.offline	Offline
 tab.settings	Settings
 
 # ---- sort ----
@@ -72,8 +73,6 @@ directLinkMode.download	Download
 thumbnailSize.small	Small
 thumbnailSize.medium	Medium
 thumbnailSize.large	Large
-downloadLocation.documents	Documents
-downloadLocation.cache	Cache
 dateFormat.automatic	Automatic
 
 # ---- browse ----
@@ -92,6 +91,9 @@ browse.actionRename	Rename
 browse.actionExtract	Extract
 browse.actionCompress	Compress
 browse.actionDownload	Download
+browse.actionAvailableOffline	Available Offline
+browse.actionSaveToDevice	Save to Device
+browse.actionRemoveFromOffline	Remove from Offline
 browse.actionAddToFavorites	Add to Favorites
 browse.actionRemoveFromFavorites	Remove from Favorites
 browse.actionShare	Create share link
@@ -172,7 +174,6 @@ favorites.removeFailedMany	Couldn't remove those favorites.
 favorites.removePartial	Removed %1$lld of %2$lld.
 
 # ---- downloads ----
-downloads.navigationTitle	Downloads
 downloads.actionOpenInFiles	Open in Files
 downloads.emptyList	Files you download from Browse show up here.
 downloads.deleteConfirmTitle	Delete?
@@ -774,6 +775,7 @@ userDetail.directoryPickerFailed	Couldn't list directories.
 previewToolbar.close	Close
 previewToolbar.createShareLink	Create share link
 previewToolbar.download	Download
+previewToolbar.saveToDevice	Save to Device
 previewToolbar.delete	Delete
 previewToolbar.share	Share
 previewToolbar.rename	Rename
@@ -965,6 +967,9 @@ offline.removeRow	Remove Offline Files
 offline.removeConfirmTitle	Remove Offline Files?
 offline.removeConfirmMessage	This deletes the files saved for offline use on this device. Your files on the server are not affected.
 offline.removeConfirm	Remove
+offline.removeItemTitle	Remove “%@” from Available Offline?
+offline.removeItemsTitle	Remove %lld items from Available Offline?
+offline.removeItemMessage	The copy on this device is deleted. Your files on the server are not affected.
 offline.preparing	Preparing…
 offline.downloadingName	Downloading %@
 offline.progressCount	%lld of %lld files
@@ -979,9 +984,10 @@ offline.resyncRow	Update Offline Files
 offline.badgeAvailable	Available offline
 offline.manageRow	Manage Offline Files
 offline.manageTitle	Offline Files
+offline.sectionSavedEarlier	Saved earlier
+offline.tabEmpty	Nothing is available offline yet. Choose Available Offline on a file or folder.
 offline.manageEmpty	Nothing is downloaded for offline use.
 offline.preferOfflineToggle	Play Downloaded Copies
-offline.pinRemoved	%@ no longer exists on the server and was removed from offline files
 offline.preferOfflineSubtitle	Use a downloaded video instead of streaming when it's available.
 offline.tunnelSpeedNote	Reaching your server through a remote tunnel can slow downloads. For large files, connect to the same network and use your server's local address.
 menu.about	About NextExplorer
@@ -1028,7 +1034,6 @@ appearance.dark	Dark
 browse.myFiles	My Files
 browse.myFilesSubtitle	Only visible to you
 downloadQueue.navigationTitle	Download Queue
-downloadQueue.openDownloads	Show Downloads
 downloadQueue.emptyList	No downloads in progress.
 downloadQueue.statusSaved	Saved
 downloadQueue.cancelAll	Cancel all downloads
@@ -1038,6 +1043,10 @@ downloadQueue.barTitleOne	Downloading %@
 downloadQueue.barTitleMany	Downloading %lld items
 downloadQueue.savedOne	Saved to Downloads
 downloadQueue.savedMany	%lld items saved to Downloads
+downloadQueue.savedToPhotos	Saved to Photos
+downloadQueue.savedToDevice	Saved to your device
+downloadQueue.photosAccessDenied	Allow Photos access in Settings to save pictures and videos.
+downloadQueue.photosSaveFailed	Couldn't add this to Photos.
 downloadQueue.bytesOf	%1$@ of %2$@
 downloadQueue.timeLeft	%@ left
 browse.sectionPersonal	Personal

@@ -150,16 +150,32 @@ class UITestCase: XCTestCase {
     @discardableResult
     func scrollTo(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 6) -> Bool {
         var swipes = 0
-        while !element.exists, swipes < maxSwipes {
+        // Reachable, not just present: a lazy list materializes a row while it is still under the tab
+        // bar, where a tap would land on the bar instead.
+        while !(element.exists && element.isHittable), swipes < maxSwipes {
             #if os(iOS)
-                app.swipeUp()
+                scrollContainer(in: app).swipeUp()
             #else
                 app.scroll(byDeltaX: 0, deltaY: -Self.macScrollStep)
             #endif
             swipes += 1
+            // The row appears once the list settles after the swipe, so look again before swiping on.
+            _ = element.appears(within: UITestTimeout.pollInterval * 2)
         }
         return element.exists
     }
+
+    #if os(iOS)
+        /// The list on screen, so a swipe starts inside it and never on the tab bar floating above it.
+        private func scrollContainer(in app: XCUIApplication) -> XCUIElement {
+            for query in [app.collectionViews, app.tables, app.scrollViews] {
+                if let visible = query.allElementsBoundByIndex.first(where: { $0.isHittable }) {
+                    return visible
+                }
+            }
+            return app
+        }
+    #endif
 
     /// Launches the app with the mock graph enabled. `auth` picks the session state the app
     /// restores on cold launch, `scenario` picks the shape of the mocked file data.
@@ -175,6 +191,7 @@ class UITestCase: XCTestCase {
         static let animationSpeed = "UITEST_ANIM_SPEED"
         static let disableAnimations = "UITEST_DISABLE_ANIMATIONS"
         static let orientation = "UITEST_ORIENTATION"
+        static let legacyDownloads = "UITEST_LEGACY_DOWNLOADS"
         static let on = "1"
         static let landscape = "landscape"
     }
@@ -187,9 +204,13 @@ class UITestCase: XCTestCase {
         auth: Auth = .loggedIn,
         scenario: Scenario = .normal,
         animationSpeed: Double = UITestCase.fastAnimationSpeed,
-        landscape: Bool = false
+        landscape: Bool = false,
+        legacyDownloads: Bool = false
     ) -> XCUIApplication {
         let app = XCUIApplication()
+        if legacyDownloads {
+            app.launchEnvironment[LaunchKey.legacyDownloads] = LaunchKey.on
+        }
         app.launchEnvironment[LaunchKey.mock] = LaunchKey.on
         app.launchEnvironment[LaunchKey.auth] = auth.rawValue
         app.launchEnvironment[LaunchKey.scenario] = scenario.rawValue

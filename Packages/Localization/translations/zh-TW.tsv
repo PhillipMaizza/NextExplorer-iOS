@@ -55,8 +55,6 @@ directLinkMode.download	下載
 thumbnailSize.small	小
 thumbnailSize.medium	中
 thumbnailSize.large	大
-downloadLocation.documents	文件
-downloadLocation.cache	快取
 dateFormat.automatic	自動
 browse.navigationTitle	瀏覽
 browse.scopeThisFolder	此檔案夾
@@ -142,7 +140,6 @@ favorites.removeMessage	這只會將它們從喜好項目移除。
 favorites.removeFailedOne	無法移除該喜好項目。
 favorites.removeFailedMany	無法移除這些喜好項目。
 favorites.removePartial	已移除 %2$lld 個中的 %1$lld 個。
-downloads.navigationTitle	下載
 downloads.actionOpenInFiles	在「檔案」中打開
 downloads.emptyList	您從「瀏覽」下載的檔案會顯示在此處。
 downloads.deleteConfirmTitle	刪除？
@@ -606,7 +603,6 @@ offline.manageRow	管理離線檔案
 offline.manageTitle	離線檔案
 offline.manageEmpty	沒有為離線使用下載任何內容。
 offline.preferOfflineToggle	播放已下載的副本
-offline.pinRemoved	%@ 在伺服器上已不存在，已從離線檔案中移除
 offline.preferOfflineSubtitle	可用時使用已下載的影片而非串流播放。
 offline.tunnelSpeedNote	透過遠端通道存取伺服器可能會拖慢下載速度。下載大型檔案時，請連線到相同網路並使用伺服器的本機位址。
 menu.about	關於 NextExplorer
@@ -642,7 +638,6 @@ appearance.dark	深色
 browse.myFiles	我的檔案
 browse.myFilesSubtitle	只有你看得到
 downloadQueue.navigationTitle	下載佇列
-downloadQueue.openDownloads	顯示下載
 downloadQueue.emptyList	沒有進行中的下載。
 downloadQueue.statusSaved	已儲存
 downloadQueue.cancelAll	取消所有下載
@@ -1128,3 +1123,17 @@ twoFactor.recoveryTitle	儲存您的復原碼
 twoFactor.shareCodesButton	共享復原碼
 twoFactor.turnOffButton	關閉
 twoFactor.turnOnButton	開啟
+browse.actionAvailableOffline	可離線使用
+browse.actionSaveToDevice	儲存到裝置
+previewToolbar.saveToDevice	儲存到裝置
+downloadQueue.savedToPhotos	已儲存到「照片」
+downloadQueue.savedToDevice	已儲存到你的裝置
+downloadQueue.photosAccessDenied	請在「設定」中允許存取「照片」，以儲存圖片和影片。
+downloadQueue.photosSaveFailed	無法加入「照片」。
+tab.offline	離線
+offline.sectionSavedEarlier	先前儲存的
+offline.tabEmpty	目前還沒有可離線使用的項目。請在檔案或檔案夾上選擇「可離線使用」。
+offline.removeItemTitle	要將「%@」從「可離線使用」中移除嗎？
+offline.removeItemsTitle	要將 %lld 個項目從「可離線使用」中移除嗎？
+offline.removeItemMessage	這會刪除此裝置上為離線使用儲存的檔案。伺服器上的檔案不受影響。
+browse.actionRemoveFromOffline	從離線中移除

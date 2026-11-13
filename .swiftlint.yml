@@ -40,3 +40,10 @@ opt_in_rules:
   - unavailable_function
 
 analyzer_rules: []
+
+custom_rules:
+  positive_platform_check:
+    name: "Positive platform check"
+    regex: '#(if|elseif)\s+!os\('
+    message: "Name the platform the code keeps: #if os(iOS) or #if os(macOS), never a negation."
+    severity: error

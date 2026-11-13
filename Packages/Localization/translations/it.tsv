@@ -55,8 +55,6 @@ directLinkMode.download	Scarica
 thumbnailSize.small	Piccola
 thumbnailSize.medium	Media
 thumbnailSize.large	Grande
-downloadLocation.documents	Documenti
-downloadLocation.cache	Cache
 dateFormat.automatic	Automatico
 browse.navigationTitle	Esplora
 browse.scopeThisFolder	Questa cartella
@@ -142,7 +140,6 @@ favorites.removeMessage	Questo li rimuove solo dai Preferiti.
 favorites.removeFailedOne	Impossibile rimuovere quel preferito.
 favorites.removeFailedMany	Impossibile rimuovere quei preferiti.
 favorites.removePartial	Rimossi %1$lld di %2$lld.
-downloads.navigationTitle	Download
 downloads.actionOpenInFiles	Apri in File
 downloads.emptyList	I file che scarichi da Esplora appaiono qui.
 downloads.deleteConfirmTitle	Eliminare?
@@ -606,7 +603,6 @@ offline.manageRow	Gestisci file offline
 offline.manageTitle	File offline
 offline.manageEmpty	Nessun elemento è scaricato per l'uso offline.
 offline.preferOfflineToggle	Riproduci le copie scaricate
-offline.pinRemoved	%@ non esiste più sul server ed è stato rimosso dai file offline
 offline.preferOfflineSubtitle	Usa un video scaricato invece dello streaming quando è disponibile.
 offline.tunnelSpeedNote	Raggiungere il server tramite un tunnel remoto può rallentare i download. Per i file di grandi dimensioni, collegati alla stessa rete e usa l'indirizzo locale del server.
 menu.about	Informazioni su NextExplorer
@@ -642,7 +638,6 @@ appearance.dark	Scuro
 browse.myFiles	I miei file
 browse.myFilesSubtitle	Visibile solo a te
 downloadQueue.navigationTitle	Coda di download
-downloadQueue.openDownloads	Mostra download
 downloadQueue.emptyList	Nessun download in corso.
 downloadQueue.statusSaved	Salvato
 downloadQueue.cancelAll	Annulla tutti i download
@@ -1134,3 +1129,17 @@ twoFactor.recoveryTitle	Salva i codici di recupero
 twoFactor.shareCodesButton	Condividi codici
 twoFactor.turnOffButton	Disattiva
 twoFactor.turnOnButton	Attiva
+browse.actionAvailableOffline	Disponibile offline
+browse.actionSaveToDevice	Salva sul dispositivo
+previewToolbar.saveToDevice	Salva sul dispositivo
+downloadQueue.savedToPhotos	Salvato in Foto
+downloadQueue.savedToDevice	Salvato sul tuo dispositivo
+downloadQueue.photosAccessDenied	Consenti l’accesso a Foto in Impostazioni per salvare immagini e video.
+downloadQueue.photosSaveFailed	Impossibile aggiungere questo elemento a Foto.
+tab.offline	Offline
+offline.sectionSavedEarlier	Salvati in precedenza
+offline.tabEmpty	Ancora nulla è disponibile offline. Scegli “Disponibile offline” su un file o una cartella.
+offline.removeItemTitle	Rimuovere “%@” da Disponibili offline?
+offline.removeItemsTitle	Rimuovere %lld elementi da Disponibili offline?
+offline.removeItemMessage	Questo elimina i file salvati per l'uso offline su questo dispositivo. I tuoi file sul server non vengono modificati.
+browse.actionRemoveFromOffline	Rimuovi da offline

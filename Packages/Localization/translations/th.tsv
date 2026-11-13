@@ -59,8 +59,6 @@ directLinkMode.download	ดาวน์โหลด
 thumbnailSize.small	เล็ก
 thumbnailSize.medium	กลาง
 thumbnailSize.large	ใหญ่
-downloadLocation.documents	เอกสาร
-downloadLocation.cache	แคช
 dateFormat.automatic	อัตโนมัติ
 browse.navigationTitle	เรียกดู
 browse.scopeThisFolder	โฟลเดอร์นี้
@@ -151,7 +149,6 @@ favorites.removeMessage	การดำเนินการนี้จะน�
 favorites.removeFailedOne	ไม่สามารถนำรายการโปรดนั้นออกได้
 favorites.removeFailedMany	ไม่สามารถนำรายการโปรดเหล่านั้นออกได้
 favorites.removePartial	นำออกแล้ว %1$lld จาก %2$lld
-downloads.navigationTitle	ดาวน์โหลด
 downloads.actionOpenInFiles	เปิดในแอปไฟล์
 downloads.emptyList	ไฟล์ที่คุณดาวน์โหลดจากเรียกดูจะแสดงที่นี่
 downloads.deleteConfirmTitle	ลบหรือไม่
@@ -875,7 +872,6 @@ offline.manageRow	จัดการไฟล์ออฟไลน์
 offline.manageTitle	ไฟล์ออฟไลน์
 offline.manageEmpty	ยังไม่ได้ดาวน์โหลดสิ่งใดไว้ใช้แบบออฟไลน์
 offline.preferOfflineToggle	เล่นสำเนาที่ดาวน์โหลด
-offline.pinRemoved	%@ ไม่มีอยู่บนเซิร์ฟเวอร์อีกต่อไปและถูกนำออกจากไฟล์ออฟไลน์แล้ว
 offline.preferOfflineSubtitle	ใช้วิดีโอที่ดาวน์โหลดแทนการสตรีมเมื่อมีให้ใช้
 offline.tunnelSpeedNote	การเข้าถึงเซิร์ฟเวอร์ผ่านอุโมงค์ระยะไกลอาจทำให้การดาวน์โหลดช้าลง สำหรับไฟล์ขนาดใหญ่ ให้เชื่อมต่อเครือข่ายเดียวกันและใช้ที่อยู่ภายในของเซิร์ฟเวอร์
 menu.about	เกี่ยวกับ NextExplorer
@@ -918,7 +914,6 @@ appearance.dark	มืด
 browse.myFiles	ไฟล์ของฉัน
 browse.myFilesSubtitle	มองเห็นได้เฉพาะคุณ
 downloadQueue.navigationTitle	คิวดาวน์โหลด
-downloadQueue.openDownloads	แสดงการดาวน์โหลด
 downloadQueue.emptyList	ไม่มีการดาวน์โหลดที่กำลังดำเนินการ
 downloadQueue.statusSaved	บันทึกแล้ว
 downloadQueue.cancelAll	ยกเลิกการดาวน์โหลดทั้งหมด
@@ -1101,3 +1096,17 @@ serverSettings.featureOffHowTo	หากต้องการเปิด ให
 trashSettings.environmentNote	ค่าเริ่มต้นมาจาก TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT และ TRASH_MAX_SIZE
 trashSettings.versionsEnvironmentNote	ค่าเริ่มต้นมาจาก VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE และ VERSIONS_SESSION_CHECKPOINT_MINUTES
 versionedFiles.refresh	รีเฟรช
+browse.actionAvailableOffline	ใช้งานแบบออฟไลน์ได้
+browse.actionSaveToDevice	บันทึกลงอุปกรณ์
+previewToolbar.saveToDevice	บันทึกลงอุปกรณ์
+downloadQueue.savedToPhotos	บันทึกลงในรูปภาพแล้ว
+downloadQueue.savedToDevice	บันทึกลงในอุปกรณ์ของคุณแล้ว
+downloadQueue.photosAccessDenied	อนุญาตการเข้าถึงรูปภาพในการตั้งค่าเพื่อบันทึกรูปภาพและวิดีโอ
+downloadQueue.photosSaveFailed	ไม่สามารถเพิ่มลงในรูปภาพได้
+tab.offline	ออฟไลน์
+offline.sectionSavedEarlier	ที่บันทึกไว้ก่อนหน้านี้
+offline.tabEmpty	ยังไม่มีสิ่งใดใช้งานแบบออฟไลน์ได้ เลือก “ใช้งานแบบออฟไลน์ได้” ที่ไฟล์หรือโฟลเดอร์
+offline.removeItemTitle	นำ “%@” ออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม
+offline.removeItemsTitle	นำ %lld รายการออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม
+offline.removeItemMessage	การดำเนินการนี้จะลบไฟล์ที่บันทึกไว้สำหรับใช้แบบออฟไลน์บนอุปกรณ์เครื่องนี้ ไฟล์ของคุณบนเซิร์ฟเวอร์ไม่ได้รับผลกระทบ
+browse.actionRemoveFromOffline	นำออกจากออฟไลน์

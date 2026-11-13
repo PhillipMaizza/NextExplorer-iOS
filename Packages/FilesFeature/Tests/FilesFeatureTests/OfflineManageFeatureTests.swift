@@ -63,18 +63,39 @@ struct OfflineManageFeatureTests {
         #expect(store.state.totalBytes == 0)
     }
 
-    @Test
-    func removeUnpinsTheRootAndNotifies() async {
-        let offline = offlineStore()
+    private func loadedStore(offline: OfflineFileStore) -> TestStoreOf<OfflineManageFeature> {
         var state = OfflineManageFeature.State()
         state.usages = IdentifiedArray(uniqueElements: usages())
-        let store = TestStore(initialState: state) {
+        return TestStore(initialState: state) {
             OfflineManageFeature()
         } withDependencies: {
             $0.offlineFileStore = offline
         }
+    }
+
+    @Test
+    func removeAsksFirstAndTouchesNothingUntilConfirmed() async {
+        let offline = offlineStore()
+        let store = loadedStore(offline: offline)
 
         await store.send(.removeTapped(path: TestFolder.docs)) {
+            $0.removal = OfflineRemovalRequest(paths: [TestFolder.docs], names: [TestFolder.docs])
+        }
+
+        #expect(offline.pinnedRoots().count == 2)
+        #expect(store.state.usages.count == 2)
+    }
+
+    @Test
+    func confirmingTheRemovalUnpinsTheRootAndNotifies() async {
+        let offline = offlineStore()
+        let store = loadedStore(offline: offline)
+
+        await store.send(.removeTapped(path: TestFolder.docs)) {
+            $0.removal = OfflineRemovalRequest(paths: [TestFolder.docs], names: [TestFolder.docs])
+        }
+        await store.send(.removeConfirmed) {
+            $0.removal = nil
             $0.usages.remove(id: TestFolder.docs)
         }
         await store.receive(.delegate(.changed))
@@ -82,5 +103,46 @@ struct OfflineManageFeatureTests {
 
         #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: TestFile.aPhoto, isDirectory: false)])
         #expect(store.state.totalBytes == 50)
+    }
+
+    @Test
+    func cancellingTheRemovalKeepsEverything() async {
+        let offline = offlineStore()
+        let store = loadedStore(offline: offline)
+
+        await store.send(.removeTapped(path: TestFolder.docs)) {
+            $0.removal = OfflineRemovalRequest(paths: [TestFolder.docs], names: [TestFolder.docs])
+        }
+        await store.send(.removeCancelled) { $0.removal = nil }
+
+        #expect(offline.pinnedRoots().count == 2)
+        #expect(store.state.usages.count == 2)
+    }
+
+    @Test
+    func removingSeveralRowsAsksOnceForAllOfThem() async {
+        let offline = offlineStore()
+        let store = loadedStore(offline: offline)
+        let paths = [TestFolder.docs, TestFile.aPhoto]
+
+        await store.send(.removeSelectionTapped(paths: paths)) {
+            $0.removal = OfflineRemovalRequest(paths: paths, names: [TestFolder.docs, TestFile.aPhoto])
+        }
+        await store.send(.removeConfirmed) {
+            $0.removal = nil
+            $0.usages = []
+        }
+        await store.receive(.delegate(.changed))
+        await store.finish()
+
+        #expect(offline.pinnedRoots().isEmpty)
+    }
+
+    @Test
+    func removingAPathThatIsNotListedAsksNothing() async {
+        let store = loadedStore(offline: offlineStore())
+
+        await store.send(.removeTapped(path: "Elsewhere"))
+        await store.send(.removeConfirmed)
     }
 }

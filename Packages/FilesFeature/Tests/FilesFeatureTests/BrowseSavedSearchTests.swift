@@ -113,6 +113,31 @@ struct BrowseSavedSearchTests {
         }
     }
 
+    @Test("A pinned folder's kept listing answers a search when the saved listing cache holds nothing")
+    func aShortTermFindsTheListingsKeptWithPinnedFolders() async {
+        let access = BrowseTestSupport.readOnlyAccess
+        let offline = OfflineFileStore.inMemory()
+        offline.saveListing(CachedDirectory(
+            path: TestFolder.docs, items: [photo, trips, unopened], access: access, fetchedAt: MockDate.date
+        ))
+        offline.saveListing(CachedDirectory(
+            path: Constants.tripsPath, items: [deepPhoto], access: access, fetchedAt: MockDate.date
+        ))
+        let store = BrowseFixtures.store(docsState()) {
+            $0.directoryCacheStore = DirectoryCacheStore.inMemory()
+            $0.offlineFileStore = offline
+        }
+
+        await store.send(.searchQueryChanged(TestSearch.shortTerm)) {
+            $0.searchQuery = TestSearch.shortTerm
+            $0.searchResults = [photoMatch]
+        }
+        await store.receive(\.searchSavedItemsLoaded) {
+            $0.searchSavedItems = savedByID
+            $0.searchResults = [photoMatch, deepMatch]
+        }
+    }
+
     @Test("Offline, the saved folders answer and the footer says the server cannot be reached")
     func offlineTheSavedFoldersAnswer() async {
         let clock = TestClock()

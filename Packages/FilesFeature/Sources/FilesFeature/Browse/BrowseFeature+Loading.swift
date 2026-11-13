@@ -57,42 +57,28 @@ extension BrowseFeature {
     }
 
     /// Recomputes which of the current items are available offline, off the main actor (a per item
-    /// disk `stat`, too much for a large listing on the main thread), then commits the ids. A file
-    /// counts as available when it's pinned (or inside a pinned folder) OR it's been saved to the
-    /// Downloads tab (matched by name within this account's scope); a folder when it's a pinned
-    /// root or sits under one.
+    /// disk `stat`, too much for a large listing on the main thread), then commits the ids. An item
+    /// counts as available when it is a pinned root or sits under one, or a file has a stored copy.
+    /// `pinned` is the part the user pinned directly.
     func computeOfflineAvailability(_ state: inout State) -> Effect<Action> {
         let items = state.items.elements
         guard !items.isEmpty else {
             state.offlineItemIDs = []
+            state.offlinePinnedItemIDs = []
             return .none
         }
         let offlineFileStore = offlineFileStore
-        let localDownloadStore = localDownloadStore
-        let downloadScope = state.downloadScope
         return .run { send in
-            let ids = await Task.detached(priority: .utility) { () -> Set<String> in
-                let pinnedPaths = offlineFileStore.pinnedRoots().map(\.path)
-                let downloadedNames = Set(((try? localDownloadStore.list(downloadScope)) ?? []).map(\.fileName))
-                var result = Set<String>()
-                for item in items {
-                    // A pinned root, or anything (folder OR file) sitting under one, is available
-                    // offline: so browsing into a downloaded folder shows the icon on its files
-                    // too, not just the folder.
-                    let coveredByPin = pinnedPaths.contains { $0 == item.id || item.id.hasPrefix($0 + "/") }
-                    if item.isDirectory {
-                        if coveredByPin {
-                            result.insert(item.id)
-                        }
-                    } else if coveredByPin || offlineFileStore.localURL(item) != nil || downloadedNames
-                        .contains(item.name)
-                    {
-                        result.insert(item.id)
-                    }
-                }
-                return result
+            let (all, pinned) = await Task.detached(priority: .utility) {
+                OfflineAvailability.classify(
+                    items,
+                    pinnedPaths: offlineFileStore.pinnedRoots().map(\.path),
+                    id: \.id,
+                    isDirectory: \.isDirectory,
+                    hasCopy: { offlineFileStore.localURL($0) != nil }
+                )
             }.value
-            await send(.offlineAvailabilityComputed(ids))
+            await send(.offlineAvailabilityComputed(all: all, pinned: pinned))
         }
         .cancellable(id: CancelID.offlineAvailability, cancelInFlight: true)
     }
@@ -149,9 +135,12 @@ extension BrowseFeature {
         // failed one (offline) surfaces the "saved copy" banner. So `dataSource` stays `.live` here.
         // The disk read runs beside the fetch, off the main actor, and is dropped if the fetch won.
         let directoryCacheStore = directoryCacheStore.bound(to: state.cacheScope)
+        let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)
         let paint: Effect<Action> = !hadLoaded && state.items.isEmpty
             ? .run { send in
-                guard let cached = directoryCacheStore.read(serverURL: serverURL, path: directoryPath) else { return }
+                guard let cached = directoryCacheStore.read(serverURL: serverURL, path: directoryPath)
+                    ?? offlineFileStore.listing(directoryPath)
+                else { return }
                 await send(.cachedListingPainted(cached))
             }
             : .none

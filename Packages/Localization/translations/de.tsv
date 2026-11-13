@@ -55,8 +55,6 @@ directLinkMode.download	Laden
 thumbnailSize.small	Klein
 thumbnailSize.medium	Mittel
 thumbnailSize.large	Groß
-downloadLocation.documents	Dokumente
-downloadLocation.cache	Cache
 dateFormat.automatic	Automatisch
 browse.navigationTitle	Durchsuchen
 browse.scopeThisFolder	Dieser Ordner
@@ -142,7 +140,6 @@ favorites.removeMessage	Dies entfernt sie nur aus den Favoriten.
 favorites.removeFailedOne	Dieser Favorit konnte nicht entfernt werden.
 favorites.removeFailedMany	Diese Favoriten konnten nicht entfernt werden.
 favorites.removePartial	%1$lld von %2$lld entfernt.
-downloads.navigationTitle	Downloads
 downloads.actionOpenInFiles	In Dateien öffnen
 downloads.emptyList	Dateien, die du aus Durchsuchen lädst, erscheinen hier.
 downloads.deleteConfirmTitle	Löschen?
@@ -606,7 +603,6 @@ offline.manageRow	Offline-Dateien verwalten
 offline.manageTitle	Offline-Dateien
 offline.manageEmpty	Nichts ist für die Offline-Nutzung heruntergeladen.
 offline.preferOfflineToggle	Heruntergeladene Kopien abspielen
-offline.pinRemoved	%@ existiert auf dem Server nicht mehr und wurde aus den Offline-Dateien entfernt
 offline.preferOfflineSubtitle	Ein heruntergeladenes Video abspielen statt zu streamen, wenn es verfügbar ist.
 offline.tunnelSpeedNote	Der Zugriff auf deinen Server über einen entfernten Tunnel kann Downloads verlangsamen. Verbinde dich für große Dateien mit demselben Netzwerk und verwende die lokale Adresse deines Servers.
 menu.about	Über NextExplorer
@@ -642,7 +638,6 @@ appearance.dark	Dunkel
 browse.myFiles	Meine Dateien
 browse.myFilesSubtitle	Nur für dich sichtbar
 downloadQueue.navigationTitle	Download-Warteschlange
-downloadQueue.openDownloads	Downloads anzeigen
 downloadQueue.emptyList	Keine laufenden Downloads.
 downloadQueue.statusSaved	Gespeichert
 downloadQueue.cancelAll	Alle Downloads abbrechen
@@ -1134,3 +1129,17 @@ twoFactor.recoveryTitle	Wiederherstellungscodes sichern
 twoFactor.shareCodesButton	Codes teilen
 twoFactor.turnOffButton	Ausschalten
 twoFactor.turnOnButton	Einschalten
+browse.actionAvailableOffline	Offline verfügbar
+browse.actionSaveToDevice	Auf Gerät sichern
+previewToolbar.saveToDevice	Auf Gerät sichern
+downloadQueue.savedToPhotos	In Fotos gesichert
+downloadQueue.savedToDevice	Auf deinem Gerät gesichert
+downloadQueue.photosAccessDenied	Erlaube in den Einstellungen den Zugriff auf Fotos, um Bilder und Videos zu sichern.
+downloadQueue.photosSaveFailed	Das konnte nicht zu Fotos hinzugefügt werden.
+tab.offline	Offline
+offline.sectionSavedEarlier	Früher gesichert
+offline.tabEmpty	Noch nichts offline verfügbar. Wähle bei einer Datei oder einem Ordner „Offline verfügbar“.
+offline.removeItemTitle	„%@“ aus „Offline verfügbar“ entfernen?
+offline.removeItemsTitle	%lld Objekte aus „Offline verfügbar“ entfernen?
+offline.removeItemMessage	Dadurch werden die für die Offline-Nutzung auf diesem Gerät gespeicherten Dateien gelöscht. Deine Dateien auf dem Server sind nicht betroffen.
+browse.actionRemoveFromOffline	Aus Offline entfernen

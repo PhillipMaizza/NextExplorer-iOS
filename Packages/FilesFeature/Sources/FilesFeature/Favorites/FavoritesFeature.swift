@@ -31,6 +31,19 @@ public struct FavoritesFeature {
         /// under one (so a downloaded subfolder favorite is flagged too). Drives the download
         /// badge on the row, mirroring `BrowseFeature.offlineItemIDs`.
         public var offlineFavoriteIDs: Set<Favorite.ID> = []
+        /// The favorites whose folder is itself pinned, the only ones the toggle can unpin.
+        public var offlinePinnedFavoriteIDs: Set<Favorite.ID> = []
+        var offlineRemoval: OfflineRemovalRequest?
+
+        /// What the selection bar's Available Offline button does right now.
+        var selectedOfflineAction: OfflineBulkAction? {
+            OfflineBulkAction.resolve(
+                selectedIDs: favorites.filter { selectedFavoriteIDs.contains($0.id) }.map(\.id),
+                offlineIDs: offlineFavoriteIDs,
+                pinnedIDs: offlinePinnedFavoriteIDs
+            )
+        }
+
         public var searchQuery = ""
         /// Recursive file search across every favorited folder's subtree, run while `searchQuery`
         /// is non-empty. `nil` until the first search of a session; the fan out merges one backend
@@ -138,7 +151,13 @@ public struct FavoritesFeature {
         case cachedFavoritesPainted([Favorite])
         /// Recompute which favorites are available offline (a pinned root, or under one).
         case computeOfflineAvailability
-        case offlineAvailabilityComputed(Set<Favorite.ID>)
+        case offlineAvailabilityComputed(all: Set<Favorite.ID>, pinned: Set<Favorite.ID>)
+        /// Pins the favorite's folder for offline use, or unpins it when the user pinned it.
+        case offlineToggleTapped(Favorite)
+        /// Pins the selected favorites' folders, or, when they all are offline, asks to unpin them.
+        case bulkOfflineTapped
+        case offlineRemovalConfirmed
+        case offlineRemovalCancelled
         case rowTapped(Favorite)
         case removeTapped(Favorite)
         case removeResponse(Favorite.ID, Result<Bool, FilesClientError>)
@@ -189,6 +208,8 @@ public struct FavoritesFeature {
             case goToSharedTab
             case uploadRequested([PendingUpload])
             case downloadRequested([FileItem])
+            case offlinePinRequested([FileItem])
+            case offlineUnpinRequested(path: String)
             case saveRequested([DownloadSaveRequest])
         }
     }
@@ -242,9 +263,54 @@ public struct FavoritesFeature {
             case .computeOfflineAvailability:
                 return computeOfflineAvailability(&state)
 
-            case let .offlineAvailabilityComputed(ids):
-                state.offlineFavoriteIDs = ids
+            case let .offlineAvailabilityComputed(all, pinned):
+                state.offlineFavoriteIDs = all
+                state.offlinePinnedFavoriteIDs = pinned
                 return .none
+
+            case .offlineRemovalCancelled:
+                state.offlineRemoval = nil
+                return .none
+
+            case .offlineRemovalConfirmed:
+                guard let request = state.offlineRemoval else { return .none }
+                state.offlineRemoval = nil
+                let removed = state.favorites.filter { request.paths.contains($0.path) }.map(\.id)
+                state.offlineFavoriteIDs.subtract(removed)
+                state.offlinePinnedFavoriteIDs.subtract(removed)
+                return .merge(request.paths.map { .send(.delegate(.offlineUnpinRequested(path: $0))) })
+
+            case .bulkOfflineTapped:
+                let selected = state.favorites.filter { state.selectedFavoriteIDs.contains($0.id) }
+                guard !selected.isEmpty else { return .none }
+                state.isSelecting = false
+                state.selectedFavoriteIDs = []
+                let toPin = selected.filter { !state.offlineFavoriteIDs.contains($0.id) }
+                if !toPin.isEmpty {
+                    state.offlineFavoriteIDs.formUnion(toPin.map(\.id))
+                    state.offlinePinnedFavoriteIDs.formUnion(toPin.map(\.id))
+                    return .send(.delegate(.offlinePinRequested(toPin.map(\.folderItem))))
+                }
+                let toUnpin = selected.filter { state.offlinePinnedFavoriteIDs.contains($0.id) }
+                guard !toUnpin.isEmpty else { return .none }
+                state.offlineRemoval = OfflineRemovalRequest(
+                    paths: toUnpin.map(\.path),
+                    names: toUnpin.map(\.displayName)
+                )
+                return .none
+
+            case let .offlineToggleTapped(favorite):
+                if state.offlinePinnedFavoriteIDs.contains(favorite.id) {
+                    state.offlineRemoval = OfflineRemovalRequest(
+                        paths: [favorite.path],
+                        names: [favorite.displayName]
+                    )
+                    return .none
+                }
+                guard !state.offlineFavoriteIDs.contains(favorite.id) else { return .none }
+                state.offlinePinnedFavoriteIDs.insert(favorite.id)
+                state.offlineFavoriteIDs.insert(favorite.id)
+                return .send(.delegate(.offlinePinRequested([favorite.folderItem])))
 
             case let .favoritesResponse(.success(favorites)):
                 state.phase = .loaded
@@ -391,7 +457,9 @@ public struct FavoritesFeature {
                     pushFolder(result.id, title: result.name, in: &state)
                     return .none
                 }
-                let item = result.previewItem(openedAt: date.now)
+                let item = offlineFileStore.pinned(to: state.cacheScope).matchingPinnedCopy(
+                    result.previewItem(openedAt: date.now)
+                )
                 var host = BrowseFeature.State(
                     serverURL: state.serverURL,
                     directoryPath: result.path,
@@ -408,6 +476,14 @@ public struct FavoritesFeature {
             case let .path(.element(id: _, action: .delegate(.downloadRequested(items)))),
                  let .previewHost(.presented(.delegate(.downloadRequested(items)))):
                 return .send(.delegate(.downloadRequested(items)))
+
+            case let .path(.element(id: _, action: .delegate(.offlinePinRequested(items)))),
+                 let .previewHost(.presented(.delegate(.offlinePinRequested(items)))):
+                return .send(.delegate(.offlinePinRequested(items)))
+
+            case let .path(.element(id: _, action: .delegate(.offlineUnpinRequested(path)))),
+                 let .previewHost(.presented(.delegate(.offlineUnpinRequested(path)))):
+                return .send(.delegate(.offlineUnpinRequested(path: path)))
 
             case let .path(.element(id: _, action: .delegate(.saveRequested(requests)))),
                  let .previewHost(.presented(.delegate(.saveRequested(requests)))):
@@ -594,21 +670,26 @@ public struct FavoritesFeature {
         let favorites = state.favorites
         guard !favorites.isEmpty else {
             state.offlineFavoriteIDs = []
+            state.offlinePinnedFavoriteIDs = []
             return .none
         }
         let offlineFileStore = offlineFileStore
         return .run { send in
-            let ids = await Task.detached(priority: .utility) { () -> Set<Favorite.ID> in
+            let (all, pinned) = await Task.detached(priority: .utility) { () -> (Set<Favorite.ID>, Set<Favorite.ID>) in
                 let pinnedDirectoryPaths = offlineFileStore.pinnedRoots().filter(\.isDirectory).map(\.path)
-                var result = Set<Favorite.ID>()
-                for favorite in favorites where pinnedDirectoryPaths.contains(where: {
-                    $0 == favorite.path || favorite.path.hasPrefix($0 + "/")
-                }) {
-                    result.insert(favorite.id)
+                var all = Set<Favorite.ID>()
+                var pinned = Set<Favorite.ID>()
+                for favorite in favorites {
+                    if pinnedDirectoryPaths.contains(favorite.path) {
+                        pinned.insert(favorite.id)
+                        all.insert(favorite.id)
+                    } else if pinnedDirectoryPaths.contains(where: { favorite.path.hasPrefix($0 + "/") }) {
+                        all.insert(favorite.id)
+                    }
                 }
-                return result
+                return (all, pinned)
             }.value
-            await send(.offlineAvailabilityComputed(ids))
+            await send(.offlineAvailabilityComputed(all: all, pinned: pinned))
         }
         .cancellable(id: CancelID.offlineAvailability, cancelInFlight: true)
     }
@@ -732,5 +813,19 @@ public struct FavoritesFeature {
             }
             await send(.bulkRemoveResponse(removedPaths), animation: .default)
         }
+    }
+}
+
+extension Favorite {
+    /// The favorite's folder as an item, for the offline engine, which only needs its path and kind.
+    var folderItem: FileItem {
+        let components = path.split(separator: "/", omittingEmptySubsequences: true)
+        return FileItem(
+            name: components.last.map(String.init) ?? path,
+            path: components.dropLast().joined(separator: "/"),
+            dateModified: updatedAt,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
     }
 }

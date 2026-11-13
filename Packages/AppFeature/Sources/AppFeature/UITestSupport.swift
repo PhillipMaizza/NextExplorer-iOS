@@ -38,6 +38,9 @@
         public static let disableAnimationsFlag = UITestEnvironment.disableAnimationsKey
         public static let animationSpeedKey = "UITEST_ANIM_SPEED"
         public static let orientationKey = "UITEST_ORIENTATION"
+        /// `1` seeds one file saved by an earlier version into the Offline tab's "Saved earlier" list.
+        public static let legacyDownloadsKey = "UITEST_LEGACY_DOWNLOADS"
+        public static let legacyDownloadName = "legacy-report.pdf"
 
         /// Whether this launch runs under XCUITest with animations off.
         public static let disablesAnimations: Bool = {
@@ -53,6 +56,27 @@
             #if os(iOS)
                 transaction.disablesAnimations = true
             #endif
+        }
+
+        /// A download folder holding one file an earlier version saved, so the tests can prove such files
+        /// still list, open and delete. Held in memory: the sandbox folders stay untouched.
+        static func legacyDownloadStore() -> LegacyDownloadStore {
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent(legacyDownloadName)
+            FileManager.default.createFile(atPath: url.path, contents: Data("legacy".utf8))
+            let downloads = LockIsolated([
+                LocalDownload(
+                    url: url,
+                    fileName: legacyDownloadName,
+                    size: 6,
+                    modifiedDate: Date(timeIntervalSince1970: 1_700_000_000)
+                ),
+            ])
+            return LegacyDownloadStore(
+                save: { _, _, _ in throw CocoaError(.fileWriteUnknown) },
+                list: { _ in downloads.value },
+                delete: { url in downloads.withValue { $0.removeAll { $0.url == url } } },
+                rename: { url, _ in url }
+            )
         }
 
         /// How long the hinge needs to unlock rotation on a foldable before landscape is requested.
@@ -511,6 +535,9 @@
                 $0.previewCacheStore = .testValue
                 $0.thumbnailCache = .testValue
                 $0.offlineFileStore = .inMemory()
+                if environment[UITestSupport.legacyDownloadsKey] == "1" {
+                    $0.localDownloadStore = UITestSupport.legacyDownloadStore()
+                }
             }
         }
     }

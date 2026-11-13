@@ -30,13 +30,15 @@ public struct MainTabFeature {
         public var browse: BrowseTabFeature.State
         public var favorites: FavoritesFeature.State
         public var shared: SharedFeature.State
-        public var downloads = DownloadsFeature.State()
+        public var downloads = OfflineTabFeature.State()
         public var settings: SettingsFeature.State
         public var uploads: UploadsFeature.State
         public var downloadQueue: DownloadQueueFeature.State
         /// The offline download engine, a session lifetime sibling so its long running download
         /// effect survives the user leaving the Settings screen that started it.
         public var offline: OfflineDownloadsFeature.State
+        /// What the Offline tab lists: every pinned file and folder with its size.
+        public var offlineManage = OfflineManageFeature.State()
         /// Shared offline progress, reset when a fresh session mounts so a previous account's
         /// finished run never lingers on the new account's Settings screen.
         @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var offlineProgress = OfflineDownloadProgress()
@@ -44,6 +46,8 @@ public struct MainTabFeature {
         public var uploadToast: UploadToast?
         /// The "saved to Downloads" confirmation once the download queue drains.
         public var downloadToast: String?
+        /// iPhone and iPad: staged files waiting for the Save to Files panel.
+        public var pendingExportURLs: [URL] = []
         #if os(macOS)
             /// Where the last Mac save landed, revealed by the confirmation's Show in Finder.
             public var lastSavedDownloadURL: URL?
@@ -54,6 +58,7 @@ public struct MainTabFeature {
         public init(serverURL: URL, user: User) {
             browse = BrowseTabFeature.State(serverURL: serverURL)
             favorites = FavoritesFeature.State(serverURL: serverURL)
+            downloads = OfflineTabFeature.State(serverURL: serverURL)
             shared = SharedFeature.State(serverURL: serverURL)
             settings = SettingsFeature.State(serverURL: serverURL, user: user)
             uploads = UploadsFeature.State(serverURL: serverURL)
@@ -108,15 +113,18 @@ public struct MainTabFeature {
         case browse(BrowseTabFeature.Action)
         case favorites(FavoritesFeature.Action)
         case shared(SharedFeature.Action)
-        case downloads(DownloadsFeature.Action)
+        case downloads(OfflineTabFeature.Action)
         case settings(SettingsFeature.Action)
         case uploads(UploadsFeature.Action)
         case downloadQueue(DownloadQueueFeature.Action)
         case offline(OfflineDownloadsFeature.Action)
+        case offlineManage(OfflineManageFeature.Action)
         case openUploadedLocation(String)
         case dismissUploadToast
         case openDownloadsTab
         case dismissDownloadToast
+        /// The Save to Files panel closed; `didSave` is false when the user cancelled it.
+        case deviceExportFinished(didSave: Bool)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -129,6 +137,7 @@ public struct MainTabFeature {
     }
 
     @Dependency(\.connectivity) var connectivity
+    @Dependency(\.deviceSaver) var deviceSaver
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     private enum CancelID { case connectivity }
@@ -170,7 +179,7 @@ public struct MainTabFeature {
                 SharedFeature()
             }
             Scope(state: \.downloads, action: \.downloads) {
-                DownloadsFeature()
+                OfflineTabFeature()
             }
             Scope(state: \.settings, action: \.settings) {
                 SettingsFeature()
@@ -183,6 +192,9 @@ public struct MainTabFeature {
             }
             Scope(state: \.offline, action: \.offline) {
                 OfflineDownloadsFeature()
+            }
+            Scope(state: \.offlineManage, action: \.offlineManage) {
+                OfflineManageFeature()
             }
             Reduce { state, action in
                 switch action {
@@ -265,7 +277,8 @@ public struct MainTabFeature {
                     return .merge(
                         .send(.downloads(.refreshButtonTapped)),
                         .send(.browse(.offlineAvailabilityChanged)),
-                        .send(.favorites(.offlineAvailabilityChanged))
+                        .send(.favorites(.offlineAvailabilityChanged)),
+                        .send(.downloads(.offlineAvailabilityChanged))
                     )
 
                 case let .downloadQueue(.delegate(.queueFinished(summary))):
@@ -282,9 +295,11 @@ public struct MainTabFeature {
                             return .none
                         }
                     #endif
-                    state.downloadToast = summary.savedCount == 1
-                        ? L10n.DownloadQueue.savedOne
-                        : L10n.DownloadQueue.savedMany(summary.savedCount)
+                    #if os(macOS)
+                        state.downloadToast = summary.savedCount == 1
+                            ? L10n.DownloadQueue.savedOne
+                            : L10n.DownloadQueue.savedMany(summary.savedCount)
+                    #endif
                     return .none
 
                 case .openDownloadsTab:
@@ -342,14 +357,11 @@ public struct MainTabFeature {
                     )
 
                 case .observeConnectivity:
-                    // Runs once when this session's shell mounts: clear any offline progress left over
-                    // from a previous account (unless a download is somehow already running), then check
-                    // the pinned folders for new files to pull down.
-                    state.$offlineProgress.withLock {
-                        if !$0.isActive {
-                            $0 = OfflineDownloadProgress()
-                        }
-                    }
+                    // Runs once when this session's shell mounts. The progress is shared in memory and
+                    // outlives the shell: a run cut off by a sign out leaves its last file name in it,
+                    // which the next account must never see. No run of this session has started yet,
+                    // so it is cleared whatever it says, then the pinned folders are checked.
+                    state.$offlineProgress.withLock { $0 = OfflineDownloadProgress() }
                     // First value is the current state (ignored); refresh only on a real
                     // offline -> online transition.
                     let connectivity = connectivity
@@ -443,7 +455,44 @@ public struct MainTabFeature {
                         )
                 #endif
 
-                case .browse, .favorites, .shared, .downloads, .settings, .uploads, .downloadQueue, .offline, .delegate:
+                case .browse, .favorites, .shared, .downloads, .settings, .uploads, .downloadQueue, .offline,
+                     .offlineManage, .delegate,
+                     .deviceExportFinished:
+                    return .none
+                }
+            }
+            Reduce<State, Action> { state, action -> Effect<Action> in
+                switch action {
+                case let .downloadQueue(.delegate(.queueFinished(summary))):
+                    return Self.finishDeviceSave(summary, state: &state)
+                case .tabSelected(.downloads), .offline(.prepared), .offline(.completed),
+                     .offline(.waitingForNetwork), .offline(.failed),
+                     .offline(.unpinTapped):
+                    // The Offline tab lists what is pinned, which these change after it first appeared.
+                    return .send(.offlineManage(.onAppear))
+                case .offlineManage(.delegate(.changed)):
+                    return .merge(
+                        .send(.browse(.offlineAvailabilityChanged)),
+                        .send(.favorites(.offlineAvailabilityChanged)),
+                        .send(.downloads(.offlineAvailabilityChanged))
+                    )
+                case let .deviceExportFinished(didSave):
+                    let staged = state.pendingExportURLs
+                    state.pendingExportURLs = []
+                    deviceSaver.discard(staged)
+                    if didSave {
+                        state.downloadToast = L10n.DownloadQueue.savedToDevice
+                    }
+                    return .none
+                case let .browse(.delegate(.offlinePinRequested(items))),
+                     let .favorites(.delegate(.offlinePinRequested(items))),
+                     let .downloads(.delegate(.offlinePinRequested(items))):
+                    return .send(.offline(.startDownload(items)))
+                case let .browse(.delegate(.offlineUnpinRequested(path))),
+                     let .favorites(.delegate(.offlineUnpinRequested(path))),
+                     let .downloads(.delegate(.offlineUnpinRequested(path))):
+                    return .send(.offline(.unpinTapped(path: path)))
+                default:
                     return .none
                 }
             }
@@ -464,6 +513,24 @@ public struct MainTabFeature {
         }
     }
 
+    /// What a drained Save to Device queue does next: the Save to Files panel for staged files,
+    /// otherwise a confirmation. The Mac saves where its panel said, so it has nothing to add.
+    private static func finishDeviceSave(
+        _ summary: DownloadQueueFeature.FinishSummary,
+        state: inout State
+    ) -> Effect<Action> {
+        #if os(macOS)
+            return .none
+        #else
+            if !summary.exportURLs.isEmpty {
+                state.pendingExportURLs += summary.exportURLs
+            } else if summary.failedCount == 0, summary.photosCount > 0 {
+                state.downloadToast = L10n.DownloadQueue.savedToPhotos
+            }
+            return .none
+        #endif
+    }
+
     /// As many as Finder's Recent Folders menu keeps by default.
     static let recentFoldersLimit = 10
 
@@ -472,5 +539,18 @@ public struct MainTabFeature {
     static func goToFolderPath(_ rawPath: String) -> String? {
         let path = rawPath.trimmingCharacters(in: CharacterSet(charactersIn: "/ ").union(.whitespacesAndNewlines))
         return path.isEmpty ? nil : path
+    }
+}
+
+extension MainTabFeature.State {
+    /// The Available Offline pill shows while a run works or after one failed.
+    var isOfflineBarVisible: Bool {
+        if offlineProgress.isActive {
+            return true
+        }
+        if case .failed = offlineProgress.phase {
+            return true
+        }
+        return false
     }
 }

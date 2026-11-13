@@ -7,11 +7,11 @@ import Foundation
 import Localization
 import SwiftUI
 
-/// The "Downloads" tab: everything `LocalDownloadStore` has saved into
+/// The "Downloads" tab: everything `LegacyDownloadStore` has saved into
 /// `Documents/Downloads`/`Caches/Downloads`. Deleting here is local-only: it never touches
 /// the server, unlike every other delete action in the app (`BrowseFeature`'s `deleteTapped`).
 @Reducer
-public struct DownloadsFeature {
+public struct OfflineTabFeature {
     public enum SortOption: String, Hashable, Sendable, CaseIterable {
         case name, size, dateAdded
 
@@ -58,7 +58,14 @@ public struct DownloadsFeature {
         /// Current account's downloads scope, so the tab lists only this account's files.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
 
-        public init() {}
+        /// Where pinned folders open: the tab browses them like Browse does. Nil only in tests and
+        /// previews that never open one.
+        public var serverURL: URL?
+        public var path = StackState<BrowseFeature.State>()
+
+        public init(serverURL: URL? = nil) {
+            self.serverURL = serverURL
+        }
 
         /// Client-side filter + sort, same shape as `BrowseFeature.displayedItems`: search
         /// only ever matches against already-downloaded file names, never the server.
@@ -103,6 +110,17 @@ public struct DownloadsFeature {
         case bulkDeleteCancelled
         case bulkDeleteConfirmed
         case bulkDeleteResponse([LocalDownload.ID])
+        /// A pinned folder row was tapped.
+        case openFolderTapped(path: String)
+        /// Pins changed: pushed folders recompute which of their items are offline.
+        case offlineAvailabilityChanged
+        case path(StackActionOf<BrowseFeature>)
+        case delegate(Delegate)
+
+        public enum Delegate: Equatable, Sendable {
+            case offlinePinRequested([FileItem])
+            case offlineUnpinRequested(path: String)
+        }
     }
 
     @Dependency(\.localDownloadStore) var localDownloadStore
@@ -240,8 +258,72 @@ public struct DownloadsFeature {
                 state.isSelecting = false
                 state.selectedDownloadIDs = []
                 return .none
+
+            case let .openFolderTapped(path):
+                guard let serverURL = state.serverURL else { return .none }
+                let name = (path as NSString).lastPathComponent
+                BrowseNavigation.jump(
+                    to: path,
+                    title: name.isEmpty ? path : name,
+                    serverURL: serverURL,
+                    stack: &state.path
+                )
+                return .none
+
+            case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
+                guard let serverURL = state.serverURL else { return .none }
+                state.path.append(BrowseNavigation.screen(for: item, serverURL: serverURL))
+                return .none
+
+            case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):
+                guard let serverURL = state.serverURL else { return .none }
+                BrowseNavigation.jump(to: path, title: title, serverURL: serverURL, stack: &state.path)
+                return .none
+
+            case let .path(.element(id: _, action: .delegate(.offlinePinRequested(items)))):
+                return .send(.delegate(.offlinePinRequested(items)))
+
+            case let .path(.element(id: _, action: .delegate(.offlineUnpinRequested(path)))):
+                return .send(.delegate(.offlineUnpinRequested(path: path)))
+
+            case .path(.element(id: _, action: .delegate(.directoryContentsChanged))):
+                return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) })
+
+            case .offlineAvailabilityChanged:
+                return .merge(state.path.ids
+                    .map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) })
+
+            case .path, .delegate:
+                return .none
             }
         }
+        .forEach(\.path, action: \.path) {
+            BrowseFeature()
+        }
+    }
+
+    /// The pinned items the tab shows: filtered by the search text, then ordered like the downloads.
+    /// A pin has no date of its own, so "date added" keeps the order they were pinned in.
+    static func displayedPinned(
+        _ usages: IdentifiedArrayOf<OfflinePinnedRootUsage>,
+        searchQuery: String,
+        sortOption: SortOption,
+        sortDirection: BrowseFeature.SortDirection
+    ) -> [OfflinePinnedRootUsage] {
+        let matches = usages.enumerated().filter {
+            searchQuery.isEmpty || SearchMatch.matches(query: searchQuery, in: $0.element.displayName)
+        }
+        let sorted = matches.sorted { lhs, rhs in
+            switch sortOption {
+            case .name:
+                lhs.element.displayName.localizedCaseInsensitiveCompare(rhs.element.displayName) == .orderedAscending
+            case .size:
+                lhs.element.sizeBytes < rhs.element.sizeBytes
+            case .dateAdded:
+                lhs.offset < rhs.offset
+            }
+        }
+        return (sortDirection == .ascending ? sorted : sorted.reversed()).map(\.element)
     }
 
     private func load(_ state: inout State) -> Effect<Action> {

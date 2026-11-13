@@ -7,15 +7,13 @@ import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
-struct DownloadsFeatureTests {
+struct OfflineTabFeatureTests {
     private func makeDownload(
-        fileName: String = TestFile.report,
-        location: DownloadLocation = .documents
+        fileName: String = TestFile.report
     ) -> LocalDownload {
         LocalDownload(
-            url: URL(fileURLWithPath: "/tmp/\(location.title)/Downloads/\(fileName)"),
+            url: URL(fileURLWithPath: "/tmp/SavedEarlier/\(fileName)"),
             fileName: fileName,
-            location: location,
             size: 1_024,
             modifiedDate: MockDate.date
         )
@@ -26,8 +24,8 @@ struct DownloadsFeatureTests {
     @Test
     func onAppearLoadsDownloads() async {
         let download = makeDownload()
-        let store = TestStore(initialState: DownloadsFeature.State()) {
-            DownloadsFeature()
+        let store = TestStore(initialState: OfflineTabFeature.State()) {
+            OfflineTabFeature()
         } withDependencies: {
             $0.localDownloadStore.list = { _ in [download] }
         }
@@ -44,11 +42,11 @@ struct DownloadsFeatureTests {
     func refreshButtonTappedReloadsEvenWhenDownloadsAreAlreadyLoaded() async {
         let existing = makeDownload(fileName: "old.pdf")
         let refreshed = makeDownload(fileName: "new.pdf")
-        var state = DownloadsFeature.State()
+        var state = OfflineTabFeature.State()
         state.downloads = [existing]
 
         let store = TestStore(initialState: state) {
-            DownloadsFeature()
+            OfflineTabFeature()
         } withDependencies: {
             $0.localDownloadStore.list = { _ in [refreshed] }
         }
@@ -65,13 +63,13 @@ struct DownloadsFeatureTests {
     @Test
     func deleteConfirmedRemovesTheDownloadFromDiskAndFromState() async {
         let download = makeDownload()
-        var state = DownloadsFeature.State()
+        var state = OfflineTabFeature.State()
         state.downloads = [download]
         state.deleteConfirmationItem = download
 
         let deletedURLs = LockIsolated<[URL]>([])
         let store = TestStore(initialState: state) {
-            DownloadsFeature()
+            OfflineTabFeature()
         } withDependencies: {
             $0.localDownloadStore.delete = { url in deletedURLs.withValue { $0.append(url) } }
         }
@@ -89,8 +87,8 @@ struct DownloadsFeatureTests {
     @Test
     func deleteTappedSetsTheConfirmationItemAndCancelledClearsIt() async {
         let download = makeDownload()
-        let store = TestStore(initialState: DownloadsFeature.State()) {
-            DownloadsFeature()
+        let store = TestStore(initialState: OfflineTabFeature.State()) {
+            OfflineTabFeature()
         }
 
         await store.send(.deleteTapped(download)) {
@@ -105,8 +103,8 @@ struct DownloadsFeatureTests {
 
     @Test
     func onAppearSurfacesAListFailureAsAReadableErrorMessage() async {
-        let store = TestStore(initialState: DownloadsFeature.State()) {
-            DownloadsFeature()
+        let store = TestStore(initialState: OfflineTabFeature.State()) {
+            OfflineTabFeature()
         } withDependencies: {
             $0.localDownloadStore.list = { _ in throw FilesClientError.network("disk error") }
         }
@@ -119,12 +117,12 @@ struct DownloadsFeatureTests {
     @Test
     func deleteConfirmedFailureSurfacesAReadableErrorMessageAndKeepsTheItem() async {
         let download = makeDownload()
-        var state = DownloadsFeature.State()
+        var state = OfflineTabFeature.State()
         state.downloads = [download]
         state.deleteConfirmationItem = download
 
         let store = TestStore(initialState: state) {
-            DownloadsFeature()
+            OfflineTabFeature()
         } withDependencies: {
             $0.localDownloadStore.delete = { _ in throw FilesClientError.network("permission denied") }
         }
@@ -143,10 +141,10 @@ struct DownloadsFeatureTests {
 
     @Test
     func onAppearIsANoOpWhileAlreadyLoading() async {
-        var state = DownloadsFeature.State()
+        var state = OfflineTabFeature.State()
         state.phase = .loading
         let store = TestStore(initialState: state) {
-            DownloadsFeature()
+            OfflineTabFeature()
         }
 
         await store.send(.onAppear)
@@ -154,11 +152,11 @@ struct DownloadsFeatureTests {
 
     @Test
     func onAppearIsANoOpWhenDownloadsAreAlreadyLoaded() async {
-        var state = DownloadsFeature.State()
+        var state = OfflineTabFeature.State()
         state.downloads = [makeDownload()]
         state.phase = .loaded
         let store = TestStore(initialState: state) {
-            DownloadsFeature()
+            OfflineTabFeature()
         }
 
         await store.send(.onAppear)
@@ -166,8 +164,8 @@ struct DownloadsFeatureTests {
 
     @Test
     func deleteConfirmedWithNoConfirmationItemDoesNothing() async {
-        let store = TestStore(initialState: DownloadsFeature.State()) {
-            DownloadsFeature()
+        let store = TestStore(initialState: OfflineTabFeature.State()) {
+            OfflineTabFeature()
         }
 
         await store.send(.deleteConfirmed)

@@ -31,13 +31,12 @@ struct MainTabSidebar: View {
             (.browse, L10n.Tab.browse, IconKit.tabBrowse),
             (.favorites, L10n.Tab.favorites, IconKit.tabFavorites),
             (.shared, L10n.Tab.shared, IconKit.tabShare),
-            (.downloads, L10n.Tab.downloads, IconKit.tabDownloads),
+            (.downloads, L10n.Tab.offline, IconKit.tabDownloads),
             (.settings, L10n.Tab.settings, IconKit.tabSettings),
         ]
         #if os(macOS)
-        // Mac downloads are saved wherever the user picks in Finder, so there is no in app
-        // Downloads section to show; Settings has its own window (⌘,), opened by its own row.
-        .filter { $0.tab != .downloads && $0.tab != .settings }
+        // Settings has its own window (⌘,), opened by its own row.
+        .filter { $0.tab != .settings }
         #endif
     }
 
@@ -107,7 +106,7 @@ struct MainTabSidebar: View {
             case .browse: IconKit.folder
             case .favorites: IconKit.star
             case .shared: IconKit.shareLink
-            case .downloads: IconKit.download
+            case .downloads: IconKit.availableOffline
             case .settings: IconKit.gearshape
             }
         }

@@ -9,14 +9,14 @@ import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
-struct MainTabDownloadsTests: MainTabTestSupport {
+struct MainTabOfflineTabTests: MainTabTestSupport {
     @Test(
         "A download requested from either screen is queued app wide and fetched through the client",
         arguments: [
-            Source(name: "from Browse", action: .browse(.delegate(.downloadRequested([MainTabDownloadsTests.movie])))),
+            Source(name: "from Browse", action: .browse(.delegate(.downloadRequested([MainTabOfflineTabTests.movie])))),
             Source(
                 name: "from Favorites",
-                action: .favorites(.delegate(.downloadRequested([MainTabDownloadsTests.movie])))
+                action: .favorites(.delegate(.downloadRequested([MainTabOfflineTabTests.movie])))
             ),
         ]
     )
@@ -57,36 +57,38 @@ struct MainTabDownloadsTests: MainTabTestSupport {
         kind: "mkv"
     )
 
-    @Test("A drained queue shows the saved toast and Open takes the user to Downloads")
-    func downloadQueueFinishedShowsTheSavedToastAndOpenGoesToDownloads() async {
-        let store = makeStore { $0.localDownloadStore.list = { _ in [] } }
+    #if os(macOS)
+        @Test("A drained queue shows the saved toast and Open takes the user to Downloads")
+        func downloadQueueFinishedShowsTheSavedToastAndOpenGoesToDownloads() async {
+            let store = makeStore { $0.localDownloadStore.list = { _ in [] } }
 
-        await store.send(.downloadQueue(.delegate(.queueFinished(.init(savedCount: 3, failedCount: 0))))) {
-            $0.downloadToast = L10n.DownloadQueue.savedMany(3)
+            await store.send(.downloadQueue(.delegate(.queueFinished(.init(savedCount: 3, failedCount: 0))))) {
+                $0.downloadToast = L10n.DownloadQueue.savedMany(3)
+            }
+            await store.send(.openDownloadsTab) {
+                $0.downloadToast = nil
+                $0.selectedTab = .downloads
+            }
+            await store.receive(\.downloads.refreshButtonTapped) {
+                $0.downloads.phase = .loading
+            }
+            await store.receive(\.downloads.downloadsResponse.success) {
+                $0.downloads.phase = .loaded
+            }
         }
-        await store.send(.openDownloadsTab) {
-            $0.downloadToast = nil
-            $0.selectedTab = .downloads
-        }
-        await store.receive(\.downloads.refreshButtonTapped) {
-            $0.downloads.phase = .loading
-        }
-        await store.receive(\.downloads.downloadsResponse.success) {
-            $0.downloads.phase = .loaded
-        }
-    }
 
-    @Test("A single saved file gets the singular toast")
-    func aSingleSavedFileGetsTheSingularToast() async {
-        let store = makeStore()
+        @Test("A single saved file gets the singular toast")
+        func aSingleSavedFileGetsTheSingularToast() async {
+            let store = makeStore()
 
-        await store.send(.downloadQueue(.delegate(.queueFinished(.init(savedCount: 1, failedCount: 0))))) {
-            $0.downloadToast = L10n.DownloadQueue.savedOne
+            await store.send(.downloadQueue(.delegate(.queueFinished(.init(savedCount: 1, failedCount: 0))))) {
+                $0.downloadToast = L10n.DownloadQueue.savedOne
+            }
+            await store.send(.dismissDownloadToast) {
+                $0.downloadToast = nil
+            }
         }
-        await store.send(.dismissDownloadToast) {
-            $0.downloadToast = nil
-        }
-    }
+    #endif
 
     @Test("A drained queue with a failure shows no toast, the failed bar owns it")
     func downloadQueueFinishedWithFailuresShowsNoToast() async {
@@ -105,6 +107,7 @@ struct MainTabDownloadsTests: MainTabTestSupport {
         }
         await store.receive(\.browse.offlineAvailabilityChanged)
         await store.receive(\.favorites.offlineAvailabilityChanged)
+        await store.receive(\.downloads.offlineAvailabilityChanged)
         await store.receive(\.browse.root.computeOfflineAvailability)
         await store.receive(\.downloads.downloadsResponse.success) {
             $0.downloads.phase = .loaded

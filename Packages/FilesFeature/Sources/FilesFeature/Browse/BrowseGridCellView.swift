@@ -7,6 +7,7 @@ import SwiftUI
 private enum Constants {
     static let cellSpacing: CGFloat = .space8
     static let defaultIconSize: CGFloat = .iconLarge
+    static let nameMinimumScale: CGFloat = 0.7
     static let favoriteBadgeSize: CGFloat = .iconXSmall
     static let favoriteBadgePadding: CGFloat = .space2
     static let favoriteBadgeBackgroundSize: CGFloat = .size20
@@ -158,10 +159,9 @@ struct GridCellView: View {
                 }
                 .overlay(alignment: .bottomLeading) {
                     if isAvailableOffline {
-                        IconKit.download
+                        IconKit.availableOffline
                             .resizable()
                             .scaledToFit()
-                            .symbolVariant(.fill)
                             .foregroundStyle(Color.accent)
                             .frame(width: Constants.favoriteBadgeSize, height: Constants.favoriteBadgeSize)
                             .padding(Constants.favoriteBadgePadding)
@@ -195,10 +195,22 @@ struct GridCellView: View {
                 )
                 // Only favoriting buzzes: un-favoriting isn't a "win" worth celebrating the same way.
                 .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
-            Text(displayName)
-                .type(.body2(.semibold), style: isHidden ? .tertiary : .primaryOnSurface)
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
+            // One line that shrinks a little to fit, then truncates in the middle (keeping the extension
+            // visible). The hidden line sets the height at full size, so a shrunk name never makes its
+            // tile shorter than the others.
+            Text(" ")
+                .type(.body2(.semibold), style: .primaryOnSurface)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
+                .hidden()
+                .overlay {
+                    Text(displayName)
+                        .type(.body2(.semibold), style: isHidden ? .tertiary : .primaryOnSurface)
+                        .lineLimit(1)
+                        .minimumScaleFactor(Constants.nameMinimumScale)
+                        .truncationMode(.middle)
+                        .multilineTextAlignment(.center)
+                }
         }
         .frame(maxWidth: .infinity)
         .overlay(alignment: .bottomTrailing) {
@@ -224,6 +236,7 @@ struct GridCellView: View {
         } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(
                 serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
+                fallbackKind: kind,
                 iconTint: Color.secondaryDS, fileSize: file?.size, modified: file?.dateModified
             )
             .frame(width: iconSize, height: iconSize)

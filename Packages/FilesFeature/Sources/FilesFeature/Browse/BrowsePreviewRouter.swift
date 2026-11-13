@@ -57,9 +57,26 @@ struct BrowsePreviewRouter: View {
                 .onAppear { isFocused = true }
                 .onKeyPress(.leftArrow) { step(by: -1) }
                 .onKeyPress(.rightArrow) { step(by: 1) }
+                .environment(\.previewOffline, offlineAction(for: item))
         #else
             routed
+                .environment(\.previewOffline, offlineAction(for: item))
+                .offlineRemovalAlert(
+                    store.offlineRemoval,
+                    onConfirm: { store.send(.offlineRemovalConfirmed) },
+                    onCancel: { store.send(.offlineRemovalCancelled) }
+                )
         #endif
+    }
+
+    private func offlineAction(for item: FileItem) -> PreviewOfflineAction? {
+        guard store.access?.canDownload ?? false else { return nil }
+        let isOn = store.offlineItemIDs.contains(item.id)
+        return PreviewOfflineAction(
+            isOn: isOn,
+            isEnabled: !isOn || store.offlinePinnedItemIDs.contains(item.id),
+            toggle: { store.send(.offlineToggleTapped(item)) }
+        )
     }
 
     #if os(macOS)
@@ -142,6 +159,7 @@ struct BrowsePreviewRouter: View {
                         store.send(.downloadTapped(current))
                     }
                     : nil,
+                offline: { current in offlineAction(for: current) },
                 onDelete: (store.access?.canDelete ?? false)
                     ? { current in
                         store.send(.deleteTapped(current))

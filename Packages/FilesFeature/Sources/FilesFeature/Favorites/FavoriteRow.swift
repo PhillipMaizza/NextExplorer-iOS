@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -72,6 +73,7 @@ struct FavoriteListRow: View {
 struct FavoriteGridCell: View {
     let store: StoreOf<FavoritesFeature>
     let favorite: Favorite
+    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
 
     var body: some View {
         SelectableGridCell(
@@ -82,6 +84,7 @@ struct FavoriteGridCell: View {
             GridCellView(
                 name: favorite.displayName,
                 isDirectory: true,
+                iconSize: (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).iconSize,
                 customIcon: FavoriteIcon.symbol(for: favorite.icon),
                 customIconTint: FavoriteColor.resolve(favorite.color),
                 customIconFilled: FavoriteIcon.isFilled(favorite.icon),
