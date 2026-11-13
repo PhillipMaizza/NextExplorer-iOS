@@ -53,13 +53,21 @@ public struct DSToastMessage: Equatable, Identifiable {
 
     /// A brief, auto-dismissing success confirmation (e.g. "Saved to Documents"). `actionTitle`/
     /// `action` add a trailing button (e.g. "Open"): omit both for a plain confirmation.
-    public static func success(_ text: String, actionTitle: String? = nil, action: (() -> Void)? = nil) -> DSToastMessage {
+    public static func success(
+        _ text: String,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) -> DSToastMessage {
         DSToastMessage(successText: text, actionTitle: actionTitle, action: action)
     }
 
     /// A brief, auto-dismissing failure toast (warning icon, `.negative` background) with an
     /// optional trailing action: e.g. "Retry" on a copy/move that didn't go through.
-    public static func failure(_ text: String, actionTitle: String? = nil, action: (() -> Void)? = nil) -> DSToastMessage {
+    public static func failure(
+        _ text: String,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) -> DSToastMessage {
         DSToastMessage(failureText: text, actionTitle: actionTitle, action: action)
     }
 

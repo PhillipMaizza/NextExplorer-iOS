@@ -9,7 +9,8 @@ import Foundation
 /// never purges them under storage pressure, and the app's own LRU evictor never touches them: a
 /// pinned file must still be there when the user is offline.
 ///
-/// Everything is scoped by `CacheAccountScope.current` (or the scope an operation captured when it started), so two accounts on one device never serve or
+/// Everything is scoped by `CacheAccountScope.current` (or the scope an operation captured when it started), so two
+/// accounts on one device never serve or
 /// count each other's pinned files. `removeAll` drops every scope at once, for the session boundary
 /// clears (rule #11).
 enum OfflineCache {
@@ -62,7 +63,11 @@ enum OfflineCache {
         return directory
     }
 
-    private static func slotDirectory(forPath path: String, create: Bool, scope: String = CacheAccountScope.current) -> URL? {
+    private static func slotDirectory(
+        forPath path: String,
+        create: Bool,
+        scope: String = CacheAccountScope.current
+    ) -> URL? {
         guard let scopeURL = scopeDirectory(create: create, scope: scope) else { return nil }
         return scopeURL
             .appendingPathComponent(slotsDirectoryName, isDirectory: true)
@@ -178,7 +183,8 @@ enum OfflineCache {
     /// "Remove Offline Files" action, so removing on one account never touches another account's
     /// pinned files on a shared device.
     static func removeCurrentScope() {
-        guard let scope = scopeDirectory(create: false), FileManager.default.fileExists(atPath: scope.path) else { return }
+        guard let scope = scopeDirectory(create: false),
+              FileManager.default.fileExists(atPath: scope.path) else { return }
         try? FileManager.default.removeItem(at: scope)
     }
 
@@ -205,7 +211,8 @@ enum OfflineCache {
         else { return [] }
         var entries: [(String, Int64)] = []
         for slotDir in slotDirs {
-            guard let path = try? String(contentsOf: slotDir.appendingPathComponent(pathSidecarName), encoding: .utf8) else { continue }
+            guard let path = try? String(contentsOf: slotDir.appendingPathComponent(pathSidecarName), encoding: .utf8)
+            else { continue }
             let contents = (try? FileManager.default.contentsOfDirectory(
                 at: slotDir, includingPropertiesForKeys: [.fileSizeKey]
             )) ?? []
@@ -453,7 +460,9 @@ public extension OfflineFileStore {
         let store = self
         return OfflineFileStore(
             localURL: { item in CacheAccountScope.withPinned(scope) { store.localURL(item) } },
-            localURLIgnoringStaleness: { item in CacheAccountScope.withPinned(scope) { store.localURLIgnoringStaleness(item) } },
+            localURLIgnoringStaleness: { item in
+                CacheAccountScope.withPinned(scope) { store.localURLIgnoringStaleness(item) }
+            },
             pinnedRoots: { CacheAccountScope.withPinned(scope) { store.pinnedRoots() } },
             setPinnedRoots: { roots in CacheAccountScope.withPinned(scope) { store.setPinnedRoots(roots) } },
             totalSizeBytes: { CacheAccountScope.withPinned(scope) { store.totalSizeBytes() } },

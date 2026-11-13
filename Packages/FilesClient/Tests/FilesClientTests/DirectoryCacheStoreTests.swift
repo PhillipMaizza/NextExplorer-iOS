@@ -37,7 +37,13 @@ struct DirectoryCacheStoreTests {
         defer { cleanUp(root) }
         let fetchedAt = MockDate.date.addingTimeInterval(1000)
 
-        store.write(serverURL: serverURL, path: TestPath.docsLowercase, result: result(path: TestPath.docsLowercase, itemNames: [TestFile.aText, TestFile.bText]), etag: nil, fetchedAt: fetchedAt)
+        store.write(
+            serverURL: serverURL,
+            path: TestPath.docsLowercase,
+            result: result(path: TestPath.docsLowercase, itemNames: [TestFile.aText, TestFile.bText]),
+            etag: nil,
+            fetchedAt: fetchedAt
+        )
 
         let cached = store.read(serverURL: serverURL, path: TestPath.docsLowercase)
         #expect(cached?.items.map(\.name) == [TestFile.aText, TestFile.bText])
@@ -53,7 +59,8 @@ struct DirectoryCacheStoreTests {
 
         store.write(
             serverURL: serverURL, path: TestPath.docsLowercase,
-            result: result(path: TestPath.docsLowercase, itemNames: ["x"]), etag: "\"abc123\"", fetchedAt: MockDate.date.addingTimeInterval(5)
+            result: result(path: TestPath.docsLowercase, itemNames: ["x"]), etag: "\"abc123\"",
+            fetchedAt: MockDate.date.addingTimeInterval(5)
         )
 
         #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"abc123\"")
@@ -74,8 +81,20 @@ struct DirectoryCacheStoreTests {
     func siblingPathsDoNotCollide() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: "a", result: result(path: "a", itemNames: ["one"]), etag: nil, fetchedAt: MockDate.date)
-        store.write(serverURL: serverURL, path: "b", result: result(path: "b", itemNames: ["two"]), etag: nil, fetchedAt: MockDate.date)
+        store.write(
+            serverURL: serverURL,
+            path: "a",
+            result: result(path: "a", itemNames: ["one"]),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
+        store.write(
+            serverURL: serverURL,
+            path: "b",
+            result: result(path: "b", itemNames: ["two"]),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
 
         #expect(store.read(serverURL: serverURL, path: "a")?.items.map(\.name) == ["one"])
         #expect(store.read(serverURL: serverURL, path: "b")?.items.map(\.name) == ["two"])
@@ -85,7 +104,13 @@ struct DirectoryCacheStoreTests {
     func leadingAndTrailingSlashesNormalizeToSameEntry() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: TestPath.docsLowercase, result: result(path: TestPath.docsLowercase, itemNames: ["x"]), etag: nil, fetchedAt: MockDate.date)
+        store.write(
+            serverURL: serverURL,
+            path: TestPath.docsLowercase,
+            result: result(path: TestPath.docsLowercase, itemNames: ["x"]),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
         #expect(store.read(serverURL: serverURL, path: "/docs/")?.items.map(\.name) == ["x"])
     }
 
@@ -93,7 +118,13 @@ struct DirectoryCacheStoreTests {
     func removeDropsEntry() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: TestPath.docsLowercase, result: result(path: TestPath.docsLowercase, itemNames: ["x"]), etag: nil, fetchedAt: MockDate.date)
+        store.write(
+            serverURL: serverURL,
+            path: TestPath.docsLowercase,
+            result: result(path: TestPath.docsLowercase, itemNames: ["x"]),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
         store.remove(serverURL: serverURL, path: TestPath.docsLowercase)
         #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase) == nil)
     }
@@ -102,8 +133,20 @@ struct DirectoryCacheStoreTests {
     func clearAllDropsEverything() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: "a", result: result(path: "a", itemNames: ["one"]), etag: nil, fetchedAt: MockDate.date)
-        store.write(serverURL: serverURL, path: "b", result: result(path: "b", itemNames: ["two"]), etag: nil, fetchedAt: MockDate.date)
+        store.write(
+            serverURL: serverURL,
+            path: "a",
+            result: result(path: "a", itemNames: ["one"]),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
+        store.write(
+            serverURL: serverURL,
+            path: "b",
+            result: result(path: "b", itemNames: ["two"]),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
         store.clearAll()
         #expect(store.read(serverURL: serverURL, path: "a") == nil)
         #expect(store.read(serverURL: serverURL, path: "b") == nil)
@@ -115,10 +158,22 @@ struct DirectoryCacheStoreTests {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
 
-        store.write(serverURL: serverURL, path: TestPath.docsLowercase, result: result(path: TestPath.docsLowercase, itemNames: ["small"]), etag: nil, fetchedAt: MockDate.date)
+        store.write(
+            serverURL: serverURL,
+            path: TestPath.docsLowercase,
+            result: result(path: TestPath.docsLowercase, itemNames: ["small"]),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
 
         let hugeNames = (0 ..< 60_000).map { "file-with-a-fairly-long-name-number-\($0).txt" }
-        store.write(serverURL: serverURL, path: TestPath.docsLowercase, result: result(path: TestPath.docsLowercase, itemNames: hugeNames), etag: nil, fetchedAt: MockDate.date)
+        store.write(
+            serverURL: serverURL,
+            path: TestPath.docsLowercase,
+            result: result(path: TestPath.docsLowercase, itemNames: hugeNames),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
 
         #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase) == nil)
     }
@@ -154,7 +209,12 @@ struct DirectoryCacheStoreTests {
             fetchedAt: MockDate.date.addingTimeInterval(100)
         )
 
-        store.touch(serverURL: serverURL, path: TestPath.docsLowercase, expectedETag: "\"v1\"", fetchedAt: MockDate.date.addingTimeInterval(500))
+        store.touch(
+            serverURL: serverURL,
+            path: TestPath.docsLowercase,
+            expectedETag: "\"v1\"",
+            fetchedAt: MockDate.date.addingTimeInterval(500)
+        )
 
         let cached = store.read(serverURL: serverURL, path: TestPath.docsLowercase)
         #expect(cached?.fetchedAt == MockDate.date.addingTimeInterval(500))
@@ -174,7 +234,12 @@ struct DirectoryCacheStoreTests {
             fetchedAt: MockDate.date.addingTimeInterval(200)
         )
 
-        store.touch(serverURL: serverURL, path: TestPath.docsLowercase, expectedETag: "\"v1\"", fetchedAt: MockDate.date.addingTimeInterval(999))
+        store.touch(
+            serverURL: serverURL,
+            path: TestPath.docsLowercase,
+            expectedETag: "\"v1\"",
+            fetchedAt: MockDate.date.addingTimeInterval(999)
+        )
 
         let cached = store.read(serverURL: serverURL, path: TestPath.docsLowercase)
         #expect(cached?.etag == "\"v2\"")
@@ -194,7 +259,13 @@ struct DirectoryCacheStoreTests {
     func schemaVersionMismatchDiscardsEntry() throws {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: TestPath.docsLowercase, result: result(path: TestPath.docsLowercase, itemNames: ["x"]), etag: nil, fetchedAt: MockDate.date)
+        store.write(
+            serverURL: serverURL,
+            path: TestPath.docsLowercase,
+            result: result(path: TestPath.docsLowercase, itemNames: ["x"]),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
 
         let cacheDirectory = root.appendingPathComponent("DirectoryCache")
         let file = try #require(

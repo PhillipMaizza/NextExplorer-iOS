@@ -96,7 +96,12 @@ public struct VersionedFilesFeature {
         let filesClient = filesClient
         return .api(
             cancelID: CancelID.page,
-            operation: { try await filesClient.fetchVersionedFiles(serverURL, filter, offset, VersionedFilesPage.defaultPageSize) },
+            operation: { try await filesClient.fetchVersionedFiles(
+                serverURL,
+                filter,
+                offset,
+                VersionedFilesPage.defaultPageSize
+            ) },
             response: { .pageResponse($0) }
         )
     }

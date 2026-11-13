@@ -14,7 +14,11 @@ struct BrowseTabFeatureTests {
     private let readOnlyAccess = BrowseTestSupport.readOnlyAccess
 
     private func screen(_ path: String, title: String? = nil) -> BrowseFeature.State {
-        BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: title ?? (path as NSString).lastPathComponent)
+        BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: path,
+            title: title ?? (path as NSString).lastPathComponent
+        )
     }
 
     private func makeState(pushing paths: [String] = []) -> BrowseTabFeature.State {
@@ -64,7 +68,13 @@ struct BrowseTabFeatureTests {
 
     @Test("Opening a folder from the root pushes it onto the path stack")
     func openingAFolderFromTheRootPushesItOntoThePathStack() async {
-        let item = FileItem(name: TestFolder.photos, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+        let item = FileItem(
+            name: TestFolder.photos,
+            path: "",
+            dateModified: MockDate.date,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
         let store = makeStore()
 
         await store.send(.root(.delegate(.openFolder(item)))) {
@@ -74,7 +84,13 @@ struct BrowseTabFeatureTests {
 
     @Test("Opening a folder from a pushed screen pushes another level")
     func openingAFolderFromAPushedScreenPushesAnotherLevel() async {
-        let nested = FileItem(name: "Vacation", path: TestFolder.photos, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+        let nested = FileItem(
+            name: "Vacation",
+            path: TestFolder.photos,
+            dateModified: MockDate.date,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
         let state = makeState(pushing: [TestFolder.photos])
         let store = makeStore(state)
 
@@ -87,7 +103,13 @@ struct BrowseTabFeatureTests {
     func openingAFolderClearsTheForwardStack() async {
         var state = makeState()
         state.forwardStack = [screen("Old")]
-        let item = FileItem(name: TestFolder.photos, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+        let item = FileItem(
+            name: TestFolder.photos,
+            path: "",
+            dateModified: MockDate.date,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
         let store = makeStore(state)
 
         await store.send(.root(.delegate(.openFolder(item)))) {
@@ -149,9 +171,23 @@ struct BrowseTabFeatureTests {
         }
     }
 
-    private nonisolated static let upload = PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: TestFile.aText, destination: TestFolder.docs)
-    private nonisolated static let item = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
-    private nonisolated static let saveRequest = DownloadSaveRequest(item: item, target: .into(URL(fileURLWithPath: "/tmp")))
+    private nonisolated static let upload = PendingUpload(
+        id: UUID(0),
+        fileURL: URL(fileURLWithPath: "/tmp/a.txt"),
+        fileName: TestFile.aText,
+        destination: TestFolder.docs
+    )
+    private nonisolated static let item = FileItem(
+        name: TestFile.aText,
+        path: TestFolder.docs,
+        dateModified: MockDate.date,
+        size: 1,
+        kind: TestKind.text
+    )
+    private nonisolated static let saveRequest = DownloadSaveRequest(
+        item: item,
+        target: .into(URL(fileURLWithPath: "/tmp"))
+    )
 
     @Test(
         "What a screen asks of the app shell bubbles up, from the root and from a pushed screen alike",
@@ -179,8 +215,20 @@ struct BrowseTabFeatureTests {
     @Test("Pasting a folder into its own folder shows the copy at once, and the refresh that follows confirms it")
     func pastingAFolderIntoItsOwnFolderShowsTheCopyWithoutARefresh() async throws {
         let now = MockDate.date.addingTimeInterval(100)
-        let misc = FileItem(name: "Misc", path: TestFolder.docs, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
-        let copy = FileItem(name: "Misc (2)", path: TestFolder.docs, dateModified: now, size: 0, kind: FileItem.directoryKind)
+        let misc = FileItem(
+            name: "Misc",
+            path: TestFolder.docs,
+            dateModified: MockDate.date,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
+        let copy = FileItem(
+            name: "Misc (2)",
+            path: TestFolder.docs,
+            dateModified: now,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
         let full = BrowseTestSupport.fullAccess
         var docs = screen(TestFolder.docs)
         docs.items = [misc]
@@ -199,7 +247,8 @@ struct BrowseTabFeatureTests {
         let store = makeStore(state) {
             $0.date = .constant(now)
             $0.filesClient.transferItems = { _, items, destination, operation in
-                transferred.withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)") }
+                transferred
+                    .withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)") }
                 try await transfer.wait()
                 return TransferResult(destination: destination, items: [.init(from: "Docs/Misc", to: "Docs/Misc (2)")])
             }
@@ -222,7 +271,8 @@ struct BrowseTabFeatureTests {
             $0.path[id: id]?.isPerformingFileAction = true
             $0.path[id: id]?.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.path[id: id]?.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [misc], destination: TestFolder.docs, operation: .copy, clearClipboard: true, resolution: .keepBoth, itemsToReplace: []
+                items: [misc], destination: TestFolder.docs, operation: .copy, clearClipboard: true,
+                resolution: .keepBoth, itemsToReplace: []
             )
         }
         transfer.open()

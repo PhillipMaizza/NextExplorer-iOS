@@ -25,7 +25,8 @@ enum DirectoryPrefetch {
     ) async {
         let stale = Array(paths.filter { path in
             guard !path.isEmpty else { return false }
-            guard let writtenAt = directoryCacheStore.lastWrittenAt(serverURL: serverURL, path: path) else { return true }
+            guard let writtenAt = directoryCacheStore.lastWrittenAt(serverURL: serverURL, path: path)
+            else { return true }
             return now.timeIntervalSince(writtenAt) >= freshnessWindow
         }.prefix(limit))
         guard !stale.isEmpty else { return }

@@ -123,7 +123,9 @@ public struct DownloadsFeature {
                     state.downloads = try IdentifiedArray(uniqueElements: localDownloadStore.list(state.downloadScope))
                     state.phase = .loaded
                 } catch {
-                    state.phase = .failed(((error as? FilesClientError) ?? .network(String(describing: error))).userMessage)
+                    state
+                        .phase = .failed(((error as? FilesClientError) ?? .network(String(describing: error)))
+                            .userMessage)
                 }
                 return .none
 

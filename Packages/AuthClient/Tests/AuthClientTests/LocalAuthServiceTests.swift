@@ -32,7 +32,11 @@ struct LocalAuthServiceTests {
             return try answer(request, status: 200, body: AuthClientFixture.sessionUserAdmin.data())
         }
 
-        let user = try await service.exchangeOIDC(serverURL: serverURL, code: Constants.code, codeVerifier: Constants.verifier)
+        let user = try await service.exchangeOIDC(
+            serverURL: serverURL,
+            code: Constants.code,
+            codeVerifier: Constants.verifier
+        )
 
         #expect(user.username == TestAccount.username)
         let request = try #require(captured.value)
@@ -63,13 +67,20 @@ struct LocalAuthServiceTests {
         FailureCase(status: 200, fixture: .commonEmptyObject, expected: .oidcFailed("no user in exchange response")),
     ]
 
-    @Test("an exchange the server refuses or answers without a user fails with the matching error", arguments: exchangeFailures)
+    @Test(
+        "an exchange the server refuses or answers without a user fails with the matching error",
+        arguments: exchangeFailures
+    )
     private func exchangeFailsWithMatchingError(_ testCase: FailureCase) async throws {
         let body = try testCase.fixture?.data() ?? Data()
         let service = makeService { request in try answer(request, status: testCase.status, body: body) }
 
         await #expect(throws: testCase.expected) {
-            _ = try await service.exchangeOIDC(serverURL: serverURL, code: Constants.code, codeVerifier: Constants.verifier)
+            _ = try await service.exchangeOIDC(
+                serverURL: serverURL,
+                code: Constants.code,
+                codeVerifier: Constants.verifier
+            )
         }
     }
 
@@ -79,7 +90,11 @@ struct LocalAuthServiceTests {
         let service = makeService { request in try answer(request, status: 200, body: body) }
 
         do {
-            _ = try await service.exchangeOIDC(serverURL: serverURL, code: Constants.code, codeVerifier: Constants.verifier)
+            _ = try await service.exchangeOIDC(
+                serverURL: serverURL,
+                code: Constants.code,
+                codeVerifier: Constants.verifier
+            )
             Issue.record("expected the exchange to fail")
         } catch let error as AuthClientError {
             guard case .decoding = error else {
@@ -99,9 +114,17 @@ struct LocalAuthServiceTests {
         func run(_ service: LocalAuthService, serverURL: URL) async throws {
             switch self {
             case .status: _ = try await service.status(serverURL: serverURL)
-            case .login: _ = try await service.login(serverURL: serverURL, identifier: TestAccount.username, password: TestAccount.password)
+            case .login: _ = try await service.login(
+                    serverURL: serverURL,
+                    identifier: TestAccount.username,
+                    password: TestAccount.password
+                )
             case .loginTOTP: _ = try await service.loginTOTP(serverURL: serverURL, code: TestAccount.totpCode)
-            case .exchangeOIDC: _ = try await service.exchangeOIDC(serverURL: serverURL, code: Constants.code, codeVerifier: Constants.verifier)
+            case .exchangeOIDC: _ = try await service.exchangeOIDC(
+                    serverURL: serverURL,
+                    code: Constants.code,
+                    codeVerifier: Constants.verifier
+                )
             case .me: _ = try await service.me(serverURL: serverURL)
             case .logout: try await service.logout(serverURL: serverURL)
             }
@@ -121,7 +144,10 @@ struct LocalAuthServiceTests {
         TransportCase(networkError: .transport(TestFailure.offline), expected: .network("transport(\"offline\")")),
     ]
 
-    @Test("a client certificate refusal keeps its own error and every other transport failure becomes a network error, on every route", arguments: transportCases)
+    @Test(
+        "a client certificate refusal keeps its own error and every other transport failure becomes a network error, on every route",
+        arguments: transportCases
+    )
     private func transportFailuresAreMapped(_ testCase: TransportCase) async {
         let service = makeService { _ in throw testCase.networkError }
 

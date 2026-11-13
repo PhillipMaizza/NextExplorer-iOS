@@ -26,7 +26,13 @@ struct UploadRequestTests {
         let source = directory.appendingPathComponent(Constants.sourceName)
         try bytes.write(to: source)
         let envelopeURL = directory.appendingPathComponent(Constants.envelopeName)
-        try UploadRequest.writeEnvelope(to: envelopeURL, boundary: boundary, fileURL: source, fileName: fileName, destination: destination)
+        try UploadRequest.writeEnvelope(
+            to: envelopeURL,
+            boundary: boundary,
+            fileURL: source,
+            fileName: fileName,
+            destination: destination
+        )
         return try Data(contentsOf: envelopeURL)
     }
 
@@ -43,7 +49,12 @@ struct UploadRequestTests {
             return afterHeaders.hasSuffix("\r\n") ? String(afterHeaders.dropLast("\r\n".count)) : afterHeaders
         }
         let headerLine = file.components(separatedBy: "\r\n\r\n").first ?? ""
-        return Parts(destination: value(destination), relativePath: value(path), header: headerLine, body: Data(value(file).utf8))
+        return Parts(
+            destination: value(destination),
+            relativePath: value(path),
+            header: headerLine,
+            body: Data(value(file).utf8)
+        )
     }
 
     @Test("A plain name and destination are written as is")
@@ -84,7 +95,13 @@ struct UploadRequestTests {
 
         for (name, destination) in [("a\0b.jpg", TestFolder.photos), (TestFile.aPhoto, "Pho\0tos")] {
             #expect(throws: UploadRequest.EnvelopeError.self) {
-                try UploadRequest.writeEnvelope(to: envelopeURL, boundary: boundary, fileURL: source, fileName: name, destination: destination)
+                try UploadRequest.writeEnvelope(
+                    to: envelopeURL,
+                    boundary: boundary,
+                    fileURL: source,
+                    fileName: name,
+                    destination: destination
+                )
             }
         }
         #expect(!FileManager.default.fileExists(atPath: envelopeURL.path))
@@ -98,7 +115,10 @@ struct UploadRequestTests {
         for name in [decomposed, composed, long] {
             let data = try envelope(fileName: name, destination: TestFolder.docs)
             let text = try #require(String(data: data, encoding: .utf8))
-            #expect(text.contains("name=\"relativePath\"\r\n\r\n\(name)\r\n"), "the name is not normalised or truncated")
+            #expect(
+                text.contains("name=\"relativePath\"\r\n\r\n\(name)\r\n"),
+                "the name is not normalised or truncated"
+            )
             #expect(text.components(separatedBy: "--\(boundary)").count == 5)
         }
     }

@@ -48,17 +48,32 @@
                 }
                 Section {
                     numberRow(L10n.ThumbnailSettings.quality, help: L10n.ThumbnailSettings.qualityHelp) {
-                        MacNumberStepper(label: L10n.ThumbnailSettings.quality, value: store.draft.quality, range: ThumbnailSettings.qualityRange, step: Metrics.qualityStep) {
+                        MacNumberStepper(
+                            label: L10n.ThumbnailSettings.quality,
+                            value: store.draft.quality,
+                            range: ThumbnailSettings.qualityRange,
+                            step: Metrics.qualityStep
+                        ) {
                             store.send(.qualityChanged($0))
                         }
                     }
                     numberRow(L10n.ThumbnailSettings.maxDimension, help: L10n.ThumbnailSettings.maxDimensionHelp) {
-                        MacNumberStepper(label: L10n.ThumbnailSettings.maxDimension, value: store.draft.size, range: ThumbnailSettings.sizeRange, step: Metrics.sizeStep) {
+                        MacNumberStepper(
+                            label: L10n.ThumbnailSettings.maxDimension,
+                            value: store.draft.size,
+                            range: ThumbnailSettings.sizeRange,
+                            step: Metrics.sizeStep
+                        ) {
                             store.send(.sizeChanged($0))
                         }
                     }
                     numberRow(L10n.ThumbnailSettings.concurrency, help: L10n.ThumbnailSettings.concurrencyHelp) {
-                        MacNumberStepper(label: L10n.ThumbnailSettings.concurrency, value: store.draft.concurrency, range: ThumbnailSettings.concurrencyRange, step: Metrics.concurrencyStep) {
+                        MacNumberStepper(
+                            label: L10n.ThumbnailSettings.concurrency,
+                            value: store.draft.concurrency,
+                            range: ThumbnailSettings.concurrencyRange,
+                            step: Metrics.concurrencyStep
+                        ) {
                             store.send(.concurrencyChanged($0))
                         }
                     }
@@ -80,7 +95,8 @@
     }
 
     #Preview("Thumbnails") {
-        var state = ThumbnailSettingsFeature.State(serverURL: URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/"))
+        var state = ThumbnailSettingsFeature
+            .State(serverURL: URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/"))
         state.loaded = ThumbnailSettings()
         state.draft = ThumbnailSettings()
         state.phase = .loaded

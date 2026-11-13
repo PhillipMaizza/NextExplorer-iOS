@@ -27,15 +27,27 @@ struct SearchFilterChips: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Constants.rowSpacing) {
-                chip(icon: IconKit.selectAll, title: L10n.Filter.all, isSelected: selectedCategories.isEmpty, action: onSelectAll)
+                chip(
+                    icon: IconKit.selectAll,
+                    title: L10n.Filter.all,
+                    isSelected: selectedCategories.isEmpty,
+                    action: onSelectAll
+                )
                 ForEach(availableCategories, id: \.self) { category in
-                    chip(icon: category.icon, title: category.title, isSelected: selectedCategories.contains(category)) {
+                    chip(
+                        icon: category.icon,
+                        title: category.title,
+                        isSelected: selectedCategories.contains(category)
+                    ) {
                         onToggle(category)
                     }
                 }
             }
         }
-        .animation(.spring(response: Constants.selectionSpringResponse, dampingFraction: Constants.selectionSpringDamping), value: selectedCategories)
+        .animation(
+            .spring(response: Constants.selectionSpringResponse, dampingFraction: Constants.selectionSpringDamping),
+            value: selectedCategories
+        )
     }
 
     private func chip(icon: Image, title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {

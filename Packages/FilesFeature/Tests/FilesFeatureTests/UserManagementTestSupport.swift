@@ -139,7 +139,9 @@ extension UserManagementTestSupport {
                 return try await addVolume()
             }
             $0.filesClient.updateUserVolume = { _, userID, volumeID, label, mode in
-                calls.withValue { $0.append(.updateVolume(userID: userID, volumeID: volumeID, label: label, mode: mode)) }
+                calls
+                    .withValue { $0.append(.updateVolume(userID: userID, volumeID: volumeID, label: label, mode: mode))
+                    }
                 return try await updateVolume()
             }
             $0.filesClient.removeUserVolume = { _, userID, volumeID in

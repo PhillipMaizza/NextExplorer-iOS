@@ -6,7 +6,8 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// `browse`, conditional GET, prefetch and `search` through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
+/// `browse`, conditional GET, prefetch and `search` through `FilesClient.live` against a stubbed `URLSession`. Nested
+/// in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     struct FilesClientBrowseTests: FilesClientLiveHarness {
@@ -162,12 +163,20 @@ extension FilesClientLiveTests {
                 now: { MockDate.date.addingTimeInterval(1) }
             )
 
-            try stub(statusCode: 200, body: browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v1\""])
+            try stub(
+                statusCode: 200,
+                body: browseResultJSON,
+                headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v1\""]
+            )
             _ = try await client.browse(serverURL, TestPath.docsLowercase)
             #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v1\"")
 
             StubURLProtocol.capturedRequest = nil
-            try stub(statusCode: 200, body: browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v2\""])
+            try stub(
+                statusCode: 200,
+                body: browseResultJSON,
+                headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"v2\""]
+            )
             _ = try await client.browse(serverURL, TestPath.docsLowercase)
             #expect(StubURLProtocol.capturedRequest?.value(forHTTPHeaderField: HTTPHeaderField.ifNoneMatch) == "\"v1\"")
             #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v2\"")
@@ -176,12 +185,25 @@ extension FilesClientLiveTests {
         @Test
         func browseReturnsTheCachedListingOnA304() async throws {
             let store = DirectoryCacheStore.inMemory()
-            let cachedItem = FileItem(name: "Saved", path: TestPath.docsLowercase, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+            let cachedItem = FileItem(
+                name: "Saved",
+                path: TestPath.docsLowercase,
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            )
             store.write(
                 serverURL: serverURL, path: TestPath.docsLowercase,
                 result: BrowseResult(
                     items: [cachedItem],
-                    access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+                    access: FileAccess(
+                        canRead: true,
+                        canWrite: false,
+                        canUpload: false,
+                        canDelete: false,
+                        canShare: false,
+                        canDownload: true
+                    ),
                     path: TestPath.docsLowercase
                 ),
                 etag: "\"v1\"",
@@ -198,13 +220,18 @@ extension FilesClientLiveTests {
             let result = try await client.browse(serverURL, TestPath.docsLowercase)
             #expect(result.items.map(\.name) == ["Saved"])
             // The 304 refreshes the entry's timestamp so a prefetch freshness check sees it as current.
-            #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.fetchedAt == MockDate.date.addingTimeInterval(500))
+            #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.fetchedAt == MockDate.date
+                .addingTimeInterval(500))
             #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.etag == "\"v1\"")
         }
 
         @Test
         func prefetchDirectoryWritesThroughOverTheLowPrioritySession() async throws {
-            try stub(statusCode: 200, body: browseResultJSON, headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"pf\""])
+            try stub(
+                statusCode: 200,
+                body: browseResultJSON,
+                headers: [HTTPHeaderField.contentType: MIMEType.json, HTTPHeaderField.etag: "\"pf\""]
+            )
             let store = DirectoryCacheStore.inMemory()
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
@@ -262,8 +289,16 @@ extension FilesClientLiveTests {
             StubURLProtocol.failure = nil
             StubURLProtocol.stub = nil
             StubURLProtocol.pathStubs = [
-                "/api/browse": .init(statusCode: 404, headers: [HTTPHeaderField.contentType: MIMEType.json], body: notFound),
-                "/api/volumes": .init(statusCode: 200, headers: [HTTPHeaderField.contentType: MIMEType.json], body: volumesJSON),
+                "/api/browse": .init(
+                    statusCode: 404,
+                    headers: [HTTPHeaderField.contentType: MIMEType.json],
+                    body: notFound
+                ),
+                "/api/volumes": .init(
+                    statusCode: 200,
+                    headers: [HTTPHeaderField.contentType: MIMEType.json],
+                    body: volumesJSON
+                ),
             ]
             let store = DirectoryCacheStore.inMemory()
             let client = FilesClient.live(

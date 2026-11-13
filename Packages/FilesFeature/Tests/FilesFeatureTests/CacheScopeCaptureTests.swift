@@ -104,7 +104,14 @@ struct CacheScopeCaptureTests {
         var state = withDependencies { $0.cacheScope = scopeSource(box) } operation: {
             BrowseFeature.State(serverURL: Fixture.server, directoryPath: Fixture.path, title: Fixture.path)
         }
-        state.access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
+        state.access = FileAccess(
+            canRead: true,
+            canWrite: true,
+            canUpload: true,
+            canDelete: true,
+            canShare: true,
+            canDownload: true
+        )
 
         box.value = Fixture.accountB
         withDependencies {

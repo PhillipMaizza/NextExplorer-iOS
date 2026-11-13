@@ -108,7 +108,8 @@ extension FilesService {
 
     /// `POST /api/users/:id/password` (admin) → 204.
     func setUserPassword(serverURL: URL, userID: String, newPassword: String) async throws {
-        let url = serverURL.appendingPathComponent(APIPath.users).appendingPathComponent(userID).appendingPathComponent(APIPath.Component.password)
+        let url = serverURL.appendingPathComponent(APIPath.users).appendingPathComponent(userID)
+            .appendingPathComponent(APIPath.Component.password)
         var httpRequest = Self.makeRequest(url: url, method: .post)
         httpRequest.setJSONContentType()
         httpRequest.httpBody = try Self.encode(NewPasswordBody(newPassword: newPassword))

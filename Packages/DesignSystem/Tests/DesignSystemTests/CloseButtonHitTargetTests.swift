@@ -13,7 +13,8 @@ import Testing
         /// Lays the view out in a window and reads whether `dsMinimumHitTarget` is in its body.
         private func appliesHitTarget(_ view: some View) -> Bool {
             let box = AppliedBox()
-            let host = UIHostingController(rootView: view.onPreferenceChange(DSHitTargetAppliedKey.self) { box.isApplied = $0 })
+            let host = UIHostingController(rootView: view
+                .onPreferenceChange(DSHitTargetAppliedKey.self) { box.isApplied = $0 })
             let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 200))
             window.rootViewController = host
             window.makeKeyAndVisible()
@@ -38,7 +39,12 @@ import Testing
 
         @Test("DSSheetHeader applies the hit target to its close button")
         func sheetHeaderAppliesIt() {
-            #expect(appliesHitTarget(DSSheetHeader(icon: IconKit.close, title: nil, closeAccessibilityLabel: "Close", onClose: {})))
+            #expect(appliesHitTarget(DSSheetHeader(
+                icon: IconKit.close,
+                title: nil,
+                closeAccessibilityLabel: "Close",
+                onClose: {}
+            )))
         }
 
         private func renderedSize(_ view: some View) -> CGSize? {

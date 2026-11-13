@@ -47,7 +47,11 @@ struct MainTabNavigationTests: MainTabTestSupport {
             $0.selectedTab = .browse
         }
         await store.receive(\.browse.navigateToDirectory) {
-            $0.browse.path[id: 0] = BrowseFeature.State(serverURL: serverURL, directoryPath: TestPath.documentsReports, title: "Reports")
+            $0.browse.path[id: 0] = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestPath.documentsReports,
+                title: "Reports"
+            )
             $0.recentFolders = [TestPath.documentsReports]
         }
     }
@@ -100,15 +104,27 @@ struct MainTabNavigationTests: MainTabTestSupport {
         let store = makeStore()
 
         await store.send(.browse(.navigateToDirectory(path: TestFolder.documents, title: TestFolder.documents))) {
-            $0.browse.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.documents, title: TestFolder.documents)])
+            $0.browse.path = StackState([BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.documents,
+                title: TestFolder.documents
+            )])
             $0.recentFolders = [TestFolder.documents]
         }
         await store.send(.browse(.navigateToDirectory(path: "Photos/Trip", title: "Trip"))) {
-            $0.browse.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Trip", title: "Trip")])
+            $0.browse.path = StackState([BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: "Photos/Trip",
+                title: "Trip"
+            )])
             $0.recentFolders = ["Photos/Trip", TestFolder.documents]
         }
         await store.send(.browse(.navigateToDirectory(path: TestFolder.documents, title: TestFolder.documents))) {
-            $0.browse.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.documents, title: TestFolder.documents)])
+            $0.browse.path = StackState([BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.documents,
+                title: TestFolder.documents
+            )])
             $0.recentFolders = [TestFolder.documents, "Photos/Trip"]
         }
         await store.send(.recentFoldersCleared) {
@@ -126,13 +142,18 @@ struct MainTabNavigationTests: MainTabTestSupport {
             expected.insert(path, at: 0)
             expected = Array(expected.prefix(10))
             await store.send(.browse(.navigateToDirectory(path: path, title: path))) {
-                $0.browse.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: path)])
+                $0.browse.path = StackState([BrowseFeature.State(
+                    serverURL: serverURL,
+                    directoryPath: path,
+                    title: path
+                )])
                 $0.recentFolders = expected
             }
         }
 
         #expect(store.state.recentFolders == [
-            "Folder11", "Folder10", "Folder9", "Folder8", "Folder7", "Folder6", "Folder5", "Folder4", "Folder3", "Folder2",
+            "Folder11", "Folder10", "Folder9", "Folder8", "Folder7", "Folder6", "Folder5", "Folder4", "Folder3",
+            "Folder2",
         ])
     }
 }

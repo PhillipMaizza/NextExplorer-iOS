@@ -15,7 +15,12 @@ struct FFmpegSettingsEncodingTests {
         Case(ffmpeg: "", ffprobe: "", expectedFFmpeg: nil, expectedFFprobe: nil),
         Case(ffmpeg: "", ffprobe: "/usr/bin/ffprobe", expectedFFmpeg: nil, expectedFFprobe: "/usr/bin/ffprobe"),
         Case(ffmpeg: "/usr/bin/ffmpeg", ffprobe: "", expectedFFmpeg: "/usr/bin/ffmpeg", expectedFFprobe: nil),
-        Case(ffmpeg: "/usr/bin/ffmpeg", ffprobe: "/usr/bin/ffprobe", expectedFFmpeg: "/usr/bin/ffmpeg", expectedFFprobe: "/usr/bin/ffprobe"),
+        Case(
+            ffmpeg: "/usr/bin/ffmpeg",
+            ffprobe: "/usr/bin/ffprobe",
+            expectedFFmpeg: "/usr/bin/ffmpeg",
+            expectedFFprobe: "/usr/bin/ffprobe"
+        ),
     ]
 
     @Test("an empty path is sent as null to clear the override and a set path as text", arguments: cases)

@@ -66,7 +66,11 @@ public struct SearchIndexSettingsFeature {
 
     public init() {}
 
-    private func save(_ state: inout State, patch: SystemSettingsPatch.SearchIndexPatch, replacesPaths: Bool) -> Effect<Action> {
+    private func save(
+        _ state: inout State,
+        patch: SystemSettingsPatch.SearchIndexPatch,
+        replacesPaths: Bool
+    ) -> Effect<Action> {
         state.isSaving = true
         state.errorMessage = nil
         return .saveSettings(
@@ -88,7 +92,12 @@ public struct SearchIndexSettingsFeature {
                 guard !state.isSaving else { return .none }
                 state.phase.beginReload()
                 state.errorMessage = nil
-                return .loadSnapshot(filesClient, serverURL: state.serverURL, cancelID: CancelID.load, response: { .loadResponse($0) })
+                return .loadSnapshot(
+                    filesClient,
+                    serverURL: state.serverURL,
+                    cancelID: CancelID.load,
+                    response: { .loadResponse($0) }
+                )
 
             case .loadResponse(.success) where state.isSaving:
                 return .none

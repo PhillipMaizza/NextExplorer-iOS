@@ -103,7 +103,11 @@ struct SharedFileInboxTests {
     func sharedFilesGoToTheTopmostPushedScreen() async {
         let file = Self.picked("Scan.pdf")
         var state = BrowseTabFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.documents, title: TestFolder.documents))
+        state.path.append(BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: TestFolder.documents,
+            title: TestFolder.documents
+        ))
         let store = TestStore(initialState: state) {
             BrowseTabFeature()
         } withDependencies: {
@@ -155,7 +159,13 @@ struct SharedFileInboxTests {
         let store = browseStore(
             directoryPath: "",
             title: "Browse",
-            state: { $0.previewItem = FileItem(name: "Notes.txt", path: "", dateModified: MockDate.date, size: 1, kind: TestKind.text) },
+            state: { $0.previewItem = FileItem(
+                name: "Notes.txt",
+                path: "",
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            ) },
             dependencies: { $0.uploadStaging = Self.staging([file]) }
         )
 
@@ -174,7 +184,10 @@ struct SharedFileInboxTests {
         let file = Self.picked("Scan.pdf")
         let store = browseStore {
             $0.uploadStaging = Self.staging([file])
-            $0.uploadDefaults = .inMemory(["account": UploadDefaults(folderPath: "Inbox/Scans")], activeAccountID: "account")
+            $0.uploadDefaults = .inMemory(
+                ["account": UploadDefaults(folderPath: "Inbox/Scans")],
+                activeAccountID: "account"
+            )
         }
 
         await store.send(.receiveSharedFiles([scan]))

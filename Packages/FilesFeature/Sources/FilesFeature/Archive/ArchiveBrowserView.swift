@@ -196,7 +196,12 @@ struct ArchiveBrowserView: View {
             statusContent(icon: IconKit.folderFill, message: L10n.Archive.emptyFolder, tint: .secondaryDS)
         } else {
             #if os(macOS)
-                ArchiveMacTable(rows: visibleRows, extractingRow: extractingRow, entryTransition: entryTransition, onOpen: handleTap)
+                ArchiveMacTable(
+                    rows: visibleRows,
+                    extractingRow: extractingRow,
+                    entryTransition: entryTransition,
+                    onOpen: handleTap
+                )
             #else
                 DSGroupedList(visibleRows) { row in
                     Button {
@@ -285,7 +290,10 @@ struct ArchiveBrowserView: View {
             // binary opened just to be shared) would otherwise freeze the UI while it unpacks.
             let outcome = await Task.detached(priority: .userInitiated) { () -> ArchiveExtractionOutcome in
                 try? FileManager.default.removeItem(at: destination)
-                try? FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try? FileManager.default.createDirectory(
+                    at: destination.deletingLastPathComponent(),
+                    withIntermediateDirectories: true
+                )
                 do {
                     try ArchiveReader.extract(fullPath, from: source, to: destination)
                     return .success
@@ -314,11 +322,15 @@ struct ArchiveBrowserView: View {
     /// (e.g. `style.css` next to `page.html`) from the same open archive: the archive
     /// equivalent of `TextFilePreviewView.resolveServerAsset`.
     private func resolveAsset(_ relativePath: String, relativeTo directory: String) async -> URL? {
-        guard let source, let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: directory) else { return nil }
+        guard let source,
+              let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: directory) else { return nil }
         let entryPath = resolved.parent.isEmpty ? resolved.name : "\(resolved.parent)/\(resolved.name)"
         let assetsBase = Self.temporaryDirectory(for: item).appendingPathComponent("assets", isDirectory: true)
         guard let destination = SafeDestination.within(assetsBase, entryPath) else { return nil }
-        try? FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try? FileManager.default.createDirectory(
+            at: destination.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
         try? FileManager.default.removeItem(at: destination)
         return (try? ArchiveReader.extract(entryPath, from: source, to: destination)) != nil ? destination : nil
     }

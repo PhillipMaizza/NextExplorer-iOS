@@ -38,7 +38,9 @@ public extension ClientCertificateClient {
     }
 
     /// An in memory stand in for previews and tests, optionally seeded with installed summaries.
-    static func inMemory(_ seeded: [ClientCertificateOrigin: ClientCertificateSummary] = [:]) -> ClientCertificateClient {
+    static func inMemory(_ seeded: [ClientCertificateOrigin: ClientCertificateSummary] = [:])
+        -> ClientCertificateClient
+    {
         let storage = LockIsolated(seeded)
         return ClientCertificateClient(
             summary: { storage.value[$0] },

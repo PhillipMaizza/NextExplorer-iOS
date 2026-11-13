@@ -19,16 +19,38 @@ private enum LogoGeometry {
 
     /// Facets 0–1 form the left wing, 2–3 the right.
     static let leftWing: [Facet] = [
-        Facet(points: [CGPoint(x: 43.57, y: 66.49), CGPoint(x: 16.15, y: 76.66), CGPoint(x: 16.15, y: 19.34)],
-              top: light, bottom: lightLow),
-        Facet(points: [CGPoint(x: 45.77, y: 30.96), CGPoint(x: 45.77, y: 65.68), CGPoint(x: 43.57, y: 66.49), CGPoint(x: 16.15, y: 19.34)],
-              top: deep, bottom: deepLow),
+        Facet(
+            points: [CGPoint(x: 43.57, y: 66.49), CGPoint(x: 16.15, y: 76.66), CGPoint(x: 16.15, y: 19.34)],
+            top: light,
+            bottom: lightLow
+        ),
+        Facet(
+            points: [
+                CGPoint(x: 45.77, y: 30.96),
+                CGPoint(x: 45.77, y: 65.68),
+                CGPoint(x: 43.57, y: 66.49),
+                CGPoint(x: 16.15, y: 19.34),
+            ],
+            top: deep,
+            bottom: deepLow
+        ),
     ]
     static let rightWing: [Facet] = [
-        Facet(points: [CGPoint(x: 79.85, y: 76.66), CGPoint(x: 50.23, y: 65.68), CGPoint(x: 50.23, y: 30.96), CGPoint(x: 53.02, y: 29.87)],
-              top: deep, bottom: deepLow),
-        Facet(points: [CGPoint(x: 79.85, y: 19.34), CGPoint(x: 79.85, y: 76.66), CGPoint(x: 53.02, y: 29.87)],
-              top: light, bottom: lightLow),
+        Facet(
+            points: [
+                CGPoint(x: 79.85, y: 76.66),
+                CGPoint(x: 50.23, y: 65.68),
+                CGPoint(x: 50.23, y: 30.96),
+                CGPoint(x: 53.02, y: 29.87),
+            ],
+            top: deep,
+            bottom: deepLow
+        ),
+        Facet(
+            points: [CGPoint(x: 79.85, y: 19.34), CGPoint(x: 79.85, y: 76.66), CGPoint(x: 53.02, y: 29.87)],
+            top: light,
+            bottom: lightLow
+        ),
     ]
 
     static func path(_ points: [CGPoint], in rect: CGRect) -> Path {

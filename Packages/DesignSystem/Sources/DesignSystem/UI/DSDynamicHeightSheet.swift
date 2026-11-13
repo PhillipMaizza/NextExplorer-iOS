@@ -5,8 +5,8 @@ import SwiftUI
     import AppKit
 #endif
 
-/// Wraps `content` in a `ScrollView` and self-measures it to drive `presentationDetents`,
-/// since measuring and feeding a height into
+/// Wraps `content` in a `ScrollView` and self-measures it to drive `presentationDetents`:
+/// measuring and feeding a height into
 /// `presentationDetents` *after* a sheet is already presented doesn't reliably resize it, so
 /// the outer container always accepts whatever size the sheet proposes while `content`
 /// measures its own true, unconstrained size from the first frame.

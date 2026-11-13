@@ -11,7 +11,14 @@ import TestUtils
 @MainActor
 struct FileUndoTests {
     private let serverURL = URL(fileURLWithPath: "/")
-    private let access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
+    private let access = FileAccess(
+        canRead: true,
+        canWrite: true,
+        canUpload: true,
+        canDelete: true,
+        canShare: true,
+        canDownload: true
+    )
     private let now = MockDate.date.addingTimeInterval(100)
 
     private func folder(_ name: String, in path: String) -> FileItem {
@@ -45,7 +52,13 @@ struct FileUndoTests {
         let misc = folder("Misc", in: TestFolder.docs)
         var initial = state(TestFolder.docs, items: [misc])
         initial.selectedItemIDs = [misc.id]
-        let copy = FileItem(name: "Misc (2)", path: TestFolder.docs, dateModified: now, size: 0, kind: FileItem.directoryKind)
+        let copy = FileItem(
+            name: "Misc (2)",
+            path: TestFolder.docs,
+            dateModified: now,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
         let deleted = LockIsolated<[FileItem]>([])
         let gate = AsyncGate()
 
@@ -91,9 +104,21 @@ struct FileUndoTests {
 
     @Test
     func undoingAMoveMovesTheItemsBackToWhereTheyCameFrom() async {
-        let report = FileItem(name: TestFile.report, path: TestFolder.docs, dateModified: now, size: 10, kind: TestKind.pdf)
+        let report = FileItem(
+            name: TestFile.report,
+            path: TestFolder.docs,
+            dateModified: now,
+            size: 10,
+            kind: TestKind.pdf
+        )
         let archive = folder(TestFolder.archive, in: TestFolder.docs)
-        let movedReport = FileItem(name: TestFile.report, path: "Docs/Archive", dateModified: now, size: 10, kind: TestKind.pdf)
+        let movedReport = FileItem(
+            name: TestFile.report,
+            path: "Docs/Archive",
+            dateModified: now,
+            size: 10,
+            kind: TestKind.pdf
+        )
         let moves = LockIsolated<[[String]]>([])
         let destinations = LockIsolated<[String]>([])
         let gate = AsyncGate()
@@ -130,7 +155,10 @@ struct FileUndoTests {
             $0.transferSuccessMessage = L10n.Browse.transferMoved(1)
             $0.items = IdentifiedArray(uniqueElements: [archive])
             $0.$undoStack.withLock {
-                $0 = [FileUndoEntry(.moved([FileUndoEntry.MovedItem(item: movedReport, originalParent: TestFolder.docs)]))]
+                $0 = [FileUndoEntry(.moved([FileUndoEntry.MovedItem(
+                    item: movedReport,
+                    originalParent: TestFolder.docs
+                )]))]
             }
         }
         await store.receive(.delegate(.directoryContentsChanged))
@@ -149,8 +177,20 @@ struct FileUndoTests {
 
     @Test
     func undoingARenameRestoresTheOldName() async {
-        let original = FileItem(name: TestFile.vacationPhoto, path: TestFolder.photos, dateModified: now, size: 0, kind: TestKind.photo)
-        let renamedItem = FileItem(name: "beach.jpg", path: TestFolder.photos, dateModified: now, size: 0, kind: TestKind.photo)
+        let original = FileItem(
+            name: TestFile.vacationPhoto,
+            path: TestFolder.photos,
+            dateModified: now,
+            size: 0,
+            kind: TestKind.photo
+        )
+        let renamedItem = FileItem(
+            name: "beach.jpg",
+            path: TestFolder.photos,
+            dateModified: now,
+            size: 0,
+            kind: TestKind.photo
+        )
         var initial = state(TestFolder.photos, items: [original])
         initial.renameSheetItem = original
         let renames = LockIsolated<[String]>([])

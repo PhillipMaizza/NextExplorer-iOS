@@ -31,7 +31,9 @@ struct VolumeAssignSheet: View {
             VStack(alignment: .leading, spacing: Metrics.volumeSheetSpacing) {
                 DSSheetHeader(
                     icon: IconKit.drive,
-                    title: sheet?.isEditing == true ? L10n.UserDetail.volumeSheetTitleEdit : L10n.UserDetail.volumeSheetTitleNew,
+                    title: sheet?.isEditing == true
+                        ? L10n.UserDetail.volumeSheetTitleEdit
+                        : L10n.UserDetail.volumeSheetTitleNew,
                     closeAccessibilityLabel: L10n.Common.close,
                     onClose: { dismiss() }
                 )
@@ -82,7 +84,9 @@ struct VolumeAssignSheet: View {
         } footer: {
             DSSheetFooter {
                 DSButton(
-                    (sheet?.isEditing ?? false) ? L10n.UserDetail.volumeSheetSaveEdit : L10n.UserDetail.volumeSheetSaveNew,
+                    (sheet?.isEditing ?? false)
+                        ? L10n.UserDetail.volumeSheetSaveEdit
+                        : L10n.UserDetail.volumeSheetSaveNew,
                     style: .primary,
                     isLoading: sheet?.isSubmitting ?? false
                 ) {
@@ -118,7 +122,11 @@ struct VolumeAssignSheet: View {
                 Button {
                     store.send(.volumePathSelected(listing.current))
                 } label: {
-                    rowLabel(L10n.UserDetail.directoryPickerUseThis, isSelected: selectedPath == listing.current, icon: IconKit.checkmark)
+                    rowLabel(
+                        L10n.UserDetail.directoryPickerUseThis,
+                        isSelected: selectedPath == listing.current,
+                        icon: IconKit.checkmark
+                    )
                 }
                 .buttonStyle(DSHapticButtonStyle())
 

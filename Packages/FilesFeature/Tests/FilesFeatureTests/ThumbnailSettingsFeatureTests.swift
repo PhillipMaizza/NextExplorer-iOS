@@ -32,7 +32,10 @@ struct ThumbnailSettingsFeatureTests {
         }
     }
 
-    private func loadedState(_ loaded: ThumbnailSettings = ThumbnailSettings(), draft: ThumbnailSettings? = nil) -> ThumbnailSettingsFeature.State {
+    private func loadedState(
+        _ loaded: ThumbnailSettings = ThumbnailSettings(),
+        draft: ThumbnailSettings? = nil
+    ) -> ThumbnailSettingsFeature.State {
         var state = ThumbnailSettingsFeature.State(serverURL: serverURL)
         state.loaded = loaded
         state.draft = draft ?? loaded

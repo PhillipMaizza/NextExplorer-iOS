@@ -44,23 +44,44 @@ struct ChangePasswordView: View {
 
                 if store.mode == .change {
                     LabeledField(L10n.ChangePassword.fieldCurrentPassword, uppercased: false) {
-                        DSSecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
-                            .textContentType(.password)
+                        DSSecureField(
+                            L10n.ChangePassword.fieldCurrentPassword,
+                            text: $store.currentPassword.sending(\.currentPasswordChanged)
+                        )
+                        .textContentType(.password)
                     }
                 }
 
                 VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
-                    LabeledField(L10n.ChangePassword.fieldNewPasswordLabel, error: newPasswordErrorText, uppercased: false) {
-                        DSSecureField(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
-                            .textContentType(.newPassword)
+                    LabeledField(
+                        L10n.ChangePassword.fieldNewPasswordLabel,
+                        error: newPasswordErrorText,
+                        uppercased: false
+                    ) {
+                        DSSecureField(
+                            L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength),
+                            text: $store.newPassword.sending(\.newPasswordChanged)
+                        )
+                        .textContentType(.newPassword)
                     }
-                    LabeledField(L10n.ChangePassword.fieldConfirmPasswordLabel, error: confirmErrorText, uppercased: false) {
-                        DSSecureField(L10n.ChangePassword.fieldConfirmPassword, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
-                            .textContentType(.newPassword)
+                    LabeledField(
+                        L10n.ChangePassword.fieldConfirmPasswordLabel,
+                        error: confirmErrorText,
+                        uppercased: false
+                    ) {
+                        DSSecureField(
+                            L10n.ChangePassword.fieldConfirmPassword,
+                            text: $store.confirmPassword.sending(\.confirmPasswordChanged)
+                        )
+                        .textContentType(.newPassword)
                     }
                 }
 
-                DSButton(store.mode == .add ? L10n.ChangePassword.addSubmitButton : L10n.ChangePassword.submitButton, style: .primary, isLoading: store.isSubmitting) {
+                DSButton(
+                    store.mode == .add ? L10n.ChangePassword.addSubmitButton : L10n.ChangePassword.submitButton,
+                    style: .primary,
+                    isLoading: store.isSubmitting
+                ) {
                     store.send(.submitTapped)
                 }
                 .disabled(!store.isSubmitEnabled)
@@ -71,9 +92,11 @@ struct ChangePasswordView: View {
             .padding(.vertical, Metrics.contentSpacing)
         }
         .backgroundGradient()
-        .navigationTitle(store.mode == .add ? L10n.ChangePassword.addNavigationTitle : L10n.ChangePassword.navigationTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .scrollDismissesKeyboard(.interactively)
+        .navigationTitle(store.mode == .add
+            ? L10n.ChangePassword.addNavigationTitle
+            : L10n.ChangePassword.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .scrollDismissesKeyboard(.interactively)
     }
 
     private var newPasswordErrorText: String? {

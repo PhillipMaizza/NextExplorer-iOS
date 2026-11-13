@@ -11,7 +11,11 @@ public struct DSShakeEffect: GeometryEffect {
     public var numberOfShakes: CGFloat
     public var animatableData: CGFloat
 
-    public init(travelDistance: CGFloat = .size16, numberOfShakes: CGFloat = DSShakeEffect.defaultShakeCount, animatableData: CGFloat) {
+    public init(
+        travelDistance: CGFloat = .size16,
+        numberOfShakes: CGFloat = DSShakeEffect.defaultShakeCount,
+        animatableData: CGFloat
+    ) {
         self.travelDistance = travelDistance
         self.numberOfShakes = numberOfShakes
         self.animatableData = animatableData

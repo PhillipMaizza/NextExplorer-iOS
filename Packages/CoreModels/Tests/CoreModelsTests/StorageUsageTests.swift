@@ -57,7 +57,8 @@ struct StorageUsageTests {
 struct ServerFeaturesVolumeUsageTests {
     @Test("decodes volumeUsage.enabled")
     func decodesFlag() throws {
-        let features = try CoreModelsFixture.serverFeaturesVolumeUsageEnabledUserVolumesDisabled.decode(ServerFeatures.self)
+        let features = try CoreModelsFixture.serverFeaturesVolumeUsageEnabledUserVolumesDisabled
+            .decode(ServerFeatures.self)
         #expect(features.isVolumeUsageEnabled)
         #expect(!features.isUserVolumesEnabled)
     }

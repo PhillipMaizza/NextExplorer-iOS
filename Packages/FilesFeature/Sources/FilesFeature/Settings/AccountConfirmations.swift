@@ -26,7 +26,8 @@ struct AccountConfirmations: ViewModifier {
     #endif
 
     private var isPromptPending: Bool {
-        store.isConfirmingSignOut || store.accountPendingRemoval != nil || store.changePassword != nil || store.twoFactor != nil
+        store.isConfirmingSignOut || store.accountPendingRemoval != nil || store.changePassword != nil || store
+            .twoFactor != nil
     }
 
     private var shouldShowPrompts: Bool {
@@ -111,7 +112,10 @@ struct AccountConfirmations: ViewModifier {
                     onDismiss: { store.send(.cancelSignOutTapped) }
                 )
             }
-            .dsAlert(isPresented: Binding(get: { shouldShowPrompts && store.accountPendingRemoval != nil }, set: { _ in })) {
+            .dsAlert(isPresented: Binding(
+                get: { shouldShowPrompts && store.accountPendingRemoval != nil },
+                set: { _ in }
+            )) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.accountSignOutTitle,
@@ -141,7 +145,9 @@ private func confirmationsPreview(_ mutate: (inout SettingsFeature.State) -> Voi
     mutate(&state)
     return Color.clear
         .previewCanvas(.sheet)
-        .modifier(AccountConfirmations(store: Store(initialState: state) { SettingsFeature() } withDependencies: { $0.filesClient = .previewValue }))
+        .modifier(AccountConfirmations(store: Store(initialState: state) { SettingsFeature() } withDependencies: {
+            $0.filesClient = .previewValue
+        }))
 }
 
 #Preview("Sign out") {

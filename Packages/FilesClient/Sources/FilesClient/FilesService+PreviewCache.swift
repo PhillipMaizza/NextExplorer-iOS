@@ -144,7 +144,13 @@ extension FilesService {
         request.setJSONContentType()
         request.httpBody = try Self.encode(DownloadRawFileBody(path: item.id))
         do {
-            return try await downloadToCache(request, directory: directory, fileURL: fileURL, metaURL: metaURL, item: item)
+            return try await downloadToCache(
+                request,
+                directory: directory,
+                fileURL: fileURL,
+                metaURL: metaURL,
+                item: item
+            )
         } catch let error as FilesClientError where error == .offline {
             if let fallback = OfflineCache.localURL(forPath: item.id, scope: scope) {
                 return fallback
@@ -323,7 +329,8 @@ extension FilesService {
             )) ?? []
             for slotDirectory in slotDirectories {
                 let contents = (try? fileManager.contentsOfDirectory(
-                    at: slotDirectory, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey], options: []
+                    at: slotDirectory, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey],
+                    options: []
                 )) ?? []
                 var slotSize: Int64 = 0
                 var modified = Date.distantPast
@@ -372,7 +379,12 @@ extension FilesService {
         for item: FileItem, namespace: String, scope: String = CacheAccountScope.current, in cachesRoot: URL? = nil
     ) -> URL {
         let cachesDirectory = cachesRoot
-            ?? (try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
+            ?? (try? FileManager.default.url(
+                for: .cachesDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: true
+            ))
             ?? FileManager.default.temporaryDirectory
         // The account is folded into the slot key so two accounts never serve each other's
         // downloaded preview/raw bytes for a matching item id.

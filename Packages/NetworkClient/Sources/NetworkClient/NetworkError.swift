@@ -44,7 +44,9 @@ extension NetworkError {
         default:
             break
         }
-        if certificateDropCodes.contains(urlError.code), let outcome = certificates?.recentOutcome(for: url ?? urlError.failingURL) {
+        if certificateDropCodes.contains(urlError.code),
+           let outcome = certificates?.recentOutcome(for: url ?? urlError.failingURL)
+        {
             return outcome == .missing ? .clientCertificateRequired : .clientCertificateRejected
         }
         if urlError.code == .timedOut, isMutation {

@@ -33,7 +33,10 @@
             XCTAssertTrue(photos.waitToAppear())
 
             // Default sort is name ascending with folders first: Documents before Photos.
-            XCTAssertTrue(precedesInReadingOrder(documents, photos), "Name ascending should place Documents before Photos")
+            XCTAssertTrue(
+                precedesInReadingOrder(documents, photos),
+                "Name ascending should place Documents before Photos"
+            )
 
             openMenu({ browse.moreMenu.tap() }, until: browse.sortMenuItem)
             browse.sortMenuItem.tap()
@@ -44,7 +47,10 @@
 
             // Name descending flips the folder group: Photos now before Documents.
             XCTAssertTrue(photos.waitToAppear())
-            XCTAssertTrue(precedesInReadingOrder(photos, documents), "Name descending should place Photos before Documents")
+            XCTAssertTrue(
+                precedesInReadingOrder(photos, documents),
+                "Name descending should place Photos before Documents"
+            )
         }
 
         func testPullToRefreshKeepsTheListingWithoutAToast() {
@@ -62,7 +68,10 @@
 
             // iOS confirms a refresh with a haptic only; the listing stays and no toast covers it.
             XCTAssertTrue(documents.waitToAppear(), "The listing should still be there after a refresh")
-            XCTAssertFalse(browse.syncCompletedToast.appears(within: UITestTimeout.short), "iOS no longer raises a sync toast")
+            XCTAssertFalse(
+                browse.syncCompletedToast.appears(within: UITestTimeout.short),
+                "iOS no longer raises a sync toast"
+            )
         }
 
         /// Whether `a` comes before `b` in reading order: higher on screen, or same row and further

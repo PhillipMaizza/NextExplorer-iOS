@@ -15,8 +15,20 @@ struct TrashAdminTests {
     func systemSettingsCarryTrashAndVersions() throws {
         let settings = try CoreModelsFixture.trashAdminSystemSettingsTrashAndVersions.decode(SystemSettings.self)
 
-        #expect(settings.trash == TrashSettings(isEnabled: false, retentionDays: 14, maxPercent: 25, maxBytes: 5 * TrashSettings.bytesPerGiB))
-        #expect(settings.versions == VersionsSettings(isEnabled: true, keepAllHours: 12, hourlyDays: 3, dailyDays: 20, maxPerFile: 80, sessionCheckpointMinutes: 5))
+        #expect(settings.trash == TrashSettings(
+            isEnabled: false,
+            retentionDays: 14,
+            maxPercent: 25,
+            maxBytes: 5 * TrashSettings.bytesPerGiB
+        ))
+        #expect(settings.versions == VersionsSettings(
+            isEnabled: true,
+            keepAllHours: 12,
+            hourlyDays: 3,
+            dailyDays: 20,
+            maxPerFile: 80,
+            sessionCheckpointMinutes: 5
+        ))
     }
 
     @Test
@@ -118,15 +130,20 @@ struct TrashAdminTests {
 
         #expect(result.zoneID == "z1")
         #expect(result.violationCount == 3)
-        #expect(try CoreModelsFixture.trashAdminVerificationEmptyViolations.decode(TrashVerification.self).violationCount == 0)
-        #expect(try CoreModelsFixture.trashAdminVerificationMissingViolations.decode(TrashVerification.self).violationCount == 0)
+        #expect(try CoreModelsFixture.trashAdminVerificationEmptyViolations.decode(TrashVerification.self)
+            .violationCount == 0)
+        #expect(try CoreModelsFixture.trashAdminVerificationMissingViolations.decode(TrashVerification.self)
+            .violationCount == 0)
     }
 
     // MARK: Patch
 
     @Test
     func aTrashAndVersionsPatchCarriesOnlyThoseSections() throws {
-        let json = try encoded(SystemSettingsPatch(trash: TrashSettings(retentionDays: 7), versions: VersionsSettings(maxPerFile: 10)))
+        let json = try encoded(SystemSettingsPatch(
+            trash: TrashSettings(retentionDays: 7),
+            versions: VersionsSettings(maxPerFile: 10)
+        ))
 
         #expect(Set(json.keys) == ["trash", "versions"])
         let trash = try #require(json["trash"] as? [String: Any])

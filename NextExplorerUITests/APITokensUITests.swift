@@ -13,7 +13,10 @@
             let screen = APITokensScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-            XCTAssertTrue(scrollTo(screen.row, in: app), "API Tokens should be its own row in Settings, not hidden in the account")
+            XCTAssertTrue(
+                scrollTo(screen.row, in: app),
+                "API Tokens should be its own row in Settings, not hidden in the account"
+            )
             screen.row.tap()
             XCTAssertTrue(screen.emptyTitle.waitToAppear(), "An account with no tokens should open on the empty state")
             return screen
@@ -47,7 +50,10 @@
             let screen = openTokens()
             makeToken(screen, password: UITestCase.Fixture.wrongPassword)
 
-            XCTAssertTrue(screen.wrongPasswordMessage.waitToAppear(), "A wrong password should show the server's message")
+            XCTAssertTrue(
+                screen.wrongPasswordMessage.waitToAppear(),
+                "A wrong password should show the server's message"
+            )
             XCTAssertFalse(screen.issuedTitle.appears(), "A wrong password must not make a token")
         }
 

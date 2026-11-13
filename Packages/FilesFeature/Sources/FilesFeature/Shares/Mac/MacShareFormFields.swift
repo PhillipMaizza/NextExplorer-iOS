@@ -68,10 +68,15 @@
             MacSettingsRow(L10n.CreateShare.fieldExpires) {
                 Toggle(L10n.CreateShare.toggleSetExpiration, isOn: isExpiryOn)
                 if isExpiryOn.wrappedValue {
-                    DatePicker(L10n.CreateShare.fieldExpires, selection: expiresAt, in: Date()..., displayedComponents: [.date, .hourAndMinute])
-                        .labelsHidden()
-                        .datePickerStyle(.field)
-                        .fixedSize()
+                    DatePicker(
+                        L10n.CreateShare.fieldExpires,
+                        selection: expiresAt,
+                        in: Date()...,
+                        displayedComponents: [.date, .hourAndMinute]
+                    )
+                    .labelsHidden()
+                    .datePickerStyle(.field)
+                    .fixedSize()
                 }
             }
         }
@@ -89,7 +94,10 @@
                 ScrollView {
                     VStack(alignment: .leading, spacing: .space4) {
                         ForEach(users) { user in
-                            Toggle(isOn: Binding(get: { selectedUserIDs.contains(user.id) }, set: { _ in onToggleUser(user.id) })) {
+                            Toggle(isOn: Binding(
+                                get: { selectedUserIDs.contains(user.id) },
+                                set: { _ in onToggleUser(user.id) }
+                            )) {
                                 HStack(spacing: .space8) {
                                     AvatarView(displayName: user.displayName ?? user.username, size: Metrics.avatarSize)
                                     Text(user.displayName ?? user.username).lineLimit(1)

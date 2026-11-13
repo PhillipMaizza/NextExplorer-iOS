@@ -117,8 +117,14 @@ private struct OfflineManageRow: View {
                 initialState: {
                     var state = OfflineManageFeature.State()
                     state.usages = [
-                        OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: "Documents", isDirectory: true), sizeBytes: 45_000_000),
-                        OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: "Photos/trip.jpg", isDirectory: false), sizeBytes: 3_200_000),
+                        OfflinePinnedRootUsage(
+                            root: OfflinePinnedRoot(path: "Documents", isDirectory: true),
+                            sizeBytes: 45_000_000
+                        ),
+                        OfflinePinnedRootUsage(
+                            root: OfflinePinnedRoot(path: "Photos/trip.jpg", isDirectory: false),
+                            sizeBytes: 3_200_000
+                        ),
                     ]
                     return state
                 }()

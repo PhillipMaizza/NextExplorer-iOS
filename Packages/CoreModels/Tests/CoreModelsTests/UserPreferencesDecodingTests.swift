@@ -45,15 +45,25 @@ struct UserPreferencesDecodingTests {
         calendar.timeZone = .gmt
         let now = MockDate.date // 2023-11-14T22:13:20Z, so one month is November's 30 days
 
-        let inThreeDays = UserPreferences.ShareExpiration(value: 3, unit: .days).expirationDate(from: now, calendar: calendar)
+        let inThreeDays = UserPreferences.ShareExpiration(value: 3, unit: .days).expirationDate(
+            from: now,
+            calendar: calendar
+        )
         #expect(inThreeDays == now.addingTimeInterval(3 * 86_400))
 
-        let inTwoWeeks = UserPreferences.ShareExpiration(value: 2, unit: .weeks).expirationDate(from: now, calendar: calendar)
+        let inTwoWeeks = UserPreferences.ShareExpiration(value: 2, unit: .weeks).expirationDate(
+            from: now,
+            calendar: calendar
+        )
         #expect(inTwoWeeks == now.addingTimeInterval(14 * 86_400))
 
-        let inOneMonth = UserPreferences.ShareExpiration(value: 1, unit: .months).expirationDate(from: now, calendar: calendar)
+        let inOneMonth = UserPreferences.ShareExpiration(value: 1, unit: .months).expirationDate(
+            from: now,
+            calendar: calendar
+        )
         #expect(inOneMonth == now.addingTimeInterval(30 * 86_400)) // November has 30 days
 
-        #expect(UserPreferences.ShareExpiration(value: 0, unit: .days).expirationDate(from: now, calendar: calendar) == nil)
+        #expect(UserPreferences.ShareExpiration(value: 0, unit: .days)
+            .expirationDate(from: now, calendar: calendar) == nil)
     }
 }

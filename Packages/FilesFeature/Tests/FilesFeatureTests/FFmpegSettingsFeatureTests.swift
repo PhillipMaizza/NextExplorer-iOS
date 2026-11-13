@@ -84,7 +84,10 @@ struct FFmpegSettingsFeatureTests {
 
     @Test
     func aReloadFailureKeepsTheFormAndShowsTheMessage() async {
-        let store = store(state: loadedState(FFmpegSettings(ffmpegPath: "/a")), settings: { throw FilesClientError.timedOut })
+        let store = store(
+            state: loadedState(FFmpegSettings(ffmpegPath: "/a")),
+            settings: { throw FilesClientError.timedOut }
+        )
 
         await store.send(.onAppear)
         await store.receive(\.loadResponse.failure) { $0.errorMessage = L10n.Error.timedOut }
@@ -125,7 +128,10 @@ struct FFmpegSettingsFeatureTests {
         await store.send(.ffmpegPathChanged("  /usr/bin/ffmpeg ")) { $0.draft.ffmpegPath = "  /usr/bin/ffmpeg " }
         await store.send(.ffprobePathChanged("\t/usr/bin/ffprobe")) { $0.draft.ffprobePath = "\t/usr/bin/ffprobe" }
 
-        #expect(store.state.trimmedDraft == FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: "/usr/bin/ffprobe"))
+        #expect(store.state.trimmedDraft == FFmpegSettings(
+            ffmpegPath: Constants.ffmpegPath,
+            ffprobePath: "/usr/bin/ffprobe"
+        ))
     }
 
     @Test
@@ -240,9 +246,18 @@ struct FFmpegSettingsFeatureTests {
     }
 
     @Test(arguments: [
-        TrimCase(draft: FFmpegSettings(ffmpegPath: "  /usr/bin/ffmpeg ", ffprobePath: ""), trimmed: FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: "")),
-        TrimCase(draft: FFmpegSettings(ffmpegPath: "/a", ffprobePath: "\t/b\t"), trimmed: FFmpegSettings(ffmpegPath: "/a", ffprobePath: "/b")),
-        TrimCase(draft: FFmpegSettings(ffmpegPath: " /opt/my tools/ffmpeg", ffprobePath: ""), trimmed: FFmpegSettings(ffmpegPath: "/opt/my tools/ffmpeg", ffprobePath: "")),
+        TrimCase(
+            draft: FFmpegSettings(ffmpegPath: "  /usr/bin/ffmpeg ", ffprobePath: ""),
+            trimmed: FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: "")
+        ),
+        TrimCase(
+            draft: FFmpegSettings(ffmpegPath: "/a", ffprobePath: "\t/b\t"),
+            trimmed: FFmpegSettings(ffmpegPath: "/a", ffprobePath: "/b")
+        ),
+        TrimCase(
+            draft: FFmpegSettings(ffmpegPath: " /opt/my tools/ffmpeg", ffprobePath: ""),
+            trimmed: FFmpegSettings(ffmpegPath: "/opt/my tools/ffmpeg", ffprobePath: "")
+        ),
     ])
     func spacesAroundAPathAreTrimmedOnlyWhenItIsSent(_ testCase: TrimCase) {
         var state = loadedState()

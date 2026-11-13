@@ -91,7 +91,8 @@ struct FilesService: Sendable {
         let decoder = makeDecoder()
         let events = data.split(separator: UInt8(ascii: "\n")).compactMap { line -> (ArchiveStreamEvent, Data)? in
             let lineData = Data(line)
-            guard let event = try? decoder.decode(ArchiveStreamEvent.self, from: lineData), event.type != nil else { return nil }
+            guard let event = try? decoder.decode(ArchiveStreamEvent.self, from: lineData),
+                  event.type != nil else { return nil }
             return (event, lineData)
         }
         guard !events.isEmpty else {
@@ -176,7 +177,9 @@ struct FilesService: Sendable {
     /// `{ message }`. Accept all three.
     static func errorMessage(from data: Data) -> String? {
         guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
-        if let error = object[ErrorBodyKey.error] as? [String: Any], let message = error[ErrorBodyKey.message] as? String {
+        if let error = object[ErrorBodyKey.error] as? [String: Any],
+           let message = error[ErrorBodyKey.message] as? String
+        {
             return message
         }
         if let error = object[ErrorBodyKey.error] as? String {
@@ -234,7 +237,10 @@ struct FilesService: Sendable {
             if let date = iso8601FormatterNoFractional.date(from: dateString) {
                 return date
             }
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid ISO8601 date: \(dateString)")
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Invalid ISO8601 date: \(dateString)"
+            )
         }
         return decoder
     }()

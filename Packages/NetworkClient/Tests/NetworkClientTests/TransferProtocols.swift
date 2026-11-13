@@ -14,7 +14,11 @@ final class NonHTTPURLProtocol: URLProtocol {
 
     override func startLoading() {
         guard let url = request.url else { return }
-        client?.urlProtocol(self, didReceive: URLResponse(url: url, mimeType: nil, expectedContentLength: 0, textEncodingName: nil), cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(
+            self,
+            didReceive: URLResponse(url: url, mimeType: nil, expectedContentLength: 0, textEncodingName: nil),
+            cacheStoragePolicy: .notAllowed
+        )
         client?.urlProtocolDidFinishLoading(self)
     }
 

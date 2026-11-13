@@ -134,16 +134,58 @@ struct SearchTermTests {
 
     @Test("Results are ordered as the server orders them: names closest and shortest first, then contents by path")
     func resultsAreOrderedLikeTheServer() {
-        let annex = SearchResultItem(name: "vieux-rapport-2019-annexe.pdf", path: "", kind: SearchResultItem.fileKind, isNameMatch: true)
-        let pdf = SearchResultItem(name: TestSearch.rankPrefixFile, path: TestFolder.docs, kind: SearchResultItem.fileKind, isNameMatch: true)
-        let folder = SearchResultItem(name: TestSearch.rankPrefixFolder, path: "", kind: SearchResultItem.directoryKind, isNameMatch: true)
+        let annex = SearchResultItem(
+            name: "vieux-rapport-2019-annexe.pdf",
+            path: "",
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
+        let pdf = SearchResultItem(
+            name: TestSearch.rankPrefixFile,
+            path: TestFolder.docs,
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
+        let folder = SearchResultItem(
+            name: TestSearch.rankPrefixFolder,
+            path: "",
+            kind: SearchResultItem.directoryKind,
+            isNameMatch: true
+        )
         let exact = SearchResultItem(name: TestSearch.rankTerm, path: Constants.z, kind: SearchResultItem.fileKind)
-        let copy = SearchResultItem(name: TestSearch.rankPrefixFile, path: Constants.archive, kind: SearchResultItem.fileKind, isNameMatch: true)
-        let notes = SearchResultItem(name: "notes.txt", path: TestFolder.docs, kind: SearchResultItem.fileKind, matchLine: TestSearch.rankTerm, matchLineNumber: 2, isNameMatch: false, isContentMatch: true)
-        let memo = SearchResultItem(name: "memo.txt", path: "A", kind: SearchResultItem.fileKind, isNameMatch: false, isContentMatch: true)
+        let copy = SearchResultItem(
+            name: TestSearch.rankPrefixFile,
+            path: Constants.archive,
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
+        let notes = SearchResultItem(
+            name: "notes.txt",
+            path: TestFolder.docs,
+            kind: SearchResultItem.fileKind,
+            matchLine: TestSearch.rankTerm,
+            matchLineNumber: 2,
+            isNameMatch: false,
+            isContentMatch: true
+        )
+        let memo = SearchResultItem(
+            name: "memo.txt",
+            path: "A",
+            kind: SearchResultItem.fileKind,
+            isNameMatch: false,
+            isContentMatch: true
+        )
 
         let ranked = SearchTerm(TestSearch.rankTerm).ranked([notes, annex, pdf, memo, folder, exact, copy])
 
-        #expect(ranked.map(\.id) == ["Z/rapport", "Rapports", "Archive/rapport.pdf", "Docs/rapport.pdf", "vieux-rapport-2019-annexe.pdf", "A/memo.txt", "Docs/notes.txt"])
+        #expect(ranked.map(\.id) == [
+            "Z/rapport",
+            "Rapports",
+            "Archive/rapport.pdf",
+            "Docs/rapport.pdf",
+            "vieux-rapport-2019-annexe.pdf",
+            "A/memo.txt",
+            "Docs/notes.txt",
+        ])
     }
 }

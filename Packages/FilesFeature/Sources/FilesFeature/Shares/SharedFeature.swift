@@ -143,7 +143,11 @@ public struct SharedFeature {
                     (lhs.expiresAt ?? .distantFuture) < (rhs.expiresAt ?? .distantFuture)
                 }
             }
-            return IdentifiedArray(sortDirection == .ascending ? sorted : sorted.reversed(), id: \.id, uniquingIDsWith: { first, _ in first })
+            return IdentifiedArray(
+                sortDirection == .ascending ? sorted : sorted.reversed(),
+                id: \.id,
+                uniquingIDsWith: { first, _ in first }
+            )
         }
 
         public var activeShares: IdentifiedArrayOf<Share> {
@@ -169,7 +173,11 @@ public struct SharedFeature {
             for segment: Segment
         ) -> (all: IdentifiedArrayOf<Share>, active: IdentifiedArrayOf<Share>, expired: IdentifiedArrayOf<Share>) {
             let all = displayedShares(for: segment)
-            let active = IdentifiedArray(all.filter { !isExpired($0) }, id: \.id, uniquingIDsWith: { first, _ in first })
+            let active = IdentifiedArray(
+                all.filter { !isExpired($0) },
+                id: \.id,
+                uniquingIDsWith: { first, _ in first }
+            )
             let expired = IdentifiedArray(all.filter(isExpired), id: \.id, uniquingIDsWith: { first, _ in first })
             return (all, active, expired)
         }
@@ -323,8 +331,19 @@ public struct SharedFeature {
                 let serverURL = state.serverURL
                 let cacheScope = state.cacheScope
                 return .run { send in
-                    let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: serverURL, scope: cacheScope, as: [Share].self)
-                    await send(.offlineSharesResolved(segment, cached: cached?.value, fetchedAt: cached?.fetchedAt, error: error))
+                    let cached = ListCache.load(
+                        jsonCacheStore,
+                        Self.cacheNamespace(segment),
+                        serverURL: serverURL,
+                        scope: cacheScope,
+                        as: [Share].self
+                    )
+                    await send(.offlineSharesResolved(
+                        segment,
+                        cached: cached?.value,
+                        fetchedAt: cached?.fetchedAt,
+                        error: error
+                    ))
                 }
                 .cancellable(id: CancelID.load(segment))
 
@@ -432,7 +451,13 @@ public struct SharedFeature {
             let serverURL = state.serverURL
             let cacheScope = state.cacheScope
             paint = .run { send in
-                guard let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: serverURL, scope: cacheScope, as: [Share].self) else { return }
+                guard let cached = ListCache.load(
+                    jsonCacheStore,
+                    Self.cacheNamespace(segment),
+                    serverURL: serverURL,
+                    scope: cacheScope,
+                    as: [Share].self
+                ) else { return }
                 await send(.cachedSharesPainted(segment, cached.value))
             }
         } else {
@@ -457,7 +482,13 @@ public struct SharedFeature {
     /// Persists a segment's current list as its offline copy.
     private func syncCache(_ state: State, segment: Segment) {
         let shares = segment == .byMe ? state.byMe : state.withMe
-        ListCache.save(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, scope: state.cacheScope, value: Array(shares))
+        ListCache.save(
+            jsonCacheStore,
+            Self.cacheNamespace(segment),
+            serverURL: state.serverURL,
+            scope: state.cacheScope,
+            value: Array(shares)
+        )
     }
 
     /// Best-effort: recipient names are a nicety, not worth surfacing an error for.

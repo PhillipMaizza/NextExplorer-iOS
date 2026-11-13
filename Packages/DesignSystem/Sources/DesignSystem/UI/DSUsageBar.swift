@@ -37,8 +37,14 @@ public struct DSUsageBar: View {
                 Capsule()
                     .fill(fillColor)
                     .frame(width: max(Constants.height, proxy.size.width * displayFraction))
-                    .animation(reduceMotion ? nil : .easeOut(duration: Constants.fillAnimationDuration), value: displayFraction)
-                    .animation(reduceMotion ? nil : .easeInOut(duration: Constants.fillAnimationDuration), value: fillColor)
+                    .animation(
+                        reduceMotion ? nil : .easeOut(duration: Constants.fillAnimationDuration),
+                        value: displayFraction
+                    )
+                    .animation(
+                        reduceMotion ? nil : .easeInOut(duration: Constants.fillAnimationDuration),
+                        value: fillColor
+                    )
             }
         }
         .frame(height: Constants.height)

@@ -84,7 +84,16 @@ struct GridCellView: View {
         self.isOpening = isOpening
     }
 
-    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, iconSize: CGFloat = Constants.defaultIconSize, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false, isAvailableOffline: Bool = false) {
+    init(
+        item: FileItem,
+        isFavorite: Bool = false,
+        serverURL: URL? = nil,
+        showThumbnails: Bool = false,
+        iconSize: CGFloat = Constants.defaultIconSize,
+        matchedSource: PreviewMatchedSource? = nil,
+        isOpening: Bool = false,
+        isAvailableOffline: Bool = false
+    ) {
         self.isAvailableOffline = isAvailableOffline
         name = item.name
         isDirectory = item.isDirectory
@@ -136,7 +145,10 @@ struct GridCellView: View {
                             .background(
                                 Circle()
                                     .fill(Color.backgroundPrimary)
-                                    .frame(width: Constants.favoriteBadgeBackgroundSize, height: Constants.favoriteBadgeBackgroundSize)
+                                    .frame(
+                                        width: Constants.favoriteBadgeBackgroundSize,
+                                        height: Constants.favoriteBadgeBackgroundSize
+                                    )
                                     .shadow(radius: Constants.favoriteBadgeShadowRadius)
                             )
                             .symbolEffect(.bounce, value: isFavorite)
@@ -156,7 +168,10 @@ struct GridCellView: View {
                             .background(
                                 Circle()
                                     .fill(Color.backgroundPrimary)
-                                    .frame(width: Constants.favoriteBadgeBackgroundSize, height: Constants.favoriteBadgeBackgroundSize)
+                                    .frame(
+                                        width: Constants.favoriteBadgeBackgroundSize,
+                                        height: Constants.favoriteBadgeBackgroundSize
+                                    )
                                     .shadow(radius: Constants.favoriteBadgeShadowRadius)
                             )
                             .symbolEffect(.bounce, value: isAvailableOffline)
@@ -164,8 +179,20 @@ struct GridCellView: View {
                             .accessibilityLabel(L10n.Offline.badgeAvailable)
                     }
                 }
-                .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
-                .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isAvailableOffline)
+                .animation(
+                    .spring(
+                        response: Constants.favoriteSpringResponse,
+                        dampingFraction: Constants.favoriteSpringDamping
+                    ),
+                    value: isFavorite
+                )
+                .animation(
+                    .spring(
+                        response: Constants.favoriteSpringResponse,
+                        dampingFraction: Constants.favoriteSpringDamping
+                    ),
+                    value: isAvailableOffline
+                )
                 // Only favoriting buzzes: un-favoriting isn't a "win" worth celebrating the same way.
                 .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
             Text(displayName)
@@ -179,7 +206,8 @@ struct GridCellView: View {
                 DSSpinner()
                     .controlSize(.small)
                     .padding(Constants.favoriteBadgePadding)
-                    .background(Circle().fill(Color.backgroundPrimary).shadow(radius: Constants.favoriteBadgeShadowRadius))
+                    .background(Circle().fill(Color.backgroundPrimary)
+                        .shadow(radius: Constants.favoriteBadgeShadowRadius))
             }
         }
     }
@@ -244,7 +272,14 @@ struct GridCellView: View {
     // fallback icon as any other file: it documents/exercises the code path rather than
     // showing an actual image.
     GridCellView(
-        item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+        item: FileItem(
+            name: "vacation.jpg",
+            path: "",
+            dateModified: Date(),
+            size: 2_400_000,
+            kind: "jpg",
+            supportsThumbnail: true
+        ),
         serverURL: URL(string: "https://nextexplorer.example.com"),
         showThumbnails: true
     )
@@ -252,7 +287,14 @@ struct GridCellView: View {
 
 #Preview("Thumbnails off (falls back to the plain icon even though the file supports one)") {
     GridCellView(
-        item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+        item: FileItem(
+            name: "vacation.jpg",
+            path: "",
+            dateModified: Date(),
+            size: 2_400_000,
+            kind: "jpg",
+            supportsThumbnail: true
+        ),
         serverURL: URL(string: "https://nextexplorer.example.com"),
         showThumbnails: false
     )

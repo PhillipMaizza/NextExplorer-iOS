@@ -30,13 +30,16 @@ public struct DSInfoCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(Constants.padding)
-        .background(RoundedRectangle(cornerRadius: Constants.cornerRadius).fill(Color.attention.opacity(Constants.fillAlpha)))
+        .background(RoundedRectangle(cornerRadius: Constants.cornerRadius)
+            .fill(Color.attention.opacity(Constants.fillAlpha)))
     }
 }
 
 #Preview {
     VStack(spacing: .space16) {
-        DSInfoCard("This connection isn't encrypted. Your password and session are sent in the clear over the local network.")
+        DSInfoCard(
+            "This connection isn't encrypted. Your password and session are sent in the clear over the local network."
+        )
         DSInfoCard("Short note.")
     }
     .padding()

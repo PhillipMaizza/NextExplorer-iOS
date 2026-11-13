@@ -6,20 +6,36 @@ import TestUtils
 @Suite("CachedDirectory")
 struct CachedDirectoryTests {
     private func access() -> FileAccess {
-        FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: true, canDownload: true)
+        FileAccess(
+            canRead: true,
+            canWrite: false,
+            canUpload: false,
+            canDelete: false,
+            canShare: true,
+            canDownload: true
+        )
     }
 
     private func listing(etag: String?) -> CachedDirectory {
         CachedDirectory(
             path: TestFolder.docs,
-            items: [FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 12, kind: TestKind.text)],
+            items: [FileItem(
+                name: TestFile.aText,
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 12,
+                kind: TestKind.text
+            )],
             access: access(),
             fetchedAt: MockDate.date,
             etag: etag
         )
     }
 
-    @Test("an entry survives being written to disk and read back, with or without an ETag", arguments: [TestETag.first, nil])
+    @Test(
+        "an entry survives being written to disk and read back, with or without an ETag",
+        arguments: [TestETag.first, nil]
+    )
     func roundTripKeepsEtag(etag: String?) throws {
         let original = listing(etag: etag)
         let data = try JSONEncoder().encode(original)

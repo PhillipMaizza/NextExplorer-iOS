@@ -34,8 +34,12 @@
                             }
                         }
                         if favoritePaths.contains(result.id) {
-                            MacTableFolderIcon(image: IconKit.starFill, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
-                                .accessibilityLabel(L10n.Favorites.accessibilityBadge)
+                            MacTableFolderIcon(
+                                image: IconKit.starFill,
+                                tint: Color.accent,
+                                size: MacBrowseTableMetrics.badgeSize
+                            )
+                            .accessibilityLabel(L10n.Favorites.accessibilityBadge)
                         }
                     }
                     .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
@@ -58,8 +62,12 @@
             .contextMenu(forSelectionType: SearchResultItem.ID.self, menu: { ids in
                 // Finder's search results menu: open the hit, show where it lives, copy its path.
                 if ids.count == 1, let result = results.first(where: { $0.id == ids.first }) {
-                    SearchResultMenu(result: result, onOpen: { onOpen(result) }, onShowInFolder: { onShowInFolder(result) })
-                        .labelStyle(.titleAndIcon)
+                    SearchResultMenu(
+                        result: result,
+                        onOpen: { onOpen(result) },
+                        onShowInFolder: { onShowInFolder(result) }
+                    )
+                    .labelStyle(.titleAndIcon)
                 }
             }, primaryAction: { ids in
                 guard ids.count == 1, let result = results.first(where: { $0.id == ids.first }) else { return }
@@ -86,7 +94,13 @@
         MacSearchResultsTable(
             results: [
                 SearchResultItem(name: "Trips", path: "Photos", kind: "dir", isNameMatch: true),
-                SearchResultItem(name: "Beach.jpg", path: "Photos/Trips", kind: "file", isNameMatch: true, isContentMatch: true),
+                SearchResultItem(
+                    name: "Beach.jpg",
+                    path: "Photos/Trips",
+                    kind: "file",
+                    isNameMatch: true,
+                    isContentMatch: true
+                ),
                 SearchResultItem(
                     name: "Quarterly Report.txt", path: "Documents", kind: "file",
                     matchLine: "    vacation budget", matchLineNumber: 12, isNameMatch: false, isContentMatch: true

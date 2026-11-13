@@ -37,14 +37,20 @@ extension AppSuites {
 
         /// The session shown straight after a launch or a switch, before `me` confirms the user.
         private func optimistic(_ serverURL: URL, username: String) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: User(id: "", username: username, email: nil)))
+            .authenticated(AuthenticatedFeature.State(
+                serverURL: serverURL,
+                user: User(id: "", username: username, email: nil)
+            ))
         }
 
         private func confirmed(_ serverURL: URL, _ user: User) -> AppFeature.Destination.State {
             .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
         }
 
-        private func updateReview(_ state: inout AppFeature.State, _ update: (inout UploadReviewFeature.State?) -> Void) {
+        private func updateReview(
+            _ state: inout AppFeature.State,
+            _ update: (inout UploadReviewFeature.State?) -> Void
+        ) {
             state.destination.modify(\.authenticated) { update(&$0.mainTab.browse.root.uploadReview) }
         }
 
@@ -87,7 +93,9 @@ extension AppSuites {
             #expect(recorder.events.value.isEmpty, "a valid session wipes nothing")
         }
 
-        @Test("A restored session the server rejects, with no other account, falls back to login and wipes the account then everything")
+        @Test(
+            "A restored session the server rejects, with no other account, falls back to login and wipes the account then everything"
+        )
         func restoredSessionRejectedFallsBackToLogin() async {
             let confirmation = AsyncGate()
             let store = makeStore {
@@ -113,7 +121,8 @@ extension AppSuites {
             await store.finish()
 
             #expect(
-                recorder.events.value == [.activeSessionCleared] + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
+                recorder.events.value == [.activeSessionCleared] + WipeRecorder
+                    .accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
             )
         }
 
@@ -178,7 +187,10 @@ extension AppSuites {
                 }
             }
 
-            await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
+            await store.send(.destination(.unauthenticated(.delegate(.authenticated(
+                AppFixtures.userA,
+                AppFixtures.serverA
+            ))))) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
                 $0.didAuthenticateFromLogin = true
                 $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
@@ -209,7 +221,9 @@ extension AppSuites {
             #expect(recorder.events.value == WipeRecorder.fullTeardown + WipeRecorder.lastSignOutCredentialWipe)
         }
 
-        @Test("Switching to another account remounts the authenticated UI, stops the left account's offline work and wipes no cache")
+        @Test(
+            "Switching to another account remounts the authenticated UI, stops the left account's offline work and wipes no cache"
+        )
         func switchingAccountRemountsWithoutClearingCache() async {
             let confirmation = AsyncGate()
             let accountList = AsyncGate()
@@ -243,7 +257,10 @@ extension AppSuites {
 
             #expect(
                 recorder.events.value == WipeRecorder.prune(
-                    origins: [AppFixtures.originA, AppFixtures.originB], accounts: [AppFixtures.accountA, AppFixtures.accountB]
+                    origins: [AppFixtures.originA, AppFixtures.originB], accounts: [
+                        AppFixtures.accountA,
+                        AppFixtures.accountB,
+                    ]
                 ),
                 "both accounts keep their caches, only what belongs to no remaining account is pruned"
             )
@@ -260,7 +277,10 @@ extension AppSuites {
 
             await store.finish()
 
-            #expect(recorder.events.value == WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA]))
+            #expect(recorder.events.value == WipeRecorder.prune(
+                origins: [AppFixtures.originA],
+                accounts: [AppFixtures.accountA]
+            ))
         }
 
         // MARK: Shared files
@@ -275,7 +295,9 @@ extension AppSuites {
             }
         }
 
-        @Test("Files shared in while signed in go straight to the tab shell, which drains the inbox and stages them for review")
+        @Test(
+            "Files shared in while signed in go straight to the tab shell, which drains the inbox and stages them for review"
+        )
         func incomingFilesWhileSignedInAreHandedOver() async {
             let scan = URL(fileURLWithPath: Constants.scanPath)
             let prepared = PickedFile(id: TestID.uuid(), fileURL: scan, fileName: "Scan.pdf", size: 10)
@@ -311,7 +333,8 @@ extension AppSuites {
                     $0?.preparingCount = 0
                 }
             }
-            await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.stagingBatchFinished)
+            await store
+                .receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.stagingBatchFinished)
 
             await store.finish()
 
@@ -341,9 +364,15 @@ extension AppSuites {
                 $0.authClient.listSessionsOrThrow = { [credentialsA, credentialsB] in [credentialsA, credentialsB] }
             }
 
-            await store.send(.addAccount(.presented(.delegate(.authenticated(AppFixtures.userB, AppFixtures.serverB))))) {
+            await store.send(.addAccount(.presented(.delegate(.authenticated(
+                AppFixtures.userB,
+                AppFixtures.serverB
+            ))))) {
                 $0.addAccount = nil
-                $0.pendingAddedAccount = AppFeature.AddedAccount(user: AppFixtures.userB, serverURL: AppFixtures.serverB)
+                $0.pendingAddedAccount = AppFeature.AddedAccount(
+                    user: AppFixtures.userB,
+                    serverURL: AppFixtures.serverB
+                )
             }
 
             #expect(recorder.events.value.isEmpty, "nothing is adopted or wiped while the sheet is still dismissing")
@@ -360,14 +389,19 @@ extension AppSuites {
 
             #expect(
                 recorder.events.value == WipeRecorder.prune(
-                    origins: [AppFixtures.originA, AppFixtures.originB], accounts: [AppFixtures.accountA, AppFixtures.accountB]
+                    origins: [AppFixtures.originA, AppFixtures.originB], accounts: [
+                        AppFixtures.accountA,
+                        AppFixtures.accountB,
+                    ]
                 )
             )
         }
 
         // MARK: Session expiry
 
-        @Test("A mid session 401 with another account signed in wipes only the expired account, twice, and switches to the next")
+        @Test(
+            "A mid session 401 with another account signed in wipes only the expired account, twice, and switches to the next"
+        )
         func midSessionExpiryFallsThroughToNextAccount() async {
             let json = JSONCacheStore.inMemory()
             json.bound(to: AppFixtures.accountA).write(key: TestCacheKey.favorites, data: Data("a".utf8))
@@ -446,7 +480,8 @@ extension AppSuites {
             await store.finish()
 
             #expect(
-                recorder.events.value == [.activeSessionCleared] + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
+                recorder.events.value == [.activeSessionCleared] + WipeRecorder
+                    .accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
             )
         }
 

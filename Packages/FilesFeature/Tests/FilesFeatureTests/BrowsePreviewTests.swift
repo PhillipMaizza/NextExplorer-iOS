@@ -95,9 +95,17 @@ struct BrowsePreviewTests {
     @Test(
         "A previewable document or an SVG downloads through the preview endpoint, a Word document through the unrestricted download",
         arguments: [
-            DownloadCase(name: TestFile.report, endpoint: "previewFile", fileURL: URL(fileURLWithPath: "/tmp/report.pdf")),
+            DownloadCase(
+                name: TestFile.report,
+                endpoint: "previewFile",
+                fileURL: URL(fileURLWithPath: "/tmp/report.pdf")
+            ),
             DownloadCase(name: "logo.svg", endpoint: "previewFile", fileURL: URL(fileURLWithPath: "/tmp/logo.svg")),
-            DownloadCase(name: "report.docx", endpoint: "downloadRawFile", fileURL: URL(fileURLWithPath: "/tmp/report.docx")),
+            DownloadCase(
+                name: "report.docx",
+                endpoint: "downloadRawFile",
+                fileURL: URL(fileURLWithPath: "/tmp/report.docx")
+            ),
         ]
     )
     func rowTappedOnADownloadedPreviewFetchesThroughTheRightEndpoint(_ download: DownloadCase) async {
@@ -239,7 +247,8 @@ struct BrowsePreviewTests {
         state.textContent = "hello"
         let saved = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.saveTextContent = { _, path, content in saved.withValue { $0.append("\(path): \(content)") } }
+            $0.filesClient
+                .saveTextContent = { _, path, content in saved.withValue { $0.append("\(path): \(content)") } }
         }
 
         await store.send(.textSaveTapped("hello world")) {

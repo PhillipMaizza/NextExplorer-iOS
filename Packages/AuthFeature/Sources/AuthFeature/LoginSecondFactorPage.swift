@@ -53,7 +53,9 @@ struct LoginSecondFactorPage: View {
                     VStack(alignment: .leading, spacing: .space8) {
                         Text(L10n.Login.codeTitle)
                             .type(.headline3)
-                        Text(store.codeMode == .authenticator ? L10n.Login.codeIntroAuthenticator : L10n.Login.codeIntroRecovery)
+                        Text(store.codeMode == .authenticator
+                            ? L10n.Login.codeIntroAuthenticator
+                            : L10n.Login.codeIntroRecovery)
                             .type(.body2(.regular), style: .secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -212,7 +214,10 @@ struct LoginSecondFactorPage: View {
     }
 
     @MainActor
-    private func previewPage(_ state: LoginFormFeature.State, sizeClass: UserInterfaceSizeClass = .compact) -> some View {
+    private func previewPage(
+        _ state: LoginFormFeature.State,
+        sizeClass: UserInterfaceSizeClass = .compact
+    ) -> some View {
         LoginSecondFactorPage(
             store: Store(initialState: state) { LoginFormFeature() },
             horizontalSizeClass: sizeClass,

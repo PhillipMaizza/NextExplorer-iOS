@@ -50,7 +50,8 @@ enum UploadStagingLocation {
                 at: directory, includingPropertiesForKeys: [.contentModificationDateKey], options: []
             )) ?? []
             for url in entries {
-                let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+                let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?
+                    .contentModificationDate
                 if let modified, modified < cutoff {
                     try? FileManager.default.removeItem(at: url)
                 }

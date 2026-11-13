@@ -14,7 +14,13 @@ struct DownloadQueueFeatureTests {
     private let serverURL = URL(fileURLWithPath: "/")
 
     private nonisolated func file(_ name: String, size: Int64 = 10) -> FileItem {
-        FileItem(name: name, path: TestFolder.files, dateModified: MockDate.date, size: size, kind: (name as NSString).pathExtension)
+        FileItem(
+            name: name,
+            path: TestFolder.files,
+            dateModified: MockDate.date,
+            size: size,
+            kind: (name as NSString).pathExtension
+        )
     }
 
     private nonisolated func folder(_ name: String) -> FileItem {
@@ -203,7 +209,10 @@ struct DownloadQueueFeatureTests {
 
         // Too early for a meaningful rate: bytes only.
         now.setValue(start.addingTimeInterval(0.5))
-        await store.send(.progress(id: UUID(0), TransferProgress(receivedBytes: 10_000_000, expectedBytes: 100_000_000))) {
+        await store.send(.progress(
+            id: UUID(0),
+            TransferProgress(receivedBytes: 10_000_000, expectedBytes: 100_000_000)
+        )) {
             $0.jobs[id: UUID(0)]?.receivedBytes = 10_000_000
             $0.jobs[id: UUID(0)]?.expectedBytes = 100_000_000
         }
@@ -211,7 +220,10 @@ struct DownloadQueueFeatureTests {
         #expect(store.state.jobs[id: UUID(0)]?.estimatedSecondsRemaining == nil)
 
         now.setValue(start.addingTimeInterval(4))
-        await store.send(.progress(id: UUID(0), TransferProgress(receivedBytes: 40_000_000, expectedBytes: 100_000_000))) {
+        await store.send(.progress(
+            id: UUID(0),
+            TransferProgress(receivedBytes: 40_000_000, expectedBytes: 100_000_000)
+        )) {
             $0.jobs[id: UUID(0)]?.receivedBytes = 40_000_000
             $0.jobs[id: UUID(0)]?.bytesPerSecond = 10_000_000
         }
@@ -237,7 +249,8 @@ struct DownloadQueueFeatureTests {
         job.receivedBytes = 400_000_000
         job.expectedBytes = 1_600_000_000
         job.bytesPerSecond = 10_000_000
-        #expect(DownloadProgressText.detail(for: job, locale: Locale(identifier: "en_US")) == "400 MB of 1.6 GB · 2m left")
+        #expect(DownloadProgressText
+            .detail(for: job, locale: Locale(identifier: "en_US")) == "400 MB of 1.6 GB · 2m left")
     }
 
     @Test

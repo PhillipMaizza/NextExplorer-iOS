@@ -22,10 +22,18 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         static let unmatchedShortTerm = "zq"
     }
 
-    private let hit = SearchResultItem(name: Constants.internetPDF, path: Constants.bills, kind: SearchResultItem.fileKind)
+    private let hit = SearchResultItem(
+        name: Constants.internetPDF,
+        path: Constants.bills,
+        kind: SearchResultItem.fileKind
+    )
 
     /// One favorite, `Bills`, whose search records each term it was asked and answers `hit`.
-    private func searchingStore(_ state: FavoritesFeature.State? = nil, clock: TestClock<Duration>, queries: LockIsolated<[String]>) -> TestStoreOf<FavoritesFeature> {
+    private func searchingStore(
+        _ state: FavoritesFeature.State? = nil,
+        clock: TestClock<Duration>,
+        queries: LockIsolated<[String]>
+    ) -> TestStoreOf<FavoritesFeature> {
         var initial = state ?? FavoritesFeature.State(serverURL: serverURL)
         initial.favorites = [makeFavorite(id: Constants.billsID, path: Constants.bills)]
         let hit = hit
@@ -73,10 +81,17 @@ struct FavoritesSearchTests: FavoritesTestSupport {
     @Test
     func rootSearchFansOutAcrossEveryFavoriteAndMergesResults() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.favorites = [makeFavorite(id: Constants.billsID, path: Constants.bills), makeFavorite(id: Constants.photosID, path: TestFolder.photos)]
+        state.favorites = [
+            makeFavorite(id: Constants.billsID, path: Constants.bills),
+            makeFavorite(id: Constants.photosID, path: TestFolder.photos),
+        ]
 
         let billsHit = hit
-        let photosHit = SearchResultItem(name: Constants.photosInternet, path: TestFolder.photos, kind: SearchResultItem.fileKind)
+        let photosHit = SearchResultItem(
+            name: Constants.photosInternet,
+            path: TestFolder.photos,
+            kind: SearchResultItem.fileKind
+        )
         let clock = TestClock()
         let searchedPaths = LockIsolated<Set<String>>([])
 
@@ -198,7 +213,11 @@ struct FavoritesSearchTests: FavoritesTestSupport {
 
     /// A store whose search waits on `gate`, records each term and answers `hit`; the favorites
     /// fetch answers `Bills`.
-    private func heldSearchStore(_ state: FavoritesFeature.State, gate: AsyncGate, queries: LockIsolated<[String]>) -> TestStoreOf<FavoritesFeature> {
+    private func heldSearchStore(
+        _ state: FavoritesFeature.State,
+        gate: AsyncGate,
+        queries: LockIsolated<[String]>
+    ) -> TestStoreOf<FavoritesFeature> {
         let hit = hit
         let bills = makeFavorite(id: Constants.billsID, path: Constants.bills)
         return TestStore(initialState: state) {
@@ -294,7 +313,10 @@ struct FavoritesSearchTests: FavoritesTestSupport {
     @Test("A term too short for the server filters the favorites by name, asks nothing and shows no skeleton")
     func aShortTermFiltersTheFavoritesByName() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.favorites = [makeFavorite(id: Constants.billsID, path: Constants.bills), makeFavorite(id: Constants.photosID, path: TestFolder.photos)]
+        state.favorites = [
+            makeFavorite(id: Constants.billsID, path: Constants.bills),
+            makeFavorite(id: Constants.photosID, path: TestFolder.photos),
+        ]
         state.phase = .loaded
         let queries = LockIsolated<[String]>([])
         let store = heldSearchStore(state, gate: AsyncGate(), queries: queries)
@@ -334,7 +356,11 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         }
 
         await store.send(.searchResultEnclosingFolderTapped(hit)) {
-            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: Constants.bills, title: Constants.bills))
+            $0.path.append(BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: Constants.bills,
+                title: Constants.bills
+            ))
         }
         #expect(store.state.searchQuery == Constants.term)
         #expect(store.state.fileSearchResults == [hit])
@@ -343,10 +369,26 @@ struct FavoritesSearchTests: FavoritesTestSupport {
     @Test("The favorites' answers merge in the server's order, closest name first and contents last")
     func mergedAnswersFollowTheServersOrder() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.favorites = [makeFavorite(id: Constants.billsID, path: Constants.bills), makeFavorite(id: Constants.photosID, path: TestFolder.photos)]
+        state.favorites = [
+            makeFavorite(id: Constants.billsID, path: Constants.bills),
+            makeFavorite(id: Constants.photosID, path: TestFolder.photos),
+        ]
         state.searchQuery = Constants.term
-        let contains = SearchResultItem(name: Constants.photosInternet, path: TestFolder.photos, kind: SearchResultItem.fileKind, isNameMatch: true)
-        let content = SearchResultItem(name: "readme.txt", path: Constants.bills, kind: SearchResultItem.fileKind, matchLine: Constants.term, matchLineNumber: 1, isNameMatch: false, isContentMatch: true)
+        let contains = SearchResultItem(
+            name: Constants.photosInternet,
+            path: TestFolder.photos,
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
+        let content = SearchResultItem(
+            name: "readme.txt",
+            path: Constants.bills,
+            kind: SearchResultItem.fileKind,
+            matchLine: Constants.term,
+            matchLineNumber: 1,
+            isNameMatch: false,
+            isContentMatch: true
+        )
         let store = TestStore(initialState: state) {
             FavoritesFeature()
         }

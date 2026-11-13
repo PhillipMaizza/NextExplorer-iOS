@@ -33,7 +33,10 @@ struct DestinationPickerFeatureTests {
     @Test
     func onAppearLoadsFoldersOnlyDroppingFiles() async {
         let store = TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+            initialState: DestinationPickerFeature.State(
+                serverURL: serverURL,
+                items: [file(TestFile.aText, path: TestFolder.inbox)]
+            )
         ) {
             DestinationPickerFeature()
         } withDependencies: {
@@ -56,10 +59,24 @@ struct DestinationPickerFeatureTests {
         #expect(inFolder.directoryPath == TestFolder.documents)
         #expect(inFolder.canConfirm == false) // access not loaded yet
 
-        inFolder.currentAccess = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
+        inFolder.currentAccess = FileAccess(
+            canRead: true,
+            canWrite: true,
+            canUpload: true,
+            canDelete: true,
+            canShare: false,
+            canDownload: true
+        )
         #expect(inFolder.canConfirm == true)
 
-        inFolder.currentAccess = FileAccess(canRead: true, canWrite: true, canUpload: false, canDelete: true, canShare: false, canDownload: true)
+        inFolder.currentAccess = FileAccess(
+            canRead: true,
+            canWrite: true,
+            canUpload: false,
+            canDelete: true,
+            canShare: false,
+            canDownload: true
+        )
         #expect(inFolder.canConfirm == false)
     }
 
@@ -67,7 +84,14 @@ struct DestinationPickerFeatureTests {
     func uploadModeConfirmEmitsTheChosenDestination() async {
         var state = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: TestFolder.documents)
         state.directoryPath = Constants.documentsReports
-        state.currentAccess = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
+        state.currentAccess = FileAccess(
+            canRead: true,
+            canWrite: true,
+            canUpload: true,
+            canDelete: true,
+            canShare: false,
+            canDownload: true
+        )
 
         let store = TestStore(initialState: state) { DestinationPickerFeature() }
 
@@ -78,13 +102,18 @@ struct DestinationPickerFeatureTests {
     @Test
     func folderTappedDrillsIntoTheChild() async {
         let store = TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+            initialState: DestinationPickerFeature.State(
+                serverURL: serverURL,
+                items: [file(TestFile.aText, path: TestFolder.inbox)]
+            )
         ) {
             DestinationPickerFeature()
         } withDependencies: {
             $0.filesClient.browse = { _, path in
                 BrowseResult(
-                    items: path == TestFolder.documents ? [folder(Constants.workFolder, path: TestFolder.documents)] : [folder(TestFolder.documents)],
+                    items: path == TestFolder.documents
+                        ? [folder(Constants.workFolder, path: TestFolder.documents)]
+                        : [folder(TestFolder.documents)],
                     access: access(), path: path
                 )
             }
@@ -123,7 +152,10 @@ struct DestinationPickerFeatureTests {
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(Constants.childFolder, path: TestFolder.documents)]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(
+            &$0,
+            folders: [folder(Constants.childFolder, path: TestFolder.documents)]
+        ) }
         #expect(store.state.canNavigateBack == true)
 
         await store.send(.folderTapped(folder("Reports", path: TestFolder.documents))) {
@@ -132,7 +164,10 @@ struct DestinationPickerFeatureTests {
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(Constants.childFolder, path: Constants.documentsReports)]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(
+            &$0,
+            folders: [folder(Constants.childFolder, path: Constants.documentsReports)]
+        ) }
 
         await store.send(.backTapped) {
             $0.directoryPath = TestFolder.documents
@@ -140,7 +175,10 @@ struct DestinationPickerFeatureTests {
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(Constants.childFolder, path: TestFolder.documents)]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(
+            &$0,
+            folders: [folder(Constants.childFolder, path: TestFolder.documents)]
+        ) }
 
         await store.send(.backTapped) {
             $0.directoryPath = ""
@@ -148,7 +186,10 @@ struct DestinationPickerFeatureTests {
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(Constants.childFolder, path: "")]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(
+            &$0,
+            folders: [folder(Constants.childFolder, path: "")]
+        ) }
         #expect(store.state.canNavigateBack == false)
     }
 
@@ -175,7 +216,10 @@ struct DestinationPickerFeatureTests {
 
     @Test
     func breadcrumbTappedJumpsStraightToThatPath() async {
-        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+        var state = DestinationPickerFeature.State(
+            serverURL: serverURL,
+            items: [file(TestFile.aText, path: TestFolder.inbox)]
+        )
         state.directoryPath = TestPath.documentsWork
 
         let store = TestStore(initialState: state) {
@@ -195,7 +239,10 @@ struct DestinationPickerFeatureTests {
     @Test
     func loadFailureSurfacesAReadableErrorAndRetryReloads() async {
         let store = TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+            initialState: DestinationPickerFeature.State(
+                serverURL: serverURL,
+                items: [file(TestFile.aText, path: TestFolder.inbox)]
+            )
         ) {
             DestinationPickerFeature()
         } withDependencies: {
@@ -214,7 +261,10 @@ struct DestinationPickerFeatureTests {
 
     @Test
     func confirmTappedEmitsTheChosenDestination() async {
-        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+        var state = DestinationPickerFeature.State(
+            serverURL: serverURL,
+            items: [file(TestFile.aText, path: TestFolder.inbox)]
+        )
         state.directoryPath = TestFolder.documents
 
         let store = TestStore(initialState: state) { DestinationPickerFeature() }
@@ -225,15 +275,24 @@ struct DestinationPickerFeatureTests {
 
     @Test
     func confirmIsBlockedIntoTheItemsOwnParentAndIntoItself() {
-        var parent = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+        var parent = DestinationPickerFeature.State(
+            serverURL: serverURL,
+            items: [file(TestFile.aText, path: TestFolder.inbox)]
+        )
         parent.directoryPath = TestFolder.inbox
         #expect(parent.canConfirm == false)
 
-        var intoItself = DestinationPickerFeature.State(serverURL: serverURL, items: [folder(TestFolder.photos, path: TestFolder.media)])
+        var intoItself = DestinationPickerFeature.State(
+            serverURL: serverURL,
+            items: [folder(TestFolder.photos, path: TestFolder.media)]
+        )
         intoItself.directoryPath = TestPath.mediaPhotos2024
         #expect(intoItself.canConfirm == false)
 
-        var ok = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.inbox)])
+        var ok = DestinationPickerFeature.State(
+            serverURL: serverURL,
+            items: [file(TestFile.aText, path: TestFolder.inbox)]
+        )
         ok.directoryPath = TestFolder.documents
         #expect(ok.canConfirm == true)
     }
@@ -260,25 +319,39 @@ struct DestinationPickerFeatureTests {
         let clock = TestClock()
         let searchScope = LockIsolated<String?>(nil)
         let store = TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.media)])
+            initialState: DestinationPickerFeature.State(
+                serverURL: serverURL,
+                items: [file(TestFile.aText, path: TestFolder.media)]
+            )
         ) {
             DestinationPickerFeature()
         } withDependencies: {
             $0.continuousClock = clock
             $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [folder(TestFolder.photos, path: TestFolder.media)], access: access(), path: TestFolder.media)
+                BrowseResult(
+                    items: [folder(TestFolder.photos, path: TestFolder.media)],
+                    access: access(),
+                    path: TestFolder.media
+                )
             }
             $0.filesClient.search = { _, path, _, _ in
                 searchScope.setValue(path)
                 return [
-                    SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind),
+                    SearchResultItem(
+                        name: Constants.summerFolder,
+                        path: TestPath.mediaPhotos2024,
+                        kind: SearchResultItem.directoryKind
+                    ),
                     SearchResultItem(name: TestFile.notes, path: TestPath.mediaPhotos, kind: TestKind.text),
                 ]
             }
         }
 
         await store.send(.onAppear) { $0.phase = .loading }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.photos, path: TestFolder.media)]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(
+            &$0,
+            folders: [folder(TestFolder.photos, path: TestFolder.media)]
+        ) }
 
         await store.send(.searchQueryChanged("sum")) {
             $0.searchQuery = "sum"
@@ -287,11 +360,19 @@ struct DestinationPickerFeatureTests {
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
-            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind)]
+            $0.searchResults = [SearchResultItem(
+                name: Constants.summerFolder,
+                path: TestPath.mediaPhotos2024,
+                kind: SearchResultItem.directoryKind
+            )]
         }
         #expect(searchScope.value == TestFolder.media)
 
-        await store.send(.searchResultTapped(SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind))) {
+        await store.send(.searchResultTapped(SearchResultItem(
+            name: Constants.summerFolder,
+            path: TestPath.mediaPhotos2024,
+            kind: SearchResultItem.directoryKind
+        ))) {
             $0.directoryPath = "Media/Photos/2024/Summer"
             $0.searchQuery = ""
             $0.searchResults = nil
@@ -299,20 +380,33 @@ struct DestinationPickerFeatureTests {
             $0.phase = .loading
             $0.currentAccess = nil
         }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.photos, path: TestFolder.media)]) }
+        await store.receive(\.foldersResponse.success) { finishLoad(
+            &$0,
+            folders: [folder(TestFolder.photos, path: TestFolder.media)]
+        ) }
     }
 
     /// A picker in `Media` whose search records each term it was asked and answers `Summer`.
-    private func searchingStore(clock: TestClock<Duration>, queries: LockIsolated<[String]>) -> TestStoreOf<DestinationPickerFeature> {
+    private func searchingStore(
+        clock: TestClock<Duration>,
+        queries: LockIsolated<[String]>
+    ) -> TestStoreOf<DestinationPickerFeature> {
         TestStore(
-            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.media)])
+            initialState: DestinationPickerFeature.State(
+                serverURL: serverURL,
+                items: [file(TestFile.aText, path: TestFolder.media)]
+            )
         ) {
             DestinationPickerFeature()
         } withDependencies: {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, query, _ in
                 queries.withValue { $0.append(query) }
-                return [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
+                return [SearchResultItem(
+                    name: Constants.summerFolder,
+                    path: TestFolder.media,
+                    kind: SearchResultItem.directoryKind
+                )]
             }
         }
     }
@@ -333,7 +427,11 @@ struct DestinationPickerFeatureTests {
         await clock.advance(by: TestSearchTiming.lastMoment)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
-            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
+            $0.searchResults = [SearchResultItem(
+                name: Constants.summerFolder,
+                path: TestFolder.media,
+                kind: SearchResultItem.directoryKind
+            )]
         }
         #expect(queries.value == [Constants.searchTerm])
     }
@@ -355,15 +453,28 @@ struct DestinationPickerFeatureTests {
         await clock.advance(by: TestSearchTiming.restOfDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
-            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
+            $0.searchResults = [SearchResultItem(
+                name: Constants.summerFolder,
+                path: TestFolder.media,
+                kind: SearchResultItem.directoryKind
+            )]
         }
         #expect(queries.value == [Constants.searchTerm])
     }
 
     @Test("A term too short for the server filters this level's folders by name instead of a blank search")
     func aShortTermFiltersTheFoldersByName() async {
-        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.media)])
-        finishLoad(&state, folders: [folder(TestFolder.photos, path: TestFolder.media), folder(Constants.workFolder, path: TestFolder.media)])
+        var state = DestinationPickerFeature.State(
+            serverURL: serverURL,
+            items: [file(TestFile.aText, path: TestFolder.media)]
+        )
+        finishLoad(
+            &state,
+            folders: [
+                folder(TestFolder.photos, path: TestFolder.media),
+                folder(Constants.workFolder, path: TestFolder.media),
+            ]
+        )
         let clock = TestClock()
         let queries = LockIsolated<[String]>([])
         let store = TestStore(initialState: state) {
@@ -412,7 +523,11 @@ extension DestinationPickerFeatureTests {
         #expect(!state.isRefiningSearch)
         state.searchResults = []
         #expect(!state.isRefiningSearch)
-        state.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
+        state.searchResults = [SearchResultItem(
+            name: Constants.summerFolder,
+            path: TestFolder.media,
+            kind: SearchResultItem.directoryKind
+        )]
         #expect(state.isRefiningSearch)
         state.isSearching = false
         #expect(!state.isRefiningSearch)

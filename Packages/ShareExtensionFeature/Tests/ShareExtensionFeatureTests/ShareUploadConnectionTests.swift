@@ -10,7 +10,8 @@ import ShareUploads
 import Testing
 import TestUtils
 
-/// Connection check, certificate problems and account switching. Nested in `ShareUploadFeatureTests` so it inherits `.serialized` with every other share upload suite.
+/// Connection check, certificate problems and account switching. Nested in `ShareUploadFeatureTests` so it inherits
+/// `.serialized` with every other share upload suite.
 extension ShareUploadFeatureTests {
     @MainActor
     @Suite(.isolatedDependencies)
@@ -21,7 +22,8 @@ extension ShareUploadFeatureTests {
             calls: Calls = Calls(),
             browse: @escaping @Sendable (URL, String) async throws -> BrowseResult
         ) -> Store {
-            let cookies = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(TestID.name())")
+            let cookies = HTTPCookieStorage
+                .sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(TestID.name())")
             cookies.cookieAcceptPolicy = .always
             return TestStore(initialState: ShareUploadFeature.State()) {
                 ShareUploadFeature()
@@ -41,7 +43,10 @@ extension ShareUploadFeatureTests {
                 $0.authClient.me = { _ in Self.user }
                 $0.filesClient.browse = browse
                 $0.uploadDefaults = .inMemory([
-                    SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true),
+                    SessionCredentials.preview.accountID: UploadDefaults(
+                        folderPath: TestFolder.photos,
+                        shouldUploadWithoutAsking: true
+                    ),
                     SessionCredentials.previewSecond.accountID: UploadDefaults(folderPath: Constants.familyFolder),
                 ])
                 $0.cookieStorage = cookies
@@ -52,7 +57,10 @@ extension ShareUploadFeatureTests {
             (AuthClientError.clientCertificateRequired, ShareUploadFeature.Phase.certificateRequired),
             (AuthClientError.clientCertificateRejected, ShareUploadFeature.Phase.certificateRejected),
         ])
-        func aCertificateProblemStopsBeforeAnythingIsSent(error: AuthClientError, phase: ShareUploadFeature.Phase) async {
+        func aCertificateProblemStopsBeforeAnythingIsSent(
+            error: AuthClientError,
+            phase: ShareUploadFeature.Phase
+        ) async {
             let calls = Calls()
             let store = TestStore(initialState: ShareUploadFeature.State()) {
                 ShareUploadFeature()
@@ -65,7 +73,10 @@ extension ShareUploadFeatureTests {
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in throw error }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true)])
+                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(
+                    folderPath: TestFolder.photos,
+                    shouldUploadWithoutAsking: true
+                )])
             }
             await store.send(.onAppear) { $0.itemCount = 1 }
             await store.receive(\.accountsLoaded) { $0.accounts = [.preview] }
@@ -147,7 +158,10 @@ extension ShareUploadFeatureTests {
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in throw AuthClientError.network(TestFailure.offline) }
                 $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true)])
+                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(
+                    folderPath: TestFolder.photos,
+                    shouldUploadWithoutAsking: true
+                )])
                 $0.continuousClock = ImmediateClock()
             }
             await store.send(.onAppear) { $0.itemCount = 1 }
@@ -191,7 +205,9 @@ extension ShareUploadFeatureTests {
                     try await gate.wait()
                     throw AuthClientError.clientCertificateRequired
                 }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
+                $0
+                    .uploadDefaults =
+                    .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
             }
             await store.send(.onAppear) { $0.itemCount = 1 }
             await store.receive(\.accountsLoaded) { $0.accounts = [.preview] }
@@ -209,7 +225,8 @@ extension ShareUploadFeatureTests {
 
         @Test
         func anotherAccountCanBeChosenWithItsOwnFolder() async {
-            let cookies = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(TestID.name())")
+            let cookies = HTTPCookieStorage
+                .sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(TestID.name())")
             cookies.cookieAcceptPolicy = .always
             let store = TestStore(initialState: ShareUploadFeature.State()) {
                 ShareUploadFeature()
@@ -220,7 +237,10 @@ extension ShareUploadFeatureTests {
                 $0.authClient.me = { _ in Self.user }
                 $0.uploadDefaults = .inMemory([
                     SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos),
-                    SessionCredentials.previewSecond.accountID: UploadDefaults(folderPath: Constants.familyFolder, shouldUploadWithoutAsking: true),
+                    SessionCredentials.previewSecond.accountID: UploadDefaults(
+                        folderPath: Constants.familyFolder,
+                        shouldUploadWithoutAsking: true
+                    ),
                 ])
                 $0.cookieStorage = cookies
             }
@@ -303,11 +323,17 @@ extension ShareUploadFeatureTests {
             await checking.send(.defaultFolderChecked(accountID: SessionCredentials.preview.accountID, .usable))
             await checking.send(.defaultFolderChecked(accountID: SessionCredentials.preview.accountID, .unavailable))
             await checking.send(.defaultFolderChecked(accountID: SessionCredentials.preview.accountID, .signedOut))
-            #expect(checking.state.destination == Constants.familyFolder, "another account's missing folder never wipes this one's")
+            #expect(
+                checking.state.destination == Constants.familyFolder,
+                "another account's missing folder never wipes this one's"
+            )
             #expect(checking.state.folderPicker == nil)
             #expect(checking.state.phase == .checking)
 
-            await checking.send(.defaultFolderChecked(accountID: SessionCredentials.previewSecond.accountID, .signedOut)) {
+            await checking.send(.defaultFolderChecked(
+                accountID: SessionCredentials.previewSecond.accountID,
+                .signedOut
+            )) {
                 $0.phase = .signedOut
             }
         }

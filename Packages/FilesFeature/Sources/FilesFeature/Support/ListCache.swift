@@ -41,7 +41,13 @@ enum ListCache {
         return (value, payload.fetchedAt)
     }
 
-    static func save(_ store: JSONCacheStore, _ namespace: String, serverURL: URL, scope: String, value: some Encodable) {
+    static func save(
+        _ store: JSONCacheStore,
+        _ namespace: String,
+        serverURL: URL,
+        scope: String,
+        value: some Encodable
+    ) {
         guard let data = try? JSONEncoder().encode(value) else { return }
         store.bound(to: scope).write(key: key(namespace, serverURL: serverURL), data: data)
     }

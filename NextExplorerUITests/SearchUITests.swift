@@ -15,7 +15,10 @@
             browse.searchField.clearAndType(Fixture.searchQuery)
 
             // The empty scenario's search returns nothing, so no result row should appear.
-            XCTAssertFalse(browse.item(Fixture.searchHit).appears(within: UITestTimeout.short), "An empty search should not show results")
+            XCTAssertFalse(
+                browse.item(Fixture.searchHit).appears(within: UITestTimeout.short),
+                "An empty search should not show results"
+            )
         }
 
         func testClearSearchReturnsToListing() {
@@ -30,7 +33,10 @@
             // Clearing the query should restore the directory listing, not leave the results up.
             browse.searchField.clearAndType("")
             XCTAssertTrue(browse.item(Fixture.folder).waitToAppear(), "Clearing search should return to the listing")
-            XCTAssertFalse(browse.item(Fixture.searchHit).appears(within: UITestTimeout.short), "Cleared search should drop the results")
+            XCTAssertFalse(
+                browse.item(Fixture.searchHit).appears(within: UITestTimeout.short),
+                "Cleared search should drop the results"
+            )
         }
 
         private func visibleSearchField(_ app: XCUIApplication) -> XCUIElement {
@@ -70,7 +76,10 @@
             field.clearAndType(Fixture.searchQuery)
 
             XCTAssertTrue(browse.item(Fixture.searchHit).waitToAppear())
-            XCTAssertFalse(browse.item(Fixture.widerSearchHit).exists, "A folder search does not look outside the folder")
+            XCTAssertFalse(
+                browse.item(Fixture.widerSearchHit).exists,
+                "A folder search does not look outside the folder"
+            )
             XCTAssertFalse(app.buttons[L10n.Browse.scopeEverywhere].exists, "There is no scope control in a folder")
 
             let widen = app.buttons[L10n.Browse.searchEverywhere].firstMatch
@@ -97,8 +106,14 @@
             field.clearAndType(Fixture.searchQuery)
 
             XCTAssertTrue(browse.item(Fixture.searchHit).waitToAppear())
-            XCTAssertTrue(browse.item(Fixture.widerSearchHit).waitToVanish(), "A new search starts inside the folder again")
-            XCTAssertTrue(app.buttons[L10n.Browse.searchEverywhere].firstMatch.waitToAppear(), "Widening is on offer again")
+            XCTAssertTrue(
+                browse.item(Fixture.widerSearchHit).waitToVanish(),
+                "A new search starts inside the folder again"
+            )
+            XCTAssertTrue(
+                app.buttons[L10n.Browse.searchEverywhere].firstMatch.waitToAppear(),
+                "Widening is on offer again"
+            )
         }
 
         func testImageFilterChipNarrowsResults() {
@@ -118,7 +133,10 @@
             XCTAssertTrue(imagesChip.waitToAppear(), "An image result should surface an Images filter chip")
             imagesChip.tap()
 
-            XCTAssertTrue(browse.item(Fixture.searchHit).waitToVanish(), "Filtering to Images should hide the document hit")
+            XCTAssertTrue(
+                browse.item(Fixture.searchHit).waitToVanish(),
+                "Filtering to Images should hide the document hit"
+            )
             XCTAssertTrue(browse.item(Fixture.imageSearchHit).exists, "Filtering to Images should keep the image hit")
         }
     }

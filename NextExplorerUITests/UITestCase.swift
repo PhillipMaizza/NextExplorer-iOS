@@ -81,7 +81,12 @@ class UITestCase: XCTestCase {
 
     /// Taps a tab bar tab, waiting until a sentinel element on that tab appears. Tab switching in
     /// XCUITest can drop the first tap under load, so it retries the tap once before failing.
-    func selectTab(_ tab: XCUIElement, until sentinel: XCUIElement, file: StaticString = #filePath, line: UInt = #line) {
+    func selectTab(
+        _ tab: XCUIElement,
+        until sentinel: XCUIElement,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         XCTAssertTrue(tab.waitToAppear(UITestTimeout.standard, "Tab should exist", file: file, line: line))
         // A tap can land while the app is still remounting (adding an account rebuilds it), so a
         // few tries before the final wait.
@@ -91,7 +96,12 @@ class UITestCase: XCTestCase {
                 return
             }
         }
-        XCTAssertTrue(sentinel.waitToAppear(UITestTimeout.standard, "Tab content should appear", file: file, line: line))
+        XCTAssertTrue(sentinel.waitToAppear(
+            UITestTimeout.standard,
+            "Tab content should appear",
+            file: file,
+            line: line
+        ))
     }
 
     /// Taps the element's center by coordinate. On iPhone Duo the tabs sit in the vertical bar and
@@ -99,7 +109,12 @@ class UITestCase: XCTestCase {
     /// attempts never returns, hanging the test. A coordinate tap skips that step.
     /// The frame is read once and tapped as an absolute point from the app root, so the element
     /// is not re-resolved mid tap (an element coordinate can come back infinite under load).
-    func tapCenter(of element: XCUIElement, in app: XCUIApplication = XCUIApplication(), file: StaticString = #filePath, line: UInt = #line) {
+    func tapCenter(
+        of element: XCUIElement,
+        in app: XCUIApplication = XCUIApplication(),
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         // The frame can still be empty while the bar lays out; never fall back to `tap()`, which
         // is the hanging scroll path.
         let hasFrame = NSPredicate { object, _ in
@@ -197,7 +212,13 @@ class UITestCase: XCTestCase {
             // On a CI runner the launched app is not always frontmost, and an inactive app closes a
             // popover at once and can drop a right click: bring it forward before any test acts.
             app.activate()
-            XCTAssertTrue(waitUntil(NSPredicate(format: "state == %d", XCUIApplication.State.runningForeground.rawValue), on: app), "The app should be frontmost")
+            XCTAssertTrue(
+                waitUntil(
+                    NSPredicate(format: "state == %d", XCUIApplication.State.runningForeground.rawValue),
+                    on: app
+                ),
+                "The app should be frontmost"
+            )
         #endif
         return app
     }
@@ -219,13 +240,19 @@ enum UITestTimeout {
 /// Waits until `predicate` holds for `object` (an element or a query) and returns whether it did,
 /// without asserting. Waits on a condition, never for a fixed time.
 func waitUntil(_ predicate: NSPredicate, on object: Any, timeout: TimeInterval = UITestTimeout.standard) -> Bool {
-    XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: predicate, object: object)], timeout: timeout) == .completed
+    XCTWaiter()
+        .wait(for: [XCTNSPredicateExpectation(predicate: predicate, object: object)], timeout: timeout) == .completed
 }
 
 extension XCUIElement {
     /// Waits for the element to exist, failing the test with a clear message otherwise.
     @discardableResult
-    func waitToAppear(_ timeout: TimeInterval = UITestTimeout.standard, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) -> Bool {
+    func waitToAppear(
+        _ timeout: TimeInterval = UITestTimeout.standard,
+        _ message: String = "",
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Bool {
         let appeared = waitForExistence(timeout: timeout)
         XCTAssertTrue(appeared, message.isEmpty ? "Expected \(self) to appear" : message, file: file, line: line)
         return appeared
@@ -281,7 +308,11 @@ extension XCUIElement {
 
     /// Waits for the element to become hittable, failing otherwise.
     @discardableResult
-    func waitToBeHittable(_ timeout: TimeInterval = UITestTimeout.standard, file: StaticString = #filePath, line: UInt = #line) -> Bool {
+    func waitToBeHittable(
+        _ timeout: TimeInterval = UITestTimeout.standard,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Bool {
         let ok = waitUntil(NSPredicate(format: "isHittable == true"), on: self, timeout: timeout)
         XCTAssertTrue(ok, "Expected \(self) to be hittable", file: file, line: line)
         return ok

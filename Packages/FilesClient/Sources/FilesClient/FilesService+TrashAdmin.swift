@@ -21,13 +21,21 @@ extension FilesService {
 
     /// `POST /api/trash/verify`.
     func verifyTrash(serverURL: URL) async throws -> [TrashVerification] {
-        let request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.trashVerify), method: .post, isMutation: true)
+        let request = Self.makeRequest(
+            url: serverURL.appendingPathComponent(APIPath.trashVerify),
+            method: .post,
+            isMutation: true
+        )
         return try await sendReportingMessage(request, decoding: VerificationEnvelope.self).zones
     }
 
     /// `POST /api/trash/maintenance`.
     func runTrashMaintenance(serverURL: URL) async throws {
-        let request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.trashMaintenance), method: .post, isMutation: true)
+        let request = Self.makeRequest(
+            url: serverURL.appendingPathComponent(APIPath.trashMaintenance),
+            method: .post,
+            isMutation: true
+        )
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
     }

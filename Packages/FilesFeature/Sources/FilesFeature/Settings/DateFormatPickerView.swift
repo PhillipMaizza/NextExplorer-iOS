@@ -32,7 +32,10 @@ struct DateFormatPickerView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: Constants.rowSpacing) {
                                 Text(format.title).type(.body1(.regular), style: .primaryOnSurface)
-                                Text(format.example(includeTime: shouldIncludeTime)).type(.body3(.regular), style: .secondary)
+                                Text(format.example(includeTime: shouldIncludeTime)).type(
+                                    .body3(.regular),
+                                    style: .secondary
+                                )
                             }
                             Spacer()
                             if format == selection {
@@ -47,7 +50,13 @@ struct DateFormatPickerView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .animation(.spring(response: Constants.checkmarkSpringResponse, dampingFraction: Constants.checkmarkSpringDamping), value: selection)
+                    .animation(
+                        .spring(
+                            response: Constants.checkmarkSpringResponse,
+                            dampingFraction: Constants.checkmarkSpringDamping
+                        ),
+                        value: selection
+                    )
                 }
             }
             .listRowBackground(Color.backgroundSecondary)

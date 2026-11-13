@@ -20,7 +20,8 @@ struct UploadStagingFailureTests {
     }
 
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingFailure-\(TestID.uuid().uuidString)")
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("StagingFailure-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
@@ -70,8 +71,18 @@ struct UploadStagingFailureTests {
     func fullDiskInAllItsForms() throws {
         let posix = NSError(domain: NSPOSIXErrorDomain, code: Int(ENOSPC))
         let quota = NSError(domain: NSPOSIXErrorDomain, code: Int(EDQUOT))
-        let wrapped = NSError(domain: NSCocoaErrorDomain, code: CocoaError.fileWriteUnknown.rawValue, userInfo: [NSUnderlyingErrorKey: posix])
-        let errors: [any Error] = [CocoaError(.fileWriteOutOfSpace), posix, quota, wrapped, ShareUploadError.insufficientSpace]
+        let wrapped = NSError(
+            domain: NSCocoaErrorDomain,
+            code: CocoaError.fileWriteUnknown.rawValue,
+            userInfo: [NSUnderlyingErrorKey: posix]
+        )
+        let errors: [any Error] = [
+            CocoaError(.fileWriteOutOfSpace),
+            posix,
+            quota,
+            wrapped,
+            ShareUploadError.insufficientSpace,
+        ]
         for error in errors {
             let root = try temporaryDirectory()
             defer { try? FileManager.default.removeItem(at: root) }
@@ -99,15 +110,27 @@ struct UploadStagingFailureTests {
         let still = try source(in: root, name: ShareUploadsTestValue.heicName)
         let movie = try source(in: root, name: "0F3A.mov")
         let provider = NSItemProvider()
-        provider.registerFileRepresentation(forTypeIdentifier: UTType.heic.identifier, fileOptions: [], visibility: .all) { completion in
+        provider.registerFileRepresentation(
+            forTypeIdentifier: UTType.heic.identifier,
+            fileOptions: [],
+            visibility: .all
+        ) { completion in
             completion(still, false, nil)
             return nil
         }
-        provider.registerDataRepresentation(forTypeIdentifier: UTType.livePhoto.identifier, visibility: .all) { completion in
-            completion(Data(), nil)
-            return nil
-        }
-        provider.registerFileRepresentation(forTypeIdentifier: UTType.quickTimeMovie.identifier, fileOptions: [], visibility: .all) { completion in
+        provider
+            .registerDataRepresentation(
+                forTypeIdentifier: UTType.livePhoto.identifier,
+                visibility: .all
+            ) { completion in
+                completion(Data(), nil)
+                return nil
+            }
+        provider.registerFileRepresentation(
+            forTypeIdentifier: UTType.quickTimeMovie.identifier,
+            fileOptions: [],
+            visibility: .all
+        ) { completion in
             completion(movie, false, nil)
             return nil
         }

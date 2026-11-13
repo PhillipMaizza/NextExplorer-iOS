@@ -10,9 +10,27 @@ import TestUtils
 @Suite(.isolatedDependencies)
 struct InspectorFollowsItemTests {
     private let serverURL = URL(fileURLWithPath: "/")
-    private let report = FileItem(name: TestFile.report, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.pdf)
-    private let notes = FileItem(name: TestFile.notes, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
-    private let renamed = FileItem(name: "final.pdf", path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.pdf)
+    private let report = FileItem(
+        name: TestFile.report,
+        path: TestFolder.docs,
+        dateModified: MockDate.date,
+        size: 1,
+        kind: TestKind.pdf
+    )
+    private let notes = FileItem(
+        name: TestFile.notes,
+        path: TestFolder.docs,
+        dateModified: MockDate.date,
+        size: 1,
+        kind: TestKind.text
+    )
+    private let renamed = FileItem(
+        name: "final.pdf",
+        path: TestFolder.docs,
+        dateModified: MockDate.date,
+        size: 1,
+        kind: TestKind.pdf
+    )
 
     private func makeStore(
         showing item: FileItem,
@@ -54,7 +72,14 @@ struct InspectorFollowsItemTests {
     @Test("Renaming the inspected item repoints the inspector and loads the new path")
     func renamingTheInspectedItemRepointsTheInspector() async {
         let fetched = LockIsolated<[String]>([])
-        let metadata = FileMetadata(path: "Docs/final.pdf", name: "final.pdf", kind: TestKind.pdf, size: 1, dateModified: MockDate.date, dateCreated: MockDate.date)
+        let metadata = FileMetadata(
+            path: "Docs/final.pdf",
+            name: "final.pdf",
+            kind: TestKind.pdf,
+            size: 1,
+            dateModified: MockDate.date,
+            dateCreated: MockDate.date
+        )
         let store = makeStore(showing: report, among: [report]) {
             $0.filesClient.fetchMetadata = { _, path in
                 fetched.withValue { $0.append(path) }
@@ -62,7 +87,10 @@ struct InspectorFollowsItemTests {
             }
         }
 
-        await store.send(.renameResponse(.success(BrowseFeature.RenameResult(originalID: "Docs/report.pdf", renamed: renamed)))) {
+        await store.send(.renameResponse(.success(BrowseFeature.RenameResult(
+            originalID: "Docs/report.pdf",
+            renamed: renamed
+        )))) {
             $0.items = [renamed]
             $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamed, previousName: TestFile.report))] }
             $0.infoItem = renamed
@@ -78,9 +106,18 @@ struct InspectorFollowsItemTests {
     @Test("Renaming an item the inspector is not showing leaves the inspector alone")
     func renamingAnotherItemKeepsTheInspector() async {
         let store = makeStore(showing: report, among: [report, notes])
-        let renamedNotes = FileItem(name: "todo.txt", path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+        let renamedNotes = FileItem(
+            name: "todo.txt",
+            path: TestFolder.docs,
+            dateModified: MockDate.date,
+            size: 1,
+            kind: TestKind.text
+        )
 
-        await store.send(.renameResponse(.success(BrowseFeature.RenameResult(originalID: TestPath.docsNotes, renamed: renamedNotes)))) {
+        await store.send(.renameResponse(.success(BrowseFeature.RenameResult(
+            originalID: TestPath.docsNotes,
+            renamed: renamedNotes
+        )))) {
             $0.items = [report, renamedNotes]
             $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedNotes, previousName: TestFile.notes))] }
         }
@@ -89,7 +126,14 @@ struct InspectorFollowsItemTests {
     // MARK: The selection moves
 
     private nonisolated func metadata(of item: FileItem) -> FileMetadata {
-        FileMetadata(path: item.id, name: item.name, kind: item.kind, size: item.size, dateModified: MockDate.date, dateCreated: MockDate.date)
+        FileMetadata(
+            path: item.id,
+            name: item.name,
+            kind: item.kind,
+            size: item.size,
+            dateModified: MockDate.date,
+            dateCreated: MockDate.date
+        )
     }
 
     @Test("An open inspector follows the selection to the new row, after the settle delay")
@@ -120,7 +164,13 @@ struct InspectorFollowsItemTests {
 
     @Test("Quick selection changes only load the row the selection settles on")
     func anInspectorFollowingQuickSelectionChangesOnlyLoadsTheRowItSettlesOn() async {
-        let draft = FileItem(name: "draft.txt", path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+        let draft = FileItem(
+            name: "draft.txt",
+            path: TestFolder.docs,
+            dateModified: MockDate.date,
+            size: 1,
+            kind: TestKind.text
+        )
         let clock = TestClock()
         let fetched = LockIsolated<[String]>([])
         let store = makeStore(showing: report, among: [report, notes, draft]) {

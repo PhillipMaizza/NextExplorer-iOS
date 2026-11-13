@@ -23,6 +23,9 @@ public enum TestID {
 
     /// A UUID no other call in the process shares.
     public static func uuid() -> UUID {
-        UUID(uuidString: "00000000-0000-0000-" + String(format: "%04x", processID & 0xFFFF) + "-" + String(format: "%012d", next())) ?? UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+        UUID(uuidString: "00000000-0000-0000-" + String(format: "%04x", processID & 0xFFFF) + "-" + String(
+            format: "%012d",
+            next()
+        )) ?? UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
     }
 }

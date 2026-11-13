@@ -43,7 +43,12 @@ struct SearchResultRow: View {
 
 #Preview("Matches") {
     List {
-        SearchResultRow(result: SearchResultItem(name: "budget.xlsx", path: "Documents", kind: "file", isNameMatch: true))
+        SearchResultRow(result: SearchResultItem(
+            name: "budget.xlsx",
+            path: "Documents",
+            kind: "file",
+            isNameMatch: true
+        ))
         SearchResultRow(result: SearchResultItem(
             name: "notes.md", path: "Documents", kind: "file",
             matchLine: "    budget for the trip", matchLineNumber: 12, isContentMatch: true
@@ -52,7 +57,10 @@ struct SearchResultRow: View {
             name: "budget-plan.md", path: "Documents", kind: "file",
             matchLine: "budget", matchLineNumber: 1, isNameMatch: true, isContentMatch: true
         ))
-        SearchResultRow(result: SearchResultItem(name: "Budgets", path: "", kind: "dir", isNameMatch: true), isFavorite: true)
+        SearchResultRow(
+            result: SearchResultItem(name: "Budgets", path: "", kind: "dir", isNameMatch: true),
+            isFavorite: true
+        )
     }
 }
 

@@ -6,12 +6,19 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// Text content reads and writes, including offline reads of a pinned copy, through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
+/// Text content reads and writes, including offline reads of a pinned copy, through `FilesClient.live` against a
+/// stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     struct FilesClientTextContentTests: FilesClientLiveHarness {
         func pinnedTextClient(scope: String, bytes: Data) throws -> FilesClient {
-            let pinned = FileItem(name: "n.txt", path: TestFolder.docs, dateModified: MockDate.date, size: Int64(bytes.count), kind: TestKind.text)
+            let pinned = FileItem(
+                name: "n.txt",
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: Int64(bytes.count),
+                kind: TestKind.text
+            )
             let source = FileManager.default.temporaryDirectory.appendingPathComponent("pin-text-\(TestID.name())")
             try bytes.write(to: source)
             _ = try OfflineCache.store(downloadedURL: source, item: pinned, scope: scope)
@@ -131,7 +138,10 @@ extension FilesClientLiveTests {
             resetStubs()
             let scope = "offline-text-\(TestID.name())"
             defer { OfflineCache.removeScope(scope) }
-            let client = try pinnedTextClient(scope: scope, bytes: Data([0x89, 0x50, 0x4E, 0x47, 0x00, 0x01, 0x02, 0x00, 0xFF]))
+            let client = try pinnedTextClient(
+                scope: scope,
+                bytes: Data([0x89, 0x50, 0x4E, 0x47, 0x00, 0x01, 0x02, 0x00, 0xFF])
+            )
 
             await #expect(throws: FilesClientError.offline) {
                 _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
@@ -145,11 +155,30 @@ extension FilesClientLiveTests {
             let scope = "scope-seeded"
             let store = DirectoryCacheStore.inMemory(scope: scope)
             let seeded = BrowseResult(
-                items: [FileItem(name: Constants.cachedName, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)],
-                access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+                items: [FileItem(
+                    name: Constants.cachedName,
+                    path: TestFolder.docs,
+                    dateModified: MockDate.date,
+                    size: 1,
+                    kind: TestKind.text
+                )],
+                access: FileAccess(
+                    canRead: true,
+                    canWrite: false,
+                    canUpload: false,
+                    canDelete: false,
+                    canShare: false,
+                    canDownload: true
+                ),
                 path: TestFolder.docs
             )
-            store.write(serverURL: serverURL, path: TestFolder.docs, result: seeded, etag: #"W/"v1""#, fetchedAt: MockDate.date)
+            store.write(
+                serverURL: serverURL,
+                path: TestFolder.docs,
+                result: seeded,
+                etag: #"W/"v1""#,
+                fetchedAt: MockDate.date
+            )
             StubURLProtocol.stub = .init(statusCode: 304, headers: [:], body: Data())
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),

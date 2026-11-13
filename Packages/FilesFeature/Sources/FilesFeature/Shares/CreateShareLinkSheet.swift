@@ -112,8 +112,12 @@ struct CreateShareLinkSheet: View {
             sourceCard
 
             section(L10n.CreateShare.sectionLabel) {
-                DSTextField(L10n.CreateShare.sectionLabel, text: $store.label.sending(\.labelChanged), prompt: Text(verbatim: store.itemName))
-                    .autocorrectionDisabled()
+                DSTextField(
+                    L10n.CreateShare.sectionLabel,
+                    text: $store.label.sending(\.labelChanged),
+                    prompt: Text(verbatim: store.itemName)
+                )
+                .autocorrectionDisabled()
             }
 
             section(L10n.CreateShare.sectionAccessMode) {
@@ -141,8 +145,12 @@ struct CreateShareLinkSheet: View {
                 isOn: $store.isPasswordEnabled.sending(\.passwordEnabledChanged)
             )
             if store.isPasswordEnabled {
-                DSSecureField(L10n.Common.password, text: $store.password.sending(\.passwordChanged), prompt: Text(L10n.Common.password))
-                    .transition(Constants.fieldReveal)
+                DSSecureField(
+                    L10n.Common.password,
+                    text: $store.password.sending(\.passwordChanged),
+                    prompt: Text(L10n.Common.password)
+                )
+                .transition(Constants.fieldReveal)
             }
 
             DSToggleRow(
@@ -235,7 +243,8 @@ struct CreateShareLinkSheet: View {
                     Spacer(minLength: 0)
                 }
                 .padding(Constants.cardPadding)
-                .background(RoundedRectangle(cornerRadius: Constants.cardCornerRadius).fill(Color.positive.opacity(0.12)))
+                .background(RoundedRectangle(cornerRadius: Constants.cardCornerRadius)
+                    .fill(Color.positive.opacity(0.12)))
 
                 section(L10n.CreateShare.sectionShareLink) {
                     copyRow(value: created.shareUrl.absoluteString, field: .shareLink) {
@@ -245,10 +254,15 @@ struct CreateShareLinkSheet: View {
 
                 VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
                     HStack(spacing: .space8) {
-                        Text(created.share.isDirectory ? L10n.CreateShare.directFolderLink : L10n.CreateShare.directFileLink)
+                        Text(created.share.isDirectory
+                            ? L10n.CreateShare.directFolderLink
+                            : L10n.CreateShare.directFileLink)
                             .type(.body2(.semibold), style: .primaryOnSurface)
                         Spacer()
-                        Picker(L10n.CreateShare.directLinkMode, selection: $store.directLinkMode.sending(\.directLinkModeChanged)) {
+                        Picker(
+                            L10n.CreateShare.directLinkMode,
+                            selection: $store.directLinkMode.sending(\.directLinkModeChanged)
+                        ) {
                             ForEach(DirectLinkMode.allCases) { mode in
                                 Text(mode.title).tag(mode)
                             }
@@ -286,7 +300,11 @@ struct CreateShareLinkSheet: View {
                 summaryRow(IconKit.lock, L10n.Common.password, L10n.CreateShare.summaryPasswordProtected)
             }
             if let expiresAt = created.share.expiresAt {
-                summaryRow(IconKit.calendar, L10n.CreateShare.summaryExpires, Self.summaryDateFormatter.string(from: expiresAt))
+                summaryRow(
+                    IconKit.calendar,
+                    L10n.CreateShare.summaryExpires,
+                    Self.summaryDateFormatter.string(from: expiresAt)
+                )
             }
         }
     }
@@ -333,7 +351,8 @@ struct CreateShareLinkSheet: View {
                     .foregroundStyle(.white)
                     .frame(width: Constants.copyIconSize, height: Constants.copyIconSize)
                     .frame(width: Constants.copyButtonWidth, height: Constants.fieldHeight)
-                    .background(RoundedRectangle(cornerRadius: .radiusControl).fill(copiedField == field ? Color.positive : Color.accent))
+                    .background(RoundedRectangle(cornerRadius: .radiusControl)
+                        .fill(copiedField == field ? Color.positive : Color.accent))
             }
             .buttonStyle(DSHapticButtonStyle())
             .accessibilityLabel(copiedField == field ? L10n.Common.copied : L10n.Common.copy)

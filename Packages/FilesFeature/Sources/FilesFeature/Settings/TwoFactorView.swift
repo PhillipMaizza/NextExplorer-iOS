@@ -160,8 +160,11 @@ struct TwoFactorView: View {
             Text(prompt.action == .turnOff ? L10n.TwoFactor.passwordTurnOffIntro : L10n.TwoFactor.passwordNewCodesIntro)
                 .type(.body3(.regular), style: .secondary)
             LabeledField(L10n.TwoFactor.passwordField, uppercased: false) {
-                DSSecureField(L10n.TwoFactor.passwordField, text: Binding(get: { prompt.password }, set: { store.send(.passwordChanged($0)) }))
-                    .textContentType(.password)
+                DSSecureField(
+                    L10n.TwoFactor.passwordField,
+                    text: Binding(get: { prompt.password }, set: { store.send(.passwordChanged($0)) })
+                )
+                .textContentType(.password)
             }
             DSButton(
                 L10n.TwoFactor.passwordConfirmButton,
@@ -237,7 +240,10 @@ private struct QRCodeView: View {
             let filter = CIFilter.qrCodeGenerator()
             filter.message = Data(text.utf8)
             filter.correctionLevel = "M"
-            guard let output = filter.outputImage?.transformed(by: CGAffineTransform(scaleX: Metrics.qrScale, y: Metrics.qrScale)) else {
+            guard let output = filter.outputImage?.transformed(by: CGAffineTransform(
+                scaleX: Metrics.qrScale,
+                y: Metrics.qrScale
+            )) else {
                 return nil
             }
             return CIContext().createCGImage(output, from: output.extent)
@@ -247,8 +253,20 @@ private struct QRCodeView: View {
 
 private enum PreviewFixtures {
     static let serverURL = URL(string: "https://nextexplorer.example.com")!
-    static let setup = TwoFactorSetup(secret: "JBSWY3DPEHPK3PXP", uri: "otpauth://totp/NextExplorer:alice?secret=JBSWY3DPEHPK3PXP&issuer=NextExplorer")
-    static let codes = ["2HSMP-G9ZSJ", "K3QWE-7RTYU", "ABCDE-FGHJK", "MNPQR-STUVW", "XY234-56789", "ZZ2AA-3BB44", "CC5DD-6EE77", "FF8GG-9HH22"]
+    static let setup = TwoFactorSetup(
+        secret: "JBSWY3DPEHPK3PXP",
+        uri: "otpauth://totp/NextExplorer:alice?secret=JBSWY3DPEHPK3PXP&issuer=NextExplorer"
+    )
+    static let codes = [
+        "2HSMP-G9ZSJ",
+        "K3QWE-7RTYU",
+        "ABCDE-FGHJK",
+        "MNPQR-STUVW",
+        "XY234-56789",
+        "ZZ2AA-3BB44",
+        "CC5DD-6EE77",
+        "FF8GG-9HH22",
+    ]
 
     @MainActor
     static func view(_ state: TwoFactorFeature.State) -> some View {
@@ -259,19 +277,31 @@ private enum PreviewFixtures {
 }
 
 #Preview("Loading") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .loading)) }
-#Preview("Failed") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .failed("Couldn't reach the server."))) }
+#Preview("Failed") { PreviewFixtures.view(.init(
+    serverURL: PreviewFixtures.serverURL,
+    phase: .failed("Couldn't reach the server.")
+)) }
 #Preview("Off") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .off)) }
 #Preview("On") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .on(recoveryCodesLeft: 8))) }
-#Preview("Enrolling") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .enrolling(PreviewFixtures.setup))) }
+#Preview("Enrolling") { PreviewFixtures.view(.init(
+    serverURL: PreviewFixtures.serverURL,
+    phase: .enrolling(PreviewFixtures.setup)
+)) }
 #Preview("Enrolling, wrong code") {
     PreviewFixtures.view({
-        var state = TwoFactorFeature.State(serverURL: PreviewFixtures.serverURL, phase: .enrolling(PreviewFixtures.setup))
+        var state = TwoFactorFeature.State(
+            serverURL: PreviewFixtures.serverURL,
+            phase: .enrolling(PreviewFixtures.setup)
+        )
         state.errorMessage = "That code didn't match."
         return state
     }())
 }
 
-#Preview("Recovery codes") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .showingRecoveryCodes(PreviewFixtures.codes))) }
+#Preview("Recovery codes") { PreviewFixtures.view(.init(
+    serverURL: PreviewFixtures.serverURL,
+    phase: .showingRecoveryCodes(PreviewFixtures.codes)
+)) }
 #Preview("Turn off, password") {
     PreviewFixtures.view({
         var state = TwoFactorFeature.State(serverURL: PreviewFixtures.serverURL, phase: .on(recoveryCodesLeft: 8))

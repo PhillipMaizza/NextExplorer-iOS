@@ -5,7 +5,10 @@ import TestUtils
 
 @Suite("FileItem decoding")
 struct FileItemDecodingTests {
-    @Test("null or missing size does not prevent decoding", arguments: [CoreModelsFixture.fileItemSizeNull, .fileItemSizeMissing])
+    @Test(
+        "null or missing size does not prevent decoding",
+        arguments: [CoreModelsFixture.fileItemSizeNull, .fileItemSizeMissing]
+    )
     func unavailableSizeDefaultsToZero(fixture: CoreModelsFixture) throws {
         let item = try fixture.decode(FileItem.self)
         #expect(item.size == 0)
@@ -37,13 +40,25 @@ struct FileItemDecodingTests {
 
     @Test("edge case: id joins path and name when path is non-empty")
     func idJoinsPathAndName() {
-        let item = FileItem(name: "file.txt", path: TestPath.homeDocs, dateModified: MockDate.date, size: 0, kind: TestKind.text)
+        let item = FileItem(
+            name: "file.txt",
+            path: TestPath.homeDocs,
+            dateModified: MockDate.date,
+            size: 0,
+            kind: TestKind.text
+        )
         #expect(item.id == "Home/Docs/file.txt")
     }
 
     @Test("edge case: id is just the name when path is empty (root level)")
     func idIsNameAtRoot() {
-        let item = FileItem(name: "Volume", path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+        let item = FileItem(
+            name: "Volume",
+            path: "",
+            dateModified: MockDate.date,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
         #expect(item.id == "Volume")
     }
 
@@ -137,11 +152,30 @@ struct FileItemDecodingTests {
         }
     }
 
-    @Test("happy path: previewable kinds (native and VLC media, downloadable, plain text, browsable archives) are never flagged unsupported")
+    @Test(
+        "happy path: previewable kinds (native and VLC media, downloadable, plain text, browsable archives) are never flagged unsupported"
+    )
     func supportedKindsAreNotUnsupportedForPreview() {
         // Includes the VLC-only containers (mkv, webm, avi, ogg, wma): they play through
         // VLCPlayerView, so they are previewable and must never report unsupported.
-        for kind in ["mp4", "mp3", "mkv", "webm", "avi", "ogg", "wma", "jpg", "nef", "pdf", "doc", "docx", "txt", "md", "zip", "rar"] {
+        for kind in [
+            "mp4",
+            "mp3",
+            "mkv",
+            "webm",
+            "avi",
+            "ogg",
+            "wma",
+            "jpg",
+            "nef",
+            "pdf",
+            "doc",
+            "docx",
+            "txt",
+            "md",
+            "zip",
+            "rar",
+        ] {
             let item = FileItem(name: "file.\(kind)", path: "", dateModified: MockDate.date, size: 0, kind: kind)
             #expect(!item.isUnsupportedForPreview, "expected \(kind) not to be unsupported")
         }
@@ -155,9 +189,17 @@ struct FileItemDecodingTests {
         }
     }
 
-    @Test("edge case: directories are never unsupported (they're not previewed at all, but the flag shouldn't claim they are)")
+    @Test(
+        "edge case: directories are never unsupported (they're not previewed at all, but the flag shouldn't claim they are)"
+    )
     func directoryIsNotUnsupportedForPreview() {
-        let item = FileItem(name: TestFolder.documents, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+        let item = FileItem(
+            name: TestFolder.documents,
+            path: "",
+            dateModified: MockDate.date,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
         #expect(!item.isUnsupportedForPreview)
     }
 

@@ -12,7 +12,12 @@ struct AuthStatusEncodingTests {
 
     @Test("encodes the nested strategies shape the server uses and nothing else")
     func encodesNestedStrategies() throws {
-        let json = try object(AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: true, redirectedPort: 8443))
+        let json = try object(AuthStatus(
+            localEnabled: true,
+            oidcEnabled: false,
+            redirectsToHTTPS: true,
+            redirectedPort: 8443
+        ))
         #expect(Set(json.keys) == ["strategies"])
         let strategies = try #require(json["strategies"] as? [String: Bool])
         #expect(strategies == ["local": true, "oidc": false])

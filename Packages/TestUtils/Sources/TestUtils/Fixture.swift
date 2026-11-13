@@ -40,7 +40,11 @@ public extension FixtureFile {
         let path = rawValue as NSString
         let directory = path.deletingLastPathComponent
         let subdirectory = directory.isEmpty ? "Fixtures" : "Fixtures/\(directory)"
-        guard let file = Self.bundle.url(forResource: path.lastPathComponent, withExtension: fileExtension, subdirectory: subdirectory) else {
+        guard let file = Self.bundle.url(
+            forResource: path.lastPathComponent,
+            withExtension: fileExtension,
+            subdirectory: subdirectory
+        ) else {
             throw Fixture.Missing(path: "\(rawValue).\(fileExtension)")
         }
         return try Data(contentsOf: file)
@@ -50,7 +54,10 @@ public extension FixtureFile {
         try String(decoding: data(), as: UTF8.self)
     }
 
-    func decode<Value: Decodable>(_ type: Value.Type = Value.self, using decoder: JSONDecoder = JSONDecoder()) throws -> Value {
+    func decode<Value: Decodable>(
+        _ type: Value.Type = Value.self,
+        using decoder: JSONDecoder = JSONDecoder()
+    ) throws -> Value {
         try decoder.decode(type, from: data())
     }
 
@@ -64,7 +71,9 @@ public extension FixtureFile {
         if let root = bundle.resourceURL?.appendingPathComponent("Fixtures"),
            let walker = FileManager.default.enumerator(at: root, includingPropertiesForKeys: [.isRegularFileKey])
         {
-            for case let url as URL in walker where (try? url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true {
+            for case let url as URL in walker
+                where (try? url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true
+            {
                 onDisk.append(String(url.path.dropFirst(root.path.count + 1)))
             }
         }

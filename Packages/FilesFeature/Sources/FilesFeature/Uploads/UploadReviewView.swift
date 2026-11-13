@@ -117,7 +117,12 @@ struct UploadReviewView: View {
         DSSheetFooter {
             VStack(spacing: Constants.rowSpacing) {
                 addMoreButton
-                DSButton(L10n.Uploads.reviewUploadButton, icon: IconKit.upload, style: .primary, isLoading: store.isPreparing) {
+                DSButton(
+                    L10n.Uploads.reviewUploadButton,
+                    icon: IconKit.upload,
+                    style: .primary,
+                    isLoading: store.isPreparing
+                ) {
                     store.send(.uploadTapped)
                 }
                 .disabled(!store.canUpload)

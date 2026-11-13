@@ -86,7 +86,11 @@ public struct AccessRulesFeature {
                 }
                 if !state.isDirty {
                     state.loaded = settings.accessRules
-                    state.drafts = IdentifiedArray(settings.accessRules, id: \.id, uniquingIDsWith: { first, _ in first })
+                    state.drafts = IdentifiedArray(
+                        settings.accessRules,
+                        id: \.id,
+                        uniquingIDsWith: { first, _ in first }
+                    )
                 } else {
                     state.loaded = settings.accessRules
                 }

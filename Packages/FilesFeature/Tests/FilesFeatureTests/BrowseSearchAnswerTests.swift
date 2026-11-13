@@ -25,7 +25,12 @@ struct BrowseSearchAnswerTests {
 
     private let photo = BrowseFixtures.file(TestFile.vacationPhoto, in: TestFolder.photos)
     private let deepHit = BrowseFixtures.deepSearchHit
-    private let newerHit = SearchResultItem(name: Constants.refreshedName, path: TestFolder.photos, kind: SearchResultItem.fileKind, isNameMatch: true)
+    private let newerHit = SearchResultItem(
+        name: Constants.refreshedName,
+        path: TestFolder.photos,
+        kind: SearchResultItem.fileKind,
+        isNameMatch: true
+    )
 
     private var photoMatch: SearchResultItem {
         SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind)
@@ -131,7 +136,9 @@ struct BrowseSearchAnswerTests {
 
     @Test("A failed refresh keeps this term's own answer on screen and says it failed")
     func aFailedRefreshKeepsTheAnswer() async {
-        let store = store(answeredState(), clock: TestClock()) { _ in throw FilesClientError.server(statusCode: Constants.serverError) }
+        let store = store(answeredState(), clock: TestClock()) { _ in
+            throw FilesClientError.server(statusCode: Constants.serverError)
+        }
 
         await store.send(.searchRetryTapped) {
             $0.searchPhase = .loading
@@ -189,15 +196,24 @@ struct BrowseSearchAnswerTests {
 
     @Test("The footer says a failure first, then a short term, then a partial answer")
     func theFooterSaysTheFailureFirst() {
-        #expect(SearchStatusFooter.message(failure: L10n.Browse.searchFailed, isTooShort: true, shortfall: .stoppedEarly) == L10n.Browse.searchFailed)
-        #expect(SearchStatusFooter.message(isTooShort: true, shortfall: .stoppedEarly) == SearchStatusFooter.tooShortMessage)
-        #expect(SearchStatusFooter.message(isTooShort: false, shortfall: .stoppedEarly) == L10n.Browse.searchStoppedEarly)
+        #expect(SearchStatusFooter.message(
+            failure: L10n.Browse.searchFailed,
+            isTooShort: true,
+            shortfall: .stoppedEarly
+        ) == L10n.Browse.searchFailed)
+        let tooShort = SearchStatusFooter.message(isTooShort: true, shortfall: .stoppedEarly)
+        #expect(tooShort == SearchStatusFooter.tooShortMessage)
+        let stopped = SearchStatusFooter.message(isTooShort: false, shortfall: .stoppedEarly)
+        #expect(stopped == L10n.Browse.searchStoppedEarly)
         #expect(SearchStatusFooter.message(isTooShort: false, shortfall: nil) == nil)
     }
 
     // MARK: Instant matches in the server's order
 
-    private func reportsState(_ path: String = TestFolder.docs, scope: BrowseFeature.SearchScope = .thisFolder) -> BrowseFeature.State {
+    private func reportsState(
+        _ path: String = TestFolder.docs,
+        scope: BrowseFeature.SearchScope = .thisFolder
+    ) -> BrowseFeature.State {
         var state = BrowseFixtures.state(path, title: path, items: [
             BrowseFixtures.file(TestSearch.rankContainsFile, in: path),
             BrowseFixtures.file(TestSearch.rankPrefixFile, in: path),
@@ -215,7 +231,11 @@ struct BrowseSearchAnswerTests {
 
     @Test("The instant matches come in the server's order, closest and shortest first, not folders first")
     func instantMatchesAreRankedLikeTheServer() {
-        #expect(instantIDs(TestSearch.rankTerm, in: reportsState()) == ["Docs/Rapports", "Docs/rapport.pdf", "Docs/vieux-rapport.pdf"])
+        #expect(instantIDs(TestSearch.rankTerm, in: reportsState()) == [
+            "Docs/Rapports",
+            "Docs/rapport.pdf",
+            "Docs/vieux-rapport.pdf",
+        ])
     }
 
     @Test("A shape finds the instant matches it fits, a path shape by the path below the search's folder")
@@ -224,7 +244,10 @@ struct BrowseSearchAnswerTests {
         // Searching this folder, a file's path below it is just its name.
         #expect(instantIDs(Constants.docsPDFGlob, in: reportsState()).isEmpty)
         // Searching everywhere, it is the whole path.
-        #expect(instantIDs(Constants.docsPDFGlob, in: reportsState(scope: .everywhere)) == ["Docs/rapport.pdf", "Docs/vieux-rapport.pdf"])
+        #expect(instantIDs(Constants.docsPDFGlob, in: reportsState(scope: .everywhere)) == [
+            "Docs/rapport.pdf",
+            "Docs/vieux-rapport.pdf",
+        ])
     }
 
     @Test("A path below a folder is what follows it, and the whole path below the root")

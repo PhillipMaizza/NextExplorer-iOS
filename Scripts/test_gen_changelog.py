@@ -45,6 +45,9 @@ class UserFacingTests(unittest.TestCase):
     def test_bump_commits_are_skipped(self):
         self.assertIsNone(gen.entry("Bump version to 1.1.4", ""))
 
+    def test_format_bot_commits_are_skipped(self):
+        self.assertIsNone(gen.entry("Format Swift code (#160)", ""))
+
 
 class GenericNoteTests(unittest.TestCase):
     def notes_for(self, subjects):

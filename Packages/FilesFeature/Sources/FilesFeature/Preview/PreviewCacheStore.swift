@@ -27,7 +27,12 @@ public struct PreviewCacheStore: Sendable {
 
 extension PreviewCacheStore: DependencyKey {
     private static var cacheDirectory: URL? {
-        guard let cachesDirectory = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false) else {
+        guard let cachesDirectory = try? FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        ) else {
             return nil
         }
         return cachesDirectory.appendingPathComponent("PreviewCache", isDirectory: true)

@@ -62,7 +62,12 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 }
             }
             // ⌘F (Edit menu) focuses the toolbar's trailing search field.
-            .modifier(MacToolbarSearch(isEnabled: showsSearchField, text: $searchText, prompt: prompt, isFocused: $isFocused))
+            .modifier(MacToolbarSearch(
+                isEnabled: showsSearchField,
+                text: $searchText,
+                prompt: prompt,
+                isFocused: $isFocused
+            ))
             .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
         #else
             header

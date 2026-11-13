@@ -96,7 +96,8 @@
             case .checking: L10n.ShareUpload.checking(store.serverName)
             case .preparing, .handingOff: L10n.ShareUpload.preparing(store.preparingStep, store.preparingTotal)
             case .partiallyPrepared: L10n.ShareUpload.readyCount(store.stagedCount)
-            case .loading, .started, .signedOut, .sessionUnreadable, .nothingToUpload, .failed, .certificateRequired, .certificateRejected: nil
+            case .loading, .started, .signedOut, .sessionUnreadable, .nothingToUpload, .failed, .certificateRequired,
+                 .certificateRejected: nil
             }
         }
 
@@ -170,14 +171,17 @@
                             }
                             .disabled(store.phase != .ready)
                             .accessibilityLabel(L10n.ShareUpload.folderLabel)
-                            .accessibilityValue(store.destination.isEmpty ? L10n.ShareUpload.folderChoose : store.destination)
-                            .accessibilityHint(L10n.ShareUpload.folderHint)
+                            .accessibilityValue(store.destination.isEmpty
+                                ? L10n.ShareUpload.folderChoose
+                                : store.destination)
+                                .accessibilityHint(L10n.ShareUpload.folderHint)
                         }
                     }
                 }
             }
             .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusMedium))
-            .overlay(RoundedRectangle(cornerRadius: .radiusMedium).strokeBorder(Color.borderPrimary.opacity(Metrics.borderOpacity)))
+            .overlay(RoundedRectangle(cornerRadius: .radiusMedium)
+                .strokeBorder(Color.borderPrimary.opacity(Metrics.borderOpacity)))
         }
 
         private var notice: ShareUploadMacNotice.Notice? {
@@ -189,7 +193,8 @@
             case .failed: .problem(L10n.ShareUpload.failed)
             case .certificateRequired: .problem(L10n.ShareUpload.certificateRequired)
             case .certificateRejected: .problem(L10n.ShareUpload.certificateRejected)
-            case .ready where store.notice == .defaultFolderUnavailable: .problem(L10n.ShareUpload.defaultFolderUnavailable)
+            case .ready
+                where store.notice == .defaultFolderUnavailable: .problem(L10n.ShareUpload.defaultFolderUnavailable)
             case .loading, .checking, .ready, .preparing, .handingOff, .partiallyPrepared: nil
             }
         }
@@ -257,10 +262,17 @@
     #Preview("No folder yet") { ShareUploadMacView(store: .preview(.ready, destination: "")) }
     #Preview("Live Photos") { ShareUploadMacView(store: .preview(.ready, livePhotos: 3)) }
     #Preview("Long folder path") {
-        ShareUploadMacView(store: .preview(.ready, destination: "Photos/Family/2026/Summer holiday in the mountains/Day three"))
+        ShareUploadMacView(store: .preview(
+            .ready,
+            destination: "Photos/Family/2026/Summer holiday in the mountains/Day three"
+        ))
     }
 
-    #Preview("Default folder gone") { ShareUploadMacView(store: .preview(.ready, destination: "", notice: .defaultFolderUnavailable)) }
+    #Preview("Default folder gone") { ShareUploadMacView(store: .preview(
+        .ready,
+        destination: "",
+        notice: .defaultFolderUnavailable
+    )) }
     #Preview("Checking") { ShareUploadMacView(store: .preview(.checking)) }
     #Preview("Preparing") { ShareUploadMacView(store: .preview(.preparing)) }
     #Preview("Handing off") { ShareUploadMacView(store: .preview(.handingOff)) }

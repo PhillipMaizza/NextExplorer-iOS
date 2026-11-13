@@ -104,7 +104,11 @@ struct SessionCookieStoreTests {
         let keychainClient = KeychainClient.inMemory()
         let store = makeStore(keychainClient: keychainClient)
         let serverURL = uniqueServerURL()
-        let creds = try credentials(serverURL: serverURL, value: Constants.persistedValue, username: TestAccount.username)
+        let creds = try credentials(
+            serverURL: serverURL,
+            value: Constants.persistedValue,
+            username: TestAccount.username
+        )
 
         try store.persist(creds)
 
@@ -134,7 +138,11 @@ struct SessionCookieStoreTests {
     func migratesLegacySingleSession() throws {
         let keychainClient = KeychainClient.inMemory()
         let serverURL = uniqueServerURL()
-        let legacy = try credentials(serverURL: serverURL, value: Constants.legacyCookieValue, username: TestAccount.username)
+        let legacy = try credentials(
+            serverURL: serverURL,
+            value: Constants.legacyCookieValue,
+            username: TestAccount.username
+        )
         try keychainClient.save(TestStorageKey.legacySession, JSONEncoder().encode(legacy))
         let store = makeStore(keychainClient: keychainClient)
 
@@ -153,14 +161,21 @@ struct SessionCookieStoreTests {
         let store = makeStore(keychainClient: keychainClient)
 
         #expect(throws: (any Error).self) { try store.loadStoredOrThrow() }
-        #expect(try keychainClient.load(TestStorageKey.storedSessions) == Data(Constants.corruptBlob.utf8), "the blob is left as it was")
+        #expect(
+            try keychainClient.load(TestStorageKey.storedSessions) == Data(Constants.corruptBlob.utf8),
+            "the blob is left as it was"
+        )
     }
 
     @Test("a corrupt stored blob is replaced only by a valid legacy session")
     func corruptBlobWithValidLegacyMigrates() throws {
         let keychainClient = KeychainClient.inMemory()
         try keychainClient.save(TestStorageKey.storedSessions, Data(Constants.corruptBlob.utf8))
-        let legacy = try credentials(serverURL: uniqueServerURL(), value: Constants.legacyCookieValue, username: TestAccount.username)
+        let legacy = try credentials(
+            serverURL: uniqueServerURL(),
+            value: Constants.legacyCookieValue,
+            username: TestAccount.username
+        )
         try keychainClient.save(TestStorageKey.legacySession, JSONEncoder().encode(legacy))
         let store = makeStore(keychainClient: keychainClient)
 
@@ -180,7 +195,11 @@ struct SessionCookieStoreTests {
     @Test("the legacy key stays when the migrated set could not be saved")
     func legacyKeptWhenSaveFails() throws {
         let inner = KeychainClient.inMemory()
-        let legacy = try credentials(serverURL: uniqueServerURL(), value: Constants.legacyCookieValue, username: TestAccount.username)
+        let legacy = try credentials(
+            serverURL: uniqueServerURL(),
+            value: Constants.legacyCookieValue,
+            username: TestAccount.username
+        )
         try inner.save(TestStorageKey.legacySession, JSONEncoder().encode(legacy))
         var failing = inner
         failing.save = { _, _ in throw CocoaError(.fileWriteUnknown) }
@@ -197,7 +216,11 @@ struct SessionCookieStoreTests {
         let store = makeStore(keychainClient: .inMemory())
         let serverA = uniqueServerURL()
         let serverB = uniqueServerURL()
-        let credsA = try credentials(serverURL: serverA, value: Constants.firstCookieValue, username: TestAccount.username)
+        let credsA = try credentials(
+            serverURL: serverA,
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        )
         let credsB = try credentials(serverURL: serverB, value: Constants.secondCookieValue, username: TestUser.jane)
 
         try store.persist(credsA)
@@ -216,7 +239,11 @@ struct SessionCookieStoreTests {
         let store = makeStore(keychainClient: .inMemory())
         let serverA = uniqueServerURL()
         let serverB = uniqueServerURL()
-        let credsA = try credentials(serverURL: serverA, value: Constants.firstCookieValue, username: TestAccount.username)
+        let credsA = try credentials(
+            serverURL: serverA,
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        )
         let credsB = try credentials(serverURL: serverB, value: Constants.secondCookieValue, username: TestUser.jane)
         try store.persist(credsA)
         try store.persist(credsB) // B active
@@ -231,7 +258,11 @@ struct SessionCookieStoreTests {
     func removeLastReturnsNil() throws {
         let store = makeStore(keychainClient: .inMemory())
         let serverA = uniqueServerURL()
-        let credsA = try credentials(serverURL: serverA, value: Constants.firstCookieValue, username: TestAccount.username)
+        let credsA = try credentials(
+            serverURL: serverA,
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        )
         try store.persist(credsA)
 
         #expect(store.remove(id: credsA.accountID) == nil)
@@ -245,7 +276,11 @@ struct SessionCookieStoreTests {
         let keychainClient = KeychainClient.inMemory()
         let store = makeStore(keychainClient: keychainClient)
         let serverA = uniqueServerURL()
-        try store.persist(credentials(serverURL: serverA, value: Constants.firstCookieValue, username: TestAccount.username))
+        try store.persist(credentials(
+            serverURL: serverA,
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        ))
 
         store.clearAll()
 

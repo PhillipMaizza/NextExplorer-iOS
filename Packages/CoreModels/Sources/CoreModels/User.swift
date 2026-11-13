@@ -88,7 +88,10 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
     /// login and `/api/auth/me` responses go through a plain `JSONDecoder` with no date
     /// strategy, so a date string there would otherwise throw. Tolerate every shape and fall
     /// back to `nil`.
-    private static func decodeTimestamp(_ container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) -> Date? {
+    private static func decodeTimestamp(
+        _ container: KeyedDecodingContainer<CodingKeys>,
+        forKey key: CodingKeys
+    ) -> Date? {
         if let date = try? container.decodeIfPresent(Date.self, forKey: key) {
             return date
         }
@@ -104,7 +107,10 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
 
     /// The server's `id` type isn't confirmed (DB auto-increment integer vs. string):
     /// accept either rather than fail decoding over it.
-    private static func decodeIDAsString(_ container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) throws -> String {
+    private static func decodeIDAsString(
+        _ container: KeyedDecodingContainer<CodingKeys>,
+        forKey key: CodingKeys
+    ) throws -> String {
         if let stringValue = try? container.decode(String.self, forKey: key) {
             return stringValue
         }

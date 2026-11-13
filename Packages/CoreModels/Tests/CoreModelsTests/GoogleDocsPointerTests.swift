@@ -14,7 +14,8 @@ struct GoogleDocsPointerTests {
 
     @Test func pullsTheHTTPSLinkOutOfAStub() throws {
         let stub = try CoreModelsFixture.googleDocsPointerDriveStub.string()
-        #expect(GoogleDocsPointer.targetURL(fromContents: stub)?.absoluteString == "https://docs.google.com/spreadsheets/d/ABC123/edit")
+        #expect(GoogleDocsPointer.targetURL(fromContents: stub)?
+            .absoluteString == "https://docs.google.com/spreadsheets/d/ABC123/edit")
     }
 
     @Test func rejectsJunkAndNonHTTPLinks() throws {

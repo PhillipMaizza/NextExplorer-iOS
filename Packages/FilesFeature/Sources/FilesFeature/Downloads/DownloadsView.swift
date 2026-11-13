@@ -12,7 +12,10 @@ private enum Constants {
         (8, 4, 7), (13, 5, 4), (6, 3, 9), (11, 4, 5), (16, 5, 6),
         (7, 3, 8), (10, 4, 4), (5, 4, 10), (12, 5, 5), (9, 3, 7),
     ].map { name, size, location in
-        SkeletonEntry(name: SkeletonEntry.text(name), subtitle: "\(SkeletonEntry.text(size)) • \(SkeletonEntry.text(location))")
+        SkeletonEntry(
+            name: SkeletonEntry.text(name),
+            subtitle: "\(SkeletonEntry.text(size)) • \(SkeletonEntry.text(location))"
+        )
     }
 }
 
@@ -43,7 +46,12 @@ struct DownloadsView: View {
     /// The whole `Documents/Downloads` folder, for the top-right menu's generic "Open in
     /// Files" (as opposed to `filesAppURL(for:)`, which deep-links to one specific file).
     private var documentsDownloadsFolderURL: URL? {
-        guard let documentsURL = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
+        guard let documentsURL = try? FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        ) else {
             return nil
         }
         let downloadsURL = documentsURL.appendingPathComponent("Downloads", isDirectory: true)
@@ -175,7 +183,10 @@ struct DownloadsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .safeAreaInset(edge: .top, spacing: 0) {
                 PinnedTitleSearchHeader(
-                    title: store.isSelecting ? L10n.Common.selectedCount(store.selectedDownloadIDs.count) : L10n.Downloads.navigationTitle,
+                    title: store.isSelecting
+                        ? L10n.Common.selectedCount(store.selectedDownloadIDs.count)
+                        : L10n
+                            .Downloads.navigationTitle,
                     searchText: $store.searchQuery.sending(\.searchQueryChanged)
                 )
             }
@@ -349,8 +360,20 @@ struct DownloadsView: View {
         } withDependencies: {
             $0.localDownloadStore.list = { _ in
                 [
-                    LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: "report.pdf", location: .documents, size: 245_000, modifiedDate: Date()),
-                    LocalDownload(url: URL(fileURLWithPath: "/tmp/Caches/Downloads/vacation.jpg"), fileName: "vacation.jpg", location: .cache, size: 2_400_000, modifiedDate: Date().addingTimeInterval(-86400)),
+                    LocalDownload(
+                        url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"),
+                        fileName: "report.pdf",
+                        location: .documents,
+                        size: 245_000,
+                        modifiedDate: Date()
+                    ),
+                    LocalDownload(
+                        url: URL(fileURLWithPath: "/tmp/Caches/Downloads/vacation.jpg"),
+                        fileName: "vacation.jpg",
+                        location: .cache,
+                        size: 2_400_000,
+                        modifiedDate: Date().addingTimeInterval(-86400)
+                    ),
                 ]
             }
         }

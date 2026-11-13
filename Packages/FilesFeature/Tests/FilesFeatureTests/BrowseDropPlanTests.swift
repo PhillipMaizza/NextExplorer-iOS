@@ -17,7 +17,12 @@ struct BrowseDropPlanTests {
     func listedRowsMoveByIDAndOthersByValue() {
         let listed = entry(TestFile.aPDF)
         let foreign = entry("z.pdf", in: TestFolder.other)
-        let plan = BrowseDropPlan(drops: [.items([listed, foreign], origin: receiver)], listed: [listed.id], destination: "Docs/Archive", receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([listed, foreign], origin: receiver)],
+            listed: [listed.id],
+            destination: "Docs/Archive",
+            receiver: receiver
+        )
 
         #expect(plan.listedIDs == [listed.id])
         #expect(plan.foreignItems == [foreign])
@@ -27,7 +32,12 @@ struct BrowseDropPlanTests {
     @Test("A folder dropped on itself is refused")
     func aFolderDroppedOnItselfIsRefused() {
         let folder = entry(TestFolder.archive, isFolder: true)
-        let plan = BrowseDropPlan(drops: [.items([folder], origin: receiver)], listed: [folder.id], destination: folder.id, receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([folder], origin: receiver)],
+            listed: [folder.id],
+            destination: folder.id,
+            receiver: receiver
+        )
 
         #expect(plan.isEmpty)
     }
@@ -35,7 +45,12 @@ struct BrowseDropPlanTests {
     @Test("A folder dropped on one of its own descendants is refused")
     func aFolderDroppedOnADescendantIsRefused() {
         let folder = entry(TestFolder.archive, isFolder: true)
-        let plan = BrowseDropPlan(drops: [.items([folder], origin: receiver)], listed: [folder.id], destination: "Docs/Archive/2024/Q1", receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([folder], origin: receiver)],
+            listed: [folder.id],
+            destination: "Docs/Archive/2024/Q1",
+            receiver: receiver
+        )
 
         #expect(plan.isEmpty)
     }
@@ -43,7 +58,12 @@ struct BrowseDropPlanTests {
     @Test("A folder whose name only shares a prefix with the destination is not its ancestor")
     func aFolderWhoseNameOnlySharesAPrefixIsNotAnAncestor() {
         let folder = entry("Arch", isFolder: true)
-        let plan = BrowseDropPlan(drops: [.items([folder], origin: receiver)], listed: [folder.id], destination: "Docs/Archive", receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([folder], origin: receiver)],
+            listed: [folder.id],
+            destination: "Docs/Archive",
+            receiver: receiver
+        )
 
         #expect(plan.listedIDs == [folder.id])
     }
@@ -51,7 +71,12 @@ struct BrowseDropPlanTests {
     @Test("Rows already in the destination are a no op")
     func rowsAlreadyInTheDestinationAreANoOp() {
         let inside = entry(TestFile.aPDF, in: "Docs/Archive")
-        let plan = BrowseDropPlan(drops: [.items([inside], origin: receiver)], listed: [], destination: "Docs/Archive", receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([inside], origin: receiver)],
+            listed: [],
+            destination: "Docs/Archive",
+            receiver: receiver
+        )
 
         #expect(plan.isEmpty)
     }
@@ -59,7 +84,12 @@ struct BrowseDropPlanTests {
     @Test("The same row dropped twice moves once")
     func theSameRowDroppedTwiceMovesOnce() {
         let a = entry(TestFile.aPDF)
-        let plan = BrowseDropPlan(drops: [.items([a], origin: receiver), .items([a], origin: receiver)], listed: [a.id], destination: "Docs/Archive", receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([a], origin: receiver), .items([a], origin: receiver)],
+            listed: [a.id],
+            destination: "Docs/Archive",
+            receiver: receiver
+        )
 
         #expect(plan.listedIDs == [a.id])
     }
@@ -68,7 +98,12 @@ struct BrowseDropPlanTests {
     func onlyFileURLsAreUploaded() throws {
         let local = URL(fileURLWithPath: "/tmp/a.jpg")
         let remote = try #require(URL(string: "https://example.com/a.jpg"))
-        let plan = BrowseDropPlan(drops: [.file(local), .file(remote)], listed: [], destination: TestFolder.docs, receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.file(local), .file(remote)],
+            listed: [],
+            destination: TestFolder.docs,
+            receiver: receiver
+        )
 
         #expect(plan.fileURLs == [local])
     }
@@ -127,7 +162,13 @@ struct BrowseDropRouterTests {
             receiver: receiver
         )
 
-        let actions = BrowseDropRouter.actions(for: plan, folder: folder, directoryPath: TestFolder.docs, canMove: true, canUpload: true)
+        let actions = BrowseDropRouter.actions(
+            for: plan,
+            folder: folder,
+            directoryPath: TestFolder.docs,
+            canMove: true,
+            canUpload: true
+        )
 
         #expect(actions == [
             .itemsDroppedOnFolder(ids: ["Docs/a.pdf"], folder: folder),
@@ -138,9 +179,20 @@ struct BrowseDropRouterTests {
 
     @Test("Without the rights nothing is sent")
     func withoutRightsNothingIsSent() {
-        let plan = BrowseDropPlan(drops: [.items([entry(TestFile.aPDF)], origin: receiver), .file(local)], listed: ["Docs/a.pdf"], destination: folder.id, receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([entry(TestFile.aPDF)], origin: receiver), .file(local)],
+            listed: ["Docs/a.pdf"],
+            destination: folder.id,
+            receiver: receiver
+        )
 
-        #expect(BrowseDropRouter.actions(for: plan, folder: folder, directoryPath: TestFolder.docs, canMove: false, canUpload: false).isEmpty)
+        #expect(BrowseDropRouter.actions(
+            for: plan,
+            folder: folder,
+            directoryPath: TestFolder.docs,
+            canMove: false,
+            canUpload: false
+        ).isEmpty)
     }
 
     @Test("A file row is not a folder drop target")
@@ -148,14 +200,26 @@ struct BrowseDropRouterTests {
         let file = entry(TestFile.aPDF)
         let plan = BrowseDropPlan(drops: [.file(local)], listed: [], destination: file.id, receiver: receiver)
 
-        #expect(BrowseDropRouter.actions(for: plan, folder: file, directoryPath: TestFolder.docs, canMove: true, canUpload: true).isEmpty)
+        #expect(BrowseDropRouter.actions(
+            for: plan,
+            folder: file,
+            directoryPath: TestFolder.docs,
+            canMove: true,
+            canUpload: true
+        ).isEmpty)
     }
 
     @Test("The background uploads through the regular flow")
     func theBackgroundUploadsThroughTheRegularFlow() {
         let plan = BrowseDropPlan(drops: [.file(local)], listed: [], destination: TestFolder.docs, receiver: receiver)
 
-        let actions = BrowseDropRouter.actions(for: plan, folder: nil, directoryPath: TestFolder.docs, canMove: true, canUpload: true)
+        let actions = BrowseDropRouter.actions(
+            for: plan,
+            folder: nil,
+            directoryPath: TestFolder.docs,
+            canMove: true,
+            canUpload: true
+        )
 
         #expect(actions == [.beginUpload(.documents([local]))])
     }
@@ -163,26 +227,54 @@ struct BrowseDropRouterTests {
     @Test("The background moves rows from another window into the folder on screen")
     func theBackgroundMovesRowsFromAnotherWindowIntoTheFolderOnScreen() {
         let foreign = entry("z.pdf", in: TestFolder.other)
-        let plan = BrowseDropPlan(drops: [.items([foreign], origin: receiver)], listed: [], destination: TestFolder.docs, receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([foreign], origin: receiver)],
+            listed: [],
+            destination: TestFolder.docs,
+            receiver: receiver
+        )
 
-        let actions = BrowseDropRouter.actions(for: plan, folder: nil, directoryPath: TestFolder.docs, canMove: true, canUpload: true)
+        let actions = BrowseDropRouter.actions(
+            for: plan,
+            folder: nil,
+            directoryPath: TestFolder.docs,
+            canMove: true,
+            canUpload: true
+        )
 
         #expect(actions == [.itemsDroppedFromOtherWindow([foreign], destination: TestFolder.docs)])
     }
 
     @Test("The background ignores rows from the same folder")
     func theBackgroundIgnoresRowsFromTheSameFolder() {
-        let plan = BrowseDropPlan(drops: [.items([entry(TestFile.aPDF)], origin: receiver)], listed: ["Docs/a.pdf"], destination: TestFolder.docs, receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([entry(TestFile.aPDF)], origin: receiver)],
+            listed: ["Docs/a.pdf"],
+            destination: TestFolder.docs,
+            receiver: receiver
+        )
 
-        #expect(BrowseDropRouter.actions(for: plan, folder: nil, directoryPath: TestFolder.docs, canMove: true, canUpload: true).isEmpty)
+        #expect(BrowseDropRouter.actions(
+            for: plan,
+            folder: nil,
+            directoryPath: TestFolder.docs,
+            canMove: true,
+            canUpload: true
+        ).isEmpty)
     }
 
     @Test("The root listing takes no moved rows")
     func theRootListingTakesNoMovedRows() {
         let foreign = entry("z.pdf", in: TestFolder.other)
-        let plan = BrowseDropPlan(drops: [.items([foreign], origin: receiver)], listed: [], destination: "", receiver: receiver)
+        let plan = BrowseDropPlan(
+            drops: [.items([foreign], origin: receiver)],
+            listed: [],
+            destination: "",
+            receiver: receiver
+        )
 
-        #expect(BrowseDropRouter.actions(for: plan, folder: nil, directoryPath: "", canMove: true, canUpload: true).isEmpty)
+        #expect(BrowseDropRouter.actions(for: plan, folder: nil, directoryPath: "", canMove: true, canUpload: true)
+            .isEmpty)
     }
 }
 
@@ -192,10 +284,12 @@ struct BrowseDropAcceptanceTests {
     private let folder = entry(TestFolder.archive, isFolder: true)
 
     private func canAccept(
-        destination: String? = nil, isFolder: Bool = true, dragged: [FileItem] = [], canMove: Bool = true, canUpload: Bool = true
+        destination: String? = nil, isFolder: Bool = true, dragged: [FileItem] = [], canMove: Bool = true,
+        canUpload: Bool = true
     ) -> Bool {
         BrowseDropAcceptance.canAccept(
-            destination: destination ?? folder.id, isFolder: isFolder, draggedRows: dragged, canMove: canMove, canUpload: canUpload
+            destination: destination ?? folder.id, isFolder: isFolder, draggedRows: dragged, canMove: canMove,
+            canUpload: canUpload
         )
     }
 
@@ -252,7 +346,12 @@ struct BrowseDropAcceptanceTests {
 @Suite(.isolatedDependencies)
 struct BrowseDropUntrustedPayloadTests {
     private func plan(_ item: FileItem) -> BrowseDropPlan {
-        BrowseDropPlan(drops: [.items([item], origin: receiver)], listed: [], destination: "Docs/Archive", receiver: receiver)
+        BrowseDropPlan(
+            drops: [.items([item], origin: receiver)],
+            listed: [],
+            destination: "Docs/Archive",
+            receiver: receiver
+        )
     }
 
     @Test("A well formed foreign row is moved")
@@ -261,7 +360,10 @@ struct BrowseDropUntrustedPayloadTests {
         #expect(plan(entry(TestFile.aPDF, in: "")).foreignItems.count == 1)
     }
 
-    @Test("A foreign row with an unsafe path is rejected", arguments: ["../secret", "Docs/../../etc", "/absolute", "a//b", "Docs/./x", "a\u{0}b", ".."])
+    @Test(
+        "A foreign row with an unsafe path is rejected",
+        arguments: ["../secret", "Docs/../../etc", "/absolute", "a//b", "Docs/./x", "a\u{0}b", ".."]
+    )
     func aForeignRowWithAnUnsafePathIsRejected(path: String) {
         #expect(plan(entry(TestFile.aPDF, in: path)).isEmpty)
     }

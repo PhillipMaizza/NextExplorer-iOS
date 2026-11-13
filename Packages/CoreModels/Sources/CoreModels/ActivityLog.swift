@@ -120,7 +120,12 @@ public struct ActivityPage: Equatable, Sendable, Decodable {
     public let isEnabled: Bool
     public let actions: [String]
 
-    public init(events: [ActivityEvent] = [], nextBefore: String? = nil, isEnabled: Bool = false, actions: [String] = []) {
+    public init(
+        events: [ActivityEvent] = [],
+        nextBefore: String? = nil,
+        isEnabled: Bool = false,
+        actions: [String] = []
+    ) {
         self.events = events
         self.nextBefore = nextBefore
         self.isEnabled = isEnabled

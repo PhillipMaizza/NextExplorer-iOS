@@ -52,7 +52,11 @@ public struct EmptyStateView: View {
                 .scaledToFit()
                 .foregroundColor(.secondaryDS)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
-                .animation(reduceMotion ? nil : .easeInOut(duration: Constants.pulseDuration).repeatForever(autoreverses: true)) {
+                .animation(reduceMotion
+                    ? nil
+                    : .easeInOut(duration: Constants.pulseDuration)
+                        .repeatForever(autoreverses: true))
+                {
                     $0.scaleEffect(isPulsing ? Constants.pulseScale : 1)
                 }
             Text(message).type(.body1(.regular), style: .secondary)

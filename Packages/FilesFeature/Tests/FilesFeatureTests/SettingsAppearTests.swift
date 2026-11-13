@@ -46,7 +46,10 @@ struct SettingsAppearTests: SettingsFeatureTestSupport {
         state.isLoadingPreferences = true
         let store = makeStore(state: state)
 
-        await store.send(.preferencesResponse(.success(UserPreferences(showHiddenFiles: true, showThumbnails: false)))) {
+        await store.send(.preferencesResponse(.success(UserPreferences(
+            showHiddenFiles: true,
+            showThumbnails: false
+        )))) {
             $0.isLoadingPreferences = false
             $0.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: true, showThumbnails: false) }
         }
@@ -102,7 +105,9 @@ struct SettingsAppearTests: SettingsFeatureTestSupport {
             }
         }
 
-        await store.send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: true))) { $0.isVolumeUsageEnabled = true }
+        await store
+            .send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: true))) { $0.isVolumeUsageEnabled = true
+            }
         await store.receive(\.volumesResponse) {
             $0.serverUsage = [
                 SettingsFeature.VolumeUsage(volume: media, usage: nil),
@@ -128,8 +133,13 @@ struct SettingsAppearTests: SettingsFeatureTestSupport {
             $0.filesClient.fetchUsage = { _, _ in throw FilesClientError.offline }
         }
 
-        await store.send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: true))) { $0.isVolumeUsageEnabled = true }
-        await store.receive(\.volumesResponse) { $0.serverUsage = [SettingsFeature.VolumeUsage(volume: media, usage: nil)] }
+        await store
+            .send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: true))) { $0.isVolumeUsageEnabled = true
+            }
+        await store.receive(\.volumesResponse) { $0.serverUsage = [SettingsFeature.VolumeUsage(
+            volume: media,
+            usage: nil
+        )] }
         await store.receive(\.serverUsageResponse)
 
         #expect(store.state.serverUsage[id: "media"]?.usage == nil)

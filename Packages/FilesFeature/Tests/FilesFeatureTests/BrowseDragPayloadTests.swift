@@ -67,7 +67,8 @@ struct BrowseDragPayloadTests {
     func theDragPayloadIsNotBuiltUntilTheDragStarts() {
         let calls = LockIsolated(0)
         let builder = DraggedServerItemBuilder(
-            item: entry(TestFile.aPDF), serverURL: BrowseTestSupport.serverURL, scope: receiver.scope, filesClient: .previewValue,
+            item: entry(TestFile.aPDF), serverURL: BrowseTestSupport.serverURL, scope: receiver.scope,
+            filesClient: .previewValue,
             selection: {
                 calls.withValue { $0 += 1 }
                 return []

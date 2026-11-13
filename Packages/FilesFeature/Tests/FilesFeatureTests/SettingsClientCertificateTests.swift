@@ -20,7 +20,10 @@ struct SettingsClientCertificateTests {
         serverURL = try #require(URL(string: "https://files.example.com:8443"))
     }
 
-    private func state(status: ClientCertificateFeature.Status = .empty, sheet: ClientCertificateFeature.State? = nil) -> SettingsFeature.State {
+    private func state(
+        status: ClientCertificateFeature.Status = .empty,
+        sheet: ClientCertificateFeature.State? = nil
+    ) -> SettingsFeature.State {
         var state = SettingsFeature.State(serverURL: serverURL, user: user)
         state.clientCertificateStatus = status
         state.clientCertificate = sheet
@@ -87,7 +90,10 @@ struct SettingsClientCertificateTests {
     private nonisolated static let warningWindow: TimeInterval = 14 * day
 
     private nonisolated static func installed(expiringIn interval: TimeInterval?) -> ClientCertificateFeature.Status {
-        .installed(ClientCertificateSummary(subject: TestCertificate.subject, expiresAt: interval.map { MockDate.date.addingTimeInterval($0) }))
+        .installed(ClientCertificateSummary(
+            subject: TestCertificate.subject,
+            expiresAt: interval.map { MockDate.date.addingTimeInterval($0) }
+        ))
     }
 
     @Test(
@@ -98,7 +104,10 @@ struct SettingsClientCertificateTests {
             DetailCase(status: installed(expiringIn: nil), expected: TestCertificate.subject),
             DetailCase(status: installed(expiringIn: 90 * day), expected: TestCertificate.subject),
             DetailCase(status: installed(expiringIn: warningWindow + 1), expected: TestCertificate.subject),
-            DetailCase(status: installed(expiringIn: warningWindow), expected: L10n.Settings.clientCertificateExpiresSoon),
+            DetailCase(
+                status: installed(expiringIn: warningWindow),
+                expected: L10n.Settings.clientCertificateExpiresSoon
+            ),
             DetailCase(status: installed(expiringIn: 3 * day), expected: L10n.Settings.clientCertificateExpiresSoon),
             DetailCase(status: installed(expiringIn: 1), expected: L10n.Settings.clientCertificateExpiresSoon),
             DetailCase(status: installed(expiringIn: 0), expected: L10n.Settings.clientCertificateExpired),

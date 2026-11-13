@@ -27,16 +27,40 @@ struct SettingsSaveRow: View {
 }
 
 #Preview("Unsaved changes") {
-    SettingsSaveRow(saveTitle: "Save Changes", discardTitle: "Discard", isSaving: false, isSaveEnabled: true, isDirty: true, onSave: {}, onDiscard: {})
-        .padding()
+    SettingsSaveRow(
+        saveTitle: "Save Changes",
+        discardTitle: "Discard",
+        isSaving: false,
+        isSaveEnabled: true,
+        isDirty: true,
+        onSave: {},
+        onDiscard: {}
+    )
+    .padding()
 }
 
 #Preview("Nothing to save") {
-    SettingsSaveRow(saveTitle: "Save Changes", discardTitle: "Discard", isSaving: false, isSaveEnabled: false, isDirty: false, onSave: {}, onDiscard: {})
-        .padding()
+    SettingsSaveRow(
+        saveTitle: "Save Changes",
+        discardTitle: "Discard",
+        isSaving: false,
+        isSaveEnabled: false,
+        isDirty: false,
+        onSave: {},
+        onDiscard: {}
+    )
+    .padding()
 }
 
 #Preview("Saving") {
-    SettingsSaveRow(saveTitle: "Save Changes", discardTitle: "Discard", isSaving: true, isSaveEnabled: false, isDirty: true, onSave: {}, onDiscard: {})
-        .padding()
+    SettingsSaveRow(
+        saveTitle: "Save Changes",
+        discardTitle: "Discard",
+        isSaving: true,
+        isSaveEnabled: false,
+        isDirty: true,
+        onSave: {},
+        onDiscard: {}
+    )
+    .padding()
 }

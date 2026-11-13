@@ -13,8 +13,6 @@ struct LoginFormFeatureTests {
     private typealias Support = LoginFormTestSupport
     private typealias Store = LoginFormTestSupport.Store
 
-    private let user = User(id: "1", username: TestAccount.username, email: nil, roles: [])
-
     /// A form that was tested, signed in on the second factor page and then failed, with every field
     /// a reset has to clear set to something.
     private var dirtyState: LoginFormFeature.State {
@@ -52,20 +50,37 @@ struct LoginFormFeatureTests {
         "A typed address is reduced to scheme, host and port only",
         arguments: [
             AcceptedAddress(scheme: .https, typed: TestHost.nextExplorer, expected: TestHost.nextExplorerURLString),
-            AcceptedAddress(scheme: .https, typed: "nextexplorer.example.com///", expected: TestHost.nextExplorerURLString),
+            AcceptedAddress(
+                scheme: .https,
+                typed: "nextexplorer.example.com///",
+                expected: TestHost.nextExplorerURLString
+            ),
             AcceptedAddress(scheme: .http, typed: "  192.168.1.50:3000  ", expected: LoginFormConstants.lanURLString),
-            AcceptedAddress(scheme: .http, typed: TestHost.nextExplorerURLString, expected: "http://nextexplorer.example.com"),
-            AcceptedAddress(scheme: .https, typed: "example.com/files/photos?sort=name#top", expected: TestHost.exampleURLString),
+            AcceptedAddress(
+                scheme: .http,
+                typed: TestHost.nextExplorerURLString,
+                expected: "http://nextexplorer.example.com"
+            ),
+            AcceptedAddress(
+                scheme: .https,
+                typed: "example.com/files/photos?sort=name#top",
+                expected: TestHost.exampleURLString
+            ),
             AcceptedAddress(scheme: .http, typed: "192.168.1.50:3000/inbox", expected: LoginFormConstants.lanURLString),
             AcceptedAddress(scheme: .http, typed: "admin:hunter2@box.local:3000", expected: "http://box.local:3000"),
             AcceptedAddress(scheme: .http, typed: "[::1]:3000", expected: "http://[::1]:3000"),
             AcceptedAddress(scheme: .https, typed: "[2001:db8::1]", expected: "https://[2001:db8::1]"),
             AcceptedAddress(scheme: .http, typed: LoginFormConstants.nasHost, expected: "http://nas"),
-            AcceptedAddress(scheme: .http, typed: LoginFormConstants.boxHostWithPort, expected: LoginFormConstants.boxURLString),
+            AcceptedAddress(
+                scheme: .http,
+                typed: LoginFormConstants.boxHostWithPort,
+                expected: LoginFormConstants.boxURLString
+            ),
         ]
     )
     func normalizedURLAcceptsAndReduces(_ address: AcceptedAddress) {
-        #expect(LoginFormFeature.normalizedURL(scheme: address.scheme, host: address.typed)?.absoluteString == address.expected)
+        let normalized = LoginFormFeature.normalizedURL(scheme: address.scheme, host: address.typed)
+        #expect(normalized?.absoluteString == address.expected)
     }
 
     @Test(
@@ -129,20 +144,33 @@ struct LoginFormFeatureTests {
     @Test(
         "A server with a sign in method shows the checkmark, then advances to the credentials page",
         arguments: [
-            ConnectCase(host: TestHost.nextExplorer, status: AuthStatus(localEnabled: true, oidcEnabled: false), requestedURL: TestHost.nextExplorerURLString),
-            ConnectCase(host: LoginFormConstants.ssoHost, status: AuthStatus(localEnabled: false, oidcEnabled: true), requestedURL: LoginFormConstants.ssoURLString),
-            ConnectCase(host: "both.example.com", status: AuthStatus(localEnabled: true, oidcEnabled: true), requestedURL: "https://both.example.com"),
+            ConnectCase(
+                host: TestHost.nextExplorer,
+                status: AuthStatus(localEnabled: true, oidcEnabled: false),
+                requestedURL: TestHost.nextExplorerURLString
+            ),
+            ConnectCase(
+                host: LoginFormConstants.ssoHost,
+                status: AuthStatus(localEnabled: false, oidcEnabled: true),
+                requestedURL: LoginFormConstants.ssoURLString
+            ),
+            ConnectCase(
+                host: "both.example.com",
+                status: AuthStatus(localEnabled: true, oidcEnabled: true),
+                requestedURL: "https://both.example.com"
+            ),
         ]
     )
     func connectionAdvancesToCredentials(_ testCase: ConnectCase) async {
         let clock = TestClock()
         let requested = LockIsolated<[String]>([])
-        let store = Support.makeStore(LoginFormFeature.State(host: testCase.host), clock: clock) { [status = testCase.status] in
-            $0.authClient.fetchStatus = { url in
-                requested.withValue { $0.append(url.absoluteString) }
-                return status
+        let store = Support
+            .makeStore(LoginFormFeature.State(host: testCase.host), clock: clock) { [status = testCase.status] in
+                $0.authClient.fetchStatus = { url in
+                    requested.withValue { $0.append(url.absoluteString) }
+                    return status
+                }
             }
-        }
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
         await clock.advance(by: .seconds(0.25))
@@ -306,7 +334,10 @@ struct LoginFormFeatureTests {
     @Test(
         "Editing the address or pressing back starts the handshake over",
         arguments: [
-            ResetCase(action: .hostChanged(LoginFormConstants.changedHostPath), expectedHost: LoginFormConstants.changedHostPath),
+            ResetCase(
+                action: .hostChanged(LoginFormConstants.changedHostPath),
+                expectedHost: LoginFormConstants.changedHostPath
+            ),
             ResetCase(action: .backButtonTapped, expectedHost: TestHost.nextExplorer),
         ]
     )
@@ -368,228 +399,5 @@ struct LoginFormFeatureTests {
         // unhandled received action and fail the finish.
         await clock.advance(by: .seconds(5))
         await store.finish()
-    }
-
-    // MARK: - Single sign on
-
-    @Test("Tapping the SSO button runs the web flow, shows the success beat and delegates authentication")
-    func ssoButtonAuthenticates() async throws {
-        let ssoUser = User(id: "sso-1", username: "ssouser", email: "sso@example.com", roles: ["user"])
-        let clock = TestClock()
-        let requested = LockIsolated<[String]>([])
-        let store = Support.makeStore(
-            LoginFormFeature.State(
-                currentPage: .credentials,
-                connectionPhase: .success,
-                host: LoginFormConstants.ssoHost,
-                authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)
-            ),
-            clock: clock
-        ) {
-            $0.authClient.loginOIDC = { url in
-                requested.withValue { $0.append(url.absoluteString) }
-                return ssoUser
-            }
-        }
-
-        await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
-        await store.receive(\.oidcResponse) { $0.oidcPhase = .success }
-        await clock.advance(by: .seconds(0.5))
-        try await store.receive(.delegate(.authenticated(ssoUser, Support.url(LoginFormConstants.ssoURLString))))
-
-        #expect(requested.value == [LoginFormConstants.ssoURLString])
-    }
-
-    struct SSOFailureCase: Sendable {
-        let error: AuthClientError
-        let message: String?
-    }
-
-    @Test(
-        "A dismissed web sheet leaves no error banner, a failed web flow shows the SSO error and then clears it",
-        arguments: [
-            SSOFailureCase(error: .oidcCancelled, message: nil),
-            SSOFailureCase(error: .oidcFailed("boom"), message: L10n.Login.errorSso),
-        ]
-    )
-    func ssoButtonFailure(_ testCase: SSOFailureCase) async {
-        let clock = TestClock()
-        let store = Support.makeStore(
-            LoginFormFeature.State(
-                currentPage: .credentials,
-                connectionPhase: .success,
-                host: LoginFormConstants.ssoHost,
-                authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)
-            ),
-            clock: clock
-        ) {
-            $0.authClient.loginOIDC = { [error = testCase.error] _ in throw error }
-        }
-
-        await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
-        await store.receive(\.oidcResponse) {
-            $0.oidcPhase = .idle
-            $0.errorMessage = testCase.message
-        }
-        if testCase.message != nil {
-            await clock.advance(by: .seconds(4))
-            await store.receive(\.clearErrorMessage) { $0.errorMessage = nil }
-        }
-        await store.finish()
-    }
-
-    // MARK: - Password sign in
-
-    struct LoginCase: Sendable {
-        let identifier: String
-        let password: String
-        let sentIdentifier: String
-        let sentPassword: String
-    }
-
-    struct LoginCall: Equatable, Sendable {
-        let url: String
-        let identifier: String
-        let password: String
-    }
-
-    @Test(
-        "Continue trims the identifier and sends the password untouched, then delegates authentication",
-        arguments: [
-            LoginCase(identifier: "  phillip@example.com  ", password: TestAccount.password, sentIdentifier: LoginFormConstants.phillipEmail, sentPassword: TestAccount.password),
-            LoginCase(identifier: TestAccount.username, password: TestAccount.password, sentIdentifier: TestAccount.username, sentPassword: TestAccount.password),
-            // The reducer has no client side password check: the server decides what a valid password is.
-            LoginCase(identifier: LoginFormConstants.phillipEmail, password: TestValue.blank, sentIdentifier: LoginFormConstants.phillipEmail, sentPassword: TestValue.blank),
-        ]
-    )
-    func localLoginSendsTheCredentials(_ testCase: LoginCase) async throws {
-        let clock = TestClock()
-        let calls = LockIsolated<[LoginCall]>([])
-        let store = Support.makeStore(
-            Support.credentialsState(identifier: testCase.identifier, password: testCase.password),
-            clock: clock
-        ) { [user] in
-            $0.authClient.login = { url, identifier, password in
-                calls.withValue { $0.append(LoginCall(url: url.absoluteString, identifier: identifier, password: password)) }
-                return user
-            }
-        }
-
-        await store.send(.continueButtonTapped) { $0.submitPhase = .submitting }
-        try await Support.finishSuccessfulSubmit(store, clock: clock, user: user)
-
-        #expect(calls.value == [LoginCall(url: Support.serverURL, identifier: testCase.sentIdentifier, password: testCase.sentPassword)])
-    }
-
-    struct IgnoredContinueCase: Sendable {
-        let host: String
-        let authStatus: AuthStatus?
-    }
-
-    @Test(
-        "Continue does nothing unless password sign in was confirmed for a valid address",
-        arguments: [
-            IgnoredContinueCase(host: TestHost.nextExplorer, authStatus: nil),
-            IgnoredContinueCase(host: TestHost.nextExplorer, authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)),
-            IgnoredContinueCase(host: AuthFeatureTestValue.invalidHost, authStatus: AuthStatus(localEnabled: true, oidcEnabled: false)),
-        ]
-    )
-    func continueIsIgnoredWithoutConfirmedPasswordSignIn(_ testCase: IgnoredContinueCase) async {
-        let calls = LockIsolated(0)
-        let state = LoginFormFeature.State(host: testCase.host, identifier: TestAccount.username, password: "x", authStatus: testCase.authStatus)
-        let store = Support.makeStore(state, clock: TestClock()) { [user] in
-            $0.authClient.login = { _, _, _ in
-                calls.withValue { $0 += 1 }
-                return user
-            }
-        }
-
-        await store.send(.continueButtonTapped)
-
-        #expect(calls.value == 0)
-        #expect(store.state.diagnostics.entries.isEmpty)
-    }
-
-    struct LoginFailureCase: Sendable {
-        let error: AuthClientError
-        let message: String
-        let scope: LoginFormFeature.InvalidFieldScope?
-    }
-
-    @Test(
-        "A refused sign in shows its message, red borders only when the credentials are wrong, then clears itself",
-        arguments: [
-            LoginFailureCase(error: .invalidCredentials, message: L10n.Login.errorInvalidCredentials, scope: .identifierAndPassword),
-            // A rate limit or a server fault says nothing about which field was wrong.
-            LoginFailureCase(error: .rateLimited, message: L10n.Login.errorRateLimited, scope: nil),
-            LoginFailureCase(error: .server(statusCode: 503), message: L10n.Login.errorServer(503), scope: nil),
-        ]
-    )
-    func loginFailureShowsMessage(_ testCase: LoginFailureCase) async {
-        let clock = TestClock()
-        let store = Support.makeStore(Support.credentialsState(identifier: LoginFormConstants.phillipEmail), clock: clock) {
-            $0.authClient.login = { [error = testCase.error] _, _, _ in throw error }
-        }
-
-        await store.send(.continueButtonTapped) { $0.submitPhase = .submitting }
-        await clock.advance(by: .seconds(0.25))
-        await store.receive(\.submitFailed) {
-            $0.submitPhase = .failure
-            $0.errorMessage = testCase.message
-            $0.invalidFieldsScope = testCase.scope
-        }
-        await Support.expireSubmitError(store, clock: clock)
-    }
-
-    @Test("regression: sessionCookieMissing does not auto dismiss, because it is a real failure and not a typo to retry")
-    func sessionCookieMissingDoesNotAutoDismiss() async {
-        let clock = TestClock()
-        let store = Support.makeStore(Support.credentialsState(identifier: LoginFormConstants.phillipEmail), clock: clock) {
-            $0.authClient.login = { _, _, _ in throw AuthClientError.sessionCookieMissing }
-        }
-
-        await store.send(.continueButtonTapped) { $0.submitPhase = .submitting }
-        await clock.advance(by: .seconds(0.25))
-        await store.receive(\.submitFailed) {
-            $0.submitPhase = .failure
-            $0.errorMessage = L10n.Login.errorIncomplete
-        }
-        // The button still re-expands so the user can retry: only the message is sticky.
-        await clock.advance(by: .seconds(1))
-        await store.receive(\.revertSubmitToIdle) { $0.submitPhase = .idle }
-
-        // Well past the usual 4 second dismissal nothing fires: a clear would be an unhandled action.
-        await clock.advance(by: .seconds(30))
-        await store.finish()
-    }
-
-    @Test("A second Continue while the first sign in is in flight cancels it, so only the second call completes")
-    func doubleSubmitCancelsFirstInFlightLogin() async throws {
-        let clock = TestClock()
-        let gate = AsyncGate()
-        let startedCalls = LockIsolated(0)
-        let completedCalls = LockIsolated<[Int]>([])
-        let store = Support.makeStore(Support.credentialsState(identifier: LoginFormConstants.phillipEmail), clock: clock) { [user] in
-            $0.authClient.login = { _, _, _ in
-                let callIndex = startedCalls.withValue { count -> Int in
-                    defer { count += 1 }
-                    return count
-                }
-                try await gate.wait()
-                completedCalls.withValue { $0.append(callIndex) }
-                return user
-            }
-        }
-
-        await store.send(.continueButtonTapped) { $0.submitPhase = .submitting }
-        // The first call is now parked on the gate.
-        await clock.advance(by: .seconds(0.25))
-
-        await store.send(.continueButtonTapped)
-        gate.open()
-        try await Support.finishSuccessfulSubmit(store, clock: clock, user: user)
-
-        #expect(startedCalls.value == 2)
-        #expect(completedCalls.value == [1])
     }
 }

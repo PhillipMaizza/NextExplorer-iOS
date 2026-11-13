@@ -212,8 +212,21 @@ struct ActivityLogView: View {
 private enum PreviewEvents {
     static let all = [
         ActivityEvent(id: "1", at: "2026-11-11T07:00:00.000Z", action: "sign-in", actor: "phillip", ip: "192.168.1.20"),
-        ActivityEvent(id: "2", at: "2026-11-11T06:58:00.000Z", action: "sign-in", outcome: .refused, actor: "intruder@example.com", ip: "203.0.113.9"),
-        ActivityEvent(id: "3", at: "2026-11-11T06:30:00.000Z", action: "file.delete", actor: "phillip", target: "Documents/old.txt"),
+        ActivityEvent(
+            id: "2",
+            at: "2026-11-11T06:58:00.000Z",
+            action: "sign-in",
+            outcome: .refused,
+            actor: "intruder@example.com",
+            ip: "203.0.113.9"
+        ),
+        ActivityEvent(
+            id: "3",
+            at: "2026-11-11T06:30:00.000Z",
+            action: "file.delete",
+            actor: "phillip",
+            target: "Documents/old.txt"
+        ),
     ]
 }
 
@@ -239,12 +252,18 @@ private func activityPreview(
             state.isUnavailable = unavailable
             return state
         }()) { ActivityLogFeature() } withDependencies: {
-            $0.filesClient.fetchSystemSettings = { _ in unavailable ? SystemSettings() : SystemSettings(activity: settings) }
+            $0.filesClient
+                .fetchSystemSettings = { _ in unavailable ? SystemSettings() : SystemSettings(activity: settings) }
             $0.filesClient.fetchActivity = { _, _, _ in
                 if case .failed = phase {
                     throw FilesClientError.offline
                 }
-                return ActivityPage(events: events, nextBefore: nextBefore, isEnabled: isLogEnabled, actions: ["sign-in", "file.delete"])
+                return ActivityPage(
+                    events: events,
+                    nextBefore: nextBefore,
+                    isEnabled: isLogEnabled,
+                    actions: ["sign-in", "file.delete"]
+                )
             }
         })
     }

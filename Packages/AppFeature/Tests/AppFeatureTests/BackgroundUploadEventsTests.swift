@@ -13,7 +13,8 @@ struct BackgroundUploadEventsTests {
 
     private func credentials(username: String) -> SessionCredentials {
         SessionCredentials(
-            serverBaseURL: server, authMode: .local, cookieName: TestSession.cookieName, cookieValue: TestSession.cookieValue,
+            serverBaseURL: server, authMode: .local, cookieName: TestSession.cookieName,
+            cookieValue: TestSession.cookieValue,
             cookieDomain: TestHost.server, cookiePath: "/", cookieIsSecure: true, expiresAt: nil, username: username
         )
     }
@@ -54,7 +55,11 @@ struct BackgroundUploadEventsTests {
 
         await BackgroundUploadEvents.checkRefusedSessions(
             shareUploads: shareUploads(flagged: [account.accountID], cleared: cleared),
-            authClient: authClient(active: account.accountID, sessions: [account], me: { _ in throw AuthClientError.sessionExpired }),
+            authClient: authClient(
+                active: account.accountID,
+                sessions: [account],
+                me: { _ in throw AuthClientError.sessionExpired }
+            ),
             expireSession: { expired.withValue { $0 += 1 } }
         )
 
@@ -85,7 +90,11 @@ struct BackgroundUploadEventsTests {
 
         await BackgroundUploadEvents.checkRefusedSessions(
             shareUploads: shareUploads(flagged: [account.accountID], cleared: LockIsolated([])),
-            authClient: authClient(active: account.accountID, sessions: [account], me: { _ in throw AuthClientError.server(statusCode: 401) }),
+            authClient: authClient(
+                active: account.accountID,
+                sessions: [account],
+                me: { _ in throw AuthClientError.server(statusCode: 401) }
+            ),
             expireSession: { expired.withValue { $0 += 1 } }
         )
 
@@ -119,7 +128,11 @@ struct BackgroundUploadEventsTests {
 
         await BackgroundUploadEvents.checkRefusedSessions(
             shareUploads: shareUploads(flagged: [account.accountID], cleared: cleared),
-            authClient: authClient(active: account.accountID, sessions: [account], me: { _ in throw AuthClientError.network(TestFailure.offline) }),
+            authClient: authClient(
+                active: account.accountID,
+                sessions: [account],
+                me: { _ in throw AuthClientError.network(TestFailure.offline) }
+            ),
             expireSession: { expired.withValue { $0 += 1 } }
         )
 
@@ -193,7 +206,10 @@ struct BackgroundUploadEventsTests {
         await retry(accountID: "gone|nobody", sessions: [], retried: 0, received: received, notices: notices)
 
         #expect(received.value.isEmpty)
-        #expect(notices.value == [.needsSignIn], "the files are still on disk: sign in and tap Retry again, not share again")
+        #expect(
+            notices.value == [.needsSignIn],
+            "the files are still on disk: sign in and tap Retry again, not share again"
+        )
     }
 
     @Test("Retry tells the user when the batch is gone, so no account can be found for it")

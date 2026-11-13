@@ -61,7 +61,9 @@
         /// Scales every window's layer time so both UIKit and SwiftUI animations finish near
         /// instantly, while their completion handlers and transition code still run. A no op unless
         /// `UITEST_MOCK=1` and a positive `UITEST_ANIM_SPEED` are set. Safe to call more than once.
-        public static func applyAnimationSpeedIfNeeded(from environment: [String: String] = ProcessInfo.processInfo.environment) {
+        public static func applyAnimationSpeedIfNeeded(
+            from environment: [String: String] = ProcessInfo.processInfo.environment
+        ) {
             guard environment[mockFlag] == "1",
                   let raw = environment[animationSpeedKey],
                   let speed = Float(raw), speed > 0 else { return }
@@ -85,12 +87,15 @@
 
         /// Called with `applyAnimationSpeedIfNeeded`; waits a moment so the hinge has already
         /// unlocked rotation on a foldable.
-        public static func applyOrientationIfNeeded(from environment: [String: String] = ProcessInfo.processInfo.environment) {
+        public static func applyOrientationIfNeeded(
+            from environment: [String: String] = ProcessInfo.processInfo.environment
+        ) {
             #if os(iOS)
                 guard environment[mockFlag] == "1", environment[orientationKey] == "landscape" else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + orientationDelay) {
                     MainActor.assumeIsolated {
-                        ActiveWindowScene.current?.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { _ in }
+                        ActiveWindowScene.current?
+                            .requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { _ in }
                     }
                 }
             #endif
@@ -119,7 +124,12 @@
         static let validCode = "123456"
         /// The recovery code the mocked `loginTOTP` accepts. Mirrored by `Fixture.validRecoveryCode`.
         static let validRecoveryCode = "AAAAA-BBBBB"
-        public static let user = User(id: "uitest-user", username: "phillip", email: "phillip@example.com", roles: ["admin"])
+        public static let user = User(
+            id: "uitest-user",
+            username: "phillip",
+            email: "phillip@example.com",
+            roles: ["admin"]
+        )
 
         enum Auth: String {
             case loggedOut
@@ -135,7 +145,10 @@
             case sessionExpired
         }
 
-        static func credentials(serverURL: URL = UITestSupport.serverURL, username: String = "phillip") -> SessionCredentials {
+        static func credentials(
+            serverURL: URL = UITestSupport.serverURL,
+            username: String = "phillip"
+        ) -> SessionCredentials {
             SessionCredentials(
                 serverBaseURL: serverURL,
                 authMode: .local,
@@ -229,7 +242,12 @@
                     FileMetadata(
                         path: path, name: (path as NSString).lastPathComponent, kind: FileItem.directoryKind, size: 0,
                         dateModified: Date(), dateCreated: Date(),
-                        directory: FileMetadata.DirectorySummary(totalSize: 12_000_000, fileCount: 2, dirCount: 0, truncated: false)
+                        directory: FileMetadata.DirectorySummary(
+                            totalSize: 12_000_000,
+                            fileCount: 2,
+                            dirCount: 0,
+                            truncated: false
+                        )
                     )
                 }
                 client.offlineDownloadFile = { _, item, onProgress in
@@ -244,13 +262,22 @@
                     let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmed.isEmpty else { return [] }
                     let widerHits = scopePath.isEmpty
-                        ? [SearchResultItem(name: widerSearchHitName, path: "Archive/\(widerSearchHitName)", kind: "txt")]
+                        ? [SearchResultItem(
+                            name: widerSearchHitName,
+                            path: "Archive/\(widerSearchHitName)",
+                            kind: "txt"
+                        )]
                         : []
                     // Like the server, names in the folder that match come first, so a folder
                     // found by search stays in the results and can be opened from there.
                     let nameMatches = store.current()
                         .filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
-                        .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file", isNameMatch: true) }
+                        .map { SearchResultItem(
+                            name: $0.name,
+                            path: $0.path,
+                            kind: $0.isDirectory ? "dir" : "file",
+                            isNameMatch: true
+                        ) }
                     return SearchPage(items: nameMatches + [
                         SearchResultItem(
                             name: searchHitName, path: "Documents/\(searchHitName)", kind: "txt",
@@ -258,7 +285,11 @@
                         ),
                         SearchResultItem(name: "Meeting Notes.md", path: "Documents/Meeting Notes.md", kind: "md"),
                         // A mixed type hit so a filter chip test can prove it narrows the results.
-                        SearchResultItem(name: imageSearchHitName, path: "Documents/\(imageSearchHitName)", kind: "jpg"),
+                        SearchResultItem(
+                            name: imageSearchHitName,
+                            path: "Documents/\(imageSearchHitName)",
+                            kind: "jpg"
+                        ),
                     ] + widerHits)
                 }
             case .empty:
@@ -291,7 +322,14 @@
         static let rootItems: [FileItem] = [
             FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory"),
             FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory"),
-            FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+            FileItem(
+                name: "vacation.jpg",
+                path: "",
+                dateModified: Date(),
+                size: 2_400_000,
+                kind: "jpg",
+                supportsThumbnail: true
+            ),
             FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 1_024, kind: "txt"),
         ]
     }
@@ -334,13 +372,26 @@
         }
 
         func addFolder(named name: String) -> FileItem {
-            let folder = FileItem(name: name.isEmpty ? "Untitled Folder" : name, path: "", dateModified: Date(), size: 0, kind: "directory")
+            let folder = FileItem(
+                name: name.isEmpty ? "Untitled Folder" : name,
+                path: "",
+                dateModified: Date(),
+                size: 0,
+                kind: "directory"
+            )
             locked { items.append(folder) }
             return folder
         }
 
         func rename(_ item: FileItem, to newName: String) -> FileItem {
-            let renamed = FileItem(name: newName, path: item.path, dateModified: item.dateModified, size: item.size, kind: item.kind, supportsThumbnail: item.supportsThumbnail)
+            let renamed = FileItem(
+                name: newName,
+                path: item.path,
+                dateModified: item.dateModified,
+                size: item.size,
+                kind: item.kind,
+                supportsThumbnail: item.supportsThumbnail
+            )
             locked {
                 if let index = items.firstIndex(where: { $0.id == item.id }) {
                     items[index] = renamed
@@ -355,7 +406,13 @@
         }
 
         func compress(_ item: FileItem) -> FileItem {
-            let archive = FileItem(name: "\(item.name).zip", path: item.path, dateModified: Date(), size: 0, kind: "zip")
+            let archive = FileItem(
+                name: "\(item.name).zip",
+                path: item.path,
+                dateModified: Date(),
+                size: 0,
+                kind: "zip"
+            )
             locked { items.append(archive) }
             return archive
         }
@@ -423,7 +480,8 @@
 
     public extension AppFeature {
         /// Idempotent: safe to call once at launch. A no op unless `UITEST_MOCK=1` is set.
-        static func prepareUITestDependencies(from environment: [String: String] = ProcessInfo.processInfo.environment) {
+        static func prepareUITestDependencies(from environment: [String: String] = ProcessInfo.processInfo.environment)
+        {
             guard environment[UITestSupport.mockFlag] == "1" else { return }
 
             // Wipe persisted defaults so @AppStorage state (view mode, thumbnail size, ...) can't

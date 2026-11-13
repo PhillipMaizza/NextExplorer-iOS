@@ -9,7 +9,10 @@
             let app = launchApp(auth: .loggedOut)
             LoginScreen(app: app).signIn()
 
-            XCTAssertTrue(sidebarItem(L10n.Tab.browse, in: app).waitToAppear(), "A successful login should reveal the sidebar")
+            XCTAssertTrue(
+                sidebarItem(L10n.Tab.browse, in: app).waitToAppear(),
+                "A successful login should reveal the sidebar"
+            )
         }
 
         func testSidebarSectionsAndShortcuts() {
@@ -24,7 +27,10 @@
             app.typeKey("2", modifierFlags: .command)
             // Only the Favorites table has a Location column.
             XCTAssertTrue(app.buttons[L10n.FileInfo.rowLocation].waitToAppear(), "⌘2 should show Favorites")
-            XCTAssertFalse(text(Self.byMeShare, in: app).appears(within: UITestTimeout.short), "Favorites should replace Shared")
+            XCTAssertFalse(
+                text(Self.byMeShare, in: app).appears(within: UITestTimeout.short),
+                "Favorites should replace Shared"
+            )
 
             app.typeKey("1", modifierFlags: .command)
             XCTAssertTrue(text(Fixture.imageFile, in: app).waitToAppear(), "⌘1 should return to Browse")
@@ -42,7 +48,10 @@
             XCTAssertTrue(app.buttons[L10n.FileInfo.rowLocation].waitToAppear(), "Favorites should replace Shared")
             sidebarItem(L10n.Tab.browse, in: app).click()
 
-            XCTAssertTrue(text(Fixture.file, in: app).waitToAppear(), "Browse should come back on the folder it had open")
+            XCTAssertTrue(
+                text(Fixture.file, in: app).waitToAppear(),
+                "Browse should come back on the folder it had open"
+            )
             XCTAssertTrue(backButton(in: app).waitToAppear(), "The opened folder should still have Back")
         }
 
@@ -51,7 +60,10 @@
             openDocuments(in: app)
 
             backButton(in: app).click()
-            XCTAssertTrue(backButton(in: app).waitToVanish(), "Back should return to the root, which has no Back button")
+            XCTAssertTrue(
+                backButton(in: app).waitToVanish(),
+                "Back should return to the root, which has no Back button"
+            )
         }
 
         // MARK: Go menu
@@ -94,7 +106,10 @@
             XCTAssertTrue(field.waitToAppear(), "⇧⌘G should ask for a folder")
             field.clearAndType("\(Fixture.folder)/\(Fixture.folderAlt)")
             app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
-            XCTAssertTrue(windowTitled(Fixture.folderAlt, in: app).waitToAppear(), "Go to Folder should open the nested folder")
+            XCTAssertTrue(
+                windowTitled(Fixture.folderAlt, in: app).waitToAppear(),
+                "Go to Folder should open the nested folder"
+            )
 
             app.typeKey(XCUIKeyboardKey.upArrow, modifierFlags: .command)
             XCTAssertTrue(windowTitled(Fixture.folder, in: app).waitToAppear(), "⌘↑ should open the parent folder")
@@ -143,7 +158,10 @@
             folder.waitToBeHittable()
             folder.click()
             app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
-            XCTAssertTrue(app.labeledButton(L10n.Common.close).waitToAppear(), "Space should open Get Info for a folder")
+            XCTAssertTrue(
+                app.labeledButton(L10n.Common.close).waitToAppear(),
+                "Space should open Get Info for a folder"
+            )
         }
 
         /// The Move dialog's folders open from the keyboard (⌘↓), not only by double click.

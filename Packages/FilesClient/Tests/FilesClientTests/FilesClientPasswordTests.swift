@@ -22,7 +22,11 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(
+                statusCode: statusCode,
+                headers: [HTTPHeaderField.contentType: MIMEType.json],
+                body: Data(body.utf8)
+            )
         }
 
         // MARK: addOwnPassword
@@ -45,7 +49,10 @@ extension FilesClientLiveTests {
         func anAccountThatAlreadyHasAPasswordSurfacesTheServersMessage() async throws {
             try stub(statusCode: 409, body: FilesClientFixture.passwordErrorAlreadyExists.string())
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 409, message: "You already have password authentication.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 409,
+                message: "You already have password authentication."
+            )) {
                 try await makeClient().addOwnPassword(serverURL, Constants.newPassword)
             }
         }
@@ -54,7 +61,10 @@ extension FilesClientLiveTests {
         func aTooShortPasswordSurfacesTheServersMessage() async throws {
             try stub(statusCode: 400, body: FilesClientFixture.passwordErrorTooShort.string())
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Password must be at least 6 characters long.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "Password must be at least 6 characters long."
+            )) {
                 try await makeClient().addOwnPassword(serverURL, "abc")
             }
         }
@@ -83,7 +93,10 @@ extension FilesClientLiveTests {
         func aWrongCurrentPasswordIsItsMessageNotASessionExpiry() async throws {
             try stub(statusCode: 401, body: FilesClientFixture.passwordErrorCurrentIncorrect.string())
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "Current password is incorrect.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 401,
+                message: "Current password is incorrect."
+            )) {
                 try await makeClient().changeOwnPassword(serverURL, TestAccount.wrongPassword, Constants.newPassword)
             }
         }

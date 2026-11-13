@@ -145,7 +145,11 @@ public struct DSNavigationRow: View {
         DSNavigationRow(title: "User Management", icon: IconKit.people) {}
         DSNavigationRow(title: "Change Password", icon: IconKit.key) {}
         DSNavigationRow(title: "Clear Cache", icon: IconKit.delete, accessory: .detail("128 MB"), role: .accent) {}
-        DSNavigationRow(title: "Server", icon: IconKit.server, accessory: .detail("files.a-very-long-subdomain.example.com:8443")) {}
+        DSNavigationRow(
+            title: "Server",
+            icon: IconKit.server,
+            accessory: .detail("files.a-very-long-subdomain.example.com:8443")
+        ) {}
         DSNavigationRow(title: "Sign Out", icon: IconKit.signOut, accessory: .none, role: .destructive) {}
     }
     .padding(.space16)

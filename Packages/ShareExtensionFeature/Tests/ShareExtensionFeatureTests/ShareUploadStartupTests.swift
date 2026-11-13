@@ -10,7 +10,8 @@ import ShareUploads
 import Testing
 import TestUtils
 
-/// Opening the sheet: session and account loading, default folder and automatic upload. Nested in `ShareUploadFeatureTests` so it inherits `.serialized` with every other share upload suite.
+/// Opening the sheet: session and account loading, default folder and automatic upload. Nested in
+/// `ShareUploadFeatureTests` so it inherits `.serialized` with every other share upload suite.
 extension ShareUploadFeatureTests {
     @MainActor
     @Suite(.isolatedDependencies)
@@ -38,7 +39,11 @@ extension ShareUploadFeatureTests {
         func uploadsStraightAwayWhenTheDefaultFolderSaysSo() async {
             let calls = Calls()
             let clock = TestClock()
-            let store = store(defaults: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true), calls: calls, clock: clock)
+            let store = store(
+                defaults: UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true),
+                calls: calls,
+                clock: clock
+            )
 
             await startAutomatic(store)
             await store.receive(\.defaultFolderChecked) { $0.phase = .ready }

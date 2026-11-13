@@ -162,7 +162,11 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
 
             VStack(spacing: 0) {
                 ForEach(directions, id: \.self) { direction in
-                    radioRow(icon: directionIcon(direction), title: directionTitle(direction), isSelected: direction == sortDirection) {
+                    radioRow(
+                        icon: directionIcon(direction),
+                        title: directionTitle(direction),
+                        isSelected: direction == sortDirection
+                    ) {
                         onSelectDirection(direction)
                     }
                 }

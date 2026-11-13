@@ -21,7 +21,11 @@ public extension View {
         func body(content: Content) -> some View {
             let sheet = alert()
             content.alert(sheet.title, isPresented: isPresented) {
-                Button(sheet.confirmTitle, role: sheet.role == .destructive ? .destructive : nil, action: sheet.onConfirm)
+                Button(
+                    sheet.confirmTitle,
+                    role: sheet.role == .destructive ? .destructive : nil,
+                    action: sheet.onConfirm
+                )
                 if let neutralTitle = sheet.neutralTitle, let onNeutral = sheet.onNeutral {
                     Button(neutralTitle, action: onNeutral)
                 }

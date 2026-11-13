@@ -117,7 +117,11 @@
             attachController(context.environment.macZoomController, to: scrollView, coordinator: context.coordinator)
         }
 
-        private func attachController(_ controller: MacZoomController?, to scrollView: NSScrollView, coordinator: Coordinator) {
+        private func attachController(
+            _ controller: MacZoomController?,
+            to scrollView: NSScrollView,
+            coordinator: Coordinator
+        ) {
             controller?.attach { [weak coordinator, weak scrollView] step in
                 guard let coordinator, let scrollView else { return }
                 coordinator.zoom(step, in: scrollView)

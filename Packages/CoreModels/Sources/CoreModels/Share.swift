@@ -115,7 +115,10 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     }
 
     /// `owner_id` follows the same unconfirmed int-vs-string shape as `User.id`.
-    private static func decodeStringOrInt(_ container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) throws -> String {
+    private static func decodeStringOrInt(
+        _ container: KeyedDecodingContainer<CodingKeys>,
+        forKey key: CodingKeys
+    ) throws -> String {
         if let stringValue = try? container.decode(String.self, forKey: key) {
             return stringValue
         }

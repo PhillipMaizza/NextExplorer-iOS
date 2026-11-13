@@ -58,7 +58,12 @@ struct SettingsPresentationTests: SettingsFeatureTestSupport {
 
     @Test
     func userManagementIsSeededFromTheSession() async {
-        let store = makeStore(state: makeState(user: User(id: "admin-1", username: "boss", email: "boss@example.com", roles: ["admin"])))
+        let store = makeStore(state: makeState(user: User(
+            id: "admin-1",
+            username: "boss",
+            email: "boss@example.com",
+            roles: ["admin"]
+        )))
 
         await store.send(.userManagementButtonTapped) {
             $0.userManagement = UserManagementFeature.State(serverURL: serverURL, currentUserID: "admin-1")

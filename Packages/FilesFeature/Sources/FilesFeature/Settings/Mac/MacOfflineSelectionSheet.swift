@@ -124,7 +124,8 @@
 
         /// `nil` free space (unknown) never blocks a download it can't size.
         private var isOverFreeSpace: Bool {
-            let values = try? URL(fileURLWithPath: NSHomeDirectory()).resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+            let values = try? URL(fileURLWithPath: NSHomeDirectory())
+                .resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
             let free = values?.volumeAvailableCapacityForImportantUsage ?? .max
             return !store.isEstimating && store.estimatedBytes > free
         }

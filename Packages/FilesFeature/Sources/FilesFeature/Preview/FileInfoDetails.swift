@@ -44,8 +44,14 @@ struct FileInfoDetails: View {
                 row(L10n.FileInfo.rowKind, kindTitle(for: metadata))
                 row(L10n.FileInfo.rowSize, FileSizeFormat.string(metadata.size))
                 row(L10n.FileInfo.rowLocation, metadata.path)
-                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: shouldIncludeTime))
-                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: shouldIncludeTime))
+                row(
+                    L10n.FileInfo.rowDateModified,
+                    dateFormat.string(from: metadata.dateModified, includeTime: shouldIncludeTime)
+                )
+                row(
+                    L10n.FileInfo.rowDateCreated,
+                    dateFormat.string(from: metadata.dateCreated, includeTime: shouldIncludeTime)
+                )
             }
 
             if let directory = metadata.directory {
@@ -88,7 +94,10 @@ struct FileInfoDetails: View {
                         row(L10n.FileInfo.rowLens, lensModel)
                     }
                     if let dateTaken = image.dateTaken {
-                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: shouldIncludeTime))
+                        row(
+                            L10n.FileInfo.rowDateTaken,
+                            dateFormat.string(from: dateTaken, includeTime: shouldIncludeTime)
+                        )
                     }
                     if let gps = image.gps {
                         row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
@@ -190,7 +199,12 @@ struct FileInfoDetails: View {
                 size: 4_096,
                 dateModified: Date(),
                 dateCreated: Date().addingTimeInterval(-86_400 * 120),
-                directory: FileMetadata.DirectorySummary(totalSize: 41_000_000_000, fileCount: 1_200, dirCount: 60, truncated: true)
+                directory: FileMetadata.DirectorySummary(
+                    totalSize: 41_000_000_000,
+                    fileCount: 1_200,
+                    dirCount: 60,
+                    truncated: true
+                )
             ),
             usage: StorageUsage(path: "Media", size: 41_000_000_000, free: 59_000_000_000, total: 100_000_000_000)
         )

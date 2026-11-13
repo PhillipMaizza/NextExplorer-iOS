@@ -4,7 +4,8 @@ import FilesClient
 import Foundation
 
 /// Shared by every feature that calls the server (Browse and the rest of FilesFeature, the
-/// folder picker, the Share Extension). Runs a throwing async call and boxes the outcome, mapping anything that isn't already a
+/// folder picker, the Share Extension). Runs a throwing async call and boxes the outcome, mapping anything that isn't
+/// already a
 /// `FilesClientError` to `.network`. Replaces the per effect `do/catch` that would otherwise
 /// repeat verbatim. A `.sessionExpired` (401) additionally trips `SessionExpiry`.
 ///

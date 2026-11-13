@@ -21,7 +21,8 @@ struct OfflineDownloadsRunTests: OfflineDownloadsTestSupport {
                 $0.filesTotal = 3
             }
         }
-        await store.send(.willDownload(name: TestFile.aText)) { $0.$progress.withLock { $0.currentName = TestFile.aText } }
+        await store
+            .send(.willDownload(name: TestFile.aText)) { $0.$progress.withLock { $0.currentName = TestFile.aText } }
         await store.send(.progressed(filesDone: 1, unitsDone: 1.5)) {
             $0.$progress.withLock {
                 $0.filesDone = 1
@@ -48,7 +49,12 @@ struct OfflineDownloadsRunTests: OfflineDownloadsTestSupport {
         offline.setInterrupted(true)
         var state = freshState()
         state.pendingPinPaths = ["A"]
-        let store = makeStore(state, hold: BrowseHold(), offline: offline, browse: { [self] path in listing([], path: path) })
+        let store = makeStore(
+            state,
+            hold: BrowseHold(),
+            offline: offline,
+            browse: { [self] path in listing([], path: path) }
+        )
 
         await store.send(.failed("Boom")) {
             $0.pendingPinPaths = []
@@ -100,7 +106,9 @@ struct OfflineDownloadsRunTests: OfflineDownloadsTestSupport {
         let downloaded = LockIsolated<[String]>([])
         let run = makeRun(
             offline: offline,
-            browse: { [self] path in listing(path == "A" ? [file(TestFile.aText, path: "A", size: 5)] : [], path: path) },
+            browse: { [self] path in
+                listing(path == "A" ? [file(TestFile.aText, path: "A", size: 5)] : [], path: path)
+            },
             download: { item in
                 downloaded.withValue { $0.append(item.id) }
                 return URL(fileURLWithPath: "/tmp/\(item.name)")
@@ -212,7 +220,10 @@ struct OfflineDownloadsRunTests: OfflineDownloadsTestSupport {
     func aFailedFileStaysPendingButStillAdvancesTheBar() async {
         let run = makeRun(
             offline: pinnedStore(["A"]),
-            browse: { [self] path in listing([file(TestFile.aText, path: "A"), file(TestFile.bText, path: "A")], path: path) },
+            browse: { [self] path in listing(
+                [file(TestFile.aText, path: "A"), file(TestFile.bText, path: "A")],
+                path: path
+            ) },
             download: { item in
                 if item.name == TestFile.aText {
                     throw FilesClientError.timedOut

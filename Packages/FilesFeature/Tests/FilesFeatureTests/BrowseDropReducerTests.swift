@@ -20,7 +20,14 @@ struct BrowseDropReducerTests {
     }
 
     private func access(canWrite: Bool = true, canUpload: Bool = true, canDelete: Bool = true) -> FileAccess {
-        FileAccess(canRead: true, canWrite: canWrite, canUpload: canUpload, canDelete: canDelete, canShare: false, canDownload: true)
+        FileAccess(
+            canRead: true,
+            canWrite: canWrite,
+            canUpload: canUpload,
+            canDelete: canDelete,
+            canShare: false,
+            canDownload: true
+        )
     }
 
     private func stagedFile(_ name: String) -> PickedFile {
@@ -65,7 +72,10 @@ struct BrowseDropReducerTests {
             $0.items = IdentifiedArray(uniqueElements: remaining)
             $0.$undoStack.withLock {
                 $0.record(FileUndoEntry(.moved(moved.map {
-                    FileUndoEntry.MovedItem(item: BrowseDropFixtures.entry($0.name, in: "Docs/Archive"), originalParent: TestFolder.docs)
+                    FileUndoEntry.MovedItem(
+                        item: BrowseDropFixtures.entry($0.name, in: "Docs/Archive"),
+                        originalParent: TestFolder.docs
+                    )
                 })))
             }
         }
@@ -81,7 +91,11 @@ struct BrowseDropReducerTests {
         let gate = AsyncGate()
         let requests = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state(items: rows + [archive])) {
-            $0.filesClient.browse = { _, path in BrowseResult(items: [], access: BrowseFixtures.writableAccess, path: path) }
+            $0.filesClient.browse = { _, path in BrowseResult(
+                items: [],
+                access: BrowseFixtures.writableAccess,
+                path: path
+            ) }
             $0.filesClient.transferItems = { _, items, destination, operation in
                 requests.withValue { $0.append("\(operation) \(items.map(\.id)) to \(destination)") }
                 try await gate.wait()
@@ -134,7 +148,10 @@ struct BrowseDropReducerTests {
     func droppingFromAnotherWindowNeedsWriteAccess() async {
         let store = BrowseFixtures.store(state(items: [], access: access(canWrite: false)))
 
-        await store.send(.itemsDroppedFromOtherWindow([BrowseDropFixtures.entry("z.pdf", in: TestFolder.other)], destination: TestFolder.docs))
+        await store.send(.itemsDroppedFromOtherWindow(
+            [BrowseDropFixtures.entry("z.pdf", in: TestFolder.other)],
+            destination: TestFolder.docs
+        ))
     }
 
     @Test("A name clash on the drop raises the transfer conflict prompt")
@@ -142,7 +159,11 @@ struct BrowseDropReducerTests {
         let report = BrowseDropFixtures.entry(TestFile.report)
         let clash = BrowseDropFixtures.entry(TestFile.report, in: "Docs/Archive")
         let store = BrowseFixtures.store(state(items: [report, archive])) {
-            $0.filesClient.browse = { _, path in BrowseResult(items: [clash], access: BrowseFixtures.writableAccess, path: path) }
+            $0.filesClient.browse = { _, path in BrowseResult(
+                items: [clash],
+                access: BrowseFixtures.writableAccess,
+                path: path
+            ) }
         }
 
         await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive)) {
@@ -153,7 +174,10 @@ struct BrowseDropReducerTests {
         await store.receive(\.transferConflictCheckResponse) {
             $0.isPerformingFileAction = false
             $0.fileActionProgressMessage = nil
-            $0.transferConflict = BrowseFeature.TransferConflict(retry: movingRetry([report], to: "Docs/Archive"), collidingItems: [clash])
+            $0.transferConflict = BrowseFeature.TransferConflict(
+                retry: movingRetry([report], to: "Docs/Archive"),
+                collidingItems: [clash]
+            )
         }
     }
 
@@ -162,7 +186,11 @@ struct BrowseDropReducerTests {
         let report = BrowseDropFixtures.entry(TestFile.report)
         let rejection = FilesClientError.forbidden(message: "Read only folder")
         let store = BrowseFixtures.store(state(items: [report, archive])) {
-            $0.filesClient.browse = { _, path in BrowseResult(items: [], access: BrowseFixtures.writableAccess, path: path) }
+            $0.filesClient.browse = { _, path in BrowseResult(
+                items: [],
+                access: BrowseFixtures.writableAccess,
+                path: path
+            ) }
             $0.filesClient.transferItems = { _, _, _, _ in throw rejection }
         }
 
@@ -191,7 +219,12 @@ struct BrowseDropReducerTests {
         await store.send(.filesDroppedOnFolder([url], folder: archive))
         await store.receive(\.directUploadStaged)
         await store.receive(.delegate(.uploadRequested([
-            PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: TestFile.aPhoto, destination: "Docs/Archive"),
+            PendingUpload(
+                id: UUID(0),
+                fileURL: URL(fileURLWithPath: "/tmp/a.jpg"),
+                fileName: TestFile.aPhoto,
+                destination: "Docs/Archive"
+            ),
         ])))
     }
 

@@ -53,8 +53,16 @@ extension BrowseFeature {
         let base = state.searchBasePath
         let saved = state.mayAnswerFromSavedListings ? Array((state.searchSavedItems ?? [:]).values) : []
         let inFolder = (state.items.elements + saved)
-            .filter { term.matches(name: $0.name, relativePath: relativePath($0.id, below: base), isDirectory: $0.isDirectory) }
-            .map { SearchResultItem(name: $0.name, path: $0.path, kind: SearchResultItem.kind(isDirectory: $0.isDirectory)) }
+            .filter { term.matches(
+                name: $0.name,
+                relativePath: relativePath($0.id, below: base),
+                isDirectory: $0.isDirectory
+            ) }
+            .map { SearchResultItem(
+                name: $0.name,
+                path: $0.path,
+                kind: SearchResultItem.kind(isDirectory: $0.isDirectory)
+            ) }
         // In the server's order, so its answer lands without shuffling what is already there.
         let results = term.ranked(inFolder + favoriteMatches(state, term: term))
         return IdentifiedArray(results, id: \.id, uniquingIDsWith: { first, _ in first })
@@ -125,7 +133,11 @@ extension BrowseFeature {
             guard base.isEmpty || favoritePath.hasPrefix(base + "/") else { return nil }
             let name = (favoritePath as NSString).lastPathComponent
             let isDirectory = state.items[id: favoritePath]?.isDirectory ?? true
-            guard term.matches(name: name, relativePath: relativePath(favoritePath, below: base), isDirectory: isDirectory) else { return nil }
+            guard term.matches(
+                name: name,
+                relativePath: relativePath(favoritePath, below: base),
+                isDirectory: isDirectory
+            ) else { return nil }
             return SearchResultItem(
                 name: name,
                 path: (favoritePath as NSString).deletingLastPathComponent,

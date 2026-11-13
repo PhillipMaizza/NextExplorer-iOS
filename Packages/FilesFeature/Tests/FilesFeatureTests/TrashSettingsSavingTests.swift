@@ -21,7 +21,10 @@ struct TrashSettingsSavingTests: TrashSettingsTestSupport {
     @Test
     func savingOnlyTheTrashFormSendsOnlyTheTrashSectionAndReloadsTheVolumes() async {
         let echoed = TrashSettings(isEnabled: true, retentionDays: 7, maxPercent: 10, maxBytes: nil)
-        let store = store(state: loadedState(), update: { _ in SystemSettings(trash: echoed, versions: VersionsSettings()) })
+        let store = store(
+            state: loadedState(),
+            update: { _ in SystemSettings(trash: echoed, versions: VersionsSettings()) }
+        )
 
         await store.send(.retentionChanged("7")) { $0.trashDraft.retentionText = "7" }
         await store.send(.saveTapped) { $0.isSaving = true }
@@ -42,7 +45,10 @@ struct TrashSettingsSavingTests: TrashSettingsTestSupport {
     @Test
     func savingOnlyTheVersionsFormSendsOnlyTheVersionsSection() async {
         let echoed = VersionsSettings(maxPerFile: 60)
-        let store = store(state: loadedState(), update: { _ in SystemSettings(trash: TrashSettings(), versions: echoed) })
+        let store = store(
+            state: loadedState(),
+            update: { _ in SystemSettings(trash: TrashSettings(), versions: echoed) }
+        )
 
         await store.send(.versionFieldChanged(.maxPerFile, "60")) { $0.versionsDraft.maxPerFileText = "60" }
         await store.send(.saveTapped) { $0.isSaving = true }
@@ -67,7 +73,10 @@ struct TrashSettingsSavingTests: TrashSettingsTestSupport {
         await store.send(.trashEnabledChanged(false)) { $0.trashDraft.isEnabled = false }
         await store.send(.versionsEnabledChanged(false)) { $0.versionsDraft.isEnabled = false }
         await store.send(.saveTapped) { $0.isSaving = true }
-        await store.receive(.saveResponse(.success(TrashSettingsFeature.SavedSettings(trash: trash, versions: versions)))) {
+        await store.receive(.saveResponse(.success(TrashSettingsFeature.SavedSettings(
+            trash: trash,
+            versions: versions
+        )))) {
             $0.isSaving = false
             $0.loadedTrash = trash
             $0.loadedVersions = versions
@@ -148,7 +157,10 @@ struct TrashSettingsSavingTests: TrashSettingsTestSupport {
 
     @Test
     func aFailedSaveKeepsTheDraftAndShowsTheMessage() async {
-        let store = store(state: loadedState(), update: { _ in throw FilesClientError.serverMessage(statusCode: 400, message: "Bad value.") })
+        let store = store(
+            state: loadedState(),
+            update: { _ in throw FilesClientError.serverMessage(statusCode: 400, message: "Bad value.") }
+        )
 
         await store.send(.retentionChanged("7")) { $0.trashDraft.retentionText = "7" }
         await store.send(.saveTapped) { $0.isSaving = true }

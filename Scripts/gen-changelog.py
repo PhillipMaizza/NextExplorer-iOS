@@ -28,7 +28,7 @@ REPO_URL = "https://github.com/PhillipMaizza/NextExplorer-iOS"
 # TestFlight caps "What to Test" at 4000 characters.
 NOTES_LIMIT = 4000
 
-SKIP = re.compile(r"^(bump version|update package\.resolved)|^initial commit$", re.IGNORECASE)
+SKIP = re.compile(r"^(bump version|update package\.resolved|format swift code)|^initial commit$", re.IGNORECASE)
 GENERIC_NOTE = "Bug fixes and improvements"
 TECHNICAL = re.compile(
     r"\b(tests?|ui ?tests?|xcuitests?|ci|lint|linting|swiftformat|swiftlint|flakes?|flaky|de-?flake|"

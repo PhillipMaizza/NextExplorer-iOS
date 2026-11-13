@@ -134,7 +134,8 @@ struct Manifest: Codable, Equatable {
     }
 
     static func touchedAt(_ directory: URL) -> Date? {
-        let values = try? directory.appendingPathComponent(fileName).resourceValues(forKeys: [.contentModificationDateKey])
+        let values = try? directory.appendingPathComponent(fileName)
+            .resourceValues(forKeys: [.contentModificationDateKey])
         return values?.contentModificationDate
     }
 

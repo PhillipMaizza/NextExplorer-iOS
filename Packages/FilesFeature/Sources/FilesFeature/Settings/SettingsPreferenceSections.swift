@@ -70,7 +70,14 @@ struct GeneralSettingsSection: View {
     }
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.toggleShowHiddenFiles, L10n.Settings.toggleRenderHTML, L10n.Settings.toggleRenderMarkdown, L10n.Settings.rowDateFormat, L10n.Settings.rowLanguage, L10n.Settings.toggleHaptics]) {
+        if filter.anyMatch([
+            L10n.Settings.toggleShowHiddenFiles,
+            L10n.Settings.toggleRenderHTML,
+            L10n.Settings.toggleRenderMarkdown,
+            L10n.Settings.rowDateFormat,
+            L10n.Settings.rowLanguage,
+            L10n.Settings.toggleHaptics,
+        ]) {
             Section {
                 if filter.matches(L10n.Settings.toggleShowHiddenFiles) {
                     DSToggleRow(
@@ -83,7 +90,11 @@ struct GeneralSettingsSection: View {
                     DSToggleRow(title: L10n.Settings.toggleRenderHTML, icon: IconKit.web, isOn: $shouldRenderHTMLPages)
                 }
                 if filter.matches(L10n.Settings.toggleRenderMarkdown) {
-                    DSToggleRow(title: L10n.Settings.toggleRenderMarkdown, icon: IconKit.textformat, isOn: $shouldRenderMarkdownPages)
+                    DSToggleRow(
+                        title: L10n.Settings.toggleRenderMarkdown,
+                        icon: IconKit.textformat,
+                        isOn: $shouldRenderMarkdownPages
+                    )
                 }
                 if !isMac, filter.matches(L10n.Settings.rowDateFormat) {
                     NavigationLink {
@@ -168,7 +179,13 @@ struct DisplaySettingsSection: View {
     }
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.rowAppearance, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions, L10n.Settings.toggleShowTabLabels]) {
+        if filter.anyMatch([
+            L10n.Settings.rowAppearance,
+            L10n.Settings.toggleShowThumbnails,
+            L10n.Settings.rowThumbnailSize,
+            L10n.Settings.toggleShowExtensions,
+            L10n.Settings.toggleShowTabLabels,
+        ]) {
             Section {
                 if filter.matches(L10n.Settings.rowAppearance) {
                     DSMenuPickerRow(selection: appearance, value: appearance.wrappedValue.title) {
@@ -216,7 +233,11 @@ struct DisplaySettingsSection: View {
                     .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
                 }
                 if filter.matches(L10n.Settings.toggleShowExtensions) {
-                    DSToggleRow(title: L10n.Settings.toggleShowExtensions, icon: IconKit.tag, isOn: $shouldShowFilenameExtensions)
+                    DSToggleRow(
+                        title: L10n.Settings.toggleShowExtensions,
+                        icon: IconKit.tag,
+                        isOn: $shouldShowFilenameExtensions
+                    )
                 }
                 // Tab labels only exist on the bottom tab bar (compact). iPad uses the sidebar,
                 // so the toggle is meaningless there.
@@ -240,7 +261,11 @@ struct StorageSettingsSection: View {
     @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardAfterCopy = false
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.toggleKeepClipboard, L10n.Settings.rowRemoveAllDownloads, L10n.Settings.rowClearCache]) {
+        if filter.anyMatch([
+            L10n.Settings.toggleKeepClipboard,
+            L10n.Settings.rowRemoveAllDownloads,
+            L10n.Settings.rowClearCache,
+        ]) {
             Section {
                 if !isMac, filter.matches(L10n.Settings.toggleKeepClipboard) {
                     DSToggleRow(

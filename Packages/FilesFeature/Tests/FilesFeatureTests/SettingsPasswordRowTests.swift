@@ -17,7 +17,10 @@ struct SettingsPasswordRowTests: SettingsFeatureTestSupport {
     }
 
     @Test(arguments: [
-        MethodsCase(result: .success([SignInMethod(id: "m1", type: "local_password", provider: "Password")]), expected: .present),
+        MethodsCase(
+            result: .success([SignInMethod(id: "m1", type: "local_password", provider: "Password")]),
+            expected: .present
+        ),
         MethodsCase(result: .success([SignInMethod(id: "m2", type: "oidc", provider: "PocketID")]), expected: .absent),
         MethodsCase(result: .success([]), expected: .absent),
         MethodsCase(result: .failure(.server(statusCode: 500)), expected: nil),
@@ -94,7 +97,10 @@ struct SettingsPasswordRowTests: SettingsFeatureTestSupport {
         (.absent, .add),
         (.unknown, .change),
     ])
-    func theChangePasswordScreenOpensInTheModeTheAccountNeeds(status: SettingsFeature.PasswordStatus, mode: ChangePasswordFeature.Mode) async {
+    func theChangePasswordScreenOpensInTheModeTheAccountNeeds(
+        status: SettingsFeature.PasswordStatus,
+        mode: ChangePasswordFeature.Mode
+    ) async {
         var state = makeState()
         state.passwordStatus = status
         let store = makeStore(state: state)
@@ -109,7 +115,10 @@ struct SettingsPasswordRowTests: SettingsFeatureTestSupport {
         (.absent, false),
         (.unknown, true),
     ])
-    func aSingleSignOnAccountIsNotAskedForAPasswordToMakeAToken(status: SettingsFeature.PasswordStatus, requiresPassword: Bool) async {
+    func aSingleSignOnAccountIsNotAskedForAPasswordToMakeAToken(
+        status: SettingsFeature.PasswordStatus,
+        requiresPassword: Bool
+    ) async {
         var state = makeState()
         state.passwordStatus = status
         let store = makeStore(state: state)

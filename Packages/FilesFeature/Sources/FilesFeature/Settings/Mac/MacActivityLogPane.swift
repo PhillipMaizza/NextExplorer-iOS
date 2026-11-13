@@ -35,7 +35,10 @@
                     Text(error).foregroundStyle(Color.negativeText)
                 }
             }
-            .confirmationDialog(L10n.ActivityLog.clearTitle, isPresented: Binding(get: { store.isConfirmingClear }, set: { _ in })) {
+            .confirmationDialog(
+                L10n.ActivityLog.clearTitle,
+                isPresented: Binding(get: { store.isConfirmingClear }, set: { _ in })
+            ) {
                 Button(L10n.ActivityLog.clearConfirm, role: .destructive) { store.send(.clearConfirmed) }
                 Button(L10n.Common.cancel, role: .cancel) { store.send(.clearCancelled) }
             } message: {
@@ -72,17 +75,24 @@
                         Text(ActivityActionLabel.title(for: action)).tag(String?.some(action))
                     }
                 }
-                Picker(L10n.ActivityLog.filterOutcome, selection: $store.filter.outcome.sending(\.outcomeFilterChanged)) {
+                Picker(
+                    L10n.ActivityLog.filterOutcome,
+                    selection: $store.filter.outcome.sending(\.outcomeFilterChanged)
+                ) {
                     Text(L10n.ActivityLog.anyOutcome).tag(ActivityOutcome?.none)
                     Text(L10n.ActivityLog.outcomeOk).tag(ActivityOutcome?.some(.ok))
                     Text(L10n.ActivityLog.outcomeRefused).tag(ActivityOutcome?.some(.refused))
                 }
                 HStack(spacing: .space8) {
-                    TextField(L10n.ActivityLog.searchPlaceholder, text: $store.filter.query.sending(\.queryChanged), prompt: Text(L10n.ActivityLog.searchPlaceholder))
-                        .labelsHidden()
-                        .textFieldStyle(.roundedBorder)
-                        .autocorrectionDisabled()
-                        .onSubmit { store.send(.searchSubmitted) }
+                    TextField(
+                        L10n.ActivityLog.searchPlaceholder,
+                        text: $store.filter.query.sending(\.queryChanged),
+                        prompt: Text(L10n.ActivityLog.searchPlaceholder)
+                    )
+                    .labelsHidden()
+                    .textFieldStyle(.roundedBorder)
+                    .autocorrectionDisabled()
+                    .onSubmit { store.send(.searchSubmitted) }
                     Button(L10n.ActivityLog.refresh) { store.send(.refreshTapped) }
                 }
             }
@@ -122,7 +132,8 @@
                         Text(date.formatted(date: .abbreviated, time: .standard)).foregroundStyle(.secondary)
                     }
                 }
-                let details = [event.actor, event.target, event.ip.map { L10n.ActivityLog.fromAddress($0) }].compactMap { $0 }
+                let details = [event.actor, event.target, event.ip.map { L10n.ActivityLog.fromAddress($0) }]
+                    .compactMap { $0 }
                 if !details.isEmpty {
                     Text(ServerSettingsMetrics.joined(details)).font(.callout).foregroundStyle(.secondary)
                 }

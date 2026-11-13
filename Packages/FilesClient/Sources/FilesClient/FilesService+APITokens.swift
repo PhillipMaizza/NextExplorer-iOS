@@ -13,11 +13,22 @@ extension FilesService {
 
     /// 201 with `{ token, secret }`. A wrong password is a 401 carrying a message; too many tokens
     /// or a bad name, scope or expiry is a 400 carrying one.
-    func createAPIToken(serverURL: URL, name: String, scope: APIToken.Scope, expiresInDays: Int?, password: String?) async throws -> IssuedAPIToken {
+    func createAPIToken(
+        serverURL: URL,
+        name: String,
+        scope: APIToken.Scope,
+        expiresInDays: Int?,
+        password: String?
+    ) async throws -> IssuedAPIToken {
         let url = serverURL.appendingPathComponent(APIPath.apiTokens)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(NewAPITokenBody(name: name, scope: scope, expiresInDays: expiresInDays, password: password))
+        request.httpBody = try Self.encode(NewAPITokenBody(
+            name: name,
+            scope: scope,
+            expiresInDays: expiresInDays,
+            password: password
+        ))
         return try await decodeAccountResponse(sendAccountRequest(request), as: IssuedAPIToken.self)
     }
 

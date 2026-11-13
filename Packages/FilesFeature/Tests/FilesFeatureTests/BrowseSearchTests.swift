@@ -21,14 +21,20 @@ struct BrowseSearchTests {
 
     // MARK: Recursive backend search, instant client pre-fill
 
-    @Test("Searching this folder fills in matches from the loaded items at once, then asks the server scoped to the folder")
+    @Test(
+        "Searching this folder fills in matches from the loaded items at once, then asks the server scoped to the folder"
+    )
     func thisFolderSearchPreFillsFromLoadedItemsThenHitsTheBackendScopedToTheCurrentDirectory() async {
         let loadedMatch = BrowseFixtures.file(TestFile.vacationPhoto, in: TestFolder.photos)
         let loadedNonMatch = BrowseFixtures.file(TestFile.notes, in: TestFolder.photos)
         let deepHit = BrowseFixtures.deepSearchHit
         let clock = TestClock()
         let scopePath = LockIsolated<[String]>([])
-        let store = BrowseFixtures.store(BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos, items: [loadedMatch, loadedNonMatch])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(
+            TestFolder.photos,
+            title: TestFolder.photos,
+            items: [loadedMatch, loadedNonMatch]
+        )) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, path, _, _ in
                 scopePath.withValue { $0.append(path) }
@@ -38,7 +44,11 @@ struct BrowseSearchTests {
 
         await store.send(.searchQueryChanged(TestSearch.term)) {
             $0.searchQuery = TestSearch.term
-            $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind)]
+            $0.searchResults = [SearchResultItem(
+                name: TestFile.vacationPhoto,
+                path: TestFolder.photos,
+                kind: SearchResultItem.fileKind
+            )]
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
@@ -54,7 +64,10 @@ struct BrowseSearchTests {
     func queriesShorterThanTheServerMinimumKeepTheInstantMatchesWithoutASearchRequest() async {
         let clock = TestClock()
         let calls = LockIsolated(0)
-        let store = BrowseFixtures.store(BrowseFixtures.state(title: TestFolder.files, items: [BrowseFixtures.folder(Constants.payslips)])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(
+            title: TestFolder.files,
+            items: [BrowseFixtures.folder(Constants.payslips)]
+        )) {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, _, _ in
                 calls.withValue { $0 += 1 }
@@ -65,7 +78,11 @@ struct BrowseSearchTests {
         // The backend answers 400 under three characters, so the instant match is all there is.
         await store.send(.searchQueryChanged("pa")) {
             $0.searchQuery = "pa"
-            $0.searchResults = [SearchResultItem(name: Constants.payslips, path: "", kind: SearchResultItem.directoryKind)]
+            $0.searchResults = [SearchResultItem(
+                name: Constants.payslips,
+                path: "",
+                kind: SearchResultItem.directoryKind
+            )]
         }
         await store.receive(\.searchSavedItemsLoaded) {
             $0.searchSavedItems = [:]
@@ -88,15 +105,27 @@ struct BrowseSearchTests {
         // "This Folder": only the favorite under Photos, ready to open before the backend answers.
         await store.send(.searchQueryChanged(TestSearch.term)) {
             $0.searchQuery = TestSearch.term
-            $0.searchResults = [SearchResultItem(name: Constants.vacation2024, path: TestSearch.deepHitPath, kind: SearchResultItem.directoryKind)]
+            $0.searchResults = [SearchResultItem(
+                name: Constants.vacation2024,
+                path: TestSearch.deepHitPath,
+                kind: SearchResultItem.directoryKind
+            )]
             $0.searchPhase = .loading
         }
         // "Everywhere": every matching favorite. A tap asks at once, replacing the pending search.
         await store.send(.searchScopeChanged(.everywhere)) {
             $0.searchScope = .everywhere
             $0.searchResults = [
-                SearchResultItem(name: Constants.vacation2024, path: TestSearch.deepHitPath, kind: SearchResultItem.directoryKind),
-                SearchResultItem(name: "Vacation Plans", path: FilesFeatureTestValue.workFolder, kind: SearchResultItem.directoryKind),
+                SearchResultItem(
+                    name: Constants.vacation2024,
+                    path: TestSearch.deepHitPath,
+                    kind: SearchResultItem.directoryKind
+                ),
+                SearchResultItem(
+                    name: "Vacation Plans",
+                    path: FilesFeatureTestValue.workFolder,
+                    kind: SearchResultItem.directoryKind
+                ),
             ]
         }
         await store.receive(\.searchResultsResponse.success) {
@@ -161,7 +190,11 @@ struct BrowseSearchTests {
     func everywhereSearchHitsTheBackendFromTheRoot() async {
         var state = BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos)
         state.searchScope = .everywhere
-        let result = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind)
+        let result = SearchResultItem(
+            name: TestFile.vacationPhoto,
+            path: TestFolder.photos,
+            kind: SearchResultItem.fileKind
+        )
         let clock = TestClock()
         let scopePath = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
@@ -201,7 +234,11 @@ struct BrowseSearchTests {
 
         await store.send(.searchQueryChanged(TestSearch.term)) {
             $0.searchQuery = TestSearch.term
-            $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: "", kind: SearchResultItem.fileKind)]
+            $0.searchResults = [SearchResultItem(
+                name: TestFile.vacationPhoto,
+                path: "",
+                kind: SearchResultItem.fileKind
+            )]
             $0.searchPhase = .loading
         }
         await store.send(.searchQueryChanged("")) {
@@ -231,7 +268,11 @@ struct BrowseSearchTests {
         // Both at least the server's three characters, so both would really be sent.
         await store.send(.searchQueryChanged(TestSearch.term)) {
             $0.searchQuery = TestSearch.term
-            $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: "", kind: SearchResultItem.fileKind)]
+            $0.searchResults = [SearchResultItem(
+                name: TestFile.vacationPhoto,
+                path: "",
+                kind: SearchResultItem.fileKind
+            )]
             $0.searchPhase = .loading
         }
         await store.send(.searchQueryChanged(TestSearch.longerTerm)) {
@@ -272,7 +313,11 @@ struct BrowseSearchTests {
     func changingScopeToEverywhereWithAnExistingQueryTriggersANetworkSearch() async {
         var state = BrowseFixtures.state()
         state.searchQuery = TestSearch.term
-        let result = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind)
+        let result = SearchResultItem(
+            name: TestFile.vacationPhoto,
+            path: TestFolder.photos,
+            kind: SearchResultItem.fileKind
+        )
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {
             $0.continuousClock = clock
@@ -297,9 +342,26 @@ struct BrowseSearchTests {
     func searchKeepsTheServerRankingAndShowMoreWidensIt() async {
         var state = BrowseFixtures.state()
         state.searchScope = .everywhere
-        let closest = SearchResultItem(name: Constants.zeta, path: "", kind: SearchResultItem.directoryKind, isNameMatch: true)
-        let content = SearchResultItem(name: "alpha.txt", path: TestFolder.docs, kind: SearchResultItem.fileKind, matchLine: Constants.zeta, matchLineNumber: 3, isContentMatch: true)
-        let more = SearchResultItem(name: "beta.txt", path: TestFolder.docs, kind: SearchResultItem.fileKind, isContentMatch: true)
+        let closest = SearchResultItem(
+            name: Constants.zeta,
+            path: "",
+            kind: SearchResultItem.directoryKind,
+            isNameMatch: true
+        )
+        let content = SearchResultItem(
+            name: "alpha.txt",
+            path: TestFolder.docs,
+            kind: SearchResultItem.fileKind,
+            matchLine: Constants.zeta,
+            matchLineNumber: 3,
+            isContentMatch: true
+        )
+        let more = SearchResultItem(
+            name: "beta.txt",
+            path: TestFolder.docs,
+            kind: SearchResultItem.fileKind,
+            isContentMatch: true
+        )
         let limits = LockIsolated<[Int?]>([])
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {
@@ -360,11 +422,21 @@ struct BrowseSearchTests {
     func aSearchStoppedAtItsTimeLimitSaysSo() async {
         var state = BrowseFixtures.state()
         state.searchScope = .everywhere
-        let hit = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind, isNameMatch: true)
+        let hit = SearchResultItem(
+            name: TestFile.vacationPhoto,
+            path: TestFolder.photos,
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {
             $0.continuousClock = clock
-            $0.filesClient.search = { _, _, _, _ in SearchPage(items: [hit], isTruncated: true, isComplete: true, limit: 100) }
+            $0.filesClient.search = { _, _, _, _ in SearchPage(
+                items: [hit],
+                isTruncated: true,
+                isComplete: true,
+                limit: 100
+            ) }
         }
 
         await store.send(.searchQueryChanged(TestSearch.term)) {
@@ -399,7 +471,12 @@ struct BrowseSearchTests {
     func showInEnclosingFolderEndsTheSearchAndOpensTheFolder() async {
         var state = BrowseFixtures.state()
         state.searchQuery = Constants.reportTerm
-        let result = SearchResultItem(name: TestFile.report, path: TestPath.documentsWork, kind: SearchResultItem.fileKind, isNameMatch: true)
+        let result = SearchResultItem(
+            name: TestFile.report,
+            path: TestPath.documentsWork,
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
         let store = BrowseFixtures.store(state)
 
         await store.send(.searchResultEnclosingFolderTapped(result)) {
@@ -413,7 +490,12 @@ struct BrowseSearchTests {
         var state = BrowseFixtures.state(TestFolder.photos)
         state.searchQuery = Constants.reportTerm
         state.searchScope = .everywhere
-        let result = SearchResultItem(name: TestFile.report, path: "", kind: SearchResultItem.fileKind, isNameMatch: true)
+        let result = SearchResultItem(
+            name: TestFile.report,
+            path: "",
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
         let store = BrowseFixtures.store(state)
 
         await store.send(.searchResultEnclosingFolderTapped(result)) {
@@ -444,16 +526,30 @@ struct BrowseSearchTests {
     func searchResultTappedOnADirectoryAtTheRootBuildsThePathFromAnEmptyParent() async {
         let store = BrowseFixtures.store()
 
-        await store.send(.searchResultTapped(SearchResultItem(name: TestFolder.docs, path: "", kind: SearchResultItem.directoryKind)))
+        await store.send(.searchResultTapped(SearchResultItem(
+            name: TestFolder.docs,
+            path: "",
+            kind: SearchResultItem.directoryKind
+        )))
         await store.receive(.delegate(.openPath(path: TestFolder.docs, title: TestFolder.docs)))
     }
 
     @Test("A file result opens its preview as a tapped row, with the type taken from its name")
     func searchResultTappedOnAFileOpensThePreviewViaRowTapped() async {
         let store = BrowseFixtures.store()
-        let opened = FileItem(name: Constants.clip, path: TestFolder.media, dateModified: MockDate.date, size: 0, kind: TestKind.video)
+        let opened = FileItem(
+            name: Constants.clip,
+            path: TestFolder.media,
+            dateModified: MockDate.date,
+            size: 0,
+            kind: TestKind.video
+        )
 
-        await store.send(.searchResultTapped(SearchResultItem(name: Constants.clip, path: TestFolder.media, kind: SearchResultItem.fileKind)))
+        await store.send(.searchResultTapped(SearchResultItem(
+            name: Constants.clip,
+            path: TestFolder.media,
+            kind: SearchResultItem.fileKind
+        )))
         await store.receive(.rowTapped(opened)) {
             $0.previewItem = opened
         }

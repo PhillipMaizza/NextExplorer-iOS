@@ -17,7 +17,12 @@ struct BackgroundUploaderRecoveryTests {
     }
 
     /// A batch nobody has heard from for longer than the stale age.
-    private func oldBatch(in harness: Harness, names: [String] = [TestFile.aPhoto, TestFile.bPhoto]) throws -> (id: String, directory: URL, manifest: Manifest) {
+    private func oldBatch(
+        in harness: Harness,
+        names: [String] = [TestFile.aPhoto, TestFile.bPhoto]
+    ) throws
+        -> (id: String, directory: URL, manifest: Manifest)
+    {
         let batch = try harness.makeBatch(
             names: names, startedAt: TestClock.reference.addingTimeInterval(-BackgroundUploader.staleAge - 60)
         )
@@ -72,7 +77,8 @@ struct BackgroundUploaderRecoveryTests {
         let batch = try harness.makeBatch(names: [TestFile.aPhoto])
         harness.uploader.complete(batchID: batch.id, index: 0, result: .failure(.network))
         try FileManager.default.setAttributes(
-            [.modificationDate: TestClock.reference], ofItemAtPath: batch.directory.appendingPathComponent("finished").path
+            [.modificationDate: TestClock.reference],
+            ofItemAtPath: batch.directory.appendingPathComponent("finished").path
         )
         harness.clock.advance(by: BackgroundUploader.failedRetention - 1)
         harness.uploader.reconnectPending()
@@ -174,7 +180,8 @@ struct BackgroundUploaderRecoveryTests {
         #expect(specs(harness) == [[3]])
         let started = try #require(harness.starter.started.first)
         #expect(started.identifier == BackgroundUploader.identifierPrefix + batch.id)
-        #expect(started.specs.first?.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=secret")
+        #expect(started.specs.first?.request
+            .value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=secret")
         #expect(harness.recorder.outcomes.isEmpty, "nothing is abandoned while files can still go out")
         #expect(harness.events.scheduledDelays.isEmpty)
     }
@@ -209,7 +216,10 @@ struct BackgroundUploaderRecoveryTests {
 
         let outcome = try #require(harness.recorder.outcomes.first)
         #expect(outcome.failures.map(\.name) == [TestFile.aPhoto, TestFile.bPhoto])
-        #expect(harness.exists(batch.directory.appendingPathComponent(ShareUploadsTestValue.firstEnvelope)), "kept for a retry")
+        #expect(
+            harness.exists(batch.directory.appendingPathComponent(ShareUploadsTestValue.firstEnvelope)),
+            "kept for a retry"
+        )
     }
 
     @Test("A batch with a live task is neither resent nor abandoned")
@@ -239,7 +249,12 @@ struct BackgroundUploaderRecoveryTests {
         )
 
         #expect(unsent == [3])
-        #expect(BackgroundUploader.unsubmittedIndexes(manifest: manifest, results: [:], liveIndexes: [], envelopeExists: { _ in false }).isEmpty)
+        #expect(BackgroundUploader.unsubmittedIndexes(
+            manifest: manifest,
+            results: [:],
+            liveIndexes: [],
+            envelopeExists: { _ in false }
+        ).isEmpty)
     }
 
     // MARK: Pending batches
@@ -274,7 +289,8 @@ struct BackgroundUploaderRecoveryTests {
 
         #expect(count == 1)
         #expect(specs(harness) == [[0]])
-        #expect(harness.starter.started.first?.specs.first?.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=fresh")
+        #expect(harness.starter.started.first?.specs.first?.request
+            .value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=fresh")
         #expect(harness.uploader.retryRefused(credentials: fresh) == 0, "a second look finds nothing refused left")
     }
 

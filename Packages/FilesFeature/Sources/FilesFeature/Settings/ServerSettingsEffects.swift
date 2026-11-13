@@ -36,7 +36,11 @@ extension Effect where Action: Sendable {
         cancelID: some Hashable & Sendable,
         response: @escaping @Sendable (Result<ServerSettingsSnapshot, FilesClientError>) -> Action
     ) -> Effect<Action> {
-        .api(cancelID: cancelID, operation: { try await ServerSettingsSnapshot.load(filesClient, serverURL: serverURL) }, response: response)
+        .api(
+            cancelID: cancelID,
+            operation: { try await ServerSettingsSnapshot.load(filesClient, serverURL: serverURL) },
+            response: response
+        )
     }
 
     /// Reads the settings alone.
@@ -46,7 +50,11 @@ extension Effect where Action: Sendable {
         cancelID: some Hashable & Sendable,
         response: @escaping @Sendable (Result<SystemSettings, FilesClientError>) -> Action
     ) -> Effect<Action> {
-        .api(cancelID: cancelID, operation: { try await filesClient.fetchSystemSettings(serverURL) }, response: response)
+        .api(
+            cancelID: cancelID,
+            operation: { try await filesClient.fetchSystemSettings(serverURL) },
+            response: response
+        )
     }
 
     /// Sends a patch and answers with the one section the server echoed back, and stops a read in

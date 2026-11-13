@@ -28,10 +28,12 @@
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             let toggle = app.descendants(matching: .any)
-                .matching(NSPredicate(format: "(elementType == %d OR elementType == %d) AND label == %@",
-                                      XCUIElement.ElementType.switch.rawValue,
-                                      XCUIElement.ElementType.checkBox.rawValue,
-                                      L10n.Settings.toggleShowHiddenFiles))
+                .matching(NSPredicate(
+                    format: "(elementType == %d OR elementType == %d) AND label == %@",
+                    XCUIElement.ElementType.switch.rawValue,
+                    XCUIElement.ElementType.checkBox.rawValue,
+                    L10n.Settings.toggleShowHiddenFiles
+                ))
                 .firstMatch
             openSettingsWindow(in: app, until: toggle)
             let before = toggle.value as? Int
@@ -55,7 +57,10 @@
             let german = app.menuItems[LocalizationOverride.displayName(for: Constants.otherLanguage)]
             XCTAssertTrue(german.waitToAppear())
             german.click()
-            XCTAssertTrue(text(germanGeneral, in: app).waitToAppear(), "The Settings window should switch to the new language")
+            XCTAssertTrue(
+                text(germanGeneral, in: app).waitToAppear(),
+                "The Settings window should switch to the new language"
+            )
         }
 
         /// The licenses sheet in About closes with Esc like any Mac dialog.

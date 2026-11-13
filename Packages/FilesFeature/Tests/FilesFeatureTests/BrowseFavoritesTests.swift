@@ -59,7 +59,10 @@ struct BrowseFavoritesTests {
             $0.directoryCacheStore.lastWrittenAt = { _, _ in nil }
         }
 
-        await store.send(.favoritesResponse([BrowseFixtures.favorite(FilesFeatureTestValue.workFolder), BrowseFixtures.favorite("Trips", position: 1)])) {
+        await store.send(.favoritesResponse([
+            BrowseFixtures.favorite(FilesFeatureTestValue.workFolder),
+            BrowseFixtures.favorite("Trips", position: 1),
+        ])) {
             $0.favoritePaths = [FilesFeatureTestValue.workFolder, "Trips"]
             $0.hasLoadedFavorites = true
         }
@@ -77,7 +80,10 @@ struct BrowseFavoritesTests {
             $0.directoryCacheStore.lastWrittenAt = { _, _ in nil }
         }
 
-        await store.send(.favoritesResponse([BrowseFixtures.favorite(TestFile.notes), BrowseFixtures.favorite(FilesFeatureTestValue.workFolder, position: 1)])) {
+        await store.send(.favoritesResponse([
+            BrowseFixtures.favorite(TestFile.notes),
+            BrowseFixtures.favorite(FilesFeatureTestValue.workFolder, position: 1),
+        ])) {
             $0.favoritePaths = [TestFile.notes, FilesFeatureTestValue.workFolder]
             $0.hasLoadedFavorites = true
         }

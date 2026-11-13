@@ -16,7 +16,10 @@ final class UploadNotificationHandler: NSObject, UNUserNotificationCenterDelegat
     private let retry: @Sendable (String) async -> Void
     private let open: @Sendable (String, String) -> Void
 
-    init(retry: @escaping @Sendable (String) async -> Void, open: @escaping @Sendable (String, String) -> Void = { _, _ in }) {
+    init(
+        retry: @escaping @Sendable (String) async -> Void,
+        open: @escaping @Sendable (String, String) -> Void = { _, _ in }
+    ) {
         self.retry = retry
         self.open = open
     }
@@ -65,7 +68,10 @@ final class UploadNotificationHandler: NSObject, UNUserNotificationCenterDelegat
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let completion = MainThreadCompletion(completionHandler)
-        switch Self.decision(actionIdentifier: response.actionIdentifier, userInfo: response.notification.request.content.userInfo) {
+        switch Self.decision(
+            actionIdentifier: response.actionIdentifier,
+            userInfo: response.notification.request.content.userInfo
+        ) {
         case let .retry(batchID):
             let retry = retry
             Task {

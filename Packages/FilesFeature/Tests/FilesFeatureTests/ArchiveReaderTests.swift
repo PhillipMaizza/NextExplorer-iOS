@@ -17,7 +17,8 @@ struct ArchiveReaderTests {
     }
 
     private func makeDirectory() throws -> URL {
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("\(Constants.directoryPrefix)\(TestID.name())")
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(Constants.directoryPrefix)\(TestID.name())")
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         return directory
     }
@@ -25,9 +26,18 @@ struct ArchiveReaderTests {
     private func makeZip(in directory: URL) throws -> URL {
         let url = directory.appendingPathComponent(FilesFeatureTestValue.bundleName)
         let archive = try Archive(url: url, accessMode: .create)
-        try archive.addEntry(with: Constants.folderEntry, type: .directory, uncompressedSize: Int64(0)) { (_: Int64, _: Int) -> Data in Data() }
-        for (path, bytes) in [(Constants.nestedEntry, Constants.nestedBytes), (Constants.rootEntry, Constants.rootBytes)] {
-            try archive.addEntry(with: path, type: .file, uncompressedSize: Int64(bytes.count)) { (position: Int64, size: Int) -> Data in
+        try archive.addEntry(with: Constants.folderEntry, type: .directory, uncompressedSize: Int64(0)) { (
+            _: Int64,
+            _: Int
+        ) -> Data in Data() }
+        for (path, bytes) in [
+            (Constants.nestedEntry, Constants.nestedBytes),
+            (Constants.rootEntry, Constants.rootBytes),
+        ] {
+            try archive.addEntry(with: path, type: .file, uncompressedSize: Int64(bytes.count)) { (
+                position: Int64,
+                size: Int
+            ) -> Data in
                 bytes.subdata(in: Int(position) ..< Int(position) + size)
             }
         }

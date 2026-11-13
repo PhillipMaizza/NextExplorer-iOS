@@ -119,14 +119,18 @@
                 browsePhase = .loaded
             } catch {
                 guard !Task.isCancelled else { return }
-                browsePhase = .failed((error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed)
+                let message = (error as? FilesClientError)?.userMessage
+                browsePhase = .failed(message ?? L10n.UserDetail.directoryPickerFailed)
             }
         }
     }
 
     @MainActor
     private func volumeSheetPreview(editing volumeID: String? = nil, error: String? = nil) -> some View {
-        var state = UserManagementFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+        var state = UserManagementFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            currentUserID: "u1"
+        )
         var sheet = UserManagementFeature.VolumeSheetState(userID: "u2", editingVolumeID: volumeID)
         sheet.label = volumeID == nil ? "" : "Media"
         sheet.selectedPath = volumeID == nil ? "" : "/mnt/media"

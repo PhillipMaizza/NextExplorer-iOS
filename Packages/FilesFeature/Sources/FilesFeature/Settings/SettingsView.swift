@@ -64,7 +64,12 @@ struct SettingsView: View {
     /// The Mac shows Change Password as a window sheet (`AccountConfirmations`), opened from the
     /// sidebar's account popover, so Settings never pushes it there.
     private var changePasswordDestination: Binding<StoreOf<ChangePasswordFeature>?> {
-        AccountConfirmations.isHostedByWindow ? .constant(nil) : $store.scope(state: \.changePassword, action: \.changePassword)
+        AccountConfirmations.isHostedByWindow
+            ? .constant(nil)
+            : $store.scope(
+                state: \.changePassword,
+                action: \.changePassword
+            )
     }
 
     private var twoFactorDestination: Binding<StoreOf<TwoFactorFeature>?> {
@@ -93,19 +98,24 @@ struct SettingsView: View {
         #else
             NavigationStack(path: $store.pages.sending(\.pagesChanged)) {
                 windowChrome(
-                    userManagementDestination(serverDetailsDestination(apiTokensDestinationView(twoFactorDestinationView(changePasswordDestinationView(
-                        settingsList {
-                            SettingsAccountsSection(store: store)
-                            SettingsProfileSection(store: store)
-                            SettingsServerStorageSection(store: store)
-                            SettingsMenuSection(store: store) { store.send(.pagesChanged(store.pages + [$0])) } footer: {
-                                SettingsVersionFooter(store: store)
-                            }
-                        }
-                        .navigationDestination(for: SettingsPage.self) { page in
-                            subpage(page)
-                        }
-                    )))))
+                    userManagementDestination(
+                        serverDetailsDestination(
+                            apiTokensDestinationView(twoFactorDestinationView(changePasswordDestinationView(
+                                settingsList {
+                                    SettingsAccountsSection(store: store)
+                                    SettingsProfileSection(store: store)
+                                    SettingsServerStorageSection(store: store)
+                                    SettingsMenuSection(store: store) { store.send(.pagesChanged(store.pages + [$0]))
+                                    } footer: {
+                                        SettingsVersionFooter(store: store)
+                                    }
+                                }
+                                .navigationDestination(for: SettingsPage.self) { page in
+                                    subpage(page)
+                                }
+                            )))
+                        )
+                    )
                 )
             }
         #endif
@@ -140,7 +150,10 @@ struct SettingsView: View {
     }
 
     private func serverDetailsDestination(_ content: some View) -> some View {
-        content.navigationDestination(item: $store.scope(state: \.serverDetails, action: \.serverDetails)) { serverDetailsStore in
+        content.navigationDestination(item: $store.scope(
+            state: \.serverDetails,
+            action: \.serverDetails
+        )) { serverDetailsStore in
             ServerDetailsView(store: serverDetailsStore)
         }
     }
@@ -164,13 +177,19 @@ struct SettingsView: View {
     }
 
     private func offlineDestination(_ content: some View) -> some View {
-        content.navigationDestination(item: $store.scope(state: \.offlineManage, action: \.offlineManage)) { manageStore in
+        content.navigationDestination(item: $store.scope(
+            state: \.offlineManage,
+            action: \.offlineManage
+        )) { manageStore in
             OfflineManageView(store: manageStore)
         }
     }
 
     private func userManagementDestination(_ content: some View) -> some View {
-        content.navigationDestination(item: $store.scope(state: \.userManagement, action: \.userManagement)) { userManagementStore in
+        content.navigationDestination(item: $store.scope(
+            state: \.userManagement,
+            action: \.userManagement
+        )) { userManagementStore in
             UserManagementView(store: userManagementStore)
         }
     }
@@ -186,12 +205,17 @@ struct SettingsView: View {
         case .storage:
             SettingsSubpage(title: page.title) { StorageSettingsSection(store: store, filter: filter) }
         case .offline:
-            offlineDestination(SettingsSubpage(title: page.title) { OfflineSettingsSection(store: store, filter: filter) })
+            offlineDestination(SettingsSubpage(title: page.title) {
+                OfflineSettingsSection(store: store, filter: filter)
+            })
         case .administration:
             adminDestinations(SettingsSubpage(title: page.title) { SettingsServerAdminSection(store: store) })
         case .sharedFiles:
             SettingsSubpage(title: page.title) {
-                SettingsUploadDefaultsSection(store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults), filter: filter)
+                SettingsUploadDefaultsSection(
+                    store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults),
+                    filter: filter
+                )
             }
         case .support:
             SettingsSubpage(title: page.title) { SupportSettingsSection(filter: filter) }
@@ -204,22 +228,40 @@ struct SettingsView: View {
 
     private func adminDestinations(_ content: some View) -> some View {
         content
-            .navigationDestination(item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)) { thumbnailStore in
+            .navigationDestination(item: $store.scope(
+                state: \.thumbnailSettings,
+                action: \.thumbnailSettings
+            )) { thumbnailStore in
                 ThumbnailSettingsView(store: thumbnailStore)
             }
-            .navigationDestination(item: $store.scope(state: \.accessRules, action: \.accessRules)) { accessRulesStore in
+            .navigationDestination(item: $store.scope(
+                state: \.accessRules,
+                action: \.accessRules
+            )) { accessRulesStore in
                 AccessRulesView(store: accessRulesStore)
             }
-            .navigationDestination(item: $store.scope(state: \.uploadSettings, action: \.uploadSettings)) { uploadStore in
+            .navigationDestination(item: $store.scope(
+                state: \.uploadSettings,
+                action: \.uploadSettings
+            )) { uploadStore in
                 UploadSettingsView(store: uploadStore)
             }
-            .navigationDestination(item: $store.scope(state: \.ffmpegSettings, action: \.ffmpegSettings)) { ffmpegStore in
+            .navigationDestination(item: $store.scope(
+                state: \.ffmpegSettings,
+                action: \.ffmpegSettings
+            )) { ffmpegStore in
                 FFmpegSettingsView(store: ffmpegStore)
             }
-            .navigationDestination(item: $store.scope(state: \.searchIndexSettings, action: \.searchIndexSettings)) { searchIndexStore in
+            .navigationDestination(item: $store.scope(
+                state: \.searchIndexSettings,
+                action: \.searchIndexSettings
+            )) { searchIndexStore in
                 SearchIndexSettingsView(store: searchIndexStore)
             }
-            .navigationDestination(item: $store.scope(state: \.folderSizeSettings, action: \.folderSizeSettings)) { folderSizeStore in
+            .navigationDestination(item: $store.scope(
+                state: \.folderSizeSettings,
+                action: \.folderSizeSettings
+            )) { folderSizeStore in
                 FolderSizeSettingsView(store: folderSizeStore)
             }
             .navigationDestination(item: $store.scope(state: \.activityLog, action: \.activityLog)) { activityStore in
@@ -228,7 +270,10 @@ struct SettingsView: View {
             .navigationDestination(item: $store.scope(state: \.trashSettings, action: \.trashSettings)) { trashStore in
                 TrashSettingsView(store: trashStore)
             }
-            .navigationDestination(item: $store.scope(state: \.versionedFiles, action: \.versionedFiles)) { versionedStore in
+            .navigationDestination(item: $store.scope(
+                state: \.versionedFiles,
+                action: \.versionedFiles
+            )) { versionedStore in
                 VersionedFilesView(store: versionedStore)
             }
     }
@@ -272,7 +317,10 @@ struct SettingsView: View {
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
             .modifier(TipJarPresentation(store: store))
             // Here rather than on its section: a sheet attached inside a `List` section may not present.
-            .sheet(item: $store.scope(state: \.uploadDefaults.folderPicker, action: \.uploadDefaults.folderPicker)) { pickerStore in
+            .sheet(item: $store.scope(
+                state: \.uploadDefaults.folderPicker,
+                action: \.uploadDefaults.folderPicker
+            )) { pickerStore in
                 DestinationPickerView(store: pickerStore)
             }
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
@@ -325,7 +373,13 @@ private func settingsPreview(
 ) -> some View {
     let state = SettingsFeature.State(
         serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-        user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [UserRole.admin])
+        user: User(
+            id: "preview-user",
+            username: "jdoe",
+            email: "jane.doe@example.com",
+            displayName: "Jane Doe",
+            roles: [UserRole.admin]
+        )
     )
     var client = FilesClient.previewValue
     configureClient(&client)
@@ -348,8 +402,18 @@ private func settingsPreview(
     @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
     $accounts.withLock {
         $0 = [
-            AccountSummary(id: "a", username: "jdoe", serverURL: URL(string: "https://home.example.com") ?? URL(fileURLWithPath: "/"), isActive: true),
-            AccountSummary(id: "b", username: "work", serverURL: URL(string: "https://files.acme.example.net") ?? URL(fileURLWithPath: "/"), isActive: false),
+            AccountSummary(
+                id: "a",
+                username: "jdoe",
+                serverURL: URL(string: "https://home.example.com") ?? URL(fileURLWithPath: "/"),
+                isActive: true
+            ),
+            AccountSummary(
+                id: "b",
+                username: "work",
+                serverURL: URL(string: "https://files.acme.example.net") ?? URL(fileURLWithPath: "/"),
+                isActive: false
+            ),
         ]
     }
     return settingsPreview()

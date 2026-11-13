@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import FolderPickerFeature
 import Foundation
+import Localization
 import ShareUploads
 
 /// Settings for files shared to NextExplorer from other apps (the Share Extension and "Open in
@@ -15,6 +16,12 @@ public struct UploadDefaultsFeature {
         /// `SessionCredentials.accountID` of the signed in account.
         public var accountID: String
         public var defaults = UploadDefaults()
+
+        /// The default folder as a row shows it: its path, or "None" when there is none.
+        public var folderTitle: String {
+            defaults.folderPath.flatMap { $0.isEmpty ? nil : $0 } ?? L10n.Settings.uploadDefaultsFolderNone
+        }
+
         @Presents public var folderPicker: DestinationPickerFeature.State?
 
         public init(serverURL: URL, accountID: String) {

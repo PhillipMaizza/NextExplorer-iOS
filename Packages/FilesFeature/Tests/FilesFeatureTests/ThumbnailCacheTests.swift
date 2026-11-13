@@ -17,8 +17,16 @@ struct ThumbnailCacheTests {
     private let store = ThumbnailCache.live(networkClient: NetworkClient())
 
     private func cacheDirectory() throws -> URL {
-        let cachesDirectory = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        return cachesDirectory.appendingPathComponent("PreviewCache", isDirectory: true).appendingPathComponent("thumbnails", isDirectory: true)
+        let cachesDirectory = try FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+        return cachesDirectory.appendingPathComponent("PreviewCache", isDirectory: true).appendingPathComponent(
+            "thumbnails",
+            isDirectory: true
+        )
     }
 
     // MARK: Happy path
@@ -65,7 +73,12 @@ struct ThumbnailCacheTests {
     // MARK: resolvedURL (remembers the `GET /api/thumbnails` resolution across app launches)
 
     private func recordURL(forPath path: String) throws -> URL {
-        let cachesDirectory = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let cachesDirectory = try FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
         return cachesDirectory
             .appendingPathComponent("PreviewCache", isDirectory: true)
             .appendingPathComponent("thumbnail-urls", isDirectory: true)

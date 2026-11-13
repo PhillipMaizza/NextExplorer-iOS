@@ -87,7 +87,8 @@ public enum SharedItemLoader {
                     try await stageRepresentation(
                         type: type, suggestedName: suggestedName, pairedWith: stillName, in: batch,
                         load: { provider.loadFileRepresentation(for: $0, openInPlace: false, completionHandler: $1) },
-                        onFraction: { onFraction(overallFraction(position: position, count: types.count, fraction: $0)) }
+                        onFraction: { onFraction(overallFraction(position: position, count: types.count, fraction: $0))
+                        }
                     )
                 }
                 if let file {
@@ -158,7 +159,9 @@ public enum SharedItemLoader {
 
     /// Finder and Files hand over a file URL rather than the bytes. The file may live in iCloud
     /// or another file provider and still be a placeholder, so it is read through a coordinator.
-    private static func stageFileURL(_ provider: NSItemProvider, in batch: UploadBatch) async throws -> UploadBatch.StagedFile? {
+    private static func stageFileURL(_ provider: NSItemProvider, in batch: UploadBatch) async throws -> UploadBatch
+        .StagedFile?
+    {
         let loaded: URL? = try await withCheckedThrowingContinuation { continuation in
             _ = provider.loadObject(ofClass: URL.self) { url, error in
                 if let error {
@@ -188,7 +191,8 @@ public enum SharedItemLoader {
 
     /// Throws `ShareUploadError.isFolder` for a folder and `fileNoSuchFile` for a path with nothing
     /// behind it: an item is never dropped without the user being told.
-    static func stageFile(at url: URL, in batch: UploadBatch, access: FileAccess) async throws -> UploadBatch.StagedFile {
+    static func stageFile(at url: URL, in batch: UploadBatch, access: FileAccess) async throws -> UploadBatch.StagedFile
+    {
         let isScoped = url.startAccessingSecurityScopedResource()
         defer {
             if isScoped {

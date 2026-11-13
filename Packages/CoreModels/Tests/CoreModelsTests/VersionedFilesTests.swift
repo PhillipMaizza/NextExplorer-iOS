@@ -35,7 +35,14 @@ struct VersionedFilesTests {
         (52, 50, 2, 52, false, true),
         (10, 0, 10, 10, false, false),
     ])
-    func theRangeAndPagingFlagsFollowTheOffset(total: Int, offset: Int, shown: Int, last: Int, hasNext: Bool, hasPrevious: Bool) {
+    func theRangeAndPagingFlagsFollowTheOffset(
+        total: Int,
+        offset: Int,
+        shown: Int,
+        last: Int,
+        hasNext: Bool,
+        hasPrevious: Bool
+    ) {
         let files = (0 ..< shown).map { VersionedFile(id: "f\($0)", name: "n") }
         let page = VersionedFilesPage(files: files, total: total, offset: offset)
 
@@ -54,7 +61,10 @@ struct VersionedFilesTests {
     func aDetailDecodesItsVersionsAndTotal() throws {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let detail = try decoder.decode(VersionedFileDetail.self, from: CoreModelsFixture.versionedFilesDetailWithPinnedUnavailableVersion.data())
+        let detail = try decoder.decode(
+            VersionedFileDetail.self,
+            from: CoreModelsFixture.versionedFilesDetailWithPinnedUnavailableVersion.data()
+        )
 
         #expect(detail.versions.map(\.id) == [TestETag.first])
         #expect(detail.versions.first?.isPinned == true)

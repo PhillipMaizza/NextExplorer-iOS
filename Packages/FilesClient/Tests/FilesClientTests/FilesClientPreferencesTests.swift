@@ -6,7 +6,8 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// User preferences and admin system settings through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
+/// User preferences and admin system settings through `FilesClient.live` against a stubbed `URLSession`. Nested in
+/// `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     struct FilesClientPreferencesTests: FilesClientLiveHarness {

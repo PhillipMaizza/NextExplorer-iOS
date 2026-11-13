@@ -93,7 +93,9 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
         #expect(try keychainClient.load(TestStorageKey.storedSessions) == nil)
     }
 
-    @Test("logout edge case: server unreachable is swallowed (best-effort) and the local session is left to removeAccount")
+    @Test(
+        "logout edge case: server unreachable is swallowed (best-effort) and the local session is left to removeAccount"
+    )
     func logoutServerUnreachableIsBestEffort() async throws {
         let cookieStorage = makeCookieStorage()
         let keychainClient = KeychainClient.inMemory()
@@ -110,7 +112,10 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
 
         #expect(attempts.paths.count == 1, "the server was asked once and the failure was swallowed")
         #expect(attempts.paths.first?.contains("logout") == true)
-        #expect(store.activeCredentials() == credentials, "logout is server side only: removing the account is what clears it locally")
+        #expect(
+            store.activeCredentials() == credentials,
+            "logout is server side only: removing the account is what clears it locally"
+        )
     }
 
     @Test("removeAccount edge case: an unreachable server still clears the session and cookie locally")
@@ -177,7 +182,9 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
         #expect(try await client.listSessionsOrThrow() == [stored])
     }
 
-    @Test("listSessionsOrThrow is empty for an empty keychain but throws for an unreadable one, where listSessions looks empty")
+    @Test(
+        "listSessionsOrThrow is empty for an empty keychain but throws for an unreadable one, where listSessions looks empty"
+    )
     func listSessionsOrThrowSeparatesEmptyFromUnreadable() async throws {
         struct StubKeychainError: Error {}
         let empty = makeClient(cookieStorage: makeCookieStorage(), handler: okHandler())

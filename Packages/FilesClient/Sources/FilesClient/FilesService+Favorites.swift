@@ -19,7 +19,13 @@ extension FilesService {
 
     /// `PATCH /api/favorites/:id`, confirmed against `backend/src/services/favoritesService.js`
     /// `updateFavorite`: `{ label, icon, color }` (position left to the reorder endpoint).
-    func updateFavorite(serverURL: URL, id: String, label: String?, icon: String, color: String?) async throws -> Favorite {
+    func updateFavorite(
+        serverURL: URL,
+        id: String,
+        label: String?,
+        icon: String,
+        color: String?
+    ) async throws -> Favorite {
         let url = serverURL.appendingPathComponent(APIPath.favorites).appendingPathComponent(id)
         var request = Self.makeRequest(url: url, method: .patch)
         request.setJSONContentType()

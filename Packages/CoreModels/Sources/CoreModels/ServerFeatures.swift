@@ -88,7 +88,8 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         isPersonalEnabled = try container.decodeIfPresent(FlagSection.self, forKey: .personal)?.enabled ?? false
         let editor = try? container.decodeIfPresent(EditorSection.self, forKey: .editor)
         editorExtensions = (editor?.extensions ?? []).map { $0.lowercased() }
-        maxUploadChunkSizeBytes = (try? container.decodeIfPresent(UploadsSection.self, forKey: .uploads))?.maxChunkSizeBytes
+        maxUploadChunkSizeBytes = (try? container.decodeIfPresent(UploadsSection.self, forKey: .uploads))?
+            .maxChunkSizeBytes
         let searchIndex = (try? container.decodeIfPresent(SearchSection.self, forKey: .search))?.index
         isSearchIndexEnabled = searchIndex?.enabled ?? false
         searchIndexLockedBy = searchIndex?.lockedBy

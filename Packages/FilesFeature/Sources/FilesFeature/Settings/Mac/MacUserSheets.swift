@@ -21,20 +21,33 @@
                 onConfirm: { store.send(.createSubmitTapped) }
             ) {
                 MacSettingsRow(L10n.UserManagement.createEmailField) {
-                    TextField(L10n.UserManagement.createEmailField, text: field(\.email, UserManagementFeature.Action.createEmailChanged), prompt: Text(L10n.UserManagement.createEmailPlaceholder))
-                        .labelsHidden()
-                        .textContentType(.emailAddress)
-                        .autocorrectionDisabled()
+                    TextField(
+                        L10n.UserManagement.createEmailField,
+                        text: field(\.email, UserManagementFeature.Action.createEmailChanged),
+                        prompt: Text(L10n.UserManagement.createEmailPlaceholder)
+                    )
+                    .labelsHidden()
+                    .textContentType(.emailAddress)
+                    .autocorrectionDisabled()
                     MacFieldError(message: sheet?.emailError)
                 }
                 MacSettingsRow(L10n.UserManagement.createUsernameField) {
-                    TextField(L10n.UserManagement.createUsernameField, text: field(\.username, UserManagementFeature.Action.createUsernameChanged), prompt: Text(L10n.UserManagement.createUsernamePlaceholder))
-                        .labelsHidden()
-                        .autocorrectionDisabled()
+                    TextField(
+                        L10n.UserManagement.createUsernameField,
+                        text: field(\.username, UserManagementFeature.Action.createUsernameChanged),
+                        prompt: Text(L10n.UserManagement.createUsernamePlaceholder)
+                    )
+                    .labelsHidden()
+                    .autocorrectionDisabled()
                 }
                 MacSettingsRow(L10n.Common.password) {
-                    SecureField(L10n.Common.password, text: field(\.password, UserManagementFeature.Action.createPasswordChanged), prompt: Text(L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength)))
-                        .labelsHidden()
+                    SecureField(
+                        L10n.Common.password,
+                        text: field(\.password, UserManagementFeature.Action.createPasswordChanged),
+                        prompt: Text(L10n.UserManagement
+                            .createPasswordPlaceholder(CredentialRules.minimumPasswordLength))
+                    )
+                    .labelsHidden()
                     MacFieldError(message: sheet?.passwordError)
                 }
                 MacSettingsRow(L10n.UserDetail.sectionRoles) {
@@ -64,7 +77,9 @@
             let isReset = sheet?.hasExistingPassword ?? false
             MacFormSheet(
                 title: isReset ? L10n.UserManagement.setPasswordResetTitle : L10n.UserManagement.setPasswordSetTitle,
-                confirmTitle: isReset ? L10n.UserManagement.setPasswordResetTitle : L10n.UserManagement.setPasswordSetTitle,
+                confirmTitle: isReset
+                    ? L10n.UserManagement.setPasswordResetTitle
+                    : L10n.UserManagement.setPasswordSetTitle,
                 isConfirmEnabled: sheet?.isSubmitEnabled ?? false,
                 isWorking: sheet?.isSubmitting ?? false,
                 errorMessage: sheet?.errorMessage,
@@ -96,8 +111,12 @@
 
         var body: some View {
             MacFormSheet(
-                title: store.mode == .add ? L10n.ChangePassword.addNavigationTitle : L10n.ChangePassword.navigationTitle,
-                confirmTitle: store.mode == .add ? L10n.ChangePassword.addSubmitButton : L10n.ChangePassword.submitButton,
+                title: store.mode == .add
+                    ? L10n.ChangePassword.addNavigationTitle
+                    : L10n.ChangePassword.navigationTitle,
+                confirmTitle: store.mode == .add
+                    ? L10n.ChangePassword.addSubmitButton
+                    : L10n.ChangePassword.submitButton,
                 isConfirmEnabled: store.isSubmitEnabled,
                 isWorking: store.isSubmitting,
                 errorMessage: store.errorMessage,
@@ -109,21 +128,32 @@
                     .padding(.bottom, .space8)
                 if store.mode == .change {
                     MacSettingsRow(L10n.ChangePassword.fieldCurrentPassword) {
-                        SecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
-                            .labelsHidden()
-                            .textContentType(.password)
+                        SecureField(
+                            L10n.ChangePassword.fieldCurrentPassword,
+                            text: $store.currentPassword.sending(\.currentPasswordChanged)
+                        )
+                        .labelsHidden()
+                        .textContentType(.password)
                     }
                 }
                 MacSettingsRow(L10n.ChangePassword.fieldNewPasswordLabel) {
-                    SecureField(L10n.ChangePassword.fieldNewPasswordLabel, text: $store.newPassword.sending(\.newPasswordChanged), prompt: Text(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength)))
-                        .labelsHidden()
-                        .textContentType(.newPassword)
+                    SecureField(
+                        L10n.ChangePassword.fieldNewPasswordLabel,
+                        text: $store.newPassword.sending(\.newPasswordChanged),
+                        prompt: Text(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength))
+                    )
+                    .labelsHidden()
+                    .textContentType(.newPassword)
                     MacFieldError(message: newPasswordError)
                 }
                 MacSettingsRow(L10n.ChangePassword.fieldConfirmPasswordLabel) {
-                    SecureField(L10n.ChangePassword.fieldConfirmPasswordLabel, text: $store.confirmPassword.sending(\.confirmPasswordChanged), prompt: Text(L10n.ChangePassword.fieldConfirmPassword))
-                        .labelsHidden()
-                        .textContentType(.newPassword)
+                    SecureField(
+                        L10n.ChangePassword.fieldConfirmPasswordLabel,
+                        text: $store.confirmPassword.sending(\.confirmPasswordChanged),
+                        prompt: Text(L10n.ChangePassword.fieldConfirmPassword)
+                    )
+                    .labelsHidden()
+                    .textContentType(.newPassword)
                     MacFieldError(message: confirmError)
                 }
                 if store.didSucceed {
@@ -144,7 +174,10 @@
 
     @MainActor
     private func userSheetsState() -> UserManagementFeature.State {
-        UserManagementFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+        UserManagementFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            currentUserID: "u1"
+        )
     }
 
     #Preview("Create user") {
@@ -164,13 +197,19 @@
 
     #Preview("Set password") {
         var state = userSheetsState()
-        state.passwordSheet = UserManagementFeature.PasswordSheetState(userID: "u2", userLabel: "Jane Doe", hasExistingPassword: true)
+        state.passwordSheet = UserManagementFeature.PasswordSheetState(
+            userID: "u2",
+            userLabel: "Jane Doe",
+            hasExistingPassword: true
+        )
         return MacSetPasswordSheet(store: Store(initialState: state) { UserManagementFeature() })
     }
 
     #Preview("Change password") {
         MacChangePasswordSheet(
-            store: Store(initialState: ChangePasswordFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"))) {
+            store: Store(initialState: ChangePasswordFeature
+                .State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")))
+            {
                 ChangePasswordFeature()
             },
             onClose: {}

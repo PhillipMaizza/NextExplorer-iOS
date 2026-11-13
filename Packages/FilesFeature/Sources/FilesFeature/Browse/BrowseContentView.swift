@@ -295,7 +295,11 @@ struct BrowseContentView: View {
         .macToolbarRefresh(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
             didFinishRefreshing.toggle()
         }
-        .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: store.phase.errorMessage == nil, extraBottomInset: bottomChromeClearance)
+        .syncCompletedToast(
+            trigger: didFinishRefreshing,
+            isErrorFree: store.phase.errorMessage == nil,
+            extraBottomInset: bottomChromeClearance
+        )
         #endif
         .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.phase.errorMessage == nil }
         .hapticFeedback(.error, trigger: store.phase.errorMessage) { _, newValue in newValue != nil }
@@ -350,7 +354,10 @@ struct BrowseContentView: View {
                     if store.clipboard != nil, !store.directoryPath.isEmpty {
                         Section {
                             Button {
-                                store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy), animation: .default)
+                                store.send(
+                                    .pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy),
+                                    animation: .default
+                                )
                             } label: {
                                 Label { Text(pasteActionTitle) } icon: { IconKit.paste }
                             }
@@ -449,7 +456,9 @@ struct BrowseContentView: View {
                     ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(
                             icon: isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star,
-                            accessibilityLabel: isEntireSelectionAlreadyFavorited ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites
+                            accessibilityLabel: isEntireSelectionAlreadyFavorited
+                                ? L10n.Browse.actionRemoveFromFavorites
+                                : L10n.Browse.actionAddToFavorites
                         ) {
                             store.send(.bulkFavoriteTapped)
                         }
@@ -479,7 +488,12 @@ struct BrowseContentView: View {
                 }
                 if isDeleteActionVisible {
                     ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(icon: IconKit.delete, role: .destructive, tint: .negative, accessibilityLabel: L10n.Browse.actionDelete) {
+                        selectionToolbarButton(
+                            icon: IconKit.delete,
+                            role: .destructive,
+                            tint: .negative,
+                            accessibilityLabel: L10n.Browse.actionDelete
+                        ) {
                             store.send(.bulkDeleteTapped)
                         }
                     }
@@ -541,7 +555,9 @@ struct BrowseContentView: View {
                 confirmTitle: L10n.Browse.newFolderConfirm,
                 isBusy: store.isPerformingFileAction,
                 additionalRule: { [extensions = store.newFileServerExtensions] name in
-                    EditableTextFiles.isEditable(name: name, serverExtensions: extensions) ? nil : L10n.Browse.newFileTypeHint
+                    EditableTextFiles.isEditable(name: name, serverExtensions: extensions)
+                        ? nil
+                        : L10n.Browse.newFileTypeHint
                 },
                 capitalizesWords: false,
                 onConfirm: { store.send(.newFileConfirmed($0)) },
@@ -626,7 +642,11 @@ struct BrowseContentView: View {
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
                     iconSize: thumbnailSize.iconSize,
-                    matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition, visibility: sourceVisibility),
+                    matchedSource: PreviewMatchedSource(
+                        id: row.id,
+                        namespace: previewTransition,
+                        visibility: sourceVisibility
+                    ),
                     isOpening: isOpeningID(row.id)
                 )
             } else {
@@ -637,7 +657,11 @@ struct BrowseContentView: View {
                     isFavorite: store.favoritePaths.contains(row.id),
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
-                    matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition, visibility: sourceVisibility),
+                    matchedSource: PreviewMatchedSource(
+                        id: row.id,
+                        namespace: previewTransition,
+                        visibility: sourceVisibility
+                    ),
                     isOpening: isOpeningID(row.id)
                 )
             }
@@ -654,7 +678,11 @@ struct BrowseContentView: View {
             serverURL: store.serverURL,
             showThumbnails: store.preferences.showThumbnails,
             iconSize: thumbnailSize.iconSize,
-            matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition, visibility: sourceVisibility),
+            matchedSource: PreviewMatchedSource(
+                id: item.id,
+                namespace: previewTransition,
+                visibility: sourceVisibility
+            ),
             isOpening: isOpening(item),
             isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
@@ -837,7 +865,9 @@ struct BrowseContentView: View {
                         store.send(.bulkFavoriteTapped)
                     } label: {
                         Label {
-                            Text(isAllFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites)
+                            Text(isAllFavorite
+                                ? L10n.Browse.actionRemoveFromFavorites
+                                : L10n.Browse.actionAddToFavorites)
                         } icon: {
                             isAllFavorite ? IconKit.starFill : IconKit.star
                         }
@@ -881,7 +911,8 @@ struct BrowseContentView: View {
                 canPaste: canPaste,
                 open: {
                     guard store.selectedItemIDs.count == 1,
-                          let item = store.displayedItems.first(where: { store.selectedItemIDs.contains($0.id) }) else { return }
+                          let item = store.displayedItems.first(where: { store.selectedItemIDs.contains($0.id) })
+                    else { return }
                     handleTap(item)
                 },
                 copyPath: {
@@ -899,7 +930,11 @@ struct BrowseContentView: View {
             isFavorite: store.favoritePaths.contains(item.id),
             serverURL: store.serverURL,
             showThumbnails: store.preferences.showThumbnails,
-            matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition, visibility: sourceVisibility),
+            matchedSource: PreviewMatchedSource(
+                id: item.id,
+                namespace: previewTransition,
+                visibility: sourceVisibility
+            ),
             isOpening: isOpening(item),
             isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
@@ -1205,7 +1240,13 @@ struct BrowseContentView: View {
         accessibilityLabel: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
-        SelectionToolbarButton(icon: icon, role: role, tint: tint, accessibilityLabel: accessibilityLabel, action: action)
+        SelectionToolbarButton(
+            icon: icon,
+            role: role,
+            tint: tint,
+            accessibilityLabel: accessibilityLabel,
+            action: action
+        )
     }
 
     private var bulkDeleteConfirmationBinding: Binding<Bool> {
@@ -1405,7 +1446,10 @@ struct BrowseContentView: View {
                     } else {
                         if showsPersonalSpace {
                             Section {
-                                PersonalSpaceGridCell(iconSize: thumbnailSize.iconSize, cellPadding: Constants.gridCellPadding) {
+                                PersonalSpaceGridCell(
+                                    iconSize: thumbnailSize.iconSize,
+                                    cellPadding: Constants.gridCellPadding
+                                ) {
                                     store.send(.personalSpaceTapped)
                                 }
                             } header: {
@@ -1423,11 +1467,17 @@ struct BrowseContentView: View {
                 }
                 .padding(Constants.gridSpacing)
                 .animation(
-                    .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+                    .spring(
+                        response: Constants.listDiffSpringResponse,
+                        dampingFraction: Constants.listDiffSpringDamping
+                    ),
                     value: displayedItems
                 )
                 .animation(
-                    .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+                    .spring(
+                        response: Constants.listDiffSpringResponse,
+                        dampingFraction: Constants.listDiffSpringDamping
+                    ),
                     value: store.displayedSearchResults
                 )
                 if store.isSearching, hasSearchFooter {
@@ -1463,7 +1513,11 @@ struct BrowseContentView: View {
     }
 
     private var searchStatusMessage: String? {
-        SearchStatusFooter.message(failure: store.searchFailureMessage, isTooShort: store.isSearchTermTooShort, shortfall: store.searchShortfall)
+        SearchStatusFooter.message(
+            failure: store.searchFailureMessage,
+            isTooShort: store.isSearchTermTooShort,
+            shortfall: store.searchShortfall
+        )
     }
 
     /// A search in a folder can be widened to everywhere, unless the term is too short for the
@@ -1524,7 +1578,8 @@ struct BrowseContentView: View {
     /// always empty) and the app-level upload progress bar while it's showing. Both are placed
     /// by ancestors a `List` inside a pushed `navigationDestination` doesn't reliably respect.
     private var bottomChromeClearance: CGFloat {
-        (store.directoryPath.isEmpty || !BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: viewModeRaw) ? 0 : BrowseBreadcrumbBarMetrics.height)
+        (store.directoryPath.isEmpty || !BrowseBreadcrumbBarMetrics
+            .isShown(browseViewModeRaw: viewModeRaw) ? 0 : BrowseBreadcrumbBarMetrics.height)
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
     }
 
@@ -1658,7 +1713,8 @@ struct BrowseContentView: View {
                 }
                 .buttonStyle(DSHapticButtonStyle())
                 .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
-                .accessibilityAddTraits(store.isSelecting && store.selectedItemIDs.contains(item.id) ? [.isSelected] : [])
+                .accessibilityAddTraits(store.isSelecting && store.selectedItemIDs
+                    .contains(item.id) ? [.isSelected] : [])
                 .contextMenu {
                     if !store.isSelecting {
                         fileActionsMenu(for: item)
@@ -1684,7 +1740,9 @@ struct BrowseContentView: View {
                             }
                             .tint(.accent)
                             .disabled(!store.hasLoadedFavorites)
-                            .accessibilityLabel(store.favoritePaths.contains(item.id) ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites)
+                            .accessibilityLabel(store.favoritePaths.contains(item.id)
+                                ? L10n.Browse.actionRemoveFromFavorites
+                                : L10n.Browse.actionAddToFavorites)
                         }
                         if store.access?.canWrite ?? false {
                             Button {
@@ -1761,14 +1819,17 @@ struct BrowseContentView: View {
                     .type(.body3(.regular), style: .secondary)
                     .multilineTextAlignment(.center)
             } else if store.canWidenSearch {
-                DSButton(L10n.Browse.searchEverywhere,
-                         icon: IconKit.search,
-                         style: .secondary,
-                         size: .small,
-                         isLoading: false, action: {
-                             store.send(.searchScopeChanged(.everywhere))
-                         })
-                         .padding(.top, Constants.emptyStateSpacing)
+                DSButton(
+                    L10n.Browse.searchEverywhere,
+                    icon: IconKit.search,
+                    style: .secondary,
+                    size: .small,
+                    isLoading: false,
+                    action: {
+                        store.send(.searchScopeChanged(.everywhere))
+                    }
+                )
+                .padding(.top, Constants.emptyStateSpacing)
             }
         }
         .padding(.space16)
@@ -1805,7 +1866,14 @@ private let browsePreviewItems: [FileItem] = [
     FileItem(name: "Projects", path: "Documents", dateModified: Date(), size: 0, kind: "directory"),
     FileItem(name: "budget.xlsx", path: "Documents", dateModified: Date(), size: 44_000, kind: "xlsx"),
     FileItem(name: "notes.txt", path: "Documents", dateModified: Date(), size: 1_200, kind: "txt"),
-    FileItem(name: "cover.jpg", path: "Documents", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+    FileItem(
+        name: "cover.jpg",
+        path: "Documents",
+        dateModified: Date(),
+        size: 2_400_000,
+        kind: "jpg",
+        supportsThumbnail: true
+    ),
 ]
 
 private let browsePreviewEmptyAccess = FileAccess(
@@ -1822,7 +1890,9 @@ private let browsePreviewEmptyAccess = FileAccess(
 
 #Preview("Browse: empty folder") {
     browsePreview(
-        configureClient: { $0.browse = { _, path in BrowseResult(items: [], access: browsePreviewEmptyAccess, path: path) } }
+        configureClient: { $0.browse = { _, path in
+            BrowseResult(items: [], access: browsePreviewEmptyAccess, path: path)
+        } }
     )
 }
 

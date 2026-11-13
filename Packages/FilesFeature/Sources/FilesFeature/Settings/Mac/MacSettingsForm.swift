@@ -136,7 +136,12 @@
     }
 
     extension View {
-        func macSettingsSaveBar(_ title: String, isSaving: Bool, isEnabled: Bool, action: @escaping () -> Void) -> some View {
+        func macSettingsSaveBar(
+            _ title: String,
+            isSaving: Bool,
+            isEnabled: Bool,
+            action: @escaping () -> Void
+        ) -> some View {
             modifier(MacSettingsSaveBar(title: title, isSaving: isSaving, isEnabled: isEnabled, action: action))
         }
     }

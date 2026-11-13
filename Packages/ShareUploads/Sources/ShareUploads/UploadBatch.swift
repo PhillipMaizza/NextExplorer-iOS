@@ -124,7 +124,8 @@ public struct UploadBatch: Sendable {
     var availableCapacity: @Sendable (URL) -> Int64? = DiskSpace.availableCapacity
     var writeEnvelope: EnvelopeWriter = { serverURL, fileURL, fileName, destination, envelopeURL in
         try UploadRequest.make(
-            serverURL: serverURL, fileURL: fileURL, fileName: fileName, destination: destination, envelopeURL: envelopeURL
+            serverURL: serverURL, fileURL: fileURL, fileName: fileName, destination: destination,
+            envelopeURL: envelopeURL
         )
     }
 
@@ -156,7 +157,8 @@ public struct UploadBatch: Sendable {
             throw ShareUploadError.insufficientSpace
         }
         defer { ledger.release(size) }
-        let envelopeURL = directory.appendingPathComponent("\(UUID().uuidString).\(EnvelopeConstants.envelopeExtension)")
+        let envelopeURL = directory
+            .appendingPathComponent("\(UUID().uuidString).\(EnvelopeConstants.envelopeExtension)")
         do {
             let request = try writeEnvelope(credentials.serverBaseURL, fileURL, fileName, destination, envelopeURL)
             thumbnailStore.seed(

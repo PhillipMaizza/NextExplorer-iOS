@@ -35,7 +35,13 @@ struct UploadProgressDelegateTests {
         defer { session.invalidateAndCancel() }
         let task = session.dataTask(with: TestHost.serverURL)
 
-        delegate.urlSession(session, task: task, didSendBodyData: 0, totalBytesSent: testCase.sent, totalBytesExpectedToSend: testCase.expected)
+        delegate.urlSession(
+            session,
+            task: task,
+            didSendBodyData: 0,
+            totalBytesSent: testCase.sent,
+            totalBytesExpectedToSend: testCase.expected
+        )
 
         #expect(reports.value == testCase.fraction.map { [$0] } ?? [])
     }
@@ -51,7 +57,13 @@ struct UploadProgressDelegateTests {
         let task = session.dataTask(with: TestHost.serverURL)
 
         for sent: Int64 in [25, 50, 100] {
-            delegate.urlSession(session, task: task, didSendBodyData: 25, totalBytesSent: sent, totalBytesExpectedToSend: 100)
+            delegate.urlSession(
+                session,
+                task: task,
+                didSendBodyData: 25,
+                totalBytesSent: sent,
+                totalBytesExpectedToSend: 100
+            )
         }
 
         #expect(reports.value == [0.25, 0.5, 1])

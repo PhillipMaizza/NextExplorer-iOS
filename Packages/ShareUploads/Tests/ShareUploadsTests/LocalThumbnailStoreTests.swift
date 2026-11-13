@@ -25,7 +25,8 @@ struct LocalThumbnailStoreTests {
     private let account = Harness.credentials.accountID
 
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("UploadThumbnails-\(TestID.uuid().uuidString)")
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("UploadThumbnails-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
@@ -74,7 +75,12 @@ struct LocalThumbnailStoreTests {
         let store = store(in: root)
         store.seed(file, .png, Constants.photo, account, MockDate.date)
 
-        #expect(read(store, scope: account, size: size, modified: MockDate.date.addingTimeInterval(-Constants.twoHours)) == nil)
+        #expect(read(
+            store,
+            scope: account,
+            size: size,
+            modified: MockDate.date.addingTimeInterval(-Constants.twoHours)
+        ) == nil)
     }
 
     @Test("A server clock somewhat behind the phone still matches the upload")
@@ -85,7 +91,12 @@ struct LocalThumbnailStoreTests {
         let store = store(in: root)
         store.seed(file, .png, Constants.photo, account, MockDate.date)
 
-        #expect(read(store, scope: account, size: size, modified: MockDate.date.addingTimeInterval(-Constants.halfHour)) != nil)
+        #expect(read(
+            store,
+            scope: account,
+            size: size,
+            modified: MockDate.date.addingTimeInterval(-Constants.halfHour)
+        ) != nil)
     }
 
     @Test("A seed older than a week is dropped")
@@ -144,8 +155,14 @@ struct LocalThumbnailStoreTests {
     @Test("Only files modified within about a week can have a seed, so older ones skip the lookup")
     func onlyRecentFilesCanHaveASeed() {
         #expect(LocalThumbnailStore.canHaveSeed(modified: MockDate.date, now: MockDate.date))
-        #expect(LocalThumbnailStore.canHaveSeed(modified: MockDate.date, now: MockDate.date.addingTimeInterval(Constants.sixDays)))
-        #expect(!LocalThumbnailStore.canHaveSeed(modified: MockDate.date, now: MockDate.date.addingTimeInterval(Constants.eightDays)))
+        #expect(LocalThumbnailStore.canHaveSeed(
+            modified: MockDate.date,
+            now: MockDate.date.addingTimeInterval(Constants.sixDays)
+        ))
+        #expect(!LocalThumbnailStore.canHaveSeed(
+            modified: MockDate.date,
+            now: MockDate.date.addingTimeInterval(Constants.eightDays)
+        ))
     }
 
     @Test("A file's server path joins the folder and the name, the root being empty")
@@ -208,7 +225,12 @@ struct LocalThumbnailStoreTests {
         defer { try? FileManager.default.removeItem(at: root) }
         let (file, _) = try ThumbnailFixture.png(in: root)
         let seeds = SeedLog()
-        let uploader = BackgroundUploader(root: root, notifier: UploadNotifier { _ in }, defaults: .standard, availableCapacity: { _ in nil })
+        let uploader = BackgroundUploader(
+            root: root,
+            notifier: UploadNotifier { _ in },
+            defaults: .standard,
+            availableCapacity: { _ in nil }
+        )
         var batch = try uploader.makeBatch(credentials: Harness.credentials, destination: TestFolder.photos)
         batch.now = { MockDate.date }
         batch.thumbnailStore.seed = { _, type, path, scope, startedAt in
@@ -226,7 +248,12 @@ struct LocalThumbnailStoreTests {
         defer { try? FileManager.default.removeItem(at: root) }
         let (file, _) = try ThumbnailFixture.png(in: root)
         let seeds = SeedLog()
-        let uploader = BackgroundUploader(root: root, notifier: UploadNotifier { _ in }, defaults: .standard, availableCapacity: { _ in nil })
+        let uploader = BackgroundUploader(
+            root: root,
+            notifier: UploadNotifier { _ in },
+            defaults: .standard,
+            availableCapacity: { _ in nil }
+        )
         var batch = try uploader.makeBatch(credentials: Harness.credentials, destination: TestFolder.photos)
         batch.writeEnvelope = { _, _, _, _, _ in throw CocoaError(.fileWriteOutOfSpace) }
         batch.thumbnailStore.seed = { _, _, path, _, _ in seeds.append(path) }

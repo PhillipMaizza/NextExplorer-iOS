@@ -17,7 +17,14 @@ struct ShareExtensionDependenciesTests {
     private var listing: BrowseResult {
         BrowseResult(
             items: [],
-            access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true),
+            access: FileAccess(
+                canRead: true,
+                canWrite: true,
+                canUpload: true,
+                canDelete: true,
+                canShare: true,
+                canDownload: true
+            ),
             path: TestFolder.photos
         )
     }
@@ -28,7 +35,13 @@ struct ShareExtensionDependenciesTests {
             ShareExtensionDependencies.configure(&$0)
         } operation: {
             @Dependency(\.directoryCacheStore) var store
-            store.write(serverURL: serverURL, path: TestFolder.photos, result: listing, etag: "\"v1\"", fetchedAt: MockClock.now)
+            store.write(
+                serverURL: serverURL,
+                path: TestFolder.photos,
+                result: listing,
+                etag: "\"v1\"",
+                fetchedAt: MockClock.now
+            )
             #expect(store.read(serverURL: serverURL, path: TestFolder.photos) == nil)
             #expect(store.totalSizeBytes() == 0)
         }

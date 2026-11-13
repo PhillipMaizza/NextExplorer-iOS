@@ -23,7 +23,11 @@ import TestUtils
 
             await store.send(.goToFolderRequested(" /Photos/2026/ "))
             await store.receive(\.browse.navigateToDirectory) {
-                $0.browse.path[id: 0] = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/2026", title: "2026")
+                $0.browse.path[id: 0] = BrowseFeature.State(
+                    serverURL: serverURL,
+                    directoryPath: "Photos/2026",
+                    title: "2026"
+                )
             }
         }
 
@@ -39,18 +43,52 @@ import TestUtils
         // MARK: Rows dragged in from another window
 
         private func dropTarget(canWrite: Bool = true) -> BrowseFeature.State {
-            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
+            var state = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.docs,
+                title: TestFolder.docs
+            )
             state.access = canWrite ? BrowseTestSupport.fullAccess : BrowseTestSupport.readOnlyAccess
-            state.items = [FileItem(name: TestFile.bText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)]
+            state.items = [FileItem(
+                name: TestFile.bText,
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            )]
             return state
         }
 
         @Test("Rows from another window move into this folder, but rows already here or the folder itself do not")
         func rowsFromAnotherWindowMoveHereButNotOntoThemselves() async {
-            let elsewhere = FileItem(name: TestFile.aText, path: "Other", dateModified: MockDate.date, size: 1, kind: TestKind.text)
-            let alreadyHere = FileItem(name: TestFile.bText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
-            let parent = FileItem(name: TestFolder.docs, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
-            let moved = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+            let elsewhere = FileItem(
+                name: TestFile.aText,
+                path: "Other",
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            )
+            let alreadyHere = FileItem(
+                name: TestFile.bText,
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            )
+            let parent = FileItem(
+                name: TestFolder.docs,
+                path: "",
+                dateModified: MockDate.date,
+                size: 0,
+                kind: FileItem.directoryKind
+            )
+            let moved = FileItem(
+                name: TestFile.aText,
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            )
             let transferred = LockIsolated<[String]>([])
             let transfer = AsyncGate()
             let state = dropTarget()
@@ -58,13 +96,21 @@ import TestUtils
                 BrowseFeature()
             } withDependencies: {
                 $0.filesClient.transferItems = { _, items, destination, operation in
-                    transferred.withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)") }
+                    transferred
+                        .withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)")
+                        }
                     try await transfer.wait()
-                    return TransferResult(destination: destination, items: [.init(from: "Other/a.txt", to: "Docs/a.txt")])
+                    return TransferResult(
+                        destination: destination,
+                        items: [.init(from: "Other/a.txt", to: "Docs/a.txt")]
+                    )
                 }
             }
 
-            await store.send(.itemsDroppedFromOtherWindow([elsewhere, alreadyHere, parent], destination: TestFolder.docs)) {
+            await store.send(.itemsDroppedFromOtherWindow(
+                [elsewhere, alreadyHere, parent],
+                destination: TestFolder.docs
+            )) {
                 $0.isPerformingFileAction = true
                 $0.fileActionProgressMessage = L10n.Browse.progressMoving
                 $0.pendingTransferRetry = BrowseFeature.TransferRetry(
@@ -106,22 +152,46 @@ import TestUtils
             arguments: [
                 NothingToMove(
                     name: "a row already in the folder",
-                    dropped: [FileItem(name: TestFile.bText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)],
+                    dropped: [FileItem(
+                        name: TestFile.bText,
+                        path: TestFolder.docs,
+                        dateModified: MockDate.date,
+                        size: 1,
+                        kind: TestKind.text
+                    )],
                     destination: TestFolder.docs, canWrite: true
                 ),
                 NothingToMove(
                     name: "the folder onto itself",
-                    dropped: [FileItem(name: TestFolder.docs, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)],
+                    dropped: [FileItem(
+                        name: TestFolder.docs,
+                        path: "",
+                        dateModified: MockDate.date,
+                        size: 0,
+                        kind: FileItem.directoryKind
+                    )],
                     destination: TestFolder.docs, canWrite: true
                 ),
                 NothingToMove(
                     name: "a folder into its own subfolder",
-                    dropped: [FileItem(name: TestFolder.docs, path: "", dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)],
+                    dropped: [FileItem(
+                        name: TestFolder.docs,
+                        path: "",
+                        dateModified: MockDate.date,
+                        size: 0,
+                        kind: FileItem.directoryKind
+                    )],
                     destination: "Docs/Sub", canWrite: true
                 ),
                 NothingToMove(
                     name: "a folder that is not writable",
-                    dropped: [FileItem(name: TestFile.aText, path: "Other", dateModified: MockDate.date, size: 1, kind: TestKind.text)],
+                    dropped: [FileItem(
+                        name: TestFile.aText,
+                        path: "Other",
+                        dateModified: MockDate.date,
+                        size: 1,
+                        kind: TestKind.text
+                    )],
                     destination: TestFolder.docs, canWrite: false
                 ),
             ]
@@ -139,7 +209,11 @@ import TestUtils
         @Test("View in Shared from a search preview closes it and switches tab")
         func viewInSharedFromASearchPreviewClosesItAndSwitchesTab() async {
             var state = FavoritesFeature.State(serverURL: serverURL)
-            state.previewHost = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
+            state.previewHost = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.docs,
+                title: TestFolder.docs
+            )
             let store = TestStore(initialState: state) {
                 FavoritesFeature()
             }
@@ -165,12 +239,21 @@ import TestUtils
             try FileManager.default.createDirectory(at: stale, withIntermediateDirectories: true)
             defer { try? FileManager.default.removeItem(at: root) }
             for directory in [fresh, stale] {
-                try FileManager.default.setAttributes([.modificationDate: MockDate.date, .creationDate: MockDate.date], ofItemAtPath: directory.path)
+                try FileManager.default.setAttributes(
+                    [.modificationDate: MockDate.date, .creationDate: MockDate.date],
+                    ofItemAtPath: directory.path
+                )
             }
 
-            MacOpenWithCopy.removeStaleCopies(in: root, now: MockDate.date.addingTimeInterval(MacOpenWithCopy.staleCopyLifetime / 2))
+            MacOpenWithCopy.removeStaleCopies(
+                in: root,
+                now: MockDate.date.addingTimeInterval(MacOpenWithCopy.staleCopyLifetime / 2)
+            )
             #expect(FileManager.default.fileExists(atPath: stale.path))
-            MacOpenWithCopy.removeStaleCopies(in: root, now: MockDate.date.addingTimeInterval(MacOpenWithCopy.staleCopyLifetime + 60))
+            MacOpenWithCopy.removeStaleCopies(
+                in: root,
+                now: MockDate.date.addingTimeInterval(MacOpenWithCopy.staleCopyLifetime + 60)
+            )
             #expect(!FileManager.default.fileExists(atPath: stale.path))
             #expect(!FileManager.default.fileExists(atPath: fresh.path))
         }

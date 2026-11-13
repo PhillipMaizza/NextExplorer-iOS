@@ -193,7 +193,9 @@ public struct OfflineDownloadsFeature {
                 state.pendingPinPaths = []
                 state.$progress.withLock {
                     $0 = OfflineDownloadProgress()
-                    $0.phase = .failed(L10n.Offline.pinRemoved(names.joined(separator: Constants.removedNamesSeparator)))
+                    $0
+                        .phase = .failed(L10n.Offline
+                            .pinRemoved(names.joined(separator: Constants.removedNamesSeparator)))
                 }
                 return .none
 
@@ -305,7 +307,8 @@ public struct OfflineDownloadsFeature {
                 offlineFileStore.setLastAutoSyncAt(now)
                 var walk = try await Self.walk(roots: rootItems, serverURL: serverURL, filesClient: filesClient)
                 let removedNames = try await Self.resolveMissingRoots(
-                    in: &walk, roots: roots, serverURL: serverURL, filesClient: filesClient, offlineFileStore: offlineFileStore
+                    in: &walk, roots: roots, serverURL: serverURL, filesClient: filesClient,
+                    offlineFileStore: offlineFileStore
                 )
                 let files = walk.files
                 if walk.hasIncompleteWalk || walk.hasForbiddenFolders {
@@ -350,7 +353,10 @@ public struct OfflineDownloadsFeature {
                 if !removedNames.isEmpty {
                     await send(.pinsRemoved(names: removedNames))
                 } else {
-                    await send(walk.hasForbiddenFolders && announceWhenNothingPending ? .failed(Self.forbiddenMessage) : .completed)
+                    await send(walk
+                        .hasForbiddenFolders && announceWhenNothingPending
+                        ? .failed(Self.forbiddenMessage)
+                        : .completed)
                 }
             }
         } catch: { error, send in
@@ -416,7 +422,11 @@ public struct OfflineDownloadsFeature {
         return removedNames
     }
 
-    private static func presence(of folder: String, serverURL: URL, filesClient: FilesClient) async throws -> FolderPresence {
+    private static func presence(
+        of folder: String,
+        serverURL: URL,
+        filesClient: FilesClient
+    ) async throws -> FolderPresence {
         let parent = (folder as NSString).deletingLastPathComponent
         do {
             let listing = try await filesClient.browse(serverURL, parent)
@@ -490,14 +500,20 @@ public struct OfflineDownloadsFeature {
                             continuation.yield(.willDownload(name: file.name))
                             let url = try? await filesClient.offlineDownloadFile(serverURL, file) { fraction in
                                 if let snapshot = counter.progress(key: key, fileFraction: fraction) {
-                                    continuation.yield(.progressed(filesDone: snapshot.filesDone, unitsDone: snapshot.unitsDone))
+                                    continuation.yield(.progressed(
+                                        filesDone: snapshot.filesDone,
+                                        unitsDone: snapshot.unitsDone
+                                    ))
                                 }
                             }
                             // A failed file (nil) still advances the bar (so it never stalls) but is
                             // not counted as done: it stays pending and the next sync retries it,
                             // instead of the run falsely reporting every file present.
                             let snapshot = counter.complete(key: key, success: url != nil)
-                            continuation.yield(.progressed(filesDone: snapshot.filesDone, unitsDone: snapshot.unitsDone))
+                            continuation.yield(.progressed(
+                                filesDone: snapshot.filesDone,
+                                unitsDone: snapshot.unitsDone
+                            ))
                         }
                         return true
                     }

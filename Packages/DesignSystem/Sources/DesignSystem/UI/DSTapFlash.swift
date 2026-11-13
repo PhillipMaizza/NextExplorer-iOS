@@ -98,7 +98,10 @@ public struct DSFlashingListRow<Content: View>: View {
     #Preview("Flash states") {
         VStack(spacing: .space16) {
             Text("Tap me").padding(.space16).frame(maxWidth: .infinity)
-                .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+                .background(
+                    Color.backgroundSecondary,
+                    in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous)
+                )
                 .dsTapFlash()
             List {
                 DSFlashingListRow { Text("Documents") }

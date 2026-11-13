@@ -55,7 +55,9 @@ final class StubURLProtocol: URLProtocol {
             return
         }
         let methodKey = "\(request.httpMethod ?? "GET") \(request.url?.path ?? "")"
-        guard let url = request.url, let stub = Self.methodStubs[methodKey] ?? Self.pathStubs[url.path] ?? Self.stub else {
+        guard let url = request.url,
+              let stub = Self.methodStubs[methodKey] ?? Self.pathStubs[url.path] ?? Self.stub
+        else {
             client?.urlProtocol(self, didFailWithError: URLError(.badURL))
             return
         }

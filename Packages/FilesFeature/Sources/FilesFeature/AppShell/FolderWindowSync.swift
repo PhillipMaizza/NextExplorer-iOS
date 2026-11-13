@@ -30,7 +30,8 @@
         /// changed nothing. A failure leaves the listings as they were.
         static func folderContentsChange(after action: Action, directoryPath: String) -> FolderContentsChange? {
             switch action {
-            case .renameResponse(.success), .newFolderResponse(.success), .newFileResponse(.success), .deleteResponse(.success),
+            case .renameResponse(.success), .newFolderResponse(.success), .newFileResponse(.success),
+                 .deleteResponse(.success),
                  .bulkDeleteResponse(.success), .extractZipResponse(.success), .compressResponse(.success),
                  .textSaveResponse(_, .success):
                 .folders([directoryPath])
@@ -104,7 +105,8 @@
     extension FavoritesFeature {
         /// The change a pushed screen in Favorites just finished, if any.
         static func folderContentsChange(after action: Action, in state: State) -> FolderContentsChange? {
-            guard case let .path(.element(id, screenAction)) = action, let screen = state.path[id: id] else { return nil }
+            guard case let .path(.element(id, screenAction)) = action,
+                  let screen = state.path[id: id] else { return nil }
             return BrowseFeature.folderContentsChange(after: screenAction, directoryPath: screen.directoryPath)
         }
 

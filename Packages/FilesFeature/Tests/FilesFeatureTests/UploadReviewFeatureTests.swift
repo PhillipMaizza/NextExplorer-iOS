@@ -21,7 +21,11 @@ struct UploadReviewFeatureTests {
         PickedFile(id: UUID(id), fileURL: URL(fileURLWithPath: "/staging/\(name)"), fileName: name, size: size)
     }
 
-    private func state(files: [PickedFile] = [], destination: String = TestFolder.inbox, preparingCount: Int = 0) -> State {
+    private func state(
+        files: [PickedFile] = [],
+        destination: String = TestFolder.inbox,
+        preparingCount: Int = 0
+    ) -> State {
         State(serverURL: serverURL, files: files, startingDestination: destination, preparingCount: preparingCount)
     }
 
@@ -73,11 +77,46 @@ struct UploadReviewFeatureTests {
     @Test(
         "Upload needs files, a destination, and nothing still preparing",
         arguments: [
-            GateCase(fileSizes: [100, 25], destination: TestFolder.documents, preparingCount: 0, canUpload: true, totalSize: 125, totalCount: 2),
-            GateCase(fileSizes: [100, 25], destination: "", preparingCount: 0, canUpload: false, totalSize: 125, totalCount: 2),
-            GateCase(fileSizes: [100], destination: TestFolder.documents, preparingCount: 1, canUpload: false, totalSize: 100, totalCount: 2),
-            GateCase(fileSizes: [], destination: TestFolder.documents, preparingCount: 0, canUpload: false, totalSize: 0, totalCount: 0),
-            GateCase(fileSizes: [], destination: TestFolder.documents, preparingCount: 3, canUpload: false, totalSize: 0, totalCount: 3),
+            GateCase(
+                fileSizes: [100, 25],
+                destination: TestFolder.documents,
+                preparingCount: 0,
+                canUpload: true,
+                totalSize: 125,
+                totalCount: 2
+            ),
+            GateCase(
+                fileSizes: [100, 25],
+                destination: "",
+                preparingCount: 0,
+                canUpload: false,
+                totalSize: 125,
+                totalCount: 2
+            ),
+            GateCase(
+                fileSizes: [100],
+                destination: TestFolder.documents,
+                preparingCount: 1,
+                canUpload: false,
+                totalSize: 100,
+                totalCount: 2
+            ),
+            GateCase(
+                fileSizes: [],
+                destination: TestFolder.documents,
+                preparingCount: 0,
+                canUpload: false,
+                totalSize: 0,
+                totalCount: 0
+            ),
+            GateCase(
+                fileSizes: [],
+                destination: TestFolder.documents,
+                preparingCount: 3,
+                canUpload: false,
+                totalSize: 0,
+                totalCount: 3
+            ),
         ]
     )
     func totalsAndUploadGate(_ testCase: GateCase) {
@@ -133,7 +172,11 @@ struct UploadReviewFeatureTests {
         arguments: [("", 0), (TestFolder.inbox, 1)]
     )
     func uploadIsGuarded(destination: String, preparingCount: Int) async {
-        let store = makeStore(state(files: [file(TestFile.aPhoto, id: 0, size: 1)], destination: destination, preparingCount: preparingCount))
+        let store = makeStore(state(
+            files: [file(TestFile.aPhoto, id: 0, size: 1)],
+            destination: destination,
+            preparingCount: preparingCount
+        ))
 
         await store.send(.uploadTapped)
     }

@@ -12,7 +12,7 @@
             Section {
                 LabeledContent(L10n.Settings.uploadDefaultsFolder) {
                     HStack(spacing: .space8) {
-                        Text(store.defaults.folderPath.flatMap { $0.isEmpty ? nil : $0 } ?? L10n.Settings.uploadDefaultsFolderNone)
+                        Text(store.folderTitle)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .truncationMode(.head)

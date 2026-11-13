@@ -362,15 +362,22 @@ public struct LoginFormView: View {
                         removal: .move(edge: .trailing).combined(with: .opacity)
                     ))
             } else {
-                LoginSecondFactorPage(store: store, horizontalSizeClass: horizontalSizeClass, submitButtonRect: $submitButtonRect)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .trailing).combined(with: .opacity)
-                    ))
+                LoginSecondFactorPage(
+                    store: store,
+                    horizontalSizeClass: horizontalSizeClass,
+                    submitButtonRect: $submitButtonRect
+                )
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .trailing).combined(with: .opacity)
+                ))
             }
         }
         .animation(
-            .spring(response: Constants.pageTransitionSpringResponse, dampingFraction: Constants.pageTransitionSpringDamping),
+            .spring(
+                response: Constants.pageTransitionSpringResponse,
+                dampingFraction: Constants.pageTransitionSpringDamping
+            ),
             value: store.currentPage
         )
     }
@@ -489,7 +496,10 @@ public struct LoginFormView: View {
                         .scaleEffect(store.host.isEmpty ? Constants.macButtonHiddenScale : 1)
                         .allowsHitTesting(!store.host.isEmpty)
                         .accessibilityHidden(store.host.isEmpty)
-                        .animation(.spring(duration: Constants.macButtonPopDuration, bounce: Constants.macButtonPopBounce), value: store.host.isEmpty)
+                        .animation(
+                            .spring(duration: Constants.macButtonPopDuration, bounce: Constants.macButtonPopBounce),
+                            value: store.host.isEmpty
+                        )
                 #else
                     if !store.host.isEmpty {
                         testConnectionButton
@@ -663,7 +673,12 @@ public struct LoginFormView: View {
     }
 
     private var identifierField: some View {
-        DSFieldContainer(label: L10n.Login.identifierField, icon: IconKit.person, shakeTrigger: identifierShakeTrigger, isInvalid: isIdentifierFieldInvalid) {
+        DSFieldContainer(
+            label: L10n.Login.identifierField,
+            icon: IconKit.person,
+            shakeTrigger: identifierShakeTrigger,
+            isInvalid: isIdentifierFieldInvalid
+        ) {
             // Native `prompt:` rather than a ZStack placeholder overlay: a sibling view stacked
             // on the field is a documented AutoFill target-resolution hazard.
             TextField(
@@ -691,7 +706,12 @@ public struct LoginFormView: View {
     }
 
     private var passwordField: some View {
-        DSFieldContainer(label: L10n.Login.passwordField, icon: IconKit.lock, shakeTrigger: passwordShakeTrigger, isInvalid: isPasswordFieldInvalid) {
+        DSFieldContainer(
+            label: L10n.Login.passwordField,
+            icon: IconKit.lock,
+            shakeTrigger: passwordShakeTrigger,
+            isInvalid: isPasswordFieldInvalid
+        ) {
             HStack(spacing: .space8) {
                 // Both fields stay mounted at all times: swapping SecureField/TextField in and
                 // out via `if/else` tears down and rebuilds the underlying text input on every

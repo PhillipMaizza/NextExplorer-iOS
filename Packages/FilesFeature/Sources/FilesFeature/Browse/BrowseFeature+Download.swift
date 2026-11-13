@@ -12,7 +12,10 @@
             let saveLocationPicker = saveLocationPicker
             return .run { send in
                 guard let destination = await saveLocationPicker.chooseFile(item.name) else { return }
-                await send(.delegate(.saveRequested([DownloadSaveRequest(item: item, target: .replacing(destination))])))
+                await send(.delegate(.saveRequested([DownloadSaveRequest(
+                    item: item,
+                    target: .replacing(destination)
+                )])))
             }
         }
 
@@ -21,7 +24,8 @@
             let saveLocationPicker = saveLocationPicker
             return .run { send in
                 guard let folder = await saveLocationPicker.chooseFolder() else { return }
-                await send(.delegate(.saveRequested(targets.map { DownloadSaveRequest(item: $0, target: .into(folder)) })))
+                await send(.delegate(.saveRequested(targets
+                        .map { DownloadSaveRequest(item: $0, target: .into(folder)) })))
             }
         }
     }

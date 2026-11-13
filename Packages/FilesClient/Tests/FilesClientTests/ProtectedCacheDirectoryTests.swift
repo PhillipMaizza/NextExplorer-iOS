@@ -16,16 +16,25 @@ struct ProtectedCacheDirectoryTests {
     }
 
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("ProtectedCache-\(TestID.uuid().uuidString)")
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProtectedCache-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
 
     /// Writes `name.json` of `Constants.entryBytes`, last modified `age` seconds after `MockDate.date`.
-    private func write(_ name: String, in directory: ProtectedCacheDirectory, age: TimeInterval, extension fileExtension: String = Constants.fileExtension) throws {
+    private func write(
+        _ name: String,
+        in directory: ProtectedCacheDirectory,
+        age: TimeInterval,
+        extension fileExtension: String = Constants.fileExtension
+    ) throws {
         let url = directory.url.appendingPathComponent(name).appendingPathExtension(fileExtension)
         try Data(count: Constants.entryBytes).write(to: url)
-        try FileManager.default.setAttributes([.modificationDate: MockDate.date.addingTimeInterval(age)], ofItemAtPath: url.path)
+        try FileManager.default.setAttributes(
+            [.modificationDate: MockDate.date.addingTimeInterval(age)],
+            ofItemAtPath: url.path
+        )
     }
 
     private func names(in directory: ProtectedCacheDirectory) -> [String] {
@@ -37,7 +46,11 @@ struct ProtectedCacheDirectoryTests {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
 
-        let directory = try #require(ProtectedCacheDirectory(name: Constants.name, base: root, fileExtension: Constants.fileExtension))
+        let directory = try #require(ProtectedCacheDirectory(
+            name: Constants.name,
+            base: root,
+            fileExtension: Constants.fileExtension
+        ))
 
         let values = try directory.url.resourceValues(forKeys: [.isDirectoryKey, .isExcludedFromBackupKey])
         #expect(values.isDirectory == true)
@@ -48,7 +61,11 @@ struct ProtectedCacheDirectoryTests {
     func entriesAreOldestFirstAndOnlyTheStores() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let directory = try #require(ProtectedCacheDirectory(name: Constants.name, base: root, fileExtension: Constants.fileExtension))
+        let directory = try #require(ProtectedCacheDirectory(
+            name: Constants.name,
+            base: root,
+            fileExtension: Constants.fileExtension
+        ))
         try write("new", in: directory, age: 20)
         try write("old", in: directory, age: 10)
         try write("other", in: directory, age: 0, extension: Constants.otherExtension)
@@ -61,7 +78,11 @@ struct ProtectedCacheDirectoryTests {
     func evictionByCountDropsTheOldest() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let directory = try #require(ProtectedCacheDirectory(name: Constants.name, base: root, fileExtension: Constants.fileExtension))
+        let directory = try #require(ProtectedCacheDirectory(
+            name: Constants.name,
+            base: root,
+            fileExtension: Constants.fileExtension
+        ))
         for (age, name) in ["a", "b", "c"].enumerated() {
             try write(name, in: directory, age: TimeInterval(age))
         }
@@ -75,7 +96,11 @@ struct ProtectedCacheDirectoryTests {
     func evictionByBytesDropsTheOldest() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let directory = try #require(ProtectedCacheDirectory(name: Constants.name, base: root, fileExtension: Constants.fileExtension))
+        let directory = try #require(ProtectedCacheDirectory(
+            name: Constants.name,
+            base: root,
+            fileExtension: Constants.fileExtension
+        ))
         for (age, name) in ["a", "b", "c"].enumerated() {
             try write(name, in: directory, age: TimeInterval(age))
         }
@@ -89,7 +114,11 @@ struct ProtectedCacheDirectoryTests {
     func removingOneAccountKeepsTheOther() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let directory = try #require(ProtectedCacheDirectory(name: Constants.name, base: root, fileExtension: Constants.fileExtension))
+        let directory = try #require(ProtectedCacheDirectory(
+            name: Constants.name,
+            base: root,
+            fileExtension: Constants.fileExtension
+        ))
         try write(Constants.accountPrefix + "1", in: directory, age: 0)
         try write(Constants.otherPrefix + "1", in: directory, age: 1)
 
@@ -102,7 +131,11 @@ struct ProtectedCacheDirectoryTests {
     func removeAllEmptiesTheFolder() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let directory = try #require(ProtectedCacheDirectory(name: Constants.name, base: root, fileExtension: Constants.fileExtension))
+        let directory = try #require(ProtectedCacheDirectory(
+            name: Constants.name,
+            base: root,
+            fileExtension: Constants.fileExtension
+        ))
         try write("a", in: directory, age: 0)
         try write("other", in: directory, age: 0, extension: Constants.otherExtension)
 

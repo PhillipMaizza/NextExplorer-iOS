@@ -17,7 +17,14 @@ struct BrowseKeyboardActionsTests {
     private let third = BrowseFixtures.file("c.txt", in: TestFolder.docs)
 
     private func access(canWrite: Bool = true, canDelete: Bool = true) -> FileAccess {
-        FileAccess(canRead: true, canWrite: canWrite, canUpload: true, canDelete: canDelete, canShare: false, canDownload: true)
+        FileAccess(
+            canRead: true,
+            canWrite: canWrite,
+            canUpload: true,
+            canDelete: canDelete,
+            canShare: false,
+            canDownload: true
+        )
     }
 
     private func makeStore(
@@ -26,7 +33,12 @@ struct BrowseKeyboardActionsTests {
         access: FileAccess? = nil,
         configure: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStoreOf<BrowseFeature> {
-        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs, items: items, access: access ?? self.access())
+        var state = BrowseFixtures.state(
+            TestFolder.docs,
+            title: TestFolder.docs,
+            items: items,
+            access: access ?? self.access()
+        )
         state.selectedItemIDs = Set(selected.map(\.id))
         return BrowseFixtures.store(state, configure: configure)
     }

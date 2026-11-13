@@ -67,7 +67,10 @@ struct LanguagePickerView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .animation(.spring(response: Constants.checkmarkSpringResponse, dampingFraction: Constants.checkmarkSpringDamping), value: appLanguage)
+        .animation(
+            .spring(response: Constants.checkmarkSpringResponse, dampingFraction: Constants.checkmarkSpringDamping),
+            value: appLanguage
+        )
     }
 }
 

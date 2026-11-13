@@ -66,7 +66,11 @@ struct TabBar {
     /// SwiftUI only hands a tab label's identifier to the bar's button when the tab view is rebuilt
     /// on screen, which a fast launch can miss. An untagged button with the tab's title is a tab.
     private func tab(_ identifier: String, title: String) -> XCUIElement {
-        app.buttons.matching(NSPredicate(format: "identifier == %@ OR (identifier == '' AND label == %@)", identifier, title)).firstMatch
+        app.buttons.matching(NSPredicate(
+            format: "identifier == %@ OR (identifier == '' AND label == %@)",
+            identifier,
+            title
+        )).firstMatch
     }
 }
 
@@ -151,11 +155,20 @@ struct LoginScreen {
     private static let notNowButton = "Not Now"
 
     /// Enters the server address and continues to the credentials page.
-    func enterServer(_ host: String = UITestCase.Fixture.serverHost, file: StaticString = #filePath, line: UInt = #line) {
+    func enterServer(
+        _ host: String = UITestCase.Fixture.serverHost,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         XCTAssertTrue(hostField.waitToAppear(file: file, line: line))
         hostField.clearAndType(host)
         press(testConnectionButton)
-        XCTAssertTrue(identifierField.waitToAppear(UITestTimeout.standard, "Test connection should advance to the credentials page", file: file, line: line))
+        XCTAssertTrue(identifierField.waitToAppear(
+            UITestTimeout.standard,
+            "Test connection should advance to the credentials page",
+            file: file,
+            line: line
+        ))
     }
 
     /// Fills the credentials page and submits it.

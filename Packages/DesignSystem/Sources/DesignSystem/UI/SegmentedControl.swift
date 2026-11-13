@@ -100,10 +100,16 @@ public struct DSSegmentedControl<Option: Hashable>: View {
         // same colored surface, e.g. the iPad login card, which is also backgroundSecondary.
         .overlay(
             RoundedRectangle(cornerRadius: .radiusFull)
-                .stroke(Color.borderPrimary.opacity(SegmentedControlConstants.borderOpacity), lineWidth: .borderWidthHairline)
+                .stroke(
+                    Color.borderPrimary.opacity(SegmentedControlConstants.borderOpacity),
+                    lineWidth: .borderWidthHairline
+                )
         )
         .animation(
-            .spring(response: SegmentedControlConstants.pillSpringResponse, dampingFraction: SegmentedControlConstants.pillSpringDamping),
+            .spring(
+                response: SegmentedControlConstants.pillSpringResponse,
+                dampingFraction: SegmentedControlConstants.pillSpringDamping
+            ),
             value: selection
         )
         .hapticFeedback(.selection, trigger: selection)

@@ -69,7 +69,10 @@ struct SearchIndexSettingsView: View {
 }
 
 #Preview("On, with folders") {
-    let value = SearchIndexSettings(isEnabled: true, excluded: ExcludedPaths(paths: ["Backups", "tmp/cache"], environmentPaths: ["node_modules"]))
+    let value = SearchIndexSettings(
+        isEnabled: true,
+        excluded: ExcludedPaths(paths: ["Backups", "tmp/cache"], environmentPaths: ["node_modules"])
+    )
     return NavigationStack {
         SearchIndexSettingsView(store: Store(initialState: {
             var state = SearchIndexSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)

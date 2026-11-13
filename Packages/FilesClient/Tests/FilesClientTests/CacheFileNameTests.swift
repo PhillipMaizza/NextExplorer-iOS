@@ -25,7 +25,8 @@ struct CacheFileNameTests {
     }
 
     private func names(in directory: URL) throws -> [String] {
-        try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil).map(\.lastPathComponent)
+        try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+            .map(\.lastPathComponent)
     }
 
     @Test("directory cache files carry the account prefix and live where the cleanup looks")
@@ -34,11 +35,24 @@ struct CacheFileNameTests {
         defer { try? FileManager.default.removeItem(at: root) }
         let result = BrowseResult(
             items: [],
-            access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+            access: FileAccess(
+                canRead: true,
+                canWrite: false,
+                canUpload: false,
+                canDelete: false,
+                canShare: false,
+                canDownload: true
+            ),
             path: Fixture.path
         )
         DirectoryCacheStore.onDisk(rootDirectory: root).bound(to: Fixture.account)
-            .write(serverURL: Fixture.server, path: Fixture.path, result: result, etag: nil, fetchedAt: Fixture.fetchedAt)
+            .write(
+                serverURL: Fixture.server,
+                path: Fixture.path,
+                result: result,
+                etag: nil,
+                fetchedAt: Fixture.fetchedAt
+            )
 
         let written = try names(in: root.appendingPathComponent(CacheLayout.directoryCacheName, isDirectory: true))
 
@@ -51,7 +65,10 @@ struct CacheFileNameTests {
     func listCacheNames() throws {
         let root = makeRoot()
         defer { try? FileManager.default.removeItem(at: root) }
-        JSONCacheStore.onDisk(rootDirectory: root).bound(to: Fixture.account).write(key: TestCacheKey.favorites, data: Fixture.payload)
+        JSONCacheStore.onDisk(rootDirectory: root).bound(to: Fixture.account).write(
+            key: TestCacheKey.favorites,
+            data: Fixture.payload
+        )
 
         let written = try names(in: root.appendingPathComponent(CacheLayout.listCacheName, isDirectory: true))
 
@@ -60,9 +77,18 @@ struct CacheFileNameTests {
         #expect(written.allSatisfy { $0.hasPrefix(CacheAccountScope.namePrefix(for: Fixture.account)) })
     }
 
-    @Test("preview and raw download slot directories carry the account prefix", arguments: CacheLayout.previewSlotNamespaces)
+    @Test(
+        "preview and raw download slot directories carry the account prefix",
+        arguments: CacheLayout.previewSlotNamespaces
+    )
     func previewSlotNames(namespace: String) {
-        let item = FileItem(name: TestFile.aText, path: Fixture.path, dateModified: Fixture.fetchedAt, size: 1, kind: TestKind.text)
+        let item = FileItem(
+            name: TestFile.aText,
+            path: Fixture.path,
+            dateModified: Fixture.fetchedAt,
+            size: 1,
+            kind: TestKind.text
+        )
 
         let slot = FilesService.previewCacheDirectory(for: item, namespace: namespace, scope: Fixture.account)
 
@@ -140,8 +166,15 @@ struct CacheFileNameTests {
         let scope = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
         let store = OfflineFileStore.liveValue
         defer { store.removeAccount(scope) }
-        let item = FileItem(name: TestFile.aText, path: Fixture.path, dateModified: Fixture.fetchedAt, size: 3, kind: TestKind.text)
-        let downloaded = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
+        let item = FileItem(
+            name: TestFile.aText,
+            path: Fixture.path,
+            dateModified: Fixture.fetchedAt,
+            size: 3,
+            kind: TestKind.text
+        )
+        let downloaded = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
         try Data("abc".utf8).write(to: downloaded)
         _ = try OfflineCache.store(downloadedURL: downloaded, item: item, scope: scope)
         let pinned = store.pinned(to: scope)
@@ -151,15 +184,21 @@ struct CacheFileNameTests {
         #expect(store.pinned(to: "\(scope)-other").localFileSize(item.id) == nil)
     }
 
-    @Test("a live client serves the pinned copy of the account its task is pinned to, whatever the process wide scope is")
+    @Test(
+        "a live client serves the pinned copy of the account its task is pinned to, whatever the process wide scope is"
+    )
     func liveClientHonorsThePinnedScope() async throws {
         let scope = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
         defer { OfflineCache.removeScope(scope) }
         let item = FileItem(name: "a.bin", path: Fixture.path, dateModified: Fixture.fetchedAt, size: 1, kind: "bin")
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
+        let source = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
         try Fixture.payload.write(to: source)
         let stored = try OfflineCache.store(downloadedURL: source, item: item, scope: scope)
-        let client = FilesClient.live(networkClient: .live(protocolClasses: [StubURLProtocol.self]), directoryCacheStore: .testValue)
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: .testValue
+        )
 
         let url = try await CacheAccountScope.withPinned(scope) {
             try await client.downloadRawFile(URL(fileURLWithPath: "/"), item)

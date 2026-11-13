@@ -62,8 +62,14 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
         let http = URL(string: Constants.statusURLString)!
         #expect(LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: Constants.authStatusURL)))
         #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: http))
-        #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: "https://elsewhere.example.com/api/auth/status")))
-        #expect(!LocalAuthService.redirectsToHTTPS(requested: URL(string: TestHost.serverURLString)!, answered: URL(string: TestHost.serverURLString)))
+        #expect(!LocalAuthService.redirectsToHTTPS(
+            requested: http,
+            answered: URL(string: "https://elsewhere.example.com/api/auth/status")
+        ))
+        #expect(!LocalAuthService.redirectsToHTTPS(
+            requested: URL(string: TestHost.serverURLString)!,
+            answered: URL(string: TestHost.serverURLString)
+        ))
         #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: nil))
     }
 

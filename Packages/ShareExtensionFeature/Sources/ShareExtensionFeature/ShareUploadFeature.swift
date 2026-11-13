@@ -91,7 +91,8 @@ public struct ShareUploadFeature {
 
         /// Several accounts are signed in: the account row becomes a picker.
         public var canChooseAccount: Bool {
-            accounts.count > 1 && [.checking, .ready, .signedOut, .certificateRequired, .certificateRejected].contains(phase)
+            accounts.count > 1 && [.checking, .ready, .signedOut, .certificateRequired, .certificateRejected]
+                .contains(phase)
         }
 
         /// How much of the running preparation pass is done, 0 to 1.
@@ -456,7 +457,10 @@ public struct ShareUploadFeature {
 
             case let .progressed(progress):
                 guard state.phase == .preparing else { return .none }
-                let isNewer = (progress.completed, progress.fraction) > (state.progress.completed, state.progress.fraction)
+                let isNewer = (progress.completed, progress.fraction) > (
+                    state.progress.completed,
+                    state.progress.fraction
+                )
                 if isNewer {
                     state.progress = progress
                 }

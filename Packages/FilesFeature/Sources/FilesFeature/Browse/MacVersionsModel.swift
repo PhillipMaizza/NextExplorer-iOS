@@ -153,18 +153,30 @@
 
         func body(content: Content) -> some View {
             content
-                .alert(L10n.FileInfo.restoreTitle, isPresented: isPresented(\.versionToRestore), presenting: model.versionToRestore) { version in
+                .alert(
+                    L10n.FileInfo.restoreTitle,
+                    isPresented: isPresented(\.versionToRestore),
+                    presenting: model.versionToRestore
+                ) { version in
                     Button(L10n.FileInfo.restoreConfirm) { model.restoreConfirmed(version) }
                     Button(L10n.Common.cancel, role: .cancel) {}
                 } message: { version in
                     Text(L10n.FileInfo.restoreMessage(MacVersionsModel.date(version.modifiedAt)))
                 }
-                .alert(L10n.FileInfo.renameTitle, isPresented: isPresented(\.versionToRename), presenting: model.versionToRename) { version in
+                .alert(
+                    L10n.FileInfo.renameTitle,
+                    isPresented: isPresented(\.versionToRename),
+                    presenting: model.versionToRename
+                ) { version in
                     TextField(L10n.FileInfo.renamePlaceholder, text: $model.renameDraft)
                     Button(L10n.Common.save) { model.renameConfirmed(version) }
                     Button(L10n.Common.cancel, role: .cancel) {}
                 }
-                .alert(L10n.FileInfo.deleteTitle, isPresented: isPresented(\.versionToDelete), presenting: model.versionToDelete) { version in
+                .alert(
+                    L10n.FileInfo.deleteTitle,
+                    isPresented: isPresented(\.versionToDelete),
+                    presenting: model.versionToDelete
+                ) { version in
                     Button(L10n.Common.delete, role: .destructive) { model.deleteConfirmed(version) }
                     Button(L10n.Common.cancel, role: .cancel) {}
                 } message: { _ in

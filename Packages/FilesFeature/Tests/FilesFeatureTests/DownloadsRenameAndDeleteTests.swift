@@ -97,12 +97,30 @@ struct DownloadsRenameAndDeleteTests {
     }
 
     nonisolated static let renameFailures = [
-        FailureCase(error: CocoaError(.fileWriteFileExists), expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorNameExists)),
-        FailureCase(error: CocoaError(.fileWriteInvalidFileName), expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorInvalidName)),
-        FailureCase(error: CocoaError(.fileNoSuchFile), expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorMissing)),
-        FailureCase(error: CocoaError(.fileReadNoSuchFile), expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorMissing)),
-        FailureCase(error: CocoaError(.fileWriteOutOfSpace), expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorGeneric)),
-        FailureCase(error: URLError(.badURL), expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorGeneric)),
+        FailureCase(
+            error: CocoaError(.fileWriteFileExists),
+            expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorNameExists)
+        ),
+        FailureCase(
+            error: CocoaError(.fileWriteInvalidFileName),
+            expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorInvalidName)
+        ),
+        FailureCase(
+            error: CocoaError(.fileNoSuchFile),
+            expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorMissing)
+        ),
+        FailureCase(
+            error: CocoaError(.fileReadNoSuchFile),
+            expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorMissing)
+        ),
+        FailureCase(
+            error: CocoaError(.fileWriteOutOfSpace),
+            expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorGeneric)
+        ),
+        FailureCase(
+            error: URLError(.badURL),
+            expected: .serverMessage(statusCode: 0, message: L10n.Downloads.errorGeneric)
+        ),
         FailureCase(error: FilesClientError.offline, expected: .offline),
     ]
 
@@ -193,7 +211,8 @@ struct DownloadsRenameAndDeleteTests {
     func aFailedRefreshOfAnEmptyListIsAFullScreenError() async {
         let store = TestStore(initialState: state(downloads: [])) { DownloadsFeature() }
 
-        await store.send(.downloadsResponse(.failure(.offline))) { $0.phase = .failed(FilesClientError.offline.userMessage) }
+        await store
+            .send(.downloadsResponse(.failure(.offline))) { $0.phase = .failed(FilesClientError.offline.userMessage) }
     }
 
     @Test

@@ -10,7 +10,8 @@ import ShareUploads
 import Testing
 import TestUtils
 
-/// Staging the shared items: partial failures, retries, progress. Nested in `ShareUploadFeatureTests` so it inherits `.serialized` with every other share upload suite.
+/// Staging the shared items: partial failures, retries, progress. Nested in `ShareUploadFeatureTests` so it inherits
+/// `.serialized` with every other share upload suite.
 extension ShareUploadFeatureTests {
     @MainActor
     @Suite(.isolatedDependencies)
@@ -36,7 +37,9 @@ extension ShareUploadFeatureTests {
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in Self.user }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
+                $0
+                    .uploadDefaults =
+                    .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
                 $0.continuousClock = TestClock()
             }
         }
@@ -82,7 +85,10 @@ extension ShareUploadFeatureTests {
                 $0.failures = failures
             }
             await store.finish()
-            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall], "nothing is sent and nothing is discarded while the user decides")
+            #expect(
+                calls.all == [ShareExtensionFeatureTestValue.prepareCall],
+                "nothing is sent and nothing is discarded while the user decides"
+            )
             #expect(store.state.failures.map(\.name) == [ShareExtensionFeatureTestValue.movieName], "the file is named")
             #expect(announcements.value == [L10n.ShareUpload.failedItemsHeader])
 
@@ -103,7 +109,12 @@ extension ShareUploadFeatureTests {
                 ItemFailure(index: 4, name: "b.pdf", cause: .notEnoughSpace),
             ]
             let report = PreparationReport(stagedCount: 4, failures: failures)
-            let store = store(count: 6, defaults: UploadDefaults(folderPath: TestFolder.photos), calls: calls, report: report)
+            let store = store(
+                count: 6,
+                defaults: UploadDefaults(folderPath: TestFolder.photos),
+                calls: calls,
+                report: report
+            )
             await becomeReady(store, count: 6, folder: TestFolder.photos)
             await store.send(.uploadTapped) {
                 $0.phase = .preparing
@@ -156,7 +167,9 @@ extension ShareUploadFeatureTests {
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in Self.user }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
+                $0
+                    .uploadDefaults =
+                    .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
                 $0.continuousClock = TestClock()
             }
             await becomeReady(store, folder: TestFolder.photos)
@@ -179,7 +192,11 @@ extension ShareUploadFeatureTests {
                 $0.phase = .handingOff
             }
             await store.receive(\.uploadResponse.success) { $0.phase = .started }
-            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.startCall])
+            #expect(calls.all == [
+                ShareExtensionFeatureTestValue.prepareCall,
+                ShareExtensionFeatureTestValue.prepareCall,
+                ShareExtensionFeatureTestValue.startCall,
+            ])
             await store.send(.viewDisappeared)
         }
 
@@ -237,7 +254,13 @@ extension ShareUploadFeatureTests {
             await store.receive(\.uploadResponse.success) { $0.phase = .started }
             #expect(calls.preparedIndexes.last == .some(nil), "no named failures: every item is read again")
             #expect(
-                calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall, ShareExtensionFeatureTestValue.discardCall, ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.startCall],
+                calls.all == [
+                    ShareExtensionFeatureTestValue.prepareCall,
+                    ShareExtensionFeatureTestValue.discardCall,
+                    ShareExtensionFeatureTestValue.discardCall,
+                    ShareExtensionFeatureTestValue.prepareCall,
+                    ShareExtensionFeatureTestValue.startCall,
+                ],
                 "the old batch is dropped before the new pass creates its own, never after"
             )
             await store.send(.viewDisappeared)
@@ -256,7 +279,10 @@ extension ShareUploadFeatureTests {
             await store.receive(\.preparationFinished.failure) { $0.phase = .failed }
             await store.finish()
 
-            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall])
+            #expect(calls.all == [
+                ShareExtensionFeatureTestValue.prepareCall,
+                ShareExtensionFeatureTestValue.discardCall,
+            ])
         }
 
         @Test
@@ -274,7 +300,10 @@ extension ShareUploadFeatureTests {
             }
             await store.receive(\.preparationFinished) { $0.phase = .nothingToUpload }
             await store.finish()
-            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall])
+            #expect(calls.all == [
+                ShareExtensionFeatureTestValue.prepareCall,
+                ShareExtensionFeatureTestValue.discardCall,
+            ])
         }
 
         @Test
@@ -288,7 +317,10 @@ extension ShareUploadFeatureTests {
                 $0.progress = PreparationProgress(completed: 2, fraction: 0.5)
             }
             await store.send(.progressed(PreparationProgress(completed: 1, fraction: 0.9)))
-            #expect(store.state.progress == PreparationProgress(completed: 2, fraction: 0.5), "a late older update never rewinds")
+            #expect(
+                store.state.progress == PreparationProgress(completed: 2, fraction: 0.5),
+                "a late older update never rewinds"
+            )
             #expect(store.state.preparationFraction == 0.625)
             await store.send(.progressed(PreparationProgress(completed: 4, fraction: 0))) {
                 $0.progress = PreparationProgress(completed: 4, fraction: 0)

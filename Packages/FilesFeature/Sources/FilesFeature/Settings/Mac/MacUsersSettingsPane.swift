@@ -193,19 +193,29 @@
     }
 
     #Preview("Users") {
-        var state = UserManagementFeature.State(serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+        var state = UserManagementFeature.State(
+            serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+            currentUserID: "u1"
+        )
         state.users = IdentifiedArray(uniqueElements: User.previewManagedUsers)
         state.phase = .loaded
-        return MacUsersSettingsPane(store: Store(initialState: state) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
-            .previewCanvas(.settingsPane)
+        return MacUsersSettingsPane(store: Store(initialState: state) { UserManagementFeature() } withDependencies: {
+            $0.filesClient = .previewValue
+        })
+        .previewCanvas(.settingsPane)
     }
 
     #Preview("Users: grant admin alert") {
-        var state = UserManagementFeature.State(serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+        var state = UserManagementFeature.State(
+            serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+            currentUserID: "u1"
+        )
         state.users = IdentifiedArray(uniqueElements: User.previewManagedUsers)
         state.phase = .loaded
         state.userToGrantAdmin = User.previewManagedUsers.first
-        return MacUsersSettingsPane(store: Store(initialState: state) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
-            .previewCanvas(.settingsPane)
+        return MacUsersSettingsPane(store: Store(initialState: state) { UserManagementFeature() } withDependencies: {
+            $0.filesClient = .previewValue
+        })
+        .previewCanvas(.settingsPane)
     }
 #endif

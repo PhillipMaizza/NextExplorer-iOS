@@ -166,7 +166,8 @@ struct Harness {
         availableCapacity: @escaping @Sendable (URL) -> Int64? = { _ in nil },
         removeEnvelope: @escaping @Sendable (URL) -> Void = { try? FileManager.default.removeItem(at: $0) }
     ) throws {
-        root = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsHarness-\(TestID.uuid().uuidString)")
+        root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ShareUploadsHarness-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         suite = "ShareUploadsHarness-\(TestID.uuid().uuidString)"
         guard let suiteDefaults = UserDefaults(suiteName: suite) else { throw CocoaError(.fileReadUnknown) }

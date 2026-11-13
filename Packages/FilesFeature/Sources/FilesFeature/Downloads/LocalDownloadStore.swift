@@ -34,7 +34,12 @@ public struct LocalDownloadStore: Sendable {
     /// `scope` is the current account's `DownloadAccountScope.identifier`, so each account saves
     /// into its own subfolder and can't see another account's files on a shared device. An empty
     /// scope maps to the unscoped legacy folder.
-    public var save: @Sendable (_ sourceURL: URL, _ fileName: String, _ location: DownloadLocation, _ scope: String) throws -> URL
+    public var save: @Sendable (
+        _ sourceURL: URL,
+        _ fileName: String,
+        _ location: DownloadLocation,
+        _ scope: String
+    ) throws -> URL
     /// Both `Documents/Downloads` and `Caches/Downloads`: the user's "Download Location"
     /// preference can change over time, so past downloads under the other location would
     /// otherwise silently disappear from the Downloads tab. Scoped to one account (see `save`).
@@ -45,7 +50,12 @@ public struct LocalDownloadStore: Sendable {
     public var rename: @Sendable (_ url: URL, _ newName: String) throws -> URL
 
     public init(
-        save: @escaping @Sendable (_ sourceURL: URL, _ fileName: String, _ location: DownloadLocation, _ scope: String) throws -> URL,
+        save: @escaping @Sendable (
+            _ sourceURL: URL,
+            _ fileName: String,
+            _ location: DownloadLocation,
+            _ scope: String
+        ) throws -> URL,
         list: @escaping @Sendable (_ scope: String) throws -> [LocalDownload],
         delete: @escaping @Sendable (_ url: URL) throws -> Void,
         rename: @escaping @Sendable (_ url: URL, _ newName: String) throws -> URL
@@ -82,7 +92,8 @@ extension LocalDownloadStore: DependencyKey {
     /// (`Downloads/`); a non-empty one nests under it (`Downloads/<scope>/`).
     private static func downloadsDirectory(for location: DownloadLocation, scope: String, create: Bool) throws -> URL {
         let fileManager = FileManager.default
-        let searchDirectory: FileManager.SearchPathDirectory = location == .documents ? .documentDirectory : .cachesDirectory
+        let searchDirectory: FileManager
+            .SearchPathDirectory = location == .documents ? .documentDirectory : .cachesDirectory
         let base = try fileManager.url(for: searchDirectory, in: .userDomainMask, appropriateFor: nil, create: create)
         let root = base.appendingPathComponent("Downloads", isDirectory: true)
         return scope.isEmpty ? root : root.appendingPathComponent(scope, isDirectory: true)
@@ -103,7 +114,8 @@ extension LocalDownloadStore: DependencyKey {
               )
         else { return }
         let looseFiles = contents.filter { (try? $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) != true }
-        guard !looseFiles.isEmpty, let scoped = try? downloadsDirectory(for: location, scope: scope, create: true) else { return }
+        guard !looseFiles.isEmpty,
+              let scoped = try? downloadsDirectory(for: location, scope: scope, create: true) else { return }
         try? fileManager.createDirectory(at: scoped, withIntermediateDirectories: true)
         for fileURL in looseFiles {
             let destination = availableDestination(in: scoped, fileName: fileURL.lastPathComponent)
@@ -138,7 +150,10 @@ extension LocalDownloadStore: DependencyKey {
                     options: [.skipsHiddenFiles]
                 )
                 for fileURL in contents {
-                    let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
+                    let resourceValues = try fileURL.resourceValues(forKeys: [
+                        .fileSizeKey,
+                        .contentModificationDateKey,
+                    ])
                     downloads.append(
                         LocalDownload(
                             url: fileURL,

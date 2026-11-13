@@ -81,7 +81,10 @@ struct APITokensView: View {
                 store.send(.renameCancelled)
             }
         })) {
-            TextField(L10n.ApiTokens.fieldName, text: Binding(get: { store.rename?.name ?? "" }, set: { store.send(.renameNameChanged($0)) }))
+            TextField(
+                L10n.ApiTokens.fieldName,
+                text: Binding(get: { store.rename?.name ?? "" }, set: { store.send(.renameNameChanged($0)) })
+            )
             Button(L10n.ApiTokens.renameSave) { store.send(.renameSubmitted) }
                 .disabled(!store.isRenameEnabled)
             Button(L10n.Common.cancel, role: .cancel) { store.send(.renameCancelled) }
@@ -187,7 +190,10 @@ private struct APITokenRow: View {
         guard let expires = token.expiresAt.flatMap({ APITokenDates.display($0) }) else {
             return L10n.ApiTokens.neverExpires
         }
-        return APITokenDates.isExpired(token.expiresAt, now: Date()) ? L10n.ApiTokens.expired(expires) : L10n.ApiTokens.expires(expires)
+        return APITokenDates.isExpired(token.expiresAt, now: Date())
+            ? L10n.ApiTokens.expired(expires)
+            : L10n.ApiTokens
+                .expires(expires)
     }
 
     private var scopeText: String {
@@ -255,9 +261,23 @@ private struct APITokenIssuedSheet: View {
 private enum PreviewFixtures {
     static let serverURL = URL(string: "https://nextexplorer.example.com")!
     static let tokens = [
-        APIToken(id: "t1", name: "backup script", scope: .read, createdAt: "2026-11-01T07:00:00.000Z", expiresAt: "2027-02-01T00:00:00.000Z", lastUsedAt: "2026-11-10T08:00:00.000Z", lastUsedIp: "10.0.0.5"),
+        APIToken(
+            id: "t1",
+            name: "backup script",
+            scope: .read,
+            createdAt: "2026-11-01T07:00:00.000Z",
+            expiresAt: "2027-02-01T00:00:00.000Z",
+            lastUsedAt: "2026-11-10T08:00:00.000Z",
+            lastUsedIp: "10.0.0.5"
+        ),
         APIToken(id: "t2", name: "home automation", scope: .write, createdAt: "2026-10-01T07:00:00.000Z"),
-        APIToken(id: "t3", name: "old test", scope: .read, createdAt: "2025-01-01T07:00:00.000Z", expiresAt: "2025-06-01T00:00:00.000Z"),
+        APIToken(
+            id: "t3",
+            name: "old test",
+            scope: .read,
+            createdAt: "2025-01-01T07:00:00.000Z",
+            expiresAt: "2025-06-01T00:00:00.000Z"
+        ),
     ]
 
     @MainActor
@@ -269,20 +289,36 @@ private enum PreviewFixtures {
 }
 
 #Preview("Loading") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .loading)) }
-#Preview("Failed") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .failed("This installation runs without accounts, so it issues no tokens."))) }
+#Preview("Failed") { PreviewFixtures.view(.init(
+    serverURL: PreviewFixtures.serverURL,
+    phase: .failed("This installation runs without accounts, so it issues no tokens.")
+)) }
 #Preview("Empty") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .loaded)) }
-#Preview("Tokens") { PreviewFixtures.view(.init(serverURL: PreviewFixtures.serverURL, phase: .loaded, tokens: PreviewFixtures.tokens)) }
+#Preview("Tokens") { PreviewFixtures.view(.init(
+    serverURL: PreviewFixtures.serverURL,
+    phase: .loaded,
+    tokens: PreviewFixtures.tokens
+)) }
 #Preview("At the limit") {
     PreviewFixtures.view(.init(
         serverURL: PreviewFixtures.serverURL,
         phase: .loaded,
-        tokens: (0 ..< APITokenLimits.maxTokensPerAccount).map { APIToken(id: "t\($0)", name: "token \($0)", scope: .read, createdAt: "2026-11-01T07:00:00.000Z") }
+        tokens: (0 ..< APITokenLimits.maxTokensPerAccount).map { APIToken(
+            id: "t\($0)",
+            name: "token \($0)",
+            scope: .read,
+            createdAt: "2026-11-01T07:00:00.000Z"
+        ) }
     ))
 }
 
 #Preview("Create form") {
     PreviewFixtures.view({
-        var state = APITokensFeature.State(serverURL: PreviewFixtures.serverURL, phase: .loaded, tokens: PreviewFixtures.tokens)
+        var state = APITokensFeature.State(
+            serverURL: PreviewFixtures.serverURL,
+            phase: .loaded,
+            tokens: PreviewFixtures.tokens
+        )
         state.createForm = .init(name: "ci runner", scope: .write)
         return state
     }())
@@ -290,7 +326,11 @@ private enum PreviewFixtures {
 
 #Preview("Create form, wrong password") {
     PreviewFixtures.view({
-        var state = APITokensFeature.State(serverURL: PreviewFixtures.serverURL, phase: .loaded, tokens: PreviewFixtures.tokens)
+        var state = APITokensFeature.State(
+            serverURL: PreviewFixtures.serverURL,
+            phase: .loaded,
+            tokens: PreviewFixtures.tokens
+        )
         state.createForm = .init(name: "ci runner")
         state.errorMessage = "That password is not right."
         return state
@@ -299,7 +339,11 @@ private enum PreviewFixtures {
 
 #Preview("Create form, no password") {
     PreviewFixtures.view({
-        var state = APITokensFeature.State(serverURL: PreviewFixtures.serverURL, requiresPassword: false, phase: .loaded)
+        var state = APITokensFeature.State(
+            serverURL: PreviewFixtures.serverURL,
+            requiresPassword: false,
+            phase: .loaded
+        )
         state.createForm = .init(name: "ci runner")
         return state
     }())
@@ -307,15 +351,26 @@ private enum PreviewFixtures {
 
 #Preview("Secret") {
     PreviewFixtures.view({
-        var state = APITokensFeature.State(serverURL: PreviewFixtures.serverURL, phase: .loaded, tokens: PreviewFixtures.tokens)
-        state.issued = IssuedAPIToken(token: PreviewFixtures.tokens[0], secret: "nxt_0123456789abcdef.0123456789abcdef0123456789abcdef")
+        var state = APITokensFeature.State(
+            serverURL: PreviewFixtures.serverURL,
+            phase: .loaded,
+            tokens: PreviewFixtures.tokens
+        )
+        state.issued = IssuedAPIToken(
+            token: PreviewFixtures.tokens[0],
+            secret: "nxt_0123456789abcdef.0123456789abcdef0123456789abcdef"
+        )
         return state
     }())
 }
 
 #Preview("Revoke") {
     PreviewFixtures.view({
-        var state = APITokensFeature.State(serverURL: PreviewFixtures.serverURL, phase: .loaded, tokens: PreviewFixtures.tokens)
+        var state = APITokensFeature.State(
+            serverURL: PreviewFixtures.serverURL,
+            phase: .loaded,
+            tokens: PreviewFixtures.tokens
+        )
         state.tokenPendingRevoke = PreviewFixtures.tokens[0]
         return state
     }())

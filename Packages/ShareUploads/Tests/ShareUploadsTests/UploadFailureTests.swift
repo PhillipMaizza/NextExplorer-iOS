@@ -11,13 +11,22 @@ struct UploadFailureTests {
         #expect(UploadFailureCause.classify(statusCode: 507, error: nil) == .serverFull)
         #expect(UploadFailureCause.classify(statusCode: 413, error: nil) == .serverFull)
         #expect(UploadFailureCause.classify(statusCode: 500, error: nil) == .other)
-        #expect(UploadFailureCause.classify(statusCode: 302, error: nil) == .other, "a refused redirect is not a sign in problem")
+        #expect(
+            UploadFailureCause.classify(statusCode: 302, error: nil) == .other,
+            "a refused redirect is not a sign in problem"
+        )
         #expect(UploadFailureCause.classify(statusCode: 401, error: URLError(.timedOut)) == .unauthorized)
     }
 
     @Test("Connectivity errors are network failures, other errors are not")
     func transportErrors() {
-        for code in [URLError.Code.notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotFindHost, .dnsLookupFailed] {
+        for code in [
+            URLError.Code.notConnectedToInternet,
+            .networkConnectionLost,
+            .timedOut,
+            .cannotFindHost,
+            .dnsLookupFailed,
+        ] {
             #expect(UploadFailureCause.classify(statusCode: nil, error: URLError(code)) == .network)
         }
         #expect(UploadFailureCause.classify(statusCode: nil, error: URLError(.cancelled)) == .other)
@@ -46,7 +55,10 @@ struct UploadFailureTests {
         #expect(result == .failure(.network))
     }
 
-    @Test("Any 2xx is a success, whatever the reply body says: a retry must never upload the file twice", arguments: [200, 201, 204, 299])
+    @Test(
+        "Any 2xx is a success, whatever the reply body says: a retry must never upload the file twice",
+        arguments: [200, 201, 204, 299]
+    )
     func anyTwoHundredIsASuccess(status: Int) throws {
         #expect(try BackgroundUploader.result(response: response(status), error: nil) == .success)
     }

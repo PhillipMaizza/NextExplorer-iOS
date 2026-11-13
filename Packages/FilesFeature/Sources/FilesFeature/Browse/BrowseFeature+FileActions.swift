@@ -45,7 +45,10 @@ extension BrowseFeature {
         let originalID = item.id
         return .run { send in
             try await send(.renameResponse(apiResult {
-                try await RenameResult(originalID: originalID, renamed: filesClient.renameItem(serverURL, item, trimmedName))
+                try await RenameResult(
+                    originalID: originalID,
+                    renamed: filesClient.renameItem(serverURL, item, trimmedName)
+                )
             }))
         }
     }

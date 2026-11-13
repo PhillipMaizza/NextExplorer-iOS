@@ -12,7 +12,11 @@ struct NetworkClientLiveTests {
 
     @Test("returns the response body and HTTPURLResponse on success")
     func successReturnsBodyAndResponse() async throws {
-        StubURLProtocol.stub = try .init(statusCode: 200, headers: [:], body: NetworkClientFixture.responseOkTrue.data())
+        StubURLProtocol.stub = try .init(
+            statusCode: 200,
+            headers: [:],
+            body: NetworkClientFixture.responseOkTrue.data()
+        )
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
         let request = URLRequest(url: URL(string: Constants.statusURLString)!)
@@ -122,7 +126,9 @@ struct NetworkClientLiveTests {
         #expect(try Data(contentsOf: fileURL) == payload)
     }
 
-    @Test("edge case: download surfaces a 404 as the HTTPURLResponse, not a thrown error, and still lands the (error) body on disk")
+    @Test(
+        "edge case: download surfaces a 404 as the HTTPURLResponse, not a thrown error, and still lands the (error) body on disk"
+    )
     func downloadSurfacesNon2xxWithoutThrowing() async throws {
         StubURLProtocol.stub = .init(statusCode: 404, headers: [:], body: Data("not found".utf8))
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])

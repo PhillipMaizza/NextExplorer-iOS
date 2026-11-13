@@ -33,7 +33,9 @@ final class ClientCertificateAssetLoader: NSObject, @unchecked Sendable {
     private var pending: [Int: Pending] = [:]
 
     init?(remoteURL: URL, cookies: [HTTPCookie], fileExtension: String) {
-        guard var components = URLComponents(url: remoteURL, resolvingAgainstBaseURL: false), components.scheme == "https" else {
+        guard var components = URLComponents(url: remoteURL, resolvingAgainstBaseURL: false),
+              components.scheme == "https"
+        else {
             return nil
         }
         components.scheme = Self.scheme
@@ -54,7 +56,9 @@ final class ClientCertificateAssetLoader: NSObject, @unchecked Sendable {
             session = nil
             // Answered, not just dropped: a player that comes back asks for these ranges again
             // instead of waiting on them forever.
-            for request in pending.values where !request.loadingRequest.isFinished && !request.loadingRequest.isCancelled {
+            for request in pending.values
+                where !request.loadingRequest.isFinished && !request.loadingRequest.isCancelled
+            {
                 request.loadingRequest.finishLoading(with: URLError(.cancelled))
             }
             pending.removeAll()

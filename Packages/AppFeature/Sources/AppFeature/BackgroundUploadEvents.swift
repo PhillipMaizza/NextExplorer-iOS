@@ -16,7 +16,10 @@ public enum BackgroundUploadEvents {
     private static let periodicReconnect = PeriodicTask()
 
     /// `true` when `identifier` is one of these sessions and was taken care of.
-    public static func handle(sessionIdentifier identifier: String, completion: @escaping @Sendable () -> Void) -> Bool {
+    public static func handle(
+        sessionIdentifier identifier: String,
+        completion: @escaping @Sendable () -> Void
+    ) -> Bool {
         guard BackgroundUploader.ownsSession(identifier) else { return false }
         BackgroundUploader.shared.handleEvents(forSession: identifier, completion: completion)
         return true
@@ -138,7 +141,8 @@ public enum BackgroundUploadEvents {
             _ = shareUploads.retryRefused(credentials)
         } catch let error as AuthClientError {
             switch error {
-            case .sessionExpired, .sessionCookieMissing, .invalidCredentials, .server(statusCode: Constants.unauthorizedStatusCode):
+            case .sessionExpired, .sessionCookieMissing, .invalidCredentials,
+                 .server(statusCode: Constants.unauthorizedStatusCode):
                 shareUploads.clearNeedsSignIn(activeID)
                 expireSession()
             default:
@@ -164,7 +168,11 @@ final class PeriodicTask: @unchecked Sendable {
 
     /// `false` when it was already running: the existing timer is kept.
     @discardableResult
-    func start(every interval: Duration, clock: some Clock<Duration>, perform: @escaping @Sendable () async -> Void) -> Bool {
+    func start(
+        every interval: Duration,
+        clock: some Clock<Duration>,
+        perform: @escaping @Sendable () async -> Void
+    ) -> Bool {
         lock.withLock {
             guard task == nil else { return false }
             let firstBeat = clock.now.advanced(by: interval)

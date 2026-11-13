@@ -20,7 +20,8 @@ struct ShareUploadsTests {
     )
 
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsTests-\(TestID.uuid().uuidString)")
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ShareUploadsTests-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
@@ -48,13 +49,15 @@ struct ShareUploadsTests {
         #expect(UploadDefaults(folderPath: nil, shouldUploadWithoutAsking: true).directFolder == nil)
         #expect(UploadDefaults(folderPath: "", shouldUploadWithoutAsking: true).directFolder == nil)
         #expect(UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: false).directFolder == nil)
-        #expect(UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true).directFolder == TestFolder.photos)
+        #expect(UploadDefaults(folderPath: TestFolder.photos, shouldUploadWithoutAsking: true)
+            .directFolder == TestFolder.photos)
     }
 
     @Test("The original file type is asked for: HEIC before its JPEG copy, a video before a still")
     func preferredType() {
         #expect(SharedItemLoader.preferredType(registered: ["public.heic", "public.jpeg"]) == .heic)
-        #expect(SharedItemLoader.preferredType(registered: ["com.apple.quicktime-movie", "public.jpeg"]) == .quickTimeMovie)
+        #expect(SharedItemLoader
+            .preferredType(registered: ["com.apple.quicktime-movie", "public.jpeg"]) == .quickTimeMovie)
         #expect(SharedItemLoader.preferredType(registered: ["com.adobe.pdf"]) == .pdf)
         #expect(SharedItemLoader.preferredType(registered: ["public.url"]) == nil, "a link is no file")
         #expect(SharedItemLoader.preferredType(registered: ["public.plain-text"]) == nil)
@@ -64,11 +67,21 @@ struct ShareUploadsTests {
     @Test("Shared files keep their own name, or get the type's extension")
     func fileNames() {
         let named = URL(fileURLWithPath: "/tmp/IMG_0042.HEIC")
-        #expect(SharedItemLoader.fileName(fileURL: named, suggestedName: ShareUploadsTestValue.imageBaseName, type: .heic) == ShareUploadsTestValue.heicName)
+        #expect(SharedItemLoader.fileName(
+            fileURL: named,
+            suggestedName: ShareUploadsTestValue.imageBaseName,
+            type: .heic
+        ) == ShareUploadsTestValue.heicName)
         let bare = URL(fileURLWithPath: "/tmp/7F2A1C")
-        #expect(SharedItemLoader.fileName(fileURL: bare, suggestedName: ShareUploadsTestValue.imageBaseName, type: .heic) == "IMG_0042.heic")
+        #expect(SharedItemLoader.fileName(
+            fileURL: bare,
+            suggestedName: ShareUploadsTestValue.imageBaseName,
+            type: .heic
+        ) == "IMG_0042.heic")
         #expect(SharedItemLoader.fileName(fileURL: bare, suggestedName: nil, type: .quickTimeMovie) == "7F2A1C.mov")
-        #expect(SharedItemLoader.fileName(fileURL: bare, suggestedName: ShareUploadsTestValue.reportName, type: .pdf) == ShareUploadsTestValue.reportName)
+        #expect(SharedItemLoader
+            .fileName(fileURL: bare, suggestedName: ShareUploadsTestValue.reportName, type: .pdf) ==
+            ShareUploadsTestValue.reportName)
     }
 
     @Test("Staging writes the upload envelope with the destination, name and bytes, no cookie yet")
@@ -108,7 +121,8 @@ struct ShareUploadsTests {
             let directory = root.appendingPathComponent(id, isDirectory: true)
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             try Manifest(
-                accountID: accountID, destination: TestFolder.photos, fileNames: [TestFile.aPhoto], envelopes: [Constants.aEnvelope],
+                accountID: accountID, destination: TestFolder.photos, fileNames: [TestFile.aPhoto],
+                envelopes: [Constants.aEnvelope],
                 contentTypes: ["multipart/form-data; boundary=B"], serverURL: credentials.serverBaseURL,
                 startedAt: TestClock.reference
             ).save(in: directory)

@@ -21,7 +21,13 @@ public struct AuthenticatedView: View {
         store: Store(
             initialState: AuthenticatedFeature.State(
                 serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+                user: User(
+                    id: "preview-user",
+                    username: "jdoe",
+                    email: "jane.doe@example.com",
+                    displayName: "Jane Doe",
+                    roles: []
+                )
             )
         ) {
             AuthenticatedFeature()

@@ -62,7 +62,10 @@ public struct ClientCertificateExpiryWarning: View {
         case .valid:
             nil
         case .expiringSoon:
-            summary.expiresAt.map { L10n.ClientCertificate.expiringSoonWarning($0.formatted(date: .abbreviated, time: .omitted)) }
+            summary.expiresAt.map { L10n.ClientCertificate.expiringSoonWarning($0.formatted(
+                date: .abbreviated,
+                time: .omitted
+            )) }
         case .expired:
             L10n.ClientCertificate.expiredWarning
         }
@@ -109,7 +112,10 @@ extension ClientCertificateSummary {
 }
 
 #Preview("Expiring soon") {
-    let summary = ClientCertificateSummary(subject: "Phillip iPhone", expiresAt: Date().addingTimeInterval(5 * 24 * 60 * 60))
+    let summary = ClientCertificateSummary(
+        subject: "Phillip iPhone",
+        expiresAt: Date().addingTimeInterval(5 * 24 * 60 * 60)
+    )
     VStack(alignment: .leading, spacing: .space8) {
         ClientCertificateSummaryLines(summary: summary)
         ClientCertificateExpiryWarning(summary: summary)

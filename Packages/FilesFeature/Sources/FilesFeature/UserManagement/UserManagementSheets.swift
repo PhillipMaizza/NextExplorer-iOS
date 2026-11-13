@@ -31,18 +31,27 @@ struct CreateUserSheet: View {
                         DSErrorCard(error)
                     }
                     LabeledField(L10n.UserManagement.createEmailField, error: sheet.emailError, uppercased: false) {
-                        DSTextField(L10n.UserManagement.createEmailPlaceholder, text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
+                        DSTextField(
+                            L10n.UserManagement.createEmailPlaceholder,
+                            text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged)
+                        )
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                     }
                     LabeledField(L10n.UserManagement.createUsernameField, uppercased: false) {
-                        DSTextField(L10n.UserManagement.createUsernamePlaceholder, text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged))
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
+                        DSTextField(
+                            L10n.UserManagement.createUsernamePlaceholder,
+                            text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged)
+                        )
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                     }
                     LabeledField(L10n.Common.password, error: sheet.passwordError, uppercased: false) {
-                        DSSecureField(L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged))
+                        DSSecureField(
+                            L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength),
+                            text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged)
+                        )
                     }
                     DSToggleRow(
                         title: L10n.UserManagement.createGrantAdminToggle,
@@ -59,7 +68,11 @@ struct CreateUserSheet: View {
             .padding(.vertical, Metrics.sheetContentSpacing)
         } footer: {
             DSSheetFooter {
-                DSButton(L10n.UserManagement.createSubmit, style: .primary, isLoading: store.createSheet?.isSubmitting ?? false) {
+                DSButton(
+                    L10n.UserManagement.createSubmit,
+                    style: .primary,
+                    isLoading: store.createSheet?.isSubmitting ?? false
+                ) {
                     store.send(.createSubmitTapped)
                 }
                 .disabled(!(store.createSheet?.isSubmitEnabled ?? false))
@@ -103,11 +116,18 @@ struct SetPasswordSheet: View {
                         : L10n.UserManagement.setPasswordSetIntro(sheet.userLabel))
                         .type(.body3(.regular), style: .secondary)
 
-                    LabeledField(L10n.UserManagement.setPasswordNewField, error: sheet.passwordError, uppercased: false) {
-                        DSSecureField(L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: Binding(
-                            get: { store.passwordSheet?.password ?? "" },
-                            set: { store.send(.passwordFieldChanged($0)) }
-                        ))
+                    LabeledField(
+                        L10n.UserManagement.setPasswordNewField,
+                        error: sheet.passwordError,
+                        uppercased: false
+                    ) {
+                        DSSecureField(
+                            L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength),
+                            text: Binding(
+                                get: { store.passwordSheet?.password ?? "" },
+                                set: { store.send(.passwordFieldChanged($0)) }
+                            )
+                        )
                     }
                 }
             }
@@ -116,7 +136,9 @@ struct SetPasswordSheet: View {
         } footer: {
             DSSheetFooter {
                 DSButton(
-                    (store.passwordSheet?.hasExistingPassword ?? false) ? L10n.UserManagement.setPasswordResetTitle : L10n.UserManagement.setPasswordSetTitle,
+                    (store.passwordSheet?.hasExistingPassword ?? false)
+                        ? L10n.UserManagement.setPasswordResetTitle
+                        : L10n.UserManagement.setPasswordSetTitle,
                     style: .primary,
                     isLoading: store.passwordSheet?.isSubmitting ?? false
                 ) {

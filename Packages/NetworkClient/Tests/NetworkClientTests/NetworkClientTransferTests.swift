@@ -70,7 +70,8 @@ struct NetworkClientNonHTTPTests {
         await #expect(throws: NetworkError.invalidResponse) { _ = try await client.upload(request, body) { _ in } }
         await #expect(throws: NetworkError.invalidResponse) { _ = try await client.download(request) }
         await #expect(throws: NetworkError.invalidResponse) { _ = try await client.lowPriorityDownload(request) }
-        await #expect(throws: NetworkError.invalidResponse) { _ = try await client.downloadWithProgress(request) { _ in } }
+        await #expect(throws: NetworkError.invalidResponse) { _ = try await client.downloadWithProgress(request) { _ in
+        } }
     }
 
     @Test("a non URLError is kept as a transport failure with its own description")
@@ -86,7 +87,9 @@ struct NetworkClientNonHTTPTests {
 
 @Suite("NetworkClient cancellation")
 struct NetworkClientCancellationTests {
-    @Test("cancelling a download with progress stops the underlying request and fails with a transport error, never hanging")
+    @Test(
+        "cancelling a download with progress stops the underlying request and fails with a transport error, never hanging"
+    )
     func cancelledProgressDownloadStopsTheRequest() async throws {
         let signals = HangingURLProtocol.signals.withLock { $0 }
         let client = NetworkClient.live(protocolClasses: [HangingURLProtocol.self])

@@ -135,7 +135,12 @@ private struct PreviewChrome: ViewModifier {
             }
         }
 
-        private func macButton(_ title: String, icon: Image, role: ButtonRole? = nil, action: @escaping () -> Void) -> some View {
+        private func macButton(
+            _ title: String,
+            icon: Image,
+            role: ButtonRole? = nil,
+            action: @escaping () -> Void
+        ) -> some View {
             Button(role: role, action: action) {
                 Label { Text(title) } icon: { icon }
             }

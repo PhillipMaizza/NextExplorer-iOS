@@ -52,7 +52,10 @@ struct UploadsQueueTests: UploadsTestSupport {
 
     @Test
     func aFreshBatchDropsTheFinishedRowsOfThePreviousOne() async {
-        let store = makeStore(state([job("old.txt", 0, .completed), job("bad.txt", 1, .failed(TestAccount.rejectedPassword))]))
+        let store = makeStore(state([
+            job("old.txt", 0, .completed),
+            job("bad.txt", 1, .failed(TestAccount.rejectedPassword)),
+        ]))
 
         await store.send(.enqueue([pending("new.txt", 2)])) {
             $0.jobs = [job("new.txt", 2, .queued)]
@@ -87,7 +90,13 @@ struct UploadsQueueTests: UploadsTestSupport {
             progress(0.5)
             progress(0.51)
             progress(1)
-            return FileItem(name: TestFile.aText, path: TestFolder.inbox, dateModified: MockDate.date, size: 10, kind: TestKind.text)
+            return FileItem(
+                name: TestFile.aText,
+                path: TestFolder.inbox,
+                dateModified: MockDate.date,
+                size: 10,
+                kind: TestKind.text
+            )
         })
 
         await store.send(.startNextIfIdle) { markUploading(&$0, 0) }
@@ -128,7 +137,12 @@ struct UploadsQueueTests: UploadsTestSupport {
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 2) }
         await store.receive(\.uploadResponse) { markCompleted(&$0, 2) }
         await store.receive(.delegate(.queueFinished(
-            summary(uploaded: 3, failed: 0, lastDestination: TestFolder.archive, changedPaths: [TestFolder.inbox, TestFolder.archive])
+            summary(
+                uploaded: 3,
+                failed: 0,
+                lastDestination: TestFolder.archive,
+                changedPaths: [TestFolder.inbox, TestFolder.archive]
+            )
         )))
         await store.finish()
     }

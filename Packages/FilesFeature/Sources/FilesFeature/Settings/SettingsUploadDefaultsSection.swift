@@ -9,12 +9,16 @@ struct SettingsUploadDefaultsSection: View {
     let filter: SettingsSearchFilter
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.uploadDefaultsRow, L10n.Settings.uploadDefaultsFolder, L10n.Settings.uploadDefaultsWithoutAsking]) {
+        if filter.anyMatch([
+            L10n.Settings.uploadDefaultsRow,
+            L10n.Settings.uploadDefaultsFolder,
+            L10n.Settings.uploadDefaultsWithoutAsking,
+        ]) {
             Section {
                 DSNavigationRow(
                     title: L10n.Settings.uploadDefaultsFolder,
                     icon: IconKit.folder,
-                    accessory: .detail(store.defaults.folderPath.flatMap { $0.isEmpty ? nil : $0 } ?? L10n.Settings.uploadDefaultsFolderNone)
+                    accessory: .detail(store.folderTitle)
                 ) {
                     store.send(.chooseFolderTapped)
                 }
@@ -57,8 +61,14 @@ struct SettingsUploadDefaultsSection: View {
 }
 
 extension StoreOf<UploadDefaultsFeature> {
-    static func uploadDefaultsPreview(folder: String? = nil, withoutAsking: Bool = false) -> StoreOf<UploadDefaultsFeature> {
-        var state = UploadDefaultsFeature.State(serverURL: URL(string: "https://files.example.com")!, accountID: "preview")
+    static func uploadDefaultsPreview(
+        folder: String? = nil,
+        withoutAsking: Bool = false
+    ) -> StoreOf<UploadDefaultsFeature> {
+        var state = UploadDefaultsFeature.State(
+            serverURL: URL(string: "https://files.example.com")!,
+            accountID: "preview"
+        )
         state.defaults = .init(folderPath: folder, shouldUploadWithoutAsking: withoutAsking)
         return Store(initialState: state) { EmptyReducer() }
     }

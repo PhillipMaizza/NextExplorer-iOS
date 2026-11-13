@@ -12,11 +12,19 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func systemSettingsDecodesTheFourBackgroundSections() throws {
-        let settings = try CoreModelsFixture.serverSettingsSystemSettingsFourBackgroundSections.decode(SystemSettings.self)
+        let settings = try CoreModelsFixture.serverSettingsSystemSettingsFourBackgroundSections
+            .decode(SystemSettings.self)
 
-        #expect(settings.uploads == UploadSettings(isChunkedEnabled: true, isChunkedAutoFallback: false, chunkSizeBytes: 16 * 1024 * 1024))
+        #expect(settings.uploads == UploadSettings(
+            isChunkedEnabled: true,
+            isChunkedAutoFallback: false,
+            chunkSizeBytes: 16 * 1024 * 1024
+        ))
         #expect(settings.ffmpeg == FFmpegSettings(ffmpegPath: Constants.ffmpegPath, ffprobePath: ""))
-        #expect(settings.searchIndex == SearchIndexSettings(isEnabled: true, excluded: ExcludedPaths(paths: ["Backups"], environmentPaths: ["tmp"])))
+        #expect(settings.searchIndex == SearchIndexSettings(
+            isEnabled: true,
+            excluded: ExcludedPaths(paths: ["Backups"], environmentPaths: ["tmp"])
+        ))
         #expect(settings.folderSize == FolderSizeSettings(mode: .shallow, excluded: ExcludedPaths(paths: ["docker"])))
     }
 
@@ -128,7 +136,11 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func anUploadsPatchSendsAllThreeFields() throws {
-        let json = try encoded(SystemSettingsPatch(uploads: UploadSettings(isChunkedEnabled: true, isChunkedAutoFallback: false, chunkSizeBytes: 8_388_608)))
+        let json = try encoded(SystemSettingsPatch(uploads: UploadSettings(
+            isChunkedEnabled: true,
+            isChunkedAutoFallback: false,
+            chunkSizeBytes: 8_388_608
+        )))
 
         let uploads = try #require(json["uploads"] as? [String: Any])
         #expect(uploads["chunkedEnabled"] as? Bool == true)

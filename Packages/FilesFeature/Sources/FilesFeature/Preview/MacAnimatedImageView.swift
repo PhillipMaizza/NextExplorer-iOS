@@ -13,7 +13,9 @@
             Group {
                 if let frames, frames.images.count > 1 {
                     // Ticks once per frame, not at the display's refresh rate.
-                    TimelineView(.animation(minimumInterval: frames.duration / Double(frames.images.count))) { timeline in
+                    TimelineView(.animation(minimumInterval: frames
+                            .duration / Double(frames.images.count)))
+                    { timeline in
                         frameImage(frames.images[frameIndex(at: timeline.date, in: frames)])
                     }
                 } else if let frame = frames?.images.first {
@@ -40,13 +42,18 @@
 
         private func frameIndex(at date: Date, in frames: AnimatedImageDecoder.Frames) -> Int {
             guard frames.duration > 0 else { return 0 }
-            let progress = date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: frames.duration) / frames.duration
+            let elapsed = date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: frames.duration)
+            let progress = elapsed / frames.duration
             return min(frames.images.count - 1, Int(progress * Double(frames.images.count)))
         }
     }
 
     #Preview {
-        AnimatedImageView(fileURL: URL(fileURLWithPath: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/GenericDocumentIcon.icns"))
-            .previewCanvas(.dialog)
+        AnimatedImageView(
+            fileURL: URL(
+                fileURLWithPath: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/GenericDocumentIcon.icns"
+            )
+        )
+        .previewCanvas(.dialog)
     }
 #endif

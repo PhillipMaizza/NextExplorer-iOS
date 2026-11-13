@@ -65,7 +65,12 @@ struct FileInfoSheet: View {
                     size: 4_096,
                     dateModified: Date(),
                     dateCreated: Date().addingTimeInterval(-86_400 * 30),
-                    directory: FileMetadata.DirectorySummary(totalSize: 10_485_760, fileCount: 42, dirCount: 3, truncated: false)
+                    directory: FileMetadata.DirectorySummary(
+                        totalSize: 10_485_760,
+                        fileCount: 42,
+                        dirCount: 3,
+                        truncated: false
+                    )
                 ),
                 errorMessage: nil,
                 onDismiss: {}
@@ -85,7 +90,12 @@ struct FileInfoSheet: View {
                     size: 4_096,
                     dateModified: Date(),
                     dateCreated: Date().addingTimeInterval(-86_400 * 120),
-                    directory: FileMetadata.DirectorySummary(totalSize: 41_000_000_000, fileCount: 1_200, dirCount: 60, truncated: false)
+                    directory: FileMetadata.DirectorySummary(
+                        totalSize: 41_000_000_000,
+                        fileCount: 1_200,
+                        dirCount: 60,
+                        truncated: false
+                    )
                 ),
                 usage: StorageUsage(path: "Media", size: 41_000_000_000, free: 59_000_000_000, total: 100_000_000_000),
                 errorMessage: nil,
@@ -102,9 +112,19 @@ struct FileInfoSheet: View {
                 metadata: FileMetadata(
                     path: "Projects", name: "Projects", kind: "directory", size: 4_096,
                     dateModified: Date(), dateCreated: Date(),
-                    directory: FileMetadata.DirectorySummary(totalSize: 78_000_000_000, fileCount: 320, dirCount: 40, truncated: false)
+                    directory: FileMetadata.DirectorySummary(
+                        totalSize: 78_000_000_000,
+                        fileCount: 320,
+                        dirCount: 40,
+                        truncated: false
+                    )
                 ),
-                usage: StorageUsage(path: "Projects", size: 78_000_000_000, free: 22_000_000_000, total: 100_000_000_000),
+                usage: StorageUsage(
+                    path: "Projects",
+                    size: 78_000_000_000,
+                    free: 22_000_000_000,
+                    total: 100_000_000_000
+                ),
                 errorMessage: nil,
                 onDismiss: {}
             )
@@ -119,7 +139,12 @@ struct FileInfoSheet: View {
                 metadata: FileMetadata(
                     path: "Backups", name: "Backups", kind: "directory", size: 4_096,
                     dateModified: Date(), dateCreated: Date(),
-                    directory: FileMetadata.DirectorySummary(totalSize: 94_000_000_000, fileCount: 8, dirCount: 0, truncated: false)
+                    directory: FileMetadata.DirectorySummary(
+                        totalSize: 94_000_000_000,
+                        fileCount: 8,
+                        dirCount: 0,
+                        truncated: false
+                    )
                 ),
                 usage: StorageUsage(path: "Backups", size: 94_000_000_000, free: 6_000_000_000, total: 100_000_000_000),
                 errorMessage: nil,
@@ -176,7 +201,14 @@ struct FileInfoSheet: View {
         .sheet(isPresented: .constant(true)) {
             FileInfoSheet(
                 item: FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 128, kind: "txt"),
-                metadata: FileMetadata(path: "notes.txt", name: "notes.txt", kind: "txt", size: 128, dateModified: Date(), dateCreated: Date()),
+                metadata: FileMetadata(
+                    path: "notes.txt",
+                    name: "notes.txt",
+                    kind: "txt",
+                    size: 128,
+                    dateModified: Date(),
+                    dateCreated: Date()
+                ),
                 errorMessage: nil,
                 onDismiss: {}
             )

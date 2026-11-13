@@ -28,7 +28,10 @@ extension FilesClientLiveHarness {
 
     func expectJSONBody(_ expected: [String: Any], sourceLocation: SourceLocation = #_sourceLocation) throws {
         let data = try #require(StubURLProtocol.capturedRequestBody, sourceLocation: sourceLocation)
-        let object = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any], sourceLocation: sourceLocation)
+        let object = try #require(
+            try JSONSerialization.jsonObject(with: data) as? [String: Any],
+            sourceLocation: sourceLocation
+        )
         #expect(NSDictionary(dictionary: object) == NSDictionary(dictionary: expected), sourceLocation: sourceLocation)
     }
 }

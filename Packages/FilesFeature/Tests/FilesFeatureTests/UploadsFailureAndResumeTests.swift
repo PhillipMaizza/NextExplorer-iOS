@@ -23,19 +23,35 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
             if attempts.withValue({ $0 += 1; return $0 }) == 1 {
                 throw FilesClientError.server(statusCode: 500)
             }
-            return FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
+            return FileItem(
+                name: call.fileName,
+                path: call.destination,
+                dateModified: MockDate.date,
+                size: 10,
+                kind: TestKind.text
+            )
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Uploads.failedGeneric) }
-        await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
+        await store.receive(.delegate(.queueFinished(summary(
+            uploaded: 0,
+            failed: 1,
+            lastDestination: nil,
+            changedPaths: []
+        ))))
         #expect(discarded.value.isEmpty)
 
         await store.send(.retryTapped(id: UUID(0))) { $0.jobs[id: UUID(0)]?.status = .queued }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markCompleted(&$0, 0) }
-        await store.receive(.delegate(.queueFinished(summary(uploaded: 1, failed: 0, lastDestination: TestFolder.inbox, changedPaths: [TestFolder.inbox]))))
+        await store.receive(.delegate(.queueFinished(summary(
+            uploaded: 1,
+            failed: 0,
+            lastDestination: TestFolder.inbox,
+            changedPaths: [TestFolder.inbox]
+        ))))
         await store.finish()
         #expect(attempts.value == 2)
     }
@@ -47,7 +63,13 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
             if failedOnce.withValue({ $0.insert(call.fileName).inserted }) {
                 throw FilesClientError.server(statusCode: 500)
             }
-            return FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
+            return FileItem(
+                name: call.fileName,
+                path: call.destination,
+                dateModified: MockDate.date,
+                size: 10,
+                kind: TestKind.text
+            )
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0), pending(TestFile.bText, 1)])) {
@@ -57,7 +79,12 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Uploads.failedGeneric) }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 1) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 1, L10n.Uploads.failedGeneric) }
-        await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 2, lastDestination: nil, changedPaths: []))))
+        await store.receive(.delegate(.queueFinished(summary(
+            uploaded: 0,
+            failed: 2,
+            lastDestination: nil,
+            changedPaths: []
+        ))))
         #expect(!store.state.isActive)
         #expect(store.state.failedCount == 2)
         #expect(store.state.isBarVisible)
@@ -70,7 +97,12 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
         await store.receive(\.uploadResponse) { markCompleted(&$0, 0) }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 1) }
         await store.receive(\.uploadResponse) { markCompleted(&$0, 1) }
-        await store.receive(.delegate(.queueFinished(summary(uploaded: 2, failed: 0, lastDestination: TestFolder.inbox, changedPaths: [TestFolder.inbox]))))
+        await store.receive(.delegate(.queueFinished(summary(
+            uploaded: 2,
+            failed: 0,
+            lastDestination: TestFolder.inbox,
+            changedPaths: [TestFolder.inbox]
+        ))))
         await store.finish()
         #expect(store.state.failedCount == 0)
         #expect(!store.state.isBarVisible)
@@ -131,7 +163,12 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
         await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, testCase.message) }
-        await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
+        await store.receive(.delegate(.queueFinished(summary(
+            uploaded: 0,
+            failed: 1,
+            lastDestination: nil,
+            changedPaths: []
+        ))))
 
         await store.send(.appResumed)
         await store.finish()
@@ -143,7 +180,10 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     func aSessionExpiredUploadTripsTheAppWideExpiryFlag() async {
         @Shared(.inMemory(SessionExpiry.sharedKey)) var sessionDidExpire = false
         $sessionDidExpire.withLock { $0 = false }
-        let store = makeStore(state([job(TestFile.aText, 0, .queued)]), upload: { _, _ in throw FilesClientError.sessionExpired })
+        let store = makeStore(
+            state([job(TestFile.aText, 0, .queued)]),
+            upload: { _, _ in throw FilesClientError.sessionExpired }
+        )
 
         await store.send(.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Error.sessionExpired) }
@@ -159,13 +199,25 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
             if attempts.withValue({ $0 += 1; return $0 }) == 1 {
                 throw error
             }
-            return FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
+            return FileItem(
+                name: call.fileName,
+                path: call.destination,
+                dateModified: MockDate.date,
+                size: 10,
+                kind: TestKind.text
+            )
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
-        await store.receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Uploads.failedGeneric, isTransportFailure: true) }
-        await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
+        await store
+            .receive(\.uploadResponse) { markFailed(&$0, 0, L10n.Uploads.failedGeneric, isTransportFailure: true) }
+        await store.receive(.delegate(.queueFinished(summary(
+            uploaded: 0,
+            failed: 1,
+            lastDestination: nil,
+            changedPaths: []
+        ))))
 
         await store.send(.appResumed) {
             $0.jobs[id: UUID(0)]?.status = .queued
@@ -173,7 +225,12 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
         }
         await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
         await store.receive(\.uploadResponse) { markCompleted(&$0, 0) }
-        await store.receive(.delegate(.queueFinished(summary(uploaded: 1, failed: 0, lastDestination: TestFolder.inbox, changedPaths: [TestFolder.inbox]))))
+        await store.receive(.delegate(.queueFinished(summary(
+            uploaded: 1,
+            failed: 0,
+            lastDestination: TestFolder.inbox,
+            changedPaths: [TestFolder.inbox]
+        ))))
         await store.finish()
         #expect(attempts.value == 2)
         #expect(sweeps.value == 1)
@@ -251,7 +308,13 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
             if attempts.withValue({ $0 += 1; return $0 }) == 1 {
                 throw FilesClientError.timedOut
             }
-            return FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
+            return FileItem(
+                name: call.fileName,
+                path: call.destination,
+                dateModified: MockDate.date,
+                size: 10,
+                kind: TestKind.text
+            )
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
@@ -272,10 +335,21 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
 
     @Test
     func aWedgedUploadAtTheRetryCapFailsAndAnnouncesTheDrainedQueue() async {
-        let store = makeStore(state([job(TestFile.aText, 0, .uploading, autoRetryCount: 3, startedAt: now.addingTimeInterval(-600))]))
+        let store = makeStore(state([job(
+            TestFile.aText,
+            0,
+            .uploading,
+            autoRetryCount: 3,
+            startedAt: now.addingTimeInterval(-600)
+        )]))
 
         await store.send(.appResumed) { markFailed(&$0, 0, L10n.Uploads.failedGeneric) }
-        await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
+        await store.receive(.delegate(.queueFinished(summary(
+            uploaded: 0,
+            failed: 1,
+            lastDestination: nil,
+            changedPaths: []
+        ))))
         await store.finish()
         #expect(store.state.jobs[id: UUID(0)]?.autoRetryCount == 3)
     }

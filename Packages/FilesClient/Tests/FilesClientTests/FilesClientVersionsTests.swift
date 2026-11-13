@@ -6,7 +6,8 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// File version history routes through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
+/// File version history routes through `FilesClient.live` against a stubbed `URLSession`. Nested in
+/// `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     struct FilesClientVersionsTests: FilesClientLiveHarness {
@@ -23,7 +24,10 @@ extension FilesClientLiveTests {
             let history = try await makeClient().fetchVersions(serverURL, TestPath.docsNotes)
             let requestURL = try #require(StubURLProtocol.capturedRequest?.url)
             #expect(requestURL.path == "/api/versions")
-            #expect(URLComponents(url: requestURL, resolvingAgainstBaseURL: false)?.queryItems == [URLQueryItem(name: "path", value: TestPath.docsNotes)])
+            #expect(URLComponents(url: requestURL, resolvingAgainstBaseURL: false)?.queryItems == [URLQueryItem(
+                name: "path",
+                value: TestPath.docsNotes
+            )])
             #expect(history.isEnabled)
             #expect(history.versions.map(\.id) == [TestETag.second, TestETag.first])
             #expect(history.versions[0].author?.label == "Phillip")
@@ -45,7 +49,12 @@ extension FilesClientLiveTests {
         @Test
         func copyVersionPostsTheDestinationAndReturnsTheNewPath() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.versionsSaveAsCopyResult.data())
-            let newPath = try await makeClient().copyVersion(serverURL, TestPath.docsNotes, TestETag.first, TestFolder.docs)
+            let newPath = try await makeClient().copyVersion(
+                serverURL,
+                TestPath.docsNotes,
+                TestETag.first,
+                TestFolder.docs
+            )
             #expect(newPath == "Docs/notes (v1).txt")
             #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/v1/copy")
             let json = try capturedJSON()

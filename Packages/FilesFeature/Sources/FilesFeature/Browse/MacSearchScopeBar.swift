@@ -31,7 +31,10 @@
                 }
                 Divider()
                 ForEach(availableCategories, id: \.self) { category in
-                    Toggle(isOn: Binding(get: { selectedCategories.contains(category) }, set: { _ in onToggle(category) })) {
+                    Toggle(isOn: Binding(
+                        get: { selectedCategories.contains(category) },
+                        set: { _ in onToggle(category) }
+                    )) {
                         Label { Text(category.title) } icon: { category.icon }
                     }
                 }

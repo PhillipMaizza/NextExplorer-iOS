@@ -36,7 +36,10 @@ struct UploadsCancelAndClearTests: UploadsTestSupport {
 
     @Test
     func cancellingTheOnlyJobClosesTheSheet() async {
-        let store = makeStore(state([job(TestFile.aText, 0, .failed(TestAccount.rejectedPassword))], isSheetPresented: true))
+        let store = makeStore(state(
+            [job(TestFile.aText, 0, .failed(TestAccount.rejectedPassword))],
+            isSheetPresented: true
+        ))
 
         await store.send(.cancelJobTapped(id: UUID(0))) {
             $0.jobs = []
@@ -115,7 +118,10 @@ struct UploadsCancelAndClearTests: UploadsTestSupport {
 
     @Test
     func clearRemovesFinishedJobsDiscardsTheirFilesAndClosesAnEmptySheet() async {
-        let store = makeStore(state([job(TestFile.aText, 0, .completed), job(TestFile.bText, 1, .failed(TestAccount.rejectedPassword))], isSheetPresented: true))
+        let store = makeStore(state(
+            [job(TestFile.aText, 0, .completed), job(TestFile.bText, 1, .failed(TestAccount.rejectedPassword))],
+            isSheetPresented: true
+        ))
 
         await store.send(.clearFinishedTapped) {
             $0.jobs = []

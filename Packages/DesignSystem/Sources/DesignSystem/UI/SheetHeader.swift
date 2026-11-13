@@ -78,7 +78,11 @@ public struct DSSheetHeader: View {
 #Preview("With title") {
     VStack(spacing: .space24) {
         DSSheetHeader(icon: IconKit.shareLink, title: "Edit Share Link", onClose: {})
-        DSSheetHeader(icon: IconKit.folderFill, title: "A rather long folder name that wraps onto a second line", onClose: {})
+        DSSheetHeader(
+            icon: IconKit.folderFill,
+            title: "A rather long folder name that wraps onto a second line",
+            onClose: {}
+        )
     }
     .padding(.space24)
     .background(Color.backgroundPrimary)

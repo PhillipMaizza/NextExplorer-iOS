@@ -68,7 +68,13 @@ public struct FavoritesFeature {
             // `onAppear` still refetches (stale-while-revalidate); `dataSource` stays `.live` so an
             // online refetch doesn't flash a "saved copy" banner.
             @Dependency(\.jsonCacheStore) var jsonCacheStore
-            if let cached = ListCache.load(jsonCacheStore, FavoritesFeature.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self) {
+            if let cached = ListCache.load(
+                jsonCacheStore,
+                FavoritesFeature.cacheNamespace,
+                serverURL: serverURL,
+                scope: cacheScope,
+                as: [Favorite].self
+            ) {
                 favorites = IdentifiedArray(
                     cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first }
                 )
@@ -254,8 +260,18 @@ public struct FavoritesFeature {
                 let serverURL = state.serverURL
                 let cacheScope = state.cacheScope
                 return .run { send in
-                    let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self)
-                    await send(.offlineFavoritesResolved(cached: cached?.value, fetchedAt: cached?.fetchedAt, error: error))
+                    let cached = ListCache.load(
+                        jsonCacheStore,
+                        Self.cacheNamespace,
+                        serverURL: serverURL,
+                        scope: cacheScope,
+                        as: [Favorite].self
+                    )
+                    await send(.offlineFavoritesResolved(
+                        cached: cached?.value,
+                        fetchedAt: cached?.fetchedAt,
+                        error: error
+                    ))
                 }
                 .cancellable(id: CancelID.load)
 
@@ -376,7 +392,11 @@ public struct FavoritesFeature {
                     return .none
                 }
                 let item = result.previewItem(openedAt: date.now)
-                var host = BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.path, title: result.enclosingFolderTitle)
+                var host = BrowseFeature.State(
+                    serverURL: state.serverURL,
+                    directoryPath: result.path,
+                    title: result.enclosingFolderTitle
+                )
                 host.previewItem = item
                 state.previewHost = host
                 return .send(.previewHost(.presented(.rowTapped(item))))
@@ -452,7 +472,9 @@ public struct FavoritesFeature {
                 let attempted = state.selectedFavoriteIDs.count
                 state.favorites.removeAll { removedPaths.contains($0.path) }
                 if removedPaths.isEmpty, attempted > 0 {
-                    state.actionErrorMessage = attempted == 1 ? L10n.Favorites.removeFailedOne : L10n.Favorites.removeFailedMany
+                    state.actionErrorMessage = attempted == 1
+                        ? L10n.Favorites.removeFailedOne
+                        : L10n.Favorites.removeFailedMany
                 } else if removedPaths.count < attempted {
                     state.actionErrorMessage = L10n.Favorites.removePartial(removedPaths.count, attempted)
                 }
@@ -485,7 +507,8 @@ public struct FavoritesFeature {
                 return .send(.delegate(.uploadRequested(files)))
 
             case .offlineAvailabilityChanged:
-                return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) })
+                return .merge(state.path.ids
+                    .map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) })
 
             case let .navigateToDirectory(path, title):
                 state.forwardStack = []
@@ -539,7 +562,13 @@ public struct FavoritesFeature {
             let serverURL = state.serverURL
             let cacheScope = state.cacheScope
             paint = .run { send in
-                guard let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self) else { return }
+                guard let cached = ListCache.load(
+                    jsonCacheStore,
+                    Self.cacheNamespace,
+                    serverURL: serverURL,
+                    scope: cacheScope,
+                    as: [Favorite].self
+                ) else { return }
                 await send(.cachedFavoritesPainted(cached.value))
             }
         } else {
@@ -599,7 +628,11 @@ public struct FavoritesFeature {
     /// loaded, or a favorite added or removed elsewhere) it searches the new ones at once.
     private func replaceFavorites(_ favorites: [Favorite], in state: inout State) -> Effect<Action> {
         let searchedPaths = Set(state.favorites.map(\.path))
-        state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+        state.favorites = IdentifiedArray(
+            favorites.sorted { $0.position < $1.position },
+            id: \.id,
+            uniquingIDsWith: { first, _ in first }
+        )
         guard Set(state.favorites.map(\.path)) != searchedPaths else { return .none }
         return refreshSearch(&state)
     }
@@ -638,10 +671,14 @@ public struct FavoritesFeature {
             if isDebounced {
                 try await clock.sleep(for: FilesClient.searchDebounce)
             }
-            let outcomes = try await withThrowingTaskGroup(of: Result<[SearchResultItem], FilesClientError>.self) { group in
+            let outcomes = try await withThrowingTaskGroup(of: Result<[SearchResultItem], FilesClientError>
+                .self)
+            { group in
                 for path in favoritePaths {
                     group.addTask {
-                        try await apiResult { try await filesClient.search(serverURL, path, query, Constants.searchLimit).items }
+                        try await apiResult {
+                            try await filesClient.search(serverURL, path, query, Constants.searchLimit).items
+                        }
                     }
                 }
                 var acc: [Result<[SearchResultItem], FilesClientError>] = []
@@ -671,7 +708,13 @@ public struct FavoritesFeature {
     /// Persists the current list as this tab's offline copy, keeping it in sync after a load or
     /// an in-place mutation.
     private func syncCache(_ state: State) {
-        ListCache.save(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, scope: state.cacheScope, value: Array(state.favorites))
+        ListCache.save(
+            jsonCacheStore,
+            Self.cacheNamespace,
+            serverURL: state.serverURL,
+            scope: state.cacheScope,
+            value: Array(state.favorites)
+        )
     }
 
     /// Best-effort, matching the sign-out flow's philosophy: one failure shouldn't block

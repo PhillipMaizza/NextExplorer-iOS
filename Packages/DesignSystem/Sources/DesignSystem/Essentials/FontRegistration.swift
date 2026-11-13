@@ -57,15 +57,27 @@ public enum DesignSystemFonts {
     public static func applyGlobalAppearance() {
         #if os(iOS)
             let navBarAppearance = UINavigationBarAppearance()
-            navBarAppearance.titleTextAttributes = [.font: weightedFont(size: Constants.navTitleSize, weight: Constants.navTitleWeight)]
-            navBarAppearance.largeTitleTextAttributes = [.font: weightedFont(size: Constants.largeTitleSize, weight: Constants.largeTitleWeight)]
+            navBarAppearance.titleTextAttributes = [.font: weightedFont(
+                size: Constants.navTitleSize,
+                weight: Constants.navTitleWeight
+            )]
+            navBarAppearance.largeTitleTextAttributes = [.font: weightedFont(
+                size: Constants.largeTitleSize,
+                weight: Constants.largeTitleWeight
+            )]
             UINavigationBar.appearance().standardAppearance = navBarAppearance
             UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
             UINavigationBar.appearance().compactAppearance = navBarAppearance
 
             let tabItemAppearance = UITabBarItemAppearance()
-            tabItemAppearance.normal.titleTextAttributes = [.font: weightedFont(size: Constants.tabItemSize, weight: Constants.tabItemNormalWeight)]
-            tabItemAppearance.selected.titleTextAttributes = [.font: weightedFont(size: Constants.tabItemSize, weight: Constants.tabItemSelectedWeight)]
+            tabItemAppearance.normal.titleTextAttributes = [.font: weightedFont(
+                size: Constants.tabItemSize,
+                weight: Constants.tabItemNormalWeight
+            )]
+            tabItemAppearance.selected.titleTextAttributes = [.font: weightedFont(
+                size: Constants.tabItemSize,
+                weight: Constants.tabItemSelectedWeight
+            )]
             let tabBarAppearance = UITabBarAppearance()
             tabBarAppearance.stackedLayoutAppearance = tabItemAppearance
             tabBarAppearance.inlineLayoutAppearance = tabItemAppearance
@@ -82,7 +94,10 @@ public enum DesignSystemFonts {
         /// to be dialed in directly on the `wght` variation axis.
         private static func weightedFont(size: CGFloat, weight: CGFloat) -> UIFont {
             guard UIFont(name: familyName, size: size) != nil else {
-                return .systemFont(ofSize: size, weight: weight >= Constants.systemFontSemiboldThreshold ? .semibold : .regular)
+                return .systemFont(
+                    ofSize: size,
+                    weight: weight >= Constants.systemFontSemiboldThreshold ? .semibold : .regular
+                )
             }
 
             let kWeightAxisIdentifier: FourCharCode = 0x77676874

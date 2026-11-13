@@ -79,8 +79,14 @@
                 MacSettingsRow(L10n.CreateShare.sectionShareLink) {
                     linkRow(created.shareUrl)
                 }
-                MacSettingsRow(created.share.isDirectory ? L10n.CreateShare.directFolderLink : L10n.CreateShare.directFileLink) {
-                    Picker(L10n.CreateShare.directLinkMode, selection: $store.directLinkMode.sending(\.directLinkModeChanged)) {
+                MacSettingsRow(created.share.isDirectory
+                    ? L10n.CreateShare.directFolderLink
+                    : L10n.CreateShare.directFileLink)
+                {
+                    Picker(
+                        L10n.CreateShare.directLinkMode,
+                        selection: $store.directLinkMode.sending(\.directLinkModeChanged)
+                    ) {
                         ForEach(DirectLinkMode.allCases) { Text($0.title).tag($0) }
                     }
                     .labelsHidden()

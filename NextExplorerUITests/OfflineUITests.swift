@@ -22,7 +22,10 @@
             XCTAssertTrue(picker.downloadButton.isEnabled, "Selecting a file should enable Download")
 
             picker.downloadButton.tap()
-            XCTAssertTrue(settings.pageRow("offline").waitToAppear(), "Confirming should dismiss the picker back to Settings")
+            XCTAssertTrue(
+                settings.pageRow("offline").waitToAppear(),
+                "Confirming should dismiss the picker back to Settings"
+            )
         }
     }
 #endif

@@ -109,7 +109,7 @@ Helpers under `Scripts/`. Two drive localization; the others keep dependency pin
   xcodebuild test -workspace PackageTests.xcworkspace -scheme PackageTests -destination 'platform=macOS'
   ```
   `bundle exec fastlane unit_tests` runs the first. The XCUITest suites run from the **NextExplorer** scheme (`fastlane ui_tests` on iOS; `-only-testing:NextExplorerUITests` with `-destination 'platform=macOS'` on the Mac, where only the `Mac*UITests` suites compile, which drives the real pointer and keyboard).
-- Lint as CI does (its Lint job gates `main`): `swiftformat . --lint` and `swiftlint`, with the versions CI pins (SwiftFormat 0.64.4, SwiftLint 0.65.1) and the repo's `.swiftformat` and `.swiftlint.yml`. Imports are sorted, so a new import goes in its alphabetical slot.
+- Lint as CI does (its Lint job gates `main`): `swiftformat . --lint` and `swiftlint`, with the versions CI pins (SwiftFormat 0.64.6, SwiftLint 0.65.1, pinned once in `.github/actions/install-lint-tools`) and the repo's `.swiftformat` and `.swiftlint.yml`. Imports are sorted, so a new import goes in its alphabetical slot. Lines stay within 120 columns: a call or declaration that does not fit puts each argument or parameter on its own line, indented one level, so run `swiftformat .` before committing. A scheduled format bot (`.github/workflows/format.yml`) opens a "Format Swift code" pull request for anything that slipped through.
 - Confirm strings are localized, there are no magic numbers, and the app builds cleanly for both iOS and the Mac before opening the PR.
 
 ## Releasing

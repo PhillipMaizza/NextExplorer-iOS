@@ -23,6 +23,7 @@ struct VersionsSettingsHourlyDaysTests {
 
     @Test("a shorter hourly span is raised to the whole days that keeping everything covers", arguments: cases)
     private func raisesToKeepAllDays(_ testCase: Case) {
-        #expect(VersionsSettings.hourlyDays(testCase.hourlyDays, keepAllHours: testCase.keepAllHours) == testCase.expected)
+        let raised = VersionsSettings.hourlyDays(testCase.hourlyDays, keepAllHours: testCase.keepAllHours)
+        #expect(raised == testCase.expected)
     }
 }

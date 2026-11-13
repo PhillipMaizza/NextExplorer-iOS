@@ -15,7 +15,21 @@ extension FavoritesTestSupport {
         URL(fileURLWithPath: "/")
     }
 
-    func makeFavorite(id: String = "1", path: String = TestFolder.documents, label: String? = nil, position: Int = 0) -> Favorite {
-        Favorite(id: id, path: path, label: label, icon: "folder", color: nil, position: position, createdAt: MockDate.date, updatedAt: MockDate.date)
+    func makeFavorite(
+        id: String = "1",
+        path: String = TestFolder.documents,
+        label: String? = nil,
+        position: Int = 0
+    ) -> Favorite {
+        Favorite(
+            id: id,
+            path: path,
+            label: label,
+            icon: "folder",
+            color: nil,
+            position: position,
+            createdAt: MockDate.date,
+            updatedAt: MockDate.date
+        )
     }
 }

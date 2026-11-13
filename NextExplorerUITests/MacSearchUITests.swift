@@ -19,7 +19,10 @@
             XCTAssertTrue(show.waitToAppear(), "A search result should offer Show in Enclosing Folder")
             show.click()
             XCTAssertTrue(backButton(in: app).waitToVanish(), "Its folder (the root) should open")
-            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear(), "The folder's listing should show, not search results")
+            XCTAssertTrue(
+                text(Fixture.folder, in: app).waitToAppear(),
+                "The folder's listing should show, not search results"
+            )
         }
 
         func testFindFocusesTheToolbarSearch() {
@@ -53,7 +56,10 @@
                     XCTAssertTrue(searchHit(in: app).waitToAppear(), "Each partial query should run")
                 }
             }
-            XCTAssertTrue(field.isFocused(within: UITestTimeout.short), "The search field should keep focus while typing")
+            XCTAssertTrue(
+                field.isFocused(within: UITestTimeout.short),
+                "The search field should keep focus while typing"
+            )
             XCTAssertEqual(field.value as? String, Fixture.folderAlt, "Every keystroke should land in the search field")
         }
 
@@ -70,7 +76,10 @@
             hit.doubleClick()
 
             XCTAssertTrue(backButton(in: app).waitToAppear(), "Opening the result should push the folder")
-            XCTAssertTrue(text(Fixture.file, in: app).waitToAppear(), "The opened folder should load its files, not stay on the skeleton")
+            XCTAssertTrue(
+                text(Fixture.file, in: app).waitToAppear(),
+                "The opened folder should load its files, not stay on the skeleton"
+            )
         }
 
         func testRefreshShortcutConfirmsTheSync() {

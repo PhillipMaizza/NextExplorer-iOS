@@ -47,7 +47,10 @@ import TestUtils
                 $0.uploadStaging = staging(files)
             }
 
-            await store.send(.beginUpload(.documents([URL(fileURLWithPath: "/tmp/a.jpg"), URL(fileURLWithPath: "/tmp/b.txt")])))
+            await store.send(.beginUpload(.documents([
+                URL(fileURLWithPath: "/tmp/a.jpg"),
+                URL(fileURLWithPath: "/tmp/b.txt"),
+            ])))
             await store.receive(\.directUploadStaged)
             await store.receive(\.delegate)
             #expect(store.state.uploadReview == nil)

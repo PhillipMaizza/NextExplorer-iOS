@@ -79,7 +79,12 @@ struct ClientCertificateFeatureTests {
     @Test("A wrong password keeps the file and clears once the user edits it")
     func wrongPassword() async {
         let store = TestStore(
-            initialState: ClientCertificateFeature.State(origin: origin, status: .empty, pendingFile: file, passphrase: TestAccount.rejectedPassword)
+            initialState: ClientCertificateFeature.State(
+                origin: origin,
+                status: .empty,
+                pendingFile: file,
+                passphrase: TestAccount.rejectedPassword
+            )
         ) {
             ClientCertificateFeature()
         } withDependencies: {
@@ -134,7 +139,12 @@ struct ClientCertificateFeatureTests {
     @Test("Installing twice while the first is running is ignored")
     func doubleInstall() async {
         let store = TestStore(
-            initialState: ClientCertificateFeature.State(origin: origin, status: .empty, pendingFile: file, importPhase: .importing)
+            initialState: ClientCertificateFeature.State(
+                origin: origin,
+                status: .empty,
+                pendingFile: file,
+                importPhase: .importing
+            )
         ) {
             ClientCertificateFeature()
         }
@@ -175,7 +185,11 @@ struct ClientCertificateFeatureTests {
     @Test("A removal the keychain refused keeps showing the certificate, with an error")
     func failedRemoval() async {
         let store = TestStore(
-            initialState: ClientCertificateFeature.State(origin: origin, status: .installed(summary), isConfirmingRemoval: true)
+            initialState: ClientCertificateFeature.State(
+                origin: origin,
+                status: .installed(summary),
+                isConfirmingRemoval: true
+            )
         ) {
             ClientCertificateFeature()
         } withDependencies: { [origin, summary] in
@@ -194,7 +208,12 @@ struct ClientCertificateFeatureTests {
     @Test("Closing, discarding or picking again waits while an import is running")
     func busyWhileImporting() async {
         let store = TestStore(
-            initialState: ClientCertificateFeature.State(origin: origin, status: .empty, pendingFile: file, importPhase: .importing)
+            initialState: ClientCertificateFeature.State(
+                origin: origin,
+                status: .empty,
+                pendingFile: file,
+                importPhase: .importing
+            )
         ) {
             ClientCertificateFeature()
         }
@@ -231,14 +250,18 @@ struct ClientCertificateFeatureTests {
         let huge = directory.appending(path: "huge.p12")
         try Data(count: 2 * 1024 * 1024).write(to: huge)
 
-        #expect(ClientCertificateFeature.readFile(at: small) == .init(name: Constants.certificateFileName, data: Data([9, 8, 7])))
+        #expect(ClientCertificateFeature.readFile(at: small) == .init(
+            name: Constants.certificateFileName,
+            data: Data([9, 8, 7])
+        ))
         #expect(ClientCertificateFeature.readFile(at: huge) == nil)
         #expect(ClientCertificateFeature.readFile(at: directory.appending(path: "missing.p12")) == nil)
     }
 
     @Test("The server name hides the default port")
     func serverName() {
-        #expect(ClientCertificateFeature.State(origin: .init(host: TestHost.shortHost, port: 443)).serverName == TestHost.shortHost)
+        #expect(ClientCertificateFeature.State(origin: .init(host: TestHost.shortHost, port: 443))
+            .serverName == TestHost.shortHost)
         #expect(ClientCertificateFeature.State(origin: origin).serverName == TestHost.serverWithPort)
     }
 }

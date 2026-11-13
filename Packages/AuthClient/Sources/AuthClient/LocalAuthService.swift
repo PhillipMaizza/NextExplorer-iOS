@@ -43,7 +43,10 @@ struct LocalAuthService: Sendable {
         var request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.login, method: .post)
         request.setJSONContentType()
         do {
-            request.httpBody = try JSONEncoder().encode(LoginRequestBody(emailOrUsername: identifier, password: password))
+            request.httpBody = try JSONEncoder().encode(LoginRequestBody(
+                emailOrUsername: identifier,
+                password: password
+            ))
         } catch {
             throw AuthClientError.decoding(error.localizedDescription)
         }
@@ -93,7 +96,11 @@ struct LocalAuthService: Sendable {
         } catch {
             throw AuthClientError.decoding(error.localizedDescription)
         }
-        let envelope = try await send(request, decoding: UserEnvelope.self, unauthorizedError: .oidcFailed("exchange rejected"))
+        let envelope = try await send(
+            request,
+            decoding: UserEnvelope.self,
+            unauthorizedError: .oidcFailed("exchange rejected")
+        )
         guard let user = envelope.user else {
             throw AuthClientError.oidcFailed("no user in exchange response")
         }

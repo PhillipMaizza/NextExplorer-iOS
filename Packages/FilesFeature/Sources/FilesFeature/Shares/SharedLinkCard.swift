@@ -70,7 +70,8 @@ struct SharedLinkHeaderRow: View {
                                 .type(.caption(.semibold), style: .error)
                                 .padding(.horizontal, Metrics.badgeHorizontalPadding)
                                 .padding(.vertical, Metrics.badgeVerticalPadding)
-                                .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(0.15)))
+                                .background(RoundedRectangle(cornerRadius: .radiusXSmall)
+                                    .fill(Color.negative.opacity(0.15)))
                         }
                     }
                     if isByMe, let path = share.sourcePath, !path.isEmpty {
@@ -189,7 +190,10 @@ struct SharedLinkDetailRow: View {
                     tint: .accent,
                     isEnabled: true
                 ) {
-                    copy(directLinkString, label: share.isDirectory ? L10n.Shared.copiedFolderZip : L10n.Shared.copiedDirectFile)
+                    copy(
+                        directLinkString,
+                        label: share.isDirectory ? L10n.Shared.copiedFolderZip : L10n.Shared.copiedDirectFile
+                    )
                 }
             }
 
@@ -314,7 +318,13 @@ struct SharedLinkDetailRow: View {
     /// Filled pill for the copy/delete actions. `tint` is `.accent` or `.negative`. Stays
     /// full opacity even when disabled (an expired link's copy buttons): it just stops
     /// responding; `copy()` guards the action too.
-    private func pillAction(_ icon: Image, _ title: String, tint: Color, isEnabled: Bool, action: @escaping () -> Void) -> some View {
+    private func pillAction(
+        _ icon: Image,
+        _ title: String,
+        tint: Color,
+        isEnabled: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             HStack(spacing: .space8) {
                 icon
@@ -436,9 +446,18 @@ private struct SharedLinkCardPreview: View {
 }
 
 #Preview("Card: expired") {
-    SharedLinkCardPreview(share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)), isExpired: true, startExpanded: true)
+    SharedLinkCardPreview(
+        share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)),
+        isExpired: true,
+        startExpanded: true
+    )
 }
 
 #Preview("Card: with me") {
-    SharedLinkCardPreview(share: .previewCard(sourcePath: nil), isByMe: false, sharedByText: "Alex Kim", startExpanded: true)
+    SharedLinkCardPreview(
+        share: .previewCard(sourcePath: nil),
+        isByMe: false,
+        sharedByText: "Alex Kim",
+        startExpanded: true
+    )
 }

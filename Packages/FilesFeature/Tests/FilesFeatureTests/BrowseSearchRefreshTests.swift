@@ -36,7 +36,11 @@ struct BrowseSearchRefreshTests {
     }
 
     /// A store whose server search records each term it was asked and answers `deepHit`.
-    private func searchingStore(_ state: BrowseFeature.State, clock: TestClock<Duration>, queries: LockIsolated<[String]>) -> TestStoreOf<BrowseFeature> {
+    private func searchingStore(
+        _ state: BrowseFeature.State,
+        clock: TestClock<Duration>,
+        queries: LockIsolated<[String]>
+    ) -> TestStoreOf<BrowseFeature> {
         let deepHit = deepHit
         return BrowseFixtures.store(state) {
             $0.continuousClock = clock
@@ -125,7 +129,12 @@ struct BrowseSearchRefreshTests {
         state.searchResults = []
         let store = BrowseFixtures.store(state)
 
-        await store.send(.cachedListingPainted(CachedDirectory(path: TestFolder.photos, items: [photo], access: BrowseTestSupport.readOnlyAccess, fetchedAt: MockDate.date))) {
+        await store.send(.cachedListingPainted(CachedDirectory(
+            path: TestFolder.photos,
+            items: [photo],
+            access: BrowseTestSupport.readOnlyAccess,
+            fetchedAt: MockDate.date
+        ))) {
             $0.items = [photo]
             $0.access = BrowseTestSupport.readOnlyAccess
             $0.isShowingCachePaint = true
@@ -160,7 +169,11 @@ struct BrowseSearchRefreshTests {
         state.searchResults = [deepHit]
         state.searchAnsweredTerm = Constants.term
         state.searchPhase = .loaded
-        let refreshed = SearchResultItem(name: Constants.refreshedName, path: TestFolder.photos, kind: SearchResultItem.fileKind)
+        let refreshed = SearchResultItem(
+            name: Constants.refreshedName,
+            path: TestFolder.photos,
+            kind: SearchResultItem.fileKind
+        )
         let search = AsyncGate()
         let favorites = AsyncGate()
         let queries = LockIsolated<[String]>([])

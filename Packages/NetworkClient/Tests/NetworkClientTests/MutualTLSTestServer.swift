@@ -32,7 +32,9 @@ enum MutualTLSFixtures {
 struct DevCATrustEvaluator: ServerTrustEvaluating {
     let anchor: SecCertificate
 
-    func evaluate(_ challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+    func evaluate(_ challenge: URLAuthenticationChallenge) async
+        -> (URLSession.AuthChallengeDisposition, URLCredential?)
+    {
         guard
             challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
             let trust = challenge.protectionSpace.serverTrust

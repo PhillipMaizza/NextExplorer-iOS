@@ -31,7 +31,9 @@ final class URLSessionAuthDelegate: NSObject, URLSessionDelegate, URLSessionTask
         await respond(to: challenge)
     }
 
-    private func respond(to challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+    private func respond(to challenge: URLAuthenticationChallenge) async
+        -> (URLSession.AuthChallengeDisposition, URLCredential?)
+    {
         if let answer = certificates.handle(challenge) {
             return answer
         }

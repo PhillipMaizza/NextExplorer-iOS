@@ -161,7 +161,11 @@ extension FilesClientLiveTests {
             try prepare(statusCode: 409, fixture: .adminUsersErrorEmailInUse)
 
             await #expect(throws: FilesClientError.serverMessage(statusCode: 409, message: "Email already in use.")) {
-                _ = try await makeClient().updateUser(serverURL, Constants.userID, UpdateUserRequest(email: Constants.newEmail))
+                _ = try await makeClient().updateUser(
+                    serverURL,
+                    Constants.userID,
+                    UpdateUserRequest(email: Constants.newEmail)
+                )
             }
         }
 
@@ -181,7 +185,10 @@ extension FilesClientLiveTests {
         func setUserPasswordSurfacesTheTooShortMessage() async throws {
             try prepare(statusCode: 400, fixture: .passwordErrorTooShort)
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Password must be at least 6 characters long.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "Password must be at least 6 characters long."
+            )) {
                 try await makeClient().setUserPassword(serverURL, Constants.userID, TestValue.outdated)
             }
         }
@@ -202,7 +209,10 @@ extension FilesClientLiveTests {
         func deleteUserSurfacesTheLegacyMessageShapeOnA400() async throws {
             try prepare(statusCode: 400, fixture: .adminUsersErrorLastAdmin)
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Cannot delete the last admin.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "Cannot delete the last admin."
+            )) {
                 try await makeClient().deleteUser(serverURL, Constants.userID)
             }
         }
@@ -238,7 +248,11 @@ extension FilesClientLiveTests {
             try prepare(statusCode: 201, fixture: .adminUsersVolumeSingle)
 
             let volume = try await makeClient().addUserVolume(
-                serverURL, Constants.userID, AddUserVolumeRequest(label: Constants.volumeLabel, path: Constants.volumePath, accessMode: .readonly)
+                serverURL, Constants.userID, AddUserVolumeRequest(
+                    label: Constants.volumeLabel,
+                    path: Constants.volumePath,
+                    accessMode: .readonly
+                )
             )
 
             try expectRequest(.post, "/api/users/u1/volumes")
@@ -250,7 +264,13 @@ extension FilesClientLiveTests {
         func updateUserVolumePatchesTheLabelAndAccessModeButNeverThePath() async throws {
             try prepare(statusCode: 200, fixture: .adminUsersVolumeSingle)
 
-            _ = try await makeClient().updateUserVolume(serverURL, Constants.userID, Constants.volumeID, "Renamed", .readonly)
+            _ = try await makeClient().updateUserVolume(
+                serverURL,
+                Constants.userID,
+                Constants.volumeID,
+                "Renamed",
+                .readonly
+            )
 
             try expectRequest(.patch, "/api/users/u1/volumes/v1")
             try expectJSONBody(["label": "Renamed", "accessMode": "readonly"])
@@ -260,7 +280,13 @@ extension FilesClientLiveTests {
         func updateUserVolumeOmitsTheLabelKeyWhenItIsNil() async throws {
             try prepare(statusCode: 200, fixture: .adminUsersVolumeSingle)
 
-            _ = try await makeClient().updateUserVolume(serverURL, Constants.userID, Constants.volumeID, nil, .readwrite)
+            _ = try await makeClient().updateUserVolume(
+                serverURL,
+                Constants.userID,
+                Constants.volumeID,
+                nil,
+                .readwrite
+            )
 
             try expectJSONBody(["accessMode": "readwrite"])
         }

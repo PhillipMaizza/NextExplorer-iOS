@@ -52,7 +52,10 @@
             browse.newFolderConfirm.tap()
 
             // The mocked backend rejects this name; the sheet must stay open rather than dismiss.
-            XCTAssertFalse(browse.newFolderNameField.waitToVanish(UITestTimeout.short), "A failed create should keep the sheet open")
+            XCTAssertFalse(
+                browse.newFolderNameField.waitToVanish(UITestTimeout.short),
+                "A failed create should keep the sheet open"
+            )
         }
     }
 #endif

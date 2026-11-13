@@ -6,7 +6,8 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// Favorites and share links through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
+/// Favorites and share links through `FilesClient.live` against a stubbed `URLSession`. Nested in
+/// `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     struct FilesClientFavoritesAndSharesTests: FilesClientLiveHarness {
@@ -65,7 +66,12 @@ extension FilesClientLiveTests {
 
         @Test
         func updateShareLinkOmitsThePasswordKeyWhenKeeping() async throws {
-            let body = try await updateBody(UpdateShareRequest(label: "New", accessMode: .readonly, target: .anyone, password: .keep))
+            let body = try await updateBody(UpdateShareRequest(
+                label: "New",
+                accessMode: .readonly,
+                target: .anyone,
+                password: .keep
+            ))
             #expect(body["password"] == nil)
             #expect(body["label"] as? String == "New")
             #expect(body["accessMode"] as? String == "readonly")

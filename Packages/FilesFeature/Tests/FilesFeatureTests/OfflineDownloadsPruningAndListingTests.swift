@@ -55,7 +55,10 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
     @Test
     func aCompleteWalkStillPrunesFilesTheServerNoLongerLists() async {
         let (offline, slots) = storeWithSlots(["A/a.txt", "A/gone.txt"])
-        let run = makeRun(offline: offline, browse: { [self] path in listing([file(TestFile.aText, path: "A")], path: path) })
+        let run = makeRun(
+            offline: offline,
+            browse: { [self] path in listing([file(TestFile.aText, path: "A")], path: path) }
+        )
 
         await run.store.send(.resyncTapped).finish()
 
@@ -65,7 +68,8 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
 
     /// Answers `A` and `B` with `rootError`, and the parent of a pinned folder with `parent`.
     private func notFoundStore(
-        offline: OfflineFileStore, hold: BrowseHold, rootError: FilesClientError, parent: @escaping @Sendable () throws -> BrowseResult
+        offline: OfflineFileStore, hold: BrowseHold, rootError: FilesClientError,
+        parent: @escaping @Sendable () throws -> BrowseResult
     ) -> Harness {
         makeStore(hold: hold, offline: offline) { path in
             guard path.isEmpty else { throw rootError }
@@ -77,7 +81,9 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
     func aSingleNotFoundNeverUnpinsAFolderWhoseParentCannotBeListed() async {
         let offline = pinnedStore(["A"])
         let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) { throw FilesClientError.offline }
+        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) {
+            throw FilesClientError.offline
+        }
 
         await resync(store, hold: hold)
         await receiveWaiting(store)
@@ -90,7 +96,9 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
     func aTransientNotFoundKeepsTheFilesUnderTheFolder() async {
         let (offline, slots) = storeWithSlots(["A/a.txt", "A/Sub/b.txt"])
         let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) { throw FilesClientError.timedOut }
+        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) {
+            throw FilesClientError.timedOut
+        }
 
         await resync(store, hold: hold)
         await receiveWaiting(store)
@@ -132,14 +140,19 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
         await receiveWaiting(store)
 
         #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
-        #expect(offline.recordMissingRoot("A") == 1, "a folder the parent lists is not missing, so earlier strikes reset")
+        #expect(
+            offline.recordMissingRoot("A") == 1,
+            "a folder the parent lists is not missing, so earlier strikes reset"
+        )
     }
 
     @Test
     func twoNotFoundSyncsInARowUnpinAFolderWhoseParentCannotBeListed() async {
         let offline = pinnedStore(["A"])
         let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) { throw FilesClientError.offline }
+        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) {
+            throw FilesClientError.offline
+        }
 
         await resync(store, hold: hold)
         await receiveWaiting(store)
@@ -180,7 +193,11 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
     func anAccessOrPathNotFoundMessageNeverCountsAsTheFolderBeingGone(message: String) async {
         let offline = pinnedStore(["A"])
         let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .serverMessage(statusCode: 404, message: message)) {
+        let store = notFoundStore(
+            offline: offline,
+            hold: hold,
+            rootError: .serverMessage(statusCode: 404, message: message)
+        ) {
             throw FilesClientError.offline
         }
 
@@ -196,7 +213,11 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
     func aNotFoundWithAnotherMessageStillNeedsTwoSyncs() async {
         let offline = pinnedStore(["A"])
         let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .serverMessage(statusCode: 404, message: "Share expired")) {
+        let store = notFoundStore(
+            offline: offline,
+            hold: hold,
+            rootError: .serverMessage(statusCode: 404, message: "Share expired")
+        ) {
             throw FilesClientError.offline
         }
 
@@ -278,7 +299,12 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
                     switch path {
                     case "A":
                         BrowseResult(
-                            items: [folder(Constants.missingFolder, path: "A"), folder("Locked", path: "A"), folder("Down", path: "A"), file(TestFile.aText, path: "A")],
+                            items: [
+                                folder(Constants.missingFolder, path: "A"),
+                                folder("Locked", path: "A"),
+                                folder("Down", path: "A"),
+                                file(TestFile.aText, path: "A"),
+                            ],
                             access: access(), path: path
                         )
                     case "A/Gone": throw FilesClientError.server(statusCode: 404)
@@ -307,7 +333,11 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
                 $0.filesClient.browse = { _, path in
                     switch path {
                     case "A":
-                        BrowseResult(items: [file(TestFile.aText, path: "A"), folder("Bad", path: "A")], access: access(), path: path)
+                        BrowseResult(
+                            items: [file(TestFile.aText, path: "A"), folder("Bad", path: "A")],
+                            access: access(),
+                            path: path
+                        )
                     default:
                         throw FilesClientError.offline
                     }
@@ -348,7 +378,12 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
         offline.removeCurrentAccount = { removals.withValue { $0 += 1 } }
         var state = freshState()
         state.$progress.withLock { $0.phase = .completed }
-        let store = makeStore(state, hold: BrowseHold(), offline: offline, browse: { [self] path in listing([], path: path) })
+        let store = makeStore(
+            state,
+            hold: BrowseHold(),
+            offline: offline,
+            browse: { [self] path in listing([], path: path) }
+        )
 
         await store.send(.removeAllOfflineTapped) { $0.$progress.withLock { $0 = OfflineDownloadProgress() } }
         await store.finish()

@@ -155,7 +155,10 @@ public struct TwoFactorFeature {
                 let code = state.code
                 let filesClient = filesClient
                 return .run { send in
-                    try await send(.confirmResponse(apiResult { try await filesClient.confirmTwoFactorSetup(serverURL, code) }))
+                    try await send(.confirmResponse(apiResult { try await filesClient.confirmTwoFactorSetup(
+                        serverURL,
+                        code
+                    ) }))
                 }
                 .cancellable(id: CancelID.action, cancelInFlight: true)
 
@@ -219,7 +222,10 @@ public struct TwoFactorFeature {
                 switch prompt.action {
                 case .newRecoveryCodes:
                     return .run { send in
-                        try await send(.recoveryCodesResponse(apiResult { try await filesClient.replaceRecoveryCodes(serverURL, password) }))
+                        try await send(.recoveryCodesResponse(apiResult { try await filesClient.replaceRecoveryCodes(
+                            serverURL,
+                            password
+                        ) }))
                     }
                     .cancellable(id: CancelID.action, cancelInFlight: true)
                 case .turnOff:

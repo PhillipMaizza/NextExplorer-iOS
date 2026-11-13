@@ -14,7 +14,10 @@ struct MainTabDownloadsTests: MainTabTestSupport {
         "A download requested from either screen is queued app wide and fetched through the client",
         arguments: [
             Source(name: "from Browse", action: .browse(.delegate(.downloadRequested([MainTabDownloadsTests.movie])))),
-            Source(name: "from Favorites", action: .favorites(.delegate(.downloadRequested([MainTabDownloadsTests.movie])))),
+            Source(
+                name: "from Favorites",
+                action: .favorites(.delegate(.downloadRequested([MainTabDownloadsTests.movie])))
+            ),
         ]
     )
     func downloadRequestedEnqueuesIntoTheAppWideDownloadQueue(_ source: Source) async throws {
@@ -46,7 +49,13 @@ struct MainTabDownloadsTests: MainTabTestSupport {
         #expect(requested.value == ["Files/movie.mkv"])
     }
 
-    private nonisolated static let movie = FileItem(name: "movie.mkv", path: TestFolder.files, dateModified: MockDate.date, size: 1, kind: "mkv")
+    private nonisolated static let movie = FileItem(
+        name: "movie.mkv",
+        path: TestFolder.files,
+        dateModified: MockDate.date,
+        size: 1,
+        kind: "mkv"
+    )
 
     @Test("A drained queue shows the saved toast and Open takes the user to Downloads")
     func downloadQueueFinishedShowsTheSavedToastAndOpenGoesToDownloads() async {

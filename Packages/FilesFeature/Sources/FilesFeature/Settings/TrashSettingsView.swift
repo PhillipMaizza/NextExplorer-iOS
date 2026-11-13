@@ -191,9 +191,14 @@ struct TrashSettingsView: View {
             VStack(alignment: .leading, spacing: .space4) {
                 Text(L10n.TrashSettings.lastPass(lastPass(for: zone)))
                     .type(.body3(.regular), style: .tertiary)
-                if let violations = store.verification?.first(where: { $0.zoneID == zone.id })?.violations, !violations.isEmpty {
+                if let violations = store.verification?.first(where: { $0.zoneID == zone.id })?.violations,
+                   !violations.isEmpty
+                {
                     Text(L10n.TrashSettings.zoneProblems(violations.count)).type(.body3(.semibold), style: .error)
-                    ForEach(Array(violations.filter { !$0.invariant.isEmpty }.enumerated()), id: \.offset) { _, violation in
+                    ForEach(
+                        Array(violations.filter { !$0.invariant.isEmpty }.enumerated()),
+                        id: \.offset
+                    ) { _, violation in
                         Text(L10n.TrashSettings.violation(violation.invariant, violation.detail))
                             .type(.body3(.regular), style: .error)
                     }
@@ -298,11 +303,23 @@ private enum PreviewZones {
         budgetBytes: 1_000_000_000, lastPass: TrashPass(at: "2026-11-11T07:00:00.000Z", purged: 2),
         events: [TrashEvent(id: "1", kind: "evicted", itemName: "holiday.mov")]
     )
-    static let missing = TrashZone(id: "z2", kind: .personal, name: "alice", isAvailable: false, reason: "missing", itemCount: 1, usedBytes: 4_000)
+    static let missing = TrashZone(
+        id: "z2",
+        kind: .personal,
+        name: "alice",
+        isAvailable: false,
+        reason: "missing",
+        itemCount: 1,
+        usedBytes: 4_000
+    )
 }
 
 @MainActor
-private func trashPreview(_ state: TrashSettingsFeature.State, failing: Bool = false, settings: SystemSettings? = nil) -> some View {
+private func trashPreview(
+    _ state: TrashSettingsFeature.State,
+    failing: Bool = false,
+    settings: SystemSettings? = nil
+) -> some View {
     let zones = state.zones
     return NavigationStack {
         TrashSettingsView(store: Store(initialState: state) { TrashSettingsFeature() } withDependencies: {

@@ -72,7 +72,10 @@ struct LoginDiagnosticsSheet: View {
                             .foregroundStyle(Color.black)
                             .frame(maxWidth: .infinity)
                             .frame(height: .size48)
-                            .background(Color.accent, in: RoundedRectangle(cornerRadius: .radiusControl, style: .continuous))
+                            .background(
+                                Color.accent,
+                                in: RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                            )
                     }
                 }
             }
@@ -88,8 +91,15 @@ struct LoginDiagnosticsSheet: View {
     private var previewDiagnostics: LoginDiagnostics {
         var diagnostics = LoginDiagnostics()
         diagnostics.record("connecting: https, default port", at: .distantPast)
-        diagnostics.record("server status: password sign in on, single sign on off, redirected to https false", at: .distantPast)
-        diagnostics.record("sign in: rejected: server answered 401, no account matches that name and password", isProblem: true, at: .distantPast)
+        diagnostics.record(
+            "server status: password sign in on, single sign on off, redirected to https false",
+            at: .distantPast
+        )
+        diagnostics.record(
+            "sign in: rejected: server answered 401, no account matches that name and password",
+            isProblem: true,
+            at: .distantPast
+        )
         return diagnostics
     }
 

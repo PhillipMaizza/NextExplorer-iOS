@@ -28,14 +28,37 @@ extension DependencyValues {
 /// dependencies fail the test when touched.
 enum BrowseFixtures {
     /// Can write and delete but not share: what the transfer tests need from a folder.
-    static let writableAccess = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
+    static let writableAccess = FileAccess(
+        canRead: true,
+        canWrite: true,
+        canUpload: true,
+        canDelete: true,
+        canShare: false,
+        canDownload: true
+    )
 
     /// The kind is the file extension unless given, which is how the server labels files.
     /// The server's hit below the photos folder that no local listing holds.
-    static let deepSearchHit = SearchResultItem(name: TestSearch.deepHitName, path: TestSearch.deepHitPath, kind: SearchResultItem.fileKind)
+    static let deepSearchHit = SearchResultItem(
+        name: TestSearch.deepHitName,
+        path: TestSearch.deepHitPath,
+        kind: SearchResultItem.fileKind
+    )
 
-    static func file(_ name: String, in path: String = "", kind: String? = nil, size: Int64 = 0, modified: Date = MockDate.date) -> FileItem {
-        FileItem(name: name, path: path, dateModified: modified, size: size, kind: kind ?? (name as NSString).pathExtension)
+    static func file(
+        _ name: String,
+        in path: String = "",
+        kind: String? = nil,
+        size: Int64 = 0,
+        modified: Date = MockDate.date
+    ) -> FileItem {
+        FileItem(
+            name: name,
+            path: path,
+            dateModified: modified,
+            size: size,
+            kind: kind ?? (name as NSString).pathExtension
+        )
     }
 
     static func folder(_ name: String, in path: String = "") -> FileItem {

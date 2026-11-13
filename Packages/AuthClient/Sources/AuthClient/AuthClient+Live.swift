@@ -61,7 +61,11 @@ public extension AuthClient {
                 try await localAuthService.status(serverURL: serverURL)
             },
             login: { serverURL, identifier, password in
-                let user = try await localAuthService.login(serverURL: serverURL, identifier: identifier, password: password)
+                let user = try await localAuthService.login(
+                    serverURL: serverURL,
+                    identifier: identifier,
+                    password: password
+                )
                 try await captureAndPersist(
                     serverURL: serverURL,
                     authMode: .local,

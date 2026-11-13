@@ -50,8 +50,17 @@
     }
 
     public extension MacSheetHeader where Trailing == EmptyView {
-        init(title: String, subtitle: String? = nil, canGoBack: Bool, backLabel: String = L10n.Common.back, onBack: @escaping () -> Void) {
-            self.init(title: title, subtitle: subtitle, canGoBack: canGoBack, backLabel: backLabel, onBack: onBack) { EmptyView() }
+        init(
+            title: String,
+            subtitle: String? = nil,
+            canGoBack: Bool,
+            backLabel: String = L10n.Common.back,
+            onBack: @escaping () -> Void
+        ) {
+            self
+                .init(title: title, subtitle: subtitle, canGoBack: canGoBack, backLabel: backLabel, onBack: onBack) {
+                    EmptyView()
+                }
         }
     }
 

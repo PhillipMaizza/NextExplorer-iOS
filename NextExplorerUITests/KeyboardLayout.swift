@@ -40,7 +40,8 @@
         }
 
         private static func isEnabled(_ source: TISInputSource) -> Bool {
-            guard let pointer = TISGetInputSourceProperty(source, kTISPropertyInputSourceIsEnabled) else { return false }
+            guard let pointer = TISGetInputSourceProperty(source, kTISPropertyInputSourceIsEnabled)
+            else { return false }
             return CFBooleanGetValue(Unmanaged<CFBoolean>.fromOpaque(pointer).takeUnretainedValue())
         }
     }

@@ -6,17 +6,26 @@
     final class AuthFlowUITests: UITestCase {
         func testRestoredValidSessionLandsInApp() {
             let app = launchApp(auth: .loggedIn)
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "A valid restored session should land on the Browse tab")
+            XCTAssertTrue(
+                TabBar(app: app).browse.waitToAppear(),
+                "A valid restored session should land on the Browse tab"
+            )
         }
 
         func testNoStoredSessionShowsLogin() {
             let app = launchApp(auth: .loggedOut)
-            XCTAssertTrue(LoginScreen(app: app).hostField.waitToAppear(), "No stored session should show the server entry page")
+            XCTAssertTrue(
+                LoginScreen(app: app).hostField.waitToAppear(),
+                "No stored session should show the server entry page"
+            )
         }
 
         func testExpiredRestoredSessionFallsBackToLogin() {
             let app = launchApp(auth: .expired)
-            XCTAssertTrue(LoginScreen(app: app).hostField.waitToAppear(), "A server rejected session should fall back to login")
+            XCTAssertTrue(
+                LoginScreen(app: app).hostField.waitToAppear(),
+                "A server rejected session should fall back to login"
+            )
         }
 
         func testFullLocalLoginJourney() {
@@ -52,7 +61,10 @@
 
             login.submitCredentials(identifier: Fixture.rejectedIdentifier, password: Fixture.wrongPassword)
 
-            XCTAssertTrue(login.diagnosticsButton.waitToAppear(), "A refused sign in should offer the sign in log at the bottom of the page")
+            XCTAssertTrue(
+                login.diagnosticsButton.waitToAppear(),
+                "A refused sign in should offer the sign in log at the bottom of the page"
+            )
         }
     }
 #endif

@@ -29,8 +29,10 @@ public struct UploadSettings: Equatable, Sendable, Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let defaults = UploadSettings()
-        isChunkedEnabled = try container.decodeIfPresent(Bool.self, forKey: .chunkedEnabled) ?? defaults.isChunkedEnabled
-        isChunkedAutoFallback = try container.decodeIfPresent(Bool.self, forKey: .chunkedAutoFallback) ?? defaults.isChunkedAutoFallback
+        isChunkedEnabled = try container.decodeIfPresent(Bool.self, forKey: .chunkedEnabled)
+            ?? defaults.isChunkedEnabled
+        isChunkedAutoFallback = try container.decodeIfPresent(Bool.self, forKey: .chunkedAutoFallback)
+            ?? defaults.isChunkedAutoFallback
         chunkSizeBytes = try container.decodeIfPresent(Int.self, forKey: .chunkSizeBytes) ?? defaults.chunkSizeBytes
     }
 

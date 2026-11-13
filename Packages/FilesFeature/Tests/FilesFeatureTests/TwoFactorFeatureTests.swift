@@ -13,7 +13,10 @@ struct TwoFactorFeatureTests {
     private typealias Store = TestStoreOf<TwoFactorFeature>
 
     private let serverURL = SettingsTestSupport.serverURL
-    private let setup = TwoFactorSetup(secret: "JBSWY3DPEHPK3PXP", uri: "otpauth://totp/NextExplorer:alice?secret=JBSWY3DPEHPK3PXP")
+    private let setup = TwoFactorSetup(
+        secret: "JBSWY3DPEHPK3PXP",
+        uri: "otpauth://totp/NextExplorer:alice?secret=JBSWY3DPEHPK3PXP"
+    )
     private let codes = ["2HSMP-G9ZSJ", "K3QWE-7RTYU"]
     private let wrongCode = FilesClientError.serverMessage(statusCode: 401, message: "Invalid code")
     private let wrongPassword = FilesClientError.serverMessage(statusCode: 401, message: "Incorrect password")
@@ -72,7 +75,8 @@ struct TwoFactorFeatureTests {
 
     @Test
     func anAccountWithTwoFactorLoadsAsOnWithItsRecoveryCodesLeft() async {
-        let store = makeStore(status: { TwoFactorStatus(isEnabled: true, confirmedAt: "2026-11-10", recoveryCodesLeft: 7) })
+        let store =
+            makeStore(status: { TwoFactorStatus(isEnabled: true, confirmedAt: "2026-11-10", recoveryCodesLeft: 7) })
 
         await store.send(.task)
         await store.receive(\.statusResponse.success) { $0.phase = .on(recoveryCodesLeft: 7) }
@@ -335,7 +339,10 @@ struct TwoFactorFeatureTests {
         let store = makeStore(phase: .on(recoveryCodesLeft: 1), replace: { throw failure })
 
         await store.send(.newRecoveryCodesTapped) { $0.passwordPrompt = .init(action: .newRecoveryCodes) }
-        await store.send(.passwordChanged(TestAccount.rejectedPassword)) { $0.passwordPrompt?.password = TestAccount.rejectedPassword }
+        await store
+            .send(.passwordChanged(TestAccount.rejectedPassword)) {
+                $0.passwordPrompt?.password = TestAccount.rejectedPassword
+            }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
         await store.receive(\.recoveryCodesResponse.failure) {
             $0.isWorking = false
@@ -367,7 +374,10 @@ struct TwoFactorFeatureTests {
         let store = makeStore(phase: .on(recoveryCodesLeft: 4), disable: { throw failure })
 
         await store.send(.turnOffTapped) { $0.passwordPrompt = .init(action: .turnOff) }
-        await store.send(.passwordChanged(TestAccount.rejectedPassword)) { $0.passwordPrompt?.password = TestAccount.rejectedPassword }
+        await store
+            .send(.passwordChanged(TestAccount.rejectedPassword)) {
+                $0.passwordPrompt?.password = TestAccount.rejectedPassword
+            }
         await store.send(.passwordPromptConfirmed) { $0.isWorking = true }
         await store.receive(\.disableResponse.failure) {
             $0.isWorking = false

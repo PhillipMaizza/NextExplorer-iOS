@@ -69,7 +69,11 @@ struct MainTabMenuCommandsTests: MainTabTestSupport {
         @Test("A folder stack popping while another section is shown is ignored")
         func aFolderStackPopWhileAnotherSectionIsShownIsIgnored() async {
             var state = makeState()
-            state.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.documents, title: TestFolder.documents))
+            state.browse.path.append(BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.documents,
+                title: TestFolder.documents
+            ))
             state.selectedTab = .shared
             let id = state.browse.path.ids[0]
             let store = makeStore(state)
@@ -80,7 +84,11 @@ struct MainTabMenuCommandsTests: MainTabTestSupport {
         @Test("Back in the visible Browse still pops and offers Forward")
         func backInTheVisibleBrowseStillPopsAndOffersForward() async {
             var state = makeState()
-            let documents = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.documents, title: TestFolder.documents)
+            let documents = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.documents,
+                title: TestFolder.documents
+            )
             state.browse.path.append(documents)
             let id = state.browse.path.ids[0]
             let store = makeStore(state)

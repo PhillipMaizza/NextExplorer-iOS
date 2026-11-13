@@ -19,7 +19,10 @@
             let language = appLanguage.isEmpty ? nil : appLanguage
             content
                 .environment(\.locale, language.map(Locale.init(identifier:)) ?? .autoupdatingCurrent)
-                .environment(\.layoutDirection, LocalizationOverride.usesRightToLeftLayout(selectedLanguage: language) ? .rightToLeft : .leftToRight)
+                .environment(
+                    \.layoutDirection,
+                    LocalizationOverride.usesRightToLeftLayout(selectedLanguage: language) ? .rightToLeft : .leftToRight
+                )
                 .id(appLanguage)
         }
     }

@@ -1,7 +1,8 @@
 import Foundation
 
 public protocol ServerTrustEvaluating: Sendable {
-    func evaluate(_ challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
+    func evaluate(_ challenge: URLAuthenticationChallenge) async
+        -> (URLSession.AuthChallengeDisposition, URLCredential?)
 }
 
 /// Defers to standard system trust evaluation: self-signed/internal-CA certs fail exactly

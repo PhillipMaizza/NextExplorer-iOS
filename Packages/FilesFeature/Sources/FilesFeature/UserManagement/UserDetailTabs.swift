@@ -18,19 +18,36 @@ struct ProfileTabView: View {
         VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
             Card(L10n.UserDetail.sectionGeneralInfo) {
                 LabeledField(L10n.UserDetail.profileDisplayNameField, uppercased: false) {
-                    DSTextField(L10n.UserDetail.profileDisplayNamePlaceholder, text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
-                        .autocorrectionDisabled()
+                    DSTextField(
+                        L10n.UserDetail.profileDisplayNamePlaceholder,
+                        text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged)
+                    )
+                    .autocorrectionDisabled()
                 }
-                LabeledField(L10n.UserDetail.profileUsernameField, error: store.isProfileDirty ? store.profileUsernameError : nil, uppercased: false) {
-                    DSTextField(L10n.UserDetail.profileUsernamePlaceholder, text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
+                LabeledField(
+                    L10n.UserDetail.profileUsernameField,
+                    error: store.isProfileDirty ? store.profileUsernameError : nil,
+                    uppercased: false
+                ) {
+                    DSTextField(
+                        L10n.UserDetail.profileUsernamePlaceholder,
+                        text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged)
+                    )
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
                 }
-                LabeledField(L10n.UserDetail.profileEmailField, error: store.isProfileDirty ? store.profileEmailError : nil, uppercased: false) {
-                    DSTextField(L10n.UserDetail.profileEmailPlaceholder, text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
-                        .keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
+                LabeledField(
+                    L10n.UserDetail.profileEmailField,
+                    error: store.isProfileDirty ? store.profileEmailError : nil,
+                    uppercased: false
+                ) {
+                    DSTextField(
+                        L10n.UserDetail.profileEmailPlaceholder,
+                        text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged)
+                    )
+                    .keyboardType(.emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
                 }
                 DSButton(L10n.UserDetail.profileSave, style: .primary, isLoading: store.isSavingProfile) {
                     store.send(.saveProfileTapped)
@@ -129,7 +146,10 @@ struct SecurityTabView: View {
                         .type(.body3(.regular), style: .secondary)
                     Spacer(minLength: .space8)
                 }
-                DSButton(user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet, style: .secondary) {
+                DSButton(
+                    user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet,
+                    style: .secondary
+                ) {
                     store.send(.setPasswordTapped)
                 }
             }
@@ -150,7 +170,10 @@ struct SecurityTabView: View {
                                 .resizable().scaledToFit()
                                 .foregroundStyle(Color.secondaryDS)
                                 .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                            Text(method.provider ?? L10n.UserDetail.ssoBadge).type(.body2(.regular), style: .primaryOnSurface)
+                            Text(method.provider ?? L10n.UserDetail.ssoBadge).type(
+                                .body2(.regular),
+                                style: .primaryOnSurface
+                            )
                             Spacer()
                             Text(L10n.UserDetail.ssoLinked).type(.caption(.semibold), style: .success)
                         }

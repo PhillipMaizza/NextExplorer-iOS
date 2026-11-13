@@ -32,7 +32,19 @@
         }
 
         static let everyone: [Self] = [.accounts, .general, .storage, .apiTokens]
-        static let admin: [Self] = [.server, .users, .thumbnails, .accessRules, .uploads, .searchIndex, .folderSize, .ffmpeg, .trash, .versions, .activity]
+        static let admin: [Self] = [
+            .server,
+            .users,
+            .thumbnails,
+            .accessRules,
+            .uploads,
+            .searchIndex,
+            .folderSize,
+            .ffmpeg,
+            .trash,
+            .versions,
+            .activity,
+        ]
         static let app: [Self] = [.about]
 
         var title: String {
@@ -111,12 +123,19 @@
                 .toolbar(removing: .sidebarToggle)
                 // Must come after the toolbar change, which otherwise drops it and lets AppKit
                 // shrink the column until the category names truncate.
-                .navigationSplitViewColumnWidth(min: Metrics.sidebarWidth, ideal: Metrics.sidebarWidth, max: Metrics.sidebarWidth)
+                .navigationSplitViewColumnWidth(
+                    min: Metrics.sidebarWidth,
+                    ideal: Metrics.sidebarWidth,
+                    max: Metrics.sidebarWidth
+                )
             } detail: {
                 NavigationStack {
                     pane(visibleSelection)
                         .navigationTitle(visibleSelection.title)
-                        .navigationDestination(item: $store.scope(state: \.offlineManage, action: \.offlineManage)) { manageStore in
+                        .navigationDestination(item: $store.scope(
+                            state: \.offlineManage,
+                            action: \.offlineManage
+                        )) { manageStore in
                             MacOfflineManagePane(store: manageStore)
                         }
                 }
@@ -208,7 +227,9 @@
                     Color.clear.onAppear { store.send(.uploadSettingsButtonTapped) }
                 }
             case .searchIndex:
-                if let detailStore = store.scope(state: \.searchIndexSettings, action: \.searchIndexSettings.presented) {
+                if let detailStore = store
+                    .scope(state: \.searchIndexSettings, action: \.searchIndexSettings.presented)
+                {
                     MacSearchIndexSettingsPane(store: detailStore)
                 } else {
                     Color.clear.onAppear { store.send(.searchIndexSettingsButtonTapped) }

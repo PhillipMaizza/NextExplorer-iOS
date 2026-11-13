@@ -169,7 +169,10 @@ extension StoreOf<ShareUploadFeature> {
         state.preparingTotal = 12
         state.progress = PreparationProgress(completed: 4, fraction: 0.4)
         state.stagedCount = 9
-        state.failures = phase == .failed || phase == .partiallyPrepared ? (failures.isEmpty ? ItemFailure.previews : failures) : []
+        state
+            .failures = phase == .failed || phase == .partiallyPrepared
+            ? (failures.isEmpty ? ItemFailure.previews : failures)
+            : []
         state.notice = notice
         state.destination = destination
         if phase != .signedOut, phase != .sessionUnreadable {
@@ -221,7 +224,11 @@ extension SessionCredentials {
 #Preview("Failed") { ShareUploadView(store: .preview(.failed)) }
 #Preview("Certificate required") { ShareUploadView(store: .preview(.certificateRequired)) }
 #Preview("Certificate refused") { ShareUploadView(store: .preview(.certificateRejected)) }
-#Preview("Default folder gone") { ShareUploadView(store: .preview(.ready, destination: "", notice: .defaultFolderUnavailable)) }
+#Preview("Default folder gone") { ShareUploadView(store: .preview(
+    .ready,
+    destination: "",
+    notice: .defaultFolderUnavailable
+)) }
 
 #Preview("Account menu") {
     VStack(spacing: .space16) {

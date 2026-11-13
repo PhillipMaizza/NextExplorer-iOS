@@ -5,7 +5,8 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// Every admin, share, favorite, permission and branding route maps the same three transport level failures the same way:
+/// Every admin, share, favorite, permission and branding route maps the same three transport level failures the same
+/// way:
 /// a dead session, a rate limit and no connection. Nested in `FilesClientLiveTests` so it inherits `.serialized`:
 /// every live client suite shares `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
@@ -26,20 +27,36 @@ extension FilesClientLiveTests {
             func call(_ client: FilesClient, _ serverURL: URL) async throws {
                 switch self {
                 case .listUsers: _ = try await client.listUsers(serverURL)
-                case .createUser: _ = try await client.createUser(serverURL, CreateUserRequest(email: "a@example.com", password: Self.password))
+                case .createUser: _ = try await client.createUser(
+                        serverURL,
+                        CreateUserRequest(email: "a@example.com", password: Self.password)
+                    )
                 case .updateUser: _ = try await client.updateUser(serverURL, Self.userID, UpdateUserRequest())
                 case .setUserPassword: try await client.setUserPassword(serverURL, Self.userID, Self.password)
                 case .deleteUser: try await client.deleteUser(serverURL, Self.userID)
                 case .userVolumes: _ = try await client.userVolumes(serverURL, Self.userID)
-                case .addUserVolume: _ = try await client.addUserVolume(serverURL, Self.userID, AddUserVolumeRequest(label: "L", path: "/p"))
-                case .updateUserVolume: _ = try await client.updateUserVolume(serverURL, Self.userID, Self.volumeID, nil, .readonly)
+                case .addUserVolume: _ = try await client.addUserVolume(
+                        serverURL,
+                        Self.userID,
+                        AddUserVolumeRequest(label: "L", path: "/p")
+                    )
+                case .updateUserVolume: _ = try await client.updateUserVolume(
+                        serverURL,
+                        Self.userID,
+                        Self.volumeID,
+                        nil,
+                        .readonly
+                    )
                 case .removeUserVolume: try await client.removeUserVolume(serverURL, Self.userID, Self.volumeID)
                 case .browseAdminDirectories: _ = try await client.browseAdminDirectories(serverURL, nil)
                 case .serverFeatures: _ = try await client.serverFeatures(serverURL)
                 case .fetchPermissions: _ = try await client.fetchPermissions(serverURL, TestFolder.docs)
                 case .changePermissions: try await client.changePermissions(serverURL, TestFolder.docs, "644", false)
                 case .changeOwnership: try await client.changeOwnership(serverURL, TestFolder.docs, nil, nil)
-                case .createShareLink: _ = try await client.createShareLink(serverURL, CreateShareLinkRequest(sourcePath: TestFolder.docs))
+                case .createShareLink: _ = try await client.createShareLink(
+                        serverURL,
+                        CreateShareLinkRequest(sourcePath: TestFolder.docs)
+                    )
                 case .mySharedLinks: _ = try await client.mySharedLinks(serverURL)
                 case .sharedWithMeLinks: _ = try await client.sharedWithMeLinks(serverURL)
                 case .shareableUsers: _ = try await client.shareableUsers(serverURL)

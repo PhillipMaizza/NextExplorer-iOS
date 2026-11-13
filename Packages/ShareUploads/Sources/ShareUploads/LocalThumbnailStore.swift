@@ -15,7 +15,8 @@ import UniformTypeIdentifiers
 /// best effort, and cleared at every session boundary.
 public struct LocalThumbnailStore: Sendable {
     /// Seeds the thumbnail for a file staged for upload to `path` under the account `scope`.
-    public var seed: @Sendable (_ fileURL: URL, _ type: UTType?, _ path: String, _ scope: String, _ startedAt: Date) -> Void
+    public var seed: @Sendable (_ fileURL: URL, _ type: UTType?, _ path: String, _ scope: String, _ startedAt: Date)
+        -> Void
     /// The seeded JPEG for `path` in the current account, if it belongs to a file of `size`
     /// modified at `modified`.
     public var thumbnail: @Sendable (_ path: String, _ size: Int64, _ modified: Date) -> Data?
@@ -26,7 +27,8 @@ public struct LocalThumbnailStore: Sendable {
     public var totalSizeBytes: @Sendable () -> Int64
 
     public init(
-        seed: @escaping @Sendable (_ fileURL: URL, _ type: UTType?, _ path: String, _ scope: String, _ startedAt: Date) -> Void,
+        seed: @escaping @Sendable (_ fileURL: URL, _ type: UTType?, _ path: String, _ scope: String, _ startedAt: Date)
+            -> Void,
         thumbnail: @escaping @Sendable (_ path: String, _ size: Int64, _ modified: Date) -> Data?,
         remove: @escaping @Sendable (_ path: String) -> Void,
         clearAll: @escaping @Sendable () -> Void,
@@ -89,7 +91,11 @@ extension LocalThumbnailStore {
     /// The JPEG to seed for a local file, or `nil` when it is not an image or PDF, too large, or
     /// fails to decode.
     static func jpeg(for fileURL: URL, type: UTType?, size: Int64) -> Data? {
-        guard size <= Constants.maxSourceBytes, let image = ThumbnailRendering.thumbnail(of: fileURL, type: type, maxPixel: Constants.maxPixel) else { return nil }
+        guard size <= Constants.maxSourceBytes, let image = ThumbnailRendering.thumbnail(
+            of: fileURL,
+            type: type,
+            maxPixel: Constants.maxPixel
+        ) else { return nil }
         return ThumbnailRendering.jpegData(image, quality: Constants.jpegQuality)
     }
 
@@ -98,7 +104,11 @@ extension LocalThumbnailStore {
         private let rootOverride: URL?
         private let now: @Sendable () -> Date
         private lazy var cacheDirectory = rootOverride.flatMap {
-            ProtectedCacheDirectory(name: CacheLayout.uploadThumbnailsName, base: $0, fileExtension: Constants.fileExtension)
+            ProtectedCacheDirectory(
+                name: CacheLayout.uploadThumbnailsName,
+                base: $0,
+                fileExtension: Constants.fileExtension
+            )
         }
 
         init(root: URL?, now: @escaping @Sendable () -> Date) {
@@ -109,7 +119,8 @@ extension LocalThumbnailStore {
         private func fileURL(scope: String, path: String) -> URL? {
             guard let directory = cacheDirectory?.url else { return nil }
             let normalized = path.trimmingCharacters(in: CacheLayout.pathTrimCharacters)
-            let digest = SHA256.hash(data: Data("\(scope)\u{0}\(normalized)".utf8)).map { String(format: "%02x", $0) }.joined()
+            let digest = SHA256.hash(data: Data("\(scope)\u{0}\(normalized)".utf8)).map { String(format: "%02x", $0) }
+                .joined()
             return directory
                 .appendingPathComponent(CacheAccountScope.scopedFileName(digest, scope: scope))
                 .appendingPathExtension(Constants.fileExtension)
@@ -164,7 +175,8 @@ extension LocalThumbnailStore {
         func asStore() -> LocalThumbnailStore {
             LocalThumbnailStore(
                 seed: { fileURL, type, path, scope, startedAt in
-                    let size = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize).flatMap { Int64($0) } ?? 0
+                    let size = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize)
+                        .flatMap { Int64($0) } ?? 0
                     guard let jpeg = LocalThumbnailStore.jpeg(for: fileURL, type: type, size: size) else { return }
                     self.seed(Entry(size: size, startedAt: startedAt, jpeg: jpeg), scope: scope, path: path)
                 },

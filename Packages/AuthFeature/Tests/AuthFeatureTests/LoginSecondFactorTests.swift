@@ -87,20 +87,36 @@ struct LoginSecondFactorTests {
     @Test(
         "The trimmed code is sent as typed and the user is handed to the app",
         arguments: [
-            CodeSignInCase(mode: .authenticator, typed: "  123456 ", sentCode: TestAccount.totpCode, sendingLog: "code: sending, 6 digits"),
-            CodeSignInCase(mode: .recovery, typed: TestAccount.recoveryCode, sentCode: TestAccount.recoveryCode, sendingLog: "code: sending, other, 11 characters"),
-            CodeSignInCase(mode: .recovery, typed: " 2HSMP-G9ZSJ ", sentCode: TestAccount.recoveryCode, sendingLog: "code: sending, other, 11 characters"),
+            CodeSignInCase(
+                mode: .authenticator,
+                typed: "  123456 ",
+                sentCode: TestAccount.totpCode,
+                sendingLog: "code: sending, 6 digits"
+            ),
+            CodeSignInCase(
+                mode: .recovery,
+                typed: TestAccount.recoveryCode,
+                sentCode: TestAccount.recoveryCode,
+                sendingLog: "code: sending, other, 11 characters"
+            ),
+            CodeSignInCase(
+                mode: .recovery,
+                typed: " 2HSMP-G9ZSJ ",
+                sentCode: TestAccount.recoveryCode,
+                sendingLog: "code: sending, other, 11 characters"
+            ),
         ]
     )
     func codeSignsIn(_ testCase: CodeSignInCase) async throws {
         let clock = TestClock()
         let calls = LockIsolated<[TOTPCall]>([])
-        let store = Support.makeStore(secondFactorState(code: testCase.typed, mode: testCase.mode), clock: clock) { [user] in
-            $0.authClient.loginTOTP = { url, code in
-                calls.withValue { $0.append(TOTPCall(url: url.absoluteString, code: code)) }
-                return user
+        let store = Support
+            .makeStore(secondFactorState(code: testCase.typed, mode: testCase.mode), clock: clock) { [user] in
+                $0.authClient.loginTOTP = { url, code in
+                    calls.withValue { $0.append(TOTPCall(url: url.absoluteString, code: code)) }
+                    return user
+                }
             }
-        }
 
         await store.send(.codeSubmitButtonTapped) { $0.submitPhase = .submitting }
         try await Support.finishSuccessfulSubmit(store, clock: clock, user: user)
@@ -141,19 +157,24 @@ struct LoginSecondFactorTests {
             ),
             // A sign in the server no longer waits on sends the user back to the password page.
             CodeFailureCase(
-                mode: .authenticator, code: "123456", error: .secondFactorExpired, message: L10n.Login.errorSecondFactorExpired,
+                mode: .authenticator, code: "123456", error: .secondFactorExpired,
+                message: L10n.Login.errorSecondFactorExpired,
                 page: .credentials, expectedCode: "", expectedMode: .authenticator,
-                sendingLog: "code: sending, 6 digits", resultLog: "code: server no longer has a sign in waiting for a code"
+                sendingLog: "code: sending, 6 digits",
+                resultLog: "code: server no longer has a sign in waiting for a code"
             ),
             CodeFailureCase(
-                mode: .recovery, code: "2HSMP-G9ZSX", error: .secondFactorExpired, message: L10n.Login.errorSecondFactorExpired,
+                mode: .recovery, code: "2HSMP-G9ZSX", error: .secondFactorExpired,
+                message: L10n.Login.errorSecondFactorExpired,
                 page: .credentials, expectedCode: "", expectedMode: .authenticator,
-                sendingLog: "code: sending, other, 11 characters", resultLog: "code: server no longer has a sign in waiting for a code"
+                sendingLog: "code: sending, other, 11 characters",
+                resultLog: "code: server no longer has a sign in waiting for a code"
             ),
             CodeFailureCase(
                 mode: .authenticator, code: "123456", error: .rateLimited, message: L10n.Login.errorRateLimited,
                 page: .secondFactor, expectedCode: TestAccount.totpCode, expectedMode: .authenticator,
-                sendingLog: "code: sending, 6 digits", resultLog: "code: server answered 429, too many attempts or account locked"
+                sendingLog: "code: sending, 6 digits",
+                resultLog: "code: server answered 429, too many attempts or account locked"
             ),
             CodeFailureCase(
                 mode: .authenticator, code: "123456", error: .network("offline"), message: L10n.Login.errorUnreachable,
@@ -253,13 +274,20 @@ struct LoginSecondFactorTests {
             CodeInput(mode: .authenticator, typed: "\u{0663}\u{0664}5", expected: "5"),
             CodeInput(mode: .authenticator, typed: String(repeating: "1", count: 500), expected: "111111"),
             CodeInput(mode: .recovery, typed: TestAccount.recoveryCode, expected: TestAccount.recoveryCode),
-            CodeInput(mode: .recovery, typed: String(repeating: "A", count: 500), expected: String(repeating: "A", count: 32)),
+            CodeInput(
+                mode: .recovery,
+                typed: String(repeating: "A", count: 500),
+                expected: String(repeating: "A", count: 32)
+            ),
         ]
     )
     func codeFieldFiltersAndCaps(_ input: CodeInput) async {
         // A check already running keeps a sixth digit from submitting, so only the filter and cap are seen.
         // The field starts with a code already in it, so an input that filters down to nothing still changes it.
-        let store = Support.makeStore(secondFactorState(code: "9", mode: input.mode, submitPhase: .submitting), clock: TestClock())
+        let store = Support.makeStore(
+            secondFactorState(code: "9", mode: input.mode, submitPhase: .submitting),
+            clock: TestClock()
+        )
 
         await store.send(.codeChanged(input.typed)) { $0.code = input.expected }
     }
@@ -300,7 +328,10 @@ struct LoginSecondFactorTests {
     )
     func typingDoesNotSend(_ testCase: NoAutoSubmitCase) async {
         let calls = LockIsolated(0)
-        let store = Support.makeStore(secondFactorState(mode: testCase.mode, submitPhase: testCase.phase), clock: TestClock()) { [user] in
+        let store = Support.makeStore(
+            secondFactorState(mode: testCase.mode, submitPhase: testCase.phase),
+            clock: TestClock()
+        ) { [user] in
             $0.authClient.loginTOTP = { _, _ in
                 calls.withValue { $0 += 1 }
                 return user
@@ -395,9 +426,11 @@ struct LoginSecondFactorTests {
     @Test("the log of a whole 2FA sign in holds no password, name, code or address")
     func logNeverHoldsWhatWasTyped() async {
         let clock = TestClock()
-        let store = Support.makeStore(secondFactorState(code: TestAccount.recoveryCode, mode: .recovery), clock: clock) {
-            $0.authClient.loginTOTP = { _, _ in throw AuthClientError.network("Could not connect to \(Support.host)") }
-        }
+        let store = Support
+            .makeStore(secondFactorState(code: TestAccount.recoveryCode, mode: .recovery), clock: clock) {
+                $0.authClient
+                    .loginTOTP = { _, _ in throw AuthClientError.network("Could not connect to \(Support.host)") }
+            }
 
         await store.send(.codeSubmitButtonTapped) { $0.submitPhase = .submitting }
         await clock.advance(by: .seconds(0.25))
@@ -414,7 +447,9 @@ struct LoginSecondFactorTests {
         expectNoSecrets(in: store, extra: ["2HSMP"])
     }
 
-    @Test("a password sign in logs the shape of the name and whether a password was set, never their text, stamped with the injected date")
+    @Test(
+        "a password sign in logs the shape of the name and whether a password was set, never their text, stamped with the injected date"
+    )
     func signInLogsShapes() async {
         let clock = TestClock()
         let store = Support.makeStore(Support.credentialsState(), clock: clock) {
@@ -432,7 +467,10 @@ struct LoginSecondFactorTests {
 
         #expect(store.state.diagnostics.entries == [
             Support.entry("sign in: sending, name username shaped, 6 characters, password set"),
-            Support.entry("sign in: rejected: server answered 401, no account matches that name and password", isProblem: true),
+            Support.entry(
+                "sign in: rejected: server answered 401, no account matches that name and password",
+                isProblem: true
+            ),
         ])
         expectNoSecrets(in: store)
     }

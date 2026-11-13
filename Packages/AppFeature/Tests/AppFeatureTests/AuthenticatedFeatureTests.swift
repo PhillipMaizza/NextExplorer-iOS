@@ -21,7 +21,10 @@ extension AppSuites {
         private let recorder = WipeRecorder()
 
         private func makeStore(
-            _ state: AuthenticatedFeature.State = AuthenticatedFeature.State(serverURL: AppFixtures.serverA, user: AppFixtures.userA),
+            _ state: AuthenticatedFeature.State = AuthenticatedFeature.State(
+                serverURL: AppFixtures.serverA,
+                user: AppFixtures.userA
+            ),
             clock: TestClock<Duration> = TestClock(),
             configure: (inout DependencyValues) -> Void = { _ in }
         ) -> Store {
@@ -95,17 +98,33 @@ extension AppSuites {
             DropTrigger(action: .mainTab(.delegate(.removeAccount(AppFixtures.accountA))), isSignOut: false),
         ]
 
-        @Test("Dropping the active account clears only that account's caches and keeps the next one's", arguments: dropTriggers)
+        @Test(
+            "Dropping the active account clears only that account's caches and keeps the next one's",
+            arguments: dropTriggers
+        )
         func droppingTheActiveAccountClearsOnlyItsCaches(_ trigger: DropTrigger) async {
             let directory = DirectoryCacheStore.inMemory()
             let json = JSONCacheStore.inMemory()
             let browse = BrowseResult(
                 items: [],
-                access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+                access: FileAccess(
+                    canRead: true,
+                    canWrite: false,
+                    canUpload: false,
+                    canDelete: false,
+                    canShare: false,
+                    canDownload: true
+                ),
                 path: ""
             )
             for id in [AppFixtures.accountA, AppFixtures.accountB] {
-                directory.bound(to: id).write(serverURL: AppFixtures.serverA, path: "", result: browse, etag: nil, fetchedAt: MockDate.date)
+                directory.bound(to: id).write(
+                    serverURL: AppFixtures.serverA,
+                    path: "",
+                    result: browse,
+                    etag: nil,
+                    fetchedAt: MockDate.date
+                )
                 json.bound(to: id).write(key: TestCacheKey.favorites, data: Data(id.utf8))
             }
             let store = makeStore {
@@ -117,9 +136,11 @@ extension AppSuites {
                 $0.jsonCacheStore = json
             }
             let markSigningOut: ((inout AuthenticatedFeature.State) -> Void)? = trigger.isSignOut
-                ? { $0.mainTab.settings.isSigningOut = true } : nil
+                ? { $0.mainTab.settings.isSigningOut = true }
+                : nil
             let markSignedOut: ((inout AuthenticatedFeature.State) -> Void)? = trigger.isSignOut
-                ? { $0.mainTab.settings.isSigningOut = false } : nil
+                ? { $0.mainTab.settings.isSigningOut = false }
+                : nil
 
             await store.send(trigger.action, assert: markSigningOut)
             await store.receive(\.accountChangeResolved, credentialsB, assert: markSignedOut)

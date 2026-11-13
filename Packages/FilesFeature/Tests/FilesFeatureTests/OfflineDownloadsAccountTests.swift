@@ -36,13 +36,22 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
     ) -> OfflineFileStore {
         var store = base
         store.pinnedRoots = { seen.withValue { $0.insert(CacheAccountScope.current) }; return base.pinnedRoots() }
-        store.setPinnedRoots = { roots in seen.withValue { $0.insert(CacheAccountScope.current) }; base.setPinnedRoots(roots) }
+        store
+            .setPinnedRoots = { roots in
+                seen.withValue { $0.insert(CacheAccountScope.current) }; base.setPinnedRoots(roots)
+            }
         store.reconcile = { paths in seen.withValue { $0.insert(CacheAccountScope.current) }; base.reconcile(paths) }
         store.localURL = { item in seen.withValue { $0.insert(CacheAccountScope.current) }; return base.localURL(item) }
-        store.setInterrupted = { value in seen.withValue { $0.insert(CacheAccountScope.current) }; base.setInterrupted(value) }
+        store
+            .setInterrupted = { value in
+                seen.withValue { $0.insert(CacheAccountScope.current) }; base.setInterrupted(value)
+            }
         store.wasInterrupted = { seen.withValue { $0.insert(CacheAccountScope.current) }; return base.wasInterrupted() }
         store.lastAutoSyncAt = { seen.withValue { $0.insert(CacheAccountScope.current) }; return base.lastAutoSyncAt() }
-        store.setLastAutoSyncAt = { date in seen.withValue { $0.insert(CacheAccountScope.current) }; base.setLastAutoSyncAt(date) }
+        store
+            .setLastAutoSyncAt = { date in
+                seen.withValue { $0.insert(CacheAccountScope.current) }; base.setLastAutoSyncAt(date)
+            }
         return store
     }
 

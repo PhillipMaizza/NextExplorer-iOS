@@ -47,8 +47,14 @@ struct APITokenCreateSheet: View {
                     }
                     if store.requiresPassword {
                         LabeledField(L10n.ApiTokens.fieldPassword, uppercased: false) {
-                            DSSecureField(L10n.ApiTokens.fieldPassword, text: Binding(get: { store.createForm?.password ?? "" }, set: { store.send(.passwordChanged($0)) }))
-                                .textContentType(.password)
+                            DSSecureField(
+                                L10n.ApiTokens.fieldPassword,
+                                text: Binding(
+                                    get: { store.createForm?.password ?? "" },
+                                    set: { store.send(.passwordChanged($0)) }
+                                )
+                            )
+                            .textContentType(.password)
                         }
                         Text(L10n.ApiTokens.passwordHint).type(.body3(.regular), style: .secondary)
                     }
@@ -114,7 +120,8 @@ private extension APIToken.Scope {
 }
 
 @MainActor
-private func createSheetPreview(requiresPassword: Bool, configure: (inout APITokensFeature.State) -> Void = { _ in }) -> some View {
+private func createSheetPreview(requiresPassword: Bool, configure: (inout APITokensFeature.State) -> Void = { _ in
+}) -> some View {
     var state = APITokensFeature.State(
         serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
         requiresPassword: requiresPassword,
@@ -127,5 +134,8 @@ private func createSheetPreview(requiresPassword: Bool, configure: (inout APITok
 
 #Preview("With password") { createSheetPreview(requiresPassword: true) }
 #Preview("No password: warning") { createSheetPreview(requiresPassword: false) }
-#Preview("Wrong password") { createSheetPreview(requiresPassword: true) { $0.errorMessage = "That password is not right." } }
+#Preview("Wrong password") {
+    createSheetPreview(requiresPassword: true) { $0.errorMessage = "That password is not right." }
+}
+
 #Preview("Creating") { createSheetPreview(requiresPassword: true) { $0.isWorking = true } }

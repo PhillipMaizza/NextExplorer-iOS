@@ -165,7 +165,12 @@ struct BrowseFileOperationsTests {
         let cache = DirectoryCacheStore.inMemory()
         let existing = BrowseFixtures.file("Old.txt", in: TestFolder.docs)
         let newFolder = BrowseFixtures.folder("Reports", in: TestFolder.docs)
-        let state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs, items: [existing], access: BrowseTestSupport.fullAccess)
+        let state = BrowseFixtures.state(
+            TestFolder.docs,
+            title: TestFolder.docs,
+            items: [existing],
+            access: BrowseTestSupport.fullAccess
+        )
         let store = BrowseFixtures.store(state) { $0.directoryCacheStore = cache }
 
         // A create edits this folder in place; the cache must now hold the new listing so an offline
@@ -262,7 +267,10 @@ struct BrowseFileOperationsTests {
         #expect(requested.value == [TestPath.docsNotes])
     }
 
-    @Test("A file name the editor cannot open is refused without calling the server", arguments: ["photo.jpg", "Makefile"])
+    @Test(
+        "A file name the editor cannot open is refused without calling the server",
+        arguments: ["photo.jpg", "Makefile"]
+    )
     func newFileConfirmedRefusesAFileTheEditorCannotOpen(_ name: String) async {
         var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)
         state.isNewFileSheetPresented = true

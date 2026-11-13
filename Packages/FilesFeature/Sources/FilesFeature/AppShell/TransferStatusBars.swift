@@ -59,7 +59,10 @@ struct TransferStatusBars: View {
             )
         } else {
             TransferFailedBar(
-                label: queue.failedCount == 1 ? L10n.DownloadQueue.barFailedOne : L10n.DownloadQueue.barFailedMany(queue.failedCount),
+                label: queue.failedCount == 1
+                    ? L10n.DownloadQueue.barFailedOne
+                    : L10n.DownloadQueue
+                        .barFailedMany(queue.failedCount),
                 onRetry: { store.send(.downloadQueue(.retryAllFailedTapped), animation: .default) },
                 onDismiss: { store.send(.downloadQueue(.clearFinishedTapped), animation: .default) },
                 onTap: { store.send(.downloadQueue(.barTapped)) }

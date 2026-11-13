@@ -22,7 +22,10 @@
 
         public var body: some View {
             Group {
-                if let session = mainStore.scope(state: \.destination.authenticated, action: \.destination.authenticated) {
+                if let session = mainStore.scope(
+                    state: \.destination.authenticated,
+                    action: \.destination.authenticated
+                ) {
                     MacSettingsContent(store: session.scope(state: \.mainTab, action: \.mainTab))
                 } else {
                     Color.clear.onAppear { dismiss() }

@@ -34,7 +34,10 @@ extension FilesService {
     }
 
     func search(serverURL: URL, path: String, query: String, limit: Int?) async throws -> SearchPage {
-        var components = URLComponents(url: serverURL.appendingPathComponent(APIPath.search), resolvingAgainstBaseURL: false)
+        var components = URLComponents(
+            url: serverURL.appendingPathComponent(APIPath.search),
+            resolvingAgainstBaseURL: false
+        )
         var queryItems = [URLQueryItem(name: QueryKey.query, value: query)]
         if !path.isEmpty {
             queryItems.append(URLQueryItem(name: QueryKey.path, value: path))
@@ -101,7 +104,13 @@ extension FilesService {
     /// into it takes. The root holds nothing of its own, so it offers nothing but reading.
     func volumeRoot(serverURL: URL) async throws -> BrowseResult {
         let items = try await volumes(serverURL: serverURL).map { volume in
-            FileItem(name: volume.path, path: "", dateModified: FileItem.unknownDate, size: 0, kind: FileItem.directoryKind)
+            FileItem(
+                name: volume.path,
+                path: "",
+                dateModified: FileItem.unknownDate,
+                size: 0,
+                kind: FileItem.directoryKind
+            )
         }
         let access = FileAccess(
             canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: false

@@ -15,7 +15,12 @@ enum ThumbnailFixture {
     static func png(in root: URL) throws -> (url: URL, size: Int64) {
         let image = try filledImage(size: imageSize)
         let url = root.appendingPathComponent(pngName)
-        let destination = try #require(CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil))
+        let destination = try #require(CGImageDestinationCreateWithURL(
+            url as CFURL,
+            UTType.png.identifier as CFString,
+            1,
+            nil
+        ))
         CGImageDestinationAddImage(destination, image, nil)
         #expect(CGImageDestinationFinalize(destination))
         let size = try #require(try url.resourceValues(forKeys: [.fileSizeKey]).fileSize)
