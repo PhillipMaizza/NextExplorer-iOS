@@ -255,6 +255,11 @@ struct BackgroundUploadEventsTests {
     // MARK: The periodic reconnect
 
     private let interval: Duration = .seconds(30)
+    /// A test clock keeps a sleep whose deadline equals its time asleep, so a loop that reaches its
+    /// sleep after the test advanced exactly to the beat would wait forever. Every step lands just
+    /// past the beat: a late sleep then returns at once, and the step before still proves nothing
+    /// fires early.
+    private let pastTheBeat: Duration = .nanoseconds(1)
 
     @Test("The periodic task fires once per interval, and only after the interval has passed", .timeLimit(.minutes(1)))
     func periodicFiresEachInterval() async {
@@ -270,7 +275,7 @@ struct BackgroundUploadEventsTests {
 
         await clock.advance(by: interval - .seconds(1))
         #expect(fires.value == 0, "nothing before the interval")
-        await clock.advance(by: .seconds(1))
+        await clock.advance(by: .seconds(1) + pastTheBeat)
         await iterator.next()
         #expect(fires.value == 1)
         await clock.advance(by: interval)
@@ -288,7 +293,7 @@ struct BackgroundUploadEventsTests {
         #expect(task.start(every: interval, clock: clock) { report.yield(1) })
         #expect(!task.start(every: interval, clock: clock) { report.yield(2) })
         #expect(task.isRunning)
-        await clock.advance(by: interval)
+        await clock.advance(by: interval + pastTheBeat)
         var iterator = fired.makeAsyncIterator()
         #expect(await iterator.next() == 1, "only the first timer exists")
         task.stop()
@@ -308,9 +313,30 @@ struct BackgroundUploadEventsTests {
 
         let (fired, report) = AsyncStream.makeStream(of: Void.self)
         #expect(task.start(every: interval, clock: clock) { report.yield() })
-        await clock.advance(by: interval)
+        await clock.advance(by: interval + pastTheBeat)
         var iterator = fired.makeAsyncIterator()
         await iterator.next()
         task.stop()
+    }
+
+    @Test("The next beat is one interval on, wherever the slow work before it ended")
+    func theNextBeatKeepsTheSchedule() {
+        let start = TestClock().now
+        let beat = start.advanced(by: interval)
+
+        let afterQuickWork = PeriodicTask.beat(after: beat, every: interval, now: beat.advanced(by: .seconds(1)))
+        let afterSlowWork = PeriodicTask.beat(after: beat, every: interval, now: beat.advanced(by: .seconds(45)))
+
+        #expect(afterQuickWork == start.advanced(by: .seconds(60)))
+        #expect(afterSlowWork == start.advanced(by: .seconds(60)))
+    }
+
+    @Test("More than a whole interval behind, the missed beats are skipped instead of fired in a burst")
+    func missedBeatsAreSkipped() {
+        let start = TestClock().now
+        let beat = start.advanced(by: interval)
+        let woke = beat.advanced(by: .seconds(600))
+
+        #expect(PeriodicTask.beat(after: beat, every: interval, now: woke) == woke.advanced(by: interval))
     }
 }

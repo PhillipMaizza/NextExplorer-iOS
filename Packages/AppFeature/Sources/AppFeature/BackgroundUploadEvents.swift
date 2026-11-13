@@ -150,7 +150,10 @@ public enum BackgroundUploadEvents {
     }
 }
 
-/// Runs `perform` every `interval` until stopped, one timer at a time.
+/// Runs `perform` every `interval` until stopped, one timer at a time. The beats are fixed when it
+/// starts (start plus one interval, plus two, ...), not measured from whenever the loop gets to
+/// sleep, so a slow `perform` or a late start never shifts them. A loop more than an interval
+/// behind (a Mac waking from sleep) skips the missed beats instead of firing them in a burst.
 final class PeriodicTask: @unchecked Sendable {
     private let lock = NSLock()
     private var task: Task<Void, Never>?
@@ -161,21 +164,31 @@ final class PeriodicTask: @unchecked Sendable {
 
     /// `false` when it was already running: the existing timer is kept.
     @discardableResult
-    func start(every interval: Duration, clock: any Clock<Duration>, perform: @escaping @Sendable () async -> Void) -> Bool {
+    func start(every interval: Duration, clock: some Clock<Duration>, perform: @escaping @Sendable () async -> Void) -> Bool {
         lock.withLock {
             guard task == nil else { return false }
+            let firstBeat = clock.now.advanced(by: interval)
             task = Task {
+                var beat = firstBeat
                 while !Task.isCancelled {
                     do {
-                        try await clock.sleep(for: interval)
+                        try await clock.sleep(until: beat, tolerance: nil)
                     } catch {
                         return
                     }
                     await perform()
+                    beat = Self.beat(after: beat, every: interval, now: clock.now)
                 }
             }
             return true
         }
+    }
+
+    /// The beat after `beat`: one interval on, or one interval from `now` when the loop has fallen
+    /// more than a whole interval behind.
+    static func beat<I: InstantProtocol>(after beat: I, every interval: I.Duration, now: I) -> I {
+        let next = beat.advanced(by: interval)
+        return next.advanced(by: interval) < now ? now.advanced(by: interval) : next
     }
 
     func stop() {
