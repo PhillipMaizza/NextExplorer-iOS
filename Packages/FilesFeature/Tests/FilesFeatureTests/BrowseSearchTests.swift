@@ -3,12 +3,17 @@ import CoreModels
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseSearchTests {
+    private enum Constants {
+        static let reportTerm = "report"
+    }
+
     // MARK: Recursive backend search, instant client pre-fill
 
     @Test("Searching this folder fills in matches from the loaded items at once, then asks the server scoped to the folder")
@@ -371,6 +376,34 @@ struct BrowseSearchTests {
     }
 
     // MARK: Opening a result
+
+    @Test("Show in Enclosing Folder ends the search and opens the folder that holds the result")
+    func showInEnclosingFolderEndsTheSearchAndOpensTheFolder() async {
+        var state = BrowseFixtures.state()
+        state.searchQuery = Constants.reportTerm
+        let result = SearchResultItem(name: TestFile.report, path: TestPath.documentsWork, kind: "file", isNameMatch: true)
+        let store = BrowseFixtures.store(state)
+
+        await store.send(.searchResultEnclosingFolderTapped(result)) {
+            $0.searchQuery = ""
+        }
+        await store.receive(.delegate(.openPath(path: TestPath.documentsWork, title: FilesFeatureTestValue.workFolder)))
+    }
+
+    @Test("Show in Enclosing Folder on a hit at the top opens the root under its own title")
+    func showInEnclosingFolderAtTheTopOpensTheRoot() async {
+        var state = BrowseFixtures.state(TestFolder.photos)
+        state.searchQuery = Constants.reportTerm
+        state.searchScope = .everywhere
+        let result = SearchResultItem(name: TestFile.report, path: "", kind: "file", isNameMatch: true)
+        let store = BrowseFixtures.store(state)
+
+        await store.send(.searchResultEnclosingFolderTapped(result)) {
+            $0.searchQuery = ""
+            $0.searchScope = .thisFolder
+        }
+        await store.receive(.delegate(.openPath(path: "", title: L10n.Browse.navigationTitle)))
+    }
 
     @Test("Opening a folder from the results ends the search")
     func openingAFolderFromSearchEndsTheSearch() async {

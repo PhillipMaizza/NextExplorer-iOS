@@ -316,4 +316,22 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         #expect(!state.hasNoMatchingFavorites)
         #expect(state.isSearching)
     }
+
+    @Test("Show in Enclosing Folder pushes the folder that holds the result and keeps the search under it")
+    func showInEnclosingFolderPushesTheFolderAndKeepsTheSearch() async {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [makeFavorite(id: "1", path: "Bills")]
+        state.searchQuery = Constants.term
+        state.fileSearchResults = [hit]
+        state.searchPhase = .loaded
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        }
+
+        await store.send(.searchResultEnclosingFolderTapped(hit)) {
+            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Bills", title: "Bills"))
+        }
+        #expect(store.state.searchQuery == Constants.term)
+        #expect(store.state.fileSearchResults == [hit])
+    }
 }

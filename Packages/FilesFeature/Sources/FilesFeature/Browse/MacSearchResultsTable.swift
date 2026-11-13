@@ -58,7 +58,7 @@
             .contextMenu(forSelectionType: SearchResultItem.ID.self, menu: { ids in
                 // Finder's search results menu: open the hit, show where it lives, copy its path.
                 if ids.count == 1, let result = results.first(where: { $0.id == ids.first }) {
-                    searchResultMenu(result)
+                    SearchResultMenu(result: result, onOpen: { onOpen(result) }, onShowInFolder: { onShowInFolder(result) })
                         .labelStyle(.titleAndIcon)
                 }
             }, primaryAction: { ids in
@@ -67,19 +67,6 @@
             })
             .scrollContentBackground(.hidden)
             .alternatingRowBackgrounds(.disabled)
-        }
-
-        @ViewBuilder
-        private func searchResultMenu(_ result: SearchResultItem) -> some View {
-            Button { onOpen(result) } label: {
-                Label { Text(L10n.Browse.open) } icon: { result.isDirectory ? IconKit.folder : IconKit.document }
-            }
-            Button { onShowInFolder(result) } label: {
-                Label { Text(L10n.Browse.showInEnclosingFolder) } icon: { IconKit.folderFill }
-            }
-            Button { PlatformPasteboard.copy(result.id) } label: {
-                Label { Text(L10n.Menu.copyPath) } icon: { IconKit.copy }
-            }
         }
 
         /// The web client's label, with the matched line when there is one: "Contents, Line 12".

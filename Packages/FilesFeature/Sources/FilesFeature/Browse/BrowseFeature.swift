@@ -536,9 +536,9 @@ public struct BrowseFeature {
         #if os(macOS)
             /// Files opened from Finder name no folder, so they always go through the review sheet.
             case reviewUpload(UploadReviewFeature.PickSource)
-            /// A search result's Show in Enclosing Folder: ends the search and opens its folder.
-            case searchResultEnclosingFolderTapped(SearchResultItem)
         #endif
+        /// A search result's Show in Enclosing Folder: ends the search and opens its folder.
+        case searchResultEnclosingFolderTapped(SearchResultItem)
         /// Files dropped on a folder row (Finder on a Mac, the Files app on an iPad).
         case filesDroppedOnFolder([URL], folder: FileItem)
         /// Rows dragged in from another Browse window, moved into `destination`.
@@ -1219,15 +1219,14 @@ public struct BrowseFeature {
                 #endif
                 return openUploadReview(source, state: &state)
 
-            #if os(macOS)
-                case let .searchResultEnclosingFolderTapped(result):
-                    state.searchQuery = ""
-                    let title = result.path.isEmpty ? L10n.Browse.navigationTitle : (result.path as NSString).lastPathComponent
-                    return .merge(
-                        search(&state),
-                        .send(.delegate(.openPath(path: result.path, title: title)))
-                    )
+            case let .searchResultEnclosingFolderTapped(result):
+                state.searchQuery = ""
+                return .merge(
+                    search(&state),
+                    .send(.delegate(.openPath(path: result.path, title: result.enclosingFolderTitle)))
+                )
 
+            #if os(macOS)
                 case let .reviewUpload(source):
                     return openUploadReview(source, state: &state)
 

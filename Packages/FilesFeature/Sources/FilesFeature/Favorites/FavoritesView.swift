@@ -379,6 +379,13 @@ struct FavoritesView: View {
                             )
                         }
                         .buttonStyle(DSHapticButtonStyle())
+                        .contextMenu {
+                            SearchResultMenu(
+                                result: result,
+                                onOpen: { store.send(.searchResultTapped(result)) },
+                                onShowInFolder: { store.send(.searchResultEnclosingFolderTapped(result)) }
+                            )
+                        }
                         .listRowSeparator(result.id == firstID ? .hidden : .visible, edges: .top)
                         .listRowSeparator(result.id == lastID ? .hidden : .visible, edges: .bottom)
                     }

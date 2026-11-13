@@ -136,21 +136,6 @@ import TestUtils
 
         // MARK: Search results
 
-        @Test("Show in Enclosing Folder ends the search and opens the folder that holds the result")
-        func showInEnclosingFolderEndsTheSearchAndOpensTheFolder() async {
-            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Home")
-            state.searchQuery = "report"
-            let result = SearchResultItem(name: TestFile.report, path: TestPath.documentsWork, kind: "file", isNameMatch: true)
-            let store = TestStore(initialState: state) {
-                BrowseFeature()
-            }
-
-            await store.send(.searchResultEnclosingFolderTapped(result)) {
-                $0.searchQuery = ""
-            }
-            await store.receive(.delegate(.openPath(path: TestPath.documentsWork, title: FilesFeatureTestValue.workFolder)))
-        }
-
         @Test("View in Shared from a search preview closes it and switches tab")
         func viewInSharedFromASearchPreviewClosesItAndSwitchesTab() async {
             var state = FavoritesFeature.State(serverURL: serverURL)

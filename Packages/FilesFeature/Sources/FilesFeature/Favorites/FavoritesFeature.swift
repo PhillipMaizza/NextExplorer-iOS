@@ -145,6 +145,9 @@ public struct FavoritesFeature {
         /// "View in Shared" after creating a link from a search result's preview.
         case viewSharesFromPreviewTapped
         case searchResultTapped(SearchResultItem)
+        /// A search result's Show in Enclosing Folder: pushes the folder it lives in, keeping the
+        /// search under it to come back to.
+        case searchResultEnclosingFolderTapped(SearchResultItem)
         case previewHost(PresentationAction<BrowseFeature.Action>)
         case selectModeToggled
         case itemSelectionToggled(Favorite.ID)
@@ -266,8 +269,7 @@ public struct FavoritesFeature {
                 return replaceFavorites(cached, in: &state)
 
             case let .rowTapped(favorite):
-                state.forwardStack = []
-                state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: favorite.path, title: favorite.displayName))
+                pushFolder(favorite.path, title: favorite.displayName, in: &state)
                 return .none
 
             case let .removeTapped(favorite):
@@ -367,8 +369,7 @@ public struct FavoritesFeature {
                 // scoped to the file's parent, seed `previewItem` so the cover has content on the
                 // first frame, then let `rowTapped` fetch it. `result.path` is the parent dir.
                 guard !result.isDirectory else {
-                    state.forwardStack = []
-                    state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.id, title: result.name))
+                    pushFolder(result.id, title: result.name, in: &state)
                     return .none
                 }
                 let ext = (result.name as NSString).pathExtension.lowercased()
@@ -384,6 +385,10 @@ public struct FavoritesFeature {
                 host.previewItem = item
                 state.previewHost = host
                 return .send(.previewHost(.presented(.rowTapped(item))))
+
+            case let .searchResultEnclosingFolderTapped(result):
+                pushFolder(result.path, title: result.enclosingFolderTitle, in: &state)
+                return .none
 
             case let .path(.element(id: _, action: .delegate(.downloadRequested(items)))),
                  let .previewHost(.presented(.delegate(.downloadRequested(items)))):
@@ -588,6 +593,12 @@ public struct FavoritesFeature {
     /// favorite (each searches that folder's whole subtree), merged and de duped. Tolerant per
     /// favorite so a since deleted favorite can't fail the whole search; results are still
     /// authoritative for the ones that answered.
+    /// Opens a folder on top of the tab, ending any forward history.
+    private func pushFolder(_ path: String, title: String, in state: inout State) {
+        state.forwardStack = []
+        state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: path, title: title))
+    }
+
     /// Replaces the list (a fetch, the saved copy, a reorder answer), sorted by position. A search
     /// already typed ran against the folders it had: when they changed (typed before the list
     /// loaded, or a favorite added or removed elsewhere) it searches the new ones at once.

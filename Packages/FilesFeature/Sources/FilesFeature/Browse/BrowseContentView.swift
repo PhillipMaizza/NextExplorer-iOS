@@ -1409,6 +1409,7 @@ struct BrowseContentView: View {
                                     .dsCard(padding: Constants.gridCellPadding)
                             }
                             .buttonStyle(DSHapticButtonStyle())
+                            .contextMenu { searchResultMenu(result) }
                             .dsTapFlash()
                         }
                     } else {
@@ -1711,6 +1712,14 @@ struct BrowseContentView: View {
         }
     }
 
+    private func searchResultMenu(_ result: SearchResultItem) -> some View {
+        SearchResultMenu(
+            result: result,
+            onOpen: { store.send(.searchResultTapped(result)) },
+            onShowInFolder: { store.send(.searchResultEnclosingFolderTapped(result)) }
+        )
+    }
+
     @ViewBuilder
     private var searchResultRows: some View {
         let results = store.displayedSearchResults ?? []
@@ -1722,6 +1731,7 @@ struct BrowseContentView: View {
                     searchResultCell(row: result, grid: false)
                 }
                 .buttonStyle(DSHapticButtonStyle())
+                .contextMenu { searchResultMenu(result) }
                 .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
                 .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
             }
