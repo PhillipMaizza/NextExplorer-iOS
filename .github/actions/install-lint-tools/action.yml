@@ -1,0 +1,42 @@
+name: Install lint tools
+description: >
+  SwiftFormat (and, on macOS, SwiftLint) at the versions the repo pins, from their release binaries
+  rather than Homebrew's latest, so a rule added upstream cannot change CI or the format bot on its own.
+  Bump these together with the local tools.
+inputs:
+  swiftlint:
+    description: Also install SwiftLint (macOS only).
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SWIFTFORMAT_VERSION: "0.64.6"
+        SWIFTLINT_VERSION: "0.65.1"
+        WITH_SWIFTLINT: ${{ inputs.swiftlint }}
+      run: |
+        set -euo pipefail
+        BIN="${RUNNER_TEMP}/lint-bin"
+        mkdir -p "${BIN}"
+        if [[ "${RUNNER_OS}" == "Linux" ]]; then
+          SWIFTFORMAT_ASSET="swiftformat_linux.zip"
+          SWIFTFORMAT_NAME="swiftformat_linux"
+        else
+          SWIFTFORMAT_ASSET="swiftformat.zip"
+          SWIFTFORMAT_NAME="swiftformat"
+        fi
+        curl -sSfL "https://github.com/nicklockwood/SwiftFormat/releases/download/${SWIFTFORMAT_VERSION}/${SWIFTFORMAT_ASSET}" -o "${RUNNER_TEMP}/swiftformat.zip"
+        unzip -o -q "${RUNNER_TEMP}/swiftformat.zip" -d "${BIN}"
+        if [[ "${SWIFTFORMAT_NAME}" != "swiftformat" ]]; then
+          mv "${BIN}/${SWIFTFORMAT_NAME}" "${BIN}/swiftformat"
+        fi
+        chmod +x "${BIN}/swiftformat"
+        "${BIN}/swiftformat" --version
+        if [[ "${WITH_SWIFTLINT}" == "true" && "${RUNNER_OS}" == "macOS" ]]; then
+          curl -sSfL "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip" -o "${RUNNER_TEMP}/swiftlint.zip"
+          unzip -o -q "${RUNNER_TEMP}/swiftlint.zip" -d "${BIN}"
+          chmod +x "${BIN}/swiftlint"
+          "${BIN}/swiftlint" version
+        fi
+        echo "${BIN}" >> "${GITHUB_PATH}"

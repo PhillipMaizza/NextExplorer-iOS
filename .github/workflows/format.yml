@@ -1,0 +1,62 @@
+name: Format
+
+# The format bot: formats every Swift file with the repo's
+# .swiftformat (lines within 120 columns, one argument or parameter per line when wrapped) and,
+# when anything changed, opens a "Format Swift code" pull request that merges itself once CI passes.
+#
+# A pull request opened with the workflow's own GITHUB_TOKEN does not start other workflows, so the
+# required checks would never run on it. Set the FORMAT_BOT_TOKEN secret (a fine grained token with
+# contents and pull requests write on this repository) so CI runs and auto merge can finish.
+
+on:
+  schedule:
+    - cron: "0 5 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: format-bot
+  cancel-in-progress: false
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BRANCH: automation/format-swift
+      TITLE: Format Swift code
+      GH_TOKEN: ${{ secrets.FORMAT_BOT_TOKEN || github.token }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          token: ${{ secrets.FORMAT_BOT_TOKEN || github.token }}
+
+      - name: Install SwiftFormat
+        uses: ./.github/actions/install-lint-tools
+        with:
+          swiftlint: "false"
+
+      - name: Format
+        run: swiftformat . --quiet
+
+      - name: Open or update the pull request
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "Already formatted."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "${BRANCH}"
+          git commit -qam "${TITLE}"
+          git push --force -q origin "${BRANCH}"
+          if [[ -z "$(gh pr list --head "${BRANCH}" --state open --json number --jq '.[].number')" ]]; then
+            gh pr create --base main --head "${BRANCH}" --title "${TITLE}" \
+              --body "SwiftFormat with the repo's .swiftformat, from the scheduled format job: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          fi
+          gh pr merge "${BRANCH}" --auto --squash
