@@ -24,4 +24,10 @@ public struct SearchTerm: Equatable, Sendable {
     public var isTooShort: Bool {
         !isEmpty && !isSearchable
     }
+
+    /// Whether `name` holds the term, case insensitively, as the server matches a plain term
+    /// against a name. An empty term matches everything.
+    public func matches(_ name: String) -> Bool {
+        isEmpty || name.localizedCaseInsensitiveContains(text)
+    }
 }

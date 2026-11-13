@@ -56,7 +56,7 @@ struct FavoritesView: View {
             hasError: store.errorMessage != nil,
             hasLoaded: store.phase.hasLoaded,
             isEmpty: store.favorites.isEmpty,
-            hasNoResults: false
+            hasNoResults: store.hasNoMatchingFavorites
         )
         guard base == .content, store.isSearching else { return base }
         if store.searchPhase.errorMessage != nil, store.fileSearchResults == nil {
@@ -174,15 +174,23 @@ struct FavoritesView: View {
             )
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            if case let .cached(fetchedAt) = store.dataSource {
-                DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
-                    .padding(.horizontal, .space16)
-                    .padding(.vertical, .space8)
-                    .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            VStack(spacing: 0) {
+                if store.isSearchTermTooShort {
+                    SearchStatusFooter(message: SearchStatusFooter.tooShortMessage, canShowMore: false, onShowMore: {})
+                        .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
+                        .transition(.opacity)
+                }
+                if case let .cached(fetchedAt) = store.dataSource {
+                    DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
+                        .padding(.horizontal, .space16)
+                        .padding(.vertical, .space8)
+                        .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
         }
         .animation(.easeInOut(duration: 0.2), value: store.dataSource)
+        .animation(.easeInOut(duration: 0.2), value: store.isSearchTermTooShort)
         .syncRefreshFeedback(errorMessage: store.errorMessage) {
             await store.send(.refreshButtonTapped).finish()
         }

@@ -13,6 +13,8 @@ struct FavoritesSearchTests: FavoritesTestSupport {
     private enum Constants {
         static let term = "internet"
         static let termWithSpace = "internet "
+        static let shortTerm = "Bi"
+        static let unmatchedShortTerm = "zq"
     }
 
     private let hit = SearchResultItem(name: "internet.pdf", path: "Bills", kind: "file")
@@ -272,5 +274,36 @@ struct FavoritesSearchTests: FavoritesTestSupport {
             $0.fileSearchResults = [hit]
         }
         #expect(queries.value == [Constants.term])
+    }
+
+    @Test("A term too short for the server filters the favorites by name, asks nothing and shows no skeleton")
+    func aShortTermFiltersTheFavoritesByName() async {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [makeFavorite(id: "1", path: "Bills"), makeFavorite(id: "2", path: TestFolder.photos)]
+        state.phase = .loaded
+        let queries = LockIsolated<[String]>([])
+        let store = heldSearchStore(state, gate: AsyncGate(), queries: queries)
+
+        await store.send(.searchQueryChanged(Constants.shortTerm)) {
+            $0.searchQuery = Constants.shortTerm
+        }
+
+        #expect(!store.state.isSearching)
+        #expect(store.state.isSearchTermTooShort)
+        #expect(store.state.displayedFavorites.map(\.path) == ["Bills"])
+        #expect(!store.state.hasNoMatchingFavorites)
+        #expect(queries.value.isEmpty)
+    }
+
+    @Test("A short term no favorite holds says so instead of showing an empty list")
+    func aShortTermMatchingNothingSaysSo() {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [makeFavorite(id: "1", path: "Bills")]
+        state.searchQuery = Constants.unmatchedShortTerm
+
+        #expect(state.hasNoMatchingFavorites)
+        state.searchQuery = Constants.term
+        #expect(!state.hasNoMatchingFavorites)
+        #expect(state.isSearching)
     }
 }

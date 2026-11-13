@@ -88,9 +88,21 @@ public struct FavoritesFeature {
             searchQuery.isEmpty && !isSelecting
         }
 
-        /// True while a query is active, so the view swaps the favorites list for file results.
+        /// True once the term is long enough for the server, so the view swaps the favorites list
+        /// for file results. A shorter term filters the favorites by name instead.
         public var isSearching: Bool {
-            !SearchTerm(searchQuery).isEmpty
+            SearchTerm(searchQuery).isSearchable
+        }
+
+        /// Typed, but too short for the server: the favorites are filtered by name and a hint
+        /// says how many characters the file search needs.
+        public var isSearchTermTooShort: Bool {
+            SearchTerm(searchQuery).isTooShort
+        }
+
+        /// A name filter left none of the favorites.
+        public var hasNoMatchingFavorites: Bool {
+            isSearchTermTooShort && displayedFavorites.isEmpty
         }
 
         /// File search results with hidden entries dropped unless the preference is on.

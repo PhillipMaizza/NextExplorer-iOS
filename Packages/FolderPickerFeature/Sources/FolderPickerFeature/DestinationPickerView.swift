@@ -87,9 +87,19 @@ public struct DestinationPickerView: View {
                 prompt: L10n.Common.search
             )
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                if !store.directoryPath.isEmpty {
-                    BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, _ in
-                        store.send(.breadcrumbTapped(path: path))
+                VStack(spacing: 0) {
+                    if store.isSearchTermTooShort {
+                        Text(SearchHint.tooShort)
+                            .type(.body3(.regular), style: .secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, .space16)
+                            .padding(.vertical, .space12)
+                            .background(Color.backgroundPrimary)
+                    }
+                    if !store.directoryPath.isEmpty {
+                        BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, _ in
+                            store.send(.breadcrumbTapped(path: path))
+                        }
                     }
                 }
             }
@@ -98,7 +108,7 @@ public struct DestinationPickerView: View {
 
     @ViewBuilder
     private var content: some View {
-        if !store.searchQuery.isEmpty {
+        if store.showsSearchResults {
             searchContent
         } else {
             browseContent
@@ -121,9 +131,12 @@ public struct DestinationPickerView: View {
         } else if store.folders.isEmpty {
             EmptyStateView(icon: IconKit.folder, message: L10n.Browse.destinationPickerNoFolders)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if store.displayedFolders.isEmpty {
+            EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             DSGroupedList {
-                ForEach(store.folders) { folder in
+                ForEach(store.displayedFolders) { folder in
                     Button {
                         store.send(.folderTapped(folder))
                     } label: {
@@ -184,6 +197,21 @@ public struct DestinationPickerView: View {
         }
         .contentShape(Rectangle())
     }
+}
+
+#Preview("Short term filters by name") {
+    var state = DestinationPickerFeature.State(
+        serverURL: URL(string: "https://example.com")!,
+        items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
+    )
+    state.searchQuery = "Ph"
+    return DestinationPickerView(
+        store: Store(initialState: state) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.filesClient = .previewValue
+        }
+    )
 }
 
 #Preview("Folders") {

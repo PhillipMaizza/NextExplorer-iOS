@@ -42,6 +42,24 @@ public struct DestinationPickerFeature {
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
         public var isSearching = false
 
+        /// True once the term is long enough for the server: the folder search replaces the listing.
+        public var showsSearchResults: Bool {
+            SearchTerm(searchQuery).isSearchable
+        }
+
+        /// Typed, but too short for the server: this level's folders are filtered by name and a
+        /// hint says how many characters the search needs.
+        public var isSearchTermTooShort: Bool {
+            SearchTerm(searchQuery).isTooShort
+        }
+
+        /// This level's folders, narrowed by name while the term is too short for the server.
+        public var displayedFolders: IdentifiedArrayOf<FileItem> {
+            let term = SearchTerm(searchQuery)
+            guard term.isTooShort else { return folders }
+            return folders.filter { term.matches($0.name) }
+        }
+
         public init(serverURL: URL, items: [FileItem]) {
             self.serverURL = serverURL
             purpose = .move

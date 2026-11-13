@@ -359,9 +359,52 @@ struct DestinationPickerFeatureTests {
         }
         #expect(queries.value == [Constants.searchTerm])
     }
+
+    @Test("A term too short for the server filters this level's folders by name instead of a blank search")
+    func aShortTermFiltersTheFoldersByName() async {
+        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.media)])
+        finishLoad(&state, folders: [folder(TestFolder.photos, path: TestFolder.media), folder(Constants.workFolder, path: TestFolder.media)])
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = TestStore(initialState: state) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, query, _ in
+                queries.withValue { $0.append(query) }
+                return []
+            }
+        }
+
+        await store.send(.searchQueryChanged(Constants.shortTerm)) {
+            $0.searchQuery = Constants.shortTerm
+        }
+        await clock.advance(by: FilesClient.searchDebounce)
+
+        #expect(!store.state.showsSearchResults)
+        #expect(store.state.isSearchTermTooShort)
+        #expect(store.state.displayedFolders.map(\.name) == [TestFolder.photos])
+        #expect(queries.value.isEmpty)
+    }
+
+    @Test("An empty or blank term lists every folder, a searchable one shows the search instead")
+    func theListingFollowsTheTerm() {
+        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [])
+        finishLoad(&state, folders: [folder(TestFolder.photos), folder(Constants.workFolder)])
+
+        state.searchQuery = TestValue.blank
+        #expect(state.displayedFolders.count == 2)
+        #expect(!state.showsSearchResults)
+        #expect(!state.isSearchTermTooShort)
+
+        state.searchQuery = Constants.searchTerm
+        #expect(state.showsSearchResults)
+        #expect(!state.isSearchTermTooShort)
+    }
 }
 
 private enum Constants {
+    static let shortTerm = "ph"
     static let searchTerm = "sum"
     static let searchTermWithSpace = "sum "
     static let summerFolder = "Summer"

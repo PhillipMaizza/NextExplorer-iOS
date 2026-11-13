@@ -1,6 +1,6 @@
 import CoreModels
 import DesignSystem
-import FilesClient
+import FolderPickerFeature
 import Localization
 import SwiftUI
 
@@ -71,7 +71,7 @@ struct SearchStatusFooter: View {
     }
 
     static var tooShortMessage: String {
-        L10n.Browse.searchTooShort(FilesClient.minimumSearchTermLength)
+        SearchHint.tooShort
     }
 }
 

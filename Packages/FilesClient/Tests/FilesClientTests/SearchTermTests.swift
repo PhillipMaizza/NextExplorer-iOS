@@ -49,4 +49,14 @@ struct SearchTermTests {
         #expect(SearchTerm("va c") != SearchTerm("vac"))
         #expect(SearchTerm("Vac") != SearchTerm("vac"))
     }
+
+    @Test("A name holds the term case insensitively, anywhere, and an empty term matches every name")
+    func aNameHoldsTheTerm() {
+        #expect(SearchTerm(" Pho ").matches("photos"))
+        #expect(SearchTerm("TOS").matches("photos"))
+        #expect(SearchTerm("").matches("photos"))
+        #expect(SearchTerm("   ").matches(""))
+        #expect(!SearchTerm("pts").matches("photos"))
+        #expect(!SearchTerm("x").matches(""))
+    }
 }

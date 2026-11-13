@@ -29,6 +29,14 @@
                 Divider()
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                if store.isSearchTermTooShort {
+                    Text(SearchHint.tooShort)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, Metrics.padding)
+                        .padding(.vertical, .space8)
+                }
                 Divider()
                 MacDialogButtons(
                     confirmTitle: confirmTitle,
@@ -68,7 +76,7 @@
 
         @ViewBuilder
         private var content: some View {
-            if !store.searchQuery.isEmpty {
+            if store.showsSearchResults {
                 if store.isSearching, store.searchResults?.isEmpty ?? true {
                     MacSpinner()
                 } else if let results = store.searchResults, results.isEmpty {
@@ -90,8 +98,10 @@
                 EmptyStateView(icon: IconKit.warning, message: errorMessage) { store.send(.retryTapped) }
             } else if store.folders.isEmpty {
                 EmptyStateView(icon: IconKit.folder, message: L10n.Browse.destinationPickerNoFolders)
+            } else if store.displayedFolders.isEmpty {
+                ContentUnavailableView.search(text: store.searchQuery)
             } else {
-                List(store.folders, selection: $selectedFolderID) { folder in
+                List(store.displayedFolders, selection: $selectedFolderID) { folder in
                     MacItemLabel(name: folder.name, isDirectory: true)
                         .accessibilityAction(named: L10n.Browse.open) { store.send(.folderTapped(folder)) }
                 }
@@ -103,7 +113,7 @@
         }
 
         private func openSelection() {
-            if !store.searchQuery.isEmpty {
+            if store.showsSearchResults {
                 if let id = selectedResultID, let result = store.searchResults?[id: id] {
                     store.send(.searchResultTapped(result))
                 }
@@ -121,6 +131,19 @@
             )) { DestinationPickerFeature() } withDependencies: { $0.filesClient = .previewValue },
             title: "Move “report.pdf”",
             confirmTitle: "Move"
+        )
+    }
+
+    #Preview("Short term filters by name") {
+        var state = DestinationPickerFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            uploadStartingAt: ""
+        )
+        state.searchQuery = "Ph"
+        return MacDestinationPickerSheet(
+            store: Store(initialState: state) { DestinationPickerFeature() } withDependencies: { $0.filesClient = .previewValue },
+            title: "Upload To",
+            confirmTitle: "Choose"
         )
     }
 
