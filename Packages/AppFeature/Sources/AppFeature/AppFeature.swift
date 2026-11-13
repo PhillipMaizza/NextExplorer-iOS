@@ -73,7 +73,12 @@ public struct AppFeature {
 
     public enum Action {
         case onAppear
-        case sessionRestoreResponse(SessionCredentials?)
+        /// The stored session, and the saved files folder recorded for its account (read with it, so
+        /// the account's files list before `me` answers, or with no connection at all).
+        case sessionRestoreResponse(SessionCredentials?, recordedDownloadScope: String? = nil)
+        /// The saved files folder recorded for the account, read before `me` answers (or offline,
+        /// when it never does).
+        case recordedDownloadScopeLoaded(scope: String, accountID: String)
         case sessionValidationResponse(Result<User, AuthClientError>, SessionCredentials)
         case sessionExpiryDetected
         /// The server confirmed the session of this account is rejected, so it is torn down unless
@@ -131,6 +136,16 @@ public struct AppFeature {
         return .run { _ in localDownloadStore.recordOwner(accountID, scope) }
     }
 
+    /// Reads the folder recorded for `accountID` off the main actor, so its saved files list before
+    /// `me` confirms the user, and with no connection at all.
+    private func loadRecordedDownloadScope(_ accountID: String) -> Effect<Action> {
+        let localDownloadStore = localDownloadStore
+        return .run { send in
+            guard let scope = localDownloadStore.ownerScope(accountID) else { return }
+            await send(.recordedDownloadScopeLoaded(scope: scope, accountID: accountID))
+        }
+    }
+
     /// The second pass of an account wipe, run once the account's screens are gone.
     private var finishAccountWipes: Effect<Action> {
         let accountCacheWipe = accountCacheWipe
@@ -181,12 +196,14 @@ public struct AppFeature {
             switch action {
             case .onAppear:
                 let authClient = authClient
+                let localDownloadStore = localDownloadStore
                 return .run { send in
                     let credentials = await authClient.restoreSession()
-                    await send(.sessionRestoreResponse(credentials))
+                    let scope = credentials.flatMap { localDownloadStore.ownerScope($0.accountID) }
+                    await send(.sessionRestoreResponse(credentials, recordedDownloadScope: scope))
                 }
 
-            case let .sessionRestoreResponse(credentials):
+            case let .sessionRestoreResponse(credentials, recordedScope):
                 guard let credentials else {
                     withAnimation {
                         state.destination = .unauthenticated(.init())
@@ -199,6 +216,9 @@ public struct AppFeature {
                 // one's.
                 CacheAccountScope.set(credentials.accountID)
                 pendingAccountWipes.remove(credentials.accountID)
+                if let recordedScope {
+                    state.$downloadScope.withLock { $0 = recordedScope }
+                }
 
                 // Optimistic: trust the stored cookie and show the app straight away, with a
                 // placeholder user filled in from the confirmed `me` response. The splash
@@ -319,7 +339,7 @@ public struct AppFeature {
                 let authClient = authClient
                 return .merge(
                     stopOfflineWork(leaving: leavingAccountID),
-                    refreshAccounts,
+                    .concatenate(loadRecordedDownloadScope(credentials.accountID), refreshAccounts),
                     finishAccountWipes,
                     .run { send in
                         do {
@@ -331,6 +351,12 @@ public struct AppFeature {
                         }
                     }
                 )
+
+            case let .recordedDownloadScopeLoaded(scope, accountID):
+                // Only for the account still active, and never over the scope `me` confirmed.
+                guard accountID == state.currentAccountID, state.downloadScope.isEmpty else { return .none }
+                state.$downloadScope.withLock { $0 = scope }
+                return .none
 
             case let .accountsRefreshed(accounts):
                 state.$accounts.withLock { $0 = accounts }

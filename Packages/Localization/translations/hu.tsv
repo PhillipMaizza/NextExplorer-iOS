@@ -1111,6 +1111,7 @@ downloadQueue.photosAccessDenied	Engedélyezze a Fotók elérését a Beállít�
 downloadQueue.photosSaveFailed	Nem sikerült hozzáadni a Fotókhoz.
 tab.offline	Offline
 offline.sectionSavedEarlier	Korábban mentett
+offline.newFilesBadge	Új fájlok érhetők el offline
 search.onDevice	Az eszközön
 search.remote	Távoli
 offline.tabEmpty	Még semmi sem érhető el offline. Válassza a(z) „Elérhető offline” lehetőséget egy fájlnál vagy mappánál.

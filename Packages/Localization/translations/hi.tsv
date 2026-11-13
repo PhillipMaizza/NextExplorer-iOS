@@ -1138,6 +1138,7 @@ downloadQueue.photosAccessDenied	चित्र और वीडियो स�
 downloadQueue.photosSaveFailed	इसे फ़ोटो में जोड़ा नहीं जा सका।
 tab.offline	ऑफ़लाइन
 offline.sectionSavedEarlier	पहले सहेजे गए
+offline.newFilesBadge	नई फ़ाइलें ऑफ़लाइन उपलब्ध हैं
 search.onDevice	डिवाइस पर
 search.remote	रिमोट
 offline.tabEmpty	अभी कुछ भी ऑफ़लाइन उपलब्ध नहीं है। किसी फ़ाइल या फ़ोल्डर पर “ऑफ़लाइन उपलब्ध” चुनें।

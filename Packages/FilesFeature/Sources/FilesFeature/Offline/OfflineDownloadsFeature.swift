@@ -486,7 +486,9 @@ public struct OfflineDownloadsFeature {
         var queue: [FileItem] = []
         for item in roots {
             if item.isDirectory {
-                queue.append(item)
+                if seen.insert(item.id).inserted {
+                    queue.append(item)
+                }
             } else if seen.insert(item.id).inserted {
                 files.append(item)
             }
@@ -535,10 +537,12 @@ public struct OfflineDownloadsFeature {
                     fill()
                     continue
                 }
-                for item in items {
+                // Only what lies below the folder, each once: a listing that loops back or reaches
+                // outside its folder can never make the walk run forever.
+                for item in items where item.id.hasPrefix(folder + "/") && seen.insert(item.id).inserted {
                     if item.isDirectory {
                         queue.append(item)
-                    } else if seen.insert(item.id).inserted {
+                    } else {
                         files.append(item)
                     }
                 }

@@ -33,6 +33,7 @@
 
         func body(content: Content) -> some View {
             content
+                .modifier(MacOfflineStatusBar(store: store))
                 .modifier(MacDockUploadStatus(
                     remaining: store.uploads.remainingCount,
                     progress: store.uploads.overallProgress

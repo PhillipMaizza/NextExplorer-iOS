@@ -1,3 +1,4 @@
+import Localization
 import XCTest
 
 /// Base class for the critical path UI tests. Launches the app against the fully mocked,
@@ -195,6 +196,7 @@ class UITestCase: XCTestCase {
         static let orientation = "UITEST_ORIENTATION"
         static let legacyDownloads = "UITEST_LEGACY_DOWNLOADS"
         static let searchOffline = "UITEST_SEARCH_OFFLINE"
+        static let offlineLaunch = "UITEST_OFFLINE_LAUNCH"
         static let on = "1"
         static let landscape = "landscape"
     }
@@ -209,7 +211,8 @@ class UITestCase: XCTestCase {
         animationSpeed: Double = UITestCase.fastAnimationSpeed,
         landscape: Bool = false,
         legacyDownloads: Bool = false,
-        searchOffline: Bool = false
+        searchOffline: Bool = false,
+        offlineLaunch: Bool = false
     ) -> XCUIApplication {
         let app = XCUIApplication()
         if legacyDownloads {
@@ -217,6 +220,9 @@ class UITestCase: XCTestCase {
         }
         if searchOffline {
             app.launchEnvironment[LaunchKey.searchOffline] = LaunchKey.on
+        }
+        if offlineLaunch {
+            app.launchEnvironment[LaunchKey.offlineLaunch] = LaunchKey.on
         }
         app.launchEnvironment[LaunchKey.mock] = LaunchKey.on
         app.launchEnvironment[LaunchKey.auth] = auth.rawValue
@@ -267,6 +273,15 @@ enum UITestTimeout {
 
 /// Waits until `predicate` holds for `object` (an element or a query) and returns whether it did,
 /// without asserting. Waits on a condition, never for a fixed time.
+/// The note over a listing shown from a saved copy ("Showing a saved copy from …"), matched on its fixed part.
+func savedCopyNote(in app: XCUIApplication) -> XCUIElement {
+    let fixedPart = L10n.Browse.offlineBannerDetail("").trimmingCharacters(in: .whitespaces)
+    // A Mac text exposes its words as the value, an iPhone one as the label.
+    return app.staticTexts
+        .matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", fixedPart, fixedPart))
+        .firstMatch
+}
+
 func waitUntil(_ predicate: NSPredicate, on object: Any, timeout: TimeInterval = UITestTimeout.standard) -> Bool {
     XCTWaiter()
         .wait(for: [XCTNSPredicateExpectation(predicate: predicate, object: object)], timeout: timeout) == .completed

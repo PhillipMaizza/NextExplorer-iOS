@@ -17,12 +17,6 @@
             text(name, in: app)
         }
 
-        private func pin(_ name: String, in app: XCUIApplication) {
-            XCTAssertTrue(text(name, in: app).waitToAppear())
-            openMenu({ text(name, in: app).rightClick() }, until: app.menuItems[L10n.Browse.actionAvailableOffline])
-            app.menuItems[L10n.Browse.actionAvailableOffline].click()
-        }
-
         func testTheOfflineSectionIsInTheSidebarAndStartsEmpty() {
             let app = launchApp()
             openOffline(in: app)
@@ -39,11 +33,15 @@
 
         func testPinningFromTheContextMenuListsTheFileInTheOfflineSection() {
             let app = launchApp()
-            pin(Fixture.file, in: app)
+            pinForOffline(Fixture.file, in: app)
 
             openOffline(in: app)
 
             XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear(), "A pinned file is listed in Offline")
+            XCTAssertFalse(
+                app.toolbars.buttons[L10n.Menu.activity].exists,
+                "An offline run shows in the bottom bar, never as the toolbar's transfers button"
+            )
             XCTAssertFalse(text(L10n.Offline.tabEmpty, in: app).exists)
         }
 
@@ -59,7 +57,7 @@
 
         func testAPinnedFolderOpensFromTheOfflineSectionAndGoesBack() {
             let app = launchApp()
-            pin(Fixture.folder, in: app)
+            pinForOffline(Fixture.folder, in: app, waitsForRun: false)
             openOffline(in: app)
             XCTAssertTrue(offlineRow(Fixture.folder, in: app).waitToAppear())
 
@@ -72,7 +70,7 @@
 
         func testAPinnedFileOpensItsPreviewFromTheOfflineSection() {
             let app = launchApp()
-            pin(Fixture.file, in: app)
+            pinForOffline(Fixture.file, in: app)
             openOffline(in: app)
             XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
 
@@ -85,9 +83,20 @@
             XCTAssertTrue(sheet.waitToVanish(), "Esc closes it, back on the Offline section")
         }
 
+        func testNewOfflineFilesPutADotBesideOfflineUntilItIsOpened() {
+            let app = launchApp()
+            pinForOffline(Fixture.file, in: app)
+
+            let dot = newFilesDot(in: app)
+            XCTAssertTrue(dot.exists, "A finished run marks Offline in the sidebar")
+            openOffline(in: app)
+            XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
+            XCTAssertTrue(dot.waitToVanish(), "Opening Offline clears it")
+        }
+
         func testRemovingAPinAsksFirstAndCancelKeepsIt() {
             let app = launchApp()
-            pin(Fixture.file, in: app)
+            pinForOffline(Fixture.file, in: app)
             openOffline(in: app)
             XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
 
@@ -106,7 +115,7 @@
 
         func testConfirmingTheRemovalEmptiesTheOfflineSection() {
             let app = launchApp()
-            pin(Fixture.file, in: app)
+            pinForOffline(Fixture.file, in: app)
             openOffline(in: app)
             XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
 

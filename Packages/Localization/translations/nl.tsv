@@ -1138,6 +1138,7 @@ downloadQueue.photosAccessDenied	Sta in Instellingen toegang tot Foto’s toe om
 downloadQueue.photosSaveFailed	Kon dit niet aan Foto’s toevoegen.
 tab.offline	Offline
 offline.sectionSavedEarlier	Eerder bewaard
+offline.newFilesBadge	Nieuwe bestanden offline beschikbaar
 search.onDevice	Op apparaat
 search.remote	Extern
 offline.tabEmpty	Er is nog niets offline beschikbaar. Kies ‘Offline beschikbaar’ bij een bestand of map.

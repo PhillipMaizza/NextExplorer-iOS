@@ -1132,6 +1132,7 @@ downloadQueue.photosAccessDenied	画像や動画を保存するには、設定�
 downloadQueue.photosSaveFailed	写真に追加できませんでした。
 tab.offline	オフライン
 offline.sectionSavedEarlier	以前に保存したもの
+offline.newFilesBadge	新しいファイルがオフラインで利用可能
 search.onDevice	このデバイス上
 search.remote	リモート
 offline.tabEmpty	オフラインで利用できる項目はまだありません。ファイルまたはフォルダで「オフラインで利用可能」を選択してください。

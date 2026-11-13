@@ -1111,6 +1111,7 @@ downloadQueue.photosAccessDenied	Επιτρέψτε την πρόσβαση στ
 downloadQueue.photosSaveFailed	Δεν ήταν δυνατή η προσθήκη στις Φωτογραφίες.
 tab.offline	Εκτός σύνδεσης
 offline.sectionSavedEarlier	Αποθηκεύτηκαν παλαιότερα
+offline.newFilesBadge	Νέα αρχεία διαθέσιμα εκτός σύνδεσης
 search.onDevice	Στη συσκευή
 search.remote	Απομακρυσμένα
 offline.tabEmpty	Τίποτα δεν είναι διαθέσιμο εκτός σύνδεσης ακόμη. Επιλέξτε «Διαθέσιμο εκτός σύνδεσης» σε ένα αρχείο ή φάκελο.

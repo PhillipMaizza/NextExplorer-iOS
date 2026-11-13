@@ -23,6 +23,10 @@
     /// * `UITEST_MOCK=1`            enables the whole path (nothing below runs without it).
     /// * `UITEST_AUTH`             `loggedOut` (default) / `loggedIn` / `expired`.
     /// * `UITEST_SCENARIO`        `normal` (default) / `empty` / `error`.
+    /// * `UITEST_OFFLINE_LAUNCH=1`  the server cannot be reached at all (`me` included), and the launch
+    ///                                 finds what an earlier session kept: the root listing and `notes.txt`
+    ///                                 pinned with its copy, as after closing the app at home and opening
+    ///                                 it on a plane.
     /// * `UITEST_SEARCH_OFFLINE=1`  the search finds no server (`offline`), while browsing still works,
     ///                                 so a test can pin files first and then search without a connection.
     /// * `UITEST_DISABLE_ANIMATIONS=1` turns off UIKit animations and every SwiftUI animation
@@ -43,6 +47,9 @@
         /// `1` seeds one file saved by an earlier version into the Offline tab's "Saved earlier" list.
         public static let legacyDownloadsKey = "UITEST_LEGACY_DOWNLOADS"
         public static let searchOfflineKey = "UITEST_SEARCH_OFFLINE"
+        public static let offlineLaunchKey = "UITEST_OFFLINE_LAUNCH"
+        /// The file the offline launch finds pinned. Mirrored by `Fixture.file`.
+        static let pinnedFileName = "notes.txt"
         public static let legacyDownloadName = "legacy-report.pdf"
 
         /// Whether this launch runs under XCUITest with animations off.
@@ -80,6 +87,35 @@
                 delete: { url in downloads.withValue { $0.removeAll { $0.url == url } } },
                 rename: { url, _ in url }
             )
+        }
+
+        /// No server to reach, and what an earlier session of the signed in account kept on the device.
+        static func startOffline(_ dependencies: inout DependencyValues) {
+            dependencies.authClient.me = { _ in throw AuthClientError.network("UITest offline launch") }
+            dependencies.filesClient.browse = { _, _ in throw FilesClientError.offline }
+            dependencies.filesClient.search = { _, _, _, _ in throw FilesClientError.offline }
+            dependencies.filesClient.favorites = { _ in throw FilesClientError.offline }
+            dependencies.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
+
+            let accountID = credentials().accountID
+            dependencies.directoryCacheStore.bound(to: accountID).write(
+                serverURL: serverURL,
+                path: "",
+                result: BrowseResult(items: rootItems, access: fullAccess, path: ""),
+                etag: nil,
+                fetchedAt: Date(timeIntervalSince1970: 1_700_000_000)
+            )
+            let copy = FileManager.default.temporaryDirectory.appendingPathComponent(pinnedFileName)
+            FileManager.default.createFile(atPath: copy.path, contents: Data("Kept for the flight".utf8))
+            let pinned = rootItems.first { $0.name == pinnedFileName }
+            let offline = OfflineFileStore.inMemory(
+                localURLs: [pinnedFileName: copy],
+                copyMetadata: pinned.map {
+                    [pinnedFileName: OfflineCopyMetadata(dateModified: $0.dateModified, size: $0.size)]
+                } ?? [:]
+            )
+            offline.setPinnedRoots([OfflinePinnedRoot(path: pinnedFileName, isDirectory: false)])
+            dependencies.offlineFileStore = offline
         }
 
         /// How long the hinge needs to unlock rotation on a foldable before landscape is requested.
@@ -543,6 +579,9 @@
                 $0.offlineFileStore = .inMemory()
                 if environment[UITestSupport.legacyDownloadsKey] == "1" {
                     $0.localDownloadStore = UITestSupport.legacyDownloadStore()
+                }
+                if environment[UITestSupport.offlineLaunchKey] == "1" {
+                    UITestSupport.startOffline(&$0)
                 }
             }
         }

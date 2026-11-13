@@ -1111,6 +1111,7 @@ downloadQueue.photosAccessDenied	Tillad adgang til Fotos i Indstillinger for at 
 downloadQueue.photosSaveFailed	Kunne ikke føje dette til Fotos.
 tab.offline	Offline
 offline.sectionSavedEarlier	Gemt tidligere
+offline.newFilesBadge	Nye filer tilgængelige offline
 search.onDevice	På enheden
 search.remote	Eksternt
 offline.tabEmpty	Intet er tilgængeligt offline endnu. Vælg “Tilgængelig offline” på en fil eller mappe.

@@ -1123,6 +1123,7 @@ downloadQueue.photosAccessDenied	Дозвольте доступ до Фото �
 downloadQueue.photosSaveFailed	Не вдалося додати це до Фото.
 tab.offline	Офлайн
 offline.sectionSavedEarlier	Збережено раніше
+offline.newFilesBadge	Нові файли доступні офлайн
 search.onDevice	На пристрої
 search.remote	Віддалено
 offline.tabEmpty	Поки що нічого немає в офлайн-доступі. Виберіть «Доступно офлайн» для файлу або папки.

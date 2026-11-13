@@ -35,6 +35,9 @@ public struct LegacyDownloadStore: Sendable {
     public var rename: @Sendable (_ url: URL, _ newName: String) throws -> URL
     /// Remembers which account a scope belongs to, so removing the account finds its files.
     public var recordOwner: @Sendable (_ accountID: String, _ scope: String) -> Void
+    /// The folder recorded for an account, so a launch without a connection (no user id yet) still
+    /// lists the account's own files; nil for an account never recorded.
+    public var ownerScope: @Sendable (_ accountID: String) -> String?
     /// Removes the files of one account, when it signs out or its session expires.
     public var removeAccount: @Sendable (_ accountID: String) -> Void
     /// Removes every account's files, when the last account signs out.
@@ -50,6 +53,7 @@ public struct LegacyDownloadStore: Sendable {
         delete: @escaping @Sendable (_ url: URL) throws -> Void,
         rename: @escaping @Sendable (_ url: URL, _ newName: String) throws -> URL,
         recordOwner: @escaping @Sendable (_ accountID: String, _ scope: String) -> Void = { _, _ in },
+        ownerScope: @escaping @Sendable (_ accountID: String) -> String? = { _ in nil },
         removeAccount: @escaping @Sendable (_ accountID: String) -> Void = { _ in },
         removeAll: @escaping @Sendable () -> Void = {},
         moveSharedFilesToPrivateStorage: @escaping @Sendable () -> Void = {}
@@ -59,6 +63,7 @@ public struct LegacyDownloadStore: Sendable {
         self.delete = delete
         self.rename = rename
         self.recordOwner = recordOwner
+        self.ownerScope = ownerScope
         self.removeAccount = removeAccount
         self.removeAll = removeAll
         self.moveSharedFilesToPrivateStorage = moveSharedFilesToPrivateStorage
@@ -74,6 +79,7 @@ extension LegacyDownloadStore: DependencyKey {
             delete: { try FileManager.default.removeItem(at: $0) },
             rename: { try SavedEarlierDisk.rename($0, to: $1) },
             recordOwner: { disk.recordOwner(accountID: $0, scope: $1) },
+            ownerScope: { disk.ownerScope(accountID: $0) },
             removeAccount: { disk.removeAccount($0) },
             removeAll: { disk.removeAll() },
             moveSharedFilesToPrivateStorage: { disk.moveSharedFilesToPrivateStorage() }

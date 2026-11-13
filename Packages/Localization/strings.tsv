@@ -985,6 +985,7 @@ offline.badgeAvailable	Available offline
 offline.manageRow	Manage Offline Files
 offline.manageTitle	Offline Files
 offline.sectionSavedEarlier	Saved earlier
+offline.newFilesBadge	New files available offline
 search.onDevice	On device
 search.remote	Remote
 offline.tabEmpty	Nothing is available offline yet. Choose Available Offline on a file or folder.

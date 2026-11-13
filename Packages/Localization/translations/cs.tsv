@@ -1121,6 +1121,7 @@ downloadQueue.photosAccessDenied	Povolte v Nastavení přístup k Fotkám, abyst
 downloadQueue.photosSaveFailed	Nepodařilo se přidat do Fotek.
 tab.offline	Offline
 offline.sectionSavedEarlier	Uloženo dříve
+offline.newFilesBadge	Nové soubory dostupné offline
 search.onDevice	V zařízení
 search.remote	Vzdálené
 offline.tabEmpty	Zatím není nic dostupné offline. U souboru nebo složky zvolte „Dostupné offline“.

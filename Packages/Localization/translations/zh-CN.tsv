@@ -1132,6 +1132,7 @@ downloadQueue.photosAccessDenied	请在“设置”中允许访问“照片”�
 downloadQueue.photosSaveFailed	无法添加到“照片”。
 tab.offline	离线
 offline.sectionSavedEarlier	之前存储的
+offline.newFilesBadge	有新文件可离线使用
 search.onDevice	在此设备上
 search.remote	远程
 offline.tabEmpty	目前还没有可离线使用的内容。请在文件或文件夹上选择“可离线使用”。

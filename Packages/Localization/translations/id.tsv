@@ -1105,6 +1105,7 @@ downloadQueue.photosAccessDenied	Izinkan akses ke Foto di Pengaturan untuk menyi
 downloadQueue.photosSaveFailed	Tidak dapat menambahkan ini ke Foto.
 tab.offline	Offline
 offline.sectionSavedEarlier	Disimpan sebelumnya
+offline.newFilesBadge	File baru tersedia offline
 search.onDevice	Di perangkat
 search.remote	Jarak jauh
 offline.tabEmpty	Belum ada yang tersedia secara offline. Pilih “Tersedia offline” pada file atau folder.

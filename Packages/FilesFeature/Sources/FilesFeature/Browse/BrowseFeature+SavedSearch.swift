@@ -21,21 +21,12 @@ extension BrowseFeature {
         let base = state.searchBasePath
         return .run { send in
             let read = Task.detached(priority: .userInitiated) {
-                // Pinned items below the search's folder are reached even when the folders above them
-                // were never saved, or their saved copies were dropped: what is kept offline is always found.
-                let pinned = offlineFileStore.pinnedRoots().filter { Self.isPath($0.path, below: base) }
-                let pinnedFiles = pinned.filter { !$0.isDirectory }.map {
-                    offlineFileStore.matchingPinnedCopy(Self.pinnedFileItem($0.path))
-                }
-                return pinnedFiles + Self.savedItems(
-                    under: [base] + pinned.filter(\.isDirectory).map(\.path),
-                    folderLimit: Self.savedSearchFoldersLimit,
-                    itemLimit: Self.savedSearchItemsLimit
-                ) { path in
-                    // The listing kept with a pinned folder backs the shared cache, which evicts.
-                    (directoryCacheStore.read(serverURL: serverURL, path: path) ?? offlineFileStore.listing(path))?
-                        .items
-                }
+                Self.savedAndKeptItems(
+                    under: base,
+                    serverURL: serverURL,
+                    directoryCacheStore: directoryCacheStore,
+                    offlineFileStore: offlineFileStore
+                )
             }
             // A search that ends or moves stops the read too, not just its answer.
             let items = await withTaskCancellationHandler { await read.value } onCancel: { read.cancel() }
@@ -43,6 +34,48 @@ extension BrowseFeature {
             await send(.searchSavedItemsLoaded(items))
         }
         .cancellable(id: CancelID.searchSavedItems, cancelInFlight: true)
+    }
+
+    /// What the device holds below `base`: the saved listings, and every pinned item below it even when
+    /// the folders above it were never saved or their saved copies were dropped. Reads the disk, so call
+    /// it off the main actor. Shared by Browse and Favorites search without a connection.
+    nonisolated static func savedAndKeptItems(
+        under base: String,
+        serverURL: URL,
+        directoryCacheStore: DirectoryCacheStore,
+        offlineFileStore: OfflineFileStore
+    ) -> [FileItem] {
+        let pinned = offlineFileStore.pinnedRoots().filter { isPath($0.path, below: base) }
+        let pinnedFiles = pinned.filter { !$0.isDirectory }.map {
+            offlineFileStore.matchingPinnedCopy(pinnedFileItem($0.path))
+        }
+        return pinnedFiles + savedItems(
+            under: [base] + pinned.filter(\.isDirectory).map(\.path),
+            folderLimit: savedSearchFoldersLimit,
+            itemLimit: savedSearchItemsLimit
+        ) { path in
+            // The listing kept with a pinned folder backs the shared cache, which evicts.
+            (directoryCacheStore.read(serverURL: serverURL, path: path) ?? offlineFileStore.listing(path))?.items
+        }
+    }
+
+    /// `items` that `term` matches below `base`, as search results.
+    nonisolated static func searchMatches(
+        _ items: [FileItem],
+        term: SearchTerm,
+        below base: String
+    ) -> [SearchResultItem] {
+        items
+            .filter { term.matches(
+                name: $0.name,
+                relativePath: relativePath($0.id, below: base),
+                isDirectory: $0.isDirectory
+            ) }
+            .map { SearchResultItem(
+                name: $0.name,
+                path: $0.path,
+                kind: SearchResultItem.kind(isDirectory: $0.isDirectory)
+            ) }
     }
 
     /// Saved items below the `starts` folders, reading at most `folderLimit` folders and keeping at

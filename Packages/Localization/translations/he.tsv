@@ -1117,6 +1117,7 @@ downloadQueue.photosAccessDenied	אפשרו גישה לתמונות בהגדרו
 downloadQueue.photosSaveFailed	לא ניתן היה להוסיף לתמונות.
 tab.offline	לא מקוון
 offline.sectionSavedEarlier	נשמרו קודם
+offline.newFilesBadge	קבצים חדשים זמינים במצב לא מקוון
 search.onDevice	במכשיר
 search.remote	מרוחק
 offline.tabEmpty	עדיין אין דבר זמין ללא חיבור. בחרו ״זמין במצב לא מקוון״ בקובץ או בתיקייה.

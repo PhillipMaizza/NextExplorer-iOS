@@ -1,4 +1,5 @@
 #if os(iOS)
+    import Localization
     import XCTest
 
     /// Offline and Save to Device on iPhone: the per item actions, the Offline tab that replaced
@@ -73,6 +74,24 @@
             XCTAssertTrue(browse.previewBackButton.waitToAppear(), "Tapping a pinned file opens its preview")
             browse.previewBackButton.tap()
             XCTAssertTrue(offline.row(Fixture.file).waitToAppear(), "Closing the preview returns to the Offline tab")
+        }
+
+        func testNewOfflineFilesPutADotOnTheOfflineTabUntilItIsOpened() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal)
+            let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.availableOfflineAction)
+            browse.availableOfflineAction.tap()
+
+            let tab = TabBar(app: app).downloads
+            let marked = NSPredicate(format: "value CONTAINS %@", L10n.Offline.newFilesBadge)
+            XCTAssertTrue(waitUntil(marked, on: tab), "A finished run marks the Offline tab")
+            let offline = OfflineTabScreen(app: app)
+            selectTab(tab, until: offline.row(Fixture.file))
+            XCTAssertTrue(
+                waitUntil(NSCompoundPredicate(notPredicateWithSubpredicate: marked), on: tab),
+                "Opening Offline clears it"
+            )
         }
 
         func testAFileOffersSaveToDeviceAndNoLongerOffersDownload() {

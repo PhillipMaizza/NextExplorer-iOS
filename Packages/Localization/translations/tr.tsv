@@ -1110,6 +1110,7 @@ downloadQueue.photosAccessDenied	Resim ve videoları kaydetmek için Ayarlar’d
 downloadQueue.photosSaveFailed	Bu, Fotoğraflar’a eklenemedi.
 tab.offline	Çevrimdışı
 offline.sectionSavedEarlier	Daha önce kaydedilenler
+offline.newFilesBadge	Yeni dosyalar çevrimdışı kullanılabilir
 search.onDevice	Cihazda
 search.remote	Uzak
 offline.tabEmpty	Henüz çevrimdışı kullanılabilir bir şey yok. Bir dosya veya klasörde “Çevrimdışı kullanılabilir” seçeneğini seçin.

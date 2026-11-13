@@ -112,6 +112,10 @@ struct SavedEarlierDisk: Sendable {
         }
     }
 
+    func ownerScope(accountID: String) -> String? {
+        Self.ownersLock.withLock { readOwners()[accountID] }
+    }
+
     func removeAccount(_ accountID: String) {
         Self.ownersLock.withLock {
             var owners = readOwners()

@@ -44,6 +44,26 @@
                 .firstMatch
         }
 
+        /// The dot beside Offline in the sidebar: a run stored files since Offline was last opened.
+        func newFilesDot(in app: XCUIApplication) -> XCUIElement {
+            app.outlines.descendants(matching: .any)
+                .matching(NSPredicate(format: "label == %@", L10n.Offline.newFilesBadge))
+                .firstMatch
+        }
+
+        /// Makes a listed item available offline from its context menu, then waits for the run to
+        /// finish (the sidebar dot), so nothing a test does next races the run's last updates. A mocked
+        /// folder lists no files of its own, so pinning one stores nothing and shows no dot: pass
+        /// `waitsForRun: false` for a folder.
+        func pinForOffline(_ name: String, in app: XCUIApplication, waitsForRun: Bool = true) {
+            XCTAssertTrue(text(name, in: app).waitToAppear())
+            openMenu({ text(name, in: app).rightClick() }, until: app.menuItems[L10n.Browse.actionAvailableOffline])
+            app.menuItems[L10n.Browse.actionAvailableOffline].click()
+            if waitsForRun {
+                XCTAssertTrue(newFilesDot(in: app).waitToAppear(), "The offline run finishes")
+            }
+        }
+
         /// A section in the main window's sidebar, a native selectable list row on the Mac.
         func sidebarItem(_ title: String, in app: XCUIApplication) -> XCUIElement {
             app.outlines.cells.staticTexts.showing(title)

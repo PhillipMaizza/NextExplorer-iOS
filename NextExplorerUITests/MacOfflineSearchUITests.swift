@@ -5,15 +5,6 @@
     /// The Mac search table with files kept offline: "On device" rows first, then "Remote", and
     /// without a connection what was kept is still found.
     final class MacOfflineSearchUITests: MacUITestCase {
-        private func pinFile(in app: XCUIApplication) {
-            XCTAssertTrue(text(Fixture.file, in: app).waitToAppear())
-            openMenu(
-                { text(Fixture.file, in: app).rightClick() },
-                until: app.menuItems[L10n.Browse.actionAvailableOffline]
-            )
-            app.menuItems[L10n.Browse.actionAvailableOffline].click()
-        }
-
         private func search(in app: XCUIApplication) {
             app.typeKey(Constants.findKey, modifierFlags: .command)
             app.typeText(Fixture.fileSearchTerm)
@@ -21,7 +12,7 @@
 
         func testThePinnedFileHeadsTheSearchTableUnderOnDevice() {
             let app = launchApp()
-            pinFile(in: app)
+            pinForOffline(Fixture.file, in: app)
 
             search(in: app)
 
@@ -42,7 +33,7 @@
 
         func testOfflineThePinnedFileIsStillFound() {
             let app = launchApp(searchOffline: true)
-            pinFile(in: app)
+            pinForOffline(Fixture.file, in: app)
 
             search(in: app)
 

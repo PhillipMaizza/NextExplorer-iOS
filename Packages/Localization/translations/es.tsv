@@ -1138,6 +1138,7 @@ downloadQueue.photosAccessDenied	Permite el acceso a Fotos en Ajustes para guard
 downloadQueue.photosSaveFailed	No se pudo añadir a Fotos.
 tab.offline	Sin conexión
 offline.sectionSavedEarlier	Guardado antes
+offline.newFilesBadge	Nuevos archivos disponibles sin conexión
 search.onDevice	En el dispositivo
 search.remote	Remoto
 offline.tabEmpty	Todavía no hay nada disponible sin conexión. Elige «Disponible sin conexión» en un archivo o carpeta.

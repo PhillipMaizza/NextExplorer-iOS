@@ -285,8 +285,12 @@ struct BrowseContentView: View {
                 loadingSkeleton
                     .transition(.opacity)
             } else if viewMode == .table, !store.isSelecting, !store.isSearching {
-                tableContent
-                    .transition(.opacity)
+                // A table has no footer row, so the saved copy note sits under it.
+                VStack(spacing: 0) {
+                    tableContent
+                    offlineFooter
+                }
+                .transition(.opacity)
             } else if viewMode == .table, store.isSearching {
                 searchTableContent
                     .transition(.opacity)
@@ -1623,9 +1627,20 @@ struct BrowseContentView: View {
     @ViewBuilder
     private var offlineFooter: some View {
         if case let .cached(fetchedAt) = store.dataSource {
-            DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
-                .padding(.horizontal, .space16)
-                .padding(.top, .space12)
+            let text = L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt))
+            #if os(macOS)
+                // Under the Mac table: a quiet line in the corner, not a card.
+                Label { Text(text) } icon: { IconKit.info }
+                    .type(.caption(.regular), style: .secondary)
+                    .fixedSize()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, .space16)
+                    .padding(.vertical, .space8)
+            #else
+                DSInfoCard(text)
+                    .padding(.horizontal, .space16)
+                    .padding(.top, .space12)
+            #endif
         }
     }
 

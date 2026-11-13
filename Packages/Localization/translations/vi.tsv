@@ -1105,6 +1105,7 @@ downloadQueue.photosAccessDenied	Cho phép truy cập Ảnh trong Cài đặt đ
 downloadQueue.photosSaveFailed	Không thể thêm mục này vào Ảnh.
 tab.offline	Ngoại tuyến
 offline.sectionSavedEarlier	Đã lưu trước đây
+offline.newFilesBadge	Có tệp mới dùng ngoại tuyến
 search.onDevice	Trên thiết bị
 search.remote	Từ xa
 offline.tabEmpty	Chưa có gì khả dụng ngoại tuyến. Chọn “Có sẵn ngoại tuyến” trên một tệp hoặc thư mục.

@@ -39,6 +39,17 @@ struct SearchOnDeviceTests {
         SearchResultItem(name: Constants.plan, path: Constants.lookalike, kind: SearchResultItem.fileKind)
     }
 
+    private let docsFavorite = Favorite(
+        id: "1",
+        path: TestFolder.docs,
+        label: nil,
+        icon: "folder",
+        color: nil,
+        position: 0,
+        createdAt: MockDate.date,
+        updatedAt: MockDate.date
+    )
+
     /// `Docs/Trips` pinned, with its listing kept on the device.
     private func pinnedTrips() -> OfflineFileStore {
         let offline = OfflineFileStore.inMemory()
@@ -265,5 +276,70 @@ struct SearchOnDeviceTests {
 
         #expect(store.state.searchResultSections.onDevice == [planHit])
         #expect(store.state.searchResultSections.remote == [photoHit])
+    }
+
+    @Test("Favorites search without a connection answers from what the device saved and kept")
+    func favoritesSearchOfflineAnswersFromTheDevice() async {
+        let clock = TestClock()
+        let cache = DirectoryCacheStore.inMemory()
+        cache.write(
+            serverURL: BrowseTestSupport.serverURL,
+            path: TestFolder.docs,
+            result: BrowseResult(
+                items: [photo, trips],
+                access: BrowseTestSupport.readOnlyAccess,
+                path: TestFolder.docs
+            ),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
+        var state = FavoritesFeature.State(serverURL: BrowseTestSupport.serverURL)
+        state.favorites = [docsFavorite]
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.directoryCacheStore = cache
+            $0.offlineFileStore = pinnedTrips()
+            $0.filesClient.search = { _, _, _, _ in throw FilesClientError.offline }
+        }
+
+        await store.send(.searchQueryChanged(TestSearch.term)) {
+            $0.searchQuery = TestSearch.term
+            $0.searchPhase = .loading
+        }
+        await clock.advance(by: FilesClient.searchDebounce)
+        await store.receive(\.fileSearchResponse.success) {
+            $0.fileSearchResults = [photoHit, planHit]
+            $0.searchPhase = .loaded
+        }
+        await store.send(.computeSearchOnDevice)
+        await store.receive(\.searchOnDeviceComputed) {
+            $0.searchOnDeviceIDs = [planHit.id]
+        }
+    }
+
+    @Test("Favorites search without a connection and nothing saved still says it is offline")
+    func favoritesSearchOfflineWithNothingSaved() async {
+        let clock = TestClock()
+        var state = FavoritesFeature.State(serverURL: BrowseTestSupport.serverURL)
+        state.favorites = [docsFavorite]
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.directoryCacheStore = DirectoryCacheStore.inMemory()
+            $0.offlineFileStore = .inMemory()
+            $0.filesClient.search = { _, _, _, _ in throw FilesClientError.offline }
+        }
+
+        await store.send(.searchQueryChanged(TestSearch.term)) {
+            $0.searchQuery = TestSearch.term
+            $0.searchPhase = .loading
+        }
+        await clock.advance(by: FilesClient.searchDebounce)
+        await store.receive(\.fileSearchResponse.failure) {
+            $0.searchPhase = .failed(FilesClientError.offline.userMessage)
+        }
     }
 }

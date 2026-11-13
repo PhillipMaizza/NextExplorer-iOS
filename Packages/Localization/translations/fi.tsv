@@ -1111,6 +1111,7 @@ downloadQueue.photosAccessDenied	Salli pääsy Kuviin Asetuksissa, jotta voit ta
 downloadQueue.photosSaveFailed	Tätä ei voitu lisätä Kuviin.
 tab.offline	Offline
 offline.sectionSavedEarlier	Aiemmin tallennetut
+offline.newFilesBadge	Uusia tiedostoja saatavilla offline-tilassa
 search.onDevice	Laitteella
 search.remote	Etänä
 offline.tabEmpty	Mitään ei ole vielä saatavilla offline-tilassa. Valitse tiedostolle tai kansiolle “Saatavilla offline-tilassa”.

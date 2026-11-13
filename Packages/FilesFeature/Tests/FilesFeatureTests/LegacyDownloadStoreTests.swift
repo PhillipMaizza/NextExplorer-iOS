@@ -246,6 +246,19 @@ struct LegacyDownloadStoreTests {
         #expect(try sandbox.store.list(Constants.scopeB).map(\.fileName) == [Constants.fileName])
     }
 
+    @Test("The folder recorded for an account reads back, for a launch with no connection")
+    func ownerScopeReadsBack() {
+        let sandbox = Sandbox()
+        defer { sandbox.cleanUp() }
+
+        sandbox.store.recordOwner(Constants.accountA, Constants.scopeA)
+
+        #expect(sandbox.store.ownerScope(Constants.accountA) == Constants.scopeA)
+        #expect(sandbox.store.ownerScope(Constants.accountB) == nil)
+        sandbox.store.removeAccount(Constants.accountA)
+        #expect(sandbox.store.ownerScope(Constants.accountA) == nil)
+    }
+
     @Test("Removing an account a second time, or one never recorded, removes nothing else")
     func removeUnknownAccountIsSafe() throws {
         let sandbox = Sandbox()

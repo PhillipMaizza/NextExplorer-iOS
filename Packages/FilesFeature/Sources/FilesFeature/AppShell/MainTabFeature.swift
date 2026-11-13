@@ -42,6 +42,9 @@ public struct MainTabFeature {
         /// Shared offline progress, reset when a fresh session mounts so a previous account's
         /// finished run never lingers on the new account's Settings screen.
         @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var offlineProgress = OfflineDownloadProgress()
+        /// A run stored new files while another section was on screen: the Offline tab and sidebar row
+        /// show a dot until Offline is opened. Held in memory, so it ends with the session.
+        public var hasUnseenOfflineFiles = false
         @Shared(.inMemory(SharedFileInbox.sharedKey)) public var sharedFileInbox: [URL] = []
         public var uploadToast: UploadToast?
         /// The "saved to Downloads" confirmation once the download queue drains.
@@ -475,6 +478,12 @@ public struct MainTabFeature {
                 case .tabSelected(.downloads), .offline(.prepared), .offline(.completed),
                      .offline(.waitingForNetwork), .offline(.failed),
                      .offline(.unpinTapped):
+                    if case .offline(.completed) = action,
+                       state.selectedTab != .downloads,
+                       state.offlineProgress.filesDone > 0
+                    {
+                        state.hasUnseenOfflineFiles = true
+                    }
                     // The Offline tab lists what is pinned, which these change after it first appeared.
                     return .send(.offlineManage(.onAppear))
                 case .offlineManage(.delegate(.changed)):
@@ -508,6 +517,15 @@ public struct MainTabFeature {
                     Self.syncFolderWindows(&state, after: action)
                 }
             #endif
+        }
+        .onChange(of: \.selectedTab) { _, tab in
+            Reduce { state, _ in
+                // However Offline was reached (a tap, a menu, a toast), its new files are now seen.
+                if tab == .downloads {
+                    state.hasUnseenOfflineFiles = false
+                }
+                return .none
+            }
         }
         .onChange(of: \.browse.currentDirectoryPath) { _, path in
             Reduce { state, _ in

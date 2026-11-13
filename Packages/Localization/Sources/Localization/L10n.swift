@@ -635,6 +635,7 @@ public enum L10n {
         public static var manageEmpty: String { tr("offline.manageEmpty") }  // "Nothing is downloaded for offline use."
         public static var manageRow: String { tr("offline.manageRow") }  // "Manage Offline Files"
         public static var manageTitle: String { tr("offline.manageTitle") }  // "Offline Files"
+        public static var newFilesBadge: String { tr("offline.newFilesBadge") }  // "New files available offline"
         public static var preferOfflineSubtitle: String { tr("offline.preferOfflineSubtitle") }
         public static var preferOfflineToggle: String { tr("offline.preferOfflineToggle") }  // "Play Downloaded Copies"
         public static var preparing: String { tr("offline.preparing") }  // "Preparing…"

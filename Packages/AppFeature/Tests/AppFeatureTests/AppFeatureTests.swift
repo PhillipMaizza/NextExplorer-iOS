@@ -154,6 +154,32 @@ extension AppSuites {
             #expect(recorder.events.value.isEmpty)
         }
 
+        @Test("Without a connection the restored account lists its own saved files folder")
+        func offlineRestoreUsesTheRecordedSavedFilesFolder() async {
+            let confirmation = AsyncGate()
+            let store = makeStore {
+                $0.authClient.restoreSession = { [credentialsA] in credentialsA }
+                $0.authClient.me = { _ in
+                    try await confirmation.wait()
+                    throw AuthClientError.network(TestFailure.offline)
+                }
+                $0.localDownloadStore.ownerScope = { [credentialsA] accountID in
+                    accountID == credentialsA.accountID ? AppFixtures.downloadScopeA : nil
+                }
+            }
+
+            await store.send(.onAppear)
+            await store.receive(\.sessionRestoreResponse) {
+                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+            }
+            await store.receive(\.accountsRefreshed)
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse)
+
+            await store.finish()
+        }
+
         @Test("No stored session stays on the login flow")
         func noStoredSessionStaysUnauthenticated() async {
             let store = makeStore {

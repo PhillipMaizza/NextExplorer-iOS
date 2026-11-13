@@ -1132,6 +1132,7 @@ downloadQueue.photosAccessDenied	이미지와 비디오를 저장하려면 설�
 downloadQueue.photosSaveFailed	사진에 추가하지 못했습니다.
 tab.offline	오프라인
 offline.sectionSavedEarlier	이전에 저장됨
+offline.newFilesBadge	새 파일을 오프라인으로 사용할 수 있음
 search.onDevice	기기에 있음
 search.remote	원격
 offline.tabEmpty	오프라인으로 사용할 수 있는 항목이 아직 없습니다. 파일이나 폴더에서 “오프라인 사용 가능”을(를) 선택하세요.

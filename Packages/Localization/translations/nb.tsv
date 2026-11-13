@@ -1111,6 +1111,7 @@ downloadQueue.photosAccessDenied	Gi tilgang til Bilder i Innstillinger for å ar
 downloadQueue.photosSaveFailed	Kunne ikke legge dette til i Bilder.
 tab.offline	Frakoblet
 offline.sectionSavedEarlier	Arkivert tidligere
+offline.newFilesBadge	Nye filer tilgjengelig frakoblet
 search.onDevice	På enheten
 search.remote	Eksternt
 offline.tabEmpty	Ingenting er tilgjengelig uten nett ennå. Velg «Tilgjengelig frakoblet» på en fil eller mappe.

@@ -1138,6 +1138,7 @@ downloadQueue.photosAccessDenied	Permita o acesso a Fotos nas Definições para 
 downloadQueue.photosSaveFailed	Não foi possível adicionar a Fotos.
 tab.offline	Offline
 offline.sectionSavedEarlier	Guardados anteriormente
+offline.newFilesBadge	Novos ficheiros disponíveis offline
 search.onDevice	No dispositivo
 search.remote	Remoto
 offline.tabEmpty	Ainda não há nada disponível offline. Escolha “Disponível offline” num ficheiro ou pasta.

@@ -347,6 +347,13 @@ struct OfflineTabView: View {
                     store.send(.onAppear)
                     offlineStore.send(.onAppear)
                 }
+                // The account's folder can become known after the first listing (`me` answering, or the
+                // recorded one read at an offline launch): list it again so its files show.
+                .onChange(of: store.downloadScope) { _, scope in
+                    if !scope.isEmpty {
+                        store.send(.refreshButtonTapped)
+                    }
+                }
                 .onChange(of: offlineProgress.phase) { _, phase in
                     if phase == .completed {
                         Task { @MainActor in offlineStore.send(.onAppear) }

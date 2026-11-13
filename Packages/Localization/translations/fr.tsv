@@ -1138,6 +1138,7 @@ downloadQueue.photosAccessDenied	Autorisez l’accès à Photos dans Réglages p
 downloadQueue.photosSaveFailed	Impossible d’ajouter ceci à Photos.
 tab.offline	Hors ligne
 offline.sectionSavedEarlier	Enregistrés précédemment
+offline.newFilesBadge	Nouveaux fichiers disponibles hors ligne
 search.onDevice	Sur l'appareil
 search.remote	À distance
 offline.tabEmpty	Rien n’est encore disponible hors connexion. Choisissez « Disponible hors ligne » sur un fichier ou un dossier.

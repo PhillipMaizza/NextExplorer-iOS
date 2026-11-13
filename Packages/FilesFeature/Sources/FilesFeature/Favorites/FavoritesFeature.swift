@@ -227,6 +227,7 @@ public struct FavoritesFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.continuousClock) var clock
     @Dependency(\.date) var date
 
@@ -770,6 +771,8 @@ public struct FavoritesFeature {
         let serverURL = state.serverURL
         let filesClient = filesClient
         let clock = clock
+        let directoryCacheStore = directoryCacheStore.bound(to: state.cacheScope)
+        let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)
         return .run { send in
             if isDebounced {
                 try await clock.sleep(for: FilesClient.searchDebounce)
@@ -799,7 +802,25 @@ public struct FavoritesFeature {
             }.first
             // Surface an error (retryable) only when nothing came back and at least one favorite
             // failed: a partial success still shows its hits.
-            if hits.isEmpty, let firstFailure {
+            if hits.isEmpty, firstFailure == .offline {
+                // No server to reach: what the device saved and kept below the favorites answers.
+                let kept = await Task.detached(priority: .userInitiated) {
+                    favoritePaths.flatMap { path in
+                        BrowseFeature.searchMatches(
+                            BrowseFeature.savedAndKeptItems(
+                                under: path,
+                                serverURL: serverURL,
+                                directoryCacheStore: directoryCacheStore,
+                                offlineFileStore: offlineFileStore
+                            ),
+                            term: term,
+                            below: path
+                        )
+                    }
+                }.value
+                guard !Task.isCancelled else { return }
+                await send(kept.isEmpty ? .fileSearchResponse(.failure(.offline)) : .fileSearchResponse(.success(kept)))
+            } else if hits.isEmpty, let firstFailure {
                 await send(.fileSearchResponse(.failure(firstFailure)))
             } else {
                 await send(.fileSearchResponse(.success(hits)))

@@ -248,7 +248,8 @@ public struct MainTabView: View {
         .platformAccentTint()
         #if os(macOS)
             .toolbar {
-                if isAnyTransferBarVisible {
+                // Uploads and downloads only: an offline run has its own bar along the window's bottom.
+                if store.uploads.isBarVisible || store.downloadQueue.isBarVisible {
                     ToolbarItem(id: "transfers", placement: .primaryAction) {
                         MacTransferActivityButton(store: store)
                     }
@@ -318,7 +319,10 @@ public struct MainTabView: View {
                         : IconKit.tabDownloadsSmall,
                     identifier: AccessibilityIdentifiers.Tab.downloads
                 )
+                .accessibilityValue(store.hasUnseenOfflineFiles ? L10n.Offline.newFilesBadge : "")
             }
+            // An empty badge is the tab bar's dot: new files were kept since Offline was last opened.
+            .badge(store.hasUnseenOfflineFiles ? Text(verbatim: "") : nil)
 
             Tab(value: MainTabFeature.Tab.settings) {
                 if visitedTabs.contains(.settings) {
