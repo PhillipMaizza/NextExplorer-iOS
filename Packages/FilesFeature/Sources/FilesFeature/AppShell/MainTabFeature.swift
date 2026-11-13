@@ -262,15 +262,18 @@ public struct MainTabFeature {
                     return .send(.browse(.receiveSharedFiles(urls)))
 
                 case let .browse(.delegate(.uploadRequested(files))),
-                     let .favorites(.delegate(.uploadRequested(files))):
+                     let .favorites(.delegate(.uploadRequested(files))),
+                     let .downloads(.delegate(.uploadRequested(files))):
                     return .send(.uploads(.enqueue(files)))
 
                 case let .browse(.delegate(.downloadRequested(items))),
-                     let .favorites(.delegate(.downloadRequested(items))):
+                     let .favorites(.delegate(.downloadRequested(items))),
+                     let .downloads(.delegate(.downloadRequested(items))):
                     return .send(.downloadQueue(.enqueue(items)))
 
                 case let .browse(.delegate(.saveRequested(requests))),
-                     let .favorites(.delegate(.saveRequested(requests))):
+                     let .favorites(.delegate(.saveRequested(requests))),
+                     let .downloads(.delegate(.saveRequested(requests))):
                     return .send(.downloadQueue(.enqueueSaves(requests)))
 
                 case .downloadQueue(.delegate(.itemSaved)):
@@ -403,14 +406,18 @@ public struct MainTabFeature {
                         .send(.offline(.autoSync(force: true)))
                     )
 
-                case .browse(.delegate(.favoritesChanged)), .favorites(.delegate(.favoritesChanged)):
+                case .browse(.delegate(.favoritesChanged)),
+                     .favorites(.delegate(.favoritesChanged)),
+                     .downloads(.delegate(.favoritesChanged)):
                     return .send(.favorites(.refreshButtonTapped))
 
                 case .browse(.delegate(.openDownloadsTapped)), .favorites(.delegate(.openDownloadsTapped)):
                     state.selectedTab = .downloads
                     return .send(.downloads(.refreshButtonTapped))
 
-                case .browse(.delegate(.goToSharedTab)), .favorites(.delegate(.goToSharedTab)):
+                case .browse(.delegate(.goToSharedTab)),
+                     .favorites(.delegate(.goToSharedTab)),
+                     .downloads(.delegate(.goToSharedTab)):
                     state.selectedTab = .shared
                     return .send(.shared(.refreshRequested))
 

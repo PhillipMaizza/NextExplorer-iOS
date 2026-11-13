@@ -18,6 +18,10 @@ struct MainTabOfflineTabTests: MainTabTestSupport {
                 name: "from Favorites",
                 action: .favorites(.delegate(.downloadRequested([MainTabOfflineTabTests.movie])))
             ),
+            Source(
+                name: "from a folder opened in Offline",
+                action: .downloads(.delegate(.downloadRequested([MainTabOfflineTabTests.movie])))
+            ),
         ]
     )
     func downloadRequestedEnqueuesIntoTheAppWideDownloadQueue(_ source: Source) async throws {

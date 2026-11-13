@@ -117,9 +117,15 @@ public struct OfflineTabFeature {
         case path(StackActionOf<BrowseFeature>)
         case delegate(Delegate)
 
+        /// What a folder opened from this tab asks of the rest of the app, as from Browse.
         public enum Delegate: Equatable, Sendable {
             case offlinePinRequested([FileItem])
             case offlineUnpinRequested(path: String)
+            case uploadRequested([PendingUpload])
+            case downloadRequested([FileItem])
+            case saveRequested([DownloadSaveRequest])
+            case favoritesChanged
+            case goToSharedTab
         }
     }
 
@@ -285,6 +291,21 @@ public struct OfflineTabFeature {
 
             case let .path(.element(id: _, action: .delegate(.offlineUnpinRequested(path)))):
                 return .send(.delegate(.offlineUnpinRequested(path: path)))
+
+            case let .path(.element(id: _, action: .delegate(.uploadRequested(files)))):
+                return .send(.delegate(.uploadRequested(files)))
+
+            case let .path(.element(id: _, action: .delegate(.downloadRequested(items)))):
+                return .send(.delegate(.downloadRequested(items)))
+
+            case let .path(.element(id: _, action: .delegate(.saveRequested(requests)))):
+                return .send(.delegate(.saveRequested(requests)))
+
+            case .path(.element(id: _, action: .delegate(.favoritesChanged))):
+                return .send(.delegate(.favoritesChanged))
+
+            case .path(.element(id: _, action: .delegate(.goToSharedTab))):
+                return .send(.delegate(.goToSharedTab))
 
             case .path(.element(id: _, action: .delegate(.directoryContentsChanged))):
                 return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) })

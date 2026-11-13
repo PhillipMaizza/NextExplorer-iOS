@@ -81,6 +81,43 @@ struct OfflineTabFolderTests {
         await store.receive(.delegate(.offlineUnpinRequested(path: Constants.childPath)))
     }
 
+    struct Request: Sendable, CustomTestStringConvertible {
+        let fromScreen: BrowseFeature.Action.Delegate
+        let upward: OfflineTabFeature.Action.Delegate
+
+        var testDescription: String {
+            "\(upward)"
+        }
+    }
+
+    @Test(
+        "A folder opened from the Offline tab can upload, download, save, star and share like one in Browse",
+        arguments: [
+            Request(
+                fromScreen: .uploadRequested([BrowseFixtures.upload]),
+                upward: .uploadRequested([BrowseFixtures.upload])
+            ),
+            Request(
+                fromScreen: .downloadRequested([BrowseFixtures.textFile]),
+                upward: .downloadRequested([BrowseFixtures.textFile])
+            ),
+            Request(
+                fromScreen: .saveRequested([BrowseFixtures.saveRequest]),
+                upward: .saveRequested([BrowseFixtures.saveRequest])
+            ),
+            Request(fromScreen: .favoritesChanged, upward: .favoritesChanged),
+            Request(fromScreen: .goToSharedTab, upward: .goToSharedTab),
+        ]
+    )
+    func requestsFromAPushedFolderGoUpToTheShell(_ request: Request) async {
+        var state = OfflineTabFeature.State(serverURL: BrowseTestSupport.serverURL)
+        state.path.append(browseScreen(Constants.folderPath, Constants.folderName))
+        let store = TestStore(initialState: state) { OfflineTabFeature() }
+
+        await store.send(.path(.element(id: 0, action: .delegate(request.fromScreen))))
+        await store.receive(.delegate(request.upward))
+    }
+
     @Test
     func aChangeInPinsMakesEveryPushedScreenRecomputeItsBadges() async {
         var state = OfflineTabFeature.State(serverURL: BrowseTestSupport.serverURL)

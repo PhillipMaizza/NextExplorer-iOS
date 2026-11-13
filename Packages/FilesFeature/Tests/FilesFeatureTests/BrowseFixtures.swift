@@ -27,6 +27,22 @@ extension DependencyValues {
 /// Builders the `BrowseFeature` reducer tests share: items, state, and a store whose unlisted
 /// dependencies fail the test when touched.
 enum BrowseFixtures {
+    /// What a screen hands the app shell, for the tests that follow requests upward.
+    static let upload = PendingUpload(
+        id: UUID(0),
+        fileURL: URL(fileURLWithPath: "/tmp/a.txt"),
+        fileName: TestFile.aText,
+        destination: TestFolder.docs
+    )
+    static let textFile = FileItem(
+        name: TestFile.aText,
+        path: TestFolder.docs,
+        dateModified: MockDate.date,
+        size: 1,
+        kind: TestKind.text
+    )
+    static let saveRequest = DownloadSaveRequest(item: textFile, target: .into(URL(fileURLWithPath: "/tmp")))
+
     /// Can write and delete but not share: what the transfer tests need from a folder.
     static let writableAccess = FileAccess(
         canRead: true,
