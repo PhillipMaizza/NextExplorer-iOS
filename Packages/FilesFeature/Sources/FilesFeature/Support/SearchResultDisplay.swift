@@ -1,4 +1,5 @@
 import CoreModels
+import FilesClient
 import Foundation
 import Localization
 
@@ -15,6 +16,20 @@ func searchResultSnippet(_ result: SearchResultItem) -> String? {
 func searchResultLineLabel(_ result: SearchResultItem) -> String? {
     guard result.matchLine != nil, let lineNumber = result.matchLineNumber else { return nil }
     return L10n.Browse.searchMatchLineLabel(lineNumber)
+}
+
+/// Where a hit lives, as the web client shows it under the name: its folder from the root.
+func searchResultLocation(_ result: SearchResultItem) -> String {
+    "/" + result.path
+}
+
+/// What a failed search says: the server's own words when it gave some, as the web client shows
+/// them, the session or connection when that is the reason, and a general line otherwise.
+func searchFailureMessage(_ error: FilesClientError) -> String {
+    switch error {
+    case .sessionExpired, .offline, .serverMessage, .forbidden: error.userMessage
+    default: L10n.Browse.searchFailed
+    }
 }
 
 /// The match a result's row says, as the web client labels it, with the matched line when there is

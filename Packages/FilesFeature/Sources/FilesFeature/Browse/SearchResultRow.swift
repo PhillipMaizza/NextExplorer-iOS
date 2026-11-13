@@ -3,23 +3,30 @@ import DesignSystem
 import SwiftUI
 
 /// A search hit as a list row, for Browse and Favorites alike: its name, the matched line under it,
-/// and what matched ("Contents, Line 12") when it is more than the name. A hit known from a listing
-/// (`knownItem`, the folder on screen or one saved on the device) shows its size and date instead
-/// when nothing matched inside it.
+/// and what matched ("Contents, Line 12") when it is more than the name. When nothing matched inside
+/// it, the line under the name says where it lives, as the web client does; a hit in the folder on
+/// screen (`currentFolder`) known from its listing shows its size and date there instead.
 struct SearchResultRow: View {
     let result: SearchResultItem
     var knownItem: FileItem?
+    var currentFolder: String?
     var isFavorite = false
     var serverURL: URL?
     var showThumbnails = false
     var matchedSource: PreviewMatchedSource?
     var isOpening = false
 
+    /// A hit in the folder on screen, whose size and date are known: where it lives goes unsaid.
+    private var shownItem: FileItem? {
+        guard let knownItem, result.path == currentFolder else { return nil }
+        return knownItem
+    }
+
     var body: some View {
         FileRowView(
             name: result.name,
             isDirectory: result.isDirectory,
-            subtitle: searchResultSnippet(result),
+            subtitle: searchResultSnippet(result) ?? (shownItem == nil ? searchResultLocation(result) : nil),
             lineLabel: searchResultRowLabel(result),
             isFavorite: isFavorite,
             kind: result.displayKind,
@@ -28,8 +35,8 @@ struct SearchResultRow: View {
             showThumbnails: showThumbnails,
             matchedSource: matchedSource,
             isOpening: isOpening,
-            dateModified: knownItem.flatMap { $0.hasKnownDate ? $0.dateModified : nil },
-            size: knownItem?.size
+            dateModified: shownItem.flatMap { $0.hasKnownDate ? $0.dateModified : nil },
+            size: shownItem?.size
         )
     }
 }
@@ -55,11 +62,12 @@ struct SearchResultRow: View {
     }
 }
 
-#Preview("Known from a saved listing") {
+#Preview("In the folder on screen") {
     List {
         SearchResultRow(
             result: SearchResultItem(name: "budget.xlsx", path: "Documents", kind: "file"),
-            knownItem: FileItem(name: "budget.xlsx", path: "Documents", dateModified: .now, size: 48_000, kind: "xlsx")
+            knownItem: FileItem(name: "budget.xlsx", path: "Documents", dateModified: .now, size: 48_000, kind: "xlsx"),
+            currentFolder: "Documents"
         )
     }
 }

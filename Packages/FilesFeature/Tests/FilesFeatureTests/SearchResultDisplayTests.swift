@@ -1,4 +1,5 @@
 import CoreModels
+import FilesClient
 @testable import FilesFeature
 import Localization
 import Testing
@@ -12,6 +13,7 @@ struct SearchResultDisplayTests {
         static let folderKind = "dir"
         static let unknownKind = "unknown"
         static let video = "clip.mp4"
+        static let serverWords = "You cannot search this folder."
     }
 
     private func hit(matchLine: String?, matchLineNumber: Int? = nil) -> SearchResultItem {
@@ -99,5 +101,30 @@ struct SearchResultDisplayTests {
     func theEnclosingFolderIsNamed() {
         #expect(SearchResultItem(name: TestFile.notes, path: "", kind: Constants.kind).enclosingFolderTitle == L10n.Browse.navigationTitle)
         #expect(SearchResultItem(name: TestFile.notes, path: TestPath.documentsWork, kind: Constants.kind).enclosingFolderTitle == FilesFeatureTestValue.workFolder)
+    }
+
+    @Test("A hit says where it lives from the root")
+    func aHitSaysWhereItLives() {
+        #expect(searchResultLocation(SearchResultItem(name: TestFile.notes, path: TestPath.documentsWork, kind: Constants.kind)) == "/Documents/Work")
+        #expect(searchResultLocation(SearchResultItem(name: TestFile.notes, path: "", kind: Constants.kind)) == "/")
+    }
+
+    struct FailureCase: Sendable {
+        let error: FilesClientError
+        let message: String
+    }
+
+    nonisolated static let failureCases = [
+        FailureCase(error: .serverMessage(statusCode: 403, message: Constants.serverWords), message: Constants.serverWords),
+        FailureCase(error: .forbidden(message: Constants.serverWords), message: Constants.serverWords),
+        FailureCase(error: .offline, message: L10n.Error.offline),
+        FailureCase(error: .sessionExpired, message: L10n.Error.sessionExpired),
+        FailureCase(error: .server(statusCode: 500), message: L10n.Browse.searchFailed),
+        FailureCase(error: .timedOut, message: L10n.Browse.searchFailed),
+    ]
+
+    @Test("A failed search says the server's own words when it has some, as the web client does", arguments: failureCases)
+    func aFailedSearchSaysTheServersWords(_ testCase: FailureCase) {
+        #expect(searchFailureMessage(testCase.error) == testCase.message)
     }
 }

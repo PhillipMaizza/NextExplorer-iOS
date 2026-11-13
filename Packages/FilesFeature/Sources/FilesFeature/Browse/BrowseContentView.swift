@@ -632,7 +632,8 @@ struct BrowseContentView: View {
             } else {
                 SearchResultRow(
                     result: row,
-                    knownItem: store.searchSavedItems?[row.id] ?? store.items[id: row.id],
+                    knownItem: store.items[id: row.id],
+                    currentFolder: store.directoryPath,
                     isFavorite: store.favoritePaths.contains(row.id),
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,

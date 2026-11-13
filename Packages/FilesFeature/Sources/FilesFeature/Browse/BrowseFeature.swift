@@ -899,7 +899,7 @@ public struct BrowseFeature {
             case let .searchResultsResponse(.failure(error)):
                 // Said under the results with Retry, otherwise a network blip during a search is
                 // indistinguishable from a genuine empty result.
-                state.searchPhase = .failed(error == .sessionExpired || error == .offline ? error.userMessage : L10n.Browse.searchFailed)
+                state.searchPhase = .failed(searchFailureMessage(error))
                 let term = SearchTerm(state.searchQuery).text
                 // Offline, the saved listings stand in (read now if this search has not yet).
                 let readSaved = loadSavedSearchItemsIfNeeded(state)

@@ -33,9 +33,10 @@ extension BrowseFeature {
             // The server never sees this term: the listings saved below the folder answer too.
             return .merge(.cancel(id: CancelID.search), loadSavedSearchItemsIfNeeded(state))
         }
-        // An earlier answer stays on screen until this term's arrives, as the web client keeps
-        // its results, so the list never shrinks to the local matches and grows back on each
-        // keystroke. With no answer to show, the instant matches paint at once.
+        // An earlier answer stays on screen until this term's arrives (the search field says a
+        // newer one is coming), so the list never shrinks to the local matches and grows back on
+        // each keystroke. The web client shows a Searching line instead; a phone keeps the rows to
+        // tap. With no answer to show, the instant matches paint at once.
         if !state.isShowingSearchAnswer {
             showInstantMatches(&state, query: query)
         }
