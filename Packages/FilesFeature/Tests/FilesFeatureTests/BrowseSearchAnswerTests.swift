@@ -13,6 +13,7 @@ import TestUtils
 @MainActor
 struct BrowseSearchAnswerTests {
     private enum Constants {
+        static let serverError = 500
         static let docsPDFGlob = "Docs/*.pdf"
         static let docsPDF = "Docs/a.pdf"
         static let lookalikePDF = "Docsy/a.pdf"
@@ -102,6 +103,9 @@ struct BrowseSearchAnswerTests {
             $0.searchResults = [photoMatch]
             $0.searchAnsweredTerm = nil
         }
+        await store.receive(\.searchSavedItemsLoaded) {
+            $0.searchSavedItems = [:]
+        }
     }
 
     @Test("A failure for a newer term drops the earlier answer for its instant matches and offers Retry")
@@ -109,7 +113,7 @@ struct BrowseSearchAnswerTests {
         let clock = TestClock()
         var state = answeredState()
         state.searchShortfall = .firstOnly(count: 100)
-        let store = store(state, clock: clock) { _ in throw FilesClientError.offline }
+        let store = store(state, clock: clock) { _ in throw FilesClientError.server(statusCode: Constants.serverError) }
 
         await store.send(.searchQueryChanged(Constants.longerTerm)) {
             $0.searchQuery = Constants.longerTerm
@@ -127,7 +131,7 @@ struct BrowseSearchAnswerTests {
 
     @Test("A failed refresh keeps this term's own answer on screen and says it failed")
     func aFailedRefreshKeepsTheAnswer() async {
-        let store = store(answeredState(), clock: TestClock()) { _ in throw FilesClientError.offline }
+        let store = store(answeredState(), clock: TestClock()) { _ in throw FilesClientError.server(statusCode: Constants.serverError) }
 
         await store.send(.searchRetryTapped) {
             $0.searchPhase = .loading

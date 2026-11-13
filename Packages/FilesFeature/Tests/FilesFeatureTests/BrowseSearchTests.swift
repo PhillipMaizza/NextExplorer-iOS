@@ -67,6 +67,9 @@ struct BrowseSearchTests {
             $0.searchQuery = "pa"
             $0.searchResults = [SearchResultItem(name: Constants.payslips, path: "", kind: SearchResultItem.directoryKind)]
         }
+        await store.receive(\.searchSavedItemsLoaded) {
+            $0.searchSavedItems = [:]
+        }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.finish()
         #expect(calls.value == 0)

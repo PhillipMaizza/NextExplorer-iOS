@@ -182,6 +182,9 @@ struct BrowseSearchTimingTests {
             $0.searchQuery = Constants.shortTerm
             $0.searchResults = []
         }
+        await store.receive(\.searchSavedItemsLoaded) {
+            $0.searchSavedItems = [:]
+        }
         #expect(!store.state.isSearchPending)
 
         await type(Constants.term, into: store)

@@ -17,11 +17,12 @@ extension BrowseFeature {
         guard !term.isEmpty else {
             state.searchResults = nil
             state.searchAnsweredTerm = nil
+            state.searchSavedItems = nil
             state.searchPhase = .idle
             state.searchShortfall = nil
             state.selectedSearchCategories = []
             state.searchScope = .thisFolder
-            return .cancel(id: CancelID.search)
+            return .merge(.cancel(id: CancelID.search), .cancel(id: CancelID.searchSavedItems))
         }
 
         // The server only searches from three characters on; until then the instant matches stand.
@@ -29,7 +30,8 @@ extension BrowseFeature {
             showInstantMatches(&state, query: query)
             state.searchPhase = .idle
             state.searchShortfall = nil
-            return .cancel(id: CancelID.search)
+            // The server never sees this term: the listings saved below the folder answer too.
+            return .merge(.cancel(id: CancelID.search), loadSavedSearchItemsIfNeeded(state))
         }
         // An earlier answer stays on screen until this term's arrives, as the web client keeps
         // its results, so the list never shrinks to the local matches and grows back on each
@@ -48,7 +50,8 @@ extension BrowseFeature {
     static func instantMatches(_ state: State, query: String) -> IdentifiedArrayOf<SearchResultItem> {
         let term = SearchTerm(query)
         let base = state.searchBasePath
-        let inFolder = state.items
+        let saved = state.mayAnswerFromSavedListings ? Array((state.searchSavedItems ?? [:]).values) : []
+        let inFolder = (state.items.elements + saved)
             .filter { term.matches(name: $0.name, relativePath: relativePath($0.id, below: base), isDirectory: $0.isDirectory) }
             .map { SearchResultItem(name: $0.name, path: $0.path, kind: SearchResultItem.kind(isDirectory: $0.isDirectory)) }
         // In the server's order, so its answer lands without shuffling what is already there.

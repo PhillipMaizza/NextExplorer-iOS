@@ -71,13 +71,15 @@ struct FileRowView: View {
         customIconFilled: Bool = false,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
-        isAvailableOffline: Bool = false
+        isAvailableOffline: Bool = false,
+        dateModified: Date? = nil,
+        size: Int64? = nil
     ) {
         self.name = name
         self.isDirectory = isDirectory
         self.isAvailableOffline = isAvailableOffline
-        dateModified = nil
-        size = nil
+        self.dateModified = dateModified
+        self.size = isDirectory ? nil : size
         customSubtitle = subtitle
         self.lineLabel = lineLabel
         self.isFavorite = isFavorite

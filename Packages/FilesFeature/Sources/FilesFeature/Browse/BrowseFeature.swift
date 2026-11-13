@@ -259,6 +259,10 @@ public struct BrowseFeature {
         /// matches. An answer stays on screen while a newer term is asked, and a failure keeps it
         /// only when it answers the term that failed.
         public var searchAnsweredTerm: String?
+        /// Files and folders below the search's folder known from listings saved on the device, by
+        /// id: read once a search needs them (a term too short for the server, or no server to
+        /// reach). `nil` until read; cleared when the search ends or its scope changes.
+        public var searchSavedItems: [String: FileItem]?
         /// The file type categories the search results are filtered to. Empty means "all types";
         /// otherwise a result shows only if its category is in the set. Only relevant while
         /// searching, and pruned to the categories actually present as results change.
@@ -410,6 +414,17 @@ public struct BrowseFeature {
             isSearching && searchPhase == .loading
         }
 
+        /// The search could not reach the server: matches from saved listings stand in.
+        public var isSearchOffline: Bool {
+            searchPhase == .failed(FilesClientError.offline.userMessage)
+        }
+
+        /// Saved listings may answer only where the server cannot: a term it never sees, or no
+        /// server to reach. Never over a real server error.
+        var mayAnswerFromSavedListings: Bool {
+            SearchTerm(searchQuery).isTooShort || isSearchOffline
+        }
+
         /// The results on screen are a server answer worth keeping while a newer term is asked.
         var isShowingSearchAnswer: Bool {
             searchAnsweredTerm != nil && searchResults?.isEmpty == false
@@ -515,6 +530,8 @@ public struct BrowseFeature {
         case searchShowMoreTapped
         /// Retry under a search that could not answer: asks again at once.
         case searchRetryTapped
+        /// The listings saved below the search's folder, read off the main actor.
+        case searchSavedItemsLoaded([FileItem])
         case searchResultsResponse(Result<SearchPage, FilesClientError>)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
@@ -665,7 +682,7 @@ public struct BrowseFeature {
     // Internal (not private) so the effect helpers extracted into `BrowseFeature+*.swift`
     // can reference these cancel ids across files.
     enum CancelID: Hashable {
-        case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
+        case search, searchSavedItems, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
         case prefetchChildren, prefetchFavorites, offlineAvailability, arrivalRecheck, newFileExtensions
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
@@ -823,7 +840,9 @@ public struct BrowseFeature {
                 guard scope != state.searchScope else { return .none }
                 state.searchScope = scope
                 state.searchLimit = FilesClient.searchLimitSteps[0]
-                return search(&state, isDebounced: false)
+                // Another folder to search from: what was saved below the old one says nothing.
+                state.searchSavedItems = nil
+                return .merge(.cancel(id: CancelID.searchSavedItems), search(&state, isDebounced: false))
 
             case .searchShowMoreTapped:
                 guard state.canShowMoreSearchResults else { return .none }
@@ -833,6 +852,10 @@ public struct BrowseFeature {
 
             case .searchRetryTapped:
                 return refreshSearch(&state)
+
+            case let .searchSavedItemsLoaded(items):
+                savedSearchItemsLoaded(items, state: &state)
+                return .none
 
             case let .searchCategoryToggled(category):
                 if state.selectedSearchCategories.contains(category) {
@@ -875,15 +898,17 @@ public struct BrowseFeature {
             case let .searchResultsResponse(.failure(error)):
                 // Said under the results with Retry, otherwise a network blip during a search is
                 // indistinguishable from a genuine empty result.
-                state.searchPhase = .failed(error == .sessionExpired ? error.userMessage : L10n.Browse.searchFailed)
+                state.searchPhase = .failed(error == .sessionExpired || error == .offline ? error.userMessage : L10n.Browse.searchFailed)
                 let term = SearchTerm(state.searchQuery).text
+                // Offline, the saved listings stand in (read now if this search has not yet).
+                let readSaved = loadSavedSearchItemsIfNeeded(state)
                 // This term's own answer (a failed refresh or Show more) stays; an earlier term's
                 // gives way to this term's instant matches.
-                guard state.searchAnsweredTerm != term else { return .none }
+                guard state.searchAnsweredTerm != term else { return readSaved }
                 state.searchResults = Self.instantMatches(state, query: term)
                 state.searchAnsweredTerm = nil
                 state.searchShortfall = nil
-                return .none
+                return readSaved
 
             case let .sortOptionChanged(option):
                 state.sortOption = option

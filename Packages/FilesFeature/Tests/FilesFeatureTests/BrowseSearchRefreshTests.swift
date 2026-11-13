@@ -105,6 +105,9 @@ struct BrowseSearchRefreshTests {
             $0.searchQuery = Constants.shortTerm
             $0.searchResults = []
         }
+        await store.receive(\.searchSavedItemsLoaded) {
+            $0.searchSavedItems = [:]
+        }
         await store.send(.itemsResponse(.success(listed([photo])))) {
             $0.items = [photo]
             $0.access = BrowseTestSupport.readOnlyAccess
