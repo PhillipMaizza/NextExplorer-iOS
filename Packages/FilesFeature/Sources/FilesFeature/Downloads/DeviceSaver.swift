@@ -76,6 +76,7 @@ extension DeviceSaver: DependencyKey {
             try fileManager.createDirectory(at: folder, withIntermediateDirectories: true)
             let destination = folder.appendingPathComponent(SafeFileName.component(fileName))
             try fileManager.moveItem(at: temporaryURL, to: destination)
+            FileProtection.apply(to: [folder, destination])
             return destination
         },
         discard: { urls in

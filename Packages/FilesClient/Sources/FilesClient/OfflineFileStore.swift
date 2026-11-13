@@ -115,23 +115,26 @@ enum OfflineCache {
     }
 
     /// Lands the freshly downloaded bytes at `item`'s slot with a matching staleness sidecar,
-    /// replacing any earlier copy. Both files inherit the encrypted at rest protection class.
+    /// replacing any earlier copy. Every file carries the protection class, and a failed write leaves no half slot
+    /// behind.
     static func store(downloadedURL: URL, item: FileItem, scope: String = CacheAccountScope.current) throws -> URL {
         guard let slot = slot(for: item, create: true, scope: scope) else {
             throw FilesClientError.decoding("Could not open the offline store.")
         }
         try FileManager.default.createDirectory(at: slot.directory, withIntermediateDirectories: true)
-        try? FileManager.default.removeItem(at: slot.fileURL)
-        try FileManager.default.moveItem(at: downloadedURL, to: slot.fileURL)
-        try metaValue(dateModified: item.dateModified, size: item.size)
-            .write(to: slot.metaURL, atomically: true, encoding: .utf8)
         let pathURL = slot.directory.appendingPathComponent(pathSidecarName)
-        try? item.id.write(to: pathURL, atomically: true, encoding: .utf8)
-        for url in [slot.fileURL, slot.metaURL, pathURL] {
-            try? FileManager.default.setAttributes(
-                [.protectionKey: FileProtectionType.completeUnlessOpen], ofItemAtPath: url.path
-            )
+        do {
+            try item.id.write(to: pathURL, atomically: true, encoding: .utf8)
+            try? FileManager.default.removeItem(at: slot.fileURL)
+            try FileManager.default.moveItem(at: downloadedURL, to: slot.fileURL)
+            try metaValue(dateModified: item.dateModified, size: item.size)
+                .write(to: slot.metaURL, atomically: true, encoding: .utf8)
+        } catch {
+            // A slot without its path sidecar could never be listed, sized or reconciled.
+            try? FileManager.default.removeItem(at: slot.directory)
+            throw error
         }
+        FileProtection.apply(to: [slot.directory, slot.fileURL, slot.metaURL, pathURL])
         return slot.fileURL
     }
 
@@ -168,6 +171,7 @@ enum OfflineCache {
         let manifestURL = scope.appendingPathComponent(manifestFileName)
         guard let data = try? JSONEncoder().encode(roots) else { return }
         try? data.write(to: manifestURL, options: .atomic)
+        FileProtection.apply(to: manifestURL)
     }
 
     /// Wipes every account's offline files. Called only at genuine session boundaries (logout, full
@@ -233,7 +237,9 @@ enum OfflineCache {
         guard let folder = listingsDirectory(create: true) else { return }
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         guard let data = try? JSONEncoder().encode(directory) else { return }
-        try? data.write(to: folder.appendingPathComponent(hex(directory.path) + ".json"), options: .atomic)
+        let url = folder.appendingPathComponent(hex(directory.path) + ".json")
+        try? data.write(to: url, options: .atomic)
+        FileProtection.apply(to: [folder, url])
     }
 
     static func listing(forPath path: String) -> CachedDirectory? {
@@ -335,6 +341,7 @@ enum OfflineCache {
         guard let url = flagURL(interruptedFileName) else { return }
         if value {
             try? Data().write(to: url)
+            FileProtection.apply(to: url)
         } else {
             try? FileManager.default.removeItem(at: url)
         }
@@ -356,6 +363,7 @@ enum OfflineCache {
     static func setLastAutoSyncAt(_ date: Date) {
         guard let url = flagURL(lastSyncFileName) else { return }
         try? String(date.timeIntervalSince1970).write(to: url, atomically: true, encoding: .utf8)
+        FileProtection.apply(to: url)
     }
 }
 

@@ -122,12 +122,10 @@
             return store.isEstimating ? "\(size)…" : size
         }
 
-        /// `nil` free space (unknown) never blocks a download it can't size.
+        @Dependency(\.deviceStorage) private var deviceStorage
+
         private var isOverFreeSpace: Bool {
-            let values = try? URL(fileURLWithPath: NSHomeDirectory())
-                .resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
-            let free = values?.volumeAvailableCapacityForImportantUsage ?? .max
-            return !store.isEstimating && store.estimatedBytes > free
+            !store.isEstimating && store.estimatedBytes > deviceStorage.freeBytes()
         }
     }
 

@@ -69,6 +69,7 @@ public struct OfflineDownloadsFeature {
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.date) var date
     @Dependency(\.connectivity) var connectivity
+    @Dependency(\.deviceStorage) var deviceStorage
 
     private enum Constants {
         /// Files download one at a time, on purpose. The backend streams a single `/api/download` well
@@ -271,11 +272,20 @@ public struct OfflineDownloadsFeature {
 
             case let .unpinTapped(path):
                 state.pendingPinPaths.remove(path)
-                return .run { _ in offlineFileStore.removeRoot(path) }
+                let remove: Effect<Action> = .run { _ in offlineFileStore.removeRoot(path) }
+                guard state.progress.isActive else { return remove }
+                // The run in flight still holds this root's files in its list: stop it, drop the root,
+                // then sync what remains, so no file of the unpinned root is stored after the removal.
+                state.$progress.withLock { $0 = OfflineDownloadProgress() }
+                return .concatenate(
+                    .cancel(id: CancelID(scope: state.scope)),
+                    remove,
+                    .send(.autoSync(force: true))
+                )
 
             case .removeAllOfflineTapped:
                 state.$progress.withLock { $0 = OfflineDownloadProgress() }
-                return .merge(
+                return .concatenate(
                     .cancel(id: CancelID(scope: state.scope)),
                     // Only this account's offline files (slots + manifest), never another account's
                     // on a shared device.
@@ -292,11 +302,13 @@ public struct OfflineDownloadsFeature {
     private func syncPinnedRoots(state: inout State, announceWhenNothingPending: Bool) -> Effect<Action> {
         let offlineFileStore = offlineFileStore.pinned(to: state.scope)
         let roots = offlineFileStore.pinnedRoots()
-        guard !roots.isEmpty else { return .none }
+        // With nothing pinned no copy should remain: a run cancelled mid file can leave one behind.
+        guard !roots.isEmpty else { return .run { _ in offlineFileStore.reconcile(nil) } }
         let rootItems = roots.map(Self.fileItem(from:))
         let serverURL = state.serverURL
         let scope = state.scope
         let filesClient = filesClient
+        let deviceStorage = deviceStorage
         let now = date.now
         return .run { send in
             try await CacheAccountScope.withPinned(scope) {
@@ -326,6 +338,11 @@ public struct OfflineDownloadsFeature {
                     return
                 }
                 if Task.isCancelled {
+                    return
+                }
+                // Files that cannot all fit would fill the disk and fail one by one on every sync.
+                guard pending.reduce(Int64(0), { $0 + max($1.size, 0) }) <= deviceStorage.freeBytes() else {
+                    await send(.failed(L10n.Offline.selectionInsufficientSpace))
                     return
                 }
                 await send(.prepared(fileCount: pending.count))

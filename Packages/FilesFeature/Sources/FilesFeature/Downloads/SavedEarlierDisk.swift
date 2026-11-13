@@ -1,4 +1,5 @@
 import CoreModels
+import FilesClient
 import Foundation
 
 /// The disk behind `LegacyDownloadStore`: `privateRoot/<scope>/` per account, plus a small map of
@@ -39,6 +40,7 @@ struct SavedEarlierDisk: Sendable {
         var values = URLResourceValues()
         values.isExcludedFromBackup = true
         try? root.setResourceValues(values)
+        FileProtection.apply(to: [privateRoot, url])
     }
 
     func save(_ sourceURL: URL, fileName: String, scope: String) throws -> URL {
@@ -48,6 +50,7 @@ struct SavedEarlierDisk: Sendable {
         // `fileName` comes from the server: keep a hostile `../` inside the folder.
         let destination = Self.availableDestination(in: folder, fileName: SafeFileName.component(fileName))
         try FileManager.default.copyItem(at: sourceURL, to: destination)
+        FileProtection.apply(to: destination)
         return destination
     }
 
@@ -82,6 +85,7 @@ struct SavedEarlierDisk: Sendable {
             throw CocoaError(.fileWriteFileExists)
         }
         try FileManager.default.moveItem(at: url, to: destination)
+        FileProtection.apply(to: destination)
         return destination
     }
 
@@ -100,6 +104,7 @@ struct SavedEarlierDisk: Sendable {
         guard let data = try? JSONEncoder().encode(owners) else { return }
         try? createPrivateFolder(privateRoot)
         try? data.write(to: ownersURL, options: .atomic)
+        FileProtection.apply(to: ownersURL)
     }
 
     func recordOwner(accountID: String, scope: String) {
