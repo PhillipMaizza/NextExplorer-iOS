@@ -69,6 +69,11 @@ public struct DestinationPickerView: View {
                         .accessibilityLabel(L10n.Common.close)
                     }
                 }
+                if store.isRefiningSearch {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        DSSpinner(size: .small)
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { store.send(.confirmTapped) } label: {
                         IconKit.checkmark
@@ -212,6 +217,17 @@ public struct DestinationPickerView: View {
             $0.filesClient = .previewValue
         }
     )
+}
+
+#Preview("Refining a search") {
+    var state = DestinationPickerFeature.State(
+        serverURL: URL(string: "https://example.com")!,
+        items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
+    )
+    state.searchQuery = "Pho"
+    state.isSearching = true
+    state.searchResults = [SearchResultItem(name: "Photos", path: "Media", kind: "dir")]
+    return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
 }
 
 #Preview("Folders") {

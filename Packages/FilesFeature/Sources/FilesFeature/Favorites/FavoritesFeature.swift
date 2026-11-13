@@ -100,6 +100,11 @@ public struct FavoritesFeature {
             SearchTerm(searchQuery).isTooShort
         }
 
+        /// A file search for the typed term is waiting or running, whatever is on screen.
+        public var isSearchPending: Bool {
+            isSearching && searchPhase == .loading
+        }
+
         /// A name filter left none of the favorites.
         public var hasNoMatchingFavorites: Bool {
             isSearchTermTooShort && displayedFavorites.isEmpty
@@ -616,9 +621,10 @@ public struct FavoritesFeature {
             state.searchPhase = .loaded
             return .cancel(id: CancelID.search)
         }
-        // First search of a query shows the skeleton; refining an existing result set keeps the
-        // current rows on screen while the new fan out runs.
-        state.searchPhase = state.fileSearchResults == nil ? .loading : .loaded
+        // Every search is loading until it answers. The view shows the skeleton only while no
+        // results exist yet: refining keeps the current rows on screen, and the header says a
+        // newer answer is coming.
+        state.searchPhase = .loading
         let serverURL = state.serverURL
         let filesClient = filesClient
         let clock = clock

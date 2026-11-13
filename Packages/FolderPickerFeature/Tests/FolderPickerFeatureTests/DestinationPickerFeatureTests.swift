@@ -403,6 +403,22 @@ struct DestinationPickerFeatureTests {
     }
 }
 
+extension DestinationPickerFeatureTests {
+    @Test("Only a search running over results already on screen is a refine; with none the list is the spinner")
+    func aRefineNeedsResultsOnScreen() {
+        var state = DestinationPickerFeature.State(serverURL: URL(string: TestHost.exampleURLString)!, items: [])
+        state.searchQuery = Constants.searchTerm
+        state.isSearching = true
+        #expect(!state.isRefiningSearch)
+        state.searchResults = []
+        #expect(!state.isRefiningSearch)
+        state.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: "dir")]
+        #expect(state.isRefiningSearch)
+        state.isSearching = false
+        #expect(!state.isRefiningSearch)
+    }
+}
+
 private enum Constants {
     static let shortTerm = "ph"
     static let searchTerm = "sum"

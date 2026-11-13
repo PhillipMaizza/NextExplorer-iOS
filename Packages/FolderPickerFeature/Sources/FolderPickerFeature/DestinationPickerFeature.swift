@@ -47,6 +47,12 @@ public struct DestinationPickerFeature {
             SearchTerm(searchQuery).isSearchable
         }
 
+        /// A newer folder search is running over results already on screen. With nothing on
+        /// screen yet the whole list is a spinner instead.
+        public var isRefiningSearch: Bool {
+            isSearching && searchResults?.isEmpty == false
+        }
+
         /// Typed, but too short for the server: this level's folders are filtered by name and a
         /// hint says how many characters the search needs.
         public var isSearchTermTooShort: Bool {

@@ -66,6 +66,9 @@
                 canGoBack: store.canNavigateBack,
                 onBack: { store.send(.backTapped) }
             ) {
+                if store.isRefiningSearch {
+                    DSSpinner(size: .small)
+                }
                 TextField(L10n.Common.search, text: $store.searchQuery.sending(\.searchQueryChanged), prompt: Text(L10n.Common.search))
                     .labelsHidden()
                     .textFieldStyle(.roundedBorder)

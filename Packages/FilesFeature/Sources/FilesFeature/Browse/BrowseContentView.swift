@@ -314,7 +314,8 @@ struct BrowseContentView: View {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : displayTitle,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                shouldFadeIntoContent: viewMode != .table
+                shouldFadeIntoContent: viewMode != .table,
+                isSearchPending: store.isSearchPending
             ) {
                 // The Mac shows these natively, as a scope bar and search field tokens.
                 #if os(iOS)

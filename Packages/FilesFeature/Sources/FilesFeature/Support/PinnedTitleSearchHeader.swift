@@ -33,6 +33,10 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     /// Whether the short fade below the header melts into scrolling content. A Mac table keeps
     /// its column headers pinned right below, where the fade would only tint them.
     var shouldFadeIntoContent: Bool = true
+    /// A search for the typed text is waiting or running: the field's magnifier turns into a
+    /// spinner (a thin bar under the header on the Mac, whose field is in the toolbar), so a list
+    /// already on screen still says a newer answer is coming.
+    var isSearchPending: Bool = false
     /// Rendered below the search field, e.g. a search-scope segmented control plus type filter
     /// chips while searching.
     @ViewBuilder var accessory: () -> Accessory
@@ -47,6 +51,15 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 accessory()
             }
             .frame(maxWidth: .infinity)
+            .overlay(alignment: .bottom) {
+                if isSearchPending {
+                    ProgressView()
+                        .progressViewStyle(.linear)
+                        .controlSize(.small)
+                        .accessibilityLabel(L10n.Common.loading)
+                        .allowsHitTesting(false)
+                }
+            }
             // ⌘F (Edit menu) focuses the toolbar's trailing search field.
             .modifier(MacToolbarSearch(isEnabled: showsSearchField, text: $searchText, prompt: prompt, isFocused: $isFocused))
             .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
@@ -95,9 +108,17 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
 
     private var searchField: some View {
         HStack(spacing: .space8) {
+            // The magnifier keeps its slot while hidden, so the spinner swaps in without moving
+            // the text.
             IconKit.search
                 .foregroundStyle(Color.secondaryDS)
+                .opacity(isSearchPending ? 0 : 1)
                 .accessibilityHidden(true)
+                .overlay {
+                    if isSearchPending {
+                        DSSpinner(size: .small, color: Color.secondaryDS)
+                    }
+                }
             TextField(
                 text: $searchText,
                 prompt: Text(prompt).foregroundColor(Color.secondaryDS)
@@ -126,6 +147,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             }
         }
         .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: searchText.isEmpty)
+        .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: isSearchPending)
         .roundedFieldStyle(isFocused: isFocused, bordered: false, cornerRadius: .radiusSearchField)
     }
 }
@@ -137,7 +159,8 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         prompt: String = L10n.Common.search,
         extraTopPadding: CGFloat = 0,
         showsSearchField: Bool = true,
-        shouldFadeIntoContent: Bool = true
+        shouldFadeIntoContent: Bool = true,
+        isSearchPending: Bool = false
     ) {
         self.init(
             title: title,
@@ -145,7 +168,8 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
             prompt: prompt,
             extraTopPadding: extraTopPadding,
             showsSearchField: showsSearchField,
-            shouldFadeIntoContent: shouldFadeIntoContent
+            shouldFadeIntoContent: shouldFadeIntoContent,
+            isSearchPending: isSearchPending
         ) { EmptyView() }
     }
 }
@@ -194,3 +218,18 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         @Entry var focusSearchField: FocusSearchAction?
     }
 #endif
+
+#Preview("Empty") {
+    PinnedTitleSearchHeader(title: "Files", searchText: .constant(""))
+        .previewCanvasWidth(.sheet)
+}
+
+#Preview("Typed") {
+    PinnedTitleSearchHeader(title: "Files", searchText: .constant("report"))
+        .previewCanvasWidth(.sheet)
+}
+
+#Preview("Search pending") {
+    PinnedTitleSearchHeader(title: "Files", searchText: .constant("report"), isSearchPending: true)
+        .previewCanvasWidth(.sheet)
+}

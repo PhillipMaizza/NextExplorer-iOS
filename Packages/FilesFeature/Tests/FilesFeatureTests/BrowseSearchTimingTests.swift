@@ -15,6 +15,7 @@ struct BrowseSearchTimingTests {
         static let term = "vac"
         static let longerTerm = "vaca"
         static let termWithSpace = "vac "
+        static let shortTerm = "va"
         /// Two emoji: two characters to Swift, four UTF16 units to the server's `q.length`.
         static let emojiTerm = "👍👍"
     }
@@ -163,5 +164,27 @@ struct BrowseSearchTimingTests {
             $0.searchResults = [hit]
         }
         #expect(queries.value == [Constants.emojiTerm])
+    }
+
+    @Test("A search is pending from the keystroke until the server answers, and never for a short term")
+    func aSearchIsPendingUntilTheServerAnswers() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await store.send(.searchQueryChanged(Constants.shortTerm)) {
+            $0.searchQuery = Constants.shortTerm
+            $0.searchResults = []
+        }
+        #expect(!store.state.isSearchPending)
+
+        await type(Constants.term, into: store)
+        #expect(store.state.isSearchPending)
+        await clock.advance(by: FilesClient.searchDebounce)
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [hit]
+        }
+        #expect(!store.state.isSearchPending)
     }
 }

@@ -395,6 +395,12 @@ public struct BrowseFeature {
 
         public var isSearching: Bool { !searchQuery.isEmpty }
 
+        /// A server search for the typed term is waiting out the debounce or running, whatever
+        /// is on screen meanwhile.
+        public var isSearchPending: Bool {
+            isSearching && isSearchingRemotely
+        }
+
         /// Typed, but too short for the server to search; only the instant matches show.
         public var isSearchTermTooShort: Bool {
             SearchTerm(searchQuery).isTooShort

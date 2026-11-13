@@ -225,12 +225,16 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         await store.send(.favoritesResponse(.success([bills]))) {
             $0.phase = .loaded
             $0.favorites = [bills]
+            $0.searchPhase = .loading
         }
+        #expect(store.state.isSearchPending)
         await store.receive(\.offlineAvailabilityComputed)
         gate.open()
         await store.receive(\.fileSearchResponse.success) {
             $0.fileSearchResults = [hit]
+            $0.searchPhase = .loaded
         }
+        #expect(!store.state.isSearchPending)
         #expect(queries.value == [Constants.term])
     }
 
@@ -264,7 +268,11 @@ struct FavoritesSearchTests: FavoritesTestSupport {
 
         await store.send(.refreshButtonTapped) {
             $0.phase = .loading
+            $0.searchPhase = .loading
         }
+        // The rows already on screen stay, and the header says a newer answer is coming.
+        #expect(store.state.fileSearchResults == [])
+        #expect(store.state.isSearchPending)
         await store.receive(\.favoritesResponse.success) {
             $0.phase = .loaded
         }
@@ -272,7 +280,9 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         gate.open()
         await store.receive(\.fileSearchResponse.success) {
             $0.fileSearchResults = [hit]
+            $0.searchPhase = .loaded
         }
+        #expect(!store.state.isSearchPending)
         #expect(queries.value == [Constants.term])
     }
 
