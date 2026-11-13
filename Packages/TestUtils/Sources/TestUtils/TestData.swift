@@ -190,3 +190,36 @@ public enum TestKind {
     public static let photo = "jpg"
     public static let video = "mp4"
 }
+
+/// Points in the 350 ms search debounce (`FilesClient.searchDebounce`), so a test proves the wait
+/// is exactly that long and that a keystroke inside it keeps or restarts it.
+public enum TestSearchTiming {
+    /// One millisecond short of the debounce: nothing may be asked yet.
+    public static let justBeforeDebounce: Duration = .milliseconds(349)
+    /// The last millisecond of the debounce.
+    public static let lastMoment: Duration = .milliseconds(1)
+    /// Part way into the debounce, where the next keystroke lands.
+    public static let partOfDebounce: Duration = .milliseconds(200)
+    /// What is left of the debounce after `partOfDebounce`.
+    public static let restOfDebounce: Duration = .milliseconds(150)
+}
+
+/// Search terms and names the search tests share across packages.
+public enum TestSearch {
+    /// A term long enough for the server, matching `TestFile.vacationPhoto`.
+    public static let term = "vac"
+    /// `term` typed one letter further.
+    public static let longerTerm = "vaca"
+    /// `term` one letter short of what the server searches.
+    public static let shortTerm = "va"
+    /// A shape for every PDF.
+    public static let pdfGlob = "*.pdf"
+    /// The server's hit below the photos folder that no local listing holds.
+    public static let deepHitName = "vacation-2.jpg"
+    public static let deepHitPath = "Photos/Trips"
+    /// A term and names ranked by how close they are: whole, starting with it, holding it.
+    public static let rankTerm = "rapport"
+    public static let rankPrefixFolder = "Rapports"
+    public static let rankPrefixFile = "rapport.pdf"
+    public static let rankContainsFile = "vieux-rapport.pdf"
+}

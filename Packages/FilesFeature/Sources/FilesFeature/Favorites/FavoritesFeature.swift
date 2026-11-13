@@ -79,8 +79,9 @@ public struct FavoritesFeature {
         /// only transform here is the search filter. `favorites` is kept in `position` order
         /// by `load` and every reorder response.
         public var displayedFavorites: [Favorite] {
-            guard !searchQuery.isEmpty else { return Array(favorites) }
-            return favorites.filter { SearchMatch.matches(query: searchQuery, in: $0.displayName) }
+            let term = SearchTerm(searchQuery)
+            guard !term.isEmpty else { return Array(favorites) }
+            return favorites.filter { term.matches($0.displayName) }
         }
 
         /// Drag reorder only makes sense over the full, unfiltered list.
@@ -88,9 +89,26 @@ public struct FavoritesFeature {
             searchQuery.isEmpty && !isSelecting
         }
 
-        /// True while a query is active, so the view swaps the favorites list for file results.
+        /// True once the term is long enough for the server, so the view swaps the favorites list
+        /// for file results. A shorter term filters the favorites by name instead.
         public var isSearching: Bool {
-            !searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            SearchTerm(searchQuery).isSearchable
+        }
+
+        /// Typed, but too short for the server: the favorites are filtered by name and a hint
+        /// says how many characters the file search needs.
+        public var isSearchTermTooShort: Bool {
+            SearchTerm(searchQuery).isTooShort
+        }
+
+        /// A file search for the typed term is waiting or running, whatever is on screen.
+        public var isSearchPending: Bool {
+            isSearching && searchPhase == .loading
+        }
+
+        /// A name filter left none of the favorites.
+        public var hasNoMatchingFavorites: Bool {
+            isSearchTermTooShort && displayedFavorites.isEmpty
         }
 
         /// File search results with hidden entries dropped unless the preference is on.
@@ -128,6 +146,9 @@ public struct FavoritesFeature {
         /// "View in Shared" after creating a link from a search result's preview.
         case viewSharesFromPreviewTapped
         case searchResultTapped(SearchResultItem)
+        /// A search result's Show in Enclosing Folder: pushes the folder it lives in, keeping the
+        /// search under it to come back to.
+        case searchResultEnclosingFolderTapped(SearchResultItem)
         case previewHost(PresentationAction<BrowseFeature.Action>)
         case selectModeToggled
         case itemSelectionToggled(Favorite.ID)
@@ -178,7 +199,6 @@ public struct FavoritesFeature {
     private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability }
 
     private enum Constants {
-        static let searchDebounce: Duration = .seconds(1)
         static let searchLimit = 100
     }
 
@@ -211,7 +231,7 @@ public struct FavoritesFeature {
                 return .merge(load(&state), availability)
 
             case .refreshButtonTapped:
-                return load(&state)
+                return .merge(load(&state), refreshSearch(&state))
 
             case .computeOfflineAvailability:
                 return computeOfflineAvailability(&state)
@@ -223,9 +243,9 @@ public struct FavoritesFeature {
             case let .favoritesResponse(.success(favorites)):
                 state.phase = .loaded
                 state.dataSource = .live
-                state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+                let search = replaceFavorites(favorites, in: &state)
                 syncCache(state)
-                return computeOfflineAvailability(&state)
+                return .merge(search, computeOfflineAvailability(&state))
 
             case let .favoritesResponse(.failure(error)):
                 // Offline with a saved copy: show it under a banner rather than an error screen.
@@ -242,18 +262,15 @@ public struct FavoritesFeature {
             case let .offlineFavoritesResolved(cached, fetchedAt, error):
                 guard let cached, let fetchedAt else { return failLoad(&state, error) }
                 state.phase = .loaded
-                state.favorites = IdentifiedArray(cached.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                 state.dataSource = .cached(fetchedAt: fetchedAt)
-                return computeOfflineAvailability(&state)
+                return .merge(replaceFavorites(cached, in: &state), computeOfflineAvailability(&state))
 
             case let .cachedFavoritesPainted(cached):
                 guard state.phase == .loading, state.favorites.isEmpty else { return .none }
-                state.favorites = IdentifiedArray(cached.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
-                return .none
+                return replaceFavorites(cached, in: &state)
 
             case let .rowTapped(favorite):
-                state.forwardStack = []
-                state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: favorite.path, title: favorite.displayName))
+                pushFolder(favorite.path, title: favorite.displayName, in: &state)
                 return .none
 
             case let .removeTapped(favorite):
@@ -307,9 +324,9 @@ public struct FavoritesFeature {
                 .cancellable(id: CancelID.reorder, cancelInFlight: true)
 
             case let .reorderResponse(.success(favorites)):
-                state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+                let search = replaceFavorites(favorites, in: &state)
                 syncCache(state)
-                return .send(.delegate(.favoritesChanged))
+                return .merge(search, .send(.delegate(.favoritesChanged)))
 
             case .reorderResponse(.failure):
                 state.actionErrorMessage = L10n.Favorites.reorderFailed
@@ -318,16 +335,19 @@ public struct FavoritesFeature {
                 return load(&state)
 
             case let .searchQueryChanged(query):
-                // A focus change or keyboard dismiss can re-send the same text through the
-                // field's binding; re-running the search would flash the results. Only act on a
-                // real text change.
-                guard query != state.searchQuery else { return .none }
+                // A focus change or keyboard dismiss resends the same text through the field's
+                // binding, and a typed space leaves the term the server reads unchanged; searching
+                // again would flash the results. Only a new term searches again.
+                let isNewTerm = SearchTerm(query) != SearchTerm(state.searchQuery)
                 state.searchQuery = query
+                guard isNewTerm else { return .none }
                 return favoriteSearch(&state)
 
             case let .fileSearchResponse(.success(results)):
+                // Each favorite's answer is ranked on its own; merged, they are ranked again the way
+                // the server ranks one answer, closest name first, rather than alphabetically.
                 state.fileSearchResults = IdentifiedArray(
-                    BrowseFeature.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first }
+                    SearchTerm(state.searchQuery).ranked(results), id: \.id, uniquingIDsWith: { first, _ in first }
                 )
                 state.searchPhase = .loaded
                 return .none
@@ -344,7 +364,7 @@ public struct FavoritesFeature {
                 return .none
 
             case .searchRetryTapped:
-                return favoriteSearch(&state)
+                return favoriteSearch(&state, isDebounced: false)
 
             case let .searchResultTapped(result):
                 // A directory result navigates into that folder (push). A file result opens directly
@@ -352,23 +372,18 @@ public struct FavoritesFeature {
                 // scoped to the file's parent, seed `previewItem` so the cover has content on the
                 // first frame, then let `rowTapped` fetch it. `result.path` is the parent dir.
                 guard !result.isDirectory else {
-                    state.forwardStack = []
-                    state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.id, title: result.name))
+                    pushFolder(result.id, title: result.name, in: &state)
                     return .none
                 }
-                let ext = (result.name as NSString).pathExtension.lowercased()
-                let item = FileItem(
-                    name: result.name,
-                    path: result.path,
-                    dateModified: date.now,
-                    size: 0,
-                    kind: ext.isEmpty ? "unknown" : ext,
-                    supportsThumbnail: false
-                )
-                var host = BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.path, title: (result.path as NSString).lastPathComponent)
+                let item = result.previewItem(openedAt: date.now)
+                var host = BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.path, title: result.enclosingFolderTitle)
                 host.previewItem = item
                 state.previewHost = host
                 return .send(.previewHost(.presented(.rowTapped(item))))
+
+            case let .searchResultEnclosingFolderTapped(result):
+                pushFolder(result.path, title: result.enclosingFolderTitle, in: &state)
+                return .none
 
             case let .path(.element(id: _, action: .delegate(.downloadRequested(items)))),
                  let .previewHost(.presented(.delegate(.downloadRequested(items)))):
@@ -573,10 +588,35 @@ public struct FavoritesFeature {
     /// favorite (each searches that folder's whole subtree), merged and de duped. Tolerant per
     /// favorite so a since deleted favorite can't fail the whole search; results are still
     /// authoritative for the ones that answered.
-    private func favoriteSearch(_ state: inout State) -> Effect<Action> {
-        let query = state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+    /// Opens a folder on top of the tab, ending any forward history.
+    private func pushFolder(_ path: String, title: String, in state: inout State) {
+        state.forwardStack = []
+        state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: path, title: title))
+    }
+
+    /// Replaces the list (a fetch, the saved copy, a reorder answer), sorted by position. A search
+    /// already typed ran against the folders it had: when they changed (typed before the list
+    /// loaded, or a favorite added or removed elsewhere) it searches the new ones at once.
+    private func replaceFavorites(_ favorites: [Favorite], in state: inout State) -> Effect<Action> {
+        let searchedPaths = Set(state.favorites.map(\.path))
+        state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+        guard Set(state.favorites.map(\.path)) != searchedPaths else { return .none }
+        return refreshSearch(&state)
+    }
+
+    /// Searches the typed term again at once, keeping the results on screen: a refresh while
+    /// searching refreshes what is on screen. Nothing happens under three characters.
+    private func refreshSearch(_ state: inout State) -> Effect<Action> {
+        guard SearchTerm(state.searchQuery).isSearchable else { return .none }
+        return favoriteSearch(&state, isDebounced: false)
+    }
+
+    /// Typing is debounced; Retry is a decision already made and asks at once.
+    private func favoriteSearch(_ state: inout State, isDebounced: Bool = true) -> Effect<Action> {
+        let term = SearchTerm(state.searchQuery)
+        let query = term.text
         // The server only searches from three characters on.
-        guard query.count >= FilesClient.minimumSearchTermLength else {
+        guard term.isSearchable else {
             state.fileSearchResults = nil
             state.searchPhase = .idle
             return .cancel(id: CancelID.search)
@@ -587,14 +627,17 @@ public struct FavoritesFeature {
             state.searchPhase = .loaded
             return .cancel(id: CancelID.search)
         }
-        // First search of a query shows the skeleton; refining an existing result set keeps the
-        // current rows on screen while the new fan out runs.
-        state.searchPhase = state.fileSearchResults == nil ? .loading : .loaded
+        // Every search is loading until it answers. The view shows the skeleton only while no
+        // results exist yet: refining keeps the current rows on screen, and the header says a
+        // newer answer is coming.
+        state.searchPhase = .loading
         let serverURL = state.serverURL
         let filesClient = filesClient
         let clock = clock
         return .run { send in
-            try await clock.sleep(for: Constants.searchDebounce)
+            if isDebounced {
+                try await clock.sleep(for: FilesClient.searchDebounce)
+            }
             let outcomes = try await withThrowingTaskGroup(of: Result<[SearchResultItem], FilesClientError>.self) { group in
                 for path in favoritePaths {
                     group.addTask {

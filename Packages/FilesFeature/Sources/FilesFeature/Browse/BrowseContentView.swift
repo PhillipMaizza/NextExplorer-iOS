@@ -34,10 +34,6 @@ private enum Constants {
     static let emptyUploadButtonHPadding: CGFloat = .space24
     /// Keeps the empty folder's dashed upload button from spanning an iPad's full width.
     static let emptyUploadButtonMaxWidth: CGFloat = 360
-    /// Placeholder date/size for a search hit's thumbnail item: a search result carries neither,
-    /// and fixed values keep its thumbnail cache key steady across renders.
-    static let searchThumbnailPlaceholderDate = Date(timeIntervalSince1970: 0)
-    static let searchThumbnailPlaceholderSize: Int64 = 0
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -123,12 +119,6 @@ struct BrowseContentView: View {
             return
         }
         store.send(.rowTapped(item))
-    }
-
-    /// Search results only report `dir`/`file` for kind, so derive a real extension from the
-    /// file name for the row icon: the same thing `searchResultTapped` hands the preview.
-    private func searchResultKind(_ result: SearchResultItem) -> String {
-        result.isDirectory ? result.kind : (result.name as NSString).pathExtension.lowercased()
     }
 
     var body: some View {
@@ -258,20 +248,28 @@ struct BrowseContentView: View {
     /// Split out of `body`: with every modifier below chained directly onto the file-action
     /// sheets/covers added above, the compiler couldn't type-check the whole expression in
     /// reasonable time.
+    /// Placeholder rows, cells or table rows in the current view mode, while a folder's first
+    /// listing or a search's first answer is on its way.
+    @ViewBuilder
+    private var loadingSkeleton: some View {
+        if viewMode == .table {
+            #if os(macOS)
+                MacBrowseTableSkeleton()
+            #endif
+        } else {
+            BrowseSkeletonView(
+                isGridView: viewMode == .grid,
+                gridColumns: gridColumns,
+                iconSize: thumbnailSize.iconSize
+            )
+        }
+    }
+
     private var browsingContent: some View {
         Group {
-            if isInitialLoad, viewMode == .table {
-                #if os(macOS)
-                    MacBrowseTableSkeleton()
-                        .transition(.opacity)
-                #endif
-            } else if isInitialLoad {
-                BrowseSkeletonView(
-                    isGridView: viewMode == .grid,
-                    gridColumns: gridColumns,
-                    iconSize: thumbnailSize.iconSize
-                )
-                .transition(.opacity)
+            if isInitialLoad {
+                loadingSkeleton
+                    .transition(.opacity)
             } else if viewMode == .table, !store.isSelecting, !store.isSearching {
                 tableContent
                     .transition(.opacity)
@@ -314,7 +312,8 @@ struct BrowseContentView: View {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : displayTitle,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                shouldFadeIntoContent: viewMode != .table
+                shouldFadeIntoContent: viewMode != .table,
+                isSearchPending: store.isSearchPending
             ) {
                 // The Mac shows these natively, as a scope bar and search field tokens.
                 #if os(iOS)
@@ -622,8 +621,8 @@ struct BrowseContentView: View {
             if grid {
                 GridCellView(
                     name: row.name, isDirectory: row.isDirectory,
-                    isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
-                    thumbnailFile: searchResultThumbnailFile(row),
+                    isFavorite: store.favoritePaths.contains(row.id), kind: row.displayKind,
+                    thumbnailFile: row.thumbnailFile,
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
                     iconSize: thumbnailSize.iconSize,
@@ -631,11 +630,11 @@ struct BrowseContentView: View {
                     isOpening: isOpeningID(row.id)
                 )
             } else {
-                FileRowView(
-                    name: row.name, isDirectory: row.isDirectory, subtitle: searchResultSnippet(row),
-                    lineLabel: searchResultLineLabel(row),
-                    isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
-                    thumbnailFile: searchResultThumbnailFile(row),
+                SearchResultRow(
+                    result: row,
+                    knownItem: store.items[id: row.id],
+                    currentFolder: store.directoryPath,
+                    isFavorite: store.favoritePaths.contains(row.id),
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
                     matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition, visibility: sourceVisibility),
@@ -643,25 +642,6 @@ struct BrowseContentView: View {
                 )
             }
         }
-    }
-
-    /// A thumbnail-capable `FileItem` for a file search hit; `nil` for a directory, which keeps
-    /// its folder glyph. Search hits carry no size or modified date, so use stable placeholders
-    /// to hold the thumbnail cache key steady across renders. `supportsThumbnail` is set for the
-    /// kinds the server will thumbnail (images, RAW, video); a PDF renders its first page on
-    /// device off its kind alone, matching a browse row.
-    private func searchResultThumbnailFile(_ result: SearchResultItem) -> FileItem? {
-        guard !result.isDirectory else { return nil }
-        let kind = searchResultKind(result)
-        let serverThumbnailable = FileItem.isImageKind(kind) || FileItem.isRawImageKind(kind) || FileItem.isVideoKind(kind)
-        return FileItem(
-            name: result.name,
-            path: result.path,
-            dateModified: Constants.searchThumbnailPlaceholderDate,
-            size: Constants.searchThumbnailPlaceholderSize,
-            kind: kind,
-            supportsThumbnail: serverThumbnailable
-        )
     }
 
     /// Extracted from the grid/list `ForEach` bodies: inlining the full cell (with the
@@ -1248,7 +1228,7 @@ struct BrowseContentView: View {
     /// Which branch of `overlayStateContent` is currently showing: a plain discriminant so
     /// the overlay can cross-fade between states instead of hard-cutting between them.
     private enum OverlayState: Hashable {
-        case none, error, empty, searching, noResults
+        case none, error, empty, searching, searchFailed, noResults
     }
 
     /// A fetch with nothing yet to show: the first load of this folder (including the frame
@@ -1264,10 +1244,12 @@ struct BrowseContentView: View {
             .error
         } else if store.phase.hasLoaded, !store.isSearching, !store.hasDisplayedItems {
             .empty
-        } else if store.isSearching, store.isSearchingRemotely, store.displayedSearchResults?.isEmpty ?? true {
-            // A recursive backend search is in flight with nothing to show yet (the client
-            // pre-fill found no local matches): spin rather than flash "no results".
+        } else if store.isSearchPending, store.displayedSearchResults?.isEmpty ?? true {
+            // A recursive backend search is in flight with nothing to show yet (the instant
+            // matches found nothing local): placeholders rather than a flash of "no results".
             .searching
+        } else if store.searchFailureMessage != nil, store.displayedSearchResults?.isEmpty ?? true {
+            .searchFailed
         } else if store.isSearching, let results = store.displayedSearchResults, results.isEmpty {
             .noResults
         } else {
@@ -1279,7 +1261,9 @@ struct BrowseContentView: View {
     private var overlayStateContent: some View {
         switch overlayState {
         case .searching:
-            DSSpinner()
+            // The shape of the answer to come, like a folder's first load, rather than a second
+            // spinner beside the one in the search field.
+            loadingSkeleton
                 .transition(.opacity)
         case .error:
             if let errorMessage = store.phase.errorMessage {
@@ -1299,6 +1283,13 @@ struct BrowseContentView: View {
                 }
             }
             .transition(.opacity)
+        case .searchFailed:
+            if let message = store.searchFailureMessage {
+                EmptyStateView(icon: IconKit.warning, message: message) {
+                    store.send(.searchRetryTapped)
+                }
+                .transition(.opacity)
+            }
         case .noResults:
             noResultsState
                 .transition(.opacity)
@@ -1408,6 +1399,7 @@ struct BrowseContentView: View {
                                     .dsCard(padding: Constants.gridCellPadding)
                             }
                             .buttonStyle(DSHapticButtonStyle())
+                            .contextMenu { searchResultMenu(result) }
                             .dsTapFlash()
                         }
                     } else {
@@ -1471,7 +1463,7 @@ struct BrowseContentView: View {
     }
 
     private var searchStatusMessage: String? {
-        SearchStatusFooter.message(isTooShort: store.isSearchTermTooShort, shortfall: store.searchShortfall)
+        SearchStatusFooter.message(failure: store.searchFailureMessage, isTooShort: store.isSearchTermTooShort, shortfall: store.searchShortfall)
     }
 
     /// A search in a folder can be widened to everywhere, unless the term is too short for the
@@ -1487,9 +1479,10 @@ struct BrowseContentView: View {
     private var searchStatusFooter: some View {
         SearchStatusFooter(
             message: searchStatusMessage,
-            canShowMore: store.canShowMoreSearchResults && !store.isSearchingRemotely,
+            canShowMore: store.canShowMoreSearchResults && store.searchPhase != .loading,
             onShowMore: { store.send(.searchShowMoreTapped) },
-            onSearchEverywhere: canOfferWiderSearch ? { store.send(.searchScopeChanged(.everywhere)) } : nil
+            onSearchEverywhere: canOfferWiderSearch ? { store.send(.searchScopeChanged(.everywhere)) } : nil,
+            onRetry: store.searchFailureMessage == nil ? nil : { store.send(.searchRetryTapped) }
         )
     }
 
@@ -1710,6 +1703,14 @@ struct BrowseContentView: View {
         }
     }
 
+    private func searchResultMenu(_ result: SearchResultItem) -> some View {
+        SearchResultMenu(
+            result: result,
+            onOpen: { store.send(.searchResultTapped(result)) },
+            onShowInFolder: { store.send(.searchResultEnclosingFolderTapped(result)) }
+        )
+    }
+
     @ViewBuilder
     private var searchResultRows: some View {
         let results = store.displayedSearchResults ?? []
@@ -1721,6 +1722,7 @@ struct BrowseContentView: View {
                     searchResultCell(row: result, grid: false)
                 }
                 .buttonStyle(DSHapticButtonStyle())
+                .contextMenu { searchResultMenu(result) }
                 .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
                 .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
             }
@@ -1839,7 +1841,15 @@ private let browsePreviewEmptyAccess = FileAccess(
     browsePreview(mutateState: {
         $0.searchQuery = "vacation"
         $0.searchScope = .everywhere
-        $0.isSearchingRemotely = true
+        $0.searchPhase = .loading
+    })
+}
+
+#Preview("Browse: search failed") {
+    browsePreview(mutateState: {
+        $0.searchQuery = "vacation"
+        $0.searchResults = []
+        $0.searchPhase = .failed(L10n.Browse.searchFailed)
     })
 }
 

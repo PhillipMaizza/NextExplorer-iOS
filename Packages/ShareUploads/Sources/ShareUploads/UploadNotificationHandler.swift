@@ -96,7 +96,9 @@ struct MainThreadCompletion: @unchecked Sendable {
         if Thread.isMainThread {
             body()
         } else {
-            DispatchQueue.main.async(execute: body)
+            // Through the wrapper, which is Sendable: the system's handler itself is not.
+            let completion = self
+            DispatchQueue.main.async { completion.body() }
         }
     }
 }

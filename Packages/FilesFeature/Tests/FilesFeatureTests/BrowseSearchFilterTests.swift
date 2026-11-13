@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
@@ -10,9 +11,14 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseSearchFilterTests {
-    private let image = SearchResultItem(name: TestFile.photo, path: "", kind: "file")
-    private let document = SearchResultItem(name: TestFile.report, path: "", kind: "file")
-    private let video = SearchResultItem(name: "clip.mp4", path: "", kind: "file")
+    private enum Constants {
+        static let clip = "clip.mp4"
+        static let clipTerm = "clip"
+    }
+
+    private let image = SearchResultItem(name: TestFile.photo, path: "", kind: SearchResultItem.fileKind)
+    private let document = SearchResultItem(name: TestFile.report, path: "", kind: SearchResultItem.fileKind)
+    private let video = SearchResultItem(name: Constants.clip, path: "", kind: SearchResultItem.fileKind)
 
     private func searchingState(_ results: [SearchResultItem]) -> BrowseFeature.State {
         var state = BrowseFixtures.state("", title: TestFolder.files)
@@ -85,7 +91,7 @@ struct BrowseSearchFilterTests {
     func theInstantPreFillDoesNotDropASelectedCategoryTheCurrentFolderLacks() async {
         // The pre-fill only sees the current folder, so pruning the selection against it would
         // wrongly clear a category that the server's subtree contains and this folder does not.
-        let videoHit = SearchResultItem(name: "clip.mp4", path: "Photos/Trips", kind: "file")
+        let videoHit = SearchResultItem(name: Constants.clip, path: TestSearch.deepHitPath, kind: SearchResultItem.fileKind)
         var state = BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos, items: [BrowseFixtures.file(TestFile.report, in: TestFolder.photos)])
         state.selectedSearchCategories = [.video]
         let clock = TestClock()
@@ -94,14 +100,15 @@ struct BrowseSearchFilterTests {
             $0.filesClient.search = { _, _, _, _ in [videoHit] }
         }
 
-        await store.send(.searchQueryChanged("clip")) {
-            $0.searchQuery = "clip"
+        await store.send(.searchQueryChanged(Constants.clipTerm)) {
+            $0.searchQuery = Constants.clipTerm
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
-        await clock.advance(by: BrowseFeature.Constants.searchDebounce)
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.clipTerm
+            $0.searchPhase = .loaded
             $0.searchResults = [videoHit]
         }
         #expect(store.state.selectedSearchCategories == [.video])
@@ -116,6 +123,8 @@ struct BrowseSearchFilterTests {
 
         // Image and video are pruned instead of stranding the list on an empty, unofferable filter.
         await store.send(.searchResultsResponse(.success([document]))) {
+            $0.searchPhase = .loaded
+            $0.searchAnsweredTerm = "a"
             $0.searchResults = [document]
             $0.selectedSearchCategories = []
         }

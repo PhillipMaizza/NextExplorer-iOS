@@ -12,7 +12,6 @@ import Localization
 @Reducer
 public struct DestinationPickerFeature {
     private enum Constants {
-        static let searchDebounce: Duration = .milliseconds(250)
         static let searchLimit = 50
     }
 
@@ -42,6 +41,30 @@ public struct DestinationPickerFeature {
         /// `directoryPath`, not just the current level.
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
         public var isSearching = false
+
+        /// True once the term is long enough for the server: the folder search replaces the listing.
+        public var showsSearchResults: Bool {
+            SearchTerm(searchQuery).isSearchable
+        }
+
+        /// A newer folder search is running over results already on screen. With nothing on
+        /// screen yet the whole list is a spinner instead.
+        public var isRefiningSearch: Bool {
+            isSearching && searchResults?.isEmpty == false
+        }
+
+        /// Typed, but too short for the server: this level's folders are filtered by name and a
+        /// hint says how many characters the search needs.
+        public var isSearchTermTooShort: Bool {
+            SearchTerm(searchQuery).isTooShort
+        }
+
+        /// This level's folders, narrowed by name while the term is too short for the server.
+        public var displayedFolders: IdentifiedArrayOf<FileItem> {
+            let term = SearchTerm(searchQuery)
+            guard term.isTooShort else { return folders }
+            return folders.filter { term.matches($0.name) }
+        }
 
         public init(serverURL: URL, items: [FileItem]) {
             self.serverURL = serverURL
@@ -133,7 +156,11 @@ public struct DestinationPickerFeature {
                 return .none
 
             case let .searchQueryChanged(query):
+                // A typed space or a resent binding leaves the term unchanged: the pending
+                // search keeps its debounce instead of starting over.
+                let isNewTerm = SearchTerm(query) != SearchTerm(state.searchQuery)
                 state.searchQuery = query
+                guard isNewTerm else { return .none }
                 return search(&state)
 
             case let .searchResultsResponse(.success(results)):
@@ -222,8 +249,9 @@ public struct DestinationPickerFeature {
 
     /// Recursive folder search scoped to the subtree under `directoryPath`, debounced.
     private func search(_ state: inout State) -> Effect<Action> {
+        let term = SearchTerm(state.searchQuery)
         // The server only searches from three characters on.
-        guard state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count >= FilesClient.minimumSearchTermLength else {
+        guard term.isSearchable else {
             state.searchResults = nil
             state.isSearching = false
             return .cancel(id: CancelID.search)
@@ -231,11 +259,11 @@ public struct DestinationPickerFeature {
         state.isSearching = true
         let serverURL = state.serverURL
         let scope = state.directoryPath
-        let query = state.searchQuery
+        let query = term.text
         let filesClient = filesClient
         let clock = clock
         return .run { send in
-            try await clock.sleep(for: Constants.searchDebounce)
+            try await clock.sleep(for: FilesClient.searchDebounce)
             try await send(.searchResultsResponse(apiResult {
                 try await filesClient.search(serverURL, scope, query, Constants.searchLimit).items
             }))

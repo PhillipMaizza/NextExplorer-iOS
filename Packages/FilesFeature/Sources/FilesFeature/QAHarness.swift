@@ -41,7 +41,7 @@ public struct QAHarness: View {
         if screen == "search" {
             state.browse.root.searchQuery = "waterfall"
             state.browse.root.searchScope = .everywhere
-            state.browse.root.isSearchingRemotely = false
+            state.browse.root.searchPhase = .loaded
             state.browse.root.searchResults = IdentifiedArray(uniqueElements: [
                 result("release-notes.md", "Projects", "md", "Added the waterfall layout to the gallery grid.", 12),
                 result("app-server.swift", "Projects/Server", "swift", "let waterfall = LayoutEngine(columns: 3)", 47),

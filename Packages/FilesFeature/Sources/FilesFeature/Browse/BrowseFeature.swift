@@ -18,11 +18,6 @@ public struct BrowseFeature {
     /// Effect timing/limits shared by `body` and the extracted `BrowseFeature+*.swift` effect
     /// helpers. Nested (not a file private top level enum) so those extensions can see it.
     enum Constants {
-        /// Gate before the recursive backend search fires, so a burst of keystrokes collapses to one
-        /// request (superseded ones are cancelled). 1s, matching the web client: the backend recurses
-        /// and scans file contents with ripgrep, which is expensive, so this deliberately throttles
-        /// how often it runs. The instant client side pre-fill covers perceived latency in the gap.
-        static let searchDebounce: Duration = .seconds(1)
         /// After a copy or move into the folder on screen, how many extra refetches wait for the
         /// new items to be listed, and how far apart. A server that finishes the copy after
         /// answering (or a listing fetched a moment too early) otherwise leaves the new
@@ -251,10 +246,23 @@ public struct BrowseFeature {
         public var effectiveSearchScope: SearchScope {
             folderDepth == 0 ? .everywhere : searchScope
         }
+
+        /// The folder a search runs from: the root everywhere, this folder otherwise.
+        var searchBasePath: String {
+            effectiveSearchScope == .everywhere ? "" : directoryPath
+        }
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
-        /// True while a recursive backend search (either scope) is in flight, so the UI can show a
-        /// spinner over the instant client side pre-fill until the authoritative results land.
-        public var isSearchingRemotely = false
+        /// The server search for the typed term: `.loading` from the keystroke through the answer,
+        /// `.failed` when it could not answer, `.idle` with no term or one too short to send.
+        public var searchPhase: DataPhase = .idle
+        /// The term `searchResults` are the server's answer to; `nil` while they are instant
+        /// matches. An answer stays on screen while a newer term is asked, and a failure keeps it
+        /// only when it answers the term that failed.
+        public var searchAnsweredTerm: String?
+        /// Files and folders below the search's folder known from listings saved on the device, by
+        /// id: read once a search needs them (a term too short for the server, or no server to
+        /// reach). `nil` until read; cleared when the search ends or its scope changes.
+        public var searchSavedItems: [String: FileItem]?
         /// The file type categories the search results are filtered to. Empty means "all types";
         /// otherwise a result shows only if its category is in the set. Only relevant while
         /// searching, and pruned to the categories actually present as results change.
@@ -398,12 +406,39 @@ public struct BrowseFeature {
         /// coexist, so one accessor drives the editor's error surface as before.
         public var textEditorErrorMessage: String? { textPhase.errorMessage ?? textSaveError }
 
-        public var isSearching: Bool { !searchQuery.isEmpty }
+        /// A term is typed; spaces alone are not one.
+        public var isSearching: Bool { !SearchTerm(searchQuery).isEmpty }
+
+        /// A server search for the typed term is waiting out the debounce or running, whatever
+        /// is on screen meanwhile.
+        public var isSearchPending: Bool {
+            isSearching && searchPhase == .loading
+        }
+
+        /// The search could not reach the server: matches from saved listings stand in.
+        public var isSearchOffline: Bool {
+            searchPhase == .failed(FilesClientError.offline.userMessage)
+        }
+
+        /// Saved listings may answer only where the server cannot: a term it never sees, or no
+        /// server to reach. Never over a real server error.
+        var mayAnswerFromSavedListings: Bool {
+            SearchTerm(searchQuery).isTooShort || isSearchOffline
+        }
+
+        /// The results on screen are a server answer worth keeping while a newer term is asked.
+        var isShowingSearchAnswer: Bool {
+            searchAnsweredTerm != nil && searchResults?.isEmpty == false
+        }
+
+        /// The search could not answer the typed term: said under the results with Retry.
+        public var searchFailureMessage: String? {
+            isSearching ? searchPhase.errorMessage : nil
+        }
 
         /// Typed, but too short for the server to search; only the instant matches show.
         public var isSearchTermTooShort: Bool {
-            let count = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count
-            return count > 0 && count < FilesClient.minimumSearchTermLength
+            SearchTerm(searchQuery).isTooShort
         }
 
         public var canShowMoreSearchResults: Bool {
@@ -494,6 +529,10 @@ public struct BrowseFeature {
         case searchFilterCleared
         case searchResultTapped(SearchResultItem)
         case searchShowMoreTapped
+        /// Retry under a search that could not answer: asks again at once.
+        case searchRetryTapped
+        /// The listings saved below the search's folder, read off the main actor.
+        case searchSavedItemsLoaded([FileItem])
         case searchResultsResponse(Result<SearchPage, FilesClientError>)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
@@ -536,9 +575,9 @@ public struct BrowseFeature {
         #if os(macOS)
             /// Files opened from Finder name no folder, so they always go through the review sheet.
             case reviewUpload(UploadReviewFeature.PickSource)
-            /// A search result's Show in Enclosing Folder: ends the search and opens its folder.
-            case searchResultEnclosingFolderTapped(SearchResultItem)
         #endif
+        /// A search result's Show in Enclosing Folder: ends the search and opens its folder.
+        case searchResultEnclosingFolderTapped(SearchResultItem)
         /// Files dropped on a folder row (Finder on a Mac, the Files app on an iPad).
         case filesDroppedOnFolder([URL], folder: FileItem)
         /// Rows dragged in from another Browse window, moved into `destination`.
@@ -644,7 +683,7 @@ public struct BrowseFeature {
     // Internal (not private) so the effect helpers extracted into `BrowseFeature+*.swift`
     // can reference these cancel ids across files.
     enum CancelID: Hashable {
-        case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
+        case search, searchSavedItems, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
         case prefetchChildren, prefetchFavorites, offlineAvailability, arrivalRecheck, newFileExtensions
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
@@ -664,7 +703,7 @@ public struct BrowseFeature {
                 return load(&state)
 
             case .refreshButtonTapped:
-                return load(&state)
+                return .merge(load(&state), refreshSearch(&state))
 
             case .computeOfflineAvailability:
                 return computeOfflineAvailability(&state)
@@ -679,9 +718,9 @@ public struct BrowseFeature {
                 state.isShowingCachePaint = false
                 state.items = IdentifiedArray(Self.sortedAlphabetically(result.items), id: \.id, uniquingIDsWith: { first, _ in first })
                 state.access = result.access
+                listingChanged(&state)
                 return .merge(
                     recheckArrivals(&state),
-                    search(&state),
                     computeOfflineAvailability(&state),
                     prefetch(
                         serverURL: state.serverURL,
@@ -716,11 +755,12 @@ public struct BrowseFeature {
                     state.items = IdentifiedArray(Self.sortedAlphabetically(cached.items), id: \.id, uniquingIDsWith: { first, _ in first })
                     state.access = cached.access
                     state.dataSource = .cached(fetchedAt: cached.fetchedAt)
-                    return .merge(search(&state), computeOfflineAvailability(&state))
+                    listingChanged(&state)
+                    return computeOfflineAvailability(&state)
                 } else if !state.items.isEmpty {
                     state.phase = .loaded
                     state.dataSource = .cached(fetchedAt: date.now)
-                    return .merge(search(&state), computeOfflineAvailability(&state))
+                    return computeOfflineAvailability(&state)
                 }
                 return failItemsLoad(&state, error)
 
@@ -729,6 +769,7 @@ public struct BrowseFeature {
                 state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
                 state.access = cached.access
                 state.isShowingCachePaint = true
+                listingChanged(&state)
                 return .none
 
             case let .serverFeaturesResponse(features):
@@ -786,24 +827,36 @@ public struct BrowseFeature {
                 return .send(.delegate(.openFolder(item)))
 
             case let .searchQueryChanged(query):
-                // A focus change or keyboard dismiss can re-send the same text through the
-                // field's binding; re-running `search` would reset results to the local pre-fill
-                // and refetch, flashing the list. Only act on a real text change.
-                guard query != state.searchQuery else { return .none }
+                // A focus change or keyboard dismiss resends the same text through the field's
+                // binding, and a typed space leaves the term the server reads unchanged; rerunning
+                // `search` would reset results to the local prefill and refetch, flashing the
+                // list. Only a new term searches again; the pending one keeps its debounce.
+                let isNewTerm = SearchTerm(query) != SearchTerm(state.searchQuery)
                 state.searchQuery = query
+                guard isNewTerm else { return .none }
                 state.searchLimit = FilesClient.searchLimitSteps[0]
                 return search(&state)
 
             case let .searchScopeChanged(scope):
+                guard scope != state.searchScope else { return .none }
                 state.searchScope = scope
                 state.searchLimit = FilesClient.searchLimitSteps[0]
-                return search(&state)
+                // Another folder to search from: what was saved below the old one says nothing.
+                state.searchSavedItems = nil
+                return .merge(.cancel(id: CancelID.searchSavedItems), search(&state, isDebounced: false))
 
             case .searchShowMoreTapped:
                 guard state.canShowMoreSearchResults else { return .none }
                 state.searchLimit = FilesClient.searchLimitSteps.first { $0 > state.searchLimit } ?? state.searchLimit
-                state.isSearchingRemotely = true
+                state.searchPhase = .loading
                 return fetchSearchResults(state, isDebounced: false)
+
+            case .searchRetryTapped:
+                return refreshSearch(&state)
+
+            case let .searchSavedItemsLoaded(items):
+                savedSearchItemsLoaded(items, state: &state)
+                return .none
 
             case let .searchCategoryToggled(category):
                 if state.selectedSearchCategories.contains(category) {
@@ -827,26 +880,16 @@ public struct BrowseFeature {
                         .send(.delegate(.openPath(path: result.id, title: result.name)))
                     )
                 }
-                // Search results only carry `dir`/`file` for `kind`, so rebuild the extension
-                // from the name and hand a real `FileItem` to the same preview routing a
-                // browse row tap uses. `dateModified`/`size` are unknown here, so the preview
-                // cache treats it as fresh and re-fetches: fine for an occasional tap.
-                let ext = (result.name as NSString).pathExtension.lowercased()
-                let item = FileItem(
-                    name: result.name,
-                    path: result.path,
-                    dateModified: date.now,
-                    size: 0,
-                    kind: ext.isEmpty ? "unknown" : ext,
-                    supportsThumbnail: false
-                )
-                return .send(.rowTapped(item))
+                // The same preview routing a browse row tap uses.
+                return .send(.rowTapped(result.previewItem(openedAt: date.now)))
 
             case let .searchResultsResponse(.success(page)):
-                state.isSearchingRemotely = false
+                state.searchPhase = .loaded
                 // The server ranks its answer (names first, closest first, then contents by
-                // relevance), so it stays in that order.
+                // relevance), so it stays in that order. A newer term cancels the request, so an
+                // answer that arrives is always for the term typed now.
                 state.searchResults = IdentifiedArray(page.items, id: \.id, uniquingIDsWith: { first, _ in first })
+                state.searchAnsweredTerm = SearchTerm(state.searchQuery).text
                 state.searchShortfall = SearchShortfall(page)
                 // Drop any selected category the new results no longer contain, so the filter
                 // can't strand the list on an empty set the sheet doesn't even offer.
@@ -854,13 +897,19 @@ public struct BrowseFeature {
                 return .none
 
             case let .searchResultsResponse(.failure(error)):
-                state.isSearchingRemotely = false
-                state.searchResults = []
+                // Said under the results with Retry, otherwise a network blip during a search is
+                // indistinguishable from a genuine empty result.
+                state.searchPhase = .failed(searchFailureMessage(error))
+                let term = SearchTerm(state.searchQuery).text
+                // Offline, the saved listings stand in (read now if this search has not yet).
+                let readSaved = loadSavedSearchItemsIfNeeded(state)
+                // This term's own answer (a failed refresh or Show more) stays; an earlier term's
+                // gives way to this term's instant matches.
+                guard state.searchAnsweredTerm != term else { return readSaved }
+                state.searchResults = Self.instantMatches(state, query: term)
+                state.searchAnsweredTerm = nil
                 state.searchShortfall = nil
-                // Surface it, otherwise a network blip during a search is indistinguishable from
-                // a genuine empty result.
-                state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : L10n.Browse.searchFailed
-                return .none
+                return readSaved
 
             case let .sortOptionChanged(option):
                 state.sortOption = option
@@ -1214,15 +1263,14 @@ public struct BrowseFeature {
                 #endif
                 return openUploadReview(source, state: &state)
 
-            #if os(macOS)
-                case let .searchResultEnclosingFolderTapped(result):
-                    state.searchQuery = ""
-                    let title = result.path.isEmpty ? L10n.Browse.navigationTitle : (result.path as NSString).lastPathComponent
-                    return .merge(
-                        search(&state),
-                        .send(.delegate(.openPath(path: result.path, title: title)))
-                    )
+            case let .searchResultEnclosingFolderTapped(result):
+                state.searchQuery = ""
+                return .merge(
+                    search(&state),
+                    .send(.delegate(.openPath(path: result.path, title: result.enclosingFolderTitle)))
+                )
 
+            #if os(macOS)
                 case let .reviewUpload(source):
                     return openUploadReview(source, state: &state)
 

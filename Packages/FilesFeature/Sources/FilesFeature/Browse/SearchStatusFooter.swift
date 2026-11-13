@@ -1,6 +1,6 @@
 import CoreModels
 import DesignSystem
-import FilesClient
+import FolderPickerFeature
 import Localization
 import SwiftUI
 
@@ -13,6 +13,8 @@ struct SearchStatusFooter: View {
     let onShowMore: () -> Void
     /// Set when the search is inside a folder and can be widened to everywhere.
     var onSearchEverywhere: (() -> Void)?
+    /// Set when the search could not answer: asks again.
+    var onRetry: (() -> Void)?
 
     var body: some View {
         #if os(macOS)
@@ -30,6 +32,10 @@ struct SearchStatusFooter: View {
                 }
                 if let onSearchEverywhere {
                     Button(L10n.Browse.searchEverywhere, action: onSearchEverywhere)
+                        .controlSize(.small)
+                }
+                if let onRetry {
+                    Button(L10n.Common.retry, action: onRetry)
                         .controlSize(.small)
                 }
             }
@@ -52,14 +58,23 @@ struct SearchStatusFooter: View {
                         .type(.body3(.semibold), style: .link)
                         .buttonStyle(.borderless)
                 }
+                if let onRetry {
+                    Button(L10n.Common.retry, action: onRetry)
+                        .type(.body3(.semibold), style: .link)
+                        .buttonStyle(.borderless)
+                }
             }
             .padding(.horizontal, .space16)
             .padding(.vertical, .space12)
         #endif
     }
 
-    /// The footer's text for the search on screen, `nil` when the answer is the whole truth.
-    static func message(isTooShort: Bool, shortfall: SearchShortfall?) -> String? {
+    /// The footer's text for the search on screen, `nil` when the answer is the whole truth. A
+    /// failure comes first: the results above it are not this term's full answer.
+    static func message(failure: String? = nil, isTooShort: Bool, shortfall: SearchShortfall?) -> String? {
+        if let failure {
+            return failure
+        }
         if isTooShort {
             return tooShortMessage
         }
@@ -71,7 +86,7 @@ struct SearchStatusFooter: View {
     }
 
     static var tooShortMessage: String {
-        L10n.Browse.searchTooShort(FilesClient.minimumSearchTermLength)
+        SearchHint.tooShort
     }
 }
 
@@ -95,6 +110,16 @@ extension SearchMatchKind {
         message: SearchStatusFooter.message(isTooShort: false, shortfall: .firstOnly(count: 100)) ?? "",
         canShowMore: true,
         onShowMore: {}
+    )
+    .previewCanvasWidth(.sheet)
+}
+
+#Preview("Failed") {
+    SearchStatusFooter(
+        message: SearchStatusFooter.message(failure: L10n.Browse.searchFailed, isTooShort: false, shortfall: nil),
+        canShowMore: false,
+        onShowMore: {},
+        onRetry: {}
     )
     .previewCanvasWidth(.sheet)
 }

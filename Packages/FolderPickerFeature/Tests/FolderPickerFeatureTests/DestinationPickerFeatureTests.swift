@@ -271,7 +271,7 @@ struct DestinationPickerFeatureTests {
             $0.filesClient.search = { _, path, _, _ in
                 searchScope.setValue(path)
                 return [
-                    SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir"),
+                    SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind),
                     SearchResultItem(name: TestFile.notes, path: TestPath.mediaPhotos, kind: TestKind.text),
                 ]
             }
@@ -284,14 +284,14 @@ struct DestinationPickerFeatureTests {
             $0.searchQuery = "sum"
             $0.isSearching = true
         }
-        await clock.advance(by: .milliseconds(250))
+        await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
-            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir")]
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind)]
         }
         #expect(searchScope.value == TestFolder.media)
 
-        await store.send(.searchResultTapped(SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir"))) {
+        await store.send(.searchResultTapped(SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind))) {
             $0.directoryPath = "Media/Photos/2024/Summer"
             $0.searchQuery = ""
             $0.searchResults = nil
@@ -301,9 +301,128 @@ struct DestinationPickerFeatureTests {
         }
         await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.photos, path: TestFolder.media)]) }
     }
+
+    /// A picker in `Media` whose search records each term it was asked and answers `Summer`.
+    private func searchingStore(clock: TestClock<Duration>, queries: LockIsolated<[String]>) -> TestStoreOf<DestinationPickerFeature> {
+        TestStore(
+            initialState: DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.media)])
+        ) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, query, _ in
+                queries.withValue { $0.append(query) }
+                return [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
+            }
+        }
+    }
+
+    @Test("Typing waits 350 ms before searching folders, and not a moment less")
+    func searchWaitsOutTheDebounceExactly() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await store.send(.searchQueryChanged(Constants.searchTerm)) {
+            $0.searchQuery = Constants.searchTerm
+            $0.isSearching = true
+        }
+        await clock.advance(by: TestSearchTiming.justBeforeDebounce)
+        #expect(queries.value.isEmpty)
+
+        await clock.advance(by: TestSearchTiming.lastMoment)
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearching = false
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
+        }
+        #expect(queries.value == [Constants.searchTerm])
+    }
+
+    @Test("A typed space leaves the server's term unchanged, so the pending search keeps its wait")
+    func aTypedSpaceKeepsThePendingSearch() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await store.send(.searchQueryChanged(Constants.searchTerm)) {
+            $0.searchQuery = Constants.searchTerm
+            $0.isSearching = true
+        }
+        await clock.advance(by: TestSearchTiming.partOfDebounce)
+        await store.send(.searchQueryChanged(Constants.searchTermWithSpace)) {
+            $0.searchQuery = Constants.searchTermWithSpace
+        }
+        await clock.advance(by: TestSearchTiming.restOfDebounce)
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearching = false
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
+        }
+        #expect(queries.value == [Constants.searchTerm])
+    }
+
+    @Test("A term too short for the server filters this level's folders by name instead of a blank search")
+    func aShortTermFiltersTheFoldersByName() async {
+        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file(TestFile.aText, path: TestFolder.media)])
+        finishLoad(&state, folders: [folder(TestFolder.photos, path: TestFolder.media), folder(Constants.workFolder, path: TestFolder.media)])
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = TestStore(initialState: state) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, query, _ in
+                queries.withValue { $0.append(query) }
+                return []
+            }
+        }
+
+        await store.send(.searchQueryChanged(Constants.shortTerm)) {
+            $0.searchQuery = Constants.shortTerm
+        }
+        await clock.advance(by: FilesClient.searchDebounce)
+
+        #expect(!store.state.showsSearchResults)
+        #expect(store.state.isSearchTermTooShort)
+        #expect(store.state.displayedFolders.map(\.name) == [TestFolder.photos])
+        #expect(queries.value.isEmpty)
+    }
+
+    @Test("An empty or blank term lists every folder, a searchable one shows the search instead")
+    func theListingFollowsTheTerm() {
+        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [])
+        finishLoad(&state, folders: [folder(TestFolder.photos), folder(Constants.workFolder)])
+
+        state.searchQuery = TestValue.blank
+        #expect(state.displayedFolders.count == 2)
+        #expect(!state.showsSearchResults)
+        #expect(!state.isSearchTermTooShort)
+
+        state.searchQuery = Constants.searchTerm
+        #expect(state.showsSearchResults)
+        #expect(!state.isSearchTermTooShort)
+    }
+}
+
+extension DestinationPickerFeatureTests {
+    @Test("Only a search running over results already on screen is a refine; with none the list is the spinner")
+    func aRefineNeedsResultsOnScreen() {
+        var state = DestinationPickerFeature.State(serverURL: URL(string: TestHost.exampleURLString)!, items: [])
+        state.searchQuery = Constants.searchTerm
+        state.isSearching = true
+        #expect(!state.isRefiningSearch)
+        state.searchResults = []
+        #expect(!state.isRefiningSearch)
+        state.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
+        #expect(state.isRefiningSearch)
+        state.isSearching = false
+        #expect(!state.isRefiningSearch)
+    }
 }
 
 private enum Constants {
+    static let shortTerm = "ph"
+    static let searchTerm = "sum"
+    static let searchTermWithSpace = "sum "
     static let summerFolder = "Summer"
     static let workFolder = "Work"
     static let childFolder = "Child"

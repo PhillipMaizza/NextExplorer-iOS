@@ -323,4 +323,9 @@ public extension FilesClient {
     /// How far Show more widens a search, as the web client steps it (`LIMIT_STEPS` in
     /// `SearchResultsView.vue`); the last step is the backend's own `MAX_LIMIT`.
     static let searchLimitSteps = [100, 300, 500]
+    /// How long typing waits before a search is sent, as the web client waits
+    /// (`useDebounceFn(runSearch, 350)` in `SpotlightSearch.vue`): short enough to feel
+    /// immediate, long enough that typing a word is still one request. A tap (scope, retry,
+    /// Show more) is a decision already made and never waits.
+    static let searchDebounce: Duration = .milliseconds(350)
 }

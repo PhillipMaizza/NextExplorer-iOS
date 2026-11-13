@@ -56,7 +56,7 @@ struct FavoritesView: View {
             hasError: store.errorMessage != nil,
             hasLoaded: store.phase.hasLoaded,
             isEmpty: store.favorites.isEmpty,
-            hasNoResults: false
+            hasNoResults: store.hasNoMatchingFavorites
         )
         guard base == .content, store.isSearching else { return base }
         if store.searchPhase.errorMessage != nil, store.fileSearchResults == nil {
@@ -152,7 +152,7 @@ struct FavoritesView: View {
     private var rootContent: some View {
         Group {
             if store.isSearching {
-                searchResultsContent
+                FavoritesSearchResultsList(store: store, phase: listPhase, pullOffset: $pullOffset)
             } else if isMacTable {
                 #if os(macOS)
                     MacFavoritesTableView(store: store, favorites: store.displayedFavorites)
@@ -170,19 +170,28 @@ struct FavoritesView: View {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                shouldFadeIntoContent: !isMacTable
+                shouldFadeIntoContent: !isMacTable,
+                isSearchPending: store.isSearchPending
             )
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            if case let .cached(fetchedAt) = store.dataSource {
-                DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
-                    .padding(.horizontal, .space16)
-                    .padding(.vertical, .space8)
-                    .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            VStack(spacing: 0) {
+                if store.isSearchTermTooShort {
+                    SearchStatusFooter(message: SearchStatusFooter.tooShortMessage, canShowMore: false, onShowMore: {})
+                        .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
+                        .transition(.opacity)
+                }
+                if case let .cached(fetchedAt) = store.dataSource {
+                    DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
+                        .padding(.horizontal, .space16)
+                        .padding(.vertical, .space8)
+                        .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
         }
         .animation(.easeInOut(duration: 0.2), value: store.dataSource)
+        .animation(.easeInOut(duration: 0.2), value: store.isSearchTermTooShort)
         .syncRefreshFeedback(errorMessage: store.errorMessage) {
             await store.send(.refreshButtonTapped).finish()
         }
@@ -291,29 +300,6 @@ struct FavoritesView: View {
         }
     }
 
-    /// Redacted `FileRowView` / `GridCellView` stand-ins that sit in the *same* `List` / grid
-    /// as the real rows: never a separate scroll container (that fights the nav bar's large
-    /// title). Shine suppressed under Reduce Motion.
-    private static let skeletonNames = [6, 12, 4, 9, 15, 7, 11, 5, 13, 8].map { String(repeating: "M", count: $0) }
-
-    private var skeletonRows: some View {
-        ForEach(Self.skeletonNames, id: \.self) { name in
-            FileRowView(name: name, isDirectory: true)
-                .redacted(reason: .placeholder)
-                .shimmering()
-                .listRowBackground(Color.backgroundSecondary)
-        }
-    }
-
-    private var skeletonCells: some View {
-        ForEach(Self.skeletonNames, id: \.self) { name in
-            GridCellView(name: name, isDirectory: true)
-                .dsCard(padding: FileGridMetrics.cellPadding)
-                .redacted(reason: .placeholder)
-                .shimmering()
-        }
-    }
-
     private var listContent: some View {
         // Bound once: the separator checks below would otherwise re-filter the list per row.
         let favorites = store.displayedFavorites
@@ -321,7 +307,7 @@ struct FavoritesView: View {
         let lastID = favorites.last?.id
         return DSGroupedList {
             if listPhase == .loading {
-                skeletonRows
+                SkeletonFileRows(entries: FavoritesSkeleton.entries)
             } else {
                 ForEach(favorites) { favorite in
                     FavoriteListRow(
@@ -345,54 +331,11 @@ struct FavoritesView: View {
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
     }
 
-    /// Recursive file search results across the favorited folders, shown in place of the favorites
-    /// list while a query is active. Same inset-grouped styling as `listContent`; tapping a hit
-    /// pushes its containing folder and opens the file.
-    private var searchResultsContent: some View {
-        let results = store.displayedSearchResults
-        let firstID = results.first?.id
-        let lastID = results.last?.id
-        return DSGroupedList {
-            if listPhase == .loading {
-                skeletonRows
-            } else {
-                ForEach(results) { result in
-                    DSFlashingListRow {
-                        Button {
-                            store.send(.searchResultTapped(result))
-                        } label: {
-                            FileRowView(
-                                name: result.name,
-                                isDirectory: result.isDirectory,
-                                subtitle: searchResultSnippet(result),
-                                lineLabel: searchResultLineLabel(result),
-                                kind: searchResultKind(result)
-                            )
-                        }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .listRowSeparator(result.id == firstID ? .hidden : .visible, edges: .top)
-                        .listRowSeparator(result.id == lastID ? .hidden : .visible, edges: .bottom)
-                    }
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .backgroundGradient()
-        .scrollPullOffset($pullOffset)
-        .dismissKeyboardOnTap()
-        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.fileSearchResults)
-    }
-
-    private func searchResultKind(_ result: SearchResultItem) -> String {
-        result.isDirectory ? result.kind : (result.name as NSString).pathExtension.lowercased()
-    }
-
     private var gridContent: some View {
         ScrollView {
             LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
                 if listPhase == .loading {
-                    skeletonCells
+                    SkeletonGridCells(entries: FavoritesSkeleton.entries)
                 } else {
                     favoriteCells
                 }

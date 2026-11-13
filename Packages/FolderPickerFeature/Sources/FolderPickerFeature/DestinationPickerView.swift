@@ -7,6 +7,8 @@ import SwiftUI
 private enum Constants {
     static let rowIconSize: CGFloat = .iconMedium
     static let chevronSize: CGFloat = .iconSmall
+    /// Uneven placeholder widths, so the redacted rows do not line up as one flat column.
+    static let skeletonNames = [7, 12, 5, 10, 8, 14].map { String(repeating: "M", count: $0) }
 }
 
 /// The folder chooser for "Move" and "Upload": a modal sheet either way (for Upload it sits
@@ -69,6 +71,11 @@ public struct DestinationPickerView: View {
                         .accessibilityLabel(L10n.Common.close)
                     }
                 }
+                if store.isRefiningSearch {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        DSSpinner(size: .small)
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { store.send(.confirmTapped) } label: {
                         IconKit.checkmark
@@ -87,9 +94,19 @@ public struct DestinationPickerView: View {
                 prompt: L10n.Common.search
             )
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                if !store.directoryPath.isEmpty {
-                    BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, _ in
-                        store.send(.breadcrumbTapped(path: path))
+                VStack(spacing: 0) {
+                    if store.isSearchTermTooShort {
+                        Text(SearchHint.tooShort)
+                            .type(.body3(.regular), style: .secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, .space16)
+                            .padding(.vertical, .space12)
+                            .background(Color.backgroundPrimary)
+                    }
+                    if !store.directoryPath.isEmpty {
+                        BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, _ in
+                            store.send(.breadcrumbTapped(path: path))
+                        }
                     }
                 }
             }
@@ -98,7 +115,7 @@ public struct DestinationPickerView: View {
 
     @ViewBuilder
     private var content: some View {
-        if !store.searchQuery.isEmpty {
+        if store.showsSearchResults {
             searchContent
         } else {
             browseContent
@@ -121,9 +138,12 @@ public struct DestinationPickerView: View {
         } else if store.folders.isEmpty {
             EmptyStateView(icon: IconKit.folder, message: L10n.Browse.destinationPickerNoFolders)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if store.displayedFolders.isEmpty {
+            EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             DSGroupedList {
-                ForEach(store.folders) { folder in
+                ForEach(store.displayedFolders) { folder in
                     Button {
                         store.send(.folderTapped(folder))
                     } label: {
@@ -138,8 +158,17 @@ public struct DestinationPickerView: View {
     @ViewBuilder
     private var searchContent: some View {
         if store.isSearching, store.searchResults?.isEmpty ?? true {
-            DSSpinner()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Placeholder folder rows for the answer to come, not a second spinner.
+            DSGroupedList {
+                ForEach(Array(Constants.skeletonNames.enumerated()), id: \.offset) { _, name in
+                    folderRow(name, subtitle: name)
+                        .redacted(reason: .placeholder)
+                        .shimmering()
+                }
+            }
+            .listStyle(.insetGrouped)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
         } else if let results = store.searchResults, results.isEmpty {
             EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -184,6 +213,42 @@ public struct DestinationPickerView: View {
         }
         .contentShape(Rectangle())
     }
+}
+
+#Preview("Short term filters by name") {
+    var state = DestinationPickerFeature.State(
+        serverURL: URL(string: "https://example.com")!,
+        items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
+    )
+    state.searchQuery = "Ph"
+    return DestinationPickerView(
+        store: Store(initialState: state) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.filesClient = .previewValue
+        }
+    )
+}
+
+#Preview("Refining a search") {
+    var state = DestinationPickerFeature.State(
+        serverURL: URL(string: "https://example.com")!,
+        items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
+    )
+    state.searchQuery = "Pho"
+    state.isSearching = true
+    state.searchResults = [SearchResultItem(name: "Photos", path: "Media", kind: "dir")]
+    return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
+}
+
+#Preview("Searching") {
+    var state = DestinationPickerFeature.State(
+        serverURL: URL(string: "https://example.com")!,
+        items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
+    )
+    state.searchQuery = "Pho"
+    state.isSearching = true
+    return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
 }
 
 #Preview("Folders") {
