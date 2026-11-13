@@ -1123,6 +1123,8 @@ downloadQueue.photosAccessDenied	Дозвольте доступ до Фото �
 downloadQueue.photosSaveFailed	Не вдалося додати це до Фото.
 tab.offline	Офлайн
 offline.sectionSavedEarlier	Збережено раніше
+search.onDevice	На пристрої
+search.remote	Віддалено
 offline.tabEmpty	Поки що нічого немає в офлайн-доступі. Виберіть «Доступно офлайн» для файлу або папки.
 offline.removeItemTitle	Прибрати «%@» із доступних офлайн?
 offline.removeItemsTitle	Прибрати %lld об’єктів із доступних офлайн?

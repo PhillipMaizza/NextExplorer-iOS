@@ -231,127 +231,127 @@ struct OfflineTabView: View {
             }
             .animation(DSMotion.contentReveal, value: listPhase)
             .featureToast(error: store.actionErrorMessage)
-            .toolbar {
-                selectSortToolbar(
-                    isSelecting: store.isSelecting,
-                    isAllSelected: isAllSelected,
-                    isSelectAvailable: !store.downloads.isEmpty,
-                    isGridView: viewMode == .grid,
-                    onSelectModeToggled: { store.send(.selectModeToggled) },
-                    onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
-                    onCancel: { store.send(.selectModeToggled) },
-                    onToggleViewMode: {
-                        withAnimation {
-                            viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
+            // The Mac table selects and sorts natively (column headers), so the tab adds no toolbar there.
+            #if os(iOS)
+                .toolbar {
+                    selectSortToolbar(
+                        isSelecting: store.isSelecting,
+                        isAllSelected: isAllSelected,
+                        isSelectAvailable: !store.downloads.isEmpty,
+                        isGridView: viewMode == .grid,
+                        onSelectModeToggled: { store.send(.selectModeToggled) },
+                        onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
+                        onCancel: { store.send(.selectModeToggled) },
+                        onToggleViewMode: {
+                            withAnimation {
+                                viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
+                            }
                         }
-                    }
-                ) {
-                    // The Mac table sorts from its column headers.
-                    #if os(iOS)
+                    ) {
                         Button {
                             isSortSheetPresented = true
                         } label: {
                             Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                         }
-                    #endif
-                }
-            }
-            .hapticFeedback(.selection, trigger: viewModeRaw)
-            .hapticFeedback(.selection, trigger: store.isSelecting)
-            .hidesTabBar(store.isSelecting)
-            .prefersToolbarItemsInVerticalBar()
-            .toolbar {
-                if store.isSelecting {
-                    ToolbarItem(placement: .bottomBar) {
-                        Spacer()
-                    }
-                    ToolbarItem(placement: .bottomBar) {
-                        ShareLink(items: selectedDownloadURLs) {
-                            IconKit.share
-                        }
-                        .accessibilityLabel(L10n.Common.share)
-                        .disabled(store.selectedDownloadIDs.isEmpty)
-                    }
-                    ToolbarItem(placement: .bottomBar) {
-                        SelectionToolbarButton(
-                            icon: IconKit.delete,
-                            role: .destructive,
-                            tint: .negative,
-                            accessibilityLabel: L10n.Common.delete,
-                            isDisabled: store.selectedDownloadIDs.isEmpty
-                        ) {
-                            store.send(.bulkDeleteTapped)
-                        }
                     }
                 }
-            }
-            .dsSheet(isPresented: $isSortSheetPresented) {
-                SortSheet(
-                    options: OfflineTabFeature.SortOption.allCases,
-                    directions: BrowseFeature.SortDirection.allCases,
-                    sortOption: store.sortOption,
-                    sortDirection: store.sortDirection,
-                    optionIcon: { $0.icon },
-                    optionTitle: { $0.title },
-                    directionIcon: { $0.icon },
-                    directionTitle: { $0.title },
-                    onSelectOption: { store.send(.sortOptionChanged($0)) },
-                    onSelectDirection: { store.send(.sortDirectionChanged($0)) },
-                    onDismiss: { isSortSheetPresented = false }
-                )
-            }
-            .downloadDeleteAlerts(store: store)
-            .offlineRemovalAlert(
-                offlineStore.removal,
-                onConfirm: { offlineStore.send(.removeConfirmed) },
-                onCancel: { offlineStore.send(.removeCancelled) }
-            )
-            .dsSheet(item: renameItemBinding) { item in
-                NameInputSheet(
-                    icon: IconKit.rename,
-                    title: L10n.Browse.renameTitle,
-                    placeholder: L10n.Browse.renameNamePlaceholder,
-                    confirmTitle: L10n.Common.save,
-                    initialName: item.fileName,
-                    isBusy: false,
-                    onConfirm: { store.send(.renameConfirmed($0)) },
-                    onCancel: { store.send(.renameCancelled) }
-                )
-            }
-            .modifier(PreviewHostCover(
-                host: $store.scope(state: \.previewHost, action: \.previewHost),
-                onViewShares: { store.send(.viewSharesFromPreviewTapped) }
-            ))
-            .fullScreenCover(item: $previewedDownload) { download in
-                PreviewZoomContainer(sourceID: download.id, namespace: previewTransition) {
-                    FilePreviewContainerView(
-                        fileURL: download.url,
-                        errorMessage: nil,
-                        onDismiss: { previewedDownload = nil },
-                        onRename: {
-                            previewedDownload = nil
-                            store.send(.renameTapped(download))
-                        },
-                        onDelete: {
-                            previewedDownload = nil
-                            store.send(.deleteTapped(download))
+            #endif
+                .hapticFeedback(.selection, trigger: viewModeRaw)
+                .hapticFeedback(.selection, trigger: store.isSelecting)
+                .hidesTabBar(store.isSelecting)
+                .prefersToolbarItemsInVerticalBar()
+                .toolbar {
+                    if store.isSelecting {
+                        ToolbarItem(placement: .bottomBar) {
+                            Spacer()
                         }
+                        ToolbarItem(placement: .bottomBar) {
+                            ShareLink(items: selectedDownloadURLs) {
+                                IconKit.share
+                            }
+                            .accessibilityLabel(L10n.Common.share)
+                            .disabled(store.selectedDownloadIDs.isEmpty)
+                        }
+                        ToolbarItem(placement: .bottomBar) {
+                            SelectionToolbarButton(
+                                icon: IconKit.delete,
+                                role: .destructive,
+                                tint: .negative,
+                                accessibilityLabel: L10n.Common.delete,
+                                isDisabled: store.selectedDownloadIDs.isEmpty
+                            ) {
+                                store.send(.bulkDeleteTapped)
+                            }
+                        }
+                    }
+                }
+                .dsSheet(isPresented: $isSortSheetPresented) {
+                    SortSheet(
+                        options: OfflineTabFeature.SortOption.allCases,
+                        directions: BrowseFeature.SortDirection.allCases,
+                        sortOption: store.sortOption,
+                        sortDirection: store.sortDirection,
+                        optionIcon: { $0.icon },
+                        optionTitle: { $0.title },
+                        directionIcon: { $0.icon },
+                        directionTitle: { $0.title },
+                        onSelectOption: { store.send(.sortOptionChanged($0)) },
+                        onSelectDirection: { store.send(.sortDirectionChanged($0)) },
+                        onDismiss: { isSortSheetPresented = false }
                     )
                 }
-            }
-            // Title lives in the pinned header (see `PinnedTitleSearchHeader`); the nav bar keeps
-            // only its actions.
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .task {
-                store.send(.onAppear)
-                offlineStore.send(.onAppear)
-            }
-            .onChange(of: offlineProgress.phase) { _, phase in
-                if phase == .completed {
-                    Task { @MainActor in offlineStore.send(.onAppear) }
+                .downloadDeleteAlerts(store: store)
+                .offlineRemovalAlert(
+                    offlineStore.removal,
+                    onConfirm: { offlineStore.send(.removeConfirmed) },
+                    onCancel: { offlineStore.send(.removeCancelled) }
+                )
+                .dsSheet(item: renameItemBinding) { item in
+                    NameInputSheet(
+                        icon: IconKit.rename,
+                        title: L10n.Browse.renameTitle,
+                        placeholder: L10n.Browse.renameNamePlaceholder,
+                        confirmTitle: L10n.Common.save,
+                        initialName: item.fileName,
+                        isBusy: false,
+                        onConfirm: { store.send(.renameConfirmed($0)) },
+                        onCancel: { store.send(.renameCancelled) }
+                    )
                 }
-            }
+                .modifier(PreviewHostCover(
+                    host: $store.scope(state: \.previewHost, action: \.previewHost),
+                    onViewShares: { store.send(.viewSharesFromPreviewTapped) }
+                ))
+                .fullScreenCover(item: $previewedDownload) { download in
+                    PreviewZoomContainer(sourceID: download.id, namespace: previewTransition) {
+                        FilePreviewContainerView(
+                            fileURL: download.url,
+                            errorMessage: nil,
+                            onDismiss: { previewedDownload = nil },
+                            onRename: {
+                                previewedDownload = nil
+                                store.send(.renameTapped(download))
+                            },
+                            onDelete: {
+                                previewedDownload = nil
+                                store.send(.deleteTapped(download))
+                            }
+                        )
+                    }
+                }
+                // Title lives in the pinned header (see `PinnedTitleSearchHeader`); the nav bar keeps
+                // only its actions.
+                .navigationTitle("")
+                .navigationBarTitleDisplayMode(.inline)
+                .task {
+                    store.send(.onAppear)
+                    offlineStore.send(.onAppear)
+                }
+                .onChange(of: offlineProgress.phase) { _, phase in
+                    if phase == .completed {
+                        Task { @MainActor in offlineStore.send(.onAppear) }
+                    }
+                }
         } destination: { pushed in
             BrowseContentView(store: pushed)
                 .environment(\.showsOfflineBadges, false)

@@ -1105,6 +1105,8 @@ downloadQueue.photosAccessDenied	อนุญาตการเข้าถึ�
 downloadQueue.photosSaveFailed	ไม่สามารถเพิ่มลงในรูปภาพได้
 tab.offline	ออฟไลน์
 offline.sectionSavedEarlier	ที่บันทึกไว้ก่อนหน้านี้
+search.onDevice	บนอุปกรณ์
+search.remote	ระยะไกล
 offline.tabEmpty	ยังไม่มีสิ่งใดใช้งานแบบออฟไลน์ได้ เลือก “ใช้งานแบบออฟไลน์ได้” ที่ไฟล์หรือโฟลเดอร์
 offline.removeItemTitle	นำ “%@” ออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม
 offline.removeItemsTitle	นำ %lld รายการออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม

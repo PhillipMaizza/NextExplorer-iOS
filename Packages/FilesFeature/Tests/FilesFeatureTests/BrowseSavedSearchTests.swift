@@ -79,17 +79,17 @@ struct BrowseSavedSearchTests {
             return listings[path]
         }
 
-        let items = BrowseFeature.savedItems(under: TestFolder.docs, folderLimit: 10, itemLimit: 10, read: read)
+        let items = BrowseFeature.savedItems(under: [TestFolder.docs], folderLimit: 10, itemLimit: 10, read: read)
         #expect(Set(items.map(\.id)) == Set([trips.id, unopened.id, photo.id, deepPhoto.id]))
         #expect(reads.value == [TestFolder.docs, Constants.tripsPath, Constants.unopenedPath])
 
         reads.setValue([])
-        #expect(BrowseFeature.savedItems(under: "", folderLimit: 2, itemLimit: 10, read: read).count == 4)
+        #expect(BrowseFeature.savedItems(under: [""], folderLimit: 2, itemLimit: 10, read: read).count == 4)
         #expect(reads.value == ["", TestFolder.docs])
 
         // The item limit stops the walk too, keeping only what fits.
         reads.setValue([])
-        #expect(BrowseFeature.savedItems(under: TestFolder.docs, folderLimit: 10, itemLimit: 2, read: read)
+        #expect(BrowseFeature.savedItems(under: [TestFolder.docs], folderLimit: 10, itemLimit: 2, read: read)
             .map(\.id) == [
                 trips.id,
                 unopened.id,

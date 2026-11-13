@@ -23,6 +23,8 @@
     /// * `UITEST_MOCK=1`            enables the whole path (nothing below runs without it).
     /// * `UITEST_AUTH`             `loggedOut` (default) / `loggedIn` / `expired`.
     /// * `UITEST_SCENARIO`        `normal` (default) / `empty` / `error`.
+    /// * `UITEST_SEARCH_OFFLINE=1`  the search finds no server (`offline`), while browsing still works,
+    ///                                 so a test can pin files first and then search without a connection.
     /// * `UITEST_DISABLE_ANIMATIONS=1` turns off UIKit animations and every SwiftUI animation
     ///                                 (`disablesAnimationsUnderUITest`), so no transition flakes a tap
     ///                                 or keeps XCUITest waiting for the app to idle.
@@ -40,6 +42,7 @@
         public static let orientationKey = "UITEST_ORIENTATION"
         /// `1` seeds one file saved by an earlier version into the Offline tab's "Saved earlier" list.
         public static let legacyDownloadsKey = "UITEST_LEGACY_DOWNLOADS"
+        public static let searchOfflineKey = "UITEST_SEARCH_OFFLINE"
         public static let legacyDownloadName = "legacy-report.pdf"
 
         /// Whether this launch runs under XCUITest with animations off.
@@ -530,6 +533,9 @@
             prepareDependencies {
                 $0.authClient = UITestSupport.authClient(auth, expiry: expiry)
                 $0.filesClient = UITestSupport.filesClient(scenario, expiry: expiry)
+                if environment[UITestSupport.searchOfflineKey] == "1" {
+                    $0.filesClient.search = { _, _, _, _ in throw FilesClientError.offline }
+                }
                 $0.directoryCacheStore = .inMemory()
                 $0.jsonCacheStore = .inMemory()
                 $0.previewCacheStore = .testValue

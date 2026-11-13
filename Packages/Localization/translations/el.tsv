@@ -1111,6 +1111,8 @@ downloadQueue.photosAccessDenied	Επιτρέψτε την πρόσβαση στ
 downloadQueue.photosSaveFailed	Δεν ήταν δυνατή η προσθήκη στις Φωτογραφίες.
 tab.offline	Εκτός σύνδεσης
 offline.sectionSavedEarlier	Αποθηκεύτηκαν παλαιότερα
+search.onDevice	Στη συσκευή
+search.remote	Απομακρυσμένα
 offline.tabEmpty	Τίποτα δεν είναι διαθέσιμο εκτός σύνδεσης ακόμη. Επιλέξτε «Διαθέσιμο εκτός σύνδεσης» σε ένα αρχείο ή φάκελο.
 offline.removeItemTitle	Κατάργηση του «%@» από τα διαθέσιμα εκτός σύνδεσης;
 offline.removeItemsTitle	Κατάργηση %lld στοιχείων από τα διαθέσιμα εκτός σύνδεσης;

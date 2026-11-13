@@ -239,12 +239,19 @@ struct BrowseContentView: View {
                 store.send(.onAppear)
                 store.send(.computeOfflineAvailability)
             }
+            // New results, or a change in what this folder keeps offline: find the results on the device.
+            .task(id: SearchOnDeviceKey(results: store.searchResults?.ids.elements, offline: store.offlineItemIDs)) {
+                store.send(.computeSearchOnDevice)
+            }
             // A finished offline download can change what's available here, so refresh the badges.
             // The completion mutates shared state, so this `onChange` fires mid reduce; hop to the next
             // tick so the send isn't reentrant.
             .onChange(of: offlineProgress.phase) { _, phase in
                 if phase == .completed {
-                    Task { @MainActor in store.send(.computeOfflineAvailability) }
+                    Task { @MainActor in
+                        store.send(.computeOfflineAvailability)
+                        store.send(.computeSearchOnDevice)
+                    }
                 }
             }
         #if os(macOS)
@@ -726,7 +733,7 @@ struct BrowseContentView: View {
                 )
                 Divider()
                 MacSearchResultsTable(
-                    results: store.displayedSearchResults.map(Array.init) ?? [],
+                    sections: store.searchResultSections,
                     favoritePaths: store.favoritePaths,
                     onOpen: { store.send(.searchResultTapped($0)) },
                     onShowInFolder: { store.send(.searchResultEnclosingFolderTapped($0)) }
@@ -1432,15 +1439,31 @@ struct BrowseContentView: View {
                         BrowseRootSectionHeader(title: L10n.Browse.sectionPersonal)
                     }
                 }
-                Section {
-                    if store.isSearching {
-                        searchResultRows
+                if store.isSearching {
+                    let sections = store.searchResultSections
+                    if sections.isSplit {
+                        Section {
+                            searchResultRows(sections.onDevice)
+                        } header: {
+                            BrowseRootSectionHeader(title: L10n.Search.onDevice)
+                        }
+                        if !sections.remote.isEmpty {
+                            Section {
+                                searchResultRows(sections.remote)
+                            } header: {
+                                BrowseRootSectionHeader(title: L10n.Search.remote)
+                            }
+                        }
                     } else {
-                        folderItemRows
+                        Section { searchResultRows(sections.remote) }
                     }
-                } header: {
-                    if showsPersonalSpace {
-                        BrowseRootSectionHeader(title: L10n.Browse.locations)
+                } else {
+                    Section {
+                        folderItemRows
+                    } header: {
+                        if showsPersonalSpace {
+                            BrowseRootSectionHeader(title: L10n.Browse.locations)
+                        }
                     }
                 }
                 if store.isSearching, hasSearchFooter {
@@ -1480,16 +1503,22 @@ struct BrowseContentView: View {
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
                     if store.isSearching {
-                        ForEach(store.displayedSearchResults ?? []) { result in
-                            Button {
-                                store.send(.searchResultTapped(result))
-                            } label: {
-                                searchResultCell(row: result, grid: true)
-                                    .dsCard(padding: Constants.gridCellPadding)
+                        let sections = store.searchResultSections
+                        if sections.isSplit {
+                            Section {
+                                searchResultCells(sections.onDevice)
+                            } header: {
+                                BrowseRootSectionHeader(title: L10n.Search.onDevice)
                             }
-                            .buttonStyle(DSHapticButtonStyle())
-                            .contextMenu { searchResultMenu(result) }
-                            .dsTapFlash()
+                            if !sections.remote.isEmpty {
+                                Section {
+                                    searchResultCells(sections.remote)
+                                } header: {
+                                    BrowseRootSectionHeader(title: L10n.Search.remote)
+                                }
+                            }
+                        } else {
+                            searchResultCells(sections.remote)
                         }
                     } else {
                         if showsPersonalSpace {
@@ -1809,6 +1838,20 @@ struct BrowseContentView: View {
         }
     }
 
+    private func searchResultCells(_ results: [SearchResultItem]) -> some View {
+        ForEach(results) { result in
+            Button {
+                store.send(.searchResultTapped(result))
+            } label: {
+                searchResultCell(row: result, grid: true)
+                    .dsCard(padding: Constants.gridCellPadding)
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .contextMenu { searchResultMenu(result) }
+            .dsTapFlash()
+        }
+    }
+
     private func searchResultMenu(_ result: SearchResultItem) -> some View {
         SearchResultMenu(
             result: result,
@@ -1817,9 +1860,7 @@ struct BrowseContentView: View {
         )
     }
 
-    @ViewBuilder
-    private var searchResultRows: some View {
-        let results = store.displayedSearchResults ?? []
+    private func searchResultRows(_ results: [SearchResultItem]) -> some View {
         ForEach(results) { result in
             DSFlashingListRow {
                 Button {

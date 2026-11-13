@@ -357,6 +357,11 @@ struct BrowseScreen {
         app.labeledButton(L10n.Browse.actionCompress)
     }
 
+    /// A search section heading ("On device", "Remote"); the list draws it in capitals.
+    func sectionHeader(_ title: String) -> XCUIElement {
+        app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", title)).firstMatch
+    }
+
     /// The "..." menu's list/grid view toggle (reads "Grid View" while in list mode).
     var gridViewToggle: XCUIElement {
         app.labeledButton(L10n.Select.gridView)

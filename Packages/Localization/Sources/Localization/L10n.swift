@@ -694,6 +694,10 @@ public enum L10n {
         public static var saveToDevice: String { tr("previewToolbar.saveToDevice") }  // "Save to Device"
         public static var share: String { tr("previewToolbar.share") }  // "Share"
     }
+    public enum Search {
+        public static var onDevice: String { tr("search.onDevice") }  // "On device"
+        public static var remote: String { tr("search.remote") }  // "Remote"
+    }
     public enum SearchIndexSettings {
         public static var addButton: String { tr("searchIndexSettings.addButton") }  // "Add"
         public static var additional: String { tr("searchIndexSettings.additional") }  // "Additional exclusions"

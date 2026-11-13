@@ -1144,6 +1144,8 @@ downloadQueue.photosAccessDenied	Permite accesul la Fotografii în Setări pentr
 downloadQueue.photosSaveFailed	Nu s-a putut adăuga în Fotografii.
 tab.offline	Offline
 offline.sectionSavedEarlier	Salvate anterior
+search.onDevice	Pe dispozitiv
+search.remote	La distanță
 offline.tabEmpty	Încă nu este nimic disponibil offline. Alege „Disponibil offline” pentru un fișier sau un dosar.
 offline.removeItemTitle	Elimini „%@” din Disponibile offline?
 offline.removeItemsTitle	Elimini %lld elemente din Disponibile offline?

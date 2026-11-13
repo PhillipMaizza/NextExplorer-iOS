@@ -50,6 +50,8 @@ public struct FavoritesFeature {
         /// search per favorite. Distinct from `displayedFavorites`, which only ever name filters the
         /// favorite folders themselves.
         public var fileSearchResults: IdentifiedArrayOf<SearchResultItem>?
+        /// The ids of the results kept on this device; they head the list as "On device".
+        public var searchOnDeviceIDs: Set<String> = []
         /// Lifecycle of the file search above: `.loading` on first run with no prior results,
         /// `.loaded` once merged results land, `.failed` when every favorite's search errored.
         public var searchPhase: DataPhase = .idle
@@ -131,6 +133,11 @@ public struct FavoritesFeature {
         }
 
         /// File search results with hidden entries dropped unless the preference is on.
+        /// `displayedSearchResults` split into what is on this device and what is only on the server.
+        public var searchResultSections: SearchResultSections {
+            SearchResultSections(displayedSearchResults, onDeviceIDs: searchOnDeviceIDs)
+        }
+
         public var displayedSearchResults: [SearchResultItem] {
             guard let fileSearchResults else { return [] }
             return fileSearchResults.filter { showHiddenFiles || !isHiddenFileName($0.name) }
@@ -168,6 +175,9 @@ public struct FavoritesFeature {
         case searchQueryChanged(String)
         case fileSearchResponse(Result<[SearchResultItem], FilesClientError>)
         case searchRetryTapped
+        /// The results changed, or what is kept offline did: find which results are on the device.
+        case computeSearchOnDevice
+        case searchOnDeviceComputed(Set<String>)
         /// "View in Shared" after creating a link from a search result's preview.
         case viewSharesFromPreviewTapped
         case searchResultTapped(SearchResultItem)
@@ -223,7 +233,9 @@ public struct FavoritesFeature {
     /// Cache namespace for this tab's saved offline copy.
     static let cacheNamespace = "favorites"
 
-    private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability }
+    private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability,
+                                           searchOnDevice
+    }
 
     private enum Constants {
         static let searchLimit = 100
@@ -448,6 +460,18 @@ public struct FavoritesFeature {
             case .searchRetryTapped:
                 return favoriteSearch(&state, isDebounced: false)
 
+            case .computeSearchOnDevice:
+                return .searchOnDevice(
+                    state.fileSearchResults?.elements ?? [],
+                    ids: &state.searchOnDeviceIDs,
+                    store: offlineFileStore.pinned(to: state.cacheScope),
+                    cancelID: CancelID.searchOnDevice
+                ) { .searchOnDeviceComputed($0) }
+
+            case let .searchOnDeviceComputed(ids):
+                state.searchOnDeviceIDs = ids
+                return .none
+
             case let .searchResultTapped(result):
                 // A directory result navigates into that folder (push). A file result opens directly
                 // in a preview cover hosted here (no folder navigation): spin up a `BrowseFeature`
@@ -460,13 +484,11 @@ public struct FavoritesFeature {
                 let item = offlineFileStore.pinned(to: state.cacheScope).matchingPinnedCopy(
                     result.previewItem(openedAt: date.now)
                 )
-                var host = BrowseFeature.State(
+                state.previewHost = .previewHost(
+                    for: item,
                     serverURL: state.serverURL,
-                    directoryPath: result.path,
-                    title: result.enclosingFolderTitle
+                    folderTitle: result.enclosingFolderTitle
                 )
-                host.previewItem = item
-                state.previewHost = host
                 return .send(.previewHost(.presented(.rowTapped(item))))
 
             case let .searchResultEnclosingFolderTapped(result):

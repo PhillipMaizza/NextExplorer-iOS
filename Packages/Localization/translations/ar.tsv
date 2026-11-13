@@ -1162,6 +1162,8 @@ downloadQueue.photosAccessDenied	اسمح بالوصول إلى الصور في 
 downloadQueue.photosSaveFailed	تعذّرت إضافة هذا العنصر إلى الصور.
 tab.offline	دون اتصال
 offline.sectionSavedEarlier	محفوظ سابقًا
+search.onDevice	على الجهاز
+search.remote	عن بُعد
 offline.tabEmpty	لا شيء متاح دون اتصال بعد. اختر «متاح دون اتصال» لملف أو مجلد.
 offline.removeItemTitle	إزالة «%@» من المتاح دون اتصال؟
 offline.removeItemsTitle	إزالة %lld عناصر من المتاح دون اتصال؟

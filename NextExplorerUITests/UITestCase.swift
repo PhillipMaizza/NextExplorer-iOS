@@ -13,6 +13,8 @@ class UITestCase: XCTestCase {
         /// An image file in the root fixture listing.
         static let imageFile = "vacation.jpg"
         static let searchQuery = "vacation"
+        /// Part of `file`'s name, so it is among the search results.
+        static let fileSearchTerm = "notes"
         /// Stable first hit the mocked search returns (mirrors `UITestSupport.searchHitName`).
         static let searchHit = "Quarterly Report.txt"
         /// The shortest query the server searches (mirrors `FilesClient.minimumSearchTermLength`).
@@ -192,6 +194,7 @@ class UITestCase: XCTestCase {
         static let disableAnimations = "UITEST_DISABLE_ANIMATIONS"
         static let orientation = "UITEST_ORIENTATION"
         static let legacyDownloads = "UITEST_LEGACY_DOWNLOADS"
+        static let searchOffline = "UITEST_SEARCH_OFFLINE"
         static let on = "1"
         static let landscape = "landscape"
     }
@@ -205,11 +208,15 @@ class UITestCase: XCTestCase {
         scenario: Scenario = .normal,
         animationSpeed: Double = UITestCase.fastAnimationSpeed,
         landscape: Bool = false,
-        legacyDownloads: Bool = false
+        legacyDownloads: Bool = false,
+        searchOffline: Bool = false
     ) -> XCUIApplication {
         let app = XCUIApplication()
         if legacyDownloads {
             app.launchEnvironment[LaunchKey.legacyDownloads] = LaunchKey.on
+        }
+        if searchOffline {
+            app.launchEnvironment[LaunchKey.searchOffline] = LaunchKey.on
         }
         app.launchEnvironment[LaunchKey.mock] = LaunchKey.on
         app.launchEnvironment[LaunchKey.auth] = auth.rawValue

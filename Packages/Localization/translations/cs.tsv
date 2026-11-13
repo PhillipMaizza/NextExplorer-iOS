@@ -1121,6 +1121,8 @@ downloadQueue.photosAccessDenied	Povolte v Nastavení přístup k Fotkám, abyst
 downloadQueue.photosSaveFailed	Nepodařilo se přidat do Fotek.
 tab.offline	Offline
 offline.sectionSavedEarlier	Uloženo dříve
+search.onDevice	V zařízení
+search.remote	Vzdálené
 offline.tabEmpty	Zatím není nic dostupné offline. U souboru nebo složky zvolte „Dostupné offline“.
 offline.removeItemTitle	Odebrat „%@“ z dostupných offline?
 offline.removeItemsTitle	Odebrat %lld položek z dostupných offline?

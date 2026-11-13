@@ -277,6 +277,9 @@ public struct BrowseFeature {
         /// id: read once a search needs them (a term too short for the server, or no server to
         /// reach). `nil` until read; cleared when the search ends or its scope changes.
         public var searchSavedItems: [String: FileItem]?
+        /// The ids of the results kept on this device, read off the main actor whenever the results
+        /// change; they head the list as "On device". Ids no longer in the results are ignored.
+        public var searchOnDeviceIDs: Set<String> = []
         /// The file type categories the search results are filtered to. Empty means "all types";
         /// otherwise a result shows only if its category is in the set. Only relevant while
         /// searching, and pruned to the categories actually present as results change.
@@ -487,6 +490,11 @@ public struct BrowseFeature {
             return visible.filter { selectedSearchCategories.contains(Self.category(of: $0)) }
         }
 
+        /// `displayedSearchResults` split into what is on this device and what is only on the server.
+        public var searchResultSections: SearchResultSections {
+            SearchResultSections(displayedSearchResults.map(Array.init) ?? [], onDeviceIDs: searchOnDeviceIDs)
+        }
+
         /// The categories actually present in the current (hidden filtered) results, in display
         /// order: the rows the filter sheet offers. Independent of the current selection, so
         /// toggling a category off doesn't make it vanish from the sheet.
@@ -527,6 +535,9 @@ public struct BrowseFeature {
         /// Recompute which visible items are available offline (from the offline store), off the
         /// main actor. Sent on appear and when a download finishes.
         case computeOfflineAvailability
+        /// The results changed, or what is kept offline did: find which results are on the device.
+        case computeSearchOnDevice
+        case searchOnDeviceComputed(Set<String>)
         case offlineAvailabilityComputed(all: Set<String>, pinned: Set<String>)
         /// Pin the item for offline use, or unpin it when the user pinned it already. An item that is
         /// offline only through a pinned parent folder does nothing.
@@ -708,7 +719,7 @@ public struct BrowseFeature {
     // can reference these cancel ids across files.
     enum CancelID: Hashable {
         case search, searchSavedItems, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
-        case prefetchChildren, prefetchFavorites, offlineAvailability, arrivalRecheck, newFileExtensions
+        case prefetchChildren, prefetchFavorites, offlineAvailability, searchOnDevice, arrivalRecheck, newFileExtensions
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
         case favorite(String)
@@ -731,6 +742,18 @@ public struct BrowseFeature {
 
             case .computeOfflineAvailability:
                 return computeOfflineAvailability(&state)
+
+            case .computeSearchOnDevice:
+                return .searchOnDevice(
+                    state.searchResults?.elements ?? [],
+                    ids: &state.searchOnDeviceIDs,
+                    store: offlineFileStore.pinned(to: state.cacheScope),
+                    cancelID: CancelID.searchOnDevice
+                ) { .searchOnDeviceComputed($0) }
+
+            case let .searchOnDeviceComputed(ids):
+                state.searchOnDeviceIDs = ids
+                return .none
 
             case let .offlineAvailabilityComputed(all, pinned):
                 state.offlineItemIDs = all

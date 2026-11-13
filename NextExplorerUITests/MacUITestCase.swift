@@ -21,8 +21,6 @@
             static let refreshKey = "r"
             static let goToFolderKey = "g"
             static let settingsKey = ","
-            /// Part of `Fixture.file`'s name, so it is among the search results.
-            static let fileSearchTerm = "notes"
         }
 
         /// A by me link and the with me link in the mocked shares.

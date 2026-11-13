@@ -1111,6 +1111,8 @@ downloadQueue.photosAccessDenied	Tillad adgang til Fotos i Indstillinger for at 
 downloadQueue.photosSaveFailed	Kunne ikke føje dette til Fotos.
 tab.offline	Offline
 offline.sectionSavedEarlier	Gemt tidligere
+search.onDevice	På enheden
+search.remote	Eksternt
 offline.tabEmpty	Intet er tilgængeligt offline endnu. Vælg “Tilgængelig offline” på en fil eller mappe.
 offline.removeItemTitle	Fjern “%@” fra tilgængeligt offline?
 offline.removeItemsTitle	Fjern %lld emner fra tilgængeligt offline?

@@ -1111,6 +1111,8 @@ downloadQueue.photosAccessDenied	Gi tilgang til Bilder i Innstillinger for å ar
 downloadQueue.photosSaveFailed	Kunne ikke legge dette til i Bilder.
 tab.offline	Frakoblet
 offline.sectionSavedEarlier	Arkivert tidligere
+search.onDevice	På enheten
+search.remote	Eksternt
 offline.tabEmpty	Ingenting er tilgjengelig uten nett ennå. Velg «Tilgjengelig frakoblet» på en fil eller mappe.
 offline.removeItemTitle	Fjerne «%@» fra tilgjengelig uten nett?
 offline.removeItemsTitle	Fjerne %lld objekter fra tilgjengelig uten nett?

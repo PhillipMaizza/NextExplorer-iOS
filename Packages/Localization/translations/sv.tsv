@@ -1138,6 +1138,8 @@ downloadQueue.photosAccessDenied	Tillåt åtkomst till Bilder i Inställningar f
 downloadQueue.photosSaveFailed	Det gick inte att lägga till i Bilder.
 tab.offline	Offline
 offline.sectionSavedEarlier	Sparat tidigare
+search.onDevice	På enheten
+search.remote	Fjärr
 offline.tabEmpty	Inget är tillgängligt offline än. Välj ”Tillgängligt offline” för en fil eller mapp.
 offline.removeItemTitle	Ta bort ”%@” från Tillgängligt offline?
 offline.removeItemsTitle	Ta bort %lld objekt från Tillgängligt offline?

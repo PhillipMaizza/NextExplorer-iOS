@@ -1111,6 +1111,8 @@ downloadQueue.photosAccessDenied	Engedélyezze a Fotók elérését a Beállít�
 downloadQueue.photosSaveFailed	Nem sikerült hozzáadni a Fotókhoz.
 tab.offline	Offline
 offline.sectionSavedEarlier	Korábban mentett
+search.onDevice	Az eszközön
+search.remote	Távoli
 offline.tabEmpty	Még semmi sem érhető el offline. Válassza a(z) „Elérhető offline” lehetőséget egy fájlnál vagy mappánál.
 offline.removeItemTitle	Eltávolítja a(z) „%@” elemet az offline elérhetők közül?
 offline.removeItemsTitle	Eltávolít %lld elemet az offline elérhetők közül?

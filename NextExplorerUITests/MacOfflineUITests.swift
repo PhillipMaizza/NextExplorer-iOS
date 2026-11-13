@@ -31,6 +31,10 @@
                 text(L10n.Offline.tabEmpty, in: app).waitToAppear(),
                 "With nothing pinned the Offline section says so"
             )
+            XCTAssertFalse(
+                app.toolbars.buttons[L10n.Common.sort].exists,
+                "The table sorts from its headers, so the section has no Sort button"
+            )
         }
 
         func testPinningFromTheContextMenuListsTheFileInTheOfflineSection() {

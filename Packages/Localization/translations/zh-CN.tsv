@@ -1132,6 +1132,8 @@ downloadQueue.photosAccessDenied	请在“设置”中允许访问“照片”�
 downloadQueue.photosSaveFailed	无法添加到“照片”。
 tab.offline	离线
 offline.sectionSavedEarlier	之前存储的
+search.onDevice	在此设备上
+search.remote	远程
 offline.tabEmpty	目前还没有可离线使用的内容。请在文件或文件夹上选择“可离线使用”。
 offline.removeItemTitle	要将“%@”从“可离线使用”中移除吗？
 offline.removeItemsTitle	要将 %lld 个项目从“可离线使用”中移除吗？
