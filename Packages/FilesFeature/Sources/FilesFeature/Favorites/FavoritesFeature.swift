@@ -606,8 +606,13 @@ public struct FavoritesFeature {
                 return .send(.delegate(.uploadRequested(files)))
 
             case .offlineAvailabilityChanged:
-                return .merge(state.path.ids
-                    .map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) })
+                var effects: [Effect<Action>] = state.path.ids
+                    .map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) }
+                // A pin or a finished run changes which search results are on the device.
+                if state.fileSearchResults != nil {
+                    effects.append(.send(.computeSearchOnDevice))
+                }
+                return .merge(effects)
 
             case let .navigateToDirectory(path, title):
                 state.forwardStack = []
@@ -804,22 +809,29 @@ public struct FavoritesFeature {
             // failed: a partial success still shows its hits.
             if hits.isEmpty, firstFailure == .offline {
                 // No server to reach: what the device saved and kept below the favorites answers.
-                let kept = await Task.detached(priority: .userInitiated) {
-                    favoritePaths.flatMap { path in
-                        BrowseFeature.searchMatches(
-                            BrowseFeature.savedAndKeptItems(
-                                under: path,
-                                serverURL: serverURL,
-                                directoryCacheStore: directoryCacheStore,
-                                offlineFileStore: offlineFileStore
-                            ),
-                            term: term,
-                            below: path
+                let read = Task.detached(priority: .userInitiated) {
+                    var heldItems = false
+                    let matches = favoritePaths.flatMap { path -> [SearchResultItem] in
+                        let items = BrowseFeature.savedAndKeptItems(
+                            under: path,
+                            serverURL: serverURL,
+                            directoryCacheStore: directoryCacheStore,
+                            offlineFileStore: offlineFileStore
                         )
+                        heldItems = heldItems || !items.isEmpty
+                        return BrowseFeature.searchMatches(items, term: term, below: path)
                     }
-                }.value
+                    return (matches: matches, heldItems: heldItems)
+                }
+                // A search that ends or moves stops the read too, not just its answer.
+                let kept = await withTaskCancellationHandler { await read.value } onCancel: { read.cancel() }
                 guard !Task.isCancelled else { return }
-                await send(kept.isEmpty ? .fileSearchResponse(.failure(.offline)) : .fileSearchResponse(.success(kept)))
+                // Nothing saved at all is "offline"; saved data that matches nothing is an empty answer.
+                await send(
+                    kept.matches.isEmpty && !kept.heldItems
+                        ? .fileSearchResponse(.failure(.offline))
+                        : .fileSearchResponse(.success(kept.matches))
+                )
             } else if hits.isEmpty, let firstFailure {
                 await send(.fileSearchResponse(.failure(firstFailure)))
             } else {

@@ -14,6 +14,7 @@ struct LegacyDownloadStoreTests {
         static let accountB = "https://files.example.com|bob"
         static let contents = "hello"
         static let fileName = "report.pdf"
+        static let otherFileName = "notes.pdf"
     }
 
     /// One temporary root per test: the private folder plus the two shared folders older
@@ -158,6 +159,25 @@ struct LegacyDownloadStoreTests {
         #expect(renamed.deletingLastPathComponent() == saved.deletingLastPathComponent())
         #expect(!sandbox.exists(saved))
         #expect(sandbox.exists(renamed))
+    }
+
+    @Test("A rename that only changes the case works, and renaming onto another file is refused")
+    func renameHandlesCaseAndClashes() throws {
+        let sandbox = Sandbox()
+        defer { sandbox.cleanUp() }
+        let saved = try sandbox.store.save(sandbox.source(), Constants.fileName, Constants.scopeA)
+        let other = try sandbox.store.save(
+            sandbox.source(Constants.otherFileName),
+            Constants.otherFileName,
+            Constants.scopeA
+        )
+
+        let upper = try sandbox.store.rename(saved, Constants.fileName.uppercased())
+        let names = try sandbox.store.list(Constants.scopeA).map(\.fileName).sorted()
+
+        #expect(upper.lastPathComponent == Constants.fileName.uppercased())
+        #expect(names == [Constants.otherFileName, Constants.fileName.uppercased()].sorted())
+        #expect(throws: (any Error).self) { try sandbox.store.rename(other, Constants.fileName.uppercased()) }
     }
 
     @Test("Delete removes the copy, and a missing copy throws")

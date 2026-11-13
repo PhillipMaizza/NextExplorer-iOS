@@ -248,6 +248,8 @@ public struct SettingsFeature {
 
         public enum Delegate: Equatable, Sendable {
             case signOutButtonTapped
+            /// Pinned roots were removed from the manage list: the engine drops a run that still holds them.
+            case offlineRootsRemoved
             /// Every local download was just deleted: `MainTabFeature` clears the
             /// Downloads tab's list without waiting for it to re-scan the (now empty) disk.
             case allDownloadsRemoved
@@ -471,7 +473,7 @@ public struct SettingsFeature {
             return .none
 
         case .offlineManage(.presented(.delegate(.changed))):
-            return .send(.refreshOfflineSize)
+            return .merge(.send(.refreshOfflineSize), .send(.delegate(.offlineRootsRemoved)))
 
         case .offlineManage:
             return .none

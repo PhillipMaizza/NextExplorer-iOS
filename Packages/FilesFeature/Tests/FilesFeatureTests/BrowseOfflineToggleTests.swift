@@ -140,6 +140,7 @@ struct BrowseOfflineToggleTests: OfflineDownloadsTestSupport {
         )
 
         await store.send(.unpinTapped(path: Constants.tripsPath))
+        await store.receive(\.unpinFinished)
         #expect(offline.pinnedRoots().map(\.path) == [TestFolder.docs])
     }
 
@@ -154,6 +155,7 @@ struct BrowseOfflineToggleTests: OfflineDownloadsTestSupport {
         )
 
         await store.send(.unpinTapped(path: Constants.tripsPath))
+        await store.receive(\.unpinFinished)
         #expect(offline.pinnedRoots().map(\.path) == [TestFolder.docs])
     }
 

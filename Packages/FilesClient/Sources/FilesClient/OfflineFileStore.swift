@@ -10,9 +10,8 @@ import Foundation
 /// pinned file must still be there when the user is offline.
 ///
 /// Everything is scoped by `CacheAccountScope.current` (or the scope an operation captured when it started), so two
-/// accounts on one device never serve or
-/// count each other's pinned files. `removeAll` drops every scope at once, for the session boundary
-/// clears (rule #11).
+/// accounts on one device never serve or count each other's pinned files. `removeAll` drops every scope at
+/// once, for the session boundary clears.
 enum OfflineCache {
     static let rootDirectoryName = "OfflineFiles"
     static let slotsDirectoryName = "slots"
@@ -24,7 +23,6 @@ enum OfflineCache {
     static let listingsDirectoryName = "listings"
     static let interruptedFileName = ".interrupted"
     static let lastSyncFileName = ".lastsync"
-    /// How many syncs in a row the server answered "not found" for a pinned folder, by path.
     private static let pathSeparator = "/"
 
     private static func applicationSupport() -> URL? {
@@ -123,15 +121,22 @@ enum OfflineCache {
         }
         try FileManager.default.createDirectory(at: slot.directory, withIntermediateDirectories: true)
         let pathURL = slot.directory.appendingPathComponent(pathSidecarName)
+        let hadCopy = FileManager.default.fileExists(atPath: slot.fileURL.path)
         do {
             try item.id.write(to: pathURL, atomically: true, encoding: .utf8)
-            try? FileManager.default.removeItem(at: slot.fileURL)
-            try FileManager.default.moveItem(at: downloadedURL, to: slot.fileURL)
+            if hadCopy {
+                _ = try FileManager.default.replaceItemAt(slot.fileURL, withItemAt: downloadedURL)
+            } else {
+                try FileManager.default.moveItem(at: downloadedURL, to: slot.fileURL)
+            }
             try metaValue(dateModified: item.dateModified, size: item.size)
                 .write(to: slot.metaURL, atomically: true, encoding: .utf8)
         } catch {
-            // A slot without its path sidecar could never be listed, sized or reconciled.
-            try? FileManager.default.removeItem(at: slot.directory)
+            // A new slot without its files could never be listed, sized or removed; an earlier copy
+            // stays, so a failed refresh never costs the file already kept.
+            if !hadCopy {
+                try? FileManager.default.removeItem(at: slot.directory)
+            }
             throw error
         }
         FileProtection.apply(to: [slot.directory, slot.fileURL, slot.metaURL, pathURL])
@@ -176,7 +181,7 @@ enum OfflineCache {
 
     /// Wipes every account's offline files. Called only at genuine session boundaries (logout, full
     /// teardown, fresh sign in) where no other account stays active, mirroring the other cache
-    /// stores' `clearAll` (rule #11).
+    /// stores' `clearAll`.
     static func removeAll() {
         guard let rootURL = root(), FileManager.default.fileExists(atPath: rootURL.path) else { return }
         try? FileManager.default.removeItem(at: rootURL)
@@ -331,8 +336,8 @@ enum OfflineCache {
         }
     }
 
-    private static func flagURL(_ name: String) -> URL? {
-        scopeDirectory(create: true)?.appendingPathComponent(name)
+    private static func flagURL(_ name: String, create: Bool = true) -> URL? {
+        scopeDirectory(create: create)?.appendingPathComponent(name)
     }
 
     /// A run in progress marker, set when a download starts and cleared on completion, so the next
@@ -348,12 +353,12 @@ enum OfflineCache {
     }
 
     static func wasInterrupted() -> Bool {
-        guard let url = flagURL(interruptedFileName) else { return false }
+        guard let url = flagURL(interruptedFileName, create: false) else { return false }
         return FileManager.default.fileExists(atPath: url.path)
     }
 
     static func lastAutoSyncAt() -> Date? {
-        guard let url = flagURL(lastSyncFileName),
+        guard let url = flagURL(lastSyncFileName, create: false),
               let text = try? String(contentsOf: url, encoding: .utf8),
               let seconds = Double(text)
         else { return nil }
@@ -394,10 +399,6 @@ public struct OfflinePinnedRoot: Codable, Equatable, Sendable {
     }
 }
 
-/// Feature facing handle to the durable offline store. Reads (`localURL`) are also done inside
-/// `FilesService` so `previewFile` / `downloadRawFile` / streaming serve a pinned copy transparently;
-/// this dependency covers what a feature drives directly: the pinned manifest, the total size for the
-/// Settings display, and the session boundary wipe.
 /// What a pinned copy was saved with: the server's modified date and size at that moment.
 public struct OfflineCopyMetadata: Equatable, Sendable {
     public let dateModified: Date
@@ -409,6 +410,10 @@ public struct OfflineCopyMetadata: Equatable, Sendable {
     }
 }
 
+/// Feature facing handle to the durable offline store. Reads (`localURL`) are also done inside
+/// `FilesService` so `previewFile`, `downloadRawFile` and streaming serve a pinned copy transparently;
+/// this dependency covers what a feature drives directly: the pinned manifest, the total size for the
+/// Settings display, and the session boundary wipe.
 public struct OfflineFileStore: Sendable {
     public var localURL: @Sendable (_ item: FileItem) -> URL?
     /// A pinned copy for `item`'s path regardless of the `dateModified|size` staleness check. For
@@ -425,7 +430,7 @@ public struct OfflineFileStore: Sendable {
     public var removeRoot: @Sendable (_ path: String) -> Void
     /// Prune stale slots: orphans, and (with a fresh listing) server-deleted files.
     public var reconcile: @Sendable (_ currentPaths: Set<String>?) -> Void
-    /// Every account's offline files. Session boundaries only (rule #11).
+    /// Every account's offline files. Session boundaries only.
     public var removeAll: @Sendable () -> Void
     /// Only the active account's offline files, for the Settings "Remove Offline Files" action.
     public var removeCurrentAccount: @Sendable () -> Void

@@ -13,6 +13,7 @@ import TestUtils
 struct SearchOnDeviceTests {
     private enum Constants {
         static let trips = "Trips"
+        static let noMatchTerm = "zzzzzz"
         static let tripsPath = "Docs/Trips"
         static let plan = "vacation-plan.pdf"
         static let lookalike = "DocsArchive"
@@ -337,5 +338,65 @@ struct SearchOnDeviceTests {
         await store.receive(\.fileSearchResponse.failure) {
             $0.searchPhase = .failed(FilesClientError.offline.userMessage)
         }
+    }
+
+    @Test("Favorites search without a connection over saved data that matches nothing answers with no results")
+    func favoritesSearchOfflineWithSavedDataButNoMatch() async {
+        let clock = TestClock()
+        let cache = DirectoryCacheStore.inMemory()
+        cache.write(
+            serverURL: BrowseTestSupport.serverURL,
+            path: TestFolder.docs,
+            result: BrowseResult(items: [photo], access: BrowseTestSupport.readOnlyAccess, path: TestFolder.docs),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
+        var state = FavoritesFeature.State(serverURL: BrowseTestSupport.serverURL)
+        state.favorites = [docsFavorite]
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.directoryCacheStore = cache
+            $0.offlineFileStore = .inMemory()
+            $0.filesClient.search = { _, _, _, _ in throw FilesClientError.offline }
+        }
+
+        await store.send(.searchQueryChanged(Constants.noMatchTerm)) {
+            $0.searchQuery = Constants.noMatchTerm
+            $0.searchPhase = .loading
+        }
+        await clock.advance(by: FilesClient.searchDebounce)
+        await store.receive(\.fileSearchResponse.success) {
+            $0.fileSearchResults = []
+            $0.searchPhase = .loaded
+        }
+    }
+
+    @Test("A change in what is kept offline finds the on device results again")
+    func favoritesRecomputesOnDeviceWhenAvailabilityChanges() async {
+        var state = FavoritesFeature.State(serverURL: BrowseTestSupport.serverURL)
+        state.searchQuery = TestSearch.term
+        state.fileSearchResults = [photoHit, planHit]
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.offlineFileStore = pinnedTrips()
+        }
+
+        await store.send(.offlineAvailabilityChanged)
+        await store.receive(\.computeSearchOnDevice)
+        await store.receive(\.searchOnDeviceComputed) {
+            $0.searchOnDeviceIDs = [planHit.id]
+        }
+    }
+
+    @Test("Without search results a change in what is kept offline starts no lookup")
+    func favoritesWithoutResultsStartsNoLookup() async {
+        let store = TestStore(initialState: FavoritesFeature.State(serverURL: BrowseTestSupport.serverURL)) {
+            FavoritesFeature()
+        }
+
+        await store.send(.offlineAvailabilityChanged)
     }
 }

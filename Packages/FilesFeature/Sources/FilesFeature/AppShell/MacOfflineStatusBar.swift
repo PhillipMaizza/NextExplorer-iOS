@@ -77,7 +77,7 @@
                         Spacer()
                         if progress.phase == .downloading {
                             Text(L10n.Offline.progressCount(progress.currentFileNumber, progress.filesTotal))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.secondaryDS)
                                 .monospacedDigit()
                         }
                         Group {

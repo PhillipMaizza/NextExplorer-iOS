@@ -61,6 +61,7 @@ struct MainTabDeviceSaveTests: MainTabTestSupport {
 
         await store.send(source.action)
         await store.receive(\.offline.unpinTapped)
+        await store.receive(\.offline.unpinFinished)
         await store.receive(\.offlineManage.onAppear)
         await store.receive(\.offlineManage.usagesLoaded)
         await store.finish()
@@ -105,6 +106,7 @@ struct MainTabDeviceSaveTests: MainTabTestSupport {
         let store = makeStore()
 
         await store.send(.offlineManage(.delegate(.changed)))
+        await store.receive(\.offline.pinnedRootsRemoved)
         await store.receive(\.browse.offlineAvailabilityChanged)
         await store.receive(\.favorites.offlineAvailabilityChanged)
         await store.receive(\.downloads.offlineAvailabilityChanged)

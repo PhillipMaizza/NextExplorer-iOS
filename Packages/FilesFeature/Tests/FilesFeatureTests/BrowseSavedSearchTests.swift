@@ -66,6 +66,23 @@ struct BrowseSavedSearchTests {
         Dictionary(uniqueKeysWithValues: [photo, trips, unopened, deepPhoto].map { ($0.id, $0) })
     }
 
+    @Test("A pinned file that a saved listing also shows keeps the listing's size and date")
+    func aListingOutranksThePinnedStub() {
+        let offline = OfflineFileStore.inMemory()
+        offline.setPinnedRoots([OfflinePinnedRoot(path: photo.id, isDirectory: false)])
+
+        let items = BrowseFeature.savedAndKeptItems(
+            under: TestFolder.docs,
+            serverURL: BrowseTestSupport.serverURL,
+            directoryCacheStore: savedListings(),
+            offlineFileStore: offline
+        )
+
+        let first = items.first { $0.id == photo.id }
+        #expect(first?.size == photo.size)
+        #expect(first?.dateModified == photo.dateModified)
+    }
+
     @Test("Saved folders are read below the search's folder, only through folders that were saved, up to both limits")
     func savedFoldersAreReadThroughSavedFoldersOnly() {
         let listings = [

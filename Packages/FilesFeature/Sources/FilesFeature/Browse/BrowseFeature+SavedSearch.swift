@@ -49,7 +49,7 @@ extension BrowseFeature {
         let pinnedFiles = pinned.filter { !$0.isDirectory }.map {
             offlineFileStore.matchingPinnedCopy(pinnedFileItem($0.path))
         }
-        return pinnedFiles + savedItems(
+        let saved = savedItems(
             under: [base] + pinned.filter(\.isDirectory).map(\.path),
             folderLimit: savedSearchFoldersLimit,
             itemLimit: savedSearchItemsLimit
@@ -57,6 +57,8 @@ extension BrowseFeature {
             // The listing kept with a pinned folder backs the shared cache, which evicts.
             (directoryCacheStore.read(serverURL: serverURL, path: path) ?? offlineFileStore.listing(path))?.items
         }
+        // A listing knows the file's real size and date; the pinned stub only fills in files no listing has.
+        return saved + pinnedFiles
     }
 
     /// `items` that `term` matches below `base`, as search results.

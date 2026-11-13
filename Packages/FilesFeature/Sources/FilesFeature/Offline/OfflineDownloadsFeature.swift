@@ -50,6 +50,10 @@ public struct OfflineDownloadsFeature {
         /// Unpin one file or folder: drops it from the manifest and frees its copies unless another
         /// pinned folder still covers them.
         case unpinTapped(path: String)
+        /// The root is gone from the store: lists that show what is pinned read it again.
+        case unpinFinished
+        /// Roots were removed elsewhere (the manage lists): a run in flight still holds their files.
+        case pinnedRootsRemoved
         case removeAllOfflineTapped
         /// Manual "Update Offline Files": re-walk the pinned roots and download only the new/changed
         /// files. Shows progress and a completion even when nothing needed downloading.
@@ -115,13 +119,12 @@ public struct OfflineDownloadsFeature {
                 let existingPaths = Set(existingRoots.map(\.path))
                 let newRoots = roots.map { OfflinePinnedRoot(path: $0.id, isDirectory: $0.isDirectory) }
                 // Track only the genuinely new pins, so a cancel rolls back exactly what this run added.
-                state.pendingPinPaths = Set(newRoots.map(\.path)).subtracting(existingPaths)
+                state.pendingPinPaths.formUnion(Set(newRoots.map(\.path)).subtracting(existingPaths))
+                // Recorded before the run starts, so a pin tapped right after cannot overwrite it and an
+                // interrupted run (app killed mid download) keeps its roots for the next sync to resume.
+                offlineFileStore.setPinnedRoots(Self.mergedRoots(existing: existingRoots, adding: newRoots))
                 return .run { send in
                     try await CacheAccountScope.withPinned(scope) {
-                        // Record the pins up front, so an interrupted run (app killed mid download) keeps
-                        // its roots and a later sync resumes the missing files instead of losing them.
-                        offlineFileStore.setPinnedRoots(Self.mergedRoots(existing: existingRoots, adding: newRoots))
-
                         let walk = try await Self.walk(
                             roots: roots, serverURL: serverURL, filesClient: filesClient,
                             onListing: Self.listingSink(offlineFileStore, fetchedAt: now)
@@ -254,7 +257,7 @@ public struct OfflineDownloadsFeature {
                 let rolledBack = state.pendingPinPaths
                 state.pendingPinPaths = []
                 state.$progress.withLock { $0 = OfflineDownloadProgress() }
-                return .merge(
+                return .concatenate(
                     .cancel(id: CancelID(scope: state.scope)),
                     .run { _ in
                         if !rolledBack.isEmpty {
@@ -272,7 +275,10 @@ public struct OfflineDownloadsFeature {
 
             case let .unpinTapped(path):
                 state.pendingPinPaths.remove(path)
-                let remove: Effect<Action> = .run { _ in offlineFileStore.removeRoot(path) }
+                let remove: Effect<Action> = .run { send in
+                    offlineFileStore.removeRoot(path)
+                    await send(.unpinFinished)
+                }
                 guard state.progress.isActive else { return remove }
                 // The run in flight still holds this root's files in its list: stop it, drop the root,
                 // then sync what remains, so no file of the unpinned root is stored after the removal.
@@ -280,6 +286,17 @@ public struct OfflineDownloadsFeature {
                 return .concatenate(
                     .cancel(id: CancelID(scope: state.scope)),
                     remove,
+                    .send(.autoSync(force: true))
+                )
+
+            case .unpinFinished:
+                return .none
+
+            case .pinnedRootsRemoved:
+                guard state.progress.isActive else { return .none }
+                state.$progress.withLock { $0 = OfflineDownloadProgress() }
+                return .concatenate(
+                    .cancel(id: CancelID(scope: state.scope)),
                     .send(.autoSync(force: true))
                 )
 
@@ -312,11 +329,13 @@ public struct OfflineDownloadsFeature {
         let now = date.now
         return .run { send in
             try await CacheAccountScope.withPinned(scope) {
-                offlineFileStore.setLastAutoSyncAt(now)
                 let walk = try await Self.walk(
                     roots: rootItems, serverURL: serverURL, filesClient: filesClient,
                     onListing: Self.listingSink(offlineFileStore, fetchedAt: now)
                 )
+                if !walk.hasIncompleteWalk {
+                    offlineFileStore.setLastAutoSyncAt(now)
+                }
                 let files = walk.files
                 // A pinned file or folder the server no longer has stays on the device until the user
                 // removes it: only orphans left by an unpinned root are dropped, never what the server lost.
@@ -384,15 +403,19 @@ public struct OfflineDownloadsFeature {
 
     /// Merges pinned roots by path, so re-pinning a folder updates rather than duplicates its entry.
     static func mergedRoots(existing: [OfflinePinnedRoot], adding: [OfflinePinnedRoot]) -> [OfflinePinnedRoot] {
-        var byPath = Dictionary(existing.map { ($0.path, $0) }, uniquingKeysWith: { _, new in new })
+        var merged = existing
         for root in adding {
-            byPath[root.path] = root
+            if let index = merged.firstIndex(where: { $0.path == root.path }) {
+                merged[index] = root
+            } else {
+                merged.append(root)
+            }
         }
-        return Array(byPath.values)
+        return merged
     }
 
-    /// Downloads `files` bounded-concurrently, replenishing the pool as each finishes, and reports
-    /// progress. Already-present files return from `offlineDownloadFile` with no network, so passing a
+    /// Downloads `files` with bounded concurrency, replenishing the pool as each finishes, and reports
+    /// progress. Files already present return from `offlineDownloadFile` with no network, so passing a
     /// mix is cheap.
     private static func runDownloads(
         _ files: [FileItem], serverURL: URL, filesClient: FilesClient, send: Send<Action>
@@ -620,7 +643,7 @@ struct OfflineWalkResult: Equatable {
 /// `filesDone` counts only successes (for the label); `unitsDone` counts every finished file including
 /// failures (so a failed file still advances the bar rather than stalling it).
 ///
-/// `@unchecked Sendable` lock-guarded class rather than an actor so the throttled progress callback
+/// `@unchecked Sendable` lock guarded class rather than an actor so the throttled progress callback
 /// (already rate limited in the network delegate) can record with a cheap synchronous lock rather
 /// than an `await` hop that would mean spawning a task per callback.
 final class DownloadProgressCounter: @unchecked Sendable {

@@ -383,7 +383,15 @@ public struct DownloadQueueFeature {
                 await group.waitForAll()
                 return result
             }
-            guard let result, !Task.isCancelled else { return }
+            guard let result, !Task.isCancelled else {
+                #if os(iOS)
+                    // A cancel that landed after the file was staged must not leave it in tmp.
+                    if case let .success(url)? = result, job.deviceDestination == .files {
+                        deviceSaver.discard([url])
+                    }
+                #endif
+                return
+            }
             await send(.downloadResponse(id: job.id, result))
         } }
         .cancellable(id: CancelID.job(job.id))

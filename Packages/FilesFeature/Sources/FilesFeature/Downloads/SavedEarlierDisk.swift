@@ -65,8 +65,9 @@ struct SavedEarlierDisk: Sendable {
             options: [.skipsHiddenFiles]
         )
         .compactMap { url in
-            let values = try url.resourceValues(forKeys: Set(keys))
-            guard values.isRegularFile == true else { return nil }
+            // One unreadable entry must not hide the others.
+            guard let values = try? url.resourceValues(forKeys: Set(keys)),
+                  values.isRegularFile == true else { return nil }
             return LocalDownload(
                 url: url,
                 fileName: url.lastPathComponent,
@@ -81,10 +82,18 @@ struct SavedEarlierDisk: Sendable {
         guard SafeFileName.isSafeComponent(newName) else { throw CocoaError(.fileWriteInvalidFileName) }
         let destination = url.deletingLastPathComponent().appendingPathComponent(newName)
         guard destination != url else { return url }
-        if FileManager.default.fileExists(atPath: destination.path) {
+        // On a volume that ignores case `a.pdf` to `A.pdf` finds the file itself at the destination.
+        let isCaseOnlyChange = destination.path.caseInsensitiveCompare(url.path) == .orderedSame
+        if FileManager.default.fileExists(atPath: destination.path), !isCaseOnlyChange {
             throw CocoaError(.fileWriteFileExists)
         }
-        try FileManager.default.moveItem(at: url, to: destination)
+        if isCaseOnlyChange {
+            let intermediate = url.deletingLastPathComponent().appendingPathComponent(UUID().uuidString)
+            try FileManager.default.moveItem(at: url, to: intermediate)
+            try FileManager.default.moveItem(at: intermediate, to: destination)
+        } else {
+            try FileManager.default.moveItem(at: url, to: destination)
+        }
         FileProtection.apply(to: destination)
         return destination
     }

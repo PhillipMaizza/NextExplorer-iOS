@@ -7,8 +7,8 @@ import Foundation
 import Localization
 import SwiftUI
 
-/// The "Downloads" tab: everything `LegacyDownloadStore` has saved into
-/// `Documents/Downloads`/`Caches/Downloads`. Deleting here is local-only: it never touches
+/// The Offline tab: the pinned items, plus the files `LegacyDownloadStore` holds from earlier versions.
+/// Deleting a saved file here only changes this device: it never touches
 /// the server, unlike every other delete action in the app (`BrowseFeature`'s `deleteTapped`).
 @Reducer
 public struct OfflineTabFeature {
@@ -73,7 +73,7 @@ public struct OfflineTabFeature {
             cacheScope = cacheScopeSource.current()
         }
 
-        /// Client-side filter + sort, same shape as `BrowseFeature.displayedItems`: search
+        /// Filter and sort on the device, same shape as `BrowseFeature.displayedItems`: search
         /// only ever matches against already-downloaded file names, never the server.
         public var displayedDownloads: [LocalDownload] {
             let matches = searchQuery.isEmpty
@@ -480,7 +480,7 @@ public struct OfflineTabFeature {
         return .serverMessage(statusCode: 0, message: message)
     }
 
-    /// Best-effort, matching the sign-out flow's philosophy: one file refusing to delete
+    /// Best effort, matching the sign-out flow's philosophy: one file refusing to delete
     /// shouldn't block removing the rest of the selection.
     private func confirmBulkDelete(_ state: inout State) -> Effect<Action> {
         state.bulkDeleteConfirmationIsPresented = false

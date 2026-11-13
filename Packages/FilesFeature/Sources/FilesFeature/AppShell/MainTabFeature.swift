@@ -452,6 +452,9 @@ public struct MainTabFeature {
                 case .settings(.delegate(.removeOfflineFiles)):
                     return .send(.offline(.removeAllOfflineTapped))
 
+                case .settings(.delegate(.offlineRootsRemoved)):
+                    return .send(.offline(.pinnedRootsRemoved))
+
                 case .recentFoldersCleared:
                     state.recentFolders = []
                     return .none
@@ -477,7 +480,7 @@ public struct MainTabFeature {
                     return Self.finishDeviceSave(summary, state: &state)
                 case .tabSelected(.downloads), .offline(.prepared), .offline(.completed),
                      .offline(.waitingForNetwork), .offline(.failed),
-                     .offline(.unpinTapped):
+                     .offline(.unpinFinished):
                     if case .offline(.completed) = action,
                        state.selectedTab != .downloads,
                        state.offlineProgress.filesDone > 0
@@ -488,6 +491,7 @@ public struct MainTabFeature {
                     return .send(.offlineManage(.onAppear))
                 case .offlineManage(.delegate(.changed)):
                     return .merge(
+                        .send(.offline(.pinnedRootsRemoved)),
                         .send(.browse(.offlineAvailabilityChanged)),
                         .send(.favorites(.offlineAvailabilityChanged)),
                         .send(.downloads(.offlineAvailabilityChanged))

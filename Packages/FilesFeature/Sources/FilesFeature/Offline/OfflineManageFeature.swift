@@ -87,10 +87,11 @@ public struct OfflineManageFeature {
                 }
                 let paths = request.paths
                 let offlineFileStore = offlineFileStore
-                return .merge(
-                    .run { _ in paths.forEach(offlineFileStore.removeRoot) },
-                    .send(.delegate(.changed))
-                )
+                // The change is announced once the roots are gone, so what refreshes reads the final state.
+                return .run { send in
+                    paths.forEach(offlineFileStore.removeRoot)
+                    await send(.delegate(.changed))
+                }
 
             case .delegate:
                 return .none
@@ -105,5 +106,8 @@ public struct OfflineManageFeature {
             let usages = await Task.detached(priority: .utility) { offlineFileStore.pinnedRootUsages() }.value
             await send(.usagesLoaded(usages))
         }
+        .cancellable(id: CancelID.load, cancelInFlight: true)
     }
+
+    private enum CancelID { case load }
 }

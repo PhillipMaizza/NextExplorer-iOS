@@ -36,7 +36,7 @@ struct OfflineTabView: View {
     }
 
     @State private var previewedDownload: LocalDownload?
-    /// Native `.zoom` open + swipe-to-dismiss morph between a download cell and its preview.
+    /// Native `.zoom` open + swipe to dismiss morph between a download cell and its preview.
     @Namespace private var previewTransition
     @State private var isSortSheetPresented = false
 
@@ -81,7 +81,7 @@ struct OfflineTabView: View {
     }
 
     /// The one screen state, derived from the store: skeleton until the first response lands
-    /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
+    /// (`store.phase`), then error, empty, no results, or the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
     private var listPhase: ListPhase {
         .derive(
@@ -103,7 +103,7 @@ struct OfflineTabView: View {
     @ViewBuilder
     private var downloadRows: some View {
         // Bound once: `displayedDownloads` filters + sorts on every read, and the separator
-        // checks below would otherwise re-derive it per row.
+        // checks below would otherwise derive again it per row.
         let downloads = store.displayedDownloads
         let firstID = downloads.first?.id
         let lastID = downloads.last?.id
@@ -141,7 +141,7 @@ struct OfflineTabView: View {
         .backgroundGradient()
         .dismissKeyboardOnTap()
         // Only spring row diffs once the list is the content: during the skeleton→content
-        // swap the outer `.animation(value: listPhase)` owns the cross-fade alone.
+        // swap the outer `.animation(value: listPhase)` owns the crossfade alone.
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
     }
 
@@ -205,9 +205,9 @@ struct OfflineTabView: View {
                     gridContent
                 }
             }
-            // Full-bleed *before* `.overlay` below: without a frame fixed to the screen size
+            // Full bleed *before* `.overlay` below: without a frame fixed to the screen size
             // up front, the List's own intrinsic size can lag a frame behind on first
-            // appearance, and the overlay (default-centered on whatever frame it currently
+            // appearance, and the overlay (centered by default on whatever frame it currently
             // sees) visibly slides from that transient small frame to the real one.
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .safeAreaInset(edge: .top, spacing: 0) {
@@ -222,8 +222,8 @@ struct OfflineTabView: View {
             // No refresh control: the tab lists what is on the device, read again on appear and
             // whenever an offline run finishes; there is nothing on the server to sync.
             // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the
-            // empty/error message is an overlay fed the list's pull-to-refresh drag so it
-            // rubber-bands with it. One animation cross-fades the whole state change.
+            // empty/error message is an overlay fed the list's pull to refresh drag so it
+            // rubber bands with it. One animation crossfades the whole state change.
             .overlay {
                 ListStateOverlay(
                     phase: listPhase,

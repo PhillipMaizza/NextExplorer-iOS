@@ -166,7 +166,7 @@ private struct PreviewChrome: ViewModifier {
                 }
                 if let offlineAction {
                     macButton(
-                        L10n.Browse.actionAvailableOffline,
+                        offlineAction.isOn ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
                         icon: IconKit.availableOffline,
                         action: offlineAction.toggle
                     )
