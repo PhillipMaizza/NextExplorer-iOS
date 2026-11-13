@@ -283,7 +283,6 @@ settings.sectionServerStorage	تخزين الخادم
 settings.serverStorageUsed	%1$@ من %2$@
 settings.sectionLicenses	التراخيص
 settings.sectionLegal	قانوني
-settings.sectionUsers	المستخدمون
 settings.sectionAdmin	الإدارة
 settings.sectionInfo	معلومات
 settings.toggleShowHiddenFiles	إظهار الملفات المخفية
@@ -1106,7 +1105,6 @@ apiTokens.revokeMessage	سيتوقف كل ما يستخدم ‏«%@» عن ال�
 apiTokens.revokeTitle	إبطال الرمز؟
 apiTokens.scopeRead	قراءة فقط
 apiTokens.scopeWrite	قراءة وكتابة
-apiTokens.sectionHeader	المطورون
 changePassword.addIntro	يسجّل هذا الحساب الدخول عبر تسجيل الدخول الموحّد وليس له كلمة سر بعد. أضف واحدة لتسجيل الدخول أيضًا باستخدام بريدك الإلكتروني أو اسم المستخدم.
 changePassword.addNavigationTitle	إضافة كلمة سر
 changePassword.addSubmitButton	إضافة كلمة سر

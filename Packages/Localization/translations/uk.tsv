@@ -477,7 +477,6 @@ settings.sectionServerStorage	Сховище сервера
 settings.serverStorageUsed	%1$@ із %2$@
 settings.sectionLicenses	Ліцензії
 settings.sectionLegal	Правова інформація
-settings.sectionUsers	Користувачі
 settings.sectionAdmin	Адміністрування
 settings.sectionInfo	Інформація
 settings.toggleShowHiddenFiles	Показувати приховані файли
@@ -745,7 +744,6 @@ twoFactor.passwordField	Пароль
 twoFactor.passwordConfirmButton	Підтвердити
 twoFactor.manageButton	Керувати…
 apiTokens.navigationTitle	Токени API
-apiTokens.sectionHeader	Розробникам
 apiTokens.intro	Токени API дають змогу скриптам та іншим інструментам використовувати ваш обліковий запис без пароля. Токен виконує лише те, що дозволяє його доступ, і ви можете відкликати його будь-коли.
 apiTokens.emptyTitle	Немає токенів API
 apiTokens.emptyMessage	Створіть токен, щоб скрипт міг використовувати ваш обліковий запис.

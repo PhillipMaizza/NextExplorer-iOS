@@ -283,7 +283,6 @@ settings.sectionServerStorage	Хранилище сервера
 settings.serverStorageUsed	%1$@ из %2$@
 settings.sectionLicenses	Лицензии
 settings.sectionLegal	Правовая информация
-settings.sectionUsers	Пользователи
 settings.sectionAdmin	Администрирование
 settings.sectionInfo	Информация
 settings.toggleShowHiddenFiles	Показывать скрытые файлы
@@ -1094,7 +1093,6 @@ apiTokens.revokeMessage	Всё, что использует «%@», сразу �
 apiTokens.revokeTitle	Отозвать токен?
 apiTokens.scopeRead	Только чтение
 apiTokens.scopeWrite	Чтение и запись
-apiTokens.sectionHeader	Разработчикам
 changePassword.addIntro	Эта учётная запись входит через единый вход и пока не имеет пароля. Добавьте его, чтобы также входить с помощью адреса эл. почты или имени пользователя.
 changePassword.addNavigationTitle	Добавить пароль
 changePassword.addSubmitButton	Добавить пароль

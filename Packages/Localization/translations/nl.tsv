@@ -283,7 +283,6 @@ settings.sectionServerStorage	Serveropslag
 settings.serverStorageUsed	%1$@ van %2$@
 settings.sectionLicenses	Licenties
 settings.sectionLegal	Juridisch
-settings.sectionUsers	Gebruikers
 settings.sectionAdmin	Beheer
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Verborgen bestanden tonen
@@ -1082,7 +1081,6 @@ apiTokens.revokeMessage	Alles wat “%@” gebruikt, werkt meteen niet meer. Dit
 apiTokens.revokeTitle	Token intrekken?
 apiTokens.scopeRead	Alleen lezen
 apiTokens.scopeWrite	Lezen en schrijven
-apiTokens.sectionHeader	Ontwikkelaars
 changePassword.addIntro	Dit account logt in met single sign-on en heeft nog geen wachtwoord. Voeg er een toe om ook in te loggen met je e-mailadres of gebruikersnaam.
 changePassword.addNavigationTitle	Wachtwoord toevoegen
 changePassword.addSubmitButton	Wachtwoord toevoegen

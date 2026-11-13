@@ -35,10 +35,6 @@ struct SearchOnDeviceTests {
         SearchResultItem(name: Constants.plan, path: Constants.tripsPath, kind: SearchResultItem.fileKind)
     }
 
-    private var lookalikeHit: SearchResultItem {
-        SearchResultItem(name: Constants.plan, path: Constants.lookalike, kind: SearchResultItem.fileKind)
-    }
-
     private let docsFavorite = Favorite(
         id: "1",
         path: TestFolder.docs,

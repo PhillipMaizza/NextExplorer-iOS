@@ -477,7 +477,6 @@ settings.sectionServerStorage	Penyimpanan Server
 settings.serverStorageUsed	%1$@ dari %2$@
 settings.sectionLicenses	Lisensi
 settings.sectionLegal	Hukum
-settings.sectionUsers	Pengguna
 settings.sectionAdmin	Admin
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Tampilkan File Tersembunyi
@@ -745,7 +744,6 @@ twoFactor.passwordField	Kata Sandi
 twoFactor.passwordConfirmButton	Konfirmasi
 twoFactor.manageButton	Kelola…
 apiTokens.navigationTitle	Token API
-apiTokens.sectionHeader	Pengembang
 apiTokens.intro	Token API memungkinkan skrip dan alat lain memakai akun Anda tanpa kata sandi. Token hanya melakukan apa yang diizinkan aksesnya, dan Anda dapat mencabutnya kapan saja.
 apiTokens.emptyTitle	Tidak ada token API
 apiTokens.emptyMessage	Buat satu agar skrip dapat memakai akun Anda.

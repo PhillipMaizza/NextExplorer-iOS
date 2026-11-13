@@ -283,7 +283,6 @@ settings.sectionServerStorage	Armazenamento do servidor
 settings.serverStorageUsed	%1$@ de %2$@
 settings.sectionLicenses	Licenças
 settings.sectionLegal	Aspetos legais
-settings.sectionUsers	Utilizadores
 settings.sectionAdmin	Administração
 settings.sectionInfo	Informações
 settings.toggleShowHiddenFiles	Mostrar ficheiros ocultos
@@ -1082,7 +1081,6 @@ apiTokens.revokeMessage	Tudo o que utilize “%@” deixará de funcionar de ime
 apiTokens.revokeTitle	Revogar token?
 apiTokens.scopeRead	Apenas leitura
 apiTokens.scopeWrite	Leitura e escrita
-apiTokens.sectionHeader	Programadores
 changePassword.addIntro	Esta conta inicia sessão com início de sessão único (SSO) e ainda não tem palavra-passe. Adicione uma para também iniciar sessão com o seu endereço de e-mail ou nome de utilizador.
 changePassword.addNavigationTitle	Adicionar palavra-passe
 changePassword.addSubmitButton	Adicionar palavra-passe

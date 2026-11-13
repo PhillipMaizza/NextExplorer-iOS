@@ -24,7 +24,6 @@ private enum Constants {
     /// How long the email/password fields stay red-bordered after a login failure.
     static let invalidFieldsDuration: Duration = .seconds(2)
     static let logoSize: CGFloat = .size96
-    static let credentialsLogoSize: CGFloat = .size56
     /// On regular width (iPad, not compact multitasking) the login form floats in a centered
     /// surface card over the full-bleed gradient, rather than stretching edge to edge.
     static let cardWidth: CGFloat = 440

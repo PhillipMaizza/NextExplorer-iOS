@@ -477,7 +477,6 @@ settings.sectionServerStorage	Serverlagring
 settings.serverStorageUsed	%1$@ av %2$@
 settings.sectionLicenses	Lisenser
 settings.sectionLegal	Juridisk
-settings.sectionUsers	Brukere
 settings.sectionAdmin	Administrasjon
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Vis skjulte filer
@@ -745,7 +744,6 @@ twoFactor.passwordField	Passord
 twoFactor.passwordConfirmButton	Bekreft
 twoFactor.manageButton	Administrer…
 apiTokens.navigationTitle	API-tokens
-apiTokens.sectionHeader	Utviklere
 apiTokens.intro	API-tokens lar skript og andre verktøy bruke kontoen din uten passordet ditt. Et token gjør bare det tilgangen tillater, og du kan trekke det tilbake når som helst.
 apiTokens.emptyTitle	Ingen API-tokens
 apiTokens.emptyMessage	Opprett ett slik at et skript kan bruke kontoen din.

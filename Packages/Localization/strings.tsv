@@ -546,7 +546,6 @@ settings.sectionServerStorage	Server Storage
 settings.serverStorageUsed	%1$@ of %2$@
 settings.sectionLicenses	Licenses
 settings.sectionLegal	Legal
-settings.sectionUsers	Users
 settings.sectionAdmin	Admin
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Show Hidden Files
@@ -849,7 +848,6 @@ twoFactor.manageButton	Manage…
 
 # ---- apiTokens ----
 apiTokens.navigationTitle	API Tokens
-apiTokens.sectionHeader	Developers
 apiTokens.intro	API tokens let scripts and other tools use your account without your password. A token only does what its access allows, and you can revoke it at any time.
 apiTokens.emptyTitle	No API tokens
 apiTokens.emptyMessage	Create one to let a script use your account.

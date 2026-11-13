@@ -485,7 +485,6 @@ settings.sectionServerStorage	Armazenamento do servidor
 settings.serverStorageUsed	%1$@ de %2$@
 settings.sectionLicenses	Licenças
 settings.sectionLegal	Aspectos legais
-settings.sectionUsers	Usuários
 settings.sectionAdmin	Administrador
 settings.sectionInfo	Informações
 settings.toggleShowHiddenFiles	Mostrar arquivos ocultos
@@ -1077,7 +1076,6 @@ apiTokens.revokeMessage	Tudo o que usa “%@” vai parar de funcionar imediatam
 apiTokens.revokeTitle	Revogar token?
 apiTokens.scopeRead	Somente leitura
 apiTokens.scopeWrite	Leitura e gravação
-apiTokens.sectionHeader	Desenvolvedores
 changePassword.addIntro	Esta conta entra com login único (SSO) e ainda não tem senha. Adicione uma para também entrar com seu e-mail ou nome de usuário.
 changePassword.addNavigationTitle	Adicionar senha
 changePassword.addSubmitButton	Adicionar senha

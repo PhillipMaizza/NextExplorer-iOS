@@ -283,7 +283,6 @@ settings.sectionServerStorage	Stockage du serveur
 settings.serverStorageUsed	%1$@ sur %2$@
 settings.sectionLicenses	Licences
 settings.sectionLegal	Mentions légales
-settings.sectionUsers	Utilisateurs
 settings.sectionAdmin	Administration
 settings.sectionInfo	Informations
 settings.toggleShowHiddenFiles	Afficher les fichiers masqués
@@ -1082,7 +1081,6 @@ apiTokens.revokeMessage	Tout ce qui utilise « %@ » cessera de fonctionner im
 apiTokens.revokeTitle	Révoquer le jeton ?
 apiTokens.scopeRead	Lecture seule
 apiTokens.scopeWrite	Lecture et écriture
-apiTokens.sectionHeader	Développeurs
 changePassword.addIntro	Ce compte se connecte avec l'authentification unique et n'a pas encore de mot de passe. Ajoutez-en un pour vous connecter aussi avec votre adresse e-mail ou votre nom d'utilisateur.
 changePassword.addNavigationTitle	Ajouter un mot de passe
 changePassword.addSubmitButton	Ajouter un mot de passe

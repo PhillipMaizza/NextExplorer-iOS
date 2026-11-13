@@ -477,7 +477,6 @@ settings.sectionServerStorage	พื้นที่จัดเก็บขอ�
 settings.serverStorageUsed	%1$@ จาก %2$@
 settings.sectionLicenses	ใบอนุญาต
 settings.sectionLegal	ข้อมูลทางกฎหมาย
-settings.sectionUsers	ผู้ใช้
 settings.sectionAdmin	การดูแลระบบ
 settings.sectionInfo	ข้อมูล
 settings.toggleShowHiddenFiles	แสดงไฟล์ที่ซ่อน
@@ -745,7 +744,6 @@ twoFactor.passwordField	รหัสผ่าน
 twoFactor.passwordConfirmButton	ยืนยัน
 twoFactor.manageButton	จัดการ…
 apiTokens.navigationTitle	โทเคน API
-apiTokens.sectionHeader	นักพัฒนา
 apiTokens.intro	โทเคน API ช่วยให้สคริปต์และเครื่องมืออื่นใช้บัญชีของคุณได้โดยไม่ต้องใช้รหัสผ่าน โทเคนทำได้เฉพาะสิ่งที่สิทธิ์การเข้าถึงอนุญาต และคุณเพิกถอนได้ทุกเมื่อ
 apiTokens.emptyTitle	ไม่มีโทเคน API
 apiTokens.emptyMessage	สร้างหนึ่งโทเคนเพื่อให้สคริปต์ใช้บัญชีของคุณได้

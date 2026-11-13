@@ -283,7 +283,6 @@ settings.sectionServerStorage	Pamięć serwera
 settings.serverStorageUsed	%1$@ z %2$@
 settings.sectionLicenses	Licencje
 settings.sectionLegal	Informacje prawne
-settings.sectionUsers	Użytkownicy
 settings.sectionAdmin	Administracja
 settings.sectionInfo	Informacje
 settings.toggleShowHiddenFiles	Pokaż ukryte pliki
@@ -1094,7 +1093,6 @@ apiTokens.revokeMessage	Wszystko, co używa „%@”, natychmiast przestanie dzi
 apiTokens.revokeTitle	Unieważnić token?
 apiTokens.scopeRead	Tylko odczyt
 apiTokens.scopeWrite	Odczyt i zapis
-apiTokens.sectionHeader	Deweloperzy
 changePassword.addIntro	To konto loguje się przez jednokrotne logowanie (SSO) i nie ma jeszcze hasła. Dodaj je, aby móc logować się także adresem e-mail lub nazwą użytkownika.
 changePassword.addNavigationTitle	Dodaj hasło
 changePassword.addSubmitButton	Dodaj hasło

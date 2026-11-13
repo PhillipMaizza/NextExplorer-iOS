@@ -283,7 +283,6 @@ settings.sectionServerStorage	सर्वर संग्रहण
 settings.serverStorageUsed	%2$@ में से %1$@
 settings.sectionLicenses	लाइसेंस
 settings.sectionLegal	कानूनी
-settings.sectionUsers	उपयोगकर्ता
 settings.sectionAdmin	व्यवस्थापन
 settings.sectionInfo	जानकारी
 settings.toggleShowHiddenFiles	छिपी हुई फ़ाइलें दिखाएं
@@ -1082,7 +1081,6 @@ apiTokens.revokeMessage	“%@” का इस्तेमाल करने �
 apiTokens.revokeTitle	टोकन रद्द करें?
 apiTokens.scopeRead	केवल पढ़ने के लिए
 apiTokens.scopeWrite	पढ़ें और लिखें
-apiTokens.sectionHeader	डेवलपर
 changePassword.addIntro	यह खाता सिंगल साइन-ऑन से साइन इन करता है और इसमें अभी तक पासवर्ड नहीं है। अपने ईमेल पते या उपयोगकर्ता नाम से भी साइन इन करने के लिए एक जोड़ें।
 changePassword.addNavigationTitle	पासवर्ड जोड़ें
 changePassword.addSubmitButton	पासवर्ड जोड़ें

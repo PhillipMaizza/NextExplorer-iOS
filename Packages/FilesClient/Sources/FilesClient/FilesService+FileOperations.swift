@@ -253,7 +253,6 @@ extension FilesService {
 
     private enum EditorPreflight {
         static let notModifiedStatus = 304
-        static let notFoundStatus = 404
         static let clientErrorStatuses = 400 ..< 500
         static let successStatuses = 200 ..< 300
         /// Answers the shared validation turns into their own errors instead of a conflict prompt.

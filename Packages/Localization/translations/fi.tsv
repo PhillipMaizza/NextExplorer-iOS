@@ -477,7 +477,6 @@ settings.sectionServerStorage	Palvelimen tallennustila
 settings.serverStorageUsed	%1$@ / %2$@
 settings.sectionLicenses	Lisenssit
 settings.sectionLegal	Oikeudelliset tiedot
-settings.sectionUsers	Käyttäjät
 settings.sectionAdmin	Ylläpito
 settings.sectionInfo	Tiedot
 settings.toggleShowHiddenFiles	Näytä piilotetut tiedostot
@@ -745,7 +744,6 @@ twoFactor.passwordField	Salasana
 twoFactor.passwordConfirmButton	Vahvista
 twoFactor.manageButton	Hallinnoi…
 apiTokens.navigationTitle	API-tunnukset
-apiTokens.sectionHeader	Kehittäjät
 apiTokens.intro	API-tunnusten avulla komentosarjat ja muut työkalut voivat käyttää tiliäsi ilman salasanaasi. Tunnus tekee vain sen, minkä sen käyttöoikeus sallii, ja voit perua sen milloin tahansa.
 apiTokens.emptyTitle	Ei API-tunnuksia
 apiTokens.emptyMessage	Luo tunnus, jotta komentosarja voi käyttää tiliäsi.

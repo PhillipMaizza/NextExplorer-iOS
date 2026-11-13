@@ -477,7 +477,6 @@ settings.sectionServerStorage	Úložiště serveru
 settings.serverStorageUsed	%1$@ z %2$@
 settings.sectionLicenses	Licence
 settings.sectionLegal	Právní informace
-settings.sectionUsers	Uživatelé
 settings.sectionAdmin	Správa
 settings.sectionInfo	Informace
 settings.toggleShowHiddenFiles	Zobrazit skryté soubory
@@ -744,7 +743,6 @@ twoFactor.passwordField	Heslo
 twoFactor.passwordConfirmButton	Potvrdit
 twoFactor.manageButton	Spravovat…
 apiTokens.navigationTitle	Tokeny API
-apiTokens.sectionHeader	Vývojáři
 apiTokens.intro	Tokeny API umožňují skriptům a dalším nástrojům používat váš účet bez hesla. Token dělá jen to, co povoluje jeho přístup, a můžete ho kdykoli odvolat.
 apiTokens.emptyTitle	Žádné tokeny API
 apiTokens.emptyMessage	Vytvořte token, aby skript mohl používat váš účet.

@@ -283,7 +283,6 @@ settings.sectionServerStorage	服务器存储
 settings.serverStorageUsed	%2$@ 中的 %1$@
 settings.sectionLicenses	许可证
 settings.sectionLegal	法律
-settings.sectionUsers	用户
 settings.sectionAdmin	管理
 settings.sectionInfo	信息
 settings.toggleShowHiddenFiles	显示隐藏文件
@@ -1076,7 +1075,6 @@ apiTokens.revokeMessage	所有使用“%@”的内容将立即停止工作。此
 apiTokens.revokeTitle	撤销令牌？
 apiTokens.scopeRead	只读
 apiTokens.scopeWrite	读取和写入
-apiTokens.sectionHeader	开发者
 changePassword.addIntro	此账户使用单点登录，尚未设置密码。添加密码后，您还可以使用电子邮件地址或用户名登录。
 changePassword.addNavigationTitle	添加密码
 changePassword.addSubmitButton	添加密码

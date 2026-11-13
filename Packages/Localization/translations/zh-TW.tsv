@@ -283,7 +283,6 @@ settings.sectionServerStorage	伺服器儲存空間
 settings.serverStorageUsed	%2$@ 中的 %1$@
 settings.sectionLicenses	授權
 settings.sectionLegal	法律
-settings.sectionUsers	使用者
 settings.sectionAdmin	管理
 settings.sectionInfo	資訊
 settings.toggleShowHiddenFiles	顯示隱藏檔案
@@ -1076,7 +1075,6 @@ apiTokens.revokeMessage	所有使用「%@」的項目將立即停止運作。此
 apiTokens.revokeTitle	撤銷權杖？
 apiTokens.scopeRead	唯讀
 apiTokens.scopeWrite	讀取和寫入
-apiTokens.sectionHeader	開發者
 changePassword.addIntro	此帳號使用單一登入，尚未設定密碼。新增密碼後，您也可以使用電子郵件地址或使用者名稱登入。
 changePassword.addNavigationTitle	新增密碼
 changePassword.addSubmitButton	新增密碼

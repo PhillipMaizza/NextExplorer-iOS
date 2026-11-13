@@ -112,7 +112,6 @@ public enum L10n {
         public static var revokeTitle: String { tr("apiTokens.revokeTitle") }  // "Revoke Token?"
         public static var scopeRead: String { tr("apiTokens.scopeRead") }  // "Read only"
         public static var scopeWrite: String { tr("apiTokens.scopeWrite") }  // "Read and write"
-        public static var sectionHeader: String { tr("apiTokens.sectionHeader") }  // "Developers"
     }
     public enum Appearance {
         public static var dark: String { tr("appearance.dark") }  // "Dark"
@@ -797,7 +796,6 @@ public enum L10n {
         public static var sectionServerStorage: String { tr("settings.sectionServerStorage") }  // "Server Storage"
         public static var sectionStorage: String { tr("settings.sectionStorage") }  // "Storage"
         public static var sectionSupport: String { tr("settings.sectionSupport") }  // "Support"
-        public static var sectionUsers: String { tr("settings.sectionUsers") }  // "Users"
         public static func serverStorageUsed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.serverStorageUsed", a0, a1) }
         public static var signOutAlertTitle: String { tr("settings.signOutAlertTitle") }  // "Sign Out?"
         public static var signOutButton: String { tr("settings.signOutButton") }  // "Sign Out"

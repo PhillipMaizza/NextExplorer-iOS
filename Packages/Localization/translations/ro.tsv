@@ -283,7 +283,6 @@ settings.sectionServerStorage	Stocare server
 settings.serverStorageUsed	%1$@ din %2$@
 settings.sectionLicenses	Licențe
 settings.sectionLegal	Aspecte legale
-settings.sectionUsers	Utilizatori
 settings.sectionAdmin	Administrare
 settings.sectionInfo	Informații
 settings.toggleShowHiddenFiles	Afișează fișierele ascunse
@@ -1088,7 +1087,6 @@ apiTokens.revokeMessage	Tot ce folosește „%@” va înceta să funcționeze i
 apiTokens.revokeTitle	Revoci tokenul?
 apiTokens.scopeRead	Doar citire
 apiTokens.scopeWrite	Citire și scriere
-apiTokens.sectionHeader	Dezvoltatori
 changePassword.addIntro	Acest cont se conectează prin autentificare unică și nu are încă o parolă. Adaugă-o pentru a te conecta și cu adresa de e-mail sau cu numele de utilizator.
 changePassword.addNavigationTitle	Adaugă parola
 changePassword.addSubmitButton	Adaugă parola

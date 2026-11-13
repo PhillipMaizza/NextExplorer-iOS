@@ -283,7 +283,6 @@ settings.sectionServerStorage	Serverlagring
 settings.serverStorageUsed	%1$@ av %2$@
 settings.sectionLicenses	Licenser
 settings.sectionLegal	Juridiskt
-settings.sectionUsers	Användare
 settings.sectionAdmin	Administration
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Visa dolda filer
@@ -1082,7 +1081,6 @@ apiTokens.revokeMessage	Allt som använder ”%@” slutar fungera direkt. Det g
 apiTokens.revokeTitle	Återkalla token?
 apiTokens.scopeRead	Endast läsning
 apiTokens.scopeWrite	Läsa och skriva
-apiTokens.sectionHeader	Utvecklare
 changePassword.addIntro	Det här kontot loggar in med enkel inloggning och har inget lösenord ännu. Lägg till ett för att också logga in med din e-postadress eller ditt användarnamn.
 changePassword.addNavigationTitle	Lägg till lösenord
 changePassword.addSubmitButton	Lägg till lösenord

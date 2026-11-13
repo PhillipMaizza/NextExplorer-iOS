@@ -283,7 +283,6 @@ settings.sectionServerStorage	サーバーストレージ
 settings.serverStorageUsed	%2$@ 中 %1$@
 settings.sectionLicenses	ライセンス
 settings.sectionLegal	法律
-settings.sectionUsers	ユーザ
 settings.sectionAdmin	管理
 settings.sectionInfo	情報
 settings.toggleShowHiddenFiles	隠しファイルを表示
@@ -1076,7 +1075,6 @@ apiTokens.revokeMessage	「%@」を使っているものはすべてすぐに動
 apiTokens.revokeTitle	トークンを失効させますか？
 apiTokens.scopeRead	読み取り専用
 apiTokens.scopeWrite	読み取りと書き込み
-apiTokens.sectionHeader	開発者
 changePassword.addIntro	このアカウントはシングルサインオンでサインインしており、まだパスワードがありません。パスワードを追加すると、メールアドレスまたはユーザ名でもサインインできます。
 changePassword.addNavigationTitle	パスワードを追加
 changePassword.addSubmitButton	パスワードを追加

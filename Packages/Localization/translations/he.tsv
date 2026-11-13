@@ -477,7 +477,6 @@ settings.sectionServerStorage	אחסון השרת
 settings.serverStorageUsed	%1$@ מתוך %2$@
 settings.sectionLicenses	רישיונות
 settings.sectionLegal	משפטי
-settings.sectionUsers	משתמשים
 settings.sectionAdmin	ניהול
 settings.sectionInfo	מידע
 settings.toggleShowHiddenFiles	הצגת קבצים מוסתרים
@@ -745,7 +744,6 @@ twoFactor.passwordField	סיסמה
 twoFactor.passwordConfirmButton	אישור
 twoFactor.manageButton	ניהול…
 apiTokens.navigationTitle	אסימוני API
-apiTokens.sectionHeader	מפתחים
 apiTokens.intro	אסימוני API מאפשרים לסקריפטים ולכלים אחרים להשתמש בחשבון שלכם בלי הסיסמה. אסימון עושה רק את מה שהגישה שלו מתירה, ואפשר לבטל אותו בכל עת.
 apiTokens.emptyTitle	אין אסימוני API
 apiTokens.emptyMessage	צרו אסימון כדי לאפשר לסקריפט להשתמש בחשבון שלכם.

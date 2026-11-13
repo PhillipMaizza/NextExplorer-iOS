@@ -283,7 +283,6 @@ settings.sectionServerStorage	서버 저장 공간
 settings.serverStorageUsed	%2$@ 중 %1$@
 settings.sectionLicenses	라이선스
 settings.sectionLegal	법률
-settings.sectionUsers	사용자
 settings.sectionAdmin	관리
 settings.sectionInfo	정보
 settings.toggleShowHiddenFiles	숨김 파일 표시
@@ -1076,7 +1075,6 @@ apiTokens.revokeMessage	“%@”을(를) 사용하는 모든 항목이 즉시 �
 apiTokens.revokeTitle	토큰을 폐기할까요?
 apiTokens.scopeRead	읽기 전용
 apiTokens.scopeWrite	읽기 및 쓰기
-apiTokens.sectionHeader	개발자
 changePassword.addIntro	이 계정은 싱글 사인온으로 로그인하며 아직 비밀번호가 없습니다. 비밀번호를 추가하면 이메일 주소나 사용자 이름으로도 로그인할 수 있습니다.
 changePassword.addNavigationTitle	비밀번호 추가
 changePassword.addSubmitButton	비밀번호 추가

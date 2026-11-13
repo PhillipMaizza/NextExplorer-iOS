@@ -283,7 +283,6 @@ settings.sectionServerStorage	Serverspeicher
 settings.serverStorageUsed	%1$@ von %2$@
 settings.sectionLicenses	Lizenzen
 settings.sectionLegal	Rechtliches
-settings.sectionUsers	Benutzer
 settings.sectionAdmin	Verwaltung
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Ausgeblendete Dateien anzeigen
@@ -1082,7 +1081,6 @@ apiTokens.revokeMessage	Alles, was „%@“ verwendet, funktioniert sofort nicht
 apiTokens.revokeTitle	Token widerrufen?
 apiTokens.scopeRead	Nur Lesen
 apiTokens.scopeWrite	Lesen und Schreiben
-apiTokens.sectionHeader	Entwickler
 changePassword.addIntro	Dieses Konto meldet sich per Single Sign-on an und hat noch kein Passwort. Lege eines an, um dich auch mit deiner E-Mail-Adresse oder deinem Benutzernamen anzumelden.
 changePassword.addNavigationTitle	Passwort hinzufügen
 changePassword.addSubmitButton	Passwort hinzufügen

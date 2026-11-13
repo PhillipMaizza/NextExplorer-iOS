@@ -477,7 +477,6 @@ settings.sectionServerStorage	Lưu trữ máy chủ
 settings.serverStorageUsed	%1$@ trên %2$@
 settings.sectionLicenses	Giấy phép
 settings.sectionLegal	Pháp lý
-settings.sectionUsers	Người dùng
 settings.sectionAdmin	Quản trị
 settings.sectionInfo	Thông tin
 settings.toggleShowHiddenFiles	Hiện tệp ẩn
@@ -745,7 +744,6 @@ twoFactor.passwordField	Mật khẩu
 twoFactor.passwordConfirmButton	Xác nhận
 twoFactor.manageButton	Quản lý…
 apiTokens.navigationTitle	Token API
-apiTokens.sectionHeader	Nhà phát triển
 apiTokens.intro	Token API cho phép các tập lệnh và công cụ khác dùng tài khoản của bạn mà không cần mật khẩu. Token chỉ làm những gì quyền truy cập của nó cho phép, và bạn có thể thu hồi bất cứ lúc nào.
 apiTokens.emptyTitle	Không có token API
 apiTokens.emptyMessage	Hãy tạo một token để tập lệnh có thể dùng tài khoản của bạn.

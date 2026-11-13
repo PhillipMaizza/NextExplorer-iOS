@@ -477,7 +477,6 @@ settings.sectionServerStorage	Αποθηκευτικός χώρος διακομ
 settings.serverStorageUsed	%1$@ από %2$@
 settings.sectionLicenses	Άδειες χρήσης
 settings.sectionLegal	Νομικά
-settings.sectionUsers	Χρήστες
 settings.sectionAdmin	Διαχείριση
 settings.sectionInfo	Πληροφορίες
 settings.toggleShowHiddenFiles	Εμφάνιση κρυφών αρχείων
@@ -745,7 +744,6 @@ twoFactor.passwordField	Κωδικός πρόσβασης
 twoFactor.passwordConfirmButton	Επιβεβαίωση
 twoFactor.manageButton	Διαχείριση…
 apiTokens.navigationTitle	Διακριτικά API
-apiTokens.sectionHeader	Προγραμματιστές
 apiTokens.intro	Τα διακριτικά API επιτρέπουν σε σενάρια και άλλα εργαλεία να χρησιμοποιούν τον λογαριασμό σας χωρίς τον κωδικό πρόσβασής σας. Ένα διακριτικό κάνει μόνο ό,τι επιτρέπει η πρόσβασή του και μπορείτε να το ανακαλέσετε οποιαδήποτε στιγμή.
 apiTokens.emptyTitle	Κανένα διακριτικό API
 apiTokens.emptyMessage	Δημιουργήστε ένα για να επιτρέψετε σε ένα σενάριο να χρησιμοποιεί τον λογαριασμό σας.

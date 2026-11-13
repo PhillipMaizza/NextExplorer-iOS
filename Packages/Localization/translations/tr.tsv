@@ -477,7 +477,6 @@ settings.sectionServerStorage	Sunucu Depolaması
 settings.serverStorageUsed	%1$@ / %2$@
 settings.sectionLicenses	Lisanslar
 settings.sectionLegal	Yasal
-settings.sectionUsers	Kullanıcılar
 settings.sectionAdmin	Yönetim
 settings.sectionInfo	Bilgi
 settings.toggleShowHiddenFiles	Gizli Dosyaları Göster
@@ -745,7 +744,6 @@ twoFactor.passwordField	Parola
 twoFactor.passwordConfirmButton	Onayla
 twoFactor.manageButton	Yönet…
 apiTokens.navigationTitle	API Belirteçleri
-apiTokens.sectionHeader	Geliştiriciler
 apiTokens.intro	API belirteçleri, betiklerin ve diğer araçların parolanız olmadan hesabınızı kullanmasına izin verir. Bir belirteç yalnızca erişiminin izin verdiğini yapar ve istediğiniz zaman geçersiz kılabilirsiniz.
 apiTokens.emptyTitle	API belirteci yok
 apiTokens.emptyMessage	Bir betiğin hesabınızı kullanmasına izin vermek için bir tane oluşturun.

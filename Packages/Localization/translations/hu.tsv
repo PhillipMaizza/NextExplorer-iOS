@@ -477,7 +477,6 @@ settings.sectionServerStorage	Kiszolgáló tárhelye
 settings.serverStorageUsed	%1$@ / %2$@
 settings.sectionLicenses	Licencek
 settings.sectionLegal	Jogi információk
-settings.sectionUsers	Felhasználók
 settings.sectionAdmin	Adminisztráció
 settings.sectionInfo	Információk
 settings.toggleShowHiddenFiles	Rejtett fájlok megjelenítése
@@ -745,7 +744,6 @@ twoFactor.passwordField	Jelszó
 twoFactor.passwordConfirmButton	Megerősítés
 twoFactor.manageButton	Kezelés…
 apiTokens.navigationTitle	API-tokenek
-apiTokens.sectionHeader	Fejlesztők
 apiTokens.intro	Az API-tokenek lehetővé teszik, hogy szkriptek és más eszközök a jelszava nélkül használják a fiókját. A token csak azt teheti, amit a hozzáférése megenged, és bármikor visszavonhatja.
 apiTokens.emptyTitle	Nincsenek API-tokenek
 apiTokens.emptyMessage	Hozzon létre egyet, hogy egy szkript használhassa a fiókját.
