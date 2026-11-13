@@ -128,11 +128,9 @@ public struct SharedFeature {
         }
 
         public func displayedShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
+            let term = SearchTerm(searchQuery)
             let base = isSearching
-                ? shares(for: segment).filter {
-                    SearchMatch.matches(query: searchQuery, in: $0.displayName)
-                        || SearchMatch.matches(query: searchQuery, in: $0.sourcePath ?? "")
-                }
+                ? shares(for: segment).filter { term.matches($0.displayName) || term.matches($0.sourcePath ?? "") }
                 : shares(for: segment)
             let sorted = base.sorted { lhs, rhs in
                 switch sortOption {

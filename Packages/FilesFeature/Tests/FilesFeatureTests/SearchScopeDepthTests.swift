@@ -130,7 +130,7 @@ struct SearchScopeDepthTests {
         initial.searchQuery = Constants.query
         let store = BrowseFixtures.store(initial)
 
-        await store.send(.searchResultTapped(SearchResultItem(name: Constants.taxes, path: Constants.otherFolder, kind: "dir"))) {
+        await store.send(.searchResultTapped(SearchResultItem(name: Constants.taxes, path: Constants.otherFolder, kind: SearchResultItem.directoryKind))) {
             $0.searchQuery = ""
             $0.searchScope = .thisFolder
         }

@@ -18,8 +18,17 @@ public struct SearchResultItem: Codable, Equatable, Identifiable, Sendable {
         case isContentMatch = "matchedContent"
     }
 
+    /// The two kinds `/api/search` reports for a hit.
+    public static let directoryKind = "dir"
+    public static let fileKind = "file"
+
+    /// The kind a hit for a folder or a file carries.
+    public static func kind(isDirectory: Bool) -> String {
+        isDirectory ? directoryKind : fileKind
+    }
+
     public var isDirectory: Bool {
-        kind == "dir"
+        kind == Self.directoryKind
     }
 
     public var id: String {

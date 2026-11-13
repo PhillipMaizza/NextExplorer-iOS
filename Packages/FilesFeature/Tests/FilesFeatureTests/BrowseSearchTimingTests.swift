@@ -12,15 +12,15 @@ import TestUtils
 @MainActor
 struct BrowseSearchTimingTests {
     private enum Constants {
-        static let term = "vac"
-        static let longerTerm = "vaca"
+        static let term = TestSearch.term
+        static let longerTerm = TestSearch.longerTerm
         static let termWithSpace = "vac "
-        static let shortTerm = "va"
+        static let shortTerm = TestSearch.shortTerm
         /// Two emoji: two characters to Swift, four UTF16 units to the server's `q.length`.
         static let emojiTerm = "👍👍"
     }
 
-    private let hit = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: "file")
+    private let hit = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind)
 
     /// A store whose server search records each term it was asked and answers `page`.
     private func searchingStore(

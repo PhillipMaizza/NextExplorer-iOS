@@ -203,3 +203,23 @@ public enum TestSearchTiming {
     /// What is left of the debounce after `partOfDebounce`.
     public static let restOfDebounce: Duration = .milliseconds(150)
 }
+
+/// Search terms and names the search tests share across packages.
+public enum TestSearch {
+    /// A term long enough for the server, matching `TestFile.vacationPhoto`.
+    public static let term = "vac"
+    /// `term` typed one letter further.
+    public static let longerTerm = "vaca"
+    /// `term` one letter short of what the server searches.
+    public static let shortTerm = "va"
+    /// A shape for every PDF.
+    public static let pdfGlob = "*.pdf"
+    /// The server's hit below the photos folder that no local listing holds.
+    public static let deepHitName = "vacation-2.jpg"
+    public static let deepHitPath = "Photos/Trips"
+    /// A term and names ranked by how close they are: whole, starting with it, holding it.
+    public static let rankTerm = "rapport"
+    public static let rankPrefixFolder = "Rapports"
+    public static let rankPrefixFile = "rapport.pdf"
+    public static let rankContainsFile = "vieux-rapport.pdf"
+}

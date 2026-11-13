@@ -46,11 +46,20 @@ extension BrowseFeature {
     /// only: a subset of what either scope's backend search returns, so the authoritative
     /// response only ever adds to them (subfolders and content matches).
     static func instantMatches(_ state: State, query: String) -> IdentifiedArrayOf<SearchResultItem> {
+        let term = SearchTerm(query)
+        let base = state.searchBasePath
         let inFolder = state.items
-            .filter { SearchMatch.matches(query: query, in: $0.name) }
-            .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file") }
-        let results = inFolder + favoriteMatches(state, query: query)
-        return IdentifiedArray(sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
+            .filter { term.matches(name: $0.name, relativePath: relativePath($0.id, below: base), isDirectory: $0.isDirectory) }
+            .map { SearchResultItem(name: $0.name, path: $0.path, kind: SearchResultItem.kind(isDirectory: $0.isDirectory)) }
+        // In the server's order, so its answer lands without shuffling what is already there.
+        let results = term.ranked(inFolder + favoriteMatches(state, term: term))
+        return IdentifiedArray(results, id: \.id, uniquingIDsWith: { first, _ in first })
+    }
+
+    /// `path` as the server sees it below the search's folder: the whole path from the root.
+    static func relativePath(_ path: String, below base: String) -> String {
+        guard !base.isEmpty, path.hasPrefix(base + "/") else { return path }
+        return String(path.dropFirst(base.count + 1))
     }
 
     /// Deliberately does NOT prune `selectedSearchCategories`: the instant matches see only this
@@ -86,7 +95,7 @@ extension BrowseFeature {
         // Both scopes hit the same recursive, content aware backend endpoint; only the base path
         // differs. "This Folder" scopes to the current directory (its whole subtree); "Everywhere"
         // searches from the root.
-        let scopePath = state.effectiveSearchScope == .everywhere ? "" : state.directoryPath
+        let scopePath = state.searchBasePath
         let serverURL = state.serverURL
         let filesClient = filesClient
         let clock = clock
@@ -106,17 +115,17 @@ extension BrowseFeature {
     /// Favorites whose name matches, inside the search scope, so a favorite is there to open
     /// the moment it is typed instead of after the backend answers. Favorites are folders (the
     /// Favorites tab opens every one as a directory), unless the loaded folder says otherwise.
-    static func favoriteMatches(_ state: State, query: String) -> [SearchResultItem] {
-        let scope = state.effectiveSearchScope == .everywhere ? "" : state.directoryPath
+    static func favoriteMatches(_ state: State, term: SearchTerm) -> [SearchResultItem] {
+        let base = state.searchBasePath
         return state.favoritePaths.compactMap { favoritePath in
-            guard scope.isEmpty || favoritePath.hasPrefix(scope + "/") else { return nil }
+            guard base.isEmpty || favoritePath.hasPrefix(base + "/") else { return nil }
             let name = (favoritePath as NSString).lastPathComponent
-            guard SearchMatch.matches(query: query, in: name) else { return nil }
             let isDirectory = state.items[id: favoritePath]?.isDirectory ?? true
+            guard term.matches(name: name, relativePath: relativePath(favoritePath, below: base), isDirectory: isDirectory) else { return nil }
             return SearchResultItem(
                 name: name,
                 path: (favoritePath as NSString).deletingLastPathComponent,
-                kind: isDirectory ? "dir" : "file"
+                kind: SearchResultItem.kind(isDirectory: isDirectory)
             )
         }
     }

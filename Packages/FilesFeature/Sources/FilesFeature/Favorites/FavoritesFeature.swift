@@ -79,8 +79,9 @@ public struct FavoritesFeature {
         /// only transform here is the search filter. `favorites` is kept in `position` order
         /// by `load` and every reorder response.
         public var displayedFavorites: [Favorite] {
-            guard !searchQuery.isEmpty else { return Array(favorites) }
-            return favorites.filter { SearchMatch.matches(query: searchQuery, in: $0.displayName) }
+            let term = SearchTerm(searchQuery)
+            guard !term.isEmpty else { return Array(favorites) }
+            return favorites.filter { term.matches($0.displayName) }
         }
 
         /// Drag reorder only makes sense over the full, unfiltered list.
@@ -343,8 +344,10 @@ public struct FavoritesFeature {
                 return favoriteSearch(&state)
 
             case let .fileSearchResponse(.success(results)):
+                // Each favorite's answer is ranked on its own; merged, they are ranked again the way
+                // the server ranks one answer, closest name first, rather than alphabetically.
                 state.fileSearchResults = IdentifiedArray(
-                    BrowseFeature.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first }
+                    SearchTerm(state.searchQuery).ranked(results), id: \.id, uniquingIDsWith: { first, _ in first }
                 )
                 state.searchPhase = .loaded
                 return .none

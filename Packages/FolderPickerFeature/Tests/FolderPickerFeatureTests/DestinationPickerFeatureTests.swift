@@ -271,7 +271,7 @@ struct DestinationPickerFeatureTests {
             $0.filesClient.search = { _, path, _, _ in
                 searchScope.setValue(path)
                 return [
-                    SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir"),
+                    SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind),
                     SearchResultItem(name: TestFile.notes, path: TestPath.mediaPhotos, kind: TestKind.text),
                 ]
             }
@@ -287,11 +287,11 @@ struct DestinationPickerFeatureTests {
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
-            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir")]
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind)]
         }
         #expect(searchScope.value == TestFolder.media)
 
-        await store.send(.searchResultTapped(SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: "dir"))) {
+        await store.send(.searchResultTapped(SearchResultItem(name: Constants.summerFolder, path: TestPath.mediaPhotos2024, kind: SearchResultItem.directoryKind))) {
             $0.directoryPath = "Media/Photos/2024/Summer"
             $0.searchQuery = ""
             $0.searchResults = nil
@@ -312,7 +312,7 @@ struct DestinationPickerFeatureTests {
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, query, _ in
                 queries.withValue { $0.append(query) }
-                return [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: "dir")]
+                return [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
             }
         }
     }
@@ -333,7 +333,7 @@ struct DestinationPickerFeatureTests {
         await clock.advance(by: TestSearchTiming.lastMoment)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
-            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: "dir")]
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
         }
         #expect(queries.value == [Constants.searchTerm])
     }
@@ -355,7 +355,7 @@ struct DestinationPickerFeatureTests {
         await clock.advance(by: TestSearchTiming.restOfDebounce)
         await store.receive(\.searchResultsResponse.success) {
             $0.isSearching = false
-            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: "dir")]
+            $0.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
         }
         #expect(queries.value == [Constants.searchTerm])
     }
@@ -412,7 +412,7 @@ extension DestinationPickerFeatureTests {
         #expect(!state.isRefiningSearch)
         state.searchResults = []
         #expect(!state.isRefiningSearch)
-        state.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: "dir")]
+        state.searchResults = [SearchResultItem(name: Constants.summerFolder, path: TestFolder.media, kind: SearchResultItem.directoryKind)]
         #expect(state.isRefiningSearch)
         state.isSearching = false
         #expect(!state.isRefiningSearch)

@@ -13,16 +13,16 @@ import TestUtils
 @MainActor
 struct BrowseSearchRefreshTests {
     private enum Constants {
-        static let term = "vac"
-        static let shortTerm = "va"
+        static let term = TestSearch.term
+        static let shortTerm = TestSearch.shortTerm
         static let refreshedName = "vacation-3.jpg"
     }
 
     private let photo = BrowseFixtures.file(TestFile.vacationPhoto, in: TestFolder.photos)
-    private let deepHit = SearchResultItem(name: "vacation-2.jpg", path: "Photos/Trips", kind: "file")
+    private let deepHit = BrowseFixtures.deepSearchHit
 
     private var photoMatch: SearchResultItem {
-        SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: "file")
+        SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind)
     }
 
     private func listed(_ items: [FileItem]) -> BrowseResult {
@@ -157,7 +157,7 @@ struct BrowseSearchRefreshTests {
         state.searchResults = [deepHit]
         state.searchAnsweredTerm = Constants.term
         state.searchPhase = .loaded
-        let refreshed = SearchResultItem(name: Constants.refreshedName, path: TestFolder.photos, kind: "file")
+        let refreshed = SearchResultItem(name: Constants.refreshedName, path: TestFolder.photos, kind: SearchResultItem.fileKind)
         let search = AsyncGate()
         let favorites = AsyncGate()
         let queries = LockIsolated<[String]>([])

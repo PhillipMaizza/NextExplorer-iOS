@@ -246,6 +246,11 @@ public struct BrowseFeature {
         public var effectiveSearchScope: SearchScope {
             folderDepth == 0 ? .everywhere : searchScope
         }
+
+        /// The folder a search runs from: the root everywhere, this folder otherwise.
+        var searchBasePath: String {
+            effectiveSearchScope == .everywhere ? "" : directoryPath
+        }
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
         /// The server search for the typed term: `.loading` from the keystroke through the answer,
         /// `.failed` when it could not answer, `.idle` with no term or one too short to send.
