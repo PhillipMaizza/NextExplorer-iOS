@@ -87,9 +87,6 @@ public struct OfflineDownloadsFeature {
         /// run on every quick app switch. A reconnect or a manual update bypasses it.
         static let autoSyncMinInterval: TimeInterval = 300
         static let notFoundStatusCode = 404
-        /// What the backend answers a browse 404 with when the path could not be resolved or the account
-        /// may not open it. Both can pass, so they never count as the folder being gone.
-        static let ambiguousNotFoundMessages: Set<String> = ["access denied", "path not found"]
         static let directoryKind = "directory"
     }
 
@@ -479,8 +476,6 @@ public struct OfflineDownloadsFeature {
     ) async throws -> OfflineWalkResult {
         var files: [FileItem] = []
         var failedFolders: [String] = []
-        var goneFolders: [String] = []
-        var ambiguousGoneFolders: [String] = []
         var forbiddenFolders: [String] = []
         var seen = Set<String>()
         // A global bounded walk rather than one level at a time: up to `maxConcurrentBrowses` folder
@@ -528,11 +523,7 @@ public struct OfflineDownloadsFeature {
                 switch outcome {
                 case let .items(listed):
                     items = listed
-                case let .gone(isAmbiguous):
-                    goneFolders.append(folder)
-                    if isAmbiguous {
-                        ambiguousGoneFolders.append(folder)
-                    }
+                case .gone:
                     fill()
                     continue
                 case .forbidden:
@@ -555,8 +546,7 @@ public struct OfflineDownloadsFeature {
             }
         }
         return OfflineWalkResult(
-            files: files, failedFolders: failedFolders, goneFolders: goneFolders,
-            ambiguousGoneFolders: ambiguousGoneFolders, forbiddenFolders: forbiddenFolders
+            files: files, failedFolders: failedFolders, forbiddenFolders: forbiddenFolders
         )
     }
 
@@ -566,19 +556,15 @@ public struct OfflineDownloadsFeature {
     /// removes them; a 403 is one the account may not read.
     private enum FolderOutcome: Sendable {
         case items([FileItem])
-        case gone(isAmbiguous: Bool)
+        case gone
         case forbidden
         case failed
 
         init(failure error: Error) {
             switch error as? FilesClientError {
-            case .server(statusCode: Constants.notFoundStatusCode):
-                self = .gone(isAmbiguous: false)
-            case let .serverMessage(statusCode: Constants.notFoundStatusCode, message):
-                let normalized = message
-                    .trimmingCharacters(in: .whitespacesAndNewlines.union(.punctuationCharacters))
-                    .lowercased()
-                self = .gone(isAmbiguous: Constants.ambiguousNotFoundMessages.contains(normalized))
+            case .server(statusCode: Constants.notFoundStatusCode),
+                 .serverMessage(statusCode: Constants.notFoundStatusCode, _):
+                self = .gone
             case .forbidden:
                 self = .forbidden
             default:
@@ -594,10 +580,6 @@ struct OfflineWalkResult: Equatable {
     var files: [FileItem]
     /// Folders that could not be listed for a reason that may pass (offline, timeout, 5xx).
     var failedFolders: [String] = []
-    /// Folders the server answered 404 for: possibly deleted there, not yet confirmed.
-    var goneFolders: [String] = []
-    /// The subset of `goneFolders` whose 404 message also fits a revoked share or an unreadable path.
-    var ambiguousGoneFolders: [String] = []
     /// Folders the server answered 403 for: kept pinned, reported to the user.
     var forbiddenFolders: [String] = []
 

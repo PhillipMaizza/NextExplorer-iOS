@@ -248,8 +248,6 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
                 return client
             }
         )
-        #expect(result.goneFolders == ["A/Gone"])
-        #expect(result.ambiguousGoneFolders.isEmpty)
         #expect(result.forbiddenFolders == ["A/Locked"])
         #expect(result.failedFolders == ["A/Down"])
         #expect(result.hasIncompleteWalk)

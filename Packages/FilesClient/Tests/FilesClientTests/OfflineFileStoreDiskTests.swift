@@ -225,14 +225,12 @@ struct OfflineFileStoreDiskTests {
         let kept = try seed(Constants.cText, in: Constants.docsSibling, bytes: 7, scope: scope)
         let pinned = store.pinned(to: scope)
         pinned.setPinnedRoots([root(Constants.docs), root(Constants.docsSibling)])
-        _ = pinned.recordMissingRoot(Constants.docs)
 
         pinned.removeRoot(Constants.docs)
 
         #expect(pinned.pinnedRoots() == [root(Constants.docsSibling)])
         #expect(pinned.localURL(removed) == nil)
         #expect(pinned.localURL(kept) != nil)
-        #expect(pinned.recordMissingRoot(Constants.docs) == 1)
     }
 
     @Test
