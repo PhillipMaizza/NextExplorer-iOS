@@ -17,7 +17,10 @@
             let login = LoginScreen(app: app)
             login.signIn(identifier: Fixture.secondFactorIdentifier)
 
-            XCTAssertTrue(login.codeField.waitToAppear(), "A right password on a 2FA account should open the code page, not an error")
+            XCTAssertTrue(
+                login.codeField.waitToAppear(),
+                "A right password on a 2FA account should open the code page, not an error"
+            )
             return (app, login)
         }
 
@@ -46,7 +49,10 @@
             XCTAssertTrue(app.menuItems[Self.pasteTitle].waitToAppear(), "The code field should offer Paste")
             app.menuItems[Self.pasteTitle].tap()
 
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "A pasted code with a space should fill the six boxes and sign in")
+            XCTAssertTrue(
+                TabBar(app: app).browse.waitToAppear(),
+                "A pasted code with a space should fill the six boxes and sign in"
+            )
         }
 
         func testWrongCodeClearsTheBoxesAndShowsTheLog() {
@@ -57,9 +63,16 @@
             login.codeField.typeText(Fixture.wrongCode)
 
             XCTAssertTrue(login.diagnosticsButton.waitToAppear(), "A wrong code should offer the sign in log")
-            XCTAssertEqual(login.codeField.value as? String ?? "", "", "A wrong code should be cleared, not left to erase digit by digit")
+            XCTAssertEqual(
+                login.codeField.value as? String ?? "",
+                "",
+                "A wrong code should be cleared, not left to erase digit by digit"
+            )
 
-            XCTAssertTrue(app.keyboards.firstMatch.waitToAppear(), "The keyboard should come back after a wrong code, so the retry needs no extra tap")
+            XCTAssertTrue(
+                app.keyboards.firstMatch.waitToAppear(),
+                "The keyboard should come back after a wrong code, so the retry needs no extra tap"
+            )
             login.codeField.typeText(Fixture.validCode)
             XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "Retrying with the right code should sign in")
         }
@@ -71,14 +84,20 @@
             login.codeField.clearAndType(Fixture.validRecoveryCode)
             login.codeSubmitButton.tap()
 
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "A recovery code should sign in from the Verify button")
+            XCTAssertTrue(
+                TabBar(app: app).browse.waitToAppear(),
+                "A recovery code should sign in from the Verify button"
+            )
         }
 
         func testBackReturnsToPassword() {
             let (app, login) = reachCodePage()
             app.buttons[L10n.Common.back].tap()
 
-            XCTAssertTrue(login.passwordField.waitToAppear(), "Back from the code page should return to the password page")
+            XCTAssertTrue(
+                login.passwordField.waitToAppear(),
+                "Back from the code page should return to the password page"
+            )
         }
     }
 #endif

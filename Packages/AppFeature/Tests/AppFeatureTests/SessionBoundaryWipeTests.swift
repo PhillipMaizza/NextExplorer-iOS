@@ -38,7 +38,10 @@ extension AppSuites {
         }
 
         private func optimistic(_ serverURL: URL, username: String) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: User(id: "", username: username, email: nil)))
+            .authenticated(AuthenticatedFeature.State(
+                serverURL: serverURL,
+                user: User(id: "", username: username, email: nil)
+            ))
         }
 
         private func confirmed(_ serverURL: URL, _ user: User) -> AppFeature.Destination.State {
@@ -72,7 +75,9 @@ extension AppSuites {
             await store.receive(\.accountsRefreshed)
         }
 
-        @Test("A fresh sign in from the login screen wipes every store and keeps only the certificates of servers with an account")
+        @Test(
+            "A fresh sign in from the login screen wipes every store and keeps only the certificates of servers with an account"
+        )
         func freshSignIn() async {
             let wipeFinished = AsyncGate()
             let store = makeStore(AppFeature.State(destination: .unauthenticated(.init()))) {
@@ -86,7 +91,10 @@ extension AppSuites {
                 }
             }
 
-            await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
+            await store.send(.destination(.unauthenticated(.delegate(.authenticated(
+                AppFixtures.userA,
+                AppFixtures.serverA
+            ))))) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
                 $0.didAuthenticateFromLogin = true
                 $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
@@ -103,7 +111,9 @@ extension AppSuites {
             )
         }
 
-        @Test("Signing the last account out wipes every store, then removes the certificates, upload defaults and share uploads")
+        @Test(
+            "Signing the last account out wipes every store, then removes the certificates, upload defaults and share uploads"
+        )
         func lastSignOut() async {
             let store = makeStore(signedIn(AppFixtures.serverA, AppFixtures.userA))
 
@@ -133,7 +143,8 @@ extension AppSuites {
             await store.finish()
 
             #expect(
-                recorder.events.value == [.activeSessionCleared] + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown,
+                recorder.events.value == [.activeSessionCleared] + WipeRecorder
+                    .accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown,
                 "no certificate, upload default or share upload is removed"
             )
         }

@@ -36,7 +36,12 @@ extension UploadsTestSupport {
     }
 
     nonisolated func pending(_ name: String, _ id: Int, destination: String = TestFolder.inbox) -> PendingUpload {
-        PendingUpload(id: UUID(id), fileURL: URL(fileURLWithPath: "/staging/\(name)"), fileName: name, destination: destination)
+        PendingUpload(
+            id: UUID(id),
+            fileURL: URL(fileURLWithPath: "/staging/\(name)"),
+            fileName: name,
+            destination: destination
+        )
     }
 
     nonisolated func fileURL(_ name: String) -> URL {
@@ -49,7 +54,8 @@ extension UploadsTestSupport {
 
     nonisolated func job(
         _ name: String, _ id: Int, _ status: Job.Status,
-        destination: String = TestFolder.inbox, isTransportFailure: Bool = false, autoRetryCount: Int = 0, startedAt: Date? = nil
+        destination: String = TestFolder.inbox, isTransportFailure: Bool = false, autoRetryCount: Int = 0,
+        startedAt: Date? = nil
     ) -> Job {
         Job(
             id: UUID(id), fileURL: URL(fileURLWithPath: "/staging/\(name)"), fileName: name,
@@ -78,7 +84,13 @@ extension UploadsTestSupport {
         _ state: State,
         isSourcePresent: Bool = true,
         upload: @escaping @Sendable (UploadCall, @Sendable (Double) -> Void) async throws -> FileItem = { call, _ in
-            FileItem(name: call.fileName, path: call.destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
+            FileItem(
+                name: call.fileName,
+                path: call.destination,
+                dateModified: MockDate.date,
+                size: 10,
+                kind: TestKind.text
+            )
         }
     ) -> Store {
         let uploadCalls = uploadCalls

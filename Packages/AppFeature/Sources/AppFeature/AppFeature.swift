@@ -145,7 +145,8 @@ public struct AppFeature {
 
     private static func isSessionRejection(_ error: AuthClientError) -> Bool {
         switch error {
-        case .sessionExpired, .sessionCookieMissing, .invalidCredentials, .server(statusCode: Constants.unauthorizedStatusCode):
+        case .sessionExpired, .sessionCookieMissing, .invalidCredentials,
+             .server(statusCode: Constants.unauthorizedStatusCode):
             true
         default:
             false
@@ -247,7 +248,8 @@ public struct AppFeature {
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
-                guard let accountID = state.currentAccountID, let serverURL = state.currentServerURL else { return .none }
+                guard let accountID = state.currentAccountID,
+                      let serverURL = state.currentServerURL else { return .none }
                 // Any request that answers 401 raises this flag, including late ones from an account
                 // that was already left, so the server is asked about the current account first.
                 let authClient = authClient

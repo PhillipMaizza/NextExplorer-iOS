@@ -16,7 +16,11 @@ struct KeychainClientGateTests {
         }
     }
 
-    @Test("a write or delete waits for the migration that began before it and runs after it finished", .timeLimit(.minutes(1)), arguments: Operation.allCases)
+    @Test(
+        "a write or delete waits for the migration that began before it and runs after it finished",
+        .timeLimit(.minutes(1)),
+        arguments: Operation.allCases
+    )
     func writeWaitsForMigration(_ operation: Operation) async {
         let gate = KeychainMigrationGate()
         let events = LockIsolated<[String]>([])
@@ -57,7 +61,9 @@ struct KeychainClientGateTests {
         }
     }
 
-    @Test("the legacy Mac migration moves nothing in a build without the keychain entitlement and keeps the item readable")
+    @Test(
+        "the legacy Mac migration moves nothing in a build without the keychain entitlement and keeps the item readable"
+    )
     func legacyMigrationWithoutEntitlementKeepsItems() throws {
         let configuration = KeychainConfiguration.unique()
         let client = KeychainClient.live(configuration: configuration)

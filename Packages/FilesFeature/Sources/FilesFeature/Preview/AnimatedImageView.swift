@@ -57,7 +57,11 @@ enum AnimatedImageDecoder {
         var totalDuration: Double = 0
         var sourceIndex = 0
         while sourceIndex < sourceFrameCount, frames.count < frameCount {
-            if let cgImage = CGImageSourceCreateThumbnailAtIndex(source, sourceIndex, thumbnailOptions as CFDictionary) {
+            if let cgImage = CGImageSourceCreateThumbnailAtIndex(
+                source,
+                sourceIndex,
+                thumbnailOptions as CFDictionary
+            ) {
                 frames.append(cgImage)
                 // Scale by `stride` so subsampling doesn't speed the loop up.
                 totalDuration += frameDuration(source: source, index: sourceIndex) * Double(stride)

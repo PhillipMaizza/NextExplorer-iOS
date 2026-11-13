@@ -15,7 +15,14 @@ struct ArrivalRecheckTests {
     private typealias Store = TestStoreOf<BrowseFeature>
 
     private let serverURL = URL(fileURLWithPath: "/")
-    private let access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
+    private let access = FileAccess(
+        canRead: true,
+        canWrite: true,
+        canUpload: true,
+        canDelete: true,
+        canShare: true,
+        canDownload: true
+    )
     private let recheckDelay = Duration.milliseconds(700)
 
     private nonisolated func file(_ name: String) -> FileItem {
@@ -53,7 +60,12 @@ struct ArrivalRecheckTests {
     }
 
     /// Advances to the next recheck and receives the refetch it starts, up to the offline availability pass.
-    private func recheck(_ store: Store, clock: TestClock<Duration>, expectingItems items: [FileItem], then update: @escaping (inout BrowseFeature.State) -> Void) async {
+    private func recheck(
+        _ store: Store,
+        clock: TestClock<Duration>,
+        expectingItems items: [FileItem],
+        then update: @escaping (inout BrowseFeature.State) -> Void
+    ) async {
         await clock.advance(by: recheckDelay)
         await store.receive(\.refreshButtonTapped) { $0.phase = .loading }
         await store.receive(\.itemsResponse.success) {

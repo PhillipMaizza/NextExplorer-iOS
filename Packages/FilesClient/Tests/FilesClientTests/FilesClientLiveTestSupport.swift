@@ -4,7 +4,8 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// Parent of every live client suite that drives `StubURLProtocol`. The suites are nested extensions of this type so they all
+/// Parent of every live client suite that drives `StubURLProtocol`. The suites are nested extensions of this type so
+/// they all
 /// inherit `.serialized`: they share the protocol's statics and must never run concurrently.
 @Suite(.serialized)
 struct FilesClientLiveTests {}
@@ -26,7 +27,11 @@ extension FilesClientLiveHarness {
 
     func stub(statusCode: Int, body: Data) {
         StubURLProtocol.failure = nil
-        StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: body)
+        StubURLProtocol.stub = .init(
+            statusCode: statusCode,
+            headers: [HTTPHeaderField.contentType: MIMEType.json],
+            body: body
+        )
     }
 
     func stub(statusCode: Int, body: Data, headers: [String: String]) {
@@ -46,7 +51,11 @@ extension FilesClientLiveHarness {
         StubURLProtocol.requests = []
     }
 
-    func editorStub(statusCode: Int, etag: String? = nil, fixture: FilesClientFixture = .commonEmptyObject) throws -> StubURLProtocol.Stub {
+    func editorStub(
+        statusCode: Int,
+        etag: String? = nil,
+        fixture: FilesClientFixture = .commonEmptyObject
+    ) throws -> StubURLProtocol.Stub {
         var headers = [HTTPHeaderField.contentType: MIMEType.json]
         if let etag {
             headers[HTTPHeaderField.etag] = etag

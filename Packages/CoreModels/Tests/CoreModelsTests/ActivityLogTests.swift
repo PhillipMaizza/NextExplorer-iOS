@@ -43,7 +43,10 @@ struct ActivityLogTests {
         #expect(event.outcome == .ok)
     }
 
-    @Test(arguments: [CoreModelsFixture.activityLogTimestampWithFractionalSeconds, .activityLogTimestampWithoutFractionalSeconds])
+    @Test(arguments: [
+        CoreModelsFixture.activityLogTimestampWithFractionalSeconds,
+        .activityLogTimestampWithoutFractionalSeconds,
+    ])
     func theTimestampParsesWithAndWithoutFractionalSeconds(fixture: CoreModelsFixture) throws {
         let event = try fixture.decode(ActivityEvent.self)
 

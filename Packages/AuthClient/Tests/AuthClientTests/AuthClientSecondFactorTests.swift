@@ -10,7 +10,9 @@ import TestUtils
 struct AuthClientSecondFactorTests: AuthClientLiveHarness {
     let serverURL = makeUniqueServerURL()
 
-    @Test("regression NXTIOS-0095: a 200 with totpRequired and no user is a second factor request, not invalid credentials, nothing persisted")
+    @Test(
+        "regression NXTIOS-0095: a 200 with totpRequired and no user is a second factor request, not invalid credentials, nothing persisted"
+    )
     func loginSecondFactorRequired() async throws {
         let keychainClient = KeychainClient.inMemory()
         let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { request in

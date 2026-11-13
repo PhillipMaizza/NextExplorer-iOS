@@ -81,7 +81,12 @@ public struct FFmpegSettingsFeature {
                 guard !state.isSaving else { return .none }
                 state.phase.beginReload()
                 state.errorMessage = nil
-                return .loadSettings(filesClient, serverURL: state.serverURL, cancelID: CancelID.load, response: { .loadResponse($0) })
+                return .loadSettings(
+                    filesClient,
+                    serverURL: state.serverURL,
+                    cancelID: CancelID.load,
+                    response: { .loadResponse($0) }
+                )
 
             case .loadResponse(.success) where state.isSaving:
                 return .none

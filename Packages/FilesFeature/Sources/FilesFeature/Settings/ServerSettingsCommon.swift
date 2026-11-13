@@ -105,7 +105,8 @@ struct RefusedTag: View {
             .type(.caption(.semibold), style: .error)
             .padding(.horizontal, ServerSettingsMetrics.tagHorizontalPadding)
             .padding(.vertical, ServerSettingsMetrics.tagVerticalPadding)
-            .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(ServerSettingsMetrics.tagFillOpacity)))
+            .background(RoundedRectangle(cornerRadius: .radiusXSmall)
+                .fill(Color.negative.opacity(ServerSettingsMetrics.tagFillOpacity)))
             .fixedSize()
             .accessibilityLabel(L10n.ActivityLog.refusedSuffix)
     }
@@ -136,7 +137,12 @@ struct ChoiceRow: View {
                     // A monospaced face reads larger than the proportional one at the same size, so
                     // paths take the next size down to sit level with the rest of the screen.
                     Text(title)
-                        .type(isMonospaced ? .body3(isSelected ? .semibold : .regular) : .body2(isSelected ? .semibold : .regular), style: .primaryOnSurface)
+                        .type(
+                            isMonospaced
+                                ? .body3(isSelected ? .semibold : .regular)
+                                : .body2(isSelected ? .semibold : .regular),
+                            style: .primaryOnSurface
+                        )
                         .monospaced(isMonospaced)
                     if let subtitle {
                         Text(subtitle).type(.body3(.regular), style: .tertiary)
@@ -287,7 +293,8 @@ struct ChoiceRowList<Item: Hashable>: View {
 }
 
 /// The list of folders a background feature skips: the ones the server's environment fixed, the
-/// ones an admin added (each a checked row, unchecked to remove it), and a field to add another. Shared by the search index and
+/// ones an admin added (each a checked row, unchecked to remove it), and a field to add another. Shared by the search
+/// index and
 /// the folder size pages, as the web client shares one component for both.
 struct ExcludedPathsEditor: View {
     let environmentTitle: String

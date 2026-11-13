@@ -10,7 +10,8 @@ import ShareUploads
 import Testing
 import TestUtils
 
-/// Cancelling, closing, the upload hand off and the close timer. Nested in `ShareUploadFeatureTests` so it inherits `.serialized` with every other share upload suite.
+/// Cancelling, closing, the upload hand off and the close timer. Nested in `ShareUploadFeatureTests` so it inherits
+/// `.serialized` with every other share upload suite.
 extension ShareUploadFeatureTests {
     @MainActor
     @Suite(.isolatedDependencies)
@@ -66,7 +67,9 @@ extension ShareUploadFeatureTests {
                 $0.authClient.loadSession = { .preview }
                 $0.authClient.listSessions = { [.preview] }
                 $0.authClient.me = { _ in Self.user }
-                $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
+                $0
+                    .uploadDefaults =
+                    .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: TestFolder.photos)])
                 $0.continuousClock = TestClock()
             }
             await becomeReady(store, count: 2, folder: TestFolder.photos)
@@ -81,7 +84,10 @@ extension ShareUploadFeatureTests {
             await store.receive(.delegate(.close(completed: false)))
             await store.finish()
             #expect(wasCancelled.value, "the in flight preparation was cancelled, not left running")
-            #expect(calls.all == [ShareExtensionFeatureTestValue.discardCall], "the half staged batch is dropped at once")
+            #expect(
+                calls.all == [ShareExtensionFeatureTestValue.discardCall],
+                "the half staged batch is dropped at once"
+            )
         }
 
         @Test
@@ -106,7 +112,10 @@ extension ShareUploadFeatureTests {
             await store.send(.cancelTapped)
             await store.receive(.delegate(.close(completed: false)))
             await store.finish()
-            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall])
+            #expect(calls.all == [
+                ShareExtensionFeatureTestValue.prepareCall,
+                ShareExtensionFeatureTestValue.discardCall,
+            ])
         }
 
         @Test
@@ -131,7 +140,10 @@ extension ShareUploadFeatureTests {
 
             await store.send(.viewDisappeared)
             await store.finish()
-            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.discardCall])
+            #expect(calls.all == [
+                ShareExtensionFeatureTestValue.prepareCall,
+                ShareExtensionFeatureTestValue.discardCall,
+            ])
         }
 
         @Test
@@ -216,7 +228,10 @@ extension ShareUploadFeatureTests {
 
             await store.send(.viewDisappeared)
             await store.finish()
-            #expect(calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.startCall], "once started the uploads belong to the system")
+            #expect(
+                calls.all == [ShareExtensionFeatureTestValue.prepareCall, ShareExtensionFeatureTestValue.startCall],
+                "once started the uploads belong to the system"
+            )
         }
 
         @Test

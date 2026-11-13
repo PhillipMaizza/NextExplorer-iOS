@@ -36,7 +36,12 @@ public struct DSFlowLayout: Layout {
         return CGSize(width: min(totalWidth, maxWidth), height: totalHeight)
     }
 
-    public func placeSubviews(in bounds: CGRect, proposal _: ProposedViewSize, subviews: Subviews, cache _: inout Void) {
+    public func placeSubviews(
+        in bounds: CGRect,
+        proposal _: ProposedViewSize,
+        subviews: Subviews,
+        cache _: inout Void
+    ) {
         var x = bounds.minX
         var y = bounds.minY
         var rowHeight: CGFloat = 0
@@ -57,7 +62,10 @@ public struct DSFlowLayout: Layout {
 
 #Preview {
     DSFlowLayout(horizontalSpacing: 6, verticalSpacing: 6) {
-        ForEach(["Swift", "SwiftUI", "Composable Architecture", "iOS", "Layout", "Chips", "Design System", "Figtree"], id: \.self) { tag in
+        ForEach(
+            ["Swift", "SwiftUI", "Composable Architecture", "iOS", "Layout", "Chips", "Design System", "Figtree"],
+            id: \.self
+        ) { tag in
             Text(tag)
                 .type(.caption(.semibold))
                 .padding(.horizontal, .space8)

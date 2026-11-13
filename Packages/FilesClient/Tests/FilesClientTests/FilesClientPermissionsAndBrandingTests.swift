@@ -45,7 +45,8 @@ extension FilesClientLiveTests {
 
             _ = try await makeClient().fetchPermissions(serverURL, "Docs/My File #1.txt")
 
-            #expect(StubURLProtocol.capturedRequest?.url?.absoluteString == "https://example.com/api/permissions/Docs/My%20File%20%231.txt")
+            #expect(StubURLProtocol.capturedRequest?.url?
+                .absoluteString == "https://example.com/api/permissions/Docs/My%20File%20%231.txt")
         }
 
         @Test
@@ -103,7 +104,10 @@ extension FilesClientLiveTests {
         func changePermissionsSurfacesTheInvalidModeMessage() async throws {
             try prepare(statusCode: 400, fixture: .permissionsErrorInvalidMode)
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Mode must be three octal digits.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "Mode must be three octal digits."
+            )) {
                 try await makeClient().changePermissions(serverURL, TestFolder.docs, "9", false)
             }
         }
@@ -142,7 +146,10 @@ extension FilesClientLiveTests {
         func changeOwnershipWithNeitherSendsOnlyThePathAndLetsTheServerRefuse() async throws {
             try prepare(statusCode: 400, fixture: .permissionsErrorInvalidMode)
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Mode must be three octal digits.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "Mode must be three octal digits."
+            )) {
                 try await makeClient().changeOwnership(serverURL, TestFolder.docs, nil, nil)
             }
             try expectJSONBody(["path": TestFolder.docs])

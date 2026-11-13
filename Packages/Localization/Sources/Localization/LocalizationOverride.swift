@@ -7,15 +7,50 @@ import os
 /// `L10n.swift` reads `bundle`/`locale` here.
 public enum LocalizationOverride {
     /// The app's UI languages, mirroring the web app's set. `en` is the source language.
-    public static let supportedLanguages = ["en", "ar", "cs", "da", "de", "el", "es", "fi", "fr", "he", "hi", "hu", "id", "it", "ja", "ko", "nb", "nl", "pl", "pt", "pt-BR", "ro", "ru", "sv", "th", "tr", "uk", "vi", "zh-CN", "zh-TW"]
+    public static let supportedLanguages = [
+        "en",
+        "ar",
+        "cs",
+        "da",
+        "de",
+        "el",
+        "es",
+        "fi",
+        "fr",
+        "he",
+        "hi",
+        "hu",
+        "id",
+        "it",
+        "ja",
+        "ko",
+        "nb",
+        "nl",
+        "pl",
+        "pt",
+        "pt-BR",
+        "ro",
+        "ru",
+        "sv",
+        "th",
+        "tr",
+        "uk",
+        "vi",
+        "zh-CN",
+        "zh-TW",
+    ]
 
     /// Each language's own name (endonym), shown in the picker so a speaker recognizes their
     /// language regardless of the current UI language.
     public static let displayNames: [String: String] = [
-        "en": "English", "ar": "العربية", "cs": "Čeština", "da": "Dansk", "de": "Deutsch", "el": "Ελληνικά", "es": "Español", "fi": "Suomi", "fr": "Français",
-        "he": "עברית", "hi": "हिन्दी", "hu": "Magyar", "id": "Bahasa Indonesia", "it": "Italiano", "ja": "日本語", "ko": "한국어", "nb": "Norsk bokmål", "nl": "Nederlands",
+        "en": "English", "ar": "العربية", "cs": "Čeština", "da": "Dansk", "de": "Deutsch", "el": "Ελληνικά",
+        "es": "Español",
+        "fi": "Suomi", "fr": "Français",
+        "he": "עברית", "hi": "हिन्दी", "hu": "Magyar", "id": "Bahasa Indonesia", "it": "Italiano", "ja": "日本語", "ko": "한국어",
+        "nb": "Norsk bokmål", "nl": "Nederlands",
         "pl": "Polski", "pt": "Português (Portugal)", "pt-BR": "Português (Brasil)", "ro": "Română", "ru": "Русский",
-        "sv": "Svenska", "th": "ไทย", "tr": "Türkçe", "uk": "Українська", "vi": "Tiếng Việt", "zh-CN": "简体中文", "zh-TW": "繁體中文",
+        "sv": "Svenska", "th": "ไทย", "tr": "Türkçe", "uk": "Українська", "vi": "Tiếng Việt", "zh-CN": "简体中文",
+        "zh-TW": "繁體中文",
     ]
 
     public static func displayName(for code: String) -> String {
@@ -42,7 +77,9 @@ public enum LocalizationOverride {
     }
 
     private static func resources(for language: String) -> Override? {
-        guard let path = Bundle.module.path(forResource: language, ofType: "lproj"), let resolved = Bundle(path: path) else {
+        guard let path = Bundle.module.path(forResource: language, ofType: "lproj"),
+              let resolved = Bundle(path: path)
+        else {
             return nil
         }
         return Override(bundle: resolved, locale: Locale(identifier: language))
@@ -85,7 +122,10 @@ public enum LocalizationOverride {
     /// Whether the UI lays out right to left: the language picked inside the app, else the language
     /// the system resolved for the app. Without the system fallback an Arabic or Hebrew phone with
     /// no in-app choice would come out left to right.
-    public static func usesRightToLeftLayout(selectedLanguage: String?, systemLanguage: String? = Bundle.main.preferredLocalizations.first) -> Bool {
+    public static func usesRightToLeftLayout(
+        selectedLanguage: String?,
+        systemLanguage: String? = Bundle.main.preferredLocalizations.first
+    ) -> Bool {
         guard let language = selectedLanguage ?? systemLanguage else {
             return false
         }

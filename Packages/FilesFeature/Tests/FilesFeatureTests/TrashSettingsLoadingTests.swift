@@ -21,7 +21,14 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
     @Test
     func loadingSeedsBothFormsAndTheVolumes() async {
         let trash = TrashSettings(isEnabled: false, retentionDays: 14, maxPercent: 20, maxBytes: 2 * gib)
-        let versions = VersionsSettings(isEnabled: false, keepAllHours: 6, hourlyDays: 2, dailyDays: 9, maxPerFile: 12, sessionCheckpointMinutes: 3)
+        let versions = VersionsSettings(
+            isEnabled: false,
+            keepAllHours: 6,
+            hourlyDays: 2,
+            dailyDays: 9,
+            maxPerFile: 12,
+            sessionCheckpointMinutes: 3
+        )
         let zone = TrashZone(id: "z1", name: "files")
         let store = store(
             settings: { SystemSettings(trash: trash, versions: versions) },
@@ -55,7 +62,13 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
         #expect(trashDraft.maxSizeText == "2")
         let versionsDraft = store.state.versionsDraft
         #expect(!versionsDraft.isEnabled)
-        #expect([versionsDraft.keepAllHoursText, versionsDraft.hourlyDaysText, versionsDraft.dailyDaysText, versionsDraft.maxPerFileText, versionsDraft.checkpointMinutesText] == ["6", "2", "9", "12", "3"])
+        #expect([
+            versionsDraft.keepAllHoursText,
+            versionsDraft.hourlyDaysText,
+            versionsDraft.dailyDaysText,
+            versionsDraft.maxPerFileText,
+            versionsDraft.checkpointMinutesText,
+        ] == ["6", "2", "9", "12", "3"])
         #expect(!store.state.isDirty)
         #expect(settingsFetches.value == 1)
         #expect(zoneFetches.value == 1)
@@ -169,7 +182,10 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
         state.isSaving = true
         let store = store(state: state)
 
-        await store.send(.settingsResponse(.success(SystemSettings(trash: TrashSettings(retentionDays: 1), versions: VersionsSettings()))))
+        await store.send(.settingsResponse(.success(SystemSettings(
+            trash: TrashSettings(retentionDays: 1),
+            versions: VersionsSettings()
+        ))))
 
         #expect(store.state.loadedTrash == TrashSettings(retentionDays: 30))
     }

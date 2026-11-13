@@ -17,7 +17,10 @@ enum SeededThumbnail {
     ) async -> PlatformImage? {
         guard LocalThumbnailStore.canHaveSeed(modified: modified, now: now) else { return nil }
         return await Task.detached(priority: priority) {
-            store.thumbnail(path, size, modified).flatMap { ImageDownsampling.image(from: $0, maxPixelDimension: maxPixel) }
+            store.thumbnail(path, size, modified).flatMap { ImageDownsampling.image(
+                from: $0,
+                maxPixelDimension: maxPixel
+            ) }
         }.value
     }
 }

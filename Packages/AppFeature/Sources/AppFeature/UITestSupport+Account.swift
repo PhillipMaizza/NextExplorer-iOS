@@ -27,7 +27,10 @@
             }
 
             var twoFactorStatus: TwoFactorStatus {
-                locked { TwoFactorStatus(isEnabled: isTwoFactorEnabled, recoveryCodesLeft: isTwoFactorEnabled ? UITestSupport.recoveryCodes.count : 0) }
+                locked { TwoFactorStatus(
+                    isEnabled: isTwoFactorEnabled,
+                    recoveryCodesLeft: isTwoFactorEnabled ? UITestSupport.recoveryCodes.count : 0
+                ) }
             }
 
             func setTwoFactor(enabled: Bool) {
@@ -42,7 +45,8 @@
                 locked {
                     let token = APIToken(
                         id: "token-\(nextTokenNumber)", name: name, scope: scope,
-                        createdAt: "2026-11-10T07:00:00.000Z", expiresAt: expiresInDays == nil ? nil : "2027-02-01T00:00:00.000Z"
+                        createdAt: "2026-11-10T07:00:00.000Z",
+                        expiresAt: expiresInDays == nil ? nil : "2027-02-01T00:00:00.000Z"
                     )
                     nextTokenNumber += 1
                     tokens.append(token)
@@ -54,7 +58,13 @@
                 locked {
                     guard let index = tokens.firstIndex(where: { $0.id == id }) else { return nil }
                     let old = tokens[index]
-                    tokens[index] = APIToken(id: old.id, name: name, scope: old.scope, createdAt: old.createdAt, expiresAt: old.expiresAt)
+                    tokens[index] = APIToken(
+                        id: old.id,
+                        name: name,
+                        scope: old.scope,
+                        createdAt: old.createdAt,
+                        expiresAt: old.expiresAt
+                    )
                     return tokens[index]
                 }
             }
@@ -71,7 +81,10 @@
 
             client.fetchTwoFactorStatus = { _ in account.twoFactorStatus }
             client.beginTwoFactorSetup = { _ in
-                TwoFactorSetup(secret: twoFactorSecret, uri: "otpauth://totp/NextExplorer:phillip?secret=\(twoFactorSecret)&issuer=NextExplorer")
+                TwoFactorSetup(
+                    secret: twoFactorSecret,
+                    uri: "otpauth://totp/NextExplorer:phillip?secret=\(twoFactorSecret)&issuer=NextExplorer"
+                )
             }
             client.confirmTwoFactorSetup = { _, code in
                 guard code == validCode else { throw wrongCode }
@@ -94,7 +107,10 @@
             }
             client.renameAPIToken = { _, id, name in
                 guard let token = account.renameToken(id: id, to: name) else {
-                    throw FilesClientError.serverMessage(statusCode: 404, message: "There is no such token on this account.")
+                    throw FilesClientError.serverMessage(
+                        statusCode: 404,
+                        message: "There is no such token on this account."
+                    )
                 }
                 return token
             }

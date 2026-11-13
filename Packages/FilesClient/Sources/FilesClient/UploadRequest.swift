@@ -35,7 +35,8 @@ public enum UploadRequest {
         let lineBreak = Constants.lineBreak
         var header = Constants.boundaryMarker + boundary + lineBreak + Constants.dispositionPrefix + quoted(name)
         if let fileName {
-            header += Constants.filenameAttribute + quoted(fileName) + lineBreak + Constants.contentTypePrefix + MIMEType.octetStream
+            header += Constants.filenameAttribute + quoted(fileName) + lineBreak + Constants
+                .contentTypePrefix + MIMEType.octetStream
         }
         return header + lineBreak + lineBreak
     }
@@ -52,7 +53,13 @@ public enum UploadRequest {
         boundary: String? = nil
     ) throws -> URLRequest {
         let boundary = boundary ?? Constants.boundaryPrefix + UUID().uuidString
-        try writeEnvelope(to: envelopeURL, boundary: boundary, fileURL: fileURL, fileName: fileName, destination: destination)
+        try writeEnvelope(
+            to: envelopeURL,
+            boundary: boundary,
+            fileURL: fileURL,
+            fileName: fileName,
+            destination: destination
+        )
         return request(serverURL: serverURL, contentType: MIMEType.multipartFormData(boundary: boundary))
     }
 
@@ -107,7 +114,8 @@ public enum UploadRequest {
             try handle.write(contentsOf: chunk)
         }
 
-        let closing = Constants.lineBreak + Constants.boundaryMarker + boundary + Constants.boundaryMarker + Constants.lineBreak
+        let closing = Constants.lineBreak + Constants.boundaryMarker + boundary
+            + Constants.boundaryMarker + Constants.lineBreak
         try handle.write(contentsOf: Data(closing.utf8))
     }
 

@@ -82,7 +82,10 @@ import SwiftUI
                             }
                         }
                     }
-                    .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous))
+                    .background(
+                        Color.backgroundSecondary,
+                        in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous)
+                    )
                     .clipShape(RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous))
                 }
                 if !section.footer.isEmpty {

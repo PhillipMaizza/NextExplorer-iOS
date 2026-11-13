@@ -7,7 +7,10 @@
         /// The Mac's stand in for pull to refresh, which a Mac list does not have: a toolbar
         /// button running the same refresh, spinning while it runs, and View › Refresh (⌘R)
         /// pressing that same button so it spins and toasts alike.
-        func macToolbarRefresh(onRefresh: @escaping @Sendable () async -> Void, onFinished: @escaping () -> Void) -> some View {
+        func macToolbarRefresh(
+            onRefresh: @escaping @Sendable () async -> Void,
+            onFinished: @escaping () -> Void
+        ) -> some View {
             modifier(MacToolbarRefresh(onRefresh: onRefresh, onFinished: onFinished))
         }
     }

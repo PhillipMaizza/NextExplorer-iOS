@@ -103,7 +103,10 @@ struct SharedGroupKeychainStoreTests {
     @Test("signing out deletes the item from every group")
     func deleteClearsBothGroups() throws {
         let keychain = FakeKeychain()
-        keychain.groups = [Constants.sharedGroup: [TestStorageKey.session: session], Constants.appGroup: [TestStorageKey.session: session]]
+        keychain.groups = [
+            Constants.sharedGroup: [TestStorageKey.session: session],
+            Constants.appGroup: [TestStorageKey.session: session],
+        ]
 
         try makeStore(keychain).delete(key: TestStorageKey.session)
 
@@ -126,7 +129,10 @@ struct SharedGroupKeychainStoreTests {
     @Test("eager migration moves every item from the app's group without a read")
     func migrateAllMovesEverything() {
         let keychain = FakeKeychain()
-        keychain.groups[Constants.appGroup] = [TestStorageKey.storedSessions: session, "certificate.index": Data("index".utf8)]
+        keychain.groups[Constants.appGroup] = [
+            TestStorageKey.storedSessions: session,
+            "certificate.index": Data("index".utf8),
+        ]
         let store = makeStore(keychain)
 
         #expect(store.migrateAll() == 2)
@@ -140,12 +146,18 @@ struct SharedGroupKeychainStoreTests {
     func migrateAllKeepsNewerSharedItem() {
         let keychain = FakeKeychain()
         let newer = Data("newer".utf8)
-        keychain.groups = [Constants.sharedGroup: [TestStorageKey.storedSessions: newer], Constants.appGroup: [TestStorageKey.storedSessions: session]]
+        keychain.groups = [
+            Constants.sharedGroup: [TestStorageKey.storedSessions: newer],
+            Constants.appGroup: [TestStorageKey.storedSessions: session],
+        ]
 
         #expect(makeStore(keychain).migrateAll() == 0)
 
         #expect(keychain.contents(Constants.sharedGroup)[TestStorageKey.storedSessions] == newer)
-        #expect(keychain.contents(Constants.appGroup).isEmpty, "the stale copy goes so only one credential copy remains")
+        #expect(
+            keychain.contents(Constants.appGroup).isEmpty,
+            "the stale copy goes so only one credential copy remains"
+        )
     }
 
     @Test("eager migration is a no-op when nothing is left, and safe to repeat")

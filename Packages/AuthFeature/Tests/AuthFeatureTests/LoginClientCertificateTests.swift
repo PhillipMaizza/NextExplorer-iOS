@@ -22,7 +22,9 @@ struct LoginClientCertificateTests {
         _ state: LoginFormFeature.State,
         clock: TestClock<Duration>,
         certificates: [ClientCertificateOrigin: ClientCertificateSummary] = [:],
-        fetchStatus: @escaping @Sendable (URL) async throws -> AuthStatus = { _ in throw AuthClientError.network("unused") }
+        fetchStatus: @escaping @Sendable (URL) async throws -> AuthStatus = { _ in
+            throw AuthClientError.network("unused")
+        }
     ) -> Store {
         TestStore(initialState: state) {
             LoginFormFeature()
@@ -58,7 +60,10 @@ struct LoginClientCertificateTests {
         ),
     ]
 
-    @Test("A server that wants or refuses a certificate offers the sheet, and the offer outlives the error text", arguments: failures)
+    @Test(
+        "A server that wants or refuses a certificate offers the sheet, and the offer outlives the error text",
+        arguments: failures
+    )
     func certificateFailureOffersSheet(_ failure: CertificateFailure) async {
         let clock = TestClock()
         let store = makeStore(
@@ -152,7 +157,12 @@ struct LoginClientCertificateTests {
     )
     func httpRedirectCarriesThePort(_ testCase: RedirectCase) async {
         let clock = TestClock()
-        let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: true, redirectedPort: testCase.answeredPort)
+        let status = AuthStatus(
+            localEnabled: true,
+            oidcEnabled: false,
+            redirectsToHTTPS: true,
+            redirectedPort: testCase.answeredPort
+        )
         let store = makeStore(
             LoginFormFeature.State(connectionPhase: .testing, scheme: .http, host: testCase.typed),
             clock: clock
@@ -269,7 +279,12 @@ struct LoginClientCertificateTests {
         arguments: [
             PromptCase(error: .network("x"), scheme: .https, host: TestHost.shortHost, expected: nil),
             PromptCase(error: .rateLimited, scheme: .https, host: TestHost.shortHost, expected: nil),
-            PromptCase(error: .clientCertificateRequired, scheme: .https, host: AuthFeatureTestValue.invalidHost, expected: nil),
+            PromptCase(
+                error: .clientCertificateRequired,
+                scheme: .https,
+                host: AuthFeatureTestValue.invalidHost,
+                expected: nil
+            ),
             PromptCase(
                 error: .clientCertificateRequired,
                 scheme: .https,
@@ -291,7 +306,8 @@ struct LoginClientCertificateTests {
         ]
     )
     func certificatePrompt(_ testCase: PromptCase) {
-        #expect(LoginFormFeature.certificatePrompt(for: testCase.error, scheme: testCase.scheme, host: testCase.host) == testCase.expected)
+        #expect(LoginFormFeature
+            .certificatePrompt(for: testCase.error, scheme: testCase.scheme, host: testCase.host) == testCase.expected)
     }
 }
 

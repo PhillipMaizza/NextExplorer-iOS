@@ -32,7 +32,10 @@
                     Text(error).foregroundStyle(Color.negativeText)
                 }
             }
-            .confirmationDialog(confirmationTitle, isPresented: Binding(get: { store.confirmation != nil }, set: { _ in })) {
+            .confirmationDialog(
+                confirmationTitle,
+                isPresented: Binding(get: { store.confirmation != nil }, set: { _ in })
+            ) {
                 Button(L10n.VersionedFiles.confirmDelete, role: .destructive) { store.send(.confirmationConfirmed) }
                 Button(L10n.Common.cancel, role: .cancel) { store.send(.confirmationCancelled) }
             } message: {
@@ -44,7 +47,11 @@
         private var summarySection: some View {
             if let page = store.page {
                 Section {
-                    Text(L10n.VersionedFiles.summary(page.total, page.totalVersions, TrashSettingsView.bytes(page.totalBytes)))
+                    Text(L10n.VersionedFiles.summary(
+                        page.total,
+                        page.totalVersions,
+                        TrashSettingsView.bytes(page.totalBytes)
+                    ))
                 } footer: {
                     MacSectionFooter(L10n.VersionedFiles.subtitle)
                 }
@@ -53,11 +60,15 @@
 
         private var filtersSection: some View {
             Section {
-                TextField(L10n.VersionedFiles.searchPlaceholder, text: $store.filter.query.sending(\.queryChanged), prompt: Text(L10n.VersionedFiles.searchPlaceholder))
-                    .labelsHidden()
-                    .textFieldStyle(.roundedBorder)
-                    .autocorrectionDisabled()
-                    .onSubmit { store.send(.searchSubmitted) }
+                TextField(
+                    L10n.VersionedFiles.searchPlaceholder,
+                    text: $store.filter.query.sending(\.queryChanged),
+                    prompt: Text(L10n.VersionedFiles.searchPlaceholder)
+                )
+                .labelsHidden()
+                .textFieldStyle(.roundedBorder)
+                .autocorrectionDisabled()
+                .onSubmit { store.send(.searchSubmitted) }
                 if let zones = store.page?.zones, !zones.isEmpty {
                     Picker(L10n.VersionedFiles.zone, selection: $store.filter.zoneID.sending(\.zoneFilterChanged)) {
                         Text(L10n.VersionedFiles.anyZone).tag(String?.none)
@@ -142,7 +153,11 @@
                 let count = store.selection[file.id]?.count ?? 0
                 HStack(spacing: Metrics.sectionSpacing) {
                     Spacer()
-                    Button(count == 0 ? L10n.VersionedFiles.deleteSelectedNone : L10n.VersionedFiles.deleteSelected(count)) {
+                    Button(count == 0
+                        ? L10n.VersionedFiles.deleteSelectedNone
+                        : L10n.VersionedFiles
+                            .deleteSelected(count))
+                    {
                         store.send(.deleteSelectedTapped(fileID: file.id))
                     }
                     .disabled(count == 0 || store.isWorking)
@@ -203,7 +218,8 @@
 
         private var confirmationTitle: String {
             switch store.confirmation {
-            case let .all(fileID): L10n.VersionedFiles.confirmAllTitle(store.files.first { $0.id == fileID }?.name ?? "")
+            case let .all(fileID): L10n.VersionedFiles
+                .confirmAllTitle(store.files.first { $0.id == fileID }?.name ?? "")
             case let .selected(_, versionIDs): L10n.VersionedFiles.confirmSomeTitle(versionIDs.count)
             case .none: ""
             }

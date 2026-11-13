@@ -12,7 +12,10 @@ struct SettingsPagesTests {
 
     @Test
     func theOpenPagesLiveInTheReducerSoTheyOutliveTheView() async {
-        let store = TestStore(initialState: SettingsFeature.State(serverURL: SettingsTestSupport.serverURL, user: user)) {
+        let store = TestStore(initialState: SettingsFeature.State(
+            serverURL: SettingsTestSupport.serverURL,
+            user: user
+        )) {
             SettingsFeature()
         }
 

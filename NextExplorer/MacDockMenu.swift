@@ -14,7 +14,11 @@
                   !session.mainTab.recentFolders.isEmpty else { return nil }
             let menu = NSMenu()
             for path in session.mainTab.recentFolders {
-                let item = NSMenuItem(title: (path as NSString).lastPathComponent, action: #selector(openRecentFolder(_:)), keyEquivalent: "")
+                let item = NSMenuItem(
+                    title: (path as NSString).lastPathComponent,
+                    action: #selector(openRecentFolder(_:)),
+                    keyEquivalent: ""
+                )
                 item.target = self
                 item.representedObject = path
                 item.toolTip = path

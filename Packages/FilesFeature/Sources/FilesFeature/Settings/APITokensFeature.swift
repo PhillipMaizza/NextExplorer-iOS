@@ -240,7 +240,11 @@ public struct APITokensFeature {
                 let name = rename.name.trimmingCharacters(in: .whitespacesAndNewlines)
                 let filesClient = filesClient
                 return .run { send in
-                    try await send(.renameResponse(apiResult { try await filesClient.renameAPIToken(serverURL, rename.id, name) }))
+                    try await send(.renameResponse(apiResult { try await filesClient.renameAPIToken(
+                        serverURL,
+                        rename.id,
+                        name
+                    ) }))
                 }
                 .cancellable(id: CancelID.action, cancelInFlight: true)
 

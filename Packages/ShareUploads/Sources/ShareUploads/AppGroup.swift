@@ -38,7 +38,11 @@ public enum AppGroup {
         private static func isEntitled(to group: String) -> Bool {
             guard
                 let task = SecTaskCreateFromSelf(nil),
-                let value = SecTaskCopyValueForEntitlement(task, "com.apple.security.application-groups" as CFString, nil)
+                let value = SecTaskCopyValueForEntitlement(
+                    task,
+                    "com.apple.security.application-groups" as CFString,
+                    nil
+                )
             else { return false }
             return (value as? [String])?.contains(group) ?? false
         }

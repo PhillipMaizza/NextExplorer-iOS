@@ -15,13 +15,17 @@ struct BrowseClipboardTests {
     private let incoming = BrowseFixtures.file(TestFile.aText, in: TestFolder.inbox)
     private let landed = BrowseFixtures.file(TestFile.aText, in: TestFolder.documents)
 
-    private func makeState(_ path: String = TestFolder.documents, access: FileAccess = BrowseFixtures.writableAccess) -> BrowseFeature.State {
+    private func makeState(
+        _ path: String = TestFolder.documents,
+        access: FileAccess = BrowseFixtures.writableAccess
+    ) -> BrowseFeature.State {
         BrowseFixtures.state(path, title: TestFolder.docs, access: access)
     }
 
     private func pasteRetry(clearClipboard: Bool) -> BrowseFeature.TransferRetry {
         BrowseFeature.TransferRetry(
-            items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: clearClipboard, resolution: .keepBoth
+            items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: clearClipboard,
+            resolution: .keepBoth
         )
     }
 
@@ -65,7 +69,10 @@ struct BrowseClipboardTests {
         let requests = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
             $0.filesClient.transferItems = { _, items, destination, operation in
-                requests.withValue { $0.append("\(items.map(\.id).joined(separator: ",")) to \(destination) as \(operation)") }
+                requests
+                    .withValue {
+                        $0.append("\(items.map(\.id).joined(separator: ",")) to \(destination) as \(operation)")
+                    }
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
             }
@@ -124,7 +131,8 @@ struct BrowseClipboardTests {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming, second, third], destination: TestFolder.documents, operation: .copy, clearClipboard: true, resolution: .keepBoth
+                items: [incoming, second, third], destination: TestFolder.documents, operation: .copy,
+                clearClipboard: true, resolution: .keepBoth
             )
         }
         gate.open()
@@ -141,7 +149,10 @@ struct BrowseClipboardTests {
         var state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, _, _, _ in throw FilesClientError.serverMessage(statusCode: 500, message: "Nope.") }
+            $0.filesClient.transferItems = { _, _, _, _ in throw FilesClientError.serverMessage(
+                statusCode: 500,
+                message: "Nope."
+            ) }
         }
 
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
@@ -221,7 +232,10 @@ struct BrowseClipboardTests {
     func pasteIsANoOpWhenCopyingAFolderIntoASubdirectoryOfItself() async {
         // The server fails this with EINVAL ("Cannot copy to a subdirectory of self").
         var state = makeState("Media/Photos/2024")
-        state.$clipboard.withLock { $0 = FileClipboard(items: [BrowseFixtures.folder(TestFolder.photos, in: TestFolder.media)], operation: .copy) }
+        state.$clipboard.withLock { $0 = FileClipboard(
+            items: [BrowseFixtures.folder(TestFolder.photos, in: TestFolder.media)],
+            operation: .copy
+        ) }
         let store = BrowseFixtures.store(state)
 
         await store.send(.pasteTapped(keepItemsAfterCopy: false))
@@ -239,7 +253,10 @@ struct BrowseClipboardTests {
         let requests = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
             $0.filesClient.transferItems = { _, items, destination, operation in
-                requests.withValue { $0.append("\(items.map(\.id).joined(separator: ",")) to \(destination) as \(operation)") }
+                requests
+                    .withValue {
+                        $0.append("\(items.map(\.id).joined(separator: ",")) to \(destination) as \(operation)")
+                    }
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination, renamedTo: [TestFile.aText: "a 2.txt"])
             }
@@ -249,7 +266,8 @@ struct BrowseClipboardTests {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [original], destination: TestFolder.documents, operation: .copy, clearClipboard: false, resolution: .keepBoth
+                items: [original], destination: TestFolder.documents, operation: .copy, clearClipboard: false,
+                resolution: .keepBoth
             )
         }
         gate.open()

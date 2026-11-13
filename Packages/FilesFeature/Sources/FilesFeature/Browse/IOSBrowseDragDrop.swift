@@ -119,7 +119,11 @@
                     } isTargeted: { isTargeted = $0 && canAccept() }
                     .overlay {
                         if isTargeted {
-                            DropOutline(cornerRadius: .radiusLarge, width: Metrics.dropOutlineWidth, inset: Metrics.dropOutlineInset)
+                            DropOutline(
+                                cornerRadius: .radiusLarge,
+                                width: Metrics.dropOutlineWidth,
+                                inset: Metrics.dropOutlineInset
+                            )
                         }
                     }
             } else {
@@ -190,14 +194,26 @@
             previewRow(PreviewFixture.folder, canMove: true, canUpload: true)
             previewRow(PreviewFixture.file, canMove: true, canUpload: true)
         }
-        .modifier(IOSFolderBackgroundDrop(destination: "Docs", isEnabled: true, canMove: true, canUpload: true, onDrop: { _ in true }))
+        .modifier(IOSFolderBackgroundDrop(
+            destination: "Docs",
+            isEnabled: true,
+            canMove: true,
+            canUpload: true,
+            onDrop: { _ in true }
+        ))
     }
 
     #Preview("No rights") {
         List {
             previewRow(PreviewFixture.folder, canMove: false, canUpload: false)
         }
-        .modifier(IOSFolderBackgroundDrop(destination: "Docs", isEnabled: true, canMove: false, canUpload: false, onDrop: { _ in true }))
+        .modifier(IOSFolderBackgroundDrop(
+            destination: "Docs",
+            isEnabled: true,
+            canMove: false,
+            canUpload: false,
+            onDrop: { _ in true }
+        ))
     }
 
     #Preview("Targeted outline") {
@@ -209,6 +225,10 @@
     #Preview("Background targeted outline") {
         Color.clear
             .frame(height: Metrics.previewHeight)
-            .overlay { DropOutline(cornerRadius: .radiusLarge, width: Metrics.dropOutlineWidth, inset: Metrics.dropOutlineInset) }
+            .overlay { DropOutline(
+                cornerRadius: .radiusLarge,
+                width: Metrics.dropOutlineWidth,
+                inset: Metrics.dropOutlineInset
+            ) }
     }
 #endif

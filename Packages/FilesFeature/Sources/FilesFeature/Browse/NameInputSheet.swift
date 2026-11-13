@@ -156,7 +156,10 @@ struct NameInputSheet: View {
             confirmTitle: "Create",
             initialName: "photo.jpg",
             isBusy: false,
-            additionalRule: { EditableTextFiles.isEditable(name: $0) ? nil : "Use a file type the editor can open, such as .txt, .md or .js." },
+            additionalRule: {
+                EditableTextFiles
+                    .isEditable(name: $0) ? nil : "Use a file type the editor can open, such as .txt, .md or .js."
+            },
             capitalizesWords: false,
             onConfirm: { _ in },
             onCancel: {}

@@ -90,7 +90,8 @@ public struct SearchTerm: Equatable, Sendable {
                 return lhs.result.id.localizedCompare(rhs.result.id) == .orderedAscending
             }
             .map(\.result)
-        let byContents = results.filter { !Self.isNameHit($0) }.sorted { $0.id.localizedCompare($1.id) == .orderedAscending }
+        let byContents = results.filter { !Self.isNameHit($0) }
+            .sorted { $0.id.localizedCompare($1.id) == .orderedAscending }
         return byName + byContents
     }
 
@@ -130,7 +131,10 @@ private final class Glob: @unchecked Sendable {
             if let compiled {
                 return compiled
             }
-            let made = try? NSRegularExpression(pattern: "^\(pattern)$", options: [.caseInsensitive, .dotMatchesLineSeparators])
+            let made = try? NSRegularExpression(
+                pattern: "^\(pattern)$",
+                options: [.caseInsensitive, .dotMatchesLineSeparators]
+            )
             compiled = .some(made)
             return made
         }

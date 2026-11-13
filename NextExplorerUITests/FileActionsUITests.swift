@@ -52,7 +52,10 @@
             browse.compressAction.tap()
 
             // Compress adds "<name>.zip"; the auto refreshed listing surfaces it.
-            XCTAssertTrue(browse.item("\(Fixture.file).zip").waitToAppear(), "Compressing should add a .zip to the listing")
+            XCTAssertTrue(
+                browse.item("\(Fixture.file).zip").waitToAppear(),
+                "Compressing should add a .zip to the listing"
+            )
         }
 
         func testToggleFavoriteUpdatesContextMenu() {

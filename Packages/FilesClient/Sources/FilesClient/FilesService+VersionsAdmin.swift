@@ -20,7 +20,12 @@ extension FilesService {
     }
 
     /// `GET /api/versions/admin/files`.
-    func fetchVersionedFiles(serverURL: URL, filter: VersionedFilesFilter, offset: Int, limit: Int) async throws -> VersionedFilesPage {
+    func fetchVersionedFiles(
+        serverURL: URL,
+        filter: VersionedFilesFilter,
+        offset: Int,
+        limit: Int
+    ) async throws -> VersionedFilesPage {
         var items: [(String, String)] = [("sort", filter.sort.rawValue), ("limit", String(limit))]
         if let zoneID = filter.zoneID, !zoneID.isEmpty {
             items.append(("zone", zoneID))
@@ -53,7 +58,10 @@ extension FilesService {
         let url = Self.versionsAdminURL(serverURL, id: id).appendingPathComponent("delete")
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(ids.map { DeleteVersionsBody(ids: $0, all: nil) } ?? DeleteVersionsBody(ids: nil, all: true))
+        request.httpBody = try Self.encode(ids.map { DeleteVersionsBody(ids: $0, all: nil) } ?? DeleteVersionsBody(
+            ids: nil,
+            all: true
+        ))
         return try await sendReportingMessage(request, decoding: VersionsDeletion.self)
     }
 }

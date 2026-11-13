@@ -28,7 +28,11 @@ struct PermissionsFeatureTests {
     private let chmodCalls = LockIsolated<[ChmodCall]>([])
     private let chownCalls = LockIsolated<[ChownCall]>([])
 
-    private func file(_ name: String = TestFile.report, path: String = TestFolder.documents, kind: String = "pdf") -> FileItem {
+    private func file(
+        _ name: String = TestFile.report,
+        path: String = TestFolder.documents,
+        kind: String = "pdf"
+    ) -> FileItem {
         FileItem(name: name, path: path, dateModified: MockDate.date, size: 10, kind: kind)
     }
 
@@ -279,7 +283,11 @@ struct PermissionsFeatureTests {
             $0.groupDraft = "staff"
         }
 
-        #expect(chownCalls.value == [ChownCall(path: "Documents/report.pdf", owner: testCase.sentOwner, group: testCase.sentGroup)])
+        #expect(chownCalls.value == [ChownCall(
+            path: "Documents/report.pdf",
+            owner: testCase.sentOwner,
+            group: testCase.sentGroup
+        )])
     }
 
     @Test(

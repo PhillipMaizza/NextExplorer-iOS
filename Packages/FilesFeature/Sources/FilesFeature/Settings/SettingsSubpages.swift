@@ -235,7 +235,13 @@ private extension StoreOf<SettingsFeature> {
     static func settingsMenuPreview(isAdmin: Bool) -> StoreOf<SettingsFeature> {
         Store(initialState: SettingsFeature.State(
             serverURL: URL(string: "https://example.com") ?? URL(fileURLWithPath: "/"),
-            user: User(id: "1", username: "demo", email: "demo@example.com", displayName: "Demo", roles: isAdmin ? ["admin"] : [])
+            user: User(
+                id: "1",
+                username: "demo",
+                email: "demo@example.com",
+                displayName: "Demo",
+                roles: isAdmin ? ["admin"] : []
+            )
         )) {
             SettingsFeature()
         }

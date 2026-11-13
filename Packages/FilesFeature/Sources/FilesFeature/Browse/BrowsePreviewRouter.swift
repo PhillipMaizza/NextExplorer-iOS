@@ -79,25 +79,35 @@ struct BrowsePreviewRouter: View {
                 item: item,
                 systemShare: .remote(item, serverURL: store.serverURL),
                 onDismiss: { store.send(.previewDismissed) },
-                onShareLink: (store.access?.canShare ?? false) ? {
-                    onShareTarget(item)
-                } : nil,
-                onRename: (store.access?.canWrite ?? false) ? {
-                    store.send(.renameTapped(item))
-                } : nil,
-                onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.downloadTapped(item))
-                } : nil,
-                onDelete: (store.access?.canDelete ?? false) ? {
-                    store.send(.deleteTapped(item))
-                } : nil
+                onShareLink: (store.access?.canShare ?? false)
+                    ? {
+                        onShareTarget(item)
+                    }
+                    : nil,
+                onRename: (store.access?.canWrite ?? false)
+                    ? {
+                        store.send(.renameTapped(item))
+                    }
+                    : nil,
+                onDownload: (store.access?.canDownload ?? false)
+                    ? {
+                        store.send(.downloadTapped(item))
+                    }
+                    : nil,
+                onDelete: (store.access?.canDelete ?? false)
+                    ? {
+                        store.send(.deleteTapped(item))
+                    }
+                    : nil
             )
         } else if item.isStreamableMedia, let url = playbackURL(for: item) {
             let onShare: (() -> Void)? = (store.access?.canShare ?? false) ? { onShareTarget(item) } : nil
             let onRename: (() -> Void)? = (store.access?.canWrite ?? false) ? { store.send(.renameTapped(item)) } : nil
-            let onDownload: (() -> Void)? = (store.access?.canDownload ?? false) ? {
-                store.send(.downloadTapped(item))
-            } : nil
+            let onDownload: (() -> Void)? = (store.access?.canDownload ?? false)
+                ? {
+                    store.send(.downloadTapped(item))
+                }
+                : nil
             let onDelete: (() -> Void)? = (store.access?.canDelete ?? false) ? { store.send(.deleteTapped(item)) } : nil
 
             // Native formats start on AVPlayer and fall back to libvlc on a decode failure; the rest
@@ -117,18 +127,26 @@ struct BrowsePreviewRouter: View {
                 initialItem: item,
                 serverURL: store.serverURL,
                 onDismiss: { store.send(.previewDismissed) },
-                onShare: (store.access?.canShare ?? false) ? { current in
-                    onShareTarget(current)
-                } : nil,
-                onRename: (store.access?.canWrite ?? false) ? { current in
-                    store.send(.renameTapped(current))
-                } : nil,
-                onDownload: (store.access?.canDownload ?? false) ? { current in
-                    store.send(.downloadTapped(current))
-                } : nil,
-                onDelete: (store.access?.canDelete ?? false) ? { current in
-                    store.send(.deleteTapped(current))
-                } : nil,
+                onShare: (store.access?.canShare ?? false)
+                    ? { current in
+                        onShareTarget(current)
+                    }
+                    : nil,
+                onRename: (store.access?.canWrite ?? false)
+                    ? { current in
+                        store.send(.renameTapped(current))
+                    }
+                    : nil,
+                onDownload: (store.access?.canDownload ?? false)
+                    ? { current in
+                        store.send(.downloadTapped(current))
+                    }
+                    : nil,
+                onDelete: (store.access?.canDelete ?? false)
+                    ? { current in
+                        store.send(.deleteTapped(current))
+                    }
+                    : nil,
                 onCurrentItemChange: onGalleryItemChange
             )
         } else if item.isPreviewableViaDownload {
@@ -136,18 +154,26 @@ struct BrowsePreviewRouter: View {
                 fileURL: store.previewFileURL,
                 errorMessage: store.previewErrorMessage,
                 onDismiss: { store.send(.previewDismissed) },
-                onShareLink: (store.access?.canShare ?? false) ? {
-                    onShareTarget(item)
-                } : nil,
-                onRename: (store.access?.canWrite ?? false) ? {
-                    store.send(.renameTapped(item))
-                } : nil,
-                onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.downloadTapped(item))
-                } : nil,
-                onDelete: (store.access?.canDelete ?? false) ? {
-                    store.send(.deleteTapped(item))
-                } : nil
+                onShareLink: (store.access?.canShare ?? false)
+                    ? {
+                        onShareTarget(item)
+                    }
+                    : nil,
+                onRename: (store.access?.canWrite ?? false)
+                    ? {
+                        store.send(.renameTapped(item))
+                    }
+                    : nil,
+                onDownload: (store.access?.canDownload ?? false)
+                    ? {
+                        store.send(.downloadTapped(item))
+                    }
+                    : nil,
+                onDelete: (store.access?.canDelete ?? false)
+                    ? {
+                        store.send(.deleteTapped(item))
+                    }
+                    : nil
             )
         } else {
             TextFilePreviewView(
@@ -186,11 +212,16 @@ struct BrowsePreviewRouter: View {
 #Preview("Text save conflict alert") {
     let item = FileItem(name: "notes.txt", path: "Docs", dateModified: .distantPast, size: 12, kind: "txt")
     var state = BrowseFeature.State(
-        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"), directoryPath: "Docs", title: "Docs"
+        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"), directoryPath: "Docs",
+        title: "Docs"
     )
     state.previewItem = item
     state.textContent = "Hello"
     state.textPhase = .loaded
     state.textSaveConflict = BrowseFeature.State.TextSaveConflict(pendingText: "Hello, edited")
-    return BrowsePreviewRouter(store: Store(initialState: state) { BrowseFeature() }, item: item, onShareTarget: { _ in })
+    return BrowsePreviewRouter(
+        store: Store(initialState: state) { BrowseFeature() },
+        item: item,
+        onShareTarget: { _ in }
+    )
 }

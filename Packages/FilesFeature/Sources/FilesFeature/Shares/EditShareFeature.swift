@@ -43,7 +43,8 @@ public struct EditShareFeature {
             accessMode = share.accessMode
             target = share.sharingType
             isExpiryEnabled = share.expiresAt != nil
-            expiresAt = share.expiresAt ?? now.addingTimeInterval(CreateShareLinkFeature.defaultExpiryDays * 24 * 60 * 60)
+            expiresAt = share.expiresAt ?? now
+                .addingTimeInterval(CreateShareLinkFeature.defaultExpiryDays * 24 * 60 * 60)
             wantsPassword = share.hasPassword
             selectedUserIDs = Set(share.permittedUserIds ?? [])
         }

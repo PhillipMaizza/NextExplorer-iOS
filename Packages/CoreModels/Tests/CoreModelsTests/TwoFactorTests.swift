@@ -8,7 +8,12 @@ struct TwoFactorTests {
     @Test("decodes an enabled status, whose keys are enabled and pending on the wire")
     func decodesEnabled() throws {
         let status = try CoreModelsFixture.twoFactorEnabled.decode(TwoFactorStatus.self)
-        #expect(status == TwoFactorStatus(isEnabled: true, isPending: false, confirmedAt: "2026-11-10T07:00:00.000Z", recoveryCodesLeft: 8))
+        #expect(status == TwoFactorStatus(
+            isEnabled: true,
+            isPending: false,
+            confirmedAt: "2026-11-10T07:00:00.000Z",
+            recoveryCodesLeft: 8
+        ))
     }
 
     @Test("decodes a status that was never confirmed, with a null date")

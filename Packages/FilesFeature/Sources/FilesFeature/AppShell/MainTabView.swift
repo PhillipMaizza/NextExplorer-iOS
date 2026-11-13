@@ -78,7 +78,11 @@ public struct MainTabView: View {
                         .padding(.horizontal, .space16)
                         // The bottom tab bar only exists on compact; on the iPad sidebar layout
                         // there's none to clear, so the bar rides on a normal bottom margin.
-                        .padding(.bottom, (horizontalSizeClass == .regular ? .space16 : Constants.barBottomClearance) + breadcrumbClearance)
+                        .padding(
+                            .bottom,
+                            (horizontalSizeClass == .regular ? .space16 : Constants.barBottomClearance) +
+                                breadcrumbClearance
+                        )
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
@@ -258,7 +262,9 @@ public struct MainTabView: View {
                 tabLabel(
                     L10n.Tab.favorites,
                     icon: store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites,
-                    smallIcon: store.selectedTab == .favorites ? IconKit.tabFavoritesFillSmall : IconKit.tabFavoritesSmall,
+                    smallIcon: store.selectedTab == .favorites
+                        ? IconKit.tabFavoritesFillSmall
+                        : IconKit.tabFavoritesSmall,
                     identifier: AccessibilityIdentifiers.Tab.favorites
                 )
             }
@@ -284,7 +290,9 @@ public struct MainTabView: View {
                 tabLabel(
                     L10n.Tab.downloads,
                     icon: store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads,
-                    smallIcon: store.selectedTab == .downloads ? IconKit.tabDownloadsFillSmall : IconKit.tabDownloadsSmall,
+                    smallIcon: store.selectedTab == .downloads
+                        ? IconKit.tabDownloadsFillSmall
+                        : IconKit.tabDownloadsSmall,
                     identifier: AccessibilityIdentifiers.Tab.downloads
                 )
             }
@@ -367,7 +375,13 @@ public struct MainTabView: View {
         store: Store(
             initialState: MainTabFeature.State(
                 serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+                user: User(
+                    id: "preview-user",
+                    username: "jdoe",
+                    email: "jane.doe@example.com",
+                    displayName: "Jane Doe",
+                    roles: []
+                )
             )
         ) {
             MainTabFeature()

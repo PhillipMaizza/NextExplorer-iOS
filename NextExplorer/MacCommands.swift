@@ -57,8 +57,11 @@
                 Button(L10n.Menu.newTab) { openBrowseWindow(asTab: true) }
                     .keyboardShortcut("t")
                 Divider()
-                Button(L10n.Browse.actionNewFolder) { sendToFrontWindow({ $0.newFolder() }, otherwise: .newFolderRequested) }
-                    .keyboardShortcut("n", modifiers: [.command, .shift])
+                Button(L10n.Browse.actionNewFolder) { sendToFrontWindow(
+                    { $0.newFolder() },
+                    otherwise: .newFolderRequested
+                ) }
+                .keyboardShortcut("n", modifiers: [.command, .shift])
                 Button(L10n.Browse.actionNewFile) { sendToFrontWindow({ $0.newFile() }, otherwise: .newFileRequested) }
                     .keyboardShortcut("n", modifiers: [.command, .option])
                 Divider()
@@ -93,13 +96,19 @@
                 Button(L10n.Browse.actionCopy) { perform(fileActions?.copy, fallback: #selector(NSText.copy(_:))) }
                     .keyboardShortcut("c")
                 Button(L10n.Browse.actionPaste) {
-                    perform(fileActions?.canPaste == true ? fileActions?.paste : nil, fallback: #selector(NSText.paste(_:)))
+                    perform(
+                        fileActions?.canPaste == true ? fileActions?.paste : nil,
+                        fallback: #selector(NSText.paste(_:))
+                    )
                 }
                 .keyboardShortcut("v")
                 Button(L10n.Common.delete) { perform(fileActions?.delete, fallback: #selector(NSText.delete(_:))) }
                     .keyboardShortcut(.delete)
-                Button(L10n.Select.selectAll) { perform(fileActions?.selectAll, fallback: #selector(NSText.selectAll(_:))) }
-                    .keyboardShortcut("a")
+                Button(L10n.Select.selectAll) { perform(
+                    fileActions?.selectAll,
+                    fallback: #selector(NSText.selectAll(_:))
+                ) }
+                .keyboardShortcut("a")
             }
             CommandGroup(after: .pasteboard) {
                 Button(L10n.Menu.copyPath) { fileActions?.copyPath() }
@@ -141,8 +150,11 @@
                     .keyboardShortcut("[")
                 Button(L10n.Menu.forward) { sendToFrontWindow({ $0.forward() }, otherwise: .forwardRequested) }
                     .keyboardShortcut("]")
-                Button(L10n.Menu.enclosingFolder) { sendToFrontWindow({ $0.enclosingFolder() }, otherwise: .enclosingFolderRequested) }
-                    .keyboardShortcut(.upArrow)
+                Button(L10n.Menu.enclosingFolder) { sendToFrontWindow(
+                    { $0.enclosingFolder() },
+                    otherwise: .enclosingFolderRequested
+                ) }
+                .keyboardShortcut(.upArrow)
                 Divider()
                 Button(L10n.Menu.goToFolder) { sendToFrontWindow({ $0.goToFolder() }, otherwise: .goToFolderPrompted) }
                     .keyboardShortcut("g", modifiers: [.command, .shift])
@@ -227,7 +239,10 @@
         }
 
         /// An extra Browse window in front gets the command; otherwise the main window does.
-        private func sendToFrontWindow(_ folderAction: (FolderWindowCommands) -> Void, otherwise action: MainTabFeature.Action) {
+        private func sendToFrontWindow(
+            _ folderAction: (FolderWindowCommands) -> Void,
+            otherwise action: MainTabFeature.Action
+        ) {
             if let folderWindow {
                 folderAction(folderWindow)
             } else {

@@ -234,7 +234,13 @@ private func permissionsPreview(
     }
 }
 
-private let previewFile = FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 1_024, kind: "pdf")
+private let previewFile = FileItem(
+    name: "report.pdf",
+    path: "Documents",
+    dateModified: Date(),
+    size: 1_024,
+    kind: "pdf"
+)
 private let previewFolder = FileItem(name: "Projects", path: "", dateModified: Date(), size: 0, kind: "directory")
 
 private func previewState(
@@ -254,7 +260,8 @@ private func previewState(
 }
 
 private let filePermissions = FilePermissions(
-    path: "Documents/report.pdf", mode: 0o100_644, owner: "phillip", group: "staff", uid: 501, gid: 20, isDirectory: false
+    path: "Documents/report.pdf", mode: 0o100_644, owner: "phillip", group: "staff", uid: 501, gid: 20,
+    isDirectory: false
 )
 private let folderPermissions = FilePermissions(
     path: "Projects", mode: 0o40_755, owner: "phillip", group: "staff", uid: 501, gid: 20, isDirectory: true

@@ -29,11 +29,17 @@ extension BrowseFeature {
         // here in `state.items`: no round trip. A picker move can land anywhere else, so
         // that case asks the server for the destination listing.
         if retry.destination == state.directoryPath {
-            return resolveTransfer(&state, retry: retry, colliding: Self.collidingItems(for: retry, in: Array(state.items)))
+            return resolveTransfer(
+                &state,
+                retry: retry,
+                colliding: Self.collidingItems(for: retry, in: Array(state.items))
+            )
         }
 
         state.isPerformingFileAction = true
-        state.fileActionProgressMessage = retry.operation == .move ? L10n.Browse.progressMoving : L10n.Browse.progressCopying
+        state.fileActionProgressMessage = retry.operation == .move
+            ? L10n.Browse.progressMoving
+            : L10n.Browse.progressCopying
         state.transferErrorMessage = nil
         state.pendingTransferRetry = retry
         let serverURL = state.serverURL
@@ -62,7 +68,9 @@ extension BrowseFeature {
     func performTransfer(_ state: inout State, retry: TransferRetry) -> Effect<Action> {
         guard !retry.items.isEmpty else { return .none }
         state.isPerformingFileAction = true
-        state.fileActionProgressMessage = retry.operation == .move ? L10n.Browse.progressMoving : L10n.Browse.progressCopying
+        state.fileActionProgressMessage = retry.operation == .move
+            ? L10n.Browse.progressMoving
+            : L10n.Browse.progressCopying
         state.transferErrorMessage = nil
         state.transferConflict = nil
         // Kept until the transfer confirms success, so the "Retry" action on a failure toast
@@ -75,7 +83,12 @@ extension BrowseFeature {
                 if retry.resolution == .replace, !retry.itemsToReplace.isEmpty {
                     try await filesClient.deleteItems(serverURL, retry.itemsToReplace)
                 }
-                let result = try await filesClient.transferItems(serverURL, retry.items, retry.destination, retry.operation)
+                let result = try await filesClient.transferItems(
+                    serverURL,
+                    retry.items,
+                    retry.destination,
+                    retry.operation
+                )
                 return TransferOutcome(result: result, operation: retry.operation, clearClipboard: retry.clearClipboard)
             }), animation: .default)
         }

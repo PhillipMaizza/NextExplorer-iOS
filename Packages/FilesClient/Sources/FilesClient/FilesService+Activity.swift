@@ -33,7 +33,11 @@ extension FilesService {
 
     /// `DELETE /api/activity`: empties the log.
     func clearActivity(serverURL: URL) async throws {
-        let request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.activity), method: .delete, isMutation: true)
+        let request = Self.makeRequest(
+            url: serverURL.appendingPathComponent(APIPath.activity),
+            method: .delete,
+            isMutation: true
+        )
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
     }

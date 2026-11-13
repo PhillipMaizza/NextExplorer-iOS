@@ -38,7 +38,11 @@ struct FileActionsMenu: View {
                 }
                 .tint(.primaryDS)
                 Button {
-                    openWindow(value: FolderWindowRoute(path: item.id, title: item.name, tabHostWindowNumber: NSApp.keyWindow?.windowNumber))
+                    openWindow(value: FolderWindowRoute(
+                        path: item.id,
+                        title: item.name,
+                        tabHostWindowNumber: NSApp.keyWindow?.windowNumber
+                    ))
                 } label: {
                     Label { Text(L10n.Browse.actionOpenInNewTab) } icon: { IconKit.newTab }
                 }

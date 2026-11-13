@@ -50,7 +50,11 @@ struct VersionedFilesView: View {
     @ViewBuilder
     private var summary: some View {
         if let page = store.page {
-            DSInfoCard(L10n.VersionedFiles.summary(page.total, page.totalVersions, TrashSettingsView.bytes(page.totalBytes)))
+            DSInfoCard(L10n.VersionedFiles.summary(
+                page.total,
+                page.totalVersions,
+                TrashSettingsView.bytes(page.totalBytes)
+            ))
         }
     }
 
@@ -67,7 +71,8 @@ struct VersionedFilesView: View {
             Card(L10n.VersionedFiles.zone) {
                 ChoiceMenuRow(
                     selection: $store.filter.zoneID.sending(\.zoneFilterChanged),
-                    valueTitle: zones.first { $0.id == store.filter.zoneID }.map(zoneLabel) ?? L10n.VersionedFiles.anyZone
+                    valueTitle: zones.first { $0.id == store.filter.zoneID }.map(zoneLabel)
+                        ?? L10n.VersionedFiles.anyZone
                 ) {
                     Text(L10n.VersionedFiles.anyZone).tag(String?.none)
                     ForEach(zones) { zone in
@@ -132,7 +137,9 @@ struct VersionedFilesView: View {
                     Spacer(minLength: ServerSettingsMetrics.rowSpacing)
                     IconKit.chevronDown
                         .foregroundStyle(Color.secondaryDS)
-                        .rotationEffect(.degrees(store.expanded.contains(file.id) ? Constants.expandedChevronDegrees : 0))
+                        .rotationEffect(.degrees(store.expanded.contains(file.id)
+                                ? Constants.expandedChevronDegrees
+                                : 0))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
@@ -280,13 +287,31 @@ struct VersionedFilesView: View {
 private enum PreviewVersions {
     static let zone = VersionedZone(id: "z1", name: "Photos")
     static let files = [
-        VersionedFile(id: "f1", name: "report.docx", folder: "Work", versions: 3, bytes: 4_200_000, newest: "2026-11-11T07:00:00.000Z", zone: zone),
+        VersionedFile(
+            id: "f1",
+            name: "report.docx",
+            folder: "Work",
+            versions: 3,
+            bytes: 4_200_000,
+            newest: "2026-11-11T07:00:00.000Z",
+            zone: zone
+        ),
         VersionedFile(id: "f2", name: "lost.txt", state: .orphaned, versions: 1, bytes: 900, zone: zone),
     ]
     static let page = VersionedFilesPage(files: files, total: 2, totalBytes: 4_200_900, totalVersions: 4, zones: [zone])
     static let detail = VersionedFileDetail(versions: [
-        FileVersion(id: "v1", size: 1_400_000, modifiedAt: Date(timeIntervalSince1970: 1_700_000_000), capturedAt: Date(timeIntervalSince1970: 1_700_000_100)),
-        FileVersion(id: "v2", size: 1_300_000, modifiedAt: Date(timeIntervalSince1970: 1_699_000_000), capturedAt: Date(timeIntervalSince1970: 1_699_000_100)),
+        FileVersion(
+            id: "v1",
+            size: 1_400_000,
+            modifiedAt: Date(timeIntervalSince1970: 1_700_000_000),
+            capturedAt: Date(timeIntervalSince1970: 1_700_000_100)
+        ),
+        FileVersion(
+            id: "v2",
+            size: 1_300_000,
+            modifiedAt: Date(timeIntervalSince1970: 1_699_000_000),
+            capturedAt: Date(timeIntervalSince1970: 1_699_000_100)
+        ),
     ])
 }
 

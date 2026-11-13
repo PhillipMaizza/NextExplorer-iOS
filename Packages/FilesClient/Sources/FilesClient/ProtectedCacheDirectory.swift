@@ -45,12 +45,17 @@ public struct ProtectedCacheDirectory: Sendable {
     /// The store's entries, oldest written first.
     public func entriesByAge() -> [Entry] {
         let keys: Set<URLResourceKey> = [.contentModificationDateKey, .fileSizeKey]
-        let urls = (try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: Array(keys))) ?? []
+        let urls = (try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: Array(keys))) ??
+            []
         return urls
             .filter { $0.pathExtension == fileExtension }
             .map { url in
                 let values = try? url.resourceValues(forKeys: keys)
-                return Entry(url: url, modified: values?.contentModificationDate ?? .distantPast, size: Int64(values?.fileSize ?? 0))
+                return Entry(
+                    url: url,
+                    modified: values?.contentModificationDate ?? .distantPast,
+                    size: Int64(values?.fileSize ?? 0)
+                )
             }
             .sorted { $0.modified < $1.modified }
     }

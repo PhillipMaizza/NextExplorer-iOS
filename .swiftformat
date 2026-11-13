@@ -18,3 +18,11 @@
 --disable redundantSwiftUIGroup,redundantViewBuilder,numberFormatting,noForceUnwrapInTests
 
 --header ignore
+# Lines stay within 120 columns: a call or declaration that would not fit puts each argument or
+# parameter on its own line, indented one level, with the closing parenthesis on its own line.
+--maxwidth 120
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+--wrapternary before-operators

@@ -69,10 +69,14 @@
                 if store.isRefiningSearch {
                     DSSpinner(size: .small)
                 }
-                TextField(L10n.Common.search, text: $store.searchQuery.sending(\.searchQueryChanged), prompt: Text(L10n.Common.search))
-                    .labelsHidden()
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: Metrics.searchWidth)
+                TextField(
+                    L10n.Common.search,
+                    text: $store.searchQuery.sending(\.searchQueryChanged),
+                    prompt: Text(L10n.Common.search)
+                )
+                .labelsHidden()
+                .textFieldStyle(.roundedBorder)
+                .frame(width: Metrics.searchWidth)
             }
             .padding(Metrics.padding)
         }
@@ -87,8 +91,12 @@
                 } else {
                     // Selectable rows: a double click or Return opens one, and VoiceOver can too.
                     List(store.searchResults ?? [], selection: $selectedResultID) { result in
-                        MacItemLabel(name: result.name, subtitle: result.path.isEmpty ? nil : result.path, isDirectory: true)
-                            .accessibilityAction(named: L10n.Browse.open) { store.send(.searchResultTapped(result)) }
+                        MacItemLabel(
+                            name: result.name,
+                            subtitle: result.path.isEmpty ? nil : result.path,
+                            isDirectory: true
+                        )
+                        .accessibilityAction(named: L10n.Browse.open) { store.send(.searchResultTapped(result)) }
                     }
                     .contextMenu(forSelectionType: SearchResultItem.ID.self, menu: { _ in }, primaryAction: { ids in
                         guard let id = ids.first, let result = store.searchResults?[id: id] else { return }
@@ -144,7 +152,9 @@
         )
         state.searchQuery = "Ph"
         return MacDestinationPickerSheet(
-            store: Store(initialState: state) { DestinationPickerFeature() } withDependencies: { $0.filesClient = .previewValue },
+            store: Store(initialState: state) { DestinationPickerFeature() } withDependencies: {
+                $0.filesClient = .previewValue
+            },
             title: "Upload To",
             confirmTitle: "Choose"
         )

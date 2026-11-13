@@ -50,7 +50,10 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     let now: @Sendable () -> Date
     private let availableCapacity: @Sendable (URL) -> Int64?
     private let startTasks: (@Sendable (_ sessionIdentifier: String, _ specs: [UploadTaskSpec]) -> Void)?
-    private let queryTasks: (@Sendable (_ sessionIdentifier: String, _ completion: @escaping @Sendable (LiveTasks) -> Void) -> Void)?
+    private let queryTasks: (@Sendable (
+        _ sessionIdentifier: String,
+        _ completion: @escaping @Sendable (LiveTasks) -> Void
+    ) -> Void)?
     private let removeEnvelope: @Sendable (URL) -> Void
     private let certificates: ClientCertificateChallengeHandler
     private let trustEvaluator: any ServerTrustEvaluating
@@ -70,7 +73,8 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         availableCapacity: @escaping @Sendable (URL) -> Int64? = DiskSpace.availableCapacity,
         events: EventsEnvironment = .live,
         startTasks: (@Sendable (_ sessionIdentifier: String, _ specs: [UploadTaskSpec]) -> Void)? = nil,
-        queryTasks: (@Sendable (_ sessionIdentifier: String, _ completion: @escaping @Sendable (LiveTasks) -> Void) -> Void)? = nil,
+        queryTasks: (@Sendable (_ sessionIdentifier: String, _ completion: @escaping @Sendable (LiveTasks) -> Void)
+            -> Void)? = nil,
         removeEnvelope: @escaping @Sendable (URL) -> Void = { try? FileManager.default.removeItem(at: $0) }
     ) {
         self.events = events
@@ -128,7 +132,13 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
             startedAt: now()
         )
         try manifest.save(in: batch.directory)
-        submit(Array(batch.staged.indices), of: manifest, in: batch.directory, credentials: batch.credentials, batchID: batch.id)
+        submit(
+            Array(batch.staged.indices),
+            of: manifest,
+            in: batch.directory,
+            credentials: batch.credentials,
+            batchID: batch.id
+        )
     }
 
     private func submit(
@@ -154,9 +164,15 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         for indices: [Int], of manifest: Manifest, in directory: URL, credentials: SessionCredentials
     ) -> [UploadTaskSpec] {
         indices.map { index in
-            var request = UploadRequest.request(serverURL: manifest.serverURL, contentType: manifest.contentTypes[index])
+            var request = UploadRequest.request(
+                serverURL: manifest.serverURL,
+                contentType: manifest.contentTypes[index]
+            )
             // A background session keeps no cookie jar of its own: the session cookie rides here.
-            request.setValue("\(credentials.cookieName)=\(credentials.cookieValue)", forHTTPHeaderField: Constants.cookieHeader)
+            request.setValue(
+                "\(credentials.cookieName)=\(credentials.cookieValue)",
+                forHTTPHeaderField: Constants.cookieHeader
+            )
             return UploadTaskSpec(
                 index: index, request: request, envelopeURL: directory.appendingPathComponent(manifest.envelopes[index])
             )
@@ -188,10 +204,15 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         }
     }
 
-    private func retryFailed(batchID: String, credentials: SessionCredentials, causes: Set<UploadFailureCause>?) -> Int {
+    private func retryFailed(
+        batchID: String,
+        credentials: SessionCredentials,
+        causes: Set<UploadFailureCause>?
+    ) -> Int {
         guard UUID(uuidString: batchID) != nil else { return 0 }
         let directory = directory(of: batchID)
-        guard var manifest = Manifest.load(from: directory), manifest.accountID == credentials.accountID else { return 0 }
+        guard var manifest = Manifest.load(from: directory),
+              manifest.accountID == credentials.accountID else { return 0 }
         let results = Manifest.results(in: directory)
         let failed = manifest.fileNames.indices.filter {
             guard let cause = results[$0]?.cause, causes?.contains(cause) ?? true else { return false }
@@ -242,7 +263,11 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         liveTasks(of: identifier) { [self] live in
             let hasManifest = Manifest.load(from: directory) != nil
             let isClaimed = Manifest.claimedAt(directory) != nil
-            if Self.shouldCompleteEventsImmediately(liveTaskCount: live.count, hasManifest: hasManifest, isClaimed: isClaimed) {
+            if Self.shouldCompleteEventsImmediately(
+                liveTaskCount: live.count,
+                hasManifest: hasManifest,
+                isClaimed: isClaimed
+            ) {
                 completeEvents(identifier: identifier, token: token)
             }
         }
@@ -412,7 +437,10 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
             return
         }
         session(for: identifier).getAllTasks { tasks in
-            completion(LiveTasks(count: tasks.count, indexes: Set(tasks.compactMap { $0.taskDescription.flatMap(Int.init) })))
+            completion(LiveTasks(
+                count: tasks.count,
+                indexes: Set(tasks.compactMap { $0.taskDescription.flatMap(Int.init) })
+            ))
         }
     }
 
@@ -613,7 +641,8 @@ extension BackgroundUploader: URLSessionTaskDelegate {
     /// registration that owns it completes: a stale timer or task query never ends a newer wake up.
     func completeEvents(identifier: String, token: UUID? = nil) {
         let registration = lock.withLock { () -> EventsRegistration? in
-            guard let current = eventsRegistrations[identifier], token == nil || current.token == token else { return nil }
+            guard let current = eventsRegistrations[identifier],
+                  token == nil || current.token == token else { return nil }
             return eventsRegistrations.removeValue(forKey: identifier)
         }
         guard let registration else { return }

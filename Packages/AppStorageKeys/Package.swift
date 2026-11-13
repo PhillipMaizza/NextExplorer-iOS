@@ -9,6 +9,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "AppStorageKeys", swiftSettings: [.swiftLanguageMode(.v6)]),
-        .testTarget(name: "AppStorageKeysTests", dependencies: ["AppStorageKeys"], swiftSettings: [.swiftLanguageMode(.v6)]),
+        .testTarget(
+            name: "AppStorageKeysTests",
+            dependencies: ["AppStorageKeys"],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
     ]
 )

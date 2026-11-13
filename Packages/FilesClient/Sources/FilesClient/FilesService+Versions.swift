@@ -22,13 +22,23 @@ extension FilesService {
 
     /// `POST /api/versions/:id/restore` with `{ path }`.
     func restoreVersion(serverURL: URL, path: String, versionID: String) async throws {
-        try await sendVersionWrite(serverURL, versionID, VersionRoute.restore, method: .post, body: VersionPathBody(path: path))
+        try await sendVersionWrite(
+            serverURL,
+            versionID,
+            VersionRoute.restore,
+            method: .post,
+            body: VersionPathBody(path: path)
+        )
     }
 
     /// `GET /api/versions/:id/content?path=`, streamed to disk and moved to `destination`.
     func downloadVersion(serverURL: URL, path: String, versionID: String, to destination: URL) async throws {
-        let base = serverURL.appendingPathComponent(APIPath.versions).appendingPathComponent(versionID).appendingPathComponent(VersionRoute.content)
-        let request = try Self.makeRequest(url: Self.versionsURL(base, query: path, appendingAPIPath: false), method: .get)
+        let base = serverURL.appendingPathComponent(APIPath.versions).appendingPathComponent(versionID)
+            .appendingPathComponent(VersionRoute.content)
+        let request = try Self.makeRequest(
+            url: Self.versionsURL(base, query: path, appendingAPIPath: false),
+            method: .get
+        )
         let downloadedURL: URL
         let response: HTTPURLResponse
         do {
@@ -49,14 +59,24 @@ extension FilesService {
     /// `POST /api/versions/:id/copy` with `{ path, destination }`: a new file in `destination`,
     /// named after the version. Returns the new file's path.
     func copyVersion(serverURL: URL, path: String, versionID: String, destination: String) async throws -> String {
-        var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, VersionRoute.copy), method: .post, isMutation: true)
+        var request = Self.makeRequest(
+            url: Self.versionURL(serverURL, versionID, VersionRoute.copy),
+            method: .post,
+            isMutation: true
+        )
         request.setJSONContentType()
         request.httpBody = try Self.encode(VersionCopyBody(path: path, destination: destination))
         return try await sendReportingMessage(request, decoding: VersionCopyResponse.self).path
     }
 
     /// `PATCH /api/versions/:id` with `{ path, label?, pinned? }`.
-    func updateVersion(serverURL: URL, path: String, versionID: String, label: String?, pinned: Bool?) async throws -> FileVersion {
+    func updateVersion(
+        serverURL: URL,
+        path: String,
+        versionID: String,
+        label: String?,
+        pinned: Bool?
+    ) async throws -> FileVersion {
         var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, nil), method: .patch)
         request.setJSONContentType()
         request.httpBody = try Self.encode(VersionUpdateBody(path: path, label: label, isPinned: pinned))
@@ -76,7 +96,11 @@ extension FilesService {
     private func sendVersionWrite(
         _ serverURL: URL, _ versionID: String, _ action: String?, method: HTTPMethod, body: some Encodable
     ) async throws {
-        var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, action), method: method, isMutation: true)
+        var request = Self.makeRequest(
+            url: Self.versionURL(serverURL, versionID, action),
+            method: method,
+            isMutation: true
+        )
         request.setJSONContentType()
         request.httpBody = try Self.encode(body)
         let (data, response) = try await performSend(request)

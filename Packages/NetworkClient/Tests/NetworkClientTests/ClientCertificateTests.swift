@@ -28,7 +28,10 @@ struct ClientCertificateTests {
         try await client.send(URLRequest(url: baseURL.appending(path: "api/auth/status")))
     }
 
-    @Test("A valid certificate gets through the handshake", arguments: [NetworkClientFixture.clientIdentity, .clientLegacyIdentity])
+    @Test(
+        "A valid certificate gets through the handshake",
+        arguments: [NetworkClientFixture.clientIdentity, .clientLegacyIdentity]
+    )
     func validCertificate(fixture: NetworkClientFixture) async throws {
         let server = try MutualTLSTestServer()
         let baseURL = try await server.start()
@@ -160,7 +163,11 @@ struct ClientCertificateTests {
         let origin = ClientCertificateOrigin(host: "localhost", port: 443)
 
         #expect(throws: ClientCertificateImportError.wrongPassword) {
-            try store.install(pkcs12: MutualTLSFixtures.data(.clientIdentity), passphrase: TestAccount.rejectedPassword, for: origin)
+            try store.install(
+                pkcs12: MutualTLSFixtures.data(.clientIdentity),
+                passphrase: TestAccount.rejectedPassword,
+                for: origin
+            )
         }
         #expect(throws: ClientCertificateImportError.invalidFile) {
             try store.install(pkcs12: Data("not a certificate".utf8), passphrase: "", for: origin)
@@ -198,7 +205,11 @@ struct ClientCertificateTests {
         let kept = ClientCertificateOrigin(host: TestHost.firstServer, port: 443)
         let dropped = ClientCertificateOrigin(host: TestHost.secondServer, port: 8443)
         for origin in [kept, dropped] {
-            try store.install(pkcs12: MutualTLSFixtures.data(.clientIdentity), passphrase: MutualTLSFixtures.passphrase, for: origin)
+            try store.install(
+                pkcs12: MutualTLSFixtures.data(.clientIdentity),
+                passphrase: MutualTLSFixtures.passphrase,
+                for: origin
+            )
         }
         #expect(ClientIdentityStore(keychain: keychain).installedOrigins() == [kept, dropped])
 
@@ -227,8 +238,14 @@ struct ClientCertificateTests {
 
     @Test("Origins use the scheme default port when the URL has none")
     func origins() {
-        #expect(ClientCertificateOrigin(url: URL(string: "https://Example.com")!) == ClientCertificateOrigin(host: TestHost.example, port: 443))
-        #expect(ClientCertificateOrigin(url: URL(string: "http://example.com/api")!) == ClientCertificateOrigin(host: TestHost.example, port: 80))
+        #expect(ClientCertificateOrigin(url: URL(string: "https://Example.com")!) == ClientCertificateOrigin(
+            host: TestHost.example,
+            port: 443
+        ))
+        #expect(ClientCertificateOrigin(url: URL(string: "http://example.com/api")!) == ClientCertificateOrigin(
+            host: TestHost.example,
+            port: 80
+        ))
         #expect(ClientCertificateOrigin(url: URL(string: "https://192.168.1.10:3662")!)?.port == 3662)
         #expect(ClientCertificateOrigin(url: URL(string: "file:///tmp/x")!) == nil)
     }
@@ -248,7 +265,8 @@ struct ClientCertificateTests {
         _ = handler.handle(ClientCertificateChallengeFixture.make(host: TestHost.example, port: 443))
         #expect(NetworkError.from(dropped, url: url, certificates: handler) == .clientCertificateRequired)
         #expect(NetworkError.from(URLError(.notConnectedToInternet), url: url, certificates: handler) == .offline)
-        #expect(NetworkError.from(dropped, url: URL(string: "https://other.example.com")!, certificates: handler) == .offline)
+        #expect(NetworkError
+            .from(dropped, url: URL(string: "https://other.example.com")!, certificates: handler) == .offline)
 
         clock.advance(by: 60)
         #expect(NetworkError.from(dropped, url: url, certificates: handler) == .offline)
@@ -272,9 +290,14 @@ struct ClientCertificateTests {
         handler.recordResponse(for: url)
 
         let origin = ClientCertificateOrigin(host: TestHost.example, port: 443)
-        try store.install(pkcs12: MutualTLSFixtures.data(.clientIdentity), passphrase: MutualTLSFixtures.passphrase, for: origin)
+        try store.install(
+            pkcs12: MutualTLSFixtures.data(.clientIdentity),
+            passphrase: MutualTLSFixtures.passphrase,
+            for: origin
+        )
         _ = handler.handle(ClientCertificateChallengeFixture.make(host: TestHost.example, port: 443))
-        #expect(NetworkError.from(URLError(.networkConnectionLost), url: url, certificates: handler) == .clientCertificateRejected)
+        #expect(NetworkError
+            .from(URLError(.networkConnectionLost), url: url, certificates: handler) == .clientCertificateRejected)
     }
 
     @Test("A certificate that expired mid session is blamed when the next handshake fails")
@@ -296,7 +319,8 @@ struct ClientCertificateTests {
 
         clock.advance(by: 3600 + 60)
         _ = handler.handle(ClientCertificateChallengeFixture.make(host: TestHost.example, port: 443))
-        #expect(NetworkError.from(URLError(.networkConnectionLost), url: url, certificates: handler) == .clientCertificateRejected)
+        #expect(NetworkError
+            .from(URLError(.networkConnectionLost), url: url, certificates: handler) == .clientCertificateRejected)
     }
 
     @Test("A keychain that can't be read right now is asked again, not remembered as empty")

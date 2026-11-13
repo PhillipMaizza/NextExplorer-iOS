@@ -50,7 +50,10 @@ struct StreamingPreviewView: View {
         self.onDownload = onDownload
         self.onDelete = onDelete
         // Only describes what to play: the player itself is built once, by the view SwiftUI keeps.
-        _playback = State(initialValue: StreamingPlayback(url: url, fileExtension: (item.name as NSString).pathExtension))
+        _playback = State(initialValue: StreamingPlayback(
+            url: url,
+            fileExtension: (item.name as NSString).pathExtension
+        ))
     }
 
     private var player: AVPlayer {
@@ -74,11 +77,17 @@ struct StreamingPreviewView: View {
                 // rather than a blank black rectangle. Keyed on "has playback ever started", not "is
                 // playing now": the latter would bring the poster back over a paused frame.
                 if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
-                    ThumbnailImage(serverURL: serverURL, path: item.id, signature: item.cacheSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
-                        .scaledToFit()
-                        .background(Color.black)
-                        .ignoresSafeArea()
-                        .allowsHitTesting(false)
+                    ThumbnailImage(
+                        serverURL: serverURL,
+                        path: item.id,
+                        signature: item.cacheSignature,
+                        fallbackIcon: IconKit.document,
+                        iconTint: Color.secondaryDS
+                    )
+                    .scaledToFit()
+                    .background(Color.black)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
                 }
 
                 if isBuffering {

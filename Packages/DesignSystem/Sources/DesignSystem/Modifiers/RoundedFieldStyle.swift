@@ -45,6 +45,11 @@ public extension View {
         bordered: Bool = true,
         cornerRadius: CGFloat = .radiusControl
     ) -> some View {
-        modifier(RoundedFieldModifier(height: height, isFocused: isFocused, bordered: bordered, cornerRadius: cornerRadius))
+        modifier(RoundedFieldModifier(
+            height: height,
+            isFocused: isFocused,
+            bordered: bordered,
+            cornerRadius: cornerRadius
+        ))
     }
 }

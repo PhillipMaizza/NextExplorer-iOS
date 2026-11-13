@@ -42,7 +42,12 @@
 
         func body(content: Content) -> some View {
             if isEnabled {
-                content.draggable(DraggedServerItem(item: item, serverURL: serverURL, scope: scope, filesClient: filesClient))
+                content.draggable(DraggedServerItem(
+                    item: item,
+                    serverURL: serverURL,
+                    scope: scope,
+                    filesClient: filesClient
+                ))
             } else {
                 content
             }
@@ -94,7 +99,13 @@
         func body(content: Content) -> some View {
             content
                 .modifier(MacFileDrag(item: item, serverURL: serverURL, scope: scope, isEnabled: canDrag))
-                .modifier(MacFolderDropTarget(folder: item, serverURL: serverURL, scope: scope, isEnabled: canDropHere, onDrop: onDrop))
+                .modifier(MacFolderDropTarget(
+                    folder: item,
+                    serverURL: serverURL,
+                    scope: scope,
+                    isEnabled: canDropHere,
+                    onDrop: onDrop
+                ))
         }
     }
 
@@ -147,9 +158,19 @@
         let file = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 1_024, kind: "pdf")
         return List {
             Label { Text(folder.name) } icon: { IconKit.folderFill }
-                .modifier(MacFolderDropTarget(folder: folder, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), scope: "preview", isEnabled: true) { _ in })
+                .modifier(MacFolderDropTarget(
+                    folder: folder,
+                    serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+                    scope: "preview",
+                    isEnabled: true
+                ) { _ in })
             Label { Text(file.name) } icon: { IconKit.document }
-                .modifier(MacFileDrag(item: file, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), scope: "preview", isEnabled: true))
+                .modifier(MacFileDrag(
+                    item: file,
+                    serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+                    scope: "preview",
+                    isEnabled: true
+                ))
         }
         .previewCanvas(.control)
     }

@@ -44,7 +44,8 @@ struct LoginDiagnostics: Equatable, Sendable {
     func rendered(header: [String]) -> String {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let lines = entries.map { "\(formatter.string(from: $0.timestamp)) \($0.isProblem ? Constants.problemMarker : "")\($0.text)" }
+        let lines = entries
+            .map { "\(formatter.string(from: $0.timestamp)) \($0.isProblem ? Constants.problemMarker : "")\($0.text)" }
         return (header + [""] + lines).joined(separator: "\n")
     }
 

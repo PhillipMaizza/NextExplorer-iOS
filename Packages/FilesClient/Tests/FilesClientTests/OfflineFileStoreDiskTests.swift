@@ -4,7 +4,8 @@ import Foundation
 import Testing
 import TestUtils
 
-/// The durable offline store on disk, one unique account scope per test so nothing is shared and the process wide scope is never touched.
+/// The durable offline store on disk, one unique account scope per test so nothing is shared and the process wide scope
+/// is never touched.
 /// `removeAll` is deliberately not exercised: it wipes every account's directory and would race the other suites.
 @Suite("Offline file store on disk")
 struct OfflineFileStoreDiskTests {
@@ -24,9 +25,16 @@ struct OfflineFileStoreDiskTests {
     }
 
     @discardableResult
-    private func seed(_ name: String, in folder: String, bytes: Int, scope: String, modified: Date = MockDate.date) throws -> FileItem {
+    private func seed(
+        _ name: String,
+        in folder: String,
+        bytes: Int,
+        scope: String,
+        modified: Date = MockDate.date
+    ) throws -> FileItem {
         let item = FileItem(name: name, path: folder, dateModified: modified, size: Int64(bytes), kind: TestKind.text)
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("\(Constants.sourcePrefix)\(TestID.name())")
+        let source = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(Constants.sourcePrefix)\(TestID.name())")
         try Data(repeating: 0x61, count: bytes).write(to: source)
         _ = try OfflineCache.store(downloadedURL: source, item: item, scope: scope)
         return item
@@ -63,7 +71,13 @@ struct OfflineFileStoreDiskTests {
         let scope = makeScope()
         let store = OfflineFileStore.liveValue
         defer { store.removeAccount(scope) }
-        let item = FileItem(name: TestFile.aText, path: Constants.docs, dateModified: MockDate.date, size: 4, kind: TestKind.text)
+        let item = FileItem(
+            name: TestFile.aText,
+            path: Constants.docs,
+            dateModified: MockDate.date,
+            size: 4,
+            kind: TestKind.text
+        )
         let slot = try #require(OfflineCache.slot(for: item, create: true, scope: scope))
         try FileManager.default.createDirectory(at: slot.directory, withIntermediateDirectories: true)
         try Data(repeating: 0x61, count: 4).write(to: slot.fileURL)
@@ -129,9 +143,13 @@ struct OfflineFileStoreDiskTests {
         defer { store.removeAccount(scope) }
         try seed(TestFile.aText, in: Constants.docs, bytes: 3, scope: scope)
         let scopeDirectory = try #require(OfflineCache.scopeDirectory(create: true, scope: scope))
-        try FilesClientFixture.offlineLegacyManifest.data().write(to: scopeDirectory.appendingPathComponent(OfflineCache.manifestFileName))
+        try FilesClientFixture.offlineLegacyManifest.data()
+            .write(to: scopeDirectory.appendingPathComponent(OfflineCache.manifestFileName))
 
-        #expect(store.pinned(to: scope).pinnedRoots() == [root(Constants.docsFile, isDirectory: false), root(Constants.docs)])
+        #expect(store.pinned(to: scope).pinnedRoots() == [
+            root(Constants.docsFile, isDirectory: false),
+            root(Constants.docs),
+        ])
     }
 
     @Test
@@ -140,7 +158,8 @@ struct OfflineFileStoreDiskTests {
         let store = OfflineFileStore.liveValue
         defer { store.removeAccount(scope) }
         let scopeDirectory = try #require(OfflineCache.scopeDirectory(create: true, scope: scope))
-        try FilesClientFixture.offlineCorruptManifest.data().write(to: scopeDirectory.appendingPathComponent(OfflineCache.manifestFileName))
+        try FilesClientFixture.offlineCorruptManifest.data()
+            .write(to: scopeDirectory.appendingPathComponent(OfflineCache.manifestFileName))
 
         #expect(store.pinned(to: scope).pinnedRoots().isEmpty)
     }
@@ -242,7 +261,8 @@ struct OfflineFileStoreDiskTests {
         defer { store.removeAccount(scope) }
         let item = try seed(TestFile.aText, in: Constants.docs, bytes: 3, scope: scope)
         let changedOnServer = FileItem(
-            name: item.name, path: item.path, dateModified: item.dateModified, size: item.size + Constants.staleSizeDelta, kind: item.kind
+            name: item.name, path: item.path, dateModified: item.dateModified,
+            size: item.size + Constants.staleSizeDelta, kind: item.kind
         )
         let pinned = store.pinned(to: scope)
 
@@ -258,7 +278,13 @@ struct OfflineFileStoreDiskTests {
         let store = OfflineFileStore.liveValue
         defer { store.removeAccount(scope) }
         let first = try seed(TestFile.aText, in: Constants.docs, bytes: 3, scope: scope, modified: MockDate.date)
-        let second = try seed(TestFile.aText, in: Constants.docs, bytes: 6, scope: scope, modified: MockDate.date.addingTimeInterval(60))
+        let second = try seed(
+            TestFile.aText,
+            in: Constants.docs,
+            bytes: 6,
+            scope: scope,
+            modified: MockDate.date.addingTimeInterval(60)
+        )
         let pinned = store.pinned(to: scope)
 
         #expect(pinned.localURL(first) == nil)

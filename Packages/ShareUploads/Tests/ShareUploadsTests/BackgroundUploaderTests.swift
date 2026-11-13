@@ -31,7 +31,10 @@ struct BackgroundUploaderTests {
         let staying = try harness.makeBatch(names: [TestFile.aPhoto], accountID: ShareUploadsTestValue.stayingAccount)
         harness.uploader.complete(batchID: leaving.id, index: 0, result: .failure(.unauthorized))
         harness.uploader.complete(batchID: staying.id, index: 0, result: .failure(.unauthorized))
-        #expect(harness.uploader.accountsNeedingSignIn() == [ShareUploadsTestValue.leavingAccount, ShareUploadsTestValue.stayingAccount])
+        #expect(harness.uploader.accountsNeedingSignIn() == [
+            ShareUploadsTestValue.leavingAccount,
+            ShareUploadsTestValue.stayingAccount,
+        ])
 
         harness.uploader.cancel(keepingAccounts: [ShareUploadsTestValue.stayingAccount])
 
@@ -156,7 +159,8 @@ struct BackgroundUploaderTests {
         let start = TestClock.reference
         func action(results: Int, claimedAt: Date? = nil, after: TimeInterval) -> BackgroundUploader.PendingAction {
             BackgroundUploader.pendingAction(
-                startedAt: start, resultCount: results, fileCount: 2, claimedAt: claimedAt, now: start.addingTimeInterval(after)
+                startedAt: start, resultCount: results, fileCount: 2, claimedAt: claimedAt,
+                now: start.addingTimeInterval(after)
             )
         }
         #expect(action(results: 0, after: BackgroundUploader.youngAge - 1) == .wait, "the extension may still own it")
@@ -202,9 +206,21 @@ struct BackgroundUploaderTests {
     @Test("A batch no task runs for is abandoned only once it is older than the stale age")
     func abandonedDecision() {
         let start = TestClock.reference
-        #expect(BackgroundUploader.isAbandoned(liveTaskCount: 0, startedAt: start, now: start.addingTimeInterval(BackgroundUploader.staleAge + 1)))
-        #expect(!BackgroundUploader.isAbandoned(liveTaskCount: 0, startedAt: start, now: start.addingTimeInterval(BackgroundUploader.staleAge - 1)))
-        #expect(!BackgroundUploader.isAbandoned(liveTaskCount: 2, startedAt: start, now: start.addingTimeInterval(BackgroundUploader.staleAge + 1)))
+        #expect(BackgroundUploader.isAbandoned(
+            liveTaskCount: 0,
+            startedAt: start,
+            now: start.addingTimeInterval(BackgroundUploader.staleAge + 1)
+        ))
+        #expect(!BackgroundUploader.isAbandoned(
+            liveTaskCount: 0,
+            startedAt: start,
+            now: start.addingTimeInterval(BackgroundUploader.staleAge - 1)
+        ))
+        #expect(!BackgroundUploader.isAbandoned(
+            liveTaskCount: 2,
+            startedAt: start,
+            now: start.addingTimeInterval(BackgroundUploader.staleAge + 1)
+        ))
     }
 
     @Test("Abandoning reports the files still outstanding as failed and keeps their envelopes")
@@ -238,7 +254,8 @@ struct BackgroundUploaderTests {
         let old = try unstarted()
         let recent = try unstarted()
         try FileManager.default.setAttributes(
-            [.modificationDate: TestClock.reference.addingTimeInterval(-BackgroundUploader.staleAge - 60)], ofItemAtPath: old.path
+            [.modificationDate: TestClock.reference.addingTimeInterval(-BackgroundUploader.staleAge - 60)],
+            ofItemAtPath: old.path
         )
         try FileManager.default.setAttributes(
             [.modificationDate: TestClock.reference.addingTimeInterval(-60)], ofItemAtPath: recent.path
@@ -252,17 +269,36 @@ struct BackgroundUploaderTests {
 
     @Test("A folder that cannot be read counts as stale")
     func missingFolderIsStale() {
-        #expect(BackgroundUploader.isStale(URL(fileURLWithPath: "/nonexistent/\(TestID.uuid().uuidString)"), now: TestClock.reference))
+        #expect(BackgroundUploader.isStale(
+            URL(fileURLWithPath: "/nonexistent/\(TestID.uuid().uuidString)"),
+            now: TestClock.reference
+        ))
     }
 
     // MARK: Waking up
 
     @Test("The wake up completion is held only when there are events left to wait for")
     func eventsDecision() {
-        #expect(BackgroundUploader.shouldCompleteEventsImmediately(liveTaskCount: 0, hasManifest: false, isClaimed: false))
-        #expect(BackgroundUploader.shouldCompleteEventsImmediately(liveTaskCount: 0, hasManifest: true, isClaimed: true))
-        #expect(!BackgroundUploader.shouldCompleteEventsImmediately(liveTaskCount: 0, hasManifest: true, isClaimed: false))
-        #expect(!BackgroundUploader.shouldCompleteEventsImmediately(liveTaskCount: 3, hasManifest: false, isClaimed: false))
+        #expect(BackgroundUploader.shouldCompleteEventsImmediately(
+            liveTaskCount: 0,
+            hasManifest: false,
+            isClaimed: false
+        ))
+        #expect(BackgroundUploader.shouldCompleteEventsImmediately(
+            liveTaskCount: 0,
+            hasManifest: true,
+            isClaimed: true
+        ))
+        #expect(!BackgroundUploader.shouldCompleteEventsImmediately(
+            liveTaskCount: 0,
+            hasManifest: true,
+            isClaimed: false
+        ))
+        #expect(!BackgroundUploader.shouldCompleteEventsImmediately(
+            liveTaskCount: 3,
+            hasManifest: false,
+            isClaimed: false
+        ))
     }
 
     @Test("Waking up for a session with no batch calls the system completion once, at once, with no timer left")
@@ -292,7 +328,10 @@ struct BackgroundUploaderTests {
         harness.tasks.set(LiveTasks(count: 2, indexes: [0, 1]), forBatch: batch.id)
         let fired = Counter()
 
-        harness.uploader.handleEvents(forSession: BackgroundUploader.identifierPrefix + batch.id, completion: fired.call)
+        harness.uploader.handleEvents(
+            forSession: BackgroundUploader.identifierPrefix + batch.id,
+            completion: fired.call
+        )
         #expect(fired.count == 0)
         #expect(harness.events.pendingTimers == 1)
 
@@ -321,7 +360,10 @@ struct BackgroundUploaderTests {
         let started = try #require(harness.starter.started.first)
         #expect(started.identifier == BackgroundUploader.identifierPrefix + batch.id)
         #expect(started.specs.map(\.index) == [0, 1])
-        #expect(started.specs.allSatisfy { $0.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=secret" })
+        #expect(started.specs
+            .allSatisfy {
+                $0.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=secret"
+            })
     }
 
     @Test("Retry resends only the failed files, with the current cookie, and the batch is reported again")
@@ -343,7 +385,10 @@ struct BackgroundUploaderTests {
         #expect(count == 2)
         let started = try #require(harness.starter.started.first)
         #expect(started.specs.map(\.index) == [1, 2])
-        #expect(started.specs.allSatisfy { $0.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=fresh" })
+        #expect(started.specs
+            .allSatisfy {
+                $0.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == "connect.sid=fresh"
+            })
         #expect(harness.uploader.accountsNeedingSignIn().isEmpty, "signing in again settles the flag")
         let manifest = try #require(Manifest.load(from: batch.directory))
         #expect(manifest.startedAt == TestClock.reference.addingTimeInterval(600))
@@ -377,12 +422,15 @@ struct BackgroundUploaderTests {
         defer { harness.tearDown() }
         let batch = try harness.makeBatch(names: [TestFile.aPhoto])
         harness.uploader.complete(batchID: batch.id, index: 0, result: .failure(.other))
-        try FileManager.default.removeItem(at: batch.directory.appendingPathComponent(ShareUploadsTestValue.firstEnvelope))
+        try FileManager.default
+            .removeItem(at: batch.directory.appendingPathComponent(ShareUploadsTestValue.firstEnvelope))
 
         #expect(harness.uploader.retryFailed(batchID: batch.id, credentials: Harness.credentials) == 0)
     }
 
-    @Test("A reported batch with failures keeps its envelopes until the retention ends, whatever the user does with the notification")
+    @Test(
+        "A reported batch with failures keeps its envelopes until the retention ends, whatever the user does with the notification"
+    )
     func failedEnvelopesSurviveUntilRetention() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
@@ -432,7 +480,8 @@ struct BackgroundUploaderTests {
         #expect(throws: ShareUploadError.insufficientSpace) {
             try batch.envelope(for: source, fileName: Constants.bigFile)
         }
-        let leftovers = try FileManager.default.contentsOfDirectory(atPath: harness.root.appendingPathComponent(batch.id).path)
+        let leftovers = try FileManager.default
+            .contentsOfDirectory(atPath: harness.root.appendingPathComponent(batch.id).path)
         #expect(leftovers.isEmpty)
     }
 

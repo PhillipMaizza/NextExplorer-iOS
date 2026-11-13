@@ -29,7 +29,11 @@ struct AuthDelegateTests {
 
     @Test("the default evaluator leaves server trust to the system")
     func defaultEvaluatorDefersToSystem() async {
-        let challenge = ClientCertificateChallengeFixture.make(host: TestHost.server, port: 443, method: NSURLAuthenticationMethodServerTrust)
+        let challenge = ClientCertificateChallengeFixture.make(
+            host: TestHost.server,
+            port: 443,
+            method: NSURLAuthenticationMethodServerTrust
+        )
         let (disposition, credential) = await DefaultServerTrustEvaluator().evaluate(challenge)
         #expect(disposition == .performDefaultHandling)
         #expect(credential == nil)
@@ -41,7 +45,11 @@ struct AuthDelegateTests {
         defer { session.invalidateAndCancel() }
         let calls = LockIsolatedBox(0)
         let delegate = makeDelegate(store: ClientIdentityStore(keychain: .inMemory()), calls: calls)
-        let challenge = ClientCertificateChallengeFixture.make(host: TestHost.server, port: 443, method: NSURLAuthenticationMethodServerTrust)
+        let challenge = ClientCertificateChallengeFixture.make(
+            host: TestHost.server,
+            port: 443,
+            method: NSURLAuthenticationMethodServerTrust
+        )
 
         let sessionAnswer = await delegate.urlSession(session, didReceive: challenge)
         let taskAnswer = await delegate.urlSession(session, task: task, didReceive: challenge)
@@ -51,11 +59,17 @@ struct AuthDelegateTests {
         #expect(calls.value == 2)
     }
 
-    @Test("a client certificate challenge with an installed identity is answered with it and never reaches the trust evaluator")
+    @Test(
+        "a client certificate challenge with an installed identity is answered with it and never reaches the trust evaluator"
+    )
     func clientCertificateIsAnsweredFirst() async throws {
         let store = ClientIdentityStore(keychain: .inMemory())
         let origin = ClientCertificateOrigin(host: TestHost.server, port: 443)
-        try store.install(pkcs12: MutualTLSFixtures.data(.clientIdentity), passphrase: MutualTLSFixtures.passphrase, for: origin)
+        try store.install(
+            pkcs12: MutualTLSFixtures.data(.clientIdentity),
+            passphrase: MutualTLSFixtures.passphrase,
+            for: origin
+        )
         let (session, task) = makeSessionAndTask()
         defer { session.invalidateAndCancel() }
         let calls = LockIsolatedBox(0)

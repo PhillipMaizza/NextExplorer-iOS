@@ -78,13 +78,14 @@ final class CancellableLoad: @unchecked Sendable {
     }
 
     func cancel() {
-        let (taken, activeProgress): (CheckedContinuation<UploadBatch.StagedFile, any Error>?, Progress?) = lock.withLock {
-            isCancelled = true
-            isFinished = true
-            observation = nil
-            defer { continuation = nil }
-            return (continuation, progress)
-        }
+        let (taken, activeProgress): (CheckedContinuation<UploadBatch.StagedFile, any Error>?, Progress?) = lock
+            .withLock {
+                isCancelled = true
+                isFinished = true
+                observation = nil
+                defer { continuation = nil }
+                return (continuation, progress)
+            }
         activeProgress?.cancel()
         taken?.resume(throwing: CancellationError())
     }

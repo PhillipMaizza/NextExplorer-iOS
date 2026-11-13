@@ -99,15 +99,26 @@ public struct FilesClient: Sendable {
     /// it; what it held becomes a version itself.
     public var restoreVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String) async throws -> Void
     /// `GET /api/versions/:id/content?path=`, saved to `destination`.
-    public var downloadVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String, _ destination: URL) async throws -> Void
+    public var downloadVersion: @Sendable (
+        _ serverURL: URL,
+        _ path: String,
+        _ versionID: String,
+        _ destination: URL
+    ) async throws -> Void
     /// `POST /api/versions/:id/copy`: a new file in the `destination` folder; returns its path.
-    public var copyVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String, _ destination: String) async throws -> String
+    public var copyVersion: @Sendable (
+        _ serverURL: URL,
+        _ path: String,
+        _ versionID: String,
+        _ destination: String
+    ) async throws -> String
     /// `PATCH /api/versions/:id`: a nil `label` or `pinned` is left as it is; `""` clears the label.
     public var updateVersion: @Sendable (
         _ serverURL: URL, _ path: String, _ versionID: String, _ label: String?, _ pinned: Bool?
     ) async throws -> FileVersion
     /// `POST /api/versions/delete`: the given versions, or every one when `all`. The file stays.
-    public var deleteVersions: @Sendable (_ serverURL: URL, _ path: String, _ ids: [String], _ all: Bool) async throws -> Void
+    public var deleteVersions: @Sendable (_ serverURL: URL, _ path: String, _ ids: [String], _ all: Bool) async throws
+        -> Void
     public var thumbnailURL: @Sendable (_ serverURL: URL, _ path: String) async throws -> URL?
     public var previewFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     /// `previewFile` served over a low priority session with a capped connection pool, for
@@ -205,7 +216,13 @@ public struct FilesClient: Sendable {
     public var fetchAPITokens: @Sendable (_ serverURL: URL) async throws -> [APIToken]
     /// `POST /api/auth/tokens`: makes one. `password` is sent only when the account has one.
     /// The secret in the reply is shown once.
-    public var createAPIToken: @Sendable (_ serverURL: URL, _ name: String, _ scope: APIToken.Scope, _ expiresInDays: Int?, _ password: String?) async throws -> IssuedAPIToken
+    public var createAPIToken: @Sendable (
+        _ serverURL: URL,
+        _ name: String,
+        _ scope: APIToken.Scope,
+        _ expiresInDays: Int?,
+        _ password: String?
+    ) async throws -> IssuedAPIToken
     /// `PATCH /api/auth/tokens/:id`: a new name, so two tokens can be told apart.
     public var renameAPIToken: @Sendable (_ serverURL: URL, _ id: String, _ name: String) async throws -> APIToken
     /// `DELETE /api/auth/tokens/:id`: no password, revoking is the safe direction.
@@ -301,7 +318,10 @@ public extension FilesClient {
     /// using the server's existing HTTP Range support for seeking, without buffering the
     /// whole file into memory first the way a full download would.
     static func previewURL(serverURL: URL, item: FileItem) -> URL? {
-        var components = URLComponents(url: serverURL.appendingPathComponent(APIPath.preview), resolvingAgainstBaseURL: false)
+        var components = URLComponents(
+            url: serverURL.appendingPathComponent(APIPath.preview),
+            resolvingAgainstBaseURL: false
+        )
         components?.queryItems = [URLQueryItem(name: QueryKey.path, value: item.id)]
         return components?.url
     }
@@ -310,7 +330,10 @@ public extension FilesClient {
     /// Safari for "Open in Browser": the server has no rendered-HTML endpoint, and cookie auth
     /// means Safari may hit a login page first (or 401 if the server requires auth).
     static func rawFileURL(serverURL: URL, item: FileItem) -> URL? {
-        var components = URLComponents(url: serverURL.appendingPathComponent(APIPath.raw), resolvingAgainstBaseURL: false)
+        var components = URLComponents(
+            url: serverURL.appendingPathComponent(APIPath.raw),
+            resolvingAgainstBaseURL: false
+        )
         components?.queryItems = [URLQueryItem(name: QueryKey.path, value: item.id)]
         return components?.url
     }

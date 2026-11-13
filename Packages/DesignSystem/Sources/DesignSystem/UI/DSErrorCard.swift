@@ -29,7 +29,8 @@ public struct DSErrorCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(Constants.padding)
-        .background(RoundedRectangle(cornerRadius: Constants.cornerRadius).fill(Color.negative.opacity(Constants.fillAlpha)))
+        .background(RoundedRectangle(cornerRadius: Constants.cornerRadius)
+            .fill(Color.negative.opacity(Constants.fillAlpha)))
     }
 }
 

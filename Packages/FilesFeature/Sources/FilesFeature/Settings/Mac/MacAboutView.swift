@@ -57,7 +57,8 @@
                     if let onTip {
                         Button(action: onTip) {
                             Text(L10n.Settings.creditsLikeApp + " ").foregroundStyle(.secondary)
-                                + Text(L10n.Settings.creditsBuyCoffee).fontWeight(.semibold).foregroundStyle(Color.accent)
+                                + Text(L10n.Settings.creditsBuyCoffee).fontWeight(.semibold)
+                                .foregroundStyle(Color.accent)
                         }
                         .buttonStyle(.plain)
                     }

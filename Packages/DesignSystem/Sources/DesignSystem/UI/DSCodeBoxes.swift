@@ -78,7 +78,10 @@ public struct DSCodeBoxes: View {
         return Text(verbatim: index < digits.count ? String(digits[index]) : "")
             .type(.headline3)
             .frame(width: Constants.boxWidth, height: Constants.boxHeight)
-            .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusControl, style: .continuous))
+            .background(
+                Color.backgroundSecondary,
+                in: RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+            )
             .overlay {
                 RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
                     .strokeBorder(

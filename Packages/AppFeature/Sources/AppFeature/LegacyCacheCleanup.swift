@@ -25,7 +25,10 @@ public enum LegacyCacheCleanup {
         let caches = caches ?? directory(.cachesDirectory, fileManager)
         if let applicationSupport {
             for name in [CacheLayout.directoryCacheName, CacheLayout.listCacheName] {
-                removeUnscopedEntries(in: applicationSupport.appendingPathComponent(name, isDirectory: true), fileManager)
+                removeUnscopedEntries(
+                    in: applicationSupport.appendingPathComponent(name, isDirectory: true),
+                    fileManager
+                )
             }
         }
         if let caches {

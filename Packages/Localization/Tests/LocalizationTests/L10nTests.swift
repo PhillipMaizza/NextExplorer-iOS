@@ -38,7 +38,11 @@ struct L10nTests {
         var unresolved: [String] = []
         for language in LocalizationOverride.supportedLanguages {
             LocalizationOverride.withLanguage(language) {
-                for key in strings.keys where LocalizationOverride.bundle.localizedString(forKey: key, value: key, table: "Localizable") == key {
+                for key in strings.keys where LocalizationOverride.bundle.localizedString(
+                    forKey: key,
+                    value: key,
+                    table: "Localizable"
+                ) == key {
                     unresolved.append("\(language)/\(key)")
                 }
             }

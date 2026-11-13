@@ -11,11 +11,13 @@ import TestUtils
 @MainActor
 struct MainTabFanOutTests: MainTabTestSupport {
     private nonisolated static let favorite = Favorite(
-        id: "1", path: TestFolder.photos, label: nil, icon: "star", color: nil, position: 0, createdAt: MockDate.date, updatedAt: MockDate.date
+        id: "1", path: TestFolder.photos, label: nil, icon: "star", color: nil, position: 0, createdAt: MockDate.date,
+        updatedAt: MockDate.date
     )
 
     private nonisolated static let download = LocalDownload(
-        url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: TestFile.report, location: .documents, size: 10, modifiedDate: MockDate.date
+        url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: TestFile.report,
+        location: .documents, size: 10, modifiedDate: MockDate.date
     )
 
     @Test("Coming back to the app refreshes the Browse root and checks the pinned folders")
@@ -42,7 +44,11 @@ struct MainTabFanOutTests: MainTabTestSupport {
     @Test("Reconnecting reloads every tab, and the folder pushed in Favorites too, not just the Favorites root")
     func connectivityRestoredRefreshesTheFavoritesTabPushedStackNotJustItsRoot() async throws {
         let state = makeState {
-            $0.favorites.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
+            $0.favorites.path.append(BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.photos,
+                title: TestFolder.photos
+            ))
         }
         let pushedID = state.favorites.path.ids[0]
         let access = BrowseTestSupport.readOnlyAccess

@@ -57,8 +57,16 @@ struct DownloadsListTests {
         SortCase(option: .name, direction: .descending, expected: [Constants.zebra, Constants.mango, Constants.apple]),
         SortCase(option: .size, direction: .ascending, expected: [Constants.apple, Constants.mango, Constants.zebra]),
         SortCase(option: .size, direction: .descending, expected: [Constants.zebra, Constants.mango, Constants.apple]),
-        SortCase(option: .dateAdded, direction: .ascending, expected: [Constants.zebra, Constants.mango, Constants.apple]),
-        SortCase(option: .dateAdded, direction: .descending, expected: [Constants.apple, Constants.mango, Constants.zebra]),
+        SortCase(
+            option: .dateAdded,
+            direction: .ascending,
+            expected: [Constants.zebra, Constants.mango, Constants.apple]
+        ),
+        SortCase(
+            option: .dateAdded,
+            direction: .descending,
+            expected: [Constants.apple, Constants.mango, Constants.zebra]
+        ),
     ]
 
     @Test(arguments: sortCases)

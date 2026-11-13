@@ -281,13 +281,16 @@ public struct SettingsFeature {
         lists: JSONCacheStore,
         uploadThumbnails: LocalThumbnailStore
     ) -> Int64 {
-        ((try? preview.size()) ?? 0) + directories.totalSizeBytes() + lists.totalSizeBytes() + uploadThumbnails.totalSizeBytes()
+        ((try? preview.size()) ?? 0) + directories.totalSizeBytes() + lists.totalSizeBytes() + uploadThumbnails
+            .totalSizeBytes()
     }
 
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
-    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize, authMethods, authStatus }
+    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize,
+                                           authMethods, authStatus
+    }
 
     public init() {}
 
@@ -340,7 +343,10 @@ public struct SettingsFeature {
             return .none
 
         case .apiTokensButtonTapped:
-            state.apiTokens = APITokensFeature.State(serverURL: state.serverURL, requiresPassword: state.passwordStatus != .absent)
+            state.apiTokens = APITokensFeature.State(
+                serverURL: state.serverURL,
+                requiresPassword: state.passwordStatus != .absent
+            )
             return .none
 
         case .apiTokens:
@@ -518,7 +524,10 @@ public struct SettingsFeature {
 
         case .clientCertificateButtonTapped:
             guard let origin = ClientCertificateOrigin(url: state.serverURL) else { return .none }
-            state.clientCertificate = ClientCertificateFeature.State(origin: origin, status: state.clientCertificateStatus)
+            state.clientCertificate = ClientCertificateFeature.State(
+                origin: origin,
+                status: state.clientCertificateStatus
+            )
             return .none
 
         case let .clientCertificateStatusLoaded(summary):
@@ -612,7 +621,13 @@ public struct SettingsFeature {
             }
             let loadUploadDefaults = Effect<Action>.send(.uploadDefaults(.onAppear))
             guard !state.isLoadingPreferences else {
-                return .merge(checkDownloads, checkCacheSize, checkOfflineSize, checkClientCertificate, loadUploadDefaults)
+                return .merge(
+                    checkDownloads,
+                    checkCacheSize,
+                    checkOfflineSize,
+                    checkClientCertificate,
+                    loadUploadDefaults
+                )
             }
             state.isLoadingPreferences = true
             let serverURL = state.serverURL

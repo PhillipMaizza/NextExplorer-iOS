@@ -44,7 +44,10 @@ final class FakeKeychainStore: KeychainStore, @unchecked Sendable {
         if isMissingEntitlement {
             throw KeychainError.unexpectedStatus(errSecMissingEntitlement)
         }
-        let error = lock.withLock { failures[Failure(operation: operation, key: key)] ?? failures[Failure(operation: operation, key: nil)] }
+        let error = lock.withLock { failures[Failure(operation: operation, key: key)] ?? failures[Failure(
+            operation: operation,
+            key: nil
+        )] }
         if let error {
             throw error
         }

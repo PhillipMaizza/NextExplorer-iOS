@@ -334,16 +334,17 @@ public struct UploadsFeature {
                 let result: Result<FileItem, FilesClientError>?
                 do {
                     result = try await apiResult {
-                        try await filesClient.uploadFile(serverURL, job.fileURL, job.fileName, job.destination) { fraction in
-                            let shouldForward = lastReported.withValue { last -> Bool in
-                                guard fraction >= 1 || fraction - last >= 0.02 else { return false }
-                                last = fraction
-                                return true
+                        try await filesClient
+                            .uploadFile(serverURL, job.fileURL, job.fileName, job.destination) { fraction in
+                                let shouldForward = lastReported.withValue { last -> Bool in
+                                    guard fraction >= 1 || fraction - last >= 0.02 else { return false }
+                                    last = fraction
+                                    return true
+                                }
+                                if shouldForward {
+                                    continuation.yield(fraction)
+                                }
                             }
-                            if shouldForward {
-                                continuation.yield(fraction)
-                            }
-                        }
                     }
                 } catch {
                     // Cancelled (`apiResult` rethrows cancellation): send no response.

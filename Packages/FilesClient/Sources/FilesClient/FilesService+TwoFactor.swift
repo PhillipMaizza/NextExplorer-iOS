@@ -28,7 +28,8 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(TwoFactorCodeBody(code: code))
-        return try await decodeAccountResponse(sendAccountRequest(request), as: RecoveryCodesEnvelope.self).recoveryCodes
+        return try await decodeAccountResponse(sendAccountRequest(request), as: RecoveryCodesEnvelope.self)
+            .recoveryCodes
     }
 
     /// `POST /api/auth/totp/recovery-codes`: new codes, the old ones stop working. Needs the password.
@@ -37,7 +38,8 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(PasswordBody(password: password))
-        return try await decodeAccountResponse(sendAccountRequest(request), as: RecoveryCodesEnvelope.self).recoveryCodes
+        return try await decodeAccountResponse(sendAccountRequest(request), as: RecoveryCodesEnvelope.self)
+            .recoveryCodes
     }
 
     /// `DELETE /api/auth/totp` with the password in the body: 204 when it is off.

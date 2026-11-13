@@ -63,20 +63,47 @@
         private var versionsSection: some View {
             Section {
                 Toggle(isOn: $store.versionsDraft.isEnabled.sending(\.versionsEnabledChanged)) {
-                    MacRowTitle(title: L10n.TrashSettings.versionsEnabled, subtitle: L10n.TrashSettings.versionsEnabledHelp)
+                    MacRowTitle(
+                        title: L10n.TrashSettings.versionsEnabled,
+                        subtitle: L10n.TrashSettings.versionsEnabledHelp
+                    )
                 }
-                versionRow(L10n.TrashSettings.keepAllHours, \.keepAllHoursText, .keepAllHours, VersionsSettings.keepAllHoursRange)
-                versionRow(L10n.TrashSettings.hourlyDays, \.hourlyDaysText, .hourlyDays, VersionsSettings.hourlyDaysRange)
+                versionRow(
+                    L10n.TrashSettings.keepAllHours,
+                    \.keepAllHoursText,
+                    .keepAllHours,
+                    VersionsSettings.keepAllHoursRange
+                )
+                versionRow(
+                    L10n.TrashSettings.hourlyDays,
+                    \.hourlyDaysText,
+                    .hourlyDays,
+                    VersionsSettings.hourlyDaysRange
+                )
                 versionRow(L10n.TrashSettings.dailyDays, \.dailyDaysText, .dailyDays, VersionsSettings.dailyDaysRange)
-                versionRow(L10n.TrashSettings.maxPerFile, \.maxPerFileText, .maxPerFile, VersionsSettings.maxPerFileRange)
-                versionRow(L10n.TrashSettings.checkpointMinutes, \.checkpointMinutesText, .checkpointMinutes, VersionsSettings.sessionCheckpointMinutesRange)
+                versionRow(
+                    L10n.TrashSettings.maxPerFile,
+                    \.maxPerFileText,
+                    .maxPerFile,
+                    VersionsSettings.maxPerFileRange
+                )
+                versionRow(
+                    L10n.TrashSettings.checkpointMinutes,
+                    \.checkpointMinutesText,
+                    .checkpointMinutes,
+                    VersionsSettings.sessionCheckpointMinutesRange
+                )
                 if store.isVersionsInvalid {
                     Text(L10n.TrashSettings.versionsInvalid).foregroundStyle(Color.negativeText)
                 }
             } header: {
                 Text(L10n.TrashSettings.versionsHeader)
             } footer: {
-                MacSectionFooter(L10n.TrashSettings.versionsSubtitle, L10n.TrashSettings.tiersHelp, L10n.TrashSettings.sharedSpace)
+                MacSectionFooter(
+                    L10n.TrashSettings.versionsSubtitle,
+                    L10n.TrashSettings.tiersHelp,
+                    L10n.TrashSettings.sharedSpace
+                )
             }
         }
 
@@ -90,7 +117,9 @@
             onChange: @escaping (String) -> Void
         ) -> some View {
             LabeledContent {
-                MacNumberStepper(label: title, value: Int(text) ?? range.lowerBound, range: range, step: 1) { onChange(String($0)) }
+                MacNumberStepper(label: title, value: Int(text) ?? range.lowerBound, range: range, step: 1) {
+                    onChange(String($0))
+                }
             } label: {
                 if let help {
                     MacRowTitle(title: title, subtitle: help)
@@ -173,18 +202,24 @@
         private func zoneRow(_ zone: TrashZone) -> some View {
             VStack(alignment: .leading, spacing: .space4) {
                 Text(zoneTitle(zone)).fontWeight(.semibold)
-                Text(zoneState(zone)).font(.callout).foregroundStyle(zone.isAvailable ? Color.secondary : Color.negativeText)
+                Text(zoneState(zone)).font(.callout)
+                    .foregroundStyle(zone.isAvailable ? Color.secondary : Color.negativeText)
                 if zone.isAvailable {
                     ProgressView(value: zone.usedFraction)
-                    Text(L10n.TrashSettings.usage(TrashSettingsView.bytes(zone.heldBytes), zone.budgetBytes.map(TrashSettingsView.bytes) ?? L10n.TrashSettings.noBudget))
-                        .font(.callout).foregroundStyle(.secondary)
+                    Text(L10n.TrashSettings.usage(
+                        TrashSettingsView.bytes(zone.heldBytes),
+                        zone.budgetBytes.map(TrashSettingsView.bytes) ?? L10n.TrashSettings.noBudget
+                    ))
+                    .font(.callout).foregroundStyle(.secondary)
                     Text(ServerSettingsMetrics.joined([
                         L10n.TrashSettings.zoneItems(zone.itemCount, TrashSettingsView.bytes(zone.usedBytes)),
                         L10n.TrashSettings.zoneVersions(zone.versionCount, TrashSettingsView.bytes(zone.versionBytes)),
                     ]))
                     .font(.callout).foregroundStyle(.secondary)
                 }
-                if let problems = store.verification?.first(where: { $0.zoneID == zone.id })?.violationCount, problems > 0 {
+                if let problems = store.verification?.first(where: { $0.zoneID == zone.id })?.violationCount,
+                   problems > 0
+                {
                     Text(L10n.TrashSettings.zoneProblems(problems)).font(.callout).foregroundStyle(Color.negativeText)
                 }
                 ForEach(zone.events) { event in

@@ -18,7 +18,10 @@
             app.labeledButton(L10n.Browse.newFolderConfirm).click()
 
             XCTAssertTrue(field.waitToVanish(), "A successful create should dismiss the sheet")
-            XCTAssertTrue(text(Constants.newFolderName, in: app).waitToAppear(), "The new folder should appear in the table")
+            XCTAssertTrue(
+                text(Constants.newFolderName, in: app).waitToAppear(),
+                "The new folder should appear in the table"
+            )
         }
 
         func testRenameInPlaceFromTheContextMenu() {
@@ -36,7 +39,10 @@
             app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
 
             XCTAssertTrue(field.waitToVanish(), "Return should finish the rename")
-            XCTAssertTrue(text(Constants.renamedFile, in: app).waitToAppear(), "The renamed file should appear in the table")
+            XCTAssertTrue(
+                text(Constants.renamedFile, in: app).waitToAppear(),
+                "The renamed file should appear in the table"
+            )
         }
 
         /// While renaming in place, ⌘A selects the name's text, not every file in the table.
@@ -53,7 +59,10 @@
             field.typeText(Constants.renamedFile)
             app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
             XCTAssertTrue(field.waitToVanish(), "Return in the field should finish the rename")
-            XCTAssertTrue(text(Constants.renamedFile, in: app).waitToAppear(), "⌘A then typing should replace the whole name")
+            XCTAssertTrue(
+                text(Constants.renamedFile, in: app).waitToAppear(),
+                "⌘A then typing should replace the whole name"
+            )
         }
 
         func testDeleteKeyAsksBeforeDeleting() {
@@ -79,9 +88,15 @@
             file.click()
             let windowsBefore = app.windows.count
             app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
-            XCTAssertTrue(waitUntil(NSPredicate(format: "count > %d", windowsBefore), on: app.windows), "Space should open Quick Look")
+            XCTAssertTrue(
+                waitUntil(NSPredicate(format: "count > %d", windowsBefore), on: app.windows),
+                "Space should open Quick Look"
+            )
             app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
-            XCTAssertTrue(waitUntil(NSPredicate(format: "count == %d", windowsBefore), on: app.windows), "Space again should close Quick Look")
+            XCTAssertTrue(
+                waitUntil(NSPredicate(format: "count == %d", windowsBefore), on: app.windows),
+                "Space again should close Quick Look"
+            )
         }
 
         /// A text preview is a sheet with its own Close and Edit, and Esc closes it.
@@ -93,7 +108,10 @@
             file.doubleClick()
             let sheet = app.sheets.firstMatch
             XCTAssertTrue(sheet.waitToAppear(), "Double click should open the preview")
-            XCTAssertTrue(sheet.buttons.labeled(L10n.PreviewToolbar.close).waitToAppear(), "The preview needs a Close button")
+            XCTAssertTrue(
+                sheet.buttons.labeled(L10n.PreviewToolbar.close).waitToAppear(),
+                "The preview needs a Close button"
+            )
             XCTAssertTrue(sheet.buttons.labeled(L10n.Common.edit).waitToAppear(), "A text preview needs Edit")
             app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
             XCTAssertTrue(sheet.waitToVanish(), "Esc should close the preview")
@@ -109,7 +127,10 @@
             file.click()
             XCUIElement.perform(withKeyModifiers: .command) { image.click() }
             image.rightClick()
-            XCTAssertTrue(app.menuItems[L10n.Browse.actionDownload].waitToAppear(), "Several rows should offer Download")
+            XCTAssertTrue(
+                app.menuItems[L10n.Browse.actionDownload].waitToAppear(),
+                "Several rows should offer Download"
+            )
             XCTAssertTrue(app.menuItems[L10n.Browse.actionMove].exists, "Several rows should offer Move")
             app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
         }

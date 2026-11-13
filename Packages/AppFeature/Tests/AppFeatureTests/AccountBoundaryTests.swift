@@ -32,7 +32,14 @@ extension AppSuites {
         private func listing() -> BrowseResult {
             BrowseResult(
                 items: [],
-                access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+                access: FileAccess(
+                    canRead: true,
+                    canWrite: false,
+                    canUpload: false,
+                    canDelete: false,
+                    canShare: false,
+                    canDownload: true
+                ),
                 path: Fixture.path
             )
         }
@@ -70,7 +77,10 @@ extension AppSuites {
         }
 
         private func optimistic(_ serverURL: URL, username: String) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: User(id: "", username: username, email: nil)))
+            .authenticated(AuthenticatedFeature.State(
+                serverURL: serverURL,
+                user: User(id: "", username: username, email: nil)
+            ))
         }
 
         private func confirmed(_ serverURL: URL, _ user: User) -> AppFeature.Destination.State {
@@ -238,7 +248,9 @@ extension AppSuites {
 
         // MARK: The pending list drains
 
-        @Test("An expiry that falls through to another account finishes its second pass, wipes what a late writer left and drains the list")
+        @Test(
+            "An expiry that falls through to another account finishes its second pass, wipes what a late writer left and drains the list"
+        )
         func fallThroughDrainsThePendingList() async {
             let pending = PendingAccountWipes.inMemory()
             let directory = DirectoryCacheStore.inMemory()
@@ -283,7 +295,8 @@ extension AppSuites {
             }
 
             directory.bound(to: AppFixtures.accountA).write(
-                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil, fetchedAt: MockDate.date
+                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil,
+                fetchedAt: MockDate.date
             )
             secondPass.open()
             confirmation.open()
@@ -296,7 +309,8 @@ extension AppSuites {
 
             #expect(pending.accounts().isEmpty, "the second pass never ran for \(pending.accounts())")
             #expect(
-                directory.bound(to: AppFixtures.accountA).read(serverURL: AppFixtures.serverA, path: Fixture.path) == nil,
+                directory.bound(to: AppFixtures.accountA)
+                    .read(serverURL: AppFixtures.serverA, path: Fixture.path) == nil,
                 "an entry written after the first wipe is removed by the second pass"
             )
             let accountWipeWithoutDirectory: [WipeRecorder.Event] = [
@@ -307,7 +321,8 @@ extension AppSuites {
                 .thumbnailMemoryCleared,
             ]
             #expect(
-                recorder.events.value == [.activeSessionCleared] + accountWipeWithoutDirectory + accountWipeWithoutDirectory,
+                recorder.events
+                    .value == [.activeSessionCleared] + accountWipeWithoutDirectory + accountWipeWithoutDirectory,
                 "wiped once on expiry and once more by the second pass"
             )
         }
@@ -318,7 +333,8 @@ extension AppSuites {
             pending.add(AppFixtures.accountA)
             let directory = DirectoryCacheStore.inMemory()
             directory.bound(to: AppFixtures.accountA).write(
-                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil, fetchedAt: MockDate.date
+                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil,
+                fetchedAt: MockDate.date
             )
             let confirmation = AsyncGate()
             let accountList = AsyncGate()
@@ -354,7 +370,8 @@ extension AppSuites {
             await store.finish()
 
             #expect(pending.accounts().isEmpty)
-            #expect(directory.bound(to: AppFixtures.accountA).read(serverURL: AppFixtures.serverA, path: Fixture.path) != nil)
+            #expect(directory.bound(to: AppFixtures.accountA)
+                .read(serverURL: AppFixtures.serverA, path: Fixture.path) != nil)
             #expect(recorder.events.value.isEmpty, "the account was signed back in, so nothing is wiped")
         }
 
@@ -364,7 +381,8 @@ extension AppSuites {
             pending.add(AppFixtures.accountA)
             let directory = DirectoryCacheStore.inMemory()
             directory.bound(to: AppFixtures.accountA).write(
-                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil, fetchedAt: MockDate.date
+                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil,
+                fetchedAt: MockDate.date
             )
             let confirmation = AsyncGate()
             let accountList = AsyncGate()
@@ -399,7 +417,8 @@ extension AppSuites {
             await store.finish()
 
             #expect(pending.accounts().isEmpty)
-            #expect(directory.bound(to: AppFixtures.accountA).read(serverURL: AppFixtures.serverA, path: Fixture.path) != nil)
+            #expect(directory.bound(to: AppFixtures.accountA)
+                .read(serverURL: AppFixtures.serverA, path: Fixture.path) != nil)
             #expect(recorder.events.value.isEmpty, "the account has a session again, so nothing is wiped")
         }
 
@@ -411,7 +430,10 @@ extension AppSuites {
                 $0.pendingAccountWipes = pending
             }
 
-            await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
+            await store.send(.destination(.unauthenticated(.delegate(.authenticated(
+                AppFixtures.userA,
+                AppFixtures.serverA
+            ))))) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
                 $0.didAuthenticateFromLogin = true
                 $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
@@ -428,7 +450,8 @@ extension AppSuites {
             pending.add(AppFixtures.accountB)
             let directory = DirectoryCacheStore.inMemory()
             directory.bound(to: AppFixtures.accountB).write(
-                serverURL: AppFixtures.serverB, path: Fixture.path, result: listing(), etag: nil, fetchedAt: MockDate.date
+                serverURL: AppFixtures.serverB, path: Fixture.path, result: listing(), etag: nil,
+                fetchedAt: MockDate.date
             )
             var state = activeState(AppFixtures.serverA, AppFixtures.userA)
             state.pendingAddedAccount = AppFeature.AddedAccount(user: AppFixtures.userB, serverURL: AppFixtures.serverB)
@@ -457,7 +480,8 @@ extension AppSuites {
             await store.finish()
 
             #expect(pending.accounts().isEmpty)
-            #expect(directory.bound(to: AppFixtures.accountB).read(serverURL: AppFixtures.serverB, path: Fixture.path) != nil)
+            #expect(directory.bound(to: AppFixtures.accountB)
+                .read(serverURL: AppFixtures.serverB, path: Fixture.path) != nil)
             #expect(
                 recorder.events.value == WipeRecorder.prune(origins: [AppFixtures.originB], accounts: []),
                 "the account that was added is not wiped, and the stored list is empty here on purpose so the pending entry can only be saved by unlisting"
@@ -476,7 +500,10 @@ extension AppSuites {
             await store.receive(\.accountsRefreshed)
             await store.finish()
 
-            #expect(recorder.events.value.isEmpty, "pruned \(recorder.events.value) on a keychain that could not be read")
+            #expect(
+                recorder.events.value.isEmpty,
+                "pruned \(recorder.events.value) on a keychain that could not be read"
+            )
         }
 
         @Test("A readable keychain still prunes to the servers and accounts that remain")
@@ -489,7 +516,10 @@ extension AppSuites {
             await store.receive(\.accountsRefreshed)
             await store.finish()
 
-            #expect(recorder.events.value == WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA]))
+            #expect(recorder.events.value == WipeRecorder.prune(
+                origins: [AppFixtures.originA],
+                accounts: [AppFixtures.accountA]
+            ))
         }
     }
 }

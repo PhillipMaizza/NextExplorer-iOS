@@ -145,7 +145,11 @@
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
             files: [
                 PickedFile(fileURL: URL(fileURLWithPath: "/tmp/beach.jpg"), fileName: "beach.jpg", size: 2_400_000),
-                PickedFile(fileURL: URL(fileURLWithPath: "/tmp/itinerary.pdf"), fileName: "itinerary.pdf", size: 180_000),
+                PickedFile(
+                    fileURL: URL(fileURLWithPath: "/tmp/itinerary.pdf"),
+                    fileName: "itinerary.pdf",
+                    size: 180_000
+                ),
             ],
             startingDestination: "Documents/Trips"
         ))

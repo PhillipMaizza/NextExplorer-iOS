@@ -12,9 +12,19 @@ import TestUtils
 struct FavoritesNavigationTests: FavoritesTestSupport {
     @Test
     func openFolderDelegateFromAPushedScreenPushesAnotherLevel() async {
-        let subfolder = FileItem(name: "2020", path: TestFolder.photos, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+        let subfolder = FileItem(
+            name: "2020",
+            path: TestFolder.photos,
+            dateModified: MockDate.date,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
+        state.path.append(BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: TestFolder.photos,
+            title: TestFolder.photos
+        ))
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
@@ -28,7 +38,11 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
     @Test
     func openPathDelegateFromAPushedScreenForwardsToNavigateToDirectory() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
+        state.path.append(BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: TestFolder.photos,
+            title: TestFolder.photos
+        ))
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
@@ -44,7 +58,11 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
     @Test
     func favoritesChangedFromAPushedScreenBubblesUpAsADelegate() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
+        state.path.append(BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: TestFolder.photos,
+            title: TestFolder.photos
+        ))
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
@@ -57,7 +75,11 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
     @Test
     func openDownloadsTappedFromAPushedScreenBubblesUpAsADelegate() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
+        state.path.append(BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: TestFolder.photos,
+            title: TestFolder.photos
+        ))
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
@@ -70,7 +92,11 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
     @Test
     func goToSharedTabFromAPushedScreenBubblesUpAsADelegate() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
+        state.path.append(BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: TestFolder.photos,
+            title: TestFolder.photos
+        ))
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
@@ -111,11 +137,22 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
     @Test
     func syncPathStackRefreshesEveryPushedSubfolder() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
+        state.path.append(BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: TestFolder.photos,
+            title: TestFolder.photos
+        ))
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/2020", title: "2020"))
         let pathIDs = state.path.ids
         let refreshed = FileItem(name: "New.txt", path: "", dateModified: MockDate.date, size: 0, kind: TestKind.text)
-        let access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
+        let access = FileAccess(
+            canRead: true,
+            canWrite: false,
+            canUpload: false,
+            canDelete: false,
+            canShare: false,
+            canDownload: true
+        )
         let firstGate = AsyncGate()
         let secondGate = AsyncGate()
         let browsed = LockIsolated<[String]>([])
@@ -165,7 +202,11 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
     @Test
     func enclosingFolderFromAFavoritesOwnFolderReturnsToTheListAndForwardReopensIt() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        let folder = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs/Work", title: FilesFeatureTestValue.workFolder)
+        let folder = BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: "Docs/Work",
+            title: FilesFeatureTestValue.workFolder
+        )
         state.path.append(folder)
         let store = TestStore(initialState: state) { FavoritesFeature() }
 

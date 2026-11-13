@@ -7,7 +7,8 @@ import Localization
 /// trimmed off (code lines are indented, which would otherwise push the text far right under a
 /// big blank gap). `nil` for a filename only hit or an all whitespace line.
 func searchResultSnippet(_ result: SearchResultItem) -> String? {
-    guard let line = result.matchLine?.trimmingCharacters(in: .whitespacesAndNewlines), !line.isEmpty else { return nil }
+    guard let line = result.matchLine?.trimmingCharacters(in: .whitespacesAndNewlines),
+          !line.isEmpty else { return nil }
     return line
 }
 
@@ -62,7 +63,14 @@ extension SearchResultItem {
     /// cache treats it as fresh and fetches it.
     func previewItem(openedAt date: Date) -> FileItem {
         let kind = displayKind
-        return FileItem(name: name, path: path, dateModified: date, size: 0, kind: kind.isEmpty ? "unknown" : kind, supportsThumbnail: false)
+        return FileItem(
+            name: name,
+            path: path,
+            dateModified: date,
+            size: 0,
+            kind: kind.isEmpty ? "unknown" : kind,
+            supportsThumbnail: false
+        )
     }
 
     /// A thumbnail capable `FileItem` for a file hit; `nil` for a folder, which keeps its glyph.

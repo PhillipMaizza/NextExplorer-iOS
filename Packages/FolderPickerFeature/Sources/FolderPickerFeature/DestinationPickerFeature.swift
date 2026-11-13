@@ -137,7 +137,8 @@ public struct DestinationPickerFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.folders.isEmpty, state.phase.errorMessage == nil, state.phase != .loading else { return .none }
+                guard state.folders.isEmpty, state.phase.errorMessage == nil,
+                      state.phase != .loading else { return .none }
                 return load(&state)
 
             case .retryTapped:
@@ -152,7 +153,10 @@ public struct DestinationPickerFeature {
                 return .none
 
             case let .foldersResponse(.failure(error)):
-                state.phase = .failed(error == .sessionExpired ? L10n.Error.sessionExpired : L10n.Browse.destinationPickerLoadFailed)
+                state
+                    .phase = .failed(error == .sessionExpired
+                        ? L10n.Error.sessionExpired
+                        : L10n.Browse.destinationPickerLoadFailed)
                 return .none
 
             case let .searchQueryChanged(query):

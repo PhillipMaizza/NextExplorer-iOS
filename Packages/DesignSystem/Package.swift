@@ -23,6 +23,10 @@ let package = Package(
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
-        .testTarget(name: "DesignSystemTests", dependencies: ["TestUtils", "DesignSystem"], swiftSettings: [.swiftLanguageMode(.v6)]),
+        .testTarget(
+            name: "DesignSystemTests",
+            dependencies: ["TestUtils", "DesignSystem"],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
     ]
 )

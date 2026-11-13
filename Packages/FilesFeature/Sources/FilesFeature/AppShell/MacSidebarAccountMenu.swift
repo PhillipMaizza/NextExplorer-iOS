@@ -77,7 +77,11 @@
                     dismissThen { store.send(.addAccountTapped) }
                 }
                 if store.showsPasswordRow {
-                    MacPopoverActionRow(title: L10n.Settings.rowChangePassword, icon: IconKit.key, action: onChangePassword)
+                    MacPopoverActionRow(
+                        title: L10n.Settings.rowChangePassword,
+                        icon: IconKit.key,
+                        action: onChangePassword
+                    )
                 }
                 MacPopoverActionRow(title: L10n.Settings.signOutButton, icon: IconKit.signOut, tone: .danger) {
                     dismissThen { store.send(.signOutButtonTapped) }
@@ -138,7 +142,10 @@
                     .opacity(account.isActive ? 1 : Metrics.inactiveOpacity)
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(account.displayName)
-                        .type(.body2(account.isActive ? .bold : .regular), style: account.isActive ? .primaryOnSurface : .secondary)
+                        .type(
+                            .body2(account.isActive ? .bold : .regular),
+                            style: account.isActive ? .primaryOnSurface : .secondary
+                        )
                         .lineLimit(1)
                     // Shrinks a long host to fit before falling back to truncating it.
                     Text(account.serverHost)
@@ -185,14 +192,14 @@
             .accessibilityLabel(account.isActive
                 ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
                 : L10n.Settings.accountLabel(account.displayName, account.serverHost))
-            .accessibilityAddTraits(account.isActive ? .isSelected : .isButton)
-            // The tap gesture is pointer only; VoiceOver's press switches like a click does.
-            .accessibilityAction {
-                if !account.isActive {
-                    onSwitch()
+                .accessibilityAddTraits(account.isActive ? .isSelected : .isButton)
+                // The tap gesture is pointer only; VoiceOver's press switches like a click does.
+                .accessibilityAction {
+                    if !account.isActive {
+                        onSwitch()
+                    }
                 }
-            }
-            .accessibilityAction(named: L10n.Settings.accountSignOut, onSignOut)
+                .accessibilityAction(named: L10n.Settings.accountSignOut, onSignOut)
         }
     }
 
@@ -261,7 +268,13 @@
             store: Store(
                 initialState: SettingsFeature.State(
                     serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                    user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+                    user: User(
+                        id: "preview-user",
+                        username: "jdoe",
+                        email: "jane.doe@example.com",
+                        displayName: "Jane Doe",
+                        roles: []
+                    )
                 )
             ) { SettingsFeature() },
             dismissThen: { $0() },
@@ -271,8 +284,18 @@
 
     private enum PreviewFixture {
         static let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
-        static let inactive = AccountSummary(id: "preview-inactive", username: "Sam Rivers", serverURL: serverURL, isActive: false)
-        static let active = AccountSummary(id: "preview-active", username: "Jane Doe", serverURL: serverURL, isActive: true)
+        static let inactive = AccountSummary(
+            id: "preview-inactive",
+            username: "Sam Rivers",
+            serverURL: serverURL,
+            isActive: false
+        )
+        static let active = AccountSummary(
+            id: "preview-active",
+            username: "Jane Doe",
+            serverURL: serverURL,
+            isActive: true
+        )
     }
 
     #Preview("Account row, hovered or focused") {

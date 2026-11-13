@@ -15,6 +15,8 @@ enum LoginFormTestSupport {
     nonisolated static let host = TestHost.nextExplorer
     nonisolated static let serverURL = TestHost.nextExplorerURLString
     nonisolated static let passwordOnly = AuthStatus(localEnabled: true, oidcEnabled: false)
+    /// The account a successful sign in answers with.
+    nonisolated static let user = User(id: "1", username: TestAccount.username, email: nil, roles: [])
 
     static func makeStore(
         _ state: LoginFormFeature.State,
@@ -31,7 +33,10 @@ enum LoginFormTestSupport {
     }
 
     /// The credentials page of a server that was tested and offers password sign in.
-    static func credentialsState(identifier: String = TestUser.asmith, password: String = TestAccount.password) -> LoginFormFeature.State {
+    static func credentialsState(
+        identifier: String = TestUser.asmith,
+        password: String = TestAccount.password
+    ) -> LoginFormFeature.State {
         LoginFormFeature.State(
             currentPage: .credentials,
             host: host,

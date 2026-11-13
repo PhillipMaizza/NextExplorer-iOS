@@ -12,7 +12,14 @@ enum BrowseDropFixtures {
 
     /// A row of a dragged listing: a PDF of ten bytes, or a folder.
     static func entry(_ name: String, in path: String = TestFolder.docs, isFolder: Bool = false) -> FileItem {
-        isFolder ? BrowseFixtures.folder(name, in: path) : BrowseFixtures.file(name, in: path, kind: TestKind.pdf, size: 10)
+        isFolder
+            ? BrowseFixtures.folder(name, in: path)
+            : BrowseFixtures.file(
+                name,
+                in: path,
+                kind: TestKind.pdf,
+                size: 10
+            )
     }
 
     /// A real staged drop copy, created the way a drop stages one.

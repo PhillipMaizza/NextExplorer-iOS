@@ -32,7 +32,8 @@ struct FolderSizeSettingsFeatureTests {
         update: @escaping @Sendable (SystemSettingsPatch) throws -> SystemSettings = { _ in SystemSettings() }
     ) -> Store {
         let response: @Sendable () throws -> SystemSettings = fetch ?? { SystemSettings(folderSize: loaded) }
-        let flags: @Sendable () throws -> ServerFeatures = features ?? { ServerFeatures(folderSizeMode: loaded?.mode ?? .off) }
+        let flags: @Sendable () throws -> ServerFeatures = features ??
+            { ServerFeatures(folderSizeMode: loaded?.mode ?? .off) }
         let fetchedURLs = fetchedURLs
         let patches = patches
         return TestStore(initialState: state ?? FolderSizeSettingsFeature.State(serverURL: serverURL)) {
@@ -50,7 +51,10 @@ struct FolderSizeSettingsFeatureTests {
         }
     }
 
-    private func loadedState(_ folderSize: FolderSizeSettings, lockedBy: String? = nil) -> FolderSizeSettingsFeature.State {
+    private func loadedState(
+        _ folderSize: FolderSizeSettings,
+        lockedBy: String? = nil
+    ) -> FolderSizeSettingsFeature.State {
         var state = FolderSizeSettingsFeature.State(serverURL: serverURL)
         state.loaded = folderSize
         state.draftPaths = folderSize.excluded.paths
@@ -64,7 +68,10 @@ struct FolderSizeSettingsFeatureTests {
     @Test
     func loadingSeedsTheModePathsAndLock() async {
         let loaded = settings(mode: .full, paths: ["docker"], environment: ["tmp"])
-        let store = store(loaded: loaded, features: { ServerFeatures(folderSizeMode: .full, folderSizeLockedBy: "FOLDER_SIZE_MODE") })
+        let store = store(
+            loaded: loaded,
+            features: { ServerFeatures(folderSizeMode: .full, folderSizeLockedBy: "FOLDER_SIZE_MODE") }
+        )
 
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.loadResponse.success) {
@@ -173,21 +180,35 @@ struct FolderSizeSettingsFeatureTests {
         let store = store(state: state)
 
         await store.send(.onAppear)
-        await store.send(.loadResponse(.success(ServerSettingsSnapshot(settings: SystemSettings(folderSize: settings(mode: .full))))))
+        await store
+            .send(
+                .loadResponse(
+                    .success(ServerSettingsSnapshot(settings: SystemSettings(folderSize: settings(mode: .full))))
+                )
+            )
 
         #expect(fetchedURLs.value.isEmpty)
     }
 
     // MARK: The mode
 
-    @Test(arguments: [(FolderSizeMode.off, FolderSizeMode.shallow), (.off, .full), (.shallow, .full), (.full, .off), (.shallow, .off)])
+    @Test(arguments: [
+        (FolderSizeMode.off, FolderSizeMode.shallow),
+        (.off, .full),
+        (.shallow, .full),
+        (.full, .off),
+        (.shallow, .off)
+    ])
     func changingTheModeSavesAtOnceSendingOnlyTheMode(from: FolderSizeMode, to: FolderSizeMode) async {
         let store = store(state: loadedState(settings(mode: from, paths: ["a"])), update: { _ in
             SystemSettings(folderSize: FolderSizeSettings(mode: to, excluded: ExcludedPaths(paths: ["a"])))
         })
 
         await store.send(.modeChanged(to)) { $0.isSaving = true }
-        await store.receive(.saveResponse(.success(FolderSizeSettings(mode: to, excluded: ExcludedPaths(paths: ["a"]))), replacesPaths: false)) {
+        await store.receive(.saveResponse(
+            .success(FolderSizeSettings(mode: to, excluded: ExcludedPaths(paths: ["a"]))),
+            replacesPaths: false
+        )) {
             $0.isSaving = false
             $0.loaded = FolderSizeSettings(mode: to, excluded: ExcludedPaths(paths: ["a"]))
             $0.effectiveMode = to
@@ -234,7 +255,10 @@ struct FolderSizeSettingsFeatureTests {
         })
 
         await store.send(.modeChanged(.full)) { $0.isSaving = true }
-        await store.receive(.saveResponse(.failure(.serverMessage(statusCode: 403, message: "Admin access required.")), replacesPaths: false)) {
+        await store.receive(.saveResponse(
+            .failure(.serverMessage(statusCode: 403, message: "Admin access required.")),
+            replacesPaths: false
+        )) {
             $0.isSaving = false
             $0.errorMessage = "Admin access required."
         }
@@ -350,7 +374,10 @@ struct FolderSizeSettingsFeatureTests {
     @Test
     func savingThePathsSendsOnlyThePathsAndAdoptsTheServersList() async {
         let echoed = settings(mode: .full, paths: ["normalised"])
-        let store = store(state: loadedState(settings(mode: .full)), update: { _ in SystemSettings(folderSize: echoed) })
+        let store = store(
+            state: loadedState(settings(mode: .full)),
+            update: { _ in SystemSettings(folderSize: echoed) }
+        )
 
         await store.send(.newPathChanged("raw")) { $0.newPath = "raw" }
         await store.send(.addPathTapped) {
@@ -381,7 +408,10 @@ struct FolderSizeSettingsFeatureTests {
 
     @Test
     func aFailedPathsSaveKeepsTheDraft() async {
-        let store = store(state: loadedState(settings()), update: { _ in throw FilesClientError.server(statusCode: 500) })
+        let store = store(
+            state: loadedState(settings()),
+            update: { _ in throw FilesClientError.server(statusCode: 500) }
+        )
 
         await store.send(.newPathChanged("a")) { $0.newPath = "a" }
         await store.send(.addPathTapped) {
@@ -402,7 +432,10 @@ struct FolderSizeSettingsFeatureTests {
         let store = store(state: loadedState(settings()), update: { _ in SystemSettings() })
 
         await store.send(.modeChanged(.full)) { $0.isSaving = true }
-        await store.receive(.saveResponse(.failure(.decoding("Settings response carried no folder size.")), replacesPaths: false)) {
+        await store.receive(.saveResponse(
+            .failure(.decoding("Settings response carried no folder size.")),
+            replacesPaths: false
+        )) {
             $0.isSaving = false
             $0.errorMessage = L10n.Error.decoding
         }

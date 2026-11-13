@@ -30,7 +30,10 @@ extension FilesClientLiveTests {
         func createShareLinkPostsTheMinimalBodyForAnOpenLink() async throws {
             try prepare(statusCode: 201, fixture: .shareCreated)
 
-            let created = try await makeClient().createShareLink(serverURL, CreateShareLinkRequest(sourcePath: TestPath.docsNote))
+            let created = try await makeClient().createShareLink(
+                serverURL,
+                CreateShareLinkRequest(sourcePath: TestPath.docsNote)
+            )
 
             try expectRequest(.post, "/api/shares")
             try expectJSONBody([
@@ -104,8 +107,14 @@ extension FilesClientLiveTests {
         func createShareLinkSurfacesTheServersMessage() async throws {
             try prepare(statusCode: 400, fixture: .shareErrorExpiryInPast)
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Expiry must be in the future.")) {
-                _ = try await makeClient().createShareLink(serverURL, CreateShareLinkRequest(sourcePath: TestFolder.docs))
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "Expiry must be in the future."
+            )) {
+                _ = try await makeClient().createShareLink(
+                    serverURL,
+                    CreateShareLinkRequest(sourcePath: TestFolder.docs)
+                )
             }
         }
 
@@ -231,7 +240,13 @@ extension FilesClientLiveTests {
         func updateFavoritePatchesLabelIconAndColor() async throws {
             try prepare(statusCode: 200, fixture: .favoriteUpdated)
 
-            let favorite = try await makeClient().updateFavorite(serverURL, Constants.favoriteID, Constants.workLabel, "folder", Constants.redColor)
+            let favorite = try await makeClient().updateFavorite(
+                serverURL,
+                Constants.favoriteID,
+                Constants.workLabel,
+                "folder",
+                Constants.redColor
+            )
 
             try expectRequest(.patch, "/api/favorites/f2")
             try expectJSONBody(["label": Constants.workLabel, "icon": "folder", "color": Constants.redColor])
@@ -261,7 +276,10 @@ extension FilesClientLiveTests {
         func reorderFavoritesPatchesTheFullOrderAndDecodesTheNewList() async throws {
             try prepare(statusCode: 200, fixture: .favoriteListTwo)
 
-            let favorites = try await makeClient().reorderFavorites(serverURL, [Constants.favoriteID, Constants.firstFavoriteID])
+            let favorites = try await makeClient().reorderFavorites(
+                serverURL,
+                [Constants.favoriteID, Constants.firstFavoriteID]
+            )
 
             try expectRequest(.patch, "/api/favorites/reorder")
             try expectJSONBody(["order": [Constants.favoriteID, Constants.firstFavoriteID]])
@@ -282,7 +300,10 @@ extension FilesClientLiveTests {
         func reorderFavoritesSurfacesTheMismatchMessage() async throws {
             try prepare(statusCode: 400, fixture: .favoriteErrorOrderMismatch)
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "Order must list every favorite once.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "Order must list every favorite once."
+            )) {
                 _ = try await makeClient().reorderFavorites(serverURL, [Constants.firstFavoriteID])
             }
         }

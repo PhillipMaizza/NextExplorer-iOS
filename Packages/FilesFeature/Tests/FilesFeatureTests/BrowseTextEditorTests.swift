@@ -92,7 +92,9 @@ struct BrowseTextEditorTests {
         }
     }
 
-    @Test("A second save of the same file is ignored while the first is still in flight, even after the preview was reopened")
+    @Test(
+        "A second save of the same file is ignored while the first is still in flight, even after the preview was reopened"
+    )
     func aSecondSaveIsIgnoredWhileTheFirstIsStillInFlight() async {
         let gate = AsyncGate()
         let saves = LockIsolated<[String]>([])

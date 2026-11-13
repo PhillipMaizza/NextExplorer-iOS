@@ -22,7 +22,11 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(
+                statusCode: statusCode,
+                headers: [HTTPHeaderField.contentType: MIMEType.json],
+                body: Data(body.utf8)
+            )
         }
 
         private func sentJSON() throws -> [String: Any] {
@@ -61,7 +65,13 @@ extension FilesClientLiveTests {
         func createSendsEveryFieldAndReturnsTheSecret() async throws {
             try stub(statusCode: 201, body: FilesClientFixture.apiTokenIssued.string())
 
-            let issued = try await makeClient().createAPIToken(serverURL, Constants.tokenName, .write, 30, TestAccount.password)
+            let issued = try await makeClient().createAPIToken(
+                serverURL,
+                Constants.tokenName,
+                .write,
+                30,
+                TestAccount.password
+            )
 
             #expect(issued.secret == TestAPIToken.secret)
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -88,8 +98,17 @@ extension FilesClientLiveTests {
         func aWrongPasswordIsAMessageNotAnExpiredSession() async throws {
             try stub(statusCode: 401, body: FilesClientFixture.apiTokenErrorWrongPassword.string())
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 401, message: "That password is not right.")) {
-                try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, TestAccount.rejectedPassword)
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 401,
+                message: "That password is not right."
+            )) {
+                try await makeClient().createAPIToken(
+                    serverURL,
+                    Constants.tokenName,
+                    .read,
+                    nil,
+                    TestAccount.rejectedPassword
+                )
             }
         }
 
@@ -97,7 +116,10 @@ extension FilesClientLiveTests {
         func tooManyTokensSurfacesTheServersMessage() async throws {
             try stub(statusCode: 400, body: FilesClientFixture.apiTokenErrorLimitReached.string())
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "This account already holds 50 tokens. Revoke one before issuing another.")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "This account already holds 50 tokens. Revoke one before issuing another."
+            )) {
                 try await makeClient().createAPIToken(serverURL, Constants.tokenName, .read, nil, nil)
             }
         }

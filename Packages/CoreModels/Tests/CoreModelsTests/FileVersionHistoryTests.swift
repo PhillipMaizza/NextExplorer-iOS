@@ -10,7 +10,12 @@ struct FileVersionHistoryTests {
         let history = try CoreModelsFixture.fileVersionHistoryFull.decodeISO(FileVersionHistory.self)
         #expect(history.isEnabled)
         #expect(history.totalBytes == 3_000_000_000)
-        #expect(history.rights == FileVersionHistory.Rights(canSee: true, canDownload: true, canRestore: false, canRemove: true))
+        #expect(history.rights == FileVersionHistory.Rights(
+            canSee: true,
+            canDownload: true,
+            canRestore: false,
+            canRemove: true
+        ))
         #expect(history.versions.map(\.id) == ["v2", "v1"])
     }
 

@@ -125,7 +125,8 @@
                 Task {
                     let box = await Task.detached(priority: .userInitiated) {
                         let language = CodeEditorLanguage.language(forKind: kind)
-                        return StateBox(state: language.map { TextViewState(text: newText, language: $0) } ?? TextViewState(text: newText))
+                        return StateBox(state: language
+                            .map { TextViewState(text: newText, language: $0) } ?? TextViewState(text: newText))
                     }.value
                     // A newer apply superseded this one while it parsed; drop its stale result and
                     // leave `isApplyingDocument` for the newer apply to clear.

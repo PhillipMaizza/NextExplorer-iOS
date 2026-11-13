@@ -6,7 +6,8 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// Raw download, item download and multipart upload through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
+/// Raw download, item download and multipart upload through `FilesClient.live` against a stubbed `URLSession`. Nested
+/// in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     struct FilesClientDownloadUploadTests: FilesClientLiveHarness {
@@ -24,7 +25,13 @@ extension FilesClientLiveTests {
             // every zip/rar/doc/docx preview until caught by live testing, not this test suite).
             stub(statusCode: 200, body: Data("raw file bytes".utf8))
             StubURLProtocol.capturedRequest = nil
-            let item = FileItem(name: FilesClientTestValue.bundleName, path: "Archives", dateModified: MockDate.date, size: 0, kind: "zip")
+            let item = FileItem(
+                name: FilesClientTestValue.bundleName,
+                path: "Archives",
+                dateModified: MockDate.date,
+                size: 0,
+                kind: "zip"
+            )
 
             _ = try await makeClient().downloadRawFile(serverURL, item)
 
@@ -47,9 +54,19 @@ extension FilesClientLiveTests {
 
         @Test
         func downloadItemPostsTheFolderPathAndReturnsAFileTheCallerOwns() async throws {
-            stub(statusCode: 200, body: Data(Constants.zipBytes.utf8), headers: [HTTPHeaderField.contentType: "application/zip"])
+            stub(
+                statusCode: 200,
+                body: Data(Constants.zipBytes.utf8),
+                headers: [HTTPHeaderField.contentType: "application/zip"]
+            )
             StubURLProtocol.capturedRequest = nil
-            let folder = FileItem(name: TestFolder.photos, path: TestFolder.files, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+            let folder = FileItem(
+                name: TestFolder.photos,
+                path: TestFolder.files,
+                dateModified: MockDate.date,
+                size: 0,
+                kind: FileItem.directoryKind
+            )
 
             let url = try await makeClient().downloadItem(serverURL, folder) { _ in }
             defer { try? FileManager.default.removeItem(at: url) }
@@ -66,7 +83,13 @@ extension FilesClientLiveTests {
         @Test
         func downloadItemMapsAServerErrorAndLeavesNoFileBehind() async throws {
             stub(statusCode: 500, body: Data())
-            let item = FileItem(name: "movie.mkv", path: TestFolder.files, dateModified: MockDate.date, size: 0, kind: "mkv")
+            let item = FileItem(
+                name: "movie.mkv",
+                path: TestFolder.files,
+                dateModified: MockDate.date,
+                size: 0,
+                kind: "mkv"
+            )
             await #expect(throws: FilesClientError.server(statusCode: 500)) {
                 _ = try await makeClient().downloadItem(serverURL, item) { _ in }
             }
@@ -80,7 +103,8 @@ extension FilesClientLiveTests {
             let fileURL = try makeTempFile(TestFile.notes, contents: Constants.uploadBody)
             defer { try? FileManager.default.removeItem(at: fileURL) }
 
-            let stored = try await makeClient().uploadFile(serverURL, fileURL, TestFile.notes, TestFolder.inbox) { _ in }
+            let stored = try await makeClient()
+                .uploadFile(serverURL, fileURL, TestFile.notes, TestFolder.inbox) { _ in }
 
             #expect(stored.name == "notes (1).txt")
             #expect(stored.path == TestFolder.inbox)

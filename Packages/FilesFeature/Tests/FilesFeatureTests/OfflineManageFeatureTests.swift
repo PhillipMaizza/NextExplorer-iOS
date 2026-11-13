@@ -35,8 +35,14 @@ struct OfflineManageFeatureTests {
         await store.send(.onAppear)
         await store.receive(\.usagesLoaded) {
             $0.usages = [
-                OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true), sizeBytes: 100),
-                OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: TestFile.aPhoto, isDirectory: false), sizeBytes: 50),
+                OfflinePinnedRootUsage(
+                    root: OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true),
+                    sizeBytes: 100
+                ),
+                OfflinePinnedRootUsage(
+                    root: OfflinePinnedRoot(path: TestFile.aPhoto, isDirectory: false),
+                    sizeBytes: 50
+                ),
             ]
         }
         #expect(store.state.totalBytes == 150)

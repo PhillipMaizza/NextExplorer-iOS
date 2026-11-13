@@ -32,7 +32,8 @@ struct SearchIndexSettingsFeatureTests {
         update: @escaping @Sendable (SystemSettingsPatch) throws -> SystemSettings = { _ in SystemSettings() }
     ) -> Store {
         let response: @Sendable () throws -> SystemSettings = fetch ?? { SystemSettings(searchIndex: loaded) }
-        let flags: @Sendable () throws -> ServerFeatures = features ?? { ServerFeatures(isSearchIndexEnabled: loaded?.isEnabled ?? false) }
+        let flags: @Sendable () throws -> ServerFeatures = features ??
+            { ServerFeatures(isSearchIndexEnabled: loaded?.isEnabled ?? false) }
         let fetchedURLs = fetchedURLs
         let patches = patches
         return TestStore(initialState: state ?? SearchIndexSettingsFeature.State(serverURL: serverURL)) {
@@ -50,7 +51,10 @@ struct SearchIndexSettingsFeatureTests {
         }
     }
 
-    private func loadedState(_ searchIndex: SearchIndexSettings, lockedBy: String? = nil) -> SearchIndexSettingsFeature.State {
+    private func loadedState(
+        _ searchIndex: SearchIndexSettings,
+        lockedBy: String? = nil
+    ) -> SearchIndexSettingsFeature.State {
         var state = SearchIndexSettingsFeature.State(serverURL: serverURL)
         state.loaded = searchIndex
         state.draftPaths = searchIndex.excluded.paths
@@ -64,7 +68,10 @@ struct SearchIndexSettingsFeatureTests {
     @Test
     func loadingSeedsThePathsAndTheLock() async {
         let loaded = settings(enabled: true, paths: ["Backups"], environment: ["tmp"])
-        let store = store(loaded: loaded, features: { ServerFeatures(isSearchIndexEnabled: true, searchIndexLockedBy: "SEARCH_INDEX") })
+        let store = store(
+            loaded: loaded,
+            features: { ServerFeatures(isSearchIndexEnabled: true, searchIndexLockedBy: "SEARCH_INDEX") }
+        )
 
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.loadResponse.success) {
@@ -147,7 +154,12 @@ struct SearchIndexSettingsFeatureTests {
         let store = store(state: state)
 
         await store.send(.onAppear)
-        await store.send(.loadResponse(.success(ServerSettingsSnapshot(settings: SystemSettings(searchIndex: settings(enabled: true))))))
+        await store
+            .send(
+                .loadResponse(
+                    .success(ServerSettingsSnapshot(settings: SystemSettings(searchIndex: settings(enabled: true))))
+                )
+            )
 
         #expect(fetchedURLs.value.isEmpty)
     }
@@ -178,7 +190,10 @@ struct SearchIndexSettingsFeatureTests {
     @Test
     func movingTheSwitchSavesAtOnceSendingOnlyTheSwitch() async {
         let echoed = settings(enabled: true, paths: ["a"])
-        let store = store(state: loadedState(settings(paths: ["a"])), update: { _ in SystemSettings(searchIndex: echoed) })
+        let store = store(
+            state: loadedState(settings(paths: ["a"])),
+            update: { _ in SystemSettings(searchIndex: echoed) }
+        )
 
         await store.send(.enabledChanged(true)) { $0.isSaving = true }
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
@@ -228,7 +243,10 @@ struct SearchIndexSettingsFeatureTests {
         })
 
         await store.send(.enabledChanged(true)) { $0.isSaving = true }
-        await store.receive(.saveResponse(.failure(.serverMessage(statusCode: 403, message: "Admin access required.")), replacesPaths: false)) {
+        await store.receive(.saveResponse(
+            .failure(.serverMessage(statusCode: 403, message: "Admin access required.")),
+            replacesPaths: false
+        )) {
             $0.isSaving = false
             $0.errorMessage = "Admin access required."
         }
@@ -352,7 +370,10 @@ struct SearchIndexSettingsFeatureTests {
     @Test
     func savingThePathsSendsOnlyThePathsAndAdoptsTheServersList() async {
         let echoed = settings(enabled: true, paths: ["normalised"])
-        let store = store(state: loadedState(settings(enabled: true)), update: { _ in SystemSettings(searchIndex: echoed) })
+        let store = store(
+            state: loadedState(settings(enabled: true)),
+            update: { _ in SystemSettings(searchIndex: echoed) }
+        )
 
         await store.send(.newPathChanged("raw")) { $0.newPath = "raw" }
         await store.send(.addPathTapped) {
@@ -383,7 +404,10 @@ struct SearchIndexSettingsFeatureTests {
 
     @Test
     func aFailedPathsSaveKeepsTheDraft() async {
-        let store = store(state: loadedState(settings()), update: { _ in throw FilesClientError.server(statusCode: 500) })
+        let store = store(
+            state: loadedState(settings()),
+            update: { _ in throw FilesClientError.server(statusCode: 500) }
+        )
 
         await store.send(.newPathChanged("a")) { $0.newPath = "a" }
         await store.send(.addPathTapped) {
@@ -404,7 +428,10 @@ struct SearchIndexSettingsFeatureTests {
         let store = store(state: loadedState(settings()), update: { _ in SystemSettings() })
 
         await store.send(.enabledChanged(true)) { $0.isSaving = true }
-        await store.receive(.saveResponse(.failure(.decoding("Settings response carried no search index.")), replacesPaths: false)) {
+        await store.receive(.saveResponse(
+            .failure(.decoding("Settings response carried no search index.")),
+            replacesPaths: false
+        )) {
             $0.isSaving = false
             $0.errorMessage = L10n.Error.decoding
         }

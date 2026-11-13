@@ -31,7 +31,12 @@ struct UserManagementCreationTests: UserManagementTestSupport {
             $0.users.append(created)
             $0.toast = L10n.UserManagement.toastUserCreated
         }
-        #expect(calls.value == [.createUser(CreateUserRequest(email: "new@example.com", username: "newbie", password: "secret1", isAdmin: true))])
+        #expect(calls.value == [.createUser(CreateUserRequest(
+            email: "new@example.com",
+            username: "newbie",
+            password: "secret1",
+            isAdmin: true
+        ))])
     }
 
     @Test(
@@ -54,7 +59,12 @@ struct UserManagementCreationTests: UserManagementTestSupport {
             $0.users.append(created)
             $0.toast = L10n.UserManagement.toastUserCreated
         }
-        #expect(calls.value == [.createUser(CreateUserRequest(email: "new@example.com", username: nil, password: "secret1", isAdmin: false))])
+        #expect(calls.value == [.createUser(CreateUserRequest(
+            email: "new@example.com",
+            username: nil,
+            password: "secret1",
+            isAdmin: false
+        ))])
     }
 
     struct CreateCase: Sendable {
@@ -68,9 +78,27 @@ struct UserManagementCreationTests: UserManagementTestSupport {
     @Test(
         "Create needs a well shaped email and a six character password, with inline errors once typed",
         arguments: [
-            CreateCase(email: "x@y.z", password: TestAccount.totpCode, emailError: nil, passwordError: nil, isSubmitEnabled: true),
-            CreateCase(email: "x@y.z", password: "12345", emailError: nil, passwordError: L10n.UserManagement.errorPasswordTooShort(6), isSubmitEnabled: false),
-            CreateCase(email: "not-an-email", password: "longenough", emailError: L10n.UserManagement.errorEmailInvalid, passwordError: nil, isSubmitEnabled: false),
+            CreateCase(
+                email: "x@y.z",
+                password: TestAccount.totpCode,
+                emailError: nil,
+                passwordError: nil,
+                isSubmitEnabled: true
+            ),
+            CreateCase(
+                email: "x@y.z",
+                password: "12345",
+                emailError: nil,
+                passwordError: L10n.UserManagement.errorPasswordTooShort(6),
+                isSubmitEnabled: false
+            ),
+            CreateCase(
+                email: "not-an-email",
+                password: "longenough",
+                emailError: L10n.UserManagement.errorEmailInvalid,
+                passwordError: nil,
+                isSubmitEnabled: false
+            ),
             CreateCase(email: "", password: "longenough", emailError: nil, passwordError: nil, isSubmitEnabled: false),
             CreateCase(email: "x@y.z", password: "", emailError: nil, passwordError: nil, isSubmitEnabled: false),
         ]
@@ -85,7 +113,11 @@ struct UserManagementCreationTests: UserManagementTestSupport {
 
     @Test
     func aCreateWhileSubmittingIsNotEnabled() {
-        let sheet = UserManagementFeature.CreateUserState(email: "x@y.z", password: TestAccount.totpCode, isSubmitting: true)
+        let sheet = UserManagementFeature.CreateUserState(
+            email: "x@y.z",
+            password: TestAccount.totpCode,
+            isSubmitting: true
+        )
 
         #expect(!sheet.isSubmitEnabled)
     }
@@ -158,7 +190,10 @@ struct UserManagementCreationTests: UserManagementTestSupport {
     @Test
     func aSetPasswordFailureKeepsTheSheetOpenWithItsMessage() async {
         let store = makeStore(loadedState([makeUser(id: "2")], detail: "2"), setPassword: {
-            throw FilesClientError.serverMessage(statusCode: 400, message: "Password must be at least 6 characters long.")
+            throw FilesClientError.serverMessage(
+                statusCode: 400,
+                message: "Password must be at least 6 characters long."
+            )
         })
 
         await store.send(.setPasswordTapped) {
@@ -182,7 +217,12 @@ struct UserManagementCreationTests: UserManagementTestSupport {
         ] as [(String, String?, Bool)]
     )
     func passwordSheetValidation(password: String, error: String?, isSubmitEnabled: Bool) {
-        let sheet = UserManagementFeature.PasswordSheetState(userID: "2", userLabel: "User 2", hasExistingPassword: true, password: password)
+        let sheet = UserManagementFeature.PasswordSheetState(
+            userID: "2",
+            userLabel: "User 2",
+            hasExistingPassword: true,
+            password: password
+        )
 
         #expect(sheet.passwordError == error)
         #expect(sheet.isSubmitEnabled == isSubmitEnabled)

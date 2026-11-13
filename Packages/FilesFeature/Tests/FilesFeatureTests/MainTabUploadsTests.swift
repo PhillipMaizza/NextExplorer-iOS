@@ -12,7 +12,12 @@ import TestUtils
 struct MainTabUploadsTests: MainTabTestSupport {
     @Test("An upload requested from Browse enters the app wide queue and runs against its destination")
     func uploadRequestedFromBrowseEnqueuesIntoTheAppWideQueue() async throws {
-        let file = PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: TestFile.aText, destination: TestFolder.inbox)
+        let file = PendingUpload(
+            id: UUID(0),
+            fileURL: URL(fileURLWithPath: "/tmp/a.txt"),
+            fileName: TestFile.aText,
+            destination: TestFolder.inbox
+        )
         let uploaded = LockIsolated<[String]>([])
         let started = AsyncGate()
         let store = makeStore {
@@ -27,7 +32,8 @@ struct MainTabUploadsTests: MainTabTestSupport {
         await store.send(.browse(.delegate(.uploadRequested([file]))))
         await store.receive(\.uploads.enqueue) {
             $0.uploads.jobs = [UploadsFeature.UploadJob(
-                id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: TestFile.aText, destination: TestFolder.inbox, progress: 0, status: .queued
+                id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: TestFile.aText,
+                destination: TestFolder.inbox, progress: 0, status: .queued
             )]
         }
         await store.receive(\.uploads.startNextIfIdle) {
@@ -46,7 +52,8 @@ struct MainTabUploadsTests: MainTabTestSupport {
     func queueFinishedShowsTheCompletionToastWithAnOpenActionForAnotherFolder() async {
         let store = makeStore()
         let summary = UploadsFeature.FinishSummary(
-            uploadedCount: 2, failedCount: 0, lastDestination: TestPath.documentsReports, changedPaths: [TestPath.documentsReports]
+            uploadedCount: 2, failedCount: 0, lastDestination: TestPath.documentsReports,
+            changedPaths: [TestPath.documentsReports]
         )
 
         await store.send(.uploads(.delegate(.queueFinished(summary)))) {
@@ -63,7 +70,11 @@ struct MainTabUploadsTests: MainTabTestSupport {
             $0.selectedTab = .browse
         }
         await store.receive(\.browse.navigateToDirectory) {
-            $0.browse.path[id: 0] = BrowseFeature.State(serverURL: serverURL, directoryPath: TestPath.documentsReports, title: "Reports")
+            $0.browse.path[id: 0] = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestPath.documentsReports,
+                title: "Reports"
+            )
             $0.recentFolders = [TestPath.documentsReports]
         }
     }
@@ -71,7 +82,11 @@ struct MainTabUploadsTests: MainTabTestSupport {
     @Test("A finished upload into the folder already on screen toasts without an Open action and refetches it")
     func queueFinishedHidesTheOpenActionWhenAlreadyViewingThatFolder() async {
         let state = makeState {
-            $0.browse.root = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.inbox, title: TestFolder.inbox)
+            $0.browse.root = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.inbox,
+                title: TestFolder.inbox
+            )
         }
         let store = makeStore(state) { $0.serveEmptyFolders() }
         let summary = UploadsFeature.FinishSummary(
@@ -99,7 +114,11 @@ struct MainTabUploadsTests: MainTabTestSupport {
     @Test("A finished upload into a folder nobody is looking at refetches nothing")
     func queueFinishedRefreshesOnlyTheChangedFolderThatIsOnScreen() async {
         let state = makeState {
-            $0.browse.root = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.inbox, title: TestFolder.inbox)
+            $0.browse.root = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestFolder.inbox,
+                title: TestFolder.inbox
+            )
         }
         let store = makeStore(state)
         let summary = UploadsFeature.FinishSummary(

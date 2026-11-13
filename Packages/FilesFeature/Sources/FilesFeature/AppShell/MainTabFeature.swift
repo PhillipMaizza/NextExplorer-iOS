@@ -275,7 +275,10 @@ public struct MainTabFeature {
                         // A Mac save lands where the user chose in Finder, not in a Downloads tab.
                         if let savedURL = summary.lastSavedURL {
                             state.lastSavedDownloadURL = savedURL
-                            state.downloadToast = Self.macSavedMessage(count: summary.savedCount, lastSavedURL: savedURL)
+                            state.downloadToast = Self.macSavedMessage(
+                                count: summary.savedCount,
+                                lastSavedURL: savedURL
+                            )
                             return .none
                         }
                     #endif

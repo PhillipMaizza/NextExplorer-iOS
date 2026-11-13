@@ -80,7 +80,11 @@
                             icon(for: item)
                         }
                         if item.id == renamingItemID {
-                            MacInlineRenameField(originalName: item.name, onCommit: onRenameCommit, onCancel: onRenameCancel)
+                            MacInlineRenameField(
+                                originalName: item.name,
+                                onCommit: onRenameCommit,
+                                onCancel: onRenameCancel
+                            )
                         } else {
                             Text(isPersonalSpace(item) ? L10n.Browse.myFiles : item.name)
                                 .lineLimit(1)
@@ -90,12 +94,20 @@
                                 .accessibilityValue(cutItemIDs.contains(item.id) ? L10n.Browse.actionCut : "")
                         }
                         if offlineItemIDs.contains(item.id) {
-                            MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
-                                .accessibilityLabel(L10n.Offline.badgeAvailable)
+                            MacTableFolderIcon(
+                                image: IconKit.download,
+                                tint: Color.accent,
+                                size: MacBrowseTableMetrics.badgeSize
+                            )
+                            .accessibilityLabel(L10n.Offline.badgeAvailable)
                         }
                         if favoriteItemIDs.contains(item.id) {
-                            MacTableFolderIcon(image: IconKit.starFill, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
-                                .accessibilityLabel(L10n.Favorites.accessibilityBadge)
+                            MacTableFolderIcon(
+                                image: IconKit.starFill,
+                                tint: Color.accent,
+                                size: MacBrowseTableMetrics.badgeSize
+                            )
+                            .accessibilityLabel(L10n.Favorites.accessibilityBadge)
                         }
                     }
                     .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
@@ -127,7 +139,12 @@
                 }
                 ForEach(items) { item in
                     TableRow(item)
-                        .draggable(DraggedServerItem(item: item, serverURL: serverURL, scope: scope, filesClient: filesClient))
+                        .draggable(DraggedServerItem(
+                            item: item,
+                            serverURL: serverURL,
+                            scope: scope,
+                            filesClient: filesClient
+                        ))
                         .dropDestination(for: MacRowDrop.self) { drops in
                             guard item.isDirectory else { return }
                             var ids: [FileItem.ID] = []
@@ -196,7 +213,8 @@
             // a double click opens), Return renames, Delete deletes; Edit menu Cut/Copy/Paste/Select
             // All and ⌘I reach the selection through the focused value.
             .onKeyPress(.space) {
-                guard renamingItemID == nil, selection.count == 1, let item = item(for: selection.first) else { return .ignored }
+                guard renamingItemID == nil, selection.count == 1,
+                      let item = item(for: selection.first) else { return .ignored }
                 if item.isDirectory {
                     keyboardActions.getInfo()
                 } else if quickLookPanel.isVisible {
@@ -349,8 +367,20 @@
         @Previewable @State var selection: Set<FileItem.ID> = []
         let items: IdentifiedArrayOf<FileItem> = [
             FileItem(name: "Projects", path: "", dateModified: Date(), size: 0, kind: "directory"),
-            FileItem(name: "report.pdf", path: "", dateModified: Date().addingTimeInterval(-86_400), size: 182_000, kind: "pdf"),
-            FileItem(name: "beach.jpg", path: "", dateModified: Date().addingTimeInterval(-86_400 * 9), size: 2_400_000, kind: "jpg"),
+            FileItem(
+                name: "report.pdf",
+                path: "",
+                dateModified: Date().addingTimeInterval(-86_400),
+                size: 182_000,
+                kind: "pdf"
+            ),
+            FileItem(
+                name: "beach.jpg",
+                path: "",
+                dateModified: Date().addingTimeInterval(-86_400 * 9),
+                size: 2_400_000,
+                kind: "jpg"
+            ),
         ]
         MacBrowseTableView(
             items: items,

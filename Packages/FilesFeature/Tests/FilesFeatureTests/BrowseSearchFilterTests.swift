@@ -91,8 +91,16 @@ struct BrowseSearchFilterTests {
     func theInstantPreFillDoesNotDropASelectedCategoryTheCurrentFolderLacks() async {
         // The pre-fill only sees the current folder, so pruning the selection against it would
         // wrongly clear a category that the server's subtree contains and this folder does not.
-        let videoHit = SearchResultItem(name: Constants.clip, path: TestSearch.deepHitPath, kind: SearchResultItem.fileKind)
-        var state = BrowseFixtures.state(TestFolder.photos, title: TestFolder.photos, items: [BrowseFixtures.file(TestFile.report, in: TestFolder.photos)])
+        let videoHit = SearchResultItem(
+            name: Constants.clip,
+            path: TestSearch.deepHitPath,
+            kind: SearchResultItem.fileKind
+        )
+        var state = BrowseFixtures.state(
+            TestFolder.photos,
+            title: TestFolder.photos,
+            items: [BrowseFixtures.file(TestFile.report, in: TestFolder.photos)]
+        )
         state.selectedSearchCategories = [.video]
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {

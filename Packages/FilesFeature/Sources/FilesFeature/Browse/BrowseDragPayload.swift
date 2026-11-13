@@ -76,7 +76,9 @@ enum DropPathValidation {
     static func isSafeRelativePath(_ path: String) -> Bool {
         guard !path.isEmpty, !path.unicodeScalars.contains(DragConstants.nulScalar) else { return false }
         return path.split(separator: Character(DragConstants.pathSeparator), omittingEmptySubsequences: false)
-            .allSatisfy { !$0.isEmpty && $0 != DragConstants.currentDirectorySegment && $0 != DragConstants.parentDirectorySegment }
+            .allSatisfy {
+                !$0.isEmpty && $0 != DragConstants.currentDirectorySegment && $0 != DragConstants.parentDirectorySegment
+            }
     }
 
     private static func isSafeName(_ name: String) -> Bool {
@@ -110,7 +112,11 @@ struct DraggedServerItem: Transferable {
 extension DraggedServerItem {
     init(item: FileItem, selection: [FileItem] = [], serverURL: URL, scope: String, filesClient: FilesClient) {
         self.init(
-            reference: ServerItemReference(dragging: item, selection: selection, origin: .current(serverURL: serverURL, scope: scope)),
+            reference: ServerItemReference(
+                dragging: item,
+                selection: selection,
+                origin: .current(serverURL: serverURL, scope: scope)
+            ),
             fileName: item.name,
             isDirectory: item.isDirectory
         ) {
@@ -129,7 +135,13 @@ struct DraggedServerItemBuilder {
     let selection: () -> [FileItem]
 
     func build() -> DraggedServerItem {
-        DraggedServerItem(item: item, selection: selection(), serverURL: serverURL, scope: scope, filesClient: filesClient)
+        DraggedServerItem(
+            item: item,
+            selection: selection(),
+            serverURL: serverURL,
+            scope: scope,
+            filesClient: filesClient
+        )
     }
 }
 
@@ -237,6 +249,7 @@ struct BrowseDropPlan: Equatable {
     }
 
     static func canMove(_ item: FileItem, into destination: String) -> Bool {
-        item.id != destination && item.path != destination && !destination.hasPrefix(item.id + DragConstants.pathSeparator)
+        item.id != destination && item.path != destination && !destination
+            .hasPrefix(item.id + DragConstants.pathSeparator)
     }
 }

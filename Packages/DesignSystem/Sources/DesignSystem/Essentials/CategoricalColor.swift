@@ -27,7 +27,19 @@ public extension Color {
 
 #Preview {
     VStack(alignment: .leading, spacing: 8) {
-        ForEach(["Jamie Rivera", "Sam Okafor", "Jeremy Brown", "Dana Lee", "Priya Nair", "Marco Bianchi", "Alex Kim", "Wei Zhang"], id: \.self) { name in
+        ForEach(
+            [
+                "Jamie Rivera",
+                "Sam Okafor",
+                "Jeremy Brown",
+                "Dana Lee",
+                "Priya Nair",
+                "Marco Bianchi",
+                "Alex Kim",
+                "Wei Zhang",
+            ],
+            id: \.self
+        ) { name in
             Text(name)
                 .type(.body2(.semibold))
                 .foregroundStyle(Color.categorical(for: name))

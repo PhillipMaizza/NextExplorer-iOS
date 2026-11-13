@@ -34,10 +34,21 @@ struct CatalogTests {
     /// The plural categories a language needs for whole numbers, from the CLDR plural rules.
     private static let requiredCategories: [String: Set<String>] = [
         "en": ["one", "other"], "de": ["one", "other"], "es": ["one", "other"], "fr": ["one", "other"],
-        "it": ["one", "other"], "nl": ["one", "other"], "pt": ["one", "other"], "pt-BR": ["one", "other"], "tr": ["one", "other"], "id": ["other"], "vi": ["other"], "sv": ["one", "other"],
+        "it": ["one", "other"], "nl": ["one", "other"], "pt": ["one", "other"], "pt-BR": ["one", "other"], "tr": [
+            "one",
+            "other",
+        ], "id": ["other"], "vi": ["other"], "sv": ["one", "other"],
         "hi": ["one", "other"],
         "ru": ["one", "few", "many", "other"], "pl": ["one", "few", "many", "other"],
-        "uk": ["one", "few", "many", "other"], "he": ["one", "two", "other"], "da": ["one", "other"], "nb": ["one", "other"], "fi": ["one", "other"], "el": ["one", "other"], "hu": ["one", "other"], "th": ["other"], "cs": ["one", "few", "many", "other"],
+        "uk": ["one", "few", "many", "other"], "he": ["one", "two", "other"], "da": ["one", "other"], "nb": [
+            "one",
+            "other",
+        ], "fi": ["one", "other"], "el": ["one", "other"], "hu": ["one", "other"], "th": ["other"], "cs": [
+            "one",
+            "few",
+            "many",
+            "other",
+        ],
         "ro": ["one", "few", "other"],
         "ar": ["zero", "one", "two", "few", "many", "other"],
         "ja": ["other"], "ko": ["other"], "zh-CN": ["other"], "zh-TW": ["other"],

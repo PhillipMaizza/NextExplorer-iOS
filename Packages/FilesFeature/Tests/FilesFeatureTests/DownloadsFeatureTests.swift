@@ -8,7 +8,10 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct DownloadsFeatureTests {
-    private func makeDownload(fileName: String = TestFile.report, location: DownloadLocation = .documents) -> LocalDownload {
+    private func makeDownload(
+        fileName: String = TestFile.report,
+        location: DownloadLocation = .documents
+    ) -> LocalDownload {
         LocalDownload(
             url: URL(fileURLWithPath: "/tmp/\(location.title)/Downloads/\(fileName)"),
             fileName: fileName,

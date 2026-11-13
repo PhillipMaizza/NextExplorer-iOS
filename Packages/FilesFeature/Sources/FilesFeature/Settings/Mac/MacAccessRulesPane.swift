@@ -103,7 +103,8 @@
     }
 
     #Preview("Access rules") {
-        var state = AccessRulesFeature.State(serverURL: URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/"))
+        var state = AccessRulesFeature
+            .State(serverURL: URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/"))
         let rules = [
             AccessRule(id: "1", path: "Documents/Reports", isRecursive: true, permission: .readOnly),
             AccessRule(id: "2", path: "Private", isRecursive: false, permission: .hidden),

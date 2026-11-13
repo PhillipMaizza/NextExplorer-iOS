@@ -22,7 +22,11 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(
+                statusCode: statusCode,
+                headers: [HTTPHeaderField.contentType: MIMEType.json],
+                body: Data(body.utf8)
+            )
         }
 
         private func sentJSON() throws -> [String: String] {
@@ -60,7 +64,10 @@ extension FilesClientLiveTests {
         func beginningSetupWithoutAPasswordSessionSurfacesTheMessage() async throws {
             try stub(statusCode: 403, body: FilesClientFixture.twoFactorErrorPasswordRequired.string())
 
-            await #expect(throws: FilesClientError.serverMessage(statusCode: 403, message: "Sign in with your password")) {
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 403,
+                message: "Sign in with your password"
+            )) {
                 try await makeClient().beginTwoFactorSetup(serverURL)
             }
         }

@@ -10,7 +10,8 @@ import ShareUploads
 import Testing
 import TestUtils
 
-/// Checking and recovering from a stale default folder. Nested in `ShareUploadFeatureTests` so it inherits `.serialized` with every other share upload suite.
+/// Checking and recovering from a stale default folder. Nested in `ShareUploadFeatureTests` so it inherits
+/// `.serialized` with every other share upload suite.
 extension ShareUploadFeatureTests {
     @MainActor
     @Suite(.isolatedDependencies)

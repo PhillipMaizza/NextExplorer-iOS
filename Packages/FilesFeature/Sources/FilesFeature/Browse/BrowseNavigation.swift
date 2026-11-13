@@ -74,7 +74,11 @@ extension BrowseHistoryState {
             return
         }
         path.removeLast()
-        path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: parent, title: (parent as NSString).lastPathComponent))
+        path.append(BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: parent,
+            title: (parent as NSString).lastPathComponent
+        ))
     }
 }
 

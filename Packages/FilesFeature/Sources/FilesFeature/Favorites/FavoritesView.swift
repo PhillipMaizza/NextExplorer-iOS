@@ -168,7 +168,9 @@ struct FavoritesView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
-                title: store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle,
+                title: store.isSelecting
+                    ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count)
+                    : L10n.Favorites.navigationTitle,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
                 shouldFadeIntoContent: !isMacTable,
                 isSearchPending: store.isSearchPending

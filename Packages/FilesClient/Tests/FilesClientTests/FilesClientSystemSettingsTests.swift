@@ -22,14 +22,21 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(
+                statusCode: statusCode,
+                headers: [HTTPHeaderField.contentType: MIMEType.json],
+                body: Data(body.utf8)
+            )
         }
 
         @Test
         func patchSendsOnlyTheSectionsSetAndDecodesTheEcho() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.systemSettingsSearchIndex.string())
 
-            let echoed = try await makeClient().updateSystemSettings(serverURL, SystemSettingsPatch(searchIndex: .init(enabled: true)))
+            let echoed = try await makeClient().updateSystemSettings(
+                serverURL,
+                SystemSettingsPatch(searchIndex: .init(enabled: true))
+            )
 
             #expect(echoed.searchIndex?.isEnabled == true)
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -45,7 +52,10 @@ extension FilesClientLiveTests {
             try stub(statusCode: 403, body: FilesClientFixture.commonErrorAdminRequired.string())
 
             await #expect(throws: FilesClientError.self) {
-                _ = try await makeClient().updateSystemSettings(serverURL, SystemSettingsPatch(ffmpeg: .init(ffmpegPath: "/a")))
+                _ = try await makeClient().updateSystemSettings(
+                    serverURL,
+                    SystemSettingsPatch(ffmpeg: .init(ffmpegPath: "/a"))
+                )
             }
         }
 
@@ -54,7 +64,10 @@ extension FilesClientLiveTests {
             try stub(statusCode: 200, body: FilesClientFixture.systemSettingsUploadsChunked.string())
 
             let echoed = try await makeClient().updateSystemSettings(
-                serverURL, SystemSettingsPatch(uploads: UploadSettings(isChunkedEnabled: true, chunkSizeBytes: 33_554_432))
+                serverURL, SystemSettingsPatch(uploads: UploadSettings(
+                    isChunkedEnabled: true,
+                    chunkSizeBytes: 33_554_432
+                ))
             )
 
             #expect(echoed.uploads?.chunkSizeBytes == 33_554_432)
@@ -77,7 +90,11 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(
+                statusCode: statusCode,
+                headers: [HTTPHeaderField.contentType: MIMEType.json],
+                body: Data(body.utf8)
+            )
         }
 
         @Test
@@ -85,12 +102,18 @@ extension FilesClientLiveTests {
             try stub(statusCode: 200, body: FilesClientFixture.activityLogEnabledEmpty.string())
 
             _ = try await makeClient().fetchActivity(
-                serverURL, ActivityFilter(action: "file.delete", outcome: .refused, query: " a+b&c "), "2026-11-11T07:10:00.000Z"
+                serverURL, ActivityFilter(action: "file.delete", outcome: .refused, query: " a+b&c "),
+                "2026-11-11T07:10:00.000Z"
             )
 
             let url = try #require(StubURLProtocol.capturedRequest?.url)
             #expect(url.path == "/api/activity")
-            let items = Dictionary(uniqueKeysWithValues: (URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []).map { ($0.name, $0.value ?? "") })
+            let items =
+                Dictionary(uniqueKeysWithValues: (URLComponents(url: url, resolvingAgainstBaseURL: false)?
+                        .queryItems ?? []).map { (
+                    $0.name,
+                    $0.value ?? ""
+                ) })
             #expect(items["action"] == "file.delete")
             #expect(items["outcome"] == "refused")
             #expect(items["q"] == "a+b&c")
@@ -154,7 +177,11 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(
+                statusCode: statusCode,
+                headers: [HTTPHeaderField.contentType: MIMEType.json],
+                body: Data(body.utf8)
+            )
         }
 
         @Test
@@ -216,7 +243,10 @@ extension FilesClientLiveTests {
 
             let echoed = try await makeClient().updateSystemSettings(
                 serverURL,
-                SystemSettingsPatch(trash: TrashSettings(retentionDays: 7), versions: VersionsSettings(isEnabled: false))
+                SystemSettingsPatch(
+                    trash: TrashSettings(retentionDays: 7),
+                    versions: VersionsSettings(isEnabled: false)
+                )
             )
 
             #expect(echoed.trash?.retentionDays == 7)
@@ -244,7 +274,11 @@ extension FilesClientLiveTests {
 
         private func stub(statusCode: Int, body: String = "") {
             StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(statusCode: statusCode, headers: [HTTPHeaderField.contentType: MIMEType.json], body: Data(body.utf8))
+            StubURLProtocol.stub = .init(
+                statusCode: statusCode,
+                headers: [HTTPHeaderField.contentType: MIMEType.json],
+                body: Data(body.utf8)
+            )
         }
 
         private func queryItems() throws -> [String: String] {
@@ -311,7 +345,11 @@ extension FilesClientLiveTests {
         func deletingNamedVersionsPostsTheirIDs() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.versionsDeletionRemainingOne.string())
 
-            let outcome = try await makeClient().deleteVersionsOfFile(serverURL, "f1", [TestETag.first, TestETag.second])
+            let outcome = try await makeClient().deleteVersionsOfFile(
+                serverURL,
+                "f1",
+                [TestETag.first, TestETag.second]
+            )
 
             #expect(outcome == VersionsDeletion(deleted: 2, remaining: 1))
             let request = try #require(StubURLProtocol.capturedRequest)

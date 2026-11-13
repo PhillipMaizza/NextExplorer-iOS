@@ -32,8 +32,12 @@
                         .accessibilityHidden(true)
                         Text(favorite.displayName).lineLimit(1).truncationMode(.middle)
                         if store.offlineFavoriteIDs.contains(favorite.id) {
-                            MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
-                                .accessibilityLabel(L10n.Offline.badgeAvailable)
+                            MacTableFolderIcon(
+                                image: IconKit.download,
+                                tint: Color.accent,
+                                size: MacBrowseTableMetrics.badgeSize
+                            )
+                            .accessibilityLabel(L10n.Offline.badgeAvailable)
                         }
                     }
                     .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
@@ -51,7 +55,10 @@
                     // The app's own private drag type: a plain string would drop the id as text
                     // into other apps, and accept any text dragged in.
                     TableRow(favorite)
-                        .draggable(ServerItemReference(id: favorite.id, origin: .current(serverURL: store.serverURL, scope: store.cacheScope)))
+                        .draggable(ServerItemReference(
+                            id: favorite.id,
+                            origin: .current(serverURL: store.serverURL, scope: store.cacheScope)
+                        ))
                         .dropDestination(for: ServerItemReference.self) { references in
                             let receiver = DragOrigin.current(serverURL: store.serverURL, scope: store.cacheScope)
                             move(references.first { $0.origin == receiver }?.id, onto: favorite.id)
@@ -104,7 +111,8 @@
             }
         }
 
-        /// Translated into the `IndexSet` and destination `onMove` reports, so the reducer handles both platforms alike.
+        /// Translated into the `IndexSet` and destination `onMove` reports, so the reducer handles both platforms
+        /// alike.
         private func move(_ draggedID: String?, onto targetID: String) {
             let orderedIDs = favorites.map(\.id)
             guard store.canReorder,
@@ -125,8 +133,26 @@
                 )
             ) { FavoritesFeature() },
             favorites: [
-                Favorite(id: "1", path: "/Documents/Projects", label: "Projects", icon: "folder", color: nil, position: 0, createdAt: Date(), updatedAt: Date()),
-                Favorite(id: "2", path: "/Photos/2026", label: nil, icon: "star", color: "blue", position: 1, createdAt: Date(), updatedAt: Date()),
+                Favorite(
+                    id: "1",
+                    path: "/Documents/Projects",
+                    label: "Projects",
+                    icon: "folder",
+                    color: nil,
+                    position: 0,
+                    createdAt: Date(),
+                    updatedAt: Date()
+                ),
+                Favorite(
+                    id: "2",
+                    path: "/Photos/2026",
+                    label: nil,
+                    icon: "star",
+                    color: "blue",
+                    position: 1,
+                    createdAt: Date(),
+                    updatedAt: Date()
+                ),
             ]
         )
         .previewCanvas(.table)

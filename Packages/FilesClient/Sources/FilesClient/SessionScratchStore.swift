@@ -4,7 +4,8 @@ import Foundation
 import NetworkClient
 
 /// The app's scratch files in `tmp`: archive entries extracted for preview, rendered HTML and
-/// Markdown previews, files staged for upload, files dropped on a window, upload envelopes, and download bodies a caller never
+/// Markdown previews, files staged for upload, files dropped on a window, upload envelopes, and download bodies a
+/// caller never
 /// moved (a crash mid transfer). Each owner cleans up after itself, but a kill or a crash leaves
 /// them behind, and they hold one account's file contents. Purged at every session boundary with
 /// the cache stores, so nothing survives into the next sign in. The shared HTTP cache goes too:
@@ -36,7 +37,8 @@ public extension SessionScratchStore {
         SessionScratchStore(purge: { scope in
             let fileManager = FileManager.default
             var folders = [
-                SessionScratchLocation.archiveBrowser, SessionScratchLocation.htmlPreview, SessionScratchLocation.droppedFiles,
+                SessionScratchLocation.archiveBrowser, SessionScratchLocation.htmlPreview,
+                SessionScratchLocation.droppedFiles,
             ]
             if scope == .everything {
                 folders.append(SessionScratchLocation.pendingUploads)
@@ -48,7 +50,10 @@ public extension SessionScratchStore {
             let prefixes = scope == .everything
                 ? [SessionScratchLocation.uploadEnvelopePrefix, NetworkClient.downloadTemporaryFilePrefix]
                 : []
-            let entries = (try? fileManager.contentsOfDirectory(at: temporaryDirectory, includingPropertiesForKeys: nil)) ?? []
+            let entries = (try? fileManager.contentsOfDirectory(
+                at: temporaryDirectory,
+                includingPropertiesForKeys: nil
+            )) ?? []
             for entry in entries where prefixes.contains(where: entry.lastPathComponent.hasPrefix) {
                 try? fileManager.removeItem(at: entry)
             }

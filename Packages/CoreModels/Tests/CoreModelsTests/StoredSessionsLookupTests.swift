@@ -5,7 +5,12 @@ import TestUtils
 
 @Suite("StoredSessions lookup and cookies")
 struct StoredSessionsLookupTests {
-    private func credentials(host: String, username: String?, expiresAt: Date? = nil, isSecure: Bool = true) -> SessionCredentials {
+    private func credentials(
+        host: String,
+        username: String?,
+        expiresAt: Date? = nil,
+        isSecure: Bool = true
+    ) -> SessionCredentials {
         SessionCredentials(
             serverBaseURL: URL(string: "https://\(host)") ?? URL(fileURLWithPath: "/"),
             authMode: .local,
@@ -45,7 +50,8 @@ struct StoredSessionsLookupTests {
 
     @Test("a persisted expiry is carried onto the reconstructed cookie")
     func cookieCarriesExpiry() throws {
-        let cookie = try #require(credentials(host: TestHost.server, username: nil, expiresAt: MockDate.date).httpCookie)
+        let cookie = try #require(credentials(host: TestHost.server, username: nil, expiresAt: MockDate.date)
+            .httpCookie)
         #expect(cookie.expiresDate == MockDate.date)
         #expect(!cookie.isSessionOnly)
     }

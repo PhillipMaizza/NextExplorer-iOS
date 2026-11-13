@@ -82,7 +82,8 @@ struct PDFThumbnailCacheTests {
 
         #expect(first != nil)
         #expect(second != nil)
-        #expect(FileManager.default.fileExists(atPath: PDFThumbnailCache.renderCacheFileURL(in: cacheDirectory, for: key).path))
+        #expect(FileManager.default
+            .fileExists(atPath: PDFThumbnailCache.renderCacheFileURL(in: cacheDirectory, for: key).path))
     }
 
     // MARK: Edge cases

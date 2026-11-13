@@ -14,7 +14,8 @@ extension AppSuites {
     struct UploadNotificationTapTests {
         private typealias Store = TestStore<AppFeature.State, AppFeature.Action>
 
-        private func tap(_ accountID: String, _ folder: String = TestPath.filesDocuments) -> UploadNotificationTaps.Tap {
+        private func tap(_ accountID: String, _ folder: String = TestPath.filesDocuments) -> UploadNotificationTaps.Tap
+        {
             UploadNotificationTaps.Tap(accountID: accountID, folder: folder)
         }
 
@@ -24,7 +25,10 @@ extension AppSuites {
             accounts: [AccountSummary],
             pending: AppFeature.PendingUploadFolder? = nil
         ) -> AppFeature.State {
-            var state = AppFeature.State(destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user)))
+            var state = AppFeature.State(destination: .authenticated(AuthenticatedFeature.State(
+                serverURL: serverURL,
+                user: user
+            )))
             state.$accounts.withLock { $0 = accounts }
             state.pendingUploadFolder = pending
             return state
@@ -67,7 +71,10 @@ extension AppSuites {
             let store = makeStore(signedIn(accounts: [AppFixtures.summaryA, AppFixtures.summaryB]))
 
             await store.send(.uploadNotificationTapped(tap(AppFixtures.accountB, TestFolder.photos))) {
-                $0.pendingUploadFolder = AppFeature.PendingUploadFolder(tap: tap(AppFixtures.accountB, TestFolder.photos), hasRequestedSwitch: true)
+                $0.pendingUploadFolder = AppFeature.PendingUploadFolder(
+                    tap: tap(AppFixtures.accountB, TestFolder.photos),
+                    hasRequestedSwitch: true
+                )
             }
             await store.receive(\.destination.authenticated.mainTab.delegate, .switchAccount(AppFixtures.accountB))
 

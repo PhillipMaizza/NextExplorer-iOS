@@ -163,7 +163,10 @@ public struct DSButton: View {
             .background(RoundedRectangle(cornerRadius: .radiusControl).fill(style.backgroundColor))
             .overlay(
                 RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(style.borderColor, lineWidth: style == .secondary || style == .outline ? .borderWidthHairline : 0)
+                    .stroke(
+                        style.borderColor,
+                        lineWidth: style == .secondary || style == .outline ? .borderWidthHairline : 0
+                    )
             )
         }
         .buttonStyle(DSHapticButtonStyle())

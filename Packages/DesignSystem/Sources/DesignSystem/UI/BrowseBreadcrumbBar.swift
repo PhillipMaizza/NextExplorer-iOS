@@ -92,7 +92,10 @@ public struct BrowseBreadcrumbBar: View {
                     ForEach(pathSegments.indices, id: \.self) { index in
                         chevron
                         segment(
-                            title: PersonalSpace.displayName(forSegment: pathSegments[index], isFirstSegment: index == 0 && rootPath.isEmpty),
+                            title: PersonalSpace.displayName(
+                                forSegment: pathSegments[index],
+                                isFirstSegment: index == 0 && rootPath.isEmpty
+                            ),
                             path: cumulativePath(through: index),
                             icon: nil
                         )

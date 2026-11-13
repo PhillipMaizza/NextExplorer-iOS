@@ -19,7 +19,12 @@ struct DataPhaseTests {
         Case(phase: .idle, hasLoaded: false, errorMessage: nil, shouldLoadOnAppear: true),
         Case(phase: .loading, hasLoaded: false, errorMessage: nil, shouldLoadOnAppear: false),
         Case(phase: .loaded, hasLoaded: true, errorMessage: nil, shouldLoadOnAppear: false),
-        Case(phase: .failed(TestFailure.offline), hasLoaded: true, errorMessage: TestFailure.offline, shouldLoadOnAppear: true),
+        Case(
+            phase: .failed(TestFailure.offline),
+            hasLoaded: true,
+            errorMessage: TestFailure.offline,
+            shouldLoadOnAppear: true
+        ),
         Case(phase: .failed(""), hasLoaded: true, errorMessage: "", shouldLoadOnAppear: true),
     ]
 

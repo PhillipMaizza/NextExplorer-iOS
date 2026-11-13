@@ -67,7 +67,10 @@ struct TrashSettingsMaintenanceTests: TrashSettingsTestSupport {
     @Test
     func maintenanceRunsThenReloadsTheVolumesAndForgetsTheVerification() async {
         var state = loadedState()
-        state.verification = [TrashVerification(zoneID: "z1", violations: [.init(invariant: "I1", detail: "content missing")])]
+        state.verification = [TrashVerification(
+            zoneID: "z1",
+            violations: [.init(invariant: "I1", detail: "content missing")]
+        )]
         let fresh = TrashZone(id: "z9", name: "fresh")
         let store = store(state: state, zones: { [fresh] })
 
@@ -134,7 +137,8 @@ struct TrashSettingsMaintenanceTests: TrashSettingsTestSupport {
         JournalCase(kind: "versions-breaker", text: L10n.TrashSettings.eventVersionsBreaker),
     ])
     func eachJournalKindHasItsOwnWording(_ testCase: JournalCase) {
-        #expect(TrashEventLabel.text(for: TrashEvent(id: "1", kind: testCase.kind, itemName: TestFile.aText)) == testCase.text)
+        #expect(TrashEventLabel
+            .text(for: TrashEvent(id: "1", kind: testCase.kind, itemName: TestFile.aText)) == testCase.text)
     }
 
     @Test

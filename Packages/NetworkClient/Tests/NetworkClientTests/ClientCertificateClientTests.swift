@@ -58,7 +58,11 @@ struct ClientCertificateClientTests {
         let store = ClientIdentityStore(keychain: .inMemory())
         let client = ClientCertificateClient.live(store: store)
 
-        let summary = try await client.install(MutualTLSFixtures.data(.clientIdentity), MutualTLSFixtures.passphrase, first)
+        let summary = try await client.install(
+            MutualTLSFixtures.data(.clientIdentity),
+            MutualTLSFixtures.passphrase,
+            first
+        )
         _ = try await client.install(MutualTLSFixtures.data(.clientIdentity), MutualTLSFixtures.passphrase, second)
 
         #expect(summary.subject == TestCertificate.subject)
@@ -87,7 +91,11 @@ struct ClientCertificateClientTests {
     @Test("hasCertificate follows the URL's origin including its port and rejects a URL without a host")
     func hasCertificateByURL() throws {
         let store = ClientIdentityStore(keychain: .inMemory())
-        try store.install(pkcs12: MutualTLSFixtures.data(.clientIdentity), passphrase: MutualTLSFixtures.passphrase, for: second)
+        try store.install(
+            pkcs12: MutualTLSFixtures.data(.clientIdentity),
+            passphrase: MutualTLSFixtures.passphrase,
+            for: second
+        )
 
         #expect(store.hasCertificate(for: URL(filePath: "/")) == false)
         #expect(try store.hasCertificate(for: #require(URL(string: "https://\(TestHost.secondServer):8443/api"))))

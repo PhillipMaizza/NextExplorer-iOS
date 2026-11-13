@@ -62,7 +62,10 @@ struct UserManagementDetailTests: UserManagementTestSupport {
 
     @Test
     func openingDetailLoadsVolumesWhenTheFeatureIsOn() async {
-        let store = makeStore(loadedState([makeUser(id: "2")], isVolumesEnabled: true), volumes: { [projects] _ in [projects] })
+        let store = makeStore(
+            loadedState([makeUser(id: "2")], isVolumesEnabled: true),
+            volumes: { [projects] _ in [projects] }
+        )
 
         await store.send(.userTapped("2")) {
             $0.detailUserID = "2"

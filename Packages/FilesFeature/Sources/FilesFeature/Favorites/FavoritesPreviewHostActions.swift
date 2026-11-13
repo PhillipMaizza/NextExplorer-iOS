@@ -42,7 +42,8 @@ struct FavoritesPreviewHostActions: ViewModifier {
             .dsAlert(isPresented: isConfirmingDelete) {
                 DSAlertSheet(
                     icon: IconKit.delete,
-                    title: host.deleteConfirmationItem.map { L10n.Browse.deleteConfirmOne($0.name) } ?? L10n.Browse.deleteConfirmTitle,
+                    title: host.deleteConfirmationItem.map { L10n.Browse.deleteConfirmOne($0.name) }
+                        ?? L10n.Browse.deleteConfirmTitle,
                     message: L10n.Browse.deleteMessage,
                     confirmTitle: L10n.Common.delete,
                     dismissTitle: L10n.Common.cancel,

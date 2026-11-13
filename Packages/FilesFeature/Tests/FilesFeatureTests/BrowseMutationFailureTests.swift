@@ -69,7 +69,10 @@ struct BrowseMutationFailureTests {
         }
     }
 
-    @Test("A delete that may have applied refetches the folder instead of assuming it failed", arguments: ambiguousErrors)
+    @Test(
+        "A delete that may have applied refetches the folder instead of assuming it failed",
+        arguments: ambiguousErrors
+    )
     func anAmbiguousDeleteFailureRefetchesTheFolder(error: FilesClientError) async {
         let browseCalls = LockIsolated(0)
         let favorites = AsyncGate()
@@ -90,7 +93,10 @@ struct BrowseMutationFailureTests {
         #expect(browseCalls.value == 1)
     }
 
-    @Test("A transfer that may have applied refetches the folder and shows what the server holds", arguments: ambiguousErrors)
+    @Test(
+        "A transfer that may have applied refetches the folder and shows what the server holds",
+        arguments: ambiguousErrors
+    )
     func anAmbiguousTransferFailureRefetchesTheFolder(error: FilesClientError) async {
         let copy = BrowseFixtures.file("a (2).txt", in: TestPath.docsLowercase)
         let browseCalls = LockIsolated(0)

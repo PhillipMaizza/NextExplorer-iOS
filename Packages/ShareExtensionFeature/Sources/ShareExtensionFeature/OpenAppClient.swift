@@ -25,7 +25,8 @@ extension OpenAppClient: DependencyKey {
     public static var liveValue: OpenAppClient {
         #if os(macOS)
             OpenAppClient(isAvailable: true) {
-                guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: appBundleIdentifier) else { return }
+                guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: appBundleIdentifier)
+                else { return }
                 NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
             }
         #else

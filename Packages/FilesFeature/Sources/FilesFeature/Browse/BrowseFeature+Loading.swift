@@ -84,7 +84,9 @@ extension BrowseFeature {
                         if coveredByPin {
                             result.insert(item.id)
                         }
-                    } else if coveredByPin || offlineFileStore.localURL(item) != nil || downloadedNames.contains(item.name) {
+                    } else if coveredByPin || offlineFileStore.localURL(item) != nil || downloadedNames
+                        .contains(item.name)
+                    {
                         result.insert(item.id)
                     }
                 }

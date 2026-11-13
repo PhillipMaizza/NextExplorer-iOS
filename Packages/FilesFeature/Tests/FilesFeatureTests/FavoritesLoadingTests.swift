@@ -60,7 +60,11 @@ struct FavoritesLoadingTests: FavoritesTestSupport {
         }
 
         await store.send(.rowTapped(favorite)) {
-            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Vacation", title: "My Trip"))
+            $0.path.append(BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: "Photos/Vacation",
+                title: "My Trip"
+            ))
         }
     }
 
@@ -72,14 +76,22 @@ struct FavoritesLoadingTests: FavoritesTestSupport {
         }
 
         await store.send(.rowTapped(favorite)) {
-            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Vacation", title: "Vacation"))
+            $0.path.append(BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: "Photos/Vacation",
+                title: "Vacation"
+            ))
         }
     }
 
     @Test
     func offlineFallsBackToTheSavedCopyUnderTheBanner() async throws {
         let fav = makeFavorite(id: "1", path: TestFolder.docs)
-        let cache = try JSONCacheStore.seeded([fav], forKey: ListCache.key(Constants.favorites, serverURL: serverURL), fetchedAt: MockDate.date)
+        let cache = try JSONCacheStore.seeded(
+            [fav],
+            forKey: ListCache.key(Constants.favorites, serverURL: serverURL),
+            fetchedAt: MockDate.date
+        )
         let gate = AsyncGate()
 
         let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
@@ -123,7 +135,10 @@ struct FavoritesLoadingTests: FavoritesTestSupport {
     func stateInitPaintsTheSavedCopySoTheFirstFrameIsNotBlank() throws {
         let cache = JSONCacheStore.inMemory()
         let fav = makeFavorite(id: "7", path: "Downloads")
-        try cache.write(key: ListCache.key(Constants.favorites, serverURL: serverURL), data: JSONEncoder().encode([fav]))
+        try cache.write(
+            key: ListCache.key(Constants.favorites, serverURL: serverURL),
+            data: JSONEncoder().encode([fav])
+        )
 
         // Constructed inside the dependency context the way the app builds the tab at mount: the
         // saved copy is painted synchronously, before any `onAppear`, so an unreachable server

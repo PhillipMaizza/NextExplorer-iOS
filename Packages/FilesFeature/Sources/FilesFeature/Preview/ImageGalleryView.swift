@@ -309,7 +309,10 @@ struct ImageGalleryPage: View {
                 .transition(.opacity)
                 // Settle from a slight scale to 1 the moment the final image lands.
                 .scaleEffect(phase.isFinal ? 1 : Constants.settleFromScale)
-                .animation(.spring(response: Constants.settleSpringResponse, dampingFraction: Constants.settleSpringDamping), value: phase.isFinal)
+                .animation(
+                    .spring(response: Constants.settleSpringResponse, dampingFraction: Constants.settleSpringDamping),
+                    value: phase.isFinal
+                )
             case let .failed(message):
                 statusContent(message: message)
             case .loading:

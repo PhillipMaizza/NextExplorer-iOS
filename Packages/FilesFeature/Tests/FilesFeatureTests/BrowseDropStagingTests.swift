@@ -63,13 +63,20 @@ struct BrowseDropStagingTests {
 
     @Test("A failed stage leaves no empty folder behind")
     func aFailedStageLeavesNoEmptyFolderBehind() throws {
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("stage-root-\(TestID.name())", isDirectory: true)
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "stage-root-\(TestID.name())",
+            isDirectory: true
+        )
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: root) }
         let isolated = IsolatedTemporaryFileManager(root: root)
         let missing = root.appendingPathComponent("missing.txt")
 
-        #expect(throws: (any Error).self) { try DroppedFileStaging.stage(missing, isOriginal: false, fileManager: isolated) }
+        #expect(throws: (any Error).self) { try DroppedFileStaging.stage(
+            missing,
+            isOriginal: false,
+            fileManager: isolated
+        ) }
 
         let staging = DroppedFileStaging.directory(in: root)
         let leftovers = (try? FileManager.default.contentsOfDirectory(atPath: staging.path)) ?? []
@@ -100,7 +107,10 @@ struct BrowseDropStagingTests {
 
     @Test("The stale sweep removes old drop copies and keeps fresh ones")
     func theStaleSweepRemovesOldDropCopiesAndKeepsFreshOnes() throws {
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("sweep-\(TestID.name())", isDirectory: true)
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "sweep-\(TestID.name())",
+            isDirectory: true
+        )
         defer { try? FileManager.default.removeItem(at: root) }
         let old = root.appendingPathComponent(TestValue.outdated, isDirectory: true)
         let fresh = root.appendingPathComponent("fresh", isDirectory: true)
@@ -108,8 +118,14 @@ struct BrowseDropStagingTests {
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         }
         let staleness: TimeInterval = 3_600
-        try FileManager.default.setAttributes([.modificationDate: MockDate.date.addingTimeInterval(-staleness)], ofItemAtPath: old.path)
-        try FileManager.default.setAttributes([.modificationDate: MockDate.date.addingTimeInterval(staleness)], ofItemAtPath: fresh.path)
+        try FileManager.default.setAttributes(
+            [.modificationDate: MockDate.date.addingTimeInterval(-staleness)],
+            ofItemAtPath: old.path
+        )
+        try FileManager.default.setAttributes(
+            [.modificationDate: MockDate.date.addingTimeInterval(staleness)],
+            ofItemAtPath: fresh.path
+        )
 
         UploadStagingLocation.sweepStale(in: [root], olderThan: MockDate.date)
 
@@ -208,7 +224,8 @@ struct BrowseDropHandlerTests {
 
         let resolution = BrowseDropHandler.resolve(
             drops: [.items([foreign], origin: receiver), .file(staged)],
-            folder: folder, listed: [], directoryPath: TestFolder.docs, receiver: receiver, canMove: true, canUpload: false
+            folder: folder, listed: [], directoryPath: TestFolder.docs, receiver: receiver, canMove: true,
+            canUpload: false
         )
 
         #expect(resolution.actions == [.itemsDroppedFromOtherWindow([foreign], destination: folder.id)])

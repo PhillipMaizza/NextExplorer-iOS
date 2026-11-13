@@ -167,7 +167,10 @@ public struct AppView: View {
                     .ignoresSafeArea()
 
             case .unauthenticated:
-                if let scopedStore = store.scope(state: \.destination.unauthenticated, action: \.destination.unauthenticated) {
+                if let scopedStore = store.scope(
+                    state: \.destination.unauthenticated,
+                    action: \.destination.unauthenticated
+                ) {
                     LoginFormView(store: scopedStore, autoFocus: !isSplashPresented)
                         .transition(.opacity)
                 }
@@ -182,14 +185,20 @@ public struct AppView: View {
                 // state survives the identity change, so the content stays put and only the
                 // nav bars relayout, no reload flash.
                 if !isSplashPresented || splashIsExiting,
-                   let scopedStore = store.scope(state: \.destination.authenticated, action: \.destination.authenticated)
+                   let scopedStore = store.scope(
+                       state: \.destination.authenticated,
+                       action: \.destination.authenticated
+                   )
                 {
                     AuthenticatedView(store: scopedStore)
                         // Keying on the active account too means switching accounts remounts the
                         // authenticated tree, so the swap cross-fades instead of updating in place.
                         // A plain quick fade (not the zoom reveal): the switch should feel light.
                         // The TCA store state survives the identity change.
-                        .id(AuthenticatedIdentity(splashPresented: isSplashPresented, accountID: store.currentAccountID))
+                        .id(AuthenticatedIdentity(
+                            splashPresented: isSplashPresented,
+                            accountID: store.currentAccountID
+                        ))
                     #if os(macOS)
                         // No cross fade on the Mac: the window has one toolbar, and with the old and
                         // new split views on screen together the new one laid its items out as if

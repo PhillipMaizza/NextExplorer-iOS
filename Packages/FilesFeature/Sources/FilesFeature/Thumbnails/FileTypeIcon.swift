@@ -71,7 +71,11 @@ private extension FileItem {
         case "toml": FileBadge(label: "TOML", background: Color(hex: 0x0F766E), foreground: .white)
         case "env": FileBadge(label: "ENV", background: Color(hex: 0x059669), foreground: .white)
         case "svg": FileBadge(label: "SVG", background: Color(hex: 0x8B5CF6), foreground: .white)
-        case "ttf", "otf", "woff", "woff2": FileBadge(label: "FONT", background: Color(hex: 0x9CA3AF), foreground: Color(hex: 0x111827))
+        case "ttf", "otf", "woff", "woff2": FileBadge(
+                label: "FONT",
+                background: Color(hex: 0x9CA3AF),
+                foreground: Color(hex: 0x111827)
+            )
         case "lock": FileBadge(label: "LOCK", background: Color(hex: 0x6B7280), foreground: .white)
         case "psd": FileBadge(label: "PSD", background: Color(hex: 0x001E36), foreground: Color(hex: 0x00C8FF))
         case "ai": FileBadge(label: "AI", background: Color(hex: 0x300000), foreground: Color(hex: 0xFF9A00))
@@ -159,7 +163,10 @@ struct FileTypeIcon: View {
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(tint)
-                .frame(width: proxy.size.width * Constants.glyphIconFraction, height: proxy.size.height * Constants.glyphIconFraction)
+                .frame(
+                    width: proxy.size.width * Constants.glyphIconFraction,
+                    height: proxy.size.height * Constants.glyphIconFraction
+                )
                 .frame(width: proxy.size.width, height: proxy.size.height)
         }
     }
@@ -173,7 +180,13 @@ struct FileTypeIcon: View {
                     .frame(height: proxy.size.height * Constants.badgeHeightFraction)
                     .overlay(
                         Text(badge.label)
-                            .font(.system(size: max(Constants.badgeMinFontSize, proxy.size.height * Constants.badgeHeightFraction * 0.62), weight: .heavy))
+                            .font(.system(
+                                size: max(
+                                    Constants.badgeMinFontSize,
+                                    proxy.size.height * Constants.badgeHeightFraction * 0.62
+                                ),
+                                weight: .heavy
+                            ))
                             .minimumScaleFactor(Constants.badgeFontMinScale)
                             .lineLimit(1)
                             .padding(.horizontal, proxy.size.width * Constants.badgeHorizontalInset)
@@ -199,7 +212,27 @@ struct FileTypeIcon: View {
 
 #Preview("Badged extensions") {
     LazyVGrid(columns: [GridItem(.adaptive(minimum: 44))], spacing: .space16) {
-        ForEach(["doc", "xls", "ppt", "csv", "txt", "md", "html", "css", "js", "ts", "json", "yaml", "py", "swift", "go", "rs"], id: \.self) { kind in
+        ForEach(
+            [
+                "doc",
+                "xls",
+                "ppt",
+                "csv",
+                "txt",
+                "md",
+                "html",
+                "css",
+                "js",
+                "ts",
+                "json",
+                "yaml",
+                "py",
+                "swift",
+                "go",
+                "rs",
+            ],
+            id: \.self
+        ) { kind in
             FileTypeIcon(kind: kind)
         }
     }

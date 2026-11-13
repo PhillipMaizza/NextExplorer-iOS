@@ -26,11 +26,20 @@
             LoginScreen(app: app).signIn(host: Fixture.otherServerHost)
 
             // Adding a server adopts it as active and remounts the app on the new account.
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "Adding an account should reveal the app on the new account")
+            XCTAssertTrue(
+                TabBar(app: app).browse.waitToAppear(),
+                "Adding an account should reveal the app on the new account"
+            )
 
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
-            XCTAssertTrue(settings.accountRow(host: Fixture.otherServerHost).waitToAppear(), "The newly added server should be listed")
-            XCTAssertTrue(settings.accountRow(host: Fixture.serverHost).exists, "The original account should still be listed")
+            XCTAssertTrue(
+                settings.accountRow(host: Fixture.otherServerHost).waitToAppear(),
+                "The newly added server should be listed"
+            )
+            XCTAssertTrue(
+                settings.accountRow(host: Fixture.serverHost).exists,
+                "The original account should still be listed"
+            )
         }
     }
 #endif

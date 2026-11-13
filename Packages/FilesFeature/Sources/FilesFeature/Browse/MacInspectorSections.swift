@@ -35,7 +35,12 @@
         private func subtitle(for share: Share) -> String {
             var parts = [share.accessMode.title]
             if let expiresAt = share.expiresAt {
-                parts.append(expiresAt <= Date() ? L10n.Shared.badgeExpired : expiresAt.formatted(date: .abbreviated, time: .omitted))
+                parts.append(expiresAt <= Date()
+                    ? L10n.Shared.badgeExpired
+                    : expiresAt.formatted(
+                        date: .abbreviated,
+                        time: .omitted
+                    ))
             }
             return parts.joined(separator: " · ")
         }
@@ -63,7 +68,10 @@
                             actionsMenu(version)
                         }
                     } label: {
-                        MacRowTitle(title: version.label ?? MacVersionsModel.date(version.modifiedAt), subtitle: subtitle(for: version))
+                        MacRowTitle(
+                            title: version.label ?? MacVersionsModel.date(version.modifiedAt),
+                            subtitle: subtitle(for: version)
+                        )
                     }
                 }
                 if history.rights.canRemove, !history.versions.isEmpty {
@@ -96,7 +104,9 @@
                 if history.rights.canRestore {
                     Divider()
                     Button(L10n.FileInfo.versionRename) { model.beginRename(version) }
-                    Button(version.isPinned ? L10n.FileInfo.versionUnpin : L10n.FileInfo.versionPin) { model.togglePin(version) }
+                    Button(version.isPinned ? L10n.FileInfo.versionUnpin : L10n.FileInfo.versionPin) {
+                        model.togglePin(version)
+                    }
                 }
                 if history.rights.canRemove {
                     Divider()
@@ -138,7 +148,11 @@
 
     #Preview("Not shared") {
         Form {
-            MacInspectorSharingSection(shares: [], serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), onShare: {})
+            MacInspectorSharingSection(
+                shares: [],
+                serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+                onShare: {}
+            )
         }
         .formStyle(.grouped)
         .previewCanvas(.inspector)
@@ -149,8 +163,20 @@
         let history = FileVersionHistory(
             isEnabled: true,
             versions: [
-                FileVersion(id: "v2", size: 18_400, modifiedAt: Date().addingTimeInterval(-hour * 3), capturedAt: Date().addingTimeInterval(-hour * 2)),
-                FileVersion(id: "v1", size: 16_100, modifiedAt: Date().addingTimeInterval(-hour * 50), capturedAt: Date().addingTimeInterval(-hour * 49), label: "Before edits", isPinned: true),
+                FileVersion(
+                    id: "v2",
+                    size: 18_400,
+                    modifiedAt: Date().addingTimeInterval(-hour * 3),
+                    capturedAt: Date().addingTimeInterval(-hour * 2)
+                ),
+                FileVersion(
+                    id: "v1",
+                    size: 16_100,
+                    modifiedAt: Date().addingTimeInterval(-hour * 50),
+                    capturedAt: Date().addingTimeInterval(-hour * 49),
+                    label: "Before edits",
+                    isPinned: true
+                ),
             ],
             totalBytes: 34_500,
             rights: .init(canSee: true, canDownload: true, canRestore: true, canRemove: true)

@@ -80,7 +80,10 @@ struct FolderSizeSettingsView: View {
 }
 
 #Preview("On, with folders") {
-    let value = FolderSizeSettings(mode: .shallow, excluded: ExcludedPaths(paths: ["Backups"], environmentPaths: ["node_modules"]))
+    let value = FolderSizeSettings(
+        mode: .shallow,
+        excluded: ExcludedPaths(paths: ["Backups"], environmentPaths: ["node_modules"])
+    )
     return NavigationStack {
         FolderSizeSettingsView(store: Store(initialState: {
             var state = FolderSizeSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)

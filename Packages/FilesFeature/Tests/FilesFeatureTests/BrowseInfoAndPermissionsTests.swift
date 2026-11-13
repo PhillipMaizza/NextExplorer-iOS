@@ -82,7 +82,12 @@ struct BrowseInfoAndPermissionsTests {
         state.infoUsage = StorageUsage(path: "x", size: 1, free: 1, total: 2)
         let store = BrowseFixtures.store(state)
 
-        await store.send(.infoUsageResponse(.success(StorageUsage(path: TestFolder.photos, size: 0, free: 0, total: 0)))) {
+        await store.send(.infoUsageResponse(.success(StorageUsage(
+            path: TestFolder.photos,
+            size: 0,
+            free: 0,
+            total: 0
+        )))) {
             $0.infoUsage = nil
         }
     }

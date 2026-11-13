@@ -41,7 +41,12 @@ public struct TrashSettingsFeature {
             } else {
                 return nil
             }
-            return TrashSettings(isEnabled: isEnabled, retentionDays: retention, maxPercent: percent, maxBytes: maxBytes)
+            return TrashSettings(
+                isEnabled: isEnabled,
+                retentionDays: retention,
+                maxPercent: percent,
+                maxBytes: maxBytes
+            )
         }
     }
 
@@ -67,7 +72,8 @@ public struct TrashSettingsFeature {
                   let hourly = Int(hourlyDaysText), VersionsSettings.hourlyDaysRange.contains(hourly),
                   let daily = Int(dailyDaysText), VersionsSettings.dailyDaysRange.contains(daily),
                   let perFile = Int(maxPerFileText), VersionsSettings.maxPerFileRange.contains(perFile),
-                  let checkpoint = Int(checkpointMinutesText), VersionsSettings.sessionCheckpointMinutesRange.contains(checkpoint)
+                  let checkpoint = Int(checkpointMinutesText),
+                  VersionsSettings.sessionCheckpointMinutesRange.contains(checkpoint)
             else { return nil }
             let tieredHourly = VersionsSettings.hourlyDays(hourly, keepAllHours: keepAll)
             return VersionsSettings(

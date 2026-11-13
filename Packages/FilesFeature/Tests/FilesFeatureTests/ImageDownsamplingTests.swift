@@ -14,7 +14,10 @@ struct ImageDownsamplingTests {
     }
 
     private func sourceImageData() throws -> Data {
-        let image = try #require(PlatformImageRenderer.image(size: CGSize(width: Constants.sourceWidth, height: Constants.sourceHeight), opaque: true) { context in
+        let image = try #require(PlatformImageRenderer.image(
+            size: CGSize(width: Constants.sourceWidth, height: Constants.sourceHeight),
+            opaque: true
+        ) { context in
             context.setFillColor(CGColor(red: 1, green: 0, blue: 0, alpha: 1))
             context.fill(CGRect(x: 0, y: 0, width: Constants.sourceWidth, height: Constants.sourceHeight))
         })
@@ -50,17 +53,23 @@ struct ImageDownsamplingTests {
     @Test
     func aFileIsDownsampledTheSameWayAsItsBytes() throws {
         let data = try sourceImageData()
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(Constants.filePrefix)\(TestID.name()).jpg")
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(Constants.filePrefix)\(TestID.name()).jpg")
         try data.write(to: url)
         defer { try? FileManager.default.removeItem(at: url) }
 
-        #expect(try pixelSize(ImageDownsampling.image(from: url, maxPixelDimension: 50)) == CGSize(width: 50, height: 25))
+        #expect(try pixelSize(ImageDownsampling.image(from: url, maxPixelDimension: 50)) == CGSize(
+            width: 50,
+            height: 25
+        ))
     }
 
     @Test
     func aMissingOrNonImageFileGivesNoImage() throws {
-        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("\(Constants.filePrefix)\(TestID.name())")
-        let text = FileManager.default.temporaryDirectory.appendingPathComponent("\(Constants.filePrefix)\(TestID.name()).txt")
+        let missing = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(Constants.filePrefix)\(TestID.name())")
+        let text = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(Constants.filePrefix)\(TestID.name()).txt")
         try Constants.notAnImage.write(to: text)
         defer { try? FileManager.default.removeItem(at: text) }
 

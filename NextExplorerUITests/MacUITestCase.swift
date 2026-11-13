@@ -38,7 +38,11 @@
         /// than a separate text.
         func searchHit(in app: XCUIApplication) -> XCUIElement {
             app.descendants(matching: .any)
-                .matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", Fixture.searchHit, Fixture.searchHit))
+                .matching(NSPredicate(
+                    format: "label CONTAINS %@ OR value CONTAINS %@",
+                    Fixture.searchHit,
+                    Fixture.searchHit
+                ))
                 .firstMatch
         }
 
@@ -93,7 +97,12 @@
             if !backButton(in: app).appears(within: UITestTimeout.short) {
                 text(Fixture.folder, in: app).doubleClick()
             }
-            XCTAssertTrue(backButton(in: app).waitToAppear(UITestTimeout.standard, "Double click should open the folder", file: file, line: line))
+            XCTAssertTrue(backButton(in: app).waitToAppear(
+                UITestTimeout.standard,
+                "Double click should open the folder",
+                file: file,
+                line: line
+            ))
         }
     }
 #endif

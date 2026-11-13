@@ -100,7 +100,13 @@ struct TextFilePreviewView: View {
     /// paths, since both ultimately go through the same `HTMLRenderedView`.
     private func resolveServerAsset(relativePath: String) async -> URL? {
         guard let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: item.path) else { return nil }
-        let sibling = FileItem(name: resolved.name, path: resolved.parent, dateModified: Date(timeIntervalSince1970: 0), size: 0, kind: (resolved.name as NSString).pathExtension)
+        let sibling = FileItem(
+            name: resolved.name,
+            path: resolved.parent,
+            dateModified: Date(timeIntervalSince1970: 0),
+            size: 0,
+            kind: (resolved.name as NSString).pathExtension
+        )
         return try? await filesClient.downloadRawFile(serverURL, sibling)
     }
 

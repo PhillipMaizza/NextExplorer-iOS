@@ -119,11 +119,16 @@ extension FilesService {
         let url = serverURL.appendingPathComponent(APIPath.uploadLogo)
         let boundary = "Boundary-\(UUID().uuidString)"
         var request = Self.makeRequest(url: url, method: .post)
-        request.setValue(MIMEType.multipartFormData(boundary: boundary), forHTTPHeaderField: HTTPHeaderField.contentType)
+        request.setValue(
+            MIMEType.multipartFormData(boundary: boundary),
+            forHTTPHeaderField: HTTPHeaderField.contentType
+        )
 
         var body = Data()
         body.append(Data("--\(boundary)\r\n".utf8))
-        body.append(Data("Content-Disposition: form-data; name=\"\(MultipartField.logo)\"; filename=\"logo.jpg\"\r\n".utf8))
+        body
+            .append(Data("Content-Disposition: form-data; name=\"\(MultipartField.logo)\"; filename=\"logo.jpg\"\r\n"
+                    .utf8))
         body.append(Data("Content-Type: \(MIMEType.jpeg)\r\n\r\n".utf8))
         body.append(jpegData)
         body.append(Data("\r\n--\(boundary)--\r\n".utf8))

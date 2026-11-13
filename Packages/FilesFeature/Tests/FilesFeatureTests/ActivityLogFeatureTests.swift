@@ -26,7 +26,11 @@ struct ActivityLogFeatureTests {
     private let settingsFetches = LockIsolated(0)
     private let clearCalls = LockIsolated(0)
 
-    private func event(_ id: String, at: String = "2026-11-11T07:00:00.000Z", action: String = "sign-in") -> ActivityEvent {
+    private func event(
+        _ id: String,
+        at: String = "2026-11-11T07:00:00.000Z",
+        action: String = "sign-in"
+    ) -> ActivityEvent {
         ActivityEvent(id: id, at: at, action: action, actor: TestAccount.username)
     }
 
@@ -34,8 +38,13 @@ struct ActivityLogFeatureTests {
     /// page behind `pageGate` and receives the settings answer first.
     private func makeStore(
         _ state: State? = nil,
-        settings: @escaping @Sendable () async throws -> SystemSettings = { SystemSettings(activity: ActivitySettings(isEnabled: true, retentionDays: 30)) },
-        page: @escaping @Sendable (ActivityFilter, String?) async throws -> ActivityPage = { _, _ in ActivityPage(isEnabled: true) },
+        settings: @escaping @Sendable () async throws -> SystemSettings = { SystemSettings(activity: ActivitySettings(
+            isEnabled: true,
+            retentionDays: 30
+        )) },
+        page: @escaping @Sendable (ActivityFilter, String?) async throws -> ActivityPage = { _, _ in
+            ActivityPage(isEnabled: true)
+        },
         update: @escaping @Sendable (SystemSettingsPatch) throws -> SystemSettings = { _ in SystemSettings() },
         clear: @escaping @Sendable () throws -> Void = {}
     ) -> Store {
@@ -65,7 +74,9 @@ struct ActivityLogFeatureTests {
         }
     }
 
-    private func loadedState(_ settings: ActivitySettings = ActivitySettings(isEnabled: true, retentionDays: 30)) -> State {
+    private func loadedState(_ settings: ActivitySettings = ActivitySettings(isEnabled: true, retentionDays: 30))
+        -> State
+    {
         var state = State(serverURL: serverURL)
         state.loadedSettings = settings
         state.isEnabledDraft = settings.isEnabled
@@ -120,7 +131,8 @@ struct ActivityLogFeatureTests {
         state.isUnavailable = true
         let store = makeStore(state)
 
-        await store.send(.settingsResponse(.success(SystemSettings(activity: enabledSettings)))) { $0.isUnavailable = false }
+        await store
+            .send(.settingsResponse(.success(SystemSettings(activity: enabledSettings)))) { $0.isUnavailable = false }
     }
 
     @Test
@@ -173,7 +185,10 @@ struct ActivityLogFeatureTests {
         )
 
         await store.send(.onAppear)
-        await store.receive(\.settingsResponse.success) { $0.loadedSettings = ActivitySettings(isEnabled: false, retentionDays: 7) }
+        await store.receive(\.settingsResponse.success) { $0.loadedSettings = ActivitySettings(
+            isEnabled: false,
+            retentionDays: 7
+        ) }
         pageGate.open()
         await store.receive(\.pageResponse)
         #expect(store.state.retentionText == "999")
@@ -197,7 +212,10 @@ struct ActivityLogFeatureTests {
         state.isSavingSettings = true
         let store = makeStore(state)
 
-        await store.send(.settingsResponse(.success(SystemSettings(activity: ActivitySettings(isEnabled: false, retentionDays: 1)))))
+        await store.send(.settingsResponse(.success(SystemSettings(activity: ActivitySettings(
+            isEnabled: false,
+            retentionDays: 1
+        )))))
         #expect(store.state.loadedSettings == enabledSettings)
     }
 
@@ -404,7 +422,11 @@ struct ActivityLogFeatureTests {
     func savingSendsBothFieldsAndReloadsTheLog() async {
         let echoed = ActivitySettings(isEnabled: false, retentionDays: 14)
         let reloaded = ActivityPage(events: [event("fresh")], isEnabled: false)
-        let store = makeStore(loadedState(), page: { _, _ in reloaded }, update: { _ in SystemSettings(activity: echoed) })
+        let store = makeStore(
+            loadedState(),
+            page: { _, _ in reloaded },
+            update: { _ in SystemSettings(activity: echoed) }
+        )
 
         await store.send(.enabledChanged(false)) { $0.isEnabledDraft = false }
         await store.send(.retentionChanged("14")) { $0.retentionText = "14" }
@@ -422,7 +444,10 @@ struct ActivityLogFeatureTests {
 
     @Test
     func aFailedSaveKeepsTheDraftAndShowsTheMessage() async {
-        let store = makeStore(loadedState(), update: { _ in throw FilesClientError.serverMessage(statusCode: 400, message: "Bad retention.") })
+        let store = makeStore(
+            loadedState(),
+            update: { _ in throw FilesClientError.serverMessage(statusCode: 400, message: "Bad retention.") }
+        )
 
         await store.send(.retentionChanged("14")) { $0.retentionText = "14" }
         await store.send(.saveSettingsTapped) { $0.isSavingSettings = true }
@@ -498,7 +523,9 @@ struct ActivityLogFeatureTests {
     @Test
     func aNonAdminCannotOpenTheActivityLog() async {
         let user = User(id: "1", username: "jdoe", email: nil, roles: [])
-        let store = TestStore(initialState: SettingsFeature.State(serverURL: serverURL, user: user)) { SettingsFeature() }
+        let store = TestStore(initialState: SettingsFeature.State(serverURL: serverURL, user: user)) {
+            SettingsFeature()
+        }
 
         await store.send(.activityLogButtonTapped)
         #expect(store.state.activityLog == nil)
@@ -507,7 +534,9 @@ struct ActivityLogFeatureTests {
     @Test
     func anAdminOpensTheActivityLog() async {
         let admin = User(id: "a", username: "boss", email: nil, roles: [UserRole.admin])
-        let store = TestStore(initialState: SettingsFeature.State(serverURL: serverURL, user: admin)) { SettingsFeature() }
+        let store = TestStore(initialState: SettingsFeature.State(serverURL: serverURL, user: admin)) {
+            SettingsFeature()
+        }
 
         await store.send(.activityLogButtonTapped) { $0.activityLog = ActivityLogFeature.State(serverURL: serverURL) }
     }

@@ -21,10 +21,15 @@ struct SkeletonFileRows: View {
 
     var body: some View {
         ForEach(Array(entries.enumerated()), id: \.offset) { _, entry in
-            FileRowView(name: entry.name, isDirectory: entry.isDirectory, subtitle: entry.subtitle, kind: entry.isDirectory ? nil : "")
-                .redacted(reason: .placeholder)
-                .shimmering()
-                .listRowBackground(Color.backgroundSecondary)
+            FileRowView(
+                name: entry.name,
+                isDirectory: entry.isDirectory,
+                subtitle: entry.subtitle,
+                kind: entry.isDirectory ? nil : ""
+            )
+            .redacted(reason: .placeholder)
+            .shimmering()
+            .listRowBackground(Color.backgroundSecondary)
         }
     }
 }
@@ -51,7 +56,10 @@ struct SkeletonGridCells: View {
 
 #Preview("File rows") {
     List {
-        SkeletonFileRows(entries: [8, 13, 6].map { SkeletonEntry(name: SkeletonEntry.text($0), subtitle: SkeletonEntry.text(9)) })
+        SkeletonFileRows(entries: [8, 13, 6].map { SkeletonEntry(
+            name: SkeletonEntry.text($0),
+            subtitle: SkeletonEntry.text(9)
+        ) })
     }
 }
 

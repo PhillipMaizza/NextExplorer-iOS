@@ -58,7 +58,11 @@ struct BrowsePrefetchTests {
         let offline = OfflineFileStore.inMemory()
         offline.setPinnedRoots(pinned.map { OfflinePinnedRoot(path: $0, isDirectory: true) })
         let store = BrowseFixtures.store(state) {
-            $0.connectivity = ConnectivityClient(isOnline: { true }, events: { AsyncStream { _ in } }, isMetered: { isMetered })
+            $0.connectivity = ConnectivityClient(
+                isOnline: { true },
+                events: { AsyncStream { _ in } },
+                isMetered: { isMetered }
+            )
             $0.offlineFileStore = offline
             $0.date = .constant(MockDate.date)
             $0.filesClient.prefetchDirectory = { _, path in prefetched.withValue { $0.append(path) } }
@@ -74,7 +78,11 @@ struct BrowsePrefetchTests {
             }
         }
 
-        await store.send(.itemsResponse(.success(BrowseResult(items: directories, access: access, path: TestPath.docsLowercase)))) {
+        await store.send(.itemsResponse(.success(BrowseResult(
+            items: directories,
+            access: access,
+            path: TestPath.docsLowercase
+        )))) {
             $0.phase = .loaded
             $0.items = IdentifiedArray(uniqueElements: directories)
             $0.access = access
@@ -134,7 +142,10 @@ struct BrowsePrefetchTests {
         #expect(prefetched.isEmpty)
     }
 
-    @Test("Folders cached recently never spend the budget, which then applies to the stale ones only", arguments: freshnessCases)
+    @Test(
+        "Folders cached recently never spend the budget, which then applies to the stale ones only",
+        arguments: freshnessCases
+    )
     func theCapAppliesToStaleFoldersOnly(_ testCase: FreshnessCase) async {
         let all = folders(30)
         let fresh = Set((0 ..< testCase.freshCount).map(path))
@@ -149,10 +160,26 @@ struct BrowsePrefetchTests {
     func theFreshnessCheckReadsTheScopeTheStateCapturedNotAnotherAccounts() async {
         let store = DirectoryCacheStore.inMemory()
         let listing = BrowseResult(items: [], access: access, path: TestPath.docsLowercase)
-        store.bound(to: "scope-alice").write(serverURL: BrowseTestSupport.serverURL, path: path(0), result: listing, etag: nil, fetchedAt: Date.distantFuture)
-        store.bound(to: "scope-bob").write(serverURL: BrowseTestSupport.serverURL, path: path(1), result: listing, etag: nil, fetchedAt: Date.distantFuture)
+        store.bound(to: "scope-alice").write(
+            serverURL: BrowseTestSupport.serverURL,
+            path: path(0),
+            result: listing,
+            etag: nil,
+            fetchedAt: Date.distantFuture
+        )
+        store.bound(to: "scope-bob").write(
+            serverURL: BrowseTestSupport.serverURL,
+            path: path(1),
+            result: listing,
+            etag: nil,
+            fetchedAt: Date.distantFuture
+        )
 
-        let prefetched = await prefetchRun(directories: folders(2), capturedScope: "scope-alice", directoryCacheStore: store)
+        let prefetched = await prefetchRun(
+            directories: folders(2),
+            capturedScope: "scope-alice",
+            directoryCacheStore: store
+        )
 
         #expect(prefetched == [path(1)])
     }
@@ -167,7 +194,11 @@ struct BrowsePrefetchTests {
             }
         }
 
-        await store.send(.itemsResponse(.success(BrowseResult(items: [], access: access, path: TestPath.docsLowercase)))) {
+        await store.send(.itemsResponse(.success(BrowseResult(
+            items: [],
+            access: access,
+            path: TestPath.docsLowercase
+        )))) {
             $0.phase = .loaded
             $0.access = access
         }
@@ -200,7 +231,10 @@ struct BrowsePrefetchTests {
     @Test("A favorite the listing shows as a file is dropped, a known folder or an unknown kind is kept")
     func favoriteFolderPathsKeepsUnknownKindsAndDropsKnownFiles() {
         let known = IdentifiedArray(uniqueElements: [
-            BrowseFixtures.file(TestFile.aText, in: TestPath.docsLowercase), BrowseFixtures.folder("Known", in: TestPath.docsLowercase),
+            BrowseFixtures.file(TestFile.aText, in: TestPath.docsLowercase), BrowseFixtures.folder(
+                "Known",
+                in: TestPath.docsLowercase
+            ),
         ])
 
         let paths = BrowseFeature.favoriteFolderPaths(

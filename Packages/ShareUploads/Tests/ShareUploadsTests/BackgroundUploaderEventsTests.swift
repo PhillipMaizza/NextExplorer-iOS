@@ -103,7 +103,9 @@ struct BackgroundUploaderEventsTests {
 
     // MARK: Cancelling with the extension at work
 
-    @Test("A batch without a manifest that was touched a moment ago is still being filled in: an account change keeps it")
+    @Test(
+        "A batch without a manifest that was touched a moment ago is still being filled in: an account change keeps it"
+    )
     func freshManifestlessBatchSurvivesCancel() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
@@ -126,7 +128,8 @@ struct BackgroundUploaderEventsTests {
         let staging = harness.root.appendingPathComponent(TestID.uuid().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
         try FileManager.default.setAttributes(
-            [.modificationDate: TestClock.reference.addingTimeInterval(-BackgroundUploader.staleAge - Constants.staleMargin)],
+            [.modificationDate: TestClock.reference
+                .addingTimeInterval(-BackgroundUploader.staleAge - Constants.staleMargin)],
             ofItemAtPath: staging.path
         )
 
@@ -147,7 +150,10 @@ struct BackgroundUploaderEventsTests {
         #expect(BackgroundUploader.isYoung(startedAt: start, touchedAt: recent, now: now))
         #expect(!BackgroundUploader.isYoung(startedAt: start, touchedAt: old, now: now))
         #expect(!BackgroundUploader.isYoung(startedAt: start, touchedAt: nil, now: now))
-        #expect(!BackgroundUploader.isYoung(startedAt: start, touchedAt: now.addingTimeInterval(1), now: now), "a touch from the future is no heartbeat")
+        #expect(
+            !BackgroundUploader.isYoung(startedAt: start, touchedAt: now.addingTimeInterval(1), now: now),
+            "a touch from the future is no heartbeat"
+        )
         #expect(BackgroundUploader.isYoung(startedAt: now.addingTimeInterval(-1), touchedAt: nil, now: now))
     }
 
@@ -296,7 +302,11 @@ struct BackgroundUploaderEventsTests {
         for _ in 0 ..< Constants.racedBatches {
             let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto])
             DispatchQueue.concurrentPerform(iterations: 2) { index in
-                (index == 0 ? harness.uploader : second).complete(batchID: batch.id, index: index, result: .failure(.network))
+                (index == 0 ? harness.uploader : second).complete(
+                    batchID: batch.id,
+                    index: index,
+                    result: .failure(.network)
+                )
             }
         }
 

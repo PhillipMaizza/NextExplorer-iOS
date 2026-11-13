@@ -55,8 +55,13 @@ public enum ThumbnailRendering {
 
     public static func jpegData(_ image: CGImage, quality: CGFloat) -> Data? {
         let data = NSMutableData()
-        guard let destination = CGImageDestinationCreateWithData(data, UTType.jpeg.identifier as CFString, 1, nil) else { return nil }
-        CGImageDestinationAddImage(destination, image, [kCGImageDestinationLossyCompressionQuality: quality] as CFDictionary)
+        guard let destination = CGImageDestinationCreateWithData(data, UTType.jpeg.identifier as CFString, 1, nil)
+        else { return nil }
+        CGImageDestinationAddImage(
+            destination,
+            image,
+            [kCGImageDestinationLossyCompressionQuality: quality] as CFDictionary
+        )
         return CGImageDestinationFinalize(destination) ? data as Data : nil
     }
 

@@ -97,7 +97,15 @@ struct FileRowView: View {
         self.isOpening = isOpening
     }
 
-    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false, isAvailableOffline: Bool = false) {
+    init(
+        item: FileItem,
+        isFavorite: Bool = false,
+        serverURL: URL? = nil,
+        showThumbnails: Bool = false,
+        matchedSource: PreviewMatchedSource? = nil,
+        isOpening: Bool = false,
+        isAvailableOffline: Bool = false
+    ) {
         name = item.name
         self.isAvailableOffline = isAvailableOffline
         isDirectory = item.isDirectory
@@ -212,8 +220,14 @@ struct FileRowView: View {
         }
         .padding(.vertical, .space4)
         .contentShape(Rectangle())
-        .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
-        .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isAvailableOffline)
+        .animation(
+            .spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping),
+            value: isFavorite
+        )
+        .animation(
+            .spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping),
+            value: isAvailableOffline
+        )
         // Only favoriting buzzes: un-favoriting isn't a "win" worth celebrating the same way.
         .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
     }
@@ -267,39 +281,59 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
 
 #Preview {
     VStack(spacing: .space16) {
-        FileRowView(name: "Folder",
-                    isDirectory: true,
-                    subtitle: nil)
-        FileRowView(name: "Folder",
-                    isDirectory: true,
-                    subtitle: "Aug 20, 2026")
-        FileRowView(name: "Favorite Folder",
-                    isDirectory: true,
-                    subtitle: "Aug 20, 2026",
-                    isFavorite: true)
-        FileRowView(name: ".hidden",
-                    isDirectory: true,
-                    subtitle: nil)
-        FileRowView(name: "File",
-                    isDirectory: false,
-                    subtitle: nil)
-        FileRowView(name: ".hidden",
-                    isDirectory: false,
-                    subtitle: nil)
-        FileRowView(name: "File",
-                    isDirectory: false,
-                    subtitle: "18kb")
-        FileRowView(name: "Favorite File",
-                    isDirectory: false,
-                    subtitle: "18kb",
-                    isFavorite: true)
-        FileRowView(name: ".hidden",
-                    isDirectory: false,
-                    subtitle: "18kb")
-        FileRowView(name: "ContentView.swift",
-                    isDirectory: false,
-                    subtitle: "let count = 0",
-                    lineLabel: "Line 58")
+        FileRowView(
+            name: "Folder",
+            isDirectory: true,
+            subtitle: nil
+        )
+        FileRowView(
+            name: "Folder",
+            isDirectory: true,
+            subtitle: "Aug 20, 2026"
+        )
+        FileRowView(
+            name: "Favorite Folder",
+            isDirectory: true,
+            subtitle: "Aug 20, 2026",
+            isFavorite: true
+        )
+        FileRowView(
+            name: ".hidden",
+            isDirectory: true,
+            subtitle: nil
+        )
+        FileRowView(
+            name: "File",
+            isDirectory: false,
+            subtitle: nil
+        )
+        FileRowView(
+            name: ".hidden",
+            isDirectory: false,
+            subtitle: nil
+        )
+        FileRowView(
+            name: "File",
+            isDirectory: false,
+            subtitle: "18kb"
+        )
+        FileRowView(
+            name: "Favorite File",
+            isDirectory: false,
+            subtitle: "18kb",
+            isFavorite: true
+        )
+        FileRowView(
+            name: ".hidden",
+            isDirectory: false,
+            subtitle: "18kb"
+        )
+        FileRowView(
+            name: "ContentView.swift",
+            isDirectory: false,
+            subtitle: "let count = 0",
+            lineLabel: "Line 58"
+        )
     }
     .padding(.space16)
 }
@@ -309,7 +343,14 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
     // fallback icon as any other file: it documents/exercises the code path rather than
     // showing an actual image.
     FileRowView(
-        item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+        item: FileItem(
+            name: "vacation.jpg",
+            path: "",
+            dateModified: Date(),
+            size: 2_400_000,
+            kind: "jpg",
+            supportsThumbnail: true
+        ),
         serverURL: URL(string: "https://nextexplorer.example.com"),
         showThumbnails: true
     )
@@ -318,7 +359,14 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
 
 #Preview("Thumbnails off (falls back to the plain icon even though the file supports one)") {
     FileRowView(
-        item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+        item: FileItem(
+            name: "vacation.jpg",
+            path: "",
+            dateModified: Date(),
+            size: 2_400_000,
+            kind: "jpg",
+            supportsThumbnail: true
+        ),
         serverURL: URL(string: "https://nextexplorer.example.com"),
         showThumbnails: false
     )

@@ -9,12 +9,18 @@
             let settings = SettingsScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-            XCTAssertTrue(scrollTo(settings.pageRow("general"), in: app), "General should be a row on the Settings root")
+            XCTAssertTrue(
+                scrollTo(settings.pageRow("general"), in: app),
+                "General should be a row on the Settings root"
+            )
             settings.pageRow("general").tap()
             XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be on the General page")
             settings.languageRow.tap()
 
-            XCTAssertTrue(settings.languagePickerSystemDefaultSubtitle.waitToAppear(), "Tapping Language should push its picker")
+            XCTAssertTrue(
+                settings.languagePickerSystemDefaultSubtitle.waitToAppear(),
+                "Tapping Language should push its picker"
+            )
         }
 
         func testOpenThumbnailSettings() {

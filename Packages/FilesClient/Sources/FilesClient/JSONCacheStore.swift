@@ -94,7 +94,11 @@ extension JSONCacheStore: DependencyKey {
         private let maxEntries: Int
         private let maxTotalBytes: Int64
 
-        init(rootOverride: URL? = nil, maxEntries: Int = Constants.maxEntries, maxTotalBytes: Int64 = Constants.maxTotalBytes) {
+        init(
+            rootOverride: URL? = nil,
+            maxEntries: Int = Constants.maxEntries,
+            maxTotalBytes: Int64 = Constants.maxTotalBytes
+        ) {
             self.rootOverride = rootOverride
             self.maxEntries = maxEntries
             self.maxTotalBytes = maxTotalBytes
@@ -187,7 +191,11 @@ extension JSONCacheStore: DependencyKey {
 
     /// A real on disk store rooted under `rootDirectory` instead of Application Support, so tests
     /// can exercise persistence and eviction in a temp directory.
-    static func onDisk(rootDirectory: URL? = nil, maxEntries: Int = Constants.maxEntries, maxTotalBytes: Int64 = Constants.maxTotalBytes) -> JSONCacheStore {
+    static func onDisk(
+        rootDirectory: URL? = nil,
+        maxEntries: Int = Constants.maxEntries,
+        maxTotalBytes: Int64 = Constants.maxTotalBytes
+    ) -> JSONCacheStore {
         Storage(rootOverride: rootDirectory, maxEntries: maxEntries, maxTotalBytes: maxTotalBytes).asStore()
     }
 

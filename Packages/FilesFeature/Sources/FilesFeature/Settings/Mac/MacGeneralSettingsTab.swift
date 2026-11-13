@@ -41,8 +41,11 @@
         var body: some View {
             MacSettingsPane {
                 Section(L10n.Settings.sectionGeneral) {
-                    Toggle(L10n.Settings.toggleShowHiddenFiles, isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles))
-                        .accessibilityLabel(L10n.Settings.toggleShowHiddenFiles)
+                    Toggle(
+                        L10n.Settings.toggleShowHiddenFiles,
+                        isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles)
+                    )
+                    .accessibilityLabel(L10n.Settings.toggleShowHiddenFiles)
                     Toggle(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
                         .accessibilityLabel(L10n.Settings.toggleShowExtensions)
                 }

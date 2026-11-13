@@ -12,7 +12,13 @@ import TestUtils
     @Suite(.isolatedDependencies)
     struct MacFolderWindowSyncTests {
         private let serverURL = BrowseTestSupport.serverURL
-        private let user = User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+        private let user = User(
+            id: "1",
+            username: "jdoe",
+            email: "jane.doe@example.com",
+            displayName: "Jane Doe",
+            roles: []
+        )
 
         private func makeStore(
             _ mutate: (inout MainTabFeature.State) -> Void = { _ in },
@@ -41,23 +47,68 @@ import TestUtils
             }
         }
 
-        private nonisolated static let item = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
-        private nonisolated static let transferred = TransferResult(destination: TestFolder.docs, items: [.init(from: "Other/a.txt", to: "Docs/a.txt")])
+        private nonisolated static let item = FileItem(
+            name: TestFile.aText,
+            path: TestFolder.docs,
+            dateModified: MockDate.date,
+            size: 1,
+            kind: TestKind.text
+        )
+        private nonisolated static let transferred = TransferResult(
+            destination: TestFolder.docs,
+            items: [.init(from: "Other/a.txt", to: "Docs/a.txt")]
+        )
 
         @Test(
             "A finished edit reloads its own folder in the other windows, a move or undo reloads everything, a failure reloads nothing",
             arguments: [
-                ChangeCase(name: "rename", action: .renameResponse(.success(.init(originalID: "Docs/b.txt", renamed: item))), expected: .folders([TestFolder.docs])),
-                ChangeCase(name: "new folder", action: .newFolderResponse(.success(item)), expected: .folders([TestFolder.docs])),
-                ChangeCase(name: "new file", action: .newFileResponse(.success(item)), expected: .folders([TestFolder.docs])),
-                ChangeCase(name: "delete", action: .deleteResponse(.success(.init(itemID: "Docs/a.txt"))), expected: .folders([TestFolder.docs])),
-                ChangeCase(name: "bulk delete", action: .bulkDeleteResponse(.success(.init(itemIDs: ["Docs/a.txt"]))), expected: .folders([TestFolder.docs])),
-                ChangeCase(name: "extract", action: .extractZipResponse(.success(item)), expected: .folders([TestFolder.docs])),
-                ChangeCase(name: "compress", action: .compressResponse(.success(item)), expected: .folders([TestFolder.docs])),
-                ChangeCase(name: "text save", action: .textSaveResponse(path: "Docs/a.txt", result: .success("etag")), expected: .folders([TestFolder.docs])),
+                ChangeCase(
+                    name: "rename",
+                    action: .renameResponse(.success(.init(originalID: "Docs/b.txt", renamed: item))),
+                    expected: .folders([TestFolder.docs])
+                ),
+                ChangeCase(
+                    name: "new folder",
+                    action: .newFolderResponse(.success(item)),
+                    expected: .folders([TestFolder.docs])
+                ),
+                ChangeCase(
+                    name: "new file",
+                    action: .newFileResponse(.success(item)),
+                    expected: .folders([TestFolder.docs])
+                ),
+                ChangeCase(
+                    name: "delete",
+                    action: .deleteResponse(.success(.init(itemID: "Docs/a.txt"))),
+                    expected: .folders([TestFolder.docs])
+                ),
+                ChangeCase(
+                    name: "bulk delete",
+                    action: .bulkDeleteResponse(.success(.init(itemIDs: ["Docs/a.txt"]))),
+                    expected: .folders([TestFolder.docs])
+                ),
+                ChangeCase(
+                    name: "extract",
+                    action: .extractZipResponse(.success(item)),
+                    expected: .folders([TestFolder.docs])
+                ),
+                ChangeCase(
+                    name: "compress",
+                    action: .compressResponse(.success(item)),
+                    expected: .folders([TestFolder.docs])
+                ),
+                ChangeCase(
+                    name: "text save",
+                    action: .textSaveResponse(path: "Docs/a.txt", result: .success("etag")),
+                    expected: .folders([TestFolder.docs])
+                ),
                 ChangeCase(
                     name: "transfer",
-                    action: .transferResponse(.success(.init(result: transferred, operation: .move, clearClipboard: false))),
+                    action: .transferResponse(.success(.init(
+                        result: transferred,
+                        operation: .move,
+                        clearClipboard: false
+                    ))),
                     expected: .everything
                 ),
                 ChangeCase(name: "undo", action: .undoResponse(.success(true)), expected: .everything),
@@ -65,23 +116,40 @@ import TestUtils
                 ChangeCase(name: "delete failure", action: .deleteResponse(.failure(.offline)), expected: nil),
                 ChangeCase(name: "transfer failure", action: .transferResponse(.failure(.offline)), expected: nil),
                 ChangeCase(name: "undo failure", action: .undoResponse(.failure(.offline)), expected: nil),
-                ChangeCase(name: "text save failure", action: .textSaveResponse(path: "Docs/a.txt", result: .failure(.offline)), expected: nil),
+                ChangeCase(
+                    name: "text save failure",
+                    action: .textSaveResponse(path: "Docs/a.txt", result: .failure(.offline)),
+                    expected: nil
+                ),
                 ChangeCase(name: "a refresh", action: .refreshButtonTapped, expected: nil),
             ]
         )
         func whichActionsChangeWhatTheOtherWindowsShow(_ changeCase: ChangeCase) {
-            #expect(BrowseFeature.folderContentsChange(after: changeCase.action, directoryPath: TestFolder.docs) == changeCase.expected)
+            #expect(BrowseFeature
+                .folderContentsChange(after: changeCase.action, directoryPath: TestFolder.docs) == changeCase.expected)
         }
 
         // MARK: Broadcasting from the main window
 
         @Test("A rename in the main window is broadcast to the other windows and reloads the Favorites copy")
         func aRenameInTheMainWindowIsBroadcastToTheOtherWindows() async {
-            let renamed = FileItem(name: TestFile.bText, path: "", dateModified: MockDate.date, size: 1, kind: TestKind.text)
+            let renamed = FileItem(
+                name: TestFile.bText,
+                path: "",
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            )
             let store = makeStore()
 
-            await store.send(.browse(.root(.renameResponse(.success(BrowseFeature.RenameResult(originalID: TestFile.aText, renamed: renamed)))))) {
-                $0.browse.root.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamed, previousName: TestFile.aText))] }
+            await store.send(.browse(.root(.renameResponse(.success(BrowseFeature.RenameResult(
+                originalID: TestFile.aText,
+                renamed: renamed
+            )))))) {
+                $0.browse.root.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(
+                    renamed,
+                    previousName: TestFile.aText
+                ))] }
                 $0.folderWindowSync = FolderWindowSync(revision: 1, change: .folders([""]), origin: nil)
             }
             await store.receive(\.favorites.refreshDirectory)
@@ -98,12 +166,26 @@ import TestUtils
 
         @Test("A change in a pushed Favorites folder is broadcast and reloads the Browse screens showing that folder")
         func aChangeInAFavoritesFolderIsBroadcastAndReloadsBrowse() async {
-            let folder = FileItem(name: "New", path: TestFolder.docs, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
+            let folder = FileItem(
+                name: "New",
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 0,
+                kind: FileItem.directoryKind
+            )
             var pushedID = StackElementID(0)
             let listing = AsyncGate()
             let store = makeStore {
-                $0.favorites.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs))
-                $0.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs))
+                $0.favorites.path.append(BrowseFeature.State(
+                    serverURL: serverURL,
+                    directoryPath: TestFolder.docs,
+                    title: TestFolder.docs
+                ))
+                $0.browse.path.append(BrowseFeature.State(
+                    serverURL: serverURL,
+                    directoryPath: TestFolder.docs,
+                    title: TestFolder.docs
+                ))
                 pushedID = $0.favorites.path.ids[0]
             } configure: {
                 $0.holdFolderListings([TestFolder.docs: listing])
@@ -134,14 +216,22 @@ import TestUtils
             let origin = UUID(0)
             let listing = AsyncGate()
             let store = makeStore {
-                $0.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.photos, title: TestFolder.photos))
+                $0.browse.path.append(BrowseFeature.State(
+                    serverURL: serverURL,
+                    directoryPath: TestFolder.photos,
+                    title: TestFolder.photos
+                ))
             } configure: {
                 $0.holdFolderListings([TestFolder.photos: listing])
             }
             let id = store.state.browse.path.ids[0]
 
             await store.send(.folderWindowChanged(.folders([TestFolder.photos]), origin: origin)) {
-                $0.folderWindowSync = FolderWindowSync(revision: 1, change: .folders([TestFolder.photos]), origin: origin)
+                $0.folderWindowSync = FolderWindowSync(
+                    revision: 1,
+                    change: .folders([TestFolder.photos]),
+                    origin: origin
+                )
             }
             await store.receive(\.browse.refreshDirectory)
             await store.receive(\.favorites.refreshDirectory)
@@ -163,10 +253,20 @@ import TestUtils
             let store = makeStore()
 
             await store.send(.uploads(.delegate(.queueFinished(UploadsFeature.FinishSummary(
-                uploadedCount: 2, failedCount: 0, lastDestination: TestFolder.docs, changedPaths: [TestFolder.docs, TestFolder.archive]
+                uploadedCount: 2, failedCount: 0, lastDestination: TestFolder.docs, changedPaths: [
+                    TestFolder.docs,
+                    TestFolder.archive,
+                ]
             ))))) {
-                $0.uploadToast = MainTabFeature.UploadToast(message: L10n.Uploads.completeMany(2), openDestination: "Docs")
-                $0.folderWindowSync = FolderWindowSync(revision: 1, change: .folders([TestFolder.archive, TestFolder.docs]), origin: nil)
+                $0.uploadToast = MainTabFeature.UploadToast(
+                    message: L10n.Uploads.completeMany(2),
+                    openDestination: "Docs"
+                )
+                $0.folderWindowSync = FolderWindowSync(
+                    revision: 1,
+                    change: .folders([TestFolder.archive, TestFolder.docs]),
+                    origin: nil
+                )
             }
             await store.receive(\.browse.refreshDirectory)
             await store.receive(\.favorites.refreshDirectory)
@@ -187,7 +287,13 @@ import TestUtils
 
         @Test("A save requested from Browse goes to the download queue and runs against the chosen target")
         func savesGoToTheDownloadQueue() async throws {
-            let item = FileItem(name: TestFile.aText, path: TestFolder.docs, dateModified: MockDate.date, size: 1, kind: TestKind.text)
+            let item = FileItem(
+                name: TestFile.aText,
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 1,
+                kind: TestKind.text
+            )
             let target = URL(fileURLWithPath: "/tmp")
             let started = AsyncGate()
             let flushed = LockIsolated(0)
@@ -200,9 +306,17 @@ import TestUtils
                 }
             })
 
-            await store.send(.browse(.delegate(.saveRequested([DownloadSaveRequest(item: item, target: .into(target))]))))
+            await store.send(.browse(.delegate(.saveRequested([DownloadSaveRequest(
+                item: item,
+                target: .into(target)
+            )]))))
             await store.receive(\.downloadQueue.enqueueSaves) {
-                $0.downloadQueue.jobs = [DownloadQueueFeature.DownloadJob(id: UUID(0), item: item, status: .queued, saveTarget: .into(target))]
+                $0.downloadQueue.jobs = [DownloadQueueFeature.DownloadJob(
+                    id: UUID(0),
+                    item: item,
+                    status: .queued,
+                    saveTarget: .into(target)
+                )]
             }
             await store.receive(\.downloadQueue.startNextIfIdle) {
                 $0.downloadQueue.jobs[id: UUID(0)]?.status = .downloading

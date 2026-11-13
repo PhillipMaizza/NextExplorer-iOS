@@ -39,8 +39,20 @@ struct BrowseSavedSearchTests {
     private func savedListings() -> DirectoryCacheStore {
         let cache = DirectoryCacheStore.inMemory()
         let access = BrowseTestSupport.readOnlyAccess
-        cache.write(serverURL: BrowseTestSupport.serverURL, path: TestFolder.docs, result: BrowseResult(items: [photo, trips, unopened], access: access, path: TestFolder.docs), etag: nil, fetchedAt: MockDate.date)
-        cache.write(serverURL: BrowseTestSupport.serverURL, path: Constants.tripsPath, result: BrowseResult(items: [deepPhoto], access: access, path: Constants.tripsPath), etag: nil, fetchedAt: MockDate.date)
+        cache.write(
+            serverURL: BrowseTestSupport.serverURL,
+            path: TestFolder.docs,
+            result: BrowseResult(items: [photo, trips, unopened], access: access, path: TestFolder.docs),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
+        cache.write(
+            serverURL: BrowseTestSupport.serverURL,
+            path: Constants.tripsPath,
+            result: BrowseResult(items: [deepPhoto], access: access, path: Constants.tripsPath),
+            etag: nil,
+            fetchedAt: MockDate.date
+        )
         return cache
     }
 
@@ -77,7 +89,11 @@ struct BrowseSavedSearchTests {
 
         // The item limit stops the walk too, keeping only what fits.
         reads.setValue([])
-        #expect(BrowseFeature.savedItems(under: TestFolder.docs, folderLimit: 10, itemLimit: 2, read: read).map(\.id) == [trips.id, unopened.id])
+        #expect(BrowseFeature.savedItems(under: TestFolder.docs, folderLimit: 10, itemLimit: 2, read: read)
+            .map(\.id) == [
+                trips.id,
+                unopened.id,
+            ])
         #expect(reads.value == [TestFolder.docs])
     }
 

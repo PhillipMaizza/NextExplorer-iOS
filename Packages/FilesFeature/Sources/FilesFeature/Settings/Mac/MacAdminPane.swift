@@ -8,7 +8,8 @@
         /// visible against a dark grouped row, where the system border all but disappears.
         func macEditableField() -> some View {
             textFieldStyle(.roundedBorder)
-                .overlay(RoundedRectangle(cornerRadius: .radiusXSmall).strokeBorder(Color.secondary.opacity(MacEditableFieldMetrics.outlineOpacity)))
+                .overlay(RoundedRectangle(cornerRadius: .radiusXSmall)
+                    .strokeBorder(Color.secondary.opacity(MacEditableFieldMetrics.outlineOpacity)))
         }
     }
 
@@ -46,7 +47,12 @@
                         Button(L10n.Common.retry, action: onAppear)
                     }
                 } else if let save {
-                    form.macSettingsSaveBar(save.title, isSaving: save.isSaving, isEnabled: save.isEnabled, action: save.action)
+                    form.macSettingsSaveBar(
+                        save.title,
+                        isSaving: save.isSaving,
+                        isEnabled: save.isEnabled,
+                        action: save.action
+                    )
                 } else {
                     form
                 }

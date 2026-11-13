@@ -37,7 +37,11 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
     private func makeFixture() throws -> Fixture {
         let keychain = KeychainClient.inMemory()
         let first = try credentials(for: serverURL, username: TestUser.alice, cookieValue: TestSession.cookieValue)
-        let second = try credentials(for: otherServerURL, username: TestUser.bob, cookieValue: TestSession.refreshedCookieValue)
+        let second = try credentials(
+            for: otherServerURL,
+            username: TestUser.bob,
+            cookieValue: TestSession.refreshedCookieValue
+        )
         let stored = StoredSessions(sessions: [first, second], activeID: second.accountID)
         try keychain.save(TestStorageKey.storedSessions, JSONEncoder().encode(stored))
         let cookieStorage = makeCookieStorage()
@@ -73,7 +77,8 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
         #expect(switched == fixture.first)
         #expect(await fixture.client.activeAccountID() == fixture.first.accountID)
         #expect(try storedSessions(fixture.keychain).activeID == fixture.first.accountID)
-        let cookie = fixture.cookieStorage.cookies(for: serverURL)?.first { $0.name == AuthClientConfiguration.CookieName.local }
+        let cookie = fixture.cookieStorage.cookies(for: serverURL)?
+            .first { $0.name == AuthClientConfiguration.CookieName.local }
         #expect(cookie?.value == TestSession.cookieValue)
     }
 
@@ -83,7 +88,10 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
 
         #expect(await fixture.client.switchAccount(Constants.unknownAccountID) == nil)
         #expect(await fixture.client.activeAccountID() == fixture.second.accountID)
-        #expect(try storedSessions(fixture.keychain) == StoredSessions(sessions: [fixture.first, fixture.second], activeID: fixture.second.accountID))
+        #expect(try storedSessions(fixture.keychain) == StoredSessions(
+            sessions: [fixture.first, fixture.second],
+            activeID: fixture.second.accountID
+        ))
     }
 
     @Test("clearing the active session drops only that account and promotes the next one")

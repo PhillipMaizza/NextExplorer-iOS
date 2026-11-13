@@ -52,7 +52,14 @@ public struct QAHarness: View {
 
         // Pre-seed the Browse root loaded so the hero shot has a rich tree with no skeleton flash.
         state.browse.root.phase = .loaded
-        state.browse.root.access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
+        state.browse.root.access = FileAccess(
+            canRead: true,
+            canWrite: true,
+            canUpload: true,
+            canDelete: true,
+            canShare: true,
+            canDownload: true
+        )
         state.browse.root.items = IdentifiedArray(uniqueElements: [
             dir("Documents", "2026-09-12"),
             dir("Photos", "2026-09-14"),
@@ -78,12 +85,27 @@ public struct QAHarness: View {
         return state
     }
 
-    private static func result(_ name: String, _ path: String, _ kind: String, _ line: String?, _ lineNo: Int?) -> SearchResultItem {
+    private static func result(
+        _ name: String,
+        _ path: String,
+        _ kind: String,
+        _ line: String?,
+        _ lineNo: Int?
+    ) -> SearchResultItem {
         SearchResultItem(name: name, path: path, kind: kind, matchLine: line, matchLineNumber: lineNo)
     }
 
     private static func fav(_ id: String, _ path: String, _ label: String, _ position: Int) -> Favorite {
-        Favorite(id: id, path: path, label: label, icon: "folder", color: nil, position: position, createdAt: date("2026-09-01"), updatedAt: date("2026-09-01"))
+        Favorite(
+            id: id,
+            path: path,
+            label: label,
+            icon: "folder",
+            color: nil,
+            position: position,
+            createdAt: date("2026-09-01"),
+            updatedAt: date("2026-09-01")
+        )
     }
 
     private static func dir(_ name: String, _ ymd: String) -> FileItem {

@@ -45,7 +45,8 @@ struct LoginDiagnosticsTests {
 
     @Test("edge case: an empty name is described without crashing")
     func emptyIdentifier() {
-        #expect(LoginDiagnostics.describe(identifier: TestValue.blank) == "username shaped, 0 characters, surrounding whitespace removed")
+        #expect(LoginDiagnostics
+            .describe(identifier: TestValue.blank) == "username shaped, 0 characters, surrounding whitespace removed")
     }
 
     @Test("a password is only ever empty or set")
@@ -131,7 +132,10 @@ struct LoginDiagnosticsTests {
         var log = LoginDiagnostics()
         log.record("connecting: https, default port", at: timestamp)
         log.record("sign in: rejected", isProblem: true, at: timestamp)
-        let lines = log.rendered(header: ["NextExplorer 1.1.4 (1)"]).split(separator: "\n", omittingEmptySubsequences: false)
+        let lines = log.rendered(header: ["NextExplorer 1.1.4 (1)"]).split(
+            separator: "\n",
+            omittingEmptySubsequences: false
+        )
         #expect(lines.map(String.init) == [
             "NextExplorer 1.1.4 (1)",
             "",

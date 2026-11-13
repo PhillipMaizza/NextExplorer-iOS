@@ -176,7 +176,10 @@ struct ThumbnailImage: View {
                 data: nil, width: side, height: side, bitsPerComponent: 8, bytesPerRow: 0,
                 space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
             ) else { return nil }
-            let colors = [CGColor(red: 0.94, green: 0.55, blue: 0.12, alpha: 1), CGColor(red: 0.12, green: 0.59, blue: 0.86, alpha: 1)]
+            let colors = [
+                CGColor(red: 0.94, green: 0.55, blue: 0.12, alpha: 1),
+                CGColor(red: 0.12, green: 0.59, blue: 0.86, alpha: 1),
+            ]
             for band in 0 ..< 8 {
                 context.setFillColor(colors[band % colors.count])
                 context.fill(CGRect(x: 0, y: band * side / 8, width: side, height: side / 8))

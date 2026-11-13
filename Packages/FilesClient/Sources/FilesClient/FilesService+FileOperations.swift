@@ -123,7 +123,9 @@ extension FilesService {
     /// known script (or plain ASCII), and the text is not the byte pair pattern of ASCII shaped
     /// legacy text read two bytes at a time, which also lands in the CJK block.
     private static func nonLatinUTF16Text(of data: Data) -> String? {
-        guard data.count >= TextDecoding.minimumUTF16Bytes, data.count.isMultiple(of: TextDecoding.utf16UnitBytes) else {
+        guard data.count >= TextDecoding.minimumUTF16Bytes,
+              data.count.isMultiple(of: TextDecoding.utf16UnitBytes)
+        else {
             return nil
         }
         let candidates = [String.Encoding.utf16LittleEndian, .utf16BigEndian].compactMap { encoding -> String? in
@@ -153,7 +155,10 @@ extension FilesService {
 
     private static func isASCIIPairPattern(_ data: Data, encoding _: String.Encoding) -> Bool {
         let bytes = Array(data.prefix(TextDecoding.sampleBytes))
-        let pairs = stride(from: 0, to: bytes.count - 1, by: TextDecoding.utf16UnitBytes).map { (bytes[$0], bytes[$0 + 1]) }
+        let pairs = stride(from: 0, to: bytes.count - 1, by: TextDecoding.utf16UnitBytes).map { (
+            bytes[$0],
+            bytes[$0 + 1]
+        ) }
         guard !pairs.isEmpty else { return false }
         let asciiPairs = pairs.filter {
             TextDecoding.printableASCIIBytes.contains($0.0) && TextDecoding.printableASCIIBytes.contains($0.1)
@@ -353,7 +358,10 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         do {
-            let body = CompressItemBody(items: [CompressItemBody.Item(name: item.name, path: item.path)], destination: item.path)
+            let body = CompressItemBody(
+                items: [CompressItemBody.Item(name: item.name, path: item.path)],
+                destination: item.path
+            )
             request.httpBody = try JSONEncoder().encode(body)
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
@@ -371,7 +379,11 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         do {
-            let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(path: $0.path, name: $0.name, kind: $0.kind) })
+            let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(
+                path: $0.path,
+                name: $0.name,
+                kind: $0.kind
+            ) })
             request.httpBody = try JSONEncoder().encode(body)
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
@@ -388,7 +400,11 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .delete, isMutation: true)
         request.setJSONContentType()
         do {
-            let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(path: $0.path, name: $0.name, kind: $0.kind) })
+            let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(
+                path: $0.path,
+                name: $0.name,
+                kind: $0.kind
+            ) })
             request.httpBody = try JSONEncoder().encode(body)
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)

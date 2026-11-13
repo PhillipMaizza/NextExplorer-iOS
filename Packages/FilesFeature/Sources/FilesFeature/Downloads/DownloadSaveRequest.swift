@@ -64,20 +64,31 @@ public struct DownloadSaveRequest: Equatable, Sendable {
             let expectedBytes = totalBytes > 0 ? totalBytes : nil
             let fileManager = FileManager.default
             let staging = fileManager.temporaryDirectory
-                .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)", isDirectory: true)
+                .appendingPathComponent(
+                    "\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)",
+                    isDirectory: true
+                )
             defer { try? fileManager.removeItem(at: staging) }
             try local { try fileManager.createDirectory(at: staging, withIntermediateDirectories: true) }
             let rootPrefix = item.id + "/"
             var completedBytes: Int64 = 0
             for file in files {
                 try Task.checkCancellation()
-                let relativePath = file.id.hasPrefix(rootPrefix) ? String(file.id.dropFirst(rootPrefix.count)) : file.name
+                let relativePath = file.id.hasPrefix(rootPrefix)
+                    ? String(file.id.dropFirst(rootPrefix.count))
+                    : file.name
                 // Server names are untrusted: never let one escape the chosen folder.
                 guard let target = SafeDestination.within(staging, relativePath) else { continue }
-                try local { try fileManager.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true) }
+                try local { try fileManager.createDirectory(
+                    at: target.deletingLastPathComponent(),
+                    withIntermediateDirectories: true
+                ) }
                 let base = completedBytes
                 let temporary = try await filesClient.downloadItem(serverURL, file) { update in
-                    onProgress(TransferProgress(receivedBytes: base + update.receivedBytes, expectedBytes: expectedBytes))
+                    onProgress(TransferProgress(
+                        receivedBytes: base + update.receivedBytes,
+                        expectedBytes: expectedBytes
+                    ))
                 }
                 defer { try? fileManager.removeItem(at: temporary) }
                 try local { try move(temporary, to: target) }

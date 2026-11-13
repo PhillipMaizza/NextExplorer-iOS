@@ -18,7 +18,14 @@ struct UserManagementAccountTests: UserManagementTestSupport {
     @Test
     func savingTheProfileSendsTheTrimmedFieldsThenUpdatesTheUserAndToasts() async {
         let user = makeUser(id: "2")
-        let updated = User(id: "2", username: "user2", email: "new@example.com", displayName: "Renamed", roles: [], authMethods: user.authMethods)
+        let updated = User(
+            id: "2",
+            username: "user2",
+            email: "new@example.com",
+            displayName: "Renamed",
+            roles: [],
+            authMethods: user.authMethods
+        )
         let store = makeStore(loadedState([user], detail: "2"), updateUser: { updated })
 
         await store.send(.editDisplayNameChanged("  Renamed  ")) { $0.editDisplayName = "  Renamed  " }
@@ -31,7 +38,10 @@ struct UserManagementAccountTests: UserManagementTestSupport {
             $0.editEmail = "new@example.com"
             $0.toast = L10n.UserManagement.toastProfileUpdated
         }
-        #expect(calls.value == [.updateUser(id: "2", request: UpdateUserRequest(email: "new@example.com", username: "user2", displayName: "Renamed"))])
+        #expect(calls.value == [.updateUser(
+            id: "2",
+            request: UpdateUserRequest(email: "new@example.com", username: "user2", displayName: "Renamed")
+        )])
         #expect(!store.state.isProfileDirty)
     }
 
@@ -61,7 +71,13 @@ struct UserManagementAccountTests: UserManagementTestSupport {
     @Test(
         "A profile save needs a username and a well shaped email",
         arguments: [
-            ProfileEditCase(username: "renamed", email: "user2@example.com", usernameError: nil, emailError: nil, isSaveEnabled: true),
+            ProfileEditCase(
+                username: "renamed",
+                email: "user2@example.com",
+                usernameError: nil,
+                emailError: nil,
+                isSaveEnabled: true
+            ),
             ProfileEditCase(
                 username: TestValue.blank, email: "user2@example.com",
                 usernameError: L10n.UserManagement.errorUsernameRequired, emailError: nil, isSaveEnabled: false
@@ -74,7 +90,13 @@ struct UserManagementAccountTests: UserManagementTestSupport {
                 username: "user2", email: "broken@",
                 usernameError: nil, emailError: L10n.UserManagement.errorEmailInvalid, isSaveEnabled: false
             ),
-            ProfileEditCase(username: "user2", email: "user2@example.com", usernameError: nil, emailError: nil, isSaveEnabled: false),
+            ProfileEditCase(
+                username: "user2",
+                email: "user2@example.com",
+                usernameError: nil,
+                emailError: nil,
+                isSaveEnabled: false
+            ),
         ]
     )
     func profileValidationGatesTheSave(_ testCase: ProfileEditCase) async {
@@ -100,7 +122,14 @@ struct UserManagementAccountTests: UserManagementTestSupport {
     @Test
     func grantingAdminAsksFirstThenSendsTheRolesAndToasts() async {
         let user = makeUser(id: "2")
-        let promoted = User(id: "2", username: "user2", email: "user2@example.com", displayName: "User 2", roles: ["admin"], authMethods: user.authMethods)
+        let promoted = User(
+            id: "2",
+            username: "user2",
+            email: "user2@example.com",
+            displayName: "User 2",
+            roles: ["admin"],
+            authMethods: user.authMethods
+        )
         let store = makeStore(loadedState([user], detail: "2"), updateUser: { promoted })
 
         await store.send(.grantAdminTapped) { $0.userToGrantAdmin = user }
@@ -120,7 +149,12 @@ struct UserManagementAccountTests: UserManagementTestSupport {
     @Test
     func grantingAdminKeepsTheUsersOtherRolesSorted() async {
         let editor = User(id: "2", username: "user2", email: "user2@example.com", roles: ["viewer", "editor"])
-        let promoted = User(id: "2", username: "user2", email: "user2@example.com", roles: ["admin", "editor", "viewer"])
+        let promoted = User(
+            id: "2",
+            username: "user2",
+            email: "user2@example.com",
+            roles: ["admin", "editor", "viewer"]
+        )
         let store = makeStore(loadedState([editor], detail: "2"), updateUser: { promoted })
 
         await store.send(.grantAdminTapped) { $0.userToGrantAdmin = editor }

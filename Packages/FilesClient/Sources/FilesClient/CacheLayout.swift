@@ -19,7 +19,11 @@ public enum CacheLayout {
     public static let thumbnailsDirectoryName = "thumbnails"
     public static let thumbnailURLsDirectoryName = "thumbnail-urls"
     public static let pdfThumbnailsDirectoryName = "pdf-thumbnails"
-    public static let flatScopedDirectories = [thumbnailsDirectoryName, thumbnailURLsDirectoryName, pdfThumbnailsDirectoryName]
+    public static let flatScopedDirectories = [
+        thumbnailsDirectoryName,
+        thumbnailURLsDirectoryName,
+        pdfThumbnailsDirectoryName,
+    ]
     /// Joins the parts of an in memory or hashed cache key (scope, server, path).
     public static let keySeparator = "\n"
     public static let pathTrimCharacters = CharacterSet(charactersIn: "/")
@@ -34,11 +38,13 @@ public enum CacheLayout {
 }
 
 public extension CacheAccountScope {
-    /// Whether `name` starts with an account prefix (16 hex digits then the separator), as every entry written since the
+    /// Whether `name` starts with an account prefix (16 hex digits then the separator), as every entry written since
+    /// the
     /// caches became account scoped does.
     static func hasAccountPrefix(_ name: String) -> Bool {
         let digits = prefixByteCount * hexDigitsPerByte
-        guard name.count > digits, name[name.index(name.startIndex, offsetBy: digits)] == prefixSeparator else { return false }
+        guard name.count > digits,
+              name[name.index(name.startIndex, offsetBy: digits)] == prefixSeparator else { return false }
         return name.prefix(digits).allSatisfy(\.isHexDigit)
     }
 }

@@ -183,7 +183,12 @@ public struct DownloadQueueFeature {
                     state.jobs.removeAll { $0.status.isTerminal }
                 }
                 for request in requests {
-                    state.jobs.append(DownloadJob(id: uuid(), item: request.item, status: .queued, saveTarget: request.target))
+                    state.jobs.append(DownloadJob(
+                        id: uuid(),
+                        item: request.item,
+                        status: .queued,
+                        saveTarget: request.target
+                    ))
                 }
                 return .send(.startNextIfIdle)
 
@@ -288,7 +293,8 @@ public struct DownloadQueueFeature {
         let filesClient = filesClient
         let localDownloadStore = localDownloadStore
         return .run { send in await BackgroundActivity.whileTransferring(name: Self.activityName) {
-            let (progress, continuation) = AsyncStream<TransferProgress>.makeStream(bufferingPolicy: .bufferingNewest(1))
+            let (progress, continuation) = AsyncStream<TransferProgress>
+                .makeStream(bufferingPolicy: .bufferingNewest(1))
 
             let result = await withTaskGroup(
                 of: Void.self, returning: Result<URL, FilesClientError>?.self

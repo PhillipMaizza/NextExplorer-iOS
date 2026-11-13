@@ -26,7 +26,13 @@ struct APITokensFeatureTests {
 
     private let serverURL = SettingsTestSupport.serverURL
     private let backup = APIToken(id: Constants.id, name: "backup", scope: .read, createdAt: "2026-11-10T07:00:00.000Z")
-    private let nightly = APIToken(id: "t2", name: Constants.nightlyTokenName, scope: .write, createdAt: "2026-11-11T07:00:00.000Z", expiresAt: "2027-01-01T00:00:00.000Z")
+    private let nightly = APIToken(
+        id: "t2",
+        name: Constants.nightlyTokenName,
+        scope: .write,
+        createdAt: "2026-11-11T07:00:00.000Z",
+        expiresAt: "2027-01-01T00:00:00.000Z"
+    )
     private let wrongPassword = FilesClientError.serverMessage(statusCode: 401, message: "That password is not right.")
     private let createCalls = LockIsolated<[CreateCall]>([])
     private let renameCalls = LockIsolated<[RenameCall]>([])
@@ -42,7 +48,12 @@ struct APITokensFeatureTests {
         revoke: @escaping @Sendable () async throws -> Void = { throw FilesClientError.offline },
         initial: (inout APITokensFeature.State) -> Void = { _ in }
     ) -> Store {
-        var state = APITokensFeature.State(serverURL: serverURL, requiresPassword: requiresPassword, phase: phase, tokens: tokens ?? [backup])
+        var state = APITokensFeature.State(
+            serverURL: serverURL,
+            requiresPassword: requiresPassword,
+            phase: phase,
+            tokens: tokens ?? [backup]
+        )
         initial(&state)
         let createCalls = createCalls
         let renameCalls = renameCalls
@@ -52,7 +63,8 @@ struct APITokensFeatureTests {
         } withDependencies: {
             $0.filesClient.fetchAPITokens = { _ in try await list() }
             $0.filesClient.createAPIToken = { _, name, scope, days, password in
-                createCalls.withValue { $0.append(CreateCall(name: name, scope: scope, days: days, password: password)) }
+                createCalls
+                    .withValue { $0.append(CreateCall(name: name, scope: scope, days: days, password: password)) }
                 return try await create()
             }
             $0.filesClient.renameAPIToken = { _, id, name in
@@ -67,7 +79,8 @@ struct APITokensFeatureTests {
     }
 
     private func tokens(count: Int) -> [APIToken] {
-        (0 ..< count).map { APIToken(id: "t\($0)", name: "n\($0)", scope: .read, createdAt: "2026-11-10T07:00:00.000Z") }
+        (0 ..< count)
+            .map { APIToken(id: "t\($0)", name: "n\($0)", scope: .read, createdAt: "2026-11-10T07:00:00.000Z") }
     }
 
     private func openedForm(_ store: Store, name: String = "ci", password: String? = nil) async {
@@ -104,7 +117,8 @@ struct APITokensFeatureTests {
         let attempts = LockIsolated(0)
         let store = makeStore(phase: .loading, tokens: [], list: {
             if attempts.withValue({ $0 += 1; return $0 }) == 1 {
-                throw FilesClientError.forbidden(message: "This installation runs without accounts, so it issues no tokens.")
+                throw FilesClientError
+                    .forbidden(message: "This installation runs without accounts, so it issues no tokens.")
             }
             return [backup]
         })
@@ -155,7 +169,11 @@ struct APITokensFeatureTests {
         BlockedCase(phase: .loaded, count: 1, isWorking: true),
     ])
     func theFormDoesNotOpenAtTheLimitBeforeTheListLoadedOrWhileWorking(_ testCase: BlockedCase) async {
-        let store = makeStore(phase: testCase.phase, tokens: tokens(count: testCase.count), initial: { $0.isWorking = testCase.isWorking })
+        let store = makeStore(
+            phase: testCase.phase,
+            tokens: tokens(count: testCase.count),
+            initial: { $0.isWorking = testCase.isWorking }
+        )
 
         await store.send(.newTokenTapped)
     }
@@ -227,7 +245,12 @@ struct APITokensFeatureTests {
             $0.issued = issued
         }
 
-        #expect(createCalls.value == [CreateCall(name: Constants.nightlyTokenName, scope: .write, days: nil, password: TestAccount.password)])
+        #expect(createCalls.value == [CreateCall(
+            name: Constants.nightlyTokenName,
+            scope: .write,
+            days: nil,
+            password: TestAccount.password
+        )])
     }
 
     @Test
@@ -270,7 +293,10 @@ struct APITokensFeatureTests {
 
     @Test(arguments: [
         KeepsPasswordCase(error: .rateLimited, message: L10n.Error.rateLimited),
-        KeepsPasswordCase(error: .serverMessage(statusCode: 500, message: "The server is busy."), message: "The server is busy."),
+        KeepsPasswordCase(
+            error: .serverMessage(statusCode: 500, message: "The server is busy."),
+            message: "The server is busy."
+        ),
         KeepsPasswordCase(error: .offline, message: L10n.Error.offline),
     ])
     func anyOtherFailureKeepsThePassword(_ testCase: KeepsPasswordCase) async {
@@ -386,7 +412,10 @@ struct APITokensFeatureTests {
 
     @Test
     func aFailedRenameShowsTheMessageAndKeepsTheOldName() async {
-        let store = makeStore(rename: { throw FilesClientError.serverMessage(statusCode: 404, message: "There is no such token on this account.") })
+        let store = makeStore(rename: { throw FilesClientError.serverMessage(
+            statusCode: 404,
+            message: "There is no such token on this account."
+        ) })
 
         await store.send(.renameTapped(backup)) { $0.rename = .init(id: Constants.id, name: "backup") }
         await store.send(.renameNameChanged("x")) { $0.rename?.name = "x" }

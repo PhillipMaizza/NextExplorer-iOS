@@ -53,17 +53,24 @@ extension ThumbnailCache: DependencyKey {
     }
 
     private static func previewCacheSubdirectory(_ name: String) throws -> URL {
-        let cachesDirectory = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let cachesDirectory = try FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
         return cachesDirectory.appendingPathComponent(CacheLayout.previewCacheName, isDirectory: true)
             .appendingPathComponent(name, isDirectory: true)
     }
 
     private static func cacheFileURL(for url: URL) throws -> URL {
-        try previewCacheSubdirectory(CacheLayout.thumbnailsDirectoryName).appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: url.absoluteString)))
+        try previewCacheSubdirectory(CacheLayout.thumbnailsDirectoryName)
+            .appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: url.absoluteString)))
     }
 
     private static func resolutionRecordURL(for path: String) throws -> URL {
-        try previewCacheSubdirectory(CacheLayout.thumbnailURLsDirectoryName).appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: path)))
+        try previewCacheSubdirectory(CacheLayout.thumbnailURLsDirectoryName)
+            .appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: path)))
     }
 
     private static let resolutionRecordSeparator = "\u{0}"
@@ -95,7 +102,10 @@ extension ThumbnailCache: DependencyKey {
                 guard downloadedSize <= maxResponseBytes else {
                     throw URLError(.dataLengthExceedsMaximum)
                 }
-                try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: fileURL.deletingLastPathComponent(),
+                    withIntermediateDirectories: true
+                )
                 try? FileManager.default.removeItem(at: fileURL)
                 try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
                 return try Data(contentsOf: fileURL)
@@ -112,7 +122,10 @@ extension ThumbnailCache: DependencyKey {
                 }
                 let resolved = await resolve()
                 if let recordURL {
-                    try? FileManager.default.createDirectory(at: recordURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                    try? FileManager.default.createDirectory(
+                        at: recordURL.deletingLastPathComponent(),
+                        withIntermediateDirectories: true
+                    )
                     try? "\(signature)\(resolutionRecordSeparator)\(resolved?.absoluteString ?? "")"
                         .write(to: recordURL, atomically: true, encoding: .utf8)
                 }

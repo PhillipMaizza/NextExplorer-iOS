@@ -33,7 +33,10 @@
 
         func body(content: Content) -> some View {
             content
-                .modifier(MacDockUploadStatus(remaining: store.uploads.remainingCount, progress: store.uploads.overallProgress))
+                .modifier(MacDockUploadStatus(
+                    remaining: store.uploads.remainingCount,
+                    progress: store.uploads.overallProgress
+                ))
                 .windowTitle(windowTitle)
                 .modifier(AccountConfirmations(store: store.scope(state: \.settings, action: \.settings)))
                 .modifier(TipJarPresentation(store: store.scope(state: \.settings, action: \.settings)))

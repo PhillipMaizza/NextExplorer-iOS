@@ -12,9 +12,15 @@
             let screen = TwoFactorScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-            XCTAssertTrue(screen.row.waitToAppear(), "The Two-Factor row should be visible without expanding the account")
+            XCTAssertTrue(
+                screen.row.waitToAppear(),
+                "The Two-Factor row should be visible without expanding the account"
+            )
             screen.row.tap()
-            XCTAssertTrue(screen.offTitle.waitToAppear(), "An account without a second factor should open on the off screen")
+            XCTAssertTrue(
+                screen.offTitle.waitToAppear(),
+                "An account without a second factor should open on the off screen"
+            )
             return (app, screen)
         }
 
@@ -24,7 +30,10 @@
             XCTAssertTrue(screen.codeField.waitToAppear(), "Turning on should show the code boxes")
             screen.codeField.tap()
             screen.codeField.typeText(UITestCase.Fixture.validCode)
-            XCTAssertTrue(screen.recoveryTitle.waitToAppear(), "The sixth digit should confirm and show the recovery codes")
+            XCTAssertTrue(
+                screen.recoveryTitle.waitToAppear(),
+                "The sixth digit should confirm and show the recovery codes"
+            )
         }
 
         func testTurningOnShowsTheRecoveryCodesThenLandsOnOn() {
@@ -44,7 +53,11 @@
 
             XCTAssertTrue(screen.wrongCodeMessage.waitToAppear(), "A wrong code should show the server's message")
             XCTAssertFalse(screen.recoveryTitle.appears(), "A wrong code must not turn it on")
-            XCTAssertEqual(screen.codeField.value as? String ?? "", "", "A wrong code should be cleared so it can be typed again")
+            XCTAssertEqual(
+                screen.codeField.value as? String ?? "",
+                "",
+                "A wrong code should be cleared so it can be typed again"
+            )
         }
 
         func testTurningOffAsksForThePasswordAndAWrongOneKeepsItOn() {
@@ -58,7 +71,10 @@
             screen.passwordField.tap()
             screen.passwordField.typeText(UITestCase.Fixture.wrongPassword)
             screen.passwordConfirmButton.tap()
-            XCTAssertTrue(screen.wrongPasswordMessage.waitToAppear(), "A wrong password should show the server's message")
+            XCTAssertTrue(
+                screen.wrongPasswordMessage.waitToAppear(),
+                "A wrong password should show the server's message"
+            )
             XCTAssertTrue(screen.onTitle.exists, "A wrong password must leave it on")
 
             screen.passwordField.clearAndType(UITestCase.Fixture.accountPassword)

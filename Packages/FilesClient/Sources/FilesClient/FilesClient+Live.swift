@@ -11,7 +11,11 @@ public extension FilesClient {
         now: @escaping @Sendable () -> Date = { Date() },
         activeScope: @escaping @Sendable () -> String = { CacheAccountScope.current }
     ) -> FilesClient {
-        let service = FilesService(networkClient: networkClient, textEditorETags: textEditorETags, activeScope: activeScope)
+        let service = FilesService(
+            networkClient: networkClient,
+            textEditorETags: textEditorETags,
+            activeScope: activeScope
+        )
 
         @Sendable func resolveBrowse(serverURL: URL, path: String, isLowPriority: Bool) async throws -> BrowseResult {
             // Pinned at request start so a late response lands in the account that asked for it,
@@ -152,13 +156,29 @@ public extension FilesClient {
                 try await service.restoreVersion(serverURL: serverURL, path: path, versionID: versionID)
             },
             downloadVersion: { serverURL, path, versionID, destination in
-                try await service.downloadVersion(serverURL: serverURL, path: path, versionID: versionID, to: destination)
+                try await service.downloadVersion(
+                    serverURL: serverURL,
+                    path: path,
+                    versionID: versionID,
+                    to: destination
+                )
             },
             copyVersion: { serverURL, path, versionID, destination in
-                try await service.copyVersion(serverURL: serverURL, path: path, versionID: versionID, destination: destination)
+                try await service.copyVersion(
+                    serverURL: serverURL,
+                    path: path,
+                    versionID: versionID,
+                    destination: destination
+                )
             },
             updateVersion: { serverURL, path, versionID, label, pinned in
-                try await service.updateVersion(serverURL: serverURL, path: path, versionID: versionID, label: label, pinned: pinned)
+                try await service.updateVersion(
+                    serverURL: serverURL,
+                    path: path,
+                    versionID: versionID,
+                    label: label,
+                    pinned: pinned
+                )
             },
             deleteVersions: { serverURL, path, ids, all in
                 try await service.deleteVersions(serverURL: serverURL, path: path, ids: ids, all: all)
@@ -256,7 +276,13 @@ public extension FilesClient {
                 try await service.apiTokens(serverURL: serverURL)
             },
             createAPIToken: { serverURL, name, scope, expiresInDays, password in
-                try await service.createAPIToken(serverURL: serverURL, name: name, scope: scope, expiresInDays: expiresInDays, password: password)
+                try await service.createAPIToken(
+                    serverURL: serverURL,
+                    name: name,
+                    scope: scope,
+                    expiresInDays: expiresInDays,
+                    password: password
+                )
             },
             renameAPIToken: { serverURL, id, name in
                 try await service.renameAPIToken(serverURL: serverURL, id: id, name: name)
@@ -280,7 +306,12 @@ public extension FilesClient {
                 try await service.clearActivity(serverURL: serverURL)
             },
             fetchVersionedFiles: { serverURL, filter, offset, limit in
-                try await service.fetchVersionedFiles(serverURL: serverURL, filter: filter, offset: offset, limit: limit)
+                try await service.fetchVersionedFiles(
+                    serverURL: serverURL,
+                    filter: filter,
+                    offset: offset,
+                    limit: limit
+                )
             },
             fetchVersionedFile: { serverURL, id in
                 try await service.fetchVersionedFile(serverURL: serverURL, id: id)
@@ -344,7 +375,11 @@ extension FilesClient: DependencyKey {
         @Dependency(\.networkClient) var networkClient
         @Dependency(\.directoryCacheStore) var directoryCacheStore
         @Dependency(\.textEditorETagStore) var textEditorETags
-        return .live(networkClient: networkClient, directoryCacheStore: directoryCacheStore, textEditorETags: textEditorETags)
+        return .live(
+            networkClient: networkClient,
+            directoryCacheStore: directoryCacheStore,
+            textEditorETags: textEditorETags
+        )
     }
 }
 

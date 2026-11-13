@@ -7,7 +7,11 @@ import UserNotifications
 
 @Suite("Upload notifications")
 struct UploadNotificationTests {
-    private func outcome(uploaded: Int, failures: [FailedUpload] = [], destination: String = TestPath.photos2026) -> BatchOutcome {
+    private func outcome(
+        uploaded: Int,
+        failures: [FailedUpload] = [],
+        destination: String = TestPath.photos2026
+    ) -> BatchOutcome {
         BatchOutcome(
             batchID: TestUpload.batchID, accountID: TestUpload.accountID, host: TestHost.server,
             destination: destination, uploaded: uploaded, failures: failures
@@ -104,8 +108,12 @@ struct UploadNotificationTests {
     @Test("Arabic quotes the folder with guillemets, as the other Arabic strings do")
     func arabicQuotes() {
         for count in [0, 1, 2, 3, 11, 100] {
-            let text = LocalizationOverride.withLanguage("ar") { L10n.ShareUpload.notificationDoneBody(count, "Photos") }
-            #expect(text.contains("«") && text.contains("»") && text.contains(TestFolder.photos), Comment(rawValue: text))
+            let text = LocalizationOverride
+                .withLanguage("ar") { L10n.ShareUpload.notificationDoneBody(count, "Photos") }
+            #expect(
+                text.contains("«") && text.contains("»") && text.contains(TestFolder.photos),
+                Comment(rawValue: text)
+            )
             #expect(!text.contains("”") && !text.contains("“"), Comment(rawValue: text))
         }
     }
@@ -134,7 +142,8 @@ struct UploadNotificationTests {
             #expect(category.hiddenPreviewsBodyPlaceholder == english { L10n.ShareUpload.notificationHiddenPreview })
         }
         #expect(categories.first { $0.identifier == UploadNotificationIdentifier.failedCategory }?.actions.count == 1)
-        #expect(categories.first { $0.identifier == UploadNotificationIdentifier.doneCategory }?.actions.isEmpty == true)
+        #expect(categories.first { $0.identifier == UploadNotificationIdentifier.doneCategory }?.actions
+            .isEmpty == true)
     }
 
     @Test("The hidden preview text is translated in every language")
@@ -187,7 +196,10 @@ struct UploadNotificationTests {
         english { UploadNotifier.postRetryFailed(.needsSignIn, using: center.center) }
 
         let requests = center.requests
-        #expect(requests.map(\.identifier) == Array(repeating: UploadNotificationIdentifier.retryFailureNotification, count: 2))
+        #expect(requests.map(\.identifier) == Array(
+            repeating: UploadNotificationIdentifier.retryFailureNotification,
+            count: 2
+        ))
         #expect(requests.map(\.content.title) == ["Couldn't retry", "Couldn't retry"])
         #expect(requests.map(\.content.body) == [
             "Open NextExplorer and share the files again.",
@@ -205,27 +217,42 @@ struct UploadNotificationTests {
             UploadNotificationKey.destination: TestPath.filesDocuments,
         ]
         #expect(
-            UploadNotificationHandler.decision(actionIdentifier: UploadNotificationIdentifier.retryAction, userInfo: info)
+            UploadNotificationHandler.decision(
+                actionIdentifier: UploadNotificationIdentifier.retryAction,
+                userInfo: info
+            )
                 == .retry(batchID: TestUpload.batchID)
         )
         #expect(
             UploadNotificationHandler.decision(actionIdentifier: UNNotificationDefaultActionIdentifier, userInfo: info)
                 == .open(accountID: TestUpload.accountID, folder: TestPath.filesDocuments)
         )
-        #expect(UploadNotificationHandler.decision(actionIdentifier: UNNotificationDismissActionIdentifier, userInfo: info) == .ignore)
+        #expect(UploadNotificationHandler.decision(
+            actionIdentifier: UNNotificationDismissActionIdentifier,
+            userInfo: info
+        ) == .ignore)
         #expect(UploadNotificationHandler.decision(actionIdentifier: "other", userInfo: info) == .ignore)
     }
 
     @Test("A notification posted before folders were included only opens the app")
     func olderNotificationOnlyOpens() {
         let info: [AnyHashable: Any] = [UploadNotificationKey.batchID: TestUpload.batchID]
-        #expect(UploadNotificationHandler.decision(actionIdentifier: UNNotificationDefaultActionIdentifier, userInfo: info) == .ignore)
+        #expect(UploadNotificationHandler.decision(
+            actionIdentifier: UNNotificationDefaultActionIdentifier,
+            userInfo: info
+        ) == .ignore)
     }
 
     @Test("A notification without its batch id is ignored")
     func incompleteUserInfo() {
-        #expect(UploadNotificationHandler.decision(actionIdentifier: UploadNotificationIdentifier.retryAction, userInfo: [:]) == .ignore)
-        #expect(UploadNotificationHandler.decision(actionIdentifier: UNNotificationDismissActionIdentifier, userInfo: [:]) == .ignore)
+        #expect(UploadNotificationHandler.decision(
+            actionIdentifier: UploadNotificationIdentifier.retryAction,
+            userInfo: [:]
+        ) == .ignore)
+        #expect(UploadNotificationHandler.decision(
+            actionIdentifier: UNNotificationDismissActionIdentifier,
+            userInfo: [:]
+        ) == .ignore)
     }
 
     // MARK: Permission
@@ -281,7 +308,11 @@ struct UploadNotificationTests {
     @Test("Where the full prompt cannot be shown the quiet permission is the fallback")
     func provisionalFallback() async {
         let requests = Requests()
-        await UploadNotifier.requestPermission(using: authorization(status: .notDetermined, fullFails: true, requests: requests))
+        await UploadNotifier.requestPermission(using: authorization(
+            status: .notDetermined,
+            fullFails: true,
+            requests: requests
+        ))
         #expect(requests.options == [[.alert, .sound], [.alert, .provisional]])
     }
 

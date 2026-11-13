@@ -54,7 +54,11 @@ struct SharedFeatureTests {
         let share = makeShare(id: "s1")
         let fetchGate = AsyncGate()
         let usersGate = AsyncGate()
-        let cache = try JSONCacheStore.seeded([share], forKey: ListCache.key("shares.byMe", serverURL: serverURL), fetchedAt: MockDate.date)
+        let cache = try JSONCacheStore.seeded(
+            [share],
+            forKey: ListCache.key("shares.byMe", serverURL: serverURL),
+            fetchedAt: MockDate.date
+        )
 
         let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
             SharedFeature()

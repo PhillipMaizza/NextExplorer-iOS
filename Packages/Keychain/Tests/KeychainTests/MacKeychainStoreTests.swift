@@ -66,7 +66,10 @@ struct MacKeychainStoreTests {
     @Test("eager migration moves every legacy item without a read, and is safe to repeat")
     func migrateAllMovesEverything() {
         let modern = FakeKeychainStore()
-        let legacy = FakeKeychainStore(items: [TestStorageKey.storedSessions: session, TestStorageKey.legacySession: Data(TestValue.outdated.utf8)])
+        let legacy = FakeKeychainStore(items: [
+            TestStorageKey.storedSessions: session,
+            TestStorageKey.legacySession: Data(TestValue.outdated.utf8),
+        ])
         let store = MacKeychainStore(modern: modern, legacy: legacy)
 
         #expect(store.migrateAll() == 2)

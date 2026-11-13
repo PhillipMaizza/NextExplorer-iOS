@@ -15,15 +15,30 @@ enum BrowseTestSupport {
         return url
     }()
 
-    static let fullAccess = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
-    static let readOnlyAccess = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
+    static let fullAccess = FileAccess(
+        canRead: true,
+        canWrite: true,
+        canUpload: true,
+        canDelete: true,
+        canShare: true,
+        canDownload: true
+    )
+    static let readOnlyAccess = FileAccess(
+        canRead: true,
+        canWrite: false,
+        canUpload: false,
+        canDelete: false,
+        canShare: false,
+        canDownload: true
+    )
 }
 
 extension DependencyValues {
     /// Every folder answers with an empty read only listing, no favorites exist and the server
     /// reports no features, so a folder load ends after its two responses and starts nothing else.
     mutating func serveEmptyFolders() {
-        filesClient.browse = { _, path in BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path) }
+        filesClient
+            .browse = { _, path in BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path) }
         filesClient.favorites = { _ in [] }
         filesClient.serverFeatures = { _ in throw FilesClientError.offline }
     }

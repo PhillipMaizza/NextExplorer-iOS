@@ -57,7 +57,10 @@
                     if let progress {
                         Circle()
                             .trim(from: 0, to: progress)
-                            .stroke(Color.accentColor, style: StrokeStyle(lineWidth: Metrics.ringLineWidth, lineCap: .round))
+                            .stroke(
+                                Color.accentColor,
+                                style: StrokeStyle(lineWidth: Metrics.ringLineWidth, lineCap: .round)
+                            )
                             .rotationEffect(.degrees(-90))
                             .frame(width: Metrics.ringFrameSize, height: Metrics.ringFrameSize)
                     }
@@ -202,7 +205,9 @@
                 .onChange(of: downloadsRemaining) { old, new in
                     guard drained(old: old, new: new), downloadsSaved + downloadsFailed > 0 else { return }
                     notify(
-                        title: downloadsFailed > 0 ? TransferFailureText.downloads(downloadsFailed) : L10n.DownloadQueue.notifyDone,
+                        title: downloadsFailed > 0
+                            ? TransferFailureText.downloads(downloadsFailed)
+                            : L10n.DownloadQueue.notifyDone,
                         body: downloadsBody
                     )
                 }

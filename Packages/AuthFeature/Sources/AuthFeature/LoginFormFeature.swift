@@ -323,8 +323,11 @@ public struct LoginFormFeature {
                     return .none
                 case .authenticator:
                     // Pasting "123 456" or "123-456" still lands as six digits.
-                    state.code = String(text.filter { Self.asciiDigits.contains($0) }.prefix(Self.authenticatorCodeLength))
-                    guard state.code.count == Self.authenticatorCodeLength, state.submitPhase == .idle else { return .none }
+                    state
+                        .code = String(text.filter { Self.asciiDigits.contains($0) }
+                            .prefix(Self.authenticatorCodeLength))
+                    guard state.code.count == Self.authenticatorCodeLength,
+                          state.submitPhase == .idle else { return .none }
                     return .send(.codeSubmitButtonTapped)
                 }
 
@@ -345,7 +348,11 @@ public struct LoginFormFeature {
                 state.submitPhase = .idle
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
-                return .merge(.cancel(id: CancelID.submit), .cancel(id: CancelID.submitRevert), .cancel(id: CancelID.errorDismiss))
+                return .merge(
+                    .cancel(id: CancelID.submit),
+                    .cancel(id: CancelID.submitRevert),
+                    .cancel(id: CancelID.errorDismiss)
+                )
 
             case .backButtonTapped:
                 state.resetConnection()
@@ -409,7 +416,11 @@ public struct LoginFormFeature {
                 state.logError("server status", error, at: now)
                 state.errorMessage = Self.message(for: error)
                 state.certificatePrompt = Self.certificatePrompt(for: error, scheme: state.scheme, host: state.host)
-                return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock), lookUpCertificateInUse(state))
+                return .merge(
+                    Self.scheduleRevertToIdle(clock),
+                    Self.scheduleErrorDismiss(clock),
+                    lookUpCertificateInUse(state)
+                )
 
             case .revertToIdle:
                 state.connectionPhase = .idle
@@ -793,7 +804,12 @@ public struct LoginFormFeature {
         }
     }
 
-    static func loginResult(_ authClient: AuthClient, _ url: URL, _ identifier: String, _ password: String) async -> Result<User, AuthClientError> {
+    static func loginResult(
+        _ authClient: AuthClient,
+        _ url: URL,
+        _ identifier: String,
+        _ password: String
+    ) async -> Result<User, AuthClientError> {
         do {
             return try await .success(authClient.login(url, identifier, password))
         } catch {
@@ -801,7 +817,11 @@ public struct LoginFormFeature {
         }
     }
 
-    static func loginTOTPResult(_ authClient: AuthClient, _ url: URL, _ code: String) async -> Result<User, AuthClientError> {
+    static func loginTOTPResult(
+        _ authClient: AuthClient,
+        _ url: URL,
+        _ code: String
+    ) async -> Result<User, AuthClientError> {
         do {
             return try await .success(authClient.loginTOTP(url, code))
         } catch {

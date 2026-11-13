@@ -185,7 +185,10 @@
                         }
                     }
                 } label: {
-                    Label { Text(share.isDirectory ? L10n.Shared.actionFolderLink : L10n.Shared.actionFileLink) } icon: { IconKit.link }
+                    Label { Text(share.isDirectory ? L10n.Shared.actionFolderLink : L10n.Shared.actionFileLink)
+                    } icon: {
+                        IconKit.link
+                    }
                 }
             } label: {
                 Label { Text(L10n.Common.copy) } icon: { IconKit.copy }
@@ -220,7 +223,8 @@
                     MacTableFolderIcon(image: IconKit.folderFill, tint: Color.accent)
                 } else {
                     // A custom label often drops the extension; the shared file's own name keeps it.
-                    FileTypeIcon(kind: ((share.sourceName ?? share.sourcePath ?? share.displayName) as NSString).pathExtension)
+                    FileTypeIcon(kind: ((share.sourceName ?? share.sourcePath ?? share.displayName) as NSString)
+                        .pathExtension)
                         .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
                 }
             }
@@ -304,7 +308,8 @@
                 .type(.caption(.semibold), style: .error)
                 .padding(.horizontal, SharedLinkMetrics.badgeHorizontalPadding)
                 .padding(.vertical, SharedLinkMetrics.badgeVerticalPadding)
-                .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(Metrics.expiredBadgeFillOpacity)))
+                .background(RoundedRectangle(cornerRadius: .radiusXSmall)
+                    .fill(Color.negative.opacity(Metrics.expiredBadgeFillOpacity)))
                 .fixedSize()
                 // Read as the word, not spelled out as capitals.
                 .accessibilityLabel(L10n.Shared.badgeExpired)

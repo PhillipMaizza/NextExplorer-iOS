@@ -126,7 +126,8 @@
                         LabeledContent(L10n.Settings.clientCertificate) {
                             HStack(spacing: .space8) {
                                 Text(store.clientCertificateStatus.settingsDetail()).foregroundStyle(.secondary)
-                                Button(L10n.Login.manageClientCertificate) { store.send(.clientCertificateButtonTapped) }
+                                Button(L10n.Login.manageClientCertificate) { store.send(.clientCertificateButtonTapped)
+                                }
                             }
                         }
                     }
@@ -167,7 +168,10 @@
                 }
             }
             // On the pane, not its section: a sheet attached inside a form section may not present.
-            .sheet(item: Bindable(store).scope(state: \.uploadDefaults.folderPicker, action: \.uploadDefaults.folderPicker)) { pickerStore in
+            .sheet(item: Bindable(store).scope(
+                state: \.uploadDefaults.folderPicker,
+                action: \.uploadDefaults.folderPicker
+            )) { pickerStore in
                 DestinationPickerView(store: pickerStore)
             }
         }
@@ -190,8 +194,18 @@
         @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
         $accounts.withLock {
             $0 = [
-                AccountSummary(id: "a", username: "jdoe", serverURL: URL(string: "https://home.example.com") ?? URL(fileURLWithPath: "/"), isActive: true),
-                AccountSummary(id: "b", username: "work", serverURL: URL(string: "https://files.acme.example.net") ?? URL(fileURLWithPath: "/"), isActive: false),
+                AccountSummary(
+                    id: "a",
+                    username: "jdoe",
+                    serverURL: URL(string: "https://home.example.com") ?? URL(fileURLWithPath: "/"),
+                    isActive: true
+                ),
+                AccountSummary(
+                    id: "b",
+                    username: "work",
+                    serverURL: URL(string: "https://files.acme.example.net") ?? URL(fileURLWithPath: "/"),
+                    isActive: false
+                ),
             ]
         }
         return MacAccountsSettingsTab(store: Store(initialState: .macPreview) { SettingsFeature() })

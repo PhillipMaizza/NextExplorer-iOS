@@ -318,7 +318,11 @@ extension DirectoryCacheStore: DependencyKey {
         private var entries: [String: CachedDirectory] = [:]
 
         private func key(_ scope: String, _ serverURL: URL, _ path: String) -> String {
-            CacheLayout.key(scope, serverURL.absoluteString, path.trimmingCharacters(in: CacheLayout.pathTrimCharacters))
+            CacheLayout.key(
+                scope,
+                serverURL.absoluteString,
+                path.trimmingCharacters(in: CacheLayout.pathTrimCharacters)
+            )
         }
 
         func read(scope: String, serverURL: URL, path: String) -> CachedDirectory? {
@@ -338,7 +342,8 @@ extension DirectoryCacheStore: DependencyKey {
             let entryKey = key(scope, serverURL, path)
             guard let current = entries[entryKey], current.etag == expectedETag else { return }
             entries[entryKey] = CachedDirectory(
-                path: current.path, items: current.items, access: current.access, fetchedAt: fetchedAt, etag: current.etag
+                path: current.path, items: current.items, access: current.access, fetchedAt: fetchedAt,
+                etag: current.etag
             )
         }
 

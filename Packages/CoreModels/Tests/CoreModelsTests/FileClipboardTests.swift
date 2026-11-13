@@ -6,7 +6,13 @@ import TestUtils
 @Suite("FileClipboard.canPaste")
 struct FileClipboardTests {
     private func file(_ name: String, path: String) -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date.addingTimeInterval(1), size: 0, kind: TestKind.text)
+        FileItem(
+            name: name,
+            path: path,
+            dateModified: MockDate.date.addingTimeInterval(1),
+            size: 0,
+            kind: TestKind.text
+        )
     }
 
     @Test("root and read-only folders are never valid targets")
@@ -26,7 +32,13 @@ struct FileClipboardTests {
     @Test("copy of a folder into itself or a subdirectory of itself is blocked (server EINVAL)")
     func copyIntoSelfIsBlocked() {
         let folder = FileClipboard(
-            items: [FileItem(name: TestFolder.photos, path: TestFolder.media, dateModified: MockDate.date.addingTimeInterval(1), size: 0, kind: FileItem.directoryKind)],
+            items: [FileItem(
+                name: TestFolder.photos,
+                path: TestFolder.media,
+                dateModified: MockDate.date.addingTimeInterval(1),
+                size: 0,
+                kind: FileItem.directoryKind
+            )],
             operation: .copy
         )
         #expect(folder.canPaste(into: TestPath.mediaPhotos, canWrite: true) == false)
@@ -42,7 +54,13 @@ struct FileClipboardTests {
         #expect(file.canPaste(into: TestFolder.documents, canWrite: true) == true)
 
         let folder = FileClipboard(
-            items: [FileItem(name: TestFolder.photos, path: TestFolder.media, dateModified: MockDate.date.addingTimeInterval(1), size: 0, kind: FileItem.directoryKind)],
+            items: [FileItem(
+                name: TestFolder.photos,
+                path: TestFolder.media,
+                dateModified: MockDate.date.addingTimeInterval(1),
+                size: 0,
+                kind: FileItem.directoryKind
+            )],
             operation: .move
         )
         #expect(folder.canPaste(into: TestPath.mediaPhotos, canWrite: true) == false)

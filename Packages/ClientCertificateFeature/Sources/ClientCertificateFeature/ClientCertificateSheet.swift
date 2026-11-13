@@ -100,7 +100,10 @@ public struct ClientCertificateSheet: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .dsCard()
                     }
-                    section(L10n.ClientCertificate.passwordLabel, error: store.failure == .wrongPassword ? store.failure?.message : nil) {
+                    section(
+                        L10n.ClientCertificate.passwordLabel,
+                        error: store.failure == .wrongPassword ? store.failure?.message : nil
+                    ) {
                         DSSecureField(
                             L10n.ClientCertificate.passwordLabel,
                             text: $store.passphrase.sending(\.passphraseChanged),
@@ -223,6 +226,10 @@ extension ClientCertificateOrigin {
 
 #Preview("Invalid file") {
     Color.clear.sheet(isPresented: .constant(true)) {
-        ClientCertificateSheet(store: .preview(.init(origin: .preview, status: .empty, importPhase: .failed(.invalidFile))))
+        ClientCertificateSheet(store: .preview(.init(
+            origin: .preview,
+            status: .empty,
+            importPhase: .failed(.invalidFile)
+        )))
     }
 }

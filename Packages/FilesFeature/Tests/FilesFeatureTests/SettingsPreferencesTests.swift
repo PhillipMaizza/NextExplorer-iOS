@@ -19,8 +19,18 @@ struct SettingsPreferencesTests: SettingsFeatureTestSupport {
     }
 
     @Test(arguments: [
-        ToggleCase(action: .setShowHiddenFiles(true), key: .showHiddenFiles, value: true, expected: UserPreferences(showHiddenFiles: true, showThumbnails: true)),
-        ToggleCase(action: .setShowThumbnails(false), key: .showThumbnails, value: false, expected: UserPreferences(showHiddenFiles: false, showThumbnails: false)),
+        ToggleCase(
+            action: .setShowHiddenFiles(true),
+            key: .showHiddenFiles,
+            value: true,
+            expected: UserPreferences(showHiddenFiles: true, showThumbnails: true)
+        ),
+        ToggleCase(
+            action: .setShowThumbnails(false),
+            key: .showThumbnails,
+            value: false,
+            expected: UserPreferences(showHiddenFiles: false, showThumbnails: false)
+        ),
     ])
     func aToggleUpdatesTheSharedPreferencesAndPersistsOptimistically(_ testCase: ToggleCase) async {
         let recorded = LockIsolated<[String]>([])

@@ -20,7 +20,11 @@ struct BrowseSearchTimingTests {
         static let emojiTerm = "👍👍"
     }
 
-    private let hit = SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind)
+    private let hit = SearchResultItem(
+        name: TestFile.vacationPhoto,
+        path: TestFolder.photos,
+        kind: SearchResultItem.fileKind
+    )
 
     /// A store whose server search records each term it was asked and answers `page`.
     private func searchingStore(
@@ -113,7 +117,11 @@ struct BrowseSearchTimingTests {
     func aSpaceAfterShowMoreKeepsTheWiderResults() async {
         let clock = TestClock()
         let queries = LockIsolated<[String]>([])
-        let store = searchingStore(clock: clock, queries: queries, page: SearchPage(items: [hit], isComplete: false, limit: 100))
+        let store = searchingStore(
+            clock: clock,
+            queries: queries,
+            page: SearchPage(items: [hit], isComplete: false, limit: 100)
+        )
 
         await type(Constants.term, into: store)
         await clock.advance(by: FilesClient.searchDebounce)

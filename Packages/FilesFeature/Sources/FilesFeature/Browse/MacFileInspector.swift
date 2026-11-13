@@ -65,8 +65,13 @@
                         Section {
                             HStack {
                                 Spacer()
-                                Button(isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites, action: onToggleFavorite)
-                                    .disabled(!isFavoriteToggleEnabled)
+                                Button(
+                                    isFavorite
+                                        ? L10n.Browse.actionRemoveFromFavorites
+                                        : L10n.Browse.actionAddToFavorites,
+                                    action: onToggleFavorite
+                                )
+                                .disabled(!isFavoriteToggleEnabled)
                             }
                         }
                     }
@@ -129,11 +134,20 @@
         @ViewBuilder
         private func details(_ metadata: FileMetadata) -> some View {
             Section {
-                row(L10n.FileInfo.rowKind, metadata.isDirectory ? L10n.FileInfo.navigationTitleFolder : metadata.kind.uppercased())
+                row(
+                    L10n.FileInfo.rowKind,
+                    metadata.isDirectory ? L10n.FileInfo.navigationTitleFolder : metadata.kind.uppercased()
+                )
                 row(L10n.FileInfo.rowSize, Self.bytes(metadata.size))
                 row(L10n.FileInfo.rowLocation, metadata.path)
-                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: shouldIncludeTime))
-                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: shouldIncludeTime))
+                row(
+                    L10n.FileInfo.rowDateModified,
+                    dateFormat.string(from: metadata.dateModified, includeTime: shouldIncludeTime)
+                )
+                row(
+                    L10n.FileInfo.rowDateCreated,
+                    dateFormat.string(from: metadata.dateCreated, includeTime: shouldIncludeTime)
+                )
             }
             if let directory = metadata.directory {
                 Section {
@@ -162,7 +176,10 @@
                         row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
                     }
                     if let model = image.cameraModel {
-                        row(L10n.FileInfo.rowCamera, [image.cameraMake, model].compactMap(\.self).joined(separator: " "))
+                        row(
+                            L10n.FileInfo.rowCamera,
+                            [image.cameraMake, model].compactMap(\.self).joined(separator: " ")
+                        )
                     }
                     if let lensModel = image.lensModel {
                         row(L10n.FileInfo.rowLens, lensModel)
@@ -171,7 +188,10 @@
                         row(L10n.FileInfo.rowSoftware, software)
                     }
                     if let dateTaken = image.dateTaken {
-                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: shouldIncludeTime))
+                        row(
+                            L10n.FileInfo.rowDateTaken,
+                            dateFormat.string(from: dateTaken, includeTime: shouldIncludeTime)
+                        )
                     }
                     if let gps = image.gps {
                         row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
@@ -267,7 +287,8 @@
         private func shares(for item: FileItem) -> [Share]? {
             // The server stores the path without leading or trailing slashes.
             let path = item.id.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-            return sharedLinks?.filter { $0.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == path }
+            return sharedLinks?
+                .filter { $0.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == path }
         }
 
         func body(content: Content) -> some View {

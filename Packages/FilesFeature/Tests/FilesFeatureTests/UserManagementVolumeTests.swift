@@ -18,7 +18,10 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
     @Test
     func assigningAVolumeSendsTheRequestAndAddsItToTheDetail() async {
         let created = media
-        let store = makeStore(loadedState([makeUser(id: "2")], detail: "2", isVolumesEnabled: true, volumes: []), addVolume: { created })
+        let store = makeStore(
+            loadedState([makeUser(id: "2")], detail: "2", isVolumesEnabled: true, volumes: []),
+            addVolume: { created }
+        )
 
         await store.send(.addVolumeTapped) { $0.volumeSheet = .init(userID: "2") }
         await store.send(.volumePathSelected("/srv/media")) {
@@ -33,7 +36,10 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
             $0.volumes[id: "v9"] = created
             $0.toast = L10n.UserManagement.toastVolumeSaved
         }
-        #expect(calls.value == [.addVolume(userID: "2", request: AddUserVolumeRequest(label: TestFolder.media, path: "/srv/media", accessMode: .readonly))])
+        #expect(calls.value == [.addVolume(
+            userID: "2",
+            request: AddUserVolumeRequest(label: TestFolder.media, path: "/srv/media", accessMode: .readonly)
+        )])
     }
 
     @Test
@@ -64,7 +70,12 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
     )
     func volumeSheetValidation(_ testCase: VolumeSheetCase) async {
         var state = loadedState([makeUser(id: "2")], detail: "2")
-        state.volumeSheet = .init(userID: "2", label: testCase.label, selectedPath: testCase.path, isSubmitting: testCase.isSubmitting)
+        state.volumeSheet = .init(
+            userID: "2",
+            label: testCase.label,
+            selectedPath: testCase.path,
+            isSubmitting: testCase.isSubmitting
+        )
         let store = makeStore(state, addVolume: { [media] in media })
 
         #expect(store.state.volumeSheet?.isSubmitEnabled == testCase.isSubmitEnabled)
@@ -76,9 +87,15 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
 
     @Test
     func aVolumeSaveFailureKeepsTheSheetOpenWithItsMessage() async {
-        let store = makeStore(loadedState([makeUser(id: "2")], detail: "2", isVolumesEnabled: true, volumes: []), addVolume: {
-            throw FilesClientError.serverMessage(statusCode: 409, message: "This path is already assigned to this user")
-        })
+        let store = makeStore(
+            loadedState([makeUser(id: "2")], detail: "2", isVolumesEnabled: true, volumes: []),
+            addVolume: {
+                throw FilesClientError.serverMessage(
+                    statusCode: 409,
+                    message: "This path is already assigned to this user"
+                )
+            }
+        )
 
         await store.send(.addVolumeTapped) { $0.volumeSheet = .init(userID: "2") }
         await store.send(.volumePathSelected("/srv/media")) {
@@ -95,14 +112,26 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
 
     @Test
     func editingAVolumeGoesThroughUpdateNotAdd() async {
-        let saved = UserVolume(id: TestETag.first, userId: "2", label: "Renamed", path: "/srv/projects", accessMode: .readonly)
+        let saved = UserVolume(
+            id: TestETag.first,
+            userId: "2",
+            label: "Renamed",
+            path: "/srv/projects",
+            accessMode: .readonly
+        )
         let store = makeStore(
             loadedState([makeUser(id: "2")], detail: "2", isVolumesEnabled: true, volumes: [projects]),
             updateVolume: { saved }
         )
 
         await store.send(.editVolumeTapped(projects)) {
-            $0.volumeSheet = .init(userID: "2", editingVolumeID: TestETag.first, label: "Projects", selectedPath: "/srv/projects", accessMode: .readwrite)
+            $0.volumeSheet = .init(
+                userID: "2",
+                editingVolumeID: TestETag.first,
+                label: "Projects",
+                selectedPath: "/srv/projects",
+                accessMode: .readwrite
+            )
         }
         await store.send(.volumeLabelChanged("Renamed")) { $0.volumeSheet?.label = "Renamed" }
         await store.send(.volumeAccessModeChanged(.readonly)) { $0.volumeSheet?.accessMode = .readonly }
@@ -112,7 +141,12 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
             $0.volumes[id: TestETag.first] = saved
             $0.toast = L10n.UserManagement.toastVolumeSaved
         }
-        #expect(calls.value == [.updateVolume(userID: "2", volumeID: TestETag.first, label: "Renamed", mode: .readonly)])
+        #expect(calls.value == [.updateVolume(
+            userID: "2",
+            volumeID: TestETag.first,
+            label: "Renamed",
+            mode: .readonly
+        )])
     }
 
     @Test
@@ -245,7 +279,10 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
             $0.removingVolumeIDs = []
             $0.volumes.remove(id: TestETag.second)
         }
-        #expect(calls.value == [.removeVolume(userID: "2", volumeID: TestETag.first), .removeVolume(userID: "2", volumeID: TestETag.second)])
+        #expect(calls.value == [
+            .removeVolume(userID: "2", volumeID: TestETag.first),
+            .removeVolume(userID: "2", volumeID: TestETag.second),
+        ])
     }
 
     @Test

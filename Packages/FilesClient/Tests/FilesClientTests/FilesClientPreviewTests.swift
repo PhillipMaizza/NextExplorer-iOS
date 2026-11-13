@@ -6,7 +6,8 @@ import NetworkClient
 import Testing
 import TestUtils
 
-/// Preview, thumbnail and preview cache behavior through `FilesClient.live` against a stubbed `URLSession`. Nested in `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
+/// Preview, thumbnail and preview cache behavior through `FilesClient.live` against a stubbed `URLSession`. Nested in
+/// `FilesClientLiveTests` so it inherits `.serialized`: every live client suite shares
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     struct FilesClientPreviewTests: FilesClientLiveHarness {
@@ -206,7 +207,13 @@ extension FilesClientLiveTests {
 
         @Test
         func evictionNeverDeletesTheSlotItWasAskedToProtect() throws {
-            let item = FileItem(name: "huge-\(TestID.name()).mkv", path: "Evict", dateModified: MockDate.date, size: 600_000_000, kind: "mkv")
+            let item = FileItem(
+                name: "huge-\(TestID.name()).mkv",
+                path: "Evict",
+                dateModified: MockDate.date,
+                size: 600_000_000,
+                kind: "mkv"
+            )
             let slot = FilesService.previewCacheDirectory(for: item, namespace: FilesService.rawDownloadCacheNamespace)
             try FileManager.default.createDirectory(at: slot, withIntermediateDirectories: true)
             let fileURL = slot.appendingPathComponent(item.name)
@@ -217,7 +224,10 @@ extension FilesClientLiveTests {
             defer { try? FileManager.default.removeItem(at: slot) }
 
             FilesService.evictPreviewCacheIfNeeded(protecting: slot)
-            #expect(FileManager.default.fileExists(atPath: fileURL.path), "the file just downloaded must survive even when it alone exceeds the budget")
+            #expect(
+                FileManager.default.fileExists(atPath: fileURL.path),
+                "the file just downloaded must survive even when it alone exceeds the budget"
+            )
 
             FilesService.evictPreviewCacheIfNeeded()
             #expect(!FileManager.default.fileExists(atPath: fileURL.path))

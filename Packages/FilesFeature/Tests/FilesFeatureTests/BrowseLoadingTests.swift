@@ -114,7 +114,10 @@ struct BrowseLoadingTests {
 
     @Test("A failed refresh of a folder that shows items keeps them and reports the error as a toast")
     func aFailedRefreshKeepsTheListAndShowsAToast() async {
-        let items = [BrowseFixtures.file(TestFile.aText, in: TestPath.docsLowercase), BrowseFixtures.file(TestFile.bText, in: TestPath.docsLowercase)]
+        let items = [
+            BrowseFixtures.file(TestFile.aText, in: TestPath.docsLowercase),
+            BrowseFixtures.file(TestFile.bText, in: TestPath.docsLowercase),
+        ]
         let favorites = AsyncGate()
         let store = BrowseFixtures.store(BrowseFixtures.loadedState(TestPath.docsLowercase, items: items)) {
             $0.serveEmptyFolders()

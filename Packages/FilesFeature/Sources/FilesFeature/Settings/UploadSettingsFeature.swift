@@ -68,7 +68,12 @@ public struct UploadSettingsFeature {
                 guard !state.isSaving else { return .none }
                 state.phase.beginReload()
                 state.errorMessage = nil
-                return .loadSnapshot(filesClient, serverURL: state.serverURL, cancelID: CancelID.load, response: { .loadResponse($0) })
+                return .loadSnapshot(
+                    filesClient,
+                    serverURL: state.serverURL,
+                    cancelID: CancelID.load,
+                    response: { .loadResponse($0) }
+                )
 
             case .loadResponse(.success) where state.isSaving:
                 return .none

@@ -138,7 +138,15 @@ private extension LocalDownload {
     let store = Store(initialState: DownloadsFeature.State()) { DownloadsFeature() }
     return DownloadRowPreview { namespace in
         DSGroupedList {
-            DownloadListRow(store: store, download: .preview, namespace: namespace, openURL: OpenURLAction { _ in .handled }, isFirst: true, isLast: true, onPreview: {})
+            DownloadListRow(
+                store: store,
+                download: .preview,
+                namespace: namespace,
+                openURL: OpenURLAction { _ in .handled },
+                isFirst: true,
+                isLast: true,
+                onPreview: {}
+            )
         }
         .listStyle(.insetGrouped)
     }
@@ -147,9 +155,15 @@ private extension LocalDownload {
 #Preview("Grid cell") {
     let store = Store(initialState: DownloadsFeature.State()) { DownloadsFeature() }
     return DownloadRowPreview { namespace in
-        DownloadGridCell(store: store, download: .preview, namespace: namespace, openURL: OpenURLAction { _ in .handled }, onPreview: {})
-            .frame(width: 120)
-            .padding()
+        DownloadGridCell(
+            store: store,
+            download: .preview,
+            namespace: namespace,
+            openURL: OpenURLAction { _ in .handled },
+            onPreview: {}
+        )
+        .frame(width: 120)
+        .padding()
     }
 }
 

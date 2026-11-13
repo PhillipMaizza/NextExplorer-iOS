@@ -37,8 +37,14 @@ struct EditShareFeatureTests {
         let expiry = MockDate.date.addingTimeInterval(200_000_000)
         let state = EditShareFeature.State(
             serverURL: serverURL,
-            share: share(label: "Bills", accessMode: .readwrite, target: .users, hasPassword: true,
-                         expiresAt: expiry, permittedUserIds: ["u2", "u3"])
+            share: share(
+                label: "Bills",
+                accessMode: .readwrite,
+                target: .users,
+                hasPassword: true,
+                expiresAt: expiry,
+                permittedUserIds: ["u2", "u3"]
+            )
         )
         #expect(state.label == "Bills")
         #expect(state.accessMode == .readwrite)

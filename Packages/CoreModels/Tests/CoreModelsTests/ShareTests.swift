@@ -50,7 +50,12 @@ struct ShareDecodingTests {
 
 @Suite("Share display and expiry")
 struct ShareDisplayTests {
-    private func share(label: String? = nil, sourceName: String? = nil, sourcePath: String? = nil, expiresAt: Date? = nil) -> Share {
+    private func share(
+        label: String? = nil,
+        sourceName: String? = nil,
+        sourcePath: String? = nil,
+        expiresAt: Date? = nil
+    ) -> Share {
         Share(
             id: "s",
             shareToken: "token",

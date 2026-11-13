@@ -210,12 +210,14 @@ public struct UserManagementFeature {
         /// sheet. `.type` puts admins first, then by name; the direction flips the whole list.
         public var displayedUsers: [User] {
             let query = searchQuery.trimmed.lowercased()
-            let base = query.isEmpty ? Array(users) : users.filter { user in
-                let haystack = [user.displayName, user.username, user.email]
-                    .compactMap { $0?.lowercased() }
-                    .joined(separator: " ")
-                return haystack.contains(query)
-            }
+            let base = query.isEmpty
+                ? Array(users)
+                : users.filter { user in
+                    let haystack = [user.displayName, user.username, user.email]
+                        .compactMap { $0?.lowercased() }
+                        .joined(separator: " ")
+                    return haystack.contains(query)
+                }
             let sorted = base.sorted { lhs, rhs in
                 switch sortOption {
                 case .type where lhs.isAdmin != rhs.isAdmin:

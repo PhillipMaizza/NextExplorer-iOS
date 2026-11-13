@@ -48,7 +48,8 @@
                 case let .browse(.delegate(delegate)):
                     return .run { _ in await forward(.browse(delegate)) }
                 case let .browse(browseAction):
-                    guard let change = BrowseTabFeature.folderContentsChange(after: browseAction, in: state.browse) else { return .none }
+                    guard let change = BrowseTabFeature.folderContentsChange(after: browseAction, in: state.browse)
+                    else { return .none }
                     return .run { _ in await forward(.folderChanged(change)) }
                 case let .otherWindowChanged(change):
                     return BrowseTabFeature.refresh(for: change).map(Action.browse)

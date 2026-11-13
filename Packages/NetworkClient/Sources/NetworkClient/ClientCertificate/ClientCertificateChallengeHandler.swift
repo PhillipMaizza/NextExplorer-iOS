@@ -49,7 +49,9 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
 
     /// Returns `nil` for any challenge that is not a client certificate request, so the caller
     /// falls through to its own handling (server trust).
-    public func handle(_ challenge: URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?)? {
+    public func handle(_ challenge: URLAuthenticationChallenge)
+        -> (URLSession.AuthChallengeDisposition, URLCredential?)?
+    {
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodClientCertificate else {
             return nil
         }

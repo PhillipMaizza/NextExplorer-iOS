@@ -31,7 +31,11 @@
                             Button(L10n.ServerDetails.changeLogo + "…") { isChoosingIcon = true }
                         }
                     }
-                    TextField(L10n.ServerDetails.nameLabel, text: $store.nameDraft.sending(\.nameChanged), prompt: Text(L10n.ServerDetails.namePlaceholder))
+                    TextField(
+                        L10n.ServerDetails.nameLabel,
+                        text: $store.nameDraft.sending(\.nameChanged),
+                        prompt: Text(L10n.ServerDetails.namePlaceholder)
+                    )
                     if store.nameError == .empty {
                         Text(L10n.ServerDetails.nameErrorEmpty).foregroundStyle(Color.negativeText)
                     }

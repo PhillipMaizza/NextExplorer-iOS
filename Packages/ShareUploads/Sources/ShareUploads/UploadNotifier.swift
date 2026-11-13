@@ -57,7 +57,9 @@ extension UploadNotification {
             title = L10n.ShareUpload.notificationDoneTitle
             body = L10n.ShareUpload.notificationDoneBody(outcome.uploaded, folder)
         } else {
-            title = outcome.uploaded > 0 ? L10n.ShareUpload.notificationFailedTitle : L10n.ShareUpload.notificationAllFailedTitle
+            title = outcome.uploaded > 0
+                ? L10n.ShareUpload.notificationFailedTitle
+                : L10n.ShareUpload.notificationAllFailedTitle
             body = Self.failureBody(outcome.failures)
         }
     }
@@ -177,7 +179,10 @@ struct UploadNotifier: Sendable {
     }
 
     /// Said when Retry could not start anything, so the user is never left with silence.
-    static func postRetryFailed(_ reason: UploadNotifications.RetryFailure, using center: NotificationCenterClient = .live) {
+    static func postRetryFailed(
+        _ reason: UploadNotifications.RetryFailure,
+        using center: NotificationCenterClient = .live
+    ) {
         let content = UNMutableNotificationContent()
         content.title = L10n.ShareUpload.retryFailedTitle
         switch reason {

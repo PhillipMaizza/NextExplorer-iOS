@@ -58,15 +58,21 @@ struct FavoriteEditSheet: View {
                 onConfirm: { store.send(.saveTapped) }
             ) {
                 MacSettingsRow(L10n.Favorites.editNameLabel) {
-                    TextField(L10n.Favorites.editNameLabel, text: $store.nameDraft.sending(\.nameChanged), prompt: Text(verbatim: store.favorite.path))
-                        .labelsHidden()
-                        .autocorrectionDisabled()
+                    TextField(
+                        L10n.Favorites.editNameLabel,
+                        text: $store.nameDraft.sending(\.nameChanged),
+                        prompt: Text(verbatim: store.favorite.path)
+                    )
+                    .labelsHidden()
+                    .autocorrectionDisabled()
                     MacFieldError(message: nameErrorText)
                 }
                 MacSettingsRow(L10n.Favorites.editColorLabel) {
                     HStack(spacing: .space8) {
-                        macSwatch(Color.secondary, isSelected: store.colorDraft == nil) { store.send(.colorSelected(nil)) }
-                            .accessibilityLabel(L10n.Favorites.editColorDefault)
+                        macSwatch(Color.secondary, isSelected: store.colorDraft == nil) {
+                            store.send(.colorSelected(nil))
+                        }
+                        .accessibilityLabel(L10n.Favorites.editColorDefault)
                         ForEach(FavoriteColor.palette) { swatch in
                             macSwatch(swatch.color, isSelected: FavoriteColor.matches(store.colorDraft, swatch.hex)) {
                                 store.send(.colorSelected(swatch.hex))
@@ -75,13 +81,19 @@ struct FavoriteEditSheet: View {
                     }
                 }
                 MacSettingsRow(L10n.Favorites.editIconLabel) {
-                    Picker(L10n.Favorites.editIconLabel, selection: $store.iconStyleDraft.sending(\.iconStyleSelected)) {
+                    Picker(
+                        L10n.Favorites.editIconLabel,
+                        selection: $store.iconStyleDraft.sending(\.iconStyleSelected)
+                    ) {
                         ForEach(FavoriteEditFeature.IconStyle.allCases, id: \.self) { Text(iconStyleLabel($0)).tag($0) }
                     }
                     .labelsHidden()
                     .pickerStyle(.segmented)
                     .fixedSize()
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: Metrics.macIconCell), spacing: .space4)], spacing: .space4) {
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: Metrics.macIconCell), spacing: .space4)],
+                        spacing: .space4
+                    ) {
                         ForEach(FavoriteIcon.names, id: \.self) { name in
                             Button { store.send(.iconSelected(name)) } label: {
                                 FavoriteIcon.symbol(for: name)
@@ -92,7 +104,10 @@ struct FavoriteEditSheet: View {
                                     .frame(width: Metrics.macIconCell, height: Metrics.macIconCell)
                                     .background(
                                         RoundedRectangle(cornerRadius: Metrics.macIconCornerRadius)
-                                            .fill(store.iconDraft == name ? tint.opacity(Metrics.macSelectedIconOpacity) : Color.clear)
+                                            .fill(store.iconDraft == name
+                                                ? tint
+                                                    .opacity(Metrics.macSelectedIconOpacity)
+                                                : Color.clear)
                                     )
                             }
                             .buttonStyle(.plain)
@@ -108,7 +123,10 @@ struct FavoriteEditSheet: View {
                     .fill(color)
                     .frame(width: Metrics.macSwatch, height: Metrics.macSwatch)
                     .padding(.space2)
-                    .overlay(Circle().strokeBorder(isSelected ? Color.primary : Color.clear, lineWidth: Metrics.macSwatchRing))
+                    .overlay(Circle().strokeBorder(
+                        isSelected ? Color.primary : Color.clear,
+                        lineWidth: Metrics.macSwatchRing
+                    ))
             }
             .buttonStyle(.plain)
         }

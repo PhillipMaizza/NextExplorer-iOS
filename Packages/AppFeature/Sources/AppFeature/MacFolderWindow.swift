@@ -70,7 +70,9 @@
             accountID = account
             let mainStore = mainStore
             let windowID = windowID
-            let windowStore = Store(initialState: FolderWindowFeature.State(serverURL: session.mainTab.browse.root.serverURL)) {
+            let windowStore = Store(initialState: FolderWindowFeature
+                .State(serverURL: session.mainTab.browse.root.serverURL))
+            {
                 FolderWindowFeature { forwarded in
                     await MainActor.run {
                         guard case .authenticated = mainStore.destination else { return }

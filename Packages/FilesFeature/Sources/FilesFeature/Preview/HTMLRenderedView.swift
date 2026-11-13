@@ -69,7 +69,10 @@ struct HTMLRenderedView: View {
             // them to): strip the leading slash to place them the same way on disk.
             let localRelativePath = relativePath.hasPrefix("/") ? String(relativePath.dropFirst()) : relativePath
             guard let destinationURL = SafeDestination.within(directory, localRelativePath) else { continue }
-            try? FileManager.default.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try? FileManager.default.createDirectory(
+                at: destinationURL.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
             try? FileManager.default.removeItem(at: destinationURL)
             try? FileManager.default.copyItem(at: downloadedURL, to: destinationURL)
         }
@@ -81,7 +84,10 @@ struct HTMLRenderedView: View {
     /// protocol-relative `//`, `data:`, `mailto:`) or an in-page anchor (`#section`); the
     /// same-folder assets a fetched HTML string alone has no way to reach.
     private nonisolated static func relativeAssetPaths(in html: String) -> [String] {
-        guard let regex = try? NSRegularExpression(pattern: #"(?:href|src)\s*=\s*["']([^"'#][^"']*)["']"#, options: [.caseInsensitive]) else {
+        guard let regex = try? NSRegularExpression(
+            pattern: #"(?:href|src)\s*=\s*["']([^"'#][^"']*)["']"#,
+            options: [.caseInsensitive]
+        ) else {
             return []
         }
         let range = NSRange(html.startIndex..., in: html)

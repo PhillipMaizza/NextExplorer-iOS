@@ -20,6 +20,10 @@ let package = Package(
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
-        .testTarget(name: "KeychainTests", dependencies: ["TestUtils", "Keychain"], swiftSettings: [.swiftLanguageMode(.v6)]),
+        .testTarget(
+            name: "KeychainTests",
+            dependencies: ["TestUtils", "Keychain"],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
     ]
 )

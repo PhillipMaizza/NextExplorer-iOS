@@ -35,7 +35,10 @@ struct UploadSettingsFeatureTests {
         }
     }
 
-    private func loadedState(_ uploads: UploadSettings = UploadSettings(), maxMiB: Int = 512) -> UploadSettingsFeature.State {
+    private func loadedState(
+        _ uploads: UploadSettings = UploadSettings(),
+        maxMiB: Int = 512
+    ) -> UploadSettingsFeature.State {
         var state = UploadSettingsFeature.State(serverURL: serverURL)
         state.loaded = uploads
         state.draft = uploads
@@ -158,7 +161,16 @@ struct UploadSettingsFeatureTests {
         })
 
         await store.send(.onAppear)
-        await store.send(.loadResponse(.success(ServerSettingsSnapshot(settings: SystemSettings(uploads: UploadSettings(isChunkedEnabled: true))))))
+        await store
+            .send(
+                .loadResponse(
+                    .success(
+                        ServerSettingsSnapshot(
+                            settings: SystemSettings(uploads: UploadSettings(isChunkedEnabled: true))
+                        )
+                    )
+                )
+            )
     }
 
     // MARK: Editing

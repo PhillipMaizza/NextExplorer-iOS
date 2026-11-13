@@ -30,7 +30,14 @@ struct AccountCacheWipeTests {
     private func listing() -> BrowseResult {
         BrowseResult(
             items: [],
-            access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+            access: FileAccess(
+                canRead: true,
+                canWrite: false,
+                canUpload: false,
+                canDelete: false,
+                canShare: false,
+                canDownload: true
+            ),
             path: Fixture.path
         )
     }
@@ -68,8 +75,20 @@ struct AccountCacheWipeTests {
     @Test("wiping an account clears its disk entries, the thumbnails in memory and lists it as pending")
     func wipeClearsEverythingAndListsThePendingAccount() {
         let directory = DirectoryCacheStore.inMemory()
-        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
-        directory.bound(to: Fixture.otherAccount).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        directory.bound(to: Fixture.account).write(
+            serverURL: Fixture.server,
+            path: Fixture.path,
+            result: listing(),
+            etag: nil,
+            fetchedAt: Fixture.fetchedAt
+        )
+        directory.bound(to: Fixture.otherAccount).write(
+            serverURL: Fixture.server,
+            path: Fixture.path,
+            result: listing(),
+            etag: nil,
+            fetchedAt: Fixture.fetchedAt
+        )
         let pending = PendingAccountWipes.inMemory()
         let counters = Counters()
 
@@ -91,7 +110,13 @@ struct AccountCacheWipeTests {
         defer { defaults.removePersistentDomain(forName: suite) }
         let directory = DirectoryCacheStore.inMemory()
         makeWipe(directory: directory, pending: .persisted(in: defaults))(Fixture.account)
-        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        directory.bound(to: Fixture.account).write(
+            serverURL: Fixture.server,
+            path: Fixture.path,
+            result: listing(),
+            etag: nil,
+            fetchedAt: Fixture.fetchedAt
+        )
 
         let relaunched = PendingAccountWipes.persisted(in: defaults)
         #expect(relaunched.accounts() == [Fixture.account])
@@ -114,14 +139,27 @@ struct AccountCacheWipeTests {
     @Test("a pending account that has a stored session again is unlisted and never wiped")
     func liveAccountIsUnlistedWithoutAWipe() {
         let directory = DirectoryCacheStore.inMemory()
-        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
-        directory.bound(to: Fixture.otherAccount).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        directory.bound(to: Fixture.account).write(
+            serverURL: Fixture.server,
+            path: Fixture.path,
+            result: listing(),
+            etag: nil,
+            fetchedAt: Fixture.fetchedAt
+        )
+        directory.bound(to: Fixture.otherAccount).write(
+            serverURL: Fixture.server,
+            path: Fixture.path,
+            result: listing(),
+            etag: nil,
+            fetchedAt: Fixture.fetchedAt
+        )
         let pending = PendingAccountWipes.inMemory()
         pending.add(Fixture.account)
         pending.add(Fixture.otherAccount)
         let counters = Counters()
 
-        makeWipe(directory: directory, pending: pending, counters: counters).finishPending(liveAccountIDs: [Fixture.account])
+        makeWipe(directory: directory, pending: pending, counters: counters)
+            .finishPending(liveAccountIDs: [Fixture.account])
 
         #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
         #expect(directory.bound(to: Fixture.otherAccount).read(serverURL: Fixture.server, path: Fixture.path) == nil)
@@ -133,7 +171,13 @@ struct AccountCacheWipeTests {
     func unreadableKeychainWipesNothing() async {
         struct KeychainFailure: Error {}
         let directory = DirectoryCacheStore.inMemory()
-        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        directory.bound(to: Fixture.account).write(
+            serverURL: Fixture.server,
+            path: Fixture.path,
+            result: listing(),
+            etag: nil,
+            fetchedAt: Fixture.fetchedAt
+        )
         let pending = PendingAccountWipes.inMemory()
         pending.add(Fixture.account)
         var authClient = AuthClient.previewValue
@@ -149,7 +193,13 @@ struct AccountCacheWipeTests {
     func launchRecoverySparesLiveAccounts() async {
         let directory = DirectoryCacheStore.inMemory()
         for account in [Fixture.account, Fixture.otherAccount] {
-            directory.bound(to: account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+            directory.bound(to: account).write(
+                serverURL: Fixture.server,
+                path: Fixture.path,
+                result: listing(),
+                etag: nil,
+                fetchedAt: Fixture.fetchedAt
+            )
         }
         let pending = PendingAccountWipes.inMemory()
         pending.add(Fixture.account)

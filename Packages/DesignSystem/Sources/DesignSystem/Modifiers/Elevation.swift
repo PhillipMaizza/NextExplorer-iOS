@@ -1,8 +1,7 @@
 import SwiftUI
 
-/// Shadow tiers for surfaces that should read as raised above the background. Values are
-/// tuned by hand (two stacked shadow layers, dark navy
-/// base color): a tight, discreet lift rather than a broad, soft glow.
+/// Shadow tiers for surfaces that should read as raised above the background: two stacked
+/// shadow layers on a dark navy base color, a tight, discreet lift rather than a broad, soft glow.
 public enum Elevation: CaseIterable {
     /// No shadow.
     case level0
@@ -53,7 +52,17 @@ public extension Elevation {
 public extension View {
     /// Applies the design system's two-layer elevation shadow.
     func elevation(_ level: Elevation, alpha: Double = Elevation.defaultAlpha) -> some View {
-        shadow(color: Elevation.shadowColor.opacity(alpha), radius: level.firstShadow.blur / 2, x: 0, y: level.firstShadow.y)
-            .shadow(color: Elevation.shadowColor.opacity(alpha), radius: level.secondShadow.blur / 2, x: 0, y: level.secondShadow.y)
+        shadow(
+            color: Elevation.shadowColor.opacity(alpha),
+            radius: level.firstShadow.blur / 2,
+            x: 0,
+            y: level.firstShadow.y
+        )
+        .shadow(
+            color: Elevation.shadowColor.opacity(alpha),
+            radius: level.secondShadow.blur / 2,
+            x: 0,
+            y: level.secondShadow.y
+        )
     }
 }

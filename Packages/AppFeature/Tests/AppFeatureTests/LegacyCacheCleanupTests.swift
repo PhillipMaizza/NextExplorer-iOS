@@ -56,7 +56,8 @@ struct LegacyCacheCleanupTests {
     }
 
     private func makeSandbox() throws -> Sandbox {
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
         let suite = "\(Fixture.suitePrefix)\(TestID.name())"
         return try Sandbox(
             root: root,
@@ -68,7 +69,11 @@ struct LegacyCacheCleanupTests {
     }
 
     private func run(_ sandbox: Sandbox) {
-        LegacyCacheCleanup.run(defaults: sandbox.defaults, applicationSupport: sandbox.applicationSupport, caches: sandbox.caches)
+        LegacyCacheCleanup.run(
+            defaults: sandbox.defaults,
+            applicationSupport: sandbox.applicationSupport,
+            caches: sandbox.caches
+        )
     }
 
     @Test("entries without an account prefix are removed from every cache location and prefixed ones stay")

@@ -34,7 +34,10 @@ extension TrashSettingsTestSupport {
     /// answer it receives second until the first has been received.
     func store(
         state: TrashSettingsFeature.State? = nil,
-        settings: @escaping @Sendable () async throws -> SystemSettings = { SystemSettings(trash: TrashSettings(), versions: VersionsSettings()) },
+        settings: @escaping @Sendable () async throws -> SystemSettings = { SystemSettings(
+            trash: TrashSettings(),
+            versions: VersionsSettings()
+        ) },
         zones: @escaping @Sendable () async throws -> [TrashZone] = { [] },
         update: @escaping @Sendable (SystemSettingsPatch) throws -> SystemSettings = { _ in SystemSettings() },
         verify: @escaping @Sendable () throws -> [TrashVerification] = { [] },

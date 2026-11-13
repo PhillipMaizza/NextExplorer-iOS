@@ -7,7 +7,14 @@ public extension FilesClient {
         browse: { _, path in
             BrowseResult(
                 items: FileItem.previewItems,
-                access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true),
+                access: FileAccess(
+                    canRead: true,
+                    canWrite: true,
+                    canUpload: true,
+                    canDelete: true,
+                    canShare: true,
+                    canDownload: true
+                ),
                 path: path
             )
         },
@@ -15,15 +22,42 @@ public extension FilesClient {
         search: { _, _, _, _ in [] },
         favorites: { _ in Favorite.previewFavorites },
         addFavorite: { _, path in
-            Favorite(id: UUID().uuidString, path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+            Favorite(
+                id: UUID().uuidString,
+                path: path,
+                label: nil,
+                icon: "star",
+                color: nil,
+                position: 0,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
         },
         removeFavorite: { _, _ in },
         updateFavorite: { _, id, label, icon, color in
-            Favorite(id: id, path: "Documents", label: label, icon: icon, color: color, position: 0, createdAt: Date(), updatedAt: Date())
+            Favorite(
+                id: id,
+                path: "Documents",
+                label: label,
+                icon: icon,
+                color: color,
+                position: 0,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
         },
         reorderFavorites: { _, orderedIDs in
             orderedIDs.enumerated().map { index, id in
-                Favorite(id: id, path: id, label: id, icon: "StarIcon", color: nil, position: index, createdAt: Date(), updatedAt: Date())
+                Favorite(
+                    id: id,
+                    path: id,
+                    label: id,
+                    icon: "StarIcon",
+                    color: nil,
+                    position: index,
+                    createdAt: Date(),
+                    updatedAt: Date()
+                )
             }
         },
         volumes: { _ in Volume.previewVolumes },
@@ -33,13 +67,32 @@ public extension FilesClient {
         updateBranding: { _, appName, appLogoUrl in Branding(appName: appName, appLogoUrl: appLogoUrl) },
         uploadServerLogo: { _, _ in "/static/logos/custom-logo.png" },
         renameItem: { _, item, newName in
-            FileItem(name: newName, path: item.path, dateModified: item.dateModified, size: item.size, kind: item.kind, supportsThumbnail: item.supportsThumbnail)
+            FileItem(
+                name: newName,
+                path: item.path,
+                dateModified: item.dateModified,
+                size: item.size,
+                kind: item.kind,
+                supportsThumbnail: item.supportsThumbnail
+            )
         },
         createFolder: { _, path, name in
-            FileItem(name: name.isEmpty ? "Untitled Folder" : name, path: path, dateModified: Date(), size: 0, kind: "directory")
+            FileItem(
+                name: name.isEmpty ? "Untitled Folder" : name,
+                path: path,
+                dateModified: Date(),
+                size: 0,
+                kind: "directory"
+            )
         },
         createFile: { _, path, name in
-            FileItem(name: name.isEmpty ? "Untitled.txt" : name, path: path, dateModified: Date(), size: 0, kind: (name as NSString).pathExtension.lowercased())
+            FileItem(
+                name: name.isEmpty ? "Untitled.txt" : name,
+                path: path,
+                dateModified: Date(),
+                size: 0,
+                kind: (name as NSString).pathExtension.lowercased()
+            )
         },
         deleteImpact: { _, _ in DeleteImpact(shareCount: 0) },
         deleteItems: { _, _ in },
@@ -57,7 +110,12 @@ public extension FilesClient {
                 size: 4_096,
                 dateModified: Date(),
                 dateCreated: Date(),
-                directory: FileMetadata.DirectorySummary(totalSize: 10_485_760, fileCount: 42, dirCount: 3, truncated: false)
+                directory: FileMetadata.DirectorySummary(
+                    totalSize: 10_485_760,
+                    fileCount: 42,
+                    dirCount: 3,
+                    truncated: false
+                )
             )
         },
         fetchUsage: { _, path in
@@ -83,8 +141,22 @@ public extension FilesClient {
             return FileVersionHistory(
                 isEnabled: true,
                 versions: [
-                    FileVersion(id: "v2", size: 18_400, modifiedAt: Date().addingTimeInterval(-hour * 3), capturedAt: Date().addingTimeInterval(-hour * 2), author: .init(label: "phillip")),
-                    FileVersion(id: "v1", size: 16_100, modifiedAt: Date().addingTimeInterval(-hour * 50), capturedAt: Date().addingTimeInterval(-hour * 49), author: .init(label: "phillip"), label: "Before edits", isPinned: true),
+                    FileVersion(
+                        id: "v2",
+                        size: 18_400,
+                        modifiedAt: Date().addingTimeInterval(-hour * 3),
+                        capturedAt: Date().addingTimeInterval(-hour * 2),
+                        author: .init(label: "phillip")
+                    ),
+                    FileVersion(
+                        id: "v1",
+                        size: 16_100,
+                        modifiedAt: Date().addingTimeInterval(-hour * 50),
+                        capturedAt: Date().addingTimeInterval(-hour * 49),
+                        author: .init(label: "phillip"),
+                        label: "Before edits",
+                        isPinned: true
+                    ),
                 ],
                 totalBytes: 34_500,
                 rights: .init(canSee: true, canDownload: true, canRestore: true, canRemove: true)
@@ -94,19 +166,32 @@ public extension FilesClient {
         downloadVersion: { _, _, _, _ in },
         copyVersion: { _, path, _, _ in path },
         updateVersion: { _, _, versionID, label, pinned in
-            FileVersion(id: versionID, size: 0, modifiedAt: Date(), capturedAt: Date(), label: label, isPinned: pinned ?? false)
+            FileVersion(
+                id: versionID,
+                size: 0,
+                modifiedAt: Date(),
+                capturedAt: Date(),
+                label: label,
+                isPinned: pinned ?? false
+            )
         },
         deleteVersions: { _, _, _, _ in },
         thumbnailURL: { _, _ in nil },
         previewFile: { _, item in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Previews-Preview", isDirectory: true)
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "Previews-Preview",
+                isDirectory: true
+            )
             try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             let fileURL = directory.appendingPathComponent(item.name)
             try? Data().write(to: fileURL)
             return fileURL
         },
         previewFileLowPriority: { _, item in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Previews-Preview", isDirectory: true)
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "Previews-Preview",
+                isDirectory: true
+            )
             try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             let fileURL = directory.appendingPathComponent(item.name)
             try? Data().write(to: fileURL)
@@ -115,17 +200,29 @@ public extension FilesClient {
         fetchTextContent: { _, _ in "" },
         saveTextContent: { _, _, _ in },
         extractZip: { _, item in
-            FileItem(name: item.name.replacingOccurrences(of: ".zip", with: ""), path: item.path, dateModified: Date(), size: 0, kind: "directory")
+            FileItem(
+                name: item.name.replacingOccurrences(of: ".zip", with: ""),
+                path: item.path,
+                dateModified: Date(),
+                size: 0,
+                kind: "directory"
+            )
         },
         downloadRawFile: { _, item in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Downloads-Preview", isDirectory: true)
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "Downloads-Preview",
+                isDirectory: true
+            )
             try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             let fileURL = directory.appendingPathComponent(item.name)
             try? Data().write(to: fileURL)
             return fileURL
         },
         offlineDownloadFile: { _, item, onProgress in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Offline-Preview", isDirectory: true)
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "Offline-Preview",
+                isDirectory: true
+            )
             try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             let fileURL = directory.appendingPathComponent(item.name)
             try? Data().write(to: fileURL)
@@ -141,7 +238,13 @@ public extension FilesClient {
         flushDownloadConnections: {},
         uploadFile: { _, _, fileName, destination, onProgress in
             onProgress(1)
-            return FileItem(name: fileName, path: destination, dateModified: Date(), size: 0, kind: (fileName as NSString).pathExtension.lowercased())
+            return FileItem(
+                name: fileName,
+                path: destination,
+                dateModified: Date(),
+                size: 0,
+                kind: (fileName as NSString).pathExtension.lowercased()
+            )
         },
         compressItem: { _, item in
             FileItem(name: "\(item.name).zip", path: item.path, dateModified: Date(), size: 0, kind: "zip")
@@ -199,11 +302,18 @@ public extension FilesClient {
         },
         changeOwnPassword: { _, _, _ in },
         addOwnPassword: { _, _ in },
-        fetchAuthMethods: { _ in [SignInMethod(id: "preview-password", type: SignInMethod.localPasswordType, provider: "Password")] },
+        fetchAuthMethods: { _ in [SignInMethod(
+            id: "preview-password",
+            type: SignInMethod.localPasswordType,
+            provider: "Password"
+        )] },
         fetchAuthStatus: { _ in AuthStatus(localEnabled: true, oidcEnabled: false) },
         fetchTwoFactorStatus: { _ in TwoFactorStatus(isEnabled: false) },
         beginTwoFactorSetup: { _ in
-            TwoFactorSetup(secret: "JBSWY3DPEHPK3PXP", uri: "otpauth://totp/NextExplorer:preview?secret=JBSWY3DPEHPK3PXP&issuer=NextExplorer")
+            TwoFactorSetup(
+                secret: "JBSWY3DPEHPK3PXP",
+                uri: "otpauth://totp/NextExplorer:preview?secret=JBSWY3DPEHPK3PXP&issuer=NextExplorer"
+            )
         },
         confirmTwoFactorSetup: { _, _ in ["AAAAA-BBBBB", "CCCCC-DDDDD"] },
         replaceRecoveryCodes: { _, _ in ["EEEEE-FFFFF", "GGGGG-HHHHH"] },
@@ -215,7 +325,12 @@ public extension FilesClient {
                 secret: "nx_preview_0123456789abcdef"
             )
         },
-        renameAPIToken: { _, id, name in APIToken(id: id, name: name, scope: .read, createdAt: "2026-11-10T07:00:00.000Z") },
+        renameAPIToken: { _, id, name in APIToken(
+            id: id,
+            name: name,
+            scope: .read,
+            createdAt: "2026-11-10T07:00:00.000Z"
+        ) },
         revokeAPIToken: { _, _ in },
         serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true, isVolumeUsageEnabled: true) },
         fetchSystemSettings: { _ in
@@ -316,7 +431,10 @@ public extension User {
         User(
             id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie Rivera",
             roles: [], emailVerified: true, createdAt: Date(timeIntervalSinceNow: -86_400 * 30),
-            updatedAt: Date(), authMethods: [AuthMethod(method: "local_password"), AuthMethod(method: "oidc", provider: "Authentik")]
+            updatedAt: Date(), authMethods: [
+                AuthMethod(method: "local_password"),
+                AuthMethod(method: "oidc", provider: "Authentik"),
+            ]
         ),
         User(
             id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor",
@@ -329,8 +447,24 @@ public extension User {
 public extension UserVolume {
     static func previewVolumes(userID: String) -> [UserVolume] {
         [
-            UserVolume(id: "v1", userId: userID, label: "Projects", path: "/srv/volumes/projects", accessMode: .readwrite, createdAt: Date(), updatedAt: Date()),
-            UserVolume(id: "v2", userId: userID, label: "Archive", path: "/srv/volumes/archive", accessMode: .readonly, createdAt: Date(), updatedAt: Date()),
+            UserVolume(
+                id: "v1",
+                userId: userID,
+                label: "Projects",
+                path: "/srv/volumes/projects",
+                accessMode: .readwrite,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            UserVolume(
+                id: "v2",
+                userId: userID,
+                label: "Archive",
+                path: "/srv/volumes/archive",
+                accessMode: .readonly,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
         ]
     }
 }
@@ -376,14 +510,30 @@ extension FileItem {
     static let previewItems: [FileItem] = [
         FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory"),
         FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory"),
-        FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+        FileItem(
+            name: "vacation.jpg",
+            path: "",
+            dateModified: Date(),
+            size: 2_400_000,
+            kind: "jpg",
+            supportsThumbnail: true
+        ),
         FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 1_024, kind: "txt"),
     ]
 }
 
 extension Favorite {
     static let previewFavorites: [Favorite] = [
-        Favorite(id: "1", path: "Documents", label: "Documents", icon: "folder", color: nil, position: 0, createdAt: Date(), updatedAt: Date()),
+        Favorite(
+            id: "1",
+            path: "Documents",
+            label: "Documents",
+            icon: "folder",
+            color: nil,
+            position: 0,
+            createdAt: Date(),
+            updatedAt: Date()
+        ),
     ]
 }
 

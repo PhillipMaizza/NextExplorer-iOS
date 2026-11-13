@@ -23,6 +23,8 @@ enum DownloadProgressText {
 
     static func duration(_ seconds: Double, locale: Locale) -> String {
         let rounded = Duration.seconds(max(Int(seconds.rounded(.up)), 1))
-        return rounded.formatted(.units(allowed: [.hours, .minutes, .seconds], width: .narrow, maximumUnitCount: 2).locale(locale))
+        return rounded
+            .formatted(.units(allowed: [.hours, .minutes, .seconds], width: .narrow, maximumUnitCount: 2)
+                .locale(locale))
     }
 }

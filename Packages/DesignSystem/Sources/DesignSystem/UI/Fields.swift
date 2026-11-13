@@ -50,7 +50,10 @@ public struct DSFieldContainer<Content: View>: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(isInvalid ? Color.negative : Color.borderPrimary, lineWidth: isInvalid ? FieldConstants.invalidBorderWidth : .borderWidthHairline)
+                    .stroke(
+                        isInvalid ? Color.negative : Color.borderPrimary,
+                        lineWidth: isInvalid ? FieldConstants.invalidBorderWidth : .borderWidthHairline
+                    )
             )
             .animation(.easeInOut(duration: FieldConstants.borderFadeDuration), value: isInvalid)
             .shake(trigger: shakeTrigger)

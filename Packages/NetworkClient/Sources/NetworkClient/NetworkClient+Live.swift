@@ -169,7 +169,12 @@ public extension NetworkClient {
             do {
                 (temporaryURL, response) = try await inMemorySession.current.download(for: request)
             } catch {
-                throw NetworkError.from(error, url: request.url, isMutation: NetworkClient.isMutation(request), certificates: certificates)
+                throw NetworkError.from(
+                    error,
+                    url: request.url,
+                    isMutation: NetworkClient.isMutation(request),
+                    certificates: certificates
+                )
             }
             defer { try? FileManager.default.removeItem(at: temporaryURL) }
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -214,7 +219,11 @@ public extension NetworkClient {
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse
                 }
-                if let error = certificates.certificateError(status: httpResponse.statusCode, bodyPrefix: data, url: request.url) {
+                if let error = certificates.certificateError(
+                    status: httpResponse.statusCode,
+                    bodyPrefix: data,
+                    url: request.url
+                ) {
                     throw error
                 }
                 certificates.recordResponse(for: request.url)
@@ -228,40 +237,51 @@ public extension NetworkClient {
                 let observationBox = ProgressObservationBox()
                 let throttle = ProgressThrottle(onProgress: onProgress)
                 return try await withTaskCancellationHandler {
-                    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<(URL, HTTPURLResponse), Error>) in
+                    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<
+                        (URL, HTTPURLResponse),
+                        Error
+                    >) in
                         // A completion handler task, NOT a download delegate: the delegate's per chunk
                         // `didWriteData` runs on the session's serial delegate queue and applies
                         // backpressure to the socket, which throttled the transfer. Progress instead
                         // comes from the task's own `NSProgress` via KVO, which never touches that
                         // queue. Server trust still falls through to the session `URLSessionAuthDelegate`.
-                        let task = downloadSession.current.downloadTask(with: request) { temporaryURL, response, error in
-                            observationBox.invalidate()
-                            if let error {
-                                continuation.resume(throwing: NetworkError.from(error, url: request.url, certificates: certificates))
-                                return
+                        let task = downloadSession.current
+                            .downloadTask(with: request) { temporaryURL, response, error in
+                                observationBox.invalidate()
+                                if let error {
+                                    continuation.resume(throwing: NetworkError.from(
+                                        error,
+                                        url: request.url,
+                                        certificates: certificates
+                                    ))
+                                    return
+                                }
+                                guard let temporaryURL, let httpResponse = response as? HTTPURLResponse else {
+                                    continuation.resume(throwing: NetworkError.invalidResponse)
+                                    return
+                                }
+                                if let error = certificates.certificateError(
+                                    status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL),
+                                    url: request.url
+                                ) {
+                                    continuation.resume(throwing: error)
+                                    return
+                                }
+                                certificates.recordResponse(for: request.url)
+                                // The system deletes `temporaryURL` the instant this returns, so move it
+                                // synchronously to a stable location the caller owns.
+                                let stableURL = FileManager.default.temporaryDirectory
+                                    .appendingPathComponent(
+                                        "\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)"
+                                    )
+                                do {
+                                    try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
+                                    continuation.resume(returning: (stableURL, httpResponse))
+                                } catch {
+                                    continuation.resume(throwing: NetworkError.transport(error.localizedDescription))
+                                }
                             }
-                            guard let temporaryURL, let httpResponse = response as? HTTPURLResponse else {
-                                continuation.resume(throwing: NetworkError.invalidResponse)
-                                return
-                            }
-                            if let error = certificates.certificateError(
-                                status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL), url: request.url
-                            ) {
-                                continuation.resume(throwing: error)
-                                return
-                            }
-                            certificates.recordResponse(for: request.url)
-                            // The system deletes `temporaryURL` the instant this returns, so move it
-                            // synchronously to a stable location the caller owns.
-                            let stableURL = FileManager.default.temporaryDirectory
-                                .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
-                            do {
-                                try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
-                                continuation.resume(returning: (stableURL, httpResponse))
-                            } catch {
-                                continuation.resume(throwing: NetworkError.transport(error.localizedDescription))
-                            }
-                        }
                         // The task's byte counters, not its `NSProgress` (which counts in percent units
                         // and stalls when the length is unknown), so a streamed archive still reports.
                         let observation = task.observe(\.countOfBytesReceived, options: [.new]) { task, _ in

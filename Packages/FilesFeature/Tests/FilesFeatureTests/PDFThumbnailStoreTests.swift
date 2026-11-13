@@ -65,7 +65,10 @@ struct PDFThumbnailStoreTests {
         let store = PDFThumbnailStore()
         let pdfURL = makePDF()
         defer { try? FileManager.default.removeItem(at: pdfURL) }
-        let seed = ThumbnailRendering.firstPDFPage(at: pdfURL, maxPixel: 64).flatMap { ThumbnailRendering.jpegData($0, quality: 0.8) }
+        let seed = ThumbnailRendering.firstPDFPage(at: pdfURL, maxPixel: 64).flatMap { ThumbnailRendering.jpegData(
+            $0,
+            quality: 0.8
+        ) }
         let fetchCount = LockIsolated(0)
         var client = FilesClient.previewValue
         client.previewFileLowPriority = { _, _ in

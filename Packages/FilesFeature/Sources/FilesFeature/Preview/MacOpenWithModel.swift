@@ -110,7 +110,12 @@
         static func make(from source: URL, named name: String) async throws -> URL {
             try await Task.detached(priority: .userInitiated) {
                 let fileManager = FileManager.default
-                let caches = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                let caches = try fileManager.url(
+                    for: .cachesDirectory,
+                    in: .userDomainMask,
+                    appropriateFor: nil,
+                    create: true
+                )
                 let root = caches
                     .appendingPathComponent("PreviewCache", isDirectory: true)
                     .appendingPathComponent(directoryName, isDirectory: true)
@@ -201,7 +206,11 @@
             run { cachedURL in
                 let url = try await MacOpenWithCopy.make(from: cachedURL, named: name ?? cachedURL.lastPathComponent)
                 if let app {
-                    _ = try await NSWorkspace.shared.open([url], withApplicationAt: app.url, configuration: NSWorkspace.OpenConfiguration())
+                    _ = try await NSWorkspace.shared.open(
+                        [url],
+                        withApplicationAt: app.url,
+                        configuration: NSWorkspace.OpenConfiguration()
+                    )
                 } else if !NSWorkspace.shared.open(url) {
                     throw CocoaError(.fileReadUnknown)
                 }
@@ -231,7 +240,11 @@
                         guard let document = PDFDocument(url: url) else { throw CocoaError(.fileReadCorruptFile) }
                         return PDFBox(document: document)
                     }.value
-                    guard let pdfOperation = box.document.printOperation(for: printInfo, scalingMode: .pageScaleToFit, autoRotate: true) else {
+                    guard let pdfOperation = box.document.printOperation(
+                        for: printInfo,
+                        scalingMode: .pageScaleToFit,
+                        autoRotate: true
+                    ) else {
                         throw CocoaError(.fileReadUnknown)
                     }
                     operation = pdfOperation

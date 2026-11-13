@@ -200,7 +200,10 @@ extension ShareUploadFeature.State {
 
 #Preview("Actions") {
     VStack(spacing: .space24) {
-        ForEach([ShareUploadFeature.Phase.ready, .checking, .partiallyPrepared, .failed, .signedOut], id: \.self) { phase in
+        ForEach(
+            [ShareUploadFeature.Phase.ready, .checking, .partiallyPrepared, .failed, .signedOut],
+            id: \.self
+        ) { phase in
             ShareUploadActions(store: .preview(phase))
         }
     }
@@ -209,7 +212,8 @@ extension ShareUploadFeature.State {
 
 extension ShareUploadFeature.Phase {
     static let previewCases: [ShareUploadFeature.Phase] = [
-        .loading, .checking, .ready, .preparing, .handingOff, .partiallyPrepared, .started, .signedOut, .sessionUnreadable,
+        .loading, .checking, .ready, .preparing, .handingOff, .partiallyPrepared, .started, .signedOut,
+        .sessionUnreadable,
         .nothingToUpload, .failed, .certificateRequired, .certificateRejected,
     ]
 }
@@ -217,7 +221,11 @@ extension ShareUploadFeature.Phase {
 extension ItemFailure {
     static let previews = [
         ItemFailure(index: 1, name: "IMG_0042.MOV", cause: .notEnoughSpace),
-        ItemFailure(index: 4, name: "Quarterly report with a very long file name that keeps going.pdf", cause: .cannotRead),
+        ItemFailure(
+            index: 4,
+            name: "Quarterly report with a very long file name that keeps going.pdf",
+            cause: .cannotRead
+        ),
         ItemFailure(index: 7, name: "File 8", cause: .other),
     ]
 }

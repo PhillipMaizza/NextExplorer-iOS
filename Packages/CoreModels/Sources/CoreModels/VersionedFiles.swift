@@ -170,7 +170,12 @@ public struct VersionedFilesFilter: Equatable, Sendable {
     public var state: VersionedFileState?
     public var sort: VersionedFileSort
 
-    public init(query: String = "", zoneID: String? = nil, state: VersionedFileState? = nil, sort: VersionedFileSort = .bytes) {
+    public init(
+        query: String = "",
+        zoneID: String? = nil,
+        state: VersionedFileState? = nil,
+        sort: VersionedFileSort = .bytes
+    ) {
         self.query = query
         self.zoneID = zoneID
         self.state = state

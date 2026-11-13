@@ -27,7 +27,10 @@ struct DownloadQueueView: View {
                     MacTransferRow(id: job.id, name: job.fileName, status: {
                         switch job.status {
                         case .queued: .waiting
-                        case .downloading: .running(progress: job.progress, detail: DownloadProgressText.detail(for: job, locale: locale))
+                        case .downloading: .running(
+                                progress: job.progress,
+                                detail: DownloadProgressText.detail(for: job, locale: locale)
+                            )
                         case .completed: .done(savedLabel(job))
                         case let .failed(message): .failed(message)
                         }
@@ -192,7 +195,14 @@ private func previewJob(
 #Preview("Mixed") {
     DownloadQueueView(
         store: Store(initialState: .preview([
-            previewJob("Holiday.mp4", kind: "mp4", status: .downloading, received: 420_000_000, expected: 1_600_000_000, rate: 12_000_000),
+            previewJob(
+                "Holiday.mp4",
+                kind: "mp4",
+                status: .downloading,
+                received: 420_000_000,
+                expected: 1_600_000_000,
+                rate: 12_000_000
+            ),
             previewJob("Photos", kind: "directory", status: .downloading, received: 312_000_000),
             previewJob("Report.pdf", kind: "pdf", status: .completed, received: 2_400_000),
             previewJob("Big.iso", kind: "iso", status: .failed("Couldn't reach the server.")),

@@ -32,7 +32,10 @@ struct SharedItemsClientLiveTests {
         return provider
     }
 
-    private func failingProvider(named name: String?, error: any Error = CocoaError(.fileReadNoSuchFile)) -> NSItemProvider {
+    private func failingProvider(
+        named name: String?,
+        error: any Error = CocoaError(.fileReadNoSuchFile)
+    ) -> NSItemProvider {
         let provider = NSItemProvider()
         provider.suggestedName = name
         provider.registerFileRepresentation(for: .pdf, visibility: .all, openInPlace: false) { completion in
@@ -206,7 +209,10 @@ struct SharedItemsClientLiveTests {
         release.value?()
         let preparation = try await task.value
 
-        #expect(reached.map { $0 >= ProgressPump.Constants.reportedAtLeast && $0 <= 1 } == true, "the fraction of the file being read reaches the caller")
+        #expect(
+            reached.map { $0 >= ProgressPump.Constants.reportedAtLeast && $0 <= 1 } == true,
+            "the fraction of the file being read reaches the caller"
+        )
         #expect(preparation.stagedCount == 1)
         client.discard()
     }

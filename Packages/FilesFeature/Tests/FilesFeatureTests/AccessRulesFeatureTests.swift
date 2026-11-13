@@ -12,7 +12,10 @@ struct AccessRulesFeatureTests {
     private typealias Store = TestStoreOf<AccessRulesFeature>
 
     private let serverURL = SettingsTestSupport.serverURL
-    private let adminOnly = FilesClientError.serverMessage(statusCode: 403, message: "Admin access required for system settings.")
+    private let adminOnly = FilesClientError.serverMessage(
+        statusCode: 403,
+        message: "Admin access required for system settings."
+    )
 
     private func rule(_ id: String, _ path: String, _ permission: AccessRule.Permission = .readOnly) -> AccessRule {
         AccessRule(id: id, path: path, isRecursive: true, permission: permission)
@@ -29,7 +32,9 @@ struct AccessRulesFeatureTests {
     private func makeStore(
         _ state: AccessRulesFeature.State,
         fetch: @escaping @Sendable () async throws -> SystemSettings = { throw FilesClientError.offline },
-        update: @escaping @Sendable ([AccessRule]) async throws -> [AccessRule] = { _ in throw FilesClientError.offline }
+        update: @escaping @Sendable ([AccessRule]) async throws -> [AccessRule] = { _ in
+            throw FilesClientError.offline
+        }
     ) -> Store {
         TestStore(initialState: state) {
             AccessRulesFeature()

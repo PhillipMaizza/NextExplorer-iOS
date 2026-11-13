@@ -38,7 +38,10 @@ struct BrowseSortAndVisibilityTests {
     }
 
     private nonisolated static let older = BrowseFixtures.file("older.txt", modified: MockDate.date)
-    private nonisolated static let newer = BrowseFixtures.file("newer.txt", modified: MockDate.date.addingTimeInterval(1_000))
+    private nonisolated static let newer = BrowseFixtures.file(
+        "newer.txt",
+        modified: MockDate.date.addingTimeInterval(1_000)
+    )
     private nonisolated static let small = BrowseFixtures.file("small.txt", size: 10)
     private nonisolated static let large = BrowseFixtures.file("large.txt", size: 1_000)
     private nonisolated static let photo = BrowseFixtures.file(TestFile.photo)
@@ -49,14 +52,49 @@ struct BrowseSortAndVisibilityTests {
     @Test(
         "Files sort within their group by the chosen option and direction",
         arguments: [
-            SortCase(option: .name, direction: .ascending, items: [fileB, fileA], expected: [TestFile.aText, TestFile.bText]),
-            SortCase(option: .name, direction: .descending, items: [fileA, fileB], expected: [TestFile.bText, TestFile.aText]),
+            SortCase(
+                option: .name,
+                direction: .ascending,
+                items: [fileB, fileA],
+                expected: [TestFile.aText, TestFile.bText]
+            ),
+            SortCase(
+                option: .name,
+                direction: .descending,
+                items: [fileA, fileB],
+                expected: [TestFile.bText, TestFile.aText]
+            ),
             SortCase(option: .size, direction: .ascending, items: [large, small], expected: ["small.txt", "large.txt"]),
-            SortCase(option: .size, direction: .descending, items: [small, large], expected: ["large.txt", "small.txt"]),
-            SortCase(option: .dateModified, direction: .ascending, items: [newer, older], expected: ["older.txt", "newer.txt"]),
-            SortCase(option: .dateModified, direction: .descending, items: [older, newer], expected: ["newer.txt", "older.txt"]),
-            SortCase(option: .kind, direction: .ascending, items: [notes, photo], expected: [TestFile.photo, TestFile.notes]),
-            SortCase(option: .kind, direction: .descending, items: [photo, notes], expected: [TestFile.notes, TestFile.photo]),
+            SortCase(
+                option: .size,
+                direction: .descending,
+                items: [small, large],
+                expected: ["large.txt", "small.txt"]
+            ),
+            SortCase(
+                option: .dateModified,
+                direction: .ascending,
+                items: [newer, older],
+                expected: ["older.txt", "newer.txt"]
+            ),
+            SortCase(
+                option: .dateModified,
+                direction: .descending,
+                items: [older, newer],
+                expected: ["newer.txt", "older.txt"]
+            ),
+            SortCase(
+                option: .kind,
+                direction: .ascending,
+                items: [notes, photo],
+                expected: [TestFile.photo, TestFile.notes]
+            ),
+            SortCase(
+                option: .kind,
+                direction: .descending,
+                items: [photo, notes],
+                expected: [TestFile.notes, TestFile.photo]
+            ),
         ]
     )
     func filesSortWithinTheirGroup(_ sort: SortCase) {

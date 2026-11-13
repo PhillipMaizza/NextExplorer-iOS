@@ -183,7 +183,8 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// doesn't mean "not media": it means the UI should show a clear "unsupported format"
     /// message instead of opening a player that will silently fail.
     public var isNativelyPlayable: Bool {
-        Self.nativelyPlayableVideoExtensions.contains(lowercaseKind) || Self.nativelyPlayableAudioExtensions.contains(lowercaseKind)
+        Self.nativelyPlayableVideoExtensions.contains(lowercaseKind) || Self.nativelyPlayableAudioExtensions
+            .contains(lowercaseKind)
     }
 
     /// Download-then-`QLPreviewController` kinds: images/RAW/PDF via `GET /api/preview`
@@ -199,7 +200,8 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// text-editor fallback specifically, no point round-tripping to `/api/editor` just to
     /// have the server reject it as binary.
     public var isPreviewable: Bool {
-        isStreamableMedia || isPreviewableViaDownload || (!isArchive && !Self.knownBinaryExtensions.contains(lowercaseKind))
+        isStreamableMedia || isPreviewableViaDownload ||
+            (!isArchive && !Self.knownBinaryExtensions.contains(lowercaseKind))
     }
 
     /// The single source of truth for "tapping this should show a toast instead of opening

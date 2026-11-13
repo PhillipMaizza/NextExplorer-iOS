@@ -92,7 +92,9 @@ struct VLCPlayerView: View {
                         IconKit.warning
                             .font(.system(size: .size44, weight: .regular))
                             .foregroundStyle(.white)
-                        Text(isBlockedByClientCertificate ? L10n.Media.clientCertificateUnsupported : L10n.Archive.openFailed)
+                        Text(isBlockedByClientCertificate
+                            ? L10n.Media.clientCertificateUnsupported
+                            : L10n.Archive.openFailed)
                             .type(.body2(.regular))
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
@@ -106,7 +108,10 @@ struct VLCPlayerView: View {
                     VLCPlaybackControls(controller: controller)
                         .opacity(controlsVisible ? 1 : 0)
                         .allowsHitTesting(controlsVisible)
-                        .animation(.easeInOut(duration: VLCPlaybackConstants.controlsFadeDuration), value: controlsVisible)
+                        .animation(
+                            .easeInOut(duration: VLCPlaybackConstants.controlsFadeDuration),
+                            value: controlsVisible
+                        )
                 }
             }
             .previewChrome(

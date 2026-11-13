@@ -129,7 +129,11 @@ extension ShareUploadHarness {
 
     /// Opens the sheet with Upload Without Asking on, up to the connection check that starts the
     /// default folder check.
-    func startAutomatic(_ store: ShareUploadFeatureTests.Store, count: Int = 3, folder: String = TestFolder.photos) async {
+    func startAutomatic(
+        _ store: ShareUploadFeatureTests.Store,
+        count: Int = 3,
+        folder: String = TestFolder.photos
+    ) async {
         await store.send(.onAppear) { $0.itemCount = count }
         await store.receive(\.accountsLoaded) { $0.accounts = [credentials] }
         await store.receive(\.sessionLoaded) {

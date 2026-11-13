@@ -57,12 +57,27 @@
 
         private var profileSection: some View {
             Section(L10n.UserDetail.sectionGeneralInfo) {
-                field(L10n.UserDetail.profileDisplayNameField, prompt: L10n.UserDetail.profileDisplayNamePlaceholder, \.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged)
-                field(L10n.UserDetail.profileUsernameField, prompt: L10n.UserDetail.profileUsernamePlaceholder, \.editUsername, UserManagementFeature.Action.editUsernameChanged)
+                field(
+                    L10n.UserDetail.profileDisplayNameField,
+                    prompt: L10n.UserDetail.profileDisplayNamePlaceholder,
+                    \.editDisplayName,
+                    UserManagementFeature.Action.editDisplayNameChanged
+                )
+                field(
+                    L10n.UserDetail.profileUsernameField,
+                    prompt: L10n.UserDetail.profileUsernamePlaceholder,
+                    \.editUsername,
+                    UserManagementFeature.Action.editUsernameChanged
+                )
                 if store.isProfileDirty, let error = store.profileUsernameError {
                     Text(error).foregroundStyle(Color.negativeText)
                 }
-                field(L10n.UserDetail.profileEmailField, prompt: L10n.UserDetail.profileEmailPlaceholder, \.editEmail, UserManagementFeature.Action.editEmailChanged)
+                field(
+                    L10n.UserDetail.profileEmailField,
+                    prompt: L10n.UserDetail.profileEmailPlaceholder,
+                    \.editEmail,
+                    UserManagementFeature.Action.editEmailChanged
+                )
                 if store.isProfileDirty, let error = store.profileEmailError {
                     Text(error).foregroundStyle(Color.negativeText)
                 }
@@ -96,13 +111,17 @@
                     )
                 }
                 LabeledContent {
-                    Button((user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet) + "…") {
+                    Button((user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet) +
+                        "…")
+                    {
                         store.send(.setPasswordTapped)
                     }
                 } label: {
                     MacRowTitle(
                         title: L10n.UserDetail.sectionLocalPassword,
-                        subtitle: user.hasLocalPassword ? L10n.UserDetail.passwordHasLocal : L10n.UserDetail.passwordSSOOnly
+                        subtitle: user.hasLocalPassword
+                            ? L10n.UserDetail.passwordHasLocal
+                            : L10n.UserDetail.passwordSSOOnly
                     )
                 }
                 LabeledContent(L10n.UserDetail.sectionSSO) {
@@ -160,17 +179,29 @@
             _ keyPath: KeyPath<UserManagementFeature.State, String>,
             _ action: @escaping @Sendable (String) -> UserManagementFeature.Action
         ) -> some View {
-            TextField(title, text: Binding(get: { store.state[keyPath: keyPath] }, set: { store.send(action($0)) }), prompt: Text(prompt))
-                .autocorrectionDisabled()
+            TextField(
+                title,
+                text: Binding(get: { store.state[keyPath: keyPath] }, set: { store.send(action($0)) }),
+                prompt: Text(prompt)
+            )
+            .autocorrectionDisabled()
         }
     }
 
     #Preview("User") {
-        var state = UserManagementFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+        var state = UserManagementFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            currentUserID: "u1"
+        )
         state.users = IdentifiedArray(uniqueElements: User.previewManagedUsers)
         state.phase = .loaded
         let user = User.previewManagedUsers.last ?? User(id: "u2", username: "jane", email: "jane@example.com")
-        return MacUserDetailForm(store: Store(initialState: state) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue }, user: user)
-            .previewCanvas(.settingsPane)
+        return MacUserDetailForm(
+            store: Store(initialState: state) { UserManagementFeature() } withDependencies: {
+                $0.filesClient = .previewValue
+            },
+            user: user
+        )
+        .previewCanvas(.settingsPane)
     }
 #endif

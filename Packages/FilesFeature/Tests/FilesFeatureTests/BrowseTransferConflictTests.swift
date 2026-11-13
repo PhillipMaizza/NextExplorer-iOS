@@ -16,13 +16,23 @@ struct BrowseTransferConflictTests {
     private let existing = BrowseFixtures.file(TestFile.aText, in: TestFolder.documents)
 
     private func conflictState(clipboard: [FileItem]? = nil) -> BrowseFeature.State {
-        var state = BrowseFixtures.state(TestFolder.documents, title: TestFolder.docs, items: [existing], access: BrowseFixtures.writableAccess)
+        var state = BrowseFixtures.state(
+            TestFolder.documents,
+            title: TestFolder.docs,
+            items: [existing],
+            access: BrowseFixtures.writableAccess
+        )
         state.$clipboard.withLock { $0 = FileClipboard(items: clipboard ?? [incoming], operation: .copy) }
         return state
     }
 
     private var askRetry: BrowseFeature.TransferRetry {
-        BrowseFeature.TransferRetry(items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true)
+        BrowseFeature.TransferRetry(
+            items: [incoming],
+            destination: TestFolder.documents,
+            operation: .copy,
+            clearClipboard: true
+        )
     }
 
     private func pasteAndStopAtThePrompt(_ store: TestStoreOf<BrowseFeature>) async {
@@ -88,7 +98,8 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true, resolution: .keepBoth
+                items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
+                resolution: .keepBoth
             )
         }
         gate.open()
@@ -125,7 +136,8 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = L10n.Browse.progressCopying
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [existing], destination: TestFolder.documents, operation: .copy, clearClipboard: false, resolution: .keepBoth
+                items: [existing], destination: TestFolder.documents, operation: .copy, clearClipboard: false,
+                resolution: .keepBoth
             )
         }
         gate.open()

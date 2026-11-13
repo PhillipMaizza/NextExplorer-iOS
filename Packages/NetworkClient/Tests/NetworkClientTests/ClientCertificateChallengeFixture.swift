@@ -12,7 +12,13 @@ enum ClientCertificateChallengeFixture {
         port: Int,
         method: String = NSURLAuthenticationMethodClientCertificate
     ) -> URLAuthenticationChallenge {
-        let space = URLProtectionSpace(host: host, port: port, protocol: "https", realm: nil, authenticationMethod: method)
+        let space = URLProtectionSpace(
+            host: host,
+            port: port,
+            protocol: "https",
+            realm: nil,
+            authenticationMethod: method
+        )
         return URLAuthenticationChallenge(
             protectionSpace: space,
             proposedCredential: nil,

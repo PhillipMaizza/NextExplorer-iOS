@@ -177,7 +177,10 @@ public struct ActivityLogFeature {
                 return .saveSettings(
                     filesClient,
                     serverURL: state.serverURL,
-                    patch: SystemSettingsPatch(activity: ActivitySettings(isEnabled: state.isEnabledDraft, retentionDays: days)),
+                    patch: SystemSettingsPatch(activity: ActivitySettings(
+                        isEnabled: state.isEnabledDraft,
+                        retentionDays: days
+                    )),
                     section: \.activity,
                     missingMessage: "Settings response carried no activity.",
                     cancelLoad: CancelID.settings,

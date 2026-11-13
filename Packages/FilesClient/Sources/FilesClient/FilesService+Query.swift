@@ -11,7 +11,10 @@ extension FilesService {
     static func url(serverURL: URL, path: String, items: [(String, String)]) throws -> URL {
         var components = URLComponents(url: serverURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
         components?.percentEncodedQueryItems = items.map { name, value in
-            URLQueryItem(name: name, value: value.addingPercentEncoding(withAllowedCharacters: unreservedQueryCharacters))
+            URLQueryItem(
+                name: name,
+                value: value.addingPercentEncoding(withAllowedCharacters: unreservedQueryCharacters)
+            )
         }
         guard let url = components?.url else {
             throw FilesClientError.decoding("Could not build the request URL.")

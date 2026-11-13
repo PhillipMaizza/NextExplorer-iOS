@@ -8,7 +8,8 @@ import UniformTypeIdentifiers
 @Suite("Shared item staging")
 struct SharedItemLoaderStagingTests {
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingTests-\(TestID.uuid().uuidString)")
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("StagingTests-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
@@ -50,18 +51,37 @@ struct SharedItemLoaderStagingTests {
     @Test("A Live Photo stages its still and its paired movie, any other image just itself")
     func livePhotoTypes() {
         #expect(
-            SharedItemLoader.stagingTypes(registered: ["com.apple.live-photo", "public.heic", "public.jpeg", "com.apple.quicktime-movie"])
+            SharedItemLoader.stagingTypes(registered: [
+                "com.apple.live-photo",
+                "public.heic",
+                "public.jpeg",
+                "com.apple.quicktime-movie",
+            ])
                 == [.heic, .quickTimeMovie]
         )
-        #expect(SharedItemLoader.stagingTypes(registered: ["com.apple.live-photo", "public.heic"]) == [.heic], "no movie offered, nothing to pair")
-        #expect(SharedItemLoader.stagingTypes(registered: ["com.apple.live-photo", "com.apple.quicktime-movie"]) == [.quickTimeMovie])
-        #expect(SharedItemLoader.stagingTypes(registered: ["public.heic", "com.apple.quicktime-movie"]) == [.heic], "an image next to a video is not a pair")
+        #expect(
+            SharedItemLoader.stagingTypes(registered: ["com.apple.live-photo", "public.heic"]) == [.heic],
+            "no movie offered, nothing to pair"
+        )
+        #expect(SharedItemLoader
+            .stagingTypes(registered: ["com.apple.live-photo", "com.apple.quicktime-movie"]) == [.quickTimeMovie])
+        #expect(
+            SharedItemLoader.stagingTypes(registered: ["public.heic", "com.apple.quicktime-movie"]) == [.heic],
+            "an image next to a video is not a pair"
+        )
     }
 
     @Test("The paired movie takes the still's name with the movie's extension")
     func pairedName() {
-        #expect(SharedItemLoader.pairedMovieName(stillName: ShareUploadsTestValue.heicName, movieType: .quickTimeMovie) == Constants.lowercaseMovieName)
-        #expect(SharedItemLoader.pairedMovieName(stillName: ShareUploadsTestValue.imageBaseName, movieType: .mpeg4Movie) == "IMG_0042.mp4")
+        let paired = SharedItemLoader.pairedMovieName(
+            stillName: ShareUploadsTestValue.heicName,
+            movieType: .quickTimeMovie
+        )
+        #expect(paired == Constants.lowercaseMovieName)
+        #expect(SharedItemLoader.pairedMovieName(
+            stillName: ShareUploadsTestValue.imageBaseName,
+            movieType: .mpeg4Movie
+        ) == "IMG_0042.mp4")
         #expect(SharedItemLoader.pairedMovieName(stillName: "a.b.heic", movieType: .quickTimeMovie) == "a.b.mov")
     }
 
@@ -170,7 +190,9 @@ struct SharedItemLoaderStagingTests {
         #expect(try envelopeText(file).contains(Constants.pdfBytes))
     }
 
-    @Test("Cancelling a representation read cancels the provider's progress and stages nothing, even if the copy still finishes")
+    @Test(
+        "Cancelling a representation read cancels the provider's progress and stages nothing, even if the copy still finishes"
+    )
     func representationCancellationStopsTheCopy() async throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
@@ -219,15 +241,27 @@ struct SharedItemLoaderStagingTests {
         try Data(Constants.stillBytes.utf8).write(to: still)
         try Data(Constants.movieBytes.utf8).write(to: movie)
         let provider = NSItemProvider()
-        provider.registerFileRepresentation(forTypeIdentifier: UTType.heic.identifier, fileOptions: [], visibility: .all) { completion in
+        provider.registerFileRepresentation(
+            forTypeIdentifier: UTType.heic.identifier,
+            fileOptions: [],
+            visibility: .all
+        ) { completion in
             completion(still, false, nil)
             return nil
         }
-        provider.registerDataRepresentation(forTypeIdentifier: UTType.livePhoto.identifier, visibility: .all) { completion in
-            completion(Data(), nil)
-            return nil
-        }
-        provider.registerFileRepresentation(forTypeIdentifier: UTType.quickTimeMovie.identifier, fileOptions: [], visibility: .all) { completion in
+        provider
+            .registerDataRepresentation(
+                forTypeIdentifier: UTType.livePhoto.identifier,
+                visibility: .all
+            ) { completion in
+                completion(Data(), nil)
+                return nil
+            }
+        provider.registerFileRepresentation(
+            forTypeIdentifier: UTType.quickTimeMovie.identifier,
+            fileOptions: [],
+            visibility: .all
+        ) { completion in
             completion(movie, false, nil)
             return nil
         }
@@ -247,7 +281,11 @@ struct SharedItemLoaderStagingTests {
         let image = root.appendingPathComponent(TestFile.photo)
         try Data("jpeg bytes".utf8).write(to: image)
         let provider = NSItemProvider()
-        provider.registerFileRepresentation(forTypeIdentifier: UTType.jpeg.identifier, fileOptions: [], visibility: .all) { completion in
+        provider.registerFileRepresentation(
+            forTypeIdentifier: UTType.jpeg.identifier,
+            fileOptions: [],
+            visibility: .all
+        ) { completion in
             completion(image, false, nil)
             return nil
         }
@@ -282,7 +320,10 @@ struct SharedItemLoaderStagingTests {
     @Test("A failed download request stops the read and the error is passed on")
     func downloadFailure() throws {
         let file = FileManager.default.temporaryDirectory.appendingPathComponent("x-\(TestID.uuid().uuidString)")
-        let access = FileAccess(ubiquityStatus: { _ in .notDownloaded }, startDownload: { _ in throw CocoaError(.fileReadNoPermission) })
+        let access = FileAccess(
+            ubiquityStatus: { _ in .notDownloaded },
+            startDownload: { _ in throw CocoaError(.fileReadNoPermission) }
+        )
         #expect(throws: CocoaError.self) {
             try access.read(file) { $0 }
         }

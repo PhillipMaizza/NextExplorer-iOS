@@ -20,7 +20,11 @@ extension BrowseFeature {
         let base = state.searchBasePath
         return .run { send in
             let read = Task.detached(priority: .userInitiated) {
-                Self.savedItems(under: base, folderLimit: Self.savedSearchFoldersLimit, itemLimit: Self.savedSearchItemsLimit) { path in
+                Self.savedItems(
+                    under: base,
+                    folderLimit: Self.savedSearchFoldersLimit,
+                    itemLimit: Self.savedSearchItemsLimit
+                ) { path in
                     directoryCacheStore.read(serverURL: serverURL, path: path)?.items
                 }
             }
@@ -35,7 +39,12 @@ extension BrowseFeature {
     /// Saved items below `base`, reading at most `folderLimit` folders and keeping at most
     /// `itemLimit` items, only through folders whose own listing was saved: a folder never opened
     /// is not guessed at. Stops early when its task is cancelled.
-    nonisolated static func savedItems(under base: String, folderLimit: Int, itemLimit: Int, read: (String) -> [FileItem]?) -> [FileItem] {
+    nonisolated static func savedItems(
+        under base: String,
+        folderLimit: Int,
+        itemLimit: Int,
+        read: (String) -> [FileItem]?
+    ) -> [FileItem] {
         var pending = [base]
         var visited = 0
         var items: [FileItem] = []

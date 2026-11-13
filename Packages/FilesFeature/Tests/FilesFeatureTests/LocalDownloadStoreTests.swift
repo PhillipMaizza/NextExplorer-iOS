@@ -49,7 +49,12 @@ struct LocalDownloadStoreTests {
         let destinationURL = try store.save(sourceURL, fileName, .cache, scope)
         defer { try? FileManager.default.removeItem(at: destinationURL) }
 
-        let cachesURL = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let cachesURL = try FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
         #expect(destinationURL.path.hasPrefix(cachesURL.path))
         #expect(try String(contentsOf: destinationURL, encoding: .utf8) == "hello")
     }
@@ -221,7 +226,12 @@ struct LocalDownloadStoreTests {
     func listMigratesLegacyUnscopedDownloadsIntoTheCurrentScope() throws {
         let migrationScope = "test-\(TestID.name())"
         let fileName = "\(TestID.name()).txt"
-        let documentsURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let documentsURL = try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
         let legacyRoot = documentsURL.appendingPathComponent("Downloads", isDirectory: true)
         try FileManager.default.createDirectory(at: legacyRoot, withIntermediateDirectories: true)
         let legacyFile = legacyRoot.appendingPathComponent(fileName)

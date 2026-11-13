@@ -88,7 +88,8 @@ struct OfflineSelectionView: View {
                         isSelected: store.selection[item.id] != nil,
                         isAlreadyOffline: store.alreadyOfflineIDs.contains(item.id),
                         onToggle: { store.send(.selectionToggled(item)) },
-                        onDrill: item.isDirectory ? { store.send(.folderTapped(item)) } : { store.send(.selectionToggled(item)) }
+                        onDrill: item
+                            .isDirectory ? { store.send(.folderTapped(item)) } : { store.send(.selectionToggled(item)) }
                     )
                 }
             }

@@ -26,7 +26,10 @@
             ) {
                 Section {
                     Toggle(isOn: $store.draft.isChunkedEnabled.sending(\.chunkedChanged)) {
-                        MacRowTitle(title: L10n.UploadSettings.chunkedEnable, subtitle: L10n.UploadSettings.chunkedEnableHelp)
+                        MacRowTitle(
+                            title: L10n.UploadSettings.chunkedEnable,
+                            subtitle: L10n.UploadSettings.chunkedEnableHelp
+                        )
                     }
                     LabeledContent {
                         MacNumberStepper(
@@ -44,7 +47,10 @@
                 }
                 Section {
                     Toggle(isOn: $store.draft.isChunkedAutoFallback.sending(\.autoFallbackChanged)) {
-                        MacRowTitle(title: L10n.UploadSettings.autoFallback, subtitle: L10n.UploadSettings.autoFallbackHelp)
+                        MacRowTitle(
+                            title: L10n.UploadSettings.autoFallback,
+                            subtitle: L10n.UploadSettings.autoFallbackHelp
+                        )
                     }
                 }
                 if let error = store.errorMessage {
@@ -73,10 +79,22 @@
                 onAppear: { store.send(.onAppear) }
             ) {
                 Section {
-                    pathField(L10n.FfmpegSettings.ffmpegPath, L10n.FfmpegSettings.ffmpegPlaceholder, $store.draft.ffmpegPath.sending(\.ffmpegPathChanged))
-                    pathField(L10n.FfmpegSettings.ffprobePath, L10n.FfmpegSettings.ffprobePlaceholder, $store.draft.ffprobePath.sending(\.ffprobePathChanged))
+                    pathField(
+                        L10n.FfmpegSettings.ffmpegPath,
+                        L10n.FfmpegSettings.ffmpegPlaceholder,
+                        $store.draft.ffmpegPath.sending(\.ffmpegPathChanged)
+                    )
+                    pathField(
+                        L10n.FfmpegSettings.ffprobePath,
+                        L10n.FfmpegSettings.ffprobePlaceholder,
+                        $store.draft.ffprobePath.sending(\.ffprobePathChanged)
+                    )
                 } footer: {
-                    MacSectionFooter(L10n.FfmpegSettings.subtitle, L10n.FfmpegSettings.containerPathHelp, L10n.FfmpegSettings.defaultHelp)
+                    MacSectionFooter(
+                        L10n.FfmpegSettings.subtitle,
+                        L10n.FfmpegSettings.containerPathHelp,
+                        L10n.FfmpegSettings.defaultHelp
+                    )
                 }
                 if !store.isValid {
                     Text(L10n.FfmpegSettings.invalid).foregroundStyle(Color.negativeText)
@@ -118,7 +136,10 @@
             ) {
                 Section {
                     Toggle(isOn: Binding(get: { store.isEnabled }, set: { store.send(.enabledChanged($0)) })) {
-                        MacRowTitle(title: L10n.SearchIndexSettings.running, subtitle: L10n.SearchIndexSettings.runningHelp)
+                        MacRowTitle(
+                            title: L10n.SearchIndexSettings.running,
+                            subtitle: L10n.SearchIndexSettings.runningHelp
+                        )
                     }
                     .disabled(store.isSwitchLocked)
                 } footer: {
@@ -171,7 +192,10 @@
                 onAppear: { store.send(.onAppear) }
             ) {
                 Section {
-                    Picker(L10n.FolderSizeSettings.running, selection: Binding(get: { store.mode }, set: { store.send(.modeChanged($0)) })) {
+                    Picker(
+                        L10n.FolderSizeSettings.running,
+                        selection: Binding(get: { store.mode }, set: { store.send(.modeChanged($0)) })
+                    ) {
                         ForEach(FolderSizeMode.allCases, id: \.self) { mode in
                             Text(Self.label(for: mode)).tag(mode)
                         }

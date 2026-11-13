@@ -97,7 +97,8 @@ public extension SharedItemsClient {
     /// skipped quietly.
     static func live(
         providers: [NSItemProvider],
-        requestNotificationPermission: @escaping @Sendable () async -> Void = { await UploadNotifications.requestPermission() }
+        requestNotificationPermission: @escaping @Sendable () async
+            -> Void = { await UploadNotifications.requestPermission() }
     ) -> SharedItemsClient {
         let box = ProviderBox(providers: providers)
         let pending = PendingBatch()

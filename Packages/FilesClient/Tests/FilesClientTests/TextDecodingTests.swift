@@ -126,7 +126,12 @@ struct TextDecodingTests {
 
     @Test
     func latin1TextWithAccentsIsNeverTakenForUTF16() throws {
-        for text in ["Café au lait, crème brûlée et œufs", "Größe: 10 Straße, schön", "ab éé", "Señor Núñez said hello"] {
+        for text in [
+            "Café au lait, crème brûlée et œufs",
+            "Größe: 10 Straße, schön",
+            "ab éé",
+            "Señor Núñez said hello",
+        ] {
             let data = try #require(text.data(using: .windowsCP1252))
             #expect(FilesService.decodeText(data) == text)
         }

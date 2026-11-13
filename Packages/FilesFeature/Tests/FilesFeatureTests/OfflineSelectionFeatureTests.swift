@@ -30,7 +30,14 @@ struct OfflineSelectionFeatureTests {
     private nonisolated func listing(_ items: [FileItem], path: String = "") -> BrowseResult {
         BrowseResult(
             items: items,
-            access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true),
+            access: FileAccess(
+                canRead: true,
+                canWrite: true,
+                canUpload: true,
+                canDelete: true,
+                canShare: false,
+                canDownload: true
+            ),
             path: path
         )
     }
@@ -118,7 +125,9 @@ struct OfflineSelectionFeatureTests {
 
     @Test
     func aFolderWhoseSizeCannotBeFetchedStopsCalculatingAndCountsAsZero() async {
-        let store = makeStore { $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.server(statusCode: 500) } }
+        let store = makeStore { $0.filesClient.fetchMetadata = { _, _ in
+            throw FilesClientError.server(statusCode: 500)
+        } }
         let docs = folder(TestFolder.docs)
 
         await store.send(.selectionToggled(docs)) {

@@ -117,7 +117,8 @@ public struct VersionsSettings: Equatable, Sendable, Codable {
         hourlyDays = try container.decodeIfPresent(Int.self, forKey: .hourlyDays) ?? defaults.hourlyDays
         dailyDays = try container.decodeIfPresent(Int.self, forKey: .dailyDays) ?? defaults.dailyDays
         maxPerFile = try container.decodeIfPresent(Int.self, forKey: .maxPerFile) ?? defaults.maxPerFile
-        sessionCheckpointMinutes = try container.decodeIfPresent(Int.self, forKey: .sessionCheckpointMinutes) ?? defaults.sessionCheckpointMinutes
+        sessionCheckpointMinutes = try container
+            .decodeIfPresent(Int.self, forKey: .sessionCheckpointMinutes) ?? defaults.sessionCheckpointMinutes
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -243,7 +244,9 @@ public struct TrashZone: Equatable, Sendable, Decodable, Identifiable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, kind, name, available, reason, itemCount, usedBytes, versionCount, versionBytes, budgetBytes, freeBytes, lastPass, events
+        case id, kind, name, available, reason, itemCount, usedBytes, versionCount, versionBytes, budgetBytes,
+             freeBytes,
+             lastPass, events
     }
 
     public init(from decoder: Decoder) throws {
