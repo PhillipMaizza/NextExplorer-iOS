@@ -34,11 +34,12 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
             $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: TestFolder.photos, kind: "file")]
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "vac"
+            $0.searchPhase = .loaded
             $0.searchResults = [deepHit]
         }
         #expect(scopePath.value == [TestFolder.photos])
@@ -80,7 +81,7 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
             $0.searchResults = [SearchResultItem(name: "Vacation 2024", path: "Photos/Trips", kind: "dir")]
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         // "Everywhere": every matching favorite. A tap asks at once, replacing the pending search.
         await store.send(.searchScopeChanged(.everywhere)) {
@@ -91,7 +92,8 @@ struct BrowseSearchTests {
             ]
         }
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "vac"
+            $0.searchPhase = .loaded
             $0.searchResults = []
         }
     }
@@ -112,11 +114,12 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "vac"
+            $0.searchPhase = .loaded
             $0.searchResults = [deepHit]
         }
         // A focus change or keyboard dismiss re-sends the same text through the binding.
@@ -165,11 +168,12 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "vac"
+            $0.searchPhase = .loaded
             $0.searchResults = [result]
         }
         #expect(scopePath.value == [""])
@@ -190,12 +194,12 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
             $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: "", kind: "file")]
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await store.send(.searchQueryChanged("")) {
             $0.searchQuery = ""
             $0.searchResults = nil
-            $0.isSearchingRemotely = false
+            $0.searchPhase = .idle
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.finish()
@@ -220,22 +224,23 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
             $0.searchResults = [SearchResultItem(name: TestFile.vacationPhoto, path: "", kind: "file")]
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await store.send(.searchQueryChanged("vaca")) {
             $0.searchQuery = "vaca"
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "vaca"
+            $0.searchPhase = .loaded
             $0.searchResults = [result]
         }
         await store.finish()
         #expect(queries.value == ["vaca"])
     }
 
-    @Test("A failed search shows empty results and a message instead of looking like no matches")
-    func aSearchNetworkFailureSurfacesEmptyResultsWithAMessageRatherThanCrashing() async {
+    @Test("A failed search says so with Retry instead of looking like no matches")
+    func aFailedSearchSaysSoInsteadOfLookingLikeNoMatches() async {
         let clock = TestClock()
         let store = BrowseFixtures.store {
             $0.continuousClock = clock
@@ -245,14 +250,14 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.failure) {
-            $0.isSearchingRemotely = false
-            $0.searchResults = []
-            $0.fileActionErrorMessage = "Couldn't search. Check your connection and try again."
+            $0.searchPhase = .failed(L10n.Browse.searchFailed)
         }
+        #expect(store.state.searchFailureMessage == L10n.Browse.searchFailed)
+        #expect(store.state.fileActionErrorMessage == nil)
     }
 
     @Test("Switching to Everywhere with a query already typed searches at once, without the typing wait")
@@ -269,10 +274,11 @@ struct BrowseSearchTests {
         await store.send(.searchScopeChanged(.everywhere)) {
             $0.searchScope = .everywhere
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchPhase = .loaded
+            $0.searchAnsweredTerm = "vac"
             $0.searchResults = [result]
         }
     }
@@ -301,11 +307,12 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("zeta")) {
             $0.searchQuery = "zeta"
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "zeta"
+            $0.searchPhase = .loaded
             $0.searchResults = [closest, content]
             $0.searchShortfall = .firstOnly(count: 100)
         }
@@ -314,25 +321,27 @@ struct BrowseSearchTests {
         // Widens straight away, no debounce, and keeps the results on screen meanwhile.
         await store.send(.searchShowMoreTapped) {
             $0.searchLimit = 300
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "zeta"
+            $0.searchPhase = .loaded
             $0.searchResults = [closest, content, more]
             $0.searchShortfall = nil
         }
         #expect(limits.value == [100, 300])
 
-        // A new query starts over from the first step, and waits out the debounce again.
+        // A new query starts over from the first step and waits out the debounce again, keeping
+        // the earlier answer on screen until its own arrives.
         await store.send(.searchQueryChanged("zetas")) {
             $0.searchQuery = "zetas"
             $0.searchLimit = 100
-            $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "zetas"
+            $0.searchPhase = .loaded
             $0.searchResults = [closest, content]
             $0.searchShortfall = .firstOnly(count: 100)
         }
@@ -353,11 +362,12 @@ struct BrowseSearchTests {
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "vac"
+            $0.searchPhase = .loaded
             $0.searchResults = [hit]
             $0.searchShortfall = .stoppedEarly
         }
@@ -411,13 +421,13 @@ struct BrowseSearchTests {
         var state = BrowseFixtures.state()
         state.searchQuery = "pay"
         state.searchResults = [result]
-        state.isSearchingRemotely = true
+        state.searchPhase = .loading
         let store = BrowseFixtures.store(state)
 
         await store.send(.searchResultTapped(result)) {
             $0.searchQuery = ""
             $0.searchResults = nil
-            $0.isSearchingRemotely = false
+            $0.searchPhase = .idle
         }
         await store.receive(.delegate(.openPath(path: "Payslips", title: "Payslips")))
     }

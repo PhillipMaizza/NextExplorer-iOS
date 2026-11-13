@@ -1218,7 +1218,7 @@ struct BrowseContentView: View {
     /// Which branch of `overlayStateContent` is currently showing: a plain discriminant so
     /// the overlay can cross-fade between states instead of hard-cutting between them.
     private enum OverlayState: Hashable {
-        case none, error, empty, searching, noResults
+        case none, error, empty, searching, searchFailed, noResults
     }
 
     /// A fetch with nothing yet to show: the first load of this folder (including the frame
@@ -1234,10 +1234,12 @@ struct BrowseContentView: View {
             .error
         } else if store.phase.hasLoaded, !store.isSearching, !store.hasDisplayedItems {
             .empty
-        } else if store.isSearching, store.isSearchingRemotely, store.displayedSearchResults?.isEmpty ?? true {
-            // A recursive backend search is in flight with nothing to show yet (the client
-            // pre-fill found no local matches): spin rather than flash "no results".
+        } else if store.isSearchPending, store.displayedSearchResults?.isEmpty ?? true {
+            // A recursive backend search is in flight with nothing to show yet (the instant
+            // matches found nothing local): spin rather than flash "no results".
             .searching
+        } else if store.searchFailureMessage != nil, store.displayedSearchResults?.isEmpty ?? true {
+            .searchFailed
         } else if store.isSearching, let results = store.displayedSearchResults, results.isEmpty {
             .noResults
         } else {
@@ -1269,6 +1271,13 @@ struct BrowseContentView: View {
                 }
             }
             .transition(.opacity)
+        case .searchFailed:
+            if let message = store.searchFailureMessage {
+                EmptyStateView(icon: IconKit.warning, message: message) {
+                    store.send(.searchRetryTapped)
+                }
+                .transition(.opacity)
+            }
         case .noResults:
             noResultsState
                 .transition(.opacity)
@@ -1442,7 +1451,7 @@ struct BrowseContentView: View {
     }
 
     private var searchStatusMessage: String? {
-        SearchStatusFooter.message(isTooShort: store.isSearchTermTooShort, shortfall: store.searchShortfall)
+        SearchStatusFooter.message(failure: store.searchFailureMessage, isTooShort: store.isSearchTermTooShort, shortfall: store.searchShortfall)
     }
 
     /// A search in a folder can be widened to everywhere, unless the term is too short for the
@@ -1458,9 +1467,10 @@ struct BrowseContentView: View {
     private var searchStatusFooter: some View {
         SearchStatusFooter(
             message: searchStatusMessage,
-            canShowMore: store.canShowMoreSearchResults && !store.isSearchingRemotely,
+            canShowMore: store.canShowMoreSearchResults && store.searchPhase != .loading,
             onShowMore: { store.send(.searchShowMoreTapped) },
-            onSearchEverywhere: canOfferWiderSearch ? { store.send(.searchScopeChanged(.everywhere)) } : nil
+            onSearchEverywhere: canOfferWiderSearch ? { store.send(.searchScopeChanged(.everywhere)) } : nil,
+            onRetry: store.searchFailureMessage == nil ? nil : { store.send(.searchRetryTapped) }
         )
     }
 
@@ -1819,7 +1829,15 @@ private let browsePreviewEmptyAccess = FileAccess(
     browsePreview(mutateState: {
         $0.searchQuery = "vacation"
         $0.searchScope = .everywhere
-        $0.isSearchingRemotely = true
+        $0.searchPhase = .loading
+    })
+}
+
+#Preview("Browse: search failed") {
+    browsePreview(mutateState: {
+        $0.searchQuery = "vacation"
+        $0.searchResults = []
+        $0.searchPhase = .failed(L10n.Browse.searchFailed)
     })
 }
 

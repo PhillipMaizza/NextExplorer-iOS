@@ -16,24 +16,28 @@ extension BrowseFeature {
         let query = term.text
         guard !term.isEmpty else {
             state.searchResults = nil
-            state.isSearchingRemotely = false
+            state.searchAnsweredTerm = nil
+            state.searchPhase = .idle
             state.searchShortfall = nil
             state.selectedSearchCategories = []
             state.searchScope = .thisFolder
             return .cancel(id: CancelID.search)
         }
 
-        // Deliberately does NOT prune `selectedSearchCategories`: the prefill sees only this
-        // folder, so a selected category the backend subtree contains but this folder lacks would
-        // be wrongly cleared. Pruning happens against the authoritative response instead.
-        state.searchResults = Self.instantMatches(state, query: query)
         // The server only searches from three characters on; until then the instant matches stand.
         guard term.isSearchable else {
-            state.isSearchingRemotely = false
+            showInstantMatches(&state, query: query)
+            state.searchPhase = .idle
             state.searchShortfall = nil
             return .cancel(id: CancelID.search)
         }
-        state.isSearchingRemotely = true
+        // An earlier answer stays on screen until this term's arrives, as the web client keeps
+        // its results, so the list never shrinks to the local matches and grows back on each
+        // keystroke. With no answer to show, the instant matches paint at once.
+        if !state.isShowingSearchAnswer {
+            showInstantMatches(&state, query: query)
+        }
+        state.searchPhase = .loading
         return fetchSearchResults(state, isDebounced: isDebounced)
     }
 
@@ -49,21 +53,29 @@ extension BrowseFeature {
         return IdentifiedArray(sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
     }
 
+    /// Deliberately does NOT prune `selectedSearchCategories`: the instant matches see only this
+    /// folder, so a selected category the backend subtree contains but this folder lacks would be
+    /// wrongly cleared. Pruning happens against the authoritative response instead.
+    private func showInstantMatches(_ state: inout State, query: String) {
+        state.searchResults = Self.instantMatches(state, query: query)
+        state.searchAnsweredTerm = nil
+    }
+
     /// A listing of the folder on screen landed (live, the saved copy, a refresh, a failure that
-    /// cleared it). It feeds only the instant matches a term too short for the server shows. A
-    /// server search is left alone: its recursive answer is not this listing, and running it again
-    /// reset the results to the local matches and restarted the wait with nothing typed.
+    /// cleared it). It feeds only the instant matches, while they are what is on screen. A server
+    /// search is left alone: its recursive answer is not this listing, and running it again reset
+    /// the results to the local matches and restarted the wait with nothing typed.
     func listingChanged(_ state: inout State) {
         let term = SearchTerm(state.searchQuery)
-        guard term.isTooShort else { return }
-        state.searchResults = Self.instantMatches(state, query: term.text)
+        guard !term.isEmpty, !state.isShowingSearchAnswer else { return }
+        showInstantMatches(&state, query: term.text)
     }
 
     /// An explicit refresh while searching (pull to refresh, the toolbar, Retry) refreshes what is
     /// on screen, the results: at once, without the typing wait, keeping them meanwhile.
     func refreshSearch(_ state: inout State) -> Effect<Action> {
         guard SearchTerm(state.searchQuery).isSearchable else { return .none }
-        state.isSearchingRemotely = true
+        state.searchPhase = .loading
         return fetchSearchResults(state, isDebounced: false)
     }
 

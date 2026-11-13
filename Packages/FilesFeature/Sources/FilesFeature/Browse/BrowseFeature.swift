@@ -247,9 +247,13 @@ public struct BrowseFeature {
             folderDepth == 0 ? .everywhere : searchScope
         }
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
-        /// True while a recursive backend search (either scope) is in flight, so the UI can show a
-        /// spinner over the instant client side pre-fill until the authoritative results land.
-        public var isSearchingRemotely = false
+        /// The server search for the typed term: `.loading` from the keystroke through the answer,
+        /// `.failed` when it could not answer, `.idle` with no term or one too short to send.
+        public var searchPhase: DataPhase = .idle
+        /// The term `searchResults` are the server's answer to; `nil` while they are instant
+        /// matches. An answer stays on screen while a newer term is asked, and a failure keeps it
+        /// only when it answers the term that failed.
+        public var searchAnsweredTerm: String?
         /// The file type categories the search results are filtered to. Empty means "all types";
         /// otherwise a result shows only if its category is in the set. Only relevant while
         /// searching, and pruned to the categories actually present as results change.
@@ -398,7 +402,17 @@ public struct BrowseFeature {
         /// A server search for the typed term is waiting out the debounce or running, whatever
         /// is on screen meanwhile.
         public var isSearchPending: Bool {
-            isSearching && isSearchingRemotely
+            isSearching && searchPhase == .loading
+        }
+
+        /// The results on screen are a server answer worth keeping while a newer term is asked.
+        var isShowingSearchAnswer: Bool {
+            searchAnsweredTerm != nil && searchResults?.isEmpty == false
+        }
+
+        /// The search could not answer the typed term: said under the results with Retry.
+        public var searchFailureMessage: String? {
+            isSearching ? searchPhase.errorMessage : nil
         }
 
         /// Typed, but too short for the server to search; only the instant matches show.
@@ -494,6 +508,8 @@ public struct BrowseFeature {
         case searchFilterCleared
         case searchResultTapped(SearchResultItem)
         case searchShowMoreTapped
+        /// Retry under a search that could not answer: asks again at once.
+        case searchRetryTapped
         case searchResultsResponse(Result<SearchPage, FilesClientError>)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
@@ -807,8 +823,11 @@ public struct BrowseFeature {
             case .searchShowMoreTapped:
                 guard state.canShowMoreSearchResults else { return .none }
                 state.searchLimit = FilesClient.searchLimitSteps.first { $0 > state.searchLimit } ?? state.searchLimit
-                state.isSearchingRemotely = true
+                state.searchPhase = .loading
                 return fetchSearchResults(state, isDebounced: false)
+
+            case .searchRetryTapped:
+                return refreshSearch(&state)
 
             case let .searchCategoryToggled(category):
                 if state.selectedSearchCategories.contains(category) {
@@ -836,10 +855,12 @@ public struct BrowseFeature {
                 return .send(.rowTapped(result.previewItem(openedAt: date.now)))
 
             case let .searchResultsResponse(.success(page)):
-                state.isSearchingRemotely = false
+                state.searchPhase = .loaded
                 // The server ranks its answer (names first, closest first, then contents by
-                // relevance), so it stays in that order.
+                // relevance), so it stays in that order. A newer term cancels the request, so an
+                // answer that arrives is always for the term typed now.
                 state.searchResults = IdentifiedArray(page.items, id: \.id, uniquingIDsWith: { first, _ in first })
+                state.searchAnsweredTerm = SearchTerm(state.searchQuery).text
                 state.searchShortfall = SearchShortfall(page)
                 // Drop any selected category the new results no longer contain, so the filter
                 // can't strand the list on an empty set the sheet doesn't even offer.
@@ -847,12 +868,16 @@ public struct BrowseFeature {
                 return .none
 
             case let .searchResultsResponse(.failure(error)):
-                state.isSearchingRemotely = false
-                state.searchResults = []
+                // Said under the results with Retry, otherwise a network blip during a search is
+                // indistinguishable from a genuine empty result.
+                state.searchPhase = .failed(error == .sessionExpired ? error.userMessage : L10n.Browse.searchFailed)
+                let term = SearchTerm(state.searchQuery).text
+                // This term's own answer (a failed refresh or Show more) stays; an earlier term's
+                // gives way to this term's instant matches.
+                guard state.searchAnsweredTerm != term else { return .none }
+                state.searchResults = Self.instantMatches(state, query: term)
+                state.searchAnsweredTerm = nil
                 state.searchShortfall = nil
-                // Surface it, otherwise a network blip during a search is indistinguishable from
-                // a genuine empty result.
-                state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : L10n.Browse.searchFailed
                 return .none
 
             case let .sortOptionChanged(option):

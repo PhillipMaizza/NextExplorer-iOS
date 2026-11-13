@@ -98,11 +98,12 @@ struct BrowseSearchFilterTests {
         await store.send(.searchQueryChanged("clip")) {
             $0.searchQuery = "clip"
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = "clip"
+            $0.searchPhase = .loaded
             $0.searchResults = [videoHit]
         }
         #expect(store.state.selectedSearchCategories == [.video])
@@ -117,6 +118,8 @@ struct BrowseSearchFilterTests {
 
         // Image and video are pruned instead of stranding the list on an empty, unofferable filter.
         await store.send(.searchResultsResponse(.success([document]))) {
+            $0.searchPhase = .loaded
+            $0.searchAnsweredTerm = "a"
             $0.searchResults = [document]
             $0.selectedSearchCategories = []
         }

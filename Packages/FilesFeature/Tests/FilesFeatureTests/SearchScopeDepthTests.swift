@@ -43,11 +43,12 @@ struct SearchScopeDepthTests {
         await store.send(.searchQueryChanged(Constants.query)) {
             $0.searchQuery = Constants.query
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.query
+            $0.searchPhase = .loaded
         }
     }
 
@@ -87,12 +88,15 @@ struct SearchScopeDepthTests {
         let store = searchingStore(state(TestPath.filesDocuments), clock: clock, searchedPaths: searchedPaths)
 
         await searchForQuery(store, clock: clock)
+        // The folder's answer was empty, so there is nothing to keep: the instant matches stand in.
         await store.send(.searchScopeChanged(.everywhere)) {
             $0.searchScope = .everywhere
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
+            $0.searchAnsweredTerm = nil
         }
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchPhase = .loaded
+            $0.searchAnsweredTerm = Constants.query
         }
         #expect(searchedPaths.value == [TestPath.filesDocuments, ""])
     }

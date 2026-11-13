@@ -47,7 +47,7 @@ struct BrowseSearchRefreshTests {
         }
     }
 
-    @Test("A listing that lands while the server search waits leaves the results and the wait alone")
+    @Test("A listing that lands while the server search waits refreshes the instant matches and leaves the wait alone")
     func aListingDuringThePendingSearchLeavesItAlone() async {
         let clock = TestClock()
         let queries = LockIsolated<[String]>([])
@@ -56,17 +56,19 @@ struct BrowseSearchRefreshTests {
         await store.send(.searchQueryChanged(Constants.term)) {
             $0.searchQuery = Constants.term
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: TestSearchTiming.partOfDebounce)
         await store.send(.itemsResponse(.success(listed([photo])))) {
             $0.items = [photo]
             $0.access = BrowseTestSupport.readOnlyAccess
+            $0.searchResults = [photoMatch]
         }
         await store.receive(\.offlineAvailabilityComputed)
         await clock.advance(by: TestSearchTiming.restOfDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.term
+            $0.searchPhase = .loaded
             $0.searchResults = [deepHit]
         }
         #expect(queries.value == [Constants.term])
@@ -77,6 +79,8 @@ struct BrowseSearchRefreshTests {
         var state = loadedState()
         state.searchQuery = Constants.term
         state.searchResults = [deepHit]
+        state.searchAnsweredTerm = Constants.term
+        state.searchPhase = .loaded
         let clock = TestClock()
         let queries = LockIsolated<[String]>([])
         let store = searchingStore(state, clock: clock, queries: queries)
@@ -151,6 +155,8 @@ struct BrowseSearchRefreshTests {
         state.items = [photo]
         state.searchQuery = Constants.term
         state.searchResults = [deepHit]
+        state.searchAnsweredTerm = Constants.term
+        state.searchPhase = .loaded
         let refreshed = SearchResultItem(name: Constants.refreshedName, path: TestFolder.photos, kind: "file")
         let search = AsyncGate()
         let favorites = AsyncGate()
@@ -169,7 +175,7 @@ struct BrowseSearchRefreshTests {
 
         await store.send(.refreshButtonTapped) {
             $0.phase = .loading
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await store.receive(\.itemsResponse.success) {
             $0.phase = .loaded
@@ -178,7 +184,7 @@ struct BrowseSearchRefreshTests {
         await store.receive(\.offlineAvailabilityComputed)
         search.open()
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchPhase = .loaded
             $0.searchResults = [refreshed]
         }
         favorites.open()

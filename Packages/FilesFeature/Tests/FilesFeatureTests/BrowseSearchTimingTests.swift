@@ -43,7 +43,7 @@ struct BrowseSearchTimingTests {
         await store.send(.searchQueryChanged(query)) {
             $0.searchQuery = query
             $0.searchResults = []
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
     }
 
@@ -59,7 +59,8 @@ struct BrowseSearchTimingTests {
 
         await clock.advance(by: TestSearchTiming.lastMoment)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.term
+            $0.searchPhase = .loaded
             $0.searchResults = [hit]
         }
         #expect(queries.value == [Constants.term])
@@ -81,7 +82,8 @@ struct BrowseSearchTimingTests {
 
         await clock.advance(by: TestSearchTiming.restOfDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.longerTerm
+            $0.searchPhase = .loaded
             $0.searchResults = [hit]
         }
         #expect(queries.value == [Constants.longerTerm])
@@ -100,7 +102,8 @@ struct BrowseSearchTimingTests {
         }
         await clock.advance(by: TestSearchTiming.restOfDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.term
+            $0.searchPhase = .loaded
             $0.searchResults = [hit]
         }
         #expect(queries.value == [Constants.term])
@@ -115,16 +118,18 @@ struct BrowseSearchTimingTests {
         await type(Constants.term, into: store)
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.term
+            $0.searchPhase = .loaded
             $0.searchResults = [hit]
             $0.searchShortfall = .firstOnly(count: 100)
         }
         await store.send(.searchShowMoreTapped) {
             $0.searchLimit = 300
-            $0.isSearchingRemotely = true
+            $0.searchPhase = .loading
         }
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.term
+            $0.searchPhase = .loaded
         }
 
         await store.send(.searchQueryChanged(Constants.termWithSpace)) {
@@ -160,7 +165,8 @@ struct BrowseSearchTimingTests {
         #expect(!store.state.isSearchTermTooShort)
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.emojiTerm
+            $0.searchPhase = .loaded
             $0.searchResults = [hit]
         }
         #expect(queries.value == [Constants.emojiTerm])
@@ -182,7 +188,8 @@ struct BrowseSearchTimingTests {
         #expect(store.state.isSearchPending)
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingRemotely = false
+            $0.searchAnsweredTerm = Constants.term
+            $0.searchPhase = .loaded
             $0.searchResults = [hit]
         }
         #expect(!store.state.isSearchPending)
