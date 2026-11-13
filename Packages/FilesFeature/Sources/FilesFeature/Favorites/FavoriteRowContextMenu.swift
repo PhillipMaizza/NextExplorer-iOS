@@ -17,6 +17,19 @@ struct FavoriteRowContextMenu: View {
             Label { Text(L10n.Favorites.actionEdit) } icon: { IconKit.rename }
         }
         .tint(.primaryDS)
+        let isOffline = store.offlineFavoriteIDs.contains(favorite.id)
+        let isPinned = store.offlinePinnedFavoriteIDs.contains(favorite.id)
+        Button {
+            store.send(.offlineToggleTapped(favorite))
+        } label: {
+            Label {
+                Text(isPinned ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline)
+            } icon: {
+                IconKit.availableOffline
+            }
+        }
+        .tint(.primaryDS)
+        .disabled(isOffline && !isPinned)
         Button(role: .destructive) {
             store.send(.removeTapped(favorite))
         } label: {

@@ -59,8 +59,6 @@ directLinkMode.download	Last ned
 thumbnailSize.small	Liten
 thumbnailSize.medium	Middels
 thumbnailSize.large	Stor
-downloadLocation.documents	Dokumenter
-downloadLocation.cache	Hurtigbuffer
 dateFormat.automatic	Automatisk
 browse.navigationTitle	Utforsk
 browse.scopeThisFolder	Denne mappen
@@ -151,7 +149,6 @@ favorites.removeMessage	Dette fjerner dem bare fra Favoritter.
 favorites.removeFailedOne	Kunne ikke fjerne den favoritten.
 favorites.removeFailedMany	Kunne ikke fjerne de favorittene.
 favorites.removePartial	Fjernet %1$lld av %2$lld.
-downloads.navigationTitle	Nedlastinger
 downloads.actionOpenInFiles	Åpne i Filer
 downloads.emptyList	Filer du laster ned fra Utforsk, vises her.
 downloads.deleteConfirmTitle	Slette?
@@ -480,7 +477,6 @@ settings.sectionServerStorage	Serverlagring
 settings.serverStorageUsed	%1$@ av %2$@
 settings.sectionLicenses	Lisenser
 settings.sectionLegal	Juridisk
-settings.sectionUsers	Brukere
 settings.sectionAdmin	Administrasjon
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Vis skjulte filer
@@ -748,7 +744,6 @@ twoFactor.passwordField	Passord
 twoFactor.passwordConfirmButton	Bekreft
 twoFactor.manageButton	Administrer…
 apiTokens.navigationTitle	API-tokens
-apiTokens.sectionHeader	Utviklere
 apiTokens.intro	API-tokens lar skript og andre verktøy bruke kontoen din uten passordet ditt. Et token gjør bare det tilgangen tillater, og du kan trekke det tilbake når som helst.
 apiTokens.emptyTitle	Ingen API-tokens
 apiTokens.emptyMessage	Opprett ett slik at et skript kan bruke kontoen din.
@@ -875,7 +870,6 @@ offline.manageRow	Administrer frakoblede filer
 offline.manageTitle	Frakoblede filer
 offline.manageEmpty	Ingenting er lastet ned for frakoblet bruk.
 offline.preferOfflineToggle	Spill av nedlastede kopier
-offline.pinRemoved	%@ finnes ikke lenger på serveren og ble fjernet fra frakoblede filer
 offline.preferOfflineSubtitle	Bruk en nedlastet video i stedet for strømming når den er tilgjengelig.
 offline.tunnelSpeedNote	Å nå serveren din via en ekstern tunnel kan gjøre nedlastinger tregere. For store filer bør du koble til samme nettverk og bruke serverens lokale adresse.
 menu.about	Om NextExplorer
@@ -918,7 +912,6 @@ appearance.dark	Mørk
 browse.myFiles	Mine filer
 browse.myFilesSubtitle	Bare synlig for deg
 downloadQueue.navigationTitle	Nedlastingskø
-downloadQueue.openDownloads	Vis nedlastinger
 downloadQueue.emptyList	Ingen nedlastinger pågår.
 downloadQueue.statusSaved	Lagret
 downloadQueue.cancelAll	Avbryt alle nedlastinger
@@ -1107,3 +1100,23 @@ serverSettings.featureOffHowTo	For å slå den på må du angi %@ og starte cont
 trashSettings.environmentNote	Standardverdiene kommer fra TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT og TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Standardverdiene kommer fra VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE og VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Oppdater
+browse.actionAvailableOffline	Tilgjengelig frakoblet
+browse.actionSaveToDevice	Arkiver på enheten
+previewToolbar.saveToDevice	Arkiver på enheten
+downloadQueue.savedToPhotos	Arkivert i Bilder
+downloadQueue.savedToDevice	Arkivert på enheten din
+downloadQueue.photosAccessDenied	Gi tilgang til Bilder i Innstillinger for å arkivere bilder og videoer.
+downloadQueue.photosSaveFailed	Kunne ikke legge dette til i Bilder.
+tab.offline	Frakoblet
+offline.sectionSavedEarlier	Arkivert tidligere
+offline.newFilesBadge	Nye filer tilgjengelig frakoblet
+search.onDevice	På enheten
+search.remote	Eksternt
+offline.tabEmpty	Ingenting er tilgjengelig uten nett ennå. Velg «Tilgjengelig frakoblet» på en fil eller mappe.
+offline.removeItemTitle	Fjerne «%@» fra tilgjengelig uten nett?
+offline.removeItemsTitle	Fjerne %lld objekter fra tilgjengelig uten nett?
+offline.removeItemMessage	Dette sletter filene som er lagret for frakoblet bruk på denne enheten. Filene dine på serveren påvirkes ikke.
+browse.actionRemoveFromOffline	Fjern fra uten nett
+offline.rowUpdating	Oppdaterer…
+offline.rowWaitingForNetwork	Venter på nettverk
+offline.rowUpdateFailed	Kunne ikke oppdatere

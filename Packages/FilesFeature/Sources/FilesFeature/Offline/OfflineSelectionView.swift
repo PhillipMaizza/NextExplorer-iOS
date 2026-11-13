@@ -97,16 +97,10 @@ struct OfflineSelectionView: View {
         }
     }
 
-    /// Free space the OS considers available for important on-device storage. `nil` (unknown) is
-    /// treated as unlimited so the guard never blocks a download it can't size.
-    private var deviceFreeBytes: Int64 {
-        let values = try? URL(fileURLWithPath: NSHomeDirectory())
-            .resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
-        return values?.volumeAvailableCapacityForImportantUsage ?? .max
-    }
+    @Dependency(\.deviceStorage) private var deviceStorage
 
     private var isOverFreeSpace: Bool {
-        !store.isEstimating && store.estimatedBytes > deviceFreeBytes
+        !store.isEstimating && store.estimatedBytes > deviceStorage.freeBytes()
     }
 
     private var selectionFooter: some View {

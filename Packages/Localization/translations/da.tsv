@@ -59,8 +59,6 @@ directLinkMode.download	Hent
 thumbnailSize.small	Lille
 thumbnailSize.medium	Mellem
 thumbnailSize.large	Stor
-downloadLocation.documents	Dokumenter
-downloadLocation.cache	Cache
 dateFormat.automatic	Automatisk
 browse.navigationTitle	Gennemse
 browse.scopeThisFolder	Denne mappe
@@ -151,7 +149,6 @@ favorites.removeMessage	Dette fjerner dem kun fra Favoritter.
 favorites.removeFailedOne	Favoritten kunne ikke fjernes.
 favorites.removeFailedMany	Favoritterne kunne ikke fjernes.
 favorites.removePartial	Fjernede %1$lld af %2$lld.
-downloads.navigationTitle	Downloads
 downloads.actionOpenInFiles	Åbn i Filer
 downloads.emptyList	Filer, du henter fra Gennemse, vises her.
 downloads.deleteConfirmTitle	Slet?
@@ -480,7 +477,6 @@ settings.sectionServerStorage	Serverlagring
 settings.serverStorageUsed	%1$@ af %2$@
 settings.sectionLicenses	Licenser
 settings.sectionLegal	Juridisk
-settings.sectionUsers	Brugere
 settings.sectionAdmin	Administration
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Vis skjulte filer
@@ -748,7 +744,6 @@ twoFactor.passwordField	Adgangskode
 twoFactor.passwordConfirmButton	Bekræft
 twoFactor.manageButton	Administrer…
 apiTokens.navigationTitle	API-tokens
-apiTokens.sectionHeader	Udviklere
 apiTokens.intro	API-tokens lader scripts og andre værktøjer bruge din konto uden din adgangskode. Et token kan kun det, dets adgang tillader, og du kan tilbagekalde det når som helst.
 apiTokens.emptyTitle	Ingen API-tokens
 apiTokens.emptyMessage	Opret et, så et script kan bruge din konto.
@@ -875,7 +870,6 @@ offline.manageRow	Administrer offlinefiler
 offline.manageTitle	Offlinefiler
 offline.manageEmpty	Intet er hentet til offline brug.
 offline.preferOfflineToggle	Afspil hentede kopier
-offline.pinRemoved	%@ findes ikke længere på serveren og blev fjernet fra offlinefiler
 offline.preferOfflineSubtitle	Brug en hentet video i stedet for streaming, når den er tilgængelig.
 offline.tunnelSpeedNote	At nå din server via en fjerntunnel kan gøre downloads langsommere. Til store filer skal du oprette forbindelse til samme netværk og bruge serverens lokale adresse.
 menu.about	Om NextExplorer
@@ -918,7 +912,6 @@ appearance.dark	Mørk
 browse.myFiles	Mine filer
 browse.myFilesSubtitle	Kun synlig for dig
 downloadQueue.navigationTitle	Downloadkø
-downloadQueue.openDownloads	Vis downloads
 downloadQueue.emptyList	Ingen downloads i gang.
 downloadQueue.statusSaved	Gemt
 downloadQueue.cancelAll	Annuller alle downloads
@@ -1107,3 +1100,23 @@ serverSettings.featureOffHowTo	For at slå den til skal du angive %@ og genstart
 trashSettings.environmentNote	Standardværdierne kommer fra TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT og TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Standardværdierne kommer fra VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE og VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Opdater
+browse.actionAvailableOffline	Tilgængelig offline
+browse.actionSaveToDevice	Gem på enhed
+previewToolbar.saveToDevice	Gem på enhed
+downloadQueue.savedToPhotos	Gemt i Fotos
+downloadQueue.savedToDevice	Gemt på din enhed
+downloadQueue.photosAccessDenied	Tillad adgang til Fotos i Indstillinger for at gemme billeder og videoer.
+downloadQueue.photosSaveFailed	Kunne ikke føje dette til Fotos.
+tab.offline	Offline
+offline.sectionSavedEarlier	Gemt tidligere
+offline.newFilesBadge	Nye filer tilgængelige offline
+search.onDevice	På enheden
+search.remote	Eksternt
+offline.tabEmpty	Intet er tilgængeligt offline endnu. Vælg “Tilgængelig offline” på en fil eller mappe.
+offline.removeItemTitle	Fjern “%@” fra tilgængeligt offline?
+offline.removeItemsTitle	Fjern %lld emner fra tilgængeligt offline?
+offline.removeItemMessage	Dette sletter de filer, der er gemt til offline brug på denne enhed. Dine filer på serveren påvirkes ikke.
+browse.actionRemoveFromOffline	Fjern fra offline
+offline.rowUpdating	Opdaterer…
+offline.rowWaitingForNetwork	Venter på netværk
+offline.rowUpdateFailed	Kunne ikke opdatere

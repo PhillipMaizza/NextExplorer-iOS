@@ -51,6 +51,9 @@ struct ThumbnailImage: View {
     /// re-checked only when the file itself changes.
     let signature: String
     let fallbackIcon: Image
+    /// When set, a file with no thumbnail shows its typed page icon (like every other file row and
+    /// tile) instead of the generic `fallbackIcon` glyph.
+    var fallbackKind: String?
     let iconTint: Color
     /// Decode ceiling in pixels. A thumbnail is only ever shown at an icon/grid size, so
     /// decoding the server bytes (which can be a full size preview fallback) at full resolution
@@ -67,6 +70,7 @@ struct ThumbnailImage: View {
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.thumbnailCache) private var thumbnailCache
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
+    @Dependency(\.offlineFileStore) private var offlineFileStore
     @Dependency(\.date) private var date
 
     var body: some View {
@@ -88,6 +92,14 @@ struct ThumbnailImage: View {
                 return
             }
             uiImage = seeded
+            // A file kept offline is already on this device: draw it from that copy, whether or not
+            // its folder was ever opened, instead of waiting on the server for a thumbnail.
+            if seeded == nil, let local = await offlineImage() {
+                if !Task.isCancelled {
+                    uiImage = local
+                }
+                return
+            }
             let thumbnailURL = await thumbnailCache.resolvedURL(path, signature) {
                 try? await filesClient.thumbnailURL(serverURL, path)
             }
@@ -152,6 +164,24 @@ struct ThumbnailImage: View {
         )
     }
 
+    private func offlineImage() async -> PlatformImage? {
+        let store = offlineFileStore
+        let path = path
+        let target = maxPixelDimension
+        return await Task.detached(priority: .userInitiated) {
+            let name = (path as NSString).lastPathComponent
+            let item = FileItem(
+                name: name,
+                path: (path as NSString).deletingLastPathComponent,
+                dateModified: .distantPast,
+                size: 0,
+                kind: ""
+            )
+            guard let url = store.localURLIgnoringStaleness(item) else { return nil }
+            return ImageDownsampling.image(from: url, maxPixelDimension: target)
+        }.value
+    }
+
     /// Drops the seed once the server's own thumbnail is showing.
     private func dropSeed() {
         let localThumbnailStore = localThumbnailStore
@@ -159,11 +189,16 @@ struct ThumbnailImage: View {
         Task.detached(priority: .utility) { localThumbnailStore.remove(path) }
     }
 
+    @ViewBuilder
     private var fallbackImage: some View {
-        fallbackIcon
-            .resizable()
-            .scaledToFit()
-            .foregroundStyle(iconTint)
+        if let fallbackKind {
+            FileTypeIcon(kind: fallbackKind)
+        } else {
+            fallbackIcon
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(iconTint)
+        }
     }
 }
 

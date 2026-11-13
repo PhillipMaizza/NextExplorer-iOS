@@ -40,7 +40,7 @@
         private var table: some View {
             Table(store.usages, selection: $selection) {
                 TableColumn(L10n.Sort.name) { usage in
-                    MacItemLabel(name: Self.name(usage), isDirectory: usage.root.isDirectory)
+                    MacItemLabel(name: usage.displayName, isDirectory: usage.root.isDirectory)
                 }
                 TableColumn(L10n.FileInfo.rowLocation) { usage in
                     Text(usage.root.path).foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
@@ -59,6 +59,11 @@
                 .labelStyle(.titleAndIcon)
             }
             .onDeleteCommand { removeSelection() }
+            .offlineRemovalAlert(
+                store.removal,
+                onConfirm: { store.send(.removeConfirmed, animation: .default) },
+                onCancel: { store.send(.removeCancelled) }
+            )
             .overlay {
                 if store.isEmpty {
                     Text(L10n.Offline.manageEmpty).foregroundStyle(.secondary)
@@ -72,16 +77,8 @@
         }
 
         private func remove(_ ids: Set<OfflinePinnedRootUsage.ID>) {
-            for id in ids {
-                if let usage = store.usages[id: id] {
-                    store.send(.removeTapped(path: usage.root.path), animation: .default)
-                }
-            }
-        }
-
-        private static func name(_ usage: OfflinePinnedRootUsage) -> String {
-            let last = (usage.root.path as NSString).lastPathComponent
-            return last.isEmpty ? usage.root.path : last
+            let paths = ids.compactMap { store.usages[id: $0]?.root.path }
+            store.send(.removeSelectionTapped(paths: paths))
         }
     }
 

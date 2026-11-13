@@ -55,8 +55,6 @@ directLinkMode.download	ダウンロード
 thumbnailSize.small	小
 thumbnailSize.medium	中
 thumbnailSize.large	大
-downloadLocation.documents	書類
-downloadLocation.cache	キャッシュ
 dateFormat.automatic	自動
 browse.navigationTitle	ブラウズ
 browse.scopeThisFolder	このフォルダ
@@ -142,7 +140,6 @@ favorites.removeMessage	お気に入りから削除するだけです。
 favorites.removeFailedOne	そのお気に入りを削除できませんでした。
 favorites.removeFailedMany	それらのお気に入りを削除できませんでした。
 favorites.removePartial	%2$lld 件中 %1$lld 件を削除しました。
-downloads.navigationTitle	ダウンロード
 downloads.actionOpenInFiles	「ファイル」で開く
 downloads.emptyList	「ブラウズ」からダウンロードしたファイルがここに表示されます。
 downloads.deleteConfirmTitle	削除しますか？
@@ -286,7 +283,6 @@ settings.sectionServerStorage	サーバーストレージ
 settings.serverStorageUsed	%2$@ 中 %1$@
 settings.sectionLicenses	ライセンス
 settings.sectionLegal	法律
-settings.sectionUsers	ユーザ
 settings.sectionAdmin	管理
 settings.sectionInfo	情報
 settings.toggleShowHiddenFiles	隠しファイルを表示
@@ -606,7 +602,6 @@ offline.manageRow	オフラインファイルを管理
 offline.manageTitle	オフラインファイル
 offline.manageEmpty	オフライン用にダウンロードされたものはありません。
 offline.preferOfflineToggle	ダウンロードしたコピーを再生
-offline.pinRemoved	%@ はサーバー上に存在しなくなったため、オフラインファイルから削除されました
 offline.preferOfflineSubtitle	利用可能な場合はストリーミングの代わりにダウンロードした動画を使用します。
 offline.tunnelSpeedNote	リモートトンネル経由でサーバーに接続するとダウンロードが遅くなることがあります。大きなファイルの場合は、同じネットワークに接続してサーバーのローカルアドレスを使用してください。
 menu.about	NextExplorerについて
@@ -642,7 +637,6 @@ appearance.dark	ダーク
 browse.myFiles	マイファイル
 browse.myFilesSubtitle	あなただけに表示されます
 downloadQueue.navigationTitle	ダウンロードキュー
-downloadQueue.openDownloads	ダウンロードを表示
 downloadQueue.emptyList	進行中のダウンロードはありません。
 downloadQueue.statusSaved	保存済み
 downloadQueue.cancelAll	すべてのダウンロードをキャンセル
@@ -1081,7 +1075,6 @@ apiTokens.revokeMessage	「%@」を使っているものはすべてすぐに動
 apiTokens.revokeTitle	トークンを失効させますか？
 apiTokens.scopeRead	読み取り専用
 apiTokens.scopeWrite	読み取りと書き込み
-apiTokens.sectionHeader	開発者
 changePassword.addIntro	このアカウントはシングルサインオンでサインインしており、まだパスワードがありません。パスワードを追加すると、メールアドレスまたはユーザ名でもサインインできます。
 changePassword.addNavigationTitle	パスワードを追加
 changePassword.addSubmitButton	パスワードを追加
@@ -1128,3 +1121,23 @@ twoFactor.recoveryTitle	リカバリーコードを保存
 twoFactor.shareCodesButton	コードを共有
 twoFactor.turnOffButton	オフにする
 twoFactor.turnOnButton	オンにする
+browse.actionAvailableOffline	オフラインで利用可能
+browse.actionSaveToDevice	デバイスに保存
+previewToolbar.saveToDevice	デバイスに保存
+downloadQueue.savedToPhotos	写真に保存しました
+downloadQueue.savedToDevice	デバイスに保存しました
+downloadQueue.photosAccessDenied	画像や動画を保存するには、設定で写真へのアクセスを許可してください。
+downloadQueue.photosSaveFailed	写真に追加できませんでした。
+tab.offline	オフライン
+offline.sectionSavedEarlier	以前に保存したもの
+offline.newFilesBadge	新しいファイルがオフラインで利用可能
+search.onDevice	このデバイス上
+search.remote	リモート
+offline.tabEmpty	オフラインで利用できる項目はまだありません。ファイルまたはフォルダで「オフラインで利用可能」を選択してください。
+offline.removeItemTitle	「%@」をオフラインで利用可能から削除しますか？
+offline.removeItemsTitle	%lld件の項目をオフラインで利用可能から削除しますか？
+offline.removeItemMessage	この端末にオフライン用として保存されたファイルを削除します。サーバー上のファイルには影響しません。
+browse.actionRemoveFromOffline	オフラインから削除
+offline.rowUpdating	更新中…
+offline.rowWaitingForNetwork	ネットワーク待ち
+offline.rowUpdateFailed	更新できませんでした

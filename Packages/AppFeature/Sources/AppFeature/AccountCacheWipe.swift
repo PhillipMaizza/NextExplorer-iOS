@@ -18,9 +18,11 @@ struct AccountCacheWipe: Sendable {
     let jsonCacheStore: JSONCacheStore
     let previewCacheStore: PreviewCacheStore
     let offlineFileStore: OfflineFileStore
+    let localDownloadStore: LegacyDownloadStore
     let thumbnailCache: ThumbnailCache
     let textEditorETagStore: TextEditorETagStore
     let localThumbnailStore: LocalThumbnailStore
+    let deviceSaver: DeviceSaver
     let pendingWipes: PendingAccountWipes
 
     /// Built from the current dependencies, for every place that wipes an account.
@@ -29,18 +31,22 @@ struct AccountCacheWipe: Sendable {
         @Dependency(\.jsonCacheStore) var jsonCacheStore
         @Dependency(\.previewCacheStore) var previewCacheStore
         @Dependency(\.offlineFileStore) var offlineFileStore
+        @Dependency(\.localDownloadStore) var localDownloadStore
         @Dependency(\.thumbnailCache) var thumbnailCache
         @Dependency(\.textEditorETagStore) var textEditorETagStore
         @Dependency(\.localThumbnailStore) var localThumbnailStore
+        @Dependency(\.deviceSaver) var deviceSaver
         @Dependency(\.pendingAccountWipes) var pendingAccountWipes
         return AccountCacheWipe(
             directoryCacheStore: directoryCacheStore,
             jsonCacheStore: jsonCacheStore,
             previewCacheStore: previewCacheStore,
             offlineFileStore: offlineFileStore,
+            localDownloadStore: localDownloadStore,
             thumbnailCache: thumbnailCache,
             textEditorETagStore: textEditorETagStore,
             localThumbnailStore: localThumbnailStore,
+            deviceSaver: deviceSaver,
             pendingWipes: pendingAccountWipes
         )
     }
@@ -75,8 +81,11 @@ struct AccountCacheWipe: Sendable {
         jsonCacheStore.clear(scope: accountID)
         previewCacheStore.clearAccount(accountID)
         offlineFileStore.removeAccount(accountID)
+        localDownloadStore.removeAccount(accountID)
         textEditorETagStore.clear(scope: accountID)
         localThumbnailStore.clearScope(accountID)
+        // Files staged for the Save to Files panel belong to the account that fetched them.
+        deviceSaver.discardAll()
         // One cache for every account, so it is dropped whole: the active account refills it.
         thumbnailCache.clearMemory()
     }
@@ -87,6 +96,11 @@ struct AccountCacheWipe: Sendable {
 public enum PendingAccountWipeRecovery {
     public static func runAtLaunch() async {
         @Dependency(\.authClient) var authClient
-        await AccountCacheWipe.fromDependencies.finishPending(authClient: authClient)
+        let wipe = AccountCacheWipe.fromDependencies
+        // A kill can leave staged copies behind: nothing is waiting for them at launch.
+        wipe.deviceSaver.discardAll()
+        // Older versions saved into folders the Files app shows: move them private, by owner.
+        wipe.localDownloadStore.moveSharedFilesToPrivateStorage()
+        await wipe.finishPending(authClient: authClient)
     }
 }

@@ -59,8 +59,6 @@ directLinkMode.download	Tải xuống
 thumbnailSize.small	Nhỏ
 thumbnailSize.medium	Vừa
 thumbnailSize.large	Lớn
-downloadLocation.documents	Tài liệu
-downloadLocation.cache	Bộ nhớ đệm
 dateFormat.automatic	Tự động
 browse.navigationTitle	Duyệt
 browse.scopeThisFolder	Thư mục này
@@ -151,7 +149,6 @@ favorites.removeMessage	Thao tác này chỉ xóa chúng khỏi Yêu thích.
 favorites.removeFailedOne	Không thể xóa mục yêu thích đó.
 favorites.removeFailedMany	Không thể xóa các mục yêu thích đó.
 favorites.removePartial	Đã xóa %1$lld trong %2$lld.
-downloads.navigationTitle	Tải xuống
 downloads.actionOpenInFiles	Mở trong Tệp
 downloads.emptyList	Các tệp bạn tải xuống từ Duyệt sẽ hiển thị ở đây.
 downloads.deleteConfirmTitle	Xóa?
@@ -480,7 +477,6 @@ settings.sectionServerStorage	Lưu trữ máy chủ
 settings.serverStorageUsed	%1$@ trên %2$@
 settings.sectionLicenses	Giấy phép
 settings.sectionLegal	Pháp lý
-settings.sectionUsers	Người dùng
 settings.sectionAdmin	Quản trị
 settings.sectionInfo	Thông tin
 settings.toggleShowHiddenFiles	Hiện tệp ẩn
@@ -748,7 +744,6 @@ twoFactor.passwordField	Mật khẩu
 twoFactor.passwordConfirmButton	Xác nhận
 twoFactor.manageButton	Quản lý…
 apiTokens.navigationTitle	Token API
-apiTokens.sectionHeader	Nhà phát triển
 apiTokens.intro	Token API cho phép các tập lệnh và công cụ khác dùng tài khoản của bạn mà không cần mật khẩu. Token chỉ làm những gì quyền truy cập của nó cho phép, và bạn có thể thu hồi bất cứ lúc nào.
 apiTokens.emptyTitle	Không có token API
 apiTokens.emptyMessage	Hãy tạo một token để tập lệnh có thể dùng tài khoản của bạn.
@@ -875,7 +870,6 @@ offline.manageRow	Quản lý tệp ngoại tuyến
 offline.manageTitle	Tệp ngoại tuyến
 offline.manageEmpty	Chưa tải gì để dùng ngoại tuyến.
 offline.preferOfflineToggle	Phát bản sao đã tải xuống
-offline.pinRemoved	%@ không còn trên máy chủ và đã bị xóa khỏi tệp ngoại tuyến
 offline.preferOfflineSubtitle	Dùng video đã tải xuống thay vì phát trực tuyến khi có sẵn.
 offline.tunnelSpeedNote	Truy cập máy chủ qua đường hầm từ xa có thể làm chậm việc tải xuống. Với tệp lớn, hãy kết nối cùng mạng và dùng địa chỉ cục bộ của máy chủ.
 menu.about	Giới thiệu NextExplorer
@@ -918,7 +912,6 @@ appearance.dark	Tối
 browse.myFiles	Tệp của tôi
 browse.myFilesSubtitle	Chỉ mình bạn thấy
 downloadQueue.navigationTitle	Hàng đợi tải xuống
-downloadQueue.openDownloads	Hiện mục tải xuống
 downloadQueue.emptyList	Không có tệp nào đang tải xuống.
 downloadQueue.statusSaved	Đã lưu
 downloadQueue.cancelAll	Hủy tất cả lượt tải xuống
@@ -1101,3 +1094,23 @@ serverSettings.featureOffHowTo	Để bật, hãy đặt %@ và khởi động l�
 trashSettings.environmentNote	Giá trị mặc định lấy từ TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT và TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Giá trị mặc định lấy từ VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE và VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Làm mới
+browse.actionAvailableOffline	Có sẵn ngoại tuyến
+browse.actionSaveToDevice	Lưu vào thiết bị
+previewToolbar.saveToDevice	Lưu vào thiết bị
+downloadQueue.savedToPhotos	Đã lưu vào Ảnh
+downloadQueue.savedToDevice	Đã lưu vào thiết bị của bạn
+downloadQueue.photosAccessDenied	Cho phép truy cập Ảnh trong Cài đặt để lưu hình ảnh và video.
+downloadQueue.photosSaveFailed	Không thể thêm mục này vào Ảnh.
+tab.offline	Ngoại tuyến
+offline.sectionSavedEarlier	Đã lưu trước đây
+offline.newFilesBadge	Có tệp mới dùng ngoại tuyến
+search.onDevice	Trên thiết bị
+search.remote	Từ xa
+offline.tabEmpty	Chưa có gì khả dụng ngoại tuyến. Chọn “Có sẵn ngoại tuyến” trên một tệp hoặc thư mục.
+offline.removeItemTitle	Xóa “%@” khỏi mục có sẵn ngoại tuyến?
+offline.removeItemsTitle	Xóa %lld mục khỏi mục có sẵn ngoại tuyến?
+offline.removeItemMessage	Thao tác này xóa các tệp đã lưu để dùng ngoại tuyến trên thiết bị này. Các tệp của bạn trên máy chủ không bị ảnh hưởng.
+browse.actionRemoveFromOffline	Xóa khỏi ngoại tuyến
+offline.rowUpdating	Đang cập nhật…
+offline.rowWaitingForNetwork	Đang chờ mạng
+offline.rowUpdateFailed	Không thể cập nhật

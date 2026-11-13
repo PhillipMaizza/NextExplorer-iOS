@@ -12,11 +12,10 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
-    private func download(_ name: String, location: DownloadLocation, size: Int64) -> LocalDownload {
+    private func download(_ name: String, size: Int64) -> LocalDownload {
         LocalDownload(
             url: URL(fileURLWithPath: "/tmp/\(name)"),
             fileName: name,
-            location: location,
             size: size,
             modifiedDate: MockDate.date
         )
@@ -29,8 +28,8 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         state.downloadsSize = 30
         state.$downloadScope.withLock { $0 = Constants.accountA }
         let downloads = [
-            download(TestFile.aPDF, location: .documents, size: 10),
-            download(TestFile.bPhoto, location: .cache, size: 20),
+            download(TestFile.aPDF, size: 10),
+            download(TestFile.bPhoto, size: 20),
         ]
         let listedScopes = LockIsolated<[String]>([])
         let deletedURLs = LockIsolated<[URL]>([])
@@ -64,8 +63,8 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         var state = makeState()
         state.removeAllDownloadsConfirmationIsPresented = true
         let downloads = [
-            download(TestFile.aPDF, location: .documents, size: 10),
-            download(TestFile.bPhoto, location: .cache, size: 20),
+            download(TestFile.aPDF, size: 10),
+            download(TestFile.bPhoto, size: 20),
         ]
         let attempted = LockIsolated<[URL]>([])
         let store = TestStore(initialState: state) {

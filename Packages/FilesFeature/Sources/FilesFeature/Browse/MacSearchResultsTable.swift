@@ -10,17 +10,22 @@
     }
 
     /// Browse search results as a Mac table, like the folder it searches: the name with the
-    /// matched line under it, and where the hit lives. Double click or Return opens it.
+    /// matched line under it, and where the hit lives. Double click or Return opens it. Results kept
+    /// on this device head the table under "On device", the rest follow under "Remote".
     struct MacSearchResultsTable: View {
-        let results: [SearchResultItem]
+        let sections: SearchResultSections
         let favoritePaths: Set<String>
         let onOpen: (SearchResultItem) -> Void
         var onShowInFolder: (SearchResultItem) -> Void = { _ in }
 
         @State private var selection: Set<SearchResultItem.ID> = []
 
+        private var results: [SearchResultItem] {
+            sections.onDevice + sections.remote
+        }
+
         var body: some View {
-            Table(results, selection: $selection) {
+            Table(of: SearchResultItem.self, selection: $selection) {
                 TableColumn(L10n.Sort.name) { result in
                     HStack(spacing: .space8) {
                         icon(for: result)
@@ -58,6 +63,19 @@
                         .foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.matchColumnMinWidth)
+            } rows: {
+                if sections.isSplit {
+                    Section(L10n.Search.onDevice) {
+                        ForEach(sections.onDevice) { TableRow($0) }
+                    }
+                    if !sections.remote.isEmpty {
+                        Section(L10n.Search.remote) {
+                            ForEach(sections.remote) { TableRow($0) }
+                        }
+                    }
+                } else {
+                    ForEach(sections.remote) { TableRow($0) }
+                }
             }
             .contextMenu(forSelectionType: SearchResultItem.ID.self, menu: { ids in
                 // Finder's search results menu: open the hit, show where it lives, copy its path.
@@ -90,9 +108,9 @@
         }
     }
 
-    #Preview("Results") {
+    #Preview("Results, one on the device") {
         MacSearchResultsTable(
-            results: [
+            sections: SearchResultSections([
                 SearchResultItem(name: "Trips", path: "Photos", kind: "dir", isNameMatch: true),
                 SearchResultItem(
                     name: "Beach.jpg",
@@ -105,7 +123,7 @@
                     name: "Quarterly Report.txt", path: "Documents", kind: "file",
                     matchLine: "    vacation budget", matchLineNumber: 12, isNameMatch: false, isContentMatch: true
                 ),
-            ],
+            ], onDeviceIDs: ["Photos/Trips/Beach.jpg"]),
             favoritePaths: ["Photos/Trips"],
             onOpen: { _ in }
         )
@@ -113,7 +131,7 @@
     }
 
     #Preview("Empty") {
-        MacSearchResultsTable(results: [], favoritePaths: [], onOpen: { _ in })
+        MacSearchResultsTable(sections: SearchResultSections([], onDeviceIDs: []), favoritePaths: [], onOpen: { _ in })
             .previewCanvas(.table)
     }
 #endif

@@ -17,7 +17,7 @@ struct MainTabFanOutTests: MainTabTestSupport {
 
     private nonisolated static let download = LocalDownload(
         url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: TestFile.report,
-        location: .documents, size: 10, modifiedDate: MockDate.date
+        size: 10, modifiedDate: MockDate.date
     )
 
     @Test("Coming back to the app refreshes the Browse root and checks the pinned folders")

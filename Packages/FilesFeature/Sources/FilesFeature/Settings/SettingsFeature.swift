@@ -89,7 +89,7 @@ public struct SettingsFeature {
         /// "Show Hidden Files" here is reflected immediately in an already-open folder.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
         /// Current account's downloads scope, so the size/existence checks count only this
-        /// account's files. Shared with `BrowseFeature`/`DownloadsFeature` under one key.
+        /// account's files. Shared with `BrowseFeature`/`OfflineTabFeature` under one key.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// Every signed-in account for the multi-server switcher, published by `AppFeature`. The
         /// actual switch / remove / add work is owned upstream (it needs `authClient`); this only
@@ -248,6 +248,8 @@ public struct SettingsFeature {
 
         public enum Delegate: Equatable, Sendable {
             case signOutButtonTapped
+            /// Pinned roots were removed from the manage list: the engine drops a run that still holds them.
+            case offlineRootsRemoved
             /// Every local download was just deleted: `MainTabFeature` clears the
             /// Downloads tab's list without waiting for it to re-scan the (now empty) disk.
             case allDownloadsRemoved
@@ -471,7 +473,7 @@ public struct SettingsFeature {
             return .none
 
         case .offlineManage(.presented(.delegate(.changed))):
-            return .send(.refreshOfflineSize)
+            return .merge(.send(.refreshOfflineSize), .send(.delegate(.offlineRootsRemoved)))
 
         case .offlineManage:
             return .none

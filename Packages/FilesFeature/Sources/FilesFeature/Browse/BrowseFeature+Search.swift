@@ -52,24 +52,14 @@ extension BrowseFeature {
         let term = SearchTerm(query)
         let base = state.searchBasePath
         let saved = state.mayAnswerFromSavedListings ? Array((state.searchSavedItems ?? [:]).values) : []
-        let inFolder = (state.items.elements + saved)
-            .filter { term.matches(
-                name: $0.name,
-                relativePath: relativePath($0.id, below: base),
-                isDirectory: $0.isDirectory
-            ) }
-            .map { SearchResultItem(
-                name: $0.name,
-                path: $0.path,
-                kind: SearchResultItem.kind(isDirectory: $0.isDirectory)
-            ) }
+        let inFolder = searchMatches(state.items.elements + saved, term: term, below: base)
         // In the server's order, so its answer lands without shuffling what is already there.
         let results = term.ranked(inFolder + favoriteMatches(state, term: term))
         return IdentifiedArray(results, id: \.id, uniquingIDsWith: { first, _ in first })
     }
 
     /// `path` as the server sees it below the search's folder: the whole path from the root.
-    static func relativePath(_ path: String, below base: String) -> String {
+    nonisolated static func relativePath(_ path: String, below base: String) -> String {
         guard !base.isEmpty, path.hasPrefix(base + "/") else { return path }
         return String(path.dropFirst(base.count + 1))
     }

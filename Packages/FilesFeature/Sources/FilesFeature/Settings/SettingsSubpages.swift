@@ -55,7 +55,7 @@ enum SettingsMenuEntry: CaseIterable {
         case .display: L10n.Settings.sectionDisplay
         case .sharedFiles: L10n.Settings.uploadDefaultsRow
         case .storage: L10n.Settings.sectionStorage
-        case .offline: L10n.Offline.settingsRow
+        case .offline: L10n.Offline.sectionTitle
         case .administration: L10n.Settings.sectionAdmin
         case .users: L10n.Settings.rowUserManagement
         case .developers: L10n.ApiTokens.navigationTitle
@@ -71,7 +71,7 @@ enum SettingsMenuEntry: CaseIterable {
         case .display: IconKit.paintbrush
         case .sharedFiles: IconKit.upload
         case .storage: IconKit.storage
-        case .offline: IconKit.cloud
+        case .offline: IconKit.availableOffline
         case .administration: IconKit.serverRack
         case .users: IconKit.people
         case .developers: IconKit.key

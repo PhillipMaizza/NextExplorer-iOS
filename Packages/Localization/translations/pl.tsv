@@ -55,8 +55,6 @@ directLinkMode.download	Pobierz
 thumbnailSize.small	Mała
 thumbnailSize.medium	Średnia
 thumbnailSize.large	Duża
-downloadLocation.documents	Dokumenty
-downloadLocation.cache	Pamięć podręczna
 dateFormat.automatic	Automatycznie
 browse.navigationTitle	Przeglądaj
 browse.scopeThisFolder	Ten folder
@@ -142,7 +140,6 @@ favorites.removeMessage	Spowoduje to tylko usunięcie ich z ulubionych.
 favorites.removeFailedOne	Nie można usunąć tego ulubionego.
 favorites.removeFailedMany	Nie można usunąć tych ulubionych.
 favorites.removePartial	Usunięto %1$lld z %2$lld.
-downloads.navigationTitle	Pobrane
 downloads.actionOpenInFiles	Otwórz w Plikach
 downloads.emptyList	Pliki pobrane z Przeglądaj pojawią się tutaj.
 downloads.deleteConfirmTitle	Usunąć?
@@ -286,7 +283,6 @@ settings.sectionServerStorage	Pamięć serwera
 settings.serverStorageUsed	%1$@ z %2$@
 settings.sectionLicenses	Licencje
 settings.sectionLegal	Informacje prawne
-settings.sectionUsers	Użytkownicy
 settings.sectionAdmin	Administracja
 settings.sectionInfo	Informacje
 settings.toggleShowHiddenFiles	Pokaż ukryte pliki
@@ -606,7 +602,6 @@ offline.manageRow	Zarządzaj plikami offline
 offline.manageTitle	Pliki offline
 offline.manageEmpty	Nic nie zostało pobrane do użytku offline.
 offline.preferOfflineToggle	Odtwarzaj pobrane kopie
-offline.pinRemoved	%@ już nie istnieje na serwerze i został usunięty z plików offline
 offline.preferOfflineSubtitle	Używaj pobranego wideo zamiast strumieniowania, gdy jest dostępne.
 offline.tunnelSpeedNote	Łączenie się z serwerem przez zdalny tunel może spowalniać pobieranie. W przypadku dużych plików połącz się z tą samą siecią i użyj lokalnego adresu serwera.
 menu.about	O programie NextExplorer
@@ -642,7 +637,6 @@ appearance.dark	Ciemny
 browse.myFiles	Moje pliki
 browse.myFilesSubtitle	Widoczne tylko dla Ciebie
 downloadQueue.navigationTitle	Kolejka pobierania
-downloadQueue.openDownloads	Pokaż pobrane
 downloadQueue.emptyList	Brak trwających pobrań.
 downloadQueue.statusSaved	Zapisano
 downloadQueue.cancelAll	Anuluj wszystkie pobierania
@@ -1099,7 +1093,6 @@ apiTokens.revokeMessage	Wszystko, co używa „%@”, natychmiast przestanie dzi
 apiTokens.revokeTitle	Unieważnić token?
 apiTokens.scopeRead	Tylko odczyt
 apiTokens.scopeWrite	Odczyt i zapis
-apiTokens.sectionHeader	Deweloperzy
 changePassword.addIntro	To konto loguje się przez jednokrotne logowanie (SSO) i nie ma jeszcze hasła. Dodaj je, aby móc logować się także adresem e-mail lub nazwą użytkownika.
 changePassword.addNavigationTitle	Dodaj hasło
 changePassword.addSubmitButton	Dodaj hasło
@@ -1146,3 +1139,23 @@ twoFactor.recoveryTitle	Zapisz kody odzyskiwania
 twoFactor.shareCodesButton	Udostępnij kody
 twoFactor.turnOffButton	Wyłącz
 twoFactor.turnOnButton	Włącz
+browse.actionAvailableOffline	Dostępne offline
+browse.actionSaveToDevice	Zapisz na urządzeniu
+previewToolbar.saveToDevice	Zapisz na urządzeniu
+downloadQueue.savedToPhotos	Zapisano w Zdjęciach
+downloadQueue.savedToDevice	Zapisano na urządzeniu
+downloadQueue.photosAccessDenied	Zezwól na dostęp do Zdjęć w Ustawieniach, aby zapisywać obrazy i filmy.
+downloadQueue.photosSaveFailed	Nie udało się dodać tego do Zdjęć.
+tab.offline	Offline
+offline.sectionSavedEarlier	Zapisane wcześniej
+offline.newFilesBadge	Nowe pliki dostępne offline
+search.onDevice	Na urządzeniu
+search.remote	Zdalne
+offline.tabEmpty	Nic nie jest jeszcze dostępne offline. Wybierz „Dostępne offline” przy pliku lub folderze.
+offline.removeItemTitle	Usunąć „%@” z dostępnych offline?
+offline.removeItemsTitle	Usunąć %lld elementów z dostępnych offline?
+offline.removeItemMessage	Spowoduje to usunięcie plików zapisanych do użytku offline na tym urządzeniu. Pliki na serwerze pozostaną bez zmian.
+browse.actionRemoveFromOffline	Usuń z offline
+offline.rowUpdating	Aktualizowanie…
+offline.rowWaitingForNetwork	Oczekiwanie na sieć
+offline.rowUpdateFailed	Nie udało się zaktualizować

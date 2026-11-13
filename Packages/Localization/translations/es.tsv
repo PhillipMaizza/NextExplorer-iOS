@@ -55,8 +55,6 @@ directLinkMode.download	Descargar
 thumbnailSize.small	Pequeña
 thumbnailSize.medium	Mediana
 thumbnailSize.large	Grande
-downloadLocation.documents	Documentos
-downloadLocation.cache	Caché
 dateFormat.automatic	Automático
 browse.navigationTitle	Explorar
 browse.scopeThisFolder	Esta carpeta
@@ -142,7 +140,6 @@ favorites.removeMessage	Esto solo los quita de Favoritos.
 favorites.removeFailedOne	No se pudo quitar ese favorito.
 favorites.removeFailedMany	No se pudieron quitar esos favoritos.
 favorites.removePartial	Se quitaron %1$lld de %2$lld.
-downloads.navigationTitle	Descargas
 downloads.actionOpenInFiles	Abrir en Archivos
 downloads.emptyList	Los archivos que descargues desde Explorar aparecerán aquí.
 downloads.deleteConfirmTitle	¿Eliminar?
@@ -286,7 +283,6 @@ settings.sectionServerStorage	Almacenamiento del servidor
 settings.serverStorageUsed	%1$@ de %2$@
 settings.sectionLicenses	Licencias
 settings.sectionLegal	Legal
-settings.sectionUsers	Usuarios
 settings.sectionAdmin	Administración
 settings.sectionInfo	Información
 settings.toggleShowHiddenFiles	Mostrar archivos ocultos
@@ -606,7 +602,6 @@ offline.manageRow	Gestionar archivos sin conexión
 offline.manageTitle	Archivos sin conexión
 offline.manageEmpty	No hay nada descargado para uso sin conexión.
 offline.preferOfflineToggle	Reproducir copias descargadas
-offline.pinRemoved	%@ ya no existe en el servidor y se quitó de los archivos sin conexión
 offline.preferOfflineSubtitle	Usar un vídeo descargado en lugar de transmitirlo cuando esté disponible.
 offline.tunnelSpeedNote	Acceder a tu servidor a través de un túnel remoto puede ralentizar las descargas. Para archivos grandes, conéctate a la misma red y usa la dirección local de tu servidor.
 menu.about	Acerca de NextExplorer
@@ -642,7 +637,6 @@ appearance.dark	Oscuro
 browse.myFiles	Mis archivos
 browse.myFilesSubtitle	Solo visible para ti
 downloadQueue.navigationTitle	Cola de descargas
-downloadQueue.openDownloads	Ver descargas
 downloadQueue.emptyList	No hay descargas en curso.
 downloadQueue.statusSaved	Guardado
 downloadQueue.cancelAll	Cancelar todas las descargas
@@ -1087,7 +1081,6 @@ apiTokens.revokeMessage	Todo lo que use “%@” dejará de funcionar de inmedia
 apiTokens.revokeTitle	¿Revocar el token?
 apiTokens.scopeRead	Solo lectura
 apiTokens.scopeWrite	Lectura y escritura
-apiTokens.sectionHeader	Desarrolladores
 changePassword.addIntro	Esta cuenta inicia sesión con inicio de sesión único y aún no tiene contraseña. Añade una para iniciar sesión también con tu correo electrónico o nombre de usuario.
 changePassword.addNavigationTitle	Añadir contraseña
 changePassword.addSubmitButton	Añadir contraseña
@@ -1134,3 +1127,23 @@ twoFactor.recoveryTitle	Guarda tus códigos de recuperación
 twoFactor.shareCodesButton	Compartir códigos
 twoFactor.turnOffButton	Desactivar
 twoFactor.turnOnButton	Activar
+browse.actionAvailableOffline	Disponible sin conexión
+browse.actionSaveToDevice	Guardar en el dispositivo
+previewToolbar.saveToDevice	Guardar en el dispositivo
+downloadQueue.savedToPhotos	Guardado en Fotos
+downloadQueue.savedToDevice	Guardado en tu dispositivo
+downloadQueue.photosAccessDenied	Permite el acceso a Fotos en Ajustes para guardar imágenes y vídeos.
+downloadQueue.photosSaveFailed	No se pudo añadir a Fotos.
+tab.offline	Sin conexión
+offline.sectionSavedEarlier	Guardado antes
+offline.newFilesBadge	Nuevos archivos disponibles sin conexión
+search.onDevice	En el dispositivo
+search.remote	Remoto
+offline.tabEmpty	Todavía no hay nada disponible sin conexión. Elige «Disponible sin conexión» en un archivo o carpeta.
+offline.removeItemTitle	¿Quitar «%@» de disponibles sin conexión?
+offline.removeItemsTitle	¿Quitar %lld elementos de disponibles sin conexión?
+offline.removeItemMessage	Esto elimina los archivos guardados para uso sin conexión en este dispositivo. Tus archivos en el servidor no se ven afectados.
+browse.actionRemoveFromOffline	Quitar de sin conexión
+offline.rowUpdating	Actualizando…
+offline.rowWaitingForNetwork	Esperando red
+offline.rowUpdateFailed	No se pudo actualizar

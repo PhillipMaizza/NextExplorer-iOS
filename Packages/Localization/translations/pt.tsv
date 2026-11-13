@@ -55,8 +55,6 @@ directLinkMode.download	Transferir
 thumbnailSize.small	Pequena
 thumbnailSize.medium	Média
 thumbnailSize.large	Grande
-downloadLocation.documents	Documentos
-downloadLocation.cache	Cache
 dateFormat.automatic	Automático
 browse.navigationTitle	Explorar
 browse.scopeThisFolder	Esta pasta
@@ -142,7 +140,6 @@ favorites.removeMessage	Isto apenas os remove dos Favoritos.
 favorites.removeFailedOne	Não foi possível remover esse favorito.
 favorites.removeFailedMany	Não foi possível remover esses favoritos.
 favorites.removePartial	Removidos %1$lld de %2$lld.
-downloads.navigationTitle	Transferências
 downloads.actionOpenInFiles	Abrir em Ficheiros
 downloads.emptyList	Os ficheiros que transferir a partir de Explorar aparecem aqui.
 downloads.deleteConfirmTitle	Eliminar?
@@ -286,7 +283,6 @@ settings.sectionServerStorage	Armazenamento do servidor
 settings.serverStorageUsed	%1$@ de %2$@
 settings.sectionLicenses	Licenças
 settings.sectionLegal	Aspetos legais
-settings.sectionUsers	Utilizadores
 settings.sectionAdmin	Administração
 settings.sectionInfo	Informações
 settings.toggleShowHiddenFiles	Mostrar ficheiros ocultos
@@ -606,7 +602,6 @@ offline.manageRow	Gerir ficheiros offline
 offline.manageTitle	Ficheiros offline
 offline.manageEmpty	Nada foi transferido para utilização offline.
 offline.preferOfflineToggle	Reproduzir cópias transferidas
-offline.pinRemoved	%@ já não existe no servidor e foi removido dos ficheiros offline
 offline.preferOfflineSubtitle	Usar um vídeo transferido em vez de o transmitir, quando estiver disponível.
 offline.tunnelSpeedNote	Aceder ao teu servidor através de um túnel remoto pode tornar as transferências lentas. Para ficheiros grandes, liga-te à mesma rede e usa o endereço local do servidor.
 menu.about	Sobre o NextExplorer
@@ -642,7 +637,6 @@ appearance.dark	Escuro
 browse.myFiles	Os meus ficheiros
 browse.myFilesSubtitle	Visível apenas para si
 downloadQueue.navigationTitle	Fila de downloads
-downloadQueue.openDownloads	Mostrar downloads
 downloadQueue.emptyList	Nenhum download em andamento.
 downloadQueue.statusSaved	Guardado
 downloadQueue.cancelAll	Cancelar todos os downloads
@@ -1087,7 +1081,6 @@ apiTokens.revokeMessage	Tudo o que utilize “%@” deixará de funcionar de ime
 apiTokens.revokeTitle	Revogar token?
 apiTokens.scopeRead	Apenas leitura
 apiTokens.scopeWrite	Leitura e escrita
-apiTokens.sectionHeader	Programadores
 changePassword.addIntro	Esta conta inicia sessão com início de sessão único (SSO) e ainda não tem palavra-passe. Adicione uma para também iniciar sessão com o seu endereço de e-mail ou nome de utilizador.
 changePassword.addNavigationTitle	Adicionar palavra-passe
 changePassword.addSubmitButton	Adicionar palavra-passe
@@ -1134,3 +1127,23 @@ twoFactor.recoveryTitle	Guarde os seus códigos de recuperação
 twoFactor.shareCodesButton	Partilhar códigos
 twoFactor.turnOffButton	Desativar
 twoFactor.turnOnButton	Ativar
+browse.actionAvailableOffline	Disponível offline
+browse.actionSaveToDevice	Guardar no dispositivo
+previewToolbar.saveToDevice	Guardar no dispositivo
+downloadQueue.savedToPhotos	Guardado em Fotos
+downloadQueue.savedToDevice	Guardado no seu dispositivo
+downloadQueue.photosAccessDenied	Permita o acesso a Fotos nas Definições para guardar imagens e vídeos.
+downloadQueue.photosSaveFailed	Não foi possível adicionar a Fotos.
+tab.offline	Offline
+offline.sectionSavedEarlier	Guardados anteriormente
+offline.newFilesBadge	Novos ficheiros disponíveis offline
+search.onDevice	No dispositivo
+search.remote	Remoto
+offline.tabEmpty	Ainda não há nada disponível offline. Escolha “Disponível offline” num ficheiro ou pasta.
+offline.removeItemTitle	Remover “%@” de Disponível offline?
+offline.removeItemsTitle	Remover %lld itens de Disponível offline?
+offline.removeItemMessage	Isto elimina os ficheiros guardados para utilização offline neste dispositivo. Os seus ficheiros no servidor não são afetados.
+browse.actionRemoveFromOffline	Remover de offline
+offline.rowUpdating	A atualizar…
+offline.rowWaitingForNetwork	A aguardar rede
+offline.rowUpdateFailed	Não foi possível atualizar

@@ -59,8 +59,6 @@ directLinkMode.download	Lataa
 thumbnailSize.small	Pieni
 thumbnailSize.medium	Keskikokoinen
 thumbnailSize.large	Suuri
-downloadLocation.documents	Asiakirjat
-downloadLocation.cache	Välimuisti
 dateFormat.automatic	Automaattinen
 browse.navigationTitle	Selaa
 browse.scopeThisFolder	Tämä kansio
@@ -151,7 +149,6 @@ favorites.removeMessage	Tämä poistaa ne vain suosikeista.
 favorites.removeFailedOne	Tuota suosikkia ei voitu poistaa.
 favorites.removeFailedMany	Noita suosikkeja ei voitu poistaa.
 favorites.removePartial	Poistettu %1$lld / %2$lld.
-downloads.navigationTitle	Lataukset
 downloads.actionOpenInFiles	Avaa Tiedostoissa
 downloads.emptyList	Selaa-näkymästä lataamasi tiedostot näkyvät täällä.
 downloads.deleteConfirmTitle	Poistetaanko?
@@ -480,7 +477,6 @@ settings.sectionServerStorage	Palvelimen tallennustila
 settings.serverStorageUsed	%1$@ / %2$@
 settings.sectionLicenses	Lisenssit
 settings.sectionLegal	Oikeudelliset tiedot
-settings.sectionUsers	Käyttäjät
 settings.sectionAdmin	Ylläpito
 settings.sectionInfo	Tiedot
 settings.toggleShowHiddenFiles	Näytä piilotetut tiedostot
@@ -748,7 +744,6 @@ twoFactor.passwordField	Salasana
 twoFactor.passwordConfirmButton	Vahvista
 twoFactor.manageButton	Hallinnoi…
 apiTokens.navigationTitle	API-tunnukset
-apiTokens.sectionHeader	Kehittäjät
 apiTokens.intro	API-tunnusten avulla komentosarjat ja muut työkalut voivat käyttää tiliäsi ilman salasanaasi. Tunnus tekee vain sen, minkä sen käyttöoikeus sallii, ja voit perua sen milloin tahansa.
 apiTokens.emptyTitle	Ei API-tunnuksia
 apiTokens.emptyMessage	Luo tunnus, jotta komentosarja voi käyttää tiliäsi.
@@ -875,7 +870,6 @@ offline.manageRow	Hallinnoi offline-tiedostoja
 offline.manageTitle	Offline-tiedostot
 offline.manageEmpty	Mitään ei ole ladattu offline-käyttöön.
 offline.preferOfflineToggle	Toista ladatut kopiot
-offline.pinRemoved	%@ ei ole enää palvelimella, ja se poistettiin offline-tiedostoista
 offline.preferOfflineSubtitle	Käytä ladattua videota suoratoiston sijaan, kun se on saatavilla.
 offline.tunnelSpeedNote	Palvelimeen pääsy etätunnelin kautta voi hidastaa latauksia. Suurille tiedostoille yhdistä samaan verkkoon ja käytä palvelimen paikallista osoitetta.
 menu.about	Tietoja: NextExplorer
@@ -918,7 +912,6 @@ appearance.dark	Tumma
 browse.myFiles	Omat tiedostot
 browse.myFilesSubtitle	Näkyy vain sinulle
 downloadQueue.navigationTitle	Latausjono
-downloadQueue.openDownloads	Näytä lataukset
 downloadQueue.emptyList	Ei käynnissä olevia latauksia.
 downloadQueue.statusSaved	Tallennettu
 downloadQueue.cancelAll	Peruuta kaikki lataukset
@@ -1107,3 +1100,23 @@ serverSettings.featureOffHowTo	Ota se käyttöön asettamalla %@ ja käynnistäm
 trashSettings.environmentNote	Oletusarvot tulevat muuttujista TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT ja TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Oletusarvot tulevat muuttujista VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ja VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Päivitä
+browse.actionAvailableOffline	Saatavilla offline-tilassa
+browse.actionSaveToDevice	Tallenna laitteelle
+previewToolbar.saveToDevice	Tallenna laitteelle
+downloadQueue.savedToPhotos	Tallennettu Kuviin
+downloadQueue.savedToDevice	Tallennettu laitteellesi
+downloadQueue.photosAccessDenied	Salli pääsy Kuviin Asetuksissa, jotta voit tallentaa kuvia ja videoita.
+downloadQueue.photosSaveFailed	Tätä ei voitu lisätä Kuviin.
+tab.offline	Offline
+offline.sectionSavedEarlier	Aiemmin tallennetut
+offline.newFilesBadge	Uusia tiedostoja saatavilla offline-tilassa
+search.onDevice	Laitteella
+search.remote	Etänä
+offline.tabEmpty	Mitään ei ole vielä saatavilla offline-tilassa. Valitse tiedostolle tai kansiolle “Saatavilla offline-tilassa”.
+offline.removeItemTitle	Poistetaanko “%@” offline-saatavista?
+offline.removeItemsTitle	Poistetaanko %lld kohdetta offline-saatavista?
+offline.removeItemMessage	Tämä poistaa tähän laitteeseen offline-käyttöön tallennetut tiedostot. Palvelimella olevia tiedostojasi ei kosketa.
+browse.actionRemoveFromOffline	Poista offline-tilasta
+offline.rowUpdating	Päivitetään…
+offline.rowWaitingForNetwork	Odottaa verkkoa
+offline.rowUpdateFailed	Päivitys epäonnistui

@@ -188,10 +188,9 @@ struct FileRowView: View {
             }
 
             if isAvailableOffline {
-                IconKit.download
+                IconKit.availableOffline
                     .resizable()
                     .scaledToFit()
-                    .symbolVariant(.fill)
                     .foregroundStyle(Color.accent)
                     .frame(width: .iconSmall, height: .iconSmall)
                     .symbolEffect(.bounce, value: isAvailableOffline)
@@ -244,6 +243,7 @@ struct FileRowView: View {
         } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(
                 serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
+                fallbackKind: kind,
                 iconTint: Color.secondaryDS, fileSize: file?.size, modified: file?.dateModified
             )
             .frame(width: Constants.iconFrame, height: Constants.iconFrame)

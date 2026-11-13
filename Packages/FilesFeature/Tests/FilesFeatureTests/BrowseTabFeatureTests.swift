@@ -171,33 +171,24 @@ struct BrowseTabFeatureTests {
         }
     }
 
-    private nonisolated static let upload = PendingUpload(
-        id: UUID(0),
-        fileURL: URL(fileURLWithPath: "/tmp/a.txt"),
-        fileName: TestFile.aText,
-        destination: TestFolder.docs
-    )
-    private nonisolated static let item = FileItem(
-        name: TestFile.aText,
-        path: TestFolder.docs,
-        dateModified: MockDate.date,
-        size: 1,
-        kind: TestKind.text
-    )
-    private nonisolated static let saveRequest = DownloadSaveRequest(
-        item: item,
-        target: .into(URL(fileURLWithPath: "/tmp"))
-    )
-
     @Test(
         "What a screen asks of the app shell bubbles up, from the root and from a pushed screen alike",
         arguments: [
             Bubble(fromScreen: .favoritesChanged, upward: .favoritesChanged),
             Bubble(fromScreen: .openDownloadsTapped, upward: .openDownloadsTapped),
             Bubble(fromScreen: .goToSharedTab, upward: .goToSharedTab),
-            Bubble(fromScreen: .uploadRequested([upload]), upward: .uploadRequested([upload])),
-            Bubble(fromScreen: .downloadRequested([item]), upward: .downloadRequested([item])),
-            Bubble(fromScreen: .saveRequested([saveRequest]), upward: .saveRequested([saveRequest])),
+            Bubble(
+                fromScreen: .uploadRequested([BrowseFixtures.upload]),
+                upward: .uploadRequested([BrowseFixtures.upload])
+            ),
+            Bubble(
+                fromScreen: .downloadRequested([BrowseFixtures.textFile]),
+                upward: .downloadRequested([BrowseFixtures.textFile])
+            ),
+            Bubble(
+                fromScreen: .saveRequested([BrowseFixtures.saveRequest]),
+                upward: .saveRequested([BrowseFixtures.saveRequest])
+            ),
         ]
     )
     func delegatesBubbleUp(_ bubble: Bubble) async {

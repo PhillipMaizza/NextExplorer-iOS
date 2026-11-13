@@ -212,6 +212,20 @@ public struct BrowseFeature {
         /// covered by a pinned root), so rows/cells can show an offline badge. Recomputed off the
         /// main actor when the listing loads, on appear, and when a download finishes.
         public var offlineItemIDs: Set<String> = []
+        /// The subset of `offlineItemIDs` the user pinned themselves. The rest are offline only
+        /// because a parent folder is pinned, so they cannot be unpinned on their own.
+        public var offlinePinnedItemIDs: Set<String> = []
+        /// Items waiting for the user to confirm taking them out of Available Offline.
+        var offlineRemoval: OfflineRemovalRequest?
+
+        /// What the selection bar's Available Offline button does right now.
+        var selectedOfflineAction: OfflineBulkAction? {
+            OfflineBulkAction.resolve(
+                selectedIDs: items.filter { selectedItemIDs.contains($0.id) }.map(\.id),
+                offlineIDs: offlineItemIDs,
+                pinnedIDs: offlinePinnedItemIDs
+            )
+        }
         /// The server has personal folders on (`features.personal.enabled`). Only the root screen
         /// asks, since the root volume listing never includes the account's own folder.
         public var isPersonalSpaceEnabled = false
@@ -263,6 +277,9 @@ public struct BrowseFeature {
         /// id: read once a search needs them (a term too short for the server, or no server to
         /// reach). `nil` until read; cleared when the search ends or its scope changes.
         public var searchSavedItems: [String: FileItem]?
+        /// The ids of the results kept on this device, read off the main actor whenever the results
+        /// change; they head the list as "On device". Ids no longer in the results are ignored.
+        public var searchOnDeviceIDs: Set<String> = []
         /// The file type categories the search results are filtered to. Empty means "all types";
         /// otherwise a result shows only if its category is in the set. Only relevant while
         /// searching, and pruned to the categories actually present as results change.
@@ -473,6 +490,11 @@ public struct BrowseFeature {
             return visible.filter { selectedSearchCategories.contains(Self.category(of: $0)) }
         }
 
+        /// `displayedSearchResults` split into what is on this device and what is only on the server.
+        public var searchResultSections: SearchResultSections {
+            SearchResultSections(displayedSearchResults.map(Array.init) ?? [], onDeviceIDs: searchOnDeviceIDs)
+        }
+
         /// The categories actually present in the current (hidden filtered) results, in display
         /// order: the rows the filter sheet offers. Independent of the current selection, so
         /// toggling a category off doesn't make it vanish from the sheet.
@@ -513,7 +535,15 @@ public struct BrowseFeature {
         /// Recompute which visible items are available offline (from the offline store), off the
         /// main actor. Sent on appear and when a download finishes.
         case computeOfflineAvailability
-        case offlineAvailabilityComputed(Set<String>)
+        /// The results changed, or what is kept offline did: find which results are on the device.
+        case computeSearchOnDevice
+        case searchOnDeviceComputed(Set<String>)
+        case offlineAvailabilityComputed(all: Set<String>, pinned: Set<String>)
+        /// Pin the item for offline use, or unpin it when the user pinned it already. An item that is
+        /// offline only through a pinned parent folder does nothing.
+        case offlineToggleTapped(FileItem)
+        case offlineRemovalConfirmed
+        case offlineRemovalCancelled
         case itemsResponse(Result<BrowseResult, FilesClientError>)
         case favoritesResponse([Favorite])
         /// The saved listing read off the main actor for an offline failure, `nil` when none is stored.
@@ -593,6 +623,9 @@ public struct BrowseFeature {
         case bulkFavoriteTapped
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped
+        /// Pins every selected item that is not offline yet; when all of them are, unpins the ones
+        /// the user pinned. Items offline only through a parent folder are left alone.
+        case bulkOfflineTapped
         case beginUpload(UploadReviewFeature.PickSource)
         /// Files another app shared in: opens the upload review here, or adds them to one already open.
         case receiveSharedFiles([URL])
@@ -653,6 +686,9 @@ public struct BrowseFeature {
             case uploadRequested([PendingUpload])
             /// Items handed to `MainTabFeature`'s app wide download queue.
             case downloadRequested([FileItem])
+            /// Items pinned for offline use, handed to the offline engine in `MainTabFeature`.
+            case offlinePinRequested([FileItem])
+            case offlineUnpinRequested(path: String)
             /// Mac: items placed in Finder through the save panel, for the same queue.
             case saveRequested([DownloadSaveRequest])
             /// A copy/move just changed what's on the server. `BrowseTabFeature` re-fetches
@@ -673,7 +709,6 @@ public struct BrowseFeature {
     static let personalSpaceCacheNamespace = "personalSpace"
     @Dependency(\.continuousClock) var clock
     @Dependency(\.date) var date
-    @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.uploadDefaults) var uploadDefaults
     @Dependency(\.openURL) var openURL
@@ -684,7 +719,7 @@ public struct BrowseFeature {
     // can reference these cancel ids across files.
     enum CancelID: Hashable {
         case search, searchSavedItems, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
-        case prefetchChildren, prefetchFavorites, offlineAvailability, arrivalRecheck, newFileExtensions
+        case prefetchChildren, prefetchFavorites, offlineAvailability, searchOnDevice, arrivalRecheck, newFileExtensions
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
         case favorite(String)
@@ -708,9 +743,43 @@ public struct BrowseFeature {
             case .computeOfflineAvailability:
                 return computeOfflineAvailability(&state)
 
-            case let .offlineAvailabilityComputed(ids):
-                state.offlineItemIDs = ids
+            case .computeSearchOnDevice:
+                return .searchOnDevice(
+                    state.searchResults?.elements ?? [],
+                    ids: &state.searchOnDeviceIDs,
+                    store: offlineFileStore.pinned(to: state.cacheScope),
+                    cancelID: CancelID.searchOnDevice
+                ) { .searchOnDeviceComputed($0) }
+
+            case let .searchOnDeviceComputed(ids):
+                state.searchOnDeviceIDs = ids
                 return .none
+
+            case let .offlineAvailabilityComputed(all, pinned):
+                state.offlineItemIDs = all
+                state.offlinePinnedItemIDs = pinned
+                return .none
+
+            case .offlineRemovalCancelled:
+                state.offlineRemoval = nil
+                return .none
+
+            case .offlineRemovalConfirmed:
+                guard let request = state.offlineRemoval else { return .none }
+                state.offlineRemoval = nil
+                state.offlineItemIDs.subtract(request.paths)
+                state.offlinePinnedItemIDs.subtract(request.paths)
+                return .merge(request.paths.map { .send(.delegate(.offlineUnpinRequested(path: $0))) })
+
+            case let .offlineToggleTapped(item):
+                if state.offlinePinnedItemIDs.contains(item.id) {
+                    state.offlineRemoval = OfflineRemovalRequest(paths: [item.id], names: [item.name])
+                    return .none
+                }
+                guard !state.offlineItemIDs.contains(item.id) else { return .none }
+                state.offlinePinnedItemIDs.insert(item.id)
+                state.offlineItemIDs.insert(item.id)
+                return .send(.delegate(.offlinePinRequested([item])))
 
             case let .itemsResponse(.success(result)):
                 state.phase = .loaded
@@ -736,10 +805,14 @@ public struct BrowseFeature {
             case let .itemsResponse(.failure(error)):
                 guard error == .offline else { return failItemsLoad(&state, error) }
                 let directoryCacheStore = directoryCacheStore.bound(to: state.cacheScope)
+                let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)
                 let serverURL = state.serverURL
                 let directoryPath = state.directoryPath
                 return .run { send in
-                    await send(.offlineListingResolved(directoryCacheStore.read(serverURL: serverURL, path: directoryPath), error))
+                    // The listing kept with a pinned folder never evicts, so it backs the shared cache.
+                    let cached = directoryCacheStore.read(serverURL: serverURL, path: directoryPath)
+                        ?? offlineFileStore.listing(directoryPath)
+                    await send(.offlineListingResolved(cached, error))
                 }
                 .cancellable(id: CancelID.load)
 
@@ -881,7 +954,9 @@ public struct BrowseFeature {
                     )
                 }
                 // The same preview routing a browse row tap uses.
-                return .send(.rowTapped(result.previewItem(openedAt: date.now)))
+                // A pinned copy opens first: the hit knows no size or date, so it takes the copy's own.
+                let pinned = offlineFileStore.pinned(to: state.cacheScope)
+                return .send(.rowTapped(pinned.matchingPinnedCopy(result.previewItem(openedAt: date.now))))
 
             case let .searchResultsResponse(.success(page)):
                 state.searchPhase = .loaded
@@ -1162,6 +1237,7 @@ public struct BrowseFeature {
                     // A Mac saves where the user says, through the save panel, then the queue saves it there.
                     return startDownload(&state, item: item)
                 #else
+                    guard !item.isDirectory else { return .none }
                     if state.previewItem != nil {
                         state.downloadSuccessMessage = L10n.DownloadQueue.barTitleOne(item.name)
                     }
@@ -1249,8 +1325,26 @@ public struct BrowseFeature {
                 #if os(macOS)
                     return startBulkDownload(&state, targets: Array(targets))
                 #else
-                    return .send(.delegate(.downloadRequested(Array(targets))))
+                    // Save to Device takes files only; folders in the selection are left out.
+                    let files = targets.filter { !$0.isDirectory }
+                    return files.isEmpty ? .none : .send(.delegate(.downloadRequested(Array(files))))
                 #endif
+
+            case .bulkOfflineTapped:
+                let targets = state.items.filter { state.selectedItemIDs.contains($0.id) }
+                guard !targets.isEmpty else { return .none }
+                state.isSelecting = false
+                state.selectedItemIDs = []
+                let toPin = targets.filter { !state.offlineItemIDs.contains($0.id) }
+                if !toPin.isEmpty {
+                    state.offlineItemIDs.formUnion(toPin.map(\.id))
+                    state.offlinePinnedItemIDs.formUnion(toPin.map(\.id))
+                    return .send(.delegate(.offlinePinRequested(Array(toPin))))
+                }
+                let toUnpin = targets.filter { state.offlinePinnedItemIDs.contains($0.id) }
+                guard !toUnpin.isEmpty else { return .none }
+                state.offlineRemoval = OfflineRemovalRequest(paths: toUnpin.map(\.id), names: toUnpin.map(\.name))
+                return .none
 
             case let .beginUpload(source):
                 guard source.count > 0 else { return .none }

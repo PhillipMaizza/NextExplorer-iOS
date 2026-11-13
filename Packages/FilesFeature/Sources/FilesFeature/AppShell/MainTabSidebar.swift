@@ -16,6 +16,8 @@ private enum Constants {
     static let macSidebarMinWidth: CGFloat = 240
     static let macSidebarIdealWidth: CGFloat = 280
     static let macSidebarMaxWidth: CGFloat = 360
+    /// Extra room above and below each Mac sidebar row, so the sections do not feel cramped.
+    static let macRowVerticalPadding: CGFloat = .space8
 }
 
 /// The split view's sidebar on iPad and the Mac: the signed in account, the sections, and the
@@ -31,13 +33,12 @@ struct MainTabSidebar: View {
             (.browse, L10n.Tab.browse, IconKit.tabBrowse),
             (.favorites, L10n.Tab.favorites, IconKit.tabFavorites),
             (.shared, L10n.Tab.shared, IconKit.tabShare),
-            (.downloads, L10n.Tab.downloads, IconKit.tabDownloads),
+            (.downloads, L10n.Tab.offline, IconKit.tabDownloads),
             (.settings, L10n.Tab.settings, IconKit.tabSettings),
         ]
         #if os(macOS)
-        // Mac downloads are saved wherever the user picks in Finder, so there is no in app
-        // Downloads section to show; Settings has its own window (⌘,), opened by its own row.
-        .filter { $0.tab != .downloads && $0.tab != .settings }
+        // Settings has its own window (⌘,), opened by its own row.
+        .filter { $0.tab != .settings }
         #endif
     }
 
@@ -93,6 +94,7 @@ struct MainTabSidebar: View {
         private var macSettingsRow: some View {
             Button { openSettings() } label: {
                 Label { Text(L10n.Tab.settings) } icon: { MacSidebarIcon(image: Self.macIcon(for: .settings)) }
+                    .padding(.vertical, Constants.macRowVerticalPadding)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(Rectangle())
             }
@@ -107,7 +109,7 @@ struct MainTabSidebar: View {
             case .browse: IconKit.folder
             case .favorites: IconKit.star
             case .shared: IconKit.shareLink
-            case .downloads: IconKit.download
+            case .downloads: IconKit.availableOffline
             case .settings: IconKit.gearshape
             }
         }
@@ -115,24 +117,41 @@ struct MainTabSidebar: View {
 
     @ViewBuilder
     private func sidebarRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
+        let hasNewFiles = item.tab == .downloads && store.hasUnseenOfflineFiles
         #if os(macOS)
             // The system sidebar row with the Settings sidebar's glyphs.
-            Label { Text(item.title) } icon: {
-                MacSidebarIcon(image: Self.macIcon(for: item.tab))
+            HStack {
+                Label { Text(item.title) } icon: {
+                    MacSidebarIcon(image: Self.macIcon(for: item.tab))
+                }
+                .accessibilityLabel(item.title)
+                if hasNewFiles {
+                    Spacer()
+                    NewFilesDot()
+                }
             }
+            .padding(.vertical, Constants.macRowVerticalPadding)
             .tag(item.tab)
-            .accessibilityLabel(item.title)
         #else
             let isSelected = store.selectedTab == item.tab
-            Label {
-                Text(item.title)
-                    .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
-            } icon: {
-                sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
+            HStack {
+                Label {
+                    Text(item.title)
+                        .type(
+                            .body1(isSelected ? .semibold : .regular),
+                            style: isSelected ? .primaryOnSurface : .secondary
+                        )
+                } icon: {
+                    sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
+                }
+                .accessibilityLabel(item.title)
+                if hasNewFiles {
+                    Spacer()
+                    NewFilesDot()
+                }
             }
             .tag(item.tab)
             .listRowBackground(sidebarSelectionBackground(isSelected: isSelected))
-            .accessibilityLabel(item.title)
         #endif
     }
 

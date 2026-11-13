@@ -4,10 +4,10 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// What the preview of a Favorites search result needs to act on its file: the rename sheet,
-/// the delete confirmation and Create Share Link, plus the file action toasts. The host
-/// `BrowseFeature` sets the state; without these its toolbar buttons did nothing.
-struct FavoritesPreviewHostActions: ViewModifier {
+/// What a file opened on its own (a Favorites search result, a file kept offline) needs to act on
+/// it: the rename sheet, the delete confirmation and Create Share Link, plus the file action toasts.
+/// The host `BrowseFeature` sets the state; without these its toolbar buttons did nothing.
+struct PreviewHostActions: ViewModifier {
     let host: StoreOf<BrowseFeature>
     /// Set by the preview's Create Share Link button.
     @Binding var shareTarget: FileItem?
@@ -72,12 +72,44 @@ struct FavoritesPreviewHostActions: ViewModifier {
     }
 }
 
-#Preview("Favorites preview actions") {
+/// The cover a screen opens one file in, without navigating to its folder: the host `BrowseFeature`
+/// drives the same preview router Browse uses, and the actions above.
+struct PreviewHostCover: ViewModifier {
+    @Binding var host: StoreOf<BrowseFeature>?
+    let onViewShares: () -> Void
+    /// The file the preview asked to share.
+    @State private var shareTarget: FileItem?
+
+    func body(content: Content) -> some View {
+        content.fullScreenCover(item: $host) { hostStore in
+            if let previewItem = hostStore.previewItem {
+                BrowsePreviewRouter(store: hostStore, item: previewItem, onShareTarget: { shareTarget = $0 })
+                    .modifier(PreviewHostActions(
+                        host: hostStore,
+                        shareTarget: $shareTarget,
+                        onViewShares: onViewShares
+                    ))
+            }
+        }
+    }
+}
+
+extension BrowseFeature.State {
+    /// A host for previewing `item` alone, scoped to the folder holding it, with the cover's content
+    /// set for the first frame; `rowTapped` then fetches it (or opens the kept copy offline).
+    static func previewHost(for item: FileItem, serverURL: URL, folderTitle: String) -> Self {
+        var host = Self(serverURL: serverURL, directoryPath: item.path, title: folderTitle)
+        host.previewItem = item
+        return host
+    }
+}
+
+#Preview("Preview host actions") {
     let host = Store(initialState: BrowseFeature.State(
         serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
         directoryPath: "Docs",
         title: "Docs"
     )) { BrowseFeature() } withDependencies: { $0.filesClient = .previewValue }
     return Text(verbatim: "report.pdf")
-        .modifier(FavoritesPreviewHostActions(host: host, shareTarget: .constant(nil), onViewShares: {}))
+        .modifier(PreviewHostActions(host: host, shareTarget: .constant(nil), onViewShares: {}))
 }

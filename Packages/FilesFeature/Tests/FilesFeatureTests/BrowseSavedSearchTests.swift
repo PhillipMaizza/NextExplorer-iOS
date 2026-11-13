@@ -66,6 +66,23 @@ struct BrowseSavedSearchTests {
         Dictionary(uniqueKeysWithValues: [photo, trips, unopened, deepPhoto].map { ($0.id, $0) })
     }
 
+    @Test("A pinned file that a saved listing also shows keeps the listing's size and date")
+    func aListingOutranksThePinnedStub() {
+        let offline = OfflineFileStore.inMemory()
+        offline.setPinnedRoots([OfflinePinnedRoot(path: photo.id, isDirectory: false)])
+
+        let items = BrowseFeature.savedAndKeptItems(
+            under: TestFolder.docs,
+            serverURL: BrowseTestSupport.serverURL,
+            directoryCacheStore: savedListings(),
+            offlineFileStore: offline
+        )
+
+        let first = items.first { $0.id == photo.id }
+        #expect(first?.size == photo.size)
+        #expect(first?.dateModified == photo.dateModified)
+    }
+
     @Test("Saved folders are read below the search's folder, only through folders that were saved, up to both limits")
     func savedFoldersAreReadThroughSavedFoldersOnly() {
         let listings = [
@@ -79,17 +96,17 @@ struct BrowseSavedSearchTests {
             return listings[path]
         }
 
-        let items = BrowseFeature.savedItems(under: TestFolder.docs, folderLimit: 10, itemLimit: 10, read: read)
+        let items = BrowseFeature.savedItems(under: [TestFolder.docs], folderLimit: 10, itemLimit: 10, read: read)
         #expect(Set(items.map(\.id)) == Set([trips.id, unopened.id, photo.id, deepPhoto.id]))
         #expect(reads.value == [TestFolder.docs, Constants.tripsPath, Constants.unopenedPath])
 
         reads.setValue([])
-        #expect(BrowseFeature.savedItems(under: "", folderLimit: 2, itemLimit: 10, read: read).count == 4)
+        #expect(BrowseFeature.savedItems(under: [""], folderLimit: 2, itemLimit: 10, read: read).count == 4)
         #expect(reads.value == ["", TestFolder.docs])
 
         // The item limit stops the walk too, keeping only what fits.
         reads.setValue([])
-        #expect(BrowseFeature.savedItems(under: TestFolder.docs, folderLimit: 10, itemLimit: 2, read: read)
+        #expect(BrowseFeature.savedItems(under: [TestFolder.docs], folderLimit: 10, itemLimit: 2, read: read)
             .map(\.id) == [
                 trips.id,
                 unopened.id,
@@ -101,6 +118,31 @@ struct BrowseSavedSearchTests {
     func aShortTermFindsSavedFolders() async {
         let store = BrowseFixtures.store(docsState()) {
             $0.directoryCacheStore = savedListings()
+        }
+
+        await store.send(.searchQueryChanged(TestSearch.shortTerm)) {
+            $0.searchQuery = TestSearch.shortTerm
+            $0.searchResults = [photoMatch]
+        }
+        await store.receive(\.searchSavedItemsLoaded) {
+            $0.searchSavedItems = savedByID
+            $0.searchResults = [photoMatch, deepMatch]
+        }
+    }
+
+    @Test("A pinned folder's kept listing answers a search when the saved listing cache holds nothing")
+    func aShortTermFindsTheListingsKeptWithPinnedFolders() async {
+        let access = BrowseTestSupport.readOnlyAccess
+        let offline = OfflineFileStore.inMemory()
+        offline.saveListing(CachedDirectory(
+            path: TestFolder.docs, items: [photo, trips, unopened], access: access, fetchedAt: MockDate.date
+        ))
+        offline.saveListing(CachedDirectory(
+            path: Constants.tripsPath, items: [deepPhoto], access: access, fetchedAt: MockDate.date
+        ))
+        let store = BrowseFixtures.store(docsState()) {
+            $0.directoryCacheStore = DirectoryCacheStore.inMemory()
+            $0.offlineFileStore = offline
         }
 
         await store.send(.searchQueryChanged(TestSearch.shortTerm)) {

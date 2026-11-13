@@ -136,31 +136,6 @@ struct CacheFileNameTests {
         #expect(store.pinned(to: scopeB).pinnedRoots().isEmpty)
     }
 
-    @Test("missing root strikes count per root and per account, and reset when the root is unpinned")
-    func missingRootStrikes() {
-        let scopeA = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
-        let scopeB = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
-        let store = OfflineFileStore.liveValue
-        defer {
-            store.removeAccount(scopeA)
-            store.removeAccount(scopeB)
-        }
-        let a = store.pinned(to: scopeA)
-        let b = store.pinned(to: scopeB)
-
-        #expect(a.recordMissingRoot(Constants.firstRoot) == 1)
-        #expect(a.recordMissingRoot(Constants.firstRoot) == 2)
-        #expect(a.recordMissingRoot(Constants.secondRoot) == 1)
-        #expect(b.recordMissingRoot(Constants.firstRoot) == 1)
-
-        a.clearMissingRoot(Constants.firstRoot)
-        #expect(a.recordMissingRoot(Constants.firstRoot) == 1)
-
-        a.setPinnedRoots([OfflinePinnedRoot(path: Constants.secondRoot, isDirectory: true)])
-        a.removeRoot(Constants.secondRoot)
-        #expect(a.recordMissingRoot(Constants.secondRoot) == 1)
-    }
-
     @Test("local file size reports the pinned copy's bytes and nil for a path that is not pinned")
     func localFileSize() throws {
         let scope = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
@@ -206,9 +181,4 @@ struct CacheFileNameTests {
 
         #expect(url == stored)
     }
-}
-
-private enum Constants {
-    static let firstRoot = "one"
-    static let secondRoot = "two"
 }

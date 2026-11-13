@@ -7,11 +7,11 @@ import Foundation
 import Localization
 import SwiftUI
 
-/// The "Downloads" tab: everything `LocalDownloadStore` has saved into
-/// `Documents/Downloads`/`Caches/Downloads`. Deleting here is local-only: it never touches
+/// The Offline tab: the pinned items, plus the files `LegacyDownloadStore` holds from earlier versions.
+/// Deleting a saved file here only changes this device: it never touches
 /// the server, unlike every other delete action in the app (`BrowseFeature`'s `deleteTapped`).
 @Reducer
-public struct DownloadsFeature {
+public struct OfflineTabFeature {
     public enum SortOption: String, Hashable, Sendable, CaseIterable {
         case name, size, dateAdded
 
@@ -58,9 +58,22 @@ public struct DownloadsFeature {
         /// Current account's downloads scope, so the tab lists only this account's files.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
 
-        public init() {}
+        /// Where pinned folders open: the tab browses them like Browse does. Nil only in tests and
+        /// previews that never open one.
+        public var serverURL: URL?
+        public var path = StackState<BrowseFeature.State>()
+        /// A pinned file opened on its own, in a cover over the tab.
+        @Presents public var previewHost: BrowseFeature.State?
+        /// The account the tab belongs to, so a pinned file opens from its own kept copy.
+        let cacheScope: String
 
-        /// Client-side filter + sort, same shape as `BrowseFeature.displayedItems`: search
+        public init(serverURL: URL? = nil) {
+            self.serverURL = serverURL
+            @Dependency(\.cacheScope) var cacheScopeSource
+            cacheScope = cacheScopeSource.current()
+        }
+
+        /// Filter and sort on the device, same shape as `BrowseFeature.displayedItems`: search
         /// only ever matches against already-downloaded file names, never the server.
         public var displayedDownloads: [LocalDownload] {
             let matches = searchQuery.isEmpty
@@ -103,9 +116,35 @@ public struct DownloadsFeature {
         case bulkDeleteCancelled
         case bulkDeleteConfirmed
         case bulkDeleteResponse([LocalDownload.ID])
+        /// A pinned row or tile was tapped: a folder opens in place, a file in a preview.
+        case pinnedItemTapped(OfflinePinnedRoot)
+        /// A pinned folder row was tapped.
+        case openFolderTapped(path: String)
+        /// A pinned file row was tapped: it opens from its kept copy, with or without a connection.
+        case pinnedFileTapped(path: String)
+        case previewHost(PresentationAction<BrowseFeature.Action>)
+        /// The pinned file's preview asked to see its share links.
+        case viewSharesFromPreviewTapped
+        /// Pins changed: pushed folders recompute which of their items are offline.
+        case offlineAvailabilityChanged
+        case path(StackActionOf<BrowseFeature>)
+        case delegate(Delegate)
+
+        /// What a folder opened from this tab asks of the rest of the app, as from Browse.
+        public enum Delegate: Equatable, Sendable {
+            case offlinePinRequested([FileItem])
+            case offlineUnpinRequested(path: String)
+            case uploadRequested([PendingUpload])
+            case downloadRequested([FileItem])
+            case saveRequested([DownloadSaveRequest])
+            case favoritesChanged
+            case goToSharedTab
+        }
     }
 
     @Dependency(\.localDownloadStore) var localDownloadStore
+    @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.date) var date
 
     private enum CancelID { case load }
 
@@ -240,8 +279,138 @@ public struct DownloadsFeature {
                 state.isSelecting = false
                 state.selectedDownloadIDs = []
                 return .none
+
+            case let .pinnedItemTapped(root):
+                return .send(root.isDirectory ? .openFolderTapped(path: root.path) : .pinnedFileTapped(path: root.path))
+
+            case let .openFolderTapped(path):
+                guard let serverURL = state.serverURL else { return .none }
+                let name = (path as NSString).lastPathComponent
+                BrowseNavigation.jump(
+                    to: path,
+                    title: name.isEmpty ? path : name,
+                    serverURL: serverURL,
+                    stack: &state.path
+                )
+                return .none
+
+            case let .pinnedFileTapped(path):
+                guard let serverURL = state.serverURL else { return .none }
+                let name = (path as NSString).lastPathComponent
+                let parent = (path as NSString).deletingLastPathComponent
+                // The size and date the copy was kept with, so the preview knows it is complete.
+                let item = offlineFileStore.pinned(to: state.cacheScope).matchingPinnedCopy(FileItem(
+                    name: name,
+                    path: parent,
+                    dateModified: date.now,
+                    size: 0,
+                    kind: (name as NSString).pathExtension.lowercased()
+                ))
+                let folderName = (parent as NSString).lastPathComponent
+                state.previewHost = .previewHost(
+                    for: item,
+                    serverURL: serverURL,
+                    folderTitle: folderName.isEmpty ? L10n.Browse.navigationTitle : folderName
+                )
+                return .send(.previewHost(.presented(.rowTapped(item))))
+
+            case let .previewHost(.presented(.delegate(.offlinePinRequested(items)))):
+                return .send(.delegate(.offlinePinRequested(items)))
+
+            case let .previewHost(.presented(.delegate(.offlineUnpinRequested(path)))):
+                return .send(.delegate(.offlineUnpinRequested(path: path)))
+
+            case let .previewHost(.presented(.delegate(.downloadRequested(items)))):
+                return .send(.delegate(.downloadRequested(items)))
+
+            case let .previewHost(.presented(.delegate(.saveRequested(requests)))):
+                return .send(.delegate(.saveRequested(requests)))
+
+            case .previewHost(.presented(.delegate(.goToSharedTab))), .viewSharesFromPreviewTapped:
+                state.previewHost = nil
+                return .send(.delegate(.goToSharedTab))
+
+            case .previewHost(.presented(.previewDismissed)),
+                 .previewHost(.presented(.deleteResponse(.success))):
+                // Closing the preview, or deleting its file, returns to the tab.
+                state.previewHost = nil
+                return .none
+
+            case .previewHost:
+                return .none
+
+            case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
+                guard let serverURL = state.serverURL else { return .none }
+                state.path.append(BrowseNavigation.screen(for: item, serverURL: serverURL))
+                return .none
+
+            case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):
+                guard let serverURL = state.serverURL else { return .none }
+                BrowseNavigation.jump(to: path, title: title, serverURL: serverURL, stack: &state.path)
+                return .none
+
+            case let .path(.element(id: _, action: .delegate(.offlinePinRequested(items)))):
+                return .send(.delegate(.offlinePinRequested(items)))
+
+            case let .path(.element(id: _, action: .delegate(.offlineUnpinRequested(path)))):
+                return .send(.delegate(.offlineUnpinRequested(path: path)))
+
+            case let .path(.element(id: _, action: .delegate(.uploadRequested(files)))):
+                return .send(.delegate(.uploadRequested(files)))
+
+            case let .path(.element(id: _, action: .delegate(.downloadRequested(items)))):
+                return .send(.delegate(.downloadRequested(items)))
+
+            case let .path(.element(id: _, action: .delegate(.saveRequested(requests)))):
+                return .send(.delegate(.saveRequested(requests)))
+
+            case .path(.element(id: _, action: .delegate(.favoritesChanged))):
+                return .send(.delegate(.favoritesChanged))
+
+            case .path(.element(id: _, action: .delegate(.goToSharedTab))):
+                return .send(.delegate(.goToSharedTab))
+
+            case .path(.element(id: _, action: .delegate(.directoryContentsChanged))):
+                return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) })
+
+            case .offlineAvailabilityChanged:
+                return .merge(state.path.ids
+                    .map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) })
+
+            case .path, .delegate:
+                return .none
             }
         }
+        .forEach(\.path, action: \.path) {
+            BrowseFeature()
+        }
+        .ifLet(\.$previewHost, action: \.previewHost) {
+            BrowseFeature()
+        }
+    }
+
+    /// The pinned items the tab shows: filtered by the search text, then ordered like the downloads.
+    /// A pin has no date of its own, so "date added" keeps the order they were pinned in.
+    static func displayedPinned(
+        _ usages: IdentifiedArrayOf<OfflinePinnedRootUsage>,
+        searchQuery: String,
+        sortOption: SortOption,
+        sortDirection: BrowseFeature.SortDirection
+    ) -> [OfflinePinnedRootUsage] {
+        let matches = usages.enumerated().filter {
+            searchQuery.isEmpty || SearchMatch.matches(query: searchQuery, in: $0.element.displayName)
+        }
+        let sorted = matches.sorted { lhs, rhs in
+            switch sortOption {
+            case .name:
+                lhs.element.displayName.localizedCaseInsensitiveCompare(rhs.element.displayName) == .orderedAscending
+            case .size:
+                lhs.element.sizeBytes < rhs.element.sizeBytes
+            case .dateAdded:
+                lhs.offset < rhs.offset
+            }
+        }
+        return (sortDirection == .ascending ? sorted : sorted.reversed()).map(\.element)
     }
 
     private func load(_ state: inout State) -> Effect<Action> {
@@ -311,7 +480,7 @@ public struct DownloadsFeature {
         return .serverMessage(statusCode: 0, message: message)
     }
 
-    /// Best-effort, matching the sign-out flow's philosophy: one file refusing to delete
+    /// Best effort, matching the sign-out flow's philosophy: one file refusing to delete
     /// shouldn't block removing the rest of the selection.
     private func confirmBulkDelete(_ state: inout State) -> Effect<Action> {
         state.bulkDeleteConfirmationIsPresented = false

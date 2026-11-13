@@ -126,5 +126,7 @@
 			<dict/>
 		</dict>
 	</array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>NextExplorer adds the pictures and videos you choose to save to your photo library.</string>
 </dict>
 </plist>

@@ -154,6 +154,32 @@ extension AppSuites {
             #expect(recorder.events.value.isEmpty)
         }
 
+        @Test("Without a connection the restored account lists its own saved files folder")
+        func offlineRestoreUsesTheRecordedSavedFilesFolder() async {
+            let confirmation = AsyncGate()
+            let store = makeStore {
+                $0.authClient.restoreSession = { [credentialsA] in credentialsA }
+                $0.authClient.me = { _ in
+                    try await confirmation.wait()
+                    throw AuthClientError.network(TestFailure.offline)
+                }
+                $0.localDownloadStore.ownerScope = { [credentialsA] accountID in
+                    accountID == credentialsA.accountID ? AppFixtures.downloadScopeA : nil
+                }
+            }
+
+            await store.send(.onAppear)
+            await store.receive(\.sessionRestoreResponse) {
+                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+            }
+            await store.receive(\.accountsRefreshed)
+            confirmation.open()
+            await store.receive(\.sessionValidationResponse)
+
+            await store.finish()
+        }
+
         @Test("No stored session stays on the login flow")
         func noStoredSessionStaysUnauthenticated() async {
             let store = makeStore {
@@ -244,6 +270,7 @@ extension AppSuites {
                 $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             accountList.open()
             await store.receive(\.accountsRefreshed)
             confirmation.open()
@@ -383,6 +410,7 @@ extension AppSuites {
                 $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             accountList.open()
             await store.receive(\.accountsRefreshed)
             await store.finish()
@@ -435,6 +463,7 @@ extension AppSuites {
                 $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             await store.receive(\.accountsRefreshed)
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {

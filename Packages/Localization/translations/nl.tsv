@@ -55,8 +55,6 @@ directLinkMode.download	Downloaden
 thumbnailSize.small	Klein
 thumbnailSize.medium	Gemiddeld
 thumbnailSize.large	Groot
-downloadLocation.documents	Documenten
-downloadLocation.cache	Cache
 dateFormat.automatic	Automatisch
 browse.navigationTitle	Verkennen
 browse.scopeThisFolder	Deze map
@@ -142,7 +140,6 @@ favorites.removeMessage	Hiermee worden ze alleen uit favorieten verwijderd.
 favorites.removeFailedOne	Kan die favoriet niet verwijderen.
 favorites.removeFailedMany	Kan die favorieten niet verwijderen.
 favorites.removePartial	%1$lld van %2$lld verwijderd.
-downloads.navigationTitle	Downloads
 downloads.actionOpenInFiles	Openen in Bestanden
 downloads.emptyList	Bestanden die je downloadt vanuit Verkennen verschijnen hier.
 downloads.deleteConfirmTitle	Verwijderen?
@@ -286,7 +283,6 @@ settings.sectionServerStorage	Serveropslag
 settings.serverStorageUsed	%1$@ van %2$@
 settings.sectionLicenses	Licenties
 settings.sectionLegal	Juridisch
-settings.sectionUsers	Gebruikers
 settings.sectionAdmin	Beheer
 settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Verborgen bestanden tonen
@@ -606,7 +602,6 @@ offline.manageRow	Offline bestanden beheren
 offline.manageTitle	Offline bestanden
 offline.manageEmpty	Er is niets gedownload voor offline gebruik.
 offline.preferOfflineToggle	Gedownloade kopieën afspelen
-offline.pinRemoved	%@ bestaat niet meer op de server en is verwijderd uit de offlinebestanden
 offline.preferOfflineSubtitle	Een gedownloade video gebruiken in plaats van streamen wanneer die beschikbaar is.
 offline.tunnelSpeedNote	Toegang tot je server via een externe tunnel kan downloads vertragen. Verbind voor grote bestanden met hetzelfde netwerk en gebruik het lokale adres van je server.
 menu.about	Over NextExplorer
@@ -642,7 +637,6 @@ appearance.dark	Donker
 browse.myFiles	Mijn bestanden
 browse.myFilesSubtitle	Alleen zichtbaar voor jou
 downloadQueue.navigationTitle	Downloadwachtrij
-downloadQueue.openDownloads	Downloads tonen
 downloadQueue.emptyList	Geen downloads bezig.
 downloadQueue.statusSaved	Opgeslagen
 downloadQueue.cancelAll	Alle downloads annuleren
@@ -1087,7 +1081,6 @@ apiTokens.revokeMessage	Alles wat “%@” gebruikt, werkt meteen niet meer. Dit
 apiTokens.revokeTitle	Token intrekken?
 apiTokens.scopeRead	Alleen lezen
 apiTokens.scopeWrite	Lezen en schrijven
-apiTokens.sectionHeader	Ontwikkelaars
 changePassword.addIntro	Dit account logt in met single sign-on en heeft nog geen wachtwoord. Voeg er een toe om ook in te loggen met je e-mailadres of gebruikersnaam.
 changePassword.addNavigationTitle	Wachtwoord toevoegen
 changePassword.addSubmitButton	Wachtwoord toevoegen
@@ -1134,3 +1127,23 @@ twoFactor.recoveryTitle	Sla je herstelcodes op
 twoFactor.shareCodesButton	Codes delen
 twoFactor.turnOffButton	Uitschakelen
 twoFactor.turnOnButton	Inschakelen
+browse.actionAvailableOffline	Offline beschikbaar
+browse.actionSaveToDevice	Bewaar op apparaat
+previewToolbar.saveToDevice	Bewaar op apparaat
+downloadQueue.savedToPhotos	Bewaard in Foto’s
+downloadQueue.savedToDevice	Bewaard op je apparaat
+downloadQueue.photosAccessDenied	Sta in Instellingen toegang tot Foto’s toe om afbeeldingen en video’s te bewaren.
+downloadQueue.photosSaveFailed	Kon dit niet aan Foto’s toevoegen.
+tab.offline	Offline
+offline.sectionSavedEarlier	Eerder bewaard
+offline.newFilesBadge	Nieuwe bestanden offline beschikbaar
+search.onDevice	Op apparaat
+search.remote	Extern
+offline.tabEmpty	Er is nog niets offline beschikbaar. Kies ‘Offline beschikbaar’ bij een bestand of map.
+offline.removeItemTitle	‘%@’ verwijderen uit Offline beschikbaar?
+offline.removeItemsTitle	%lld onderdelen verwijderen uit Offline beschikbaar?
+offline.removeItemMessage	Hiermee worden de voor offline gebruik opgeslagen bestanden op dit apparaat verwijderd. Je bestanden op de server worden niet gewijzigd.
+browse.actionRemoveFromOffline	Verwijderen uit offline
+offline.rowUpdating	Bijwerken…
+offline.rowWaitingForNetwork	Wacht op netwerk
+offline.rowUpdateFailed	Bijwerken mislukt

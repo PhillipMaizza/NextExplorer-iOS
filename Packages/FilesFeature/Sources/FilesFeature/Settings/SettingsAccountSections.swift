@@ -223,45 +223,6 @@ struct SettingsProfileSection: View {
     }
 }
 
-// MARK: Users (admin)
-
-struct SettingsUsersSection: View {
-    let store: StoreOf<SettingsFeature>
-
-    var body: some View {
-        if store.user.isAdmin {
-            Section {
-                DSNavigationRow(title: L10n.Settings.rowUserManagement, icon: IconKit.people) {
-                    store.send(.userManagementButtonTapped)
-                }
-            } header: {
-                SettingsSectionHeader(L10n.Settings.sectionUsers)
-            }
-            .listRowBackground(Color.backgroundSecondary)
-        }
-    }
-}
-
-// MARK: API tokens
-
-/// Its own entry rather than a row inside the account: a token is a credential for a script, issued
-/// from the signed in account, and managed like one.
-struct SettingsAPITokensSection: View {
-    let store: StoreOf<SettingsFeature>
-
-    var body: some View {
-        Section {
-            DSNavigationRow(title: L10n.ApiTokens.navigationTitle, icon: IconKit.key) {
-                store.send(.apiTokensButtonTapped)
-            }
-            .accessibilityIdentifier(AccessibilityIdentifiers.Settings.apiTokensRow)
-        } header: {
-            SettingsSectionHeader(L10n.ApiTokens.sectionHeader)
-        }
-        .listRowBackground(Color.backgroundSecondary)
-    }
-}
-
 // MARK: Server admin
 
 /// Admin-only server config that isn't per-user: thumbnail generation and folder access

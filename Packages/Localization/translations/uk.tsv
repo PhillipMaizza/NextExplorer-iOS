@@ -59,8 +59,6 @@ directLinkMode.download	Завантажити
 thumbnailSize.small	Малий
 thumbnailSize.medium	Середній
 thumbnailSize.large	Великий
-downloadLocation.documents	Документи
-downloadLocation.cache	Кеш
 dateFormat.automatic	Автоматично
 browse.navigationTitle	Огляд
 browse.scopeThisFolder	Ця папка
@@ -151,7 +149,6 @@ favorites.removeMessage	Це лише вилучить їх з обраного.
 favorites.removeFailedOne	Не вдалося вилучити цей елемент обраного.
 favorites.removeFailedMany	Не вдалося вилучити ці елементи обраного.
 favorites.removePartial	Вилучено %1$lld з %2$lld.
-downloads.navigationTitle	Завантаження
 downloads.actionOpenInFiles	Відкрити у «Файлах»
 downloads.emptyList	Файли, які ви завантажуєте в Огляді, з’являються тут.
 downloads.deleteConfirmTitle	Видалити?
@@ -480,7 +477,6 @@ settings.sectionServerStorage	Сховище сервера
 settings.serverStorageUsed	%1$@ із %2$@
 settings.sectionLicenses	Ліцензії
 settings.sectionLegal	Правова інформація
-settings.sectionUsers	Користувачі
 settings.sectionAdmin	Адміністрування
 settings.sectionInfo	Інформація
 settings.toggleShowHiddenFiles	Показувати приховані файли
@@ -748,7 +744,6 @@ twoFactor.passwordField	Пароль
 twoFactor.passwordConfirmButton	Підтвердити
 twoFactor.manageButton	Керувати…
 apiTokens.navigationTitle	Токени API
-apiTokens.sectionHeader	Розробникам
 apiTokens.intro	Токени API дають змогу скриптам та іншим інструментам використовувати ваш обліковий запис без пароля. Токен виконує лише те, що дозволяє його доступ, і ви можете відкликати його будь-коли.
 apiTokens.emptyTitle	Немає токенів API
 apiTokens.emptyMessage	Створіть токен, щоб скрипт міг використовувати ваш обліковий запис.
@@ -875,7 +870,6 @@ offline.manageRow	Керувати офлайн-файлами
 offline.manageTitle	Офлайн-файли
 offline.manageEmpty	Нічого не завантажено для офлайн-використання.
 offline.preferOfflineToggle	Відтворювати завантажені копії
-offline.pinRemoved	%@ більше немає на сервері, його вилучено з офлайн-файлів
 offline.preferOfflineSubtitle	Використовувати завантажене відео замість потокової передачі, коли воно доступне.
 offline.tunnelSpeedNote	Доступ до сервера через віддалений тунель може уповільнювати завантаження. Для великих файлів підключіться до тієї самої мережі й скористайтеся локальною адресою сервера.
 menu.about	Про NextExplorer
@@ -918,7 +912,6 @@ appearance.dark	Темний
 browse.myFiles	Мої файли
 browse.myFilesSubtitle	Видно лише вам
 downloadQueue.navigationTitle	Черга завантажень
-downloadQueue.openDownloads	Показати завантаження
 downloadQueue.emptyList	Немає завантажень у процесі.
 downloadQueue.statusSaved	Збережено
 downloadQueue.cancelAll	Скасувати всі завантаження
@@ -1119,3 +1112,23 @@ serverSettings.featureOffHowTo	Щоб увімкнути її, задайте %@
 trashSettings.environmentNote	Типові значення беруться з TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT та TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Типові значення беруться з VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE та VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Оновити
+browse.actionAvailableOffline	Доступно офлайн
+browse.actionSaveToDevice	Зберегти на пристрій
+previewToolbar.saveToDevice	Зберегти на пристрій
+downloadQueue.savedToPhotos	Збережено у Фото
+downloadQueue.savedToDevice	Збережено на пристрій
+downloadQueue.photosAccessDenied	Дозвольте доступ до Фото в налаштуваннях, щоб зберігати зображення й відео.
+downloadQueue.photosSaveFailed	Не вдалося додати це до Фото.
+tab.offline	Офлайн
+offline.sectionSavedEarlier	Збережено раніше
+offline.newFilesBadge	Нові файли доступні офлайн
+search.onDevice	На пристрої
+search.remote	Віддалено
+offline.tabEmpty	Поки що нічого немає в офлайн-доступі. Виберіть «Доступно офлайн» для файлу або папки.
+offline.removeItemTitle	Прибрати «%@» із доступних офлайн?
+offline.removeItemsTitle	Прибрати %lld об’єктів із доступних офлайн?
+offline.removeItemMessage	Це видалить файли, збережені для офлайн-використання на цьому пристрої. Ваші файли на сервері не зачіпаються.
+browse.actionRemoveFromOffline	Прибрати з офлайн
+offline.rowUpdating	Оновлення…
+offline.rowWaitingForNetwork	Очікування мережі
+offline.rowUpdateFailed	Не вдалося оновити

@@ -1,3 +1,4 @@
+import Localization
 import XCTest
 
 /// Base class for the critical path UI tests. Launches the app against the fully mocked,
@@ -13,6 +14,8 @@ class UITestCase: XCTestCase {
         /// An image file in the root fixture listing.
         static let imageFile = "vacation.jpg"
         static let searchQuery = "vacation"
+        /// Part of `file`'s name, so it is among the search results.
+        static let fileSearchTerm = "notes"
         /// Stable first hit the mocked search returns (mirrors `UITestSupport.searchHitName`).
         static let searchHit = "Quarterly Report.txt"
         /// The shortest query the server searches (mirrors `FilesClient.minimumSearchTermLength`).
@@ -150,16 +153,32 @@ class UITestCase: XCTestCase {
     @discardableResult
     func scrollTo(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 6) -> Bool {
         var swipes = 0
-        while !element.exists, swipes < maxSwipes {
+        // Reachable, not just present: a lazy list materializes a row while it is still under the tab
+        // bar, where a tap would land on the bar instead.
+        while !(element.exists && element.isHittable), swipes < maxSwipes {
             #if os(iOS)
-                app.swipeUp()
+                scrollContainer(in: app).swipeUp()
             #else
                 app.scroll(byDeltaX: 0, deltaY: -Self.macScrollStep)
             #endif
             swipes += 1
+            // The row appears once the list settles after the swipe, so look again before swiping on.
+            _ = element.appears(within: UITestTimeout.pollInterval * 2)
         }
         return element.exists
     }
+
+    #if os(iOS)
+        /// The list on screen, so a swipe starts inside it and never on the tab bar floating above it.
+        private func scrollContainer(in app: XCUIApplication) -> XCUIElement {
+            for query in [app.collectionViews, app.tables, app.scrollViews] {
+                if let visible = query.allElementsBoundByIndex.first(where: { $0.isHittable }) {
+                    return visible
+                }
+            }
+            return app
+        }
+    #endif
 
     /// Launches the app with the mock graph enabled. `auth` picks the session state the app
     /// restores on cold launch, `scenario` picks the shape of the mocked file data.
@@ -175,6 +194,9 @@ class UITestCase: XCTestCase {
         static let animationSpeed = "UITEST_ANIM_SPEED"
         static let disableAnimations = "UITEST_DISABLE_ANIMATIONS"
         static let orientation = "UITEST_ORIENTATION"
+        static let legacyDownloads = "UITEST_LEGACY_DOWNLOADS"
+        static let searchOffline = "UITEST_SEARCH_OFFLINE"
+        static let offlineLaunch = "UITEST_OFFLINE_LAUNCH"
         static let on = "1"
         static let landscape = "landscape"
     }
@@ -187,9 +209,21 @@ class UITestCase: XCTestCase {
         auth: Auth = .loggedIn,
         scenario: Scenario = .normal,
         animationSpeed: Double = UITestCase.fastAnimationSpeed,
-        landscape: Bool = false
+        landscape: Bool = false,
+        legacyDownloads: Bool = false,
+        searchOffline: Bool = false,
+        offlineLaunch: Bool = false
     ) -> XCUIApplication {
         let app = XCUIApplication()
+        if legacyDownloads {
+            app.launchEnvironment[LaunchKey.legacyDownloads] = LaunchKey.on
+        }
+        if searchOffline {
+            app.launchEnvironment[LaunchKey.searchOffline] = LaunchKey.on
+        }
+        if offlineLaunch {
+            app.launchEnvironment[LaunchKey.offlineLaunch] = LaunchKey.on
+        }
         app.launchEnvironment[LaunchKey.mock] = LaunchKey.on
         app.launchEnvironment[LaunchKey.auth] = auth.rawValue
         app.launchEnvironment[LaunchKey.scenario] = scenario.rawValue
@@ -239,6 +273,15 @@ enum UITestTimeout {
 
 /// Waits until `predicate` holds for `object` (an element or a query) and returns whether it did,
 /// without asserting. Waits on a condition, never for a fixed time.
+/// The note over a listing shown from a saved copy ("Showing a saved copy from …"), matched on its fixed part.
+func savedCopyNote(in app: XCUIApplication) -> XCUIElement {
+    let fixedPart = L10n.Browse.offlineBannerDetail("").trimmingCharacters(in: .whitespaces)
+    // A Mac text exposes its words as the value, an iPhone one as the label.
+    return app.staticTexts
+        .matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", fixedPart, fixedPart))
+        .firstMatch
+}
+
 func waitUntil(_ predicate: NSPredicate, on object: Any, timeout: TimeInterval = UITestTimeout.standard) -> Bool {
     XCTWaiter()
         .wait(for: [XCTNSPredicateExpectation(predicate: predicate, object: object)], timeout: timeout) == .completed

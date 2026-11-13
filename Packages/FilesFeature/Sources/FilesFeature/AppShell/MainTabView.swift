@@ -90,6 +90,7 @@ public struct MainTabView: View {
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isBarVisible)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isActive)
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.isOfflineBarVisible)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
             .onChange(of: shouldShowTransferBars) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }
@@ -104,11 +105,25 @@ public struct MainTabView: View {
                 get: { store.downloadQueue.isSheetPresented },
                 set: { store.send(.downloadQueue(.sheetPresented($0))) }
             )) {
-                DownloadQueueView(
-                    store: store.scope(state: \.downloadQueue, action: \.downloadQueue),
-                    onOpenDownloads: { store.send(.openDownloadsTab) }
-                )
+                DownloadQueueView(store: store.scope(state: \.downloadQueue, action: \.downloadQueue))
             }
+        #if os(iOS)
+            .fileMover(
+                isPresented: Binding(
+                    get: { !store.pendingExportURLs.isEmpty },
+                    set: { _ in }
+                ),
+                files: store.pendingExportURLs,
+                onCompletion: { result in
+                    if case .success = result {
+                        store.send(.deviceExportFinished(didSave: true))
+                    } else {
+                        store.send(.deviceExportFinished(didSave: false))
+                    }
+                },
+                onCancellation: { store.send(.deviceExportFinished(didSave: false)) }
+            )
+        #endif
             .dsToast(Binding(
                 get: { uploadToastMessage },
                 set: {
@@ -128,7 +143,7 @@ public struct MainTabView: View {
                                 }
                             }
                         #endif
-                        return .success(message, actionTitle: L10n.Browse.open) { store.send(.openDownloadsTab) }
+                        return .success(message)
                     }
                 },
                 set: {
@@ -171,7 +186,7 @@ public struct MainTabView: View {
     }
 
     private var isAnyTransferBarVisible: Bool {
-        store.uploads.isBarVisible || store.downloadQueue.isBarVisible
+        store.uploads.isBarVisible || store.downloadQueue.isBarVisible || store.isOfflineBarVisible
     }
 
     /// The floating transfer bars; the Mac shows a toolbar activity button instead.
@@ -212,7 +227,11 @@ public struct MainTabView: View {
         case .shared:
             split { SharedView(store: store.scope(state: \.shared, action: \.shared)) }
         case .downloads:
-            split { DownloadsView(store: store.scope(state: \.downloads, action: \.downloads)) }
+            split { OfflineTabView(
+                store: store.scope(state: \.downloads, action: \.downloads),
+                offlineStore: store.scope(state: \.offlineManage, action: \.offlineManage),
+                favorites: store.favorites.favorites
+            ) }
         case .settings:
             split { SettingsView(store: store.scope(state: \.settings, action: \.settings)) }
         }
@@ -229,7 +248,8 @@ public struct MainTabView: View {
         .platformAccentTint()
         #if os(macOS)
             .toolbar {
-                if isAnyTransferBarVisible {
+                // Uploads and downloads only: an offline run has its own bar along the window's bottom.
+                if store.uploads.isBarVisible || store.downloadQueue.isBarVisible {
                     ToolbarItem(id: "transfers", placement: .primaryAction) {
                         MacTransferActivityButton(store: store)
                     }
@@ -246,8 +266,9 @@ public struct MainTabView: View {
             Tab(value: MainTabFeature.Tab.browse) {
                 BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
             } label: {
-                tabLabel(
-                    L10n.Tab.browse,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.browse,
                     icon: store.selectedTab == .browse ? IconKit.tabBrowseFill : IconKit.tabBrowse,
                     smallIcon: store.selectedTab == .browse ? IconKit.tabBrowseFillSmall : IconKit.tabBrowseSmall,
                     identifier: AccessibilityIdentifiers.Tab.browse
@@ -259,8 +280,9 @@ public struct MainTabView: View {
                     FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
                 }
             } label: {
-                tabLabel(
-                    L10n.Tab.favorites,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.favorites,
                     icon: store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites,
                     smallIcon: store.selectedTab == .favorites
                         ? IconKit.tabFavoritesFillSmall
@@ -274,8 +296,9 @@ public struct MainTabView: View {
                     SharedView(store: store.scope(state: \.shared, action: \.shared))
                 }
             } label: {
-                tabLabel(
-                    L10n.Tab.shared,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.shared,
                     icon: store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare,
                     smallIcon: store.selectedTab == .shared ? IconKit.tabShareFillSmall : IconKit.tabShareSmall,
                     identifier: AccessibilityIdentifiers.Tab.shared
@@ -284,26 +307,35 @@ public struct MainTabView: View {
 
             Tab(value: MainTabFeature.Tab.downloads) {
                 if visitedTabs.contains(.downloads) {
-                    DownloadsView(store: store.scope(state: \.downloads, action: \.downloads))
+                    OfflineTabView(
+                        store: store.scope(state: \.downloads, action: \.downloads),
+                        offlineStore: store.scope(state: \.offlineManage, action: \.offlineManage),
+                        favorites: store.favorites.favorites
+                    )
                 }
             } label: {
-                tabLabel(
-                    L10n.Tab.downloads,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.offline,
                     icon: store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads,
                     smallIcon: store.selectedTab == .downloads
                         ? IconKit.tabDownloadsFillSmall
                         : IconKit.tabDownloadsSmall,
                     identifier: AccessibilityIdentifiers.Tab.downloads
                 )
+                .accessibilityValue(store.hasUnseenOfflineFiles ? L10n.Offline.newFilesBadge : "")
             }
+            // An empty badge is the tab bar's dot: new files were kept since Offline was last opened.
+            .badge(store.hasUnseenOfflineFiles ? Text(verbatim: "") : nil)
 
             Tab(value: MainTabFeature.Tab.settings) {
                 if visitedTabs.contains(.settings) {
                     SettingsView(store: store.scope(state: \.settings, action: \.settings))
                 }
             } label: {
-                tabLabel(
-                    L10n.Tab.settings,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.settings,
                     icon: store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings,
                     smallIcon: store.selectedTab == .settings ? IconKit.tabSettingsFillSmall : IconKit.tabSettingsSmall,
                     identifier: AccessibilityIdentifiers.Tab.settings
@@ -315,31 +347,6 @@ public struct MainTabView: View {
         // toggling labels off leaves the old titled items on screen. Rebuild on the toggle.
         // `visitedTabs` (MainTabView @State) and the store-bound selection both survive it.
         .id(showTabLabels)
-    }
-
-    /// A tab bar item: title + smaller glyph when "Show Tab Labels" is on, the full-size icon
-    /// on its own otherwise. The title carries the accessibility label in both modes.
-    @ViewBuilder
-    private func tabLabel(_ title: String, icon: Image, smallIcon: Image, identifier: String) -> some View {
-        if showTabLabels {
-            Label {
-                Text(title)
-            } icon: {
-                tabIcon(smallIcon)
-            }
-            .accessibilityLabel(title)
-            .accessibilityIdentifier(identifier)
-        } else {
-            tabIcon(icon)
-                .accessibilityLabel(title)
-                .accessibilityIdentifier(identifier)
-        }
-    }
-
-    private func tabIcon(_ image: Image) -> some View {
-        image
-            .resizable()
-            .scaledToFit()
     }
 
     /// Whether the current tab is showing a `BrowseBreadcrumbBar` right now: the upload bar
@@ -389,10 +396,4 @@ public struct MainTabView: View {
             $0.filesClient = .previewValue
         }
     )
-}
-
-extension EnvironmentValues {
-    /// True inside the `MainTabView` split view detail. Read this rather than the size class:
-    /// on iPhone Duo open the detail column is narrow enough to report compact.
-    @Entry var isSplitViewDetail = false
 }

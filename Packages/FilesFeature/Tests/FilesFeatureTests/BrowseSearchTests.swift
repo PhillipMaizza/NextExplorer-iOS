@@ -554,4 +554,31 @@ struct BrowseSearchTests {
             $0.previewItem = opened
         }
     }
+
+    @Test("A file result that is kept offline opens as that copy, so the pinned file serves it first")
+    func searchResultTappedOnAPinnedFileOpensItWithThePinnedCopysOwnMetadata() async {
+        let pinnedDate = MockDate.date.addingTimeInterval(-3_600)
+        let pinnedSize: Int64 = 4_096
+        let pinnedPath = "\(TestFolder.media)/\(Constants.clip)"
+        let offline = OfflineFileStore.inMemory(
+            copyMetadata: [pinnedPath: OfflineCopyMetadata(dateModified: pinnedDate, size: pinnedSize)]
+        )
+        let store = BrowseFixtures.store { $0.offlineFileStore = offline }
+        let opened = FileItem(
+            name: Constants.clip,
+            path: TestFolder.media,
+            dateModified: pinnedDate,
+            size: pinnedSize,
+            kind: TestKind.video
+        )
+
+        await store.send(.searchResultTapped(SearchResultItem(
+            name: Constants.clip,
+            path: TestFolder.media,
+            kind: SearchResultItem.fileKind
+        )))
+        await store.receive(.rowTapped(opened)) {
+            $0.previewItem = opened
+        }
+    }
 }

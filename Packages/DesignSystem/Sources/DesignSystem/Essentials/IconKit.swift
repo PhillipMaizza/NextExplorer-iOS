@@ -103,7 +103,11 @@ public enum IconKit {
     public static let time = Image(systemName: "clock")
     public static let rename = Image(systemName: "square.and.pencil")
     public static let haptics = Image(systemName: "waveform")
-    public static let download = Image(systemName: "arrow.down.circle")
+    /// Copies a file out of the app (Save to Device, Mac Download).
+    public static let download = Image(systemName: "square.and.arrow.down")
+    /// Available Offline: one glyph for the badge beside a file, the actions, the pill and the empty
+    /// state. Whether an item is offline shows in the label and the tint, never in a second glyph.
+    public static let availableOffline = Image(systemName: "arrow.down.circle.dotted")
     public static let upload = Image(systemName: "arrow.up.circle")
     public static let retry = Image(systemName: "arrow.clockwise")
     public static let checkmarkCircleFill = Image(systemName: "checkmark.circle.fill")

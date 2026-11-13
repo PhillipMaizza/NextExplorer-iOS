@@ -40,8 +40,15 @@ private enum Constants {
 /// render this same view, scoped to their own `BrowseFeature` store. The list/grid
 /// choice is a per-device display preference, not per-folder state, so it's stored
 /// directly here rather than threaded through `BrowseFeature.State`.
+extension EnvironmentValues {
+    /// Off for folders opened from the Offline tab, where everything is offline and a badge on each
+    /// item says nothing. Browse and Favorites keep it.
+    @Entry var showsOfflineBadges = true
+}
+
 struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
+    @Environment(\.showsOfflineBadges) private var showsOfflineBadges
     /// Observed only to refresh the offline badges when a download completes.
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
@@ -232,12 +239,19 @@ struct BrowseContentView: View {
                 store.send(.onAppear)
                 store.send(.computeOfflineAvailability)
             }
+            // New results, or a change in what this folder keeps offline: find the results on the device.
+            .task(id: SearchOnDeviceKey(results: store.searchResults?.ids.elements, offline: store.offlineItemIDs)) {
+                store.send(.computeSearchOnDevice)
+            }
             // A finished offline download can change what's available here, so refresh the badges.
             // The completion mutates shared state, so this `onChange` fires mid reduce; hop to the next
             // tick so the send isn't reentrant.
             .onChange(of: offlineProgress.phase) { _, phase in
                 if phase == .completed {
-                    Task { @MainActor in store.send(.computeOfflineAvailability) }
+                    Task { @MainActor in
+                        store.send(.computeOfflineAvailability)
+                        store.send(.computeSearchOnDevice)
+                    }
                 }
             }
         #if os(macOS)
@@ -271,8 +285,12 @@ struct BrowseContentView: View {
                 loadingSkeleton
                     .transition(.opacity)
             } else if viewMode == .table, !store.isSelecting, !store.isSearching {
-                tableContent
-                    .transition(.opacity)
+                // A table has no footer row, so the saved copy note sits under it.
+                VStack(spacing: 0) {
+                    tableContent
+                    offlineFooter
+                }
+                .transition(.opacity)
             } else if viewMode == .table, store.isSearching {
                 searchTableContent
                     .transition(.opacity)
@@ -479,10 +497,23 @@ struct BrowseContentView: View {
                         }
                     }
                 }
-                if isDownloadActionVisible {
+                if isSaveActionVisible {
                     ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(icon: IconKit.download, accessibilityLabel: L10n.Browse.actionDownload) {
+                        selectionToolbarButton(icon: SaveActionStyle.icon, accessibilityLabel: SaveActionStyle.title) {
                             store.send(.bulkDownloadTapped)
+                        }
+                    }
+                }
+                if store.access?.canDownload ?? false {
+                    ToolbarItem(placement: .selectionBar) {
+                        let action = store.selectedOfflineAction
+                        selectionToolbarButton(
+                            icon: action?.icon ?? IconKit.availableOffline,
+                            tint: action == .remove ? .negative : nil,
+                            accessibilityLabel: action?.title ?? L10n.Browse.actionAvailableOffline,
+                            isDisabled: action == nil
+                        ) {
+                            store.send(.bulkOfflineTapped)
                         }
                     }
                 }
@@ -584,6 +615,11 @@ struct BrowseContentView: View {
             )
         }
         .hapticFeedback(.warning, trigger: store.transferConflict)
+        .offlineRemovalAlert(
+            store.previewItem == nil ? store.offlineRemoval : nil,
+            onConfirm: { store.send(.offlineRemovalConfirmed) },
+            onCancel: { store.send(.offlineRemovalCancelled) }
+        )
     }
 
     private var previewPresentedBinding: Binding<Bool> {
@@ -684,7 +720,7 @@ struct BrowseContentView: View {
                 visibility: sourceVisibility
             ),
             isOpening: isOpening(item),
-            isAvailableOffline: store.offlineItemIDs.contains(item.id)
+            isAvailableOffline: showsOfflineBadges && store.offlineItemIDs.contains(item.id)
         )
     }
 
@@ -701,7 +737,7 @@ struct BrowseContentView: View {
                 )
                 Divider()
                 MacSearchResultsTable(
-                    results: store.displayedSearchResults.map(Array.init) ?? [],
+                    sections: store.searchResultSections,
                     favoritePaths: store.favoritePaths,
                     onOpen: { store.send(.searchResultTapped($0)) },
                     onShowInFolder: { store.send(.searchResultEnclosingFolderTapped($0)) }
@@ -857,6 +893,21 @@ struct BrowseContentView: View {
                         Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
                     }
                     .tint(.primaryDS)
+                    let offlineAction = OfflineBulkAction.resolve(
+                        selectedIDs: items.map(\.id),
+                        offlineIDs: store.offlineItemIDs,
+                        pinnedIDs: store.offlinePinnedItemIDs
+                    )
+                    Button(role: offlineAction == .remove ? .destructive : nil) {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.bulkOfflineTapped)
+                    } label: {
+                        Label { Text(offlineAction?.title ?? L10n.Browse.actionAvailableOffline) } icon: {
+                            offlineAction?.icon ?? IconKit.availableOffline
+                        }
+                    }
+                    .tint(offlineAction == .remove ? .negative : .primaryDS)
+                    .disabled(offlineAction == nil)
                 }
                 if items.allSatisfy(\.isDirectory) {
                     let isAllFavorite = items.allSatisfy { store.favoritePaths.contains($0.id) }
@@ -936,7 +987,7 @@ struct BrowseContentView: View {
                 visibility: sourceVisibility
             ),
             isOpening: isOpening(item),
-            isAvailableOffline: store.offlineItemIDs.contains(item.id)
+            isAvailableOffline: showsOfflineBadges && store.offlineItemIDs.contains(item.id)
         )
     }
 
@@ -1218,6 +1269,12 @@ struct BrowseContentView: View {
         !store.selectedItemIDs.isEmpty && (store.access?.canDownload ?? false)
     }
 
+    private var isSaveActionVisible: Bool {
+        isDownloadActionVisible && store.items.contains {
+            store.selectedItemIDs.contains($0.id) && SaveActionStyle.isAvailable(for: $0.isDirectory)
+        }
+    }
+
     private var isDeleteActionVisible: Bool {
         !store.selectedItemIDs.isEmpty && (store.access?.canDelete ?? false)
     }
@@ -1238,6 +1295,7 @@ struct BrowseContentView: View {
         role: ButtonRole? = nil,
         tint: Color? = nil,
         accessibilityLabel: String? = nil,
+        isDisabled: Bool = false,
         action: @escaping () -> Void
     ) -> some View {
         SelectionToolbarButton(
@@ -1245,6 +1303,7 @@ struct BrowseContentView: View {
             role: role,
             tint: tint,
             accessibilityLabel: accessibilityLabel,
+            isDisabled: isDisabled,
             action: action
         )
     }
@@ -1384,15 +1443,31 @@ struct BrowseContentView: View {
                         BrowseRootSectionHeader(title: L10n.Browse.sectionPersonal)
                     }
                 }
-                Section {
-                    if store.isSearching {
-                        searchResultRows
+                if store.isSearching {
+                    let sections = store.searchResultSections
+                    if sections.isSplit {
+                        Section {
+                            searchResultRows(sections.onDevice)
+                        } header: {
+                            BrowseRootSectionHeader(title: L10n.Search.onDevice)
+                        }
+                        if !sections.remote.isEmpty {
+                            Section {
+                                searchResultRows(sections.remote)
+                            } header: {
+                                BrowseRootSectionHeader(title: L10n.Search.remote)
+                            }
+                        }
                     } else {
-                        folderItemRows
+                        Section { searchResultRows(sections.remote) }
                     }
-                } header: {
-                    if showsPersonalSpace {
-                        BrowseRootSectionHeader(title: L10n.Browse.locations)
+                } else {
+                    Section {
+                        folderItemRows
+                    } header: {
+                        if showsPersonalSpace {
+                            BrowseRootSectionHeader(title: L10n.Browse.locations)
+                        }
                     }
                 }
                 if store.isSearching, hasSearchFooter {
@@ -1432,16 +1507,22 @@ struct BrowseContentView: View {
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
                     if store.isSearching {
-                        ForEach(store.displayedSearchResults ?? []) { result in
-                            Button {
-                                store.send(.searchResultTapped(result))
-                            } label: {
-                                searchResultCell(row: result, grid: true)
-                                    .dsCard(padding: Constants.gridCellPadding)
+                        let sections = store.searchResultSections
+                        if sections.isSplit {
+                            Section {
+                                searchResultCells(sections.onDevice)
+                            } header: {
+                                BrowseRootSectionHeader(title: L10n.Search.onDevice)
                             }
-                            .buttonStyle(DSHapticButtonStyle())
-                            .contextMenu { searchResultMenu(result) }
-                            .dsTapFlash()
+                            if !sections.remote.isEmpty {
+                                Section {
+                                    searchResultCells(sections.remote)
+                                } header: {
+                                    BrowseRootSectionHeader(title: L10n.Search.remote)
+                                }
+                            }
+                        } else {
+                            searchResultCells(sections.remote)
                         }
                     } else {
                         if showsPersonalSpace {
@@ -1546,9 +1627,20 @@ struct BrowseContentView: View {
     @ViewBuilder
     private var offlineFooter: some View {
         if case let .cached(fetchedAt) = store.dataSource {
-            DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
-                .padding(.horizontal, .space16)
-                .padding(.top, .space12)
+            let text = L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt))
+            #if os(macOS)
+                // Under the Mac table: a quiet line in the corner, not a card.
+                Label { Text(text) } icon: { IconKit.info }
+                    .type(.caption(.regular), style: .secondary)
+                    .fixedSize()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, .space16)
+                    .padding(.vertical, .space8)
+            #else
+                DSInfoCard(text)
+                    .padding(.horizontal, .space16)
+                    .padding(.top, .space12)
+            #endif
         }
     }
 
@@ -1761,6 +1853,20 @@ struct BrowseContentView: View {
         }
     }
 
+    private func searchResultCells(_ results: [SearchResultItem]) -> some View {
+        ForEach(results) { result in
+            Button {
+                store.send(.searchResultTapped(result))
+            } label: {
+                searchResultCell(row: result, grid: true)
+                    .dsCard(padding: Constants.gridCellPadding)
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .contextMenu { searchResultMenu(result) }
+            .dsTapFlash()
+        }
+    }
+
     private func searchResultMenu(_ result: SearchResultItem) -> some View {
         SearchResultMenu(
             result: result,
@@ -1769,9 +1875,7 @@ struct BrowseContentView: View {
         )
     }
 
-    @ViewBuilder
-    private var searchResultRows: some View {
-        let results = store.displayedSearchResults ?? []
+    private func searchResultRows(_ results: [SearchResultItem]) -> some View {
         ForEach(results) { result in
             DSFlashingListRow {
                 Button {

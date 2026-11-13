@@ -24,7 +24,9 @@ struct AccountCacheWipeTests {
         let thumbnailClears = LockIsolated(0)
         let previewClears = LockIsolated<[String]>([])
         let offlineRemovals = LockIsolated<[String]>([])
+        let savedEarlierRemovals = LockIsolated<[String]>([])
         let uploadThumbnailClears = LockIsolated<[String]>([])
+        let stagedDiscards = LockIsolated(0)
     }
 
     private func listing() -> BrowseResult {
@@ -58,6 +60,11 @@ struct AccountCacheWipeTests {
                 store.removeAccount = { scope in counters.offlineRemovals.withValue { $0.append(scope) } }
                 return store
             }(),
+            localDownloadStore: {
+                var store = LegacyDownloadStore.testValue
+                store.removeAccount = { account in counters.savedEarlierRemovals.withValue { $0.append(account) } }
+                return store
+            }(),
             thumbnailCache: ThumbnailCache(
                 data: { _ in Data() }, resolvedURL: { _, _, _ in nil },
                 clearMemory: { counters.thumbnailClears.withValue { $0 += 1 } }
@@ -67,6 +74,11 @@ struct AccountCacheWipeTests {
                 var store = LocalThumbnailStore.testValue
                 store.clearScope = { scope in counters.uploadThumbnailClears.withValue { $0.append(scope) } }
                 return store
+            }(),
+            deviceSaver: {
+                var saver = DeviceSaver.testValue
+                saver.discardAll = { counters.stagedDiscards.withValue { $0 += 1 } }
+                return saver
             }(),
             pendingWipes: pending
         )
@@ -99,7 +111,9 @@ struct AccountCacheWipeTests {
         #expect(counters.thumbnailClears.value == 1)
         #expect(counters.previewClears.value == [Fixture.account])
         #expect(counters.offlineRemovals.value == [Fixture.account])
+        #expect(counters.savedEarlierRemovals.value == [Fixture.account])
         #expect(counters.uploadThumbnailClears.value == [Fixture.account])
+        #expect(counters.stagedDiscards.value == 1)
         #expect(pending.accounts() == [Fixture.account])
     }
 
@@ -164,6 +178,7 @@ struct AccountCacheWipeTests {
         #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
         #expect(directory.bound(to: Fixture.otherAccount).read(serverURL: Fixture.server, path: Fixture.path) == nil)
         #expect(counters.offlineRemovals.value == [Fixture.otherAccount])
+        #expect(counters.savedEarlierRemovals.value == [Fixture.otherAccount])
         #expect(pending.accounts().isEmpty)
     }
 

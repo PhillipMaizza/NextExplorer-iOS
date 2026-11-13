@@ -55,8 +55,6 @@ directLinkMode.download	تنزيل
 thumbnailSize.small	صغير
 thumbnailSize.medium	متوسط
 thumbnailSize.large	كبير
-downloadLocation.documents	المستندات
-downloadLocation.cache	ذاكرة التخزين المؤقت
 dateFormat.automatic	تلقائي
 browse.navigationTitle	تصفح
 browse.scopeThisFolder	هذا المجلد
@@ -142,7 +140,6 @@ favorites.removeMessage	هذا يزيلها من المفضلة فقط.
 favorites.removeFailedOne	تعذّر إزالة تلك المفضلة.
 favorites.removeFailedMany	تعذّر إزالة تلك المفضلات.
 favorites.removePartial	تمت إزالة %1$lld من %2$lld.
-downloads.navigationTitle	التنزيلات
 downloads.actionOpenInFiles	فتح في الملفات
 downloads.emptyList	تظهر هنا الملفات التي تنزّلها من تصفح.
 downloads.deleteConfirmTitle	حذف؟
@@ -286,7 +283,6 @@ settings.sectionServerStorage	تخزين الخادم
 settings.serverStorageUsed	%1$@ من %2$@
 settings.sectionLicenses	التراخيص
 settings.sectionLegal	قانوني
-settings.sectionUsers	المستخدمون
 settings.sectionAdmin	الإدارة
 settings.sectionInfo	معلومات
 settings.toggleShowHiddenFiles	إظهار الملفات المخفية
@@ -606,7 +602,6 @@ offline.manageRow	إدارة الملفات دون اتصال
 offline.manageTitle	الملفات دون اتصال
 offline.manageEmpty	لا يوجد شيء تم تنزيله للاستخدام دون اتصال.
 offline.preferOfflineToggle	تشغيل النسخ التي جرى تنزيلها
-offline.pinRemoved	لم يعد %@ موجودًا على الخادم وتمت إزالته من الملفات دون اتصال
 offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله بدلاً من البث عندما يكون متاحًا.
 offline.tunnelSpeedNote	قد يؤدي الوصول إلى خادمك عبر نفق بعيد إلى إبطاء التنزيلات. للملفات الكبيرة، اتصل بالشبكة نفسها واستخدم العنوان المحلي لخادمك.
 menu.about	حول NextExplorer
@@ -642,7 +637,6 @@ appearance.dark	داكن
 browse.myFiles	ملفاتي
 browse.myFilesSubtitle	مرئي لك فقط
 downloadQueue.navigationTitle	قائمة التنزيل
-downloadQueue.openDownloads	عرض التنزيلات
 downloadQueue.emptyList	لا توجد تنزيلات قيد التقدم.
 downloadQueue.statusSaved	تم الحفظ
 downloadQueue.cancelAll	إلغاء جميع التنزيلات
@@ -1111,7 +1105,6 @@ apiTokens.revokeMessage	سيتوقف كل ما يستخدم ‏«%@» عن ال�
 apiTokens.revokeTitle	إبطال الرمز؟
 apiTokens.scopeRead	قراءة فقط
 apiTokens.scopeWrite	قراءة وكتابة
-apiTokens.sectionHeader	المطورون
 changePassword.addIntro	يسجّل هذا الحساب الدخول عبر تسجيل الدخول الموحّد وليس له كلمة سر بعد. أضف واحدة لتسجيل الدخول أيضًا باستخدام بريدك الإلكتروني أو اسم المستخدم.
 changePassword.addNavigationTitle	إضافة كلمة سر
 changePassword.addSubmitButton	إضافة كلمة سر
@@ -1158,3 +1151,23 @@ twoFactor.recoveryTitle	احفظ رموز الاسترداد
 twoFactor.shareCodesButton	مشاركة الرموز
 twoFactor.turnOffButton	إيقاف
 twoFactor.turnOnButton	تشغيل
+browse.actionAvailableOffline	متاح دون اتصال
+browse.actionSaveToDevice	حفظ على الجهاز
+previewToolbar.saveToDevice	حفظ على الجهاز
+downloadQueue.savedToPhotos	تم الحفظ في الصور
+downloadQueue.savedToDevice	تم الحفظ على جهازك
+downloadQueue.photosAccessDenied	اسمح بالوصول إلى الصور في الإعدادات لحفظ الصور ومقاطع الفيديو.
+downloadQueue.photosSaveFailed	تعذّرت إضافة هذا العنصر إلى الصور.
+tab.offline	دون اتصال
+offline.sectionSavedEarlier	محفوظ سابقًا
+offline.newFilesBadge	ملفات جديدة متاحة دون اتصال
+search.onDevice	على الجهاز
+search.remote	عن بُعد
+offline.tabEmpty	لا شيء متاح دون اتصال بعد. اختر «متاح دون اتصال» لملف أو مجلد.
+offline.removeItemTitle	إزالة «%@» من المتاح دون اتصال؟
+offline.removeItemsTitle	إزالة %lld عناصر من المتاح دون اتصال؟
+offline.removeItemMessage	يؤدي هذا إلى حذف الملفات المحفوظة للاستخدام دون اتصال على هذا الجهاز. لن تتأثر ملفاتك على الخادم.
+browse.actionRemoveFromOffline	إزالة من المتاح دون اتصال
+offline.rowUpdating	جارٍ التحديث…
+offline.rowWaitingForNetwork	في انتظار الشبكة
+offline.rowUpdateFailed	تعذر التحديث

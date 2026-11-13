@@ -16,7 +16,6 @@ private enum Constants {
 /// cancel while it runs, retry on failure, and a shortcut to the Downloads tab.
 struct DownloadQueueView: View {
     @Bindable var store: StoreOf<DownloadQueueFeature>
-    let onOpenDownloads: () -> Void
     @Environment(\.locale) private var locale
 
     var body: some View {
@@ -63,9 +62,6 @@ struct DownloadQueueView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(L10n.Uploads.clear) { store.send(.clearFinishedTapped, animation: .default) }
                             .disabled(!store.hasClearableJobs)
-                    }
-                    ToolbarItem(placement: .bottomBar) {
-                        Button(L10n.DownloadQueue.openDownloads, action: onOpenDownloads)
                     }
                 }
         }
@@ -208,8 +204,7 @@ private func previewJob(
             previewJob("Big.iso", kind: "iso", status: .failed("Couldn't reach the server.")),
         ])) {
             DownloadQueueFeature()
-        },
-        onOpenDownloads: {}
+        }
     )
 }
 
@@ -217,7 +212,6 @@ private func previewJob(
     DownloadQueueView(
         store: Store(initialState: DownloadQueueFeature.State.preview([DownloadQueueFeature.DownloadJob]())) {
             DownloadQueueFeature()
-        },
-        onOpenDownloads: {}
+        }
     )
 }

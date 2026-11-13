@@ -53,7 +53,7 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
     }
 
     @Test
-    func aCompleteWalkStillPrunesFilesTheServerNoLongerLists() async {
+    func aCompleteWalkKeepsFilesTheServerNoLongerLists() async {
         let (offline, slots) = storeWithSlots(["A/a.txt", "A/gone.txt"])
         let run = makeRun(
             offline: offline,
@@ -63,188 +63,119 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
         await run.store.send(.resyncTapped).finish()
 
         #expect(run.phase == .completed)
-        #expect(slots.value == ["A/a.txt"])
+        #expect(slots.value == ["A/a.txt", "A/gone.txt"], "A file deleted online stays until the user removes it")
     }
 
-    /// Answers `A` and `B` with `rootError`, and the parent of a pinned folder with `parent`.
-    private func notFoundStore(
-        offline: OfflineFileStore, hold: BrowseHold, rootError: FilesClientError,
+    @Test
+    func aSyncOnlyDropsOrphansOfUnpinnedRootsNeverWhatTheServerLost() async {
+        let offline = pinnedStore(["A"])
+        let calls = LockIsolated<[Bool]>([])
+        var watched = offline
+        watched.reconcile = { current in calls.withValue { $0.append(current == nil) } }
+        let run = makeRun(
+            offline: watched,
+            browse: { [self] path in listing([file(TestFile.aText, path: "A")], path: path) }
+        )
+
+        await run.store.send(.resyncTapped).finish()
+
+        #expect(calls.value == [true], "Reconciled once, with no list of what the server still has")
+    }
+
+    /// Answers a pinned folder with `rootError` and everything else (its parent) with `parent`.
+    private func goneRun(
+        offline: OfflineFileStore, rootError: FilesClientError,
         parent: @escaping @Sendable () throws -> BrowseResult
-    ) -> Harness {
-        makeStore(hold: hold, offline: offline) { path in
+    ) -> Run {
+        makeRun(offline: offline) { path in
             guard path.isEmpty else { throw rootError }
             return try parent()
         }
     }
 
-    @Test
-    func aSingleNotFoundNeverUnpinsAFolderWhoseParentCannotBeListed() async {
-        let offline = pinnedStore(["A"])
-        let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) {
-            throw FilesClientError.offline
-        }
-
-        await resync(store, hold: hold)
-        await receiveWaiting(store)
-
-        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
-        #expect(store.state.progress.phase == .waitingForNetwork)
-    }
-
-    @Test
-    func aTransientNotFoundKeepsTheFilesUnderTheFolder() async {
+    @Test(arguments: [
+        FilesClientError.server(statusCode: 404),
+        .serverMessage(statusCode: 404, message: "Share expired"),
+        .serverMessage(statusCode: 404, message: "Access denied"),
+        .serverMessage(statusCode: 404, message: "Path not found."),
+    ])
+    func aPinnedFolderDeletedOnTheServerKeepsItsPinAndItsFiles(rootError: FilesClientError) async {
         let (offline, slots) = storeWithSlots(["A/a.txt", "A/Sub/b.txt"])
-        let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) {
-            throw FilesClientError.timedOut
-        }
+        let run = goneRun(offline: offline, rootError: rootError) { [self] in listing([folder("B")]) }
 
-        await resync(store, hold: hold)
-        await receiveWaiting(store)
+        await run.store.send(.resyncTapped).finish()
 
+        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
         #expect(slots.value == ["A/a.txt", "A/Sub/b.txt"])
-        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
+        #expect(run.phase == .completed, "A folder the server lost is not an error to report")
     }
 
     @Test
-    func aFolderTheParentListingOmitsIsUnpinnedAndTheUserIsToldWhich() async {
-        let offline = pinnedStore(["A", "B"])
-        let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) { [self] in
-            listing([folder("B")])
+    func aFolderStaysPinnedHoweverManySyncsFindItGone() async {
+        let (offline, slots) = storeWithSlots(["A/a.txt"])
+        let run = goneRun(offline: offline, rootError: .server(statusCode: 404)) { [self] in listing([]) }
+
+        for _ in 0 ..< 4 {
+            await run.store.send(.resyncTapped).finish()
         }
-
-        await resync(store, hold: hold)
-        await store.receive(\.pinsRemoved) {
-            $0.$progress.withLock { $0.phase = .failed(L10n.Offline.pinRemoved("A")) }
-        }
-
-        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "B", isDirectory: true)])
-        #expect(!store.state.progress.isActive)
-    }
-
-    @Test
-    func aFolderTheParentListingStillShowsKeepsItsPinAndItsStrikes() async {
-        let offline = pinnedStore(["A"])
-        let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) { [self] in
-            listing([folder("A")])
-        }
-
-        await resync(store, hold: hold)
-        await receiveWaiting(store)
-        await resync(store, hold: hold)
-        await receiveWaiting(store)
-        await resync(store, hold: hold)
-        await receiveWaiting(store)
 
         #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
-        #expect(
-            offline.recordMissingRoot("A") == 1,
-            "a folder the parent lists is not missing, so earlier strikes reset"
-        )
+        #expect(slots.value == ["A/a.txt"])
     }
 
     @Test
-    func twoNotFoundSyncsInARowUnpinAFolderWhoseParentCannotBeListed() async {
+    func aFolderThatComesBackIsSyncedAgain() async {
+        let isGone = LockIsolated(true)
+        let downloaded = LockIsolated<[String]>([])
         let offline = pinnedStore(["A"])
-        let hold = BrowseHold()
-        let store = notFoundStore(offline: offline, hold: hold, rootError: .server(statusCode: 404)) {
-            throw FilesClientError.offline
-        }
-
-        await resync(store, hold: hold)
-        await receiveWaiting(store)
-        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
-
-        await resync(store, hold: hold)
-        await store.receive(\.pinsRemoved) {
-            $0.$progress.withLock { $0.phase = .failed(L10n.Offline.pinRemoved("A")) }
-        }
-
-        #expect(offline.pinnedRoots().isEmpty)
-    }
-
-    @Test
-    func aSuccessfulListingBetweenTwoNotFoundSyncsResetsTheStrikes() async {
-        let offline = pinnedStore(["A"])
-        let isHealthy = LockIsolated(false)
-        let run = makeRun(offline: offline) { [self] path in
-            if isHealthy.value {
-                return listing([], path: path)
+        let run = makeRun(
+            offline: offline,
+            browse: { [self] path in
+                if path == "A", isGone.value {
+                    throw FilesClientError.server(statusCode: 404)
+                }
+                return listing(path == "A" ? [file(TestFile.aText, path: "A")] : [], path: path)
+            },
+            download: { item in
+                downloaded.withValue { $0.append(item.id) }
+                return URL(fileURLWithPath: "/tmp/\(item.name)")
             }
-            throw FilesClientError.server(statusCode: 404)
-        }
+        )
 
         await run.store.send(.resyncTapped).finish()
-        #expect(run.phase == .waitingForNetwork)
-        isHealthy.setValue(true)
+        #expect(downloaded.value.isEmpty)
+        isGone.setValue(false)
         await run.store.send(.resyncTapped).finish()
-        #expect(run.phase == .completed)
-        isHealthy.setValue(false)
-        await run.store.send(.resyncTapped).finish()
-        #expect(run.phase == .waitingForNetwork)
 
-        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
-    }
-
-    @Test(arguments: ["Access denied", "Path not found.", "path not found", "ACCESS DENIED."])
-    func anAccessOrPathNotFoundMessageNeverCountsAsTheFolderBeingGone(message: String) async {
-        let offline = pinnedStore(["A"])
-        let hold = BrowseHold()
-        let store = notFoundStore(
-            offline: offline,
-            hold: hold,
-            rootError: .serverMessage(statusCode: 404, message: message)
-        ) {
-            throw FilesClientError.offline
-        }
-
-        for _ in 0 ..< 3 {
-            await resync(store, hold: hold)
-            await receiveWaiting(store)
-        }
-
+        #expect(downloaded.value == ["A/a.txt"])
         #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
     }
 
     @Test
-    func aNotFoundWithAnotherMessageStillNeedsTwoSyncs() async {
-        let offline = pinnedStore(["A"])
-        let hold = BrowseHold()
-        let store = notFoundStore(
-            offline: offline,
-            hold: hold,
-            rootError: .serverMessage(statusCode: 404, message: "Share expired")
-        ) {
-            throw FilesClientError.offline
-        }
-
-        await resync(store, hold: hold)
-        await receiveWaiting(store)
-        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
-        await resync(store, hold: hold)
-        await store.receive(\.pinsRemoved) {
-            $0.$progress.withLock { $0.phase = .failed(L10n.Offline.pinRemoved("A")) }
-        }
-
-        #expect(offline.pinnedRoots().isEmpty)
-    }
-
-    @Test
-    func aMissingSubfolderOfAPinnedRootNeverUnpinsAnythingAndLeavesTheWalkIncomplete() async {
+    func aSubfolderDeletedOnTheServerKeepsItsFilesWhileTheRestSyncs() async {
         let (offline, slots) = storeWithSlots(["A/a.txt", "A/Gone/b.txt"])
-        let hold = BrowseHold()
-        let store = makeStore(hold: hold, offline: offline) { [self] path in
+        let run = makeRun(offline: offline) { [self] path in
             guard path == "A" else { throw FilesClientError.server(statusCode: 404) }
             return listing([file(TestFile.aText, path: "A"), folder(Constants.missingFolder, path: "A")], path: path)
         }
 
+        await run.store.send(.resyncTapped).finish()
+
+        #expect(run.phase == .completed)
+        #expect(slots.value == ["A/a.txt", "A/Gone/b.txt"])
+        #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
+    }
+
+    @Test
+    func aFailedListingStillShowsWaitingForTheNetworkAndKeepsEverything() async {
+        let (offline, slots) = storeWithSlots(["A/a.txt"])
+        let hold = BrowseHold()
+        let store = makeStore(hold: hold, offline: offline) { _ in throw FilesClientError.timedOut }
+
         await resync(store, hold: hold)
         await receiveWaiting(store)
 
-        #expect(slots.value == ["A/a.txt", "A/Gone/b.txt"], "a partial walk never prunes")
+        #expect(slots.value == ["A/a.txt"])
         #expect(offline.pinnedRoots() == [OfflinePinnedRoot(path: "A", isDirectory: true)])
     }
 
@@ -317,8 +248,6 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
                 return client
             }
         )
-        #expect(result.goneFolders == ["A/Gone"])
-        #expect(result.ambiguousGoneFolders.isEmpty)
         #expect(result.forbiddenFolders == ["A/Locked"])
         #expect(result.failedFolders == ["A/Down"])
         #expect(result.hasIncompleteWalk)

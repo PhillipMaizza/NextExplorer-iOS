@@ -219,4 +219,32 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
             $0.path.append(folder)
         }
     }
+
+    @Test("A file found by search opens in a preview of its own, its kept copy when there is one")
+    func aFileResultOpensInAPreviewHost() async {
+        let result = SearchResultItem(name: TestFile.aPhoto, path: TestFolder.photos, kind: SearchResultItem.fileKind)
+        let kept = FileItem(
+            name: TestFile.aPhoto,
+            path: TestFolder.photos,
+            dateModified: MockDate.date.addingTimeInterval(-600),
+            size: 2_048,
+            kind: TestKind.photo
+        )
+        let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.date = .constant(MockDate.date)
+            $0.offlineFileStore = .inMemory(copyMetadata: [
+                kept.id: OfflineCopyMetadata(dateModified: kept.dateModified, size: kept.size),
+            ])
+        }
+
+        await store.send(.searchResultTapped(result)) {
+            $0.previewHost = .previewHost(for: kept, serverURL: serverURL, folderTitle: TestFolder.photos)
+        }
+        await store.receive(\.previewHost.rowTapped)
+        await store.send(.previewHost(.presented(.previewDismissed))) {
+            $0.previewHost = nil
+        }
+    }
 }

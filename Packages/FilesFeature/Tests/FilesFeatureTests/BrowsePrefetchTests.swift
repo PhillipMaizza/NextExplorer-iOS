@@ -93,6 +93,7 @@ struct BrowsePrefetchTests {
         } else {
             await store.receive(\.offlineAvailabilityComputed) {
                 $0.offlineItemIDs = availableOffline
+                $0.offlinePinnedItemIDs = availableOffline
             }
         }
         await store.finish()

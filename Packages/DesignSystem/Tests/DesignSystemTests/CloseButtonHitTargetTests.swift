@@ -2,7 +2,7 @@
 import SwiftUI
 import Testing
 
-#if !os(macOS)
+#if os(iOS)
     private final class AppliedBox: @unchecked Sendable {
         var isApplied = false
     }

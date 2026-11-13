@@ -1,16 +1,17 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
 
-/// Size + save-location subtitle for a local download. The `ByteCountFormatter` is shared across
+/// Size subtitle for a local download. The `ByteCountFormatter` is shared across
 /// the list row and grid cell, so its holder is `@MainActor` (a bare module-level static is not
 /// concurrency-safe, rule #10 §17).
 @MainActor
 enum DownloadFormatting {
     static func subtitle(for download: LocalDownload) -> String {
-        "\(FileSizeFormat.string(download.size)) • \(download.location.title)"
+        FileSizeFormat.string(download.size)
     }
 }
 
@@ -18,10 +19,9 @@ enum DownloadFormatting {
 /// toggles selection while selecting, otherwise hands back through `onPreview` so the host drives
 /// the `.zoom` cover; delete / rename / share hang off the trailing swipe and the shared menu.
 struct DownloadListRow: View {
-    let store: StoreOf<DownloadsFeature>
+    let store: StoreOf<OfflineTabFeature>
     let download: LocalDownload
     let namespace: Namespace.ID
-    let openURL: OpenURLAction
     let isFirst: Bool
     let isLast: Bool
     let onPreview: () -> Void
@@ -71,7 +71,7 @@ struct DownloadListRow: View {
             }
         } contextMenu: {
             if !store.isSelecting {
-                DownloadRowContextMenu(store: store, download: download, openURL: openURL)
+                DownloadRowContextMenu(store: store, download: download)
             }
         }
     }
@@ -88,11 +88,11 @@ struct DownloadListRow: View {
 /// One local download as a grid tile: the same behavior as `DownloadListRow` on the shared
 /// `SelectableGridCell` shell.
 struct DownloadGridCell: View {
-    let store: StoreOf<DownloadsFeature>
+    let store: StoreOf<OfflineTabFeature>
     let download: LocalDownload
     let namespace: Namespace.ID
-    let openURL: OpenURLAction
     let onPreview: () -> Void
+    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
 
     var body: some View {
         SelectableGridCell(
@@ -104,11 +104,12 @@ struct DownloadGridCell: View {
                 name: download.fileName,
                 isDirectory: false,
                 kind: (download.fileName as NSString).pathExtension,
+                iconSize: (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).iconSize,
                 matchedSource: PreviewMatchedSource(id: download.id, namespace: namespace)
             )
         } contextMenu: {
             if !store.isSelecting {
-                DownloadRowContextMenu(store: store, download: download, openURL: openURL)
+                DownloadRowContextMenu(store: store, download: download)
             }
         }
     }
@@ -127,7 +128,6 @@ private extension LocalDownload {
         LocalDownload(
             url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"),
             fileName: "report.pdf",
-            location: .documents,
             size: 245_000,
             modifiedDate: Date()
         )
@@ -135,14 +135,13 @@ private extension LocalDownload {
 }
 
 #Preview("List row") {
-    let store = Store(initialState: DownloadsFeature.State()) { DownloadsFeature() }
+    let store = Store(initialState: OfflineTabFeature.State()) { OfflineTabFeature() }
     return DownloadRowPreview { namespace in
         DSGroupedList {
             DownloadListRow(
                 store: store,
                 download: .preview,
                 namespace: namespace,
-                openURL: OpenURLAction { _ in .handled },
                 isFirst: true,
                 isLast: true,
                 onPreview: {}
@@ -153,13 +152,12 @@ private extension LocalDownload {
 }
 
 #Preview("Grid cell") {
-    let store = Store(initialState: DownloadsFeature.State()) { DownloadsFeature() }
+    let store = Store(initialState: OfflineTabFeature.State()) { OfflineTabFeature() }
     return DownloadRowPreview { namespace in
         DownloadGridCell(
             store: store,
             download: .preview,
             namespace: namespace,
-            openURL: OpenURLAction { _ in .handled },
             onPreview: {}
         )
         .frame(width: 120)

@@ -31,9 +31,11 @@ extension View {
         onRename: (() -> Void)? = nil,
         onDownload: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil,
+        offline: PreviewOfflineAction? = nil,
         onClose: @escaping () -> Void
     ) -> some View {
         modifier(PreviewChrome(
+            offline: offline,
             title: title,
             systemShare: systemShare,
             onShareLink: onShareLink,
@@ -46,6 +48,9 @@ extension View {
 }
 
 private struct PreviewChrome: ViewModifier {
+    /// Set by a caller that knows the current file (the gallery); otherwise the environment's.
+    let offline: PreviewOfflineAction?
+    @Environment(\.previewOffline) private var environmentOffline
     let title: String?
     let systemShare: SystemShareSource
     let onShareLink: (() -> Void)?
@@ -53,6 +58,22 @@ private struct PreviewChrome: ViewModifier {
     let onDownload: (() -> Void)?
     let onDelete: (() -> Void)?
     let onClose: () -> Void
+
+    private var offlineAction: PreviewOfflineAction? {
+        offline ?? environmentOffline
+    }
+
+    private var downloadTitle: String {
+        #if os(macOS)
+            L10n.PreviewToolbar.download
+        #else
+            L10n.PreviewToolbar.saveToDevice
+        #endif
+    }
+
+    private var downloadIcon: Image {
+        IconKit.download
+    }
 
     private var hasSystemShare: Bool {
         if case .unavailable = systemShare {
@@ -93,8 +114,22 @@ private struct PreviewChrome: ViewModifier {
                                 .accessibilityLabelWithTooltip(L10n.PreviewToolbar.rename)
                         }
                         if let onDownload {
-                            Button { onDownload() } label: { IconKit.download.foregroundStyle(Color.primaryDS) }
-                                .accessibilityLabelWithTooltip(L10n.PreviewToolbar.download)
+                            Button { onDownload() } label: { downloadIcon.foregroundStyle(Color.primaryDS) }
+                                .accessibilityLabelWithTooltip(downloadTitle)
+                        }
+                        if let offlineAction {
+                            Button { offlineAction.toggle() } label: {
+                                IconKit.availableOffline
+                                    .foregroundStyle(offlineAction.isOn && offlineAction.isEnabled
+                                        ? Color.negative
+                                        : Color.primaryDS)
+                            }
+                            .disabled(!offlineAction.isEnabled)
+                            .accessibilityLabelWithTooltip(
+                                offlineAction.isOn
+                                    ? L10n.Browse.actionRemoveFromOffline
+                                    : L10n.Browse.actionAvailableOffline
+                            )
                         }
                         if onDelete != nil {
                             Spacer()
@@ -128,6 +163,14 @@ private struct PreviewChrome: ViewModifier {
                 }
                 if let onDownload {
                     macButton(L10n.PreviewToolbar.download, icon: IconKit.download, action: onDownload)
+                }
+                if let offlineAction {
+                    macButton(
+                        offlineAction.isOn ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
+                        icon: IconKit.availableOffline,
+                        action: offlineAction.toggle
+                    )
+                    .disabled(!offlineAction.isEnabled)
                 }
                 if let onDelete {
                     macButton(L10n.PreviewToolbar.delete, icon: IconKit.delete, role: .destructive, action: onDelete)

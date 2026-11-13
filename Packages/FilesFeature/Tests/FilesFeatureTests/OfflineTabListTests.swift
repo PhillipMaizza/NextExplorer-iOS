@@ -8,7 +8,7 @@ import TestUtils
 /// Search, sort and multi select of the Downloads tab. Pure state, so no effect ever runs.
 @Suite(.isolatedDependencies)
 @MainActor
-struct DownloadsListTests {
+struct OfflineTabListTests {
     private enum Constants {
         static let zebra = "zebra.pdf"
         static let apple = "Apple.pdf"
@@ -20,7 +20,6 @@ struct DownloadsListTests {
         LocalDownload(
             url: URL(fileURLWithPath: "\(Constants.folderPath)\(name)"),
             fileName: name,
-            location: .documents,
             size: size,
             modifiedDate: MockDate.date.addingTimeInterval(modifiedOffset)
         )
@@ -39,15 +38,15 @@ struct DownloadsListTests {
         download(Constants.mango, size: 500, modifiedOffset: 100)
     }
 
-    private func state(searchQuery: String = "") -> DownloadsFeature.State {
-        var state = DownloadsFeature.State()
+    private func state(searchQuery: String = "") -> OfflineTabFeature.State {
+        var state = OfflineTabFeature.State()
         state.downloads = [zebra, apple, mango]
         state.searchQuery = searchQuery
         return state
     }
 
     struct SortCase: Sendable {
-        let option: DownloadsFeature.SortOption
+        let option: OfflineTabFeature.SortOption
         let direction: BrowseFeature.SortDirection
         let expected: [String]
     }
@@ -111,7 +110,7 @@ struct DownloadsListTests {
 
     @Test
     func theReducerStoresTheSearchQuerySortOptionAndDirection() async {
-        let store = TestStore(initialState: DownloadsFeature.State()) { DownloadsFeature() }
+        let store = TestStore(initialState: OfflineTabFeature.State()) { OfflineTabFeature() }
 
         await store.send(.searchQueryChanged("pdf")) { $0.searchQuery = "pdf" }
         await store.send(.sortOptionChanged(.size)) { $0.sortOption = .size }
@@ -124,7 +123,7 @@ struct DownloadsListTests {
     func togglingSelectModeAlwaysStartsFromAnEmptySelection() async {
         var initial = state()
         initial.selectedDownloadIDs = [zebra.id]
-        let store = TestStore(initialState: initial) { DownloadsFeature() }
+        let store = TestStore(initialState: initial) { OfflineTabFeature() }
 
         await store.send(.selectModeToggled) {
             $0.isSelecting = true
@@ -139,7 +138,7 @@ struct DownloadsListTests {
 
     @Test
     func tappingAnItemTwiceSelectsThenDeselectsIt() async {
-        let store = TestStore(initialState: state()) { DownloadsFeature() }
+        let store = TestStore(initialState: state()) { OfflineTabFeature() }
 
         await store.send(.itemSelectionToggled(zebra.id)) { $0.selectedDownloadIDs = [zebra.id] }
         await store.send(.itemSelectionToggled(apple.id)) { $0.selectedDownloadIDs = [zebra.id, apple.id] }
@@ -148,7 +147,7 @@ struct DownloadsListTests {
 
     @Test
     func selectAllOnlySelectsWhatTheSearchStillShows() async {
-        let store = TestStore(initialState: state(searchQuery: "pdf")) { DownloadsFeature() }
+        let store = TestStore(initialState: state(searchQuery: "pdf")) { OfflineTabFeature() }
 
         await store.send(.selectAllTapped) { $0.selectedDownloadIDs = [zebra.id, apple.id] }
         await store.send(.deselectAllTapped) { $0.selectedDownloadIDs = [] }

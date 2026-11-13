@@ -10,7 +10,7 @@
             let app = launchApp()
             openDocuments(in: app)
             app.typeKey(Constants.findKey, modifierFlags: .command)
-            app.typeText(Constants.fileSearchTerm)
+            app.typeText(Fixture.fileSearchTerm)
 
             let hit = app.outlines.cells.staticTexts.showing(Fixture.file)
             XCTAssertTrue(hit.waitToAppear(), "The file should be among the search results")

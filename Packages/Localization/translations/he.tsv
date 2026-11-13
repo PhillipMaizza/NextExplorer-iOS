@@ -59,8 +59,6 @@ directLinkMode.download	הורדה
 thumbnailSize.small	קטן
 thumbnailSize.medium	בינוני
 thumbnailSize.large	גדול
-downloadLocation.documents	מסמכים
-downloadLocation.cache	מטמון
 dateFormat.automatic	אוטומטי
 browse.navigationTitle	עיון
 browse.scopeThisFolder	התיקייה הזו
@@ -151,7 +149,6 @@ favorites.removeMessage	פעולה זו רק מסירה אותם מהמועדפ�
 favorites.removeFailedOne	לא ניתן היה להסיר את המועדף הזה.
 favorites.removeFailedMany	לא ניתן היה להסיר את המועדפים האלה.
 favorites.removePartial	הוסרו %1$lld מתוך %2$lld.
-downloads.navigationTitle	הורדות
 downloads.actionOpenInFiles	פתיחה ב"קבצים"
 downloads.emptyList	קבצים שתורידו מ"עיון" יופיעו כאן.
 downloads.deleteConfirmTitle	למחוק?
@@ -480,7 +477,6 @@ settings.sectionServerStorage	אחסון השרת
 settings.serverStorageUsed	%1$@ מתוך %2$@
 settings.sectionLicenses	רישיונות
 settings.sectionLegal	משפטי
-settings.sectionUsers	משתמשים
 settings.sectionAdmin	ניהול
 settings.sectionInfo	מידע
 settings.toggleShowHiddenFiles	הצגת קבצים מוסתרים
@@ -748,7 +744,6 @@ twoFactor.passwordField	סיסמה
 twoFactor.passwordConfirmButton	אישור
 twoFactor.manageButton	ניהול…
 apiTokens.navigationTitle	אסימוני API
-apiTokens.sectionHeader	מפתחים
 apiTokens.intro	אסימוני API מאפשרים לסקריפטים ולכלים אחרים להשתמש בחשבון שלכם בלי הסיסמה. אסימון עושה רק את מה שהגישה שלו מתירה, ואפשר לבטל אותו בכל עת.
 apiTokens.emptyTitle	אין אסימוני API
 apiTokens.emptyMessage	צרו אסימון כדי לאפשר לסקריפט להשתמש בחשבון שלכם.
@@ -875,7 +870,6 @@ offline.manageRow	ניהול קבצים לא מקוונים
 offline.manageTitle	קבצים לא מקוונים
 offline.manageEmpty	לא הורד דבר לשימוש לא מקוון.
 offline.preferOfflineToggle	הפעלת עותקים שהורדו
-offline.pinRemoved	%@ כבר אינו קיים בשרת והוסר מהקבצים הלא מקוונים
 offline.preferOfflineSubtitle	שימוש בסרטון שהורד במקום סטרימינג כשהוא זמין.
 offline.tunnelSpeedNote	גישה לשרת דרך מנהרה מרוחקת עלולה להאט הורדות. לקבצים גדולים, התחברו לאותה רשת והשתמשו בכתובת המקומית של השרת.
 menu.about	אודות NextExplorer
@@ -918,7 +912,6 @@ appearance.dark	כהה
 browse.myFiles	הקבצים שלי
 browse.myFilesSubtitle	גלוי רק לכם
 downloadQueue.navigationTitle	תור הורדות
-downloadQueue.openDownloads	הצגת הורדות
 downloadQueue.emptyList	אין הורדות בתהליך.
 downloadQueue.statusSaved	נשמר
 downloadQueue.cancelAll	ביטול כל ההורדות
@@ -1113,3 +1106,23 @@ serverSettings.featureOffHowTo	כדי להפעיל אותה, הגדירו את %
 trashSettings.environmentNote	ערכי ברירת המחדל מגיעים מ-TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT ו-TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	ערכי ברירת המחדל מגיעים מ-VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ו-VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	רענון
+browse.actionAvailableOffline	זמין במצב לא מקוון
+browse.actionSaveToDevice	שמירה במכשיר
+previewToolbar.saveToDevice	שמירה במכשיר
+downloadQueue.savedToPhotos	נשמר בתמונות
+downloadQueue.savedToDevice	נשמר במכשיר שלך
+downloadQueue.photosAccessDenied	אפשרו גישה לתמונות בהגדרות כדי לשמור תמונות וסרטונים.
+downloadQueue.photosSaveFailed	לא ניתן היה להוסיף לתמונות.
+tab.offline	לא מקוון
+offline.sectionSavedEarlier	נשמרו קודם
+offline.newFilesBadge	קבצים חדשים זמינים במצב לא מקוון
+search.onDevice	במכשיר
+search.remote	מרוחק
+offline.tabEmpty	עדיין אין דבר זמין ללא חיבור. בחרו ״זמין במצב לא מקוון״ בקובץ או בתיקייה.
+offline.removeItemTitle	להסיר את ״%@״ מהזמינים ללא חיבור?
+offline.removeItemsTitle	להסיר %lld פריטים מהזמינים ללא חיבור?
+offline.removeItemMessage	פעולה זו מוחקת את הקבצים ששמורים לשימוש לא מקוון במכשיר זה. הקבצים שלכם בשרת לא מושפעים.
+browse.actionRemoveFromOffline	הסרה מהזמינים ללא חיבור
+offline.rowUpdating	מעדכן…
+offline.rowWaitingForNetwork	ממתין לרשת
+offline.rowUpdateFailed	העדכון נכשל

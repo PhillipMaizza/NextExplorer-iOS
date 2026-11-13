@@ -55,7 +55,7 @@ struct TabBar {
     }
 
     var downloads: XCUIElement {
-        tab(AccessibilityIdentifiers.Tab.downloads, title: L10n.Tab.downloads)
+        tab(AccessibilityIdentifiers.Tab.downloads, title: L10n.Tab.offline)
     }
 
     var settings: XCUIElement {
@@ -289,6 +289,32 @@ struct BrowseScreen {
         app.labeledButton(L10n.Browse.actionDelete)
     }
 
+    var availableOfflineAction: XCUIElement {
+        app.labeledButton(L10n.Browse.actionAvailableOffline)
+    }
+
+    var saveToDeviceAction: XCUIElement {
+        app.labeledButton(L10n.Browse.actionSaveToDevice)
+    }
+
+    var downloadAction: XCUIElement {
+        app.labeledButton(L10n.Browse.actionDownload)
+    }
+
+    var removeFromOfflineAction: XCUIElement {
+        app.labeledButton(L10n.Browse.actionRemoveFromOffline)
+    }
+
+    /// The confirmation every Available Offline removal asks, and its destructive button.
+    /// The selection bar's Available Offline button.
+    var offlineSelectionButton: XCUIElement {
+        app.buttons[L10n.Browse.actionAvailableOffline].firstMatch
+    }
+
+    var removeOfflineConfirmButton: XCUIElement {
+        app.labeledButton(L10n.Offline.removeConfirm)
+    }
+
     /// Rename sheet.
     var renameNameField: XCUIElement {
         app.textFields[L10n.Browse.renameNamePlaceholder]
@@ -329,6 +355,11 @@ struct BrowseScreen {
 
     var compressAction: XCUIElement {
         app.labeledButton(L10n.Browse.actionCompress)
+    }
+
+    /// A search section heading ("On device", "Remote"); the list draws it in capitals.
+    func sectionHeader(_ title: String) -> XCUIElement {
+        app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", title)).firstMatch
     }
 
     /// The "..." menu's list/grid view toggle (reads "Grid View" while in list mode).
@@ -398,10 +429,37 @@ struct SharedScreen {
     }
 }
 
-struct DownloadsScreen {
+/// The Offline tab: pinned files and folders, plus files an earlier version saved into the app.
+struct OfflineTabScreen {
     let app: XCUIApplication
     var emptyMessage: XCUIElement {
-        app.staticTexts[L10n.Downloads.emptyList]
+        app.staticTexts[L10n.Offline.tabEmpty]
+    }
+
+    var savedEarlierHeader: XCUIElement {
+        app.staticTexts[L10n.Offline.sectionSavedEarlier.uppercased()].exists
+            ? app.staticTexts[L10n.Offline.sectionSavedEarlier.uppercased()]
+            : app.staticTexts[L10n.Offline.sectionSavedEarlier]
+    }
+
+    func row(_ name: String) -> XCUIElement {
+        app.staticTexts[name].firstMatch
+    }
+
+    var backButton: XCUIElement {
+        app.navigationBars.buttons.firstMatch
+    }
+
+    var deleteAction: XCUIElement {
+        app.labeledButton(L10n.Common.delete)
+    }
+
+    var removeAction: XCUIElement {
+        app.labeledButton(L10n.Common.remove)
+    }
+
+    var removeConfirmButton: XCUIElement {
+        app.labeledButton(L10n.Offline.removeConfirm)
     }
 }
 

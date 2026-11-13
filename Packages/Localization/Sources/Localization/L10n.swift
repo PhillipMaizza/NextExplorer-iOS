@@ -112,7 +112,6 @@ public enum L10n {
         public static var revokeTitle: String { tr("apiTokens.revokeTitle") }  // "Revoke Token?"
         public static var scopeRead: String { tr("apiTokens.scopeRead") }  // "Read only"
         public static var scopeWrite: String { tr("apiTokens.scopeWrite") }  // "Read and write"
-        public static var sectionHeader: String { tr("apiTokens.sectionHeader") }  // "Developers"
     }
     public enum Appearance {
         public static var dark: String { tr("appearance.dark") }  // "Dark"
@@ -127,6 +126,7 @@ public enum L10n {
     }
     public enum Browse {
         public static var actionAddToFavorites: String { tr("browse.actionAddToFavorites") }  // "Add to Favorites"
+        public static var actionAvailableOffline: String { tr("browse.actionAvailableOffline") }  // "Available Offline"
         public static var actionClearClipboard: String { tr("browse.actionClearClipboard") }  // "Clear clipboard"
         public static var actionCompress: String { tr("browse.actionCompress") }  // "Compress"
         public static var actionCopy: String { tr("browse.actionCopy") }  // "Copy"
@@ -147,7 +147,9 @@ public enum L10n {
         public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
         public static var actionPermissions: String { tr("browse.actionPermissions") }  // "Permissions"
         public static var actionRemoveFromFavorites: String { tr("browse.actionRemoveFromFavorites") }  // "Remove from Favorites"
+        public static var actionRemoveFromOffline: String { tr("browse.actionRemoveFromOffline") }  // "Remove from Offline"
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
+        public static var actionSaveToDevice: String { tr("browse.actionSaveToDevice") }  // "Save to Device"
         public static var actionShare: String { tr("browse.actionShare") }  // "Create share link"
         public static var breadcrumbHint: String { tr("browse.breadcrumbHint") }  // "Opens this folder"
         public static func bulkFavoriteFailed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.bulkFavoriteFailed", a0, a1) }
@@ -341,10 +343,6 @@ public enum L10n {
         public static var inline: String { tr("directLinkMode.inline") }  // "View"
         public static var raw: String { tr("directLinkMode.raw") }  // "Raw"
     }
-    public enum DownloadLocation {
-        public static var cache: String { tr("downloadLocation.cache") }  // "Cache"
-        public static var documents: String { tr("downloadLocation.documents") }  // "Documents"
-    }
     public enum DownloadQueue {
         public static func barFailedMany(_ a0: CVarArg) -> String { tr("downloadQueue.barFailedMany", a0) }
         public static var barFailedOne: String { tr("downloadQueue.barFailedOne") }  // "1 download failed"
@@ -355,9 +353,12 @@ public enum L10n {
         public static var emptyList: String { tr("downloadQueue.emptyList") }  // "No downloads in progress."
         public static var navigationTitle: String { tr("downloadQueue.navigationTitle") }  // "Download Queue"
         public static var notifyDone: String { tr("downloadQueue.notifyDone") }  // "Downloads finished"
-        public static var openDownloads: String { tr("downloadQueue.openDownloads") }  // "Show Downloads"
+        public static var photosAccessDenied: String { tr("downloadQueue.photosAccessDenied") }  // "Allow Photos access in Settings to save pictures and videos."
+        public static var photosSaveFailed: String { tr("downloadQueue.photosSaveFailed") }  // "Couldn't add this to Photos."
         public static func savedMany(_ a0: CVarArg) -> String { tr("downloadQueue.savedMany", a0) }
         public static var savedOne: String { tr("downloadQueue.savedOne") }  // "Saved to Downloads"
+        public static var savedToDevice: String { tr("downloadQueue.savedToDevice") }  // "Saved to your device"
+        public static var savedToPhotos: String { tr("downloadQueue.savedToPhotos") }  // "Saved to Photos"
         public static var statusSaved: String { tr("downloadQueue.statusSaved") }  // "Saved"
         public static func timeLeft(_ a0: CVarArg) -> String { tr("downloadQueue.timeLeft", a0) }
     }
@@ -373,7 +374,6 @@ public enum L10n {
         public static var errorInvalidName: String { tr("downloads.errorInvalidName") }  // "That name isn't allowed."
         public static var errorMissing: String { tr("downloads.errorMissing") }  // "That file could no longer be found."
         public static var errorNameExists: String { tr("downloads.errorNameExists") }  // "A file with that name already exists."
-        public static var navigationTitle: String { tr("downloads.navigationTitle") }  // "Downloads"
     }
     public enum EditShare {
         public static var passwordKeepHint: String { tr("editShare.passwordKeepHint") }  // "Leave blank to keep the current password"
@@ -634,7 +634,7 @@ public enum L10n {
         public static var manageEmpty: String { tr("offline.manageEmpty") }  // "Nothing is downloaded for offline use."
         public static var manageRow: String { tr("offline.manageRow") }  // "Manage Offline Files"
         public static var manageTitle: String { tr("offline.manageTitle") }  // "Offline Files"
-        public static func pinRemoved(_ a0: CVarArg) -> String { tr("offline.pinRemoved", a0) }
+        public static var newFilesBadge: String { tr("offline.newFilesBadge") }  // "New files available offline"
         public static var preferOfflineSubtitle: String { tr("offline.preferOfflineSubtitle") }
         public static var preferOfflineToggle: String { tr("offline.preferOfflineToggle") }  // "Play Downloaded Copies"
         public static var preparing: String { tr("offline.preparing") }  // "Preparing…"
@@ -642,8 +642,15 @@ public enum L10n {
         public static var removeConfirm: String { tr("offline.removeConfirm") }  // "Remove"
         public static var removeConfirmMessage: String { tr("offline.removeConfirmMessage") }
         public static var removeConfirmTitle: String { tr("offline.removeConfirmTitle") }  // "Remove Offline Files?"
+        public static var removeItemMessage: String { tr("offline.removeItemMessage") }
+        public static func removeItemTitle(_ a0: CVarArg) -> String { tr("offline.removeItemTitle", a0) }
+        public static func removeItemsTitle(_ a0: CVarArg) -> String { tr("offline.removeItemsTitle", a0) }
         public static var removeRow: String { tr("offline.removeRow") }  // "Remove Offline Files"
         public static var resyncRow: String { tr("offline.resyncRow") }  // "Update Offline Files"
+        public static var rowUpdateFailed: String { tr("offline.rowUpdateFailed") }  // "Couldn't update"
+        public static var rowUpdating: String { tr("offline.rowUpdating") }  // "Updating…"
+        public static var rowWaitingForNetwork: String { tr("offline.rowWaitingForNetwork") }  // "Waiting for network"
+        public static var sectionSavedEarlier: String { tr("offline.sectionSavedEarlier") }  // "Saved earlier"
         public static var sectionTitle: String { tr("offline.sectionTitle") }  // "Offline"
         public static var selectionDownload: String { tr("offline.selectionDownload") }  // "Download"
         public static var selectionEmpty: String { tr("offline.selectionEmpty") }  // "This folder is empty."
@@ -652,6 +659,7 @@ public enum L10n {
         public static var selectionLoadFailed: String { tr("offline.selectionLoadFailed") }  // "This folder couldn't be loaded."
         public static var selectionTitle: String { tr("offline.selectionTitle") }  // "Download for Offline"
         public static var settingsRow: String { tr("offline.settingsRow") }  // "Download Files for Offline Use"
+        public static var tabEmpty: String { tr("offline.tabEmpty") }
         public static var tunnelSpeedNote: String { tr("offline.tunnelSpeedNote") }
         public static var waitingForNetwork: String { tr("offline.waitingForNetwork") }  // "Will download when you're back online"
     }
@@ -686,7 +694,12 @@ public enum L10n {
         public static var delete: String { tr("previewToolbar.delete") }  // "Delete"
         public static var download: String { tr("previewToolbar.download") }  // "Download"
         public static var rename: String { tr("previewToolbar.rename") }  // "Rename"
+        public static var saveToDevice: String { tr("previewToolbar.saveToDevice") }  // "Save to Device"
         public static var share: String { tr("previewToolbar.share") }  // "Share"
+    }
+    public enum Search {
+        public static var onDevice: String { tr("search.onDevice") }  // "On device"
+        public static var remote: String { tr("search.remote") }  // "Remote"
     }
     public enum SearchIndexSettings {
         public static var addButton: String { tr("searchIndexSettings.addButton") }  // "Add"
@@ -786,7 +799,6 @@ public enum L10n {
         public static var sectionServerStorage: String { tr("settings.sectionServerStorage") }  // "Server Storage"
         public static var sectionStorage: String { tr("settings.sectionStorage") }  // "Storage"
         public static var sectionSupport: String { tr("settings.sectionSupport") }  // "Support"
-        public static var sectionUsers: String { tr("settings.sectionUsers") }  // "Users"
         public static func serverStorageUsed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.serverStorageUsed", a0, a1) }
         public static var signOutAlertTitle: String { tr("settings.signOutAlertTitle") }  // "Sign Out?"
         public static var signOutButton: String { tr("settings.signOutButton") }  // "Sign Out"
@@ -909,6 +921,7 @@ public enum L10n {
         public static var browse: String { tr("tab.browse") }  // "Browse"
         public static var downloads: String { tr("tab.downloads") }  // "Downloads"
         public static var favorites: String { tr("tab.favorites") }  // "Favorites"
+        public static var offline: String { tr("tab.offline") }  // "Offline"
         public static var settings: String { tr("tab.settings") }  // "Settings"
         public static var shared: String { tr("tab.shared") }  // "Shared"
     }

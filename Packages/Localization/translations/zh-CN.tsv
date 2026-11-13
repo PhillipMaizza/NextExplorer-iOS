@@ -55,8 +55,6 @@ directLinkMode.download	下载
 thumbnailSize.small	小
 thumbnailSize.medium	中
 thumbnailSize.large	大
-downloadLocation.documents	文稿
-downloadLocation.cache	缓存
 dateFormat.automatic	自动
 browse.navigationTitle	浏览
 browse.scopeThisFolder	此文件夹
@@ -142,7 +140,6 @@ favorites.removeMessage	这仅会将它们从收藏中移除。
 favorites.removeFailedOne	无法移除该收藏。
 favorites.removeFailedMany	无法移除这些收藏。
 favorites.removePartial	已移除 %2$lld 项中的 %1$lld 项。
-downloads.navigationTitle	下载
 downloads.actionOpenInFiles	在“文件”中打开
 downloads.emptyList	您从“浏览”下载的文件会显示在此处。
 downloads.deleteConfirmTitle	删除？
@@ -286,7 +283,6 @@ settings.sectionServerStorage	服务器存储
 settings.serverStorageUsed	%2$@ 中的 %1$@
 settings.sectionLicenses	许可证
 settings.sectionLegal	法律
-settings.sectionUsers	用户
 settings.sectionAdmin	管理
 settings.sectionInfo	信息
 settings.toggleShowHiddenFiles	显示隐藏文件
@@ -606,7 +602,6 @@ offline.manageRow	管理离线文件
 offline.manageTitle	离线文件
 offline.manageEmpty	没有为离线使用下载任何内容。
 offline.preferOfflineToggle	播放已下载的副本
-offline.pinRemoved	%@ 在服务器上已不存在，已从离线文件中移除
 offline.preferOfflineSubtitle	可用时使用已下载的视频而非流式播放。
 offline.tunnelSpeedNote	通过远程隧道访问服务器可能会降低下载速度。下载大文件时，请连接到同一网络并使用服务器的本地地址。
 menu.about	关于 NextExplorer
@@ -642,7 +637,6 @@ appearance.dark	深色
 browse.myFiles	我的文件
 browse.myFilesSubtitle	仅你可见
 downloadQueue.navigationTitle	下载队列
-downloadQueue.openDownloads	显示下载
 downloadQueue.emptyList	没有进行中的下载。
 downloadQueue.statusSaved	已保存
 downloadQueue.cancelAll	取消所有下载
@@ -1081,7 +1075,6 @@ apiTokens.revokeMessage	所有使用“%@”的内容将立即停止工作。此
 apiTokens.revokeTitle	撤销令牌？
 apiTokens.scopeRead	只读
 apiTokens.scopeWrite	读取和写入
-apiTokens.sectionHeader	开发者
 changePassword.addIntro	此账户使用单点登录，尚未设置密码。添加密码后，您还可以使用电子邮件地址或用户名登录。
 changePassword.addNavigationTitle	添加密码
 changePassword.addSubmitButton	添加密码
@@ -1128,3 +1121,23 @@ twoFactor.recoveryTitle	保存您的恢复码
 twoFactor.shareCodesButton	共享恢复码
 twoFactor.turnOffButton	关闭
 twoFactor.turnOnButton	开启
+browse.actionAvailableOffline	可离线使用
+browse.actionSaveToDevice	存储到设备
+previewToolbar.saveToDevice	存储到设备
+downloadQueue.savedToPhotos	已存储到“照片”
+downloadQueue.savedToDevice	已存储到你的设备
+downloadQueue.photosAccessDenied	请在“设置”中允许访问“照片”，以存储图片和视频。
+downloadQueue.photosSaveFailed	无法添加到“照片”。
+tab.offline	离线
+offline.sectionSavedEarlier	之前存储的
+offline.newFilesBadge	有新文件可离线使用
+search.onDevice	在此设备上
+search.remote	远程
+offline.tabEmpty	目前还没有可离线使用的内容。请在文件或文件夹上选择“可离线使用”。
+offline.removeItemTitle	要将“%@”从“可离线使用”中移除吗？
+offline.removeItemsTitle	要将 %lld 个项目从“可离线使用”中移除吗？
+offline.removeItemMessage	这将删除此设备上为离线使用保存的文件。服务器上的文件不受影响。
+browse.actionRemoveFromOffline	从离线中移除
+offline.rowUpdating	正在更新…
+offline.rowWaitingForNetwork	等待网络
+offline.rowUpdateFailed	无法更新

@@ -59,8 +59,6 @@ directLinkMode.download	Λήψη
 thumbnailSize.small	Μικρό
 thumbnailSize.medium	Μεσαίο
 thumbnailSize.large	Μεγάλο
-downloadLocation.documents	Έγγραφα
-downloadLocation.cache	Προσωρινή μνήμη
 dateFormat.automatic	Αυτόματα
 browse.navigationTitle	Περιήγηση
 browse.scopeThisFolder	Αυτός ο φάκελος
@@ -151,7 +149,6 @@ favorites.removeMessage	Αυτό τα αφαιρεί μόνο από τα Αγα
 favorites.removeFailedOne	Δεν ήταν δυνατή η αφαίρεση αυτού του αγαπημένου.
 favorites.removeFailedMany	Δεν ήταν δυνατή η αφαίρεση αυτών των αγαπημένων.
 favorites.removePartial	Αφαιρέθηκαν %1$lld από %2$lld.
-downloads.navigationTitle	Λήψεις
 downloads.actionOpenInFiles	Άνοιγμα στα Αρχεία
 downloads.emptyList	Τα αρχεία που κατεβάζετε από την Περιήγηση εμφανίζονται εδώ.
 downloads.deleteConfirmTitle	Διαγραφή;
@@ -480,7 +477,6 @@ settings.sectionServerStorage	Αποθηκευτικός χώρος διακομ
 settings.serverStorageUsed	%1$@ από %2$@
 settings.sectionLicenses	Άδειες χρήσης
 settings.sectionLegal	Νομικά
-settings.sectionUsers	Χρήστες
 settings.sectionAdmin	Διαχείριση
 settings.sectionInfo	Πληροφορίες
 settings.toggleShowHiddenFiles	Εμφάνιση κρυφών αρχείων
@@ -748,7 +744,6 @@ twoFactor.passwordField	Κωδικός πρόσβασης
 twoFactor.passwordConfirmButton	Επιβεβαίωση
 twoFactor.manageButton	Διαχείριση…
 apiTokens.navigationTitle	Διακριτικά API
-apiTokens.sectionHeader	Προγραμματιστές
 apiTokens.intro	Τα διακριτικά API επιτρέπουν σε σενάρια και άλλα εργαλεία να χρησιμοποιούν τον λογαριασμό σας χωρίς τον κωδικό πρόσβασής σας. Ένα διακριτικό κάνει μόνο ό,τι επιτρέπει η πρόσβασή του και μπορείτε να το ανακαλέσετε οποιαδήποτε στιγμή.
 apiTokens.emptyTitle	Κανένα διακριτικό API
 apiTokens.emptyMessage	Δημιουργήστε ένα για να επιτρέψετε σε ένα σενάριο να χρησιμοποιεί τον λογαριασμό σας.
@@ -875,7 +870,6 @@ offline.manageRow	Διαχείριση αρχείων εκτός σύνδεση�
 offline.manageTitle	Αρχεία εκτός σύνδεσης
 offline.manageEmpty	Δεν έχει ληφθεί τίποτα για χρήση εκτός σύνδεσης.
 offline.preferOfflineToggle	Αναπαραγωγή ληφθέντων αντιγράφων
-offline.pinRemoved	Το %@ δεν υπάρχει πλέον στον διακομιστή και αφαιρέθηκε από τα αρχεία εκτός σύνδεσης
 offline.preferOfflineSubtitle	Χρήση ληφθέντος βίντεο αντί ροής όταν είναι διαθέσιμο.
 offline.tunnelSpeedNote	Η πρόσβαση στον διακομιστή μέσω απομακρυσμένης σήραγγας μπορεί να επιβραδύνει τις λήψεις. Για μεγάλα αρχεία, συνδεθείτε στο ίδιο δίκτυο και χρησιμοποιήστε την τοπική διεύθυνση του διακομιστή.
 menu.about	Σχετικά με το NextExplorer
@@ -918,7 +912,6 @@ appearance.dark	Σκοτεινή
 browse.myFiles	Τα αρχεία μου
 browse.myFilesSubtitle	Ορατό μόνο σε εσάς
 downloadQueue.navigationTitle	Ουρά λήψεων
-downloadQueue.openDownloads	Εμφάνιση λήψεων
 downloadQueue.emptyList	Δεν υπάρχουν λήψεις σε εξέλιξη.
 downloadQueue.statusSaved	Αποθηκεύτηκε
 downloadQueue.cancelAll	Ακύρωση όλων των λήψεων
@@ -1107,3 +1100,23 @@ serverSettings.featureOffHowTo	Για να την ενεργοποιήσετε, 
 trashSettings.environmentNote	Οι προεπιλογές προέρχονται από τα TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT και TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Οι προεπιλογές προέρχονται από τα VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE και VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Ανανέωση
+browse.actionAvailableOffline	Διαθέσιμο εκτός σύνδεσης
+browse.actionSaveToDevice	Αποθήκευση στη συσκευή
+previewToolbar.saveToDevice	Αποθήκευση στη συσκευή
+downloadQueue.savedToPhotos	Αποθηκεύτηκε στις Φωτογραφίες
+downloadQueue.savedToDevice	Αποθηκεύτηκε στη συσκευή σας
+downloadQueue.photosAccessDenied	Επιτρέψτε την πρόσβαση στις Φωτογραφίες από τις Ρυθμίσεις για να αποθηκεύετε εικόνες και βίντεο.
+downloadQueue.photosSaveFailed	Δεν ήταν δυνατή η προσθήκη στις Φωτογραφίες.
+tab.offline	Εκτός σύνδεσης
+offline.sectionSavedEarlier	Αποθηκεύτηκαν παλαιότερα
+offline.newFilesBadge	Νέα αρχεία διαθέσιμα εκτός σύνδεσης
+search.onDevice	Στη συσκευή
+search.remote	Απομακρυσμένα
+offline.tabEmpty	Τίποτα δεν είναι διαθέσιμο εκτός σύνδεσης ακόμη. Επιλέξτε «Διαθέσιμο εκτός σύνδεσης» σε ένα αρχείο ή φάκελο.
+offline.removeItemTitle	Κατάργηση του «%@» από τα διαθέσιμα εκτός σύνδεσης;
+offline.removeItemsTitle	Κατάργηση %lld στοιχείων από τα διαθέσιμα εκτός σύνδεσης;
+offline.removeItemMessage	Αυτό διαγράφει τα αρχεία που έχουν αποθηκευτεί για χρήση εκτός σύνδεσης σε αυτήν τη συσκευή. Τα αρχεία σας στον διακομιστή δεν επηρεάζονται.
+browse.actionRemoveFromOffline	Κατάργηση από εκτός σύνδεσης
+offline.rowUpdating	Ενημέρωση…
+offline.rowWaitingForNetwork	Αναμονή για δίκτυο
+offline.rowUpdateFailed	Η ενημέρωση απέτυχε

@@ -13,15 +13,20 @@ private enum Constants {
 struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
     @Environment(\.isSplitViewDetail) private var isSplitViewDetail
-    @AppStorage(AppStorageKeys.favoritesViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
+    /// One list or grid choice for Browse, Favorites and Offline, so switching it in one is switching it everywhere.
+    @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
+    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
+
+    private var thumbnailSize: ThumbnailSize {
+        ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium
+    }
+
     /// A finished offline download can change which favorites are available offline, so refresh
     /// the badges when it completes (mirrors `BrowseContentView`).
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
-    /// The file a search result preview asked to share.
-    @State private var previewShareTarget: FileItem?
 
     private var viewMode: FileListViewMode {
         #if os(macOS)
@@ -103,8 +108,6 @@ struct FavoritesView: View {
         store.path.first?.title ?? ""
     }
 
-    @AppStorage(AppStorageKeys.browseViewMode) private var browseViewModeRaw = FileListViewMode.list.rawValue
-
     private var isTopScreenSelecting: Bool {
         store.path.last?.isSelecting ?? false
     }
@@ -134,7 +137,7 @@ struct FavoritesView: View {
     @ViewBuilder
     private var breadcrumbBar: some View {
         if !currentDirectoryPath.isEmpty, !isTopScreenSelecting,
-           BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: browseViewModeRaw)
+           BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: viewModeRaw)
         {
             BrowseBreadcrumbBar(
                 directoryPath: currentDirectoryPath,
@@ -235,22 +238,11 @@ struct FavoritesView: View {
         .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
             FavoriteEditSheet(store: editStore, onClose: { store.send(.editSheet(.dismiss)) })
         }
-        // A tapped file result opens directly in this cover (no folder navigation); the host
-        // `BrowseFeature` drives the same preview router Browse uses.
-        .fullScreenCover(item: $store.scope(state: \.previewHost, action: \.previewHost)) { hostStore in
-            if let previewItem = hostStore.previewItem {
-                BrowsePreviewRouter(
-                    store: hostStore,
-                    item: previewItem,
-                    onShareTarget: { previewShareTarget = $0 }
-                )
-                .modifier(FavoritesPreviewHostActions(
-                    host: hostStore,
-                    shareTarget: $previewShareTarget,
-                    onViewShares: { store.send(.viewSharesFromPreviewTapped) }
-                ))
-            }
-        }
+        // A tapped file result opens directly in this cover (no folder navigation).
+        .modifier(PreviewHostCover(
+            host: $store.scope(state: \.previewHost, action: \.previewHost),
+            onViewShares: { store.send(.viewSharesFromPreviewTapped) }
+        ))
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
         .toolbar {
@@ -264,6 +256,17 @@ struct FavoritesView: View {
                     // Filled star, not trash: this only ever unfavorites the selection:
                     // the underlying folders/files aren't touched, so "delete" iconography
                     // would overstate what the action does.
+                    let action = store.selectedOfflineAction
+                    SelectionToolbarButton(
+                        icon: action?.icon ?? IconKit.availableOffline,
+                        tint: action == .remove ? .negative : nil,
+                        accessibilityLabel: action?.title ?? L10n.Browse.actionAvailableOffline,
+                        isDisabled: action == nil
+                    ) {
+                        store.send(.bulkOfflineTapped)
+                    }
+                }
+                ToolbarItem(placement: .selectionBar) {
                     SelectionToolbarButton(
                         icon: IconKit.starFill,
                         tint: .accent,
@@ -289,6 +292,11 @@ struct FavoritesView: View {
             )
         }
         .hapticFeedback(.warning, trigger: store.bulkRemoveConfirmationIsPresented)
+        .offlineRemovalAlert(
+            store.offlineRemoval,
+            onConfirm: { store.send(.offlineRemovalConfirmed) },
+            onCancel: { store.send(.offlineRemovalCancelled) }
+        )
         // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
@@ -335,7 +343,7 @@ struct FavoritesView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
+            LazyVGrid(columns: FileGridMetrics.columns(for: thumbnailSize), spacing: FileGridMetrics.spacing) {
                 if listPhase == .loading {
                     SkeletonGridCells(entries: FavoritesSkeleton.entries)
                 } else {

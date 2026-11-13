@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Identifies the exact source view a full-screen preview's `.zoom` transition should grow
 /// from: the file's thumbnail/icon inside its row or grid cell, not the whole-width row.
-/// Threaded from `BrowseContentView` / `DownloadsView` into `FileRowView` / `GridCellView`.
+/// Threaded from `BrowseContentView` / `OfflineTabView` into `FileRowView` / `GridCellView`.
 struct PreviewMatchedSource {
     let id: AnyHashable
     let namespace: Namespace.ID
@@ -62,7 +62,7 @@ extension View {
 }
 
 /// Wraps a full-screen file preview presented in a `.fullScreenCover` so its native `.zoom`
-/// open/dismiss morph (see `BrowseContentView` / `DownloadsView`) reads against the app
+/// open/dismiss morph (see `BrowseContentView` / `OfflineTabView`) reads against the app
 /// background gradient rather than the cover's default black: the content is pinned full
 /// bleed over `backgroundGradient()`, and the whole stack, gradient included, is the
 /// transition subject, so the gradient fills every gap the morphing card leaves.

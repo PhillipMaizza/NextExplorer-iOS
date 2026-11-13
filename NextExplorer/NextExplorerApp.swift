@@ -69,16 +69,17 @@ struct NextExplorerApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        #if DEBUG
+            // Swap in the fully mocked, backend free dependency graph when launched by XCUITest.
+            // A no op in every normal launch. Must run first: the launch migrations start a task that
+            // reads dependencies, and one read before this freezes the live value for the whole run.
+            AppFeature.prepareUITestDependencies()
+        #endif
         LaunchMigrations.start()
         #if os(macOS)
             // No window restores (each scene opts out), and leftover saved state from a crash,
             // Force Quit or test run made AppKit restore nothing, so no window opened at all.
             UserDefaults.standard.register(defaults: ["ApplePersistenceIgnoreState": true])
-        #endif
-        #if DEBUG
-            // Swap in the fully mocked, backend free dependency graph when launched by XCUITest.
-            // A no op in every normal launch. Runs before the root store is first built in `body`.
-            AppFeature.prepareUITestDependencies()
         #endif
         // Point localization at the saved language before the first view builds, so the splash and
         // login are already in the chosen language rather than flashing the system one first.

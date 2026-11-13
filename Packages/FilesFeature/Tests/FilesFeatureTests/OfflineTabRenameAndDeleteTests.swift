@@ -9,7 +9,7 @@ import TestUtils
 /// Renaming and bulk deleting local downloads, plus how a refresh failure is shown.
 @Suite(.isolatedDependencies)
 @MainActor
-struct DownloadsRenameAndDeleteTests {
+struct OfflineTabRenameAndDeleteTests {
     private enum Constants {
         static let oldName = "old.pdf"
         static let newName = "new.pdf"
@@ -21,14 +21,13 @@ struct DownloadsRenameAndDeleteTests {
         LocalDownload(
             url: URL(fileURLWithPath: "\(Constants.folderPath)\(name)"),
             fileName: name,
-            location: .documents,
             size: 10,
             modifiedDate: MockDate.date
         )
     }
 
-    private func state(downloads: [LocalDownload], renameItem: LocalDownload? = nil) -> DownloadsFeature.State {
-        var state = DownloadsFeature.State()
+    private func state(downloads: [LocalDownload], renameItem: LocalDownload? = nil) -> OfflineTabFeature.State {
+        var state = OfflineTabFeature.State()
         state.downloads = IdentifiedArray(uniqueElements: downloads)
         state.renameItem = renameItem
         return state
@@ -39,7 +38,7 @@ struct DownloadsRenameAndDeleteTests {
     @Test
     func renameTappedOpensTheRenamePromptAndCancelClosesIt() async {
         let item = download(Constants.oldName)
-        let store = TestStore(initialState: state(downloads: [item])) { DownloadsFeature() }
+        let store = TestStore(initialState: state(downloads: [item])) { OfflineTabFeature() }
 
         await store.send(.renameTapped(item)) { $0.renameItem = item }
         await store.send(.renameCancelled) { $0.renameItem = nil }
@@ -54,7 +53,7 @@ struct DownloadsRenameAndDeleteTests {
         var initial = state(downloads: [item], renameItem: item)
         initial.$downloadScope.withLock { $0 = Constants.scope }
         let store = TestStore(initialState: initial) {
-            DownloadsFeature()
+            OfflineTabFeature()
         } withDependencies: {
             $0.localDownloadStore.rename = { url, name in
                 renames.withValue { $0.append("\(url.lastPathComponent)>\(name)") }
@@ -79,14 +78,14 @@ struct DownloadsRenameAndDeleteTests {
     @Test(arguments: ["", "   \n", Constants.oldName, "  \(Constants.oldName) "])
     func aBlankOrUnchangedNameJustClosesThePromptWithoutTouchingTheDisk(_ name: String) async {
         let item = download(Constants.oldName)
-        let store = TestStore(initialState: state(downloads: [item], renameItem: item)) { DownloadsFeature() }
+        let store = TestStore(initialState: state(downloads: [item], renameItem: item)) { OfflineTabFeature() }
 
         await store.send(.renameConfirmed(name)) { $0.renameItem = nil }
     }
 
     @Test
     func confirmingWithNoRenameTargetDoesNothing() async {
-        let store = TestStore(initialState: state(downloads: [download(Constants.oldName)])) { DownloadsFeature() }
+        let store = TestStore(initialState: state(downloads: [download(Constants.oldName)])) { OfflineTabFeature() }
 
         await store.send(.renameConfirmed(Constants.newName))
     }
@@ -129,7 +128,7 @@ struct DownloadsRenameAndDeleteTests {
         let item = download(Constants.oldName)
         let error = testCase.error
         let store = TestStore(initialState: state(downloads: [item], renameItem: item)) {
-            DownloadsFeature()
+            OfflineTabFeature()
         } withDependencies: {
             $0.localDownloadStore.rename = { _, _ in throw error }
         }
@@ -147,7 +146,7 @@ struct DownloadsRenameAndDeleteTests {
 
     @Test
     func bulkDeleteNeedsASelectionBeforeItAsksForConfirmation() async {
-        let store = TestStore(initialState: state(downloads: [download(Constants.oldName)])) { DownloadsFeature() }
+        let store = TestStore(initialState: state(downloads: [download(Constants.oldName)])) { OfflineTabFeature() }
 
         await store.send(.bulkDeleteTapped)
     }
@@ -157,7 +156,7 @@ struct DownloadsRenameAndDeleteTests {
         let item = download(Constants.oldName)
         var initial = state(downloads: [item])
         initial.selectedDownloadIDs = [item.id]
-        let store = TestStore(initialState: initial) { DownloadsFeature() }
+        let store = TestStore(initialState: initial) { OfflineTabFeature() }
 
         await store.send(.bulkDeleteTapped) { $0.bulkDeleteConfirmationIsPresented = true }
         await store.send(.bulkDeleteCancelled) { $0.bulkDeleteConfirmationIsPresented = false }
@@ -176,7 +175,7 @@ struct DownloadsRenameAndDeleteTests {
         initial.bulkDeleteConfirmationIsPresented = true
         let deleted = LockIsolated<[URL]>([])
         let store = TestStore(initialState: initial) {
-            DownloadsFeature()
+            OfflineTabFeature()
         } withDependencies: {
             $0.localDownloadStore.delete = { url in
                 deleted.withValue { $0.append(url) }
@@ -200,7 +199,7 @@ struct DownloadsRenameAndDeleteTests {
     func confirmingBulkDeleteWithNothingSelectedOnlyDismissesTheDialog() async {
         var initial = state(downloads: [download(Constants.oldName)])
         initial.bulkDeleteConfirmationIsPresented = true
-        let store = TestStore(initialState: initial) { DownloadsFeature() }
+        let store = TestStore(initialState: initial) { OfflineTabFeature() }
 
         await store.send(.bulkDeleteConfirmed) { $0.bulkDeleteConfirmationIsPresented = false }
     }
@@ -209,7 +208,7 @@ struct DownloadsRenameAndDeleteTests {
 
     @Test
     func aFailedRefreshOfAnEmptyListIsAFullScreenError() async {
-        let store = TestStore(initialState: state(downloads: [])) { DownloadsFeature() }
+        let store = TestStore(initialState: state(downloads: [])) { OfflineTabFeature() }
 
         await store
             .send(.downloadsResponse(.failure(.offline))) { $0.phase = .failed(FilesClientError.offline.userMessage) }
@@ -218,7 +217,7 @@ struct DownloadsRenameAndDeleteTests {
     @Test
     func aFailedRefreshOverAPopulatedListKeepsTheListAndToasts() async {
         let item = download(Constants.oldName)
-        let store = TestStore(initialState: state(downloads: [item])) { DownloadsFeature() }
+        let store = TestStore(initialState: state(downloads: [item])) { OfflineTabFeature() }
 
         await store.send(.downloadsResponse(.failure(.offline))) {
             $0.phase = .loaded

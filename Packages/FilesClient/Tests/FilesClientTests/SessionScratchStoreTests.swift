@@ -30,8 +30,14 @@ struct SessionScratchStoreTests {
         try Data(Constants.scratchContent.utf8).write(to: html.appendingPathComponent("index.html"))
         let envelope = root.appendingPathComponent("\(SessionScratchLocation.uploadEnvelopePrefix)x.multipart")
         try Data(Constants.scratchContent.utf8).write(to: envelope)
+        let staged = root.appendingPathComponent(SessionScratchLocation.deviceSaveStaging)
+            .appendingPathComponent(TestID.name())
+        try fileManager.createDirectory(at: staged, withIntermediateDirectories: true)
+        try Data(Constants.scratchContent.utf8).write(to: staged.appendingPathComponent(TestFile.aText))
 
         SessionScratchStore.live(temporaryDirectory: root).purge(.everything)
+
+        #expect(!fileManager.fileExists(atPath: staged.deletingLastPathComponent().path), "staged device saves go")
 
         #expect(!fileManager.fileExists(atPath: archive.deletingLastPathComponent().path))
         #expect(!fileManager.fileExists(atPath: uploads.path))

@@ -65,6 +65,7 @@ extension AppSuites {
                 $0.destination = optimistic(serverURL, username: next.username ?? "")
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, leaving)
+            await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             accountList.open()
             await store.receive(\.accountsRefreshed)
             confirmation.open()
@@ -185,6 +186,74 @@ extension AppSuites {
                 )
             )
         }
+
+        #if os(iOS)
+            @Test("Switching accounts stops the Save to Device job of the account left and clears what it staged")
+            func switchStopsTheLeftAccountsSaveToDevice() async {
+                let confirmation = AsyncGate()
+                let accountList = AsyncGate()
+                let downloadStarted = AsyncGate()
+                let discardedAll = LockIsolated(0)
+                let item = FileItem(
+                    name: TestFile.photo,
+                    path: TestFolder.files,
+                    dateModified: MockDate.date,
+                    size: 10,
+                    kind: "jpg"
+                )
+                let job = DownloadQueueFeature.DownloadJob(id: UUID(0), item: item, status: .queued)
+                let store = makeStore(signedIn(AppFixtures.serverA, AppFixtures.userA)) {
+                    $0.uuid = .incrementing
+                    $0.date = .constant(MockDate.date)
+                    $0.filesClient.flushDownloadConnections = {}
+                    $0.filesClient.downloadItem = { _, _, _ in
+                        downloadStarted.open()
+                        try await suspendUntilCancelled()
+                        throw CancellationError()
+                    }
+                    $0.deviceSaver = DeviceSaver(
+                        saveToPhotos: { _, _ in },
+                        stage: { url, _ in url },
+                        discard: { _ in },
+                        discardAll: { discardedAll.withValue { $0 += 1 } }
+                    )
+                    $0.authClient.listSessions = {
+                        try? await accountList.wait()
+                        return []
+                    }
+                    $0.authClient.me = { _ in
+                        try await confirmation.wait()
+                        return AppFixtures.userB
+                    }
+                }
+
+                await store.send(.destination(.authenticated(.mainTab(.downloadQueue(.enqueue([item])))))) {
+                    $0.destination.modify(\.authenticated) { $0.mainTab.downloadQueue.jobs = [job] }
+                }
+                await store.receive(\.destination.authenticated.mainTab.downloadQueue.startNextIfIdle) {
+                    $0.destination.modify(\.authenticated) {
+                        $0.mainTab.downloadQueue.jobs[id: UUID(0)]?.status = .downloading
+                        $0.mainTab.downloadQueue.jobs[id: UUID(0)]?.startedAt = MockDate.date
+                    }
+                }
+                try? await downloadStarted.wait()
+
+                await switchToAccount(
+                    store,
+                    next: AppFixtures.credentials(AppFixtures.serverB, TestUser.bob),
+                    user: AppFixtures.userB,
+                    serverURL: AppFixtures.serverB,
+                    downloadScope: AppFixtures.downloadScopeB,
+                    leaving: AppFixtures.accountA,
+                    accountList: accountList,
+                    confirmation: confirmation
+                )
+                await store.finish()
+
+                #expect(discardedAll.value == 1)
+                #expect(store.state.destination.authenticated?.mainTab.downloadQueue.jobs.isEmpty == true)
+            }
+        #endif
 
         @Test("Certificates are not pruned while Add Account is open, so its new certificate survives")
         func noPruneWhileAddingAccount() async {

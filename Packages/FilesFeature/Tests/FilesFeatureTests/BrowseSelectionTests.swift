@@ -181,7 +181,29 @@ struct BrowseSelectionTests {
                 $0.isSelecting = false
                 $0.selectedItemIDs = []
             }
-            await store.receive(.delegate(.downloadRequested([photos, notes])))
+            await store.receive(.delegate(.downloadRequested([notes])))
+        }
+
+        @Test("Bulk Save to Device leaves folders out and does nothing when only folders are selected")
+        func bulkDownloadTappedWithOnlyFoldersDoesNothing() async {
+            let photos = BrowseFixtures.folder(TestFolder.photos, in: TestFolder.files)
+            var state = BrowseFixtures.state(TestFolder.files, title: TestFolder.files, items: [photos])
+            state.isSelecting = true
+            state.selectedItemIDs = [photos.id]
+            let store = BrowseFixtures.store(state)
+
+            await store.send(.bulkDownloadTapped) {
+                $0.isSelecting = false
+                $0.selectedItemIDs = []
+            }
+        }
+
+        @Test("Save to Device ignores a folder")
+        func downloadTappedIgnoresAFolder() async {
+            let photos = BrowseFixtures.folder(TestFolder.photos, in: TestFolder.files)
+            let store = BrowseFixtures.store(BrowseFixtures.state(TestFolder.files, items: [photos]))
+
+            await store.send(.downloadTapped(photos))
         }
     #endif
 }

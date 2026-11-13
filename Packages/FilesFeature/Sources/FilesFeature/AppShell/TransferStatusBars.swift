@@ -19,6 +19,36 @@ struct TransferStatusBars: View {
                 downloadStatusBar
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+            if store.isOfflineBarVisible {
+                offlineStatusBar
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+    }
+
+    /// The same pill the downloads use, for a run that makes files available offline.
+    @ViewBuilder
+    private var offlineStatusBar: some View {
+        let progress = store.offlineProgress
+        if case let .failed(message) = progress.phase {
+            TransferFailedBar(
+                label: message,
+                onRetry: { store.send(.offline(.resyncTapped), animation: .default) },
+                onDismiss: { store.send(.offline(.dismissStatusTapped), animation: .default) },
+                onTap: {}
+            )
+        } else {
+            TransferProgressBar(
+                icon: IconKit.availableOffline,
+                title: offlineBarTitle,
+                progress: offlineBarProgress,
+                detail: progress.phase == .downloading
+                    ? L10n.Offline.progressCount(progress.currentFileNumber, progress.filesTotal)
+                    : nil,
+                cancelLabel: L10n.Common.cancel,
+                onTap: {},
+                onCancelAll: { store.send(.offline(.cancelTapped), animation: .default) }
+            )
         }
     }
 
@@ -68,6 +98,19 @@ struct TransferStatusBars: View {
                 onTap: { store.send(.downloadQueue(.barTapped)) }
             )
         }
+    }
+
+    /// The file an offline run is fetching, or that it is still working out what to fetch.
+    var offlineBarTitle: String {
+        let progress = store.offlineProgress
+        return progress.phase == .downloading && !progress.currentName.isEmpty
+            ? L10n.Offline.downloadingName(progress.currentName)
+            : L10n.Offline.preparing
+    }
+
+    /// `nil` while the run prepares, so the bar shows an indeterminate progress.
+    var offlineBarProgress: Double? {
+        store.offlineProgress.phase == .downloading ? store.offlineProgress.fractionComplete : nil
     }
 
     var downloadBarTitle: String {

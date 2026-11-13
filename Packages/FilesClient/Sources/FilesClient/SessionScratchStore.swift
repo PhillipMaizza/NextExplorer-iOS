@@ -4,7 +4,8 @@ import Foundation
 import NetworkClient
 
 /// The app's scratch files in `tmp`: archive entries extracted for preview, rendered HTML and
-/// Markdown previews, files staged for upload, files dropped on a window, upload envelopes, and download bodies a
+/// Markdown previews, files staged for upload, files staged for Save to Files, files dropped on a window, upload
+/// envelopes, and download bodies a
 /// caller never
 /// moved (a crash mid transfer). Each owner cleans up after itself, but a kill or a crash leaves
 /// them behind, and they hold one account's file contents. Purged at every session boundary with
@@ -29,6 +30,7 @@ public enum SessionScratchLocation {
     public static let htmlPreview = "HTMLPreview"
     public static let pendingUploads = "PendingUploads"
     public static let droppedFiles = "DroppedFiles"
+    public static let deviceSaveStaging = "DeviceSaveStaging"
     public static let uploadEnvelopePrefix = "upload-"
 }
 
@@ -42,6 +44,7 @@ public extension SessionScratchStore {
             ]
             if scope == .everything {
                 folders.append(SessionScratchLocation.pendingUploads)
+                folders.append(SessionScratchLocation.deviceSaveStaging)
             }
             for name in folders {
                 try? fileManager.removeItem(at: temporaryDirectory.appendingPathComponent(name, isDirectory: true))

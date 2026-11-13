@@ -59,8 +59,6 @@ directLinkMode.download	Stáhnout
 thumbnailSize.small	Malé
 thumbnailSize.medium	Střední
 thumbnailSize.large	Velké
-downloadLocation.documents	Dokumenty
-downloadLocation.cache	Mezipaměť
 dateFormat.automatic	Automaticky
 browse.navigationTitle	Procházet
 browse.scopeThisFolder	Tato složka
@@ -151,7 +149,6 @@ favorites.removeMessage	Tím se pouze odeberou z Oblíbených.
 favorites.removeFailedOne	Tuto oblíbenou položku se nepodařilo odebrat.
 favorites.removeFailedMany	Tyto oblíbené položky se nepodařilo odebrat.
 favorites.removePartial	Odebráno %1$lld z %2$lld.
-downloads.navigationTitle	Stažené
 downloads.actionOpenInFiles	Otevřít v Souborech
 downloads.emptyList	Soubory, které stáhnete z Procházení, se zobrazí zde.
 downloads.deleteConfirmTitle	Smazat?
@@ -480,7 +477,6 @@ settings.sectionServerStorage	Úložiště serveru
 settings.serverStorageUsed	%1$@ z %2$@
 settings.sectionLicenses	Licence
 settings.sectionLegal	Právní informace
-settings.sectionUsers	Uživatelé
 settings.sectionAdmin	Správa
 settings.sectionInfo	Informace
 settings.toggleShowHiddenFiles	Zobrazit skryté soubory
@@ -747,7 +743,6 @@ twoFactor.passwordField	Heslo
 twoFactor.passwordConfirmButton	Potvrdit
 twoFactor.manageButton	Spravovat…
 apiTokens.navigationTitle	Tokeny API
-apiTokens.sectionHeader	Vývojáři
 apiTokens.intro	Tokeny API umožňují skriptům a dalším nástrojům používat váš účet bez hesla. Token dělá jen to, co povoluje jeho přístup, a můžete ho kdykoli odvolat.
 apiTokens.emptyTitle	Žádné tokeny API
 apiTokens.emptyMessage	Vytvořte token, aby skript mohl používat váš účet.
@@ -874,7 +869,6 @@ offline.manageRow	Spravovat offline soubory
 offline.manageTitle	Offline soubory
 offline.manageEmpty	Nic není staženo pro offline použití.
 offline.preferOfflineToggle	Přehrávat stažené kopie
-offline.pinRemoved	%@ již na serveru neexistuje a byl odebrán z offline souborů
 offline.preferOfflineSubtitle	Použít stažené video místo streamování, když je k dispozici.
 offline.tunnelSpeedNote	Připojení k serveru přes vzdálený tunel může stahování zpomalit. U velkých souborů se připojte ke stejné síti a použijte místní adresu serveru.
 menu.about	O aplikaci NextExplorer
@@ -917,7 +911,6 @@ appearance.dark	Tmavý
 browse.myFiles	Moje soubory
 browse.myFilesSubtitle	Viditelné jen pro vás
 downloadQueue.navigationTitle	Fronta stahování
-downloadQueue.openDownloads	Zobrazit stažené
 downloadQueue.emptyList	Nic se právě nestahuje.
 downloadQueue.statusSaved	Uloženo
 downloadQueue.cancelAll	Zrušit všechna stahování
@@ -1117,3 +1110,23 @@ serverSettings.featureOffHowTo	Chcete-li ji zapnout, nastavte %@ a restartujte k
 trashSettings.environmentNote	Výchozí hodnoty pocházejí z TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT a TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Výchozí hodnoty pocházejí z VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE a VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Obnovit
+browse.actionAvailableOffline	Dostupné offline
+browse.actionSaveToDevice	Uložit do zařízení
+previewToolbar.saveToDevice	Uložit do zařízení
+downloadQueue.savedToPhotos	Uloženo do Fotek
+downloadQueue.savedToDevice	Uloženo do zařízení
+downloadQueue.photosAccessDenied	Povolte v Nastavení přístup k Fotkám, abyste mohli ukládat obrázky a videa.
+downloadQueue.photosSaveFailed	Nepodařilo se přidat do Fotek.
+tab.offline	Offline
+offline.sectionSavedEarlier	Uloženo dříve
+offline.newFilesBadge	Nové soubory dostupné offline
+search.onDevice	V zařízení
+search.remote	Vzdálené
+offline.tabEmpty	Zatím není nic dostupné offline. U souboru nebo složky zvolte „Dostupné offline“.
+offline.removeItemTitle	Odebrat „%@“ z dostupných offline?
+offline.removeItemsTitle	Odebrat %lld položek z dostupných offline?
+offline.removeItemMessage	Tím se smažou soubory uložené pro offline použití na tomto zařízení. Vaše soubory na serveru se nezmění.
+browse.actionRemoveFromOffline	Odebrat z offline
+offline.rowUpdating	Aktualizace…
+offline.rowWaitingForNetwork	Čeká na síť
+offline.rowUpdateFailed	Aktualizace se nezdařila

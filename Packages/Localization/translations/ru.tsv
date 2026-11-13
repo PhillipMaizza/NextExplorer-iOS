@@ -55,8 +55,6 @@ directLinkMode.download	Загрузка
 thumbnailSize.small	Маленькие
 thumbnailSize.medium	Средние
 thumbnailSize.large	Большие
-downloadLocation.documents	Документы
-downloadLocation.cache	Кеш
 dateFormat.automatic	Автоматически
 browse.navigationTitle	Обзор
 browse.scopeThisFolder	Эта папка
@@ -142,7 +140,6 @@ favorites.removeMessage	Это только уберёт их из избран�
 favorites.removeFailedOne	Не удалось убрать это из избранного.
 favorites.removeFailedMany	Не удалось убрать их из избранного.
 favorites.removePartial	Убрано %1$lld из %2$lld.
-downloads.navigationTitle	Загрузки
 downloads.actionOpenInFiles	Открыть в «Файлах»
 downloads.emptyList	Файлы, загруженные из Обзора, появятся здесь.
 downloads.deleteConfirmTitle	Удалить?
@@ -286,7 +283,6 @@ settings.sectionServerStorage	Хранилище сервера
 settings.serverStorageUsed	%1$@ из %2$@
 settings.sectionLicenses	Лицензии
 settings.sectionLegal	Правовая информация
-settings.sectionUsers	Пользователи
 settings.sectionAdmin	Администрирование
 settings.sectionInfo	Информация
 settings.toggleShowHiddenFiles	Показывать скрытые файлы
@@ -606,7 +602,6 @@ offline.manageRow	Управление офлайн-файлами
 offline.manageTitle	Офлайн-файлы
 offline.manageEmpty	Ничего не загружено для офлайн-доступа.
 offline.preferOfflineToggle	Воспроизводить загруженные копии
-offline.pinRemoved	%@ больше не существует на сервере и удалено из офлайн-файлов
 offline.preferOfflineSubtitle	Использовать загруженное видео вместо потоковой передачи, когда оно доступно.
 offline.tunnelSpeedNote	Доступ к серверу через удалённый туннель может замедлить загрузки. Для больших файлов подключитесь к той же сети и используйте локальный адрес сервера.
 menu.about	О программе NextExplorer
@@ -642,7 +637,6 @@ appearance.dark	Тёмное
 browse.myFiles	Мои файлы
 browse.myFilesSubtitle	Видно только вам
 downloadQueue.navigationTitle	Очередь загрузок
-downloadQueue.openDownloads	Показать загрузки
 downloadQueue.emptyList	Нет активных загрузок.
 downloadQueue.statusSaved	Сохранено
 downloadQueue.cancelAll	Отменить все загрузки
@@ -1099,7 +1093,6 @@ apiTokens.revokeMessage	Всё, что использует «%@», сразу �
 apiTokens.revokeTitle	Отозвать токен?
 apiTokens.scopeRead	Только чтение
 apiTokens.scopeWrite	Чтение и запись
-apiTokens.sectionHeader	Разработчикам
 changePassword.addIntro	Эта учётная запись входит через единый вход и пока не имеет пароля. Добавьте его, чтобы также входить с помощью адреса эл. почты или имени пользователя.
 changePassword.addNavigationTitle	Добавить пароль
 changePassword.addSubmitButton	Добавить пароль
@@ -1146,3 +1139,23 @@ twoFactor.recoveryTitle	Сохраните резервные коды
 twoFactor.shareCodesButton	Поделиться кодами
 twoFactor.turnOffButton	Выключить
 twoFactor.turnOnButton	Включить
+browse.actionAvailableOffline	Доступно офлайн
+browse.actionSaveToDevice	Сохранить на устройство
+previewToolbar.saveToDevice	Сохранить на устройство
+downloadQueue.savedToPhotos	Сохранено в Фото
+downloadQueue.savedToDevice	Сохранено на устройство
+downloadQueue.photosAccessDenied	Разрешите доступ к Фото в настройках, чтобы сохранять изображения и видео.
+downloadQueue.photosSaveFailed	Не удалось добавить это в Фото.
+tab.offline	Офлайн
+offline.sectionSavedEarlier	Сохранено ранее
+offline.newFilesBadge	Новые файлы доступны офлайн
+search.onDevice	На устройстве
+search.remote	Удалённо
+offline.tabEmpty	Пока нет ничего, что доступно офлайн. Выберите «Доступно офлайн» для файла или папки.
+offline.removeItemTitle	Убрать «%@» из доступных офлайн?
+offline.removeItemsTitle	Убрать %lld объектов из доступных офлайн?
+offline.removeItemMessage	Это удалит файлы, сохранённые для офлайн-доступа на этом устройстве. Ваши файлы на сервере не будут затронуты.
+browse.actionRemoveFromOffline	Убрать из офлайн
+offline.rowUpdating	Обновление…
+offline.rowWaitingForNetwork	Ожидание сети
+offline.rowUpdateFailed	Не удалось обновить

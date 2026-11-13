@@ -59,8 +59,6 @@ directLinkMode.download	Baixar
 thumbnailSize.small	Pequena
 thumbnailSize.medium	Média
 thumbnailSize.large	Grande
-downloadLocation.documents	Documentos
-downloadLocation.cache	Cache
 dateFormat.automatic	Automático
 browse.navigationTitle	Explorar
 browse.scopeThisFolder	Esta pasta
@@ -152,7 +150,6 @@ favorites.removeMessage	Isto apenas os remove dos Favoritos.
 favorites.removeFailedOne	Não foi possível remover esse favorito.
 favorites.removeFailedMany	Não foi possível remover esses favoritos.
 favorites.removePartial	Removidos %1$lld de %2$lld.
-downloads.navigationTitle	downloads
 downloads.actionOpenInFiles	Abrir em Arquivos
 downloads.emptyList	Os arquivos que baixar a partir de Explorar aparecem aqui.
 downloads.deleteConfirmTitle	Excluir?
@@ -488,7 +485,6 @@ settings.sectionServerStorage	Armazenamento do servidor
 settings.serverStorageUsed	%1$@ de %2$@
 settings.sectionLicenses	Licenças
 settings.sectionLegal	Aspectos legais
-settings.sectionUsers	Usuários
 settings.sectionAdmin	Administrador
 settings.sectionInfo	Informações
 settings.toggleShowHiddenFiles	Mostrar arquivos ocultos
@@ -804,7 +800,6 @@ offline.manageRow	Gerenciar arquivos offline
 offline.manageTitle	Arquivos offline
 offline.manageEmpty	Nada foi baixado para uso offline.
 offline.preferOfflineToggle	Reproduzir cópias baixadas
-offline.pinRemoved	%@ não existe mais no servidor e foi removido dos arquivos offline
 offline.preferOfflineSubtitle	Usar um vídeo baixado em vez de transmitir quando estiver disponível.
 offline.tunnelSpeedNote	Acessar seu servidor por um túnel remoto pode deixar os downloads lentos. Para arquivos grandes, conecte-se à mesma rede e use o endereço local do servidor.
 menu.about	Sobre o NextExplorer
@@ -847,7 +842,6 @@ appearance.dark	Escuro
 browse.myFiles	Meus Arquivos
 browse.myFilesSubtitle	Visível apenas para você
 downloadQueue.navigationTitle	Fila de downloads
-downloadQueue.openDownloads	Mostrar downloads
 downloadQueue.emptyList	Nenhum download em andamento.
 downloadQueue.statusSaved	Salvo
 downloadQueue.cancelAll	Cancelar todos os downloads
@@ -1082,7 +1076,6 @@ apiTokens.revokeMessage	Tudo o que usa “%@” vai parar de funcionar imediatam
 apiTokens.revokeTitle	Revogar token?
 apiTokens.scopeRead	Somente leitura
 apiTokens.scopeWrite	Leitura e gravação
-apiTokens.sectionHeader	Desenvolvedores
 changePassword.addIntro	Esta conta entra com login único (SSO) e ainda não tem senha. Adicione uma para também entrar com seu e-mail ou nome de usuário.
 changePassword.addNavigationTitle	Adicionar senha
 changePassword.addSubmitButton	Adicionar senha
@@ -1129,3 +1122,23 @@ twoFactor.recoveryTitle	Salve seus códigos de recuperação
 twoFactor.shareCodesButton	Compartilhar códigos
 twoFactor.turnOffButton	Desativar
 twoFactor.turnOnButton	Ativar
+browse.actionAvailableOffline	Disponível offline
+browse.actionSaveToDevice	Salvar no dispositivo
+previewToolbar.saveToDevice	Salvar no dispositivo
+downloadQueue.savedToPhotos	Salvo em Fotos
+downloadQueue.savedToDevice	Salvo no seu dispositivo
+downloadQueue.photosAccessDenied	Permita o acesso a Fotos em Ajustes para salvar imagens e vídeos.
+downloadQueue.photosSaveFailed	Não foi possível adicionar a Fotos.
+tab.offline	Offline
+offline.sectionSavedEarlier	Salvos anteriormente
+offline.newFilesBadge	Novos arquivos disponíveis offline
+search.onDevice	No dispositivo
+search.remote	Remoto
+offline.tabEmpty	Ainda não há nada disponível offline. Escolha “Disponível offline” em um arquivo ou pasta.
+offline.removeItemTitle	Remover “%@” de Disponível offline?
+offline.removeItemsTitle	Remover %lld itens de Disponível offline?
+offline.removeItemMessage	Isso exclui os arquivos salvos para uso offline neste dispositivo. Seus arquivos no servidor não são afetados.
+browse.actionRemoveFromOffline	Remover de offline
+offline.rowUpdating	Atualizando…
+offline.rowWaitingForNetwork	Aguardando rede
+offline.rowUpdateFailed	Não foi possível atualizar
