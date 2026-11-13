@@ -47,25 +47,10 @@ public struct AuthenticatedFeature {
     }
 
     @Dependency(\.authClient) var authClient
-    @Dependency(\.directoryCacheStore) var directoryCacheStore
-    @Dependency(\.jsonCacheStore) var jsonCacheStore
-    @Dependency(\.previewCacheStore) var previewCacheStore
-    @Dependency(\.offlineFileStore) var offlineFileStore
-    @Dependency(\.thumbnailCache) var thumbnailCache
-    @Dependency(\.textEditorETagStore) var textEditorETagStore
-    @Dependency(\.pendingAccountWipes) var pendingAccountWipes
     @Dependency(\.continuousClock) var clock
 
     private var accountCacheWipe: AccountCacheWipe {
-        AccountCacheWipe(
-            directoryCacheStore: directoryCacheStore,
-            jsonCacheStore: jsonCacheStore,
-            previewCacheStore: previewCacheStore,
-            offlineFileStore: offlineFileStore,
-            thumbnailCache: thumbnailCache,
-            textEditorETagStore: textEditorETagStore,
-            pendingWipes: pendingAccountWipes
-        )
+        .fromDependencies
     }
 
     private enum Constants {

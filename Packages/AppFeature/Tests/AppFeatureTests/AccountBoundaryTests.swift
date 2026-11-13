@@ -303,6 +303,7 @@ extension AppSuites {
                 .jsonAccountCleared(AppFixtures.accountA),
                 .previewAccountCleared(AppFixtures.accountA),
                 .offlineAccountCleared(AppFixtures.accountA),
+                .uploadThumbnailsAccountCleared(AppFixtures.accountA),
                 .thumbnailMemoryCleared,
             ]
             #expect(

@@ -3,7 +3,7 @@ import CryptoKit
 import DesignSystem
 import FilesClient
 import Foundation
-import PDFKit
+import ShareUploads
 #if os(iOS)
     import UIKit
 #endif
@@ -87,45 +87,12 @@ extension PDFThumbnailCache {
             .appendingPathExtension(Constants.renderCacheFileExtension)
     }
 
-    /// Rasterizes page one of the PDF at `url`, scaled so its longest side is `maxPixel`.
-    ///
-    /// Renders through `UIGraphicsImageRenderer` at an explicit scale of 1 rather than
-    /// `PDFPage.thumbnail(of:for:)`, which rasterizes at the main-screen scale; on a 3x
-    /// device that is a 9x-area bitmap for the same `maxPixel`, i.e. megabytes per thumbnail
-    /// held in memory. Opaque, white-backed: no alpha channel to carry around.
+    /// Rasterizes page one of the PDF at `url`, scaled so its longest side is `maxPixel`, with
+    /// the CoreGraphics renderer the share extension uses too (`ThumbnailRendering`): an exact
+    /// pixel size rather than `PDFPage.thumbnail(of:for:)`, which rasterizes at the main screen
+    /// scale (a 9x area bitmap on a 3x device). Opaque, white backed: no alpha channel to carry.
     static func renderFirstPage(of url: URL, maxPixel: CGFloat) -> PlatformImage? {
-        guard let document = PDFDocument(url: url), let page = document.page(at: 0) else { return nil }
-        let pageRect = page.bounds(for: .cropBox)
-        guard pageRect.width > 0, pageRect.height > 0 else { return nil }
-
-        let scale = maxPixel / max(pageRect.width, pageRect.height)
-        let size = CGSize(
-            width: (pageRect.width * scale).rounded(),
-            height: (pageRect.height * scale).rounded()
-        )
-
-        #if os(macOS)
-            return PlatformImageRenderer.image(size: size, opaque: true) { cgContext in
-                cgContext.setFillColor(CGColor(gray: 1, alpha: 1))
-                cgContext.fill(CGRect(origin: .zero, size: size))
-                cgContext.scaleBy(x: scale, y: scale)
-                cgContext.translateBy(x: -pageRect.minX, y: -pageRect.minY)
-                page.draw(with: .cropBox, to: cgContext)
-            }
-        #else
-            let format = UIGraphicsImageRendererFormat.preferred()
-            format.scale = 1
-            format.opaque = true
-            return UIGraphicsImageRenderer(size: size, format: format).image { context in
-                let cgContext = context.cgContext
-                UIColor.white.setFill()
-                cgContext.fill(CGRect(origin: .zero, size: size))
-                cgContext.translateBy(x: 0, y: size.height)
-                cgContext.scaleBy(x: scale, y: -scale)
-                cgContext.translateBy(x: -pageRect.minX, y: -pageRect.minY)
-                page.draw(with: .cropBox, to: cgContext)
-            }
-        #endif
+        ThumbnailRendering.firstPDFPage(at: url, maxPixel: maxPixel).map { PlatformImage(cgImage: $0) }
     }
 
     /// A cache backed by an on-disk render directory. `renderCacheDirectory` is a seam for
