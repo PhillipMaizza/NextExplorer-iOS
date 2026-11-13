@@ -6,13 +6,13 @@ import FilesClient
 import Localization
 import SwiftUI
 
-/// The Offline tab's pinned items as grid tiles: a folder opens, a file only shows what is kept, and
-/// the context menu removes the pin (after the usual confirmation).
+/// The Offline tab's pinned items as grid tiles: a folder opens in place, a file in a preview from its
+/// kept copy, and the context menu removes the pin (after the usual confirmation).
 struct OfflinePinnedGridCells: View {
     let store: StoreOf<OfflineManageFeature>
     let usages: [OfflinePinnedRootUsage]
     var favorites: IdentifiedArrayOf<Favorite> = []
-    var onOpenFolder: (String) -> Void = { _ in }
+    var onOpen: (OfflinePinnedRoot) -> Void = { _ in }
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
 
     var body: some View {
@@ -21,11 +21,7 @@ struct OfflinePinnedGridCells: View {
             SelectableGridCell(
                 isSelecting: false,
                 isSelected: false,
-                onTap: {
-                    if usage.root.isDirectory {
-                        onOpenFolder(usage.root.path)
-                    }
-                }
+                onTap: { onOpen(usage.root) }
             ) {
                 GridCellView(
                     name: usage.displayName,

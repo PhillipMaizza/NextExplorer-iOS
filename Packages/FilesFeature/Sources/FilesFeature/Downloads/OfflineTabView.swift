@@ -120,8 +120,8 @@ struct OfflineTabView: View {
                 SkeletonFileRows(entries: Constants.skeletonEntries)
             } else {
                 if isShowingPinned {
-                    OfflinePinnedSection(store: offlineStore, usages: displayedPinned, favorites: favorites) { path in
-                        store.send(.openFolderTapped(path: path))
+                    OfflinePinnedSection(store: offlineStore, usages: displayedPinned, favorites: favorites) { root in
+                        store.send(.pinnedItemTapped(root))
                     }
                 }
                 if isShowingPinned, !store.downloads.isEmpty {
@@ -150,8 +150,8 @@ struct OfflineTabView: View {
                         store: offlineStore,
                         usages: displayedPinned,
                         favorites: favorites
-                    ) { path in
-                        store.send(.openFolderTapped(path: path))
+                    ) { root in
+                        store.send(.pinnedItemTapped(root))
                     }
                     downloadCells
                 }
@@ -318,6 +318,10 @@ struct OfflineTabView: View {
                     onCancel: { store.send(.renameCancelled) }
                 )
             }
+            .modifier(PreviewHostCover(
+                host: $store.scope(state: \.previewHost, action: \.previewHost),
+                onViewShares: { store.send(.viewSharesFromPreviewTapped) }
+            ))
             .fullScreenCover(item: $previewedDownload) { download in
                 PreviewZoomContainer(sourceID: download.id, namespace: previewTransition) {
                     FilePreviewContainerView(

@@ -66,6 +66,21 @@
             XCTAssertTrue(offlineRow(Fixture.folder, in: app).waitToAppear(), "Back returns to the Offline list")
         }
 
+        func testAPinnedFileOpensItsPreviewFromTheOfflineSection() {
+            let app = launchApp()
+            pin(Fixture.file, in: app)
+            openOffline(in: app)
+            XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
+
+            offlineRow(Fixture.file, in: app).doubleClick()
+
+            let sheet = app.sheets.firstMatch
+            XCTAssertTrue(sheet.waitToAppear(), "Double clicking a pinned file opens its preview")
+            XCTAssertTrue(sheet.buttons.labeled(L10n.PreviewToolbar.close).waitToAppear())
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+            XCTAssertTrue(sheet.waitToVanish(), "Esc closes it, back on the Offline section")
+        }
+
         func testRemovingAPinAsksFirstAndCancelKeepsIt() {
             let app = launchApp()
             pin(Fixture.file, in: app)

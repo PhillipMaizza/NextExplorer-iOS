@@ -51,7 +51,7 @@ struct OfflineManageRow: View {
     let usage: OfflinePinnedRootUsage
     var isFirst = false
     var isLast = false
-    /// Set for folders: tapping the row opens it.
+    /// Tapping the row opens it; nil where rows only list (Manage Offline Files).
     var onOpen: (() -> Void)?
     var favorite: Favorite?
     let onRemove: () -> Void

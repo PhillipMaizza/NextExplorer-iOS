@@ -12,7 +12,7 @@ struct OfflinePinnedSection: View {
     /// What to list, already filtered and ordered by the tab.
     let usages: [OfflinePinnedRootUsage]
     var favorites: IdentifiedArrayOf<Favorite> = []
-    var onOpenFolder: (String) -> Void = { _ in }
+    var onOpen: (OfflinePinnedRoot) -> Void = { _ in }
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var progress = OfflineDownloadProgress()
 
     var body: some View {
@@ -26,7 +26,7 @@ struct OfflinePinnedSection: View {
                     usage: usage,
                     isFirst: index == 0,
                     isLast: index == usages.count - 1,
-                    onOpen: usage.root.isDirectory ? { onOpenFolder(usage.root.path) } : nil,
+                    onOpen: { onOpen(usage.root) },
                     favorite: favorites.first { $0.path == usage.root.path }
                 ) {
                     store.send(.removeTapped(path: usage.root.path), animation: .default)

@@ -27,8 +27,6 @@ struct FavoritesView: View {
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
-    /// The file a search result preview asked to share.
-    @State private var previewShareTarget: FileItem?
 
     private var viewMode: FileListViewMode {
         #if os(macOS)
@@ -240,22 +238,11 @@ struct FavoritesView: View {
         .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
             FavoriteEditSheet(store: editStore, onClose: { store.send(.editSheet(.dismiss)) })
         }
-        // A tapped file result opens directly in this cover (no folder navigation); the host
-        // `BrowseFeature` drives the same preview router Browse uses.
-        .fullScreenCover(item: $store.scope(state: \.previewHost, action: \.previewHost)) { hostStore in
-            if let previewItem = hostStore.previewItem {
-                BrowsePreviewRouter(
-                    store: hostStore,
-                    item: previewItem,
-                    onShareTarget: { previewShareTarget = $0 }
-                )
-                .modifier(FavoritesPreviewHostActions(
-                    host: hostStore,
-                    shareTarget: $previewShareTarget,
-                    onViewShares: { store.send(.viewSharesFromPreviewTapped) }
-                ))
-            }
-        }
+        // A tapped file result opens directly in this cover (no folder navigation).
+        .modifier(PreviewHostCover(
+            host: $store.scope(state: \.previewHost, action: \.previewHost),
+            onViewShares: { store.send(.viewSharesFromPreviewTapped) }
+        ))
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
         .toolbar {

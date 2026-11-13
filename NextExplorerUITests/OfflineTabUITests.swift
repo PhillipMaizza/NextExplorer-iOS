@@ -59,6 +59,22 @@
             XCTAssertTrue(offline.row(Fixture.folder).waitToAppear(), "Back returns to the Offline list")
         }
 
+        func testAPinnedFileOpensItsPreviewFromTheOfflineTab() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal)
+            let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.availableOfflineAction)
+            browse.availableOfflineAction.tap()
+
+            let offline = OfflineTabScreen(app: app)
+            selectTab(TabBar(app: app).downloads, until: offline.row(Fixture.file))
+            offline.row(Fixture.file).tap()
+
+            XCTAssertTrue(browse.previewBackButton.waitToAppear(), "Tapping a pinned file opens its preview")
+            browse.previewBackButton.tap()
+            XCTAssertTrue(offline.row(Fixture.file).waitToAppear(), "Closing the preview returns to the Offline tab")
+        }
+
         func testAFileOffersSaveToDeviceAndNoLongerOffersDownload() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)

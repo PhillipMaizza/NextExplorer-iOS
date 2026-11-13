@@ -205,14 +205,11 @@
             rows.first { $0.id == id }
         }
 
-        /// A pinned folder opens in place and a saved file previews; a pinned file has nothing to open,
-        /// as on the phone.
+        /// A pinned folder opens in place, a pinned file previews from its kept copy, a saved file previews.
         private func open(_ row: MacOfflineTableRow) {
             switch row {
-            case let .pinned(usage) where usage.root.isDirectory:
-                store.send(.openFolderTapped(path: usage.root.path))
-            case .pinned:
-                break
+            case let .pinned(usage):
+                store.send(.pinnedItemTapped(usage.root))
             case let .saved(download):
                 onPreview(download)
             }

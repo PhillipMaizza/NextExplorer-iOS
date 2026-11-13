@@ -62,9 +62,15 @@ public struct OfflineTabFeature {
         /// previews that never open one.
         public var serverURL: URL?
         public var path = StackState<BrowseFeature.State>()
+        /// A pinned file opened on its own, in a cover over the tab.
+        @Presents public var previewHost: BrowseFeature.State?
+        /// The account the tab belongs to, so a pinned file opens from its own kept copy.
+        let cacheScope: String
 
         public init(serverURL: URL? = nil) {
             self.serverURL = serverURL
+            @Dependency(\.cacheScope) var cacheScopeSource
+            cacheScope = cacheScopeSource.current()
         }
 
         /// Client-side filter + sort, same shape as `BrowseFeature.displayedItems`: search
@@ -110,8 +116,15 @@ public struct OfflineTabFeature {
         case bulkDeleteCancelled
         case bulkDeleteConfirmed
         case bulkDeleteResponse([LocalDownload.ID])
+        /// A pinned row or tile was tapped: a folder opens in place, a file in a preview.
+        case pinnedItemTapped(OfflinePinnedRoot)
         /// A pinned folder row was tapped.
         case openFolderTapped(path: String)
+        /// A pinned file row was tapped: it opens from its kept copy, with or without a connection.
+        case pinnedFileTapped(path: String)
+        case previewHost(PresentationAction<BrowseFeature.Action>)
+        /// The pinned file's preview asked to see its share links.
+        case viewSharesFromPreviewTapped
         /// Pins changed: pushed folders recompute which of their items are offline.
         case offlineAvailabilityChanged
         case path(StackActionOf<BrowseFeature>)
@@ -130,6 +143,8 @@ public struct OfflineTabFeature {
     }
 
     @Dependency(\.localDownloadStore) var localDownloadStore
+    @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.date) var date
 
     private enum CancelID { case load }
 
@@ -265,6 +280,9 @@ public struct OfflineTabFeature {
                 state.selectedDownloadIDs = []
                 return .none
 
+            case let .pinnedItemTapped(root):
+                return .send(root.isDirectory ? .openFolderTapped(path: root.path) : .pinnedFileTapped(path: root.path))
+
             case let .openFolderTapped(path):
                 guard let serverURL = state.serverURL else { return .none }
                 let name = (path as NSString).lastPathComponent
@@ -274,6 +292,51 @@ public struct OfflineTabFeature {
                     serverURL: serverURL,
                     stack: &state.path
                 )
+                return .none
+
+            case let .pinnedFileTapped(path):
+                guard let serverURL = state.serverURL else { return .none }
+                let name = (path as NSString).lastPathComponent
+                let parent = (path as NSString).deletingLastPathComponent
+                // The size and date the copy was kept with, so the preview knows it is complete.
+                let item = offlineFileStore.pinned(to: state.cacheScope).matchingPinnedCopy(FileItem(
+                    name: name,
+                    path: parent,
+                    dateModified: date.now,
+                    size: 0,
+                    kind: (name as NSString).pathExtension.lowercased()
+                ))
+                let folderName = (parent as NSString).lastPathComponent
+                state.previewHost = .previewHost(
+                    for: item,
+                    serverURL: serverURL,
+                    folderTitle: folderName.isEmpty ? L10n.Browse.navigationTitle : folderName
+                )
+                return .send(.previewHost(.presented(.rowTapped(item))))
+
+            case let .previewHost(.presented(.delegate(.offlinePinRequested(items)))):
+                return .send(.delegate(.offlinePinRequested(items)))
+
+            case let .previewHost(.presented(.delegate(.offlineUnpinRequested(path)))):
+                return .send(.delegate(.offlineUnpinRequested(path: path)))
+
+            case let .previewHost(.presented(.delegate(.downloadRequested(items)))):
+                return .send(.delegate(.downloadRequested(items)))
+
+            case let .previewHost(.presented(.delegate(.saveRequested(requests)))):
+                return .send(.delegate(.saveRequested(requests)))
+
+            case .previewHost(.presented(.delegate(.goToSharedTab))), .viewSharesFromPreviewTapped:
+                state.previewHost = nil
+                return .send(.delegate(.goToSharedTab))
+
+            case .previewHost(.presented(.previewDismissed)),
+                 .previewHost(.presented(.deleteResponse(.success))):
+                // Closing the preview, or deleting its file, returns to the tab.
+                state.previewHost = nil
+                return .none
+
+            case .previewHost:
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
@@ -319,6 +382,9 @@ public struct OfflineTabFeature {
             }
         }
         .forEach(\.path, action: \.path) {
+            BrowseFeature()
+        }
+        .ifLet(\.$previewHost, action: \.previewHost) {
             BrowseFeature()
         }
     }
