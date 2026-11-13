@@ -266,8 +266,9 @@ public struct MainTabView: View {
             Tab(value: MainTabFeature.Tab.browse) {
                 BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
             } label: {
-                tabLabel(
-                    L10n.Tab.browse,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.browse,
                     icon: store.selectedTab == .browse ? IconKit.tabBrowseFill : IconKit.tabBrowse,
                     smallIcon: store.selectedTab == .browse ? IconKit.tabBrowseFillSmall : IconKit.tabBrowseSmall,
                     identifier: AccessibilityIdentifiers.Tab.browse
@@ -279,8 +280,9 @@ public struct MainTabView: View {
                     FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
                 }
             } label: {
-                tabLabel(
-                    L10n.Tab.favorites,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.favorites,
                     icon: store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites,
                     smallIcon: store.selectedTab == .favorites
                         ? IconKit.tabFavoritesFillSmall
@@ -294,8 +296,9 @@ public struct MainTabView: View {
                     SharedView(store: store.scope(state: \.shared, action: \.shared))
                 }
             } label: {
-                tabLabel(
-                    L10n.Tab.shared,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.shared,
                     icon: store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare,
                     smallIcon: store.selectedTab == .shared ? IconKit.tabShareFillSmall : IconKit.tabShareSmall,
                     identifier: AccessibilityIdentifiers.Tab.shared
@@ -311,8 +314,9 @@ public struct MainTabView: View {
                     )
                 }
             } label: {
-                tabLabel(
-                    L10n.Tab.offline,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.offline,
                     icon: store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads,
                     smallIcon: store.selectedTab == .downloads
                         ? IconKit.tabDownloadsFillSmall
@@ -329,8 +333,9 @@ public struct MainTabView: View {
                     SettingsView(store: store.scope(state: \.settings, action: \.settings))
                 }
             } label: {
-                tabLabel(
-                    L10n.Tab.settings,
+                MainTabBarLabel(
+                    showsTitle: showTabLabels,
+                    title: L10n.Tab.settings,
                     icon: store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings,
                     smallIcon: store.selectedTab == .settings ? IconKit.tabSettingsFillSmall : IconKit.tabSettingsSmall,
                     identifier: AccessibilityIdentifiers.Tab.settings
@@ -342,31 +347,6 @@ public struct MainTabView: View {
         // toggling labels off leaves the old titled items on screen. Rebuild on the toggle.
         // `visitedTabs` (MainTabView @State) and the store-bound selection both survive it.
         .id(showTabLabels)
-    }
-
-    /// A tab bar item: title + smaller glyph when "Show Tab Labels" is on, the full-size icon
-    /// on its own otherwise. The title carries the accessibility label in both modes.
-    @ViewBuilder
-    private func tabLabel(_ title: String, icon: Image, smallIcon: Image, identifier: String) -> some View {
-        if showTabLabels {
-            Label {
-                Text(title)
-            } icon: {
-                tabIcon(smallIcon)
-            }
-            .accessibilityLabel(title)
-            .accessibilityIdentifier(identifier)
-        } else {
-            tabIcon(icon)
-                .accessibilityLabel(title)
-                .accessibilityIdentifier(identifier)
-        }
-    }
-
-    private func tabIcon(_ image: Image) -> some View {
-        image
-            .resizable()
-            .scaledToFit()
     }
 
     /// Whether the current tab is showing a `BrowseBreadcrumbBar` right now: the upload bar
@@ -416,10 +396,4 @@ public struct MainTabView: View {
             $0.filesClient = .previewValue
         }
     )
-}
-
-extension EnvironmentValues {
-    /// True inside the `MainTabView` split view detail. Read this rather than the size class:
-    /// on iPhone Duo open the detail column is narrow enough to report compact.
-    @Entry var isSplitViewDetail = false
 }
