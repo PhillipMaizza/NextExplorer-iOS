@@ -49,7 +49,7 @@
                 }
                 .width(min: Metrics.locationColumnMinWidth)
                 TableColumn(L10n.Browse.searchMatchColumn) { result in
-                    Text(matchDescription(result))
+                    Text(searchResultMatchDescription(result) ?? "")
                         .lineLimit(1)
                         .foregroundStyle(.secondary)
                 }
@@ -67,13 +67,6 @@
             })
             .scrollContentBackground(.hidden)
             .alternatingRowBackgrounds(.disabled)
-        }
-
-        /// The web client's label, with the matched line when there is one: "Contents, Line 12".
-        private func matchDescription(_ result: SearchResultItem) -> String {
-            [result.matchKind?.title, searchResultLineLabel(result)]
-                .compactMap(\.self)
-                .joined(separator: ", ")
         }
 
         private func icon(for result: SearchResultItem) -> some View {

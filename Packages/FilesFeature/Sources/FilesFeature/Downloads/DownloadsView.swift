@@ -8,12 +8,11 @@ import SwiftUI
 private enum Constants {
     /// Uneven redacted name / size / location widths so the skeleton doesn't line up as flat
     /// columns. Each row is `(name, "size • location")`.
-    static let skeletonRows: [(name: String, subtitle: String)] = [
+    static let skeletonEntries = [
         (8, 4, 7), (13, 5, 4), (6, 3, 9), (11, 4, 5), (16, 5, 6),
         (7, 3, 8), (10, 4, 4), (5, 4, 10), (12, 5, 5), (9, 3, 7),
-    ].map { name, size, loc in
-        (String(repeating: "M", count: name),
-         "\(String(repeating: "M", count: size)) • \(String(repeating: "M", count: loc))")
+    ].map { name, size, location in
+        SkeletonEntry(name: SkeletonEntry.text(name), subtitle: "\(SkeletonEntry.text(size)) • \(SkeletonEntry.text(location))")
     }
 }
 
@@ -116,7 +115,7 @@ struct DownloadsView: View {
     private var listContent: some View {
         DSGroupedList {
             if listPhase == .loading {
-                skeletonRows
+                SkeletonFileRows(entries: Constants.skeletonEntries)
             } else {
                 downloadRows
             }
@@ -131,32 +130,11 @@ struct DownloadsView: View {
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
     }
 
-    /// Redacted `FileRowView` stand-ins that sit in the *same* `List` as the real rows (never a
-    /// separate scroll container: that fights the nav bar's large-title tracking). The shine
-    /// is suppressed under Reduce Motion.
-    private var skeletonRows: some View {
-        ForEach(Array(Constants.skeletonRows.enumerated()), id: \.offset) { _, row in
-            FileRowView(name: row.name, isDirectory: false, subtitle: row.subtitle, kind: "")
-                .redacted(reason: .placeholder)
-                .shimmering()
-                .listRowBackground(Color.backgroundSecondary)
-        }
-    }
-
-    private var skeletonCells: some View {
-        ForEach(Array(Constants.skeletonRows.enumerated()), id: \.offset) { _, row in
-            GridCellView(name: row.name, isDirectory: false, kind: "")
-                .dsCard(padding: FileGridMetrics.cellPadding)
-                .redacted(reason: .placeholder)
-                .shimmering()
-        }
-    }
-
     private var gridContent: some View {
         ScrollView {
             LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
                 if listPhase == .loading {
-                    skeletonCells
+                    SkeletonGridCells(entries: Constants.skeletonEntries)
                 } else {
                     downloadCells
                 }

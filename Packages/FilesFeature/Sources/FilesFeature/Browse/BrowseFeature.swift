@@ -832,20 +832,8 @@ public struct BrowseFeature {
                         .send(.delegate(.openPath(path: result.id, title: result.name)))
                     )
                 }
-                // Search results only carry `dir`/`file` for `kind`, so rebuild the extension
-                // from the name and hand a real `FileItem` to the same preview routing a
-                // browse row tap uses. `dateModified`/`size` are unknown here, so the preview
-                // cache treats it as fresh and re-fetches: fine for an occasional tap.
-                let ext = (result.name as NSString).pathExtension.lowercased()
-                let item = FileItem(
-                    name: result.name,
-                    path: result.path,
-                    dateModified: date.now,
-                    size: 0,
-                    kind: ext.isEmpty ? "unknown" : ext,
-                    supportsThumbnail: false
-                )
-                return .send(.rowTapped(item))
+                // The same preview routing a browse row tap uses.
+                return .send(.rowTapped(result.previewItem(openedAt: date.now)))
 
             case let .searchResultsResponse(.success(page)):
                 state.isSearchingRemotely = false

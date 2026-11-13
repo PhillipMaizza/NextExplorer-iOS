@@ -372,16 +372,8 @@ public struct FavoritesFeature {
                     pushFolder(result.id, title: result.name, in: &state)
                     return .none
                 }
-                let ext = (result.name as NSString).pathExtension.lowercased()
-                let item = FileItem(
-                    name: result.name,
-                    path: result.path,
-                    dateModified: date.now,
-                    size: 0,
-                    kind: ext.isEmpty ? "unknown" : ext,
-                    supportsThumbnail: false
-                )
-                var host = BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.path, title: (result.path as NSString).lastPathComponent)
+                let item = result.previewItem(openedAt: date.now)
+                var host = BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.path, title: result.enclosingFolderTitle)
                 host.previewItem = item
                 state.previewHost = host
                 return .send(.previewHost(.presented(.rowTapped(item))))

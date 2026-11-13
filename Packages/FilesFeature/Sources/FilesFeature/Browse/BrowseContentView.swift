@@ -34,10 +34,6 @@ private enum Constants {
     static let emptyUploadButtonHPadding: CGFloat = .space24
     /// Keeps the empty folder's dashed upload button from spanning an iPad's full width.
     static let emptyUploadButtonMaxWidth: CGFloat = 360
-    /// Placeholder date/size for a search hit's thumbnail item: a search result carries neither,
-    /// and fixed values keep its thumbnail cache key steady across renders.
-    static let searchThumbnailPlaceholderDate = Date(timeIntervalSince1970: 0)
-    static let searchThumbnailPlaceholderSize: Int64 = 0
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -123,12 +119,6 @@ struct BrowseContentView: View {
             return
         }
         store.send(.rowTapped(item))
-    }
-
-    /// Search results only report `dir`/`file` for kind, so derive a real extension from the
-    /// file name for the row icon: the same thing `searchResultTapped` hands the preview.
-    private func searchResultKind(_ result: SearchResultItem) -> String {
-        result.isDirectory ? result.kind : (result.name as NSString).pathExtension.lowercased()
     }
 
     var body: some View {
@@ -623,8 +613,8 @@ struct BrowseContentView: View {
             if grid {
                 GridCellView(
                     name: row.name, isDirectory: row.isDirectory,
-                    isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
-                    thumbnailFile: searchResultThumbnailFile(row),
+                    isFavorite: store.favoritePaths.contains(row.id), kind: row.displayKind,
+                    thumbnailFile: row.thumbnailFile,
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
                     iconSize: thumbnailSize.iconSize,
@@ -632,11 +622,9 @@ struct BrowseContentView: View {
                     isOpening: isOpeningID(row.id)
                 )
             } else {
-                FileRowView(
-                    name: row.name, isDirectory: row.isDirectory, subtitle: searchResultSnippet(row),
-                    lineLabel: searchResultLineLabel(row),
-                    isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
-                    thumbnailFile: searchResultThumbnailFile(row),
+                SearchResultRow(
+                    result: row,
+                    isFavorite: store.favoritePaths.contains(row.id),
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
                     matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition, visibility: sourceVisibility),
@@ -644,25 +632,6 @@ struct BrowseContentView: View {
                 )
             }
         }
-    }
-
-    /// A thumbnail-capable `FileItem` for a file search hit; `nil` for a directory, which keeps
-    /// its folder glyph. Search hits carry no size or modified date, so use stable placeholders
-    /// to hold the thumbnail cache key steady across renders. `supportsThumbnail` is set for the
-    /// kinds the server will thumbnail (images, RAW, video); a PDF renders its first page on
-    /// device off its kind alone, matching a browse row.
-    private func searchResultThumbnailFile(_ result: SearchResultItem) -> FileItem? {
-        guard !result.isDirectory else { return nil }
-        let kind = searchResultKind(result)
-        let serverThumbnailable = FileItem.isImageKind(kind) || FileItem.isRawImageKind(kind) || FileItem.isVideoKind(kind)
-        return FileItem(
-            name: result.name,
-            path: result.path,
-            dateModified: Constants.searchThumbnailPlaceholderDate,
-            size: Constants.searchThumbnailPlaceholderSize,
-            kind: kind,
-            supportsThumbnail: serverThumbnailable
-        )
     }
 
     /// Extracted from the grid/list `ForEach` bodies: inlining the full cell (with the
