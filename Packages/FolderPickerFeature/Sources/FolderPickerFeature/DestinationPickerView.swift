@@ -7,6 +7,8 @@ import SwiftUI
 private enum Constants {
     static let rowIconSize: CGFloat = .iconMedium
     static let chevronSize: CGFloat = .iconSmall
+    /// Uneven placeholder widths, so the redacted rows do not line up as one flat column.
+    static let skeletonNames = [7, 12, 5, 10, 8, 14].map { String(repeating: "M", count: $0) }
 }
 
 /// The folder chooser for "Move" and "Upload": a modal sheet either way (for Upload it sits
@@ -156,8 +158,17 @@ public struct DestinationPickerView: View {
     @ViewBuilder
     private var searchContent: some View {
         if store.isSearching, store.searchResults?.isEmpty ?? true {
-            DSSpinner()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Placeholder folder rows for the answer to come, not a second spinner.
+            DSGroupedList {
+                ForEach(Array(Constants.skeletonNames.enumerated()), id: \.offset) { _, name in
+                    folderRow(name, subtitle: name)
+                        .redacted(reason: .placeholder)
+                        .shimmering()
+                }
+            }
+            .listStyle(.insetGrouped)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
         } else if let results = store.searchResults, results.isEmpty {
             EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -227,6 +238,16 @@ public struct DestinationPickerView: View {
     state.searchQuery = "Pho"
     state.isSearching = true
     state.searchResults = [SearchResultItem(name: "Photos", path: "Media", kind: "dir")]
+    return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
+}
+
+#Preview("Searching") {
+    var state = DestinationPickerFeature.State(
+        serverURL: URL(string: "https://example.com")!,
+        items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
+    )
+    state.searchQuery = "Pho"
+    state.isSearching = true
     return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
 }
 

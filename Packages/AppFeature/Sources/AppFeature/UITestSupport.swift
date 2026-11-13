@@ -45,6 +45,16 @@
             return environment[mockFlag] == "1" && environment[disableAnimationsFlag] == "1"
         }()
 
+        /// Drops a transaction's animation when the launch asks for no animations. Nonisolated: SwiftUI
+        /// calls it from whichever thread renders.
+        nonisolated static func stripAnimations(_ transaction: inout Transaction) {
+            guard disablesAnimations else { return }
+            transaction.animation = nil
+            #if os(iOS)
+                transaction.disablesAnimations = true
+            #endif
+        }
+
         /// How long the hinge needs to unlock rotation on a foldable before landscape is requested.
         private static let orientationDelay: TimeInterval = 1
 
@@ -450,14 +460,12 @@
     public extension View {
         /// Under XCUITest with animations off, no SwiftUI animation runs, explicit `withAnimation`
         /// included: every transaction through the root view loses its animation.
+        ///
+        /// SwiftUI reads transactions off the main thread too (a lazy grid places its cells on the
+        /// async renderer), so the closure is a nonisolated function: a closure written here would be
+        /// main actor isolated, and its isolation check stops the app on that thread.
         func disablesAnimationsUnderUITest() -> some View {
-            transaction { transaction in
-                guard UITestSupport.disablesAnimations else { return }
-                transaction.animation = nil
-                #if os(iOS)
-                    transaction.disablesAnimations = true
-                #endif
-            }
+            transaction(UITestSupport.stripAnimations)
         }
     }
 #endif

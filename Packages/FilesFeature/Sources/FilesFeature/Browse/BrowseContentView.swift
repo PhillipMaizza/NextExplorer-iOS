@@ -248,20 +248,28 @@ struct BrowseContentView: View {
     /// Split out of `body`: with every modifier below chained directly onto the file-action
     /// sheets/covers added above, the compiler couldn't type-check the whole expression in
     /// reasonable time.
+    /// Placeholder rows, cells or table rows in the current view mode, while a folder's first
+    /// listing or a search's first answer is on its way.
+    @ViewBuilder
+    private var loadingSkeleton: some View {
+        if viewMode == .table {
+            #if os(macOS)
+                MacBrowseTableSkeleton()
+            #endif
+        } else {
+            BrowseSkeletonView(
+                isGridView: viewMode == .grid,
+                gridColumns: gridColumns,
+                iconSize: thumbnailSize.iconSize
+            )
+        }
+    }
+
     private var browsingContent: some View {
         Group {
-            if isInitialLoad, viewMode == .table {
-                #if os(macOS)
-                    MacBrowseTableSkeleton()
-                        .transition(.opacity)
-                #endif
-            } else if isInitialLoad {
-                BrowseSkeletonView(
-                    isGridView: viewMode == .grid,
-                    gridColumns: gridColumns,
-                    iconSize: thumbnailSize.iconSize
-                )
-                .transition(.opacity)
+            if isInitialLoad {
+                loadingSkeleton
+                    .transition(.opacity)
             } else if viewMode == .table, !store.isSelecting, !store.isSearching {
                 tableContent
                     .transition(.opacity)
@@ -1237,7 +1245,7 @@ struct BrowseContentView: View {
             .empty
         } else if store.isSearchPending, store.displayedSearchResults?.isEmpty ?? true {
             // A recursive backend search is in flight with nothing to show yet (the instant
-            // matches found nothing local): spin rather than flash "no results".
+            // matches found nothing local): placeholders rather than a flash of "no results".
             .searching
         } else if store.searchFailureMessage != nil, store.displayedSearchResults?.isEmpty ?? true {
             .searchFailed
@@ -1252,7 +1260,9 @@ struct BrowseContentView: View {
     private var overlayStateContent: some View {
         switch overlayState {
         case .searching:
-            DSSpinner()
+            // The shape of the answer to come, like a folder's first load, rather than a second
+            // spinner beside the one in the search field.
+            loadingSkeleton
                 .transition(.opacity)
         case .error:
             if let errorMessage = store.phase.errorMessage {
