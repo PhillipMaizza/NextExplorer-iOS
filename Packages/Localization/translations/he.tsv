@@ -119,10 +119,18 @@ browse.clipboardCopiedOne	%@ הועתק
 browse.clipboardCopiedMany	%lld פריטים הועתקו
 browse.progressMoving	מעביר…
 browse.progressCopying	מעתיק…
-browse.transferMoved	%lld פריטים הועברו
-browse.transferCopied	%lld פריטים הועתקו
-browse.transferMovedWithSkipped	%1$lld פריטים הועברו, %2$lld דולגו
-browse.transferCopiedWithSkipped	%1$lld פריטים הועתקו, %2$lld דולגו
+browse.transferMoved#one	%lld פריט הועבר
+browse.transferMoved#two	%lld פריטים הועברו
+browse.transferMoved#other	%lld פריטים הועברו
+browse.transferCopied#one	%lld פריט הועתק
+browse.transferCopied#two	%lld פריטים הועתקו
+browse.transferCopied#other	%lld פריטים הועתקו
+browse.transferMovedWithSkipped#one	%1$lld פריט הועבר, %2$lld דולגו
+browse.transferMovedWithSkipped#two	%1$lld פריטים הועברו, %2$lld דולגו
+browse.transferMovedWithSkipped#other	%1$lld פריטים הועברו, %2$lld דולגו
+browse.transferCopiedWithSkipped#one	%1$lld פריט הועתק, %2$lld דולגו
+browse.transferCopiedWithSkipped#two	%1$lld פריטים הועתקו, %2$lld דולגו
+browse.transferCopiedWithSkipped#other	%1$lld פריטים הועתקו, %2$lld דולגו
 browse.transferConflictTitle	להחליף פריטים?
 browse.transferConflictMessageOne	"%@" כבר קיים בתיקייה הזו.
 browse.transferConflictMessageMany	%lld פריטים כבר קיימים בתיקייה הזו.
@@ -144,7 +152,9 @@ favorites.editColorLabel	צבע
 favorites.editColorDefault	ברירת מחדל
 favorites.editSave	שמירה
 favorites.reorderFailed	לא ניתן היה לשמור את הסדר החדש.
-favorites.removeConfirm	להסיר %lld מועדפים?
+favorites.removeConfirm#one	להסיר %lld מועדף?
+favorites.removeConfirm#two	להסיר %lld מועדפים?
+favorites.removeConfirm#other	להסיר %lld מועדפים?
 favorites.removeMessage	פעולה זו רק מסירה אותם מהמועדפים.
 favorites.removeFailedOne	לא ניתן היה להסיר את המועדף הזה.
 favorites.removeFailedMany	לא ניתן היה להסיר את המועדפים האלה.
@@ -183,7 +193,9 @@ uploads.reviewAddMore	הוספת קבצים נוספים
 uploads.reviewPreviewFile	תצוגה מקדימה של %@
 uploads.reviewInsecureNetworkNotice	מחובר באמצעות http. אם השרת הזה נמצא רק ברשת הביתית שלכם, ההעלאות לא יעבדו כשאתם מחוץ לרשת.
 uploads.stagingFailed	לא ניתן היה להוסיף את הקבצים האלה. נסו שוב.
-uploads.stagingSkipped	לא ניתן היה להכין %lld פריטים והם הושמטו.
+uploads.stagingSkipped#one	לא ניתן היה להכין %lld פריט והוא הושמט.
+uploads.stagingSkipped#two	לא ניתן היה להכין %lld פריטים והם הושמטו.
+uploads.stagingSkipped#other	לא ניתן היה להכין %lld פריטים והם הושמטו.
 uploads.discardTitle	לבטל את ההעלאה?
 uploads.discardMessage	הקבצים שהוספתם לא יועלו.
 uploads.discardConfirm	ביטול
@@ -944,7 +956,9 @@ menu.go	מעבר
 menu.activity	העברות
 menu.showAll	הצגת הכול
 uploads.notifyDone	ההעלאות הסתיימו
-uploads.notifyBody	%lld קבצים הועלו
+uploads.notifyBody#one	%lld קובץ הועלה
+uploads.notifyBody#two	%lld קבצים הועלו
+uploads.notifyBody#other	%lld קבצים הועלו
 downloadQueue.notifyDone	ההורדות הסתיימו
 fileInfo.rowSoftware	תוכנה
 fileInfo.sectionVersions	גרסאות
@@ -1126,3 +1140,6 @@ browse.actionRemoveFromOffline	הסרה מהזמינים ללא חיבור
 offline.rowUpdating	מעדכן…
 offline.rowWaitingForNetwork	ממתין לרשת
 offline.rowUpdateFailed	העדכון נכשל
+pdfPreview.pageIndicator	%1$lld מתוך %2$lld
+previewToolbar.savePhoto	שמירת תמונה
+previewToolbar.saveVideo	שמירת סרטון

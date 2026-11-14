@@ -111,10 +111,18 @@ browse.clipboardCopiedOne	%@ copiat
 browse.clipboardCopiedMany	%lld elemente copiate
 browse.progressMoving	Se mută…
 browse.progressCopying	Se copiază…
-browse.transferMoved	%lld elemente mutate
-browse.transferCopied	%lld elemente copiate
-browse.transferMovedWithSkipped	%1$lld elemente mutate, %2$lld omise
-browse.transferCopiedWithSkipped	%1$lld elemente copiate, %2$lld omise
+browse.transferMoved#one	%lld element mutat
+browse.transferMoved#few	%lld elemente mutate
+browse.transferMoved#other	%lld de elemente mutate
+browse.transferCopied#one	%lld element copiat
+browse.transferCopied#few	%lld elemente copiate
+browse.transferCopied#other	%lld de elemente copiate
+browse.transferMovedWithSkipped#one	%1$lld element mutat, %2$lld omise
+browse.transferMovedWithSkipped#few	%1$lld elemente mutate, %2$lld omise
+browse.transferMovedWithSkipped#other	%1$lld de elemente mutate, %2$lld omise
+browse.transferCopiedWithSkipped#one	%1$lld element copiat, %2$lld omise
+browse.transferCopiedWithSkipped#few	%1$lld elemente copiate, %2$lld omise
+browse.transferCopiedWithSkipped#other	%1$lld de elemente copiate, %2$lld omise
 browse.transferConflictTitle	Înlocuiești elementele?
 browse.transferConflictMessageOne	„%@” există deja în acest dosar.
 browse.transferConflictMessageMany	%lld elemente există deja în acest dosar.
@@ -135,7 +143,9 @@ favorites.editColorLabel	Culoare
 favorites.editColorDefault	Implicit
 favorites.editSave	Salvează
 favorites.reorderFailed	Nu s-a putut salva noua ordine.
-favorites.removeConfirm	Elimini %lld favorite?
+favorites.removeConfirm#one	Elimini %lld favorit?
+favorites.removeConfirm#few	Elimini %lld favorite?
+favorites.removeConfirm#other	Elimini %lld de favorite?
 favorites.removeMessage	Aceasta doar le elimină de la favorite.
 favorites.removeFailedOne	Nu s-a putut elimina acel favorit.
 favorites.removeFailedMany	Nu s-au putut elimina acele favorite.
@@ -174,7 +184,9 @@ uploads.reviewAddMore	Adaugă mai multe fișiere
 uploads.reviewPreviewFile	Previzualizează %@
 uploads.reviewInsecureNetworkNotice	Conectat prin http. Dacă acest server este doar în rețeaua ta de acasă, încărcările nu vor funcționa când ești în afara ei.
 uploads.stagingFailed	Nu s-au putut adăuga acele fișiere. Încearcă din nou.
-uploads.stagingSkipped	%lld elemente nu au putut fi pregatite și au fost omise.
+uploads.stagingSkipped#one	%lld element nu a putut fi pregătit și a fost omis.
+uploads.stagingSkipped#few	%lld elemente nu au putut fi pregătite și au fost omise.
+uploads.stagingSkipped#other	%lld de elemente nu au putut fi pregătite și au fost omise.
 uploads.discardTitle	Renunți la încărcare?
 uploads.discardMessage	Fișierele adăugate nu vor fi încărcate.
 uploads.discardConfirm	Renunță
@@ -676,7 +688,9 @@ menu.go	Mergi
 menu.activity	Transferuri
 menu.showAll	Afișează tot
 uploads.notifyDone	Încărcări finalizate
-uploads.notifyBody	%lld fișiere încărcate
+uploads.notifyBody#one	%lld fișier încărcat
+uploads.notifyBody#few	%lld fișiere încărcate
+uploads.notifyBody#other	%lld de fișiere încărcate
 downloadQueue.notifyDone	Descărcări finalizate
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versiuni
@@ -1153,3 +1167,6 @@ browse.actionRemoveFromOffline	Elimină din offline
 offline.rowUpdating	Se actualizează…
 offline.rowWaitingForNetwork	Se așteaptă rețeaua
 offline.rowUpdateFailed	Actualizarea a eșuat
+pdfPreview.pageIndicator	%1$lld din %2$lld
+previewToolbar.savePhoto	Salvează poza
+previewToolbar.saveVideo	Salvează videoclipul

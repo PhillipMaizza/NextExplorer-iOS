@@ -111,10 +111,14 @@ browse.clipboardCopiedOne	%@ copié
 browse.clipboardCopiedMany	%lld éléments copiés
 browse.progressMoving	Déplacement…
 browse.progressCopying	Copie…
-browse.transferMoved	%lld éléments déplacés
-browse.transferCopied	%lld éléments copiés
-browse.transferMovedWithSkipped	%1$lld éléments déplacés, %2$lld ignorés
-browse.transferCopiedWithSkipped	%1$lld éléments copiés, %2$lld ignorés
+browse.transferMoved#one	%lld élément déplacé
+browse.transferMoved#other	%lld éléments déplacés
+browse.transferCopied#one	%lld élément copié
+browse.transferCopied#other	%lld éléments copiés
+browse.transferMovedWithSkipped#one	%1$lld élément déplacé, %2$lld ignorés
+browse.transferMovedWithSkipped#other	%1$lld éléments déplacés, %2$lld ignorés
+browse.transferCopiedWithSkipped#one	%1$lld élément copié, %2$lld ignorés
+browse.transferCopiedWithSkipped#other	%1$lld éléments copiés, %2$lld ignorés
 browse.transferConflictTitle	Remplacer les éléments ?
 browse.transferConflictMessageOne	« %@ » existe déjà dans ce dossier.
 browse.transferConflictMessageMany	%lld éléments existent déjà dans ce dossier.
@@ -135,7 +139,8 @@ favorites.editColorLabel	Couleur
 favorites.editColorDefault	Par défaut
 favorites.editSave	Enregistrer
 favorites.reorderFailed	Impossible d'enregistrer le nouvel ordre.
-favorites.removeConfirm	Retirer %lld favoris ?
+favorites.removeConfirm#one	Retirer %lld favori ?
+favorites.removeConfirm#other	Retirer %lld favoris ?
 favorites.removeMessage	Cela les retire uniquement des favoris.
 favorites.removeFailedOne	Impossible de retirer ce favori.
 favorites.removeFailedMany	Impossible de retirer ces favoris.
@@ -174,7 +179,8 @@ uploads.reviewAddMore	Ajouter d'autres fichiers
 uploads.reviewPreviewFile	Aperçu de %@
 uploads.reviewInsecureNetworkNotice	Connecté en http. Si ce serveur n'est que sur votre réseau domestique, les envois ne fonctionneront pas hors de ce réseau.
 uploads.stagingFailed	Impossible d'ajouter ces fichiers. Réessayez.
-uploads.stagingSkipped	%lld éléments n'ont pas pu être préparés et ont été ignorés.
+uploads.stagingSkipped#one	%lld élément n'a pas pu être préparé et a été ignoré.
+uploads.stagingSkipped#other	%lld éléments n'ont pas pu être préparés et ont été ignorés.
 uploads.discardTitle	Abandonner l'envoi ?
 uploads.discardMessage	Les fichiers que vous avez ajoutés ne seront pas envoyés.
 uploads.discardConfirm	Abandonner
@@ -676,7 +682,8 @@ menu.go	Aller
 menu.activity	Transferts
 menu.showAll	Tout afficher
 uploads.notifyDone	Envois terminés
-uploads.notifyBody	%lld fichiers envoyés
+uploads.notifyBody#one	%lld fichier envoyé
+uploads.notifyBody#other	%lld fichiers envoyés
 downloadQueue.notifyDone	Téléchargements terminés
 fileInfo.rowSoftware	Logiciel
 fileInfo.sectionVersions	Versions
@@ -1147,3 +1154,6 @@ browse.actionRemoveFromOffline	Retirer du hors connexion
 offline.rowUpdating	Mise à jour…
 offline.rowWaitingForNetwork	En attente du réseau
 offline.rowUpdateFailed	Échec de la mise à jour
+pdfPreview.pageIndicator	%1$lld sur %2$lld
+previewToolbar.savePhoto	Enregistrer la photo
+previewToolbar.saveVideo	Enregistrer la vidéo

@@ -670,6 +670,9 @@ public enum L10n {
         public static var print: String { tr("openWith.print") }  // "Print…"
         public static var viewAsText: String { tr("openWith.viewAsText") }  // "View as Text"
     }
+    public enum PdfPreview {
+        public static func pageIndicator(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("pdfPreview.pageIndicator", a0, a1) }
+    }
     public enum Permissions {
         public static var applyOwnership: String { tr("permissions.applyOwnership") }  // "Apply Ownership"
         public static var applyPermissions: String { tr("permissions.applyPermissions") }  // "Apply Permissions"
@@ -694,7 +697,9 @@ public enum L10n {
         public static var delete: String { tr("previewToolbar.delete") }  // "Delete"
         public static var download: String { tr("previewToolbar.download") }  // "Download"
         public static var rename: String { tr("previewToolbar.rename") }  // "Rename"
+        public static var savePhoto: String { tr("previewToolbar.savePhoto") }  // "Save Photo"
         public static var saveToDevice: String { tr("previewToolbar.saveToDevice") }  // "Save to Device"
+        public static var saveVideo: String { tr("previewToolbar.saveVideo") }  // "Save Video"
         public static var share: String { tr("previewToolbar.share") }  // "Share"
     }
     public enum Search {

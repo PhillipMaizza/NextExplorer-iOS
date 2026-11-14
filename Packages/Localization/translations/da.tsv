@@ -119,10 +119,14 @@ browse.clipboardCopiedOne	%@ kopieret
 browse.clipboardCopiedMany	%lld emner kopieret
 browse.progressMoving	Flytter…
 browse.progressCopying	Kopierer…
-browse.transferMoved	%lld emner flyttet
-browse.transferCopied	%lld emner kopieret
-browse.transferMovedWithSkipped	%1$lld emner flyttet, %2$lld sprunget over
-browse.transferCopiedWithSkipped	%1$lld emner kopieret, %2$lld sprunget over
+browse.transferMoved#one	%lld emne flyttet
+browse.transferMoved#other	%lld emner flyttet
+browse.transferCopied#one	%lld emne kopieret
+browse.transferCopied#other	%lld emner kopieret
+browse.transferMovedWithSkipped#one	%1$lld emne flyttet, %2$lld sprunget over
+browse.transferMovedWithSkipped#other	%1$lld emner flyttet, %2$lld sprunget over
+browse.transferCopiedWithSkipped#one	%1$lld emne kopieret, %2$lld sprunget over
+browse.transferCopiedWithSkipped#other	%1$lld emner kopieret, %2$lld sprunget over
 browse.transferConflictTitle	Erstat emner?
 browse.transferConflictMessageOne	"%@" findes allerede i denne mappe.
 browse.transferConflictMessageMany	%lld emner findes allerede i denne mappe.
@@ -144,7 +148,8 @@ favorites.editColorLabel	Farve
 favorites.editColorDefault	Standard
 favorites.editSave	Gem
 favorites.reorderFailed	Den nye rækkefølge kunne ikke gemmes.
-favorites.removeConfirm	Fjern %lld favoritter?
+favorites.removeConfirm#one	Fjern %lld favorit?
+favorites.removeConfirm#other	Fjern %lld favoritter?
 favorites.removeMessage	Dette fjerner dem kun fra Favoritter.
 favorites.removeFailedOne	Favoritten kunne ikke fjernes.
 favorites.removeFailedMany	Favoritterne kunne ikke fjernes.
@@ -183,7 +188,8 @@ uploads.reviewAddMore	Tilføj flere filer
 uploads.reviewPreviewFile	Eksempelvisning af %@
 uploads.reviewInsecureNetworkNotice	Forbundet via http. Hvis denne server kun findes på dit hjemmenetværk, virker uploads ikke, når du er væk fra det.
 uploads.stagingFailed	Filerne kunne ikke tilføjes. Prøv igen.
-uploads.stagingSkipped	%lld emner kunne ikke forberedes og blev udeladt.
+uploads.stagingSkipped#one	%lld emne kunne ikke forberedes og blev udeladt.
+uploads.stagingSkipped#other	%lld emner kunne ikke forberedes og blev udeladt.
 uploads.discardTitle	Kassér upload?
 uploads.discardMessage	De filer, du har tilføjet, bliver ikke uploadet.
 uploads.discardConfirm	Kassér
@@ -944,7 +950,8 @@ menu.go	Gå
 menu.activity	Overførsler
 menu.showAll	Vis alle
 uploads.notifyDone	Uploads færdige
-uploads.notifyBody	%lld filer uploadet
+uploads.notifyBody#one	%lld fil uploadet
+uploads.notifyBody#other	%lld filer uploadet
 downloadQueue.notifyDone	Downloads færdige
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versioner
@@ -1120,3 +1127,6 @@ browse.actionRemoveFromOffline	Fjern fra offline
 offline.rowUpdating	Opdaterer…
 offline.rowWaitingForNetwork	Venter på netværk
 offline.rowUpdateFailed	Kunne ikke opdatere
+pdfPreview.pageIndicator	%1$lld af %2$lld
+previewToolbar.savePhoto	Gem foto
+previewToolbar.saveVideo	Gem video

@@ -119,10 +119,14 @@ browse.clipboardCopiedOne	%@ kopioitu
 browse.clipboardCopiedMany	%lld kohdetta kopioitu
 browse.progressMoving	Siirretään…
 browse.progressCopying	Kopioidaan…
-browse.transferMoved	%lld kohdetta siirretty
-browse.transferCopied	%lld kohdetta kopioitu
-browse.transferMovedWithSkipped	%1$lld kohdetta siirretty, %2$lld ohitettu
-browse.transferCopiedWithSkipped	%1$lld kohdetta kopioitu, %2$lld ohitettu
+browse.transferMoved#one	%lld kohde siirretty
+browse.transferMoved#other	%lld kohdetta siirretty
+browse.transferCopied#one	%lld kohde kopioitu
+browse.transferCopied#other	%lld kohdetta kopioitu
+browse.transferMovedWithSkipped#one	%1$lld kohde siirretty, %2$lld ohitettu
+browse.transferMovedWithSkipped#other	%1$lld kohdetta siirretty, %2$lld ohitettu
+browse.transferCopiedWithSkipped#one	%1$lld kohde kopioitu, %2$lld ohitettu
+browse.transferCopiedWithSkipped#other	%1$lld kohdetta kopioitu, %2$lld ohitettu
 browse.transferConflictTitle	Korvataanko kohteet?
 browse.transferConflictMessageOne	"%@" on jo tässä kansiossa.
 browse.transferConflictMessageMany	%lld kohdetta on jo tässä kansiossa.
@@ -144,7 +148,8 @@ favorites.editColorLabel	Väri
 favorites.editColorDefault	Oletus
 favorites.editSave	Tallenna
 favorites.reorderFailed	Uutta järjestystä ei voitu tallentaa.
-favorites.removeConfirm	Poistetaanko %lld suosikkia?
+favorites.removeConfirm#one	Poistetaanko %lld suosikki?
+favorites.removeConfirm#other	Poistetaanko %lld suosikkia?
 favorites.removeMessage	Tämä poistaa ne vain suosikeista.
 favorites.removeFailedOne	Tuota suosikkia ei voitu poistaa.
 favorites.removeFailedMany	Noita suosikkeja ei voitu poistaa.
@@ -183,7 +188,8 @@ uploads.reviewAddMore	Lisää tiedostoja
 uploads.reviewPreviewFile	Esikatsele: %@
 uploads.reviewInsecureNetworkNotice	Yhdistetty http-yhteydellä. Jos tämä palvelin on vain kotiverkossasi, lähetykset eivät toimi, kun olet poissa sieltä.
 uploads.stagingFailed	Tiedostoja ei voitu lisätä. Yritä uudelleen.
-uploads.stagingSkipped	%lld kohdetta ei voitu valmistella, ja ne jätettiin pois.
+uploads.stagingSkipped#one	%lld kohde jätettiin pois, koska sitä ei voitu valmistella.
+uploads.stagingSkipped#other	%lld kohdetta ei voitu valmistella, ja ne jätettiin pois.
 uploads.discardTitle	Hylätäänkö lähetys?
 uploads.discardMessage	Lisäämiäsi tiedostoja ei lähetetä.
 uploads.discardConfirm	Hylkää
@@ -944,7 +950,8 @@ menu.go	Siirry
 menu.activity	Siirrot
 menu.showAll	Näytä kaikki
 uploads.notifyDone	Lähetykset valmiit
-uploads.notifyBody	%lld tiedostoa lähetetty
+uploads.notifyBody#one	%lld tiedosto lähetetty
+uploads.notifyBody#other	%lld tiedostoa lähetetty
 downloadQueue.notifyDone	Lataukset valmiit
 fileInfo.rowSoftware	Ohjelmisto
 fileInfo.sectionVersions	Versiot
@@ -1120,3 +1127,6 @@ browse.actionRemoveFromOffline	Poista offline-tilasta
 offline.rowUpdating	Päivitetään…
 offline.rowWaitingForNetwork	Odottaa verkkoa
 offline.rowUpdateFailed	Päivitys epäonnistui
+pdfPreview.pageIndicator	%1$lld / %2$lld
+previewToolbar.savePhoto	Tallenna kuva
+previewToolbar.saveVideo	Tallenna video

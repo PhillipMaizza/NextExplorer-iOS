@@ -385,6 +385,17 @@ public struct BrowseFeature {
         /// used for PDFs: images/RAW load themselves per-page in the gallery view, and
         /// video/audio stream directly, neither going through this at all.
         public var previewItem: FileItem?
+        /// The open file came from a search hit, not this folder's listing: it can live in another
+        /// folder or be hidden here, so its gallery holds it alone.
+        var isPreviewOutsideListing = false
+        /// Pushed from the Offline tab: the screen offers only what works on files kept on the device
+        /// (copy, share, save, remove from offline), so its access is narrowed when it lands.
+        public var isKeptOffline = false
+        /// The listing comes from the device (an Offline tab screen, or a saved copy shown with no
+        /// network): only actions on kept files are offered, done from those files, not the server.
+        var showsDeviceContent: Bool {
+            isKeptOffline || dataSource != .live
+        }
         public var previewFileURL: URL?
         /// The `GET /api/preview` download lifecycle. `isLoadingPreview` / `previewErrorMessage`
         /// are derived from it.
@@ -395,6 +406,9 @@ public struct BrowseFeature {
         /// streamable (anything `GET /api/preview` 415s on): fetched/saved via the real
         /// `/api/editor` endpoint, the server's actual text view+edit path.
         public var textContent: String?
+        /// The gallery handed a text file to the editor (its Edit button): the cover shows the editor
+        /// for `previewItem` until it closes back to the gallery.
+        public var isPreviewEditing = false
         /// The `/api/editor` read lifecycle. A save is a separate mutation (`isSavingTextContent`
         /// + `textSaveError`), so it never rewinds a loaded editor back to a load phase.
         public var textPhase: DataPhase = .idle
@@ -665,6 +679,8 @@ public struct BrowseFeature {
         case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
         case infoUsageResponse(Result<StorageUsage, FilesClientError>)
         case previewDismissed
+        case previewEditTapped(FileItem)
+        case previewEditorClosed
         case previewFileResponse(Result<URL, FilesClientError>)
         case textContentResponse(Result<String, FilesClientError>)
         case openInBrowserTapped(FileItem)
@@ -886,14 +902,13 @@ public struct BrowseFeature {
                     // - Browsable archives (.zip/.rar) list themselves in `ArchiveBrowserView`.
                     // Only PDFs and plain-text files need a fetch here.
                     state.previewItem = item
-                    if item.isUnsupportedForPreview
-                        || item.isBrowsableArchive
-                        || item.isStreamableMedia
-                        || ((item.isImage || item.isRawImage) && !item.isSVG) {
+                    state.isPreviewEditing = false
+                    switch PreviewKind(item) {
+                    case .unsupported, .archive, .media, .image:
                         return .none
-                    } else if item.isPreviewableViaDownload {
+                    case .document:
                         return loadPreview(&state, item: item)
-                    } else {
+                    case .text:
                         return loadTextContent(&state, item: item)
                     }
                 }
@@ -956,7 +971,9 @@ public struct BrowseFeature {
                 // The same preview routing a browse row tap uses.
                 // A pinned copy opens first: the hit knows no size or date, so it takes the copy's own.
                 let pinned = offlineFileStore.pinned(to: state.cacheScope)
-                return .send(.rowTapped(pinned.matchingPinnedCopy(result.previewItem(openedAt: date.now))))
+                let item = pinned.matchingPinnedCopy(result.previewItem(openedAt: date.now))
+                state.isPreviewOutsideListing = true
+                return .send(.rowTapped(item))
 
             case let .searchResultsResponse(.success(page)):
                 state.searchPhase = .loaded
@@ -1652,13 +1669,32 @@ public struct BrowseFeature {
             case .previewDismissed:
                 state.newlyCreatedFileID = nil
                 state.previewItem = nil
+                state.isPreviewOutsideListing = false
                 state.previewFileURL = nil
                 state.previewPhase = .idle
                 state.textContent = nil
                 state.textPhase = .idle
                 state.textSaveError = nil
                 state.textSaveConflict = nil
+                state.isPreviewEditing = false
                 return .merge(.cancel(id: CancelID.preview), .cancel(id: CancelID.googleDocsPointer))
+
+            case let .previewEditTapped(item):
+                // The gallery swiped to this file, so it becomes the preview; a fresh read so the
+                // edit starts from what the server holds now.
+                state.previewItem = item
+                state.isPreviewEditing = true
+                state.previewFileURL = nil
+                state.previewPhase = .idle
+                return loadTextContent(&state, item: item)
+
+            case .previewEditorClosed:
+                // Back to the gallery on the same file. The text stays: the gallery page shows it
+                // without asking again, including what a save just wrote.
+                state.isPreviewEditing = false
+                state.textSaveError = nil
+                state.textSaveConflict = nil
+                return .none
 
             case let .previewFileResponse(.success(fileURL)):
                 state.previewPhase = .loaded

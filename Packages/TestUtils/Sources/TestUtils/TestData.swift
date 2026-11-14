@@ -26,6 +26,12 @@ public enum TestFile {
     public static let aPDF = "a.pdf"
     /// A third photo name next to a.jpg and b.jpg.
     public static let cPhoto = "c.jpg"
+    public static let clip = "clip.mp4"
+    public static let archive = "archive.zip"
+    /// Photo and video names with the upper case extensions a camera writes, and a PNG.
+    public static let cameraPhoto = "a.HEIC"
+    public static let screenshot = "a.png"
+    public static let cameraClip = "a.MOV"
 }
 
 public enum TestAccount {

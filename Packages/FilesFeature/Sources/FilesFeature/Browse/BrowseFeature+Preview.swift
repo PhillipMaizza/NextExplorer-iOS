@@ -40,13 +40,7 @@ extension BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = filesClient
         return .run { send in
-            try await send(.previewFileResponse(apiResult {
-                // Word docs aren't in `PREVIEWABLE_EXTENSIONS`: `GET /api/preview` 415s them,
-                // so they come down via the unrestricted download endpoint instead.
-                item.isOfficeDocument
-                    ? try await filesClient.downloadRawFile(serverURL, item)
-                    : try await filesClient.previewFile(serverURL, item)
-            }))
+            try await send(.previewFileResponse(apiResult { try await filesClient.previewDocument(serverURL, item) }))
         }
         .cancellable(id: CancelID.preview, cancelInFlight: true)
     }
@@ -102,5 +96,53 @@ extension BrowseFeature {
                 return newContent
             }))
         }
+    }
+}
+
+extension BrowseFeature.State {
+    /// The cover shows the text editor instead of the gallery: a file New File just made, a Google
+    /// Drive stub whose link could not be read, or a text file the gallery's Edit handed over.
+    var showsTextEditor: Bool {
+        guard let item = previewItem else { return false }
+        return isPreviewEditing || newlyCreatedFileID == item.id || item.isGoogleDocsPointer
+    }
+
+    /// Whether the open preview is the gallery, which deletes in place and stays open on the
+    /// neighbour. iPhone and iPad page through every file; the Mac steps with the arrow keys and
+    /// pages only its images.
+    var isPreviewInGallery: Bool {
+        guard let item = previewItem, !showsTextEditor else { return false }
+        #if os(iOS)
+            return true
+        #else
+            return PreviewKind(item) == .image
+        #endif
+    }
+
+    /// Whether the cover has what it needs to present: the gallery opens at once, but the file
+    /// tapped as a document or text waits for its first fetch so the cover zooms in on content.
+    var isPreviewContentReady: Bool {
+        guard let item = previewItem else { return false }
+        if isPreviewEditing {
+            return true
+        }
+        switch PreviewKind(item) {
+        case .unsupported, .media, .archive, .image:
+            return true
+        case .document:
+            return previewFileURL != nil || previewErrorMessage != nil
+        case .text:
+            return textContent != nil || textEditorErrorMessage != nil
+        }
+    }
+
+    /// The files the gallery swipes through, in list order: every file shown except Google Drive
+    /// stubs, which open their linked document instead. A file opened on its own (Favorites, the
+    /// Offline tab) has no listing loaded here, and a search hit may sit in another folder, so both
+    /// page alone. Once a listing is loaded it is the truth: a deleted file leaves it, so the
+    /// gallery moves on or closes.
+    func galleryItems(startingAt item: FileItem) -> [FileItem] {
+        guard phase != .idle, !isPreviewOutsideListing else { return [item] }
+        return Array(displayedItems.filter { !$0.isDirectory && !$0.isGoogleDocsPointer })
     }
 }

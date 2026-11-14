@@ -111,10 +111,10 @@ browse.clipboardCopiedOne	%@ をコピーしました
 browse.clipboardCopiedMany	%lld 項目をコピーしました
 browse.progressMoving	移動中…
 browse.progressCopying	コピー中…
-browse.transferMoved	%lld 項目を移動しました
-browse.transferCopied	%lld 項目をコピーしました
-browse.transferMovedWithSkipped	%1$lld 項目を移動、%2$lld 項目をスキップ
-browse.transferCopiedWithSkipped	%1$lld 項目をコピー、%2$lld 項目をスキップ
+browse.transferMoved#other	%lld 項目を移動しました
+browse.transferCopied#other	%lld 項目をコピーしました
+browse.transferMovedWithSkipped#other	%1$lld 項目を移動、%2$lld 項目をスキップ
+browse.transferCopiedWithSkipped#other	%1$lld 項目をコピー、%2$lld 項目をスキップ
 browse.transferConflictTitle	項目を置き換えますか？
 browse.transferConflictMessageOne	「%@」はこのフォルダに既に存在します。
 browse.transferConflictMessageMany	%lld 項目がこのフォルダに既に存在します。
@@ -135,7 +135,7 @@ favorites.editColorLabel	カラー
 favorites.editColorDefault	デフォルト
 favorites.editSave	保存
 favorites.reorderFailed	新しい並び順を保存できませんでした。
-favorites.removeConfirm	%lld 件のお気に入りを削除しますか？
+favorites.removeConfirm#other	%lld 件のお気に入りを削除しますか？
 favorites.removeMessage	お気に入りから削除するだけです。
 favorites.removeFailedOne	そのお気に入りを削除できませんでした。
 favorites.removeFailedMany	それらのお気に入りを削除できませんでした。
@@ -174,7 +174,7 @@ uploads.reviewAddMore	ファイルをさらに追加
 uploads.reviewPreviewFile	%@ をプレビュー
 uploads.reviewInsecureNetworkNotice	http で接続しています。このサーバーがホームネットワークのみにある場合、そのネットワークから離れるとアップロードは機能しません。
 uploads.stagingFailed	それらのファイルを追加できませんでした。再試行してください。
-uploads.stagingSkipped	%lld 項目を準備できず、除外されました。
+uploads.stagingSkipped#other	%lld 項目を準備できず、除外されました。
 uploads.discardTitle	アップロードを破棄しますか？
 uploads.discardMessage	追加したファイルはアップロードされません。
 uploads.discardConfirm	破棄
@@ -676,7 +676,7 @@ menu.go	移動
 menu.activity	転送
 menu.showAll	すべて表示
 uploads.notifyDone	アップロード完了
-uploads.notifyBody	%lld 個のファイルをアップロードしました
+uploads.notifyBody#other	%lld 個のファイルをアップロードしました
 downloadQueue.notifyDone	ダウンロード完了
 fileInfo.rowSoftware	ソフトウェア
 fileInfo.sectionVersions	バージョン
@@ -1141,3 +1141,6 @@ browse.actionRemoveFromOffline	オフラインから削除
 offline.rowUpdating	更新中…
 offline.rowWaitingForNetwork	ネットワーク待ち
 offline.rowUpdateFailed	更新できませんでした
+pdfPreview.pageIndicator	%1$lld/%2$lld
+previewToolbar.savePhoto	写真を保存
+previewToolbar.saveVideo	ビデオを保存

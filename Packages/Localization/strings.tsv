@@ -140,10 +140,14 @@ browse.clipboardCopiedOne	%@ copied
 browse.clipboardCopiedMany	%lld items copied
 browse.progressMoving	Moving…
 browse.progressCopying	Copying…
-browse.transferMoved	Moved %lld items
-browse.transferCopied	Copied %lld items
-browse.transferMovedWithSkipped	Moved %1$lld items, skipped %2$lld
-browse.transferCopiedWithSkipped	Copied %1$lld items, skipped %2$lld
+browse.transferMoved#one	Moved %lld item
+browse.transferMoved#other	Moved %lld items
+browse.transferCopied#one	Copied %lld item
+browse.transferCopied#other	Copied %lld items
+browse.transferMovedWithSkipped#one	Moved %1$lld item, skipped %2$lld
+browse.transferMovedWithSkipped#other	Moved %1$lld items, skipped %2$lld
+browse.transferCopiedWithSkipped#one	Copied %1$lld item, skipped %2$lld
+browse.transferCopiedWithSkipped#other	Copied %1$lld items, skipped %2$lld
 browse.transferConflictTitle	Replace items?
 browse.transferConflictMessageOne	"%@" already exists in this folder.
 browse.transferConflictMessageMany	%lld items already exist in this folder.
@@ -167,7 +171,8 @@ favorites.editColorLabel	Color
 favorites.editColorDefault	Default
 favorites.editSave	Save
 favorites.reorderFailed	Couldn't save the new order.
-favorites.removeConfirm	Remove %lld Favorites?
+favorites.removeConfirm#one	Remove %lld Favorite?
+favorites.removeConfirm#other	Remove %lld Favorites?
 favorites.removeMessage	This only removes them from Favorites.
 favorites.removeFailedOne	Couldn't remove that favorite.
 favorites.removeFailedMany	Couldn't remove those favorites.
@@ -213,7 +218,8 @@ uploads.reviewAddMore	Add more files
 uploads.reviewPreviewFile	Preview %@
 uploads.reviewInsecureNetworkNotice	Connected over http. If this server is only on your home network, uploads won't work while you're away from it.
 uploads.stagingFailed	Couldn't add those files. Try again.
-uploads.stagingSkipped	%lld items couldn't be prepared and were left out.
+uploads.stagingSkipped#one	%lld item couldn't be prepared and was left out.
+uploads.stagingSkipped#other	%lld items couldn't be prepared and were left out.
 uploads.discardTitle	Discard upload?
 uploads.discardMessage	The files you added won't be uploaded.
 uploads.discardConfirm	Discard
@@ -1072,7 +1078,8 @@ menu.go	Go
 menu.activity	Transfers
 menu.showAll	Show All
 uploads.notifyDone	Uploads finished
-uploads.notifyBody	%lld files uploaded
+uploads.notifyBody#one	%lld file uploaded
+uploads.notifyBody#other	%lld files uploaded
 downloadQueue.notifyDone	Downloads finished
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versions
@@ -1242,3 +1249,6 @@ versionedFiles.refresh	Refresh
 offline.rowUpdating	Updating…
 offline.rowWaitingForNetwork	Waiting for network
 offline.rowUpdateFailed	Couldn't update
+pdfPreview.pageIndicator	%1$lld of %2$lld
+previewToolbar.savePhoto	Save Photo
+previewToolbar.saveVideo	Save Video

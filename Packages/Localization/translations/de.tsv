@@ -111,10 +111,14 @@ browse.clipboardCopiedOne	%@ kopiert
 browse.clipboardCopiedMany	%lld Objekte kopiert
 browse.progressMoving	Wird bewegt…
 browse.progressCopying	Wird kopiert…
-browse.transferMoved	%lld Objekte bewegt
-browse.transferCopied	%lld Objekte kopiert
-browse.transferMovedWithSkipped	%1$lld Objekte bewegt, %2$lld übersprungen
-browse.transferCopiedWithSkipped	%1$lld Objekte kopiert, %2$lld übersprungen
+browse.transferMoved#one	%lld Objekt bewegt
+browse.transferMoved#other	%lld Objekte bewegt
+browse.transferCopied#one	%lld Objekt kopiert
+browse.transferCopied#other	%lld Objekte kopiert
+browse.transferMovedWithSkipped#one	%1$lld Objekt bewegt, %2$lld übersprungen
+browse.transferMovedWithSkipped#other	%1$lld Objekte bewegt, %2$lld übersprungen
+browse.transferCopiedWithSkipped#one	%1$lld Objekt kopiert, %2$lld übersprungen
+browse.transferCopiedWithSkipped#other	%1$lld Objekte kopiert, %2$lld übersprungen
 browse.transferConflictTitle	Objekte ersetzen?
 browse.transferConflictMessageOne	„%@“ ist in diesem Ordner bereits vorhanden.
 browse.transferConflictMessageMany	%lld Objekte sind in diesem Ordner bereits vorhanden.
@@ -135,7 +139,8 @@ favorites.editColorLabel	Farbe
 favorites.editColorDefault	Standard
 favorites.editSave	Sichern
 favorites.reorderFailed	Neue Reihenfolge konnte nicht gesichert werden.
-favorites.removeConfirm	%lld Favoriten entfernen?
+favorites.removeConfirm#one	%lld Favorit entfernen?
+favorites.removeConfirm#other	%lld Favoriten entfernen?
 favorites.removeMessage	Dies entfernt sie nur aus den Favoriten.
 favorites.removeFailedOne	Dieser Favorit konnte nicht entfernt werden.
 favorites.removeFailedMany	Diese Favoriten konnten nicht entfernt werden.
@@ -174,7 +179,8 @@ uploads.reviewAddMore	Weitere Dateien hinzufügen
 uploads.reviewPreviewFile	%@ vorschauen
 uploads.reviewInsecureNetworkNotice	Über http verbunden. Wenn dieser Server nur in deinem Heimnetzwerk ist, funktionieren Uploads nicht, wenn du dich außerhalb befindest.
 uploads.stagingFailed	Diese Dateien konnten nicht hinzugefügt werden. Versuche es erneut.
-uploads.stagingSkipped	%lld Objekte konnten nicht vorbereitet werden und wurden ausgelassen.
+uploads.stagingSkipped#one	%lld Objekt konnte nicht vorbereitet werden und wurde ausgelassen.
+uploads.stagingSkipped#other	%lld Objekte konnten nicht vorbereitet werden und wurden ausgelassen.
 uploads.discardTitle	Upload verwerfen?
 uploads.discardMessage	Die hinzugefügten Dateien werden nicht hochgeladen.
 uploads.discardConfirm	Verwerfen
@@ -676,7 +682,8 @@ menu.go	Gehe zu
 menu.activity	Übertragungen
 menu.showAll	Alle anzeigen
 uploads.notifyDone	Uploads abgeschlossen
-uploads.notifyBody	%lld Dateien hochgeladen
+uploads.notifyBody#one	%lld Datei hochgeladen
+uploads.notifyBody#other	%lld Dateien hochgeladen
 downloadQueue.notifyDone	Downloads abgeschlossen
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versionen
@@ -1147,3 +1154,6 @@ browse.actionRemoveFromOffline	Aus Offline entfernen
 offline.rowUpdating	Wird aktualisiert…
 offline.rowWaitingForNetwork	Wartet auf Netzwerk
 offline.rowUpdateFailed	Aktualisierung fehlgeschlagen
+pdfPreview.pageIndicator	%1$lld von %2$lld
+previewToolbar.savePhoto	Foto sichern
+previewToolbar.saveVideo	Video sichern

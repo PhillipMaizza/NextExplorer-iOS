@@ -111,10 +111,14 @@ browse.clipboardCopiedOne	%@ kopierad
 browse.clipboardCopiedMany	%lld objekt kopierade
 browse.progressMoving	Flyttar…
 browse.progressCopying	Kopierar…
-browse.transferMoved	Flyttade %lld objekt
-browse.transferCopied	Kopierade %lld objekt
-browse.transferMovedWithSkipped	Flyttade %1$lld objekt, hoppade över %2$lld
-browse.transferCopiedWithSkipped	Kopierade %1$lld objekt, hoppade över %2$lld
+browse.transferMoved#one	Flyttade %lld objekt
+browse.transferMoved#other	Flyttade %lld objekt
+browse.transferCopied#one	Kopierade %lld objekt
+browse.transferCopied#other	Kopierade %lld objekt
+browse.transferMovedWithSkipped#one	Flyttade %1$lld objekt, hoppade över %2$lld
+browse.transferMovedWithSkipped#other	Flyttade %1$lld objekt, hoppade över %2$lld
+browse.transferCopiedWithSkipped#one	Kopierade %1$lld objekt, hoppade över %2$lld
+browse.transferCopiedWithSkipped#other	Kopierade %1$lld objekt, hoppade över %2$lld
 browse.transferConflictTitle	Ersätt objekt?
 browse.transferConflictMessageOne	”%@” finns redan i den här mappen.
 browse.transferConflictMessageMany	%lld objekt finns redan i den här mappen.
@@ -135,7 +139,8 @@ favorites.editColorLabel	Färg
 favorites.editColorDefault	Standard
 favorites.editSave	Spara
 favorites.reorderFailed	Det gick inte att spara den nya ordningen.
-favorites.removeConfirm	Ta bort %lld favoriter?
+favorites.removeConfirm#one	Ta bort %lld favorit?
+favorites.removeConfirm#other	Ta bort %lld favoriter?
 favorites.removeMessage	Detta tar bara bort dem från favoriter.
 favorites.removeFailedOne	Det gick inte att ta bort den favoriten.
 favorites.removeFailedMany	Det gick inte att ta bort de favoriterna.
@@ -174,7 +179,8 @@ uploads.reviewAddMore	Lägg till fler filer
 uploads.reviewPreviewFile	Förhandsvisa %@
 uploads.reviewInsecureNetworkNotice	Ansluten via http. Om den här servern bara finns i ditt hemnätverk fungerar inte uppladdningar när du är borta från det.
 uploads.stagingFailed	Det gick inte att lägga till de filerna. Försök igen.
-uploads.stagingSkipped	%lld objekt kunde inte förberedas och utelämnades.
+uploads.stagingSkipped#one	%lld objekt kunde inte förberedas och utelämnades.
+uploads.stagingSkipped#other	%lld objekt kunde inte förberedas och utelämnades.
 uploads.discardTitle	Kassera uppladdningen?
 uploads.discardMessage	Filerna du lade till laddas inte upp.
 uploads.discardConfirm	Kassera
@@ -676,7 +682,8 @@ menu.go	Gå
 menu.activity	Överföringar
 menu.showAll	Visa alla
 uploads.notifyDone	Uppladdningar klara
-uploads.notifyBody	%lld filer uppladdade
+uploads.notifyBody#one	%lld fil uppladdad
+uploads.notifyBody#other	%lld filer uppladdade
 downloadQueue.notifyDone	Hämtningar klara
 fileInfo.rowSoftware	Programvara
 fileInfo.sectionVersions	Versioner
@@ -1147,3 +1154,6 @@ browse.actionRemoveFromOffline	Ta bort från offline
 offline.rowUpdating	Uppdaterar…
 offline.rowWaitingForNetwork	Väntar på nätverk
 offline.rowUpdateFailed	Det gick inte att uppdatera
+pdfPreview.pageIndicator	%1$lld av %2$lld
+previewToolbar.savePhoto	Spara bild
+previewToolbar.saveVideo	Spara video

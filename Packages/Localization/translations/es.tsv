@@ -111,10 +111,14 @@ browse.clipboardCopiedOne	%@ copiado
 browse.clipboardCopiedMany	%lld elementos copiados
 browse.progressMoving	Moviendo…
 browse.progressCopying	Copiando…
-browse.transferMoved	Se movieron %lld elementos
-browse.transferCopied	Se copiaron %lld elementos
-browse.transferMovedWithSkipped	Se movieron %1$lld elementos, se omitieron %2$lld
-browse.transferCopiedWithSkipped	Se copiaron %1$lld elementos, se omitieron %2$lld
+browse.transferMoved#one	Se movió %lld elemento
+browse.transferMoved#other	Se movieron %lld elementos
+browse.transferCopied#one	Se copió %lld elemento
+browse.transferCopied#other	Se copiaron %lld elementos
+browse.transferMovedWithSkipped#one	Se movió %1$lld elemento, se omitieron %2$lld
+browse.transferMovedWithSkipped#other	Se movieron %1$lld elementos, se omitieron %2$lld
+browse.transferCopiedWithSkipped#one	Se copió %1$lld elemento, se omitieron %2$lld
+browse.transferCopiedWithSkipped#other	Se copiaron %1$lld elementos, se omitieron %2$lld
 browse.transferConflictTitle	¿Reemplazar elementos?
 browse.transferConflictMessageOne	"%@" ya existe en esta carpeta.
 browse.transferConflictMessageMany	%lld elementos ya existen en esta carpeta.
@@ -135,7 +139,8 @@ favorites.editColorLabel	Color
 favorites.editColorDefault	Predeterminado
 favorites.editSave	Guardar
 favorites.reorderFailed	No se pudo guardar el nuevo orden.
-favorites.removeConfirm	¿Quitar %lld favoritos?
+favorites.removeConfirm#one	¿Quitar %lld favorito?
+favorites.removeConfirm#other	¿Quitar %lld favoritos?
 favorites.removeMessage	Esto solo los quita de Favoritos.
 favorites.removeFailedOne	No se pudo quitar ese favorito.
 favorites.removeFailedMany	No se pudieron quitar esos favoritos.
@@ -174,7 +179,8 @@ uploads.reviewAddMore	Añadir más archivos
 uploads.reviewPreviewFile	Vista previa de %@
 uploads.reviewInsecureNetworkNotice	Conectado por http. Si este servidor solo está en tu red doméstica, las subidas no funcionarán cuando estés fuera de ella.
 uploads.stagingFailed	No se pudieron añadir esos archivos. Inténtalo de nuevo.
-uploads.stagingSkipped	No se pudieron preparar %lld elementos y quedaron excluidos.
+uploads.stagingSkipped#one	No se pudo preparar %lld elemento y quedó excluido.
+uploads.stagingSkipped#other	No se pudieron preparar %lld elementos y quedaron excluidos.
 uploads.discardTitle	¿Descartar la subida?
 uploads.discardMessage	Los archivos que añadiste no se subirán.
 uploads.discardConfirm	Descartar
@@ -676,7 +682,8 @@ menu.go	Ir
 menu.activity	Transferencias
 menu.showAll	Mostrar todo
 uploads.notifyDone	Subidas terminadas
-uploads.notifyBody	%lld archivos subidos
+uploads.notifyBody#one	%lld archivo subido
+uploads.notifyBody#other	%lld archivos subidos
 downloadQueue.notifyDone	Descargas terminadas
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versiones
@@ -1147,3 +1154,6 @@ browse.actionRemoveFromOffline	Quitar de sin conexión
 offline.rowUpdating	Actualizando…
 offline.rowWaitingForNetwork	Esperando red
 offline.rowUpdateFailed	No se pudo actualizar
+pdfPreview.pageIndicator	%1$lld de %2$lld
+previewToolbar.savePhoto	Guardar foto
+previewToolbar.saveVideo	Guardar vídeo

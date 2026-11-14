@@ -119,10 +119,10 @@ browse.clipboardCopiedOne	Đã sao chép %@
 browse.clipboardCopiedMany	Đã sao chép %lld mục
 browse.progressMoving	Đang di chuyển…
 browse.progressCopying	Đang sao chép…
-browse.transferMoved	Đã di chuyển %lld mục
-browse.transferCopied	Đã sao chép %lld mục
-browse.transferMovedWithSkipped	Đã di chuyển %1$lld mục, bỏ qua %2$lld
-browse.transferCopiedWithSkipped	Đã sao chép %1$lld mục, bỏ qua %2$lld
+browse.transferMoved#other	Đã di chuyển %lld mục
+browse.transferCopied#other	Đã sao chép %lld mục
+browse.transferMovedWithSkipped#other	Đã di chuyển %1$lld mục, bỏ qua %2$lld
+browse.transferCopiedWithSkipped#other	Đã sao chép %1$lld mục, bỏ qua %2$lld
 browse.transferConflictTitle	Thay thế các mục?
 browse.transferConflictMessageOne	"%@" đã có trong thư mục này.
 browse.transferConflictMessageMany	%lld mục đã có trong thư mục này.
@@ -144,7 +144,7 @@ favorites.editColorLabel	Màu
 favorites.editColorDefault	Mặc định
 favorites.editSave	Lưu
 favorites.reorderFailed	Không thể lưu thứ tự mới.
-favorites.removeConfirm	Xóa %lld mục yêu thích?
+favorites.removeConfirm#other	Xóa %lld mục yêu thích?
 favorites.removeMessage	Thao tác này chỉ xóa chúng khỏi Yêu thích.
 favorites.removeFailedOne	Không thể xóa mục yêu thích đó.
 favorites.removeFailedMany	Không thể xóa các mục yêu thích đó.
@@ -183,7 +183,7 @@ uploads.reviewAddMore	Thêm tệp
 uploads.reviewPreviewFile	Xem trước %@
 uploads.reviewInsecureNetworkNotice	Đã kết nối qua http. Nếu máy chủ này chỉ có trong mạng gia đình của bạn, việc tải lên sẽ không hoạt động khi bạn ở xa.
 uploads.stagingFailed	Không thể thêm các tệp đó. Hãy thử lại.
-uploads.stagingSkipped	Không thể chuẩn bị %lld mục nên đã bỏ qua.
+uploads.stagingSkipped#other	Không thể chuẩn bị %lld mục nên đã bỏ qua.
 uploads.discardTitle	Hủy tải lên?
 uploads.discardMessage	Các tệp bạn đã thêm sẽ không được tải lên.
 uploads.discardConfirm	Hủy bỏ
@@ -944,7 +944,7 @@ menu.go	Đi tới
 menu.activity	Chuyển tệp
 menu.showAll	Hiện tất cả
 uploads.notifyDone	Tải lên hoàn tất
-uploads.notifyBody	Đã tải lên %lld tệp
+uploads.notifyBody#other	Đã tải lên %lld tệp
 downloadQueue.notifyDone	Tải xuống hoàn tất
 fileInfo.rowSoftware	Phần mềm
 fileInfo.sectionVersions	Phiên bản
@@ -1114,3 +1114,6 @@ browse.actionRemoveFromOffline	Xóa khỏi ngoại tuyến
 offline.rowUpdating	Đang cập nhật…
 offline.rowWaitingForNetwork	Đang chờ mạng
 offline.rowUpdateFailed	Không thể cập nhật
+pdfPreview.pageIndicator	%1$lld trên %2$lld
+previewToolbar.savePhoto	Lưu ảnh
+previewToolbar.saveVideo	Lưu video

@@ -111,10 +111,30 @@ browse.clipboardCopiedOne	تم نسخ %@
 browse.clipboardCopiedMany	تم نسخ %lld عنصر
 browse.progressMoving	جارٍ النقل…
 browse.progressCopying	جارٍ النسخ…
-browse.transferMoved	تم نقل %lld عنصر
-browse.transferCopied	تم نسخ %lld عنصر
-browse.transferMovedWithSkipped	تم نقل %1$lld عنصر، وتم تخطي %2$lld
-browse.transferCopiedWithSkipped	تم نسخ %1$lld عنصر، وتم تخطي %2$lld
+browse.transferMoved#zero	تم نقل %lld عنصر
+browse.transferMoved#one	تم نقل %lld عنصر
+browse.transferMoved#two	تم نقل %lld عنصرين
+browse.transferMoved#few	تم نقل %lld عناصر
+browse.transferMoved#many	تم نقل %lld عنصرًا
+browse.transferMoved#other	تم نقل %lld عنصر
+browse.transferCopied#zero	تم نسخ %lld عنصر
+browse.transferCopied#one	تم نسخ %lld عنصر
+browse.transferCopied#two	تم نسخ %lld عنصرين
+browse.transferCopied#few	تم نسخ %lld عناصر
+browse.transferCopied#many	تم نسخ %lld عنصرًا
+browse.transferCopied#other	تم نسخ %lld عنصر
+browse.transferMovedWithSkipped#zero	تم نقل %1$lld عنصر، وتم تخطي %2$lld
+browse.transferMovedWithSkipped#one	تم نقل %1$lld عنصر، وتم تخطي %2$lld
+browse.transferMovedWithSkipped#two	تم نقل %1$lld عنصرين، وتم تخطي %2$lld
+browse.transferMovedWithSkipped#few	تم نقل %1$lld عناصر، وتم تخطي %2$lld
+browse.transferMovedWithSkipped#many	تم نقل %1$lld عنصرًا، وتم تخطي %2$lld
+browse.transferMovedWithSkipped#other	تم نقل %1$lld عنصر، وتم تخطي %2$lld
+browse.transferCopiedWithSkipped#zero	تم نسخ %1$lld عنصر، وتم تخطي %2$lld
+browse.transferCopiedWithSkipped#one	تم نسخ %1$lld عنصر، وتم تخطي %2$lld
+browse.transferCopiedWithSkipped#two	تم نسخ %1$lld عنصرين، وتم تخطي %2$lld
+browse.transferCopiedWithSkipped#few	تم نسخ %1$lld عناصر، وتم تخطي %2$lld
+browse.transferCopiedWithSkipped#many	تم نسخ %1$lld عنصرًا، وتم تخطي %2$lld
+browse.transferCopiedWithSkipped#other	تم نسخ %1$lld عنصر، وتم تخطي %2$lld
 browse.transferConflictTitle	استبدال العناصر؟
 browse.transferConflictMessageOne	‏«%@» موجود بالفعل في هذا المجلد.
 browse.transferConflictMessageMany	%lld عنصر موجود بالفعل في هذا المجلد.
@@ -135,7 +155,12 @@ favorites.editColorLabel	اللون
 favorites.editColorDefault	افتراضي
 favorites.editSave	حفظ
 favorites.reorderFailed	تعذّر حفظ الترتيب الجديد.
-favorites.removeConfirm	إزالة %lld من المفضلة؟
+favorites.removeConfirm#zero	إزالة %lld من المفضلة؟
+favorites.removeConfirm#one	إزالة %lld من المفضلة؟
+favorites.removeConfirm#two	إزالة %lld من المفضلة؟
+favorites.removeConfirm#few	إزالة %lld من المفضلة؟
+favorites.removeConfirm#many	إزالة %lld من المفضلة؟
+favorites.removeConfirm#other	إزالة %lld من المفضلة؟
 favorites.removeMessage	هذا يزيلها من المفضلة فقط.
 favorites.removeFailedOne	تعذّر إزالة تلك المفضلة.
 favorites.removeFailedMany	تعذّر إزالة تلك المفضلات.
@@ -174,7 +199,12 @@ uploads.reviewAddMore	إضافة المزيد من الملفات
 uploads.reviewPreviewFile	معاينة %@
 uploads.reviewInsecureNetworkNotice	متصل عبر http. إذا كان هذا الخادم على شبكتك المنزلية فقط، فلن يعمل الرفع عندما تكون بعيدًا عنها.
 uploads.stagingFailed	تعذّر إضافة تلك الملفات. أعد المحاولة.
-uploads.stagingSkipped	تعذّر تحضير %lld عنصر وتم استبعادها.
+uploads.stagingSkipped#zero	تعذّر تحضير %lld عنصر وتم استبعادها.
+uploads.stagingSkipped#one	تعذّر تحضير %lld عنصر وتم استبعاده.
+uploads.stagingSkipped#two	تعذّر تحضير %lld عنصرين وتم استبعادهما.
+uploads.stagingSkipped#few	تعذّر تحضير %lld عناصر وتم استبعادها.
+uploads.stagingSkipped#many	تعذّر تحضير %lld عنصرًا وتم استبعادها.
+uploads.stagingSkipped#other	تعذّر تحضير %lld عنصر وتم استبعادها.
 uploads.discardTitle	تجاهل الرفع؟
 uploads.discardMessage	لن يتم رفع الملفات التي أضفتها.
 uploads.discardConfirm	تجاهل
@@ -676,7 +706,12 @@ menu.go	انتقال
 menu.activity	عمليات النقل
 menu.showAll	عرض الكل
 uploads.notifyDone	اكتمل الرفع
-uploads.notifyBody	تم رفع %lld ملف
+uploads.notifyBody#zero	تم رفع %lld ملف
+uploads.notifyBody#one	تم رفع %lld ملف
+uploads.notifyBody#two	تم رفع %lld ملفين
+uploads.notifyBody#few	تم رفع %lld ملفات
+uploads.notifyBody#many	تم رفع %lld ملفًا
+uploads.notifyBody#other	تم رفع %lld ملف
 downloadQueue.notifyDone	اكتمل التنزيل
 fileInfo.rowSoftware	البرنامج
 fileInfo.sectionVersions	الإصدارات
@@ -1171,3 +1206,6 @@ browse.actionRemoveFromOffline	إزالة من المتاح دون اتصال
 offline.rowUpdating	جارٍ التحديث…
 offline.rowWaitingForNetwork	في انتظار الشبكة
 offline.rowUpdateFailed	تعذر التحديث
+pdfPreview.pageIndicator	%1$lld من %2$lld
+previewToolbar.savePhoto	حفظ الصورة
+previewToolbar.saveVideo	حفظ الفيديو

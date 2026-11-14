@@ -1,4 +1,3 @@
-import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -6,40 +5,18 @@ import FilesClient
 import Localization
 import SwiftUI
 
-/// Routes one preview-target `FileItem` to the right full-screen cover: unsupported screen,
-/// streaming player, archive browser, image gallery, download-backed file preview, or the text
-/// editor. Branch order must match `BrowseContentView.isPreviewContentReady`. The share sheet
+/// Routes one preview target `FileItem` to its full screen cover. On iPhone and iPad that is the
+/// gallery, which pages through every file in the folder, or the text editor while editing. A Mac
+/// shows one file at a time by its `PreviewKind` (unsupported screen, player, archive browser, image
+/// gallery, document, editor) and steps through the folder with the arrow keys. The share sheet
 /// target is view-local to `BrowseContentView`, so it's handed back through `onShareTarget`.
 struct BrowsePreviewRouter: View {
     let store: StoreOf<BrowseFeature>
     let item: FileItem
     let onShareTarget: (FileItem) -> Void
-    /// Only the image gallery uses this: reports the swiped-to image so the cover's `.zoom`
-    /// source follows the current page. Every other branch previews a single item.
+    /// Reports the file the gallery swiped to, so the cover's `.zoom` source follows the current
+    /// page. The editor previews a single file.
     var onGalleryItemChange: (FileItem) -> Void = { _ in }
-
-    @Dependency(\.offlineFileStore) private var offlineFileStore
-    /// When on, a fully downloaded copy plays locally even online; off streams when online and uses
-    /// the local copy only as an offline fallback.
-    @AppStorage(AppStorageKeys.preferOfflineMedia) private var shouldPreferOfflineMedia = true
-
-    /// The primary source: with "prefer offline copies" on, a fully downloaded pinned copy (its
-    /// `dateModified|size` staleness key proves it is complete and current) plays locally even online.
-    /// Otherwise the Range-seekable preview stream, so online playback streams the fresh file.
-    private func playbackURL(for item: FileItem) -> URL? {
-        if shouldPreferOfflineMedia, let complete = offlineFileStore.localURL(item) {
-            return complete
-        }
-        return FilesClient.previewURL(serverURL: store.serverURL, item: item)
-    }
-
-    /// A pinned copy that couldn't be verified complete (a placeholder `FileItem` opened from search
-    /// or Favorites, with no real size/date). Used only if the stream fails, i.e. offline. `nil` when
-    /// the primary is already the verified local copy.
-    private func offlineFallbackURL(for item: FileItem) -> URL? {
-        guard offlineFileStore.localURL(item) == nil else { return nil }
-        return offlineFileStore.localURLIgnoringStaleness(item)
-    }
 
     #if os(macOS)
         @FocusState private var isFocused: Bool
@@ -70,11 +47,12 @@ struct BrowsePreviewRouter: View {
     }
 
     private func offlineAction(for item: FileItem) -> PreviewOfflineAction? {
-        guard store.access?.canDownload ?? false else { return nil }
+        // A pinned file can always be taken off the device, even before its folder's access loads.
+        let isPinned = store.offlinePinnedItemIDs.contains(item.id)
+        guard isPinned || (store.access?.canDownload ?? false) else { return nil }
         let isOn = store.offlineItemIDs.contains(item.id)
         return PreviewOfflineAction(
             isOn: isOn,
-            isEnabled: !isOn || store.offlinePinnedItemIDs.contains(item.id),
             toggle: { store.send(.offlineToggleTapped(item)) }
         )
     }
@@ -89,140 +67,137 @@ struct BrowsePreviewRouter: View {
         }
     #endif
 
+    /// The bars' actions on a file, each only when the folder allows it.
+    private var actions: FileGalleryActions {
+        let access = store.access
+        return FileGalleryActions(
+            onShare: (access?.canShare ?? false) ? { onShareTarget($0) } : nil,
+            onRename: (access?.canWrite ?? false) ? { store.send(.renameTapped($0)) } : nil,
+            onDownload: (access?.canDownload ?? false) ? { store.send(.downloadTapped($0)) } : nil,
+            offline: { offlineAction(for: $0) },
+            onDelete: (access?.canDelete ?? false) ? { store.send(.deleteTapped($0)) } : nil,
+            onInfo: { store.send(.infoTapped($0)) },
+            // Same gates as the list's menu: a move deletes the original, a copy is checked on paste.
+            onMove: (access?.canWrite ?? false) && (access?.canDelete ?? false)
+                ? { store.send(.moveTapped($0), animation: .default) }
+                : nil,
+            onCopy: { store.send(.copyTapped($0), animation: .default) },
+            onEdit: { store.send(.previewEditTapped($0)) }
+        )
+    }
+
+    #if os(macOS)
+        /// One of `actions` bound to the file this preview shows.
+        private func bound(_ action: ((FileItem) -> Void)?) -> (() -> Void)? {
+            action.map { action in { action(item) } }
+        }
+    #endif
+
     @ViewBuilder
     private var routed: some View {
-        if item.isUnsupportedForPreview {
-            UnsupportedFilePreviewView(
-                item: item,
-                systemShare: .remote(item, serverURL: store.serverURL),
-                onDismiss: { store.send(.previewDismissed) },
-                onShareLink: (store.access?.canShare ?? false)
-                    ? {
-                        onShareTarget(item)
-                    }
-                    : nil,
-                onRename: (store.access?.canWrite ?? false)
-                    ? {
-                        store.send(.renameTapped(item))
-                    }
-                    : nil,
-                onDownload: (store.access?.canDownload ?? false)
-                    ? {
-                        store.send(.downloadTapped(item))
-                    }
-                    : nil,
-                onDelete: (store.access?.canDelete ?? false)
-                    ? {
-                        store.send(.deleteTapped(item))
-                    }
-                    : nil
-            )
-        } else if item.isStreamableMedia, let url = playbackURL(for: item) {
-            let onShare: (() -> Void)? = (store.access?.canShare ?? false) ? { onShareTarget(item) } : nil
-            let onRename: (() -> Void)? = (store.access?.canWrite ?? false) ? { store.send(.renameTapped(item)) } : nil
-            let onDownload: (() -> Void)? = (store.access?.canDownload ?? false)
-                ? {
-                    store.send(.downloadTapped(item))
-                }
-                : nil
-            let onDelete: (() -> Void)? = (store.access?.canDelete ?? false) ? { store.send(.deleteTapped(item)) } : nil
-
-            // Native formats start on AVPlayer and fall back to libvlc on a decode failure; the rest
-            // start on libvlc directly. A pinned offline copy plays from its local file (no stream).
-            VideoPlayerHost(
-                item: item, url: url, serverURL: store.serverURL,
-                preferNative: item.isNativelyPlayable,
-                offlineFallbackURL: offlineFallbackURL(for: item),
-                onDismiss: { store.send(.previewDismissed) },
-                onShare: onShare, onRename: onRename, onDownload: onDownload, onDelete: onDelete
-            )
-        } else if item.isBrowsableArchive {
-            ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
-        } else if item.isImage || item.isRawImage, !item.isSVG {
-            ImageGalleryView(
-                items: store.displayedItems.filter { ($0.isImage || $0.isRawImage) && !$0.isSVG },
-                initialItem: item,
-                serverURL: store.serverURL,
-                onDismiss: { store.send(.previewDismissed) },
-                onShare: (store.access?.canShare ?? false)
-                    ? { current in
-                        onShareTarget(current)
-                    }
-                    : nil,
-                onRename: (store.access?.canWrite ?? false)
-                    ? { current in
-                        store.send(.renameTapped(current))
-                    }
-                    : nil,
-                onDownload: (store.access?.canDownload ?? false)
-                    ? { current in
-                        store.send(.downloadTapped(current))
-                    }
-                    : nil,
-                offline: { current in offlineAction(for: current) },
-                onDelete: (store.access?.canDelete ?? false)
-                    ? { current in
-                        store.send(.deleteTapped(current))
-                    }
-                    : nil,
-                onCurrentItemChange: onGalleryItemChange
-            )
-        } else if item.isPreviewableViaDownload {
-            FilePreviewContainerView(
-                fileURL: store.previewFileURL,
-                errorMessage: store.previewErrorMessage,
-                onDismiss: { store.send(.previewDismissed) },
-                onShareLink: (store.access?.canShare ?? false)
-                    ? {
-                        onShareTarget(item)
-                    }
-                    : nil,
-                onRename: (store.access?.canWrite ?? false)
-                    ? {
-                        store.send(.renameTapped(item))
-                    }
-                    : nil,
-                onDownload: (store.access?.canDownload ?? false)
-                    ? {
-                        store.send(.downloadTapped(item))
-                    }
-                    : nil,
-                onDelete: (store.access?.canDelete ?? false)
-                    ? {
-                        store.send(.deleteTapped(item))
-                    }
-                    : nil
-            )
-        } else {
-            TextFilePreviewView(
-                item: item,
-                serverURL: store.serverURL,
-                fileName: item.name,
-                kind: item.kind,
-                content: store.textContent,
-                errorMessage: store.textEditorErrorMessage,
-                isLoading: store.isLoadingTextContent,
-                isSaving: store.isSavingTextContent,
-                onSave: { store.send(.textSaveTapped($0)) },
-                onRetry: { store.send(.textContentRetryTapped) },
-                onDismiss: { store.send(.previewDismissed) },
-                startsEditing: store.newlyCreatedFileID == item.id
-            )
-            .dsAlert(isPresented: Binding(get: { store.isTextSaveConflictPresented }, set: { _ in })) {
-                DSAlertSheet(
-                    icon: IconKit.warning,
-                    title: L10n.TextPreview.conflictTitle(item.name),
-                    message: L10n.TextPreview.conflictMessage,
-                    confirmTitle: L10n.TextPreview.conflictOverwrite,
-                    dismissTitle: L10n.Common.cancel,
-                    neutralTitle: L10n.TextPreview.conflictReload,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.textSaveOverwriteTapped) },
-                    onNeutral: { store.send(.textSaveReloadTapped) },
-                    onDismiss: { store.send(.textSaveConflictDismissed) }
+        #if os(iOS)
+            // Every file opens in the gallery and pages through the folder; only
+            // editing a text file (or a file New File just made) shows the editor.
+            if store.showsTextEditor {
+                textEditor
+            } else {
+                FileGalleryView(
+                    items: store.state.galleryItems(startingAt: item),
+                    initialItem: item,
+                    serverURL: store.serverURL,
+                    preload: GalleryPreload(itemID: item.id, fileURL: store.previewFileURL, text: store.textContent),
+                    actions: actions,
+                    onDismiss: { store.send(.previewDismissed) },
+                    onCurrentItemChange: onGalleryItemChange
                 )
             }
+        #else
+            macRouted
+        #endif
+    }
+
+    #if os(macOS)
+        @ViewBuilder
+        private var macRouted: some View {
+            let actions = actions
+            switch store.showsTextEditor ? .text : PreviewKind(item) {
+            case .unsupported:
+                UnsupportedFilePreviewView(
+                    item: item,
+                    systemShare: .remote(item, serverURL: store.serverURL),
+                    onDismiss: { store.send(.previewDismissed) },
+                    onShareLink: bound(actions.onShare),
+                    onRename: bound(actions.onRename),
+                    onDownload: bound(actions.onDownload),
+                    onDelete: bound(actions.onDelete)
+                )
+            case .media:
+                MediaPreview(
+                    item: item,
+                    serverURL: store.serverURL,
+                    onDismiss: { store.send(.previewDismissed) },
+                    onShare: bound(actions.onShare),
+                    onRename: bound(actions.onRename),
+                    onDownload: bound(actions.onDownload),
+                    onDelete: bound(actions.onDelete)
+                )
+            case .archive:
+                ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
+            case .image:
+                FileGalleryView(
+                    items: store.displayedItems.filter { PreviewKind($0) == .image },
+                    initialItem: item,
+                    serverURL: store.serverURL,
+                    actions: actions,
+                    onDismiss: { store.send(.previewDismissed) },
+                    onCurrentItemChange: onGalleryItemChange
+                )
+            case .document:
+                FilePreviewContainerView(
+                    fileURL: store.previewFileURL,
+                    errorMessage: store.previewErrorMessage,
+                    onDismiss: { store.send(.previewDismissed) },
+                    onShareLink: bound(actions.onShare),
+                    onRename: bound(actions.onRename),
+                    onDownload: bound(actions.onDownload),
+                    onDelete: bound(actions.onDelete)
+                )
+            case .text:
+                textEditor
+            }
+        }
+    #endif
+
+    private var textEditor: some View {
+        TextFilePreviewView(
+            item: item,
+            serverURL: store.serverURL,
+            fileName: item.name,
+            kind: item.kind,
+            content: store.textContent,
+            errorMessage: store.textEditorErrorMessage,
+            isLoading: store.isLoadingTextContent,
+            isSaving: store.isSavingTextContent,
+            onSave: { store.send(.textSaveTapped($0)) },
+            onRetry: { store.send(.textContentRetryTapped) },
+            // Opened from the gallery's Edit, closing goes back to the gallery on this file.
+            onDismiss: { store.send(store.isPreviewEditing ? .previewEditorClosed : .previewDismissed) },
+            startsEditing: store.newlyCreatedFileID == item.id || store.isPreviewEditing
+        )
+        .dsAlert(isPresented: Binding(get: { store.isTextSaveConflictPresented }, set: { _ in })) {
+            DSAlertSheet(
+                icon: IconKit.warning,
+                title: L10n.TextPreview.conflictTitle(item.name),
+                message: L10n.TextPreview.conflictMessage,
+                confirmTitle: L10n.TextPreview.conflictOverwrite,
+                dismissTitle: L10n.Common.cancel,
+                neutralTitle: L10n.TextPreview.conflictReload,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.textSaveOverwriteTapped) },
+                onNeutral: { store.send(.textSaveReloadTapped) },
+                onDismiss: { store.send(.textSaveConflictDismissed) }
+            )
         }
     }
 }

@@ -119,10 +119,14 @@ browse.clipboardCopiedOne	Αντιγράφηκε το %@
 browse.clipboardCopiedMany	Αντιγράφηκαν %lld στοιχεία
 browse.progressMoving	Μετακίνηση…
 browse.progressCopying	Αντιγραφή…
-browse.transferMoved	Μετακινήθηκαν %lld στοιχεία
-browse.transferCopied	Αντιγράφηκαν %lld στοιχεία
-browse.transferMovedWithSkipped	Μετακινήθηκαν %1$lld στοιχεία, παραλείφθηκαν %2$lld
-browse.transferCopiedWithSkipped	Αντιγράφηκαν %1$lld στοιχεία, παραλείφθηκαν %2$lld
+browse.transferMoved#one	Μετακινήθηκε %lld στοιχείο
+browse.transferMoved#other	Μετακινήθηκαν %lld στοιχεία
+browse.transferCopied#one	Αντιγράφηκε %lld στοιχείο
+browse.transferCopied#other	Αντιγράφηκαν %lld στοιχεία
+browse.transferMovedWithSkipped#one	Μετακινήθηκε %1$lld στοιχείο, παραλείφθηκαν %2$lld
+browse.transferMovedWithSkipped#other	Μετακινήθηκαν %1$lld στοιχεία, παραλείφθηκαν %2$lld
+browse.transferCopiedWithSkipped#one	Αντιγράφηκε %1$lld στοιχείο, παραλείφθηκαν %2$lld
+browse.transferCopiedWithSkipped#other	Αντιγράφηκαν %1$lld στοιχεία, παραλείφθηκαν %2$lld
 browse.transferConflictTitle	Αντικατάσταση στοιχείων;
 browse.transferConflictMessageOne	Το "%@" υπάρχει ήδη σε αυτόν τον φάκελο.
 browse.transferConflictMessageMany	%lld στοιχεία υπάρχουν ήδη σε αυτόν τον φάκελο.
@@ -144,7 +148,8 @@ favorites.editColorLabel	Χρώμα
 favorites.editColorDefault	Προεπιλογή
 favorites.editSave	Αποθήκευση
 favorites.reorderFailed	Δεν ήταν δυνατή η αποθήκευση της νέας σειράς.
-favorites.removeConfirm	Αφαίρεση %lld αγαπημένων;
+favorites.removeConfirm#one	Αφαίρεση %lld αγαπημένου;
+favorites.removeConfirm#other	Αφαίρεση %lld αγαπημένων;
 favorites.removeMessage	Αυτό τα αφαιρεί μόνο από τα Αγαπημένα.
 favorites.removeFailedOne	Δεν ήταν δυνατή η αφαίρεση αυτού του αγαπημένου.
 favorites.removeFailedMany	Δεν ήταν δυνατή η αφαίρεση αυτών των αγαπημένων.
@@ -183,7 +188,8 @@ uploads.reviewAddMore	Προσθήκη περισσότερων αρχείων
 uploads.reviewPreviewFile	Προεπισκόπηση του %@
 uploads.reviewInsecureNetworkNotice	Συνδεδεμένοι μέσω http. Αν αυτός ο διακομιστής βρίσκεται μόνο στο οικιακό σας δίκτυο, οι μεταφορτώσεις δεν θα λειτουργούν όταν είστε μακριά από αυτό.
 uploads.stagingFailed	Δεν ήταν δυνατή η προσθήκη αυτών των αρχείων. Δοκιμάστε ξανά.
-uploads.stagingSkipped	%lld στοιχεία δεν ήταν δυνατό να προετοιμαστούν και παραλείφθηκαν.
+uploads.stagingSkipped#one	%lld στοιχείο δεν ήταν δυνατό να προετοιμαστεί και παραλείφθηκε.
+uploads.stagingSkipped#other	%lld στοιχεία δεν ήταν δυνατό να προετοιμαστούν και παραλείφθηκαν.
 uploads.discardTitle	Απόρριψη μεταφόρτωσης;
 uploads.discardMessage	Τα αρχεία που προσθέσατε δεν θα μεταφορτωθούν.
 uploads.discardConfirm	Απόρριψη
@@ -944,7 +950,8 @@ menu.go	Μετάβαση
 menu.activity	Μεταφορές
 menu.showAll	Εμφάνιση όλων
 uploads.notifyDone	Οι μεταφορτώσεις ολοκληρώθηκαν
-uploads.notifyBody	Μεταφορτώθηκαν %lld αρχεία
+uploads.notifyBody#one	Μεταφορτώθηκε %lld αρχείο
+uploads.notifyBody#other	Μεταφορτώθηκαν %lld αρχεία
 downloadQueue.notifyDone	Οι λήψεις ολοκληρώθηκαν
 fileInfo.rowSoftware	Λογισμικό
 fileInfo.sectionVersions	Εκδόσεις
@@ -1120,3 +1127,6 @@ browse.actionRemoveFromOffline	Κατάργηση από εκτός σύνδεσ
 offline.rowUpdating	Ενημέρωση…
 offline.rowWaitingForNetwork	Αναμονή για δίκτυο
 offline.rowUpdateFailed	Η ενημέρωση απέτυχε
+pdfPreview.pageIndicator	%1$lld από %2$lld
+previewToolbar.savePhoto	Αποθήκευση φωτογραφίας
+previewToolbar.saveVideo	Αποθήκευση βίντεο

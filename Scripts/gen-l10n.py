@@ -136,12 +136,25 @@ def write_catalog(entries, plurals, translations):
         def variations(values):
             return {"plural": {c: {"stringUnit": {"state": "translated", "value": values[c]}} for c in PLURAL_CATEGORIES if c in values}}
 
-        locs = {"en": {"variations": variations(forms)}}
+        # A string with more than one number (`%1$lld`, `%2$lld`) cannot say which one picks the form,
+        # so it becomes one explicit substitution on the first number, the whole sentence in each form.
+        def localization(values):
+            if "%1$" not in values["other"]:
+                return {"variations": variations(values)}
+            spelled = {c: v.replace("%1$lld", "%arg") for c, v in values.items()}
+            return {
+                "stringUnit": {"state": "translated", "value": "%#@count@"},
+                "substitutions": {
+                    "count": {"argNum": 1, "formatSpecifier": "lld", "variations": variations(spelled)},
+                },
+            }
+
+        locs = {"en": localization(forms)}
         for lang in LANGUAGES:
             values = {c: translations.get(lang, {}).get(f"{base}#{c}") for c in PLURAL_CATEGORIES}
             values = {c: v for c, v in values.items() if v is not None}
             # No translated forms at all: the English forms, for the same raw key reason as above.
-            locs[lang] = {"variations": variations(values if "other" in values else forms)}
+            locs[lang] = localization(values if "other" in values else forms)
         return locs
 
     for base, forms in plurals.items():

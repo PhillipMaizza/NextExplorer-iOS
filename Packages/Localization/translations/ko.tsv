@@ -111,10 +111,10 @@ browse.clipboardCopiedOne	%@ 복사됨
 browse.clipboardCopiedMany	항목 %lld개 복사됨
 browse.progressMoving	이동하는 중…
 browse.progressCopying	복사하는 중…
-browse.transferMoved	항목 %lld개 이동함
-browse.transferCopied	항목 %lld개 복사함
-browse.transferMovedWithSkipped	항목 %1$lld개 이동, %2$lld개 건너뜀
-browse.transferCopiedWithSkipped	항목 %1$lld개 복사, %2$lld개 건너뜀
+browse.transferMoved#other	항목 %lld개 이동함
+browse.transferCopied#other	항목 %lld개 복사함
+browse.transferMovedWithSkipped#other	항목 %1$lld개 이동, %2$lld개 건너뜀
+browse.transferCopiedWithSkipped#other	항목 %1$lld개 복사, %2$lld개 건너뜀
 browse.transferConflictTitle	항목을 교체할까요?
 browse.transferConflictMessageOne	“%@”이(가) 이 폴더에 이미 있습니다.
 browse.transferConflictMessageMany	항목 %lld개가 이 폴더에 이미 있습니다.
@@ -135,7 +135,7 @@ favorites.editColorLabel	색상
 favorites.editColorDefault	기본값
 favorites.editSave	저장
 favorites.reorderFailed	새 순서를 저장할 수 없습니다.
-favorites.removeConfirm	즐겨찾기 %lld개를 제거할까요?
+favorites.removeConfirm#other	즐겨찾기 %lld개를 제거할까요?
 favorites.removeMessage	즐겨찾기에서만 제거됩니다.
 favorites.removeFailedOne	해당 즐겨찾기를 제거할 수 없습니다.
 favorites.removeFailedMany	해당 즐겨찾기를 제거할 수 없습니다.
@@ -174,7 +174,7 @@ uploads.reviewAddMore	파일 더 추가
 uploads.reviewPreviewFile	%@ 미리보기
 uploads.reviewInsecureNetworkNotice	http로 연결되었습니다. 이 서버가 홈 네트워크에만 있다면 네트워크를 벗어나면 업로드가 작동하지 않습니다.
 uploads.stagingFailed	해당 파일을 추가할 수 없습니다. 다시 시도하세요.
-uploads.stagingSkipped	항목 %lld개를 준비할 수 없어 제외되었습니다.
+uploads.stagingSkipped#other	항목 %lld개를 준비할 수 없어 제외되었습니다.
 uploads.discardTitle	업로드를 취소할까요?
 uploads.discardMessage	추가한 파일은 업로드되지 않습니다.
 uploads.discardConfirm	취소
@@ -676,7 +676,7 @@ menu.go	이동
 menu.activity	전송
 menu.showAll	모두 보기
 uploads.notifyDone	업로드 완료
-uploads.notifyBody	파일 %lld개 업로드됨
+uploads.notifyBody#other	파일 %lld개 업로드됨
 downloadQueue.notifyDone	다운로드 완료
 fileInfo.rowSoftware	소프트웨어
 fileInfo.sectionVersions	버전
@@ -1141,3 +1141,6 @@ browse.actionRemoveFromOffline	오프라인에서 제거
 offline.rowUpdating	업데이트 중…
 offline.rowWaitingForNetwork	네트워크 대기 중
 offline.rowUpdateFailed	업데이트하지 못했습니다
+pdfPreview.pageIndicator	%1$lld/%2$lld
+previewToolbar.savePhoto	사진 저장
+previewToolbar.saveVideo	비디오 저장

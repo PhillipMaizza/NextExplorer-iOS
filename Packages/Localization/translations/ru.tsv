@@ -111,10 +111,22 @@ browse.clipboardCopiedOne	%@ скопировано
 browse.clipboardCopiedMany	Скопировано объектов: %lld
 browse.progressMoving	Перемещение…
 browse.progressCopying	Копирование…
-browse.transferMoved	Перемещено объектов: %lld
-browse.transferCopied	Скопировано объектов: %lld
-browse.transferMovedWithSkipped	Перемещено объектов: %1$lld, пропущено: %2$lld
-browse.transferCopiedWithSkipped	Скопировано объектов: %1$lld, пропущено: %2$lld
+browse.transferMoved#one	Перемещено объектов: %lld
+browse.transferMoved#few	Перемещено объектов: %lld
+browse.transferMoved#many	Перемещено объектов: %lld
+browse.transferMoved#other	Перемещено объектов: %lld
+browse.transferCopied#one	Скопировано объектов: %lld
+browse.transferCopied#few	Скопировано объектов: %lld
+browse.transferCopied#many	Скопировано объектов: %lld
+browse.transferCopied#other	Скопировано объектов: %lld
+browse.transferMovedWithSkipped#one	Перемещено объектов: %1$lld, пропущено: %2$lld
+browse.transferMovedWithSkipped#few	Перемещено объектов: %1$lld, пропущено: %2$lld
+browse.transferMovedWithSkipped#many	Перемещено объектов: %1$lld, пропущено: %2$lld
+browse.transferMovedWithSkipped#other	Перемещено объектов: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped#one	Скопировано объектов: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped#few	Скопировано объектов: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped#many	Скопировано объектов: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped#other	Скопировано объектов: %1$lld, пропущено: %2$lld
 browse.transferConflictTitle	Заменить объекты?
 browse.transferConflictMessageOne	«%@» уже существует в этой папке.
 browse.transferConflictMessageMany	%lld объектов уже существуют в этой папке.
@@ -135,7 +147,10 @@ favorites.editColorLabel	Цвет
 favorites.editColorDefault	По умолчанию
 favorites.editSave	Сохранить
 favorites.reorderFailed	Не удалось сохранить новый порядок.
-favorites.removeConfirm	Убрать из избранного: %lld?
+favorites.removeConfirm#one	Убрать из избранного: %lld?
+favorites.removeConfirm#few	Убрать из избранного: %lld?
+favorites.removeConfirm#many	Убрать из избранного: %lld?
+favorites.removeConfirm#other	Убрать из избранного: %lld?
 favorites.removeMessage	Это только уберёт их из избранного.
 favorites.removeFailedOne	Не удалось убрать это из избранного.
 favorites.removeFailedMany	Не удалось убрать их из избранного.
@@ -174,7 +189,10 @@ uploads.reviewAddMore	Добавить ещё файлы
 uploads.reviewPreviewFile	Просмотр %@
 uploads.reviewInsecureNetworkNotice	Подключено по http. Если этот сервер доступен только в вашей домашней сети, отправка не будет работать вне её.
 uploads.stagingFailed	Не удалось добавить эти файлы. Повторите попытку.
-uploads.stagingSkipped	Не удалось подготовить объектов: %lld, они были пропущены.
+uploads.stagingSkipped#one	Не удалось подготовить объектов: %lld, они были пропущены.
+uploads.stagingSkipped#few	Не удалось подготовить объектов: %lld, они были пропущены.
+uploads.stagingSkipped#many	Не удалось подготовить объектов: %lld, они были пропущены.
+uploads.stagingSkipped#other	Не удалось подготовить объектов: %lld, они были пропущены.
 uploads.discardTitle	Отменить отправку?
 uploads.discardMessage	Добавленные файлы не будут отправлены.
 uploads.discardConfirm	Отменить
@@ -676,7 +694,10 @@ menu.go	Переход
 menu.activity	Передачи
 menu.showAll	Показать все
 uploads.notifyDone	Загрузка на сервер завершена
-uploads.notifyBody	Загружено файлов: %lld
+uploads.notifyBody#one	Загружено файлов: %lld
+uploads.notifyBody#few	Загружено файлов: %lld
+uploads.notifyBody#many	Загружено файлов: %lld
+uploads.notifyBody#other	Загружено файлов: %lld
 downloadQueue.notifyDone	Загрузки завершены
 fileInfo.rowSoftware	Программа
 fileInfo.sectionVersions	Версии
@@ -1159,3 +1180,6 @@ browse.actionRemoveFromOffline	Убрать из офлайн
 offline.rowUpdating	Обновление…
 offline.rowWaitingForNetwork	Ожидание сети
 offline.rowUpdateFailed	Не удалось обновить
+pdfPreview.pageIndicator	%1$lld из %2$lld
+previewToolbar.savePhoto	Сохранить фото
+previewToolbar.saveVideo	Сохранить видео

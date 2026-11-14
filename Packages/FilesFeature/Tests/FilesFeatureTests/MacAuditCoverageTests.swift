@@ -151,7 +151,7 @@ import TestUtils
         func aGalleryPageNeverDecodesPastTheMacCap() {
             #expect(ImageGalleryPage.decodeTarget(screenLongSide: 1_440, scale: 2) == 5_760)
             let capped = ImageGalleryPage.decodeTarget(screenLongSide: 3_008, scale: 2)
-            #expect(capped == ImageGalleryPage.macMaxPixelDimension)
+            #expect(capped == ImageGalleryPage.maxDecodePixelDimension)
         }
 
         @Test("The Quick Look responder joins and leaves the window chain")

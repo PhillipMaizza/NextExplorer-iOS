@@ -2,10 +2,6 @@ import CoreModels
 import DesignSystem
 import SwiftUI
 
-private enum Constants {
-    static let contentSpacing: CGFloat = .space16
-}
-
 /// Full-screen container for non-streamable files (images, PDFs, documents, ...): shows a
 /// spinner while `FilesClient.previewFile` downloads, then `QuickLookPreview` once it's
 /// ready. Unlike `FileInfoSheet`, there's no `presentationDetents`-resize problem here:
@@ -46,19 +42,13 @@ struct FilePreviewContainerView: View {
         }
     }
 
+    @ViewBuilder
     private var statusContent: some View {
-        VStack(spacing: Constants.contentSpacing) {
-            if let errorMessage {
-                IconKit.warning
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.negative)
-                    .frame(width: .iconMedium, height: .iconMedium)
-                Text(errorMessage).type(.body1(.regular), style: .secondary)
-            } else {
-                DSSpinner()
-            }
+        if let errorMessage {
+            PreviewErrorView(message: errorMessage)
+        } else {
+            DSSpinner()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

@@ -119,10 +119,22 @@ browse.clipboardCopiedOne	Скопійовано: %@
 browse.clipboardCopiedMany	Скопійовано елементів: %lld
 browse.progressMoving	Переміщення…
 browse.progressCopying	Копіювання…
-browse.transferMoved	Переміщено елементів: %lld
-browse.transferCopied	Скопійовано елементів: %lld
-browse.transferMovedWithSkipped	Переміщено елементів: %1$lld, пропущено: %2$lld
-browse.transferCopiedWithSkipped	Скопійовано елементів: %1$lld, пропущено: %2$lld
+browse.transferMoved#one	Переміщено елементів: %lld
+browse.transferMoved#few	Переміщено елементів: %lld
+browse.transferMoved#many	Переміщено елементів: %lld
+browse.transferMoved#other	Переміщено елементів: %lld
+browse.transferCopied#one	Скопійовано елементів: %lld
+browse.transferCopied#few	Скопійовано елементів: %lld
+browse.transferCopied#many	Скопійовано елементів: %lld
+browse.transferCopied#other	Скопійовано елементів: %lld
+browse.transferMovedWithSkipped#one	Переміщено елементів: %1$lld, пропущено: %2$lld
+browse.transferMovedWithSkipped#few	Переміщено елементів: %1$lld, пропущено: %2$lld
+browse.transferMovedWithSkipped#many	Переміщено елементів: %1$lld, пропущено: %2$lld
+browse.transferMovedWithSkipped#other	Переміщено елементів: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped#one	Скопійовано елементів: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped#few	Скопійовано елементів: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped#many	Скопійовано елементів: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped#other	Скопійовано елементів: %1$lld, пропущено: %2$lld
 browse.transferConflictTitle	Замінити елементи?
 browse.transferConflictMessageOne	"%@" уже є в цій папці.
 browse.transferConflictMessageMany	Елементів, що вже є в цій папці: %lld.
@@ -144,7 +156,10 @@ favorites.editColorLabel	Колір
 favorites.editColorDefault	За замовчуванням
 favorites.editSave	Зберегти
 favorites.reorderFailed	Не вдалося зберегти новий порядок.
-favorites.removeConfirm	Вилучити з обраного (%lld)?
+favorites.removeConfirm#one	Вилучити з обраного (%lld)?
+favorites.removeConfirm#few	Вилучити з обраного (%lld)?
+favorites.removeConfirm#many	Вилучити з обраного (%lld)?
+favorites.removeConfirm#other	Вилучити з обраного (%lld)?
 favorites.removeMessage	Це лише вилучить їх з обраного.
 favorites.removeFailedOne	Не вдалося вилучити цей елемент обраного.
 favorites.removeFailedMany	Не вдалося вилучити ці елементи обраного.
@@ -183,7 +198,10 @@ uploads.reviewAddMore	Додати ще файли
 uploads.reviewPreviewFile	Попередній перегляд %@
 uploads.reviewInsecureNetworkNotice	З’єднання через http. Якщо цей сервер є лише у вашій домашній мережі, вивантаження не працюватиме, коли ви поза нею.
 uploads.stagingFailed	Не вдалося додати ці файли. Спробуйте ще раз.
-uploads.stagingSkipped	Не вдалося підготувати елементи (%lld), їх пропущено.
+uploads.stagingSkipped#one	Не вдалося підготувати елементи (%lld), їх пропущено.
+uploads.stagingSkipped#few	Не вдалося підготувати елементи (%lld), їх пропущено.
+uploads.stagingSkipped#many	Не вдалося підготувати елементи (%lld), їх пропущено.
+uploads.stagingSkipped#other	Не вдалося підготувати елементи (%lld), їх пропущено.
 uploads.discardTitle	Скасувати вивантаження?
 uploads.discardMessage	Додані файли не буде вивантажено.
 uploads.discardConfirm	Скасувати
@@ -944,7 +962,10 @@ menu.go	Перейти
 menu.activity	Передавання
 menu.showAll	Показати все
 uploads.notifyDone	Вивантаження завершено
-uploads.notifyBody	Вивантажено файлів: %lld
+uploads.notifyBody#one	Вивантажено файлів: %lld
+uploads.notifyBody#few	Вивантажено файлів: %lld
+uploads.notifyBody#many	Вивантажено файлів: %lld
+uploads.notifyBody#other	Вивантажено файлів: %lld
 downloadQueue.notifyDone	Завантаження завершено
 fileInfo.rowSoftware	Програмне забезпечення
 fileInfo.sectionVersions	Версії
@@ -1132,3 +1153,6 @@ browse.actionRemoveFromOffline	Прибрати з офлайн
 offline.rowUpdating	Оновлення…
 offline.rowWaitingForNetwork	Очікування мережі
 offline.rowUpdateFailed	Не вдалося оновити
+pdfPreview.pageIndicator	%1$lld із %2$lld
+previewToolbar.savePhoto	Зберегти фото
+previewToolbar.saveVideo	Зберегти відео

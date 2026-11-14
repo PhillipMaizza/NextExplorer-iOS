@@ -111,10 +111,10 @@ browse.clipboardCopiedOne	已拷贝 %@
 browse.clipboardCopiedMany	已拷贝 %lld 项
 browse.progressMoving	正在移动…
 browse.progressCopying	正在拷贝…
-browse.transferMoved	已移动 %lld 项
-browse.transferCopied	已拷贝 %lld 项
-browse.transferMovedWithSkipped	已移动 %1$lld 项，跳过 %2$lld 项
-browse.transferCopiedWithSkipped	已拷贝 %1$lld 项，跳过 %2$lld 项
+browse.transferMoved#other	已移动 %lld 项
+browse.transferCopied#other	已拷贝 %lld 项
+browse.transferMovedWithSkipped#other	已移动 %1$lld 项，跳过 %2$lld 项
+browse.transferCopiedWithSkipped#other	已拷贝 %1$lld 项，跳过 %2$lld 项
 browse.transferConflictTitle	替换项目？
 browse.transferConflictMessageOne	“%@”已存在于此文件夹中。
 browse.transferConflictMessageMany	%lld 项已存在于此文件夹中。
@@ -135,7 +135,7 @@ favorites.editColorLabel	颜色
 favorites.editColorDefault	默认
 favorites.editSave	保存
 favorites.reorderFailed	无法保存新顺序。
-favorites.removeConfirm	移除 %lld 个收藏？
+favorites.removeConfirm#other	移除 %lld 个收藏？
 favorites.removeMessage	这仅会将它们从收藏中移除。
 favorites.removeFailedOne	无法移除该收藏。
 favorites.removeFailedMany	无法移除这些收藏。
@@ -174,7 +174,7 @@ uploads.reviewAddMore	添加更多文件
 uploads.reviewPreviewFile	预览 %@
 uploads.reviewInsecureNetworkNotice	通过 http 连接。如果此服务器仅在您的家庭网络中，离开该网络时上传将无法工作。
 uploads.stagingFailed	无法添加这些文件。请重试。
-uploads.stagingSkipped	%lld 项无法准备，已被略过。
+uploads.stagingSkipped#other	%lld 项无法准备，已被略过。
 uploads.discardTitle	放弃上传？
 uploads.discardMessage	您添加的文件将不会上传。
 uploads.discardConfirm	放弃
@@ -676,7 +676,7 @@ menu.go	前往
 menu.activity	传输
 menu.showAll	显示全部
 uploads.notifyDone	上传完成
-uploads.notifyBody	已上传 %lld 个文件
+uploads.notifyBody#other	已上传 %lld 个文件
 downloadQueue.notifyDone	下载完成
 fileInfo.rowSoftware	软件
 fileInfo.sectionVersions	版本
@@ -1141,3 +1141,6 @@ browse.actionRemoveFromOffline	从离线中移除
 offline.rowUpdating	正在更新…
 offline.rowWaitingForNetwork	等待网络
 offline.rowUpdateFailed	无法更新
+pdfPreview.pageIndicator	%1$lld/%2$lld
+previewToolbar.savePhoto	存储照片
+previewToolbar.saveVideo	存储视频

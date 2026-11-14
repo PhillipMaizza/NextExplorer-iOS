@@ -64,9 +64,21 @@
         let kind: String
         @Binding var text: String
         let isEditable: Bool
+        /// Room for bars floating over the editor: the text starts below them and scrolls under.
+        var contentInsets: UIEdgeInsets = .zero
+        /// A tap while reading (the gallery shows and hides its bars); editing keeps taps for the cursor.
+        var onTap: (() -> Void)?
 
         func makeUIView(context: Context) -> TextView {
             let view = TextView()
+            view.contentInsetAdjustmentBehavior = .never
+            Self.apply(contentInsets, to: view)
+            let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.tapped))
+            tap.cancelsTouchesInView = false
+            tap.delegate = context.coordinator
+            view.addGestureRecognizer(tap)
+            context.coordinator.onTap = onTap
+            context.coordinator.view = view
             view.editorDelegate = context.coordinator
             view.backgroundColor = .clear
             view.showLineNumbers = true
@@ -76,7 +88,11 @@
         }
 
         func updateUIView(_ uiView: TextView, context: Context) {
+            context.coordinator.onTap = onTap
             uiView.isEditable = isEditable
+            if uiView.contentInset != contentInsets {
+                Self.apply(contentInsets, to: uiView)
+            }
             // Reapply the document only when the bound text diverges from what the editor itself
             // last reported, i.e. a genuine external change (first load, a reload, a save driven
             // content swap), never our own echoed keystrokes, and never mid scroll. Applying it
@@ -91,12 +107,22 @@
             Coordinator(text: $text)
         }
 
+        /// Sets the insets, keeping a view still at the top resting at the new top.
+        private static func apply(_ insets: UIEdgeInsets, to view: UIScrollView) {
+            let wasAtTop = view.contentOffset.y <= -view.contentInset.top
+            view.contentInset = insets
+            view.verticalScrollIndicatorInsets = insets
+            if wasAtTop {
+                view.contentOffset.y = -insets.top
+            }
+        }
+
         private struct StateBox: @unchecked Sendable {
             let state: TextViewState
         }
 
         @MainActor
-        final class Coordinator: NSObject, TextViewDelegate {
+        final class Coordinator: NSObject, TextViewDelegate, UIGestureRecognizerDelegate {
             private let text: Binding<String>
             /// The text the editor last held after an apply or a user edit. `updateUIView` compares
             /// against this to tell an external content change (reapply) from its own echoed edit
@@ -107,6 +133,23 @@
             /// Bumped on every apply so a slower off main parse from a superseded apply can't land its
             /// `setState` after a newer one and overwrite the current document.
             private var applyGeneration = 0
+            private var hasPlacedFirstLine = false
+
+            var onTap: (() -> Void)?
+            weak var view: TextView?
+
+            @objc func tapped() {
+                guard view?.isEditable == false else { return }
+                onTap?()
+            }
+
+            /// Runestone's own taps (selection, links) and the host's still run beside this one.
+            nonisolated func gestureRecognizer(
+                _: UIGestureRecognizer,
+                shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer
+            ) -> Bool {
+                true
+            }
 
             init(text: Binding<String>) {
                 self.text = text
@@ -133,6 +176,14 @@
                     guard generation == applyGeneration else { return }
                     view.setState(box.state)
                     isApplyingDocument = false
+                    // The first document starts at its first line, below any bar floating over it; a later
+                    // reload (after a save) keeps the reader where they were. Runestone lays the new state
+                    // out on the next pass and resets the offset, so wait for it.
+                    guard !hasPlacedFirstLine else { return }
+                    hasPlacedFirstLine = true
+                    DispatchQueue.main.async {
+                        view.contentOffset.y = -view.contentInset.top
+                    }
                 }
             }
 
