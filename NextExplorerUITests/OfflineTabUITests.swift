@@ -217,7 +217,36 @@
             XCTAssertTrue(offline.row(Fixture.file).waitToVanish(), "A confirmed removal empties the tab")
         }
 
-        func testTheSelectionBarOfflineButtonNeedsASelection() {
+        func testPinnedItemsPickedInSelectModeAreRemovedFromOfflineOnly() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal, legacyDownloads: true)
+            let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.availableOfflineAction)
+            browse.availableOfflineAction.tap()
+
+            let offline = OfflineTabScreen(app: app)
+            selectTab(TabBar(app: app).downloads, until: offline.row(Fixture.file))
+            openMenu({ browse.moreMenu.tap() }, until: browse.selectMenuItem)
+            browse.selectMenuItem.tap()
+
+            let remove = offline.removeFromOfflineSelectionButton
+            XCTAssertTrue(offline.row(Fixture.file).waitToAppear())
+            XCTAssertFalse(remove.exists, "With nothing picked the bar offers nothing")
+            offline.row(Fixture.file).tap()
+            XCTAssertTrue(remove.waitToAppear(), "A picked pinned item offers Remove from Offline")
+            XCTAssertTrue(remove.isEnabled(within: UITestTimeout.standard), "It can be tapped")
+            XCTAssertFalse(offline.deleteAction.isEnabled, "Delete is only for files saved earlier")
+
+            remove.tap()
+            XCTAssertTrue(offline.removeConfirmButton.waitToAppear(), "Removing asks first")
+            offline.removeConfirmButton.tap()
+
+            XCTAssertTrue(offline.row(Fixture.file).waitToVanish(), "The pinned item leaves the tab")
+            XCTAssertTrue(remove.waitToVanish(), "Select mode ends once it is removed")
+            XCTAssertTrue(offline.row(legacyName).exists, "Files saved earlier stay")
+        }
+
+        func testTheSelectionMenuAppearsOnlyOnceSomethingIsSelected() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
             XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
@@ -225,10 +254,11 @@
             browse.selectMenuItem.tap()
 
             let offlineButton = browse.offlineSelectionButton
-            XCTAssertTrue(offlineButton.waitToAppear(), "Select mode offers Available Offline")
-            XCTAssertFalse(offlineButton.isEnabled, "With nothing selected it is disabled")
+            XCTAssertTrue(browse.row(Fixture.file).waitToAppear())
+            XCTAssertFalse(browse.selectionActionsMenu.exists, "With nothing selected the menu is not offered")
 
             browse.row(Fixture.file).tap()
+            openMenu({ browse.selectionActionsMenu.tap() }, until: offlineButton)
             XCTAssertTrue(offlineButton.isEnabled(within: UITestTimeout.standard), "A selection enables it")
         }
     }

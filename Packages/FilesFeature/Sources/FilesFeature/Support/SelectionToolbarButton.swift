@@ -32,12 +32,17 @@ struct SelectionToolbarButton: View {
         static let iconSize: CGFloat = .iconMedium
     }
 
+    /// A set color would stay bright while disabled, so a disabled button dims like the system's own.
+    private var iconColor: Color {
+        isDisabled ? Color.tertiaryDS : tint ?? Color.primaryDS
+    }
+
     var body: some View {
         #if os(macOS)
             // The Mac toolbar sizes its own glyphs; a hand sized icon looked oversized there.
             Button(role: role, action: action) {
                 icon
-                    .foregroundStyle(tint ?? Color.primaryDS)
+                    .foregroundStyle(iconColor)
             }
             .disabled(isDisabled)
             .help(accessibilityLabel ?? "")
@@ -48,7 +53,7 @@ struct SelectionToolbarButton: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    .foregroundStyle(tint ?? Color.primaryDS)
+                    .foregroundStyle(iconColor)
             }
             .buttonStyle(DSHapticButtonStyle())
             .disabled(isDisabled)

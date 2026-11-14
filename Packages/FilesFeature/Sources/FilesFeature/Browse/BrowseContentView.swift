@@ -457,7 +457,7 @@ struct BrowseContentView: View {
         #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
-        .hidesTabBar(store.isSelecting)
+        .selectModeChrome(isSelecting: store.isSelecting)
         .prefersToolbarItemsInVerticalBar()
         .toolbar {
             if store.isSelecting {
@@ -466,85 +466,26 @@ struct BrowseContentView: View {
                         Spacer()
                     }
                 #endif
-                if let singleSelectedItem, store.access?.canWrite ?? false {
+                // One menu holds every action, and only once something is picked.
+                if !store.selectedItemIDs.isEmpty {
                     ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(icon: IconKit.rename, accessibilityLabel: L10n.Browse.actionRename) {
-                            store.send(.renameTapped(singleSelectedItem))
-                        }
-                    }
-                }
-                if let singleSelectedItem, store.access?.canShare ?? false {
-                    ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(icon: IconKit.shareLink, accessibilityLabel: L10n.Browse.actionShare) {
-                            shareTarget = singleSelectedItem
-                        }
-                    }
-                }
-                if isFavoriteActionVisible {
-                    ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(
-                            icon: isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star,
-                            accessibilityLabel: isEntireSelectionAlreadyFavorited
-                                ? L10n.Browse.actionRemoveFromFavorites
-                                : L10n.Browse.actionAddToFavorites
-                        ) {
-                            store.send(.bulkFavoriteTapped)
-                        }
-                        .disabled(!store.hasLoadedFavorites)
-                    }
-                }
-                if isTransferActionVisible {
-                    ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(icon: IconKit.copy, accessibilityLabel: L10n.Browse.actionCopy) {
-                            store.send(.bulkCopyTapped, animation: .default)
-                        }
-                    }
-                }
-                if isTransferActionVisible, store.access?.canWrite ?? false, store.access?.canDelete ?? false {
-                    ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(icon: IconKit.move, accessibilityLabel: L10n.Browse.actionMove) {
-                            store.send(.bulkMoveTapped, animation: .default)
-                        }
-                    }
-                }
-                if isSaveActionVisible {
-                    ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(icon: SaveActionStyle.icon, accessibilityLabel: SaveActionStyle.title) {
-                            store.send(.bulkDownloadTapped)
-                        }
-                    }
-                }
-                if store.access?.canDownload ?? false {
-                    ToolbarItem(placement: .selectionBar) {
-                        let action = store.selectedOfflineAction
-                        selectionToolbarButton(
-                            icon: action?.icon ?? IconKit.availableOffline,
-                            tint: action == .remove ? .negative : nil,
-                            accessibilityLabel: action?.title ?? L10n.Browse.actionAvailableOffline,
-                            isDisabled: action == nil
-                        ) {
-                            store.send(.bulkOfflineTapped)
-                        }
-                    }
-                }
-                if isDeleteActionVisible {
-                    ToolbarItem(placement: .selectionBar) {
-                        selectionToolbarButton(
-                            icon: IconKit.delete,
-                            role: .destructive,
-                            tint: .negative,
-                            accessibilityLabel: L10n.Browse.actionDelete
-                        ) {
-                            store.send(.bulkDeleteTapped)
-                        }
+                        SelectionActionsMenu(
+                            availability: store.selectionAvailability,
+                            onInfo: { store.send(.infoTapped($0)) },
+                            onRename: { store.send(.renameTapped($0)) },
+                            onShareLink: { shareTarget = $0 },
+                            onShareKept: { store.send(.keptShareTapped(store.selectedItems)) },
+                            onCopy: { store.send(.bulkCopyTapped, animation: .default) },
+                            onMove: { store.send(.bulkMoveTapped, animation: .default) },
+                            onSave: { store.send(.bulkDownloadTapped) },
+                            onOffline: { store.send(.bulkOfflineTapped) },
+                            onFavorite: { store.send(.bulkFavoriteTapped) },
+                            onDelete: { store.send(.bulkDeleteTapped) }
+                        )
                     }
                 }
             }
         }
-        .animation(
-            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-            value: store.selectedItemIDs
-        )
         .dsAlert(isPresented: bulkDeleteConfirmationBinding) {
             DSAlertSheet(
                 icon: IconKit.delete,
@@ -569,8 +510,8 @@ struct BrowseContentView: View {
                 optionTitle: { $0.title },
                 directionIcon: { $0.icon },
                 directionTitle: { $0.title },
-                onSelectOption: { store.send(.sortOptionChanged($0)) },
-                onSelectDirection: { store.send(.sortDirectionChanged($0)) },
+                onSelectOption: { store.send(.sortOptionChanged($0), animation: DSMotion.listChange) },
+                onSelectDirection: { store.send(.sortDirectionChanged($0), animation: DSMotion.listChange) },
                 onDismiss: { isSortSheetPresented = false }
             )
         }
@@ -1247,77 +1188,16 @@ struct BrowseContentView: View {
         store.hasDisplayedItems && store.selectedItemIDs.count == store.displayedItemCount
     }
 
-    /// Rename only makes sense for a single target: `nil` (hiding the toolbar icon) for
-    /// zero or multiple selected items.
-    private var singleSelectedItem: FileItem? {
-        guard store.selectedItemIDs.count == 1, let id = store.selectedItemIDs.first else { return nil }
-        return store.items[id: id]
-    }
-
-    /// Only directories can be favorited, so a selection mixing a file in with a folder has
-    /// no well-defined bulk target: the icon disappears entirely rather than silently
-    /// ignoring the file, which a merely-disabled icon would leave ambiguous.
-    private var isFavoriteActionVisible: Bool {
-        !store.selectedItemIDs.isEmpty && store.selectedItemIDs.allSatisfy { id in
-            store.items[id: id]?.isDirectory ?? false
-        }
-    }
-
-    /// Filled when tapping the toolbar star would unfavorite the whole selection, matching
-    /// the single-item context-menu icon's own filled/outline convention.
-    private var isEntireSelectionAlreadyFavorited: Bool {
-        !store.selectedItemIDs.isEmpty && store.selectedItemIDs.allSatisfy(store.favoritePaths.contains)
-    }
-
-    private var isDownloadActionVisible: Bool {
-        !store.selectedItemIDs.isEmpty && (store.access?.canDownload ?? false)
-    }
-
-    private var isSaveActionVisible: Bool {
-        isDownloadActionVisible && store.items.contains {
-            store.selectedItemIDs.contains($0.id) && SaveActionStyle.isAvailable(for: $0.isDirectory)
-        }
-    }
-
-    private var isDeleteActionVisible: Bool {
-        !store.selectedItemIDs.isEmpty && (store.access?.canDelete ?? false)
-    }
-
-    /// Copy/Move from the selection toolbar: available whenever anything is selected, except
-    /// for a lone root location (same rule the single-item context menu enforces via
-    /// `isSoleRootLocation`). Copy needs no permission; the Move button adds a
-    /// `canWrite && canDelete` gate at its site.
-    private var isTransferActionVisible: Bool {
-        !store.selectedItemIDs.isEmpty && !(store.directoryPath.isEmpty && store.items.count <= 1)
-    }
-
-    /// A multi-select bottom-toolbar button, every glyph pinned to the same square so the
-    /// row reads as uniform regardless of each symbol's intrinsic aspect ratio. Defaults to
-    /// `primaryDS`; only Delete passes an explicit `.negative` tint.
-    private func selectionToolbarButton(
-        icon: Image,
-        role: ButtonRole? = nil,
-        tint: Color? = nil,
-        accessibilityLabel: String? = nil,
-        isDisabled: Bool = false,
-        action: @escaping () -> Void
-    ) -> some View {
-        SelectionToolbarButton(
-            icon: icon,
-            role: role,
-            tint: tint,
-            accessibilityLabel: accessibilityLabel,
-            isDisabled: isDisabled,
-            action: action
-        )
-    }
-
     private var bulkDeleteConfirmationBinding: Binding<Bool> {
         Binding(get: { store.bulkDeleteConfirmationIsPresented }, set: { _ in })
     }
 
     private var bulkDeleteConfirmationTitle: String {
-        L10n.Browse.deleteConfirmMany(store.selectedItemIDs.count)
+        let selected = store.items.filter { store.selectedItemIDs.contains($0.id) }
+        if selected.count == 1, let item = selected.first {
+            return L10n.Browse.deleteConfirmOne(item.name)
+        }
+        return L10n.Browse.deleteConfirmMany(store.selectedItemIDs.count)
     }
 
     private func fileActionsMenu(for item: FileItem) -> some View {
@@ -1761,11 +1641,10 @@ struct BrowseContentView: View {
                 #else
                     .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                 #endif
-                    .overlay(alignment: .topLeading) {
-                        if store.isSelecting {
-                            DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
-                        }
-                    }
+                    .dsGridSelection(
+                        isSelecting: store.isSelecting,
+                        isSelected: store.selectedItemIDs.contains(item.id)
+                    )
             }
             .buttonStyle(DSHapticButtonStyle())
             .dsTapFlash()
@@ -1794,17 +1673,16 @@ struct BrowseContentView: View {
                         handleTap(item)
                     }
                 } label: {
-                    HStack(spacing: .space12) {
-                        if store.isSelecting {
-                            DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
-                        }
-                        listRowCell(for: item)
-                    }
+                    listRowCell(for: item)
+                        .dsListSelection(
+                            isSelecting: store.isSelecting,
+                            isSelected: store.selectedItemIDs.contains(item.id)
+                        )
                     #if os(macOS)
-                    // On the label, not the row chain: that chain is at the type checker's limit.
-                    .modifier(macRowDragDrop(for: item))
+                        // On the label, not the row chain: that chain is at the type checker's limit.
+                        .modifier(macRowDragDrop(for: item))
                     #else
-                    .modifier(IOSBrowseItemDragDrop(store: store, item: item))
+                        .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                     #endif
                 }
                 .buttonStyle(DSHapticButtonStyle())

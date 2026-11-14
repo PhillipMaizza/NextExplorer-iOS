@@ -76,9 +76,5 @@
         var canUploadHere: Bool {
             access?.canUpload ?? true
         }
-
-        var selectedItems: [FileItem] {
-            items.filter { selectedItemIDs.contains($0.id) }
-        }
     }
 #endif

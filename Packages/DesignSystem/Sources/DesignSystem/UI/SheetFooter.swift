@@ -7,11 +7,11 @@ private enum Constants {
 }
 
 /// The pinned action strip every presented card sheet shares: whatever buttons a sheet puts
-/// in `DSDynamicHeightSheet`'s `footer:` closure, wrapped with the one standard padding and an
-/// opaque `backgroundPrimary` fill so the strip stays legible over scrolling content.
+/// in `DSDynamicHeightSheet`'s `footer:` closure, wrapped with the one standard padding.
 ///
-/// The opaque fill is the separation from the content above; there is deliberately no
-/// `Divider()`.
+/// On iOS the strip sits straight on the sheet's frosted surface (a second surface would read as a
+/// darker band), and the system's scroll edge effect keeps it legible over scrolling content. On a
+/// Mac an opaque `backgroundPrimary` fill does that; either way there is deliberately no `Divider()`.
 public struct DSSheetFooter<Content: View>: View {
     private let content: Content
 
@@ -25,7 +25,9 @@ public struct DSSheetFooter<Content: View>: View {
             .padding(.top, Constants.topPadding)
             .padding(.bottom, Constants.bottomPadding)
             .frame(maxWidth: .infinity)
+        #if os(macOS)
             .background(Color.backgroundPrimary)
+        #endif
     }
 }
 

@@ -56,6 +56,33 @@ struct DSToastPresenterTests {
         #expect(presenter.visibleID == progress.id)
     }
 
+    @Test("a progress toast rebuilt from the same text stays on screen without a swap")
+    func rebuiltProgressStaysVisible() {
+        let presenter = DSToastPresenter()
+        let owner = TestID.uuid()
+        presenter.set(.progress("Moving…"), owner: owner)
+        presenter.set(.progress("Moving…"), owner: owner)
+        #expect(presenter.visibleID == DSToastMessage.progress("Moving…").id)
+        #expect(presenter.swapTask == nil)
+    }
+
+    @Test("a progress toast with new text swaps in")
+    func progressWithNewTextSwaps() async {
+        let presenter = DSToastPresenter()
+        let owner = TestID.uuid()
+        presenter.set(.progress("Moving…"), owner: owner)
+        presenter.set(.progress("Copying…"), owner: owner)
+        #expect(presenter.visibleID == nil)
+        await presenter.swapTask?.value
+        #expect(presenter.visibleID == DSToastMessage.progress("Copying…").id)
+    }
+
+    @Test("brief toasts with the same text stay distinct, so each gets its own timer")
+    func briefToastsWithSameTextDiffer() {
+        #expect(DSToastMessage.success("Copied") != DSToastMessage.success("Copied"))
+        #expect(DSToastMessage.failure("Could not copy") != DSToastMessage.failure("Could not copy"))
+    }
+
     @Test("clearing the only toast hides it")
     func clearingHides() {
         let presenter = DSToastPresenter()

@@ -168,9 +168,8 @@ struct FavoritesView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
-                title: store.isSelecting
-                    ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count)
-                    : L10n.Favorites.navigationTitle,
+                title: L10n.Favorites.navigationTitle,
+                selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : nil,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
                 shouldFadeIntoContent: !isMacTable,
                 isSearchPending: store.isSearchPending
@@ -213,7 +212,6 @@ struct FavoritesView: View {
         }
         .animation(DSMotion.contentReveal, value: listPhase)
         .featureToast(error: store.actionErrorMessage)
-        .hidesTabBar(store.isSelecting)
         .prefersToolbarItemsInVerticalBar()
         .toolbar {
             selectSortToolbar(
@@ -232,6 +230,8 @@ struct FavoritesView: View {
                 sortMenu: { EmptyView() }
             )
         }
+        // Below the toolbar, so its Cancel can hide the circles before select mode ends.
+        .selectModeChrome(isSelecting: store.isSelecting)
         .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
             FavoriteEditSheet(store: editStore, onClose: { store.send(.editSheet(.dismiss)) })
         }
@@ -243,17 +243,18 @@ struct FavoritesView: View {
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
         .toolbar {
-            if store.isSelecting {
+            // The bar's actions only once something is picked, never greyed out over nothing. Showing
+            // the saved list with no network, only taking kept folders off the device works, so with
+            // nothing kept picked there is no bar at all.
+            let isOffline = store.dataSource != .live
+            let action = store.selectedOfflineAction
+            if store.isSelecting, !store.selectedFavoriteIDs.isEmpty, !isOffline || action == .remove {
                 #if os(iOS)
                     ToolbarItem(placement: .bottomBar) {
                         Spacer()
                     }
                 #endif
                 ToolbarItem(placement: .selectionBar) {
-                    // Filled star, not trash: this only ever unfavorites the selection:
-                    // the underlying folders/files aren't touched, so "delete" iconography
-                    // would overstate what the action does.
-                    let action = store.selectedOfflineAction
                     SelectionToolbarButton(
                         icon: action?.icon ?? IconKit.availableOffline,
                         tint: action == .remove ? .negative : nil,
@@ -263,14 +264,19 @@ struct FavoritesView: View {
                         store.send(.bulkOfflineTapped)
                     }
                 }
-                ToolbarItem(placement: .selectionBar) {
-                    SelectionToolbarButton(
-                        icon: IconKit.starFill,
-                        tint: .accent,
-                        accessibilityLabel: L10n.Favorites.actionRemoveFromFavorites,
-                        isDisabled: store.selectedFavoriteIDs.isEmpty
-                    ) {
-                        store.send(.bulkRemoveTapped)
+                if !isOffline {
+                    ToolbarItem(placement: .selectionBar) {
+                        // Filled star, not trash: this only ever unfavorites the selection:
+                        // the underlying folders/files aren't touched, so "delete" iconography
+                        // would overstate what the action does.
+                        SelectionToolbarButton(
+                            icon: IconKit.starFill,
+                            tint: .accent,
+                            accessibilityLabel: L10n.Favorites.actionRemoveFromFavorites,
+                            isDisabled: store.selectedFavoriteIDs.isEmpty
+                        ) {
+                            store.send(.bulkRemoveTapped)
+                        }
                     }
                 }
             }

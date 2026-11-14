@@ -45,12 +45,13 @@
             openMenu({ browse.moreMenu.tap() }, until: browse.selectMenuItem)
             browse.selectMenuItem.tap()
 
-            // Select two rows, then delete them from the selection toolbar.
+            // Select two rows, then delete them from the selection menu.
             XCTAssertTrue(browse.row(Fixture.file).waitToAppear())
+            XCTAssertFalse(browse.selectionActionsMenu.exists, "With nothing selected the bar offers nothing")
             browse.row(Fixture.file).tap()
             browse.row(Fixture.imageFile).tap()
 
-            XCTAssertTrue(browse.bulkDeleteButton.waitToAppear(), "Selecting items should reveal the delete action")
+            openMenu({ browse.selectionActionsMenu.tap() }, until: browse.bulkDeleteButton)
             browse.bulkDeleteButton.tap()
 
             XCTAssertTrue(browse.deleteConfirmButton.waitToAppear(), "Bulk delete should confirm first")

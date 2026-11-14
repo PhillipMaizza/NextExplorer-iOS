@@ -305,12 +305,17 @@ struct BrowseScreen {
         app.labeledButton(L10n.Browse.actionRemoveFromOffline)
     }
 
-    /// The confirmation every Available Offline removal asks, and its destructive button.
-    /// The selection bar's Available Offline button.
+    /// The select mode bar's one menu, holding every action on the selection.
+    var selectionActionsMenu: XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label == %@", L10n.Common.more)).element(boundBy: 0)
+    }
+
+    /// Available Offline inside the selection menu.
     var offlineSelectionButton: XCUIElement {
         app.buttons[L10n.Browse.actionAvailableOffline].firstMatch
     }
 
+    /// The destructive button of the confirmation every Available Offline removal asks.
     var removeOfflineConfirmButton: XCUIElement {
         app.labeledButton(L10n.Offline.removeConfirm)
     }
@@ -393,7 +398,7 @@ struct BrowseScreen {
         app.staticTexts[L10n.Common.syncCompleted]
     }
 
-    /// Select mode bottom bar delete button (now carries an accessibility label).
+    /// Delete inside the selection menu.
     var bulkDeleteButton: XCUIElement {
         app.labeledButton(L10n.Browse.actionDelete)
     }
@@ -460,6 +465,11 @@ struct OfflineTabScreen {
 
     var removeConfirmButton: XCUIElement {
         app.labeledButton(L10n.Offline.removeConfirm)
+    }
+
+    /// The select mode bar's Remove from Offline, for the picked pinned items.
+    var removeFromOfflineSelectionButton: XCUIElement {
+        app.labeledButton(L10n.Browse.actionRemoveFromOffline)
     }
 }
 

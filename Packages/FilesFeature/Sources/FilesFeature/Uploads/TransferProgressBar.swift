@@ -48,7 +48,7 @@ struct TransferProgressBar: View {
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
             VStack(alignment: .leading, spacing: Constants.textSpacing) {
                 Text(title)
-                    .type(.body3(.semibold), style: .inverted)
+                    .type(.body3(.semibold), style: .primaryOnSurface)
                     .lineLimit(1)
                     .truncationMode(.middle)
                 if let progress {
@@ -59,7 +59,7 @@ struct TransferProgressBar: View {
                 }
                 if let detail {
                     Text(detail)
-                        .type(.caption(.regular), style: .invertedSecondary)
+                        .type(.caption(.regular), style: .secondary)
                         .lineLimit(1)
                         .monospacedDigit()
                 }
@@ -68,7 +68,7 @@ struct TransferProgressBar: View {
                 IconKit.closeCircle
                     .resizable()
                     .scaledToFit()
-                    .foregroundStyle(Color.secondaryInverted)
+                    .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.cancelSize, height: Constants.cancelSize)
             }
             .buttonStyle(DSHapticButtonStyle())
@@ -76,7 +76,7 @@ struct TransferProgressBar: View {
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .background(Color.primaryDS, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+        .dsGlass(interactive: true, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .onTapGesture(perform: onTap)
         .accessibilityElement(children: .ignore)
@@ -104,7 +104,7 @@ struct TransferFailedBar: View {
                 .foregroundStyle(Color.negative)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
             Text(label)
-                .type(.body3(.semibold), style: .inverted)
+                .type(.body3(.semibold), style: .primaryOnSurface)
                 .lineLimit(1)
             Spacer(minLength: Constants.contentSpacing)
             Button(action: onRetry) {
@@ -116,7 +116,7 @@ struct TransferFailedBar: View {
                 IconKit.closeCircle
                     .resizable()
                     .scaledToFit()
-                    .foregroundStyle(Color.secondaryInverted)
+                    .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.cancelSize, height: Constants.cancelSize)
             }
             .buttonStyle(DSHapticButtonStyle())
@@ -124,7 +124,7 @@ struct TransferFailedBar: View {
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .background(Color.primaryDS, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+        .dsGlass(interactive: true, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .onTapGesture(perform: onTap)
         .accessibilityElement(children: .ignore)
