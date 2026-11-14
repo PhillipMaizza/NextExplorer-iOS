@@ -140,9 +140,15 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
         // A system sheet sizes itself from the detents; a `dsSheet` card has no detents, so it
         // caps its own height (the scroll view would otherwise fill the screen).
         .frame(maxHeight: isCardSheet ? resolvedHeight : nil)
-        .background(Color.backgroundPrimary)
-        .presentationDetents(detents)
-        .presentationDragIndicator(maxHeightFraction == nil ? .hidden : .visible)
+        #if os(iOS)
+            // Down under the home indicator too, or the bottom edge shows a lighter band.
+            .background(DSSheetSurface().ignoresSafeArea())
+            .presentationBackground(.clear)
+        #elseif os(macOS)
+            .background(Color.backgroundPrimary)
+        #endif
+            .presentationDetents(detents)
+            .presentationDragIndicator(maxHeightFraction == nil ? .hidden : .visible)
     }
 
     /// Fixed mode locks `contentHeight` on the first non-zero reading and ignores every later

@@ -51,15 +51,21 @@ func selectSortToolbar(
                 .accessibilityLabelWithTooltip(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
             }
             ToolbarItem(placement: .primaryAction) {
-                Button(L10n.Common.cancel, action: onCancel)
-                    .buttonStyle(DSHapticButtonStyle())
+                SelectModeCancelButton(action: onCancel)
             }
         } else {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     clipboardMenu()
                     if isSelectAvailable {
-                        Button(action: onSelectModeToggled) {
+                        Button {
+                            // Select mode swaps this menu's button for Cancel, so it waits for the
+                            // menu to close into its button first; swapped at once, the menu popped off.
+                            Task {
+                                try? await DSMotion.waitForStep(DSMotion.menuCloseDuration)
+                                onSelectModeToggled()
+                            }
+                        } label: {
                             Label { Text(L10n.Common.select) } icon: { IconKit.select }
                         }
                     }
@@ -75,9 +81,34 @@ func selectSortToolbar(
                 } label: {
                     IconKit.moreOptions.foregroundStyle(Color.primaryDS)
                 }
+                // Menu glyphs follow the tint: primary like the system's own menus, not the accent.
+                .tint(Color.primaryDS)
                 .accessibilityLabelWithTooltip(L10n.Common.more)
                 .accessibilityIdentifier(AccessibilityIdentifiers.Browse.moreMenu)
             }
         }
     #endif
+}
+
+/// Cancel while selecting: hides the circles first through the screen's `selectModeChrome`, then
+/// ends select mode; with no chrome around it, it ends select mode at once.
+private struct SelectModeCancelButton: View {
+    let action: () -> Void
+    @Environment(\.leaveSelectMode) private var leaveSelectMode
+
+    var body: some View {
+        Button(L10n.Common.cancel) {
+            if let leaveSelectMode {
+                leaveSelectMode { action() }
+            } else {
+                action()
+            }
+        }
+        .buttonStyle(DSHapticButtonStyle())
+    }
+}
+
+#Preview("Cancel") {
+    SelectModeCancelButton {}
+        .padding(.space16)
 }

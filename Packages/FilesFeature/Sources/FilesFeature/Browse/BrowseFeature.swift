@@ -1545,7 +1545,9 @@ public struct BrowseFeature {
                 let items = Array(state.items.filter { state.selectedItemIDs.contains($0.id) })
                 guard !items.isEmpty else { return .none }
                 state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .copy) }
-                state.clipboardStagedMessage = L10n.Browse.clipboardCopiedMany(items.count)
+                state.clipboardStagedMessage = items.count == 1
+                    ? L10n.Browse.clipboardCopiedOne(items[0].name)
+                    : L10n.Browse.clipboardCopiedMany(items.count)
                 state.isSelecting = false
                 state.selectedItemIDs = []
                 return .none
@@ -1570,12 +1572,12 @@ public struct BrowseFeature {
                 state.selectedItemIDs = ids
                 // An open inspector follows the selection to the newly picked row.
                 guard state.infoItem != nil, ids.count == 1,
-                      let item = selectedItems(state).first, item.id != state.infoItem?.id
+                      let item = state.selectedItems.first, item.id != state.infoItem?.id
                 else { return .none }
                 return loadInfo(&state, item: item, settle: Constants.inspectorFollowDelay)
 
             case .copySelectionTapped:
-                let items = selectedItems(state)
+                let items = state.selectedItems
                 guard !items.isEmpty else { return .none }
                 state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .copy) }
                 state.clipboardStagedMessage = items.count == 1
@@ -1584,7 +1586,7 @@ public struct BrowseFeature {
                 return .none
 
             case .cutSelectionTapped:
-                let items = selectedItems(state)
+                let items = state.selectedItems
                 guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
                 state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .move) }
                 state.clipboardStagedMessage = items.count == 1
@@ -1605,7 +1607,7 @@ public struct BrowseFeature {
                 return .send(.delegate(.directoryContentsChanged))
 
             case .duplicateSelectionTapped:
-                let items = selectedItems(state)
+                let items = state.selectedItems
                 guard !items.isEmpty, !state.directoryPath.isEmpty, state.access?.canWrite ?? false else { return .none }
                 return performTransfer(&state, retry: TransferRetry(
                     items: items,
@@ -1616,12 +1618,12 @@ public struct BrowseFeature {
                 ))
 
             case .deleteSelectionTapped:
-                let items = selectedItems(state)
+                let items = state.selectedItems
                 guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
                 return items.count == 1 ? .send(.deleteTapped(items[0])) : .send(.bulkDeleteTapped)
 
             case .renameSelectionTapped:
-                let items = selectedItems(state)
+                let items = state.selectedItems
                 guard items.count == 1, state.access?.canWrite ?? false else { return .none }
                 return .send(.renameTapped(items[0]))
 
@@ -1639,10 +1641,10 @@ public struct BrowseFeature {
 
             case .infoSelectionTapped:
                 // ⌘I toggles: pressing it again for the item already shown closes the inspector.
-                if state.infoItem != nil, state.infoItem?.id == selectedItems(state).first?.id {
+                if state.infoItem != nil, state.infoItem?.id == state.selectedItems.first?.id {
                     return .send(.infoDismissed)
                 }
-                let items = selectedItems(state)
+                let items = state.selectedItems
                 guard items.count == 1 else { return .none }
                 return .send(.infoTapped(items[0]))
 
@@ -1977,10 +1979,5 @@ extension BrowseFeature {
             }
             await send(.directUploadStaged(staged, destination: destination, requested: urls.count))
         }
-    }
-
-    /// The selected rows in list order (the selection set itself is unordered).
-    func selectedItems(_ state: State) -> [FileItem] {
-        state.items.filter { state.selectedItemIDs.contains($0.id) }
     }
 }

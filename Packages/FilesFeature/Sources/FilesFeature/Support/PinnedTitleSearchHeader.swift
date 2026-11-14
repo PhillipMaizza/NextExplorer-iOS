@@ -21,6 +21,9 @@ private enum Constants {
 /// system title hidden (`.navigationBarTitleDisplayMode(.inline)` + no title text).
 struct PinnedTitleSearchHeader<Accessory: View>: View {
     let title: String
+    /// The selection count shown in place of `title` while selecting (`nil` otherwise). It swaps in
+    /// and out with the selection circles, in the same step and motion, not when select mode flips.
+    var selectionTitle: String?
     @Binding var searchText: String
     var prompt: String = L10n.Common.search
     /// Extra padding above the title. A screen whose nav bar carries no toolbar actions (e.g.
@@ -42,6 +45,12 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     @ViewBuilder var accessory: () -> Accessory
 
     @FocusState private var isFocused: Bool
+    @Environment(\.selectionIndicatorsShown) private var selectionIndicatorsShown
+
+    private var shownTitle: String {
+        guard let selectionTitle, selectionIndicatorsShown ?? true else { return title }
+        return selectionTitle
+    }
 
     var body: some View {
         #if os(macOS)
@@ -76,8 +85,10 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: .space12) {
-            Text(title)
+            Text(shownTitle)
                 .type(.headline2, style: .primaryOnSurface)
+                .contentTransition(.interpolate)
+                .animation(DSMotion.selectModeStep, value: shownTitle)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -161,6 +172,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
 extension PinnedTitleSearchHeader where Accessory == EmptyView {
     init(
         title: String,
+        selectionTitle: String? = nil,
         searchText: Binding<String>,
         prompt: String = L10n.Common.search,
         extraTopPadding: CGFloat = 0,
@@ -170,6 +182,7 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
     ) {
         self.init(
             title: title,
+            selectionTitle: selectionTitle,
             searchText: searchText,
             prompt: prompt,
             extraTopPadding: extraTopPadding,

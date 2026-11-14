@@ -224,9 +224,8 @@ struct OfflineTabView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .safeAreaInset(edge: .top, spacing: 0) {
                 PinnedTitleSearchHeader(
-                    title: store.isSelecting
-                        ? L10n.Common.selectedCount(store.selectedDownloadIDs.count)
-                        : L10n.Tab.offline,
+                    title: L10n.Tab.offline,
+                    selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedCount) : nil,
                     searchText: $store.searchQuery.sending(\.searchQueryChanged),
                     shouldFadeIntoContent: !isMacTable
                 )
@@ -281,31 +280,18 @@ struct OfflineTabView: View {
             #endif
                 .hapticFeedback(.selection, trigger: viewModeRaw)
                 .hapticFeedback(.selection, trigger: store.isSelecting)
-                .hidesTabBar(store.isSelecting)
+                .selectModeChrome(isSelecting: store.isSelecting)
                 .prefersToolbarItemsInVerticalBar()
                 .toolbar {
-                    if store.isSelecting {
-                        ToolbarItem(placement: .bottomBar) {
-                            Spacer()
-                        }
-                        ToolbarItem(placement: .bottomBar) {
-                            ShareLink(items: selectedDownloadURLs) {
-                                IconKit.share
-                            }
-                            .accessibilityLabel(L10n.Common.share)
-                            .disabled(store.selectedDownloadIDs.isEmpty)
-                        }
-                        ToolbarItem(placement: .bottomBar) {
-                            SelectionToolbarButton(
-                                icon: IconKit.delete,
-                                role: .destructive,
-                                tint: .negative,
-                                accessibilityLabel: L10n.Common.delete,
-                                isDisabled: store.selectedDownloadIDs.isEmpty
-                            ) {
-                                store.send(.bulkDeleteTapped)
-                            }
-                        }
+                    // The bar's actions only once something is picked, never greyed out over nothing.
+                    if store.isSelecting, store.selectedCount > 0 {
+                        OfflineSelectionToolbar(
+                            selectedPinnedPaths: displayedPinned.map(\.root.path)
+                                .filter(store.selectedPinnedPaths.contains),
+                            selectedDownloadURLs: selectedDownloadURLs,
+                            onRemoveFromOffline: { offlineStore.send(.removeSelectionTapped(paths: $0)) },
+                            onDelete: { store.send(.bulkDeleteTapped) }
+                        )
                     }
                 }
                 .dsSheet(isPresented: $isSortSheetPresented) {
@@ -318,8 +304,8 @@ struct OfflineTabView: View {
                         optionTitle: { $0.title },
                         directionIcon: { $0.icon },
                         directionTitle: { $0.title },
-                        onSelectOption: { store.send(.sortOptionChanged($0)) },
-                        onSelectDirection: { store.send(.sortDirectionChanged($0)) },
+                        onSelectOption: { store.send(.sortOptionChanged($0), animation: DSMotion.listChange) },
+                        onSelectDirection: { store.send(.sortDirectionChanged($0), animation: DSMotion.listChange) },
                         onDismiss: { isSortSheetPresented = false }
                     )
                 }

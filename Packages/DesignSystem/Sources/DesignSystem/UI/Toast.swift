@@ -8,6 +8,10 @@ private enum Constants {
     static let bottomInset: CGFloat = .space16
     static let autoDismissDelay: Duration = .seconds(4.5)
     static let animationDuration: Double = 0.3
+    /// How much of the toast's color sits over the frosted glass: enough to keep its meaning and
+    /// the white text legible, little enough to let the glass through.
+    static let tintOpacity: Double = 0.78
+    static let progressIDPrefix = "progress:"
 }
 
 /// A brief message overlaid at the bottom of the screen: either a self-dismissing warning
@@ -71,8 +75,10 @@ public struct DSToastMessage: Equatable, Identifiable {
         DSToastMessage(failureText: text, actionTitle: actionTitle, action: action)
     }
 
+    /// Keyed by its text, not a fresh id: callers rebuild it from state on every render, and a new
+    /// id each time would restart the presenter swap forever. With no timer, reuse is harmless.
     private init(progressText: String) {
-        id = UUID().uuidString
+        id = Constants.progressIDPrefix + progressText
         icon = nil
         text = progressText
         backgroundColor = .secondaryDS
@@ -216,7 +222,7 @@ private struct DSToastOverlay: View {
         .foregroundStyle(Color.primaryInverted)
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .background(Capsule().fill(message.backgroundColor))
+        .background { DSFrostedTint(Capsule(), tint: message.backgroundColor, tintOpacity: Constants.tintOpacity) }
         .padding(.bottom, Constants.bottomInset + extraBottomInset)
         .transition(.move(edge: .bottom).combined(with: .opacity))
         // One VoiceOver element; spoken as a status announcement the moment it appears,

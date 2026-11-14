@@ -59,6 +59,23 @@ struct BrowseClipboardTests {
         }
     }
 
+    @Test("Bulk copy of a single selected item names it instead of counting it")
+    func bulkCopyOfOneItemNamesIt() async {
+        let only = BrowseFixtures.file(TestFile.aText, in: TestFolder.documents)
+        var state = makeState()
+        state.items = [only, BrowseFixtures.file(TestFile.bText, in: TestFolder.documents)]
+        state.isSelecting = true
+        state.selectedItemIDs = [only.id]
+        let store = BrowseFixtures.store(state)
+
+        await store.send(.bulkCopyTapped) {
+            $0.$clipboard.withLock { $0 = FileClipboard(items: [only], operation: .copy) }
+            $0.clipboardStagedMessage = L10n.Browse.clipboardCopiedOne(only.name)
+            $0.isSelecting = false
+            $0.selectedItemIDs = []
+        }
+    }
+
     // MARK: Paste
 
     @Test("Paste copies into the current folder, lists the copy, and empties the clipboard when keep is off")

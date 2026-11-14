@@ -55,7 +55,28 @@ struct FileActionsMenu: View {
         #endif
         // Explicit `.tint`: the Browse tree runs under `.tint(Color.accent)`, which would
         // otherwise cascade into the menu and color every icon/label gold instead of the
-        // system's normal label color: only Delete should stand out, in red.
+        // system's normal label color: only removals and Delete stand out, in red.
+        // Device content offers only actions on kept files.
+        if !store.showsDeviceContent {
+            Section { aboutActions }
+        }
+        Section { editActions }
+        Section { sendActions }
+        Section { keepActions }
+        if store.access?.canDelete ?? false {
+            Section {
+                Button(role: .destructive) {
+                    store.send(.deleteTapped(item))
+                } label: {
+                    Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                }
+                .tint(.negative)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var aboutActions: some View {
         Button {
             store.send(.infoTapped(item))
         } label: {
@@ -76,6 +97,10 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
         }
+    }
+
+    @ViewBuilder
+    private var editActions: some View {
         if store.access?.canWrite ?? false {
             Button {
                 store.send(.renameTapped(item))
@@ -83,8 +108,6 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
             }
             .tint(.primaryDS)
-        }
-        if store.access?.canWrite ?? false {
             // Extract only offers `.zip`: the server's own extract route 415s anything else
             // ("Only .zip archives are supported"), `.rar` included despite this app being
             // able to browse rar contents client-side.
@@ -107,7 +130,7 @@ struct FileActionsMenu: View {
         // paste); move has to delete the original, so it mirrors the web client's
         // `canWrite && canDelete` gate. A lone root location has nowhere to go and can't be
         // left absent, so neither is offered for it.
-        if !isSoleRootLocation {
+        if !isSoleRootLocation, !store.showsDeviceContent {
             Button {
                 store.send(.copyTapped(item), animation: .default)
             } label: {
@@ -144,7 +167,18 @@ struct FileActionsMenu: View {
                 .tint(.primaryDS)
             }
         }
-        if store.access?.canDownload ?? false, SaveActionStyle.isAvailable(for: item.isDirectory) {
+    }
+
+    /// On device content only a kept file can be saved or shared, from its copy on the device.
+    private var isKept: Bool {
+        store.offlineItemIDs.contains(item.id)
+    }
+
+    @ViewBuilder
+    private var sendActions: some View {
+        if store.access?.canDownload ?? false, SaveActionStyle.isAvailable(for: item.isDirectory),
+           !store.showsDeviceContent || isKept
+        {
             Button {
                 store.send(.downloadTapped(item))
             } label: {
@@ -152,39 +186,16 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
         }
-        if store.access?.canDownload ?? false {
-            let isAvailableOffline = store.offlineItemIDs.contains(item.id)
-            // Offline only through a pinned parent folder: it stays on until that folder is unpinned.
-            let isCoveredByFolder = isAvailableOffline && !store.offlinePinnedItemIDs.contains(item.id)
-            Button {
-                store.send(.offlineToggleTapped(item))
-            } label: {
-                Label {
-                    Text(isAvailableOffline && !isCoveredByFolder
-                        ? L10n.Browse.actionRemoveFromOffline
-                        : L10n.Browse.actionAvailableOffline)
-                } icon: {
-                    IconKit.availableOffline
+        if store.showsDeviceContent {
+            if isKept, !item.isDirectory, BrowseFeature.State.canShareKeptFiles {
+                Button {
+                    store.send(.keptShareTapped([item]))
+                } label: {
+                    Label { Text(L10n.PreviewToolbar.share) } icon: { IconKit.share }
                 }
+                .tint(.primaryDS)
             }
-            .tint(.primaryDS)
-            .disabled(isCoveredByFolder)
-        }
-        // Only folders can be favorited: the server 400s on anything else.
-        if item.isDirectory {
-            Button {
-                store.send(.favoriteToggleButtonTapped(item))
-            } label: {
-                if store.favoritePaths.contains(item.id) {
-                    Label { Text(L10n.Browse.actionRemoveFromFavorites) } icon: { IconKit.starFill }
-                } else {
-                    Label { Text(L10n.Browse.actionAddToFavorites) } icon: { IconKit.star }
-                }
-            }
-            .tint(.primaryDS)
-            .disabled(!store.hasLoadedFavorites)
-        }
-        if store.access?.canShare ?? false {
+        } else if store.access?.canShare ?? false {
             Button {
                 onShare(item)
             } label: {
@@ -192,13 +203,34 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
         }
-        if store.access?.canDelete ?? false {
-            Button(role: .destructive) {
-                store.send(.deleteTapped(item))
-            } label: {
-                Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+    }
+
+    /// Available Offline and Favorites, always their own group. Taking an item off either reads as a
+    /// removal: red, like Delete.
+    @ViewBuilder
+    private var keepActions: some View {
+        if store.access?.canDownload ?? false, !store.showsDeviceContent || isKept {
+            // A file kept through a pinned folder removes that folder, after a confirmation naming it.
+            let isRemoval = store.offlineItemIDs.contains(item.id)
+            RemovableMenuButton(
+                title: isRemoval ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
+                icon: IconKit.availableOffline,
+                isRemoval: isRemoval
+            ) {
+                store.send(.offlineToggleTapped(item))
             }
-            .tint(.negative)
+        }
+        // Only folders can be favorited: the server 400s on anything else.
+        if item.isDirectory, !store.showsDeviceContent {
+            let isFavorite = store.favoritePaths.contains(item.id)
+            RemovableMenuButton(
+                title: isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,
+                icon: isFavorite ? IconKit.starFill : IconKit.star,
+                isRemoval: isFavorite
+            ) {
+                store.send(.favoriteToggleButtonTapped(item))
+            }
+            .disabled(!store.hasLoadedFavorites)
         }
     }
 
@@ -207,4 +239,36 @@ struct FileActionsMenu: View {
     private var isSoleRootLocation: Bool {
         store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1
     }
+}
+
+@MainActor
+private enum PreviewSample {
+    static let folder = FileItem(
+        name: "Projects",
+        path: "",
+        dateModified: .distantPast,
+        size: 0,
+        kind: FileItem.directoryKind
+    )
+
+    /// A folder kept offline and in the favorites, so the last group shows both removals in red.
+    static func menu() -> some View {
+        var state = BrowseFeature.State(
+            serverURL: URL(fileURLWithPath: "/"),
+            directoryPath: "",
+            title: "Files"
+        )
+        state.offlineItemIDs = [folder.id]
+        state.offlinePinnedItemIDs = [folder.id]
+        state.favoritePaths = [folder.id]
+        return Menu("Projects") {
+            FileActionsMenu(store: Store(initialState: state) { BrowseFeature() }, item: folder, onShare: { _ in })
+        }
+        .padding()
+        .background(Color.backgroundPrimary)
+    }
+}
+
+#Preview("Folder kept offline and favorited") {
+    PreviewSample.menu()
 }

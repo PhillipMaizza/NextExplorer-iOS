@@ -66,12 +66,7 @@ struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View,
 
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: .space12) {
-                if isSelecting {
-                    DSSelectionIndicator(isSelected: isSelected)
-                }
-                content
-            }
+            content.dsListSelection(isSelecting: isSelecting, isSelected: isSelected)
         }
         .buttonStyle(DSHapticButtonStyle())
         .accessibilityAddTraits(isSelecting && isSelected ? [.isSelected] : [])
@@ -114,11 +109,7 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
         Button(action: onTap) {
             content
                 .dsCard(padding: padding)
-                .overlay(alignment: .topLeading) {
-                    if isSelecting {
-                        DSSelectionIndicator(isSelected: isSelected)
-                    }
-                }
+                .dsGridSelection(isSelecting: isSelecting, isSelected: isSelected)
         }
         .buttonStyle(DSHapticButtonStyle())
         .hapticFeedback(.selection, trigger: isSelected)

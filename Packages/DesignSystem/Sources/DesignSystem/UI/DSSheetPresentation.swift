@@ -164,8 +164,7 @@ private struct DSCardSheetHost<CardContent: View>: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color.black
-                .opacity(isCardShown ? Constants.dimOpacity : 0)
+            backdrop
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
                 .onTapGesture(perform: onBackgroundTap)
@@ -185,5 +184,16 @@ private struct DSCardSheetHost<CardContent: View>: View {
         .onAppear {
             withAnimation(Constants.presentAnimation) { isCardShown = true }
         }
+    }
+
+    /// The screen behind the card, frosted and dimmed; only dimmed with Reduce Transparency on.
+    private var backdrop: some View {
+        DSFrostedTint(
+            Rectangle(),
+            tint: .black,
+            tintOpacity: Constants.dimOpacity,
+            fallbackOpacity: Constants.dimOpacity
+        )
+        .opacity(isCardShown ? 1 : 0)
     }
 }
