@@ -59,6 +59,7 @@ class UITestCase: XCTestCase {
         case empty
         case error
         case sessionExpired
+        case gallery
     }
 
     #if os(macOS)

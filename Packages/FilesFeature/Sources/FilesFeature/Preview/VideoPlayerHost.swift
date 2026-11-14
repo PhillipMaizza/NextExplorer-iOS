@@ -28,6 +28,8 @@ struct VideoPlayerHost: View {
     var onRename: (() -> Void)?
     var onDownload: (() -> Void)?
     var onDelete: (() -> Void)?
+    /// Inside the gallery, which draws the bars and owns rotation.
+    let isEmbedded: Bool
 
     @State private var currentURL: URL
     @State private var useVLCFallback: Bool
@@ -43,7 +45,8 @@ struct VideoPlayerHost: View {
         onShare: (() -> Void)? = nil,
         onRename: (() -> Void)? = nil,
         onDownload: (() -> Void)? = nil,
-        onDelete: (() -> Void)? = nil
+        onDelete: (() -> Void)? = nil,
+        isEmbedded: Bool = false
     ) {
         self.item = item
         self.url = url
@@ -55,6 +58,7 @@ struct VideoPlayerHost: View {
         self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
+        self.isEmbedded = isEmbedded
         _currentURL = State(initialValue: url)
         _useVLCFallback = State(initialValue: !preferNative)
     }
@@ -63,16 +67,28 @@ struct VideoPlayerHost: View {
         Group {
             if useVLCFallback {
                 VLCPlayerView(
-                    item: item, url: currentURL, serverURL: serverURL,
+                    item: item,
+                    url: currentURL,
+                    serverURL: serverURL,
                     onDismiss: onDismiss,
-                    onShare: onShare, onRename: onRename, onDownload: onDownload, onDelete: onDelete
+                    onShare: onShare,
+                    onRename: onRename,
+                    onDownload: onDownload,
+                    onDelete: onDelete,
+                    isEmbedded: isEmbedded
                 )
             } else {
                 StreamingPreviewView(
-                    item: item, url: currentURL, serverURL: serverURL,
+                    item: item,
+                    url: currentURL,
+                    serverURL: serverURL,
                     onDismiss: onDismiss,
                     onPlaybackFailed: handlePlaybackFailure,
-                    onShare: onShare, onRename: onRename, onDownload: onDownload, onDelete: onDelete
+                    onShare: onShare,
+                    onRename: onRename,
+                    onDownload: onDownload,
+                    onDelete: onDelete,
+                    isEmbedded: isEmbedded
                 )
             }
         }

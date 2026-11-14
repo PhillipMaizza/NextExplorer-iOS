@@ -16,7 +16,6 @@ struct BrowseSearchTests {
         static let vacation2024 = "Vacation 2024"
         static let zeta = "zeta"
         static let zetas = "zetas"
-        static let clip = "clip.mp4"
     }
 
     // MARK: Recursive backend search, instant client pre-fill
@@ -538,7 +537,7 @@ struct BrowseSearchTests {
     func searchResultTappedOnAFileOpensThePreviewViaRowTapped() async {
         let store = BrowseFixtures.store()
         let opened = FileItem(
-            name: Constants.clip,
+            name: TestFile.clip,
             path: TestFolder.media,
             dateModified: MockDate.date,
             size: 0,
@@ -546,10 +545,12 @@ struct BrowseSearchTests {
         )
 
         await store.send(.searchResultTapped(SearchResultItem(
-            name: Constants.clip,
+            name: TestFile.clip,
             path: TestFolder.media,
             kind: SearchResultItem.fileKind
-        )))
+        ))) {
+            $0.isPreviewOutsideListing = true
+        }
         await store.receive(.rowTapped(opened)) {
             $0.previewItem = opened
         }
@@ -559,13 +560,13 @@ struct BrowseSearchTests {
     func searchResultTappedOnAPinnedFileOpensItWithThePinnedCopysOwnMetadata() async {
         let pinnedDate = MockDate.date.addingTimeInterval(-3_600)
         let pinnedSize: Int64 = 4_096
-        let pinnedPath = "\(TestFolder.media)/\(Constants.clip)"
+        let pinnedPath = "\(TestFolder.media)/\(TestFile.clip)"
         let offline = OfflineFileStore.inMemory(
             copyMetadata: [pinnedPath: OfflineCopyMetadata(dateModified: pinnedDate, size: pinnedSize)]
         )
         let store = BrowseFixtures.store { $0.offlineFileStore = offline }
         let opened = FileItem(
-            name: Constants.clip,
+            name: TestFile.clip,
             path: TestFolder.media,
             dateModified: pinnedDate,
             size: pinnedSize,
@@ -573,10 +574,12 @@ struct BrowseSearchTests {
         )
 
         await store.send(.searchResultTapped(SearchResultItem(
-            name: Constants.clip,
+            name: TestFile.clip,
             path: TestFolder.media,
             kind: SearchResultItem.fileKind
-        )))
+        ))) {
+            $0.isPreviewOutsideListing = true
+        }
         await store.receive(.rowTapped(opened)) {
             $0.previewItem = opened
         }

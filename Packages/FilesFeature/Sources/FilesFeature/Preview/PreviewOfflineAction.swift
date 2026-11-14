@@ -1,10 +1,9 @@
 import SwiftUI
 
 /// The Available Offline button of a preview's action bar: what it shows for the file on screen and
-/// what a tap does. `isEnabled` is false when the file is offline only because a parent folder is.
+/// what a tap does.
 struct PreviewOfflineAction: Sendable {
     let isOn: Bool
-    let isEnabled: Bool
     let toggle: @MainActor () -> Void
 }
 

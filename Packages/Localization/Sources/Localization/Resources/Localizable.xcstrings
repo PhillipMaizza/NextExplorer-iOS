@@ -38485,183 +38485,585 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copied %lld items"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copied %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copied %lld items"
+                }
+              }
+            }
           }
         },
         "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "تم نسخ %lld عنصر"
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نسخ %lld عنصر"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نسخ %lld عنصر"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نسخ %lld عنصرين"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نسخ %lld عناصر"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نسخ %lld عنصرًا"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نسخ %lld عنصر"
+                }
+              }
+            }
           }
         },
         "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zkopírováno položek: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Zkopírováno položek: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Zkopírováno položek: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Zkopírováno položek: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Zkopírováno položek: %lld"
+                }
+              }
+            }
           }
         },
         "da": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld emner kopieret"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld emne kopieret"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld emner kopieret"
+                }
+              }
+            }
           }
         },
         "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Objekte kopiert"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekt kopiert"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekte kopiert"
+                }
+              }
+            }
           }
         },
         "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Αντιγράφηκαν %lld στοιχεία"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Αντιγράφηκε %lld στοιχείο"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Αντιγράφηκαν %lld στοιχεία"
+                }
+              }
+            }
           }
         },
         "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Se copiaron %lld elementos"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Se copió %lld elemento"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Se copiaron %lld elementos"
+                }
+              }
+            }
           }
         },
         "fi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld kohdetta kopioitu"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld kohde kopioitu"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld kohdetta kopioitu"
+                }
+              }
+            }
           }
         },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld éléments copiés"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld élément copié"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld éléments copiés"
+                }
+              }
+            }
           }
         },
         "he": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld פריטים הועתקו"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld פריט הועתק"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld פריטים הועתקו"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld פריטים הועתקו"
+                }
+              }
+            }
           }
         },
         "hi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld आइटम कॉपी किए गए"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम कॉपी किया गया"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम कॉपी किए गए"
+                }
+              }
+            }
           }
         },
         "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elem másolva"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elem másolva"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elem másolva"
+                }
+              }
+            }
           }
         },
         "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld item disalin"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item disalin"
+                }
+              }
+            }
           }
         },
         "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copiati %lld elementi"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiato %lld elemento"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiati %lld elementi"
+                }
+              }
+            }
           }
         },
         "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 項目をコピーしました"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 項目をコピーしました"
+                }
+              }
+            }
           }
         },
         "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "항목 %lld개 복사함"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "항목 %lld개 복사함"
+                }
+              }
+            }
           }
         },
         "nb": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elementer kopiert"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld element kopiert"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elementer kopiert"
+                }
+              }
+            }
           }
         },
         "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld items gekopieerd"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item gekopieerd"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items gekopieerd"
+                }
+              }
+            }
           }
         },
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skopiowano %lld elementów"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Skopiowano %lld element"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Skopiowano %lld elementy"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Skopiowano %lld elementów"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Skopiowano %lld elementu"
+                }
+              }
+            }
           }
         },
         "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copiados %lld itens"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiado %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiados %lld itens"
+                }
+              }
+            }
           }
         },
         "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copiados %lld itens"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiado %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiados %lld itens"
+                }
+              }
+            }
           }
         },
         "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elemente copiate"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld element copiat"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elemente copiate"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld de elemente copiate"
+                }
+              }
+            }
           }
         },
         "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Скопировано объектов: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопировано объектов: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопировано объектов: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопировано объектов: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопировано объектов: %lld"
+                }
+              }
+            }
           }
         },
         "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopierade %lld objekt"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopierade %lld objekt"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopierade %lld objekt"
+                }
+              }
+            }
           }
         },
         "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "คัดลอก %lld รายการแล้ว"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "คัดลอก %lld รายการแล้ว"
+                }
+              }
+            }
           }
         },
         "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld öğe kopyalandı"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld öğe kopyalandı"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld öğe kopyalandı"
+                }
+              }
+            }
           }
         },
         "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Скопійовано елементів: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопійовано елементів: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопійовано елементів: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопійовано елементів: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопійовано елементів: %lld"
+                }
+              }
+            }
           }
         },
         "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Đã sao chép %lld mục"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Đã sao chép %lld mục"
+                }
+              }
+            }
           }
         },
         "zh-CN": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已拷贝 %lld 项"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "已拷贝 %lld 项"
+                }
+              }
+            }
           }
         },
         "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已拷貝 %lld 個項目"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "已拷貝 %lld 個項目"
+                }
+              }
+            }
           }
         }
       }
@@ -38672,181 +39074,883 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copied %1$lld items, skipped %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Copied %arg item, skipped %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Copied %arg items, skipped %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "تم نسخ %1$lld عنصر، وتم تخطي %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "zero": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نسخ %arg عنصر، وتم تخطي %2$lld"
+                    }
+                  },
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نسخ %arg عنصر، وتم تخطي %2$lld"
+                    }
+                  },
+                  "two": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نسخ %arg عنصرين، وتم تخطي %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نسخ %arg عناصر، وتم تخطي %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نسخ %arg عنصرًا، وتم تخطي %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نسخ %arg عنصر، وتم تخطي %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zkopírováno položek: %1$lld, přeskočeno: %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Zkopírováno položek: %arg, přeskočeno: %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Zkopírováno položek: %arg, přeskočeno: %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Zkopírováno položek: %arg, přeskočeno: %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Zkopírováno položek: %arg, přeskočeno: %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld emner kopieret, %2$lld sprunget over"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg emne kopieret, %2$lld sprunget over"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg emner kopieret, %2$lld sprunget over"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld Objekte kopiert, %2$lld übersprungen"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg Objekt kopiert, %2$lld übersprungen"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg Objekte kopiert, %2$lld übersprungen"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Αντιγράφηκαν %1$lld στοιχεία, παραλείφθηκαν %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Αντιγράφηκε %arg στοιχείο, παραλείφθηκαν %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Αντιγράφηκαν %arg στοιχεία, παραλείφθηκαν %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se copiaron %1$lld elementos, se omitieron %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Se copió %arg elemento, se omitieron %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Se copiaron %arg elementos, se omitieron %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld kohdetta kopioitu, %2$lld ohitettu"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg kohde kopioitu, %2$lld ohitettu"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg kohdetta kopioitu, %2$lld ohitettu"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld éléments copiés, %2$lld ignorés"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg élément copié, %2$lld ignorés"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg éléments copiés, %2$lld ignorés"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld פריטים הועתקו, %2$lld דולגו"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg פריט הועתק, %2$lld דולגו"
+                    }
+                  },
+                  "two": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg פריטים הועתקו, %2$lld דולגו"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg פריטים הועתקו, %2$lld דולגו"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld आइटम कॉपी किए गए, %2$lld छोड़े गए"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg आइटम कॉपी किया गया, %2$lld छोड़े गए"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg आइटम कॉपी किए गए, %2$lld छोड़े गए"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld elem másolva, %2$lld kihagyva"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg elem másolva, %2$lld kihagyva"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg elem másolva, %2$lld kihagyva"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld item disalin, %2$lld dilewati"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg item disalin, %2$lld dilewati"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiati %1$lld elementi, saltati %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Copiato %arg elemento, saltati %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Copiati %arg elementi, saltati %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld 項目をコピー、%2$lld 項目をスキップ"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg 項目をコピー、%2$lld 項目をスキップ"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "항목 %1$lld개 복사, %2$lld개 건너뜀"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "항목 %arg개 복사, %2$lld개 건너뜀"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld elementer kopiert, %2$lld hoppet over"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg element kopiert, %2$lld hoppet over"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg elementer kopiert, %2$lld hoppet over"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld items gekopieerd, %2$lld overgeslagen"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg item gekopieerd, %2$lld overgeslagen"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg items gekopieerd, %2$lld overgeslagen"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Skopiowano %1$lld elementów, pominięto %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Skopiowano %arg element, pominięto %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Skopiowano %arg elementy, pominięto %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Skopiowano %arg elementów, pominięto %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Skopiowano %arg elementu, pominięto %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiados %1$lld itens, ignorados %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Copiado %arg item, ignorados %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Copiados %arg itens, ignorados %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiados %1$lld itens, ignorados %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Copiado %arg item, ignorados %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Copiados %arg itens, ignorados %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld elemente copiate, %2$lld omise"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg element copiat, %2$lld omise"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg elemente copiate, %2$lld omise"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg de elemente copiate, %2$lld omise"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Скопировано объектов: %1$lld, пропущено: %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Скопировано объектов: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Скопировано объектов: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Скопировано объектов: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Скопировано объектов: %arg, пропущено: %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopierade %1$lld objekt, hoppade över %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Kopierade %arg objekt, hoppade över %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Kopierade %arg objekt, hoppade över %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "คัดลอก %1$lld รายการแล้ว ข้าม %2$lld รายการ"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "คัดลอก %arg รายการแล้ว ข้าม %2$lld รายการ"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld öğe kopyalandı, %2$lld atlandı"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg öğe kopyalandı, %2$lld atlandı"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg öğe kopyalandı, %2$lld atlandı"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Скопійовано елементів: %1$lld, пропущено: %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Скопійовано елементів: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Скопійовано елементів: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Скопійовано елементів: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Скопійовано елементів: %arg, пропущено: %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Đã sao chép %1$lld mục, bỏ qua %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Đã sao chép %arg mục, bỏ qua %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "已拷贝 %1$lld 项，跳过 %2$lld 项"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "已拷贝 %arg 项，跳过 %2$lld 项"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "已拷貝 %1$lld 個項目，略過 %2$lld 個"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "已拷貝 %arg 個項目，略過 %2$lld 個"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -38855,183 +39959,585 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moved %lld items"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Moved %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Moved %lld items"
+                }
+              }
+            }
           }
         },
         "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "تم نقل %lld عنصر"
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نقل %lld عنصر"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نقل %lld عنصر"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نقل %lld عنصرين"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نقل %lld عناصر"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نقل %lld عنصرًا"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم نقل %lld عنصر"
+                }
+              }
+            }
           }
         },
         "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Přesunuto položek: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Přesunuto položek: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Přesunuto položek: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Přesunuto položek: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Přesunuto položek: %lld"
+                }
+              }
+            }
           }
         },
         "da": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld emner flyttet"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld emne flyttet"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld emner flyttet"
+                }
+              }
+            }
           }
         },
         "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Objekte bewegt"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekt bewegt"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekte bewegt"
+                }
+              }
+            }
           }
         },
         "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Μετακινήθηκαν %lld στοιχεία"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Μετακινήθηκε %lld στοιχείο"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Μετακινήθηκαν %lld στοιχεία"
+                }
+              }
+            }
           }
         },
         "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Se movieron %lld elementos"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Se movió %lld elemento"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Se movieron %lld elementos"
+                }
+              }
+            }
           }
         },
         "fi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld kohdetta siirretty"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld kohde siirretty"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld kohdetta siirretty"
+                }
+              }
+            }
           }
         },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld éléments déplacés"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld élément déplacé"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld éléments déplacés"
+                }
+              }
+            }
           }
         },
         "he": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld פריטים הועברו"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld פריט הועבר"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld פריטים הועברו"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld פריטים הועברו"
+                }
+              }
+            }
           }
         },
         "hi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld आइटम ले जाए गए"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम ले जाया गया"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम ले जाए गए"
+                }
+              }
+            }
           }
         },
         "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elem áthelyezve"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elem áthelyezve"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elem áthelyezve"
+                }
+              }
+            }
           }
         },
         "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld item dipindahkan"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item dipindahkan"
+                }
+              }
+            }
           }
         },
         "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spostati %lld elementi"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Spostato %lld elemento"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Spostati %lld elementi"
+                }
+              }
+            }
           }
         },
         "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 項目を移動しました"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 項目を移動しました"
+                }
+              }
+            }
           }
         },
         "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "항목 %lld개 이동함"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "항목 %lld개 이동함"
+                }
+              }
+            }
           }
         },
         "nb": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elementer flyttet"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld element flyttet"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elementer flyttet"
+                }
+              }
+            }
           }
         },
         "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld items verplaatst"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item verplaatst"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items verplaatst"
+                }
+              }
+            }
           }
         },
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Przeniesiono %lld elementów"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Przeniesiono %lld element"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Przeniesiono %lld elementy"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Przeniesiono %lld elementów"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Przeniesiono %lld elementu"
+                }
+              }
+            }
           }
         },
         "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Movidos %lld itens"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Movido %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Movidos %lld itens"
+                }
+              }
+            }
           }
         },
         "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Movidos %lld itens"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Movido %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Movidos %lld itens"
+                }
+              }
+            }
           }
         },
         "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elemente mutate"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld element mutat"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elemente mutate"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld de elemente mutate"
+                }
+              }
+            }
           }
         },
         "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Перемещено объектов: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Перемещено объектов: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Перемещено объектов: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Перемещено объектов: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Перемещено объектов: %lld"
+                }
+              }
+            }
           }
         },
         "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flyttade %lld objekt"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Flyttade %lld objekt"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Flyttade %lld objekt"
+                }
+              }
+            }
           }
         },
         "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ย้าย %lld รายการแล้ว"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "ย้าย %lld รายการแล้ว"
+                }
+              }
+            }
           }
         },
         "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld öğe taşındı"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld öğe taşındı"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld öğe taşındı"
+                }
+              }
+            }
           }
         },
         "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Переміщено елементів: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Переміщено елементів: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Переміщено елементів: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Переміщено елементів: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Переміщено елементів: %lld"
+                }
+              }
+            }
           }
         },
         "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Đã di chuyển %lld mục"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Đã di chuyển %lld mục"
+                }
+              }
+            }
           }
         },
         "zh-CN": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已移动 %lld 项"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "已移动 %lld 项"
+                }
+              }
+            }
           }
         },
         "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已移動 %lld 個項目"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "已移動 %lld 個項目"
+                }
+              }
+            }
           }
         }
       }
@@ -39042,181 +40548,883 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Moved %1$lld items, skipped %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Moved %arg item, skipped %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Moved %arg items, skipped %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "تم نقل %1$lld عنصر، وتم تخطي %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "zero": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نقل %arg عنصر، وتم تخطي %2$lld"
+                    }
+                  },
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نقل %arg عنصر، وتم تخطي %2$lld"
+                    }
+                  },
+                  "two": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نقل %arg عنصرين، وتم تخطي %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نقل %arg عناصر، وتم تخطي %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نقل %arg عنصرًا، وتم تخطي %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "تم نقل %arg عنصر، وتم تخطي %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Přesunuto položek: %1$lld, přeskočeno: %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Přesunuto položek: %arg, přeskočeno: %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Přesunuto položek: %arg, přeskočeno: %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Přesunuto položek: %arg, přeskočeno: %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Přesunuto položek: %arg, přeskočeno: %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld emner flyttet, %2$lld sprunget over"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg emne flyttet, %2$lld sprunget over"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg emner flyttet, %2$lld sprunget over"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld Objekte bewegt, %2$lld übersprungen"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg Objekt bewegt, %2$lld übersprungen"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg Objekte bewegt, %2$lld übersprungen"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Μετακινήθηκαν %1$lld στοιχεία, παραλείφθηκαν %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Μετακινήθηκε %arg στοιχείο, παραλείφθηκαν %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Μετακινήθηκαν %arg στοιχεία, παραλείφθηκαν %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se movieron %1$lld elementos, se omitieron %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Se movió %arg elemento, se omitieron %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Se movieron %arg elementos, se omitieron %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld kohdetta siirretty, %2$lld ohitettu"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg kohde siirretty, %2$lld ohitettu"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg kohdetta siirretty, %2$lld ohitettu"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld éléments déplacés, %2$lld ignorés"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg élément déplacé, %2$lld ignorés"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg éléments déplacés, %2$lld ignorés"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld פריטים הועברו, %2$lld דולגו"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg פריט הועבר, %2$lld דולגו"
+                    }
+                  },
+                  "two": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg פריטים הועברו, %2$lld דולגו"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg פריטים הועברו, %2$lld דולגו"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld आइटम ले जाए गए, %2$lld छोड़े गए"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg आइटम ले जाया गया, %2$lld छोड़े गए"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg आइटम ले जाए गए, %2$lld छोड़े गए"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld elem áthelyezve, %2$lld kihagyva"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg elem áthelyezve, %2$lld kihagyva"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg elem áthelyezve, %2$lld kihagyva"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld item dipindahkan, %2$lld dilewati"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg item dipindahkan, %2$lld dilewati"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Spostati %1$lld elementi, saltati %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Spostato %arg elemento, saltati %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Spostati %arg elementi, saltati %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld 項目を移動、%2$lld 項目をスキップ"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg 項目を移動、%2$lld 項目をスキップ"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "항목 %1$lld개 이동, %2$lld개 건너뜀"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "항목 %arg개 이동, %2$lld개 건너뜀"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld elementer flyttet, %2$lld hoppet over"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg element flyttet, %2$lld hoppet over"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg elementer flyttet, %2$lld hoppet over"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld items verplaatst, %2$lld overgeslagen"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg item verplaatst, %2$lld overgeslagen"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg items verplaatst, %2$lld overgeslagen"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Przeniesiono %1$lld elementów, pominięto %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Przeniesiono %arg element, pominięto %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Przeniesiono %arg elementy, pominięto %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Przeniesiono %arg elementów, pominięto %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Przeniesiono %arg elementu, pominięto %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Movidos %1$lld itens, ignorados %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Movido %arg item, ignorados %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Movidos %arg itens, ignorados %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Movidos %1$lld itens, ignorados %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Movido %arg item, ignorados %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Movidos %arg itens, ignorados %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld elemente mutate, %2$lld omise"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg element mutat, %2$lld omise"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg elemente mutate, %2$lld omise"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg de elemente mutate, %2$lld omise"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Перемещено объектов: %1$lld, пропущено: %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Перемещено объектов: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Перемещено объектов: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Перемещено объектов: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Перемещено объектов: %arg, пропущено: %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Flyttade %1$lld objekt, hoppade över %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Flyttade %arg objekt, hoppade över %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Flyttade %arg objekt, hoppade över %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ย้าย %1$lld รายการแล้ว ข้าม %2$lld รายการ"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "ย้าย %arg รายการแล้ว ข้าม %2$lld รายการ"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld öğe taşındı, %2$lld atlandı"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg öğe taşındı, %2$lld atlandı"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg öğe taşındı, %2$lld atlandı"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Переміщено елементів: %1$lld, пропущено: %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Переміщено елементів: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "few": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Переміщено елементів: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "many": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Переміщено елементів: %arg, пропущено: %2$lld"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Переміщено елементів: %arg, пропущено: %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Đã di chuyển %1$lld mục, bỏ qua %2$lld"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "Đã di chuyển %arg mục, bỏ qua %2$lld"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "已移动 %1$lld 项，跳过 %2$lld 项"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "已移动 %arg 项，跳过 %2$lld 项"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "已移動 %1$lld 個項目，略過 %2$lld 個"
+            "value": "%#@count@"
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "已移動 %arg 個項目，略過 %2$lld 個"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -69195,183 +71403,585 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove %lld Favorites?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Remove %lld Favorite?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Remove %lld Favorites?"
+                }
+              }
+            }
           }
         },
         "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "إزالة %lld من المفضلة؟"
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "إزالة %lld من المفضلة؟"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "إزالة %lld من المفضلة؟"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "إزالة %lld من المفضلة؟"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "إزالة %lld من المفضلة؟"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "إزالة %lld من المفضلة؟"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "إزالة %lld من المفضلة؟"
+                }
+              }
+            }
           }
         },
         "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Odebrat oblíbené (%lld)?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Odebrat oblíbené (%lld)?"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Odebrat oblíbené (%lld)?"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Odebrat oblíbené (%lld)?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Odebrat oblíbené (%lld)?"
+                }
+              }
+            }
           }
         },
         "da": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fjern %lld favoritter?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Fjern %lld favorit?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Fjern %lld favoritter?"
+                }
+              }
+            }
           }
         },
         "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Favoriten entfernen?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Favorit entfernen?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Favoriten entfernen?"
+                }
+              }
+            }
           }
         },
         "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Αφαίρεση %lld αγαπημένων;"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Αφαίρεση %lld αγαπημένου;"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Αφαίρεση %lld αγαπημένων;"
+                }
+              }
+            }
           }
         },
         "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿Quitar %lld favoritos?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "¿Quitar %lld favorito?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "¿Quitar %lld favoritos?"
+                }
+              }
+            }
           }
         },
         "fi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Poistetaanko %lld suosikkia?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Poistetaanko %lld suosikki?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Poistetaanko %lld suosikkia?"
+                }
+              }
+            }
           }
         },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retirer %lld favoris ?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Retirer %lld favori ?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Retirer %lld favoris ?"
+                }
+              }
+            }
           }
         },
         "he": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "להסיר %lld מועדפים?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "להסיר %lld מועדף?"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "להסיר %lld מועדפים?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "להסיר %lld מועדפים?"
+                }
+              }
+            }
           }
         },
         "hi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld पसंदीदा निकालें?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld पसंदीदा निकालें?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld पसंदीदा निकालें?"
+                }
+              }
+            }
           }
         },
         "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld kedvenc eltávolítása?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld kedvenc eltávolítása?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld kedvenc eltávolítása?"
+                }
+              }
+            }
           }
         },
         "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hapus %lld Favorit?"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Hapus %lld Favorit?"
+                }
+              }
+            }
           }
         },
         "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rimuovere %lld preferiti?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Rimuovere %lld preferito?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Rimuovere %lld preferiti?"
+                }
+              }
+            }
           }
         },
         "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 件のお気に入りを削除しますか？"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 件のお気に入りを削除しますか？"
+                }
+              }
+            }
           }
         },
         "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "즐겨찾기 %lld개를 제거할까요?"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "즐겨찾기 %lld개를 제거할까요?"
+                }
+              }
+            }
           }
         },
         "nb": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fjerne %lld favoritter?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Fjerne %lld favoritt?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Fjerne %lld favoritter?"
+                }
+              }
+            }
           }
         },
         "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld favorieten verwijderen?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld favoriet verwijderen?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld favorieten verwijderen?"
+                }
+              }
+            }
           }
         },
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Usunąć %lld ulubionych?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Usunąć %lld ulubiony?"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Usunąć %lld ulubione?"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Usunąć %lld ulubionych?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Usunąć %lld ulubionych?"
+                }
+              }
+            }
           }
         },
         "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remover %lld favoritos?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Remover %lld favorito?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Remover %lld favoritos?"
+                }
+              }
+            }
           }
         },
         "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remover %lld favoritos?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Remover %lld favorito?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Remover %lld favoritos?"
+                }
+              }
+            }
           }
         },
         "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Elimini %lld favorite?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Elimini %lld favorit?"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Elimini %lld favorite?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Elimini %lld de favorite?"
+                }
+              }
+            }
           }
         },
         "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Убрать из избранного: %lld?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Убрать из избранного: %lld?"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Убрать из избранного: %lld?"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Убрать из избранного: %lld?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Убрать из избранного: %lld?"
+                }
+              }
+            }
           }
         },
         "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ta bort %lld favoriter?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ta bort %lld favorit?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ta bort %lld favoriter?"
+                }
+              }
+            }
           }
         },
         "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "นำรายการโปรดออก %lld รายการหรือไม่"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "นำรายการโปรดออก %lld รายการหรือไม่"
+                }
+              }
+            }
           }
         },
         "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Favori Kaldırılsın mı?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Favori Kaldırılsın mı?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Favori Kaldırılsın mı?"
+                }
+              }
+            }
           }
         },
         "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вилучити з обраного (%lld)?"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Вилучити з обраного (%lld)?"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Вилучити з обраного (%lld)?"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Вилучити з обраного (%lld)?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Вилучити з обраного (%lld)?"
+                }
+              }
+            }
           }
         },
         "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Xóa %lld mục yêu thích?"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Xóa %lld mục yêu thích?"
+                }
+              }
+            }
           }
         },
         "zh-CN": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "移除 %lld 个收藏？"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "移除 %lld 个收藏？"
+                }
+              }
+            }
           }
         },
         "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "移除 %lld 個喜好項目？"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "移除 %lld 個喜好項目？"
+                }
+              }
+            }
           }
         }
       }
@@ -111556,6 +114166,191 @@
         }
       }
     },
+    "pdfPreview.pageIndicator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld من %2$lld"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld z %2$lld"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld af %2$lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld von %2$lld"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld από %2$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld de %2$lld"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld / %2$lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld sur %2$lld"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld מתוך %2$lld"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%2$lld में से %1$lld"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld / %2$lld"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld dari %2$lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld di %2$lld"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld/%2$lld"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld/%2$lld"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld av %2$lld"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld van %2$lld"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld z %2$lld"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld de %2$lld"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld de %2$lld"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld din %2$lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld из %2$lld"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld av %2$lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld จาก %2$lld"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld / %2$lld"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld із %2$lld"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld trên %2$lld"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld/%2$lld"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
     "permissions.applyOwnership": {
       "extractionState": "manual",
       "localizations": {
@@ -115441,6 +118236,191 @@
         }
       }
     },
+    "previewToolbar.savePhoto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Photo"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفظ الصورة"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uložit fotku"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gem foto"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto sichern"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Αποθήκευση φωτογραφίας"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar foto"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tallenna kuva"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer la photo"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שמירת תמונה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ोटो सहेजें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotó mentése"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simpan Foto"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salva foto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を保存"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사진 저장"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arkiver bilde"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewaar foto"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zachowaj zdjęcie"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar fotografia"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salvar Foto"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salvează poza"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить фото"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spara bild"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกรูปภาพ"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı Kaydet"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зберегти фото"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu ảnh"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储照片"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存照片"
+          }
+        }
+      }
+    },
     "previewToolbar.saveToDevice": {
       "extractionState": "manual",
       "localizations": {
@@ -115622,6 +118602,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "儲存到裝置"
+          }
+        }
+      }
+    },
+    "previewToolbar.saveVideo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Video"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفظ الفيديو"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uložit video"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gem video"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video sichern"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Αποθήκευση βίντεο"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar vídeo"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tallenna video"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer la vidéo"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שמירת סרטון"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "वीडियो सहेजें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Videó mentése"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simpan Video"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salva video"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ビデオを保存"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비디오 저장"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arkiver video"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewaar video"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zachowaj wideo"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar vídeo"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salvar Vídeo"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salvează videoclipul"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить видео"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spara video"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกวิดีโอ"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Videoyu Kaydet"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зберегти відео"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu video"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储视频"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存影片"
           }
         }
       }
@@ -185012,183 +188177,585 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld files uploaded"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file uploaded"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files uploaded"
+                }
+              }
+            }
           }
         },
         "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "تم رفع %lld ملف"
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم رفع %lld ملف"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم رفع %lld ملف"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم رفع %lld ملفين"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم رفع %lld ملفات"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم رفع %lld ملفًا"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تم رفع %lld ملف"
+                }
+              }
+            }
           }
         },
         "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nahráno souborů: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Nahráno souborů: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Nahráno souborů: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Nahráno souborů: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Nahráno souborů: %lld"
+                }
+              }
+            }
           }
         },
         "da": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld filer uploadet"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fil uploadet"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld filer uploadet"
+                }
+              }
+            }
           }
         },
         "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Dateien hochgeladen"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Datei hochgeladen"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Dateien hochgeladen"
+                }
+              }
+            }
           }
         },
         "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Μεταφορτώθηκαν %lld αρχεία"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Μεταφορτώθηκε %lld αρχείο"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Μεταφορτώθηκαν %lld αρχεία"
+                }
+              }
+            }
           }
         },
         "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld archivos subidos"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld archivo subido"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld archivos subidos"
+                }
+              }
+            }
           }
         },
         "fi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld tiedostoa lähetetty"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tiedosto lähetetty"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tiedostoa lähetetty"
+                }
+              }
+            }
           }
         },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld fichiers envoyés"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fichier envoyé"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fichiers envoyés"
+                }
+              }
+            }
           }
         },
         "he": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld קבצים הועלו"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld קובץ הועלה"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld קבצים הועלו"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld קבצים הועלו"
+                }
+              }
+            }
           }
         },
         "hi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld फ़ाइलें अपलोड हुईं"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld फ़ाइल अपलोड हुई"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld फ़ाइलें अपलोड हुईं"
+                }
+              }
+            }
           }
         },
         "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld fájl feltöltve"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fájl feltöltve"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fájl feltöltve"
+                }
+              }
+            }
           }
         },
         "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld file diunggah"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file diunggah"
+                }
+              }
+            }
           }
         },
         "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld file caricati"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file caricato"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file caricati"
+                }
+              }
+            }
           }
         },
         "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 個のファイルをアップロードしました"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 個のファイルをアップロードしました"
+                }
+              }
+            }
           }
         },
         "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "파일 %lld개 업로드됨"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "파일 %lld개 업로드됨"
+                }
+              }
+            }
           }
         },
         "nb": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld filer lastet opp"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fil lastet opp"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld filer lastet opp"
+                }
+              }
+            }
           }
         },
         "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld bestanden geüpload"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld bestand geüpload"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld bestanden geüpload"
+                }
+              }
+            }
           }
         },
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wysłano plików: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Wysłano plików: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Wysłano plików: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Wysłano plików: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Wysłano plików: %lld"
+                }
+              }
+            }
           }
         },
         "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld ficheiros enviados"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld ficheiro enviado"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld ficheiros enviados"
+                }
+              }
+            }
           }
         },
         "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld arquivos enviados"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld arquivo enviado"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld arquivos enviados"
+                }
+              }
+            }
           }
         },
         "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld fișiere încărcate"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fișier încărcat"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fișiere încărcate"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld de fișiere încărcate"
+                }
+              }
+            }
           }
         },
         "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Загружено файлов: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Загружено файлов: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Загружено файлов: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Загружено файлов: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Загружено файлов: %lld"
+                }
+              }
+            }
           }
         },
         "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld filer uppladdade"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fil uppladdad"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld filer uppladdade"
+                }
+              }
+            }
           }
         },
         "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "อัปโหลดแล้ว %lld ไฟล์"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "อัปโหลดแล้ว %lld ไฟล์"
+                }
+              }
+            }
           }
         },
         "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld dosya yüklendi"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld dosya yüklendi"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld dosya yüklendi"
+                }
+              }
+            }
           }
         },
         "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вивантажено файлів: %lld"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Вивантажено файлів: %lld"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Вивантажено файлів: %lld"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Вивантажено файлів: %lld"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Вивантажено файлів: %lld"
+                }
+              }
+            }
           }
         },
         "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Đã tải lên %lld tệp"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Đã tải lên %lld tệp"
+                }
+              }
+            }
           }
         },
         "zh-CN": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已上传 %lld 个文件"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "已上传 %lld 个文件"
+                }
+              }
+            }
           }
         },
         "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已上傳 %lld 個檔案"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "已上傳 %lld 個檔案"
+                }
+              }
+            }
           }
         }
       }
@@ -187787,183 +191354,585 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld items couldn't be prepared and were left out."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item couldn't be prepared and was left out."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items couldn't be prepared and were left out."
+                }
+              }
+            }
           }
         },
         "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "تعذّر تحضير %lld عنصر وتم استبعادها."
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تعذّر تحضير %lld عنصر وتم استبعادها."
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تعذّر تحضير %lld عنصر وتم استبعاده."
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تعذّر تحضير %lld عنصرين وتم استبعادهما."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تعذّر تحضير %lld عناصر وتم استبعادها."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تعذّر تحضير %lld عنصرًا وتم استبعادها."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "تعذّر تحضير %lld عنصر وتم استبعادها."
+                }
+              }
+            }
           }
         },
         "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Položky (%lld) se nepodařilo připravit a byly vynechány."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Položky (%lld) se nepodařilo připravit a byly vynechány."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Položky (%lld) se nepodařilo připravit a byly vynechány."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Položky (%lld) se nepodařilo připravit a byly vynechány."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Položky (%lld) se nepodařilo připravit a byly vynechány."
+                }
+              }
+            }
           }
         },
         "da": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld emner kunne ikke forberedes og blev udeladt."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld emne kunne ikke forberedes og blev udeladt."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld emner kunne ikke forberedes og blev udeladt."
+                }
+              }
+            }
           }
         },
         "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Objekte konnten nicht vorbereitet werden und wurden ausgelassen."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekt konnte nicht vorbereitet werden und wurde ausgelassen."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekte konnten nicht vorbereitet werden und wurden ausgelassen."
+                }
+              }
+            }
           }
         },
         "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld στοιχεία δεν ήταν δυνατό να προετοιμαστούν και παραλείφθηκαν."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld στοιχείο δεν ήταν δυνατό να προετοιμαστεί και παραλείφθηκε."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld στοιχεία δεν ήταν δυνατό να προετοιμαστούν και παραλείφθηκαν."
+                }
+              }
+            }
           }
         },
         "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudieron preparar %lld elementos y quedaron excluidos."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "No se pudo preparar %lld elemento y quedó excluido."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "No se pudieron preparar %lld elementos y quedaron excluidos."
+                }
+              }
+            }
           }
         },
         "fi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld kohdetta ei voitu valmistella, ja ne jätettiin pois."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld kohde jätettiin pois, koska sitä ei voitu valmistella."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld kohdetta ei voitu valmistella, ja ne jätettiin pois."
+                }
+              }
+            }
           }
         },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld éléments n'ont pas pu être préparés et ont été ignorés."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld élément n'a pas pu être préparé et a été ignoré."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld éléments n'ont pas pu être préparés et ont été ignorés."
+                }
+              }
+            }
           }
         },
         "he": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "לא ניתן היה להכין %lld פריטים והם הושמטו."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "לא ניתן היה להכין %lld פריט והוא הושמט."
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "לא ניתן היה להכין %lld פריטים והם הושמטו."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "לא ניתן היה להכין %lld פריטים והם הושמטו."
+                }
+              }
+            }
           }
         },
         "hi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld आइटम तैयार नहीं हो सके और छोड़ दिए गए।"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम तैयार नहीं हो सका और छोड़ दिया गया।"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम तैयार नहीं हो सके और छोड़ दिए गए।"
+                }
+              }
+            }
           }
         },
         "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elemet nem sikerült előkészíteni, ezért kimaradt."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elemet nem sikerült előkészíteni, ezért kimaradt."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elemet nem sikerült előkészíteni, ezért kimaradt."
+                }
+              }
+            }
           }
         },
         "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld item tidak dapat disiapkan dan dilewati."
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item tidak dapat disiapkan dan dilewati."
+                }
+              }
+            }
           }
         },
         "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elementi non sono stati preparati e sono stati esclusi."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elemento non è stato preparato ed è stato escluso."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elementi non sono stati preparati e sono stati esclusi."
+                }
+              }
+            }
           }
         },
         "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 項目を準備できず、除外されました。"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 項目を準備できず、除外されました。"
+                }
+              }
+            }
           }
         },
         "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "항목 %lld개를 준비할 수 없어 제외되었습니다."
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "항목 %lld개를 준비할 수 없어 제외되었습니다."
+                }
+              }
+            }
           }
         },
         "nb": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elementer kunne ikke klargjøres og ble utelatt."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld element kunne ikke klargjøres og ble utelatt."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elementer kunne ikke klargjøres og ble utelatt."
+                }
+              }
+            }
           }
         },
         "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld items konden niet worden voorbereid en zijn weggelaten."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item kon niet worden voorbereid en is weggelaten."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items konden niet worden voorbereid en zijn weggelaten."
+                }
+              }
+            }
           }
         },
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elementów nie udało się przygotować i zostały pominięte."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elementu nie udało się przygotować i został pominięty."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elementów nie udało się przygotować i zostały pominięte."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elementów nie udało się przygotować i zostały pominięte."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elementów nie udało się przygotować i zostały pominięte."
+                }
+              }
+            }
           }
         },
         "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld itens não puderam ser preparados e foram deixados de fora."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item não pôde ser preparado e foi deixado de fora."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld itens não puderam ser preparados e foram deixados de fora."
+                }
+              }
+            }
           }
         },
         "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld itens não puderam ser preparados e foram deixados de fora."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item não pôde ser preparado e foi deixado de fora."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld itens não puderam ser preparados e foram deixados de fora."
+                }
+              }
+            }
           }
         },
         "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld elemente nu au putut fi pregatite și au fost omise."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld element nu a putut fi pregătit și a fost omis."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elemente nu au putut fi pregătite și au fost omise."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld de elemente nu au putut fi pregătite și au fost omise."
+                }
+              }
+            }
           }
         },
         "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не удалось подготовить объектов: %lld, они были пропущены."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Не удалось подготовить объектов: %lld, они были пропущены."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Не удалось подготовить объектов: %lld, они были пропущены."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Не удалось подготовить объектов: %lld, они были пропущены."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Не удалось подготовить объектов: %lld, они были пропущены."
+                }
+              }
+            }
           }
         },
         "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld objekt kunde inte förberedas och utelämnades."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld objekt kunde inte förberedas och utelämnades."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld objekt kunde inte förberedas och utelämnades."
+                }
+              }
+            }
           }
         },
         "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ไม่สามารถเตรียม %lld รายการได้ และถูกข้ามไป"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "ไม่สามารถเตรียม %lld รายการได้ และถูกข้ามไป"
+                }
+              }
+            }
           }
         },
         "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld öğe hazırlanamadı ve dışarıda bırakıldı."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld öğe hazırlanamadı ve dışarıda bırakıldı."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld öğe hazırlanamadı ve dışarıda bırakıldı."
+                }
+              }
+            }
           }
         },
         "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не вдалося підготувати елементи (%lld), їх пропущено."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Не вдалося підготувати елементи (%lld), їх пропущено."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Не вдалося підготувати елементи (%lld), їх пропущено."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Не вдалося підготувати елементи (%lld), їх пропущено."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Не вдалося підготувати елементи (%lld), їх пропущено."
+                }
+              }
+            }
           }
         },
         "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Không thể chuẩn bị %lld mục nên đã bỏ qua."
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Không thể chuẩn bị %lld mục nên đã bỏ qua."
+                }
+              }
+            }
           }
         },
         "zh-CN": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 项无法准备，已被略过。"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 项无法准备，已被略过。"
+                }
+              }
+            }
           }
         },
         "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 個項目無法準備，已被略過。"
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 個項目無法準備，已被略過。"
+                }
+              }
+            }
           }
         }
       }

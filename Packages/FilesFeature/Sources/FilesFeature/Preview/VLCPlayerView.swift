@@ -38,6 +38,9 @@ struct VLCPlayerView: View {
     private let onRename: (() -> Void)?
     private let onDownload: (() -> Void)?
     private let onDelete: (() -> Void)?
+    /// Inside the gallery: the gallery draws the bars and owns rotation, so the player shows only
+    /// the video and its playback controls.
+    private let isEmbedded: Bool
 
     @StateObject private var controller = VLCPlaybackController()
     #if os(macOS)
@@ -59,7 +62,8 @@ struct VLCPlayerView: View {
         onShare: (() -> Void)? = nil,
         onRename: (() -> Void)? = nil,
         onDownload: (() -> Void)? = nil,
-        onDelete: (() -> Void)? = nil
+        onDelete: (() -> Void)? = nil,
+        isEmbedded: Bool = false
     ) {
         self.item = item
         self.url = url
@@ -69,96 +73,111 @@ struct VLCPlayerView: View {
         self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
+        self.isEmbedded = isEmbedded
+    }
+
+    @ViewBuilder
+    private var chrome: some View {
+        if isEmbedded {
+            playerStack
+        } else {
+            NavigationStack {
+                playerStack
+                    .previewChrome(
+                        title: item.name,
+                        systemShare: .remote(item, serverURL: serverURL),
+                        onShareLink: onShare,
+                        onRename: onRename,
+                        onDownload: onDownload,
+                        onDelete: onDelete,
+                        file: item,
+                        onClose: onDismiss
+                    )
+            }
+        }
+    }
+
+    private var playerStack: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VLCVideoSurface(player: controller.player)
+                .ignoresSafeArea()
+
+            // Transparent tap catcher above the libvlc drawable (which swallows touches of
+            // its own) and below the controls, so taps in the empty area toggle the chrome
+            // while the buttons/scrubber on top still get theirs first.
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture { toggleControls() }
+                .ignoresSafeArea()
+
+            if controller.hasError || isBlockedByClientCertificate {
+                VStack(spacing: .space12) {
+                    IconKit.warning
+                        .font(.system(size: .size44, weight: .regular))
+                        .foregroundStyle(.white)
+                    Text(isBlockedByClientCertificate
+                        ? L10n.Media.clientCertificateUnsupported
+                        : L10n.Archive.openFailed)
+                        .type(.body2(.regular))
+                        .foregroundStyle(.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, .space24)
+                    if isBlockedByClientCertificate, let onDownload {
+                        DSButton(L10n.Common.download, icon: IconKit.download, style: .primary, action: onDownload)
+                            .fixedSize()
+                    }
+                }
+            } else {
+                VLCPlaybackControls(controller: controller)
+                    .opacity(controlsVisible ? 1 : 0)
+                    .allowsHitTesting(controlsVisible)
+                    .animation(
+                        .easeInOut(duration: VLCPlaybackConstants.controlsFadeDuration),
+                        value: controlsVisible
+                    )
+            }
+        }
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.black.ignoresSafeArea()
-
-                VLCVideoSurface(player: controller.player)
-                    .ignoresSafeArea()
-
-                // Transparent tap catcher above the libvlc drawable (which swallows touches of
-                // its own) and below the controls, so taps in the empty area toggle the chrome
-                // while the buttons/scrubber on top still get theirs first.
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture { toggleControls() }
-                    .ignoresSafeArea()
-
-                if controller.hasError || isBlockedByClientCertificate {
-                    VStack(spacing: .space12) {
-                        IconKit.warning
-                            .font(.system(size: .size44, weight: .regular))
-                            .foregroundStyle(.white)
-                        Text(isBlockedByClientCertificate
-                            ? L10n.Media.clientCertificateUnsupported
-                            : L10n.Archive.openFailed)
-                            .type(.body2(.regular))
-                            .foregroundStyle(.white)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, .space24)
-                        if isBlockedByClientCertificate, let onDownload {
-                            DSButton(L10n.Common.download, icon: IconKit.download, style: .primary, action: onDownload)
-                                .fixedSize()
-                        }
-                    }
+        chrome
+            .onChange(of: controller.isPlaying) { _, playing in
+                if playing {
+                    scheduleAutoHide()
                 } else {
-                    VLCPlaybackControls(controller: controller)
-                        .opacity(controlsVisible ? 1 : 0)
-                        .allowsHitTesting(controlsVisible)
-                        .animation(
-                            .easeInOut(duration: VLCPlaybackConstants.controlsFadeDuration),
-                            value: controlsVisible
-                        )
+                    controlsVisible = true; autoHideTask?.cancel()
                 }
             }
-            .previewChrome(
-                title: item.name,
-                systemShare: .remote(item, serverURL: serverURL),
-                onShareLink: onShare,
-                onRename: onRename,
-                onDownload: onDownload,
-                onDelete: onDelete,
-                onClose: onDismiss
-            )
-        }
-        .onChange(of: controller.isPlaying) { _, playing in
-            if playing {
-                scheduleAutoHide()
-            } else {
-                controlsVisible = true; autoHideTask?.cancel()
-            }
-        }
         #if os(macOS)
-        // Space plays and pauses, as in QuickTime; the arrows keep stepping through the folder.
-        .focusable()
-        .focusEffectDisabled()
-        .focused($isKeyboardFocused)
-        .task { isKeyboardFocused = true }
-        .onKeyPress(.space) {
-            controller.togglePlayPause()
-            return .handled
-        }
+            // Space plays and pauses, as a Mac player does; the arrows keep stepping through the folder.
+            .focusable()
+            .focusEffectDisabled()
+            .focused($isKeyboardFocused)
+            .task { isKeyboardFocused = true }
+            .onKeyPress(.space) {
+                controller.togglePlayPause()
+                return .handled
+            }
         #endif
-        .onAppear {
-            if item.isVideo {
-                OrientationLock.shared.unlock()
+            .onAppear {
+                if item.isVideo, !isEmbedded {
+                    OrientationLock.shared.unlock()
+                }
+                // Checked once here, not in init: SwiftUI rebuilds the struct on every parent update.
+                isBlockedByClientCertificate = !url.isFileURL && ClientIdentityStore.shared.hasCertificate(for: url)
+                guard !isBlockedByClientCertificate else { return }
+                controller.start(url: url)
+                scheduleAutoHide()
             }
-            // Checked once here, not in init: SwiftUI rebuilds the struct on every parent update.
-            isBlockedByClientCertificate = !url.isFileURL && ClientIdentityStore.shared.hasCertificate(for: url)
-            guard !isBlockedByClientCertificate else { return }
-            controller.start(url: url)
-            scheduleAutoHide()
-        }
-        .onDisappear {
-            if item.isVideo {
-                OrientationLock.shared.lock()
+            .onDisappear {
+                if item.isVideo, !isEmbedded {
+                    OrientationLock.shared.lock()
+                }
+                autoHideTask?.cancel()
+                controller.stop()
             }
-            autoHideTask?.cancel()
-            controller.stop()
-        }
     }
 
     private func toggleControls() {

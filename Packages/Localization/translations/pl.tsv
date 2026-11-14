@@ -111,10 +111,22 @@ browse.clipboardCopiedOne	Skopiowano %@
 browse.clipboardCopiedMany	Skopiowano %lld elementów
 browse.progressMoving	Przenoszenie…
 browse.progressCopying	Kopiowanie…
-browse.transferMoved	Przeniesiono %lld elementów
-browse.transferCopied	Skopiowano %lld elementów
-browse.transferMovedWithSkipped	Przeniesiono %1$lld elementów, pominięto %2$lld
-browse.transferCopiedWithSkipped	Skopiowano %1$lld elementów, pominięto %2$lld
+browse.transferMoved#one	Przeniesiono %lld element
+browse.transferMoved#few	Przeniesiono %lld elementy
+browse.transferMoved#many	Przeniesiono %lld elementów
+browse.transferMoved#other	Przeniesiono %lld elementu
+browse.transferCopied#one	Skopiowano %lld element
+browse.transferCopied#few	Skopiowano %lld elementy
+browse.transferCopied#many	Skopiowano %lld elementów
+browse.transferCopied#other	Skopiowano %lld elementu
+browse.transferMovedWithSkipped#one	Przeniesiono %1$lld element, pominięto %2$lld
+browse.transferMovedWithSkipped#few	Przeniesiono %1$lld elementy, pominięto %2$lld
+browse.transferMovedWithSkipped#many	Przeniesiono %1$lld elementów, pominięto %2$lld
+browse.transferMovedWithSkipped#other	Przeniesiono %1$lld elementu, pominięto %2$lld
+browse.transferCopiedWithSkipped#one	Skopiowano %1$lld element, pominięto %2$lld
+browse.transferCopiedWithSkipped#few	Skopiowano %1$lld elementy, pominięto %2$lld
+browse.transferCopiedWithSkipped#many	Skopiowano %1$lld elementów, pominięto %2$lld
+browse.transferCopiedWithSkipped#other	Skopiowano %1$lld elementu, pominięto %2$lld
 browse.transferConflictTitle	Zastąpić elementy?
 browse.transferConflictMessageOne	„%@” już istnieje w tym folderze.
 browse.transferConflictMessageMany	%lld elementów już istnieje w tym folderze.
@@ -135,7 +147,10 @@ favorites.editColorLabel	Kolor
 favorites.editColorDefault	Domyślny
 favorites.editSave	Zapisz
 favorites.reorderFailed	Nie można zapisać nowej kolejności.
-favorites.removeConfirm	Usunąć %lld ulubionych?
+favorites.removeConfirm#one	Usunąć %lld ulubiony?
+favorites.removeConfirm#few	Usunąć %lld ulubione?
+favorites.removeConfirm#many	Usunąć %lld ulubionych?
+favorites.removeConfirm#other	Usunąć %lld ulubionych?
 favorites.removeMessage	Spowoduje to tylko usunięcie ich z ulubionych.
 favorites.removeFailedOne	Nie można usunąć tego ulubionego.
 favorites.removeFailedMany	Nie można usunąć tych ulubionych.
@@ -174,7 +189,10 @@ uploads.reviewAddMore	Dodaj więcej plików
 uploads.reviewPreviewFile	Podgląd %@
 uploads.reviewInsecureNetworkNotice	Połączono przez http. Jeśli ten serwer jest tylko w sieci domowej, przesyłanie nie będzie działać poza nią.
 uploads.stagingFailed	Nie można dodać tych plików. Spróbuj ponownie.
-uploads.stagingSkipped	%lld elementów nie udało się przygotować i zostały pominięte.
+uploads.stagingSkipped#one	%lld elementu nie udało się przygotować i został pominięty.
+uploads.stagingSkipped#few	%lld elementów nie udało się przygotować i zostały pominięte.
+uploads.stagingSkipped#many	%lld elementów nie udało się przygotować i zostały pominięte.
+uploads.stagingSkipped#other	%lld elementów nie udało się przygotować i zostały pominięte.
 uploads.discardTitle	Odrzucić przesyłanie?
 uploads.discardMessage	Dodane pliki nie zostaną przesłane.
 uploads.discardConfirm	Odrzuć
@@ -676,7 +694,10 @@ menu.go	Idź
 menu.activity	Transfery
 menu.showAll	Pokaż wszystko
 uploads.notifyDone	Wysyłanie zakończone
-uploads.notifyBody	Wysłano plików: %lld
+uploads.notifyBody#one	Wysłano plików: %lld
+uploads.notifyBody#few	Wysłano plików: %lld
+uploads.notifyBody#many	Wysłano plików: %lld
+uploads.notifyBody#other	Wysłano plików: %lld
 downloadQueue.notifyDone	Pobieranie zakończone
 fileInfo.rowSoftware	Oprogramowanie
 fileInfo.sectionVersions	Wersje
@@ -1159,3 +1180,6 @@ browse.actionRemoveFromOffline	Usuń z offline
 offline.rowUpdating	Aktualizowanie…
 offline.rowWaitingForNetwork	Oczekiwanie na sieć
 offline.rowUpdateFailed	Nie udało się zaktualizować
+pdfPreview.pageIndicator	%1$lld z %2$lld
+previewToolbar.savePhoto	Zachowaj zdjęcie
+previewToolbar.saveVideo	Zachowaj wideo

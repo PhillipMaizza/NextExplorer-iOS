@@ -111,10 +111,14 @@ browse.clipboardCopiedOne	%@ कॉपी किया गया
 browse.clipboardCopiedMany	%lld आइटम कॉपी किए गए
 browse.progressMoving	ले जाया जा रहा है…
 browse.progressCopying	कॉपी किया जा रहा है…
-browse.transferMoved	%lld आइटम ले जाए गए
-browse.transferCopied	%lld आइटम कॉपी किए गए
-browse.transferMovedWithSkipped	%1$lld आइटम ले जाए गए, %2$lld छोड़े गए
-browse.transferCopiedWithSkipped	%1$lld आइटम कॉपी किए गए, %2$lld छोड़े गए
+browse.transferMoved#one	%lld आइटम ले जाया गया
+browse.transferMoved#other	%lld आइटम ले जाए गए
+browse.transferCopied#one	%lld आइटम कॉपी किया गया
+browse.transferCopied#other	%lld आइटम कॉपी किए गए
+browse.transferMovedWithSkipped#one	%1$lld आइटम ले जाया गया, %2$lld छोड़े गए
+browse.transferMovedWithSkipped#other	%1$lld आइटम ले जाए गए, %2$lld छोड़े गए
+browse.transferCopiedWithSkipped#one	%1$lld आइटम कॉपी किया गया, %2$lld छोड़े गए
+browse.transferCopiedWithSkipped#other	%1$lld आइटम कॉपी किए गए, %2$lld छोड़े गए
 browse.transferConflictTitle	आइटम बदलें?
 browse.transferConflictMessageOne	“%@” इस फ़ोल्डर में पहले से मौजूद है।
 browse.transferConflictMessageMany	%lld आइटम इस फ़ोल्डर में पहले से मौजूद हैं।
@@ -135,7 +139,8 @@ favorites.editColorLabel	रंग
 favorites.editColorDefault	डिफ़ॉल्ट
 favorites.editSave	सहेजें
 favorites.reorderFailed	नया क्रम सहेज नहीं सके।
-favorites.removeConfirm	%lld पसंदीदा निकालें?
+favorites.removeConfirm#one	%lld पसंदीदा निकालें?
+favorites.removeConfirm#other	%lld पसंदीदा निकालें?
 favorites.removeMessage	यह उन्हें केवल पसंदीदा से निकालता है।
 favorites.removeFailedOne	वह पसंदीदा निकाल नहीं सके।
 favorites.removeFailedMany	वे पसंदीदा निकाल नहीं सके।
@@ -174,7 +179,8 @@ uploads.reviewAddMore	और फ़ाइलें जोड़ें
 uploads.reviewPreviewFile	%@ का पूर्वावलोकन
 uploads.reviewInsecureNetworkNotice	http के माध्यम से कनेक्ट किया गया। यदि यह सर्वर केवल आपके होम नेटवर्क पर है, तो उससे दूर रहने पर अपलोड काम नहीं करेंगे।
 uploads.stagingFailed	वे फ़ाइलें जोड़ नहीं सके। पुनः प्रयास करें।
-uploads.stagingSkipped	%lld आइटम तैयार नहीं हो सके और छोड़ दिए गए।
+uploads.stagingSkipped#one	%lld आइटम तैयार नहीं हो सका और छोड़ दिया गया।
+uploads.stagingSkipped#other	%lld आइटम तैयार नहीं हो सके और छोड़ दिए गए।
 uploads.discardTitle	अपलोड छोड़ें?
 uploads.discardMessage	आपके द्वारा जोड़ी गई फ़ाइलें अपलोड नहीं होंगी।
 uploads.discardConfirm	छोड़ें
@@ -676,7 +682,8 @@ menu.go	जाएँ
 menu.activity	स्थानांतरण
 menu.showAll	सभी दिखाएँ
 uploads.notifyDone	अपलोड पूरे हुए
-uploads.notifyBody	%lld फ़ाइलें अपलोड हुईं
+uploads.notifyBody#one	%lld फ़ाइल अपलोड हुई
+uploads.notifyBody#other	%lld फ़ाइलें अपलोड हुईं
 downloadQueue.notifyDone	डाउनलोड पूरे हुए
 fileInfo.rowSoftware	सॉफ़्टवेयर
 fileInfo.sectionVersions	संस्करण
@@ -1147,3 +1154,6 @@ browse.actionRemoveFromOffline	ऑफ़लाइन से हटाएँ
 offline.rowUpdating	अपडेट हो रहा है…
 offline.rowWaitingForNetwork	नेटवर्क की प्रतीक्षा
 offline.rowUpdateFailed	अपडेट नहीं हो सका
+pdfPreview.pageIndicator	%2$lld में से %1$lld
+previewToolbar.savePhoto	फ़ोटो सहेजें
+previewToolbar.saveVideo	वीडियो सहेजें

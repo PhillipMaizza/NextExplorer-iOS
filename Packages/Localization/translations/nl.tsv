@@ -111,10 +111,14 @@ browse.clipboardCopiedOne	%@ gekopieerd
 browse.clipboardCopiedMany	%lld items gekopieerd
 browse.progressMoving	Verplaatsen…
 browse.progressCopying	Kopiëren…
-browse.transferMoved	%lld items verplaatst
-browse.transferCopied	%lld items gekopieerd
-browse.transferMovedWithSkipped	%1$lld items verplaatst, %2$lld overgeslagen
-browse.transferCopiedWithSkipped	%1$lld items gekopieerd, %2$lld overgeslagen
+browse.transferMoved#one	%lld item verplaatst
+browse.transferMoved#other	%lld items verplaatst
+browse.transferCopied#one	%lld item gekopieerd
+browse.transferCopied#other	%lld items gekopieerd
+browse.transferMovedWithSkipped#one	%1$lld item verplaatst, %2$lld overgeslagen
+browse.transferMovedWithSkipped#other	%1$lld items verplaatst, %2$lld overgeslagen
+browse.transferCopiedWithSkipped#one	%1$lld item gekopieerd, %2$lld overgeslagen
+browse.transferCopiedWithSkipped#other	%1$lld items gekopieerd, %2$lld overgeslagen
 browse.transferConflictTitle	Items vervangen?
 browse.transferConflictMessageOne	"%@" bestaat al in deze map.
 browse.transferConflictMessageMany	%lld items bestaan al in deze map.
@@ -135,7 +139,8 @@ favorites.editColorLabel	Kleur
 favorites.editColorDefault	Standaard
 favorites.editSave	Bewaren
 favorites.reorderFailed	Kan de nieuwe volgorde niet bewaren.
-favorites.removeConfirm	%lld favorieten verwijderen?
+favorites.removeConfirm#one	%lld favoriet verwijderen?
+favorites.removeConfirm#other	%lld favorieten verwijderen?
 favorites.removeMessage	Hiermee worden ze alleen uit favorieten verwijderd.
 favorites.removeFailedOne	Kan die favoriet niet verwijderen.
 favorites.removeFailedMany	Kan die favorieten niet verwijderen.
@@ -174,7 +179,8 @@ uploads.reviewAddMore	Meer bestanden toevoegen
 uploads.reviewPreviewFile	Voorbeeld van %@
 uploads.reviewInsecureNetworkNotice	Verbonden via http. Als deze server alleen op je thuisnetwerk staat, werken uploads niet wanneer je er niet mee verbonden bent.
 uploads.stagingFailed	Kan die bestanden niet toevoegen. Probeer het opnieuw.
-uploads.stagingSkipped	%lld items konden niet worden voorbereid en zijn weggelaten.
+uploads.stagingSkipped#one	%lld item kon niet worden voorbereid en is weggelaten.
+uploads.stagingSkipped#other	%lld items konden niet worden voorbereid en zijn weggelaten.
 uploads.discardTitle	Upload verwerpen?
 uploads.discardMessage	De bestanden die je hebt toegevoegd worden niet geüpload.
 uploads.discardConfirm	Verwerpen
@@ -676,7 +682,8 @@ menu.go	Ga
 menu.activity	Overdrachten
 menu.showAll	Toon alles
 uploads.notifyDone	Uploads voltooid
-uploads.notifyBody	%lld bestanden geüpload
+uploads.notifyBody#one	%lld bestand geüpload
+uploads.notifyBody#other	%lld bestanden geüpload
 downloadQueue.notifyDone	Downloads voltooid
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versies
@@ -1147,3 +1154,6 @@ browse.actionRemoveFromOffline	Verwijderen uit offline
 offline.rowUpdating	Bijwerken…
 offline.rowWaitingForNetwork	Wacht op netwerk
 offline.rowUpdateFailed	Bijwerken mislukt
+pdfPreview.pageIndicator	%1$lld van %2$lld
+previewToolbar.savePhoto	Bewaar foto
+previewToolbar.saveVideo	Bewaar video

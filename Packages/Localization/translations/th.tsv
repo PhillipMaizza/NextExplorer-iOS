@@ -119,10 +119,10 @@ browse.clipboardCopiedOne	คัดลอก %@ แล้ว
 browse.clipboardCopiedMany	คัดลอก %lld รายการแล้ว
 browse.progressMoving	กำลังย้าย…
 browse.progressCopying	กำลังคัดลอก…
-browse.transferMoved	ย้าย %lld รายการแล้ว
-browse.transferCopied	คัดลอก %lld รายการแล้ว
-browse.transferMovedWithSkipped	ย้าย %1$lld รายการแล้ว ข้าม %2$lld รายการ
-browse.transferCopiedWithSkipped	คัดลอก %1$lld รายการแล้ว ข้าม %2$lld รายการ
+browse.transferMoved#other	ย้าย %lld รายการแล้ว
+browse.transferCopied#other	คัดลอก %lld รายการแล้ว
+browse.transferMovedWithSkipped#other	ย้าย %1$lld รายการแล้ว ข้าม %2$lld รายการ
+browse.transferCopiedWithSkipped#other	คัดลอก %1$lld รายการแล้ว ข้าม %2$lld รายการ
 browse.transferConflictTitle	แทนที่รายการหรือไม่
 browse.transferConflictMessageOne	มี "%@" อยู่ในโฟลเดอร์นี้แล้ว
 browse.transferConflictMessageMany	มี %lld รายการอยู่ในโฟลเดอร์นี้แล้ว
@@ -144,7 +144,7 @@ favorites.editColorLabel	สี
 favorites.editColorDefault	ค่าเริ่มต้น
 favorites.editSave	บันทึก
 favorites.reorderFailed	ไม่สามารถบันทึกลำดับใหม่ได้
-favorites.removeConfirm	นำรายการโปรดออก %lld รายการหรือไม่
+favorites.removeConfirm#other	นำรายการโปรดออก %lld รายการหรือไม่
 favorites.removeMessage	การดำเนินการนี้จะนำออกจากรายการโปรดเท่านั้น
 favorites.removeFailedOne	ไม่สามารถนำรายการโปรดนั้นออกได้
 favorites.removeFailedMany	ไม่สามารถนำรายการโปรดเหล่านั้นออกได้
@@ -183,7 +183,7 @@ uploads.reviewAddMore	เพิ่มไฟล์อีก
 uploads.reviewPreviewFile	ดูตัวอย่าง %@
 uploads.reviewInsecureNetworkNotice	เชื่อมต่อผ่าน http หากเซิร์ฟเวอร์นี้อยู่ในเครือข่ายบ้านของคุณเท่านั้น การอัปโหลดจะใช้ไม่ได้เมื่อคุณอยู่นอกเครือข่าย
 uploads.stagingFailed	ไม่สามารถเพิ่มไฟล์เหล่านั้นได้ ลองอีกครั้ง
-uploads.stagingSkipped	ไม่สามารถเตรียม %lld รายการได้ และถูกข้ามไป
+uploads.stagingSkipped#other	ไม่สามารถเตรียม %lld รายการได้ และถูกข้ามไป
 uploads.discardTitle	ละทิ้งการอัปโหลดหรือไม่
 uploads.discardMessage	ไฟล์ที่คุณเพิ่มจะไม่ถูกอัปโหลด
 uploads.discardConfirm	ละทิ้ง
@@ -944,7 +944,7 @@ menu.go	ไป
 menu.activity	การถ่ายโอน
 menu.showAll	แสดงทั้งหมด
 uploads.notifyDone	อัปโหลดเสร็จสิ้น
-uploads.notifyBody	อัปโหลดแล้ว %lld ไฟล์
+uploads.notifyBody#other	อัปโหลดแล้ว %lld ไฟล์
 downloadQueue.notifyDone	ดาวน์โหลดเสร็จสิ้น
 fileInfo.rowSoftware	ซอฟต์แวร์
 fileInfo.sectionVersions	เวอร์ชัน
@@ -1114,3 +1114,6 @@ browse.actionRemoveFromOffline	นำออกจากออฟไลน์
 offline.rowUpdating	กำลังอัปเดต…
 offline.rowWaitingForNetwork	รอเครือข่าย
 offline.rowUpdateFailed	อัปเดตไม่สำเร็จ
+pdfPreview.pageIndicator	%1$lld จาก %2$lld
+previewToolbar.savePhoto	บันทึกรูปภาพ
+previewToolbar.saveVideo	บันทึกวิดีโอ

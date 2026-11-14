@@ -119,10 +119,14 @@ browse.clipboardCopiedOne	%@ másolva
 browse.clipboardCopiedMany	%lld elem másolva
 browse.progressMoving	Áthelyezés…
 browse.progressCopying	Másolás…
-browse.transferMoved	%lld elem áthelyezve
-browse.transferCopied	%lld elem másolva
-browse.transferMovedWithSkipped	%1$lld elem áthelyezve, %2$lld kihagyva
-browse.transferCopiedWithSkipped	%1$lld elem másolva, %2$lld kihagyva
+browse.transferMoved#one	%lld elem áthelyezve
+browse.transferMoved#other	%lld elem áthelyezve
+browse.transferCopied#one	%lld elem másolva
+browse.transferCopied#other	%lld elem másolva
+browse.transferMovedWithSkipped#one	%1$lld elem áthelyezve, %2$lld kihagyva
+browse.transferMovedWithSkipped#other	%1$lld elem áthelyezve, %2$lld kihagyva
+browse.transferCopiedWithSkipped#one	%1$lld elem másolva, %2$lld kihagyva
+browse.transferCopiedWithSkipped#other	%1$lld elem másolva, %2$lld kihagyva
 browse.transferConflictTitle	Lecseréli az elemeket?
 browse.transferConflictMessageOne	A(z) "%@" már létezik ebben a mappában.
 browse.transferConflictMessageMany	%lld elem már létezik ebben a mappában.
@@ -144,7 +148,8 @@ favorites.editColorLabel	Szín
 favorites.editColorDefault	Alapértelmezett
 favorites.editSave	Mentés
 favorites.reorderFailed	Az új sorrendet nem sikerült menteni.
-favorites.removeConfirm	%lld kedvenc eltávolítása?
+favorites.removeConfirm#one	%lld kedvenc eltávolítása?
+favorites.removeConfirm#other	%lld kedvenc eltávolítása?
 favorites.removeMessage	Ez csak a Kedvencek közül távolítja el őket.
 favorites.removeFailedOne	Ezt a kedvencet nem sikerült eltávolítani.
 favorites.removeFailedMany	Ezeket a kedvenceket nem sikerült eltávolítani.
@@ -183,7 +188,8 @@ uploads.reviewAddMore	További fájlok hozzáadása
 uploads.reviewPreviewFile	%@ előnézete
 uploads.reviewInsecureNetworkNotice	Kapcsolat http-n keresztül. Ha ez a kiszolgáló csak az otthoni hálózaton érhető el, a feltöltések nem működnek, amikor távol van.
 uploads.stagingFailed	A fájlokat nem sikerült hozzáadni. Próbálja újra.
-uploads.stagingSkipped	%lld elemet nem sikerült előkészíteni, ezért kimaradt.
+uploads.stagingSkipped#one	%lld elemet nem sikerült előkészíteni, ezért kimaradt.
+uploads.stagingSkipped#other	%lld elemet nem sikerült előkészíteni, ezért kimaradt.
 uploads.discardTitle	Elveti a feltöltést?
 uploads.discardMessage	A hozzáadott fájlok nem lesznek feltöltve.
 uploads.discardConfirm	Elvetés
@@ -944,7 +950,8 @@ menu.go	Ugrás
 menu.activity	Átvitelek
 menu.showAll	Összes megjelenítése
 uploads.notifyDone	A feltöltések befejeződtek
-uploads.notifyBody	%lld fájl feltöltve
+uploads.notifyBody#one	%lld fájl feltöltve
+uploads.notifyBody#other	%lld fájl feltöltve
 downloadQueue.notifyDone	A letöltések befejeződtek
 fileInfo.rowSoftware	Szoftver
 fileInfo.sectionVersions	Verziók
@@ -1120,3 +1127,6 @@ browse.actionRemoveFromOffline	Eltávolítás az offline közül
 offline.rowUpdating	Frissítés…
 offline.rowWaitingForNetwork	Hálózatra vár
 offline.rowUpdateFailed	A frissítés nem sikerült
+pdfPreview.pageIndicator	%1$lld / %2$lld
+previewToolbar.savePhoto	Fotó mentése
+previewToolbar.saveVideo	Videó mentése

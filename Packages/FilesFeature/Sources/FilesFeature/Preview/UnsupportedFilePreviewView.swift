@@ -5,9 +5,6 @@ import SwiftUI
 
 private enum Constants {
     static let iconSize: CGFloat = .size64
-    static let headerSpacing: CGFloat = .space8
-    static let contentSpacing: CGFloat = .space24
-    static let horizontalPadding: CGFloat = .space24
 }
 
 /// Full-screen stand-in for a file the app has no viewer for (`FileItem.isUnsupportedForPreview`)
@@ -25,10 +22,6 @@ struct UnsupportedFilePreviewView: View {
     var onDownload: (() -> Void)?
     var onDelete: (() -> Void)?
 
-    private var typeText: String {
-        item.kind.isEmpty ? L10n.UnsupportedPreview.genericType : item.kind.uppercased()
-    }
-
     var body: some View {
         NavigationStack {
             content
@@ -39,6 +32,7 @@ struct UnsupportedFilePreviewView: View {
                     onRename: onRename,
                     onDownload: onDownload,
                     onDelete: onDelete,
+                    file: item,
                     onClose: onDismiss
                 )
         }
@@ -59,7 +53,7 @@ struct UnsupportedFilePreviewView: View {
                 }
             } description: {
                 Text(verbatim: L10n.UnsupportedPreview.macDescription(
-                    typeText, FileSizeFormat.string(item.size), L10n.UnsupportedPreview.cannotOpen
+                    item.previewTypeText, FileSizeFormat.string(item.size), L10n.UnsupportedPreview.cannotOpen
                 ))
             } actions: {
                 MacOpenWithButtons(source: systemShare)
@@ -69,32 +63,7 @@ struct UnsupportedFilePreviewView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.backgroundPrimary.ignoresSafeArea())
         #else
-            VStack(spacing: Constants.contentSpacing) {
-                Spacer()
-
-                VStack(spacing: Constants.headerSpacing) {
-                    FileTypeIcon(kind: item.kind)
-                        .frame(width: Constants.iconSize, height: Constants.iconSize)
-
-                    Text(item.name)
-                        .type(.headline3, style: .primaryOnSurface)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(3)
-                    Text(typeText)
-                        .type(.body2(.regular), style: .secondary)
-                    Text(FileSizeFormat.string(item.size))
-                        .type(.body2(.regular), style: .secondary)
-                }
-
-                Text(L10n.UnsupportedPreview.cannotOpen)
-                    .type(.body2(.regular), style: .secondary)
-                    .multilineTextAlignment(.center)
-
-                Spacer()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.horizontal, Constants.horizontalPadding)
-            .backgroundGradient()
+            FileSummaryView(item: item, message: L10n.UnsupportedPreview.cannotOpen)
         #endif
     }
 }

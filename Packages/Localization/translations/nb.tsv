@@ -119,10 +119,14 @@ browse.clipboardCopiedOne	%@ kopiert
 browse.clipboardCopiedMany	%lld elementer kopiert
 browse.progressMoving	Flytter…
 browse.progressCopying	Kopierer…
-browse.transferMoved	%lld elementer flyttet
-browse.transferCopied	%lld elementer kopiert
-browse.transferMovedWithSkipped	%1$lld elementer flyttet, %2$lld hoppet over
-browse.transferCopiedWithSkipped	%1$lld elementer kopiert, %2$lld hoppet over
+browse.transferMoved#one	%lld element flyttet
+browse.transferMoved#other	%lld elementer flyttet
+browse.transferCopied#one	%lld element kopiert
+browse.transferCopied#other	%lld elementer kopiert
+browse.transferMovedWithSkipped#one	%1$lld element flyttet, %2$lld hoppet over
+browse.transferMovedWithSkipped#other	%1$lld elementer flyttet, %2$lld hoppet over
+browse.transferCopiedWithSkipped#one	%1$lld element kopiert, %2$lld hoppet over
+browse.transferCopiedWithSkipped#other	%1$lld elementer kopiert, %2$lld hoppet over
 browse.transferConflictTitle	Erstatte elementer?
 browse.transferConflictMessageOne	"%@" finnes allerede i denne mappen.
 browse.transferConflictMessageMany	%lld elementer finnes allerede i denne mappen.
@@ -144,7 +148,8 @@ favorites.editColorLabel	Farge
 favorites.editColorDefault	Standard
 favorites.editSave	Lagre
 favorites.reorderFailed	Kunne ikke lagre den nye rekkefølgen.
-favorites.removeConfirm	Fjerne %lld favoritter?
+favorites.removeConfirm#one	Fjerne %lld favoritt?
+favorites.removeConfirm#other	Fjerne %lld favoritter?
 favorites.removeMessage	Dette fjerner dem bare fra Favoritter.
 favorites.removeFailedOne	Kunne ikke fjerne den favoritten.
 favorites.removeFailedMany	Kunne ikke fjerne de favorittene.
@@ -183,7 +188,8 @@ uploads.reviewAddMore	Legg til flere filer
 uploads.reviewPreviewFile	Forhåndsvis %@
 uploads.reviewInsecureNetworkNotice	Koblet til via http. Hvis denne serveren bare finnes på hjemmenettverket ditt, fungerer ikke opplastinger når du er borte fra det.
 uploads.stagingFailed	Kunne ikke legge til filene. Prøv igjen.
-uploads.stagingSkipped	%lld elementer kunne ikke klargjøres og ble utelatt.
+uploads.stagingSkipped#one	%lld element kunne ikke klargjøres og ble utelatt.
+uploads.stagingSkipped#other	%lld elementer kunne ikke klargjøres og ble utelatt.
 uploads.discardTitle	Forkaste opplastingen?
 uploads.discardMessage	Filene du la til, blir ikke lastet opp.
 uploads.discardConfirm	Forkast
@@ -944,7 +950,8 @@ menu.go	Gå
 menu.activity	Overføringer
 menu.showAll	Vis alle
 uploads.notifyDone	Opplastinger ferdig
-uploads.notifyBody	%lld filer lastet opp
+uploads.notifyBody#one	%lld fil lastet opp
+uploads.notifyBody#other	%lld filer lastet opp
 downloadQueue.notifyDone	Nedlastinger ferdig
 fileInfo.rowSoftware	Programvare
 fileInfo.sectionVersions	Versjoner
@@ -1120,3 +1127,6 @@ browse.actionRemoveFromOffline	Fjern fra uten nett
 offline.rowUpdating	Oppdaterer…
 offline.rowWaitingForNetwork	Venter på nettverk
 offline.rowUpdateFailed	Kunne ikke oppdatere
+pdfPreview.pageIndicator	%1$lld av %2$lld
+previewToolbar.savePhoto	Arkiver bilde
+previewToolbar.saveVideo	Arkiver video

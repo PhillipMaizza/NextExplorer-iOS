@@ -111,10 +111,14 @@ browse.clipboardCopiedOne	%@ copiato
 browse.clipboardCopiedMany	%lld elementi copiati
 browse.progressMoving	Spostamento…
 browse.progressCopying	Copia…
-browse.transferMoved	Spostati %lld elementi
-browse.transferCopied	Copiati %lld elementi
-browse.transferMovedWithSkipped	Spostati %1$lld elementi, saltati %2$lld
-browse.transferCopiedWithSkipped	Copiati %1$lld elementi, saltati %2$lld
+browse.transferMoved#one	Spostato %lld elemento
+browse.transferMoved#other	Spostati %lld elementi
+browse.transferCopied#one	Copiato %lld elemento
+browse.transferCopied#other	Copiati %lld elementi
+browse.transferMovedWithSkipped#one	Spostato %1$lld elemento, saltati %2$lld
+browse.transferMovedWithSkipped#other	Spostati %1$lld elementi, saltati %2$lld
+browse.transferCopiedWithSkipped#one	Copiato %1$lld elemento, saltati %2$lld
+browse.transferCopiedWithSkipped#other	Copiati %1$lld elementi, saltati %2$lld
 browse.transferConflictTitle	Sostituire gli elementi?
 browse.transferConflictMessageOne	"%@" esiste già in questa cartella.
 browse.transferConflictMessageMany	%lld elementi esistono già in questa cartella.
@@ -135,7 +139,8 @@ favorites.editColorLabel	Colore
 favorites.editColorDefault	Predefinito
 favorites.editSave	Salva
 favorites.reorderFailed	Impossibile salvare il nuovo ordine.
-favorites.removeConfirm	Rimuovere %lld preferiti?
+favorites.removeConfirm#one	Rimuovere %lld preferito?
+favorites.removeConfirm#other	Rimuovere %lld preferiti?
 favorites.removeMessage	Questo li rimuove solo dai Preferiti.
 favorites.removeFailedOne	Impossibile rimuovere quel preferito.
 favorites.removeFailedMany	Impossibile rimuovere quei preferiti.
@@ -174,7 +179,8 @@ uploads.reviewAddMore	Aggiungi altri file
 uploads.reviewPreviewFile	Anteprima di %@
 uploads.reviewInsecureNetworkNotice	Connesso tramite http. Se questo server è solo sulla tua rete domestica, i caricamenti non funzioneranno quando sei lontano da essa.
 uploads.stagingFailed	Impossibile aggiungere quei file. Riprova.
-uploads.stagingSkipped	%lld elementi non sono stati preparati e sono stati esclusi.
+uploads.stagingSkipped#one	%lld elemento non è stato preparato ed è stato escluso.
+uploads.stagingSkipped#other	%lld elementi non sono stati preparati e sono stati esclusi.
 uploads.discardTitle	Scartare il caricamento?
 uploads.discardMessage	I file che hai aggiunto non verranno caricati.
 uploads.discardConfirm	Scarta
@@ -676,7 +682,8 @@ menu.go	Vai
 menu.activity	Trasferimenti
 menu.showAll	Mostra tutto
 uploads.notifyDone	Caricamenti completati
-uploads.notifyBody	%lld file caricati
+uploads.notifyBody#one	%lld file caricato
+uploads.notifyBody#other	%lld file caricati
 downloadQueue.notifyDone	Download completati
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versioni
@@ -1147,3 +1154,6 @@ browse.actionRemoveFromOffline	Rimuovi da offline
 offline.rowUpdating	Aggiornamento…
 offline.rowWaitingForNetwork	In attesa della rete
 offline.rowUpdateFailed	Aggiornamento non riuscito
+pdfPreview.pageIndicator	%1$lld di %2$lld
+previewToolbar.savePhoto	Salva foto
+previewToolbar.saveVideo	Salva video

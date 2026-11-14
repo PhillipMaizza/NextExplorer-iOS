@@ -119,10 +119,10 @@ browse.clipboardCopiedOne	%@ disalin
 browse.clipboardCopiedMany	%lld item disalin
 browse.progressMoving	Memindahkan…
 browse.progressCopying	Menyalin…
-browse.transferMoved	%lld item dipindahkan
-browse.transferCopied	%lld item disalin
-browse.transferMovedWithSkipped	%1$lld item dipindahkan, %2$lld dilewati
-browse.transferCopiedWithSkipped	%1$lld item disalin, %2$lld dilewati
+browse.transferMoved#other	%lld item dipindahkan
+browse.transferCopied#other	%lld item disalin
+browse.transferMovedWithSkipped#other	%1$lld item dipindahkan, %2$lld dilewati
+browse.transferCopiedWithSkipped#other	%1$lld item disalin, %2$lld dilewati
 browse.transferConflictTitle	Ganti item?
 browse.transferConflictMessageOne	"%@" sudah ada di folder ini.
 browse.transferConflictMessageMany	%lld item sudah ada di folder ini.
@@ -144,7 +144,7 @@ favorites.editColorLabel	Warna
 favorites.editColorDefault	Default
 favorites.editSave	Simpan
 favorites.reorderFailed	Tidak dapat menyimpan urutan baru.
-favorites.removeConfirm	Hapus %lld Favorit?
+favorites.removeConfirm#other	Hapus %lld Favorit?
 favorites.removeMessage	Ini hanya menghapusnya dari Favorit.
 favorites.removeFailedOne	Tidak dapat menghapus favorit itu.
 favorites.removeFailedMany	Tidak dapat menghapus favorit tersebut.
@@ -183,7 +183,7 @@ uploads.reviewAddMore	Tambah file lagi
 uploads.reviewPreviewFile	Pratinjau %@
 uploads.reviewInsecureNetworkNotice	Terhubung melalui http. Jika server ini hanya ada di jaringan rumah Anda, unggahan tidak akan berfungsi saat Anda jauh darinya.
 uploads.stagingFailed	Tidak dapat menambahkan file tersebut. Coba lagi.
-uploads.stagingSkipped	%lld item tidak dapat disiapkan dan dilewati.
+uploads.stagingSkipped#other	%lld item tidak dapat disiapkan dan dilewati.
 uploads.discardTitle	Buang unggahan?
 uploads.discardMessage	File yang Anda tambahkan tidak akan diunggah.
 uploads.discardConfirm	Buang
@@ -944,7 +944,7 @@ menu.go	Pergi
 menu.activity	Transfer
 menu.showAll	Tampilkan Semua
 uploads.notifyDone	Unggahan selesai
-uploads.notifyBody	%lld file diunggah
+uploads.notifyBody#other	%lld file diunggah
 downloadQueue.notifyDone	Unduhan selesai
 fileInfo.rowSoftware	Perangkat Lunak
 fileInfo.sectionVersions	Versi
@@ -1114,3 +1114,6 @@ browse.actionRemoveFromOffline	Hapus dari Offline
 offline.rowUpdating	Memperbarui…
 offline.rowWaitingForNetwork	Menunggu jaringan
 offline.rowUpdateFailed	Gagal memperbarui
+pdfPreview.pageIndicator	%1$lld dari %2$lld
+previewToolbar.savePhoto	Simpan Foto
+previewToolbar.saveVideo	Simpan Video

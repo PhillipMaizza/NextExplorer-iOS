@@ -134,6 +134,8 @@
             // setup, both on the main thread; assert that so the main actor only UIKit access is
             // legal from this nonisolated helper.
             MainActor.assumeIsolated {
+                // The waits between animation steps follow the same speed as the animations.
+                DSMotion.speed = Double(speed)
                 #if os(iOS)
                     for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
                         for window in scene.windows {
@@ -206,6 +208,9 @@
             case error
             /// Browse answers 401, tripping the mid session expiry path back to login.
             case sessionExpired
+            /// Like `normal`, but the folder holds one file of every kind the gallery pages
+            /// through, and text files read back `galleryNotesText`.
+            case gallery
         }
 
         static func credentials(
@@ -280,11 +285,14 @@
         static func filesClient(_ scenario: Scenario, expiry: MockSessionExpiry = MockSessionExpiry()) -> FilesClient {
             var client = FilesClient.previewValue
             switch scenario {
-            case .normal:
+            case .normal, .gallery:
                 installAccountMocks(into: &client)
                 // A mutable in memory directory so writes (create folder, rename, delete, compress)
                 // are reflected by the next browse, letting a UI test assert the listing changed.
-                let store = MockFileStore(items: rootItems)
+                let store = MockFileStore(items: scenario == .gallery ? galleryItems : rootItems)
+                if scenario == .gallery {
+                    installGalleryFiles(into: &client)
+                }
                 client.browse = { _, path in
                     BrowseResult(items: store.current(), access: fullAccess, path: path)
                 }
@@ -297,6 +305,16 @@
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
                 client.deleteItems = { _, items in store.delete(items) }
+                // A move leaves this folder; a copy changes nothing here (every folder lists the same).
+                client.transferItems = { _, items, destination, operation in
+                    if operation == .move {
+                        store.delete(items)
+                    }
+                    return TransferResult(
+                        destination: destination,
+                        items: items.map { TransferResult.Entry(from: $0.id, to: "\(destination)/\($0.name)") }
+                    )
+                }
                 client.compressItem = { _, item in store.compress(item) }
                 // Offline: a folder's estimate and a per file "download" that completes instantly, so
                 // the offline picker + download flow is exercisable without a backend or disk writes.

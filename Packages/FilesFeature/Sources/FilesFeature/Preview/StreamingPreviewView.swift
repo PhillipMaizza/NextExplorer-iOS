@@ -23,6 +23,9 @@ struct StreamingPreviewView: View {
     private let onRename: (() -> Void)?
     private let onDownload: (() -> Void)?
     private let onDelete: (() -> Void)?
+    /// Inside the gallery: the gallery draws the bars and owns rotation, so the player shows only
+    /// the video.
+    private let isEmbedded: Bool
 
     @State private var playback: StreamingPlayback
     @State private var hasStartedPlaying = false
@@ -38,7 +41,8 @@ struct StreamingPreviewView: View {
         onShare: (() -> Void)? = nil,
         onRename: (() -> Void)? = nil,
         onDownload: (() -> Void)? = nil,
-        onDelete: (() -> Void)? = nil
+        onDelete: (() -> Void)? = nil,
+        isEmbedded: Bool = false
     ) {
         self.item = item
         self.url = url
@@ -49,6 +53,7 @@ struct StreamingPreviewView: View {
         self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
+        self.isEmbedded = isEmbedded
         // Only describes what to play: the player itself is built once, by the view SwiftUI keeps.
         _playback = State(initialValue: StreamingPlayback(
             url: url,
@@ -68,88 +73,102 @@ struct StreamingPreviewView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                VideoPlayer(player: player)
-                    .ignoresSafeArea()
-
-                // A poster frame before playback starts, matching the web client's `<video poster>`,
-                // rather than a blank black rectangle. Keyed on "has playback ever started", not "is
-                // playing now": the latter would bring the poster back over a paused frame.
-                if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
-                    ThumbnailImage(
-                        serverURL: serverURL,
-                        path: item.id,
-                        signature: item.cacheSignature,
-                        fallbackIcon: IconKit.document,
-                        iconTint: Color.secondaryDS
-                    )
-                    .scaledToFit()
-                    .background(Color.black)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-
-                if isBuffering {
-                    DSSpinner()
-                        .tint(Color.white)
-                        .allowsHitTesting(false)
+        chrome
+            .onReceive(player.publisher(for: \.rate)) { rate in
+                if rate != 0 {
+                    hasStartedPlaying = true
                 }
             }
-            .ignoresSafeArea()
-            .previewChrome(
-                title: item.name,
-                systemShare: .remote(item, serverURL: serverURL),
-                onShareLink: onShare,
-                onRename: onRename,
-                onDownload: onDownload,
-                onDelete: onDelete,
-                onClose: onDismiss
-            )
-        }
-        .onReceive(player.publisher(for: \.rate)) { rate in
-            if rate != 0 {
-                hasStartedPlaying = true
+            .onReceive(player.publisher(for: \.timeControlStatus)) { status in
+                timeControlStatus = status
             }
-        }
-        .onReceive(player.publisher(for: \.timeControlStatus)) { status in
-            timeControlStatus = status
-        }
-        .onReceive(player.publisher(for: \.status)) { status in
-            if status == .failed {
+            .onReceive(player.publisher(for: \.status)) { status in
+                if status == .failed {
+                    reportFailureOnce()
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemFailedToPlayToEndTime)) { _ in
                 reportFailureOnce()
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemFailedToPlayToEndTime)) { _ in
-            reportFailureOnce()
-        }
-        .onAppear {
-            // Only video gets free rotation; an audio-only stream stays locked to portrait.
-            if item.isVideo {
-                OrientationLock.shared.unlock()
-            }
-            // `setCategory` can block; AVFoundation warns against calling it synchronously on the
-            // main thread while a session may already be active. `play()` stays on the main actor
-            // for `VideoPlayer` to observe it.
-            #if os(iOS)
-                Task.detached(priority: .userInitiated) {
-                    try? AVAudioSession.sharedInstance().setCategory(.playback)
+            .onAppear {
+                // Only video gets free rotation; an audio only stream stays locked to portrait.
+                if item.isVideo, !isEmbedded {
+                    OrientationLock.shared.unlock()
                 }
-            #endif
-            player.play()
-        }
-        .onDisappear {
-            if item.isVideo {
-                OrientationLock.shared.lock()
+                // `setCategory` can block; AVFoundation warns against calling it synchronously on the
+                // main thread while a session may already be active. `play()` stays on the main actor
+                // for `VideoPlayer` to observe it.
+                #if os(iOS)
+                    Task.detached(priority: .userInitiated) {
+                        try? AVAudioSession.sharedInstance().setCategory(.playback)
+                    }
+                #endif
+                player.play()
             }
-            player.pause()
-            playback.tearDown()
-            #if os(iOS)
-                Task.detached(priority: .userInitiated) {
-                    try? AVAudioSession.sharedInstance().setCategory(.ambient)
+            .onDisappear {
+                if item.isVideo, !isEmbedded {
+                    OrientationLock.shared.lock()
                 }
-            #endif
+                player.pause()
+                playback.tearDown()
+                #if os(iOS)
+                    Task.detached(priority: .userInitiated) {
+                        try? AVAudioSession.sharedInstance().setCategory(.ambient)
+                    }
+                #endif
+            }
+    }
+
+    @ViewBuilder
+    private var chrome: some View {
+        if isEmbedded {
+            playerStack
+        } else {
+            NavigationStack {
+                playerStack
+                    .previewChrome(
+                        title: item.name,
+                        systemShare: .remote(item, serverURL: serverURL),
+                        onShareLink: onShare,
+                        onRename: onRename,
+                        onDownload: onDownload,
+                        onDelete: onDelete,
+                        file: item,
+                        onClose: onDismiss
+                    )
+            }
         }
+    }
+
+    private var playerStack: some View {
+        ZStack {
+            VideoPlayer(player: player)
+                .ignoresSafeArea()
+
+            // A poster frame before playback starts, matching the web client's `<video poster>`,
+            // rather than a blank black rectangle. Keyed on "has playback ever started", not "is
+            // playing now": the latter would bring the poster back over a paused frame.
+            if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
+                ThumbnailImage(
+                    serverURL: serverURL,
+                    path: item.id,
+                    signature: item.cacheSignature,
+                    fallbackIcon: IconKit.document,
+                    iconTint: Color.secondaryDS
+                )
+                .scaledToFit()
+                .background(Color.black)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+            }
+
+            if isBuffering {
+                DSSpinner()
+                    .tint(Color.white)
+                    .allowsHitTesting(false)
+            }
+        }
+        .ignoresSafeArea()
     }
 
     /// Report a decode/load failure exactly once, so the host swaps to the libvlc player. Guarded so

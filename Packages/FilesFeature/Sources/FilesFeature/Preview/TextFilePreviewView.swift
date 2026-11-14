@@ -1,14 +1,8 @@
-import AppStorageKeys
-import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
 import Localization
 import SwiftUI
-
-private enum Constants {
-    static let statusSpacing: CGFloat = .space16
-}
 
 /// Full-screen viewer/editor for plain-text and code files: the only "edit docs" scope the
 /// user confirmed. The real `/api/preview` endpoint only serves images/RAW/video/audio/PDF,
@@ -35,7 +29,6 @@ struct TextFilePreviewView: View {
     /// later. That empty then swap is what left Runestone's document half built and blank when the
     /// content arrived after the editor mounted (a slow "Everywhere" search hit this every time).
     @State private var draft: String?
-    @State private var renderedMarkdownHTML = ""
     @State private var isEditing = false
     @State private var savedToast: DSToastMessage?
     /// Closing with edits not yet saved: asking first, then (Save) closing once the save lands.
@@ -55,10 +48,7 @@ struct TextFilePreviewView: View {
         })
     }
 
-    @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
-    @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
     @Environment(\.openURL) private var openURL
-    @Dependency(\.filesClient) private var filesClient
 
     /// The text currently shown/edited: the edit buffer once the user has typed, otherwise the
     /// loaded `content` verbatim.
@@ -90,26 +80,6 @@ struct TextFilePreviewView: View {
         return lowercaseKind == "html" || lowercaseKind == "htm"
     }
 
-    private var isMarkdown: Bool {
-        let lowercaseKind = kind.lowercased()
-        return lowercaseKind == "md" || lowercaseKind == "markdown"
-    }
-
-    /// Downloads a same-folder asset (`downloadRawFile` has no extension restriction, unlike
-    /// `previewFile`'s `GET /api/preview`): shared by both the HTML and Markdown render
-    /// paths, since both ultimately go through the same `HTMLRenderedView`.
-    private func resolveServerAsset(relativePath: String) async -> URL? {
-        guard let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: item.path) else { return nil }
-        let sibling = FileItem(
-            name: resolved.name,
-            path: resolved.parent,
-            dateModified: Date(timeIntervalSince1970: 0),
-            size: 0,
-            kind: (resolved.name as NSString).pathExtension
-        )
-        return try? await filesClient.downloadRawFile(serverURL, sibling)
-    }
-
     var body: some View {
         chrome
             .dsToast($savedToast)
@@ -139,22 +109,6 @@ struct TextFilePreviewView: View {
             .onAppear {
                 if startsEditing {
                     isEditing = true
-                }
-            }
-            // `MarkdownRenderer.html` parses the whole document; run it off the main thread so a
-            // large Markdown file doesn't freeze the UI on open. `.task(id:)` cancels a superseded
-            // render, so a fast content change can't land a stale HTML string.
-            .task(id: content) {
-                guard isMarkdown else {
-                    renderedMarkdownHTML = ""
-                    return
-                }
-                let source = content ?? ""
-                let html = await Task.detached(priority: .userInitiated) {
-                    MarkdownRenderer.html(from: source)
-                }.value
-                if !Task.isCancelled {
-                    renderedMarkdownHTML = html
                 }
             }
             .onChange(of: isSaving) { wasSaving, nowSaving in
@@ -248,46 +202,21 @@ struct TextFilePreviewView: View {
     @ViewBuilder
     private var editorBody: some View {
         if let errorMessage {
-            errorContent(errorMessage)
+            PreviewErrorView(message: errorMessage, onRetry: onRetry)
         } else if isLoading {
             DSSpinner()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if isHTML, shouldRenderHTMLPages, !isEditing {
-            // "Render HTML Pages" in Settings: editing always drops back to code (there's no
-            // in-place editor for a rendered page), regardless of this setting.
-            HTMLRenderedView(cacheKey: item.id, html: currentText, resolveAsset: resolveServerAsset)
-        } else if isMarkdown, shouldRenderMarkdownPages, !isEditing {
-            // "Render Markdown Files" in Settings: same rendering pipeline as HTML, fed
-            // compiled-to-HTML Markdown instead of the raw source.
-            HTMLRenderedView(cacheKey: item.id, html: renderedMarkdownHTML, resolveAsset: resolveServerAsset)
         } else {
-            // Real tree-sitter syntax highlighting (Runestone): kept visible whether or not
-            // `isEditing` is on, not just while actively editing, since highlighting helps
-            // reading just as much as writing.
-            #if os(macOS)
-                CodeEditorView(kind: kind, text: editorText, isEditable: isEditing, onEscape: requestClose)
-            #else
-                CodeEditorView(kind: kind, text: editorText, isEditable: isEditing)
-            #endif
+            TextDocumentBody(
+                item: item,
+                serverURL: serverURL,
+                kind: kind,
+                content: content,
+                text: editorText,
+                isEditing: isEditing,
+                onEscape: requestClose
+            )
         }
-    }
-
-    /// Load failure: the warning + message plus a retry that re-fires the `/api/editor` fetch,
-    /// so a transient network error isn't a dead end that forces closing the preview.
-    private func errorContent(_ message: String) -> some View {
-        VStack(spacing: Constants.statusSpacing) {
-            IconKit.warning
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(Color.negative)
-                .frame(width: .iconMedium, height: .iconMedium)
-            Text(message)
-                .type(.body1(.regular), style: .secondary)
-                .multilineTextAlignment(.center)
-            RetryLinkButton(action: onRetry)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal, .space16)
     }
 }
 

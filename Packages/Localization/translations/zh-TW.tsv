@@ -111,10 +111,10 @@ browse.clipboardCopiedOne	已拷貝 %@
 browse.clipboardCopiedMany	已拷貝 %lld 個項目
 browse.progressMoving	正在移動…
 browse.progressCopying	正在拷貝…
-browse.transferMoved	已移動 %lld 個項目
-browse.transferCopied	已拷貝 %lld 個項目
-browse.transferMovedWithSkipped	已移動 %1$lld 個項目，略過 %2$lld 個
-browse.transferCopiedWithSkipped	已拷貝 %1$lld 個項目，略過 %2$lld 個
+browse.transferMoved#other	已移動 %lld 個項目
+browse.transferCopied#other	已拷貝 %lld 個項目
+browse.transferMovedWithSkipped#other	已移動 %1$lld 個項目，略過 %2$lld 個
+browse.transferCopiedWithSkipped#other	已拷貝 %1$lld 個項目，略過 %2$lld 個
 browse.transferConflictTitle	取代項目？
 browse.transferConflictMessageOne	「%@」已存在於此檔案夾中。
 browse.transferConflictMessageMany	%lld 個項目已存在於此檔案夾中。
@@ -135,7 +135,7 @@ favorites.editColorLabel	顏色
 favorites.editColorDefault	預設
 favorites.editSave	儲存
 favorites.reorderFailed	無法儲存新順序。
-favorites.removeConfirm	移除 %lld 個喜好項目？
+favorites.removeConfirm#other	移除 %lld 個喜好項目？
 favorites.removeMessage	這只會將它們從喜好項目移除。
 favorites.removeFailedOne	無法移除該喜好項目。
 favorites.removeFailedMany	無法移除這些喜好項目。
@@ -174,7 +174,7 @@ uploads.reviewAddMore	加入更多檔案
 uploads.reviewPreviewFile	預覽 %@
 uploads.reviewInsecureNetworkNotice	透過 http 連線。如果此伺服器僅在您的家庭網路中，離開該網路時上傳將無法運作。
 uploads.stagingFailed	無法加入這些檔案。請重試。
-uploads.stagingSkipped	%lld 個項目無法準備，已被略過。
+uploads.stagingSkipped#other	%lld 個項目無法準備，已被略過。
 uploads.discardTitle	放棄上傳？
 uploads.discardMessage	您加入的檔案將不會上傳。
 uploads.discardConfirm	放棄
@@ -676,7 +676,7 @@ menu.go	前往
 menu.activity	傳輸
 menu.showAll	顯示全部
 uploads.notifyDone	上傳完成
-uploads.notifyBody	已上傳 %lld 個檔案
+uploads.notifyBody#other	已上傳 %lld 個檔案
 downloadQueue.notifyDone	下載完成
 fileInfo.rowSoftware	軟體
 fileInfo.sectionVersions	版本
@@ -1141,3 +1141,6 @@ browse.actionRemoveFromOffline	從離線中移除
 offline.rowUpdating	正在更新…
 offline.rowWaitingForNetwork	等待網路
 offline.rowUpdateFailed	無法更新
+pdfPreview.pageIndicator	%1$lld/%2$lld
+previewToolbar.savePhoto	儲存照片
+previewToolbar.saveVideo	儲存影片

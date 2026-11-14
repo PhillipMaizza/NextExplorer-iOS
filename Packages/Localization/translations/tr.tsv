@@ -119,10 +119,14 @@ browse.clipboardCopiedOne	%@ kopyalandı
 browse.clipboardCopiedMany	%lld öğe kopyalandı
 browse.progressMoving	Taşınıyor…
 browse.progressCopying	Kopyalanıyor…
-browse.transferMoved	%lld öğe taşındı
-browse.transferCopied	%lld öğe kopyalandı
-browse.transferMovedWithSkipped	%1$lld öğe taşındı, %2$lld atlandı
-browse.transferCopiedWithSkipped	%1$lld öğe kopyalandı, %2$lld atlandı
+browse.transferMoved#one	%lld öğe taşındı
+browse.transferMoved#other	%lld öğe taşındı
+browse.transferCopied#one	%lld öğe kopyalandı
+browse.transferCopied#other	%lld öğe kopyalandı
+browse.transferMovedWithSkipped#one	%1$lld öğe taşındı, %2$lld atlandı
+browse.transferMovedWithSkipped#other	%1$lld öğe taşındı, %2$lld atlandı
+browse.transferCopiedWithSkipped#one	%1$lld öğe kopyalandı, %2$lld atlandı
+browse.transferCopiedWithSkipped#other	%1$lld öğe kopyalandı, %2$lld atlandı
 browse.transferConflictTitle	Öğeler değiştirilsin mi?
 browse.transferConflictMessageOne	"%@" bu klasörde zaten var.
 browse.transferConflictMessageMany	%lld öğe bu klasörde zaten var.
@@ -144,7 +148,8 @@ favorites.editColorLabel	Renk
 favorites.editColorDefault	Varsayılan
 favorites.editSave	Kaydet
 favorites.reorderFailed	Yeni sıra kaydedilemedi.
-favorites.removeConfirm	%lld Favori Kaldırılsın mı?
+favorites.removeConfirm#one	%lld Favori Kaldırılsın mı?
+favorites.removeConfirm#other	%lld Favori Kaldırılsın mı?
 favorites.removeMessage	Bu yalnızca onları Favoriler'den kaldırır.
 favorites.removeFailedOne	Bu favori kaldırılamadı.
 favorites.removeFailedMany	Bu favoriler kaldırılamadı.
@@ -183,7 +188,8 @@ uploads.reviewAddMore	Daha fazla dosya ekle
 uploads.reviewPreviewFile	%@ önizle
 uploads.reviewInsecureNetworkNotice	http üzerinden bağlısınız. Bu sunucu yalnızca ev ağınızdaysa, ağdan uzakken yüklemeler çalışmaz.
 uploads.stagingFailed	Bu dosyalar eklenemedi. Tekrar deneyin.
-uploads.stagingSkipped	%lld öğe hazırlanamadı ve dışarıda bırakıldı.
+uploads.stagingSkipped#one	%lld öğe hazırlanamadı ve dışarıda bırakıldı.
+uploads.stagingSkipped#other	%lld öğe hazırlanamadı ve dışarıda bırakıldı.
 uploads.discardTitle	Yükleme iptal edilsin mi?
 uploads.discardMessage	Eklediğiniz dosyalar yüklenmeyecek.
 uploads.discardConfirm	Vazgeç
@@ -944,7 +950,8 @@ menu.go	Git
 menu.activity	Aktarımlar
 menu.showAll	Tümünü Göster
 uploads.notifyDone	Yüklemeler tamamlandı
-uploads.notifyBody	%lld dosya yüklendi
+uploads.notifyBody#one	%lld dosya yüklendi
+uploads.notifyBody#other	%lld dosya yüklendi
 downloadQueue.notifyDone	İndirmeler tamamlandı
 fileInfo.rowSoftware	Yazılım
 fileInfo.sectionVersions	Sürümler
@@ -1119,3 +1126,6 @@ browse.actionRemoveFromOffline	Çevrimdışından kaldır
 offline.rowUpdating	Güncelleniyor…
 offline.rowWaitingForNetwork	Ağ bekleniyor
 offline.rowUpdateFailed	Güncellenemedi
+pdfPreview.pageIndicator	%1$lld / %2$lld
+previewToolbar.savePhoto	Fotoğrafı Kaydet
+previewToolbar.saveVideo	Videoyu Kaydet

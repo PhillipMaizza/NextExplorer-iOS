@@ -81,6 +81,11 @@ struct BrowseContentView: View {
     /// swipe morphs back to the visible image instead of the one first tapped. `nil` until the
     /// gallery reports a page, then the tapped item's id is used.
     @State private var galleryCurrentItemID: String?
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
+    /// The screen's bottom safe area (the home indicator), part of the path bar's clearance.
+    @State private var bottomSafeInset: CGFloat = 0
+    /// From the folder picker appearing until its sheet has fully closed.
+    @State private var isDestinationPickerOnScreen = false
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
 
@@ -130,14 +135,15 @@ struct BrowseContentView: View {
 
     var body: some View {
         browsingContent
-            .sheet(item: $store.scope(state: \.destinationPicker, action: \.destinationPicker)) { pickerStore in
-                DestinationPickerView(store: pickerStore)
+            .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { bottomSafeInset = $0 }
+            .sheet(item: destinationPickerBinding(inPreview: false), onDismiss: destinationPickerDismissed) {
+                destinationPicker($0)
             }
             .dsSheet(item: $store.scope(state: \.uploadReview, action: \.uploadReview)) { reviewStore in
                 UploadReviewView(store: reviewStore)
             }
         #if os(iOS)
-            .dsSheet(item: infoPhaseBinding) { phase in
+            .dsSheet(item: infoPhaseBinding(inPreview: false)) { phase in
                 infoSheetContent(for: phase)
             }
         #endif
@@ -167,6 +173,18 @@ struct BrowseContentView: View {
                     .dsSheet(item: shareTargetFromPreviewBinding) { shareItem in
                         createShareLinkSheet(for: shareItem, fromPreview: true)
                     }
+                    // Get Info and Move from the gallery's title menu, over the cover.
+                    .sheet(item: destinationPickerBinding(inPreview: true), onDismiss: destinationPickerDismissed) {
+                        destinationPicker($0)
+                    }
+                    .dsAlert(isPresented: transferConflictBinding(inPreview: true)) {
+                        transferConflictSheet
+                    }
+                    #if os(iOS)
+                    .dsSheet(item: infoPhaseBinding(inPreview: true)) { phase in
+                        infoSheetContent(for: phase)
+                    }
+                    #endif
                     .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
                     // The preview stays put through downloads and renames: their result
                     // toasts surface over the cover, and "Open" on a download routes back
@@ -227,7 +245,7 @@ struct BrowseContentView: View {
                 // it, like a second tap on the spinning row; the cover would otherwise appear over
                 // another screen with nothing to zoom from. An open cover also takes this view off
                 // screen, but by then its content is ready, so it is left alone.
-                if store.previewItem != nil, !isPreviewContentReady {
+                if store.previewItem != nil, !store.isPreviewContentReady {
                     // Next tick: a disappear driven by a reducer (a push) must not send reentrantly.
                     Task { @MainActor in store.send(.previewDismissed) }
                 }
@@ -599,20 +617,8 @@ struct BrowseContentView: View {
             deleteConfirmationSheet(dismissingPreview: false)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-        .dsAlert(isPresented: transferConflictBinding) {
-            DSAlertSheet(
-                icon: IconKit.warning,
-                title: L10n.Browse.transferConflictTitle,
-                message: transferConflictMessage,
-                confirmTitle: L10n.Browse.transferConflictReplace,
-                dismissTitle: L10n.Common.cancel,
-                neutralTitle: L10n.Browse.transferConflictKeepBoth,
-                role: .destructive,
-                closeAccessibilityLabel: L10n.Common.close,
-                onConfirm: { store.send(.transferConflictResolved(.replace), animation: .default) },
-                onNeutral: { store.send(.transferConflictResolved(.keepBoth), animation: .default) },
-                onDismiss: { store.send(.transferConflictResolved(nil)) }
-            )
+        .dsAlert(isPresented: transferConflictBinding(inPreview: false)) {
+            transferConflictSheet
         }
         .hapticFeedback(.warning, trigger: store.transferConflict)
         .offlineRemovalAlert(
@@ -624,7 +630,7 @@ struct BrowseContentView: View {
 
     private var previewPresentedBinding: Binding<Bool> {
         Binding(
-            get: { store.previewItem != nil && isPreviewContentReady },
+            get: { store.previewItem != nil && store.isPreviewContentReady },
             set: {
                 if !$0 {
                     store.send(.previewDismissed)
@@ -633,36 +639,12 @@ struct BrowseContentView: View {
         )
     }
 
-    /// Whether the tapped file has loaded enough to present its cover. The download/editor
-    /// previews (PDF, office docs, text) hold the cover, and show a row spinner, until their
-    /// fetch lands; gallery, streaming, archives and the unsupported screen are ready at once.
-    /// Branch order mirrors `previewContent(for:)`.
-    private var isPreviewContentReady: Bool {
-        guard let item = store.previewItem else { return false }
-        if item.isUnsupportedForPreview {
-            return true
-        }
-        if item.isStreamableMedia {
-            return true
-        }
-        if item.isBrowsableArchive {
-            return true
-        }
-        if (item.isImage || item.isRawImage) && !item.isSVG {
-            return true
-        }
-        if item.isPreviewableViaDownload {
-            return store.previewFileURL != nil || store.previewErrorMessage != nil
-        }
-        return store.textContent != nil || store.textEditorErrorMessage != nil
-    }
-
     private func isOpening(_ item: FileItem) -> Bool {
         isOpeningID(item.id)
     }
 
     private func isOpeningID(_ id: String) -> Bool {
-        store.previewItem?.id == id && !isPreviewContentReady
+        store.previewItem?.id == id && !store.isPreviewContentReady
     }
 
     /// Search hits and browse rows share an `id` scheme (`path/name`), so `searchResultTapped`
@@ -1068,9 +1050,10 @@ struct BrowseContentView: View {
         return .result(item)
     }
 
-    private var infoPhaseBinding: Binding<InfoSheetPhase?> {
+    /// The info sheet over whichever surface is frontmost: the list, or the preview cover.
+    private func infoPhaseBinding(inPreview: Bool) -> Binding<InfoSheetPhase?> {
         Binding(
-            get: { infoPhase },
+            get: { (store.previewItem != nil) == inPreview ? infoPhase : nil },
             set: {
                 if $0 == nil {
                     store.send(.infoDismissed)
@@ -1175,12 +1158,6 @@ struct BrowseContentView: View {
         Binding(get: { store.deleteConfirmationItem != nil && store.previewItem != nil }, set: { _ in })
     }
 
-    /// The gallery holds many images, so deleting one drops it from the pager and stays open
-    /// (like Photos) rather than tearing the whole cover down.
-    private var isPreviewGallery: Bool {
-        store.previewItem.map { ($0.isImage || $0.isRawImage) && !$0.isSVG } ?? false
-    }
-
     private func deleteConfirmationSheet(dismissingPreview: Bool) -> DSAlertSheet {
         DSAlertSheet(
             icon: IconKit.delete,
@@ -1194,7 +1171,7 @@ struct BrowseContentView: View {
                 // A single-item preview dismisses the cover and defers the delete so the row
                 // animates out on the list. The gallery (and the list) delete in place. Either
                 // way `deleteConfirmationItem` clears synchronously, so no binding flicker.
-                if dismissingPreview, !isPreviewGallery {
+                if dismissingPreview, !store.isPreviewInGallery {
                     store.send(.deleteConfirmedFromPreview)
                 } else {
                     store.send(.deleteConfirmed)
@@ -1228,15 +1205,41 @@ struct BrowseContentView: View {
 
     /// The button closures own dismissal (they clear `transferConflict`); the no op setter
     /// keeps a SwiftUI initiated dismiss from firing a second resolve into a torn down sheet.
-    private var transferConflictBinding: Binding<Bool> {
-        Binding(get: { store.transferConflict != nil }, set: { _ in })
+    /// Split by surface like the info sheet, so a move started in the gallery asks over the cover.
+    /// Waits for the folder picker to finish closing: a card can't present while the sheet under
+    /// it is still on its way out, and would be dropped.
+    private func transferConflictBinding(inPreview: Bool) -> Binding<Bool> {
+        Binding(
+            get: {
+                store.transferConflict != nil && !isDestinationPickerOnScreen
+                    && (store.previewItem != nil) == inPreview
+            },
+            set: { _ in }
+        )
     }
 
-    private var transferConflictMessage: String {
-        guard let conflict = store.transferConflict else { return "" }
-        return conflict.count == 1
-            ? L10n.Browse.transferConflictMessageOne(conflict.firstName)
-            : L10n.Browse.transferConflictMessageMany(conflict.count)
+    private func destinationPicker(_ pickerStore: StoreOf<DestinationPickerFeature>) -> some View {
+        DestinationPickerView(store: pickerStore)
+            .onAppear { isDestinationPickerOnScreen = true }
+    }
+
+    private func destinationPickerDismissed() {
+        isDestinationPickerOnScreen = false
+    }
+
+    private var transferConflictSheet: DSAlertSheet {
+        DSAlertSheet.transferConflict(store.transferConflict) { choice in
+            store.send(.transferConflictResolved(choice), animation: choice == nil ? nil : .default)
+        }
+    }
+
+    /// The folder picker over whichever surface is frontmost: the list, or the preview cover.
+    private func destinationPickerBinding(inPreview: Bool) -> Binding<StoreOf<DestinationPickerFeature>?> {
+        let scoped = $store.scope(state: \.destinationPicker, action: \.destinationPicker)
+        return Binding(
+            get: { (store.previewItem != nil) == inPreview ? scoped.wrappedValue : nil },
+            set: { scoped.wrappedValue = $0 }
+        )
     }
 
     private var isAllSelected: Bool {

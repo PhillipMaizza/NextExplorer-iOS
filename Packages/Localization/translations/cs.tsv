@@ -119,10 +119,22 @@ browse.clipboardCopiedOne	Zkopírováno: %@
 browse.clipboardCopiedMany	Zkopírováno položek: %lld
 browse.progressMoving	Přesouvání…
 browse.progressCopying	Kopírování…
-browse.transferMoved	Přesunuto položek: %lld
-browse.transferCopied	Zkopírováno položek: %lld
-browse.transferMovedWithSkipped	Přesunuto položek: %1$lld, přeskočeno: %2$lld
-browse.transferCopiedWithSkipped	Zkopírováno položek: %1$lld, přeskočeno: %2$lld
+browse.transferMoved#one	Přesunuto položek: %lld
+browse.transferMoved#few	Přesunuto položek: %lld
+browse.transferMoved#many	Přesunuto položek: %lld
+browse.transferMoved#other	Přesunuto položek: %lld
+browse.transferCopied#one	Zkopírováno položek: %lld
+browse.transferCopied#few	Zkopírováno položek: %lld
+browse.transferCopied#many	Zkopírováno položek: %lld
+browse.transferCopied#other	Zkopírováno položek: %lld
+browse.transferMovedWithSkipped#one	Přesunuto položek: %1$lld, přeskočeno: %2$lld
+browse.transferMovedWithSkipped#few	Přesunuto položek: %1$lld, přeskočeno: %2$lld
+browse.transferMovedWithSkipped#many	Přesunuto položek: %1$lld, přeskočeno: %2$lld
+browse.transferMovedWithSkipped#other	Přesunuto položek: %1$lld, přeskočeno: %2$lld
+browse.transferCopiedWithSkipped#one	Zkopírováno položek: %1$lld, přeskočeno: %2$lld
+browse.transferCopiedWithSkipped#few	Zkopírováno položek: %1$lld, přeskočeno: %2$lld
+browse.transferCopiedWithSkipped#many	Zkopírováno položek: %1$lld, přeskočeno: %2$lld
+browse.transferCopiedWithSkipped#other	Zkopírováno položek: %1$lld, přeskočeno: %2$lld
 browse.transferConflictTitle	Nahradit položky?
 browse.transferConflictMessageOne	"%@" v této složce již existuje.
 browse.transferConflictMessageMany	Položky, které již v této složce existují: %lld.
@@ -144,7 +156,10 @@ favorites.editColorLabel	Barva
 favorites.editColorDefault	Výchozí
 favorites.editSave	Uložit
 favorites.reorderFailed	Nové pořadí se nepodařilo uložit.
-favorites.removeConfirm	Odebrat oblíbené (%lld)?
+favorites.removeConfirm#one	Odebrat oblíbené (%lld)?
+favorites.removeConfirm#few	Odebrat oblíbené (%lld)?
+favorites.removeConfirm#many	Odebrat oblíbené (%lld)?
+favorites.removeConfirm#other	Odebrat oblíbené (%lld)?
 favorites.removeMessage	Tím se pouze odeberou z Oblíbených.
 favorites.removeFailedOne	Tuto oblíbenou položku se nepodařilo odebrat.
 favorites.removeFailedMany	Tyto oblíbené položky se nepodařilo odebrat.
@@ -183,7 +198,10 @@ uploads.reviewAddMore	Přidat další soubory
 uploads.reviewPreviewFile	Náhled %@
 uploads.reviewInsecureNetworkNotice	Připojeno přes http. Pokud je tento server jen ve vaší domácí síti, nahrávání nebude mimo ni fungovat.
 uploads.stagingFailed	Tyto soubory se nepodařilo přidat. Zkuste to znovu.
-uploads.stagingSkipped	Položky (%lld) se nepodařilo připravit a byly vynechány.
+uploads.stagingSkipped#one	Položky (%lld) se nepodařilo připravit a byly vynechány.
+uploads.stagingSkipped#few	Položky (%lld) se nepodařilo připravit a byly vynechány.
+uploads.stagingSkipped#many	Položky (%lld) se nepodařilo připravit a byly vynechány.
+uploads.stagingSkipped#other	Položky (%lld) se nepodařilo připravit a byly vynechány.
 uploads.discardTitle	Zahodit nahrávání?
 uploads.discardMessage	Přidané soubory nebudou nahrány.
 uploads.discardConfirm	Zahodit
@@ -943,7 +961,10 @@ menu.go	Přejít
 menu.activity	Přenosy
 menu.showAll	Zobrazit vše
 uploads.notifyDone	Nahrávání dokončeno
-uploads.notifyBody	Nahráno souborů: %lld
+uploads.notifyBody#one	Nahráno souborů: %lld
+uploads.notifyBody#few	Nahráno souborů: %lld
+uploads.notifyBody#many	Nahráno souborů: %lld
+uploads.notifyBody#other	Nahráno souborů: %lld
 downloadQueue.notifyDone	Stahování dokončeno
 fileInfo.sectionVersions	Verze
 fileInfo.versionsNone	Žádné dřívější verze
@@ -1130,3 +1151,6 @@ browse.actionRemoveFromOffline	Odebrat z offline
 offline.rowUpdating	Aktualizace…
 offline.rowWaitingForNetwork	Čeká na síť
 offline.rowUpdateFailed	Aktualizace se nezdařila
+pdfPreview.pageIndicator	%1$lld z %2$lld
+previewToolbar.savePhoto	Uložit fotku
+previewToolbar.saveVideo	Uložit video

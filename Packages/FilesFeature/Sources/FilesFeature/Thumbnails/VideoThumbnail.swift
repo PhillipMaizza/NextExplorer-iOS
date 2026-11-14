@@ -57,7 +57,7 @@ struct VideoThumbnailView: View {
         }
     }
 
-    private static func firstFrame(of url: URL, maxPixelSize: CGFloat) async -> PlatformImage? {
+    static func firstFrame(of url: URL, maxPixelSize: CGFloat) async -> PlatformImage? {
         let generator = AVAssetImageGenerator(asset: AVURLAsset(url: url))
         generator.appliesPreferredTrackTransform = true
         generator.maximumSize = CGSize(width: maxPixelSize, height: maxPixelSize)

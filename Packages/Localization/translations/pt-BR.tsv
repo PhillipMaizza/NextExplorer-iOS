@@ -120,10 +120,14 @@ browse.clipboardCopiedOne	%@ copiado
 browse.clipboardCopiedMany	%lld itens copiados
 browse.progressMoving	Movendo…
 browse.progressCopying	Copiando…
-browse.transferMoved	Movidos %lld itens
-browse.transferCopied	Copiados %lld itens
-browse.transferMovedWithSkipped	Movidos %1$lld itens, ignorados %2$lld
-browse.transferCopiedWithSkipped	Copiados %1$lld itens, ignorados %2$lld
+browse.transferMoved#one	Movido %lld item
+browse.transferMoved#other	Movidos %lld itens
+browse.transferCopied#one	Copiado %lld item
+browse.transferCopied#other	Copiados %lld itens
+browse.transferMovedWithSkipped#one	Movido %1$lld item, ignorados %2$lld
+browse.transferMovedWithSkipped#other	Movidos %1$lld itens, ignorados %2$lld
+browse.transferCopiedWithSkipped#one	Copiado %1$lld item, ignorados %2$lld
+browse.transferCopiedWithSkipped#other	Copiados %1$lld itens, ignorados %2$lld
 browse.transferConflictTitle	Substituir itens?
 browse.transferConflictMessageOne	"%@" já existe nesta pasta.
 browse.transferConflictMessageMany	%lld itens já existem nesta pasta.
@@ -145,7 +149,8 @@ favorites.editColorLabel	Cor
 favorites.editColorDefault	Padrão
 favorites.editSave	Salvar
 favorites.reorderFailed	Não foi possível salvar a nova ordem.
-favorites.removeConfirm	Remover %lld favoritos?
+favorites.removeConfirm#one	Remover %lld favorito?
+favorites.removeConfirm#other	Remover %lld favoritos?
 favorites.removeMessage	Isto apenas os remove dos Favoritos.
 favorites.removeFailedOne	Não foi possível remover esse favorito.
 favorites.removeFailedMany	Não foi possível remover esses favoritos.
@@ -185,7 +190,8 @@ uploads.reviewAddMore	Adicionar mais arquivos
 uploads.reviewPreviewFile	Pré-visualizar %@
 uploads.reviewInsecureNetworkNotice	Conectado por http. Se este servidor só for acessível na sua rede doméstica, os envios não funcionarão quando você estiver fora dela.
 uploads.stagingFailed	Não foi possível adicionar esses arquivos. Tente novamente.
-uploads.stagingSkipped	%lld itens não puderam ser preparados e foram deixados de fora.
+uploads.stagingSkipped#one	%lld item não pôde ser preparado e foi deixado de fora.
+uploads.stagingSkipped#other	%lld itens não puderam ser preparados e foram deixados de fora.
 uploads.discardTitle	Descartar o envio?
 uploads.discardMessage	Os arquivos que adicionou não serão enviados.
 uploads.discardConfirm	Descartar
@@ -875,7 +881,8 @@ menu.go	Ir
 menu.activity	Downloads
 menu.showAll	Mostrar tudo
 uploads.notifyDone	Envios concluídos
-uploads.notifyBody	%lld arquivos enviados
+uploads.notifyBody#one	%lld arquivo enviado
+uploads.notifyBody#other	%lld arquivos enviados
 downloadQueue.notifyDone	Downloads concluídos
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versões
@@ -1142,3 +1149,6 @@ browse.actionRemoveFromOffline	Remover de offline
 offline.rowUpdating	Atualizando…
 offline.rowWaitingForNetwork	Aguardando rede
 offline.rowUpdateFailed	Não foi possível atualizar
+pdfPreview.pageIndicator	%1$lld de %2$lld
+previewToolbar.savePhoto	Salvar Foto
+previewToolbar.saveVideo	Salvar Vídeo
