@@ -246,6 +246,8 @@ struct BrowseContentView: View {
                 // Yield first so these sends land after whatever action presented this view has
                 // finished reducing, never reentrantly during it (TCA forbids reentrant sends).
                 await Task.yield()
+                // Gone already (a jump replaced this screen): its element is no longer in the stack.
+                guard !Task.isCancelled else { return }
                 store.send(.onAppear)
                 store.send(.computeOfflineAvailability)
             }
@@ -342,7 +344,8 @@ struct BrowseContentView: View {
         .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: store.dataSource)
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
-                title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : displayTitle,
+                title: displayTitle,
+                selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : nil,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
                 shouldFadeIntoContent: viewMode != .table,
                 isSearchPending: store.isSearchPending
@@ -361,6 +364,7 @@ struct BrowseContentView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationHistoryTitle(displayTitle)
         .toolbar {
             // The Mac table selects natively (click, Command and Shift click), so select mode
             // and the view mode control are iOS only.
@@ -1549,13 +1553,15 @@ struct BrowseContentView: View {
         }
     }
 
-    /// Bottom scroll clearance for the chrome floating under this list: the breadcrumb bar
-    /// (`BrowseTabView`/`FavoritesView`, pushed screens only: the root's `directoryPath` is
-    /// always empty) and the app-level upload progress bar while it's showing. Both are placed
-    /// by ancestors a `List` inside a pushed `navigationDestination` doesn't reliably respect.
+    /// Bottom scroll clearance for the chrome floating under this list: the split view's path
+    /// bar (`SplitDetailBreadcrumb`, below a tab's root only) and the app wide upload progress
+    /// bar while it's showing. Both are placed by ancestors a `List` inside a pushed
+    /// `navigationDestination` doesn't reliably respect. The path bar stands above the home
+    /// indicator while the list scrolls down to the screen's edge, so that inset counts too.
     private var bottomChromeClearance: CGFloat {
-        (store.directoryPath.isEmpty || !BrowseBreadcrumbBarMetrics
-            .isShown(browseViewModeRaw: viewModeRaw) ? 0 : BrowseBreadcrumbBarMetrics.height)
+        let showsPathBar = !store.directoryPath.isEmpty && BrowseBreadcrumbBarMetrics
+            .isShown(browseViewModeRaw: viewModeRaw, isSplitViewDetail: isSplitViewDetail)
+        return (showsPathBar ? BrowseBreadcrumbBarMetrics.contentClearance + bottomSafeInset : 0)
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
     }
 

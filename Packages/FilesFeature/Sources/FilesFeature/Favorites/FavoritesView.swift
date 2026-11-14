@@ -5,14 +5,8 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum Constants {
-    static let breadcrumbContentSpacing: CGFloat = .space8
-    static let breadcrumbVisibilityAnimationDuration: Double = 0.25
-}
-
 struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
-    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
     /// One list or grid choice for Browse, Favorites and Offline, so switching it in one is switching it everywhere.
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
@@ -86,67 +80,15 @@ struct FavoritesView: View {
         L10n.Favorites.removeConfirm(store.selectedFavoriteIDs.count)
     }
 
-    /// The topmost pushed screen's path: mirrors `BrowseTabView`'s persistent breadcrumb
-    /// bar, since browsing into a favorited folder now stays inside this tab (pushing
-    /// `BrowseFeature` screens) instead of jumping to Browse.
-    private var currentDirectoryPath: String {
-        store.path.last?.directoryPath ?? ""
-    }
-
-    /// The favorited folder itself: the *first* pushed screen, regardless of how deep
-    /// `path` currently goes: anchors the breadcrumb instead of the true server root:
-    /// browsing from Favorites is scoped to that one subtree, so server "Home" isn't
-    /// reachable from here at all.
-    private var rootDirectoryPath: String {
-        store.path.first?.directoryPath ?? ""
-    }
-
-    private var rootTitle: String {
-        store.path.first?.title ?? ""
-    }
-
-    private var isTopScreenSelecting: Bool {
-        store.path.last?.isSelecting ?? false
-    }
-
+    /// The folder path bar is `SplitDetailBreadcrumb`, floating over the split view: an iPhone
+    /// shows none.
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             rootContent
         } destination: { store in
             BrowseContentView(store: store)
-                .navigationTitle("")
-                // See `BrowseTabView`: a split view detail drops what wraps the stack.
-                .overlay(alignment: .bottom) {
-                    if isSplitViewDetail {
-                        breadcrumbBar
-                    }
-                }
         }
-        .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
-            if !isSplitViewDetail {
-                breadcrumbBar
-            }
-        }
-        .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
         .platformAccentTint()
-    }
-
-    @ViewBuilder
-    private var breadcrumbBar: some View {
-        if !currentDirectoryPath.isEmpty, !isTopScreenSelecting,
-           BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: viewModeRaw)
-        {
-            BrowseBreadcrumbBar(
-                directoryPath: currentDirectoryPath,
-                rootTitle: rootTitle,
-                rootPath: rootDirectoryPath,
-                rootIcon: IconKit.folderFill,
-                containerCrumb: (L10n.Favorites.navigationTitle, "", IconKit.starFill)
-            ) { path, title in
-                store.send(.navigateToDirectory(path: path, title: title))
-            }
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-        }
     }
 
     private var rootContent: some View {
@@ -300,8 +242,7 @@ struct FavoritesView: View {
             onConfirm: { store.send(.offlineRemovalConfirmed) },
             onCancel: { store.send(.offlineRemovalCancelled) }
         )
-        // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
-        .navigationTitle("")
+        .navigationHistoryTitle(L10n.Favorites.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .task {
             store.send(.onAppear)

@@ -38,11 +38,9 @@
         func testSignOutReturnsToLogin() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
 
-            // Sign Out now lives inside the active account's collapsible section.
-            XCTAssertTrue(settings.activeAccountRow.waitToAppear(), "Settings should show the active account")
-            settings.activeAccountRow.tap()
+            settings.revealSignOut()
 
             XCTAssertTrue(settings.signOutButton.waitToAppear(), "Expanding the account should reveal Sign Out")
             settings.signOutButton.tap()

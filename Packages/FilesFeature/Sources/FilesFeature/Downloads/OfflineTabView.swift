@@ -353,10 +353,8 @@ struct OfflineTabView: View {
                         )
                     }
                 }
-                // Title lives in the pinned header (see `PinnedTitleSearchHeader`); the nav bar keeps
-                // only its actions.
-                .navigationTitle("")
                 .navigationBarTitleDisplayMode(.inline)
+                .navigationHistoryTitle(L10n.Tab.offline)
                 .task {
                     store.send(.onAppear)
                     offlineStore.send(.onAppear)

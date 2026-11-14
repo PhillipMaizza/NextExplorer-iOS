@@ -47,9 +47,9 @@
         private func openDocumentsFolder(_ app: XCUIApplication) -> BrowseScreen {
             let browse = BrowseScreen(app: app)
             XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-            // Pushing can drop the first tap, so retry until the breadcrumb (shown only below the
-            // root) proves the push landed.
-            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
+            // Pushing can drop the first tap, so retry until the folder's navigation bar proves the
+            // push landed.
+            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.folderNavigationBar(Fixture.folder))
             return browse
         }
 

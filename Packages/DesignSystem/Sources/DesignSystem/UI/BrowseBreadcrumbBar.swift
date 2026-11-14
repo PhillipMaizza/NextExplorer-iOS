@@ -4,29 +4,35 @@ import SwiftUI
 
 private enum Constants {
     static let segmentSpacing: CGFloat = .space4
-    static let verticalPadding: CGFloat = .space16
     static let chevronSize: CGFloat = .iconXSmall
     static let fullOpacity: Double = 1.0
-    /// Empty width after the last segment (also the scroll anchor): keeps the current
-    /// folder's name off the very edge when the bar is scrolled to its trailing end.
-    static let trailingInset: CGFloat = .space16
+    static let barHeight: CGFloat = .size40
+    /// Room inside the capsule on both ends, so the current folder never sits against its edge.
+    static let innerHorizontalPadding: CGFloat = .space24
+    static let outerHorizontalMargin: CGFloat = .space16
+    static let bottomMargin: CGFloat = .space8
+    static let contentGap: CGFloat = .space16
+    static let levelAnimationDuration: Double = 0.25
 }
 
-/// `BrowseBreadcrumbBar`'s total rendered height, shared with `BrowseContentView` so its
-/// list/grid can explicitly reserve the same amount of bottom scroll-content inset. The bar is
-/// placed via `BrowseTabView`'s `.safeAreaInset` on the *ancestor* `NavigationStack`, but a
-/// `List` inside a pushed `navigationDestination` (which is every screen the bar is actually
-/// visible on: the root screen's `directoryPath` is always empty) doesn't reliably extend its
-/// own scroll extent to respect that ancestor inset, letting the last row scroll out from
-/// behind the bar. `BrowseContentView` reserves this same height directly on its own
+/// `BrowseBreadcrumbBar`'s total rendered height (the capsule plus its bottom margin), shared with
+/// `BrowseContentView` so its list/grid can explicitly reserve the same amount of bottom
+/// scroll content inset. A `List` inside a pushed `navigationDestination` doesn't reliably extend
+/// its own scroll extent to respect an ancestor's inset, letting the last row scroll out from
+/// behind the bar, so `BrowseContentView` reserves this same height directly on its own
 /// scrollable content instead of trusting that propagation.
 public enum BrowseBreadcrumbBarMetrics {
-    public static let height: CGFloat = .size48
+    public static let height: CGFloat = Constants.barHeight + Constants.bottomMargin
+    /// What a list reserves under its last row for the bar: its height plus a gap above it.
+    public static let contentClearance: CGFloat = height + Constants.contentGap
 }
 
 /// Mirrors the web client's own path breadcrumb ("Location"): tapping any earlier segment
 /// jumps straight there via the same `openPath` delegate search results use, rather than
 /// popping the navigation stack one folder at a time.
+///
+/// A small frosted capsule floating over the bottom of the content: it hugs a short path and
+/// scrolls a long one, with the content passing blurred underneath.
 ///
 /// `rootPath`/`rootTitle`/`rootIcon` default to true server root ("Home") for Browse, but
 /// Favorites overrides them to the favorited folder itself: browsing there is scoped to
@@ -43,6 +49,12 @@ public struct BrowseBreadcrumbBar: View {
     var rootIcon: Image? = IconKit.drive
     var containerCrumb: (title: String, path: String, icon: Image?)?
     let onSegmentTapped: (_ path: String, _ title: String) -> Void
+    /// The segments' natural width: the capsule shrinks to it when the path is short.
+    @State private var contentWidth: CGFloat?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    #if os(iOS)
+        @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
 
     public init(
         directoryPath: String,
@@ -75,12 +87,45 @@ public struct BrowseBreadcrumbBar: View {
         ([rootPath] + pathSegments[0 ... index]).filter { !$0.isEmpty }.joined(separator: "/")
     }
 
+    /// A level's name: the leading `personal` of the root reads as "My Files".
+    private func levelTitle(for path: String) -> String {
+        let segment = (path as NSString).lastPathComponent
+        let isFirstSegment = rootPath.isEmpty && !path.contains("/")
+        return PersonalSpace.displayName(forSegment: segment, isFirstSegment: isFirstSegment)
+    }
+
+    /// A new level slides in from the trailing edge, a popped one slides back out; only fades with
+    /// Reduce Motion.
+    private var levelTransition: AnyTransition {
+        reduceMotion ? .opacity : .move(edge: .trailing).combined(with: .opacity)
+    }
+
+    private var levelAnimation: Animation? {
+        .easeInOut(duration: Constants.levelAnimationDuration)
+    }
+
     /// A fixed id for the trailing edge of the bar (rather than tagging the last real
     /// segment): `ScrollViewReader` needs some anchor to scroll to, and this way there's
     /// always exactly one, even at the root with no path segments at all.
     private static let trailingAnchorID = "trailing"
 
+    /// A compact width iPhone shows no path bar anywhere: the title and the back button say where
+    /// the user is, and the bar would only crowd the bottom of a small screen.
+    private var isShown: Bool {
+        #if os(iOS)
+            horizontalSizeClass != .compact
+        #elseif os(macOS)
+            true
+        #endif
+    }
+
     public var body: some View {
+        if isShown {
+            bar
+        }
+    }
+
+    private var bar: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: Constants.segmentSpacing) {
@@ -89,30 +134,43 @@ public struct BrowseBreadcrumbBar: View {
                         chevron
                     }
                     segment(title: rootTitle, path: rootPath, icon: rootIcon)
-                    ForEach(pathSegments.indices, id: \.self) { index in
-                        chevron
-                        segment(
-                            title: PersonalSpace.displayName(
-                                forSegment: pathSegments[index],
-                                isFirstSegment: index == 0 && rootPath.isEmpty
-                            ),
-                            path: cumulativePath(through: index),
-                            icon: nil
-                        )
+                    // Keyed by each level's path, so a level pushed or popped slides in or out
+                    // on its own while the ones before it stay put.
+                    ForEach(pathSegments.indices.map { cumulativePath(through: $0) }, id: \.self) { path in
+                        HStack(spacing: Constants.segmentSpacing) {
+                            chevron
+                            segment(title: levelTitle(for: path), path: path, icon: nil)
+                        }
+                        .transition(levelTransition)
                     }
-                    // Trailing spacer doubling as the scroll anchor: keeps the rightmost
-                    // segment readable (not flush against the edge) when scrolled to the end,
-                    // and gives `ScrollViewReader` a stable target even at the root with no
-                    // path segments at all.
-                    Color.clear.frame(width: Constants.trailingInset, height: 1).id(Self.trailingAnchorID)
+                    // Gives `ScrollViewReader` a stable target even at the root with no path
+                    // segments at all.
+                    Color.clear.frame(width: 0, height: 1).id(Self.trailingAnchorID)
                 }
-                .padding(.horizontal, .space16)
-                .padding(.vertical, Constants.verticalPadding)
+                .padding(.horizontal, Constants.innerHorizontalPadding)
+                .frame(height: Constants.barHeight)
+                .animation(levelAnimation, value: directoryPath)
+                .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width in
+                    // The capsule grows and shrinks with the levels; only its first size lands at once.
+                    if contentWidth == nil {
+                        contentWidth = width
+                    } else {
+                        withAnimation(levelAnimation) { contentWidth = width }
+                    }
+                }
             }
-            .frame(height: BrowseBreadcrumbBarMetrics.height)
-            // Bottom only: on iPhone Duo the side safe area is the vertical bar, which the strip
-            // must stop at rather than run under.
-            .background(Color.backgroundSecondary, ignoresSafeAreaEdges: .bottom)
+            .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+            .frame(maxWidth: contentWidth ?? .infinity)
+            .frame(height: Constants.barHeight)
+            // A rotation or the sidebar showing narrows the bar: bring the current folder back.
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { _ in
+                proxy.scrollTo(Self.trailingAnchorID, anchor: .trailing)
+            }
+            .clipShape(Capsule())
+            .dsGlass(in: Capsule())
+            .padding(.horizontal, Constants.outerHorizontalMargin)
+            .padding(.bottom, Constants.bottomMargin)
+            .frame(maxWidth: .infinity)
             // The path is always visible at the trailing edge: deep breadcrumbs otherwise
             // stay scrolled to "Home" after navigating into a new folder, hiding exactly the
             // segment that just changed.

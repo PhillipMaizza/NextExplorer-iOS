@@ -26,12 +26,21 @@ private enum Constants {
 struct SettingsAccountsSection: View {
     let store: StoreOf<SettingsFeature>
     @State private var isActiveAccountExpanded = false
+    /// On iPad the sidebar's account popover switches, adds, signs out and opens the second factor,
+    /// so the section is left out there.
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     private var activeAccount: AccountSummary {
         store.activeAccount
     }
 
     var body: some View {
+        if !isSplitViewDetail {
+            accountsSection
+        }
+    }
+
+    private var accountsSection: some View {
         Section {
             activeAccountRow(activeAccount)
             // Outside the disclosure: the second factor protects the account, so it is not

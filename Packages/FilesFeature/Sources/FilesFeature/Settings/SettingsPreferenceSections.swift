@@ -365,11 +365,10 @@ struct LegalSettingsSection: View {
 
 // MARK: Version footer
 
-/// The bottom of the Settings root: the logo and version (compact only), the credits and the tip
+/// The bottom of the Settings root: the logo and version, the credits and the tip
 /// prompt.
 struct SettingsVersionFooter: View {
     let store: StoreOf<SettingsFeature>
-    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     private var appVersionText: String {
         let info = Bundle.main.infoDictionary
@@ -387,17 +386,13 @@ struct SettingsVersionFooter: View {
 
     var body: some View {
         VStack(spacing: .space16) {
-            // On iPad the logo + version live in the sidebar footer instead, so this
-            // section only carries the credits there; compact keeps the full block.
-            if !isSplitViewDetail {
-                VStack(spacing: Constants.versionLogoSpacing) {
-                    IconKit.logo
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: Constants.versionLogoSize, height: Constants.versionLogoSize)
-                    Text(appVersionText)
-                        .type(.label4, style: .tertiary)
-                }
+            VStack(spacing: Constants.versionLogoSpacing) {
+                IconKit.logo
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.versionLogoSize, height: Constants.versionLogoSize)
+                Text(appVersionText)
+                    .type(.label4, style: .tertiary)
             }
             VStack(spacing: .space4) {
                 // `.body3(.regular)` is the same 14pt/subheadline metrics as label4 but

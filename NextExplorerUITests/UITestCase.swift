@@ -95,6 +95,9 @@ class UITestCase: XCTestCase {
         // A tap can land while the app is still remounting (adding an account rebuilds it), so a
         // few tries before the final wait.
         for _ in 0 ..< UITestTimeout.tabTapAttempts {
+            #if os(iOS)
+                declineSavePasswordIfShown(in: XCUIApplication())
+            #endif
             tapCenter(of: tab)
             if sentinel.appears(within: UITestTimeout.short) {
                 return
@@ -158,7 +161,7 @@ class UITestCase: XCTestCase {
         // bar, where a tap would land on the bar instead.
         while !(element.exists && element.isHittable), swipes < maxSwipes {
             #if os(iOS)
-                scrollContainer(in: app).swipeUp()
+                swipeUp(in: scrollContainer(in: app))
             #else
                 app.scroll(byDeltaX: 0, deltaY: -Self.macScrollStep)
             #endif
@@ -171,15 +174,39 @@ class UITestCase: XCTestCase {
 
     #if os(iOS)
         /// The list on screen, so a swipe starts inside it and never on the tab bar floating above it.
+        /// The widest one, so on iPad it is the screen's content and not the sidebar beside it: the
+        /// content list sits under the sidebar there, so it never reads as hittable and is dragged by
+        /// a point in its middle instead.
         private func scrollContainer(in app: XCUIApplication) -> XCUIElement {
             for query in [app.collectionViews, app.tables, app.scrollViews] {
-                if let visible = query.allElementsBoundByIndex.first(where: { $0.isHittable }) {
-                    return visible
+                let shown = query.allElementsBoundByIndex.filter { $0.exists && !$0.frame.isEmpty }
+                if let widest = shown.max(by: { $0.frame.width < $1.frame.width }) {
+                    return widest
                 }
             }
             return app
         }
+
+        /// Drags the container up by a point in its middle, clear of a bar floating at the bottom.
+        private func swipeUp(in container: XCUIElement) {
+            let start = container.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6))
+            let end = container.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
+            start.press(forDuration: UITestTimeout.dragPress, thenDragTo: end)
+        }
+
+        /// iOS's Save Password prompt can come up a moment after a sign in ends and take the next
+        /// tap; declined here if it is up, without waiting for it.
+        func declineSavePasswordIfShown(in app: XCUIApplication) {
+            let notNow = app.alerts.buttons[UITestCase.savePasswordDeclineTitle].firstMatch
+            if notNow.exists {
+                notNow.tap()
+                _ = notNow.waitToVanish(UITestTimeout.short)
+            }
+        }
     #endif
+
+    /// The button iOS's Save Password prompt offers to decline it (the simulator runs in English).
+    static let savePasswordDeclineTitle = "Not Now"
 
     /// Launches the app with the mock graph enabled. `auth` picks the session state the app
     /// restores on cold launch, `scenario` picks the shape of the mocked file data.
@@ -270,6 +297,8 @@ enum UITestTimeout {
     static let pollInterval: TimeInterval = 0.25
     /// Taps `selectTab` tries before its final wait.
     static let tabTapAttempts = 3
+    /// How long a scroll drag holds before it moves: short enough to read as a swipe, not a long press.
+    static let dragPress: TimeInterval = 0.05
 }
 
 /// Waits until `predicate` holds for `object` (an element or a query) and returns whether it did,

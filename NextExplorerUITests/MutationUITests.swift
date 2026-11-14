@@ -10,8 +10,8 @@
             let browse = BrowseScreen(app: app)
             XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
             // New Folder only appears below root; pushing can drop the first tap, so retry until the
-            // breadcrumb (shown only below the root) proves the push landed.
-            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
+            // folder's navigation bar proves the push landed.
+            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.folderNavigationBar(Fixture.folder))
             openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
             browse.newFolderMenuItem.tap()
 
@@ -27,7 +27,7 @@
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
             XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
+            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.folderNavigationBar(Fixture.folder))
             openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
             browse.newFolderMenuItem.tap()
 
@@ -43,7 +43,7 @@
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
             XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
+            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.folderNavigationBar(Fixture.folder))
             openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
             browse.newFolderMenuItem.tap()
 

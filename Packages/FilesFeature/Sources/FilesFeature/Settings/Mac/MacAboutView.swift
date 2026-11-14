@@ -85,7 +85,7 @@
 
         private var info: some View {
             VStack(alignment: .leading, spacing: Metrics.infoSpacing) {
-                Text(Self.appName)
+                Text(AppIdentity.name)
                     .font(.title2.weight(.semibold))
                 Text(Self.versionText)
                     .foregroundStyle(.secondary)
@@ -103,12 +103,6 @@
                 }
                 .controlSize(.large)
             }
-        }
-
-        private static var appName: String {
-            Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
-                ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
-                ?? ""
         }
 
         private static var versionText: String {

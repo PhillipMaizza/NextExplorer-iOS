@@ -56,6 +56,9 @@ public struct MainTabView: View {
     /// Keep the sidebar open beside the detail in both orientations so the account header and
     /// sections stay visible; the toolbar toggle still hides it on demand.
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    /// Where the sidebar ends, so the path bar floating over the split view keeps to the detail
+    /// column. The detail's own size is not reported again after a rotation; the sidebar's is.
+    @State private var sidebarTrailingEdge: CGFloat = 0
 
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store
@@ -238,9 +241,16 @@ public struct MainTabView: View {
     private func split(@ViewBuilder detail: () -> some View) -> some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             MainTabSidebar(store: store)
+                .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxX } action: {
+                    sidebarTrailingEdge = $0
+                }
         } detail: {
             detail()
                 .environment(\.isSplitViewDetail, true)
+        }
+        .overlay(alignment: .bottom) {
+            SplitDetailBreadcrumb(store: store)
+                .padding(.leading, columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge))
         }
         .navigationSplitViewStyle(.balanced)
         .platformAccentTint()
@@ -347,21 +357,13 @@ public struct MainTabView: View {
         .id(showTabLabels)
     }
 
-    /// Whether the current tab is showing a `BrowseBreadcrumbBar` right now: the upload bar
-    /// has to sit above it. Mirrors `BrowseTabView` / `FavoritesView`'s own visibility rule.
+    /// Room for the split view's `SplitDetailBreadcrumb` under the upload bar (none on iPhone,
+    /// which shows no path).
     private var breadcrumbClearance: CGFloat {
-        switch store.selectedTab {
-        case .browse:
-            let dir = store.browse.path.last?.directoryPath ?? store.browse.root.directoryPath
-            let selecting = store.browse.path.last?.isSelecting ?? store.browse.root.isSelecting
-            return (!dir.isEmpty && !selecting) ? Constants.breadcrumbClearance : 0
-        case .favorites:
-            let dir = store.favorites.path.last?.directoryPath ?? ""
-            let selecting = store.favorites.path.last?.isSelecting ?? false
-            return (!dir.isEmpty && !selecting) ? Constants.breadcrumbClearance : 0
-        default:
-            return 0
-        }
+        #if os(iOS)
+            guard horizontalSizeClass == .regular else { return 0 }
+        #endif
+        return store.splitBreadcrumbPath == nil ? 0 : Constants.breadcrumbClearance
     }
 
     private var uploadToastMessage: DSToastMessage? {

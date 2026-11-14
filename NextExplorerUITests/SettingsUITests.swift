@@ -7,7 +7,7 @@
         func testOpenLanguagePicker() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
 
             XCTAssertTrue(
                 scrollTo(settings.pageRow("general"), in: app),
@@ -26,7 +26,7 @@
         func testOpenThumbnailSettings() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
 
             XCTAssertTrue(scrollTo(settings.pageRow("administration"), in: app), "An admin should see the Admin row")
             settings.pageRow("administration").tap()
@@ -38,7 +38,7 @@
         func testTipJarSheetOpens() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
 
             // The tip button lives in the version footer at the very bottom of the List.
             XCTAssertTrue(scrollTo(settings.tipButton, in: app), "The version footer should offer a tip button")

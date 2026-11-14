@@ -5,12 +5,35 @@ import Localization
 import SwiftUI
 
 private enum Constants {
+    /// Inset of a footer row's icon inside its pill, lining it up with the section rows above.
+    static let footerRowInset: CGFloat = .space16
     /// Icon size for the iPad sidebar rows.
-    static let sidebarIconSize: CGFloat = 24
-    /// Opacity of the neutral selection pill behind the active sidebar row.
-    static let sidebarSelectionOpacity: Double = 1.0
-    /// Logo size in the iPad sidebar footer.
-    static let sidebarFooterLogoSize: CGFloat = 40
+    static let sidebarIconSize: CGFloat = .iconMedium
+    /// Space between a sidebar row's icon and its title, the same in every row.
+    static let iconTitleSpacing: CGFloat = .space12
+    /// The height of a section row in the iPad sidebar list, so the footer rows below it match.
+    static let sidebarRowHeight: CGFloat = 52
+    // The account block at the foot of the sidebar: larger on iPad, where it is a touch target
+    // that opens the account popover.
+    #if os(iOS)
+        static let avatarSize: CGFloat = .size44
+        static var profileNameType: Typography.TextType {
+            .body1(.bold)
+        }
+
+        static var profileEmailType: Typography.TextType {
+            .body3(.regular)
+        }
+    #elseif os(macOS)
+        static let avatarSize: CGFloat = .size32
+        static var profileNameType: Typography.TextType {
+            .body3(.bold)
+        }
+
+        static var profileEmailType: Typography.TextType {
+            .caption(.regular)
+        }
+    #endif
     /// The Mac sidebar column opens wider than the system default, since a Mac window has the
     /// space an iPad split view does not.
     static let macSidebarMinWidth: CGFloat = 240
@@ -20,26 +43,33 @@ private enum Constants {
     static let macRowVerticalPadding: CGFloat = .space8
 }
 
-/// The split view's sidebar on iPad and the Mac: the signed in account, the sections, and the
-/// app identity footer. Compact width uses the bottom tab bar instead.
+/// The split view's sidebar on iPad and the Mac: the app's name, the sections, then the tip jar, help
+/// and Settings, and the signed in account at the foot. Compact width uses the bottom tab bar instead.
 struct MainTabSidebar: View {
     let store: StoreOf<MainTabFeature>
+    @Environment(\.openURL) private var openURL
     #if os(macOS)
         @Environment(\.openSettings) private var openSettings
     #endif
 
-    private static var sidebarItems: [(tab: MainTabFeature.Tab, title: String, icon: Image)] {
+    /// The tab bar's identifiers, so a sidebar row is the same destination to VoiceOver and UI tests.
+    private static func identifier(for tab: MainTabFeature.Tab) -> String {
+        switch tab {
+        case .browse: AccessibilityIdentifiers.Tab.browse
+        case .favorites: AccessibilityIdentifiers.Tab.favorites
+        case .shared: AccessibilityIdentifiers.Tab.shared
+        case .downloads: AccessibilityIdentifiers.Tab.downloads
+        case .settings: AccessibilityIdentifiers.Tab.settings
+        }
+    }
+
+    private static var sectionItems: [(tab: MainTabFeature.Tab, title: String, icon: Image)] {
         [
             (.browse, L10n.Tab.browse, IconKit.tabBrowse),
             (.favorites, L10n.Tab.favorites, IconKit.tabFavorites),
             (.shared, L10n.Tab.shared, IconKit.tabShare),
             (.downloads, L10n.Tab.offline, IconKit.tabDownloads),
-            (.settings, L10n.Tab.settings, IconKit.tabSettings),
         ]
-        #if os(macOS)
-        // Settings has its own window (⌘,), opened by its own row.
-        .filter { $0.tab != .settings }
-        #endif
     }
 
     var body: some View {
@@ -47,8 +77,7 @@ struct MainTabSidebar: View {
             .listStyle(.sidebar)
         #if os(iOS)
             // Suppress the system's opaque accent selection capsule; each row draws its own
-            // translucent neutral pill via `listRowBackground` instead. The Mac keeps the
-            // system's own sidebar selection.
+            // pill via `listRowBackground` instead. The Mac keeps the system's own sidebar selection.
             .tint(Color.clear)
         #endif
             .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -71,37 +100,40 @@ struct MainTabSidebar: View {
                     store.send(.tabSelected(tab))
                 }
             }
-        )) { sidebarSections }
+        )) {
+            Section {
+                appIdentity
+            }
+            Section {
+                ForEach(Self.sectionItems, id: \.tab) { item in
+                    sidebarRow(item)
+                }
+            }
+        }
     }
 
-    @ViewBuilder
-    private var sidebarSections: some View {
-        Section {
-            sidebarProfile
+    /// The app icon and name, heading the sidebar. Not a destination, so it carries no tag.
+    /// Laid out like a section row (same icon frame, same leading edge), so the logo lines up with
+    /// the section icons below it.
+    private var appIdentity: some View {
+        HStack(spacing: Constants.iconTitleSpacing) {
+            IconKit.logo
+                .resizable()
+                .scaledToFit()
+                .frame(width: Constants.sidebarIconSize, height: Constants.sidebarIconSize)
+                .accessibilityHidden(true)
+            Text(AppIdentity.name)
+                .type(.headline4, style: .primaryOnSurface)
+                .lineLimit(1)
         }
-        Section {
-            ForEach(Self.sidebarItems, id: \.tab) { item in
-                sidebarRow(item)
-            }
-            #if os(macOS)
-                macSettingsRow
-            #endif
-        }
+        .padding(.vertical, .space4)
+        .accessibilityAddTraits(.isHeader)
+        #if os(iOS)
+            .listRowBackground(Color.clear)
+        #endif
     }
 
     #if os(macOS)
-        /// Settings is its own window on the Mac, so this row opens it instead of selecting a tab.
-        private var macSettingsRow: some View {
-            Button { openSettings() } label: {
-                Label { Text(L10n.Tab.settings) } icon: { MacSidebarIcon(image: Self.macIcon(for: .settings)) }
-                    .padding(.vertical, Constants.macRowVerticalPadding)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(L10n.Tab.settings)
-        }
-
         /// The tab bar artwork is drawn for iOS tab bars; the Mac sidebar uses system symbols
         /// at the standard sidebar size instead.
         private static func macIcon(for tab: MainTabFeature.Tab) -> Image {
@@ -131,142 +163,196 @@ struct MainTabSidebar: View {
                 }
             }
             .padding(.vertical, Constants.macRowVerticalPadding)
+            .accessibilityIdentifier(Self.identifier(for: item.tab))
             .tag(item.tab)
         #else
             let isSelected = store.selectedTab == item.tab
             HStack {
-                Label {
-                    Text(item.title)
-                        .type(
-                            .body1(isSelected ? .semibold : .regular),
-                            style: isSelected ? .primaryOnSurface : .secondary
-                        )
-                } icon: {
-                    sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
-                }
-                .accessibilityLabel(item.title)
+                rowLabel(item.title, icon: item.icon, isSelected: isSelected)
+                    .accessibilityLabel(item.title)
                 if hasNewFiles {
                     Spacer()
                     NewFilesDot()
+                        .accessibilityHidden(true)
                 }
             }
+            .accessibilityElement(children: .combine)
+            // The dot reads as the row's value, as it does on the tab bar, not as part of its name.
+            .accessibilityValue(hasNewFiles ? L10n.Offline.newFilesBadge : "")
+            .accessibilityIdentifier(Self.identifier(for: item.tab))
+            .accessibilityAddTraits(.isButton)
             .tag(item.tab)
-            .listRowBackground(sidebarSelectionBackground(isSelected: isSelected))
+            .listRowBackground(SidebarSelectionPill(isSelected: isSelected))
         #endif
     }
 
-    /// Translucent neutral selection pill: `primaryDS` at low opacity lightens the dark sidebar
-    /// and darkens the light one, a soft capsule rather than the accent fill.
-    @ViewBuilder
-    private func sidebarSelectionBackground(isSelected: Bool) -> some View {
-        if isSelected {
-            Capsule(style: .continuous)
-                .fill(Color.accent.opacity(Constants.sidebarSelectionOpacity))
-                .padding(.vertical, .space2)
-        } else {
-            Color.clear
+    /// One explicit stack rather than a `Label`, whose icon spacing differs inside a List and out of
+    /// one: the section rows and the footer rows then line up exactly.
+    private func rowLabel(_ title: String, icon: Image, isSelected: Bool) -> some View {
+        HStack(spacing: Constants.iconTitleSpacing) {
+            icon
+                .resizable()
+                .scaledToFit()
+                .frame(width: Constants.sidebarIconSize, height: Constants.sidebarIconSize)
+                .foregroundStyle(isSelected ? Color.primaryDS : Color.secondaryDS)
+            Text(title)
+                .type(
+                    .body1(isSelected ? .semibold : .regular),
+                    style: isSelected ? .primaryOnSurface : .secondary
+                )
         }
     }
 
-    private static var sidebarIconSize: CGFloat {
-        Constants.sidebarIconSize
-    }
-
-    private func sidebarIcon(_ image: Image, color: Color) -> some View {
-        image
-            .resizable()
-            .scaledToFit()
-            .frame(width: Self.sidebarIconSize, height: Self.sidebarIconSize)
-            .foregroundStyle(color)
-    }
-
-    /// Signed in identity at the top of the sidebar: avatar + name + email. Read only on iPad,
-    /// where account actions stay in Settings; the Mac opens an account menu from it.
-    private var sidebarProfile: some View {
-        #if os(macOS)
-            MacSidebarAccountMenu(
-                store: store.scope(state: \.settings, action: \.settings),
-                onChangePassword: {
-                    store.send(.settings(.changePasswordButtonTapped))
-                }
-            ) {
-                HStack(spacing: .space8) {
-                    profileSummary
-                    IconKit.chevronUpDown
-                        .foregroundStyle(Color.secondaryDS)
-                }
-                .contentShape(Rectangle())
+    /// The tip jar, help and Settings, then a divider and the signed in account.
+    private var sidebarFooter: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            footerButton(L10n.TipJar.title, icon: IconKit.coffee, action: openTipJar)
+            footerButton(L10n.Settings.rowSupport, icon: IconKit.help, opensOutside: true) {
+                openURL(AppLinks.support)
             }
+            settingsButton
+            Divider()
+                .padding(.top, .space16)
+                .padding(.bottom, .space24)
+            sidebarProfile
+        }
+        .padding(.horizontal, .space16)
+        .padding(.vertical, .space12)
+    }
+
+    private var settingsButton: some View {
+        #if os(macOS)
+            // Settings has its own window (⌘,) on the Mac.
+            footerButton(L10n.Tab.settings, icon: IconKit.gearshape) { openSettings() }
         #else
-            profileSummary
+            footerButton(L10n.Tab.settings, icon: IconKit.gearshape, isSelected: store.selectedTab == .settings) {
+                store.send(.tabSelected(.settings))
+            }
+            .accessibilityIdentifier(AccessibilityIdentifiers.Tab.settings)
         #endif
+    }
+
+    /// The Mac's main window hosts the tip jar; on iPad it is Settings, so the jar opens there.
+    private func openTipJar() {
+        #if os(iOS)
+            store.send(.tabSelected(.settings))
+        #endif
+        store.send(.settings(.tipJarButtonTapped))
+    }
+
+    private func footerButton(
+        _ title: String,
+        icon: Image,
+        isSelected: Bool = false,
+        opensOutside: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        // The section rows' own label, height and inset, so both groups read as one list.
+        Button(action: action) {
+            HStack {
+                rowLabel(title, icon: icon, isSelected: isSelected)
+                    .lineLimit(1)
+                if opensOutside {
+                    Spacer(minLength: 0)
+                    // A page outside the app, marked like a link that leaves it.
+                    IconKit.externalLink
+                        .foregroundStyle(Color.secondaryDS)
+                        .accessibilityHidden(true)
+                }
+            }
+            .padding(.horizontal, Constants.footerRowInset)
+            .frame(maxWidth: .infinity, minHeight: Constants.sidebarRowHeight, alignment: .leading)
+            .background(SidebarSelectionPill(isSelected: isSelected))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    /// Signed in identity at the foot of the sidebar: avatar, name and email. It opens the account
+    /// popover, for switching, adding and signing out without a trip to Settings.
+    private var sidebarProfile: some View {
+        SidebarAccountMenu(
+            store: store.scope(state: \.settings, action: \.settings),
+            onChangePassword: {
+                #if os(iOS)
+                    // Change Password is pushed inside Settings on iPad.
+                    store.send(.tabSelected(.settings))
+                #endif
+                store.send(.settings(.changePasswordButtonTapped))
+            },
+            revealSettings: {
+                #if os(iOS)
+                    store.send(.tabSelected(.settings))
+                #endif
+            }
+        ) {
+            HStack(spacing: .space8) {
+                profileSummary
+                IconKit.chevronUpDown
+                    .foregroundStyle(Color.secondaryDS)
+            }
+            .contentShape(Rectangle())
+        }
     }
 
     private var profileSummary: some View {
         HStack(spacing: .space12) {
-            AvatarView(displayName: store.settings.displayName, size: .size44)
+            AvatarView(displayName: store.settings.displayName, size: Constants.avatarSize)
             VStack(alignment: .leading, spacing: .space2) {
                 Text(store.settings.displayName)
-                    .type(.body2(.bold), style: .primaryOnSurface)
+                    .type(Constants.profileNameType, style: .primaryOnSurface)
                     .lineLimit(1)
                 if let email = store.settings.user.email {
                     Text(email)
-                        .type(.body3(.regular), style: .secondary)
+                        .type(Constants.profileEmailType, style: .secondary)
                         .lineLimit(1)
                         .truncationMode(.tail)
                 }
             }
             Spacer(minLength: 0)
         }
-        .padding(.vertical, .space4)
-    }
-
-    /// App identity footer pinned to the bottom of the sidebar: logo + marketing version. On iPad
-    /// the interactive credits stay in the Settings detail, where the tip jar sheet is presented;
-    /// the Mac adds the coffee link here and hosts the tip jar on its main window.
-    private var sidebarFooter: some View {
-        VStack(spacing: .space8) {
-            IconKit.logo
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.sidebarFooterLogoSize, height: Constants.sidebarFooterLogoSize)
-                .accessibilityHidden(true)
-            Text(appVersionText)
-                .type(.body3(.regular), style: .tertiary)
-            #if os(macOS)
-                // The Mac's Settings window has no credits block, so the tip jar starts here.
-                Button {
-                    store.send(.settings(.tipJarButtonTapped))
-                } label: {
-                    (Text(L10n.Settings.creditsLikeApp + " ").fontWeight(.regular)
-                        + Text(L10n.Settings.creditsBuyCoffee).fontWeight(.bold).foregroundColor(.accent))
-                        .type(.body3(.regular), style: .tertiary)
-                        .multilineTextAlignment(.center)
-                }
-                .buttonStyle(.plain)
-            #endif
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, .space16)
-    }
-
-    private var appVersionText: String {
-        let info = Bundle.main.infoDictionary
-        let version = info?["CFBundleShortVersionString"] as? String ?? "-"
-        let build = info?["CFBundleVersion"] as? String ?? "-"
-        return L10n.Settings.appVersion(version, build)
-            .replacingOccurrences(of: "(\(build))", with: "")
-            .trimmingCharacters(in: .whitespaces)
+        .padding(.horizontal, Constants.footerRowInset)
     }
 }
 
-#Preview {
-    NavigationSplitView {
-        MainTabSidebar(store: Store(initialState: MainTabFeature.State(
-            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-            user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe")
-        )) { MainTabFeature() } withDependencies: { $0.filesClient = .previewValue })
+/// The selected row's pill: the accent capsule, so the sidebar's selection reads like the tab bar's.
+private struct SidebarSelectionPill: View {
+    let isSelected: Bool
+
+    var body: some View {
+        if isSelected {
+            Capsule(style: .continuous)
+                .fill(Color.accent)
+                .padding(.vertical, .space2)
+        } else {
+            Color.clear
+        }
+    }
+}
+
+@MainActor
+private func previewSidebar(selectedTab: MainTabFeature.Tab = .browse) -> some View {
+    var state = MainTabFeature.State(
+        serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+        user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe")
+    )
+    state.selectedTab = selectedTab
+    let store = Store(initialState: state) { MainTabFeature() } withDependencies: {
+        $0.filesClient = .previewValue
+    }
+    return NavigationSplitView {
+        MainTabSidebar(store: store)
     } detail: {
         Color.clear
     }
+}
+
+#Preview("Browse") {
+    previewSidebar()
+}
+
+#Preview("Settings") {
+    previewSidebar(selectedTab: .settings)
 }
