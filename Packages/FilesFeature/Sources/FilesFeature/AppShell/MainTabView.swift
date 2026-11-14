@@ -41,6 +41,7 @@ public struct MainTabView: View {
     /// each tab's body on first selection defers the first layout pass to when the tab is
     /// actually on screen.
     @State private var visitedTabs: Set<MainTabFeature.Tab> = [.browse]
+    @State private var offlinePhase = OfflineDownloadProgress.Phase.idle
     /// Mirrors `store.uploads.isActive` so list screens can reserve bottom inset for the bar.
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     /// The bar's real rendered height, measured below and read by list screens instead of a
@@ -90,7 +91,8 @@ public struct MainTabView: View {
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isBarVisible)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isActive)
-            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.isOfflineBarVisible)
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: offlinePhase.showsOfflineBar)
+            .onOfflinePhaseChange(initial: true) { offlinePhase = $0 }
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
             .onChange(of: shouldShowTransferBars) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }
@@ -185,16 +187,12 @@ public struct MainTabView: View {
         $uploadBarHeight.withLock { $0 = height }
     }
 
-    private var isAnyTransferBarVisible: Bool {
-        store.uploads.isBarVisible || store.downloadQueue.isBarVisible || store.isOfflineBarVisible
-    }
-
     /// The floating transfer bars; the Mac shows a toolbar activity button instead.
     private var shouldShowTransferBars: Bool {
         #if os(macOS)
             false
         #else
-            isAnyTransferBarVisible
+            store.uploads.isBarVisible || store.downloadQueue.isBarVisible || offlinePhase.showsOfflineBar
         #endif
     }
 

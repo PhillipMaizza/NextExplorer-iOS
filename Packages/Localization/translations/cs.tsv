@@ -1147,6 +1147,7 @@ offline.tabEmpty	Zatím není nic dostupné offline. U souboru nebo složky zvol
 offline.removeItemTitle	Odebrat „%@“ z dostupných offline?
 offline.removeItemsTitle	Odebrat %lld položek z dostupných offline?
 offline.removeItemMessage	Tím se smažou soubory uložené pro offline použití na tomto zařízení. Vaše soubory na serveru se nezmění.
+offline.shareNotKept	Tyto soubory zatím nejsou v tomto zařízení.
 browse.actionRemoveFromOffline	Odebrat z offline
 offline.rowUpdating	Aktualizace…
 offline.rowWaitingForNetwork	Čeká na síť

@@ -68,7 +68,9 @@ struct BrowseOfflineCacheTests {
         let browse = AsyncGate()
         let favorites = AsyncGate()
         let offline = OfflineFileStore.inMemory()
-        offline.saveListing(cachedListing([cachedItem]))
+        let kept = cachedListing([cachedItem])
+        offline.setPinnedRoots([OfflinePinnedRoot(path: kept.path, isDirectory: true)])
+        offline.saveListing(kept)
         let store = docsStore {
             $0.serveEmptyFolders()
             $0.filesClient.browse = { _, _ in
@@ -95,7 +97,7 @@ struct BrowseOfflineCacheTests {
             $0.phase = .loaded
             $0.dataSource = .cached(fetchedAt: fetchedAt)
         }
-        await store.receive(\.offlineAvailabilityComputed)
+        await store.receive(\.offlineAvailabilityComputed) { $0.offlineItemIDs = [cachedItem.id] }
         favorites.open()
         await store.receive(\.favoritesResponse) {
             $0.hasLoadedFavorites = true

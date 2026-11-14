@@ -121,6 +121,17 @@ struct IdentifiedURL: Identifiable {
             }
         }
 
+        /// Presents the system share sheet for files kept on the device.
+        func keptFilesShareSheet(_ share: KeptFilesShare?, onDismiss: @escaping () -> Void) -> some View {
+            sheet(item: Binding(get: { share }, set: {
+                if $0 == nil {
+                    onDismiss()
+                }
+            })) { share in
+                ActivityShareSheet(items: share.urls).systemSharePresentation()
+            }
+        }
+
         /// Half height like the system's own share sheet, where the sheet is frosted glass; the
         /// system goes opaque by itself with Reduce Transparency on.
         private func systemSharePresentation() -> some View {

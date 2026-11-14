@@ -139,6 +139,8 @@ public struct OfflineDownloadsFeature {
                         await BackgroundActivity.run(name: Constants.downloadTaskName) {
                             await Self.runDownloads(files, serverURL: serverURL, filesClient: filesClient, send: send)
                         }
+                        // A file taken off while this run listed or fetched it may have landed again: dropped here.
+                        offlineFileStore.reconcile(nil)
                         if Task.isCancelled {
                             return
                         }
@@ -330,7 +332,10 @@ public struct OfflineDownloadsFeature {
         return .run { send in
             try await CacheAccountScope.withPinned(scope) {
                 let walk = try await Self.walk(
-                    roots: rootItems, serverURL: serverURL, filesClient: filesClient,
+                    roots: rootItems,
+                    serverURL: serverURL,
+                    filesClient: filesClient,
+                    keeps: { roots.keeps($0) },
                     onListing: Self.listingSink(offlineFileStore, fetchedAt: now)
                 )
                 if !walk.hasIncompleteWalk {
@@ -369,6 +374,8 @@ public struct OfflineDownloadsFeature {
                 await BackgroundActivity.run(name: Constants.syncTaskName) {
                     await Self.runDownloads(pending, serverURL: serverURL, filesClient: filesClient, send: send)
                 }
+                // A file taken off while this run listed or fetched it may have landed again: dropped here.
+                offlineFileStore.reconcile(nil)
                 if Task.isCancelled {
                     return
                 }
@@ -510,8 +517,14 @@ public struct OfflineDownloadsFeature {
     /// Same walk as `enumerate`, but reports the folders that could not be listed. A folder that
     /// fails to list is skipped, not fatal, so one unreadable subfolder doesn't sink an otherwise good
     /// run, yet the result is flagged incomplete so callers never treat it as the full server state.
+    /// What `keeps` turns down (a file or folder taken off inside a pinned folder) is left out, with
+    /// everything below it.
     static func walk(
-        roots: [FileItem], serverURL: URL, filesClient: FilesClient, skipsUnreadableFolders: Bool = true,
+        roots: [FileItem],
+        serverURL: URL,
+        filesClient: FilesClient,
+        skipsUnreadableFolders: Bool = true,
+        keeps: @Sendable (String) -> Bool = { _ in true },
         onListing: (@Sendable (String, BrowseResult) -> Void)? = nil
     ) async throws -> OfflineWalkResult {
         var files: [FileItem] = []
@@ -579,7 +592,8 @@ public struct OfflineDownloadsFeature {
                 }
                 // Only what lies below the folder, each once: a listing that loops back or reaches
                 // outside its folder can never make the walk run forever.
-                for item in items where item.id.hasPrefix(folder + "/") && seen.insert(item.id).inserted {
+                let below = items.filter { $0.id.hasPrefix(folder + "/") && keeps($0.id) }
+                for item in below where seen.insert(item.id).inserted {
                     if item.isDirectory {
                         queue.append(item)
                     } else {

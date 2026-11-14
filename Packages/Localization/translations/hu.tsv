@@ -1123,6 +1123,7 @@ offline.tabEmpty	Még semmi sem érhető el offline. Válassza a(z) „Elérhet�
 offline.removeItemTitle	Eltávolítja a(z) „%@” elemet az offline elérhetők közül?
 offline.removeItemsTitle	Eltávolít %lld elemet az offline elérhetők közül?
 offline.removeItemMessage	Ez törli az offline használatra mentett fájlokat ezen az eszközön. A kiszolgálón lévő fájljait nem érinti.
+offline.shareNotKept	Ezek a fájlok még nincsenek ezen az eszközön.
 browse.actionRemoveFromOffline	Eltávolítás az offline közül
 offline.rowUpdating	Frissítés…
 offline.rowWaitingForNetwork	Hálózatra vár

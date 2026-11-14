@@ -1150,6 +1150,7 @@ offline.tabEmpty	Er is nog niets offline beschikbaar. Kies ‘Offline beschikbaa
 offline.removeItemTitle	‘%@’ verwijderen uit Offline beschikbaar?
 offline.removeItemsTitle	%lld onderdelen verwijderen uit Offline beschikbaar?
 offline.removeItemMessage	Hiermee worden de voor offline gebruik opgeslagen bestanden op dit apparaat verwijderd. Je bestanden op de server worden niet gewijzigd.
+offline.shareNotKept	Deze bestanden staan nog niet op dit apparaat.
 browse.actionRemoveFromOffline	Verwijderen uit offline
 offline.rowUpdating	Bijwerken…
 offline.rowWaitingForNetwork	Wacht op netwerk

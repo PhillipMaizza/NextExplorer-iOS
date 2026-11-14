@@ -1202,6 +1202,7 @@ offline.tabEmpty	لا شيء متاح دون اتصال بعد. اختر «مت�
 offline.removeItemTitle	إزالة «%@» من المتاح دون اتصال؟
 offline.removeItemsTitle	إزالة %lld عناصر من المتاح دون اتصال؟
 offline.removeItemMessage	يؤدي هذا إلى حذف الملفات المحفوظة للاستخدام دون اتصال على هذا الجهاز. لن تتأثر ملفاتك على الخادم.
+offline.shareNotKept	هذه الملفات ليست على هذا الجهاز بعد.
 browse.actionRemoveFromOffline	إزالة من المتاح دون اتصال
 offline.rowUpdating	جارٍ التحديث…
 offline.rowWaitingForNetwork	في انتظار الشبكة

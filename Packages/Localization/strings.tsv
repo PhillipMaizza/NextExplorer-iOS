@@ -974,6 +974,7 @@ offline.removeConfirm	Remove
 offline.removeItemTitle	Remove “%@” from Available Offline?
 offline.removeItemsTitle	Remove %lld items from Available Offline?
 offline.removeItemMessage	The copy on this device is deleted. Your files on the server are not affected.
+offline.shareNotKept	These files aren't on this device yet.
 offline.preparing	Preparing…
 offline.downloadingName	Downloading %@
 offline.progressCount	%lld of %lld files

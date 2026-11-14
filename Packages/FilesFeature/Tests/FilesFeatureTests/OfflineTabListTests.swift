@@ -14,6 +14,8 @@ struct OfflineTabListTests {
         static let apple = "Apple.pdf"
         static let mango = "mango.txt"
         static let folderPath = "/tmp/Downloads/"
+        static let pinnedFolder = TestFolder.documents
+        static let pinnedFile = TestPath.photosPhoto
     }
 
     private func download(_ name: String, size: Int64, modifiedOffset: TimeInterval) -> LocalDownload {
@@ -149,7 +151,102 @@ struct OfflineTabListTests {
     func selectAllOnlySelectsWhatTheSearchStillShows() async {
         let store = TestStore(initialState: state(searchQuery: "pdf")) { OfflineTabFeature() }
 
-        await store.send(.selectAllTapped) { $0.selectedDownloadIDs = [zebra.id, apple.id] }
+        await store.send(.selectAllTapped(pinnedPaths: [])) { $0.selectedDownloadIDs = [zebra.id, apple.id] }
         await store.send(.deselectAllTapped) { $0.selectedDownloadIDs = [] }
+    }
+
+    // MARK: pinned items in the selection
+
+    @Test("A pinned item is picked and unpicked next to the saved files")
+    func tappingAPinnedItemTwiceSelectsThenDeselectsIt() async {
+        let store = TestStore(initialState: state()) { OfflineTabFeature() }
+
+        await store.send(.pinnedSelectionToggled(path: Constants.pinnedFolder)) {
+            $0.selectedPinnedPaths = [Constants.pinnedFolder]
+        }
+        await store.send(.itemSelectionToggled(zebra.id)) { $0.selectedDownloadIDs = [zebra.id] }
+        #expect(store.state.selectedCount == 2)
+        await store.send(.pinnedSelectionToggled(path: Constants.pinnedFolder)) { $0.selectedPinnedPaths = [] }
+        #expect(store.state.selectedCount == 1)
+    }
+
+    @Test("Select All picks the pinned items the tab shows along with the saved files")
+    func selectAllPicksPinnedItemsToo() async {
+        let store = TestStore(initialState: state(searchQuery: "pdf")) { OfflineTabFeature() }
+
+        await store.send(.selectAllTapped(pinnedPaths: [Constants.pinnedFile])) {
+            $0.selectedDownloadIDs = [zebra.id, apple.id]
+            $0.selectedPinnedPaths = [Constants.pinnedFile]
+        }
+        await store.send(.deselectAllTapped) {
+            $0.selectedDownloadIDs = []
+            $0.selectedPinnedPaths = []
+        }
+    }
+
+    @Test("Select All with nothing pinned on screen picks no pinned item")
+    func selectAllWithNoPinnedItems() async {
+        let store = TestStore(initialState: state(searchQuery: "pdf")) { OfflineTabFeature() }
+
+        await store.send(.selectAllTapped(pinnedPaths: [])) { $0.selectedDownloadIDs = [zebra.id, apple.id] }
+        #expect(store.state.selectedPinnedPaths.isEmpty)
+    }
+
+    @Test("Leaving and entering select mode drops picked pinned items")
+    func togglingSelectModeDropsPinnedItems() async {
+        var initial = state()
+        initial.isSelecting = true
+        initial.selectedPinnedPaths = [Constants.pinnedFolder]
+        let store = TestStore(initialState: initial) { OfflineTabFeature() }
+
+        await store.send(.selectModeToggled) {
+            $0.isSelecting = false
+            $0.selectedPinnedPaths = []
+        }
+    }
+
+    @Test("Removing the picked pinned items from offline ends select mode")
+    func removingPinnedItemsEndsSelectMode() async {
+        var initial = state()
+        initial.isSelecting = true
+        initial.selectedPinnedPaths = [Constants.pinnedFolder, Constants.pinnedFile]
+        initial.selectedDownloadIDs = [zebra.id]
+        let store = TestStore(initialState: initial) { OfflineTabFeature() }
+
+        await store.send(.pinnedSelectionRemoved) {
+            $0.isSelecting = false
+            $0.selectedPinnedPaths = []
+            $0.selectedDownloadIDs = []
+        }
+    }
+
+    @Test("A picked pinned item no longer shown leaves the selection; the others stay")
+    func pinnedItemsNoLongerShownLeaveTheSelection() async {
+        var initial = state()
+        initial.isSelecting = true
+        initial.selectedPinnedPaths = [Constants.pinnedFolder, Constants.pinnedFile]
+        let store = TestStore(initialState: initial) { OfflineTabFeature() }
+
+        await store.send(.shownPinnedPathsChanged([Constants.pinnedFile, TestFolder.inbox])) {
+            $0.selectedPinnedPaths = [Constants.pinnedFile]
+        }
+        #expect(store.state.selectedCount == 1)
+        await store.send(.shownPinnedPathsChanged([])) { $0.selectedPinnedPaths = [] }
+    }
+
+    @Test("Deleting the saved files also clears picked pinned items as select mode ends")
+    func bulkDeleteEndsSelectModeWithPinnedItems() async {
+        var initial = state()
+        initial.isSelecting = true
+        initial.selectedPinnedPaths = [Constants.pinnedFile]
+        initial.selectedDownloadIDs = [zebra.id]
+        let store = TestStore(initialState: initial) { OfflineTabFeature() }
+
+        await store.send(.bulkDeleteResponse([zebra.id])) {
+            $0.downloads.remove(id: zebra.id)
+            $0.isSelecting = false
+            $0.selectedPinnedPaths = []
+            $0.selectedDownloadIDs = []
+        }
     }
 }

@@ -117,7 +117,7 @@ struct SearchOnDeviceTests {
 
         let result = OfflineAvailability.classify(
             entries,
-            pinnedPaths: [Constants.tripsPath],
+            roots: [OfflinePinnedRoot(path: Constants.tripsPath, isDirectory: true)],
             id: \.id,
             isDirectory: \.isDirectory,
             hasCopy: \.hasCopy
@@ -129,6 +129,23 @@ struct SearchOnDeviceTests {
             "\(TestFolder.docs)/\(TestFile.vacationPhoto)",
         ])
         #expect(result.pinned == [Constants.tripsPath])
+    }
+
+    @Test("What was taken off inside a pinned folder, and everything under it, is not on the device")
+    func whatWasTakenOffIsNotOnTheDevice() {
+        let plan = "\(Constants.tripsPath)/\(Constants.plan)"
+        let entries: [(id: String, isDirectory: Bool)] = [(Constants.tripsPath, true), (plan, false)]
+
+        let result = OfflineAvailability.classify(
+            entries,
+            roots: [OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true, excludedPaths: [Constants.tripsPath])],
+            id: \.id,
+            isDirectory: \.isDirectory,
+            hasCopy: { _ in false }
+        )
+
+        #expect(result.all.isEmpty)
+        #expect(result.pinned.isEmpty)
     }
 
     // MARK: Browse

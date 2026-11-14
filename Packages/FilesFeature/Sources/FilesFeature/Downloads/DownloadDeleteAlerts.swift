@@ -24,7 +24,12 @@ private struct DownloadDeleteAlerts: ViewModifier {
     }
 
     private var bulkDeleteConfirmationTitle: String {
-        L10n.Downloads.deleteConfirmMany(store.selectedDownloadIDs.count)
+        if store.selectedDownloadIDs.count == 1, let id = store.selectedDownloadIDs.first,
+           let download = store.downloads[id: id]
+        {
+            return L10n.Downloads.deleteConfirmOne(download.fileName)
+        }
+        return L10n.Downloads.deleteConfirmMany(store.selectedDownloadIDs.count)
     }
 
     func body(content: Content) -> some View {

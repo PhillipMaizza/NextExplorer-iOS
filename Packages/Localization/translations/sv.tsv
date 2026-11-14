@@ -1150,6 +1150,7 @@ offline.tabEmpty	Inget är tillgängligt offline än. Välj ”Tillgängligt off
 offline.removeItemTitle	Ta bort ”%@” från Tillgängligt offline?
 offline.removeItemsTitle	Ta bort %lld objekt från Tillgängligt offline?
 offline.removeItemMessage	Detta tar bort filerna som sparats för offlineanvändning på den här enheten. Dina filer på servern påverkas inte.
+offline.shareNotKept	De här filerna finns inte på den här enheten än.
 browse.actionRemoveFromOffline	Ta bort från offline
 offline.rowUpdating	Uppdaterar…
 offline.rowWaitingForNetwork	Väntar på nätverk

@@ -164,22 +164,42 @@ struct ThumbnailImage: View {
         )
     }
 
+    /// A picture is decoded from the kept copy and a video gives its first frame, so both show with
+    /// no network and need nothing saved besides the file itself.
     private func offlineImage() async -> PlatformImage? {
         let store = offlineFileStore
         let path = path
         let target = maxPixelDimension
-        return await Task.detached(priority: .userInitiated) {
-            let name = (path as NSString).lastPathComponent
-            let item = FileItem(
-                name: name,
-                path: (path as NSString).deletingLastPathComponent,
-                dateModified: .distantPast,
-                size: 0,
-                kind: ""
-            )
-            guard let url = store.localURLIgnoringStaleness(item) else { return nil }
-            return ImageDownsampling.image(from: url, maxPixelDimension: target)
+        let name = (path as NSString).lastPathComponent
+        let item = FileItem(
+            name: name,
+            path: (path as NSString).deletingLastPathComponent,
+            dateModified: .distantPast,
+            size: 0,
+            kind: (name as NSString).pathExtension.lowercased()
+        )
+        let local = await Task.detached(priority: .userInitiated) {
+            store.localURLIgnoringStaleness(item)
         }.value
+        guard let local else { return nil }
+        // Kept in memory like a server thumbnail, so scrolling back does not decode or frame it again.
+        let key = local.appendingPathComponent(String(Int(target))) as NSURL
+        if let cached = ThumbnailMemoryCache.shared.object(forKey: key) {
+            return cached
+        }
+        let image: PlatformImage? = if item.isVideo {
+            await VideoThumbnailView.firstFrame(of: local, maxPixelSize: target)
+        } else {
+            await Task.detached(priority: .userInitiated) {
+                ImageDownsampling.image(from: local, maxPixelDimension: target)
+            }.value
+        }
+        if let image {
+            ThumbnailMemoryCache.shared.setObject(
+                image, forKey: key, cost: ThumbnailMemoryCache.decodedByteCost(of: image)
+            )
+        }
+        return image
     }
 
     /// Drops the seed once the server's own thumbnail is showing.

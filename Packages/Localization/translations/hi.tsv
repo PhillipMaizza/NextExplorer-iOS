@@ -1150,6 +1150,7 @@ offline.tabEmpty	अभी कुछ भी ऑफ़लाइन उपलब�
 offline.removeItemTitle	“%@” को ऑफ़लाइन उपलब्ध से हटाएँ?
 offline.removeItemsTitle	%lld आइटम को ऑफ़लाइन उपलब्ध से हटाएँ?
 offline.removeItemMessage	इससे इस डिवाइस पर ऑफ़लाइन उपयोग के लिए सहेजी गई फ़ाइलें हट जाती हैं। सर्वर पर आपकी फ़ाइलें प्रभावित नहीं होतीं।
+offline.shareNotKept	ये फ़ाइलें अभी इस डिवाइस पर नहीं हैं।
 browse.actionRemoveFromOffline	ऑफ़लाइन से हटाएँ
 offline.rowUpdating	अपडेट हो रहा है…
 offline.rowWaitingForNetwork	नेटवर्क की प्रतीक्षा

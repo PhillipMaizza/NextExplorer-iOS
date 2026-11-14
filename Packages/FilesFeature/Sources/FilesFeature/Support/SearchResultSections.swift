@@ -37,7 +37,7 @@ extension OfflineAvailability {
         return await Task.detached(priority: .utility) {
             classify(
                 results,
-                pinnedPaths: store.pinnedRoots().map(\.path),
+                roots: store.pinnedRoots(),
                 id: \.id,
                 isDirectory: \.isDirectory,
                 // A hit carries no size or date, so any complete or partial copy counts, like opening it does.

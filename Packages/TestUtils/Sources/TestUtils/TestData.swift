@@ -158,6 +158,8 @@ public enum TestPath {
     public static let filesDocuments = "Files/Documents"
     /// The Docs folder as a lowercase cache path.
     public static let docsLowercase = "docs"
+    /// A photo inside Photos, pinned on its own in the Offline tab tests.
+    public static let photosPhoto = "Photos/a.jpg"
     /// A note inside Docs.
     public static let docsNote = "Docs/n.txt"
     /// A notes file inside Docs.

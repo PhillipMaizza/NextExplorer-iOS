@@ -44,11 +44,14 @@ struct OfflineTabPinnedFileTests {
     private func openPhoto(_ store: TestStoreOf<OfflineTabFeature>) async {
         await store.send(.pinnedItemTapped(OfflinePinnedRoot(path: Constants.filePath, isDirectory: false)))
         await store.receive(\.pinnedFileTapped) {
-            $0.previewHost = .previewHost(
+            var host = BrowseFeature.State.previewHost(
                 for: keptPhoto,
                 serverURL: BrowseTestSupport.serverURL,
                 folderTitle: TestFolder.photos
             )
+            host.offlineItemIDs = [Constants.filePath]
+            host.offlinePinnedItemIDs = [Constants.filePath]
+            $0.previewHost = host
         }
         await store.receive(\.previewHost.rowTapped)
     }
@@ -69,11 +72,13 @@ struct OfflineTabPinnedFileTests {
 
         await store.send(.pinnedItemTapped(OfflinePinnedRoot(path: TestFolder.photos, isDirectory: true)))
         await store.receive(\.openFolderTapped) {
-            $0.path[id: 0] = BrowseFeature.State(
+            var screen = BrowseFeature.State(
                 serverURL: BrowseTestSupport.serverURL,
                 directoryPath: TestFolder.photos,
                 title: TestFolder.photos
             )
+            screen.isKeptOffline = true
+            $0.path[id: 0] = screen
         }
     }
 
@@ -98,13 +103,35 @@ struct OfflineTabPinnedFileTests {
         await store.receive(.delegate(.goToSharedTab))
     }
 
-    @Test("Removing it from offline, downloading or saving it from the preview goes up to the shell")
+    @Test("The preview knows its file is pinned, so it offers Remove from Offline")
+    func thePreviewKnowsItsFileIsPinned() async {
+        let store = makeStore()
+        await openPhoto(store)
+
+        #expect(store.state.previewHost?.offlinePinnedItemIDs == [keptPhoto.id])
+        #expect(store.state.previewHost?.offlineItemIDs == [keptPhoto.id])
+        #expect(store.state.previewHost?.access == nil, "Offered even before any folder access is known")
+    }
+
+    @Test("Remove from Offline in the preview asks first, then unpins and returns to the tab")
+    func removingFromOfflineClosesThePreview() async {
+        let store = makeStore()
+        await openPhoto(store)
+
+        await store.send(.previewHost(.presented(.offlineToggleTapped(keptPhoto)))) {
+            $0.previewHost?.offlineRemoval = OfflineRemovalRequest(paths: [keptPhoto.id], names: [keptPhoto.name])
+        }
+        await store.send(.previewHost(.presented(.delegate(.offlineUnpinRequested(path: Constants.filePath))))) {
+            $0.previewHost = nil
+        }
+        await store.receive(.delegate(.offlineUnpinRequested(path: Constants.filePath)))
+    }
+
+    @Test("Downloading or saving it from the preview goes up to the shell")
     func previewRequestsGoUp() async {
         let store = makeStore()
         await openPhoto(store)
 
-        await store.send(.previewHost(.presented(.delegate(.offlineUnpinRequested(path: Constants.filePath)))))
-        await store.receive(.delegate(.offlineUnpinRequested(path: Constants.filePath)))
         await store.send(.previewHost(.presented(.delegate(.downloadRequested([keptPhoto])))))
         await store.receive(.delegate(.downloadRequested([keptPhoto])))
         await store.send(.previewHost(.presented(.delegate(.saveRequested([BrowseFixtures.saveRequest])))))

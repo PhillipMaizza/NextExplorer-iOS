@@ -66,7 +66,8 @@
         var favorites: IdentifiedArrayOf<Favorite> = []
         let onPreview: (LocalDownload) -> Void
 
-        @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var progress = OfflineDownloadProgress()
+        /// The offline run's phase, kept here so the table updates per phase, not per progress tick.
+        @State private var phase = OfflineDownloadProgress.Phase.idle
         @State private var selection: Set<MacOfflineTableRow.ID> = []
         @FocusState private var isFocused: Bool
 
@@ -88,7 +89,7 @@
                                 size: MacBrowseTableMetrics.badgeSize
                             )
                             .accessibilityLabel(L10n.Offline.badgeAvailable)
-                            if let title = OfflineSyncState(phase: progress.phase).title {
+                            if let title = OfflineSyncState(phase: phase).title {
                                 Text(title).type(.body3(.regular), style: .secondary)
                             }
                         }
@@ -131,6 +132,7 @@
                 return .handled
             }
             .onDeleteCommand { remove(selection) }
+            .onOfflinePhaseChange(initial: true) { phase = $0 }
             .onChange(of: rows.map(\.id)) { _, ids in
                 selection.formIntersection(ids)
             }

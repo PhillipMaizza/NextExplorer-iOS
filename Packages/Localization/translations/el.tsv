@@ -1123,6 +1123,7 @@ offline.tabEmpty	Τίποτα δεν είναι διαθέσιμο εκτός σ
 offline.removeItemTitle	Κατάργηση του «%@» από τα διαθέσιμα εκτός σύνδεσης;
 offline.removeItemsTitle	Κατάργηση %lld στοιχείων από τα διαθέσιμα εκτός σύνδεσης;
 offline.removeItemMessage	Αυτό διαγράφει τα αρχεία που έχουν αποθηκευτεί για χρήση εκτός σύνδεσης σε αυτήν τη συσκευή. Τα αρχεία σας στον διακομιστή δεν επηρεάζονται.
+offline.shareNotKept	Αυτά τα αρχεία δεν βρίσκονται ακόμη σε αυτή τη συσκευή.
 browse.actionRemoveFromOffline	Κατάργηση από εκτός σύνδεσης
 offline.rowUpdating	Ενημέρωση…
 offline.rowWaitingForNetwork	Αναμονή για δίκτυο

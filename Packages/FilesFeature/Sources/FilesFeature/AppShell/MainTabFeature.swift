@@ -574,12 +574,16 @@ public struct MainTabFeature {
 extension MainTabFeature.State {
     /// The Available Offline pill shows while a run works or after one failed.
     var isOfflineBarVisible: Bool {
-        if offlineProgress.isActive {
-            return true
+        offlineProgress.phase.showsOfflineBar
+    }
+}
+
+extension OfflineDownloadProgress.Phase {
+    /// The Available Offline pill shows while a run works or after one failed.
+    var showsOfflineBar: Bool {
+        switch self {
+        case .preparing, .downloading, .failed: true
+        case .idle, .completed, .waitingForNetwork: false
         }
-        if case .failed = offlineProgress.phase {
-            return true
-        }
-        return false
     }
 }

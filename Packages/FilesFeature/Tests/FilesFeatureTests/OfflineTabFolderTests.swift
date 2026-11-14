@@ -23,8 +23,11 @@ struct OfflineTabFolderTests {
         }
     }
 
+    /// Every screen the Offline tab pushes is an offline screen.
     private func browseScreen(_ path: String, _ title: String) -> BrowseFeature.State {
-        BrowseFeature.State(serverURL: BrowseTestSupport.serverURL, directoryPath: path, title: title)
+        var screen = BrowseFeature.State(serverURL: BrowseTestSupport.serverURL, directoryPath: path, title: title)
+        screen.isKeptOffline = true
+        return screen
     }
 
     @Test

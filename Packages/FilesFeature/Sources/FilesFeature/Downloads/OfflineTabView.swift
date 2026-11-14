@@ -25,8 +25,8 @@ struct OfflineTabView: View {
     let offlineStore: StoreOf<OfflineManageFeature>
     /// Favorites, so a pinned favorite folder keeps its icon and color.
     var favorites: IdentifiedArrayOf<Favorite> = []
-    /// A finished offline run changes what the tab lists, so it is read again.
-    @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
+    /// The offline run's phase, kept here so the list updates per phase, not per progress tick.
+    @State private var offlinePhase = OfflineDownloadProgress.Phase.idle
     /// The same list or grid choice as Browse and Favorites, so a folder opened from this tab keeps it.
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
@@ -39,11 +39,6 @@ struct OfflineTabView: View {
     /// Native `.zoom` open + swipe to dismiss morph between a download cell and its preview.
     @Namespace private var previewTransition
     @State private var isSortSheetPresented = false
-
-    /// Pinned items and files saved earlier, the whole tab's footprint on this device.
-    private var usedBytes: Int64 {
-        offlineStore.totalBytes + store.downloads.reduce(Int64(0)) { $0 + $1.size }
-    }
 
     private var viewMode: FileListViewMode {
         #if os(macOS)
@@ -73,7 +68,13 @@ struct OfflineTabView: View {
     }
 
     private var isAllSelected: Bool {
-        !store.displayedDownloads.isEmpty && store.selectedDownloadIDs.count == store.displayedDownloads.count
+        store.selectedCount > 0 && store.selectedDownloadIDs.count == store.displayedDownloads.count
+            && store.selectedPinnedPaths.count == displayedPinned.count
+    }
+
+    /// In select mode a pinned item is picked; otherwise a folder opens in place and a file in a preview.
+    private func pinnedTapped(_ root: OfflinePinnedRoot) {
+        store.send(store.isSelecting ? .pinnedSelectionToggled(path: root.path) : .pinnedItemTapped(root))
     }
 
     private var selectedDownloadURLs: [URL] {
@@ -125,9 +126,17 @@ struct OfflineTabView: View {
                 SkeletonFileRows(entries: Constants.skeletonEntries)
             } else {
                 if isShowingPinned {
-                    OfflinePinnedSection(store: offlineStore, usages: displayedPinned, favorites: favorites) { root in
-                        store.send(.pinnedItemTapped(root))
-                    }
+                    OfflinePinnedSection(
+                        store: offlineStore,
+                        usages: displayedPinned,
+                        phase: offlinePhase,
+                        favorites: favorites,
+                        serverURL: store.serverURL,
+                        showThumbnails: store.preferences.showThumbnails,
+                        isSelecting: store.isSelecting,
+                        selectedPaths: store.selectedPinnedPaths,
+                        onOpen: pinnedTapped
+                    )
                 }
                 if isShowingPinned, !store.downloads.isEmpty {
                     Section { downloadRows } header: { DSFieldLabel(L10n.Offline.sectionSavedEarlier) }
@@ -154,10 +163,13 @@ struct OfflineTabView: View {
                     OfflinePinnedGridCells(
                         store: offlineStore,
                         usages: displayedPinned,
-                        favorites: favorites
-                    ) { root in
-                        store.send(.pinnedItemTapped(root))
-                    }
+                        favorites: favorites,
+                        serverURL: store.serverURL,
+                        showThumbnails: store.preferences.showThumbnails,
+                        isSelecting: store.isSelecting,
+                        selectedPaths: store.selectedPinnedPaths,
+                        onOpen: pinnedTapped
+                    )
                     downloadCells
                 }
             }
@@ -234,11 +246,6 @@ struct OfflineTabView: View {
                     onRetry: { store.send(.refreshButtonTapped) }
                 )
             }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                if listPhase == .content, usedBytes > 0 {
-                    OfflineStorageSummary(bytes: usedBytes)
-                }
-            }
             .animation(DSMotion.contentReveal, value: listPhase)
             .featureToast(error: store.actionErrorMessage)
             // The Mac table selects and sorts natively (column headers), so the tab adds no toolbar there.
@@ -247,10 +254,16 @@ struct OfflineTabView: View {
                     selectSortToolbar(
                         isSelecting: store.isSelecting,
                         isAllSelected: isAllSelected,
-                        isSelectAvailable: !store.downloads.isEmpty,
+                        isSelectAvailable: !store.downloads.isEmpty || !offlineStore.isEmpty,
                         isGridView: viewMode == .grid,
                         onSelectModeToggled: { store.send(.selectModeToggled) },
-                        onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
+                        onSelectAllToggled: {
+                            store.send(
+                                isAllSelected
+                                    ? .deselectAllTapped
+                                    : .selectAllTapped(pinnedPaths: displayedPinned.map(\.root.path))
+                            )
+                        },
                         onCancel: { store.send(.selectModeToggled) },
                         onToggleViewMode: {
                             withAnimation {
@@ -313,7 +326,12 @@ struct OfflineTabView: View {
                 .downloadDeleteAlerts(store: store)
                 .offlineRemovalAlert(
                     offlineStore.removal,
-                    onConfirm: { offlineStore.send(.removeConfirmed) },
+                    onConfirm: {
+                        offlineStore.send(.removeConfirmed)
+                        if store.isSelecting {
+                            store.send(.pinnedSelectionRemoved)
+                        }
+                    },
                     onCancel: { offlineStore.send(.removeCancelled) }
                 )
                 .dsSheet(item: renameItemBinding) { item in
@@ -364,15 +382,20 @@ struct OfflineTabView: View {
                         store.send(.refreshButtonTapped)
                     }
                 }
-                .onChange(of: offlineProgress.phase) { _, phase in
+                .onChange(of: displayedPinned.map(\.root.path)) { _, paths in
+                    if store.isSelecting {
+                        store.send(.shownPinnedPathsChanged(paths))
+                    }
+                }
+                .onOfflinePhaseChange(initial: true) { offlinePhase = $0 }
+                // Only a run finishing while the tab is up reads it again; `.task` covers appearing.
+                .onOfflinePhaseChange { phase in
                     if phase == .completed {
                         Task { @MainActor in offlineStore.send(.onAppear) }
                     }
                 }
         } destination: { pushed in
             BrowseContentView(store: pushed)
-                .environment(\.showsOfflineBadges, false)
-                .navigationTitle("")
         }
         .tint(Color.accent)
     }
