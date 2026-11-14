@@ -21,9 +21,6 @@ struct FavoritesView: View {
         ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium
     }
 
-    /// A finished offline download can change which favorites are available offline, so refresh
-    /// the badges when it completes (mirrors `BrowseContentView`).
-    @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
@@ -303,7 +300,7 @@ struct FavoritesView: View {
         .task {
             store.send(.onAppear)
         }
-        .onChange(of: offlineProgress.phase) { _, phase in
+        .onOfflinePhaseChange { phase in
             if phase == .completed {
                 Task { @MainActor in store.send(.computeOfflineAvailability) }
             }

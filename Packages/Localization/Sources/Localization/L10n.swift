@@ -659,6 +659,7 @@ public enum L10n {
         public static var selectionLoadFailed: String { tr("offline.selectionLoadFailed") }  // "This folder couldn't be loaded."
         public static var selectionTitle: String { tr("offline.selectionTitle") }  // "Download for Offline"
         public static var settingsRow: String { tr("offline.settingsRow") }  // "Download Files for Offline Use"
+        public static var shareNotKept: String { tr("offline.shareNotKept") }  // "These files aren't on this device yet."
         public static var tabEmpty: String { tr("offline.tabEmpty") }
         public static var tunnelSpeedNote: String { tr("offline.tunnelSpeedNote") }
         public static var waitingForNetwork: String { tr("offline.waitingForNetwork") }  // "Will download when you're back online"

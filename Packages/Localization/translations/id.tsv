@@ -1110,6 +1110,7 @@ offline.tabEmpty	Belum ada yang tersedia secara offline. Pilih “Tersedia offli
 offline.removeItemTitle	Hapus “%@” dari Tersedia Offline?
 offline.removeItemsTitle	Hapus %lld item dari Tersedia Offline?
 offline.removeItemMessage	Ini menghapus file yang disimpan untuk penggunaan offline di perangkat ini. File Anda di server tidak terpengaruh.
+offline.shareNotKept	File ini belum ada di perangkat ini.
 browse.actionRemoveFromOffline	Hapus dari Offline
 offline.rowUpdating	Memperbarui…
 offline.rowWaitingForNetwork	Menunggu jaringan

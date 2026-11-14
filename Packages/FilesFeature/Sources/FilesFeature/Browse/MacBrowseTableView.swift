@@ -36,7 +36,6 @@
         let cutItemIDs: Set<FileItem.ID>
         /// Items saved for offline use, badged like the iOS rows.
         let offlineItemIDs: Set<FileItem.ID>
-        @Environment(\.showsOfflineBadges) private var showsOfflineBadges
         /// Favorited items, starred like the iOS rows.
         var favoriteItemIDs: Set<FileItem.ID> = []
         let onOpen: (FileItem) -> Void
@@ -94,7 +93,7 @@
                                 // On the name alone, never the rename field, whose value is its text.
                                 .accessibilityValue(cutItemIDs.contains(item.id) ? L10n.Browse.actionCut : "")
                         }
-                        if showsOfflineBadges, offlineItemIDs.contains(item.id) {
+                        if offlineItemIDs.contains(item.id) {
                             MacTableFolderIcon(
                                 image: IconKit.availableOffline,
                                 tint: Color.accent,

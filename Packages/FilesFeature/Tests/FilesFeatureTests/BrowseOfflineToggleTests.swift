@@ -74,8 +74,56 @@ struct BrowseOfflineToggleTests: OfflineDownloadsTestSupport {
         await store.send(.offlineRemovalConfirmed)
     }
 
-    @Test
-    func togglingAnItemOfflineOnlyThroughItsFolderDoesNothing() async {
+    @Test("A file kept through its folder comes off on its own, the folder staying pinned")
+    func togglingAnItemOfflineOnlyThroughItsFolderTakesItOffAlone() async {
+        var state = BrowseFixtures.loadedState(Constants.tripsPath, items: [tripsPhoto, nested])
+        state.offlineItemIDs = [tripsPhoto.id, nested.id]
+        let store = BrowseFixtures.store(state) {
+            $0.offlineFileStore = pinnedStore([TestFolder.docs, Constants.tripsPath])
+        }
+        let request = OfflineRemovalRequest(paths: [tripsPhoto.id], names: [tripsPhoto.name])
+
+        await store.send(.offlineToggleTapped(tripsPhoto)) { $0.offlineRemoval = request }
+        await store.send(.offlineRemovalConfirmed) {
+            $0.offlineRemoval = nil
+            $0.offlineItemIDs = [nested.id]
+        }
+        await store.receive(.delegate(.offlineUnpinRequested(path: tripsPhoto.id)))
+    }
+
+    @Test("On a screen listing the device, what comes off leaves the list")
+    func anOfflineScreenDropsWhatCameOff() async {
+        var state = BrowseFixtures.loadedState(Constants.tripsPath, items: [tripsPhoto, nested])
+        state.isKeptOffline = true
+        state.offlineItemIDs = [tripsPhoto.id, nested.id]
+        state.offlineRemoval = OfflineRemovalRequest(paths: [tripsPhoto.id], names: [tripsPhoto.name])
+        let store = BrowseFixtures.store(state)
+
+        await store.send(.offlineRemovalConfirmed) {
+            $0.offlineRemoval = nil
+            $0.offlineItemIDs = [nested.id]
+            $0.items = [nested]
+        }
+        await store.receive(.delegate(.offlineUnpinRequested(path: tripsPhoto.id)))
+    }
+
+    @Test("Taking a folder off keeps the mark on a file inside it that is pinned on its own")
+    func removingAFolderKeepsAFilePinnedOnItsOwn() async {
+        var state = BrowseFixtures.loadedState(Constants.tripsPath, items: [tripsPhoto, nested])
+        state.offlineItemIDs = [tripsPhoto.id, nested.id]
+        state.offlinePinnedItemIDs = [tripsPhoto.id]
+        state.offlineRemoval = OfflineRemovalRequest(paths: [Constants.tripsPath], names: [Constants.trips])
+        let store = BrowseFixtures.store(state)
+
+        await store.send(.offlineRemovalConfirmed) {
+            $0.offlineRemoval = nil
+            $0.offlineItemIDs = [tripsPhoto.id]
+        }
+        await store.receive(.delegate(.offlineUnpinRequested(path: Constants.tripsPath)))
+    }
+
+    @Test("A file offline with no pinned folder found asks nothing")
+    func togglingACoveredItemWithNoPinnedFolderDoesNothing() async {
         var state = BrowseFixtures.loadedState(Constants.tripsPath, items: [tripsPhoto])
         state.offlineItemIDs = [tripsPhoto.id]
         let store = BrowseFixtures.store(state)
@@ -159,6 +207,23 @@ struct BrowseOfflineToggleTests: OfflineDownloadsTestSupport {
         #expect(offline.pinnedRoots().map(\.path) == [TestFolder.docs])
     }
 
+    @Test("Taking off a file inside a pinned folder leaves it out of the folder, which stays pinned")
+    func unpinningAPathInsideAPinnedFolderExcludesIt() async {
+        let offline = pinnedStore([Constants.tripsPath])
+        let store = makeStore(
+            freshState(),
+            hold: BrowseHold(),
+            offline: offline,
+            browse: { _ in BrowseResult(items: [], access: BrowseTestSupport.fullAccess, path: "") }
+        )
+
+        await store.send(.unpinTapped(path: tripsPhoto.id))
+        await store.receive(\.unpinFinished)
+        #expect(offline.pinnedRoots() == [
+            OfflinePinnedRoot(path: Constants.tripsPath, isDirectory: true, excludedPaths: [tripsPhoto.id]),
+        ])
+    }
+
     @Test
     func bulkOfflinePinsEverySelectedItemThatIsNotOfflineYet() async {
         var state = BrowseFixtures.loadedState(TestFolder.docs, items: [photo, trips, other])
@@ -199,8 +264,26 @@ struct BrowseOfflineToggleTests: OfflineDownloadsTestSupport {
         await store.receive(.delegate(.offlineUnpinRequested(path: trips.id)))
     }
 
-    @Test
-    func bulkOfflineOnItemsOfflineOnlyThroughAFolderDoesNothing() async {
+    @Test("Items kept only through a pinned folder come off on their own, each named")
+    func bulkOfflineOnItemsOfflineOnlyThroughAFolderTakesThemOff() async {
+        var state = BrowseFixtures.loadedState(Constants.tripsPath, items: [tripsPhoto, nested])
+        state.isSelecting = true
+        state.selectedItemIDs = [tripsPhoto.id, nested.id]
+        state.offlineItemIDs = [tripsPhoto.id, nested.id]
+        let store = BrowseFixtures.store(state) { $0.offlineFileStore = pinnedStore([Constants.tripsPath]) }
+
+        await store.send(.bulkOfflineTapped) {
+            $0.isSelecting = false
+            $0.selectedItemIDs = []
+            $0.offlineRemoval = OfflineRemovalRequest(
+                paths: [tripsPhoto.id, nested.id],
+                names: [tripsPhoto.name, nested.name]
+            )
+        }
+    }
+
+    @Test("Items offline with no pinned folder found ask nothing")
+    func bulkOfflineOnItemsWithNoPinnedFolderAsksNothing() async {
         var state = BrowseFixtures.loadedState(Constants.tripsPath, items: [tripsPhoto])
         state.isSelecting = true
         state.selectedItemIDs = [tripsPhoto.id]

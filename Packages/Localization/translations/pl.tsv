@@ -1176,6 +1176,7 @@ offline.tabEmpty	Nic nie jest jeszcze dostępne offline. Wybierz „Dostępne of
 offline.removeItemTitle	Usunąć „%@” z dostępnych offline?
 offline.removeItemsTitle	Usunąć %lld elementów z dostępnych offline?
 offline.removeItemMessage	Spowoduje to usunięcie plików zapisanych do użytku offline na tym urządzeniu. Pliki na serwerze pozostaną bez zmian.
+offline.shareNotKept	Te pliki nie są jeszcze na tym urządzeniu.
 browse.actionRemoveFromOffline	Usuń z offline
 offline.rowUpdating	Aktualizowanie…
 offline.rowWaitingForNetwork	Oczekiwanie na sieć

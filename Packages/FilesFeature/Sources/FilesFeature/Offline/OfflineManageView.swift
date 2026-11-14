@@ -55,6 +55,12 @@ struct OfflineManageRow: View {
     var onOpen: (() -> Void)?
     var favorite: Favorite?
     var syncState = OfflineSyncState.upToDate
+    /// Set where the row can draw its file's thumbnail (the Offline tab), from the kept copy first.
+    var serverURL: URL?
+    var showThumbnails = false
+    /// The Offline tab's select mode: a tap picks the row, and its swipe and menu step aside.
+    var isSelecting = false
+    var isSelected = false
     let onRemove: () -> Void
 
     private var subtitle: String {
@@ -76,8 +82,8 @@ struct OfflineManageRow: View {
     /// a pinned favorite folder keeps the icon and color of its favorite and every other row reads alike.
     var body: some View {
         SelectableListRow(
-            isSelecting: false,
-            isSelected: false,
+            isSelecting: isSelecting,
+            isSelected: isSelected,
             isFirst: isFirst,
             isLast: isLast,
             onTap: { onOpen?() }
@@ -87,14 +93,21 @@ struct OfflineManageRow: View {
                 isDirectory: usage.root.isDirectory,
                 subtitle: subtitle,
                 kind: usage.kind,
+                thumbnailFile: usage.thumbnailFile,
+                serverURL: serverURL,
+                showThumbnails: showThumbnails,
                 customIcon: favorite.map { FavoriteIcon.symbol(for: $0.icon) },
                 customIconTint: favorite.flatMap { FavoriteColor.resolve($0.color) },
                 customIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false
             )
         } trailingSwipe: {
-            removeButton
+            if !isSelecting {
+                removeButton
+            }
         } contextMenu: {
-            removeButton
+            if !isSelecting {
+                removeButton
+            }
         }
     }
 }

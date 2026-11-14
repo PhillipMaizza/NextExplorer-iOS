@@ -1123,6 +1123,7 @@ offline.tabEmpty	Mitään ei ole vielä saatavilla offline-tilassa. Valitse tied
 offline.removeItemTitle	Poistetaanko “%@” offline-saatavista?
 offline.removeItemsTitle	Poistetaanko %lld kohdetta offline-saatavista?
 offline.removeItemMessage	Tämä poistaa tähän laitteeseen offline-käyttöön tallennetut tiedostot. Palvelimella olevia tiedostojasi ei kosketa.
+offline.shareNotKept	Nämä tiedostot eivät ole vielä tällä laitteella.
 browse.actionRemoveFromOffline	Poista offline-tilasta
 offline.rowUpdating	Päivitetään…
 offline.rowWaitingForNetwork	Odottaa verkkoa

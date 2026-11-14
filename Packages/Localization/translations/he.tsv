@@ -1136,6 +1136,7 @@ offline.tabEmpty	עדיין אין דבר זמין ללא חיבור. בחרו �
 offline.removeItemTitle	להסיר את ״%@״ מהזמינים ללא חיבור?
 offline.removeItemsTitle	להסיר %lld פריטים מהזמינים ללא חיבור?
 offline.removeItemMessage	פעולה זו מוחקת את הקבצים ששמורים לשימוש לא מקוון במכשיר זה. הקבצים שלכם בשרת לא מושפעים.
+offline.shareNotKept	הקבצים האלה עדיין לא נמצאים במכשיר הזה.
 browse.actionRemoveFromOffline	הסרה מהזמינים ללא חיבור
 offline.rowUpdating	מעדכן…
 offline.rowWaitingForNetwork	ממתין לרשת

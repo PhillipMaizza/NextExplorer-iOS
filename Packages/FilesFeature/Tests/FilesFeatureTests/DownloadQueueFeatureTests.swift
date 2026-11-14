@@ -359,4 +359,36 @@ struct DownloadQueueFeatureTests {
         let fileJob = DownloadQueueFeature.DownloadJob(id: UUID(1), item: file("clip.mp4"), status: .queued)
         #expect(fileJob.fileName == "clip.mp4")
     }
+
+    @Test("A file kept on the device is saved from that copy, with no download")
+    func aKeptFileSavesFromItsCopy() async {
+        let kept = file(TestFile.notes)
+        let downloads = LockIsolated(0)
+        let store = makeStore {
+            $0.offlineFileStore = .inMemory(localURLs: [kept.id: temporaryFile()])
+            $0.filesClient.downloadItem = { _, _, _ in
+                downloads.withValue { $0 += 1 }
+                throw FilesClientError.offline
+            }
+        }
+
+        await store.send(.enqueue([kept])) {
+            $0.jobs = [Job(id: UUID(0), item: kept, status: .queued)]
+        }
+        await receiveStart(store, id: 0)
+        var summary = Summary(savedCount: 1, failedCount: 0)
+        await store.receive(\.downloadResponse) {
+            $0.jobs[id: UUID(0)]?.status = .completed
+            #if os(iOS)
+                // A phone hands a text file to Save to Files, staged first.
+                let staged = URL(fileURLWithPath: "/staged/\(kept.name)")
+                $0.jobs[id: UUID(0)]?.savedURL = staged
+                summary.exportURLs = [staged]
+            #endif
+        }
+        await store.receive(.delegate(.itemSaved))
+        await store.receive(.delegate(.queueFinished(summary)))
+
+        #expect(downloads.value == 0)
+    }
 }

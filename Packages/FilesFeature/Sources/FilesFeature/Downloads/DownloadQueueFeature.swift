@@ -170,6 +170,8 @@ public struct DownloadQueueFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.deviceSaver) var deviceSaver
+    @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.cacheScope) var cacheScopeSource
     @Dependency(\.uuid) var uuid
     @Dependency(\.date) var date
     private enum CancelID: Hashable {
@@ -327,6 +329,15 @@ public struct DownloadQueueFeature {
         let filesClient = filesClient
         let localDownloadStore = localDownloadStore
         let deviceSaver = deviceSaver
+        let keptCopies = offlineFileStore.pinned(to: cacheScopeSource.current())
+        // A file kept on the device is copied rather than downloaded again, so it saves with no network.
+        let fetch: @Sendable (FileItem, @escaping @Sendable (TransferProgress) -> Void) async throws -> URL = {
+            item, onProgress in
+            if let kept = keptCopies.localURL(item), let copy = Self.temporaryCopy(of: kept) {
+                return copy
+            }
+            return try await filesClient.downloadItem(serverURL, item, onProgress)
+        }
         return .run { send in await BackgroundActivity.whileTransferring(name: Self.activityName) {
             let (progress, continuation) = AsyncStream<TransferProgress>
                 .makeStream(bufferingPolicy: .bufferingNewest(1))
@@ -358,7 +369,7 @@ public struct DownloadQueueFeature {
                             }
                         #endif
                         #if os(macOS)
-                            let temporaryURL = try await filesClient.downloadItem(serverURL, job.item) { update in
+                            let temporaryURL = try await fetch(job.item) { update in
                                 continuation.yield(update)
                             }
                             defer { try? FileManager.default.removeItem(at: temporaryURL) }
@@ -369,11 +380,10 @@ public struct DownloadQueueFeature {
                                 throw FilesClientError.decoding(error.localizedDescription)
                             }
                         #else
-                            return try await Self.saveToDevice(
-                                job.item, serverURL: serverURL, filesClient: filesClient, deviceSaver: deviceSaver
-                            ) { update in
-                                continuation.yield(update)
-                            }
+                            return try await Self
+                                .saveToDevice(job.item, fetch: fetch, deviceSaver: deviceSaver) { update in
+                                    continuation.yield(update)
+                                }
                         #endif
                     }
                 } catch {
@@ -406,12 +416,11 @@ public struct DownloadQueueFeature {
         /// for the Save to Files panel. Returns the staged URL.
         private static func saveToDevice(
             _ item: FileItem,
-            serverURL: URL,
-            filesClient: FilesClient,
+            fetch: @Sendable (FileItem, @escaping @Sendable (TransferProgress) -> Void) async throws -> URL,
             deviceSaver: DeviceSaver,
             onProgress: @escaping @Sendable (TransferProgress) -> Void
         ) async throws -> URL {
-            let temporaryURL = try await filesClient.downloadItem(serverURL, item, onProgress)
+            let temporaryURL = try await fetch(item, onProgress)
             guard !Task.isCancelled else {
                 try? FileManager.default.removeItem(at: temporaryURL)
                 throw CancellationError()
@@ -439,6 +448,20 @@ public struct DownloadQueueFeature {
             return staged
         }
     #endif
+
+    /// A throwaway copy of a kept file, which the save then moves or stages like a fresh download;
+    /// `nil` when the copy fails, so the file is downloaded instead.
+    private static func temporaryCopy(of kept: URL) -> URL? {
+        let copy = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension(kept.pathExtension)
+        do {
+            try FileManager.default.copyItem(at: kept, to: copy)
+            return copy
+        } catch {
+            return nil
+        }
+    }
 
     private func discardStaged(_ jobs: [DownloadJob]) {
         #if os(iOS)

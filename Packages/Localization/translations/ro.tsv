@@ -1163,6 +1163,7 @@ offline.tabEmpty	Încă nu este nimic disponibil offline. Alege „Disponibil of
 offline.removeItemTitle	Elimini „%@” din Disponibile offline?
 offline.removeItemsTitle	Elimini %lld elemente din Disponibile offline?
 offline.removeItemMessage	Aceasta șterge fișierele salvate pentru utilizare offline pe acest dispozitiv. Fișierele tale de pe server nu sunt afectate.
+offline.shareNotKept	Aceste fișiere nu sunt încă pe acest dispozitiv.
 browse.actionRemoveFromOffline	Elimină din offline
 offline.rowUpdating	Se actualizează…
 offline.rowWaitingForNetwork	Se așteaptă rețeaua

@@ -23,7 +23,6 @@ enum OfflineCache {
     static let listingsDirectoryName = "listings"
     static let interruptedFileName = ".interrupted"
     static let lastSyncFileName = ".lastsync"
-    private static let pathSeparator = "/"
 
     private static func applicationSupport() -> URL? {
         try? FileManager.default.url(
@@ -256,8 +255,8 @@ enum OfflineCache {
         return directory
     }
 
-    /// Drops the listings of folders no pinned root covers any more (an unpinned root's folders).
-    private static func pruneListings(rootPaths: [String]) {
+    /// Drops the listings of folders no pin keeps any more (an unpinned root's folders, or one taken off).
+    private static func pruneListings(roots: [OfflinePinnedRoot]) {
         guard let folder = listingsDirectory(create: false),
               let files = try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)
         else { return }
@@ -266,15 +265,11 @@ enum OfflineCache {
                 CachedDirectory.self,
                 from: $0
             ) }
-            guard let directory, isCovered(directory.path, byRootPaths: rootPaths) else {
+            guard let directory, roots.keeps(directory.path) else {
                 try? FileManager.default.removeItem(at: file)
                 continue
             }
         }
-    }
-
-    private static func isCovered(_ path: String, byRootPaths roots: [String]) -> Bool {
-        roots.contains { $0 == path || path.hasPrefix($0 + pathSeparator) }
     }
 
     /// Total offline bytes for each pinned root, for the manage screen.
@@ -283,9 +278,10 @@ enum OfflineCache {
         let entries = slotEntries()
         return roots.map { root in
             let size = entries
-                .filter { $0.path == root.path || $0.path.hasPrefix(root.path + pathSeparator) }
+                .filter { root.keeps($0.path) }
                 .reduce(Int64(0)) { $0 + $1.size }
-            return OfflinePinnedRootUsage(root: root, sizeBytes: size)
+            let copy = root.isDirectory ? nil : copyMetadata(forPath: root.path)
+            return OfflinePinnedRootUsage(root: root, sizeBytes: size, copy: copy)
         }
     }
 
@@ -294,12 +290,19 @@ enum OfflineCache {
         try? FileManager.default.removeItem(at: directory)
     }
 
-    /// Unpins one root: drops it from the manifest, then deletes any slots no longer covered by a
-    /// remaining root (freeing that root's disk unless another pin still covers those files).
-    static func removeRoot(path rootPath: String) {
-        setPinnedRoots(pinnedRoots().filter { $0.path != rootPath })
-        reconcile(currentPaths: nil)
+    /// Takes one path off the device: unpins it, or leaves it out of the pinned folder keeping it,
+    /// then deletes any slots no pin keeps any more (freeing its disk unless another pin still keeps
+    /// those files).
+    /// Removals run at once when several items come off together, and each rewrites the same
+    /// manifest; one at a time, none loses another's change.
+    static func removeRoot(path: String) {
+        removalLock.withLock {
+            setPinnedRoots(pinnedRoots().takingOff(path))
+            reconcile(currentPaths: nil)
+        }
     }
+
+    private static let removalLock = NSLock()
 
     /// The server size and modified date the pinned copy of `path` was saved with, read from its
     /// staleness key; nil when none is stored or the key is unreadable.
@@ -324,11 +327,10 @@ enum OfflineCache {
     /// when `currentPaths` is supplied from a fresh sync, any covered file the server no longer lists
     /// (deleted upstream). `currentPaths` nil does orphan cleanup only.
     static func reconcile(currentPaths: Set<String>?) {
-        let rootPaths = pinnedRoots().map(\.path)
-        pruneListings(rootPaths: rootPaths)
+        let roots = pinnedRoots()
+        pruneListings(roots: roots)
         for entry in slotEntries() {
-            let covered = isCovered(entry.path, byRootPaths: rootPaths)
-            if !covered {
+            if !roots.keeps(entry.path) {
                 removeSlot(forPath: entry.path)
             } else if let currentPaths, !currentPaths.contains(entry.path) {
                 removeSlot(forPath: entry.path)
@@ -376,14 +378,17 @@ enum OfflineCache {
 public struct OfflinePinnedRootUsage: Equatable, Sendable, Identifiable {
     public let root: OfflinePinnedRoot
     public let sizeBytes: Int64
+    /// The date and size a pinned file was kept with; nil for a folder or a file not downloaded yet.
+    public let copy: OfflineCopyMetadata?
 
     public var id: String {
         root.path
     }
 
-    public init(root: OfflinePinnedRoot, sizeBytes: Int64) {
+    public init(root: OfflinePinnedRoot, sizeBytes: Int64, copy: OfflineCopyMetadata? = nil) {
         self.root = root
         self.sizeBytes = sizeBytes
+        self.copy = copy
     }
 }
 
@@ -392,10 +397,60 @@ public struct OfflinePinnedRootUsage: Equatable, Sendable, Identifiable {
 public struct OfflinePinnedRoot: Codable, Equatable, Sendable {
     public let path: String
     public let isDirectory: Bool
+    /// Files and folders inside a pinned folder the user took off the device on their own: the
+    /// folder stays pinned, and a sync leaves these out.
+    public let excludedPaths: [String]
 
-    public init(path: String, isDirectory: Bool) {
+    public init(path: String, isDirectory: Bool, excludedPaths: [String] = []) {
         self.path = path
         self.isDirectory = isDirectory
+        self.excludedPaths = excludedPaths
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case path
+        case isDirectory
+        case excludedPaths
+    }
+
+    /// A manifest written before exclusions existed has none.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        path = try container.decode(String.self, forKey: .path)
+        isDirectory = try container.decode(Bool.self, forKey: .isDirectory)
+        excludedPaths = try container.decodeIfPresent([String].self, forKey: .excludedPaths) ?? []
+    }
+
+    /// Whether this pin keeps `path` on the device: the pinned item itself, or anything below a pinned
+    /// folder that was not taken off on its own.
+    public func keeps(_ path: String) -> Bool {
+        if path == self.path {
+            return true
+        }
+        guard isDirectory, path.hasPrefix(self.path + "/") else { return false }
+        return !excludedPaths.contains { path == $0 || path.hasPrefix($0 + "/") }
+    }
+}
+
+public extension [OfflinePinnedRoot] {
+    /// Whether any pin keeps `path` on the device.
+    func keeps(_ path: String) -> Bool {
+        contains { $0.keeps(path) }
+    }
+
+    /// The nearest pinned folder that keeps `path` below it; nil when none does.
+    func coveringRoot(of path: String) -> OfflinePinnedRoot? {
+        filter { $0.isDirectory && $0.path != path && $0.keeps(path) }
+            .max { $0.path.count < $1.path.count }
+    }
+
+    /// These pins with `path` taken off the device: unpinned when it was pinned, and left out of every
+    /// pinned folder that still keeps it, while the folders themselves stay pinned.
+    func takingOff(_ path: String) -> [OfflinePinnedRoot] {
+        filter { $0.path != path }.map { root in
+            guard root.isDirectory, root.keeps(path) else { return root }
+            return OfflinePinnedRoot(path: root.path, isDirectory: true, excludedPaths: root.excludedPaths + [path])
+        }
     }
 }
 
@@ -426,7 +481,8 @@ public struct OfflineFileStore: Sendable {
     public var totalSizeBytes: @Sendable () -> Int64
     /// Per-root offline usage, for the manage screen.
     public var pinnedRootUsages: @Sendable () -> [OfflinePinnedRootUsage]
-    /// Unpin one root (manifest + its slots), for per-root removal.
+    /// Takes one path off the device (manifest + its slots): a pin comes off, and a file or folder kept
+    /// through a pinned folder is left out of it while the folder stays pinned.
     public var removeRoot: @Sendable (_ path: String) -> Void
     /// Prune stale slots: orphans, and (with a fresh listing) server-deleted files.
     public var reconcile: @Sendable (_ currentPaths: Set<String>?) -> Void
@@ -509,6 +565,12 @@ public extension OfflineFileStore {
             kind: item.kind,
             supportsThumbnail: item.supportsThumbnail
         )
+    }
+
+    /// The pinned folder that keeps `path` on the device, the nearest one when folders nest; nil when
+    /// no pinned folder covers it.
+    func coveringRoot(of path: String) -> String? {
+        pinnedRoots().coveringRoot(of: path)?.path
     }
 
     /// This store with every call made under `scope`, so work that started for one account keeps
@@ -597,7 +659,9 @@ extension OfflineFileStore: DependencyKey {
             pinnedRoots: { box.pinnedRoots() },
             setPinnedRoots: { box.setPinnedRoots($0) },
             totalSizeBytes: { 0 },
-            pinnedRootUsages: { box.pinnedRoots().map { OfflinePinnedRootUsage(root: $0, sizeBytes: 0) } },
+            pinnedRootUsages: {
+                box.pinnedRoots().map { OfflinePinnedRootUsage(root: $0, sizeBytes: 0, copy: copyMetadata[$0.path]) }
+            },
             removeRoot: { box.removeRoot(path: $0) },
             reconcile: { _ in },
             removeAll: { box.removeAll() },
@@ -641,7 +705,7 @@ extension OfflineFileStore: DependencyKey {
 
         func removeRoot(path: String) {
             lock.lock(); defer { lock.unlock() }
-            roots.removeAll { $0.path == path }
+            roots = roots.takingOff(path)
         }
 
         func saveListing(_ directory: CachedDirectory) {

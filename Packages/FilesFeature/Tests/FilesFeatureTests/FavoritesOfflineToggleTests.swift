@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
@@ -64,6 +65,26 @@ struct FavoritesOfflineToggleTests: FavoritesTestSupport {
         await store.receive(.delegate(.offlineUnpinRequested(path: Constants.nestedPath)))
     }
 
+    @Test("Taking a favorite folder off clears the mark on a favorite inside it, not one pinned on its own")
+    func removingAFavoriteClearsTheFavoritesInsideIt() async {
+        let docs = makeFavorite(id: "A", path: TestFolder.docs)
+        let reports = makeFavorite(id: "B", path: Constants.nestedPath)
+        let pinnedReports = makeFavorite(id: "C", path: "\(Constants.nestedPath)/\(Constants.nestedName)")
+        let store = store {
+            $0.favorites = [docs, reports, pinnedReports]
+            $0.offlineFavoriteIDs = ["A", "B", "C"]
+            $0.offlinePinnedFavoriteIDs = ["A", "C"]
+            $0.offlineRemoval = OfflineRemovalRequest(paths: [TestFolder.docs], names: [docs.displayName])
+        }
+
+        await store.send(.offlineRemovalConfirmed) {
+            $0.offlineRemoval = nil
+            $0.offlineFavoriteIDs = ["C"]
+            $0.offlinePinnedFavoriteIDs = ["C"]
+        }
+        await store.receive(.delegate(.offlineUnpinRequested(path: TestFolder.docs)))
+    }
+
     @Test
     func bulkOfflinePinsTheSelectedFavoritesThatAreNotOfflineYet() async {
         let first = makeFavorite(id: "A", path: Constants.nestedPath)
@@ -110,8 +131,24 @@ struct FavoritesOfflineToggleTests: FavoritesTestSupport {
         await store.send(.bulkOfflineTapped)
     }
 
-    @Test
-    func aFavoriteOfflineOnlyThroughAParentFolderCannotBeToggled() async {
+    @Test("A favorite kept only through a pinned parent comes off on its own, under its own name")
+    func aFavoriteOfflineThroughAParentComesOffItself() async {
+        let favorite = makeFavorite(id: "B", path: Constants.nestedPath)
+        let offline = OfflineFileStore.inMemory()
+        offline.setPinnedRoots([OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true)])
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.offlineFavoriteIDs = ["B"]
+        let store = TestStore(initialState: state) { FavoritesFeature() } withDependencies: {
+            $0.offlineFileStore = offline
+        }
+
+        await store.send(.offlineToggleTapped(favorite)) {
+            $0.offlineRemoval = OfflineRemovalRequest(paths: [favorite.path], names: [favorite.displayName])
+        }
+    }
+
+    @Test("A favorite offline with no pinned parent found asks nothing")
+    func aFavoriteOfflineWithNoPinnedParentAsksNothing() async {
         let favorite = makeFavorite(id: "B", path: Constants.nestedPath)
         let store = store { $0.offlineFavoriteIDs = ["B"] }
 

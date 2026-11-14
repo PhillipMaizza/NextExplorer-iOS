@@ -1149,6 +1149,7 @@ offline.tabEmpty	Поки що нічого немає в офлайн-дост�
 offline.removeItemTitle	Прибрати «%@» із доступних офлайн?
 offline.removeItemsTitle	Прибрати %lld об’єктів із доступних офлайн?
 offline.removeItemMessage	Це видалить файли, збережені для офлайн-використання на цьому пристрої. Ваші файли на сервері не зачіпаються.
+offline.shareNotKept	Цих файлів ще немає на цьому пристрої.
 browse.actionRemoveFromOffline	Прибрати з офлайн
 offline.rowUpdating	Оновлення…
 offline.rowWaitingForNetwork	Очікування мережі

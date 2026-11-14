@@ -67,12 +67,13 @@ extension BrowseFeature {
             state.offlinePinnedItemIDs = []
             return .none
         }
-        let offlineFileStore = offlineFileStore
+        // A detached task drops the account pinned on this task, so the store is bound to it here.
+        let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)
         return .run { send in
             let (all, pinned) = await Task.detached(priority: .utility) {
                 OfflineAvailability.classify(
                     items,
-                    pinnedPaths: offlineFileStore.pinnedRoots().map(\.path),
+                    roots: offlineFileStore.pinnedRoots(),
                     id: \.id,
                     isDirectory: \.isDirectory,
                     hasCopy: { offlineFileStore.localURL($0) != nil }
@@ -124,7 +125,19 @@ extension BrowseFeature {
         return .none
     }
 
-    func load(_ state: inout State) -> Effect<Action> {
+    /// An Offline tab screen lists what is kept on the device, with no request; any other screen
+    /// (or an Offline tab folder with nothing kept yet) asks the server.
+    func load(_ state: inout State, fromDevice: Bool? = nil) -> Effect<Action> {
+        if fromDevice ?? state.isKeptOffline {
+            state.phase = .loading
+            let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)
+            let directoryPath = state.directoryPath
+            return .run { send in
+                let roots = offlineFileStore.pinnedRoots()
+                await send(.keptListingResolved(offlineFileStore.listing(directoryPath)?.keeping(roots.keeps)))
+            }
+            .cancellable(id: CancelID.load, cancelInFlight: true)
+        }
         let hadLoaded = state.phase.hasLoaded
         state.phase = .loading
         let serverURL = state.serverURL
@@ -184,5 +197,43 @@ extension BrowseFeature {
             etag: nil,
             fetchedAt: date.now
         )
+    }
+}
+
+extension CachedDirectory {
+    /// A saved listing with the kept files added that it lacks (a saved copy older than the
+    /// download); whichever exists when only one does, `nil` when neither.
+    static func merging(saved: CachedDirectory?, kept: CachedDirectory?) -> CachedDirectory? {
+        guard let saved else { return kept }
+        guard let kept else { return saved }
+        let savedIDs = Set(saved.items.map(\.id))
+        return CachedDirectory(
+            path: saved.path,
+            items: saved.items + kept.items.filter { !savedIDs.contains($0.id) },
+            access: saved.access,
+            fetchedAt: saved.fetchedAt,
+            etag: saved.etag
+        )
+    }
+
+    /// This listing without the entries `isKept` turns down, such as a file taken off inside a
+    /// pinned folder.
+    func keeping(_ isKept: (String) -> Bool) -> CachedDirectory {
+        CachedDirectory(
+            path: path,
+            items: items.filter { isKept($0.id) },
+            access: access,
+            fetchedAt: fetchedAt,
+            etag: etag
+        )
+    }
+}
+
+/// Files handed to the system share sheet, identified by the files themselves.
+struct KeptFilesShare: Equatable, Identifiable, Sendable {
+    let urls: [URL]
+
+    var id: [URL] {
+        urls
     }
 }

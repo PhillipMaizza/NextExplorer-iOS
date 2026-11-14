@@ -1150,6 +1150,7 @@ offline.tabEmpty	Rien n’est encore disponible hors connexion. Choisissez « Di
 offline.removeItemTitle	Retirer « %@ » des éléments disponibles hors connexion ?
 offline.removeItemsTitle	Retirer %lld éléments des éléments disponibles hors connexion ?
 offline.removeItemMessage	Cela supprime les fichiers enregistrés pour une utilisation hors ligne sur cet appareil. Vos fichiers sur le serveur ne sont pas affectés.
+offline.shareNotKept	Ces fichiers ne sont pas encore sur cet appareil.
 browse.actionRemoveFromOffline	Retirer du hors connexion
 offline.rowUpdating	Mise à jour…
 offline.rowWaitingForNetwork	En attente du réseau

@@ -40,17 +40,9 @@ private enum Constants {
 /// render this same view, scoped to their own `BrowseFeature` store. The list/grid
 /// choice is a per-device display preference, not per-folder state, so it's stored
 /// directly here rather than threaded through `BrowseFeature.State`.
-extension EnvironmentValues {
-    /// Off for folders opened from the Offline tab, where everything is offline and a badge on each
-    /// item says nothing. Browse and Favorites keep it.
-    @Entry var showsOfflineBadges = true
-}
-
 struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
-    @Environment(\.showsOfflineBadges) private var showsOfflineBadges
     /// Observed only to refresh the offline badges when a download completes.
-    @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardPreference = false
@@ -264,7 +256,7 @@ struct BrowseContentView: View {
             // A finished offline download can change what's available here, so refresh the badges.
             // The completion mutates shared state, so this `onChange` fires mid reduce; hop to the next
             // tick so the send isn't reentrant.
-            .onChange(of: offlineProgress.phase) { _, phase in
+            .onOfflinePhaseChange { phase in
                 if phase == .completed {
                     Task { @MainActor in
                         store.send(.computeOfflineAvailability)
@@ -626,6 +618,9 @@ struct BrowseContentView: View {
             onConfirm: { store.send(.offlineRemovalConfirmed) },
             onCancel: { store.send(.offlineRemovalCancelled) }
         )
+        #if os(iOS)
+        .keptFilesShareSheet(store.keptShare) { store.send(.keptShareDismissed) }
+        #endif
     }
 
     private var previewPresentedBinding: Binding<Bool> {
@@ -702,7 +697,7 @@ struct BrowseContentView: View {
                 visibility: sourceVisibility
             ),
             isOpening: isOpening(item),
-            isAvailableOffline: showsOfflineBadges && store.offlineItemIDs.contains(item.id)
+            isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
     }
 
@@ -832,88 +827,94 @@ struct BrowseContentView: View {
             } else if items.count == 1, let item = items.first {
                 fileActionsMenu(for: item)
             } else {
-                Button {
-                    store.send(.tableSelectionChanged(ids))
-                    store.send(.copySelectionTapped, animation: .default)
-                } label: {
-                    Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
-                }
-                .tint(.primaryDS)
-                if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
+                Section {
                     Button {
                         store.send(.tableSelectionChanged(ids))
-                        store.send(.duplicateSelectionTapped, animation: .default)
+                        store.send(.copySelectionTapped, animation: .default)
                     } label: {
-                        Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
+                        Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
                     }
                     .tint(.primaryDS)
-                }
-                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
-                    Button {
-                        store.send(.tableSelectionChanged(ids))
-                        store.send(.cutSelectionTapped, animation: .default)
-                    } label: {
-                        Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
-                    }
-                    .tint(.primaryDS)
-                }
-                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
-                    Button {
-                        store.send(.tableSelectionChanged(ids))
-                        store.send(.bulkMoveTapped, animation: .default)
-                    } label: {
-                        Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
-                    }
-                    .tint(.primaryDS)
-                }
-                // Select mode's bulk bar is iOS only, so the Mac's several row actions live here.
-                if store.access?.canDownload ?? false {
-                    Button {
-                        store.send(.tableSelectionChanged(ids))
-                        store.send(.bulkDownloadTapped)
-                    } label: {
-                        Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
-                    }
-                    .tint(.primaryDS)
-                    let offlineAction = OfflineBulkAction.resolve(
-                        selectedIDs: items.map(\.id),
-                        offlineIDs: store.offlineItemIDs,
-                        pinnedIDs: store.offlinePinnedItemIDs
-                    )
-                    Button(role: offlineAction == .remove ? .destructive : nil) {
-                        store.send(.tableSelectionChanged(ids))
-                        store.send(.bulkOfflineTapped)
-                    } label: {
-                        Label { Text(offlineAction?.title ?? L10n.Browse.actionAvailableOffline) } icon: {
-                            offlineAction?.icon ?? IconKit.availableOffline
+                    if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
+                        Button {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.duplicateSelectionTapped, animation: .default)
+                        } label: {
+                            Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
                         }
+                        .tint(.primaryDS)
                     }
-                    .tint(offlineAction == .remove ? .negative : .primaryDS)
-                    .disabled(offlineAction == nil)
+                    if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                        Button {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.cutSelectionTapped, animation: .default)
+                        } label: {
+                            Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                        }
+                        .tint(.primaryDS)
+                    }
+                    if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                        Button {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.bulkMoveTapped, animation: .default)
+                        } label: {
+                            Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
+                        }
+                        .tint(.primaryDS)
+                    }
                 }
-                if items.allSatisfy(\.isDirectory) {
-                    let isAllFavorite = items.allSatisfy { store.favoritePaths.contains($0.id) }
-                    Button {
-                        store.send(.tableSelectionChanged(ids))
-                        store.send(.bulkFavoriteTapped)
-                    } label: {
-                        Label {
-                            Text(isAllFavorite
+                Section {
+                    // Select mode's bulk bar is iOS only, so the Mac's several row actions live here.
+                    if store.access?.canDownload ?? false {
+                        Button {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.bulkDownloadTapped)
+                        } label: {
+                            Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
+                        }
+                        .tint(.primaryDS)
+                    }
+                }
+                // Available Offline and Favorites, always their own group; a removal is red.
+                Section {
+                    if store.access?.canDownload ?? false {
+                        let offlineAction = OfflineBulkAction.resolve(
+                            selectedIDs: items.map(\.id),
+                            offlineIDs: store.offlineItemIDs
+                        )
+                        RemovableMenuButton(
+                            title: offlineAction?.title ?? L10n.Browse.actionAvailableOffline,
+                            icon: offlineAction?.icon ?? IconKit.availableOffline,
+                            isRemoval: offlineAction == .remove
+                        ) {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.bulkOfflineTapped)
+                        }
+                        .disabled(offlineAction == nil)
+                    }
+                    if items.allSatisfy(\.isDirectory) {
+                        let isAllFavorite = items.allSatisfy { store.favoritePaths.contains($0.id) }
+                        RemovableMenuButton(
+                            title: isAllFavorite
                                 ? L10n.Browse.actionRemoveFromFavorites
-                                : L10n.Browse.actionAddToFavorites)
-                        } icon: {
-                            isAllFavorite ? IconKit.starFill : IconKit.star
+                                : L10n.Browse.actionAddToFavorites,
+                            icon: isAllFavorite ? IconKit.starFill : IconKit.star,
+                            isRemoval: isAllFavorite
+                        ) {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.bulkFavoriteTapped)
                         }
+                        .disabled(!store.hasLoadedFavorites)
                     }
-                    .tint(.primaryDS)
-                    .disabled(!store.hasLoadedFavorites)
                 }
-                if store.access?.canDelete ?? false {
-                    Button(role: .destructive) {
-                        store.send(.tableSelectionChanged(ids))
-                        store.send(.deleteSelectionTapped)
-                    } label: {
-                        Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                Section {
+                    if store.access?.canDelete ?? false {
+                        Button(role: .destructive) {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.deleteSelectionTapped)
+                        } label: {
+                            Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                        }
                     }
                 }
             }
@@ -969,7 +970,7 @@ struct BrowseContentView: View {
                 visibility: sourceVisibility
             ),
             isOpening: isOpening(item),
-            isAvailableOffline: showsOfflineBadges && store.offlineItemIDs.contains(item.id)
+            isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
     }
 
@@ -1827,7 +1828,7 @@ struct BrowseContentView: View {
                             .accessibilityLabel(L10n.Common.delete)
                         }
                         // Only folders can be favorited: the server 400s on anything else.
-                        if item.isDirectory {
+                        if item.isDirectory, !store.showsDeviceContent {
                             Button {
                                 store.send(.favoriteToggleButtonTapped(item))
                             } label: {

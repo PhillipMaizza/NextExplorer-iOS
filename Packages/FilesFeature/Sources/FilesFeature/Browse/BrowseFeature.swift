@@ -217,13 +217,14 @@ public struct BrowseFeature {
         public var offlinePinnedItemIDs: Set<String> = []
         /// Items waiting for the user to confirm taking them out of Available Offline.
         var offlineRemoval: OfflineRemovalRequest?
+        /// Kept files handed to the system share sheet, from their copies on the device.
+        var keptShare: KeptFilesShare?
 
         /// What the selection bar's Available Offline button does right now.
         var selectedOfflineAction: OfflineBulkAction? {
             OfflineBulkAction.resolve(
                 selectedIDs: items.filter { selectedItemIDs.contains($0.id) }.map(\.id),
-                offlineIDs: offlineItemIDs,
-                pinnedIDs: offlinePinnedItemIDs
+                offlineIDs: offlineItemIDs
             )
         }
         /// The server has personal folders on (`features.personal.enabled`). Only the root screen
@@ -564,6 +565,8 @@ public struct BrowseFeature {
         case offlineListingResolved(CachedDirectory?, FilesClientError)
         /// The saved listing read off the main actor to paint a first load, `nil` when none is stored.
         case cachedListingPainted(CachedDirectory)
+        /// The listing kept with a pinned folder, read for an Offline tab screen; `nil` when none is kept.
+        case keptListingResolved(CachedDirectory?)
         case serverFeaturesResponse(ServerFeatures)
         case personalSpaceTapped
         case rowTapped(FileItem)
@@ -637,6 +640,10 @@ public struct BrowseFeature {
         case bulkFavoriteTapped
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped
+        /// Share on device content: the kept copies of these files go to the system share sheet.
+        case keptShareTapped([FileItem])
+        case keptShareResolved([URL])
+        case keptShareDismissed
         /// Pins every selected item that is not offline yet; when all of them are, unpins the ones
         /// the user pinned. Items offline only through a parent folder are left alone.
         case bulkOfflineTapped
@@ -772,6 +779,18 @@ public struct BrowseFeature {
                 return .none
 
             case let .offlineAvailabilityComputed(all, pinned):
+                // A search hit open in the preview is not in the listing this was worked out from:
+                // its marks stay, or its preview would offer to keep a file that already is.
+                var all = all
+                var pinned = pinned
+                if state.isPreviewOutsideListing, let hit = state.previewItem?.id, state.items[id: hit] == nil {
+                    if state.offlineItemIDs.contains(hit) {
+                        all.insert(hit)
+                    }
+                    if state.offlinePinnedItemIDs.contains(hit) {
+                        pinned.insert(hit)
+                    }
+                }
                 state.offlineItemIDs = all
                 state.offlinePinnedItemIDs = pinned
                 return .none
@@ -785,14 +804,27 @@ public struct BrowseFeature {
                 state.offlineRemoval = nil
                 state.offlineItemIDs.subtract(request.paths)
                 state.offlinePinnedItemIDs.subtract(request.paths)
+                // A removed folder takes the files kept through it off the device too, except one
+                // pinned on its own, which stays.
+                state.offlineItemIDs = state.offlineItemIDs.filter { id in
+                    state.offlinePinnedItemIDs.contains(id) || !request.paths.contains { id.hasPrefix($0 + "/") }
+                }
+                // A screen listing what is on the device stops showing what just came off it.
+                if state.isKeptOffline {
+                    let stillKept = state.offlineItemIDs
+                    state.items.removeAll { item in
+                        !stillKept.contains(item.id)
+                            && request.paths.contains { item.id == $0 || item.id.hasPrefix($0 + "/") }
+                    }
+                    listingChanged(&state)
+                }
                 return .merge(request.paths.map { .send(.delegate(.offlineUnpinRequested(path: $0))) })
 
             case let .offlineToggleTapped(item):
-                if state.offlinePinnedItemIDs.contains(item.id) {
-                    state.offlineRemoval = OfflineRemovalRequest(paths: [item.id], names: [item.name])
+                if state.offlineItemIDs.contains(item.id) {
+                    state.offlineRemoval = offlineRemoval(of: [item], state: state)
                     return .none
                 }
-                guard !state.offlineItemIDs.contains(item.id) else { return .none }
                 state.offlinePinnedItemIDs.insert(item.id)
                 state.offlineItemIDs.insert(item.id)
                 return .send(.delegate(.offlinePinRequested([item])))
@@ -802,7 +834,7 @@ public struct BrowseFeature {
                 state.dataSource = .live
                 state.isShowingCachePaint = false
                 state.items = IdentifiedArray(Self.sortedAlphabetically(result.items), id: \.id, uniquingIDsWith: { first, _ in first })
-                state.access = result.access
+                state.access = Self.shownAccess(result.access, isNarrowed: state.isKeptOffline)
                 listingChanged(&state)
                 return .merge(
                     recheckArrivals(&state),
@@ -825,9 +857,13 @@ public struct BrowseFeature {
                 let serverURL = state.serverURL
                 let directoryPath = state.directoryPath
                 return .run { send in
-                    // The listing kept with a pinned folder never evicts, so it backs the shared cache.
-                    let cached = directoryCacheStore.read(serverURL: serverURL, path: directoryPath)
-                        ?? offlineFileStore.listing(directoryPath)
+                    // The saved copy plus whatever is kept on the device, so nothing kept goes missing
+                    // from a saved copy older than the download.
+                    let roots = offlineFileStore.pinnedRoots()
+                    let cached = CachedDirectory.merging(
+                        saved: directoryCacheStore.read(serverURL: serverURL, path: directoryPath),
+                        kept: offlineFileStore.listing(directoryPath)?.keeping(roots.keeps)
+                    )
                     await send(.offlineListingResolved(cached, error))
                 }
                 .cancellable(id: CancelID.load)
@@ -842,21 +878,32 @@ public struct BrowseFeature {
                 if let cached {
                     state.phase = .loaded
                     state.items = IdentifiedArray(Self.sortedAlphabetically(cached.items), id: \.id, uniquingIDsWith: { first, _ in first })
-                    state.access = cached.access
+                    state.access = Self.shownAccess(cached.access, isNarrowed: true)
                     state.dataSource = .cached(fetchedAt: cached.fetchedAt)
                     listingChanged(&state)
                     return computeOfflineAvailability(&state)
                 } else if !state.items.isEmpty {
                     state.phase = .loaded
+                    state.access = state.access.map { Self.shownAccess($0, isNarrowed: true) }
                     state.dataSource = .cached(fetchedAt: date.now)
                     return computeOfflineAvailability(&state)
                 }
                 return failItemsLoad(&state, error)
 
+            case let .keptListingResolved(kept):
+                // No kept listing for this folder (not downloaded yet): ask the server like any screen.
+                guard let kept else { return load(&state, fromDevice: false) }
+                state.phase = .loaded
+                state.isShowingCachePaint = false
+                state.items = IdentifiedArray(Self.sortedAlphabetically(kept.items), id: \.id, uniquingIDsWith: { first, _ in first })
+                state.access = Self.shownAccess(kept.access, isNarrowed: true)
+                listingChanged(&state)
+                return computeOfflineAvailability(&state)
+
             case let .cachedListingPainted(cached):
                 guard state.phase == .loading, state.items.isEmpty else { return .none }
                 state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
-                state.access = cached.access
+                state.access = Self.shownAccess(cached.access, isNarrowed: state.isKeptOffline)
                 state.isShowingCachePaint = true
                 listingChanged(&state)
                 return .none
@@ -973,6 +1020,14 @@ public struct BrowseFeature {
                 let pinned = offlineFileStore.pinned(to: state.cacheScope)
                 let item = pinned.matchingPinnedCopy(result.previewItem(openedAt: date.now))
                 state.isPreviewOutsideListing = true
+                // The hit is not in the listing the offline marks come from, so its preview would
+                // offer to keep a file that already is. Marked here, its removal is offered instead.
+                if pinned.pinnedRoots().contains(where: { $0.path == item.id }) {
+                    state.offlinePinnedItemIDs.insert(item.id)
+                    state.offlineItemIDs.insert(item.id)
+                } else if pinned.coveringRoot(of: item.id) != nil {
+                    state.offlineItemIDs.insert(item.id)
+                }
                 return .send(.rowTapped(item))
 
             case let .searchResultsResponse(.success(page)):
@@ -1249,6 +1304,31 @@ public struct BrowseFeature {
                 state.fileActionErrorMessage = error.userMessage
                 return refetchAfterAmbiguousFailure(&state, error)
 
+            case let .keptShareTapped(items):
+                // Cleared so a second tap that finds nothing again shows its message again.
+                state.fileActionErrorMessage = nil
+                let files = items.filter { !$0.isDirectory }
+                let store = offlineFileStore.pinned(to: state.cacheScope)
+                return .run { send in
+                    await send(.keptShareResolved(files.compactMap { store.localURLIgnoringStaleness($0) }))
+                }
+
+            case let .keptShareResolved(urls):
+                // Select mode ends only once the sheet opens; files still downloading keep the
+                // selection and say why nothing opened.
+                guard !urls.isEmpty else {
+                    state.fileActionErrorMessage = L10n.Offline.shareNotKept
+                    return .none
+                }
+                state.isSelecting = false
+                state.selectedItemIDs = []
+                state.keptShare = KeptFilesShare(urls: urls)
+                return .none
+
+            case .keptShareDismissed:
+                state.keptShare = nil
+                return .none
+
             case let .downloadTapped(item):
                 #if os(macOS)
                     // A Mac saves where the user says, through the save panel, then the queue saves it there.
@@ -1358,9 +1438,7 @@ public struct BrowseFeature {
                     state.offlinePinnedItemIDs.formUnion(toPin.map(\.id))
                     return .send(.delegate(.offlinePinRequested(Array(toPin))))
                 }
-                let toUnpin = targets.filter { state.offlinePinnedItemIDs.contains($0.id) }
-                guard !toUnpin.isEmpty else { return .none }
-                state.offlineRemoval = OfflineRemovalRequest(paths: toUnpin.map(\.id), names: toUnpin.map(\.name))
+                state.offlineRemoval = offlineRemoval(of: Array(targets), state: state)
                 return .none
 
             case let .beginUpload(source):
@@ -1797,6 +1875,34 @@ public struct BrowseFeature {
                 return .cancel(id: CancelID.info)
             }
         }
+    }
+
+    /// The access a screen acts on: the server's, narrowed on device content (an Offline tab screen or
+    /// a saved copy shown with no network) to what works on kept files, so writes, deletes and uploads
+    /// are not offered there.
+    static func shownAccess(_ access: FileAccess, isNarrowed: Bool) -> FileAccess {
+        guard isNarrowed else { return access }
+        return FileAccess(
+            canRead: access.canRead,
+            canWrite: false,
+            canUpload: false,
+            canDelete: false,
+            canShare: access.canShare,
+            canDownload: access.canDownload,
+            canCreateFolder: false,
+            canCreateFile: false
+        )
+    }
+
+    /// The confirmation for taking `items` off the device, under this screen's account.
+    func offlineRemoval(of items: [FileItem], state: State) -> OfflineRemovalRequest? {
+        // The manifest is read once, not once per picked item.
+        let roots = offlineFileStore.pinned(to: state.cacheScope).pinnedRoots()
+        return .removing(
+            items.map { (path: $0.id, name: $0.name) },
+            pinnedPaths: state.offlinePinnedItemIDs,
+            coveringRoot: { roots.coveringRoot(of: $0)?.path }
+        )
     }
 
     /// Folders before files, each group alphabetical, matching the web client's own

@@ -13,19 +13,39 @@ struct OfflineRemovalRequest: Equatable, Sendable {
     }
 }
 
+extension OfflineRemovalRequest {
+    /// Taking `items` off the device: one the user pinned is unpinned, one kept only through a pinned
+    /// folder is left out of it while the folder stays pinned. An item inside another picked one comes
+    /// off with it, so it is not named twice. `nil` when none of them can come off.
+    static func removing(
+        _ items: [(path: String, name: String)],
+        pinnedPaths: Set<String>,
+        coveringRoot: (String) -> String?
+    ) -> OfflineRemovalRequest? {
+        let removable = items.filter { pinnedPaths.contains($0.path) || coveringRoot($0.path) != nil }
+        let paths = Set(removable.map(\.path))
+        var kept: [(path: String, name: String)] = []
+        for item in removable where !kept.contains(where: { $0.path == item.path }) {
+            guard !paths.contains(where: { item.path.hasPrefix($0 + "/") }) else { continue }
+            kept.append(item)
+        }
+        return kept.isEmpty ? nil : OfflineRemovalRequest(paths: kept.map(\.path), names: kept.map(\.name))
+    }
+}
+
 /// What the Available Offline button does for a selection: add what is not offline yet, or, when
-/// everything already is, remove what the user pinned. `nil` (button disabled) for no selection or only
-/// items that are offline through a parent folder.
+/// everything already is, remove it (an item kept through a pinned folder comes off on its own).
+/// `nil` (button disabled) for no selection.
 enum OfflineBulkAction: Equatable {
     case add
     case remove
 
-    static func resolve(selectedIDs: [String], offlineIDs: Set<String>, pinnedIDs: Set<String>) -> OfflineBulkAction? {
+    static func resolve(selectedIDs: [String], offlineIDs: Set<String>) -> OfflineBulkAction? {
         guard !selectedIDs.isEmpty else { return nil }
         if selectedIDs.contains(where: { !offlineIDs.contains($0) }) {
             return .add
         }
-        return selectedIDs.contains(where: pinnedIDs.contains) ? .remove : nil
+        return .remove
     }
 
     var title: String {

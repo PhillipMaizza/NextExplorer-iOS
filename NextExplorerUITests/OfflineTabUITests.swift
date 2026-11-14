@@ -60,6 +60,56 @@
             XCTAssertTrue(offline.row(Fixture.folder).waitToAppear(), "Back returns to the Offline list")
         }
 
+        func testRemoveFromOfflineInAPinnedFilesPreviewTakesItOffTheTab() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal)
+            let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.availableOfflineAction)
+            browse.availableOfflineAction.tap()
+
+            let offline = OfflineTabScreen(app: app)
+            selectTab(TabBar(app: app).downloads, until: offline.row(Fixture.file))
+            offline.row(Fixture.file).tap()
+            XCTAssertTrue(browse.previewBackButton.waitToAppear(), "Tapping a pinned file opens its preview")
+
+            let title = app.navigationBars.descendants(matching: .any).labeled(Fixture.file)
+            openMenu({ title.tap() }, until: browse.removeFromOfflineAction)
+            browse.removeFromOfflineAction.tap()
+            XCTAssertTrue(browse.removeOfflineConfirmButton.waitToAppear(), "Removing asks first")
+            browse.removeOfflineConfirmButton.tap()
+
+            XCTAssertTrue(browse.previewBackButton.waitToVanish(), "The preview closes once its file leaves the tab")
+            XCTAssertTrue(offline.row(Fixture.file).waitToVanish(), "The file is no longer listed as offline")
+        }
+
+        /// The mocked listing is the same in every folder, so the file under the pinned folder is
+        /// reached through search, whose hits sit under Documents.
+        func testAFileFoundInsideAPinnedFolderCanTakeTheFolderOffTheDeviceFromItsPreview() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal)
+            let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
+            openMenu({ browse.row(Fixture.folder).longPress() }, until: browse.availableOfflineAction)
+            browse.availableOfflineAction.tap()
+
+            XCTAssertTrue(browse.searchField.waitToAppear())
+            browse.searchField.clearAndType(Fixture.fileSearchTerm)
+            XCTAssertTrue(browse.item(Fixture.searchHit).waitToAppear())
+            browse.item(Fixture.searchHit).tap()
+            XCTAssertTrue(browse.previewBackButton.waitToAppear(), "The file opens in its preview")
+
+            let title = app.navigationBars.descendants(matching: .any).labeled(Fixture.searchHit)
+            openMenu({ title.tap() }, until: browse.removeFromOfflineAction)
+            XCTAssertTrue(browse.removeFromOfflineAction.isEnabled, "A file kept through its folder can be removed")
+            browse.removeFromOfflineAction.tap()
+            XCTAssertTrue(browse.removeOfflineConfirmButton.waitToAppear(), "Removing asks first")
+            XCTAssertTrue(
+                app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", Fixture.folder)).firstMatch.exists,
+                "The confirmation names the folder that comes off the device"
+            )
+            browse.removeOfflineConfirmButton.tap()
+            XCTAssertTrue(browse.removeOfflineConfirmButton.waitToVanish())
+        }
+
         func testAPinnedFileOpensItsPreviewFromTheOfflineTab() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)

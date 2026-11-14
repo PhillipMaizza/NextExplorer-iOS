@@ -7,8 +7,12 @@ import Foundation
 /// pushed subfolder). Centralises how a pushed browse screen is built.
 enum BrowseNavigation {
     /// A pushed screen for drilling into `item`.
-    static func screen(for item: FileItem, serverURL: URL) -> BrowseFeature.State {
-        BrowseFeature.State(serverURL: serverURL, directoryPath: item.id, title: item.name)
+    /// `isKeptOffline` marks a screen pushed from the Offline tab, which offers only what works on
+    /// files kept on the device.
+    static func screen(for item: FileItem, serverURL: URL, isKeptOffline: Bool = false) -> BrowseFeature.State {
+        var screen = BrowseFeature.State(serverURL: serverURL, directoryPath: item.id, title: item.name)
+        screen.isKeptOffline = isKeptOffline
+        return screen
     }
 
     /// Reset the stack and jump straight to an arbitrary path (e.g. a deep search result).
@@ -17,11 +21,14 @@ enum BrowseNavigation {
         to path: String,
         title: String,
         serverURL: URL,
+        isKeptOffline: Bool = false,
         stack: inout StackState<BrowseFeature.State>
     ) {
         stack.removeAll()
         guard !path.isEmpty else { return }
-        stack.append(BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: title))
+        var screen = BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: title)
+        screen.isKeptOffline = isKeptOffline
+        stack.append(screen)
     }
 }
 

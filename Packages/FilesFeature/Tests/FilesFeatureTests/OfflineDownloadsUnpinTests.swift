@@ -208,4 +208,14 @@ struct OfflineDownloadsUnpinTests: OfflineDownloadsTestSupport {
         #expect(merged.map(\.path) == [Constants.rootB, Constants.rootA, Constants.rootC])
         #expect(merged[1].isDirectory == false, "re pinning replaces the entry in place")
     }
+
+    @Test("Pinning a folder again keeps all of it, dropping what was taken off inside it")
+    func repinningAFolderClearsItsExclusions() {
+        let existing = [
+            OfflinePinnedRoot(path: Constants.rootA, isDirectory: true, excludedPaths: [Constants.rootB]),
+        ]
+        let adding = [OfflinePinnedRoot(path: Constants.rootA, isDirectory: true)]
+
+        #expect(OfflineDownloadsFeature.mergedRoots(existing: existing, adding: adding) == adding)
+    }
 }

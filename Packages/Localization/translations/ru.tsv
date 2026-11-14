@@ -1176,6 +1176,7 @@ offline.tabEmpty	Пока нет ничего, что доступно офла�
 offline.removeItemTitle	Убрать «%@» из доступных офлайн?
 offline.removeItemsTitle	Убрать %lld объектов из доступных офлайн?
 offline.removeItemMessage	Это удалит файлы, сохранённые для офлайн-доступа на этом устройстве. Ваши файлы на сервере не будут затронуты.
+offline.shareNotKept	Этих файлов пока нет на этом устройстве.
 browse.actionRemoveFromOffline	Убрать из офлайн
 offline.rowUpdating	Обновление…
 offline.rowWaitingForNetwork	Ожидание сети

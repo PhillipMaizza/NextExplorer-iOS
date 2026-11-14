@@ -1122,6 +1122,7 @@ offline.tabEmpty	Henüz çevrimdışı kullanılabilir bir şey yok. Bir dosya v
 offline.removeItemTitle	“%@” çevrimdışı kullanılabilirden kaldırılsın mı?
 offline.removeItemsTitle	%lld öğe çevrimdışı kullanılabilirden kaldırılsın mı?
 offline.removeItemMessage	Bu işlem, bu cihazda çevrimdışı kullanım için kaydedilen dosyaları siler. Sunucudaki dosyalarınız etkilenmez.
+offline.shareNotKept	Bu dosyalar henüz bu cihazda değil.
 browse.actionRemoveFromOffline	Çevrimdışından kaldır
 offline.rowUpdating	Güncelleniyor…
 offline.rowWaitingForNetwork	Ağ bekleniyor

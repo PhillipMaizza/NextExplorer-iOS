@@ -54,9 +54,13 @@ public struct OfflineTabFeature {
         public var sortDirection: BrowseFeature.SortDirection = .ascending
         public var isSelecting = false
         public var selectedDownloadIDs: Set<LocalDownload.ID> = []
+        /// Pinned items picked in select mode; they can only be removed from offline, never deleted.
+        public var selectedPinnedPaths: Set<String> = []
         public var bulkDeleteConfirmationIsPresented = false
         /// Current account's downloads scope, so the tab lists only this account's files.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
+        /// The Thumbnails setting, so pinned files draw theirs like Browse does.
+        @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
 
         /// Where pinned folders open: the tab browses them like Browse does. Nil only in tests and
         /// previews that never open one.
@@ -91,6 +95,16 @@ public struct OfflineTabFeature {
             }
             return sortDirection == .ascending ? sorted : sorted.reversed()
         }
+
+        /// Pinned items and saved files picked together, for the select mode title.
+        public var selectedCount: Int {
+            selectedDownloadIDs.count + selectedPinnedPaths.count
+        }
+
+        mutating func clearSelection() {
+            selectedDownloadIDs = []
+            selectedPinnedPaths = []
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -110,7 +124,14 @@ public struct OfflineTabFeature {
         case sortDirectionChanged(BrowseFeature.SortDirection)
         case selectModeToggled
         case itemSelectionToggled(LocalDownload.ID)
-        case selectAllTapped
+        case pinnedSelectionToggled(path: String)
+        /// `pinnedPaths` is what the tab shows of the pinned items, searched and sorted like the rest.
+        case selectAllTapped(pinnedPaths: [String])
+        /// The selected pinned items were removed from offline: select mode ends like after a delete.
+        case pinnedSelectionRemoved
+        /// The pinned items on screen changed (a run finished, an unpin elsewhere, the search): a picked
+        /// item no longer shown leaves the selection, so the count and Select All match what is listed.
+        case shownPinnedPathsChanged([String])
         case deselectAllTapped
         case bulkDeleteTapped
         case bulkDeleteCancelled
@@ -241,7 +262,7 @@ public struct OfflineTabFeature {
 
             case .selectModeToggled:
                 state.isSelecting.toggle()
-                state.selectedDownloadIDs = []
+                state.clearSelection()
                 return .none
 
             case let .itemSelectionToggled(id):
@@ -252,12 +273,30 @@ public struct OfflineTabFeature {
                 }
                 return .none
 
-            case .selectAllTapped:
+            case let .pinnedSelectionToggled(path):
+                if state.selectedPinnedPaths.contains(path) {
+                    state.selectedPinnedPaths.remove(path)
+                } else {
+                    state.selectedPinnedPaths.insert(path)
+                }
+                return .none
+
+            case let .selectAllTapped(pinnedPaths):
                 state.selectedDownloadIDs = Set(state.displayedDownloads.map(\.id))
+                state.selectedPinnedPaths = Set(pinnedPaths)
                 return .none
 
             case .deselectAllTapped:
-                state.selectedDownloadIDs = []
+                state.clearSelection()
+                return .none
+
+            case .pinnedSelectionRemoved:
+                state.isSelecting = false
+                state.clearSelection()
+                return .none
+
+            case let .shownPinnedPathsChanged(paths):
+                state.selectedPinnedPaths.formIntersection(paths)
                 return .none
 
             case .bulkDeleteTapped:
@@ -277,7 +316,7 @@ public struct OfflineTabFeature {
                     state.downloads.remove(id: id)
                 }
                 state.isSelecting = false
-                state.selectedDownloadIDs = []
+                state.clearSelection()
                 return .none
 
             case let .pinnedItemTapped(root):
@@ -290,6 +329,7 @@ public struct OfflineTabFeature {
                     to: path,
                     title: name.isEmpty ? path : name,
                     serverURL: serverURL,
+                    isKeptOffline: true,
                     stack: &state.path
                 )
                 return .none
@@ -307,17 +347,23 @@ public struct OfflineTabFeature {
                     kind: (name as NSString).pathExtension.lowercased()
                 ))
                 let folderName = (parent as NSString).lastPathComponent
-                state.previewHost = .previewHost(
+                var host = BrowseFeature.State.previewHost(
                     for: item,
                     serverURL: serverURL,
                     folderTitle: folderName.isEmpty ? L10n.Browse.navigationTitle : folderName
                 )
+                // Everything in this tab is pinned, so its preview offers Remove from Offline.
+                host.offlineItemIDs = [item.id]
+                host.offlinePinnedItemIDs = [item.id]
+                state.previewHost = host
                 return .send(.previewHost(.presented(.rowTapped(item))))
 
             case let .previewHost(.presented(.delegate(.offlinePinRequested(items)))):
                 return .send(.delegate(.offlinePinRequested(items)))
 
             case let .previewHost(.presented(.delegate(.offlineUnpinRequested(path)))):
+                // The file leaves this tab, so its preview closes like after a delete.
+                state.previewHost = nil
                 return .send(.delegate(.offlineUnpinRequested(path: path)))
 
             case let .previewHost(.presented(.delegate(.downloadRequested(items)))):
@@ -341,12 +387,18 @@ public struct OfflineTabFeature {
 
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
                 guard let serverURL = state.serverURL else { return .none }
-                state.path.append(BrowseNavigation.screen(for: item, serverURL: serverURL))
+                state.path.append(BrowseNavigation.screen(for: item, serverURL: serverURL, isKeptOffline: true))
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):
                 guard let serverURL = state.serverURL else { return .none }
-                BrowseNavigation.jump(to: path, title: title, serverURL: serverURL, stack: &state.path)
+                BrowseNavigation.jump(
+                    to: path,
+                    title: title,
+                    serverURL: serverURL,
+                    isKeptOffline: true,
+                    stack: &state.path
+                )
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.offlinePinRequested(items)))):

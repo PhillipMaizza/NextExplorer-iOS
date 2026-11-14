@@ -79,7 +79,9 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
 
         await run.store.send(.resyncTapped).finish()
 
-        #expect(calls.value == [true], "Reconciled once, with no list of what the server still has")
+        // Before the downloads (orphans of unpinned roots) and after them (anything taken off
+        // meanwhile), never with a list of what the server still has.
+        #expect(calls.value == [true, true])
     }
 
     /// Answers a pinned folder with `rootError` and everything else (its parent) with `parent`.

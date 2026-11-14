@@ -11,13 +11,18 @@ struct OfflinePinnedSection: View {
     let store: StoreOf<OfflineManageFeature>
     /// What to list, already filtered and ordered by the tab.
     let usages: [OfflinePinnedRootUsage]
+    /// The offline run's phase, which every pinned row's state follows.
+    var phase = OfflineDownloadProgress.Phase.idle
     var favorites: IdentifiedArrayOf<Favorite> = []
+    var serverURL: URL?
+    var showThumbnails = false
+    var isSelecting = false
+    var selectedPaths: Set<String> = []
     var onOpen: (OfflinePinnedRoot) -> Void = { _ in }
-    @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var progress = OfflineDownloadProgress()
 
     var body: some View {
         Section {
-            if progress.phase == .waitingForNetwork {
+            if phase == .waitingForNetwork {
                 Text(L10n.Offline.waitingForNetwork)
                     .type(.body3(.regular), style: .secondary)
             }
@@ -28,7 +33,11 @@ struct OfflinePinnedSection: View {
                     isLast: index == usages.count - 1,
                     onOpen: { onOpen(usage.root) },
                     favorite: favorites.first { $0.path == usage.root.path },
-                    syncState: OfflineSyncState(phase: progress.phase)
+                    syncState: OfflineSyncState(phase: phase),
+                    serverURL: serverURL,
+                    showThumbnails: showThumbnails,
+                    isSelecting: isSelecting,
+                    isSelected: selectedPaths.contains(usage.root.path)
                 ) {
                     store.send(.removeTapped(path: usage.root.path), animation: .default)
                 }

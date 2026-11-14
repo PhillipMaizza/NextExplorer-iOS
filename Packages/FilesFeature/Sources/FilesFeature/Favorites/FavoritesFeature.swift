@@ -39,8 +39,7 @@ public struct FavoritesFeature {
         var selectedOfflineAction: OfflineBulkAction? {
             OfflineBulkAction.resolve(
                 selectedIDs: favorites.filter { selectedFavoriteIDs.contains($0.id) }.map(\.id),
-                offlineIDs: offlineFavoriteIDs,
-                pinnedIDs: offlinePinnedFavoriteIDs
+                offlineIDs: offlineFavoriteIDs
             )
         }
 
@@ -291,6 +290,12 @@ public struct FavoritesFeature {
                 let removed = state.favorites.filter { request.paths.contains($0.path) }.map(\.id)
                 state.offlineFavoriteIDs.subtract(removed)
                 state.offlinePinnedFavoriteIDs.subtract(removed)
+                // A favorite inside what came off goes with it, unless it is pinned on its own.
+                let below = state.favorites.filter { favorite in
+                    !state.offlinePinnedFavoriteIDs.contains(favorite.id)
+                        && request.paths.contains { favorite.path.hasPrefix($0 + "/") }
+                }
+                state.offlineFavoriteIDs.subtract(below.map(\.id))
                 return .merge(request.paths.map { .send(.delegate(.offlineUnpinRequested(path: $0))) })
 
             case .bulkOfflineTapped:
@@ -304,23 +309,14 @@ public struct FavoritesFeature {
                     state.offlinePinnedFavoriteIDs.formUnion(toPin.map(\.id))
                     return .send(.delegate(.offlinePinRequested(toPin.map(\.folderItem))))
                 }
-                let toUnpin = selected.filter { state.offlinePinnedFavoriteIDs.contains($0.id) }
-                guard !toUnpin.isEmpty else { return .none }
-                state.offlineRemoval = OfflineRemovalRequest(
-                    paths: toUnpin.map(\.path),
-                    names: toUnpin.map(\.displayName)
-                )
+                state.offlineRemoval = offlineRemoval(of: Array(selected), state: state)
                 return .none
 
             case let .offlineToggleTapped(favorite):
-                if state.offlinePinnedFavoriteIDs.contains(favorite.id) {
-                    state.offlineRemoval = OfflineRemovalRequest(
-                        paths: [favorite.path],
-                        names: [favorite.displayName]
-                    )
+                if state.offlineFavoriteIDs.contains(favorite.id) {
+                    state.offlineRemoval = offlineRemoval(of: [favorite], state: state)
                     return .none
                 }
-                guard !state.offlineFavoriteIDs.contains(favorite.id) else { return .none }
                 state.offlinePinnedFavoriteIDs.insert(favorite.id)
                 state.offlineFavoriteIDs.insert(favorite.id)
                 return .send(.delegate(.offlinePinRequested([favorite.folderItem])))
@@ -690,6 +686,17 @@ public struct FavoritesFeature {
         .cancellable(id: CancelID.load, cancelInFlight: true)
     }
 
+    /// The confirmation for taking `favorites` off the device, under this list's account.
+    private func offlineRemoval(of favorites: [Favorite], state: State) -> OfflineRemovalRequest? {
+        // The manifest is read once, not once per picked favorite.
+        let roots = offlineFileStore.pinned(to: state.cacheScope).pinnedRoots()
+        return .removing(
+            favorites.map { (path: $0.path, name: $0.displayName) },
+            pinnedPaths: Set(favorites.filter { state.offlinePinnedFavoriteIDs.contains($0.id) }.map(\.path)),
+            coveringRoot: { roots.coveringRoot(of: $0)?.path }
+        )
+    }
+
     /// Recomputes which favorites are available offline, off the main actor (reads the pinned
     /// manifest from disk), then commits the ids. A favorite folder counts as available when it is
     /// a pinned directory root or sits under one, so a downloaded subfolder favorite is flagged
@@ -701,17 +708,18 @@ public struct FavoritesFeature {
             state.offlinePinnedFavoriteIDs = []
             return .none
         }
-        let offlineFileStore = offlineFileStore
+        // A detached task drops the account pinned on this task, so the store is bound to it here.
+        let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)
         return .run { send in
             let (all, pinned) = await Task.detached(priority: .utility) { () -> (Set<Favorite.ID>, Set<Favorite.ID>) in
-                let pinnedDirectoryPaths = offlineFileStore.pinnedRoots().filter(\.isDirectory).map(\.path)
+                let pinnedDirectories = offlineFileStore.pinnedRoots().filter(\.isDirectory)
                 var all = Set<Favorite.ID>()
                 var pinned = Set<Favorite.ID>()
                 for favorite in favorites {
-                    if pinnedDirectoryPaths.contains(favorite.path) {
+                    if pinnedDirectories.contains(where: { $0.path == favorite.path }) {
                         pinned.insert(favorite.id)
                         all.insert(favorite.id)
-                    } else if pinnedDirectoryPaths.contains(where: { favorite.path.hasPrefix($0 + "/") }) {
+                    } else if pinnedDirectories.keeps(favorite.path) {
                         all.insert(favorite.id)
                     }
                 }
@@ -722,10 +730,6 @@ public struct FavoritesFeature {
         .cancellable(id: CancelID.offlineAvailability, cancelInFlight: true)
     }
 
-    /// Recursive file search fanned out across every favorited folder: one backend search per
-    /// favorite (each searches that folder's whole subtree), merged and de duped. Tolerant per
-    /// favorite so a since deleted favorite can't fail the whole search; results are still
-    /// authoritative for the ones that answered.
     /// Opens a folder on top of the tab, ending any forward history.
     private func pushFolder(_ path: String, title: String, in state: inout State) {
         state.forwardStack = []
@@ -753,6 +757,10 @@ public struct FavoritesFeature {
         return favoriteSearch(&state, isDebounced: false)
     }
 
+    /// Recursive file search fanned out across every favorited folder: one backend search per
+    /// favorite (each searches that folder's whole subtree), merged and de duped. Tolerant per
+    /// favorite so a since deleted favorite can't fail the whole search; results are still
+    /// authoritative for the ones that answered.
     /// Typing is debounced; Retry is a decision already made and asks at once.
     private func favoriteSearch(_ state: inout State, isDebounced: Bool = true) -> Effect<Action> {
         let term = SearchTerm(state.searchQuery)

@@ -1,6 +1,7 @@
 import CoreText
 import Foundation
 #if os(iOS)
+    import SwiftUI
     import UIKit
 #endif
 
@@ -78,6 +79,11 @@ public enum DesignSystemFonts {
                 size: Constants.tabItemSize,
                 weight: Constants.tabItemSelectedWeight
             )]
+            // The tab badge is the accent dot, not the system red.
+            let accent = UIColor(Color.accent)
+            for state in [tabItemAppearance.normal, tabItemAppearance.selected] {
+                state.badgeBackgroundColor = accent
+            }
             let tabBarAppearance = UITabBarAppearance()
             tabBarAppearance.stackedLayoutAppearance = tabItemAppearance
             tabBarAppearance.inlineLayoutAppearance = tabItemAppearance

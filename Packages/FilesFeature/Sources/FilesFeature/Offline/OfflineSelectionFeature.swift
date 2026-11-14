@@ -109,11 +109,11 @@ public struct OfflineSelectionFeature {
                 // Items already available offline are shown pre checked and dimmed, and are never re
                 // downloaded: a file whose bytes are pinned, or a folder covered by a pinned root
                 // (the folder itself was pinned, or an ancestor of it was).
-                let pinnedPaths = offlineFileStore.pinnedRoots().map(\.path)
+                let pinnedRoots = offlineFileStore.pinnedRoots()
                 state.alreadyOfflineIDs = Set(
                     result.items.compactMap { item in
                         if item.isDirectory {
-                            return Self.isCovered(item.id, byPinnedRoots: pinnedPaths) ? item.id : nil
+                            return pinnedRoots.keeps(item.id) ? item.id : nil
                         }
                         return offlineFileStore.localURL(item) != nil ? item.id : nil
                     }
@@ -187,12 +187,6 @@ public struct OfflineSelectionFeature {
                 return .none
             }
         }
-    }
-
-    /// Whether `path` is fully covered by an offline pin: the folder itself is a pinned root, or it
-    /// sits inside one (an ancestor was pinned, so a folder wide download already includes it).
-    private static func isCovered(_ path: String, byPinnedRoots roots: [String]) -> Bool {
-        roots.contains { root in root == path || path.hasPrefix(root + "/") }
     }
 
     private func load(_ state: inout State) -> Effect<Action> {

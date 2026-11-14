@@ -1110,6 +1110,7 @@ offline.tabEmpty	ยังไม่มีสิ่งใดใช้งานแ
 offline.removeItemTitle	นำ “%@” ออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม
 offline.removeItemsTitle	นำ %lld รายการออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม
 offline.removeItemMessage	การดำเนินการนี้จะลบไฟล์ที่บันทึกไว้สำหรับใช้แบบออฟไลน์บนอุปกรณ์เครื่องนี้ ไฟล์ของคุณบนเซิร์ฟเวอร์ไม่ได้รับผลกระทบ
+offline.shareNotKept	ไฟล์เหล่านี้ยังไม่อยู่ในอุปกรณ์นี้
 browse.actionRemoveFromOffline	นำออกจากออฟไลน์
 offline.rowUpdating	กำลังอัปเดต…
 offline.rowWaitingForNetwork	รอเครือข่าย
