@@ -11,7 +11,7 @@
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
             let screen = APITokensScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
 
             XCTAssertTrue(
                 scrollTo(screen.row, in: app),

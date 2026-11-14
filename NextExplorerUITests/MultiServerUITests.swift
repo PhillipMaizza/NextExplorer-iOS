@@ -8,17 +8,18 @@
         func testSwitcherShowsActiveAccountAndAddRow() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
+            settings.openAccounts()
 
-            XCTAssertTrue(settings.accountsSectionHeader.waitToAppear(), "Settings should show an Accounts section")
-            XCTAssertTrue(settings.addAccountRow.exists, "The switcher should offer an Add Account row")
+            XCTAssertTrue(settings.addAccountRow.waitToAppear(), "The switcher should offer an Add Account row")
             XCTAssertTrue(settings.accountRow(host: Fixture.serverHost).exists, "The active account should be listed")
         }
 
         func testAddingSecondServerListsBothAccounts() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
+            settings.openAccounts()
 
             XCTAssertTrue(settings.addAccountRow.waitToAppear())
             settings.addAccountRow.tap()
@@ -31,7 +32,8 @@
                 "Adding an account should reveal the app on the new account"
             )
 
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
+            settings.openAccounts()
             XCTAssertTrue(
                 settings.accountRow(host: Fixture.otherServerHost).waitToAppear(),
                 "The newly added server should be listed"

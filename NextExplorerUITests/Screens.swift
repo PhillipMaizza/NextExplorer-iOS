@@ -65,10 +65,12 @@ struct TabBar {
     /// A tab by its identifier, or by its title when the tab bar built its items without one:
     /// SwiftUI only hands a tab label's identifier to the bar's button when the tab view is rebuilt
     /// on screen, which a fast launch can miss. An untagged button with the tab's title is a tab.
+    /// The iPad sidebar lists its sections as rows rather than buttons, carrying the same identifiers.
     private func tab(_ identifier: String, title: String) -> XCUIElement {
-        app.buttons.matching(NSPredicate(
-            format: "identifier == %@ OR (identifier == '' AND label == %@)",
+        app.descendants(matching: .any).matching(NSPredicate(
+            format: "identifier == %@ OR (elementType == %d AND identifier == '' AND label == %@)",
             identifier,
+            XCUIElement.ElementType.button.rawValue,
             title
         )).firstMatch
     }
@@ -128,10 +130,17 @@ struct LoginScreen {
 
     /// After an accepted password iOS may offer to save it, in a sheet inside the app that takes the
     /// next tap (a 2FA test tapped it instead of "Use a recovery code"). XCUITest's interruption
-    /// monitors only see other processes, so it is declined here, waiting a short while for it.
+    /// monitors only see other processes, so it is declined here, waiting a short while for it. On
+    /// iPhone it is a sheet; on iPad an alert, so the button is looked for in either.
     private func declineSavePassword() {
         #if os(iOS)
-            let notNow = app.sheets.buttons[Self.notNowButton]
+            let notNow = app.descendants(matching: .any)
+                .matching(NSPredicate(format: "elementType IN %@", [
+                    XCUIElement.ElementType.sheet.rawValue,
+                    XCUIElement.ElementType.alert.rawValue,
+                ]))
+                .buttons[UITestCase.savePasswordDeclineTitle]
+                .firstMatch
             guard notNow.appears(within: UITestTimeout.short) else { return }
             // A page that focuses a field (the 2FA code boxes) raises the keyboard under the sheet
             // first and moves the sheet above it only once the keyboard is up: tapping before that
@@ -150,9 +159,6 @@ struct LoginScreen {
             XCTAssertTrue(notNow.waitToVanish(), "The Save Password sheet should close")
         #endif
     }
-
-    /// The button iOS's Save Password sheet offers to decline it (the simulator runs in English).
-    private static let notNowButton = "Not Now"
 
     /// Enters the server address and continues to the credentials page.
     func enterServer(
@@ -196,10 +202,10 @@ struct LoginScreen {
 
 struct BrowseScreen {
     let app: XCUIApplication
-    /// The breadcrumb's leading "Locations" crumb. The bar only shows below the root, so it
-    /// proves a push into a folder landed (the upload menu exists at the root too).
-    var breadcrumbRoot: XCUIElement {
-        app.buttons[L10n.Browse.locations].firstMatch
+    /// The navigation bar of the pushed folder, named after it, so it proves a push into that
+    /// folder landed (the upload menu exists at the root too).
+    func folderNavigationBar(_ name: String) -> XCUIElement {
+        app.navigationBars[name].firstMatch
     }
 
     var searchField: XCUIElement {
@@ -484,7 +490,8 @@ struct TextPreviewScreen {
     }
 }
 
-/// The Two-Factor Authentication screen, reached from the active account's section in Settings.
+/// The Two-Factor Authentication screen, reached from the accounts: in Settings on iPhone, in the
+/// sidebar's account popover on iPad.
 struct TwoFactorScreen {
     let app: XCUIApplication
 
@@ -637,6 +644,34 @@ struct SettingsScreen {
         app.buttons[L10n.Settings.signOutButton].firstMatch
     }
 
+    /// Settings is on screen: its General row, on every layout.
+    var root: XCUIElement {
+        pageRow("general")
+    }
+
+    /// iPad keeps the accounts in the sidebar's account popover; iPhone lists them in Settings.
+    private var keepsAccountsInSidebar: Bool {
+        app.collectionViews["Sidebar"].exists
+    }
+
+    /// Brings the account list on screen: opens the sidebar's account popover on iPad, nothing to
+    /// do on iPhone, where Settings lists them.
+    func openAccounts() {
+        guard keepsAccountsInSidebar else { return }
+        app.buttons[L10n.Settings.sectionAccounts].firstMatch.tap()
+        _ = addAccountRow.waitToAppear()
+    }
+
+    /// Brings Sign Out on screen: in the account popover on iPad, under the expanded active
+    /// account on iPhone.
+    func revealSignOut() {
+        if keepsAccountsInSidebar {
+            openAccounts()
+        } else if activeAccountRow.waitToAppear() {
+            activeAccountRow.tap()
+        }
+    }
+
     /// The active account row (expands to reveal Change Password / Sign Out). A stable identifier
     /// since its label is a combined accessibility element.
     var activeAccountRow: XCUIElement {
@@ -655,10 +690,6 @@ struct SettingsScreen {
     }
 
     /// Multi-server switcher: the Accounts section header and the "Add Account" row.
-    var accountsSectionHeader: XCUIElement {
-        app.staticTexts[L10n.Settings.sectionAccounts]
-    }
-
     var addAccountRow: XCUIElement {
         app.buttons[L10n.Settings.addAccount].firstMatch
     }
@@ -667,7 +698,9 @@ struct SettingsScreen {
     /// label (the row folds its name/host into one element, so the host isn't a separate static
     /// text).
     func accountRow(host: String) -> XCUIElement {
-        app.buttons.containing(host)
+        app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label CONTAINS %@", host))
+            .firstMatch
     }
 
     /// Admin section row that pushes the thumbnail settings screen.

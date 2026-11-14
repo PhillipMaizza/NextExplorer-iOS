@@ -60,6 +60,7 @@ public enum IconKit {
     public static let star = Image(systemName: "star")
     public static let starFill = Image(systemName: "star.fill")
     public static let help = Image(systemName: "questionmark.circle")
+    public static let coffee = Image(systemName: "cup.and.saucer")
     public static let gearshape = Image(systemName: "gearshape")
     public static let paintbrush = Image(systemName: "paintbrush")
     // `.forward`, not `.right`: the semantic variant auto mirrors under a right to left layout

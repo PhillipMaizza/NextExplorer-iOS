@@ -10,7 +10,8 @@
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
             let screen = TwoFactorScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
+            settings.openAccounts()
 
             XCTAssertTrue(
                 screen.row.waitToAppear(),

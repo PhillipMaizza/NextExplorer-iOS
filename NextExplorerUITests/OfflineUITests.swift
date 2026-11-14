@@ -8,7 +8,7 @@
         func testSelectingAFileEnablesDownloadThenDismisses() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+            selectTab(TabBar(app: app).settings, until: settings.root)
 
             // With nothing downloaded yet Offline is a single item, so its Settings row opens the picker.
             XCTAssertTrue(scrollTo(settings.pageRow("offline"), in: app))
