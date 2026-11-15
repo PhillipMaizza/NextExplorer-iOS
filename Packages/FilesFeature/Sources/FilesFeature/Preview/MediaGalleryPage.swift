@@ -6,6 +6,8 @@ import SwiftUI
 private enum Constants {
     static let playButtonSize: CGFloat = .size64
     static let playButtonShadowRadius: CGFloat = 8
+    /// A video with no poster frame shows its file icon at this size behind the play button.
+    static let posterFallbackSize: CGFloat = .size96
 }
 
 /// A video or audio file in the gallery. It plays in place once started (the file opened from the
@@ -43,7 +45,9 @@ struct MediaGalleryPage: View {
                     path: item.id,
                     signature: item.cacheSignature,
                     fallbackIcon: IconKit.document,
-                    iconTint: Color.secondaryDS
+                    fallbackKind: item.kind,
+                    iconTint: Color.secondaryDS,
+                    fallbackSize: Constants.posterFallbackSize
                 )
                 .scaledToFit()
                 .allowsHitTesting(false)

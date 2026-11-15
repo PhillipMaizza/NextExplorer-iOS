@@ -55,6 +55,9 @@ struct ThumbnailImage: View {
     /// tile) instead of the generic `fallbackIcon` glyph.
     var fallbackKind: String?
     let iconTint: Color
+    /// The fallback's side when the image would fill a large frame (a video poster), so a missing
+    /// thumbnail shows an icon at icon size rather than one stretched across the screen.
+    var fallbackSize: CGFloat?
     /// Decode ceiling in pixels. A thumbnail is only ever shown at an icon/grid size, so
     /// decoding the server bytes (which can be a full size preview fallback) at full resolution
     /// is wasted memory and a main thread decode. Downsampled to this on a background task.
@@ -209,16 +212,18 @@ struct ThumbnailImage: View {
         Task.detached(priority: .utility) { localThumbnailStore.remove(path) }
     }
 
-    @ViewBuilder
     private var fallbackImage: some View {
-        if let fallbackKind {
-            FileTypeIcon(kind: fallbackKind)
-        } else {
-            fallbackIcon
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(iconTint)
+        Group {
+            if let fallbackKind {
+                FileTypeIcon(kind: fallbackKind)
+            } else {
+                fallbackIcon
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(iconTint)
+            }
         }
+        .frame(maxWidth: fallbackSize, maxHeight: fallbackSize)
     }
 }
 
