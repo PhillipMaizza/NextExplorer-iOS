@@ -24,9 +24,9 @@
         func body(content: Content) -> some View {
             content
                 .toolbar {
-                    // Navigation placement shares one glass capsule with Back on a pushed screen;
-                    // as a separate primary action the system drew it there without any background.
-                    ToolbarItem(placement: .navigation) {
+                    // Back stays leading as the navigation control; the refresh sits with the actions
+                    // at the trailing edge, as Safari's reload does.
+                    ToolbarItem(placement: .primaryAction) {
                         MacRefreshToolbarButton(isRefreshing: isRefreshing, action: refresh)
                     }
                 }
