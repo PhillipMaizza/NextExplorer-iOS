@@ -110,8 +110,18 @@ public enum UploadRequest {
 
         let input = try FileHandle(forReadingFrom: fileURL)
         defer { try? input.close() }
-        while let chunk = try input.read(upToCount: Constants.chunkSizeBytes), !chunk.isEmpty {
-            try handle.write(contentsOf: chunk)
+        // Each chunk is released before the next is read. Without the pool every chunk read stays in
+        // memory until the copy ends, so a file of a gigabyte needs a gigabyte of memory: the app
+        // survives that, the Share Extension's much smaller budget does not.
+        var hasMore = true
+        while hasMore {
+            hasMore = try autoreleasepool {
+                guard let chunk = try input.read(upToCount: Constants.chunkSizeBytes), !chunk.isEmpty else {
+                    return false
+                }
+                try handle.write(contentsOf: chunk)
+                return true
+            }
         }
 
         let closing = Constants.lineBreak + Constants.boundaryMarker + boundary
