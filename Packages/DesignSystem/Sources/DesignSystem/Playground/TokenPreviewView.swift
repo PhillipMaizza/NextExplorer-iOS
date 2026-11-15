@@ -23,7 +23,7 @@ struct TokenPreviewView: View {
     TokenPreviewView()
 }
 
-/// Every `Typography.TextType` case rendered against its own name/size/weight so a Figtree
+/// Every `Typography.TextType` case rendered against its own name/size/weight so a font
 /// change (or a registration regression) is visible at a glance in the canvas.
 private struct TypographyPreviewView: View {
     private let rows: [(name: String, type: Typography.TextType)] = [

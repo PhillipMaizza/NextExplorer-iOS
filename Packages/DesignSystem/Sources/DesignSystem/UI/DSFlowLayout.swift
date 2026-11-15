@@ -63,7 +63,7 @@ public struct DSFlowLayout: Layout {
 #Preview {
     DSFlowLayout(horizontalSpacing: 6, verticalSpacing: 6) {
         ForEach(
-            ["Swift", "SwiftUI", "Composable Architecture", "iOS", "Layout", "Chips", "Design System", "Figtree"],
+            ["Swift", "SwiftUI", "Composable Architecture", "iOS", "Layout", "Chips", "Design System", "Inter"],
             id: \.self
         ) { tag in
             Text(tag)

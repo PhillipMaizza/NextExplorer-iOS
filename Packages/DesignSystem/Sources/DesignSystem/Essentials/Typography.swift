@@ -17,8 +17,8 @@ public enum Typography {
 
     /// Font size/weight tiers. Separate from `TextStyle` (color) so either can vary independently.
     ///
-    /// Backed by the Figtree variable font (registered lazily on first use, see
-    /// `TextType.fontsRegistered` below). Its default instance is Light, so every tier
+    /// Backed by the Inter variable font (registered lazily on first use, see
+    /// `TextType.fontsRegistered` below), the font of the NextExplorer website. Every tier
     /// applies an explicit weight; never rely on the font's own default.
     public enum TextType {
         case display
@@ -37,10 +37,8 @@ public enum Typography {
         case label3
         case label4
 
-        private static let familyName = "Figtree"
-
         /// Lazily registers the font on first access. Previews never run `NextExplorerApp.init()`,
-        /// and `Font.custom` silently falls back to the system font if "Figtree" isn't registered.
+        /// and `Font.custom` silently falls back to the system font if Inter isn't registered.
         private static let fontsRegistered: Void = DesignSystemFonts.registerAll()
 
         public var size: CGFloat {
@@ -83,7 +81,7 @@ public enum Typography {
         }
 
         /// The tier's weight, bumped one step heavier when the system Bold Text accessibility
-        /// setting is on. A system font inherits Bold Text for free; the custom Figtree font
+        /// setting is on. A system font inherits Bold Text for free; the custom Inter font
         /// does not, so the DS text modifier feeds `legibilityWeight` through here instead.
         public func weight(boldText: Bool) -> Font.Weight {
             boldText ? Self.bolder(weight) : weight
@@ -103,7 +101,7 @@ public enum Typography {
             }
         }
 
-        /// The system text style each tier scales against so the custom Figtree font tracks
+        /// The system text style each tier scales against so the custom Inter font tracks
         /// Dynamic Type. `Font.custom(_:size:relativeTo:)` runs the base `size` through
         /// `UIFontMetrics` for this style, which a bare `Font.custom(_:size:)` never does.
         private var relativeTextStyle: Font.TextStyle {
@@ -139,7 +137,7 @@ public enum Typography {
                 return .system(macTextStyle)
             #else
                 _ = Self.fontsRegistered
-                return .custom(Self.familyName, size: size, relativeTo: relativeTextStyle)
+                return .custom(DesignSystemFonts.familyName, size: size, relativeTo: relativeTextStyle)
             #endif
         }
     }
@@ -183,7 +181,7 @@ public enum Typography {
 public extension View {
     /// Applies a Design System text type (font + weight) to any view. Runs through
     /// `DSTextTypeModifier` so the weight honors the system Bold Text accessibility setting,
-    /// which the custom Figtree font would otherwise ignore.
+    /// which the custom Inter font would otherwise ignore.
     func type(_ type: Typography.TextType) -> some View {
         modifier(DSTextTypeModifier(type: type))
     }
