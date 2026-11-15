@@ -75,23 +75,25 @@ struct FilesService: Sendable {
         }
     }
 
-    /// For the archive endpoints (`POST /api/files/zip/compress` and `/extract`). Current backends
-    /// answer 200 with an NDJSON progress stream (`start`, `progress`, then `done` carrying the
-    /// item, or `error`; see `backend/src/utils/ndjsonStream.js`) instead of one JSON body, so the
-    /// result is decoded from the `done` line. A plain JSON body from an older server still works.
-    func sendArchiveOperation<Response: Decodable>(
+    /// For the endpoints that report progress while they work: copy and move
+    /// (`POST /api/files/copy`, `/move`) and the archive ones (`POST /api/files/zip/compress`,
+    /// `/extract`). Current backends answer 200 with an NDJSON stream (`start`, `progress`, then
+    /// `done` carrying the result, or `error`; see `backend/src/utils/ndjsonStream.js`) instead of
+    /// one JSON body, so the result is decoded from the `done` line. A plain JSON body from an
+    /// older server still works.
+    func sendStreamedOperation<Response: Decodable>(
         _ request: URLRequest, decoding _: Response.Type
     ) async throws -> Response {
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
-        return try Self.decodeArchiveOperation(Response.self, from: data)
+        return try Self.decodeStreamedOperation(Response.self, from: data)
     }
 
-    static func decodeArchiveOperation<Response: Decodable>(_: Response.Type, from data: Data) throws -> Response {
+    static func decodeStreamedOperation<Response: Decodable>(_: Response.Type, from data: Data) throws -> Response {
         let decoder = makeDecoder()
-        let events = data.split(separator: UInt8(ascii: "\n")).compactMap { line -> (ArchiveStreamEvent, Data)? in
+        let events = data.split(separator: UInt8(ascii: "\n")).compactMap { line -> (OperationStreamEvent, Data)? in
             let lineData = Data(line)
-            guard let event = try? decoder.decode(ArchiveStreamEvent.self, from: lineData),
+            guard let event = try? decoder.decode(OperationStreamEvent.self, from: lineData),
                   event.type != nil else { return nil }
             return (event, lineData)
         }
@@ -102,13 +104,13 @@ struct FilesService: Sendable {
                 throw FilesClientError.decoding(error.localizedDescription)
             }
         }
-        if let (failure, _) = events.last(where: { $0.0.type == ArchiveStreamEvent.errorType }) {
+        if let (failure, _) = events.last(where: { $0.0.type == OperationStreamEvent.errorType }) {
             guard let message = failure.message, !message.isEmpty else {
                 throw FilesClientError.server(statusCode: 500)
             }
             throw FilesClientError.serverMessage(statusCode: 500, message: message)
         }
-        guard let (_, doneLine) = events.last(where: { $0.0.type == ArchiveStreamEvent.doneType }) else {
+        guard let (_, doneLine) = events.last(where: { $0.0.type == OperationStreamEvent.doneType }) else {
             throw FilesClientError.decoding("The server ended the operation without a result.")
         }
         do {
