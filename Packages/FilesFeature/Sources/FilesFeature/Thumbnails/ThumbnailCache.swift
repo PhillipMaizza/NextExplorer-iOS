@@ -17,11 +17,13 @@ public struct ThumbnailCache: Sendable {
     /// `GET /api/thumbnails/*` once per file. The server bakes the file's content hash into
     /// the URL it returns, so a remembered mapping is valid only while the file is unchanged:
     /// `signature` (`FileItem.cacheSignature`) keys that. `resolve` runs only on a cache miss
-    /// or a changed signature; a `nil` result is remembered too, so an un-thumbnailable file
-    /// isn't asked about again on every scroll.
+    /// or a changed signature. A `nil` result (the server says the file has none) is remembered
+    /// for `emptyRecordLifetime`, so an un-thumbnailable file isn't asked about again on every
+    /// scroll yet a thumbnail made later is found. A throw (still being made, offline, a failed
+    /// request) is passed on and remembers nothing.
     public var resolvedURL: @Sendable (
-        _ path: String, _ signature: String, _ resolve: @Sendable () async -> URL?
-    ) async -> URL?
+        _ path: String, _ signature: String, _ resolve: @Sendable () async throws -> URL?
+    ) async throws -> URL?
     /// Empties the process-wide in-memory decoded-thumbnail cache. Called at every session
     /// boundary (sign out, session expiry, fresh sign in) and from "Clear Cache" so no decoded
     /// image survives an account switch. The on-disk bytes live under the preview cache root and
@@ -31,8 +33,8 @@ public struct ThumbnailCache: Sendable {
     public init(
         data: @escaping @Sendable (_ url: URL) async throws -> Data,
         resolvedURL: @escaping @Sendable (
-            _ path: String, _ signature: String, _ resolve: @Sendable () async -> URL?
-        ) async -> URL?,
+            _ path: String, _ signature: String, _ resolve: @Sendable () async throws -> URL?
+        ) async throws -> URL?,
         clearMemory: @escaping @Sendable () -> Void
     ) {
         self.data = data
@@ -74,6 +76,9 @@ extension ThumbnailCache: DependencyKey {
     }
 
     private static let resolutionRecordSeparator = "\u{0}"
+    /// How long "this file has no thumbnail" is believed. Older releases wrote that verdict for a
+    /// thumbnail the server had only not made yet, so it is checked again after this.
+    static let emptyRecordLifetime: TimeInterval = 3600
 
     public static var liveValue: ThumbnailCache {
         @Dependency(\.networkClient) var networkClient
@@ -117,10 +122,17 @@ extension ThumbnailCache: DependencyKey {
                 {
                     let parts = record.components(separatedBy: resolutionRecordSeparator)
                     if parts.count == 2, parts[0] == signature {
-                        return parts[1].isEmpty ? nil : URL(string: parts[1])
+                        if !parts[1].isEmpty {
+                            return URL(string: parts[1])
+                        }
+                        let written = (try? recordURL.resourceValues(forKeys: [.contentModificationDateKey]))?
+                            .contentModificationDate ?? .distantPast
+                        if Date().timeIntervalSince(written) < emptyRecordLifetime {
+                            return nil
+                        }
                     }
                 }
-                let resolved = await resolve()
+                let resolved = try await resolve()
                 if let recordURL {
                     try? FileManager.default.createDirectory(
                         at: recordURL.deletingLastPathComponent(),
@@ -137,7 +149,7 @@ extension ThumbnailCache: DependencyKey {
 
     public static let testValue = ThumbnailCache(
         data: { _ in throw Unimplemented() },
-        resolvedURL: { _, _, resolve in await resolve() },
+        resolvedURL: { _, _, resolve in try await resolve() },
         clearMemory: {}
     )
 

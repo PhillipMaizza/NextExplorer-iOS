@@ -64,12 +64,19 @@ extension FilesService {
     /// thumbnailable, `{ thumbnail: "/static/thumbnails/<hash>.webp" }` once generated (cached
     /// after the first request), or `{ thumbnail: "/api/preview?path=..." }` as a fallback for
     /// images whose thumbnail generation failed. All three are server-relative, resolved
-    /// against `serverURL`; an empty string means "no thumbnail," not an error.
+    /// against `serverURL`; an empty string means "no thumbnail," not an error, unless the server
+    /// marks it `pending` (answered 202 while it makes the thumbnail): that throws
+    /// `ThumbnailPendingError`, so a caller asks again instead of taking it for "none".
     func thumbnailURL(serverURL: URL, path: String) async throws -> URL? {
         let url = Self.appendingPathSegments(of: path, to: serverURL.appendingPathComponent(APIPath.thumbnails))
         let request = Self.makeRequest(url: url, method: .get)
         let envelope = try await send(request, decoding: ThumbnailEnvelope.self)
-        guard !envelope.thumbnail.isEmpty else { return nil }
+        guard !envelope.thumbnail.isEmpty else {
+            if envelope.pending == true {
+                throw ThumbnailPendingError(retryAfter: envelope.retryAfterMs.map(Duration.milliseconds))
+            }
+            return nil
+        }
         return URL(string: envelope.thumbnail, relativeTo: serverURL)?.absoluteURL
     }
 

@@ -24,3 +24,14 @@ public enum FilesClientError: Error, Equatable, Sendable {
     /// The installed client certificate was refused by the server.
     case clientCertificateRejected
 }
+
+/// The server is still making a thumbnail (it answered 202 with `pending`), so there is neither a
+/// thumbnail yet nor a verdict that there will be none.
+public struct ThumbnailPendingError: Error, Equatable, Sendable {
+    /// How long the server asked to wait before asking again, when it said.
+    public let retryAfter: Duration?
+
+    public init(retryAfter: Duration? = nil) {
+        self.retryAfter = retryAfter
+    }
+}

@@ -35,6 +35,13 @@ enum ThumbnailMemoryCache {
     }
 }
 
+private enum Constants {
+    /// How often a thumbnail the server is still making is asked for, and how long to wait between
+    /// asks when the server doesn't say. About 40 seconds in all, enough for a long video.
+    static let pendingAttempts = 20
+    static let pendingRetryDelay = Duration.seconds(2)
+}
+
 /// Lazily resolves and displays a thumbnail for one file: a small spinner while the request
 /// is in flight, then either the image or `fallbackIcon`: on failure or once resolved to no
 /// thumbnail (`GET /api/thumbnails/*` legitimately returns `{ thumbnail: "" }` for e.g. PDFs
@@ -75,6 +82,7 @@ struct ThumbnailImage: View {
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
     @Dependency(\.offlineFileStore) private var offlineFileStore
     @Dependency(\.date) private var date
+    @Dependency(\.continuousClock) private var clock
 
     var body: some View {
         Group {
@@ -103,9 +111,7 @@ struct ThumbnailImage: View {
                 }
                 return
             }
-            let thumbnailURL = await thumbnailCache.resolvedURL(path, signature) {
-                try? await filesClient.thumbnailURL(serverURL, path)
-            }
+            let thumbnailURL = await resolveThumbnailURL()
             // A cancelled task (the row scrolled away, or the tab was switched mid load) is not
             // a failure: leave the loading placeholder so re-appearing retries, instead of
             // marking it resolved and dropping to the generic fallback icon.
@@ -155,6 +161,30 @@ struct ThumbnailImage: View {
             uiImage = decoded ?? seeded
             didResolve = true
         }
+    }
+
+    /// The server's thumbnail URL for this file. While the server still makes it (a video's first
+    /// frame takes a moment) this asks again, so the thumbnail appears by itself; a failed request
+    /// leaves the placeholder icon without being remembered, so the next appearance asks again.
+    private func resolveThumbnailURL() async -> URL? {
+        let serverURL = serverURL
+        let path = path
+        let filesClient = filesClient
+        for _ in 0 ..< Constants.pendingAttempts {
+            do {
+                return try await thumbnailCache.resolvedURL(path, signature) {
+                    try await filesClient.thumbnailURL(serverURL, path)
+                }
+            } catch let pending as ThumbnailPendingError {
+                try? await clock.sleep(for: pending.retryAfter ?? Constants.pendingRetryDelay)
+                if Task.isCancelled {
+                    return nil
+                }
+            } catch {
+                return nil
+            }
+        }
+        return nil
     }
 
     /// The seeded thumbnail of a file just shared into the app; `nil` without the file's size and

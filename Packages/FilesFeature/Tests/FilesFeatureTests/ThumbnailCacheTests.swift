@@ -92,7 +92,7 @@ struct ThumbnailCacheTests {
         let resolved = URL(string: "https://example.com/static/thumbnails/abc.webp")!
         let callCount = LockIsolated(0)
 
-        let first = await store.resolvedURL(path, "100.0|4096") {
+        let first = try await store.resolvedURL(path, "100.0|4096") {
             callCount.withValue { $0 += 1 }
             return resolved
         }
@@ -100,7 +100,7 @@ struct ThumbnailCacheTests {
         #expect(callCount.value == 1)
 
         // Same path + signature: served from the record, resolver never runs again.
-        let second = await store.resolvedURL(path, "100.0|4096") {
+        let second = try await store.resolvedURL(path, "100.0|4096") {
             callCount.withValue { $0 += 1 }
             return resolved
         }
@@ -115,8 +115,8 @@ struct ThumbnailCacheTests {
         let old = URL(string: "https://example.com/static/thumbnails/v1.webp")!
         let new = URL(string: "https://example.com/static/thumbnails/v2.webp")!
 
-        _ = await store.resolvedURL(path, "1.0|10") { old }
-        let afterEdit = await store.resolvedURL(path, "2.0|20") { new }
+        _ = try await store.resolvedURL(path, "1.0|10") { old }
+        let afterEdit = try await store.resolvedURL(path, "2.0|20") { new }
 
         #expect(afterEdit == new)
     }
@@ -127,11 +127,11 @@ struct ThumbnailCacheTests {
         defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
         let callCount = LockIsolated(0)
 
-        let first = await store.resolvedURL(path, "5.0|1") {
+        let first = try await store.resolvedURL(path, "5.0|1") {
             callCount.withValue { $0 += 1 }
             return nil
         }
-        let second = await store.resolvedURL(path, "5.0|1") {
+        let second = try await store.resolvedURL(path, "5.0|1") {
             callCount.withValue { $0 += 1 }
             return nil
         }
@@ -139,6 +139,37 @@ struct ThumbnailCacheTests {
         #expect(first == nil)
         #expect(second == nil)
         #expect(callCount.value == 1)
+    }
+
+    @Test
+    func resolvedURLRemembersNothingWhenTheResolverThrowsSoAPendingThumbnailIsAskedAgain() async throws {
+        let path = "Videos/\(TestID.name()).mp4"
+        defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
+        let resolved = URL(string: "https://example.com/static/thumbnails/frame.webp")!
+
+        await #expect(throws: ThumbnailPendingError.self) {
+            _ = try await store.resolvedURL(path, "7.0|9") { throw ThumbnailPendingError() }
+        }
+        let later = try await store.resolvedURL(path, "7.0|9") { resolved }
+
+        #expect(later == resolved)
+    }
+
+    @Test
+    func resolvedURLAsksAgainOnceAnEmptyRecordIsOlderThanItsLifetime() async throws {
+        let path = "Videos/\(TestID.name()).mp4"
+        defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
+        let resolved = URL(string: "https://example.com/static/thumbnails/frame.webp")!
+
+        _ = try await store.resolvedURL(path, "8.0|3") { nil }
+        // The record an older release wrote for a thumbnail that was only not made yet.
+        try FileManager.default.setAttributes(
+            [.modificationDate: Date.distantPast],
+            ofItemAtPath: recordURL(forPath: path).path
+        )
+        let later = try await store.resolvedURL(path, "8.0|3") { resolved }
+
+        #expect(later == resolved)
     }
 }
 

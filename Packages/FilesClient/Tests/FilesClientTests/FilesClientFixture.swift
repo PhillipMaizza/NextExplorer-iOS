@@ -128,6 +128,7 @@ enum FilesClientFixture: String, FixtureFile {
     // MARK: preview
 
     case previewThumbnailEmpty = "preview/thumbnail-empty"
+    case previewThumbnailPending = "preview/thumbnail-pending"
     case previewThumbnailPreviewQuery = "preview/thumbnail-preview-query"
     case previewThumbnailStaticPath = "preview/thumbnail-static-path"
 

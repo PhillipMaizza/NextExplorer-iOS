@@ -12,5 +12,9 @@ extension FilesService {
 
     struct ThumbnailEnvelope: Decodable {
         let thumbnail: String
+        /// `true` while the server still makes the thumbnail (a video's first frame takes ffmpeg a
+        /// moment): the empty `thumbnail` then means "not yet", not "none".
+        let pending: Bool?
+        let retryAfterMs: Int?
     }
 }
