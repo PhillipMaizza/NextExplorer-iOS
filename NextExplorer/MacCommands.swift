@@ -30,13 +30,8 @@
         /// Read by `body`, so every menu title is rebuilt in a newly chosen language.
         @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
-        /// Computed, not stored: the titles must follow a language change.
-        private static var sections: [(tab: MainTabFeature.Tab, title: String, key: KeyEquivalent)] {
-            [
-                (.browse, L10n.Tab.browse, "1"),
-                (.favorites, L10n.Tab.favorites, "2"),
-                (.shared, L10n.Tab.shared, "3"),
-            ]
+        private static var sections: [AppMenu.Section] {
+            AppMenu.sections(includingOffline: false)
         }
 
         var body: some Commands {
@@ -250,10 +245,8 @@
             }
         }
 
-        /// Menu items stay visible while signed out; they simply do nothing until a session exists.
         private func send(_ action: MainTabFeature.Action) {
-            guard case .authenticated = store.destination else { return }
-            store.send(.destination(.authenticated(.mainTab(action))))
+            AppMenu.send(action, to: store)
         }
     }
 

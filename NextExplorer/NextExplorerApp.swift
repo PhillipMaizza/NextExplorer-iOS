@@ -133,6 +133,8 @@ struct NextExplorerApp: App {
         // The session comes from the store, so the main window always opens fresh.
         .restorationBehavior(.disabled)
         .commands { NextExplorerCommands(store: Self.store) }
+        #elseif os(iOS)
+        .commands { IOSKeyboardCommands(store: Self.store) }
         #endif
         #if os(macOS)
             WindowGroup(id: FolderWindowRoute.windowID, for: FolderWindowRoute.self) { $route in

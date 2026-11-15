@@ -195,6 +195,15 @@ struct BrowseContentView: View {
             }
             .onChange(of: store.transferSuccessMessage) { _, newValue in
                 guard let newValue else { return }
+                #if os(iOS)
+                    // No ⌘Z at hand on a phone: the toast offers the undo itself.
+                    if !store.undoStack.isEmpty {
+                        toastMessage = .success(newValue, actionTitle: L10n.Menu.undo) {
+                            store.send(.undoTapped, animation: DSMotion.listDiff)
+                        }
+                        return
+                    }
+                #endif
                 toastMessage = .success(newValue)
             }
             .onChange(of: store.clipboardStagedMessage) { _, newValue in
@@ -216,6 +225,11 @@ struct BrowseContentView: View {
                     galleryCurrentItemID = nil
                 }
             }
+        #if os(iOS)
+            .fileUndoRegistration(store.undoStack) { [store] in
+                store.send(.undoTapped, animation: DSMotion.listDiff)
+            }
+        #endif
             .onAppear { sourceVisibility.isScreenVisible = true }
             .onDisappear {
                 sourceVisibility.isScreenVisible = false
@@ -610,6 +624,10 @@ struct BrowseContentView: View {
     /// Extracted from the grid/list `ForEach` bodies: inlining the full cell (with the
     /// `matchedSource` / `isOpening` args) tipped those already-large expressions past the
     /// type-checker's budget.
+    private func contextMenuPreview(for item: FileItem) -> some View {
+        FileContextMenuPreview(item: item, serverURL: store.serverURL, showThumbnails: store.preferences.showThumbnails)
+    }
+
     private func gridCell(for item: FileItem) -> some View {
         GridCellView(
             item: item,
@@ -1609,6 +1627,15 @@ struct BrowseContentView: View {
                 if !store.isSelecting {
                     fileActionsMenu(for: item)
                 }
+            } preview: {
+                contextMenuPreview(for: item)
+            }
+            // A tile has no swipe, so VoiceOver gets the row's swipe actions as its own.
+            .accessibilityActions {
+                BrowseQuickActionButtons(
+                    actions: BrowseQuickAction.actions(for: item, store: store),
+                    style: .accessibility
+                )
             }
         }
     }
@@ -1649,51 +1676,11 @@ struct BrowseContentView: View {
                     if !store.isSelecting {
                         fileActionsMenu(for: item)
                     }
+                } preview: {
+                    contextMenuPreview(for: item)
                 }
                 .swipeActions(edge: .trailing) {
-                    if !store.isSelecting {
-                        // Device content cannot be deleted, only taken off the device, as on the tab's own rows.
-                        if store.showsDeviceContent, store.offlineItemIDs.contains(item.id) {
-                            Button {
-                                store.send(.offlineToggleTapped(item))
-                            } label: {
-                                IconKit.delete
-                            }
-                            .tint(.negative)
-                            .accessibilityLabel(L10n.Browse.actionRemoveFromOffline)
-                        }
-                        if store.access?.canDelete ?? false {
-                            Button {
-                                store.send(.deleteTapped(item))
-                            } label: {
-                                IconKit.delete
-                            }
-                            .tint(.negative)
-                            .accessibilityLabel(L10n.Common.delete)
-                        }
-                        // Only folders can be favorited: the server 400s on anything else.
-                        if item.isDirectory, !store.showsDeviceContent {
-                            Button {
-                                store.send(.favoriteToggleButtonTapped(item))
-                            } label: {
-                                store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
-                            }
-                            .tint(.accent)
-                            .disabled(!store.hasLoadedFavorites)
-                            .accessibilityLabel(store.favoritePaths.contains(item.id)
-                                ? L10n.Browse.actionRemoveFromFavorites
-                                : L10n.Browse.actionAddToFavorites)
-                        }
-                        if store.access?.canWrite ?? false {
-                            Button {
-                                store.send(.renameTapped(item))
-                            } label: {
-                                IconKit.rename
-                            }
-                            .tint(.positive)
-                            .accessibilityLabel(L10n.Browse.actionRename)
-                        }
-                    }
+                    BrowseQuickActionButtons(actions: BrowseQuickAction.actions(for: item, store: store), style: .swipe)
                 }
                 .listRowSeparator(item.id == firstItemID ? .hidden : .visible, edges: .top)
                 .listRowSeparator(item.id == lastItemID ? .hidden : .visible, edges: .bottom)
