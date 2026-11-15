@@ -32,7 +32,15 @@ enum ThumbnailMemoryCache {
     /// is emptied at the same points so no decoded image outlives a sign out (rule #11).
     static func removeAll() {
         shared.removeAllObjects()
+        AudioArtwork.forgetMisses()
     }
+}
+
+private enum Constants {
+    /// How often a thumbnail the server is still making is asked for, and how long to wait between
+    /// asks when the server doesn't say. About 40 seconds in all, enough for a long video.
+    static let pendingAttempts = 20
+    static let pendingRetryDelay = Duration.seconds(2)
 }
 
 /// Lazily resolves and displays a thumbnail for one file: a small spinner while the request
@@ -55,6 +63,9 @@ struct ThumbnailImage: View {
     /// tile) instead of the generic `fallbackIcon` glyph.
     var fallbackKind: String?
     let iconTint: Color
+    /// The fallback's side when the image would fill a large frame (a video poster), so a missing
+    /// thumbnail shows an icon at icon size rather than one stretched across the screen.
+    var fallbackSize: CGFloat?
     /// Decode ceiling in pixels. A thumbnail is only ever shown at an icon/grid size, so
     /// decoding the server bytes (which can be a full size preview fallback) at full resolution
     /// is wasted memory and a main thread decode. Downsampled to this on a background task.
@@ -72,6 +83,7 @@ struct ThumbnailImage: View {
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
     @Dependency(\.offlineFileStore) private var offlineFileStore
     @Dependency(\.date) private var date
+    @Dependency(\.continuousClock) private var clock
 
     var body: some View {
         Group {
@@ -87,6 +99,14 @@ struct ThumbnailImage: View {
         }
         .task(id: "\(path)\u{0}\(signature)") {
             guard uiImage == nil else { return }
+            // Audio has no server thumbnail: its cover art is read from the file's own tags.
+            if fileItem.isAudio {
+                uiImage = await audioArtwork()
+                if !Task.isCancelled {
+                    didResolve = true
+                }
+                return
+            }
             let seeded = await seededImage()
             if Task.isCancelled {
                 return
@@ -100,9 +120,7 @@ struct ThumbnailImage: View {
                 }
                 return
             }
-            let thumbnailURL = await thumbnailCache.resolvedURL(path, signature) {
-                try? await filesClient.thumbnailURL(serverURL, path)
-            }
+            let thumbnailURL = await resolveThumbnailURL()
             // A cancelled task (the row scrolled away, or the tab was switched mid load) is not
             // a failure: leave the loading placeholder so re-appearing retries, instead of
             // marking it resolved and dropping to the generic fallback icon.
@@ -154,6 +172,30 @@ struct ThumbnailImage: View {
         }
     }
 
+    /// The server's thumbnail URL for this file. While the server still makes it (a video's first
+    /// frame takes a moment) this asks again, so the thumbnail appears by itself; a failed request
+    /// leaves the placeholder icon without being remembered, so the next appearance asks again.
+    private func resolveThumbnailURL() async -> URL? {
+        let serverURL = serverURL
+        let path = path
+        let filesClient = filesClient
+        for _ in 0 ..< Constants.pendingAttempts {
+            do {
+                return try await thumbnailCache.resolvedURL(path, signature) {
+                    try await filesClient.thumbnailURL(serverURL, path)
+                }
+            } catch let pending as ThumbnailPendingError {
+                try? await clock.sleep(for: pending.retryAfter ?? Constants.pendingRetryDelay)
+                if Task.isCancelled {
+                    return nil
+                }
+            } catch {
+                return nil
+            }
+        }
+        return nil
+    }
+
     /// The seeded thumbnail of a file just shared into the app; `nil` without the file's size and
     /// date or when no seed matches them.
     private func seededImage() async -> PlatformImage? {
@@ -164,20 +206,35 @@ struct ThumbnailImage: View {
         )
     }
 
-    /// A picture is decoded from the kept copy and a video gives its first frame, so both show with
-    /// no network and need nothing saved besides the file itself.
-    private func offlineImage() async -> PlatformImage? {
-        let store = offlineFileStore
-        let path = path
-        let target = maxPixelDimension
+    /// The file as far as its path says, enough to look up a kept copy or build its stream address.
+    private var fileItem: FileItem {
         let name = (path as NSString).lastPathComponent
-        let item = FileItem(
+        return FileItem(
             name: name,
             path: (path as NSString).deletingLastPathComponent,
             dateModified: .distantPast,
             size: 0,
             kind: (name as NSString).pathExtension.lowercased()
         )
+    }
+
+    /// An audio file's cover art, from its kept copy when it has one (no network), else its stream.
+    private func audioArtwork() async -> PlatformImage? {
+        let item = fileItem
+        let store = offlineFileStore
+        let local = await Task.detached(priority: .userInitiated) {
+            store.localURLIgnoringStaleness(item)
+        }.value
+        guard let url = local ?? FilesClient.previewURL(serverURL: serverURL, item: item) else { return nil }
+        return await AudioArtwork.image(url: url, fileExtension: item.kind, maxPixel: maxPixelDimension)
+    }
+
+    /// A picture is decoded from the kept copy and a video gives its first frame, so both show with
+    /// no network and need nothing saved besides the file itself.
+    private func offlineImage() async -> PlatformImage? {
+        let store = offlineFileStore
+        let target = maxPixelDimension
+        let item = fileItem
         let local = await Task.detached(priority: .userInitiated) {
             store.localURLIgnoringStaleness(item)
         }.value
@@ -209,16 +266,18 @@ struct ThumbnailImage: View {
         Task.detached(priority: .utility) { localThumbnailStore.remove(path) }
     }
 
-    @ViewBuilder
     private var fallbackImage: some View {
-        if let fallbackKind {
-            FileTypeIcon(kind: fallbackKind)
-        } else {
-            fallbackIcon
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(iconTint)
+        Group {
+            if let fallbackKind {
+                FileTypeIcon(kind: fallbackKind)
+            } else {
+                fallbackIcon
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(iconTint)
+            }
         }
+        .frame(maxWidth: fallbackSize, maxHeight: fallbackSize)
     }
 }
 

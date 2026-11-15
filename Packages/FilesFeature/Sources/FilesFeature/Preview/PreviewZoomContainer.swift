@@ -89,3 +89,34 @@ struct PreviewZoomContainer<ID: Hashable, Content: View>: View {
             .backgroundGradient()
     }
 }
+
+/// Where a screen's preview covers zoom from: its transition namespace and which sources are on
+/// screen. Every screen that opens files hands one to its rows and to its cover, so every file
+/// opens the same way.
+struct PreviewZoomContext {
+    let namespace: Namespace.ID
+    let visibility: PreviewSourceVisibility
+
+    func source(for id: AnyHashable) -> PreviewMatchedSource {
+        PreviewMatchedSource(id: id, namespace: namespace, visibility: visibility)
+    }
+}
+
+/// A preview cover's content, zooming from `sourceID` when that source is on screen. Whether it
+/// zooms is decided once, when the cover appears, and held until it closes: the cover itself takes
+/// the list off screen, which must not change the dismiss transition.
+struct ZoomingPreview<Content: View>: View {
+    let sourceID: AnyHashable
+    let context: PreviewZoomContext
+    @ViewBuilder let content: Content
+
+    @State private var frozenZoom: Bool?
+
+    var body: some View {
+        let zooms = frozenZoom ?? context.visibility.canZoom(from: sourceID)
+        PreviewZoomContainer(sourceID: sourceID, namespace: context.namespace, zooms: zooms) {
+            content
+        }
+        .onAppear { frozenZoom = zooms }
+    }
+}

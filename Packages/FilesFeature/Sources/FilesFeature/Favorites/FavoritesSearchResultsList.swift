@@ -12,6 +12,8 @@ struct FavoritesSearchResultsList: View {
     /// The screen's state: skeleton rows while `.loading`, list diffs animated only in `.content`.
     let phase: ListPhase
     @Binding var pullOffset: CGFloat
+    /// The screen's preview zoom, so an opened hit grows from its row.
+    var zoom: PreviewZoomContext?
 
     var body: some View {
         let sections = store.searchResultSections
@@ -53,7 +55,7 @@ struct FavoritesSearchResultsList: View {
                 Button {
                     store.send(.searchResultTapped(result))
                 } label: {
-                    SearchResultRow(result: result)
+                    SearchResultRow(result: result, matchedSource: zoom?.source(for: result.id))
                 }
                 .buttonStyle(DSPressableButtonStyle())
                 .contextMenu {

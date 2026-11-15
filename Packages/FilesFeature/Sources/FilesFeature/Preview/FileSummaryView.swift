@@ -5,6 +5,8 @@ import SwiftUI
 
 private enum Constants {
     static let iconSize: CGFloat = .size64
+    /// The side of an audio file's cover art, shown in place of its icon.
+    static let artworkSize: CGFloat = .size192
     static let headerSpacing: CGFloat = .space8
     static let contentSpacing: CGFloat = .space24
     static let horizontalPadding: CGFloat = .space24
@@ -18,15 +20,37 @@ private enum Constants {
 struct FileSummaryView<Action: View>: View {
     let item: FileItem
     var message: String?
+    /// When set, an audio file shows its cover art (when its tags carry one) in place of the icon.
+    var artworkServerURL: URL?
     @ViewBuilder var action: () -> Action
+
+    @ViewBuilder
+    private var icon: some View {
+        if item.isAudio, let artworkServerURL {
+            ThumbnailImage(
+                serverURL: artworkServerURL,
+                path: item.id,
+                signature: item.cacheSignature,
+                fallbackIcon: IconKit.document,
+                fallbackKind: item.kind,
+                iconTint: Color.secondaryDS,
+                fallbackSize: Constants.iconSize,
+                maxPixelDimension: Constants.artworkSize * 3
+            )
+            .frame(maxWidth: Constants.artworkSize, maxHeight: Constants.artworkSize)
+            .clipShape(RoundedRectangle(cornerRadius: .radiusControl, style: .continuous))
+        } else {
+            FileTypeIcon(kind: item.kind)
+                .frame(width: Constants.iconSize, height: Constants.iconSize)
+        }
+    }
 
     var body: some View {
         VStack(spacing: Constants.contentSpacing) {
             Spacer()
 
             VStack(spacing: Constants.headerSpacing) {
-                FileTypeIcon(kind: item.kind)
-                    .frame(width: Constants.iconSize, height: Constants.iconSize)
+                icon
 
                 Text(item.name)
                     .type(.headline3, style: .primaryOnSurface)

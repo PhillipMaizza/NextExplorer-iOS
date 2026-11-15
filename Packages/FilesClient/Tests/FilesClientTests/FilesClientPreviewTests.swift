@@ -70,6 +70,14 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func thumbnailURLThrowsPendingWhileTheServerStillMakesTheThumbnail() async throws {
+            try stub(statusCode: 202, body: FilesClientFixture.previewThumbnailPending.data())
+            await #expect(throws: ThumbnailPendingError(retryAfter: .milliseconds(1500))) {
+                _ = try await makeClient().thumbnailURL(serverURL, Constants.vacationPhoto)
+            }
+        }
+
+        @Test
         func thumbnailURLPercentEncodesEachPathSegment() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.previewThumbnailEmpty.data())
             StubURLProtocol.capturedRequest = nil

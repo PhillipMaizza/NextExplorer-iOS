@@ -32,11 +32,17 @@ struct MediaPreview: View {
     }
 
     var body: some View {
-        Group {
+        // Never empty: SwiftUI runs no task on a view that has nothing in it, so without the black
+        // behind it the sources below were never looked up, the player never started and a gallery
+        // page holding it had no size at all.
+        ZStack {
+            Color.black
             if let sources, let url = sources.playback {
                 player(url: url, offlineFallbackURL: sources.offlineFallback)
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Media.player)
         .task(id: sourcesID) {
             let store = offlineFileStore
             let item = item

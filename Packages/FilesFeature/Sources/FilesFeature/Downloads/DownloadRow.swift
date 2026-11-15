@@ -21,7 +21,7 @@ enum DownloadFormatting {
 struct DownloadListRow: View {
     let store: StoreOf<OfflineTabFeature>
     let download: LocalDownload
-    let namespace: Namespace.ID
+    let zoom: PreviewZoomContext
     let isFirst: Bool
     let isLast: Bool
     let onPreview: () -> Void
@@ -40,7 +40,7 @@ struct DownloadListRow: View {
                 isDirectory: false,
                 subtitle: DownloadFormatting.subtitle(for: download),
                 kind: (download.fileName as NSString).pathExtension,
-                matchedSource: PreviewMatchedSource(id: download.id, namespace: namespace)
+                matchedSource: zoom.source(for: download.id)
             )
         } trailingSwipe: {
             if !store.isSelecting {
@@ -91,7 +91,7 @@ struct DownloadListRow: View {
 struct DownloadGridCell: View {
     let store: StoreOf<OfflineTabFeature>
     let download: LocalDownload
-    let namespace: Namespace.ID
+    let zoom: PreviewZoomContext
     let onPreview: () -> Void
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
 
@@ -107,7 +107,7 @@ struct DownloadGridCell: View {
                 isDirectory: false,
                 kind: (download.fileName as NSString).pathExtension,
                 iconSize: (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).iconSize,
-                matchedSource: PreviewMatchedSource(id: download.id, namespace: namespace)
+                matchedSource: zoom.source(for: download.id)
             )
         } contextMenu: {
             if !store.isSelecting {
@@ -138,12 +138,12 @@ private extension LocalDownload {
 
 #Preview("List row") {
     let store = Store(initialState: OfflineTabFeature.State()) { OfflineTabFeature() }
-    return DownloadRowPreview { namespace in
+    return DownloadRowPreview { zoom in
         DSGroupedList {
             DownloadListRow(
                 store: store,
                 download: .preview,
-                namespace: namespace,
+                zoom: zoom,
                 isFirst: true,
                 isLast: true,
                 onPreview: {}
@@ -155,11 +155,11 @@ private extension LocalDownload {
 
 #Preview("Grid cell") {
     let store = Store(initialState: OfflineTabFeature.State()) { OfflineTabFeature() }
-    return DownloadRowPreview { namespace in
+    return DownloadRowPreview { zoom in
         DownloadGridCell(
             store: store,
             download: .preview,
-            namespace: namespace,
+            zoom: zoom,
             onPreview: {}
         )
         .frame(width: 120)
@@ -167,11 +167,12 @@ private extension LocalDownload {
     }
 }
 
-/// Supplies a `Namespace.ID` to a preview body (a `@Namespace` can't be declared at file scope).
+/// Supplies a zoom context to a preview body (a `@Namespace` can't be declared at file scope).
 private struct DownloadRowPreview<Content: View>: View {
     @Namespace private var namespace
-    @ViewBuilder let content: (Namespace.ID) -> Content
+    @State private var visibility = PreviewSourceVisibility()
+    @ViewBuilder let content: (PreviewZoomContext) -> Content
     var body: some View {
-        content(namespace)
+        content(PreviewZoomContext(namespace: namespace, visibility: visibility))
     }
 }

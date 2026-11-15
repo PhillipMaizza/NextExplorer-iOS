@@ -1,4 +1,5 @@
 #if os(iOS)
+    import CoreModels
     import Localization
     import XCTest
 
@@ -95,11 +96,15 @@
             swipeToPage(Fixture.document, in: app)
         }
 
-        func testOpenedVideoPlaysWithoutAPlayButton() {
+        func testOpenedVideoPlayerFillsItsPage() {
             let app = openGallery(at: Fixture.video)
-            XCTAssertFalse(
-                app.labeledButton(L10n.Media.play).appears(within: UITestTimeout.short),
-                "The video opened from the list starts playing on its own"
+            let player = app.otherElements[AccessibilityIdentifiers.Media.player].firstMatch
+            XCTAssertTrue(player.waitToAppear(), "The opened video has a player on its page")
+            XCTAssertEqual(
+                player.frame.width,
+                app.windows.firstMatch.frame.width,
+                accuracy: 1,
+                "A playing page keeps the width of the screen, so the next page stays off screen"
             )
         }
 
