@@ -146,7 +146,12 @@ struct ThumbnailImage: View {
                 return
             }
             guard let thumbnailURL else {
-                didResolve = true
+                // The server made none (it cannot decode every image, an .ico for one): the device
+                // decodes the picture itself.
+                uiImage = await deviceDecodedImage()
+                if !Task.isCancelled {
+                    didResolve = true
+                }
                 return
             }
             if let cached = ThumbnailMemoryCache.shared.object(forKey: thumbnailURL as NSURL) {
@@ -276,6 +281,33 @@ struct ThumbnailImage: View {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url }
         components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "v", value: signature)]
         return components.url ?? url
+    }
+
+    /// A picture the server has no thumbnail of, decoded on the device from its preview (the server
+    /// cuts a RAW file's embedded JPEG out for that). `nil` for what ImageIO cannot read, such as SVG.
+    private func deviceDecodedImage() async -> PlatformImage? {
+        let item = fileItem
+        guard item.isImage || item.isRawImage, !item.isSVG else { return nil }
+        let cacheKey = "\(path)\u{0}\(signature)"
+        if ThumbnailMisses.contains(cacheKey) {
+            return nil
+        }
+        guard let url = FilesClient.previewURL(serverURL: serverURL, item: item),
+              let data = try? await thumbnailCache.data(url)
+        else {
+            if !Task.isCancelled {
+                ThumbnailMisses.insert(cacheKey)
+            }
+            return nil
+        }
+        let target = maxPixelDimension
+        let image = await Task.detached(priority: .utility) {
+            ImageDownsampling.image(from: data, maxPixelDimension: target)
+        }.value
+        if image == nil, !Task.isCancelled {
+            ThumbnailMisses.insert(cacheKey)
+        }
+        return image
     }
 
     /// An audio file's cover art, from its kept copy when it has one (no network), else its stream.
