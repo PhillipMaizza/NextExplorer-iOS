@@ -272,6 +272,7 @@ import TestUtils
             await store.receive(\.favorites.refreshDirectory)
             await store.receive(\.browse.refreshDirectory)
             await store.receive(\.favorites.refreshDirectory)
+            await store.receive(\.offline.uploadsLanded)
         }
 
         @Test("An upload that changed nothing is not broadcast")
