@@ -1103,3 +1103,4 @@ offline.rowUpdateFailed	更新できませんでした
 pdfPreview.pageIndicator	%1$lld/%2$lld
 previewToolbar.savePhoto	写真を保存
 previewToolbar.saveVideo	ビデオを保存
+offline.removeEmptiesFolderMessage	「%@」のほかの項目はこの端末に残らないため、フォルダもオフラインで利用可能から削除されます。サーバー上のファイルには影響しません。

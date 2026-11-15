@@ -1116,3 +1116,4 @@ offline.rowUpdateFailed	Não foi possível atualizar
 pdfPreview.pageIndicator	%1$lld de %2$lld
 previewToolbar.savePhoto	Guardar fotografia
 previewToolbar.saveVideo	Guardar vídeo
+offline.removeEmptiesFolderMessage	Nada mais de “%@” fica neste dispositivo, por isso a pasta também é removida de Disponível offline. Os seus ficheiros no servidor não são afetados.

@@ -613,6 +613,7 @@ public enum L10n {
         public static var removeConfirm: String { tr("offline.removeConfirm") }  // "Remove"
         public static var removeConfirmMessage: String { tr("offline.removeConfirmMessage") }
         public static var removeConfirmTitle: String { tr("offline.removeConfirmTitle") }  // "Remove Offline Files?"
+        public static func removeEmptiesFolderMessage(_ a0: CVarArg) -> String { tr("offline.removeEmptiesFolderMessage", a0) }
         public static var removeItemMessage: String { tr("offline.removeItemMessage") }
         public static func removeItemTitle(_ a0: CVarArg) -> String { tr("offline.removeItemTitle", a0) }
         public static func removeItemsTitle(_ a0: CVarArg) -> String { tr("offline.removeItemsTitle", a0) }

@@ -1076,3 +1076,4 @@ offline.rowUpdateFailed	อัปเดตไม่สำเร็จ
 pdfPreview.pageIndicator	%1$lld จาก %2$lld
 previewToolbar.savePhoto	บันทึกรูปภาพ
 previewToolbar.saveVideo	บันทึกวิดีโอ
+offline.removeEmptiesFolderMessage	จะไม่มีรายการอื่นใน “%@” เหลืออยู่บนอุปกรณ์เครื่องนี้ ระบบจึงนำโฟลเดอร์ออกจากที่ใช้งานแบบออฟไลน์ได้ด้วย ไฟล์ของคุณบนเซิร์ฟเวอร์ไม่ได้รับผลกระทบ

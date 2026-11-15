@@ -104176,6 +104176,191 @@
         }
       }
     },
+    "offline.removeEmptiesFolderMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing else in “%@” stays on this device, so the folder is removed from Available Offline too. Your files on the server are not affected."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لن يبقى شيء آخر من «%@» على هذا الجهاز، لذا سيُزال المجلد من المتاح دون اتصال أيضًا. لن تتأثر ملفاتك على الخادم."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Z „%@“ už na tomto zařízení nic nezůstane, proto se z dostupných offline odebere i složka. Vaše soubory na serveru se nezmění."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intet andet i “%@” bliver på denne enhed, så mappen fjernes også fra tilgængeligt offline. Dine filer på serveren påvirkes ikke."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von „%@“ bleibt nichts mehr auf diesem Gerät, daher wird auch der Ordner aus „Offline verfügbar“ entfernt. Deine Dateien auf dem Server sind nicht betroffen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Τίποτα άλλο από το «%@» δεν μένει σε αυτήν τη συσκευή, οπότε και ο φάκελος καταργείται από τα διαθέσιμα εκτός σύνδεσης. Τα αρχεία σας στον διακομιστή δεν επηρεάζονται."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No queda nada más de «%@» en este dispositivo, así que la carpeta también se quita de disponibles sin conexión. Tus archivos en el servidor no se ven afectados."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kansiosta “%@” ei jää tähän laitteeseen mitään muuta, joten kansiokin poistetaan offline-saatavista. Palvelimella olevia tiedostojasi ei kosketa."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus rien de « %@ » ne reste sur cet appareil, le dossier est donc aussi retiré des éléments disponibles hors connexion. Vos fichiers sur le serveur ne sont pas affectés."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שום דבר נוסף מ״%@״ לא נשאר במכשיר זה, ולכן גם התיקייה תוסר מהזמינים ללא חיבור. הקבצים שלכם בשרת לא מושפעים."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” में से इस डिवाइस पर और कुछ नहीं बचेगा, इसलिए फ़ोल्डर भी ऑफ़लाइन उपलब्ध से हट जाएगा। सर्वर पर आपकी फ़ाइलें प्रभावित नहीं होतीं।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A(z) „%@” mappából semmi más nem marad ezen az eszközön, ezért a mappa is lekerül az offline elérhetők közül. A kiszolgálón lévő fájljait nem érinti."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tidak ada lagi isi “%@” yang tersisa di perangkat ini, jadi folder juga dihapus dari Tersedia Offline. File Anda di server tidak terpengaruh."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Di “%@” non resta altro su questo dispositivo, quindi anche la cartella viene rimossa da Disponibili offline. I tuoi file sul server non vengono modificati."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「%@」のほかの項目はこの端末に残らないため、フォルダもオフラインで利用可能から削除されます。サーバー上のファイルには影響しません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”에서 이 기기에 남는 항목이 없으므로 폴더도 오프라인 사용 가능에서 제거됩니다. 서버의 파일은 영향을 받지 않습니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ingenting annet i «%@» blir igjen på denne enheten, så mappen fjernes også fra tilgjengelig uten nett. Filene dine på serveren påvirkes ikke."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er blijft niets anders van ‘%@’ op dit apparaat staan, dus de map wordt ook verwijderd uit Offline beschikbaar. Je bestanden op de server worden niet gewijzigd."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Z „%@” nic więcej nie zostanie na tym urządzeniu, więc folder również zostanie usunięty z dostępnych offline. Pliki na serwerze pozostaną bez zmian."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada mais de “%@” fica neste dispositivo, por isso a pasta também é removida de Disponível offline. Os seus ficheiros no servidor não são afetados."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada mais de “%@” fica neste dispositivo, então a pasta também é removida de Disponível offline. Seus arquivos no servidor não são afetados."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Din „%@” nu mai rămâne nimic pe acest dispozitiv, așa că și dosarul este eliminat din Disponibile offline. Fișierele tale de pe server nu sunt afectate."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Из «%@» на этом устройстве больше ничего не останется, поэтому папка тоже будет убрана из доступных офлайн. Ваши файлы на сервере не будут затронуты."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inget annat i ”%@” finns kvar på den här enheten, så mappen tas också bort från Tillgängligt offline. Dina filer på servern påverkas inte."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "จะไม่มีรายการอื่นใน “%@” เหลืออยู่บนอุปกรณ์เครื่องนี้ ระบบจึงนำโฟลเดอร์ออกจากที่ใช้งานแบบออฟไลน์ได้ด้วย ไฟล์ของคุณบนเซิร์ฟเวอร์ไม่ได้รับผลกระทบ"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” içinden bu cihazda başka bir şey kalmayacağı için klasör de çevrimdışı kullanılabilirden kaldırılır. Sunucudaki dosyalarınız etkilenmez."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Із «%@» на цьому пристрої більше нічого не залишиться, тому папку теж буде прибрано з доступних офлайн. Ваші файли на сервері не зачіпаються."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không còn mục nào khác của “%@” trên thiết bị này, nên thư mục cũng bị xóa khỏi mục có sẵn ngoại tuyến. Các tệp của bạn trên máy chủ không bị ảnh hưởng."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”中不会再有其他内容留在此设备上，因此该文件夹也会从“可离线使用”中移除。服务器上的文件不受影响。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「%@」中不會再有其他內容留在此裝置上，因此該檔案夾也會從「可離線使用」中移除。伺服器上的檔案不受影響。"
+          }
+        }
+      }
+    },
     "offline.removeItemMessage": {
       "extractionState": "manual",
       "localizations": {

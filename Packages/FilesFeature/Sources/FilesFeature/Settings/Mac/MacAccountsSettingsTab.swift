@@ -174,6 +174,7 @@
             )) { pickerStore in
                 DestinationPickerView(store: pickerStore)
             }
+            .task { store.send(.signInStatusRequested) }
         }
     }
 

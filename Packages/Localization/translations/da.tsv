@@ -1089,3 +1089,4 @@ offline.rowUpdateFailed	Kunne ikke opdatere
 pdfPreview.pageIndicator	%1$lld af %2$lld
 previewToolbar.savePhoto	Gem foto
 previewToolbar.saveVideo	Gem video
+offline.removeEmptiesFolderMessage	Intet andet i “%@” bliver på denne enhed, så mappen fjernes også fra tilgængeligt offline. Dine filer på serveren påvirkes ikke.

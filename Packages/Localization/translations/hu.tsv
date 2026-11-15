@@ -1089,3 +1089,4 @@ offline.rowUpdateFailed	A frissítés nem sikerült
 pdfPreview.pageIndicator	%1$lld / %2$lld
 previewToolbar.savePhoto	Fotó mentése
 previewToolbar.saveVideo	Videó mentése
+offline.removeEmptiesFolderMessage	A(z) „%@” mappából semmi más nem marad ezen az eszközön, ezért a mappa is lekerül az offline elérhetők közül. A kiszolgálón lévő fájljait nem érinti.

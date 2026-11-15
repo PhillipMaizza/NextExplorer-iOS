@@ -1103,3 +1103,4 @@ offline.rowUpdateFailed	无法更新
 pdfPreview.pageIndicator	%1$lld/%2$lld
 previewToolbar.savePhoto	存储照片
 previewToolbar.saveVideo	存储视频
+offline.removeEmptiesFolderMessage	“%@”中不会再有其他内容留在此设备上，因此该文件夹也会从“可离线使用”中移除。服务器上的文件不受影响。

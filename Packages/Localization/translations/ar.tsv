@@ -1168,3 +1168,4 @@ offline.rowUpdateFailed	تعذر التحديث
 pdfPreview.pageIndicator	%1$lld من %2$lld
 previewToolbar.savePhoto	حفظ الصورة
 previewToolbar.saveVideo	حفظ الفيديو
+offline.removeEmptiesFolderMessage	لن يبقى شيء آخر من «%@» على هذا الجهاز، لذا سيُزال المجلد من المتاح دون اتصال أيضًا. لن تتأثر ملفاتك على الخادم.

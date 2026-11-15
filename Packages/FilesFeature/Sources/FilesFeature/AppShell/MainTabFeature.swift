@@ -339,6 +339,9 @@ public struct MainTabFeature {
                             openDestination: alreadyThere ? nil : summary.lastDestination
                         )
                     }
+                    if summary.uploadedCount > 0 {
+                        effects.append(.send(.offline(.uploadsLanded(destinations: summary.changedPaths))))
+                    }
                     return .merge(effects)
 
                 case let .openUploadedLocation(destination):

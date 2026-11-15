@@ -67,14 +67,4 @@
         }
     }
 
-    extension BrowseFeature.State {
-        var canMoveHere: Bool {
-            access?.canDelete ?? false
-        }
-
-        /// Allowed while access is still loading, as the `+` upload menu is.
-        var canUploadHere: Bool {
-            access?.canUpload ?? true
-        }
-    }
 #endif

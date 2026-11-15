@@ -364,7 +364,7 @@ struct BrowseContentView: View {
             selectSortToolbar(
                 isSelecting: store.isSelecting,
                 isAllSelected: isAllSelected,
-                isSelectAvailable: !store.isSearching && store.hasDisplayedItems && viewMode != .table,
+                isSelectAvailable: !store.isSearching && store.canSelectItems && viewMode != .table,
                 isGridView: viewMode == .grid,
                 onSelectModeToggled: { store.send(.selectModeToggled) },
                 onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
@@ -406,7 +406,7 @@ struct BrowseContentView: View {
                 }
             }
             #if os(iOS)
-                if !store.isSelecting, canAddHere {
+                if !store.isSelecting, store.canAddHere {
                     if #available(iOS 26.0, *) {
                         ToolbarSpacer(.fixed, placement: .topBarTrailing)
                     }
@@ -442,7 +442,7 @@ struct BrowseContentView: View {
         .modifier(MacFinderDrop(
             serverURL: store.serverURL,
             scope: store.cacheScope,
-            isEnabled: canUploadHere && !store.isSelecting,
+            isEnabled: store.canUploadHere && !store.isSelecting,
             onDrop: { urls in store.send(.beginUpload(.documents(urls))) },
             onDropItems: { items in
                 guard !store.directoryPath.isEmpty else { return }
@@ -687,7 +687,7 @@ struct BrowseContentView: View {
                 onDropForeignItemsOnFolder: { items, folder in
                     store.send(.itemsDroppedFromOtherWindow(items, destination: folder.id))
                 },
-                canUploadToFolders: canUploadHere,
+                canUploadToFolders: store.canUploadHere,
                 onFilesDroppedOnFolder: { urls, folder in store.send(.filesDroppedOnFolder(urls, folder: folder)) },
                 contextMenu: { ids in tableContextMenu(for: ids) },
                 renamingItemID: shouldRenameInTable ? store.renameSheetItem?.id : nil,
@@ -739,19 +739,19 @@ struct BrowseContentView: View {
         private func tableContextMenu(for ids: Set<FileItem.ID>) -> some View {
             let items = store.displayedItems.filter { ids.contains($0.id) }
             if items.isEmpty {
-                if !store.directoryPath.isEmpty, canCreateFolderHere {
+                if !store.directoryPath.isEmpty, store.canCreateFolderHere {
                     Button { store.send(.newFolderTapped) } label: {
                         Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
                     }
                     .tint(.primaryDS)
                 }
-                if !store.directoryPath.isEmpty, canCreateFileHere {
+                if !store.directoryPath.isEmpty, store.canCreateFileHere {
                     Button { store.send(.newFileTapped) } label: {
                         Label { Text(L10n.Browse.actionNewFile) } icon: { IconKit.newFile }
                     }
                     .tint(.primaryDS)
                 }
-                if canUploadHere {
+                if store.canUploadHere {
                     Button { isFilesPickerPresented = true } label: {
                         Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.upload }
                     }
@@ -1254,7 +1254,7 @@ struct BrowseContentView: View {
         case .empty:
             VStack(spacing: Constants.emptyUploadButtonTopSpacing) {
                 EmptyStateView(icon: IconKit.folder, message: L10n.EmptyState.folderEmpty)
-                if !store.isSelecting, canUploadHere {
+                if !store.isSelecting, store.canUploadHere {
                     emptyStateUploadButton
                 }
             }
@@ -1280,19 +1280,19 @@ struct BrowseContentView: View {
             label: label,
             leadingActions: {
                 if !store.directoryPath.isEmpty {
-                    if canCreateFolderHere {
+                    if store.canCreateFolderHere {
                         Button { store.send(.newFolderTapped) } label: {
                             Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
                         }
                     }
-                    if canCreateFileHere {
+                    if store.canCreateFileHere {
                         Button { store.send(.newFileTapped) } label: {
                             Label { Text(L10n.Browse.actionNewFile) } icon: { IconKit.newFile }
                         }
                     }
                 }
             },
-            includesUploadSources: canUploadHere,
+            includesUploadSources: store.canUploadHere,
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,
@@ -1539,25 +1539,6 @@ struct BrowseContentView: View {
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
     }
 
-    /// Gates the `+` upload menu on the folder's own `FileAccess.canUpload`. Defaults to
-    /// allowed while access is still loading: the first browse response fills it in.
-    private var canUploadHere: Bool {
-        store.access?.canUpload ?? true
-    }
-
-    private var canCreateFileHere: Bool {
-        store.access?.canCreateFile ?? true
-    }
-
-    private var canCreateFolderHere: Bool {
-        store.access?.canCreateFolder ?? true
-    }
-
-    /// The `+` appears when anything can be added here: an upload, a new folder or a new file.
-    private var canAddHere: Bool {
-        canUploadHere || (!store.directoryPath.isEmpty && (canCreateFileHere || canCreateFolderHere))
-    }
-
     /// The empty folder's call to action: the same camera / Photos / Files menu as the `+`,
     /// behind an accent pill so a first time user has somewhere obvious to start.
     private var emptyStateUploadButton: some View {
@@ -1568,7 +1549,6 @@ struct BrowseContentView: View {
             isCameraPresented: $isCameraPresented,
             isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
         )
-        .tint(.primaryDS)
         .frame(maxWidth: Constants.emptyUploadButtonMaxWidth)
         .padding(.horizontal, Constants.emptyUploadButtonHPadding)
         .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
@@ -1674,6 +1654,16 @@ struct BrowseContentView: View {
                 }
                 .swipeActions(edge: .trailing) {
                     if !store.isSelecting {
+                        // Device content cannot be deleted, only taken off the device, as on the tab's own rows.
+                        if store.showsDeviceContent, store.offlineItemIDs.contains(item.id) {
+                            Button {
+                                store.send(.offlineToggleTapped(item))
+                            } label: {
+                                IconKit.delete
+                            }
+                            .tint(.negative)
+                            .accessibilityLabel(L10n.Browse.actionRemoveFromOffline)
+                        }
                         if store.access?.canDelete ?? false {
                             Button {
                                 store.send(.deleteTapped(item))

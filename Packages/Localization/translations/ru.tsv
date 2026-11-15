@@ -1142,3 +1142,4 @@ offline.rowUpdateFailed	Не удалось обновить
 pdfPreview.pageIndicator	%1$lld из %2$lld
 previewToolbar.savePhoto	Сохранить фото
 previewToolbar.saveVideo	Сохранить видео
+offline.removeEmptiesFolderMessage	Из «%@» на этом устройстве больше ничего не останется, поэтому папка тоже будет убрана из доступных офлайн. Ваши файлы на сервере не будут затронуты.

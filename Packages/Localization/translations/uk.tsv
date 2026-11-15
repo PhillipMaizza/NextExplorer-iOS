@@ -1115,3 +1115,4 @@ offline.rowUpdateFailed	Не вдалося оновити
 pdfPreview.pageIndicator	%1$lld із %2$lld
 previewToolbar.savePhoto	Зберегти фото
 previewToolbar.saveVideo	Зберегти відео
+offline.removeEmptiesFolderMessage	Із «%@» на цьому пристрої більше нічого не залишиться, тому папку теж буде прибрано з доступних офлайн. Ваші файли на сервері не зачіпаються.

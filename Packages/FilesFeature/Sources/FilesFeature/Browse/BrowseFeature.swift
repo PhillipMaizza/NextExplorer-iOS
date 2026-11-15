@@ -481,8 +481,16 @@ public struct BrowseFeature {
         /// `items`, folders first, with hidden entries dropped unless the preference is on
         /// and sorted by `sortOption`.
         public var displayedItems: IdentifiedArrayOf<FileItem> {
-            let visible = preferences.showHiddenFiles ? items : items.filter { !isHiddenFileName($0.name) }
-            return IdentifiedArray(BrowseFeature.sorted(visible, by: sortOption, direction: sortDirection), id: \.id, uniquingIDsWith: { first, _ in first })
+            IdentifiedArray(
+                BrowseFeature.sorted(visibleItems, by: sortOption, direction: sortDirection),
+                id: \.id,
+                uniquingIDsWith: { first, _ in first }
+            )
+        }
+
+        /// `items` with hidden entries dropped unless the preference is on, in listing order.
+        var visibleItems: [FileItem] {
+            preferences.showHiddenFiles ? items.elements : items.elements.filter { !isHiddenFileName($0.name) }
         }
 
         /// Whether `displayedItems` would be non empty, and how many entries it would hold,
@@ -559,6 +567,8 @@ public struct BrowseFeature {
         case offlineToggleTapped(FileItem)
         case offlineRemovalConfirmed
         case offlineRemovalCancelled
+        /// A screen above this one took `paths` off the device: an Offline tab screen stops listing them.
+        case keptItemsRemoved(paths: [String])
         case itemsResponse(Result<BrowseResult, FilesClientError>)
         case favoritesResponse([Favorite])
         /// The saved listing read off the main actor for an offline failure, `nil` when none is stored.
@@ -723,6 +733,9 @@ public struct BrowseFeature {
             case openDownloadsTapped
             /// "View in Shared" on the created-share-link sheet: switches to the Shared tab.
             case goToSharedTab
+            /// An Offline tab screen took its own folder off the device with its last items: the
+            /// parent closes it and drops `removedPaths` from the screens below.
+            case keptFolderEmptied(removedPaths: [String])
         }
     }
 
@@ -809,16 +822,29 @@ public struct BrowseFeature {
                 state.offlineItemIDs = state.offlineItemIDs.filter { id in
                     state.offlinePinnedItemIDs.contains(id) || !request.paths.contains { id.hasPrefix($0 + "/") }
                 }
-                // A screen listing what is on the device stops showing what just came off it.
+                let unpins = Effect<Action>.merge(
+                    request.paths.map { .send(.delegate(.offlineUnpinRequested(path: $0))) }
+                )
+                // The folder on screen came off with its last items: back to where it was opened from.
+                if request.emptiedFolderName != nil {
+                    return .concatenate(
+                        unpins,
+                        .send(.delegate(.keptFolderEmptied(removedPaths: request.paths)))
+                    )
+                }
                 if state.isKeptOffline {
-                    let stillKept = state.offlineItemIDs
-                    state.items.removeAll { item in
-                        !stillKept.contains(item.id)
-                            && request.paths.contains { item.id == $0 || item.id.hasPrefix($0 + "/") }
-                    }
+                    Self.dropTakenOff(request.paths, from: &state)
                     listingChanged(&state)
                 }
-                return .merge(request.paths.map { .send(.delegate(.offlineUnpinRequested(path: $0))) })
+                return unpins
+
+            case let .keptItemsRemoved(paths):
+                guard state.isKeptOffline else { return .none }
+                state.offlineItemIDs = state.offlineItemIDs.filter { !Self.isTakenOff($0, by: paths) }
+                state.offlinePinnedItemIDs = state.offlinePinnedItemIDs.filter { !Self.isTakenOff($0, by: paths) }
+                Self.dropTakenOff(paths, from: &state)
+                listingChanged(&state)
+                return .none
 
             case let .offlineToggleTapped(item):
                 if state.offlineItemIDs.contains(item.id) {
@@ -1896,15 +1922,42 @@ public struct BrowseFeature {
         )
     }
 
-    /// The confirmation for taking `items` off the device, under this screen's account.
+    /// The confirmation for taking `items` off the device, under this screen's account. On an Offline
+    /// tab screen, picking everything it still shows takes the folder itself off instead: a kept folder
+    /// with nothing in it is not worth keeping, and the screen goes back once it is confirmed.
     func offlineRemoval(of items: [FileItem], state: State) -> OfflineRemovalRequest? {
         // The manifest is read once, not once per picked item.
         let roots = offlineFileStore.pinned(to: state.cacheScope).pinnedRoots()
-        return .removing(
+        let coveringRoot: (String) -> String? = { roots.coveringRoot(of: $0)?.path }
+        guard let request = OfflineRemovalRequest.removing(
             items.map { (path: $0.id, name: $0.name) },
             pinnedPaths: state.offlinePinnedItemIDs,
-            coveringRoot: { roots.coveringRoot(of: $0)?.path }
-        )
+            coveringRoot: coveringRoot
+        ) else { return nil }
+        guard state.isKeptOffline, !state.directoryPath.isEmpty,
+              state.visibleItems.allSatisfy({ Self.isTakenOff($0.id, by: request.paths) }),
+              let folder = OfflineRemovalRequest.removing(
+                  [(path: state.directoryPath, name: state.title)],
+                  pinnedPaths: Set(roots.map(\.path)),
+                  coveringRoot: coveringRoot
+              )
+        else { return request }
+        return OfflineRemovalRequest(paths: folder.paths, names: request.names, emptiedFolderName: state.title)
+    }
+
+    /// Whether taking `paths` off the device takes `id` with it: the item itself or a folder above it.
+    static func isTakenOff(_ id: String, by paths: [String]) -> Bool {
+        paths.contains { id == $0 || id.hasPrefix($0 + "/") }
+    }
+
+    /// A screen listing what is on the device stops showing what just came off it.
+    static func dropTakenOff(_ paths: [String], from state: inout State) {
+        let stillKept = state.offlineItemIDs
+        let countBefore = state.items.count
+        state.items.removeAll { !stillKept.contains($0.id) && isTakenOff($0.id, by: paths) }
+        if state.items.count != countBefore {
+            state.selectedItemIDs.formIntersection(state.items.ids)
+        }
     }
 
     /// Folders before files, each group alphabetical, matching the web client's own

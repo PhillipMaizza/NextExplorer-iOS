@@ -1089,3 +1089,4 @@ offline.rowUpdateFailed	Päivitys epäonnistui
 pdfPreview.pageIndicator	%1$lld / %2$lld
 previewToolbar.savePhoto	Tallenna kuva
 previewToolbar.saveVideo	Tallenna video
+offline.removeEmptiesFolderMessage	Kansiosta “%@” ei jää tähän laitteeseen mitään muuta, joten kansiokin poistetaan offline-saatavista. Palvelimella olevia tiedostojasi ei kosketa.

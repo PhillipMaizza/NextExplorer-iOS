@@ -51,6 +51,7 @@ struct SidebarAccountMenu<Label: View>: View {
                 onChangePassword()
             }
             .presentationCompactAdaptation(.popover)
+            .task { store.send(.signInStatusRequested) }
         }
     }
 }

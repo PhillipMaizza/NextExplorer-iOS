@@ -1102,3 +1102,4 @@ offline.rowUpdateFailed	העדכון נכשל
 pdfPreview.pageIndicator	%1$lld מתוך %2$lld
 previewToolbar.savePhoto	שמירת תמונה
 previewToolbar.saveVideo	שמירת סרטון
+offline.removeEmptiesFolderMessage	שום דבר נוסף מ״%@״ לא נשאר במכשיר זה, ולכן גם התיקייה תוסר מהזמינים ללא חיבור. הקבצים שלכם בשרת לא מושפעים.

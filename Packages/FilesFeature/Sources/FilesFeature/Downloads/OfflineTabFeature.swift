@@ -422,6 +422,12 @@ public struct OfflineTabFeature {
             case .path(.element(id: _, action: .delegate(.goToSharedTab))):
                 return .send(.delegate(.goToSharedTab))
 
+            case let .path(.element(id: id, action: .delegate(.keptFolderEmptied(removedPaths)))):
+                state.path.pop(from: id)
+                return .merge(state.path.ids.map {
+                    .send(.path(.element(id: $0, action: .keptItemsRemoved(paths: removedPaths))))
+                })
+
             case .path(.element(id: _, action: .delegate(.directoryContentsChanged))):
                 return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) })
 

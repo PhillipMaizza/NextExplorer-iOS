@@ -1116,3 +1116,4 @@ offline.rowUpdateFailed	No se pudo actualizar
 pdfPreview.pageIndicator	%1$lld de %2$lld
 previewToolbar.savePhoto	Guardar foto
 previewToolbar.saveVideo	Guardar vídeo
+offline.removeEmptiesFolderMessage	No queda nada más de «%@» en este dispositivo, así que la carpeta también se quita de disponibles sin conexión. Tus archivos en el servidor no se ven afectados.
