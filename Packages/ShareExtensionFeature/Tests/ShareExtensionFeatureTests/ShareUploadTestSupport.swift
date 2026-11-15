@@ -89,7 +89,10 @@ extension ShareUploadHarness {
         isAssistive: Bool = false,
         announcements: LockIsolated<[String]> = LockIsolated([])
     ) -> ShareUploadFeatureTests.Store {
-        TestStore(initialState: ShareUploadFeature.State()) {
+        // Read before the closures: a closure that reaches `Self` captures a non Sendable metatype.
+        let user = Self.user
+        let listing = Self.listing()
+        return TestStore(initialState: ShareUploadFeature.State()) {
             ShareUploadFeature()
         } withDependencies: {
             $0.sharedItems.count = { count }
@@ -104,8 +107,8 @@ extension ShareUploadHarness {
             $0.sharedItems.discard = { calls.record("discard") }
             $0.authClient.loadSession = { credentials }
             $0.authClient.listSessions = { credentials.map { [$0] } ?? [] }
-            $0.authClient.me = { _ in Self.user }
-            $0.filesClient.browse = browse ?? { _, _ in Self.listing() }
+            $0.authClient.me = { _ in user }
+            $0.filesClient.browse = browse ?? { _, _ in listing }
             $0.uploadDefaults = .inMemory(credentials.map { [$0.accountID: defaults] } ?? [:])
             $0.continuousClock = clock
             $0.shareAccessibility = ShareAccessibilityClient(

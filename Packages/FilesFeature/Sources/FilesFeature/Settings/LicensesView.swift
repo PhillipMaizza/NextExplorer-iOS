@@ -3,7 +3,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let rowIconSize: CGFloat = .iconSmall
     static let detailPadding: CGFloat = .space16
     static let detailSpacing: CGFloat = .space8
 }

@@ -2,7 +2,6 @@ import SwiftUI
 
 private enum FieldConstants {
     static let invalidBorderWidth: CGFloat = 2
-    static let borderFadeDuration: Double = 0.2
 }
 
 /// Chrome shared by every labeled input field in the app: a label above a leading-icon,
@@ -55,7 +54,7 @@ public struct DSFieldContainer<Content: View>: View {
                         lineWidth: isInvalid ? FieldConstants.invalidBorderWidth : .borderWidthHairline
                     )
             )
-            .animation(.easeInOut(duration: FieldConstants.borderFadeDuration), value: isInvalid)
+            .animation(DSMotion.stateFade, value: isInvalid)
             .shake(trigger: shakeTrigger)
         }
     }

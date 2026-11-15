@@ -14,7 +14,7 @@ private enum Constants {
     static let cornerRadius: CGFloat = .size4
     /// The reveal when a render lands: the page springs up from a slight shrink while the
     /// placeholder fades out under it.
-    static let revealAnimation: Animation = .spring(response: 0.4, dampingFraction: 0.7)
+    static let revealAnimation: Animation = DSMotion.pop
     static let revealInitialScale: CGFloat = 0.86
 }
 

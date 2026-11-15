@@ -33,8 +33,8 @@ struct TransferStatusBars: View {
         if case let .failed(message) = progress.phase {
             TransferFailedBar(
                 label: message,
-                onRetry: { store.send(.offline(.resyncTapped), animation: .default) },
-                onDismiss: { store.send(.offline(.dismissStatusTapped), animation: .default) },
+                onRetry: { store.send(.offline(.resyncTapped), animation: DSMotion.stateFade) },
+                onDismiss: { store.send(.offline(.dismissStatusTapped), animation: DSMotion.stateFade) },
                 onTap: {}
             )
         } else {
@@ -47,7 +47,7 @@ struct TransferStatusBars: View {
                     : nil,
                 cancelLabel: L10n.Common.cancel,
                 onTap: {},
-                onCancelAll: { store.send(.offline(.cancelTapped), animation: .default) }
+                onCancelAll: { store.send(.offline(.cancelTapped), animation: DSMotion.stateFade) }
             )
         }
     }
@@ -61,14 +61,14 @@ struct TransferStatusBars: View {
                 progress: store.uploads.currentJob?.progress ?? 0,
                 cancelLabel: L10n.Uploads.cancelAll,
                 onTap: { store.send(.uploads(.barTapped)) },
-                onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: .default) }
+                onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: DSMotion.stateFade) }
             )
         } else {
             let count = store.uploads.failedCount
             TransferFailedBar(
                 label: count == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(count),
-                onRetry: { store.send(.uploads(.retryAllFailedTapped), animation: .default) },
-                onDismiss: { store.send(.uploads(.clearFinishedTapped), animation: .default) },
+                onRetry: { store.send(.uploads(.retryAllFailedTapped), animation: DSMotion.stateFade) },
+                onDismiss: { store.send(.uploads(.clearFinishedTapped), animation: DSMotion.stateFade) },
                 onTap: { store.send(.uploads(.barTapped)) }
             )
         }
@@ -85,7 +85,7 @@ struct TransferStatusBars: View {
                 detail: queue.currentJob.flatMap { DownloadProgressText.detail(for: $0, locale: locale) },
                 cancelLabel: L10n.DownloadQueue.cancelAll,
                 onTap: { store.send(.downloadQueue(.barTapped)) },
-                onCancelAll: { store.send(.downloadQueue(.cancelAllTapped), animation: .default) }
+                onCancelAll: { store.send(.downloadQueue(.cancelAllTapped), animation: DSMotion.stateFade) }
             )
         } else {
             TransferFailedBar(
@@ -93,8 +93,8 @@ struct TransferStatusBars: View {
                     ? L10n.DownloadQueue.barFailedOne
                     : L10n.DownloadQueue
                         .barFailedMany(queue.failedCount),
-                onRetry: { store.send(.downloadQueue(.retryAllFailedTapped), animation: .default) },
-                onDismiss: { store.send(.downloadQueue(.clearFinishedTapped), animation: .default) },
+                onRetry: { store.send(.downloadQueue(.retryAllFailedTapped), animation: DSMotion.stateFade) },
+                onDismiss: { store.send(.downloadQueue(.clearFinishedTapped), animation: DSMotion.stateFade) },
                 onTap: { store.send(.downloadQueue(.barTapped)) }
             )
         }

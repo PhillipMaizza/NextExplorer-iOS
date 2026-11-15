@@ -10,7 +10,6 @@ import SwiftUI
 #endif
 
 private enum Constants {
-    static let barAnimationDuration: Double = 0.2
     /// Clearance so the floating upload bar rides above the tab bar rather than replacing it
     /// (a bottom `safeAreaInset` / `tabViewBottomAccessory` hides the Liquid Glass tab bar).
     static let barBottomClearance: CGFloat = 68
@@ -90,13 +89,13 @@ public struct MainTabView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
-            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isBarVisible)
-            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
-            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isBarVisible)
-            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isActive)
-            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: offlinePhase.showsOfflineBar)
+            .animation(DSMotion.stateFade, value: store.uploads.isBarVisible)
+            .animation(DSMotion.stateFade, value: store.uploads.isActive)
+            .animation(DSMotion.stateFade, value: store.downloadQueue.isBarVisible)
+            .animation(DSMotion.stateFade, value: store.downloadQueue.isActive)
+            .animation(DSMotion.stateFade, value: offlinePhase.showsOfflineBar)
             .onOfflinePhaseChange(initial: true) { offlinePhase = $0 }
-            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
+            .animation(DSMotion.stateFade, value: breadcrumbClearance)
             .onChange(of: shouldShowTransferBars) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }
             }
@@ -157,7 +156,6 @@ public struct MainTabView: View {
                     }
                 }
             ), extraBottomInset: Constants.toastTabBarClearance)
-            .hapticFeedback(.selection, trigger: store.selectedTab)
             .onChange(of: store.selectedTab, initial: true) { _, tab in
                 visitedTabs.insert(tab)
             }

@@ -7,7 +7,6 @@ common.delete	حذف
 common.remove	إزالة
 common.clear	مسح
 common.done	تم
-common.ok	موافق
 common.openSettings	فتح الإعدادات
 common.logOut	تسجيل الخروج
 common.close	إغلاق
@@ -23,7 +22,6 @@ common.selectedCount	%lld محدد
 tab.browse	تصفح
 tab.favorites	المفضلة
 tab.shared	المشتركة
-tab.downloads	التنزيلات
 tab.settings	الإعدادات
 sort.sheetTitle	الفرز حسب
 sort.name	الاسم
@@ -33,8 +31,6 @@ sort.dateModified	تاريخ التعديل
 sort.dateAdded	تاريخ الإضافة
 sort.dateShared	تاريخ المشاركة
 sort.expiration	انتهاء الصلاحية
-sort.email	البريد الإلكتروني
-sort.type	النوع
 sort.ascending	تصاعدي
 sort.descending	تنازلي
 select.selectAll	تحديد الكل
@@ -59,11 +55,8 @@ dateFormat.automatic	تلقائي
 browse.navigationTitle	تصفح
 browse.scopeThisFolder	هذا المجلد
 browse.scopeEverywhere	كل مكان
-browse.searchScopeInFolder	هذا المجلد
-browse.searchScopeEverywhere	كل مكان
 browse.locations	المواقع
 browse.open	فتح
-browse.unsupportedFileType	نوع ملف غير مدعوم
 browse.actionGetInfo	معلومات
 browse.actionPermissions	الأذونات
 browse.actionRename	إعادة تسمية
@@ -93,7 +86,6 @@ browse.searchEverywhere	البحث في كل مكان
 browse.searchFailed	تعذّر البحث. تحقق من اتصالك وأعد المحاولة.
 browse.progressExtracting	جارٍ الاستخراج…
 browse.progressCompressing	جارٍ الضغط…
-browse.offlineBannerTitle	غير متصل
 browse.offlineBannerDetail	يتم عرض نسخة محفوظة من %@
 browse.actionCopy	نسخ
 browse.destinationPickerMoveTitle	نقل إلى…
@@ -105,8 +97,6 @@ browse.actionPaste	لصق
 browse.actionPasteCount	لصق %lld عنصر
 browse.actionPasteHere	اللصق هنا
 browse.actionClearClipboard	مسح الحافظة
-browse.clipboardMoveCount	%lld للنقل
-browse.clipboardCopyCount	%lld للنسخ
 browse.clipboardCopiedOne	تم نسخ %@
 browse.clipboardCopiedMany	تم نسخ %lld عنصر
 browse.progressMoving	جارٍ النقل…
@@ -165,8 +155,6 @@ favorites.removeMessage	هذا يزيلها من المفضلة فقط.
 favorites.removeFailedOne	تعذّر إزالة تلك المفضلة.
 favorites.removeFailedMany	تعذّر إزالة تلك المفضلات.
 favorites.removePartial	تمت إزالة %1$lld من %2$lld.
-downloads.actionOpenInFiles	فتح في الملفات
-downloads.emptyList	تظهر هنا الملفات التي تنزّلها من تصفح.
 downloads.deleteConfirmTitle	حذف؟
 downloads.deleteConfirmOne	حذف ‏«%@»؟
 downloads.deleteConfirmMany	حذف %lld ملف؟
@@ -209,15 +197,12 @@ uploads.discardTitle	تجاهل الرفع؟
 uploads.discardMessage	لن يتم رفع الملفات التي أضفتها.
 uploads.discardConfirm	تجاهل
 uploads.statusWaiting	في الانتظار
-uploads.statusFailed	فشل الرفع
 uploads.barTitleOne	جارٍ رفع %@
 uploads.barTitleMany	جارٍ رفع %lld ملف
 uploads.barFailedOne	فشل رفع واحد
 uploads.barFailedMany	فشل %lld رفع
-uploads.retryAll	إعادة محاولة الكل
 uploads.complete	اكتمل الرفع
 uploads.completeMany	تم رفع %lld ملف
-uploads.completeWithFailures	تم رفع %1$lld، وفشل %2$lld
 uploads.failedGeneric	تعذّر رفع هذا الملف.
 uploads.clear	مسح
 uploads.emptyList	لا عمليات رفع بعد.
@@ -252,7 +237,6 @@ createShare.sectionLabel	التسمية
 createShare.sectionAccessMode	وضع الوصول
 createShare.sectionWhoCanAccess	من يمكنه الوصول
 createShare.sectionShareLink	رابط المشاركة
-createShare.fieldPassword	كلمة السر
 createShare.togglePasswordProtect	الحماية بكلمة سر
 createShare.toggleSetExpiration	تعيين تاريخ انتهاء الصلاحية
 createShare.fieldExpires	ينتهي في
@@ -267,7 +251,6 @@ createShare.directFolderLink	رابط ZIP مباشر للمجلد
 createShare.directFileLink	رابط ملف مباشر
 createShare.summaryAccess	الوصول
 createShare.summarySharedWith	تمت المشاركة مع
-createShare.summaryPassword	كلمة السر
 createShare.summaryPasswordProtected	محمي
 createShare.summaryExpires	ينتهي في
 createShare.summarySpecificPeople	أشخاص محددون
@@ -275,7 +258,6 @@ createShare.errorPastExpiration	اختر تاريخ انتهاء صلاحية ف
 editShare.title	تحرير رابط المشاركة
 editShare.save	حفظ التغييرات
 editShare.passwordKeepHint	اتركه فارغًا للاحتفاظ بكلمة السر الحالية
-editShare.savedToast	تم تحديث رابط المشاركة
 thumbnailSettings.navigationTitle	الصور المصغّرة
 thumbnailSettings.subtitle	تحكّم في كيفية إنشاء الخادم للصور المصغّرة لكل عميل.
 thumbnailSettings.enable	إنشاء صور مصغّرة
@@ -358,17 +340,10 @@ serverDetails.nameErrorEmpty	لا يمكن أن يكون اسم الخادم ف�
 serverDetails.urlLabel	عنوان URL للخادم
 serverDetails.urlFootnote	العنوان الذي تم تثبيت نسخة NextExplorer الخاصة بك عليه. لتغييره، سجّل الخروج وأضف الخادم مرة أخرى.
 serverDetails.updateButton	تحديث الخادم
-serverDetails.savedMessage	تم تحديث تفاصيل الخادم.
 serverDetails.logoErrorTooLarge	تلك الصورة كبيرة جدًا. اختر واحدة أقل من 2 ميغابايت.
 serverDetails.cameraDeniedTitle	الوصول إلى الكاميرا متوقف
 serverDetails.cameraDeniedMessage	فعّل الوصول إلى الكاميرا في الإعدادات لالتقاط صورة.
 licenses.navigationTitle	تراخيص المصدر المفتوح
-licenses.sectionSoftware	البرامج
-licenses.sectionFontSoftware	برامج الخطوط
-licenses.labelAuthor	المؤلف
-licenses.labelOriginalVersion	الإصدار الأصلي
-licenses.labelModifiedVersion	الإصدار المعدّل
-licenses.labelReservedFontName	اسم الخط المحجوز
 fileInfo.navigationTitleFolder	مجلد
 fileInfo.rowKind	النوع
 fileInfo.rowSize	الحجم
@@ -415,7 +390,6 @@ userManagement.createUser	إنشاء مستخدم
 userManagement.badgeAdmin	مسؤول
 userManagement.emptyList	لا مستخدمين بعد.
 userManagement.noSearchMatches	لا مستخدمين يطابقون ‏«%@».
-userManagement.loadFailed	تعذّر الوصول إلى الخادم.
 userManagement.sortType	النوع
 userManagement.sortName	الاسم
 userManagement.sortEmail	البريد الإلكتروني
@@ -427,7 +401,6 @@ userManagement.createEmailField	البريد الإلكتروني
 userManagement.createEmailPlaceholder	name@example.com
 userManagement.createUsernameField	اسم المستخدم (اختياري)
 userManagement.createUsernamePlaceholder	مشتق من البريد الإلكتروني
-userManagement.createPasswordField	كلمة السر
 userManagement.createPasswordPlaceholder	‏%lld حرفًا على الأقل
 userManagement.createGrantAdminToggle	منح وصول المسؤول
 userManagement.createGrantAdminSubtitle	تحكّم كامل في الملفات والمشاركات والمستخدمين.
@@ -449,7 +422,6 @@ userManagement.toastVolumeRemoved	تمت إزالة وحدة التخزين
 userManagement.errorEmailRequired	البريد الإلكتروني مطلوب.
 userManagement.errorEmailInvalid	أدخل عنوان بريد إلكتروني صالحًا.
 userManagement.errorUsernameRequired	اسم المستخدم مطلوب.
-userManagement.errorEmailInUse	البريد الإلكتروني مستخدم بالفعل.
 userManagement.errorPasswordTooShort	استخدم %lld حرفًا على الأقل.
 userDetail.fallbackName	مستخدم
 userDetail.sectionGeneralInfo	معلومات عامة
@@ -541,13 +513,10 @@ login.errorIncomplete	لم يكتمل تسجيل الدخول. يُرجى إعا
 login.errorUnreachable	تعذّر الوصول إلى ذلك الخادم. تحقق من العنوان وأعد المحاولة.
 login.errorUnexpectedResponse	استجابة غير متوقعة من الخادم.
 login.errorKeychain	تعذّر حفظ جلستك على هذا الجهاز.
-login.errorDecoding	استجاب الخادم بشكل غير متوقع. تحقق من العنوان وأعد المحاولة.
-login.errorNoLocalAuth	هذا الخادم لا يتيح تسجيل الدخول باسم المستخدم وكلمة السر.
 login.errorRateLimited	محاولات كثيرة جدًا. يُرجى الانتظار بضع دقائق وإعادة المحاولة.
 login.errorServer	واجه الخادم مشكلة (خطأ %lld). يُرجى إعادة المحاولة لاحقًا.
 browse.nameErrorReserved	هذا الاسم غير مسموح به.
 browse.nameErrorSeparators	لا يمكن أن يحتوي الاسم على / أو \.
-browse.searchMatchLine	السطر %1$lld: %2$@
 browse.searchMatchLineLabel	السطر %lld
 browse.searchTooShort	اكتب %lld أحرف على الأقل للبحث في المجلدات الفرعية ومحتوى الملفات.
 browse.searchStoppedEarly	توقف البحث عند حده الزمني. هذه هي النتائج التي عُثر عليها حتى الآن.
@@ -558,8 +527,6 @@ browse.searchMatchedByName	الاسم
 browse.searchMatchedByContent	المحتوى
 browse.searchMatchedByBoth	الاسم والمحتوى
 createShare.errorPasswordRequired	أدخل كلمة سر أو أوقف الحماية بكلمة سر.
-filter.sheetTitle	التصفية حسب النوع
-filter.button	تصفية
 filter.all	جميع الأنواع
 filter.folders	المجلدات
 filter.images	الصور
@@ -643,7 +610,6 @@ settings.sectionSupport	الدعم
 settings.rowRateApp	قيّم NextExplorer
 settings.rowSupport	المساعدة والدعم
 menu.refresh	تحديث
-select.tableView	عرض الجدول
 openWith.openIn	فتح في %@
 openWith.openWith	فتح باستخدام
 openWith.viewAsText	عرض كنص
@@ -659,7 +625,6 @@ menu.newWindow	نافذة جديدة
 menu.newTab	علامة تبويب جديدة
 browse.actionOpenInNewWindow	فتح في نافذة جديدة
 browse.actionOpenInNewTab	فتح في علامة تبويب جديدة
-select.viewAs	العرض
 settings.rowAppearance	المظهر
 appearance.system	النظام
 appearance.light	فاتح
@@ -679,12 +644,8 @@ downloadQueue.savedMany	تم حفظ %lld عنصر في التنزيلات
 downloadQueue.bytesOf	%1$@ من %2$@
 downloadQueue.timeLeft	متبقٍ %@
 browse.sectionPersonal	شخصي
-browse.progressDownloading	جارٍ التنزيل…
-browse.progressDownloadingIndexed	جارٍ تنزيل %1$lld من %2$lld…
 browse.downloadSavedTo	تم الحفظ في %@
-browse.downloadSavedCountTo	تم حفظ %1$lld من %2$lld عنصر في %3$@
 browse.downloadSavedAllTo	تم حفظ %1$lld عنصر في %2$@
-browse.downloadBulkFailed	تعذّر حفظ هذه العناصر على جهازك.
 macSettings.labelFormat	%@:
 macSettings.addAccount	إضافة حساب…
 macSettings.changePassword	تغيير كلمة المرور…
@@ -697,7 +658,6 @@ macSettings.roleAdmin	مسؤول
 macSettings.roleUser	مستخدم
 macSettings.status	الحالة
 macSettings.statusSignedIn	مسجّل الدخول
-macSettings.manage	إدارة…
 macSettings.cache	ذاكرة التخزين المؤقت
 macSettings.support	المساعدة والدعم…
 macSettings.permission	الإذن
@@ -964,7 +924,6 @@ activityLog.anyOutcome	أي نتيجة
 activityLog.outcomeOk	ناجح
 activityLog.outcomeRefused	مرفوض
 activityLog.searchPlaceholder	اسم أو مسار
-activityLog.searchButton	بحث
 activityLog.refresh	تحديث
 activityLog.clear	إفراغ السجل
 activityLog.clearTitle	هل تريد إفراغ السجل؟
@@ -1080,7 +1039,6 @@ versionedFiles.newest	الأحدث: %@
 versionedFiles.versionPinned	مثبّت
 versionedFiles.versionUnavailable	غير متاح
 versionedFiles.versionBy	بواسطة %@
-versionedFiles.detailFailed	تعذّرت قراءة هذا السجل.
 versionedFiles.deleteSelectedNone	حدّد الإصدارات المراد حذفها
 versionedFiles.deleteSelected	حذف المحدد (%lld)
 versionedFiles.deleteAll	حذف كل الإصدارات

@@ -132,7 +132,7 @@ struct FileActionsMenu: View {
         // left absent, so neither is offered for it.
         if !isSoleRootLocation, !store.showsDeviceContent {
             Button {
-                store.send(.copyTapped(item), animation: .default)
+                store.send(.copyTapped(item), animation: DSMotion.listDiff)
             } label: {
                 Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
             }
@@ -141,7 +141,7 @@ struct FileActionsMenu: View {
                 if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
                     Button {
                         store.send(.tableSelectionChanged([item.id]))
-                        store.send(.duplicateSelectionTapped, animation: .default)
+                        store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
                     } label: {
                         Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
                     }
@@ -151,7 +151,7 @@ struct FileActionsMenu: View {
                 if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                     Button {
                         store.send(.tableSelectionChanged([item.id]))
-                        store.send(.cutSelectionTapped, animation: .default)
+                        store.send(.cutSelectionTapped, animation: DSMotion.listDiff)
                     } label: {
                         Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
                     }
@@ -160,7 +160,7 @@ struct FileActionsMenu: View {
             #endif
             if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                 Button {
-                    store.send(.moveTapped(item), animation: .default)
+                    store.send(.moveTapped(item), animation: DSMotion.listDiff)
                 } label: {
                     Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
                 }

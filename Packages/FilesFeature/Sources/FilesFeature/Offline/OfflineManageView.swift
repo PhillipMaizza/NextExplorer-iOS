@@ -23,7 +23,7 @@ struct OfflineManageView: View {
                                 isFirst: index == 0,
                                 isLast: index == store.usages.count - 1
                             ) {
-                                store.send(.removeTapped(path: usage.root.path), animation: .default)
+                                store.send(.removeTapped(path: usage.root.path), animation: DSMotion.listDiff)
                             }
                         }
                     } footer: {

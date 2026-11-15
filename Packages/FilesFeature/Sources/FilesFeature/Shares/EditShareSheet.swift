@@ -164,7 +164,7 @@ struct EditShareSheet: View {
                         .padding(.vertical, .space8)
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(DSHapticButtonStyle())
+                    .buttonStyle(DSPressableButtonStyle())
                     .hapticFeedback(.selection, trigger: isSelected)
                 }
             }

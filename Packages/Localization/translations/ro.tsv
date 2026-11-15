@@ -7,7 +7,6 @@ common.delete	Șterge
 common.remove	Elimină
 common.clear	Golește
 common.done	Gata
-common.ok	OK
 common.openSettings	Deschide Setări
 common.logOut	Deconectează-te
 common.close	Închide
@@ -23,7 +22,6 @@ common.selectedCount	%lld selectate
 tab.browse	Explorează
 tab.favorites	Favorite
 tab.shared	Partajate
-tab.downloads	Descărcări
 tab.settings	Setări
 sort.sheetTitle	Sortează după
 sort.name	Nume
@@ -33,8 +31,6 @@ sort.dateModified	Data modificării
 sort.dateAdded	Data adăugării
 sort.dateShared	Data partajării
 sort.expiration	Expirare
-sort.email	E-mail
-sort.type	Tip
 sort.ascending	Crescător
 sort.descending	Descrescător
 select.selectAll	Selectează tot
@@ -59,11 +55,8 @@ dateFormat.automatic	Automat
 browse.navigationTitle	Explorează
 browse.scopeThisFolder	Acest dosar
 browse.scopeEverywhere	Peste tot
-browse.searchScopeInFolder	Acest dosar
-browse.searchScopeEverywhere	Peste tot
 browse.locations	Locații
 browse.open	Deschide
-browse.unsupportedFileType	Tip de fișier neacceptat
 browse.actionGetInfo	Informații
 browse.actionPermissions	Permisiuni
 browse.actionRename	Redenumește
@@ -93,7 +86,6 @@ browse.searchEverywhere	Caută peste tot
 browse.searchFailed	Căutarea a eșuat. Verifică conexiunea și încearcă din nou.
 browse.progressExtracting	Se extrage…
 browse.progressCompressing	Se comprimă…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Se afișează o copie salvată din %@
 browse.actionCopy	Copiază
 browse.destinationPickerMoveTitle	Mută în…
@@ -105,8 +97,6 @@ browse.actionPaste	Lipește
 browse.actionPasteCount	Lipește %lld elemente
 browse.actionPasteHere	Lipește aici
 browse.actionClearClipboard	Golește clipboardul
-browse.clipboardMoveCount	%lld de mutat
-browse.clipboardCopyCount	%lld de copiat
 browse.clipboardCopiedOne	%@ copiat
 browse.clipboardCopiedMany	%lld elemente copiate
 browse.progressMoving	Se mută…
@@ -150,8 +140,6 @@ favorites.removeMessage	Aceasta doar le elimină de la favorite.
 favorites.removeFailedOne	Nu s-a putut elimina acel favorit.
 favorites.removeFailedMany	Nu s-au putut elimina acele favorite.
 favorites.removePartial	Eliminate %1$lld din %2$lld.
-downloads.actionOpenInFiles	Deschide în Fișiere
-downloads.emptyList	Fișierele descărcate din Explorează apar aici.
 downloads.deleteConfirmTitle	Ștergi?
 downloads.deleteConfirmOne	Ștergi „%@”?
 downloads.deleteConfirmMany	Ștergi %lld fișiere?
@@ -191,15 +179,12 @@ uploads.discardTitle	Renunți la încărcare?
 uploads.discardMessage	Fișierele adăugate nu vor fi încărcate.
 uploads.discardConfirm	Renunță
 uploads.statusWaiting	În așteptare
-uploads.statusFailed	Încărcarea a eșuat
 uploads.barTitleOne	Se încarcă %@
 uploads.barTitleMany	Se încarcă %lld fișiere
 uploads.barFailedOne	1 încărcare a eșuat
 uploads.barFailedMany	%lld încărcări au eșuat
-uploads.retryAll	Reîncearcă toate
 uploads.complete	Încărcare finalizată
 uploads.completeMany	%lld fișiere încărcate
-uploads.completeWithFailures	%1$lld încărcate, %2$lld eșuate
 uploads.failedGeneric	Nu s-a putut încărca acest fișier.
 uploads.clear	Golește
 uploads.emptyList	Nicio încărcare încă.
@@ -234,7 +219,6 @@ createShare.sectionLabel	Etichetă
 createShare.sectionAccessMode	Mod de acces
 createShare.sectionWhoCanAccess	Cine poate accesa
 createShare.sectionShareLink	Link de partajare
-createShare.fieldPassword	Parolă
 createShare.togglePasswordProtect	Protejează cu parolă
 createShare.toggleSetExpiration	Setează data de expirare
 createShare.fieldExpires	Expiră
@@ -249,7 +233,6 @@ createShare.directFolderLink	Link ZIP direct al dosarului
 createShare.directFileLink	Link direct al fișierului
 createShare.summaryAccess	Acces
 createShare.summarySharedWith	Partajat cu
-createShare.summaryPassword	Parolă
 createShare.summaryPasswordProtected	Protejat
 createShare.summaryExpires	Expiră
 createShare.summarySpecificPeople	Anumite persoane
@@ -257,7 +240,6 @@ createShare.errorPastExpiration	Alege o dată de expirare în viitor.
 editShare.title	Editează linkul de partajare
 editShare.save	Salvează modificările
 editShare.passwordKeepHint	Lasă gol pentru a păstra parola actuală
-editShare.savedToast	Link de partajare actualizat
 thumbnailSettings.navigationTitle	Miniaturi
 thumbnailSettings.subtitle	Controlează modul în care serverul generează miniaturile de imagine pentru fiecare client.
 thumbnailSettings.enable	Generează miniaturi
@@ -340,17 +322,10 @@ serverDetails.nameErrorEmpty	Numele serverului nu poate fi gol.
 serverDetails.urlLabel	URL server
 serverDetails.urlFootnote	Adresa unde este instalată instanța ta NextExplorer. Pentru a o schimba, deconectează-te și adaugă serverul din nou.
 serverDetails.updateButton	Actualizează serverul
-serverDetails.savedMessage	Detaliile serverului au fost actualizate.
 serverDetails.logoErrorTooLarge	Acea imagine este prea mare. Alege una sub 2 MB.
 serverDetails.cameraDeniedTitle	Acces la cameră dezactivat
 serverDetails.cameraDeniedMessage	Activează accesul la cameră în Setări pentru a face o fotografie.
 licenses.navigationTitle	Licențe open source
-licenses.sectionSoftware	Software
-licenses.sectionFontSoftware	Software de fonturi
-licenses.labelAuthor	Autor
-licenses.labelOriginalVersion	Versiune originală
-licenses.labelModifiedVersion	Versiune modificată
-licenses.labelReservedFontName	Nume de font rezervat
 fileInfo.navigationTitleFolder	Dosar
 fileInfo.rowKind	Fel
 fileInfo.rowSize	Dimensiune
@@ -397,7 +372,6 @@ userManagement.createUser	Creează utilizator
 userManagement.badgeAdmin	Administrator
 userManagement.emptyList	Niciun utilizator încă.
 userManagement.noSearchMatches	Niciun utilizator nu corespunde cu „%@”.
-userManagement.loadFailed	Nu s-a putut contacta serverul.
 userManagement.sortType	Tip
 userManagement.sortName	Nume
 userManagement.sortEmail	E-mail
@@ -409,7 +383,6 @@ userManagement.createEmailField	E-mail
 userManagement.createEmailPlaceholder	nume@exemplu.com
 userManagement.createUsernameField	Nume de utilizator (opțional)
 userManagement.createUsernamePlaceholder	Derivat din e-mail
-userManagement.createPasswordField	Parolă
 userManagement.createPasswordPlaceholder	Cel puțin %lld caractere
 userManagement.createGrantAdminToggle	Acordă acces de administrator
 userManagement.createGrantAdminSubtitle	Control complet asupra fișierelor, partajărilor și utilizatorilor.
@@ -431,7 +404,6 @@ userManagement.toastVolumeRemoved	Volum eliminat
 userManagement.errorEmailRequired	E-mailul este obligatoriu.
 userManagement.errorEmailInvalid	Introdu o adresă de e-mail validă.
 userManagement.errorUsernameRequired	Numele de utilizator este obligatoriu.
-userManagement.errorEmailInUse	E-mailul este deja folosit.
 userManagement.errorPasswordTooShort	Folosește cel puțin %lld caractere.
 userDetail.fallbackName	Utilizator
 userDetail.sectionGeneralInfo	Informații generale
@@ -523,13 +495,10 @@ login.errorIncomplete	Conectarea nu s-a finalizat. Te rugăm să încerci din no
 login.errorUnreachable	Nu s-a putut contacta acel server. Verifică adresa și încearcă din nou.
 login.errorUnexpectedResponse	Răspuns neașteptat de la server.
 login.errorKeychain	Nu s-a putut salva sesiunea pe acest dispozitiv.
-login.errorDecoding	Serverul a răspuns neașteptat. Verifică adresa și încearcă din nou.
-login.errorNoLocalAuth	Acest server nu are activată conectarea cu nume de utilizator și parolă.
 login.errorRateLimited	Prea multe încercări. Așteaptă câteva minute și încearcă din nou.
 login.errorServer	Serverul a întâmpinat o problemă (eroare %lld). Încearcă din nou mai târziu.
 browse.nameErrorReserved	Acest nume nu este permis.
 browse.nameErrorSeparators	Un nume nu poate conține / sau \.
-browse.searchMatchLine	Linia %1$lld: %2$@
 browse.searchMatchLineLabel	Linia %lld
 browse.searchTooShort	Tastează cel puțin %lld caractere pentru a căuta în subfoldere și în conținutul fișierelor.
 browse.searchStoppedEarly	Căutarea s-a oprit la limita de timp. Acestea sunt rezultatele găsite până acum.
@@ -540,8 +509,6 @@ browse.searchMatchedByName	Nume
 browse.searchMatchedByContent	Conținut
 browse.searchMatchedByBoth	Nume și conținut
 createShare.errorPasswordRequired	Introdu o parolă sau dezactivează protecția cu parolă.
-filter.sheetTitle	Filtrează după tip
-filter.button	Filtrează
 filter.all	Toate tipurile
 filter.folders	Dosare
 filter.images	Imagini
@@ -625,7 +592,6 @@ settings.sectionSupport	Asistență
 settings.rowRateApp	Evaluează NextExplorer
 settings.rowSupport	Ajutor și asistență
 menu.refresh	Reîmprospătează
-select.tableView	Vizualizare tabel
 openWith.openIn	Deschide în %@
 openWith.openWith	Deschide cu
 openWith.viewAsText	Vezi ca text
@@ -641,7 +607,6 @@ menu.newWindow	Fereastră nouă
 menu.newTab	Filă nouă
 browse.actionOpenInNewWindow	Deschide în fereastră nouă
 browse.actionOpenInNewTab	Deschide în filă nouă
-select.viewAs	Vizualizare
 settings.rowAppearance	Aspect
 appearance.system	Sistem
 appearance.light	Luminos
@@ -661,12 +626,8 @@ downloadQueue.savedMany	%lld elemente salvate în Descărcări
 downloadQueue.bytesOf	%1$@ din %2$@
 downloadQueue.timeLeft	%@ rămase
 browse.sectionPersonal	Personal
-browse.progressDownloading	Se descarcă…
-browse.progressDownloadingIndexed	Se descarcă %1$lld din %2$lld…
 browse.downloadSavedTo	Salvat în %@
-browse.downloadSavedCountTo	Salvate %1$lld din %2$lld elemente în %3$@
 browse.downloadSavedAllTo	Salvate %1$lld elemente în %2$@
-browse.downloadBulkFailed	Nu s-au putut salva aceste elemente pe dispozitiv.
 macSettings.labelFormat	%@:
 macSettings.addAccount	Adaugă cont…
 macSettings.changePassword	Schimbă parola…
@@ -679,7 +640,6 @@ macSettings.roleAdmin	Administrator
 macSettings.roleUser	Utilizator
 macSettings.status	Stare
 macSettings.statusSignedIn	Conectat
-macSettings.manage	Gestionează…
 macSettings.cache	Cache
 macSettings.support	Ajutor și asistență…
 macSettings.permission	Permisiune
@@ -925,7 +885,6 @@ activityLog.anyOutcome	Orice rezultat
 activityLog.outcomeOk	Reușit
 activityLog.outcomeRefused	Refuzat
 activityLog.searchPlaceholder	Un nume sau o cale
-activityLog.searchButton	Caută
 activityLog.refresh	Reîmprospătează
 activityLog.clear	Golește jurnalul
 activityLog.clearTitle	Golești jurnalul?
@@ -1041,7 +1000,6 @@ versionedFiles.newest	Ultima: %@
 versionedFiles.versionPinned	Fixată
 versionedFiles.versionUnavailable	Indisponibilă
 versionedFiles.versionBy	De %@
-versionedFiles.detailFailed	Acest istoric nu a putut fi citit.
 versionedFiles.deleteSelectedNone	Bifează versiunile de șters
 versionedFiles.deleteSelected	Ștergeți selecția (%lld)
 versionedFiles.deleteAll	Șterge toate versiunile

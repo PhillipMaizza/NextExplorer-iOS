@@ -8,7 +8,6 @@ private enum Constants {
     /// static. Disabled under Reduce Motion.
     static let pulseScale: CGFloat = 1.05
     static let pulseDuration: Double = 2.4
-    static let appearDuration: Double = 0.35
 }
 
 /// The icon and message placeholder shown across the app for load error, empty and no
@@ -54,8 +53,7 @@ public struct EmptyStateView: View {
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
                 .animation(reduceMotion
                     ? nil
-                    : .easeInOut(duration: Constants.pulseDuration)
-                        .repeatForever(autoreverses: true))
+                    : DSMotion.pulse(duration: Constants.pulseDuration))
                 {
                     $0.scaleEffect(isPulsing ? Constants.pulseScale : 1)
                 }
@@ -68,7 +66,7 @@ public struct EmptyStateView: View {
         .multilineTextAlignment(.center)
         // Gentle fade + rise on first appear, then start the breathing loop. Scoped animations
         // (not value based) so the view's first layout is never animated along with them.
-        .animation(.easeOut(duration: Constants.appearDuration)) {
+        .animation(DSMotion.appear) {
             $0
                 .opacity(hasAppeared || reduceMotion ? 1 : 0)
                 .offset(y: hasAppeared || reduceMotion ? 0 : .space8)

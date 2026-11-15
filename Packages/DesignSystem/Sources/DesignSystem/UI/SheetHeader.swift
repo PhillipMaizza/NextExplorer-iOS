@@ -61,7 +61,7 @@ public struct DSSheetHeader: View {
                         .background(Circle().fill(Color.backgroundSecondary))
                         .dsMinimumHitTarget()
                 }
-                .buttonStyle(DSHapticButtonStyle())
+                .buttonStyle(DSPressableButtonStyle())
                 .accessibilityLabel(closeAccessibilityLabel)
             }
 

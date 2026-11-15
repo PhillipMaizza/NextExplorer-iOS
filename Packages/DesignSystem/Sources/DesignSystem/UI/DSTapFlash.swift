@@ -11,7 +11,6 @@ import SwiftUI
 private enum Constants {
     static let flashOpacity: Double = 0.16
     static let holdDuration: Duration = .milliseconds(90)
-    static let fadeDuration: Double = 0.4
 }
 
 /// The flash as state, shared by the card and list row variants.
@@ -29,11 +28,11 @@ private struct TapFlash: ViewModifier {
         instant.disablesAnimations = true
         withTransaction(instant) { isFlashing = true }
         Task { @MainActor in
-            try? await Task.sleep(for: Constants.holdDuration)
+            try? await DSMotion.waitForStep(Constants.holdDuration)
             if reduceMotion {
                 isFlashing = false
             } else {
-                withAnimation(.easeOut(duration: Constants.fadeDuration)) { isFlashing = false }
+                withAnimation(DSMotion.fadeOut) { isFlashing = false }
             }
         }
     }

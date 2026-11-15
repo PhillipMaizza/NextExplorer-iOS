@@ -7,7 +7,6 @@ common.delete	Usuń
 common.remove	Usuń
 common.clear	Wyczyść
 common.done	Gotowe
-common.ok	OK
 common.openSettings	Otwórz Ustawienia
 common.logOut	Wyloguj się
 common.close	Zamknij
@@ -23,7 +22,6 @@ common.selectedCount	Zaznaczono: %lld
 tab.browse	Przeglądaj
 tab.favorites	Ulubione
 tab.shared	Udostępnione
-tab.downloads	Pobrane
 tab.settings	Ustawienia
 sort.sheetTitle	Sortuj według
 sort.name	Nazwa
@@ -33,8 +31,6 @@ sort.dateModified	Data modyfikacji
 sort.dateAdded	Data dodania
 sort.dateShared	Data udostępnienia
 sort.expiration	Wygasa
-sort.email	E-mail
-sort.type	Typ
 sort.ascending	Rosnąco
 sort.descending	Malejąco
 select.selectAll	Zaznacz wszystko
@@ -59,11 +55,8 @@ dateFormat.automatic	Automatycznie
 browse.navigationTitle	Przeglądaj
 browse.scopeThisFolder	Ten folder
 browse.scopeEverywhere	Wszędzie
-browse.searchScopeInFolder	Ten folder
-browse.searchScopeEverywhere	Wszędzie
 browse.locations	Lokalizacje
 browse.open	Otwórz
-browse.unsupportedFileType	Nieobsługiwany typ pliku
 browse.actionGetInfo	Informacje
 browse.actionPermissions	Uprawnienia
 browse.actionRename	Zmień nazwę
@@ -93,7 +86,6 @@ browse.searchEverywhere	Szukaj wszędzie
 browse.searchFailed	Nie można wyszukać. Sprawdź połączenie i spróbuj ponownie.
 browse.progressExtracting	Wypakowywanie…
 browse.progressCompressing	Kompresowanie…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Wyświetlanie zapisanej kopii z %@
 browse.actionCopy	Kopiuj
 browse.destinationPickerMoveTitle	Przenieś do…
@@ -105,8 +97,6 @@ browse.actionPaste	Wklej
 browse.actionPasteCount	Wklej %lld elementów
 browse.actionPasteHere	Wklej tutaj
 browse.actionClearClipboard	Wyczyść schowek
-browse.clipboardMoveCount	%lld do przeniesienia
-browse.clipboardCopyCount	%lld do skopiowania
 browse.clipboardCopiedOne	Skopiowano %@
 browse.clipboardCopiedMany	Skopiowano %lld elementów
 browse.progressMoving	Przenoszenie…
@@ -155,8 +145,6 @@ favorites.removeMessage	Spowoduje to tylko usunięcie ich z ulubionych.
 favorites.removeFailedOne	Nie można usunąć tego ulubionego.
 favorites.removeFailedMany	Nie można usunąć tych ulubionych.
 favorites.removePartial	Usunięto %1$lld z %2$lld.
-downloads.actionOpenInFiles	Otwórz w Plikach
-downloads.emptyList	Pliki pobrane z Przeglądaj pojawią się tutaj.
 downloads.deleteConfirmTitle	Usunąć?
 downloads.deleteConfirmOne	Usunąć „%@”?
 downloads.deleteConfirmMany	Usunąć %lld plików?
@@ -197,15 +185,12 @@ uploads.discardTitle	Odrzucić przesyłanie?
 uploads.discardMessage	Dodane pliki nie zostaną przesłane.
 uploads.discardConfirm	Odrzuć
 uploads.statusWaiting	Oczekiwanie
-uploads.statusFailed	Przesyłanie nie powiodło się
 uploads.barTitleOne	Przesyłanie %@
 uploads.barTitleMany	Przesyłanie %lld plików
 uploads.barFailedOne	1 przesyłanie nie powiodło się
 uploads.barFailedMany	%lld przesyłań nie powiodło się
-uploads.retryAll	Ponów wszystkie
 uploads.complete	Przesyłanie ukończone
 uploads.completeMany	Przesłano %lld plików
-uploads.completeWithFailures	Przesłano %1$lld, nie powiodło się %2$lld
 uploads.failedGeneric	Nie można przesłać tego pliku.
 uploads.clear	Wyczyść
 uploads.emptyList	Brak przesyłań.
@@ -240,7 +225,6 @@ createShare.sectionLabel	Etykieta
 createShare.sectionAccessMode	Tryb dostępu
 createShare.sectionWhoCanAccess	Kto ma dostęp
 createShare.sectionShareLink	Link do udostępniania
-createShare.fieldPassword	Hasło
 createShare.togglePasswordProtect	Chroń hasłem
 createShare.toggleSetExpiration	Ustaw datę wygaśnięcia
 createShare.fieldExpires	Wygasa
@@ -255,7 +239,6 @@ createShare.directFolderLink	Bezpośredni link ZIP folderu
 createShare.directFileLink	Bezpośredni link do pliku
 createShare.summaryAccess	Dostęp
 createShare.summarySharedWith	Udostępnione dla
-createShare.summaryPassword	Hasło
 createShare.summaryPasswordProtected	Chronione
 createShare.summaryExpires	Wygasa
 createShare.summarySpecificPeople	Określone osoby
@@ -263,7 +246,6 @@ createShare.errorPastExpiration	Wybierz przyszłą datę wygaśnięcia.
 editShare.title	Edytuj link do udostępniania
 editShare.save	Zapisz zmiany
 editShare.passwordKeepHint	Pozostaw puste, aby zachować obecne hasło
-editShare.savedToast	Zaktualizowano link do udostępniania
 thumbnailSettings.navigationTitle	Miniatury
 thumbnailSettings.subtitle	Kontroluj sposób generowania miniatur obrazów przez serwer dla każdego klienta.
 thumbnailSettings.enable	Generuj miniatury
@@ -346,17 +328,10 @@ serverDetails.nameErrorEmpty	Nazwa serwera nie może być pusta.
 serverDetails.urlLabel	Adres URL serwera
 serverDetails.urlFootnote	Adres, pod którym zainstalowana jest Twoja instancja NextExplorer. Aby go zmienić, wyloguj się i dodaj serwer ponownie.
 serverDetails.updateButton	Zaktualizuj serwer
-serverDetails.savedMessage	Zaktualizowano dane serwera.
 serverDetails.logoErrorTooLarge	Ten obraz jest za duży. Wybierz obraz poniżej 2 MB.
 serverDetails.cameraDeniedTitle	Dostęp do aparatu wyłączony
 serverDetails.cameraDeniedMessage	Włącz dostęp do aparatu w Ustawieniach, aby zrobić zdjęcie.
 licenses.navigationTitle	Licencje open source
-licenses.sectionSoftware	Oprogramowanie
-licenses.sectionFontSoftware	Oprogramowanie czcionek
-licenses.labelAuthor	Autor
-licenses.labelOriginalVersion	Wersja oryginalna
-licenses.labelModifiedVersion	Wersja zmodyfikowana
-licenses.labelReservedFontName	Zastrzeżona nazwa czcionki
 fileInfo.navigationTitleFolder	Folder
 fileInfo.rowKind	Rodzaj
 fileInfo.rowSize	Rozmiar
@@ -403,7 +378,6 @@ userManagement.createUser	Utwórz użytkownika
 userManagement.badgeAdmin	Administrator
 userManagement.emptyList	Brak użytkowników.
 userManagement.noSearchMatches	Żaden użytkownik nie pasuje do „%@”.
-userManagement.loadFailed	Nie można połączyć się z serwerem.
 userManagement.sortType	Typ
 userManagement.sortName	Nazwa
 userManagement.sortEmail	E-mail
@@ -415,7 +389,6 @@ userManagement.createEmailField	E-mail
 userManagement.createEmailPlaceholder	imie@przyklad.com
 userManagement.createUsernameField	Nazwa użytkownika (opcjonalnie)
 userManagement.createUsernamePlaceholder	Wywnioskowana z e-maila
-userManagement.createPasswordField	Hasło
 userManagement.createPasswordPlaceholder	Co najmniej %lld znaków
 userManagement.createGrantAdminToggle	Przyznaj dostęp administratora
 userManagement.createGrantAdminSubtitle	Pełna kontrola nad plikami, udostępnieniami i użytkownikami.
@@ -437,7 +410,6 @@ userManagement.toastVolumeRemoved	Usunięto wolumin
 userManagement.errorEmailRequired	E-mail jest wymagany.
 userManagement.errorEmailInvalid	Wprowadź prawidłowy adres e-mail.
 userManagement.errorUsernameRequired	Nazwa użytkownika jest wymagana.
-userManagement.errorEmailInUse	E-mail jest już używany.
 userManagement.errorPasswordTooShort	Użyj co najmniej %lld znaków.
 userDetail.fallbackName	Użytkownik
 userDetail.sectionGeneralInfo	Informacje ogólne
@@ -529,13 +501,10 @@ login.errorIncomplete	Logowanie nie zostało ukończone. Spróbuj ponownie.
 login.errorUnreachable	Nie można połączyć się z tym serwerem. Sprawdź adres i spróbuj ponownie.
 login.errorUnexpectedResponse	Nieoczekiwana odpowiedź serwera.
 login.errorKeychain	Nie można zapisać sesji na tym urządzeniu.
-login.errorDecoding	Serwer odpowiedział nieoczekiwanie. Sprawdź adres i spróbuj ponownie.
-login.errorNoLocalAuth	Ten serwer nie ma włączonego logowania nazwą użytkownika i hasłem.
 login.errorRateLimited	Zbyt wiele prób. Odczekaj kilka minut i spróbuj ponownie.
 login.errorServer	Serwer napotkał problem (błąd %lld). Spróbuj ponownie później.
 browse.nameErrorReserved	Ta nazwa jest niedozwolona.
 browse.nameErrorSeparators	Nazwa nie może zawierać / ani \.
-browse.searchMatchLine	Wiersz %1$lld: %2$@
 browse.searchMatchLineLabel	Wiersz %lld
 browse.searchTooShort	Wpisz co najmniej %lld znaki, aby przeszukać podfoldery i zawartość plików.
 browse.searchStoppedEarly	Wyszukiwanie zatrzymało się na limicie czasu. Oto wyniki znalezione do tej pory.
@@ -546,8 +515,6 @@ browse.searchMatchedByName	Nazwa
 browse.searchMatchedByContent	Zawartość
 browse.searchMatchedByBoth	Nazwa i zawartość
 createShare.errorPasswordRequired	Wprowadź hasło lub wyłącz ochronę hasłem.
-filter.sheetTitle	Filtruj według typu
-filter.button	Filtruj
 filter.all	Wszystkie typy
 filter.folders	Foldery
 filter.images	Obrazy
@@ -631,7 +598,6 @@ settings.sectionSupport	Pomoc
 settings.rowRateApp	Oceń NextExplorer
 settings.rowSupport	Pomoc i wsparcie
 menu.refresh	Odśwież
-select.tableView	Widok tabeli
 openWith.openIn	Otwórz w %@
 openWith.openWith	Otwórz za pomocą
 openWith.viewAsText	Pokaż jako tekst
@@ -647,7 +613,6 @@ menu.newWindow	Nowe okno
 menu.newTab	Nowa karta
 browse.actionOpenInNewWindow	Otwórz w nowym oknie
 browse.actionOpenInNewTab	Otwórz w nowej karcie
-select.viewAs	Widok
 settings.rowAppearance	Wygląd
 appearance.system	Systemowy
 appearance.light	Jasny
@@ -667,12 +632,8 @@ downloadQueue.savedMany	Zapisano w Pobranych elementów: %lld
 downloadQueue.bytesOf	%1$@ z %2$@
 downloadQueue.timeLeft	pozostało %@
 browse.sectionPersonal	Osobiste
-browse.progressDownloading	Pobieranie…
-browse.progressDownloadingIndexed	Pobieranie %1$lld z %2$lld…
 browse.downloadSavedTo	Zapisano w %@
-browse.downloadSavedCountTo	Zapisano %1$lld z %2$lld elementów w %3$@
 browse.downloadSavedAllTo	Zapisano %1$lld elementów w %2$@
-browse.downloadBulkFailed	Nie można zapisać tych elementów na urządzeniu.
 macSettings.labelFormat	%@:
 macSettings.addAccount	Dodaj konto…
 macSettings.changePassword	Zmień hasło…
@@ -685,7 +646,6 @@ macSettings.roleAdmin	Administrator
 macSettings.roleUser	Użytkownik
 macSettings.status	Stan
 macSettings.statusSignedIn	Zalogowano
-macSettings.manage	Zarządzaj…
 macSettings.cache	Pamięć podręczna
 macSettings.support	Pomoc i wsparcie…
 macSettings.permission	Uprawnienie
@@ -938,7 +898,6 @@ activityLog.anyOutcome	Dowolny wynik
 activityLog.outcomeOk	Udane
 activityLog.outcomeRefused	odmowa
 activityLog.searchPlaceholder	Nazwa lub ścieżka
-activityLog.searchButton	Szukaj
 activityLog.refresh	Odśwież
 activityLog.clear	Wyczyść dziennik
 activityLog.clearTitle	Opróżnić dziennik?
@@ -1054,7 +1013,6 @@ versionedFiles.newest	Ostatnia: %@
 versionedFiles.versionPinned	Przypięta
 versionedFiles.versionUnavailable	Niedostępna
 versionedFiles.versionBy	Przez %@
-versionedFiles.detailFailed	Nie udało się odczytać tej historii.
 versionedFiles.deleteSelectedNone	Zaznacz wersje do usunięcia
 versionedFiles.deleteSelected	Usuń zaznaczone (%lld)
 versionedFiles.deleteAll	Usuń wszystkie wersje

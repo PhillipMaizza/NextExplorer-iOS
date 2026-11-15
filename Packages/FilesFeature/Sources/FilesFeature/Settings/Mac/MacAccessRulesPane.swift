@@ -45,7 +45,7 @@
                     }
                     HStack {
                         Spacer()
-                        Button(L10n.AccessRules.addRule) { store.send(.addRuleTapped, animation: .default) }
+                        Button(L10n.AccessRules.addRule) { store.send(.addRuleTapped, animation: DSMotion.listDiff) }
                     }
                 } footer: {
                     MacSectionFooter(L10n.AccessRules.subtitle)
@@ -83,7 +83,7 @@
                 .labelsHidden()
                 .frame(width: Metrics.permissionWidth)
                 Button(role: .destructive) {
-                    store.send(.removeRule(id: rule.id), animation: .default)
+                    store.send(.removeRule(id: rule.id), animation: DSMotion.listDiff)
                 } label: {
                     IconKit.removeCircle
                 }

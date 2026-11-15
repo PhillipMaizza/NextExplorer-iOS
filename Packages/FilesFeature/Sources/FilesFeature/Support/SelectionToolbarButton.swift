@@ -2,7 +2,7 @@ import DesignSystem
 import SwiftUI
 
 /// One glyph button in a multi-select bottom toolbar. A single definition so the bars in
-/// Browse, Downloads and Favorites share one icon size, tint, haptic and appear/disappear
+/// Browse, Downloads and Favorites share one icon size, tint, press style and appear/disappear
 /// transition, rather than each screen restyling the same button.
 struct SelectionToolbarButton: View {
     let icon: Image
@@ -55,7 +55,7 @@ struct SelectionToolbarButton: View {
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .foregroundStyle(iconColor)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .disabled(isDisabled)
             .modifier(OptionalAccessibilityLabel(label: accessibilityLabel))
             .transition(.scale.combined(with: .opacity))

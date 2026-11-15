@@ -2,10 +2,6 @@ import SwiftUI
 
 private enum SegmentedControlConstants {
     static let height: CGFloat = .size40
-    /// Matches `DSAnimatedButton`'s morph spring (`Buttons.swift`) so every "shape slides
-    /// into place" moment in the app shares the same feel.
-    static let pillSpringResponse: Double = 0.35
-    static let pillSpringDamping: Double = 0.8
     /// Softens the track's hairline border so it defines the control without reading as a hard line.
     static let borderOpacity: Double = 0.5
 }
@@ -106,10 +102,7 @@ public struct DSSegmentedControl<Option: Hashable>: View {
                 )
         )
         .animation(
-            .spring(
-                response: SegmentedControlConstants.pillSpringResponse,
-                dampingFraction: SegmentedControlConstants.pillSpringDamping
-            ),
+            DSMotion.controlMorph,
             value: selection
         )
         .hapticFeedback(.selection, trigger: selection)

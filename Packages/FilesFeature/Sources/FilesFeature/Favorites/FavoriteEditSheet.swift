@@ -257,7 +257,7 @@ struct FavoriteEditSheet: View {
                 )
                 .frame(width: Metrics.swatch, height: Metrics.swatch)
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
     }
 
     private var iconGrid: some View {
@@ -277,7 +277,7 @@ struct FavoriteEditSheet: View {
                                 .strokeBorder(tint, lineWidth: store.iconDraft == name ? Metrics.selectionLineWidth : 0)
                         )
                 }
-                .buttonStyle(DSHapticButtonStyle())
+                .buttonStyle(DSPressableButtonStyle())
             }
         }
     }

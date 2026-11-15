@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FolderPickerFeature
 import Foundation
@@ -90,7 +91,7 @@ extension BrowseFeature {
                     retry.operation
                 )
                 return TransferOutcome(result: result, operation: retry.operation, clearClipboard: retry.clearClipboard)
-            }), animation: .default)
+            }), animation: DSMotion.listDiff)
         }
         .cancellable(id: CancelID.transfer)
     }

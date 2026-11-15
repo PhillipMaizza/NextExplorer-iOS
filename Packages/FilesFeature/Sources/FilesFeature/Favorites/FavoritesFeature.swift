@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FolderPickerFeature
 import Foundation
@@ -372,7 +373,7 @@ public struct FavoritesFeature {
                     try await send(.removeResponse(favorite.id, apiResult {
                         try await filesClient.removeFavorite(serverURL, favorite.path)
                         return true
-                    }), animation: .default)
+                    }), animation: DSMotion.listDiff)
                 }
                 // A rapid double tap on one row's remove collapses to a single request.
                 .cancellable(id: CancelID.remove(favorite.id), cancelInFlight: true)
@@ -874,7 +875,7 @@ public struct FavoritesFeature {
             for favorite in targets where await (try? filesClient.removeFavorite(serverURL, favorite.path)) != nil {
                 removedPaths.append(favorite.path)
             }
-            await send(.bulkRemoveResponse(removedPaths), animation: .default)
+            await send(.bulkRemoveResponse(removedPaths), animation: DSMotion.listDiff)
         }
     }
 }

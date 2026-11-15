@@ -8,7 +8,6 @@ common.delete	Видалити
 common.remove	Вилучити
 common.clear	Очистити
 common.done	Готово
-common.ok	OK
 common.openSettings	Відкрити налаштування
 common.logOut	Вийти
 common.close	Закрити
@@ -27,7 +26,6 @@ common.selectedCount	Вибрано: %lld
 tab.browse	Огляд
 tab.favorites	Обране
 tab.shared	Спільні
-tab.downloads	Завантаження
 tab.settings	Налаштування
 sort.sheetTitle	Сортувати за
 sort.name	Ім’я
@@ -37,8 +35,6 @@ sort.dateModified	Дата зміни
 sort.dateAdded	Дата додавання
 sort.dateShared	Дата надання доступу
 sort.expiration	Термін дії
-sort.email	Електронна пошта
-sort.type	Тип
 sort.ascending	За зростанням
 sort.descending	За спаданням
 select.selectAll	Вибрати все
@@ -63,12 +59,9 @@ dateFormat.automatic	Автоматично
 browse.navigationTitle	Огляд
 browse.scopeThisFolder	Ця папка
 browse.scopeEverywhere	Усюди
-browse.searchScopeInFolder	Ця папка
-browse.searchScopeEverywhere	Усюди
 browse.locations	Розташування
 browse.breadcrumbHint	Відкриває цю папку
 browse.open	Відкрити
-browse.unsupportedFileType	Непідтримуваний тип файлу
 browse.actionGetInfo	Інформація
 browse.actionPermissions	Дозволи
 browse.actionRename	Перейменувати
@@ -101,7 +94,6 @@ browse.searchEverywhere	Шукати всюди
 browse.searchFailed	Не вдалося виконати пошук. Перевірте з’єднання й спробуйте ще раз.
 browse.progressExtracting	Розпакування…
 browse.progressCompressing	Стиснення…
-browse.offlineBannerTitle	Офлайн
 browse.offlineBannerDetail	Показано збережену копію від %@
 browse.actionCopy	Копіювати
 browse.destinationPickerMoveTitle	Перемістити до…
@@ -113,8 +105,6 @@ browse.actionPaste	Вставити
 browse.actionPasteCount	Вставити елементи (%lld)
 browse.actionPasteHere	Вставити сюди
 browse.actionClearClipboard	Очистити буфер обміну
-browse.clipboardMoveCount	Перемістити: %lld
-browse.clipboardCopyCount	Копіювати: %lld
 browse.clipboardCopiedOne	Скопійовано: %@
 browse.clipboardCopiedMany	Скопійовано елементів: %lld
 browse.progressMoving	Переміщення…
@@ -164,8 +154,6 @@ favorites.removeMessage	Це лише вилучить їх з обраного.
 favorites.removeFailedOne	Не вдалося вилучити цей елемент обраного.
 favorites.removeFailedMany	Не вдалося вилучити ці елементи обраного.
 favorites.removePartial	Вилучено %1$lld з %2$lld.
-downloads.actionOpenInFiles	Відкрити у «Файлах»
-downloads.emptyList	Файли, які ви завантажуєте в Огляді, з’являються тут.
 downloads.deleteConfirmTitle	Видалити?
 downloads.deleteConfirmOne	Видалити “%@”?
 downloads.deleteConfirmMany	Видалити файли (%lld)?
@@ -206,15 +194,12 @@ uploads.discardTitle	Скасувати вивантаження?
 uploads.discardMessage	Додані файли не буде вивантажено.
 uploads.discardConfirm	Скасувати
 uploads.statusWaiting	Очікування
-uploads.statusFailed	Не вдалося вивантажити
 uploads.barTitleOne	Вивантаження %@
 uploads.barTitleMany	Вивантаження файлів: %lld
 uploads.barFailedOne	1 вивантаження не вдалося
 uploads.barFailedMany	Невдалих вивантажень: %lld
-uploads.retryAll	Повторити всі
 uploads.complete	Вивантаження завершено
 uploads.completeMany	Вивантажено файлів: %lld
-uploads.completeWithFailures	Вивантажено: %1$lld, не вдалося: %2$lld
 uploads.failedGeneric	Не вдалося вивантажити цей файл.
 uploads.clear	Очистити
 uploads.emptyList	Вивантажень ще немає.
@@ -248,7 +233,6 @@ createShare.sectionLabel	Мітка
 createShare.sectionAccessMode	Режим доступу
 createShare.sectionWhoCanAccess	Хто має доступ
 createShare.sectionShareLink	Посилання для спільного доступу
-createShare.fieldPassword	Пароль
 createShare.togglePasswordProtect	Захист паролем
 createShare.toggleSetExpiration	Встановити термін дії
 createShare.fieldExpires	Спливає
@@ -263,7 +247,6 @@ createShare.directFolderLink	Пряме посилання на ZIP папки
 createShare.directFileLink	Пряме посилання на файл
 createShare.summaryAccess	Доступ
 createShare.summarySharedWith	Кому
-createShare.summaryPassword	Пароль
 createShare.summaryPasswordProtected	Захищено
 createShare.summaryExpires	Спливає
 createShare.summarySpecificPeople	Окремі люди
@@ -271,7 +254,6 @@ createShare.errorPastExpiration	Виберіть дату завершення �
 editShare.title	Змінити посилання для спільного доступу
 editShare.save	Зберегти зміни
 editShare.passwordKeepHint	Залиште порожнім, щоб зберегти поточний пароль
-editShare.savedToast	Посилання для спільного доступу оновлено
 thumbnailSettings.navigationTitle	Мініатюри
 thumbnailSettings.subtitle	Керуйте тим, як сервер створює мініатюри зображень для всіх клієнтів.
 thumbnailSettings.enable	Створювати мініатюри
@@ -345,7 +327,6 @@ activityLog.anyOutcome	Будь-який результат
 activityLog.outcomeOk	Успішно
 activityLog.outcomeRefused	Відхилено
 activityLog.searchPlaceholder	Ім’я або шлях
-activityLog.searchButton	Знайти
 activityLog.refresh	Оновити
 activityLog.clear	Очистити журнал
 activityLog.clearTitle	Очистити журнал?
@@ -461,7 +442,6 @@ versionedFiles.newest	Остання: %@
 versionedFiles.versionPinned	Закріплено
 versionedFiles.versionUnavailable	Недоступно
 versionedFiles.versionBy	Автор: %@
-versionedFiles.detailFailed	Не вдалося прочитати цю історію.
 versionedFiles.deleteSelectedNone	Позначте версії для видалення
 versionedFiles.deleteSelected	Видалити вибрані (%lld)
 versionedFiles.deleteAll	Видалити всі версії
@@ -551,17 +531,10 @@ serverDetails.nameErrorEmpty	Назва сервера не може бути п
 serverDetails.urlLabel	URL сервера
 serverDetails.urlFootnote	Адреса, за якою встановлено ваш екземпляр NextExplorer. Щоб її змінити, вийдіть і додайте сервер знову.
 serverDetails.updateButton	Оновити сервер
-serverDetails.savedMessage	Дані сервера оновлено.
 serverDetails.logoErrorTooLarge	Це зображення завелике. Виберіть менше за 2 МБ.
 serverDetails.cameraDeniedTitle	Доступ до камери вимкнено
 serverDetails.cameraDeniedMessage	Увімкніть доступ до камери в Налаштуваннях, щоб зробити фото.
 licenses.navigationTitle	Ліцензії відкритого коду
-licenses.sectionSoftware	Програмне забезпечення
-licenses.sectionFontSoftware	Програмне забезпечення шрифтів
-licenses.labelAuthor	Автор
-licenses.labelOriginalVersion	Оригінальна версія
-licenses.labelModifiedVersion	Змінена версія
-licenses.labelReservedFontName	Зарезервована назва шрифту
 fileInfo.navigationTitleFolder	Папка
 fileInfo.rowKind	Тип
 fileInfo.rowSize	Розмір
@@ -611,7 +584,6 @@ userManagement.createUser	Створити користувача
 userManagement.badgeAdmin	Адмін
 userManagement.emptyList	Користувачів ще немає.
 userManagement.noSearchMatches	Немає користувачів, що відповідають “%@”.
-userManagement.loadFailed	Не вдалося зв’язатися із сервером.
 userManagement.sortType	Тип
 userManagement.sortName	Ім’я
 userManagement.sortEmail	Електронна пошта
@@ -622,7 +594,6 @@ userManagement.createNavigationTitle	Створити користувача
 userManagement.createEmailField	Електронна пошта
 userManagement.createUsernameField	Ім’я користувача (необов’язково)
 userManagement.createUsernamePlaceholder	Походить з електронної пошти
-userManagement.createPasswordField	Пароль
 userManagement.createPasswordPlaceholder	Щонайменше символів: %lld
 userManagement.createGrantAdminToggle	Надати доступ адміністратора
 userManagement.createGrantAdminSubtitle	Повний контроль над файлами, спільним доступом і користувачами.
@@ -644,7 +615,6 @@ userManagement.toastVolumeRemoved	Том вилучено
 userManagement.errorEmailRequired	Потрібна електронна пошта.
 userManagement.errorEmailInvalid	Введіть дійсну адресу електронної пошти.
 userManagement.errorUsernameRequired	Потрібне ім’я користувача.
-userManagement.errorEmailInUse	Ця адреса електронної пошти вже використовується.
 userManagement.errorPasswordTooShort	Використайте щонайменше символів: %lld.
 userDetail.fallbackName	Користувач
 userDetail.sectionGeneralInfo	Загальні відомості
@@ -810,8 +780,6 @@ login.errorIncomplete	Вхід не завершено. Спробуйте ще 
 login.errorUnreachable	Не вдалося зв’язатися із цим сервером. Перевірте адресу й спробуйте ще раз.
 login.errorUnexpectedResponse	Несподівана відповідь сервера.
 login.errorKeychain	Не вдалося зберегти ваш сеанс на цьому пристрої.
-login.errorDecoding	Сервер відповів несподівано. Перевірте адресу й спробуйте ще раз.
-login.errorNoLocalAuth	На цьому сервері не ввімкнено вхід за іменем користувача й паролем.
 login.errorRateLimited	Забагато спроб. Зачекайте кілька хвилин і спробуйте ще раз.
 login.ssoButton	Увійти через SSO
 login.orDivider	або
@@ -833,7 +801,6 @@ login.diagnosticsTitle	Журнал входу
 login.diagnosticsIntro	Цей журнал показує, що відповів сервер на кожному кроці, щоб допомогти знайти причину збою входу. Він ніколи не містить вашого пароля, введеної адреси чи імені користувача. Надішліть його розробнику.
 browse.nameErrorReserved	Така назва недопустима.
 browse.nameErrorSeparators	Назва не може містити / або \.
-browse.searchMatchLine	Рядок %1$lld: %2$@
 browse.searchMatchLineLabel	Рядок %lld
 browse.searchTooShort	Введіть щонайменше символів: %lld, щоб шукати в підпапках і вмісті файлів.
 browse.searchStoppedEarly	Пошук зупинився через обмеження часу. Це результати, знайдені на цей момент.
@@ -845,8 +812,6 @@ browse.searchMatchedByContent	Вміст
 browse.searchMatchedByBoth	Ім’я та вміст
 createShare.errorPasswordRequired	Введіть пароль або вимкніть захист паролем.
 login.errorServer	На сервері сталася проблема (помилка %lld). Спробуйте пізніше.
-filter.sheetTitle	Фільтр за типом
-filter.button	Фільтр
 filter.all	Усі типи
 filter.folders	Папки
 filter.images	Зображення
@@ -899,13 +864,8 @@ settings.sectionSupport	Підтримка
 settings.rowRateApp	Оцінити NextExplorer
 settings.rowSupport	Довідка й підтримка
 menu.refresh	Оновити
-select.tableView	Таблиця
-browse.progressDownloading	Завантаження…
-browse.progressDownloadingIndexed	Завантаження %1$lld із %2$lld…
 browse.downloadSavedTo	Збережено в %@
-browse.downloadSavedCountTo	Збережено %1$lld із %2$lld елементів у %3$@
 browse.downloadSavedAllTo	Збережено елементів: %1$lld у %2$@
-browse.downloadBulkFailed	Не вдалося зберегти ці елементи на ваш пристрій.
 openWith.openIn	Відкрити в %@
 openWith.openWith	Відкрити за допомогою
 openWith.viewAsText	Переглянути як текст
@@ -922,7 +882,6 @@ menu.newWindow	Нове вікно
 menu.newTab	Нова вкладка
 browse.actionOpenInNewWindow	Відкрити в новому вікні
 browse.actionOpenInNewTab	Відкрити в новій вкладці
-select.viewAs	Вигляд
 settings.rowAppearance	Вигляд
 appearance.system	Системний
 appearance.light	Світлий
@@ -953,7 +912,6 @@ macSettings.roleAdmin	Адміністратор
 macSettings.roleUser	Користувач
 macSettings.status	Стан
 macSettings.statusSignedIn	Вхід виконано
-macSettings.manage	Керувати…
 macSettings.cache	Кеш
 macSettings.support	Довідка й підтримка…
 macSettings.permission	Дозвіл

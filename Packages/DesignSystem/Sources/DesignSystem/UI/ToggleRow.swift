@@ -53,7 +53,6 @@ public struct DSToggleRow: View {
         .accessibilityLabel(title)
         #endif
         .tint(Color.accent)
-        .hapticFeedback(.selection, trigger: isOn)
     }
 }
 

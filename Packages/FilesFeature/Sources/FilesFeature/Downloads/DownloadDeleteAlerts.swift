@@ -49,7 +49,6 @@ private struct DownloadDeleteAlerts: ViewModifier {
                     onDismiss: { store.send(.deleteCancelled) }
                 )
             }
-            .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
             .dsAlert(isPresented: bulkDeleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
@@ -63,7 +62,6 @@ private struct DownloadDeleteAlerts: ViewModifier {
                     onDismiss: { store.send(.bulkDeleteCancelled) }
                 )
             }
-            .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
     }
 }
 

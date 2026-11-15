@@ -8,7 +8,6 @@ common.delete	Sil
 common.remove	Kaldır
 common.clear	Temizle
 common.done	Bitti
-common.ok	Tamam
 common.openSettings	Ayarları Aç
 common.logOut	Oturumu Kapat
 common.close	Kapat
@@ -27,7 +26,6 @@ common.selectedCount	%lld Seçili
 tab.browse	Gözat
 tab.favorites	Favoriler
 tab.shared	Paylaşılanlar
-tab.downloads	İndirilenler
 tab.settings	Ayarlar
 sort.sheetTitle	Sıralama Ölçütü
 sort.name	Ad
@@ -37,8 +35,6 @@ sort.dateModified	Değiştirilme Tarihi
 sort.dateAdded	Eklenme Tarihi
 sort.dateShared	Paylaşılma Tarihi
 sort.expiration	Son Kullanma
-sort.email	E-posta
-sort.type	Tür
 sort.ascending	Artan
 sort.descending	Azalan
 select.selectAll	Tümünü Seç
@@ -63,12 +59,9 @@ dateFormat.automatic	Otomatik
 browse.navigationTitle	Gözat
 browse.scopeThisFolder	Bu Klasör
 browse.scopeEverywhere	Her Yerde
-browse.searchScopeInFolder	Bu Klasör
-browse.searchScopeEverywhere	Her Yerde
 browse.locations	Konumlar
 browse.breadcrumbHint	Bu klasörü açar
 browse.open	Aç
-browse.unsupportedFileType	Desteklenmeyen dosya türü
 browse.actionGetInfo	Bilgi Al
 browse.actionPermissions	İzinler
 browse.actionRename	Yeniden Adlandır
@@ -101,7 +94,6 @@ browse.searchEverywhere	Her yerde ara
 browse.searchFailed	Arama yapılamadı. Bağlantınızı kontrol edip tekrar deneyin.
 browse.progressExtracting	Arşivden çıkarılıyor…
 browse.progressCompressing	Sıkıştırılıyor…
-browse.offlineBannerTitle	Çevrimdışı
 browse.offlineBannerDetail	%@ tarihli kayıtlı bir kopya gösteriliyor
 browse.actionCopy	Kopyala
 browse.destinationPickerMoveTitle	Şuraya taşı…
@@ -113,8 +105,6 @@ browse.actionPaste	Yapıştır
 browse.actionPasteCount	%lld öğeyi yapıştır
 browse.actionPasteHere	Buraya yapıştır
 browse.actionClearClipboard	Panoyu temizle
-browse.clipboardMoveCount	%lld taşınacak
-browse.clipboardCopyCount	%lld kopyalanacak
 browse.clipboardCopiedOne	%@ kopyalandı
 browse.clipboardCopiedMany	%lld öğe kopyalandı
 browse.progressMoving	Taşınıyor…
@@ -154,8 +144,6 @@ favorites.removeMessage	Bu yalnızca onları Favoriler'den kaldırır.
 favorites.removeFailedOne	Bu favori kaldırılamadı.
 favorites.removeFailedMany	Bu favoriler kaldırılamadı.
 favorites.removePartial	%2$lld öğeden %1$lld tanesi kaldırıldı.
-downloads.actionOpenInFiles	Dosyalar'da Aç
-downloads.emptyList	Gözat'tan indirdiğiniz dosyalar burada görünür.
 downloads.deleteConfirmTitle	Silinsin mi?
 downloads.deleteConfirmOne	“%@” silinsin mi?
 downloads.deleteConfirmMany	%lld dosya silinsin mi?
@@ -194,15 +182,12 @@ uploads.discardTitle	Yükleme iptal edilsin mi?
 uploads.discardMessage	Eklediğiniz dosyalar yüklenmeyecek.
 uploads.discardConfirm	Vazgeç
 uploads.statusWaiting	Bekliyor
-uploads.statusFailed	Yükleme başarısız
 uploads.barTitleOne	%@ yükleniyor
 uploads.barTitleMany	%lld dosya yükleniyor
 uploads.barFailedOne	1 yükleme başarısız
 uploads.barFailedMany	%lld yükleme başarısız
-uploads.retryAll	Tümünü yeniden dene
 uploads.complete	Yükleme tamamlandı
 uploads.completeMany	%lld dosya yüklendi
-uploads.completeWithFailures	%1$lld yüklendi, %2$lld başarısız
 uploads.failedGeneric	Bu dosya yüklenemedi.
 uploads.clear	Temizle
 uploads.emptyList	Henüz yükleme yok.
@@ -236,7 +221,6 @@ createShare.sectionLabel	Etiket
 createShare.sectionAccessMode	Erişim Modu
 createShare.sectionWhoCanAccess	Kimler erişebilir
 createShare.sectionShareLink	Paylaşım Bağlantısı
-createShare.fieldPassword	Parola
 createShare.togglePasswordProtect	Parolayla koru
 createShare.toggleSetExpiration	Son kullanma tarihi belirle
 createShare.fieldExpires	Son kullanma
@@ -251,7 +235,6 @@ createShare.directFolderLink	Doğrudan klasör ZIP bağlantısı
 createShare.directFileLink	Doğrudan dosya bağlantısı
 createShare.summaryAccess	Erişim
 createShare.summarySharedWith	Paylaşılan kişi
-createShare.summaryPassword	Parola
 createShare.summaryPasswordProtected	Korumalı
 createShare.summaryExpires	Son kullanma
 createShare.summarySpecificPeople	Belirli kişiler
@@ -259,7 +242,6 @@ createShare.errorPastExpiration	Gelecekte bir son kullanma tarihi seçin.
 editShare.title	Paylaşım Bağlantısını Düzenle
 editShare.save	Değişiklikleri Kaydet
 editShare.passwordKeepHint	Mevcut parolayı korumak için boş bırakın
-editShare.savedToast	Paylaşım bağlantısı güncellendi
 thumbnailSettings.navigationTitle	Küçük Resimler
 thumbnailSettings.subtitle	Sunucunun her istemci için küçük resimleri nasıl oluşturacağını denetleyin.
 thumbnailSettings.enable	Küçük Resim Oluştur
@@ -333,7 +315,6 @@ activityLog.anyOutcome	Herhangi bir sonuç
 activityLog.outcomeOk	Başarılı
 activityLog.outcomeRefused	Reddedildi
 activityLog.searchPlaceholder	Bir ad veya yol
-activityLog.searchButton	Ara
 activityLog.refresh	Yenile
 activityLog.clear	Günlüğü Boşalt
 activityLog.clearTitle	Günlük boşaltılsın mı?
@@ -449,7 +430,6 @@ versionedFiles.newest	En son: %@
 versionedFiles.versionPinned	Sabitlendi
 versionedFiles.versionUnavailable	Kullanılamıyor
 versionedFiles.versionBy	Ekleyen: %@
-versionedFiles.detailFailed	Bu geçmiş okunamadı.
 versionedFiles.deleteSelectedNone	Silinecek sürümleri işaretleyin
 versionedFiles.deleteSelected	Seçilenleri Sil (%lld)
 versionedFiles.deleteAll	Tüm Sürümleri Sil
@@ -539,17 +519,10 @@ serverDetails.nameErrorEmpty	Sunucu adı boş olamaz.
 serverDetails.urlLabel	Sunucu URL'si
 serverDetails.urlFootnote	NextExplorer örneğinizin kurulu olduğu adres. Değiştirmek için oturumu kapatıp sunucuyu yeniden ekleyin.
 serverDetails.updateButton	Sunucuyu Güncelle
-serverDetails.savedMessage	Sunucu ayrıntıları güncellendi.
 serverDetails.logoErrorTooLarge	Bu görsel çok büyük. 2 MB'tan küçük bir görsel seçin.
 serverDetails.cameraDeniedTitle	Kamera Erişimi Kapalı
 serverDetails.cameraDeniedMessage	Fotoğraf çekmek için Ayarlar'da kamera erişimini açın.
 licenses.navigationTitle	Açık Kaynak Lisansları
-licenses.sectionSoftware	Yazılım
-licenses.sectionFontSoftware	Yazı Tipi Yazılımı
-licenses.labelAuthor	Yazar
-licenses.labelOriginalVersion	Özgün Sürüm
-licenses.labelModifiedVersion	Değiştirilmiş Sürüm
-licenses.labelReservedFontName	Ayrılmış Yazı Tipi Adı
 fileInfo.navigationTitleFolder	Klasör
 fileInfo.rowKind	Tür
 fileInfo.rowSize	Boyut
@@ -599,7 +572,6 @@ userManagement.createUser	Kullanıcı Oluştur
 userManagement.badgeAdmin	Yönetici
 userManagement.emptyList	Henüz kullanıcı yok.
 userManagement.noSearchMatches	“%@” ile eşleşen kullanıcı yok.
-userManagement.loadFailed	Sunucuya ulaşılamadı.
 userManagement.sortType	Tür
 userManagement.sortName	Ad
 userManagement.sortEmail	E-posta
@@ -610,7 +582,6 @@ userManagement.createNavigationTitle	Kullanıcı Oluştur
 userManagement.createEmailField	E-posta
 userManagement.createUsernameField	Kullanıcı adı (isteğe bağlı)
 userManagement.createUsernamePlaceholder	E-postadan türetilir
-userManagement.createPasswordField	Parola
 userManagement.createPasswordPlaceholder	En az %lld karakter
 userManagement.createGrantAdminToggle	Yönetici Erişimi Ver
 userManagement.createGrantAdminSubtitle	Dosyalar, paylaşımlar ve kullanıcılar üzerinde tam denetim.
@@ -632,7 +603,6 @@ userManagement.toastVolumeRemoved	Birim kaldırıldı
 userManagement.errorEmailRequired	E-posta gerekli.
 userManagement.errorEmailInvalid	Geçerli bir e-posta adresi girin.
 userManagement.errorUsernameRequired	Kullanıcı adı gerekli.
-userManagement.errorEmailInUse	E-posta zaten kullanımda.
 userManagement.errorPasswordTooShort	En az %lld karakter kullanın.
 userDetail.fallbackName	Kullanıcı
 userDetail.sectionGeneralInfo	Genel Bilgiler
@@ -798,8 +768,6 @@ login.errorIncomplete	Oturum açma tamamlanamadı. Lütfen tekrar deneyin.
 login.errorUnreachable	Bu sunucuya ulaşılamadı. Adresi kontrol edip tekrar deneyin.
 login.errorUnexpectedResponse	Sunucudan beklenmedik yanıt.
 login.errorKeychain	Oturumunuz bu cihaza kaydedilemedi.
-login.errorDecoding	Sunucu beklenmedik şekilde yanıt verdi. Adresi kontrol edip tekrar deneyin.
-login.errorNoLocalAuth	Bu sunucuda kullanıcı adı/parola ile oturum açma etkin değil.
 login.errorRateLimited	Çok fazla deneme. Lütfen birkaç dakika bekleyip tekrar deneyin.
 login.ssoButton	SSO ile oturum aç
 login.orDivider	veya
@@ -821,7 +789,6 @@ login.diagnosticsTitle	Oturum açma günlüğü
 login.diagnosticsIntro	Bu günlük, oturum açmanın neden başarısız olduğunu bulmaya yardımcı olmak için sunucunun her adımda ne yanıt verdiğini gösterir. Parolanızı, yazdığınız adresi veya kullanıcı adınızı asla içermez. Geliştiriciye gönderin.
 browse.nameErrorReserved	Bu ada izin verilmiyor.
 browse.nameErrorSeparators	Bir ad / veya \ içeremez.
-browse.searchMatchLine	Satır %1$lld: %2$@
 browse.searchMatchLineLabel	Satır %lld
 browse.searchTooShort	Alt klasörlerde ve dosya içeriklerinde aramak için en az %lld karakter yazın.
 browse.searchStoppedEarly	Arama zaman sınırında durdu. Şimdiye kadar bulunan sonuçlar bunlar.
@@ -833,8 +800,6 @@ browse.searchMatchedByContent	İçerik
 browse.searchMatchedByBoth	Ad ve İçerik
 createShare.errorPasswordRequired	Bir parola girin veya parola korumasını kapatın.
 login.errorServer	Sunucuda bir sorun oluştu (hata %lld). Lütfen daha sonra tekrar deneyin.
-filter.sheetTitle	Türe Göre Filtrele
-filter.button	Filtrele
 filter.all	Tüm Türler
 filter.folders	Klasörler
 filter.images	Görseller
@@ -887,13 +852,8 @@ settings.sectionSupport	Destek
 settings.rowRateApp	NextExplorer'ı Değerlendir
 settings.rowSupport	Yardım ve Destek
 menu.refresh	Yenile
-select.tableView	Tablo Görünümü
-browse.progressDownloading	İndiriliyor…
-browse.progressDownloadingIndexed	%2$lld öğeden %1$lld tanesi indiriliyor…
 browse.downloadSavedTo	%@ konumuna kaydedildi
-browse.downloadSavedCountTo	%2$lld öğeden %1$lld tanesi %3$@ konumuna kaydedildi
 browse.downloadSavedAllTo	%1$lld öğe %2$@ konumuna kaydedildi
-browse.downloadBulkFailed	Bu öğeler cihazınıza kaydedilemedi.
 openWith.openIn	%@ ile aç
 openWith.openWith	Birlikte Aç
 openWith.viewAsText	Metin Olarak Görüntüle
@@ -910,7 +870,6 @@ menu.newWindow	Yeni Pencere
 menu.newTab	Yeni Sekme
 browse.actionOpenInNewWindow	Yeni Pencerede Aç
 browse.actionOpenInNewTab	Yeni Sekmede Aç
-select.viewAs	Görünüm
 settings.rowAppearance	Görünüm
 appearance.system	Sistem
 appearance.light	Açık
@@ -941,7 +900,6 @@ macSettings.roleAdmin	Yönetici
 macSettings.roleUser	Kullanıcı
 macSettings.status	Durum
 macSettings.statusSignedIn	Oturum Açık
-macSettings.manage	Yönet…
 macSettings.cache	Önbellek
 macSettings.support	Yardım ve Destek…
 macSettings.permission	İzin

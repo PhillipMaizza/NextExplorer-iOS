@@ -3,6 +3,7 @@ import AuthClient
 import AuthFeature
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FilesFeature
 import Foundation
@@ -208,7 +209,7 @@ public struct AppFeature {
 
             case let .sessionRestoreResponse(credentials, recordedScope):
                 guard let credentials else {
-                    withAnimation {
+                    withAnimation(DSMotion.contentReveal) {
                         state.destination = .unauthenticated(.init())
                     }
                     return refreshAccounts
@@ -267,7 +268,7 @@ public struct AppFeature {
                 if case let .authenticated(current) = state.destination, current.user == user {
                     return .merge(refreshAccounts, recordOwner)
                 }
-                withAnimation {
+                withAnimation(DSMotion.contentReveal) {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, user: user)
                     )
@@ -331,7 +332,7 @@ public struct AppFeature {
                 // Finalized once `me` confirms the user id; empty in the meantime.
                 state.$downloadScope.withLock { $0 = "" }
                 state.didAuthenticateFromLogin = false
-                withAnimation {
+                withAnimation(DSMotion.contentReveal) {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(
                             serverURL: credentials.serverBaseURL,
@@ -475,7 +476,7 @@ public struct AppFeature {
                     userID: user.id
                 )
                 state.didAuthenticateFromLogin = false
-                withAnimation {
+                withAnimation(DSMotion.contentReveal) {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(serverURL: serverURL, user: user)
                     )
@@ -554,7 +555,7 @@ public struct AppFeature {
         state.didAuthenticateFromLogin = false
         state.addAccount = nil
         state.pendingAddedAccount = nil
-        withAnimation {
+        withAnimation(DSMotion.contentReveal) {
             state.destination = .unauthenticated(.init())
         }
         let authClient = authClient

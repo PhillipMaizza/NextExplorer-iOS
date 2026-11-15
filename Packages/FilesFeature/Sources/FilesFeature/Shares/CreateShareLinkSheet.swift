@@ -28,7 +28,7 @@ private enum Constants {
         .opacity
     }
 
-    static let fieldRevealAnimation: Animation = .easeInOut(duration: 0.2)
+    static let fieldRevealAnimation: Animation = DSMotion.stateFade
 }
 
 /// The "Create Share Link" sheet: mirrors the web client's `ShareDialog.vue`, in the app's
@@ -209,7 +209,7 @@ struct CreateShareLinkSheet: View {
                         .padding(.vertical, .space8)
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(DSHapticButtonStyle())
+                    .buttonStyle(DSPressableButtonStyle())
                     .hapticFeedback(.selection, trigger: isSelected)
                 }
             }
@@ -354,17 +354,17 @@ struct CreateShareLinkSheet: View {
                     .background(RoundedRectangle(cornerRadius: .radiusControl)
                         .fill(copiedField == field ? Color.positive : Color.accent))
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .accessibilityLabel(copiedField == field ? L10n.Common.copied : L10n.Common.copy)
         }
     }
 
     private func copy(_ string: String, as field: CopiedField) {
         PlatformPasteboard.copy(string)
-        withAnimation { copiedField = field }
+        withAnimation(DSMotion.quickFade) { copiedField = field }
         Task {
             try? await Task.sleep(for: .seconds(Constants.copyFeedbackSeconds))
-            withAnimation {
+            withAnimation(DSMotion.quickFade) {
                 if copiedField == field {
                     copiedField = nil
                 }

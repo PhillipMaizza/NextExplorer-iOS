@@ -34,7 +34,7 @@ struct AccessRulesView: View {
                     }
 
                     DSButton(L10n.AccessRules.addRule, icon: IconKit.plus, style: .secondary) {
-                        store.send(.addRuleTapped, animation: .default)
+                        store.send(.addRuleTapped, animation: DSMotion.listDiff)
                     }
 
                     if let error = store.errorMessage ?? store.phase.errorMessage {
@@ -108,7 +108,7 @@ struct AccessRulesView: View {
             HStack {
                 Spacer()
                 Button(role: .destructive) {
-                    store.send(.removeRule(id: rule.id), animation: .default)
+                    store.send(.removeRule(id: rule.id), animation: DSMotion.listDiff)
                 } label: {
                     HStack(spacing: .space4) {
                         IconKit.delete
@@ -118,7 +118,7 @@ struct AccessRulesView: View {
                     }
                     .foregroundStyle(Color.negative)
                 }
-                .buttonStyle(DSHapticButtonStyle())
+                .buttonStyle(DSPressableButtonStyle())
             }
         }
         .padding(.space16)

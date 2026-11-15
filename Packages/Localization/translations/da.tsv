@@ -8,7 +8,6 @@ common.delete	Slet
 common.remove	Fjern
 common.clear	Ryd
 common.done	Udført
-common.ok	OK
 common.openSettings	Åbn Indstillinger
 common.logOut	Log ud
 common.close	Luk
@@ -27,7 +26,6 @@ common.selectedCount	%lld valgt
 tab.browse	Gennemse
 tab.favorites	Favoritter
 tab.shared	Delt
-tab.downloads	Downloads
 tab.settings	Indstillinger
 sort.sheetTitle	Sortér efter
 sort.name	Navn
@@ -37,8 +35,6 @@ sort.dateModified	Ændringsdato
 sort.dateAdded	Tilføjelsesdato
 sort.dateShared	Delingsdato
 sort.expiration	Udløb
-sort.email	E-mail
-sort.type	Type
 sort.ascending	Stigende
 sort.descending	Faldende
 select.selectAll	Vælg alle
@@ -63,12 +59,9 @@ dateFormat.automatic	Automatisk
 browse.navigationTitle	Gennemse
 browse.scopeThisFolder	Denne mappe
 browse.scopeEverywhere	Overalt
-browse.searchScopeInFolder	Denne mappe
-browse.searchScopeEverywhere	Overalt
 browse.locations	Placeringer
 browse.breadcrumbHint	Åbner denne mappe
 browse.open	Åbn
-browse.unsupportedFileType	Filtypen understøttes ikke
 browse.actionGetInfo	Vis info
 browse.actionPermissions	Tilladelser
 browse.actionRename	Omdøb
@@ -101,7 +94,6 @@ browse.searchEverywhere	Søg overalt
 browse.searchFailed	Søgningen mislykkedes. Tjek din forbindelse, og prøv igen.
 browse.progressExtracting	Udpakker…
 browse.progressCompressing	Komprimerer…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Viser en gemt kopi fra %@
 browse.actionCopy	Kopiér
 browse.destinationPickerMoveTitle	Flyt til…
@@ -113,8 +105,6 @@ browse.actionPaste	Indsæt
 browse.actionPasteCount	Indsæt %lld emner
 browse.actionPasteHere	Indsæt her
 browse.actionClearClipboard	Ryd udklipsholder
-browse.clipboardMoveCount	%lld til flytning
-browse.clipboardCopyCount	%lld til kopiering
 browse.clipboardCopiedOne	%@ kopieret
 browse.clipboardCopiedMany	%lld emner kopieret
 browse.progressMoving	Flytter…
@@ -154,8 +144,6 @@ favorites.removeMessage	Dette fjerner dem kun fra Favoritter.
 favorites.removeFailedOne	Favoritten kunne ikke fjernes.
 favorites.removeFailedMany	Favoritterne kunne ikke fjernes.
 favorites.removePartial	Fjernede %1$lld af %2$lld.
-downloads.actionOpenInFiles	Åbn i Filer
-downloads.emptyList	Filer, du henter fra Gennemse, vises her.
 downloads.deleteConfirmTitle	Slet?
 downloads.deleteConfirmOne	Slet “%@”?
 downloads.deleteConfirmMany	Slet %lld filer?
@@ -194,15 +182,12 @@ uploads.discardTitle	Kassér upload?
 uploads.discardMessage	De filer, du har tilføjet, bliver ikke uploadet.
 uploads.discardConfirm	Kassér
 uploads.statusWaiting	Venter
-uploads.statusFailed	Upload mislykkedes
 uploads.barTitleOne	Uploader %@
 uploads.barTitleMany	Uploader %lld filer
 uploads.barFailedOne	1 upload mislykkedes
 uploads.barFailedMany	%lld uploads mislykkedes
-uploads.retryAll	Prøv alle igen
 uploads.complete	Upload fuldført
 uploads.completeMany	%lld filer uploadet
-uploads.completeWithFailures	%1$lld uploadet, %2$lld mislykkedes
 uploads.failedGeneric	Filen kunne ikke uploades.
 uploads.clear	Ryd
 uploads.emptyList	Ingen uploads endnu.
@@ -236,7 +221,6 @@ createShare.sectionLabel	Etiket
 createShare.sectionAccessMode	Adgangstilstand
 createShare.sectionWhoCanAccess	Hvem har adgang
 createShare.sectionShareLink	Delingslink
-createShare.fieldPassword	Adgangskode
 createShare.togglePasswordProtect	Beskyt med adgangskode
 createShare.toggleSetExpiration	Angiv udløbsdato
 createShare.fieldExpires	Udløber
@@ -251,7 +235,6 @@ createShare.directFolderLink	Direkte ZIP-link til mappe
 createShare.directFileLink	Direkte fillink
 createShare.summaryAccess	Adgang
 createShare.summarySharedWith	Delt med
-createShare.summaryPassword	Adgangskode
 createShare.summaryPasswordProtected	Beskyttet
 createShare.summaryExpires	Udløber
 createShare.summarySpecificPeople	Bestemte personer
@@ -259,7 +242,6 @@ createShare.errorPastExpiration	Vælg en udløbsdato i fremtiden.
 editShare.title	Rediger delingslink
 editShare.save	Gem ændringer
 editShare.passwordKeepHint	Lad feltet stå tomt for at beholde den nuværende adgangskode
-editShare.savedToast	Delingslink opdateret
 thumbnailSettings.navigationTitle	Miniaturer
 thumbnailSettings.subtitle	Styr, hvordan serveren opretter miniaturer af billeder til alle klienter.
 thumbnailSettings.enable	Opret miniaturer
@@ -333,7 +315,6 @@ activityLog.anyOutcome	Ethvert resultat
 activityLog.outcomeOk	Lykkedes
 activityLog.outcomeRefused	Afvist
 activityLog.searchPlaceholder	Et navn eller en sti
-activityLog.searchButton	Søg
 activityLog.refresh	Opdater
 activityLog.clear	Tøm loggen
 activityLog.clearTitle	Tøm loggen?
@@ -449,7 +430,6 @@ versionedFiles.newest	Seneste: %@
 versionedFiles.versionPinned	Fastgjort
 versionedFiles.versionUnavailable	Utilgængelig
 versionedFiles.versionBy	Af %@
-versionedFiles.detailFailed	Denne historik kunne ikke læses.
 versionedFiles.deleteSelectedNone	Markér versioner, der skal slettes
 versionedFiles.deleteSelected	Slet valgte (%lld)
 versionedFiles.deleteAll	Slet alle versioner
@@ -539,17 +519,10 @@ serverDetails.nameErrorEmpty	Servernavnet må ikke være tomt.
 serverDetails.urlLabel	Server-URL
 serverDetails.urlFootnote	Adressen, hvor din NextExplorer-instans er installeret. Hvis du vil ændre den, skal du logge ud og tilføje serveren igen.
 serverDetails.updateButton	Opdater server
-serverDetails.savedMessage	Serveroplysninger opdateret.
 serverDetails.logoErrorTooLarge	Det billede er for stort. Vælg et under 2 MB.
 serverDetails.cameraDeniedTitle	Kameraadgang slået fra
 serverDetails.cameraDeniedMessage	Slå kameraadgang til i Indstillinger for at tage et foto.
 licenses.navigationTitle	Open source-licenser
-licenses.sectionSoftware	Software
-licenses.sectionFontSoftware	Skriftsoftware
-licenses.labelAuthor	Forfatter
-licenses.labelOriginalVersion	Oprindelig version
-licenses.labelModifiedVersion	Ændret version
-licenses.labelReservedFontName	Reserveret skriftnavn
 fileInfo.navigationTitleFolder	Mappe
 fileInfo.rowKind	Art
 fileInfo.rowSize	Størrelse
@@ -599,7 +572,6 @@ userManagement.createUser	Opret bruger
 userManagement.badgeAdmin	Administrator
 userManagement.emptyList	Ingen brugere endnu.
 userManagement.noSearchMatches	Ingen brugere matcher “%@”.
-userManagement.loadFailed	Serveren kunne ikke nås.
 userManagement.sortType	Type
 userManagement.sortName	Navn
 userManagement.sortEmail	E-mail
@@ -610,7 +582,6 @@ userManagement.createNavigationTitle	Opret bruger
 userManagement.createEmailField	E-mail
 userManagement.createUsernameField	Brugernavn (valgfrit)
 userManagement.createUsernamePlaceholder	Udledt af e-mail
-userManagement.createPasswordField	Adgangskode
 userManagement.createPasswordPlaceholder	Mindst %lld tegn
 userManagement.createGrantAdminToggle	Giv administratoradgang
 userManagement.createGrantAdminSubtitle	Fuld kontrol over filer, delinger og brugere.
@@ -632,7 +603,6 @@ userManagement.toastVolumeRemoved	Drev fjernet
 userManagement.errorEmailRequired	E-mail er påkrævet.
 userManagement.errorEmailInvalid	Indtast en gyldig e-mailadresse.
 userManagement.errorUsernameRequired	Brugernavn er påkrævet.
-userManagement.errorEmailInUse	E-mailen er allerede i brug.
 userManagement.errorPasswordTooShort	Brug mindst %lld tegn.
 userDetail.fallbackName	Bruger
 userDetail.sectionGeneralInfo	Generelle oplysninger
@@ -798,8 +768,6 @@ login.errorIncomplete	Login blev ikke fuldført. Prøv igen.
 login.errorUnreachable	Serveren kunne ikke nås. Tjek adressen, og prøv igen.
 login.errorUnexpectedResponse	Uventet svar fra serveren.
 login.errorKeychain	Din session kunne ikke gemmes på denne enhed.
-login.errorDecoding	Serveren svarede uventet. Tjek adressen, og prøv igen.
-login.errorNoLocalAuth	Denne server har ikke login med brugernavn og adgangskode slået til.
 login.errorRateLimited	For mange forsøg. Vent et par minutter, og prøv igen.
 login.ssoButton	Log ind med SSO
 login.orDivider	eller
@@ -821,7 +789,6 @@ login.diagnosticsTitle	Login-log
 login.diagnosticsIntro	Denne log viser, hvad serveren svarede i hvert trin, så det er lettere at finde ud af, hvorfor login mislykkes. Den indeholder aldrig din adgangskode, den adresse, du indtastede, eller dit brugernavn. Send den til udvikleren.
 browse.nameErrorReserved	Det navn er ikke tilladt.
 browse.nameErrorSeparators	Et navn må ikke indeholde / eller \.
-browse.searchMatchLine	Linje %1$lld: %2$@
 browse.searchMatchLineLabel	Linje %lld
 browse.searchTooShort	Skriv mindst %lld tegn for at søge i undermapper og filindhold.
 browse.searchStoppedEarly	Søgningen stoppede ved tidsgrænsen. Det er de resultater, der er fundet indtil nu.
@@ -833,8 +800,6 @@ browse.searchMatchedByContent	Indhold
 browse.searchMatchedByBoth	Navn og indhold
 createShare.errorPasswordRequired	Indtast en adgangskode, eller slå adgangskodebeskyttelse fra.
 login.errorServer	Serveren stødte på et problem (fejl %lld). Prøv igen senere.
-filter.sheetTitle	Filtrér efter type
-filter.button	Filtrér
 filter.all	Alle typer
 filter.folders	Mapper
 filter.images	Billeder
@@ -887,13 +852,8 @@ settings.sectionSupport	Support
 settings.rowRateApp	Bedøm NextExplorer
 settings.rowSupport	Hjælp og support
 menu.refresh	Opdater
-select.tableView	Tabelvisning
-browse.progressDownloading	Henter…
-browse.progressDownloadingIndexed	Henter %1$lld af %2$lld…
 browse.downloadSavedTo	Gemt i %@
-browse.downloadSavedCountTo	Gemte %1$lld af %2$lld emner i %3$@
 browse.downloadSavedAllTo	Gemte %1$lld emner i %2$@
-browse.downloadBulkFailed	Disse emner kunne ikke gemmes på din enhed.
 openWith.openIn	Åbn i %@
 openWith.openWith	Åbn med
 openWith.viewAsText	Vis som tekst
@@ -910,7 +870,6 @@ menu.newWindow	Nyt vindue
 menu.newTab	Ny fane
 browse.actionOpenInNewWindow	Åbn i nyt vindue
 browse.actionOpenInNewTab	Åbn i ny fane
-select.viewAs	Vis
 settings.rowAppearance	Udseende
 appearance.system	System
 appearance.light	Lys
@@ -941,7 +900,6 @@ macSettings.roleAdmin	Administrator
 macSettings.roleUser	Bruger
 macSettings.status	Status
 macSettings.statusSignedIn	Logget ind
-macSettings.manage	Administrer…
 macSettings.cache	Cache
 macSettings.support	Hjælp og support…
 macSettings.permission	Tilladelse

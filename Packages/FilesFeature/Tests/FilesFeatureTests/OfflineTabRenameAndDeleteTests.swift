@@ -50,7 +50,7 @@ struct OfflineTabRenameAndDeleteTests {
         let renamed = download(Constants.newName)
         let renames = LockIsolated<[String]>([])
         let listedScopes = LockIsolated<[String]>([])
-        var initial = state(downloads: [item], renameItem: item)
+        let initial = state(downloads: [item], renameItem: item)
         initial.$downloadScope.withLock { $0 = Constants.scope }
         let store = TestStore(initialState: initial) {
             OfflineTabFeature()

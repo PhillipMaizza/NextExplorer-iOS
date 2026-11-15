@@ -69,21 +69,15 @@ public enum DSButtonSize: CaseIterable, Hashable {
 private enum Constants {
     static let loadingOpacity: Double = 0.7
     static let disabledOpacity: Double = 0.4
-    static let contentFadeDuration: Double = 0.15
-    static let morphSpringResponse: Double = 0.35
-    static let morphSpringDamping: Double = 0.8
     /// Fixed dark charcoal fill for `.inverted`, deliberately not theme-adaptive.
     static let invertedFillWhite: Double = 0.15
     /// Press-down feedback: a subtle scale-down over this duration.
     static let pressedScale: CGFloat = 0.97
-    static let pressDuration: Double = 0.15
 }
 
-/// Adds a light tap haptic on press-down without any of `.plain`'s visual side effects: any
-/// plain tappable row/icon/button in the app should feel tactile, not just visually respond.
-/// `configuration.isPressed` flips true on press-down and false on release/cancel; the
-/// `condition` closure fires the feedback only on the true transition, not the release.
-public struct DSHapticButtonStyle: ButtonStyle {
+/// A plain tappable row, icon or button that shrinks a little while pressed, without any of
+/// `.plain`'s visual side effects.
+public struct DSPressableButtonStyle: ButtonStyle {
     public init() {}
 
     public func makeBody(configuration: Configuration) -> some View {
@@ -92,7 +86,8 @@ public struct DSHapticButtonStyle: ButtonStyle {
         }
     }
 
-    /// Adds a light haptic and a subtle scale-down on press. A nested view so it can read Reduce
+    /// A subtle scale down on press, with no haptic: a tap on a plain button is not an event worth a
+    /// buzz, and haptics stay for outcomes and changing values. A nested view so it can read Reduce
     /// Motion (a `ButtonStyle` can't observe `@Environment` directly).
     private struct PressFeedback<Label: View>: View {
         let isPressed: Bool
@@ -102,10 +97,7 @@ public struct DSHapticButtonStyle: ButtonStyle {
         var body: some View {
             label
                 .scaleEffect(reduceMotion || !isPressed ? 1 : Constants.pressedScale)
-                .animation(reduceMotion ? nil : .easeOut(duration: Constants.pressDuration), value: isPressed)
-                .hapticFeedback(.impact(weight: .light), trigger: isPressed) { _, isPressed in
-                    isPressed
-                }
+                .animation(reduceMotion ? nil : DSMotion.quickFade, value: isPressed)
         }
     }
 }
@@ -169,10 +161,10 @@ public struct DSButton: View {
                     )
             )
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .allowsHitTesting(isEnabled && !isLoading)
         .opacity(!isEnabled ? Constants.disabledOpacity : isLoading ? Constants.loadingOpacity : 1)
-        .animation(.easeOut(duration: Constants.contentFadeDuration), value: isLoading)
+        .animation(DSMotion.quickFade, value: isLoading)
     }
 }
 
@@ -212,17 +204,17 @@ public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
         GeometryReader { proxy in
             Button(action: action) {
                 content
-                    .animation(.easeOut(duration: Constants.contentFadeDuration), value: phase)
+                    .animation(DSMotion.quickFade, value: phase)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     // Without this, only the pixels the label actually draws (the text glyphs)
                     // register taps: the rest of the expanded frame is transparent, so most of
                     // the pill was visually a button but not actually tappable.
                     .contentShape(Rectangle())
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .allowsHitTesting(isHitEnabled && isEnabled)
             .opacity(isEnabled ? 1 : Constants.disabledOpacity)
-            .animation(.easeOut(duration: Constants.contentFadeDuration), value: isEnabled)
+            .animation(DSMotion.quickFade, value: isEnabled)
             .modifier(
                 MorphingButtonChrome(
                     progress: isCollapsed ? 1 : 0,
@@ -234,7 +226,7 @@ public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
             )
             .frame(maxWidth: .infinity)
             .animation(
-                .spring(response: Constants.morphSpringResponse, dampingFraction: Constants.morphSpringDamping),
+                DSMotion.controlMorph,
                 value: isCollapsed
             )
         }

@@ -8,7 +8,6 @@ common.delete	Excluir
 common.remove	Remover
 common.clear	Limpar
 common.done	Concluído
-common.ok	OK
 common.openSettings	Abrir Configurações
 common.logOut	Sair
 common.close	Fechar
@@ -27,7 +26,6 @@ common.selectedCount	%lld selecionados
 tab.browse	Explorar
 tab.favorites	Favoritos
 tab.shared	Compartilhado
-tab.downloads	downloads
 tab.settings	Configurações
 sort.sheetTitle	Ordenar por
 sort.name	Nome
@@ -37,8 +35,6 @@ sort.dateModified	Data de modificação
 sort.dateAdded	Data de adição
 sort.dateShared	Data de compartilhamento
 sort.expiration	Validade
-sort.email	E-mail
-sort.type	Tipo
 sort.ascending	Ascendente
 sort.descending	Descendente
 select.selectAll	Selecionar tudo
@@ -63,12 +59,9 @@ dateFormat.automatic	Automático
 browse.navigationTitle	Explorar
 browse.scopeThisFolder	Esta pasta
 browse.scopeEverywhere	Em todo lugar
-browse.searchScopeInFolder	Esta pasta
-browse.searchScopeEverywhere	Em todo lugar
 browse.locations	Locais
 browse.breadcrumbHint	Abre esta pasta
 browse.open	Abrir
-browse.unsupportedFileType	Tipo de arquivo não suportado
 browse.actionGetInfo	Obter Informações
 browse.actionPermissions	Permissões
 browse.actionRename	Renomear
@@ -102,7 +95,6 @@ browse.searchEverywhere	Pesquisar em todo lugar
 browse.searchFailed	Não foi possível pesquisar. Verifique a conexão e tente novamente.
 browse.progressExtracting	Extraindo…
 browse.progressCompressing	Comprimindo…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Mostrando uma cópia salva de %@
 browse.actionCopy	Copiar
 browse.destinationPickerMoveTitle	Mover para…
@@ -114,8 +106,6 @@ browse.actionPaste	Colar
 browse.actionPasteCount	Colar %lld itens
 browse.actionPasteHere	Colar aqui
 browse.actionClearClipboard	Limpar área de transferência
-browse.clipboardMoveCount	%lld para mover
-browse.clipboardCopyCount	%lld para copiar
 browse.clipboardCopiedOne	%@ copiado
 browse.clipboardCopiedMany	%lld itens copiados
 browse.progressMoving	Movendo…
@@ -155,8 +145,6 @@ favorites.removeMessage	Isto apenas os remove dos Favoritos.
 favorites.removeFailedOne	Não foi possível remover esse favorito.
 favorites.removeFailedMany	Não foi possível remover esses favoritos.
 favorites.removePartial	Removidos %1$lld de %2$lld.
-downloads.actionOpenInFiles	Abrir em Arquivos
-downloads.emptyList	Os arquivos que baixar a partir de Explorar aparecem aqui.
 downloads.deleteConfirmTitle	Excluir?
 downloads.deleteConfirmOne	Excluir “%@”?
 downloads.deleteConfirmMany	Excluir %lld arquivos?
@@ -196,15 +184,12 @@ uploads.discardTitle	Descartar o envio?
 uploads.discardMessage	Os arquivos que adicionou não serão enviados.
 uploads.discardConfirm	Descartar
 uploads.statusWaiting	Em espera
-uploads.statusFailed	Envio falhou
 uploads.barTitleOne	Enviando %@
 uploads.barTitleMany	Enviando %lld arquivos
 uploads.barFailedOne	1 envio falhou
 uploads.barFailedMany	%lld envios falharam
-uploads.retryAll	Tentar todos novamente
 uploads.complete	Envio concluído
 uploads.completeMany	%lld arquivos enviados
-uploads.completeWithFailures	%1$lld enviados, %2$lld falharam
 uploads.failedGeneric	Não foi possível enviar este arquivo.
 uploads.clear	Limpar
 uploads.emptyList	Ainda não há envios.
@@ -239,7 +224,6 @@ createShare.sectionLabel	Rótulo
 createShare.sectionAccessMode	Modo de Acesso
 createShare.sectionWhoCanAccess	Quem pode acessar
 createShare.sectionShareLink	Link de compartilhamento
-createShare.fieldPassword	Senha
 createShare.togglePasswordProtect	Proteger com senha
 createShare.toggleSetExpiration	Definir data de expiração
 createShare.fieldExpires	Expira
@@ -254,7 +238,6 @@ createShare.directFolderLink	Link direto da pasta (ZIP)
 createShare.directFileLink	Link direto do arquivo
 createShare.summaryAccess	Acesso
 createShare.summarySharedWith	Compartilhado com
-createShare.summaryPassword	Senha
 createShare.summaryPasswordProtected	Protegido
 createShare.summaryExpires	Expira
 createShare.summarySpecificPeople	Pessoas específicas
@@ -262,7 +245,6 @@ createShare.errorPastExpiration	Escolha uma data de validade futura.
 editShare.title	Editar o link de compartilhamento
 editShare.save	Salvar as alterações
 editShare.passwordKeepHint	Deixe em branco para manter a senha atual
-editShare.savedToast	Link de compartilhamento atualizado
 thumbnailSettings.navigationTitle	Miniaturas
 thumbnailSettings.subtitle	Controle como o servidor gera as miniaturas de imagem para todos os clientes.
 thumbnailSettings.enable	Gerar miniaturas
@@ -339,7 +321,6 @@ activityLog.anyOutcome	Qualquer resultado
 activityLog.outcomeOk	Com êxito
 activityLog.outcomeRefused	recusado
 activityLog.searchPlaceholder	Um nome ou um caminho
-activityLog.searchButton	Buscar
 activityLog.refresh	Atualizar
 activityLog.clear	Esvaziar o registro
 activityLog.clearTitle	Esvaziar o registro?
@@ -455,7 +436,6 @@ versionedFiles.newest	Última: %@
 versionedFiles.versionPinned	Fixada
 versionedFiles.versionUnavailable	Indisponível
 versionedFiles.versionBy	Por %@
-versionedFiles.detailFailed	Não foi possível ler este histórico.
 versionedFiles.deleteSelectedNone	Marque as versões a excluir
 versionedFiles.deleteSelected	Excluir seleção (%lld)
 versionedFiles.deleteAll	Excluir todas as versões
@@ -548,17 +528,10 @@ serverDetails.nameErrorEmpty	O nome do servidor não pode estar vazio.
 serverDetails.urlLabel	URL do servidor
 serverDetails.urlFootnote	O endereço onde sua instância do NextExplorer está instalada. Para alterá-lo, saia e adicione o servidor novamente.
 serverDetails.updateButton	Atualizar servidor
-serverDetails.savedMessage	Detalhes do servidor atualizados.
 serverDetails.logoErrorTooLarge	Essa imagem é muito grande. Escolha uma com menos de 2 MB.
 serverDetails.cameraDeniedTitle	Acesso à câmera desativado
 serverDetails.cameraDeniedMessage	Ative o acesso à câmera em Configurações para tirar uma foto.
 licenses.navigationTitle	Licenças de código aberto
-licenses.sectionSoftware	Software
-licenses.sectionFontSoftware	Software de fontes
-licenses.labelAuthor	Autor
-licenses.labelOriginalVersion	Versão original
-licenses.labelModifiedVersion	Versão modificada
-licenses.labelReservedFontName	Nome reservado da fonte
 fileInfo.navigationTitleFolder	Pasta
 fileInfo.rowKind	Tipo
 fileInfo.rowSize	Tamanho
@@ -608,7 +581,6 @@ userManagement.createUser	Criar Usuário
 userManagement.badgeAdmin	Administrador
 userManagement.emptyList	Ainda não há usuários.
 userManagement.noSearchMatches	Nenhum usuário corresponde a “%@”.
-userManagement.loadFailed	Não foi possível conectar ao servidor.
 userManagement.sortType	Tipo
 userManagement.sortName	Nome
 userManagement.sortEmail	E-mail
@@ -620,7 +592,6 @@ userManagement.createEmailField	E-mail
 userManagement.createEmailPlaceholder	nome@exemplo.com
 userManagement.createUsernameField	Nome de usuário (opcional)
 userManagement.createUsernamePlaceholder	Derivado do e-mail
-userManagement.createPasswordField	Senha
 userManagement.createPasswordPlaceholder	Pelo menos %lld caracteres
 userManagement.createGrantAdminToggle	Conceder acesso de administrador
 userManagement.createGrantAdminSubtitle	Controle total sobre arquivos, compartilhamentos e usuários.
@@ -642,7 +613,6 @@ userManagement.toastVolumeRemoved	Volume removido
 userManagement.errorEmailRequired	O e-mail é obrigatório.
 userManagement.errorEmailInvalid	Digite um endereço de e-mail válido.
 userManagement.errorUsernameRequired	O nome de usuário é obrigatório.
-userManagement.errorEmailInUse	E-mail já em uso.
 userManagement.errorPasswordTooShort	Use pelo menos %lld caracteres.
 userDetail.fallbackName	Usuário
 userDetail.sectionGeneralInfo	Informações gerais
@@ -740,8 +710,6 @@ login.errorIncomplete	O login não foi concluído. Tente novamente.
 login.errorUnreachable	Não foi possível entrar em contato com esse servidor. Verifique o endereço e tente novamente.
 login.errorUnexpectedResponse	Resposta inesperada do servidor.
 login.errorKeychain	Não foi possível salvar sua sessão neste dispositivo.
-login.errorDecoding	O servidor respondeu de forma inesperada. Verifique o endereço e tente novamente.
-login.errorNoLocalAuth	Este servidor não tem o login com nome de usuário e senha ativado.
 login.errorRateLimited	Muitas tentativas. Aguarde alguns minutos e tente novamente.
 login.ssoButton	Entrar com SSO
 login.orDivider	ou
@@ -751,7 +719,6 @@ login.errorClientCertificateRequired	Este servidor pede um certificado de client
 login.errorClientCertificateRejected	O servidor recusou este certificado de cliente.
 browse.nameErrorReserved	Esse nome não é permitido.
 browse.nameErrorSeparators	Um nome não pode conter / ou \.
-browse.searchMatchLine	Linha %1$lld: %2$@
 browse.searchMatchLineLabel	Linha %lld
 browse.searchTooShort	Digite pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos arquivos.
 browse.searchStoppedEarly	A pesquisa parou no limite de tempo. Estes são os resultados encontrados até agora.
@@ -763,8 +730,6 @@ browse.searchMatchedByContent	conteúdo
 browse.searchMatchedByBoth	nome e conteúdo
 createShare.errorPasswordRequired	Digite uma senha ou desative a proteção por senha.
 login.errorServer	O servidor teve um problema (erro %lld). Tente novamente mais tarde.
-filter.sheetTitle	Filtrar por tipo
-filter.button	Filtrar
 filter.all	Todos os tipos
 filter.folders	pastas
 filter.images	Imagens
@@ -817,13 +782,8 @@ settings.sectionSupport	Suporte
 settings.rowRateApp	Avaliar o NextExplorer
 settings.rowSupport	Ajuda e suporte
 menu.refresh	Atualizar
-select.tableView	Visualização em tabela
-browse.progressDownloading	Baixando…
-browse.progressDownloadingIndexed	Baixando %1$lld de %2$lld…
 browse.downloadSavedTo	Salvo em %@
-browse.downloadSavedCountTo	Salvos %1$lld de %2$lld itens em %3$@
 browse.downloadSavedAllTo	Salvos %1$lld itens em %2$@
-browse.downloadBulkFailed	Não foi possível salvar estes itens no seu dispositivo.
 openWith.openIn	Abrir em %@
 openWith.openWith	Abrir com
 openWith.viewAsText	Ver como texto
@@ -840,7 +800,6 @@ menu.newWindow	Nova janela
 menu.newTab	Nova aba
 browse.actionOpenInNewWindow	Abrir em nova janela
 browse.actionOpenInNewTab	Abrir em nova aba
-select.viewAs	Visualizar
 settings.rowAppearance	Aparência
 appearance.system	Sistema
 appearance.light	Claro
@@ -872,7 +831,6 @@ macSettings.roleAdmin	Administrador
 macSettings.roleUser	Usuário
 macSettings.status	Situação
 macSettings.statusSignedIn	Entrou
-macSettings.manage	Gerenciar…
 macSettings.cache	Cache
 macSettings.support	Ajuda e suporte…
 macSettings.permission	Permissão

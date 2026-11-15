@@ -239,14 +239,14 @@ struct VolumesTabView: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .accessibilityLabel(L10n.UserDetail.volumeEditAccessibility(volume.label))
             Button { store.send(.removeVolumeTapped(volume)) } label: {
                 IconKit.delete.resizable().scaledToFit()
                     .foregroundStyle(Color.negative)
                     .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .accessibilityLabel(L10n.UserDetail.volumeRemoveAccessibility(volume.label))
         }
         .padding(.vertical, .space8)

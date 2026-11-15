@@ -8,7 +8,6 @@ common.delete	ลบ
 common.remove	นำออก
 common.clear	ล้าง
 common.done	เสร็จสิ้น
-common.ok	ตกลง
 common.openSettings	เปิดการตั้งค่า
 common.logOut	ออกจากระบบ
 common.close	ปิด
@@ -27,7 +26,6 @@ common.selectedCount	เลือกแล้ว %lld
 tab.browse	เรียกดู
 tab.favorites	รายการโปรด
 tab.shared	ที่แชร์
-tab.downloads	ดาวน์โหลด
 tab.settings	การตั้งค่า
 sort.sheetTitle	เรียงตาม
 sort.name	ชื่อ
@@ -37,8 +35,6 @@ sort.dateModified	วันที่แก้ไข
 sort.dateAdded	วันที่เพิ่ม
 sort.dateShared	วันที่แชร์
 sort.expiration	วันหมดอายุ
-sort.email	อีเมล
-sort.type	ประเภท
 sort.ascending	จากน้อยไปมาก
 sort.descending	จากมากไปน้อย
 select.selectAll	เลือกทั้งหมด
@@ -63,12 +59,9 @@ dateFormat.automatic	อัตโนมัติ
 browse.navigationTitle	เรียกดู
 browse.scopeThisFolder	โฟลเดอร์นี้
 browse.scopeEverywhere	ทุกที่
-browse.searchScopeInFolder	โฟลเดอร์นี้
-browse.searchScopeEverywhere	ทุกที่
 browse.locations	ตำแหน่งที่ตั้ง
 browse.breadcrumbHint	เปิดโฟลเดอร์นี้
 browse.open	เปิด
-browse.unsupportedFileType	ไม่รองรับชนิดไฟล์นี้
 browse.actionGetInfo	แสดงข้อมูล
 browse.actionPermissions	สิทธิ์
 browse.actionRename	เปลี่ยนชื่อ
@@ -101,7 +94,6 @@ browse.searchEverywhere	ค้นหาทุกที่
 browse.searchFailed	ค้นหาไม่สำเร็จ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
 browse.progressExtracting	กำลังแตกไฟล์…
 browse.progressCompressing	กำลังบีบอัด…
-browse.offlineBannerTitle	ออฟไลน์
 browse.offlineBannerDetail	กำลังแสดงสำเนาที่บันทึกไว้จาก %@
 browse.actionCopy	คัดลอก
 browse.destinationPickerMoveTitle	ย้ายไปที่…
@@ -113,8 +105,6 @@ browse.actionPaste	วาง
 browse.actionPasteCount	วาง %lld รายการ
 browse.actionPasteHere	วางที่นี่
 browse.actionClearClipboard	ล้างคลิปบอร์ด
-browse.clipboardMoveCount	%lld รายการที่จะย้าย
-browse.clipboardCopyCount	%lld รายการที่จะคัดลอก
 browse.clipboardCopiedOne	คัดลอก %@ แล้ว
 browse.clipboardCopiedMany	คัดลอก %lld รายการแล้ว
 browse.progressMoving	กำลังย้าย…
@@ -149,8 +139,6 @@ favorites.removeMessage	การดำเนินการนี้จะน�
 favorites.removeFailedOne	ไม่สามารถนำรายการโปรดนั้นออกได้
 favorites.removeFailedMany	ไม่สามารถนำรายการโปรดเหล่านั้นออกได้
 favorites.removePartial	นำออกแล้ว %1$lld จาก %2$lld
-downloads.actionOpenInFiles	เปิดในแอปไฟล์
-downloads.emptyList	ไฟล์ที่คุณดาวน์โหลดจากเรียกดูจะแสดงที่นี่
 downloads.deleteConfirmTitle	ลบหรือไม่
 downloads.deleteConfirmOne	ลบ “%@” หรือไม่
 downloads.deleteConfirmMany	ลบ %lld ไฟล์หรือไม่
@@ -188,15 +176,12 @@ uploads.discardTitle	ละทิ้งการอัปโหลดหรื�
 uploads.discardMessage	ไฟล์ที่คุณเพิ่มจะไม่ถูกอัปโหลด
 uploads.discardConfirm	ละทิ้ง
 uploads.statusWaiting	กำลังรอ
-uploads.statusFailed	อัปโหลดไม่สำเร็จ
 uploads.barTitleOne	กำลังอัปโหลด %@
 uploads.barTitleMany	กำลังอัปโหลด %lld ไฟล์
 uploads.barFailedOne	อัปโหลดไม่สำเร็จ 1 รายการ
 uploads.barFailedMany	อัปโหลดไม่สำเร็จ %lld รายการ
-uploads.retryAll	ลองทั้งหมดอีกครั้ง
 uploads.complete	อัปโหลดเสร็จสิ้น
 uploads.completeMany	อัปโหลดแล้ว %lld ไฟล์
-uploads.completeWithFailures	อัปโหลดแล้ว %1$lld ไม่สำเร็จ %2$lld
 uploads.failedGeneric	ไม่สามารถอัปโหลดไฟล์นี้ได้
 uploads.clear	ล้าง
 uploads.emptyList	ยังไม่มีการอัปโหลด
@@ -230,7 +215,6 @@ createShare.sectionLabel	ป้ายกำกับ
 createShare.sectionAccessMode	โหมดการเข้าถึง
 createShare.sectionWhoCanAccess	ใครเข้าถึงได้
 createShare.sectionShareLink	ลิงก์แชร์
-createShare.fieldPassword	รหัสผ่าน
 createShare.togglePasswordProtect	ป้องกันด้วยรหัสผ่าน
 createShare.toggleSetExpiration	ตั้งวันหมดอายุ
 createShare.fieldExpires	หมดอายุ
@@ -245,7 +229,6 @@ createShare.directFolderLink	ลิงก์ ZIP โดยตรงของโ�
 createShare.directFileLink	ลิงก์โดยตรงของไฟล์
 createShare.summaryAccess	การเข้าถึง
 createShare.summarySharedWith	แชร์กับ
-createShare.summaryPassword	รหัสผ่าน
 createShare.summaryPasswordProtected	ป้องกันแล้ว
 createShare.summaryExpires	หมดอายุ
 createShare.summarySpecificPeople	บุคคลที่ระบุ
@@ -253,7 +236,6 @@ createShare.errorPastExpiration	เลือกวันหมดอายุใ
 editShare.title	แก้ไขลิงก์แชร์
 editShare.save	บันทึกการเปลี่ยนแปลง
 editShare.passwordKeepHint	เว้นว่างไว้เพื่อใช้รหัสผ่านปัจจุบันต่อ
-editShare.savedToast	อัปเดตลิงก์แชร์แล้ว
 thumbnailSettings.navigationTitle	ภาพขนาดย่อ
 thumbnailSettings.subtitle	ควบคุมวิธีที่เซิร์ฟเวอร์สร้างภาพขนาดย่อสำหรับไคลเอนต์ทั้งหมด
 thumbnailSettings.enable	สร้างภาพขนาดย่อ
@@ -327,7 +309,6 @@ activityLog.anyOutcome	ผลลัพธ์ใดก็ได้
 activityLog.outcomeOk	สำเร็จ
 activityLog.outcomeRefused	ถูกปฏิเสธ
 activityLog.searchPlaceholder	ชื่อหรือพาธ
-activityLog.searchButton	ค้นหา
 activityLog.refresh	รีเฟรช
 activityLog.clear	ล้างบันทึก
 activityLog.clearTitle	ล้างบันทึกหรือไม่
@@ -443,7 +424,6 @@ versionedFiles.newest	ล่าสุด: %@
 versionedFiles.versionPinned	ปักหมุดแล้ว
 versionedFiles.versionUnavailable	ไม่พร้อมใช้งาน
 versionedFiles.versionBy	โดย %@
-versionedFiles.detailFailed	ไม่สามารถอ่านประวัตินี้ได้
 versionedFiles.deleteSelectedNone	ทำเครื่องหมายเวอร์ชันที่จะลบ
 versionedFiles.deleteSelected	ลบที่เลือก (%lld)
 versionedFiles.deleteAll	ลบทุกเวอร์ชัน
@@ -533,17 +513,10 @@ serverDetails.nameErrorEmpty	ชื่อเซิร์ฟเวอร์ต้
 serverDetails.urlLabel	URL ของเซิร์ฟเวอร์
 serverDetails.urlFootnote	ที่อยู่ที่ติดตั้ง NextExplorer ของคุณ หากต้องการเปลี่ยน ให้ออกจากระบบแล้วเพิ่มเซิร์ฟเวอร์ใหม่อีกครั้ง
 serverDetails.updateButton	อัปเดตเซิร์ฟเวอร์
-serverDetails.savedMessage	อัปเดตรายละเอียดเซิร์ฟเวอร์แล้ว
 serverDetails.logoErrorTooLarge	รูปภาพนั้นใหญ่เกินไป เลือกรูปที่เล็กกว่า 2 MB
 serverDetails.cameraDeniedTitle	การเข้าถึงกล้องปิดอยู่
 serverDetails.cameraDeniedMessage	เปิดการเข้าถึงกล้องในการตั้งค่าเพื่อถ่ายภาพ
 licenses.navigationTitle	ใบอนุญาตโอเพนซอร์ส
-licenses.sectionSoftware	ซอฟต์แวร์
-licenses.sectionFontSoftware	ซอฟต์แวร์ฟอนต์
-licenses.labelAuthor	ผู้เขียน
-licenses.labelOriginalVersion	เวอร์ชันต้นฉบับ
-licenses.labelModifiedVersion	เวอร์ชันที่แก้ไข
-licenses.labelReservedFontName	ชื่อฟอนต์ที่สงวนไว้
 fileInfo.navigationTitleFolder	โฟลเดอร์
 fileInfo.rowKind	ชนิด
 fileInfo.rowSize	ขนาด
@@ -593,7 +566,6 @@ userManagement.createUser	สร้างผู้ใช้
 userManagement.badgeAdmin	ผู้ดูแลระบบ
 userManagement.emptyList	ยังไม่มีผู้ใช้
 userManagement.noSearchMatches	ไม่มีผู้ใช้ที่ตรงกับ “%@”
-userManagement.loadFailed	ไม่สามารถติดต่อเซิร์ฟเวอร์ได้
 userManagement.sortType	ประเภท
 userManagement.sortName	ชื่อ
 userManagement.sortEmail	อีเมล
@@ -604,7 +576,6 @@ userManagement.createNavigationTitle	สร้างผู้ใช้
 userManagement.createEmailField	อีเมล
 userManagement.createUsernameField	ชื่อผู้ใช้ (ไม่บังคับ)
 userManagement.createUsernamePlaceholder	สร้างจากอีเมล
-userManagement.createPasswordField	รหัสผ่าน
 userManagement.createPasswordPlaceholder	อย่างน้อย %lld อักขระ
 userManagement.createGrantAdminToggle	ให้สิทธิ์ผู้ดูแลระบบ
 userManagement.createGrantAdminSubtitle	ควบคุมไฟล์ การแชร์ และผู้ใช้ได้อย่างเต็มที่
@@ -626,7 +597,6 @@ userManagement.toastVolumeRemoved	นำวอลุ่มออกแล้ว
 userManagement.errorEmailRequired	ต้องระบุอีเมล
 userManagement.errorEmailInvalid	ป้อนที่อยู่อีเมลที่ถูกต้อง
 userManagement.errorUsernameRequired	ต้องระบุชื่อผู้ใช้
-userManagement.errorEmailInUse	อีเมลนี้ถูกใช้แล้ว
 userManagement.errorPasswordTooShort	ใช้อย่างน้อย %lld อักขระ
 userDetail.fallbackName	ผู้ใช้
 userDetail.sectionGeneralInfo	ข้อมูลทั่วไป
@@ -792,8 +762,6 @@ login.errorIncomplete	การเข้าสู่ระบบไม่เส�
 login.errorUnreachable	ไม่สามารถติดต่อเซิร์ฟเวอร์นั้นได้ ตรวจสอบที่อยู่แล้วลองอีกครั้ง
 login.errorUnexpectedResponse	การตอบกลับจากเซิร์ฟเวอร์ที่ไม่คาดคิด
 login.errorKeychain	ไม่สามารถบันทึกเซสชันของคุณบนอุปกรณ์เครื่องนี้ได้
-login.errorDecoding	เซิร์ฟเวอร์ตอบกลับโดยไม่คาดคิด ตรวจสอบที่อยู่แล้วลองอีกครั้ง
-login.errorNoLocalAuth	เซิร์ฟเวอร์นี้ไม่ได้เปิดใช้การเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่าน
 login.errorRateLimited	ลองหลายครั้งเกินไป โปรดรอสักครู่แล้วลองอีกครั้ง
 login.ssoButton	เข้าสู่ระบบด้วย SSO
 login.orDivider	หรือ
@@ -815,7 +783,6 @@ login.diagnosticsTitle	บันทึกการเข้าสู่ระบ
 login.diagnosticsIntro	บันทึกนี้แสดงสิ่งที่เซิร์ฟเวอร์ตอบกลับในแต่ละขั้นตอน เพื่อช่วยหาสาเหตุที่เข้าสู่ระบบไม่ได้ บันทึกนี้ไม่เคยมีรหัสผ่าน ที่อยู่ที่คุณพิมพ์ หรือชื่อผู้ใช้ของคุณ ส่งให้นักพัฒนา
 browse.nameErrorReserved	ไม่อนุญาตให้ใช้ชื่อนั้น
 browse.nameErrorSeparators	ชื่อต้องไม่มี / หรือ \
-browse.searchMatchLine	บรรทัด %1$lld: %2$@
 browse.searchMatchLineLabel	บรรทัด %lld
 browse.searchTooShort	พิมพ์อย่างน้อย %lld อักขระเพื่อค้นหาในโฟลเดอร์ย่อยและเนื้อหาไฟล์
 browse.searchStoppedEarly	การค้นหาหยุดที่ขีดจำกัดเวลา นี่คือผลลัพธ์ที่พบจนถึงตอนนี้
@@ -827,8 +794,6 @@ browse.searchMatchedByContent	เนื้อหา
 browse.searchMatchedByBoth	ชื่อและเนื้อหา
 createShare.errorPasswordRequired	ป้อนรหัสผ่านหรือปิดการป้องกันด้วยรหัสผ่าน
 login.errorServer	เซิร์ฟเวอร์พบปัญหา (ข้อผิดพลาด %lld) โปรดลองอีกครั้งในภายหลัง
-filter.sheetTitle	กรองตามชนิด
-filter.button	กรอง
 filter.all	ทุกชนิด
 filter.folders	โฟลเดอร์
 filter.images	รูปภาพ
@@ -881,13 +846,8 @@ settings.sectionSupport	การสนับสนุน
 settings.rowRateApp	ให้คะแนน NextExplorer
 settings.rowSupport	ความช่วยเหลือและการสนับสนุน
 menu.refresh	รีเฟรช
-select.tableView	มุมมองตาราง
-browse.progressDownloading	กำลังดาวน์โหลด…
-browse.progressDownloadingIndexed	กำลังดาวน์โหลด %1$lld จาก %2$lld…
 browse.downloadSavedTo	บันทึกไปที่ %@ แล้ว
-browse.downloadSavedCountTo	บันทึก %1$lld จาก %2$lld รายการไปที่ %3$@ แล้ว
 browse.downloadSavedAllTo	บันทึก %1$lld รายการไปที่ %2$@ แล้ว
-browse.downloadBulkFailed	ไม่สามารถบันทึกรายการเหล่านี้ลงในอุปกรณ์ของคุณได้
 openWith.openIn	เปิดใน %@
 openWith.openWith	เปิดด้วย
 openWith.viewAsText	ดูเป็นข้อความ
@@ -904,7 +864,6 @@ menu.newWindow	หน้าต่างใหม่
 menu.newTab	แท็บใหม่
 browse.actionOpenInNewWindow	เปิดในหน้าต่างใหม่
 browse.actionOpenInNewTab	เปิดในแท็บใหม่
-select.viewAs	มุมมอง
 settings.rowAppearance	รูปลักษณ์
 appearance.system	ระบบ
 appearance.light	สว่าง
@@ -935,7 +894,6 @@ macSettings.roleAdmin	ผู้ดูแลระบบ
 macSettings.roleUser	ผู้ใช้
 macSettings.status	สถานะ
 macSettings.statusSignedIn	เข้าสู่ระบบแล้ว
-macSettings.manage	จัดการ…
 macSettings.cache	แคช
 macSettings.support	ความช่วยเหลือและการสนับสนุน…
 macSettings.permission	สิทธิ์

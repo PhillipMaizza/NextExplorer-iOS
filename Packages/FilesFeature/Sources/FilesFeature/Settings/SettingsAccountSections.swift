@@ -7,7 +7,6 @@ import SwiftUI
 private enum Constants {
     static let avatarSize: CGFloat = .size48
     static let profileRowSpacing: CGFloat = .space12
-    static let signOutFadeDuration: Double = 0.15
     static let tagHorizontalPadding: CGFloat = .space8
     static let tagVerticalPadding: CGFloat = .space4
     static let tagBorderWidth: CGFloat = 1
@@ -179,7 +178,7 @@ struct SettingsAccountsSection: View {
         ) {
             store.send(.signOutButtonTapped)
         }
-        .animation(.easeInOut(duration: Constants.signOutFadeDuration), value: store.isSigningOut)
+        .animation(DSMotion.quickFade, value: store.isSigningOut)
     }
 
     /// Accent tinted to read as the primary "add" affordance, matching its plus icon.

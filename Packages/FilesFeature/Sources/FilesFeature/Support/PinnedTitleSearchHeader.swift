@@ -4,8 +4,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    /// Cross fade for the clear button appearing with text.
-    static let fieldAnimationDuration: Double = 0.15
     /// Height of the fade tail under the header.
     static let fadeHeight: CGFloat = .space8
 }
@@ -163,8 +161,8 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: searchText.isEmpty)
-        .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: isSearchPending)
+        .animation(DSMotion.quickFade, value: searchText.isEmpty)
+        .animation(DSMotion.quickFade, value: isSearchPending)
         .roundedFieldStyle(isFocused: isFocused, bordered: false, cornerRadius: .radiusSearchField)
     }
 }

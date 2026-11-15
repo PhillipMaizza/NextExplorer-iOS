@@ -9,8 +9,6 @@ private enum Constants {
     static let chipHorizontalPadding: CGFloat = .space12
     static let chipVerticalPadding: CGFloat = .space8
     static let iconSize: CGFloat = .iconXSmall
-    static let selectionSpringResponse: Double = 0.3
-    static let selectionSpringDamping: Double = 0.85
 }
 
 /// Horizontally scrolling "Filter by type" chip row shown below the search scope control while
@@ -45,7 +43,7 @@ struct SearchFilterChips: View {
             }
         }
         .animation(
-            .spring(response: Constants.selectionSpringResponse, dampingFraction: Constants.selectionSpringDamping),
+            DSMotion.pop,
             value: selectedCategories
         )
     }

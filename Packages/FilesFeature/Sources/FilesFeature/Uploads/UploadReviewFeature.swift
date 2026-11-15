@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import DesignSystem
 import FolderPickerFeature
 import Foundation
 import Localization
@@ -121,17 +122,17 @@ public struct UploadReviewFeature {
                     case let .documents(urls):
                         for await file in uploadStaging.stageDocuments(urls) {
                             staged += 1
-                            await send(.filePrepared(file), animation: .default)
+                            await send(.filePrepared(file), animation: DSMotion.listDiff)
                         }
                     case let .photos(items):
                         for await file in uploadStaging.stagePhotos(items) {
                             staged += 1
-                            await send(.filePrepared(file), animation: .default)
+                            await send(.filePrepared(file), animation: DSMotion.listDiff)
                         }
                     case let .camera(url):
                         if let file = await uploadStaging.stageCameraCapture(url) {
                             staged += 1
-                            await send(.filePrepared(file), animation: .default)
+                            await send(.filePrepared(file), animation: DSMotion.listDiff)
                         }
                     }
                     await send(.stagingBatchFinished(requested: requested, staged: staged))

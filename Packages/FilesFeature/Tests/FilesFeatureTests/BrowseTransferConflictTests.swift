@@ -16,7 +16,7 @@ struct BrowseTransferConflictTests {
     private let existing = BrowseFixtures.file(TestFile.aText, in: TestFolder.documents)
 
     private func conflictState(clipboard: [FileItem]? = nil) -> BrowseFeature.State {
-        var state = BrowseFixtures.state(
+        let state = BrowseFixtures.state(
             TestFolder.documents,
             title: TestFolder.docs,
             items: [existing],

@@ -8,9 +8,6 @@ import SwiftUI
 
 private enum Constants {
     static let pageTransitionSpringResponse: Double = 0.4
-    static let pageTransitionSpringDamping: Double = 0.85
-    static let contentFadeDuration: Double = 0.15
-    static let quickFadeDuration: Double = 0.2
     static let navBarHeight: CGFloat = .size44
     static let navBarTitleHorizontalPadding: CGFloat = .size44
     static let backChevronSize: CGFloat = .iconSmall
@@ -20,7 +17,6 @@ private enum Constants {
     /// How long after a failed Test Connection (once the button has morphed into the red X
     /// and the field has shaken) the error text waits before fading in.
     static let errorRevealDelay: Duration = .seconds(0.4)
-    static let errorFadeDuration: Double = 0.3
     /// How long the email/password fields stay red-bordered after a login failure.
     static let invalidFieldsDuration: Duration = .seconds(2)
     static let logoSize: CGFloat = .size96
@@ -48,8 +44,6 @@ private enum Constants {
     /// beat, so the spinner is actually visible.
     static let keyboardDismissDuration: Duration = .seconds(0.25)
     static let macButtonHiddenScale: CGFloat = 0.9
-    static let macButtonPopDuration: Double = 0.3
-    static let macButtonPopBounce: Double = 0.35
     /// Named coordinate space the submit button's rect is measured in, so the flood circle
     /// positions against the same origin regardless of scroll offset.
     static let rootSpace = LoginCoordinateSpace.root
@@ -144,7 +138,7 @@ public struct LoginFormView: View {
             return
         }
         Task {
-            try? await Task.sleep(for: Constants.keyboardDismissDuration)
+            try? await DSMotion.waitForStep(Constants.keyboardDismissDuration)
             guard !Task.isCancelled else { return }
             store.send(.testConnectionButtonTapped)
         }
@@ -161,7 +155,7 @@ public struct LoginFormView: View {
             return
         }
         Task {
-            try? await Task.sleep(for: Constants.keyboardDismissDuration)
+            try? await DSMotion.waitForStep(Constants.keyboardDismissDuration)
             guard !Task.isCancelled else { return }
             store.send(.continueButtonTapped)
         }
@@ -178,7 +172,7 @@ public struct LoginFormView: View {
             return
         }
         Task {
-            try? await Task.sleep(for: Constants.keyboardDismissDuration)
+            try? await DSMotion.waitForStep(Constants.keyboardDismissDuration)
             guard !Task.isCancelled else { return }
             store.send(.ssoButtonTapped)
         }
@@ -260,7 +254,7 @@ public struct LoginFormView: View {
         .modifier(LoginHapticsModifier(errorMessage: store.errorMessage, connectionPhase: store.connectionPhase))
         .onChange(of: store.errorMessage) { _, newValue in
             guard newValue != nil else { return }
-            withAnimation(.default) {
+            withAnimation(DSMotion.stateFade) {
                 if store.currentPage == .server {
                     shakeTrigger += 1
                 } else {
@@ -273,16 +267,16 @@ public struct LoginFormView: View {
         }
         .task(id: store.errorMessage) {
             guard let message = store.errorMessage, !message.isEmpty else {
-                withAnimation(.easeInOut(duration: Constants.errorFadeDuration)) {
+                withAnimation(DSMotion.contentReveal) {
                     displayedErrorMessage = nil
                     isIdentifierFieldInvalid = false
                     isPasswordFieldInvalid = false
                 }
                 return
             }
-            try? await Task.sleep(for: Constants.errorRevealDelay)
+            try? await DSMotion.waitForStep(Constants.errorRevealDelay)
             guard !Task.isCancelled else { return }
-            withAnimation(.easeInOut(duration: Constants.errorFadeDuration)) {
+            withAnimation(DSMotion.contentReveal) {
                 displayedErrorMessage = message
             }
 
@@ -291,7 +285,7 @@ public struct LoginFormView: View {
             isPasswordFieldInvalid = store.invalidFieldsScope == .identifierAndPassword
             try? await Task.sleep(for: Constants.invalidFieldsDuration)
             guard !Task.isCancelled else { return }
-            withAnimation(.easeInOut(duration: Constants.errorFadeDuration)) {
+            withAnimation(DSMotion.contentReveal) {
                 isIdentifierFieldInvalid = false
                 isPasswordFieldInvalid = false
             }
@@ -373,10 +367,7 @@ public struct LoginFormView: View {
             }
         }
         .animation(
-            .spring(
-                response: Constants.pageTransitionSpringResponse,
-                dampingFraction: Constants.pageTransitionSpringDamping
-            ),
+            DSMotion.pageTransition,
             value: store.currentPage
         )
     }
@@ -408,7 +399,7 @@ public struct LoginFormView: View {
                         .type(.headline3, style: .primaryOnSurface)
                         .multilineTextAlignment(.center)
                     }
-                    .buttonStyle(DSHapticButtonStyle())
+                    .buttonStyle(DSPressableButtonStyle())
                     .accessibilityLabel(L10n.Login.serverQuestion)
                     .accessibilityHint(L10n.Login.serverInfoAccessibility)
                 }
@@ -496,7 +487,7 @@ public struct LoginFormView: View {
                         .allowsHitTesting(!store.host.isEmpty)
                         .accessibilityHidden(store.host.isEmpty)
                         .animation(
-                            .spring(duration: Constants.macButtonPopDuration, bounce: Constants.macButtonPopBounce),
+                            DSMotion.pop,
                             value: store.host.isEmpty
                         )
                 #else
@@ -520,7 +511,7 @@ public struct LoginFormView: View {
         // reaching the button, so the user has to tap twice. `.immediately` dismisses on
         // first touch instead, so the same tap reaches the button underneath.
         .scrollDismissesKeyboard(.immediately)
-        .animation(.easeInOut(duration: Constants.quickFadeDuration), value: store.host.isEmpty)
+        .animation(DSMotion.stateFade, value: store.host.isEmpty)
         // Get the Local Network permission alert out of the way while the user is still
         // typing the address, not the moment they hit "Test connection".
         .onAppear { LocalNetworkPrimer.prime() }
@@ -602,7 +593,7 @@ public struct LoginFormView: View {
                             .frame(width: .size44, height: .size44, alignment: .leading)
                             .contentShape(Rectangle())
                     }
-                    .buttonStyle(DSHapticButtonStyle())
+                    .buttonStyle(DSPressableButtonStyle())
                     .accessibilityLabel(L10n.Common.back)
                     Spacer()
                 }
@@ -697,7 +688,7 @@ public struct LoginFormView: View {
             .accessibilityIdentifier(AccessibilityIdentifiers.Login.identifierField)
             .focused($focusedField, equals: .identifier)
             .task {
-                try? await Task.sleep(for: Constants.identifierAutoFocusDelay)
+                try? await DSMotion.waitForStep(Constants.identifierAutoFocusDelay)
                 guard !Task.isCancelled else { return }
                 focusedField = .identifier
             }
@@ -762,12 +753,12 @@ public struct LoginFormView: View {
                             .frame(minWidth: .size44, minHeight: .size44)
                             .contentShape(Rectangle())
                     }
-                    .buttonStyle(DSHapticButtonStyle())
+                    .buttonStyle(DSPressableButtonStyle())
                     .accessibilityLabel(store.isPasswordVisible ? L10n.Login.hidePassword : L10n.Login.showPassword)
                     .transition(.opacity)
                 }
             }
-            .animation(.easeInOut(duration: Constants.contentFadeDuration), value: focusedField)
+            .animation(DSMotion.quickFade, value: focusedField)
         }
     }
 
@@ -814,7 +805,7 @@ public struct LoginFormView: View {
                 submitButtonRect = newFrame
             }
         }
-        .animation(.easeInOut(duration: Constants.contentFadeDuration), value: isSubmitLocalEnabled)
+        .animation(DSMotion.quickFade, value: isSubmitLocalEnabled)
     }
 
     private var orDivider: some View {

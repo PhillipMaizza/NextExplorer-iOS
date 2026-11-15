@@ -11,7 +11,6 @@ common.delete	Delete
 common.remove	Remove
 common.clear	Clear
 common.done	Done
-common.ok	OK
 common.openSettings	Open Settings
 common.logOut	Log Out
 common.close	Close
@@ -32,7 +31,6 @@ common.selectedCount	%lld Selected
 tab.browse	Browse
 tab.favorites	Favorites
 tab.shared	Shared
-tab.downloads	Downloads
 tab.offline	Offline
 tab.settings	Settings
 
@@ -45,8 +43,6 @@ sort.dateModified	Date Modified
 sort.dateAdded	Date Added
 sort.dateShared	Date Shared
 sort.expiration	Expiration
-sort.email	Email
-sort.type	Type
 sort.ascending	Ascending
 sort.descending	Descending
 
@@ -79,12 +75,9 @@ dateFormat.automatic	Automatic
 browse.navigationTitle	Browse
 browse.scopeThisFolder	This Folder
 browse.scopeEverywhere	Everywhere
-browse.searchScopeInFolder	This Folder
-browse.searchScopeEverywhere	Everywhere
 browse.locations	Locations
 browse.breadcrumbHint	Opens this folder
 browse.open	Open
-browse.unsupportedFileType	Unsupported file type
 browse.actionGetInfo	Get Info
 browse.actionPermissions	Permissions
 browse.actionRename	Rename
@@ -121,7 +114,6 @@ browse.searchEverywhere	Search everywhere
 browse.searchFailed	Couldn't search. Check your connection and try again.
 browse.progressExtracting	Extracting…
 browse.progressCompressing	Compressing…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Showing a saved copy from %@
 
 browse.actionCopy	Copy
@@ -134,8 +126,6 @@ browse.actionPaste	Paste
 browse.actionPasteCount	Paste %lld items
 browse.actionPasteHere	Paste here
 browse.actionClearClipboard	Clear clipboard
-browse.clipboardMoveCount	%lld to move
-browse.clipboardCopyCount	%lld to copy
 browse.clipboardCopiedOne	%@ copied
 browse.clipboardCopiedMany	%lld items copied
 browse.progressMoving	Moving…
@@ -179,8 +169,6 @@ favorites.removeFailedMany	Couldn't remove those favorites.
 favorites.removePartial	Removed %1$lld of %2$lld.
 
 # ---- downloads ----
-downloads.actionOpenInFiles	Open in Files
-downloads.emptyList	Files you download from Browse show up here.
 downloads.deleteConfirmTitle	Delete?
 downloads.deleteConfirmOne	Delete “%@”?
 downloads.deleteConfirmMany	Delete %lld files?
@@ -224,15 +212,12 @@ uploads.discardTitle	Discard upload?
 uploads.discardMessage	The files you added won't be uploaded.
 uploads.discardConfirm	Discard
 uploads.statusWaiting	Waiting
-uploads.statusFailed	Upload failed
 uploads.barTitleOne	Uploading %@
 uploads.barTitleMany	Uploading %lld files
 uploads.barFailedOne	1 upload failed
 uploads.barFailedMany	%lld uploads failed
-uploads.retryAll	Retry all
 uploads.complete	Upload complete
 uploads.completeMany	%lld files uploaded
-uploads.completeWithFailures	%1$lld uploaded, %2$lld failed
 uploads.failedGeneric	Couldn't upload this file.
 uploads.clear	Clear
 uploads.emptyList	No uploads yet.
@@ -271,7 +256,6 @@ createShare.sectionLabel	Label
 createShare.sectionAccessMode	Access Mode
 createShare.sectionWhoCanAccess	Who can access
 createShare.sectionShareLink	Share Link
-createShare.fieldPassword	Password
 createShare.togglePasswordProtect	Password protect
 createShare.toggleSetExpiration	Set expiration date
 createShare.fieldExpires	Expires
@@ -286,7 +270,6 @@ createShare.directFolderLink	Direct folder ZIP link
 createShare.directFileLink	Direct file link
 createShare.summaryAccess	Access
 createShare.summarySharedWith	Shared with
-createShare.summaryPassword	Password
 createShare.summaryPasswordProtected	Protected
 createShare.summaryExpires	Expires
 createShare.summarySpecificPeople	Specific people
@@ -296,7 +279,6 @@ createShare.errorPastExpiration	Pick an expiration date in the future.
 editShare.title	Edit Share Link
 editShare.save	Save Changes
 editShare.passwordKeepHint	Leave blank to keep the current password
-editShare.savedToast	Share link updated
 
 # ---- open share link ----
 
@@ -390,7 +372,6 @@ activityLog.anyOutcome	Any outcome
 activityLog.outcomeOk	Succeeded
 activityLog.outcomeRefused	Refused
 activityLog.searchPlaceholder	A name or a path
-activityLog.searchButton	Search
 activityLog.refresh	Refresh
 activityLog.clear	Empty the Log
 activityLog.clearTitle	Empty the log?
@@ -510,7 +491,6 @@ versionedFiles.newest	Latest: %@
 versionedFiles.versionPinned	Pinned
 versionedFiles.versionUnavailable	Unavailable
 versionedFiles.versionBy	By %@
-versionedFiles.detailFailed	This history could not be read.
 versionedFiles.deleteSelectedNone	Tick versions to delete
 versionedFiles.deleteSelected	Delete Selected (%lld)
 versionedFiles.deleteAll	Delete All Versions
@@ -614,19 +594,12 @@ serverDetails.nameErrorEmpty	Server name can't be empty.
 serverDetails.urlLabel	Server URL
 serverDetails.urlFootnote	The address where your NextExplorer instance is installed. To change it, sign out and add the server again.
 serverDetails.updateButton	Update Server
-serverDetails.savedMessage	Server details updated.
 serverDetails.logoErrorTooLarge	That image is too large. Pick one under 2 MB.
 serverDetails.cameraDeniedTitle	Camera Access Off
 serverDetails.cameraDeniedMessage	Turn on camera access in Settings to take a photo.
 
 # ---- licenses ----
 licenses.navigationTitle	Open Source Licenses
-licenses.sectionSoftware	Software
-licenses.sectionFontSoftware	Font Software
-licenses.labelAuthor	Author
-licenses.labelOriginalVersion	Original Version
-licenses.labelModifiedVersion	Modified Version
-licenses.labelReservedFontName	Reserved Font Name
 
 # ---- file info ----
 fileInfo.navigationTitleFolder	Folder
@@ -686,7 +659,6 @@ userManagement.createUser	Create User
 userManagement.badgeAdmin	Admin
 userManagement.emptyList	No users yet.
 userManagement.noSearchMatches	No users match “%@”.
-userManagement.loadFailed	Couldn't reach the server.
 userManagement.sortType	Type
 userManagement.sortName	Name
 userManagement.sortEmail	Email
@@ -698,7 +670,6 @@ userManagement.createEmailField	Email
 userManagement.createEmailPlaceholder	name@example.com
 userManagement.createUsernameField	Username (optional)
 userManagement.createUsernamePlaceholder	Derived from email
-userManagement.createPasswordField	Password
 userManagement.createPasswordPlaceholder	At least %lld characters
 userManagement.createGrantAdminToggle	Grant Admin Access
 userManagement.createGrantAdminSubtitle	Full control over files, shares and users.
@@ -720,7 +691,6 @@ userManagement.toastVolumeRemoved	Volume removed
 userManagement.errorEmailRequired	Email is required.
 userManagement.errorEmailInvalid	Enter a valid email address.
 userManagement.errorUsernameRequired	Username is required.
-userManagement.errorEmailInUse	Email already in use.
 userManagement.errorPasswordTooShort	Use at least %lld characters.
 
 # ---- user detail ----
@@ -902,8 +872,6 @@ login.errorIncomplete	Sign-in didn't complete. Please try again.
 login.errorUnreachable	Could not reach that server. Check the address and try again.
 login.errorUnexpectedResponse	Unexpected response from server.
 login.errorKeychain	Could not save your session on this device.
-login.errorDecoding	Server responded unexpectedly. Check the address and try again.
-login.errorNoLocalAuth	This server doesn't have username/password sign-in enabled.
 login.errorRateLimited	Too many attempts. Please wait a few minutes and try again.
 login.ssoButton	Sign in with SSO
 login.orDivider	or
@@ -927,7 +895,6 @@ login.diagnosticsIntro	This log shows what the server answered at each step, to 
 # ---- restored keys (were present in generated catalog but missing from tsv) ----
 browse.nameErrorReserved	That name isn't allowed.
 browse.nameErrorSeparators	A name can't contain / or \.
-browse.searchMatchLine	Line %1$lld: %2$@
 browse.searchMatchLineLabel	Line %lld
 browse.searchTooShort	Type at least %lld characters to search subfolders and file contents.
 browse.searchStoppedEarly	The search stopped at its time limit. These are the results found so far.
@@ -940,8 +907,6 @@ browse.searchMatchedByBoth	Name and Contents
 createShare.errorPasswordRequired	Enter a password or turn off password protection.
 login.errorServer	The server ran into a problem (error %lld). Please try again later.
 # ---- filter by type ----
-filter.sheetTitle	Filter by Type
-filter.button	Filter
 filter.all	All Types
 filter.folders	Folders
 filter.images	Images
@@ -1007,14 +972,9 @@ settings.sectionSupport	Support
 settings.rowRateApp	Rate NextExplorer
 settings.rowSupport	Help & Support
 menu.refresh	Refresh
-select.tableView	Table View
 # ---- save panel downloads (macOS) ----
-browse.progressDownloading	Downloading…
-browse.progressDownloadingIndexed	Downloading %1$lld of %2$lld…
 browse.downloadSavedTo	Saved to %@
-browse.downloadSavedCountTo	Saved %1$lld of %2$lld items to %3$@
 browse.downloadSavedAllTo	Saved %1$lld items to %2$@
-browse.downloadBulkFailed	Couldn't save these items to your device.
 # ---- open with (macOS) ----
 openWith.openIn	Open in %@
 openWith.openWith	Open With
@@ -1032,7 +992,6 @@ menu.newWindow	New Window
 menu.newTab	New Tab
 browse.actionOpenInNewWindow	Open in New Window
 browse.actionOpenInNewTab	Open in New Tab
-select.viewAs	View
 
 # ---- appearance, personal folder, download queue ----
 settings.rowAppearance	Appearance
@@ -1070,7 +1029,6 @@ macSettings.roleAdmin	Administrator
 macSettings.roleUser	User
 macSettings.status	Status
 macSettings.statusSignedIn	Signed In
-macSettings.manage	Manage…
 macSettings.cache	Cache
 macSettings.support	Help & Support…
 macSettings.permission	Permission

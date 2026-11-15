@@ -27,7 +27,7 @@ enum FileGridMetrics {
 }
 
 /// The shared shell for one row in a multi-select file listing (Favorites, Downloads): the
-/// leading selection glyph while selecting, the haptic button, the grouped-card background, the
+/// leading selection glyph while selecting, the pressable button, the grouped card background, the
 /// `.isSelected` trait, and the first/last separator suppression that makes the group read as one
 /// card. Callers supply the row content plus the feature-specific swipes and context menu; the
 /// shell owns nothing feature-specific, so both tabs' rows collapse to one implementation.
@@ -68,7 +68,7 @@ struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View,
         Button(action: onTap) {
             content.dsListSelection(isSelecting: isSelecting, isSelected: isSelected)
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .accessibilityAddTraits(isSelecting && isSelected ? [.isSelected] : [])
         .listRowBackground(Color.backgroundSecondary)
         .contextMenu { menu }
@@ -111,8 +111,7 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
                 .dsCard(padding: padding)
                 .dsGridSelection(isSelecting: isSelecting, isSelected: isSelected)
         }
-        .buttonStyle(DSHapticButtonStyle())
-        .hapticFeedback(.selection, trigger: isSelected)
+        .buttonStyle(DSPressableButtonStyle())
         .contextMenu { menu }
     }
 }

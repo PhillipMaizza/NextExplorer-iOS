@@ -7,7 +7,6 @@ common.delete	Удалить
 common.remove	Убрать
 common.clear	Очистить
 common.done	Готово
-common.ok	ОК
 common.openSettings	Открыть настройки
 common.logOut	Выйти
 common.close	Закрыть
@@ -23,7 +22,6 @@ common.selectedCount	Выбрано: %lld
 tab.browse	Обзор
 tab.favorites	Избранное
 tab.shared	Общие
-tab.downloads	Загрузки
 tab.settings	Настройки
 sort.sheetTitle	Сортировать по
 sort.name	Имя
@@ -33,8 +31,6 @@ sort.dateModified	Дата изменения
 sort.dateAdded	Дата добавления
 sort.dateShared	Дата открытия доступа
 sort.expiration	Срок действия
-sort.email	Эл. почта
-sort.type	Тип
 sort.ascending	По возрастанию
 sort.descending	По убыванию
 select.selectAll	Выбрать все
@@ -59,11 +55,8 @@ dateFormat.automatic	Автоматически
 browse.navigationTitle	Обзор
 browse.scopeThisFolder	Эта папка
 browse.scopeEverywhere	Везде
-browse.searchScopeInFolder	Эта папка
-browse.searchScopeEverywhere	Везде
 browse.locations	Расположения
 browse.open	Открыть
-browse.unsupportedFileType	Неподдерживаемый тип файла
 browse.actionGetInfo	Свойства
 browse.actionPermissions	Права доступа
 browse.actionRename	Переименовать
@@ -93,7 +86,6 @@ browse.searchEverywhere	Искать везде
 browse.searchFailed	Не удалось выполнить поиск. Проверьте соединение и повторите попытку.
 browse.progressExtracting	Извлечение…
 browse.progressCompressing	Сжатие…
-browse.offlineBannerTitle	Офлайн
 browse.offlineBannerDetail	Показана сохранённая копия от %@
 browse.actionCopy	Скопировать
 browse.destinationPickerMoveTitle	Переместить в…
@@ -105,8 +97,6 @@ browse.actionPaste	Вставить
 browse.actionPasteCount	Вставить объектов: %lld
 browse.actionPasteHere	Вставить сюда
 browse.actionClearClipboard	Очистить буфер обмена
-browse.clipboardMoveCount	%lld к перемещению
-browse.clipboardCopyCount	%lld к копированию
 browse.clipboardCopiedOne	%@ скопировано
 browse.clipboardCopiedMany	Скопировано объектов: %lld
 browse.progressMoving	Перемещение…
@@ -155,8 +145,6 @@ favorites.removeMessage	Это только уберёт их из избран�
 favorites.removeFailedOne	Не удалось убрать это из избранного.
 favorites.removeFailedMany	Не удалось убрать их из избранного.
 favorites.removePartial	Убрано %1$lld из %2$lld.
-downloads.actionOpenInFiles	Открыть в «Файлах»
-downloads.emptyList	Файлы, загруженные из Обзора, появятся здесь.
 downloads.deleteConfirmTitle	Удалить?
 downloads.deleteConfirmOne	Удалить «%@»?
 downloads.deleteConfirmMany	Удалить файлов: %lld?
@@ -197,15 +185,12 @@ uploads.discardTitle	Отменить отправку?
 uploads.discardMessage	Добавленные файлы не будут отправлены.
 uploads.discardConfirm	Отменить
 uploads.statusWaiting	Ожидание
-uploads.statusFailed	Ошибка отправки
 uploads.barTitleOne	Отправка %@
 uploads.barTitleMany	Отправка файлов: %lld
 uploads.barFailedOne	1 отправка не удалась
 uploads.barFailedMany	Не удалось отправок: %lld
-uploads.retryAll	Повторить все
 uploads.complete	Отправка завершена
 uploads.completeMany	Отправлено файлов: %lld
-uploads.completeWithFailures	Отправлено: %1$lld, с ошибкой: %2$lld
 uploads.failedGeneric	Не удалось отправить этот файл.
 uploads.clear	Очистить
 uploads.emptyList	Пока нет отправок.
@@ -240,7 +225,6 @@ createShare.sectionLabel	Метка
 createShare.sectionAccessMode	Режим доступа
 createShare.sectionWhoCanAccess	Кто имеет доступ
 createShare.sectionShareLink	Ссылка доступа
-createShare.fieldPassword	Пароль
 createShare.togglePasswordProtect	Защитить паролем
 createShare.toggleSetExpiration	Задать срок действия
 createShare.fieldExpires	Истекает
@@ -255,7 +239,6 @@ createShare.directFolderLink	Прямая ZIP-ссылка на папку
 createShare.directFileLink	Прямая ссылка на файл
 createShare.summaryAccess	Доступ
 createShare.summarySharedWith	Доступ открыт
-createShare.summaryPassword	Пароль
 createShare.summaryPasswordProtected	Защищено
 createShare.summaryExpires	Истекает
 createShare.summarySpecificPeople	Определённые люди
@@ -263,7 +246,6 @@ createShare.errorPastExpiration	Выберите дату истечения в 
 editShare.title	Изменить ссылку доступа
 editShare.save	Сохранить изменения
 editShare.passwordKeepHint	Оставьте пустым, чтобы сохранить текущий пароль
-editShare.savedToast	Ссылка доступа обновлена
 thumbnailSettings.navigationTitle	Миниатюры
 thumbnailSettings.subtitle	Управляйте тем, как сервер создаёт миниатюры изображений для всех клиентов.
 thumbnailSettings.enable	Создавать миниатюры
@@ -346,17 +328,10 @@ serverDetails.nameErrorEmpty	Имя сервера не может быть пу
 serverDetails.urlLabel	URL сервера
 serverDetails.urlFootnote	Адрес, по которому установлен ваш экземпляр NextExplorer. Чтобы изменить его, выйдите и добавьте сервер заново.
 serverDetails.updateButton	Обновить сервер
-serverDetails.savedMessage	Данные сервера обновлены.
 serverDetails.logoErrorTooLarge	Это изображение слишком большое. Выберите файл до 2 МБ.
 serverDetails.cameraDeniedTitle	Доступ к камере отключён
 serverDetails.cameraDeniedMessage	Включите доступ к камере в Настройках, чтобы сделать фото.
 licenses.navigationTitle	Лицензии открытого кода
-licenses.sectionSoftware	Программное обеспечение
-licenses.sectionFontSoftware	Программное обеспечение шрифтов
-licenses.labelAuthor	Автор
-licenses.labelOriginalVersion	Оригинальная версия
-licenses.labelModifiedVersion	Изменённая версия
-licenses.labelReservedFontName	Зарезервированное имя шрифта
 fileInfo.navigationTitleFolder	Папка
 fileInfo.rowKind	Тип
 fileInfo.rowSize	Размер
@@ -403,7 +378,6 @@ userManagement.createUser	Создать пользователя
 userManagement.badgeAdmin	Администратор
 userManagement.emptyList	Пока нет пользователей.
 userManagement.noSearchMatches	Нет пользователей, соответствующих «%@».
-userManagement.loadFailed	Не удалось связаться с сервером.
 userManagement.sortType	Тип
 userManagement.sortName	Имя
 userManagement.sortEmail	Эл. почта
@@ -415,7 +389,6 @@ userManagement.createEmailField	Эл. почта
 userManagement.createEmailPlaceholder	name@example.com
 userManagement.createUsernameField	Имя пользователя (необязательно)
 userManagement.createUsernamePlaceholder	Из адреса эл. почты
-userManagement.createPasswordField	Пароль
 userManagement.createPasswordPlaceholder	Не менее %lld символов
 userManagement.createGrantAdminToggle	Предоставить доступ администратора
 userManagement.createGrantAdminSubtitle	Полный контроль над файлами, ссылками и пользователями.
@@ -437,7 +410,6 @@ userManagement.toastVolumeRemoved	Том удалён
 userManagement.errorEmailRequired	Требуется адрес эл. почты.
 userManagement.errorEmailInvalid	Введите действительный адрес эл. почты.
 userManagement.errorUsernameRequired	Требуется имя пользователя.
-userManagement.errorEmailInUse	Этот адрес эл. почты уже используется.
 userManagement.errorPasswordTooShort	Используйте не менее %lld символов.
 userDetail.fallbackName	Пользователь
 userDetail.sectionGeneralInfo	Общая информация
@@ -529,13 +501,10 @@ login.errorIncomplete	Вход не завершён. Повторите поп�
 login.errorUnreachable	Не удалось связаться с этим сервером. Проверьте адрес и повторите попытку.
 login.errorUnexpectedResponse	Неожиданный ответ сервера.
 login.errorKeychain	Не удалось сохранить вашу сессию на этом устройстве.
-login.errorDecoding	Сервер ответил неожиданно. Проверьте адрес и повторите попытку.
-login.errorNoLocalAuth	На этом сервере не включён вход по имени пользователя и паролю.
 login.errorRateLimited	Слишком много попыток. Подождите несколько минут и повторите попытку.
 login.errorServer	На сервере возникла проблема (ошибка %lld). Повторите попытку позже.
 browse.nameErrorReserved	Это имя недопустимо.
 browse.nameErrorSeparators	Имя не может содержать / или \.
-browse.searchMatchLine	Строка %1$lld: %2$@
 browse.searchMatchLineLabel	Строка %lld
 browse.searchTooShort	Введите не менее %lld символов, чтобы искать во вложенных папках и содержимом файлов.
 browse.searchStoppedEarly	Поиск остановлен по истечении лимита времени. Вот результаты, найденные на данный момент.
@@ -546,8 +515,6 @@ browse.searchMatchedByName	Имя
 browse.searchMatchedByContent	Содержимое
 browse.searchMatchedByBoth	Имя и содержимое
 createShare.errorPasswordRequired	Введите пароль или отключите защиту паролем.
-filter.sheetTitle	Фильтр по типу
-filter.button	Фильтр
 filter.all	Все типы
 filter.folders	Папки
 filter.images	Изображения
@@ -631,7 +598,6 @@ settings.sectionSupport	Поддержка
 settings.rowRateApp	Оценить NextExplorer
 settings.rowSupport	Помощь и поддержка
 menu.refresh	Обновить
-select.tableView	Вид таблицы
 openWith.openIn	Открыть в %@
 openWith.openWith	Открыть в программе
 openWith.viewAsText	Показать как текст
@@ -647,7 +613,6 @@ menu.newWindow	Новое окно
 menu.newTab	Новая вкладка
 browse.actionOpenInNewWindow	Открыть в новом окне
 browse.actionOpenInNewTab	Открыть в новой вкладке
-select.viewAs	Вид
 settings.rowAppearance	Оформление
 appearance.system	Системное
 appearance.light	Светлое
@@ -667,12 +632,8 @@ downloadQueue.savedMany	Сохранено в Загрузках элемент�
 downloadQueue.bytesOf	%1$@ из %2$@
 downloadQueue.timeLeft	осталось %@
 browse.sectionPersonal	Личное
-browse.progressDownloading	Загрузка…
-browse.progressDownloadingIndexed	Загрузка %1$lld из %2$lld…
 browse.downloadSavedTo	Сохранено в %@
-browse.downloadSavedCountTo	Сохранено %1$lld из %2$lld объектов в %3$@
 browse.downloadSavedAllTo	Сохранено объектов: %1$lld в %2$@
-browse.downloadBulkFailed	Не удалось сохранить эти объекты на устройство.
 macSettings.labelFormat	%@:
 macSettings.addAccount	Добавить аккаунт…
 macSettings.changePassword	Изменить пароль…
@@ -685,7 +646,6 @@ macSettings.roleAdmin	Администратор
 macSettings.roleUser	Пользователь
 macSettings.status	Статус
 macSettings.statusSignedIn	Вход выполнен
-macSettings.manage	Управлять…
 macSettings.cache	Кэш
 macSettings.support	Помощь и поддержка…
 macSettings.permission	Доступ
@@ -938,7 +898,6 @@ activityLog.anyOutcome	Любой результат
 activityLog.outcomeOk	Успешно
 activityLog.outcomeRefused	отказано
 activityLog.searchPlaceholder	Имя или путь
-activityLog.searchButton	Поиск
 activityLog.refresh	Обновить
 activityLog.clear	Очистить журнал
 activityLog.clearTitle	Очистить журнал?
@@ -1054,7 +1013,6 @@ versionedFiles.newest	Последняя: %@
 versionedFiles.versionPinned	Закреплена
 versionedFiles.versionUnavailable	Недоступна
 versionedFiles.versionBy	Автор: %@
-versionedFiles.detailFailed	Не удалось прочитать эту историю.
 versionedFiles.deleteSelectedNone	Отметьте версии для удаления
 versionedFiles.deleteSelected	Удалить выбранные (%lld)
 versionedFiles.deleteAll	Удалить все версии

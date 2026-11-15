@@ -117,7 +117,7 @@ struct NameInputSheet: View {
                             .transition(.opacity)
                     }
                 }
-                .animation(.easeInOut(duration: 0.15), value: validationError)
+                .animation(DSMotion.quickFade, value: validationError)
                 DSButton(confirmTitle, style: .primary, isLoading: isBusy, action: submit)
                     .disabled(!canSubmit)
             }

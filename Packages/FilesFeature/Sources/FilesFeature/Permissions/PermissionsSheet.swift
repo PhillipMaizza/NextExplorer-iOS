@@ -159,7 +159,7 @@ struct PermissionsSheet: View {
             DSSelectionIndicator(isSelected: isOn, size: Constants.checkboxSize)
                 .contentShape(Rectangle())
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .hapticFeedback(.selection, trigger: isOn)
     }
 

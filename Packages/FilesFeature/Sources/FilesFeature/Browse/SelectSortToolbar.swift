@@ -47,7 +47,7 @@ func selectSortToolbar(
                 Button(action: onSelectAllToggled) {
                     IconKit.selectAll
                 }
-                .buttonStyle(DSHapticButtonStyle())
+                .buttonStyle(DSPressableButtonStyle())
                 .accessibilityLabelWithTooltip(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
             }
             ToolbarItem(placement: .primaryAction) {
@@ -104,7 +104,7 @@ private struct SelectModeCancelButton: View {
                 action()
             }
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
     }
 }
 

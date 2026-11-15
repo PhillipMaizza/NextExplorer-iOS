@@ -20,7 +20,6 @@ import VLCKitSPM
 /// is passed explicitly as an `:http-cookie` option or the stream 401s. Archive entries pass a
 /// local file URL, which needs no cookie.
 private enum VLCPlaybackConstants {
-    static let controlsFadeDuration: Double = 0.2
     /// Idle time before the controls fade while playing, like AVPlayer's chrome.
     static let controlsAutoHideDelay: Duration = .seconds(3)
     static let playButtonShadowRadius: CGFloat = 8
@@ -134,7 +133,7 @@ struct VLCPlayerView: View {
                     .opacity(controlsVisible ? 1 : 0)
                     .allowsHitTesting(controlsVisible)
                     .animation(
-                        .easeInOut(duration: VLCPlaybackConstants.controlsFadeDuration),
+                        DSMotion.galleryFade,
                         value: controlsVisible
                     )
             }

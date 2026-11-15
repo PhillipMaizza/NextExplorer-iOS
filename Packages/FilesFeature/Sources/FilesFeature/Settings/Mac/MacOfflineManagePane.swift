@@ -61,7 +61,7 @@
             .onDeleteCommand { removeSelection() }
             .offlineRemovalAlert(
                 store.removal,
-                onConfirm: { store.send(.removeConfirmed, animation: .default) },
+                onConfirm: { store.send(.removeConfirmed, animation: DSMotion.listDiff) },
                 onCancel: { store.send(.removeCancelled) }
             )
             .overlay {

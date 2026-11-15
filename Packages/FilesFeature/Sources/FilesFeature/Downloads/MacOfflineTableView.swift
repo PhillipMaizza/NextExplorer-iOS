@@ -230,7 +230,7 @@
             let downloads = selected.compactMap(\.saved)
             guard paths.isEmpty || downloads.isEmpty else { return }
             if !paths.isEmpty {
-                offlineStore.send(.removeSelectionTapped(paths: paths), animation: .default)
+                offlineStore.send(.removeSelectionTapped(paths: paths), animation: DSMotion.listDiff)
             } else if downloads.count == 1, let download = downloads.first {
                 store.send(.deleteTapped(download))
             } else if downloads.count > 1 {

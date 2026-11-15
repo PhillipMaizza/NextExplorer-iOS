@@ -15,18 +15,11 @@ struct BrowseRootSectionHeader: View {
 }
 
 /// The "My Files" row pinned above the volumes on the Browse root list.
-///
-/// A bare `List` row button may fire without ever reporting `isPressed` (the volume rows get it
-/// through their context menu interaction), so the press haptic is tied to the tap instead.
 struct PersonalSpaceRow: View {
     let onTap: () -> Void
-    @State private var tapCount = 0
 
     var body: some View {
-        Button {
-            tapCount += 1
-            onTap()
-        } label: {
+        Button(action: onTap) {
             FileRowView(
                 name: L10n.Browse.myFiles,
                 isDirectory: true,
@@ -36,7 +29,6 @@ struct PersonalSpaceRow: View {
             )
         }
         .buttonStyle(.plain)
-        .hapticFeedback(.impact(weight: .light), trigger: tapCount)
         .accessibilityHint(L10n.Browse.myFilesSubtitle)
     }
 }
@@ -58,7 +50,7 @@ struct PersonalSpaceGridCell: View {
             )
             .dsCard(padding: cellPadding)
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .accessibilityHint(L10n.Browse.myFilesSubtitle)
     }
 }

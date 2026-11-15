@@ -11,7 +11,6 @@ private enum Constants {
     static let bottomPadding: CGFloat = .space24
     static let rowIconSize: CGFloat = .iconSmall
     static let radioSize: CGFloat = .iconSmall
-    static let selectionAnimationDuration: Double = 0.2
     static let fullOpacity: Double = 1.0
     static let zeroOpacity: Double = 0.0
     static let toolbarButtonWidth: CGFloat = .iconMedium
@@ -44,7 +43,7 @@ struct SortToolbarButton: View {
                     .frame(width: Constants.toolbarButtonWidth, height: Constants.toolbarButtonHeight)
                     .foregroundStyle(Color.primaryDS)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .disabled(isDisabled)
             .accessibilityLabel(L10n.Common.sort)
         #endif
@@ -204,8 +203,8 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
             .padding(.vertical, Constants.rowVerticalPadding)
             .contentShape(Rectangle())
         }
-        .buttonStyle(DSHapticButtonStyle())
-        .animation(.easeInOut(duration: Constants.selectionAnimationDuration), value: isSelected)
+        .buttonStyle(DSPressableButtonStyle())
+        .animation(DSMotion.stateFade, value: isSelected)
         .hapticFeedback(.selection, trigger: isSelected)
     }
 }

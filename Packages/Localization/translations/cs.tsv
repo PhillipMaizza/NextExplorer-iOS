@@ -8,7 +8,6 @@ common.delete	Smazat
 common.remove	Odebrat
 common.clear	Vymazat
 common.done	Hotovo
-common.ok	OK
 common.openSettings	Otevřít Nastavení
 common.logOut	Odhlásit se
 common.close	Zavřít
@@ -27,7 +26,6 @@ common.selectedCount	Vybráno: %lld
 tab.browse	Procházet
 tab.favorites	Oblíbené
 tab.shared	Sdílené
-tab.downloads	Stažené
 tab.settings	Nastavení
 sort.sheetTitle	Řadit podle
 sort.name	Název
@@ -37,8 +35,6 @@ sort.dateModified	Datum změny
 sort.dateAdded	Datum přidání
 sort.dateShared	Datum sdílení
 sort.expiration	Vypršení platnosti
-sort.email	E-mail
-sort.type	Typ
 sort.ascending	Vzestupně
 sort.descending	Sestupně
 select.selectAll	Vybrat vše
@@ -63,12 +59,9 @@ dateFormat.automatic	Automaticky
 browse.navigationTitle	Procházet
 browse.scopeThisFolder	Tato složka
 browse.scopeEverywhere	Všude
-browse.searchScopeInFolder	Tato složka
-browse.searchScopeEverywhere	Všude
 browse.locations	Umístění
 browse.breadcrumbHint	Otevře tuto složku
 browse.open	Otevřít
-browse.unsupportedFileType	Nepodporovaný typ souboru
 browse.actionGetInfo	Informace
 browse.actionPermissions	Oprávnění
 browse.actionRename	Přejmenovat
@@ -101,7 +94,6 @@ browse.searchEverywhere	Hledat všude
 browse.searchFailed	Hledání se nezdařilo. Zkontrolujte připojení a zkuste to znovu.
 browse.progressExtracting	Rozbalování…
 browse.progressCompressing	Komprimace…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Zobrazuje se uložená kopie z %@
 browse.actionCopy	Kopírovat
 browse.destinationPickerMoveTitle	Přesunout do…
@@ -113,8 +105,6 @@ browse.actionPaste	Vložit
 browse.actionPasteCount	Vložit položky (%lld)
 browse.actionPasteHere	Vložit sem
 browse.actionClearClipboard	Vymazat schránku
-browse.clipboardMoveCount	K přesunutí: %lld
-browse.clipboardCopyCount	Ke kopírování: %lld
 browse.clipboardCopiedOne	Zkopírováno: %@
 browse.clipboardCopiedMany	Zkopírováno položek: %lld
 browse.progressMoving	Přesouvání…
@@ -164,8 +154,6 @@ favorites.removeMessage	Tím se pouze odeberou z Oblíbených.
 favorites.removeFailedOne	Tuto oblíbenou položku se nepodařilo odebrat.
 favorites.removeFailedMany	Tyto oblíbené položky se nepodařilo odebrat.
 favorites.removePartial	Odebráno %1$lld z %2$lld.
-downloads.actionOpenInFiles	Otevřít v Souborech
-downloads.emptyList	Soubory, které stáhnete z Procházení, se zobrazí zde.
 downloads.deleteConfirmTitle	Smazat?
 downloads.deleteConfirmOne	Smazat „%@“?
 downloads.deleteConfirmMany	Smazat soubory (%lld)?
@@ -206,15 +194,12 @@ uploads.discardTitle	Zahodit nahrávání?
 uploads.discardMessage	Přidané soubory nebudou nahrány.
 uploads.discardConfirm	Zahodit
 uploads.statusWaiting	Čeká
-uploads.statusFailed	Nahrávání se nezdařilo
 uploads.barTitleOne	Nahrávání: %@
 uploads.barTitleMany	Nahrávání souborů: %lld
 uploads.barFailedOne	1 nahrávání se nezdařilo
 uploads.barFailedMany	Nezdařená nahrávání: %lld
-uploads.retryAll	Zkusit vše znovu
 uploads.complete	Nahrávání dokončeno
 uploads.completeMany	Nahráno souborů: %lld
-uploads.completeWithFailures	Nahráno: %1$lld, nezdařilo se: %2$lld
 uploads.failedGeneric	Tento soubor se nepodařilo nahrát.
 uploads.clear	Vymazat
 uploads.emptyList	Zatím žádná nahrávání.
@@ -248,7 +233,6 @@ createShare.sectionLabel	Popisek
 createShare.sectionAccessMode	Režim přístupu
 createShare.sectionWhoCanAccess	Kdo má přístup
 createShare.sectionShareLink	Odkaz ke sdílení
-createShare.fieldPassword	Heslo
 createShare.togglePasswordProtect	Chránit heslem
 createShare.toggleSetExpiration	Nastavit datum vypršení
 createShare.fieldExpires	Vyprší
@@ -263,7 +247,6 @@ createShare.directFolderLink	Přímý odkaz na ZIP složky
 createShare.directFileLink	Přímý odkaz na soubor
 createShare.summaryAccess	Přístup
 createShare.summarySharedWith	Sdíleno s
-createShare.summaryPassword	Heslo
 createShare.summaryPasswordProtected	Chráněno
 createShare.summaryExpires	Vyprší
 createShare.summarySpecificPeople	Konkrétní lidé
@@ -271,7 +254,6 @@ createShare.errorPastExpiration	Vyberte datum vypršení v budoucnosti.
 editShare.title	Upravit odkaz ke sdílení
 editShare.save	Uložit změny
 editShare.passwordKeepHint	Nechte prázdné, aby zůstalo stávající heslo
-editShare.savedToast	Odkaz ke sdílení aktualizován
 thumbnailSettings.navigationTitle	Miniatury
 thumbnailSettings.subtitle	Určete, jak server vytváří miniatury obrázků pro všechny klienty.
 thumbnailSettings.enable	Vytvářet miniatury
@@ -345,7 +327,6 @@ activityLog.anyOutcome	Libovolný výsledek
 activityLog.outcomeOk	Úspěšné
 activityLog.outcomeRefused	Odmítnuto
 activityLog.searchPlaceholder	Název nebo cesta
-activityLog.searchButton	Hledat
 activityLog.refresh	Obnovit
 activityLog.clear	Vyprázdnit protokol
 activityLog.clearTitle	Vyprázdnit protokol?
@@ -461,7 +442,6 @@ versionedFiles.newest	Poslední: %@
 versionedFiles.versionPinned	Připnuto
 versionedFiles.versionUnavailable	Nedostupné
 versionedFiles.versionBy	Autor: %@
-versionedFiles.detailFailed	Tuto historii se nepodařilo přečíst.
 versionedFiles.deleteSelectedNone	Zaškrtněte verze ke smazání
 versionedFiles.deleteSelected	Smazat vybrané (%lld)
 versionedFiles.deleteAll	Smazat všechny verze
@@ -551,16 +531,10 @@ serverDetails.nameErrorEmpty	Název serveru nesmí být prázdný.
 serverDetails.urlLabel	URL serveru
 serverDetails.urlFootnote	Adresa, na které je nainstalována vaše instance NextExploreru. Chcete-li ji změnit, odhlaste se a přidejte server znovu.
 serverDetails.updateButton	Aktualizovat server
-serverDetails.savedMessage	Údaje o serveru byly aktualizovány.
 serverDetails.logoErrorTooLarge	Tento obrázek je příliš velký. Vyberte obrázek menší než 2 MB.
 serverDetails.cameraDeniedTitle	Přístup k fotoaparátu je vypnutý
 serverDetails.cameraDeniedMessage	Zapněte v Nastavení přístup k fotoaparátu, abyste mohli pořídit fotku.
 licenses.navigationTitle	Licence open source
-licenses.sectionFontSoftware	Software písem
-licenses.labelAuthor	Autor
-licenses.labelOriginalVersion	Původní verze
-licenses.labelModifiedVersion	Upravená verze
-licenses.labelReservedFontName	Vyhrazený název písma
 fileInfo.navigationTitleFolder	Složka
 fileInfo.rowKind	Druh
 fileInfo.rowSize	Velikost
@@ -610,7 +584,6 @@ userManagement.createUser	Vytvořit uživatele
 userManagement.badgeAdmin	Správce
 userManagement.emptyList	Zatím žádní uživatelé.
 userManagement.noSearchMatches	Žádní uživatelé neodpovídají „%@“.
-userManagement.loadFailed	Server není dostupný.
 userManagement.sortType	Typ
 userManagement.sortName	Název
 userManagement.sortEmail	E-mail
@@ -621,7 +594,6 @@ userManagement.createNavigationTitle	Vytvořit uživatele
 userManagement.createEmailField	E-mail
 userManagement.createUsernameField	Uživatelské jméno (volitelné)
 userManagement.createUsernamePlaceholder	Odvozeno z e-mailu
-userManagement.createPasswordField	Heslo
 userManagement.createPasswordPlaceholder	Alespoň znaků: %lld
 userManagement.createGrantAdminToggle	Udělit přístup správce
 userManagement.createGrantAdminSubtitle	Plná kontrola nad soubory, sdíleními a uživateli.
@@ -643,7 +615,6 @@ userManagement.toastVolumeRemoved	Svazek odebrán
 userManagement.errorEmailRequired	E-mail je povinný.
 userManagement.errorEmailInvalid	Zadejte platnou e-mailovou adresu.
 userManagement.errorUsernameRequired	Uživatelské jméno je povinné.
-userManagement.errorEmailInUse	E-mail se již používá.
 userManagement.errorPasswordTooShort	Použijte alespoň znaků: %lld.
 userDetail.fallbackName	Uživatel
 userDetail.sectionGeneralInfo	Obecné informace
@@ -809,8 +780,6 @@ login.errorIncomplete	Přihlášení nebylo dokončeno. Zkuste to prosím znovu.
 login.errorUnreachable	K tomuto serveru se nepodařilo připojit. Zkontrolujte adresu a zkuste to znovu.
 login.errorUnexpectedResponse	Neočekávaná odpověď serveru.
 login.errorKeychain	Relaci se nepodařilo uložit na tomto zařízení.
-login.errorDecoding	Server odpověděl neočekávaně. Zkontrolujte adresu a zkuste to znovu.
-login.errorNoLocalAuth	Na tomto serveru není povoleno přihlášení uživatelským jménem a heslem.
 login.errorRateLimited	Příliš mnoho pokusů. Počkejte prosím několik minut a zkuste to znovu.
 login.ssoButton	Přihlásit se přes SSO
 login.orDivider	nebo
@@ -832,7 +801,6 @@ login.diagnosticsTitle	Protokol přihlášení
 login.diagnosticsIntro	Tento protokol ukazuje, co server odpověděl v každém kroku, aby bylo možné zjistit, proč se přihlášení nedaří. Nikdy neobsahuje vaše heslo, zadanou adresu ani uživatelské jméno. Pošlete ho vývojáři.
 browse.nameErrorReserved	Tento název není povolen.
 browse.nameErrorSeparators	Název nesmí obsahovat / ani \.
-browse.searchMatchLine	Řádek %1$lld: %2$@
 browse.searchMatchLineLabel	Řádek %lld
 browse.searchTooShort	Pro hledání v podsložkách a obsahu souborů zadejte alespoň znaků: %lld.
 browse.searchStoppedEarly	Hledání se zastavilo na časovém limitu. Toto jsou dosud nalezené výsledky.
@@ -844,8 +812,6 @@ browse.searchMatchedByContent	Obsah
 browse.searchMatchedByBoth	Název a obsah
 createShare.errorPasswordRequired	Zadejte heslo nebo vypněte ochranu heslem.
 login.errorServer	Na serveru došlo k problému (chyba %lld). Zkuste to prosím později.
-filter.sheetTitle	Filtrovat podle typu
-filter.button	Filtr
 filter.all	Všechny typy
 filter.folders	Složky
 filter.images	Obrázky
@@ -898,13 +864,8 @@ settings.sectionSupport	Podpora
 settings.rowRateApp	Ohodnotit NextExplorer
 settings.rowSupport	Nápověda a podpora
 menu.refresh	Obnovit
-select.tableView	Zobrazení tabulky
-browse.progressDownloading	Stahování…
-browse.progressDownloadingIndexed	Stahování %1$lld z %2$lld…
 browse.downloadSavedTo	Uloženo do: %@
-browse.downloadSavedCountTo	Uloženo %1$lld z %2$lld položek do: %3$@
 browse.downloadSavedAllTo	Uloženo položek: %1$lld do: %2$@
-browse.downloadBulkFailed	Tyto položky se nepodařilo uložit do zařízení.
 openWith.openIn	Otevřít v %@
 openWith.openWith	Otevřít v aplikaci
 openWith.viewAsText	Zobrazit jako text
@@ -921,7 +882,6 @@ menu.newWindow	Nové okno
 menu.newTab	Nová karta
 browse.actionOpenInNewWindow	Otevřít v novém okně
 browse.actionOpenInNewTab	Otevřít v nové kartě
-select.viewAs	Zobrazení
 settings.rowAppearance	Vzhled
 appearance.system	Systém
 appearance.light	Světlý
@@ -952,7 +912,6 @@ macSettings.roleAdmin	Správce
 macSettings.roleUser	Uživatel
 macSettings.status	Stav
 macSettings.statusSignedIn	Přihlášeno
-macSettings.manage	Spravovat…
 macSettings.cache	Mezipaměť
 macSettings.support	Nápověda a podpora…
 macSettings.permission	Oprávnění

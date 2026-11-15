@@ -9,8 +9,6 @@ private enum Constants {
     static let chevronSize: CGFloat = .iconXSmall
     static let fullOpacity: Double = 1.0
     static let halfOpacity: Double = 0.5
-    static let favoriteSpringResponse: Double = 0.3
-    static let favoriteSpringDamping: Double = 0.7
 }
 
 struct FileRowView: View {
@@ -220,15 +218,13 @@ struct FileRowView: View {
         .padding(.vertical, .space4)
         .contentShape(Rectangle())
         .animation(
-            .spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping),
+            DSMotion.pop,
             value: isFavorite
         )
         .animation(
-            .spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping),
+            DSMotion.pop,
             value: isAvailableOffline
         )
-        // Only favoriting buzzes: un-favoriting isn't a "win" worth celebrating the same way.
-        .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
     }
 
     @ViewBuilder

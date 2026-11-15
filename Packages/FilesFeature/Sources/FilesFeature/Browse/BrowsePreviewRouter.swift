@@ -40,7 +40,7 @@ struct BrowsePreviewRouter: View {
                 .environment(\.previewOffline, offlineAction(for: item))
                 .offlineRemovalAlert(
                     store.offlineRemoval,
-                    onConfirm: { store.send(.offlineRemovalConfirmed) },
+                    onConfirm: { store.send(.offlineRemovalConfirmed, animation: DSMotion.listDiff) },
                     onCancel: { store.send(.offlineRemovalCancelled) }
                 )
         #endif
@@ -79,9 +79,9 @@ struct BrowsePreviewRouter: View {
             onInfo: { store.send(.infoTapped($0)) },
             // Same gates as the list's menu: a move deletes the original, a copy is checked on paste.
             onMove: (access?.canWrite ?? false) && (access?.canDelete ?? false)
-                ? { store.send(.moveTapped($0), animation: .default) }
+                ? { store.send(.moveTapped($0), animation: DSMotion.listDiff) }
                 : nil,
-            onCopy: { store.send(.copyTapped($0), animation: .default) },
+            onCopy: { store.send(.copyTapped($0), animation: DSMotion.listDiff) },
             onEdit: { store.send(.previewEditTapped($0)) }
         )
     }

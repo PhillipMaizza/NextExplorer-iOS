@@ -60,7 +60,6 @@ struct UploadReviewView: View {
             isCameraPresented: $isCameraPresented,
             isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
         )
-        .tint(.primaryDS)
         .disabled(store.isPreparing)
         .opacity(store.isPreparing ? Constants.disabledOpacity : Constants.enabledOpacity)
     }
@@ -154,7 +153,7 @@ struct UploadReviewView: View {
                         .frame(width: .iconXSmall, height: .iconXSmall)
                 }
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .tint(.primaryDS)
 
             Divider()
@@ -181,7 +180,7 @@ struct UploadReviewView: View {
                 UploadFileRow(
                     file: file,
                     onPreview: { previewSelection = PreviewSelection(id: file.id) },
-                    onRemove: { store.send(.removeFileTapped(id: file.id), animation: .default) }
+                    onRemove: { store.send(.removeFileTapped(id: file.id), animation: DSMotion.listDiff) }
                 )
                 if index < store.files.count - 1 {
                     Divider()

@@ -125,7 +125,7 @@
 
         private func remove(_ ids: Set<PickedFile.ID>) {
             for id in ids {
-                store.send(.removeFileTapped(id: id), animation: .default)
+                store.send(.removeFileTapped(id: id), animation: DSMotion.listDiff)
             }
         }
     }

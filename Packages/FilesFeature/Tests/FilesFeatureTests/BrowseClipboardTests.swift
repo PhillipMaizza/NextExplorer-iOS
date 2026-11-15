@@ -80,7 +80,7 @@ struct BrowseClipboardTests {
 
     @Test("Paste copies into the current folder, lists the copy, and empties the clipboard when keep is off")
     func pasteCopiesIntoTheCurrentFolderAndClearsTheClipboardWhenKeepIsOff() async {
-        var state = makeState()
+        let state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let gate = AsyncGate()
         let requests = LockIsolated<[String]>([])
@@ -109,7 +109,7 @@ struct BrowseClipboardTests {
 
     @Test("Paste keeps the clipboard when keep items after copy is on")
     func pasteKeepsTheClipboardWhenKeepItemsAfterCopyIsOn() async {
-        var state = makeState()
+        let state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
@@ -134,7 +134,7 @@ struct BrowseClipboardTests {
     func pasteSuccessMessageReportsSkippedCopies() async {
         let second = BrowseFixtures.file(TestFile.bText, in: TestFolder.inbox)
         let third = BrowseFixtures.file("c.txt", in: TestFolder.inbox)
-        var state = makeState()
+        let state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming, second, third], operation: .copy) }
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
@@ -163,7 +163,7 @@ struct BrowseClipboardTests {
 
     @Test("A failed paste keeps the clipboard and shows the server's message")
     func pasteFailureKeepsTheClipboardAndSurfacesAReadableError() async {
-        var state = makeState()
+        let state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let store = BrowseFixtures.store(state) {
             $0.filesClient.transferItems = { _, _, _, _ in throw FilesClientError.serverMessage(
@@ -186,7 +186,7 @@ struct BrowseClipboardTests {
 
     @Test("Retrying a failed paste runs the same transfer again and empties the clipboard on success")
     func retryTransferReRunsTheFailedTransferAndClearsTheClipboardOnSuccess() async {
-        var state = makeState()
+        let state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let attempts = LockIsolated(0)
         let gate = AsyncGate()
@@ -228,7 +228,7 @@ struct BrowseClipboardTests {
 
     @Test("Paste does nothing at the volume root")
     func pasteIsANoOpAtTheVolumeRoot() async {
-        var state = makeState("")
+        let state = makeState("")
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         // No transferItems override: a request fails the test as unimplemented.
         let store = BrowseFixtures.store(state)
@@ -238,7 +238,7 @@ struct BrowseClipboardTests {
 
     @Test("Paste does nothing in a folder that is not writable")
     func pasteIsANoOpWhenTheFolderIsNotWritable() async {
-        var state = makeState(access: BrowseTestSupport.readOnlyAccess)
+        let state = makeState(access: BrowseTestSupport.readOnlyAccess)
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let store = BrowseFixtures.store(state)
 
@@ -248,7 +248,7 @@ struct BrowseClipboardTests {
     @Test("Pasting a folder into a subdirectory of itself does nothing, instead of sending a doomed request")
     func pasteIsANoOpWhenCopyingAFolderIntoASubdirectoryOfItself() async {
         // The server fails this with EINVAL ("Cannot copy to a subdirectory of self").
-        var state = makeState("Media/Photos/2024")
+        let state = makeState("Media/Photos/2024")
         state.$clipboard.withLock { $0 = FileClipboard(
             items: [BrowseFixtures.folder(TestFolder.photos, in: TestFolder.media)],
             operation: .copy

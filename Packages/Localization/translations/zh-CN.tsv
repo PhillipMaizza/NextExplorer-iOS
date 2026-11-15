@@ -7,7 +7,6 @@ common.delete	删除
 common.remove	移除
 common.clear	清除
 common.done	完成
-common.ok	好
 common.openSettings	打开设置
 common.logOut	退出登录
 common.close	关闭
@@ -23,7 +22,6 @@ common.selectedCount	已选择 %lld 项
 tab.browse	浏览
 tab.favorites	收藏
 tab.shared	共享
-tab.downloads	下载
 tab.settings	设置
 sort.sheetTitle	排序方式
 sort.name	名称
@@ -33,8 +31,6 @@ sort.dateModified	修改日期
 sort.dateAdded	添加日期
 sort.dateShared	共享日期
 sort.expiration	到期
-sort.email	电子邮件
-sort.type	类型
 sort.ascending	升序
 sort.descending	降序
 select.selectAll	全选
@@ -59,11 +55,8 @@ dateFormat.automatic	自动
 browse.navigationTitle	浏览
 browse.scopeThisFolder	此文件夹
 browse.scopeEverywhere	所有位置
-browse.searchScopeInFolder	此文件夹
-browse.searchScopeEverywhere	所有位置
 browse.locations	位置
 browse.open	打开
-browse.unsupportedFileType	不支持的文件类型
 browse.actionGetInfo	显示简介
 browse.actionPermissions	权限
 browse.actionRename	重命名
@@ -93,7 +86,6 @@ browse.searchEverywhere	在所有位置搜索
 browse.searchFailed	无法搜索。请检查连接后重试。
 browse.progressExtracting	正在解压…
 browse.progressCompressing	正在压缩…
-browse.offlineBannerTitle	离线
 browse.offlineBannerDetail	正在显示来自 %@ 的已保存副本
 browse.actionCopy	拷贝
 browse.destinationPickerMoveTitle	移动到…
@@ -105,8 +97,6 @@ browse.actionPaste	粘贴
 browse.actionPasteCount	粘贴 %lld 项
 browse.actionPasteHere	粘贴到此处
 browse.actionClearClipboard	清空剪贴板
-browse.clipboardMoveCount	%lld 项待移动
-browse.clipboardCopyCount	%lld 项待拷贝
 browse.clipboardCopiedOne	已拷贝 %@
 browse.clipboardCopiedMany	已拷贝 %lld 项
 browse.progressMoving	正在移动…
@@ -140,8 +130,6 @@ favorites.removeMessage	这仅会将它们从收藏中移除。
 favorites.removeFailedOne	无法移除该收藏。
 favorites.removeFailedMany	无法移除这些收藏。
 favorites.removePartial	已移除 %2$lld 项中的 %1$lld 项。
-downloads.actionOpenInFiles	在“文件”中打开
-downloads.emptyList	您从“浏览”下载的文件会显示在此处。
 downloads.deleteConfirmTitle	删除？
 downloads.deleteConfirmOne	删除“%@”？
 downloads.deleteConfirmMany	删除 %lld 个文件？
@@ -179,15 +167,12 @@ uploads.discardTitle	放弃上传？
 uploads.discardMessage	您添加的文件将不会上传。
 uploads.discardConfirm	放弃
 uploads.statusWaiting	等待中
-uploads.statusFailed	上传失败
 uploads.barTitleOne	正在上传 %@
 uploads.barTitleMany	正在上传 %lld 个文件
 uploads.barFailedOne	1 个上传失败
 uploads.barFailedMany	%lld 个上传失败
-uploads.retryAll	全部重试
 uploads.complete	上传完成
 uploads.completeMany	已上传 %lld 个文件
-uploads.completeWithFailures	已上传 %1$lld 个，失败 %2$lld 个
 uploads.failedGeneric	无法上传此文件。
 uploads.clear	清除
 uploads.emptyList	暂无上传。
@@ -222,7 +207,6 @@ createShare.sectionLabel	标签
 createShare.sectionAccessMode	访问模式
 createShare.sectionWhoCanAccess	谁可以访问
 createShare.sectionShareLink	共享链接
-createShare.fieldPassword	密码
 createShare.togglePasswordProtect	密码保护
 createShare.toggleSetExpiration	设置到期日期
 createShare.fieldExpires	到期
@@ -237,7 +221,6 @@ createShare.directFolderLink	直接文件夹 ZIP 链接
 createShare.directFileLink	直接文件链接
 createShare.summaryAccess	访问权限
 createShare.summarySharedWith	共享给
-createShare.summaryPassword	密码
 createShare.summaryPasswordProtected	受保护
 createShare.summaryExpires	到期
 createShare.summarySpecificPeople	特定人员
@@ -245,7 +228,6 @@ createShare.errorPastExpiration	请选择将来的到期日期。
 editShare.title	编辑共享链接
 editShare.save	保存更改
 editShare.passwordKeepHint	留空以保留当前密码
-editShare.savedToast	共享链接已更新
 thumbnailSettings.navigationTitle	缩略图
 thumbnailSettings.subtitle	控制服务器为每个客户端生成图像缩略图的方式。
 thumbnailSettings.enable	生成缩略图
@@ -328,17 +310,10 @@ serverDetails.nameErrorEmpty	服务器名称不能为空。
 serverDetails.urlLabel	服务器 URL
 serverDetails.urlFootnote	您的 NextExplorer 实例的安装地址。若要更改，请退出登录并重新添加服务器。
 serverDetails.updateButton	更新服务器
-serverDetails.savedMessage	服务器详情已更新。
 serverDetails.logoErrorTooLarge	该图像过大。请选择小于 2 MB 的图像。
 serverDetails.cameraDeniedTitle	相机访问已关闭
 serverDetails.cameraDeniedMessage	请在“设置”中开启相机访问以便拍照。
 licenses.navigationTitle	开源许可证
-licenses.sectionSoftware	软件
-licenses.sectionFontSoftware	字体软件
-licenses.labelAuthor	作者
-licenses.labelOriginalVersion	原始版本
-licenses.labelModifiedVersion	修改版本
-licenses.labelReservedFontName	保留字体名称
 fileInfo.navigationTitleFolder	文件夹
 fileInfo.rowKind	种类
 fileInfo.rowSize	大小
@@ -385,7 +360,6 @@ userManagement.createUser	创建用户
 userManagement.badgeAdmin	管理员
 userManagement.emptyList	暂无用户。
 userManagement.noSearchMatches	没有与“%@”匹配的用户。
-userManagement.loadFailed	无法连接到服务器。
 userManagement.sortType	类型
 userManagement.sortName	名称
 userManagement.sortEmail	电子邮件
@@ -397,7 +371,6 @@ userManagement.createEmailField	电子邮件
 userManagement.createEmailPlaceholder	name@example.com
 userManagement.createUsernameField	用户名（可选）
 userManagement.createUsernamePlaceholder	由电子邮件推导
-userManagement.createPasswordField	密码
 userManagement.createPasswordPlaceholder	至少 %lld 个字符
 userManagement.createGrantAdminToggle	授予管理员访问权限
 userManagement.createGrantAdminSubtitle	对文件、共享和用户的完全控制。
@@ -419,7 +392,6 @@ userManagement.toastVolumeRemoved	卷已移除
 userManagement.errorEmailRequired	电子邮件为必填项。
 userManagement.errorEmailInvalid	请输入有效的电子邮件地址。
 userManagement.errorUsernameRequired	用户名为必填项。
-userManagement.errorEmailInUse	电子邮件已被使用。
 userManagement.errorPasswordTooShort	请至少使用 %lld 个字符。
 userDetail.fallbackName	用户
 userDetail.sectionGeneralInfo	常规信息
@@ -511,13 +483,10 @@ login.errorIncomplete	登录未完成。请重试。
 login.errorUnreachable	无法连接到该服务器。请检查地址后重试。
 login.errorUnexpectedResponse	服务器响应异常。
 login.errorKeychain	无法在此设备上保存您的会话。
-login.errorDecoding	服务器响应异常。请检查地址后重试。
-login.errorNoLocalAuth	此服务器未启用用户名/密码登录。
 login.errorRateLimited	尝试次数过多。请等待几分钟后重试。
 login.errorServer	服务器遇到问题（错误 %lld）。请稍后重试。
 browse.nameErrorReserved	该名称不允许使用。
 browse.nameErrorSeparators	名称不能包含 / 或 \。
-browse.searchMatchLine	第 %1$lld 行：%2$@
 browse.searchMatchLineLabel	第 %lld 行
 browse.searchTooShort	至少输入 %lld 个字符以搜索子文件夹和文件内容。
 browse.searchStoppedEarly	搜索已达到时间限制而停止。以下是目前找到的结果。
@@ -528,8 +497,6 @@ browse.searchMatchedByName	名称
 browse.searchMatchedByContent	内容
 browse.searchMatchedByBoth	名称和内容
 createShare.errorPasswordRequired	请输入密码或关闭密码保护。
-filter.sheetTitle	按类型筛选
-filter.button	筛选
 filter.all	所有类型
 filter.folders	文件夹
 filter.images	图像
@@ -613,7 +580,6 @@ settings.sectionSupport	支持
 settings.rowRateApp	为 NextExplorer 评分
 settings.rowSupport	帮助与支持
 menu.refresh	刷新
-select.tableView	表格视图
 openWith.openIn	在 %@ 中打开
 openWith.openWith	打开方式
 openWith.viewAsText	以文本查看
@@ -629,7 +595,6 @@ menu.newWindow	新建窗口
 menu.newTab	新建标签页
 browse.actionOpenInNewWindow	在新窗口中打开
 browse.actionOpenInNewTab	在新标签页中打开
-select.viewAs	显示方式
 settings.rowAppearance	外观
 appearance.system	跟随系统
 appearance.light	浅色
@@ -649,12 +614,8 @@ downloadQueue.savedMany	%lld 个项目已保存到下载
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	剩余 %@
 browse.sectionPersonal	个人
-browse.progressDownloading	正在下载…
-browse.progressDownloadingIndexed	正在下载 %2$lld 项中的第 %1$lld 项…
 browse.downloadSavedTo	已保存到 %@
-browse.downloadSavedCountTo	已将 %2$lld 项中的 %1$lld 项保存到 %3$@
 browse.downloadSavedAllTo	已将 %1$lld 项保存到 %2$@
-browse.downloadBulkFailed	无法将这些项目保存到您的设备。
 macSettings.labelFormat	%@：
 macSettings.addAccount	添加账户…
 macSettings.changePassword	更改密码…
@@ -667,7 +628,6 @@ macSettings.roleAdmin	管理员
 macSettings.roleUser	用户
 macSettings.status	状态
 macSettings.statusSignedIn	已登录
-macSettings.manage	管理…
 macSettings.cache	缓存
 macSettings.support	帮助与支持…
 macSettings.permission	权限
@@ -899,7 +859,6 @@ activityLog.anyOutcome	任何结果
 activityLog.outcomeOk	成功
 activityLog.outcomeRefused	被拒绝
 activityLog.searchPlaceholder	名称或路径
-activityLog.searchButton	搜索
 activityLog.refresh	刷新
 activityLog.clear	清空日志
 activityLog.clearTitle	清空日志？
@@ -1015,7 +974,6 @@ versionedFiles.newest	最新：%@
 versionedFiles.versionPinned	已固定
 versionedFiles.versionUnavailable	不可用
 versionedFiles.versionBy	作者：%@
-versionedFiles.detailFailed	无法读取此历史记录。
 versionedFiles.deleteSelectedNone	勾选要删除的版本
 versionedFiles.deleteSelected	删除所选（%lld）
 versionedFiles.deleteAll	删除所有版本

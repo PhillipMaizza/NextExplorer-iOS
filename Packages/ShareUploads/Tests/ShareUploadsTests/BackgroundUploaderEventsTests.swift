@@ -299,10 +299,11 @@ struct BackgroundUploaderEventsTests {
             now: { clock.now }, startTasks: harness.starter.start
         )
 
+        let first = harness.uploader
         for _ in 0 ..< Constants.racedBatches {
             let batch = try harness.makeBatch(names: [TestFile.aPhoto, TestFile.bPhoto])
             DispatchQueue.concurrentPerform(iterations: 2) { index in
-                (index == 0 ? harness.uploader : second).complete(
+                (index == 0 ? first : second).complete(
                     batchID: batch.id,
                     index: index,
                     result: .failure(.network)

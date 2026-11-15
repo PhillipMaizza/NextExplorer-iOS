@@ -131,13 +131,11 @@ public enum IconKit {
     public static let key = Image(systemName: "key")
     public static let cloud = Image(systemName: "cloud")
     public static let plus = Image(systemName: "plus")
-    /// `zipper.page`. Not to be confused with `archiveDocument` (`doc.zipper`) below.
-    public static let archivePage = Image(systemName: "zipper.page")
     public static let select = Image(systemName: "checkmark.circle")
     public static let unfavorite = Image(systemName: "star.slash")
     public static let info = Image(systemName: "info.circle")
     public static let extract = Image(systemName: "archivebox")
-    /// `doc.zipper`. See `archivePage` above.
+    /// `doc.zipper`.
     public static let archiveDocument = Image(systemName: "doc.zipper")
     public static let size = Image(systemName: "internaldrive")
     public static let sparkle = Image(systemName: "sparkles")

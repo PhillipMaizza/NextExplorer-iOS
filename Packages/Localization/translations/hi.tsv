@@ -7,7 +7,6 @@ common.delete	हटाएं
 common.remove	निकालें
 common.clear	साफ़ करें
 common.done	पूर्ण
-common.ok	ठीक है
 common.openSettings	सेटिंग्स खोलें
 common.logOut	साइन आउट करें
 common.close	बंद करें
@@ -23,7 +22,6 @@ common.selectedCount	%lld चयनित
 tab.browse	ब्राउज़ करें
 tab.favorites	पसंदीदा
 tab.shared	साझा किए गए
-tab.downloads	डाउनलोड
 tab.settings	सेटिंग्स
 sort.sheetTitle	इसके अनुसार क्रमबद्ध करें
 sort.name	नाम
@@ -33,8 +31,6 @@ sort.dateModified	संशोधन तिथि
 sort.dateAdded	जोड़ने की तिथि
 sort.dateShared	साझा करने की तिथि
 sort.expiration	समाप्ति
-sort.email	ईमेल
-sort.type	प्रकार
 sort.ascending	आरोही
 sort.descending	अवरोही
 select.selectAll	सभी चुनें
@@ -59,11 +55,8 @@ dateFormat.automatic	स्वचालित
 browse.navigationTitle	ब्राउज़ करें
 browse.scopeThisFolder	यह फ़ोल्डर
 browse.scopeEverywhere	हर जगह
-browse.searchScopeInFolder	यह फ़ोल्डर
-browse.searchScopeEverywhere	हर जगह
 browse.locations	स्थान
 browse.open	खोलें
-browse.unsupportedFileType	असमर्थित फ़ाइल प्रकार
 browse.actionGetInfo	जानकारी
 browse.actionPermissions	अनुमतियां
 browse.actionRename	नाम बदलें
@@ -93,7 +86,6 @@ browse.searchEverywhere	हर जगह खोजें
 browse.searchFailed	खोज नहीं सके। अपना कनेक्शन जांचें और पुनः प्रयास करें।
 browse.progressExtracting	निकाला जा रहा है…
 browse.progressCompressing	संपीड़ित किया जा रहा है…
-browse.offlineBannerTitle	ऑफ़लाइन
 browse.offlineBannerDetail	%@ से सहेजी गई प्रति दिखाई जा रही है
 browse.actionCopy	कॉपी करें
 browse.destinationPickerMoveTitle	यहां ले जाएं…
@@ -105,8 +97,6 @@ browse.actionPaste	पेस्ट करें
 browse.actionPasteCount	%lld आइटम पेस्ट करें
 browse.actionPasteHere	यहां पेस्ट करें
 browse.actionClearClipboard	क्लिपबोर्ड साफ़ करें
-browse.clipboardMoveCount	%lld ले जाने के लिए
-browse.clipboardCopyCount	%lld कॉपी करने के लिए
 browse.clipboardCopiedOne	%@ कॉपी किया गया
 browse.clipboardCopiedMany	%lld आइटम कॉपी किए गए
 browse.progressMoving	ले जाया जा रहा है…
@@ -145,8 +135,6 @@ favorites.removeMessage	यह उन्हें केवल पसंदी�
 favorites.removeFailedOne	वह पसंदीदा निकाल नहीं सके।
 favorites.removeFailedMany	वे पसंदीदा निकाल नहीं सके।
 favorites.removePartial	%2$lld में से %1$lld निकाले गए।
-downloads.actionOpenInFiles	फ़ाइल्स में खोलें
-downloads.emptyList	ब्राउज़ से डाउनलोड की गई फ़ाइलें यहां दिखती हैं।
 downloads.deleteConfirmTitle	हटाएं?
 downloads.deleteConfirmOne	“%@” हटाएं?
 downloads.deleteConfirmMany	%lld फ़ाइलें हटाएं?
@@ -185,15 +173,12 @@ uploads.discardTitle	अपलोड छोड़ें?
 uploads.discardMessage	आपके द्वारा जोड़ी गई फ़ाइलें अपलोड नहीं होंगी।
 uploads.discardConfirm	छोड़ें
 uploads.statusWaiting	प्रतीक्षा में
-uploads.statusFailed	अपलोड विफल
 uploads.barTitleOne	%@ अपलोड हो रहा है
 uploads.barTitleMany	%lld फ़ाइलें अपलोड हो रही हैं
 uploads.barFailedOne	1 अपलोड विफल
 uploads.barFailedMany	%lld अपलोड विफल
-uploads.retryAll	सभी पुनः प्रयास करें
 uploads.complete	अपलोड पूर्ण
 uploads.completeMany	%lld फ़ाइलें अपलोड की गईं
-uploads.completeWithFailures	%1$lld अपलोड की गईं, %2$lld विफल
 uploads.failedGeneric	यह फ़ाइल अपलोड नहीं कर सके।
 uploads.clear	साफ़ करें
 uploads.emptyList	अभी तक कोई अपलोड नहीं।
@@ -228,7 +213,6 @@ createShare.sectionLabel	लेबल
 createShare.sectionAccessMode	एक्सेस मोड
 createShare.sectionWhoCanAccess	कौन एक्सेस कर सकता है
 createShare.sectionShareLink	साझा लिंक
-createShare.fieldPassword	पासवर्ड
 createShare.togglePasswordProtect	पासवर्ड से सुरक्षित करें
 createShare.toggleSetExpiration	समाप्ति तिथि सेट करें
 createShare.fieldExpires	समाप्त होता है
@@ -243,7 +227,6 @@ createShare.directFolderLink	सीधा फ़ोल्डर ZIP लिंक
 createShare.directFileLink	सीधा फ़ाइल लिंक
 createShare.summaryAccess	एक्सेस
 createShare.summarySharedWith	इनके साथ साझा
-createShare.summaryPassword	पासवर्ड
 createShare.summaryPasswordProtected	सुरक्षित
 createShare.summaryExpires	समाप्त होता है
 createShare.summarySpecificPeople	विशिष्ट लोग
@@ -251,7 +234,6 @@ createShare.errorPastExpiration	भविष्य की समाप्ति 
 editShare.title	साझा लिंक संपादित करें
 editShare.save	परिवर्तन सहेजें
 editShare.passwordKeepHint	वर्तमान पासवर्ड रखने के लिए खाली छोड़ें
-editShare.savedToast	साझा लिंक अपडेट किया गया
 thumbnailSettings.navigationTitle	थंबनेल
 thumbnailSettings.subtitle	नियंत्रित करें कि सर्वर हर क्लाइंट के लिए छवि थंबनेल कैसे बनाता है।
 thumbnailSettings.enable	थंबनेल बनाएं
@@ -334,17 +316,10 @@ serverDetails.nameErrorEmpty	सर्वर का नाम खाली न�
 serverDetails.urlLabel	सर्वर URL
 serverDetails.urlFootnote	वह पता जहां आपका NextExplorer इंस्टेंस स्थापित है। इसे बदलने के लिए, साइन आउट करें और सर्वर फिर से जोड़ें।
 serverDetails.updateButton	सर्वर अपडेट करें
-serverDetails.savedMessage	सर्वर विवरण अपडेट किया गया।
 serverDetails.logoErrorTooLarge	वह छवि बहुत बड़ी है। 2 MB से कम की चुनें।
 serverDetails.cameraDeniedTitle	कैमरा एक्सेस बंद
 serverDetails.cameraDeniedMessage	फ़ोटो लेने के लिए सेटिंग्स में कैमरा एक्सेस चालू करें।
 licenses.navigationTitle	ओपन सोर्स लाइसेंस
-licenses.sectionSoftware	सॉफ़्टवेयर
-licenses.sectionFontSoftware	फ़ॉन्ट सॉफ़्टवेयर
-licenses.labelAuthor	लेखक
-licenses.labelOriginalVersion	मूल संस्करण
-licenses.labelModifiedVersion	संशोधित संस्करण
-licenses.labelReservedFontName	आरक्षित फ़ॉन्ट नाम
 fileInfo.navigationTitleFolder	फ़ोल्डर
 fileInfo.rowKind	प्रकार
 fileInfo.rowSize	आकार
@@ -391,7 +366,6 @@ userManagement.createUser	उपयोगकर्ता बनाएं
 userManagement.badgeAdmin	व्यवस्थापक
 userManagement.emptyList	अभी तक कोई उपयोगकर्ता नहीं।
 userManagement.noSearchMatches	“%@” से कोई उपयोगकर्ता मेल नहीं खाता।
-userManagement.loadFailed	सर्वर तक नहीं पहुंच सके।
 userManagement.sortType	प्रकार
 userManagement.sortName	नाम
 userManagement.sortEmail	ईमेल
@@ -403,7 +377,6 @@ userManagement.createEmailField	ईमेल
 userManagement.createEmailPlaceholder	name@example.com
 userManagement.createUsernameField	उपयोगकर्ता नाम (वैकल्पिक)
 userManagement.createUsernamePlaceholder	ईमेल से व्युत्पन्न
-userManagement.createPasswordField	पासवर्ड
 userManagement.createPasswordPlaceholder	कम से कम %lld अक्षर
 userManagement.createGrantAdminToggle	व्यवस्थापक एक्सेस दें
 userManagement.createGrantAdminSubtitle	फ़ाइलों, साझाकरण और उपयोगकर्ताओं पर पूर्ण नियंत्रण।
@@ -425,7 +398,6 @@ userManagement.toastVolumeRemoved	वॉल्यूम निकाला ग�
 userManagement.errorEmailRequired	ईमेल आवश्यक है।
 userManagement.errorEmailInvalid	एक मान्य ईमेल पता दर्ज करें।
 userManagement.errorUsernameRequired	उपयोगकर्ता नाम आवश्यक है।
-userManagement.errorEmailInUse	ईमेल पहले से उपयोग में है।
 userManagement.errorPasswordTooShort	कम से कम %lld अक्षर उपयोग करें।
 userDetail.fallbackName	उपयोगकर्ता
 userDetail.sectionGeneralInfo	सामान्य जानकारी
@@ -517,13 +489,10 @@ login.errorIncomplete	साइन-इन पूरा नहीं हुआ।
 login.errorUnreachable	उस सर्वर तक नहीं पहुंच सके। पता जांचें और पुनः प्रयास करें।
 login.errorUnexpectedResponse	सर्वर से अप्रत्याशित प्रतिक्रिया।
 login.errorKeychain	इस डिवाइस पर आपका सत्र सहेज नहीं सके।
-login.errorDecoding	सर्वर ने अप्रत्याशित रूप से प्रतिक्रिया दी। पता जांचें और पुनः प्रयास करें।
-login.errorNoLocalAuth	इस सर्वर पर उपयोगकर्ता नाम/पासवर्ड साइन-इन सक्षम नहीं है।
 login.errorRateLimited	बहुत अधिक प्रयास। कृपया कुछ मिनट प्रतीक्षा करें और पुनः प्रयास करें।
 login.errorServer	सर्वर में समस्या आई (त्रुटि %lld)। कृपया बाद में पुनः प्रयास करें।
 browse.nameErrorReserved	वह नाम अनुमत नहीं है।
 browse.nameErrorSeparators	नाम में / या \ नहीं हो सकता।
-browse.searchMatchLine	पंक्ति %1$lld: %2$@
 browse.searchMatchLineLabel	पंक्ति %lld
 browse.searchTooShort	सबफ़ोल्डर और फ़ाइलों की सामग्री में खोजने के लिए कम से कम %lld अक्षर लिखें।
 browse.searchStoppedEarly	खोज अपनी समय सीमा पर रुक गई। अब तक मिले परिणाम ये हैं।
@@ -534,8 +503,6 @@ browse.searchMatchedByName	नाम
 browse.searchMatchedByContent	सामग्री
 browse.searchMatchedByBoth	नाम और सामग्री
 createShare.errorPasswordRequired	एक पासवर्ड दर्ज करें या पासवर्ड सुरक्षा बंद करें।
-filter.sheetTitle	प्रकार के अनुसार फ़िल्टर करें
-filter.button	फ़िल्टर
 filter.all	सभी प्रकार
 filter.folders	फ़ोल्डर
 filter.images	छवियां
@@ -619,7 +586,6 @@ settings.sectionSupport	सहायता
 settings.rowRateApp	NextExplorer को रेट करें
 settings.rowSupport	सहायता और समर्थन
 menu.refresh	रीफ़्रेश करें
-select.tableView	तालिका दृश्य
 openWith.openIn	%@ में खोलें
 openWith.openWith	इसके साथ खोलें
 openWith.viewAsText	टेक्स्ट के रूप में देखें
@@ -635,7 +601,6 @@ menu.newWindow	नई विंडो
 menu.newTab	नया टैब
 browse.actionOpenInNewWindow	नई विंडो में खोलें
 browse.actionOpenInNewTab	नए टैब में खोलें
-select.viewAs	दृश्य
 settings.rowAppearance	रूप-रंग
 appearance.system	सिस्टम
 appearance.light	लाइट
@@ -655,12 +620,8 @@ downloadQueue.savedMany	%lld आइटम डाउनलोड में सह
 downloadQueue.bytesOf	%2$@ में से %1$@
 downloadQueue.timeLeft	%@ बाकी
 browse.sectionPersonal	व्यक्तिगत
-browse.progressDownloading	डाउनलोड हो रहा है…
-browse.progressDownloadingIndexed	%2$lld में से %1$lld डाउनलोड हो रहा है…
 browse.downloadSavedTo	%@ में सहेजा गया
-browse.downloadSavedCountTo	%2$lld में से %1$lld आइटम %3$@ में सहेजे गए
 browse.downloadSavedAllTo	%1$lld आइटम %2$@ में सहेजे गए
-browse.downloadBulkFailed	इन आइटम को आपके डिवाइस पर सहेज नहीं सके।
 macSettings.labelFormat	%@:
 macSettings.addAccount	खाता जोड़ें…
 macSettings.changePassword	पासवर्ड बदलें…
@@ -673,7 +634,6 @@ macSettings.roleAdmin	व्यवस्थापक
 macSettings.roleUser	उपयोगकर्ता
 macSettings.status	स्थिति
 macSettings.statusSignedIn	साइन इन है
-macSettings.manage	प्रबंधित करें…
 macSettings.cache	कैश
 macSettings.support	सहायता और समर्थन…
 macSettings.permission	अनुमति
@@ -912,7 +872,6 @@ activityLog.anyOutcome	कोई भी परिणाम
 activityLog.outcomeOk	सफल
 activityLog.outcomeRefused	अस्वीकृत
 activityLog.searchPlaceholder	नाम या पथ
-activityLog.searchButton	खोजें
 activityLog.refresh	ताज़ा करें
 activityLog.clear	लॉग खाली करें
 activityLog.clearTitle	लॉग खाली करें?
@@ -1028,7 +987,6 @@ versionedFiles.newest	नवीनतम: %@
 versionedFiles.versionPinned	पिन किया
 versionedFiles.versionUnavailable	उपलब्ध नहीं
 versionedFiles.versionBy	%@ द्वारा
-versionedFiles.detailFailed	यह इतिहास पढ़ा नहीं जा सका।
 versionedFiles.deleteSelectedNone	हटाने के लिए संस्करण चुनें
 versionedFiles.deleteSelected	चुने हुए हटाएँ (%lld)
 versionedFiles.deleteAll	सभी संस्करण हटाएँ

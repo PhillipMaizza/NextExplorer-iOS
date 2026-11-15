@@ -39,7 +39,7 @@
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
-                .animation(.easeInOut(duration: 0.2), value: isVisible)
+                .animation(DSMotion.stateFade, value: isVisible)
                 .task(id: store.offlineProgress.isActive) {
                     guard store.offlineProgress.isActive else {
                         isRunShown = false
@@ -69,8 +69,11 @@
                         IconKit.error.foregroundStyle(Color.negativeText)
                         Text(message).lineLimit(1).truncationMode(.tail)
                         Spacer()
-                        Button(L10n.Common.clear) { store.send(.offline(.dismissStatusTapped), animation: .default) }
-                        Button(L10n.Common.retry) { store.send(.offline(.resyncTapped), animation: .default) }
+                        Button(L10n.Common.clear) { store.send(
+                            .offline(.dismissStatusTapped),
+                            animation: DSMotion.stateFade
+                        ) }
+                        Button(L10n.Common.retry) { store.send(.offline(.resyncTapped), animation: DSMotion.stateFade) }
                     } else {
                         IconKit.availableOffline.foregroundStyle(Color.accent)
                         Text(titles.offlineBarTitle).lineLimit(1).truncationMode(.middle)
@@ -88,7 +91,8 @@
                             }
                         }
                         .frame(width: Metrics.progressWidth)
-                        Button(L10n.Common.cancel) { store.send(.offline(.cancelTapped), animation: .default) }
+                        Button(L10n.Common.cancel) { store.send(.offline(.cancelTapped), animation: DSMotion.stateFade)
+                        }
                     }
                 }
                 .controlSize(.small)
@@ -102,7 +106,7 @@
 
     @MainActor
     private func statusBarPreviewStore(_ phase: OfflineDownloadProgress.Phase) -> StoreOf<MainTabFeature> {
-        var state = MainTabFeature.State(
+        let state = MainTabFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
             user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com")
         )

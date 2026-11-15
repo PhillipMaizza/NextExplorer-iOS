@@ -7,7 +7,6 @@ common.delete	Löschen
 common.remove	Entfernen
 common.clear	Löschen
 common.done	Fertig
-common.ok	OK
 common.openSettings	Einstellungen öffnen
 common.logOut	Abmelden
 common.close	Schließen
@@ -23,7 +22,6 @@ common.selectedCount	%lld ausgewählt
 tab.browse	Durchsuchen
 tab.favorites	Favoriten
 tab.shared	Geteilt
-tab.downloads	Downloads
 tab.settings	Einstellungen
 sort.sheetTitle	Sortieren nach
 sort.name	Name
@@ -33,8 +31,6 @@ sort.dateModified	Änderungsdatum
 sort.dateAdded	Hinzufügedatum
 sort.dateShared	Teilungsdatum
 sort.expiration	Ablauf
-sort.email	E-Mail
-sort.type	Typ
 sort.ascending	Aufsteigend
 sort.descending	Absteigend
 select.selectAll	Alle auswählen
@@ -59,11 +55,8 @@ dateFormat.automatic	Automatisch
 browse.navigationTitle	Durchsuchen
 browse.scopeThisFolder	Dieser Ordner
 browse.scopeEverywhere	Überall
-browse.searchScopeInFolder	Dieser Ordner
-browse.searchScopeEverywhere	Überall
 browse.locations	Orte
 browse.open	Öffnen
-browse.unsupportedFileType	Nicht unterstützter Dateityp
 browse.actionGetInfo	Informationen
 browse.actionPermissions	Berechtigungen
 browse.actionRename	Umbenennen
@@ -93,7 +86,6 @@ browse.searchEverywhere	Überall suchen
 browse.searchFailed	Suche fehlgeschlagen. Prüfe deine Verbindung und versuche es erneut.
 browse.progressExtracting	Wird entpackt…
 browse.progressCompressing	Wird komprimiert…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Gesicherte Kopie von %@ wird angezeigt
 browse.actionCopy	Kopieren
 browse.destinationPickerMoveTitle	Bewegen nach…
@@ -105,8 +97,6 @@ browse.actionPaste	Einsetzen
 browse.actionPasteCount	%lld Objekte einsetzen
 browse.actionPasteHere	Hier einsetzen
 browse.actionClearClipboard	Zwischenablage leeren
-browse.clipboardMoveCount	%lld zu bewegen
-browse.clipboardCopyCount	%lld zu kopieren
 browse.clipboardCopiedOne	%@ kopiert
 browse.clipboardCopiedMany	%lld Objekte kopiert
 browse.progressMoving	Wird bewegt…
@@ -145,8 +135,6 @@ favorites.removeMessage	Dies entfernt sie nur aus den Favoriten.
 favorites.removeFailedOne	Dieser Favorit konnte nicht entfernt werden.
 favorites.removeFailedMany	Diese Favoriten konnten nicht entfernt werden.
 favorites.removePartial	%1$lld von %2$lld entfernt.
-downloads.actionOpenInFiles	In Dateien öffnen
-downloads.emptyList	Dateien, die du aus Durchsuchen lädst, erscheinen hier.
 downloads.deleteConfirmTitle	Löschen?
 downloads.deleteConfirmOne	„%@“ löschen?
 downloads.deleteConfirmMany	%lld Dateien löschen?
@@ -185,15 +173,12 @@ uploads.discardTitle	Upload verwerfen?
 uploads.discardMessage	Die hinzugefügten Dateien werden nicht hochgeladen.
 uploads.discardConfirm	Verwerfen
 uploads.statusWaiting	Warten
-uploads.statusFailed	Upload fehlgeschlagen
 uploads.barTitleOne	%@ wird hochgeladen
 uploads.barTitleMany	%lld Dateien werden hochgeladen
 uploads.barFailedOne	1 Upload fehlgeschlagen
 uploads.barFailedMany	%lld Uploads fehlgeschlagen
-uploads.retryAll	Alle erneut versuchen
 uploads.complete	Upload abgeschlossen
 uploads.completeMany	%lld Dateien hochgeladen
-uploads.completeWithFailures	%1$lld hochgeladen, %2$lld fehlgeschlagen
 uploads.failedGeneric	Diese Datei konnte nicht hochgeladen werden.
 uploads.clear	Löschen
 uploads.emptyList	Noch keine Uploads.
@@ -228,7 +213,6 @@ createShare.sectionLabel	Bezeichnung
 createShare.sectionAccessMode	Zugriffsmodus
 createShare.sectionWhoCanAccess	Wer kann zugreifen
 createShare.sectionShareLink	Freigabelink
-createShare.fieldPassword	Passwort
 createShare.togglePasswordProtect	Mit Passwort schützen
 createShare.toggleSetExpiration	Ablaufdatum festlegen
 createShare.fieldExpires	Läuft ab
@@ -243,7 +227,6 @@ createShare.directFolderLink	Direkter ZIP-Link des Ordners
 createShare.directFileLink	Direkter Dateilink
 createShare.summaryAccess	Zugriff
 createShare.summarySharedWith	Geteilt mit
-createShare.summaryPassword	Passwort
 createShare.summaryPasswordProtected	Geschützt
 createShare.summaryExpires	Läuft ab
 createShare.summarySpecificPeople	Bestimmte Personen
@@ -251,7 +234,6 @@ createShare.errorPastExpiration	Wähle ein Ablaufdatum in der Zukunft.
 editShare.title	Freigabelink bearbeiten
 editShare.save	Änderungen sichern
 editShare.passwordKeepHint	Leer lassen, um das aktuelle Passwort zu behalten
-editShare.savedToast	Freigabelink aktualisiert
 thumbnailSettings.navigationTitle	Miniaturen
 thumbnailSettings.subtitle	Steuere, wie der Server Bildminiaturen für jeden Client erzeugt.
 thumbnailSettings.enable	Miniaturen erzeugen
@@ -334,17 +316,10 @@ serverDetails.nameErrorEmpty	Der Servername darf nicht leer sein.
 serverDetails.urlLabel	Server-URL
 serverDetails.urlFootnote	Die Adresse, unter der deine NextExplorer-Instanz installiert ist. Zum Ändern melde dich ab und füge den Server erneut hinzu.
 serverDetails.updateButton	Server aktualisieren
-serverDetails.savedMessage	Serverdetails aktualisiert.
 serverDetails.logoErrorTooLarge	Dieses Bild ist zu groß. Wähle eines unter 2 MB.
 serverDetails.cameraDeniedTitle	Kamerazugriff aus
 serverDetails.cameraDeniedMessage	Aktiviere den Kamerazugriff in den Einstellungen, um ein Foto aufzunehmen.
 licenses.navigationTitle	Open-Source-Lizenzen
-licenses.sectionSoftware	Software
-licenses.sectionFontSoftware	Schriftsoftware
-licenses.labelAuthor	Autor
-licenses.labelOriginalVersion	Originalversion
-licenses.labelModifiedVersion	Geänderte Version
-licenses.labelReservedFontName	Reservierter Schriftname
 fileInfo.navigationTitleFolder	Ordner
 fileInfo.rowKind	Art
 fileInfo.rowSize	Größe
@@ -391,7 +366,6 @@ userManagement.createUser	Benutzer erstellen
 userManagement.badgeAdmin	Admin
 userManagement.emptyList	Noch keine Benutzer.
 userManagement.noSearchMatches	Keine Benutzer passen zu „%@“.
-userManagement.loadFailed	Server konnte nicht erreicht werden.
 userManagement.sortType	Typ
 userManagement.sortName	Name
 userManagement.sortEmail	E-Mail
@@ -403,7 +377,6 @@ userManagement.createEmailField	E-Mail
 userManagement.createEmailPlaceholder	name@beispiel.com
 userManagement.createUsernameField	Benutzername (optional)
 userManagement.createUsernamePlaceholder	Aus E-Mail abgeleitet
-userManagement.createPasswordField	Passwort
 userManagement.createPasswordPlaceholder	Mindestens %lld Zeichen
 userManagement.createGrantAdminToggle	Administratorzugriff gewähren
 userManagement.createGrantAdminSubtitle	Vollständige Kontrolle über Dateien, Freigaben und Benutzer.
@@ -425,7 +398,6 @@ userManagement.toastVolumeRemoved	Volume entfernt
 userManagement.errorEmailRequired	E-Mail ist erforderlich.
 userManagement.errorEmailInvalid	Gib eine gültige E-Mail-Adresse ein.
 userManagement.errorUsernameRequired	Benutzername ist erforderlich.
-userManagement.errorEmailInUse	E-Mail wird bereits verwendet.
 userManagement.errorPasswordTooShort	Verwende mindestens %lld Zeichen.
 userDetail.fallbackName	Benutzer
 userDetail.sectionGeneralInfo	Allgemeine Infos
@@ -517,13 +489,10 @@ login.errorIncomplete	Die Anmeldung wurde nicht abgeschlossen. Bitte versuche es
 login.errorUnreachable	Dieser Server konnte nicht erreicht werden. Prüfe die Adresse und versuche es erneut.
 login.errorUnexpectedResponse	Unerwartete Antwort vom Server.
 login.errorKeychain	Deine Sitzung konnte auf diesem Gerät nicht gesichert werden.
-login.errorDecoding	Der Server hat unerwartet geantwortet. Prüfe die Adresse und versuche es erneut.
-login.errorNoLocalAuth	Auf diesem Server ist die Anmeldung mit Benutzername und Passwort nicht aktiviert.
 login.errorRateLimited	Zu viele Versuche. Bitte warte einige Minuten und versuche es erneut.
 login.errorServer	Auf dem Server ist ein Problem aufgetreten (Fehler %lld). Bitte versuche es später erneut.
 browse.nameErrorReserved	Dieser Name ist nicht zulässig.
 browse.nameErrorSeparators	Ein Name darf kein / oder \ enthalten.
-browse.searchMatchLine	Zeile %1$lld: %2$@
 browse.searchMatchLineLabel	Zeile %lld
 browse.searchTooShort	Gib mindestens %lld Zeichen ein, um Unterordner und Dateiinhalte zu durchsuchen.
 browse.searchStoppedEarly	Die Suche wurde am Zeitlimit beendet. Das sind die bisher gefundenen Ergebnisse.
@@ -534,8 +503,6 @@ browse.searchMatchedByName	Name
 browse.searchMatchedByContent	Inhalt
 browse.searchMatchedByBoth	Name und Inhalt
 createShare.errorPasswordRequired	Gib ein Passwort ein oder deaktiviere den Passwortschutz.
-filter.sheetTitle	Nach Typ filtern
-filter.button	Filtern
 filter.all	Alle Typen
 filter.folders	Ordner
 filter.images	Bilder
@@ -619,7 +586,6 @@ settings.sectionSupport	Support
 settings.rowRateApp	NextExplorer bewerten
 settings.rowSupport	Hilfe & Support
 menu.refresh	Aktualisieren
-select.tableView	Tabellenansicht
 openWith.openIn	In %@ öffnen
 openWith.openWith	Öffnen mit
 openWith.viewAsText	Als Text anzeigen
@@ -635,7 +601,6 @@ menu.newWindow	Neues Fenster
 menu.newTab	Neuer Tab
 browse.actionOpenInNewWindow	In neuem Fenster öffnen
 browse.actionOpenInNewTab	In neuem Tab öffnen
-select.viewAs	Darstellung
 settings.rowAppearance	Erscheinungsbild
 appearance.system	System
 appearance.light	Hell
@@ -655,12 +620,8 @@ downloadQueue.savedMany	%lld Objekte in Downloads gespeichert
 downloadQueue.bytesOf	%1$@ von %2$@
 downloadQueue.timeLeft	noch %@
 browse.sectionPersonal	Persönlich
-browse.progressDownloading	Wird geladen…
-browse.progressDownloadingIndexed	%1$lld von %2$lld wird geladen…
 browse.downloadSavedTo	Gesichert in %@
-browse.downloadSavedCountTo	%1$lld von %2$lld Objekten in %3$@ gesichert
 browse.downloadSavedAllTo	%1$lld Objekte in %2$@ gesichert
-browse.downloadBulkFailed	Diese Objekte konnten nicht auf deinem Gerät gesichert werden.
 macSettings.labelFormat	%@:
 macSettings.addAccount	Account hinzufügen …
 macSettings.changePassword	Passwort ändern …
@@ -673,7 +634,6 @@ macSettings.roleAdmin	Administrator
 macSettings.roleUser	Benutzer
 macSettings.status	Status
 macSettings.statusSignedIn	Angemeldet
-macSettings.manage	Verwalten …
 macSettings.cache	Cache
 macSettings.support	Hilfe & Support …
 macSettings.permission	Berechtigung
@@ -912,7 +872,6 @@ activityLog.anyOutcome	Jedes Ergebnis
 activityLog.outcomeOk	Erfolgreich
 activityLog.outcomeRefused	Abgelehnt
 activityLog.searchPlaceholder	Ein Name oder ein Pfad
-activityLog.searchButton	Suchen
 activityLog.refresh	Aktualisieren
 activityLog.clear	Protokoll leeren
 activityLog.clearTitle	Protokoll leeren?
@@ -1028,7 +987,6 @@ versionedFiles.newest	Neueste: %@
 versionedFiles.versionPinned	Angeheftet
 versionedFiles.versionUnavailable	Nicht verfügbar
 versionedFiles.versionBy	Von %@
-versionedFiles.detailFailed	Dieser Verlauf konnte nicht gelesen werden.
 versionedFiles.deleteSelectedNone	Zu löschende Versionen auswählen
 versionedFiles.deleteSelected	Auswahl löschen (%lld)
 versionedFiles.deleteAll	Alle Versionen löschen

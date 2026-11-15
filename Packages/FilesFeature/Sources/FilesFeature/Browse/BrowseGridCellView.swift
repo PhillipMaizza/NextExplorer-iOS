@@ -14,8 +14,6 @@ private enum Constants {
     static let favoriteBadgeShadowRadius: CGFloat = 0.5
     static let fullOpacity: Double = 1.0
     static let halfOpacity: Double = 0.5
-    static let favoriteSpringResponse: Double = 0.3
-    static let favoriteSpringDamping: Double = 0.7
 }
 
 /// One tile of `BrowseContentView`'s grid display mode: icon (dimmed if hidden, badged if
@@ -180,21 +178,13 @@ struct GridCellView: View {
                     }
                 }
                 .animation(
-                    .spring(
-                        response: Constants.favoriteSpringResponse,
-                        dampingFraction: Constants.favoriteSpringDamping
-                    ),
+                    DSMotion.pop,
                     value: isFavorite
                 )
                 .animation(
-                    .spring(
-                        response: Constants.favoriteSpringResponse,
-                        dampingFraction: Constants.favoriteSpringDamping
-                    ),
+                    DSMotion.pop,
                     value: isAvailableOffline
                 )
-                // Only favoriting buzzes: un-favoriting isn't a "win" worth celebrating the same way.
-                .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
             // One line that shrinks a little to fit, then truncates in the middle (keeping the extension
             // visible). The hidden line sets the height at full size, so a shrunk name never makes its
             // tile shorter than the others.

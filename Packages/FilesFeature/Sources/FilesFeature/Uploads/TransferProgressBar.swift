@@ -71,7 +71,7 @@ struct TransferProgressBar: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.cancelSize, height: Constants.cancelSize)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .accessibilityLabel(cancelLabel)
         }
         .padding(.horizontal, Constants.horizontalPadding)
@@ -111,7 +111,7 @@ struct TransferFailedBar: View {
                 Text(L10n.Common.retry)
                     .type(.body3(.semibold), style: .link)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             Button(action: onDismiss) {
                 IconKit.closeCircle
                     .resizable()
@@ -119,7 +119,7 @@ struct TransferFailedBar: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.cancelSize, height: Constants.cancelSize)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .accessibilityLabel(L10n.Common.close)
         }
         .padding(.horizontal, Constants.horizontalPadding)
@@ -159,7 +159,7 @@ struct IndeterminateProgressBar: View {
                         .frame(width: segment)
                         .offset(x: isAnimating ? proxy.size.width : (reduceMotion ? 0 : -segment))
                         .animation(
-                            reduceMotion ? nil : .linear(duration: Metrics.duration).repeatForever(autoreverses: false),
+                            reduceMotion ? nil : DSMotion.loop(duration: Metrics.duration),
                             value: isAnimating
                         )
                 }

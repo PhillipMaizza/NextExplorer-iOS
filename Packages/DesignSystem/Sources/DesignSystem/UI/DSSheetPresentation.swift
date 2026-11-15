@@ -3,8 +3,13 @@ import SwiftUI
 private enum Constants {
     static let dimOpacity: Double = 0.3
     static let cardMargin: CGFloat = .space8
-    static let presentAnimation: Animation = .spring(response: 0.35, dampingFraction: 0.9)
-    static let dismissAnimation: Animation = .easeIn(duration: 0.2)
+    @MainActor static var presentAnimation: Animation {
+        DSMotion.sheetPresent
+    }
+
+    @MainActor static var dismissAnimation: Animation {
+        DSMotion.sheetDismiss
+    }
 }
 
 public extension EnvironmentValues {

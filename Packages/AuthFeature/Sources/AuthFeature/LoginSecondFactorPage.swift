@@ -40,7 +40,7 @@ struct LoginSecondFactorPage: View {
                         .frame(width: .size44, height: .size44, alignment: .leading)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(DSHapticButtonStyle())
+                .buttonStyle(DSPressableButtonStyle())
                 .accessibilityLabel(L10n.Common.back)
                 Spacer()
             }
@@ -108,7 +108,7 @@ struct LoginSecondFactorPage: View {
             }
         }
         .task {
-            try? await Task.sleep(for: Constants.autoFocusDelay)
+            try? await DSMotion.waitForStep(Constants.autoFocusDelay)
             guard !Task.isCancelled else { return }
             isCodeFocused = true
         }

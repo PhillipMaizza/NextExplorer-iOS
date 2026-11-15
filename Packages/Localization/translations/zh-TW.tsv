@@ -7,7 +7,6 @@ common.delete	刪除
 common.remove	移除
 common.clear	清除
 common.done	完成
-common.ok	好
 common.openSettings	打開設定
 common.logOut	登出
 common.close	關閉
@@ -23,7 +22,6 @@ common.selectedCount	已選取 %lld 個
 tab.browse	瀏覽
 tab.favorites	喜好項目
 tab.shared	共享
-tab.downloads	下載
 tab.settings	設定
 sort.sheetTitle	排序方式
 sort.name	名稱
@@ -33,8 +31,6 @@ sort.dateModified	修改日期
 sort.dateAdded	加入日期
 sort.dateShared	分享日期
 sort.expiration	到期
-sort.email	電子郵件
-sort.type	類型
 sort.ascending	遞增
 sort.descending	遞減
 select.selectAll	全選
@@ -59,11 +55,8 @@ dateFormat.automatic	自動
 browse.navigationTitle	瀏覽
 browse.scopeThisFolder	此檔案夾
 browse.scopeEverywhere	所有位置
-browse.searchScopeInFolder	此檔案夾
-browse.searchScopeEverywhere	所有位置
 browse.locations	位置
 browse.open	打開
-browse.unsupportedFileType	不支援的檔案類型
 browse.actionGetInfo	顯示簡介
 browse.actionPermissions	權限
 browse.actionRename	重新命名
@@ -93,7 +86,6 @@ browse.searchEverywhere	在所有位置搜尋
 browse.searchFailed	無法搜尋。請檢查連線後重試。
 browse.progressExtracting	正在解壓縮…
 browse.progressCompressing	正在壓縮…
-browse.offlineBannerTitle	離線
 browse.offlineBannerDetail	正在顯示來自 %@ 的已儲存副本
 browse.actionCopy	拷貝
 browse.destinationPickerMoveTitle	移動到…
@@ -105,8 +97,6 @@ browse.actionPaste	貼上
 browse.actionPasteCount	貼上 %lld 個項目
 browse.actionPasteHere	貼上到此處
 browse.actionClearClipboard	清除剪貼板
-browse.clipboardMoveCount	%lld 個待移動
-browse.clipboardCopyCount	%lld 個待拷貝
 browse.clipboardCopiedOne	已拷貝 %@
 browse.clipboardCopiedMany	已拷貝 %lld 個項目
 browse.progressMoving	正在移動…
@@ -140,8 +130,6 @@ favorites.removeMessage	這只會將它們從喜好項目移除。
 favorites.removeFailedOne	無法移除該喜好項目。
 favorites.removeFailedMany	無法移除這些喜好項目。
 favorites.removePartial	已移除 %2$lld 個中的 %1$lld 個。
-downloads.actionOpenInFiles	在「檔案」中打開
-downloads.emptyList	您從「瀏覽」下載的檔案會顯示在此處。
 downloads.deleteConfirmTitle	刪除？
 downloads.deleteConfirmOne	刪除「%@」？
 downloads.deleteConfirmMany	刪除 %lld 個檔案？
@@ -179,15 +167,12 @@ uploads.discardTitle	放棄上傳？
 uploads.discardMessage	您加入的檔案將不會上傳。
 uploads.discardConfirm	放棄
 uploads.statusWaiting	等待中
-uploads.statusFailed	上傳失敗
 uploads.barTitleOne	正在上傳 %@
 uploads.barTitleMany	正在上傳 %lld 個檔案
 uploads.barFailedOne	1 個上傳失敗
 uploads.barFailedMany	%lld 個上傳失敗
-uploads.retryAll	全部重試
 uploads.complete	上傳完成
 uploads.completeMany	已上傳 %lld 個檔案
-uploads.completeWithFailures	已上傳 %1$lld 個，失敗 %2$lld 個
 uploads.failedGeneric	無法上傳此檔案。
 uploads.clear	清除
 uploads.emptyList	尚無上傳。
@@ -222,7 +207,6 @@ createShare.sectionLabel	標籤
 createShare.sectionAccessMode	取用模式
 createShare.sectionWhoCanAccess	誰可以取用
 createShare.sectionShareLink	共享連結
-createShare.fieldPassword	密碼
 createShare.togglePasswordProtect	密碼保護
 createShare.toggleSetExpiration	設定到期日期
 createShare.fieldExpires	到期
@@ -237,7 +221,6 @@ createShare.directFolderLink	直接檔案夾 ZIP 連結
 createShare.directFileLink	直接檔案連結
 createShare.summaryAccess	取用權限
 createShare.summarySharedWith	共享給
-createShare.summaryPassword	密碼
 createShare.summaryPasswordProtected	受保護
 createShare.summaryExpires	到期
 createShare.summarySpecificPeople	特定人員
@@ -245,7 +228,6 @@ createShare.errorPastExpiration	請選擇未來的到期日期。
 editShare.title	編輯共享連結
 editShare.save	儲存更改
 editShare.passwordKeepHint	留空以保留目前密碼
-editShare.savedToast	共享連結已更新
 thumbnailSettings.navigationTitle	縮覽圖
 thumbnailSettings.subtitle	控制伺服器為每個用戶端生成圖像縮覽圖的方式。
 thumbnailSettings.enable	生成縮覽圖
@@ -328,17 +310,10 @@ serverDetails.nameErrorEmpty	伺服器名稱不能空白。
 serverDetails.urlLabel	伺服器 URL
 serverDetails.urlFootnote	您的 NextExplorer 執行個體的安裝位址。若要更改，請登出並重新加入伺服器。
 serverDetails.updateButton	更新伺服器
-serverDetails.savedMessage	伺服器詳細資料已更新。
 serverDetails.logoErrorTooLarge	該圖像過大。請選擇小於 2 MB 的圖像。
 serverDetails.cameraDeniedTitle	相機取用已關閉
 serverDetails.cameraDeniedMessage	請在「設定」中開啟相機取用以便拍照。
 licenses.navigationTitle	開放原始碼授權
-licenses.sectionSoftware	軟體
-licenses.sectionFontSoftware	字型軟體
-licenses.labelAuthor	作者
-licenses.labelOriginalVersion	原始版本
-licenses.labelModifiedVersion	修改版本
-licenses.labelReservedFontName	保留字型名稱
 fileInfo.navigationTitleFolder	檔案夾
 fileInfo.rowKind	種類
 fileInfo.rowSize	大小
@@ -385,7 +360,6 @@ userManagement.createUser	建立使用者
 userManagement.badgeAdmin	管理員
 userManagement.emptyList	尚無使用者。
 userManagement.noSearchMatches	沒有與「%@」相符的使用者。
-userManagement.loadFailed	無法連線到伺服器。
 userManagement.sortType	類型
 userManagement.sortName	名稱
 userManagement.sortEmail	電子郵件
@@ -397,7 +371,6 @@ userManagement.createEmailField	電子郵件
 userManagement.createEmailPlaceholder	name@example.com
 userManagement.createUsernameField	使用者名稱（選填）
 userManagement.createUsernamePlaceholder	由電子郵件衍生
-userManagement.createPasswordField	密碼
 userManagement.createPasswordPlaceholder	至少 %lld 個字元
 userManagement.createGrantAdminToggle	授予管理員取用權限
 userManagement.createGrantAdminSubtitle	對檔案、共享和使用者的完全控制。
@@ -419,7 +392,6 @@ userManagement.toastVolumeRemoved	卷宗已移除
 userManagement.errorEmailRequired	電子郵件為必填項。
 userManagement.errorEmailInvalid	請輸入有效的電子郵件位址。
 userManagement.errorUsernameRequired	使用者名稱為必填項。
-userManagement.errorEmailInUse	電子郵件已被使用。
 userManagement.errorPasswordTooShort	請至少使用 %lld 個字元。
 userDetail.fallbackName	使用者
 userDetail.sectionGeneralInfo	一般資訊
@@ -511,13 +483,10 @@ login.errorIncomplete	登入未完成。請重試。
 login.errorUnreachable	無法連線到該伺服器。請檢查位址後重試。
 login.errorUnexpectedResponse	伺服器回應異常。
 login.errorKeychain	無法在此裝置上儲存您的工作階段。
-login.errorDecoding	伺服器回應異常。請檢查位址後重試。
-login.errorNoLocalAuth	此伺服器未啟用使用者名稱/密碼登入。
 login.errorRateLimited	嘗試次數過多。請等待幾分鐘後重試。
 login.errorServer	伺服器遇到問題（錯誤 %lld）。請稍後重試。
 browse.nameErrorReserved	該名稱不允許使用。
 browse.nameErrorSeparators	名稱不能包含 / 或 \。
-browse.searchMatchLine	第 %1$lld 行：%2$@
 browse.searchMatchLineLabel	第 %lld 行
 browse.searchTooShort	至少輸入 %lld 個字元以搜尋子資料夾和檔案內容。
 browse.searchStoppedEarly	搜尋已達到時間限制而停止。以下是目前找到的結果。
@@ -528,8 +497,6 @@ browse.searchMatchedByName	名稱
 browse.searchMatchedByContent	內容
 browse.searchMatchedByBoth	名稱和內容
 createShare.errorPasswordRequired	請輸入密碼或關閉密碼保護。
-filter.sheetTitle	依類型篩選
-filter.button	篩選
 filter.all	所有類型
 filter.folders	檔案夾
 filter.images	圖像
@@ -613,7 +580,6 @@ settings.sectionSupport	支援
 settings.rowRateApp	為 NextExplorer 評分
 settings.rowSupport	說明與支援
 menu.refresh	重新整理
-select.tableView	表格檢視
 openWith.openIn	在 %@ 中打開
 openWith.openWith	打開方式
 openWith.viewAsText	以文字檢視
@@ -629,7 +595,6 @@ menu.newWindow	新增視窗
 menu.newTab	新增標籤頁
 browse.actionOpenInNewWindow	在新視窗中打開
 browse.actionOpenInNewTab	在新標籤頁中打開
-select.viewAs	顯示方式
 settings.rowAppearance	外觀
 appearance.system	跟隨系統
 appearance.light	淺色
@@ -649,12 +614,8 @@ downloadQueue.savedMany	%lld 個項目已儲存到下載
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	剩餘 %@
 browse.sectionPersonal	個人
-browse.progressDownloading	正在下載…
-browse.progressDownloadingIndexed	正在下載 %2$lld 個中的第 %1$lld 個…
 browse.downloadSavedTo	已儲存到 %@
-browse.downloadSavedCountTo	已將 %2$lld 個中的 %1$lld 個項目儲存到 %3$@
 browse.downloadSavedAllTo	已將 %1$lld 個項目儲存到 %2$@
-browse.downloadBulkFailed	無法將這些項目儲存到您的裝置。
 macSettings.labelFormat	%@：
 macSettings.addAccount	新增帳號…
 macSettings.changePassword	更改密碼…
@@ -667,7 +628,6 @@ macSettings.roleAdmin	管理員
 macSettings.roleUser	使用者
 macSettings.status	狀態
 macSettings.statusSignedIn	已登入
-macSettings.manage	管理…
 macSettings.cache	快取
 macSettings.support	幫助與支援…
 macSettings.permission	權限
@@ -899,7 +859,6 @@ activityLog.anyOutcome	任何結果
 activityLog.outcomeOk	成功
 activityLog.outcomeRefused	遭拒
 activityLog.searchPlaceholder	名稱或路徑
-activityLog.searchButton	搜尋
 activityLog.refresh	重新整理
 activityLog.clear	清空記錄
 activityLog.clearTitle	要清空記錄嗎？
@@ -1015,7 +974,6 @@ versionedFiles.newest	最新：%@
 versionedFiles.versionPinned	已釘選
 versionedFiles.versionUnavailable	無法使用
 versionedFiles.versionBy	作者：%@
-versionedFiles.detailFailed	無法讀取此歷程記錄。
 versionedFiles.deleteSelectedNone	勾選要刪除的版本
 versionedFiles.deleteSelected	刪除所選（%lld）
 versionedFiles.deleteAll	刪除所有版本

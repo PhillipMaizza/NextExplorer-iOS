@@ -68,13 +68,14 @@ public extension FixtureFile {
         }
         let named = Set(allCases.map { "\($0.rawValue).\($0.fileExtension)" })
         var onDisk: [String] = []
-        if let root = bundle.resourceURL?.appendingPathComponent("Fixtures"),
+        // Resolved on both sides: under `/tmp` the walker reports `/private/tmp` paths.
+        if let root = bundle.resourceURL?.appendingPathComponent("Fixtures").resolvingSymlinksInPath(),
            let walker = FileManager.default.enumerator(at: root, includingPropertiesForKeys: [.isRegularFileKey])
         {
             for case let url as URL in walker
                 where (try? url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true
             {
-                onDisk.append(String(url.path.dropFirst(root.path.count + 1)))
+                onDisk.append(String(url.resolvingSymlinksInPath().path.dropFirst(root.path.count + 1)))
             }
         }
         return (missing.sorted(), onDisk.filter { !named.contains($0) }.sorted())

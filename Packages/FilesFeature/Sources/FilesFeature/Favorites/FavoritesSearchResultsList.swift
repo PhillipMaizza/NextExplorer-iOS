@@ -40,8 +40,6 @@ struct FavoritesSearchResultsList: View {
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        .animation(phase == .content ? DSMotion.listDiff : nil, value: store.fileSearchResults)
-        .animation(phase == .content ? DSMotion.listDiff : nil, value: store.searchOnDeviceIDs)
         .task(id: store.fileSearchResults?.ids.elements) {
             store.send(.computeSearchOnDevice)
         }
@@ -57,7 +55,7 @@ struct FavoritesSearchResultsList: View {
                 } label: {
                     SearchResultRow(result: result)
                 }
-                .buttonStyle(DSHapticButtonStyle())
+                .buttonStyle(DSPressableButtonStyle())
                 .contextMenu {
                     SearchResultMenu(
                         result: result,
