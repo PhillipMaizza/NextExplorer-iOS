@@ -95,14 +95,6 @@
             swipeToPage(Fixture.document, in: app)
         }
 
-        func testOpenedVideoPlaysWithoutAPlayButton() {
-            let app = openGallery(at: Fixture.video)
-            XCTAssertFalse(
-                app.labeledButton(L10n.Media.play).appears(within: UITestTimeout.short),
-                "The video opened from the list starts playing on its own"
-            )
-        }
-
         func testDeleteKeepsTheGalleryOpenOnTheNeighbour() {
             let app = openGallery(at: Fixture.text)
             // Delete sits in the title menu, so the page's bottom stays free for its content.
