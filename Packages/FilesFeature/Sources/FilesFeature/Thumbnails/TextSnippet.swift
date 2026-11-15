@@ -1,3 +1,4 @@
+import ComposableArchitecture
 import CoreModels
 import Foundation
 
@@ -15,10 +16,19 @@ enum TextSnippet {
         static let maxReplacementShare = 0.1
     }
 
+    /// What `isTextKind` answered for each kind, because every row and tile asks on every render.
+    private static let answers = LockIsolated<[String: Bool]>([:])
+
     /// Whether files of this kind (their extension) are drawn from their own first lines: the text and
     /// code files the app can open in its editor, in place of an icon the server has no thumbnail for.
     static func isTextKind(_ kind: String) -> Bool {
-        PreviewKind(FileItem(name: "file", path: "", dateModified: .distantPast, size: 0, kind: kind)) == .text
+        if let known = answers.value[kind] {
+            return known
+        }
+        let item = FileItem(name: "file", path: "", dateModified: .distantPast, size: 0, kind: kind)
+        let isText = PreviewKind(item) == .text
+        answers.withValue { $0[kind] = isText }
+        return isText
     }
 
     /// The first lines of `data`, or `nil` when the bytes are not text (a NUL byte, mostly undecodable) or hold

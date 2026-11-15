@@ -7,6 +7,11 @@ import NetworkClient
 /// thumbnail of audio, so the app reads the art itself: from the kept copy when there is one, else
 /// from the stream, where AVFoundation asks the server only for the byte ranges the tags sit in.
 enum AudioArtwork {
+    private enum Constants {
+        /// A tag can hold art of any size; more than this is not loaded for a thumbnail.
+        static let maxArtworkBytes = 16 * 1024 * 1024
+    }
+
     /// The art of the file at `url`, decoded to at most `maxPixel`; `nil` when it has none.
     static func image(url: URL, fileExtension: String, maxPixel: CGFloat) async -> PlatformImage? {
         let key = url.absoluteString
@@ -16,11 +21,16 @@ enum AudioArtwork {
         if ThumbnailMisses.contains(key) {
             return nil
         }
-        guard let image = await readArtwork(url: url, fileExtension: fileExtension, maxPixel: maxPixel) else {
-            // A cancelled read (the row scrolled away) says nothing about the file.
-            if !Task.isCancelled {
-                ThumbnailMisses.insert(key)
-            }
+        let read: PlatformImage?
+        do {
+            read = try await readArtwork(url: url, fileExtension: fileExtension, maxPixel: maxPixel)
+        } catch {
+            // The tags could not be read (offline, refused, a row that scrolled away): that says nothing
+            // about the file, so nothing is remembered.
+            return nil
+        }
+        guard let image = read else {
+            ThumbnailMisses.insert(key)
             return nil
         }
         ThumbnailMemoryCache.shared.setObject(
@@ -31,7 +41,8 @@ enum AudioArtwork {
         return image
     }
 
-    private static func readArtwork(url: URL, fileExtension: String, maxPixel: CGFloat) async -> PlatformImage? {
+    /// Throws when the tags cannot be read; `nil` when they are read and hold no usable art.
+    private static func readArtwork(url: URL, fileExtension: String, maxPixel: CGFloat) async throws -> PlatformImage? {
         var loader: ClientCertificateAssetLoader?
         let asset: AVURLAsset
         if url.isFileURL {
@@ -49,12 +60,11 @@ enum AudioArtwork {
             }
         }
         defer { loader?.invalidate() }
-        guard let metadata = try? await asset.load(.commonMetadata),
-              let artwork = AVMetadataItem.metadataItems(
-                  from: metadata,
-                  filteredByIdentifier: .commonIdentifierArtwork
-              ).first,
-              let data = try? await artwork.load(.dataValue)
+        let metadata = try await asset.load(.commonMetadata)
+        guard let artwork = AVMetadataItem.metadataItems(from: metadata, filteredByIdentifier: .commonIdentifierArtwork)
+            .first,
+            let data = try await artwork.load(.dataValue),
+            data.count <= Constants.maxArtworkBytes
         else {
             return nil
         }
