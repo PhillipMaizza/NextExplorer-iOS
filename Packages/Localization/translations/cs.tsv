@@ -882,6 +882,8 @@ menu.newWindow	Nové okno
 menu.newTab	Nová karta
 browse.actionOpenInNewWindow	Otevřít v novém okně
 browse.actionOpenInNewTab	Otevřít v nové kartě
+select.slideTipTitle	Výběr tažením
+select.slideTipMessage	Přejeďte prstem do strany přes položky a vyberete jich několik najednou.
 settings.rowAppearance	Vzhled
 appearance.system	Systém
 appearance.light	Světlý
@@ -1114,3 +1116,7 @@ offline.rowUpdateFailed	Aktualizace se nezdařila
 pdfPreview.pageIndicator	%1$lld z %2$lld
 previewToolbar.savePhoto	Uložit fotku
 previewToolbar.saveVideo	Uložit video
+offline.removeEmptiesFolderMessage	Z „%@“ už na tomto zařízení nic nezůstane, proto se z dostupných offline odebere i složka. Vaše soubory na serveru se nezmění.
+shareUpload.nameLabel	Název souboru
+shareUpload.namesLabel	Názvy souborů
+shareUpload.nameHint	Název, pod kterým se soubor nahraje. Přípona zůstane stejná.

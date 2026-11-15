@@ -18,9 +18,6 @@ private enum Constants {
     static let previewToolbarToastInset: CGFloat = .size56
     static let emptyStateSpacing: CGFloat = .space8
     static let emptyStateIconSize: CGFloat = .superIcon
-    static let gridSpacing: CGFloat = .space16
-    /// Inset between a grid tile's content and its `backgroundSecondary` card edge.
-    static let gridCellPadding: CGFloat = .space12
     /// Height of the invisible long-press paste target past the last row.
     static let pasteTargetMinHeight: CGFloat = 260
     /// Gap between the empty folder message and its upload call to action.
@@ -103,10 +100,6 @@ struct BrowseContentView: View {
     /// subfolders show their real folder name from `store.title`.
     private var displayTitle: String {
         store.directoryPath.isEmpty ? L10n.Browse.navigationTitle : store.title
-    }
-
-    private var gridColumns: [GridItem] {
-        [GridItem(.adaptive(minimum: thumbnailSize.gridItemMinWidth), spacing: Constants.gridSpacing)]
     }
 
     private func handleTap(_ item: FileItem) {
@@ -202,6 +195,15 @@ struct BrowseContentView: View {
             }
             .onChange(of: store.transferSuccessMessage) { _, newValue in
                 guard let newValue else { return }
+                #if os(iOS)
+                    // No ⌘Z at hand on a phone: the toast offers the undo itself.
+                    if !store.undoStack.isEmpty {
+                        toastMessage = .success(newValue, actionTitle: L10n.Menu.undo) {
+                            store.send(.undoTapped, animation: DSMotion.listDiff)
+                        }
+                        return
+                    }
+                #endif
                 toastMessage = .success(newValue)
             }
             .onChange(of: store.clipboardStagedMessage) { _, newValue in
@@ -223,6 +225,11 @@ struct BrowseContentView: View {
                     galleryCurrentItemID = nil
                 }
             }
+        #if os(iOS)
+            .fileUndoRegistration(store.undoStack) { [store] in
+                store.send(.undoTapped, animation: DSMotion.listDiff)
+            }
+        #endif
             .onAppear { sourceVisibility.isScreenVisible = true }
             .onDisappear {
                 sourceVisibility.isScreenVisible = false
@@ -278,7 +285,7 @@ struct BrowseContentView: View {
         } else {
             BrowseSkeletonView(
                 isGridView: viewMode == .grid,
-                gridColumns: gridColumns,
+                gridColumns: FileGridMetrics.columns,
                 iconSize: thumbnailSize.iconSize
             )
         }
@@ -364,7 +371,7 @@ struct BrowseContentView: View {
             selectSortToolbar(
                 isSelecting: store.isSelecting,
                 isAllSelected: isAllSelected,
-                isSelectAvailable: !store.isSearching && store.hasDisplayedItems && viewMode != .table,
+                isSelectAvailable: !store.isSearching && store.canSelectItems && viewMode != .table,
                 isGridView: viewMode == .grid,
                 onSelectModeToggled: { store.send(.selectModeToggled) },
                 onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
@@ -406,7 +413,7 @@ struct BrowseContentView: View {
                 }
             }
             #if os(iOS)
-                if !store.isSelecting, canAddHere {
+                if !store.isSelecting, store.canAddHere {
                     if #available(iOS 26.0, *) {
                         ToolbarSpacer(.fixed, placement: .topBarTrailing)
                     }
@@ -442,7 +449,7 @@ struct BrowseContentView: View {
         .modifier(MacFinderDrop(
             serverURL: store.serverURL,
             scope: store.cacheScope,
-            isEnabled: canUploadHere && !store.isSelecting,
+            isEnabled: store.canUploadHere && !store.isSelecting,
             onDrop: { urls in store.send(.beginUpload(.documents(urls))) },
             onDropItems: { items in
                 guard !store.directoryPath.isEmpty else { return }
@@ -617,6 +624,10 @@ struct BrowseContentView: View {
     /// Extracted from the grid/list `ForEach` bodies: inlining the full cell (with the
     /// `matchedSource` / `isOpening` args) tipped those already-large expressions past the
     /// type-checker's budget.
+    private func contextMenuPreview(for item: FileItem) -> some View {
+        FileContextMenuPreview(item: item, serverURL: store.serverURL, showThumbnails: store.preferences.showThumbnails)
+    }
+
     private func gridCell(for item: FileItem) -> some View {
         GridCellView(
             item: item,
@@ -687,7 +698,7 @@ struct BrowseContentView: View {
                 onDropForeignItemsOnFolder: { items, folder in
                     store.send(.itemsDroppedFromOtherWindow(items, destination: folder.id))
                 },
-                canUploadToFolders: canUploadHere,
+                canUploadToFolders: store.canUploadHere,
                 onFilesDroppedOnFolder: { urls, folder in store.send(.filesDroppedOnFolder(urls, folder: folder)) },
                 contextMenu: { ids in tableContextMenu(for: ids) },
                 renamingItemID: shouldRenameInTable ? store.renameSheetItem?.id : nil,
@@ -739,19 +750,19 @@ struct BrowseContentView: View {
         private func tableContextMenu(for ids: Set<FileItem.ID>) -> some View {
             let items = store.displayedItems.filter { ids.contains($0.id) }
             if items.isEmpty {
-                if !store.directoryPath.isEmpty, canCreateFolderHere {
+                if !store.directoryPath.isEmpty, store.canCreateFolderHere {
                     Button { store.send(.newFolderTapped) } label: {
                         Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
                     }
                     .tint(.primaryDS)
                 }
-                if !store.directoryPath.isEmpty, canCreateFileHere {
+                if !store.directoryPath.isEmpty, store.canCreateFileHere {
                     Button { store.send(.newFileTapped) } label: {
                         Label { Text(L10n.Browse.actionNewFile) } icon: { IconKit.newFile }
                     }
                     .tint(.primaryDS)
                 }
-                if canUploadHere {
+                if store.canUploadHere {
                     Button { isFilesPickerPresented = true } label: {
                         Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.upload }
                     }
@@ -1254,7 +1265,7 @@ struct BrowseContentView: View {
         case .empty:
             VStack(spacing: Constants.emptyUploadButtonTopSpacing) {
                 EmptyStateView(icon: IconKit.folder, message: L10n.EmptyState.folderEmpty)
-                if !store.isSelecting, canUploadHere {
+                if !store.isSelecting, store.canUploadHere {
                     emptyStateUploadButton
                 }
             }
@@ -1280,19 +1291,19 @@ struct BrowseContentView: View {
             label: label,
             leadingActions: {
                 if !store.directoryPath.isEmpty {
-                    if canCreateFolderHere {
+                    if store.canCreateFolderHere {
                         Button { store.send(.newFolderTapped) } label: {
                             Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
                         }
                     }
-                    if canCreateFileHere {
+                    if store.canCreateFileHere {
                         Button { store.send(.newFileTapped) } label: {
                             Label { Text(L10n.Browse.actionNewFile) } icon: { IconKit.newFile }
                         }
                     }
                 }
             },
-            includesUploadSources: canUploadHere,
+            includesUploadSources: store.canUploadHere,
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,
@@ -1361,6 +1372,7 @@ struct BrowseContentView: View {
             // Scrolling the results dismisses the search keyboard, the expected gesture when the
             // results fill the screen and tapping a row would navigate rather than just defocus.
             .scrollDismissesKeyboard(.immediately)
+            .modifier(BrowseDragToSelect(store: store))
             .backgroundGradient()
             .safeAreaPadding(.bottom, bottomChromeClearance)
             .scrollGalleryPageIntoView(proxy, id: galleryCurrentItemID)
@@ -1373,7 +1385,7 @@ struct BrowseContentView: View {
         let displayedItems = store.displayedItems
         return ScrollViewReader { proxy in
             ScrollView {
-                LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
+                LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
                     if store.isSearching {
                         let sections = store.searchResultSections
                         if sections.isSplit {
@@ -1397,7 +1409,7 @@ struct BrowseContentView: View {
                             Section {
                                 PersonalSpaceGridCell(
                                     iconSize: thumbnailSize.iconSize,
-                                    cellPadding: Constants.gridCellPadding
+                                    cellPadding: FileGridMetrics.cellPadding
                                 ) {
                                     store.send(.personalSpaceTapped)
                                 }
@@ -1414,7 +1426,7 @@ struct BrowseContentView: View {
                         }
                     }
                 }
-                .padding(Constants.gridSpacing)
+                .padding(FileGridMetrics.spacing)
                 .animation(
                     DSMotion.listDiff,
                     value: displayedItems
@@ -1430,6 +1442,7 @@ struct BrowseContentView: View {
                 pasteTargetArea
             }
             .scrollDismissesKeyboard(.immediately)
+            .modifier(BrowseDragToSelect(store: store))
             .backgroundGradient()
             .safeAreaPadding(.bottom, bottomChromeClearance)
             .dismissKeyboardOnTap()
@@ -1539,25 +1552,6 @@ struct BrowseContentView: View {
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
     }
 
-    /// Gates the `+` upload menu on the folder's own `FileAccess.canUpload`. Defaults to
-    /// allowed while access is still loading: the first browse response fills it in.
-    private var canUploadHere: Bool {
-        store.access?.canUpload ?? true
-    }
-
-    private var canCreateFileHere: Bool {
-        store.access?.canCreateFile ?? true
-    }
-
-    private var canCreateFolderHere: Bool {
-        store.access?.canCreateFolder ?? true
-    }
-
-    /// The `+` appears when anything can be added here: an upload, a new folder or a new file.
-    private var canAddHere: Bool {
-        canUploadHere || (!store.directoryPath.isEmpty && (canCreateFileHere || canCreateFolderHere))
-    }
-
     /// The empty folder's call to action: the same camera / Photos / Files menu as the `+`,
     /// behind an accent pill so a first time user has somewhere obvious to start.
     private var emptyStateUploadButton: some View {
@@ -1568,7 +1562,6 @@ struct BrowseContentView: View {
             isCameraPresented: $isCameraPresented,
             isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
         )
-        .tint(.primaryDS)
         .frame(maxWidth: Constants.emptyUploadButtonMaxWidth)
         .padding(.horizontal, Constants.emptyUploadButtonHPadding)
         .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
@@ -1615,16 +1608,18 @@ struct BrowseContentView: View {
                 }
             } label: {
                 gridCell(for: item)
-                    .dsCard(padding: Constants.gridCellPadding)
+                    .dsGridTile(
+                        padding: FileGridMetrics.cellPadding,
+                        isSelecting: store.isSelecting,
+                        isSelected: store.selectedItemIDs.contains(item.id),
+                        seed: item.id
+                    )
+                    .dragSelectable(id: item.id)
                 #if os(macOS)
                     .modifier(macRowDragDrop(for: item))
                 #else
                     .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                 #endif
-                    .dsGridSelection(
-                        isSelecting: store.isSelecting,
-                        isSelected: store.selectedItemIDs.contains(item.id)
-                    )
             }
             .buttonStyle(DSPressableButtonStyle())
             .dsTapFlash()
@@ -1632,6 +1627,15 @@ struct BrowseContentView: View {
                 if !store.isSelecting {
                     fileActionsMenu(for: item)
                 }
+            } preview: {
+                contextMenuPreview(for: item)
+            }
+            // A tile has no swipe, so VoiceOver gets the row's swipe actions as its own.
+            .accessibilityActions {
+                BrowseQuickActionButtons(
+                    actions: BrowseQuickAction.actions(for: item, store: store),
+                    style: .accessibility
+                )
             }
         }
     }
@@ -1657,6 +1661,7 @@ struct BrowseContentView: View {
                             isSelecting: store.isSelecting,
                             isSelected: store.selectedItemIDs.contains(item.id)
                         )
+                        .dragSelectable(id: item.id)
                     #if os(macOS)
                         // On the label, not the row chain: that chain is at the type checker's limit.
                         .modifier(macRowDragDrop(for: item))
@@ -1671,41 +1676,11 @@ struct BrowseContentView: View {
                     if !store.isSelecting {
                         fileActionsMenu(for: item)
                     }
+                } preview: {
+                    contextMenuPreview(for: item)
                 }
                 .swipeActions(edge: .trailing) {
-                    if !store.isSelecting {
-                        if store.access?.canDelete ?? false {
-                            Button {
-                                store.send(.deleteTapped(item))
-                            } label: {
-                                IconKit.delete
-                            }
-                            .tint(.negative)
-                            .accessibilityLabel(L10n.Common.delete)
-                        }
-                        // Only folders can be favorited: the server 400s on anything else.
-                        if item.isDirectory, !store.showsDeviceContent {
-                            Button {
-                                store.send(.favoriteToggleButtonTapped(item))
-                            } label: {
-                                store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
-                            }
-                            .tint(.accent)
-                            .disabled(!store.hasLoadedFavorites)
-                            .accessibilityLabel(store.favoritePaths.contains(item.id)
-                                ? L10n.Browse.actionRemoveFromFavorites
-                                : L10n.Browse.actionAddToFavorites)
-                        }
-                        if store.access?.canWrite ?? false {
-                            Button {
-                                store.send(.renameTapped(item))
-                            } label: {
-                                IconKit.rename
-                            }
-                            .tint(.positive)
-                            .accessibilityLabel(L10n.Browse.actionRename)
-                        }
-                    }
+                    BrowseQuickActionButtons(actions: BrowseQuickAction.actions(for: item, store: store), style: .swipe)
                 }
                 .listRowSeparator(item.id == firstItemID ? .hidden : .visible, edges: .top)
                 .listRowSeparator(item.id == lastItemID ? .hidden : .visible, edges: .bottom)
@@ -1719,7 +1694,7 @@ struct BrowseContentView: View {
                 store.send(.searchResultTapped(result))
             } label: {
                 searchResultCell(row: result, grid: true)
-                    .dsCard(padding: Constants.gridCellPadding)
+                    .dsGridTile(padding: FileGridMetrics.cellPadding)
             }
             .buttonStyle(DSPressableButtonStyle())
             .contextMenu { searchResultMenu(result) }

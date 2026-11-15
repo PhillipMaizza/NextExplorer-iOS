@@ -864,6 +864,8 @@ menu.newWindow	Cửa sổ mới
 menu.newTab	Tab mới
 browse.actionOpenInNewWindow	Mở trong cửa sổ mới
 browse.actionOpenInNewTab	Mở trong tab mới
+select.slideTipTitle	Trượt để chọn
+select.slideTipMessage	Trượt ngón tay ngang qua các mục để chọn nhiều mục cùng lúc.
 settings.rowAppearance	Giao diện
 appearance.system	Hệ thống
 appearance.light	Sáng
@@ -1076,3 +1078,7 @@ offline.rowUpdateFailed	Không thể cập nhật
 pdfPreview.pageIndicator	%1$lld trên %2$lld
 previewToolbar.savePhoto	Lưu ảnh
 previewToolbar.saveVideo	Lưu video
+offline.removeEmptiesFolderMessage	Không còn mục nào khác của “%@” trên thiết bị này, nên thư mục cũng bị xóa khỏi mục có sẵn ngoại tuyến. Các tệp của bạn trên máy chủ không bị ảnh hưởng.
+shareUpload.nameLabel	Tên tệp
+shareUpload.namesLabel	Tên tệp
+shareUpload.nameHint	Tên dùng khi tải tệp lên. Phần mở rộng giữ nguyên.

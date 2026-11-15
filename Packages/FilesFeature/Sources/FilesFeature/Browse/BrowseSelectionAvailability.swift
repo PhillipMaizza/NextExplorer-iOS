@@ -35,6 +35,36 @@ extension BrowseFeature.State {
         )
     }
 
+    /// Select mode is offered only where a pick can lead to an action: device content acts on kept
+    /// files alone, so a saved copy shown with no network and nothing kept in it has nothing to select.
+    var canSelectItems: Bool {
+        hasDisplayedItems && (!showsDeviceContent || items.contains { offlineItemIDs.contains($0.id) })
+    }
+
+    var canMoveHere: Bool {
+        access?.canDelete ?? false
+    }
+
+    /// Allowed while a live folder's access is still loading, so the `+` is there from the first
+    /// frame. A screen of device content offers nothing to add, also before its access lands, so
+    /// its toolbar never shows the `+` only to take it away again.
+    var canUploadHere: Bool {
+        access?.canUpload ?? !showsDeviceContent
+    }
+
+    var canCreateFileHere: Bool {
+        access?.canCreateFile ?? !showsDeviceContent
+    }
+
+    var canCreateFolderHere: Bool {
+        access?.canCreateFolder ?? !showsDeviceContent
+    }
+
+    /// The `+` appears when anything can be added here: an upload, a new folder or a new file.
+    var canAddHere: Bool {
+        canUploadHere || (!directoryPath.isEmpty && (canCreateFileHere || canCreateFolderHere))
+    }
+
     /// The selected items, in listing order.
     var selectedItems: [FileItem] {
         items.filter { selectedItemIDs.contains($0.id) }

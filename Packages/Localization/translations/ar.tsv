@@ -625,6 +625,8 @@ menu.newWindow	نافذة جديدة
 menu.newTab	علامة تبويب جديدة
 browse.actionOpenInNewWindow	فتح في نافذة جديدة
 browse.actionOpenInNewTab	فتح في علامة تبويب جديدة
+select.slideTipTitle	اسحب للتحديد
+select.slideTipMessage	اسحب إصبعك أفقيًا فوق العناصر لتحديد عدة عناصر معًا.
 settings.rowAppearance	المظهر
 appearance.system	النظام
 appearance.light	فاتح
@@ -1168,3 +1170,7 @@ offline.rowUpdateFailed	تعذر التحديث
 pdfPreview.pageIndicator	%1$lld من %2$lld
 previewToolbar.savePhoto	حفظ الصورة
 previewToolbar.saveVideo	حفظ الفيديو
+offline.removeEmptiesFolderMessage	لن يبقى شيء آخر من «%@» على هذا الجهاز، لذا سيُزال المجلد من المتاح دون اتصال أيضًا. لن تتأثر ملفاتك على الخادم.
+shareUpload.nameLabel	اسم الملف
+shareUpload.namesLabel	أسماء الملفات
+shareUpload.nameHint	الاسم الذي يُرفع به الملف. يبقى الامتداد كما هو.

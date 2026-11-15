@@ -870,6 +870,8 @@ menu.newWindow	Νέο παράθυρο
 menu.newTab	Νέα καρτέλα
 browse.actionOpenInNewWindow	Άνοιγμα σε νέο παράθυρο
 browse.actionOpenInNewTab	Άνοιγμα σε νέα καρτέλα
+select.slideTipTitle	Σύρετε για επιλογή
+select.slideTipMessage	Σύρετε ένα δάχτυλο πλάγια πάνω από στοιχεία για να επιλέξετε πολλά μαζί.
 settings.rowAppearance	Εμφάνιση
 appearance.system	Σύστημα
 appearance.light	Φωτεινή
@@ -1089,3 +1091,7 @@ offline.rowUpdateFailed	Η ενημέρωση απέτυχε
 pdfPreview.pageIndicator	%1$lld από %2$lld
 previewToolbar.savePhoto	Αποθήκευση φωτογραφίας
 previewToolbar.saveVideo	Αποθήκευση βίντεο
+offline.removeEmptiesFolderMessage	Τίποτα άλλο από το «%@» δεν μένει σε αυτήν τη συσκευή, οπότε και ο φάκελος καταργείται από τα διαθέσιμα εκτός σύνδεσης. Τα αρχεία σας στον διακομιστή δεν επηρεάζονται.
+shareUpload.nameLabel	Όνομα αρχείου
+shareUpload.namesLabel	Ονόματα αρχείων
+shareUpload.nameHint	Το όνομα με το οποίο ανεβαίνει το αρχείο. Η επέκταση μένει ίδια.

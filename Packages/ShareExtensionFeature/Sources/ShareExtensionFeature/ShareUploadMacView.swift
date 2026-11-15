@@ -31,6 +31,9 @@
         var body: some View {
             VStack(alignment: .leading, spacing: .space16) {
                 header
+                if store.shouldShowNames {
+                    ShareUploadNameFields(store: store)
+                }
                 if store.credentials != nil, store.canChooseAccount || store.shouldShowDetails {
                     details
                 }

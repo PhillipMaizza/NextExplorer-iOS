@@ -601,6 +601,8 @@ menu.newWindow	Neues Fenster
 menu.newTab	Neuer Tab
 browse.actionOpenInNewWindow	In neuem Fenster öffnen
 browse.actionOpenInNewTab	In neuem Tab öffnen
+select.slideTipTitle	Zum Auswählen wischen
+select.slideTipMessage	Wische mit einem Finger seitlich über Objekte, um mehrere auf einmal auszuwählen.
 settings.rowAppearance	Erscheinungsbild
 appearance.system	System
 appearance.light	Hell
@@ -1116,3 +1118,7 @@ offline.rowUpdateFailed	Aktualisierung fehlgeschlagen
 pdfPreview.pageIndicator	%1$lld von %2$lld
 previewToolbar.savePhoto	Foto sichern
 previewToolbar.saveVideo	Video sichern
+offline.removeEmptiesFolderMessage	Von „%@“ bleibt nichts mehr auf diesem Gerät, daher wird auch der Ordner aus „Offline verfügbar“ entfernt. Deine Dateien auf dem Server sind nicht betroffen.
+shareUpload.nameLabel	Dateiname
+shareUpload.namesLabel	Dateinamen
+shareUpload.nameHint	Der Name, unter dem die Datei hochgeladen wird. Die Dateiendung bleibt gleich.

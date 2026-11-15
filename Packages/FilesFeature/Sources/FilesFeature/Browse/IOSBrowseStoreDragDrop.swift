@@ -16,7 +16,8 @@
                 item: item,
                 serverURL: store.serverURL,
                 scope: store.cacheScope,
-                canDropHere: !store.isSelecting,
+                // Select mode too: the lifted selection dropped on a folder moves into it, as in Files.
+                canDropHere: true,
                 canMove: store.canMoveHere,
                 canUpload: store.canUploadHere,
                 selection: { store.isSelecting ? store.selectedItems : [] },
@@ -67,14 +68,4 @@
         }
     }
 
-    extension BrowseFeature.State {
-        var canMoveHere: Bool {
-            access?.canDelete ?? false
-        }
-
-        /// Allowed while access is still loading, as the `+` upload menu is.
-        var canUploadHere: Bool {
-            access?.canUpload ?? true
-        }
-    }
 #endif

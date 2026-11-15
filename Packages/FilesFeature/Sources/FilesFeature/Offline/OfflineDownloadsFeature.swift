@@ -62,6 +62,9 @@ public struct OfflineDownloadsFeature {
         /// it only surfaces progress if there is actually something new to download, so a launch with
         /// nothing changed shows nothing. `force` bypasses the foreground throttle (used on reconnect).
         case autoSync(force: Bool)
+        /// Uploads finished into these folders: each one a pinned folder keeps gets its new files
+        /// downloaded, so a file uploaded into a kept folder is kept too. Only those folders are walked.
+        case uploadsLanded(destinations: Set<String>)
         /// A background sync failed; clear any progress it was showing without an error banner.
         case autoSyncFailed
         /// The app moved to another account: stop this account's sync and download and drop its
@@ -193,6 +196,19 @@ public struct OfflineDownloadsFeature {
                 }
                 return syncPinnedRoots(state: &state, announceWhenNothingPending: resuming)
 
+            case let .uploadsLanded(destinations):
+                // A run in flight has listed its folders already; the next sync picks the new files up.
+                guard !state.progress.isActive, connectivity.isOnline() else { return .none }
+                let covering = offlineFileStore.pinnedRoots().filter { root in
+                    root.isDirectory && destinations.contains { root.keeps($0) }
+                }
+                guard !covering.isEmpty else { return .none }
+                return syncPinnedRoots(
+                    state: &state,
+                    announceWhenNothingPending: false,
+                    limitedTo: Set(covering.map(\.path))
+                )
+
             case let .accountDeactivated(scope):
                 state.pendingPinPaths = []
                 state.$progress.withLock { $0 = OfflineDownloadProgress() }
@@ -318,12 +334,20 @@ public struct OfflineDownloadsFeature {
     /// or ones whose server `size`/`dateModified` changed so their staleness key no longer matches).
     /// `announceWhenNothingPending` shows a completion for a manual tap; an automatic sync stays silent
     /// when there is nothing new.
-    private func syncPinnedRoots(state: inout State, announceWhenNothingPending: Bool) -> Effect<Action> {
+    /// `limitedTo` walks only those pinned roots (after an upload), and leaves the automatic sync
+    /// throttle alone, since the other roots were not looked at.
+    private func syncPinnedRoots(
+        state: inout State,
+        announceWhenNothingPending: Bool,
+        limitedTo rootPaths: Set<String>? = nil
+    ) -> Effect<Action> {
         let offlineFileStore = offlineFileStore.pinned(to: state.scope)
         let roots = offlineFileStore.pinnedRoots()
         // With nothing pinned no copy should remain: a run cancelled mid file can leave one behind.
         guard !roots.isEmpty else { return .run { _ in offlineFileStore.reconcile(nil) } }
-        let rootItems = roots.map(Self.fileItem(from:))
+        let walkedRoots = rootPaths.map { paths in roots.filter { paths.contains($0.path) } } ?? roots
+        let isFullSync = rootPaths == nil
+        let rootItems = walkedRoots.map(Self.fileItem(from:))
         let serverURL = state.serverURL
         let scope = state.scope
         let filesClient = filesClient
@@ -338,7 +362,7 @@ public struct OfflineDownloadsFeature {
                     keeps: { roots.keeps($0) },
                     onListing: Self.listingSink(offlineFileStore, fetchedAt: now)
                 )
-                if !walk.hasIncompleteWalk {
+                if isFullSync, !walk.hasIncompleteWalk {
                     offlineFileStore.setLastAutoSyncAt(now)
                 }
                 let files = walk.files

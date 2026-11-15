@@ -882,6 +882,8 @@ menu.newWindow	Нове вікно
 menu.newTab	Нова вкладка
 browse.actionOpenInNewWindow	Відкрити в новому вікні
 browse.actionOpenInNewTab	Відкрити в новій вкладці
+select.slideTipTitle	Вибір проведенням
+select.slideTipMessage	Проведіть пальцем убік по об’єктах, щоб вибрати кілька одразу.
 settings.rowAppearance	Вигляд
 appearance.system	Системний
 appearance.light	Світлий
@@ -1115,3 +1117,7 @@ offline.rowUpdateFailed	Не вдалося оновити
 pdfPreview.pageIndicator	%1$lld із %2$lld
 previewToolbar.savePhoto	Зберегти фото
 previewToolbar.saveVideo	Зберегти відео
+offline.removeEmptiesFolderMessage	Із «%@» на цьому пристрої більше нічого не залишиться, тому папку теж буде прибрано з доступних офлайн. Ваші файли на сервері не зачіпаються.
+shareUpload.nameLabel	Назва файлу
+shareUpload.namesLabel	Назви файлів
+shareUpload.nameHint	Назва, з якою файл буде завантажено. Розширення не зміниться.

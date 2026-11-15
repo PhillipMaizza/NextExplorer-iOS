@@ -1,3 +1,4 @@
+import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import Localization
@@ -43,7 +44,18 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     @ViewBuilder var accessory: () -> Accessory
 
     @FocusState private var isFocused: Bool
+    #if os(iOS)
+        @Shared(.inMemory(SearchFocusRequest.key)) private var searchFocusRequests = 0
+        @State private var isOnScreen = false
+    #endif
     @Environment(\.selectionIndicatorsShown) private var selectionIndicatorsShown
+
+    #if os(iOS)
+        /// The selection count is up on the screen on show: the moment slide to select can be tried.
+        private var showsSlideTip: Bool {
+            isOnScreen && selectionTitle != nil && (selectionIndicatorsShown ?? true)
+        }
+    #endif
 
     private var shownTitle: String {
         guard let selectionTitle, selectionIndicatorsShown ?? true else { return title }
@@ -78,6 +90,14 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
         #else
             header
+                .onAppear { isOnScreen = true }
+                .onDisappear { isOnScreen = false }
+                // ⌘F from a keyboard focuses the field of the screen on show.
+                .onChange(of: searchFocusRequests) {
+                    if isOnScreen, showsSearchField {
+                        isFocused = true
+                    }
+                }
         #endif
     }
 
@@ -88,6 +108,10 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .contentTransition(.interpolate)
                 .animation(DSMotion.selectModeStep, value: shownTitle)
                 .lineLimit(1)
+            #if os(iOS)
+                .popoverTip(showsSlideTip ? SlideToSelectTip() : nil, arrowEdge: .top)
+                .tipImageStyle(Color.accent)
+            #endif
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
@@ -233,6 +257,19 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
 
     public extension FocusedValues {
         @Entry var focusSearchField: FocusSearchAction?
+    }
+#endif
+
+#if os(iOS)
+    /// ⌘F on an iPad keyboard: the screen on show focuses its search field.
+    public enum SearchFocusRequest {
+        static let key = "searchFocusRequest"
+
+        @MainActor
+        public static func post() {
+            @Shared(.inMemory(key)) var requests = 0
+            $requests.withLock { $0 += 1 }
+        }
     }
 #endif
 

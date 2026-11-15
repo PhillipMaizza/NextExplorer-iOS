@@ -992,6 +992,8 @@ menu.newWindow	New Window
 menu.newTab	New Tab
 browse.actionOpenInNewWindow	Open in New Window
 browse.actionOpenInNewTab	Open in New Tab
+select.slideTipTitle	Slide to Select
+select.slideTipMessage	Slide a finger sideways across items to select several at once.
 
 # ---- appearance, personal folder, download queue ----
 settings.rowAppearance	Appearance
@@ -1211,3 +1213,7 @@ offline.rowUpdateFailed	Couldn't update
 pdfPreview.pageIndicator	%1$lld of %2$lld
 previewToolbar.savePhoto	Save Photo
 previewToolbar.saveVideo	Save Video
+offline.removeEmptiesFolderMessage	Nothing else in “%@” stays on this device, so the folder is removed from Available Offline too. Your files on the server are not affected.
+shareUpload.nameLabel	File Name
+shareUpload.namesLabel	File Names
+shareUpload.nameHint	The name the file uploads under. Its extension stays the same.

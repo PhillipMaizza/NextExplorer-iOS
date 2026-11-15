@@ -21,7 +21,12 @@ public struct BrowseTabFeature {
 
         /// The server path of the folder on screen; empty at the volume root.
         public var currentDirectoryPath: String {
-            path.last?.directoryPath ?? root.directoryPath
+            visibleFolder.directoryPath
+        }
+
+        /// The folder on screen: the top of the stack, or the root when nothing is pushed.
+        var visibleFolder: BrowseFeature.State {
+            path.last ?? root
         }
     }
 
@@ -38,6 +43,8 @@ public struct BrowseTabFeature {
         /// Menu bar commands: act on whichever folder is on screen (the top of the stack, or
         /// the root when nothing is pushed).
         case refreshVisibleFolder
+        /// A keyboard command on the selection of the folder on screen (iPad Edit menu).
+        case commandInVisibleFolder(FolderCommand)
         case newFolderInVisibleFolder
         case newFileInVisibleFolder
         /// Mac ⌘[: leave the visible folder for the screen under it.
@@ -64,6 +71,16 @@ public struct BrowseTabFeature {
         }
     }
 
+    /// What the iPad Edit menu does to the visible folder's selection.
+    public enum FolderCommand: Equatable, Sendable {
+        case cut
+        case copy
+        case paste(keepItemsAfterCopy: Bool)
+        case delete
+        /// Selects every item, entering select mode first when it is not on.
+        case selectAll
+    }
+
     public init() {}
 
     public var body: some ReducerOf<Self> {
@@ -81,10 +98,28 @@ public struct BrowseTabFeature {
                 return .none
 
             case .refreshVisibleFolder:
-                if let id = state.path.ids.last {
-                    return .send(.path(.element(id: id, action: .refreshButtonTapped)))
+                return Self.sendToVisibleFolder(state, .refreshButtonTapped)
+
+            case let .commandInVisibleFolder(command):
+                switch command {
+                case .cut:
+                    return Self.sendToVisibleFolder(state, .cutSelectionTapped)
+                case .copy:
+                    return Self.sendToVisibleFolder(state, .copySelectionTapped)
+                case let .paste(keepItemsAfterCopy):
+                    return Self.sendToVisibleFolder(state, .pasteTapped(keepItemsAfterCopy: keepItemsAfterCopy))
+                case .delete:
+                    return Self.sendToVisibleFolder(state, .deleteSelectionTapped)
+                case .selectAll:
+                    let folder = state.visibleFolder
+                    let selectAll = Self.sendToVisibleFolder(state, .selectAllTapped)
+                    if folder.isSelecting {
+                        return selectAll
+                    }
+                    // As the Select button: a folder with nothing to select stays out of select mode.
+                    guard folder.canSelectItems else { return .none }
+                    return .concatenate(Self.sendToVisibleFolder(state, .selectModeToggled), selectAll)
                 }
-                return .send(.root(.refreshButtonTapped))
 
             case .newFolderInVisibleFolder:
                 // Mirrors the UI: the account root is not a writable folder.
@@ -123,10 +158,7 @@ public struct BrowseTabFeature {
                 return .send(.syncPathStack)
 
             case let .receiveSharedFiles(urls):
-                if let id = state.path.ids.last {
-                    return .send(.path(.element(id: id, action: .receiveSharedFiles(urls))))
-                }
-                return .send(.root(.receiveSharedFiles(urls)))
+                return Self.sendToVisibleFolder(state, .receiveSharedFiles(urls))
 
             case .root(.delegate(.openDownloadsTapped)):
                 return .send(.delegate(.openDownloadsTapped))
@@ -203,5 +235,13 @@ public struct BrowseTabFeature {
         .forEach(\.path, action: \.path) {
             BrowseFeature()
         }
+    }
+
+    /// Hands an action to the folder on screen.
+    private static func sendToVisibleFolder(_ state: State, _ action: BrowseFeature.Action) -> Effect<Action> {
+        if let id = state.path.ids.last {
+            return .send(.path(.element(id: id, action: action)))
+        }
+        return .send(.root(action))
     }
 }

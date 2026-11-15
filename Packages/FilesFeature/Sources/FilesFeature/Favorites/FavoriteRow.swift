@@ -16,6 +16,7 @@ struct FavoriteListRow: View {
 
     var body: some View {
         SelectableListRow(
+            selectionID: favorite.id,
             isSelecting: store.isSelecting,
             isSelected: store.selectedFavoriteIDs.contains(favorite.id),
             isFirst: isFirst,
@@ -77,6 +78,7 @@ struct FavoriteGridCell: View {
 
     var body: some View {
         SelectableGridCell(
+            selectionID: favorite.id,
             isSelecting: store.isSelecting,
             isSelected: store.selectedFavoriteIDs.contains(favorite.id),
             onTap: handleTap

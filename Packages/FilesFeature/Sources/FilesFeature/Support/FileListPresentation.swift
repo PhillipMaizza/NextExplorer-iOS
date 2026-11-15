@@ -19,11 +19,6 @@ enum FileGridMetrics {
     static var columns: [GridItem] {
         [GridItem(.adaptive(minimum: adaptiveMinimum), spacing: spacing)]
     }
-
-    /// Columns for the "Thumbnail Size" setting: a bigger size fits fewer, larger tiles per row.
-    static func columns(for size: ThumbnailSize) -> [GridItem] {
-        [GridItem(.adaptive(minimum: size.gridItemMinWidth), spacing: spacing)]
-    }
 }
 
 /// The shared shell for one row in a multi-select file listing (Favorites, Downloads): the
@@ -32,6 +27,8 @@ enum FileGridMetrics {
 /// card. Callers supply the row content plus the feature-specific swipes and context menu; the
 /// shell owns nothing feature-specific, so both tabs' rows collapse to one implementation.
 struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View, Menu: View>: View {
+    /// What a finger slide in select mode knows this row by (see `dragToSelect`).
+    private let selectionID: String
     private let isSelecting: Bool
     private let isSelected: Bool
     private let isFirst: Bool
@@ -43,6 +40,7 @@ struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View,
     private let menu: Menu
 
     init(
+        selectionID: String,
         isSelecting: Bool,
         isSelected: Bool,
         isFirst: Bool,
@@ -53,6 +51,7 @@ struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View,
         @ViewBuilder trailingSwipe: () -> TrailingSwipe = { EmptyView() },
         @ViewBuilder contextMenu: () -> Menu = { EmptyView() }
     ) {
+        self.selectionID = selectionID
         self.isSelecting = isSelecting
         self.isSelected = isSelected
         self.isFirst = isFirst
@@ -66,7 +65,9 @@ struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View,
 
     var body: some View {
         Button(action: onTap) {
-            content.dsListSelection(isSelecting: isSelecting, isSelected: isSelected)
+            content
+                .dsListSelection(isSelecting: isSelecting, isSelected: isSelected)
+                .dragSelectable(id: selectionID)
         }
         .buttonStyle(DSPressableButtonStyle())
         .accessibilityAddTraits(isSelecting && isSelected ? [.isSelected] : [])
@@ -79,9 +80,10 @@ struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View,
     }
 }
 
-/// The grid-tile counterpart to `SelectableListRow`: the same tap + selection-glyph overlay +
-/// context menu behavior, laid out as a `dsCard` tile.
+/// The grid tile counterpart to `SelectableListRow`: the same tap, selection and context
+/// menu behavior, laid out as an outlined `dsGridTile` that wiggles while selecting.
 struct SelectableGridCell<Content: View, Menu: View>: View {
+    private let selectionID: String
     private let isSelecting: Bool
     private let isSelected: Bool
     private let padding: CGFloat
@@ -90,6 +92,7 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
     private let menu: Menu
 
     init(
+        selectionID: String,
         isSelecting: Bool,
         isSelected: Bool,
         padding: CGFloat = FileGridMetrics.cellPadding,
@@ -97,6 +100,7 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
         @ViewBuilder content: () -> Content,
         @ViewBuilder contextMenu: () -> Menu = { EmptyView() }
     ) {
+        self.selectionID = selectionID
         self.isSelecting = isSelecting
         self.isSelected = isSelected
         self.padding = padding
@@ -108,8 +112,8 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
     var body: some View {
         Button(action: onTap) {
             content
-                .dsCard(padding: padding)
-                .dsGridSelection(isSelecting: isSelecting, isSelected: isSelected)
+                .dsGridTile(padding: padding, isSelecting: isSelecting, isSelected: isSelected, seed: selectionID)
+                .dragSelectable(id: selectionID)
         }
         .buttonStyle(DSPressableButtonStyle())
         .contextMenu { menu }

@@ -870,6 +870,8 @@ menu.newWindow	Nyt vindue
 menu.newTab	Ny fane
 browse.actionOpenInNewWindow	Åbn i nyt vindue
 browse.actionOpenInNewTab	Åbn i ny fane
+select.slideTipTitle	Stryg for at vælge
+select.slideTipMessage	Stryg en finger sidelæns hen over emner for at vælge flere på én gang.
 settings.rowAppearance	Udseende
 appearance.system	System
 appearance.light	Lys
@@ -1089,3 +1091,7 @@ offline.rowUpdateFailed	Kunne ikke opdatere
 pdfPreview.pageIndicator	%1$lld af %2$lld
 previewToolbar.savePhoto	Gem foto
 previewToolbar.saveVideo	Gem video
+offline.removeEmptiesFolderMessage	Intet andet i “%@” bliver på denne enhed, så mappen fjernes også fra tilgængeligt offline. Dine filer på serveren påvirkes ikke.
+shareUpload.nameLabel	Filnavn
+shareUpload.namesLabel	Filnavne
+shareUpload.nameHint	Navnet, filen uploades med. Filtypenavnet forbliver det samme.

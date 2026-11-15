@@ -38,12 +38,6 @@ public extension View {
     func dsListSelection(isSelecting: Bool, isSelected: Bool) -> some View {
         modifier(ListSelectionModifier(isSelecting: isSelecting, isSelected: isSelected))
     }
-
-    /// A grid cell's selection circle while selecting: in its top leading corner, centered on the
-    /// card's corner curve so the two stay concentric, as system badges do.
-    func dsGridSelection(isSelecting: Bool, isSelected: Bool) -> some View {
-        modifier(GridSelectionModifier(isSelecting: isSelecting, isSelected: isSelected))
-    }
 }
 
 private struct ListSelectionModifier: ViewModifier {
@@ -80,36 +74,6 @@ private struct ListSelectionModifier: ViewModifier {
     }
 }
 
-private struct GridSelectionModifier: ViewModifier {
-    let isSelecting: Bool
-    let isSelected: Bool
-    @Environment(\.selectionIndicatorsShown) private var indicatorsShown
-
-    /// Seeded from `isSelecting`, so a row that appears while selecting has its circle from its first
-    /// frame instead of sliding it in.
-    init(isSelecting: Bool, isSelected: Bool) {
-        self.isSelecting = isSelecting
-        self.isSelected = isSelected
-        _isShown = State(initialValue: isSelecting)
-    }
-
-    @State private var isShown = false
-
-    func body(content: Content) -> some View {
-        content
-            .overlay(alignment: .topLeading) {
-                if isShown {
-                    DSSelectionIndicator(isSelected: isSelected)
-                        .padding(max(.space4, .radiusCard - .size20 / 2))
-                }
-            }
-            .onAppear { isShown = indicatorsShown ?? isSelecting }
-            .onChange(of: indicatorsShown ?? isSelecting) { _, isShown in
-                withAnimation(DSMotion.selectModeStep) { self.isShown = isShown }
-            }
-    }
-}
-
 #Preview {
     HStack(spacing: .space16) {
         DSSelectionIndicator(isSelected: true)
@@ -118,13 +82,4 @@ private struct GridSelectionModifier: ViewModifier {
     }
     .padding()
     .background(Color.backgroundPrimary)
-}
-
-#Preview("Grid cell") {
-    Color.backgroundSecondary
-        .frame(width: 120, height: 120)
-        .clipShape(RoundedRectangle(cornerRadius: .radiusLarge))
-        .dsGridSelection(isSelecting: true, isSelected: true)
-        .padding()
-        .background(Color.backgroundPrimary)
 }

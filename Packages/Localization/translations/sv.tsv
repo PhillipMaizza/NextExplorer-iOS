@@ -601,6 +601,8 @@ menu.newWindow	Nytt fönster
 menu.newTab	Ny flik
 browse.actionOpenInNewWindow	Öppna i nytt fönster
 browse.actionOpenInNewTab	Öppna i ny flik
+select.slideTipTitle	Svep för att välja
+select.slideTipMessage	Svep med ett finger i sidled över objekt för att välja flera på en gång.
 settings.rowAppearance	Utseende
 appearance.system	System
 appearance.light	Ljust
@@ -1116,3 +1118,7 @@ offline.rowUpdateFailed	Det gick inte att uppdatera
 pdfPreview.pageIndicator	%1$lld av %2$lld
 previewToolbar.savePhoto	Spara bild
 previewToolbar.saveVideo	Spara video
+offline.removeEmptiesFolderMessage	Inget annat i ”%@” finns kvar på den här enheten, så mappen tas också bort från Tillgängligt offline. Dina filer på servern påverkas inte.
+shareUpload.nameLabel	Filnamn
+shareUpload.namesLabel	Filnamn
+shareUpload.nameHint	Namnet som filen laddas upp med. Filändelsen förblir densamma.

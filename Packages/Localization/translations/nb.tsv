@@ -870,6 +870,8 @@ menu.newWindow	Nytt vindu
 menu.newTab	Ny fane
 browse.actionOpenInNewWindow	Åpne i nytt vindu
 browse.actionOpenInNewTab	Åpne i ny fane
+select.slideTipTitle	Sveip for å velge
+select.slideTipMessage	Sveip en finger sidelengs over objekter for å velge flere samtidig.
 settings.rowAppearance	Utseende
 appearance.system	System
 appearance.light	Lys
@@ -1089,3 +1091,7 @@ offline.rowUpdateFailed	Kunne ikke oppdatere
 pdfPreview.pageIndicator	%1$lld av %2$lld
 previewToolbar.savePhoto	Arkiver bilde
 previewToolbar.saveVideo	Arkiver video
+offline.removeEmptiesFolderMessage	Ingenting annet i «%@» blir igjen på denne enheten, så mappen fjernes også fra tilgjengelig uten nett. Filene dine på serveren påvirkes ikke.
+shareUpload.nameLabel	Filnavn
+shareUpload.namesLabel	Filnavn
+shareUpload.nameHint	Navnet filen lastes opp med. Filtypen forblir den samme.

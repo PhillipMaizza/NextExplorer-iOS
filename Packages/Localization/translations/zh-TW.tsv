@@ -595,6 +595,8 @@ menu.newWindow	新增視窗
 menu.newTab	新增標籤頁
 browse.actionOpenInNewWindow	在新視窗中打開
 browse.actionOpenInNewTab	在新標籤頁中打開
+select.slideTipTitle	滑動選取
+select.slideTipMessage	用手指橫向滑過項目，即可一次選取多個。
 settings.rowAppearance	外觀
 appearance.system	跟隨系統
 appearance.light	淺色
@@ -1103,3 +1105,7 @@ offline.rowUpdateFailed	無法更新
 pdfPreview.pageIndicator	%1$lld/%2$lld
 previewToolbar.savePhoto	儲存照片
 previewToolbar.saveVideo	儲存影片
+offline.removeEmptiesFolderMessage	「%@」中不會再有其他內容留在此裝置上，因此該檔案夾也會從「可離線使用」中移除。伺服器上的檔案不受影響。
+shareUpload.nameLabel	檔案名稱
+shareUpload.namesLabel	檔案名稱
+shareUpload.nameHint	上傳時使用的檔案名稱。副檔名維持不變。

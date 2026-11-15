@@ -5,6 +5,7 @@ private enum Constants {
     static let contentPadding: CGFloat = .space24
     static let buttonSpacing: CGFloat = .space12
     static let messageLineSpacing: CGFloat = .space4
+    static let titleLineLimit = 2
 }
 
 /// The app's confirmation prompt, presented with `.sheet(isPresented:) { DSAlertSheet(...) }`.
@@ -15,7 +16,9 @@ private enum Constants {
 ///
 /// It disables interactive (swipe) dismissal: like an alert it only closes through one of
 /// its own buttons, so give the presenting binding a no op setter and derive its getter from
-/// feature state. While `isConfirmLoading` is true every control but the confirm spinner
+/// feature state. Like a system alert, VoiceOver starts on the title and message, Escape
+/// dismisses, and Return confirms a standard prompt (never a destructive one). While `isConfirmLoading` is true every
+/// control but the confirm spinner
 /// locks. `closeAccessibilityLabel` / `dismissTitle` default to English; localized call sites
 /// pass their own `L10n` strings so DesignSystem stays free of an app copy dependency.
 public struct DSAlertSheet: View {
@@ -46,6 +49,7 @@ public struct DSAlertSheet: View {
     let onConfirm: () -> Void
     let onNeutral: (() -> Void)?
     let onDismiss: () -> Void
+    @AccessibilityFocusState private var isPromptFocused: Bool
 
     public init(
         icon: Image,
@@ -84,7 +88,6 @@ public struct DSAlertSheet: View {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
                     icon: icon,
-                    title: title,
                     tint: role.headerTint,
                     closeAccessibilityLabel: closeAccessibilityLabel,
                     onClose: onDismiss
@@ -93,13 +96,7 @@ public struct DSAlertSheet: View {
                 // close chip locks so the prompt can't be dismissed out from under the work.
                 .disabled(isConfirmLoading)
 
-                if let message {
-                    Text(message)
-                        .type(.body2(.regular), style: .secondary)
-                        .lineSpacing(Constants.messageLineSpacing)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+                prompt
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, Constants.contentPadding)
@@ -108,16 +105,41 @@ public struct DSAlertSheet: View {
             DSSheetFooter {
                 VStack(spacing: Constants.buttonSpacing) {
                     DSButton(confirmTitle, style: role.confirmStyle, isLoading: isConfirmLoading, action: onConfirm)
+                        // As a system alert: Return takes the safe default, never a destructive action.
+                        .keyboardShortcut(role == .standard ? .defaultAction : nil)
                     if let neutralTitle, let onNeutral {
                         DSButton(neutralTitle, style: .secondary, action: onNeutral)
                             .disabled(isConfirmLoading)
                     }
                     DSButton(dismissTitle, style: hasNeutralAction ? .ghost : .secondary, action: onDismiss)
+                        .keyboardShortcut(.cancelAction)
                         .disabled(isConfirmLoading)
                 }
             }
         }
         .interactiveDismissDisabled()
+        .task { isPromptFocused = true }
+    }
+
+    /// The title and message read as one, first, the way VoiceOver opens a system alert.
+    private var prompt: some View {
+        VStack(alignment: .leading, spacing: Constants.contentSpacing) {
+            Text(title)
+                .type(.headline3)
+                .foregroundColor(role.headerTint)
+                .lineLimit(Constants.titleLineLimit)
+
+            if let message {
+                Text(message)
+                    .type(.body2(.regular), style: .secondary)
+                    .lineSpacing(Constants.messageLineSpacing)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityFocused($isPromptFocused)
     }
 }
 

@@ -595,6 +595,8 @@ menu.newWindow	新建窗口
 menu.newTab	新建标签页
 browse.actionOpenInNewWindow	在新窗口中打开
 browse.actionOpenInNewTab	在新标签页中打开
+select.slideTipTitle	滑动选择
+select.slideTipMessage	用手指横向滑过项目，即可一次选择多个。
 settings.rowAppearance	外观
 appearance.system	跟随系统
 appearance.light	浅色
@@ -1103,3 +1105,7 @@ offline.rowUpdateFailed	无法更新
 pdfPreview.pageIndicator	%1$lld/%2$lld
 previewToolbar.savePhoto	存储照片
 previewToolbar.saveVideo	存储视频
+offline.removeEmptiesFolderMessage	“%@”中不会再有其他内容留在此设备上，因此该文件夹也会从“可离线使用”中移除。服务器上的文件不受影响。
+shareUpload.nameLabel	文件名
+shareUpload.namesLabel	文件名
+shareUpload.nameHint	上传时使用的文件名。扩展名保持不变。

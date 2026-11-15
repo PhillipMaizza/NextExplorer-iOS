@@ -870,6 +870,8 @@ menu.newWindow	Új ablak
 menu.newTab	Új lap
 browse.actionOpenInNewWindow	Megnyitás új ablakban
 browse.actionOpenInNewTab	Megnyitás új lapon
+select.slideTipTitle	Kijelölés csúsztatással
+select.slideTipMessage	Csúsztasd az ujjad oldalirányban az elemeken, hogy egyszerre többet jelölj ki.
 settings.rowAppearance	Megjelenés
 appearance.system	Rendszer
 appearance.light	Világos
@@ -1089,3 +1091,7 @@ offline.rowUpdateFailed	A frissítés nem sikerült
 pdfPreview.pageIndicator	%1$lld / %2$lld
 previewToolbar.savePhoto	Fotó mentése
 previewToolbar.saveVideo	Videó mentése
+offline.removeEmptiesFolderMessage	A(z) „%@” mappából semmi más nem marad ezen az eszközön, ezért a mappa is lekerül az offline elérhetők közül. A kiszolgálón lévő fájljait nem érinti.
+shareUpload.nameLabel	Fájlnév
+shareUpload.namesLabel	Fájlnevek
+shareUpload.nameHint	A név, amelyen a fájl feltöltődik. A kiterjesztés nem változik.

@@ -23,6 +23,7 @@ struct OfflinePinnedGridCells: View {
         ForEach(usages) { usage in
             let favorite = favorites.first { $0.path == usage.root.path }
             SelectableGridCell(
+                selectionID: OfflineTabSweepID.pinned(usage.root.path),
                 isSelecting: isSelecting,
                 isSelected: selectedPaths.contains(usage.root.path),
                 onTap: { onOpen(usage.root) }

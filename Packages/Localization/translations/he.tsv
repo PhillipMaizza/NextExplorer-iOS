@@ -876,6 +876,8 @@ menu.newWindow	חלון חדש
 menu.newTab	לשונית חדשה
 browse.actionOpenInNewWindow	פתיחה בחלון חדש
 browse.actionOpenInNewTab	פתיחה בלשונית חדשה
+select.slideTipTitle	החלקה לבחירה
+select.slideTipMessage	החליקו אצבע לרוחב על פריטים כדי לבחור כמה בבת אחת.
 settings.rowAppearance	מראה
 appearance.system	מערכת
 appearance.light	בהיר
@@ -1102,3 +1104,7 @@ offline.rowUpdateFailed	העדכון נכשל
 pdfPreview.pageIndicator	%1$lld מתוך %2$lld
 previewToolbar.savePhoto	שמירת תמונה
 previewToolbar.saveVideo	שמירת סרטון
+offline.removeEmptiesFolderMessage	שום דבר נוסף מ״%@״ לא נשאר במכשיר זה, ולכן גם התיקייה תוסר מהזמינים ללא חיבור. הקבצים שלכם בשרת לא מושפעים.
+shareUpload.nameLabel	שם הקובץ
+shareUpload.namesLabel	שמות הקבצים
+shareUpload.nameHint	השם שתחתיו הקובץ יועלה. הסיומת נשארת זהה.

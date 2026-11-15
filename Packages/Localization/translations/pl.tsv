@@ -613,6 +613,8 @@ menu.newWindow	Nowe okno
 menu.newTab	Nowa karta
 browse.actionOpenInNewWindow	Otwórz w nowym oknie
 browse.actionOpenInNewTab	Otwórz w nowej karcie
+select.slideTipTitle	Przesuń, aby zaznaczyć
+select.slideTipMessage	Przesuń palcem w bok po elementach, aby zaznaczyć kilka naraz.
 settings.rowAppearance	Wygląd
 appearance.system	Systemowy
 appearance.light	Jasny
@@ -1142,3 +1144,7 @@ offline.rowUpdateFailed	Nie udało się zaktualizować
 pdfPreview.pageIndicator	%1$lld z %2$lld
 previewToolbar.savePhoto	Zachowaj zdjęcie
 previewToolbar.saveVideo	Zachowaj wideo
+offline.removeEmptiesFolderMessage	Z „%@” nic więcej nie zostanie na tym urządzeniu, więc folder również zostanie usunięty z dostępnych offline. Pliki na serwerze pozostaną bez zmian.
+shareUpload.nameLabel	Nazwa pliku
+shareUpload.namesLabel	Nazwy plików
+shareUpload.nameHint	Nazwa, pod którą plik zostanie przesłany. Rozszerzenie pozostaje bez zmian.

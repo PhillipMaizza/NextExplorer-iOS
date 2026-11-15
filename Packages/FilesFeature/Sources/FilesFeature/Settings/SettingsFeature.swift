@@ -1,6 +1,7 @@
 import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FolderPickerFeature
 import Foundation
@@ -18,16 +19,22 @@ public struct SettingsFeature {
     /// Whether the account can use the password rows: a single sign on account has no password
     /// until it adds one.
     public enum PasswordStatus: Equatable, Sendable {
+        /// Not answered yet.
         case unknown
         case present
         case absent
+        /// Asked, but the server gave no answer: the rows stay, since the account may well have one.
+        case unconfirmed
     }
 
     /// Whether the server lets accounts sign in with a password, from `GET /api/auth/status`.
     public enum LocalSignInStatus: Equatable, Sendable {
+        /// Not answered yet.
         case unknown
         case enabled
         case disabled
+        /// Asked, but the server gave no answer: the rows stay, since the server may well allow it.
+        case unconfirmed
     }
 
     @ObservableState
@@ -36,21 +43,26 @@ public struct SettingsFeature {
         public var user: User
         public var isSigningOut = false
         public var isConfirmingSignOut = false
-        /// Whether the account has a password, from `GET /api/auth/methods`. `unknown` until the
-        /// answer arrives and when it can't be fetched, which keeps today's Change Password row.
+        /// Whether the account has a password, from `GET /api/auth/methods`.
         public var passwordStatus: PasswordStatus = .unknown
-        /// `unknown` until the answer arrives and when it can't be fetched, which keeps the rows.
+        /// Whether the server allows password sign in, from `GET /api/auth/status`.
         public var localSignInStatus: LocalSignInStatus = .unknown
 
         /// A password does nothing on a server that has password sign in off (`AUTH_MODE=oidc`).
+        /// Hidden until the server answers, so a row the account cannot use never shows for a moment.
         public var showsPasswordRow: Bool {
-            localSignInStatus != .disabled
+            localSignInStatus == .enabled || localSignInStatus == .unconfirmed
         }
 
         /// The second factor guards the password sign in, so it needs both the server to allow
         /// that sign in and the account to have a password. The web app hides it the same way.
         public var showsTwoFactorRow: Bool {
-            showsPasswordRow && passwordStatus != .absent
+            showsPasswordRow && (passwordStatus == .present || passwordStatus == .unconfirmed)
+        }
+
+        /// Both answers are in, so asking again would change nothing.
+        var isSignInStatusSettled: Bool {
+            [.present, .absent].contains(passwordStatus) && [.enabled, .disabled].contains(localSignInStatus)
         }
 
         /// Held by the feature, not created inline in the view: a `Store` built in a
@@ -165,6 +177,8 @@ public struct SettingsFeature {
 
     public enum Action: Sendable {
         case onAppear
+        /// Asks the server which sign in rows the account gets, for a menu shown before Settings.
+        case signInStatusRequested
         case pagesChanged([SettingsPage])
         case userManagementButtonTapped
         case userManagement(PresentationAction<UserManagementFeature.Action>)
@@ -296,6 +310,27 @@ public struct SettingsFeature {
 
     public init() {}
 
+    /// Which sign in rows the account gets. The rows arrive in the list's own motion.
+    private func loadSignInStatus(serverURL: URL) -> Effect<Action> {
+        let filesClient = filesClient
+        return .merge(
+            .run { send in
+                try await send(
+                    .authMethodsResponse(apiResult { try await filesClient.fetchAuthMethods(serverURL) }),
+                    animation: DSMotion.listDiff
+                )
+            }
+            .cancellable(id: CancelID.authMethods, cancelInFlight: true),
+            .run { send in
+                try await send(
+                    .authStatusResponse(apiResult { try await filesClient.fetchAuthStatus(serverURL) }),
+                    animation: DSMotion.listDiff
+                )
+            }
+            .cancellable(id: CancelID.authStatus, cancelInFlight: true)
+        )
+    }
+
     private func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .userManagementButtonTapped:
@@ -320,6 +355,9 @@ public struct SettingsFeature {
             return .none
 
         case .authMethodsResponse(.failure):
+            if state.passwordStatus == .unknown {
+                state.passwordStatus = .unconfirmed
+            }
             return .none
 
         case let .authStatusResponse(.success(status)):
@@ -327,7 +365,14 @@ public struct SettingsFeature {
             return .none
 
         case .authStatusResponse(.failure):
+            if state.localSignInStatus == .unknown {
+                state.localSignInStatus = .unconfirmed
+            }
             return .none
+
+        case .signInStatusRequested:
+            guard !state.isSignInStatusSettled else { return .none }
+            return loadSignInStatus(serverURL: state.serverURL)
 
         case .changePassword(.presented(.delegate(.passwordAdded))):
             state.passwordStatus = .present
@@ -634,17 +679,8 @@ public struct SettingsFeature {
             state.isLoadingPreferences = true
             let serverURL = state.serverURL
             let filesClient = filesClient
-            let loadAuthMethods = Effect<Action>.run { send in
-                try await send(.authMethodsResponse(apiResult { try await filesClient.fetchAuthMethods(serverURL) }))
-            }
-            .cancellable(id: CancelID.authMethods, cancelInFlight: true)
-            let loadAuthStatus = Effect<Action>.run { send in
-                try await send(.authStatusResponse(apiResult { try await filesClient.fetchAuthStatus(serverURL) }))
-            }
-            .cancellable(id: CancelID.authStatus, cancelInFlight: true)
             return .merge(
-                loadAuthMethods,
-                loadAuthStatus,
+                loadSignInStatus(serverURL: serverURL),
                 checkDownloads,
                 checkCacheSize,
                 checkOfflineSize,

@@ -65,6 +65,7 @@ struct MainTabUploadsTests: MainTabTestSupport {
         }
         await store.receive(\.browse.refreshDirectory)
         await store.receive(\.favorites.refreshDirectory)
+        await store.receive(\.offline.uploadsLanded)
         await store.send(.openUploadedLocation(TestPath.documentsReports)) {
             $0.uploadToast = nil
             $0.selectedTab = .browse
@@ -99,6 +100,7 @@ struct MainTabUploadsTests: MainTabTestSupport {
         }
         await store.receive(\.browse.refreshDirectory)
         await store.receive(\.favorites.refreshDirectory)
+        await store.receive(\.offline.uploadsLanded)
         await store.receive(\.browse.root.refreshButtonTapped) {
             $0.browse.root.phase = .loading
         }
@@ -131,5 +133,6 @@ struct MainTabUploadsTests: MainTabTestSupport {
         }
         await store.receive(\.browse.refreshDirectory)
         await store.receive(\.favorites.refreshDirectory)
+        await store.receive(\.offline.uploadsLanded)
     }
 }

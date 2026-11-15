@@ -147,13 +147,14 @@ struct OfflineTabView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+        .modifier(OfflineTabDragToSelect(store: store, pinnedPaths: displayedPinned.map(\.root.path)))
         .backgroundGradient()
         .dismissKeyboardOnTap()
     }
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: FileGridMetrics.columns(for: thumbnailSize), spacing: FileGridMetrics.spacing) {
+            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
                 if listPhase == .loading {
                     SkeletonGridCells(entries: Constants.skeletonEntries)
                 } else {
@@ -173,6 +174,7 @@ struct OfflineTabView: View {
             .padding(FileGridMetrics.spacing)
             .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
         }
+        .modifier(OfflineTabDragToSelect(store: store, pinnedPaths: displayedPinned.map(\.root.path)))
         .backgroundGradient()
         .dismissKeyboardOnTap()
     }

@@ -601,6 +601,8 @@ menu.newWindow	Nova janela
 menu.newTab	Nova aba
 browse.actionOpenInNewWindow	Abrir em nova janela
 browse.actionOpenInNewTab	Abrir em nova aba
+select.slideTipTitle	Deslize para selecionar
+select.slideTipMessage	Deslize um dedo de lado sobre os itens para selecionar vários de uma só vez.
 settings.rowAppearance	Aparência
 appearance.system	Sistema
 appearance.light	Claro
@@ -1116,3 +1118,7 @@ offline.rowUpdateFailed	Não foi possível atualizar
 pdfPreview.pageIndicator	%1$lld de %2$lld
 previewToolbar.savePhoto	Guardar fotografia
 previewToolbar.saveVideo	Guardar vídeo
+offline.removeEmptiesFolderMessage	Nada mais de “%@” fica neste dispositivo, por isso a pasta também é removida de Disponível offline. Os seus ficheiros no servidor não são afetados.
+shareUpload.nameLabel	Nome do ficheiro
+shareUpload.namesLabel	Nomes dos ficheiros
+shareUpload.nameHint	O nome com que o ficheiro é carregado. A extensão mantém-se.

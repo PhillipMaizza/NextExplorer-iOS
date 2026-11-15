@@ -56,6 +56,18 @@ public struct PreparationReport: Equatable, Sendable {
     }
 }
 
+/// A shared item's name as the share sheet lets the user edit it: the part before the extension, and
+/// the extension that stays (empty when the item does not say yet, as Photos does before staging).
+public struct SharedItemName: Equatable, Sendable {
+    public var base: String
+    public var fileExtension: String
+
+    public init(base: String, fileExtension: String = "") {
+        self.base = base
+        self.fileExtension = fileExtension
+    }
+}
+
 /// The items another app shared, as the extension received them. The extension's view controller
 /// supplies the live value around its `NSItemProvider`s.
 ///
@@ -67,14 +79,18 @@ public struct SharedItemsClient: Sendable {
     public var count: @Sendable () -> Int = { 0 }
     /// How many of the items are Live Photos, which upload as the still and its motion video.
     public var livePhotoCount: @Sendable () -> Int = { 0 }
+    /// Each item's name, in order, for the share sheet to offer for editing.
+    public var names: @Sendable () -> [SharedItemName] = { [] }
     /// Stages the items at `indexes` (all of them when `nil`) into the pending batch for
-    /// `credentials`' server, creating it on the first pass. An item that can't be read is
-    /// skipped and reported, never fatal. Throws only for the whole pass (cancellation, no batch
-    /// folder), and a cancelled pass has already discarded the batch.
+    /// `credentials`' server, creating it on the first pass, each one in `renames` under the name
+    /// the user gave it (its extension kept). An item that can't be read is skipped and reported,
+    /// never fatal. Throws only for the whole pass (cancellation, no batch folder), and a cancelled
+    /// pass has already discarded the batch.
     public var prepare: @Sendable (
         _ credentials: SessionCredentials,
         _ destination: String,
         _ indexes: [Int]?,
+        _ renames: [Int: String],
         _ onProgress: @Sendable @escaping (PreparationProgress) -> Void
     ) async throws -> PreparationReport
     /// Hands the pending batch to the background uploader. Returns how many files went out.
@@ -88,6 +104,7 @@ extension SharedItemsClient: TestDependencyKey {
     public static let testValue: SharedItemsClient = {
         var client = SharedItemsClient()
         client.livePhotoCount = { 0 }
+        client.names = { [] }
         return client
     }()
 }
@@ -105,7 +122,14 @@ public extension SharedItemsClient {
         return SharedItemsClient(
             count: { box.providers.count },
             livePhotoCount: { box.providers.filter(ProviderStager.isLivePhoto).count },
-            prepare: { credentials, destination, indexes, onProgress in
+            names: {
+                box.providers.enumerated().map { index, provider in
+                    SharedItemLoader.editableName(suggestedName: provider.suggestedName)
+                        .map { SharedItemName(base: $0.base, fileExtension: $0.fileExtension) }
+                        ?? SharedItemName(base: ProviderStager.displayName(of: provider, index: index))
+                }
+            },
+            prepare: { credentials, destination, indexes, renames, onProgress in
                 // Quiet permission for the "upload finished" notification, asked before anything goes out.
                 await requestNotificationPermission()
                 let uploader = BackgroundUploader.shared
@@ -119,7 +143,11 @@ public extension SharedItemsClient {
                         onProgress(PreparationProgress(completed: position))
                         let provider = box.providers[index]
                         do {
-                            let staged = try await SharedItemLoader.stageAll(provider, in: batch) { fraction in
+                            let staged = try await SharedItemLoader.stageAll(
+                                provider,
+                                in: batch,
+                                renamedTo: renames[index]
+                            ) { fraction in
                                 onProgress(PreparationProgress(completed: position, fraction: fraction))
                             }
                             for file in staged {

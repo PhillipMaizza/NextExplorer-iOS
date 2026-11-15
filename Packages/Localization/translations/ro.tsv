@@ -607,6 +607,8 @@ menu.newWindow	Fereastră nouă
 menu.newTab	Filă nouă
 browse.actionOpenInNewWindow	Deschide în fereastră nouă
 browse.actionOpenInNewTab	Deschide în filă nouă
+select.slideTipTitle	Glisează pentru a selecta
+select.slideTipMessage	Glisează un deget lateral peste elemente pentru a selecta mai multe deodată.
 settings.rowAppearance	Aspect
 appearance.system	Sistem
 appearance.light	Luminos
@@ -1129,3 +1131,7 @@ offline.rowUpdateFailed	Actualizarea a eșuat
 pdfPreview.pageIndicator	%1$lld din %2$lld
 previewToolbar.savePhoto	Salvează poza
 previewToolbar.saveVideo	Salvează videoclipul
+offline.removeEmptiesFolderMessage	Din „%@” nu mai rămâne nimic pe acest dispozitiv, așa că și dosarul este eliminat din Disponibile offline. Fișierele tale de pe server nu sunt afectate.
+shareUpload.nameLabel	Numele fișierului
+shareUpload.namesLabel	Numele fișierelor
+shareUpload.nameHint	Numele sub care se încarcă fișierul. Extensia rămâne aceeași.

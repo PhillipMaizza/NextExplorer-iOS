@@ -601,6 +601,8 @@ menu.newWindow	Nieuw venster
 menu.newTab	Nieuw tabblad
 browse.actionOpenInNewWindow	Open in nieuw venster
 browse.actionOpenInNewTab	Open in nieuw tabblad
+select.slideTipTitle	Veeg om te selecteren
+select.slideTipMessage	Veeg met een vinger zijwaarts over onderdelen om er meerdere tegelijk te selecteren.
 settings.rowAppearance	Weergave
 appearance.system	Systeem
 appearance.light	Licht
@@ -1116,3 +1118,7 @@ offline.rowUpdateFailed	Bijwerken mislukt
 pdfPreview.pageIndicator	%1$lld van %2$lld
 previewToolbar.savePhoto	Bewaar foto
 previewToolbar.saveVideo	Bewaar video
+offline.removeEmptiesFolderMessage	Er blijft niets anders van ‘%@’ op dit apparaat staan, dus de map wordt ook verwijderd uit Offline beschikbaar. Je bestanden op de server worden niet gewijzigd.
+shareUpload.nameLabel	Bestandsnaam
+shareUpload.namesLabel	Bestandsnamen
+shareUpload.nameHint	De naam waaronder het bestand wordt geüpload. De extensie blijft hetzelfde.

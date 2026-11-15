@@ -125,6 +125,8 @@ public struct OfflineTabFeature {
         case selectModeToggled
         case itemSelectionToggled(LocalDownload.ID)
         case pinnedSelectionToggled(path: String)
+        /// A finger slide across the tab in select mode picked these pinned items and saved files.
+        case selectionSwept(pinnedPaths: Set<String>, downloadIDs: Set<LocalDownload.ID>)
         /// `pinnedPaths` is what the tab shows of the pinned items, searched and sorted like the rest.
         case selectAllTapped(pinnedPaths: [String])
         /// The selected pinned items were removed from offline: select mode ends like after a delete.
@@ -281,6 +283,12 @@ public struct OfflineTabFeature {
                 }
                 return .none
 
+            case let .selectionSwept(pinnedPaths, downloadIDs):
+                guard state.isSelecting else { return .none }
+                state.selectedPinnedPaths = pinnedPaths
+                state.selectedDownloadIDs = downloadIDs.intersection(state.downloads.map(\.id))
+                return .none
+
             case let .selectAllTapped(pinnedPaths):
                 state.selectedDownloadIDs = Set(state.displayedDownloads.map(\.id))
                 state.selectedPinnedPaths = Set(pinnedPaths)
@@ -421,6 +429,12 @@ public struct OfflineTabFeature {
 
             case .path(.element(id: _, action: .delegate(.goToSharedTab))):
                 return .send(.delegate(.goToSharedTab))
+
+            case let .path(.element(id: id, action: .delegate(.keptFolderEmptied(removedPaths)))):
+                state.path.pop(from: id)
+                return .merge(state.path.ids.map {
+                    .send(.path(.element(id: $0, action: .keptItemsRemoved(paths: removedPaths))))
+                })
 
             case .path(.element(id: _, action: .delegate(.directoryContentsChanged))):
                 return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) })

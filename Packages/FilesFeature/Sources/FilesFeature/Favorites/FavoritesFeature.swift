@@ -187,6 +187,8 @@ public struct FavoritesFeature {
         case previewHost(PresentationAction<BrowseFeature.Action>)
         case selectModeToggled
         case itemSelectionToggled(Favorite.ID)
+        /// A finger slide across the list in select mode picked this selection.
+        case selectionSwept(Set<Favorite.ID>)
         case selectAllTapped
         case deselectAllTapped
         case bulkRemoveTapped
@@ -541,6 +543,11 @@ public struct FavoritesFeature {
                 } else {
                     state.selectedFavoriteIDs.insert(id)
                 }
+                return .none
+
+            case let .selectionSwept(ids):
+                guard state.isSelecting else { return .none }
+                state.selectedFavoriteIDs = ids.intersection(state.favorites.map(\.id))
                 return .none
 
             case .selectAllTapped:

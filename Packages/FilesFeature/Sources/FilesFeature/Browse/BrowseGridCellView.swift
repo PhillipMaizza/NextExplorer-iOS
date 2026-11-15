@@ -315,6 +315,16 @@ struct GridCellView: View {
     .padding(.space16)
 }
 
+#Preview("Select mode tiles") {
+    HStack(spacing: .space16) {
+        GridCellView(name: "Photos", isDirectory: true)
+            .dsGridTile(isSelecting: true, isSelected: false, seed: "Photos")
+        GridCellView(name: "vacation.jpg", isDirectory: false)
+            .dsGridTile(isSelecting: true, isSelected: true, seed: "vacation.jpg")
+    }
+    .padding(.space16)
+}
+
 #Preview("All variants") {
     LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: .space16) {
         GridCellView(name: "Photos", isDirectory: true)

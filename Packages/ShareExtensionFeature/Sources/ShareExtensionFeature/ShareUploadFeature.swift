@@ -73,12 +73,32 @@ public struct ShareUploadFeature {
         public var destination = ""
         /// Settings' "Upload Without Asking" for this account: uploads once the connection checks out.
         public var shouldUploadWithoutAsking = false
+        /// Each shared item's name, editable before the upload starts.
+        public var names: [EditableItemName] = []
         @Presents public var folderPicker: DestinationPickerFeature.State?
 
         public init() {}
 
         public var canUpload: Bool {
-            phase == .ready && credentials != nil && !destination.isEmpty
+            phase == .ready && credentials != nil && !destination.isEmpty && names.allSatisfy(\.isAcceptable)
+        }
+
+        /// Names can be changed until the files are being prepared.
+        public var canEditNames: Bool {
+            [.checking, .ready].contains(phase)
+        }
+
+        /// The name fields show while they can be edited, except on the way to an upload that starts on
+        /// its own, which would only flash them.
+        public var shouldShowNames: Bool {
+            !names.isEmpty && canEditNames && !shouldUploadWithoutAsking
+        }
+
+        /// The names the user changed, by item, for the staging pass to upload under.
+        var renames: [Int: String] {
+            Dictionary(uniqueKeysWithValues: names.enumerated().compactMap { index, name in
+                name.isEdited ? (index, name.trimmed) : nil
+            })
         }
 
         public var accountName: String {
@@ -172,6 +192,7 @@ public struct ShareUploadFeature {
         case accountSelected(String)
         case connectionChecked(accountID: String, ConnectionCheck)
         case defaultFolderChecked(accountID: String, DefaultFolderCheck)
+        case nameChanged(index: Int, String)
         case chooseFolderTapped
         case folderPicker(PresentationAction<DestinationPickerFeature.Action>)
         case uploadTapped
@@ -299,10 +320,11 @@ public struct ShareUploadFeature {
         state.progress = PreparationProgress()
         state.preparingTotal = indexes?.count ?? state.itemCount
         let destination = state.destination
+        let renames = state.renames
         let sharedItems = sharedItems
         return .run { send in
             do {
-                let report = try await sharedItems.prepare(credentials, destination, indexes) { progress in
+                let report = try await sharedItems.prepare(credentials, destination, indexes, renames) { progress in
                     Task { await send(.progressed(progress)) }
                 }
                 await send(.preparationFinished(.success(report)))
@@ -346,6 +368,7 @@ public struct ShareUploadFeature {
                 guard state.phase == .loading else { return .none }
                 state.itemCount = sharedItems.count()
                 state.livePhotoCount = sharedItems.livePhotoCount()
+                state.names = sharedItems.names().map(EditableItemName.init)
                 guard state.itemCount > 0 else {
                     state.phase = .nothingToUpload
                     return .none
@@ -428,6 +451,11 @@ public struct ShareUploadFeature {
                     state.phase = .signedOut
                     return .none
                 }
+
+            case let .nameChanged(index, text):
+                guard state.canEditNames, state.names.indices.contains(index) else { return .none }
+                state.names[index].text = text
+                return .none
 
             case .chooseFolderTapped:
                 guard let credentials = state.credentials, state.phase == .ready else { return .none }

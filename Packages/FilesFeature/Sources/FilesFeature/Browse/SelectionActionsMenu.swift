@@ -29,6 +29,14 @@ struct SelectionActionsMenu: View {
         var canFavorite = false
         var isAllFavorite = false
         var hasLoadedFavorites = true
+
+        /// Whether the menu would list anything for this selection: with nothing, the button is
+        /// disabled rather than opening an empty menu (device content with no kept pick).
+        var hasActions: Bool {
+            let singleActions = single != nil && (canGetInfo || canWrite || canShare)
+            return singleActions || canTransfer || sharesKeptFiles || canSave || canKeepOffline || canFavorite
+                || canDelete
+        }
     }
 
     let availability: Availability
@@ -115,6 +123,7 @@ struct SelectionActionsMenu: View {
         }
         // Menu glyphs follow the tint: primary like the system's own menus, not the accent.
         .tint(Color.primaryDS)
+        .disabled(!availability.hasActions)
         .accessibilityLabel(L10n.Common.more)
     }
 
@@ -184,4 +193,8 @@ private enum PreviewSample {
 
 #Preview("Read only") {
     PreviewSample.menu(.init(canTransfer: true))
+}
+
+#Preview("Offline, nothing kept picked") {
+    PreviewSample.menu(.init(single: PreviewSample.report, canGetInfo: false))
 }

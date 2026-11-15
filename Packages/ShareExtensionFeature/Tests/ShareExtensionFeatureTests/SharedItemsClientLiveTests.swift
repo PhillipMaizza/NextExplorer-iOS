@@ -58,7 +58,7 @@ struct SharedItemsClientLiveTests {
         ]
         let client = client(providers)
 
-        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
 
         #expect(report.stagedCount == 2)
         #expect(report.failures == [ItemFailure(index: 1, name: Constants.brokenName, cause: .cannotRead)])
@@ -69,7 +69,7 @@ struct SharedItemsClientLiveTests {
     func anUnnamedFailureGetsAPositionName() async throws {
         let client = try client([readableProvider(named: TestFile.aPDF), failingProvider(named: nil)])
 
-        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
 
         let failure = try #require(report.failures.first)
         #expect(failure.index == 1)
@@ -81,7 +81,7 @@ struct SharedItemsClientLiveTests {
     func aFullDeviceIsNamedAsTheCause() async throws {
         let client = client([failingProvider(named: "big.mov", error: CocoaError(.fileWriteOutOfSpace))])
 
-        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
 
         #expect(report.stagedCount == 0)
         #expect(report.failures.map(\.cause) == [.notEnoughSpace])
@@ -107,11 +107,11 @@ struct SharedItemsClientLiveTests {
         }
         let client = try client([readableProvider(named: "ok.pdf"), flaky])
 
-        let first = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+        let first = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
         #expect(first.stagedCount == 1)
         #expect(first.failures.map(\.index) == [1])
 
-        let second = try await client.prepare(credentials, TestFolder.photos, [1]) { _ in }
+        let second = try await client.prepare(credentials, TestFolder.photos, [1], [:]) { _ in }
         #expect(second.stagedCount == 2, "the earlier file is still staged")
         #expect(second.failures.isEmpty)
         client.discard()
@@ -122,7 +122,7 @@ struct SharedItemsClientLiveTests {
         let link = try NSItemProvider(object: #require(URL(string: TestHost.exampleURLString)) as NSURL)
         let client = client([link])
 
-        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
 
         #expect(report.stagedCount == 0)
         #expect(report.failures.isEmpty)
@@ -134,7 +134,7 @@ struct SharedItemsClientLiveTests {
         let seen = LockIsolated<[PreparationProgress]>([])
         let client = try client([readableProvider(named: TestFile.aPDF), readableProvider(named: "b.pdf")])
 
-        _ = try await client.prepare(credentials, TestFolder.photos, nil) { progress in
+        _ = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { progress in
             seen.withValue { $0.append(progress) }
         }
 
@@ -196,7 +196,7 @@ struct SharedItemsClientLiveTests {
         let client = client([provider])
 
         let task = Task {
-            try await client.prepare(credentials, TestFolder.photos, nil) { reported in
+            try await client.prepare(credentials, TestFolder.photos, nil, [:]) { reported in
                 report.yield(reported.fraction)
             }
         }
@@ -229,7 +229,7 @@ struct SharedItemsClientLiveTests {
         let client = client([provider])
 
         let task = Task {
-            try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+            try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
         }
         var iterator = started.makeAsyncIterator()
         await iterator.next()
@@ -253,7 +253,7 @@ struct SharedItemsClientLiveTests {
         }
         let client = try client([readableProvider(named: TestFile.aPDF), folderProvider])
 
-        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
 
         #expect(report.stagedCount == 1)
         #expect(report.failures == [ItemFailure(index: 1, name: Constants.holidayFolder, cause: .folder)])
@@ -270,7 +270,7 @@ struct SharedItemsClientLiveTests {
         }
         let client = client([provider])
 
-        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
 
         #expect(report.stagedCount == 0)
         #expect(report.failures == [ItemFailure(index: 0, name: Constants.goneName, cause: .cannotRead)])
@@ -300,7 +300,7 @@ struct SharedItemsClientLiveTests {
     @Test("discarding drops the staged batch once, and a second discard changes nothing")
     func discardDropsTheBatchOnce() async throws {
         let client = try client([readableProvider(named: TestFile.aPDF)])
-        let report = try await client.prepare(credentials, TestFolder.photos, nil) { _ in }
+        let report = try await client.prepare(credentials, TestFolder.photos, nil, [:]) { _ in }
         #expect(report.stagedCount == 1)
 
         client.discard()

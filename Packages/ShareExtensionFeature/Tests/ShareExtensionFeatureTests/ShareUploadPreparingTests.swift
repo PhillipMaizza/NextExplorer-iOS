@@ -22,7 +22,7 @@ extension ShareUploadFeatureTests {
                 ShareUploadFeature()
             } withDependencies: {
                 $0.sharedItems.count = { 2 }
-                $0.sharedItems.prepare = { _, _, indexes, _ in
+                $0.sharedItems.prepare = { _, _, indexes, _, _ in
                     calls.record(indexes: indexes, folder: TestFolder.photos)
                     if let error = firstError() {
                         throw error
@@ -149,7 +149,7 @@ extension ShareUploadFeatureTests {
                 ShareUploadFeature()
             } withDependencies: {
                 $0.sharedItems.count = { 3 }
-                $0.sharedItems.prepare = { _, _, _, _ in
+                $0.sharedItems.prepare = { _, _, _, _, _ in
                     let pass = passes.withValue { value -> Int in
                         value += 1
                         return value

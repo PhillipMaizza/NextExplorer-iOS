@@ -864,6 +864,8 @@ menu.newWindow	หน้าต่างใหม่
 menu.newTab	แท็บใหม่
 browse.actionOpenInNewWindow	เปิดในหน้าต่างใหม่
 browse.actionOpenInNewTab	เปิดในแท็บใหม่
+select.slideTipTitle	เลื่อนเพื่อเลือก
+select.slideTipMessage	เลื่อนนิ้วไปด้านข้างผ่านรายการเพื่อเลือกหลายรายการพร้อมกัน
 settings.rowAppearance	รูปลักษณ์
 appearance.system	ระบบ
 appearance.light	สว่าง
@@ -1076,3 +1078,7 @@ offline.rowUpdateFailed	อัปเดตไม่สำเร็จ
 pdfPreview.pageIndicator	%1$lld จาก %2$lld
 previewToolbar.savePhoto	บันทึกรูปภาพ
 previewToolbar.saveVideo	บันทึกวิดีโอ
+offline.removeEmptiesFolderMessage	จะไม่มีรายการอื่นใน “%@” เหลืออยู่บนอุปกรณ์เครื่องนี้ ระบบจึงนำโฟลเดอร์ออกจากที่ใช้งานแบบออฟไลน์ได้ด้วย ไฟล์ของคุณบนเซิร์ฟเวอร์ไม่ได้รับผลกระทบ
+shareUpload.nameLabel	ชื่อไฟล์
+shareUpload.namesLabel	ชื่อไฟล์
+shareUpload.nameHint	ชื่อที่ใช้อัปโหลดไฟล์ นามสกุลไฟล์ยังคงเหมือนเดิม

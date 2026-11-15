@@ -613,6 +613,7 @@ public enum L10n {
         public static var removeConfirm: String { tr("offline.removeConfirm") }  // "Remove"
         public static var removeConfirmMessage: String { tr("offline.removeConfirmMessage") }
         public static var removeConfirmTitle: String { tr("offline.removeConfirmTitle") }  // "Remove Offline Files?"
+        public static func removeEmptiesFolderMessage(_ a0: CVarArg) -> String { tr("offline.removeEmptiesFolderMessage", a0) }
         public static var removeItemMessage: String { tr("offline.removeItemMessage") }
         public static func removeItemTitle(_ a0: CVarArg) -> String { tr("offline.removeItemTitle", a0) }
         public static func removeItemsTitle(_ a0: CVarArg) -> String { tr("offline.removeItemsTitle", a0) }
@@ -698,6 +699,8 @@ public enum L10n {
         public static var gridView: String { tr("select.gridView") }  // "Grid View"
         public static var listView: String { tr("select.listView") }  // "List View"
         public static var selectAll: String { tr("select.selectAll") }  // "Select All"
+        public static var slideTipMessage: String { tr("select.slideTipMessage") }
+        public static var slideTipTitle: String { tr("select.slideTipTitle") }  // "Slide to Select"
     }
     public enum ServerDetails {
         public static var cameraDeniedMessage: String { tr("serverDetails.cameraDeniedMessage") }  // "Turn on camera access in Settings to take a photo."
@@ -828,6 +831,9 @@ public enum L10n {
         public static func itemCount(_ a0: CVarArg) -> String { tr("shareUpload.itemCount", a0) }
         public static var keepOpen: String { tr("shareUpload.keepOpen") }  // "Keep this open until preparing finishes."
         public static var livePhotoNote: String { tr("shareUpload.livePhotoNote") }  // "Live Photos upload with their motion video."
+        public static var nameHint: String { tr("shareUpload.nameHint") }
+        public static var nameLabel: String { tr("shareUpload.nameLabel") }  // "File Name"
+        public static var namesLabel: String { tr("shareUpload.namesLabel") }  // "File Names"
         public static var nothingToUpload: String { tr("shareUpload.nothingToUpload") }  // "There's nothing here NextExplorer can upload."
         public static var notificationAllFailedTitle: String { tr("shareUpload.notificationAllFailedTitle") }  // "Upload failed"
         public static func notificationDoneBody(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.notificationDoneBody", a0, a1) }

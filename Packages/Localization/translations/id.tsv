@@ -864,6 +864,8 @@ menu.newWindow	Jendela Baru
 menu.newTab	Tab Baru
 browse.actionOpenInNewWindow	Buka di Jendela Baru
 browse.actionOpenInNewTab	Buka di Tab Baru
+select.slideTipTitle	Geser untuk Memilih
+select.slideTipMessage	Geser jari ke samping melintasi item untuk memilih beberapa sekaligus.
 settings.rowAppearance	Tampilan
 appearance.system	Sistem
 appearance.light	Terang
@@ -1076,3 +1078,7 @@ offline.rowUpdateFailed	Gagal memperbarui
 pdfPreview.pageIndicator	%1$lld dari %2$lld
 previewToolbar.savePhoto	Simpan Foto
 previewToolbar.saveVideo	Simpan Video
+offline.removeEmptiesFolderMessage	Tidak ada lagi isi “%@” yang tersisa di perangkat ini, jadi folder juga dihapus dari Tersedia Offline. File Anda di server tidak terpengaruh.
+shareUpload.nameLabel	Nama File
+shareUpload.namesLabel	Nama File
+shareUpload.nameHint	Nama yang digunakan saat file diunggah. Ekstensinya tetap sama.

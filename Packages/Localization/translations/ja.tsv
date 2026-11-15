@@ -595,6 +595,8 @@ menu.newWindow	新規ウインドウ
 menu.newTab	新規タブ
 browse.actionOpenInNewWindow	新規ウインドウで開く
 browse.actionOpenInNewTab	新規タブで開く
+select.slideTipTitle	スライドして選択
+select.slideTipMessage	項目の上で指を横にスライドすると、まとめて選択できます。
 settings.rowAppearance	外観
 appearance.system	システム
 appearance.light	ライト
@@ -1103,3 +1105,7 @@ offline.rowUpdateFailed	更新できませんでした
 pdfPreview.pageIndicator	%1$lld/%2$lld
 previewToolbar.savePhoto	写真を保存
 previewToolbar.saveVideo	ビデオを保存
+offline.removeEmptiesFolderMessage	「%@」のほかの項目はこの端末に残らないため、フォルダもオフラインで利用可能から削除されます。サーバー上のファイルには影響しません。
+shareUpload.nameLabel	ファイル名
+shareUpload.namesLabel	ファイル名
+shareUpload.nameHint	アップロード時のファイル名です。拡張子は変わりません。

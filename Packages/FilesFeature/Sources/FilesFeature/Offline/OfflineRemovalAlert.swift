@@ -7,9 +7,16 @@ import SwiftUI
 struct OfflineRemovalRequest: Equatable, Sendable {
     let paths: [String]
     let names: [String]
+    /// Set when the picked items are everything left in the kept folder on screen: the folder itself
+    /// comes off instead (`paths` names it), and the confirmation says so.
+    var emptiedFolderName: String?
 
     var title: String {
         names.count == 1 ? L10n.Offline.removeItemTitle(names[0]) : L10n.Offline.removeItemsTitle(names.count)
+    }
+
+    var message: String {
+        emptiedFolderName.map { L10n.Offline.removeEmptiesFolderMessage($0) } ?? L10n.Offline.removeItemMessage
     }
 }
 
@@ -69,7 +76,7 @@ extension View {
             DSAlertSheet(
                 icon: IconKit.availableOffline,
                 title: request?.title ?? "",
-                message: L10n.Offline.removeItemMessage,
+                message: request?.message ?? L10n.Offline.removeItemMessage,
                 confirmTitle: L10n.Offline.removeConfirm,
                 dismissTitle: L10n.Common.cancel,
                 role: .destructive,

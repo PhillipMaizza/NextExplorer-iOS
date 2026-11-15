@@ -601,6 +601,8 @@ menu.newWindow	Nuova finestra
 menu.newTab	Nuovo pannello
 browse.actionOpenInNewWindow	Apri in una nuova finestra
 browse.actionOpenInNewTab	Apri in un nuovo pannello
+select.slideTipTitle	Scorri per selezionare
+select.slideTipMessage	Fai scorrere un dito di lato sugli elementi per selezionarne più di uno alla volta.
 settings.rowAppearance	Aspetto
 appearance.system	Sistema
 appearance.light	Chiaro
@@ -1116,3 +1118,7 @@ offline.rowUpdateFailed	Aggiornamento non riuscito
 pdfPreview.pageIndicator	%1$lld di %2$lld
 previewToolbar.savePhoto	Salva foto
 previewToolbar.saveVideo	Salva video
+offline.removeEmptiesFolderMessage	Di “%@” non resta altro su questo dispositivo, quindi anche la cartella viene rimossa da Disponibili offline. I tuoi file sul server non vengono modificati.
+shareUpload.nameLabel	Nome del file
+shareUpload.namesLabel	Nomi dei file
+shareUpload.nameHint	Il nome con cui il file viene caricato. L’estensione resta la stessa.

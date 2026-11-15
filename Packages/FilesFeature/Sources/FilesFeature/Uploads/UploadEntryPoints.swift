@@ -154,6 +154,8 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
             label()
         }
         .menuOrder(.fixed)
+        // Menu glyphs follow the tint: primary like the system's own menus, not the accent.
+        .tint(Color.primaryDS)
     }
 
     @ViewBuilder

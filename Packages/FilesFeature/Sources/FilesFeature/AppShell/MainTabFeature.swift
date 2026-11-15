@@ -89,6 +89,8 @@ public struct MainTabFeature {
         case refreshSelectedTab
         case newFolderRequested
         case newFileRequested
+        /// iPad Edit menu: cut, copy, paste, delete or select all in the visible Browse folder.
+        case folderCommandRequested(BrowseTabFeature.FolderCommand)
         /// Mac Go menu: Back (⌘[), Enclosing Folder (⌘↑), Forward (⌘]) and Go to Folder (⇧⌘G).
         case backRequested
         case enclosingFolderRequested
@@ -222,6 +224,10 @@ public struct MainTabFeature {
                     guard state.selectedTab == .browse else { return .none }
                     return .send(.browse(.newFileInVisibleFolder))
 
+                case let .folderCommandRequested(command):
+                    guard state.selectedTab == .browse else { return .none }
+                    return .send(.browse(.commandInVisibleFolder(command)))
+
                 case .backRequested:
                     switch state.selectedTab {
                     case .browse: return .send(.browse(.goBack))
@@ -338,6 +344,9 @@ public struct MainTabFeature {
                             message: message,
                             openDestination: alreadyThere ? nil : summary.lastDestination
                         )
+                    }
+                    if summary.uploadedCount > 0 {
+                        effects.append(.send(.offline(.uploadsLanded(destinations: summary.changedPaths))))
                     }
                     return .merge(effects)
 

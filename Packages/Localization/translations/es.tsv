@@ -601,6 +601,8 @@ menu.newWindow	Nueva ventana
 menu.newTab	Nueva pestaña
 browse.actionOpenInNewWindow	Abrir en una ventana nueva
 browse.actionOpenInNewTab	Abrir en una pestaña nueva
+select.slideTipTitle	Desliza para seleccionar
+select.slideTipMessage	Desliza un dedo de lado sobre los elementos para seleccionar varios a la vez.
 settings.rowAppearance	Apariencia
 appearance.system	Sistema
 appearance.light	Claro
@@ -1116,3 +1118,7 @@ offline.rowUpdateFailed	No se pudo actualizar
 pdfPreview.pageIndicator	%1$lld de %2$lld
 previewToolbar.savePhoto	Guardar foto
 previewToolbar.saveVideo	Guardar vídeo
+offline.removeEmptiesFolderMessage	No queda nada más de «%@» en este dispositivo, así que la carpeta también se quita de disponibles sin conexión. Tus archivos en el servidor no se ven afectados.
+shareUpload.nameLabel	Nombre del archivo
+shareUpload.namesLabel	Nombres de los archivos
+shareUpload.nameHint	El nombre con el que se sube el archivo. La extensión no cambia.
