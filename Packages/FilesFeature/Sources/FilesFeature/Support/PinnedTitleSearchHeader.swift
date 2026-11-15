@@ -263,7 +263,7 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         var body: some View {
             HStack(spacing: .space8) {
                 IconKit.search
-                    .foregroundStyle(Color.accent)
+                    .foregroundStyle(Color.secondaryDS)
                     .accessibilityHidden(true)
                 TextField(prompt, text: $text)
                     .textFieldStyle(.plain)

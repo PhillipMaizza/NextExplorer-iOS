@@ -89,7 +89,7 @@
                     IconKit.search
                         .resizable()
                         .scaledToFit()
-                        .foregroundStyle(Color.accent)
+                        .foregroundStyle(Color.secondaryDS)
                         .frame(width: .iconMedium, height: .iconMedium)
                         .accessibilityHidden(true)
                 }
