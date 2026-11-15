@@ -75,10 +75,10 @@ extension OpenSourceLicense {
             text: mitText(copyright: "Copyright (c) 2018 Max Brunsfeld")
         ),
         OpenSourceLicense(
-            name: "Figtree",
+            name: "Inter",
             licenseName: "OFL-1.1",
             text: """
-            Copyright 2022 The Figtree Project Authors (https://github.com/erikdkennedy/figtree)
+            Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)
 
             This Font Software is licensed under the SIL Open Font License, Version 1.1.
             This license is copied below, and is also available with a FAQ at:
@@ -123,7 +123,7 @@ extension OpenSourceLicense {
             "Author" refers to any designer, engineer, programmer, technical
             writer or other person who contributed to the Font Software.
 
-            PERMISSION & CONDITIONS
+            PERMISSION AND CONDITIONS
             Permission is hereby granted, free of charge, to any person obtaining
             a copy of the Font Software, to use, study, copy, merge, embed, modify,
             redistribute, and sell modified and unmodified copies of the Font

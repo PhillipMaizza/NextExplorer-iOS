@@ -10,7 +10,7 @@ struct MarkdownRendererTests {
 
     @Test func namesTheAppFontFirstWithoutAnyRemoteFontFetch() {
         let html = MarkdownRenderer.html(from: "# Title")
-        #expect(html.contains("font-family: \"Figtree\", -apple-system"))
+        #expect(html.contains("font-family: \"Inter Variable\", -apple-system"))
         // The render path must not phone home: no remote stylesheet, no preconnect.
         #expect(!html.contains("fonts.googleapis.com"))
         #expect(!html.contains("fonts.gstatic.com"))

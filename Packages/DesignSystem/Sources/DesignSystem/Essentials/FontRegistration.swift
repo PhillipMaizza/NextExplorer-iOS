@@ -21,10 +21,10 @@ private enum Constants {
 public enum DesignSystemFonts {
     /// The registered family name: also the `font-family` to name in any CSS that wants to
     /// match the app (see `MarkdownRenderer`).
-    public static let familyName = "Figtree"
+    public static let familyName = "Inter Variable"
 
-    /// Registers the Figtree variable font from this package's resource bundle with the
-    /// system font manager. Call once at app launch, before any `Font.custom("Figtree", ...)`
+    /// Registers the Inter variable font from this package's resource bundle with the system
+    /// font manager. Call once at app launch, before any `Font.custom(familyName, ...)`
     /// is used: package-bundled fonts aren't picked up by Info.plist `UIAppFonts`, which
     /// only sees fonts in the main app bundle, so this has to happen at runtime instead.
     ///
@@ -39,7 +39,7 @@ public enum DesignSystemFonts {
 
     private static let registerOnce: Void = {
         guard let url = Bundle.module.url(
-            forResource: "Figtree-VariableFont_wght",
+            forResource: "InterVariable",
             withExtension: "ttf",
             subdirectory: "Fonts"
         ) else {
@@ -49,7 +49,7 @@ public enum DesignSystemFonts {
         CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error)
     }()
 
-    /// Applies Figtree to the UIKit-rendered chrome SwiftUI's `.font()` modifier can't
+    /// Applies Inter to the UIKit-rendered chrome SwiftUI's `.font()` modifier can't
     /// reach (navigation bar titles and tab bar item labels) via the shared appearance
     /// proxies. Call once at launch, after `registerAll()`. Only text attributes are set;
     /// background/translucency are left at their defaults so this doesn't fight the
@@ -95,7 +95,7 @@ public enum DesignSystemFonts {
 
     #if os(iOS)
 
-        /// Figtree is a variable font registered as one family at its default (Light)
+        /// Inter is a variable font registered as one family at its default (Regular)
         /// instance. UIKit has no `.fontWeight()` style modifier, so a specific weight has
         /// to be dialed in directly on the `wght` variation axis.
         private static func weightedFont(size: CGFloat, weight: CGFloat) -> UIFont {

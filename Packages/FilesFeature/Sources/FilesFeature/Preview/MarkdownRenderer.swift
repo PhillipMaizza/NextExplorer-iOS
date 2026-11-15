@@ -29,9 +29,9 @@ enum MarkdownRenderer {
 
     /// Without an explicit charset WebKit guesses Latin-1 for a bare fragment and mangles every
     /// non-ASCII byte (em dashes turn into "\u{00E2}\u{20AC}\u{201D}"). The rest is just enough
-    /// to make the page readable in the app's own font (Figtree, pulled from Google Fonts by
-    /// the `<link>` in the head: falls back to the system stack offline), with sane width and
-    /// visible table borders. `body`'s `font-family` is the lowest-specificity rule in the
+    /// to make the page readable: the app's own font first (Inter, never fetched from the web, so
+    /// the system stack takes over where the page cannot see the bundled copy), with sane width
+    /// and visible table borders. `body`'s `font-family` is the lowest-specificity rule in the
     /// document, so a `<style>` block inside the Markdown source still wins the cascade.
     private static let documentCSS = """
     :root { color-scheme: light dark; }

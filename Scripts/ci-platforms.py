@@ -98,7 +98,11 @@ def outputs(kinds, event):
 
 
 def content_at(ref, path):
-    result = subprocess.run(["git", "show", f"{ref}:{path}"], capture_output=True, text=True)
+    """The file's text at `ref`, None when it is gone. A binary file (a font, an image) is read with its
+    undecodable bytes replaced: only Swift files are ever inspected, and a binary one is never one."""
+    result = subprocess.run(
+        ["git", "show", f"{ref}:{path}"], capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
     return result.stdout if result.returncode == 0 else None
 
 
