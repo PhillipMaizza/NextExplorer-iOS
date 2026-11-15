@@ -437,10 +437,11 @@ jobs:
     runs-on: xcode-27
     timeout-minutes: 45
 
-    # Three runners, each with about a third of the suite by measured class time (main run of
-    # 2026-11-12: FileActions 25 min; SecondFactor, MultiSelectClipboard, Search and Shared 23;
-    # the rest 22). The last one runs every class the others skip, so a new test class always
-    # runs somewhere. Re-measure from a main run's log when a class grows.
+    # Three runners, each with about a third of the suite by measured time (main run of
+    # 2026-11-15: shard 1 with FileActions 8 min, shard 2 15 min, the rest 41 min, over the 45 min
+    # job limit once its setup is counted). Gallery moved to the first shard when it grew to 17
+    # tests. The last shard runs every class the others skip, so a new test class always runs
+    # somewhere. Re-measure from a main run's log when a class grows.
     strategy:
       fail-fast: false
       matrix:
@@ -448,6 +449,7 @@ jobs:
           - name: 1 of 3
             only: >-
               -only-testing:NextExplorerUITests/FileActionsUITests
+              -only-testing:NextExplorerUITests/GalleryUITests
           - name: 2 of 3
             only: >-
               -only-testing:NextExplorerUITests/SecondFactorUITests
@@ -458,6 +460,7 @@ jobs:
             only: >-
               -only-testing:NextExplorerUITests
               -skip-testing:NextExplorerUITests/FileActionsUITests
+              -skip-testing:NextExplorerUITests/GalleryUITests
               -skip-testing:NextExplorerUITests/SecondFactorUITests
               -skip-testing:NextExplorerUITests/MultiSelectClipboardUITests
               -skip-testing:NextExplorerUITests/SearchUITests
