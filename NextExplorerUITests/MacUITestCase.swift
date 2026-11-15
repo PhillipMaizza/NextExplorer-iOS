@@ -45,9 +45,14 @@
         }
 
         /// The dot beside Offline in the sidebar: a run stored files since Offline was last opened.
+        /// The row reads it as its value.
         func newFilesDot(in app: XCUIApplication) -> XCUIElement {
-            app.outlines.descendants(matching: .any)
-                .matching(NSPredicate(format: "label == %@", L10n.Offline.newFilesBadge))
+            app.buttons
+                .matching(NSPredicate(
+                    format: "identifier == %@ AND value == %@",
+                    AccessibilityIdentifiers.Tab.downloads,
+                    L10n.Offline.newFilesBadge
+                ))
                 .firstMatch
         }
 
@@ -64,9 +69,15 @@
             }
         }
 
-        /// A section in the main window's sidebar, a native selectable list row on the Mac.
+        /// A section in the main window's sidebar, a row button found by the tab's identifier.
         func sidebarItem(_ title: String, in app: XCUIApplication) -> XCUIElement {
-            app.outlines.cells.staticTexts.showing(title)
+            let identifiers = [
+                L10n.Tab.browse: AccessibilityIdentifiers.Tab.browse,
+                L10n.Tab.favorites: AccessibilityIdentifiers.Tab.favorites,
+                L10n.Tab.shared: AccessibilityIdentifiers.Tab.shared,
+                L10n.Tab.offline: AccessibilityIdentifiers.Tab.downloads,
+            ]
+            return app.buttons[identifiers[title] ?? title].firstMatch
         }
 
         /// An item of the Go menu, opened first.

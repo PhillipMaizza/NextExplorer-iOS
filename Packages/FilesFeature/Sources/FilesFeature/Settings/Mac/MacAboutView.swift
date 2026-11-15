@@ -22,10 +22,15 @@
     public struct MacAboutView: View {
         public static let windowID = "about"
 
-        public init() {}
+        /// Opens the tip jar in the main window, where the session lives.
+        private let onTip: (@MainActor () -> Void)?
+
+        public init(onTip: (@MainActor () -> Void)? = nil) {
+            self.onTip = onTip
+        }
 
         public var body: some View {
-            MacAboutContent()
+            MacAboutContent(onTip: onTip)
                 .padding(Metrics.padding)
                 .frame(width: Metrics.width)
         }
@@ -34,8 +39,8 @@
     /// The app icon beside its name, version and links, with the credits underneath, like a
     /// native Mac app's About pane.
     struct MacAboutContent: View {
-        /// Opens the tip jar; the About window has no signed in session to buy with.
-        var onTip: (() -> Void)?
+        /// Opens the tip jar; the About window has no session of its own, so its owner supplies this.
+        var onTip: (@MainActor () -> Void)?
 
         @Environment(\.requestReview) private var requestReview
         @Environment(\.openURL) private var openURL

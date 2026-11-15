@@ -2,15 +2,17 @@
     import DesignSystem
     import SwiftUI
 
-    /// A sidebar row's glyph like Finder's: the accent, white only on the emphasized (blue)
-    /// selection of a focused sidebar, and the accent again on the gray selection it shows
-    /// while focus is elsewhere.
+    /// A sidebar row's glyph: the primary color, white only on the emphasized (blue) selection of
+    /// a focused sidebar, and the primary color again on the gray selection it shows while focus
+    /// is elsewhere. The Mac keeps the accent out of the sidebar.
     struct MacSidebarIcon: View {
         let image: Image
         @Environment(\.backgroundProminence) private var backgroundProminence
 
         var body: some View {
-            image.foregroundStyle(backgroundProminence == .increased ? Color.white : Color.accent)
+            image
+                .imageScale(.medium)
+                .foregroundStyle(backgroundProminence == .increased ? Color.white : Color.primaryDS)
         }
     }
 

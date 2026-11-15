@@ -99,6 +99,18 @@ struct NextExplorerApp: App {
         Task.detached { await BackgroundUploadEvents.reconnectPending() }
     }
 
+    #if os(macOS)
+        /// The About window's coffee link: the tip jar sheet belongs to the main window, so that
+        /// window comes forward and presents it. Signed out, there is no session and nothing opens.
+        private static func openTipJar() {
+            guard case .authenticated = store.destination else { return }
+            store.send(.destination(.authenticated(.mainTab(.settings(.tipJarButtonTapped)))))
+            NSApp.activate(ignoringOtherApps: true)
+            NSApp.windows.first { $0.isVisible && $0.canBecomeMain && $0.title != L10n.Menu.about }?
+                .makeKeyAndOrderFront(nil)
+        }
+    #endif
+
     var body: some Scene {
         WindowGroup {
             AppView(store: Self.store)
@@ -116,6 +128,7 @@ struct NextExplorerApp: App {
                 // A Mac window always gets the regular width sidebar layout, never the phone tab bar.
                 .environment(\.horizontalSizeClass, .regular)
                 .frame(minWidth: MacWindow.minWidth, minHeight: MacWindow.minHeight)
+                .macFrostedWindow()
             #endif
             #if DEBUG
             .disablesAnimationsUnderUITest()
@@ -140,6 +153,7 @@ struct NextExplorerApp: App {
             WindowGroup(id: FolderWindowRoute.windowID, for: FolderWindowRoute.self) { $route in
                 if let route {
                     MacFolderWindow(route: route, mainStore: Self.store)
+                        .macFrostedWindow()
                         .appAppearance(appearanceMode)
                 }
             }
@@ -149,7 +163,9 @@ struct NextExplorerApp: App {
             .restorationBehavior(.disabled)
 
             Window(L10n.Menu.about, id: MacAboutView.windowID) {
-                MacAboutView()
+                MacAboutView(onTip: Self.openTipJar)
+                    .containerBackground(.ultraThinMaterial, for: .window)
+                    .macFrostedWindow()
                     .followsAppLanguage()
                     .appAppearance(appearanceMode)
             }

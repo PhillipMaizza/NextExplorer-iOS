@@ -39,8 +39,14 @@ private enum Constants {
     static let macSidebarMinWidth: CGFloat = 240
     static let macSidebarIdealWidth: CGFloat = 280
     static let macSidebarMaxWidth: CGFloat = 360
-    /// Extra room above and below each Mac sidebar row, so the sections do not feel cramped.
-    static let macRowVerticalPadding: CGFloat = .space8
+    #if os(macOS)
+        /// The Mac rows carry their own inset inside their pill, so the footer sits on the sections' edge.
+        static let footerHorizontalPadding: CGFloat = .space8
+        static let profileInset: CGFloat = MacSidebarMetrics.rowHorizontalPadding
+    #else
+        static let footerHorizontalPadding: CGFloat = .space16
+        static let profileInset: CGFloat = footerRowInset
+    #endif
 }
 
 /// The split view's sidebar on iPad and the Mac: the app's name, the sections, then the tip jar, help
@@ -73,65 +79,93 @@ struct MainTabSidebar: View {
     }
 
     var body: some View {
-        sidebarList
-            .listStyle(.sidebar)
-        #if os(iOS)
-            // Suppress the system's opaque accent selection capsule; each row draws its own
-            // pill via `listRowBackground` instead. The Mac keeps the system's own sidebar selection.
-            .tint(Color.clear)
-        #endif
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                sidebarFooter
-            }
         #if os(macOS)
-            .navigationSplitViewColumnWidth(
-                min: Constants.macSidebarMinWidth,
-                ideal: Constants.macSidebarIdealWidth,
-                max: Constants.macSidebarMaxWidth
-            )
+            // Rows of its own on the window's frosted glass, rather than a list, so selection and
+            // hover are the same pill in the sections and the footer.
+            macSections
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    MacSidebarHeader()
+                }
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    sidebarFooter
+                }
+                .navigationSplitViewColumnWidth(
+                    min: Constants.macSidebarMinWidth,
+                    ideal: Constants.macSidebarIdealWidth,
+                    max: Constants.macSidebarMaxWidth
+                )
+        #else
+            sidebarList
+                .listStyle(.sidebar)
+                // Suppress the system's opaque accent selection capsule; each row draws its own
+                // pill via `listRowBackground` instead.
+                .tint(Color.clear)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    sidebarFooter
+                }
         #endif
     }
 
-    private var sidebarList: some View {
-        List(selection: Binding(
-            get: { store.selectedTab },
-            set: {
-                if let tab = $0 {
-                    store.send(.tabSelected(tab))
-                }
-            }
-        )) {
-            Section {
-                appIdentity
-            }
-            Section {
+    #if os(macOS)
+        private var macSections: some View {
+            VStack(spacing: .space4) {
                 ForEach(Self.sectionItems, id: \.tab) { item in
-                    sidebarRow(item)
+                    MacSidebarLinkRow(
+                        title: item.title,
+                        icon: Self.macIcon(for: item.tab),
+                        isSelected: store.selectedTab == item.tab,
+                        showsNewFilesDot: item.tab == .downloads && store.hasUnseenOfflineFiles
+                    ) {
+                        store.send(.tabSelected(item.tab))
+                    }
+                    .accessibilityIdentifier(Self.identifier(for: item.tab))
+                }
+            }
+            .padding(.horizontal, .space8)
+            .frame(maxHeight: .infinity, alignment: .top)
+        }
+    #endif
+
+    #if os(iOS)
+        private var sidebarList: some View {
+            List(selection: Binding(
+                get: { store.selectedTab },
+                set: {
+                    if let tab = $0 {
+                        store.send(.tabSelected(tab))
+                    }
+                }
+            )) {
+                Section {
+                    appIdentity
+                }
+                Section {
+                    ForEach(Self.sectionItems, id: \.tab) { item in
+                        sidebarRow(item)
+                    }
                 }
             }
         }
-    }
 
-    /// The app icon and name, heading the sidebar. Not a destination, so it carries no tag.
-    /// Laid out like a section row (same icon frame, same leading edge), so the logo lines up with
-    /// the section icons below it.
-    private var appIdentity: some View {
-        HStack(spacing: Constants.iconTitleSpacing) {
-            IconKit.logo
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.sidebarIconSize, height: Constants.sidebarIconSize)
-                .accessibilityHidden(true)
-            Text(AppIdentity.name)
-                .type(.headline4, style: .primaryOnSurface)
-                .lineLimit(1)
-        }
-        .padding(.vertical, .space4)
-        .accessibilityAddTraits(.isHeader)
-        #if os(iOS)
+        /// The app icon and name, heading the sidebar. Not a destination, so it carries no tag.
+        /// Laid out like a section row (same icon frame, same leading edge), so the logo lines up with
+        /// the section icons below it.
+        private var appIdentity: some View {
+            HStack(spacing: Constants.iconTitleSpacing) {
+                IconKit.logo
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.sidebarIconSize, height: Constants.sidebarIconSize)
+                    .accessibilityHidden(true)
+                Text(AppIdentity.name)
+                    .type(.headline4, style: .primaryOnSurface)
+                    .lineLimit(1)
+            }
+            .padding(.vertical, .space4)
+            .accessibilityAddTraits(.isHeader)
             .listRowBackground(Color.clear)
-        #endif
-    }
+        }
+    #endif
 
     #if os(macOS)
         /// The tab bar artwork is drawn for iOS tab bars; the Mac sidebar uses system symbols
@@ -147,27 +181,11 @@ struct MainTabSidebar: View {
         }
     #endif
 
-    @ViewBuilder
-    private func sidebarRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
-        let hasNewFiles = item.tab == .downloads && store.hasUnseenOfflineFiles
-        #if os(macOS)
-            // The system sidebar row with the Settings sidebar's glyphs.
-            HStack {
-                Label { Text(item.title) } icon: {
-                    MacSidebarIcon(image: Self.macIcon(for: item.tab))
-                }
-                .accessibilityLabel(item.title)
-                if hasNewFiles {
-                    Spacer()
-                    NewFilesDot()
-                }
-            }
-            .padding(.vertical, Constants.macRowVerticalPadding)
-            .accessibilityIdentifier(Self.identifier(for: item.tab))
-            .tag(item.tab)
-        #else
+    #if os(iOS)
+        private func sidebarRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
+            let hasNewFiles = item.tab == .downloads && store.hasUnseenOfflineFiles
             let isSelected = store.selectedTab == item.tab
-            HStack {
+            return HStack {
                 rowLabel(item.title, icon: item.icon, isSelected: isSelected)
                     .accessibilityLabel(item.title)
                 if hasNewFiles {
@@ -183,25 +201,27 @@ struct MainTabSidebar: View {
             .accessibilityAddTraits(.isButton)
             .tag(item.tab)
             .listRowBackground(SidebarSelectionPill(isSelected: isSelected))
-        #endif
-    }
-
-    /// One explicit stack rather than a `Label`, whose icon spacing differs inside a List and out of
-    /// one: the section rows and the footer rows then line up exactly.
-    private func rowLabel(_ title: String, icon: Image, isSelected: Bool) -> some View {
-        HStack(spacing: Constants.iconTitleSpacing) {
-            icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.sidebarIconSize, height: Constants.sidebarIconSize)
-                .foregroundStyle(isSelected ? Color.primaryDS : Color.secondaryDS)
-            Text(title)
-                .type(
-                    .body1(isSelected ? .semibold : .regular),
-                    style: isSelected ? .primaryOnSurface : .secondary
-                )
         }
-    }
+    #endif
+
+    #if os(iOS)
+        /// One explicit stack rather than a `Label`, whose icon spacing differs inside a List and out of
+        /// one: the section rows and the footer rows then line up exactly.
+        private func rowLabel(_ title: String, icon: Image, isSelected: Bool) -> some View {
+            HStack(spacing: Constants.iconTitleSpacing) {
+                icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.sidebarIconSize, height: Constants.sidebarIconSize)
+                    .foregroundStyle(isSelected ? Color.primaryDS : Color.secondaryDS)
+                Text(title)
+                    .type(
+                        .body1(isSelected ? .semibold : .regular),
+                        style: isSelected ? .primaryOnSurface : .secondary
+                    )
+            }
+        }
+    #endif
 
     /// The tip jar, help and Settings, then a divider and the signed in account.
     private var sidebarFooter: some View {
@@ -216,7 +236,7 @@ struct MainTabSidebar: View {
                 .padding(.bottom, .space24)
             sidebarProfile
         }
-        .padding(.horizontal, .space16)
+        .padding(.horizontal, Constants.footerHorizontalPadding)
         .padding(.vertical, .space12)
     }
 
@@ -247,27 +267,32 @@ struct MainTabSidebar: View {
         opensOutside: Bool = false,
         action: @escaping () -> Void
     ) -> some View {
-        // The section rows' own label, height and inset, so both groups read as one list.
-        Button(action: action) {
-            HStack {
-                rowLabel(title, icon: icon, isSelected: isSelected)
-                    .lineLimit(1)
-                if opensOutside {
-                    Spacer(minLength: 0)
-                    // A page outside the app, marked like a link that leaves it.
-                    IconKit.externalLink
-                        .foregroundStyle(Color.secondaryDS)
-                        .accessibilityHidden(true)
+        #if os(macOS)
+            // The same frosted row as the sections, so both groups read as one sidebar.
+            MacSidebarLinkRow(title: title, icon: icon, isSelected: isSelected, action: action)
+        #else
+            // The section rows' own label, height and inset, so both groups read as one list.
+            Button(action: action) {
+                HStack {
+                    rowLabel(title, icon: icon, isSelected: isSelected)
+                        .lineLimit(1)
+                    if opensOutside {
+                        Spacer(minLength: 0)
+                        // A page outside the app, marked like a link that leaves it.
+                        IconKit.externalLink
+                            .foregroundStyle(Color.secondaryDS)
+                            .accessibilityHidden(true)
+                    }
                 }
+                .padding(.horizontal, Constants.footerRowInset)
+                .frame(maxWidth: .infinity, minHeight: Constants.sidebarRowHeight, alignment: .leading)
+                .background(SidebarSelectionPill(isSelected: isSelected))
+                .contentShape(Rectangle())
             }
-            .padding(.horizontal, Constants.footerRowInset)
-            .frame(maxWidth: .infinity, minHeight: Constants.sidebarRowHeight, alignment: .leading)
-            .background(SidebarSelectionPill(isSelected: isSelected))
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(title)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
+            .buttonStyle(.plain)
+            .accessibilityLabel(title)
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+        #endif
     }
 
     /// Signed in identity at the foot of the sidebar: avatar, name and email. It opens the account
@@ -313,24 +338,26 @@ struct MainTabSidebar: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, Constants.footerRowInset)
+        .padding(.horizontal, Constants.profileInset)
     }
 }
 
-/// The selected row's pill: the accent capsule, so the sidebar's selection reads like the tab bar's.
-private struct SidebarSelectionPill: View {
-    let isSelected: Bool
+#if os(iOS)
+    /// The selected row's pill: the accent capsule, so the sidebar's selection reads like the tab bar's.
+    private struct SidebarSelectionPill: View {
+        let isSelected: Bool
 
-    var body: some View {
-        if isSelected {
-            Capsule(style: .continuous)
-                .fill(Color.accent)
-                .padding(.vertical, .space2)
-        } else {
-            Color.clear
+        var body: some View {
+            if isSelected {
+                Capsule(style: .continuous)
+                    .fill(Color.accent)
+                    .padding(.vertical, .space2)
+            } else {
+                Color.clear
+            }
         }
     }
-}
+#endif
 
 @MainActor
 private func previewSidebar(selectedTab: MainTabFeature.Tab = .browse) -> some View {
