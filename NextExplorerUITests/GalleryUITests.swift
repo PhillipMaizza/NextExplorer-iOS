@@ -1,4 +1,5 @@
 #if os(iOS)
+    import CoreModels
     import Localization
     import XCTest
 
@@ -93,6 +94,18 @@
             XCTAssertTrue(title(Fixture.text, in: app).exists, "The gallery stays on the edited file")
 
             swipeToPage(Fixture.document, in: app)
+        }
+
+        func testOpenedVideoPlayerFillsItsPage() {
+            let app = openGallery(at: Fixture.video)
+            let player = app.otherElements[AccessibilityIdentifiers.Media.player].firstMatch
+            XCTAssertTrue(player.waitToAppear(), "The opened video has a player on its page")
+            XCTAssertEqual(
+                player.frame.width,
+                app.windows.firstMatch.frame.width,
+                accuracy: 1,
+                "A playing page keeps the width of the screen, so the next page stays off screen"
+            )
         }
 
         func testOpenedVideoPlaysWithoutAPlayButton() {
