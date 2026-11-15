@@ -2,6 +2,11 @@
 /// target that queries them. Identifiers stay constant across localizations, so tests never
 /// key off translated visible text.
 public enum AccessibilityIdentifiers {
+    public enum Media {
+        /// The player of a video or audio file, in the gallery and full screen.
+        public static let player = "media.player"
+    }
+
     public enum Tab {
         public static let browse = "tab.browse"
         public static let favorites = "tab.favorites"
