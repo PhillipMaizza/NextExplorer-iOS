@@ -30,7 +30,7 @@ struct MediaGalleryPage: View {
         } else if item.isVideo {
             poster
         } else {
-            FileSummaryView(item: item) {
+            FileSummaryView(item: item, artworkServerURL: serverURL) {
                 DSButton(L10n.Media.play, icon: IconKit.play, style: .primary, action: onPlay)
             }
         }

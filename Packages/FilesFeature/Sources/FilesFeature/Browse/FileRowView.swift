@@ -149,7 +149,12 @@ struct FileRowView: View {
     }
 
     private var isEligibleForThumbnail: Bool {
-        !isDirectory && supportsThumbnail && showThumbnails && serverURL != nil && itemID != nil
+        !isDirectory && (supportsThumbnail || isAudio) && showThumbnails && serverURL != nil && itemID != nil
+    }
+
+    /// Audio has no server thumbnail but may carry cover art in its tags.
+    private var isAudio: Bool {
+        kind.map(FileItem.isAudioKind) ?? false
     }
 
     private var isEligibleForPDFThumbnail: Bool {

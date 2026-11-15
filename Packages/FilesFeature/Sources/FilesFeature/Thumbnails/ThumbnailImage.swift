@@ -32,6 +32,7 @@ enum ThumbnailMemoryCache {
     /// is emptied at the same points so no decoded image outlives a sign out (rule #11).
     static func removeAll() {
         shared.removeAllObjects()
+        AudioArtwork.forgetMisses()
     }
 }
 
@@ -98,6 +99,14 @@ struct ThumbnailImage: View {
         }
         .task(id: "\(path)\u{0}\(signature)") {
             guard uiImage == nil else { return }
+            // Audio has no server thumbnail: its cover art is read from the file's own tags.
+            if fileItem.isAudio {
+                uiImage = await audioArtwork()
+                if !Task.isCancelled {
+                    didResolve = true
+                }
+                return
+            }
             let seeded = await seededImage()
             if Task.isCancelled {
                 return
@@ -197,20 +206,35 @@ struct ThumbnailImage: View {
         )
     }
 
-    /// A picture is decoded from the kept copy and a video gives its first frame, so both show with
-    /// no network and need nothing saved besides the file itself.
-    private func offlineImage() async -> PlatformImage? {
-        let store = offlineFileStore
-        let path = path
-        let target = maxPixelDimension
+    /// The file as far as its path says, enough to look up a kept copy or build its stream address.
+    private var fileItem: FileItem {
         let name = (path as NSString).lastPathComponent
-        let item = FileItem(
+        return FileItem(
             name: name,
             path: (path as NSString).deletingLastPathComponent,
             dateModified: .distantPast,
             size: 0,
             kind: (name as NSString).pathExtension.lowercased()
         )
+    }
+
+    /// An audio file's cover art, from its kept copy when it has one (no network), else its stream.
+    private func audioArtwork() async -> PlatformImage? {
+        let item = fileItem
+        let store = offlineFileStore
+        let local = await Task.detached(priority: .userInitiated) {
+            store.localURLIgnoringStaleness(item)
+        }.value
+        guard let url = local ?? FilesClient.previewURL(serverURL: serverURL, item: item) else { return nil }
+        return await AudioArtwork.image(url: url, fileExtension: item.kind, maxPixel: maxPixelDimension)
+    }
+
+    /// A picture is decoded from the kept copy and a video gives its first frame, so both show with
+    /// no network and need nothing saved besides the file itself.
+    private func offlineImage() async -> PlatformImage? {
+        let store = offlineFileStore
+        let target = maxPixelDimension
+        let item = fileItem
         let local = await Task.detached(priority: .userInitiated) {
             store.localURLIgnoringStaleness(item)
         }.value
