@@ -47,7 +47,7 @@ extension ClientCertificateFeature.Status {
 
 #Preview("Installed") {
     List {
-        SettingsClientCertificateRow(store: .settingsPreview(status: .installed(.init(subject: "Phillip iPhone"))))
+        SettingsClientCertificateRow(store: .settingsPreview(status: .installed(.init(subject: "Example iPhone"))))
     }
 }
 
@@ -60,7 +60,7 @@ extension ClientCertificateFeature.Status {
 #Preview("Expiring soon") {
     List {
         SettingsClientCertificateRow(store: .settingsPreview(status: .installed(.init(
-            subject: "Phillip iPhone", expiresAt: Date().addingTimeInterval(3 * 24 * 60 * 60)
+            subject: "Example iPhone", expiresAt: Date().addingTimeInterval(3 * 24 * 60 * 60)
         ))))
     }
 }
@@ -68,7 +68,7 @@ extension ClientCertificateFeature.Status {
 #Preview("Expired") {
     List {
         SettingsClientCertificateRow(store: .settingsPreview(status: .installed(.init(
-            subject: "Phillip iPhone", expiresAt: Date().addingTimeInterval(-24 * 60 * 60)
+            subject: "Example iPhone", expiresAt: Date().addingTimeInterval(-24 * 60 * 60)
         ))))
     }
 }

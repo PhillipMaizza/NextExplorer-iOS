@@ -31,13 +31,13 @@ struct LoginCertificateStatus: View {
 }
 
 #Preview("In use") {
-    LoginCertificateStatus(summary: .init(subject: "Phillip iPhone"), onChange: {})
+    LoginCertificateStatus(summary: .init(subject: "Example iPhone"), onChange: {})
         .padding(.space24)
 }
 
 #Preview("Expiring soon") {
     LoginCertificateStatus(
-        summary: .init(subject: "Phillip iPhone", expiresAt: Date().addingTimeInterval(4 * 24 * 60 * 60)),
+        summary: .init(subject: "Example iPhone", expiresAt: Date().addingTimeInterval(4 * 24 * 60 * 60)),
         onChange: {}
     )
     .padding(.space24)
