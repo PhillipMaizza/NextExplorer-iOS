@@ -87,7 +87,7 @@ extension ClientCertificateFeature.Failure {
 
 extension ClientCertificateSummary {
     static let preview = ClientCertificateSummary(
-        subject: "Phillip iPhone",
+        subject: "Example iPhone",
         issuer: "Homelab Client CA",
         expiresAt: Date(timeIntervalSince1970: 1_830_000_000)
     )
@@ -113,7 +113,7 @@ extension ClientCertificateSummary {
 
 #Preview("Expiring soon") {
     let summary = ClientCertificateSummary(
-        subject: "Phillip iPhone",
+        subject: "Example iPhone",
         expiresAt: Date().addingTimeInterval(5 * 24 * 60 * 60)
     )
     VStack(alignment: .leading, spacing: .space8) {

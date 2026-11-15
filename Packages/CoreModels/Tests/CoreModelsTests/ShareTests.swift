@@ -100,18 +100,18 @@ struct ShareDisplayTests {
 
     @Test("a share with no expiry never expires")
     func noExpiryNeverExpires() {
-        #expect(!share().isExpired)
+        #expect(!share().isExpired(now: MockDate.date))
     }
 
     @Test("a share whose expiry is long past is expired")
     func pastExpiryIsExpired() {
-        #expect(share(expiresAt: .distantPast).isExpired)
-        #expect(share(expiresAt: MockDate.date).isExpired)
+        #expect(share(expiresAt: .distantPast).isExpired(now: MockDate.date))
+        #expect(share(expiresAt: MockDate.date).isExpired(now: MockDate.date))
     }
 
     @Test("a share whose expiry is far in the future is not expired")
     func futureExpiryIsNotExpired() {
-        #expect(!share(expiresAt: .distantFuture).isExpired)
+        #expect(!share(expiresAt: .distantFuture).isExpired(now: MockDate.date))
     }
 }
 

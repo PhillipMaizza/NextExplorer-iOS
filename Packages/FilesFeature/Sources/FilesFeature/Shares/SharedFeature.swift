@@ -106,8 +106,7 @@ public struct SharedFeature {
         }
 
         func isExpired(_ share: Share) -> Bool {
-            guard let expiresAt = share.expiresAt else { return false }
-            return expiresAt <= now
+            share.isExpired(now: now)
         }
 
         /// The current segment's raw (unfiltered, unsorted) list.

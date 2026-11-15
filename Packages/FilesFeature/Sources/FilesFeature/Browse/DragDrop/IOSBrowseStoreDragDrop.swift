@@ -10,6 +10,7 @@
     struct IOSBrowseItemDragDrop: ViewModifier {
         let store: StoreOf<BrowseFeature>
         let item: FileItem
+        var canDrag = true
 
         func body(content: Content) -> some View {
             content.modifier(IOSRowDragDrop(
@@ -20,6 +21,7 @@
                 canDropHere: true,
                 canMove: store.canMoveHere,
                 canUpload: store.canUploadHere,
+                canDrag: canDrag,
                 selection: { store.isSelecting ? store.selectedItems : [] },
                 onDrop: { IOSBrowseDropSender.send($0, onto: item, store: store) }
             ))

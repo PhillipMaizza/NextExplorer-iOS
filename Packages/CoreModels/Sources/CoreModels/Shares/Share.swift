@@ -140,9 +140,9 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         return shareToken
     }
 
-    public var isExpired: Bool {
+    public func isExpired(now: Date) -> Bool {
         guard let expiresAt else { return false }
-        return expiresAt <= Date()
+        return expiresAt <= now
     }
 }
 
