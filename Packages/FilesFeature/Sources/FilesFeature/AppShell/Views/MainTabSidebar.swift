@@ -4,6 +4,10 @@ import DesignSystem
 import Localization
 import SwiftUI
 
+#if os(macOS)
+    import AppKit
+#endif
+
 private enum Constants {
     /// Inset of a footer row's icon inside its pill, lining it up with the section rows above.
     static let footerRowInset: CGFloat = .space16
@@ -66,6 +70,7 @@ struct MainTabSidebar: View {
     let store: StoreOf<MainTabFeature>
     @Environment(\.openURL) private var openURL
     #if os(macOS)
+        @Environment(\.openSettings) private var openSettings
         @Environment(\.openWindow) private var openWindow
     #endif
 
@@ -284,6 +289,11 @@ struct MainTabSidebar: View {
             }
             #if os(iOS)
                 settingsButton
+            #else
+                // Settings has its own window (⌘,) on the Mac.
+                footerButton(L10n.Tab.settings, icon: IconKit.gearshape, shortcut: "\u{2318} ,") {
+                    openSettings()
+                }
             #endif
             #if os(macOS)
                 sidebarProfile
@@ -326,6 +336,7 @@ struct MainTabSidebar: View {
         icon: Image,
         isSelected: Bool = false,
         opensOutside: Bool = false,
+        shortcut: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
         #if os(macOS)
@@ -334,6 +345,9 @@ struct MainTabSidebar: View {
                     IconKit.externalLink
                         .foregroundStyle(Color.secondaryDS)
                         .accessibilityHidden(true)
+                }
+                if let shortcut {
+                    MacTag(text: shortcut)
                 }
             }
         #else
@@ -435,7 +449,7 @@ struct MainTabSidebar: View {
         var body: some View {
             Button(action: action) {
                 HStack(spacing: .space8) {
-                    IconKit.logo
+                    Image(nsImage: NSApplication.shared.applicationIconImage)
                         .resizable()
                         .scaledToFit()
                         .frame(width: Constants.macLogoSize, height: Constants.macLogoSize)
