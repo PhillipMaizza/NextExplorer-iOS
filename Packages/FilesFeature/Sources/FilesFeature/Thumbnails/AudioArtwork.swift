@@ -1,5 +1,4 @@
 import AVFoundation
-import ComposableArchitecture
 import DesignSystem
 import Foundation
 import NetworkClient
@@ -8,27 +7,19 @@ import NetworkClient
 /// thumbnail of audio, so the app reads the art itself: from the kept copy when there is one, else
 /// from the stream, where AVFoundation asks the server only for the byte ranges the tags sit in.
 enum AudioArtwork {
-    /// Paths whose file has no art, so a folder of tagless files is not asked about again on every scroll.
-    /// Kept for the session only: tags change rarely, and the answer costs one small request.
-    private static let misses = LockIsolated(Set<String>())
-
-    static func forgetMisses() {
-        misses.setValue([])
-    }
-
     /// The art of the file at `url`, decoded to at most `maxPixel`; `nil` when it has none.
     static func image(url: URL, fileExtension: String, maxPixel: CGFloat) async -> PlatformImage? {
         let key = url.absoluteString
         if let cached = ThumbnailMemoryCache.shared.object(forKey: url as NSURL) {
             return cached
         }
-        if misses.value.contains(key) {
+        if ThumbnailMisses.contains(key) {
             return nil
         }
         guard let image = await readArtwork(url: url, fileExtension: fileExtension, maxPixel: maxPixel) else {
             // A cancelled read (the row scrolled away) says nothing about the file.
             if !Task.isCancelled {
-                misses.withValue { _ = $0.insert(key) }
+                ThumbnailMisses.insert(key)
             }
             return nil
         }

@@ -32,7 +32,8 @@ enum ThumbnailMemoryCache {
     /// is emptied at the same points so no decoded image outlives a sign out (rule #11).
     static func removeAll() {
         shared.removeAllObjects()
-        AudioArtwork.forgetMisses()
+        ThumbnailMisses.removeAll()
+        TextSnippetCache.removeAll()
     }
 }
 
@@ -76,6 +77,8 @@ struct ThumbnailImage: View {
     var fileSize: Int64?
     var modified: Date?
 
+    /// The first lines of a text file, drawn as a small page.
+    @State private var snippet: String?
     @State private var uiImage: PlatformImage?
     @State private var didResolve = false
     @Dependency(\.filesClient) private var filesClient
@@ -85,9 +88,17 @@ struct ThumbnailImage: View {
     @Dependency(\.date) private var date
     @Dependency(\.continuousClock) private var clock
 
+    /// Whether files of this kind are drawn from their own content, which the server makes no
+    /// thumbnail of: an audio file's cover art and a text file's first lines.
+    static func readsOwnContent(kind: String) -> Bool {
+        FileItem.isAudioKind(kind) || TextSnippet.isTextKind(kind)
+    }
+
     var body: some View {
         Group {
-            if let uiImage {
+            if let snippet {
+                TextThumbnailView(snippet: snippet)
+            } else if let uiImage {
                 Image(platformImage: uiImage)
                     .resizable()
                     .scaledToFit()
@@ -99,9 +110,16 @@ struct ThumbnailImage: View {
         }
         .task(id: "\(path)\u{0}\(signature)") {
             guard uiImage == nil else { return }
-            // Audio has no server thumbnail: its cover art is read from the file's own tags.
+            // Audio and text have no server thumbnail: the app reads the file's own tags or first lines.
             if fileItem.isAudio {
                 uiImage = await audioArtwork()
+                if !Task.isCancelled {
+                    didResolve = true
+                }
+                return
+            }
+            if TextSnippet.isTextKind(fileItem.kind) {
+                snippet = await textSnippet()
                 if !Task.isCancelled {
                     didResolve = true
                 }
@@ -216,6 +234,48 @@ struct ThumbnailImage: View {
             size: 0,
             kind: (name as NSString).pathExtension.lowercased()
         )
+    }
+
+    /// The first lines of a text file, from its kept copy when it has one (no network), else the
+    /// server's raw text (which it refuses above its editor limit). Cached for the session.
+    private func textSnippet() async -> String? {
+        let item = fileItem
+        let cacheKey = "\(path)\u{0}\(signature)"
+        if let cached = TextSnippetCache.shared.object(forKey: cacheKey as NSString) {
+            return cached as String
+        }
+        if ThumbnailMisses.contains(cacheKey) {
+            return nil
+        }
+        let store = offlineFileStore
+        let local = await Task.detached(priority: .userInitiated) {
+            store.localURLIgnoringStaleness(item)
+        }.value
+        var bytes: Data?
+        if let local {
+            bytes = await Task
+                .detached(priority: .utility) { try? FileHandle(forReadingFrom: local).read(upToCount: 4096) }.value
+        } else if let url = FilesClient.rawFileURL(serverURL: serverURL, item: item).map({ versioned($0) }) {
+            bytes = try? await thumbnailCache.data(url)
+        }
+        if Task.isCancelled {
+            return nil
+        }
+        guard let bytes,
+              let text = await Task.detached(priority: .utility, operation: { TextSnippet.make(from: bytes) }).value
+        else {
+            ThumbnailMisses.insert(cacheKey)
+            return nil
+        }
+        TextSnippetCache.shared.setObject(text as NSString, forKey: cacheKey as NSString)
+        return text
+    }
+
+    /// `url` tied to this version of the file, so a cached copy is never shown for a changed file.
+    private func versioned(_ url: URL) -> URL {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url }
+        components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "v", value: signature)]
+        return components.url ?? url
     }
 
     /// An audio file's cover art, from its kept copy when it has one (no network), else its stream.
