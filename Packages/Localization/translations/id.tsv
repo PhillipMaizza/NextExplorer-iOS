@@ -1077,3 +1077,6 @@ pdfPreview.pageIndicator	%1$lld dari %2$lld
 previewToolbar.savePhoto	Simpan Foto
 previewToolbar.saveVideo	Simpan Video
 offline.removeEmptiesFolderMessage	Tidak ada lagi isi “%@” yang tersisa di perangkat ini, jadi folder juga dihapus dari Tersedia Offline. File Anda di server tidak terpengaruh.
+shareUpload.nameLabel	Nama File
+shareUpload.namesLabel	Nama File
+shareUpload.nameHint	Nama yang digunakan saat file diunggah. Ekstensinya tetap sama.

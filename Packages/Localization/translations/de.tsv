@@ -1117,3 +1117,6 @@ pdfPreview.pageIndicator	%1$lld von %2$lld
 previewToolbar.savePhoto	Foto sichern
 previewToolbar.saveVideo	Video sichern
 offline.removeEmptiesFolderMessage	Von „%@“ bleibt nichts mehr auf diesem Gerät, daher wird auch der Ordner aus „Offline verfügbar“ entfernt. Deine Dateien auf dem Server sind nicht betroffen.
+shareUpload.nameLabel	Dateiname
+shareUpload.namesLabel	Dateinamen
+shareUpload.nameHint	Der Name, unter dem die Datei hochgeladen wird. Die Dateiendung bleibt gleich.

@@ -1090,3 +1090,6 @@ pdfPreview.pageIndicator	%1$lld av %2$lld
 previewToolbar.savePhoto	Arkiver bilde
 previewToolbar.saveVideo	Arkiver video
 offline.removeEmptiesFolderMessage	Ingenting annet i «%@» blir igjen på denne enheten, så mappen fjernes også fra tilgjengelig uten nett. Filene dine på serveren påvirkes ikke.
+shareUpload.nameLabel	Filnavn
+shareUpload.namesLabel	Filnavn
+shareUpload.nameHint	Navnet filen lastes opp med. Filtypen forblir den samme.

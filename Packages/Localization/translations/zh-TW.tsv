@@ -1104,3 +1104,6 @@ pdfPreview.pageIndicator	%1$lld/%2$lld
 previewToolbar.savePhoto	儲存照片
 previewToolbar.saveVideo	儲存影片
 offline.removeEmptiesFolderMessage	「%@」中不會再有其他內容留在此裝置上，因此該檔案夾也會從「可離線使用」中移除。伺服器上的檔案不受影響。
+shareUpload.nameLabel	檔案名稱
+shareUpload.namesLabel	檔案名稱
+shareUpload.nameHint	上傳時使用的檔案名稱。副檔名維持不變。

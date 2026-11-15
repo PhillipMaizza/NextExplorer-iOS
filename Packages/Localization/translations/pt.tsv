@@ -1117,3 +1117,6 @@ pdfPreview.pageIndicator	%1$lld de %2$lld
 previewToolbar.savePhoto	Guardar fotografia
 previewToolbar.saveVideo	Guardar vídeo
 offline.removeEmptiesFolderMessage	Nada mais de “%@” fica neste dispositivo, por isso a pasta também é removida de Disponível offline. Os seus ficheiros no servidor não são afetados.
+shareUpload.nameLabel	Nome do ficheiro
+shareUpload.namesLabel	Nomes dos ficheiros
+shareUpload.nameHint	O nome com que o ficheiro é carregado. A extensão mantém-se.

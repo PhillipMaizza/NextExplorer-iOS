@@ -53,7 +53,7 @@ extension ShareUploadFeatureTests {
                 ShareUploadFeature()
             } withDependencies: {
                 $0.sharedItems.count = { 2 }
-                $0.sharedItems.prepare = { _, _, _, _ in
+                $0.sharedItems.prepare = { _, _, _, _, _ in
                     signalEntered.yield()
                     do {
                         try await suspendUntilCancelled()

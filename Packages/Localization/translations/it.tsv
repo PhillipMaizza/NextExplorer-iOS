@@ -1117,3 +1117,6 @@ pdfPreview.pageIndicator	%1$lld di %2$lld
 previewToolbar.savePhoto	Salva foto
 previewToolbar.saveVideo	Salva video
 offline.removeEmptiesFolderMessage	Di “%@” non resta altro su questo dispositivo, quindi anche la cartella viene rimossa da Disponibili offline. I tuoi file sul server non vengono modificati.
+shareUpload.nameLabel	Nome del file
+shareUpload.namesLabel	Nomi dei file
+shareUpload.nameHint	Il nome con cui il file viene caricato. L’estensione resta la stessa.

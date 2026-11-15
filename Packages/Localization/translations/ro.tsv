@@ -1130,3 +1130,6 @@ pdfPreview.pageIndicator	%1$lld din %2$lld
 previewToolbar.savePhoto	Salvează poza
 previewToolbar.saveVideo	Salvează videoclipul
 offline.removeEmptiesFolderMessage	Din „%@” nu mai rămâne nimic pe acest dispozitiv, așa că și dosarul este eliminat din Disponibile offline. Fișierele tale de pe server nu sunt afectate.
+shareUpload.nameLabel	Numele fișierului
+shareUpload.namesLabel	Numele fișierelor
+shareUpload.nameHint	Numele sub care se încarcă fișierul. Extensia rămâne aceeași.

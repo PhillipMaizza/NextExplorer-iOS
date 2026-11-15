@@ -1117,3 +1117,6 @@ pdfPreview.pageIndicator	%2$lld में से %1$lld
 previewToolbar.savePhoto	फ़ोटो सहेजें
 previewToolbar.saveVideo	वीडियो सहेजें
 offline.removeEmptiesFolderMessage	“%@” में से इस डिवाइस पर और कुछ नहीं बचेगा, इसलिए फ़ोल्डर भी ऑफ़लाइन उपलब्ध से हट जाएगा। सर्वर पर आपकी फ़ाइलें प्रभावित नहीं होतीं।
+shareUpload.nameLabel	फ़ाइल का नाम
+shareUpload.namesLabel	फ़ाइलों के नाम
+shareUpload.nameHint	वह नाम जिससे फ़ाइल अपलोड होगी। एक्सटेंशन वही रहता है।

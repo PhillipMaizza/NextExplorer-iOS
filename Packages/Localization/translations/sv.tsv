@@ -1117,3 +1117,6 @@ pdfPreview.pageIndicator	%1$lld av %2$lld
 previewToolbar.savePhoto	Spara bild
 previewToolbar.saveVideo	Spara video
 offline.removeEmptiesFolderMessage	Inget annat i ”%@” finns kvar på den här enheten, så mappen tas också bort från Tillgängligt offline. Dina filer på servern påverkas inte.
+shareUpload.nameLabel	Filnamn
+shareUpload.namesLabel	Filnamn
+shareUpload.nameHint	Namnet som filen laddas upp med. Filändelsen förblir densamma.

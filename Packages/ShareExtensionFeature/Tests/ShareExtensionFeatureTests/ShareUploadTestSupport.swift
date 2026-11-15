@@ -96,7 +96,7 @@ extension ShareUploadHarness {
             ShareUploadFeature()
         } withDependencies: {
             $0.sharedItems.count = { count }
-            $0.sharedItems.prepare = { _, destination, indexes, _ in
+            $0.sharedItems.prepare = { _, destination, indexes, _, _ in
                 calls.record(indexes: indexes, folder: destination)
                 return report ?? PreparationReport(stagedCount: count, failures: [])
             }

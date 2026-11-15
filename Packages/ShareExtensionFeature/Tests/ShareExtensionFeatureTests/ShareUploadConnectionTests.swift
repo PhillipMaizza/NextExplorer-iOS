@@ -29,7 +29,7 @@ extension ShareUploadFeatureTests {
                 ShareUploadFeature()
             } withDependencies: {
                 $0.sharedItems.count = { 1 }
-                $0.sharedItems.prepare = { _, destination, indexes, _ in
+                $0.sharedItems.prepare = { _, destination, indexes, _, _ in
                     calls.record(indexes: indexes, folder: destination)
                     return PreparationReport(stagedCount: 1, failures: [])
                 }
@@ -66,7 +66,7 @@ extension ShareUploadFeatureTests {
                 ShareUploadFeature()
             } withDependencies: {
                 $0.sharedItems.count = { 1 }
-                $0.sharedItems.prepare = { _, destination, _, _ in
+                $0.sharedItems.prepare = { _, destination, _, _, _ in
                     calls.record(indexes: nil, folder: destination)
                     return PreparationReport(stagedCount: 1, failures: [])
                 }
@@ -149,7 +149,7 @@ extension ShareUploadFeatureTests {
                 ShareUploadFeature()
             } withDependencies: {
                 $0.sharedItems.count = { 1 }
-                $0.sharedItems.prepare = { _, destination, indexes, _ in
+                $0.sharedItems.prepare = { _, destination, indexes, _, _ in
                     calls.record(indexes: indexes, folder: destination)
                     return PreparationReport(stagedCount: 1, failures: [])
                 }
@@ -195,7 +195,7 @@ extension ShareUploadFeatureTests {
                 ShareUploadFeature()
             } withDependencies: {
                 $0.sharedItems.count = { 1 }
-                $0.sharedItems.prepare = { _, destination, indexes, _ in
+                $0.sharedItems.prepare = { _, destination, indexes, _, _ in
                     calls.record(indexes: indexes, folder: destination)
                     return PreparationReport(stagedCount: 1, failures: [])
                 }

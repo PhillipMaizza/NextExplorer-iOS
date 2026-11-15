@@ -1212,3 +1212,6 @@ pdfPreview.pageIndicator	%1$lld of %2$lld
 previewToolbar.savePhoto	Save Photo
 previewToolbar.saveVideo	Save Video
 offline.removeEmptiesFolderMessage	Nothing else in “%@” stays on this device, so the folder is removed from Available Offline too. Your files on the server are not affected.
+shareUpload.nameLabel	File Name
+shareUpload.namesLabel	File Names
+shareUpload.nameHint	The name the file uploads under. Its extension stays the same.

@@ -1117,3 +1117,6 @@ pdfPreview.pageIndicator	%1$lld sur %2$lld
 previewToolbar.savePhoto	Enregistrer la photo
 previewToolbar.saveVideo	Enregistrer la vidéo
 offline.removeEmptiesFolderMessage	Plus rien de « %@ » ne reste sur cet appareil, le dossier est donc aussi retiré des éléments disponibles hors connexion. Vos fichiers sur le serveur ne sont pas affectés.
+shareUpload.nameLabel	Nom du fichier
+shareUpload.namesLabel	Noms des fichiers
+shareUpload.nameHint	Le nom sous lequel le fichier est envoyé. L’extension reste la même.

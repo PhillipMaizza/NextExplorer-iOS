@@ -1089,3 +1089,6 @@ pdfPreview.pageIndicator	%1$lld / %2$lld
 previewToolbar.savePhoto	Fotoğrafı Kaydet
 previewToolbar.saveVideo	Videoyu Kaydet
 offline.removeEmptiesFolderMessage	“%@” içinden bu cihazda başka bir şey kalmayacağı için klasör de çevrimdışı kullanılabilirden kaldırılır. Sunucudaki dosyalarınız etkilenmez.
+shareUpload.nameLabel	Dosya Adı
+shareUpload.namesLabel	Dosya Adları
+shareUpload.nameHint	Dosyanın yükleneceği ad. Uzantı aynı kalır.

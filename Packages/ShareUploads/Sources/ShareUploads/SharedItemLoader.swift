@@ -61,6 +61,22 @@ public enum SharedItemLoader {
         return "\(base).\(fileExtension)"
     }
 
+    /// `name` under a `base` the user typed, keeping its extension: the share sheet edits only the part
+    /// before it. A `nil` or blank base keeps `name` as it is.
+    public static func renamed(_ name: String, to base: String?) -> String {
+        guard let base = base?.trimmingCharacters(in: .whitespacesAndNewlines), !base.isEmpty else { return name }
+        let fileExtension = (name as NSString).pathExtension
+        return fileExtension.isEmpty ? base : "\(base).\(fileExtension)"
+    }
+
+    /// The part of a provider's suggested name the user can edit, and the extension that stays with it.
+    public static func editableName(suggestedName: String?) -> (base: String, fileExtension: String)? {
+        guard let suggestedName, !suggestedName.isEmpty else { return nil }
+        let base = (suggestedName as NSString).deletingPathExtension
+        guard !base.isEmpty else { return (suggestedName, "") }
+        return (base, (suggestedName as NSString).pathExtension)
+    }
+
     /// How a provider hands over one type's file: `NSItemProvider.loadFileRepresentation` in
     /// production, a stand in in tests.
     typealias RepresentationLoader = (
@@ -70,9 +86,12 @@ public enum SharedItemLoader {
     /// Stages every file one shared item stands for: the file itself, plus a Live Photo's paired
     /// movie under the still's name. Empty for an item with no file (a link, plain text).
     /// `onFraction` reports how much of the item has been read, 0 to 1, across all its files.
+    /// `renamedTo` is the name the user gave the item, without its extension; a Live Photo's movie
+    /// follows the still's new name.
     public static func stageAll(
         _ provider: NSItemProvider,
         in batch: UploadBatch,
+        renamedTo base: String? = nil,
         onFraction: @escaping @Sendable (Double) -> Void = { _ in }
     ) async throws -> [UploadBatch.StagedFile] {
         let types = stagingTypes(registered: provider.registeredTypeIdentifiers)
@@ -82,10 +101,10 @@ public enum SharedItemLoader {
             for (position, type) in types.enumerated() {
                 let stillName = type.conforms(to: .movie) ? staged.first?.fileName : nil
                 let file: UploadBatch.StagedFile? = if stagingMode(for: type) == .fileURL {
-                    try await stageFileURL(provider, in: batch)
+                    try await stageFileURL(provider, in: batch, renamedTo: base)
                 } else {
                     try await stageRepresentation(
-                        type: type, suggestedName: suggestedName, pairedWith: stillName, in: batch,
+                        type: type, suggestedName: suggestedName, pairedWith: stillName, renamedTo: base, in: batch,
                         load: { provider.loadFileRepresentation(for: $0, openInPlace: false, completionHandler: $1) },
                         onFraction: { onFraction(overallFraction(position: position, count: types.count, fraction: $0))
                         }
@@ -117,6 +136,7 @@ public enum SharedItemLoader {
         type: UTType,
         suggestedName: String?,
         pairedWith stillName: String?,
+        renamedTo base: String? = nil,
         in batch: UploadBatch,
         load: RepresentationLoader,
         onFraction: @escaping @Sendable (Double) -> Void
@@ -133,7 +153,7 @@ public enum SharedItemLoader {
                     guard loading.isActive else { return }
                     loading.finish(Result {
                         let name = stillName.map { pairedMovieName(stillName: $0, movieType: type) }
-                            ?? fileName(fileURL: url, suggestedName: suggestedName, type: type)
+                            ?? renamed(fileName(fileURL: url, suggestedName: suggestedName, type: type), to: base)
                         let file = try batch.envelope(for: url, fileName: name)
                         guard loading.isActive, batch.exists else {
                             file.removeEnvelope()
@@ -159,9 +179,11 @@ public enum SharedItemLoader {
 
     /// Finder and Files hand over a file URL rather than the bytes. The file may live in iCloud
     /// or another file provider and still be a placeholder, so it is read through a coordinator.
-    private static func stageFileURL(_ provider: NSItemProvider, in batch: UploadBatch) async throws -> UploadBatch
-        .StagedFile?
-    {
+    private static func stageFileURL(
+        _ provider: NSItemProvider,
+        in batch: UploadBatch,
+        renamedTo base: String?
+    ) async throws -> UploadBatch.StagedFile? {
         let loaded: URL? = try await withCheckedThrowingContinuation { continuation in
             _ = provider.loadObject(ofClass: URL.self) { url, error in
                 if let error {
@@ -172,7 +194,7 @@ public enum SharedItemLoader {
             }
         }
         guard let url = loaded, url.isFileURL else { return nil }
-        return try await stageFile(at: url, in: batch, access: .live)
+        return try await stageFile(at: url, in: batch, access: .live, renamedTo: base)
     }
 
     /// Writes the envelope unless the staging was cancelled or the batch discarded, and takes it
@@ -191,8 +213,13 @@ public enum SharedItemLoader {
 
     /// Throws `ShareUploadError.isFolder` for a folder and `fileNoSuchFile` for a path with nothing
     /// behind it: an item is never dropped without the user being told.
-    static func stageFile(at url: URL, in batch: UploadBatch, access: FileAccess) async throws -> UploadBatch.StagedFile
-    {
+    static func stageFile(
+        at url: URL,
+        in batch: UploadBatch,
+        access: FileAccess,
+        renamedTo base: String? = nil
+    ) async throws -> UploadBatch.StagedFile {
+        let fileName = renamed(url.lastPathComponent, to: base)
         let isScoped = url.startAccessingSecurityScopedResource()
         defer {
             if isScoped {
@@ -212,7 +239,7 @@ public enum SharedItemLoader {
                     continuation.resume(with: Result {
                         try flag.throwIfCancelled()
                         return try access.read(url) { readURL in
-                            try writeEnvelope(for: readURL, fileName: url.lastPathComponent, in: batch, flag: flag)
+                            try writeEnvelope(for: readURL, fileName: fileName, in: batch, flag: flag)
                         }
                     })
                 }

@@ -49,6 +49,12 @@ public struct ShareUploadView: View {
                         onClose: { store.send(.cancelTapped) }
                     )
                     ShareUploadStatus(store: store)
+                    if store.shouldShowNames {
+                        let title = store.names.count == 1 ? L10n.ShareUpload.nameLabel : L10n.ShareUpload.namesLabel
+                        section(title) {
+                            ShareUploadNameFields(store: store)
+                        }
+                    }
                     if store.credentials != nil, store.canChooseAccount || store.shouldShowDetails {
                         section(L10n.ShareUpload.accountLabel) {
                             ShareUploadAccountMenu(store: store)
@@ -159,7 +165,8 @@ extension StoreOf<ShareUploadFeature> {
         accounts: Int = 1,
         notice: ShareUploadFeature.Notice? = nil,
         failures: [ItemFailure] = [],
-        livePhotos: Int = 0
+        livePhotos: Int = 0,
+        names: [String] = []
     ) -> StoreOf<ShareUploadFeature> {
         var state = ShareUploadFeature.State()
         state.accounts = Array([SessionCredentials.preview, .previewSecond].prefix(accounts))
@@ -175,6 +182,7 @@ extension StoreOf<ShareUploadFeature> {
             : []
         state.notice = notice
         state.destination = destination
+        state.names = names.map { EditableItemName(SharedItemName(base: $0)) }
         if phase != .signedOut, phase != .sessionUnreadable {
             state.credentials = .preview
         }
@@ -210,6 +218,7 @@ extension SessionCredentials {
 }
 
 #Preview("Ready") { ShareUploadView(store: .preview(.ready)) }
+#Preview("Ready, one file to name") { ShareUploadView(store: .preview(.ready, names: ["IMG_0042"])) }
 #Preview("Two accounts") { ShareUploadView(store: .preview(.ready, accounts: 2)) }
 #Preview("No folder yet") { ShareUploadView(store: .preview(.ready, destination: "")) }
 #Preview("Preparing") { ShareUploadView(store: .preview(.preparing)) }
