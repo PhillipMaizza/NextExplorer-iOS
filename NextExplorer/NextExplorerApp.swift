@@ -116,6 +116,7 @@ struct NextExplorerApp: App {
                 // A Mac window always gets the regular width sidebar layout, never the phone tab bar.
                 .environment(\.horizontalSizeClass, .regular)
                 .frame(minWidth: MacWindow.minWidth, minHeight: MacWindow.minHeight)
+                .macFrostedWindow()
             #endif
             #if DEBUG
             .disablesAnimationsUnderUITest()
@@ -140,6 +141,7 @@ struct NextExplorerApp: App {
             WindowGroup(id: FolderWindowRoute.windowID, for: FolderWindowRoute.self) { $route in
                 if let route {
                     MacFolderWindow(route: route, mainStore: Self.store)
+                        .macFrostedWindow()
                         .appAppearance(appearanceMode)
                 }
             }
@@ -150,6 +152,8 @@ struct NextExplorerApp: App {
 
             Window(L10n.Menu.about, id: MacAboutView.windowID) {
                 MacAboutView()
+                    .containerBackground(.ultraThinMaterial, for: .window)
+                    .macFrostedWindow()
                     .followsAppLanguage()
                     .appAppearance(appearanceMode)
             }
