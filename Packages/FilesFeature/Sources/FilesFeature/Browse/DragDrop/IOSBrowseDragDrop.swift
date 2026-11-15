@@ -154,12 +154,21 @@
         let canDropHere: Bool
         let canMove: Bool
         let canUpload: Bool
+        var canDrag = true
         let selection: () -> [FileItem]
         let onDrop: ([BrowseDrop]) -> Bool
 
+        @ViewBuilder
+        private func draggable(_ content: Content) -> some View {
+            if canDrag {
+                content.modifier(IOSItemDrag(item: item, serverURL: serverURL, scope: scope, selection: selection))
+            } else {
+                content
+            }
+        }
+
         func body(content: Content) -> some View {
-            content
-                .modifier(IOSItemDrag(item: item, serverURL: serverURL, scope: scope, selection: selection))
+            draggable(content)
                 .modifier(IOSFolderDropTarget(
                     folder: item, isEnabled: canDropHere, canMove: canMove, canUpload: canUpload, onDrop: onDrop
                 ))

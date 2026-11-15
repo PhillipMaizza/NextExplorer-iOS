@@ -1,0 +1,136 @@
+import ComposableArchitecture
+import CoreModels
+import DesignSystem
+import FilesClient
+import SwiftUI
+
+/// Search hits and browse rows share an `id` scheme (`path/name`), so `searchResultTapped`
+/// builds a `FileItem` whose id matches the hit: the `.zoom` source and the opening
+/// spinner can key off the same value.
+private struct BrowseSearchResultCell: View {
+    let store: StoreOf<BrowseFeature>
+    let row: SearchResultItem
+    let isGrid: Bool
+    let source: BrowsePreviewSource
+    var iconSize: CGFloat = 0
+
+    var body: some View {
+        Group {
+            if isGrid {
+                GridCellView(
+                    name: row.name, isDirectory: row.isDirectory,
+                    isFavorite: store.favoritePaths.contains(row.id), kind: row.displayKind,
+                    thumbnailFile: row.thumbnailFile,
+                    serverURL: store.serverURL,
+                    showThumbnails: store.preferences.showThumbnails,
+                    iconSize: iconSize,
+                    matchedSource: source.matched(row.id),
+                    isOpening: source.isOpening(row.id, in: store)
+                )
+            } else {
+                SearchResultRow(
+                    result: row,
+                    knownItem: store.items[id: row.id],
+                    currentFolder: store.directoryPath,
+                    isFavorite: store.favoritePaths.contains(row.id),
+                    serverURL: store.serverURL,
+                    showThumbnails: store.preferences.showThumbnails,
+                    matchedSource: source.matched(row.id),
+                    isOpening: source.isOpening(row.id, in: store)
+                )
+            }
+        }
+    }
+}
+
+private struct BrowseSearchResultActions: View {
+    let store: StoreOf<BrowseFeature>
+    let result: SearchResultItem
+
+    var body: some View {
+        SearchResultMenu(
+            result: result,
+            onOpen: { store.send(.searchResultTapped(result)) },
+            onShowInFolder: { store.send(.searchResultEnclosingFolderTapped(result)) }
+        )
+    }
+}
+
+/// Search hits as grid tiles.
+struct BrowseSearchResultCells: View {
+    let store: StoreOf<BrowseFeature>
+    let results: [SearchResultItem]
+    let source: BrowsePreviewSource
+    let iconSize: CGFloat
+
+    var body: some View {
+        ForEach(results) { result in
+            Button {
+                store.send(.searchResultTapped(result))
+            } label: {
+                BrowseSearchResultCell(store: store, row: result, isGrid: true, source: source, iconSize: iconSize)
+                    .dsGridTile(padding: FileGridMetrics.cellPadding)
+            }
+            .buttonStyle(DSPressableButtonStyle())
+            .contextMenu { BrowseSearchResultActions(store: store, result: result) }
+            .dsTapFlash()
+        }
+    }
+}
+
+/// Search hits as list rows.
+struct BrowseSearchResultRows: View {
+    let store: StoreOf<BrowseFeature>
+    let results: [SearchResultItem]
+    let source: BrowsePreviewSource
+
+    var body: some View {
+        ForEach(results) { result in
+            DSFlashingListRow {
+                Button {
+                    store.send(.searchResultTapped(result))
+                } label: {
+                    BrowseSearchResultCell(store: store, row: result, isGrid: false, source: source)
+                }
+                .buttonStyle(DSPressableButtonStyle())
+                .contextMenu { BrowseSearchResultActions(store: store, result: result) }
+                .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
+                .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
+            }
+        }
+    }
+}
+
+/// The note under a search's results: why it is short, how to see more, search everywhere, retry.
+struct BrowseSearchFooter: View {
+    let store: StoreOf<BrowseFeature>
+
+    var body: some View {
+        SearchStatusFooter(
+            message: Self.message(store),
+            canShowMore: store.canShowMoreSearchResults && store.searchPhase != .loading,
+            onShowMore: { store.send(.searchShowMoreTapped) },
+            onSearchEverywhere: Self
+                .canOfferWiderSearch(store) ? { store.send(.searchScopeChanged(.everywhere)) } : nil,
+            onRetry: store.searchFailureMessage == nil ? nil : { store.send(.searchRetryTapped) }
+        )
+    }
+
+    static func isShown(_ store: StoreOf<BrowseFeature>) -> Bool {
+        message(store) != nil || canOfferWiderSearch(store)
+    }
+
+    private static func message(_ store: StoreOf<BrowseFeature>) -> String? {
+        SearchStatusFooter.message(
+            failure: store.searchFailureMessage,
+            isTooShort: store.isSearchTermTooShort,
+            shortfall: store.searchShortfall
+        )
+    }
+
+    /// A search in a folder can be widened to everywhere, unless the term is too short for the
+    /// server to search at all.
+    private static func canOfferWiderSearch(_ store: StoreOf<BrowseFeature>) -> Bool {
+        store.canWidenSearch && !store.isSearchTermTooShort
+    }
+}
