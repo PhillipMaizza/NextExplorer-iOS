@@ -61,6 +61,8 @@ struct OfflineManageRow: View {
     /// The Offline tab's select mode: a tap picks the row, and its swipe and menu step aside.
     var isSelecting = false
     var isSelected = false
+    /// Where the row's file grows into its preview from, on the Offline tab.
+    var matchedSource: PreviewMatchedSource?
     let onRemove: () -> Void
 
     private var subtitle: String {
@@ -99,7 +101,8 @@ struct OfflineManageRow: View {
                 showThumbnails: showThumbnails,
                 customIcon: favorite.map { FavoriteIcon.symbol(for: $0.icon) },
                 customIconTint: favorite.flatMap { FavoriteColor.resolve($0.color) },
-                customIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false
+                customIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,
+                matchedSource: matchedSource
             )
         } trailingSwipe: {
             if !isSelecting {

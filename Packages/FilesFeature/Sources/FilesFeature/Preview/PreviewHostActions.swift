@@ -73,22 +73,38 @@ struct PreviewHostActions: ViewModifier {
 }
 
 /// The cover a screen opens one file in, without navigating to its folder: the host `BrowseFeature`
-/// drives the same preview router Browse uses, and the actions above.
+/// drives the same preview router Browse uses, and the actions above. With a `zoom` context it grows
+/// from the file's thumbnail, as Browse's cover does.
 struct PreviewHostCover: ViewModifier {
     @Binding var host: StoreOf<BrowseFeature>?
+    var zoom: PreviewZoomContext?
     let onViewShares: () -> Void
     /// The file the preview asked to share.
     @State private var shareTarget: FileItem?
+    /// The page the gallery shows, so closing it zooms back to that file's row.
+    @State private var galleryItemID: String?
 
     func body(content: Content) -> some View {
-        content.fullScreenCover(item: $host) { hostStore in
+        content.fullScreenCover(item: $host, onDismiss: { galleryItemID = nil }) { hostStore in
             if let previewItem = hostStore.previewItem {
-                BrowsePreviewRouter(store: hostStore, item: previewItem, onShareTarget: { shareTarget = $0 })
-                    .modifier(PreviewHostActions(
-                        host: hostStore,
-                        shareTarget: $shareTarget,
-                        onViewShares: onViewShares
-                    ))
+                let router = BrowsePreviewRouter(
+                    store: hostStore,
+                    item: previewItem,
+                    onShareTarget: { shareTarget = $0 },
+                    onGalleryItemChange: { galleryItemID = $0.id }
+                )
+                Group {
+                    if let zoom {
+                        ZoomingPreview(sourceID: galleryItemID ?? previewItem.id, context: zoom) { router }
+                    } else {
+                        router
+                    }
+                }
+                .modifier(PreviewHostActions(
+                    host: hostStore,
+                    shareTarget: $shareTarget,
+                    onViewShares: onViewShares
+                ))
             }
         }
     }

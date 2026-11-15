@@ -16,6 +16,8 @@ struct OfflinePinnedGridCells: View {
     var showThumbnails = false
     var isSelecting = false
     var selectedPaths: Set<String> = []
+    /// The tab's preview zoom, so a kept file grows from its tile when opened.
+    var zoom: PreviewZoomContext?
     var onOpen: (OfflinePinnedRoot) -> Void = { _ in }
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
 
@@ -38,7 +40,8 @@ struct OfflinePinnedGridCells: View {
                     iconSize: (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).iconSize,
                     customIcon: usage.root.isDirectory ? favorite.map { FavoriteIcon.symbol(for: $0.icon) } : nil,
                     customIconTint: favorite.flatMap { FavoriteColor.resolve($0.color) },
-                    customIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false
+                    customIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,
+                    matchedSource: usage.root.isDirectory ? nil : zoom?.source(for: usage.root.path)
                 )
             } contextMenu: {
                 if !isSelecting {

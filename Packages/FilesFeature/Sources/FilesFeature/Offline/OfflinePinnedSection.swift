@@ -18,6 +18,8 @@ struct OfflinePinnedSection: View {
     var showThumbnails = false
     var isSelecting = false
     var selectedPaths: Set<String> = []
+    /// The tab's preview zoom, so a kept file grows from its row when opened.
+    var zoom: PreviewZoomContext?
     var onOpen: (OfflinePinnedRoot) -> Void = { _ in }
 
     var body: some View {
@@ -37,7 +39,8 @@ struct OfflinePinnedSection: View {
                     serverURL: serverURL,
                     showThumbnails: showThumbnails,
                     isSelecting: isSelecting,
-                    isSelected: selectedPaths.contains(usage.root.path)
+                    isSelected: selectedPaths.contains(usage.root.path),
+                    matchedSource: usage.root.isDirectory ? nil : zoom?.source(for: usage.root.path)
                 ) {
                     store.send(.removeTapped(path: usage.root.path), animation: DSMotion.listDiff)
                 }

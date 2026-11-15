@@ -18,6 +18,13 @@ struct FavoritesView: View {
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
+    /// A file opened from a search hit grows from its row, as it does in Browse.
+    @Namespace private var previewTransition
+    @State private var sourceVisibility = PreviewSourceVisibility()
+
+    private var zoom: PreviewZoomContext {
+        PreviewZoomContext(namespace: previewTransition, visibility: sourceVisibility)
+    }
 
     private var viewMode: FileListViewMode {
         #if os(macOS)
@@ -94,7 +101,7 @@ struct FavoritesView: View {
     private var rootContent: some View {
         Group {
             if store.isSearching {
-                FavoritesSearchResultsList(store: store, phase: listPhase, pullOffset: $pullOffset)
+                FavoritesSearchResultsList(store: store, phase: listPhase, pullOffset: $pullOffset, zoom: zoom)
             } else if isMacTable {
                 #if os(macOS)
                     MacFavoritesTableView(store: store, favorites: store.displayedFavorites)
@@ -180,6 +187,7 @@ struct FavoritesView: View {
         // A tapped file result opens directly in this cover (no folder navigation).
         .modifier(PreviewHostCover(
             host: $store.scope(state: \.previewHost, action: \.previewHost),
+            zoom: zoom,
             onViewShares: { store.send(.viewSharesFromPreviewTapped) }
         ))
         .toolbar {
@@ -244,6 +252,8 @@ struct FavoritesView: View {
         .task {
             store.send(.onAppear)
         }
+        .onAppear { sourceVisibility.isScreenVisible = true }
+        .onDisappear { sourceVisibility.isScreenVisible = false }
         .onOfflinePhaseChange { phase in
             if phase == .completed {
                 Task { @MainActor in store.send(.computeOfflineAvailability) }

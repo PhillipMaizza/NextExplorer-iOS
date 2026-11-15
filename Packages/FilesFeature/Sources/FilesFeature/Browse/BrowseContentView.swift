@@ -56,9 +56,6 @@ struct BrowseContentView: View {
     /// instead of a hand-rolled drag gesture.
     @Namespace private var previewTransition
     @State private var sourceVisibility = PreviewSourceVisibility()
-    /// Whether the open cover zooms, decided once when it appears and held until it closes: the
-    /// cover itself takes the list off screen, which must not change the dismiss transition.
-    @State private var frozenCoverZoom: Bool?
     /// The image the gallery is currently showing (it swipes between siblings). Drives the
     /// cover's `.zoom` source and scrolls the matching cell into view, so dismissing after a
     /// swipe morphs back to the visible image instead of the one first tapped. `nil` until the
@@ -133,9 +130,10 @@ struct BrowseContentView: View {
                 // `isPresented`, not `item:`; so an in-place rename (which changes the item's
                 // id) updates the cover's content instead of dismissing and re-presenting it.
                 if let item = store.previewItem {
-                    let sourceID = galleryCurrentItemID ?? item.id
-                    let zooms = frozenCoverZoom ?? sourceVisibility.canZoom(from: sourceID)
-                    PreviewZoomContainer(sourceID: sourceID, namespace: previewTransition, zooms: zooms) {
+                    ZoomingPreview(
+                        sourceID: galleryCurrentItemID ?? item.id,
+                        context: PreviewZoomContext(namespace: previewTransition, visibility: sourceVisibility)
+                    ) {
                         BrowsePreviewRouter(
                             store: store,
                             item: item,
@@ -169,8 +167,6 @@ struct BrowseContentView: View {
                     // through the reducer so the cover dismisses before the tab switches.
                     .dsToast(previewToastBinding, extraBottomInset: Constants.previewToolbarToastInset)
                     .dsToast(previewProgressToastBinding, extraBottomInset: Constants.previewToolbarToastInset)
-                    .onAppear { frozenCoverZoom = zooms }
-                    .onDisappear { frozenCoverZoom = nil }
                 }
             }
             .dsSheet(item: shareTargetBinding) { item in

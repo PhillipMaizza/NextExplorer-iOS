@@ -36,8 +36,14 @@ struct OfflineTabView: View {
     }
 
     @State private var previewedDownload: LocalDownload?
-    /// Native `.zoom` open + swipe to dismiss morph between a download cell and its preview.
+    /// Native `.zoom` open + swipe to dismiss morph between a kept file or download and its preview.
     @Namespace private var previewTransition
+    @State private var sourceVisibility = PreviewSourceVisibility()
+
+    private var zoom: PreviewZoomContext {
+        PreviewZoomContext(namespace: previewTransition, visibility: sourceVisibility)
+    }
+
     @State private var isSortSheetPresented = false
 
     private var viewMode: FileListViewMode {
@@ -112,7 +118,7 @@ struct OfflineTabView: View {
             DownloadListRow(
                 store: store,
                 download: download,
-                namespace: previewTransition,
+                zoom: zoom,
                 isFirst: download.id == firstID,
                 isLast: download.id == lastID,
                 onPreview: { previewedDownload = download }
@@ -135,6 +141,7 @@ struct OfflineTabView: View {
                         showThumbnails: store.preferences.showThumbnails,
                         isSelecting: store.isSelecting,
                         selectedPaths: store.selectedPinnedPaths,
+                        zoom: zoom,
                         onOpen: pinnedTapped
                     )
                 }
@@ -166,6 +173,7 @@ struct OfflineTabView: View {
                         showThumbnails: store.preferences.showThumbnails,
                         isSelecting: store.isSelecting,
                         selectedPaths: store.selectedPinnedPaths,
+                        zoom: zoom,
                         onOpen: pinnedTapped
                     )
                     downloadCells
@@ -188,7 +196,7 @@ struct OfflineTabView: View {
             DownloadGridCell(
                 store: store,
                 download: download,
-                namespace: previewTransition,
+                zoom: zoom,
                 onPreview: { previewedDownload = download }
             )
         }
@@ -331,10 +339,11 @@ struct OfflineTabView: View {
                 }
                 .modifier(PreviewHostCover(
                     host: $store.scope(state: \.previewHost, action: \.previewHost),
+                    zoom: zoom,
                     onViewShares: { store.send(.viewSharesFromPreviewTapped) }
                 ))
                 .fullScreenCover(item: $previewedDownload) { download in
-                    PreviewZoomContainer(sourceID: download.id, namespace: previewTransition) {
+                    ZoomingPreview(sourceID: download.id, context: zoom) {
                         FilePreviewContainerView(
                             fileURL: download.url,
                             errorMessage: nil,
@@ -356,6 +365,8 @@ struct OfflineTabView: View {
                     store.send(.onAppear)
                     offlineStore.send(.onAppear)
                 }
+                .onAppear { sourceVisibility.isScreenVisible = true }
+                .onDisappear { sourceVisibility.isScreenVisible = false }
                 // The account's folder can become known after the first listing (`me` answering, or the
                 // recorded one read at an offline launch): list it again so its files show.
                 .onChange(of: store.downloadScope) { _, scope in
