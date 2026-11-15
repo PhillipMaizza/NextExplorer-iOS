@@ -100,7 +100,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         } withDependencies: {
             $0.continuousClock = clock
             $0.filesClient.search = { _, path, _, _ in
-                searchedPaths.withValue { $0.insert(path) }
+                searchedPaths.withValue { _ = $0.insert(path) }
                 switch path {
                 case Constants.bills: return [billsHit]
                 case TestFolder.photos: return [photosHit]

@@ -8,7 +8,6 @@ common.delete	Διαγραφή
 common.remove	Αφαίρεση
 common.clear	Εκκαθάριση
 common.done	Τέλος
-common.ok	OK
 common.openSettings	Άνοιγμα Ρυθμίσεων
 common.logOut	Αποσύνδεση
 common.close	Κλείσιμο
@@ -27,7 +26,6 @@ common.selectedCount	%lld επιλεγμένα
 tab.browse	Περιήγηση
 tab.favorites	Αγαπημένα
 tab.shared	Κοινόχρηστα
-tab.downloads	Λήψεις
 tab.settings	Ρυθμίσεις
 sort.sheetTitle	Ταξινόμηση κατά
 sort.name	Όνομα
@@ -37,8 +35,6 @@ sort.dateModified	Ημερομηνία τροποποίησης
 sort.dateAdded	Ημερομηνία προσθήκης
 sort.dateShared	Ημερομηνία κοινοποίησης
 sort.expiration	Λήξη
-sort.email	Email
-sort.type	Τύπος
 sort.ascending	Αύξουσα
 sort.descending	Φθίνουσα
 select.selectAll	Επιλογή όλων
@@ -63,12 +59,9 @@ dateFormat.automatic	Αυτόματα
 browse.navigationTitle	Περιήγηση
 browse.scopeThisFolder	Αυτός ο φάκελος
 browse.scopeEverywhere	Παντού
-browse.searchScopeInFolder	Αυτός ο φάκελος
-browse.searchScopeEverywhere	Παντού
 browse.locations	Τοποθεσίες
 browse.breadcrumbHint	Ανοίγει αυτόν τον φάκελο
 browse.open	Άνοιγμα
-browse.unsupportedFileType	Μη υποστηριζόμενος τύπος αρχείου
 browse.actionGetInfo	Λήψη πληροφοριών
 browse.actionPermissions	Δικαιώματα
 browse.actionRename	Μετονομασία
@@ -101,7 +94,6 @@ browse.searchEverywhere	Αναζήτηση παντού
 browse.searchFailed	Η αναζήτηση απέτυχε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.
 browse.progressExtracting	Εξαγωγή…
 browse.progressCompressing	Συμπίεση…
-browse.offlineBannerTitle	Εκτός σύνδεσης
 browse.offlineBannerDetail	Εμφάνιση αποθηκευμένου αντιγράφου από %@
 browse.actionCopy	Αντιγραφή
 browse.destinationPickerMoveTitle	Μετακίνηση σε…
@@ -113,8 +105,6 @@ browse.actionPaste	Επικόλληση
 browse.actionPasteCount	Επικόλληση %lld στοιχείων
 browse.actionPasteHere	Επικόλληση εδώ
 browse.actionClearClipboard	Εκκαθάριση προχείρου
-browse.clipboardMoveCount	%lld προς μετακίνηση
-browse.clipboardCopyCount	%lld προς αντιγραφή
 browse.clipboardCopiedOne	Αντιγράφηκε το %@
 browse.clipboardCopiedMany	Αντιγράφηκαν %lld στοιχεία
 browse.progressMoving	Μετακίνηση…
@@ -154,8 +144,6 @@ favorites.removeMessage	Αυτό τα αφαιρεί μόνο από τα Αγα
 favorites.removeFailedOne	Δεν ήταν δυνατή η αφαίρεση αυτού του αγαπημένου.
 favorites.removeFailedMany	Δεν ήταν δυνατή η αφαίρεση αυτών των αγαπημένων.
 favorites.removePartial	Αφαιρέθηκαν %1$lld από %2$lld.
-downloads.actionOpenInFiles	Άνοιγμα στα Αρχεία
-downloads.emptyList	Τα αρχεία που κατεβάζετε από την Περιήγηση εμφανίζονται εδώ.
 downloads.deleteConfirmTitle	Διαγραφή;
 downloads.deleteConfirmOne	Διαγραφή του «%@»;
 downloads.deleteConfirmMany	Διαγραφή %lld αρχείων;
@@ -194,15 +182,12 @@ uploads.discardTitle	Απόρριψη μεταφόρτωσης;
 uploads.discardMessage	Τα αρχεία που προσθέσατε δεν θα μεταφορτωθούν.
 uploads.discardConfirm	Απόρριψη
 uploads.statusWaiting	Σε αναμονή
-uploads.statusFailed	Η μεταφόρτωση απέτυχε
 uploads.barTitleOne	Μεταφόρτωση του %@
 uploads.barTitleMany	Μεταφόρτωση %lld αρχείων
 uploads.barFailedOne	1 μεταφόρτωση απέτυχε
 uploads.barFailedMany	%lld μεταφορτώσεις απέτυχαν
-uploads.retryAll	Επανάληψη όλων
 uploads.complete	Η μεταφόρτωση ολοκληρώθηκε
 uploads.completeMany	Μεταφορτώθηκαν %lld αρχεία
-uploads.completeWithFailures	Μεταφορτώθηκαν %1$lld, απέτυχαν %2$lld
 uploads.failedGeneric	Δεν ήταν δυνατή η μεταφόρτωση αυτού του αρχείου.
 uploads.clear	Εκκαθάριση
 uploads.emptyList	Δεν υπάρχουν ακόμη μεταφορτώσεις.
@@ -236,7 +221,6 @@ createShare.sectionLabel	Ετικέτα
 createShare.sectionAccessMode	Λειτουργία πρόσβασης
 createShare.sectionWhoCanAccess	Ποιος έχει πρόσβαση
 createShare.sectionShareLink	Σύνδεσμος κοινοποίησης
-createShare.fieldPassword	Κωδικός πρόσβασης
 createShare.togglePasswordProtect	Προστασία με κωδικό πρόσβασης
 createShare.toggleSetExpiration	Ορισμός ημερομηνίας λήξης
 createShare.fieldExpires	Λήγει
@@ -251,7 +235,6 @@ createShare.directFolderLink	Άμεσος σύνδεσμος ZIP φακέλου
 createShare.directFileLink	Άμεσος σύνδεσμος αρχείου
 createShare.summaryAccess	Πρόσβαση
 createShare.summarySharedWith	Κοινοποιήθηκε σε
-createShare.summaryPassword	Κωδικός πρόσβασης
 createShare.summaryPasswordProtected	Προστατευμένο
 createShare.summaryExpires	Λήγει
 createShare.summarySpecificPeople	Συγκεκριμένα άτομα
@@ -259,7 +242,6 @@ createShare.errorPastExpiration	Επιλέξτε ημερομηνία λήξης
 editShare.title	Επεξεργασία συνδέσμου κοινοποίησης
 editShare.save	Αποθήκευση αλλαγών
 editShare.passwordKeepHint	Αφήστε το κενό για να διατηρηθεί ο τρέχων κωδικός πρόσβασης
-editShare.savedToast	Ο σύνδεσμος κοινοποίησης ενημερώθηκε
 thumbnailSettings.navigationTitle	Μικρογραφίες
 thumbnailSettings.subtitle	Ελέγξτε πώς ο διακομιστής δημιουργεί μικρογραφίες εικόνων για όλους τους πελάτες.
 thumbnailSettings.enable	Δημιουργία μικρογραφιών
@@ -333,7 +315,6 @@ activityLog.anyOutcome	Οποιοδήποτε αποτέλεσμα
 activityLog.outcomeOk	Επιτυχία
 activityLog.outcomeRefused	Απορρίφθηκε
 activityLog.searchPlaceholder	Ένα όνομα ή μια διαδρομή
-activityLog.searchButton	Αναζήτηση
 activityLog.refresh	Ανανέωση
 activityLog.clear	Εκκαθάριση αρχείου καταγραφής
 activityLog.clearTitle	Εκκαθάριση του αρχείου καταγραφής;
@@ -449,7 +430,6 @@ versionedFiles.newest	Τελευταία: %@
 versionedFiles.versionPinned	Καρφιτσωμένη
 versionedFiles.versionUnavailable	Μη διαθέσιμη
 versionedFiles.versionBy	Από %@
-versionedFiles.detailFailed	Δεν ήταν δυνατή η ανάγνωση αυτού του ιστορικού.
 versionedFiles.deleteSelectedNone	Επιλέξτε τις εκδόσεις προς διαγραφή
 versionedFiles.deleteSelected	Διαγραφή επιλεγμένων (%lld)
 versionedFiles.deleteAll	Διαγραφή όλων των εκδόσεων
@@ -539,17 +519,10 @@ serverDetails.nameErrorEmpty	Το όνομα του διακομιστή δεν 
 serverDetails.urlLabel	URL διακομιστή
 serverDetails.urlFootnote	Η διεύθυνση όπου είναι εγκατεστημένο το NextExplorer σας. Για να την αλλάξετε, αποσυνδεθείτε και προσθέστε ξανά τον διακομιστή.
 serverDetails.updateButton	Ενημέρωση διακομιστή
-serverDetails.savedMessage	Τα στοιχεία του διακομιστή ενημερώθηκαν.
 serverDetails.logoErrorTooLarge	Αυτή η εικόνα είναι πολύ μεγάλη. Επιλέξτε μία κάτω από 2 MB.
 serverDetails.cameraDeniedTitle	Η πρόσβαση στην κάμερα είναι ανενεργή
 serverDetails.cameraDeniedMessage	Ενεργοποιήστε την πρόσβαση στην κάμερα στις Ρυθμίσεις για να τραβήξετε φωτογραφία.
 licenses.navigationTitle	Άδειες χρήσης ανοικτού κώδικα
-licenses.sectionSoftware	Λογισμικό
-licenses.sectionFontSoftware	Λογισμικό γραμματοσειρών
-licenses.labelAuthor	Δημιουργός
-licenses.labelOriginalVersion	Αρχική έκδοση
-licenses.labelModifiedVersion	Τροποποιημένη έκδοση
-licenses.labelReservedFontName	Δεσμευμένο όνομα γραμματοσειράς
 fileInfo.navigationTitleFolder	Φάκελος
 fileInfo.rowKind	Είδος
 fileInfo.rowSize	Μέγεθος
@@ -599,7 +572,6 @@ userManagement.createUser	Δημιουργία χρήστη
 userManagement.badgeAdmin	Διαχειριστής
 userManagement.emptyList	Δεν υπάρχουν ακόμη χρήστες.
 userManagement.noSearchMatches	Κανένας χρήστης δεν ταιριάζει με «%@».
-userManagement.loadFailed	Δεν ήταν δυνατή η επικοινωνία με τον διακομιστή.
 userManagement.sortType	Τύπος
 userManagement.sortName	Όνομα
 userManagement.sortEmail	Email
@@ -610,7 +582,6 @@ userManagement.createNavigationTitle	Δημιουργία χρήστη
 userManagement.createEmailField	Email
 userManagement.createUsernameField	Όνομα χρήστη (προαιρετικό)
 userManagement.createUsernamePlaceholder	Προκύπτει από το email
-userManagement.createPasswordField	Κωδικός πρόσβασης
 userManagement.createPasswordPlaceholder	Τουλάχιστον %lld χαρακτήρες
 userManagement.createGrantAdminToggle	Παροχή πρόσβασης διαχειριστή
 userManagement.createGrantAdminSubtitle	Πλήρης έλεγχος αρχείων, κοινοποιήσεων και χρηστών.
@@ -632,7 +603,6 @@ userManagement.toastVolumeRemoved	Ο τόμος αφαιρέθηκε
 userManagement.errorEmailRequired	Απαιτείται email.
 userManagement.errorEmailInvalid	Εισαγάγετε μια έγκυρη διεύθυνση email.
 userManagement.errorUsernameRequired	Απαιτείται όνομα χρήστη.
-userManagement.errorEmailInUse	Το email χρησιμοποιείται ήδη.
 userManagement.errorPasswordTooShort	Χρησιμοποιήστε τουλάχιστον %lld χαρακτήρες.
 userDetail.fallbackName	Χρήστης
 userDetail.sectionGeneralInfo	Γενικές πληροφορίες
@@ -798,8 +768,6 @@ login.errorIncomplete	Η σύνδεση δεν ολοκληρώθηκε. Δοκ�
 login.errorUnreachable	Δεν ήταν δυνατή η επικοινωνία με αυτόν τον διακομιστή. Ελέγξτε τη διεύθυνση και δοκιμάστε ξανά.
 login.errorUnexpectedResponse	Απροσδόκητη απάντηση από τον διακομιστή.
 login.errorKeychain	Δεν ήταν δυνατή η αποθήκευση της συνεδρίας σας σε αυτήν τη συσκευή.
-login.errorDecoding	Ο διακομιστής απάντησε απροσδόκητα. Ελέγξτε τη διεύθυνση και δοκιμάστε ξανά.
-login.errorNoLocalAuth	Αυτός ο διακομιστής δεν έχει ενεργοποιημένη τη σύνδεση με όνομα χρήστη και κωδικό πρόσβασης.
 login.errorRateLimited	Πάρα πολλές προσπάθειες. Περιμένετε λίγα λεπτά και δοκιμάστε ξανά.
 login.ssoButton	Σύνδεση με SSO
 login.orDivider	ή
@@ -821,7 +789,6 @@ login.diagnosticsTitle	Αρχείο καταγραφής σύνδεσης
 login.diagnosticsIntro	Αυτό το αρχείο καταγραφής δείχνει τι απάντησε ο διακομιστής σε κάθε βήμα, για να βοηθήσει στον εντοπισμό του γιατί αποτυγχάνει η σύνδεση. Δεν περιέχει ποτέ τον κωδικό πρόσβασής σας, τη διεύθυνση που πληκτρολογήσατε ή το όνομα χρήστη σας. Στείλτε το στον προγραμματιστή.
 browse.nameErrorReserved	Αυτό το όνομα δεν επιτρέπεται.
 browse.nameErrorSeparators	Ένα όνομα δεν μπορεί να περιέχει / ή \.
-browse.searchMatchLine	Γραμμή %1$lld: %2$@
 browse.searchMatchLineLabel	Γραμμή %lld
 browse.searchTooShort	Πληκτρολογήστε τουλάχιστον %lld χαρακτήρες για αναζήτηση σε υποφακέλους και περιεχόμενο αρχείων.
 browse.searchStoppedEarly	Η αναζήτηση σταμάτησε στο χρονικό της όριο. Αυτά είναι τα αποτελέσματα που βρέθηκαν μέχρι τώρα.
@@ -833,8 +800,6 @@ browse.searchMatchedByContent	Περιεχόμενο
 browse.searchMatchedByBoth	Όνομα και περιεχόμενο
 createShare.errorPasswordRequired	Εισαγάγετε έναν κωδικό πρόσβασης ή απενεργοποιήστε την προστασία με κωδικό.
 login.errorServer	Ο διακομιστής αντιμετώπισε πρόβλημα (σφάλμα %lld). Δοκιμάστε ξανά αργότερα.
-filter.sheetTitle	Φίλτρο ανά τύπο
-filter.button	Φίλτρο
 filter.all	Όλοι οι τύποι
 filter.folders	Φάκελοι
 filter.images	Εικόνες
@@ -887,13 +852,8 @@ settings.sectionSupport	Υποστήριξη
 settings.rowRateApp	Αξιολόγηση του NextExplorer
 settings.rowSupport	Βοήθεια και υποστήριξη
 menu.refresh	Ανανέωση
-select.tableView	Προβολή πίνακα
-browse.progressDownloading	Λήψη…
-browse.progressDownloadingIndexed	Λήψη %1$lld από %2$lld…
 browse.downloadSavedTo	Αποθηκεύτηκε στο %@
-browse.downloadSavedCountTo	Αποθηκεύτηκαν %1$lld από %2$lld στοιχεία στο %3$@
 browse.downloadSavedAllTo	Αποθηκεύτηκαν %1$lld στοιχεία στο %2$@
-browse.downloadBulkFailed	Δεν ήταν δυνατή η αποθήκευση αυτών των στοιχείων στη συσκευή σας.
 openWith.openIn	Άνοιγμα στο %@
 openWith.openWith	Άνοιγμα με
 openWith.viewAsText	Προβολή ως κείμενο
@@ -910,7 +870,6 @@ menu.newWindow	Νέο παράθυρο
 menu.newTab	Νέα καρτέλα
 browse.actionOpenInNewWindow	Άνοιγμα σε νέο παράθυρο
 browse.actionOpenInNewTab	Άνοιγμα σε νέα καρτέλα
-select.viewAs	Προβολή
 settings.rowAppearance	Εμφάνιση
 appearance.system	Σύστημα
 appearance.light	Φωτεινή
@@ -941,7 +900,6 @@ macSettings.roleAdmin	Διαχειριστής
 macSettings.roleUser	Χρήστης
 macSettings.status	Κατάσταση
 macSettings.statusSignedIn	Συνδεδεμένος
-macSettings.manage	Διαχείριση…
 macSettings.cache	Προσωρινή μνήμη
 macSettings.support	Βοήθεια και υποστήριξη…
 macSettings.permission	Δικαίωμα

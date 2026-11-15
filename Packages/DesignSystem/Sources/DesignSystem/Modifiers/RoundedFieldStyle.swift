@@ -27,7 +27,7 @@ private struct RoundedFieldModifier: ViewModifier {
                         .strokeBorder(borderStyle, lineWidth: isFocused ? .borderWidthFocused : .borderWidthHairline)
                 }
             }
-            .animation(.easeInOut(duration: 0.15), value: isFocused)
+            .animation(DSMotion.quickFade, value: isFocused)
     }
 }
 

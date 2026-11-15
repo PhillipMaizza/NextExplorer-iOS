@@ -95,7 +95,7 @@ struct TipJarSheet: View {
                     .strokeBorder(Color.borderPrimary.opacity(0.4), lineWidth: 1)
             )
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .disabled(store.purchasingID != nil)
         .accessibilityLabel("\(product.displayName), \(product.displayPrice)")
     }

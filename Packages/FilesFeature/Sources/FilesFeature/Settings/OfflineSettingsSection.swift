@@ -6,7 +6,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let rowIconSize: CGFloat = .iconSmall
     static let fullOpacity: Double = 1.0
     static let disabledOpacity: Double = 0.5
     static let progressSpacing: CGFloat = .space8
@@ -124,8 +123,7 @@ struct OfflineSettingsSection: View {
                 // A slow breathing fade while a sync runs, so the row reads as actively working.
                 .animation(reduceMotion
                     ? nil
-                    : .easeInOut(duration: Constants.statusPulseDuration)
-                        .repeatForever(autoreverses: true))
+                    : DSMotion.pulse(duration: Constants.statusPulseDuration))
                 {
                     $0.opacity(statusPulse ? Constants.statusPulseOpacity : 1)
                 }

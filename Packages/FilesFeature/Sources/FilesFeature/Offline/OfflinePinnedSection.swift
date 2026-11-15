@@ -39,7 +39,7 @@ struct OfflinePinnedSection: View {
                     isSelecting: isSelecting,
                     isSelected: selectedPaths.contains(usage.root.path)
                 ) {
-                    store.send(.removeTapped(path: usage.root.path), animation: .default)
+                    store.send(.removeTapped(path: usage.root.path), animation: DSMotion.listDiff)
                 }
             }
         }

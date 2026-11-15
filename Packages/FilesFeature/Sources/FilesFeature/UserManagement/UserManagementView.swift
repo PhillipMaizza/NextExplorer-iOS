@@ -19,7 +19,7 @@ struct UserManagementView: View {
                     } label: {
                         UserRow(user: user)
                     }
-                    .buttonStyle(DSHapticButtonStyle())
+                    .buttonStyle(DSPressableButtonStyle())
                     .listRowBackground(Color.backgroundSecondary)
                 }
             }

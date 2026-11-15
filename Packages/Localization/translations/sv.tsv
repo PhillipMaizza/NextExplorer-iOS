@@ -7,7 +7,6 @@ common.delete	Radera
 common.remove	Ta bort
 common.clear	Rensa
 common.done	Klar
-common.ok	OK
 common.openSettings	Öppna Inställningar
 common.logOut	Logga ut
 common.close	Stäng
@@ -23,7 +22,6 @@ common.selectedCount	%lld markerade
 tab.browse	Bläddra
 tab.favorites	Favoriter
 tab.shared	Delade
-tab.downloads	Nedladdningar
 tab.settings	Inställningar
 sort.sheetTitle	Sortera efter
 sort.name	Namn
@@ -33,8 +31,6 @@ sort.dateModified	Ändringsdatum
 sort.dateAdded	Tillagd datum
 sort.dateShared	Delad datum
 sort.expiration	Upphör
-sort.email	E-post
-sort.type	Typ
 sort.ascending	Stigande
 sort.descending	Fallande
 select.selectAll	Markera alla
@@ -59,11 +55,8 @@ dateFormat.automatic	Automatisk
 browse.navigationTitle	Bläddra
 browse.scopeThisFolder	Den här mappen
 browse.scopeEverywhere	Överallt
-browse.searchScopeInFolder	Den här mappen
-browse.searchScopeEverywhere	Överallt
 browse.locations	Platser
 browse.open	Öppna
-browse.unsupportedFileType	Filtypen stöds inte
 browse.actionGetInfo	Visa info
 browse.actionPermissions	Behörigheter
 browse.actionRename	Byt namn
@@ -93,7 +86,6 @@ browse.searchEverywhere	Sök överallt
 browse.searchFailed	Sökningen misslyckades. Kontrollera anslutningen och försök igen.
 browse.progressExtracting	Extraherar…
 browse.progressCompressing	Komprimerar…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Visar en sparad kopia från %@
 browse.actionCopy	Kopiera
 browse.destinationPickerMoveTitle	Flytta till…
@@ -105,8 +97,6 @@ browse.actionPaste	Klistra in
 browse.actionPasteCount	Klistra in %lld objekt
 browse.actionPasteHere	Klistra in här
 browse.actionClearClipboard	Rensa urklipp
-browse.clipboardMoveCount	%lld att flytta
-browse.clipboardCopyCount	%lld att kopiera
 browse.clipboardCopiedOne	%@ kopierad
 browse.clipboardCopiedMany	%lld objekt kopierade
 browse.progressMoving	Flyttar…
@@ -145,8 +135,6 @@ favorites.removeMessage	Detta tar bara bort dem från favoriter.
 favorites.removeFailedOne	Det gick inte att ta bort den favoriten.
 favorites.removeFailedMany	Det gick inte att ta bort de favoriterna.
 favorites.removePartial	Tog bort %1$lld av %2$lld.
-downloads.actionOpenInFiles	Öppna i Filer
-downloads.emptyList	Filer du laddar ner från Bläddra visas här.
 downloads.deleteConfirmTitle	Radera?
 downloads.deleteConfirmOne	Radera ”%@”?
 downloads.deleteConfirmMany	Radera %lld filer?
@@ -185,15 +173,12 @@ uploads.discardTitle	Kassera uppladdningen?
 uploads.discardMessage	Filerna du lade till laddas inte upp.
 uploads.discardConfirm	Kassera
 uploads.statusWaiting	Väntar
-uploads.statusFailed	Uppladdningen misslyckades
 uploads.barTitleOne	Laddar upp %@
 uploads.barTitleMany	Laddar upp %lld filer
 uploads.barFailedOne	1 uppladdning misslyckades
 uploads.barFailedMany	%lld uppladdningar misslyckades
-uploads.retryAll	Försök med alla igen
 uploads.complete	Uppladdning klar
 uploads.completeMany	%lld filer uppladdade
-uploads.completeWithFailures	%1$lld uppladdade, %2$lld misslyckades
 uploads.failedGeneric	Det gick inte att ladda upp den här filen.
 uploads.clear	Rensa
 uploads.emptyList	Inga uppladdningar än.
@@ -228,7 +213,6 @@ createShare.sectionLabel	Etikett
 createShare.sectionAccessMode	Åtkomstläge
 createShare.sectionWhoCanAccess	Vem kan komma åt
 createShare.sectionShareLink	Delningslänk
-createShare.fieldPassword	Lösenord
 createShare.togglePasswordProtect	Lösenordsskydda
 createShare.toggleSetExpiration	Ange utgångsdatum
 createShare.fieldExpires	Upphör
@@ -243,7 +227,6 @@ createShare.directFolderLink	Direkt ZIP-länk för mapp
 createShare.directFileLink	Direkt fillänk
 createShare.summaryAccess	Åtkomst
 createShare.summarySharedWith	Delad med
-createShare.summaryPassword	Lösenord
 createShare.summaryPasswordProtected	Skyddad
 createShare.summaryExpires	Upphör
 createShare.summarySpecificPeople	Specifika personer
@@ -251,7 +234,6 @@ createShare.errorPastExpiration	Välj ett utgångsdatum i framtiden.
 editShare.title	Redigera delningslänk
 editShare.save	Spara ändringar
 editShare.passwordKeepHint	Lämna tomt för att behålla det nuvarande lösenordet
-editShare.savedToast	Delningslänk uppdaterad
 thumbnailSettings.navigationTitle	Miniatyrer
 thumbnailSettings.subtitle	Styr hur servern genererar bildminiatyrer för alla klienter.
 thumbnailSettings.enable	Generera miniatyrer
@@ -334,17 +316,10 @@ serverDetails.nameErrorEmpty	Servernamnet får inte vara tomt.
 serverDetails.urlLabel	Server-URL
 serverDetails.urlFootnote	Adressen där din NextExplorer-instans är installerad. För att ändra den, logga ut och lägg till servern igen.
 serverDetails.updateButton	Uppdatera server
-serverDetails.savedMessage	Serveruppgifterna uppdaterades.
 serverDetails.logoErrorTooLarge	Den bilden är för stor. Välj en under 2 MB.
 serverDetails.cameraDeniedTitle	Kameraåtkomst av
 serverDetails.cameraDeniedMessage	Aktivera kameraåtkomst i Inställningar för att ta ett foto.
 licenses.navigationTitle	Öppen källkod-licenser
-licenses.sectionSoftware	Programvara
-licenses.sectionFontSoftware	Teckensnittsprogramvara
-licenses.labelAuthor	Upphovsperson
-licenses.labelOriginalVersion	Ursprunglig version
-licenses.labelModifiedVersion	Modifierad version
-licenses.labelReservedFontName	Reserverat teckensnittsnamn
 fileInfo.navigationTitleFolder	Mapp
 fileInfo.rowKind	Sort
 fileInfo.rowSize	Storlek
@@ -391,7 +366,6 @@ userManagement.createUser	Skapa användare
 userManagement.badgeAdmin	Administratör
 userManagement.emptyList	Inga användare än.
 userManagement.noSearchMatches	Inga användare matchar ”%@”.
-userManagement.loadFailed	Det gick inte att nå servern.
 userManagement.sortType	Typ
 userManagement.sortName	Namn
 userManagement.sortEmail	E-post
@@ -403,7 +377,6 @@ userManagement.createEmailField	E-post
 userManagement.createEmailPlaceholder	namn@exempel.com
 userManagement.createUsernameField	Användarnamn (valfritt)
 userManagement.createUsernamePlaceholder	Härledd från e-post
-userManagement.createPasswordField	Lösenord
 userManagement.createPasswordPlaceholder	Minst %lld tecken
 userManagement.createGrantAdminToggle	Ge administratörsåtkomst
 userManagement.createGrantAdminSubtitle	Full kontroll över filer, delningar och användare.
@@ -425,7 +398,6 @@ userManagement.toastVolumeRemoved	Volym borttagen
 userManagement.errorEmailRequired	E-post krävs.
 userManagement.errorEmailInvalid	Ange en giltig e-postadress.
 userManagement.errorUsernameRequired	Användarnamn krävs.
-userManagement.errorEmailInUse	E-posten används redan.
 userManagement.errorPasswordTooShort	Använd minst %lld tecken.
 userDetail.fallbackName	Användare
 userDetail.sectionGeneralInfo	Allmän info
@@ -517,13 +489,10 @@ login.errorIncomplete	Inloggningen slutfördes inte. Försök igen.
 login.errorUnreachable	Det gick inte att nå den servern. Kontrollera adressen och försök igen.
 login.errorUnexpectedResponse	Oväntat svar från servern.
 login.errorKeychain	Det gick inte att spara din session på den här enheten.
-login.errorDecoding	Servern svarade oväntat. Kontrollera adressen och försök igen.
-login.errorNoLocalAuth	Den här servern har inte inloggning med användarnamn och lösenord aktiverat.
 login.errorRateLimited	För många försök. Vänta några minuter och försök igen.
 login.errorServer	Servern stötte på ett problem (fel %lld). Försök igen senare.
 browse.nameErrorReserved	Det namnet är inte tillåtet.
 browse.nameErrorSeparators	Ett namn får inte innehålla / eller \.
-browse.searchMatchLine	Rad %1$lld: %2$@
 browse.searchMatchLineLabel	Rad %lld
 browse.searchTooShort	Skriv minst %lld tecken för att söka i undermappar och filinnehåll.
 browse.searchStoppedEarly	Sökningen stoppades vid tidsgränsen. Det här är resultaten som hittats hittills.
@@ -534,8 +503,6 @@ browse.searchMatchedByName	Namn
 browse.searchMatchedByContent	Innehåll
 browse.searchMatchedByBoth	Namn och innehåll
 createShare.errorPasswordRequired	Ange ett lösenord eller stäng av lösenordsskydd.
-filter.sheetTitle	Filtrera efter typ
-filter.button	Filtrera
 filter.all	Alla typer
 filter.folders	Mappar
 filter.images	Bilder
@@ -619,7 +586,6 @@ settings.sectionSupport	Support
 settings.rowRateApp	Betygsätt NextExplorer
 settings.rowSupport	Hjälp och support
 menu.refresh	Uppdatera
-select.tableView	Tabellvy
 openWith.openIn	Öppna i %@
 openWith.openWith	Öppna med
 openWith.viewAsText	Visa som text
@@ -635,7 +601,6 @@ menu.newWindow	Nytt fönster
 menu.newTab	Ny flik
 browse.actionOpenInNewWindow	Öppna i nytt fönster
 browse.actionOpenInNewTab	Öppna i ny flik
-select.viewAs	Visa
 settings.rowAppearance	Utseende
 appearance.system	System
 appearance.light	Ljust
@@ -655,12 +620,8 @@ downloadQueue.savedMany	%lld objekt sparade i Nedladdningar
 downloadQueue.bytesOf	%1$@ av %2$@
 downloadQueue.timeLeft	%@ kvar
 browse.sectionPersonal	Personligt
-browse.progressDownloading	Laddar ner…
-browse.progressDownloadingIndexed	Laddar ner %1$lld av %2$lld…
 browse.downloadSavedTo	Sparad i %@
-browse.downloadSavedCountTo	Sparade %1$lld av %2$lld objekt i %3$@
 browse.downloadSavedAllTo	Sparade %1$lld objekt i %2$@
-browse.downloadBulkFailed	Det gick inte att spara dessa objekt på din enhet.
 macSettings.labelFormat	%@:
 macSettings.addAccount	Lägg till konto…
 macSettings.changePassword	Ändra lösenord…
@@ -673,7 +634,6 @@ macSettings.roleAdmin	Administratör
 macSettings.roleUser	Användare
 macSettings.status	Status
 macSettings.statusSignedIn	Inloggad
-macSettings.manage	Hantera…
 macSettings.cache	Cache
 macSettings.support	Hjälp och support…
 macSettings.permission	Behörighet
@@ -912,7 +872,6 @@ activityLog.anyOutcome	Alla resultat
 activityLog.outcomeOk	Lyckad
 activityLog.outcomeRefused	Nekad
 activityLog.searchPlaceholder	Ett namn eller en sökväg
-activityLog.searchButton	Sök
 activityLog.refresh	Uppdatera
 activityLog.clear	Töm loggen
 activityLog.clearTitle	Tömma loggen?
@@ -1028,7 +987,6 @@ versionedFiles.newest	Senaste: %@
 versionedFiles.versionPinned	Fäst
 versionedFiles.versionUnavailable	Inte tillgänglig
 versionedFiles.versionBy	Av %@
-versionedFiles.detailFailed	Den här historiken kunde inte läsas.
 versionedFiles.deleteSelectedNone	Markera versioner att ta bort
 versionedFiles.deleteSelected	Ta bort markerade (%lld)
 versionedFiles.deleteAll	Radera alla versioner

@@ -42,7 +42,7 @@ struct OfflinePinnedGridCells: View {
             } contextMenu: {
                 if !isSelecting {
                     Button {
-                        store.send(.removeTapped(path: usage.root.path), animation: .default)
+                        store.send(.removeTapped(path: usage.root.path), animation: DSMotion.listDiff)
                     } label: {
                         Label { Text(L10n.Common.remove) } icon: { IconKit.delete }
                     }

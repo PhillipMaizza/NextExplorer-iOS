@@ -7,12 +7,7 @@ import FilesFeature
 import Localization
 import SwiftUI
 
-private enum Constants {
-    static let destinationCrossFadeDuration: Double = 0.35
-    /// After the login button's accent circle has flooded the screen, `AppView` holds that
-    /// same accent fill and fades it out, uncovering the app that cross-faded in behind it.
-    static let authFillFadeDuration: Double = 0.4
-}
+private enum Constants {}
 
 /// Identity for the authenticated subtree: it remounts when the splash finishes (to relayout nav
 /// bars) and when the active account changes (to play the switch transition).
@@ -81,7 +76,7 @@ public struct AppView: View {
     }
 
     private var contentSwapAnimation: Animation {
-        reduceMotion ? .easeInOut(duration: 0.25) : .smooth(duration: 0.45)
+        DSMotion.screenTransition(reduceMotion: reduceMotion)
     }
 
     public var body: some View {
@@ -127,7 +122,7 @@ public struct AppView: View {
             // The login button's circle has just filled the screen with accent; pick that up
             // seamlessly, then fade it out over the app.
             authFillOpacity = 1
-            withAnimation(.easeOut(duration: Constants.authFillFadeDuration)) {
+            withAnimation(DSMotion.fadeOut) {
                 authFillOpacity = 0
             }
         }
@@ -210,7 +205,7 @@ public struct AppView: View {
                 }
             }
         }
-        .animation(.easeInOut(duration: Constants.destinationCrossFadeDuration), value: store.destination)
+        .animation(DSMotion.contentReveal, value: store.destination)
         // Remount when the language changes so every cached string and UIKit-backed title
         // (nav bars, tab bar) re-resolves through the new `LocalizationOverride` bundle. The TCA
         // store state lives outside the view tree, so navigation and data survive the swap.

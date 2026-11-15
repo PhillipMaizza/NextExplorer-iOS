@@ -133,8 +133,8 @@ struct FavoritesView: View {
                 }
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: store.dataSource)
-        .animation(.easeInOut(duration: 0.2), value: store.isSearchTermTooShort)
+        .animation(DSMotion.stateFade, value: store.dataSource)
+        .animation(DSMotion.stateFade, value: store.isSearchTermTooShort)
         .syncRefreshFeedback(errorMessage: store.errorMessage) {
             await store.send(.refreshButtonTapped).finish()
         }
@@ -165,7 +165,7 @@ struct FavoritesView: View {
                 onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
                 onCancel: { store.send(.selectModeToggled) },
                 onToggleViewMode: {
-                    withAnimation {
+                    withAnimation(DSMotion.contentReveal) {
                         viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
                     }
                 },
@@ -182,8 +182,6 @@ struct FavoritesView: View {
             host: $store.scope(state: \.previewHost, action: \.previewHost),
             onViewShares: { store.send(.viewSharesFromPreviewTapped) }
         ))
-        .hapticFeedback(.selection, trigger: viewModeRaw)
-        .hapticFeedback(.selection, trigger: store.isSelecting)
         .toolbar {
             // The bar's actions only once something is picked, never greyed out over nothing. Showing
             // the saved list with no network, only taking kept folders off the device works, so with
@@ -236,10 +234,9 @@ struct FavoritesView: View {
                 onDismiss: { store.send(.bulkRemoveCancelled) }
             )
         }
-        .hapticFeedback(.warning, trigger: store.bulkRemoveConfirmationIsPresented)
         .offlineRemovalAlert(
             store.offlineRemoval,
-            onConfirm: { store.send(.offlineRemovalConfirmed) },
+            onConfirm: { store.send(.offlineRemovalConfirmed, animation: DSMotion.listDiff) },
             onCancel: { store.send(.offlineRemovalCancelled) }
         )
         .navigationHistoryTitle(L10n.Favorites.navigationTitle)
@@ -279,10 +276,6 @@ struct FavoritesView: View {
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        // Only spring row diffs once the list is the content: during the skeleton→content
-        // swap the outer `.animation(value: listPhase)` owns the cross-fade alone, so the two
-        // don't run the same transition twice.
-        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
     }
 
     private var gridContent: some View {

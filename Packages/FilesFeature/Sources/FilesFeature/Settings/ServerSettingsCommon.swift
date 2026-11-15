@@ -155,11 +155,11 @@ struct ChoiceRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .disabled(isDisabled)
         .opacity(isDisabled ? ServerSettingsMetrics.disabledOpacity : 1)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .animation(.easeInOut(duration: ServerSettingsMetrics.selectionAnimationDuration), value: isSelected)
+        .animation(DSMotion.stateFade, value: isSelected)
         .hapticFeedback(.selection, trigger: isSelected)
     }
 
@@ -255,7 +255,7 @@ struct ChoiceMenuRow<Selection: Hashable, Options: View>: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
         }
     }
 }

@@ -21,7 +21,7 @@ public struct RetryLinkButton: View {
                 .type(.label3, style: .link)
                 .padding(.top, Constants.topPadding)
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
     }
 }
 

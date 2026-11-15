@@ -8,7 +8,6 @@ common.delete	Törlés
 common.remove	Eltávolítás
 common.clear	Ürítés
 common.done	Kész
-common.ok	OK
 common.openSettings	Beállítások megnyitása
 common.logOut	Kijelentkezés
 common.close	Bezárás
@@ -27,7 +26,6 @@ common.selectedCount	%lld kijelölve
 tab.browse	Böngészés
 tab.favorites	Kedvencek
 tab.shared	Megosztott
-tab.downloads	Letöltések
 tab.settings	Beállítások
 sort.sheetTitle	Rendezés alapja
 sort.name	Név
@@ -37,8 +35,6 @@ sort.dateModified	Módosítás dátuma
 sort.dateAdded	Hozzáadás dátuma
 sort.dateShared	Megosztás dátuma
 sort.expiration	Lejárat
-sort.email	E-mail
-sort.type	Típus
 sort.ascending	Növekvő
 sort.descending	Csökkenő
 select.selectAll	Összes kijelölése
@@ -63,12 +59,9 @@ dateFormat.automatic	Automatikus
 browse.navigationTitle	Böngészés
 browse.scopeThisFolder	Ez a mappa
 browse.scopeEverywhere	Mindenhol
-browse.searchScopeInFolder	Ez a mappa
-browse.searchScopeEverywhere	Mindenhol
 browse.locations	Helyek
 browse.breadcrumbHint	Megnyitja ezt a mappát
 browse.open	Megnyitás
-browse.unsupportedFileType	Nem támogatott fájltípus
 browse.actionGetInfo	Információk
 browse.actionPermissions	Engedélyek
 browse.actionRename	Átnevezés
@@ -101,7 +94,6 @@ browse.searchEverywhere	Keresés mindenhol
 browse.searchFailed	A keresés nem sikerült. Ellenőrizze a kapcsolatot, és próbálja újra.
 browse.progressExtracting	Kicsomagolás…
 browse.progressCompressing	Tömörítés…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Mentett másolat megjelenítése innen: %@
 browse.actionCopy	Másolás
 browse.destinationPickerMoveTitle	Áthelyezés ide…
@@ -113,8 +105,6 @@ browse.actionPaste	Beillesztés
 browse.actionPasteCount	%lld elem beillesztése
 browse.actionPasteHere	Beillesztés ide
 browse.actionClearClipboard	Vágólap ürítése
-browse.clipboardMoveCount	%lld áthelyezésre vár
-browse.clipboardCopyCount	%lld másolásra vár
 browse.clipboardCopiedOne	%@ másolva
 browse.clipboardCopiedMany	%lld elem másolva
 browse.progressMoving	Áthelyezés…
@@ -154,8 +144,6 @@ favorites.removeMessage	Ez csak a Kedvencek közül távolítja el őket.
 favorites.removeFailedOne	Ezt a kedvencet nem sikerült eltávolítani.
 favorites.removeFailedMany	Ezeket a kedvenceket nem sikerült eltávolítani.
 favorites.removePartial	Eltávolítva: %1$lld / %2$lld.
-downloads.actionOpenInFiles	Megnyitás a Fájlokban
-downloads.emptyList	A Böngészésből letöltött fájlok itt jelennek meg.
 downloads.deleteConfirmTitle	Törli?
 downloads.deleteConfirmOne	Törli a következőt: „%@”?
 downloads.deleteConfirmMany	%lld fájl törlése?
@@ -194,15 +182,12 @@ uploads.discardTitle	Elveti a feltöltést?
 uploads.discardMessage	A hozzáadott fájlok nem lesznek feltöltve.
 uploads.discardConfirm	Elvetés
 uploads.statusWaiting	Várakozik
-uploads.statusFailed	A feltöltés sikertelen
 uploads.barTitleOne	Feltöltés: %@
 uploads.barTitleMany	%lld fájl feltöltése folyamatban
 uploads.barFailedOne	1 feltöltés sikertelen
 uploads.barFailedMany	%lld feltöltés sikertelen
-uploads.retryAll	Összes újrapróbálása
 uploads.complete	A feltöltés befejeződött
 uploads.completeMany	%lld fájl feltöltve
-uploads.completeWithFailures	%1$lld feltöltve, %2$lld sikertelen
 uploads.failedGeneric	Ezt a fájlt nem sikerült feltölteni.
 uploads.clear	Ürítés
 uploads.emptyList	Még nincsenek feltöltések.
@@ -236,7 +221,6 @@ createShare.sectionLabel	Címke
 createShare.sectionAccessMode	Hozzáférési mód
 createShare.sectionWhoCanAccess	Ki férhet hozzá
 createShare.sectionShareLink	Megosztási hivatkozás
-createShare.fieldPassword	Jelszó
 createShare.togglePasswordProtect	Védelem jelszóval
 createShare.toggleSetExpiration	Lejárati dátum megadása
 createShare.fieldExpires	Lejár
@@ -251,7 +235,6 @@ createShare.directFolderLink	Közvetlen ZIP-hivatkozás a mappához
 createShare.directFileLink	Közvetlen fájlhivatkozás
 createShare.summaryAccess	Hozzáférés
 createShare.summarySharedWith	Megosztva vele
-createShare.summaryPassword	Jelszó
 createShare.summaryPasswordProtected	Védett
 createShare.summaryExpires	Lejár
 createShare.summarySpecificPeople	Meghatározott személyek
@@ -259,7 +242,6 @@ createShare.errorPastExpiration	Válasszon lejárati dátumot a jövőben.
 editShare.title	Megosztási hivatkozás szerkesztése
 editShare.save	Módosítások mentése
 editShare.passwordKeepHint	Hagyja üresen a jelenlegi jelszó megtartásához
-editShare.savedToast	A megosztási hivatkozás frissítve
 thumbnailSettings.navigationTitle	Miniatűrök
 thumbnailSettings.subtitle	Szabályozza, hogyan hozza létre a kiszolgáló a képek miniatűrjeit az összes kliens számára.
 thumbnailSettings.enable	Miniatűrök létrehozása
@@ -333,7 +315,6 @@ activityLog.anyOutcome	Bármilyen eredmény
 activityLog.outcomeOk	Sikeres
 activityLog.outcomeRefused	Elutasítva
 activityLog.searchPlaceholder	Egy név vagy elérési út
-activityLog.searchButton	Keresés
 activityLog.refresh	Frissítés
 activityLog.clear	Napló ürítése
 activityLog.clearTitle	Üríti a naplót?
@@ -449,7 +430,6 @@ versionedFiles.newest	Legutóbbi: %@
 versionedFiles.versionPinned	Kitűzve
 versionedFiles.versionUnavailable	Nem érhető el
 versionedFiles.versionBy	Készítette: %@
-versionedFiles.detailFailed	Ezt az előzményt nem sikerült beolvasni.
 versionedFiles.deleteSelectedNone	Jelölje be a törlendő verziókat
 versionedFiles.deleteSelected	Kijelöltek törlése (%lld)
 versionedFiles.deleteAll	Az összes verzió törlése
@@ -539,17 +519,10 @@ serverDetails.nameErrorEmpty	A kiszolgáló neve nem lehet üres.
 serverDetails.urlLabel	Kiszolgáló URL-je
 serverDetails.urlFootnote	Az a cím, ahol a NextExplorer példánya telepítve van. A módosításhoz jelentkezzen ki, és adja hozzá újra a kiszolgálót.
 serverDetails.updateButton	Kiszolgáló frissítése
-serverDetails.savedMessage	A kiszolgáló adatai frissítve.
 serverDetails.logoErrorTooLarge	Ez a kép túl nagy. Válasszon egy 2 MB-nál kisebbet.
 serverDetails.cameraDeniedTitle	A kamerahozzáférés ki van kapcsolva
 serverDetails.cameraDeniedMessage	Kapcsolja be a kamerahozzáférést a Beállításokban fénykép készítéséhez.
 licenses.navigationTitle	Nyílt forráskódú licencek
-licenses.sectionSoftware	Szoftver
-licenses.sectionFontSoftware	Betűtípus-szoftver
-licenses.labelAuthor	Szerző
-licenses.labelOriginalVersion	Eredeti verzió
-licenses.labelModifiedVersion	Módosított verzió
-licenses.labelReservedFontName	Fenntartott betűtípusnév
 fileInfo.navigationTitleFolder	Mappa
 fileInfo.rowKind	Fajta
 fileInfo.rowSize	Méret
@@ -599,7 +572,6 @@ userManagement.createUser	Felhasználó létrehozása
 userManagement.badgeAdmin	Rendszergazda
 userManagement.emptyList	Még nincsenek felhasználók.
 userManagement.noSearchMatches	Egy felhasználó sem felel meg a következőnek: „%@”.
-userManagement.loadFailed	A kiszolgáló nem érhető el.
 userManagement.sortType	Típus
 userManagement.sortName	Név
 userManagement.sortEmail	E-mail
@@ -610,7 +582,6 @@ userManagement.createNavigationTitle	Felhasználó létrehozása
 userManagement.createEmailField	E-mail
 userManagement.createUsernameField	Felhasználónév (nem kötelező)
 userManagement.createUsernamePlaceholder	Az e-mailből származtatva
-userManagement.createPasswordField	Jelszó
 userManagement.createPasswordPlaceholder	Legalább %lld karakter
 userManagement.createGrantAdminToggle	Rendszergazdai hozzáférés megadása
 userManagement.createGrantAdminSubtitle	Teljes irányítás a fájlok, megosztások és felhasználók felett.
@@ -632,7 +603,6 @@ userManagement.toastVolumeRemoved	Kötet eltávolítva
 userManagement.errorEmailRequired	Az e-mail megadása kötelező.
 userManagement.errorEmailInvalid	Adjon meg érvényes e-mail-címet.
 userManagement.errorUsernameRequired	A felhasználónév megadása kötelező.
-userManagement.errorEmailInUse	Az e-mail már használatban van.
 userManagement.errorPasswordTooShort	Használjon legalább %lld karaktert.
 userDetail.fallbackName	Felhasználó
 userDetail.sectionGeneralInfo	Általános információk
@@ -798,8 +768,6 @@ login.errorIncomplete	A bejelentkezés nem fejeződött be. Próbálja újra.
 login.errorUnreachable	Ezt a kiszolgálót nem sikerült elérni. Ellenőrizze a címet, és próbálja újra.
 login.errorUnexpectedResponse	Váratlan válasz a kiszolgálótól.
 login.errorKeychain	A munkamenetet nem sikerült elmenteni ezen az eszközön.
-login.errorDecoding	A kiszolgáló váratlan választ adott. Ellenőrizze a címet, és próbálja újra.
-login.errorNoLocalAuth	Ezen a kiszolgálón nincs engedélyezve a felhasználónévvel és jelszóval való bejelentkezés.
 login.errorRateLimited	Túl sok próbálkozás. Várjon néhány percet, és próbálja újra.
 login.ssoButton	Bejelentkezés SSO-val
 login.orDivider	vagy
@@ -821,7 +789,6 @@ login.diagnosticsTitle	Bejelentkezési napló
 login.diagnosticsIntro	Ez a napló azt mutatja, mit válaszolt a kiszolgáló az egyes lépéseknél, hogy segítsen kideríteni, miért hiúsul meg a bejelentkezés. Soha nem tartalmazza a jelszavát, a beírt címet vagy a felhasználónevét. Küldje el a fejlesztőnek.
 browse.nameErrorReserved	Ez a név nem engedélyezett.
 browse.nameErrorSeparators	A név nem tartalmazhat / vagy \ jelet.
-browse.searchMatchLine	%1$lld. sor: %2$@
 browse.searchMatchLineLabel	%lld. sor
 browse.searchTooShort	Írjon be legalább %lld karaktert az almappákban és a fájlok tartalmában való kereséshez.
 browse.searchStoppedEarly	A keresés elérte az időkorlátját. Ezek az eddig talált eredmények.
@@ -833,8 +800,6 @@ browse.searchMatchedByContent	Tartalom
 browse.searchMatchedByBoth	Név és tartalom
 createShare.errorPasswordRequired	Adjon meg jelszót, vagy kapcsolja ki a jelszavas védelmet.
 login.errorServer	A kiszolgáló problémába ütközött (%lld. hiba). Próbálja újra később.
-filter.sheetTitle	Szűrés típus szerint
-filter.button	Szűrő
 filter.all	Minden típus
 filter.folders	Mappák
 filter.images	Képek
@@ -887,13 +852,8 @@ settings.sectionSupport	Támogatás
 settings.rowRateApp	A NextExplorer értékelése
 settings.rowSupport	Súgó és támogatás
 menu.refresh	Frissítés
-select.tableView	Táblázatnézet
-browse.progressDownloading	Letöltés…
-browse.progressDownloadingIndexed	Letöltés: %1$lld / %2$lld…
 browse.downloadSavedTo	Mentve ide: %@
-browse.downloadSavedCountTo	Mentve %1$lld / %2$lld elem ide: %3$@
 browse.downloadSavedAllTo	Mentve %1$lld elem ide: %2$@
-browse.downloadBulkFailed	Ezeket az elemeket nem sikerült az eszközére menteni.
 openWith.openIn	Megnyitás ebben: %@
 openWith.openWith	Megnyitás ezzel
 openWith.viewAsText	Megtekintés szövegként
@@ -910,7 +870,6 @@ menu.newWindow	Új ablak
 menu.newTab	Új lap
 browse.actionOpenInNewWindow	Megnyitás új ablakban
 browse.actionOpenInNewTab	Megnyitás új lapon
-select.viewAs	Nézet
 settings.rowAppearance	Megjelenés
 appearance.system	Rendszer
 appearance.light	Világos
@@ -941,7 +900,6 @@ macSettings.roleAdmin	Rendszergazda
 macSettings.roleUser	Felhasználó
 macSettings.status	Állapot
 macSettings.statusSignedIn	Bejelentkezve
-macSettings.manage	Kezelés…
 macSettings.cache	Gyorsítótár
 macSettings.support	Súgó és támogatás…
 macSettings.permission	Engedély

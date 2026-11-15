@@ -34,24 +34,16 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
     private func recordingStore(
         seen: LockIsolated<Set<String>>, base: OfflineFileStore
     ) -> OfflineFileStore {
+        let mark: @Sendable () -> Void = { seen.withValue { _ = $0.insert(CacheAccountScope.current) } }
         var store = base
-        store.pinnedRoots = { seen.withValue { $0.insert(CacheAccountScope.current) }; return base.pinnedRoots() }
-        store
-            .setPinnedRoots = { roots in
-                seen.withValue { $0.insert(CacheAccountScope.current) }; base.setPinnedRoots(roots)
-            }
-        store.reconcile = { paths in seen.withValue { $0.insert(CacheAccountScope.current) }; base.reconcile(paths) }
-        store.localURL = { item in seen.withValue { $0.insert(CacheAccountScope.current) }; return base.localURL(item) }
-        store
-            .setInterrupted = { value in
-                seen.withValue { $0.insert(CacheAccountScope.current) }; base.setInterrupted(value)
-            }
-        store.wasInterrupted = { seen.withValue { $0.insert(CacheAccountScope.current) }; return base.wasInterrupted() }
-        store.lastAutoSyncAt = { seen.withValue { $0.insert(CacheAccountScope.current) }; return base.lastAutoSyncAt() }
-        store
-            .setLastAutoSyncAt = { date in
-                seen.withValue { $0.insert(CacheAccountScope.current) }; base.setLastAutoSyncAt(date)
-            }
+        store.pinnedRoots = { mark(); return base.pinnedRoots() }
+        store.setPinnedRoots = { roots in mark(); base.setPinnedRoots(roots) }
+        store.reconcile = { paths in mark(); base.reconcile(paths) }
+        store.localURL = { item in mark(); return base.localURL(item) }
+        store.setInterrupted = { value in mark(); base.setInterrupted(value) }
+        store.wasInterrupted = { mark(); return base.wasInterrupted() }
+        store.lastAutoSyncAt = { mark(); return base.lastAutoSyncAt() }
+        store.setLastAutoSyncAt = { date in mark(); base.setLastAutoSyncAt(date) }
         return store
     }
 
@@ -68,11 +60,11 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
             scopedState(box),
             offline: recordingStore(seen: seen, base: base),
             browse: { [self] path in
-                seen.withValue { $0.insert(CacheAccountScope.current) }
+                seen.withValue { _ = $0.insert(CacheAccountScope.current) }
                 return listing([file(TestFile.aText, path: "A")], path: path)
             },
             download: { _ in
-                seen.withValue { $0.insert(CacheAccountScope.current) }
+                seen.withValue { _ = $0.insert(CacheAccountScope.current) }
                 return URL(fileURLWithPath: "/tmp/a.txt")
             },
             configure: { $0.cacheScope = CacheScopeSource(current: { box.value }) }
@@ -176,7 +168,7 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
 
     @Test
     func aSyncStartingOnceBackOnlineClearsTheWaitingNote() async {
-        var state = freshState()
+        let state = freshState()
         state.$progress.withLock { $0.phase = .waitingForNetwork }
         let store = makeStore(state, hold: BrowseHold(), browse: { [self] path in listing([], path: path) })
 

@@ -84,7 +84,7 @@ public struct DSNavigationRow: View {
             Button(role: role == .destructive ? .destructive : nil, action: action) {
                 rowLabel
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .disabled(isLoading)
         } else {
             rowLabel
@@ -133,7 +133,7 @@ public struct DSNavigationRow: View {
                 .minimumScaleFactor(Constants.detailMinScale)
                 .truncationMode(.middle)
                 .contentTransition(.numericText())
-                .animation(.snappy, value: text)
+                .animation(DSMotion.quickFade, value: text)
         case .none:
             EmptyView()
         }

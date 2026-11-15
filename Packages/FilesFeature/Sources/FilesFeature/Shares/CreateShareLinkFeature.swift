@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FolderPickerFeature
 import Foundation
@@ -209,7 +210,7 @@ public struct CreateShareLinkFeature {
                 return .run { send in
                     try await send(.createResponse(apiResult {
                         try await filesClient.createShareLink(serverURL, request)
-                    }), animation: .default)
+                    }), animation: DSMotion.listDiff)
                 }
 
             case let .createResponse(.success(created)):

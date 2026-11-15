@@ -36,7 +36,7 @@ private struct ShimmerModifier: ViewModifier {
                         .frame(width: bandWidth)
                         // Only the sweep is animated: `withAnimation` around the whole view also
                         // animated its first layout, sliding skeletons in from the top left.
-                        .animation(.linear(duration: Constants.sweepDuration).repeatForever(autoreverses: false)) {
+                        .animation(DSMotion.loop(duration: Constants.sweepDuration)) {
                             $0.offset(x: phase * (proxy.size.width + bandWidth))
                         }
                         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)

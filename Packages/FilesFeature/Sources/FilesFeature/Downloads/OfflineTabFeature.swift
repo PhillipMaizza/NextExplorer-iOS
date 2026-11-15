@@ -482,7 +482,7 @@ public struct OfflineTabFeature {
         return .run { send in
             do {
                 try localDownloadStore.delete(download.url)
-                await send(.deleteResponse(.success(download.id)))
+                await send(.deleteResponse(.success(download.id)), animation: DSMotion.listDiff)
             } catch {
                 guard !Task.isCancelled else { return }
                 await send(.deleteResponse(.failure(Self.localStoreError(error))))
@@ -544,7 +544,7 @@ public struct OfflineTabFeature {
             for download in targets where (try? localDownloadStore.delete(download.url)) != nil {
                 deletedIDs.append(download.id)
             }
-            await send(.bulkDeleteResponse(deletedIDs), animation: .default)
+            await send(.bulkDeleteResponse(deletedIDs), animation: DSMotion.listDiff)
         }
     }
 }

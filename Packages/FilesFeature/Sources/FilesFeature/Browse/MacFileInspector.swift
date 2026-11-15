@@ -10,7 +10,6 @@
     private enum Metrics {
         static let iconSize: CGFloat = .size44
         static let width: CGFloat = 300
-        static let slideDuration: Double = 0.2
         /// Matches `BrowseFeature`'s follow delay: rows skipped past with the arrow keys never
         /// load their permissions or versions.
         static let followDelay: Duration = .milliseconds(200)
@@ -315,7 +314,7 @@
                     .transition(.move(edge: .trailing))
                 }
             }
-            .animation(.easeInOut(duration: Metrics.slideDuration), value: screen.infoItem == nil)
+            .animation(DSMotion.stateFade, value: screen.infoItem == nil)
             .task(id: SharesLoad(isOpen: screen.infoItem != nil, revision: shareLinksRevision)) {
                 guard screen.infoItem != nil else { return }
                 let links = try? await filesClient.mySharedLinks(screen.serverURL)

@@ -5,7 +5,6 @@ private enum Constants {
     /// Fill switches colour as it crosses these (fraction *used*).
     static let cautionThreshold: Double = 0.7
     static let criticalThreshold: Double = 0.9
-    static let fillAnimationDuration: Double = 0.35
     static let trackOpacity: Double = 0.35
 }
 
@@ -38,11 +37,11 @@ public struct DSUsageBar: View {
                     .fill(fillColor)
                     .frame(width: max(Constants.height, proxy.size.width * displayFraction))
                     .animation(
-                        reduceMotion ? nil : .easeOut(duration: Constants.fillAnimationDuration),
+                        reduceMotion ? nil : DSMotion.appear,
                         value: displayFraction
                     )
                     .animation(
-                        reduceMotion ? nil : .easeInOut(duration: Constants.fillAnimationDuration),
+                        reduceMotion ? nil : DSMotion.appear,
                         value: fillColor
                     )
             }

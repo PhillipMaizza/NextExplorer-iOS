@@ -33,7 +33,6 @@ public struct DSCodeBoxes: View {
         static let idleBorderWidth: CGFloat = 1
         static let activeBorderWidth: CGFloat = 2
         static let idleBorderOpacity: Double = 0.35
-        static let focusAnimationDuration: Double = 0.15
     }
 
     private var activeIndex: Int {
@@ -68,8 +67,8 @@ public struct DSCodeBoxes: View {
                 .focused(isFocused)
                 .accessibilityIdentifier(accessibilityIdentifier)
         }
-        .animation(.easeInOut(duration: Constants.focusAnimationDuration), value: code)
-        .animation(.easeInOut(duration: Constants.focusAnimationDuration), value: isFocused.wrappedValue)
+        .animation(DSMotion.quickFade, value: code)
+        .animation(DSMotion.quickFade, value: isFocused.wrappedValue)
     }
 
     private func box(at index: Int) -> some View {

@@ -7,7 +7,6 @@ common.delete	삭제
 common.remove	제거
 common.clear	지우기
 common.done	완료
-common.ok	확인
 common.openSettings	설정 열기
 common.logOut	로그아웃
 common.close	닫기
@@ -23,7 +22,6 @@ common.selectedCount	%lld개 선택됨
 tab.browse	탐색
 tab.favorites	즐겨찾기
 tab.shared	공유됨
-tab.downloads	다운로드
 tab.settings	설정
 sort.sheetTitle	정렬 기준
 sort.name	이름
@@ -33,8 +31,6 @@ sort.dateModified	수정한 날짜
 sort.dateAdded	추가한 날짜
 sort.dateShared	공유한 날짜
 sort.expiration	만료
-sort.email	이메일
-sort.type	유형
 sort.ascending	오름차순
 sort.descending	내림차순
 select.selectAll	모두 선택
@@ -59,11 +55,8 @@ dateFormat.automatic	자동
 browse.navigationTitle	탐색
 browse.scopeThisFolder	이 폴더
 browse.scopeEverywhere	모든 위치
-browse.searchScopeInFolder	이 폴더
-browse.searchScopeEverywhere	모든 위치
 browse.locations	위치
 browse.open	열기
-browse.unsupportedFileType	지원되지 않는 파일 형식
 browse.actionGetInfo	정보 보기
 browse.actionPermissions	권한
 browse.actionRename	이름 변경
@@ -93,7 +86,6 @@ browse.searchEverywhere	모든 위치에서 검색
 browse.searchFailed	검색할 수 없습니다. 연결을 확인하고 다시 시도하세요.
 browse.progressExtracting	압축 푸는 중…
 browse.progressCompressing	압축하는 중…
-browse.offlineBannerTitle	오프라인
 browse.offlineBannerDetail	%@의 저장된 사본을 표시하는 중
 browse.actionCopy	복사
 browse.destinationPickerMoveTitle	이동할 위치…
@@ -105,8 +97,6 @@ browse.actionPaste	붙여넣기
 browse.actionPasteCount	항목 %lld개 붙여넣기
 browse.actionPasteHere	여기에 붙여넣기
 browse.actionClearClipboard	클립보드 비우기
-browse.clipboardMoveCount	이동할 항목 %lld개
-browse.clipboardCopyCount	복사할 항목 %lld개
 browse.clipboardCopiedOne	%@ 복사됨
 browse.clipboardCopiedMany	항목 %lld개 복사됨
 browse.progressMoving	이동하는 중…
@@ -140,8 +130,6 @@ favorites.removeMessage	즐겨찾기에서만 제거됩니다.
 favorites.removeFailedOne	해당 즐겨찾기를 제거할 수 없습니다.
 favorites.removeFailedMany	해당 즐겨찾기를 제거할 수 없습니다.
 favorites.removePartial	%2$lld개 중 %1$lld개 제거됨.
-downloads.actionOpenInFiles	파일 앱에서 열기
-downloads.emptyList	탐색에서 다운로드한 파일이 여기에 표시됩니다.
 downloads.deleteConfirmTitle	삭제할까요?
 downloads.deleteConfirmOne	“%@”을(를) 삭제할까요?
 downloads.deleteConfirmMany	파일 %lld개를 삭제할까요?
@@ -179,15 +167,12 @@ uploads.discardTitle	업로드를 취소할까요?
 uploads.discardMessage	추가한 파일은 업로드되지 않습니다.
 uploads.discardConfirm	취소
 uploads.statusWaiting	대기 중
-uploads.statusFailed	업로드 실패
 uploads.barTitleOne	%@ 업로드 중
 uploads.barTitleMany	파일 %lld개 업로드 중
 uploads.barFailedOne	업로드 1개 실패
 uploads.barFailedMany	업로드 %lld개 실패
-uploads.retryAll	모두 다시 시도
 uploads.complete	업로드 완료
 uploads.completeMany	파일 %lld개 업로드됨
-uploads.completeWithFailures	%1$lld개 업로드, %2$lld개 실패
 uploads.failedGeneric	이 파일을 업로드할 수 없습니다.
 uploads.clear	지우기
 uploads.emptyList	아직 업로드가 없습니다.
@@ -222,7 +207,6 @@ createShare.sectionLabel	레이블
 createShare.sectionAccessMode	접근 모드
 createShare.sectionWhoCanAccess	접근할 수 있는 사람
 createShare.sectionShareLink	공유 링크
-createShare.fieldPassword	비밀번호
 createShare.togglePasswordProtect	비밀번호 보호
 createShare.toggleSetExpiration	만료 날짜 설정
 createShare.fieldExpires	만료
@@ -237,7 +221,6 @@ createShare.directFolderLink	직접 폴더 ZIP 링크
 createShare.directFileLink	직접 파일 링크
 createShare.summaryAccess	접근
 createShare.summarySharedWith	공유 대상
-createShare.summaryPassword	비밀번호
 createShare.summaryPasswordProtected	보호됨
 createShare.summaryExpires	만료
 createShare.summarySpecificPeople	특정 사용자
@@ -245,7 +228,6 @@ createShare.errorPastExpiration	미래의 만료 날짜를 선택하세요.
 editShare.title	공유 링크 편집
 editShare.save	변경 사항 저장
 editShare.passwordKeepHint	현재 비밀번호를 유지하려면 비워 두세요
-editShare.savedToast	공유 링크가 업데이트됨
 thumbnailSettings.navigationTitle	썸네일
 thumbnailSettings.subtitle	서버가 모든 클라이언트를 위해 이미지 썸네일을 생성하는 방식을 제어합니다.
 thumbnailSettings.enable	썸네일 생성
@@ -328,17 +310,10 @@ serverDetails.nameErrorEmpty	서버 이름은 비워 둘 수 없습니다.
 serverDetails.urlLabel	서버 URL
 serverDetails.urlFootnote	NextExplorer 인스턴스가 설치된 주소입니다. 변경하려면 로그아웃한 후 서버를 다시 추가하세요.
 serverDetails.updateButton	서버 업데이트
-serverDetails.savedMessage	서버 정보가 업데이트되었습니다.
 serverDetails.logoErrorTooLarge	이미지가 너무 큽니다. 2MB 미만의 이미지를 선택하세요.
 serverDetails.cameraDeniedTitle	카메라 접근 꺼짐
 serverDetails.cameraDeniedMessage	사진을 촬영하려면 설정에서 카메라 접근을 켜세요.
 licenses.navigationTitle	오픈 소스 라이선스
-licenses.sectionSoftware	소프트웨어
-licenses.sectionFontSoftware	폰트 소프트웨어
-licenses.labelAuthor	작성자
-licenses.labelOriginalVersion	원본 버전
-licenses.labelModifiedVersion	수정된 버전
-licenses.labelReservedFontName	예약된 폰트 이름
 fileInfo.navigationTitleFolder	폴더
 fileInfo.rowKind	종류
 fileInfo.rowSize	크기
@@ -385,7 +360,6 @@ userManagement.createUser	사용자 만들기
 userManagement.badgeAdmin	관리자
 userManagement.emptyList	아직 사용자가 없습니다.
 userManagement.noSearchMatches	“%@”과(와) 일치하는 사용자가 없습니다.
-userManagement.loadFailed	서버에 연결할 수 없습니다.
 userManagement.sortType	유형
 userManagement.sortName	이름
 userManagement.sortEmail	이메일
@@ -397,7 +371,6 @@ userManagement.createEmailField	이메일
 userManagement.createEmailPlaceholder	name@example.com
 userManagement.createUsernameField	사용자 이름 (선택 사항)
 userManagement.createUsernamePlaceholder	이메일에서 파생됨
-userManagement.createPasswordField	비밀번호
 userManagement.createPasswordPlaceholder	최소 %lld자
 userManagement.createGrantAdminToggle	관리자 접근 권한 부여
 userManagement.createGrantAdminSubtitle	파일, 공유 및 사용자에 대한 전체 제어.
@@ -419,7 +392,6 @@ userManagement.toastVolumeRemoved	볼륨이 제거됨
 userManagement.errorEmailRequired	이메일이 필요합니다.
 userManagement.errorEmailInvalid	유효한 이메일 주소를 입력하세요.
 userManagement.errorUsernameRequired	사용자 이름이 필요합니다.
-userManagement.errorEmailInUse	이미 사용 중인 이메일입니다.
 userManagement.errorPasswordTooShort	최소 %lld자를 사용하세요.
 userDetail.fallbackName	사용자
 userDetail.sectionGeneralInfo	일반 정보
@@ -511,13 +483,10 @@ login.errorIncomplete	로그인이 완료되지 않았습니다. 다시 시도�
 login.errorUnreachable	해당 서버에 연결할 수 없습니다. 주소를 확인하고 다시 시도하세요.
 login.errorUnexpectedResponse	서버로부터 예기치 않은 응답입니다.
 login.errorKeychain	이 기기에 세션을 저장할 수 없습니다.
-login.errorDecoding	서버가 예기치 않게 응답했습니다. 주소를 확인하고 다시 시도하세요.
-login.errorNoLocalAuth	이 서버는 사용자 이름/비밀번호 로그인이 활성화되어 있지 않습니다.
 login.errorRateLimited	시도가 너무 많습니다. 몇 분 기다린 후 다시 시도하세요.
 login.errorServer	서버에 문제가 발생했습니다 (오류 %lld). 나중에 다시 시도하세요.
 browse.nameErrorReserved	해당 이름은 허용되지 않습니다.
 browse.nameErrorSeparators	이름에는 / 또는 \를 포함할 수 없습니다.
-browse.searchMatchLine	%1$lld번째 줄: %2$@
 browse.searchMatchLineLabel	%lld번째 줄
 browse.searchTooShort	하위 폴더와 파일 내용을 검색하려면 %lld자 이상 입력하세요.
 browse.searchStoppedEarly	검색이 시간 제한에 도달해 중단되었습니다. 지금까지 찾은 결과입니다.
@@ -528,8 +497,6 @@ browse.searchMatchedByName	이름
 browse.searchMatchedByContent	내용
 browse.searchMatchedByBoth	이름 및 내용
 createShare.errorPasswordRequired	비밀번호를 입력하거나 비밀번호 보호를 끄세요.
-filter.sheetTitle	유형별 필터
-filter.button	필터
 filter.all	모든 유형
 filter.folders	폴더
 filter.images	이미지
@@ -613,7 +580,6 @@ settings.sectionSupport	지원
 settings.rowRateApp	NextExplorer 평가하기
 settings.rowSupport	도움말 및 지원
 menu.refresh	새로 고침
-select.tableView	표 보기
 openWith.openIn	%@에서 열기
 openWith.openWith	다음으로 열기
 openWith.viewAsText	텍스트로 보기
@@ -629,7 +595,6 @@ menu.newWindow	새로운 윈도우
 menu.newTab	새로운 탭
 browse.actionOpenInNewWindow	새로운 윈도우에서 열기
 browse.actionOpenInNewTab	새로운 탭에서 열기
-select.viewAs	보기
 settings.rowAppearance	화면 모드
 appearance.system	시스템
 appearance.light	라이트
@@ -649,12 +614,8 @@ downloadQueue.savedMany	항목 %lld개가 다운로드에 저장됨
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	%@ 남음
 browse.sectionPersonal	개인
-browse.progressDownloading	다운로드 중…
-browse.progressDownloadingIndexed	%2$lld개 중 %1$lld개 다운로드 중…
 browse.downloadSavedTo	%@에 저장됨
-browse.downloadSavedCountTo	%2$lld개 중 %1$lld개 항목을 %3$@에 저장함
 browse.downloadSavedAllTo	%1$lld개 항목을 %2$@에 저장함
-browse.downloadBulkFailed	이 항목을 기기에 저장할 수 없습니다.
 macSettings.labelFormat	%@:
 macSettings.addAccount	계정 추가…
 macSettings.changePassword	암호 변경…
@@ -667,7 +628,6 @@ macSettings.roleAdmin	관리자
 macSettings.roleUser	사용자
 macSettings.status	상태
 macSettings.statusSignedIn	로그인됨
-macSettings.manage	관리…
 macSettings.cache	캐시
 macSettings.support	도움말 및 지원…
 macSettings.permission	권한
@@ -899,7 +859,6 @@ activityLog.anyOutcome	모든 결과
 activityLog.outcomeOk	성공
 activityLog.outcomeRefused	거부됨
 activityLog.searchPlaceholder	이름 또는 경로
-activityLog.searchButton	검색
 activityLog.refresh	새로 고침
 activityLog.clear	로그 비우기
 activityLog.clearTitle	로그를 비울까요?
@@ -1015,7 +974,6 @@ versionedFiles.newest	최신: %@
 versionedFiles.versionPinned	고정됨
 versionedFiles.versionUnavailable	사용 불가
 versionedFiles.versionBy	작성자: %@
-versionedFiles.detailFailed	이 기록을 읽지 못했습니다.
 versionedFiles.deleteSelectedNone	삭제할 버전을 선택하세요
 versionedFiles.deleteSelected	선택 항목 삭제 (%lld)
 versionedFiles.deleteAll	모든 버전 삭제

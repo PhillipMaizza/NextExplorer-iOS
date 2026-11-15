@@ -100,7 +100,7 @@ struct SharedView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
-            .animation(.easeInOut(duration: 0.2), value: store.dataSources[store.segment])
+            .animation(DSMotion.stateFade, value: store.dataSources[store.segment])
             .prefersToolbarItemsInVerticalBar()
             // The Mac table sorts from its column headers instead.
             #if os(iOS)
@@ -154,7 +154,6 @@ struct SharedView: View {
                         onDismiss: { store.send(.deleteCancelled) }
                     )
                 }
-                .hapticFeedback(.warning, trigger: store.deleteConfirmationShare != nil)
                 .dsToast($toastMessage)
                 .task { store.send(.onAppear) }
                 .task {

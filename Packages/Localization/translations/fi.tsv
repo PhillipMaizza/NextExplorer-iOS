@@ -8,7 +8,6 @@ common.delete	Poista
 common.remove	Poista
 common.clear	Tyhjennä
 common.done	Valmis
-common.ok	OK
 common.openSettings	Avaa asetukset
 common.logOut	Kirjaudu ulos
 common.close	Sulje
@@ -27,7 +26,6 @@ common.selectedCount	%lld valittu
 tab.browse	Selaa
 tab.favorites	Suosikit
 tab.shared	Jaetut
-tab.downloads	Lataukset
 tab.settings	Asetukset
 sort.sheetTitle	Lajitteluperuste
 sort.name	Nimi
@@ -37,8 +35,6 @@ sort.dateModified	Muokkauspäivä
 sort.dateAdded	Lisäyspäivä
 sort.dateShared	Jakopäivä
 sort.expiration	Vanheneminen
-sort.email	Sähköposti
-sort.type	Tyyppi
 sort.ascending	Nouseva
 sort.descending	Laskeva
 select.selectAll	Valitse kaikki
@@ -63,12 +59,9 @@ dateFormat.automatic	Automaattinen
 browse.navigationTitle	Selaa
 browse.scopeThisFolder	Tämä kansio
 browse.scopeEverywhere	Kaikkialla
-browse.searchScopeInFolder	Tämä kansio
-browse.searchScopeEverywhere	Kaikkialla
 browse.locations	Sijainnit
 browse.breadcrumbHint	Avaa tämän kansion
 browse.open	Avaa
-browse.unsupportedFileType	Tiedostotyyppiä ei tueta
 browse.actionGetInfo	Näytä tiedot
 browse.actionPermissions	Käyttöoikeudet
 browse.actionRename	Nimeä uudelleen
@@ -101,7 +94,6 @@ browse.searchEverywhere	Hae kaikkialta
 browse.searchFailed	Hakua ei voitu tehdä. Tarkista yhteytesi ja yritä uudelleen.
 browse.progressExtracting	Puretaan…
 browse.progressCompressing	Pakataan…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Näytetään tallennettu kopio ajalta %@
 browse.actionCopy	Kopioi
 browse.destinationPickerMoveTitle	Siirrä kohteeseen…
@@ -113,8 +105,6 @@ browse.actionPaste	Liitä
 browse.actionPasteCount	Liitä %lld kohdetta
 browse.actionPasteHere	Liitä tähän
 browse.actionClearClipboard	Tyhjennä leikepöytä
-browse.clipboardMoveCount	%lld siirrettävää
-browse.clipboardCopyCount	%lld kopioitavaa
 browse.clipboardCopiedOne	%@ kopioitu
 browse.clipboardCopiedMany	%lld kohdetta kopioitu
 browse.progressMoving	Siirretään…
@@ -154,8 +144,6 @@ favorites.removeMessage	Tämä poistaa ne vain suosikeista.
 favorites.removeFailedOne	Tuota suosikkia ei voitu poistaa.
 favorites.removeFailedMany	Noita suosikkeja ei voitu poistaa.
 favorites.removePartial	Poistettu %1$lld / %2$lld.
-downloads.actionOpenInFiles	Avaa Tiedostoissa
-downloads.emptyList	Selaa-näkymästä lataamasi tiedostot näkyvät täällä.
 downloads.deleteConfirmTitle	Poistetaanko?
 downloads.deleteConfirmOne	Poistetaanko “%@”?
 downloads.deleteConfirmMany	Poistetaanko %lld tiedostoa?
@@ -194,15 +182,12 @@ uploads.discardTitle	Hylätäänkö lähetys?
 uploads.discardMessage	Lisäämiäsi tiedostoja ei lähetetä.
 uploads.discardConfirm	Hylkää
 uploads.statusWaiting	Odottaa
-uploads.statusFailed	Lähetys epäonnistui
 uploads.barTitleOne	Lähetetään: %@
 uploads.barTitleMany	Lähetetään %lld tiedostoa
 uploads.barFailedOne	1 lähetys epäonnistui
 uploads.barFailedMany	%lld lähetystä epäonnistui
-uploads.retryAll	Yritä kaikkia uudelleen
 uploads.complete	Lähetys valmis
 uploads.completeMany	%lld tiedostoa lähetetty
-uploads.completeWithFailures	%1$lld lähetetty, %2$lld epäonnistui
 uploads.failedGeneric	Tätä tiedostoa ei voitu lähettää.
 uploads.clear	Tyhjennä
 uploads.emptyList	Ei vielä lähetyksiä.
@@ -236,7 +221,6 @@ createShare.sectionLabel	Nimike
 createShare.sectionAccessMode	Käyttötila
 createShare.sectionWhoCanAccess	Kenellä on pääsy
 createShare.sectionShareLink	Jakolinkki
-createShare.fieldPassword	Salasana
 createShare.togglePasswordProtect	Suojaa salasanalla
 createShare.toggleSetExpiration	Aseta vanhenemispäivä
 createShare.fieldExpires	Vanhenee
@@ -251,7 +235,6 @@ createShare.directFolderLink	Suora kansion ZIP-linkki
 createShare.directFileLink	Suora tiedostolinkki
 createShare.summaryAccess	Käyttöoikeus
 createShare.summarySharedWith	Jaettu henkilölle
-createShare.summaryPassword	Salasana
 createShare.summaryPasswordProtected	Suojattu
 createShare.summaryExpires	Vanhenee
 createShare.summarySpecificPeople	Tietyt henkilöt
@@ -259,7 +242,6 @@ createShare.errorPastExpiration	Valitse vanhenemispäivä tulevaisuudesta.
 editShare.title	Muokkaa jakolinkkiä
 editShare.save	Tallenna muutokset
 editShare.passwordKeepHint	Jätä tyhjäksi säilyttääksesi nykyisen salasanan
-editShare.savedToast	Jakolinkki päivitetty
 thumbnailSettings.navigationTitle	Pikkukuvat
 thumbnailSettings.subtitle	Määritä, miten palvelin luo kuvien pikkukuvat kaikille asiakkaille.
 thumbnailSettings.enable	Luo pikkukuvat
@@ -333,7 +315,6 @@ activityLog.anyOutcome	Mikä tahansa tulos
 activityLog.outcomeOk	Onnistui
 activityLog.outcomeRefused	Evätty
 activityLog.searchPlaceholder	Nimi tai polku
-activityLog.searchButton	Hae
 activityLog.refresh	Päivitä
 activityLog.clear	Tyhjennä loki
 activityLog.clearTitle	Tyhjennetäänkö loki?
@@ -449,7 +430,6 @@ versionedFiles.newest	Viimeisin: %@
 versionedFiles.versionPinned	Kiinnitetty
 versionedFiles.versionUnavailable	Ei saatavilla
 versionedFiles.versionBy	Tekijä: %@
-versionedFiles.detailFailed	Tätä historiaa ei voitu lukea.
 versionedFiles.deleteSelectedNone	Rastita poistettavat versiot
 versionedFiles.deleteSelected	Poista valitut (%lld)
 versionedFiles.deleteAll	Poista kaikki versiot
@@ -539,17 +519,10 @@ serverDetails.nameErrorEmpty	Palvelimen nimi ei voi olla tyhjä.
 serverDetails.urlLabel	Palvelimen URL
 serverDetails.urlFootnote	Osoite, jossa NextExplorer-instanssisi on asennettuna. Jos haluat muuttaa sitä, kirjaudu ulos ja lisää palvelin uudelleen.
 serverDetails.updateButton	Päivitä palvelin
-serverDetails.savedMessage	Palvelimen tiedot päivitetty.
 serverDetails.logoErrorTooLarge	Tuo kuva on liian suuri. Valitse alle 2 Mt:n kuva.
 serverDetails.cameraDeniedTitle	Kameran käyttö pois päältä
 serverDetails.cameraDeniedMessage	Salli kameran käyttö Asetuksissa ottaaksesi kuvan.
 licenses.navigationTitle	Avoimen lähdekoodin lisenssit
-licenses.sectionSoftware	Ohjelmisto
-licenses.sectionFontSoftware	Fonttiohjelmisto
-licenses.labelAuthor	Tekijä
-licenses.labelOriginalVersion	Alkuperäinen versio
-licenses.labelModifiedVersion	Muokattu versio
-licenses.labelReservedFontName	Varattu fontin nimi
 fileInfo.navigationTitleFolder	Kansio
 fileInfo.rowKind	Laji
 fileInfo.rowSize	Koko
@@ -599,7 +572,6 @@ userManagement.createUser	Luo käyttäjä
 userManagement.badgeAdmin	Ylläpitäjä
 userManagement.emptyList	Ei vielä käyttäjiä.
 userManagement.noSearchMatches	Mikään käyttäjä ei vastaa hakua “%@”.
-userManagement.loadFailed	Palvelimeen ei saatu yhteyttä.
 userManagement.sortType	Tyyppi
 userManagement.sortName	Nimi
 userManagement.sortEmail	Sähköposti
@@ -610,7 +582,6 @@ userManagement.createNavigationTitle	Luo käyttäjä
 userManagement.createEmailField	Sähköposti
 userManagement.createUsernameField	Käyttäjänimi (valinnainen)
 userManagement.createUsernamePlaceholder	Johdettu sähköpostista
-userManagement.createPasswordField	Salasana
 userManagement.createPasswordPlaceholder	Vähintään %lld merkkiä
 userManagement.createGrantAdminToggle	Anna ylläpitäjän käyttöoikeus
 userManagement.createGrantAdminSubtitle	Täysi hallinta tiedostoihin, jakoihin ja käyttäjiin.
@@ -632,7 +603,6 @@ userManagement.toastVolumeRemoved	Taltio poistettu
 userManagement.errorEmailRequired	Sähköposti vaaditaan.
 userManagement.errorEmailInvalid	Anna kelvollinen sähköpostiosoite.
 userManagement.errorUsernameRequired	Käyttäjänimi vaaditaan.
-userManagement.errorEmailInUse	Sähköposti on jo käytössä.
 userManagement.errorPasswordTooShort	Käytä vähintään %lld merkkiä.
 userDetail.fallbackName	Käyttäjä
 userDetail.sectionGeneralInfo	Yleistiedot
@@ -798,8 +768,6 @@ login.errorIncomplete	Sisäänkirjautuminen ei onnistunut. Yritä uudelleen.
 login.errorUnreachable	Tähän palvelimeen ei saatu yhteyttä. Tarkista osoite ja yritä uudelleen.
 login.errorUnexpectedResponse	Odottamaton vastaus palvelimelta.
 login.errorKeychain	Istuntoasi ei voitu tallentaa tälle laitteelle.
-login.errorDecoding	Palvelin vastasi odottamattomasti. Tarkista osoite ja yritä uudelleen.
-login.errorNoLocalAuth	Tällä palvelimella ei ole käyttäjänimi- ja salasanakirjautumista käytössä.
 login.errorRateLimited	Liian monta yritystä. Odota muutama minuutti ja yritä uudelleen.
 login.ssoButton	Kirjaudu sisään SSO:lla
 login.orDivider	tai
@@ -821,7 +789,6 @@ login.diagnosticsTitle	Kirjautumisloki
 login.diagnosticsIntro	Tämä loki näyttää, mitä palvelin vastasi kussakin vaiheessa, jotta voi selvittää, miksi kirjautuminen epäonnistuu. Se ei koskaan sisällä salasanaasi, kirjoittamaasi osoitetta tai käyttäjänimeäsi. Lähetä se kehittäjälle.
 browse.nameErrorReserved	Tuo nimi ei ole sallittu.
 browse.nameErrorSeparators	Nimi ei voi sisältää merkkiä / tai \.
-browse.searchMatchLine	Rivi %1$lld: %2$@
 browse.searchMatchLineLabel	Rivi %lld
 browse.searchTooShort	Kirjoita vähintään %lld merkkiä hakeaksesi alikansioista ja tiedostojen sisällöstä.
 browse.searchStoppedEarly	Haku pysähtyi aikarajaansa. Nämä ovat toistaiseksi löydetyt tulokset.
@@ -833,8 +800,6 @@ browse.searchMatchedByContent	Sisältö
 browse.searchMatchedByBoth	Nimi ja sisältö
 createShare.errorPasswordRequired	Anna salasana tai poista salasanasuojaus käytöstä.
 login.errorServer	Palvelimella oli ongelma (virhe %lld). Yritä myöhemmin uudelleen.
-filter.sheetTitle	Suodata tyypin mukaan
-filter.button	Suodata
 filter.all	Kaikki tyypit
 filter.folders	Kansiot
 filter.images	Kuvat
@@ -887,13 +852,8 @@ settings.sectionSupport	Tuki
 settings.rowRateApp	Arvioi NextExplorer
 settings.rowSupport	Ohje ja tuki
 menu.refresh	Päivitä
-select.tableView	Taulukkonäkymä
-browse.progressDownloading	Ladataan…
-browse.progressDownloadingIndexed	Ladataan %1$lld / %2$lld…
 browse.downloadSavedTo	Tallennettu kohteeseen %@
-browse.downloadSavedCountTo	Tallennettu %1$lld / %2$lld kohdetta kohteeseen %3$@
 browse.downloadSavedAllTo	Tallennettu %1$lld kohdetta kohteeseen %2$@
-browse.downloadBulkFailed	Näitä kohteita ei voitu tallentaa laitteellesi.
 openWith.openIn	Avaa sovelluksessa %@
 openWith.openWith	Avaa sovelluksella
 openWith.viewAsText	Näytä tekstinä
@@ -910,7 +870,6 @@ menu.newWindow	Uusi ikkuna
 menu.newTab	Uusi välilehti
 browse.actionOpenInNewWindow	Avaa uudessa ikkunassa
 browse.actionOpenInNewTab	Avaa uudessa välilehdessä
-select.viewAs	Näytä
 settings.rowAppearance	Ulkoasu
 appearance.system	Järjestelmä
 appearance.light	Vaalea
@@ -941,7 +900,6 @@ macSettings.roleAdmin	Ylläpitäjä
 macSettings.roleUser	Käyttäjä
 macSettings.status	Tila
 macSettings.statusSignedIn	Kirjauduttu sisään
-macSettings.manage	Hallinnoi…
 macSettings.cache	Välimuisti
 macSettings.support	Ohje ja tuki…
 macSettings.permission	Käyttöoikeus

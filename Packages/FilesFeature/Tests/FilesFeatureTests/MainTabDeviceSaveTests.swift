@@ -88,7 +88,7 @@ struct MainTabDeviceSaveTests: MainTabTestSupport {
 
     @Test
     func theOfflinePillShowsWhileARunWorksAndAfterItFailsButNotOtherwise() {
-        var state = makeState()
+        let state = makeState()
         #expect(!state.isOfflineBarVisible)
 
         for phase in [OfflineDownloadProgress.Phase.preparing, .downloading, .failed("x")] {

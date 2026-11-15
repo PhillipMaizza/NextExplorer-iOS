@@ -21,12 +21,6 @@ private enum Constants {
     static let gridSpacing: CGFloat = .space16
     /// Inset between a grid tile's content and its `backgroundSecondary` card edge.
     static let gridCellPadding: CGFloat = .space12
-    static let listDiffSpringResponse: Double = 0.35
-    static let listDiffSpringDamping: Double = 0.8
-    static let overlayCrossfadeDuration: Double = 0.2
-    /// Skeleton to loaded content crossfade: a touch longer than the overlay swap so the
-    /// placeholder visibly resolves into the real rows rather than blinking out.
-    static let contentRevealDuration: Double = 0.3
     /// Height of the invisible long-press paste target past the last row.
     static let pasteTargetMinHeight: CGFloat = 260
     /// Gap between the empty folder message and its upload call to action.
@@ -177,7 +171,6 @@ struct BrowseContentView: View {
                         infoSheetContent(for: phase)
                     }
                     #endif
-                    .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
                     // The preview stays put through downloads and renames: their result
                     // toasts surface over the cover, and "Open" on a download routes back
                     // through the reducer so the cover dismisses before the tab switches.
@@ -218,7 +211,7 @@ struct BrowseContentView: View {
             .onChange(of: store.transferErrorMessage) { _, newValue in
                 guard let newValue else { return }
                 toastMessage = .failure(newValue, actionTitle: L10n.Common.retry) {
-                    store.send(.retryTransferTapped, animation: .default)
+                    store.send(.retryTransferTapped, animation: DSMotion.listDiff)
                 }
             }
             // The share target is view-local state; clear it whenever the preview closes so a
@@ -315,7 +308,7 @@ struct BrowseContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.easeInOut(duration: Constants.contentRevealDuration), value: isInitialLoad)
+        .animation(DSMotion.contentReveal, value: isInitialLoad)
         .platformAccentTint()
         .refreshable {
             await store.send(.refreshButtonTapped).finish()
@@ -339,9 +332,9 @@ struct BrowseContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 // Scoped to the overlay so an implicit animation can't catch sibling geometry
                 // settling on first appear (same fix as `SharedView`).
-                .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
+                .animation(DSMotion.stateFade, value: overlayState)
         }
-        .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: store.dataSource)
+        .animation(DSMotion.stateFade, value: store.dataSource)
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
                 title: displayTitle,
@@ -377,7 +370,7 @@ struct BrowseContentView: View {
                 onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
                 onCancel: { store.send(.selectModeToggled) },
                 onToggleViewMode: {
-                    withAnimation {
+                    withAnimation(DSMotion.contentReveal) {
                         viewModeRaw = (viewMode == .grid ? BrowseViewMode.list : .grid).rawValue
                     }
                 },
@@ -388,14 +381,14 @@ struct BrowseContentView: View {
                             Button {
                                 store.send(
                                     .pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy),
-                                    animation: .default
+                                    animation: DSMotion.listDiff
                                 )
                             } label: {
                                 Label { Text(pasteActionTitle) } icon: { IconKit.paste }
                             }
                             .disabled(!canPasteIntoCurrentFolder)
                             Button {
-                                store.send(.clipboardCleared, animation: .default)
+                                store.send(.clipboardCleared, animation: DSMotion.listDiff)
                             } label: {
                                 Label { Text(L10n.Browse.actionClearClipboard) } icon: { IconKit.close }
                             }
@@ -459,8 +452,6 @@ struct BrowseContentView: View {
         #else
         .modifier(IOSBrowseBackgroundDragDrop(store: store))
         #endif
-        .hapticFeedback(.selection, trigger: viewModeRaw)
-        .hapticFeedback(.selection, trigger: store.isSelecting)
         .selectModeChrome(isSelecting: store.isSelecting)
         .prefersToolbarItemsInVerticalBar()
         .toolbar {
@@ -479,8 +470,8 @@ struct BrowseContentView: View {
                             onRename: { store.send(.renameTapped($0)) },
                             onShareLink: { shareTarget = $0 },
                             onShareKept: { store.send(.keptShareTapped(store.selectedItems)) },
-                            onCopy: { store.send(.bulkCopyTapped, animation: .default) },
-                            onMove: { store.send(.bulkMoveTapped, animation: .default) },
+                            onCopy: { store.send(.bulkCopyTapped, animation: DSMotion.listDiff) },
+                            onMove: { store.send(.bulkMoveTapped, animation: DSMotion.listDiff) },
                             onSave: { store.send(.bulkDownloadTapped) },
                             onOffline: { store.send(.bulkOfflineTapped) },
                             onFavorite: { store.send(.bulkFavoriteTapped) },
@@ -503,7 +494,6 @@ struct BrowseContentView: View {
                 onDismiss: { store.send(.bulkDeleteCancelled) }
             )
         }
-        .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
         .dsSheet(isPresented: $isSortSheetPresented) {
             SortSheet(
                 options: BrowseFeature.SortOption.allCases,
@@ -553,14 +543,12 @@ struct BrowseContentView: View {
         .dsAlert(isPresented: isDeletingBinding) {
             deleteConfirmationSheet(dismissingPreview: false)
         }
-        .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
         .dsAlert(isPresented: transferConflictBinding(inPreview: false)) {
             transferConflictSheet
         }
-        .hapticFeedback(.warning, trigger: store.transferConflict)
         .offlineRemovalAlert(
             store.previewItem == nil ? store.offlineRemoval : nil,
-            onConfirm: { store.send(.offlineRemovalConfirmed) },
+            onConfirm: { store.send(.offlineRemovalConfirmed, animation: DSMotion.listDiff) },
             onCancel: { store.send(.offlineRemovalCancelled) }
         )
         #if os(iOS)
@@ -775,7 +763,7 @@ struct BrowseContentView: View {
                 Section {
                     Button {
                         store.send(.tableSelectionChanged(ids))
-                        store.send(.copySelectionTapped, animation: .default)
+                        store.send(.copySelectionTapped, animation: DSMotion.listDiff)
                     } label: {
                         Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
                     }
@@ -783,7 +771,7 @@ struct BrowseContentView: View {
                     if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
                         Button {
                             store.send(.tableSelectionChanged(ids))
-                            store.send(.duplicateSelectionTapped, animation: .default)
+                            store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
                         } label: {
                             Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
                         }
@@ -792,7 +780,7 @@ struct BrowseContentView: View {
                     if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                         Button {
                             store.send(.tableSelectionChanged(ids))
-                            store.send(.cutSelectionTapped, animation: .default)
+                            store.send(.cutSelectionTapped, animation: DSMotion.listDiff)
                         } label: {
                             Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
                         }
@@ -801,7 +789,7 @@ struct BrowseContentView: View {
                     if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                         Button {
                             store.send(.tableSelectionChanged(ids))
-                            store.send(.bulkMoveTapped, animation: .default)
+                            store.send(.bulkMoveTapped, animation: DSMotion.listDiff)
                         } label: {
                             Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
                         }
@@ -876,12 +864,12 @@ struct BrowseContentView: View {
             return BrowseKeyboardActions(
                 cut: { store.send(.cutSelectionTapped) },
                 copy: { store.send(.copySelectionTapped) },
-                duplicate: { store.send(.duplicateSelectionTapped, animation: .default) },
-                undo: { store.send(.undoTapped, animation: .default) },
+                duplicate: { store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff) },
+                undo: { store.send(.undoTapped, animation: DSMotion.listDiff) },
                 canUndo: !store.undoStack.isEmpty,
                 paste: {
                     guard canPaste else { return }
-                    store.send(.pasteTapped(keepItemsAfterCopy: keepAfterCopy), animation: .default)
+                    store.send(.pasteTapped(keepItemsAfterCopy: keepAfterCopy), animation: DSMotion.listDiff)
                 },
                 delete: { store.send(.deleteSelectionTapped) },
                 rename: { store.send(.renameSelectionTapped) },
@@ -1175,7 +1163,7 @@ struct BrowseContentView: View {
 
     private var transferConflictSheet: DSAlertSheet {
         DSAlertSheet.transferConflict(store.transferConflict) { choice in
-            store.send(.transferConflictResolved(choice), animation: choice == nil ? nil : .default)
+            store.send(.transferConflictResolved(choice), animation: choice == nil ? nil : DSMotion.listDiff)
         }
     }
 
@@ -1375,14 +1363,6 @@ struct BrowseContentView: View {
             .scrollDismissesKeyboard(.immediately)
             .backgroundGradient()
             .safeAreaPadding(.bottom, bottomChromeClearance)
-            .animation(
-                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-                value: store.displayedItems
-            )
-            .animation(
-                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-                value: store.displayedSearchResults
-            )
             .scrollGalleryPageIntoView(proxy, id: galleryCurrentItemID)
         }
     }
@@ -1436,17 +1416,11 @@ struct BrowseContentView: View {
                 }
                 .padding(Constants.gridSpacing)
                 .animation(
-                    .spring(
-                        response: Constants.listDiffSpringResponse,
-                        dampingFraction: Constants.listDiffSpringDamping
-                    ),
+                    DSMotion.listDiff,
                     value: displayedItems
                 )
                 .animation(
-                    .spring(
-                        response: Constants.listDiffSpringResponse,
-                        dampingFraction: Constants.listDiffSpringDamping
-                    ),
+                    DSMotion.listDiff,
                     value: store.displayedSearchResults
                 )
                 if store.isSearching, hasSearchFooter {
@@ -1618,13 +1592,13 @@ struct BrowseContentView: View {
     private var pasteEmptySpaceMenu: some View {
         if store.clipboard != nil, !store.directoryPath.isEmpty {
             Button {
-                store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy), animation: .default)
+                store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy), animation: DSMotion.listDiff)
             } label: {
                 Label { Text(L10n.Browse.actionPasteHere) } icon: { IconKit.paste }
             }
             .disabled(!canPasteIntoCurrentFolder)
             Button {
-                store.send(.clipboardCleared, animation: .default)
+                store.send(.clipboardCleared, animation: DSMotion.listDiff)
             } label: {
                 Label { Text(L10n.Browse.actionClearClipboard) } icon: { IconKit.close }
             }
@@ -1652,9 +1626,8 @@ struct BrowseContentView: View {
                         isSelected: store.selectedItemIDs.contains(item.id)
                     )
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .dsTapFlash()
-            .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
             .contextMenu {
                 if !store.isSelecting {
                     fileActionsMenu(for: item)
@@ -1691,8 +1664,7 @@ struct BrowseContentView: View {
                         .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                     #endif
                 }
-                .buttonStyle(DSHapticButtonStyle())
-                .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
+                .buttonStyle(DSPressableButtonStyle())
                 .accessibilityAddTraits(store.isSelecting && store.selectedItemIDs
                     .contains(item.id) ? [.isSelected] : [])
                 .contextMenu {
@@ -1749,7 +1721,7 @@ struct BrowseContentView: View {
                 searchResultCell(row: result, grid: true)
                     .dsCard(padding: Constants.gridCellPadding)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .contextMenu { searchResultMenu(result) }
             .dsTapFlash()
         }
@@ -1771,7 +1743,7 @@ struct BrowseContentView: View {
                 } label: {
                     searchResultCell(row: result, grid: false)
                 }
-                .buttonStyle(DSHapticButtonStyle())
+                .buttonStyle(DSPressableButtonStyle())
                 .contextMenu { searchResultMenu(result) }
                 .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
                 .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)

@@ -300,7 +300,6 @@ struct SettingsView: View {
                     onDismiss: { store.send(.removeAllDownloadsCancelled) }
                 )
             }
-            .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
             .dsAlert(isPresented: isConfirmingClearCache) {
                 DSAlertSheet(
                     icon: IconKit.delete,
@@ -314,7 +313,6 @@ struct SettingsView: View {
                     onDismiss: { store.send(.clearCacheCancelled) }
                 )
             }
-            .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
             .modifier(TipJarPresentation(store: store))
             // Here rather than on its section: a sheet attached inside a `List` section may not present.
             .sheet(item: $store.scope(
@@ -343,7 +341,6 @@ struct SettingsView: View {
                     onDismiss: { store.send(.removeOfflineCancelled) }
                 )
             }
-            .hapticFeedback(.warning, trigger: store.removeOfflineConfirmationIsPresented)
             .task {
                 store.send(.onAppear)
             }

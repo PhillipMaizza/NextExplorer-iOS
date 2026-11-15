@@ -17,7 +17,7 @@ enum SharedLinkMetrics {
     static let headerVerticalPadding: CGFloat = .space16
     /// Plain reveal, no spring overshoot: header holds still, detail row eases in/out.
     static var expand: Animation {
-        .easeInOut(duration: 0.5)
+        DSMotion.cardExpand
     }
 
     static let actionRowSpacing: CGFloat = .space8
@@ -95,7 +95,7 @@ struct SharedLinkHeaderRow: View {
             .padding(.vertical, Metrics.headerVerticalPadding)
             .contentShape(Rectangle())
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .opacity(isDeleting ? Metrics.deletingOpacity : 1)
         .disabled(isDeleting)
     }
@@ -338,7 +338,7 @@ struct SharedLinkDetailRow: View {
             .background(RoundedRectangle(cornerRadius: .radiusControl).fill(tint.opacity(0.12)))
             .contentShape(Rectangle())
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .allowsHitTesting(isEnabled)
     }
 

@@ -37,9 +37,9 @@ struct DownloadQueueView: View {
                 },
                 emptyMessage: L10n.DownloadQueue.emptyList,
                 canClear: store.hasClearableJobs,
-                onCancel: { store.send(.cancelJobTapped(id: $0), animation: .default) },
-                onRetry: { store.send(.retryTapped(id: $0), animation: .default) },
-                onClear: { store.send(.clearFinishedTapped, animation: .default) },
+                onCancel: { store.send(.cancelJobTapped(id: $0), animation: DSMotion.listDiff) },
+                onRetry: { store.send(.retryTapped(id: $0), animation: DSMotion.listDiff) },
+                onClear: { store.send(.clearFinishedTapped, animation: DSMotion.listDiff) },
                 onClose: { store.send(.sheetPresented(false)) }
             )
         #else
@@ -60,7 +60,7 @@ struct DownloadQueueView: View {
                         .accessibilityLabel(L10n.Common.close)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(L10n.Uploads.clear) { store.send(.clearFinishedTapped, animation: .default) }
+                        Button(L10n.Uploads.clear) { store.send(.clearFinishedTapped, animation: DSMotion.listDiff) }
                             .disabled(!store.hasClearableJobs)
                     }
                 }
@@ -139,13 +139,13 @@ struct DownloadQueueView: View {
     private func control(_ job: DownloadQueueFeature.DownloadJob) -> some View {
         switch job.status {
         case .queued, .downloading:
-            Button { store.send(.cancelJobTapped(id: job.id), animation: .default) } label: {
+            Button { store.send(.cancelJobTapped(id: job.id), animation: DSMotion.listDiff) } label: {
                 IconKit.closeCircle
                     .resizable().scaledToFit()
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.controlSize, height: Constants.controlSize)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .accessibilityLabel(L10n.Common.cancel)
         case .completed:
             IconKit.checkmarkCircleFill
@@ -153,13 +153,13 @@ struct DownloadQueueView: View {
                 .foregroundStyle(Color.positive)
                 .frame(width: Constants.controlSize, height: Constants.controlSize)
         case .failed:
-            Button { store.send(.retryTapped(id: job.id), animation: .default) } label: {
+            Button { store.send(.retryTapped(id: job.id), animation: DSMotion.listDiff) } label: {
                 IconKit.retry
                     .resizable().scaledToFit()
                     .foregroundStyle(Color.accent)
                     .frame(width: Constants.controlSize, height: Constants.controlSize)
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .accessibilityLabel(L10n.Common.retry)
         }
     }

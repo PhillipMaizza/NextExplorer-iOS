@@ -85,8 +85,9 @@ struct BackgroundUploaderTests {
         let batch = try harness.makeBatch(names: [TestFile.aPhoto])
         Manifest.record(index: 0, result: .failure(.other), in: batch.directory)
 
+        let uploader = harness.uploader
         DispatchQueue.concurrentPerform(iterations: 32) { _ in
-            harness.uploader.finishBatch(id: batch.id, manifest: batch.manifest)
+            uploader.finishBatch(id: batch.id, manifest: batch.manifest)
         }
 
         #expect(harness.recorder.outcomes.count == 1)

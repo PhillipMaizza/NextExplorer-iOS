@@ -8,7 +8,6 @@ common.delete	Hapus
 common.remove	Buang
 common.clear	Bersihkan
 common.done	Selesai
-common.ok	OK
 common.openSettings	Buka Pengaturan
 common.logOut	Keluar
 common.close	Tutup
@@ -27,7 +26,6 @@ common.selectedCount	%lld Dipilih
 tab.browse	Jelajahi
 tab.favorites	Favorit
 tab.shared	Dibagikan
-tab.downloads	Unduhan
 tab.settings	Pengaturan
 sort.sheetTitle	Urutkan Menurut
 sort.name	Nama
@@ -37,8 +35,6 @@ sort.dateModified	Tanggal Diubah
 sort.dateAdded	Tanggal Ditambahkan
 sort.dateShared	Tanggal Dibagikan
 sort.expiration	Kedaluwarsa
-sort.email	Email
-sort.type	Tipe
 sort.ascending	Naik
 sort.descending	Turun
 select.selectAll	Pilih Semua
@@ -63,12 +59,9 @@ dateFormat.automatic	Otomatis
 browse.navigationTitle	Jelajahi
 browse.scopeThisFolder	Folder Ini
 browse.scopeEverywhere	Di Mana Saja
-browse.searchScopeInFolder	Folder Ini
-browse.searchScopeEverywhere	Di Mana Saja
 browse.locations	Lokasi
 browse.breadcrumbHint	Membuka folder ini
 browse.open	Buka
-browse.unsupportedFileType	Jenis file tidak didukung
 browse.actionGetInfo	Info
 browse.actionPermissions	Izin
 browse.actionRename	Ganti Nama
@@ -101,7 +94,6 @@ browse.searchEverywhere	Cari di mana saja
 browse.searchFailed	Tidak dapat mencari. Periksa koneksi Anda dan coba lagi.
 browse.progressExtracting	Mengekstrak…
 browse.progressCompressing	Mengompres…
-browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Menampilkan salinan tersimpan dari %@
 browse.actionCopy	Salin
 browse.destinationPickerMoveTitle	Pindahkan ke…
@@ -113,8 +105,6 @@ browse.actionPaste	Tempel
 browse.actionPasteCount	Tempel %lld item
 browse.actionPasteHere	Tempel di sini
 browse.actionClearClipboard	Kosongkan papan klip
-browse.clipboardMoveCount	%lld untuk dipindahkan
-browse.clipboardCopyCount	%lld untuk disalin
 browse.clipboardCopiedOne	%@ disalin
 browse.clipboardCopiedMany	%lld item disalin
 browse.progressMoving	Memindahkan…
@@ -149,8 +139,6 @@ favorites.removeMessage	Ini hanya menghapusnya dari Favorit.
 favorites.removeFailedOne	Tidak dapat menghapus favorit itu.
 favorites.removeFailedMany	Tidak dapat menghapus favorit tersebut.
 favorites.removePartial	%1$lld dari %2$lld dihapus.
-downloads.actionOpenInFiles	Buka di File
-downloads.emptyList	File yang Anda unduh dari Jelajahi muncul di sini.
 downloads.deleteConfirmTitle	Hapus?
 downloads.deleteConfirmOne	Hapus “%@”?
 downloads.deleteConfirmMany	Hapus %lld file?
@@ -188,15 +176,12 @@ uploads.discardTitle	Buang unggahan?
 uploads.discardMessage	File yang Anda tambahkan tidak akan diunggah.
 uploads.discardConfirm	Buang
 uploads.statusWaiting	Menunggu
-uploads.statusFailed	Unggahan gagal
 uploads.barTitleOne	Mengunggah %@
 uploads.barTitleMany	Mengunggah %lld file
 uploads.barFailedOne	1 unggahan gagal
 uploads.barFailedMany	%lld unggahan gagal
-uploads.retryAll	Coba lagi semua
 uploads.complete	Unggahan selesai
 uploads.completeMany	%lld file diunggah
-uploads.completeWithFailures	%1$lld diunggah, %2$lld gagal
 uploads.failedGeneric	Tidak dapat mengunggah file ini.
 uploads.clear	Bersihkan
 uploads.emptyList	Belum ada unggahan.
@@ -230,7 +215,6 @@ createShare.sectionLabel	Label
 createShare.sectionAccessMode	Mode Akses
 createShare.sectionWhoCanAccess	Siapa yang dapat mengakses
 createShare.sectionShareLink	Tautan Berbagi
-createShare.fieldPassword	Kata Sandi
 createShare.togglePasswordProtect	Lindungi dengan kata sandi
 createShare.toggleSetExpiration	Atur tanggal kedaluwarsa
 createShare.fieldExpires	Kedaluwarsa
@@ -245,7 +229,6 @@ createShare.directFolderLink	Tautan ZIP folder langsung
 createShare.directFileLink	Tautan file langsung
 createShare.summaryAccess	Akses
 createShare.summarySharedWith	Dibagikan kepada
-createShare.summaryPassword	Kata Sandi
 createShare.summaryPasswordProtected	Dilindungi
 createShare.summaryExpires	Kedaluwarsa
 createShare.summarySpecificPeople	Orang tertentu
@@ -253,7 +236,6 @@ createShare.errorPastExpiration	Pilih tanggal kedaluwarsa di masa depan.
 editShare.title	Ubah Tautan Berbagi
 editShare.save	Simpan Perubahan
 editShare.passwordKeepHint	Biarkan kosong untuk mempertahankan kata sandi saat ini
-editShare.savedToast	Tautan berbagi diperbarui
 thumbnailSettings.navigationTitle	Gambar Mini
 thumbnailSettings.subtitle	Atur cara server membuat gambar mini untuk setiap klien.
 thumbnailSettings.enable	Buat Gambar Mini
@@ -327,7 +309,6 @@ activityLog.anyOutcome	Hasil apa saja
 activityLog.outcomeOk	Berhasil
 activityLog.outcomeRefused	Ditolak
 activityLog.searchPlaceholder	Nama atau jalur
-activityLog.searchButton	Cari
 activityLog.refresh	Segarkan
 activityLog.clear	Kosongkan Log
 activityLog.clearTitle	Kosongkan log?
@@ -443,7 +424,6 @@ versionedFiles.newest	Terbaru: %@
 versionedFiles.versionPinned	Disematkan
 versionedFiles.versionUnavailable	Tidak tersedia
 versionedFiles.versionBy	Oleh %@
-versionedFiles.detailFailed	Riwayat ini tidak dapat dibaca.
 versionedFiles.deleteSelectedNone	Centang versi yang akan dihapus
 versionedFiles.deleteSelected	Hapus yang Dipilih (%lld)
 versionedFiles.deleteAll	Hapus Semua Versi
@@ -533,17 +513,10 @@ serverDetails.nameErrorEmpty	Nama server tidak boleh kosong.
 serverDetails.urlLabel	URL Server
 serverDetails.urlFootnote	Alamat tempat instans NextExplorer Anda terpasang. Untuk mengubahnya, keluar lalu tambahkan server lagi.
 serverDetails.updateButton	Perbarui Server
-serverDetails.savedMessage	Detail server diperbarui.
 serverDetails.logoErrorTooLarge	Gambar itu terlalu besar. Pilih yang kurang dari 2 MB.
 serverDetails.cameraDeniedTitle	Akses Kamera Mati
 serverDetails.cameraDeniedMessage	Aktifkan akses kamera di Pengaturan untuk mengambil foto.
 licenses.navigationTitle	Lisensi Sumber Terbuka
-licenses.sectionSoftware	Perangkat Lunak
-licenses.sectionFontSoftware	Perangkat Lunak Font
-licenses.labelAuthor	Penulis
-licenses.labelOriginalVersion	Versi Asli
-licenses.labelModifiedVersion	Versi yang Dimodifikasi
-licenses.labelReservedFontName	Nama Font yang Dicadangkan
 fileInfo.navigationTitleFolder	Folder
 fileInfo.rowKind	Jenis
 fileInfo.rowSize	Ukuran
@@ -593,7 +566,6 @@ userManagement.createUser	Buat Pengguna
 userManagement.badgeAdmin	Admin
 userManagement.emptyList	Belum ada pengguna.
 userManagement.noSearchMatches	Tidak ada pengguna yang cocok dengan “%@”.
-userManagement.loadFailed	Tidak dapat menjangkau server.
 userManagement.sortType	Tipe
 userManagement.sortName	Nama
 userManagement.sortEmail	Email
@@ -604,7 +576,6 @@ userManagement.createNavigationTitle	Buat Pengguna
 userManagement.createEmailField	Email
 userManagement.createUsernameField	Nama pengguna (opsional)
 userManagement.createUsernamePlaceholder	Diturunkan dari email
-userManagement.createPasswordField	Kata Sandi
 userManagement.createPasswordPlaceholder	Minimal %lld karakter
 userManagement.createGrantAdminToggle	Berikan Akses Admin
 userManagement.createGrantAdminSubtitle	Kendali penuh atas file, berbagi, dan pengguna.
@@ -626,7 +597,6 @@ userManagement.toastVolumeRemoved	Volume dihapus
 userManagement.errorEmailRequired	Email wajib diisi.
 userManagement.errorEmailInvalid	Masukkan alamat email yang valid.
 userManagement.errorUsernameRequired	Nama pengguna wajib diisi.
-userManagement.errorEmailInUse	Email sudah digunakan.
 userManagement.errorPasswordTooShort	Gunakan setidaknya %lld karakter.
 userDetail.fallbackName	Pengguna
 userDetail.sectionGeneralInfo	Info Umum
@@ -792,8 +762,6 @@ login.errorIncomplete	Proses masuk tidak selesai. Silakan coba lagi.
 login.errorUnreachable	Tidak dapat menjangkau server itu. Periksa alamat dan coba lagi.
 login.errorUnexpectedResponse	Respons tak terduga dari server.
 login.errorKeychain	Tidak dapat menyimpan sesi Anda di perangkat ini.
-login.errorDecoding	Server merespons secara tak terduga. Periksa alamat dan coba lagi.
-login.errorNoLocalAuth	Server ini tidak mengaktifkan masuk dengan nama pengguna/kata sandi.
 login.errorRateLimited	Terlalu banyak percobaan. Harap tunggu beberapa menit dan coba lagi.
 login.ssoButton	Masuk dengan SSO
 login.orDivider	atau
@@ -815,7 +783,6 @@ login.diagnosticsTitle	Log masuk
 login.diagnosticsIntro	Log ini menunjukkan jawaban server pada setiap langkah, untuk membantu mencari alasan masuk gagal. Log tidak pernah berisi kata sandi, alamat yang Anda ketik, atau nama pengguna Anda. Kirimkan ke pengembang.
 browse.nameErrorReserved	Nama itu tidak diizinkan.
 browse.nameErrorSeparators	Nama tidak boleh berisi / atau \.
-browse.searchMatchLine	Baris %1$lld: %2$@
 browse.searchMatchLineLabel	Baris %lld
 browse.searchTooShort	Ketik minimal %lld karakter untuk mencari di subfolder dan isi file.
 browse.searchStoppedEarly	Pencarian berhenti pada batas waktunya. Ini hasil yang ditemukan sejauh ini.
@@ -827,8 +794,6 @@ browse.searchMatchedByContent	Isi
 browse.searchMatchedByBoth	Nama dan Isi
 createShare.errorPasswordRequired	Masukkan kata sandi atau matikan perlindungan kata sandi.
 login.errorServer	Server mengalami masalah (kesalahan %lld). Silakan coba lagi nanti.
-filter.sheetTitle	Filter menurut Jenis
-filter.button	Filter
 filter.all	Semua Jenis
 filter.folders	Folder
 filter.images	Gambar
@@ -881,13 +846,8 @@ settings.sectionSupport	Dukungan
 settings.rowRateApp	Beri Peringkat NextExplorer
 settings.rowSupport	Bantuan & Dukungan
 menu.refresh	Segarkan
-select.tableView	Tampilan Tabel
-browse.progressDownloading	Mengunduh…
-browse.progressDownloadingIndexed	Mengunduh %1$lld dari %2$lld…
 browse.downloadSavedTo	Disimpan ke %@
-browse.downloadSavedCountTo	%1$lld dari %2$lld item disimpan ke %3$@
 browse.downloadSavedAllTo	%1$lld item disimpan ke %2$@
-browse.downloadBulkFailed	Tidak dapat menyimpan item ini ke perangkat Anda.
 openWith.openIn	Buka di %@
 openWith.openWith	Buka Dengan
 openWith.viewAsText	Lihat sebagai Teks
@@ -904,7 +864,6 @@ menu.newWindow	Jendela Baru
 menu.newTab	Tab Baru
 browse.actionOpenInNewWindow	Buka di Jendela Baru
 browse.actionOpenInNewTab	Buka di Tab Baru
-select.viewAs	Tampilan
 settings.rowAppearance	Tampilan
 appearance.system	Sistem
 appearance.light	Terang
@@ -935,7 +894,6 @@ macSettings.roleAdmin	Administrator
 macSettings.roleUser	Pengguna
 macSettings.status	Status
 macSettings.statusSignedIn	Sudah Masuk
-macSettings.manage	Kelola…
 macSettings.cache	Cache
 macSettings.support	Bantuan & Dukungan…
 macSettings.permission	Izin

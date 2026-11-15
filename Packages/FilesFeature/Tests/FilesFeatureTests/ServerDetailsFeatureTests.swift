@@ -15,7 +15,7 @@ struct ServerDetailsFeatureTests {
     private func makeState(
         branding: Branding = Branding(appName: "Explorer", appLogoUrl: Branding.defaultLogoPath)
     ) -> ServerDetailsFeature.State {
-        var state = ServerDetailsFeature.State(serverURL: serverURL, branding: branding)
+        let state = ServerDetailsFeature.State(serverURL: serverURL, branding: branding)
         state.$sharedBranding.withLock { $0 = Branding() }
         return state
     }

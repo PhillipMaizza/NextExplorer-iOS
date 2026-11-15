@@ -115,7 +115,7 @@ struct VolumeAssignSheet: View {
                                 .foregroundStyle(Color.accent)
                                 .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                         }
-                        .buttonStyle(DSHapticButtonStyle())
+                        .buttonStyle(DSPressableButtonStyle())
                         .accessibilityLabel(L10n.UserDetail.directoryPickerGoUp)
                     }
                 }
@@ -128,7 +128,7 @@ struct VolumeAssignSheet: View {
                         icon: IconKit.checkmark
                     )
                 }
-                .buttonStyle(DSHapticButtonStyle())
+                .buttonStyle(DSPressableButtonStyle())
 
                 ForEach(listing.directories) { directory in
                     HStack(spacing: .space8) {
@@ -137,7 +137,7 @@ struct VolumeAssignSheet: View {
                         } label: {
                             rowLabel(directory.name, isSelected: selectedPath == directory.path, icon: IconKit.folder)
                         }
-                        .buttonStyle(DSHapticButtonStyle())
+                        .buttonStyle(DSPressableButtonStyle())
                         Spacer()
                         Button {
                             browsePath = directory.path
@@ -146,7 +146,7 @@ struct VolumeAssignSheet: View {
                                 .foregroundStyle(Color.tertiaryDS)
                                 .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                         }
-                        .buttonStyle(DSHapticButtonStyle())
+                        .buttonStyle(DSPressableButtonStyle())
                         .accessibilityLabel(L10n.UserDetail.directoryPickerOpen(directory.name))
                     }
                 }

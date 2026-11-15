@@ -6,8 +6,6 @@ import SwiftUI
 
 private enum Constants {
     static let statusSpacing: CGFloat = .space16
-    /// Chrome crossfade when tapping a full-screen archive image, matching `ImageGalleryView`.
-    static let chromeFadeDuration: Double = 0.22
     /// A text/markdown entry is only ever read this far in for preview: an archive can hold a
     /// multi-gigabyte "text" file, and `String(contentsOf:)` would pull all of it into memory.
     static let maxTextPreviewBytes = 5 * 1024 * 1024
@@ -84,7 +82,7 @@ private struct ArchiveImagePreviewView: View {
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    withAnimation(.easeInOut(duration: Constants.chromeFadeDuration)) {
+                    withAnimation(DSMotion.galleryFade) {
                         areControlsHidden.toggle()
                     }
                 }

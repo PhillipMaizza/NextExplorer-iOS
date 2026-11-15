@@ -57,6 +57,7 @@ public final class AsyncGate: Sendable {
 
 /// Keeps work in flight until the task is cancelled. No timer is involved.
 public func suspendUntilCancelled() async throws {
-    for await _ in AsyncStream<Void> { _ in } {}
+    let neverFinishes = AsyncStream<Void> { _ in }
+    for await _ in neverFinishes {}
     try Task.checkCancellation()
 }

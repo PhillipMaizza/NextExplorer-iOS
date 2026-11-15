@@ -88,7 +88,7 @@ struct AuthDelegateTests {
 
     @Test("a client certificate challenge without an installed identity gets the default handling and no credential")
     func missingIdentityGetsDefaultHandling() async {
-        let (session, task) = makeSessionAndTask()
+        let (session, _) = makeSessionAndTask()
         defer { session.invalidateAndCancel() }
         let calls = LockIsolatedBox(0)
         let delegate = makeDelegate(store: ClientIdentityStore(keychain: .inMemory()), calls: calls)

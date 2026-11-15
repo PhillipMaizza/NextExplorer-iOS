@@ -8,7 +8,6 @@ common.delete	Xóa
 common.remove	Gỡ
 common.clear	Xóa sạch
 common.done	Xong
-common.ok	OK
 common.openSettings	Mở Cài đặt
 common.logOut	Đăng xuất
 common.close	Đóng
@@ -27,7 +26,6 @@ common.selectedCount	Đã chọn %lld
 tab.browse	Duyệt
 tab.favorites	Yêu thích
 tab.shared	Đã chia sẻ
-tab.downloads	Tải xuống
 tab.settings	Cài đặt
 sort.sheetTitle	Sắp xếp theo
 sort.name	Tên
@@ -37,8 +35,6 @@ sort.dateModified	Ngày sửa đổi
 sort.dateAdded	Ngày thêm
 sort.dateShared	Ngày chia sẻ
 sort.expiration	Hết hạn
-sort.email	Email
-sort.type	Loại
 sort.ascending	Tăng dần
 sort.descending	Giảm dần
 select.selectAll	Chọn tất cả
@@ -63,12 +59,9 @@ dateFormat.automatic	Tự động
 browse.navigationTitle	Duyệt
 browse.scopeThisFolder	Thư mục này
 browse.scopeEverywhere	Mọi nơi
-browse.searchScopeInFolder	Thư mục này
-browse.searchScopeEverywhere	Mọi nơi
 browse.locations	Vị trí
 browse.breadcrumbHint	Mở thư mục này
 browse.open	Mở
-browse.unsupportedFileType	Loại tệp không được hỗ trợ
 browse.actionGetInfo	Xem thông tin
 browse.actionPermissions	Quyền
 browse.actionRename	Đổi tên
@@ -101,7 +94,6 @@ browse.searchEverywhere	Tìm kiếm ở mọi nơi
 browse.searchFailed	Không thể tìm kiếm. Hãy kiểm tra kết nối và thử lại.
 browse.progressExtracting	Đang giải nén…
 browse.progressCompressing	Đang nén…
-browse.offlineBannerTitle	Ngoại tuyến
 browse.offlineBannerDetail	Đang hiển thị bản sao đã lưu từ %@
 browse.actionCopy	Sao chép
 browse.destinationPickerMoveTitle	Di chuyển đến…
@@ -113,8 +105,6 @@ browse.actionPaste	Dán
 browse.actionPasteCount	Dán %lld mục
 browse.actionPasteHere	Dán vào đây
 browse.actionClearClipboard	Xóa bộ nhớ tạm
-browse.clipboardMoveCount	%lld để di chuyển
-browse.clipboardCopyCount	%lld để sao chép
 browse.clipboardCopiedOne	Đã sao chép %@
 browse.clipboardCopiedMany	Đã sao chép %lld mục
 browse.progressMoving	Đang di chuyển…
@@ -149,8 +139,6 @@ favorites.removeMessage	Thao tác này chỉ xóa chúng khỏi Yêu thích.
 favorites.removeFailedOne	Không thể xóa mục yêu thích đó.
 favorites.removeFailedMany	Không thể xóa các mục yêu thích đó.
 favorites.removePartial	Đã xóa %1$lld trong %2$lld.
-downloads.actionOpenInFiles	Mở trong Tệp
-downloads.emptyList	Các tệp bạn tải xuống từ Duyệt sẽ hiển thị ở đây.
 downloads.deleteConfirmTitle	Xóa?
 downloads.deleteConfirmOne	Xóa “%@”?
 downloads.deleteConfirmMany	Xóa %lld tệp?
@@ -188,15 +176,12 @@ uploads.discardTitle	Hủy tải lên?
 uploads.discardMessage	Các tệp bạn đã thêm sẽ không được tải lên.
 uploads.discardConfirm	Hủy bỏ
 uploads.statusWaiting	Đang chờ
-uploads.statusFailed	Tải lên thất bại
 uploads.barTitleOne	Đang tải lên %@
 uploads.barTitleMany	Đang tải lên %lld tệp
 uploads.barFailedOne	1 lượt tải lên thất bại
 uploads.barFailedMany	%lld lượt tải lên thất bại
-uploads.retryAll	Thử lại tất cả
 uploads.complete	Tải lên hoàn tất
 uploads.completeMany	Đã tải lên %lld tệp
-uploads.completeWithFailures	Đã tải lên %1$lld, thất bại %2$lld
 uploads.failedGeneric	Không thể tải tệp này lên.
 uploads.clear	Xóa
 uploads.emptyList	Chưa có lượt tải lên nào.
@@ -230,7 +215,6 @@ createShare.sectionLabel	Nhãn
 createShare.sectionAccessMode	Chế độ truy cập
 createShare.sectionWhoCanAccess	Ai có thể truy cập
 createShare.sectionShareLink	Liên kết chia sẻ
-createShare.fieldPassword	Mật khẩu
 createShare.togglePasswordProtect	Bảo vệ bằng mật khẩu
 createShare.toggleSetExpiration	Đặt ngày hết hạn
 createShare.fieldExpires	Hết hạn
@@ -245,7 +229,6 @@ createShare.directFolderLink	Liên kết ZIP trực tiếp của thư mục
 createShare.directFileLink	Liên kết trực tiếp của tệp
 createShare.summaryAccess	Quyền truy cập
 createShare.summarySharedWith	Chia sẻ với
-createShare.summaryPassword	Mật khẩu
 createShare.summaryPasswordProtected	Được bảo vệ
 createShare.summaryExpires	Hết hạn
 createShare.summarySpecificPeople	Những người cụ thể
@@ -253,7 +236,6 @@ createShare.errorPastExpiration	Hãy chọn một ngày hết hạn trong tươn
 editShare.title	Sửa liên kết chia sẻ
 editShare.save	Lưu thay đổi
 editShare.passwordKeepHint	Để trống để giữ mật khẩu hiện tại
-editShare.savedToast	Đã cập nhật liên kết chia sẻ
 thumbnailSettings.navigationTitle	Ảnh thu nhỏ
 thumbnailSettings.subtitle	Kiểm soát cách máy chủ tạo ảnh thu nhỏ cho mọi máy khách.
 thumbnailSettings.enable	Tạo ảnh thu nhỏ
@@ -327,7 +309,6 @@ activityLog.anyOutcome	Mọi kết quả
 activityLog.outcomeOk	Thành công
 activityLog.outcomeRefused	Bị từ chối
 activityLog.searchPlaceholder	Tên hoặc đường dẫn
-activityLog.searchButton	Tìm
 activityLog.refresh	Làm mới
 activityLog.clear	Xóa sạch nhật ký
 activityLog.clearTitle	Xóa sạch nhật ký?
@@ -443,7 +424,6 @@ versionedFiles.newest	Mới nhất: %@
 versionedFiles.versionPinned	Đã ghim
 versionedFiles.versionUnavailable	Không khả dụng
 versionedFiles.versionBy	Bởi %@
-versionedFiles.detailFailed	Không thể đọc lịch sử này.
 versionedFiles.deleteSelectedNone	Đánh dấu các phiên bản cần xóa
 versionedFiles.deleteSelected	Xóa mục đã chọn (%lld)
 versionedFiles.deleteAll	Xóa tất cả phiên bản
@@ -533,17 +513,10 @@ serverDetails.nameErrorEmpty	Tên máy chủ không được để trống.
 serverDetails.urlLabel	URL máy chủ
 serverDetails.urlFootnote	Địa chỉ nơi phiên bản NextExplorer của bạn được cài đặt. Để thay đổi, hãy đăng xuất và thêm lại máy chủ.
 serverDetails.updateButton	Cập nhật máy chủ
-serverDetails.savedMessage	Đã cập nhật thông tin máy chủ.
 serverDetails.logoErrorTooLarge	Ảnh đó quá lớn. Hãy chọn ảnh dưới 2 MB.
 serverDetails.cameraDeniedTitle	Truy cập camera đang tắt
 serverDetails.cameraDeniedMessage	Bật quyền truy cập camera trong Cài đặt để chụp ảnh.
 licenses.navigationTitle	Giấy phép mã nguồn mở
-licenses.sectionSoftware	Phần mềm
-licenses.sectionFontSoftware	Phần mềm phông chữ
-licenses.labelAuthor	Tác giả
-licenses.labelOriginalVersion	Phiên bản gốc
-licenses.labelModifiedVersion	Phiên bản đã sửa đổi
-licenses.labelReservedFontName	Tên phông chữ được bảo lưu
 fileInfo.navigationTitleFolder	Thư mục
 fileInfo.rowKind	Loại
 fileInfo.rowSize	Kích thước
@@ -593,7 +566,6 @@ userManagement.createUser	Tạo người dùng
 userManagement.badgeAdmin	Quản trị viên
 userManagement.emptyList	Chưa có người dùng nào.
 userManagement.noSearchMatches	Không có người dùng nào khớp với “%@”.
-userManagement.loadFailed	Không thể kết nối đến máy chủ.
 userManagement.sortType	Loại
 userManagement.sortName	Tên
 userManagement.sortEmail	Email
@@ -604,7 +576,6 @@ userManagement.createNavigationTitle	Tạo người dùng
 userManagement.createEmailField	Email
 userManagement.createUsernameField	Tên người dùng (không bắt buộc)
 userManagement.createUsernamePlaceholder	Lấy từ email
-userManagement.createPasswordField	Mật khẩu
 userManagement.createPasswordPlaceholder	Ít nhất %lld ký tự
 userManagement.createGrantAdminToggle	Cấp quyền quản trị
 userManagement.createGrantAdminSubtitle	Toàn quyền kiểm soát tệp, chia sẻ và người dùng.
@@ -626,7 +597,6 @@ userManagement.toastVolumeRemoved	Đã xóa volume
 userManagement.errorEmailRequired	Cần có email.
 userManagement.errorEmailInvalid	Hãy nhập địa chỉ email hợp lệ.
 userManagement.errorUsernameRequired	Cần có tên người dùng.
-userManagement.errorEmailInUse	Email đã được sử dụng.
 userManagement.errorPasswordTooShort	Hãy dùng ít nhất %lld ký tự.
 userDetail.fallbackName	Người dùng
 userDetail.sectionGeneralInfo	Thông tin chung
@@ -792,8 +762,6 @@ login.errorIncomplete	Đăng nhập chưa hoàn tất. Vui lòng thử lại.
 login.errorUnreachable	Không thể kết nối đến máy chủ đó. Hãy kiểm tra địa chỉ và thử lại.
 login.errorUnexpectedResponse	Phản hồi bất ngờ từ máy chủ.
 login.errorKeychain	Không thể lưu phiên của bạn trên thiết bị này.
-login.errorDecoding	Máy chủ phản hồi bất ngờ. Hãy kiểm tra địa chỉ và thử lại.
-login.errorNoLocalAuth	Máy chủ này chưa bật đăng nhập bằng tên người dùng/mật khẩu.
 login.errorRateLimited	Quá nhiều lần thử. Vui lòng đợi vài phút rồi thử lại.
 login.ssoButton	Đăng nhập bằng SSO
 login.orDivider	hoặc
@@ -815,7 +783,6 @@ login.diagnosticsTitle	Nhật ký đăng nhập
 login.diagnosticsIntro	Nhật ký này cho thấy máy chủ đã trả lời gì ở mỗi bước, để giúp tìm lý do đăng nhập thất bại. Nó không bao giờ chứa mật khẩu, địa chỉ bạn đã nhập hay tên người dùng của bạn. Hãy gửi nó cho nhà phát triển.
 browse.nameErrorReserved	Tên đó không được phép.
 browse.nameErrorSeparators	Tên không được chứa / hoặc \.
-browse.searchMatchLine	Dòng %1$lld: %2$@
 browse.searchMatchLineLabel	Dòng %lld
 browse.searchTooShort	Nhập ít nhất %lld ký tự để tìm trong thư mục con và nội dung tệp.
 browse.searchStoppedEarly	Tìm kiếm đã dừng ở giới hạn thời gian. Đây là các kết quả tìm được cho đến nay.
@@ -827,8 +794,6 @@ browse.searchMatchedByContent	Nội dung
 browse.searchMatchedByBoth	Tên và nội dung
 createShare.errorPasswordRequired	Nhập mật khẩu hoặc tắt bảo vệ bằng mật khẩu.
 login.errorServer	Máy chủ gặp sự cố (lỗi %lld). Vui lòng thử lại sau.
-filter.sheetTitle	Lọc theo loại
-filter.button	Lọc
 filter.all	Mọi loại
 filter.folders	Thư mục
 filter.images	Hình ảnh
@@ -881,13 +846,8 @@ settings.sectionSupport	Hỗ trợ
 settings.rowRateApp	Đánh giá NextExplorer
 settings.rowSupport	Trợ giúp và hỗ trợ
 menu.refresh	Làm mới
-select.tableView	Dạng bảng
-browse.progressDownloading	Đang tải xuống…
-browse.progressDownloadingIndexed	Đang tải xuống %1$lld trong %2$lld…
 browse.downloadSavedTo	Đã lưu vào %@
-browse.downloadSavedCountTo	Đã lưu %1$lld trong %2$lld mục vào %3$@
 browse.downloadSavedAllTo	Đã lưu %1$lld mục vào %2$@
-browse.downloadBulkFailed	Không thể lưu các mục này vào thiết bị của bạn.
 openWith.openIn	Mở trong %@
 openWith.openWith	Mở bằng
 openWith.viewAsText	Xem dạng văn bản
@@ -904,7 +864,6 @@ menu.newWindow	Cửa sổ mới
 menu.newTab	Tab mới
 browse.actionOpenInNewWindow	Mở trong cửa sổ mới
 browse.actionOpenInNewTab	Mở trong tab mới
-select.viewAs	Xem
 settings.rowAppearance	Giao diện
 appearance.system	Hệ thống
 appearance.light	Sáng
@@ -935,7 +894,6 @@ macSettings.roleAdmin	Quản trị viên
 macSettings.roleUser	Người dùng
 macSettings.status	Trạng thái
 macSettings.statusSignedIn	Đã đăng nhập
-macSettings.manage	Quản lý…
 macSettings.cache	Bộ nhớ đệm
 macSettings.support	Trợ giúp và hỗ trợ…
 macSettings.permission	Quyền

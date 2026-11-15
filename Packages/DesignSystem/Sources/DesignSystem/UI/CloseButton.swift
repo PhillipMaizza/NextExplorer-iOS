@@ -85,7 +85,7 @@ public struct DSCloseButton: View {
                 .dsGlass(interactive: true, in: Circle())
                 .dsMinimumHitTarget()
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .accessibilityLabel(accessibilityLabel)
     }
 }

@@ -109,7 +109,7 @@ struct ShareUploadAccountMenu: View {
                 }
                 .dsCard()
             }
-            .buttonStyle(DSHapticButtonStyle())
+            .buttonStyle(DSPressableButtonStyle())
             .accessibilityLabel(L10n.ShareUpload.accountLabel)
             .accessibilityValue(store.accountName)
             .accessibilityHint(L10n.ShareUpload.accountHint)
@@ -144,7 +144,7 @@ struct ShareUploadFolderButton: View {
             }
             .dsCard()
         }
-        .buttonStyle(DSHapticButtonStyle())
+        .buttonStyle(DSPressableButtonStyle())
         .disabled(store.phase != .ready)
         .accessibilityLabel(L10n.ShareUpload.folderLabel)
         .accessibilityValue(store.destination.isEmpty ? L10n.ShareUpload.folderChoose : store.destination)

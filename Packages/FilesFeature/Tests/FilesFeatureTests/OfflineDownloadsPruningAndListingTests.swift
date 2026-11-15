@@ -307,7 +307,7 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
         let removals = LockIsolated(0)
         var offline = pinnedStore(["A"])
         offline.removeCurrentAccount = { removals.withValue { $0 += 1 } }
-        var state = freshState()
+        let state = freshState()
         state.$progress.withLock { $0.phase = .completed }
         let store = makeStore(
             state,

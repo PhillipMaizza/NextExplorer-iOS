@@ -149,9 +149,6 @@ struct OfflineTabView: View {
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .dismissKeyboardOnTap()
-        // Only spring row diffs once the list is the content: during the skeleton→content
-        // swap the outer `.animation(value: listPhase)` owns the crossfade alone.
-        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
     }
 
     private var gridContent: some View {
@@ -265,7 +262,7 @@ struct OfflineTabView: View {
                         },
                         onCancel: { store.send(.selectModeToggled) },
                         onToggleViewMode: {
-                            withAnimation {
+                            withAnimation(DSMotion.contentReveal) {
                                 viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
                             }
                         }
@@ -278,8 +275,6 @@ struct OfflineTabView: View {
                     }
                 }
             #endif
-                .hapticFeedback(.selection, trigger: viewModeRaw)
-                .hapticFeedback(.selection, trigger: store.isSelecting)
                 .selectModeChrome(isSelecting: store.isSelecting)
                 .prefersToolbarItemsInVerticalBar()
                 .toolbar {
@@ -313,7 +308,7 @@ struct OfflineTabView: View {
                 .offlineRemovalAlert(
                     offlineStore.removal,
                     onConfirm: {
-                        offlineStore.send(.removeConfirmed)
+                        offlineStore.send(.removeConfirmed, animation: DSMotion.listDiff)
                         if store.isSelecting {
                             store.send(.pinnedSelectionRemoved)
                         }

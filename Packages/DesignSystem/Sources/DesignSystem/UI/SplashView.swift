@@ -107,10 +107,10 @@ public struct SplashView: View {
     private func run() async {
         await pause(Constants.hold)
 
-        withAnimation(.easeInOut(duration: Constants.spinDuration)) { spin = 1 }
+        withAnimation(DSMotion.splashStep(duration: Constants.spinDuration)) { spin = 1 }
         await pause(Constants.spinDuration)
 
-        withAnimation(.easeInOut(duration: Constants.shineDuration)) { shine = 1 }
+        withAnimation(DSMotion.splashStep(duration: Constants.shineDuration)) { shine = 1 }
         await pause(Constants.shineDuration)
 
         didSettle = true
@@ -135,13 +135,13 @@ public struct SplashView: View {
         onExitStarted()
 
         Task { @MainActor in
-            withAnimation(.easeInOut(duration: Constants.flapStep)) { flap = 0.8 }
+            withAnimation(DSMotion.splashStep(duration: Constants.flapStep)) { flap = 0.8 }
             await pause(Constants.flapStep)
-            withAnimation(.easeInOut(duration: Constants.flapStep)) { flap = -0.45 }
+            withAnimation(DSMotion.splashStep(duration: Constants.flapStep)) { flap = -0.45 }
             await pause(Constants.flapStep)
-            withAnimation(.easeInOut(duration: Constants.flapStep)) { flap = 0 }
+            withAnimation(DSMotion.splashStep(duration: Constants.flapStep)) { flap = 0 }
 
-            withAnimation(.easeIn(duration: Constants.partDuration)) {
+            withAnimation(DSMotion.splashExit(duration: Constants.partDuration)) {
                 part = 1
                 fade = 0
             }

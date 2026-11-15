@@ -7,7 +7,6 @@ private enum Constants {
     static let iconSize: CGFloat = .iconSmall
     static let bottomInset: CGFloat = .space16
     static let autoDismissDelay: Duration = .seconds(4.5)
-    static let animationDuration: Double = 0.3
     /// How much of the toast's color sits over the frosted glass: enough to keep its meaning and
     /// the white text legible, little enough to let the glass through.
     static let tintOpacity: Double = 0.78
@@ -24,7 +23,7 @@ public struct DSToastMessage: Equatable, Identifiable {
     public let backgroundColor: Color
     public let isPersistent: Bool
     /// Distinguishes a success confirmation from a warning: both are brief and
-    /// auto-dismissing, but only one should play a success haptic instead of a warning one.
+    /// auto dismissing, but only one should play a success haptic instead of an error one.
     fileprivate let isSuccess: Bool
     /// An optional trailing action button (e.g. "Open"). Not part of `Equatable`: the
     /// custom `==` below only compares `id`, so a closure here doesn't need to conform.
@@ -142,7 +141,7 @@ final class DSToastPresenter {
         visibleID = nil
         guard target != nil else { return }
         swapTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(Constants.animationDuration))
+            try? await DSMotion.waitForStep(.seconds(DSMotion.toastDuration))
             guard !Task.isCancelled, let self else { return }
             visibleID = requests.last?.id
         }
@@ -186,13 +185,13 @@ private struct DSToastOverlay: View {
                 toast(message)
             }
         }
-        .animation(.spring(duration: Constants.animationDuration), value: visibleMessage)
+        .animation(DSMotion.toast, value: visibleMessage)
         .onAppear { presenter.set(message, owner: owner) }
         .onChange(of: message) { _, newValue in presenter.set(newValue, owner: owner) }
         .onDisappear { presenter.set(nil, owner: owner) }
-        // Persistent progress toasts (e.g. "Extracting\u{2026}") aren't errors: only the
-        // auto-dismissing warning/success styles should buzz, each with its own feedback kind.
-        .hapticFeedback(.warning, trigger: visibleMessage?.id) { _, newValue in
+        // Persistent progress toasts (e.g. "Extracting\u{2026}") aren't outcomes: only the
+        // auto dismissing failure and success styles buzz, each with its own notification kind.
+        .hapticFeedback(.error, trigger: visibleMessage?.id) { _, newValue in
             newValue != nil && visibleMessage?.isPersistent == false && visibleMessage?.isSuccess == false
         }
         .hapticFeedback(.success, trigger: visibleMessage?.id) { _, newValue in
@@ -214,7 +213,7 @@ private struct DSToastOverlay: View {
             Text(message.text).type(.body2(.semibold))
             if let actionTitle = message.actionTitle, let action = message.action {
                 Button(actionTitle, action: action)
-                    .buttonStyle(DSHapticButtonStyle())
+                    .buttonStyle(DSPressableButtonStyle())
                     .type(.body2(.bold))
                     .underline()
             }

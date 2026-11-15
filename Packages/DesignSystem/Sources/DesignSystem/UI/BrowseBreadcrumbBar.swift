@@ -12,7 +12,6 @@ private enum Constants {
     static let outerHorizontalMargin: CGFloat = .space16
     static let bottomMargin: CGFloat = .space8
     static let contentGap: CGFloat = .space16
-    static let levelAnimationDuration: Double = 0.25
 }
 
 /// `BrowseBreadcrumbBar`'s total rendered height (the capsule plus its bottom margin), shared with
@@ -101,7 +100,7 @@ public struct BrowseBreadcrumbBar: View {
     }
 
     private var levelAnimation: Animation? {
-        .easeInOut(duration: Constants.levelAnimationDuration)
+        DSMotion.stateFade
     }
 
     /// A fixed id for the trailing edge of the bar (rather than tagging the last real
@@ -176,11 +175,10 @@ public struct BrowseBreadcrumbBar: View {
             // segment that just changed.
             .onAppear { proxy.scrollTo(Self.trailingAnchorID, anchor: .trailing) }
             .onChange(of: directoryPath) { _, _ in
-                withAnimation {
+                withAnimation(DSMotion.stateFade) {
                     proxy.scrollTo(Self.trailingAnchorID, anchor: .trailing)
                 }
             }
-            .hapticFeedback(.selection, trigger: directoryPath)
         }
     }
 

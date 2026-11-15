@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FolderPickerFeature
 import Foundation
@@ -49,7 +50,7 @@ extension BrowseFeature {
                     originalID: originalID,
                     renamed: filesClient.renameItem(serverURL, item, trimmedName)
                 )
-            }))
+            }), animation: DSMotion.listDiff)
         }
     }
 
@@ -67,7 +68,7 @@ extension BrowseFeature {
         return .run { send in
             try await send(.newFolderResponse(apiResult {
                 try await filesClient.createFolder(serverURL, directoryPath, trimmedName)
-            }))
+            }), animation: DSMotion.listDiff)
         }
     }
 
@@ -87,7 +88,7 @@ extension BrowseFeature {
         return .run { send in
             try await send(.newFileResponse(apiResult {
                 try await filesClient.createFile(serverURL, directoryPath, trimmedName)
-            }))
+            }), animation: DSMotion.listDiff)
         }
     }
 
@@ -123,7 +124,7 @@ extension BrowseFeature {
             try await send(.deleteResponse(apiResult {
                 try await filesClient.deleteItems(serverURL, [item])
                 return DeleteResult(itemID: itemID)
-            }), animation: .default)
+            }), animation: DSMotion.listDiff)
         }
     }
 
@@ -143,7 +144,7 @@ extension BrowseFeature {
             try await send(.bulkDeleteResponse(apiResult {
                 try await filesClient.deleteItems(serverURL, itemsToDelete)
                 return BulkDeleteResult(itemIDs: itemIDs)
-            }), animation: .default)
+            }), animation: DSMotion.listDiff)
         }
     }
 

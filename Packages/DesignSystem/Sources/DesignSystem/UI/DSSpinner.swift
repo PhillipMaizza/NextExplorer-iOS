@@ -91,7 +91,7 @@ public struct DSSpinner: View {
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 // Scoped to the rotation alone: a value based animation also caught the spinner's
                 // first placement in a still sizing window, sliding it in from the top left.
-                .animation(.linear(duration: Constants.rotationDuration).repeatForever(autoreverses: false)) {
+                .animation(DSMotion.loop(duration: Constants.rotationDuration)) {
                     $0.rotationEffect(.degrees(isAnimating ? Constants.fullRotation : 0))
                 }
         }

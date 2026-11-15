@@ -15,7 +15,6 @@ struct BrowseOfflineToggleTests: OfflineDownloadsTestSupport {
         static let tripsPath = "Docs/Trips"
         static let other = "Other"
         static let nested = "Nested"
-        static let nestedPath = "Docs/Trips/Nested"
     }
 
     private let photo = BrowseFixtures.file(TestFile.vacationPhoto, in: TestFolder.docs)

@@ -70,7 +70,6 @@ struct SharedSegmentList: View {
         .syncRefreshFeedback(errorMessage: errorMessage, signalsErrorHaptic: false) {
             await store.send(.refreshRequested).finish()
         }
-        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: partition.all)
         .overlay {
             ListStateOverlay(
                 phase: listPhase,

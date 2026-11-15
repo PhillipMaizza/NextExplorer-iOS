@@ -395,7 +395,7 @@ public struct SharedFeature {
                     try await send(.deleteResponse(share.id, apiResult {
                         try await filesClient.deleteShareLink(serverURL, share.id)
                         return true
-                    }), animation: .default)
+                    }), animation: DSMotion.listDiff)
                 }
 
             case let .deleteResponse(id, .success):

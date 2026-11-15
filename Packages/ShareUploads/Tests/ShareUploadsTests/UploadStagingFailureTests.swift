@@ -11,6 +11,7 @@ struct UploadStagingFailureTests {
         static let aBinary = "a.bin"
         static let firstBinary = "first.bin"
         static let secondBinary = "second.bin"
+        static let sourceBinary = "source.bin"
         static let sourceBytes = 100
         static let spareBytes: Int64 = 150
         static let concurrentReservations = 64
@@ -33,7 +34,11 @@ struct UploadStagingFailureTests {
         return try uploader.makeBatch(credentials: Harness.credentials, destination: TestFolder.photos)
     }
 
-    private func source(in root: URL, name: String = "source.bin", bytes: Int = Constants.sourceBytes) throws -> URL {
+    private func source(
+        in root: URL,
+        name: String = Constants.sourceBinary,
+        bytes: Int = Constants.sourceBytes
+    ) throws -> URL {
         let url = root.appendingPathComponent(name)
         try Data(count: bytes).write(to: url)
         return url
@@ -314,7 +319,7 @@ struct UploadStagingFailureTests {
             at: file, in: batch, access: FileAccess(ubiquityStatus: { _ in nil }, startDownload: { _ in })
         )
 
-        #expect(staged != nil)
+        #expect(staged.fileName == "source.bin")
         #expect(envelopes(of: batch).count == 1)
     }
 }
