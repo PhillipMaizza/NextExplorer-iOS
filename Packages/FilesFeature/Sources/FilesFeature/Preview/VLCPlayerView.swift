@@ -20,8 +20,6 @@ import VLCKitSPM
 /// is passed explicitly as an `:http-cookie` option or the stream 401s. Archive entries pass a
 /// local file URL, which needs no cookie.
 private enum VLCPlaybackConstants {
-    /// Idle time before the controls fade while playing, like AVPlayer's chrome.
-    static let controlsAutoHideDelay: Duration = .seconds(3)
     static let playButtonShadowRadius: CGFloat = 8
     static let trackOpacity: Double = 0.3
     /// One VoiceOver swipe on the scrubber moves playback this far.
@@ -48,7 +46,6 @@ struct VLCPlayerView: View {
         @FocusState private var isKeyboardFocused: Bool
     #endif
     @State private var controlsVisible = true
-    @State private var autoHideTask: Task<Void, Never>?
     /// libvlc runs its own HTTP stack, which can't present a TLS client certificate, so a server
     /// behind mTLS would just drop the stream. Say so up front instead of a generic failure.
     @State private var isBlockedByClientCertificate = false
@@ -142,12 +139,9 @@ struct VLCPlayerView: View {
 
     var body: some View {
         chrome
-            .onChange(of: controller.isPlaying) { _, playing in
-                if playing {
-                    scheduleAutoHide()
-                } else {
-                    controlsVisible = true; autoHideTask?.cancel()
-                }
+            // Every play start shows the controls, and they stay until a tap hides them.
+            .onChange(of: controller.isPlaying) { _, _ in
+                controlsVisible = true
             }
         #if os(macOS)
             // Space plays and pauses, as a Mac player does; the arrows keep stepping through the folder.
@@ -168,35 +162,17 @@ struct VLCPlayerView: View {
                 isBlockedByClientCertificate = !url.isFileURL && ClientIdentityStore.shared.hasCertificate(for: url)
                 guard !isBlockedByClientCertificate else { return }
                 controller.start(url: url)
-                scheduleAutoHide()
             }
             .onDisappear {
                 if item.isVideo, !isEmbedded {
                     OrientationLock.shared.lock()
                 }
-                autoHideTask?.cancel()
                 controller.stop()
             }
     }
 
     private func toggleControls() {
         controlsVisible.toggle()
-        if controlsVisible {
-            scheduleAutoHide()
-        } else {
-            autoHideTask?.cancel()
-        }
-    }
-
-    /// Fade the controls out after a few idle seconds, matching AVPlayer's chrome. Only while
-    /// playing: a paused player keeps its controls up so the scrubber stays reachable.
-    private func scheduleAutoHide() {
-        autoHideTask?.cancel()
-        autoHideTask = Task { @MainActor in
-            try? await Task.sleep(for: VLCPlaybackConstants.controlsAutoHideDelay)
-            guard !Task.isCancelled, controller.isPlaying else { return }
-            controlsVisible = false
-        }
     }
 }
 

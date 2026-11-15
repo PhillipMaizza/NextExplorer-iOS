@@ -218,6 +218,13 @@ struct FileGalleryView: View {
                     playingItemID = nil
                     currentItem.map(onCurrentItemChange)
                 }
+                // Starting a video or song brings the bars back, so its controls are never hidden.
+                .onChange(of: playingItemID) { _, playing in
+                    guard playing != nil, areControlsHidden else { return }
+                    withAnimation(DSMotion.galleryFade) {
+                        areControlsHidden = false
+                    }
+                }
                 .contentShape(Rectangle())
                 // A short fade, nothing more: the page is full bleed and never moves, so only the
                 // chrome itself crossfades.
