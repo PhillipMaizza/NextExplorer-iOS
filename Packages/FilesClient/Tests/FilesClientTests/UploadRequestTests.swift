@@ -130,10 +130,33 @@ struct UploadRequestTests {
         #expect(data.range(of: bytes) != nil)
         #expect(data.suffix("\r\n--\(boundary)--\r\n".utf8.count) == Data("\r\n--\(boundary)--\r\n".utf8))
     }
+
+    @Test("A file of several chunks is copied whole, every byte once and in order")
+    func multiChunkFileIsCopiedWhole() throws {
+        // A run of distinct bytes that does not divide the chunk size, so a chunk written twice,
+        // dropped or out of order shifts what follows.
+        let run = Data((0 ... UInt8.max).map(\.self).dropLast(Constants.runShortfall))
+        var bytes = Data(capacity: Constants.multiChunkBytes)
+        while bytes.count < Constants.multiChunkBytes {
+            bytes.append(run.prefix(Constants.multiChunkBytes - bytes.count))
+        }
+        let closing = Data("\r\n--\(boundary)--\r\n".utf8)
+
+        let data = try envelope(fileName: Constants.largeName, destination: TestFolder.docs, bytes: bytes)
+        let framing = try envelope(fileName: Constants.largeName, destination: TestFolder.docs, bytes: Data())
+
+        #expect(data.count == framing.count + bytes.count)
+        #expect(data.dropLast(closing.count).suffix(bytes.count) == bytes)
+    }
 }
 
 private enum Constants {
     static let envelopeName = "envelope.multipart"
     static let sourceName = "source.bin"
     static let numberedPhoto = "IMG_1.jpg"
+    /// One and a half of the envelope's 1 MiB chunks: a full chunk, a partial one, then the end.
+    static let multiChunkBytes = 1_572_864
+    /// Bytes left off the end of the 256 byte run, so the run never lines up with a chunk.
+    static let runShortfall = 3
+    static let largeName = "large.bin"
 }
