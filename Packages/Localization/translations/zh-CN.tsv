@@ -1109,3 +1109,4 @@ offline.removeEmptiesFolderMessage	“%@”中不会再有其他内容留在此�
 shareUpload.nameLabel	文件名
 shareUpload.namesLabel	文件名
 shareUpload.nameHint	上传时使用的文件名。扩展名保持不变。
+spotlight.placeholder	搜索文件和文件夹

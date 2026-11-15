@@ -1217,3 +1217,4 @@ offline.removeEmptiesFolderMessage	Nothing else in “%@” stays on this device
 shareUpload.nameLabel	File Name
 shareUpload.namesLabel	File Names
 shareUpload.nameHint	The name the file uploads under. Its extension stays the same.
+spotlight.placeholder	Search files and folders

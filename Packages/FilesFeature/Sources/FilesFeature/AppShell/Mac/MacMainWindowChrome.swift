@@ -8,6 +8,10 @@
     /// Everything the main Mac window adds around the app shell: its title, the Dock upload
     /// status, the account and tip jar prompts it shares with the Settings window, Go to
     /// Folder, and the transfer notifications.
+    private enum Constants {
+        static let spotlightAnimationDuration: Double = 0.2
+    }
+
     struct MacMainWindowChrome: ViewModifier {
         let store: StoreOf<MainTabFeature>
 
@@ -33,6 +37,12 @@
 
         func body(content: Content) -> some View {
             content
+                .overlay {
+                    if let spotlightStore = store.scope(state: \.spotlight, action: \.spotlight.presented) {
+                        SpotlightView(store: spotlightStore)
+                    }
+                }
+                .animation(.easeOut(duration: Constants.spotlightAnimationDuration), value: store.spotlight != nil)
                 .modifier(MacOfflineStatusBar(store: store))
                 .modifier(MacDockUploadStatus(
                     remaining: store.uploads.remainingCount,

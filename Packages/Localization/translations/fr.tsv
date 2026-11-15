@@ -1122,3 +1122,4 @@ offline.removeEmptiesFolderMessage	Plus rien de « %@ » ne reste sur cet appare
 shareUpload.nameLabel	Nom du fichier
 shareUpload.namesLabel	Noms des fichiers
 shareUpload.nameHint	Le nom sous lequel le fichier est envoyé. L’extension reste la même.
+spotlight.placeholder	Rechercher des fichiers et des dossiers

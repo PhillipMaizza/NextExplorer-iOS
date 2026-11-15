@@ -113,6 +113,8 @@
                 Button(L10n.Common.search) { focusSearchField?() }
                     .keyboardShortcut("f")
                     .disabled(focusSearchField == nil)
+                Button(L10n.Spotlight.placeholder) { send(.spotlightToggled) }
+                    .keyboardShortcut("k")
             }
             CommandGroup(before: .sidebar) {
                 sortMenu

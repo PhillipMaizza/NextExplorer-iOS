@@ -1109,3 +1109,4 @@ offline.removeEmptiesFolderMessage	“%@”에서 이 기기에 남는 항목이
 shareUpload.nameLabel	파일 이름
 shareUpload.namesLabel	파일 이름
 shareUpload.nameHint	파일이 업로드될 때 사용할 이름입니다. 확장자는 그대로 유지됩니다.
+spotlight.placeholder	파일 및 폴더 검색
