@@ -31,7 +31,7 @@
             focusWindow(app)
 
             app.typeKey(Constants.findKey, modifierFlags: .command)
-            let field = app.searchFields.firstMatch
+            let field = app.textFields[AccessibilityIdentifiers.Search.field]
             XCTAssertTrue(field.isFocused(within: UITestTimeout.standard), "⌘F should focus the toolbar search")
             app.typeText(Fixture.searchQuery)
             XCTAssertTrue(searchHit(in: app).waitToAppear(), "⌘F then typing should show the search results")
@@ -44,7 +44,7 @@
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             focusWindow(app)
             app.typeKey(Constants.findKey, modifierFlags: .command)
-            let field = app.searchFields.firstMatch
+            let field = app.textFields[AccessibilityIdentifiers.Search.field]
             XCTAssertTrue(field.waitToAppear())
 
             for (typed, character) in Fixture.folderAlt.enumerated() {

@@ -5,6 +5,11 @@ import Localization
 import SwiftUI
 
 private enum Constants {
+    /// The shortcut that opens the search panel, hinted in the Mac field's prompt.
+    static let macSearchShortcutHint = "\u{2318} K"
+    static let macSearchWidth: CGFloat = 260
+    static let macSearchHeight: CGFloat = 32
+
     /// Height of the fade tail under the header.
     static let fadeHeight: CGFloat = .space8
 }
@@ -226,23 +231,60 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
             if !isEnabled {
                 content
             } else {
-                // A plain field: tokens and search scopes attached here rebuilt or covered it on
-                // the first keystroke and took its focus. Browse puts its scope and kind filter in
-                // a bar above the results instead, as Finder does.
-                pinned(content.searchable(text: $text, placement: .toolbar, prompt: Text(prompt)))
+                // A plain field of its own, with the ⌘K tag the system field cannot hold. Browse puts its
+                // scope and kind filter in a bar above the results instead, as Finder does.
+                content
+                    .toolbar {
+                        // Pins the field to the trailing edge whatever else the screen puts in the
+                        // toolbar; without it a screen with only leading items packs it beside them.
+                        if #available(macOS 26.0, *) {
+                            ToolbarSpacer(.flexible)
+                            ToolbarItem(placement: .primaryAction) {
+                                MacSearchField(text: $text, prompt: prompt, isFocused: isFocused)
+                            }
+                            .sharedBackgroundVisibility(.hidden)
+                        } else {
+                            ToolbarItem(placement: .primaryAction) {
+                                MacSearchField(text: $text, prompt: prompt, isFocused: isFocused)
+                            }
+                        }
+                    }
             }
         }
+    }
 
-        private func pinned(_ searchable: some View) -> some View {
-            searchable
-                .searchFocused(isFocused)
-                // Pins the field to the trailing edge whatever else the screen puts in the
-                // toolbar; without it a screen with only leading items packs it beside them.
-                .toolbar {
-                    if #available(macOS 26.0, *) {
-                        ToolbarSpacer(.flexible)
+    /// The Mac toolbar's search field: a glass capsule with the magnifier, the text, and either a clear
+    /// button or the ⌘K tag that opens the search panel.
+    private struct MacSearchField: View {
+        @Binding var text: String
+        let prompt: String
+        var isFocused: FocusState<Bool>.Binding
+
+        var body: some View {
+            HStack(spacing: .space8) {
+                IconKit.search
+                    .foregroundStyle(Color.accent)
+                    .accessibilityHidden(true)
+                TextField(prompt, text: $text)
+                    .textFieldStyle(.plain)
+                    .tint(Color.accent)
+                    .focused(isFocused)
+                    .onExitCommand { text = "" }
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Search.field)
+                if text.isEmpty {
+                    MacTag(text: Constants.macSearchShortcutHint)
+                } else {
+                    Button { text = "" } label: {
+                        IconKit.closeCircle
+                            .foregroundStyle(Color.secondaryDS)
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(L10n.Common.cancel)
                 }
+            }
+            .padding(.horizontal, .space12)
+            .frame(width: Constants.macSearchWidth, height: Constants.macSearchHeight)
+            .dsGlass()
         }
     }
 

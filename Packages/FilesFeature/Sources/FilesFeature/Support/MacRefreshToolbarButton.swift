@@ -26,8 +26,16 @@
                 .toolbar {
                     // Back stays leading as the navigation control; the refresh sits with the actions
                     // at the trailing edge, as Safari's reload does.
-                    ToolbarItem(placement: .primaryAction) {
-                        MacRefreshToolbarButton(isRefreshing: isRefreshing, action: refresh)
+                    if #available(macOS 26.0, *) {
+                        // Only the arrow, without the glass capsule the toolbar draws around an item.
+                        ToolbarItem(placement: .primaryAction) {
+                            MacRefreshToolbarButton(isRefreshing: isRefreshing, action: refresh)
+                        }
+                        .sharedBackgroundVisibility(.hidden)
+                    } else {
+                        ToolbarItem(placement: .primaryAction) {
+                            MacRefreshToolbarButton(isRefreshing: isRefreshing, action: refresh)
+                        }
                     }
                 }
                 // Published from the screen rather than the button: a toolbar item is hosted
