@@ -607,6 +607,8 @@ menu.newWindow	Fereastră nouă
 menu.newTab	Filă nouă
 browse.actionOpenInNewWindow	Deschide în fereastră nouă
 browse.actionOpenInNewTab	Deschide în filă nouă
+select.slideTipTitle	Glisează pentru a selecta
+select.slideTipMessage	Glisează un deget lateral peste elemente pentru a selecta mai multe deodată.
 settings.rowAppearance	Aspect
 appearance.system	Sistem
 appearance.light	Luminos

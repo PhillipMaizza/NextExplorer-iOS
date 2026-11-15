@@ -613,6 +613,8 @@ menu.newWindow	Новое окно
 menu.newTab	Новая вкладка
 browse.actionOpenInNewWindow	Открыть в новом окне
 browse.actionOpenInNewTab	Открыть в новой вкладке
+select.slideTipTitle	Выбор смахиванием
+select.slideTipMessage	Проведите пальцем в сторону по объектам, чтобы выбрать сразу несколько.
 settings.rowAppearance	Оформление
 appearance.system	Системное
 appearance.light	Светлое

@@ -864,6 +864,8 @@ menu.newWindow	หน้าต่างใหม่
 menu.newTab	แท็บใหม่
 browse.actionOpenInNewWindow	เปิดในหน้าต่างใหม่
 browse.actionOpenInNewTab	เปิดในแท็บใหม่
+select.slideTipTitle	เลื่อนเพื่อเลือก
+select.slideTipMessage	เลื่อนนิ้วไปด้านข้างผ่านรายการเพื่อเลือกหลายรายการพร้อมกัน
 settings.rowAppearance	รูปลักษณ์
 appearance.system	ระบบ
 appearance.light	สว่าง

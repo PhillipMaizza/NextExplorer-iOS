@@ -870,6 +870,8 @@ menu.newWindow	Uusi ikkuna
 menu.newTab	Uusi välilehti
 browse.actionOpenInNewWindow	Avaa uudessa ikkunassa
 browse.actionOpenInNewTab	Avaa uudessa välilehdessä
+select.slideTipTitle	Valitse pyyhkäisemällä
+select.slideTipMessage	Pyyhkäise sormella sivuttain kohteiden yli valitaksesi useita kerralla.
 settings.rowAppearance	Ulkoasu
 appearance.system	Järjestelmä
 appearance.light	Vaalea

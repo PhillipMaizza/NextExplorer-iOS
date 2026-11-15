@@ -273,6 +273,7 @@ struct FavoritesView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+        .modifier(FavoritesDragToSelect(store: store))
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
@@ -280,7 +281,7 @@ struct FavoritesView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: FileGridMetrics.columns(for: thumbnailSize), spacing: FileGridMetrics.spacing) {
+            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
                 if listPhase == .loading {
                     SkeletonGridCells(entries: FavoritesSkeleton.entries)
                 } else {
@@ -290,6 +291,7 @@ struct FavoritesView: View {
             .padding(FileGridMetrics.spacing)
             .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
         }
+        .modifier(FavoritesDragToSelect(store: store))
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()

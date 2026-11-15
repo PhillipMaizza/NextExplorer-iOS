@@ -595,6 +595,8 @@ menu.newWindow	新規ウインドウ
 menu.newTab	新規タブ
 browse.actionOpenInNewWindow	新規ウインドウで開く
 browse.actionOpenInNewTab	新規タブで開く
+select.slideTipTitle	スライドして選択
+select.slideTipMessage	項目の上で指を横にスライドすると、まとめて選択できます。
 settings.rowAppearance	外観
 appearance.system	システム
 appearance.light	ライト

@@ -613,6 +613,8 @@ menu.newWindow	Nowe okno
 menu.newTab	Nowa karta
 browse.actionOpenInNewWindow	Otwórz w nowym oknie
 browse.actionOpenInNewTab	Otwórz w nowej karcie
+select.slideTipTitle	Przesuń, aby zaznaczyć
+select.slideTipMessage	Przesuń palcem w bok po elementach, aby zaznaczyć kilka naraz.
 settings.rowAppearance	Wygląd
 appearance.system	Systemowy
 appearance.light	Jasny

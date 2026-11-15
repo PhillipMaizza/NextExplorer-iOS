@@ -882,6 +882,8 @@ menu.newWindow	Нове вікно
 menu.newTab	Нова вкладка
 browse.actionOpenInNewWindow	Відкрити в новому вікні
 browse.actionOpenInNewTab	Відкрити в новій вкладці
+select.slideTipTitle	Вибір проведенням
+select.slideTipMessage	Проведіть пальцем убік по об’єктах, щоб вибрати кілька одразу.
 settings.rowAppearance	Вигляд
 appearance.system	Системний
 appearance.light	Світлий

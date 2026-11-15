@@ -882,6 +882,8 @@ menu.newWindow	Nové okno
 menu.newTab	Nová karta
 browse.actionOpenInNewWindow	Otevřít v novém okně
 browse.actionOpenInNewTab	Otevřít v nové kartě
+select.slideTipTitle	Výběr tažením
+select.slideTipMessage	Přejeďte prstem do strany přes položky a vyberete jich několik najednou.
 settings.rowAppearance	Vzhled
 appearance.system	Systém
 appearance.light	Světlý

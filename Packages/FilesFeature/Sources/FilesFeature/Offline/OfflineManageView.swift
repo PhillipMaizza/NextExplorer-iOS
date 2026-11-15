@@ -82,6 +82,7 @@ struct OfflineManageRow: View {
     /// a pinned favorite folder keeps the icon and color of its favorite and every other row reads alike.
     var body: some View {
         SelectableListRow(
+            selectionID: OfflineTabSweepID.pinned(usage.root.path),
             isSelecting: isSelecting,
             isSelected: isSelected,
             isFirst: isFirst,

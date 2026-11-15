@@ -864,6 +864,8 @@ menu.newWindow	Cửa sổ mới
 menu.newTab	Tab mới
 browse.actionOpenInNewWindow	Mở trong cửa sổ mới
 browse.actionOpenInNewTab	Mở trong tab mới
+select.slideTipTitle	Trượt để chọn
+select.slideTipMessage	Trượt ngón tay ngang qua các mục để chọn nhiều mục cùng lúc.
 settings.rowAppearance	Giao diện
 appearance.system	Hệ thống
 appearance.light	Sáng

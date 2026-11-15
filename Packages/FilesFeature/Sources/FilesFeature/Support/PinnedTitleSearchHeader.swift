@@ -43,7 +43,17 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     @ViewBuilder var accessory: () -> Accessory
 
     @FocusState private var isFocused: Bool
+    #if os(iOS)
+        @State private var isOnScreen = false
+    #endif
     @Environment(\.selectionIndicatorsShown) private var selectionIndicatorsShown
+
+    #if os(iOS)
+        /// The selection count is up on the screen on show: the moment slide to select can be tried.
+        private var showsSlideTip: Bool {
+            isOnScreen && selectionTitle != nil && (selectionIndicatorsShown ?? true)
+        }
+    #endif
 
     private var shownTitle: String {
         guard let selectionTitle, selectionIndicatorsShown ?? true else { return title }
@@ -78,6 +88,8 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
         #else
             header
+                .onAppear { isOnScreen = true }
+                .onDisappear { isOnScreen = false }
         #endif
     }
 
@@ -88,6 +100,10 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .contentTransition(.interpolate)
                 .animation(DSMotion.selectModeStep, value: shownTitle)
                 .lineLimit(1)
+            #if os(iOS)
+                .popoverTip(showsSlideTip ? SlideToSelectTip() : nil, arrowEdge: .top)
+                .tipImageStyle(Color.accent)
+            #endif
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)

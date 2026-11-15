@@ -22,16 +22,8 @@ public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Minimum width of a grid column: drives how many tiles fit per row.
-    public var gridItemMinWidth: CGFloat {
-        switch self {
-        case .small: 76
-        case .medium: 100
-        case .large: 140
-        }
-    }
-
-    /// Size of the icon/thumbnail image within a grid tile.
+    /// Size of the icon or thumbnail within a grid tile. The tile itself keeps one size, so the
+    /// setting grows the picture, not the grid.
     public var iconSize: CGFloat {
         switch self {
         case .small: .iconLarge

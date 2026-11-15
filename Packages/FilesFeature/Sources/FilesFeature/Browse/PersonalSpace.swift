@@ -48,7 +48,7 @@ struct PersonalSpaceGridCell: View {
                 customIcon: IconKit.person,
                 customIconTint: .accent
             )
-            .dsCard(padding: cellPadding)
+            .dsGridTile(padding: cellPadding)
         }
         .buttonStyle(DSPressableButtonStyle())
         .accessibilityHint(L10n.Browse.myFilesSubtitle)

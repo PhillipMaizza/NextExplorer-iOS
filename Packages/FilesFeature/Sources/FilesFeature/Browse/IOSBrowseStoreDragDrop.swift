@@ -16,7 +16,8 @@
                 item: item,
                 serverURL: store.serverURL,
                 scope: store.cacheScope,
-                canDropHere: !store.isSelecting,
+                // Select mode too: the lifted selection dropped on a folder moves into it, as in Files.
+                canDropHere: true,
                 canMove: store.canMoveHere,
                 canUpload: store.canUploadHere,
                 selection: { store.isSelecting ? store.selectedItems : [] },

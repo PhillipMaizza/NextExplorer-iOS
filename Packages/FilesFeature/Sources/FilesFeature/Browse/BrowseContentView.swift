@@ -18,9 +18,6 @@ private enum Constants {
     static let previewToolbarToastInset: CGFloat = .size56
     static let emptyStateSpacing: CGFloat = .space8
     static let emptyStateIconSize: CGFloat = .superIcon
-    static let gridSpacing: CGFloat = .space16
-    /// Inset between a grid tile's content and its `backgroundSecondary` card edge.
-    static let gridCellPadding: CGFloat = .space12
     /// Height of the invisible long-press paste target past the last row.
     static let pasteTargetMinHeight: CGFloat = 260
     /// Gap between the empty folder message and its upload call to action.
@@ -103,10 +100,6 @@ struct BrowseContentView: View {
     /// subfolders show their real folder name from `store.title`.
     private var displayTitle: String {
         store.directoryPath.isEmpty ? L10n.Browse.navigationTitle : store.title
-    }
-
-    private var gridColumns: [GridItem] {
-        [GridItem(.adaptive(minimum: thumbnailSize.gridItemMinWidth), spacing: Constants.gridSpacing)]
     }
 
     private func handleTap(_ item: FileItem) {
@@ -278,7 +271,7 @@ struct BrowseContentView: View {
         } else {
             BrowseSkeletonView(
                 isGridView: viewMode == .grid,
-                gridColumns: gridColumns,
+                gridColumns: FileGridMetrics.columns,
                 iconSize: thumbnailSize.iconSize
             )
         }
@@ -1361,6 +1354,7 @@ struct BrowseContentView: View {
             // Scrolling the results dismisses the search keyboard, the expected gesture when the
             // results fill the screen and tapping a row would navigate rather than just defocus.
             .scrollDismissesKeyboard(.immediately)
+            .modifier(BrowseDragToSelect(store: store))
             .backgroundGradient()
             .safeAreaPadding(.bottom, bottomChromeClearance)
             .scrollGalleryPageIntoView(proxy, id: galleryCurrentItemID)
@@ -1373,7 +1367,7 @@ struct BrowseContentView: View {
         let displayedItems = store.displayedItems
         return ScrollViewReader { proxy in
             ScrollView {
-                LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
+                LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
                     if store.isSearching {
                         let sections = store.searchResultSections
                         if sections.isSplit {
@@ -1397,7 +1391,7 @@ struct BrowseContentView: View {
                             Section {
                                 PersonalSpaceGridCell(
                                     iconSize: thumbnailSize.iconSize,
-                                    cellPadding: Constants.gridCellPadding
+                                    cellPadding: FileGridMetrics.cellPadding
                                 ) {
                                     store.send(.personalSpaceTapped)
                                 }
@@ -1414,7 +1408,7 @@ struct BrowseContentView: View {
                         }
                     }
                 }
-                .padding(Constants.gridSpacing)
+                .padding(FileGridMetrics.spacing)
                 .animation(
                     DSMotion.listDiff,
                     value: displayedItems
@@ -1430,6 +1424,7 @@ struct BrowseContentView: View {
                 pasteTargetArea
             }
             .scrollDismissesKeyboard(.immediately)
+            .modifier(BrowseDragToSelect(store: store))
             .backgroundGradient()
             .safeAreaPadding(.bottom, bottomChromeClearance)
             .dismissKeyboardOnTap()
@@ -1595,16 +1590,18 @@ struct BrowseContentView: View {
                 }
             } label: {
                 gridCell(for: item)
-                    .dsCard(padding: Constants.gridCellPadding)
+                    .dsGridTile(
+                        padding: FileGridMetrics.cellPadding,
+                        isSelecting: store.isSelecting,
+                        isSelected: store.selectedItemIDs.contains(item.id),
+                        seed: item.id
+                    )
+                    .dragSelectable(id: item.id)
                 #if os(macOS)
                     .modifier(macRowDragDrop(for: item))
                 #else
                     .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                 #endif
-                    .dsGridSelection(
-                        isSelecting: store.isSelecting,
-                        isSelected: store.selectedItemIDs.contains(item.id)
-                    )
             }
             .buttonStyle(DSPressableButtonStyle())
             .dsTapFlash()
@@ -1637,6 +1634,7 @@ struct BrowseContentView: View {
                             isSelecting: store.isSelecting,
                             isSelected: store.selectedItemIDs.contains(item.id)
                         )
+                        .dragSelectable(id: item.id)
                     #if os(macOS)
                         // On the label, not the row chain: that chain is at the type checker's limit.
                         .modifier(macRowDragDrop(for: item))
@@ -1709,7 +1707,7 @@ struct BrowseContentView: View {
                 store.send(.searchResultTapped(result))
             } label: {
                 searchResultCell(row: result, grid: true)
-                    .dsCard(padding: Constants.gridCellPadding)
+                    .dsGridTile(padding: FileGridMetrics.cellPadding)
             }
             .buttonStyle(DSPressableButtonStyle())
             .contextMenu { searchResultMenu(result) }

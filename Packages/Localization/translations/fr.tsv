@@ -601,6 +601,8 @@ menu.newWindow	Nouvelle fenêtre
 menu.newTab	Nouvel onglet
 browse.actionOpenInNewWindow	Ouvrir dans une nouvelle fenêtre
 browse.actionOpenInNewTab	Ouvrir dans un nouvel onglet
+select.slideTipTitle	Glisser pour sélectionner
+select.slideTipMessage	Faites glisser un doigt sur les éléments, de côté, pour en sélectionner plusieurs à la fois.
 settings.rowAppearance	Apparence
 appearance.system	Système
 appearance.light	Clair

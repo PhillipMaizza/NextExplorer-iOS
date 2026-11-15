@@ -601,6 +601,8 @@ menu.newWindow	Nuova finestra
 menu.newTab	Nuovo pannello
 browse.actionOpenInNewWindow	Apri in una nuova finestra
 browse.actionOpenInNewTab	Apri in un nuovo pannello
+select.slideTipTitle	Scorri per selezionare
+select.slideTipMessage	Fai scorrere un dito di lato sugli elementi per selezionarne più di uno alla volta.
 settings.rowAppearance	Aspetto
 appearance.system	Sistema
 appearance.light	Chiaro

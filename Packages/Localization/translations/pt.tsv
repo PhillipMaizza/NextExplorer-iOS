@@ -601,6 +601,8 @@ menu.newWindow	Nova janela
 menu.newTab	Nova aba
 browse.actionOpenInNewWindow	Abrir em nova janela
 browse.actionOpenInNewTab	Abrir em nova aba
+select.slideTipTitle	Deslize para selecionar
+select.slideTipMessage	Deslize um dedo de lado sobre os itens para selecionar vários de uma só vez.
 settings.rowAppearance	Aparência
 appearance.system	Sistema
 appearance.light	Claro

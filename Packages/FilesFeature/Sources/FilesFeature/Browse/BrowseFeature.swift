@@ -641,6 +641,8 @@ public struct BrowseFeature {
         case itemsDroppedFromOtherWindow([FileItem], destination: String)
         case selectModeToggled
         case itemSelectionToggled(FileItem.ID)
+        /// A finger slide across the listing in select mode picked this selection.
+        case selectionSwept(Set<FileItem.ID>)
         case selectAllTapped
         case deselectAllTapped
         case bulkDeleteTapped
@@ -1380,6 +1382,11 @@ public struct BrowseFeature {
                 } else {
                     state.selectedItemIDs.insert(id)
                 }
+                return .none
+
+            case let .selectionSwept(ids):
+                guard state.isSelecting else { return .none }
+                state.selectedItemIDs = ids.intersection(state.items.ids)
                 return .none
 
             case .selectAllTapped:

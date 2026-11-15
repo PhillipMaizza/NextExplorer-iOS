@@ -41,7 +41,7 @@ struct SkeletonGridCells: View {
     var body: some View {
         ForEach(Array(entries.enumerated()), id: \.offset) { _, entry in
             GridCellView(name: entry.name, isDirectory: entry.isDirectory, kind: entry.isDirectory ? nil : "")
-                .dsCard(padding: FileGridMetrics.cellPadding)
+                .dsGridTile(padding: FileGridMetrics.cellPadding)
                 .redacted(reason: .placeholder)
                 .shimmering()
         }

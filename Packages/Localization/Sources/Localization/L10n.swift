@@ -699,6 +699,8 @@ public enum L10n {
         public static var gridView: String { tr("select.gridView") }  // "Grid View"
         public static var listView: String { tr("select.listView") }  // "List View"
         public static var selectAll: String { tr("select.selectAll") }  // "Select All"
+        public static var slideTipMessage: String { tr("select.slideTipMessage") }
+        public static var slideTipTitle: String { tr("select.slideTipTitle") }  // "Slide to Select"
     }
     public enum ServerDetails {
         public static var cameraDeniedMessage: String { tr("serverDetails.cameraDeniedMessage") }  // "Turn on camera access in Settings to take a photo."

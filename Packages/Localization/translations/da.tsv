@@ -870,6 +870,8 @@ menu.newWindow	Nyt vindue
 menu.newTab	Ny fane
 browse.actionOpenInNewWindow	Åbn i nyt vindue
 browse.actionOpenInNewTab	Åbn i ny fane
+select.slideTipTitle	Stryg for at vælge
+select.slideTipMessage	Stryg en finger sidelæns hen over emner for at vælge flere på én gang.
 settings.rowAppearance	Udseende
 appearance.system	System
 appearance.light	Lys

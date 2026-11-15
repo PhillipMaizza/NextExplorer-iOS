@@ -601,6 +601,8 @@ menu.newWindow	Nieuw venster
 menu.newTab	Nieuw tabblad
 browse.actionOpenInNewWindow	Open in nieuw venster
 browse.actionOpenInNewTab	Open in nieuw tabblad
+select.slideTipTitle	Veeg om te selecteren
+select.slideTipMessage	Veeg met een vinger zijwaarts over onderdelen om er meerdere tegelijk te selecteren.
 settings.rowAppearance	Weergave
 appearance.system	Systeem
 appearance.light	Licht

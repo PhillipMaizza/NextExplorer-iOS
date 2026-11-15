@@ -6,6 +6,7 @@ import FilesFeature
 import Localization
 import SwiftUI
 #if os(iOS)
+    import TipKit
     import UIKit
 #endif
 
@@ -76,6 +77,13 @@ struct NextExplorerApp: App {
             AppFeature.prepareUITestDependencies()
         #endif
         LaunchMigrations.start()
+        #if os(iOS)
+            // The tips that teach a hidden gesture once (slide to select); never over a UI test's screens.
+            if UITestEnvironment.isActive {
+                Tips.hideAllTipsForTesting()
+            }
+            try? Tips.configure()
+        #endif
         #if os(macOS)
             // No window restores (each scene opts out), and leftover saved state from a crash,
             // Force Quit or test run made AppKit restore nothing, so no window opened at all.

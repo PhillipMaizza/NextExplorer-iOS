@@ -125,6 +125,8 @@ public struct OfflineTabFeature {
         case selectModeToggled
         case itemSelectionToggled(LocalDownload.ID)
         case pinnedSelectionToggled(path: String)
+        /// A finger slide across the tab in select mode picked these pinned items and saved files.
+        case selectionSwept(pinnedPaths: Set<String>, downloadIDs: Set<LocalDownload.ID>)
         /// `pinnedPaths` is what the tab shows of the pinned items, searched and sorted like the rest.
         case selectAllTapped(pinnedPaths: [String])
         /// The selected pinned items were removed from offline: select mode ends like after a delete.
@@ -279,6 +281,12 @@ public struct OfflineTabFeature {
                 } else {
                     state.selectedPinnedPaths.insert(path)
                 }
+                return .none
+
+            case let .selectionSwept(pinnedPaths, downloadIDs):
+                guard state.isSelecting else { return .none }
+                state.selectedPinnedPaths = pinnedPaths
+                state.selectedDownloadIDs = downloadIDs.intersection(state.downloads.map(\.id))
                 return .none
 
             case let .selectAllTapped(pinnedPaths):

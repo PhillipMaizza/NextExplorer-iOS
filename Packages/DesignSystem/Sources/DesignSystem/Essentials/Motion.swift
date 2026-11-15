@@ -156,6 +156,21 @@ public enum DSMotion {
         isReduceMotionEnabled ? contentReveal : .spring(response: 0.25, dampingFraction: 0.85)
     }
 
+    /// How far a grid tile tilts each way while it wiggles in select mode, in degrees.
+    public static let selectModeWiggleAngle: Double = 1.6
+
+    /// One tilt of the select mode wiggle; it runs back and forth for as long as select mode lasts.
+    public static let selectModeWiggleDuration: Double = 0.14
+
+    /// The select mode wiggle of grid tiles, as on the Home Screen when apps can be moved. `nil` under
+    /// Reduce Motion, where the accent outline alone shows the selection, and under UI tests, which
+    /// need a still screen to settle on.
+    @MainActor
+    public static var selectModeWiggle: Animation? {
+        guard !isReduceMotionEnabled, !UITestEnvironment.isActive else { return nil }
+        return .easeInOut(duration: selectModeWiggleDuration).repeatForever(autoreverses: true)
+    }
+
     /// How long the gallery's fades take.
     public static let galleryFadeDuration: Double = 0.22
 

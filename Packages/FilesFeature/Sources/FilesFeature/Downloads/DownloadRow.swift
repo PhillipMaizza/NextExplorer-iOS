@@ -28,6 +28,7 @@ struct DownloadListRow: View {
 
     var body: some View {
         SelectableListRow(
+            selectionID: OfflineTabSweepID.download(download.id),
             isSelecting: store.isSelecting,
             isSelected: store.selectedDownloadIDs.contains(download.id),
             isFirst: isFirst,
@@ -96,6 +97,7 @@ struct DownloadGridCell: View {
 
     var body: some View {
         SelectableGridCell(
+            selectionID: OfflineTabSweepID.download(download.id),
             isSelecting: store.isSelecting,
             isSelected: store.selectedDownloadIDs.contains(download.id),
             onTap: handleTap

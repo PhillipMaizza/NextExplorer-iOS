@@ -625,6 +625,8 @@ menu.newWindow	نافذة جديدة
 menu.newTab	علامة تبويب جديدة
 browse.actionOpenInNewWindow	فتح في نافذة جديدة
 browse.actionOpenInNewTab	فتح في علامة تبويب جديدة
+select.slideTipTitle	اسحب للتحديد
+select.slideTipMessage	اسحب إصبعك أفقيًا فوق العناصر لتحديد عدة عناصر معًا.
 settings.rowAppearance	المظهر
 appearance.system	النظام
 appearance.light	فاتح
