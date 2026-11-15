@@ -345,7 +345,7 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(ExtractZipBody(path: item.id))
-        let envelope = try await sendArchiveOperation(request, decoding: ExtractZipEnvelope.self)
+        let envelope = try await sendStreamedOperation(request, decoding: ExtractZipEnvelope.self)
         return envelope.item
     }
 
@@ -365,7 +365,7 @@ extension FilesService {
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
-        let envelope = try await sendArchiveOperation(request, decoding: CompressItemEnvelope.self)
+        let envelope = try await sendStreamedOperation(request, decoding: CompressItemEnvelope.self)
         return envelope.item
     }
 
@@ -420,7 +420,8 @@ extension FilesService {
     /// `{ items: [{ path, name }], destination }`; `path`/`name` are `FileItem`'s own fields,
     /// same as rename/delete. Name collisions in the destination are resolved server side
     /// (`findAvailableName`). A validation failure (empty destination, source missing, a
-    /// folder moved into itself) comes back with a message worth surfacing verbatim.
+    /// folder moved into itself) comes back with a message worth surfacing verbatim. Once the
+    /// transfer starts the answer is a progress stream whose `done` line carries the result.
     func transferItems(
         serverURL: URL, items: [FileItem], destination: String, operation: TransferOperation
     ) async throws -> TransferResult {
@@ -438,7 +439,7 @@ extension FilesService {
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
-        let result = try await sendReportingMessage(request, decoding: TransferResult.self)
+        let result = try await sendStreamedOperation(request, decoding: TransferResult.self)
         if operation == .move {
             for item in items {
                 textEditorETags.forget(scope: scope, serverURL: serverURL, path: item.id)

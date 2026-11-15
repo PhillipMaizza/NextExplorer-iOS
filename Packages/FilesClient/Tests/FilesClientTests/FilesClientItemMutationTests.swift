@@ -163,6 +163,49 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func transferItemsDecodesTheDoneLineOfAnNDJSONProgressStream() async throws {
+            try stub(
+                statusCode: 200,
+                body: FilesClientFixture.itemMutationNdjsonMoveDone.data(),
+                headers: [HTTPHeaderField.contentType: "application/x-ndjson; charset=utf-8"]
+            )
+            let folder = FileItem(
+                name: Constants.testsFolder,
+                path: TestFolder.files,
+                dateModified: MockDate.date,
+                size: 0,
+                kind: FileItem.directoryKind
+            )
+
+            let result = try await makeClient().transferItems(serverURL, [folder], Constants.variousFolder, .move)
+
+            #expect(result.destination == "Files/Various")
+            #expect(result.items == [TransferResult.Entry(from: "Files/Tests", to: "Files/Various/Tests")])
+        }
+
+        @Test
+        func transferItemsSurfacesTheErrorLineOfAnNDJSONStream() async throws {
+            try stub(
+                statusCode: 200,
+                body: FilesClientFixture.itemMutationNdjsonMoveError.data(),
+                headers: [HTTPHeaderField.contentType: "application/x-ndjson"]
+            )
+            let folder = FileItem(
+                name: Constants.testsFolder,
+                path: TestFolder.files,
+                dateModified: MockDate.date,
+                size: 0,
+                kind: FileItem.directoryKind
+            )
+            await #expect(throws: FilesClientError.serverMessage(
+                statusCode: 500,
+                message: "Not enough space on the destination."
+            )) {
+                _ = try await makeClient().transferItems(serverURL, [folder], Constants.variousFolder, .move)
+            }
+        }
+
+        @Test
         func transferItemsSurfacesAValidationMessageFromTheServer() async throws {
             try stub(
                 statusCode: 500,
@@ -374,7 +417,7 @@ extension FilesClientLiveTests {
         func anNDJSONStreamWithoutADoneLineIsADecodingError() throws {
             let data = try FilesClientFixture.itemMutationArchiveStartLine.data()
             #expect(throws: FilesClientError.self) {
-                _ = try FilesService.decodeArchiveOperation(FilesService.CompressItemEnvelope.self, from: data)
+                _ = try FilesService.decodeStreamedOperation(FilesService.CompressItemEnvelope.self, from: data)
             }
         }
     }
@@ -382,5 +425,7 @@ extension FilesClientLiveTests {
 
 private enum Constants {
     static let documentsArchive = "Documents.zip"
+    static let testsFolder = "Tests"
+    static let variousFolder = "Files/Various"
     static let vacationFile = "vacation-2024.jpg"
 }

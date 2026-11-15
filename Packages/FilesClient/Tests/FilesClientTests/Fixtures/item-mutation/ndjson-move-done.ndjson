@@ -1,0 +1,4 @@
+{"type":"start","totalBytes":2048,"totalItems":1,"destination":"Files/Various"}
+{"type":"progress","copiedBytes":0,"totalBytes":2048,"currentName":"Tests"}
+{"type":"progress","copiedBytes":2048,"totalBytes":2048,"currentName":"Tests"}
+{"type":"done","success":true,"destination":"Files/Various","items":[{"from":"Files/Tests","to":"Files/Various/Tests"}]}

@@ -84,15 +84,16 @@ extension BrowseFeature {
         .cancellable(id: CancelID.offlineAvailability, cancelInFlight: true)
     }
 
-    /// A mutation that timed out, or that a gateway answered for, may still have finished on the
-    /// server, so the folder is refetched to show what really happened instead of trusting the failure.
+    /// A mutation that timed out, that a gateway answered for, or whose success answer could not be
+    /// read may still have finished on the server, so the folder is refetched to show what really
+    /// happened instead of trusting the failure.
     func refetchAfterAmbiguousFailure(_ state: inout State, _ error: FilesClientError) -> Effect<Action> {
         Self.mayHaveAppliedOnServer(error) ? load(&state) : .none
     }
 
     static func mayHaveAppliedOnServer(_ error: FilesClientError) -> Bool {
         switch error {
-        case .timedOut:
+        case .timedOut, .decoding:
             true
         case let .server(statusCode), let .serverMessage(statusCode, _):
             Constants.ambiguousMutationStatuses.contains(statusCode)

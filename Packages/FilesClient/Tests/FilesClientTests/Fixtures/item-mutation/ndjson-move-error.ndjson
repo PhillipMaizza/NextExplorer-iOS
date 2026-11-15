@@ -1,0 +1,2 @@
+{"type":"start","totalBytes":2048,"totalItems":1,"destination":"Files/Various"}
+{"type":"error","message":"Not enough space on the destination.","code":"TRANSFER_FAILED"}

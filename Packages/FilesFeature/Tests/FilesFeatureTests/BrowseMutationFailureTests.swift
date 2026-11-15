@@ -6,8 +6,9 @@ import Foundation
 import Testing
 import TestUtils
 
-/// A mutation that timed out, or that a gateway answered for, may still have finished on the server,
-/// so the folder is refetched to show what really happened. Every other failure is believed.
+/// A mutation that timed out, that a gateway answered for, or whose success answer could not be read
+/// may still have finished on the server, so the folder is refetched to show what really happened.
+/// Every other failure is believed.
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseMutationFailureTests {
@@ -18,6 +19,9 @@ struct BrowseMutationFailureTests {
             "\(error)"
         }
     }
+
+    /// A 200 whose body did not decode, as a progress stream read as one JSON body did.
+    private nonisolated static let unreadableAnswer = FilesClientError.decoding("The data couldn't be read.")
 
     private nonisolated static let ambiguityCases: [AmbiguityCase] =
         [502, 503, 504, 524].flatMap { status in
@@ -34,6 +38,7 @@ struct BrowseMutationFailureTests {
         }
         + [
             AmbiguityCase(error: .timedOut, isAmbiguous: true),
+            AmbiguityCase(error: unreadableAnswer, isAmbiguous: true),
             AmbiguityCase(error: .offline, isAmbiguous: false),
             AmbiguityCase(error: .sessionExpired, isAmbiguous: false),
             AmbiguityCase(error: .rateLimited, isAmbiguous: false),
@@ -42,6 +47,7 @@ struct BrowseMutationFailureTests {
 
     private nonisolated static let ambiguousErrors: [FilesClientError] = [
         .timedOut,
+        unreadableAnswer,
         .server(statusCode: 502),
         .server(statusCode: 503),
         .server(statusCode: 504),
@@ -129,7 +135,10 @@ struct BrowseMutationFailureTests {
         }
     }
 
-    @Test("Only a timeout or a gateway answer may have been applied on the server", arguments: ambiguityCases)
+    @Test(
+        "Only a timeout, a gateway answer or an unreadable success may have been applied on the server",
+        arguments: ambiguityCases
+    )
     func mayHaveAppliedOnServerFollowsTheError(_ testCase: AmbiguityCase) {
         #expect(BrowseFeature.mayHaveAppliedOnServer(testCase.error) == testCase.isAmbiguous)
     }
