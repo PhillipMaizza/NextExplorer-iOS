@@ -2,6 +2,11 @@
     import DesignSystem
     import SwiftUI
 
+    private enum Constants {
+        /// One glyph column for every row, so titles line up whatever the glyph's own width.
+        static let columnWidth: CGFloat = 20
+    }
+
     /// A sidebar row's glyph: the primary color, white only on the emphasized (blue) selection of
     /// a focused sidebar, and the primary color again on the gray selection it shows while focus
     /// is elsewhere. The Mac keeps the accent out of the sidebar.
@@ -12,6 +17,7 @@
         var body: some View {
             image
                 .imageScale(.medium)
+                .frame(width: Constants.columnWidth)
                 .foregroundStyle(backgroundProminence == .increased ? Color.white : Color.primaryDS)
         }
     }

@@ -242,9 +242,20 @@ public struct MainTabView: View {
                 .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxX } action: {
                     sidebarTrailingEdge = $0
                 }
+            #if os(macOS)
+                .navigationSplitViewColumnWidth(
+                    min: MainTabSidebar.macColumnWidth.min,
+                    ideal: MainTabSidebar.macColumnWidth.ideal,
+                    max: MainTabSidebar.macColumnWidth.max
+                )
+            #endif
         } detail: {
             detail()
                 .environment(\.isSplitViewDetail, true)
+            #if os(macOS)
+                // Every tab's content and toolbar sit on the same surface, not only Browse's.
+                .backgroundGradient()
+            #endif
         }
         .overlay(alignment: .bottom) {
             SplitDetailBreadcrumb(store: store)
