@@ -85,7 +85,7 @@ public extension AuthClient {
                 return user
             },
             loginOIDC: { serverURL in
-                let pkce = PKCE.generate()
+                let pkce = try PKCE.generate()
                 var components = URLComponents(
                     url: serverURL.appendingPathComponent(AuthPath.oidcMobileLogin),
                     resolvingAgainstBaseURL: false
