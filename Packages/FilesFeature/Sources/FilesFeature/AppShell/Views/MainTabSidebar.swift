@@ -4,10 +4,6 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-#if os(macOS)
-    import AppKit
-#endif
-
 private enum Constants {
     /// Inset of a footer row's icon inside its pill, lining it up with the section rows above.
     static let footerRowInset: CGFloat = .space16
@@ -46,7 +42,7 @@ private enum Constants {
     static let macPillInset: CGFloat = .space16
     static let hoverOpacity: Double = 0.08
     static let selectedOpacity: Double = 0.14
-    static let macLogoSize: CGFloat = .size32
+    static let macLogoSize: CGFloat = .size24
     /// Keeps the account chevron off the Mac card's edge.
     static let chevronTrailingInset: CGFloat = .space12
     /// The wash behind the Mac account card.
@@ -341,11 +337,6 @@ struct MainTabSidebar: View {
     ) -> some View {
         #if os(macOS)
             MacSidebarRow(title: title, icon: icon, action: action) {
-                if opensOutside {
-                    IconKit.externalLink
-                        .foregroundStyle(Color.secondaryDS)
-                        .accessibilityHidden(true)
-                }
                 if let shortcut {
                     MacTag(text: shortcut)
                 }
@@ -449,7 +440,7 @@ struct MainTabSidebar: View {
         var body: some View {
             Button(action: action) {
                 HStack(spacing: .space8) {
-                    Image(nsImage: NSApplication.shared.applicationIconImage)
+                    IconKit.logo
                         .resizable()
                         .scaledToFit()
                         .frame(width: Constants.macLogoSize, height: Constants.macLogoSize)
