@@ -21,14 +21,14 @@ struct PKCETests {
     }
 
     @Test("the challenge is the S256 transform of the verifier")
-    func challengeIsS256OfVerifier() {
-        let pkce = PKCE.generate()
+    func challengeIsS256OfVerifier() throws {
+        let pkce = try PKCE.generate()
         #expect(pkce.challenge == s256Challenge(of: pkce.verifier))
     }
 
     @Test("the verifier is 43 URL safe characters, the shortest length RFC 7636 allows, and carries no padding")
-    func verifierIsURLSafe() {
-        let pkce = PKCE.generate()
+    func verifierIsURLSafe() throws {
+        let pkce = try PKCE.generate()
         #expect(pkce.verifier.count == 43)
         #expect(pkce.challenge.count == 43)
         let allowed = Set("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
@@ -36,9 +36,16 @@ struct PKCETests {
         #expect(pkce.challenge.allSatisfy(allowed.contains))
     }
 
+    @Test("a failed system random source stops the login instead of making an all zero verifier")
+    func aFailedRandomSourceThrows() {
+        #expect(throws: AuthClientError.oidcFailed("could not make a login secret")) {
+            _ = try PKCE.generate { _ in errSecParam }
+        }
+    }
+
     @Test("every flow gets a fresh verifier")
-    func verifiersDiffer() {
-        let pairs = (0 ..< 8).map { _ in PKCE.generate() }
+    func verifiersDiffer() throws {
+        let pairs = try (0 ..< 8).map { _ in try PKCE.generate() }
         #expect(Set(pairs.map(\.verifier)).count == pairs.count)
         #expect(Set(pairs.map(\.challenge)).count == pairs.count)
     }
