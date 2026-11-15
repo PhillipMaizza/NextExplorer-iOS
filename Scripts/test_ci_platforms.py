@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Self check for ci-platforms.py: python3 Scripts/test_ci_platforms.py"""
 import importlib.util
+import os
 import pathlib
+import subprocess
+import tempfile
 import unittest
 
 SCRIPT = pathlib.Path(__file__).resolve().parent / "ci-platforms.py"
@@ -112,6 +115,42 @@ class PlatformsTests(unittest.TestCase):
 
     def test_one_shared_file_among_mac_files_runs_both(self):
         self.assertEqual(ci.platforms([ci.MAC, ci.SHARED]), (True, True))
+
+
+
+class ContentAtTests(unittest.TestCase):
+    """Reads a committed file back from a throwaway repository."""
+
+    def commit(self, name, data):
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        root = pathlib.Path(folder.name)
+        git = ["git", "-C", folder.name, "-c", "user.name=t", "-c", "user.email=t@example.com"]
+        subprocess.run(git + ["init", "-q"], check=True)
+        (root / name).write_bytes(data)
+        subprocess.run(git + ["add", name], check=True)
+        subprocess.run(git + ["commit", "-q", "-m", "c"], check=True)
+        return folder.name
+
+    def read(self, repo, name):
+        previous = pathlib.Path.cwd()
+        try:
+            os.chdir(repo)
+            return ci.content_at("HEAD", name)
+        finally:
+            os.chdir(previous)
+
+    def test_a_binary_file_is_read_without_failing(self):
+        repo = self.commit("Font.ttf", bytes([0, 1, 0, 0, 0xBE, 0xFF, 0x80]))
+        self.assertIsInstance(self.read(repo, "Font.ttf"), str)
+
+    def test_a_swift_file_is_read_as_is(self):
+        repo = self.commit("A.swift", MAC_FILE.encode())
+        self.assertEqual(self.read(repo, "A.swift"), MAC_FILE)
+
+    def test_a_missing_file_is_none(self):
+        repo = self.commit("A.swift", MAC_FILE.encode())
+        self.assertIsNone(self.read(repo, "Gone.swift"))
 
 
 if __name__ == "__main__":
