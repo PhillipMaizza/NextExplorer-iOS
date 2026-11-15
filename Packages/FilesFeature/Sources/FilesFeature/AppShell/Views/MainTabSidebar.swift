@@ -42,7 +42,7 @@ private enum Constants {
     static let macPillInset: CGFloat = .space16
     static let hoverOpacity: Double = 0.08
     static let selectedOpacity: Double = 0.14
-    static let macLogoSize: CGFloat = .size40
+    static let macLogoSize: CGFloat = .size32
     /// Keeps the account chevron off the Mac card's edge.
     static let chevronTrailingInset: CGFloat = .space12
     /// The wash behind the Mac account card.
@@ -127,33 +127,12 @@ struct MainTabSidebar: View {
         }
 
         /// The logo and name above the sections. Opens the About window, and is not a destination.
-        private static var appVersion: String {
-            Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        }
-
         private var macIdentity: some View {
-            Button {
+            MacSidebarIdentity {
                 openWindow(id: MacAboutView.windowID)
-            } label: {
-                HStack(alignment: .bottom, spacing: .space8) {
-                    IconKit.logo
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: Constants.macLogoSize, height: Constants.macLogoSize)
-                        .accessibilityHidden(true)
-                    Spacer(minLength: 0)
-                    Text("v\(Self.appVersion)")
-                        .type(.caption(.regular), style: .tertiary)
-                }
-                .padding(.vertical, .space8)
-                .padding(.horizontal, .space12)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
-            .help(L10n.Menu.about)
             .selectionDisabled()
             .listRowSeparator(.hidden)
-            .accessibilityLabel(L10n.Menu.about)
         }
 
         private func macRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
@@ -448,6 +427,40 @@ struct MainTabSidebar: View {
 #endif
 
 #if os(macOS)
+    /// The logo and name above the sections. Opens the About window, with the same hover pill as the rows.
+    private struct MacSidebarIdentity: View {
+        let action: () -> Void
+        @State private var isHovered = false
+
+        var body: some View {
+            Button(action: action) {
+                HStack(spacing: .space8) {
+                    IconKit.logo
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Constants.macLogoSize, height: Constants.macLogoSize)
+                        .accessibilityHidden(true)
+                    Text(AppIdentity.name)
+                        .type(.headline4, style: .primaryOnSurface)
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, .space12)
+                .frame(maxWidth: .infinity, minHeight: Constants.macRowHeight, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                        .fill(Color.primaryDS.opacity(isHovered ? Constants.hoverOpacity : 0))
+                )
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .padding(.vertical, .space8)
+            .onHover { isHovered = $0 }
+            .help(L10n.Menu.about)
+            .accessibilityLabel(L10n.Menu.about)
+        }
+    }
+
     /// A sidebar row drawn here rather than by the list, so the selected and hovered pills keep a gap
     /// between rows. Used by the sections and the footer links alike.
     private struct MacSidebarRow<Trailing: View>: View {
