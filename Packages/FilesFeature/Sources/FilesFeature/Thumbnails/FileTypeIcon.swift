@@ -99,7 +99,7 @@ private extension FileItem {
 /// A page silhouette with a folded top-right corner: the same base shape the web app's
 /// `FileBadgeIcon.vue`/`txt-icon.vue`/etc. all share, just as a native `Shape` instead of a
 /// literal SVG path.
-private struct FilePageShape: Shape {
+struct FilePageShape: Shape {
     func path(in rect: CGRect) -> Path {
         let fold = min(rect.width, rect.height) * Constants.foldFraction
         var path = Path()

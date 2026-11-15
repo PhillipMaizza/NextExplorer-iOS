@@ -32,7 +32,8 @@ enum ThumbnailMemoryCache {
     /// is emptied at the same points so no decoded image outlives a sign out (rule #11).
     static func removeAll() {
         shared.removeAllObjects()
-        AudioArtwork.forgetMisses()
+        ThumbnailMisses.removeAll()
+        TextSnippetCache.removeAll()
     }
 }
 
@@ -41,6 +42,8 @@ private enum Constants {
     /// asks when the server doesn't say. About 40 seconds in all, enough for a long video.
     static let pendingAttempts = 20
     static let pendingRetryDelay = Duration.seconds(2)
+    static let pendingMinDelay = Duration.milliseconds(500)
+    static let pendingMaxDelay = Duration.seconds(10)
 }
 
 /// Lazily resolves and displays a thumbnail for one file: a small spinner while the request
@@ -76,6 +79,8 @@ struct ThumbnailImage: View {
     var fileSize: Int64?
     var modified: Date?
 
+    /// The first lines of a text file, drawn as a small page.
+    @State private var snippet: String?
     @State private var uiImage: PlatformImage?
     @State private var didResolve = false
     @Dependency(\.filesClient) private var filesClient
@@ -85,9 +90,23 @@ struct ThumbnailImage: View {
     @Dependency(\.date) private var date
     @Dependency(\.continuousClock) private var clock
 
+    /// Whether files of this kind are drawn from their own content, which the server makes no
+    /// thumbnail of: an audio file's cover art and a text file's first lines.
+    /// How long to wait before asking again: what the server asked, kept within bounds so a wrong
+    /// value from it can neither hammer it nor park the thumbnail for good.
+    static func pendingDelay(asked: Duration?) -> Duration {
+        min(max(asked ?? Constants.pendingRetryDelay, Constants.pendingMinDelay), Constants.pendingMaxDelay)
+    }
+
+    static func readsOwnContent(kind: String) -> Bool {
+        FileItem.isAudioKind(kind) || TextSnippet.isTextKind(kind)
+    }
+
     var body: some View {
         Group {
-            if let uiImage {
+            if let snippet {
+                TextThumbnailView(snippet: snippet)
+            } else if let uiImage {
                 Image(platformImage: uiImage)
                     .resizable()
                     .scaledToFit()
@@ -99,9 +118,16 @@ struct ThumbnailImage: View {
         }
         .task(id: "\(path)\u{0}\(signature)") {
             guard uiImage == nil else { return }
-            // Audio has no server thumbnail: its cover art is read from the file's own tags.
+            // Audio and text have no server thumbnail: the app reads the file's own tags or first lines.
             if fileItem.isAudio {
-                uiImage = await audioArtwork()
+                uiImage = await loader.audioArtwork()
+                if !Task.isCancelled {
+                    didResolve = true
+                }
+                return
+            }
+            if TextSnippet.isTextKind(fileItem.kind) {
+                snippet = await loader.textSnippet()
                 if !Task.isCancelled {
                     didResolve = true
                 }
@@ -128,7 +154,12 @@ struct ThumbnailImage: View {
                 return
             }
             guard let thumbnailURL else {
-                didResolve = true
+                // The server made none (it cannot decode every image, an .ico for one): the device
+                // decodes the picture itself.
+                uiImage = await loader.deviceDecodedImage()
+                if !Task.isCancelled {
+                    didResolve = true
+                }
                 return
             }
             if let cached = ThumbnailMemoryCache.shared.object(forKey: thumbnailURL as NSURL) {
@@ -185,7 +216,7 @@ struct ThumbnailImage: View {
                     try await filesClient.thumbnailURL(serverURL, path)
                 }
             } catch let pending as ThumbnailPendingError {
-                try? await clock.sleep(for: pending.retryAfter ?? Constants.pendingRetryDelay)
+                try? await clock.sleep(for: Self.pendingDelay(asked: pending.retryAfter))
                 if Task.isCancelled {
                     return nil
                 }
@@ -206,27 +237,20 @@ struct ThumbnailImage: View {
         )
     }
 
-    /// The file as far as its path says, enough to look up a kept copy or build its stream address.
-    private var fileItem: FileItem {
-        let name = (path as NSString).lastPathComponent
-        return FileItem(
-            name: name,
-            path: (path as NSString).deletingLastPathComponent,
-            dateModified: .distantPast,
-            size: 0,
-            kind: (name as NSString).pathExtension.lowercased()
+    /// What loads a thumbnail from the file's own content (cover art, first lines, a decoded picture).
+    private var loader: ThumbnailContentLoader {
+        ThumbnailContentLoader(
+            serverURL: serverURL,
+            path: path,
+            signature: signature,
+            maxPixel: maxPixelDimension,
+            thumbnailCache: thumbnailCache,
+            offlineFileStore: offlineFileStore
         )
     }
 
-    /// An audio file's cover art, from its kept copy when it has one (no network), else its stream.
-    private func audioArtwork() async -> PlatformImage? {
-        let item = fileItem
-        let store = offlineFileStore
-        let local = await Task.detached(priority: .userInitiated) {
-            store.localURLIgnoringStaleness(item)
-        }.value
-        guard let url = local ?? FilesClient.previewURL(serverURL: serverURL, item: item) else { return nil }
-        return await AudioArtwork.image(url: url, fileExtension: item.kind, maxPixel: maxPixelDimension)
+    private var fileItem: FileItem {
+        loader.item
     }
 
     /// A picture is decoded from the kept copy and a video gives its first frame, so both show with

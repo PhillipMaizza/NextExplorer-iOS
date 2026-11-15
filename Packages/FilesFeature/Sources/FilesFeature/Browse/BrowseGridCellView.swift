@@ -121,12 +121,12 @@ struct GridCellView: View {
     }
 
     private var isEligibleForThumbnail: Bool {
-        !isDirectory && (supportsThumbnail || isAudio) && showThumbnails && serverURL != nil && itemID != nil
+        !isDirectory && (supportsThumbnail || readsOwnContent) && showThumbnails && serverURL != nil && itemID != nil
     }
 
-    /// Audio has no server thumbnail but may carry cover art in its tags.
-    private var isAudio: Bool {
-        kind.map(FileItem.isAudioKind) ?? false
+    /// Audio (cover art) and text (its first lines) have no server thumbnail: the app draws their own.
+    private var readsOwnContent: Bool {
+        kind.map(ThumbnailImage.readsOwnContent) ?? false
     }
 
     private var isEligibleForPDFThumbnail: Bool {
