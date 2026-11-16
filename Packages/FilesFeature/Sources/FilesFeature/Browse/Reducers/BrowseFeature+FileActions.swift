@@ -104,7 +104,7 @@ extension BrowseFeature {
         .cancellable(id: CancelID.deleteImpact, cancelInFlight: true)
     }
 
-    func confirmDelete(_ state: inout State, deferred: Bool = false) -> Effect<Action> {
+    func confirmDelete(_ state: inout State, deferred: Bool = false, permanent: Bool = false) -> Effect<Action> {
         guard let item = state.deleteConfirmationItem else { return .none }
         state.deleteConfirmationItem = nil
         state.deleteImpactCheck = .idle
@@ -112,9 +112,8 @@ extension BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = filesClient
         let clock = clock
-        let itemID = item.id
         return .run { send in
-            // `deferred`: let the preview cover finish dismissing first, so the row-removal
+            // `deferred`: let the preview cover finish dismissing first, so the row removal
             // animation plays on the list the user is now looking at.
             if deferred {
                 try await clock.sleep(for: Constants.previewActionSettleDelay)
@@ -122,13 +121,13 @@ extension BrowseFeature {
             // Animated so the row visibly slides out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
             try await send(.deleteResponse(apiResult {
-                _ = try await filesClient.deleteItems(serverURL, [item], false)
-                return DeleteResult(itemID: itemID)
+                let outcome = try await filesClient.deleteItems(serverURL, [item], permanent)
+                return DeleteResult(requested: [item], outcome: outcome)
             }), animation: DSMotion.listDiff)
         }
     }
 
-    func confirmBulkDelete(_ state: inout State) -> Effect<Action> {
+    func confirmBulkDelete(_ state: inout State, permanent: Bool = false) -> Effect<Action> {
         state.bulkDeleteConfirmationIsPresented = false
         state.deleteImpactCheck = .idle
         guard !state.isBulkActionInFlight else { return .none }
@@ -137,15 +136,53 @@ extension BrowseFeature {
         state.isBulkActionInFlight = true
         let serverURL = state.serverURL
         let filesClient = filesClient
-        let itemIDs = itemsToDelete.map(\.id)
         return .run { send in
             // Animated so the rows visibly slide out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
             try await send(.bulkDeleteResponse(apiResult {
-                _ = try await filesClient.deleteItems(serverURL, itemsToDelete, false)
-                return BulkDeleteResult(itemIDs: itemIDs)
+                let outcome = try await filesClient.deleteItems(serverURL, itemsToDelete, permanent)
+                return DeleteResult(requested: itemsToDelete, outcome: outcome)
             }), animation: DSMotion.listDiff)
         }
+    }
+
+    /// The items the trash refused, deleted for good after the user agreed.
+    func deleteKeptPermanently(_ state: inout State) -> Effect<Action> {
+        let items = state.keptDeletes.map(\.item)
+        state.keptDeletes = []
+        guard !items.isEmpty, !state.isPerformingFileAction else { return .none }
+        state.isPerformingFileAction = true
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            try await send(.deleteResponse(apiResult {
+                let outcome = try await filesClient.deleteItems(serverURL, items, true)
+                return DeleteResult(requested: items, outcome: outcome)
+            }), animation: DSMotion.listDiff)
+        }
+    }
+
+    /// Drops the rows a delete removed, keeps the ones the trash refused for the follow up
+    /// prompt, and announces what went to the trash.
+    func applyDeleteResult(_ state: inout State, _ result: DeleteResult) -> Effect<Action> {
+        var hadFavorited = false
+        for itemID in result.removedIDs {
+            state.items.remove(id: itemID)
+            if state.favoritePaths.remove(itemID) != nil {
+                hadFavorited = true
+            }
+        }
+        state.keptDeletes = result.kept
+        if result.trashedCount > 0 {
+            state.trashNotice = MovedToTrashNotice(
+                count: result.trashedCount,
+                sequence: (state.trashNotice?.sequence ?? 0) + 1
+            )
+        }
+        if !result.removedIDs.isEmpty {
+            syncListingCache(state)
+        }
+        return hadFavorited ? .send(.delegate(.favoritesChanged)) : .none
     }
 
     /// Every selected directory is toggled, mirroring the single-item context-menu action:

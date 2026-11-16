@@ -34,6 +34,8 @@ public extension BrowseFeature {
         /// Gateway and proxy answers (bad gateway, unavailable, gateway timeout, and Cloudflare's
         /// origin timeout) that say nothing about whether a slow mutation finished on the server.
         static let ambiguousMutationStatuses: Set<Int> = [502, 503, 504, 524]
+        /// The status a replace reports when the trash kept what it was replacing (a conflict).
+        static let replaceRefusedStatus = 409
     }
 
     /// Where `.searchable`'s scope bar points the search request. "This Folder" is
@@ -105,8 +107,52 @@ public extension BrowseFeature {
         public let renamed: FileItem
     }
 
+    /// What a delete did: the rows to drop, the items the trash refused (still on disk), and how
+    /// many went to the trash rather than away for good.
     struct DeleteResult: Equatable, Sendable {
-        public let itemID: String
+        public let removedIDs: [FileItem.ID]
+        public let kept: [KeptDelete]
+        public let trashedCount: Int
+
+        public init(removedIDs: [FileItem.ID], kept: [KeptDelete] = [], trashedCount: Int = 0) {
+            self.removedIDs = removedIDs
+            self.kept = kept
+            self.trashedCount = trashedCount
+        }
+
+        /// Pairs the server's answers with the request by position, as it answers in order.
+        init(requested: [FileItem], outcome: DeleteOutcome) {
+            let kept = zip(requested, outcome.items).compactMap { item, entry in
+                entry.status == .kept
+                    ? KeptDelete(item: item, reason: entry.reason, size: entry.size, budgetBytes: entry.budgetBytes)
+                    : nil
+            }
+            let keptIDs = Set(kept.map(\.id))
+            self.init(
+                removedIDs: requested.map(\.id).filter { !keptIDs.contains($0) },
+                kept: kept,
+                trashedCount: outcome.trashedCount
+            )
+        }
+    }
+
+    /// An item the trash would not take, left where it was.
+    struct KeptDelete: Equatable, Sendable, Identifiable {
+        public let item: FileItem
+        public let reason: TrashRefusal?
+        public let size: Int64?
+        public let budgetBytes: Int64?
+
+        public var id: FileItem.ID {
+            item.id
+        }
+    }
+
+    /// A delete sent `count` items to the trash; `sequence` makes each notice new, so the toast
+    /// shows again for a second delete of the same size.
+    struct MovedToTrashNotice: Equatable, Sendable {
+        public let count: Int
+        public let sequence: Int
     }
 
     /// State of the `POST /api/files/delete-impact` lookup that runs while a delete
@@ -118,10 +164,6 @@ public extension BrowseFeature {
         case checking
         case loaded(DeleteImpact)
         case unavailable
-    }
-
-    struct BulkDeleteResult: Equatable, Sendable {
-        public let itemIDs: [String]
     }
 
     struct BulkFavoriteToggleResult: Equatable, Sendable {

@@ -73,6 +73,12 @@ struct BrowseToastEvents: ViewModifier {
                 }
                 toastMessage = .success(newValue)
             }
+            .onChange(of: store.trashNotice) { _, newValue in
+                guard let newValue else { return }
+                toastMessage = .success(L10n.Trash.movedToTrash(newValue.count), actionTitle: L10n.Trash.openTrash) {
+                    store.send(.delegate(.openTrashTapped))
+                }
+            }
             .onChange(of: store.clipboardStagedMessage) { _, newValue in
                 guard let newValue else { return }
                 toastMessage = .success(newValue)

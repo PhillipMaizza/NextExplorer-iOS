@@ -194,12 +194,23 @@ extension BrowseFeature {
                 confirmDelete(&state, deferred: true)
             )
 
+        case let .deletePermanentlyConfirmed(fromPreview):
+            guard fromPreview else { return confirmDelete(&state, permanent: true) }
+            return .merge(
+                .send(.previewDismissed),
+                confirmDelete(&state, deferred: true, permanent: true)
+            )
+
+        case .keptDeletePermanentlyConfirmed:
+            return deleteKeptPermanently(&state)
+
+        case .keptDeleteDismissed:
+            state.keptDeletes = []
+            return .none
+
         case let .deleteResponse(.success(result)):
             state.isPerformingFileAction = false
-            state.items.remove(id: result.itemID)
-            let wasFavorited = state.favoritePaths.remove(result.itemID) != nil
-            syncListingCache(state)
-            return wasFavorited ? .send(.delegate(.favoritesChanged)) : .none
+            return applyDeleteResult(&state, result)
 
         case let .deleteResponse(.failure(error)):
             state.isPerformingFileAction = false

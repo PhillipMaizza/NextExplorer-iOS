@@ -84,6 +84,36 @@ struct BrowseTransferConflictTests {
         #expect(calls.value == ["delete [\"Documents/a.txt\"]", "transfer [\"Inbox/a.txt\"]"])
     }
 
+    @Test("Replace stops before the transfer when the trash keeps the item it would replace")
+    func replaceStopsWhenTheTrashKeepsTheClashingItem() async {
+        let existing = existing
+        let store = BrowseFixtures.store(conflictState()) {
+            $0.filesClient.deleteItems = { _, items, _ in
+                DeleteOutcome(items: items.map { .init(path: $0.id, status: .kept, reason: .otherDevice) })
+            }
+            $0.filesClient.transferItems = { _, _, _, _ in
+                Issue.record("Transferred over an item that is still there")
+                return BrowseFixtures.transferResult([], to: TestFolder.documents)
+            }
+        }
+
+        await pasteAndStopAtThePrompt(store)
+        await store.send(.transferConflictResolved(.replace)) {
+            $0.transferConflict = nil
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.pendingTransferRetry = BrowseFeature.TransferRetry(
+                items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
+                resolution: .replace, itemsToReplace: [existing]
+            )
+        }
+        await store.receive(\.transferResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.transferErrorMessage = L10n.Trash.replaceKept(existing.name)
+        }
+    }
+
     @Test("Keep both transfers without deleting anything and lets the server number the copy")
     func keepBothTransfersWithoutDeletingAnything() async {
         let gate = AsyncGate()

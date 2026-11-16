@@ -82,7 +82,15 @@ extension BrowseFeature {
         return .run { send in
             try await send(.transferResponse(apiResult {
                 if retry.resolution == .replace, !retry.itemsToReplace.isEmpty {
-                    _ = try await filesClient.deleteItems(serverURL, retry.itemsToReplace, false)
+                    // What is replaced goes to the trash. One the trash refused still holds its name,
+                    // so the transfer stops rather than landing beside it under another name.
+                    let outcome = try await filesClient.deleteItems(serverURL, retry.itemsToReplace, false)
+                    if let kept = outcome.kept(of: retry.itemsToReplace).first {
+                        throw FilesClientError.serverMessage(
+                            statusCode: Constants.replaceRefusedStatus,
+                            message: L10n.Trash.replaceKept(kept.name)
+                        )
+                    }
                 }
                 let result = try await filesClient.transferItems(
                     serverURL,

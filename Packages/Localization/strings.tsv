@@ -1219,3 +1219,99 @@ shareUpload.nameLabel	File Name
 shareUpload.namesLabel	File Names
 shareUpload.nameHint	The name the file uploads under. Its extension stays the same.
 spotlight.placeholder	Search files and folders
+# Trash: delete confirmations, the trash screen and its Mac table
+trash.title	Trash
+trash.rowSubtitle	Deleted items you can restore
+trash.moveToTrash	Move to Trash
+trash.deletePermanently	Delete Permanently
+trash.deleteMessageOne#one	It will go to the trash, which keeps it for %lld day.
+trash.deleteMessageOne#other	It will go to the trash, which keeps it for %lld days.
+trash.deleteMessageMany#one	They will go to the trash, which keeps them for %lld day.
+trash.deleteMessageMany#other	They will go to the trash, which keeps them for %lld days.
+trash.deleteMessageGeneric	Deleted items go to the trash, where they can be restored.
+trash.deleteSomePermanent#one	%lld of them cannot go to the trash and will be deleted for good.
+trash.deleteSomePermanent#other	%lld of them cannot go to the trash and will be deleted for good.
+trash.reasonDisabled	The trash is switched off.
+trash.reasonOtherDevice	It is on another disk than its volume's trash.
+trash.reasonTooLarge	It is larger than the whole trash of its volume.
+trash.reasonZoneRoot	A whole volume cannot go into its own trash.
+trash.reasonZoneUnwritable	The trash of its volume cannot be written to.
+trash.reasonNoZone	It is not in a place that has a trash.
+trash.reasonUnknown	The server did not say why.
+trash.deleteLinkedShares#one	This content has %lld share link. It stops working while the content is in the trash, and can be brought back when it is restored.
+trash.deleteLinkedShares#other	This content has %lld share links. They stop working while the content is in the trash, and can be brought back when it is restored.
+trash.keptTitle	Could Not Go to the Trash
+trash.keptTooLarge	“%1$@” is %2$@, more than the %3$@ its volume's trash can hold.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#one	%lld item moved to the trash
+trash.movedToTrash#other	%lld items moved to the trash
+trash.openTrash	Open Trash
+trash.replaceKept	“%@” could not go to the trash, so nothing was replaced.
+trash.subtitle#one	Items are removed for good %lld day after they were deleted.
+trash.subtitle#other	Items are removed for good %lld days after they were deleted.
+trash.emptyState	The trash is empty.
+trash.disabledNotice	The trash is switched off: deleting removes items for good. What is still here can be restored.
+trash.unavailable	Volume unavailable
+trash.removedToday	Removed today
+trash.removedIn#one	Removed in %lld day
+trash.removedIn#other	Removed in %lld days
+trash.locationPersonal	Personal folder
+trash.locationUnknown	Unknown location
+trash.deletedByYou	You
+trash.deletedByShareLink	Share link
+trash.deletedByUnknown	Unknown
+trash.deletedBy	Deleted by %@
+trash.restore	Restore
+trash.restoreTo	Restore To…
+trash.restoreHere	Restore Here
+trash.restoreFolder	Restore Whole Folder
+trash.openLocation	Open Original Location
+trash.emptyTrash	Empty Trash
+trash.forget	Forget
+trash.confirmDeleteTitle	Delete Permanently?
+trash.confirmDeleteMessage#one	This item will be removed for good. This cannot be undone.
+trash.confirmDeleteMessage#other	These %lld items will be removed for good. This cannot be undone.
+trash.confirmEmptyTitle	Empty the Trash?
+trash.confirmEmptyMessage	Everything in your trash will be removed for good. This cannot be undone.
+trash.restored#one	%lld item restored
+trash.restored#other	%lld items restored
+trash.renamed	“%1$@” was restored as “%2$@”: its name was taken.
+trash.notRestored#one	%lld item could not be restored.
+trash.notRestored#other	%lld items could not be restored.
+trash.deletedPermanently#one	%lld item deleted permanently
+trash.deletedPermanently#other	%lld items deleted permanently
+trash.notDeleted#one	%lld item could not be deleted.
+trash.notDeleted#other	%lld items could not be deleted.
+trash.emptied#one	Trash emptied: %lld item removed
+trash.emptied#other	Trash emptied: %lld items removed
+trash.leftBehind#one	%lld item could not be removed and is still there.
+trash.leftBehind#other	%lld items could not be removed and are still there.
+trash.failureForbidden	You can no longer write where it was.
+trash.failureBlocked	Something now stands where its folder was.
+trash.failureUnavailable	Its volume is not available.
+trash.failureBusy	It is already being handled.
+trash.failureLost	Its content had disappeared.
+trash.failureNotFound	It is no longer in the trash.
+trash.failureDestinationForbidden	You cannot create items in that folder.
+trash.failureInvalidDestination	That folder cannot receive it.
+trash.failureCancelled	The restore stopped before reaching it.
+trash.failureUnknown	It could not be handled.
+trash.sharesBadge	Shared
+trash.sharesChooseTitle	What About the Share Links?
+trash.sharesChooseMessage#one	%lld share link belonged to what you are restoring. It has stopped working since the deletion.
+trash.sharesChooseMessage#other	%lld share links belonged to what you are restoring. They have stopped working since the deletion.
+trash.sharesChooseElsewhere	Brought back, they will point to the new location.
+trash.sharesKeep	Restore the Share Links
+trash.sharesDrop	Delete the Share Links
+trash.sharesRestored#one	%lld share link brought back
+trash.sharesRestored#other	%lld share links brought back
+trash.sharesDropped#one	%lld share link deleted
+trash.sharesDropped#other	%lld share links deleted
+trash.loadFailed	The trash could not be loaded.
+trash.folderLoadFailed	This folder could not be opened.
+trash.folderEmpty	This folder is empty.
+trash.restoring	Restoring…
+trash.columnOriginalLocation	Original Location
+trash.columnDeletedBy	Deleted By
+trash.columnDeletedOn	Deleted On
+trash.columnRemoved	Removed
