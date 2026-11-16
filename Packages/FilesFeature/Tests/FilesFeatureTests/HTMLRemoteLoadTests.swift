@@ -34,11 +34,13 @@ struct HTMLRemoteLoadTests {
         func webView(_: WKWebView, stop _: any WKURLSchemeTask) {}
     }
 
-    /// Resumes once the page has finished loading, its subresources included.
+    /// Resumes once the page has finished loading, its subresources included, or failed to.
     @MainActor
     private final class LoadWaiter: NSObject, WKNavigationDelegate {
         private var continuation: CheckedContinuation<Void, Never>?
         private var isFinished = false
+        /// Only a page that loaded proves the rules let local content through.
+        private(set) var didLoad = false
 
         func wait() async {
             guard !isFinished else { return }
@@ -46,6 +48,7 @@ struct HTMLRemoteLoadTests {
         }
 
         func webView(_: WKWebView, didFinish _: WKNavigation!) {
+            didLoad = true
             finish()
         }
 
@@ -64,8 +67,10 @@ struct HTMLRemoteLoadTests {
         }
     }
 
-    /// Loads the page from disk with `configuration` and answers what it asked the probe for.
-    private func remoteRequests(rendering configuration: WKWebViewConfiguration) async throws -> [URL] {
+    /// Loads the page from disk with `configuration`: whether it loaded, and what it asked the probe for.
+    private func render(
+        _ configuration: WKWebViewConfiguration
+    ) async throws -> (didLoad: Bool, remoteRequests: [URL]) {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("\(Constants.directoryPrefix)\(TestID.name())", isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -80,20 +85,24 @@ struct HTMLRemoteLoadTests {
         webView.navigationDelegate = waiter
         webView.loadFileURL(pageURL, allowingReadAccessTo: directory)
         await waiter.wait()
-        return probe.requested
+        return (waiter.didLoad, probe.requested)
     }
 
     @Test("Without the rules the page does ask for its remote image and stylesheet")
     func controlRenderReachesTheProbe() async throws {
-        #expect(try await !remoteRequests(rendering: WKWebViewConfiguration()).isEmpty)
+        let result = try await render(WKWebViewConfiguration())
+
+        #expect(result.didLoad)
+        #expect(!result.remoteRequests.isEmpty)
     }
 
-    @Test("With the preview's configuration the page reaches no host at all")
+    @Test("With the preview's configuration the page loads and reaches no host at all")
     func previewRenderReachesNothing() async throws {
         let rules = try #require(await LocalOnlyContentRules.compiled())
 
-        let requests = try await remoteRequests(rendering: LocalOnlyContentRules.webViewConfiguration(applying: rules))
+        let result = try await render(LocalOnlyContentRules.webViewConfiguration(applying: rules))
 
-        #expect(requests.isEmpty)
+        #expect(result.didLoad, "the rules must never block the local page itself")
+        #expect(result.remoteRequests.isEmpty)
     }
 }
