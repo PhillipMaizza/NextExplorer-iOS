@@ -162,10 +162,10 @@ struct FileRedoTests {
     func aNewOperationEndsTheRedoHistory() async {
         let made = folder(Constants.newFolderName)
         let pending = FileUndoEntry(.renamed(renamedPhoto, previousName: TestFile.vacationPhoto))
-        let store = store(redo: [pending])
-        store.exhaustivity = .off
+        let store = store(redo: [pending]) { $0.directoryCacheStore = .inMemory() }
 
         await store.send(.newFolderResponse(.success(made))) {
+            $0.items = [made]
             $0.$undoStack.withLock { $0 = [FileUndoEntry(.madeNew(made))] }
             $0.$redoStack.withLock { $0 = [] }
         }
