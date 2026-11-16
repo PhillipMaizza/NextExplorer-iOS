@@ -11,6 +11,8 @@ private enum Constants {
     static let sidebarIconSize: CGFloat = .iconMedium
     /// Space between a sidebar row's icon and its title, the same in every row.
     static let iconTitleSpacing: CGFloat = .space12
+    /// How much of the sidebar's color sits over its frost: enough for the rows to stay legible.
+    static let sidebarTintOpacity: Double = 0.55
     /// The height of a section row in the iPad sidebar list, so the footer rows below it match.
     static let sidebarRowHeight: CGFloat = 52
     // The account block at the foot of the sidebar: larger on iPad, where it is a touch target
@@ -108,6 +110,12 @@ struct MainTabSidebar: View {
                 // Suppress the system's opaque accent selection capsule; each row draws its own
                 // pill via `listRowBackground` instead.
                 .tint(Color.clear)
+                // Frosted over the content running on beneath it; solid with Reduce Transparency.
+                .scrollContentBackground(.hidden)
+                .background {
+                    DSFrostedTint(Rectangle(), tint: .backgroundSecondary, tintOpacity: Constants.sidebarTintOpacity)
+                        .ignoresSafeArea()
+                }
                 .safeAreaInset(edge: .bottom, spacing: 0) {
                     sidebarFooter
                 }
@@ -201,12 +209,8 @@ struct MainTabSidebar: View {
     private var sidebarFooter: some View {
         VStack(alignment: .leading, spacing: 0) {
             footerButton(L10n.TipJar.title, icon: IconKit.coffee, action: openTipJar)
-            footerButton(L10n.Settings.rowSupport, icon: IconKit.help, opensOutside: true) {
-                #if os(macOS)
-                    openURL(AppLinks.supportMail)
-                #else
-                    openURL(AppLinks.support)
-                #endif
+            footerButton(L10n.Settings.rowSupport, icon: IconKit.help) {
+                openURL(AppLinks.supportMail)
             }
             #if os(iOS)
                 settingsButton
@@ -256,7 +260,6 @@ struct MainTabSidebar: View {
         _ title: String,
         icon: Image,
         isSelected: Bool = false,
-        opensOutside: Bool = false,
         shortcut: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
@@ -272,13 +275,6 @@ struct MainTabSidebar: View {
                 HStack {
                     rowLabel(title, icon: icon, isSelected: isSelected)
                         .lineLimit(1)
-                    if opensOutside {
-                        Spacer(minLength: 0)
-                        // A page outside the app, marked like a link that leaves it.
-                        IconKit.externalLink
-                            .foregroundStyle(Color.secondaryDS)
-                            .accessibilityHidden(true)
-                    }
                 }
                 .padding(.horizontal, Constants.footerRowInset)
                 .frame(maxWidth: .infinity, minHeight: Constants.sidebarRowHeight, alignment: .leading)

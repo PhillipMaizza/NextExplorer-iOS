@@ -88,13 +88,7 @@ struct LoginSecondFactorPage: View {
             }
             .scrollDismissesKeyboard(.immediately)
         }
-        .background {
-            if horizontalSizeClass == .regular {
-                Color.backgroundSecondary
-            } else {
-                LinearGradient.backgroundPrimary.ignoresSafeArea()
-            }
-        }
+        .background { LoginPageSurface(horizontalSizeClass: horizontalSizeClass) }
         .onChange(of: store.codeMode) { _, _ in
             isCodeFocused = true
         }
