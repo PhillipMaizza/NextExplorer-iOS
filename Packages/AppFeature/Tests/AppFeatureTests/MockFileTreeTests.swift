@@ -22,13 +22,20 @@ struct MockFileTreeTests {
 
     @Test
     func aFolderOpenedForTheFirstTimeListsTheTemplateAtItsOwnPath() {
-        let tree = MockFileTree(template: template)
+        let tree = MockFileTree(template: template, seededDepth: 1)
         #expect(tree.list(Constants.docs).map(\.id) == ["Documents/Photos", "Documents/notes.txt"])
     }
 
     @Test
+    func foldersBelowTheSeededDepthStartEmpty() {
+        let tree = MockFileTree(template: template, seededDepth: 1)
+        #expect(tree.list("Documents/Photos").isEmpty)
+        #expect(MockFileTree(template: template, seededDepth: 0).list(Constants.docs).isEmpty)
+    }
+
+    @Test
     func aMadeFolderStartsEmptyAndAMoveIntoItLeavesTheSource() {
-        let tree = MockFileTree(template: template)
+        let tree = MockFileTree(template: template, seededDepth: 1)
         let reports = tree.createFolder(in: Constants.docs, named: Constants.reports)
         #expect(tree.list(reports.id).isEmpty)
 
@@ -47,7 +54,7 @@ struct MockFileTreeTests {
 
     @Test
     func aTakenNameGetsAFreeOneAsTheServerKeepsBoth() {
-        let tree = MockFileTree(template: template)
+        let tree = MockFileTree(template: template, seededDepth: 1)
         let notes = tree.list("")[1]
         let result = tree.transfer([notes], to: Constants.docs, operation: .copy)
 
@@ -57,7 +64,7 @@ struct MockFileTreeTests {
 
     @Test
     func renamingAFolderCarriesWhatIsInside() {
-        let tree = MockFileTree(template: template)
+        let tree = MockFileTree(template: template, seededDepth: 1)
         let reports = tree.createFolder(in: Constants.docs, named: Constants.reports)
         let notes = tree.list(Constants.docs)[1]
         _ = tree.transfer([notes], to: reports.id, operation: .move)
@@ -69,11 +76,10 @@ struct MockFileTreeTests {
 
     @Test
     func deletingAFolderForgetsWhatWasInside() {
-        let tree = MockFileTree(template: template)
+        let tree = MockFileTree(template: template, seededDepth: 1)
         let reports = tree.createFolder(in: Constants.docs, named: Constants.reports)
         tree.delete([reports])
-        // Listed again, a folder of that name is a fresh one from the template.
         #expect(!tree.list(Constants.docs).contains { $0.name == Constants.reports })
-        #expect(tree.list(reports.id).count == template.count)
+        #expect(tree.list(reports.id).isEmpty)
     }
 }

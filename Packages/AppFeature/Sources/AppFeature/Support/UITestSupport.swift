@@ -289,7 +289,11 @@
                 installAccountMocks(into: &client)
                 // An in memory file tree so writes (create, rename, delete, move, copy, compress) land
                 // in the folder they name and show in the next listing, as on the server.
-                let store = MockFileTree(template: scenario == .gallery ? galleryItems : rootItems)
+                // The root and its folders hold the fixture (the gallery only its root, whose one folder
+                // is where a move lands); deeper folders start empty.
+                let store = scenario == .gallery
+                    ? MockFileTree(template: galleryItems, seededDepth: 0)
+                    : MockFileTree(template: rootItems, seededDepth: 1)
                 if scenario == .gallery {
                     installGalleryFiles(into: &client)
                 }

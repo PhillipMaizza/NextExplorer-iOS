@@ -5,8 +5,9 @@
 
     /// The UI tests' server side file tree, in memory for one app launch: every operation acts on
     /// the folder it names, as the real server does, so a move leaves one folder and lands in another
-    /// and undoing it brings it back. A folder opened for the first time lists the fixture `template`,
-    /// so any folder a test opens has the files it expects; a folder made during the test starts empty.
+    /// and undoing it brings it back. The root and the folders down to `seededDepth` list the fixture
+    /// `template` the first time they are opened, so the folders a test opens have the files it
+    /// expects; deeper folders, and any made during the test, start empty.
     /// The lock keeps it safe across the client's `@Sendable` async closures.
     final class MockFileTree: @unchecked Sendable {
         private enum Constants {
@@ -17,11 +18,13 @@
 
         private let lock = NSLock()
         private let template: [FileItem]
+        private let seededDepth: Int
         /// Each listed folder's children, by folder path ("" is the root).
         private var folders: [String: [FileItem]] = [:]
 
-        init(template: [FileItem]) {
+        init(template: [FileItem], seededDepth: Int) {
             self.template = template
+            self.seededDepth = seededDepth
         }
 
         private func locked<T>(_ body: () -> T) -> T {
@@ -107,7 +110,8 @@
             if let listed = folders[path] {
                 return listed
             }
-            let fresh = template.map { Self.relocated($0, to: path, named: $0.name) }
+            let depth = path.isEmpty ? 0 : path.split(separator: "/").count
+            let fresh = depth > seededDepth ? [] : template.map { Self.relocated($0, to: path, named: $0.name) }
             folders[path] = fresh
             return fresh
         }
