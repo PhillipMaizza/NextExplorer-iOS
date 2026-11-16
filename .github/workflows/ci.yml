@@ -5,9 +5,10 @@ name: CI
 # before anyone reviews the change.
 #
 # The XCUITest suites (iPhone on a simulator, and the Mac app) are heavier (they cold launch the
-# app per test) so they run on pushes to main, on demand ("Run workflow" on a branch), and on
-# pull requests labelled `ui-tests` (from the next push after labelling). The iPhone suite is
-# built once and split across three runners that only run it.
+# app per test) so they run on pushes to main, on demand ("Run workflow" on a branch), on pull
+# requests labelled `ui-tests` (from the next push after labelling), and on pull requests that
+# change a UI test or the mocked backend it runs against. The iPhone suite is built once and split
+# across two runners that only run it.
 
 on:
   # No branch filter, so a pull request stacked on another branch gets its checks too, and still
@@ -42,6 +43,7 @@ jobs:
       code: ${{ steps.diff.outputs.code }}
       ios: ${{ steps.diff.outputs.ios }}
       mac: ${{ steps.diff.outputs.mac }}
+      ui: ${{ steps.diff.outputs.ui }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -83,7 +85,7 @@ jobs:
           esac
           if [ -z "${BASE}" ] || ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
             echo "No base to compare against; running everything"
-            printf 'code=true\nios=true\nmac=true\n' >> "${GITHUB_OUTPUT}"
+            printf 'code=true\nios=true\nmac=true\nui=true\n' >> "${GITHUB_OUTPUT}"
             exit 0
           fi
           CHANGED=$(git -c core.quotePath=false diff --name-only "${BASE}" "${GITHUB_SHA}")
@@ -343,7 +345,8 @@ jobs:
       needs.changes.outputs.ios == 'true' && (
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests')))
+      (github.event_name == 'pull_request' && (
+      contains(github.event.pull_request.labels.*.name, 'ui-tests') || needs.changes.outputs.ui == 'true')))
     runs-on: xcode-27
     timeout-minutes: 45
 
@@ -428,43 +431,40 @@ jobs:
   ui-test:
     name: UI tests (${{ matrix.shard.name }})
     needs: [changes, ui-test-build]
-    # Merges to main, manual runs from the Actions tab, and pull requests labelled `ui-tests`.
+    # Merges to main, manual runs from the Actions tab, pull requests labelled `ui-tests`, and pull
+    # requests that change a UI test or its mock.
     if: >-
       needs.changes.outputs.ios == 'true' && (
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests')))
+      (github.event_name == 'pull_request' && (
+      contains(github.event.pull_request.labels.*.name, 'ui-tests') || needs.changes.outputs.ui == 'true')))
     runs-on: xcode-27
     timeout-minutes: 45
 
-    # Three runners, each with about a third of the suite by measured time (main run of
-    # 2026-11-15: shard 1 with FileActions 8 min, shard 2 15 min, the rest 41 min, over the 45 min
-    # job limit once its setup is counted). Gallery moved to the first shard when it grew to 17
-    # tests. The last shard runs every class the others skip, so a new test class always runs
-    # somewhere. Re-measure from a main run's log when a class grows.
+    # Two runners, each with about half of the suite by measured time (median class times of the
+    # green main runs of 2026-11-13 to 2026-11-15: the first shard 1540 s, the rest 1530 s). Two,
+    # not three: the account runs five macOS jobs at once, and three are still busy when this build
+    # ends (Build and test, Mac build and test, Mac UI tests), so a third shard waited about ten
+    # minutes for a runner and finished last. The second shard runs every class the first skips, so a new
+    # test class always runs somewhere. Re-measure from a main run's log when a class grows.
     strategy:
       fail-fast: false
       matrix:
         shard:
-          - name: 1 of 3
+          - name: 1 of 2
             only: >-
-              -only-testing:NextExplorerUITests/FileActionsUITests
               -only-testing:NextExplorerUITests/GalleryUITests
-          - name: 2 of 3
-            only: >-
+              -only-testing:NextExplorerUITests/OfflineTabUITests
               -only-testing:NextExplorerUITests/SecondFactorUITests
-              -only-testing:NextExplorerUITests/MultiSelectClipboardUITests
-              -only-testing:NextExplorerUITests/SearchUITests
-              -only-testing:NextExplorerUITests/SharedUITests
-          - name: 3 of 3
+              -only-testing:NextExplorerUITests/OfflineLaunchUITests
+          - name: 2 of 2
             only: >-
               -only-testing:NextExplorerUITests
-              -skip-testing:NextExplorerUITests/FileActionsUITests
               -skip-testing:NextExplorerUITests/GalleryUITests
+              -skip-testing:NextExplorerUITests/OfflineTabUITests
               -skip-testing:NextExplorerUITests/SecondFactorUITests
-              -skip-testing:NextExplorerUITests/MultiSelectClipboardUITests
-              -skip-testing:NextExplorerUITests/SearchUITests
-              -skip-testing:NextExplorerUITests/SharedUITests
+              -skip-testing:NextExplorerUITests/OfflineLaunchUITests
 
     env:
       SIM_DEVICE: iPhone 17
@@ -563,7 +563,8 @@ jobs:
       needs.changes.outputs.mac == 'true' && (
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests')))
+      (github.event_name == 'pull_request' && (
+      contains(github.event.pull_request.labels.*.name, 'ui-tests') || needs.changes.outputs.ui == 'true')))
     runs-on: xcode-27
     timeout-minutes: 60
 

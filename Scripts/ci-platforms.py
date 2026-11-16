@@ -6,6 +6,7 @@ Reads changed file paths from stdin (one per line) and prints GitHub Actions out
     code=true|false
     ios=true|false
     mac=true|false
+    ui=true|false
 
 Docs, screenshots, store text and issue templates never build, on a pull request or on main. On a pull request:
 
@@ -17,6 +18,9 @@ Docs, screenshots, store text and issue templates never build, on a pull request
 Anything else counts for both: shared Swift, project files, resources, fixtures, lint config,
 workflows, scripts the build jobs run, and any file that is deleted or has an `#else` branch. The
 lists below are allow lists: an unknown file builds. A push to main builds everything except docs.
+
+`ui` says a pull request changed the UI tests or the mocked backend they launch against, so their
+suites run on it without the `ui-tests` label (each on the platforms `ios` and `mac` pick).
 
     python3 Scripts/ci-platforms.py --ref <sha> --event pull_request|push
 """
@@ -54,6 +58,11 @@ CHECKED_FILES = {
 CHECKED_FOLDERS = ("Scripts/mtls/",)
 
 GUARDS = {"#if os(macOS)": MAC, "#if os(iOS)": IOS}
+
+# The UI test suites and the mocked backend the app runs for them.
+UI_TEST_PATTERN = re.compile(
+    r"^NextExplorerUITests/|^Packages/AppFeature/Sources/AppFeature/Support/(UITestSupport[^/]*|MockFileTree)\.swift$"
+)
 
 
 def kind(path, content):
@@ -97,6 +106,11 @@ def outputs(kinds, event):
     return True, ios, mac
 
 
+def touches_ui_tests(paths):
+    """Whether any changed path is a UI test or the mock it runs against."""
+    return any(UI_TEST_PATTERN.search(path) for path in paths)
+
+
 def content_at(ref, path):
     """The file's text at `ref`, None when it is gone. A binary file (a font, an image) is read with its
     undecodable bytes replaced: only Swift files are ever inspected, and a binary one is never one."""
@@ -116,6 +130,7 @@ def main():
     print(f"code={str(code).lower()}")
     print(f"ios={str(ios).lower()}")
     print(f"mac={str(mac).lower()}")
+    print(f"ui={str(touches_ui_tests(paths)).lower()}")
 
 
 if __name__ == "__main__":
