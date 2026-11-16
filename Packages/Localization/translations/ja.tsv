@@ -539,6 +539,7 @@ settings.addAccount	アカウントを追加
 settings.accountSignOut	サインアウト
 settings.accountSignOutTitle	サインアウトしますか？
 settings.accountSignOutMessage	このデバイスで %@ をサインアウトしますか？このアカウントを使うには再度サインインする必要があります。
+settings.accountChangeFailed	現在アカウントを変更できませんでした。もう一度お試しください。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 使用中のアカウント
 settings.badgeActive	アクティブ

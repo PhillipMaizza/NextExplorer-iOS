@@ -22,7 +22,8 @@
 
             openMenu({ offline.row(legacyName).press(forDuration: 1) }, until: offline.deleteAction)
             offline.deleteAction.tap()
-            XCTAssertTrue(offline.deleteAction.waitToAppear(), "Delete asks for confirmation first")
+            XCTAssertTrue(offline.deleteConfirmMessage.waitToAppear(), "Delete asks for confirmation first")
+            XCTAssertTrue(offline.row(legacyName).exists, "Nothing is deleted before the confirmation")
             offline.deleteAction.tap()
 
             XCTAssertTrue(offline.row(legacyName).waitToVanish(), "A confirmed delete removes the saved file")

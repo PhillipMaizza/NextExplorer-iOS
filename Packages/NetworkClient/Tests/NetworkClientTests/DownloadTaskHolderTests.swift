@@ -19,7 +19,9 @@ struct DownloadTaskHolderTests {
         #expect(holder.store(task))
         holder.cancel()
 
-        #expect(task.state == .canceling)
+        // A task that never started can finish cancelling at once, so either state proves it; an
+        // uncancelled one stays suspended.
+        #expect([.canceling, .completed].contains(task.state))
     }
 
     @Test("a task stored after cancellation is refused so the caller cancels it instead of resuming")

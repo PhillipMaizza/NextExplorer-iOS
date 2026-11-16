@@ -78,7 +78,7 @@ final class ArchiveSource: @unchecked Sendable {
             _ = try archive.extract(entry, bufferSize: 1024 * 1024, skipCRC32: true) { chunk in
                 written += UInt64(chunk.count)
                 guard written <= ArchiveReader.maxEntrySize else { throw ArchiveReaderError.entryTooLarge }
-                fileHandle.write(chunk)
+                try fileHandle.write(contentsOf: chunk)
             }
         case let .rar(archive):
             guard let entry = try rarEntries().first(where: { $0.fileName == entryPath }) else {
@@ -92,19 +92,28 @@ final class ArchiveSource: @unchecked Sendable {
             defer { try? fileHandle.close() }
             var written: UInt64 = 0
             var overflowed = false
-            // `Unrar`'s handler can't throw, so once the running count passes the ceiling we stop
-            // writing and report afterward: the decoder keeps running but nothing more hits disk.
+            var writeError: (any Error)?
+            // `Unrar`'s handler can't throw, so once the running count passes the ceiling or a write
+            // fails (a full disk) we stop writing and report afterward: the decoder keeps running
+            // but nothing more hits disk.
             try archive.extract(entry) { chunk, _ in
-                guard !overflowed else { return }
+                guard !overflowed, writeError == nil else { return }
                 written += UInt64(chunk.count)
                 if written > ArchiveReader.maxEntrySize {
                     overflowed = true
                     return
                 }
-                fileHandle.write(chunk)
+                do {
+                    try fileHandle.write(contentsOf: chunk)
+                } catch {
+                    writeError = error
+                }
             }
             if overflowed {
                 throw ArchiveReaderError.entryTooLarge
+            }
+            if let writeError {
+                throw writeError
             }
         }
     }
@@ -141,8 +150,14 @@ enum ArchiveReader {
         try source.entries()
     }
 
+    /// A failed extraction (too large, a full disk, a corrupt entry) leaves no partial file behind.
     static func extract(_ entryPath: String, from source: ArchiveSource, to destinationURL: URL) throws {
-        try source.extract(entryPath, to: destinationURL)
+        do {
+            try source.extract(entryPath, to: destinationURL)
+        } catch {
+            try? FileManager.default.removeItem(at: destinationURL)
+            throw error
+        }
     }
 
     /// Rejects an extraction before it starts when the declared size exceeds the ceiling or the

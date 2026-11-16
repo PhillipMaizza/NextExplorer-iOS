@@ -23,7 +23,9 @@ extension FilesService {
     /// suffixed on a collision.
     func createFolder(serverURL: URL, path: String, name: String) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.filesFolder)
-        var request = Self.makeRequest(url: url, method: .post)
+        // The long budget: a NAS waking its disks can take longer than the interactive one, and a
+        // timeout read as offline would invite a retry that creates a second, renamed folder.
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(CreateFolderBody(path: path, name: name))
         let envelope = try await sendReportingMessage(request, decoding: CreateFolderEnvelope.self)
@@ -32,7 +34,7 @@ extension FilesService {
 
     func createFile(serverURL: URL, path: String, name: String) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.filesFile)
-        var request = Self.makeRequest(url: url, method: .post)
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(CreateFolderBody(path: path, name: name))
         let envelope = try await sendReportingMessage(request, decoding: CreateFolderEnvelope.self)
@@ -52,11 +54,18 @@ extension FilesService {
             if let offlineURL = OfflineCache.localURL(forPath: path, scope: scope),
                let text = Self.offlineEditorText(at: offlineURL)
             {
+                // The pinned copy can be older than the server's file and carries no version, so its
+                // first save must ask before overwriting: a tag the server can never match makes the
+                // save's check report a conflict, with Overwrite and Reload to choose from.
+                textEditorETags.set(Self.offlineCopyETag, for: Self.editorKey(scope, serverURL, path))
                 return text
             }
             throw error
         }
     }
+
+    /// Stands in for the version of a file opened from its pinned copy; never a real server ETag.
+    static let offlineCopyETag = #""offline-copy""#
 
     /// The pinned copy as editor text, refused above the backend editor cap (so the offline editor
     /// never opens what the server would not) and when the bytes are not plain text.

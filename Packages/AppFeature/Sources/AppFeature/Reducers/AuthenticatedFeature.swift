@@ -34,6 +34,9 @@ public struct AuthenticatedFeature {
         /// The active account changed as a result of a switch / sign out / removal performed here;
         /// carries the account now active (`nil` when none remain).
         case accountChangeResolved(SessionCredentials?)
+        /// The stored accounts could not be read, so nothing was switched or removed and the user
+        /// is told.
+        case accountChangeFailed
         case delegate(Delegate)
 
         @CasePathable
@@ -62,6 +65,26 @@ public struct AuthenticatedFeature {
 
     public init() {}
 
+    /// Signs `accountID` out and wipes its caches. It is listed as pending before its session goes,
+    /// so a kill in between cannot orphan its files; an unreadable keychain removes nothing.
+    private func remove(_ accountID: String) -> Effect<Action> {
+        let authClient = authClient
+        let accountCacheWipe = accountCacheWipe
+        return .run { send in
+            accountCacheWipe.markPending(accountID)
+            let next: SessionCredentials?
+            do {
+                next = try await authClient.removeAccount(accountID)
+            } catch {
+                accountCacheWipe.pendingWipes.remove(accountID)
+                await send(.accountChangeFailed)
+                return
+            }
+            accountCacheWipe.wipe(accountID)
+            await send(.accountChangeResolved(next))
+        }
+    }
+
     public var body: some ReducerOf<Self> {
         Scope(state: \.mainTab, action: \.mainTab) {
             MainTabFeature()
@@ -74,32 +97,34 @@ public struct AuthenticatedFeature {
                 // teardown (every store, preferences) is done by `AppFeature` once the delegate
                 // below reports no account is left.
                 state.mainTab.settings.isSigningOut = true
-                let accountID = state.accountID
-                let authClient = authClient
-                let accountCacheWipe = accountCacheWipe
-                return .run { send in
-                    accountCacheWipe.markPending(accountID)
-                    let next = await authClient.removeAccount(accountID)
-                    accountCacheWipe.wipe(accountID)
-                    await send(.accountChangeResolved(next))
-                }
+                state.mainTab.settings.hasAccountChangeFailed = false
+                return remove(state.accountID)
 
             case let .mainTab(.delegate(.switchAccount(accountID))):
+                state.mainTab.settings.hasAccountChangeFailed = false
                 let authClient = authClient
                 return .run { send in
-                    let switched = await authClient.switchAccount(accountID)
+                    // An unknown account switches nothing: it does not mean the last account is
+                    // gone, which is what `nil` tells `accountChangeResolved`.
+                    let switched: SessionCredentials?
+                    do {
+                        switched = try await authClient.switchAccount(accountID)
+                    } catch {
+                        await send(.accountChangeFailed)
+                        return
+                    }
+                    guard let switched else { return }
                     await send(.accountChangeResolved(switched))
                 }
 
             case let .mainTab(.delegate(.removeAccount(accountID))):
-                let authClient = authClient
-                let accountCacheWipe = accountCacheWipe
-                return .run { send in
-                    accountCacheWipe.markPending(accountID)
-                    let next = await authClient.removeAccount(accountID)
-                    accountCacheWipe.wipe(accountID)
-                    await send(.accountChangeResolved(next))
-                }
+                state.mainTab.settings.hasAccountChangeFailed = false
+                return remove(accountID)
+
+            case .accountChangeFailed:
+                state.mainTab.settings.isSigningOut = false
+                state.mainTab.settings.hasAccountChangeFailed = true
+                return .none
 
             case .mainTab(.delegate(.addAccountRequested)):
                 return .send(.delegate(.addAccountRequested))

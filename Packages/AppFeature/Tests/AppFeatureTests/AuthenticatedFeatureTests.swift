@@ -15,6 +15,8 @@ extension AppSuites {
 
         private enum Constants {
             static let promptDismissDuration: Duration = .seconds(0.4)
+            static let keychainFailure = "keychain unreadable"
+            static let unknownAccountID = "https://unknown.example.com|nobody"
         }
 
         private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, TestUser.bob)
@@ -160,6 +162,57 @@ extension AppSuites {
                 ],
                 "the account is removed from the keychain before its caches go, and the next account's stay"
             )
+        }
+
+        // MARK: Unreadable keychain
+
+        @Test(
+            "Signing out or removing with an unreadable keychain removes and wipes nothing, stops the spinner and says why",
+            arguments: dropTriggers
+        )
+        func unreadableKeychainRemovesNothing(_ trigger: DropTrigger) async {
+            let pending = PendingAccountWipes.inMemory()
+            let store = makeStore {
+                $0.pendingAccountWipes = pending
+                $0.authClient.removeAccount = { _ in throw AuthClientError.keychain(Constants.keychainFailure) }
+            }
+            let markSigningOut: ((inout AuthenticatedFeature.State) -> Void)? = trigger.isSignOut
+                ? { $0.mainTab.settings.isSigningOut = true }
+                : nil
+
+            await store.send(trigger.action, assert: markSigningOut)
+            await store.receive(\.accountChangeFailed) {
+                $0.mainTab.settings.isSigningOut = false
+                $0.mainTab.settings.hasAccountChangeFailed = true
+            }
+
+            #expect(pending.accounts().isEmpty)
+            #expect(recorder.events.value.isEmpty, "nothing is wiped for an account that is still signed in")
+        }
+
+        @Test(
+            "A switch that can't read the accounts says why, one to an unknown account does nothing, and neither reads as the last account gone"
+        )
+        func failedSwitchChangesNothing() async {
+            let store = makeStore {
+                $0.authClient.switchAccount = { id in
+                    guard id == Constants.unknownAccountID else {
+                        throw AuthClientError.keychain(Constants.keychainFailure)
+                    }
+                    return nil
+                }
+            }
+
+            await store.send(.mainTab(.delegate(.switchAccount(AppFixtures.accountB))))
+            await store.receive(\.accountChangeFailed) {
+                $0.mainTab.settings.hasAccountChangeFailed = true
+            }
+            await store.send(.mainTab(.delegate(.switchAccount(Constants.unknownAccountID)))) {
+                $0.mainTab.settings.hasAccountChangeFailed = false
+            }
+            await store.finish()
+
+            #expect(recorder.events.value.isEmpty)
         }
 
         // MARK: Switching and adding

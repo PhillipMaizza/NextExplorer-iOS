@@ -108,7 +108,6 @@ public final class ClientIdentityStore: @unchecked Sendable {
 
     private static let indexKey = "clientIdentity.index"
 
-    /// Call with `lock` held.
     /// Call with `lock` held. Throws when the keychain can't be read, so an update never
     /// overwrites the real index with an empty one.
     private func loadIndex() throws -> Set<ClientCertificateOrigin> {

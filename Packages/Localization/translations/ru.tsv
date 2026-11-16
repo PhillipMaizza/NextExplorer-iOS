@@ -557,6 +557,7 @@ settings.addAccount	Добавить аккаунт
 settings.accountSignOut	Выйти
 settings.accountSignOutTitle	Выйти?
 settings.accountSignOutMessage	Выйти из аккаунта %@ на этом устройстве? Чтобы снова использовать этот аккаунт, потребуется войти заново.
+settings.accountChangeFailed	Сейчас не удалось изменить аккаунты. Попробуйте ещё раз.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, активный аккаунт
 settings.badgeActive	Активный

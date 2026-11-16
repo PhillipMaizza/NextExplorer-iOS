@@ -545,6 +545,7 @@ settings.addAccount	Konto hinzufügen
 settings.accountSignOut	Abmelden
 settings.accountSignOutTitle	Abmelden?
 settings.accountSignOutMessage	%@ auf diesem Gerät abmelden? Du musst dich erneut anmelden, um dieses Konto zu verwenden.
+settings.accountChangeFailed	Deine Konten konnten gerade nicht geändert werden. Bitte versuche es erneut.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktives Konto
 settings.badgeActive	Aktiv

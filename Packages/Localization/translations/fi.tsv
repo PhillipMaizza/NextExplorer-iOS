@@ -503,6 +503,7 @@ settings.addAccount	Lisää tili
 settings.accountSignOut	Kirjaudu ulos
 settings.accountSignOutTitle	Kirjaudutaanko ulos?
 settings.accountSignOutMessage	Kirjataanko %@ ulos tässä laitteessa? Sinun on kirjauduttava uudelleen sisään käyttääksesi tätä tiliä.
+settings.accountChangeFailed	Tilejä ei voitu muuttaa juuri nyt. Yritä uudelleen.
 settings.accountActiveLabel	%1$@, %2$@, aktiivinen tili
 settings.badgeActive	Aktiivinen
 settings.dateFormatNavigationTitle	Päivämäärämuoto

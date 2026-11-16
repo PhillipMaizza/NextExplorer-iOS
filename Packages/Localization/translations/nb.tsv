@@ -503,6 +503,7 @@ settings.addAccount	Legg til konto
 settings.accountSignOut	Logg ut
 settings.accountSignOutTitle	Logge ut?
 settings.accountSignOutMessage	Logge %@ ut på denne enheten? Du må logge inn igjen for å bruke denne kontoen.
+settings.accountChangeFailed	Kontoene dine kunne ikke endres akkurat nå. Prøv igjen.
 settings.accountActiveLabel	%1$@, %2$@, aktiv konto
 settings.badgeActive	Aktiv
 settings.dateFormatNavigationTitle	Datoformat

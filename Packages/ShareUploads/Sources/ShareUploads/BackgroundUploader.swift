@@ -39,7 +39,6 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
 
     private enum Constants {
         static let removingPrefix = ".removing-"
-        static let cookieHeader = "Cookie"
         static let successStatusCodes = 200 ..< 300
     }
 
@@ -169,10 +168,7 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
                 contentType: manifest.contentTypes[index]
             )
             // A background session keeps no cookie jar of its own: the session cookie rides here.
-            request.setValue(
-                "\(credentials.cookieName)=\(credentials.cookieValue)",
-                forHTTPHeaderField: Constants.cookieHeader
-            )
+            request.setValue(credentials.cookieHeader, forHTTPHeaderField: HTTPHeaderField.cookie)
             return UploadTaskSpec(
                 index: index, request: request, envelopeURL: directory.appendingPathComponent(manifest.envelopes[index])
             )

@@ -29,6 +29,23 @@ extension FilesClientLiveTests {
             resetStubs()
         }
 
+        @Test("Creating a folder or a file gets the long budget, so a slow server is never read as offline")
+        func aTimedOutCreateSurfacesAsTimedOutNotOffline() async {
+            resetStubs()
+            StubURLProtocol.failure = URLError(.timedOut)
+            let client = makeClient()
+
+            await #expect(throws: FilesClientError.timedOut) {
+                _ = try await client.createFolder(serverURL, TestFolder.docs, TestFolder.photos)
+            }
+            await #expect(throws: FilesClientError.timedOut) {
+                _ = try await client.createFile(serverURL, TestFolder.docs, TestFile.aText)
+            }
+            #expect(StubURLProtocol.requests.count == 2)
+            #expect(StubURLProtocol.requests.allSatisfy { NetworkClient.isMutation($0) })
+            resetStubs()
+        }
+
         @Test
         func aTimedOutReadStillSurfacesAsOffline() async {
             resetStubs()

@@ -131,8 +131,12 @@ extension LocalThumbnailStore {
             defer { lock.unlock() }
             guard let url = fileURL(scope: scope, path: path), let data = try? JSONEncoder().encode(entry),
                   data.count <= Constants.maxEntryBytes else { return }
-            try? data.write(to: url, options: .atomic)
-            cacheDirectory?.evict(maxEntries: Constants.maxEntries, maxTotalBytes: Constants.maxTotalBytes)
+            try? cacheDirectory?.write(
+                data,
+                to: url,
+                maxEntries: Constants.maxEntries,
+                maxTotalBytes: Constants.maxTotalBytes
+            )
         }
 
         func thumbnail(scope: String, path: String, size: Int64, modified: Date) -> Data? {

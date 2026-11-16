@@ -99,9 +99,9 @@ struct OfflineDownloadsUnpinTests: OfflineDownloadsTestSupport {
 
     @Test
     func aSyncWithNothingPinnedStillDropsLeftoverCopies() async {
-        let reconciles = LockIsolated<[Set<String>?]>([])
+        let reconciles = LockIsolated(0)
         var offline = OfflineFileStore.inMemory()
-        offline.reconcile = { paths in reconciles.withValue { $0.append(paths) } }
+        offline.reconcile = { reconciles.withValue { $0 += 1 } }
         let run = makeRun(
             offline: offline,
             browse: { _ in throw FilesClientError.offline },
@@ -110,7 +110,7 @@ struct OfflineDownloadsUnpinTests: OfflineDownloadsTestSupport {
 
         await run.store.send(.autoSync(force: true)).finish()
 
-        #expect(reconciles.value == [nil])
+        #expect(reconciles.value == 1)
     }
 
     @Test

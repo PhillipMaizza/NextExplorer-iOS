@@ -108,6 +108,34 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func savingAFileOpenedFromItsPinnedCopyAsksBeforeOverwritingTheServer() async throws {
+            resetStubs()
+            let scope = "offline-text-\(TestID.name())"
+            defer { OfflineCache.removeScope(scope) }
+            let client = try pinnedTextClient(scope: scope, bytes: Data(Constants.pinnedText.utf8))
+            _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
+            StubURLProtocol.failure = nil
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(
+                statusCode: 200,
+                etag: Constants.serverETag
+            )
+            StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
+                statusCode: 200,
+                fixture: .commonSuccessTrue
+            )
+            let puts = { StubURLProtocol.requests.filter { $0.httpMethod == HTTPMethod.put.rawValue }.count }
+
+            await #expect(throws: FilesClientError.changedOnServer) {
+                try await client.saveTextContent(serverURL, TestPath.docsNote, FilesClientTestValue.localEdit)
+            }
+            #expect(puts() == 0, "a copy that may be older than the server's never overwrites it unasked")
+
+            try await client.saveTextContent(serverURL, TestPath.docsNote, FilesClientTestValue.localEdit)
+            #expect(puts() == 1, "Overwrite after the prompt goes through")
+            resetStubs()
+        }
+
+        @Test
         func anOfflineTextReadRefusesAPinnedCopyAboveTheBackendEditorCap() async throws {
             resetStubs()
             let scope = "offline-text-\(TestID.name())"
@@ -195,6 +223,7 @@ extension FilesClientLiveTests {
 }
 
 private enum Constants {
+    static let serverETag = #"W/"theirs""#
     static let cachedName = "cached.txt"
     static let pinnedText = "pinned text"
     static let updatedContent = "updated content"

@@ -85,8 +85,10 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
     func clearAllSessionsRemovesPersisted() async throws {
         let keychainClient = KeychainClient.inMemory()
         try keychainClient.save(TestStorageKey.storedSessions, Data("placeholder".utf8))
+        // An unreadable set drops every cookie in its jar: a jar of its own keeps other suites' cookies.
+        let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: TestID.name())
 
-        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { _ in
+        let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { _ in
             throw NetworkError.transport(Constants.unexpectedCallMessage)
         }
         await client.clearAllSessions()
@@ -102,16 +104,16 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
         let credentials = try credentials()
         let store = SessionCookieStore(keychainClient: keychainClient, cookieStorage: cookieStorage)
         try store.persist(credentials)
-        let attempts = RecordedPaths()
+        let attempts = Recorded<URLRequest>()
         let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { request in
-            attempts.add(request.url?.path ?? "")
+            attempts.add(request)
             throw NetworkError.transport(TestFailure.offline)
         }
 
         try await client.logout(serverURL)
 
-        #expect(attempts.paths.count == 1, "the server was asked once and the failure was swallowed")
-        #expect(attempts.paths.first?.contains("logout") == true)
+        #expect(attempts.values.count == 1, "the server was asked once and the failure was swallowed")
+        #expect(attempts.values.first?.url?.path.contains("logout") == true)
         #expect(
             store.activeCredentials() == credentials,
             "logout is server side only: removing the account is what clears it locally"
@@ -129,7 +131,7 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
             throw NetworkError.transport(TestFailure.offline)
         }
 
-        let next = await client.removeAccount(credentials.accountID)
+        let next = try await client.removeAccount(credentials.accountID)
 
         #expect(next == nil)
         #expect(store.activeCredentials() == nil)
@@ -211,20 +213,6 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
         await #expect(throws: AuthClientError.self) {
             _ = try await client.loadSession()
         }
-    }
-}
-
-/// The request paths a fake network saw, safe to write from the network closure.
-private final class RecordedPaths: @unchecked Sendable {
-    private let lock = NSLock()
-    private var stored: [String] = []
-
-    var paths: [String] {
-        lock.withLock { stored }
-    }
-
-    func add(_ path: String) {
-        lock.withLock { stored.append(path) }
     }
 }
 

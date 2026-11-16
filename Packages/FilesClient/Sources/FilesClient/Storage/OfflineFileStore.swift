@@ -298,7 +298,7 @@ enum OfflineCache {
     static func removeRoot(path: String) {
         removalLock.withLock {
             setPinnedRoots(pinnedRoots().takingOff(path))
-            reconcile(currentPaths: nil)
+            reconcile()
         }
     }
 
@@ -323,18 +323,13 @@ enum OfflineCache {
         return Int64(size)
     }
 
-    /// Prunes stale slots: any not covered by a pinned root (an orphan from an unpinned root), and,
-    /// when `currentPaths` is supplied from a fresh sync, any covered file the server no longer lists
-    /// (deleted upstream). `currentPaths` nil does orphan cleanup only.
-    static func reconcile(currentPaths: Set<String>?) {
+    /// Prunes the slots no pinned root covers any more (orphans of an unpinned root). A pinned file
+    /// the server no longer lists stays until the user removes it.
+    static func reconcile() {
         let roots = pinnedRoots()
         pruneListings(roots: roots)
-        for entry in slotEntries() {
-            if !roots.keeps(entry.path) {
-                removeSlot(forPath: entry.path)
-            } else if let currentPaths, !currentPaths.contains(entry.path) {
-                removeSlot(forPath: entry.path)
-            }
+        for entry in slotEntries() where !roots.keeps(entry.path) {
+            removeSlot(forPath: entry.path)
         }
     }
 
@@ -484,8 +479,8 @@ public struct OfflineFileStore: Sendable {
     /// Takes one path off the device (manifest + its slots): a pin comes off, and a file or folder kept
     /// through a pinned folder is left out of it while the folder stays pinned.
     public var removeRoot: @Sendable (_ path: String) -> Void
-    /// Prune stale slots: orphans, and (with a fresh listing) server-deleted files.
-    public var reconcile: @Sendable (_ currentPaths: Set<String>?) -> Void
+    /// Prune the slots no pinned root covers any more. Never what the server deleted.
+    public var reconcile: @Sendable () -> Void
     /// Every account's offline files. Session boundaries only.
     public var removeAll: @Sendable () -> Void
     /// Only the active account's offline files, for the Settings "Remove Offline Files" action.
@@ -516,7 +511,7 @@ public struct OfflineFileStore: Sendable {
         totalSizeBytes: @escaping @Sendable () -> Int64,
         pinnedRootUsages: @escaping @Sendable () -> [OfflinePinnedRootUsage],
         removeRoot: @escaping @Sendable (String) -> Void,
-        reconcile: @escaping @Sendable (Set<String>?) -> Void,
+        reconcile: @escaping @Sendable () -> Void,
         removeAll: @escaping @Sendable () -> Void,
         removeCurrentAccount: @escaping @Sendable () -> Void,
         removeAccount: @escaping @Sendable (String) -> Void = { _ in },
@@ -587,7 +582,7 @@ public extension OfflineFileStore {
             totalSizeBytes: { CacheAccountScope.withPinned(scope) { store.totalSizeBytes() } },
             pinnedRootUsages: { CacheAccountScope.withPinned(scope) { store.pinnedRootUsages() } },
             removeRoot: { path in CacheAccountScope.withPinned(scope) { store.removeRoot(path) } },
-            reconcile: { paths in CacheAccountScope.withPinned(scope) { store.reconcile(paths) } },
+            reconcile: { CacheAccountScope.withPinned(scope) { store.reconcile() } },
             removeAll: store.removeAll,
             removeCurrentAccount: { CacheAccountScope.withPinned(scope) { store.removeCurrentAccount() } },
             removeAccount: store.removeAccount,
@@ -612,7 +607,7 @@ extension OfflineFileStore: DependencyKey {
         totalSizeBytes: { OfflineCache.totalSizeBytes() },
         pinnedRootUsages: { OfflineCache.pinnedRootUsages() },
         removeRoot: { OfflineCache.removeRoot(path: $0) },
-        reconcile: { OfflineCache.reconcile(currentPaths: $0) },
+        reconcile: { OfflineCache.reconcile() },
         removeAll: { OfflineCache.removeAll() },
         removeCurrentAccount: { OfflineCache.removeCurrentScope() },
         removeAccount: { OfflineCache.removeScope($0) },
@@ -636,7 +631,7 @@ extension OfflineFileStore: DependencyKey {
         totalSizeBytes: { 0 },
         pinnedRootUsages: { [] },
         removeRoot: { _ in },
-        reconcile: { _ in },
+        reconcile: {},
         removeAll: {},
         removeCurrentAccount: {},
         setInterrupted: { _ in },
@@ -663,7 +658,7 @@ extension OfflineFileStore: DependencyKey {
                 box.pinnedRoots().map { OfflinePinnedRootUsage(root: $0, sizeBytes: 0, copy: copyMetadata[$0.path]) }
             },
             removeRoot: { box.removeRoot(path: $0) },
-            reconcile: { _ in },
+            reconcile: {},
             removeAll: { box.removeAll() },
             removeCurrentAccount: { box.removeAll() },
             setInterrupted: { box.setInterrupted($0) },

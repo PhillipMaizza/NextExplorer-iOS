@@ -539,6 +539,7 @@ settings.addAccount	新增帳戶
 settings.accountSignOut	登出
 settings.accountSignOutTitle	登出？
 settings.accountSignOutMessage	要在此裝置上登出 %@ 嗎？您需要重新登入才能使用此帳戶。
+settings.accountChangeFailed	目前無法變更您的帳戶，請再試一次。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 使用中的帳戶
 settings.badgeActive	使用中

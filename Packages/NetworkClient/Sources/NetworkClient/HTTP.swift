@@ -17,6 +17,7 @@ public enum HTTPHeaderField {
     public static let accept = "Accept"
     public static let ifNoneMatch = "If-None-Match"
     public static let etag = "ETag"
+    public static let cookie = "Cookie"
 }
 
 /// Media types sent or accepted by the client.

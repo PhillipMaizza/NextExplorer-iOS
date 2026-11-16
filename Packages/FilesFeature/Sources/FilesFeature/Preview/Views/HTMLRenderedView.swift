@@ -29,11 +29,16 @@ struct HTMLRenderedView: View {
     let resolveAsset: (String) async -> URL?
 
     @State private var localHTMLURL: URL?
+    @State private var contentRules: WKContentRuleList?
 
     var body: some View {
         Group {
-            if let localHTMLURL {
-                HTMLWebView(fileURL: localHTMLURL, readAccessURL: localHTMLURL.deletingLastPathComponent())
+            if let localHTMLURL, let contentRules {
+                HTMLWebView(
+                    fileURL: localHTMLURL,
+                    readAccessURL: localHTMLURL.deletingLastPathComponent(),
+                    contentRules: contentRules
+                )
             } else {
                 DSSpinner()
             }
@@ -47,43 +52,66 @@ struct HTMLRenderedView: View {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent(SessionScratchLocation.htmlPreview, isDirectory: true)
             .appendingPathComponent(cacheKey.replacingOccurrences(of: "/", with: "_"), isDirectory: true)
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        guard let mainFileURL = await Self.writePage(html, into: directory, resolveAsset: resolveAsset),
+              // Without the rules the page could load remote images and styles, so it is never shown.
+              let rules = await LocalOnlyContentRules.compiled(),
+              !Task.isCancelled
+        else { return }
+        contentRules = rules
+        localHTMLURL = mainFileURL
+    }
+
+    /// Writes the page and the same folder assets it references into `directory` and returns the
+    /// page's file, or `nil` when it can't be written or the task was cancelled meanwhile. The file
+    /// work runs off the main thread, so a large page never stalls the UI.
+    static func writePage(
+        _ html: String,
+        into directory: URL,
+        resolveAsset: (String) async -> URL?
+    ) async -> URL? {
         // Always `.html`, never `fileName`'s real extension: `loadFileURL` has WebKit infer
         // MIME type from the file's own extension, and the content written here is always
-        // HTML: including for Markdown, converted upstream. Writing it out as e.g.
-        // `README.md` made WebKit render the (correctly-converted) HTML *source* as plain
-        // text instead of interpreting it as markup: looked like "just shown as code."
-        let mainFileURL = directory.appendingPathComponent("index.html")
-        guard (try? html.write(to: mainFileURL, atomically: true, encoding: .utf8)) != nil else { return }
-
-        // The `href`/`src` regex scan walks the entire document; run it off the main thread so a
-        // large HTML file doesn't stall the UI while its assets are being resolved.
-        let html = html
-        let assetPaths = await Task.detached(priority: .userInitiated) {
-            Self.relativeAssetPaths(in: html)
+        // HTML, Markdown included (converted upstream). Written out as `README.md`, WebKit
+        // showed the converted HTML source as plain text instead of rendering it.
+        let mainFileURL = directory.appendingPathComponent(Constants.pageFileName)
+        let assetPaths: [String]? = await Task.detached(priority: .userInitiated) {
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            guard (try? html.write(to: mainFileURL, atomically: true, encoding: .utf8)) != nil else { return nil }
+            return Self.relativeAssetPaths(in: html)
         }.value
+        guard let assetPaths else { return nil }
         for relativePath in assetPaths {
+            guard !Task.isCancelled else { return nil }
             guard let downloadedURL = await resolveAsset(relativePath) else { continue }
-            // Root-absolute references (`/assets/app.js`) are resolved by `resolveAsset`
+            // Root absolute references (`/assets/app.js`) are resolved by `resolveAsset`
             // relative to the file's own folder too (there's no real site root to anchor
             // them to): strip the leading slash to place them the same way on disk.
             let localRelativePath = relativePath.hasPrefix("/") ? String(relativePath.dropFirst()) : relativePath
             guard let destinationURL = SafeDestination.within(directory, localRelativePath) else { continue }
-            try? FileManager.default.createDirectory(
-                at: destinationURL.deletingLastPathComponent(),
-                withIntermediateDirectories: true
-            )
-            try? FileManager.default.removeItem(at: destinationURL)
-            try? FileManager.default.copyItem(at: downloadedURL, to: destinationURL)
+            await Task.detached(priority: .userInitiated) {
+                Self.place(downloadedURL, at: destinationURL)
+            }.value
         }
+        return Task.isCancelled ? nil : mainFileURL
+    }
 
-        localHTMLURL = mainFileURL
+    private enum Constants {
+        static let pageFileName = "index.html"
+    }
+
+    private nonisolated static func place(_ sourceURL: URL, at destinationURL: URL) {
+        try? FileManager.default.createDirectory(
+            at: destinationURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        try? FileManager.default.removeItem(at: destinationURL)
+        try? FileManager.default.copyItem(at: sourceURL, to: destinationURL)
     }
 
     /// Every `href="..."`/`src="..."` value that isn't already absolute (`http(s)://`,
     /// protocol-relative `//`, `data:`, `mailto:`) or an in-page anchor (`#section`); the
     /// same-folder assets a fetched HTML string alone has no way to reach.
-    private nonisolated static func relativeAssetPaths(in html: String) -> [String] {
+    nonisolated static func relativeAssetPaths(in html: String) -> [String] {
         guard let regex = try? NSRegularExpression(
             pattern: #"(?:href|src)\s*=\s*["']([^"'#][^"']*)["']"#,
             options: [.caseInsensitive]
@@ -117,10 +145,10 @@ enum RelativeAssetPath {
         // relative to the file's own folder, the same heuristic a typical single-folder
         // static site upload effectively already assumes.
         let cleanedReference = relativePath.hasPrefix("/") ? String(relativePath.dropFirst()) : relativePath
-        // `URL(fileURLWithPath:)` treats an empty path as the process's current working
-        // directory, not "no base": an empty `directory` (files at the volume root) needs an
-        // explicit "/" base instead, or sibling paths silently resolve against the app's cwd.
-        let baseURL = URL(fileURLWithPath: directory.isEmpty ? "/" : directory, isDirectory: true)
+        // `URL(fileURLWithPath:)` resolves a relative path against the process's working
+        // directory, so the folder is anchored at "/" (the volume root when it is empty) and
+        // sibling paths never pick up wherever the process happens to run.
+        let baseURL = URL(fileURLWithPath: "/" + directory, isDirectory: true)
         let resolvedPath = URL(fileURLWithPath: cleanedReference, relativeTo: baseURL).standardizedFileURL.path
         let cleanPath = resolvedPath.hasPrefix("/") ? String(resolvedPath.dropFirst()) : resolvedPath
         guard !cleanPath.isEmpty else { return nil }
@@ -131,21 +159,56 @@ enum RelativeAssetPath {
     }
 }
 
+/// Blocks every load that is not a local file or inline data (one rule each: WebKit's rule
+/// patterns have no alternation). The navigation delegate only sees
+/// page navigations: images, stylesheets, fonts and media in an untrusted page would otherwise
+/// still reach the network, telling a stranger the reader's address and when the file was opened.
+@MainActor
+enum LocalOnlyContentRules {
+    private static let identifier = "LocalOnly"
+    static let encoded = """
+    [{"trigger":{"url-filter":".*"},"action":{"type":"block"}},\
+    {"trigger":{"url-filter":"^file:"},"action":{"type":"ignore-previous-rules"}},\
+    {"trigger":{"url-filter":"^data:"},"action":{"type":"ignore-previous-rules"}}]
+    """
+    private static var cached: WKContentRuleList?
+
+    /// Compiled once per run; `nil` only when WebKit refuses the rules.
+    static func compiled() async -> WKContentRuleList? {
+        if let cached {
+            return cached
+        }
+        let rules = try? await WKContentRuleListStore.default()?.compileContentRuleList(
+            forIdentifier: identifier,
+            encodedContentRuleList: encoded
+        )
+        cached = rules
+        return rules
+    }
+
+    /// The configuration every rendered page loads with. The content is an untrusted file from the
+    /// user's server (or an archive): JavaScript is disabled so a hostile page can't read
+    /// neighbouring files off disk, `rules` block every remote load, and the navigation delegate
+    /// pins navigation to the local file.
+    static func webViewConfiguration(applying rules: WKContentRuleList) -> WKWebViewConfiguration {
+        let configuration = WKWebViewConfiguration()
+        configuration.userContentController.add(rules)
+        configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+        // No shared cookie or storage jar for untrusted server content: nothing to reach even if
+        // disabled scripts and pinned navigation were somehow bypassed.
+        configuration.websiteDataStore = .nonPersistent()
+        return configuration
+    }
+}
+
 @MainActor
 private struct HTMLWebView {
     let fileURL: URL
     let readAccessURL: URL
+    let contentRules: WKContentRuleList
 
     fileprivate func makeWebView(coordinator: Coordinator) -> WKWebView {
-        // The rendered content is an untrusted file from the user's server (or an archive).
-        // JavaScript is disabled so a hostile page can't read neighbouring files off disk or
-        // exfiltrate them; the navigation delegate pins navigation to the local file and
-        // blocks every outbound request.
-        let configuration = WKWebViewConfiguration()
-        configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-        // No shared cookie/storage jar for untrusted server content: nothing to reach even if
-        // the JS-off + navigation-blocked guarantees were somehow bypassed.
-        configuration.websiteDataStore = .nonPersistent()
+        let configuration = LocalOnlyContentRules.webViewConfiguration(applying: contentRules)
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = coordinator
         webView.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)

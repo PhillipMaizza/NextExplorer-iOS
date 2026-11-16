@@ -32,6 +32,8 @@ struct ShareExtensionDependenciesTests {
     @Test("the extension's directory cache is the no cache store")
     func configureReplacesTheDirectoryCache() {
         withDependencies {
+            // A store that does keep listings, so the check fails unless `configure` replaces it.
+            $0.directoryCacheStore = .inMemory()
             ShareExtensionDependencies.configure(&$0)
         } operation: {
             @Dependency(\.directoryCacheStore) var store

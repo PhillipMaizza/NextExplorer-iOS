@@ -14,6 +14,12 @@ struct ArchiveReaderTests {
         static let directoryPrefix = "archive-reader-"
         static let zipKind = "zip"
         static let rarKind = "rar"
+        static let extractedName = "extracted.bin"
+        static let localHeaderSize = 30
+        static let nameLengthOffset = 26
+        static let extraLengthOffset = 28
+        static let corruptByteCount = 4
+        static let corruptBytes = Data(repeating: 0xFF, count: corruptByteCount)
     }
 
     private func makeDirectory() throws -> URL {
@@ -124,6 +130,41 @@ struct ArchiveReaderTests {
             try ArchiveReader.extract("docs/other.txt", from: source, to: destination)
         }
         #expect(!FileManager.default.fileExists(atPath: destination.path))
+    }
+
+    @Test("An entry that fails partway leaves no partial file behind")
+    func aFailedExtractionLeavesNoPartialFile() throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let url = directory.appendingPathComponent(FilesFeatureTestValue.bundleName)
+        let archive = try Archive(url: url, accessMode: .create)
+        try archive.addEntry(
+            with: Constants.rootEntry,
+            type: .file,
+            uncompressedSize: Int64(Constants.rootBytes.count),
+            compressionMethod: .deflate
+        ) { (position: Int64, size: Int) -> Data in
+            Constants.rootBytes.subdata(in: Int(position) ..< Int(position) + size)
+        }
+        try corruptFirstEntryData(of: url)
+        let source = try ArchiveReader.open(fileURL: url, kind: Constants.zipKind)
+        let destination = directory.appendingPathComponent(Constants.extractedName)
+
+        #expect(throws: (any Error).self) {
+            try ArchiveReader.extract(Constants.rootEntry, from: source, to: destination)
+        }
+        #expect(!FileManager.default.fileExists(atPath: destination.path))
+    }
+
+    /// Overwrites the start of the first entry's deflate stream with a reserved block type, so
+    /// inflating it fails after the destination file was created.
+    private func corruptFirstEntryData(of url: URL) throws {
+        var bytes = try Data(contentsOf: url)
+        let nameLength = Int(bytes[Constants.nameLengthOffset]) | Int(bytes[Constants.nameLengthOffset + 1]) << 8
+        let extraLength = Int(bytes[Constants.extraLengthOffset]) | Int(bytes[Constants.extraLengthOffset + 1]) << 8
+        let dataStart = Constants.localHeaderSize + nameLength + extraLength
+        bytes.replaceSubrange(dataStart ..< dataStart + Constants.corruptByteCount, with: Constants.corruptBytes)
+        try bytes.write(to: url)
     }
 
     @Test

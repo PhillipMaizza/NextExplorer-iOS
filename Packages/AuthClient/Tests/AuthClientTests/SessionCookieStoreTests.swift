@@ -228,7 +228,7 @@ struct SessionCookieStoreTests {
         #expect(store.allSessions().count == 2)
         #expect(store.activeCredentials()?.accountID == credsB.accountID)
 
-        let switched = try #require(store.setActive(id: credsA.accountID))
+        let switched = try #require(try store.setActive(id: credsA.accountID))
         #expect(switched.accountID == credsA.accountID)
         #expect(store.activeCredentials()?.accountID == credsA.accountID)
         #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.contains { $0.value == "aaa" } == true)
@@ -248,7 +248,7 @@ struct SessionCookieStoreTests {
         try store.persist(credsA)
         try store.persist(credsB) // B active
 
-        let next = try #require(store.remove(id: credsB.accountID))
+        let next = try #require(try store.remove(id: credsB.accountID))
         #expect(next.accountID == credsA.accountID)
         #expect(store.allSessions().count == 1)
         #expect(HTTPCookieStorage.shared.cookies(for: serverB)?.contains { $0.value == "bbb" } != true)
@@ -265,7 +265,7 @@ struct SessionCookieStoreTests {
         )
         try store.persist(credsA)
 
-        #expect(store.remove(id: credsA.accountID) == nil)
+        #expect(try store.remove(id: credsA.accountID) == nil)
         #expect(store.allSessions().isEmpty)
     }
 
@@ -287,6 +287,62 @@ struct SessionCookieStoreTests {
         #expect(try keychainClient.load(TestStorageKey.storedSessions) == nil)
         #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.isEmpty ?? true)
         #expect(store.activeCredentials() == nil)
+    }
+
+    // MARK: unreadable keychain
+
+    /// A keychain whose reads fail and whose saves and deletes are both recorded.
+    private func unreadableKeychain(writes: Recorded<String>) -> KeychainClient {
+        KeychainClient(
+            save: { key, _ in writes.add(key) },
+            load: { _ in throw KeychainError.unexpectedStatus(errSecInteractionNotAllowed) },
+            delete: { key in writes.add(key) }
+        )
+    }
+
+    @Test("an unreadable keychain refuses every change instead of saving over the accounts it could not see")
+    func unreadableKeychainRefusesChanges() throws {
+        let writes = Recorded<String>()
+        let store = makeStore(keychainClient: unreadableKeychain(writes: writes))
+        let credentials = try credentials(
+            serverURL: uniqueServerURL(),
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        )
+
+        #expect(throws: KeychainError.self) {
+            try store.persist(credentials)
+        }
+        #expect(throws: KeychainError.self) {
+            try store.setActive(id: credentials.accountID)
+        }
+        #expect(throws: KeychainError.self) {
+            try store.remove(id: credentials.accountID)
+        }
+        #expect(throws: KeychainError.self) {
+            try store.clearActive()
+        }
+        #expect(writes.values.isEmpty)
+    }
+
+    @Test("clearAll with an unreadable keychain still drops every session cookie")
+    func clearAllUnreadableDropsEveryCookie() throws {
+        let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: TestID.name())
+        let store = SessionCookieStore(
+            keychainClient: unreadableKeychain(writes: Recorded<String>()),
+            cookieStorage: cookieStorage
+        )
+        let credentials = try credentials(
+            serverURL: uniqueServerURL(),
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        )
+        store.install(credentials)
+        #expect(cookieStorage.cookies?.isEmpty == false)
+
+        store.clearAll()
+
+        #expect(cookieStorage.cookies?.isEmpty ?? true)
     }
 }
 

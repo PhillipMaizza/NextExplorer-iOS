@@ -569,6 +569,7 @@ settings.addAccount	إضافة حساب
 settings.accountSignOut	تسجيل الخروج
 settings.accountSignOutTitle	تسجيل الخروج؟
 settings.accountSignOutMessage	تسجيل خروج %@ من هذا الجهاز؟ ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام هذا الحساب.
+settings.accountChangeFailed	تعذّر تغيير حساباتك الآن. يُرجى المحاولة مرة أخرى.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, الحساب النشط
 settings.badgeActive	نشط

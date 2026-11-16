@@ -90,6 +90,16 @@ struct SessionCookieStore: Sendable {
         return StoredSessions()
     }
 
+    /// The set a change starts from. A keychain that can't be read throws, so a change never
+    /// saves over accounts it could not see; a stored blob that no longer decodes is replaced.
+    private func loadForChange() throws -> StoredSessions {
+        do {
+            return try loadStoredOrThrow()
+        } catch is DecodingError {
+            return StoredSessions()
+        }
+    }
+
     private func saveStored(_ stored: StoredSessions) throws {
         let data = try JSONEncoder().encode(stored)
         try keychainClient.save(Self.storageKey, data)
@@ -99,13 +109,9 @@ struct SessionCookieStore: Sendable {
 
     /// Adds or replaces one account, marks it active, persists, and installs its cookie.
     func persist(_ credentials: SessionCredentials) throws {
-        var stored = loadStored()
+        var stored = try loadForChange()
         stored.upsert(credentials)
-        do {
-            try saveStored(stored)
-        } catch {
-            throw error
-        }
+        try saveStored(stored)
         install(credentials)
     }
 
@@ -118,10 +124,10 @@ struct SessionCookieStore: Sendable {
     }
 
     /// Makes `id` the active account and installs its cookie. Returns the now-active credentials,
-    /// or `nil` if the id is unknown.
+    /// or `nil` if the id is unknown. Throws when the set can't be read.
     @discardableResult
-    func setActive(id: String) -> SessionCredentials? {
-        var stored = loadStored()
+    func setActive(id: String) throws -> SessionCredentials? {
+        var stored = try loadForChange()
         guard let target = stored.session(id: id) else { return nil }
         stored.activeID = id
         try? saveStored(stored)
@@ -131,9 +137,14 @@ struct SessionCookieStore: Sendable {
 
     /// Removes one account, dropping its cookie, and returns whatever account is active afterwards
     /// (the caller uses `nil` to fall back to the login screen).
+    /// Throws when the set can't be read, so an unreadable keychain never reads as "none left".
     @discardableResult
-    func remove(id: String) -> SessionCredentials? {
-        var stored = loadStored()
+    func remove(id: String) throws -> SessionCredentials? {
+        try remove(id: id, from: loadForChange())
+    }
+
+    private func remove(id: String, from stored: StoredSessions) -> SessionCredentials? {
+        var stored = stored
         let removed = stored.session(id: id)
         stored.remove(id: id)
         try? saveStored(stored)
@@ -147,24 +158,30 @@ struct SessionCookieStore: Sendable {
         return nil
     }
 
-    /// Session-expiry / 401 teardown of the active account only: drops it and switches to the next
+    /// Session expiry / 401 teardown of the active account only: drops it and switches to the next
     /// remaining account if there is one. Returns the new active account, or `nil` when none left.
+    /// Throws when the set can't be read, so an unreadable keychain never reads as "none left".
     @discardableResult
-    func clearActive() -> SessionCredentials? {
-        let stored = loadStored()
+    func clearActive() throws -> SessionCredentials? {
+        let stored = try loadForChange()
         guard let active = stored.active else {
             clearAll()
             return nil
         }
-        return remove(id: active.accountID)
+        return remove(id: active.accountID, from: stored)
     }
 
     /// Full teardown: every account signed out (or a hard reset). Clears the Keychain set and all
     /// of its cookies from `HTTPCookieStorage`.
     func clearAll() {
-        let stored = loadStored()
+        let stored = try? loadStoredOrThrow()
         try? keychainClient.delete(Self.storageKey)
         try? keychainClient.delete(Self.legacyStorageKey)
+        guard let stored else {
+            // The servers are unknown when the set can't be read, so no session cookie may stay.
+            cookieStorage.removeCookies(since: .distantPast)
+            return
+        }
         for session in stored.sessions {
             deleteCookies(serverURL: session.serverBaseURL)
         }

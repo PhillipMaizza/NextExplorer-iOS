@@ -551,6 +551,7 @@ settings.addAccount	Adaugă cont
 settings.accountSignOut	Deconectare
 settings.accountSignOutTitle	Deconectare?
 settings.accountSignOutMessage	Deconectezi %@ de pe acest dispozitiv? Va trebui să te autentifici din nou pentru a folosi acest cont.
+settings.accountChangeFailed	Conturile tale nu au putut fi modificate acum. Încearcă din nou.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, cont activ
 settings.badgeActive	Activ

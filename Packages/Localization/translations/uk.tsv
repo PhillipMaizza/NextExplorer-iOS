@@ -515,6 +515,7 @@ settings.addAccount	Додати обліковий запис
 settings.accountSignOut	Вийти
 settings.accountSignOutTitle	Вийти?
 settings.accountSignOutMessage	Вийти з облікового запису %@ на цьому пристрої? Щоб користуватися ним, потрібно буде ввійти знову.
+settings.accountChangeFailed	Зараз не вдалося змінити облікові записи. Спробуйте ще раз.
 settings.accountActiveLabel	%1$@, %2$@, активний обліковий запис
 settings.badgeActive	Активний
 settings.dateFormatNavigationTitle	Формат дати

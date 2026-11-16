@@ -726,6 +726,7 @@ public enum L10n {
     }
     public enum Settings {
         public static func accountActiveLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountActiveLabel", a0, a1) }
+        public static var accountChangeFailed: String { tr("settings.accountChangeFailed") }  // "Couldn't change your accounts right now. Please try again."
         public static func accountLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountLabel", a0, a1) }
         public static var accountSignOut: String { tr("settings.accountSignOut") }  // "Sign Out"
         public static func accountSignOutMessage(_ a0: CVarArg) -> String { tr("settings.accountSignOutMessage", a0) }

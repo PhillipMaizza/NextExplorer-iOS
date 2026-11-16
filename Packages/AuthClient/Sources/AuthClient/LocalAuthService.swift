@@ -116,8 +116,14 @@ struct LocalAuthService: Sendable {
         return user
     }
 
-    func logout(serverURL: URL) async throws {
-        let request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.logout, method: .post)
+    /// With `credentials`, logs out that account even while another one is active: its own cookie
+    /// is sent and the shared jar is neither read nor changed by the reply.
+    func logout(serverURL: URL, credentials: SessionCredentials? = nil) async throws {
+        var request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.logout, method: .post)
+        if let credentials {
+            request.httpShouldHandleCookies = false
+            request.setValue(credentials.cookieHeader, forHTTPHeaderField: HTTPHeaderField.cookie)
+        }
         _ = try await sendIgnoringBody(request)
     }
 

@@ -27,6 +27,40 @@ struct AuthDelegateTests {
         return (session, session.dataTask(with: TestHost.serverURL))
     }
 
+    @Test("a request carrying a cookie set by hand never follows a redirect; any other request does")
+    func handSetCookieNeverFollowsARedirect() async throws {
+        let session = URLSession(configuration: .ephemeral)
+        defer { session.invalidateAndCancel() }
+        let delegate = makeDelegate(store: ClientIdentityStore(keychain: .inMemory()), calls: LockIsolatedBox(0))
+        var handSet = URLRequest(url: TestHost.serverURL)
+        handSet.httpShouldHandleCookies = false
+        handSet.setValue(Constants.cookieHeader, forHTTPHeaderField: HTTPHeaderField.cookie)
+        let target = try #require(URL(string: Constants.redirectTarget))
+        let redirect = try #require(HTTPURLResponse(
+            url: TestHost.serverURL,
+            statusCode: Constants.foundStatus,
+            httpVersion: nil,
+            headerFields: [Constants.locationHeader: Constants.redirectTarget]
+        ))
+        let next = URLRequest(url: target)
+
+        let refused = await delegate.urlSession(
+            session,
+            task: session.dataTask(with: handSet),
+            willPerformHTTPRedirection: redirect,
+            newRequest: next
+        )
+        let followed = await delegate.urlSession(
+            session,
+            task: session.dataTask(with: URLRequest(url: TestHost.serverURL)),
+            willPerformHTTPRedirection: redirect,
+            newRequest: next
+        )
+
+        #expect(refused == nil)
+        #expect(followed?.url == target)
+    }
+
     @Test("the default evaluator leaves server trust to the system")
     func defaultEvaluatorDefersToSystem() async {
         let challenge = ClientCertificateChallengeFixture.make(
@@ -100,4 +134,11 @@ struct AuthDelegateTests {
         #expect(answer.1 == nil)
         #expect(calls.value == 0)
     }
+}
+
+private enum Constants {
+    static let cookieHeader = "connect.sid=abc"
+    static let redirectTarget = "https://sso.example.com/login"
+    static let locationHeader = "Location"
+    static let foundStatus = 302
 }

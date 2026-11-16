@@ -497,6 +497,7 @@ settings.addAccount	เพิ่มบัญชี
 settings.accountSignOut	ออกจากระบบ
 settings.accountSignOutTitle	ออกจากระบบหรือไม่
 settings.accountSignOutMessage	ออกจากระบบ %@ บนอุปกรณ์เครื่องนี้หรือไม่ คุณจะต้องเข้าสู่ระบบอีกครั้งเพื่อใช้บัญชีนี้
+settings.accountChangeFailed	ไม่สามารถเปลี่ยนแปลงบัญชีของคุณได้ในขณะนี้ โปรดลองอีกครั้ง
 settings.accountActiveLabel	%1$@, %2$@, บัญชีที่ใช้งานอยู่
 settings.badgeActive	ใช้งานอยู่
 settings.dateFormatNavigationTitle	รูปแบบวันที่
