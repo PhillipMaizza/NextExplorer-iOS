@@ -291,12 +291,12 @@ struct SessionCookieStoreTests {
 
     // MARK: unreadable keychain
 
-    /// A keychain whose reads fail and whose writes are counted.
+    /// A keychain whose reads fail and whose saves and deletes are both recorded.
     private func unreadableKeychain(writes: Recorded<String>) -> KeychainClient {
         KeychainClient(
             save: { key, _ in writes.add(key) },
             load: { _ in throw KeychainError.unexpectedStatus(errSecInteractionNotAllowed) },
-            delete: { _ in }
+            delete: { key in writes.add(key) }
         )
     }
 

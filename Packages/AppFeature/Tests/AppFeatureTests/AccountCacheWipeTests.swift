@@ -141,8 +141,11 @@ struct AccountCacheWipeTests {
     }
 
     @Test("listing the same account twice keeps one entry")
-    func pendingListHasNoDuplicates() {
-        let pending = PendingAccountWipes.inMemory()
+    func pendingListHasNoDuplicates() throws {
+        let suite = "\(Fixture.defaultsSuitePrefix)\(TestID.name())"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let pending = PendingAccountWipes.persisted(in: defaults)
         pending.add(Fixture.account)
         pending.add(Fixture.account)
         pending.add(Fixture.otherAccount)

@@ -85,6 +85,21 @@ struct OfflineFileStoreDiskTests {
         #expect(store.pinned(to: scope).totalSizeBytes() == 0)
     }
 
+    @Test("A pinned file reports the copy it was saved with, the same path pinned as a folder reports none")
+    func rootUsageReportsTheKeptCopyOnlyForAFile() throws {
+        let scope = makeScope()
+        let store = OfflineFileStore.liveValue
+        defer { store.removeAccount(scope) }
+        let item = try seed(TestFile.aText, in: Constants.docs, bytes: 3, scope: scope)
+        let pinned = store.pinned(to: scope)
+
+        pinned.setPinnedRoots([root(item.id, isDirectory: false)])
+        #expect(pinned.pinnedRootUsages().map(\.copy) == [OfflineCopyMetadata(dateModified: MockDate.date, size: 3)])
+
+        pinned.setPinnedRoots([root(item.id, isDirectory: true)])
+        #expect(pinned.pinnedRootUsages().map(\.copy) == [nil])
+    }
+
     @Test
     func rootUsageSumsTheFilesBelowEachRootAndNotASiblingWithTheSamePrefix() throws {
         let scope = makeScope()

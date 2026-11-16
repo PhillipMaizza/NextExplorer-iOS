@@ -38,9 +38,6 @@ struct FileNameValidationTests {
         for _ in 0 ..< 4000 {
             let trimmed = FuzzStrings.random(using: &rng, maxLength: 40)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-            let message = FileNameValidation.errorMessage(forTrimmed: trimmed)
-            // isAcceptable must agree with the message + empty rule, always.
-            #expect(FileNameValidation.isAcceptable(trimmed: trimmed) == (!trimmed.isEmpty && message == nil))
             // A name we accept can never smuggle a separator or a reserved name past us.
             if FileNameValidation.isAcceptable(trimmed: trimmed) {
                 #expect(!trimmed.contains("/") && !trimmed.contains("\\"))

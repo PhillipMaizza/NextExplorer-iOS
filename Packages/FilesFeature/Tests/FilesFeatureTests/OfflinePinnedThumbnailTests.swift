@@ -76,15 +76,4 @@ struct OfflinePinnedThumbnailTests {
         #expect(file.path.isEmpty)
         #expect(file.id == TestFile.aPhoto)
     }
-
-    @Test("The in memory store reports each pinned file's kept copy, and none for a folder")
-    func storeReportsTheCopy() {
-        let store = OfflineFileStore.inMemory(copyMetadata: [TestPath.photosPhoto: kept])
-        store.setPinnedRoots([
-            OfflinePinnedRoot(path: TestPath.photosPhoto, isDirectory: false),
-            OfflinePinnedRoot(path: TestFolder.docs, isDirectory: true),
-        ])
-        let copies = store.pinnedRootUsages().map(\.copy)
-        #expect(copies == [kept, nil])
-    }
 }
