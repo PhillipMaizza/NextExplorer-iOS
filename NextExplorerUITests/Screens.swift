@@ -465,6 +465,12 @@ struct OfflineTabScreen {
         app.labeledButton(L10n.Common.delete)
     }
 
+    /// Only the delete confirmation shows this: the menu item and the confirm button share the
+    /// "Delete" label, so waiting on that label passes while the menu is still closing.
+    var deleteConfirmMessage: XCUIElement {
+        app.staticTexts[L10n.Downloads.deleteSingleMessage].firstMatch
+    }
+
     var removeAction: XCUIElement {
         app.labeledButton(L10n.Common.remove)
     }
