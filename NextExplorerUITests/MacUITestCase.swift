@@ -82,6 +82,7 @@
                 L10n.Tab.favorites: AccessibilityIdentifiers.Tab.favorites,
                 L10n.Tab.shared: AccessibilityIdentifiers.Tab.shared,
                 L10n.Tab.offline: AccessibilityIdentifiers.Tab.downloads,
+                L10n.Trash.title: AccessibilityIdentifiers.Tab.trash,
             ]
             return app.buttons[identifiers[title] ?? title].firstMatch
         }

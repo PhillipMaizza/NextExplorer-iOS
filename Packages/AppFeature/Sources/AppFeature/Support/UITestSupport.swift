@@ -308,10 +308,22 @@
                     return store.createFolder(in: path, named: name)
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
-                client.deleteItems = { _, items, _ in
-                    store.delete(items)
-                    return DeleteOutcome()
+                client.deleteItems = { _, items, permanent in store.delete(items, permanent: permanent) }
+                // A server with its trash on: deletes land there and can be restored or purged.
+                client.serverFeatures = { _ in
+                    ServerFeatures(
+                        isUserVolumesEnabled: true,
+                        isVolumeUsageEnabled: true,
+                        trash: TrashAvailability(isEnabled: true, retentionDays: 30)
+                    )
                 }
+                client.fetchTrash = { _ in store.trashListing() }
+                client.restoreTrash = { _, target, _, _ in
+                    guard case let .items(ids) = target else { return TrashActionResult(items: []) }
+                    return store.restore(ids)
+                }
+                client.purgeTrash = { _, ids, _ in store.purge(ids) }
+                client.emptyTrash = { _ in store.emptyTrash() }
                 client.transferItems = { _, items, destination, operation in
                     store.transfer(items, to: destination, operation: operation)
                 }
