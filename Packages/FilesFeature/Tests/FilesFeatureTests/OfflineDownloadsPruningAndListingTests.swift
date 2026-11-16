@@ -17,10 +17,8 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
             localURLs: Dictionary(uniqueKeysWithValues: paths.map { ($0, URL(fileURLWithPath: "/tmp/\($0)")) })
         )
         offline.setPinnedRoots([OfflinePinnedRoot(path: "A", isDirectory: true)])
-        offline.reconcile = { current in
-            guard let current else { return }
-            slots.withValue { $0 = $0.intersection(current) }
-        }
+        // Orphan cleanup only: nothing here is outside the pinned root, so every slot stays.
+        offline.reconcile = {}
         return (offline, slots)
     }
 
@@ -69,9 +67,9 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
     @Test
     func aSyncOnlyDropsOrphansOfUnpinnedRootsNeverWhatTheServerLost() async {
         let offline = pinnedStore(["A"])
-        let calls = LockIsolated<[Bool]>([])
+        let calls = LockIsolated(0)
         var watched = offline
-        watched.reconcile = { current in calls.withValue { $0.append(current == nil) } }
+        watched.reconcile = { calls.withValue { $0 += 1 } }
         let run = makeRun(
             offline: watched,
             browse: { [self] path in listing([file(TestFile.aText, path: "A")], path: path) }
@@ -80,8 +78,8 @@ struct OfflineDownloadsPruningAndListingTests: OfflineDownloadsTestSupport {
         await run.store.send(.resyncTapped).finish()
 
         // Before the downloads (orphans of unpinned roots) and after them (anything taken off
-        // meanwhile), never with a list of what the server still has.
-        #expect(calls.value == [true, true])
+        // meanwhile). It takes no list of what the server has, so it can never drop a lost file.
+        #expect(calls.value == 2)
     }
 
     /// Answers a pinned folder with `rootError` and everything else (its parent) with `parent`.

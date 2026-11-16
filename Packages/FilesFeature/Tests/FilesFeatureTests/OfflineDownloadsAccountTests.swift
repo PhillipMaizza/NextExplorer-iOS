@@ -38,7 +38,7 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
         var store = base
         store.pinnedRoots = { mark(); return base.pinnedRoots() }
         store.setPinnedRoots = { roots in mark(); base.setPinnedRoots(roots) }
-        store.reconcile = { paths in mark(); base.reconcile(paths) }
+        store.reconcile = { mark(); base.reconcile() }
         store.localURL = { item in mark(); return base.localURL(item) }
         store.setInterrupted = { value in mark(); base.setInterrupted(value) }
         store.wasInterrupted = { mark(); return base.wasInterrupted() }

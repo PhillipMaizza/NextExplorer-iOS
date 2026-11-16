@@ -143,7 +143,7 @@ public struct OfflineDownloadsFeature {
                             await Self.runDownloads(files, serverURL: serverURL, filesClient: filesClient, send: send)
                         }
                         // A file taken off while this run listed or fetched it may have landed again: dropped here.
-                        offlineFileStore.reconcile(nil)
+                        offlineFileStore.reconcile()
                         if Task.isCancelled {
                             return
                         }
@@ -282,7 +282,7 @@ public struct OfflineDownloadsFeature {
                             offlineFileStore.setPinnedRoots(
                                 offlineFileStore.pinnedRoots().filter { !rolledBack.contains($0.path) }
                             )
-                            offlineFileStore.reconcile(nil)
+                            offlineFileStore.reconcile()
                         }
                     }
                 )
@@ -344,7 +344,7 @@ public struct OfflineDownloadsFeature {
         let offlineFileStore = offlineFileStore.pinned(to: state.scope)
         let roots = offlineFileStore.pinnedRoots()
         // With nothing pinned no copy should remain: a run cancelled mid file can leave one behind.
-        guard !roots.isEmpty else { return .run { _ in offlineFileStore.reconcile(nil) } }
+        guard !roots.isEmpty else { return .run { _ in offlineFileStore.reconcile() } }
         let walkedRoots = rootPaths.map { paths in roots.filter { paths.contains($0.path) } } ?? roots
         let isFullSync = rootPaths == nil
         let rootItems = walkedRoots.map(Self.fileItem(from:))
@@ -368,7 +368,7 @@ public struct OfflineDownloadsFeature {
                 let files = walk.files
                 // A pinned file or folder the server no longer has stays on the device until the user
                 // removes it: only orphans left by an unpinned root are dropped, never what the server lost.
-                offlineFileStore.reconcile(nil)
+                offlineFileStore.reconcile()
                 let pending = files.filter { offlineFileStore.localURL($0) == nil }
                 guard !pending.isEmpty else {
                     if walk.hasIncompleteWalk {
@@ -399,7 +399,7 @@ public struct OfflineDownloadsFeature {
                     await Self.runDownloads(pending, serverURL: serverURL, filesClient: filesClient, send: send)
                 }
                 // A file taken off while this run listed or fetched it may have landed again: dropped here.
-                offlineFileStore.reconcile(nil)
+                offlineFileStore.reconcile()
                 if Task.isCancelled {
                     return
                 }

@@ -177,43 +177,12 @@ struct OfflineFileStoreDiskTests {
         let pinned = store.pinned(to: scope)
         pinned.setPinnedRoots([root(Constants.docs)])
 
-        pinned.reconcile(nil)
+        pinned.reconcile()
 
         #expect(pinned.localURL(kept) != nil)
         #expect(pinned.localURL(sibling) == nil)
         #expect(pinned.localURL(orphan) == nil)
         #expect(pinned.totalSizeBytes() == 3)
-    }
-
-    @Test
-    func reconcileWithAFreshListingAlsoDropsFilesTheServerNoLongerHas() throws {
-        let scope = makeScope()
-        let store = OfflineFileStore.liveValue
-        defer { store.removeAccount(scope) }
-        let stillThere = try seed(TestFile.aText, in: Constants.docs, bytes: 3, scope: scope)
-        let deleted = try seed(TestFile.bText, in: Constants.docsSub, bytes: 5, scope: scope)
-        let pinned = store.pinned(to: scope)
-        pinned.setPinnedRoots([root(Constants.docs)])
-
-        pinned.reconcile([stillThere.id])
-
-        #expect(pinned.localURL(stillThere) != nil)
-        #expect(pinned.localURL(deleted) == nil)
-    }
-
-    @Test
-    func reconcileWithAnEmptyFreshListingDropsEveryCoveredFile() throws {
-        let scope = makeScope()
-        let store = OfflineFileStore.liveValue
-        defer { store.removeAccount(scope) }
-        let item = try seed(TestFile.aText, in: Constants.docs, bytes: 3, scope: scope)
-        let pinned = store.pinned(to: scope)
-        pinned.setPinnedRoots([root(Constants.docs)])
-
-        pinned.reconcile([])
-
-        #expect(pinned.localURL(item) == nil)
-        #expect(pinned.pinnedRoots() == [root(Constants.docs)])
     }
 
     @Test
@@ -428,7 +397,7 @@ struct OfflineFileStoreDiskTests {
         store.saveListing(listing(Constants.docs))
         store.saveListing(listing(Constants.docsSibling))
 
-        store.reconcile(nil)
+        store.reconcile()
 
         #expect(store.listing(Constants.docs) == listing(Constants.docs))
         #expect(store.listing(Constants.docsSibling) == nil, "Docs2 is not under the pinned Docs")
