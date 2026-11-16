@@ -32,7 +32,7 @@
             app.typeKey(Constants.findKey, modifierFlags: .command)
             app.typeText(Fixture.fileSearchTerm)
 
-            XCTAssertTrue(text(L10n.Search.onDevice, in: app).waitToAppear(), "Found, as on the device")
+            XCTAssertTrue(heading(L10n.Search.onDevice, in: app).waitToAppear(), "Found, as on the device")
         }
     }
 #endif

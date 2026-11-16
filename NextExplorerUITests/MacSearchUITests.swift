@@ -88,7 +88,9 @@
             app.typeKey(Constants.findKey, modifierFlags: .command)
             app.typeText(Fixture.fileSearchTerm)
 
-            let hit = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", Fixture.file)).firstMatch
+            // The root copy, by the end of its row's label ("TXT, notes.txt, /"): the mocked tree also
+            // has one in Documents, listed first as it sits in the folder on screen.
+            let hit = app.buttons.matching(NSPredicate(format: "label ENDSWITH %@", "\(Fixture.file), /")).firstMatch
             XCTAssertTrue(hit.waitToAppear(), "The file should be among the results")
             hit.click()
 
