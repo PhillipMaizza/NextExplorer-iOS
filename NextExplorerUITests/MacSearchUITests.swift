@@ -3,67 +3,65 @@
     import Localization
     import XCTest
 
-    /// The toolbar search and refresh on the Mac.
+    /// The Mac search panel, opened from the toolbar's search icon, ⌘F or ⌘K, and the toolbar refresh.
     final class MacSearchUITests: MacUITestCase {
-        /// A search result's Show in Enclosing Folder ends the search and opens where it lives.
-        func testShowInEnclosingFolderFromSearch() {
+        private func panelField(in app: XCUIApplication) -> XCUIElement {
+            app.textFields[AccessibilityIdentifiers.Search.spotlightField]
+        }
+
+        func testToolbarSearchIconOpensThePanel() {
+            let app = launchApp()
+            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
+
+            app.buttons[AccessibilityIdentifiers.Search.field].firstMatch.click()
+
+            XCTAssertTrue(panelField(in: app).waitToAppear(), "The search icon should open the search panel")
+            XCTAssertFalse(app.textFields[AccessibilityIdentifiers.Search.field].exists, "No inline search field")
+        }
+
+        /// A pushed folder keeps the search icon in its toolbar, and it opens the panel.
+        func testSearchIconStaysInsideAFolder() {
             let app = launchApp()
             openDocuments(in: app)
-            app.typeKey(Constants.findKey, modifierFlags: .command)
-            app.typeText(Fixture.fileSearchTerm)
+            XCTAssertTrue(backButton(in: app).waitToAppear())
 
-            let hit = app.outlines.cells.staticTexts.showing(Fixture.file)
-            XCTAssertTrue(hit.waitToAppear(), "The file should be among the search results")
-            hit.rightClick()
-            let show = app.menuItems[L10n.Browse.showInEnclosingFolder]
-            XCTAssertTrue(show.waitToAppear(), "A search result should offer Show in Enclosing Folder")
-            show.click()
-            XCTAssertTrue(backButton(in: app).waitToVanish(), "Its folder (the root) should open")
-            XCTAssertTrue(
-                text(Fixture.folder, in: app).waitToAppear(),
-                "The folder's listing should show, not search results"
-            )
+            let icon = app.buttons[AccessibilityIdentifiers.Search.field].firstMatch
+            XCTAssertTrue(icon.waitToAppear(), "A folder's toolbar should show the search icon")
+            icon.click()
+            XCTAssertTrue(panelField(in: app).waitToAppear())
         }
 
-        func testFindFocusesTheToolbarSearch() {
+        func testFindOpensThePanelAndTypingSearches() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             focusWindow(app)
 
             app.typeKey(Constants.findKey, modifierFlags: .command)
-            let field = app.textFields[AccessibilityIdentifiers.Search.field]
-            XCTAssertTrue(field.isFocused(within: UITestTimeout.standard), "⌘F should focus the toolbar search")
+            XCTAssertTrue(panelField(in: app).isFocused(within: UITestTimeout.standard), "⌘F should open the panel")
             app.typeText(Fixture.searchQuery)
-            XCTAssertTrue(searchHit(in: app).waitToAppear(), "⌘F then typing should show the search results")
+            XCTAssertTrue(searchHit(in: app).waitToAppear(), "Typing should show the search results")
         }
 
-        /// Typing in the toolbar search, letting the search run between keys, keeps every keystroke
-        /// in the field.
-        func testTypingInSearchKeepsTheFieldFocused() {
+        /// Typing in the panel, letting the search run between keys, keeps every keystroke in the field.
+        func testTypingInThePanelKeepsTheFieldFocused() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             focusWindow(app)
             app.typeKey(Constants.findKey, modifierFlags: .command)
-            let field = app.textFields[AccessibilityIdentifiers.Search.field]
+            let field = panelField(in: app)
             XCTAssertTrue(field.waitToAppear())
 
             for (typed, character) in Fixture.folderAlt.enumerated() {
                 app.typeText(String(character))
-                // From the server minimum on, each key resets the results to the instant matches and
-                // the debounced search adds the hit back, so the hit showing again means this partial
-                // query has run before the next key.
                 if typed + 1 >= Fixture.minimumSearchLength {
                     XCTAssertTrue(searchHit(in: app).waitToAppear(), "Each partial query should run")
                 }
             }
-            XCTAssertTrue(
-                field.isFocused(within: UITestTimeout.short),
-                "The search field should keep focus while typing"
-            )
-            XCTAssertEqual(field.value as? String, Fixture.folderAlt, "Every keystroke should land in the search field")
+            XCTAssertTrue(field.isFocused(within: UITestTimeout.short), "The field should keep focus while typing")
+            XCTAssertEqual(field.value as? String, Fixture.folderAlt, "Every keystroke should land in the field")
         }
 
-        /// A folder found by search opens and loads like one opened from the table.
+        /// A folder found by search opens and loads like one opened from the table, and the panel goes.
         func testOpeningAFolderFromSearchLoadsIt() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
@@ -71,14 +69,34 @@
             app.typeKey(Constants.findKey, modifierFlags: .command)
             app.typeText(Fixture.folderAlt)
 
-            let hit = app.outlines.cells.staticTexts.showing(Fixture.folderAlt)
-            XCTAssertTrue(hit.waitToAppear(), "The folder should be among the search results")
-            hit.doubleClick()
+            let hit = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", Fixture.folderAlt)).firstMatch
+            XCTAssertTrue(hit.waitToAppear(), "The folder should be among the results")
+            hit.click()
 
+            XCTAssertTrue(panelField(in: app).waitToVanish(), "Choosing a result should close the panel")
             XCTAssertTrue(backButton(in: app).waitToAppear(), "Opening the result should push the folder")
             XCTAssertTrue(
                 text(Fixture.file, in: app).waitToAppear(),
                 "The opened folder should load its files, not stay on the skeleton"
+            )
+        }
+
+        /// A file found by search opens the folder that holds it, loaded, from another folder.
+        func testOpeningAFileFromSearchShowsItsFolder() {
+            let app = launchApp()
+            openDocuments(in: app)
+            app.typeKey(Constants.findKey, modifierFlags: .command)
+            app.typeText(Fixture.fileSearchTerm)
+
+            let hit = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", Fixture.file)).firstMatch
+            XCTAssertTrue(hit.waitToAppear(), "The file should be among the results")
+            hit.click()
+
+            XCTAssertTrue(panelField(in: app).waitToVanish(), "Choosing a result should close the panel")
+            XCTAssertTrue(backButton(in: app).waitToVanish(), "Its folder (the root) should open")
+            XCTAssertTrue(
+                text(Fixture.folder, in: app).waitToAppear(),
+                "The folder's listing should show, not a skeleton"
             )
         }
 

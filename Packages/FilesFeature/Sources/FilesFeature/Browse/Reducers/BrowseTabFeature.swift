@@ -34,6 +34,9 @@ public struct BrowseTabFeature {
         case root(BrowseFeature.Action)
         case path(StackActionOf<BrowseFeature>)
         case navigateToDirectory(path: String, title: String)
+        /// A search hit: opens the folder (or the one holding the file, then selects and opens it) on top
+        /// of the folders already open, so Back returns to the previous one.
+        case navigateToItem(folder: String, title: String, revealing: String?)
         /// Re-fetches the root folder and every pushed subfolder currently on the live
         /// navigation stack: sent when the app becomes active again after being backgrounded.
         case syncPathStack
@@ -210,6 +213,17 @@ public struct BrowseTabFeature {
             case let .navigateToDirectory(path, title):
                 state.forwardStack = []
                 BrowseNavigation.jump(to: path, title: title, serverURL: state.root.serverURL, stack: &state.path)
+                return .none
+
+            case let .navigateToItem(folder, title, itemID):
+                state.forwardStack = []
+                BrowseNavigation.push(to: folder, title: title, serverURL: state.root.serverURL, stack: &state.path)
+                guard let itemID else { return .none }
+                if let id = state.path.ids.last {
+                    state.path[id: id]?.revealItemID = itemID
+                } else {
+                    state.root.revealItemID = itemID
+                }
                 return .none
 
             case .syncPathStack:

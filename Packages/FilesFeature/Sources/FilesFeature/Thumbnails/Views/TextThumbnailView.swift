@@ -29,7 +29,8 @@ struct TextThumbnailView: View {
                         .fixedSize(horizontal: true, vertical: false)
                         .padding(.horizontal, width * Constants.insetShareOfWidth)
                         .padding(.top, proxy.size.height * Constants.topInsetShareOfHeight)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        // A fixed frame: a flexible one grows to a long line's width and the clip with it.
+                        .frame(width: width, height: proxy.size.height, alignment: .topLeading)
                         .clipShape(FilePageShape())
                 }
         }

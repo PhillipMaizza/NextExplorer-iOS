@@ -35,6 +35,7 @@
         }
 
         var body: some Commands {
+            SidebarCommands()
             // About NextExplorer opens the app's own About window (credits and links).
             CommandGroup(replacing: .appInfo) {
                 Button(L10n.Menu.about) { openWindow(id: MacAboutView.windowID) }
@@ -75,15 +76,18 @@
                     .keyboardShortcut("p")
                     .disabled(printPreview == nil)
             }
-            // Undo reverses the last file operation while the file table has focus and one is
-            // recorded; otherwise both items go down the responder chain (text fields, editor).
+            // Undo reverses the last file operation and Redo does the last undone one again, while the
+            // file table has focus and one is waiting; otherwise both go down the responder chain
+            // (text fields, editor).
             CommandGroup(replacing: .undoRedo) {
                 Button(L10n.Menu.undo) {
                     perform(fileActions?.canUndo == true ? fileActions?.undo : nil, fallback: Selector(("undo:")))
                 }
                 .keyboardShortcut("z")
-                Button(L10n.Menu.redo) { NSApp.sendAction(Selector(("redo:")), to: nil, from: nil) }
-                    .keyboardShortcut("z", modifiers: [.command, .shift])
+                Button(L10n.Menu.redo) {
+                    perform(fileActions?.canRedo == true ? fileActions?.redo : nil, fallback: Selector(("redo:")))
+                }
+                .keyboardShortcut("z", modifiers: [.command, .shift])
             }
             CommandGroup(replacing: .pasteboard) {
                 Button(L10n.Browse.actionCut) { perform(fileActions?.cut, fallback: #selector(NSText.cut(_:))) }
@@ -265,7 +269,7 @@
         @Environment(\.openURL) private var openURL
 
         var body: some View {
-            Button(L10n.Menu.support) { openURL(AppLinks.support) }
+            Button(L10n.Menu.support) { openURL(AppLinks.supportMail) }
         }
     }
 #endif

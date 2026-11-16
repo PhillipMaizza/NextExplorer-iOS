@@ -24,6 +24,10 @@ public struct BrowseFeature {
         public var directoryPath: String
         public var title: String
         public var items: IdentifiedArrayOf<FileItem> = []
+        /// A file a search sent the user to: selected, scrolled to and opened once the listing holds it.
+        var revealItemID: FileItem.ID?
+        /// The row the Mac table scrolls into view, set when `revealItemID` lands in the listing.
+        var scrollTargetID: FileItem.ID?
         public var favoritePaths: Set<String> = []
         /// A favorites answer has landed. Until then `favoritePaths` says nothing, and toggling a star
         /// would re add a folder that is already a favorite, resetting its label, icon and color.
@@ -125,6 +129,8 @@ public struct BrowseFeature {
         @Shared(.inMemory(FileClipboard.sharedKey)) public var clipboard: FileClipboard?
         /// App wide ⌘Z history of reversible file operations (`FileUndoEntry`).
         @Shared(.inMemory(FileUndoEntry.sharedKey)) public var undoStack: [FileUndoEntry] = []
+        /// Operations ⌘Z reversed, for ⇧⌘Z to do again (`FileUndoEntry.isRedoable` ones only).
+        @Shared(.inMemory(FileUndoEntry.redoSharedKey)) public var redoStack: [FileUndoEntry] = []
         /// Current account's downloads scope, so saved files land in this account's folder.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// The "Move" destination chooser, presented for a single item or a multi selection.
@@ -525,13 +531,17 @@ public struct BrowseFeature {
         /// Keyboard driven actions for the Mac file table, acting on whatever rows are selected
         /// there (tracked in `selectedItemIDs` without entering select mode).
         case tableSelectionChanged(Set<FileItem.ID>)
+        /// The listing now holds the file a search sent the user to: select it, scroll to it, open it.
+        case revealItemShown(FileItem.ID)
         case copySelectionTapped
         case cutSelectionTapped
         /// Copies the selection into its own folder; the server names the copies "Name (2)".
         case duplicateSelectionTapped
         /// Reverses the last recorded file operation (⌘Z).
         case undoTapped
-        case undoResponse(Result<Bool, FilesClientError>)
+        case undoResponse(Result<FileUndoEntry, FilesClientError>)
+        case redoTapped
+        case redoResponse(Result<FileUndoEntry, FilesClientError>)
         case deleteSelectionTapped
         case renameSelectionTapped
         case infoSelectionTapped

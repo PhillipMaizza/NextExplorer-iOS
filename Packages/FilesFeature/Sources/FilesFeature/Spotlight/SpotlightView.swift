@@ -1,4 +1,5 @@
 #if os(macOS)
+    import AppKit
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
@@ -18,6 +19,7 @@
         static let activeOpacity: Double = 0.1
         static let fieldFont = Font.title2
         static let animationDuration: Double = 0.2
+        static let zoomScale: CGFloat = 0.94
         /// The panel's frost is darkened so the field and hits read clearly over any window.
         static let panelDarkTint: Double = 0.5
         static let panelLightTint: Double = 0.1
@@ -28,25 +30,24 @@
     struct SpotlightView: View {
         @Bindable var store: StoreOf<SpotlightFeature>
         @FocusState private var isFieldFocused: Bool
+        /// Where the pointer was at the last arrow key press.
+        @State private var keyboardMouseLocation: CGPoint?
         @Environment(\.colorScheme) private var colorScheme
-        @State private var isShown = false
 
         var body: some View {
             ZStack(alignment: .top) {
-                Color.black.opacity(isShown ? Constants.scrimOpacity : 0)
+                Color.black.opacity(Constants.scrimOpacity)
                     .ignoresSafeArea()
                     .onTapGesture { store.send(.closeRequested) }
                     .accessibilityHidden(true)
+                    .transition(.opacity)
+                // Zooms in from just under full size, and back out the same way on the way out,
+                // like the system Spotlight.
                 panel
                     .padding(.top, Constants.topOffset)
-                    .opacity(isShown ? 1 : 0)
+                    .transition(.scale(scale: Constants.zoomScale, anchor: .top).combined(with: .opacity))
             }
             .onExitCommand { store.send(.closeRequested) }
-            .task {
-                withAnimation(.easeOut(duration: Constants.animationDuration)) {
-                    isShown = true
-                }
-            }
         }
 
         private var panelShape: RoundedRectangle {
@@ -98,12 +99,15 @@
                     .tint(Color.accent)
                     .font(Constants.fieldFont)
                     .focused($isFieldFocused)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Search.spotlightField)
                     .onSubmit { store.send(.submitted) }
                     .onKeyPress(.downArrow) {
+                        keyboardMouseLocation = NSEvent.mouseLocation
                         store.send(.selectionMoved(.down))
                         return .handled
                     }
                     .onKeyPress(.upArrow) {
+                        keyboardMouseLocation = NSEvent.mouseLocation
                         store.send(.selectionMoved(.up))
                         return .handled
                     }
@@ -139,21 +143,51 @@
             }
         }
 
+        private func sectionHeader(_ title: String) -> some View {
+            Text(title)
+                .type(.caption(.bold), style: .secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, .space8)
+                .padding(.top, .space8)
+                .accessibilityAddTraits(.isHeader)
+        }
+
+        private func rows(_ hits: [SearchResultItem], startingAt offset: Int) -> some View {
+            ForEach(Array(hits.enumerated()), id: \.element.id) { position, result in
+                let index = offset + position
+                SpotlightResultRow(
+                    result: result,
+                    serverURL: store.serverURL,
+                    showThumbnails: store.preferences.showThumbnails,
+                    isActive: store.activeIndex == index,
+                    onHover: { isInside in
+                        // Entering a row highlights it; leaving never clears, since the exit of the row
+                        // left can land after the enter of the next and drop the highlight. A pointer
+                        // resting still while the arrow keys scroll rows under it must not take it back.
+                        guard isInside, NSEvent.mouseLocation != keyboardMouseLocation else { return }
+                        store.send(.highlighted(index))
+                    },
+                    onOpen: { store.send(.resultTapped(result)) }
+                )
+                .id(index)
+            }
+        }
+
         private var resultsBody: some View {
             VStack(spacing: 0) {
                 if !store.results.isEmpty {
                     ScrollViewReader { proxy in
                         ScrollView {
                             LazyVStack(spacing: 0) {
-                                ForEach(Array(store.results.enumerated()), id: \.element.id) { index, result in
-                                    SpotlightResultRow(
-                                        result: result,
-                                        isActive: store.activeIndex == index,
-                                        onHover: { store.send(.highlighted($0 ? index : nil)) },
-                                        onOpen: { store.send(.resultTapped(result)) }
-                                    )
-                                    .id(index)
+                                let sections = store.sections
+                                if sections.isSplit {
+                                    sectionHeader(L10n.Search.onDevice)
                                 }
+                                rows(sections.onDevice, startingAt: 0)
+                                if sections.isSplit {
+                                    sectionHeader(L10n.Search.remote)
+                                }
+                                rows(sections.remote, startingAt: sections.onDevice.count)
                             }
                             .padding(.space8)
                         }
@@ -184,20 +218,26 @@
 
     private struct SpotlightResultRow: View {
         let result: SearchResultItem
+        let serverURL: URL
+        let showThumbnails: Bool
         let isActive: Bool
         let onHover: (Bool) -> Void
         let onOpen: () -> Void
 
         var body: some View {
             Button(action: onOpen) {
-                SearchResultRow(result: result)
-                    .padding(.horizontal, .space8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
-                            .fill(isActive ? Color.primaryDS.opacity(Constants.activeOpacity) : .clear)
-                    )
-                    .contentShape(Rectangle())
+                SearchResultRow(
+                    result: result,
+                    serverURL: serverURL,
+                    showThumbnails: showThumbnails
+                )
+                .padding(.horizontal, .space8)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
+                        .fill(isActive ? Color.primaryDS.opacity(Constants.activeOpacity) : .clear)
+                )
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .onHover(perform: onHover)

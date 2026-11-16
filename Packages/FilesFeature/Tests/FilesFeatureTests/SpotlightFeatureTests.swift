@@ -56,6 +56,7 @@ struct SpotlightFeatureTests {
             SpotlightFeature()
         } withDependencies: {
             $0.continuousClock = clock
+            $0.offlineFileStore = .inMemory(copyMetadata: [:])
             $0.filesClient.search = { _, path, query, limit in
                 asked.withValue { $0.append(Ask(path: path, query: query, limit: limit)) }
                 return page
@@ -96,7 +97,7 @@ struct SpotlightFeatureTests {
         #expect(asked.value.isEmpty)
     }
 
-    @Test("Typing waits 350 ms, then asks below the base path with the first limit")
+    @Test("Typing waits 350 ms, then asks the folder and everywhere with the first limit")
     func typingWaitsThenAsks() async {
         let clock = TestClock<Duration>()
         let asked = LockIsolated<[Ask]>([])
@@ -114,11 +115,60 @@ struct SpotlightFeatureTests {
             $0.results = [folderHit, fileHit]
             $0.phase = .loaded
         }
-        #expect(asked.value == [Ask(
-            path: Constants.basePath,
-            query: Constants.term,
-            limit: FilesClient.searchLimitSteps[0]
-        )])
+        await store.receive(\.onDeviceComputed)
+        #expect(Set(asked.value.map(\.path)) == ["", Constants.basePath])
+        #expect(asked.value.allSatisfy { $0.query == Constants.term && $0.limit == FilesClient.searchLimitSteps[0] })
+    }
+
+    @Test("The folder's hits come first, then the rest, each listed once")
+    func folderHitsComeFirst() async {
+        let clock = TestClock<Duration>()
+        let store = TestStore(initialState: state()) {
+            SpotlightFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.offlineFileStore = .inMemory(copyMetadata: [:])
+            $0.filesClient.search = { [folderHit, fileHit, otherHit] _, path, _, _ in
+                path.isEmpty ? SearchPage(items: [folderHit, fileHit, otherHit]) : SearchPage(items: [otherHit])
+            }
+        }
+
+        await store.send(.queryChanged(Constants.term)) {
+            $0.query = Constants.term
+            $0.phase = .loading
+        }
+        await clock.advance(by: .milliseconds(350))
+        await store.receive(\.searchResponse.success) {
+            $0.results = [otherHit, folderHit, fileHit]
+            $0.phase = .loaded
+        }
+        await store.receive(\.onDeviceComputed)
+    }
+
+    @Test("At the root one search asks everywhere")
+    func rootAsksOnce() async {
+        let clock = TestClock<Duration>()
+        let asked = LockIsolated<[Ask]>([])
+        let store = store(state(basePath: ""), clock: clock, asked: asked, page: SearchPage(items: [fileHit]))
+
+        await store.send(.queryChanged(Constants.term)) {
+            $0.query = Constants.term
+            $0.phase = .loading
+        }
+        await clock.advance(by: .milliseconds(350))
+        await store.receive(\.searchResponse.success) {
+            $0.results = [fileHit]
+            $0.phase = .loaded
+        }
+        await store.receive(\.onDeviceComputed)
+        #expect(asked.value.map(\.path) == [""])
+    }
+
+    @Test("Offline matches keep the folder's first, in their ranked order")
+    func folderFirstPartition() {
+        #expect(SpotlightFeature.folderFirst([folderHit, fileHit, otherHit], below: Constants.basePath)
+            == [otherHit, folderHit, fileHit])
+        #expect(SpotlightFeature.folderFirst([folderHit, fileHit], below: "") == [folderHit, fileHit])
     }
 
     @Test("A newer term replaces the one still waiting, so only it is asked")
@@ -140,7 +190,8 @@ struct SpotlightFeatureTests {
             $0.results = [fileHit]
             $0.phase = .loaded
         }
-        #expect(asked.value.map(\.query) == [Constants.longerTerm])
+        await store.receive(\.onDeviceComputed)
+        #expect(Set(asked.value.map(\.query)) == [Constants.longerTerm])
     }
 
     @Test("A failed search says why and clears the list")
@@ -178,6 +229,40 @@ struct SpotlightFeatureTests {
             $0.results = [fileHit, otherHit]
             $0.phase = .loaded
         }
+        await store.receive(\.onDeviceComputed)
+    }
+
+    @Test("Hits kept on the device are listed first, and the arrow keys follow that order")
+    func onDeviceHitsComeFirst() async {
+        var state = loaded([folderHit, fileHit, otherHit])
+        state.onDeviceIDs = [otherHit.id]
+        let store = TestStore(initialState: state) { SpotlightFeature() }
+
+        #expect(store.state.displayed == [otherHit, folderHit, fileHit])
+        await store.send(.selectionMoved(.down)) { $0.activeIndex = 0 }
+        await store.send(.submitted)
+        await store.receive(.delegate(.openResult(otherHit)))
+    }
+
+    @Test("Without a connection the search answers from the device, never from the server")
+    func offlineAnswersFromTheDevice() async {
+        let clock = TestClock<Duration>()
+        let store = TestStore(initialState: state()) {
+            SpotlightFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.offlineFileStore = .inMemory(copyMetadata: [:])
+            $0.directoryCacheStore = .inMemory()
+            $0.filesClient.search = { _, _, _, _ in throw FilesClientError.offline }
+        }
+
+        await store.send(.queryChanged(Constants.term)) {
+            $0.query = Constants.term
+            $0.phase = .loading
+        }
+        await clock.advance(by: .milliseconds(350))
+        await store.receive(\.searchResponse.failure)
+        await store.receive(\.savedMatchesLoaded) { $0.phase = .loaded }
     }
 
     @Test("Show more asks at once with the next step, keeping the list while it loads")
@@ -201,7 +286,8 @@ struct SpotlightFeatureTests {
             $0.shortfall = nil
             $0.phase = .loaded
         }
-        #expect(asked.value.map(\.limit) == [Constants.secondStep])
+        await store.receive(\.onDeviceComputed)
+        #expect(Set(asked.value.map(\.limit)) == [Constants.secondStep])
     }
 
     @Test("Show more does nothing without a short answer, or at the last step")
@@ -265,6 +351,18 @@ struct SpotlightFeatureTests {
 
         let empty = store(loaded([]), clock: clock, page: page)
         await empty.send(.submitted)
+    }
+
+    @Test("Return re sending the unchanged text keeps the highlight, so it opens that hit")
+    func unchangedQueryKeepsTheHighlight() async {
+        let store = store(
+            loaded([folderHit, fileHit, otherHit], activeIndex: 2),
+            clock: TestClock<Duration>(),
+            page: SearchPage(items: [])
+        )
+        await store.send(.queryChanged(Constants.term))
+        await store.send(.submitted)
+        await store.receive(.delegate(.openResult(otherHit)))
     }
 
     @Test("Clicking a hit opens it")

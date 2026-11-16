@@ -187,7 +187,9 @@ struct BrowseContentView: View {
                     Task { @MainActor in store.send(.previewDismissed) }
                 }
             }
-            .task {
+            // Keyed on the folder: a jump to another folder at the same depth swaps this screen's store
+            // under the same view, which must start loading it too.
+            .task(id: store.directoryPath) {
                 // Yield first so these sends land after whatever action presented this view has
                 // finished reducing, never reentrantly during it (TCA forbids reentrant sends).
                 await Task.yield()
@@ -195,6 +197,14 @@ struct BrowseContentView: View {
                 guard !Task.isCancelled else { return }
                 store.send(.onAppear)
                 store.send(.computeOfflineAvailability)
+            }
+            // A search hit opened this folder: once its listing holds the file, select it.
+            .task(id: RevealKey(
+                id: store.revealItemID,
+                isListed: store.revealItemID.map { store.items[id: $0] != nil }
+            )) {
+                guard let id = store.revealItemID, store.items[id: id] != nil else { return }
+                store.send(.revealItemShown(id))
             }
             // New results, or a change in what this folder keeps offline: find the results on the device.
             .task(id: SearchOnDeviceKey(results: store.searchResults?.ids.elements, offline: store.offlineItemIDs)) {
@@ -285,6 +295,12 @@ struct BrowseContentView: View {
         .macToolbarRefresh(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
             didFinishRefreshing.toggle()
         }
+        .focusedSceneValue(
+            \.uploadToVisibleFolder,
+            !store.isSelecting && store.canUploadHere
+                ? UploadToVisibleFolderAction { isFilesPickerPresented = true }
+                : nil
+        )
         .syncCompletedToast(
             trigger: didFinishRefreshing,
             isErrorFree: store.phase.errorMessage == nil,
@@ -534,7 +550,8 @@ struct BrowseContentView: View {
                 onRenameCancel: { store.send(.renameCancelled) },
                 personalSpace: store.showsPersonalSpace ? Self.macPersonalSpaceItem : nil,
                 onOpenPersonalSpace: { store.send(.personalSpaceTapped) },
-                onQuickLookUnavailable: { toastMessage = DSToastMessage(icon: IconKit.warning, text: $0) }
+                onQuickLookUnavailable: { toastMessage = DSToastMessage(icon: IconKit.warning, text: $0) },
+                scrollTargetID: store.scrollTargetID
             )
             .focusedSceneValue(\.browseViewOptions, BrowseViewOptions(
                 sortOption: store.sortOption,
@@ -649,4 +666,9 @@ struct BrowseContentView: View {
         .padding(.horizontal, Constants.emptyUploadButtonHPadding)
         .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
     }
+}
+
+private struct RevealKey: Hashable {
+    let id: String?
+    let isListed: Bool?
 }

@@ -102,6 +102,8 @@ public struct MainTabFeature {
         case goToFolderRequested(String)
         /// Mac ⌘K: opens the search panel, or closes it.
         case spotlightToggled
+        /// Opens the panel, or leaves it open; the toolbar icons send it so a repeated tap never closes it.
+        case spotlightOpened
         case spotlight(PresentationAction<SpotlightFeature.Action>)
         case recentFoldersCleared
         #if os(macOS)
@@ -261,23 +263,27 @@ public struct MainTabFeature {
                     state.selectedTab = .browse
                     return .send(.browse(.navigateToDirectory(path: path, title: (path as NSString).lastPathComponent)))
 
-                case .spotlightToggled:
+                case .spotlightToggled where state.spotlight != nil:
+                    state.spotlight = nil
+                    return .none
+
+                case .spotlightToggled, .spotlightOpened:
                     if state.spotlight == nil {
                         state.spotlight = SpotlightFeature.State(
                             serverURL: state.browse.root.serverURL,
                             basePath: state.selectedTab == .browse ? state.browse.currentDirectoryPath : ""
                         )
-                    } else {
-                        state.spotlight = nil
                     }
                     return .none
 
                 case let .spotlight(.presented(.delegate(.openResult(result)))):
                     state.spotlight = nil
                     state.selectedTab = .browse
-                    let folder = result.isDirectory ? result.id : result.path
-                    let title = result.isDirectory ? result.name : result.enclosingFolderTitle
-                    return .send(.browse(.navigateToDirectory(path: folder, title: title)))
+                    return .send(.browse(.navigateToItem(
+                        folder: result.isDirectory ? result.id : result.path,
+                        title: result.isDirectory ? result.name : result.enclosingFolderTitle,
+                        revealing: result.isDirectory ? nil : result.id
+                    )))
 
                 case .spotlight(.presented(.delegate(.closed))):
                     state.spotlight = nil
