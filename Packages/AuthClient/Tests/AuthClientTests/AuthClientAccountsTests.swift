@@ -72,7 +72,7 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
     func switchAccount() async throws {
         let fixture = try makeFixture()
 
-        let switched = await fixture.client.switchAccount(fixture.first.accountID)
+        let switched = try await fixture.client.switchAccount(fixture.first.accountID)
 
         #expect(switched == fixture.first)
         #expect(await fixture.client.activeAccountID() == fixture.first.accountID)
@@ -86,7 +86,7 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
     func switchToUnknownAccount() async throws {
         let fixture = try makeFixture()
 
-        #expect(await fixture.client.switchAccount(Constants.unknownAccountID) == nil)
+        #expect(try await fixture.client.switchAccount(Constants.unknownAccountID) == nil)
         #expect(await fixture.client.activeAccountID() == fixture.second.accountID)
         #expect(try storedSessions(fixture.keychain) == StoredSessions(
             sessions: [fixture.first, fixture.second],
@@ -125,7 +125,7 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
             return try await okHandler()(request)
         }
 
-        let next = await client.removeAccount(fixture.first.accountID)
+        let next = try await client.removeAccount(fixture.first.accountID)
 
         #expect(next == fixture.second)
         let logout = try #require(seen.values.first)
@@ -134,15 +134,24 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
         #expect(logout.httpShouldHandleCookies == false)
     }
 
-    @Test("clearing the active session with an unreadable keychain throws instead of reading as no account left")
-    func clearActiveUnreadableThrows() async {
+    @Test("switching, removing or clearing with an unreadable keychain throws and changes nothing")
+    func unreadableKeychainThrows() async {
         let unreadable = KeychainClient(
             save: { _, _ in Issue.record("nothing may be saved over an unread set") },
             load: { _ in throw KeychainError.unexpectedStatus(errSecInteractionNotAllowed) },
             delete: { _ in Issue.record("nothing may be deleted when the set can't be read") }
         )
-        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: unreadable, handler: okHandler())
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: unreadable) { _ in
+            Issue.record("no logout is sent for an account that can't be read")
+            throw NetworkError.transport(TestFailure.offline)
+        }
 
+        await #expect(throws: AuthClientError.self) {
+            _ = try await client.switchAccount(Constants.unknownAccountID)
+        }
+        await #expect(throws: AuthClientError.self) {
+            _ = try await client.removeAccount(Constants.unknownAccountID)
+        }
         await #expect(throws: AuthClientError.self) {
             _ = try await client.clearActiveSession()
         }

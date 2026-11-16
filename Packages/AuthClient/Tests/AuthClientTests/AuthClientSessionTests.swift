@@ -131,7 +131,7 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
             throw NetworkError.transport(TestFailure.offline)
         }
 
-        let next = await client.removeAccount(credentials.accountID)
+        let next = try await client.removeAccount(credentials.accountID)
 
         #expect(next == nil)
         #expect(store.activeCredentials() == nil)

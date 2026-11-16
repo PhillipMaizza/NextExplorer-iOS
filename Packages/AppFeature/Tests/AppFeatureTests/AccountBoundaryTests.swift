@@ -131,8 +131,8 @@ extension AppSuites {
             #expect(recorder.events.value.isEmpty)
         }
 
-        @Test("An expiry confirmed while the stored accounts can't be read signs nobody out and wipes nothing")
-        func expiryWithUnreadableKeychainChangesNothing() async {
+        @Test("An expiry confirmed while the stored accounts can't be read signs nobody out but still wipes its caches")
+        func expiryWithUnreadableKeychainKeepsAccountsAndWipesCaches() async {
             let pending = PendingAccountWipes.inMemory()
             let store = makeStore(activeState(AppFixtures.serverA, AppFixtures.userA)) {
                 $0.pendingAccountWipes = pending
@@ -145,7 +145,7 @@ extension AppSuites {
             await store.finish()
 
             #expect(pending.accounts().isEmpty)
-            #expect(recorder.events.value.isEmpty)
+            #expect(recorder.events.value == WipeRecorder.accountWipe(AppFixtures.accountA))
             #expect(store.state.currentAccountID == AppFixtures.accountA)
         }
 

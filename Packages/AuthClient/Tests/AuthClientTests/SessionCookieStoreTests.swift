@@ -228,7 +228,7 @@ struct SessionCookieStoreTests {
         #expect(store.allSessions().count == 2)
         #expect(store.activeCredentials()?.accountID == credsB.accountID)
 
-        let switched = try #require(store.setActive(id: credsA.accountID))
+        let switched = try #require(try store.setActive(id: credsA.accountID))
         #expect(switched.accountID == credsA.accountID)
         #expect(store.activeCredentials()?.accountID == credsA.accountID)
         #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.contains { $0.value == "aaa" } == true)
@@ -248,7 +248,7 @@ struct SessionCookieStoreTests {
         try store.persist(credsA)
         try store.persist(credsB) // B active
 
-        let next = try #require(store.remove(id: credsB.accountID))
+        let next = try #require(try store.remove(id: credsB.accountID))
         #expect(next.accountID == credsA.accountID)
         #expect(store.allSessions().count == 1)
         #expect(HTTPCookieStorage.shared.cookies(for: serverB)?.contains { $0.value == "bbb" } != true)
@@ -265,7 +265,7 @@ struct SessionCookieStoreTests {
         )
         try store.persist(credsA)
 
-        #expect(store.remove(id: credsA.accountID) == nil)
+        #expect(try store.remove(id: credsA.accountID) == nil)
         #expect(store.allSessions().isEmpty)
     }
 
@@ -313,8 +313,12 @@ struct SessionCookieStoreTests {
         #expect(throws: KeychainError.self) {
             try store.persist(credentials)
         }
-        #expect(store.setActive(id: credentials.accountID) == nil)
-        #expect(store.remove(id: credentials.accountID) == nil)
+        #expect(throws: KeychainError.self) {
+            try store.setActive(id: credentials.accountID)
+        }
+        #expect(throws: KeychainError.self) {
+            try store.remove(id: credentials.accountID)
+        }
         #expect(throws: KeychainError.self) {
             try store.clearActive()
         }

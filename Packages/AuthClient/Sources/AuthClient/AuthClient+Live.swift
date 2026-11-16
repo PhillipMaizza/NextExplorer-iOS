@@ -37,6 +37,16 @@ public extension AuthClient {
             }
         }
 
+        // Reports a keychain failure of the account store as `AuthClientError.keychain`.
+        @Sendable
+        func keychainErrors<T>(_ work: () throws -> T) throws -> T {
+            do {
+                return try work()
+            } catch {
+                throw AuthClientError.keychain(String(describing: error))
+            }
+        }
+
         @Sendable
         func captureAndPersist(serverURL: URL, authMode: AuthMode, cookieName: String, username: String?) async throws {
             try await onCookieQueue {
@@ -169,7 +179,7 @@ public extension AuthClient {
                 await onCookieQueue { cookieStore.activeCredentials()?.accountID }
             },
             switchAccount: { accountID in
-                await onCookieQueue { cookieStore.setActive(id: accountID) }
+                try await onCookieQueue { try keychainErrors { try cookieStore.setActive(id: accountID) } }
             },
             removeAccount: { accountID in
                 // Best effort server logout of the account being removed, with its own cookie: the
@@ -180,16 +190,10 @@ public extension AuthClient {
                 if let removed {
                     try? await localAuthService.logout(serverURL: removed.serverBaseURL, credentials: removed)
                 }
-                return await onCookieQueue { cookieStore.remove(id: accountID) }
+                return try await onCookieQueue { try keychainErrors { try cookieStore.remove(id: accountID) } }
             },
             clearActiveSession: {
-                try await onCookieQueue {
-                    do {
-                        return try cookieStore.clearActive()
-                    } catch {
-                        throw AuthClientError.keychain(String(describing: error))
-                    }
-                }
+                try await onCookieQueue { try keychainErrors { try cookieStore.clearActive() } }
             },
             clearAllSessions: {
                 await onCookieQueue { cookieStore.clearAll() }

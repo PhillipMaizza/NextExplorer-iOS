@@ -31,11 +31,14 @@ public struct AuthClient: Sendable {
     /// The `accountID` of the active account, or `nil` when none.
     public var activeAccountID: @Sendable () async -> String?
     /// Switches the active account and installs its cookie (no re-authentication). Returns the
-    /// now-active credentials, or `nil` if the id is unknown.
-    public var switchAccount: @Sendable (_ accountID: String) async -> SessionCredentials?
+    /// now active credentials, or `nil` if the id is unknown. A keychain that can't be read throws
+    /// `AuthClientError.keychain` and changes nothing.
+    public var switchAccount: @Sendable (_ accountID: String) async throws -> SessionCredentials?
     /// Signs one account out: best-effort server logout, drops its stored credentials and cookie,
-    /// and returns whatever account is active afterwards (`nil` when none remain).
-    public var removeAccount: @Sendable (_ accountID: String) async -> SessionCredentials?
+    /// and returns whatever account is active afterwards (`nil` when none remain). A keychain that
+    /// can't be read throws `AuthClientError.keychain` and changes nothing, instead of reading as
+    /// "no account left".
+    public var removeAccount: @Sendable (_ accountID: String) async throws -> SessionCredentials?
     /// Tears down just the active account (session expiry / 401) and returns the next remaining
     /// account, or `nil` when none are left. A keychain that can't be read throws
     /// `AuthClientError.keychain` and changes nothing, instead of reading as "no account left".

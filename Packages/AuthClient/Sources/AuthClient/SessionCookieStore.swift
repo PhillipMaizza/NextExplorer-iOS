@@ -124,10 +124,11 @@ struct SessionCookieStore: Sendable {
     }
 
     /// Makes `id` the active account and installs its cookie. Returns the now-active credentials,
-    /// or `nil` if the id is unknown.
+    /// or `nil` if the id is unknown. Throws when the set can't be read.
     @discardableResult
-    func setActive(id: String) -> SessionCredentials? {
-        guard var stored = try? loadForChange(), let target = stored.session(id: id) else { return nil }
+    func setActive(id: String) throws -> SessionCredentials? {
+        var stored = try loadForChange()
+        guard let target = stored.session(id: id) else { return nil }
         stored.activeID = id
         try? saveStored(stored)
         install(target)
@@ -136,10 +137,10 @@ struct SessionCookieStore: Sendable {
 
     /// Removes one account, dropping its cookie, and returns whatever account is active afterwards
     /// (the caller uses `nil` to fall back to the login screen).
+    /// Throws when the set can't be read, so an unreadable keychain never reads as "none left".
     @discardableResult
-    func remove(id: String) -> SessionCredentials? {
-        guard let stored = try? loadForChange() else { return nil }
-        return remove(id: id, from: stored)
+    func remove(id: String) throws -> SessionCredentials? {
+        try remove(id: id, from: loadForChange())
     }
 
     private func remove(id: String, from stored: StoredSessions) -> SessionCredentials? {
