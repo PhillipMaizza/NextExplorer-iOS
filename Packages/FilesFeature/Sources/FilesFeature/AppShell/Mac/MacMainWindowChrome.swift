@@ -43,7 +43,6 @@
                     }
                 }
                 .animation(.easeOut(duration: Constants.spotlightAnimationDuration), value: store.spotlight != nil)
-                .modifier(MacOfflineStatusBar(store: store))
                 .modifier(MacDockUploadStatus(
                     remaining: store.uploads.remainingCount,
                     progress: store.uploads.overallProgress

@@ -16,6 +16,8 @@
     /// why, with Retry and Clear.
     struct MacOfflineStatusBar: ViewModifier {
         let store: StoreOf<MainTabFeature>
+        /// Where the sidebar ends, so the bar spans only the content beside it.
+        let leadingInset: CGFloat
         /// Set once a run has lasted `showDelay`; a failure shows at once.
         @State private var isRunShown = false
 
@@ -33,9 +35,10 @@
 
         func body(content: Content) -> some View {
             content
-                .safeAreaInset(edge: .bottom, spacing: 0) {
+                .overlay(alignment: .bottom) {
                     if isVisible {
                         MacOfflineStatusBarContent(store: store)
+                            .padding(.leading, leadingInset)
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
@@ -85,9 +88,9 @@
                         }
                         Group {
                             if let fraction = titles.offlineBarProgress {
-                                ProgressView(value: fraction)
+                                ProgressView(value: fraction).tint(Color.accent)
                             } else {
-                                ProgressView().progressViewStyle(.linear)
+                                ProgressView().progressViewStyle(.linear).tint(Color.accent)
                             }
                         }
                         .frame(width: Metrics.progressWidth)
