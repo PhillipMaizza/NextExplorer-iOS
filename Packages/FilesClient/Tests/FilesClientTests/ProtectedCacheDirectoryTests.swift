@@ -13,6 +13,7 @@ struct ProtectedCacheDirectoryTests {
         static let accountPrefix = "account-a-"
         static let otherPrefix = "account-b-"
         static let otherExtension = "tmp"
+        static let writeEntryCap = 2
     }
 
     private func temporaryDirectory() throws -> URL {
@@ -108,6 +109,64 @@ struct ProtectedCacheDirectoryTests {
         directory.evict(maxEntries: .max, maxTotalBytes: 150)
 
         #expect(names(in: directory) == ["c"])
+    }
+
+    /// Writes `name.json` through the store's own `write` under an entry cap of two, then dates it
+    /// `age` seconds after `MockDate.date`; `nil` leaves it dated now, newer than every dated entry.
+    private func put(_ name: String, in directory: ProtectedCacheDirectory, age: TimeInterval?) throws {
+        let url = directory.url.appendingPathComponent(name).appendingPathExtension(Constants.fileExtension)
+        try directory.write(
+            Data(count: Constants.entryBytes),
+            to: url,
+            maxEntries: Constants.writeEntryCap,
+            maxTotalBytes: .max
+        )
+        if let age {
+            try FileManager.default.setAttributes(
+                [.modificationDate: MockDate.date.addingTimeInterval(age)],
+                ofItemAtPath: url.path
+            )
+        }
+    }
+
+    @Test("A write past the entry cap evicts the oldest; replacing an entry does not count twice")
+    func writesKeepTheEntryCap() throws {
+        let root = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let directory = try #require(ProtectedCacheDirectory(
+            name: Constants.name,
+            base: root,
+            fileExtension: Constants.fileExtension
+        ))
+        try put("a", in: directory, age: 0)
+        try put("b", in: directory, age: 1)
+        try put("b", in: directory, age: 1)
+
+        #expect(names(in: directory) == ["a", "b"])
+
+        try put("c", in: directory, age: nil)
+
+        #expect(names(in: directory) == ["b", "c"])
+    }
+
+    @Test("An entry removed by other means never makes a write evict a live one")
+    func removedEntriesAreNotMadeUpFor() throws {
+        let root = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let directory = try #require(ProtectedCacheDirectory(
+            name: Constants.name,
+            base: root,
+            fileExtension: Constants.fileExtension
+        ))
+        try put("a", in: directory, age: 0)
+        try put("b", in: directory, age: 1)
+        try FileManager.default.removeItem(
+            at: directory.url.appendingPathComponent("a").appendingPathExtension(Constants.fileExtension)
+        )
+
+        try put("c", in: directory, age: nil)
+
+        #expect(names(in: directory) == ["b", "c"])
     }
 
     @Test("One account's entries can be removed, keeping the other's")

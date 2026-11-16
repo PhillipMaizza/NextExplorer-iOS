@@ -144,8 +144,7 @@ extension JSONCacheStore: DependencyKey {
                 try? fileManager.removeItem(at: fileURL)
                 return
             }
-            try? encoded.write(to: fileURL, options: .atomic)
-            cacheDirectory?.evict(maxEntries: maxEntries, maxTotalBytes: maxTotalBytes)
+            try? cacheDirectory?.write(encoded, to: fileURL, maxEntries: maxEntries, maxTotalBytes: maxTotalBytes)
         }
 
         func remove(scope: String, key: String) {

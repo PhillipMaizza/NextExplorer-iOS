@@ -195,8 +195,7 @@ extension DirectoryCacheStore: DependencyKey {
                 try? fileManager.removeItem(at: fileURL)
                 return
             }
-            try? data.write(to: fileURL, options: .atomic)
-            cacheDirectory?.evict(maxEntries: maxEntries, maxTotalBytes: maxTotalBytes)
+            try? cacheDirectory?.write(data, to: fileURL, maxEntries: maxEntries, maxTotalBytes: maxTotalBytes)
         }
 
         func touch(scope: String, serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
@@ -216,7 +215,7 @@ extension DirectoryCacheStore: DependencyKey {
                 etag: current.etag
             )
             guard let encoded = try? JSONEncoder.cache.encode(refreshed) else { return }
-            try? encoded.write(to: fileURL, options: .atomic)
+            try? cacheDirectory?.write(encoded, to: fileURL, maxEntries: maxEntries, maxTotalBytes: maxTotalBytes)
         }
 
         func remove(scope: String, serverURL: URL, path: String) {
