@@ -63,15 +63,14 @@ struct BrowseToastEvents: ViewModifier {
             }
             .onChange(of: store.transferSuccessMessage) { _, newValue in
                 guard let newValue else { return }
-                #if os(iOS)
-                    // No ⌘Z at hand on a phone: the toast offers the undo itself.
-                    if !store.undoStack.isEmpty {
-                        toastMessage = .success(newValue, actionTitle: L10n.Menu.undo) {
-                            store.send(.undoTapped, animation: DSMotion.listDiff)
-                        }
-                        return
+                // The toast offers the undo itself: a phone has no ⌘Z at hand, and on the Mac a
+                // drag leaves focus where ⌘Z may not reach the file table.
+                if !store.undoStack.isEmpty {
+                    toastMessage = .success(newValue, actionTitle: L10n.Menu.undo) {
+                        store.send(.undoTapped, animation: DSMotion.listDiff)
                     }
-                #endif
+                    return
+                }
                 toastMessage = .success(newValue)
             }
             .onChange(of: store.clipboardStagedMessage) { _, newValue in

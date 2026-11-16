@@ -74,7 +74,7 @@ extension BrowseFeature {
             state.renameSheetItem = nil
             let previousName = state.items[id: result.originalID]?.name ?? (result.originalID as NSString)
                 .lastPathComponent
-            state.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(result.renamed, previousName: previousName))) }
+            recordUndo(&state, FileUndoEntry(.renamed(result.renamed, previousName: previousName)))
             if let index = state.items.index(id: result.originalID) {
                 state.items.remove(at: index)
                 state.items.insert(result.renamed, at: index)
@@ -114,7 +114,7 @@ extension BrowseFeature {
             state.isPerformingFileAction = false
             state.isNewFolderSheetPresented = false
             state.items.append(folder)
-            state.$undoStack.withLock { $0.record(FileUndoEntry(.created([folder]))) }
+            recordUndo(&state, FileUndoEntry(.madeNew(folder)))
             syncListingCache(state)
             return .none
 
@@ -154,7 +154,7 @@ extension BrowseFeature {
             state.isPerformingFileAction = false
             state.isNewFileSheetPresented = false
             state.items.append(file)
-            state.$undoStack.withLock { $0.record(FileUndoEntry(.created([file]))) }
+            recordUndo(&state, FileUndoEntry(.madeNew(file)))
             syncListingCache(state)
             // Straight into the editor: an empty file is only ever made to be written in. After
             // the sheet has gone, since a cover presented mid dismissal can be dropped on iOS.

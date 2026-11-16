@@ -111,11 +111,21 @@ import TestUtils
                     ))),
                     expected: .everything
                 ),
-                ChangeCase(name: "undo", action: .undoResponse(.success(true)), expected: .everything),
+                ChangeCase(
+                    name: "undo",
+                    action: .undoResponse(.success(FileUndoEntry(.created([])))),
+                    expected: .everything
+                ),
+                ChangeCase(
+                    name: "redo",
+                    action: .redoResponse(.success(FileUndoEntry(.created([])))),
+                    expected: .everything
+                ),
                 ChangeCase(name: "rename failure", action: .renameResponse(.failure(.offline)), expected: nil),
                 ChangeCase(name: "delete failure", action: .deleteResponse(.failure(.offline)), expected: nil),
                 ChangeCase(name: "transfer failure", action: .transferResponse(.failure(.offline)), expected: nil),
                 ChangeCase(name: "undo failure", action: .undoResponse(.failure(.offline)), expected: nil),
+                ChangeCase(name: "redo failure", action: .redoResponse(.failure(.offline)), expected: nil),
                 ChangeCase(
                     name: "text save failure",
                     action: .textSaveResponse(path: "Docs/a.txt", result: .failure(.offline)),
@@ -194,7 +204,7 @@ import TestUtils
 
             await store.send(.favorites(.path(.element(id: pushedID, action: .newFolderResponse(.success(folder)))))) {
                 $0.favorites.path[id: pushedID]?.items = [folder]
-                $0.favorites.path[id: pushedID]?.$undoStack.withLock { $0 = [FileUndoEntry(.created([folder]))] }
+                $0.favorites.path[id: pushedID]?.$undoStack.withLock { $0 = [FileUndoEntry(.madeNew(folder))] }
                 $0.folderWindowSync = FolderWindowSync(revision: 1, change: .folders([TestFolder.docs]), origin: nil)
             }
             await store.receive(\.browse.refreshDirectory)
