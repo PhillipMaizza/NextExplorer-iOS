@@ -18,7 +18,6 @@
         static let borderOpacity: Double = 0.12
         static let activeOpacity: Double = 0.1
         static let fieldFont = Font.title2
-        static let animationDuration: Double = 0.2
         static let zoomScale: CGFloat = 0.94
         /// The panel's frost is darkened so the field and hits read clearly over any window.
         static let panelDarkTint: Double = 0.5
@@ -194,7 +193,7 @@
                         .frame(maxHeight: Constants.resultsMaxHeight)
                         .onChange(of: store.activeIndex) { _, index in
                             guard let index else { return }
-                            withAnimation(.easeOut(duration: Constants.animationDuration)) {
+                            withAnimation(DSMotion.stateFade) {
                                 proxy.scrollTo(index)
                             }
                         }

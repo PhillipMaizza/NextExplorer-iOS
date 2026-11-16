@@ -250,13 +250,6 @@ public struct MainTabView: View {
                 .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxX } action: {
                     sidebarTrailingEdge = $0
                 }
-            #if os(macOS)
-                .navigationSplitViewColumnWidth(
-                    min: MainTabSidebar.macColumnWidth.min,
-                    ideal: MainTabSidebar.macColumnWidth.ideal,
-                    max: MainTabSidebar.macColumnWidth.max
-                )
-            #endif
         } detail: {
             detail()
                 .environment(\.isSplitViewDetail, true)
@@ -272,21 +265,10 @@ public struct MainTabView: View {
         .navigationSplitViewStyle(.balanced)
         .platformAccentTint()
         #if os(macOS)
-            .environment(\.openSpotlight, OpenSpotlightAction { store.send(.spotlightOpened) })
-            // Over the whole split view, so every tab shows it, but only beside the sidebar.
-            .modifier(MacOfflineStatusBar(
+            .modifier(MacSplitChrome(
                 store: store,
-                leadingInset: columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge)
+                sidebarInset: columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge)
             ))
-            .toolbar {
-                // Uploads and downloads only: an offline run has its own bar along the window's bottom.
-                if store.uploads.isBarVisible || store.downloadQueue.isBarVisible {
-                    ToolbarItem(id: "transfers", placement: .primaryAction) {
-                        MacTransferActivityButton(store: store)
-                    }
-                }
-            }
-            .macWindowToolbar()
         #endif
     }
 

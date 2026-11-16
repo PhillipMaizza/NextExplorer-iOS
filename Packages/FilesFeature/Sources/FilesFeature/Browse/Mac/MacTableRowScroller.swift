@@ -54,4 +54,16 @@
             return nil
         }
     }
+
+    private struct PreviewRow: Identifiable {
+        let id: Int
+    }
+
+    #Preview("Scrolled to the last row") {
+        Table((0 ..< 60).map(PreviewRow.init)) {
+            TableColumn(Text(verbatim: "Row")) { row in Text(verbatim: "Row \(row.id)") }
+        }
+        .background { MacTableRowScroller(row: 59, target: "59") }
+        .frame(width: 300, height: 240)
+    }
 #endif

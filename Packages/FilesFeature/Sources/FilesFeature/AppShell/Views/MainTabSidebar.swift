@@ -66,15 +66,6 @@ struct MainTabSidebar: View {
         @Environment(\.openSettings) private var openSettings
     #endif
 
-    #if os(macOS)
-        /// The Mac column's width range, applied where the split view hosts the sidebar.
-        static let macColumnWidth = (
-            min: Constants.macSidebarMinWidth,
-            ideal: Constants.macSidebarIdealWidth,
-            max: Constants.macSidebarMaxWidth
-        )
-    #endif
-
     /// The tab bar's identifiers, so a sidebar row is the same destination to VoiceOver and UI tests.
     static func identifier(for tab: MainTabFeature.Tab) -> String {
         switch tab {
@@ -104,6 +95,11 @@ struct MainTabSidebar: View {
                     .listStyle(.sidebar)
                 sidebarFooter
             }
+            .navigationSplitViewColumnWidth(
+                min: Constants.macSidebarMinWidth,
+                ideal: Constants.macSidebarIdealWidth,
+                max: Constants.macSidebarMaxWidth
+            )
         #else
             sidebarList
                 .listStyle(.sidebar)

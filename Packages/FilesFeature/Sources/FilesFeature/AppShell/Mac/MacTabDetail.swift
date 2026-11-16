@@ -28,6 +28,43 @@
         }
     }
 
+    /// What the Mac split view adds over every section: the search panel's opener, the offline bar
+    /// beside the sidebar, the transfers button and the window's Upload, Refresh and Search.
+    struct MacSplitChrome: ViewModifier {
+        let store: StoreOf<MainTabFeature>
+        /// Where the sidebar ends, so the offline bar spans only the content beside it.
+        let sidebarInset: CGFloat
+
+        func body(content: Content) -> some View {
+            content
+                .environment(\.openSpotlight, OpenSpotlightAction { store.send(.spotlightOpened) })
+                .modifier(MacOfflineStatusBar(store: store, leadingInset: sidebarInset))
+                .toolbar {
+                    // Uploads and downloads only: an offline run has its own bar along the window's bottom.
+                    if store.uploads.isBarVisible || store.downloadQueue.isBarVisible {
+                        ToolbarItem(id: "transfers", placement: .primaryAction) {
+                            MacTransferActivityButton(store: store)
+                        }
+                    }
+                }
+                .macWindowToolbar()
+        }
+    }
+
+    #Preview("Split chrome") {
+        NavigationStack {
+            Text(verbatim: "Section")
+                .frame(width: 600, height: 300)
+        }
+        .modifier(MacSplitChrome(
+            store: Store(initialState: MainTabFeature.State(
+                serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+                user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe")
+            )) { MainTabFeature() },
+            sidebarInset: 0
+        ))
+    }
+
     #Preview("Browse") {
         MacTabDetail(store: Store(initialState: MainTabFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),

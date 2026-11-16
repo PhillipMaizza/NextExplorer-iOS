@@ -34,4 +34,10 @@
             }
         }
     }
+
+    #Preview("Frosted window") {
+        Text(verbatim: "Content over the window's frost")
+            .padding(48)
+            .macFrostedWindow()
+    }
 #endif
