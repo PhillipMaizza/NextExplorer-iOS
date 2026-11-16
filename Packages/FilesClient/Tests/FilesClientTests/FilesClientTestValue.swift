@@ -4,4 +4,5 @@ enum FilesClientTestValue {
     static let localEdit = "mine"
     static let postEditor = "POST /api/editor"
     static let putEditor = "PUT /api/editor"
+    static let headEditor = "HEAD /api/editor"
 }

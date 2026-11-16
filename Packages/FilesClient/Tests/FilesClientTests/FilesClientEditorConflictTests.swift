@@ -19,7 +19,7 @@ extension FilesClientLiveTests {
                 etag: #"W/"v1""#,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: 304)
             StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
                 statusCode: 200,
                 etag: #"W/"v2""#,
@@ -49,7 +49,7 @@ extension FilesClientLiveTests {
                 etag: #"W/"v1""#,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(
                 statusCode: 200,
                 etag: #"W/"other""#,
                 fixture: .editorContentTheirs
@@ -79,7 +79,7 @@ extension FilesClientLiveTests {
                 etag: #"W/"v1""#,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 404)
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: 404)
             StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
                 statusCode: 200,
                 fixture: .commonSuccessTrue
@@ -105,7 +105,7 @@ extension FilesClientLiveTests {
                 etag: #"W/"v1""#,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: status)
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: status)
             StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
                 statusCode: 200,
                 fixture: .commonSuccessTrue
@@ -128,7 +128,7 @@ extension FilesClientLiveTests {
                 etag: #"W/"v1""#,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 401)
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: 401)
             let client = makeClient()
             _ = try await client.fetchTextContent(serverURL, TestPath.docsNote)
 
@@ -162,7 +162,7 @@ extension FilesClientLiveTests {
                 etag: #"W/"v1""#,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: 304)
             StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
                 statusCode: 200,
                 fixture: .commonSuccessTrue
@@ -186,7 +186,7 @@ extension FilesClientLiveTests {
                 etag: backendETag,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: 304)
             StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
                 statusCode: 200,
                 etag: backendETag,
@@ -211,7 +211,7 @@ extension FilesClientLiveTests {
                 etag: #"W/"v1""#,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: 304)
             StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
                 statusCode: 200,
                 fixture: .commonSuccessTrue
@@ -234,7 +234,7 @@ extension FilesClientLiveTests {
                 etag: #"W/"v1""#,
                 fixture: .editorContentHi
             )
-            StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: 304)
             StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
                 statusCode: 200,
                 fixture: .commonSuccessTrue
@@ -283,7 +283,7 @@ extension FilesClientLiveTests {
                     statusCode: 200,
                     fixture: .commonEmptyObject
                 )
-                StubURLProtocol.methodStubs[Constants.headEditor] = try editorStub(statusCode: 304)
+                StubURLProtocol.methodStubs[FilesClientTestValue.headEditor] = try editorStub(statusCode: 304)
                 StubURLProtocol.methodStubs[FilesClientTestValue.putEditor] = try editorStub(
                     statusCode: 200,
                     fixture: .commonSuccessTrue
@@ -343,8 +343,4 @@ private final class ScopeBox: @unchecked Sendable {
         get { lock.withLock { scope } }
         set { lock.withLock { scope = newValue } }
     }
-}
-
-private enum Constants {
-    static let headEditor = "HEAD /api/editor"
 }
