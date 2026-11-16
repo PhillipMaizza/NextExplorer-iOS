@@ -545,6 +545,7 @@ settings.addAccount	Lägg till konto
 settings.accountSignOut	Logga ut
 settings.accountSignOutTitle	Logga ut?
 settings.accountSignOutMessage	Logga ut %@ på den här enheten? Du måste logga in igen för att använda det här kontot.
+settings.accountChangeFailed	Det gick inte att ändra dina konton just nu. Försök igen.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktivt konto
 settings.badgeActive	Aktiv

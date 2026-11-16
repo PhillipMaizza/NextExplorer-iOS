@@ -497,6 +497,7 @@ settings.addAccount	Thêm tài khoản
 settings.accountSignOut	Đăng xuất
 settings.accountSignOutTitle	Đăng xuất?
 settings.accountSignOutMessage	Đăng xuất %@ trên thiết bị này? Bạn sẽ cần đăng nhập lại để dùng tài khoản này.
+settings.accountChangeFailed	Không thể thay đổi tài khoản của bạn lúc này. Vui lòng thử lại.
 settings.accountActiveLabel	%1$@, %2$@, tài khoản đang dùng
 settings.badgeActive	Đang dùng
 settings.dateFormatNavigationTitle	Định dạng ngày

@@ -167,7 +167,7 @@ extension AppSuites {
         // MARK: Unreadable keychain
 
         @Test(
-            "Signing out or removing with an unreadable keychain removes and wipes nothing, and the spinner stops",
+            "Signing out or removing with an unreadable keychain removes and wipes nothing, stops the spinner and says why",
             arguments: dropTriggers
         )
         func unreadableKeychainRemovesNothing(_ trigger: DropTrigger) async {
@@ -179,18 +179,20 @@ extension AppSuites {
             let markSigningOut: ((inout AuthenticatedFeature.State) -> Void)? = trigger.isSignOut
                 ? { $0.mainTab.settings.isSigningOut = true }
                 : nil
-            let markSignedOut: ((inout AuthenticatedFeature.State) -> Void)? = trigger.isSignOut
-                ? { $0.mainTab.settings.isSigningOut = false }
-                : nil
 
             await store.send(trigger.action, assert: markSigningOut)
-            await store.receive(\.accountChangeFailed, assert: markSignedOut)
+            await store.receive(\.accountChangeFailed) {
+                $0.mainTab.settings.isSigningOut = false
+                $0.mainTab.settings.hasAccountChangeFailed = true
+            }
 
             #expect(pending.accounts().isEmpty)
             #expect(recorder.events.value.isEmpty, "nothing is wiped for an account that is still signed in")
         }
 
-        @Test("A switch that can't read the accounts, or names an unknown one, never reads as the last account gone")
+        @Test(
+            "A switch that can't read the accounts says why, one to an unknown account does nothing, and neither reads as the last account gone"
+        )
         func failedSwitchChangesNothing() async {
             let store = makeStore {
                 $0.authClient.switchAccount = { id in
@@ -202,7 +204,12 @@ extension AppSuites {
             }
 
             await store.send(.mainTab(.delegate(.switchAccount(AppFixtures.accountB))))
-            await store.send(.mainTab(.delegate(.switchAccount(Constants.unknownAccountID))))
+            await store.receive(\.accountChangeFailed) {
+                $0.mainTab.settings.hasAccountChangeFailed = true
+            }
+            await store.send(.mainTab(.delegate(.switchAccount(Constants.unknownAccountID)))) {
+                $0.mainTab.settings.hasAccountChangeFailed = false
+            }
             await store.finish()
 
             #expect(recorder.events.value.isEmpty)

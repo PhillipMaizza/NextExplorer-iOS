@@ -509,6 +509,7 @@ settings.addAccount	הוספת חשבון
 settings.accountSignOut	התנתקות
 settings.accountSignOutTitle	להתנתק?
 settings.accountSignOutMessage	להתנתק מהחשבון של %@ במכשיר זה? תצטרכו להתחבר שוב כדי להשתמש בחשבון הזה.
+settings.accountChangeFailed	לא ניתן לשנות את החשבונות שלכם כרגע. נסו שוב.
 settings.accountActiveLabel	%1$@, %2$@, חשבון פעיל
 settings.badgeActive	פעיל
 settings.dateFormatNavigationTitle	פורמט תאריך

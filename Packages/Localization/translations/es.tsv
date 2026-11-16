@@ -545,6 +545,7 @@ settings.addAccount	Añadir cuenta
 settings.accountSignOut	Cerrar sesión
 settings.accountSignOutTitle	¿Cerrar sesión?
 settings.accountSignOutMessage	¿Cerrar la sesión de %@ en este dispositivo? Deberás iniciar sesión de nuevo para usar esta cuenta.
+settings.accountChangeFailed	No se han podido cambiar tus cuentas ahora mismo. Inténtalo de nuevo.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, cuenta activa
 settings.badgeActive	Activa

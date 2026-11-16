@@ -503,6 +503,7 @@ settings.addAccount	Προσθήκη λογαριασμού
 settings.accountSignOut	Αποσύνδεση
 settings.accountSignOutTitle	Αποσύνδεση;
 settings.accountSignOutMessage	Αποσύνδεση του %@ σε αυτήν τη συσκευή; Θα χρειαστεί να συνδεθείτε ξανά για να χρησιμοποιήσετε αυτόν τον λογαριασμό.
+settings.accountChangeFailed	Δεν ήταν δυνατή η αλλαγή των λογαριασμών σας αυτήν τη στιγμή. Δοκιμάστε ξανά.
 settings.accountActiveLabel	%1$@, %2$@, ενεργός λογαριασμός
 settings.badgeActive	Ενεργός
 settings.dateFormatNavigationTitle	Μορφή ημερομηνίας

@@ -90,6 +90,10 @@ struct SettingsView: View {
                 guard let toast else { return }
                 userManagementToast = .success(toast)
             }
+        #if os(macOS)
+            // The Settings window is its own window on the Mac, away from the main window's toast.
+            .featureToast(error: store.hasAccountChangeFailed ? L10n.Settings.accountChangeFailed : nil)
+        #endif
     }
 
     private var root: some View {

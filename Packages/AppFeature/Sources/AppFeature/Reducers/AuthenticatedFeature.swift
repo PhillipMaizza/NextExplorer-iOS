@@ -34,7 +34,8 @@ public struct AuthenticatedFeature {
         /// The active account changed as a result of a switch / sign out / removal performed here;
         /// carries the account now active (`nil` when none remain).
         case accountChangeResolved(SessionCredentials?)
-        /// The stored accounts could not be read, so nothing was switched or removed.
+        /// The stored accounts could not be read, so nothing was switched or removed and the user
+        /// is told.
         case accountChangeFailed
         case delegate(Delegate)
 
@@ -96,22 +97,33 @@ public struct AuthenticatedFeature {
                 // teardown (every store, preferences) is done by `AppFeature` once the delegate
                 // below reports no account is left.
                 state.mainTab.settings.isSigningOut = true
+                state.mainTab.settings.hasAccountChangeFailed = false
                 return remove(state.accountID)
 
             case let .mainTab(.delegate(.switchAccount(accountID))):
+                state.mainTab.settings.hasAccountChangeFailed = false
                 let authClient = authClient
                 return .run { send in
-                    // An unknown account or an unreadable keychain switches nothing: neither means
-                    // the last account is gone, which is what `nil` tells `accountChangeResolved`.
-                    guard let switched = try? await authClient.switchAccount(accountID) else { return }
+                    // An unknown account switches nothing: it does not mean the last account is
+                    // gone, which is what `nil` tells `accountChangeResolved`.
+                    let switched: SessionCredentials?
+                    do {
+                        switched = try await authClient.switchAccount(accountID)
+                    } catch {
+                        await send(.accountChangeFailed)
+                        return
+                    }
+                    guard let switched else { return }
                     await send(.accountChangeResolved(switched))
                 }
 
             case let .mainTab(.delegate(.removeAccount(accountID))):
+                state.mainTab.settings.hasAccountChangeFailed = false
                 return remove(accountID)
 
             case .accountChangeFailed:
                 state.mainTab.settings.isSigningOut = false
+                state.mainTab.settings.hasAccountChangeFailed = true
                 return .none
 
             case .mainTab(.delegate(.addAccountRequested)):

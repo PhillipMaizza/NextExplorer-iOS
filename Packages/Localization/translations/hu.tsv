@@ -503,6 +503,7 @@ settings.addAccount	Fiók hozzáadása
 settings.accountSignOut	Kijelentkezés
 settings.accountSignOutTitle	Kijelentkezik?
 settings.accountSignOutMessage	Kijelentkezteti a(z) %@ fiókot ezen az eszközön? A fiók használatához újra be kell jelentkeznie.
+settings.accountChangeFailed	A fiókokat most nem sikerült módosítani. Próbálja újra.
 settings.accountActiveLabel	%1$@, %2$@, aktív fiók
 settings.badgeActive	Aktív
 settings.dateFormatNavigationTitle	Dátumformátum

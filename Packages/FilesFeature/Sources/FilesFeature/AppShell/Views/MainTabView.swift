@@ -156,6 +156,10 @@ public struct MainTabView: View {
                     }
                 }
             ), extraBottomInset: Constants.toastTabBarClearance)
+            .featureToast(
+                error: store.settings.hasAccountChangeFailed ? L10n.Settings.accountChangeFailed : nil,
+                extraBottomInset: Constants.toastTabBarClearance
+            )
             .onChange(of: store.selectedTab, initial: true) { _, tab in
                 visitedTabs.insert(tab)
             }

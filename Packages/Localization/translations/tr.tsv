@@ -503,6 +503,7 @@ settings.addAccount	Hesap Ekle
 settings.accountSignOut	Oturumu Kapat
 settings.accountSignOutTitle	Oturum Kapatılsın mı?
 settings.accountSignOutMessage	%@ hesabının bu cihazdaki oturumu kapatılsın mı? Bu hesabı kullanmak için yeniden oturum açmanız gerekir.
+settings.accountChangeFailed	Hesaplarınız şu anda değiştirilemedi. Lütfen tekrar deneyin.
 settings.accountActiveLabel	%1$@, %2$@, etkin hesap
 settings.badgeActive	Etkin
 settings.dateFormatNavigationTitle	Tarih Biçimi

@@ -42,6 +42,9 @@ public struct SettingsFeature {
         public var serverURL: URL
         public var user: User
         public var isSigningOut = false
+        /// Set by the parent when a sign out, removal or switch could not read the stored accounts,
+        /// so the screen says why nothing happened; cleared when the next one starts.
+        public var hasAccountChangeFailed = false
         public var isConfirmingSignOut = false
         /// Whether the account has a password, from `GET /api/auth/methods`.
         public var passwordStatus: PasswordStatus = .unknown

@@ -545,6 +545,7 @@ settings.addAccount	Ajouter un compte
 settings.accountSignOut	Se déconnecter
 settings.accountSignOutTitle	Se déconnecter ?
 settings.accountSignOutMessage	Déconnecter %@ de cet appareil ? Vous devrez vous reconnecter pour utiliser ce compte.
+settings.accountChangeFailed	Impossible de modifier vos comptes pour le moment. Veuillez réessayer.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, compte actif
 settings.badgeActive	Actif

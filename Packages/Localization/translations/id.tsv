@@ -497,6 +497,7 @@ settings.addAccount	Tambah Akun
 settings.accountSignOut	Keluar
 settings.accountSignOutTitle	Keluar?
 settings.accountSignOutMessage	Keluarkan %@ di perangkat ini? Anda perlu masuk lagi untuk memakai akun ini.
+settings.accountChangeFailed	Akun Anda tidak dapat diubah saat ini. Coba lagi.
 settings.accountActiveLabel	%1$@, %2$@, akun aktif
 settings.badgeActive	Aktif
 settings.dateFormatNavigationTitle	Format Tanggal

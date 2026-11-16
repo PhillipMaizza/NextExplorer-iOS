@@ -539,6 +539,7 @@ settings.addAccount	添加账户
 settings.accountSignOut	退出登录
 settings.accountSignOutTitle	退出登录？
 settings.accountSignOutMessage	在此设备上退出 %@ 吗？您需要重新登录才能使用此账户。
+settings.accountChangeFailed	暂时无法更改您的账户，请重试。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 当前账户
 settings.badgeActive	使用中
