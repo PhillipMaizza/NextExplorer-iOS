@@ -53,6 +53,12 @@ struct BrowseListContent<Menu: View>: View {
                         }
                     }
                 }
+                if store.showsTrashRow {
+                    Section {
+                        TrashRootRow { store.send(.trashTapped) }
+                            .listRowBackground(Color.backgroundSecondary)
+                    }
+                }
                 if store.isSearching, BrowseSearchFooter.isShown(store) {
                     BrowseSearchFooter(store: store)
                         .listRowInsets(EdgeInsets())
@@ -121,6 +127,11 @@ struct BrowseGridContent<Menu: View>: View {
                         } header: {
                             if store.showsPersonalSpace {
                                 BrowseRootSectionHeader(title: L10n.Browse.locations)
+                            }
+                        }
+                        if store.showsTrashRow {
+                            TrashRootGridCell(iconSize: iconSize, cellPadding: FileGridMetrics.cellPadding) {
+                                store.send(.trashTapped)
                             }
                         }
                     }

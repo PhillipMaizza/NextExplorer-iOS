@@ -148,7 +148,10 @@
         var body: some View {
             List {
                 macIdentity
-                ForEach(MainTabSidebar.sectionItems, id: \.tab) { item in
+                ForEach(
+                    MainTabSidebar.sectionItems(showsTrash: store.browse.root.isTrashAvailable),
+                    id: \.tab
+                ) { item in
                     macRow(item)
                 }
             }
@@ -170,6 +173,7 @@
             case .shared: isSelected ? IconKit.shareLinkFill : IconKit.shareLink
             case .downloads: isSelected ? IconKit.availableOfflineFill : IconKit.availableOffline
             case .settings: isSelected ? IconKit.gearshapeFill : IconKit.gearshape
+            case .trash: isSelected ? IconKit.deleteFill : IconKit.delete
             }
         }
     }

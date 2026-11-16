@@ -11,6 +11,9 @@ struct BrowseTabView: View {
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             BrowseContentView(store: store.scope(state: \.root, action: \.root))
+                .navigationDestination(item: $store.scope(state: \.trash, action: \.trash)) { trashStore in
+                    TrashView(store: trashStore)
+                }
         } destination: { store in
             BrowseContentView(store: store)
         }

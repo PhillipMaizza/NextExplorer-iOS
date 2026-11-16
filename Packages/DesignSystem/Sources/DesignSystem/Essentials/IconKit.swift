@@ -102,6 +102,11 @@ public enum IconKit {
     public static let radioSelected = Image(systemName: "largecircle.fill.circle")
     public static let tag = Image(systemName: "tag")
     public static let delete = Image(systemName: "trash")
+    public static let deleteFill = Image(systemName: "trash.fill")
+    /// Puts a trashed item back where it was deleted from.
+    public static let restore = Image(systemName: "arrow.uturn.backward")
+    /// Puts a trashed item into a folder the user picks.
+    public static let restoreTo = Image(systemName: "arrow.uturn.backward.circle")
     public static let time = Image(systemName: "clock")
     public static let rename = Image(systemName: "square.and.pencil")
     public static let haptics = Image(systemName: "waveform")

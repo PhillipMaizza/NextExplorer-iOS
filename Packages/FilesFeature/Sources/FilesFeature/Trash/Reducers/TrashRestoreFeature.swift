@@ -1,0 +1,201 @@
+import ComposableArchitecture
+import CoreModels
+import FilesClient
+import FolderPickerFeature
+import Foundation
+import Localization
+
+/// Restoring from the trash, shared by the trash list and a deleted folder: asks what to do with
+/// the share links when there are any, picks a folder for Restore To, runs the request, and words
+/// the result. The owner reloads when it hears `delegate(.finished)`.
+@Reducer
+public struct TrashRestoreFeature {
+    @ObservableState
+    public struct State: Equatable {
+        public var serverURL: URL
+        /// A restore waiting for the user to choose what happens to its share links.
+        public var awaitingShareChoice: Request?
+        /// Restore To: the target waiting for the folder picker's answer.
+        public var awaitingDestination: Request?
+        @Presents public var destinationPicker: DestinationPickerFeature.State?
+        public var isRestoring = false
+        /// Whether the running restore goes into a chosen folder, which can take a while and can be stopped.
+        public var isRestoringToFolder = false
+        public var notice: TrashNotice?
+
+        public init(serverURL: URL) {
+            self.serverURL = serverURL
+        }
+    }
+
+    public struct Request: Equatable, Sendable {
+        public let target: TrashTarget
+        public var destination: String?
+        public let shareCount: Int
+    }
+
+    public enum Action: Equatable, Sendable {
+        case restore(TrashTarget, shareCount: Int)
+        case restoreTo(TrashTarget, shareCount: Int)
+        case destinationPicker(PresentationAction<DestinationPickerFeature.Action>)
+        case shareChoiceMade(ShareLinkChoice)
+        case shareChoiceDismissed
+        case cancelTapped
+        case response(Result<TrashActionResult, FilesClientError>)
+        case delegate(Delegate)
+
+        public enum Delegate: Equatable, Sendable {
+            /// Something may have left the trash: reload.
+            case finished
+        }
+    }
+
+    enum CancelID {
+        case restore
+    }
+
+    @Dependency(\.filesClient) var filesClient
+
+    public init() {}
+
+    public var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            switch action {
+            case let .restore(target, shareCount):
+                return ask(&state, Request(target: target, destination: nil, shareCount: shareCount))
+
+            case let .restoreTo(target, shareCount):
+                guard !state.isRestoring else { return .none }
+                state.awaitingDestination = Request(target: target, destination: nil, shareCount: shareCount)
+                state.destinationPicker = DestinationPickerFeature.State(serverURL: state.serverURL, restoringFrom: "")
+                return .none
+
+            case let .destinationPicker(.presented(.delegate(.confirmed(destination)))):
+                state.destinationPicker = nil
+                guard var request = state.awaitingDestination else { return .none }
+                state.awaitingDestination = nil
+                request.destination = destination
+                return ask(&state, request)
+
+            case .destinationPicker(.presented(.delegate(.cancelled))):
+                state.destinationPicker = nil
+                state.awaitingDestination = nil
+                return .none
+
+            case .destinationPicker:
+                return .none
+
+            case let .shareChoiceMade(choice):
+                guard let request = state.awaitingShareChoice else { return .none }
+                state.awaitingShareChoice = nil
+                return run(&state, request, shares: choice)
+
+            case .shareChoiceDismissed:
+                state.awaitingShareChoice = nil
+                return .none
+
+            case .cancelTapped:
+                // Closing the request stops the server; what had not started stays in the trash.
+                guard state.isRestoring else { return .none }
+                state.isRestoring = false
+                state.isRestoringToFolder = false
+                return .merge(.cancel(id: CancelID.restore), .send(.delegate(.finished)))
+
+            case let .response(.success(result)):
+                state.isRestoring = false
+                state.isRestoringToFolder = false
+                state.notice = TrashNotice.after(
+                    state.notice,
+                    text: Self.summary(of: result),
+                    isFailure: result.succeeded.isEmpty
+                )
+                return .send(.delegate(.finished))
+
+            case let .response(.failure(error)):
+                state.isRestoring = false
+                state.isRestoringToFolder = false
+                state.notice = TrashNotice.after(state.notice, text: error.userMessage, isFailure: true)
+                return .send(.delegate(.finished))
+
+            case .delegate:
+                return .none
+            }
+        }
+        .ifLet(\.$destinationPicker, action: \.destinationPicker) {
+            DestinationPickerFeature()
+        }
+    }
+
+    private func ask(_ state: inout State, _ request: Request) -> Effect<Action> {
+        guard !state.isRestoring else { return .none }
+        guard request.shareCount == 0 else {
+            state.awaitingShareChoice = request
+            return .none
+        }
+        // Nothing to bring back; the choice is sent anyway, since the server needs one.
+        return run(&state, request, shares: .drop)
+    }
+
+    private func run(_ state: inout State, _ request: Request, shares: ShareLinkChoice) -> Effect<Action> {
+        state.isRestoring = true
+        state.isRestoringToFolder = request.destination != nil
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            try await send(.response(apiResult {
+                try await filesClient.restoreTrash(serverURL, request.target, request.destination, shares)
+            }))
+        }
+        .cancellable(id: CancelID.restore, cancelInFlight: true)
+    }
+
+    /// Counts, renamed items, share links and failures, one line each.
+    static func summary(of result: TrashActionResult) -> String {
+        var lines: [String] = []
+        if !result.succeeded.isEmpty {
+            lines.append(L10n.Trash.restored(result.succeeded.count))
+        }
+        for entry in result.succeeded where entry.isRenamed {
+            lines.append(L10n.Trash.renamed(entry.name ?? "", entry.restoredName ?? ""))
+        }
+        if result.sharesRestored > 0 {
+            lines.append(L10n.Trash.sharesRestored(result.sharesRestored))
+        }
+        if result.sharesDropped > 0 {
+            lines.append(L10n.Trash.sharesDropped(result.sharesDropped))
+        }
+        if let failure = result.failed.first {
+            lines.append(L10n.Trash.notRestored(result.failed.count) + " " + failure.status.reason)
+        }
+        return lines.joined(separator: "\n")
+    }
+}
+
+/// A result to show once as a toast: `sequence` makes a repeat of the same text show again.
+public struct TrashNotice: Equatable, Sendable {
+    public let text: String
+    public let isFailure: Bool
+    public let sequence: Int
+
+    static func after(_ previous: TrashNotice?, text: String, isFailure: Bool) -> TrashNotice {
+        TrashNotice(text: text, isFailure: isFailure, sequence: (previous?.sequence ?? 0) + 1)
+    }
+}
+
+extension TrashActionResult.Status {
+    /// Why an item could not be restored or deleted, as one sentence.
+    var reason: String {
+        switch self {
+        case .forbidden: L10n.Trash.failureForbidden
+        case .destinationForbidden: L10n.Trash.failureDestinationForbidden
+        case .blocked: L10n.Trash.failureBlocked
+        case .invalidDestination: L10n.Trash.failureInvalidDestination
+        case .unavailable: L10n.Trash.failureUnavailable
+        case .busy: L10n.Trash.failureBusy
+        case .lost: L10n.Trash.failureLost
+        case .notFound: L10n.Trash.failureNotFound
+        case .cancelled: L10n.Trash.failureCancelled
+        case .restored, .purged, .forgotten, .unknown: L10n.Trash.failureUnknown
+        }
+    }
+}

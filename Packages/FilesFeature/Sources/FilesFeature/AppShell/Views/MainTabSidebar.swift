@@ -74,6 +74,7 @@ struct MainTabSidebar: View {
         case .shared: AccessibilityIdentifiers.Tab.shared
         case .downloads: AccessibilityIdentifiers.Tab.downloads
         case .settings: AccessibilityIdentifiers.Tab.settings
+        case .trash: AccessibilityIdentifiers.Tab.trash
         }
     }
 
@@ -84,6 +85,11 @@ struct MainTabSidebar: View {
             (.shared, L10n.Tab.shared, IconKit.tabShare),
             (.downloads, L10n.Tab.offline, IconKit.tabDownloads),
         ]
+    }
+
+    /// The sections this server offers: Trash only where the server has a trash.
+    static func sectionItems(showsTrash: Bool) -> [(tab: MainTabFeature.Tab, title: String, icon: Image)] {
+        showsTrash ? sectionItems + [(.trash, L10n.Trash.title, IconKit.delete)] : sectionItems
     }
 
     var body: some View {
@@ -132,7 +138,7 @@ struct MainTabSidebar: View {
                     appIdentity
                 }
                 Section {
-                    ForEach(Self.sectionItems, id: \.tab) { item in
+                    ForEach(Self.sectionItems(showsTrash: store.browse.root.isTrashAvailable), id: \.tab) { item in
                         sidebarRow(item)
                     }
                 }

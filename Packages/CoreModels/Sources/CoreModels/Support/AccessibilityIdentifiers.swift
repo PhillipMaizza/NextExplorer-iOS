@@ -13,6 +13,7 @@ public enum AccessibilityIdentifiers {
         public static let shared = "tab.shared"
         public static let downloads = "tab.downloads"
         public static let settings = "tab.settings"
+        public static let trash = "tab.trash"
     }
 
     public enum Login {
