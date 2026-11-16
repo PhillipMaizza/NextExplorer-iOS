@@ -54,6 +54,7 @@ KEY_MATERIAL = re.compile(
 )
 SIGNING_FILE = re.compile(r"\.(p8|p12|pfx|mobileprovision)$")
 TEST_FIXTURE = re.compile(r"/Tests/[^/]+/Fixtures/")
+BOT_AUTHOR = "[bot]@"
 GENERATOR_LINES = re.compile(r"^\s*(Co-Authored-By:|.*Generated with\b)", re.IGNORECASE | re.MULTILINE)
 LOCALIZATION_SOURCES = re.compile(r"^Packages/Localization/(strings\.tsv|translations/)")
 GENERATED_L10N = (
@@ -237,7 +238,8 @@ def check_determinism(changed):
         return []
     with tempfile.TemporaryDirectory() as temp:
         into = pathlib.Path(temp)
-        materialize(tracked(["Packages/*/Tests", "NextExplorerUITests", "Scripts/check-test-determinism.py"], None), None, into)
+        tests = [path for path in tracked(["Packages", "NextExplorerUITests"], None) if is_test(path) or "/Fixtures/" in path]
+        materialize([*tests, "Scripts/check-test-determinism.py"], None, into)
         run = subprocess.run([sys.executable, str(into / "Scripts/check-test-determinism.py")], capture_output=True, text=True)
     return [] if run.returncode == 0 else [(run.stdout + run.stderr).strip()]
 
@@ -300,6 +302,11 @@ def main():
         findings += check_lint(changed)
     else:
         base = git("merge-base", args.base, "HEAD").strip()
+        authors = git("log", "--no-merges", "--format=%ae", f"{base}..HEAD").split()
+        if authors and all(BOT_AUTHOR in author for author in authors):
+            # The scheduled format job's own pull request: machine edits, checked by lint in its build.
+            print("House rules: skipped for a bot pull request")
+            return 0
         findings, changed = check_change([f"{base}...HEAD"], lambda p: f"{base}:{p}", lambda p: f"HEAD:{p}", denylist)
         findings += check_localization(changed, "HEAD")
         for sha in git("rev-list", "--no-merges", f"{base}..HEAD").split():
