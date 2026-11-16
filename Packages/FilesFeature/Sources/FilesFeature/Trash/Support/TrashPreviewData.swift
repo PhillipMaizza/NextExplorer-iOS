@@ -3,6 +3,7 @@ import CoreModels
 import Foundation
 
 /// Fixed trash contents for previews: one of each kind of row the screens draw.
+@MainActor
 enum TrashPreviewData {
     private enum Constants {
         static let deletedAt = Date(timeIntervalSince1970: 1_763_200_000)
