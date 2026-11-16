@@ -73,65 +73,63 @@ public extension NetworkClient {
         protocolClasses: [AnyClass] = [],
         maxInMemoryResponseBytes: Int = NetworkClient.defaultMaxInMemoryResponseBytes
     ) -> NetworkClient {
-        let configuration = URLSessionConfiguration.default
-        // No HTTP cache: the app keeps its own caches, which are cleared at every session boundary.
-        // `URLCache.shared` is not, so a response stored there could outlive the account it was for.
-        configuration.urlCache = nil
-        configuration.httpCookieStorage = cookieStorage
-        configuration.httpCookieAcceptPolicy = .always
-        configuration.httpShouldSetCookies = true
-        configuration.timeoutIntervalForRequest = Constants.interactiveRequestTimeout
-        if !protocolClasses.isEmpty {
-            configuration.protocolClasses = protocolClasses
+        /// Every session shares the cookie jar and trust handling and differs only in its budgets.
+        func makeConfiguration(
+            requestTimeout: TimeInterval,
+            maxConnectionsPerHost: Int? = nil
+        ) -> URLSessionConfiguration {
+            let configuration = URLSessionConfiguration.default
+            // No HTTP cache: the app keeps its own caches, which are cleared at every session boundary.
+            // `URLCache.shared` is not, so a response stored there could outlive the account it was for.
+            configuration.urlCache = nil
+            configuration.httpCookieStorage = cookieStorage
+            configuration.httpCookieAcceptPolicy = .always
+            configuration.httpShouldSetCookies = true
+            configuration.timeoutIntervalForRequest = requestTimeout
+            if let maxConnectionsPerHost {
+                configuration.httpMaximumConnectionsPerHost = maxConnectionsPerHost
+            }
+            if !protocolClasses.isEmpty {
+                configuration.protocolClasses = protocolClasses
+            }
+            return configuration
         }
 
         let delegate = URLSessionAuthDelegate(trustEvaluator: trustEvaluator, certificates: certificates)
-        let session = ReplaceableSession(configuration: configuration, delegate: delegate)
+        let session = ReplaceableSession(
+            configuration: makeConfiguration(requestTimeout: Constants.interactiveRequestTimeout),
+            delegate: delegate
+        )
 
         // A second session for opportunistic background fetches (PDF thumbnail page
         // downloads). Its own connection pool, capped low, so however many the UI kicks off
         // they can't take slots from the main session's interactive traffic. Deliberately
         // NOT `networkServiceType = .background`: that lets the system defer requests
         // indefinitely, even in the foreground, so thumbnails would just never appear.
-        let lowPriorityConfiguration = URLSessionConfiguration.default
-        lowPriorityConfiguration.urlCache = nil
-        lowPriorityConfiguration.httpCookieStorage = cookieStorage
-        lowPriorityConfiguration.httpCookieAcceptPolicy = .always
-        lowPriorityConfiguration.httpShouldSetCookies = true
-        lowPriorityConfiguration.httpMaximumConnectionsPerHost = Constants.lowPriorityMaxConnectionsPerHost
-        lowPriorityConfiguration.timeoutIntervalForRequest = Constants.lowPriorityRequestTimeout
-        if !protocolClasses.isEmpty {
-            lowPriorityConfiguration.protocolClasses = protocolClasses
-        }
-        let lowPrioritySession = ReplaceableSession(configuration: lowPriorityConfiguration, delegate: delegate)
+        let lowPrioritySession = ReplaceableSession(
+            configuration: makeConfiguration(
+                requestTimeout: Constants.lowPriorityRequestTimeout,
+                maxConnectionsPerHost: Constants.lowPriorityMaxConnectionsPerHost
+            ),
+            delegate: delegate
+        )
 
         // A dedicated session for file downloads (previews, offline sync). Same cookie jar and trust
         // handling as the main session, but a generous request (inactivity) timeout so a large or slow
         // transfer isn't killed by the interactive 15s budget. This was the cause of "downloads are
         // hyper slow": on the main session, large downloads timed out at 15s and retried in a loop.
-        let downloadConfiguration = URLSessionConfiguration.default
-        downloadConfiguration.urlCache = nil
-        downloadConfiguration.httpCookieStorage = cookieStorage
-        downloadConfiguration.httpCookieAcceptPolicy = .always
-        downloadConfiguration.httpShouldSetCookies = true
-        downloadConfiguration.timeoutIntervalForRequest = Constants.downloadRequestTimeout
-        if !protocolClasses.isEmpty {
-            downloadConfiguration.protocolClasses = protocolClasses
-        }
-        let downloadSession = ReplaceableSession(configuration: downloadConfiguration, delegate: delegate)
+        let downloadSession = ReplaceableSession(
+            configuration: makeConfiguration(requestTimeout: Constants.downloadRequestTimeout),
+            delegate: delegate
+        )
 
         certificates.replaceOnCertificateChange([session, lowPrioritySession, downloadSession])
 
-        @Sendable func streamToFile(
-            _ request: URLRequest, using downloadSession: ReplaceableSession
-        ) async throws -> (URL, HTTPURLResponse) {
-            let temporaryURL: URL
-            let response: URLResponse
-            do {
-                (temporaryURL, response) = try await downloadSession.current.download(for: request)
-            } catch {
-                throw NetworkError.from(error, url: request.url, certificates: certificates)
-            }
+        // Checks a finished download's response and moves its body somewhere the caller owns: the
+        // system deletes `temporaryURL` once the download call or completion handler returns.
+        @Sendable func finishDownload(
+            _ request: URLRequest, temporaryURL: URL, response: URLResponse?
+        ) throws -> (URL, HTTPURLResponse) {
             guard let httpResponse = response as? HTTPURLResponse else {
                 try? FileManager.default.removeItem(at: temporaryURL)
                 throw NetworkError.invalidResponse
@@ -143,8 +141,6 @@ public extension NetworkClient {
                 throw error
             }
             certificates.recordResponse(for: request.url)
-            // `session.download` deletes its temp file the moment this closure returns, so
-            // move it somewhere the caller controls before handing the URL back.
             let stableURL = FileManager.default.temporaryDirectory
                 .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
             do {
@@ -154,6 +150,19 @@ public extension NetworkClient {
                 throw NetworkError.transport(error.localizedDescription)
             }
             return (stableURL, httpResponse)
+        }
+
+        @Sendable func streamToFile(
+            _ request: URLRequest, using downloadSession: ReplaceableSession
+        ) async throws -> (URL, HTTPURLResponse) {
+            let temporaryURL: URL
+            let response: URLResponse
+            do {
+                (temporaryURL, response) = try await downloadSession.current.download(for: request)
+            } catch {
+                throw NetworkError.from(error, url: request.url, certificates: certificates)
+            }
+            return try finishDownload(request, temporaryURL: temporaryURL, response: response)
         }
 
         // Stream to a temp file rather than `session.data(for:)` so response size is bounded
@@ -257,30 +266,13 @@ public extension NetworkClient {
                                     ))
                                     return
                                 }
-                                guard let temporaryURL, let httpResponse = response as? HTTPURLResponse else {
+                                guard let temporaryURL else {
                                     continuation.resume(throwing: NetworkError.invalidResponse)
                                     return
                                 }
-                                if let error = certificates.certificateError(
-                                    status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL),
-                                    url: request.url
-                                ) {
-                                    continuation.resume(throwing: error)
-                                    return
-                                }
-                                certificates.recordResponse(for: request.url)
-                                // The system deletes `temporaryURL` the instant this returns, so move it
-                                // synchronously to a stable location the caller owns.
-                                let stableURL = FileManager.default.temporaryDirectory
-                                    .appendingPathComponent(
-                                        "\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)"
-                                    )
-                                do {
-                                    try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
-                                    continuation.resume(returning: (stableURL, httpResponse))
-                                } catch {
-                                    continuation.resume(throwing: NetworkError.transport(error.localizedDescription))
-                                }
+                                continuation.resume(with: Result {
+                                    try finishDownload(request, temporaryURL: temporaryURL, response: response)
+                                })
                             }
                         // The task's byte counters, not its `NSProgress` (which counts in percent units
                         // and stalls when the length is unknown), so a streamed archive still reports.
