@@ -30,8 +30,7 @@ public struct ActivityLogFeature {
         public var isLoadingMore = false
         public var listError: String?
 
-        public var isConfirmingClear = false
-        public var isClearing = false
+        public var clearPhase: ConfirmPhase = .idle
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
@@ -219,16 +218,15 @@ public struct ActivityLogFeature {
                 return loadPage(&state, more: true)
 
             case .clearTapped:
-                state.isConfirmingClear = true
+                state.clearPhase.ask()
                 return .none
 
             case .clearCancelled:
-                state.isConfirmingClear = false
+                state.clearPhase.cancel()
                 return .none
 
             case .clearConfirmed:
-                state.isConfirmingClear = false
-                state.isClearing = true
+                state.clearPhase = .running
                 state.listError = nil
                 let serverURL = state.serverURL
                 let filesClient = filesClient
@@ -242,11 +240,11 @@ public struct ActivityLogFeature {
                 )
 
             case .clearResponse(.success):
-                state.isClearing = false
+                state.clearPhase = .idle
                 return loadPage(&state, more: false)
 
             case let .clearResponse(.failure(error)):
-                state.isClearing = false
+                state.clearPhase = .idle
                 state.listError = error.userMessage
                 return .none
             }

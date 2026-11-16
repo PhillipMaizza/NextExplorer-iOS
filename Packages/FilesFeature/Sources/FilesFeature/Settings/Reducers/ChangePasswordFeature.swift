@@ -28,6 +28,16 @@ public struct ChangePasswordFeature {
         case add
     }
 
+    /// Where the form is: being filled in, sent, confirmed, or refused with the server's reason.
+    /// A refusal stays on screen while the user corrects the fields; a confirmation goes away
+    /// as soon as they type again.
+    public enum Phase: Equatable, Sendable {
+        case editing
+        case submitting
+        case succeeded
+        case failed(String)
+    }
+
     @ObservableState
     public struct State: Equatable {
         public let serverURL: URL
@@ -35,13 +45,26 @@ public struct ChangePasswordFeature {
         public var currentPassword = ""
         public var newPassword = ""
         public var confirmPassword = ""
-        public var isSubmitting = false
-        public var errorMessage: String?
-        public var didSucceed = false
+        public var phase: Phase = .editing
 
         public init(serverURL: URL, mode: Mode = .change) {
             self.serverURL = serverURL
             self.mode = mode
+        }
+
+        var isSubmitting: Bool {
+            phase == .submitting
+        }
+
+        var didSucceed: Bool {
+            phase == .succeeded
+        }
+
+        var errorMessage: String? {
+            if case let .failed(message) = phase {
+                return message
+            }
+            return nil
         }
 
         /// Shown once the field has content. An empty field is "not filled in yet", not wrong.
@@ -88,24 +111,22 @@ public struct ChangePasswordFeature {
             switch action {
             case let .currentPasswordChanged(value):
                 state.currentPassword = value
-                state.didSucceed = false
+                state.dismissSuccess()
                 return .none
 
             case let .newPasswordChanged(value):
                 state.newPassword = value
-                state.didSucceed = false
+                state.dismissSuccess()
                 return .none
 
             case let .confirmPasswordChanged(value):
                 state.confirmPassword = value
-                state.didSucceed = false
+                state.dismissSuccess()
                 return .none
 
             case .submitTapped:
                 guard state.isSubmitEnabled else { return .none }
-                state.isSubmitting = true
-                state.errorMessage = nil
-                state.didSucceed = false
+                state.phase = .submitting
                 let serverURL = state.serverURL
                 let current = state.currentPassword
                 let new = state.newPassword
@@ -123,21 +144,28 @@ public struct ChangePasswordFeature {
                 .cancellable(id: CancelID.submit, cancelInFlight: true)
 
             case .response(.success):
-                state.isSubmitting = false
                 state.currentPassword = ""
                 state.newPassword = ""
                 state.confirmPassword = ""
-                state.didSucceed = true
+                state.phase = .succeeded
                 return state.mode == .add ? .send(.delegate(.passwordAdded)) : .none
 
             case let .response(.failure(error)):
-                state.isSubmitting = false
-                state.errorMessage = error.userMessage
+                state.phase = .failed(error.userMessage)
                 return .none
 
             case .delegate:
                 return .none
             }
+        }
+    }
+}
+
+private extension ChangePasswordFeature.State {
+    /// Typing again takes down a confirmation, but leaves a refusal up while it is being fixed.
+    mutating func dismissSuccess() {
+        if phase == .succeeded {
+            phase = .editing
         }
     }
 }

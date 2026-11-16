@@ -477,8 +477,8 @@ struct ActivityLogFeatureTests {
     func emptyingTheLogAsksFirstAndCancelLeavesItAlone() async {
         let store = makeStore(loadedState())
 
-        await store.send(.clearTapped) { $0.isConfirmingClear = true }
-        await store.send(.clearCancelled) { $0.isConfirmingClear = false }
+        await store.send(.clearTapped) { $0.clearPhase = .confirming }
+        await store.send(.clearCancelled) { $0.clearPhase = .idle }
         #expect(clearCalls.value == 0)
     }
 
@@ -489,12 +489,11 @@ struct ActivityLogFeatureTests {
         let empty = ActivityPage(events: [], isEnabled: true)
         let store = makeStore(state, page: { _, _ in empty })
 
-        await store.send(.clearTapped) { $0.isConfirmingClear = true }
+        await store.send(.clearTapped) { $0.clearPhase = .confirming }
         await store.send(.clearConfirmed) {
-            $0.isConfirmingClear = false
-            $0.isClearing = true
+            $0.clearPhase = .running
         }
-        await store.receive(\.clearResponse.success) { $0.isClearing = false }
+        await store.receive(\.clearResponse.success) { $0.clearPhase = .idle }
         await store.receive(.pageResponse(.success(empty), isMore: false)) {
             $0.events = []
             $0.isLogEnabled = true
@@ -509,9 +508,9 @@ struct ActivityLogFeatureTests {
         state.events = [event("1")]
         let store = makeStore(state, clear: { throw FilesClientError.server(statusCode: 500) })
 
-        await store.send(.clearConfirmed) { $0.isClearing = true }
+        await store.send(.clearConfirmed) { $0.clearPhase = .running }
         await store.receive(\.clearResponse.failure) {
-            $0.isClearing = false
+            $0.clearPhase = .idle
             $0.listError = L10n.Error.server(500)
         }
         #expect(store.state.events.map(\.id) == ["1"])

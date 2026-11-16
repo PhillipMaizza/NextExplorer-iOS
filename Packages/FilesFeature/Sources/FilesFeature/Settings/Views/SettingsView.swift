@@ -50,11 +50,11 @@ struct SettingsView: View {
     // of `DSAlertSheet`'s own buttons, which drive the reducer directly.
 
     private var isConfirmingRemoveAllDownloads: Binding<Bool> {
-        Binding(get: { store.removeAllDownloadsConfirmationIsPresented }, set: { _ in })
+        Binding(get: { store.removeAllDownloadsPhase.isConfirming }, set: { _ in })
     }
 
     private var isConfirmingClearCache: Binding<Bool> {
-        Binding(get: { store.clearCacheConfirmationIsPresented }, set: { _ in })
+        Binding(get: { store.clearCachePhase.isConfirming }, set: { _ in })
     }
 
     private var isConfirmingRemoveOffline: Binding<Bool> {
