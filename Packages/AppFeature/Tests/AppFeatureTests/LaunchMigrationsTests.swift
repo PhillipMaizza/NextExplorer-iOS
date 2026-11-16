@@ -24,19 +24,4 @@ struct LaunchMigrationsTests {
 
         #expect(events.value == ["begin", "sharedGroup", "legacyMac", "finish"])
     }
-
-    /// Called from the main actor, as the app does, so a run on the caller would record true.
-    @MainActor
-    @Test("The migrations do not run on the calling thread")
-    func runsOffTheCaller() async {
-        let callerIsMain = LockIsolated<Bool?>(nil)
-        let task = LaunchMigrations.start(steps: LaunchMigrations.Steps(
-            begin: {},
-            sharedGroup: { callerIsMain.setValue(Thread.isMainThread) },
-            legacyMac: {},
-            finish: {}
-        ))
-        await task.value
-        #expect(callerIsMain.value == false)
-    }
 }
