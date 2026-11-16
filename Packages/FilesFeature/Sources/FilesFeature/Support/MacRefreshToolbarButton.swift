@@ -4,9 +4,9 @@
     import SwiftUI
 
     extension View {
-        /// The Mac's stand in for pull to refresh, which a Mac list does not have: a toolbar
-        /// button running the same refresh, spinning while it runs, and View › Refresh (⌘R)
-        /// pressing that same button so it spins and toasts alike.
+        /// The Mac's stand in for pull to refresh, which a Mac list does not have: publishes the
+        /// refresh the window's toolbar button (`macWindowToolbar`) and View › Refresh (⌘R) both
+        /// run, so either dims the button and toasts alike.
         func macToolbarRefresh(
             onRefresh: @escaping @Sendable () async -> Void,
             onFinished: @escaping () -> Void
@@ -23,24 +23,12 @@
 
         func body(content: Content) -> some View {
             content
-                .toolbar {
-                    // Back stays leading as the navigation control; the refresh sits with the actions
-                    // at the trailing edge, as Safari's reload does.
-                    if #available(macOS 26.0, *) {
-                        // Only the arrow, without the glass capsule the toolbar draws around an item.
-                        ToolbarItem(placement: .primaryAction) {
-                            MacRefreshToolbarButton(isRefreshing: isRefreshing, action: refresh)
-                        }
-                        .sharedBackgroundVisibility(.hidden)
-                    } else {
-                        ToolbarItem(placement: .primaryAction) {
-                            MacRefreshToolbarButton(isRefreshing: isRefreshing, action: refresh)
-                        }
-                    }
-                }
                 // Published from the screen rather than the button: a toolbar item is hosted
                 // outside the window's view tree, so a value set there never reached ⌘R.
-                .focusedSceneValue(\.refreshVisibleScreen, RefreshScreenAction(perform: refresh))
+                .focusedSceneValue(
+                    \.refreshVisibleScreen,
+                    RefreshScreenAction(isRefreshing: isRefreshing, perform: refresh)
+                )
         }
 
         private func refresh() {
@@ -54,7 +42,7 @@
         }
     }
 
-    private struct MacRefreshToolbarButton: View {
+    struct MacRefreshToolbarButton: View {
         let isRefreshing: Bool
         let action: () -> Void
 
@@ -71,6 +59,7 @@
 
     /// ⌘R for the section on screen, published by its toolbar refresh.
     public struct RefreshScreenAction {
+        let isRefreshing: Bool
         let perform: () -> Void
 
         public func callAsFunction() {
@@ -88,5 +77,6 @@
                 .previewCanvas(.dialog)
                 .macToolbarRefresh(onRefresh: { try? await Task.sleep(for: .seconds(2)) }, onFinished: {})
         }
+        .macWindowToolbar()
     }
 #endif

@@ -32,6 +32,12 @@ public extension View {
     /// Fills the view with `LinearGradient.backgroundPrimary`, ignoring safe area edges
     /// like a screen background normally would.
     func backgroundGradient() -> some View {
-        background(LinearGradient.backgroundPrimary.ignoresSafeArea())
+        #if os(macOS)
+            // Frosted like the window, and each screen paints its own: a navigation stack keeps the
+            // screens below the one on show alive, and a see through screen would show them.
+            macFrostedWindow()
+        #else
+            background(LinearGradient.backgroundPrimary.ignoresSafeArea())
+        #endif
     }
 }

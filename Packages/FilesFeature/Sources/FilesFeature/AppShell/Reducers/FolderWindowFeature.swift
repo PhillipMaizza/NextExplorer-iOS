@@ -71,6 +71,7 @@
 
         public var body: some View {
             BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
+                .macWindowToolbar()
                 .windowTitle(store.browse.path.last?.title ?? store.browse.root.title)
                 .focusedSceneValue(\.folderWindowCommands, FolderWindowCommands(
                     send: { store.send(.browse($0)) },
