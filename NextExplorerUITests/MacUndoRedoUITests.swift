@@ -8,7 +8,6 @@
         private enum Constants {
             static let editMenu = "Edit"
             static let newFolderName = "Reports"
-            static let dragHold: TimeInterval = 0.6
         }
 
         private func edit(_ title: String, in app: XCUIApplication) {
@@ -54,10 +53,20 @@
             let target = text(Constants.newFolderName, in: app)
             XCTAssertTrue(target.waitToAppear())
 
+            // Move… rather than a drag: a drag only starts after a timed press.
             let file = text(Fixture.file, in: app)
-            // A Mac table row starts dragging only after the button has been held a moment.
-            file.click(forDuration: Constants.dragHold, thenDragTo: target)
-            XCTAssertTrue(file.waitToVanish(), "Dropping the file on a folder should move it there")
+            let move = app.menuItems[L10n.Browse.actionMove]
+            openMenu({ file.rightClick() }, until: move)
+            move.click()
+            let sheet = app.sheets.firstMatch
+            XCTAssertTrue(sheet.waitToAppear(), "Move should open the folder picker")
+            openInPicker(Fixture.folder, in: sheet, app: app)
+            openInPicker(Constants.newFolderName, in: sheet, app: app)
+            // Only a folder the file can go to enables Move Here: the root and its own folder do not.
+            let moveHere = sheet.buttons.labeled(L10n.Browse.destinationPickerConfirmMove)
+            XCTAssertTrue(moveHere.isEnabled(within: UITestTimeout.standard), "The new folder should take the file")
+            moveHere.click()
+            XCTAssertTrue(file.waitToVanish(), "Moving the file into the folder should take it out of this one")
 
             let undo = app.buttons[L10n.Menu.undo].firstMatch
             XCTAssertTrue(undo.waitToAppear(), "The move toast should offer Undo")
@@ -72,6 +81,14 @@
 
             target.doubleClick()
             XCTAssertTrue(file.waitToAppear(), "The file should be in the folder it was moved to")
+        }
+
+        /// Selects a folder in the Move picker and opens it with ⌘↓.
+        private func openInPicker(_ name: String, in sheet: XCUIElement, app: XCUIApplication) {
+            let row = sheet.staticTexts.showing(name)
+            XCTAssertTrue(row.waitToAppear(), "The picker should list \(name)")
+            row.click()
+            app.typeKey(XCUIKeyboardKey.downArrow, modifierFlags: .command)
         }
     }
 #endif

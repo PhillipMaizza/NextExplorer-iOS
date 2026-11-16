@@ -242,7 +242,9 @@ private struct DSToastOverlay: View {
         // to leave never shortens this one.
         .task(id: message.id) {
             AccessibilityNotification.Announcement(message.text).post()
-            guard !message.isPersistent else { return }
+            // Under UI tests a toast with a button stays until it is used or replaced: the timer runs
+            // on the wall clock, which a test that is slow to reach the button would otherwise race.
+            guard !message.isPersistent, !(UITestEnvironment.isActive && message.action != nil) else { return }
             try? await Task.sleep(for: Constants.autoDismissDelay)
             // A toast swapped out early is cancelled here; clearing then would wipe its successor.
             guard !Task.isCancelled else { return }
