@@ -298,7 +298,6 @@ struct ArchiveBrowserView: View {
                     try ArchiveReader.extract(fullPath, from: source, to: destination)
                     return .success
                 } catch ArchiveReaderError.entryTooLarge {
-                    try? FileManager.default.removeItem(at: destination)
                     return .tooLarge
                 } catch {
                     return .failed
