@@ -23,7 +23,9 @@ extension FilesService {
     /// suffixed on a collision.
     func createFolder(serverURL: URL, path: String, name: String) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.filesFolder)
-        var request = Self.makeRequest(url: url, method: .post)
+        // The long budget: a NAS waking its disks can take longer than the interactive one, and a
+        // timeout read as offline would invite a retry that creates a second, renamed folder.
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(CreateFolderBody(path: path, name: name))
         let envelope = try await sendReportingMessage(request, decoding: CreateFolderEnvelope.self)
@@ -32,7 +34,7 @@ extension FilesService {
 
     func createFile(serverURL: URL, path: String, name: String) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.filesFile)
-        var request = Self.makeRequest(url: url, method: .post)
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(CreateFolderBody(path: path, name: name))
         let envelope = try await sendReportingMessage(request, decoding: CreateFolderEnvelope.self)
