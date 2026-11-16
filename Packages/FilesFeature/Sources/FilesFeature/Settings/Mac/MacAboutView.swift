@@ -103,7 +103,7 @@
                 .buttonStyle(.link)
                 .padding(.vertical, Metrics.infoSpacing)
                 HStack {
-                    Button(L10n.MacSettings.support) { openURL(AppLinks.support) }
+                    Button(L10n.MacSettings.support) { openURL(AppLinks.supportMail) }
                     Button(L10n.Settings.rowRateApp) { requestReview() }
                 }
                 .controlSize(.large)

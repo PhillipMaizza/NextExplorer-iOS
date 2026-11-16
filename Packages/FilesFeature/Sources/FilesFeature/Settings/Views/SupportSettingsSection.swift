@@ -45,8 +45,8 @@ struct SupportSettingsSection: View {
                     }
                 }
                 if filter.matches(L10n.Settings.rowSupport) {
-                    row(title: L10n.Settings.rowSupport, icon: IconKit.help, trailing: IconKit.externalLink) {
-                        openURL(AppLinks.support)
+                    row(title: L10n.Settings.rowSupport, icon: IconKit.help, trailing: nil) {
+                        openURL(AppLinks.supportMail)
                     }
                 }
             } header: {

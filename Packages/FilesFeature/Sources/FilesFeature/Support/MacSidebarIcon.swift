@@ -12,13 +12,16 @@
     /// is elsewhere. The Mac keeps the accent out of the sidebar.
     struct MacSidebarIcon: View {
         let image: Image
+        var isAccented = false
         @Environment(\.backgroundProminence) private var backgroundProminence
 
         var body: some View {
             image
                 .imageScale(.medium)
                 .frame(width: Constants.columnWidth)
-                .foregroundStyle(backgroundProminence == .increased ? Color.white : Color.primaryDS)
+                .foregroundStyle(backgroundProminence == .increased
+                    ? Color.white
+                    : isAccented ? Color.accent : Color.primaryDS)
         }
     }
 

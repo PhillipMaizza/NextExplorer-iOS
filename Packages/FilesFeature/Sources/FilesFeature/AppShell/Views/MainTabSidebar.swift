@@ -36,13 +36,8 @@ private enum Constants {
     #endif
     /// The Mac sidebar column opens wider than the system default, since a Mac window has the
     /// space an iPad split view does not.
-    /// A Mac footer row's height and hover wash, matching the system list rows above.
-    static let macRowHeight: CGFloat = 28
     /// Where the system's selection pill sits inside a sidebar row, so the hover wash lines up with it.
     static let macPillInset: CGFloat = .space16
-    static let hoverOpacity: Double = 0.08
-    static let selectedOpacity: Double = 0.14
-    static let macLogoSize: CGFloat = .size24
     /// Keeps the account chevron off the Mac card's edge.
     static let chevronTrailingInset: CGFloat = .space12
     /// The wash behind the Mac account card.
@@ -67,7 +62,6 @@ struct MainTabSidebar: View {
     @Environment(\.openURL) private var openURL
     #if os(macOS)
         @Environment(\.openSettings) private var openSettings
-        @Environment(\.openWindow) private var openWindow
     #endif
 
     #if os(macOS)
@@ -80,7 +74,7 @@ struct MainTabSidebar: View {
     #endif
 
     /// The tab bar's identifiers, so a sidebar row is the same destination to VoiceOver and UI tests.
-    private static func identifier(for tab: MainTabFeature.Tab) -> String {
+    static func identifier(for tab: MainTabFeature.Tab) -> String {
         switch tab {
         case .browse: AccessibilityIdentifiers.Tab.browse
         case .favorites: AccessibilityIdentifiers.Tab.favorites
@@ -90,7 +84,7 @@ struct MainTabSidebar: View {
         }
     }
 
-    private static var sectionItems: [(tab: MainTabFeature.Tab, title: String, icon: Image)] {
+    static var sectionItems: [(tab: MainTabFeature.Tab, title: String, icon: Image)] {
         [
             (.browse, L10n.Tab.browse, IconKit.tabBrowse),
             (.favorites, L10n.Tab.favorites, IconKit.tabFavorites),
@@ -104,7 +98,7 @@ struct MainTabSidebar: View {
             // The system sidebar list: native selection, hover and vibrancy over the window's glass.
             // The footer is a sibling of the list, not an inset over it, so its rows get their own hover.
             VStack(spacing: 0) {
-                macSections
+                MacSidebarSections(store: store)
                     .listStyle(.sidebar)
                 sidebarFooter
             }
@@ -119,61 +113,6 @@ struct MainTabSidebar: View {
                 }
         #endif
     }
-
-    #if os(macOS)
-        /// The ⌘1 to ⌘4 hint shown at a row's trailing edge.
-        private static func shortcutHint(for tab: MainTabFeature.Tab) -> String? {
-            guard let index = sectionItems.firstIndex(where: { $0.tab == tab }) else { return nil }
-            return "\u{2318} \(index + 1)"
-        }
-
-        /// The logo and name above the sections. Opens the About window, and is not a destination.
-        private var macIdentity: some View {
-            MacSidebarIdentity {
-                openWindow(id: MacAboutView.windowID)
-            }
-            .selectionDisabled()
-            .listRowSeparator(.hidden)
-        }
-
-        private func macRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
-            let hasNewFiles = item.tab == .downloads && store.hasUnseenOfflineFiles
-            return MacSidebarRow(
-                title: item.title,
-                icon: Self.macIcon(for: item.tab),
-                isSelected: store.selectedTab == item.tab
-            ) {
-                store.send(.tabSelected(item.tab))
-            } trailing: {
-                if hasNewFiles {
-                    NewFilesDot()
-                        .accessibilityHidden(true)
-                }
-                if let hint = Self.shortcutHint(for: item.tab) {
-                    MacTag(text: hint)
-                }
-            }
-            .listRowInsets(EdgeInsets())
-            .accessibilityValue(hasNewFiles ? L10n.Offline.newFilesBadge : "")
-            .accessibilityIdentifier(Self.identifier(for: item.tab))
-        }
-
-        private var macSections: some View {
-            List {
-                macIdentity
-                ForEach(Self.sectionItems, id: \.tab) { item in
-                    macRow(item)
-                }
-            }
-            // The menu bar owns ⌘1 to ⌘3; Offline lives in the sidebar only, so ⌘4 is bound here.
-            .background {
-                Button(L10n.Tab.offline) { store.send(.tabSelected(.downloads)) }
-                    .keyboardShortcut("4")
-                    .opacity(0)
-                    .accessibilityHidden(true)
-            }
-        }
-    #endif
 
     #if os(iOS)
         private var sidebarList: some View {
@@ -213,20 +152,6 @@ struct MainTabSidebar: View {
             .padding(.vertical, .space4)
             .accessibilityAddTraits(.isHeader)
             .listRowBackground(Color.clear)
-        }
-    #endif
-
-    #if os(macOS)
-        /// The tab bar artwork is drawn for iOS tab bars; the Mac sidebar uses system symbols
-        /// at the standard sidebar size instead.
-        private static func macIcon(for tab: MainTabFeature.Tab) -> Image {
-            switch tab {
-            case .browse: IconKit.folder
-            case .favorites: IconKit.star
-            case .shared: IconKit.shareLink
-            case .downloads: IconKit.availableOffline
-            case .settings: IconKit.gearshape
-            }
         }
     #endif
 
@@ -427,89 +352,6 @@ struct MainTabSidebar: View {
             } else {
                 Color.clear
             }
-        }
-    }
-#endif
-
-#if os(macOS)
-    /// The logo and name above the sections. Opens the About window, with the same hover pill as the rows.
-    private struct MacSidebarIdentity: View {
-        let action: () -> Void
-        @State private var isHovered = false
-
-        var body: some View {
-            Button(action: action) {
-                HStack(spacing: .space8) {
-                    IconKit.logo
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: Constants.macLogoSize, height: Constants.macLogoSize)
-                        .accessibilityHidden(true)
-                    Text(AppIdentity.name)
-                        .type(.headline4, style: .primaryOnSurface)
-                        .lineLimit(1)
-                    Spacer(minLength: 0)
-                }
-                .padding(.horizontal, .space12)
-                .frame(maxWidth: .infinity, minHeight: Constants.macRowHeight, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
-                        .fill(Color.primaryDS.opacity(isHovered ? Constants.hoverOpacity : 0))
-                )
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .padding(.vertical, .space8)
-            .onHover { isHovered = $0 }
-            .help(L10n.Menu.about)
-            .accessibilityLabel(L10n.Menu.about)
-        }
-    }
-
-    /// A sidebar row drawn here rather than by the list, so the selected and hovered pills keep a gap
-    /// between rows. Used by the sections and the footer links alike.
-    private struct MacSidebarRow<Trailing: View>: View {
-        let title: String
-        let icon: Image
-        var isSelected = false
-        let action: () -> Void
-        @ViewBuilder var trailing: () -> Trailing
-        @State private var isHovered = false
-
-        private var fillOpacity: Double {
-            if isSelected {
-                Constants.selectedOpacity
-            } else if isHovered {
-                Constants.hoverOpacity
-            } else {
-                0
-            }
-        }
-
-        var body: some View {
-            Button(action: action) {
-                HStack {
-                    Label {
-                        Text(title)
-                    } icon: {
-                        MacSidebarIcon(image: icon)
-                    }
-                    .fontWeight(isSelected ? .semibold : .regular)
-                    Spacer(minLength: 0)
-                    trailing()
-                }
-                .padding(.horizontal, .space12)
-                .frame(maxWidth: .infinity, minHeight: Constants.macRowHeight, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
-                        .fill(Color.primaryDS.opacity(fillOpacity))
-                )
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .padding(.vertical, .space2)
-            .onHover { isHovered = $0 }
-            .accessibilityAddTraits(isSelected ? .isSelected : [])
         }
     }
 #endif

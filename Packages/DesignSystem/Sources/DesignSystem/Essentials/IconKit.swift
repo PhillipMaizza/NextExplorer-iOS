@@ -62,6 +62,7 @@ public enum IconKit {
     public static let help = Image(systemName: "questionmark.circle")
     public static let coffee = Image(systemName: "cup.and.saucer")
     public static let gearshape = Image(systemName: "gearshape")
+    public static let gearshapeFill = Image(systemName: "gearshape.fill")
     public static let paintbrush = Image(systemName: "paintbrush")
     // `.forward`, not `.right`: the semantic variant auto mirrors under a right to left layout
     // (Arabic) so disclosure and breadcrumb chevrons point into the content the correct way.
@@ -109,6 +110,7 @@ public enum IconKit {
     /// Available Offline: one glyph for the badge beside a file, the actions, the pill and the empty
     /// state. Whether an item is offline shows in the label and the tint, never in a second glyph.
     public static let availableOffline = Image(systemName: "arrow.down.circle.dotted")
+    public static let availableOfflineFill = Image(systemName: "arrow.down.circle.fill")
     public static let upload = Image(systemName: "arrow.up.circle")
     public static let retry = Image(systemName: "arrow.clockwise")
     public static let checkmarkCircleFill = Image(systemName: "checkmark.circle.fill")
@@ -118,6 +120,7 @@ public enum IconKit {
     public static let drive = Image(systemName: "externaldrive.fill")
     /// Connected nodes glyph for the share link concept, distinct from `share` (the system share sheet action).
     public static let shareLink = Image(systemName: "point.3.connected.trianglepath.dotted")
+    public static let shareLinkFill = Image(systemName: "point.3.filled.connected.trianglepath.dotted")
     public static let link = Image(systemName: "link")
     public static let people = Image(systemName: "person.2")
     public static let copy = Image(systemName: "doc.on.doc")
