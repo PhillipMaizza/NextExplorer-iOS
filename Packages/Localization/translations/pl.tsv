@@ -1150,3 +1150,128 @@ shareUpload.nameLabel	Nazwa pliku
 shareUpload.namesLabel	Nazwy plików
 shareUpload.nameHint	Nazwa, pod którą plik zostanie przesłany. Rozszerzenie pozostaje bez zmian.
 spotlight.placeholder	Szukaj plików i folderów
+trash.title	Kosz
+trash.rowSubtitle	Usunięte elementy, które możesz przywrócić
+trash.moveToTrash	Przenieś do kosza
+trash.deletePermanently	Usuń trwale
+trash.deleteMessage#one	Trafi do kosza, który przechowuje usunięte elementy (dni: %lld), aby można je było przywrócić.
+trash.deleteMessage#few	Trafi do kosza, który przechowuje usunięte elementy (dni: %lld), aby można je było przywrócić.
+trash.deleteMessage#many	Trafi do kosza, który przechowuje usunięte elementy (dni: %lld), aby można je było przywrócić.
+trash.deleteMessage#other	Trafi do kosza, który przechowuje usunięte elementy (dni: %lld), aby można je było przywrócić.
+trash.deleteMessageGeneric	Trafi do kosza, z którego można przywrócić usunięte elementy.
+trash.deleteSomePermanent#one	%lld z nich nie może trafić do kosza i zostanie usunięty trwale.
+trash.deleteSomePermanent#few	%lld z nich nie mogą trafić do kosza i zostaną usunięte trwale.
+trash.deleteSomePermanent#many	%lld z nich nie może trafić do kosza i zostanie usuniętych trwale.
+trash.deleteSomePermanent#other	%lld z nich nie może trafić do kosza i zostanie usuniętych trwale.
+trash.reasonDisabled	Kosz jest wyłączony.
+trash.reasonOtherDevice	Znajduje się na innym dysku niż kosz swojego woluminu.
+trash.reasonTooLarge	Jest większy niż cały kosz swojego woluminu.
+trash.reasonZoneRoot	Cały wolumin nie może trafić do własnego kosza.
+trash.reasonZoneUnwritable	Nie można zapisywać w koszu jego woluminu.
+trash.reasonNoZone	Nie znajduje się w miejscu z koszem.
+trash.reasonUnknown	Serwer nie podał powodu.
+trash.deleteLinkedShares#one	Ta zawartość ma linki udostępniania (%lld). Nie działają, dopóki zawartość jest w koszu, i można je przywrócić razem z nią.
+trash.deleteLinkedShares#few	Ta zawartość ma linki udostępniania (%lld). Nie działają, dopóki zawartość jest w koszu, i można je przywrócić razem z nią.
+trash.deleteLinkedShares#many	Ta zawartość ma linki udostępniania (%lld). Nie działają, dopóki zawartość jest w koszu, i można je przywrócić razem z nią.
+trash.deleteLinkedShares#other	Ta zawartość ma linki udostępniania (%lld). Nie działają, dopóki zawartość jest w koszu, i można je przywrócić razem z nią.
+trash.keptTitle	Nie udało się przenieść do kosza
+trash.keptTooLarge	„%1$@” ma %2$@, więcej niż %3$@, które mieści kosz jego woluminu.
+trash.keptReason	„%1$@”: %2$@
+trash.movedToTrash#one	Przeniesione do kosza: %lld
+trash.movedToTrash#few	Przeniesione do kosza: %lld
+trash.movedToTrash#many	Przeniesione do kosza: %lld
+trash.movedToTrash#other	Przeniesione do kosza: %lld
+trash.openTrash	Otwórz kosz
+trash.replaceKept	„%@” nie mógł trafić do kosza, więc nic nie zostało zastąpione.
+trash.subtitle#one	Elementy są trwale usuwane %lld dzień po usunięciu.
+trash.subtitle#few	Elementy są trwale usuwane %lld dni po usunięciu.
+trash.subtitle#many	Elementy są trwale usuwane %lld dni po usunięciu.
+trash.subtitle#other	Elementy są trwale usuwane %lld dni po usunięciu.
+trash.emptyState	Kosz jest pusty.
+trash.disabledNotice	Kosz jest wyłączony: usuwanie jest trwałe. To, co nadal tu jest, można przywrócić.
+trash.unavailable	Wolumin niedostępny
+trash.removedToday	Usunięcie dzisiaj
+trash.removedIn#one	Usunięcie za (dni): %lld
+trash.removedIn#few	Usunięcie za (dni): %lld
+trash.removedIn#many	Usunięcie za (dni): %lld
+trash.removedIn#other	Usunięcie za (dni): %lld
+trash.locationPersonal	Folder osobisty
+trash.locationUnknown	Nieznana
+trash.deletedByYou	Ty
+trash.deletedByShareLink	Link udostępniania
+trash.deletedByUnknown	Nieznany
+trash.deletedBy	Usunięte przez: %@
+trash.restore	Przywróć
+trash.restoreTo	Przywróć do…
+trash.restoreHere	Przywróć tutaj
+trash.restoreFolder	Przywróć cały folder
+trash.openLocation	Otwórz pierwotną lokalizację
+trash.emptyTrash	Opróżnij kosz
+trash.forget	Zapomnij
+trash.confirmDeleteTitle	Usunąć trwale?
+trash.confirmDeleteMessage#one	%lld element zostanie trwale usunięty. Tej operacji nie można cofnąć.
+trash.confirmDeleteMessage#few	Te %lld elementy zostaną usunięte trwale. Tej operacji nie można cofnąć.
+trash.confirmDeleteMessage#many	Tych %lld elementów zostanie usuniętych trwale. Tej operacji nie można cofnąć.
+trash.confirmDeleteMessage#other	Tych %lld elementów zostanie usuniętych trwale. Tej operacji nie można cofnąć.
+trash.confirmEmptyTitle	Opróżnić kosz?
+trash.confirmEmptyMessage	Wszystko w Twoim koszu zostanie usunięte trwale. Tej operacji nie można cofnąć.
+trash.restored#one	Przywrócono %lld element
+trash.restored#few	Przywrócono %lld elementy
+trash.restored#many	Przywrócono %lld elementów
+trash.restored#other	Przywrócono %lld elementów
+trash.renamed	"%1$@" przywrócono jako "%2$@": nazwa była zajęta.
+trash.notRestored#one	Nie udało się przywrócić %lld elementu.
+trash.notRestored#few	Nie udało się przywrócić %lld elementów.
+trash.notRestored#many	Nie udało się przywrócić %lld elementów.
+trash.notRestored#other	Nie udało się przywrócić %lld elementów.
+trash.deletedPermanently#one	Trwale usunięto %lld element
+trash.deletedPermanently#few	Trwale usunięto %lld elementy
+trash.deletedPermanently#many	Trwale usunięto %lld elementów
+trash.deletedPermanently#other	Trwale usunięto %lld elementów
+trash.notDeleted#one	Nie udało się usunąć %lld elementu.
+trash.notDeleted#few	Nie udało się usunąć %lld elementów.
+trash.notDeleted#many	Nie udało się usunąć %lld elementów.
+trash.notDeleted#other	Nie udało się usunąć %lld elementów.
+trash.emptied#one	Kosz opróżniony: usunięto %lld element
+trash.emptied#few	Kosz opróżniony: usunięto %lld elementy
+trash.emptied#many	Kosz opróżniony: usunięto %lld elementów
+trash.emptied#other	Kosz opróżniony: usunięto %lld elementów
+trash.leftBehind#one	Nie udało się usunąć %lld elementu i nadal tam jest.
+trash.leftBehind#few	Nie udało się usunąć %lld elementów i nadal tam są.
+trash.leftBehind#many	Nie udało się usunąć %lld elementów i nadal tam są.
+trash.leftBehind#other	Nie udało się usunąć %lld elementów i nadal tam są.
+trash.failureForbidden	Nie możesz już zapisywać w miejscu, w którym się znajdował.
+trash.failureBlocked	W miejscu jego folderu jest teraz coś innego.
+trash.failureUnavailable	Jego wolumin jest niedostępny.
+trash.failureBusy	Jest już przetwarzany.
+trash.failureLost	Jego zawartość zniknęła.
+trash.failureNotFound	Nie ma go już w koszu.
+trash.failureDestinationForbidden	Nie możesz tworzyć elementów w tym folderze.
+trash.failureInvalidDestination	Ten folder nie może go przyjąć.
+trash.failureCancelled	Przywracanie zatrzymało się, zanim do niego doszło.
+trash.failureUnknown	Nie udało się go przetworzyć.
+trash.sharesBadge	Udostępnione
+trash.sharesChooseTitle	Co zrobić z linkami udostępniania?
+trash.sharesChooseMessage#one	Do tego, co przywracasz, należały linki udostępniania (%lld). Od usunięcia nie działają.
+trash.sharesChooseMessage#few	Do tego, co przywracasz, należały linki udostępniania (%lld). Od usunięcia nie działają.
+trash.sharesChooseMessage#many	Do tego, co przywracasz, należały linki udostępniania (%lld). Od usunięcia nie działają.
+trash.sharesChooseMessage#other	Do tego, co przywracasz, należały linki udostępniania (%lld). Od usunięcia nie działają.
+trash.sharesChooseElsewhere	Po przywróceniu będą wskazywać nowe położenie.
+trash.sharesKeep	Przywróć linki udostępniania
+trash.sharesDrop	Usuń linki udostępniania
+trash.sharesRestored#one	Przywrócone linki udostępniania: %lld
+trash.sharesRestored#few	Przywrócone linki udostępniania: %lld
+trash.sharesRestored#many	Przywrócone linki udostępniania: %lld
+trash.sharesRestored#other	Przywrócone linki udostępniania: %lld
+trash.sharesDropped#one	Usunięte linki udostępniania: %lld
+trash.sharesDropped#few	Usunięte linki udostępniania: %lld
+trash.sharesDropped#many	Usunięte linki udostępniania: %lld
+trash.sharesDropped#other	Usunięte linki udostępniania: %lld
+trash.loadFailed	Nie udało się wczytać kosza.
+trash.folderLoadFailed	Nie udało się otworzyć tego folderu.
+trash.folderEmpty	Ten folder jest pusty.
+trash.restoring	Przywracanie…
+trash.columnOriginalLocation	Pierwotna lokalizacja
+trash.columnDeletedBy	Usunięte przez
+trash.columnDeletedOn	Data usunięcia
+trash.columnRemoved	Trwałe usunięcie

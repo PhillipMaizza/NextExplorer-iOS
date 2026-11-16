@@ -1150,3 +1150,128 @@ shareUpload.nameLabel	Имя файла
 shareUpload.namesLabel	Имена файлов
 shareUpload.nameHint	Имя, под которым файл будет загружен. Расширение не изменится.
 spotlight.placeholder	Поиск файлов и папок
+trash.title	Корзина
+trash.rowSubtitle	Удалённые объекты, которые можно восстановить
+trash.moveToTrash	В корзину
+trash.deletePermanently	Удалить навсегда
+trash.deleteMessage#one	Объект попадёт в корзину, где удалённые объекты хранятся (дней: %lld), чтобы их можно было восстановить.
+trash.deleteMessage#few	Объект попадёт в корзину, где удалённые объекты хранятся (дней: %lld), чтобы их можно было восстановить.
+trash.deleteMessage#many	Объект попадёт в корзину, где удалённые объекты хранятся (дней: %lld), чтобы их можно было восстановить.
+trash.deleteMessage#other	Объект попадёт в корзину, где удалённые объекты хранятся (дней: %lld), чтобы их можно было восстановить.
+trash.deleteMessageGeneric	Объект попадёт в корзину, откуда удалённые объекты можно восстановить.
+trash.deleteSomePermanent#one	%lld из них не может попасть в корзину и будет удалён навсегда.
+trash.deleteSomePermanent#few	%lld из них не могут попасть в корзину и будут удалены навсегда.
+trash.deleteSomePermanent#many	%lld из них не могут попасть в корзину и будут удалены навсегда.
+trash.deleteSomePermanent#other	%lld из них не могут попасть в корзину и будут удалены навсегда.
+trash.reasonDisabled	Корзина отключена.
+trash.reasonOtherDevice	Он находится на другом диске, чем корзина его тома.
+trash.reasonTooLarge	Он больше, чем вся корзина его тома.
+trash.reasonZoneRoot	Целый том не может попасть в собственную корзину.
+trash.reasonZoneUnwritable	В корзину его тома нельзя записывать.
+trash.reasonNoZone	Он находится не там, где есть корзина.
+trash.reasonUnknown	Сервер не указал причину.
+trash.deleteLinkedShares#one	У этого содержимого есть ссылки общего доступа (%lld). Они не работают, пока содержимое в корзине, и их можно вернуть при восстановлении.
+trash.deleteLinkedShares#few	У этого содержимого есть ссылки общего доступа (%lld). Они не работают, пока содержимое в корзине, и их можно вернуть при восстановлении.
+trash.deleteLinkedShares#many	У этого содержимого есть ссылки общего доступа (%lld). Они не работают, пока содержимое в корзине, и их можно вернуть при восстановлении.
+trash.deleteLinkedShares#other	У этого содержимого есть ссылки общего доступа (%lld). Они не работают, пока содержимое в корзине, и их можно вернуть при восстановлении.
+trash.keptTitle	Не удалось переместить в корзину
+trash.keptTooLarge	«%1$@» занимает %2$@ — больше, чем %3$@, которые вмещает корзина его тома.
+trash.keptReason	«%1$@»: %2$@
+trash.movedToTrash#one	Перемещено в корзину: %lld
+trash.movedToTrash#few	Перемещено в корзину: %lld
+trash.movedToTrash#many	Перемещено в корзину: %lld
+trash.movedToTrash#other	Перемещено в корзину: %lld
+trash.openTrash	Открыть корзину
+trash.replaceKept	«%@» не удалось переместить в корзину, поэтому ничего не заменено.
+trash.subtitle#one	Элементы удаляются навсегда через %lld день после удаления.
+trash.subtitle#few	Элементы удаляются навсегда через %lld дня после удаления.
+trash.subtitle#many	Элементы удаляются навсегда через %lld дней после удаления.
+trash.subtitle#other	Элементы удаляются навсегда через %lld дней после удаления.
+trash.emptyState	Корзина пуста.
+trash.disabledNotice	Корзина отключена: удаление происходит навсегда. То, что ещё здесь, можно восстановить.
+trash.unavailable	Том недоступен
+trash.removedToday	Удаляется сегодня
+trash.removedIn#one	Удаляется через (дней): %lld
+trash.removedIn#few	Удаляется через (дней): %lld
+trash.removedIn#many	Удаляется через (дней): %lld
+trash.removedIn#other	Удаляется через (дней): %lld
+trash.locationPersonal	Личная папка
+trash.locationUnknown	Неизвестно
+trash.deletedByYou	Вы
+trash.deletedByShareLink	Ссылка общего доступа
+trash.deletedByUnknown	Неизвестно
+trash.deletedBy	Удалил: %@
+trash.restore	Восстановить
+trash.restoreTo	Восстановить в…
+trash.restoreHere	Восстановить сюда
+trash.restoreFolder	Восстановить всю папку
+trash.openLocation	Открыть исходное расположение
+trash.emptyTrash	Очистить корзину
+trash.forget	Забыть
+trash.confirmDeleteTitle	Удалить навсегда?
+trash.confirmDeleteMessage#one	%lld объект будет удалён навсегда. Это действие нельзя отменить.
+trash.confirmDeleteMessage#few	Эти %lld элемента будут удалены навсегда. Это действие нельзя отменить.
+trash.confirmDeleteMessage#many	Эти %lld элементов будут удалены навсегда. Это действие нельзя отменить.
+trash.confirmDeleteMessage#other	Эти %lld элементов будут удалены навсегда. Это действие нельзя отменить.
+trash.confirmEmptyTitle	Очистить корзину?
+trash.confirmEmptyMessage	Всё содержимое вашей корзины будет удалено навсегда. Это действие нельзя отменить.
+trash.restored#one	Восстановлен %lld элемент
+trash.restored#few	Восстановлено %lld элемента
+trash.restored#many	Восстановлено %lld элементов
+trash.restored#other	Восстановлено %lld элементов
+trash.renamed	"%1$@" восстановлен как "%2$@": имя было занято.
+trash.notRestored#one	Не удалось восстановить %lld элемент.
+trash.notRestored#few	Не удалось восстановить %lld элемента.
+trash.notRestored#many	Не удалось восстановить %lld элементов.
+trash.notRestored#other	Не удалось восстановить %lld элементов.
+trash.deletedPermanently#one	Удалён навсегда %lld элемент
+trash.deletedPermanently#few	Удалено навсегда %lld элемента
+trash.deletedPermanently#many	Удалено навсегда %lld элементов
+trash.deletedPermanently#other	Удалено навсегда %lld элементов
+trash.notDeleted#one	Не удалось удалить %lld элемент.
+trash.notDeleted#few	Не удалось удалить %lld элемента.
+trash.notDeleted#many	Не удалось удалить %lld элементов.
+trash.notDeleted#other	Не удалось удалить %lld элементов.
+trash.emptied#one	Корзина очищена: удалён %lld элемент
+trash.emptied#few	Корзина очищена: удалено %lld элемента
+trash.emptied#many	Корзина очищена: удалено %lld элементов
+trash.emptied#other	Корзина очищена: удалено %lld элементов
+trash.leftBehind#one	Не удалось удалить %lld элемент, он всё ещё там.
+trash.leftBehind#few	Не удалось удалить %lld элемента, они всё ещё там.
+trash.leftBehind#many	Не удалось удалить %lld элементов, они всё ещё там.
+trash.leftBehind#other	Не удалось удалить %lld элементов, они всё ещё там.
+trash.failureForbidden	У вас больше нет права записи в его исходное расположение.
+trash.failureBlocked	На месте его папки теперь находится что-то другое.
+trash.failureUnavailable	Его том недоступен.
+trash.failureBusy	Он уже обрабатывается.
+trash.failureLost	Его содержимое исчезло.
+trash.failureNotFound	Его больше нет в корзине.
+trash.failureDestinationForbidden	Вы не можете создавать элементы в этой папке.
+trash.failureInvalidDestination	Эта папка не может его принять.
+trash.failureCancelled	Восстановление остановилось раньше, чем дошло до него.
+trash.failureUnknown	Его не удалось обработать.
+trash.sharesBadge	Общий доступ
+trash.sharesChooseTitle	Что делать со ссылками общего доступа?
+trash.sharesChooseMessage#one	У восстанавливаемого были ссылки общего доступа (%lld). После удаления они не работают.
+trash.sharesChooseMessage#few	У восстанавливаемого были ссылки общего доступа (%lld). После удаления они не работают.
+trash.sharesChooseMessage#many	У восстанавливаемого были ссылки общего доступа (%lld). После удаления они не работают.
+trash.sharesChooseMessage#other	У восстанавливаемого были ссылки общего доступа (%lld). После удаления они не работают.
+trash.sharesChooseElsewhere	Возвращённые ссылки будут указывать на новое расположение.
+trash.sharesKeep	Вернуть ссылки общего доступа
+trash.sharesDrop	Удалить ссылки общего доступа
+trash.sharesRestored#one	Возвращено ссылок общего доступа: %lld
+trash.sharesRestored#few	Возвращено ссылок общего доступа: %lld
+trash.sharesRestored#many	Возвращено ссылок общего доступа: %lld
+trash.sharesRestored#other	Возвращено ссылок общего доступа: %lld
+trash.sharesDropped#one	Удалено ссылок общего доступа: %lld
+trash.sharesDropped#few	Удалено ссылок общего доступа: %lld
+trash.sharesDropped#many	Удалено ссылок общего доступа: %lld
+trash.sharesDropped#other	Удалено ссылок общего доступа: %lld
+trash.loadFailed	Не удалось загрузить корзину.
+trash.folderLoadFailed	Не удалось открыть эту папку.
+trash.folderEmpty	Эта папка пуста.
+trash.restoring	Восстановление…
+trash.columnOriginalLocation	Исходное расположение
+trash.columnDeletedBy	Кем удалено
+trash.columnDeletedOn	Дата удаления
+trash.columnRemoved	Окончательное удаление

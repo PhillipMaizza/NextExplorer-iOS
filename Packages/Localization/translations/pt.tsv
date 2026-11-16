@@ -1124,3 +1124,96 @@ shareUpload.nameLabel	Nome do ficheiro
 shareUpload.namesLabel	Nomes dos ficheiros
 shareUpload.nameHint	O nome com que o ficheiro é carregado. A extensão mantém-se.
 spotlight.placeholder	Pesquisar ficheiros e pastas
+trash.title	Reciclagem
+trash.rowSubtitle	Itens eliminados que pode restaurar
+trash.moveToTrash	Mover para a reciclagem
+trash.deletePermanently	Eliminar definitivamente
+trash.deleteMessage#one	Vai para a reciclagem, que guarda os itens eliminados durante %lld dia para poderem ser restaurados.
+trash.deleteMessage#other	Vai para a reciclagem, que guarda os itens eliminados durante %lld dias para poderem ser restaurados.
+trash.deleteMessageGeneric	Vai para a reciclagem, de onde os itens eliminados podem ser restaurados.
+trash.deleteSomePermanent#one	%lld deles não pode ir para a reciclagem e será eliminado definitivamente.
+trash.deleteSomePermanent#other	%lld deles não podem ir para a reciclagem e serão eliminados definitivamente.
+trash.reasonDisabled	A reciclagem está desativado.
+trash.reasonOtherDevice	Está num disco diferente da reciclagem do seu volume.
+trash.reasonTooLarge	É maior do que toda a reciclagem do seu volume.
+trash.reasonZoneRoot	Um volume inteiro não pode ir para o seu própria reciclagem.
+trash.reasonZoneUnwritable	Não é possível escrever na reciclagem do seu volume.
+trash.reasonNoZone	Não está num local que tenha reciclagem.
+trash.reasonUnknown	O servidor não indicou o motivo.
+trash.deleteLinkedShares#one	Este conteúdo tem %lld ligação de partilha. Deixa de funcionar enquanto o conteúdo estiver na reciclagem e pode ser recuperada ao restaurar.
+trash.deleteLinkedShares#other	Este conteúdo tem %lld ligações de partilha. Deixam de funcionar enquanto o conteúdo estiver na reciclagem e podem ser recuperadas ao restaurar.
+trash.keptTitle	Não foi possível mover para a reciclagem
+trash.keptTooLarge	“%1$@” tem %2$@, mais do que os %3$@ que a reciclagem do seu volume comporta.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#one	%lld item movido para a reciclagem
+trash.movedToTrash#other	%lld itens movidos para a reciclagem
+trash.openTrash	Abrir a reciclagem
+trash.replaceKept	“%@” não pôde ir para a reciclagem, por isso nada foi substituído.
+trash.subtitle#one	Os itens são eliminados definitivamente %lld dia depois de serem apagados.
+trash.subtitle#other	Os itens são eliminados definitivamente %lld dias depois de serem apagados.
+trash.emptyState	A reciclagem está vazio.
+trash.disabledNotice	A reciclagem está desativado: eliminar remove os itens definitivamente. O que ainda está aqui pode ser restaurado.
+trash.unavailable	Volume indisponível
+trash.removedToday	Removido hoje
+trash.removedIn#one	Removido daqui a %lld dia
+trash.removedIn#other	Removido daqui a %lld dias
+trash.locationPersonal	Pasta pessoal
+trash.locationUnknown	Localização desconhecida
+trash.deletedByYou	Você
+trash.deletedByShareLink	Ligação de partilha
+trash.deletedByUnknown	Desconhecido
+trash.deletedBy	Eliminado por %@
+trash.restore	Restaurar
+trash.restoreTo	Restaurar para…
+trash.restoreHere	Restaurar aqui
+trash.restoreFolder	Restaurar a pasta inteira
+trash.openLocation	Abrir localização original
+trash.emptyTrash	Esvaziar a reciclagem
+trash.forget	Esquecer
+trash.confirmDeleteTitle	Eliminar definitivamente?
+trash.confirmDeleteMessage#one	%lld item será removido definitivamente. Esta ação não pode ser anulada.
+trash.confirmDeleteMessage#other	%lld itens serão removidos definitivamente. Esta ação não pode ser anulada.
+trash.confirmEmptyTitle	Esvaziar a reciclagem?
+trash.confirmEmptyMessage	Tudo o que está no seu lixo será removido definitivamente. Esta ação não pode ser anulada.
+trash.restored#one	%lld item restaurado
+trash.restored#other	%lld itens restaurados
+trash.renamed	“%1$@” foi restaurado como “%2$@”: o nome estava ocupado.
+trash.notRestored#one	Não foi possível restaurar %lld item.
+trash.notRestored#other	Não foi possível restaurar %lld itens.
+trash.deletedPermanently#one	%lld item eliminado definitivamente
+trash.deletedPermanently#other	%lld itens eliminados definitivamente
+trash.notDeleted#one	Não foi possível eliminar %lld item.
+trash.notDeleted#other	Não foi possível eliminar %lld itens.
+trash.emptied#one	Reciclagem esvaziada: %lld item removido
+trash.emptied#other	Reciclagem esvaziada: %lld itens removidos
+trash.leftBehind#one	Não foi possível remover %lld item, que continua lá.
+trash.leftBehind#other	Não foi possível remover %lld itens, que continuam lá.
+trash.failureForbidden	Já não pode escrever onde estava.
+trash.failureBlocked	Algo ocupa agora o lugar da sua pasta.
+trash.failureUnavailable	O seu volume não está disponível.
+trash.failureBusy	Já está a ser tratado.
+trash.failureLost	O seu conteúdo tinha desaparecido.
+trash.failureNotFound	Já não está na reciclagem.
+trash.failureDestinationForbidden	Não pode criar itens nessa pasta.
+trash.failureInvalidDestination	Essa pasta não o pode receber.
+trash.failureCancelled	O restauro parou antes de lá chegar.
+trash.failureUnknown	Não foi possível tratá-lo.
+trash.sharesBadge	Partilhado
+trash.sharesChooseTitle	E as ligações de partilha?
+trash.sharesChooseMessage#one	%lld ligação de partilha pertencia ao que está a restaurar. Deixou de funcionar desde a eliminação.
+trash.sharesChooseMessage#other	%lld ligações de partilha pertenciam ao que está a restaurar. Deixaram de funcionar desde a eliminação.
+trash.sharesChooseElsewhere	Se forem recuperadas, apontarão para a nova localização.
+trash.sharesKeep	Restaurar as ligações
+trash.sharesDrop	Eliminar as ligações
+trash.sharesRestored#one	%lld ligação de partilha recuperada
+trash.sharesRestored#other	%lld ligações de partilha recuperadas
+trash.sharesDropped#one	%lld ligação de partilha eliminada
+trash.sharesDropped#other	%lld ligações de partilha eliminadas
+trash.loadFailed	Não foi possível carregar a reciclagem.
+trash.folderLoadFailed	Não foi possível abrir esta pasta.
+trash.folderEmpty	Esta pasta está vazia.
+trash.restoring	A restaurar…
+trash.columnOriginalLocation	Localização original
+trash.columnDeletedBy	Eliminado por
+trash.columnDeletedOn	Eliminado em
+trash.columnRemoved	Removido

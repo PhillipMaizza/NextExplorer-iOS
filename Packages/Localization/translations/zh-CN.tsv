@@ -1111,3 +1111,80 @@ shareUpload.nameLabel	文件名
 shareUpload.namesLabel	文件名
 shareUpload.nameHint	上传时使用的文件名。扩展名保持不变。
 spotlight.placeholder	搜索文件和文件夹
+trash.title	回收站
+trash.rowSubtitle	可恢复的已删除项目
+trash.moveToTrash	移至回收站
+trash.deletePermanently	永久删除
+trash.deleteMessage#other	它会进入回收站，回收站会将已删除项目保留 %lld 天，以便恢复。
+trash.deleteMessageGeneric	它会进入回收站，已删除的项目可从回收站恢复。
+trash.deleteSomePermanent#other	其中 %lld 项无法移至回收站，将被永久删除。
+trash.reasonDisabled	回收站已关闭。
+trash.reasonOtherDevice	它与所在卷的回收站不在同一磁盘上。
+trash.reasonTooLarge	它比所在卷的整个回收站还大。
+trash.reasonZoneRoot	整个卷无法移至自己的回收站。
+trash.reasonZoneUnwritable	无法写入所在卷的回收站。
+trash.reasonNoZone	它不在有回收站的位置。
+trash.reasonUnknown	服务器未说明原因。
+trash.deleteLinkedShares#other	此内容有 %lld 个共享链接。内容在回收站中时链接失效，还原时可以恢复。
+trash.keptTitle	无法移至回收站
+trash.keptTooLarge	“%1$@”大小为 %2$@，超过其卷回收站可容纳的 %3$@。
+trash.keptReason	“%1$@”：%2$@
+trash.movedToTrash#other	已将 %lld 个项目移到回收站
+trash.openTrash	打开回收站
+trash.replaceKept	“%@”无法移到回收站，因此未替换任何内容。
+trash.subtitle#other	项目在删除 %lld 天后将被永久删除。
+trash.emptyState	回收站为空。
+trash.disabledNotice	回收站已关闭：删除会永久移除项目。这里仍有的项目可以还原。
+trash.unavailable	卷不可用
+trash.removedToday	今天删除
+trash.removedIn#other	%lld 天后删除
+trash.locationPersonal	个人文件夹
+trash.locationUnknown	未知
+trash.deletedByYou	你
+trash.deletedByShareLink	共享链接
+trash.deletedByUnknown	未知
+trash.deletedBy	删除者：%@
+trash.restore	还原
+trash.restoreTo	还原到…
+trash.restoreHere	恢复到此处
+trash.restoreFolder	还原整个文件夹
+trash.openLocation	打开原位置
+trash.emptyTrash	清空回收站
+trash.forget	忘记
+trash.confirmDeleteTitle	永久删除？
+trash.confirmDeleteMessage#other	%lld 项将被永久删除。此操作无法撤销。
+trash.confirmEmptyTitle	清空回收站？
+trash.confirmEmptyMessage	回收站中的所有内容都将被永久删除。此操作无法撤销。
+trash.restored#other	已还原 %lld 项
+trash.renamed	"%1$@" 已还原为 "%2$@"：原名称已被占用。
+trash.notRestored#other	%lld 项无法还原.
+trash.deletedPermanently#other	已永久删除 %lld 项
+trash.notDeleted#other	%lld 项无法删除.
+trash.emptied#other	回收站已清空：删除了 %lld 项
+trash.leftBehind#other	%lld 项无法删除，仍在回收站中。
+trash.failureForbidden	你已无法写入其原位置。
+trash.failureBlocked	其文件夹的位置现在已被其他内容占用。
+trash.failureUnavailable	其所在卷不可用。
+trash.failureBusy	它正在处理中。
+trash.failureLost	其内容已消失。
+trash.failureNotFound	它已不在回收站中。
+trash.failureDestinationForbidden	你无法在该文件夹中创建项目。
+trash.failureInvalidDestination	该文件夹无法接收它。
+trash.failureCancelled	恢复在处理到它之前已停止。
+trash.failureUnknown	无法处理。
+trash.sharesBadge	已共享
+trash.sharesChooseTitle	如何处理共享链接？
+trash.sharesChooseMessage#other	你要还原的内容有 %lld 个共享链接，自删除起已失效。
+trash.sharesChooseElsewhere	恢复后，链接将指向新位置。
+trash.sharesKeep	恢复共享链接
+trash.sharesDrop	删除共享链接
+trash.sharesRestored#other	已恢复 %lld 个共享链接
+trash.sharesDropped#other	已删除 %lld 个共享链接
+trash.loadFailed	无法加载回收站。
+trash.folderLoadFailed	无法打开此文件夹。
+trash.folderEmpty	此文件夹为空。
+trash.restoring	正在恢复…
+trash.columnOriginalLocation	原位置
+trash.columnDeletedBy	删除者
+trash.columnDeletedOn	删除时间
+trash.columnRemoved	永久删除

@@ -1097,3 +1097,96 @@ shareUpload.nameLabel	Filnavn
 shareUpload.namesLabel	Filnavn
 shareUpload.nameHint	Navnet filen lastes opp med. Filtypen forblir den samme.
 spotlight.placeholder	Søk i filer og mapper
+trash.title	Papirkurv
+trash.rowSubtitle	Slettede elementer du kan gjenopprette
+trash.moveToTrash	Flytt til papirkurven
+trash.deletePermanently	Slett permanent
+trash.deleteMessage#one	Det havner i papirkurven, som tar vare på slettede elementer i %lld dag slik at de kan gjenopprettes.
+trash.deleteMessage#other	Det havner i papirkurven, som tar vare på slettede elementer i %lld dager slik at de kan gjenopprettes.
+trash.deleteMessageGeneric	Det havner i papirkurven, der slettede elementer kan gjenopprettes.
+trash.deleteSomePermanent#one	%lld av dem kan ikke legges i papirkurven og slettes permanent.
+trash.deleteSomePermanent#other	%lld av dem kan ikke legges i papirkurven og slettes permanent.
+trash.reasonDisabled	Papirkurven er slått av.
+trash.reasonOtherDevice	Det ligger på en annen disk enn volumets papirkurv.
+trash.reasonTooLarge	Det er større enn hele papirkurven på volumet.
+trash.reasonZoneRoot	Et helt volum kan ikke legges i sin egen papirkurv.
+trash.reasonZoneUnwritable	Det kan ikke skrives til volumets papirkurv.
+trash.reasonNoZone	Det ligger et sted uten papirkurv.
+trash.reasonUnknown	Serveren oppga ingen grunn.
+trash.deleteLinkedShares#one	Innholdet har %lld delingslenke. Den virker ikke mens innholdet er i papirkurven, og kan hentes tilbake ved gjenoppretting.
+trash.deleteLinkedShares#other	Innholdet har %lld delingslenker. De virker ikke mens innholdet er i papirkurven, og kan hentes tilbake ved gjenoppretting.
+trash.keptTitle	Kunne ikke flyttes til papirkurven
+trash.keptTooLarge	«%1$@» er %2$@, mer enn de %3$@ volumets papirkurv rommer.
+trash.keptReason	«%1$@»: %2$@
+trash.movedToTrash#one	%lld element flyttet til papirkurven
+trash.movedToTrash#other	%lld elementer flyttet til papirkurven
+trash.openTrash	Åpne papirkurven
+trash.replaceKept	«%@» kunne ikke legges i papirkurven, så ingenting ble erstattet.
+trash.subtitle#one	Elementer slettes permanent %lld dag etter at de ble slettet.
+trash.subtitle#other	Elementer slettes permanent %lld dager etter at de ble slettet.
+trash.emptyState	Papirkurven er tom.
+trash.disabledNotice	Papirkurven er slått av: sletting fjerner elementer permanent. Det som fortsatt ligger her, kan gjenopprettes.
+trash.unavailable	Volumet er utilgjengelig
+trash.removedToday	Fjernes i dag
+trash.removedIn#one	Fjernes om %lld dag
+trash.removedIn#other	Fjernes om %lld dager
+trash.locationPersonal	Personlig mappe
+trash.locationUnknown	Ukjent plassering
+trash.deletedByYou	Deg
+trash.deletedByShareLink	Delingslenke
+trash.deletedByUnknown	Ukjent
+trash.deletedBy	Slettet av %@
+trash.restore	Gjenopprett
+trash.restoreTo	Gjenopprett til…
+trash.restoreHere	Gjenopprett her
+trash.restoreFolder	Gjenopprett hele mappen
+trash.openLocation	Åpne opprinnelig plassering
+trash.emptyTrash	Tøm papirkurven
+trash.forget	Glem
+trash.confirmDeleteTitle	Slette permanent?
+trash.confirmDeleteMessage#one	%lld element fjernes permanent. Dette kan ikke angres.
+trash.confirmDeleteMessage#other	%lld elementer fjernes permanent. Dette kan ikke angres.
+trash.confirmEmptyTitle	Tømme papirkurven?
+trash.confirmEmptyMessage	Alt i papirkurven fjernes permanent. Dette kan ikke angres.
+trash.restored#one	%lld element gjenopprettet
+trash.restored#other	%lld elementer gjenopprettet
+trash.renamed	«%1$@» ble gjenopprettet som «%2$@»: navnet var opptatt.
+trash.notRestored#one	%lld element kunne ikke gjenopprettes.
+trash.notRestored#other	%lld elementer kunne ikke gjenopprettes.
+trash.deletedPermanently#one	%lld element slettet permanent
+trash.deletedPermanently#other	%lld elementer slettet permanent
+trash.notDeleted#one	%lld element kunne ikke slettes.
+trash.notDeleted#other	%lld elementer kunne ikke slettes.
+trash.emptied#one	Papirkurven er tømt: %lld element fjernet
+trash.emptied#other	Papirkurven er tømt: %lld elementer fjernet
+trash.leftBehind#one	%lld element kunne ikke fjernes og ligger der fortsatt.
+trash.leftBehind#other	%lld elementer kunne ikke fjernes og ligger der fortsatt.
+trash.failureForbidden	Du kan ikke lenger skrive der det lå.
+trash.failureBlocked	Noe står nå der mappen lå.
+trash.failureUnavailable	Volumet er ikke tilgjengelig.
+trash.failureBusy	Det blir allerede behandlet.
+trash.failureLost	Innholdet hadde forsvunnet.
+trash.failureNotFound	Det er ikke lenger i papirkurven.
+trash.failureDestinationForbidden	Du kan ikke opprette elementer i den mappen.
+trash.failureInvalidDestination	Den mappen kan ikke ta imot det.
+trash.failureCancelled	Gjenopprettingen stoppet før den kom dit.
+trash.failureUnknown	Det kunne ikke behandles.
+trash.sharesBadge	Delt
+trash.sharesChooseTitle	Hva med delingslenkene?
+trash.sharesChooseMessage#one	%lld delingslenke hørte til det du gjenoppretter. Den har ikke virket siden slettingen.
+trash.sharesChooseMessage#other	%lld delingslenker hørte til det du gjenoppretter. De har ikke virket siden slettingen.
+trash.sharesChooseElsewhere	Hentes de tilbake, peker de til den nye plasseringen.
+trash.sharesKeep	Gjenopprett delingslenkene
+trash.sharesDrop	Slett delingslenkene
+trash.sharesRestored#one	%lld delingslenke hentet tilbake
+trash.sharesRestored#other	%lld delingslenker hentet tilbake
+trash.sharesDropped#one	%lld delingslenke slettet
+trash.sharesDropped#other	%lld delingslenker slettet
+trash.loadFailed	Papirkurven kunne ikke lastes inn.
+trash.folderLoadFailed	Mappen kunne ikke åpnes.
+trash.folderEmpty	Mappen er tom.
+trash.restoring	Gjenoppretter…
+trash.columnOriginalLocation	Opprinnelig plassering
+trash.columnDeletedBy	Slettet av
+trash.columnDeletedOn	Slettet
+trash.columnRemoved	Fjernes

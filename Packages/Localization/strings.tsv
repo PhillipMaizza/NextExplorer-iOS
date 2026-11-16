@@ -1224,11 +1224,9 @@ trash.title	Trash
 trash.rowSubtitle	Deleted items you can restore
 trash.moveToTrash	Move to Trash
 trash.deletePermanently	Delete Permanently
-trash.deleteMessageOne#one	It will go to the trash, which keeps it for %lld day.
-trash.deleteMessageOne#other	It will go to the trash, which keeps it for %lld days.
-trash.deleteMessageMany#one	They will go to the trash, which keeps them for %lld day.
-trash.deleteMessageMany#other	They will go to the trash, which keeps them for %lld days.
-trash.deleteMessageGeneric	Deleted items go to the trash, where they can be restored.
+trash.deleteMessage#one	It goes to the trash, which keeps deleted items for %lld day so they can be restored.
+trash.deleteMessage#other	It goes to the trash, which keeps deleted items for %lld days so they can be restored.
+trash.deleteMessageGeneric	It goes to the trash, where deleted items can be restored.
 trash.deleteSomePermanent#one	%lld of them cannot go to the trash and will be deleted for good.
 trash.deleteSomePermanent#other	%lld of them cannot go to the trash and will be deleted for good.
 trash.reasonDisabled	The trash is switched off.
@@ -1269,7 +1267,7 @@ trash.openLocation	Open Original Location
 trash.emptyTrash	Empty Trash
 trash.forget	Forget
 trash.confirmDeleteTitle	Delete Permanently?
-trash.confirmDeleteMessage#one	This item will be removed for good. This cannot be undone.
+trash.confirmDeleteMessage#one	%lld item will be removed for good. This cannot be undone.
 trash.confirmDeleteMessage#other	These %lld items will be removed for good. This cannot be undone.
 trash.confirmEmptyTitle	Empty the Trash?
 trash.confirmEmptyMessage	Everything in your trash will be removed for good. This cannot be undone.

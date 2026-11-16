@@ -1124,3 +1124,96 @@ shareUpload.nameLabel	Filnamn
 shareUpload.namesLabel	Filnamn
 shareUpload.nameHint	Namnet som filen laddas upp med. Filändelsen förblir densamma.
 spotlight.placeholder	Sök efter filer och mappar
+trash.title	Papperskorg
+trash.rowSubtitle	Raderade objekt som du kan återställa
+trash.moveToTrash	Flytta till papperskorgen
+trash.deletePermanently	Radera permanent
+trash.deleteMessage#one	Det hamnar i papperskorgen, som sparar raderade objekt i %lld dag så att de kan återställas.
+trash.deleteMessage#other	Det hamnar i papperskorgen, som sparar raderade objekt i %lld dagar så att de kan återställas.
+trash.deleteMessageGeneric	Det hamnar i papperskorgen, där raderade objekt kan återställas.
+trash.deleteSomePermanent#one	%lld av dem kan inte flyttas till papperskorgen och raderas permanent.
+trash.deleteSomePermanent#other	%lld av dem kan inte flyttas till papperskorgen och raderas permanent.
+trash.reasonDisabled	Papperskorgen är avstängd.
+trash.reasonOtherDevice	Det ligger på en annan disk än volymens papperskorg.
+trash.reasonTooLarge	Det är större än hela volymens papperskorg.
+trash.reasonZoneRoot	En hel volym kan inte flyttas till sin egen papperskorg.
+trash.reasonZoneUnwritable	Det går inte att skriva till volymens papperskorg.
+trash.reasonNoZone	Det ligger inte på en plats med papperskorg.
+trash.reasonUnknown	Servern angav ingen orsak.
+trash.deleteLinkedShares#one	Innehållet har %lld delningslänk. Den fungerar inte medan innehållet ligger i papperskorgen och kan återställas tillsammans med det.
+trash.deleteLinkedShares#other	Innehållet har %lld delningslänkar. De fungerar inte medan innehållet ligger i papperskorgen och kan återställas tillsammans med det.
+trash.keptTitle	Kunde inte flyttas till papperskorgen
+trash.keptTooLarge	”%1$@” är %2$@, mer än de %3$@ som volymens papperskorg rymmer.
+trash.keptReason	”%1$@”: %2$@
+trash.movedToTrash#one	%lld objekt flyttat till papperskorgen
+trash.movedToTrash#other	%lld objekt flyttade till papperskorgen
+trash.openTrash	Öppna papperskorgen
+trash.replaceKept	”%@” kunde inte flyttas till papperskorgen, så inget ersattes.
+trash.subtitle#one	Objekt tas bort permanent %lld dag efter att de raderats.
+trash.subtitle#other	Objekt tas bort permanent %lld dagar efter att de raderats.
+trash.emptyState	Papperskorgen är tom.
+trash.disabledNotice	Papperskorgen är avstängd: radering tar bort permanent. Det som fortfarande finns här kan återställas.
+trash.unavailable	Volymen är inte tillgänglig
+trash.removedToday	Tas bort i dag
+trash.removedIn#one	Tas bort om %lld dag
+trash.removedIn#other	Tas bort om %lld dagar
+trash.locationPersonal	Personlig mapp
+trash.locationUnknown	Okänd
+trash.deletedByYou	Du
+trash.deletedByShareLink	Delningslänk
+trash.deletedByUnknown	Okänd
+trash.deletedBy	Raderat av %@
+trash.restore	Återställ
+trash.restoreTo	Återställ till…
+trash.restoreHere	Återställ här
+trash.restoreFolder	Återställ hela mappen
+trash.openLocation	Öppna ursprunglig plats
+trash.emptyTrash	Töm papperskorgen
+trash.forget	Glöm
+trash.confirmDeleteTitle	Radera permanent?
+trash.confirmDeleteMessage#one	%lld objekt tas bort permanent. Det går inte att ångra.
+trash.confirmDeleteMessage#other	Dessa %lld objekt tas bort permanent. Åtgärden går inte att ångra.
+trash.confirmEmptyTitle	Töm papperskorgen?
+trash.confirmEmptyMessage	Allt i din papperskorg tas bort permanent. Åtgärden går inte att ångra.
+trash.restored#one	%lld objekt återställt
+trash.restored#other	%lld objekt återställda
+trash.renamed	"%1$@" återställdes som "%2$@": namnet var upptaget.
+trash.notRestored#one	%lld objekt kunde inte återställas.
+trash.notRestored#other	%lld objekt kunde inte återställas.
+trash.deletedPermanently#one	%lld objekt raderat permanent
+trash.deletedPermanently#other	%lld objekt raderade permanent
+trash.notDeleted#one	%lld objekt kunde inte raderas.
+trash.notDeleted#other	%lld objekt kunde inte raderas.
+trash.emptied#one	Papperskorgen tömd: %lld objekt borttaget
+trash.emptied#other	Papperskorgen tömd: %lld objekt borttagna
+trash.leftBehind#one	%lld objekt kunde inte tas bort och finns kvar.
+trash.leftBehind#other	%lld objekt kunde inte tas bort och finns kvar.
+trash.failureForbidden	Du kan inte längre skriva där det låg.
+trash.failureBlocked	Något står nu där dess mapp låg.
+trash.failureUnavailable	Dess volym är inte tillgänglig.
+trash.failureBusy	Det hanteras redan.
+trash.failureLost	Dess innehåll hade försvunnit.
+trash.failureNotFound	Det finns inte längre i papperskorgen.
+trash.failureDestinationForbidden	Du kan inte skapa objekt i den mappen.
+trash.failureInvalidDestination	Den mappen kan inte ta emot det.
+trash.failureCancelled	Återställningen stoppades innan den nådde dit.
+trash.failureUnknown	Det kunde inte hanteras.
+trash.sharesBadge	Delad
+trash.sharesChooseTitle	Vad ska hända med delningslänkarna?
+trash.sharesChooseMessage#one	%lld delningslänk hörde till det du återställer. Den har inte fungerat sedan borttagningen.
+trash.sharesChooseMessage#other	%lld delningslänkar hörde till det du återställer. De har inte fungerat sedan borttagningen.
+trash.sharesChooseElsewhere	Återställda pekar de på den nya platsen.
+trash.sharesKeep	Återställ delningslänkarna
+trash.sharesDrop	Ta bort delningslänkarna
+trash.sharesRestored#one	%lld delningslänk återställd
+trash.sharesRestored#other	%lld delningslänkar återställda
+trash.sharesDropped#one	%lld delningslänk borttagen
+trash.sharesDropped#other	%lld delningslänkar borttagna
+trash.loadFailed	Papperskorgen kunde inte läsas in.
+trash.folderLoadFailed	Mappen kunde inte öppnas.
+trash.folderEmpty	Den här mappen är tom.
+trash.restoring	Återställer…
+trash.columnOriginalLocation	Ursprunglig plats
+trash.columnDeletedBy	Raderad av
+trash.columnDeletedOn	Raderad
+trash.columnRemoved	Tas bort

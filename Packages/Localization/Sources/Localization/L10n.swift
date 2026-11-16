@@ -954,9 +954,8 @@ public enum L10n {
         public static var confirmEmptyMessage: String { tr("trash.confirmEmptyMessage") }
         public static var confirmEmptyTitle: String { tr("trash.confirmEmptyTitle") }  // "Empty the Trash?"
         public static func deleteLinkedShares(_ a0: CVarArg) -> String { tr("trash.deleteLinkedShares", a0) }
-        public static var deleteMessageGeneric: String { tr("trash.deleteMessageGeneric") }  // "Deleted items go to the trash, where they can be restored."
-        public static func deleteMessageMany(_ a0: CVarArg) -> String { tr("trash.deleteMessageMany", a0) }
-        public static func deleteMessageOne(_ a0: CVarArg) -> String { tr("trash.deleteMessageOne", a0) }
+        public static func deleteMessage(_ a0: CVarArg) -> String { tr("trash.deleteMessage", a0) }
+        public static var deleteMessageGeneric: String { tr("trash.deleteMessageGeneric") }  // "It goes to the trash, where deleted items can be restored."
         public static var deletePermanently: String { tr("trash.deletePermanently") }  // "Delete Permanently"
         public static func deleteSomePermanent(_ a0: CVarArg) -> String { tr("trash.deleteSomePermanent", a0) }
         public static func deletedBy(_ a0: CVarArg) -> String { tr("trash.deletedBy", a0) }

@@ -1084,3 +1084,80 @@ shareUpload.nameLabel	Tên tệp
 shareUpload.namesLabel	Tên tệp
 shareUpload.nameHint	Tên dùng khi tải tệp lên. Phần mở rộng giữ nguyên.
 spotlight.placeholder	Tìm tệp và thư mục
+trash.title	Thùng rác
+trash.rowSubtitle	Mục đã xóa mà bạn có thể khôi phục
+trash.moveToTrash	Chuyển vào thùng rác
+trash.deletePermanently	Xóa vĩnh viễn
+trash.deleteMessage#other	Mục sẽ vào thùng rác, nơi giữ các mục đã xóa trong %lld ngày để có thể khôi phục.
+trash.deleteMessageGeneric	Mục sẽ vào thùng rác, nơi có thể khôi phục các mục đã xóa.
+trash.deleteSomePermanent#other	%lld mục trong số đó không thể vào thùng rác và sẽ bị xóa vĩnh viễn.
+trash.reasonDisabled	Thùng rác đang tắt.
+trash.reasonOtherDevice	Mục nằm trên ổ đĩa khác với thùng rác của ổ chứa nó.
+trash.reasonTooLarge	Mục lớn hơn toàn bộ thùng rác của ổ chứa nó.
+trash.reasonZoneRoot	Không thể đưa cả một ổ vào thùng rác của chính nó.
+trash.reasonZoneUnwritable	Không thể ghi vào thùng rác của ổ chứa nó.
+trash.reasonNoZone	Mục không nằm ở nơi có thùng rác.
+trash.reasonUnknown	Máy chủ không cho biết lý do.
+trash.deleteLinkedShares#other	Nội dung này có %lld liên kết chia sẻ. Liên kết ngừng hoạt động khi nội dung ở trong thùng rác và có thể khôi phục cùng nội dung.
+trash.keptTitle	Không thể chuyển vào thùng rác
+trash.keptTooLarge	“%1$@” có dung lượng %2$@, lớn hơn %3$@ mà thùng rác của ổ chứa có thể giữ.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#other	Đã chuyển %lld mục vào thùng rác
+trash.openTrash	Mở thùng rác
+trash.replaceKept	“%@” không thể vào thùng rác nên không có gì bị thay thế.
+trash.subtitle#other	Các mục bị xóa vĩnh viễn %lld ngày sau khi bị xóa.
+trash.emptyState	Thùng rác trống.
+trash.disabledNotice	Thùng rác đang tắt: xóa sẽ loại bỏ mục vĩnh viễn. Những gì còn ở đây vẫn có thể khôi phục.
+trash.unavailable	Ổ không khả dụng
+trash.removedToday	Xóa hôm nay
+trash.removedIn#other	Xóa sau %lld ngày
+trash.locationPersonal	Thư mục cá nhân
+trash.locationUnknown	Vị trí không xác định
+trash.deletedByYou	Bạn
+trash.deletedByShareLink	Liên kết chia sẻ
+trash.deletedByUnknown	Không xác định
+trash.deletedBy	Người xóa: %@
+trash.restore	Khôi phục
+trash.restoreTo	Khôi phục vào…
+trash.restoreHere	Khôi phục tại đây
+trash.restoreFolder	Khôi phục cả thư mục
+trash.openLocation	Mở vị trí ban đầu
+trash.emptyTrash	Dọn sạch thùng rác
+trash.forget	Bỏ qua
+trash.confirmDeleteTitle	Xóa vĩnh viễn?
+trash.confirmDeleteMessage#other	%lld mục sẽ bị xóa vĩnh viễn. Không thể hoàn tác.
+trash.confirmEmptyTitle	Dọn sạch thùng rác?
+trash.confirmEmptyMessage	Mọi thứ trong thùng rác sẽ bị xóa vĩnh viễn. Không thể hoàn tác.
+trash.restored#other	Đã khôi phục %lld mục
+trash.renamed	“%1$@” được khôi phục thành “%2$@” vì tên đã được dùng.
+trash.notRestored#other	Không thể khôi phục %lld mục.
+trash.deletedPermanently#other	Đã xóa vĩnh viễn %lld mục
+trash.notDeleted#other	Không thể xóa %lld mục.
+trash.emptied#other	Đã dọn thùng rác: xóa %lld mục
+trash.leftBehind#other	Không thể xóa %lld mục và chúng vẫn còn đó.
+trash.failureForbidden	Bạn không còn quyền ghi ở vị trí cũ.
+trash.failureBlocked	Hiện có thứ khác ở chỗ thư mục của nó.
+trash.failureUnavailable	Ổ chứa nó không khả dụng.
+trash.failureBusy	Mục đang được xử lý.
+trash.failureLost	Nội dung của nó đã biến mất.
+trash.failureNotFound	Mục không còn trong thùng rác.
+trash.failureDestinationForbidden	Bạn không thể tạo mục trong thư mục đó.
+trash.failureInvalidDestination	Thư mục đó không thể nhận mục này.
+trash.failureCancelled	Việc khôi phục đã dừng trước khi tới mục này.
+trash.failureUnknown	Không thể xử lý mục này.
+trash.sharesBadge	Đã chia sẻ
+trash.sharesChooseTitle	Còn liên kết chia sẻ thì sao?
+trash.sharesChooseMessage#other	Có %lld liên kết chia sẻ thuộc nội dung bạn đang khôi phục. Chúng ngừng hoạt động từ khi bị xóa.
+trash.sharesChooseElsewhere	Nếu khôi phục, liên kết sẽ trỏ đến vị trí mới.
+trash.sharesKeep	Khôi phục liên kết chia sẻ
+trash.sharesDrop	Xóa liên kết chia sẻ
+trash.sharesRestored#other	Đã khôi phục %lld liên kết chia sẻ
+trash.sharesDropped#other	Đã xóa %lld liên kết chia sẻ
+trash.loadFailed	Không thể tải thùng rác.
+trash.folderLoadFailed	Không thể mở thư mục này.
+trash.folderEmpty	Thư mục này trống.
+trash.restoring	Đang khôi phục…
+trash.columnOriginalLocation	Vị trí ban đầu
+trash.columnDeletedBy	Người xóa
+trash.columnDeletedOn	Ngày xóa
+trash.columnRemoved	Xóa vĩnh viễn

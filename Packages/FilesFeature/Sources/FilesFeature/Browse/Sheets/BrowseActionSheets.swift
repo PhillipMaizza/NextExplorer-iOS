@@ -63,7 +63,6 @@ struct BrowseActionSheets: ViewModifier {
         return BrowseDeleteCopy.alert(
             title: BrowseDeleteCopy.title(store),
             check: store.deleteImpactCheck,
-            count: 1,
             onConfirm: { store.send(fromPreview ? .deleteConfirmedFromPreview : .deleteConfirmed) },
             onDeletePermanently: { store.send(.deletePermanentlyConfirmed(fromPreview: fromPreview)) },
             onDismiss: { store.send(.deleteCancelled) }
@@ -164,7 +163,6 @@ struct BrowseListSheets: ViewModifier {
                 BrowseDeleteCopy.alert(
                     title: BrowseDeleteCopy.bulkTitle(store),
                     check: store.deleteImpactCheck,
-                    count: store.selectedItemIDs.count,
                     onConfirm: { store.send(.bulkDeleteConfirmed) },
                     onDeletePermanently: { store.send(.bulkDeletePermanentlyConfirmed) },
                     onDismiss: { store.send(.bulkDeleteCancelled) }

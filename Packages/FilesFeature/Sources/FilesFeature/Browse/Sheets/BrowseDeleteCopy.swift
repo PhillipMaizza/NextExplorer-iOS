@@ -27,7 +27,6 @@ enum BrowseDeleteCopy {
     static func alert(
         title: String,
         check: BrowseFeature.DeleteImpactCheck,
-        count: Int,
         onConfirm: @escaping () -> Void,
         onDeletePermanently: @escaping () -> Void,
         onDismiss: @escaping () -> Void
@@ -36,7 +35,7 @@ enum BrowseDeleteCopy {
         return DSAlertSheet(
             icon: IconKit.delete,
             title: title,
-            message: message(check, count: count),
+            message: message(check),
             confirmTitle: movesToTrash ? L10n.Trash.moveToTrash : L10n.Common.delete,
             dismissTitle: L10n.Common.cancel,
             neutralTitle: movesToTrash ? L10n.Trash.deletePermanently : nil,
@@ -50,11 +49,11 @@ enum BrowseDeleteCopy {
 
     /// Where the items go, why some cannot go to the trash, and what happens to their share links.
     /// A check still running or failed says what deleting for good says: the safe assumption.
-    static func message(_ check: BrowseFeature.DeleteImpactCheck, count: Int) -> String {
+    static func message(_ check: BrowseFeature.DeleteImpactCheck) -> String {
         var lines: [String] = []
         let impact = impact(check)
         if let plan = impact?.trash, plan.trashCount > 0 {
-            lines.append(trashLine(retentionDays: plan.retentionDays, count: count))
+            lines.append(plan.retentionDays.map { L10n.Trash.deleteMessage($0) } ?? L10n.Trash.deleteMessageGeneric)
             if plan.permanentCount > 0 {
                 lines.append(L10n.Trash.deleteSomePermanent(plan.permanentCount))
                 lines += plan.permanentReasons.map(\.message)
@@ -92,11 +91,6 @@ enum BrowseDeleteCopy {
     private static func impact(_ check: BrowseFeature.DeleteImpactCheck) -> DeleteImpact? {
         guard case let .loaded(impact) = check else { return nil }
         return impact
-    }
-
-    private static func trashLine(retentionDays: Int?, count: Int) -> String {
-        guard let retentionDays else { return L10n.Trash.deleteMessageGeneric }
-        return count == 1 ? L10n.Trash.deleteMessageOne(retentionDays) : L10n.Trash.deleteMessageMany(retentionDays)
     }
 
     private static func shareLine(_ check: BrowseFeature.DeleteImpactCheck) -> String? {

@@ -1124,3 +1124,96 @@ shareUpload.nameLabel	Nom du fichier
 shareUpload.namesLabel	Noms des fichiers
 shareUpload.nameHint	Le nom sous lequel le fichier est envoyé. L’extension reste la même.
 spotlight.placeholder	Rechercher des fichiers et des dossiers
+trash.title	Corbeille
+trash.rowSubtitle	Éléments supprimés que vous pouvez restaurer
+trash.moveToTrash	Mettre à la corbeille
+trash.deletePermanently	Supprimer définitivement
+trash.deleteMessage#one	Il ira dans la corbeille, qui conserve les éléments supprimés %lld jour pour pouvoir les restaurer.
+trash.deleteMessage#other	Il ira dans la corbeille, qui conserve les éléments supprimés %lld jours pour pouvoir les restaurer.
+trash.deleteMessageGeneric	Il ira dans la corbeille, d’où les éléments supprimés peuvent être restaurés.
+trash.deleteSomePermanent#one	%lld d'entre eux ne peut pas aller dans la corbeille et sera supprimé définitivement.
+trash.deleteSomePermanent#other	%lld d'entre eux ne peuvent pas aller dans la corbeille et seront supprimés définitivement.
+trash.reasonDisabled	La corbeille est désactivée.
+trash.reasonOtherDevice	Il se trouve sur un autre disque que la corbeille de son volume.
+trash.reasonTooLarge	Il est plus volumineux que toute la corbeille de son volume.
+trash.reasonZoneRoot	Un volume entier ne peut pas aller dans sa propre corbeille.
+trash.reasonZoneUnwritable	La corbeille de son volume n'est pas accessible en écriture.
+trash.reasonNoZone	Il n'est pas dans un emplacement doté d'une corbeille.
+trash.reasonUnknown	Le serveur n’a pas indiqué pourquoi.
+trash.deleteLinkedShares#one	Ce contenu possède %lld lien de partage. Il ne fonctionnera plus tant que le contenu est dans la corbeille, et pourra être rétabli à la restauration.
+trash.deleteLinkedShares#other	Ce contenu possède %lld liens de partage. Ils ne fonctionneront plus tant que le contenu est dans la corbeille, et pourront être rétablis à la restauration.
+trash.keptTitle	Impossible de mettre à la corbeille
+trash.keptTooLarge	« %1$@ » fait %2$@, plus que les %3$@ que peut contenir la corbeille de son volume.
+trash.keptReason	« %1$@ » : %2$@
+trash.movedToTrash#one	%lld élément placé dans la corbeille
+trash.movedToTrash#other	%lld éléments placés dans la corbeille
+trash.openTrash	Ouvrir la corbeille
+trash.replaceKept	« %@ » n’a pas pu aller dans la corbeille, rien n’a donc été remplacé.
+trash.subtitle#one	Les éléments sont supprimés définitivement %lld jour après leur suppression.
+trash.subtitle#other	Les éléments sont supprimés définitivement %lld jours après leur suppression.
+trash.emptyState	La corbeille est vide.
+trash.disabledNotice	La corbeille est désactivée : supprimer efface définitivement. Ce qui s'y trouve encore peut être restauré.
+trash.unavailable	Volume indisponible
+trash.removedToday	Supprimé aujourd’hui
+trash.removedIn#one	Supprimé dans %lld jour
+trash.removedIn#other	Supprimé dans %lld jours
+trash.locationPersonal	Dossier personnel
+trash.locationUnknown	Inconnu
+trash.deletedByYou	Vous
+trash.deletedByShareLink	Lien de partage
+trash.deletedByUnknown	Inconnu
+trash.deletedBy	Supprimé par %@
+trash.restore	Restaurer
+trash.restoreTo	Restaurer vers…
+trash.restoreHere	Restaurer ici
+trash.restoreFolder	Restaurer tout le dossier
+trash.openLocation	Ouvrir l'emplacement d'origine
+trash.emptyTrash	Vider la corbeille
+trash.forget	Oublier
+trash.confirmDeleteTitle	Supprimer définitivement ?
+trash.confirmDeleteMessage#one	%lld élément sera supprimé définitivement. Cette action est irréversible.
+trash.confirmDeleteMessage#other	Ces %lld éléments seront supprimés définitivement. Cette action est irréversible.
+trash.confirmEmptyTitle	Vider la corbeille ?
+trash.confirmEmptyMessage	Tout ce que contient votre corbeille sera supprimé définitivement. Cette action est irréversible.
+trash.restored#one	%lld élément restauré
+trash.restored#other	%lld éléments restaurés
+trash.renamed	"%1$@" a été restauré sous le nom "%2$@" : son nom était pris.
+trash.notRestored#one	%lld élément n'a pas pu être restauré.
+trash.notRestored#other	%lld éléments n'ont pas pu être restaurés.
+trash.deletedPermanently#one	%lld élément supprimé définitivement
+trash.deletedPermanently#other	%lld éléments supprimés définitivement
+trash.notDeleted#one	%lld élément n'a pas pu être supprimé.
+trash.notDeleted#other	%lld éléments n'ont pas pu être supprimés.
+trash.emptied#one	Corbeille vidée : %lld élément supprimé
+trash.emptied#other	Corbeille vidée : %lld éléments supprimés
+trash.leftBehind#one	%lld élément n'a pas pu être supprimé et y est toujours.
+trash.leftBehind#other	%lld éléments n'ont pas pu être supprimés et y sont toujours.
+trash.failureForbidden	Vous ne pouvez plus écrire à son emplacement d'origine.
+trash.failureBlocked	Quelque chose occupe désormais la place de son dossier.
+trash.failureUnavailable	Son volume n'est pas disponible.
+trash.failureBusy	Il est déjà en cours de traitement.
+trash.failureLost	Son contenu avait disparu.
+trash.failureNotFound	Il n'est plus dans la corbeille.
+trash.failureDestinationForbidden	Vous ne pouvez pas créer d'éléments dans ce dossier.
+trash.failureInvalidDestination	Ce dossier ne peut pas le recevoir.
+trash.failureCancelled	La restauration s’est arrêtée avant de l’atteindre.
+trash.failureUnknown	Il n'a pas pu être traité.
+trash.sharesBadge	Partagé
+trash.sharesChooseTitle	Que faire des liens de partage ?
+trash.sharesChooseMessage#one	%lld lien de partage appartenait à ce que vous restaurez. Il ne fonctionne plus depuis la suppression.
+trash.sharesChooseMessage#other	%lld liens de partage appartenaient à ce que vous restaurez. Ils ne fonctionnent plus depuis la suppression.
+trash.sharesChooseElsewhere	Rétablis, ils pointeront vers le nouvel emplacement.
+trash.sharesKeep	Rétablir les liens de partage
+trash.sharesDrop	Supprimer les liens de partage
+trash.sharesRestored#one	%lld lien de partage rétabli
+trash.sharesRestored#other	%lld liens de partage rétablis
+trash.sharesDropped#one	%lld lien de partage supprimé
+trash.sharesDropped#other	%lld liens de partage supprimés
+trash.loadFailed	La corbeille n'a pas pu être chargée.
+trash.folderLoadFailed	Ce dossier n'a pas pu être ouvert.
+trash.folderEmpty	Ce dossier est vide.
+trash.restoring	Restauration…
+trash.columnOriginalLocation	Emplacement d'origine
+trash.columnDeletedBy	Supprimé par
+trash.columnDeletedOn	Supprimé le
+trash.columnRemoved	Suppression

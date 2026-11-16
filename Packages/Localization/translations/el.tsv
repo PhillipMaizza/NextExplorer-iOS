@@ -1097,3 +1097,96 @@ shareUpload.nameLabel	Όνομα αρχείου
 shareUpload.namesLabel	Ονόματα αρχείων
 shareUpload.nameHint	Το όνομα με το οποίο ανεβαίνει το αρχείο. Η επέκταση μένει ίδια.
 spotlight.placeholder	Αναζήτηση αρχείων και φακέλων
+trash.title	Κάδος απορριμμάτων
+trash.rowSubtitle	Διαγραμμένα στοιχεία που μπορείτε να επαναφέρετε
+trash.moveToTrash	Μεταφορά στον κάδο
+trash.deletePermanently	Οριστική διαγραφή
+trash.deleteMessage#one	Θα πάει στον κάδο, που κρατά τα διαγραμμένα στοιχεία για %lld ημέρα ώστε να μπορούν να επανέλθουν.
+trash.deleteMessage#other	Θα πάει στον κάδο, που κρατά τα διαγραμμένα στοιχεία για %lld ημέρες ώστε να μπορούν να επανέλθουν.
+trash.deleteMessageGeneric	Θα πάει στον κάδο, από όπου τα διαγραμμένα στοιχεία μπορούν να επανέλθουν.
+trash.deleteSomePermanent#one	%lld από αυτά δεν μπορεί να πάει στον κάδο και θα διαγραφεί οριστικά.
+trash.deleteSomePermanent#other	%lld από αυτά δεν μπορούν να πάνε στον κάδο και θα διαγραφούν οριστικά.
+trash.reasonDisabled	Ο κάδος είναι απενεργοποιημένος.
+trash.reasonOtherDevice	Βρίσκεται σε άλλο δίσκο από τον κάδο του τόμου του.
+trash.reasonTooLarge	Είναι μεγαλύτερο από ολόκληρο τον κάδο του τόμου του.
+trash.reasonZoneRoot	Ένας ολόκληρος τόμος δεν μπορεί να μπει στον δικό του κάδο.
+trash.reasonZoneUnwritable	Ο κάδος του τόμου του δεν επιτρέπει εγγραφή.
+trash.reasonNoZone	Δεν βρίσκεται σε θέση που έχει κάδο.
+trash.reasonUnknown	Ο διακομιστής δεν είπε γιατί.
+trash.deleteLinkedShares#one	Το περιεχόμενο έχει %lld σύνδεσμο κοινής χρήσης. Δεν λειτουργεί όσο το περιεχόμενο είναι στον κάδο και μπορεί να επανέλθει με την επαναφορά.
+trash.deleteLinkedShares#other	Το περιεχόμενο έχει %lld συνδέσμους κοινής χρήσης. Δεν λειτουργούν όσο το περιεχόμενο είναι στον κάδο και μπορούν να επανέλθουν με την επαναφορά.
+trash.keptTitle	Δεν ήταν δυνατή η μεταφορά στον κάδο
+trash.keptTooLarge	Το «%1$@» είναι %2$@, περισσότερο από τα %3$@ που χωρά ο κάδος του τόμου του.
+trash.keptReason	«%1$@»: %2$@
+trash.movedToTrash#one	%lld στοιχείο μεταφέρθηκε στον κάδο
+trash.movedToTrash#other	%lld στοιχεία μεταφέρθηκαν στον κάδο
+trash.openTrash	Άνοιγμα κάδου
+trash.replaceKept	Το «%@» δεν μπόρεσε να πάει στον κάδο, οπότε δεν αντικαταστάθηκε τίποτα.
+trash.subtitle#one	Τα στοιχεία διαγράφονται οριστικά %lld ημέρα μετά τη διαγραφή τους.
+trash.subtitle#other	Τα στοιχεία διαγράφονται οριστικά %lld ημέρες μετά τη διαγραφή τους.
+trash.emptyState	Ο κάδος είναι άδειος.
+trash.disabledNotice	Ο κάδος είναι απενεργοποιημένος: η διαγραφή αφαιρεί οριστικά τα στοιχεία. Όσα υπάρχουν ακόμα εδώ μπορούν να επανέλθουν.
+trash.unavailable	Μη διαθέσιμος τόμος
+trash.removedToday	Αφαιρείται σήμερα
+trash.removedIn#one	Αφαιρείται σε %lld ημέρα
+trash.removedIn#other	Αφαιρείται σε %lld ημέρες
+trash.locationPersonal	Προσωπικός φάκελος
+trash.locationUnknown	Άγνωστη θέση
+trash.deletedByYou	Εσείς
+trash.deletedByShareLink	Σύνδεσμος κοινής χρήσης
+trash.deletedByUnknown	Άγνωστος
+trash.deletedBy	Διαγράφηκε από %@
+trash.restore	Επαναφορά
+trash.restoreTo	Επαναφορά σε…
+trash.restoreHere	Επαναφορά εδώ
+trash.restoreFolder	Επαναφορά ολόκληρου του φακέλου
+trash.openLocation	Άνοιγμα αρχικής θέσης
+trash.emptyTrash	Άδειασμα κάδου
+trash.forget	Ξέχασε
+trash.confirmDeleteTitle	Οριστική διαγραφή;
+trash.confirmDeleteMessage#one	%lld στοιχείο θα αφαιρεθεί οριστικά. Δεν αναιρείται.
+trash.confirmDeleteMessage#other	%lld στοιχεία θα αφαιρεθούν οριστικά. Δεν αναιρείται.
+trash.confirmEmptyTitle	Άδειασμα του κάδου;
+trash.confirmEmptyMessage	Ό,τι υπάρχει στον κάδο σας θα αφαιρεθεί οριστικά. Δεν αναιρείται.
+trash.restored#one	%lld στοιχείο επανήλθε
+trash.restored#other	%lld στοιχεία επανήλθαν
+trash.renamed	Το «%1$@» επανήλθε ως «%2$@»: το όνομα ήταν πιασμένο.
+trash.notRestored#one	Δεν ήταν δυνατή η επαναφορά %lld στοιχείου.
+trash.notRestored#other	Δεν ήταν δυνατή η επαναφορά %lld στοιχείων.
+trash.deletedPermanently#one	%lld στοιχείο διαγράφηκε οριστικά
+trash.deletedPermanently#other	%lld στοιχεία διαγράφηκαν οριστικά
+trash.notDeleted#one	Δεν ήταν δυνατή η διαγραφή %lld στοιχείου.
+trash.notDeleted#other	Δεν ήταν δυνατή η διαγραφή %lld στοιχείων.
+trash.emptied#one	Ο κάδος άδειασε: αφαιρέθηκε %lld στοιχείο
+trash.emptied#other	Ο κάδος άδειασε: αφαιρέθηκαν %lld στοιχεία
+trash.leftBehind#one	%lld στοιχείο δεν αφαιρέθηκε και είναι ακόμα εκεί.
+trash.leftBehind#other	%lld στοιχεία δεν αφαιρέθηκαν και είναι ακόμα εκεί.
+trash.failureForbidden	Δεν μπορείτε πλέον να γράψετε εκεί που ήταν.
+trash.failureBlocked	Κάτι βρίσκεται πλέον εκεί που ήταν ο φάκελός του.
+trash.failureUnavailable	Ο τόμος του δεν είναι διαθέσιμος.
+trash.failureBusy	Ήδη γίνεται επεξεργασία του.
+trash.failureLost	Το περιεχόμενό του είχε χαθεί.
+trash.failureNotFound	Δεν βρίσκεται πλέον στον κάδο.
+trash.failureDestinationForbidden	Δεν μπορείτε να δημιουργήσετε στοιχεία σε αυτόν τον φάκελο.
+trash.failureInvalidDestination	Αυτός ο φάκελος δεν μπορεί να το δεχτεί.
+trash.failureCancelled	Η επαναφορά σταμάτησε πριν φτάσει σε αυτό.
+trash.failureUnknown	Δεν ήταν δυνατή η επεξεργασία του.
+trash.sharesBadge	Κοινόχρηστο
+trash.sharesChooseTitle	Τι γίνεται με τους συνδέσμους;
+trash.sharesChooseMessage#one	%lld σύνδεσμος κοινής χρήσης ανήκε σε αυτό που επαναφέρετε. Δεν λειτουργεί από τη διαγραφή.
+trash.sharesChooseMessage#other	%lld σύνδεσμοι κοινής χρήσης ανήκαν σε αυτό που επαναφέρετε. Δεν λειτουργούν από τη διαγραφή.
+trash.sharesChooseElsewhere	Αν επανέλθουν, θα δείχνουν στη νέα θέση.
+trash.sharesKeep	Επαναφορά των συνδέσμων
+trash.sharesDrop	Διαγραφή των συνδέσμων
+trash.sharesRestored#one	%lld σύνδεσμος επανήλθε
+trash.sharesRestored#other	%lld σύνδεσμοι επανήλθαν
+trash.sharesDropped#one	%lld σύνδεσμος διαγράφηκε
+trash.sharesDropped#other	%lld σύνδεσμοι διαγράφηκαν
+trash.loadFailed	Δεν ήταν δυνατή η φόρτωση του κάδου.
+trash.folderLoadFailed	Δεν ήταν δυνατό το άνοιγμα του φακέλου.
+trash.folderEmpty	Ο φάκελος είναι άδειος.
+trash.restoring	Επαναφορά…
+trash.columnOriginalLocation	Αρχική θέση
+trash.columnDeletedBy	Διαγράφηκε από
+trash.columnDeletedOn	Ημερομηνία διαγραφής
+trash.columnRemoved	Αφαίρεση

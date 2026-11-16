@@ -47,7 +47,6 @@ struct PreviewHostActions: ViewModifier {
                 BrowseDeleteCopy.alert(
                     title: BrowseDeleteCopy.title(host),
                     check: host.deleteImpactCheck,
-                    count: 1,
                     onConfirm: { host.send(.deleteConfirmed) },
                     onDeletePermanently: { host.send(.deletePermanentlyConfirmed(fromPreview: false)) },
                     onDismiss: { host.send(.deleteCancelled) }

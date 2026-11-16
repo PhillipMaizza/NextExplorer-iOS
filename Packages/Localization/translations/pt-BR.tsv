@@ -1119,3 +1119,96 @@ shareUpload.nameLabel	Nome do arquivo
 shareUpload.namesLabel	Nomes dos arquivos
 shareUpload.nameHint	O nome com que o arquivo é enviado. A extensão continua a mesma.
 spotlight.placeholder	Pesquisar arquivos e pastas
+trash.title	Lixeira
+trash.rowSubtitle	Itens excluídos que você pode restaurar
+trash.moveToTrash	Mover para a lixeira
+trash.deletePermanently	Excluir permanentemente
+trash.deleteMessage#one	Vai para a lixeira, que guarda os itens excluídos por %lld dia para que possam ser restaurados.
+trash.deleteMessage#other	Vai para a lixeira, que guarda os itens excluídos por %lld dias para que possam ser restaurados.
+trash.deleteMessageGeneric	Vai para a lixeira, de onde os itens excluídos podem ser restaurados.
+trash.deleteSomePermanent#one	%lld deles não pode ir para a lixeira e será excluído permanentemente.
+trash.deleteSomePermanent#other	%lld deles não podem ir para a lixeira e serão excluídos permanentemente.
+trash.reasonDisabled	A lixeira está desativada.
+trash.reasonOtherDevice	Está em um disco diferente do da lixeira do seu volume.
+trash.reasonTooLarge	É maior que toda a lixeira do seu volume.
+trash.reasonZoneRoot	Um volume inteiro não pode ir para a própria lixeira.
+trash.reasonZoneUnwritable	Não é possível gravar na lixeira do seu volume.
+trash.reasonNoZone	Não está em um local com lixeira.
+trash.reasonUnknown	O servidor não informou o motivo.
+trash.deleteLinkedShares#one	Este conteúdo tem %lld link de compartilhamento. Ele deixa de funcionar enquanto o conteúdo estiver na lixeira e pode ser recuperado na restauração.
+trash.deleteLinkedShares#other	Este conteúdo tem %lld links de compartilhamento. Eles deixam de funcionar enquanto o conteúdo estiver na lixeira e podem ser recuperados na restauração.
+trash.keptTitle	Não foi possível mover para a lixeira
+trash.keptTooLarge	“%1$@” tem %2$@, mais do que os %3$@ que a lixeira do volume comporta.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#one	%lld item movido para a lixeira
+trash.movedToTrash#other	%lld itens movidos para a lixeira
+trash.openTrash	Abrir lixeira
+trash.replaceKept	“%@” não pôde ir para a lixeira, então nada foi substituído.
+trash.subtitle#one	Os itens são excluídos permanentemente %lld dia após serem apagados.
+trash.subtitle#other	Os itens são excluídos permanentemente %lld dias após serem apagados.
+trash.emptyState	A lixeira está vazia.
+trash.disabledNotice	A lixeira está desativada: excluir apaga permanentemente. O que ainda está aqui pode ser restaurado.
+trash.unavailable	Volume indisponível
+trash.removedToday	Removido hoje
+trash.removedIn#one	Removido em %lld dia
+trash.removedIn#other	Removido em %lld dias
+trash.locationPersonal	Pasta pessoal
+trash.locationUnknown	Desconhecido
+trash.deletedByYou	Você
+trash.deletedByShareLink	Link de compartilhamento
+trash.deletedByUnknown	Desconhecido
+trash.deletedBy	Excluído por %@
+trash.restore	Restaurar
+trash.restoreTo	Restaurar em…
+trash.restoreHere	Restaurar aqui
+trash.restoreFolder	Restaurar a pasta inteira
+trash.openLocation	Abrir local original
+trash.emptyTrash	Esvaziar lixeira
+trash.forget	Esquecer
+trash.confirmDeleteTitle	Excluir permanentemente?
+trash.confirmDeleteMessage#one	%lld item será removido definitivamente. Isso não pode ser desfeito.
+trash.confirmDeleteMessage#other	Estes %lld itens serão excluídos permanentemente. Esta ação não pode ser desfeita.
+trash.confirmEmptyTitle	Esvaziar a lixeira?
+trash.confirmEmptyMessage	Tudo o que está na sua lixeira será excluído permanentemente. Esta ação não pode ser desfeita.
+trash.restored#one	%lld item restaurado
+trash.restored#other	%lld itens restaurados
+trash.renamed	"%1$@" foi restaurado como "%2$@": o nome já estava em uso.
+trash.notRestored#one	%lld item não pôde ser restaurado.
+trash.notRestored#other	%lld itens não puderam ser restaurados.
+trash.deletedPermanently#one	%lld item excluído permanentemente
+trash.deletedPermanently#other	%lld itens excluídos permanentemente
+trash.notDeleted#one	%lld item não pôde ser excluído.
+trash.notDeleted#other	%lld itens não puderam ser excluídos.
+trash.emptied#one	Lixeira esvaziada: %lld item removido
+trash.emptied#other	Lixeira esvaziada: %lld itens removidos
+trash.leftBehind#one	%lld item não pôde ser removido e continua lá.
+trash.leftBehind#other	%lld itens não puderam ser removidos e continuam lá.
+trash.failureForbidden	Você não pode mais gravar onde ele estava.
+trash.failureBlocked	Algo agora ocupa o lugar da sua pasta.
+trash.failureUnavailable	Seu volume não está disponível.
+trash.failureBusy	Já está sendo processado.
+trash.failureLost	Seu conteúdo havia desaparecido.
+trash.failureNotFound	Não está mais na lixeira.
+trash.failureDestinationForbidden	Você não pode criar itens nessa pasta.
+trash.failureInvalidDestination	Essa pasta não pode recebê-lo.
+trash.failureCancelled	A restauração parou antes de chegar a ele.
+trash.failureUnknown	Não foi possível processá-lo.
+trash.sharesBadge	Compartilhado
+trash.sharesChooseTitle	O que fazer com os links de compartilhamento?
+trash.sharesChooseMessage#one	%lld link de compartilhamento pertencia ao que você está restaurando. Ele não funciona desde a exclusão.
+trash.sharesChooseMessage#other	%lld links de compartilhamento pertenciam ao que você está restaurando. Eles não funcionam desde a exclusão.
+trash.sharesChooseElsewhere	Recuperados, eles apontarão para o novo local.
+trash.sharesKeep	Restaurar os links de compartilhamento
+trash.sharesDrop	Excluir os links de compartilhamento
+trash.sharesRestored#one	%lld link de compartilhamento recuperado
+trash.sharesRestored#other	%lld links de compartilhamento recuperados
+trash.sharesDropped#one	%lld link de compartilhamento excluído
+trash.sharesDropped#other	%lld links de compartilhamento excluídos
+trash.loadFailed	Não foi possível carregar a lixeira.
+trash.folderLoadFailed	Não foi possível abrir esta pasta.
+trash.folderEmpty	Esta pasta está vazia.
+trash.restoring	Restaurando…
+trash.columnOriginalLocation	Local original
+trash.columnDeletedBy	Excluído por
+trash.columnDeletedOn	Excluído em
+trash.columnRemoved	Remoção

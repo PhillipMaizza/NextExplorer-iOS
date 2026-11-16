@@ -1124,3 +1124,96 @@ shareUpload.nameLabel	Nombre del archivo
 shareUpload.namesLabel	Nombres de los archivos
 shareUpload.nameHint	El nombre con el que se sube el archivo. La extensión no cambia.
 spotlight.placeholder	Buscar archivos y carpetas
+trash.title	Papelera
+trash.rowSubtitle	Elementos eliminados que puedes restaurar
+trash.moveToTrash	Mover a la papelera
+trash.deletePermanently	Eliminar definitivamente
+trash.deleteMessage#one	Irá a la papelera, que conserva los elementos eliminados %lld día para poder restaurarlos.
+trash.deleteMessage#other	Irá a la papelera, que conserva los elementos eliminados %lld días para poder restaurarlos.
+trash.deleteMessageGeneric	Irá a la papelera, desde donde se pueden restaurar los elementos eliminados.
+trash.deleteSomePermanent#one	%lld de ellos no puede ir a la papelera y se eliminará definitivamente.
+trash.deleteSomePermanent#other	%lld de ellos no pueden ir a la papelera y se eliminarán definitivamente.
+trash.reasonDisabled	La papelera está desactivada.
+trash.reasonOtherDevice	Está en otro disco distinto al de la papelera de su volumen.
+trash.reasonTooLarge	Es más grande que toda la papelera de su volumen.
+trash.reasonZoneRoot	Un volumen entero no puede ir a su propia papelera.
+trash.reasonZoneUnwritable	No se puede escribir en la papelera de su volumen.
+trash.reasonNoZone	No está en un lugar con papelera.
+trash.reasonUnknown	El servidor no indicó el motivo.
+trash.deleteLinkedShares#one	Este contenido tiene %lld enlace compartido. Deja de funcionar mientras el contenido está en la papelera y se puede recuperar al restaurarlo.
+trash.deleteLinkedShares#other	Este contenido tiene %lld enlaces compartidos. Dejan de funcionar mientras el contenido está en la papelera y se pueden recuperar al restaurarlo.
+trash.keptTitle	No se pudo mover a la papelera
+trash.keptTooLarge	“%1$@” ocupa %2$@, más que los %3$@ que admite la papelera de su volumen.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#one	%lld elemento movido a la papelera
+trash.movedToTrash#other	%lld elementos movidos a la papelera
+trash.openTrash	Abrir papelera
+trash.replaceKept	“%@” no pudo ir a la papelera, así que no se reemplazó nada.
+trash.subtitle#one	Los elementos se eliminan definitivamente %lld día después de borrarlos.
+trash.subtitle#other	Los elementos se eliminan definitivamente %lld días después de borrarlos.
+trash.emptyState	La papelera está vacía.
+trash.disabledNotice	La papelera está desactivada: eliminar borra definitivamente. Lo que aún está aquí se puede restaurar.
+trash.unavailable	Volumen no disponible
+trash.removedToday	Se elimina hoy
+trash.removedIn#one	Se elimina en %lld día
+trash.removedIn#other	Se elimina en %lld días
+trash.locationPersonal	Carpeta personal
+trash.locationUnknown	Desconocida
+trash.deletedByYou	Tú
+trash.deletedByShareLink	Enlace compartido
+trash.deletedByUnknown	Desconocido
+trash.deletedBy	Eliminado por %@
+trash.restore	Restaurar
+trash.restoreTo	Restaurar en…
+trash.restoreHere	Restaurar aquí
+trash.restoreFolder	Restaurar la carpeta entera
+trash.openLocation	Abrir ubicación original
+trash.emptyTrash	Vaciar papelera
+trash.forget	Olvidar
+trash.confirmDeleteTitle	¿Eliminar definitivamente?
+trash.confirmDeleteMessage#one	Se eliminará %lld elemento de forma definitiva. No se puede deshacer.
+trash.confirmDeleteMessage#other	Estos %lld elementos se eliminarán definitivamente. Esta acción no se puede deshacer.
+trash.confirmEmptyTitle	¿Vaciar la papelera?
+trash.confirmEmptyMessage	Todo lo que hay en tu papelera se eliminará definitivamente. Esta acción no se puede deshacer.
+trash.restored#one	%lld elemento restaurado
+trash.restored#other	%lld elementos restaurados
+trash.renamed	"%1$@" se restauró como "%2$@": su nombre estaba ocupado.
+trash.notRestored#one	%lld elemento no se pudo restaurar.
+trash.notRestored#other	%lld elementos no se pudieron restaurar.
+trash.deletedPermanently#one	%lld elemento eliminado definitivamente
+trash.deletedPermanently#other	%lld elementos eliminados definitivamente
+trash.notDeleted#one	%lld elemento no se pudo eliminar.
+trash.notDeleted#other	%lld elementos no se pudieron eliminar.
+trash.emptied#one	Papelera vaciada: %lld elemento eliminado
+trash.emptied#other	Papelera vaciada: %lld elementos eliminados
+trash.leftBehind#one	%lld elemento no se pudo eliminar y sigue ahí.
+trash.leftBehind#other	%lld elementos no se pudieron eliminar y siguen ahí.
+trash.failureForbidden	Ya no puedes escribir donde estaba.
+trash.failureBlocked	Ahora hay algo en el lugar de su carpeta.
+trash.failureUnavailable	Su volumen no está disponible.
+trash.failureBusy	Ya se está procesando.
+trash.failureLost	Su contenido había desaparecido.
+trash.failureNotFound	Ya no está en la papelera.
+trash.failureDestinationForbidden	No puede crear elementos en esa carpeta.
+trash.failureInvalidDestination	Esa carpeta no puede recibirlo.
+trash.failureCancelled	La restauración se detuvo antes de llegar a él.
+trash.failureUnknown	No se pudo procesar.
+trash.sharesBadge	Compartido
+trash.sharesChooseTitle	¿Qué hacer con los enlaces compartidos?
+trash.sharesChooseMessage#one	%lld enlace compartido pertenecía a lo que restaura. No funciona desde la eliminación.
+trash.sharesChooseMessage#other	%lld enlaces compartidos pertenecían a lo que restaura. No funcionan desde la eliminación.
+trash.sharesChooseElsewhere	Si se recuperan, apuntarán a la nueva ubicación.
+trash.sharesKeep	Restaurar los enlaces compartidos
+trash.sharesDrop	Eliminar los enlaces compartidos
+trash.sharesRestored#one	%lld enlace compartido recuperado
+trash.sharesRestored#other	%lld enlaces compartidos recuperados
+trash.sharesDropped#one	%lld enlace compartido eliminado
+trash.sharesDropped#other	%lld enlaces compartidos eliminados
+trash.loadFailed	No se pudo cargar la papelera.
+trash.folderLoadFailed	No se pudo abrir esta carpeta.
+trash.folderEmpty	Esta carpeta está vacía.
+trash.restoring	Restaurando…
+trash.columnOriginalLocation	Ubicación original
+trash.columnDeletedBy	Eliminado por
+trash.columnDeletedOn	Eliminado el
+trash.columnRemoved	Eliminación

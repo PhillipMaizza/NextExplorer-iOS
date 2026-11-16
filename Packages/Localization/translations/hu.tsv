@@ -1097,3 +1097,96 @@ shareUpload.nameLabel	Fájlnév
 shareUpload.namesLabel	Fájlnevek
 shareUpload.nameHint	A név, amelyen a fájl feltöltődik. A kiterjesztés nem változik.
 spotlight.placeholder	Fájlok és mappák keresése
+trash.title	Kuka
+trash.rowSubtitle	Visszaállítható törölt elemek
+trash.moveToTrash	Áthelyezés a kukába
+trash.deletePermanently	Végleges törlés
+trash.deleteMessage#one	A kukába kerül, amely %lld napig őrzi a törölt elemeket, hogy visszaállíthatók legyenek.
+trash.deleteMessage#other	A kukába kerül, amely %lld napig őrzi a törölt elemeket, hogy visszaállíthatók legyenek.
+trash.deleteMessageGeneric	A kukába kerül, ahonnan a törölt elemek visszaállíthatók.
+trash.deleteSomePermanent#one	Közülük %lld nem kerülhet a kukába, és véglegesen törlődik.
+trash.deleteSomePermanent#other	Közülük %lld nem kerülhet a kukába, és véglegesen törlődik.
+trash.reasonDisabled	A kuka ki van kapcsolva.
+trash.reasonOtherDevice	Más lemezen van, mint a kötete kukája.
+trash.reasonTooLarge	Nagyobb, mint a kötet teljes kukája.
+trash.reasonZoneRoot	Egy teljes kötet nem kerülhet a saját kukájába.
+trash.reasonZoneUnwritable	A kötet kukája nem írható.
+trash.reasonNoZone	Olyan helyen van, ahol nincs kuka.
+trash.reasonUnknown	A kiszolgáló nem adott okot.
+trash.deleteLinkedShares#one	A tartalomhoz %lld megosztási hivatkozás tartozik. Nem működik, amíg a tartalom a kukában van, és visszaállításkor visszahozható.
+trash.deleteLinkedShares#other	A tartalomhoz %lld megosztási hivatkozás tartozik. Nem működik, amíg a tartalom a kukában van, és visszaállításkor visszahozható.
+trash.keptTitle	Nem került a kukába
+trash.keptTooLarge	„%1$@” mérete %2$@, több mint a kötet kukájába férő %3$@.
+trash.keptReason	„%1$@”: %2$@
+trash.movedToTrash#one	%lld elem a kukába került
+trash.movedToTrash#other	%lld elem a kukába került
+trash.openTrash	Kuka megnyitása
+trash.replaceKept	„%@” nem kerülhetett a kukába, ezért semmi sem lett lecserélve.
+trash.subtitle#one	Az elemek a törlés után %lld nappal véglegesen törlődnek.
+trash.subtitle#other	Az elemek a törlés után %lld nappal véglegesen törlődnek.
+trash.emptyState	A kuka üres.
+trash.disabledNotice	A kuka ki van kapcsolva: a törlés véglegesen eltávolítja az elemeket. Ami még itt van, visszaállítható.
+trash.unavailable	A kötet nem érhető el
+trash.removedToday	Ma törlődik
+trash.removedIn#one	%lld nap múlva törlődik
+trash.removedIn#other	%lld nap múlva törlődik
+trash.locationPersonal	Személyes mappa
+trash.locationUnknown	Ismeretlen hely
+trash.deletedByYou	Te
+trash.deletedByShareLink	Megosztási hivatkozás
+trash.deletedByUnknown	Ismeretlen
+trash.deletedBy	Törölte: %@
+trash.restore	Visszaállítás
+trash.restoreTo	Visszaállítás ide…
+trash.restoreHere	Visszaállítás ide
+trash.restoreFolder	Teljes mappa visszaállítása
+trash.openLocation	Eredeti hely megnyitása
+trash.emptyTrash	Kuka ürítése
+trash.forget	Elfelejtés
+trash.confirmDeleteTitle	Végleges törlés?
+trash.confirmDeleteMessage#one	%lld elem véglegesen törlődik. Ez nem vonható vissza.
+trash.confirmDeleteMessage#other	%lld elem véglegesen törlődik. Ez nem vonható vissza.
+trash.confirmEmptyTitle	Kiüríti a kukát?
+trash.confirmEmptyMessage	A kukában lévő összes elem véglegesen törlődik. Ez nem vonható vissza.
+trash.restored#one	%lld elem visszaállítva
+trash.restored#other	%lld elem visszaállítva
+trash.renamed	„%1$@” „%2$@” néven lett visszaállítva: a név foglalt volt.
+trash.notRestored#one	%lld elemet nem sikerült visszaállítani.
+trash.notRestored#other	%lld elemet nem sikerült visszaállítani.
+trash.deletedPermanently#one	%lld elem véglegesen törölve
+trash.deletedPermanently#other	%lld elem véglegesen törölve
+trash.notDeleted#one	%lld elemet nem sikerült törölni.
+trash.notDeleted#other	%lld elemet nem sikerült törölni.
+trash.emptied#one	Kuka kiürítve: %lld elem törölve
+trash.emptied#other	Kuka kiürítve: %lld elem törölve
+trash.leftBehind#one	%lld elemet nem sikerült eltávolítani, és még ott van.
+trash.leftBehind#other	%lld elemet nem sikerült eltávolítani, és még ott van.
+trash.failureForbidden	Már nem írhatsz oda, ahol volt.
+trash.failureBlocked	Valami most ott van, ahol a mappája volt.
+trash.failureUnavailable	A kötete nem érhető el.
+trash.failureBusy	Már feldolgozás alatt áll.
+trash.failureLost	A tartalma eltűnt.
+trash.failureNotFound	Már nincs a kukában.
+trash.failureDestinationForbidden	Ebben a mappában nem hozhatsz létre elemeket.
+trash.failureInvalidDestination	Ez a mappa nem fogadhatja.
+trash.failureCancelled	A visszaállítás leállt, mielőtt odaért volna.
+trash.failureUnknown	Nem sikerült feldolgozni.
+trash.sharesBadge	Megosztva
+trash.sharesChooseTitle	Mi legyen a megosztási hivatkozásokkal?
+trash.sharesChooseMessage#one	%lld megosztási hivatkozás tartozott ahhoz, amit visszaállítasz. A törlés óta nem működik.
+trash.sharesChooseMessage#other	%lld megosztási hivatkozás tartozott ahhoz, amit visszaállítasz. A törlés óta nem működik.
+trash.sharesChooseElsewhere	Ha visszahozod, az új helyre mutatnak.
+trash.sharesKeep	Hivatkozások visszaállítása
+trash.sharesDrop	Hivatkozások törlése
+trash.sharesRestored#one	%lld megosztási hivatkozás visszahozva
+trash.sharesRestored#other	%lld megosztási hivatkozás visszahozva
+trash.sharesDropped#one	%lld megosztási hivatkozás törölve
+trash.sharesDropped#other	%lld megosztási hivatkozás törölve
+trash.loadFailed	A kukát nem sikerült betölteni.
+trash.folderLoadFailed	A mappát nem sikerült megnyitni.
+trash.folderEmpty	A mappa üres.
+trash.restoring	Visszaállítás…
+trash.columnOriginalLocation	Eredeti hely
+trash.columnDeletedBy	Törölte
+trash.columnDeletedOn	Törlés dátuma
+trash.columnRemoved	Törlődik

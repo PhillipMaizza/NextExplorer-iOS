@@ -37,20 +37,20 @@ struct BrowseDeleteToTrashTests {
 
     @Test("A plan that sends the item to the trash says how long the trash keeps it and how its links behave")
     func copyForTheTrash() {
-        let message = BrowseDeleteCopy.message(.loaded(allToTrash), count: 1)
+        let message = BrowseDeleteCopy.message(.loaded(allToTrash))
 
         #expect(message == [
-            L10n.Trash.deleteMessageOne(Constants.retentionDays),
+            L10n.Trash.deleteMessage(Constants.retentionDays),
             L10n.Trash.deleteLinkedShares(1),
         ].joined(separator: "\n\n"))
     }
 
     @Test("A mixed plan counts what skips the trash and says why")
     func copyForAMixedPlan() {
-        let message = BrowseDeleteCopy.message(.loaded(mixed), count: 2)
+        let message = BrowseDeleteCopy.message(.loaded(mixed))
 
         #expect(message == [
-            L10n.Trash.deleteMessageMany(Constants.retentionDays),
+            L10n.Trash.deleteMessage(Constants.retentionDays),
             L10n.Trash.deleteSomePermanent(1),
             L10n.Trash.reasonOtherDevice,
         ].joined(separator: "\n\n"))
@@ -58,9 +58,9 @@ struct BrowseDeleteToTrashTests {
 
     @Test("Without a trash plan, while checking or after a failed check, the copy warns it cannot be undone")
     func copyWithoutATrash() {
-        #expect(BrowseDeleteCopy.message(.checking, count: 1) == L10n.Browse.deleteMessage)
-        #expect(BrowseDeleteCopy.message(.loaded(DeleteImpact(shareCount: 0)), count: 1) == L10n.Browse.deleteMessage)
-        #expect(BrowseDeleteCopy.message(.unavailable, count: 1)
+        #expect(BrowseDeleteCopy.message(.checking) == L10n.Browse.deleteMessage)
+        #expect(BrowseDeleteCopy.message(.loaded(DeleteImpact(shareCount: 0))) == L10n.Browse.deleteMessage)
+        #expect(BrowseDeleteCopy.message(.unavailable)
             == L10n.Browse.deleteMessage + "\n\n" + L10n.Browse.deleteLinkedSharesUnavailable)
     }
 
@@ -72,7 +72,7 @@ struct BrowseDeleteToTrashTests {
                 .init(path: photo.id, goesToTrash: false, reason: .disabled),
             ])
         )
-        #expect(BrowseDeleteCopy.message(.loaded(impact), count: 1) == L10n.Browse.deleteMessage)
+        #expect(BrowseDeleteCopy.message(.loaded(impact)) == L10n.Browse.deleteMessage)
     }
 
     // MARK: Delete

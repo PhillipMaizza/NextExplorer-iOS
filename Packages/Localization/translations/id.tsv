@@ -1084,3 +1084,80 @@ shareUpload.nameLabel	Nama File
 shareUpload.namesLabel	Nama File
 shareUpload.nameHint	Nama yang digunakan saat file diunggah. Ekstensinya tetap sama.
 spotlight.placeholder	Cari file dan folder
+trash.title	Sampah
+trash.rowSubtitle	Item terhapus yang dapat Anda pulihkan
+trash.moveToTrash	Pindahkan ke Sampah
+trash.deletePermanently	Hapus Permanen
+trash.deleteMessage#other	Item akan masuk ke sampah, yang menyimpan item terhapus selama %lld hari agar bisa dipulihkan.
+trash.deleteMessageGeneric	Item akan masuk ke sampah, tempat item terhapus bisa dipulihkan.
+trash.deleteSomePermanent#other	%lld di antaranya tidak bisa masuk ke sampah dan akan dihapus permanen.
+trash.reasonDisabled	Sampah dinonaktifkan.
+trash.reasonOtherDevice	Item berada di disk yang berbeda dengan sampah volumenya.
+trash.reasonTooLarge	Item lebih besar dari seluruh sampah volumenya.
+trash.reasonZoneRoot	Satu volume utuh tidak bisa masuk ke sampahnya sendiri.
+trash.reasonZoneUnwritable	Sampah volumenya tidak dapat ditulisi.
+trash.reasonNoZone	Item tidak berada di tempat yang memiliki sampah.
+trash.reasonUnknown	Server tidak menyebutkan alasannya.
+trash.deleteLinkedShares#other	Konten ini memiliki %lld tautan berbagi. Tautan tidak berfungsi selama konten di sampah, dan bisa dikembalikan saat dipulihkan.
+trash.keptTitle	Tidak Bisa Dipindahkan ke Sampah
+trash.keptTooLarge	“%1$@” berukuran %2$@, lebih dari %3$@ yang dapat ditampung sampah volumenya.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#other	%lld item dipindahkan ke sampah
+trash.openTrash	Buka Sampah
+trash.replaceKept	“%@” tidak bisa masuk ke sampah, jadi tidak ada yang diganti.
+trash.subtitle#other	Item dihapus permanen %lld hari setelah dihapus.
+trash.emptyState	Sampah kosong.
+trash.disabledNotice	Sampah dinonaktifkan: menghapus akan menghilangkan item secara permanen. Yang masih ada di sini bisa dipulihkan.
+trash.unavailable	Volume tidak tersedia
+trash.removedToday	Dihapus hari ini
+trash.removedIn#other	Dihapus dalam %lld hari
+trash.locationPersonal	Folder pribadi
+trash.locationUnknown	Lokasi tidak diketahui
+trash.deletedByYou	Anda
+trash.deletedByShareLink	Tautan berbagi
+trash.deletedByUnknown	Tidak diketahui
+trash.deletedBy	Dihapus oleh %@
+trash.restore	Pulihkan
+trash.restoreTo	Pulihkan ke…
+trash.restoreHere	Pulihkan di Sini
+trash.restoreFolder	Pulihkan Seluruh Folder
+trash.openLocation	Buka Lokasi Asli
+trash.emptyTrash	Kosongkan Sampah
+trash.forget	Lupakan
+trash.confirmDeleteTitle	Hapus Permanen?
+trash.confirmDeleteMessage#other	%lld item akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.
+trash.confirmEmptyTitle	Kosongkan Sampah?
+trash.confirmEmptyMessage	Semua isi sampah Anda akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.
+trash.restored#other	%lld item dipulihkan
+trash.renamed	“%1$@” dipulihkan sebagai “%2$@”: namanya sudah dipakai.
+trash.notRestored#other	%lld item tidak dapat dipulihkan.
+trash.deletedPermanently#other	%lld item dihapus permanen
+trash.notDeleted#other	%lld item tidak dapat dihapus.
+trash.emptied#other	Sampah dikosongkan: %lld item dihapus
+trash.leftBehind#other	%lld item tidak dapat dihapus dan masih ada di sana.
+trash.failureForbidden	Anda tidak lagi bisa menulis di tempat asalnya.
+trash.failureBlocked	Kini ada sesuatu di tempat foldernya dulu.
+trash.failureUnavailable	Volumenya tidak tersedia.
+trash.failureBusy	Item sedang diproses.
+trash.failureLost	Isinya telah hilang.
+trash.failureNotFound	Item sudah tidak ada di sampah.
+trash.failureDestinationForbidden	Anda tidak dapat membuat item di folder itu.
+trash.failureInvalidDestination	Folder itu tidak dapat menerimanya.
+trash.failureCancelled	Pemulihan berhenti sebelum mencapainya.
+trash.failureUnknown	Item tidak dapat diproses.
+trash.sharesBadge	Dibagikan
+trash.sharesChooseTitle	Bagaimana dengan Tautan Berbagi?
+trash.sharesChooseMessage#other	%lld tautan berbagi milik konten yang Anda pulihkan. Tautan itu tidak berfungsi sejak dihapus.
+trash.sharesChooseElsewhere	Jika dikembalikan, tautan akan mengarah ke lokasi baru.
+trash.sharesKeep	Pulihkan Tautan Berbagi
+trash.sharesDrop	Hapus Tautan Berbagi
+trash.sharesRestored#other	%lld tautan berbagi dikembalikan
+trash.sharesDropped#other	%lld tautan berbagi dihapus
+trash.loadFailed	Sampah tidak dapat dimuat.
+trash.folderLoadFailed	Folder ini tidak dapat dibuka.
+trash.folderEmpty	Folder ini kosong.
+trash.restoring	Memulihkan…
+trash.columnOriginalLocation	Lokasi Asli
+trash.columnDeletedBy	Dihapus Oleh
+trash.columnDeletedOn	Tanggal Dihapus
+trash.columnRemoved	Dihapus Permanen

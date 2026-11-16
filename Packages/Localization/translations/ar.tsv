@@ -1176,3 +1176,160 @@ shareUpload.nameLabel	اسم الملف
 shareUpload.namesLabel	أسماء الملفات
 shareUpload.nameHint	الاسم الذي يُرفع به الملف. يبقى الامتداد كما هو.
 spotlight.placeholder	البحث في الملفات والمجلدات
+trash.title	سلة المحذوفات
+trash.rowSubtitle	عناصر محذوفة يمكنك استعادتها
+trash.moveToTrash	نقل إلى سلة المحذوفات
+trash.deletePermanently	حذف نهائي
+trash.deleteMessage#zero	سينتقل إلى سلة المحذوفات التي تحتفظ بالعناصر المحذوفة (عدد الأيام: %lld) ليمكن استعادتها.
+trash.deleteMessage#one	سينتقل إلى سلة المحذوفات التي تحتفظ بالعناصر المحذوفة (عدد الأيام: %lld) ليمكن استعادتها.
+trash.deleteMessage#two	سينتقل إلى سلة المحذوفات التي تحتفظ بالعناصر المحذوفة (عدد الأيام: %lld) ليمكن استعادتها.
+trash.deleteMessage#few	سينتقل إلى سلة المحذوفات التي تحتفظ بالعناصر المحذوفة (عدد الأيام: %lld) ليمكن استعادتها.
+trash.deleteMessage#many	سينتقل إلى سلة المحذوفات التي تحتفظ بالعناصر المحذوفة (عدد الأيام: %lld) ليمكن استعادتها.
+trash.deleteMessage#other	سينتقل إلى سلة المحذوفات التي تحتفظ بالعناصر المحذوفة (عدد الأيام: %lld) ليمكن استعادتها.
+trash.deleteMessageGeneric	سينتقل إلى سلة المحذوفات التي يمكن استعادة العناصر المحذوفة منها.
+trash.deleteSomePermanent#zero	عناصر لا يمكن نقلها إلى سلة المحذوفات وستُحذف نهائيًا: %lld.
+trash.deleteSomePermanent#one	عناصر لا يمكن نقلها إلى سلة المحذوفات وستُحذف نهائيًا: %lld.
+trash.deleteSomePermanent#two	عناصر لا يمكن نقلها إلى سلة المحذوفات وستُحذف نهائيًا: %lld.
+trash.deleteSomePermanent#few	عناصر لا يمكن نقلها إلى سلة المحذوفات وستُحذف نهائيًا: %lld.
+trash.deleteSomePermanent#many	عناصر لا يمكن نقلها إلى سلة المحذوفات وستُحذف نهائيًا: %lld.
+trash.deleteSomePermanent#other	عناصر لا يمكن نقلها إلى سلة المحذوفات وستُحذف نهائيًا: %lld.
+trash.reasonDisabled	سلة المحذوفات متوقفة.
+trash.reasonOtherDevice	يقع على قرص غير قرص سلة المحذوفات الخاصة بوحدة التخزين.
+trash.reasonTooLarge	حجمه أكبر من سلة المحذوفات كاملةً في وحدة التخزين.
+trash.reasonZoneRoot	لا يمكن نقل وحدة تخزين كاملة إلى سلة المحذوفات الخاصة بها.
+trash.reasonZoneUnwritable	لا يمكن الكتابة في سلة المحذوفات الخاصة بوحدة التخزين.
+trash.reasonNoZone	ليس في مكان له سلة محذوفات.
+trash.reasonUnknown	لم يذكر الخادم السبب.
+trash.deleteLinkedShares#zero	روابط المشاركة لهذا المحتوى: %lld. لا تعمل ما دام المحتوى في سلة المحذوفات، ويمكن إعادتها عند الاستعادة.
+trash.deleteLinkedShares#one	روابط المشاركة لهذا المحتوى: %lld. لا تعمل ما دام المحتوى في سلة المحذوفات، ويمكن إعادتها عند الاستعادة.
+trash.deleteLinkedShares#two	روابط المشاركة لهذا المحتوى: %lld. لا تعمل ما دام المحتوى في سلة المحذوفات، ويمكن إعادتها عند الاستعادة.
+trash.deleteLinkedShares#few	روابط المشاركة لهذا المحتوى: %lld. لا تعمل ما دام المحتوى في سلة المحذوفات، ويمكن إعادتها عند الاستعادة.
+trash.deleteLinkedShares#many	روابط المشاركة لهذا المحتوى: %lld. لا تعمل ما دام المحتوى في سلة المحذوفات، ويمكن إعادتها عند الاستعادة.
+trash.deleteLinkedShares#other	روابط المشاركة لهذا المحتوى: %lld. لا تعمل ما دام المحتوى في سلة المحذوفات، ويمكن إعادتها عند الاستعادة.
+trash.keptTitle	تعذّر النقل إلى سلة المحذوفات
+trash.keptTooLarge	حجم «%1$@» هو %2$@، أي أكثر من %3$@ التي تتسع لها سلة المحذوفات في وحدة التخزين.
+trash.keptReason	«%1$@»: %2$@
+trash.movedToTrash#zero	عناصر نُقلت إلى سلة المحذوفات: %lld
+trash.movedToTrash#one	عناصر نُقلت إلى سلة المحذوفات: %lld
+trash.movedToTrash#two	عناصر نُقلت إلى سلة المحذوفات: %lld
+trash.movedToTrash#few	عناصر نُقلت إلى سلة المحذوفات: %lld
+trash.movedToTrash#many	عناصر نُقلت إلى سلة المحذوفات: %lld
+trash.movedToTrash#other	عناصر نُقلت إلى سلة المحذوفات: %lld
+trash.openTrash	فتح سلة المحذوفات
+trash.replaceKept	تعذّر نقل «%@» إلى سلة المحذوفات، لذا لم يُستبدل شيء.
+trash.subtitle#zero	تُحذف العناصر نهائيًا بعد حذفها بعدد من الأيام: %lld.
+trash.subtitle#one	تُحذف العناصر نهائيًا بعد حذفها بعدد من الأيام: %lld.
+trash.subtitle#two	تُحذف العناصر نهائيًا بعد حذفها بعدد من الأيام: %lld.
+trash.subtitle#few	تُحذف العناصر نهائيًا بعد حذفها بعدد من الأيام: %lld.
+trash.subtitle#many	تُحذف العناصر نهائيًا بعد حذفها بعدد من الأيام: %lld.
+trash.subtitle#other	تُحذف العناصر نهائيًا بعد حذفها بعدد من الأيام: %lld.
+trash.emptyState	سلة المحذوفات فارغة.
+trash.disabledNotice	سلة المحذوفات متوقفة: الحذف يزيل العناصر نهائيًا. ما زال يمكن استعادة ما هو موجود هنا.
+trash.unavailable	وحدة التخزين غير متاحة
+trash.removedToday	يُزال اليوم
+trash.removedIn#zero	يُزال بعد (أيام): %lld
+trash.removedIn#one	يُزال بعد (أيام): %lld
+trash.removedIn#two	يُزال بعد (أيام): %lld
+trash.removedIn#few	يُزال بعد (أيام): %lld
+trash.removedIn#many	يُزال بعد (أيام): %lld
+trash.removedIn#other	يُزال بعد (أيام): %lld
+trash.locationPersonal	المجلد الشخصي
+trash.locationUnknown	موقع غير معروف
+trash.deletedByYou	أنت
+trash.deletedByShareLink	رابط مشاركة
+trash.deletedByUnknown	غير معروف
+trash.deletedBy	حذفه: %@
+trash.restore	استعادة
+trash.restoreTo	استعادة إلى…
+trash.restoreHere	استعادة هنا
+trash.restoreFolder	استعادة المجلد كاملًا
+trash.openLocation	فتح الموقع الأصلي
+trash.emptyTrash	إفراغ سلة المحذوفات
+trash.forget	نسيان
+trash.confirmDeleteTitle	حذف نهائي؟
+trash.confirmDeleteMessage#zero	ستُزال العناصر نهائيًا (العدد: %lld). لا يمكن التراجع عن ذلك.
+trash.confirmDeleteMessage#one	ستُزال العناصر نهائيًا (العدد: %lld). لا يمكن التراجع عن ذلك.
+trash.confirmDeleteMessage#two	ستُزال العناصر نهائيًا (العدد: %lld). لا يمكن التراجع عن ذلك.
+trash.confirmDeleteMessage#few	ستُزال العناصر نهائيًا (العدد: %lld). لا يمكن التراجع عن ذلك.
+trash.confirmDeleteMessage#many	ستُزال العناصر نهائيًا (العدد: %lld). لا يمكن التراجع عن ذلك.
+trash.confirmDeleteMessage#other	ستُزال العناصر نهائيًا (العدد: %lld). لا يمكن التراجع عن ذلك.
+trash.confirmEmptyTitle	إفراغ سلة المحذوفات؟
+trash.confirmEmptyMessage	سيُزال كل ما في سلة المحذوفات نهائيًا. لا يمكن التراجع عن ذلك.
+trash.restored#zero	العناصر المستعادة: %lld
+trash.restored#one	العناصر المستعادة: %lld
+trash.restored#two	العناصر المستعادة: %lld
+trash.restored#few	العناصر المستعادة: %lld
+trash.restored#many	العناصر المستعادة: %lld
+trash.restored#other	العناصر المستعادة: %lld
+trash.renamed	استُعيد «%1$@» باسم «%2$@»: كان الاسم مستخدمًا.
+trash.notRestored#zero	عناصر تعذّرت استعادتها: %lld.
+trash.notRestored#one	عناصر تعذّرت استعادتها: %lld.
+trash.notRestored#two	عناصر تعذّرت استعادتها: %lld.
+trash.notRestored#few	عناصر تعذّرت استعادتها: %lld.
+trash.notRestored#many	عناصر تعذّرت استعادتها: %lld.
+trash.notRestored#other	عناصر تعذّرت استعادتها: %lld.
+trash.deletedPermanently#zero	عناصر حُذفت نهائيًا: %lld
+trash.deletedPermanently#one	عناصر حُذفت نهائيًا: %lld
+trash.deletedPermanently#two	عناصر حُذفت نهائيًا: %lld
+trash.deletedPermanently#few	عناصر حُذفت نهائيًا: %lld
+trash.deletedPermanently#many	عناصر حُذفت نهائيًا: %lld
+trash.deletedPermanently#other	عناصر حُذفت نهائيًا: %lld
+trash.notDeleted#zero	عناصر تعذّر حذفها: %lld.
+trash.notDeleted#one	عناصر تعذّر حذفها: %lld.
+trash.notDeleted#two	عناصر تعذّر حذفها: %lld.
+trash.notDeleted#few	عناصر تعذّر حذفها: %lld.
+trash.notDeleted#many	عناصر تعذّر حذفها: %lld.
+trash.notDeleted#other	عناصر تعذّر حذفها: %lld.
+trash.emptied#zero	أُفرغت سلة المحذوفات، العناصر المزالة: %lld
+trash.emptied#one	أُفرغت سلة المحذوفات، العناصر المزالة: %lld
+trash.emptied#two	أُفرغت سلة المحذوفات، العناصر المزالة: %lld
+trash.emptied#few	أُفرغت سلة المحذوفات، العناصر المزالة: %lld
+trash.emptied#many	أُفرغت سلة المحذوفات، العناصر المزالة: %lld
+trash.emptied#other	أُفرغت سلة المحذوفات، العناصر المزالة: %lld
+trash.leftBehind#zero	عناصر تعذّرت إزالتها وما زالت موجودة: %lld.
+trash.leftBehind#one	عناصر تعذّرت إزالتها وما زالت موجودة: %lld.
+trash.leftBehind#two	عناصر تعذّرت إزالتها وما زالت موجودة: %lld.
+trash.leftBehind#few	عناصر تعذّرت إزالتها وما زالت موجودة: %lld.
+trash.leftBehind#many	عناصر تعذّرت إزالتها وما زالت موجودة: %lld.
+trash.leftBehind#other	عناصر تعذّرت إزالتها وما زالت موجودة: %lld.
+trash.failureForbidden	لم تعد تستطيع الكتابة حيث كان.
+trash.failureBlocked	يوجد الآن شيء آخر مكان مجلده.
+trash.failureUnavailable	وحدة التخزين الخاصة به غير متاحة.
+trash.failureBusy	تجري معالجته بالفعل.
+trash.failureLost	كان محتواه قد اختفى.
+trash.failureNotFound	لم يعد في سلة المحذوفات.
+trash.failureDestinationForbidden	لا يمكنك إنشاء عناصر في ذلك المجلد.
+trash.failureInvalidDestination	لا يستطيع ذلك المجلد استقباله.
+trash.failureCancelled	توقفت الاستعادة قبل الوصول إليه.
+trash.failureUnknown	تعذّرت معالجته.
+trash.sharesBadge	مُشارك
+trash.sharesChooseTitle	ماذا عن روابط المشاركة؟
+trash.sharesChooseMessage#zero	روابط مشاركة تخص ما تستعيده: %lld. توقفت عن العمل منذ الحذف.
+trash.sharesChooseMessage#one	روابط مشاركة تخص ما تستعيده: %lld. توقفت عن العمل منذ الحذف.
+trash.sharesChooseMessage#two	روابط مشاركة تخص ما تستعيده: %lld. توقفت عن العمل منذ الحذف.
+trash.sharesChooseMessage#few	روابط مشاركة تخص ما تستعيده: %lld. توقفت عن العمل منذ الحذف.
+trash.sharesChooseMessage#many	روابط مشاركة تخص ما تستعيده: %lld. توقفت عن العمل منذ الحذف.
+trash.sharesChooseMessage#other	روابط مشاركة تخص ما تستعيده: %lld. توقفت عن العمل منذ الحذف.
+trash.sharesChooseElsewhere	إذا أُعيدت فستشير إلى الموقع الجديد.
+trash.sharesKeep	استعادة روابط المشاركة
+trash.sharesDrop	حذف روابط المشاركة
+trash.sharesRestored#zero	روابط مشاركة أُعيدت: %lld
+trash.sharesRestored#one	روابط مشاركة أُعيدت: %lld
+trash.sharesRestored#two	روابط مشاركة أُعيدت: %lld
+trash.sharesRestored#few	روابط مشاركة أُعيدت: %lld
+trash.sharesRestored#many	روابط مشاركة أُعيدت: %lld
+trash.sharesRestored#other	روابط مشاركة أُعيدت: %lld
+trash.sharesDropped#zero	روابط مشاركة حُذفت: %lld
+trash.sharesDropped#one	روابط مشاركة حُذفت: %lld
+trash.sharesDropped#two	روابط مشاركة حُذفت: %lld
+trash.sharesDropped#few	روابط مشاركة حُذفت: %lld
+trash.sharesDropped#many	روابط مشاركة حُذفت: %lld
+trash.sharesDropped#other	روابط مشاركة حُذفت: %lld
+trash.loadFailed	تعذّر تحميل سلة المحذوفات.
+trash.folderLoadFailed	تعذّر فتح هذا المجلد.
+trash.folderEmpty	هذا المجلد فارغ.
+trash.restoring	جارٍ الاستعادة…
+trash.columnOriginalLocation	الموقع الأصلي
+trash.columnDeletedBy	حذفه
+trash.columnDeletedOn	تاريخ الحذف
+trash.columnRemoved	الإزالة

@@ -1097,3 +1097,96 @@ shareUpload.nameLabel	Tiedostonimi
 shareUpload.namesLabel	Tiedostonimet
 shareUpload.nameHint	Nimi, jolla tiedosto ladataan. Tiedostopääte pysyy samana.
 spotlight.placeholder	Hae tiedostoja ja kansioita
+trash.title	Roskakori
+trash.rowSubtitle	Poistetut kohteet, jotka voit palauttaa
+trash.moveToTrash	Siirrä roskakoriin
+trash.deletePermanently	Poista pysyvästi
+trash.deleteMessage#one	Se siirtyy roskakoriin, joka säilyttää poistettuja kohteita %lld päivän, jotta ne voi palauttaa.
+trash.deleteMessage#other	Se siirtyy roskakoriin, joka säilyttää poistettuja kohteita %lld päivää, jotta ne voi palauttaa.
+trash.deleteMessageGeneric	Se siirtyy roskakoriin, josta poistetut kohteet voi palauttaa.
+trash.deleteSomePermanent#one	%lld niistä ei voi siirtyä roskakoriin, ja se poistetaan pysyvästi.
+trash.deleteSomePermanent#other	%lld niistä ei voi siirtyä roskakoriin, ja ne poistetaan pysyvästi.
+trash.reasonDisabled	Roskakori on pois päältä.
+trash.reasonOtherDevice	Se on eri levyllä kuin taltion roskakori.
+trash.reasonTooLarge	Se on suurempi kuin taltion koko roskakori.
+trash.reasonZoneRoot	Kokonaista taltiota ei voi siirtää sen omaan roskakoriin.
+trash.reasonZoneUnwritable	Taltion roskakoriin ei voi kirjoittaa.
+trash.reasonNoZone	Se on paikassa, jossa ei ole roskakoria.
+trash.reasonUnknown	Palvelin ei kertonut syytä.
+trash.deleteLinkedShares#one	Sisällöllä on %lld jakolinkki. Se ei toimi, kun sisältö on roskakorissa, ja sen voi palauttaa sisällön mukana.
+trash.deleteLinkedShares#other	Sisällöllä on %lld jakolinkkiä. Ne eivät toimi, kun sisältö on roskakorissa, ja ne voi palauttaa sisällön mukana.
+trash.keptTitle	Ei voitu siirtää roskakoriin
+trash.keptTooLarge	”%1$@” on %2$@, enemmän kuin taltion roskakoriin mahtuvat %3$@.
+trash.keptReason	”%1$@”: %2$@
+trash.movedToTrash#one	%lld kohde siirretty roskakoriin
+trash.movedToTrash#other	%lld kohdetta siirretty roskakoriin
+trash.openTrash	Avaa roskakori
+trash.replaceKept	”%@” ei voinut siirtyä roskakoriin, joten mitään ei korvattu.
+trash.subtitle#one	Kohteet poistetaan pysyvästi %lld päivä poistamisen jälkeen.
+trash.subtitle#other	Kohteet poistetaan pysyvästi %lld päivää poistamisen jälkeen.
+trash.emptyState	Roskakori on tyhjä.
+trash.disabledNotice	Roskakori on pois päältä: poistaminen poistaa kohteet pysyvästi. Täällä vielä olevat voi palauttaa.
+trash.unavailable	Taltio ei käytettävissä
+trash.removedToday	Poistetaan tänään
+trash.removedIn#one	Poistetaan %lld päivän päästä
+trash.removedIn#other	Poistetaan %lld päivän päästä
+trash.locationPersonal	Henkilökohtainen kansio
+trash.locationUnknown	Tuntematon sijainti
+trash.deletedByYou	Sinä
+trash.deletedByShareLink	Jakolinkki
+trash.deletedByUnknown	Tuntematon
+trash.deletedBy	Poistaja: %@
+trash.restore	Palauta
+trash.restoreTo	Palauta kohteeseen…
+trash.restoreHere	Palauta tähän
+trash.restoreFolder	Palauta koko kansio
+trash.openLocation	Avaa alkuperäinen sijainti
+trash.emptyTrash	Tyhjennä roskakori
+trash.forget	Unohda
+trash.confirmDeleteTitle	Poistetaanko pysyvästi?
+trash.confirmDeleteMessage#one	%lld kohde poistetaan pysyvästi. Tätä ei voi kumota.
+trash.confirmDeleteMessage#other	%lld kohdetta poistetaan pysyvästi. Tätä ei voi kumota.
+trash.confirmEmptyTitle	Tyhjennetäänkö roskakori?
+trash.confirmEmptyMessage	Kaikki roskakorin sisältö poistetaan pysyvästi. Tätä ei voi kumota.
+trash.restored#one	%lld kohde palautettu
+trash.restored#other	%lld kohdetta palautettu
+trash.renamed	”%1$@” palautettiin nimellä ”%2$@”: nimi oli varattu.
+trash.notRestored#one	%lld kohdetta ei voitu palauttaa.
+trash.notRestored#other	%lld kohdetta ei voitu palauttaa.
+trash.deletedPermanently#one	%lld kohde poistettu pysyvästi
+trash.deletedPermanently#other	%lld kohdetta poistettu pysyvästi
+trash.notDeleted#one	%lld kohdetta ei voitu poistaa.
+trash.notDeleted#other	%lld kohdetta ei voitu poistaa.
+trash.emptied#one	Roskakori tyhjennetty: %lld kohde poistettu
+trash.emptied#other	Roskakori tyhjennetty: %lld kohdetta poistettu
+trash.leftBehind#one	%lld kohdetta ei voitu poistaa, ja se on yhä paikallaan.
+trash.leftBehind#other	%lld kohdetta ei voitu poistaa, ja ne ovat yhä paikallaan.
+trash.failureForbidden	Et voi enää kirjoittaa sen alkuperäiseen paikkaan.
+trash.failureBlocked	Kansion paikalla on nyt jotain muuta.
+trash.failureUnavailable	Sen taltio ei ole käytettävissä.
+trash.failureBusy	Sitä käsitellään jo.
+trash.failureLost	Sen sisältö oli kadonnut.
+trash.failureNotFound	Se ei ole enää roskakorissa.
+trash.failureDestinationForbidden	Et voi luoda kohteita tuohon kansioon.
+trash.failureInvalidDestination	Tuo kansio ei voi vastaanottaa sitä.
+trash.failureCancelled	Palautus pysähtyi ennen sitä.
+trash.failureUnknown	Sitä ei voitu käsitellä.
+trash.sharesBadge	Jaettu
+trash.sharesChooseTitle	Entä jakolinkit?
+trash.sharesChooseMessage#one	%lld jakolinkki kuului palautettavaan sisältöön. Se ei ole toiminut poistamisen jälkeen.
+trash.sharesChooseMessage#other	%lld jakolinkkiä kuului palautettavaan sisältöön. Ne eivät ole toimineet poistamisen jälkeen.
+trash.sharesChooseElsewhere	Palautettuina ne osoittavat uuteen sijaintiin.
+trash.sharesKeep	Palauta jakolinkit
+trash.sharesDrop	Poista jakolinkit
+trash.sharesRestored#one	%lld jakolinkki palautettu
+trash.sharesRestored#other	%lld jakolinkkiä palautettu
+trash.sharesDropped#one	%lld jakolinkki poistettu
+trash.sharesDropped#other	%lld jakolinkkiä poistettu
+trash.loadFailed	Roskakoria ei voitu ladata.
+trash.folderLoadFailed	Kansiota ei voitu avata.
+trash.folderEmpty	Kansio on tyhjä.
+trash.restoring	Palautetaan…
+trash.columnOriginalLocation	Alkuperäinen sijainti
+trash.columnDeletedBy	Poistaja
+trash.columnDeletedOn	Poistettu
+trash.columnRemoved	Poistetaan
