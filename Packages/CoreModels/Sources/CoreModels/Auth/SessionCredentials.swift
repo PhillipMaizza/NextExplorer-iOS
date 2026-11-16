@@ -45,6 +45,12 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         serverBaseURL.absoluteString + "|" + (username ?? "")
     }
 
+    /// The `Cookie` header value that speaks for this account alone, for a request that must not
+    /// carry whichever account's cookie the shared jar holds.
+    public var cookieHeader: String {
+        "\(cookieName)=\(cookieValue)"
+    }
+
     /// Reconstructs the `HTTPCookie` this session was captured from, so it can be
     /// reinstalled into `HTTPCookieStorage.shared` on app relaunch.
     public var httpCookie: HTTPCookie? {

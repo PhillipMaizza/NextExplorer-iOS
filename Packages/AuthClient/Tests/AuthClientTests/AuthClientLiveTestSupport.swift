@@ -61,3 +61,17 @@ extension AuthClientLiveHarness {
         }
     }
 }
+
+/// What a fake network or keychain was handed, safe to write from its closures.
+final class Recorded<Value>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var stored: [Value] = []
+
+    var values: [Value] {
+        lock.withLock { stored }
+    }
+
+    func add(_ value: Value) {
+        lock.withLock { stored.append(value) }
+    }
+}

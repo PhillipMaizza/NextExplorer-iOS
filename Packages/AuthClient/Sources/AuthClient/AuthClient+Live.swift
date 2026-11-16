@@ -172,17 +172,24 @@ public extension AuthClient {
                 await onCookieQueue { cookieStore.setActive(id: accountID) }
             },
             removeAccount: { accountID in
-                // Best-effort server logout of the account being removed, then drop it locally.
-                let serverURL = await onCookieQueue {
-                    cookieStore.allSessions().first(where: { $0.accountID == accountID })?.serverBaseURL
+                // Best effort server logout of the account being removed, with its own cookie: the
+                // jar holds only the active account's, which may be another user on the same server.
+                let removed = await onCookieQueue {
+                    cookieStore.allSessions().first(where: { $0.accountID == accountID })
                 }
-                if let serverURL {
-                    try? await localAuthService.logout(serverURL: serverURL)
+                if let removed {
+                    try? await localAuthService.logout(serverURL: removed.serverBaseURL, credentials: removed)
                 }
                 return await onCookieQueue { cookieStore.remove(id: accountID) }
             },
             clearActiveSession: {
-                await onCookieQueue { cookieStore.clearActive() }
+                try await onCookieQueue {
+                    do {
+                        return try cookieStore.clearActive()
+                    } catch {
+                        throw AuthClientError.keychain(String(describing: error))
+                    }
+                }
             },
             clearAllSessions: {
                 await onCookieQueue { cookieStore.clearAll() }

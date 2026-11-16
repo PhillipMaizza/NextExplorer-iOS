@@ -37,8 +37,9 @@ public struct AuthClient: Sendable {
     /// and returns whatever account is active afterwards (`nil` when none remain).
     public var removeAccount: @Sendable (_ accountID: String) async -> SessionCredentials?
     /// Tears down just the active account (session expiry / 401) and returns the next remaining
-    /// account, or `nil` when none are left.
-    public var clearActiveSession: @Sendable () async -> SessionCredentials?
+    /// account, or `nil` when none are left. A keychain that can't be read throws
+    /// `AuthClientError.keychain` and changes nothing, instead of reading as "no account left".
+    public var clearActiveSession: @Sendable () async throws -> SessionCredentials?
     /// Full teardown: every account signed out (hard reset of the stored set and its cookies).
     public var clearAllSessions: @Sendable () async -> Void
 }

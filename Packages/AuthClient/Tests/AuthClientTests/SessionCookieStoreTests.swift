@@ -288,6 +288,58 @@ struct SessionCookieStoreTests {
         #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.isEmpty ?? true)
         #expect(store.activeCredentials() == nil)
     }
+
+    // MARK: unreadable keychain
+
+    /// A keychain whose reads fail and whose writes are counted.
+    private func unreadableKeychain(writes: Recorded<String>) -> KeychainClient {
+        KeychainClient(
+            save: { key, _ in writes.add(key) },
+            load: { _ in throw KeychainError.unexpectedStatus(errSecInteractionNotAllowed) },
+            delete: { _ in }
+        )
+    }
+
+    @Test("an unreadable keychain refuses every change instead of saving over the accounts it could not see")
+    func unreadableKeychainRefusesChanges() throws {
+        let writes = Recorded<String>()
+        let store = makeStore(keychainClient: unreadableKeychain(writes: writes))
+        let credentials = try credentials(
+            serverURL: uniqueServerURL(),
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        )
+
+        #expect(throws: KeychainError.self) {
+            try store.persist(credentials)
+        }
+        #expect(store.setActive(id: credentials.accountID) == nil)
+        #expect(store.remove(id: credentials.accountID) == nil)
+        #expect(throws: KeychainError.self) {
+            try store.clearActive()
+        }
+        #expect(writes.values.isEmpty)
+    }
+
+    @Test("clearAll with an unreadable keychain still drops every session cookie")
+    func clearAllUnreadableDropsEveryCookie() throws {
+        let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: TestID.name())
+        let store = SessionCookieStore(
+            keychainClient: unreadableKeychain(writes: Recorded<String>()),
+            cookieStorage: cookieStorage
+        )
+        let credentials = try credentials(
+            serverURL: uniqueServerURL(),
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        )
+        store.install(credentials)
+        #expect(cookieStorage.cookies?.isEmpty == false)
+
+        store.clearAll()
+
+        #expect(cookieStorage.cookies?.isEmpty ?? true)
+    }
 }
 
 private enum Constants {

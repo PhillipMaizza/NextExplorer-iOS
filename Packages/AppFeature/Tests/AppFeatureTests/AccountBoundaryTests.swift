@@ -131,6 +131,24 @@ extension AppSuites {
             #expect(recorder.events.value.isEmpty)
         }
 
+        @Test("An expiry confirmed while the stored accounts can't be read signs nobody out and wipes nothing")
+        func expiryWithUnreadableKeychainChangesNothing() async {
+            let pending = PendingAccountWipes.inMemory()
+            let store = makeStore(activeState(AppFixtures.serverA, AppFixtures.userA)) {
+                $0.pendingAccountWipes = pending
+                $0.authClient.clearActiveSession = {
+                    throw AuthClientError.keychain(Fixture.keychainFailure)
+                }
+            }
+
+            await store.send(.sessionExpiryConfirmed(accountID: AppFixtures.accountA))
+            await store.finish()
+
+            #expect(pending.accounts().isEmpty)
+            #expect(recorder.events.value.isEmpty)
+            #expect(store.state.currentAccountID == AppFixtures.accountA)
+        }
+
         @Test("An expiry confirmed for an account that is no longer active is dropped")
         func staleConfirmationIsDropped() async {
             let store = makeStore(activeState(AppFixtures.serverB, AppFixtures.userB)) {

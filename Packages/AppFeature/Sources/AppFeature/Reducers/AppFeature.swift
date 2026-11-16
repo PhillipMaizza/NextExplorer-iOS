@@ -167,12 +167,20 @@ public struct AppFeature {
 
     /// Drops the active account whose session the server rejected and wipes its caches. It is
     /// listed as pending before its session goes, so a kill in between cannot orphan its files.
+    /// When the stored accounts can't be read nothing changes: tearing down then would sign every
+    /// account out, and the next 401 asks again.
     private func tearDownExpired(accountID: String) -> Effect<Action> {
         let authClient = authClient
         let accountCacheWipe = accountCacheWipe
         return .run { send in
             accountCacheWipe.markPending(accountID)
-            let next = await authClient.clearActiveSession()
+            let next: SessionCredentials?
+            do {
+                next = try await authClient.clearActiveSession()
+            } catch {
+                accountCacheWipe.pendingWipes.remove(accountID)
+                return
+            }
             accountCacheWipe.wipe(accountID)
             await send(.activeAccountTornDown(next))
         }

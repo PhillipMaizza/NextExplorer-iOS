@@ -98,7 +98,7 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
     func clearActivePromotesNext() async throws {
         let fixture = try makeFixture()
 
-        let next = await fixture.client.clearActiveSession()
+        let next = try await fixture.client.clearActiveSession()
 
         #expect(next == fixture.first)
         let stored = try storedSessions(fixture.keychain)
@@ -109,11 +109,43 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
     @Test("clearing the last remaining session leaves no account and no stored credentials")
     func clearLastSession() async throws {
         let fixture = try makeFixture()
-        _ = await fixture.client.clearActiveSession()
+        _ = try await fixture.client.clearActiveSession()
 
-        #expect(await fixture.client.clearActiveSession() == nil)
+        #expect(try await fixture.client.clearActiveSession() == nil)
         #expect(await fixture.client.activeAccountID() == nil)
         #expect(try storedSessions(fixture.keychain) == StoredSessions())
+    }
+
+    @Test("removing an account that is not active logs it out with its own cookie, not the active one's")
+    func removeInactiveAccountLogsOutWithItsOwnCookie() async throws {
+        let fixture = try makeFixture()
+        let seen = Recorded<URLRequest>()
+        let client = makeClient(cookieStorage: fixture.cookieStorage, keychainClient: fixture.keychain) { request in
+            seen.add(request)
+            return try await okHandler()(request)
+        }
+
+        let next = await client.removeAccount(fixture.first.accountID)
+
+        #expect(next == fixture.second)
+        let logout = try #require(seen.values.first)
+        #expect(logout.url?.host() == serverURL.host())
+        #expect(logout.value(forHTTPHeaderField: Constants.cookieHeader) == Constants.firstAccountCookie)
+        #expect(logout.httpShouldHandleCookies == false)
+    }
+
+    @Test("clearing the active session with an unreadable keychain throws instead of reading as no account left")
+    func clearActiveUnreadableThrows() async {
+        let unreadable = KeychainClient(
+            save: { _, _ in Issue.record("nothing may be saved over an unread set") },
+            load: { _ in throw KeychainError.unexpectedStatus(errSecInteractionNotAllowed) },
+            delete: { _ in Issue.record("nothing may be deleted when the set can't be read") }
+        )
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: unreadable, handler: okHandler())
+
+        await #expect(throws: AuthClientError.self) {
+            _ = try await client.clearActiveSession()
+        }
     }
 
     @Test("clearing with nothing stored returns nil and stores nothing")
@@ -121,11 +153,13 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
         let keychain = KeychainClient.inMemory()
         let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychain, handler: okHandler())
 
-        #expect(await client.clearActiveSession() == nil)
+        #expect(try await client.clearActiveSession() == nil)
         #expect(try keychain.load(TestStorageKey.storedSessions) == nil)
     }
 }
 
 private enum Constants {
     static let unknownAccountID = "http://unknown.invalid|nobody"
+    static let cookieHeader = "Cookie"
+    static let firstAccountCookie = "connect.sid=abc"
 }
