@@ -33,17 +33,19 @@ enum TrashRowText {
         return days == 0 ? L10n.Trash.removedToday : L10n.Trash.removedIn(days)
     }
 
-    /// The row's second line: location, who deleted it, when it goes, and its badges.
+    /// The row's second line, most urgent first since a narrow row cuts it off: whether it can be
+    /// reached, when it goes, who deleted it, where from, and whether it had share links.
     static func subtitle(_ item: TrashItem, now: Date, calendar: Calendar) -> String {
-        var parts = [location(item), L10n.Trash.deletedBy(deletedBy(item))]
+        var parts: [String] = []
+        if !item.isAvailable {
+            parts.append(L10n.Trash.unavailable)
+        }
         if let removal = removal(item, now: now, calendar: calendar) {
             parts.append(removal)
         }
+        parts += [L10n.Trash.deletedBy(deletedBy(item)), location(item)]
         if item.shareCount > 0 {
             parts.append(L10n.Trash.sharesBadge)
-        }
-        if !item.isAvailable {
-            parts.append(L10n.Trash.unavailable)
         }
         return parts.joined(separator: separator)
     }
