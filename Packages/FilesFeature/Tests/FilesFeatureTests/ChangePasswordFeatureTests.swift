@@ -86,12 +86,11 @@ struct ChangePasswordFeatureTests {
         let store = makeStore(mode: .add, add: {})
         await fillNew(store, Constants.newPassword)
 
-        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.send(.submitTapped) { $0.phase = .submitting }
         await store.receive(\.response.success) {
-            $0.isSubmitting = false
             $0.newPassword = ""
             $0.confirmPassword = ""
-            $0.didSucceed = true
+            $0.phase = .succeeded
         }
         await store.receive(.delegate(.passwordAdded))
 
@@ -106,10 +105,9 @@ struct ChangePasswordFeatureTests {
         })
         await fillNew(store, Constants.newPassword)
 
-        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.send(.submitTapped) { $0.phase = .submitting }
         await store.receive(\.response.failure) {
-            $0.isSubmitting = false
-            $0.errorMessage = "You already have password authentication."
+            $0.phase = .failed("You already have password authentication.")
         }
         #expect(!store.state.didSucceed)
         #expect(store.state.newPassword == Constants.newPassword)
@@ -120,13 +118,12 @@ struct ChangePasswordFeatureTests {
         let store = makeStore(change: {})
         await fillChange(store)
 
-        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.send(.submitTapped) { $0.phase = .submitting }
         await store.receive(\.response.success) {
-            $0.isSubmitting = false
             $0.currentPassword = ""
             $0.newPassword = ""
             $0.confirmPassword = ""
-            $0.didSucceed = true
+            $0.phase = .succeeded
         }
         await store.finish()
         #expect(addCalls.value.isEmpty)
@@ -194,13 +191,12 @@ struct ChangePasswordFeatureTests {
         let store = makeStore(change: {})
         await fillChange(store)
 
-        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.send(.submitTapped) { $0.phase = .submitting }
         await store.receive(\.response.success) {
-            $0.isSubmitting = false
             $0.currentPassword = ""
             $0.newPassword = ""
             $0.confirmPassword = ""
-            $0.didSucceed = true
+            $0.phase = .succeeded
         }
         #expect(changeCalls.value == [ChangeCall(current: "old-pass", new: "the-new-one")])
     }
@@ -215,7 +211,7 @@ struct ChangePasswordFeatureTests {
     )
     func typingAgainClearsAStaleSuccessMessage(_ action: ChangePasswordFeature.Action) async {
         var state = ChangePasswordFeature.State(serverURL: serverURL)
-        state.didSucceed = true
+        state.phase = .succeeded
         let store = TestStore(initialState: state) { ChangePasswordFeature() }
 
         await store.send(action) {
@@ -224,11 +220,21 @@ struct ChangePasswordFeatureTests {
             case .newPasswordChanged: $0.newPassword = "x"
             default: $0.confirmPassword = "x"
             }
-            $0.didSucceed = false
+            $0.phase = .editing
         }
     }
 
     // MARK: Error paths
+
+    @Test
+    func typingAfterARefusalKeepsTheReasonOnScreen() async {
+        var state = ChangePasswordFeature.State(serverURL: serverURL)
+        state.phase = .failed(L10n.Error.rateLimited)
+        let store = TestStore(initialState: state) { ChangePasswordFeature() }
+
+        await store.send(.newPasswordChanged("x")) { $0.newPassword = "x" }
+        #expect(store.state.errorMessage == L10n.Error.rateLimited)
+    }
 
     @Test
     func aWrongCurrentPasswordSurfacesTheServerMessageAndKeepsTheForm() async {
@@ -237,10 +243,9 @@ struct ChangePasswordFeatureTests {
         })
         await fillChange(store, current: TestAccount.rejectedPassword)
 
-        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.send(.submitTapped) { $0.phase = .submitting }
         await store.receive(\.response.failure) {
-            $0.isSubmitting = false
-            $0.errorMessage = "Current password is incorrect."
+            $0.phase = .failed("Current password is incorrect.")
         }
         #expect(store.state.currentPassword == TestAccount.rejectedPassword)
         #expect(store.state.newPassword == "the-new-one")
@@ -251,10 +256,9 @@ struct ChangePasswordFeatureTests {
         let store = makeStore(change: { throw FilesClientError.rateLimited })
         await fillChange(store)
 
-        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.send(.submitTapped) { $0.phase = .submitting }
         await store.receive(\.response.failure) {
-            $0.isSubmitting = false
-            $0.errorMessage = L10n.Error.rateLimited
+            $0.phase = .failed(L10n.Error.rateLimited)
         }
     }
 
@@ -268,21 +272,16 @@ struct ChangePasswordFeatureTests {
         })
         await fillChange(store)
 
-        await store.send(.submitTapped) { $0.isSubmitting = true }
+        await store.send(.submitTapped) { $0.phase = .submitting }
         await store.receive(\.response.failure) {
-            $0.isSubmitting = false
-            $0.errorMessage = L10n.Error.rateLimited
+            $0.phase = .failed(L10n.Error.rateLimited)
         }
-        await store.send(.submitTapped) {
-            $0.isSubmitting = true
-            $0.errorMessage = nil
-        }
+        await store.send(.submitTapped) { $0.phase = .submitting }
         await store.receive(\.response.success) {
-            $0.isSubmitting = false
             $0.currentPassword = ""
             $0.newPassword = ""
             $0.confirmPassword = ""
-            $0.didSucceed = true
+            $0.phase = .succeeded
         }
         #expect(attempts.value == 2)
     }

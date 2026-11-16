@@ -142,7 +142,7 @@ struct ChangePasswordView: View {
                 state.currentPassword = "wrong"
                 state.newPassword = "abcdef"
                 state.confirmPassword = "abcdef"
-                state.errorMessage = "Current password is incorrect."
+                state.phase = .failed("Current password is incorrect.")
                 return state
             }()) {
                 ChangePasswordFeature()
@@ -171,7 +171,7 @@ struct ChangePasswordView: View {
                 var state = ChangePasswordFeature.State(serverURL: URL(string: "https://x.example.com")!, mode: .add)
                 state.newPassword = "abcdef"
                 state.confirmPassword = "abcdef"
-                state.errorMessage = "You already have password authentication."
+                state.phase = .failed("You already have password authentication.")
                 return state
             }()) {
                 ChangePasswordFeature()
@@ -185,7 +185,7 @@ struct ChangePasswordView: View {
         ChangePasswordView(
             store: Store(initialState: {
                 var state = ChangePasswordFeature.State(serverURL: URL(string: "https://x.example.com")!)
-                state.didSucceed = true
+                state.phase = .succeeded
                 return state
             }()) {
                 ChangePasswordFeature()
