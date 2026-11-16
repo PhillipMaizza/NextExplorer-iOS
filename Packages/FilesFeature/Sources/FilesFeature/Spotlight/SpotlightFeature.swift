@@ -239,9 +239,11 @@ public struct SpotlightFeature {
                 // its hits. Listed first, they win the duplicates the wider search repeats.
                 async let inFolder = filesClient.search(serverURL, basePath, term, limit)
                 async let everywhere = filesClient.search(serverURL, "", term, limit)
-                let (folderPage, everywherePage) = try await (inFolder, everywhere)
+                // The wider answer decides: a folder that cannot be searched only loses its head start.
+                let everywherePage = try await everywhere
+                let folderItems = await (try? inFolder)?.items ?? []
                 var page = everywherePage
-                page.items = folderPage.items + everywherePage.items
+                page.items = folderItems + everywherePage.items
                 return page
             },
             response: Action.searchResponse

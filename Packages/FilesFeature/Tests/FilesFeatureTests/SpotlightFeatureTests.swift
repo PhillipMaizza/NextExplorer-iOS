@@ -145,6 +145,32 @@ struct SpotlightFeatureTests {
         await store.receive(\.onDeviceComputed)
     }
 
+    @Test("A folder that cannot be searched still lists everything the wider search found")
+    func folderSearchFailureKeepsTheWiderAnswer() async {
+        let clock = TestClock<Duration>()
+        let store = TestStore(initialState: state()) {
+            SpotlightFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.offlineFileStore = .inMemory(copyMetadata: [:])
+            $0.filesClient.search = { [folderHit, fileHit] _, path, _, _ in
+                guard path.isEmpty else { throw FilesClientError.forbidden(message: nil) }
+                return SearchPage(items: [folderHit, fileHit])
+            }
+        }
+
+        await store.send(.queryChanged(Constants.term)) {
+            $0.query = Constants.term
+            $0.phase = .loading
+        }
+        await clock.advance(by: .milliseconds(350))
+        await store.receive(\.searchResponse.success) {
+            $0.results = [folderHit, fileHit]
+            $0.phase = .loaded
+        }
+        await store.receive(\.onDeviceComputed)
+    }
+
     @Test("At the root one search asks everywhere")
     func rootAsksOnce() async {
         let clock = TestClock<Duration>()
