@@ -31,6 +31,22 @@ final class URLSessionAuthDelegate: NSObject, URLSessionDelegate, URLSessionTask
         await respond(to: challenge)
     }
 
+    /// A request that carries one account's cookie by hand (`httpShouldHandleCookies` off) never
+    /// follows a redirect: a header set by hand goes along to wherever the redirect points, which
+    /// could be another host (a login proxy, say). Every other request follows as usual.
+    func urlSession(
+        _: URLSession,
+        task: URLSessionTask,
+        willPerformHTTPRedirection _: HTTPURLResponse,
+        newRequest request: URLRequest
+    ) async -> URLRequest? {
+        guard let original = task.originalRequest,
+              !original.httpShouldHandleCookies,
+              original.value(forHTTPHeaderField: HTTPHeaderField.cookie) != nil
+        else { return request }
+        return nil
+    }
+
     private func respond(to challenge: URLAuthenticationChallenge) async
         -> (URLSession.AuthChallengeDisposition, URLCredential?)
     {
