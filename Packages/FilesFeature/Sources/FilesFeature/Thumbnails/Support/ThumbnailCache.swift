@@ -113,6 +113,7 @@ extension ThumbnailCache: DependencyKey {
                 )
                 try? FileManager.default.removeItem(at: fileURL)
                 try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
+                CacheTrimSchedule.shared.recordWriteAndTrimIfDue()
                 return try Data(contentsOf: fileURL)
             },
             resolvedURL: { path, signature, resolve in

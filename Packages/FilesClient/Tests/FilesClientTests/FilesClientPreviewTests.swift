@@ -240,9 +240,44 @@ extension FilesClientLiveTests {
             FilesService.evictPreviewCacheIfNeeded()
             #expect(!FileManager.default.fileExists(atPath: fileURL.path))
         }
+
+        @Test("Rendered PDF pages and remembered thumbnail URLs count toward the cap and go oldest first")
+        func evictionTrimsEveryFlatFolder() throws {
+            let cachesRoot = FileManager.default.temporaryDirectory
+                .appendingPathComponent("preview-evict-\(TestID.name())", isDirectory: true)
+            defer { try? FileManager.default.removeItem(at: cachesRoot) }
+            let previewRoot = cachesRoot.appendingPathComponent(CacheLayout.previewCacheName, isDirectory: true)
+            let oldPage = previewRoot.appendingPathComponent(CacheLayout.pdfThumbnailsDirectoryName)
+                .appendingPathComponent(Constants.oldPageName)
+            let newRecord = previewRoot.appendingPathComponent(CacheLayout.thumbnailURLsDirectoryName)
+                .appendingPathComponent(Constants.newRecordName)
+            for file in [oldPage, newRecord] {
+                try FileManager.default.createDirectory(
+                    at: file.deletingLastPathComponent(),
+                    withIntermediateDirectories: true
+                )
+                FileManager.default.createFile(atPath: file.path, contents: nil)
+            }
+            let handle = try FileHandle(forWritingTo: oldPage)
+            try handle.truncate(atOffset: UInt64(FilesService.previewCacheMaxBytes) + 1)
+            try handle.close()
+            try FileManager.default.setAttributes([.modificationDate: MockDate.date], ofItemAtPath: oldPage.path)
+            try FileManager.default.setAttributes(
+                [.modificationDate: MockDate.date.addingTimeInterval(Constants.newerBy)],
+                ofItemAtPath: newRecord.path
+            )
+
+            FilesService.evictPreviewCacheIfNeeded(in: cachesRoot)
+
+            #expect(!FileManager.default.fileExists(atPath: oldPage.path))
+            #expect(FileManager.default.fileExists(atPath: newRecord.path))
+        }
     }
 }
 
 private enum Constants {
     static let vacationPhoto = "Photos/vacation.jpg"
+    static let oldPageName = "page.jpg"
+    static let newRecordName = "record.txt"
+    static let newerBy: TimeInterval = 60
 }

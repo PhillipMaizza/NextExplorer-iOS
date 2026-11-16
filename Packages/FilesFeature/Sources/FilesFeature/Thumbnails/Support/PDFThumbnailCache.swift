@@ -114,6 +114,7 @@ extension PDFThumbnailCache {
                     at: renderCacheURL.deletingLastPathComponent(), withIntermediateDirectories: true
                 )
                 try? jpeg.write(to: renderCacheURL, options: .atomic)
+                CacheTrimSchedule.shared.recordWriteAndTrimIfDue()
             }
             return rendered
         }

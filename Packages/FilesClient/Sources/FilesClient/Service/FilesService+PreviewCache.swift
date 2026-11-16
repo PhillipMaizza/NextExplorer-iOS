@@ -13,13 +13,6 @@ extension FilesService {
     /// bytes for every kind that uses both (RAW images already diverge one direction).
     static let previewCacheNamespace = CacheLayout.previewNamespaceName
     static let rawDownloadCacheNamespace = CacheLayout.rawDownloadNamespaceName
-    /// Flat subdirectory of thumbnail image bytes written by `FilesFeature`'s `ThumbnailCache`
-    /// under this same `PreviewCache` root. Kept in sync with `ThumbnailCache`'s own
-    /// `previewCacheSubdirectory("thumbnails")`; the two live in different packages, so the name
-    /// is duplicated deliberately. Included in eviction so thumbnails (each up to the 32 MB
-    /// response cap when `thumbnailURL` falls back to a full preview) can't grow the cache
-    /// without bound.
-    static let thumbnailCacheSubdirectory = CacheLayout.thumbnailsDirectoryName
     /// Flat subdirectories written by `FilesFeature` whose file names start with the account prefix
     /// (`CacheAccountScope.scopedFileName`): thumbnail bytes, remembered thumbnail URLs and
     /// rendered PDF first pages.
@@ -301,15 +294,16 @@ extension FilesService {
     /// whole item slot (its file and `.meta`, or a single thumbnail file) is removed at once so a
     /// slot is never left half evicted.
     /// `protecting` is the slot the caller just wrote: it is about to be handed back, so it is
-    /// never a candidate even when it alone is larger than the budget.
-    static func evictPreviewCacheIfNeeded(protecting protectedSlot: URL? = nil) {
+    /// never a candidate even when it alone is larger than the budget. `cachesRoot` is a seam for
+    /// tests; production uses the app's Caches directory.
+    static func evictPreviewCacheIfNeeded(protecting protectedSlot: URL? = nil, in cachesRoot: URL? = nil) {
         evictionLock.lock()
         defer { evictionLock.unlock() }
 
         let fileManager = FileManager.default
-        guard let cachesDirectory = try? fileManager.url(
+        guard let cachesDirectory = cachesRoot ?? (try? fileManager.url(
             for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false
-        ) else { return }
+        )) else { return }
         let root = cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
 
         // A single evictable unit removed atomically: a per item preview/download directory, or
@@ -346,18 +340,20 @@ extension FilesService {
             }
         }
 
-        // Thumbnails are flat files (not per item directories) under their own subdirectory, so
-        // each file is its own slot. Without this they escaped eviction entirely and grew the
-        // cache without bound.
-        let thumbnailRoot = root.appendingPathComponent(Self.thumbnailCacheSubdirectory, isDirectory: true)
-        let thumbnailFiles = (try? fileManager.contentsOfDirectory(
-            at: thumbnailRoot, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey], options: []
-        )) ?? []
-        for file in thumbnailFiles {
-            let values = try? file.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
-            let size = Int64(values?.fileSize ?? 0)
-            slots.append(Slot(url: file, modified: values?.contentModificationDate ?? .distantPast, size: size))
-            total += size
+        // Thumbnails, remembered thumbnail URLs and rendered PDF pages are flat files (not per
+        // item directories), so each file is its own slot. Without this they escaped eviction
+        // entirely and grew the cache without bound.
+        for flatDirectory in Self.flatScopedCacheSubdirectories {
+            let flatRoot = root.appendingPathComponent(flatDirectory, isDirectory: true)
+            let files = (try? fileManager.contentsOfDirectory(
+                at: flatRoot, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey], options: []
+            )) ?? []
+            for file in files {
+                let values = try? file.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
+                let size = Int64(values?.fileSize ?? 0)
+                slots.append(Slot(url: file, modified: values?.contentModificationDate ?? .distantPast, size: size))
+                total += size
+            }
         }
 
         guard total > Self.previewCacheMaxBytes else { return }
