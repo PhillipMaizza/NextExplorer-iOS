@@ -6,9 +6,8 @@
         public let cut: () -> Void
         public let copy: () -> Void
         public let duplicate: () -> Void
+        /// Undoes the last file operation; does nothing when none is waiting.
         public let undo: () -> Void
-        /// Whether a file operation is waiting to be undone; otherwise ⌘Z edits text as usual.
-        public let canUndo: Bool
         public let paste: () -> Void
         public let delete: () -> Void
         public let rename: () -> Void
@@ -19,9 +18,8 @@
         public var open: () -> Void = {}
         /// Edit ▸ Copy Path (⌥⌘C): the selection's server paths, one per line.
         public var copyPath: () -> Void = {}
+        /// Does the last undone operation again; does nothing when none is waiting.
         public var redo: () -> Void = {}
-        /// Whether an undone move or rename is waiting to be redone; otherwise ⇧⌘Z edits text as usual.
-        public var canRedo = false
     }
 
     /// The visible Browse screen's sort, for the View menu's Sort By.
@@ -53,7 +51,7 @@
     extension BrowseKeyboardActions {
         /// Does nothing, for previews of the views that take it.
         static let preview = BrowseKeyboardActions(
-            cut: {}, copy: {}, duplicate: {}, undo: {}, canUndo: false, paste: {},
+            cut: {}, copy: {}, duplicate: {}, undo: {}, paste: {},
             delete: {}, rename: {}, selectAll: {}, getInfo: {}, canPaste: false
         )
     }

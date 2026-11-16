@@ -150,7 +150,6 @@
                 copy: { store.send(.copySelectionTapped) },
                 duplicate: { store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff) },
                 undo: { store.send(.undoTapped, animation: DSMotion.listDiff) },
-                canUndo: !store.undoStack.isEmpty,
                 paste: {
                     guard canPaste else { return }
                     store.send(.pasteTapped(keepItemsAfterCopy: keepsClipboard), animation: DSMotion.listDiff)
@@ -171,8 +170,7 @@
                     guard !paths.isEmpty else { return }
                     PlatformPasteboard.copy(paths.joined(separator: "\n"))
                 },
-                redo: { store.send(.redoTapped, animation: DSMotion.listDiff) },
-                canRedo: !store.redoStack.isEmpty
+                redo: { store.send(.redoTapped, animation: DSMotion.listDiff) }
             )
         }
     }
