@@ -118,15 +118,26 @@ struct BrowseTabFeatureTests {
         }
     }
 
-    @Test("Navigating to a path replaces the entire stack with that folder, also when it is already open")
+    @Test("Navigating to a path replaces the entire stack with that folder, and keeps it when already open")
     func navigatingToANonEmptyPathReplacesTheEntirePathStack() async {
         let store = makeStore(makeState(pushing: ["A", "A/B"]))
 
         await store.send(.navigateToDirectory(path: TestFolder.photos, title: TestFolder.photos)) {
             $0.path = StackState([screen(TestFolder.photos)])
         }
-        await store.send(.navigateToDirectory(path: TestFolder.photos, title: TestFolder.photos)) {
-            $0.path = StackState([screen(TestFolder.photos)])
+        await store.send(.navigateToDirectory(path: TestFolder.photos, title: TestFolder.photos))
+    }
+
+    @Test("A search hit opens on top of the open folders, so Back returns to the previous one")
+    func searchHitPushesOntoTheStack() async {
+        let store = makeStore(makeState(pushing: ["A"]))
+
+        await store.send(.navigateToItem(folder: TestFolder.photos, title: TestFolder.photos, revealing: nil)) {
+            $0.path.append(screen(TestFolder.photos))
+        }
+        await store.send(.navigateToItem(folder: TestFolder.photos, title: TestFolder.photos, revealing: nil))
+        await store.send(.navigateToItem(folder: "", title: "Home", revealing: nil)) {
+            $0.path = StackState()
         }
     }
 

@@ -333,7 +333,6 @@ public struct LoginFormView: View {
     private var styledCard: some View {
         pages
             .frame(maxWidth: Constants.cardWidth, maxHeight: Constants.cardMaxHeight)
-            .background(Color.backgroundSecondary)
             .clipShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
             .elevation(.level16)
             .frame(maxWidth: .infinity)
@@ -511,6 +510,7 @@ public struct LoginFormView: View {
         // reaching the button, so the user has to tap twice. `.immediately` dismisses on
         // first touch instead, so the same tap reaches the button underneath.
         .scrollDismissesKeyboard(.immediately)
+        .background { LoginPageSurface(horizontalSizeClass: horizontalSizeClass) }
         .animation(DSMotion.stateFade, value: store.host.isEmpty)
         // Get the Local Network permission alert out of the way while the user is still
         // typing the address, not the moment they hit "Test connection".
@@ -651,15 +651,7 @@ public struct LoginFormView: View {
             }
             .scrollDismissesKeyboard(.immediately)
         }
-        // Opaque so the outgoing page can't show through mid slide. In the card (regular width)
-        // that fill is the card surface; full bleed it stays the gradient.
-        .background {
-            if horizontalSizeClass == .regular {
-                Color.backgroundSecondary
-            } else {
-                LinearGradient.backgroundPrimary.ignoresSafeArea()
-            }
-        }
+        .background { LoginPageSurface(horizontalSizeClass: horizontalSizeClass) }
     }
 
     private var identifierField: some View {

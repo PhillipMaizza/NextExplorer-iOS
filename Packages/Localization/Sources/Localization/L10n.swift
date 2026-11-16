@@ -895,6 +895,9 @@ public enum L10n {
         public static var sheetTitle: String { tr("sort.sheetTitle") }  // "Sort By"
         public static var size: String { tr("sort.size") }  // "Size"
     }
+    public enum Spotlight {
+        public static var placeholder: String { tr("spotlight.placeholder") }  // "Search files and folders"
+    }
     public enum Tab {
         public static var browse: String { tr("tab.browse") }  // "Browse"
         public static var favorites: String { tr("tab.favorites") }  // "Favorites"

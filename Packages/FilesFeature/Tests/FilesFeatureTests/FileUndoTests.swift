@@ -167,7 +167,15 @@ struct FileUndoTests {
             $0.$undoStack.withLock { $0 = [] }
             $0.isPerformingFileAction = true
         }
-        await store.receive(\.undoResponse.success) { $0.isPerformingFileAction = false }
+        await store.receive(\.undoResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.$redoStack.withLock {
+                $0 = [FileUndoEntry(.moved([FileUndoEntry.MovedItem(
+                    item: movedReport,
+                    originalParent: TestFolder.docs
+                )]))]
+            }
+        }
         await store.receive(.delegate(.directoryContentsChanged))
         await store.finish()
 
@@ -217,7 +225,10 @@ struct FileUndoTests {
             $0.$undoStack.withLock { $0 = [] }
             $0.isPerformingFileAction = true
         }
-        await store.receive(\.undoResponse.success) { $0.isPerformingFileAction = false }
+        await store.receive(\.undoResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.$redoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedItem, previousName: TestFile.vacationPhoto))] }
+        }
         await store.receive(.delegate(.directoryContentsChanged))
         await store.finish()
 

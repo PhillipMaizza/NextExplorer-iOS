@@ -19,6 +19,9 @@
         public var open: () -> Void = {}
         /// Edit ▸ Copy Path (⌥⌘C): the selection's server paths, one per line.
         public var copyPath: () -> Void = {}
+        public var redo: () -> Void = {}
+        /// Whether an undone move or rename is waiting to be redone; otherwise ⇧⌘Z edits text as usual.
+        public var canRedo = false
     }
 
     /// The visible Browse screen's sort, for the View menu's Sort By.

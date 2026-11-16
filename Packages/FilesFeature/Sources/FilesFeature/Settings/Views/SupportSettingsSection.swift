@@ -9,6 +9,21 @@ private enum Constants {
 
 /// Hosted pages the app links to outside Settings' legal rows.
 public enum AppLinks {
+    static let contactEmail = "hello@phillipmaizza.com"
+    /// A new message to the developer, titled with the app's version and carrying what a report
+    /// needs, for the user's own mail app.
+    public static var supportMail: URL {
+        let version = AppDiagnostics.appVersion
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = contactEmail
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: "NextExplorer v\(version) support"),
+            URLQueryItem(name: "body", value: "\n\n" + AppDiagnostics.summary),
+        ]
+        return components.url ?? support
+    }
+
     public static let support = URL(string: "https://phillipmaizza.com/nextexplorer")!
     static let privacy = URL(string: "https://phillipmaizza.com/nextexplorer/privacy.html")!
     static let terms = URL(string: "https://phillipmaizza.com/nextexplorer/terms.html")!
@@ -30,8 +45,8 @@ struct SupportSettingsSection: View {
                     }
                 }
                 if filter.matches(L10n.Settings.rowSupport) {
-                    row(title: L10n.Settings.rowSupport, icon: IconKit.help, trailing: IconKit.externalLink) {
-                        openURL(AppLinks.support)
+                    row(title: L10n.Settings.rowSupport, icon: IconKit.help, trailing: nil) {
+                        openURL(AppLinks.supportMail)
                     }
                 }
             } header: {

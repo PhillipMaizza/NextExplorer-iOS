@@ -7,9 +7,14 @@ private enum Constants {
     static let iconSize: CGFloat = .iconSmall
     static let bottomInset: CGFloat = .space16
     static let autoDismissDelay: Duration = .seconds(4.5)
-    /// How much of the toast's color sits over the frosted glass: enough to keep its meaning and
-    /// the white text legible, little enough to let the glass through.
-    static let tintOpacity: Double = 0.78
+    // How much of the toast's color sits over the frosted glass: enough to keep its meaning and
+    // the white text legible, little enough to let the glass through. Solid on the Mac, whose
+    // windows are already frosted.
+    #if os(macOS)
+        static let tintOpacity: Double = 1
+    #else
+        static let tintOpacity: Double = 0.78
+    #endif
     static let progressIDPrefix = "progress:"
 }
 
@@ -212,10 +217,14 @@ private struct DSToastOverlay: View {
             }
             Text(message.text).type(.body2(.semibold))
             if let actionTitle = message.actionTitle, let action = message.action {
-                Button(actionTitle, action: action)
-                    .buttonStyle(DSPressableButtonStyle())
-                    .type(.body2(.bold))
-                    .underline()
+                // The toast has done its job once its button is used: it goes, then the action runs.
+                Button(actionTitle) {
+                    self.message = nil
+                    action()
+                }
+                .buttonStyle(DSPressableButtonStyle())
+                .type(.body2(.bold))
+                .underline()
             }
         }
         .foregroundStyle(Color.primaryInverted)
@@ -224,10 +233,11 @@ private struct DSToastOverlay: View {
         .background { DSFrostedTint(Capsule(), tint: message.backgroundColor, tintOpacity: Constants.tintOpacity) }
         .padding(.bottom, Constants.bottomInset + extraBottomInset)
         .transition(.move(edge: .bottom).combined(with: .opacity))
-        // One VoiceOver element; spoken as a status announcement the moment it appears,
-        // since a transient toast never receives focus on its own.
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isStaticText)
+        // One VoiceOver element, spoken as a status announcement the moment it appears, since a
+        // transient toast never receives focus on its own. With a button, the text and the button
+        // stay apart so the button can still be reached and pressed.
+        .accessibilityElement(children: message.action == nil ? .combine : .contain)
+        .accessibilityAddTraits(message.action == nil ? .isStaticText : [])
         // Starts only once the toast is on screen, so time spent waiting for an earlier one
         // to leave never shortens this one.
         .task(id: message.id) {

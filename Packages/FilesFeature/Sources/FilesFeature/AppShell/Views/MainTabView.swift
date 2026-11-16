@@ -216,8 +216,16 @@ public struct MainTabView: View {
     /// place. The shared `MainTabSidebar` + `columnVisibility` keep the sidebar (and its show/hide
     /// toggle) identical across tabs; TCA store state lives outside the view tree and survives.
     /// The Mac too: one split view with only `.id` on the swapped detail still traps there.
-    @ViewBuilder
     private var splitView: some View {
+        #if os(macOS)
+            split { MacTabDetail(store: store) }
+        #else
+            perTabSplitView
+        #endif
+    }
+
+    @ViewBuilder
+    private var perTabSplitView: some View {
         switch store.selectedTab {
         case .browse:
             split { BrowseTabView(store: store.scope(state: \.browse, action: \.browse)) }
@@ -245,6 +253,10 @@ public struct MainTabView: View {
         } detail: {
             detail()
                 .environment(\.isSplitViewDetail, true)
+            #if os(macOS)
+                // Every tab's content and toolbar sit on the same surface, not only Browse's.
+                .backgroundGradient()
+            #endif
         }
         .overlay(alignment: .bottom) {
             SplitDetailBreadcrumb(store: store)
@@ -253,14 +265,10 @@ public struct MainTabView: View {
         .navigationSplitViewStyle(.balanced)
         .platformAccentTint()
         #if os(macOS)
-            .toolbar {
-                // Uploads and downloads only: an offline run has its own bar along the window's bottom.
-                if store.uploads.isBarVisible || store.downloadQueue.isBarVisible {
-                    ToolbarItem(id: "transfers", placement: .primaryAction) {
-                        MacTransferActivityButton(store: store)
-                    }
-                }
-            }
+            .modifier(MacSplitChrome(
+                store: store,
+                sidebarInset: columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge)
+            ))
         #endif
     }
 

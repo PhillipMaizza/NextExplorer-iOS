@@ -35,7 +35,7 @@
                  .bulkDeleteResponse(.success), .extractZipResponse(.success), .compressResponse(.success),
                  .textSaveResponse(_, .success):
                 .folders([directoryPath])
-            case .transferResponse(.success), .undoResponse(.success):
+            case .transferResponse(.success), .undoResponse(.success), .redoResponse(.success):
                 .everything
             default:
                 nil

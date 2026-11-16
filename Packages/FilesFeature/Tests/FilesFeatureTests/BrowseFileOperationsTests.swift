@@ -138,7 +138,7 @@ struct BrowseFileOperationsTests {
             $0.isPerformingFileAction = false
             $0.isNewFolderSheetPresented = false
             $0.items = [existing, created]
-            $0.$undoStack.withLock { $0.record(FileUndoEntry(.created([created]))) }
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.madeNew(created))) }
         }
         #expect(requested.value == ["Docs/Reports"])
     }
@@ -177,7 +177,7 @@ struct BrowseFileOperationsTests {
         // revisit shows the folder, not the state before the create.
         await store.send(.newFolderResponse(.success(newFolder))) {
             $0.items = [existing, newFolder]
-            $0.$undoStack.withLock { $0.record(FileUndoEntry(.created([newFolder]))) }
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.madeNew(newFolder))) }
         }
 
         let cached = cache.read(serverURL: BrowseTestSupport.serverURL, path: TestFolder.docs)
@@ -245,7 +245,7 @@ struct BrowseFileOperationsTests {
             $0.isPerformingFileAction = false
             $0.isNewFileSheetPresented = false
             $0.items = [created]
-            $0.$undoStack.withLock { $0.record(FileUndoEntry(.created([created]))) }
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.madeNew(created))) }
             $0.newlyCreatedFileID = created.id
         }
         // Opens only once the New File sheet has finished closing.

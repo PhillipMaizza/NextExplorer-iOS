@@ -24,11 +24,24 @@ enum BrowseNavigation {
         isKeptOffline: Bool = false,
         stack: inout StackState<BrowseFeature.State>
     ) {
+        // Already there: swapping in a fresh copy of the folder on screen leaves it never loaded.
+        guard stack.last?.directoryPath != path else { return }
         stack.removeAll()
         guard !path.isEmpty else { return }
         var screen = BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: title)
         screen.isKeptOffline = isKeptOffline
         stack.append(screen)
+    }
+
+    /// Opens `path` on top of the folders already open, so Back returns to where the user was.
+    /// The root is no pushable screen: going there clears the stack.
+    static func push(to path: String, title: String, serverURL: URL, stack: inout StackState<BrowseFeature.State>) {
+        guard (stack.last?.directoryPath ?? "") != path else { return }
+        guard !path.isEmpty else {
+            stack.removeAll()
+            return
+        }
+        stack.append(BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: title))
     }
 }
 

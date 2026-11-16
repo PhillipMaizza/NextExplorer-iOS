@@ -14,6 +14,7 @@ struct BrowsePreviewSource {
     }
 
     /// The row whose file is still being fetched for the preview, so it shows its spinner.
+    @MainActor
     func isOpening(_ id: String, in store: StoreOf<BrowseFeature>) -> Bool {
         store.previewItem?.id == id && !store.isPreviewContentReady
     }

@@ -11,6 +11,7 @@ import SwiftUI
 enum BrowseOverlayState: Hashable {
     case none, error, empty, searching, searchFailed, noResults
 
+    @MainActor
     init(store: StoreOf<BrowseFeature>) {
         if store.phase.errorMessage != nil {
             self = .error

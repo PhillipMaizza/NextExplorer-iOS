@@ -13,6 +13,8 @@ default_platform(:ios)
 #                  logged in
 #   TESTFLIGHT_GROUPS  comma separated TestFlight groups every upload is handed to, instead of
 #                  TESTFLIGHT_DEFAULT_GROUPS
+#   RELEASE_NOTES_FILE  a hand written What's New (one "- " bullet per change) used instead of the
+#                  notes generated from main's history
 #
 # Versions come from git tags: `release` ships the next version after the newest `v<version>`
 # tag (patch by default) by passing MARKETING_VERSION to the archive, then tags it. A project
@@ -25,6 +27,8 @@ default_platform(:ios)
 # only one; the other skips that version).
 
 PROJECT = "NextExplorer.xcodeproj".freeze
+# App Store Connect refuses a What's New longer than this.
+WHATS_NEW_LIMIT = 4000
 PBXPROJ = "#{PROJECT}/project.pbxproj".freeze
 SCHEME = "NextExplorer".freeze
 COPYRIGHT_HOLDER = "Phillip Maizza".freeze
@@ -391,7 +395,16 @@ platform :mac do
 
 end
 
+# What's New for the App Store and TestFlight, and the GitHub Release text. RELEASE_NOTES_FILE, a
+# hand written list of user facing changes, wins over the notes generated from main's history.
 def release_notes(version, links: false)
+  file = ENV["RELEASE_NOTES_FILE"].to_s
+  unless file.empty?
+    notes = File.read(File.expand_path(file)).strip
+    UI.user_error!("#{file} is empty") if notes.empty?
+    UI.user_error!("#{file} is over the App Store's #{WHATS_NEW_LIMIT} character What's New limit") if notes.length > WHATS_NEW_LIMIT
+    return notes
+  end
   script = File.join(repo_root, "Scripts/gen-changelog.py")
   args = ["python3", script, "--notes", version]
   args << "--links" if links

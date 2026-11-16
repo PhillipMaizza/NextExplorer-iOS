@@ -58,7 +58,7 @@ import TestUtils
 
             await store.send(.browse(.root(.newFolderResponse(.success(folder))))) {
                 $0.browse.root.items = [folder]
-                $0.browse.root.$undoStack.withLock { $0 = [FileUndoEntry(.created([folder]))] }
+                $0.browse.root.$undoStack.withLock { $0 = [FileUndoEntry(.madeNew(folder))] }
             }
             await store.finish()
 

@@ -170,7 +170,9 @@
                     let paths = store.displayedItems.filter { store.selectedItemIDs.contains($0.id) }.map(\.id)
                     guard !paths.isEmpty else { return }
                     PlatformPasteboard.copy(paths.joined(separator: "\n"))
-                }
+                },
+                redo: { store.send(.redoTapped, animation: DSMotion.listDiff) },
+                canRedo: !store.redoStack.isEmpty
             )
         }
     }

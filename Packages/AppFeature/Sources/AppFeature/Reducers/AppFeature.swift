@@ -42,6 +42,7 @@ public struct AppFeature {
         /// different account's session.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var fileClipboard: FileClipboard?
         @Shared(.inMemory(FileUndoEntry.sharedKey)) public var fileUndoStack: [FileUndoEntry] = []
+        @Shared(.inMemory(FileUndoEntry.redoSharedKey)) public var fileRedoStack: [FileUndoEntry] = []
         @Shared(.inMemory(SharedFileInbox.sharedKey)) public var sharedFileInbox: [URL] = []
         /// The signed-in account's downloads scope (server + user id), so each account's saved
         /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
@@ -310,6 +311,7 @@ public struct AppFeature {
             case let .activeAccountTornDown(next):
                 state.$fileClipboard.withLock { $0 = nil }
                 state.$fileUndoStack.withLock { $0 = [] }
+                state.$fileRedoStack.withLock { $0 = [] }
                 if let next {
                     // Another account is still signed in: switch to it rather than dropping the
                     // user out to the login screen.
@@ -324,6 +326,7 @@ public struct AppFeature {
                 let leavingAccountID = state.currentAccountID
                 state.$fileClipboard.withLock { $0 = nil }
                 state.$fileUndoStack.withLock { $0 = [] }
+                state.$fileRedoStack.withLock { $0 = [] }
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
@@ -465,6 +468,7 @@ public struct AppFeature {
                 let serverURL = added.serverURL
                 state.$fileClipboard.withLock { $0 = nil }
                 state.$fileUndoStack.withLock { $0 = [] }
+                state.$fileRedoStack.withLock { $0 = [] }
                 let accountID = AuthenticatedFeature.State.accountID(serverURL: serverURL, username: user.username)
                 let leavingAccountID = state.currentAccountID
                 CacheAccountScope.set(accountID)
@@ -550,6 +554,7 @@ public struct AppFeature {
     private func teardownToLogin(_ state: inout State, removesClientCertificates: Bool) -> Effect<Action> {
         state.$fileClipboard.withLock { $0 = nil }
         state.$fileUndoStack.withLock { $0 = [] }
+        state.$fileRedoStack.withLock { $0 = [] }
         state.$downloadScope.withLock { $0 = "" }
         CacheAccountScope.set("")
         state.didAuthenticateFromLogin = false

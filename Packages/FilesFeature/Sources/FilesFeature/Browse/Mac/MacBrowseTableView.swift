@@ -60,6 +60,8 @@
         var onOpenPersonalSpace: () -> Void = {}
         /// Space on a file Quick Look can't show: the reason, for the screen's toast.
         var onQuickLookUnavailable: (String) -> Void = { _ in }
+        /// A row to scroll into view, such as the file a search opened this folder for.
+        var scrollTargetID: FileItem.ID?
 
         @Dependency(\.filesClient) private var filesClient
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
@@ -195,6 +197,12 @@
                 } else if ids.count == 1, let item = item(for: ids.first) {
                     onOpen(item)
                 }
+            }
+            .background {
+                MacTableRowScroller(
+                    row: scrollTargetID.flatMap { items.index(id: $0) }.map { $0 + (personalSpace == nil ? 0 : 1) },
+                    target: scrollTargetID
+                )
             }
             .scrollContentBackground(.hidden)
             // AppKit stripes the empty space below the rows at its default row height, which
@@ -401,4 +409,5 @@
         )
         .previewCanvas(.table)
     }
+
 #endif

@@ -148,6 +148,13 @@ extension BrowseFeature {
             else { return .none }
             return loadInfo(&state, item: item, settle: Constants.inspectorFollowDelay)
 
+        case let .revealItemShown(id):
+            guard state.revealItemID == id, let item = state.items[id: id] else { return .none }
+            state.revealItemID = nil
+            state.scrollTargetID = id
+            // Its folder first, then the file itself, as a double click on its row would.
+            return .concatenate(.send(.tableSelectionChanged([id])), .send(.rowTapped(item)))
+
         case .copySelectionTapped:
             let items = state.selectedItems
             guard !items.isEmpty else { return .none }
@@ -169,11 +176,22 @@ extension BrowseFeature {
         case .undoTapped:
             return undo(&state)
 
-        case .undoResponse(.success):
+        case let .undoResponse(.success(entry)):
             state.isPerformingFileAction = false
+            if entry.isRedoable {
+                state.$redoStack.withLock { $0.record(entry) }
+            }
             return .send(.delegate(.directoryContentsChanged))
 
-        case let .undoResponse(.failure(error)):
+        case .redoTapped:
+            return redo(&state)
+
+        case let .redoResponse(.success(entry)):
+            state.isPerformingFileAction = false
+            state.$undoStack.withLock { $0.record(entry) }
+            return .send(.delegate(.directoryContentsChanged))
+
+        case let .undoResponse(.failure(error)), let .redoResponse(.failure(error)):
             state.isPerformingFileAction = false
             state.fileActionErrorMessage = error.userMessage
             return .send(.delegate(.directoryContentsChanged))

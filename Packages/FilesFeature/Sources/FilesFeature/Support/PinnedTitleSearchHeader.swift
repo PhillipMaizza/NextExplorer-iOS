@@ -44,6 +44,9 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     @ViewBuilder var accessory: () -> Accessory
 
     @FocusState private var isFocused: Bool
+    #if os(macOS)
+        @Environment(\.openSpotlight) private var openSpotlight
+    #endif
     #if os(iOS)
         @Shared(.inMemory(SearchFocusRequest.key)) private var searchFocusRequests = 0
         @State private var isOnScreen = false
@@ -80,14 +83,11 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                         .allowsHitTesting(false)
                 }
             }
-            // ⌘F (Edit menu) focuses the toolbar's trailing search field.
-            .modifier(MacToolbarSearch(
-                isEnabled: showsSearchField,
-                text: $searchText,
-                prompt: prompt,
-                isFocused: $isFocused
-            ))
-            .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
+            // The window's toolbar search button reads this, like ⌘F: both open the search panel.
+            .focusedSceneValue(
+                \.focusSearchField,
+                showsSearchField ? FocusSearchAction { openSpotlight?() } : nil
+            )
         #else
             header
                 .onAppear { isOnScreen = true }
@@ -216,34 +216,30 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
 }
 
 #if os(macOS)
-    private struct MacToolbarSearch: ViewModifier {
-        let isEnabled: Bool
-        @Binding var text: String
-        let prompt: String
-        var isFocused: FocusState<Bool>.Binding
+    /// The Mac toolbar's search: a magnifier opening the panel, shown while the screen has a search.
+    struct MacSearchButton: View {
+        let action: FocusSearchAction
 
-        func body(content: Content) -> some View {
-            if !isEnabled {
-                content
-            } else {
-                // A plain field: tokens and search scopes attached here rebuilt or covered it on
-                // the first keystroke and took its focus. Browse puts its scope and kind filter in
-                // a bar above the results instead, as Finder does.
-                pinned(content.searchable(text: $text, placement: .toolbar, prompt: Text(prompt)))
+        var body: some View {
+            Button { action() } label: {
+                Label { Text(L10n.Common.search) } icon: { IconKit.search }
             }
+            .help(L10n.Common.search)
+            .accessibilityIdentifier(AccessibilityIdentifiers.Search.field)
         }
+    }
 
-        private func pinned(_ searchable: some View) -> some View {
-            searchable
-                .searchFocused(isFocused)
-                // Pins the field to the trailing edge whatever else the screen puts in the
-                // toolbar; without it a screen with only leading items packs it beside them.
-                .toolbar {
-                    if #available(macOS 26.0, *) {
-                        ToolbarSpacer(.flexible)
-                    }
-                }
+    /// Opens the Mac search panel; set once on the main window so every screen can reach it.
+    struct OpenSpotlightAction {
+        let perform: () -> Void
+
+        func callAsFunction() {
+            perform()
         }
+    }
+
+    extension EnvironmentValues {
+        @Entry var openSpotlight: OpenSpotlightAction?
     }
 
     /// Focuses the visible screen's search field; published by `PinnedTitleSearchHeader`.

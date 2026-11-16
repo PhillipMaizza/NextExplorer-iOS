@@ -287,33 +287,30 @@
             switch scenario {
             case .normal, .gallery:
                 installAccountMocks(into: &client)
-                // A mutable in memory directory so writes (create folder, rename, delete, compress)
-                // are reflected by the next browse, letting a UI test assert the listing changed.
-                let store = MockFileStore(items: scenario == .gallery ? galleryItems : rootItems)
+                // An in memory file tree so writes (create, rename, delete, move, copy, compress) land
+                // in the folder they name and show in the next listing, as on the server.
+                // The root and its folders hold the fixture (the gallery only its root, whose one folder
+                // is where a move lands); deeper folders start empty.
+                let store = scenario == .gallery
+                    ? MockFileTree(template: galleryItems, seededDepth: 0)
+                    : MockFileTree(template: rootItems, seededDepth: 1)
                 if scenario == .gallery {
                     installGalleryFiles(into: &client)
                 }
                 client.browse = { _, path in
-                    BrowseResult(items: store.current(), access: fullAccess, path: path)
+                    BrowseResult(items: store.list(path), access: fullAccess, path: path)
                 }
-                client.createFolder = { _, _, name in
+                client.createFolder = { _, path, name in
                     // A sentinel name lets a test exercise the failure path (sheet stays open).
                     if name == failingFolderName {
                         throw FilesClientError.network("UITest injected failure")
                     }
-                    return store.addFolder(named: name)
+                    return store.createFolder(in: path, named: name)
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
                 client.deleteItems = { _, items in store.delete(items) }
-                // A move leaves this folder; a copy changes nothing here (every folder lists the same).
                 client.transferItems = { _, items, destination, operation in
-                    if operation == .move {
-                        store.delete(items)
-                    }
-                    return TransferResult(
-                        destination: destination,
-                        items: items.map { TransferResult.Entry(from: $0.id, to: "\(destination)/\($0.name)") }
-                    )
+                    store.transfer(items, to: destination, operation: operation)
                 }
                 client.compressItem = { _, item in store.compress(item) }
                 // Offline: a folder's estimate and a per file "download" that completes instantly, so
@@ -351,7 +348,7 @@
                         : []
                     // Like the server, names in the folder that match come first, so a folder
                     // found by search stays in the results and can be opened from there.
-                    let nameMatches = store.current()
+                    let nameMatches = store.list(scopePath)
                         .filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
                         .map { SearchResultItem(
                             name: $0.name,
@@ -429,73 +426,6 @@
         func reject() {
             lock.lock(); defer { lock.unlock() }
             rejected = true
-        }
-    }
-
-    /// A tiny mutable directory backing the `.normal` files client, so a mutation a UI test drives
-    /// (create folder, rename, delete, compress) shows up on the next browse. One instance lives per
-    /// app launch; the lock keeps it safe across the client's `@Sendable` async closures.
-    final class MockFileStore: @unchecked Sendable {
-        private let lock = NSLock()
-        private var items: [FileItem]
-
-        init(items: [FileItem]) {
-            self.items = items
-        }
-
-        private func locked<T>(_ body: () -> T) -> T {
-            lock.lock(); defer { lock.unlock() }
-            return body()
-        }
-
-        func current() -> [FileItem] {
-            locked { items }
-        }
-
-        func addFolder(named name: String) -> FileItem {
-            let folder = FileItem(
-                name: name.isEmpty ? "Untitled Folder" : name,
-                path: "",
-                dateModified: Date(),
-                size: 0,
-                kind: "directory"
-            )
-            locked { items.append(folder) }
-            return folder
-        }
-
-        func rename(_ item: FileItem, to newName: String) -> FileItem {
-            let renamed = FileItem(
-                name: newName,
-                path: item.path,
-                dateModified: item.dateModified,
-                size: item.size,
-                kind: item.kind,
-                supportsThumbnail: item.supportsThumbnail
-            )
-            locked {
-                if let index = items.firstIndex(where: { $0.id == item.id }) {
-                    items[index] = renamed
-                }
-            }
-            return renamed
-        }
-
-        func delete(_ toDelete: [FileItem]) {
-            let ids = Set(toDelete.map(\.id))
-            locked { items.removeAll { ids.contains($0.id) } }
-        }
-
-        func compress(_ item: FileItem) -> FileItem {
-            let archive = FileItem(
-                name: "\(item.name).zip",
-                path: item.path,
-                dateModified: Date(),
-                size: 0,
-                kind: "zip"
-            )
-            locked { items.append(archive) }
-            return archive
         }
     }
 

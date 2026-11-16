@@ -111,7 +111,9 @@ struct SharedView: View {
                 }
             #else
                 .toolbar {
-                    ToolbarItem(placement: .principal) {
+                    // Beside the title: a centered (principal) picker would pull the window's
+                    // refresh and search in from the trailing edge to sit before it.
+                    ToolbarItem(placement: .navigation) {
                         Picker(L10n.Shared.navigationTitle, selection: segment) {
                             ForEach(SharedFeature.Segment.allCases, id: \.self) { segment in
                                 Text(segment.title).tag(segment)

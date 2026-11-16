@@ -31,6 +31,8 @@ public enum AccessibilityIdentifiers {
 
     public enum Search {
         public static let field = "search.field"
+        /// The Mac search panel's text field.
+        public static let spotlightField = "search.spotlightField"
     }
 
     public enum Browse {
