@@ -8,7 +8,7 @@ import Localization
 
 /// Drives the "Create Share Link" sheet (`CreateShareLinkSheet`): mirrors the web client's
 /// `ShareDialog.vue`. Two screens in one state: the form, then the created link confirmation
-/// (`step` is `.created`). Verified request/response shapes: [[share-link-api]].
+/// (`step` is `.created`).
 @Reducer
 public struct CreateShareLinkFeature {
     /// Days ahead the expiration date defaults to when the user first enables it.

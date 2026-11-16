@@ -1,0 +1,3 @@
+#!/bin/sh
+# Checks what is staged, never the working tree. Install once with Scripts/install-hooks.sh.
+exec python3 "$(git rev-parse --show-toplevel)/Scripts/check-house-rules.py" --staged
