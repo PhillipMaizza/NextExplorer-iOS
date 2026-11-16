@@ -56,11 +56,10 @@ struct CreateShareLinkFeatureTests {
         }
 
         await store.send(.accessModeChanged(.readonly))
-        await store.send(.createTapped) { $0.isCreating = true }
+        await store.send(.createTapped) { $0.step = .creating }
         gate.open()
         await store.receive(\.createResponse.success) {
-            $0.isCreating = false
-            $0.createdShare = created
+            $0.step = .created(created)
             $0.$shareLinksRevision.withLock { $0 += 1 }
         }
     }
@@ -165,11 +164,10 @@ struct CreateShareLinkFeatureTests {
             }
         }
 
-        await store.send(.createTapped) { $0.isCreating = true }
+        await store.send(.createTapped) { $0.step = .creating }
         gate.open()
         await store.receive(\.createResponse.success) {
-            $0.isCreating = false
-            $0.createdShare = created
+            $0.step = .created(created)
             $0.$shareLinksRevision.withLock { $0 += 1 }
         }
     }
@@ -183,9 +181,9 @@ struct CreateShareLinkFeatureTests {
             $0.filesClient.createShareLink = { _, _ in throw FilesClientError.server(statusCode: 400) }
         }
 
-        await store.send(.createTapped) { $0.isCreating = true }
+        await store.send(.createTapped) { $0.step = .creating }
         await store.receive(\.createResponse.failure) {
-            $0.isCreating = false
+            $0.step = .form
             $0.errorMessage = FilesClientError.server(statusCode: 400).userMessage
         }
     }
@@ -249,9 +247,18 @@ struct CreateShareLinkFeatureTests {
     }
 
     @Test
+    func aMadeLinkIsNeverMadeAgain() async {
+        var state = makeState()
+        state.step = .created(makeCreated())
+        let store = TestStore(initialState: state) { CreateShareLinkFeature() }
+        #expect(!store.state.isCreateEnabled)
+        await store.send(.createTapped)
+    }
+
+    @Test
     func directLinkAppendsTheModeQuery() {
         var state = makeState()
-        state.createdShare = makeCreated()
+        state.step = .created(makeCreated())
         state.directLinkMode = .download
         #expect(state.directLink?.absoluteString == "https://cloud.example.com/api/share/TOK123/file?mode=download")
         state.directLinkMode = .auto

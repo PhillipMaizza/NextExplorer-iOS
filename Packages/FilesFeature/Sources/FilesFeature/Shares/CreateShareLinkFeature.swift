@@ -7,12 +7,19 @@ import Foundation
 import Localization
 
 /// Drives the "Create Share Link" sheet (`CreateShareLinkSheet`): mirrors the web client's
-/// `ShareDialog.vue`. Two phases in one state: the form, then the created-link confirmation
-/// (`createdShare != nil`). Verified request/response shapes: [[share-link-api]].
+/// `ShareDialog.vue`. Two screens in one state: the form, then the created link confirmation
+/// (`step` is `.created`). Verified request/response shapes: [[share-link-api]].
 @Reducer
 public struct CreateShareLinkFeature {
     /// Days ahead the expiration date defaults to when the user first enables it.
     static let defaultExpiryDays: Double = 7
+
+    /// The sheet's progress: the form being filled in, the link being made, then the made link.
+    public enum Step: Equatable, Sendable {
+        case form
+        case creating
+        case created(CreatedShare)
+    }
 
     @ObservableState
     public struct State: Equatable {
@@ -32,9 +39,10 @@ public struct CreateShareLinkFeature {
         /// preferences fetch doesn't stomp on their choice.
         var hasTouchedExpiry = false
 
-        public var isCreating = false
+        public var step: Step = .form
+        /// What the form says went wrong: a field left inconsistent, the user list failing to
+        /// load, or the server refusing the link. Several sources, so it lives beside `step`.
         public var errorMessage: String?
-        public var createdShare: CreatedShare?
         public var directLinkMode: DirectLinkMode = .auto
 
         /// Shareable-users list, loaded the first time "Specific users" is chosen.
@@ -59,8 +67,20 @@ public struct CreateShareLinkFeature {
             itemPath.isEmpty ? itemName : "\(itemPath)/\(itemName)"
         }
 
+        public var isCreating: Bool {
+            step == .creating
+        }
+
+        public var createdShare: CreatedShare? {
+            if case let .created(share) = step {
+                return share
+            }
+            return nil
+        }
+
+        /// Only the form makes a link: never a second one while the first is on its way or made.
         public var isCreateEnabled: Bool {
-            guard !isCreating else { return false }
+            guard step == .form else { return false }
             if target == .users {
                 return !selectedUserIDs.isEmpty
             }
@@ -192,7 +212,7 @@ public struct CreateShareLinkFeature {
                     state.errorMessage = L10n.CreateShare.errorPastExpiration
                     return .none
                 }
-                state.isCreating = true
+                state.step = .creating
                 state.errorMessage = nil
                 let request = CreateShareLinkRequest(
                     sourcePath: state.sourcePath,
@@ -214,13 +234,12 @@ public struct CreateShareLinkFeature {
                 }
 
             case let .createResponse(.success(created)):
-                state.isCreating = false
-                state.createdShare = created
+                state.step = .created(created)
                 state.$shareLinksRevision.withLock { $0 += 1 }
                 return .none
 
             case let .createResponse(.failure(error)):
-                state.isCreating = false
+                state.step = .form
                 state.errorMessage = error.userMessage
                 return .none
             }

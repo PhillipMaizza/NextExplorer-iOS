@@ -32,7 +32,7 @@ private enum Constants {
 }
 
 /// The "Create Share Link" sheet: mirrors the web client's `ShareDialog.vue`, in the app's
-/// design-system idiom. Two phases: the form, then (`store.createdShare != nil`) the
+/// design-system idiom. Two screens: the form, then (`store.createdShare != nil`) the
 /// created-link confirmation.
 struct CreateShareLinkSheet: View {
     @Bindable var store: StoreOf<CreateShareLinkFeature>
@@ -410,7 +410,7 @@ struct CreateShareLinkSheet: View {
                         itemPath: "Documents/Bills",
                         isDirectory: true
                     )
-                    state.createdShare = CreatedShare(
+                    state.step = .created(CreatedShare(
                         share: Share(
                             id: "s1", shareToken: "UrkLIGIHMF", ownerId: "u",
                             sourcePath: "Documents/Bills/Electricity", isDirectory: true,
@@ -419,7 +419,7 @@ struct CreateShareLinkSheet: View {
                         ),
                         shareUrl: URL(string: "https://cloud.example.com/share/UrkLIGIHMF")!,
                         directFileUrl: URL(string: "https://cloud.example.com/api/share/UrkLIGIHMF/file")!
-                    )
+                    ))
                     return state
                 }()
             ) {
