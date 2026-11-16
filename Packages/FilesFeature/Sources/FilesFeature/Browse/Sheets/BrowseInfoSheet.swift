@@ -14,6 +14,7 @@ enum BrowseInfoSheetPhase: Identifiable, Equatable {
     case loading(FileItem)
     case result(FileItem)
 
+    @MainActor
     init?(store: StoreOf<BrowseFeature>) {
         guard let item = store.infoItem else { return nil }
         guard store.infoMetadata != nil || store.infoErrorMessage != nil else {

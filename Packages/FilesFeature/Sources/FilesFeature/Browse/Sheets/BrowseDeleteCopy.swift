@@ -7,6 +7,7 @@ import Localization
 import SwiftUI
 
 /// The words of the single and bulk delete confirmations.
+@MainActor
 enum BrowseDeleteCopy {
     static func title(_ store: StoreOf<BrowseFeature>) -> String {
         guard let item = store.deleteConfirmationItem else { return L10n.Browse.deleteConfirmTitle }

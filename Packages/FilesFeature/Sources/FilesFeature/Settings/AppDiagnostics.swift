@@ -17,7 +17,7 @@ enum AppDiagnostics {
         sysctlbyname("hw.model", nil, &size, nil, 0)
         var model = [CChar](repeating: 0, count: max(size, 1))
         sysctlbyname("hw.model", &model, &size, nil, 0)
-        return String(cString: model)
+        return text(model)
     }
 
     private static var chip: String {
@@ -25,7 +25,12 @@ enum AppDiagnostics {
         sysctlbyname("machdep.cpu.brand_string", nil, &size, nil, 0)
         var brand = [CChar](repeating: 0, count: max(size, 1))
         sysctlbyname("machdep.cpu.brand_string", &brand, &size, nil, 0)
-        return String(cString: brand)
+        return text(brand)
+    }
+
+    /// A sysctl string: its bytes up to the null terminator.
+    private static func text(_ bytes: [CChar]) -> String {
+        String(decoding: bytes.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }, as: UTF8.self)
     }
 
     private static var memoryGigabytes: Int {
