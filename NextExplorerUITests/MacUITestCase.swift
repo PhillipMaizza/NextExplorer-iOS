@@ -32,6 +32,12 @@
             app.staticTexts.showing(string)
         }
 
+        /// A section header (a text with the heading trait). `firstMatch` resolves a heading as a
+        /// plain element rather than a text and never finds it, so this takes the first of the full match.
+        func heading(_ string: String, in app: XCUIApplication) -> XCUIElement {
+            app.staticTexts.matching(NSPredicate(format: "label == %@", string)).element(boundBy: 0)
+        }
+
         /// The mocked search's fixed hit. A result row carries its name on the row itself rather
         /// than a separate text.
         func searchHit(in app: XCUIApplication) -> XCUIElement {
