@@ -490,6 +490,9 @@ public struct MainTabFeature {
                         return .send(.browse(.openTrash))
                     #endif
 
+                case .trash(.delegate(.restored)):
+                    return .send(.browse(.syncPathStack))
+
                 case let .trash(.delegate(.openPath(path, title))):
                     state.selectedTab = .browse
                     return .send(.browse(.navigateToDirectory(path: path, title: title)))

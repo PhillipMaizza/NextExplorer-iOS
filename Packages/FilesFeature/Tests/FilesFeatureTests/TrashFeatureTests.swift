@@ -150,6 +150,7 @@ struct TrashFeatureTests {
             $0.restore.notice = TrashNotice(text: L10n.Trash.restored(1), isFailure: false, sequence: 1)
         }
         await store.receive(.restore(.delegate(.finished)))
+        await store.receive(.delegate(.restored))
         await store.receive(\.loadResponse.success) { $0.items = [] }
         #expect(sent.value == [.drop])
     }
@@ -195,6 +196,7 @@ struct TrashFeatureTests {
             )
         }
         await store.receive(.restore(.delegate(.finished)))
+        await store.receive(.delegate(.restored))
         await store.receive(\.loadResponse.success) { $0.items = [] }
     }
 
@@ -242,6 +244,7 @@ struct TrashFeatureTests {
             )
         }
         await store.receive(.restore(.delegate(.finished)))
+        await store.receive(.delegate(.restored))
         await store.receive(\.loadResponse.success)
     }
 
@@ -273,6 +276,7 @@ struct TrashFeatureTests {
             $0.restore.isRestoringToFolder = false
         }
         await store.receive(.restore(.delegate(.finished)))
+        await store.receive(.delegate(.restored))
         await store.receive(\.loadResponse.success)
     }
 

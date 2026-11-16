@@ -76,6 +76,8 @@ public struct TrashFeature {
         public enum Delegate: Equatable, Sendable {
             /// Open Original Location: the folder an item was deleted from.
             case openPath(path: String, title: String)
+            /// Items went back into folders: listings on screen read them again.
+            case restored
         }
     }
 
@@ -103,13 +105,13 @@ public struct TrashFeature {
             case .restore(.delegate(.finished)):
                 state.isSelecting = false
                 state.selectedIDs = []
-                return load(&state)
+                return .merge(load(&state), .send(.delegate(.restored)))
 
             case let .folder(.presented(.delegate(.restored(isWholeFolder)))):
                 if isWholeFolder {
                     state.folder = nil
                 }
-                return load(&state)
+                return .merge(load(&state), .send(.delegate(.restored)))
 
             case let .loadResponse(.success(listing)):
                 state.phase = .loaded

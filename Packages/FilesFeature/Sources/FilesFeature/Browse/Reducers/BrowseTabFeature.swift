@@ -214,6 +214,9 @@ public struct BrowseTabFeature {
                 state.trash = nil
                 return .send(.navigateToDirectory(path: path, title: title))
 
+            case .trash(.presented(.delegate(.restored))):
+                return .send(.syncPathStack)
+
             case .trash:
                 return .none
 
