@@ -82,7 +82,7 @@ extension BrowseFeature {
         return .run { send in
             try await send(.transferResponse(apiResult {
                 if retry.resolution == .replace, !retry.itemsToReplace.isEmpty {
-                    try await filesClient.deleteItems(serverURL, retry.itemsToReplace)
+                    _ = try await filesClient.deleteItems(serverURL, retry.itemsToReplace, false)
                 }
                 let result = try await filesClient.transferItems(
                     serverURL,

@@ -122,7 +122,7 @@ extension BrowseFeature {
             // Animated so the row visibly slides out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
             try await send(.deleteResponse(apiResult {
-                try await filesClient.deleteItems(serverURL, [item])
+                _ = try await filesClient.deleteItems(serverURL, [item], false)
                 return DeleteResult(itemID: itemID)
             }), animation: DSMotion.listDiff)
         }
@@ -142,7 +142,7 @@ extension BrowseFeature {
             // Animated so the rows visibly slide out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
             try await send(.bulkDeleteResponse(apiResult {
-                try await filesClient.deleteItems(serverURL, itemsToDelete)
+                _ = try await filesClient.deleteItems(serverURL, itemsToDelete, false)
                 return BulkDeleteResult(itemIDs: itemIDs)
             }), animation: DSMotion.listDiff)
         }

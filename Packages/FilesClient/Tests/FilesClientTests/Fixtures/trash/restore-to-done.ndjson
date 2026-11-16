@@ -1,0 +1,3 @@
+{"type":"start","totalBytes":2048,"totalItems":1,"destination":"Files/Restored"}
+{"type":"progress","copiedBytes":2048,"totalBytes":2048,"currentName":"a.txt","completedItems":1}
+{"type":"done","destination":"Files/Restored","items":[{"id":"t1","status":"restored","name":"a.txt","restoredName":"a.txt","renamed":false,"path":"Files/Restored"}]}

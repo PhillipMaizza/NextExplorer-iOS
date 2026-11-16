@@ -111,7 +111,10 @@ struct FileRedoTests {
         let deleted = LockIsolated<[String]>([])
         let created = LockIsolated<[String]>([])
         let store = store(undo: [FileUndoEntry(.madeNew(made))]) {
-            $0.filesClient.deleteItems = { _, items in deleted.withValue { $0 += items.map(\.id) } }
+            $0.filesClient.deleteItems = { _, items, _ in
+                deleted.withValue { $0 += items.map(\.id) }
+                return DeleteOutcome()
+            }
             $0.filesClient.createFolder = { _, path, name in
                 created.withValue { $0.append("\(path)/\(name)") }
                 return remade
@@ -147,7 +150,7 @@ struct FileRedoTests {
     func anUndoneCopyIsNeverOfferedForRedo() async {
         let copy = folder(Constants.newFolderName)
         let store = store(undo: [FileUndoEntry(.created([copy]))]) {
-            $0.filesClient.deleteItems = { _, _ in }
+            $0.filesClient.deleteItems = { _, _, _ in DeleteOutcome() }
         }
 
         await store.send(.undoTapped) {

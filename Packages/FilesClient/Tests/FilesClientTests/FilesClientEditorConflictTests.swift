@@ -262,7 +262,7 @@ extension FilesClientLiveTests {
             let cases: [(String, @Sendable (FilesClient) async throws -> Void)] = [
                 ("rename", { _ = try await $0.renameItem(serverURL, item, "m.txt") }),
                 ("move", { _ = try await $0.transferItems(serverURL, [item], "Other", .move) }),
-                ("delete", { try await $0.deleteItems(serverURL, [item]) }),
+                ("delete", { _ = try await $0.deleteItems(serverURL, [item], false) }),
             ]
             for (name, operation) in cases {
                 resetStubs()

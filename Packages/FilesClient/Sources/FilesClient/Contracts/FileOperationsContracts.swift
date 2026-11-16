@@ -86,5 +86,7 @@ extension FilesService {
         }
 
         let items: [Item]
+        /// Sent only as `true`: left out, the server uses the trash when it has one.
+        var permanent: Bool?
     }
 }

@@ -1,0 +1,4 @@
+{
+  "personal": { "enabled": true },
+  "trash": { "enabled": true, "retentionDays": 30 }
+}

@@ -85,7 +85,8 @@ extension FilesClientLiveTests {
                 size: 0,
                 kind: FileItem.directoryKind
             )
-            try await makeClient().deleteItems(serverURL, [first, second])
+            let outcome = try await makeClient().deleteItems(serverURL, [first, second], false)
+            #expect(outcome.items.isEmpty)
             let request = try #require(StubURLProtocol.capturedRequest)
             #expect(request.httpMethod == HTTPMethod.delete.rawValue)
             let body = try #require(StubURLProtocol.capturedRequestBody)
@@ -94,6 +95,26 @@ extension FilesClientLiveTests {
             #expect(items.count == 2)
             #expect(items[0]["name"] == TestFile.aText)
             #expect(items[1]["kind"] == "directory")
+            #expect(json["permanent"] == nil)
+        }
+
+        @Test
+        func deleteItemsSendsPermanentOnlyWhenAskedAndReadsEachOutcome() async throws {
+            try stub(statusCode: 200, body: FilesClientFixture.itemMutationDeleteOutcomeMixed.data())
+            let item = FileItem(
+                name: TestFile.aText,
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 0,
+                kind: TestKind.text
+            )
+
+            let outcome = try await makeClient().deleteItems(serverURL, [item], true)
+
+            #expect(outcome.items.map(\.status) == [.trashed, .deleted, .missing, .kept, .unknown])
+            let body = try #require(StubURLProtocol.capturedRequestBody)
+            let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+            #expect(json["permanent"] as? Bool == true)
         }
 
         @Test
@@ -107,7 +128,7 @@ extension FilesClientLiveTests {
                 kind: TestKind.text
             )
             await #expect(throws: FilesClientError.forbidden(message: nil)) {
-                try await makeClient().deleteItems(serverURL, [item])
+                _ = try await makeClient().deleteItems(serverURL, [item], false)
             }
         }
 
@@ -115,7 +136,7 @@ extension FilesClientLiveTests {
         func deleteItemsWithAnEmptyArrayStillSendsTheRequest() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.commonSuccessNoItems.data())
             StubURLProtocol.capturedRequest = nil
-            try await makeClient().deleteItems(serverURL, [])
+            _ = try await makeClient().deleteItems(serverURL, [], false)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [[String: String]]])
             #expect(json["items"]?.isEmpty == true)

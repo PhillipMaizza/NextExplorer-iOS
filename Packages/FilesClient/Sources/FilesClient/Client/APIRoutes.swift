@@ -15,6 +15,12 @@ enum APIPath {
     static let trashZones = "api/trash/zones"
     static let trashVerify = "api/trash/verify"
     static let trashMaintenance = "api/trash/maintenance"
+    static let trash = "api/trash"
+    static let trashItems = "api/trash/items"
+    static let trashRestore = "api/trash/restore"
+    static let trashRestoreTo = "api/trash/restore-to"
+    static let trashDelete = "api/trash/delete"
+    static let trashEmpty = "api/trash/empty"
     static let branding = "api/branding"
     static let uploadLogo = "api/settings/upload-logo"
     static let features = "api/features"
@@ -65,6 +71,10 @@ enum APIPath {
     enum Component {
         static let password = "password"
         static let volumes = "volumes"
+        static let entries = "entries"
+        static let text = "text"
+        static let restore = "restore"
+        static let restoreTo = "restore-to"
     }
 }
 

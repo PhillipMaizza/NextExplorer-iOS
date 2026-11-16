@@ -1,0 +1,15 @@
+{
+  "shareCount": 0,
+  "shares": [],
+  "trash": {
+    "enabled": true,
+    "retentionDays": 7,
+    "items": [
+      { "path": "Files/a.txt", "disposition": "trash", "reason": null, "shareCount": 0 },
+      { "path": "Files/big.iso", "disposition": "permanent", "reason": "too-large", "shareCount": 0, "versionCount": 2, "versionBytes": 2048 },
+      { "path": "Other/c.txt", "disposition": "permanent", "reason": "other-device", "shareCount": 0 },
+      { "path": "Other/d.txt", "disposition": "permanent", "reason": "too-large", "shareCount": 0 },
+      { "path": "Other/e.txt", "disposition": "sideways", "reason": "a-new-reason", "shareCount": 0 }
+    ]
+  }
+}

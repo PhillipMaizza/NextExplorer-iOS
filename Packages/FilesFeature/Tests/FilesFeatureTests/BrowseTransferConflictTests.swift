@@ -55,7 +55,10 @@ struct BrowseTransferConflictTests {
         let gate = AsyncGate()
         let calls = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(conflictState()) {
-            $0.filesClient.deleteItems = { _, items in calls.withValue { $0.append("delete \(items.map(\.id))") } }
+            $0.filesClient.deleteItems = { _, items, _ in
+                calls.withValue { $0.append("delete \(items.map(\.id))") }
+                return DeleteOutcome()
+            }
             $0.filesClient.transferItems = { _, items, destination, _ in
                 calls.withValue { $0.append("transfer \(items.map(\.id))") }
                 try await gate.wait()
@@ -85,7 +88,10 @@ struct BrowseTransferConflictTests {
     func keepBothTransfersWithoutDeletingAnything() async {
         let gate = AsyncGate()
         let store = BrowseFixtures.store(conflictState()) {
-            $0.filesClient.deleteItems = { _, items in Issue.record("Deleted \(items.map(\.id)) on keep both") }
+            $0.filesClient.deleteItems = { _, items, _ in
+                Issue.record("Deleted \(items.map(\.id)) on keep both")
+                return DeleteOutcome()
+            }
             $0.filesClient.transferItems = { _, items, destination, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination, renamedTo: [TestFile.aText: "a 2.txt"])

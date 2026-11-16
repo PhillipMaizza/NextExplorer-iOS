@@ -64,9 +64,9 @@ extension BrowseFeature {
             try await send(.undoResponse(apiResult {
                 switch entry.kind {
                 case let .created(items):
-                    try await filesClient.deleteItems(serverURL, items)
+                    _ = try await filesClient.deleteItems(serverURL, items, false)
                 case let .madeNew(item):
-                    try await filesClient.deleteItems(serverURL, [item])
+                    _ = try await filesClient.deleteItems(serverURL, [item], false)
                 case let .moved(moves):
                     let byParent = Dictionary(grouping: moves, by: \.originalParent)
                     for (parent, group) in byParent {

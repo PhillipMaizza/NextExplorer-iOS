@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "items": [
+    { "path": "Files/a.txt", "status": "trashed", "trashItemId": "t1" },
+    { "path": "Files/b.txt", "status": "deleted", "deletedShareCount": 1 },
+    { "path": "Files/c.txt", "status": "missing" },
+    { "path": "Files/big", "status": "kept", "reason": "too-large", "size": 3435973837, "budgetBytes": 2147483648 },
+    { "path": "Files/e.txt", "status": "vanished" }
+  ]
+}

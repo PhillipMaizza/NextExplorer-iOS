@@ -1,0 +1,5 @@
+{
+  "items": [
+    { "id": "t1", "status": "restored", "name": "a.txt", "restoredName": "a (1).txt", "renamed": true, "path": "Files", "sharesRestored": 1, "sharesDropped": 0 }
+  ]
+}

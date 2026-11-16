@@ -70,7 +70,10 @@ struct BrowseDeleteAndArchiveTests {
         state.deleteConfirmationItem = photo
         let deleted = LockIsolated<[[String]]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, items in deleted.withValue { $0.append(items.map(\.id)) } }
+            $0.filesClient.deleteItems = { _, items, _ in
+                deleted.withValue { $0.append(items.map(\.id)) }
+                return DeleteOutcome()
+            }
         }
 
         await store.send(.deleteConfirmed) {
@@ -91,7 +94,7 @@ struct BrowseDeleteAndArchiveTests {
         var state = BrowseFixtures.state(items: [photo])
         state.deleteConfirmationItem = photo
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, _ in }
+            $0.filesClient.deleteItems = { _, _, _ in DeleteOutcome() }
         }
 
         await store.send(.deleteConfirmed) {
@@ -109,7 +112,7 @@ struct BrowseDeleteAndArchiveTests {
         var state = BrowseFixtures.state(items: [photo])
         state.deleteConfirmationItem = photo
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, _ in throw FilesClientError.server(statusCode: 403) }
+            $0.filesClient.deleteItems = { _, _, _ in throw FilesClientError.server(statusCode: 403) }
         }
 
         await store.send(.deleteConfirmed) {
@@ -130,7 +133,7 @@ struct BrowseDeleteAndArchiveTests {
         let clock = TestClock()
         let store = BrowseFixtures.store(state) {
             $0.continuousClock = clock
-            $0.filesClient.deleteItems = { _, _ in }
+            $0.filesClient.deleteItems = { _, _, _ in DeleteOutcome() }
         }
 
         await store.send(.deleteConfirmedFromPreview) {

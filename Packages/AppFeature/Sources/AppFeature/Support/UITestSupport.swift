@@ -308,7 +308,10 @@
                     return store.createFolder(in: path, named: name)
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
-                client.deleteItems = { _, items in store.delete(items) }
+                client.deleteItems = { _, items, _ in
+                    store.delete(items)
+                    return DeleteOutcome()
+                }
                 client.transferItems = { _, items, destination, operation in
                     store.transfer(items, to: destination, operation: operation)
                 }
