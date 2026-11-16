@@ -134,6 +134,8 @@ Lanes (`bundle exec fastlane <lane>`, `ios` is the default platform):
 
 Uploads carry the version's `gen-changelog.py` notes as TestFlight's "What to Test" and go to the "External Testers" group (override with `TESTFLIGHT_GROUPS`); the internal group receives every build on its own, and App Store Connect refuses to assign one to it.
 
+To ship hand written notes instead of the generated ones, put one `- ` bullet per user facing change in a file and pass it as `RELEASE_NOTES_FILE`: it becomes What's New, "What to Test" and the GitHub Release text, and the lane refuses it if it is empty or over the App Store's 4000 character limit.
+
 Mac only lanes (`bundle exec fastlane mac <lane>`):
 
 - `unit_tests`: every package's tests on the Mac.
