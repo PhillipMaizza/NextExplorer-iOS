@@ -24,7 +24,7 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
     @Test
     func removeAllDownloadsConfirmedDeletesEveryDownloadOfThisAccountAndDelegatesUpward() async {
         var state = makeState()
-        state.removeAllDownloadsConfirmationIsPresented = true
+        state.removeAllDownloadsPhase = .confirming
         state.downloadsSize = 30
         state.$downloadScope.withLock { $0 = Constants.accountA }
         let downloads = [
@@ -44,11 +44,10 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         }
 
         await store.send(.removeAllDownloadsConfirmed) {
-            $0.removeAllDownloadsConfirmationIsPresented = false
-            $0.isRemovingAllDownloads = true
+            $0.removeAllDownloadsPhase = .running
         }
         await store.receive(\.removeAllDownloadsResponse) {
-            $0.isRemovingAllDownloads = false
+            $0.removeAllDownloadsPhase = .idle
             $0.hasDownloads = false
             $0.downloadsSize = 0
         }
@@ -61,7 +60,7 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
     @Test
     func removeAllDownloadsConfirmedIsBestEffortWhenOneFileFailsToDelete() async {
         var state = makeState()
-        state.removeAllDownloadsConfirmationIsPresented = true
+        state.removeAllDownloadsPhase = .confirming
         let downloads = [
             download(TestFile.aPDF, size: 10),
             download(TestFile.bPhoto, size: 20),
@@ -80,11 +79,10 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         }
 
         await store.send(.removeAllDownloadsConfirmed) {
-            $0.removeAllDownloadsConfirmationIsPresented = false
-            $0.isRemovingAllDownloads = true
+            $0.removeAllDownloadsPhase = .running
         }
         await store.receive(\.removeAllDownloadsResponse) {
-            $0.isRemovingAllDownloads = false
+            $0.removeAllDownloadsPhase = .idle
             $0.hasDownloads = false
         }
         await store.receive(\.delegate, .allDownloadsRemoved)
@@ -95,7 +93,7 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
     @Test(arguments: [false, true])
     func clearCacheConfirmedClearsTheCacheAndResetsTheSizeEvenWhenClearingFails(clearFails: Bool) async {
         var state = makeState()
-        state.clearCacheConfirmationIsPresented = true
+        state.clearCachePhase = .confirming
         state.cacheSize = 4096
         let clears = LockIsolated(0)
         let uploadThumbnailClears = LockIsolated(0)
@@ -112,11 +110,10 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         }
 
         await store.send(.clearCacheConfirmed) {
-            $0.clearCacheConfirmationIsPresented = false
-            $0.isClearingCache = true
+            $0.clearCachePhase = .running
         }
         await store.receive(\.clearCacheResponse) {
-            $0.isClearingCache = false
+            $0.clearCachePhase = .idle
             $0.cacheSize = 0
         }
 

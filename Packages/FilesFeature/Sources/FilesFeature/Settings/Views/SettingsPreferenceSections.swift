@@ -284,7 +284,7 @@ struct StorageSettingsSection: View {
                     ) {
                         store.send(.removeAllDownloadsTapped)
                     }
-                    .disabled(store.isRemovingAllDownloads || !store.hasDownloads)
+                    .disabled(store.removeAllDownloadsPhase.isRunning || !store.hasDownloads)
                     .opacity(store.hasDownloads ? Constants.fullOpacity : Constants.disabledOpacity)
                 }
                 if filter.matches(L10n.Settings.rowClearCache) {
@@ -296,7 +296,7 @@ struct StorageSettingsSection: View {
                     ) {
                         store.send(.clearCacheTapped)
                     }
-                    .disabled(store.isClearingCache || store.cacheSize == 0)
+                    .disabled(store.clearCachePhase.isRunning || store.cacheSize == 0)
                     .opacity(store.cacheSize > 0 ? Constants.fullOpacity : Constants.disabledOpacity)
                 }
             } header: {

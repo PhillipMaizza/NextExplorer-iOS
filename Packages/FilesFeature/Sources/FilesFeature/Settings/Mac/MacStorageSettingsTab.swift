@@ -28,7 +28,7 @@
                             Text(FileSizeFormat.string(store.cacheSize))
                                 .monospacedDigit()
                             Button(L10n.Settings.rowClearCache + "…") { store.send(.clearCacheTapped) }
-                                .disabled(store.isClearingCache || store.cacheSize == 0)
+                                .disabled(store.clearCachePhase.isRunning || store.cacheSize == 0)
                         }
                     }
                 } footer: {

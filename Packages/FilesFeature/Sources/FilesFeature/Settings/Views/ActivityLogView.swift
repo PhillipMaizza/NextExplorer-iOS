@@ -55,7 +55,7 @@ struct ActivityLogView: View {
             eventsCard
             clearButton
         }
-        .dsAlert(isPresented: Binding(get: { store.isConfirmingClear }, set: { _ in })) {
+        .dsAlert(isPresented: Binding(get: { store.clearPhase.isConfirming }, set: { _ in })) {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: L10n.ActivityLog.clearTitle,
@@ -202,7 +202,7 @@ struct ActivityLogView: View {
     }
 
     private var clearButton: some View {
-        DSButton(L10n.ActivityLog.clear, icon: IconKit.delete, style: .failure, isLoading: store.isClearing) {
+        DSButton(L10n.ActivityLog.clear, icon: IconKit.delete, style: .failure, isLoading: store.clearPhase.isRunning) {
             store.send(.clearTapped)
         }
         .formActionAlignment()

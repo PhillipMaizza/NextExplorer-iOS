@@ -114,8 +114,7 @@ public struct SettingsFeature {
         /// dialog; cleared on cancel or confirm.
         public var accountPendingRemoval: AccountSummary?
         public var isLoadingPreferences = false
-        public var removeAllDownloadsConfirmationIsPresented = false
-        public var isRemovingAllDownloads = false
+        public var removeAllDownloadsPhase: ConfirmPhase = .idle
         /// Checked independently of the Downloads tab's own state (which may never have
         /// loaded, if the user hasn't visited that tab this session): this is what actually
         /// disables "Remove All Downloads" until there's proof there's nothing to remove.
@@ -133,8 +132,7 @@ public struct SettingsFeature {
             offlineSize > 0 || offlineProgress.phase != .idle
         }
 
-        public var isClearingCache = false
-        public var clearCacheConfirmationIsPresented = false
+        public var clearCachePhase: ConfirmPhase = .idle
         /// Durable offline store size for this account, read from `OfflineFileStore` on appear and
         /// refreshed when a download run completes.
         public var offlineSize: Int64 = 0
@@ -760,16 +758,15 @@ public struct SettingsFeature {
             return .send(.delegate(.removeAccount(id)))
 
         case .removeAllDownloadsTapped:
-            state.removeAllDownloadsConfirmationIsPresented = true
+            state.removeAllDownloadsPhase.ask()
             return .none
 
         case .removeAllDownloadsCancelled:
-            state.removeAllDownloadsConfirmationIsPresented = false
+            state.removeAllDownloadsPhase.cancel()
             return .none
 
         case .removeAllDownloadsConfirmed:
-            state.removeAllDownloadsConfirmationIsPresented = false
-            state.isRemovingAllDownloads = true
+            state.removeAllDownloadsPhase = .running
             let localDownloadStore = localDownloadStore
             let downloadScope = state.downloadScope
             return .run { send in
@@ -783,7 +780,7 @@ public struct SettingsFeature {
             }
 
         case .removeAllDownloadsResponse:
-            state.isRemovingAllDownloads = false
+            state.removeAllDownloadsPhase = .idle
             state.hasDownloads = false
             state.downloadsSize = 0
             return .send(.delegate(.allDownloadsRemoved))
@@ -801,16 +798,15 @@ public struct SettingsFeature {
             return .none
 
         case .clearCacheTapped:
-            state.clearCacheConfirmationIsPresented = true
+            state.clearCachePhase.ask()
             return .none
 
         case .clearCacheCancelled:
-            state.clearCacheConfirmationIsPresented = false
+            state.clearCachePhase.cancel()
             return .none
 
         case .clearCacheConfirmed:
-            state.clearCacheConfirmationIsPresented = false
-            state.isClearingCache = true
+            state.clearCachePhase = .running
             let previewCacheStore = previewCacheStore
             let directoryCacheStore = directoryCacheStore
             let jsonCacheStore = jsonCacheStore
@@ -828,7 +824,7 @@ public struct SettingsFeature {
             }
 
         case .clearCacheResponse:
-            state.isClearingCache = false
+            state.clearCachePhase = .idle
             state.cacheSize = 0
             return .none
 
