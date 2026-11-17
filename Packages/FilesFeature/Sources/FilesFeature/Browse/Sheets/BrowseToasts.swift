@@ -21,7 +21,7 @@ struct BrowseToasts: ViewModifier {
         content
             .dsToast(messageBinding, extraBottomInset: extraBottomInset)
             .dsToast(progressBinding, extraBottomInset: extraBottomInset)
-            .modifier(BrowseDeleteProgress(store: store, bottomInset: extraBottomInset, isEnabled: !inPreview))
+            .modifier(BrowseOperationProgress(store: store, bottomInset: extraBottomInset, isEnabled: isFrontmost))
     }
 
     private var messageBinding: Binding<DSToastMessage?> {

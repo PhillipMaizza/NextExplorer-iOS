@@ -24,7 +24,7 @@ extension FilesClientLiveTests {
             )
 
             await #expect(throws: FilesClientError.timedOut) {
-                _ = try await makeClient().deleteItems(serverURL, [item], false)
+                _ = try await makeClient().deleteItems(serverURL, [item], false, nil)
             }
             resetStubs()
         }
@@ -121,8 +121,8 @@ extension FilesClientLiveTests {
 
             _ = try await client.fetchTextContent(serverURL, item.id)
             _ = try await client.browse(serverURL, TestFolder.docs)
-            _ = try await client.deleteItems(serverURL, [item], false)
-            _ = try await client.transferItems(serverURL, [item], "Other", .move)
+            _ = try await client.deleteItems(serverURL, [item], false, nil)
+            _ = try await client.transferItems(serverURL, [item], "Other", .move, nil)
 
             func timeout(_ method: String, _ path: String) -> TimeInterval? {
                 StubURLProtocol.requests.first { $0.httpMethod == method && $0.url?.path == path }?.timeoutInterval

@@ -63,11 +63,11 @@ struct FileUndoTests {
         let gate = AsyncGate()
 
         let store = store(initial) {
-            $0.filesClient.transferItems = { _, _, destination, _ in
+            $0.filesClient.transferItems = { _, _, destination, _, _ in
                 try await gate.wait()
                 return TransferResult(destination: destination, items: [.init(from: "Docs/Misc", to: "Docs/Misc (2)")])
             }
-            $0.filesClient.deleteItems = { _, items, _ in
+            $0.filesClient.deleteItems = { _, items, _, _ in
                 deleted.setValue(items)
                 return DeleteOutcome()
             }
@@ -75,7 +75,7 @@ struct FileUndoTests {
 
         await store.send(.duplicateSelectionTapped) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [misc], destination: TestFolder.docs, operation: .copy, clearClipboard: false,
                 resolution: .keepBoth, itemsToReplace: []
@@ -84,7 +84,7 @@ struct FileUndoTests {
         gate.open()
         await store.receive(\.transferResponse.success) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.pendingTransferRetry = nil
             $0.transferSuccessMessage = L10n.Browse.transferCopied(1)
             $0.items = IdentifiedArray(uniqueElements: [misc, copy])
@@ -129,7 +129,7 @@ struct FileUndoTests {
 
         let store = store(state(TestFolder.docs, items: [report, archive])) {
             $0.filesClient.browse = { _, path in BrowseResult(items: [], access: access, path: path) }
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 moves.withValue { $0.append(items.map(\.id)) }
                 destinations.withValue { $0.append(destination) }
@@ -144,7 +144,7 @@ struct FileUndoTests {
 
         await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressMoving
+            $0.transferProgress = 0
             $0.pendingTransferRetry = retry
         }
         await store.receive(\.transferConflictCheckResponse.success) {
@@ -153,7 +153,7 @@ struct FileUndoTests {
         gate.open()
         await store.receive(\.transferResponse.success) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.pendingTransferRetry = nil
             $0.transferSuccessMessage = L10n.Browse.transferMoved(1)
             $0.items = IdentifiedArray(uniqueElements: [archive])

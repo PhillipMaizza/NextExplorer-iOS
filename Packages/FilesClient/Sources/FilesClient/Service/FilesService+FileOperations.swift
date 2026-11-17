@@ -464,7 +464,8 @@ extension FilesService {
     /// folder moved into itself) comes back with a message worth surfacing verbatim. Once the
     /// transfer starts the answer is a progress stream whose `done` line carries the result.
     func transferItems(
-        serverURL: URL, items: [FileItem], destination: String, operation: TransferOperation
+        serverURL: URL, items: [FileItem], destination: String, operation: TransferOperation,
+        onProgress: (@Sendable (Double) -> Void)? = nil
     ) async throws -> TransferResult {
         let scope = activeScope()
         let endpoint = operation == .copy ? APIPath.filesCopy : APIPath.filesMove
@@ -480,7 +481,7 @@ extension FilesService {
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
-        let result = try await sendStreamedOperation(request, decoding: TransferResult.self)
+        let result = try await sendStreamedOperation(request, decoding: TransferResult.self, onProgress: onProgress)
         if operation == .move {
             for item in items {
                 textEditorETags.forget(scope: scope, serverURL: serverURL, path: item.id)

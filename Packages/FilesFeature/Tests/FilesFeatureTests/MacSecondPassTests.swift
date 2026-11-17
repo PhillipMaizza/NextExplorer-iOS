@@ -95,9 +95,10 @@ import TestUtils
             let store = TestStore(initialState: state) {
                 BrowseFeature()
             } withDependencies: {
-                $0.filesClient.transferItems = { _, items, destination, operation in
+                $0.filesClient.transferItems = { _, items, destination, operation, _ in
                     transferred
-                        .withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)")
+                        .withValue {
+                            $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)")
                         }
                     try await transfer.wait()
                     return TransferResult(
@@ -112,7 +113,7 @@ import TestUtils
                 destination: TestFolder.docs
             )) {
                 $0.isPerformingFileAction = true
-                $0.fileActionProgressMessage = L10n.Browse.progressMoving
+                $0.transferProgress = 0
                 $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                     items: [elsewhere], destination: TestFolder.docs, operation: .move, clearClipboard: false,
                     resolution: .keepBoth, itemsToReplace: []
@@ -121,7 +122,7 @@ import TestUtils
             transfer.open()
             await store.receive(\.transferResponse.success) {
                 $0.isPerformingFileAction = false
-                $0.fileActionProgressMessage = nil
+                $0.transferProgress = nil
                 $0.pendingTransferRetry = nil
                 $0.transferSuccessMessage = L10n.Browse.transferMoved(1)
                 $0.items = [alreadyHere, moved]

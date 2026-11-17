@@ -117,7 +117,7 @@ enum BrowseFixtures {
         let copies = alreadyListed + listed
         await store.receive(\.transferResponse.success) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.pendingTransferRetry = nil
             $0.transferSuccessMessage = message
             for item in listed {
@@ -165,9 +165,9 @@ enum BrowseFixtures {
     ) -> TestStoreOf<BrowseFeature> {
         TestStore(initialState: state ?? self.state()) {
             BrowseFeature()
-        } withDependencies: {
-            $0.date = .constant(MockDate.date)
-            configure(&$0)
+        } withDependencies: { deps in
+            deps.date = .constant(MockDate.date)
+            configure(&deps)
         }
     }
 }

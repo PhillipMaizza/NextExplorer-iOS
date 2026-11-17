@@ -214,7 +214,8 @@
             /// Like `normal`, but the folder holds one file of every kind the gallery pages
             /// through, and text files read back `galleryNotesText`.
             case gallery
-            /// Like `normal`, but a delete reports 40 percent and then waits until it is cancelled, so the
+            /// Like `normal`, but a delete, copy or move reports 40 percent and then waits until it is cancelled, so
+            /// the
             /// progress bar and its Cancel button stay on screen.
             case slowOperations
         }
@@ -314,10 +315,9 @@
                     return store.createFolder(in: path, named: name)
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
-                client.deleteItems = { _, items, permanent in store.delete(items, permanent: permanent) }
-                client.deleteItemsWithProgress = { _, items, permanent, onProgress in
+                client.deleteItems = { _, items, permanent, onProgress in
                     guard scenario == .slowOperations else { return store.delete(items, permanent: permanent) }
-                    onProgress(heldProgress)
+                    onProgress?(heldProgress)
                     try await Task.sleep(for: .seconds(heldSeconds))
                     return store.delete(items, permanent: permanent)
                 }
@@ -343,8 +343,13 @@
                 }
                 client.purgeTrash = { _, ids, _ in store.purge(ids) }
                 client.emptyTrash = { _ in store.emptyTrash() }
-                client.transferItems = { _, items, destination, operation in
-                    store.transfer(items, to: destination, operation: operation)
+                client.transferItems = { _, items, destination, operation, onProgress in
+                    guard scenario == .slowOperations else {
+                        return store.transfer(items, to: destination, operation: operation)
+                    }
+                    onProgress?(heldProgress)
+                    try await Task.sleep(for: .seconds(heldSeconds))
+                    return store.transfer(items, to: destination, operation: operation)
                 }
                 client.compressItem = { _, item in store.compress(item) }
                 // Offline: a folder's estimate and a per file "download" that completes instantly, so

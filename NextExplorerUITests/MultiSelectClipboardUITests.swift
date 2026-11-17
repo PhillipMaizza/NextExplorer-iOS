@@ -84,5 +84,28 @@
             XCTAssertTrue(pill.waitToVanish(), "Cancel should remove the progress bar")
             XCTAssertTrue(browse.item(Fixture.file).exists, "A cancelled delete keeps the rows")
         }
+
+        func testCancellingARunningPasteRemovesTheProgressBar() {
+            let app = launchApp(auth: .loggedIn, scenario: .slowOperations)
+            let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+
+            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.copyAction)
+            browse.copyAction.tap()
+            browse.item(Fixture.folder).tap()
+            XCTAssertTrue(browse.moreMenu.waitToAppear())
+            openMenu({ browse.moreMenu.tap() }, until: browse.pasteMenuItem)
+            browse.pasteMenuItem.tap()
+
+            // The mocked folder already holds notes.txt, so the collision prompt comes first.
+            XCTAssertTrue(browse.keepBothButton.waitToAppear())
+            browse.keepBothButton.tap()
+
+            let pill = browse.copyProgressPill
+            XCTAssertTrue(pill.waitToAppear(), "A running copy should show its progress bar")
+            pill.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
+
+            XCTAssertTrue(pill.waitToVanish(), "Cancel should remove the progress bar")
+        }
     }
 #endif

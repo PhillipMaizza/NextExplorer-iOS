@@ -61,7 +61,7 @@ struct FileRedoTests {
         let entry = FileUndoEntry(.moved([FileUndoEntry.MovedItem(item: movedReport, originalParent: TestFolder.docs)]))
         let moves = LockIsolated<[String]>([])
         let store = store(redo: [entry]) {
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 moves.withValue { $0 += items.map { "\($0.id)>\(destination) \(operation)" } }
                 return TransferResult(destination: destination, items: [])
             }
@@ -111,7 +111,7 @@ struct FileRedoTests {
         let deleted = LockIsolated<[String]>([])
         let created = LockIsolated<[String]>([])
         let store = store(undo: [FileUndoEntry(.madeNew(made))]) {
-            $0.filesClient.deleteItems = { _, items, _ in
+            $0.filesClient.deleteItems = { _, items, _, _ in
                 deleted.withValue { $0 += items.map(\.id) }
                 return DeleteOutcome()
             }
@@ -150,7 +150,7 @@ struct FileRedoTests {
     func anUndoneCopyIsNeverOfferedForRedo() async {
         let copy = folder(Constants.newFolderName)
         let store = store(undo: [FileUndoEntry(.created([copy]))]) {
-            $0.filesClient.deleteItems = { _, _, _ in DeleteOutcome() }
+            $0.filesClient.deleteItems = { _, _, _, _ in DeleteOutcome() }
         }
 
         await store.send(.undoTapped) {

@@ -295,6 +295,16 @@ struct BrowseScreen {
         app.labeledButton(L10n.Browse.actionDelete)
     }
 
+    /// The collision prompt's choice that keeps both files, shown when a paste meets a same named item.
+    var keepBothButton: XCUIElement {
+        app.labeledButton(L10n.Browse.transferConflictKeepBoth)
+    }
+
+    /// The floating pill of a running copy.
+    var copyProgressPill: XCUIElement {
+        app.labeledButton(L10n.Browse.progressCopying)
+    }
+
     /// The floating pill of a running bulk delete.
     var deleteProgressPill: XCUIElement {
         app.labeledButton(L10n.Browse.progressDeleting)

@@ -100,8 +100,8 @@ struct BrowseSelectionTests {
         state.favoritePaths = [folder.id]
         let deleted = LockIsolated<[Set<String>]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItemsWithProgress = { _, items, _, onProgress in
-                onProgress(0.5)
+            $0.filesClient.deleteItems = { _, items, _, onProgress in
+                onProgress?(0.5)
                 deleted.withValue { $0.append(Set(items.map(\.id))) }
                 return DeleteOutcome()
             }
@@ -130,7 +130,7 @@ struct BrowseSelectionTests {
     @Test("A failed bulk delete shows a readable message and keeps the selection")
     func bulkDeleteConfirmedFailureSurfacesAReadableErrorMessage() async {
         let store = BrowseFixtures.store(selectingState(selected: [folder.id])) {
-            $0.filesClient.deleteItemsWithProgress = { _, _, _, _ in throw FilesClientError.server(statusCode: 403) }
+            $0.filesClient.deleteItems = { _, _, _, _ in throw FilesClientError.server(statusCode: 403) }
         }
 
         await store.send(.bulkDeleteConfirmed) {

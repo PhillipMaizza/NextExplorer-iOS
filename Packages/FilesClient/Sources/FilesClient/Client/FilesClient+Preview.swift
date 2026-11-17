@@ -95,14 +95,8 @@ public extension FilesClient {
             )
         },
         deleteImpact: { _, _ in DeleteImpact(shareCount: 0) },
-        deleteItems: { _, _, _ in DeleteOutcome() },
-        deleteItemsWithProgress: { _, _, _, _ in DeleteOutcome() },
-        transferItems: { _, items, destination, _ in
-            TransferResult(
-                destination: destination,
-                items: items.map { TransferResult.Entry(from: $0.id, to: "\(destination)/\($0.name)") }
-            )
-        },
+        deleteItems: { _, _, _, _ in DeleteOutcome() },
+        transferItems: { _, items, destination, _, _ in previewTransfer(items, destination) },
         recentDestinations: { _ in ["Documents/Projects", "Media/Photos"] },
         folderSizes: { _, paths in
             Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(sizeBytes: 48_000_000, indexed: true)) })
@@ -562,4 +556,11 @@ extension Volume {
         Volume(name: "media", path: "media"),
         Volume(name: "home", path: "home"),
     ]
+}
+
+private func previewTransfer(_ items: [FileItem], _ destination: String) -> TransferResult {
+    TransferResult(
+        destination: destination,
+        items: items.map { TransferResult.Entry(from: $0.id, to: "\(destination)/\($0.name)") }
+    )
 }

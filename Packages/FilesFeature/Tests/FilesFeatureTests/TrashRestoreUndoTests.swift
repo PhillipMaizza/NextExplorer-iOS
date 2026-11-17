@@ -43,7 +43,7 @@ struct TrashRestoreUndoTests {
         let sent = LockIsolated<[FileItem]>([])
         let store = store {
             $0.filesClient.restoreTrash = { _, _, _, _, _ in TrashActionResult(items: [restored]) }
-            $0.filesClient.deleteItems = { _, items, permanent in
+            $0.filesClient.deleteItems = { _, items, permanent, _ in
                 #expect(!permanent)
                 sent.setValue(items)
                 return DeleteOutcome(items: [.init(path: items[0].id, status: .trashed)])
@@ -94,7 +94,7 @@ struct TrashRestoreUndoTests {
     func undoFailure() async {
         let store = store {
             $0.filesClient.restoreTrash = { _, _, _, _, _ in TrashActionResult(items: [restored]) }
-            $0.filesClient.deleteItems = { _, _, _ in throw FilesClientError.offline }
+            $0.filesClient.deleteItems = { _, _, _, _ in throw FilesClientError.offline }
         }
 
         await store.send(.restore(.items(["t3"]), shareCount: 0)) { $0.phase = .inPlace }

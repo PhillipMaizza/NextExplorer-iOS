@@ -86,7 +86,7 @@ struct BrowseMoveAndUploadReviewTests {
         gate.open()
         await store.receive(\.transferResponse.success) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.pendingTransferRetry = nil
             $0.transferSuccessMessage = message
             $0.$undoStack.withLock {
@@ -119,7 +119,7 @@ struct BrowseMoveAndUploadReviewTests {
                 events.withValue { $0.append("list \(path)") }
                 return BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path)
             }
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 events.withValue { $0.append("\(operation) \(items.map(\.id)) to \(destination)") }
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
@@ -129,7 +129,7 @@ struct BrowseMoveAndUploadReviewTests {
         await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: TestFolder.archive))))) {
             $0.destinationPicker = nil
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressMoving
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [incoming], destination: TestFolder.archive, operation: .move, clearClipboard: false
             )
@@ -154,7 +154,7 @@ struct BrowseMoveAndUploadReviewTests {
                 access: BrowseTestSupport.readOnlyAccess,
                 path: path
             ) }
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult([items[0], items[1]], to: destination, skipping: [items[2]])
             }
@@ -163,7 +163,7 @@ struct BrowseMoveAndUploadReviewTests {
         await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: TestFolder.archive))))) {
             $0.destinationPicker = nil
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressMoving
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [incoming, second, third], destination: TestFolder.archive, operation: .move,
                 clearClipboard: false

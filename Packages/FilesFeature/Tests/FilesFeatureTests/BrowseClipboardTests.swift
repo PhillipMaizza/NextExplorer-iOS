@@ -85,7 +85,7 @@ struct BrowseClipboardTests {
         let gate = AsyncGate()
         let requests = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 requests
                     .withValue {
                         $0.append("\(items.map(\.id).joined(separator: ",")) to \(destination) as \(operation)")
@@ -97,7 +97,7 @@ struct BrowseClipboardTests {
 
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = pasteRetry(clearClipboard: true)
         }
         gate.open()
@@ -107,13 +107,78 @@ struct BrowseClipboardTests {
         #expect(requests.value == ["Inbox/a.txt to Documents as copy"])
     }
 
+    @Test("A running paste reports its progress to the bar")
+    func pasteReportsItsProgress() async {
+        let state = makeState()
+        state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
+        let gate = AsyncGate()
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.transferItems = { _, items, destination, _, onProgress in
+                onProgress?(0.5)
+                try await gate.wait()
+                return BrowseFixtures.transferResult(items, to: destination)
+            }
+        }
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
+            $0.isPerformingFileAction = true
+            $0.transferProgress = 0
+            $0.pendingTransferRetry = pasteRetry(clearClipboard: true)
+        }
+        await store.receive(\.transferProgressed) {
+            $0.transferProgress = 0.5
+        }
+        gate.open()
+        await BrowseFixtures.receiveCopyIntoOpenFolder(
+            store, listed: [landed], message: L10n.Browse.transferCopied(1), clearsClipboard: true
+        )
+    }
+
+    @Test("Cancel during a transfer ends the run and reads the folder again")
+    func transferCancelEndsTheRunAndReloads() async {
+        var state = makeState()
+        state.isPerformingFileAction = true
+        state.transferProgress = 0.3
+        state.pendingTransferRetry = pasteRetry(clearClipboard: false)
+        let favorites = AsyncGate()
+        let store = BrowseFixtures.store(state) {
+            $0.serveEmptyFolders()
+            $0.serveListing([])
+            $0.holdFavorites(favorites)
+        }
+
+        await store.send(.transferCancelTapped) {
+            $0.isPerformingFileAction = false
+            $0.transferProgress = nil
+            $0.pendingTransferRetry = nil
+            $0.phase = .loading
+        }
+        await store.receive(\.itemsResponse.success) {
+            $0.phase = .loaded
+            $0.access = BrowseTestSupport.readOnlyAccess
+            $0.items = []
+        }
+        favorites.open()
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
+        await store.finish()
+    }
+
+    @Test("Cancel with no transfer running does nothing")
+    func transferCancelWithNothingRunningDoesNothing() async {
+        let store = BrowseFixtures.store(makeState())
+
+        await store.send(.transferCancelTapped)
+    }
+
     @Test("Paste keeps the clipboard when keep items after copy is on")
     func pasteKeepsTheClipboardWhenKeepItemsAfterCopyIsOn() async {
         let state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
             }
@@ -121,7 +186,7 @@ struct BrowseClipboardTests {
 
         await store.send(.pasteTapped(keepItemsAfterCopy: true)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = pasteRetry(clearClipboard: false)
         }
         gate.open()
@@ -138,7 +203,7 @@ struct BrowseClipboardTests {
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming, second, third], operation: .copy) }
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult([items[0], items[1]], to: destination, skipping: [items[2]])
             }
@@ -146,7 +211,7 @@ struct BrowseClipboardTests {
 
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [incoming, second, third], destination: TestFolder.documents, operation: .copy,
                 clearClipboard: true, resolution: .keepBoth
@@ -166,7 +231,7 @@ struct BrowseClipboardTests {
         let state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, _, _, _ in throw FilesClientError.serverMessage(
+            $0.filesClient.transferItems = { _, _, _, _, _ in throw FilesClientError.serverMessage(
                 statusCode: 500,
                 message: "Nope."
             ) }
@@ -174,12 +239,12 @@ struct BrowseClipboardTests {
 
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = pasteRetry(clearClipboard: true)
         }
         await store.receive(\.transferResponse.failure) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.transferErrorMessage = "Nope."
         }
     }
@@ -191,7 +256,7 @@ struct BrowseClipboardTests {
         let attempts = LockIsolated(0)
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 let attempt = attempts.withValue { value -> Int in
                     value += 1
                     return value
@@ -206,17 +271,17 @@ struct BrowseClipboardTests {
 
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = pasteRetry(clearClipboard: true)
         }
         await store.receive(\.transferResponse.failure) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.transferErrorMessage = "Nope."
         }
         await store.send(.retryTransferTapped) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.transferErrorMessage = nil
         }
         gate.open()
@@ -269,7 +334,7 @@ struct BrowseClipboardTests {
         let gate = AsyncGate()
         let requests = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 requests
                     .withValue {
                         $0.append("\(items.map(\.id).joined(separator: ",")) to \(destination) as \(operation)")
@@ -281,7 +346,7 @@ struct BrowseClipboardTests {
 
         await store.send(.duplicateSelectionTapped) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [original], destination: TestFolder.documents, operation: .copy, clearClipboard: false,
                 resolution: .keepBoth

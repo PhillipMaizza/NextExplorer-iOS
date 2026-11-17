@@ -69,20 +69,18 @@ public struct FilesClient: Sendable {
     /// A warning source for the delete confirmation; the delete itself is never gated on it.
     public var deleteImpact: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> DeleteImpact
     /// `DELETE /api/files`: to the trash when the server has one, unless `permanent`. The answer
-    /// says per item where it went; an item the trash refused stays on disk as `kept`.
+    /// says per item where it went; an item the trash refused stays on disk as `kept`. With `onProgress`
+    /// the call goes to the streamed delete route and reports progress (0 to 1) as the server works
+    /// through the items; a server without the route (404) gets the plain delete instead.
     public var deleteItems: @Sendable (
-        _ serverURL: URL, _ items: [FileItem], _ permanent: Bool
-    ) async throws -> DeleteOutcome
-    /// The streamed delete route: the same delete, answering with progress (0 to 1) as the
-    /// server works through the items. A server without the route (404) gets the plain delete instead.
-    public var deleteItemsWithProgress: @Sendable (
-        _ serverURL: URL, _ items: [FileItem], _ permanent: Bool, _ onProgress: @escaping @Sendable (Double) -> Void
+        _ serverURL: URL, _ items: [FileItem], _ permanent: Bool, _ onProgress: (@Sendable (Double) -> Void)?
     ) async throws -> DeleteOutcome
     /// `POST /api/files/copy` or `/api/files/move` depending on `operation`. `destination` is
     /// the target directory's relative path; the server rejects an empty one ("Cannot copy or
-    /// move items to the root path").
+    /// move items to the root path"). With `onProgress`, reports progress (0 to 1, by bytes).
     public var transferItems: @Sendable (
-        _ serverURL: URL, _ items: [FileItem], _ destination: String, _ operation: TransferOperation
+        _ serverURL: URL, _ items: [FileItem], _ destination: String, _ operation: TransferOperation,
+        _ onProgress: (@Sendable (Double) -> Void)?
     ) async throws -> TransferResult
     /// `GET /api/files/recent-destinations`: relative folder paths, most recent first.
     public var recentDestinations: @Sendable (_ serverURL: URL) async throws -> [String]

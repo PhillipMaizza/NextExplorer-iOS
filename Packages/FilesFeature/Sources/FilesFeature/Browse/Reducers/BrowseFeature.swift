@@ -200,6 +200,8 @@ public struct BrowseFeature {
         public var isBulkActionInFlight = false
         /// How far the running bulk delete is (0 to 1); nil when none runs. Drives the progress bar.
         public var bulkDeleteProgress: Double?
+        /// How far the running copy or move is (0 to 1); nil when none runs.
+        public var transferProgress: Double?
         public var bulkDeleteConfirmationIsPresented = false
         /// Items the trash refused during the last delete, still on disk. Non empty puts up the
         /// prompt that offers to delete them for good.
@@ -585,6 +587,8 @@ public struct BrowseFeature {
         case retryTransferTapped
         case transferConflictCheckResponse(Result<[FileItem], FilesClientError>)
         case transferConflictResolved(TransferConflictChoice?)
+        case transferProgressed(Double)
+        case transferCancelTapped
         case transferResponse(Result<TransferOutcome, FilesClientError>)
         case destinationPicker(PresentationAction<DestinationPickerFeature.Action>)
         case infoTapped(FileItem)

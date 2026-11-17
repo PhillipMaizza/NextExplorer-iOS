@@ -66,7 +66,7 @@ struct BrowseDropReducerTests {
         gate.open()
         await store.receive(\.transferResponse.success) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.pendingTransferRetry = nil
             $0.transferSuccessMessage = L10n.Browse.transferMoved(moved.count)
             $0.items = IdentifiedArray(uniqueElements: remaining)
@@ -96,7 +96,7 @@ struct BrowseDropReducerTests {
                 access: BrowseFixtures.writableAccess,
                 path: path
             ) }
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 requests.withValue { $0.append("\(operation) \(items.map(\.id)) to \(destination)") }
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
@@ -105,7 +105,7 @@ struct BrowseDropReducerTests {
 
         await store.send(.itemsDroppedOnFolder(ids: rows.map(\.id), folder: archive)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressMoving
+            $0.transferProgress = 0
             $0.pendingTransferRetry = movingRetry(rows, to: "Docs/Archive")
         }
         await receiveMoveIntoArchive(store, moved: rows, remaining: [archive], gate: gate)
@@ -168,17 +168,57 @@ struct BrowseDropReducerTests {
 
         await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressMoving
+            $0.transferProgress = 0
             $0.pendingTransferRetry = movingRetry([report], to: "Docs/Archive")
         }
         await store.receive(\.transferConflictCheckResponse) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.transferConflict = BrowseFeature.TransferConflict(
                 retry: movingRetry([report], to: "Docs/Archive"),
                 collidingItems: [clash]
             )
         }
+    }
+
+    @Test("Cancel while the drop still checks the destination ends the run and reads the folder again")
+    func cancelDuringTheConflictCheckEndsTheRunAndReloads() async {
+        let report = BrowseDropFixtures.entry(TestFile.report)
+        let favorites = AsyncGate()
+        let listings = LockIsolated(0)
+        let store = BrowseFixtures.store(state(items: [report, archive])) {
+            $0.serveEmptyFolders()
+            $0.holdFavorites(favorites)
+            $0.filesClient.browse = { _, path in
+                // The first listing is the destination check, left hanging for Cancel to stop.
+                if listings.withValue({ $0 += 1; return $0 }) == 1 {
+                    try await suspendUntilCancelled()
+                }
+                return BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path)
+            }
+        }
+
+        await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive)) {
+            $0.isPerformingFileAction = true
+            $0.transferProgress = 0
+            $0.pendingTransferRetry = movingRetry([report], to: "Docs/Archive")
+        }
+        await store.send(.transferCancelTapped) {
+            $0.isPerformingFileAction = false
+            $0.transferProgress = nil
+            $0.pendingTransferRetry = nil
+            $0.phase = .loading
+        }
+        await store.receive(\.itemsResponse.success) {
+            $0.phase = .loaded
+            $0.access = BrowseTestSupport.readOnlyAccess
+            $0.items = []
+        }
+        favorites.open()
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
+        await store.finish()
     }
 
     @Test("A rejected move shows the server's message and keeps the row")
@@ -191,12 +231,12 @@ struct BrowseDropReducerTests {
                 access: BrowseFixtures.writableAccess,
                 path: path
             ) }
-            $0.filesClient.transferItems = { _, _, _, _ in throw rejection }
+            $0.filesClient.transferItems = { _, _, _, _, _ in throw rejection }
         }
 
         await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressMoving
+            $0.transferProgress = 0
             $0.pendingTransferRetry = movingRetry([report], to: "Docs/Archive")
         }
         await store.receive(\.transferConflictCheckResponse) {
@@ -204,7 +244,7 @@ struct BrowseDropReducerTests {
         }
         await store.receive(\.transferResponse.failure) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.transferErrorMessage = rejection.userMessage
         }
     }

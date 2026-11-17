@@ -248,7 +248,7 @@ struct BrowseTabFeatureTests {
         let transferred = LockIsolated<[String]>([])
         let store = makeStore(state) {
             $0.date = .constant(now)
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 transferred
                     .withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)") }
                 try await transfer.wait()
@@ -271,7 +271,7 @@ struct BrowseTabFeatureTests {
 
         await store.send(.path(.element(id: id, action: .pasteTapped(keepItemsAfterCopy: false)))) {
             $0.path[id: id]?.isPerformingFileAction = true
-            $0.path[id: id]?.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.path[id: id]?.transferProgress = 0
             $0.path[id: id]?.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [misc], destination: TestFolder.docs, operation: .copy, clearClipboard: true,
                 resolution: .keepBoth, itemsToReplace: []
@@ -280,7 +280,7 @@ struct BrowseTabFeatureTests {
         transfer.open()
         await store.receive(\.path[id: id].transferResponse.success) {
             $0.path[id: id]?.isPerformingFileAction = false
-            $0.path[id: id]?.fileActionProgressMessage = nil
+            $0.path[id: id]?.transferProgress = nil
             $0.path[id: id]?.pendingTransferRetry = nil
             $0.path[id: id]?.$clipboard.withLock { $0 = nil }
             $0.path[id: id]?.transferSuccessMessage = L10n.Browse.transferCopied(1)

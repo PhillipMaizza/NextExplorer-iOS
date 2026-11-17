@@ -288,10 +288,22 @@ extension BrowseFeature {
                 return .none
             }
 
+        case let .transferProgressed(fraction):
+            state.transferProgress = fraction
+            return .none
+
+        case .transferCancelTapped:
+            guard state.transferProgress != nil else { return .none }
+            state.isPerformingFileAction = false
+            state.transferProgress = nil
+            state.pendingTransferRetry = nil
+            // The server stops where it was: what it already copied or moved stays, so read the folder again.
+            return .merge(.cancel(id: CancelID.transfer), load(&state))
+
         case let .transferResponse(.success(outcome)):
             let sources = state.pendingTransferRetry?.items ?? []
             state.isPerformingFileAction = false
-            state.fileActionProgressMessage = nil
+            state.transferProgress = nil
             state.pendingTransferRetry = nil
             state.transferErrorMessage = nil
             if outcome.clearClipboard {
@@ -304,7 +316,7 @@ extension BrowseFeature {
 
         case let .transferResponse(.failure(error)):
             state.isPerformingFileAction = false
-            state.fileActionProgressMessage = nil
+            state.transferProgress = nil
             state.transferErrorMessage = error.userMessage
             return refetchAfterAmbiguousFailure(&state, error)
 
