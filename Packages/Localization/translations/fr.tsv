@@ -392,6 +392,9 @@ userManagement.setPasswordSetIntro	Donnez à %@ un mot de passe local pour qu'il
 userManagement.toastProfileUpdated	Profil mis à jour
 userManagement.toastAdminGranted	Administrateur accordé
 userManagement.toastUserRemoved	Utilisateur supprimé
+userManagement.toastUnlocked	Compte déverrouillé
+userManagement.toastTwoFactorReset	Authentification à deux facteurs réinitialisée
+userManagement.toastPasskeysRemoved	Passkeys supprimées
 userManagement.toastUserCreated	Utilisateur créé
 userManagement.toastPasswordUpdated	Mot de passe mis à jour
 userManagement.toastVolumeSaved	Volume enregistré
@@ -437,6 +440,20 @@ userDetail.removeVolumeTitle	Retirer le volume ?
 userDetail.removeVolumeMessage	%@ est retiré de cet utilisateur. Le répertoire lui-même n'est pas touché.
 userDetail.removeUserTitle	Supprimer l'utilisateur ?
 userDetail.removeUserMessage	%@ perd immédiatement l'accès. Ses fichiers sur le serveur ne sont pas supprimés.
+userDetail.sectionAccountRecovery	Récupération du compte
+userDetail.lockTitle	Verrouillage de connexion
+userDetail.lockedUntil	Verrouillé après trop d'échecs de connexion jusqu'à %@.
+userDetail.lockRelease	Déverrouiller
+userDetail.twoFactorTitle	Authentification à deux facteurs
+userDetail.twoFactorOn	Activée. Réinitialisez-la si l'utilisateur a perdu son appareil et ses codes de récupération.
+userDetail.twoFactorReset	Réinitialiser
+userDetail.passkeysTitle	Passkeys
+userDetail.passkeysSubtitle	Supprime toutes les passkeys. L'utilisateur se connecte avec son mot de passe et peut ensuite ajouter une nouvelle passkey.
+userDetail.passkeysRemove	Tout supprimer
+userDetail.resetTwoFactorTitle	Réinitialiser l'authentification à deux facteurs ?
+userDetail.resetTwoFactorMessage	%@ pourra se connecter sans seconde étape jusqu'à sa nouvelle configuration.
+userDetail.resetPasskeysTitle	Supprimer les passkeys ?
+userDetail.resetPasskeysMessage	Toutes les passkeys de %@ sont supprimées. Il se connecte avec son mot de passe.
 userDetail.grantAdminTitle	Accorder les droits d’administrateur ?
 userDetail.grantAdminMessage	%@ deviendra administrateur avec un contrôle total sur les fichiers, les partages et les utilisateurs. Un administrateur ne peut pas être rétrogradé depuis l’app.
 userDetail.volumeSheetLabelField	Libellé

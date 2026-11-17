@@ -391,6 +391,9 @@ userManagement.setPasswordSetIntro	Assegna a %@ una password locale così può a
 userManagement.toastProfileUpdated	Profilo aggiornato
 userManagement.toastAdminGranted	Amministratore concesso
 userManagement.toastUserRemoved	Utente rimosso
+userManagement.toastUnlocked	Account sbloccato
+userManagement.toastTwoFactorReset	Autenticazione a due fattori reimpostata
+userManagement.toastPasskeysRemoved	Passkey rimosse
 userManagement.toastUserCreated	Utente creato
 userManagement.toastPasswordUpdated	Password aggiornata
 userManagement.toastVolumeSaved	Volume salvato
@@ -436,6 +439,20 @@ userDetail.removeVolumeTitle	Rimuovere il volume?
 userDetail.removeVolumeMessage	%@ viene rimosso da questo utente. La directory non viene toccata.
 userDetail.removeUserTitle	Rimuovere l'utente?
 userDetail.removeUserMessage	%@ perde subito l'accesso. I suoi file sul server non vengono eliminati.
+userDetail.sectionAccountRecovery	Recupero dell'account
+userDetail.lockTitle	Blocco di accesso
+userDetail.lockedUntil	Bloccato dopo troppi tentativi di accesso falliti fino a %@.
+userDetail.lockRelease	Sblocca
+userDetail.twoFactorTitle	Autenticazione a due fattori
+userDetail.twoFactorOn	Attiva. Reimpostala se l'utente ha perso il dispositivo e i codici di recupero.
+userDetail.twoFactorReset	Reimposta
+userDetail.passkeysTitle	Passkey
+userDetail.passkeysSubtitle	Rimuove ogni passkey. L'utente accede con la password e poi può aggiungere una nuova passkey.
+userDetail.passkeysRemove	Rimuovi tutte
+userDetail.resetTwoFactorTitle	Reimpostare l'autenticazione a due fattori?
+userDetail.resetTwoFactorMessage	%@ potrà accedere senza un secondo passaggio finché non la configura di nuovo.
+userDetail.resetPasskeysTitle	Rimuovere le passkey?
+userDetail.resetPasskeysMessage	Tutte le passkey di %@ vengono rimosse. Accede con la password.
 userDetail.grantAdminTitle	Concedere i permessi di amministratore?
 userDetail.grantAdminMessage	%@ diventerà amministratore con pieno controllo su file, condivisioni e utenti. Gli amministratori non possono essere declassati dall'app.
 userDetail.volumeSheetLabelField	Etichetta

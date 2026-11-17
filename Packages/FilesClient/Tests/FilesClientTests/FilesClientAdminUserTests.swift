@@ -226,6 +226,31 @@ extension FilesClientLiveTests {
             }
         }
 
+        // MARK: resetUserSecurity
+
+        @Test(arguments: [
+            (UserSecurityReset.lock, "/api/users/u1/lock"),
+            (UserSecurityReset.twoFactor, "/api/users/u1/two-factor"),
+            (UserSecurityReset.passkeys, "/api/users/u1/passkeys"),
+        ])
+        func resetUserSecuritySendsADeleteToTheMatchingRoute(reset: UserSecurityReset, path: String) async throws {
+            prepareEmpty(statusCode: 204)
+
+            try await makeClient().resetUserSecurity(serverURL, Constants.userID, reset)
+
+            try expectRequest(.delete, path)
+            expectNoBody()
+        }
+
+        @Test
+        func resetUserSecuritySurfacesAMissingUserAsTheBareStatus() async throws {
+            prepareEmpty(statusCode: 404)
+
+            await #expect(throws: FilesClientError.server(statusCode: 404)) {
+                try await makeClient().resetUserSecurity(serverURL, Constants.userID, .lock)
+            }
+        }
+
         // MARK: volumes
 
         @Test

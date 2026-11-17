@@ -85,6 +85,9 @@
                     onDismiss: { store.send(.grantAdminCancelled) }
                 )
             }
+            .dsAlert(isPresented: Binding(get: { store.isConfirmingSecurityReset }, set: { _ in })) {
+                securityResetAlert(store: store)
+            }
             .dsAlert(isPresented: Binding(get: { store.userToDelete != nil }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.delete,

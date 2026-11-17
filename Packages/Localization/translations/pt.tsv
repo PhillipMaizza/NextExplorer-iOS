@@ -391,6 +391,9 @@ userManagement.setPasswordSetIntro	Dê a %@ uma palavra-passe local para poder i
 userManagement.toastProfileUpdated	Perfil atualizado
 userManagement.toastAdminGranted	Administrador concedido
 userManagement.toastUserRemoved	Utilizador removido
+userManagement.toastUnlocked	Conta desbloqueada
+userManagement.toastTwoFactorReset	Autenticação de dois fatores reposta
+userManagement.toastPasskeysRemoved	Passkeys removidas
 userManagement.toastUserCreated	Utilizador criado
 userManagement.toastPasswordUpdated	Palavra-passe atualizada
 userManagement.toastVolumeSaved	Volume guardado
@@ -436,6 +439,20 @@ userDetail.removeVolumeTitle	Remover o volume?
 userDetail.removeVolumeMessage	%@ é desatribuído deste utilizador. O diretório em si não é afetado.
 userDetail.removeUserTitle	Remover o utilizador?
 userDetail.removeUserMessage	%@ perde o acesso de imediato. Os seus ficheiros no servidor não são eliminados.
+userDetail.sectionAccountRecovery	Recuperação da conta
+userDetail.lockTitle	Bloqueio de início de sessão
+userDetail.lockedUntil	Bloqueada após demasiadas tentativas falhadas de início de sessão até %@.
+userDetail.lockRelease	Desbloquear
+userDetail.twoFactorTitle	Autenticação de dois fatores
+userDetail.twoFactorOn	Ativa. Reponha se o utilizador perdeu o dispositivo e os códigos de recuperação.
+userDetail.twoFactorReset	Repor
+userDetail.passkeysTitle	Passkeys
+userDetail.passkeysSubtitle	Remove todas as passkeys. O utilizador inicia sessão com a palavra-passe e depois pode adicionar uma nova passkey.
+userDetail.passkeysRemove	Remover todas
+userDetail.resetTwoFactorTitle	Repor a autenticação de dois fatores?
+userDetail.resetTwoFactorMessage	%@ pode iniciar sessão sem um segundo passo até a configurar novamente.
+userDetail.resetPasskeysTitle	Remover passkeys?
+userDetail.resetPasskeysMessage	Todas as passkeys de %@ são removidas. Inicia sessão com a palavra-passe.
 userDetail.grantAdminTitle	Conceder permissões de administrador?
 userDetail.grantAdminMessage	%@ passa a ser administrador com controlo total sobre ficheiros, partilhas e utilizadores. Os administradores não podem ser despromovidos a partir da aplicação.
 userDetail.volumeSheetLabelField	Etiqueta

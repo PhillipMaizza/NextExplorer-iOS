@@ -404,6 +404,9 @@ userManagement.setPasswordSetIntro	Nadaj użytkownikowi %@ hasło lokalne, aby m
 userManagement.toastProfileUpdated	Zaktualizowano profil
 userManagement.toastAdminGranted	Przyznano uprawnienia administratora
 userManagement.toastUserRemoved	Usunięto użytkownika
+userManagement.toastUnlocked	Konto odblokowane
+userManagement.toastTwoFactorReset	Uwierzytelnianie dwuskładnikowe zresetowane
+userManagement.toastPasskeysRemoved	Klucze dostępu usunięte
 userManagement.toastUserCreated	Utworzono użytkownika
 userManagement.toastPasswordUpdated	Zaktualizowano hasło
 userManagement.toastVolumeSaved	Zapisano wolumin
@@ -449,6 +452,20 @@ userDetail.removeVolumeTitle	Usunąć wolumin?
 userDetail.removeVolumeMessage	%@ zostaje odpięty od tego użytkownika. Sam katalog nie zostaje naruszony.
 userDetail.removeUserTitle	Usunąć użytkownika?
 userDetail.removeUserMessage	%@ natychmiast traci dostęp. Jego pliki na serwerze nie są usuwane.
+userDetail.sectionAccountRecovery	Odzyskiwanie konta
+userDetail.lockTitle	Blokada logowania
+userDetail.lockedUntil	Zablokowane po zbyt wielu nieudanych próbach logowania do %@.
+userDetail.lockRelease	Odblokuj
+userDetail.twoFactorTitle	Uwierzytelnianie dwuskładnikowe
+userDetail.twoFactorOn	Włączone. Zresetuj, jeśli użytkownik zgubił urządzenie i kody odzyskiwania.
+userDetail.twoFactorReset	Zresetuj
+userDetail.passkeysTitle	Klucze dostępu
+userDetail.passkeysSubtitle	Usuwa wszystkie klucze dostępu. Użytkownik loguje się hasłem i może potem dodać nowy klucz dostępu.
+userDetail.passkeysRemove	Usuń wszystkie
+userDetail.resetTwoFactorTitle	Zresetować uwierzytelnianie dwuskładnikowe?
+userDetail.resetTwoFactorMessage	%@ będzie mieć dostęp bez drugiego kroku, dopóki nie skonfiguruje go ponownie.
+userDetail.resetPasskeysTitle	Usunąć klucze dostępu?
+userDetail.resetPasskeysMessage	Wszystkie klucze dostępu użytkownika %@ zostaną usunięte. Logowanie odbywa się hasłem.
 userDetail.grantAdminTitle	Nadać uprawnienia administratora?
 userDetail.grantAdminMessage	%@ zostanie administratorem z pełną kontrolą nad plikami, udostępnieniami i użytkownikami. Administratora nie można zdegradować z poziomu aplikacji.
 userDetail.volumeSheetLabelField	Etykieta

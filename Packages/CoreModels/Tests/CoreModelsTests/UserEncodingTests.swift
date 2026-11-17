@@ -21,7 +21,9 @@ struct UserEncodingTests {
             emailVerified: true,
             createdAt: MockDate.date,
             updatedAt: MockDate.date.addingTimeInterval(60),
-            authMethods: [AuthMethod(method: "password"), AuthMethod(method: "oidc", provider: "google")]
+            authMethods: [AuthMethod(method: "password"), AuthMethod(method: "oidc", provider: "google")],
+            lockedUntil: MockDate.date.addingTimeInterval(120),
+            twoFactorEnabled: true
         )
         let data = try JSONEncoder().encode(user)
         #expect(try JSONDecoder().decode(User.self, from: data) == user)
@@ -30,7 +32,7 @@ struct UserEncodingTests {
     @Test("optional fields that are nil are omitted while roles and flags are always written")
     func omitsNilOptionals() throws {
         let json = try object(User(id: "1", username: TestUser.alice, email: nil))
-        #expect(Set(json.keys) == ["id", "username", "roles", "emailVerified", "authMethods"])
+        #expect(Set(json.keys) == ["id", "username", "roles", "emailVerified", "authMethods", "twoFactorEnabled"])
         #expect(json["roles"] as? [String] == [])
         #expect(json["emailVerified"] as? Bool == false)
     }

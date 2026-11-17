@@ -43,6 +43,33 @@ struct UserDecodingTests {
         #expect(user.updatedAt != nil)
     }
 
+    @Test("admin list: a lock and a second factor decode, and a login response has neither")
+    func adminListCarriesLockAndTwoFactor() throws {
+        let user = try CoreModelsFixture.userAdminListLockedTwoFactor.decode(User.self)
+        #expect(user.isLocked)
+        #expect(user.lockedUntil == ServerTimestamp.date(from: "2027-01-15T10:30:00.000Z"))
+        #expect(user.twoFactorEnabled)
+
+        let plain = try CoreModelsFixture.userAdminWithEmail.decode(User.self)
+        #expect(!plain.isLocked)
+        #expect(!plain.twoFactorEnabled)
+    }
+
+    @Test("afterReset drops only what the reset clears")
+    func afterResetClearsOnlyTheMatchingState() throws {
+        let user = try CoreModelsFixture.userAdminListLockedTwoFactor.decode(User.self)
+
+        let unlocked = user.afterReset(.lock)
+        #expect(!unlocked.isLocked)
+        #expect(unlocked.twoFactorEnabled)
+
+        let withoutSecondFactor = user.afterReset(.twoFactor)
+        #expect(withoutSecondFactor.isLocked)
+        #expect(!withoutSecondFactor.twoFactorEnabled)
+
+        #expect(user.afterReset(.passkeys) == user)
+    }
+
     @Test("edge case: an unparseable timestamp degrades to nil rather than throwing")
     func garbageTimestampDegradesToNil() throws {
         let user = try CoreModelsFixture.userGarbageTimestamp.decode(User.self)

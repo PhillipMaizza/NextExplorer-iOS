@@ -14,6 +14,14 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
     public let updatedAt: Date?
     /// Only populated by the admin `GET /api/users` list; empty for `/api/auth/me`.
     public let authMethods: [AuthMethod]
+    /// Only populated by the admin `GET /api/users` list: the end of an active sign in lock.
+    public private(set) var lockedUntil: Date?
+    /// Only populated by the admin `GET /api/users` list.
+    public private(set) var twoFactorEnabled: Bool
+
+    public var isLocked: Bool {
+        lockedUntil != nil
+    }
 
     public var isAdmin: Bool {
         roles.contains(UserRole.admin)
@@ -37,7 +45,9 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         emailVerified: Bool = false,
         createdAt: Date? = nil,
         updatedAt: Date? = nil,
-        authMethods: [AuthMethod] = []
+        authMethods: [AuthMethod] = [],
+        lockedUntil: Date? = nil,
+        twoFactorEnabled: Bool = false
     ) {
         self.id = id
         self.username = username
@@ -48,10 +58,25 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.authMethods = authMethods
+        self.lockedUntil = lockedUntil
+        self.twoFactorEnabled = twoFactorEnabled
+    }
+
+    /// This user once the server has applied `reset`, so the list and detail can drop the lock or
+    /// the second factor without waiting for a reload.
+    public func afterReset(_ reset: UserSecurityReset) -> User {
+        var user = self
+        switch reset {
+        case .lock: user.lockedUntil = nil
+        case .twoFactor: user.twoFactorEnabled = false
+        case .passkeys: break
+        }
+        return user
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, username, email, displayName, roles, emailVerified, createdAt, updatedAt, authMethods
+        case id, username, email, displayName, roles, emailVerified, createdAt, updatedAt, authMethods, lockedUntil,
+             twoFactorEnabled
     }
 
     public init(from decoder: Decoder) throws {
@@ -68,6 +93,8 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         createdAt = Self.decodeTimestamp(container, forKey: .createdAt)
         updatedAt = Self.decodeTimestamp(container, forKey: .updatedAt)
         authMethods = (try? container.decodeIfPresent([AuthMethod].self, forKey: .authMethods)) ?? []
+        lockedUntil = Self.decodeTimestamp(container, forKey: .lockedUntil)
+        twoFactorEnabled = (try? container.decodeIfPresent(Bool.self, forKey: .twoFactorEnabled)) ?? false
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -81,6 +108,8 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         try container.encodeIfPresent(createdAt, forKey: .createdAt)
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try container.encode(authMethods, forKey: .authMethods)
+        try container.encodeIfPresent(lockedUntil, forKey: .lockedUntil)
+        try container.encode(twoFactorEnabled, forKey: .twoFactorEnabled)
     }
 
     /// `createdAt` and `updatedAt` are metadata the admin user list shows and nothing else

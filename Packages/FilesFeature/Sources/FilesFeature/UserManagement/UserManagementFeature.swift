@@ -28,6 +28,8 @@ public struct UserManagementFeature {
         case grantRole
         /// Delete for the open detail user, cancelled with the detail.
         case deleteUser
+        /// Unlock, two factor reset or passkey reset for the open detail user, cancelled with the detail.
+        case securityReset
         /// Volume assign and update for the open detail user, cancelled with the detail. Separate
         /// from `volumeRemoval` so removing a volume can't cancel a save whose sheet is spinning.
         case volumeSave
@@ -169,6 +171,15 @@ public struct UserManagementFeature {
         public var editEmail = ""
         public var isSavingProfile = false
         public var isUpdatingRoles = false
+        /// Pending two factor or passkey reset confirmation for the detail user. Both drop a
+        /// sign in protection, so they ask first; releasing a lock does not.
+        public var securityResetToConfirm: UserSecurityReset?
+        public var isResettingSecurity = false
+
+        /// Whether the two factor or passkey confirmation is on screen; a lock release never asks.
+        var isConfirmingSecurityReset: Bool {
+            securityResetToConfirm?.confirmTitle != nil
+        }
 
         /// Volumes tab.
         public var volumes: IdentifiedArrayOf<UserVolume> = []
@@ -290,6 +301,11 @@ public struct UserManagementFeature {
         case grantAdminConfirmed
         case rolesResponse(Result<User, FilesClientError>)
 
+        case securityResetTapped(UserSecurityReset)
+        case securityResetConfirmed
+        case securityResetCancelled
+        case securityResetResponse(User.ID, UserSecurityReset, Result<Bool, FilesClientError>)
+
         case deleteUserTapped(User)
         case deleteUserConfirmed
         case deleteUserCancelled
@@ -407,6 +423,8 @@ public struct UserManagementFeature {
                 state.isSavingProfile = false
                 state.isUpdatingRoles = false
                 state.userToGrantAdmin = nil
+                state.securityResetToConfirm = nil
+                state.isResettingSecurity = false
                 state.volumeSheet?.isSubmitting = false
                 if state.volumesPhase == .loading {
                     state.volumesPhase = .idle
@@ -416,6 +434,7 @@ public struct UserManagementFeature {
                         .cancel(id: CancelID.saveProfile),
                         .cancel(id: CancelID.grantRole),
                         .cancel(id: CancelID.deleteUser),
+                        .cancel(id: CancelID.securityReset),
                         .cancel(id: CancelID.volumeSave),
                         .cancel(id: CancelID.volumes),
                     ] + state.volumes.map { .cancel(id: CancelID.volumeRemoval($0.id)) }
@@ -516,6 +535,43 @@ public struct UserManagementFeature {
 
             case let .rolesResponse(.failure(error)):
                 state.isUpdatingRoles = false
+                state.detailErrorMessage = error.userMessage
+                return .none
+
+            case let .securityResetTapped(reset):
+                state.securityResetToConfirm = reset
+                return reset == .lock ? .send(.securityResetConfirmed) : .none
+
+            case .securityResetCancelled:
+                state.securityResetToConfirm = nil
+                return .none
+
+            case .securityResetConfirmed:
+                let reset = state.securityResetToConfirm
+                state.securityResetToConfirm = nil
+                guard let reset, let id = state.detailUserID, !state.isResettingSecurity else { return .none }
+                state.isResettingSecurity = true
+                state.detailErrorMessage = nil
+                let serverURL = state.serverURL
+                let filesClient = filesClient
+                return .run { send in
+                    try await send(.securityResetResponse(id, reset, apiResult {
+                        try await filesClient.resetUserSecurity(serverURL, id, reset)
+                        return true
+                    }))
+                }
+                .cancellable(id: CancelID.securityReset, cancelInFlight: true)
+
+            case let .securityResetResponse(id, reset, .success):
+                state.isResettingSecurity = false
+                if let user = state.users[id: id] {
+                    state.users[id: id] = user.afterReset(reset)
+                }
+                state.toast = reset.toast
+                return .none
+
+            case let .securityResetResponse(_, _, .failure(error)):
+                state.isResettingSecurity = false
                 state.detailErrorMessage = error.userMessage
                 return .none
 

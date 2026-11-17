@@ -202,6 +202,7 @@ enum CoreModelsFixture: String, FixtureFile {
 
     // MARK: user
 
+    case userAdminListLockedTwoFactor = "user/admin-list-locked-two-factor"
     case userAdminWithAuthMethods = "user/admin-with-auth-methods"
     case userAdminWithEmail = "user/admin-with-email"
     case userGarbageTimestamp = "user/garbage-timestamp"

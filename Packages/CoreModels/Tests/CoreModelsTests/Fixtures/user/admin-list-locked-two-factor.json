@@ -1,0 +1,13 @@
+{
+  "id": "2",
+  "username": "bob",
+  "email": "bob@example.com",
+  "roles": [],
+  "authMethods": [
+    {
+      "method": "local_password"
+    }
+  ],
+  "lockedUntil": "2027-01-15T10:30:00.000Z",
+  "twoFactorEnabled": true
+}

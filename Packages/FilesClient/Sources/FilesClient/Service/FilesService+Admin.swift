@@ -126,6 +126,16 @@ extension FilesService {
         try Self.validateReportingMessage(data, response)
     }
 
+    /// `DELETE /api/users/:id/{lock,two-factor,passkeys}` (admin) → 204. Each is idempotent on the
+    /// server, so a stale list showing a lock that already expired still succeeds.
+    func resetUserSecurity(serverURL: URL, userID: String, reset: UserSecurityReset) async throws {
+        let url = serverURL.appendingPathComponent(APIPath.users).appendingPathComponent(userID)
+            .appendingPathComponent(reset.rawValue)
+        let request = Self.makeRequest(url: url, method: .delete)
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+    }
+
     /// `GET /api/users/:id/volumes` (admin, `USER_VOLUMES` feature).
     func userVolumes(serverURL: URL, userID: String) async throws -> [UserVolume] {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID)

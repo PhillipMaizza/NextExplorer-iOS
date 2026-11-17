@@ -320,6 +320,9 @@ public struct FilesClient: Sendable {
     ) async throws -> Void
     /// `DELETE /api/users/:id`: remove a user. The server rejects deleting yourself or the last admin.
     public var deleteUser: @Sendable (_ serverURL: URL, _ userID: String) async throws -> Void
+    public var resetUserSecurity: @Sendable (
+        _ serverURL: URL, _ userID: String, _ reset: UserSecurityReset
+    ) async throws -> Void
 
     // MARK: Admin per user volumes (also require the `USER_VOLUMES` feature)
 

@@ -81,6 +81,9 @@ struct UserDetailView: View {
                 onDismiss: { store.send(.grantAdminCancelled) }
             )
         }
+        .dsAlert(isPresented: securityResetAlertPresented) {
+            securityResetAlert(store: store)
+        }
         .dsAlert(isPresented: deleteAlertPresented) {
             DSAlertSheet(
                 icon: IconKit.delete,
@@ -130,6 +133,10 @@ struct UserDetailView: View {
     /// of `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var removeVolumeAlertPresented: Binding<Bool> {
         Binding(get: { store.volumeToRemove != nil }, set: { _ in })
+    }
+
+    private var securityResetAlertPresented: Binding<Bool> {
+        Binding(get: { store.isConfirmingSecurityReset }, set: { _ in })
     }
 
     private var grantAdminAlertPresented: Binding<Bool> {

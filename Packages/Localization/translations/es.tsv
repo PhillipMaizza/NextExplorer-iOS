@@ -391,6 +391,9 @@ userManagement.setPasswordSetIntro	Dale a %@ una contraseña local para que pued
 userManagement.toastProfileUpdated	Perfil actualizado
 userManagement.toastAdminGranted	Administrador concedido
 userManagement.toastUserRemoved	Usuario eliminado
+userManagement.toastUnlocked	Cuenta desbloqueada
+userManagement.toastTwoFactorReset	Autenticación en dos pasos restablecida
+userManagement.toastPasskeysRemoved	Passkeys eliminadas
 userManagement.toastUserCreated	Usuario creado
 userManagement.toastPasswordUpdated	Contraseña actualizada
 userManagement.toastVolumeSaved	Volumen guardado
@@ -436,6 +439,20 @@ userDetail.removeVolumeTitle	¿Quitar el volumen?
 userDetail.removeVolumeMessage	%@ se desasigna de este usuario. El directorio en sí no se toca.
 userDetail.removeUserTitle	¿Eliminar usuario?
 userDetail.removeUserMessage	%@ pierde el acceso de inmediato. Sus archivos en el servidor no se eliminan.
+userDetail.sectionAccountRecovery	Recuperación de cuenta
+userDetail.lockTitle	Bloqueo de inicio de sesión
+userDetail.lockedUntil	Bloqueada por demasiados intentos fallidos de inicio de sesión hasta %@.
+userDetail.lockRelease	Desbloquear
+userDetail.twoFactorTitle	Autenticación en dos pasos
+userDetail.twoFactorOn	Activada. Restablécela si el usuario perdió su dispositivo y los códigos de recuperación.
+userDetail.twoFactorReset	Restablecer
+userDetail.passkeysTitle	Passkeys
+userDetail.passkeysSubtitle	Elimina todas las passkeys. El usuario inicia sesión con su contraseña y después puede añadir una nueva passkey.
+userDetail.passkeysRemove	Eliminar todas
+userDetail.resetTwoFactorTitle	¿Restablecer la autenticación en dos pasos?
+userDetail.resetTwoFactorMessage	%@ podrá iniciar sesión sin un segundo paso hasta que la vuelva a configurar.
+userDetail.resetPasskeysTitle	¿Eliminar passkeys?
+userDetail.resetPasskeysMessage	Se eliminan todas las passkeys de %@. Inicia sesión con su contraseña.
 userDetail.grantAdminTitle	¿Conceder permisos de administrador?
 userDetail.grantAdminMessage	%@ pasará a ser administrador con control total sobre archivos, recursos compartidos y usuarios. Los administradores no pueden ser degradados desde la app.
 userDetail.volumeSheetLabelField	Etiqueta

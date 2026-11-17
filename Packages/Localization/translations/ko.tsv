@@ -386,6 +386,9 @@ userManagement.setPasswordSetIntro	%@이(가) SSO 없이 로그인할 수 있도
 userManagement.toastProfileUpdated	프로필이 업데이트됨
 userManagement.toastAdminGranted	관리자 권한이 부여됨
 userManagement.toastUserRemoved	사용자가 제거됨
+userManagement.toastUnlocked	계정 잠금을 해제했습니다
+userManagement.toastTwoFactorReset	2단계 인증을 재설정했습니다
+userManagement.toastPasskeysRemoved	패스키를 삭제했습니다
 userManagement.toastUserCreated	사용자가 생성됨
 userManagement.toastPasswordUpdated	비밀번호가 업데이트됨
 userManagement.toastVolumeSaved	볼륨이 저장됨
@@ -431,6 +434,20 @@ userDetail.removeVolumeTitle	볼륨을 제거할까요?
 userDetail.removeVolumeMessage	%@이(가) 이 사용자에서 할당 해제됩니다. 디렉터리 자체는 영향을 받지 않습니다.
 userDetail.removeUserTitle	사용자를 제거할까요?
 userDetail.removeUserMessage	%@이(가) 즉시 접근 권한을 잃습니다. 서버의 파일은 삭제되지 않습니다.
+userDetail.sectionAccountRecovery	계정 복구
+userDetail.lockTitle	로그인 잠금
+userDetail.lockedUntil	로그인 실패가 반복되어 %@까지 잠겨 있습니다.
+userDetail.lockRelease	잠금 해제
+userDetail.twoFactorTitle	2단계 인증
+userDetail.twoFactorOn	켜짐. 사용자가 기기와 복구 코드를 잃어버렸다면 재설정하세요.
+userDetail.twoFactorReset	재설정
+userDetail.passkeysTitle	패스키
+userDetail.passkeysSubtitle	모든 패스키를 삭제합니다. 사용자는 비밀번호로 로그인하고 이후 새 패스키를 추가할 수 있습니다.
+userDetail.passkeysRemove	모두 삭제
+userDetail.resetTwoFactorTitle	2단계 인증을 재설정할까요?
+userDetail.resetTwoFactorMessage	다시 설정하기 전까지 %@ 님은 두 번째 단계 없이 로그인할 수 있습니다.
+userDetail.resetPasskeysTitle	패스키를 삭제할까요?
+userDetail.resetPasskeysMessage	%@ 님의 모든 패스키가 삭제됩니다. 비밀번호로 로그인합니다.
 userDetail.grantAdminTitle	관리자 권한을 부여할까요?
 userDetail.grantAdminMessage	%@ 님이 파일, 공유 및 사용자를 완전히 제어하는 관리자가 됩니다. 앱에서는 관리자 권한을 해제할 수 없습니다.
 userDetail.volumeSheetLabelField	레이블

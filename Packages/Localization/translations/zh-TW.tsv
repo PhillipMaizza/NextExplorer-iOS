@@ -386,6 +386,9 @@ userManagement.setPasswordSetIntro	為 %@ 設定本機密碼，以便無需 SSO 
 userManagement.toastProfileUpdated	個人資料已更新
 userManagement.toastAdminGranted	已授予管理員權限
 userManagement.toastUserRemoved	使用者已移除
+userManagement.toastUnlocked	帳號已解除鎖定
+userManagement.toastTwoFactorReset	雙重驗證已重設
+userManagement.toastPasskeysRemoved	通行密鑰已移除
 userManagement.toastUserCreated	使用者已建立
 userManagement.toastPasswordUpdated	密碼已更新
 userManagement.toastVolumeSaved	卷宗已儲存
@@ -431,6 +434,20 @@ userDetail.removeVolumeTitle	移除卷宗？
 userDetail.removeVolumeMessage	%@ 已從此使用者取消指派。目錄本身不受影響。
 userDetail.removeUserTitle	移除使用者？
 userDetail.removeUserMessage	%@ 會立即失去取用權限。其在伺服器上的檔案不會被刪除。
+userDetail.sectionAccountRecovery	帳號復原
+userDetail.lockTitle	登入鎖定
+userDetail.lockedUntil	因登入失敗次數過多，已鎖定至 %@。
+userDetail.lockRelease	解除鎖定
+userDetail.twoFactorTitle	雙重驗證
+userDetail.twoFactorOn	已開啟。如果使用者遺失裝置和復原碼，請重設。
+userDetail.twoFactorReset	重設
+userDetail.passkeysTitle	通行密鑰
+userDetail.passkeysSubtitle	移除所有通行密鑰。使用者以密碼登入，之後可以新增通行密鑰。
+userDetail.passkeysRemove	全部移除
+userDetail.resetTwoFactorTitle	重設雙重驗證？
+userDetail.resetTwoFactorMessage	在重新設定之前，%@ 不需要第二步即可登入。
+userDetail.resetPasskeysTitle	移除通行密鑰？
+userDetail.resetPasskeysMessage	將移除 %@ 的所有通行密鑰，該使用者將以密碼登入。
 userDetail.grantAdminTitle	授予管理員權限？
 userDetail.grantAdminMessage	%@ 將成為管理員，可完整控制檔案、分享和使用者。無法從 App 中降級管理員。
 userDetail.volumeSheetLabelField	標籤

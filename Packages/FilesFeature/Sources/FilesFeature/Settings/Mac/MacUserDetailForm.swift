@@ -124,6 +124,18 @@
                             : L10n.UserDetail.passwordSSOOnly
                     )
                 }
+                if !store.isViewingOwnAccount {
+                    ForEach(UserRecoveryRow.rows(for: user)) { row in
+                        LabeledContent {
+                            Button(row.reset.actionTitle + (row.reset == .lock ? "" : "…")) {
+                                store.send(.securityResetTapped(row.reset))
+                            }
+                            .disabled(store.isResettingSecurity)
+                        } label: {
+                            MacRowTitle(title: row.title, subtitle: row.subtitle)
+                        }
+                    }
+                }
                 LabeledContent(L10n.UserDetail.sectionSSO) {
                     if user.oidcMethods.isEmpty {
                         Text(L10n.UserDetail.ssoNone)

@@ -1185,6 +1185,12 @@ public enum L10n {
         public static var fallbackName: String { tr("userDetail.fallbackName") }  // "User"
         public static func grantAdminMessage(_ a0: CVarArg) -> String { tr("userDetail.grantAdminMessage", a0) }
         public static var grantAdminTitle: String { tr("userDetail.grantAdminTitle") }  // "Grant Admin?"
+        public static var lockRelease: String { tr("userDetail.lockRelease") }  // "Unlock"
+        public static var lockTitle: String { tr("userDetail.lockTitle") }  // "Sign In Lock"
+        public static func lockedUntil(_ a0: CVarArg) -> String { tr("userDetail.lockedUntil", a0) }
+        public static var passkeysRemove: String { tr("userDetail.passkeysRemove") }  // "Remove All"
+        public static var passkeysSubtitle: String { tr("userDetail.passkeysSubtitle") }
+        public static var passkeysTitle: String { tr("userDetail.passkeysTitle") }  // "Passkeys"
         public static var passwordHasLocal: String { tr("userDetail.passwordHasLocal") }  // "This user signs in with an email and password."
         public static var passwordReset: String { tr("userDetail.passwordReset") }  // "Reset Password"
         public static var passwordSSOOnly: String { tr("userDetail.passwordSSOOnly") }  // "This user has no local password and signs in with SSO only."
@@ -1200,10 +1206,15 @@ public enum L10n {
         public static var removeUserTitle: String { tr("userDetail.removeUserTitle") }  // "Remove User?"
         public static func removeVolumeMessage(_ a0: CVarArg) -> String { tr("userDetail.removeVolumeMessage", a0) }
         public static var removeVolumeTitle: String { tr("userDetail.removeVolumeTitle") }  // "Remove Volume?"
+        public static func resetPasskeysMessage(_ a0: CVarArg) -> String { tr("userDetail.resetPasskeysMessage", a0) }
+        public static var resetPasskeysTitle: String { tr("userDetail.resetPasskeysTitle") }  // "Remove Passkeys?"
+        public static func resetTwoFactorMessage(_ a0: CVarArg) -> String { tr("userDetail.resetTwoFactorMessage", a0) }
+        public static var resetTwoFactorTitle: String { tr("userDetail.resetTwoFactorTitle") }  // "Reset Two Factor?"
         public static var roleAdmin: String { tr("userDetail.roleAdmin") }  // "Administrator"
         public static var roleAdminLocked: String { tr("userDetail.roleAdminLocked") }  // "Administrators can't be demoted from the app."
         public static var roleAdminSubtitle: String { tr("userDetail.roleAdminSubtitle") }  // "Full control over files, shares and users."
         public static var roleGrantAdmin: String { tr("userDetail.roleGrantAdmin") }  // "Grant Admin"
+        public static var sectionAccountRecovery: String { tr("userDetail.sectionAccountRecovery") }  // "Account Recovery"
         public static var sectionAssignedVolumes: String { tr("userDetail.sectionAssignedVolumes") }  // "Assigned Volumes"
         public static var sectionGeneralInfo: String { tr("userDetail.sectionGeneralInfo") }  // "General Info"
         public static var sectionLocalPassword: String { tr("userDetail.sectionLocalPassword") }  // "Local Password"
@@ -1212,6 +1223,9 @@ public enum L10n {
         public static var ssoBadge: String { tr("userDetail.ssoBadge") }  // "SSO"
         public static var ssoLinked: String { tr("userDetail.ssoLinked") }  // "Linked"
         public static var ssoNone: String { tr("userDetail.ssoNone") }  // "No linked SSO providers."
+        public static var twoFactorOn: String { tr("userDetail.twoFactorOn") }
+        public static var twoFactorReset: String { tr("userDetail.twoFactorReset") }  // "Reset"
+        public static var twoFactorTitle: String { tr("userDetail.twoFactorTitle") }  // "Two Factor Authentication"
         public static func volumeEditAccessibility(_ a0: CVarArg) -> String { tr("userDetail.volumeEditAccessibility", a0) }
         public static func volumeRemoveAccessibility(_ a0: CVarArg) -> String { tr("userDetail.volumeRemoveAccessibility", a0) }
         public static var volumeSheetAccessMode: String { tr("userDetail.volumeSheetAccessMode") }  // "Access Mode"
@@ -1261,8 +1275,11 @@ public enum L10n {
         public static var tabSecurity: String { tr("userManagement.tabSecurity") }  // "Security"
         public static var tabVolumes: String { tr("userManagement.tabVolumes") }  // "Volumes"
         public static var toastAdminGranted: String { tr("userManagement.toastAdminGranted") }  // "Admin granted"
+        public static var toastPasskeysRemoved: String { tr("userManagement.toastPasskeysRemoved") }  // "Passkeys removed"
         public static var toastPasswordUpdated: String { tr("userManagement.toastPasswordUpdated") }  // "Password updated"
         public static var toastProfileUpdated: String { tr("userManagement.toastProfileUpdated") }  // "Profile updated"
+        public static var toastTwoFactorReset: String { tr("userManagement.toastTwoFactorReset") }  // "Two factor reset"
+        public static var toastUnlocked: String { tr("userManagement.toastUnlocked") }  // "Account unlocked"
         public static var toastUserCreated: String { tr("userManagement.toastUserCreated") }  // "User created"
         public static var toastUserRemoved: String { tr("userManagement.toastUserRemoved") }  // "User removed"
         public static var toastVolumeRemoved: String { tr("userManagement.toastVolumeRemoved") }  // "Volume removed"

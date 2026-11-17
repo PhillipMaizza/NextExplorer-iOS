@@ -392,6 +392,9 @@ userManagement.setPasswordSetIntro	Gib %@ ein lokales Passwort, damit die Anmeld
 userManagement.toastProfileUpdated	Profil aktualisiert
 userManagement.toastAdminGranted	Admin gewährt
 userManagement.toastUserRemoved	Benutzer entfernt
+userManagement.toastUnlocked	Konto entsperrt
+userManagement.toastTwoFactorReset	Zwei-Faktor zurückgesetzt
+userManagement.toastPasskeysRemoved	Passkeys entfernt
 userManagement.toastUserCreated	Benutzer erstellt
 userManagement.toastPasswordUpdated	Passwort aktualisiert
 userManagement.toastVolumeSaved	Volume gesichert
@@ -437,6 +440,20 @@ userDetail.removeVolumeTitle	Volume entfernen?
 userDetail.removeVolumeMessage	%@ wird von diesem Benutzer entfernt. Das Verzeichnis selbst wird nicht berührt.
 userDetail.removeUserTitle	Benutzer entfernen?
 userDetail.removeUserMessage	%@ verliert sofort den Zugriff. Seine Dateien auf dem Server werden nicht gelöscht.
+userDetail.sectionAccountRecovery	Kontowiederherstellung
+userDetail.lockTitle	Anmeldesperre
+userDetail.lockedUntil	Nach zu vielen fehlgeschlagenen Anmeldeversuchen gesperrt bis %@.
+userDetail.lockRelease	Entsperren
+userDetail.twoFactorTitle	Zwei-Faktor-Authentifizierung
+userDetail.twoFactorOn	Aktiv. Zurücksetzen, wenn der Benutzer sein Gerät und die Wiederherstellungscodes verloren hat.
+userDetail.twoFactorReset	Zurücksetzen
+userDetail.passkeysTitle	Passkeys
+userDetail.passkeysSubtitle	Entfernt jeden Passkey. Der Benutzer meldet sich mit seinem Passwort an und kann danach einen neuen Passkey hinzufügen.
+userDetail.passkeysRemove	Alle entfernen
+userDetail.resetTwoFactorTitle	Zwei-Faktor zurücksetzen?
+userDetail.resetTwoFactorMessage	%@ kann sich ohne zweiten Schritt anmelden, bis die Funktion erneut eingerichtet wird.
+userDetail.resetPasskeysTitle	Passkeys entfernen?
+userDetail.resetPasskeysMessage	Alle Passkeys von %@ werden entfernt. Die Anmeldung erfolgt mit dem Passwort.
 userDetail.grantAdminTitle	Administratorrechte erteilen?
 userDetail.grantAdminMessage	%@ wird Administrator mit voller Kontrolle über Dateien, Freigaben und Benutzer. Administratoren können in der App nicht herabgestuft werden.
 userDetail.volumeSheetLabelField	Bezeichnung
