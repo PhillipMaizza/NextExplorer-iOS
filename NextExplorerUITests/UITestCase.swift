@@ -290,6 +290,9 @@ class UITestCase: XCTestCase {
 enum UITestTimeout {
     /// The normal budget for something to appear once an action has kicked off an async load.
     static let standard: TimeInterval = 10
+    /// For a step that waits on a refresh after a server round trip, which the shared Mac runner
+    /// sometimes takes far longer over than a local machine.
+    static let slow: TimeInterval = 40
     /// A tighter budget used when asserting something should NOT appear, so a negative check
     /// doesn't stall the suite.
     static let short: TimeInterval = 3
