@@ -331,14 +331,14 @@ private struct VLCTrackMenu: View {
     @ObservedObject var controller: VLCPlaybackController
 
     var body: some View {
-        if controller.audioTracks.count > 1 || !controller.subtitleTracks.isEmpty {
+        if controller.hasTrackChoices {
             Menu {
                 if controller.audioTracks.count > 1 {
                     Picker(L10n.Media.audioTrack, selection: audioBinding) {
                         ForEach(controller.audioTracks) { Text($0.name).tag($0.id) }
                     }
                 }
-                if !controller.subtitleTracks.isEmpty {
+                if controller.subtitleTracks.contains(where: { $0.id >= 0 }) {
                     Picker(L10n.Media.subtitles, selection: subtitleBinding) {
                         ForEach(controller.subtitleTracks) { Text($0.name).tag($0.id) }
                     }

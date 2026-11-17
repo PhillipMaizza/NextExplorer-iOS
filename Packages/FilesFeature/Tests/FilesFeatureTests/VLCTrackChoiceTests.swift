@@ -20,4 +20,16 @@ struct VLCTrackChoiceTests {
         #expect(VLCPlaybackController.choices(names: nil, ids: nil).isEmpty)
         #expect(VLCPlaybackController.choices(names: ["A"], ids: ["x"]).isEmpty)
     }
+
+    @Test
+    func theMenuNeedsAnotherAudioTrackOrARealSubtitleTrack() {
+        let off = VLCTrackChoice(id: -1, name: "Disable")
+        let english = VLCTrackChoice(id: 3, name: "English")
+        let french = VLCTrackChoice(id: 4, name: "Français")
+
+        #expect(!VLCPlaybackController.hasChoices(audio: [english], subtitles: [off]))
+        #expect(!VLCPlaybackController.hasChoices(audio: [], subtitles: []))
+        #expect(VLCPlaybackController.hasChoices(audio: [english, french], subtitles: [off]))
+        #expect(VLCPlaybackController.hasChoices(audio: [english], subtitles: [off, french]))
+    }
 }

@@ -78,10 +78,26 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
 
     /// The tracks only exist once playback has started, so this runs from the state callback.
     private func refreshTracks() {
-        audioTracks = Self.choices(names: player.audioTrackNames, ids: player.audioTrackIndexes)
-        subtitleTracks = Self.choices(names: player.videoSubTitlesNames, ids: player.videoSubTitlesIndexes)
+        // libvlc lists a Disable entry with a negative id. Audio has no use for it; subtitles keep it as Off.
+        let audio = Self.choices(names: player.audioTrackNames, ids: player.audioTrackIndexes).filter { $0.id >= 0 }
+        let subtitles = Self.choices(names: player.videoSubTitlesNames, ids: player.videoSubTitlesIndexes)
+        if audio != audioTracks {
+            audioTracks = audio
+        }
+        if subtitles != subtitleTracks {
+            subtitleTracks = subtitles
+        }
         selectedAudioID = player.currentAudioTrackIndex
         selectedSubtitleID = player.currentVideoSubTitleIndex
+    }
+
+    /// Whether the menu has anything to pick: another audio track, or any real subtitle track.
+    var hasTrackChoices: Bool {
+        Self.hasChoices(audio: audioTracks, subtitles: subtitleTracks)
+    }
+
+    static func hasChoices(audio: [VLCTrackChoice], subtitles: [VLCTrackChoice]) -> Bool {
+        audio.count > 1 || subtitles.contains { $0.id >= 0 }
     }
 
     static func choices(names: [Any]?, ids: [Any]?) -> [VLCTrackChoice] {
@@ -129,7 +145,7 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
                 isBuffering = false
             }
             durationText = player.media?.length.stringValue ?? durationText
-            if player.state == .playing, audioTracks.isEmpty, subtitleTracks.isEmpty {
+            if player.state == .playing {
                 refreshTracks()
             }
         }
