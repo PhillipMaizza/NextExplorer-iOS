@@ -24,6 +24,7 @@
             NavigationStack {
                 content
                     .navigationTitle(L10n.Trash.title)
+                    .navigationSubtitle(footnote)
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
                             Button(role: .destructive) { store.send(.emptyTrashTapped) } label: {
@@ -55,10 +56,10 @@
             }
         }
 
-        /// How long items stay, or that the trash is off, under the table as on iOS.
-        private var footnote: String? {
+        /// How long items stay, or that the trash is off, under the window title.
+        private var footnote: String {
             guard store.isEnabled else { return L10n.Trash.disabledNotice }
-            return store.retentionDays.map { L10n.Trash.subtitle($0) }
+            return store.retentionDays.map { L10n.Trash.subtitle($0) } ?? ""
         }
 
         private var content: some View {
@@ -66,15 +67,6 @@
                 EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
             } loaded: {
                 table
-            }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                if let footnote {
-                    Text(footnote)
-                        .type(.body3(.regular), style: .secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, .space16)
-                        .padding(.vertical, .space8)
-                }
             }
         }
 
