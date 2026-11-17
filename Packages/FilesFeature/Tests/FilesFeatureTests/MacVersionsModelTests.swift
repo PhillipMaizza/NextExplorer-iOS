@@ -242,8 +242,9 @@ import TestUtils
             ))?.value
             #expect(model.statusMessage != nil)
 
-            model.togglePin(version)
+            let pinning = model.togglePin(version)
             #expect(model.statusMessage == nil)
+            await pinning?.value
 
             await model.replaceConfirmed(VersionReplacement(
                 version: version,

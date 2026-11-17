@@ -148,7 +148,8 @@
             }
         }
 
-        func togglePin(_ version: FileVersion) {
+        @discardableResult
+        func togglePin(_ version: FileVersion) -> Task<Void, Never>? {
             perform { client, serverURL, path in
                 _ = try await client.updateVersion(serverURL, path, version.id, nil, !version.isPinned)
             }
