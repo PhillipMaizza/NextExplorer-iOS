@@ -20,7 +20,7 @@ func selectSortToolbar(
     onCancel: @escaping () -> Void,
     onToggleViewMode: @escaping () -> Void,
     hasClipboardItems: Bool = false,
-    @ViewBuilder extraViewModes: () -> some View = { EmptyView() },
+    @ViewBuilder extraMenuItems: () -> some View = { EmptyView() },
     @ViewBuilder clipboardMenu: () -> some View = { EmptyView() },
     @ViewBuilder sortMenu: () -> some View
 ) -> some ToolbarContent {
@@ -77,7 +77,7 @@ func selectSortToolbar(
                             isGridView ? IconKit.listBullet : IconKit.squareGrid
                         }
                     }
-                    extraViewModes()
+                    extraMenuItems()
                 } label: {
                     IconKit.moreOptions.foregroundStyle(Color.primaryDS)
                 }
@@ -92,7 +92,7 @@ func selectSortToolbar(
 
 /// Cancel while selecting: hides the circles first through the screen's `selectModeChrome`, then
 /// ends select mode; with no chrome around it, it ends select mode at once.
-struct SelectModeCancelButton: View {
+private struct SelectModeCancelButton: View {
     let action: () -> Void
     @Environment(\.leaveSelectMode) private var leaveSelectMode
 

@@ -132,9 +132,7 @@ struct TrashView: View {
         if !store.isEnabled {
             DSInfoCard(L10n.Trash.disabledNotice)
         } else if let days = store.retentionDays {
-            Text(L10n.Trash.subtitle(days))
-                .type(.body3(.regular), style: .secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            DSInfoCard(L10n.Trash.subtitle(days))
         }
     }
 
@@ -151,7 +149,8 @@ struct TrashView: View {
                 name: item.name,
                 isDirectory: item.isDirectory,
                 subtitle: TrashRowText.subtitle(item, now: date.now, calendar: calendar),
-                kind: TrashRowText.kind(item.name, isDirectory: item.isDirectory)
+                kind: TrashRowText.kind(item.name, isDirectory: item.isDirectory),
+                subtitleLineLimit: nil
             )
             .opacity(item.isAvailable ? 1 : Constants.unavailableOpacity)
         } trailingSwipe: {

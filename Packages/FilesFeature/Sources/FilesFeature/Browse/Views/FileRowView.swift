@@ -17,6 +17,8 @@ struct FileRowView: View {
     let dateModified: Date?
     let size: Int64?
     let customSubtitle: String?
+    /// How many lines the subtitle may take: one in a listing, any where it carries details (the trash).
+    var subtitleLineLimit: Int? = 1
     /// A small semibold line rendered under the subtitle, e.g. "Line 58" for a search content
     /// match. `nil` hides it.
     let lineLabel: String?
@@ -71,8 +73,10 @@ struct FileRowView: View {
         isOpening: Bool = false,
         isAvailableOffline: Bool = false,
         dateModified: Date? = nil,
-        size: Int64? = nil
+        size: Int64? = nil,
+        subtitleLineLimit: Int? = 1
     ) {
+        self.subtitleLineLimit = subtitleLineLimit
         self.name = name
         self.isDirectory = isDirectory
         self.isAvailableOffline = isAvailableOffline
@@ -174,7 +178,7 @@ struct FileRowView: View {
                 if let subtitle {
                     Text(subtitle)
                         .type(.body3(.regular), style: isHidden ? .tertiary : .secondary)
-                        .lineLimit(1)
+                        .lineLimit(subtitleLineLimit)
                 }
                 if let lineLabel {
                     Text(lineLabel)
