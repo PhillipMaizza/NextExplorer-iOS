@@ -5,6 +5,7 @@ import Localization
 /// The words a trash row shows beside the name, shared by the list, the Mac table and VoiceOver.
 enum TrashRowText {
     static let separator = " · "
+    private static let secondsPerDay: Double = 86400
 
     /// Where it was deleted from: the personal folder or a volume, and the folder inside it.
     static func location(_ item: TrashItem) -> String {
@@ -33,21 +34,29 @@ enum TrashRowText {
         return days == 0 ? L10n.Trash.removedToday : L10n.Trash.removedIn(days)
     }
 
-    /// The row's second line, most urgent first since a narrow row cuts it off: whether it can be
-    /// reached, when it goes, who deleted it, where from, and whether it had share links.
+    /// How long until it goes, as a plain count ("30 days") in the app's language.
+    static func timeLeft(_ item: TrashItem, now: Date, calendar: Calendar) -> String? {
+        guard let days = item.daysUntilRemoval(now: now, calendar: calendar) else { return nil }
+        guard days > 0 else { return L10n.Trash.removedToday }
+        return Duration.seconds(Double(days) * secondsPerDay)
+            .formatted(.units(allowed: [.days], width: .wide).locale(LocalizationOverride.locale))
+    }
+
+    /// The row's details under the name: whether it can be reached, how long it has left, who deleted
+    /// it and whether it had share links, then on their own line the folder it came from.
     static func subtitle(_ item: TrashItem, now: Date, calendar: Calendar) -> String {
         var parts: [String] = []
         if !item.isAvailable {
             parts.append(L10n.Trash.unavailable)
         }
-        if let removal = removal(item, now: now, calendar: calendar) {
-            parts.append(removal)
+        if let timeLeft = timeLeft(item, now: now, calendar: calendar) {
+            parts.append(timeLeft)
         }
-        parts += [L10n.Trash.deletedBy(deletedBy(item)), location(item)]
+        parts.append(L10n.Trash.deletedBy(deletedBy(item)))
         if item.shareCount > 0 {
             parts.append(L10n.Trash.sharesBadge)
         }
-        return parts.joined(separator: separator)
+        return parts.joined(separator: separator) + "\n" + location(item)
     }
 
     /// The extension a row's file icon is chosen by.

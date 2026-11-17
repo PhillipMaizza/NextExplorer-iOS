@@ -15,6 +15,7 @@ func selectSortToolbar(
     isAllSelected: Bool,
     isSelectAvailable: Bool,
     isGridView: Bool,
+    isViewModeAvailable: Bool = true,
     onSelectModeToggled: @escaping () -> Void,
     onSelectAllToggled: @escaping () -> Void,
     onCancel: @escaping () -> Void,
@@ -70,11 +71,13 @@ func selectSortToolbar(
                         }
                     }
                     sortMenu()
-                    Button(action: onToggleViewMode) {
-                        Label {
-                            Text(isGridView ? L10n.Select.listView : L10n.Select.gridView)
-                        } icon: {
-                            isGridView ? IconKit.listBullet : IconKit.squareGrid
+                    if isViewModeAvailable {
+                        Button(action: onToggleViewMode) {
+                            Label {
+                                Text(isGridView ? L10n.Select.listView : L10n.Select.gridView)
+                            } icon: {
+                                isGridView ? IconKit.listBullet : IconKit.squareGrid
+                            }
                         }
                     }
                     extraMenuItems()

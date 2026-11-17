@@ -1,4 +1,3 @@
-import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -10,19 +9,13 @@ private enum Constants {
     static let unavailableOpacity: Double = 0.5
 }
 
-/// The trash on iPhone and iPad, pushed from the Browse root's Trash row: the Browse rows, grid,
-/// selection and sort, with the retention note under the list.
+/// The trash on iPhone and iPad, pushed from the Browse root's Trash row: the Browse rows,
+/// selection and sort, with how long items stay behind the toolbar's info button.
 struct TrashView: View {
     @Bindable var store: StoreOf<TrashFeature>
-    @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
-    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @State private var isSortSheetPresented = false
     @Dependency(\.date) private var date
     @Dependency(\.calendar) private var calendar
-
-    private var isGridView: Bool {
-        viewModeRaw == FileListViewMode.grid.rawValue
-    }
 
     var body: some View {
         content
@@ -41,12 +34,7 @@ struct TrashView: View {
             .navigationBarTitleDisplayMode(.inline)
         #endif
             .toolbar {
-                TrashToolbar(
-                    store: store,
-                    isGridView: isGridView,
-                    onSort: { isSortSheetPresented = true },
-                    onToggleViewMode: toggleViewMode
-                )
+                TrashToolbar(store: store, onSort: { isSortSheetPresented = true })
             }
             // Below the toolbar, so its Cancel can hide the circles before select mode ends.
             .selectModeChrome(isSelecting: store.isSelecting)
@@ -74,20 +62,14 @@ struct TrashView: View {
             .padding(.space16)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } loaded: {
-            Group {
-                if isGridView {
-                    grid
-                } else {
-                    list
-                }
-            }
-            .dragToSelect(
-                isEnabled: store.isSelecting,
-                selection: store.selectedIDs,
-                order: { store.displayedItems.map(\.id) },
-                onChange: { store.send(.selectionSwept($0)) }
-            )
-            .refreshable { await store.send(.refreshPulled).finish() }
+            list
+                .dragToSelect(
+                    isEnabled: store.isSelecting,
+                    selection: store.selectedIDs,
+                    order: { store.displayedItems.map(\.id) },
+                    onChange: { store.send(.selectionSwept($0)) }
+                )
+                .refreshable { await store.send(.refreshPulled).finish() }
         }
     }
 
@@ -110,28 +92,12 @@ struct TrashView: View {
         .animation(DSMotion.listDiff, value: items)
     }
 
-    private var grid: some View {
-        ScrollView {
-            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
-                ForEach(store.displayedItems) { item in
-                    cell(item)
-                }
-            }
-            .padding(FileGridMetrics.spacing)
-            .animation(DSMotion.listDiff, value: store.displayedItems)
-            footer
-                .padding(.horizontal, FileGridMetrics.spacing)
-                .padding(.bottom, FileGridMetrics.spacing)
-        }
-    }
-
-    /// How long items stay, or that the trash is off, under the list as Browse notes its own.
+    /// That the trash is off, under the list: deletes no longer come here. How long items stay is
+    /// behind the toolbar's info button.
     @ViewBuilder
     private var footer: some View {
         if !store.isEnabled {
             DSInfoCard(L10n.Trash.disabledNotice)
-        } else if let days = store.retentionDays {
-            DSInfoCard(L10n.Trash.subtitle(days))
         }
     }
 
@@ -149,38 +115,11 @@ struct TrashView: View {
                 isDirectory: item.isDirectory,
                 subtitle: TrashRowText.subtitle(item, now: date.now, calendar: calendar),
                 kind: TrashRowText.kind(item.name, isDirectory: item.isDirectory),
-                subtitleLineLimit: nil
+                wrapsText: true
             )
             .opacity(item.isAvailable ? 1 : Constants.unavailableOpacity)
         } trailingSwipe: {
             BrowseQuickActionButtons(actions: BrowseQuickAction.trashActions(for: item, store: store), style: .swipe)
-        } contextMenu: {
-            if !store.isSelecting {
-                TrashItemMenu(item: item, store: store)
-            }
-        }
-        .accessibilityActions {
-            BrowseQuickActionButtons(
-                actions: BrowseQuickAction.trashActions(for: item, store: store),
-                style: .accessibility
-            )
-        }
-    }
-
-    private func cell(_ item: TrashItem) -> some View {
-        SelectableGridCell(
-            selectionID: item.id,
-            isSelecting: store.isSelecting,
-            isSelected: store.selectedIDs.contains(item.id),
-            onTap: { store.send(.itemTapped(item)) }
-        ) {
-            GridCellView(
-                name: item.name,
-                isDirectory: item.isDirectory,
-                kind: TrashRowText.kind(item.name, isDirectory: item.isDirectory),
-                iconSize: (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).iconSize
-            )
-            .opacity(item.isAvailable ? 1 : Constants.unavailableOpacity)
         } contextMenu: {
             if !store.isSelecting {
                 TrashItemMenu(item: item, store: store)
@@ -208,12 +147,6 @@ struct TrashView: View {
             onSelectDirection: { store.send(.sortDirectionChanged($0), animation: DSMotion.listChange) },
             onDismiss: { isSortSheetPresented = false }
         )
-    }
-
-    private func toggleViewMode() {
-        withAnimation(DSMotion.contentReveal) {
-            viewModeRaw = (isGridView ? FileListViewMode.list : .grid).rawValue
-        }
     }
 
     private var textBinding: Binding<Bool> {
@@ -255,13 +188,6 @@ struct TrashView: View {
             $0.selectedIDs = ["t1"]
         })
     }
-}
-
-#Preview("Grid") {
-    let defaults = UserDefaults(suiteName: "TrashGridPreview") ?? .standard
-    defaults.set(FileListViewMode.grid.rawValue, forKey: AppStorageKeys.browseViewMode)
-    return NavigationStack { TrashView(store: TrashPreviewData.trash()) }
-        .defaultAppStorage(defaults)
 }
 
 #Preview("Switched off with leftovers") {

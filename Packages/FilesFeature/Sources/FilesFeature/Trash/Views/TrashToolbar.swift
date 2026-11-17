@@ -8,20 +8,29 @@ import SwiftUI
 /// switch and a red Empty Trash; while selecting, Select All, Cancel and the selection bar.
 struct TrashToolbar: ToolbarContent {
     let store: StoreOf<TrashFeature>
-    let isGridView: Bool
     let onSort: () -> Void
-    let onToggleViewMode: () -> Void
 
     var body: some ToolbarContent {
+        #if os(iOS)
+            if !store.isSelecting, store.isEnabled, let days = store.retentionDays {
+                ToolbarItem(placement: .topBarTrailing) {
+                    TrashRetentionInfoButton(text: L10n.Trash.subtitle(days))
+                }
+                if #available(iOS 26.0, *) {
+                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                }
+            }
+        #endif
         selectSortToolbar(
             isSelecting: store.isSelecting,
             isAllSelected: store.isAllSelected,
             isSelectAvailable: !store.items.isEmpty && !store.isBusy,
-            isGridView: isGridView,
+            isGridView: false,
+            isViewModeAvailable: false,
             onSelectModeToggled: { store.send(.selectModeToggled) },
             onSelectAllToggled: { store.send(.selectAllTapped) },
             onCancel: { store.send(.selectModeToggled) },
-            onToggleViewMode: onToggleViewMode,
+            onToggleViewMode: {},
             extraMenuItems: {
                 Divider()
                 Button(role: .destructive) { store.send(.emptyTrashTapped) } label: {
@@ -46,15 +55,34 @@ struct TrashToolbar: ToolbarContent {
     }
 }
 
+/// The info button beside the menu: how long the trash keeps items, read in a small native menu.
+private struct TrashRetentionInfoButton: View {
+    let text: String
+
+    var body: some View {
+        Menu {
+            Text(text)
+        } label: {
+            IconKit.info
+                .foregroundStyle(Color.primaryDS)
+        }
+        .tint(Color.primaryDS)
+        .accessibilityLabel(text)
+    }
+}
+
+#Preview("Info button") {
+    TrashRetentionInfoButton(text: L10n.Trash.subtitle(30))
+        .padding(.space24)
+}
+
 #if os(iOS)
     #Preview("Toolbar") {
         NavigationStack {
             Color.backgroundPrimary
                 .toolbar { TrashToolbar(
                     store: TrashPreviewData.trash(),
-                    isGridView: false,
-                    onSort: {},
-                    onToggleViewMode: {}
+                    onSort: {}
                 ) }
         }
     }
@@ -68,9 +96,7 @@ struct TrashToolbar: ToolbarContent {
                             $0.isSelecting = true
                             $0.selectedIDs = ["t1"]
                         },
-                        isGridView: true,
-                        onSort: {},
-                        onToggleViewMode: {}
+                        onSort: {}
                     )
                 }
         }

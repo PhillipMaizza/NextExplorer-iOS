@@ -17,8 +17,8 @@ struct TrashRowTextTests {
         return calendar
     }
 
-    @Test("The second line leads with reach and removal, then who, where and the share badge")
-    func subtitleOrder() {
+    @Test("The details lead with reach, time left, who and the share badge, then the folder on its own line")
+    func subtitleOrder() throws {
         let item = TrashItem(
             id: "t1",
             name: "a.txt",
@@ -31,10 +31,15 @@ struct TrashRowTextTests {
 
         let subtitle = TrashRowText.subtitle(item, now: MockDate.date, calendar: calendar)
 
-        #expect(subtitle == [
-            L10n.Trash.unavailable, L10n.Trash.removedIn(2), L10n.Trash.deletedBy("Ada"), "Media/2025",
-            L10n.Trash.sharesBadge,
-        ].joined(separator: TrashRowText.separator))
+        let lines = subtitle.components(separatedBy: "\n")
+        let parts = try #require(lines.first).components(separatedBy: TrashRowText.separator)
+        #expect(lines.count == 2)
+        #expect(lines.last == "Media/2025")
+        #expect(parts.count == 4)
+        #expect(parts[0] == L10n.Trash.unavailable)
+        #expect(parts[1].contains("2"))
+        #expect(parts[2] == L10n.Trash.deletedBy("Ada"))
+        #expect(parts[3] == L10n.Trash.sharesBadge)
     }
 
     @Test("Locations name the personal folder, a volume root, or say they are unknown")
