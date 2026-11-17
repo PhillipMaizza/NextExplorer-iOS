@@ -16,7 +16,8 @@
             confirm.click()
             XCTAssertTrue(text(Fixture.file, in: app).waitToVanish(), "The confirmed file should leave the table")
 
-            sidebarItem(L10n.Trash.title, in: app).click()
+            // ⌘5 opens the Trash section, as ⌘4 opens Offline.
+            app.typeKey("5", modifierFlags: .command)
             let trashed = text(Fixture.file, in: app)
             XCTAssertTrue(trashed.waitToAppear(), "The deleted file should be in the Trash section")
 
