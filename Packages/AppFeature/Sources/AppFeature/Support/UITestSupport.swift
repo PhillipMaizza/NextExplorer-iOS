@@ -309,6 +309,7 @@
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
                 client.deleteItems = { _, items, permanent in store.delete(items, permanent: permanent) }
+                client.deleteItemsWithProgress = { _, items, permanent, _ in store.delete(items, permanent: permanent) }
                 client.deleteImpact = { _, items in
                     DeleteImpact(shareCount: 0, trash: DeleteImpact.TrashPlan(
                         isEnabled: true,
