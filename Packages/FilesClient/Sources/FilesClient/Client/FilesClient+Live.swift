@@ -126,20 +126,12 @@ public extension FilesClient {
             deleteImpact: { serverURL, items in
                 try await service.deleteImpact(serverURL: serverURL, items: items)
             },
-            deleteItems: { serverURL, items, permanent in
-                try await service.deleteItems(serverURL: serverURL, items: items, permanent: permanent)
-            },
-            deleteItemsWithProgress: { serverURL, items, permanent, onProgress in
+            deleteItems: { serverURL, items, permanent, onProgress in
                 try await service.deleteItems(
                     serverURL: serverURL, items: items, permanent: permanent, onProgress: onProgress
                 )
             },
-            transferItems: { serverURL, items, destination, operation in
-                try await service.transferItems(
-                    serverURL: serverURL, items: items, destination: destination, operation: operation
-                )
-            },
-            transferItemsWithProgress: { serverURL, items, destination, operation, onProgress in
+            transferItems: { serverURL, items, destination, operation, onProgress in
                 try await service.transferItems(
                     serverURL: serverURL, items: items, destination: destination, operation: operation,
                     onProgress: onProgress

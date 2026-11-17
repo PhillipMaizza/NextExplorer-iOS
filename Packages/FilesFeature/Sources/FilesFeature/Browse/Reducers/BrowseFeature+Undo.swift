@@ -64,13 +64,13 @@ extension BrowseFeature {
             try await send(.undoResponse(apiResult {
                 switch entry.kind {
                 case let .created(items):
-                    _ = try await filesClient.deleteItems(serverURL, items, false)
+                    _ = try await filesClient.deleteItems(serverURL, items, false, nil)
                 case let .madeNew(item):
-                    _ = try await filesClient.deleteItems(serverURL, [item], false)
+                    _ = try await filesClient.deleteItems(serverURL, [item], false, nil)
                 case let .moved(moves):
                     let byParent = Dictionary(grouping: moves, by: \.originalParent)
                     for (parent, group) in byParent {
-                        _ = try await filesClient.transferItems(serverURL, group.map(\.item), parent, .move)
+                        _ = try await filesClient.transferItems(serverURL, group.map(\.item), parent, .move, nil)
                     }
                 case let .renamed(item, previousName):
                     _ = try await filesClient.renameItem(serverURL, item, previousName)
@@ -104,7 +104,7 @@ extension BrowseFeature {
                     let byDestination = Dictionary(grouping: moves, by: \.item.path)
                     for (destination, group) in byDestination {
                         let items = group.map { $0.item.relocated(to: $0.originalParent) }
-                        _ = try await filesClient.transferItems(serverURL, items, destination, .move)
+                        _ = try await filesClient.transferItems(serverURL, items, destination, .move, nil)
                     }
                 case let .renamed(item, previousName):
                     _ = try await filesClient.renameItem(serverURL, item.named(previousName), item.name)

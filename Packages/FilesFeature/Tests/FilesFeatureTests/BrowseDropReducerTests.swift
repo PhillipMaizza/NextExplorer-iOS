@@ -96,7 +96,7 @@ struct BrowseDropReducerTests {
                 access: BrowseFixtures.writableAccess,
                 path: path
             ) }
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 requests.withValue { $0.append("\(operation) \(items.map(\.id)) to \(destination)") }
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
@@ -231,7 +231,7 @@ struct BrowseDropReducerTests {
                 access: BrowseFixtures.writableAccess,
                 path: path
             ) }
-            $0.filesClient.transferItems = { _, _, _, _ in throw rejection }
+            $0.filesClient.transferItems = { _, _, _, _, _ in throw rejection }
         }
 
         await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive)) {

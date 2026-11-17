@@ -119,7 +119,7 @@ struct BrowseMoveAndUploadReviewTests {
                 events.withValue { $0.append("list \(path)") }
                 return BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path)
             }
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 events.withValue { $0.append("\(operation) \(items.map(\.id)) to \(destination)") }
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
@@ -154,7 +154,7 @@ struct BrowseMoveAndUploadReviewTests {
                 access: BrowseTestSupport.readOnlyAccess,
                 path: path
             ) }
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult([items[0], items[1]], to: destination, skipping: [items[2]])
             }

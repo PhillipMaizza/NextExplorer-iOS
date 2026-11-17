@@ -86,7 +86,7 @@ struct BrowseDeleteToTrashTests {
         let asked = LockIsolated<[Bool]>([])
         let store = BrowseFixtures.store(state) {
             $0.directoryCacheStore = cache
-            $0.filesClient.deleteItems = { _, _, permanent in
+            $0.filesClient.deleteItems = { _, _, permanent, _ in
                 asked.withValue { $0.append(permanent) }
                 return DeleteOutcome(items: [.init(path: "Docs/photo", status: .trashed)])
             }
@@ -113,7 +113,7 @@ struct BrowseDeleteToTrashTests {
         state.deleteConfirmationItem = photo
         let asked = LockIsolated<[Bool]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, _, permanent in
+            $0.filesClient.deleteItems = { _, _, permanent, _ in
                 asked.withValue { $0.append(permanent) }
                 return DeleteOutcome(items: [.init(path: "Docs/photo", status: .deleted)])
             }
@@ -155,8 +155,7 @@ struct BrowseDeleteToTrashTests {
             })
         }
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, items, permanent in answer(items, permanent) }
-            $0.filesClient.deleteItemsWithProgress = { _, items, permanent, _ in answer(items, permanent) }
+            $0.filesClient.deleteItems = { _, items, permanent, _ in answer(items, permanent) }
         }
         let kept = BrowseFeature.KeptDelete(
             item: photo,
@@ -208,7 +207,7 @@ struct BrowseDeleteToTrashTests {
         state.bulkDeleteConfirmationIsPresented = true
         let asked = LockIsolated<[Bool]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItemsWithProgress = { _, _, permanent, _ in
+            $0.filesClient.deleteItems = { _, _, permanent, _ in
                 asked.withValue { $0.append(permanent) }
                 return DeleteOutcome()
             }
@@ -235,7 +234,7 @@ struct BrowseDeleteToTrashTests {
         state.trashNotice = .init(count: 1, sequence: 4)
         state.deleteConfirmationItem = notes
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, items, _ in DeleteOutcome(items: items.map { .init(
+            $0.filesClient.deleteItems = { _, items, _, _ in DeleteOutcome(items: items.map { .init(
                 path: $0.id,
                 status: .trashed
             ) }) }

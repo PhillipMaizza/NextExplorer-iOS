@@ -37,7 +37,7 @@ struct BrowseTabFeatureTests {
             BrowseTabFeature()
         } withDependencies: {
             $0.date = .constant(MockDate.date)
-            BrowseFixtures.forwardingTransferProgress(&$0, configure: configure)
+            configure(&$0)
         }
     }
 
@@ -248,7 +248,7 @@ struct BrowseTabFeatureTests {
         let transferred = LockIsolated<[String]>([])
         let store = makeStore(state) {
             $0.date = .constant(now)
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 transferred
                     .withValue { $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)") }
                 try await transfer.wait()

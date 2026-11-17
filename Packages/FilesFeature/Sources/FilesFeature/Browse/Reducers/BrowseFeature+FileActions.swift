@@ -121,7 +121,7 @@ extension BrowseFeature {
             // Animated so the row visibly slides out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
             try await send(.deleteResponse(apiResult {
-                let outcome = try await filesClient.deleteItems(serverURL, [item], permanent)
+                let outcome = try await filesClient.deleteItems(serverURL, [item], permanent, nil)
                 return DeleteResult(requested: [item], outcome: outcome)
             }), animation: DSMotion.listDiff)
         }
@@ -145,7 +145,7 @@ extension BrowseFeature {
                     send: send,
                     action: Action.bulkDeleteProgressed
                 ) { onProgress in
-                    try await filesClient.deleteItemsWithProgress(serverURL, itemsToDelete, permanent, onProgress)
+                    try await filesClient.deleteItems(serverURL, itemsToDelete, permanent, onProgress)
                 }
                 return DeleteResult(requested: itemsToDelete, outcome: outcome)
             }), animation: DSMotion.listDiff)
@@ -163,7 +163,7 @@ extension BrowseFeature {
         let filesClient = filesClient
         return .run { send in
             try await send(.deleteResponse(apiResult {
-                let outcome = try await filesClient.deleteItems(serverURL, items, true)
+                let outcome = try await filesClient.deleteItems(serverURL, items, true, nil)
                 return DeleteResult(requested: items, outcome: outcome)
             }), animation: DSMotion.listDiff)
         }

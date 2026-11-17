@@ -55,11 +55,11 @@ struct BrowseTransferConflictTests {
         let gate = AsyncGate()
         let calls = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(conflictState()) {
-            $0.filesClient.deleteItems = { _, items, _ in
+            $0.filesClient.deleteItems = { _, items, _, _ in
                 calls.withValue { $0.append("delete \(items.map(\.id))") }
                 return DeleteOutcome()
             }
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 calls.withValue { $0.append("transfer \(items.map(\.id))") }
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
@@ -88,10 +88,10 @@ struct BrowseTransferConflictTests {
     func replaceStopsWhenTheTrashKeepsTheClashingItem() async {
         let existing = existing
         let store = BrowseFixtures.store(conflictState()) {
-            $0.filesClient.deleteItems = { _, items, _ in
+            $0.filesClient.deleteItems = { _, items, _, _ in
                 DeleteOutcome(items: items.map { .init(path: $0.id, status: .kept, reason: .otherDevice) })
             }
-            $0.filesClient.transferItems = { _, _, _, _ in
+            $0.filesClient.transferItems = { _, _, _, _, _ in
                 Issue.record("Transferred over an item that is still there")
                 return BrowseFixtures.transferResult([], to: TestFolder.documents)
             }
@@ -118,11 +118,11 @@ struct BrowseTransferConflictTests {
     func keepBothTransfersWithoutDeletingAnything() async {
         let gate = AsyncGate()
         let store = BrowseFixtures.store(conflictState()) {
-            $0.filesClient.deleteItems = { _, items, _ in
+            $0.filesClient.deleteItems = { _, items, _, _ in
                 Issue.record("Deleted \(items.map(\.id)) on keep both")
                 return DeleteOutcome()
             }
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination, renamedTo: [TestFile.aText: "a 2.txt"])
             }
@@ -162,7 +162,7 @@ struct BrowseTransferConflictTests {
     func pastingAFileBackIntoItsOwnFolderIsNotTreatedAsACollision() async {
         let gate = AsyncGate()
         let store = BrowseFixtures.store(conflictState(clipboard: [existing])) {
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination, renamedTo: [TestFile.aText: "a 2.txt"])
             }

@@ -80,7 +80,7 @@ extension BrowseFeature {
                 if retry.resolution == .replace, !retry.itemsToReplace.isEmpty {
                     // What is replaced goes to the trash. One the trash refused still holds its name,
                     // so the transfer stops rather than landing beside it under another name.
-                    let outcome = try await filesClient.deleteItems(serverURL, retry.itemsToReplace, false)
+                    let outcome = try await filesClient.deleteItems(serverURL, retry.itemsToReplace, false, nil)
                     if let kept = outcome.kept(of: retry.itemsToReplace).first {
                         throw FilesClientError.serverMessage(
                             statusCode: Constants.replaceRefusedStatus,
@@ -92,7 +92,7 @@ extension BrowseFeature {
                     send: send,
                     action: Action.transferProgressed
                 ) { onProgress in
-                    try await filesClient.transferItemsWithProgress(
+                    try await filesClient.transferItems(
                         serverURL,
                         retry.items,
                         retry.destination,

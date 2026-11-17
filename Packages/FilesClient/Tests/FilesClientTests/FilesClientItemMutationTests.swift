@@ -85,7 +85,7 @@ extension FilesClientLiveTests {
                 size: 0,
                 kind: FileItem.directoryKind
             )
-            let outcome = try await makeClient().deleteItems(serverURL, [first, second], false)
+            let outcome = try await makeClient().deleteItems(serverURL, [first, second], false, nil)
             #expect(outcome.items.isEmpty)
             let request = try #require(StubURLProtocol.capturedRequest)
             #expect(request.httpMethod == HTTPMethod.delete.rawValue)
@@ -109,7 +109,7 @@ extension FilesClientLiveTests {
                 kind: TestKind.text
             )
 
-            let outcome = try await makeClient().deleteItems(serverURL, [item], true)
+            let outcome = try await makeClient().deleteItems(serverURL, [item], true, nil)
 
             #expect(outcome.items.map(\.status) == [.trashed, .deleted, .missing, .kept, .unknown])
             let body = try #require(StubURLProtocol.capturedRequestBody)
@@ -118,7 +118,7 @@ extension FilesClientLiveTests {
         }
 
         @Test
-        func deleteItemsWithProgressPostsToTheStreamRouteAndReportsEachStep() async throws {
+        func deleteItemsPostsToTheStreamRouteAndReportsEachStep() async throws {
             try stub(
                 statusCode: 200,
                 body: FilesClientFixture.itemMutationNdjsonDeleteDone.data(),
@@ -133,7 +133,7 @@ extension FilesClientLiveTests {
             )
             let steps = LockIsolated<[Double]>([])
 
-            let outcome = try await makeClient().deleteItemsWithProgress(serverURL, [item], false) { fraction in
+            let outcome = try await makeClient().deleteItems(serverURL, [item], false) { fraction in
                 steps.withValue { $0.append(fraction) }
             }
 
@@ -145,7 +145,7 @@ extension FilesClientLiveTests {
         }
 
         @Test
-        func transferItemsWithProgressReportsTheBytesCopiedAsAFraction() async throws {
+        func transferItemsReportsTheBytesCopiedAsAFraction() async throws {
             try stub(
                 statusCode: 200,
                 body: FilesClientFixture.itemMutationNdjsonMoveDone.data(),
@@ -160,7 +160,7 @@ extension FilesClientLiveTests {
             )
             let steps = LockIsolated<[Double]>([])
 
-            let result = try await makeClient().transferItemsWithProgress(
+            let result = try await makeClient().transferItems(
                 serverURL, [item], TestFolder.archive, .move
             ) { fraction in
                 steps.withValue { $0.append(fraction) }
@@ -172,7 +172,7 @@ extension FilesClientLiveTests {
         }
 
         @Test
-        func deleteItemsWithProgressFallsBackToThePlainDeleteWhenTheStreamRouteIsMissing() async throws {
+        func deleteItemsFallsBackToThePlainDeleteWhenTheStreamRouteIsMissing() async throws {
             try stub(statusCode: 404, body: Data())
             let item = FileItem(
                 name: TestFile.aText,
@@ -183,7 +183,7 @@ extension FilesClientLiveTests {
             )
 
             await #expect(throws: FilesClientError.server(statusCode: 404)) {
-                _ = try await makeClient().deleteItemsWithProgress(serverURL, [item], false) { _ in }
+                _ = try await makeClient().deleteItems(serverURL, [item], false) { _ in }
             }
 
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -202,7 +202,7 @@ extension FilesClientLiveTests {
                 kind: TestKind.text
             )
             await #expect(throws: FilesClientError.forbidden(message: nil)) {
-                _ = try await makeClient().deleteItems(serverURL, [item], false)
+                _ = try await makeClient().deleteItems(serverURL, [item], false, nil)
             }
         }
 
@@ -210,7 +210,7 @@ extension FilesClientLiveTests {
         func deleteItemsWithAnEmptyArrayStillSendsTheRequest() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.commonSuccessNoItems.data())
             StubURLProtocol.capturedRequest = nil
-            _ = try await makeClient().deleteItems(serverURL, [], false)
+            _ = try await makeClient().deleteItems(serverURL, [], false, nil)
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [[String: String]]])
             #expect(json["items"]?.isEmpty == true)
@@ -228,7 +228,7 @@ extension FilesClientLiveTests {
                 size: 0,
                 kind: TestKind.text
             )
-            let result = try await makeClient().transferItems(serverURL, [item], TestFolder.documents, .copy)
+            let result = try await makeClient().transferItems(serverURL, [item], TestFolder.documents, .copy, nil)
             #expect(result.destination == TestFolder.documents)
             #expect(result.movedCount == 1)
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -266,7 +266,7 @@ extension FilesClientLiveTests {
                 size: 0,
                 kind: FileItem.directoryKind
             )
-            _ = try await makeClient().transferItems(serverURL, [item], TestFolder.archive, .move)
+            _ = try await makeClient().transferItems(serverURL, [item], TestFolder.archive, .move, nil)
             #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/files/move")
         }
 
@@ -285,7 +285,7 @@ extension FilesClientLiveTests {
                 kind: FileItem.directoryKind
             )
 
-            let result = try await makeClient().transferItems(serverURL, [folder], Constants.variousFolder, .move)
+            let result = try await makeClient().transferItems(serverURL, [folder], Constants.variousFolder, .move, nil)
 
             #expect(result.destination == "Files/Various")
             #expect(result.items == [TransferResult.Entry(from: "Files/Tests", to: "Files/Various/Tests")])
@@ -309,7 +309,7 @@ extension FilesClientLiveTests {
                 statusCode: 500,
                 message: "Not enough space on the destination."
             )) {
-                _ = try await makeClient().transferItems(serverURL, [folder], Constants.variousFolder, .move)
+                _ = try await makeClient().transferItems(serverURL, [folder], Constants.variousFolder, .move, nil)
             }
         }
 
@@ -330,7 +330,7 @@ extension FilesClientLiveTests {
                 statusCode: 500,
                 message: "Cannot copy or move items to the root path."
             )) {
-                _ = try await makeClient().transferItems(serverURL, [item], "", .move)
+                _ = try await makeClient().transferItems(serverURL, [item], "", .move, nil)
             }
         }
 
@@ -345,7 +345,7 @@ extension FilesClientLiveTests {
                 kind: TestKind.text
             )
             await #expect(throws: FilesClientError.sessionExpired) {
-                _ = try await makeClient().transferItems(serverURL, [item], TestFolder.documents, .copy)
+                _ = try await makeClient().transferItems(serverURL, [item], TestFolder.documents, .copy, nil)
             }
         }
 

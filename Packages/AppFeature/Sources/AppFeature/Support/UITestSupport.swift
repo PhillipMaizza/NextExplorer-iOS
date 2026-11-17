@@ -314,10 +314,9 @@
                     return store.createFolder(in: path, named: name)
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
-                client.deleteItems = { _, items, permanent in store.delete(items, permanent: permanent) }
-                client.deleteItemsWithProgress = { _, items, permanent, onProgress in
+                client.deleteItems = { _, items, permanent, onProgress in
                     guard scenario == .slowOperations else { return store.delete(items, permanent: permanent) }
-                    onProgress(heldProgress)
+                    onProgress?(heldProgress)
                     try await Task.sleep(for: .seconds(heldSeconds))
                     return store.delete(items, permanent: permanent)
                 }
@@ -343,10 +342,7 @@
                 }
                 client.purgeTrash = { _, ids, _ in store.purge(ids) }
                 client.emptyTrash = { _ in store.emptyTrash() }
-                client.transferItems = { _, items, destination, operation in
-                    store.transfer(items, to: destination, operation: operation)
-                }
-                client.transferItemsWithProgress = { _, items, destination, operation, _ in
+                client.transferItems = { _, items, destination, operation, _ in
                     store.transfer(items, to: destination, operation: operation)
                 }
                 client.compressItem = { _, item in store.compress(item) }

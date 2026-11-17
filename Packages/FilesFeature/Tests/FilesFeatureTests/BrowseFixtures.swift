@@ -167,23 +167,7 @@ enum BrowseFixtures {
             BrowseFeature()
         } withDependencies: { deps in
             deps.date = .constant(MockDate.date)
-            forwardingTransferProgress(&deps, configure: configure)
+            configure(&deps)
         }
-    }
-
-    /// Runs `configure`, then makes the progress transfer answer with whatever plain transfer it left:
-    /// tests stub `transferItems`, the reducer asks for `transferItemsWithProgress`.
-    static func forwardingTransferProgress(
-        _ deps: inout DependencyValues,
-        configure: (inout DependencyValues) -> Void
-    ) {
-        let initialTransfer = deps.filesClient.transferItems
-        let transfer = LockIsolated(initialTransfer)
-        deps.filesClient.transferItemsWithProgress = { serverURL, items, destination, operation, _ in
-            try await transfer.value(serverURL, items, destination, operation)
-        }
-        configure(&deps)
-        let configuredTransfer = deps.filesClient.transferItems
-        transfer.setValue(configuredTransfer)
     }
 }

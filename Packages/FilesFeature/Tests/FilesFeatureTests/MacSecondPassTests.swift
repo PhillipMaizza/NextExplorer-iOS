@@ -95,18 +95,16 @@ import TestUtils
             let store = TestStore(initialState: state) {
                 BrowseFeature()
             } withDependencies: {
-                BrowseFixtures.forwardingTransferProgress(&$0) {
-                    $0.filesClient.transferItems = { _, items, destination, operation in
-                        transferred
-                            .withValue {
-                                $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)")
-                            }
-                        try await transfer.wait()
-                        return TransferResult(
-                            destination: destination,
-                            items: [.init(from: "Other/a.txt", to: "Docs/a.txt")]
-                        )
-                    }
+                $0.filesClient.transferItems = { _, items, destination, operation, _ in
+                    transferred
+                        .withValue {
+                            $0.append("\(items.map(\.id).joined(separator: ",")) \(destination) \(operation)")
+                        }
+                    try await transfer.wait()
+                    return TransferResult(
+                        destination: destination,
+                        items: [.init(from: "Other/a.txt", to: "Docs/a.txt")]
+                    )
                 }
             }
 

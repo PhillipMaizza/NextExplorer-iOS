@@ -41,7 +41,7 @@ struct FileUndoTests {
             BrowseFeature()
         } withDependencies: {
             $0.date = .constant(now)
-            BrowseFixtures.forwardingTransferProgress(&$0, configure: configure)
+            configure(&$0)
         }
     }
 
@@ -63,11 +63,11 @@ struct FileUndoTests {
         let gate = AsyncGate()
 
         let store = store(initial) {
-            $0.filesClient.transferItems = { _, _, destination, _ in
+            $0.filesClient.transferItems = { _, _, destination, _, _ in
                 try await gate.wait()
                 return TransferResult(destination: destination, items: [.init(from: "Docs/Misc", to: "Docs/Misc (2)")])
             }
-            $0.filesClient.deleteItems = { _, items, _ in
+            $0.filesClient.deleteItems = { _, items, _, _ in
                 deleted.setValue(items)
                 return DeleteOutcome()
             }
@@ -129,7 +129,7 @@ struct FileUndoTests {
 
         let store = store(state(TestFolder.docs, items: [report, archive])) {
             $0.filesClient.browse = { _, path in BrowseResult(items: [], access: access, path: path) }
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 moves.withValue { $0.append(items.map(\.id)) }
                 destinations.withValue { $0.append(destination) }

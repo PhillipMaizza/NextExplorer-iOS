@@ -139,7 +139,7 @@ public struct TrashRestoreFeature {
                 let filesClient = filesClient
                 return .run { send in
                     try await send(.undoResponse(apiResult {
-                        try await filesClient.deleteItems(serverURL, items, false)
+                        try await filesClient.deleteItems(serverURL, items, false, nil)
                     }))
                 }
                 .cancellable(id: CancelID.undo, cancelInFlight: true)

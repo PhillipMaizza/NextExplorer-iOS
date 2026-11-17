@@ -85,7 +85,7 @@ struct BrowseClipboardTests {
         let gate = AsyncGate()
         let requests = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 requests
                     .withValue {
                         $0.append("\(items.map(\.id).joined(separator: ",")) to \(destination) as \(operation)")
@@ -113,8 +113,8 @@ struct BrowseClipboardTests {
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItemsWithProgress = { _, items, destination, _, onProgress in
-                onProgress(0.5)
+            $0.filesClient.transferItems = { _, items, destination, _, onProgress in
+                onProgress?(0.5)
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
             }
@@ -178,7 +178,7 @@ struct BrowseClipboardTests {
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult(items, to: destination)
             }
@@ -203,7 +203,7 @@ struct BrowseClipboardTests {
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming, second, third], operation: .copy) }
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 try await gate.wait()
                 return BrowseFixtures.transferResult([items[0], items[1]], to: destination, skipping: [items[2]])
             }
@@ -231,7 +231,7 @@ struct BrowseClipboardTests {
         let state = makeState()
         state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, _, _, _ in throw FilesClientError.serverMessage(
+            $0.filesClient.transferItems = { _, _, _, _, _ in throw FilesClientError.serverMessage(
                 statusCode: 500,
                 message: "Nope."
             ) }
@@ -256,7 +256,7 @@ struct BrowseClipboardTests {
         let attempts = LockIsolated(0)
         let gate = AsyncGate()
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, _ in
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
                 let attempt = attempts.withValue { value -> Int in
                     value += 1
                     return value
@@ -334,7 +334,7 @@ struct BrowseClipboardTests {
         let gate = AsyncGate()
         let requests = LockIsolated<[String]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.transferItems = { _, items, destination, operation in
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
                 requests
                     .withValue {
                         $0.append("\(items.map(\.id).joined(separator: ",")) to \(destination) as \(operation)")
