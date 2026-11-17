@@ -1,0 +1,6 @@
+[
+  { "path": "Docs", "canEnter": true, "sizeBytes": 4096, "entryCount": 12, "lastUpdated": "2026-11-17T09:00:00.000Z", "indexed": true, "dirty": false, "excluded": false },
+  { "path": "Photos", "canEnter": false, "sizeBytes": 9000000, "entryCount": 300, "lastUpdated": null, "indexed": true, "dirty": true, "excluded": false },
+  { "path": "New", "canEnter": true, "sizeBytes": null, "entryCount": null, "lastUpdated": null, "indexed": false, "dirty": false, "excluded": false },
+  { "path": "Cache", "canEnter": true, "sizeBytes": null, "entryCount": null, "lastUpdated": null, "indexed": false, "dirty": false, "excluded": true }
+]

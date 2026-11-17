@@ -78,6 +78,12 @@ enum FilesClientFixture: String, FixtureFile {
 
     case featuresUserVolumesEnabled = "features/user-volumes-enabled"
 
+    // MARK: FolderSize
+
+    case folderSizeBatch = "folder-size/batch"
+    case folderSizeErrorExcluded = "folder-size/error-excluded"
+    case folderSizeRefreshAccepted = "folder-size/refresh-accepted"
+
     // MARK: item-mutation
 
     case itemMutationDeleteOutcomeMixed = "item-mutation/delete-outcome-mixed"
