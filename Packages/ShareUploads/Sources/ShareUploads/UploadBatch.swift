@@ -142,7 +142,12 @@ public struct UploadBatch: Sendable {
 
     let ledger = SpaceLedger()
     private(set) var staged: [StagedFile] = []
-    public private(set) var deferredCount = 0
+    /// The folders of the files kept for the app, so discarding the batch takes them out too.
+    private(set) var deferredFolders: [URL] = []
+
+    public var deferredCount: Int {
+        deferredFolders.count
+    }
 
     /// Every file the user shared, whether it goes out now or waits for the app.
     public var count: Int {
@@ -202,7 +207,7 @@ public struct UploadBatch: Sendable {
 
     public mutating func add(_ file: StagedFile) {
         if file.isDeferred {
-            deferredCount += 1
+            deferredFolders.append(file.envelopeURL)
         } else {
             staged.append(file)
         }

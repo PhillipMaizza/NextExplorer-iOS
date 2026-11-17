@@ -132,6 +132,22 @@ struct DeferredUploadsTests {
         #expect(harness.center.requests.map(\.identifier) == [UploadNotificationIdentifier.deferredNotification])
     }
 
+    @Test("Cancelling the share takes the files kept for the app out too")
+    func discardingABatchDeletesItsKeptFiles() throws {
+        let (store, root, source) = try makeStore()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let harness = try Harness(deferredUploads: store)
+        defer { harness.tearDown() }
+        var batch = try harness.uploader.makeBatch(credentials: Harness.credentials, destination: TestPath.photos2026)
+        batch.deferralBytes = 1
+        try batch.add(batch.envelope(for: source, fileName: Value.bigName))
+        #expect(!store.isEmpty)
+
+        harness.uploader.discard(batch)
+
+        #expect(store.isEmpty, "a cancelled share must not upload from the app later")
+    }
+
     @Test("Signing out also deletes the files kept for the app")
     func cancelDiscardsDeferredFiles() throws {
         let (store, root, source) = try makeStore()

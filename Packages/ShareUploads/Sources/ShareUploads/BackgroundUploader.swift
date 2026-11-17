@@ -191,6 +191,9 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
 
     /// Drops a batch that was never started (the user cancelled while files were being read).
     public func discard(_ batch: UploadBatch) {
+        for folder in batch.deferredFolders {
+            try? FileManager.default.removeItem(at: folder)
+        }
         try? FileManager.default.removeItem(at: batch.directory)
     }
 
