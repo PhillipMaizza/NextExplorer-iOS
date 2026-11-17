@@ -112,7 +112,7 @@
             let app = openGallery(at: Fixture.text)
             // Delete sits in the title menu, so the page's bottom stays free for its content.
             choose(L10n.PreviewToolbar.delete, from: Fixture.text, in: app)
-            let confirm = app.buttons[L10n.Common.delete].firstMatch
+            let confirm = app.buttons[L10n.Trash.moveToTrash].firstMatch
             XCTAssertTrue(confirm.waitToAppear(), "Delete asks first")
             keepScreenshot(of: "delete confirmation", in: app)
             confirm.tap()

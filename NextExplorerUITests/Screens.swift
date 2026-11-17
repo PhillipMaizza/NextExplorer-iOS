@@ -335,9 +335,9 @@ struct BrowseScreen {
         app.labeledButton(L10n.Common.save)
     }
 
-    /// Delete confirmation sheet's destructive button.
+    /// Delete confirmation sheet's main button: the mocked server has a trash, so it moves there.
     var deleteConfirmButton: XCUIElement {
-        app.labeledButton(L10n.Common.delete)
+        app.labeledButton(L10n.Trash.moveToTrash)
     }
 
     /// Create share link sheet's submit button (proof the sheet opened).

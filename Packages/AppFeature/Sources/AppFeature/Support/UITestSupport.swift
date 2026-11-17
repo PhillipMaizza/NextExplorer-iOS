@@ -309,6 +309,13 @@
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
                 client.deleteItems = { _, items, permanent in store.delete(items, permanent: permanent) }
+                client.deleteImpact = { _, items in
+                    DeleteImpact(shareCount: 0, trash: DeleteImpact.TrashPlan(
+                        isEnabled: true,
+                        retentionDays: 30,
+                        items: items.map { DeleteImpact.Disposition(path: $0.id, goesToTrash: true) }
+                    ))
+                }
                 // A server with its trash on: deletes land there and can be restored or purged.
                 client.serverFeatures = { _ in
                     ServerFeatures(

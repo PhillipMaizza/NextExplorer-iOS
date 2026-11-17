@@ -11,7 +11,7 @@
 
             text(Fixture.file, in: app).click()
             app.typeKey(XCUIKeyboardKey.delete, modifierFlags: [])
-            let confirm = app.labeledButton(L10n.Common.delete)
+            let confirm = app.labeledButton(L10n.Trash.moveToTrash)
             XCTAssertTrue(confirm.waitToAppear(), "Delete should ask for confirmation first")
             confirm.click()
             XCTAssertTrue(text(Fixture.file, in: app).waitToVanish(), "The confirmed file should leave the table")
