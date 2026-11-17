@@ -4,6 +4,8 @@ private enum Constants {
     static let horizontalPadding: CGFloat = .space16
     static let verticalPadding: CGFloat = .space12
     static let spacing: CGFloat = .space8
+    static let actionHorizontalPadding: CGFloat = .space12
+    static let actionVerticalPadding: CGFloat = .space4
     static let iconSize: CGFloat = .iconSmall
     static let bottomInset: CGFloat = .space16
     static let autoDismissDelay: Duration = .seconds(4.5)
@@ -223,8 +225,12 @@ private struct DSToastOverlay: View {
                     action()
                 }
                 .buttonStyle(DSPressableButtonStyle())
-                .type(.body2(.bold))
-                .underline()
+                .type(.body3(.bold))
+                .foregroundStyle(Color.primaryInverted)
+                .textCase(.uppercase)
+                .padding(.horizontal, Constants.actionHorizontalPadding)
+                .padding(.vertical, Constants.actionVerticalPadding)
+                .background(DSFrostedTint(Capsule(), tint: message.backgroundColor, tintOpacity: 1))
             }
         }
         .foregroundStyle(Color.primaryInverted)
@@ -284,6 +290,14 @@ public extension View {
 
 #Preview("Success") {
     @Previewable @State var message: DSToastMessage? = .success("Saved to Documents")
+
+    Color.backgroundPrimary
+        .ignoresSafeArea()
+        .dsToast($message)
+}
+
+#Preview("Success with action") {
+    @Previewable @State var message: DSToastMessage? = .success("Moved 1 item", actionTitle: "Undo") {}
 
     Color.backgroundPrimary
         .ignoresSafeArea()
