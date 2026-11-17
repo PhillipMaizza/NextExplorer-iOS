@@ -181,6 +181,46 @@ struct BrowseDropReducerTests {
         }
     }
 
+    @Test("Cancel while the drop still checks the destination ends the run and reads the folder again")
+    func cancelDuringTheConflictCheckEndsTheRunAndReloads() async {
+        let report = BrowseDropFixtures.entry(TestFile.report)
+        let favorites = AsyncGate()
+        let listings = LockIsolated(0)
+        let store = BrowseFixtures.store(state(items: [report, archive])) {
+            $0.serveEmptyFolders()
+            $0.holdFavorites(favorites)
+            $0.filesClient.browse = { _, path in
+                // The first listing is the destination check, left hanging for Cancel to stop.
+                if listings.withValue({ $0 += 1; return $0 }) == 1 {
+                    try await suspendUntilCancelled()
+                }
+                return BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path)
+            }
+        }
+
+        await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive)) {
+            $0.isPerformingFileAction = true
+            $0.transferProgress = 0
+            $0.pendingTransferRetry = movingRetry([report], to: "Docs/Archive")
+        }
+        await store.send(.transferCancelTapped) {
+            $0.isPerformingFileAction = false
+            $0.transferProgress = nil
+            $0.pendingTransferRetry = nil
+            $0.phase = .loading
+        }
+        await store.receive(\.itemsResponse.success) {
+            $0.phase = .loaded
+            $0.access = BrowseTestSupport.readOnlyAccess
+            $0.items = []
+        }
+        favorites.open()
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
+        await store.finish()
+    }
+
     @Test("A rejected move shows the server's message and keeps the row")
     func aRejectedMoveSurfacesTheServerMessage() async {
         let report = BrowseDropFixtures.entry(TestFile.report)
