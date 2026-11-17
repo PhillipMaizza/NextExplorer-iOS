@@ -121,7 +121,7 @@ public struct UploadsFeature {
         case appResumed
         case startNextIfIdle
         case progress(id: UUID, Double)
-        case uploadResponse(id: UUID, Result<FileItem, FilesClientError>)
+        case uploadResponse(id: UUID, Result<Bool, FilesClientError>)
         case cancelJobTapped(id: UUID)
         case cancelAllTapped
         case retryTapped(id: UUID)
@@ -324,14 +324,14 @@ public struct UploadsFeature {
             let lastReported = LockIsolated(0.0)
 
             let result = await withTaskGroup(
-                of: Void.self, returning: Result<FileItem, FilesClientError>?.self
+                of: Void.self, returning: Result<Bool, FilesClientError>?.self
             ) { group in
                 group.addTask {
                     for await fraction in progress {
                         await send(.progress(id: job.id, fraction))
                     }
                 }
-                let result: Result<FileItem, FilesClientError>?
+                let result: Result<Bool, FilesClientError>?
                 do {
                     result = try await apiResult {
                         try await filesClient
@@ -345,6 +345,7 @@ public struct UploadsFeature {
                                     continuation.yield(fraction)
                                 }
                             }
+                        return true
                     }
                 } catch {
                     // Cancelled (`apiResult` rethrows cancellation): send no response.

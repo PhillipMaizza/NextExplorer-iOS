@@ -170,6 +170,7 @@ enum FilesClientFixture: String, FixtureFile {
     case systemSettingsThumbnailsAndAccessRules = "system-settings/thumbnails-and-access-rules"
     case systemSettingsThumbnailsDisabledEcho = "system-settings/thumbnails-disabled-echo"
     case systemSettingsUploadsChunked = "system-settings/uploads-chunked"
+    case systemSettingsUploadsAutoFallback = "system-settings/uploads-auto-fallback"
 
     // MARK: text-content
 
@@ -205,6 +206,7 @@ enum FilesClientFixture: String, FixtureFile {
     case uploadErrorForbidden = "upload/error-forbidden"
     case uploadRenamedNotesCopy = "upload/renamed-notes-copy"
     case uploadRenamedWeirdName = "upload/renamed-weird-name"
+    case uploadErrorTooLarge = "upload/error-too-large"
     case capabilitiesMixed = "capabilities/mixed"
 
     // MARK: versioned-files

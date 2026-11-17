@@ -19,17 +19,10 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     @Test
     func aFailedUploadReportsNoChangedPathsAndCanBeRetried() async {
         let attempts = LockIsolated(0)
-        let store = makeStore(state(), upload: { call, _ in
+        let store = makeStore(state(), upload: { _, _ in
             if attempts.withValue({ $0 += 1; return $0 }) == 1 {
                 throw FilesClientError.server(statusCode: 500)
             }
-            return FileItem(
-                name: call.fileName,
-                path: call.destination,
-                dateModified: MockDate.date,
-                size: 10,
-                kind: TestKind.text
-            )
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
@@ -63,13 +56,6 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
             if failedOnce.withValue({ $0.insert(call.fileName).inserted }) {
                 throw FilesClientError.server(statusCode: 500)
             }
-            return FileItem(
-                name: call.fileName,
-                path: call.destination,
-                dateModified: MockDate.date,
-                size: 10,
-                kind: TestKind.text
-            )
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0), pending(TestFile.bText, 1)])) {
@@ -195,17 +181,10 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     @Test(arguments: [FilesClientError.offline, .network("lost")])
     func appResumedRequeuesTransportFailuresAndTheRetryCanSucceed(_ error: FilesClientError) async {
         let attempts = LockIsolated(0)
-        let store = makeStore(state(), upload: { call, _ in
+        let store = makeStore(state(), upload: { _, _ in
             if attempts.withValue({ $0 += 1; return $0 }) == 1 {
                 throw error
             }
-            return FileItem(
-                name: call.fileName,
-                path: call.destination,
-                dateModified: MockDate.date,
-                size: 10,
-                kind: TestKind.text
-            )
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }
@@ -304,17 +283,10 @@ struct UploadsFailureAndResumeTests: UploadsTestSupport {
     @Test
     func aTimedOutUploadWaitsForAManualRetryBecauseTheServerMayHaveStoredIt() async {
         let attempts = LockIsolated(0)
-        let store = makeStore(state(), upload: { call, _ in
+        let store = makeStore(state(), upload: { _, _ in
             if attempts.withValue({ $0 += 1; return $0 }) == 1 {
                 throw FilesClientError.timedOut
             }
-            return FileItem(
-                name: call.fileName,
-                path: call.destination,
-                dateModified: MockDate.date,
-                size: 10,
-                kind: TestKind.text
-            )
         })
 
         await store.send(.enqueue([pending(TestFile.aText, 0)])) { $0.jobs = [job(TestFile.aText, 0, .queued)] }

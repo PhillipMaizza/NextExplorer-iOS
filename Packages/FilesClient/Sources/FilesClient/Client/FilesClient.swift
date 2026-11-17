@@ -184,15 +184,15 @@ public struct FilesClient: Sendable {
     /// the file at `fileURL`. `destination` must not be empty (the server rejects the root).
     /// The request is first assembled into a temporary multipart envelope on disk (one extra
     /// copy of the payload), then streamed from that file, so nothing buffers the whole file
-    /// in memory. Reports fractional progress (0...1); returns the server's echo of the stored
-    /// file, which may carry an auto-renamed `name` on a collision.
+    /// in memory. Reports fractional progress (0...1). A large file goes as resumable pieces
+    /// (`/api/upload/tus`) when the server forces them or refused a direct request for its size.
     public var uploadFile: @Sendable (
         _ serverURL: URL,
         _ fileURL: URL,
         _ fileName: String,
         _ destination: String,
         _ onProgress: @Sendable @escaping (Double) -> Void
-    ) async throws -> FileItem
+    ) async throws -> Void
     public var compressItem: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
     public var createShareLink: @Sendable (
         _ serverURL: URL, _ request: CreateShareLinkRequest

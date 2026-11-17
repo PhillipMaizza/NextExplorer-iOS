@@ -90,13 +90,6 @@ struct UploadsQueueTests: UploadsTestSupport {
             progress(0.5)
             progress(0.51)
             progress(1)
-            return FileItem(
-                name: TestFile.aText,
-                path: TestFolder.inbox,
-                dateModified: MockDate.date,
-                size: 10,
-                kind: TestKind.text
-            )
         })
 
         await store.send(.startNextIfIdle) { markUploading(&$0, 0) }
@@ -111,7 +104,7 @@ struct UploadsQueueTests: UploadsTestSupport {
     func aResponseForAJobThatIsGoneIsIgnored() async {
         let store = makeStore(state([job(TestFile.aText, 0, .completed)]))
 
-        await store.send(.uploadResponse(id: UUID(7), .success(uploaded("ghost.txt"))))
+        await store.send(.uploadResponse(id: UUID(7), .success(true)))
         #expect(discarded.value.isEmpty)
     }
 
