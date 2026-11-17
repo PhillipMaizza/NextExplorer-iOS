@@ -3,6 +3,7 @@ import CoreModels
 import Foundation
 import Localization
 import NetworkClient
+import ShareUploads
 
 @Reducer
 public struct MainTabFeature {
@@ -161,6 +162,7 @@ public struct MainTabFeature {
 
     @Dependency(\.connectivity) var connectivity
     @Dependency(\.deviceSaver) var deviceSaver
+    @Dependency(\.shareUploads) var shareUploads
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     private enum CancelID { case connectivity }
@@ -418,6 +420,7 @@ public struct MainTabFeature {
                         .send(.browse(.syncPathStack)),
                         .send(.favorites(.syncPathStack)),
                         .send(.uploads(.appResumed)),
+                        claimDeferredShares(state),
                         // Check the pinned folders for new files each time the app comes forward.
                         .send(.offline(.autoSync(force: false)))
                     )
@@ -644,6 +647,23 @@ public struct MainTabFeature {
 
     /// The trash changes behind the screen (deletes elsewhere, expiry, another device): a trash
     /// section already shown reads it again; one never opened loads when it first appears.
+    /// Big files the Share Extension kept for the app: moved into the app's own upload scratch folder
+    /// and queued, where the upload sends them in pieces like any file picked in the app.
+    func claimDeferredShares(_ state: State) -> Effect<Action> {
+        let accountID = state.settings.uploadDefaults.accountID
+        let shareUploads = shareUploads
+        return .run { send in
+            let claimed = shareUploads.claimDeferred(accountID, UploadStagingLocation.directory)
+            guard !claimed.isEmpty else { return }
+            await send(.uploads(.enqueue(claimed.map {
+                PendingUpload(
+                    id: UUID(uuidString: $0.id) ?? UUID(), fileURL: $0.fileURL, fileName: $0.fileName,
+                    destination: $0.destination
+                )
+            })))
+        }
+    }
+
     static func refreshTrashIfLoaded(_ state: State) -> Effect<Action> {
         state.trash.phase.hasLoaded ? .send(.trash(.refreshPulled)) : .none
     }
