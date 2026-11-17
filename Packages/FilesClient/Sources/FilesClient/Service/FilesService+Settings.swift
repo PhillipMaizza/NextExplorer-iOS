@@ -138,3 +138,11 @@ extension FilesService {
         return envelope.logoUrl
     }
 }
+
+extension FilesService {
+    /// `GET /api/capabilities`: the optional programs the server found, for the admin Server tools page.
+    func fetchCapabilities(serverURL: URL) async throws -> [ServerCapability] {
+        let request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.capabilities), method: .get)
+        return try await send(request, decoding: ServerCapabilitiesEnvelope.self).capabilities
+    }
+}
