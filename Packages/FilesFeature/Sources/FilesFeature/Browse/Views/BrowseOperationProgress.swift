@@ -181,33 +181,31 @@ struct BrowseOperationProgress: ViewModifier {
     }
 #endif
 
-#if DEBUG
-    extension BrowseRunningOperation {
-        static func previewDelete(_ progress: Double) -> Self {
-            Self(
-                title: L10n.Browse.progressDeleting,
-                icon: IconKit.delete,
-                progress: progress,
-                cancelAction: .bulkDeleteCancelTapped
-            )
-        }
-
-        static func previewCopy(_ progress: Double) -> Self {
-            Self(
-                title: L10n.Browse.progressCopying,
-                icon: IconKit.copy,
-                progress: progress,
-                cancelAction: .transferCancelTapped
-            )
-        }
-
-        static func previewMove(_ progress: Double) -> Self {
-            Self(
-                title: L10n.Browse.progressMoving,
-                icon: IconKit.move,
-                progress: progress,
-                cancelAction: .transferCancelTapped
-            )
-        }
+extension BrowseRunningOperation {
+    static func previewDelete(_ progress: Double) -> Self {
+        Self(
+            title: L10n.Browse.progressDeleting,
+            icon: IconKit.delete,
+            progress: progress,
+            cancelAction: .bulkDeleteCancelTapped
+        )
     }
-#endif
+
+    static func previewCopy(_ progress: Double) -> Self {
+        Self(
+            title: L10n.Browse.progressCopying,
+            icon: IconKit.copy,
+            progress: progress,
+            cancelAction: .transferCancelTapped
+        )
+    }
+
+    static func previewMove(_ progress: Double) -> Self {
+        Self(
+            title: L10n.Browse.progressMoving,
+            icon: IconKit.move,
+            progress: progress,
+            cancelAction: .transferCancelTapped
+        )
+    }
+}
