@@ -117,7 +117,7 @@ enum BrowseFixtures {
         let copies = alreadyListed + listed
         await store.receive(\.transferResponse.success) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.pendingTransferRetry = nil
             $0.transferSuccessMessage = message
             for item in listed {
@@ -165,9 +165,25 @@ enum BrowseFixtures {
     ) -> TestStoreOf<BrowseFeature> {
         TestStore(initialState: state ?? self.state()) {
             BrowseFeature()
-        } withDependencies: {
-            $0.date = .constant(MockDate.date)
-            configure(&$0)
+        } withDependencies: { deps in
+            deps.date = .constant(MockDate.date)
+            forwardingTransferProgress(&deps, configure: configure)
         }
+    }
+
+    /// Runs `configure`, then makes the progress transfer answer with whatever plain transfer it left:
+    /// tests stub `transferItems`, the reducer asks for `transferItemsWithProgress`.
+    static func forwardingTransferProgress(
+        _ deps: inout DependencyValues,
+        configure: (inout DependencyValues) -> Void
+    ) {
+        let initialTransfer = deps.filesClient.transferItems
+        let transfer = LockIsolated(initialTransfer)
+        deps.filesClient.transferItemsWithProgress = { serverURL, items, destination, operation, _ in
+            try await transfer.value(serverURL, items, destination, operation)
+        }
+        configure(&deps)
+        let configuredTransfer = deps.filesClient.transferItems
+        transfer.setValue(configuredTransfer)
     }
 }

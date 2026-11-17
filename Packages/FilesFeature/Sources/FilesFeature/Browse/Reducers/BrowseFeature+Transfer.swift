@@ -38,9 +38,7 @@ extension BrowseFeature {
         }
 
         state.isPerformingFileAction = true
-        state.fileActionProgressMessage = retry.operation == .move
-            ? L10n.Browse.progressMoving
-            : L10n.Browse.progressCopying
+        state.transferProgress = 0
         state.transferErrorMessage = nil
         state.pendingTransferRetry = retry
         let serverURL = state.serverURL
@@ -58,7 +56,7 @@ extension BrowseFeature {
     func resolveTransfer(_ state: inout State, retry: TransferRetry, colliding: [FileItem]) -> Effect<Action> {
         guard !colliding.isEmpty else { return performTransfer(&state, retry: retry.resolved(.keepBoth)) }
         state.isPerformingFileAction = false
-        state.fileActionProgressMessage = nil
+        state.transferProgress = nil
         state.pendingTransferRetry = retry
         state.transferConflict = TransferConflict(retry: retry, collidingItems: colliding)
         return .none
@@ -69,9 +67,7 @@ extension BrowseFeature {
     func performTransfer(_ state: inout State, retry: TransferRetry) -> Effect<Action> {
         guard !retry.items.isEmpty else { return .none }
         state.isPerformingFileAction = true
-        state.fileActionProgressMessage = retry.operation == .move
-            ? L10n.Browse.progressMoving
-            : L10n.Browse.progressCopying
+        state.transferProgress = 0
         state.transferErrorMessage = nil
         state.transferConflict = nil
         // Kept until the transfer confirms success, so the "Retry" action on a failure toast
@@ -92,12 +88,18 @@ extension BrowseFeature {
                         )
                     }
                 }
-                let result = try await filesClient.transferItems(
-                    serverURL,
-                    retry.items,
-                    retry.destination,
-                    retry.operation
-                )
+                let result = try await withProgressActions(
+                    send: send,
+                    action: Action.transferProgressed
+                ) { onProgress in
+                    try await filesClient.transferItemsWithProgress(
+                        serverURL,
+                        retry.items,
+                        retry.destination,
+                        retry.operation,
+                        onProgress
+                    )
+                }
                 return TransferOutcome(result: result, operation: retry.operation, clearClipboard: retry.clearClipboard)
             }), animation: DSMotion.listDiff)
         }

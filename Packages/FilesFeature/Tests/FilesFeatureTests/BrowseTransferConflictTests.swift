@@ -70,7 +70,7 @@ struct BrowseTransferConflictTests {
         await store.send(.transferConflictResolved(.replace)) {
             $0.transferConflict = nil
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
                 resolution: .replace, itemsToReplace: [existing]
@@ -101,7 +101,7 @@ struct BrowseTransferConflictTests {
         await store.send(.transferConflictResolved(.replace)) {
             $0.transferConflict = nil
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
                 resolution: .replace, itemsToReplace: [existing]
@@ -109,7 +109,7 @@ struct BrowseTransferConflictTests {
         }
         await store.receive(\.transferResponse.failure) {
             $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
+            $0.transferProgress = nil
             $0.transferErrorMessage = L10n.Trash.replaceKept(existing.name)
         }
     }
@@ -132,7 +132,7 @@ struct BrowseTransferConflictTests {
         await store.send(.transferConflictResolved(.keepBoth)) {
             $0.transferConflict = nil
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
                 resolution: .keepBoth
@@ -170,7 +170,7 @@ struct BrowseTransferConflictTests {
 
         await store.send(.pasteTapped(keepItemsAfterCopy: true)) {
             $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [existing], destination: TestFolder.documents, operation: .copy, clearClipboard: false,
                 resolution: .keepBoth

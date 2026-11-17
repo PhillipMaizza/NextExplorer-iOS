@@ -37,7 +37,7 @@ struct BrowseTabFeatureTests {
             BrowseTabFeature()
         } withDependencies: {
             $0.date = .constant(MockDate.date)
-            configure(&$0)
+            BrowseFixtures.forwardingTransferProgress(&$0, configure: configure)
         }
     }
 
@@ -271,7 +271,7 @@ struct BrowseTabFeatureTests {
 
         await store.send(.path(.element(id: id, action: .pasteTapped(keepItemsAfterCopy: false)))) {
             $0.path[id: id]?.isPerformingFileAction = true
-            $0.path[id: id]?.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.path[id: id]?.transferProgress = 0
             $0.path[id: id]?.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [misc], destination: TestFolder.docs, operation: .copy, clearClipboard: true,
                 resolution: .keepBoth, itemsToReplace: []
@@ -280,7 +280,7 @@ struct BrowseTabFeatureTests {
         transfer.open()
         await store.receive(\.path[id: id].transferResponse.success) {
             $0.path[id: id]?.isPerformingFileAction = false
-            $0.path[id: id]?.fileActionProgressMessage = nil
+            $0.path[id: id]?.transferProgress = nil
             $0.path[id: id]?.pendingTransferRetry = nil
             $0.path[id: id]?.$clipboard.withLock { $0 = nil }
             $0.path[id: id]?.transferSuccessMessage = L10n.Browse.transferCopied(1)
