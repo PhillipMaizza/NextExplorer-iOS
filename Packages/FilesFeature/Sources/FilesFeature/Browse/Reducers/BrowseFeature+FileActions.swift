@@ -134,16 +134,23 @@ extension BrowseFeature {
         let itemsToDelete = state.selectedItemIDs.compactMap { state.items[id: $0] }
         guard !itemsToDelete.isEmpty else { return .none }
         state.isBulkActionInFlight = true
+        state.bulkDeleteProgress = 0
         let serverURL = state.serverURL
         let filesClient = filesClient
         return .run { send in
             // Animated so the rows visibly slide out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
             try await send(.bulkDeleteResponse(apiResult {
-                let outcome = try await filesClient.deleteItems(serverURL, itemsToDelete, permanent)
+                let outcome = try await withProgressActions(
+                    send: send,
+                    action: Action.bulkDeleteProgressed
+                ) { onProgress in
+                    try await filesClient.deleteItemsWithProgress(serverURL, itemsToDelete, permanent, onProgress)
+                }
                 return DeleteResult(requested: itemsToDelete, outcome: outcome)
             }), animation: DSMotion.listDiff)
         }
+        .cancellable(id: CancelID.bulkDelete)
     }
 
     /// The items the trash refused, deleted for good after the user agreed.

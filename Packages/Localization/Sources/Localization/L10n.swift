@@ -188,6 +188,7 @@ public enum L10n {
         public static var open: String { tr("browse.open") }  // "Open"
         public static var progressCompressing: String { tr("browse.progressCompressing") }  // "Compressing…"
         public static var progressCopying: String { tr("browse.progressCopying") }  // "Copying…"
+        public static var progressDeleting: String { tr("browse.progressDeleting") }  // "Deleting…"
         public static var progressExtracting: String { tr("browse.progressExtracting") }  // "Extracting…"
         public static var progressMoving: String { tr("browse.progressMoving") }  // "Moving…"
         public static var quickLookTooLarge: String { tr("browse.quickLookTooLarge") }  // "This file is too large for Quick Look."
