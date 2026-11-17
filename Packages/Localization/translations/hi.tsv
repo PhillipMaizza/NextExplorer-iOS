@@ -1251,3 +1251,6 @@ serverTools.missing	अनुपस्थित
 serverTools.notUsed	उपयोग में नहीं
 serverTools.package	पैकेज: %@
 serverTools.missingFormats	नहीं खुल सकते: %@
+shareUpload.deferredTitle	बड़ी फ़ाइलें प्रतीक्षा में
+shareUpload.deferredBody#one	%lld बड़ी फ़ाइल अपलोड करने के लिए NextExplorer खोलें।
+shareUpload.deferredBody#other	%lld बड़ी फ़ाइलें अपलोड करने के लिए NextExplorer खोलें।

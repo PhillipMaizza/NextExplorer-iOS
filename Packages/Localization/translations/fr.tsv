@@ -1251,3 +1251,6 @@ serverTools.missing	Manquant
 serverTools.notUsed	Non utilisé
 serverTools.package	Paquet : %@
 serverTools.missingFormats	Ne peut pas ouvrir : %@
+shareUpload.deferredTitle	Fichiers volumineux en attente
+shareUpload.deferredBody#one	Ouvrez NextExplorer pour envoyer %lld fichier volumineux.
+shareUpload.deferredBody#other	Ouvrez NextExplorer pour envoyer %lld fichiers volumineux.

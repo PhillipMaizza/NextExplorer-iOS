@@ -1251,3 +1251,6 @@ serverTools.missing	Saknas
 serverTools.notUsed	Används inte
 serverTools.package	Paket: %@
 serverTools.missingFormats	Kan inte öppna: %@
+shareUpload.deferredTitle	Stora filer väntar
+shareUpload.deferredBody#one	Öppna NextExplorer för att ladda upp %lld stor fil.
+shareUpload.deferredBody#other	Öppna NextExplorer för att ladda upp %lld stora filer.

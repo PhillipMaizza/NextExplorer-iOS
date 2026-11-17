@@ -1309,3 +1309,8 @@ serverTools.missing	Brak
 serverTools.notUsed	Nieużywane
 serverTools.package	Pakiet: %@
 serverTools.missingFormats	Nie można otworzyć: %@
+shareUpload.deferredTitle	Duże pliki czekają
+shareUpload.deferredBody#one	Otwórz NextExplorer, aby przesłać %lld duży plik.
+shareUpload.deferredBody#few	Otwórz NextExplorer, aby przesłać %lld duże pliki.
+shareUpload.deferredBody#many	Otwórz NextExplorer, aby przesłać %lld dużych plików.
+shareUpload.deferredBody#other	Otwórz NextExplorer, aby przesłać %lld dużego pliku.

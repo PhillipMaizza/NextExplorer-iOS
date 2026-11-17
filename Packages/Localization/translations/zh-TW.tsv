@@ -1222,3 +1222,5 @@ serverTools.missing	缺少
 serverTools.notUsed	未使用
 serverTools.package	套件：%@
 serverTools.missingFormats	無法開啟：%@
+shareUpload.deferredTitle	大型檔案等待中
+shareUpload.deferredBody#other	打開 NextExplorer 以上傳 %lld 個大型檔案。

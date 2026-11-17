@@ -1251,3 +1251,6 @@ serverTools.missing	Fehlt
 serverTools.notUsed	Nicht genutzt
 serverTools.package	Paket: %@
 serverTools.missingFormats	Nicht lesbar: %@
+shareUpload.deferredTitle	Große Dateien warten
+shareUpload.deferredBody#one	Öffne NextExplorer, um %lld große Datei hochzuladen.
+shareUpload.deferredBody#other	Öffne NextExplorer, um %lld große Dateien hochzuladen.

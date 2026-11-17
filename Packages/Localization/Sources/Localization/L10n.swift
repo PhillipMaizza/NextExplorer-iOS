@@ -835,6 +835,8 @@ public enum L10n {
         public static var certificateRequired: String { tr("shareUpload.certificateRequired") }
         public static func checking(_ a0: CVarArg) -> String { tr("shareUpload.checking", a0) }
         public static var defaultFolderUnavailable: String { tr("shareUpload.defaultFolderUnavailable") }
+        public static func deferredBody(_ a0: CVarArg) -> String { tr("shareUpload.deferredBody", a0) }
+        public static var deferredTitle: String { tr("shareUpload.deferredTitle") }  // "Large files are waiting"
         public static var failed: String { tr("shareUpload.failed") }  // "The files couldn't be prepared for upload."
         public static func failedItemLine(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.failedItemLine", a0, a1) }
         public static var failedItemsHeader: String { tr("shareUpload.failedItemsHeader") }  // "These files couldn't be prepared:"

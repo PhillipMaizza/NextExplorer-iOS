@@ -1222,3 +1222,5 @@ serverTools.missing	없음
 serverTools.notUsed	사용 안 함
 serverTools.package	패키지: %@
 serverTools.missingFormats	열 수 없음: %@
+shareUpload.deferredTitle	큰 파일 대기 중
+shareUpload.deferredBody#other	NextExplorer를 열어 큰 파일 %lld개를 업로드하세요.

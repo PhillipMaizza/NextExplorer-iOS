@@ -1168,6 +1168,9 @@ shareUpload.notificationDoneTitle	Upload finished
 shareUpload.notificationFailedTitle	Some files didn't upload
 shareUpload.notificationDoneBody#one	%lld file uploaded to “%@”.
 shareUpload.notificationDoneBody#other	%lld files uploaded to “%@”.
+shareUpload.deferredTitle	Large files are waiting
+shareUpload.deferredBody#one	Open NextExplorer to upload %lld large file.
+shareUpload.deferredBody#other	Open NextExplorer to upload %lld large files.
 shareUpload.notificationAllFailedTitle	Upload failed
 shareUpload.failureUnauthorized#one	%lld file wasn't uploaded. Sign in again, then retry.
 shareUpload.failureUnauthorized#other	%lld files weren't uploaded. Sign in again, then retry.

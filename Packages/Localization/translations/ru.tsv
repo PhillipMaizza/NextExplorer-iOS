@@ -1309,3 +1309,8 @@ serverTools.missing	Отсутствует
 serverTools.notUsed	Не используется
 serverTools.package	Пакет: %@
 serverTools.missingFormats	Не открываются: %@
+shareUpload.deferredTitle	Большие файлы ждут
+shareUpload.deferredBody#one	Откройте NextExplorer, чтобы загрузить %lld большой файл.
+shareUpload.deferredBody#few	Откройте NextExplorer, чтобы загрузить %lld больших файла.
+shareUpload.deferredBody#many	Откройте NextExplorer, чтобы загрузить %lld больших файлов.
+shareUpload.deferredBody#other	Откройте NextExplorer, чтобы загрузить %lld больших файла.

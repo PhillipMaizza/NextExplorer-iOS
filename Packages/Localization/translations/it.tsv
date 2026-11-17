@@ -1251,3 +1251,6 @@ serverTools.missing	Mancante
 serverTools.notUsed	Non usato
 serverTools.package	Pacchetto: %@
 serverTools.missingFormats	Non apribili: %@
+shareUpload.deferredTitle	File grandi in attesa
+shareUpload.deferredBody#one	Apri NextExplorer per caricare %lld file grande.
+shareUpload.deferredBody#other	Apri NextExplorer per caricare %lld file grandi.

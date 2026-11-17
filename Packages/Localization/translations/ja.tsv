@@ -1222,3 +1222,5 @@ serverTools.missing	未インストール
 serverTools.notUsed	未使用
 serverTools.package	パッケージ: %@
 serverTools.missingFormats	開けない形式: %@
+shareUpload.deferredTitle	大きなファイルが待機中
+shareUpload.deferredBody#other	NextExplorer を開いて、%lld 個の大きなファイルをアップロードしてください。
