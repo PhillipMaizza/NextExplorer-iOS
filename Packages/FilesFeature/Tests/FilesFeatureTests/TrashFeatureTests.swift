@@ -384,4 +384,26 @@ struct TrashFeatureTests {
         await store.send(.selectAllTapped) { $0.selectedIDs = [] }
         await store.send(.selectModeToggled) { $0.isSelecting = false }
     }
+
+    // MARK: Whole folder
+
+    @Test("Restoring a whole folder closes it and the list carries its result and Undo")
+    func wholeFolderResultMovesToTheList() async {
+        let restored = FileItem(name: "Photos", path: "Media", dateModified: .distantPast, size: 0, kind: "")
+        let notice = TrashNotice(text: L10n.Trash.restored(1), isFailure: false, isUndoable: true, sequence: 1)
+        var state = loadedState([photos])
+        var folder = TrashFolderFeature.State(serverURL: TestHost.serverURL, item: photos)
+        folder.restore.notice = notice
+        folder.restore.undoable = [restored]
+        state.folder = folder
+        let store = store(state) { $0.filesClient.fetchTrash = { _ in Self.listing([]) } }
+
+        await store.send(.folder(.presented(.delegate(.restored(isWholeFolder: true))))) {
+            $0.folder = nil
+            $0.restore.undoable = [restored]
+            $0.restore.notice = notice
+        }
+        await store.receive(.delegate(.restored))
+        await store.receive(\.loadResponse.success) { $0.items = [] }
+    }
 }

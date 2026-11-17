@@ -124,6 +124,16 @@ public struct TrashFeature {
 
             case let .folder(.presented(.delegate(.restored(isWholeFolder)))):
                 if isWholeFolder {
+                    // The folder's screen closes, and its toast with it: the list shows the result and its Undo.
+                    if let finished = state.folder?.restore, let notice = finished.notice {
+                        state.restore.undoable = finished.undoable
+                        state.restore.notice = TrashNotice.after(
+                            state.restore.notice,
+                            text: notice.text,
+                            isFailure: notice.isFailure,
+                            isUndoable: notice.isUndoable
+                        )
+                    }
                     state.folder = nil
                 }
                 return .merge(load(&state), .send(.delegate(.restored)))

@@ -15,6 +15,8 @@ struct TrashFolderView: View {
             .backgroundGradient()
             .navigationTitle(store.title)
             .toolbar { toolbar }
+            // Its own: the trash list's chrome above it would show or hide these circles with the list's.
+            .selectModeChrome(isSelecting: store.isSelecting)
             .task { store.send(.task) }
             .modifier(TrashRestorePrompts(
                 store: store.scope(state: \.restore, action: \.restore),
