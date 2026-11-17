@@ -157,5 +157,34 @@ class BranchTests(unittest.TestCase):
             self.assertEqual(len(check.check_branch(name)), 1, name)
 
 
+class MovedFileTests(unittest.TestCase):
+    def test_a_moved_file_is_its_old_self_not_a_new_file(self):
+        import os
+        import subprocess
+        import tempfile
+
+        view = "import SwiftUI\n\nstruct Row: View {\n    var body: some View {\n        // A hyphen-ated comment\n        Text(\"x\")\n    }\n}\n"
+        with tempfile.TemporaryDirectory() as temp:
+            def git(*args):
+                return subprocess.run(["git", *args], cwd=temp, capture_output=True, text=True, check=True).stdout
+
+            git("init", "-q")
+            git("config", "user.email", "t@example.com")
+            git("config", "user.name", "t")
+            pathlib.Path(temp, "Row.swift").write_text(view)
+            git("add", "-A")
+            git("commit", "-qm", "base")
+            os.makedirs(os.path.join(temp, "Views"))
+            git("mv", "Row.swift", "Views/Row.swift")
+            git("add", "-A")
+            real_root = check.ROOT
+            check.ROOT = pathlib.Path(temp)
+            try:
+                statuses = check.changed_files(["--cached"])
+            finally:
+                check.ROOT = real_root
+        self.assertEqual(statuses, {"Views/Row.swift": ("M", "Row.swift")})
+
+
 if __name__ == "__main__":
     unittest.main()
