@@ -6,9 +6,17 @@
     import SwiftUI
 
     private enum Metrics {
-        static let locationColumnMinWidth: CGFloat = 180
-        static let deletedByColumnWidth: CGFloat = 120
-        static let removedColumnWidth: CGFloat = 130
+        // The detail columns give way before the sidebar does: fixed widths summed past the window
+        // and squeezed the sidebar.
+        static let nameColumnMinWidth: CGFloat = 160
+        static let locationColumnMinWidth: CGFloat = 110
+        static let locationColumnIdealWidth: CGFloat = 180
+        static let deletedByColumnMinWidth: CGFloat = 70
+        static let deletedByColumnIdealWidth: CGFloat = 120
+        static let dateColumnMinWidth: CGFloat = 90
+        static let removedColumnMinWidth: CGFloat = 90
+        static let removedColumnIdealWidth: CGFloat = 130
+        static let sizeColumnMinWidth: CGFloat = 60
         static let unavailableOpacity: Double = 0.5
     }
 
@@ -88,33 +96,33 @@
                     .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
                     .opacity(item.isAvailable ? 1 : Metrics.unavailableOpacity)
                 }
-                .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
+                .width(min: Metrics.nameColumnMinWidth)
                 TableColumn(L10n.Trash.columnOriginalLocation) { item in
                     Text(item.isAvailable ? TrashRowText.location(item) : L10n.Trash.unavailable)
                         .lineLimit(1)
                         .truncationMode(.head)
                         .foregroundStyle(Color.secondaryDS)
                 }
-                .width(min: Metrics.locationColumnMinWidth)
+                .width(min: Metrics.locationColumnMinWidth, ideal: Metrics.locationColumnIdealWidth)
                 TableColumn(L10n.Trash.columnDeletedBy) { item in
                     Text(TrashRowText.deletedBy(item)).foregroundStyle(Color.secondaryDS)
                 }
-                .width(Metrics.deletedByColumnWidth)
+                .width(min: Metrics.deletedByColumnMinWidth, ideal: Metrics.deletedByColumnIdealWidth)
                 TableColumn(L10n.Trash.columnDeletedOn, value: \.sortDeletedAt) { item in
                     Text(TrashRowText.deletedOn(item) ?? "").foregroundStyle(Color.secondaryDS)
                 }
-                .width(MacBrowseTableMetrics.dateColumnWidth)
+                .width(min: Metrics.dateColumnMinWidth, ideal: MacBrowseTableMetrics.dateColumnWidth)
                 TableColumn(L10n.Trash.columnRemoved) { item in
                     Text(TrashRowText.removal(item, now: date.now, calendar: calendar) ?? "")
                         .foregroundStyle(Color.secondaryDS)
                 }
-                .width(Metrics.removedColumnWidth)
+                .width(min: Metrics.removedColumnMinWidth, ideal: Metrics.removedColumnIdealWidth)
                 TableColumn(L10n.Sort.size, value: \.sortSize) { item in
                     Text(item.size.map(FileSizeFormat.string) ?? "")
                         .foregroundStyle(Color.secondaryDS)
                         .monospacedDigit()
                 }
-                .width(MacBrowseTableMetrics.sizeColumnWidth)
+                .width(min: Metrics.sizeColumnMinWidth, ideal: MacBrowseTableMetrics.sizeColumnWidth)
             }
             .contextMenu(forSelectionType: TrashItem.ID.self) { ids in
                 menu(for: ids)

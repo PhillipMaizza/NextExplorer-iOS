@@ -103,9 +103,6 @@ struct MainTabSidebar: View {
                     .listStyle(.sidebar)
                 sidebarFooter
             }
-            // The column width alone is not held on the Mac: the split view restores a narrower
-            // width than its minimum. A minimum on the content itself is.
-            .frame(minWidth: Constants.macSidebarMinWidth, idealWidth: Constants.macSidebarIdealWidth)
             .navigationSplitViewColumnWidth(
                 min: Constants.macSidebarMinWidth,
                 ideal: Constants.macSidebarIdealWidth,
