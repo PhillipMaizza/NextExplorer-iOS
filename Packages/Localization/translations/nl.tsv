@@ -1254,3 +1254,9 @@ serverTools.missing	Ontbreekt
 serverTools.notUsed	Niet gebruikt
 serverTools.package	Pakket: %@
 serverTools.missingFormats	Kan niet openen: %@
+shareUpload.deferredTitle	Grote bestanden wachten
+shareUpload.deferredBody#one	Open NextExplorer om %lld groot bestand te uploaden.
+shareUpload.deferredBody#other	Open NextExplorer om %lld grote bestanden te uploaden.
+shareUpload.failureTooLarge#one	%lld bestand is niet geüpload. De verbinding met je server weigert zulke grote bestanden. Deel ze opnieuw en NextExplorer verstuurt ze in delen.
+shareUpload.failureTooLarge#other	%lld bestanden zijn niet geüpload. De verbinding met je server weigert zulke grote bestanden. Deel ze opnieuw en NextExplorer verstuurt ze in delen.
+shareUpload.startedDeferred	Bewaard voor NextExplorer. Open de app om je grote bestanden te uploaden.

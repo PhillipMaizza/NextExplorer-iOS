@@ -189,7 +189,7 @@
 
         private var notice: ShareUploadMacNotice.Notice? {
             switch store.phase {
-            case .started: .done(L10n.ShareUpload.started)
+            case .started: .done(store.startedMessage)
             case .signedOut: .problem(L10n.ShareUpload.signedOut)
             case .sessionUnreadable: .problem(L10n.ShareUpload.sessionUnreadable)
             case .nothingToUpload: .problem(L10n.ShareUpload.nothingToUpload)
@@ -282,6 +282,10 @@
     #Preview("Partly prepared") { ShareUploadMacView(store: .preview(.partiallyPrepared)) }
     #Preview("Failed") { ShareUploadMacView(store: .preview(.failed)) }
     #Preview("Started") { ShareUploadMacView(store: .preview(.started)) }
+    #Preview("Started, big files kept for the app") {
+        ShareUploadMacView(store: .preview(.started, deferredCount: 2))
+    }
+
     #Preview("Signed out") { ShareUploadMacView(store: .preview(.signedOut)) }
     #Preview("Session unreadable") { ShareUploadMacView(store: .preview(.sessionUnreadable)) }
     #Preview("Nothing to upload") { ShareUploadMacView(store: .preview(.nothingToUpload)) }

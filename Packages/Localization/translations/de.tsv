@@ -1254,3 +1254,9 @@ serverTools.missing	Fehlt
 serverTools.notUsed	Nicht genutzt
 serverTools.package	Paket: %@
 serverTools.missingFormats	Nicht lesbar: %@
+shareUpload.deferredTitle	Große Dateien warten
+shareUpload.deferredBody#one	Öffne NextExplorer, um %lld große Datei hochzuladen.
+shareUpload.deferredBody#other	Öffne NextExplorer, um %lld große Dateien hochzuladen.
+shareUpload.failureTooLarge#one	%lld Datei wurde nicht hochgeladen. Deine Serververbindung lehnt so große Dateien ab. Teile sie erneut, dann sendet NextExplorer sie in Teilen.
+shareUpload.failureTooLarge#other	%lld Dateien wurden nicht hochgeladen. Deine Serververbindung lehnt so große Dateien ab. Teile sie erneut, dann sendet NextExplorer sie in Teilen.
+shareUpload.startedDeferred	Für NextExplorer gesichert. Öffne die App, um deine großen Dateien hochzuladen.

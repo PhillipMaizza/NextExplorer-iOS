@@ -1254,3 +1254,9 @@ serverTools.missing	अनुपस्थित
 serverTools.notUsed	उपयोग में नहीं
 serverTools.package	पैकेज: %@
 serverTools.missingFormats	नहीं खुल सकते: %@
+shareUpload.deferredTitle	बड़ी फ़ाइलें प्रतीक्षा में
+shareUpload.deferredBody#one	%lld बड़ी फ़ाइल अपलोड करने के लिए NextExplorer खोलें।
+shareUpload.deferredBody#other	%lld बड़ी फ़ाइलें अपलोड करने के लिए NextExplorer खोलें।
+shareUpload.failureTooLarge#one	%lld फ़ाइल अपलोड नहीं हुई। आपके सर्वर का कनेक्शन इतनी बड़ी फ़ाइलें मना करता है। इन्हें फिर से शेयर करें, NextExplorer इन्हें हिस्सों में भेजेगा।
+shareUpload.failureTooLarge#other	%lld फ़ाइलें अपलोड नहीं हुईं। आपके सर्वर का कनेक्शन इतनी बड़ी फ़ाइलें मना करता है। इन्हें फिर से शेयर करें, NextExplorer इन्हें हिस्सों में भेजेगा।
+shareUpload.startedDeferred	NextExplorer के लिए सहेजा गया। बड़ी फ़ाइलें अपलोड करने के लिए ऐप खोलें।

@@ -41,7 +41,8 @@ struct BackgroundUploadEventsTests {
             retryRefused: { credentials in
                 retried.withValue { $0.append(credentials) }
                 return 1
-            }
+            },
+            pendingDeferred: { _ in [] }
         )
     }
 

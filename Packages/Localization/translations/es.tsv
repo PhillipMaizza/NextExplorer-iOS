@@ -1254,3 +1254,9 @@ serverTools.missing	Falta
 serverTools.notUsed	No se usa
 serverTools.package	Paquete: %@
 serverTools.missingFormats	No puede abrir: %@
+shareUpload.deferredTitle	Archivos grandes en espera
+shareUpload.deferredBody#one	Abre NextExplorer para subir %lld archivo grande.
+shareUpload.deferredBody#other	Abre NextExplorer para subir %lld archivos grandes.
+shareUpload.failureTooLarge#one	%lld archivo no se subió. La conexión con tu servidor rechaza archivos tan grandes. Compártelos de nuevo y NextExplorer los enviará por partes.
+shareUpload.failureTooLarge#other	%lld archivos no se subieron. La conexión con tu servidor rechaza archivos tan grandes. Compártelos de nuevo y NextExplorer los enviará por partes.
+shareUpload.startedDeferred	Guardado para NextExplorer. Abre la app para subir tus archivos grandes.

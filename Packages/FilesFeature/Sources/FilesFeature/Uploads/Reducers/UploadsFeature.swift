@@ -154,7 +154,10 @@ public struct UploadsFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case let .enqueue(pending):
+            case let .enqueue(requested):
+                // A file already in the queue is not added twice: the app asks for the Share Extension's
+                // kept files each time it comes forward.
+                let pending = requested.filter { state.jobs[id: $0.id] == nil }
                 guard !pending.isEmpty else { return .none }
                 // A fresh batch starts from a clean slate so finished rows don't pile up.
                 if !state.isActive {

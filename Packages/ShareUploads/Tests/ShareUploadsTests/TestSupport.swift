@@ -164,6 +164,7 @@ struct Harness {
 
     init(
         availableCapacity: @escaping @Sendable (URL) -> Int64? = { _ in nil },
+        deferredUploads: DeferredUploads? = nil,
         removeEnvelope: @escaping @Sendable (URL) -> Void = { try? FileManager.default.removeItem(at: $0) }
     ) throws {
         root = FileManager.default.temporaryDirectory
@@ -180,6 +181,7 @@ struct Harness {
             defaults: suiteDefaults,
             now: { clock.now },
             availableCapacity: availableCapacity,
+            deferredUploads: deferredUploads,
             events: events.environment,
             startTasks: starter.start,
             queryTasks: tasks.query,

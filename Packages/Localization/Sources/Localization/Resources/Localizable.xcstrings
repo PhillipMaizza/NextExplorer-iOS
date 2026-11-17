@@ -140991,6 +140991,796 @@
         }
       }
     },
+    "shareUpload.deferredBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "ar": {
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "افتح NextExplorer لرفع %lld ملف كبير."
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "افتح NextExplorer لرفع %lld ملف كبير."
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "افتح NextExplorer لرفع %lld ملفين كبيرين."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "افتح NextExplorer لرفع %lld ملفات كبيرة."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "افتح NextExplorer لرفع %lld ملفًا كبيرًا."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "افتح NextExplorer لرفع %lld ملف كبير."
+                }
+              }
+            }
+          }
+        },
+        "cs": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otevřete NextExplorer a nahrajte %lld velký soubor."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otevřete NextExplorer a nahrajte %lld velké soubory."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otevřete NextExplorer a nahrajte %lld velkého souboru."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otevřete NextExplorer a nahrajte %lld velkých souborů."
+                }
+              }
+            }
+          }
+        },
+        "da": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Öffne NextExplorer, um %lld große Datei hochzuladen."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Öffne NextExplorer, um %lld große Dateien hochzuladen."
+                }
+              }
+            }
+          }
+        },
+        "el": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Abre NextExplorer para subir %lld archivo grande."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Abre NextExplorer para subir %lld archivos grandes."
+                }
+              }
+            }
+          }
+        },
+        "fi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ouvrez NextExplorer pour envoyer %lld fichier volumineux."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ouvrez NextExplorer pour envoyer %lld fichiers volumineux."
+                }
+              }
+            }
+          }
+        },
+        "he": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "פתחו את NextExplorer כדי להעלות קובץ גדול %lld."
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "פתחו את NextExplorer כדי להעלות %lld קבצים גדולים."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "פתחו את NextExplorer כדי להעלות %lld קבצים גדולים."
+                }
+              }
+            }
+          }
+        },
+        "hi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld बड़ी फ़ाइल अपलोड करने के लिए NextExplorer खोलें।"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld बड़ी फ़ाइलें अपलोड करने के लिए NextExplorer खोलें।"
+                }
+              }
+            }
+          }
+        },
+        "hu": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Apri NextExplorer per caricare %lld file grande."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Apri NextExplorer per caricare %lld file grandi."
+                }
+              }
+            }
+          }
+        },
+        "ja": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "NextExplorer を開いて、%lld 個の大きなファイルをアップロードしてください。"
+                }
+              }
+            }
+          }
+        },
+        "ko": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "NextExplorer를 열어 큰 파일 %lld개를 업로드하세요."
+                }
+              }
+            }
+          }
+        },
+        "nb": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer om %lld groot bestand te uploaden."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer om %lld grote bestanden te uploaden."
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otwórz NextExplorer, aby przesłać %lld duży plik."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otwórz NextExplorer, aby przesłać %lld duże pliki."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otwórz NextExplorer, aby przesłać %lld dużych plików."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otwórz NextExplorer, aby przesłać %lld dużego pliku."
+                }
+              }
+            }
+          }
+        },
+        "pt": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Abra o NextExplorer para enviar %lld ficheiro grande."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Abra o NextExplorer para enviar %lld ficheiros grandes."
+                }
+              }
+            }
+          }
+        },
+        "pt-BR": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Abra o NextExplorer para enviar %lld arquivo grande."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Abra o NextExplorer para enviar %lld arquivos grandes."
+                }
+              }
+            }
+          }
+        },
+        "ro": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Deschide NextExplorer pentru a încărca %lld fișier mare."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Deschide NextExplorer pentru a încărca %lld fișiere mari."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Deschide NextExplorer pentru a încărca %lld de fișiere mari."
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Откройте NextExplorer, чтобы загрузить %lld большой файл."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Откройте NextExplorer, чтобы загрузить %lld больших файла."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Откройте NextExplorer, чтобы загрузить %lld больших файлов."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Откройте NextExplorer, чтобы загрузить %lld больших файла."
+                }
+              }
+            }
+          }
+        },
+        "sv": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Öppna NextExplorer för att ladda upp %lld stor fil."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Öppna NextExplorer för att ladda upp %lld stora filer."
+                }
+              }
+            }
+          }
+        },
+        "th": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "tr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "uk": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Відкрийте NextExplorer, щоб вивантажити %lld великий файл."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Відкрийте NextExplorer, щоб вивантажити %lld великі файли."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Відкрийте NextExplorer, щоб вивантажити %lld великих файлів."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Відкрийте NextExplorer, щоб вивантажити %lld великого файлу."
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large file."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open NextExplorer to upload %lld large files."
+                }
+              }
+            }
+          }
+        },
+        "zh-CN": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "打开 NextExplorer 以上传 %lld 个大文件。"
+                }
+              }
+            }
+          }
+        },
+        "zh-TW": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "打開 NextExplorer 以上傳 %lld 個大型檔案。"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "shareUpload.deferredTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ملفات كبيرة في الانتظار"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Große Dateien warten"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivos grandes en espera"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fichiers volumineux en attente"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "बड़ी फ़ाइलें प्रतीक्षा में"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File grandi in attesa"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大きなファイルが待機中"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "큰 파일 대기 중"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grote bestanden wachten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duże pliki czekają"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ficheiros grandes em espera"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arquivos grandes aguardando"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fișiere mari în așteptare"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Большие файлы ждут"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stora filer väntar"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large files are waiting"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大文件等待中"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大型檔案等待中"
+          }
+        }
+      }
+    },
     "shareUpload.failed": {
       "extractionState": "manual",
       "localizations": {
@@ -143887,6 +144677,611 @@
                 "stringUnit": {
                   "state": "translated",
                   "value": "%lld 個檔案未能上傳。伺服器儲存空間已滿。"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "shareUpload.failureTooLarge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "ar": {
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "لم يتم رفع %lld ملف. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء."
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "لم يتم رفع %lld ملف. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء."
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "لم يتم رفع %lld ملفين. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "لم يتم رفع %lld ملفات. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "لم يتم رفع %lld ملفًا. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "لم يتم رفع %lld ملف. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء."
+                }
+              }
+            }
+          }
+        },
+        "cs": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld soubor se nenahrál. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld soubory se nenahrály. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld souboru se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld souborů se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech."
+                }
+              }
+            }
+          }
+        },
+        "da": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Datei wurde nicht hochgeladen. Deine Serververbindung lehnt so große Dateien ab. Teile sie erneut, dann sendet NextExplorer sie in Teilen."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Dateien wurden nicht hochgeladen. Deine Serververbindung lehnt so große Dateien ab. Teile sie erneut, dann sendet NextExplorer sie in Teilen."
+                }
+              }
+            }
+          }
+        },
+        "el": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld archivo no se subió. La conexión con tu servidor rechaza archivos tan grandes. Compártelos de nuevo y NextExplorer los enviará por partes."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld archivos no se subieron. La conexión con tu servidor rechaza archivos tan grandes. Compártelos de nuevo y NextExplorer los enviará por partes."
+                }
+              }
+            }
+          }
+        },
+        "fi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fichier n'a pas été envoyé. La connexion à votre serveur refuse les fichiers de cette taille. Partagez-les de nouveau et NextExplorer les enverra par morceaux."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fichiers n'ont pas été envoyés. La connexion à votre serveur refuse les fichiers de cette taille. Partagez-les de nouveau et NextExplorer les enverra par morceaux."
+                }
+              }
+            }
+          }
+        },
+        "he": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "קובץ %lld לא הועלה. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים."
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים."
+                }
+              }
+            }
+          }
+        },
+        "hi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld फ़ाइल अपलोड नहीं हुई। आपके सर्वर का कनेक्शन इतनी बड़ी फ़ाइलें मना करता है। इन्हें फिर से शेयर करें, NextExplorer इन्हें हिस्सों में भेजेगा।"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld फ़ाइलें अपलोड नहीं हुईं। आपके सर्वर का कनेक्शन इतनी बड़ी फ़ाइलें मना करता है। इन्हें फिर से शेयर करें, NextExplorer इन्हें हिस्सों में भेजेगा।"
+                }
+              }
+            }
+          }
+        },
+        "hu": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file non è stato caricato. La connessione al tuo server rifiuta file così grandi. Condividili di nuovo e NextExplorer li invierà a blocchi."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file non sono stati caricati. La connessione al tuo server rifiuta file così grandi. Condividili di nuovo e NextExplorer li invierà a blocchi."
+                }
+              }
+            }
+          }
+        },
+        "ja": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 個のファイルをアップロードできませんでした。 サーバー接続がこの大きさのファイルを拒否しました。もう一度共有すると、NextExplorer が分割して送信します。"
+                }
+              }
+            }
+          }
+        },
+        "ko": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "파일 %lld개를 업로드하지 못했습니다. 서버 연결이 이 크기의 파일을 거부했습니다. 다시 공유하면 NextExplorer가 나누어 전송합니다."
+                }
+              }
+            }
+          }
+        },
+        "nb": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld bestand is niet geüpload. De verbinding met je server weigert zulke grote bestanden. Deel ze opnieuw en NextExplorer verstuurt ze in delen."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld bestanden zijn niet geüpload. De verbinding met je server weigert zulke grote bestanden. Deel ze opnieuw en NextExplorer verstuurt ze in delen."
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld plik nie został przesłany. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld pliki nie zostały przesłane. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld plików nie zostało przesłanych. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld pliku nie zostało przesłane. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach."
+                }
+              }
+            }
+          }
+        },
+        "pt": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld ficheiro não foi enviado. A ligação ao seu servidor recusa ficheiros tão grandes. Partilhe-os novamente e o NextExplorer envia-os por partes."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld ficheiros não foram enviados. A ligação ao seu servidor recusa ficheiros tão grandes. Partilhe-os novamente e o NextExplorer envia-os por partes."
+                }
+              }
+            }
+          }
+        },
+        "pt-BR": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld arquivo não foi enviado. A conexão com seu servidor recusa arquivos tão grandes. Compartilhe de novo e o NextExplorer envia em partes."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld arquivos não foram enviados. A conexão com seu servidor recusa arquivos tão grandes. Compartilhe de novo e o NextExplorer envia em partes."
+                }
+              }
+            }
+          }
+        },
+        "ro": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fișier nu a fost încărcat. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fișiere nu au fost încărcate. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld de fișiere nu au fost încărcate. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți."
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файл не загружен. Соединение с сервером отклоняет такие большие файлы. Поделитесь ими снова, и NextExplorer отправит их по частям."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файла не загружены. Соединение с сервером отклоняет такие большие файлы. Поделитесь ими снова, и NextExplorer отправит их по частям."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файлов не загружено. Соединение с сервером отклоняет такие большие файлы. Поделитесь ими снова, и NextExplorer отправит их по частям."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файла не загружено. Соединение с сервером отклоняет такие большие файлы. Поделитесь ими снова, и NextExplorer отправит их по частям."
+                }
+              }
+            }
+          }
+        },
+        "sv": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fil laddades inte upp. Anslutningen till din server nekar så stora filer. Dela dem igen så skickar NextExplorer dem i delar."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld filer laddades inte upp. Anslutningen till din server nekar så stora filer. Dela dem igen så skickar NextExplorer dem i delar."
+                }
+              }
+            }
+          }
+        },
+        "th": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "tr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "uk": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файл не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файли не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файлів не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файлу не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами."
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                }
+              }
+            }
+          }
+        },
+        "zh-CN": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 个文件未能上传。 服务器连接拒绝这么大的文件。请再次分享，NextExplorer 会分段发送。"
+                }
+              }
+            }
+          }
+        },
+        "zh-TW": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 個檔案未能上傳。 伺服器連線拒絕這麼大的檔案。請再次分享，NextExplorer 會分段傳送。"
                 }
               }
             }
@@ -150429,6 +151824,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在背景上傳。完成後你會收到通知。"
+          }
+        }
+      }
+    },
+    "shareUpload.startedDeferred": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم الحفظ لـ NextExplorer. افتح التطبيق لرفع ملفاتك الكبيرة."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für NextExplorer gesichert. Öffne die App, um deine großen Dateien hochzuladen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardado para NextExplorer. Abre la app para subir tus archivos grandes."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistré pour NextExplorer. Ouvrez l'app pour envoyer vos gros fichiers."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NextExplorer के लिए सहेजा गया। बड़ी फ़ाइलें अपलोड करने के लिए ऐप खोलें।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salvato per NextExplorer. Apri l'app per caricare i file grandi."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NextExplorer 用に保存しました。アプリを開いて大きなファイルをアップロードしてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NextExplorer용으로 저장했습니다. 앱을 열어 큰 파일을 업로드하세요."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewaard voor NextExplorer. Open de app om je grote bestanden te uploaden."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapisano dla NextExplorer. Otwórz aplikację, aby przesłać duże pliki."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardado para o NextExplorer. Abra a app para enviar os ficheiros grandes."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salvo para o NextExplorer. Abra o app para enviar os arquivos grandes."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salvat pentru NextExplorer. Deschide aplicația pentru a încărca fișierele mari."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранено для NextExplorer. Откройте приложение, чтобы загрузить большие файлы."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sparat för NextExplorer. Öppna appen för att ladda upp dina stora filer."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved for NextExplorer. Open the app to upload your large files."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已为 NextExplorer 保存。请打开应用上传大文件。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已為 NextExplorer 儲存。請打開 App 上傳大型檔案。"
           }
         }
       }

@@ -104,8 +104,11 @@ private enum EnvelopeConstants {
 public struct UploadBatch: Sendable {
     public struct StagedFile: Sendable {
         let fileName: String
+        /// The folder holding the file itself for a deferred one.
         let envelopeURL: URL
         let request: URLRequest
+        /// Kept whole for the app to upload in pieces, not sent by the background session.
+        let isDeferred: Bool
 
         /// Takes the envelope back out, for a file whose staging was cancelled after it was written.
         public func removeEnvelope() {
@@ -133,12 +136,22 @@ public struct UploadBatch: Sendable {
     /// made its own. A seam, like `writeEnvelope`.
     var thumbnailStore: LocalThumbnailStore = .liveValue
     var now: @Sendable () -> Date = { Date() }
+    /// Where files over `deferralBytes` go instead of an envelope. `nil` sends everything as one request.
+    var deferredUploads: DeferredUploads?
+    var deferralBytes = DeferredUploads.thresholdBytes
 
     let ledger = SpaceLedger()
     private(set) var staged: [StagedFile] = []
+    /// The folders of the files kept for the app, so discarding the batch takes them out too.
+    private(set) var deferredFolders: [URL] = []
 
+    public var deferredCount: Int {
+        deferredFolders.count
+    }
+
+    /// Every file the user shared, whether it goes out now or waits for the app.
     public var count: Int {
-        staged.count
+        staged.count + deferredCount
     }
 
     /// `false` once the batch was discarded.
@@ -157,6 +170,9 @@ public struct UploadBatch: Sendable {
             throw ShareUploadError.insufficientSpace
         }
         defer { ledger.release(size) }
+        if size > deferralBytes, let deferredUploads {
+            return try stageDeferred(fileURL, fileName: fileName, in: deferredUploads)
+        }
         let envelopeURL = directory
             .appendingPathComponent("\(UUID().uuidString).\(EnvelopeConstants.envelopeExtension)")
         do {
@@ -168,14 +184,32 @@ public struct UploadBatch: Sendable {
                 credentials.accountID,
                 now()
             )
-            return StagedFile(fileName: fileName, envelopeURL: envelopeURL, request: request)
+            return StagedFile(fileName: fileName, envelopeURL: envelopeURL, request: request, isDeferred: false)
         } catch {
             try? FileManager.default.removeItem(at: envelopeURL)
             throw ShareUploadError.isOutOfSpace(error) ? ShareUploadError.insufficientSpace : error
         }
     }
 
+    private func stageDeferred(_ fileURL: URL, fileName: String, in store: DeferredUploads) throws -> StagedFile {
+        do {
+            let folder = try store.stage(
+                copying: fileURL, fileName: fileName, accountID: credentials.accountID, destination: destination
+            )
+            return StagedFile(
+                fileName: fileName, envelopeURL: folder, request: URLRequest(url: credentials.serverBaseURL),
+                isDeferred: true
+            )
+        } catch {
+            throw ShareUploadError.isOutOfSpace(error) ? ShareUploadError.insufficientSpace : error
+        }
+    }
+
     public mutating func add(_ file: StagedFile) {
-        staged.append(file)
+        if file.isDeferred {
+            deferredFolders.append(file.envelopeURL)
+        } else {
+            staged.append(file)
+        }
     }
 }

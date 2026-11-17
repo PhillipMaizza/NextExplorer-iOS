@@ -3,6 +3,7 @@ import CoreModels
 import Foundation
 import Localization
 import NetworkClient
+import ShareUploads
 
 @Reducer
 public struct MainTabFeature {
@@ -161,6 +162,7 @@ public struct MainTabFeature {
 
     @Dependency(\.connectivity) var connectivity
     @Dependency(\.deviceSaver) var deviceSaver
+    @Dependency(\.shareUploads) var shareUploads
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     private enum CancelID { case connectivity }
@@ -418,6 +420,7 @@ public struct MainTabFeature {
                         .send(.browse(.syncPathStack)),
                         .send(.favorites(.syncPathStack)),
                         .send(.uploads(.appResumed)),
+                        queueDeferredShares(state),
                         // Check the pinned folders for new files each time the app comes forward.
                         .send(.offline(.autoSync(force: false)))
                     )
@@ -435,6 +438,8 @@ public struct MainTabFeature {
                     let certificateOrigin = ClientCertificateOrigin(url: state.browse.root.serverURL)
                     return .merge(
                         .send(.offline(.autoSync(force: false))),
+                        // Files the Share Extension kept while this account was not the open one.
+                        queueDeferredShares(state),
                         // Loads this server's client certificate record off the main actor once, so
                         // the video views can check for it from memory when they open.
                         .run { _ in
@@ -644,6 +649,23 @@ public struct MainTabFeature {
 
     /// The trash changes behind the screen (deletes elsewhere, expiry, another device): a trash
     /// section already shown reads it again; one never opened loads when it first appears.
+    /// Big files the Share Extension kept for the app, queued where they are: the upload sends them
+    /// in resumable pieces like any file picked in the app, and deletes each one when it is done.
+    func queueDeferredShares(_ state: State) -> Effect<Action> {
+        let accountID = state.settings.uploadDefaults.accountID
+        let shareUploads = shareUploads
+        return .run { send in
+            let kept = shareUploads.pendingDeferred(accountID)
+            guard !kept.isEmpty else { return }
+            await send(.uploads(.enqueue(kept.map {
+                PendingUpload(
+                    id: UUID(uuidString: $0.id) ?? UUID(), fileURL: $0.fileURL, fileName: $0.fileName,
+                    destination: $0.destination
+                )
+            })))
+        }
+    }
+
     static func refreshTrashIfLoaded(_ state: State) -> Effect<Action> {
         state.trash.phase.hasLoaded ? .send(.trash(.refreshPulled)) : .none
     }

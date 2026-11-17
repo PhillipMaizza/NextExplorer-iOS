@@ -22,7 +22,14 @@ final class StubURLProtocol: URLProtocol {
     /// `"METHOD /path"` keys whose requests are recorded and then left unanswered until cancelled.
     nonisolated(unsafe) static var heldMethodKeys: Set<String> = []
     /// Every intercepted request in order, for tests asserting on a multi request flow.
-    nonisolated(unsafe) static var requests: [URLRequest] = []
+    /// Guarded by a lock: URLSession appends from its own thread while tests poll for requests.
+    private nonisolated(unsafe) static var recordedRequests: [URLRequest] = []
+    private static let requestsLock = NSLock()
+    static var requests: [URLRequest] {
+        get { requestsLock.withLock { recordedRequests } }
+        set { requestsLock.withLock { recordedRequests = newValue } }
+    }
+
     nonisolated(unsafe) static var failure: URLError?
     /// Last intercepted request, for tests asserting on URL/method/body construction.
     nonisolated(unsafe) static var capturedRequest: URLRequest?
@@ -38,7 +45,7 @@ final class StubURLProtocol: URLProtocol {
 
     override func startLoading() {
         Self.capturedRequest = request
-        Self.requests.append(request)
+        Self.requestsLock.withLock { Self.recordedRequests.append(request) }
         Self.capturedRequestBody = request.httpBody ?? request.httpBodyStream.map { stream -> Data in
             stream.open()
             defer { stream.close() }

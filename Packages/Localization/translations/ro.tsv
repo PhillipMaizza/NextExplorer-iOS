@@ -1283,3 +1283,11 @@ serverTools.missing	Lipsește
 serverTools.notUsed	Nefolosit
 serverTools.package	Pachet: %@
 serverTools.missingFormats	Nu poate deschide: %@
+shareUpload.deferredTitle	Fișiere mari în așteptare
+shareUpload.deferredBody#one	Deschide NextExplorer pentru a încărca %lld fișier mare.
+shareUpload.deferredBody#few	Deschide NextExplorer pentru a încărca %lld fișiere mari.
+shareUpload.deferredBody#other	Deschide NextExplorer pentru a încărca %lld de fișiere mari.
+shareUpload.failureTooLarge#one	%lld fișier nu a fost încărcat. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți.
+shareUpload.failureTooLarge#few	%lld fișiere nu au fost încărcate. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți.
+shareUpload.failureTooLarge#other	%lld de fișiere nu au fost încărcate. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți.
+shareUpload.startedDeferred	Salvat pentru NextExplorer. Deschide aplicația pentru a încărca fișierele mari.

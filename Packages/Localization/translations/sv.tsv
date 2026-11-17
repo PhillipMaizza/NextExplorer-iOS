@@ -1254,3 +1254,9 @@ serverTools.missing	Saknas
 serverTools.notUsed	Används inte
 serverTools.package	Paket: %@
 serverTools.missingFormats	Kan inte öppna: %@
+shareUpload.deferredTitle	Stora filer väntar
+shareUpload.deferredBody#one	Öppna NextExplorer för att ladda upp %lld stor fil.
+shareUpload.deferredBody#other	Öppna NextExplorer för att ladda upp %lld stora filer.
+shareUpload.failureTooLarge#one	%lld fil laddades inte upp. Anslutningen till din server nekar så stora filer. Dela dem igen så skickar NextExplorer dem i delar.
+shareUpload.failureTooLarge#other	%lld filer laddades inte upp. Anslutningen till din server nekar så stora filer. Dela dem igen så skickar NextExplorer dem i delar.
+shareUpload.startedDeferred	Sparat för NextExplorer. Öppna appen för att ladda upp dina stora filer.

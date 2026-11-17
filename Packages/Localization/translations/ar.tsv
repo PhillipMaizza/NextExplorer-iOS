@@ -1370,3 +1370,17 @@ serverTools.missing	مفقود
 serverTools.notUsed	غير مستخدم
 serverTools.package	الحزمة: %@
 serverTools.missingFormats	لا يمكن فتح: %@
+shareUpload.deferredTitle	ملفات كبيرة في الانتظار
+shareUpload.deferredBody#zero	افتح NextExplorer لرفع %lld ملف كبير.
+shareUpload.deferredBody#one	افتح NextExplorer لرفع %lld ملف كبير.
+shareUpload.deferredBody#two	افتح NextExplorer لرفع %lld ملفين كبيرين.
+shareUpload.deferredBody#few	افتح NextExplorer لرفع %lld ملفات كبيرة.
+shareUpload.deferredBody#many	افتح NextExplorer لرفع %lld ملفًا كبيرًا.
+shareUpload.deferredBody#other	افتح NextExplorer لرفع %lld ملف كبير.
+shareUpload.failureTooLarge#zero	لم يتم رفع %lld ملف. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
+shareUpload.failureTooLarge#one	لم يتم رفع %lld ملف. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
+shareUpload.failureTooLarge#two	لم يتم رفع %lld ملفين. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
+shareUpload.failureTooLarge#few	لم يتم رفع %lld ملفات. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
+shareUpload.failureTooLarge#many	لم يتم رفع %lld ملفًا. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
+shareUpload.failureTooLarge#other	لم يتم رفع %lld ملف. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
+shareUpload.startedDeferred	تم الحفظ لـ NextExplorer. افتح التطبيق لرفع ملفاتك الكبيرة.

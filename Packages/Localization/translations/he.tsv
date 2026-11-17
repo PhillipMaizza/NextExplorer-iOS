@@ -1219,3 +1219,9 @@ trash.columnOriginalLocation	מיקום מקורי
 trash.columnDeletedBy	נמחק על ידי
 trash.columnDeletedOn	תאריך מחיקה
 trash.columnRemoved	הסרה
+shareUpload.deferredBody#one	פתחו את NextExplorer כדי להעלות קובץ גדול %lld.
+shareUpload.deferredBody#other	פתחו את NextExplorer כדי להעלות %lld קבצים גדולים.
+shareUpload.deferredBody#two	פתחו את NextExplorer כדי להעלות %lld קבצים גדולים.
+shareUpload.failureTooLarge#one	קובץ %lld לא הועלה. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים.
+shareUpload.failureTooLarge#other	%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים.
+shareUpload.failureTooLarge#two	%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים.

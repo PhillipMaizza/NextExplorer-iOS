@@ -113,6 +113,23 @@ extension ShareUploadFeatureTests {
         }
 
         @Test
+        func filesKeptForTheAppAreAnnouncedWithAnAskToOpenIt() async {
+            let announcements = LockIsolated<[String]>([])
+            let store = store(
+                defaults: UploadDefaults(folderPath: TestFolder.photos),
+                clock: ImmediateClock(),
+                deferredCount: 2,
+                announcements: announcements
+            )
+            await becomeReady(store, folder: TestFolder.photos)
+            await uploadCleanly(store, deferred: 2)
+
+            #expect(announcements.value == [L10n.ShareUpload.startedDeferred])
+            #expect(store.state.startedMessage == L10n.ShareUpload.startedDeferred)
+            await store.receive(.delegate(.close(completed: true)))
+        }
+
+        @Test
         func withVoiceOverTheSheetStaysOpenLongerThanTheShortDelay() async {
             let announcements = LockIsolated<[String]>([])
             let clock = TestClock()
