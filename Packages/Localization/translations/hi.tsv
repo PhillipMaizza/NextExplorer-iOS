@@ -1244,6 +1244,9 @@ trash.columnOriginalLocation	मूल स्थान
 trash.columnDeletedBy	किसने हटाया
 trash.columnDeletedOn	हटाने की तारीख
 trash.columnRemoved	स्थायी रूप से हटना
+media.audioTrack	ऑडियो ट्रैक
+media.subtitles	उपशीर्षक
+media.tracks	ऑडियो और उपशीर्षक
 serverTools.navigationTitle	सर्वर टूल
 serverTools.subtitle	वैकल्पिक प्रोग्राम जिन्हें सर्वर थंबनेल, खोज और आर्काइव के लिए इस्तेमाल करता है।
 serverTools.installed	इंस्टॉल है

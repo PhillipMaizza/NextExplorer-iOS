@@ -1215,6 +1215,9 @@ trash.columnOriginalLocation	원래 위치
 trash.columnDeletedBy	삭제한 사람
 trash.columnDeletedOn	삭제한 날짜
 trash.columnRemoved	영구 삭제
+media.audioTrack	오디오 트랙
+media.subtitles	자막
+media.tracks	오디오 및 자막
 serverTools.navigationTitle	서버 도구
 serverTools.subtitle	서버가 썸네일, 검색, 압축 파일에 사용하는 선택 프로그램입니다.
 serverTools.installed	설치됨

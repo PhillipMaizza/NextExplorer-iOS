@@ -1244,6 +1244,9 @@ trash.columnOriginalLocation	Ursprunglig plats
 trash.columnDeletedBy	Raderad av
 trash.columnDeletedOn	Raderad
 trash.columnRemoved	Tas bort
+media.audioTrack	Ljudspår
+media.subtitles	Undertexter
+media.tracks	Ljud och undertexter
 serverTools.navigationTitle	Serververktyg
 serverTools.subtitle	Valfria program som servern använder för miniatyrer, sökning och arkiv.
 serverTools.installed	Installerat

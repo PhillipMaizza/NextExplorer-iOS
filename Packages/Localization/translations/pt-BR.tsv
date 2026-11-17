@@ -1239,6 +1239,9 @@ trash.columnOriginalLocation	Local original
 trash.columnDeletedBy	Excluído por
 trash.columnDeletedOn	Excluído em
 trash.columnRemoved	Remoção
+media.audioTrack	Faixa de áudio
+media.subtitles	Legendas
+media.tracks	Áudio e legendas
 serverTools.navigationTitle	Ferramentas do servidor
 serverTools.subtitle	Programas opcionais que o servidor usa para miniaturas, busca e arquivos compactados.
 serverTools.installed	Instalado

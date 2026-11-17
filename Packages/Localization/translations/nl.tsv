@@ -1244,6 +1244,9 @@ trash.columnOriginalLocation	Oorspronkelijke locatie
 trash.columnDeletedBy	Verwijderd door
 trash.columnDeletedOn	Verwijderd op
 trash.columnRemoved	Gewist
+media.audioTrack	Audiospoor
+media.subtitles	Ondertitels
+media.tracks	Audio en ondertitels
 serverTools.navigationTitle	Servertools
 serverTools.subtitle	Optionele programma's die de server gebruikt voor miniaturen, zoeken en archieven.
 serverTools.installed	Geïnstalleerd

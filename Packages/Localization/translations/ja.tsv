@@ -1215,6 +1215,9 @@ trash.columnOriginalLocation	元の場所
 trash.columnDeletedBy	削除したユーザ
 trash.columnDeletedOn	削除日
 trash.columnRemoved	削除予定
+media.audioTrack	音声トラック
+media.subtitles	字幕
+media.tracks	音声と字幕
 serverTools.navigationTitle	サーバーツール
 serverTools.subtitle	サーバーがサムネイル、検索、アーカイブに使う任意のプログラムです。
 serverTools.installed	インストール済み

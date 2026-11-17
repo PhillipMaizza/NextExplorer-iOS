@@ -256,6 +256,8 @@ private struct VLCPlaybackControls: View {
                     .type(.caption(.regular))
                     .foregroundStyle(.white)
                     .monospacedDigit()
+
+                VLCTrackMenu(controller: controller)
             }
             .padding(.horizontal, .space24)
             .padding(.bottom, .space24)
@@ -319,7 +321,51 @@ private struct VLCScrubBar: View {
     }
 }
 
+#Preview("Tracks to choose") {
+    let controller = VLCPlaybackController()
+    controller.audioTracks = [VLCTrackChoice(id: 1, name: "English"), VLCTrackChoice(id: 2, name: "Français")]
+    controller.subtitleTracks = [VLCTrackChoice(id: -1, name: "Disable"), VLCTrackChoice(id: 3, name: "English")]
+    controller.isBuffering = false
+    return VLCPlaybackControls(controller: controller)
+        .background(Color.black)
+}
+
 #Preview("Controls") {
     VLCPlaybackControls(controller: VLCPlaybackController())
         .background(Color.black)
+}
+
+/// Audio and subtitle choices for the open media, shown only when it has more than one of either.
+private struct VLCTrackMenu: View {
+    @ObservedObject var controller: VLCPlaybackController
+
+    var body: some View {
+        if controller.hasTrackChoices {
+            Menu {
+                if controller.audioTracks.count > 1 {
+                    Picker(L10n.Media.audioTrack, selection: audioBinding) {
+                        ForEach(controller.audioTracks) { Text($0.name).tag($0.id) }
+                    }
+                }
+                if controller.subtitleTracks.contains(where: { $0.id >= 0 }) {
+                    Picker(L10n.Media.subtitles, selection: subtitleBinding) {
+                        ForEach(controller.subtitleTracks) { Text($0.name).tag($0.id) }
+                    }
+                }
+            } label: {
+                IconKit.subtitles
+                    .foregroundStyle(.white)
+                    .frame(minWidth: .size44, minHeight: .size44)
+            }
+            .accessibilityLabel(L10n.Media.tracks)
+        }
+    }
+
+    private var audioBinding: Binding<Int32> {
+        Binding(get: { controller.selectedAudioID }, set: { controller.selectAudio($0) })
+    }
+
+    private var subtitleBinding: Binding<Int32> {
+        Binding(get: { controller.selectedSubtitleID }, set: { controller.selectSubtitle($0) })
+    }
 }

@@ -1244,6 +1244,9 @@ trash.columnOriginalLocation	Ursprünglicher Ort
 trash.columnDeletedBy	Gelöscht von
 trash.columnDeletedOn	Gelöscht am
 trash.columnRemoved	Entfernung
+media.audioTrack	Tonspur
+media.subtitles	Untertitel
+media.tracks	Ton und Untertitel
 serverTools.navigationTitle	Server-Werkzeuge
 serverTools.subtitle	Optionale Programme, die der Server für Vorschaubilder, die Suche und Archive nutzt.
 serverTools.installed	Installiert

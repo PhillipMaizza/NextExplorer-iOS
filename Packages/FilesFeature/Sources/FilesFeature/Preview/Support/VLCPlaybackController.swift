@@ -8,6 +8,12 @@ private enum Constants {
     static let networkCachingMilliseconds = 3000
 }
 
+/// One audio or subtitle track libvlc reports for the open media.
+struct VLCTrackChoice: Equatable, Identifiable {
+    let id: Int32
+    let name: String
+}
+
 /// Bridges `VLCMediaPlayer` (delegate/KVO, ObjC) into observable SwiftUI state and owns the
 /// player for the view's lifetime. `@MainActor`, so it's `Sendable`: libvlc fires its delegate
 /// callbacks on a background thread, and each hops back to the main actor before touching the
@@ -22,6 +28,10 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
     @Published var position: Float = 0
     @Published var elapsedText = "0:00"
     @Published var durationText = "0:00"
+    @Published var audioTracks: [VLCTrackChoice] = []
+    @Published var subtitleTracks: [VLCTrackChoice] = []
+    @Published var selectedAudioID: Int32 = -1
+    @Published var selectedSubtitleID: Int32 = -1
 
     /// While the user drags the scrubber, ignore incoming time updates so the thumb doesn't
     /// fight the drag.
@@ -53,6 +63,48 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
         }
         player.media = media
         player.play()
+    }
+
+    func selectAudio(_ id: Int32) {
+        player.currentAudioTrackIndex = id
+        selectedAudioID = id
+    }
+
+    /// A negative id turns subtitles off, as libvlc does.
+    func selectSubtitle(_ id: Int32) {
+        player.currentVideoSubTitleIndex = id
+        selectedSubtitleID = id
+    }
+
+    /// The tracks only exist once playback has started, so this runs from the state callback.
+    private func refreshTracks() {
+        // libvlc lists a Disable entry with a negative id. Audio has no use for it; subtitles keep it as Off.
+        let audio = Self.choices(names: player.audioTrackNames, ids: player.audioTrackIndexes).filter { $0.id >= 0 }
+        let subtitles = Self.choices(names: player.videoSubTitlesNames, ids: player.videoSubTitlesIndexes)
+        if audio != audioTracks {
+            audioTracks = audio
+        }
+        if subtitles != subtitleTracks {
+            subtitleTracks = subtitles
+        }
+        // A current index missing from the list would leave the picker without a selection.
+        let currentAudio = player.currentAudioTrackIndex
+        selectedAudioID = audio.contains { $0.id == currentAudio } ? currentAudio : (audio.first?.id ?? -1)
+        selectedSubtitleID = player.currentVideoSubTitleIndex
+    }
+
+    /// Whether the menu has anything to pick: another audio track, or any real subtitle track.
+    var hasTrackChoices: Bool {
+        Self.hasChoices(audio: audioTracks, subtitles: subtitleTracks)
+    }
+
+    static func hasChoices(audio: [VLCTrackChoice], subtitles: [VLCTrackChoice]) -> Bool {
+        audio.count > 1 || subtitles.contains { $0.id >= 0 }
+    }
+
+    static func choices(names: [Any]?, ids: [Any]?) -> [VLCTrackChoice] {
+        guard let names = names as? [String], let ids = ids as? [NSNumber] else { return [] }
+        return zip(ids, names).map { VLCTrackChoice(id: $0.int32Value, name: $1) }
     }
 
     func stop() {
@@ -95,6 +147,9 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
                 isBuffering = false
             }
             durationText = player.media?.length.stringValue ?? durationText
+            if player.state == .playing {
+                refreshTracks()
+            }
         }
     }
 

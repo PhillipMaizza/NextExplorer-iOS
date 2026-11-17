@@ -1215,6 +1215,9 @@ trash.columnOriginalLocation	原位置
 trash.columnDeletedBy	删除者
 trash.columnDeletedOn	删除时间
 trash.columnRemoved	永久删除
+media.audioTrack	音轨
+media.subtitles	字幕
+media.tracks	音频和字幕
 serverTools.navigationTitle	服务器工具
 serverTools.subtitle	服务器用于缩略图、搜索和压缩包的可选程序。
 serverTools.installed	已安装

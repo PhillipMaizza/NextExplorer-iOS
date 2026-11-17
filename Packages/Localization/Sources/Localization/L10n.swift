@@ -574,11 +574,14 @@ public enum L10n {
         public static var username: String { tr("macSettings.username") }  // "Username"
     }
     public enum Media {
+        public static var audioTrack: String { tr("media.audioTrack") }  // "Audio Track"
         public static var clientCertificateUnsupported: String { tr("media.clientCertificateUnsupported") }
         public static var pause: String { tr("media.pause") }  // "Pause"
         public static var play: String { tr("media.play") }  // "Play"
         public static var position: String { tr("media.position") }  // "Playback Position"
         public static func positionValue(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("media.positionValue", a0, a1) }
+        public static var subtitles: String { tr("media.subtitles") }  // "Subtitles"
+        public static var tracks: String { tr("media.tracks") }  // "Audio and Subtitles"
     }
     public enum Menu {
         public static var about: String { tr("menu.about") }  // "About NextExplorer"

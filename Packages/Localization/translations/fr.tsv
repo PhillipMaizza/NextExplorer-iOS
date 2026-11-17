@@ -1244,6 +1244,9 @@ trash.columnOriginalLocation	Emplacement d'origine
 trash.columnDeletedBy	Supprimé par
 trash.columnDeletedOn	Supprimé le
 trash.columnRemoved	Suppression
+media.audioTrack	Piste audio
+media.subtitles	Sous-titres
+media.tracks	Audio et sous-titres
 serverTools.navigationTitle	Outils du serveur
 serverTools.subtitle	Programmes facultatifs que le serveur utilise pour les miniatures, la recherche et les archives.
 serverTools.installed	Installé

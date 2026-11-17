@@ -1302,6 +1302,9 @@ trash.columnOriginalLocation	Исходное расположение
 trash.columnDeletedBy	Кем удалено
 trash.columnDeletedOn	Дата удаления
 trash.columnRemoved	Окончательное удаление
+media.audioTrack	Звуковая дорожка
+media.subtitles	Субтитры
+media.tracks	Звук и субтитры
 serverTools.navigationTitle	Инструменты сервера
 serverTools.subtitle	Необязательные программы, которые сервер использует для миниатюр, поиска и архивов.
 serverTools.installed	Установлено
