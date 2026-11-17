@@ -1244,3 +1244,10 @@ trash.columnOriginalLocation	Ursprunglig plats
 trash.columnDeletedBy	Raderad av
 trash.columnDeletedOn	Raderad
 trash.columnRemoved	Tas bort
+serverTools.navigationTitle	Serververktyg
+serverTools.subtitle	Valfria program som servern använder för miniatyrer, sökning och arkiv.
+serverTools.installed	Installerat
+serverTools.missing	Saknas
+serverTools.notUsed	Används inte
+serverTools.package	Paket: %@
+serverTools.missingFormats	Kan inte öppna: %@

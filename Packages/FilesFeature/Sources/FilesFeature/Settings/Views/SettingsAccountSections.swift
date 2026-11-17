@@ -236,7 +236,7 @@ struct SettingsProfileSection: View {
 /// Admin-only server config that isn't per-user: thumbnail generation and folder access
 /// rules, each a pushed detail screen. Mirrors the web client's admin settings pages.
 struct SettingsServerAdminSection: View {
-    let store: StoreOf<SettingsFeature>
+    @Bindable var store: StoreOf<SettingsFeature>
 
     var body: some View {
         if store.user.isAdmin {
@@ -268,10 +268,16 @@ struct SettingsServerAdminSection: View {
                 DSNavigationRow(title: L10n.ActivityLog.navigationTitle, icon: IconKit.time) {
                     store.send(.activityLogButtonTapped)
                 }
+                DSNavigationRow(title: L10n.ServerTools.navigationTitle, icon: IconKit.gearshape) {
+                    store.send(.serverToolsButtonTapped)
+                }
             } header: {
                 SettingsSectionHeader(L10n.Settings.sectionAdmin)
             }
             .listRowBackground(Color.backgroundSecondary)
+            .navigationDestination(item: $store.scope(state: \.serverTools, action: \.serverTools)) { toolsStore in
+                ServerToolsView(store: toolsStore)
+            }
         }
     }
 }

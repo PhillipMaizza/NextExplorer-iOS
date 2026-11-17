@@ -734,6 +734,15 @@ public enum L10n {
         public static var featureOffTitle: String { tr("serverSettings.featureOffTitle") }  // "This feature is not enabled"
         public static var featureOffUseSwitch: String { tr("serverSettings.featureOffUseSwitch") }  // "Turn it on with the switch above."
     }
+    public enum ServerTools {
+        public static var installed: String { tr("serverTools.installed") }  // "Installed"
+        public static var missing: String { tr("serverTools.missing") }  // "Missing"
+        public static func missingFormats(_ a0: CVarArg) -> String { tr("serverTools.missingFormats", a0) }
+        public static var navigationTitle: String { tr("serverTools.navigationTitle") }  // "Server tools"
+        public static var notUsed: String { tr("serverTools.notUsed") }  // "Not used"
+        public static func package(_ a0: CVarArg) -> String { tr("serverTools.package", a0) }
+        public static var subtitle: String { tr("serverTools.subtitle") }
+    }
     public enum Settings {
         public static func accountActiveLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountActiveLabel", a0, a1) }
         public static var accountChangeFailed: String { tr("settings.accountChangeFailed") }  // "Couldn't change your accounts right now. Please try again."

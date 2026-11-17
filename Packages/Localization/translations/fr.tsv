@@ -1244,3 +1244,10 @@ trash.columnOriginalLocation	Emplacement d'origine
 trash.columnDeletedBy	Supprimé par
 trash.columnDeletedOn	Supprimé le
 trash.columnRemoved	Suppression
+serverTools.navigationTitle	Outils du serveur
+serverTools.subtitle	Programmes facultatifs que le serveur utilise pour les miniatures, la recherche et les archives.
+serverTools.installed	Installé
+serverTools.missing	Manquant
+serverTools.notUsed	Non utilisé
+serverTools.package	Paquet : %@
+serverTools.missingFormats	Ne peut pas ouvrir : %@
