@@ -140505,13 +140505,25 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Open NextExplorer to upload %lld large file."
+                  "value": "Otevřete NextExplorer a nahrajte %lld velký soubor."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otevřete NextExplorer a nahrajte %lld velké soubory."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otevřete NextExplorer a nahrajte %lld velkého souboru."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Open NextExplorer to upload %lld large files."
+                  "value": "Otevřete NextExplorer a nahrajte %lld velkých souborů."
                 }
               }
             }
@@ -140631,13 +140643,19 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Open NextExplorer to upload %lld large file."
+                  "value": "פתחו את NextExplorer כדי להעלות קובץ גדול %lld."
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "פתחו את NextExplorer כדי להעלות %lld קבצים גדולים."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Open NextExplorer to upload %lld large files."
+                  "value": "פתחו את NextExplorer כדי להעלות %lld קבצים גדולים."
                 }
               }
             }
@@ -140955,13 +140973,25 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Open NextExplorer to upload %lld large file."
+                  "value": "Відкрийте NextExplorer, щоб вивантажити %lld великий файл."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Відкрийте NextExplorer, щоб вивантажити %lld великі файли."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Відкрийте NextExplorer, щоб вивантажити %lld великих файлів."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Open NextExplorer to upload %lld large files."
+                  "value": "Відкрийте NextExplorer, щоб вивантажити %lld великого файлу."
                 }
               }
             }
@@ -144168,13 +144198,25 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                  "value": "%lld soubor se nenahrál. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld soubory se nenahrály. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld souboru se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                  "value": "%lld souborů se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech."
                 }
               }
             }
@@ -144294,13 +144336,19 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                  "value": "קובץ %lld לא הועלה. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים."
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                  "value": "%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים."
                 }
               }
             }
@@ -144618,13 +144666,25 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces."
+                  "value": "%lld файл не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файли не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld файлів не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces."
+                  "value": "%lld файлу не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами."
                 }
               }
             }
