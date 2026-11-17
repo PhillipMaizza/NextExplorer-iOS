@@ -147,7 +147,7 @@ struct MainTabUploadsTests: MainTabTestSupport {
         let started = AsyncGate()
         let store = makeStore {
             $0.serveEmptyFolders()
-            $0.shareUploads.claimDeferred = { accountID, _ in
+            $0.shareUploads.pendingDeferred = { accountID in
                 asked.withValue { $0.append(accountID) }
                 return [kept]
             }
