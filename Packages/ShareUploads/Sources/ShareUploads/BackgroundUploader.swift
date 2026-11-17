@@ -127,12 +127,10 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     /// Hands every staged file to the system. The manifest goes first: a task can finish before
     /// this returns, and finishing needs it.
     public func start(_ batch: UploadBatch) throws {
-        if batch.deferredCount > 0 {
-            UploadNotifier.postDeferred(count: batch.deferredCount, using: notifications)
-        }
         // A batch of only big files has nothing for the system to send: the app takes them over.
         guard !batch.staged.isEmpty else {
             try? FileManager.default.removeItem(at: batch.directory)
+            postDeferredNotice(for: batch)
             return
         }
         let manifest = Manifest(
@@ -152,6 +150,13 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
             credentials: batch.credentials,
             batchID: batch.id
         )
+        postDeferredNotice(for: batch)
+    }
+
+    /// Only once the batch is safely started: a failed start discards the kept files again.
+    private func postDeferredNotice(for batch: UploadBatch) {
+        guard batch.deferredCount > 0 else { return }
+        UploadNotifier.postDeferred(count: batch.deferredCount, using: notifications)
     }
 
     private func submit(

@@ -44,6 +44,23 @@ struct DeferredUploadsTests {
         #expect(store.isEmpty, "the upload deleted its file, so its folder goes")
     }
 
+    @Test("A kept file that never uploaded is dropped after a week, so a failing one cannot fill the disk")
+    func pendingDropsWeekOldFiles() throws {
+        let (store, root, source) = try makeStore()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let folder = try store.stage(
+            copying: source, fileName: Value.bigName, accountID: Harness.credentials.accountID, destination: ""
+        )
+        try FileManager.default.setAttributes(
+            [.modificationDate: TestClock.reference], ofItemAtPath: folder.appendingPathComponent("meta.json").path
+        )
+        let day: TimeInterval = 24 * 60 * 60
+
+        #expect(store.pending(accountID: Harness.credentials.accountID, now: TestClock.reference + 6 * day).count == 1)
+        #expect(store.pending(accountID: Harness.credentials.accountID, now: TestClock.reference + 8 * day).isEmpty)
+        #expect(store.isEmpty)
+    }
+
     @Test("Another account's files are not listed")
     func pendingIsPerAccount() throws {
         let (store, root, source) = try makeStore()
@@ -181,8 +198,15 @@ struct DeferredUploadsTests {
         DeferredUploads.learnRefusal(ofBytes: 80 * mebibyte, serverURL: server, defaults: defaults)
         #expect(DeferredUploads.directLimitBytes(for: server, defaults: defaults) == 30 * mebibyte, "never raised")
 
-        DeferredUploads.learnRefusal(ofBytes: mebibyte, serverURL: server, defaults: defaults)
+        DeferredUploads.learnRefusal(ofBytes: 16 * mebibyte, serverURL: server, defaults: defaults)
         #expect(DeferredUploads.directLimitBytes(for: server, defaults: defaults) == Int64(UploadMode.largeFileBytes))
+
+        let small = try #require(URL(string: "https://small.example.com"))
+        DeferredUploads.learnRefusal(ofBytes: mebibyte, serverURL: small, defaults: defaults)
+        #expect(
+            DeferredUploads.directLimitBytes(for: small, defaults: defaults) == DeferredUploads.thresholdBytes,
+            "a small file refused is not a size limit"
+        )
     }
 
     @Test("A file a proxy refused as too large lowers the limit, so sharing it again keeps it for the app")

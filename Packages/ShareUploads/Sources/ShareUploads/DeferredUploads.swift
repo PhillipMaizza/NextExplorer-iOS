@@ -42,6 +42,8 @@ public struct DeferredUploads: Sendable {
         static let metaFile = "meta.json"
         static let partialPrefix = "."
         static let partialAge: TimeInterval = 60 * 60
+        /// A kept file that never uploaded (a destination that is gone, a refused account) is dropped after this.
+        static let retention: TimeInterval = 7 * 24 * 60 * 60
     }
 
     private static let limitKeyPrefix = "shareUploads.directLimitBytes."
@@ -59,6 +61,9 @@ public struct DeferredUploads: Sendable {
     /// A direct upload of `bytes` was refused as too large: files over half that size are kept for
     /// the app from now on.
     static func learnRefusal(ofBytes bytes: Int64, serverURL: URL, defaults: UserDefaults) {
+        // A small file refused says nothing about size (a firewall rule, say): lowering the limit to the
+        // floor for it would send every big file through the app for good.
+        guard bytes > Int64(UploadMode.largeFileBytes) else { return }
         let learned = max(Int64(UploadMode.largeFileBytes), bytes / 2)
         let known = directLimitBytes(for: serverURL, defaults: defaults)
         defaults.set(Int(min(known, learned)), forKey: limitKey(serverURL))
@@ -95,8 +100,8 @@ public struct DeferredUploads: Sendable {
     /// `accountID`'s waiting files, where they are: the app uploads them in place, so one that was
     /// cut off by a force quit is simply found again at the next launch. Another account's files
     /// stay untouched: they only ever upload as the account that shared them. A folder whose file
-    /// is gone (uploaded, cancelled or failed for good) is removed.
-    public func pending(accountID: String) -> [DeferredUpload] {
+    /// is gone (uploaded or cancelled), or a week old, is removed.
+    public func pending(accountID: String, now: Date = Date()) -> [DeferredUpload] {
         var found: [DeferredUpload] = []
         for folder in folders() {
             guard
@@ -105,7 +110,10 @@ public struct DeferredUploads: Sendable {
                 meta.accountID == accountID
             else { continue }
             let payload = folder.appendingPathComponent(Constants.payload)
-            guard FileManager.default.fileExists(atPath: payload.path) else {
+            let stagedAt = (try? folder.appendingPathComponent(Constants.metaFile)
+                .resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+            let isExpired = stagedAt.map { now.timeIntervalSince($0) > Constants.retention } ?? false
+            guard !isExpired, FileManager.default.fileExists(atPath: payload.path) else {
                 try? FileManager.default.removeItem(at: folder)
                 continue
             }
