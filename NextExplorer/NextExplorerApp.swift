@@ -163,7 +163,7 @@ struct NextExplorerApp: App {
             .restorationBehavior(.disabled)
 
             Window(L10n.Menu.about, id: MacAboutView.windowID) {
-                MacAboutView(onTip: Self.openTipJar)
+                MacAboutView(onTip: { Self.openTipJar() })
                     .containerBackground(.ultraThinMaterial, for: .window)
                     .macFrostedWindow()
                     .followsAppLanguage()
