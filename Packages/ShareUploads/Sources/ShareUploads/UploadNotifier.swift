@@ -39,6 +39,7 @@ enum UploadNotificationIdentifier {
     static let failedCategory = "shareUpload.failed"
     static let doneCategory = "shareUpload.done"
     static let retryFailureNotification = "shareUpload.retryFailed"
+    static let deferredNotification = "shareUpload.deferred"
     static let retryAction = "shareUpload.retry"
 }
 
@@ -176,6 +177,17 @@ struct UploadNotifier: Sendable {
 
     static func registerCategories(using center: NotificationCenterClient = .live) {
         center.setCategories(Set(categories()))
+    }
+
+    /// Said when files were kept for the app: an iPhone's extension cannot open it, so the user is
+    /// asked to, and the app picks the files up when it comes forward.
+    static func postDeferred(count: Int, using center: NotificationCenterClient = .live) {
+        let content = UNMutableNotificationContent()
+        content.title = L10n.ShareUpload.deferredTitle
+        content.body = L10n.ShareUpload.deferredBody(count)
+        center.add(UNNotificationRequest(
+            identifier: UploadNotificationIdentifier.deferredNotification, content: content, trigger: nil
+        ))
     }
 
     /// Said when Retry could not start anything, so the user is never left with silence.

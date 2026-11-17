@@ -48,6 +48,7 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     let defaults: UserDefaults
     let now: @Sendable () -> Date
     private let availableCapacity: @Sendable (URL) -> Int64?
+    let deferredUploads: DeferredUploads?
     private let startTasks: (@Sendable (_ sessionIdentifier: String, _ specs: [UploadTaskSpec]) -> Void)?
     private let queryTasks: (@Sendable (
         _ sessionIdentifier: String,
@@ -70,6 +71,7 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         defaults: UserDefaults = AppGroup.defaults,
         now: @escaping @Sendable () -> Date = { Date() },
         availableCapacity: @escaping @Sendable (URL) -> Int64? = DiskSpace.availableCapacity,
+        deferredUploads: DeferredUploads? = .live,
         events: EventsEnvironment = .live,
         startTasks: (@Sendable (_ sessionIdentifier: String, _ specs: [UploadTaskSpec]) -> Void)? = nil,
         queryTasks: (@Sendable (_ sessionIdentifier: String, _ completion: @escaping @Sendable (LiveTasks) -> Void)
@@ -85,6 +87,7 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         self.defaults = defaults
         self.now = now
         self.availableCapacity = availableCapacity
+        self.deferredUploads = deferredUploads
         self.startTasks = startTasks
         self.queryTasks = queryTasks
         self.removeEnvelope = removeEnvelope
@@ -112,15 +115,25 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         let id = UUID().uuidString
         let directory = directory(of: id)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        return UploadBatch(
+        var batch = UploadBatch(
             id: id, directory: directory, credentials: credentials, destination: destination,
             availableCapacity: availableCapacity
         )
+        batch.deferredUploads = deferredUploads
+        return batch
     }
 
     /// Hands every staged file to the system. The manifest goes first: a task can finish before
     /// this returns, and finishing needs it.
     public func start(_ batch: UploadBatch) throws {
+        if batch.deferredCount > 0 {
+            UploadNotifier.postDeferred(count: batch.deferredCount, using: notifications)
+        }
+        // A batch of only big files has nothing for the system to send: the app takes them over.
+        guard !batch.staged.isEmpty else {
+            try? FileManager.default.removeItem(at: batch.directory)
+            return
+        }
         let manifest = Manifest(
             accountID: batch.credentials.accountID,
             destination: batch.destination,
@@ -471,6 +484,7 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     /// the last sign out) and deletes what was staged, so nothing keeps sending as an account that
     /// left. The batch folder goes first so the cancelled tasks' callbacks find nothing to report.
     public func cancel(keepingAccounts accountIDs: Set<String>) {
+        deferredUploads?.discard(keepingAccounts: accountIDs)
         sweepTombstones()
         var cancelled: [String] = []
         for id in pendingBatchIDs() {

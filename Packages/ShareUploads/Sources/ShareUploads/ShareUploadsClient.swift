@@ -13,6 +13,8 @@ public struct ShareUploadsClient: Sendable {
     public var clearNeedsSignIn: @Sendable (_ accountID: String) -> Void
     /// Once an account's session is valid again: sends the files the server refused as signed out.
     public var retryRefused: @Sendable (_ credentials: SessionCredentials) -> Int = { _ in 0 }
+    /// Big files the extension kept for the app: moves `accountID`'s into `directory` and returns them.
+    public var claimDeferred: @Sendable (_ accountID: String, _ directory: URL) -> [DeferredUpload] = { _, _ in [] }
 }
 
 extension ShareUploadsClient: DependencyKey {
@@ -20,14 +22,16 @@ extension ShareUploadsClient: DependencyKey {
         cancel: { BackgroundUploader.shared.cancel(keepingAccounts: $0) },
         accountsNeedingSignIn: { BackgroundUploader.shared.accountsNeedingSignIn() },
         clearNeedsSignIn: { BackgroundUploader.shared.clearNeedsSignIn(accountID: $0) },
-        retryRefused: { BackgroundUploader.shared.retryRefused(credentials: $0) }
+        retryRefused: { BackgroundUploader.shared.retryRefused(credentials: $0) },
+        claimDeferred: { DeferredUploads.live?.claim(accountID: $0, into: $1) ?? [] }
     )
 
     public static let testValue = ShareUploadsClient(
         cancel: { _ in },
         accountsNeedingSignIn: { [] },
         clearNeedsSignIn: { _ in },
-        retryRefused: { _ in 0 }
+        retryRefused: { _ in 0 },
+        claimDeferred: { _, _ in [] }
     )
 }
 
