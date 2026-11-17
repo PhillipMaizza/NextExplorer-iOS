@@ -30,6 +30,7 @@ public struct DestinationPickerView: View {
         case .upload: L10n.Uploads.destinationTitle
         case .move: L10n.Browse.destinationPickerMoveTitle
         case .restore: L10n.Trash.restoreTo
+        case .replaceFile: L10n.Browse.destinationPickerReplaceTitle
         }
     }
 
@@ -38,6 +39,7 @@ public struct DestinationPickerView: View {
         case .upload: L10n.Uploads.destinationConfirm
         case .move: L10n.Browse.destinationPickerConfirmMove
         case .restore: L10n.Trash.restoreHere
+        case .replaceFile: L10n.Browse.transferConflictReplace
         }
     }
 

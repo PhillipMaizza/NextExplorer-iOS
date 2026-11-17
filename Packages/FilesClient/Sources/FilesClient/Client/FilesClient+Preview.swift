@@ -164,8 +164,12 @@ public extension FilesClient {
             )
         },
         restoreVersion: { _, _, _ in },
+        versionText: { _, _, _ in
+            FileVersionText(name: "notes.txt", size: 12, modifiedAt: Date(), content: "Hello, world")
+        },
         downloadVersion: { _, _, _, _ in },
         copyVersion: { _, path, _, _ in path },
+        replaceWithVersion: { _, _, _, _ in },
         updateVersion: { _, _, versionID, label, pinned in
             FileVersion(
                 id: versionID,

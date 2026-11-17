@@ -158,6 +158,9 @@ public extension FilesClient {
             restoreVersion: { serverURL, path, versionID in
                 try await service.restoreVersion(serverURL: serverURL, path: path, versionID: versionID)
             },
+            versionText: { serverURL, path, versionID in
+                try await service.versionText(serverURL: serverURL, path: path, versionID: versionID)
+            },
             downloadVersion: { serverURL, path, versionID, destination in
                 try await service.downloadVersion(
                     serverURL: serverURL,
@@ -172,6 +175,11 @@ public extension FilesClient {
                     path: path,
                     versionID: versionID,
                     destination: destination
+                )
+            },
+            replaceWithVersion: { serverURL, path, versionID, target in
+                try await service.replaceWithVersion(
+                    serverURL: serverURL, path: path, versionID: versionID, target: target
                 )
             },
             updateVersion: { serverURL, path, versionID, label, pinned in

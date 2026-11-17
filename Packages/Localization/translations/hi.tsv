@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	यहां ले जाएं
 browse.destinationPickerNoFolders	यहां कोई फ़ोल्डर नहीं
 browse.destinationPickerLoadFailed	फ़ोल्डर लोड नहीं कर सके।
 browse.destinationPickerRecent	हाल के
+browse.destinationPickerReplaceTitle	कौन सी फ़ाइल बदलनी है?
 browse.actionMove	ले जाएं
 browse.actionPaste	पेस्ट करें
 browse.actionPasteCount	%lld आइटम पेस्ट करें
@@ -676,9 +677,15 @@ fileInfo.restoreConfirm	पुनर्स्थापित करें
 fileInfo.sectionSharing	साझाकरण
 fileInfo.notShared	कोई साझा लिंक नहीं
 fileInfo.versionActions	संस्करण कार्रवाइयाँ
+fileInfo.versionViewText	टेक्स्ट देखें
+fileInfo.versionTextTruncated	इस संस्करण का केवल शुरुआती हिस्सा दिखाया जा रहा है।
+fileInfo.versionReplaced	%@ बदल दिया गया।
 fileInfo.versionDownload	डाउनलोड करें…
 fileInfo.versionSaveCopy	प्रति के रूप में सहेजें
 fileInfo.versionRename	नाम बदलें…
+fileInfo.versionReplace	दूसरी फ़ाइल बदलें…
+fileInfo.replaceTitle	यह फ़ाइल बदलें?
+fileInfo.replaceMessage	%1$@ को %2$@ के संस्करण से बदला जाएगा। इसकी मौजूदा सामग्री एक संस्करण के रूप में रखी जाएगी।
 fileInfo.renameTitle	संस्करण का नाम बदलें
 fileInfo.renamePlaceholder	संस्करण का नाम
 fileInfo.versionPin	यह संस्करण रखें

@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	Hierheen verplaatsen
 browse.destinationPickerNoFolders	Geen mappen hier
 browse.destinationPickerLoadFailed	Kan de mappen niet laden.
 browse.destinationPickerRecent	Recent
+browse.destinationPickerReplaceTitle	Welk bestand vervangen?
 browse.actionMove	Verplaatsen
 browse.actionPaste	Plakken
 browse.actionPasteCount	%lld items plakken
@@ -676,9 +677,15 @@ fileInfo.restoreConfirm	Zet terug
 fileInfo.sectionSharing	Delen
 fileInfo.notShared	Geen deellinks
 fileInfo.versionActions	Versieacties
+fileInfo.versionViewText	Tekst bekijken
+fileInfo.versionTextTruncated	Alleen het eerste deel van deze versie wordt getoond.
+fileInfo.versionReplaced	%@ vervangen.
 fileInfo.versionDownload	Download…
 fileInfo.versionSaveCopy	Bewaar als kopie
 fileInfo.versionRename	Wijzig naam…
+fileInfo.versionReplace	Ander bestand vervangen…
+fileInfo.replaceTitle	Dit bestand vervangen?
+fileInfo.replaceMessage	%1$@ wordt vervangen door de versie van %2$@. De huidige inhoud blijft bewaard als versie.
 fileInfo.renameTitle	Wijzig versienaam
 fileInfo.renamePlaceholder	Versienaam
 fileInfo.versionPin	Bewaar deze versie

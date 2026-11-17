@@ -102,6 +102,7 @@ browse.destinationPickerConfirmMove	Mover para cá
 browse.destinationPickerNoFolders	Nenhuma pasta aqui
 browse.destinationPickerLoadFailed	Não foi possível carregar as pastas.
 browse.destinationPickerRecent	Recentes
+browse.destinationPickerReplaceTitle	Qual arquivo substituir?
 browse.actionMove	movimentação
 browse.actionPaste	Colar
 browse.actionPasteCount	Colar %lld itens
@@ -873,9 +874,15 @@ fileInfo.restoreConfirm	Restaurar
 fileInfo.sectionSharing	Compartilhando:
 fileInfo.notShared	Nenhum link compartilhado
 fileInfo.versionActions	Ações da versão
+fileInfo.versionViewText	Ver texto
+fileInfo.versionTextTruncated	Mostrando apenas o início desta versão.
+fileInfo.versionReplaced	%@ substituído.
 fileInfo.versionDownload	Baixar…
 fileInfo.versionSaveCopy	Salvar como cópia
 fileInfo.versionRename	Renomear…
+fileInfo.versionReplace	Substituir outro arquivo…
+fileInfo.replaceTitle	Substituir este arquivo?
+fileInfo.replaceMessage	%1$@ será substituído pela versão de %2$@. O conteúdo atual é mantido como versão.
 fileInfo.renameTitle	Renomear versão
 fileInfo.renamePlaceholder	Nome da versão
 fileInfo.versionPin	Manter esta versão

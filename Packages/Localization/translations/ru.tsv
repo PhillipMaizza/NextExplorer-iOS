@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	Переместить сюда
 browse.destinationPickerNoFolders	Здесь нет папок
 browse.destinationPickerLoadFailed	Не удалось загрузить папки.
 browse.destinationPickerRecent	Недавние
+browse.destinationPickerReplaceTitle	Какой файл заменить?
 browse.actionMove	Переместить
 browse.actionPaste	Вставить
 browse.actionPasteCount	Вставить объектов: %lld
@@ -690,9 +691,15 @@ fileInfo.restoreConfirm	Восстановить
 fileInfo.sectionSharing	Общий доступ
 fileInfo.notShared	Нет ссылок общего доступа
 fileInfo.versionActions	Действия с версией
+fileInfo.versionViewText	Показать текст
+fileInfo.versionTextTruncated	Показано только начало этой версии.
+fileInfo.versionReplaced	Заменён файл %@.
 fileInfo.versionDownload	Загрузить…
 fileInfo.versionSaveCopy	Сохранить как копию
 fileInfo.versionRename	Переименовать…
+fileInfo.versionReplace	Заменить другой файл…
+fileInfo.replaceTitle	Заменить этот файл?
+fileInfo.replaceMessage	Файл %1$@ будет заменён версией от %2$@. Текущее содержимое сохранится как версия.
 fileInfo.renameTitle	Переименовать версию
 fileInfo.renamePlaceholder	Название версии
 fileInfo.versionPin	Хранить эту версию

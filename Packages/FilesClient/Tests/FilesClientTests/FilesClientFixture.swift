@@ -214,6 +214,7 @@ enum FilesClientFixture: String, FixtureFile {
     case versionsListNotesTwoVersions = "versions/list-notes-two-versions"
     case versionsRestoreResult = "versions/restore-result"
     case versionsSaveAsCopyResult = "versions/save-as-copy-result"
+    case versionsTextResult = "versions/text-result"
     case versionsVersionPinned = "versions/version-pinned"
 
     var fileExtension: String {

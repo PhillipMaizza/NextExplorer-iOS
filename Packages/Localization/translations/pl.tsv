@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	Przenieś tutaj
 browse.destinationPickerNoFolders	Brak folderów tutaj
 browse.destinationPickerLoadFailed	Nie można wczytać folderów.
 browse.destinationPickerRecent	Ostatnie
+browse.destinationPickerReplaceTitle	Który plik zastąpić?
 browse.actionMove	Przenieś
 browse.actionPaste	Wklej
 browse.actionPasteCount	Wklej %lld elementów
@@ -690,9 +691,15 @@ fileInfo.restoreConfirm	Przywróć
 fileInfo.sectionSharing	Udostępnianie
 fileInfo.notShared	Brak linków udostępniania
 fileInfo.versionActions	Działania wersji
+fileInfo.versionViewText	Pokaż tekst
+fileInfo.versionTextTruncated	Wyświetlono tylko początek tej wersji.
+fileInfo.versionReplaced	Zastąpiono %@.
 fileInfo.versionDownload	Pobierz…
 fileInfo.versionSaveCopy	Zapisz jako kopię
 fileInfo.versionRename	Zmień nazwę…
+fileInfo.versionReplace	Zastąp inny plik…
+fileInfo.replaceTitle	Zastąpić ten plik?
+fileInfo.replaceMessage	Plik %1$@ zostanie zastąpiony wersją z %2$@. Obecna zawartość zostanie zachowana jako wersja.
 fileInfo.renameTitle	Zmień nazwę wersji
 fileInfo.renamePlaceholder	Nazwa wersji
 fileInfo.versionPin	Zachowaj tę wersję

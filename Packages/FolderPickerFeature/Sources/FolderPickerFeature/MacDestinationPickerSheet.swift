@@ -57,6 +57,13 @@
                     .accessibilityHidden(true)
             }
             .task { store.send(.onAppear) }
+            .onChange(of: selectedFolderID) { _, id in store.send(.rowSelected(id)) }
+            .onChange(of: store.directoryPath) { selectedFolderID = nil }
+            .onChange(of: store.selectedFilePath) { _, path in
+                if let path {
+                    selectedFolderID = path
+                }
+            }
         }
 
         private var header: some View {
@@ -102,7 +109,7 @@
                         MacItemLabel(
                             name: result.name,
                             subtitle: result.path.isEmpty ? nil : result.path,
-                            isDirectory: true
+                            isDirectory: result.isDirectory
                         )
                         .accessibilityAction(named: L10n.Browse.open) { store.send(.searchResultTapped(result)) }
                     }
@@ -121,12 +128,18 @@
                 ContentUnavailableView.search(text: store.searchQuery)
             } else {
                 List(store.displayedFolders, selection: $selectedFolderID) { folder in
-                    MacItemLabel(name: folder.name, isDirectory: true)
+                    MacItemLabel(name: folder.name, isDirectory: folder.isDirectory)
                         .accessibilityAction(named: L10n.Browse.open) { store.send(.folderTapped(folder)) }
                 }
                 .contextMenu(forSelectionType: FileItem.ID.self, menu: { _ in }, primaryAction: { ids in
                     guard let id = ids.first, let folder = store.folders[id: id] else { return }
-                    store.send(.folderTapped(folder))
+                    if folder.isDirectory {
+                        store.send(.folderTapped(folder))
+                    } else {
+                        // Only a file chooser lists files: a double click picks it and confirms.
+                        store.send(.rowSelected(id))
+                        store.send(.confirmTapped)
+                    }
                 })
             }
         }

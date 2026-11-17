@@ -6,6 +6,11 @@ extension FilesService {
         let path: String
     }
 
+    struct VersionReplaceBody: Encodable {
+        let path: String
+        let target: String
+    }
+
     struct VersionCopyBody: Encodable {
         let path: String
         let destination: String

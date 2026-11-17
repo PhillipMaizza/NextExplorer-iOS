@@ -82,6 +82,8 @@
                 }
                 if let errorMessage = model.errorMessage {
                     Text(errorMessage).foregroundStyle(Color.negativeText)
+                } else if let statusMessage = model.statusMessage {
+                    Text(statusMessage).foregroundStyle(.secondary)
                 }
             } header: {
                 Text(L10n.FileInfo.sectionVersions)
@@ -95,10 +97,16 @@
                     Button(L10n.FileInfo.versionRestore) { model.versionToRestore = version }
                         .disabled(!isAvailable)
                 }
+                if model.canViewText {
+                    Button(L10n.FileInfo.versionViewText) { model.viewText(version) }
+                        .disabled(!isAvailable)
+                }
                 if history.rights.canDownload {
                     Button(L10n.FileInfo.versionDownload) { model.download(version) }
                         .disabled(!isAvailable)
                     Button(L10n.FileInfo.versionSaveCopy) { model.saveCopy(version) }
+                        .disabled(!isAvailable)
+                    Button(L10n.FileInfo.versionReplace) { model.beginReplace(version) }
                         .disabled(!isAvailable)
                 }
                 if history.rights.canRestore {

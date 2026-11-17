@@ -84,6 +84,30 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func versionTextGetsTheTextRouteAndDecodesTheContent() async throws {
+            try stub(statusCode: 200, body: FilesClientFixture.versionsTextResult.data())
+            let text = try await makeClient().versionText(serverURL, TestPath.docsNotes, TestETag.first)
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
+            #expect(request.url?.path == "/api/versions/v1/text")
+            #expect(request.url?.query?.contains("path=Docs/notes.txt") == true)
+            #expect(text.content == Constants.oldText)
+            #expect(text.size == 8)
+        }
+
+        @Test
+        func replaceWithVersionPostsThePathAndTheTargetFile() async throws {
+            prepareEmpty(statusCode: 200)
+            try await makeClient().replaceWithVersion(serverURL, TestPath.docsNotes, TestETag.first, TestFolder.inbox)
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
+            #expect(request.url?.path == "/api/versions/v1/replace")
+            let json = try capturedJSON()
+            #expect(json["path"] as? String == TestPath.docsNotes)
+            #expect(json["target"] as? String == TestFolder.inbox)
+        }
+
+        @Test
         func downloadVersionReadsTheContentRouteIntoTheDestination() async throws {
             stub(statusCode: 200, body: Data(Constants.oldText.utf8))
             let destination = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name()).txt")
