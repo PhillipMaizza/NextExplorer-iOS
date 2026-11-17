@@ -133,6 +133,7 @@ browse.clipboardCopiedOne	%@ copied
 browse.clipboardCopiedMany	%lld items copied
 browse.progressMoving	Moving…
 browse.progressCopying	Copying…
+browse.progressDeleting	Deleting…
 browse.transferMoved#one	Moved %lld item
 browse.transferMoved#other	Moved %lld items
 browse.transferCopied#one	Copied %lld item
@@ -1339,3 +1340,10 @@ trash.columnOriginalLocation	Original Location
 trash.columnDeletedBy	Deleted By
 trash.columnDeletedOn	Deleted On
 trash.columnRemoved	Removed
+serverTools.navigationTitle	Server tools
+serverTools.subtitle	Optional programs the server uses for thumbnails, search and archives.
+serverTools.installed	Installed
+serverTools.missing	Missing
+serverTools.notUsed	Not used
+serverTools.package	Package: %@
+serverTools.missingFormats	Cannot open: %@

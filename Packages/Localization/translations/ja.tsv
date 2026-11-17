@@ -104,6 +104,7 @@ browse.clipboardCopiedOne	%@ をコピーしました
 browse.clipboardCopiedMany	%lld 項目をコピーしました
 browse.progressMoving	移動中…
 browse.progressCopying	コピー中…
+browse.progressDeleting	削除中…
 browse.transferMoved#other	%lld 項目を移動しました
 browse.transferCopied#other	%lld 項目をコピーしました
 browse.transferMovedWithSkipped#other	%1$lld 項目を移動、%2$lld 項目をスキップ
@@ -1214,3 +1215,10 @@ trash.columnOriginalLocation	元の場所
 trash.columnDeletedBy	削除したユーザ
 trash.columnDeletedOn	削除日
 trash.columnRemoved	削除予定
+serverTools.navigationTitle	サーバーツール
+serverTools.subtitle	サーバーがサムネイル、検索、アーカイブに使う任意のプログラムです。
+serverTools.installed	インストール済み
+serverTools.missing	未インストール
+serverTools.notUsed	未使用
+serverTools.package	パッケージ: %@
+serverTools.missingFormats	開けない形式: %@

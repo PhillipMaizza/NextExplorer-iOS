@@ -104,6 +104,7 @@ browse.clipboardCopiedOne	已拷贝 %@
 browse.clipboardCopiedMany	已拷贝 %lld 项
 browse.progressMoving	正在移动…
 browse.progressCopying	正在拷贝…
+browse.progressDeleting	正在删除…
 browse.transferMoved#other	已移动 %lld 项
 browse.transferCopied#other	已拷贝 %lld 项
 browse.transferMovedWithSkipped#other	已移动 %1$lld 项，跳过 %2$lld 项
@@ -1214,3 +1215,10 @@ trash.columnOriginalLocation	原位置
 trash.columnDeletedBy	删除者
 trash.columnDeletedOn	删除时间
 trash.columnRemoved	永久删除
+serverTools.navigationTitle	服务器工具
+serverTools.subtitle	服务器用于缩略图、搜索和压缩包的可选程序。
+serverTools.installed	已安装
+serverTools.missing	缺失
+serverTools.notUsed	未使用
+serverTools.package	软件包：%@
+serverTools.missingFormats	无法打开：%@

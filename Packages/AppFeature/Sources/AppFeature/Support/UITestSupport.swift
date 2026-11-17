@@ -179,6 +179,9 @@
         /// A folder name the mocked `createFolder` rejects, so a UI test can drive the failure path
         /// (the new folder sheet stays open on error). Mirrored by `Fixture.failingFolderName`.
         static let failingFolderName = "__uitest_fail__"
+        /// What `slowOperations` reports before it waits, and how long it waits (a cancel ends it sooner).
+        static let heldProgress = 0.4
+        static let heldSeconds = 600
         /// Signing in as this name answers "the password is right, now send a code", so a UI test
         /// can drive the second factor page. Mirrored by `Fixture.secondFactorIdentifier`.
         static let secondFactorIdentifier = "phillip.2fa"
@@ -211,6 +214,9 @@
             /// Like `normal`, but the folder holds one file of every kind the gallery pages
             /// through, and text files read back `galleryNotesText`.
             case gallery
+            /// Like `normal`, but a delete reports 40 percent and then waits until it is cancelled, so the
+            /// progress bar and its Cancel button stay on screen.
+            case slowOperations
         }
 
         static func credentials(
@@ -285,7 +291,7 @@
         static func filesClient(_ scenario: Scenario, expiry: MockSessionExpiry = MockSessionExpiry()) -> FilesClient {
             var client = FilesClient.previewValue
             switch scenario {
-            case .normal, .gallery:
+            case .normal, .gallery, .slowOperations:
                 installAccountMocks(into: &client)
                 // An in memory file tree so writes (create, rename, delete, move, copy, compress) land
                 // in the folder they name and show in the next listing, as on the server.
@@ -309,6 +315,12 @@
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
                 client.deleteItems = { _, items, permanent in store.delete(items, permanent: permanent) }
+                client.deleteItemsWithProgress = { _, items, permanent, onProgress in
+                    guard scenario == .slowOperations else { return store.delete(items, permanent: permanent) }
+                    onProgress(heldProgress)
+                    try await Task.sleep(for: .seconds(heldSeconds))
+                    return store.delete(items, permanent: permanent)
+                }
                 client.deleteImpact = { _, items in
                     DeleteImpact(shareCount: 0, trash: DeleteImpact.TrashPlan(
                         isEnabled: true,

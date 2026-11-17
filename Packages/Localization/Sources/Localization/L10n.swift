@@ -188,6 +188,7 @@ public enum L10n {
         public static var open: String { tr("browse.open") }  // "Open"
         public static var progressCompressing: String { tr("browse.progressCompressing") }  // "Compressing…"
         public static var progressCopying: String { tr("browse.progressCopying") }  // "Copying…"
+        public static var progressDeleting: String { tr("browse.progressDeleting") }  // "Deleting…"
         public static var progressExtracting: String { tr("browse.progressExtracting") }  // "Extracting…"
         public static var progressMoving: String { tr("browse.progressMoving") }  // "Moving…"
         public static var quickLookTooLarge: String { tr("browse.quickLookTooLarge") }  // "This file is too large for Quick Look."
@@ -732,6 +733,15 @@ public enum L10n {
         public static var featureOffKept: String { tr("serverSettings.featureOffKept") }
         public static var featureOffTitle: String { tr("serverSettings.featureOffTitle") }  // "This feature is not enabled"
         public static var featureOffUseSwitch: String { tr("serverSettings.featureOffUseSwitch") }  // "Turn it on with the switch above."
+    }
+    public enum ServerTools {
+        public static var installed: String { tr("serverTools.installed") }  // "Installed"
+        public static var missing: String { tr("serverTools.missing") }  // "Missing"
+        public static func missingFormats(_ a0: CVarArg) -> String { tr("serverTools.missingFormats", a0) }
+        public static var navigationTitle: String { tr("serverTools.navigationTitle") }  // "Server tools"
+        public static var notUsed: String { tr("serverTools.notUsed") }  // "Not used"
+        public static func package(_ a0: CVarArg) -> String { tr("serverTools.package", a0) }
+        public static var subtitle: String { tr("serverTools.subtitle") }
     }
     public enum Settings {
         public static func accountActiveLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountActiveLabel", a0, a1) }

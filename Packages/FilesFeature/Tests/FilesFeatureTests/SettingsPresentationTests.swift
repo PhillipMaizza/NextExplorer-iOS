@@ -127,6 +127,12 @@ struct SettingsPresentationTests: SettingsFeatureTestSupport {
             open: { $0.activityLog = ActivityLogFeature.State(serverURL: $1) }
         ),
         AdminPageCase(
+            description: "server tools",
+            tap: .serverToolsButtonTapped,
+            isOpen: { $0.serverTools != nil },
+            open: { $0.serverTools = ServerToolsFeature.State(serverURL: $1) }
+        ),
+        AdminPageCase(
             description: "trash",
             tap: .trashSettingsButtonTapped,
             isOpen: { $0.trashSettings != nil },

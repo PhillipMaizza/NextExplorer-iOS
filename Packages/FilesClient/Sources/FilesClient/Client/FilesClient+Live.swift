@@ -129,6 +129,11 @@ public extension FilesClient {
             deleteItems: { serverURL, items, permanent in
                 try await service.deleteItems(serverURL: serverURL, items: items, permanent: permanent)
             },
+            deleteItemsWithProgress: { serverURL, items, permanent, onProgress in
+                try await service.deleteItems(
+                    serverURL: serverURL, items: items, permanent: permanent, onProgress: onProgress
+                )
+            },
             transferItems: { serverURL, items, destination, operation in
                 try await service.transferItems(
                     serverURL: serverURL, items: items, destination: destination, operation: operation
@@ -149,6 +154,7 @@ public extension FilesClient {
             fetchUsage: { serverURL, path in
                 try await service.fetchUsage(serverURL: serverURL, path: path)
             },
+            fetchCapabilities: { serverURL in try await service.fetchCapabilities(serverURL: serverURL) },
             fetchPermissions: { serverURL, path in
                 try await service.fetchPermissions(serverURL: serverURL, path: path)
             },

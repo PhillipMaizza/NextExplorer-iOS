@@ -73,6 +73,11 @@ public struct FilesClient: Sendable {
     public var deleteItems: @Sendable (
         _ serverURL: URL, _ items: [FileItem], _ permanent: Bool
     ) async throws -> DeleteOutcome
+    /// The streamed delete route: the same delete, answering with progress (0 to 1) as the
+    /// server works through the items. A server without the route (404) gets the plain delete instead.
+    public var deleteItemsWithProgress: @Sendable (
+        _ serverURL: URL, _ items: [FileItem], _ permanent: Bool, _ onProgress: @escaping @Sendable (Double) -> Void
+    ) async throws -> DeleteOutcome
     /// `POST /api/files/copy` or `/api/files/move` depending on `operation`. `destination` is
     /// the target directory's relative path; the server rejects an empty one ("Cannot copy or
     /// move items to the root path").
@@ -90,6 +95,8 @@ public struct FilesClient: Sendable {
     /// `GET /api/usage/<path>` (`backend/src/routes/usage.js`): the folder's recursive size
     /// plus the free/total of the filesystem it's on. A denied path comes back all zeros.
     public var fetchUsage: @Sendable (_ serverURL: URL, _ path: String) async throws -> StorageUsage
+    /// `GET /api/capabilities` (admin only): which optional programs the server found.
+    public var fetchCapabilities: @Sendable (_ serverURL: URL) async throws -> [ServerCapability]
     /// `GET /api/permissions/<path>` (`backend/src/routes/permissions.js`): the file's raw
     /// `stat` mode plus resolved owner/group. Needs read access to the path.
     public var fetchPermissions: @Sendable (_ serverURL: URL, _ path: String) async throws -> FilePermissions

@@ -198,6 +198,8 @@ public struct BrowseFeature {
         public var isSelecting = false
         public var selectedItemIDs: Set<FileItem.ID> = []
         public var isBulkActionInFlight = false
+        /// How far the running bulk delete is (0 to 1); nil when none runs. Drives the progress bar.
+        public var bulkDeleteProgress: Double?
         public var bulkDeleteConfirmationIsPresented = false
         /// Items the trash refused during the last delete, still on disk. Non empty puts up the
         /// prompt that offers to delete them for good.
@@ -536,6 +538,8 @@ public struct BrowseFeature {
         case bulkDeleteCancelled
         case bulkDeleteConfirmed
         case bulkDeletePermanentlyConfirmed
+        case bulkDeleteProgressed(Double)
+        case bulkDeleteCancelTapped
         case bulkDeleteResponse(Result<DeleteResult, FilesClientError>)
         case bulkFavoriteTapped
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
@@ -651,7 +655,7 @@ public struct BrowseFeature {
     /// Internal (not private) so the effect helpers extracted into `BrowseFeature+*.swift`
     /// can reference these cancel ids across files.
     enum CancelID: Hashable {
-        case search, searchSavedItems, transfer, googleDocsPointer, deleteImpact, load, preview, info,
+        case search, searchSavedItems, bulkDelete, transfer, googleDocsPointer, deleteImpact, load, preview, info,
              previewDeferredAction, folderSizes
         case prefetchChildren, prefetchFavorites, offlineAvailability, searchOnDevice, arrivalRecheck, newFileExtensions
         /// Per path, so spamming one item's star collapses to a single in flight toggle

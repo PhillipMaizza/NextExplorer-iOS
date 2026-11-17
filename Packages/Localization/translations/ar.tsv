@@ -104,6 +104,7 @@ browse.clipboardCopiedOne	تم نسخ %@
 browse.clipboardCopiedMany	تم نسخ %lld عنصر
 browse.progressMoving	جارٍ النقل…
 browse.progressCopying	جارٍ النسخ…
+browse.progressDeleting	جارٍ الحذف…
 browse.transferMoved#zero	تم نقل %lld عنصر
 browse.transferMoved#one	تم نقل %lld عنصر
 browse.transferMoved#two	تم نقل %lld عنصرين
@@ -1359,3 +1360,10 @@ trash.columnOriginalLocation	الموقع الأصلي
 trash.columnDeletedBy	حذفه
 trash.columnDeletedOn	تاريخ الحذف
 trash.columnRemoved	الإزالة
+serverTools.navigationTitle	أدوات الخادم
+serverTools.subtitle	برامج اختيارية يستخدمها الخادم للصور المصغرة والبحث والأرشيفات.
+serverTools.installed	مثبّت
+serverTools.missing	مفقود
+serverTools.notUsed	غير مستخدم
+serverTools.package	الحزمة: %@
+serverTools.missingFormats	لا يمكن فتح: %@

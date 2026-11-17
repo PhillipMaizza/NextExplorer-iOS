@@ -23,6 +23,7 @@
         case folderSize
         case ffmpeg
         case activity
+        case serverTools
         case trash
         case versions
         case about
@@ -44,6 +45,7 @@
             .trash,
             .versions,
             .activity,
+            .serverTools,
         ]
         static let app: [Self] = [.about]
 
@@ -62,6 +64,7 @@
             case .folderSize: L10n.FolderSizeSettings.navigationTitle
             case .ffmpeg: L10n.FfmpegSettings.navigationTitle
             case .activity: L10n.ActivityLog.navigationTitle
+            case .serverTools: L10n.ServerTools.navigationTitle
             case .trash: L10n.TrashSettings.navigationTitle
             case .versions: L10n.VersionedFiles.navigationTitle
             case .about: L10n.Settings.sectionInfo
@@ -83,6 +86,7 @@
             case .folderSize: IconKit.folder
             case .ffmpeg: IconKit.film
             case .activity: IconKit.time
+            case .serverTools: IconKit.gearshape
             case .trash: IconKit.delete
             case .versions: IconKit.archiveDocument
             case .about: IconKit.info
@@ -158,6 +162,7 @@
             case .folderSize: store.send(.adminPaneLeft(.folderSize))
             case .ffmpeg: store.send(.adminPaneLeft(.ffmpeg))
             case .activity: store.send(.adminPaneLeft(.activity))
+            case .serverTools: store.send(.adminPaneLeft(.serverTools))
             case .trash: store.send(.adminPaneLeft(.trash))
             case .versions: store.send(.adminPaneLeft(.versions))
             case .apiTokens: if store.apiTokens != nil {
@@ -251,6 +256,12 @@
                     MacActivityLogPane(store: detailStore)
                 } else {
                     Color.clear.onAppear { store.send(.activityLogButtonTapped) }
+                }
+            case .serverTools:
+                if let detailStore = store.scope(state: \.serverTools, action: \.serverTools.presented) {
+                    MacServerToolsPane(store: detailStore)
+                } else {
+                    Color.clear.onAppear { store.send(.serverToolsButtonTapped) }
                 }
             case .trash:
                 if let detailStore = store.scope(state: \.trashSettings, action: \.trashSettings.presented) {

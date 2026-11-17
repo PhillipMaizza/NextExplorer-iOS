@@ -104,6 +104,7 @@ browse.clipboardCopiedOne	%@ скопировано
 browse.clipboardCopiedMany	Скопировано объектов: %lld
 browse.progressMoving	Перемещение…
 browse.progressCopying	Копирование…
+browse.progressDeleting	Удаление…
 browse.transferMoved#one	Перемещено объектов: %lld
 browse.transferMoved#few	Перемещено объектов: %lld
 browse.transferMoved#many	Перемещено объектов: %lld
@@ -1301,3 +1302,10 @@ trash.columnOriginalLocation	Исходное расположение
 trash.columnDeletedBy	Кем удалено
 trash.columnDeletedOn	Дата удаления
 trash.columnRemoved	Окончательное удаление
+serverTools.navigationTitle	Инструменты сервера
+serverTools.subtitle	Необязательные программы, которые сервер использует для миниатюр, поиска и архивов.
+serverTools.installed	Установлено
+serverTools.missing	Отсутствует
+serverTools.notUsed	Не используется
+serverTools.package	Пакет: %@
+serverTools.missingFormats	Не открываются: %@

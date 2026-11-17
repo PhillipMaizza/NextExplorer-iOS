@@ -104,6 +104,7 @@ browse.clipboardCopiedOne	%@ kopierad
 browse.clipboardCopiedMany	%lld objekt kopierade
 browse.progressMoving	Flyttar…
 browse.progressCopying	Kopierar…
+browse.progressDeleting	Raderar…
 browse.transferMoved#one	Flyttade %lld objekt
 browse.transferMoved#other	Flyttade %lld objekt
 browse.transferCopied#one	Kopierade %lld objekt
@@ -1243,3 +1244,10 @@ trash.columnOriginalLocation	Ursprunglig plats
 trash.columnDeletedBy	Raderad av
 trash.columnDeletedOn	Raderad
 trash.columnRemoved	Tas bort
+serverTools.navigationTitle	Serververktyg
+serverTools.subtitle	Valfria program som servern använder för miniatyrer, sökning och arkiv.
+serverTools.installed	Installerat
+serverTools.missing	Saknas
+serverTools.notUsed	Används inte
+serverTools.package	Paket: %@
+serverTools.missingFormats	Kan inte öppna: %@

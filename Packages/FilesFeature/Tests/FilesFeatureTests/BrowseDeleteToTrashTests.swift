@@ -136,25 +136,27 @@ struct BrowseDeleteToTrashTests {
         state.selectedItemIDs = [photo.id, notes.id]
         state.isSelecting = true
         let calls = LockIsolated<[Bool]>([])
-        let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, items, permanent in
-                calls.withValue { $0.append(permanent) }
-                if permanent {
-                    return DeleteOutcome(items: items.map { .init(path: $0.id, status: .deleted) })
-                }
-                // Answers come in the order asked: pair them with the request the reducer built.
-                return DeleteOutcome(items: items.map {
-                    $0.id == photo.id
-                        ? .init(
-                            path: $0.id,
-                            status: .kept,
-                            reason: .tooLarge,
-                            size: Constants.tooLargeSize,
-                            budgetBytes: Constants.budget
-                        )
-                        : .init(path: $0.id, status: .trashed)
-                })
+        let answer: @Sendable ([FileItem], Bool) -> DeleteOutcome = { items, permanent in
+            calls.withValue { $0.append(permanent) }
+            if permanent {
+                return DeleteOutcome(items: items.map { .init(path: $0.id, status: .deleted) })
             }
+            // Answers come in the order asked: pair them with the request the reducer built.
+            return DeleteOutcome(items: items.map {
+                $0.id == photo.id
+                    ? .init(
+                        path: $0.id,
+                        status: .kept,
+                        reason: .tooLarge,
+                        size: Constants.tooLargeSize,
+                        budgetBytes: Constants.budget
+                    )
+                    : .init(path: $0.id, status: .trashed)
+            })
+        }
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.deleteItems = { _, items, permanent in answer(items, permanent) }
+            $0.filesClient.deleteItemsWithProgress = { _, items, permanent, _ in answer(items, permanent) }
         }
         let kept = BrowseFeature.KeptDelete(
             item: photo,
@@ -165,9 +167,11 @@ struct BrowseDeleteToTrashTests {
 
         await store.send(.bulkDeleteConfirmed) {
             $0.isBulkActionInFlight = true
+            $0.bulkDeleteProgress = 0
         }
         await store.receive(\.bulkDeleteResponse.success) {
             $0.isBulkActionInFlight = false
+            $0.bulkDeleteProgress = nil
             $0.isSelecting = false
             $0.selectedItemIDs = []
             $0.items = [photo]
@@ -204,7 +208,7 @@ struct BrowseDeleteToTrashTests {
         state.bulkDeleteConfirmationIsPresented = true
         let asked = LockIsolated<[Bool]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, _, permanent in
+            $0.filesClient.deleteItemsWithProgress = { _, _, permanent, _ in
                 asked.withValue { $0.append(permanent) }
                 return DeleteOutcome()
             }
@@ -213,9 +217,11 @@ struct BrowseDeleteToTrashTests {
         await store.send(.bulkDeletePermanentlyConfirmed) {
             $0.bulkDeleteConfirmationIsPresented = false
             $0.isBulkActionInFlight = true
+            $0.bulkDeleteProgress = 0
         }
         await store.receive(\.bulkDeleteResponse.success) {
             $0.isBulkActionInFlight = false
+            $0.bulkDeleteProgress = nil
             $0.isSelecting = false
             $0.selectedItemIDs = []
             $0.items = []

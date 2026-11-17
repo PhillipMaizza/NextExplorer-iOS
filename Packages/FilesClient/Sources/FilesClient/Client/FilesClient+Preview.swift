@@ -96,6 +96,7 @@ public extension FilesClient {
         },
         deleteImpact: { _, _ in DeleteImpact(shareCount: 0) },
         deleteItems: { _, _, _ in DeleteOutcome() },
+        deleteItemsWithProgress: { _, _, _, _ in DeleteOutcome() },
         transferItems: { _, items, destination, _ in
             TransferResult(
                 destination: destination,
@@ -127,6 +128,16 @@ public extension FilesClient {
             path == "home"
                 ? StorageUsage(path: path, size: 188_000_000_000, free: 12_000_000_000, total: 200_000_000_000)
                 : StorageUsage(path: path, size: 42_000_000_000, free: 58_000_000_000, total: 100_000_000_000)
+        },
+        fetchCapabilities: { _ in
+            [
+                ServerCapability(name: "ffmpeg", isAvailable: true, version: "7.1", installPackage: "ffmpeg"),
+                ServerCapability(name: "ripgrep", isAvailable: false, installPackage: "ripgrep"),
+                ServerCapability(name: "rsync", isAvailable: false, isUsed: false, installPackage: "rsync"),
+                ServerCapability(
+                    name: "7-Zip", isAvailable: true, version: "24.08", installPackage: "7zip", missingFormats: ["rar"]
+                ),
+            ]
         },
         fetchPermissions: { _, path in
             FilePermissions(

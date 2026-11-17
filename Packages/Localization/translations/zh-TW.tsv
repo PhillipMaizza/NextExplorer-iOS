@@ -104,6 +104,7 @@ browse.clipboardCopiedOne	已拷貝 %@
 browse.clipboardCopiedMany	已拷貝 %lld 個項目
 browse.progressMoving	正在移動…
 browse.progressCopying	正在拷貝…
+browse.progressDeleting	正在刪除…
 browse.transferMoved#other	已移動 %lld 個項目
 browse.transferCopied#other	已拷貝 %lld 個項目
 browse.transferMovedWithSkipped#other	已移動 %1$lld 個項目，略過 %2$lld 個
@@ -1214,3 +1215,10 @@ trash.columnOriginalLocation	原始位置
 trash.columnDeletedBy	刪除者
 trash.columnDeletedOn	刪除時間
 trash.columnRemoved	永久刪除
+serverTools.navigationTitle	伺服器工具
+serverTools.subtitle	伺服器用於縮圖、搜尋和壓縮檔的選用程式。
+serverTools.installed	已安裝
+serverTools.missing	缺少
+serverTools.notUsed	未使用
+serverTools.package	套件：%@
+serverTools.missingFormats	無法開啟：%@

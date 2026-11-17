@@ -295,6 +295,11 @@ struct BrowseScreen {
         app.labeledButton(L10n.Browse.actionDelete)
     }
 
+    /// The floating pill of a running bulk delete.
+    var deleteProgressPill: XCUIElement {
+        app.labeledButton(L10n.Browse.progressDeleting)
+    }
+
     var availableOfflineAction: XCUIElement {
         app.labeledButton(L10n.Browse.actionAvailableOffline)
     }

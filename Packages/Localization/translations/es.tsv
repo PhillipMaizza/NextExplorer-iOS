@@ -104,6 +104,7 @@ browse.clipboardCopiedOne	%@ copiado
 browse.clipboardCopiedMany	%lld elementos copiados
 browse.progressMoving	Moviendo…
 browse.progressCopying	Copiando…
+browse.progressDeleting	Eliminando…
 browse.transferMoved#one	Se movió %lld elemento
 browse.transferMoved#other	Se movieron %lld elementos
 browse.transferCopied#one	Se copió %lld elemento
@@ -1243,3 +1244,10 @@ trash.columnOriginalLocation	Ubicación original
 trash.columnDeletedBy	Eliminado por
 trash.columnDeletedOn	Eliminado el
 trash.columnRemoved	Eliminación
+serverTools.navigationTitle	Herramientas del servidor
+serverTools.subtitle	Programas opcionales que el servidor usa para miniaturas, búsqueda y archivos comprimidos.
+serverTools.installed	Instalado
+serverTools.missing	Falta
+serverTools.notUsed	No se usa
+serverTools.package	Paquete: %@
+serverTools.missingFormats	No puede abrir: %@

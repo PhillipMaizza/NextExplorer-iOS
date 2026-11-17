@@ -80,6 +80,7 @@ public struct SettingsFeature {
         @Presents public var thumbnailSettings: ThumbnailSettingsFeature.State?
         @Presents public var uploadSettings: UploadSettingsFeature.State?
         @Presents public var ffmpegSettings: FFmpegSettingsFeature.State?
+        @Presents public var serverTools: ServerToolsFeature.State?
         @Presents public var searchIndexSettings: SearchIndexSettingsFeature.State?
         @Presents public var folderSizeSettings: FolderSizeSettingsFeature.State?
         @Presents public var activityLog: ActivityLogFeature.State?
@@ -173,7 +174,7 @@ public struct SettingsFeature {
     /// The admin pages the Mac Settings window shows as panes of their own.
     public enum AdminPane: Equatable, Sendable {
         case server, users, thumbnails, accessRules
-        case uploads, searchIndex, folderSize, ffmpeg, activity, trash, versions
+        case uploads, searchIndex, folderSize, ffmpeg, activity, trash, versions, serverTools
     }
 
     public enum Action: Sendable {
@@ -197,6 +198,8 @@ public struct SettingsFeature {
         case thumbnailSettings(PresentationAction<ThumbnailSettingsFeature.Action>)
         case uploadSettingsButtonTapped
         case uploadSettings(PresentationAction<UploadSettingsFeature.Action>)
+        case serverToolsButtonTapped
+        case serverTools(PresentationAction<ServerToolsFeature.Action>)
         case ffmpegSettingsButtonTapped
         case ffmpegSettings(PresentationAction<FFmpegSettingsFeature.Action>)
         case searchIndexSettingsButtonTapped
@@ -436,6 +439,14 @@ public struct SettingsFeature {
         case .uploadSettings:
             return .none
 
+        case .serverToolsButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.serverTools = ServerToolsFeature.State(serverURL: state.serverURL)
+            return .none
+
+        case .serverTools:
+            return .none
+
         case .ffmpegSettingsButtonTapped:
             guard state.user.isAdmin else { return .none }
             state.ffmpegSettings = FFmpegSettingsFeature.State(serverURL: state.serverURL)
@@ -497,6 +508,7 @@ public struct SettingsFeature {
             case .activity: state.activityLog = nil
             case .trash: state.trashSettings = nil
             case .versions: state.versionedFiles = nil
+            case .serverTools: state.serverTools = nil
             }
             return .none
 
@@ -878,6 +890,9 @@ public struct SettingsFeature {
             }
             .ifLet(\.$ffmpegSettings, action: \.ffmpegSettings) {
                 FFmpegSettingsFeature()
+            }
+            .ifLet(\.$serverTools, action: \.serverTools) {
+                ServerToolsFeature()
             }
             .ifLet(\.$searchIndexSettings, action: \.searchIndexSettings) {
                 SearchIndexSettingsFeature()
