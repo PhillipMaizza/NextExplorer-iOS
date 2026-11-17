@@ -28,13 +28,14 @@
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(Metrics.padding)
-                    if preview.isTruncated {
-                        Text(L10n.FileInfo.versionTextTruncated)
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding([.horizontal, .bottom], Metrics.padding)
-                    }
+                }
+                if preview.isTruncated {
+                    Divider()
+                    Text(L10n.FileInfo.versionTextTruncated)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(Metrics.padding)
                 }
                 Divider()
                 MacDialogButtons(
