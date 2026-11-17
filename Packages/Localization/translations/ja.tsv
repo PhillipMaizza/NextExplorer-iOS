@@ -1224,3 +1224,5 @@ serverTools.package	パッケージ: %@
 serverTools.missingFormats	開けない形式: %@
 shareUpload.deferredTitle	大きなファイルが待機中
 shareUpload.deferredBody#other	NextExplorer を開いて、%lld 個の大きなファイルをアップロードしてください。
+shareUpload.failureTooLarge#other	%lld 個のファイルをアップロードできませんでした。 サーバー接続がこの大きさのファイルを拒否しました。もう一度共有すると、NextExplorer が分割して送信します。
+shareUpload.startedDeferred	NextExplorer 用に保存しました。アプリを開いて大きなファイルをアップロードしてください。

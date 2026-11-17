@@ -1224,3 +1224,5 @@ serverTools.package	套件：%@
 serverTools.missingFormats	無法開啟：%@
 shareUpload.deferredTitle	大型檔案等待中
 shareUpload.deferredBody#other	打開 NextExplorer 以上傳 %lld 個大型檔案。
+shareUpload.failureTooLarge#other	%lld 個檔案未能上傳。 伺服器連線拒絕這麼大的檔案。請再次分享，NextExplorer 會分段傳送。
+shareUpload.startedDeferred	已為 NextExplorer 儲存。請打開 App 上傳大型檔案。

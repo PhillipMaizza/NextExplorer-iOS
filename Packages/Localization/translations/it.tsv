@@ -1254,3 +1254,6 @@ serverTools.missingFormats	Non apribili: %@
 shareUpload.deferredTitle	File grandi in attesa
 shareUpload.deferredBody#one	Apri NextExplorer per caricare %lld file grande.
 shareUpload.deferredBody#other	Apri NextExplorer per caricare %lld file grandi.
+shareUpload.failureTooLarge#one	%lld file non è stato caricato. La connessione al tuo server rifiuta file così grandi. Condividili di nuovo e NextExplorer li invierà a blocchi.
+shareUpload.failureTooLarge#other	%lld file non sono stati caricati. La connessione al tuo server rifiuta file così grandi. Condividili di nuovo e NextExplorer li invierà a blocchi.
+shareUpload.startedDeferred	Salvato per NextExplorer. Apri l'app per caricare i file grandi.

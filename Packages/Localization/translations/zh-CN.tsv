@@ -1224,3 +1224,5 @@ serverTools.package	软件包：%@
 serverTools.missingFormats	无法打开：%@
 shareUpload.deferredTitle	大文件等待中
 shareUpload.deferredBody#other	打开 NextExplorer 以上传 %lld 个大文件。
+shareUpload.failureTooLarge#other	%lld 个文件未能上传。 服务器连接拒绝这么大的文件。请再次分享，NextExplorer 会分段发送。
+shareUpload.startedDeferred	已为 NextExplorer 保存。请打开应用上传大文件。

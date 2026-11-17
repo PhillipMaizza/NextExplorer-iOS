@@ -1254,3 +1254,6 @@ serverTools.missingFormats	Ne peut pas ouvrir : %@
 shareUpload.deferredTitle	Fichiers volumineux en attente
 shareUpload.deferredBody#one	Ouvrez NextExplorer pour envoyer %lld fichier volumineux.
 shareUpload.deferredBody#other	Ouvrez NextExplorer pour envoyer %lld fichiers volumineux.
+shareUpload.failureTooLarge#one	%lld fichier n'a pas été envoyé. La connexion à votre serveur refuse les fichiers de cette taille. Partagez-les de nouveau et NextExplorer les enverra par morceaux.
+shareUpload.failureTooLarge#other	%lld fichiers n'ont pas été envoyés. La connexion à votre serveur refuse les fichiers de cette taille. Partagez-les de nouveau et NextExplorer les enverra par morceaux.
+shareUpload.startedDeferred	Enregistré pour NextExplorer. Ouvrez l'app pour envoyer vos gros fichiers.

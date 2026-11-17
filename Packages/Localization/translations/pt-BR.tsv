@@ -1249,3 +1249,6 @@ serverTools.missingFormats	Não consegue abrir: %@
 shareUpload.deferredTitle	Arquivos grandes aguardando
 shareUpload.deferredBody#one	Abra o NextExplorer para enviar %lld arquivo grande.
 shareUpload.deferredBody#other	Abra o NextExplorer para enviar %lld arquivos grandes.
+shareUpload.failureTooLarge#one	%lld arquivo não foi enviado. A conexão com seu servidor recusa arquivos tão grandes. Compartilhe de novo e o NextExplorer envia em partes.
+shareUpload.failureTooLarge#other	%lld arquivos não foram enviados. A conexão com seu servidor recusa arquivos tão grandes. Compartilhe de novo e o NextExplorer envia em partes.
+shareUpload.startedDeferred	Salvo para o NextExplorer. Abra o app para enviar os arquivos grandes.

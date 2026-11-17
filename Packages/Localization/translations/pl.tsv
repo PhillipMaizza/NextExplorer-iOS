@@ -1314,3 +1314,8 @@ shareUpload.deferredBody#one	Otwórz NextExplorer, aby przesłać %lld duży pli
 shareUpload.deferredBody#few	Otwórz NextExplorer, aby przesłać %lld duże pliki.
 shareUpload.deferredBody#many	Otwórz NextExplorer, aby przesłać %lld dużych plików.
 shareUpload.deferredBody#other	Otwórz NextExplorer, aby przesłać %lld dużego pliku.
+shareUpload.failureTooLarge#one	%lld plik nie został przesłany. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach.
+shareUpload.failureTooLarge#few	%lld pliki nie zostały przesłane. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach.
+shareUpload.failureTooLarge#many	%lld plików nie zostało przesłanych. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach.
+shareUpload.failureTooLarge#other	%lld pliku nie zostało przesłane. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach.
+shareUpload.startedDeferred	Zapisano dla NextExplorer. Otwórz aplikację, aby przesłać duże pliki.

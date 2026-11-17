@@ -1224,3 +1224,5 @@ serverTools.package	패키지: %@
 serverTools.missingFormats	열 수 없음: %@
 shareUpload.deferredTitle	큰 파일 대기 중
 shareUpload.deferredBody#other	NextExplorer를 열어 큰 파일 %lld개를 업로드하세요.
+shareUpload.failureTooLarge#other	파일 %lld개를 업로드하지 못했습니다. 서버 연결이 이 크기의 파일을 거부했습니다. 다시 공유하면 NextExplorer가 나누어 전송합니다.
+shareUpload.startedDeferred	NextExplorer용으로 저장했습니다. 앱을 열어 큰 파일을 업로드하세요.
