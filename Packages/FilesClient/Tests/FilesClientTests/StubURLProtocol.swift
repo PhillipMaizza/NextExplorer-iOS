@@ -29,6 +29,7 @@ final class StubURLProtocol: URLProtocol {
         get { requestsLock.withLock { recordedRequests } }
         set { requestsLock.withLock { recordedRequests = newValue } }
     }
+
     nonisolated(unsafe) static var failure: URLError?
     /// Last intercepted request, for tests asserting on URL/method/body construction.
     nonisolated(unsafe) static var capturedRequest: URLRequest?
