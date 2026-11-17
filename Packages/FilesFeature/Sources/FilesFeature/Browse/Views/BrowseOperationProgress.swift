@@ -48,7 +48,7 @@ struct BrowseOperationProgress: ViewModifier {
     let store: StoreOf<BrowseFeature>
     /// What the floating pill clears at the bottom (the tab bar, a path bar).
     let bottomInset: CGFloat
-    /// Only the list shows it: a preview cover has its own chrome.
+    /// Only the frontmost surface shows it, the list or the preview cover over it.
     let isEnabled: Bool
     @State private var isRunShown = false
 
