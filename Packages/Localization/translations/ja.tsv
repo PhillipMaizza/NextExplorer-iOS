@@ -1111,3 +1111,80 @@ shareUpload.nameLabel	ファイル名
 shareUpload.namesLabel	ファイル名
 shareUpload.nameHint	アップロード時のファイル名です。拡張子は変わりません。
 spotlight.placeholder	ファイルとフォルダを検索
+trash.title	ゴミ箱
+trash.rowSubtitle	復元できる削除済み項目
+trash.moveToTrash	ゴミ箱に移動
+trash.deletePermanently	完全に削除
+trash.deleteMessage#other	ゴミ箱に移動します。ゴミ箱は削除した項目を %lld 日間保管するので、復元できます。
+trash.deleteMessageGeneric	ゴミ箱に移動します。削除した項目はゴミ箱から復元できます。
+trash.deleteSomePermanent#other	そのうち %lld 項目はゴミ箱に移動できず、完全に削除されます。
+trash.reasonDisabled	ゴミ箱はオフです。
+trash.reasonOtherDevice	ボリュームのゴミ箱とは別のディスクにあります。
+trash.reasonTooLarge	ボリュームのゴミ箱全体より大きいです。
+trash.reasonZoneRoot	ボリューム全体を自身のゴミ箱には移動できません。
+trash.reasonZoneUnwritable	ボリュームのゴミ箱に書き込めません。
+trash.reasonNoZone	ゴミ箱のある場所にありません。
+trash.reasonUnknown	サーバは理由を示しませんでした。
+trash.deleteLinkedShares#other	このコンテンツには共有リンクが %lld 件あります。ゴミ箱にある間は機能せず、復元時に戻せます。
+trash.keptTitle	ゴミ箱に移動できませんでした
+trash.keptTooLarge	「%1$@」は %2$@ で、ボリュームのゴミ箱に入る %3$@ を超えています。
+trash.keptReason	「%1$@」：%2$@
+trash.movedToTrash#other	%lld 項目をゴミ箱に移動しました
+trash.openTrash	ゴミ箱を開く
+trash.replaceKept	「%@」をゴミ箱に移動できなかったため、何も置き換えていません。
+trash.subtitle#other	項目は削除から %lld 日後に完全に削除されます。
+trash.emptyState	ゴミ箱は空です。
+trash.disabledNotice	ゴミ箱はオフです。削除すると項目は完全に消えます。ここに残っているものは復元できます。
+trash.unavailable	ボリュームを利用できません
+trash.removedToday	今日削除
+trash.removedIn#other	%lld 日後に削除
+trash.locationPersonal	個人フォルダ
+trash.locationUnknown	不明な場所
+trash.deletedByYou	あなた
+trash.deletedByShareLink	共有リンク
+trash.deletedByUnknown	不明
+trash.deletedBy	削除したユーザ：%@
+trash.restore	復元
+trash.restoreTo	復元先を選択…
+trash.restoreHere	ここに復元
+trash.restoreFolder	フォルダ全体を復元
+trash.openLocation	元の場所を開く
+trash.emptyTrash	ゴミ箱を空にする
+trash.forget	記録を消去
+trash.confirmDeleteTitle	完全に削除しますか？
+trash.confirmDeleteMessage#other	%lld 項目が完全に削除されます。この操作は取り消せません。
+trash.confirmEmptyTitle	ゴミ箱を空にしますか？
+trash.confirmEmptyMessage	ゴミ箱の中身がすべて完全に削除されます。この操作は取り消せません。
+trash.restored#other	%lld 項目を復元しました
+trash.renamed	「%1$@」は名前が使用されていたため「%2$@」として復元しました。
+trash.notRestored#other	%lld 項目を復元できませんでした。
+trash.deletedPermanently#other	%lld 項目を完全に削除しました
+trash.notDeleted#other	%lld 項目を削除できませんでした。
+trash.emptied#other	ゴミ箱を空にしました：%lld 項目を削除
+trash.leftBehind#other	%lld 項目を削除できず、残っています。
+trash.failureForbidden	元の場所への書き込み権限がなくなりました。
+trash.failureBlocked	元のフォルダの場所に別のものがあります。
+trash.failureUnavailable	ボリュームを利用できません。
+trash.failureBusy	すでに処理中です。
+trash.failureLost	内容が失われていました。
+trash.failureNotFound	もうゴミ箱にありません。
+trash.failureDestinationForbidden	そのフォルダには項目を作成できません。
+trash.failureInvalidDestination	そのフォルダには移せません。
+trash.failureCancelled	復元はその項目に到達する前に停止しました。
+trash.failureUnknown	処理できませんでした。
+trash.sharesBadge	共有中
+trash.sharesChooseTitle	共有リンクはどうしますか？
+trash.sharesChooseMessage#other	復元する内容には共有リンクが %lld 件ありました。削除後は機能していません。
+trash.sharesChooseElsewhere	戻したリンクは新しい場所を指します。
+trash.sharesKeep	共有リンクを復元
+trash.sharesDrop	共有リンクを削除
+trash.sharesRestored#other	共有リンク %lld 件を戻しました
+trash.sharesDropped#other	共有リンク %lld 件を削除しました
+trash.loadFailed	ゴミ箱を読み込めませんでした。
+trash.folderLoadFailed	このフォルダを開けませんでした。
+trash.folderEmpty	このフォルダは空です。
+trash.restoring	復元中…
+trash.columnOriginalLocation	元の場所
+trash.columnDeletedBy	削除したユーザ
+trash.columnDeletedOn	削除日
+trash.columnRemoved	削除予定

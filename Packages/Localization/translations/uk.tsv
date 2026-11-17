@@ -1123,3 +1123,128 @@ shareUpload.nameLabel	Назва файлу
 shareUpload.namesLabel	Назви файлів
 shareUpload.nameHint	Назва, з якою файл буде завантажено. Розширення не зміниться.
 spotlight.placeholder	Пошук файлів і папок
+trash.title	Кошик
+trash.rowSubtitle	Видалені об’єкти, які можна відновити
+trash.moveToTrash	Перемістити в кошик
+trash.deletePermanently	Видалити назавжди
+trash.deleteMessage#one	Об’єкт потрапить до кошика, який зберігає видалене (днів: %lld), щоб його можна було відновити.
+trash.deleteMessage#few	Об’єкт потрапить до кошика, який зберігає видалене (днів: %lld), щоб його можна було відновити.
+trash.deleteMessage#many	Об’єкт потрапить до кошика, який зберігає видалене (днів: %lld), щоб його можна було відновити.
+trash.deleteMessage#other	Об’єкт потрапить до кошика, який зберігає видалене (днів: %lld), щоб його можна було відновити.
+trash.deleteMessageGeneric	Об’єкт потрапить до кошика, звідки видалене можна відновити.
+trash.deleteSomePermanent#one	Не можуть потрапити до кошика й будуть видалені назавжди: %lld.
+trash.deleteSomePermanent#few	Не можуть потрапити до кошика й будуть видалені назавжди: %lld.
+trash.deleteSomePermanent#many	Не можуть потрапити до кошика й будуть видалені назавжди: %lld.
+trash.deleteSomePermanent#other	Не можуть потрапити до кошика й будуть видалені назавжди: %lld.
+trash.reasonDisabled	Кошик вимкнено.
+trash.reasonOtherDevice	Він на іншому диску, ніж кошик його тому.
+trash.reasonTooLarge	Він більший за весь кошик свого тому.
+trash.reasonZoneRoot	Цілий том не може потрапити до власного кошика.
+trash.reasonZoneUnwritable	До кошика його тому неможливо записати.
+trash.reasonNoZone	Він не в місці, де є кошик.
+trash.reasonUnknown	Сервер не вказав причину.
+trash.deleteLinkedShares#one	Посилання для спільного доступу до цього вмісту: %lld. Поки вміст у кошику, вони не працюють, а під час відновлення їх можна повернути.
+trash.deleteLinkedShares#few	Посилання для спільного доступу до цього вмісту: %lld. Поки вміст у кошику, вони не працюють, а під час відновлення їх можна повернути.
+trash.deleteLinkedShares#many	Посилання для спільного доступу до цього вмісту: %lld. Поки вміст у кошику, вони не працюють, а під час відновлення їх можна повернути.
+trash.deleteLinkedShares#other	Посилання для спільного доступу до цього вмісту: %lld. Поки вміст у кошику, вони не працюють, а під час відновлення їх можна повернути.
+trash.keptTitle	Не вдалося перемістити в кошик
+trash.keptTooLarge	«%1$@» займає %2$@ — більше, ніж %3$@, які вміщує кошик його тому.
+trash.keptReason	«%1$@»: %2$@
+trash.movedToTrash#one	Переміщено в кошик: %lld
+trash.movedToTrash#few	Переміщено в кошик: %lld
+trash.movedToTrash#many	Переміщено в кошик: %lld
+trash.movedToTrash#other	Переміщено в кошик: %lld
+trash.openTrash	Відкрити кошик
+trash.replaceKept	«%@» не вдалося перемістити в кошик, тому нічого не замінено.
+trash.subtitle#one	Об’єкти видаляються назавжди через стільки днів після видалення: %lld.
+trash.subtitle#few	Об’єкти видаляються назавжди через стільки днів після видалення: %lld.
+trash.subtitle#many	Об’єкти видаляються назавжди через стільки днів після видалення: %lld.
+trash.subtitle#other	Об’єкти видаляються назавжди через стільки днів після видалення: %lld.
+trash.emptyState	Кошик порожній.
+trash.disabledNotice	Кошик вимкнено: видалення прибирає об’єкти назавжди. Те, що ще тут, можна відновити.
+trash.unavailable	Том недоступний
+trash.removedToday	Видаляється сьогодні
+trash.removedIn#one	Видаляється через (днів): %lld
+trash.removedIn#few	Видаляється через (днів): %lld
+trash.removedIn#many	Видаляється через (днів): %lld
+trash.removedIn#other	Видаляється через (днів): %lld
+trash.locationPersonal	Особиста папка
+trash.locationUnknown	Невідоме розташування
+trash.deletedByYou	Ви
+trash.deletedByShareLink	Посилання для спільного доступу
+trash.deletedByUnknown	Невідомо
+trash.deletedBy	Видалив: %@
+trash.restore	Відновити
+trash.restoreTo	Відновити в…
+trash.restoreHere	Відновити сюди
+trash.restoreFolder	Відновити всю папку
+trash.openLocation	Відкрити початкове розташування
+trash.emptyTrash	Очистити кошик
+trash.forget	Забути
+trash.confirmDeleteTitle	Видалити назавжди?
+trash.confirmDeleteMessage#one	Об’єкти буде видалено назавжди (кількість: %lld). Цю дію не можна скасувати.
+trash.confirmDeleteMessage#few	Об’єкти буде видалено назавжди (кількість: %lld). Цю дію не можна скасувати.
+trash.confirmDeleteMessage#many	Об’єкти буде видалено назавжди (кількість: %lld). Цю дію не можна скасувати.
+trash.confirmDeleteMessage#other	Об’єкти буде видалено назавжди (кількість: %lld). Цю дію не можна скасувати.
+trash.confirmEmptyTitle	Очистити кошик?
+trash.confirmEmptyMessage	Усе в кошику буде видалено назавжди. Цю дію не можна скасувати.
+trash.restored#one	Відновлено: %lld
+trash.restored#few	Відновлено: %lld
+trash.restored#many	Відновлено: %lld
+trash.restored#other	Відновлено: %lld
+trash.renamed	«%1$@» відновлено як «%2$@»: назва була зайнята.
+trash.notRestored#one	Не вдалося відновити: %lld.
+trash.notRestored#few	Не вдалося відновити: %lld.
+trash.notRestored#many	Не вдалося відновити: %lld.
+trash.notRestored#other	Не вдалося відновити: %lld.
+trash.deletedPermanently#one	Видалено назавжди: %lld
+trash.deletedPermanently#few	Видалено назавжди: %lld
+trash.deletedPermanently#many	Видалено назавжди: %lld
+trash.deletedPermanently#other	Видалено назавжди: %lld
+trash.notDeleted#one	Не вдалося видалити: %lld.
+trash.notDeleted#few	Не вдалося видалити: %lld.
+trash.notDeleted#many	Не вдалося видалити: %lld.
+trash.notDeleted#other	Не вдалося видалити: %lld.
+trash.emptied#one	Кошик очищено, видалено: %lld
+trash.emptied#few	Кошик очищено, видалено: %lld
+trash.emptied#many	Кошик очищено, видалено: %lld
+trash.emptied#other	Кошик очищено, видалено: %lld
+trash.leftBehind#one	Не вдалося прибрати, і досі там: %lld.
+trash.leftBehind#few	Не вдалося прибрати, і досі там: %lld.
+trash.leftBehind#many	Не вдалося прибрати, і досі там: %lld.
+trash.leftBehind#other	Не вдалося прибрати, і досі там: %lld.
+trash.failureForbidden	Ви більше не можете записувати туди, де він був.
+trash.failureBlocked	На місці його папки тепер щось інше.
+trash.failureUnavailable	Його том недоступний.
+trash.failureBusy	Він уже обробляється.
+trash.failureLost	Його вміст зник.
+trash.failureNotFound	Його вже немає в кошику.
+trash.failureDestinationForbidden	Ви не можете створювати об’єкти в цій папці.
+trash.failureInvalidDestination	Ця папка не може його прийняти.
+trash.failureCancelled	Відновлення зупинилося, перш ніж дійшло до нього.
+trash.failureUnknown	Не вдалося його обробити.
+trash.sharesBadge	Спільне
+trash.sharesChooseTitle	Що з посиланнями для спільного доступу?
+trash.sharesChooseMessage#one	До того, що ви відновлюєте, належали посилання для спільного доступу: %lld. Після видалення вони не працюють.
+trash.sharesChooseMessage#few	До того, що ви відновлюєте, належали посилання для спільного доступу: %lld. Після видалення вони не працюють.
+trash.sharesChooseMessage#many	До того, що ви відновлюєте, належали посилання для спільного доступу: %lld. Після видалення вони не працюють.
+trash.sharesChooseMessage#other	До того, що ви відновлюєте, належали посилання для спільного доступу: %lld. Після видалення вони не працюють.
+trash.sharesChooseElsewhere	Повернуті посилання вказуватимуть на нове розташування.
+trash.sharesKeep	Відновити посилання
+trash.sharesDrop	Видалити посилання
+trash.sharesRestored#one	Повернуто посилань: %lld
+trash.sharesRestored#few	Повернуто посилань: %lld
+trash.sharesRestored#many	Повернуто посилань: %lld
+trash.sharesRestored#other	Повернуто посилань: %lld
+trash.sharesDropped#one	Видалено посилань: %lld
+trash.sharesDropped#few	Видалено посилань: %lld
+trash.sharesDropped#many	Видалено посилань: %lld
+trash.sharesDropped#other	Видалено посилань: %lld
+trash.loadFailed	Не вдалося завантажити кошик.
+trash.folderLoadFailed	Не вдалося відкрити цю папку.
+trash.folderEmpty	Ця папка порожня.
+trash.restoring	Відновлення…
+trash.columnOriginalLocation	Початкове розташування
+trash.columnDeletedBy	Видалив
+trash.columnDeletedOn	Дата видалення
+trash.columnRemoved	Видалення

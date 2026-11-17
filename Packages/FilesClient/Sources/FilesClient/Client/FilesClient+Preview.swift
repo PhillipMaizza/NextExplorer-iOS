@@ -95,7 +95,7 @@ public extension FilesClient {
             )
         },
         deleteImpact: { _, _ in DeleteImpact(shareCount: 0) },
-        deleteItems: { _, _ in },
+        deleteItems: { _, _, _ in DeleteOutcome() },
         transferItems: { _, items, destination, _ in
             TransferResult(
                 destination: destination,
@@ -351,6 +351,14 @@ public extension FilesClient {
         fetchTrashZones: { _ in [] },
         verifyTrash: { _ in [] },
         runTrashMaintenance: { _ in },
+        fetchTrash: { _ in TrashListing(isEnabled: true, retentionDays: 30, items: []) },
+        fetchTrashEntries: { _, itemID, path in
+            TrashFolderListing(item: TrashItem(id: itemID, name: itemID, isDirectory: true), path: path, entries: [])
+        },
+        fetchTrashText: { _, itemID, _ in TrashText(name: itemID, content: "") },
+        restoreTrash: { _, _, _, _, _ in TrashActionResult(items: []) },
+        purgeTrash: { _, _, _ in TrashActionResult(items: []) },
+        emptyTrash: { _ in TrashEmptySummary(purged: 0) },
         updateSystemSettings: { _, _ in SystemSettings() },
         updateAccessRules: { _, rules in rules },
         listUsers: { _ in User.previewManagedUsers },

@@ -1,0 +1,2 @@
+{"type":"start","totalBytes":2048,"totalItems":1,"destination":"Files/Restored"}
+{"type":"error","message":"The disk is full.","code":"ENOSPC"}

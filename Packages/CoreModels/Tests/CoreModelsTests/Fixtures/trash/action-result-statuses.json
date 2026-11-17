@@ -1,0 +1,15 @@
+{
+  "items": [
+    { "id": "t1", "status": "restored", "name": "a.txt", "restoredName": "a (1).txt", "renamed": true, "path": "Files", "sharesRestored": 2, "sharesDropped": 1 },
+    { "entry": "2026/beach.jpg", "status": "restored", "name": "beach.jpg", "restoredName": "beach.jpg", "renamed": false, "path": "Media/Photos/2026" },
+    { "id": "t3", "status": "forbidden", "reason": "destination", "name": "c.txt" },
+    { "id": "t4", "status": "forbidden", "name": "d.txt" },
+    { "id": "t5", "status": "blocked", "reason": "invalid-destination", "name": "e.txt" },
+    { "id": "t6", "status": "blocked", "reason": "destination-blocked", "name": "f.txt" },
+    { "id": "t7", "status": "lost-copy", "name": "g.txt" },
+    { "id": "t8", "status": "not-found" },
+    { "id": "t9", "status": "cancelled", "name": "i.txt" },
+    { "id": "t10", "status": "purged", "reason": null, "name": "j.txt" },
+    { "id": "t11", "status": "melted", "name": "k.txt" }
+  ]
+}

@@ -20,6 +20,7 @@
             case .shared: L10n.Tab.shared
             case .downloads: L10n.Tab.offline
             case .settings: L10n.Tab.settings
+            case .trash: L10n.Trash.title
             }
         }
 

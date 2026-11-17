@@ -7,7 +7,8 @@ Thanks for taking a look. This guide covers how the project is built and the con
 1. Install Xcode 27 (what CI builds with; the code needs the iOS and macOS 26 SDKs or later).
 2. Fork and clone the repo, then open `NextExplorer.xcodeproj`.
 3. Swift Package Manager resolves dependencies on first build. No extra tooling.
-4. Build and run the **NextExplorer** scheme on an iOS 18+ simulator or device, or on **My Mac** (macOS 15+). To exercise the app end to end you need a compatible self-hosted server and an account on it.
+4. Run `Scripts/install-hooks.sh` once. Every commit then runs `Scripts/check-house-rules.py` on what is staged (comments, localization, view size, previews, secrets, lint, test determinism, commit message and branch name); CI runs the same checks on the whole branch.
+5. Build and run the **NextExplorer** scheme on an iOS 18+ simulator or device, or on **My Mac** (macOS 15+). To exercise the app end to end you need a compatible self-hosted server and an account on it.
 
 ## Source of truth
 

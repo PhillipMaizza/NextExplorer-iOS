@@ -1084,3 +1084,80 @@ shareUpload.nameLabel	ชื่อไฟล์
 shareUpload.namesLabel	ชื่อไฟล์
 shareUpload.nameHint	ชื่อที่ใช้อัปโหลดไฟล์ นามสกุลไฟล์ยังคงเหมือนเดิม
 spotlight.placeholder	ค้นหาไฟล์และโฟลเดอร์
+trash.title	ถังขยะ
+trash.rowSubtitle	รายการที่ลบซึ่งคุณกู้คืนได้
+trash.moveToTrash	ย้ายไปที่ถังขยะ
+trash.deletePermanently	ลบถาวร
+trash.deleteMessage#other	รายการจะไปที่ถังขยะ ซึ่งเก็บรายการที่ลบไว้ %lld วันเพื่อให้กู้คืนได้
+trash.deleteMessageGeneric	รายการจะไปที่ถังขยะ ซึ่งกู้คืนรายการที่ลบได้
+trash.deleteSomePermanent#other	มี %lld รายการที่ไปถังขยะไม่ได้และจะถูกลบถาวร
+trash.reasonDisabled	ถังขยะปิดอยู่
+trash.reasonOtherDevice	อยู่บนดิสก์คนละตัวกับถังขยะของวอลุ่ม
+trash.reasonTooLarge	มีขนาดใหญ่กว่าถังขยะทั้งหมดของวอลุ่ม
+trash.reasonZoneRoot	ย้ายทั้งวอลุ่มไปไว้ในถังขยะของตัวเองไม่ได้
+trash.reasonZoneUnwritable	เขียนลงถังขยะของวอลุ่มไม่ได้
+trash.reasonNoZone	ไม่ได้อยู่ในที่ที่มีถังขยะ
+trash.reasonUnknown	เซิร์ฟเวอร์ไม่ได้ระบุเหตุผล
+trash.deleteLinkedShares#other	เนื้อหานี้มีลิงก์แชร์ %lld ลิงก์ ลิงก์จะใช้ไม่ได้ขณะเนื้อหาอยู่ในถังขยะ และนำกลับมาได้เมื่อกู้คืน
+trash.keptTitle	ย้ายไปที่ถังขยะไม่ได้
+trash.keptTooLarge	“%1$@” มีขนาด %2$@ เกิน %3$@ ที่ถังขยะของวอลุ่มรองรับได้
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#other	ย้าย %lld รายการไปที่ถังขยะแล้ว
+trash.openTrash	เปิดถังขยะ
+trash.replaceKept	“%@” ไปถังขยะไม่ได้ จึงไม่ได้แทนที่สิ่งใด
+trash.subtitle#other	รายการจะถูกลบถาวรหลังจากลบไปแล้ว %lld วัน
+trash.emptyState	ถังขยะว่างเปล่า
+trash.disabledNotice	ถังขยะปิดอยู่: การลบจะลบรายการถาวร สิ่งที่ยังอยู่ที่นี่กู้คืนได้
+trash.unavailable	ใช้วอลุ่มไม่ได้
+trash.removedToday	ลบวันนี้
+trash.removedIn#other	ลบในอีก %lld วัน
+trash.locationPersonal	โฟลเดอร์ส่วนตัว
+trash.locationUnknown	ไม่ทราบตำแหน่ง
+trash.deletedByYou	คุณ
+trash.deletedByShareLink	ลิงก์แชร์
+trash.deletedByUnknown	ไม่ทราบ
+trash.deletedBy	ลบโดย %@
+trash.restore	กู้คืน
+trash.restoreTo	กู้คืนไปที่…
+trash.restoreHere	กู้คืนที่นี่
+trash.restoreFolder	กู้คืนทั้งโฟลเดอร์
+trash.openLocation	เปิดตำแหน่งเดิม
+trash.emptyTrash	ล้างถังขยะ
+trash.forget	ลืม
+trash.confirmDeleteTitle	ลบถาวรหรือไม่
+trash.confirmDeleteMessage#other	%lld รายการจะถูกลบถาวร ไม่สามารถเลิกทำได้
+trash.confirmEmptyTitle	ล้างถังขยะหรือไม่
+trash.confirmEmptyMessage	ทุกอย่างในถังขยะจะถูกลบถาวร ไม่สามารถเลิกทำได้
+trash.restored#other	กู้คืน %lld รายการแล้ว
+trash.renamed	กู้คืน “%1$@” เป็น “%2$@” เพราะชื่อเดิมถูกใช้แล้ว
+trash.notRestored#other	กู้คืน %lld รายการไม่ได้
+trash.deletedPermanently#other	ลบถาวร %lld รายการแล้ว
+trash.notDeleted#other	ลบ %lld รายการไม่ได้
+trash.emptied#other	ล้างถังขยะแล้ว: ลบ %lld รายการ
+trash.leftBehind#other	ลบ %lld รายการไม่ได้และยังอยู่ที่เดิม
+trash.failureForbidden	คุณไม่มีสิทธิ์เขียนในที่เดิมอีกต่อไป
+trash.failureBlocked	ตอนนี้มีสิ่งอื่นอยู่ในตำแหน่งโฟลเดอร์เดิม
+trash.failureUnavailable	ใช้วอลุ่มของรายการนี้ไม่ได้
+trash.failureBusy	กำลังดำเนินการอยู่แล้ว
+trash.failureLost	เนื้อหาหายไปแล้ว
+trash.failureNotFound	ไม่อยู่ในถังขยะแล้ว
+trash.failureDestinationForbidden	คุณสร้างรายการในโฟลเดอร์นั้นไม่ได้
+trash.failureInvalidDestination	โฟลเดอร์นั้นรับรายการนี้ไม่ได้
+trash.failureCancelled	การกู้คืนหยุดก่อนถึงรายการนี้
+trash.failureUnknown	ดำเนินการกับรายการนี้ไม่ได้
+trash.sharesBadge	แชร์แล้ว
+trash.sharesChooseTitle	จะทำอย่างไรกับลิงก์แชร์
+trash.sharesChooseMessage#other	มีลิงก์แชร์ %lld ลิงก์ของสิ่งที่คุณกำลังกู้คืน ลิงก์ใช้ไม่ได้ตั้งแต่ถูกลบ
+trash.sharesChooseElsewhere	หากนำกลับมา ลิงก์จะชี้ไปที่ตำแหน่งใหม่
+trash.sharesKeep	กู้คืนลิงก์แชร์
+trash.sharesDrop	ลบลิงก์แชร์
+trash.sharesRestored#other	นำลิงก์แชร์กลับมา %lld ลิงก์
+trash.sharesDropped#other	ลบลิงก์แชร์ %lld ลิงก์
+trash.loadFailed	โหลดถังขยะไม่ได้
+trash.folderLoadFailed	เปิดโฟลเดอร์นี้ไม่ได้
+trash.folderEmpty	โฟลเดอร์นี้ว่างเปล่า
+trash.restoring	กำลังกู้คืน…
+trash.columnOriginalLocation	ตำแหน่งเดิม
+trash.columnDeletedBy	ลบโดย
+trash.columnDeletedOn	วันที่ลบ
+trash.columnRemoved	ลบถาวร

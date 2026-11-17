@@ -1124,3 +1124,96 @@ shareUpload.nameLabel	फ़ाइल का नाम
 shareUpload.namesLabel	फ़ाइलों के नाम
 shareUpload.nameHint	वह नाम जिससे फ़ाइल अपलोड होगी। एक्सटेंशन वही रहता है।
 spotlight.placeholder	फ़ाइलें और फ़ोल्डर खोजें
+trash.title	रीसायकल बिन
+trash.rowSubtitle	हटाए गए आइटम जिन्हें आप पुनर्स्थापित कर सकते हैं
+trash.moveToTrash	रीसायकल बिन में ले जाएँ
+trash.deletePermanently	स्थायी रूप से हटाएँ
+trash.deleteMessage#one	यह रीसायकल बिन में जाएगा, जो हटाए गए आइटम %lld दिन तक रखता है ताकि उन्हें पुनर्स्थापित किया जा सके।
+trash.deleteMessage#other	यह रीसायकल बिन में जाएगा, जो हटाए गए आइटम %lld दिनों तक रखता है ताकि उन्हें पुनर्स्थापित किया जा सके।
+trash.deleteMessageGeneric	यह रीसायकल बिन में जाएगा, जहाँ से हटाए गए आइटम पुनर्स्थापित किए जा सकते हैं।
+trash.deleteSomePermanent#one	इनमें से %lld रीसायकल बिन में नहीं जा सकता और स्थायी रूप से हटा दिया जाएगा।
+trash.deleteSomePermanent#other	इनमें से %lld रीसायकल बिन में नहीं जा सकते और स्थायी रूप से हटा दिए जाएँगे।
+trash.reasonDisabled	रीसायकल बिन बंद है।
+trash.reasonOtherDevice	यह अपने वॉल्यूम के रीसायकल बिन से अलग डिस्क पर है।
+trash.reasonTooLarge	यह अपने वॉल्यूम के पूरे रीसायकल बिन से बड़ा है।
+trash.reasonZoneRoot	पूरा वॉल्यूम अपने ही रीसायकल बिन में नहीं जा सकता।
+trash.reasonZoneUnwritable	इसके वॉल्यूम के रीसायकल बिन में लिखा नहीं जा सकता।
+trash.reasonNoZone	यह ऐसी जगह पर नहीं है जहाँ रीसायकल बिन हो।
+trash.reasonUnknown	सर्वर ने कारण नहीं बताया।
+trash.deleteLinkedShares#one	इस सामग्री का %lld साझा लिंक है। सामग्री रीसायकल बिन में रहने तक यह काम नहीं करेगा, और पुनर्स्थापना पर इसे वापस लाया जा सकता है।
+trash.deleteLinkedShares#other	इस सामग्री के %lld साझा लिंक हैं। सामग्री रीसायकल बिन में रहने तक ये काम नहीं करेंगे, और पुनर्स्थापना पर इन्हें वापस लाया जा सकता है।
+trash.keptTitle	रीसायकल बिन में नहीं ले जाया जा सका
+trash.keptTooLarge	“%1$@” %2$@ का है, जो इसके वॉल्यूम के रीसायकल बिन की %3$@ सीमा से अधिक है।
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#one	%lld आइटम रीसायकल बिन में भेजा गया
+trash.movedToTrash#other	%lld आइटम रीसायकल बिन में भेजे गए
+trash.openTrash	रीसायकल बिन खोलें
+trash.replaceKept	“%@” रीसायकल बिन में नहीं जा सका, इसलिए कुछ भी बदला नहीं गया।
+trash.subtitle#one	आइटम हटाए जाने के %lld दिन बाद स्थायी रूप से हटा दिए जाते हैं।
+trash.subtitle#other	आइटम हटाए जाने के %lld दिन बाद स्थायी रूप से हटा दिए जाते हैं।
+trash.emptyState	रीसायकल बिन खाली है।
+trash.disabledNotice	रीसायकल बिन बंद है: हटाने से आइटम स्थायी रूप से हट जाते हैं। जो अभी यहाँ है उसे पुनर्स्थापित किया जा सकता है।
+trash.unavailable	वॉल्यूम उपलब्ध नहीं
+trash.removedToday	आज हटाया जाएगा
+trash.removedIn#one	%lld दिन में हटाया जाएगा
+trash.removedIn#other	%lld दिनों में हटाया जाएगा
+trash.locationPersonal	निजी फ़ोल्डर
+trash.locationUnknown	अज्ञात
+trash.deletedByYou	आप
+trash.deletedByShareLink	शेयर लिंक
+trash.deletedByUnknown	अज्ञात
+trash.deletedBy	%@ द्वारा हटाया गया
+trash.restore	पुनर्स्थापित करें
+trash.restoreTo	कहीं और पुनर्स्थापित करें…
+trash.restoreHere	यहाँ पुनर्स्थापित करें
+trash.restoreFolder	पूरा फ़ोल्डर पुनर्स्थापित करें
+trash.openLocation	मूल स्थान खोलें
+trash.emptyTrash	रीसायकल बिन खाली करें
+trash.forget	भूलें
+trash.confirmDeleteTitle	स्थायी रूप से हटाएँ?
+trash.confirmDeleteMessage#one	%lld आइटम स्थायी रूप से हटा दिया जाएगा। इसे पूर्ववत नहीं किया जा सकता।
+trash.confirmDeleteMessage#other	ये %lld आइटम स्थायी रूप से हटा दिए जाएँगे। यह क्रिया वापस नहीं की जा सकती।
+trash.confirmEmptyTitle	रीसायकल बिन खाली करें?
+trash.confirmEmptyMessage	आपके रीसायकल बिन में सब कुछ स्थायी रूप से हटा दिया जाएगा। यह क्रिया वापस नहीं की जा सकती।
+trash.restored#one	%lld आइटम पुनर्स्थापित हुआ
+trash.restored#other	%lld आइटम पुनर्स्थापित हुए
+trash.renamed	"%1$@" को "%2$@" नाम से पुनर्स्थापित किया गया: नाम पहले से इस्तेमाल में था।
+trash.notRestored#one	%lld आइटम पुनर्स्थापित नहीं हो सका.
+trash.notRestored#other	%lld आइटम पुनर्स्थापित नहीं हो सके.
+trash.deletedPermanently#one	%lld आइटम स्थायी रूप से हटाया गया
+trash.deletedPermanently#other	%lld आइटम स्थायी रूप से हटाए गए
+trash.notDeleted#one	%lld आइटम हटाया नहीं जा सका.
+trash.notDeleted#other	%lld आइटम हटाए नहीं जा सके.
+trash.emptied#one	रीसायकल बिन खाली किया गया: %lld आइटम हटाया गया
+trash.emptied#other	रीसायकल बिन खाली किया गया: %lld आइटम हटाए गए
+trash.leftBehind#one	%lld आइटम हटाया नहीं जा सका और अभी भी वहीं है।
+trash.leftBehind#other	%lld आइटम हटाए नहीं जा सके और अभी भी वहीं हैं।
+trash.failureForbidden	आप अब उसके मूल स्थान पर लिख नहीं सकते।
+trash.failureBlocked	उसके फ़ोल्डर की जगह अब कुछ और है।
+trash.failureUnavailable	उसका वॉल्यूम उपलब्ध नहीं है।
+trash.failureBusy	उस पर पहले से काम चल रहा है।
+trash.failureLost	उसकी सामग्री गायब हो गई थी।
+trash.failureNotFound	वह अब रीसायकल बिन में नहीं है।
+trash.failureDestinationForbidden	आप उस फ़ोल्डर में आइटम नहीं बना सकते।
+trash.failureInvalidDestination	वह फ़ोल्डर इसे नहीं ले सकता।
+trash.failureCancelled	पुनर्स्थापना इस तक पहुँचने से पहले रुक गई।
+trash.failureUnknown	उसे संसाधित नहीं किया जा सका।
+trash.sharesBadge	साझा
+trash.sharesChooseTitle	साझा लिंक का क्या करें?
+trash.sharesChooseMessage#one	आप जो पुनर्स्थापित कर रहे हैं उसका %lld साझा लिंक था। हटाए जाने के बाद से यह काम नहीं करता।
+trash.sharesChooseMessage#other	आप जो पुनर्स्थापित कर रहे हैं उसके %lld साझा लिंक थे। हटाए जाने के बाद से ये काम नहीं करते।
+trash.sharesChooseElsewhere	वापस लाए जाने पर ये नए स्थान की ओर इशारा करेंगे।
+trash.sharesKeep	साझा लिंक पुनर्स्थापित करें
+trash.sharesDrop	साझा लिंक हटाएँ
+trash.sharesRestored#one	%lld साझा लिंक वापस लाया गया
+trash.sharesRestored#other	%lld साझा लिंक वापस लाए गए
+trash.sharesDropped#one	%lld साझा लिंक हटाया गया
+trash.sharesDropped#other	%lld साझा लिंक हटाए गए
+trash.loadFailed	रीसायकल बिन लोड नहीं हो सका।
+trash.folderLoadFailed	यह फ़ोल्डर खोला नहीं जा सका।
+trash.folderEmpty	यह फ़ोल्डर खाली है।
+trash.restoring	पुनर्स्थापित हो रहा है…
+trash.columnOriginalLocation	मूल स्थान
+trash.columnDeletedBy	किसने हटाया
+trash.columnDeletedOn	हटाने की तारीख
+trash.columnRemoved	स्थायी रूप से हटना

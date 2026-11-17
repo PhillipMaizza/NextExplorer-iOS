@@ -32,8 +32,8 @@ private enum Constants {
 }
 
 /// The "Create Share Link" sheet: mirrors the web client's `ShareDialog.vue`, in the app's
-/// design-system idiom. Two screens: the form, then (`store.createdShare != nil`) the
-/// created-link confirmation.
+/// design system idiom. Two screens: the form, then (`store.createdShare != nil`) the
+/// created link confirmation.
 struct CreateShareLinkSheet: View {
     @Bindable var store: StoreOf<CreateShareLinkFeature>
     /// When set, the created-link state shows a "View in Shared" button that runs this

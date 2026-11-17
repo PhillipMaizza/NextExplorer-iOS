@@ -1124,3 +1124,96 @@ shareUpload.nameLabel	Bestandsnaam
 shareUpload.namesLabel	Bestandsnamen
 shareUpload.nameHint	De naam waaronder het bestand wordt geüpload. De extensie blijft hetzelfde.
 spotlight.placeholder	Bestanden en mappen zoeken
+trash.title	Prullenbak
+trash.rowSubtitle	Verwijderde onderdelen die je kunt terugzetten
+trash.moveToTrash	Naar prullenbak verplaatsen
+trash.deletePermanently	Definitief verwijderen
+trash.deleteMessage#one	Het gaat naar de prullenbak, die verwijderde onderdelen %lld dag bewaart zodat ze teruggezet kunnen worden.
+trash.deleteMessage#other	Het gaat naar de prullenbak, die verwijderde onderdelen %lld dagen bewaart zodat ze teruggezet kunnen worden.
+trash.deleteMessageGeneric	Het gaat naar de prullenbak, waaruit verwijderde onderdelen teruggezet kunnen worden.
+trash.deleteSomePermanent#one	%lld ervan kan niet naar de prullenbak en wordt definitief verwijderd.
+trash.deleteSomePermanent#other	%lld ervan kunnen niet naar de prullenbak en worden definitief verwijderd.
+trash.reasonDisabled	De prullenbak is uitgeschakeld.
+trash.reasonOtherDevice	Het staat op een andere schijf dan de prullenbak van het volume.
+trash.reasonTooLarge	Het is groter dan de volledige prullenbak van het volume.
+trash.reasonZoneRoot	Een volledig volume kan niet in zijn eigen prullenbak.
+trash.reasonZoneUnwritable	Er kan niet naar de prullenbak van het volume worden geschreven.
+trash.reasonNoZone	Het staat niet op een plek met een prullenbak.
+trash.reasonUnknown	De server gaf geen reden.
+trash.deleteLinkedShares#one	Deze inhoud heeft %lld deellink. Die werkt niet meer zolang de inhoud in de prullenbak ligt, en kan bij het terugzetten worden hersteld.
+trash.deleteLinkedShares#other	Deze inhoud heeft %lld deellinks. Die werken niet meer zolang de inhoud in de prullenbak ligt, en kunnen bij het terugzetten worden hersteld.
+trash.keptTitle	Kon niet naar de prullenbak
+trash.keptTooLarge	‘%1$@’ is %2$@, meer dan de %3$@ die de prullenbak van zijn volume kan bevatten.
+trash.keptReason	‘%1$@’: %2$@
+trash.movedToTrash#one	%lld onderdeel naar de prullenbak verplaatst
+trash.movedToTrash#other	%lld onderdelen naar de prullenbak verplaatst
+trash.openTrash	Prullenbak openen
+trash.replaceKept	‘%@’ kon niet naar de prullenbak, dus er is niets vervangen.
+trash.subtitle#one	Items worden %lld dag na het verwijderen definitief gewist.
+trash.subtitle#other	Items worden %lld dagen na het verwijderen definitief gewist.
+trash.emptyState	De prullenbak is leeg.
+trash.disabledNotice	De prullenbak is uitgeschakeld: verwijderen wist items definitief. Wat hier nog staat, kan worden teruggezet.
+trash.unavailable	Volume niet beschikbaar
+trash.removedToday	Wordt vandaag verwijderd
+trash.removedIn#one	Wordt over %lld dag verwijderd
+trash.removedIn#other	Wordt over %lld dagen verwijderd
+trash.locationPersonal	Persoonlijke map
+trash.locationUnknown	Onbekend
+trash.deletedByYou	U
+trash.deletedByShareLink	Deellink
+trash.deletedByUnknown	Onbekend
+trash.deletedBy	Verwijderd door %@
+trash.restore	Terugzetten
+trash.restoreTo	Terugzetten naar…
+trash.restoreHere	Hier terugzetten
+trash.restoreFolder	Hele map terugzetten
+trash.openLocation	Oorspronkelijke locatie openen
+trash.emptyTrash	Prullenbak leegmaken
+trash.forget	Vergeten
+trash.confirmDeleteTitle	Definitief verwijderen?
+trash.confirmDeleteMessage#one	%lld onderdeel wordt definitief verwijderd. Dit kan niet ongedaan worden gemaakt.
+trash.confirmDeleteMessage#other	Deze %lld items worden definitief gewist. Dit kan niet ongedaan worden gemaakt.
+trash.confirmEmptyTitle	Prullenbak leegmaken?
+trash.confirmEmptyMessage	Alles in uw prullenbak wordt definitief gewist. Dit kan niet ongedaan worden gemaakt.
+trash.restored#one	%lld item teruggezet
+trash.restored#other	%lld items teruggezet
+trash.renamed	"%1$@" is teruggezet als "%2$@": de naam was al in gebruik.
+trash.notRestored#one	%lld item kon niet worden teruggezet.
+trash.notRestored#other	%lld items konden niet worden teruggezet.
+trash.deletedPermanently#one	%lld item definitief verwijderd
+trash.deletedPermanently#other	%lld items definitief verwijderd
+trash.notDeleted#one	%lld item kon niet worden verwijderd.
+trash.notDeleted#other	%lld items konden niet worden verwijderd.
+trash.emptied#one	Prullenbak leeggemaakt: %lld item gewist
+trash.emptied#other	Prullenbak leeggemaakt: %lld items gewist
+trash.leftBehind#one	%lld item kon niet worden gewist en staat er nog.
+trash.leftBehind#other	%lld items konden niet worden gewist en staan er nog.
+trash.failureForbidden	U kunt niet meer schrijven op de plek waar het stond.
+trash.failureBlocked	Er staat nu iets anders op de plek van de map.
+trash.failureUnavailable	Het volume is niet beschikbaar.
+trash.failureBusy	Het wordt al verwerkt.
+trash.failureLost	De inhoud was verdwenen.
+trash.failureNotFound	Het staat niet meer in de prullenbak.
+trash.failureDestinationForbidden	U kunt in die map geen items aanmaken.
+trash.failureInvalidDestination	Die map kan het niet ontvangen.
+trash.failureCancelled	Het terugzetten stopte voordat het eraan toe kwam.
+trash.failureUnknown	Het kon niet worden verwerkt.
+trash.sharesBadge	Gedeeld
+trash.sharesChooseTitle	Wat gebeurt er met de deellinks?
+trash.sharesChooseMessage#one	%lld deellink hoorde bij wat u terugzet. Die werkt niet meer sinds het verwijderen.
+trash.sharesChooseMessage#other	%lld deellinks hoorden bij wat u terugzet. Die werken niet meer sinds het verwijderen.
+trash.sharesChooseElsewhere	Als ze terugkomen, wijzen ze naar de nieuwe locatie.
+trash.sharesKeep	Deellinks herstellen
+trash.sharesDrop	Deellinks verwijderen
+trash.sharesRestored#one	%lld deellink hersteld
+trash.sharesRestored#other	%lld deellinks hersteld
+trash.sharesDropped#one	%lld deellink verwijderd
+trash.sharesDropped#other	%lld deellinks verwijderd
+trash.loadFailed	De prullenbak kon niet worden geladen.
+trash.folderLoadFailed	Deze map kon niet worden geopend.
+trash.folderEmpty	Deze map is leeg.
+trash.restoring	Terugzetten…
+trash.columnOriginalLocation	Oorspronkelijke locatie
+trash.columnDeletedBy	Verwijderd door
+trash.columnDeletedOn	Verwijderd op
+trash.columnRemoved	Gewist

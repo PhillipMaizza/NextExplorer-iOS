@@ -80,6 +80,7 @@ enum FilesClientFixture: String, FixtureFile {
 
     // MARK: item-mutation
 
+    case itemMutationDeleteOutcomeMixed = "item-mutation/delete-outcome-mixed"
     case itemMutationArchiveStartLine = "item-mutation/archive-start-line"
     case itemMutationCompressedBundleDirectory = "item-mutation/compressed-bundle-directory"
     case itemMutationCompressedDocumentsZip = "item-mutation/compressed-documents-zip"
@@ -168,6 +169,13 @@ enum FilesClientFixture: String, FixtureFile {
 
     // MARK: trash
 
+    case trashEmptySummary = "trash/empty-summary"
+    case trashFolderEntries = "trash/folder-entries"
+    case trashListing = "trash/listing"
+    case trashRestoreRenamed = "trash/restore-renamed"
+    case trashRestoreToDone = "trash/restore-to-done"
+    case trashRestoreToError = "trash/restore-to-error"
+    case trashTextNotes = "trash/text-notes"
     case trashTrashAndVersionsSettings = "trash/trash-and-versions-settings"
     case trashVerificationViolations = "trash/verification-violations"
     case trashZonesEmpty = "trash/zones-empty"
@@ -210,7 +218,7 @@ enum FilesClientFixture: String, FixtureFile {
     var fileExtension: String {
         switch self {
         case .itemMutationNdjsonCompressDone, .itemMutationNdjsonCompressError, .itemMutationNdjsonExtractDone,
-             .itemMutationNdjsonMoveDone, .itemMutationNdjsonMoveError:
+             .itemMutationNdjsonMoveDone, .itemMutationNdjsonMoveError, .trashRestoreToDone, .trashRestoreToError:
             "ndjson"
         default:
             "json"

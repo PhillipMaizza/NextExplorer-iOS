@@ -1,0 +1,45 @@
+{
+  "enabled": true,
+  "retentionDays": 30,
+  "items": [
+    {
+      "id": "t1",
+      "name": "report.pdf",
+      "kind": "file",
+      "size": 2048,
+      "deletedAt": "2026-11-10T08:00:00.000Z",
+      "expiresAt": "2026-12-10T08:00:00.000Z",
+      "deletedBy": { "id": 4, "label": "Ada", "isYou": true },
+      "location": { "kind": "personal", "name": "ada", "parent": "Reports" },
+      "openPath": "personal/Reports",
+      "available": true,
+      "shareCount": 2
+    },
+    {
+      "id": "t2",
+      "name": "Photos",
+      "kind": "directory",
+      "size": 4096,
+      "deletedAt": "2026-11-09T08:00:00Z",
+      "expiresAt": "2026-12-09T08:00:00Z",
+      "deletedBy": { "id": null, "label": "share-link", "isYou": false },
+      "location": { "kind": "volume", "name": "Media", "parent": "" },
+      "openPath": null,
+      "available": false,
+      "shareCount": 0
+    },
+    {
+      "id": "t3",
+      "name": "orphan.txt",
+      "kind": "file",
+      "size": 1,
+      "deletedAt": "not a date",
+      "expiresAt": "2026-12-09T08:00:00Z",
+      "deletedBy": { "id": 9, "label": null, "isYou": false },
+      "location": null,
+      "openPath": null,
+      "available": true,
+      "shareCount": 0
+    }
+  ]
+}

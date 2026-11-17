@@ -59,7 +59,7 @@ import TestUtils
 
             await store
                 .send(.previewHost(.presented(.deleteResponse(.success(BrowseFeature
-                        .DeleteResult(itemID: "Docs/a.txt"))))))
+                        .DeleteResult(removedIDs: ["Docs/a.txt"]))))))
                 {
                     $0.previewHost = nil
                 }

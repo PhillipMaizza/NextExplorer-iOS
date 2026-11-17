@@ -1124,3 +1124,96 @@ shareUpload.nameLabel	Dateiname
 shareUpload.namesLabel	Dateinamen
 shareUpload.nameHint	Der Name, unter dem die Datei hochgeladen wird. Die Dateiendung bleibt gleich.
 spotlight.placeholder	Dateien und Ordner durchsuchen
+trash.title	Papierkorb
+trash.rowSubtitle	Gelöschte Objekte, die du wiederherstellen kannst
+trash.moveToTrash	In den Papierkorb
+trash.deletePermanently	Endgültig löschen
+trash.deleteMessage#one	Es kommt in den Papierkorb, der gelöschte Objekte %lld Tag aufbewahrt, damit sie wiederhergestellt werden können.
+trash.deleteMessage#other	Es kommt in den Papierkorb, der gelöschte Objekte %lld Tage aufbewahrt, damit sie wiederhergestellt werden können.
+trash.deleteMessageGeneric	Es kommt in den Papierkorb, aus dem gelöschte Objekte wiederhergestellt werden können.
+trash.deleteSomePermanent#one	%lld davon kann nicht in den Papierkorb und wird endgültig gelöscht.
+trash.deleteSomePermanent#other	%lld davon können nicht in den Papierkorb und werden endgültig gelöscht.
+trash.reasonDisabled	Der Papierkorb ist ausgeschaltet.
+trash.reasonOtherDevice	Es liegt auf einem anderen Datenträger als der Papierkorb seines Volumes.
+trash.reasonTooLarge	Es ist größer als der gesamte Papierkorb seines Volumes.
+trash.reasonZoneRoot	Ein ganzes Volume kann nicht in seinen eigenen Papierkorb.
+trash.reasonZoneUnwritable	In den Papierkorb seines Volumes kann nicht geschrieben werden.
+trash.reasonNoZone	Es liegt an keinem Ort mit Papierkorb.
+trash.reasonUnknown	Der Server hat keinen Grund genannt.
+trash.deleteLinkedShares#one	Für diesen Inhalt gibt es %lld Freigabelink. Er funktioniert nicht, solange der Inhalt im Papierkorb liegt, und kann beim Wiederherstellen zurückgeholt werden.
+trash.deleteLinkedShares#other	Für diesen Inhalt gibt es %lld Freigabelinks. Sie funktionieren nicht, solange der Inhalt im Papierkorb liegt, und können beim Wiederherstellen zurückgeholt werden.
+trash.keptTitle	Konnte nicht in den Papierkorb
+trash.keptTooLarge	„%1$@“ ist %2$@ groß, mehr als die %3$@, die der Papierkorb seines Volumes fasst.
+trash.keptReason	„%1$@“: %2$@
+trash.movedToTrash#one	%lld Objekt in den Papierkorb verschoben
+trash.movedToTrash#other	%lld Objekte in den Papierkorb verschoben
+trash.openTrash	Papierkorb öffnen
+trash.replaceKept	„%@“ konnte nicht in den Papierkorb, daher wurde nichts ersetzt.
+trash.subtitle#one	Elemente werden %lld Tag nach dem Löschen endgültig entfernt.
+trash.subtitle#other	Elemente werden %lld Tage nach dem Löschen endgültig entfernt.
+trash.emptyState	Der Papierkorb ist leer.
+trash.disabledNotice	Der Papierkorb ist ausgeschaltet: Löschen entfernt Elemente endgültig. Was noch hier ist, kann wiederhergestellt werden.
+trash.unavailable	Volume nicht verfügbar
+trash.removedToday	Wird heute entfernt
+trash.removedIn#one	Wird in %lld Tag entfernt
+trash.removedIn#other	Wird in %lld Tagen entfernt
+trash.locationPersonal	Persönlicher Ordner
+trash.locationUnknown	Unbekannt
+trash.deletedByYou	Sie
+trash.deletedByShareLink	Freigabelink
+trash.deletedByUnknown	Unbekannt
+trash.deletedBy	Gelöscht von %@
+trash.restore	Wiederherstellen
+trash.restoreTo	Wiederherstellen nach…
+trash.restoreHere	Hier wiederherstellen
+trash.restoreFolder	Ganzen Ordner wiederherstellen
+trash.openLocation	Ursprünglichen Ort öffnen
+trash.emptyTrash	Papierkorb leeren
+trash.forget	Vergessen
+trash.confirmDeleteTitle	Endgültig löschen?
+trash.confirmDeleteMessage#one	%lld Objekt wird endgültig entfernt. Dies kann nicht rückgängig gemacht werden.
+trash.confirmDeleteMessage#other	Diese %lld Elemente werden endgültig entfernt. Das kann nicht rückgängig gemacht werden.
+trash.confirmEmptyTitle	Papierkorb leeren?
+trash.confirmEmptyMessage	Alles in Ihrem Papierkorb wird endgültig entfernt. Das kann nicht rückgängig gemacht werden.
+trash.restored#one	%lld Element wiederhergestellt
+trash.restored#other	%lld Elemente wiederhergestellt
+trash.renamed	"%1$@" wurde als "%2$@" wiederhergestellt: Der Name war vergeben.
+trash.notRestored#one	%lld Element konnte nicht wiederhergestellt werden.
+trash.notRestored#other	%lld Elemente konnten nicht wiederhergestellt werden.
+trash.deletedPermanently#one	%lld Element endgültig gelöscht
+trash.deletedPermanently#other	%lld Elemente endgültig gelöscht
+trash.notDeleted#one	%lld Element konnte nicht gelöscht werden.
+trash.notDeleted#other	%lld Elemente konnten nicht gelöscht werden.
+trash.emptied#one	Papierkorb geleert: %lld Element entfernt
+trash.emptied#other	Papierkorb geleert: %lld Elemente entfernt
+trash.leftBehind#one	%lld Element konnte nicht entfernt werden und ist noch da.
+trash.leftBehind#other	%lld Elemente konnten nicht entfernt werden und sind noch da.
+trash.failureForbidden	Sie können an seinem Ort nicht mehr schreiben.
+trash.failureBlocked	An der Stelle seines Ordners steht jetzt etwas anderes.
+trash.failureUnavailable	Sein Volume ist nicht verfügbar.
+trash.failureBusy	Es wird bereits bearbeitet.
+trash.failureLost	Sein Inhalt war verschwunden.
+trash.failureNotFound	Es ist nicht mehr im Papierkorb.
+trash.failureDestinationForbidden	Sie dürfen in diesem Ordner nichts anlegen.
+trash.failureInvalidDestination	Dieser Ordner kann es nicht aufnehmen.
+trash.failureCancelled	Die Wiederherstellung wurde vorher gestoppt.
+trash.failureUnknown	Es konnte nicht bearbeitet werden.
+trash.sharesBadge	Freigegeben
+trash.sharesChooseTitle	Was geschieht mit den Freigabelinks?
+trash.sharesChooseMessage#one	Zu dem, was Sie wiederherstellen, gehörte %lld Freigabelink. Er funktioniert seit dem Löschen nicht mehr.
+trash.sharesChooseMessage#other	Zu dem, was Sie wiederherstellen, gehörten %lld Freigabelinks. Sie funktionieren seit dem Löschen nicht mehr.
+trash.sharesChooseElsewhere	Zurückgeholt zeigen sie auf den neuen Ort.
+trash.sharesKeep	Freigabelinks wiederherstellen
+trash.sharesDrop	Freigabelinks löschen
+trash.sharesRestored#one	%lld Freigabelink wiederhergestellt
+trash.sharesRestored#other	%lld Freigabelinks wiederhergestellt
+trash.sharesDropped#one	%lld Freigabelink gelöscht
+trash.sharesDropped#other	%lld Freigabelinks gelöscht
+trash.loadFailed	Der Papierkorb konnte nicht geladen werden.
+trash.folderLoadFailed	Dieser Ordner konnte nicht geöffnet werden.
+trash.folderEmpty	Dieser Ordner ist leer.
+trash.restoring	Wird wiederhergestellt…
+trash.columnOriginalLocation	Ursprünglicher Ort
+trash.columnDeletedBy	Gelöscht von
+trash.columnDeletedOn	Gelöscht am
+trash.columnRemoved	Entfernung

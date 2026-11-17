@@ -1,16 +1,16 @@
 import Foundation
 
-/// Shares a started download task with the cancellation handler wrapping it, so cancelling the Swift
-/// task cancels the URLSession task. Handles the race where cancellation arrives before the task is
-/// even created.
+/// Shares a started task (a download, or a streamed read) with the cancellation handler wrapping
+/// it, so cancelling the Swift task cancels the URLSession task. Handles the race where
+/// cancellation arrives before the task is even created.
 final class DownloadTaskHolder: @unchecked Sendable {
     private let lock = NSLock()
-    private var task: URLSessionDownloadTask?
+    private var task: URLSessionTask?
     private var cancelled = false
 
     /// Stores the started task, or returns `false` if cancellation already arrived (the caller then
     /// cancels the task immediately instead of resuming it).
-    func store(_ task: URLSessionDownloadTask) -> Bool {
+    func store(_ task: URLSessionTask) -> Bool {
         lock.lock()
         defer { lock.unlock() }
         guard !cancelled else { return false }

@@ -103,9 +103,10 @@
         let store: StoreOf<MainTabFeature>
         @Environment(\.openWindow) private var openWindow
 
-        /// The ⌘1 to ⌘4 hint shown at a row's trailing edge.
+        /// The ⌘1 to ⌘5 hint shown at a row's trailing edge; Trash only exists where the server has one.
         private static func shortcutHint(for tab: MainTabFeature.Tab) -> String? {
-            guard let index = MainTabSidebar.sectionItems.firstIndex(where: { $0.tab == tab }) else { return nil }
+            guard let index = MainTabSidebar.sectionItems(showsTrash: true).firstIndex(where: { $0.tab == tab })
+            else { return nil }
             return "\u{2318} \(index + 1)"
         }
 
@@ -148,16 +149,26 @@
         var body: some View {
             List {
                 macIdentity
-                ForEach(MainTabSidebar.sectionItems, id: \.tab) { item in
+                ForEach(
+                    MainTabSidebar.sectionItems(showsTrash: store.browse.root.isTrashAvailable),
+                    id: \.tab
+                ) { item in
                     macRow(item)
                 }
             }
-            // The menu bar owns ⌘1 to ⌘3; Offline lives in the sidebar only, so ⌘4 is bound here.
+            // The menu bar owns ⌘1 to ⌘3; Offline and Trash live in the sidebar only, so ⌘4 and ⌘5
+            // are bound here, ⌘5 only while the server has a trash.
             .background {
                 Button(L10n.Tab.offline) { store.send(.tabSelected(.downloads)) }
                     .keyboardShortcut("4")
                     .opacity(0)
                     .accessibilityHidden(true)
+                if store.browse.root.isTrashAvailable {
+                    Button(L10n.Trash.title) { store.send(.tabSelected(.trash)) }
+                        .keyboardShortcut("5")
+                        .opacity(0)
+                        .accessibilityHidden(true)
+                }
             }
         }
 
@@ -170,10 +181,12 @@
             case .shared: isSelected ? IconKit.shareLinkFill : IconKit.shareLink
             case .downloads: isSelected ? IconKit.availableOfflineFill : IconKit.availableOffline
             case .settings: isSelected ? IconKit.gearshapeFill : IconKit.gearshape
+            case .trash: isSelected ? IconKit.deleteFill : IconKit.delete
             }
         }
     }
 
+    @MainActor
     private func previewSections(selectedTab: MainTabFeature.Tab) -> some View {
         var state = MainTabFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),

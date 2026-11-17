@@ -944,6 +944,85 @@ public enum L10n {
         public static var title: String { tr("tipJar.title") }  // "Buy me a coffee"
         public static var toastThanks: String { tr("tipJar.toastThanks") }  // "Thank you for supporting the project! 🙏"
     }
+    public enum Trash {
+        public static var columnDeletedBy: String { tr("trash.columnDeletedBy") }  // "Deleted By"
+        public static var columnDeletedOn: String { tr("trash.columnDeletedOn") }  // "Deleted On"
+        public static var columnOriginalLocation: String { tr("trash.columnOriginalLocation") }  // "Original Location"
+        public static var columnRemoved: String { tr("trash.columnRemoved") }  // "Removed"
+        public static func confirmDeleteMessage(_ a0: CVarArg) -> String { tr("trash.confirmDeleteMessage", a0) }
+        public static var confirmDeleteTitle: String { tr("trash.confirmDeleteTitle") }  // "Delete Permanently?"
+        public static var confirmEmptyMessage: String { tr("trash.confirmEmptyMessage") }
+        public static var confirmEmptyTitle: String { tr("trash.confirmEmptyTitle") }  // "Empty the Trash?"
+        public static func deleteLinkedShares(_ a0: CVarArg) -> String { tr("trash.deleteLinkedShares", a0) }
+        public static func deleteMessage(_ a0: CVarArg) -> String { tr("trash.deleteMessage", a0) }
+        public static var deleteMessageGeneric: String { tr("trash.deleteMessageGeneric") }  // "It goes to the trash, where deleted items can be restored."
+        public static var deletePermanently: String { tr("trash.deletePermanently") }  // "Delete Permanently"
+        public static func deleteSomePermanent(_ a0: CVarArg) -> String { tr("trash.deleteSomePermanent", a0) }
+        public static func deletedBy(_ a0: CVarArg) -> String { tr("trash.deletedBy", a0) }
+        public static var deletedByShareLink: String { tr("trash.deletedByShareLink") }  // "Share link"
+        public static var deletedByUnknown: String { tr("trash.deletedByUnknown") }  // "Unknown"
+        public static var deletedByYou: String { tr("trash.deletedByYou") }  // "You"
+        public static func deletedPermanently(_ a0: CVarArg) -> String { tr("trash.deletedPermanently", a0) }
+        public static var disabledNotice: String { tr("trash.disabledNotice") }
+        public static func emptied(_ a0: CVarArg) -> String { tr("trash.emptied", a0) }
+        public static var emptyState: String { tr("trash.emptyState") }  // "The trash is empty."
+        public static var emptyTrash: String { tr("trash.emptyTrash") }  // "Empty Trash"
+        public static var failureBlocked: String { tr("trash.failureBlocked") }  // "Something now stands where its folder was."
+        public static var failureBusy: String { tr("trash.failureBusy") }  // "It is already being handled."
+        public static var failureCancelled: String { tr("trash.failureCancelled") }  // "The restore stopped before reaching it."
+        public static var failureDestinationForbidden: String { tr("trash.failureDestinationForbidden") }  // "You cannot create items in that folder."
+        public static var failureForbidden: String { tr("trash.failureForbidden") }  // "You can no longer write where it was."
+        public static var failureInvalidDestination: String { tr("trash.failureInvalidDestination") }  // "That folder cannot receive it."
+        public static var failureLost: String { tr("trash.failureLost") }  // "Its content had disappeared."
+        public static var failureNotFound: String { tr("trash.failureNotFound") }  // "It is no longer in the trash."
+        public static var failureUnavailable: String { tr("trash.failureUnavailable") }  // "Its volume is not available."
+        public static var failureUnknown: String { tr("trash.failureUnknown") }  // "It could not be handled."
+        public static var folderEmpty: String { tr("trash.folderEmpty") }  // "This folder is empty."
+        public static var folderLoadFailed: String { tr("trash.folderLoadFailed") }  // "This folder could not be opened."
+        public static var forget: String { tr("trash.forget") }  // "Forget"
+        public static func keptReason(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("trash.keptReason", a0, a1) }
+        public static var keptTitle: String { tr("trash.keptTitle") }  // "Could Not Go to the Trash"
+        public static func keptTooLarge(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("trash.keptTooLarge", a0, a1, a2) }
+        public static func leftBehind(_ a0: CVarArg) -> String { tr("trash.leftBehind", a0) }
+        public static var loadFailed: String { tr("trash.loadFailed") }  // "The trash could not be loaded."
+        public static var locationPersonal: String { tr("trash.locationPersonal") }  // "Personal folder"
+        public static var locationUnknown: String { tr("trash.locationUnknown") }  // "Unknown location"
+        public static var moveToTrash: String { tr("trash.moveToTrash") }  // "Move to Trash"
+        public static func movedToTrash(_ a0: CVarArg) -> String { tr("trash.movedToTrash", a0) }
+        public static func notDeleted(_ a0: CVarArg) -> String { tr("trash.notDeleted", a0) }
+        public static func notRestored(_ a0: CVarArg) -> String { tr("trash.notRestored", a0) }
+        public static var openLocation: String { tr("trash.openLocation") }  // "Open Original Location"
+        public static var openTrash: String { tr("trash.openTrash") }  // "Open Trash"
+        public static var reasonDisabled: String { tr("trash.reasonDisabled") }  // "The trash is switched off."
+        public static var reasonNoZone: String { tr("trash.reasonNoZone") }  // "It is not in a place that has a trash."
+        public static var reasonOtherDevice: String { tr("trash.reasonOtherDevice") }  // "It is on another disk than its volume's trash."
+        public static var reasonTooLarge: String { tr("trash.reasonTooLarge") }  // "It is larger than the whole trash of its volume."
+        public static var reasonUnknown: String { tr("trash.reasonUnknown") }  // "The server did not say why."
+        public static var reasonZoneRoot: String { tr("trash.reasonZoneRoot") }  // "A whole volume cannot go into its own trash."
+        public static var reasonZoneUnwritable: String { tr("trash.reasonZoneUnwritable") }  // "The trash of its volume cannot be written to."
+        public static func removedIn(_ a0: CVarArg) -> String { tr("trash.removedIn", a0) }
+        public static var removedToday: String { tr("trash.removedToday") }  // "Removed today"
+        public static func renamed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("trash.renamed", a0, a1) }
+        public static func replaceKept(_ a0: CVarArg) -> String { tr("trash.replaceKept", a0) }
+        public static var restore: String { tr("trash.restore") }  // "Restore"
+        public static var restoreFolder: String { tr("trash.restoreFolder") }  // "Restore Whole Folder"
+        public static var restoreHere: String { tr("trash.restoreHere") }  // "Restore Here"
+        public static var restoreTo: String { tr("trash.restoreTo") }  // "Restore To…"
+        public static func restored(_ a0: CVarArg) -> String { tr("trash.restored", a0) }
+        public static var restoring: String { tr("trash.restoring") }  // "Restoring…"
+        public static var rowSubtitle: String { tr("trash.rowSubtitle") }  // "Deleted items you can restore"
+        public static var sharesBadge: String { tr("trash.sharesBadge") }  // "Shared"
+        public static var sharesChooseElsewhere: String { tr("trash.sharesChooseElsewhere") }  // "Brought back, they will point to the new location."
+        public static func sharesChooseMessage(_ a0: CVarArg) -> String { tr("trash.sharesChooseMessage", a0) }
+        public static var sharesChooseTitle: String { tr("trash.sharesChooseTitle") }  // "What About the Share Links?"
+        public static var sharesDrop: String { tr("trash.sharesDrop") }  // "Delete the Share Links"
+        public static func sharesDropped(_ a0: CVarArg) -> String { tr("trash.sharesDropped", a0) }
+        public static var sharesKeep: String { tr("trash.sharesKeep") }  // "Restore the Share Links"
+        public static func sharesRestored(_ a0: CVarArg) -> String { tr("trash.sharesRestored", a0) }
+        public static func subtitle(_ a0: CVarArg) -> String { tr("trash.subtitle", a0) }
+        public static var title: String { tr("trash.title") }  // "Trash"
+        public static var unavailable: String { tr("trash.unavailable") }  // "Volume unavailable"
+    }
     public enum TrashSettings {
         public static var available: String { tr("trashSettings.available") }  // "Available"
         public static var checkpointMinutes: String { tr("trashSettings.checkpointMinutes") }  // "Office checkpoint (minutes)"

@@ -195,6 +195,7 @@ extension BrowseFeature {
 
         case let .serverFeaturesResponse(features):
             state.isPersonalSpaceEnabled = features.isPersonalEnabled
+            state.isTrashAvailable = features.trash != nil
             let jsonCacheStore = jsonCacheStore
             let serverURL = state.serverURL
             let cacheScope = state.cacheScope
@@ -210,6 +211,9 @@ extension BrowseFeature {
 
         case .personalSpaceTapped:
             return .send(.delegate(.openPath(path: PersonalSpace.rootPath, title: L10n.Browse.myFiles)))
+
+        case .trashTapped:
+            return .send(.delegate(.openTrashTapped))
 
         case let .favoritesResponse(favorites):
             state.favoritePaths = Set(favorites.map(\.path))

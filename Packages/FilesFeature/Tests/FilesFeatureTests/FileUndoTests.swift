@@ -67,7 +67,10 @@ struct FileUndoTests {
                 try await gate.wait()
                 return TransferResult(destination: destination, items: [.init(from: "Docs/Misc", to: "Docs/Misc (2)")])
             }
-            $0.filesClient.deleteItems = { _, items in deleted.setValue(items) }
+            $0.filesClient.deleteItems = { _, items, _ in
+                deleted.setValue(items)
+                return DeleteOutcome()
+            }
         }
 
         await store.send(.duplicateSelectionTapped) {

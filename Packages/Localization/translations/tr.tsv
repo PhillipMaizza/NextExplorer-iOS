@@ -1096,3 +1096,96 @@ shareUpload.nameLabel	Dosya Adı
 shareUpload.namesLabel	Dosya Adları
 shareUpload.nameHint	Dosyanın yükleneceği ad. Uzantı aynı kalır.
 spotlight.placeholder	Dosyalarda ve klasörlerde ara
+trash.title	Çöp Kutusu
+trash.rowSubtitle	Geri yükleyebileceğiniz silinmiş öğeler
+trash.moveToTrash	Çöp Kutusuna Taşı
+trash.deletePermanently	Kalıcı Olarak Sil
+trash.deleteMessage#one	Çöp kutusuna gider; çöp kutusu silinen öğeleri geri yüklenebilmeleri için %lld gün saklar.
+trash.deleteMessage#other	Çöp kutusuna gider; çöp kutusu silinen öğeleri geri yüklenebilmeleri için %lld gün saklar.
+trash.deleteMessageGeneric	Çöp kutusuna gider; silinen öğeler oradan geri yüklenebilir.
+trash.deleteSomePermanent#one	Bunlardan %lld tanesi çöp kutusuna gidemez ve kalıcı olarak silinir.
+trash.deleteSomePermanent#other	Bunlardan %lld tanesi çöp kutusuna gidemez ve kalıcı olarak silinir.
+trash.reasonDisabled	Çöp kutusu kapalı.
+trash.reasonOtherDevice	Biriminin çöp kutusundan farklı bir diskte.
+trash.reasonTooLarge	Biriminin tüm çöp kutusundan daha büyük.
+trash.reasonZoneRoot	Bir birimin tamamı kendi çöp kutusuna giremez.
+trash.reasonZoneUnwritable	Biriminin çöp kutusuna yazılamıyor.
+trash.reasonNoZone	Çöp kutusu olan bir yerde değil.
+trash.reasonUnknown	Sunucu nedenini belirtmedi.
+trash.deleteLinkedShares#one	Bu içeriğin %lld paylaşım bağlantısı var. İçerik çöp kutusundayken çalışmaz ve geri yüklendiğinde geri getirilebilir.
+trash.deleteLinkedShares#other	Bu içeriğin %lld paylaşım bağlantısı var. İçerik çöp kutusundayken çalışmaz ve geri yüklendiğinde geri getirilebilir.
+trash.keptTitle	Çöp Kutusuna Taşınamadı
+trash.keptTooLarge	“%1$@” %2$@ boyutunda; biriminin çöp kutusunun alabileceği %3$@ değerinden büyük.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#one	%lld öğe çöp kutusuna taşındı
+trash.movedToTrash#other	%lld öğe çöp kutusuna taşındı
+trash.openTrash	Çöp Kutusunu Aç
+trash.replaceKept	“%@” çöp kutusuna gidemedi, bu yüzden hiçbir şey değiştirilmedi.
+trash.subtitle#one	Öğeler silindikten %lld gün sonra kalıcı olarak kaldırılır.
+trash.subtitle#other	Öğeler silindikten %lld gün sonra kalıcı olarak kaldırılır.
+trash.emptyState	Çöp kutusu boş.
+trash.disabledNotice	Çöp kutusu kapalı: silme işlemi öğeleri kalıcı olarak kaldırır. Burada kalanlar geri yüklenebilir.
+trash.unavailable	Birim kullanılamıyor
+trash.removedToday	Bugün kaldırılacak
+trash.removedIn#one	%lld gün içinde kaldırılacak
+trash.removedIn#other	%lld gün içinde kaldırılacak
+trash.locationPersonal	Kişisel klasör
+trash.locationUnknown	Bilinmeyen konum
+trash.deletedByYou	Siz
+trash.deletedByShareLink	Paylaşım bağlantısı
+trash.deletedByUnknown	Bilinmiyor
+trash.deletedBy	Silen: %@
+trash.restore	Geri Yükle
+trash.restoreTo	Şuraya Geri Yükle…
+trash.restoreHere	Buraya Geri Yükle
+trash.restoreFolder	Tüm Klasörü Geri Yükle
+trash.openLocation	Özgün Konumu Aç
+trash.emptyTrash	Çöp Kutusunu Boşalt
+trash.forget	Unut
+trash.confirmDeleteTitle	Kalıcı olarak silinsin mi?
+trash.confirmDeleteMessage#one	%lld öğe kalıcı olarak kaldırılacak. Bu işlem geri alınamaz.
+trash.confirmDeleteMessage#other	%lld öğe kalıcı olarak kaldırılacak. Bu işlem geri alınamaz.
+trash.confirmEmptyTitle	Çöp kutusu boşaltılsın mı?
+trash.confirmEmptyMessage	Çöp kutunuzdaki her şey kalıcı olarak kaldırılacak. Bu işlem geri alınamaz.
+trash.restored#one	%lld öğe geri yüklendi
+trash.restored#other	%lld öğe geri yüklendi
+trash.renamed	“%1$@”, “%2$@” olarak geri yüklendi: adı kullanılıyordu.
+trash.notRestored#one	%lld öğe geri yüklenemedi.
+trash.notRestored#other	%lld öğe geri yüklenemedi.
+trash.deletedPermanently#one	%lld öğe kalıcı olarak silindi
+trash.deletedPermanently#other	%lld öğe kalıcı olarak silindi
+trash.notDeleted#one	%lld öğe silinemedi.
+trash.notDeleted#other	%lld öğe silinemedi.
+trash.emptied#one	Çöp kutusu boşaltıldı: %lld öğe kaldırıldı
+trash.emptied#other	Çöp kutusu boşaltıldı: %lld öğe kaldırıldı
+trash.leftBehind#one	%lld öğe kaldırılamadı ve hâlâ orada.
+trash.leftBehind#other	%lld öğe kaldırılamadı ve hâlâ orada.
+trash.failureForbidden	Bulunduğu yere artık yazamıyorsunuz.
+trash.failureBlocked	Klasörünün yerinde artık başka bir şey var.
+trash.failureUnavailable	Birimi kullanılamıyor.
+trash.failureBusy	Zaten işleniyor.
+trash.failureLost	İçeriği kaybolmuştu.
+trash.failureNotFound	Artık çöp kutusunda değil.
+trash.failureDestinationForbidden	O klasörde öğe oluşturamazsınız.
+trash.failureInvalidDestination	O klasör bunu alamaz.
+trash.failureCancelled	Geri yükleme ona ulaşmadan durdu.
+trash.failureUnknown	İşlenemedi.
+trash.sharesBadge	Paylaşılan
+trash.sharesChooseTitle	Paylaşım bağlantıları ne olsun?
+trash.sharesChooseMessage#one	Geri yüklediğiniz içeriğe ait %lld paylaşım bağlantısı vardı. Silindiğinden beri çalışmıyor.
+trash.sharesChooseMessage#other	Geri yüklediğiniz içeriğe ait %lld paylaşım bağlantısı vardı. Silindiğinden beri çalışmıyor.
+trash.sharesChooseElsewhere	Geri getirilirse yeni konumu gösterir.
+trash.sharesKeep	Bağlantıları Geri Yükle
+trash.sharesDrop	Bağlantıları Sil
+trash.sharesRestored#one	%lld paylaşım bağlantısı geri getirildi
+trash.sharesRestored#other	%lld paylaşım bağlantısı geri getirildi
+trash.sharesDropped#one	%lld paylaşım bağlantısı silindi
+trash.sharesDropped#other	%lld paylaşım bağlantısı silindi
+trash.loadFailed	Çöp kutusu yüklenemedi.
+trash.folderLoadFailed	Bu klasör açılamadı.
+trash.folderEmpty	Bu klasör boş.
+trash.restoring	Geri yükleniyor…
+trash.columnOriginalLocation	Özgün Konum
+trash.columnDeletedBy	Silen
+trash.columnDeletedOn	Silinme Tarihi
+trash.columnRemoved	Kaldırılma

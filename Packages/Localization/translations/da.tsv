@@ -1097,3 +1097,96 @@ shareUpload.nameLabel	Filnavn
 shareUpload.namesLabel	Filnavne
 shareUpload.nameHint	Navnet, filen uploades med. Filtypenavnet forbliver det samme.
 spotlight.placeholder	Søg i filer og mapper
+trash.title	Papirkurv
+trash.rowSubtitle	Slettede emner, du kan gendanne
+trash.moveToTrash	Flyt til papirkurven
+trash.deletePermanently	Slet permanent
+trash.deleteMessage#one	Det havner i papirkurven, som gemmer slettede emner i %lld dag, så de kan gendannes.
+trash.deleteMessage#other	Det havner i papirkurven, som gemmer slettede emner i %lld dage, så de kan gendannes.
+trash.deleteMessageGeneric	Det havner i papirkurven, hvorfra slettede emner kan gendannes.
+trash.deleteSomePermanent#one	%lld af dem kan ikke komme i papirkurven og slettes permanent.
+trash.deleteSomePermanent#other	%lld af dem kan ikke komme i papirkurven og slettes permanent.
+trash.reasonDisabled	Papirkurven er slået fra.
+trash.reasonOtherDevice	Det ligger på en anden disk end sin enheds papirkurv.
+trash.reasonTooLarge	Det er større end hele papirkurven på sin enhed.
+trash.reasonZoneRoot	En hel enhed kan ikke lægges i sin egen papirkurv.
+trash.reasonZoneUnwritable	Der kan ikke skrives til enhedens papirkurv.
+trash.reasonNoZone	Det ligger et sted uden papirkurv.
+trash.reasonUnknown	Serveren oplyste ikke hvorfor.
+trash.deleteLinkedShares#one	Indholdet har %lld delingslink. Det virker ikke, mens indholdet er i papirkurven, og kan hentes tilbage ved gendannelse.
+trash.deleteLinkedShares#other	Indholdet har %lld delingslinks. De virker ikke, mens indholdet er i papirkurven, og kan hentes tilbage ved gendannelse.
+trash.keptTitle	Kunne ikke flyttes til papirkurven
+trash.keptTooLarge	“%1$@” fylder %2$@, mere end de %3$@ enhedens papirkurv kan rumme.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#one	%lld emne flyttet til papirkurven
+trash.movedToTrash#other	%lld emner flyttet til papirkurven
+trash.openTrash	Åbn papirkurv
+trash.replaceKept	“%@” kunne ikke komme i papirkurven, så intet blev erstattet.
+trash.subtitle#one	Emner slettes permanent %lld dag efter, de blev slettet.
+trash.subtitle#other	Emner slettes permanent %lld dage efter, de blev slettet.
+trash.emptyState	Papirkurven er tom.
+trash.disabledNotice	Papirkurven er slået fra: sletning fjerner emner permanent. Det, der stadig ligger her, kan gendannes.
+trash.unavailable	Enheden er ikke tilgængelig
+trash.removedToday	Fjernes i dag
+trash.removedIn#one	Fjernes om %lld dag
+trash.removedIn#other	Fjernes om %lld dage
+trash.locationPersonal	Personlig mappe
+trash.locationUnknown	Ukendt placering
+trash.deletedByYou	Dig
+trash.deletedByShareLink	Delingslink
+trash.deletedByUnknown	Ukendt
+trash.deletedBy	Slettet af %@
+trash.restore	Gendan
+trash.restoreTo	Gendan til…
+trash.restoreHere	Gendan her
+trash.restoreFolder	Gendan hele mappen
+trash.openLocation	Åbn oprindelig placering
+trash.emptyTrash	Tøm papirkurv
+trash.forget	Glem
+trash.confirmDeleteTitle	Slet permanent?
+trash.confirmDeleteMessage#one	%lld emne fjernes permanent. Det kan ikke fortrydes.
+trash.confirmDeleteMessage#other	%lld emner fjernes permanent. Det kan ikke fortrydes.
+trash.confirmEmptyTitle	Tøm papirkurven?
+trash.confirmEmptyMessage	Alt i din papirkurv fjernes permanent. Det kan ikke fortrydes.
+trash.restored#one	%lld emne gendannet
+trash.restored#other	%lld emner gendannet
+trash.renamed	“%1$@” blev gendannet som “%2$@”: navnet var optaget.
+trash.notRestored#one	%lld emne kunne ikke gendannes.
+trash.notRestored#other	%lld emner kunne ikke gendannes.
+trash.deletedPermanently#one	%lld emne slettet permanent
+trash.deletedPermanently#other	%lld emner slettet permanent
+trash.notDeleted#one	%lld emne kunne ikke slettes.
+trash.notDeleted#other	%lld emner kunne ikke slettes.
+trash.emptied#one	Papirkurven er tømt: %lld emne fjernet
+trash.emptied#other	Papirkurven er tømt: %lld emner fjernet
+trash.leftBehind#one	%lld emne kunne ikke fjernes og ligger der stadig.
+trash.leftBehind#other	%lld emner kunne ikke fjernes og ligger der stadig.
+trash.failureForbidden	Du kan ikke længere skrive, hvor det lå.
+trash.failureBlocked	Noget står nu, hvor mappen lå.
+trash.failureUnavailable	Enheden er ikke tilgængelig.
+trash.failureBusy	Det er allerede ved at blive behandlet.
+trash.failureLost	Indholdet var forsvundet.
+trash.failureNotFound	Det er ikke længere i papirkurven.
+trash.failureDestinationForbidden	Du kan ikke oprette emner i den mappe.
+trash.failureInvalidDestination	Den mappe kan ikke modtage det.
+trash.failureCancelled	Gendannelsen stoppede, før den nåede det.
+trash.failureUnknown	Det kunne ikke behandles.
+trash.sharesBadge	Delt
+trash.sharesChooseTitle	Hvad med delingslinkene?
+trash.sharesChooseMessage#one	%lld delingslink hørte til det, du gendanner. Det har ikke virket siden sletningen.
+trash.sharesChooseMessage#other	%lld delingslinks hørte til det, du gendanner. De har ikke virket siden sletningen.
+trash.sharesChooseElsewhere	Hentes de tilbage, peger de på den nye placering.
+trash.sharesKeep	Gendan delingslinkene
+trash.sharesDrop	Slet delingslinkene
+trash.sharesRestored#one	%lld delingslink hentet tilbage
+trash.sharesRestored#other	%lld delingslinks hentet tilbage
+trash.sharesDropped#one	%lld delingslink slettet
+trash.sharesDropped#other	%lld delingslinks slettet
+trash.loadFailed	Papirkurven kunne ikke indlæses.
+trash.folderLoadFailed	Mappen kunne ikke åbnes.
+trash.folderEmpty	Mappen er tom.
+trash.restoring	Gendanner…
+trash.columnOriginalLocation	Oprindelig placering
+trash.columnDeletedBy	Slettet af
+trash.columnDeletedOn	Slettet den
+trash.columnRemoved	Fjernes

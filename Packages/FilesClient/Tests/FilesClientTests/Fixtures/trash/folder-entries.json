@@ -1,0 +1,21 @@
+{
+  "item": {
+    "id": "t2",
+    "name": "Photos",
+    "kind": "directory",
+    "size": 4096,
+    "deletedAt": "2026-11-09T08:00:00Z",
+    "expiresAt": "2026-12-09T08:00:00Z",
+    "deletedBy": { "id": 4, "label": "Ada", "isYou": true },
+    "location": { "kind": "volume", "name": "Media", "parent": "" },
+    "openPath": "Media",
+    "available": true,
+    "shareCount": 1
+  },
+  "path": "2026",
+  "entries": [
+    { "name": "Summer", "kind": "directory", "size": null, "modifiedAt": "2026-08-01T10:00:00.000Z", "shareCount": 1 },
+    { "name": "beach.jpg", "kind": "file", "size": 1024, "modifiedAt": "2026-08-01T10:00:00.000Z", "shareCount": 0 },
+    { "name": "link", "kind": "symlink", "size": null, "modifiedAt": "2026-08-01T10:00:00.000Z", "shareCount": 0 }
+  ]
+}

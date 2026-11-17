@@ -1124,3 +1124,96 @@ shareUpload.nameLabel	Nome del file
 shareUpload.namesLabel	Nomi dei file
 shareUpload.nameHint	Il nome con cui il file viene caricato. L’estensione resta la stessa.
 spotlight.placeholder	Cerca file e cartelle
+trash.title	Cestino
+trash.rowSubtitle	Elementi eliminati che puoi ripristinare
+trash.moveToTrash	Sposta nel cestino
+trash.deletePermanently	Elimina definitivamente
+trash.deleteMessage#one	Andrà nel cestino, che conserva gli elementi eliminati per %lld giorno così da poterli ripristinare.
+trash.deleteMessage#other	Andrà nel cestino, che conserva gli elementi eliminati per %lld giorni così da poterli ripristinare.
+trash.deleteMessageGeneric	Andrà nel cestino, da cui gli elementi eliminati possono essere ripristinati.
+trash.deleteSomePermanent#one	%lld di essi non può andare nel cestino e sarà eliminato definitivamente.
+trash.deleteSomePermanent#other	%lld di essi non possono andare nel cestino e saranno eliminati definitivamente.
+trash.reasonDisabled	Il cestino è disattivato.
+trash.reasonOtherDevice	Si trova su un disco diverso da quello del cestino del suo volume.
+trash.reasonTooLarge	È più grande dell'intero cestino del suo volume.
+trash.reasonZoneRoot	Un intero volume non può andare nel proprio cestino.
+trash.reasonZoneUnwritable	Non è possibile scrivere nel cestino del suo volume.
+trash.reasonNoZone	Non si trova in un luogo dotato di cestino.
+trash.reasonUnknown	Il server non ha indicato il motivo.
+trash.deleteLinkedShares#one	Questo contenuto ha %lld link di condivisione. Non funziona finché il contenuto è nel cestino e può essere ripristinato insieme a esso.
+trash.deleteLinkedShares#other	Questo contenuto ha %lld link di condivisione. Non funzionano finché il contenuto è nel cestino e possono essere ripristinati insieme a esso.
+trash.keptTitle	Impossibile spostare nel cestino
+trash.keptTooLarge	“%1$@” occupa %2$@, più dei %3$@ che il cestino del suo volume può contenere.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#one	%lld elemento spostato nel cestino
+trash.movedToTrash#other	%lld elementi spostati nel cestino
+trash.openTrash	Apri cestino
+trash.replaceKept	“%@” non è potuto andare nel cestino, quindi non è stato sostituito nulla.
+trash.subtitle#one	Gli elementi vengono eliminati definitivamente %lld giorno dopo la cancellazione.
+trash.subtitle#other	Gli elementi vengono eliminati definitivamente %lld giorni dopo la cancellazione.
+trash.emptyState	Il cestino è vuoto.
+trash.disabledNotice	Il cestino è disattivato: eliminare cancella definitivamente. Ciò che è ancora qui può essere ripristinato.
+trash.unavailable	Volume non disponibile
+trash.removedToday	Rimosso oggi
+trash.removedIn#one	Rimosso tra %lld giorno
+trash.removedIn#other	Rimosso tra %lld giorni
+trash.locationPersonal	Cartella personale
+trash.locationUnknown	Sconosciuta
+trash.deletedByYou	Tu
+trash.deletedByShareLink	Link di condivisione
+trash.deletedByUnknown	Sconosciuto
+trash.deletedBy	Eliminato da %@
+trash.restore	Ripristina
+trash.restoreTo	Ripristina in…
+trash.restoreHere	Ripristina qui
+trash.restoreFolder	Ripristina l'intera cartella
+trash.openLocation	Apri posizione originale
+trash.emptyTrash	Svuota cestino
+trash.forget	Dimentica
+trash.confirmDeleteTitle	Eliminare definitivamente?
+trash.confirmDeleteMessage#one	%lld elemento verrà rimosso definitivamente. L’operazione non può essere annullata.
+trash.confirmDeleteMessage#other	Questi %lld elementi saranno eliminati definitivamente. L'azione non può essere annullata.
+trash.confirmEmptyTitle	Svuotare il cestino?
+trash.confirmEmptyMessage	Tutto ciò che è nel tuo cestino sarà eliminato definitivamente. L'azione non può essere annullata.
+trash.restored#one	%lld elemento ripristinato
+trash.restored#other	%lld elementi ripristinati
+trash.renamed	"%1$@" è stato ripristinato come "%2$@": il nome era già in uso.
+trash.notRestored#one	%lld elemento non è stato ripristinato.
+trash.notRestored#other	%lld elementi non sono stati ripristinati.
+trash.deletedPermanently#one	%lld elemento eliminato definitivamente
+trash.deletedPermanently#other	%lld elementi eliminati definitivamente
+trash.notDeleted#one	%lld elemento non è stato eliminato.
+trash.notDeleted#other	%lld elementi non sono stati eliminati.
+trash.emptied#one	Cestino svuotato: %lld elemento eliminato
+trash.emptied#other	Cestino svuotato: %lld elementi eliminati
+trash.leftBehind#one	%lld elemento non è stato eliminato ed è ancora lì.
+trash.leftBehind#other	%lld elementi non sono stati eliminati e sono ancora lì.
+trash.failureForbidden	Non puoi più scrivere dove si trovava.
+trash.failureBlocked	Ora c'è qualcos'altro al posto della sua cartella.
+trash.failureUnavailable	Il suo volume non è disponibile.
+trash.failureBusy	È già in lavorazione.
+trash.failureLost	Il suo contenuto era scomparso.
+trash.failureNotFound	Non è più nel cestino.
+trash.failureDestinationForbidden	Non puoi creare elementi in quella cartella.
+trash.failureInvalidDestination	Quella cartella non può riceverlo.
+trash.failureCancelled	Il ripristino si è fermato prima di raggiungerlo.
+trash.failureUnknown	Non è stato possibile gestirlo.
+trash.sharesBadge	Condiviso
+trash.sharesChooseTitle	Che cosa fare dei link di condivisione?
+trash.sharesChooseMessage#one	%lld link di condivisione apparteneva a ciò che stai ripristinando. Non funziona dall'eliminazione.
+trash.sharesChooseMessage#other	%lld link di condivisione appartenevano a ciò che stai ripristinando. Non funzionano dall'eliminazione.
+trash.sharesChooseElsewhere	Se ripristinati, punteranno alla nuova posizione.
+trash.sharesKeep	Ripristina i link di condivisione
+trash.sharesDrop	Elimina i link di condivisione
+trash.sharesRestored#one	%lld link di condivisione ripristinato
+trash.sharesRestored#other	%lld link di condivisione ripristinati
+trash.sharesDropped#one	%lld link di condivisione eliminato
+trash.sharesDropped#other	%lld link di condivisione eliminati
+trash.loadFailed	Impossibile caricare il cestino.
+trash.folderLoadFailed	Impossibile aprire questa cartella.
+trash.folderEmpty	Questa cartella è vuota.
+trash.restoring	Ripristino…
+trash.columnOriginalLocation	Posizione originale
+trash.columnDeletedBy	Eliminato da
+trash.columnDeletedOn	Eliminato il
+trash.columnRemoved	Rimozione

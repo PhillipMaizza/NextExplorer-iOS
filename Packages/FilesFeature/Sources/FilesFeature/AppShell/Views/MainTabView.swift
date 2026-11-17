@@ -243,8 +243,8 @@ public struct MainTabView: View {
                 offlineStore: store.scope(state: \.offlineManage, action: \.offlineManage),
                 favorites: store.favorites.favorites
             ) }
-        case .settings:
-            split { SettingsView(store: store.scope(state: \.settings, action: \.settings)) }
+        case .settings: split { SettingsView(store: store.scope(state: \.settings, action: \.settings)) }
+        case .trash: split { NavigationStack { TrashView(store: store.scope(state: \.trash, action: \.trash)) } }
         }
     }
 
@@ -278,7 +278,7 @@ public struct MainTabView: View {
 
     private var tabs: some View {
         TabView(selection: Binding(
-            get: { store.selectedTab },
+            get: { store.phoneTab },
             set: { store.send(.tabSelected($0)) }
         )) {
             Tab(value: MainTabFeature.Tab.browse) {

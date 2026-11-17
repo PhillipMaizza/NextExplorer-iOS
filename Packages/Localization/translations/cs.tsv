@@ -1122,3 +1122,128 @@ shareUpload.nameLabel	Název souboru
 shareUpload.namesLabel	Názvy souborů
 shareUpload.nameHint	Název, pod kterým se soubor nahraje. Přípona zůstane stejná.
 spotlight.placeholder	Hledat soubory a složky
+trash.title	Koš
+trash.rowSubtitle	Smazané položky, které můžete obnovit
+trash.moveToTrash	Přesunout do koše
+trash.deletePermanently	Smazat trvale
+trash.deleteMessage#one	Přesune se do koše, který smazané položky uchovává (dní: %lld), aby šly obnovit.
+trash.deleteMessage#few	Přesune se do koše, který smazané položky uchovává (dní: %lld), aby šly obnovit.
+trash.deleteMessage#many	Přesune se do koše, který smazané položky uchovává (dní: %lld), aby šly obnovit.
+trash.deleteMessage#other	Přesune se do koše, který smazané položky uchovává (dní: %lld), aby šly obnovit.
+trash.deleteMessageGeneric	Přesune se do koše, odkud lze smazané položky obnovit.
+trash.deleteSomePermanent#one	Počet položek, které nemohou do koše a budou smazány trvale: %lld.
+trash.deleteSomePermanent#few	Počet položek, které nemohou do koše a budou smazány trvale: %lld.
+trash.deleteSomePermanent#many	Počet položek, které nemohou do koše a budou smazány trvale: %lld.
+trash.deleteSomePermanent#other	Počet položek, které nemohou do koše a budou smazány trvale: %lld.
+trash.reasonDisabled	Koš je vypnutý.
+trash.reasonOtherDevice	Je na jiném disku než koš jeho svazku.
+trash.reasonTooLarge	Je větší než celý koš jeho svazku.
+trash.reasonZoneRoot	Celý svazek nemůže do vlastního koše.
+trash.reasonZoneUnwritable	Do koše jeho svazku nelze zapisovat.
+trash.reasonNoZone	Není v místě, které má koš.
+trash.reasonUnknown	Server neuvedl důvod.
+trash.deleteLinkedShares#one	Obsah má sdílené odkazy (počet: %lld). Dokud je obsah v koši, nefungují, a při obnovení je lze vrátit.
+trash.deleteLinkedShares#few	Obsah má sdílené odkazy (počet: %lld). Dokud je obsah v koši, nefungují, a při obnovení je lze vrátit.
+trash.deleteLinkedShares#many	Obsah má sdílené odkazy (počet: %lld). Dokud je obsah v koši, nefungují, a při obnovení je lze vrátit.
+trash.deleteLinkedShares#other	Obsah má sdílené odkazy (počet: %lld). Dokud je obsah v koši, nefungují, a při obnovení je lze vrátit.
+trash.keptTitle	Nelze přesunout do koše
+trash.keptTooLarge	„%1$@“ má %2$@, víc než %3$@, které pojme koš jeho svazku.
+trash.keptReason	„%1$@“: %2$@
+trash.movedToTrash#one	Přesunuto do koše: %lld
+trash.movedToTrash#few	Přesunuto do koše: %lld
+trash.movedToTrash#many	Přesunuto do koše: %lld
+trash.movedToTrash#other	Přesunuto do koše: %lld
+trash.openTrash	Otevřít koš
+trash.replaceKept	„%@“ nešlo přesunout do koše, proto se nic nenahradilo.
+trash.subtitle#one	Položky se trvale odstraní po uplynutí dní od smazání: %lld.
+trash.subtitle#few	Položky se trvale odstraní po uplynutí dní od smazání: %lld.
+trash.subtitle#many	Položky se trvale odstraní po uplynutí dní od smazání: %lld.
+trash.subtitle#other	Položky se trvale odstraní po uplynutí dní od smazání: %lld.
+trash.emptyState	Koš je prázdný.
+trash.disabledNotice	Koš je vypnutý: mazání odstraňuje položky trvale. Co tu ještě zůstalo, lze obnovit.
+trash.unavailable	Svazek není dostupný
+trash.removedToday	Odstraní se dnes
+trash.removedIn#one	Odstraní se za (dní): %lld
+trash.removedIn#few	Odstraní se za (dní): %lld
+trash.removedIn#many	Odstraní se za (dní): %lld
+trash.removedIn#other	Odstraní se za (dní): %lld
+trash.locationPersonal	Osobní složka
+trash.locationUnknown	Neznámé umístění
+trash.deletedByYou	Vy
+trash.deletedByShareLink	Sdílený odkaz
+trash.deletedByUnknown	Neznámý
+trash.deletedBy	Smazal(a): %@
+trash.restore	Obnovit
+trash.restoreTo	Obnovit do…
+trash.restoreHere	Obnovit sem
+trash.restoreFolder	Obnovit celou složku
+trash.openLocation	Otevřít původní umístění
+trash.emptyTrash	Vysypat koš
+trash.forget	Zapomenout
+trash.confirmDeleteTitle	Smazat trvale?
+trash.confirmDeleteMessage#one	Položky budou trvale odstraněny (počet: %lld). Tuto akci nelze vrátit.
+trash.confirmDeleteMessage#few	Položky budou trvale odstraněny (počet: %lld). Tuto akci nelze vrátit.
+trash.confirmDeleteMessage#many	Položky budou trvale odstraněny (počet: %lld). Tuto akci nelze vrátit.
+trash.confirmDeleteMessage#other	Položky budou trvale odstraněny (počet: %lld). Tuto akci nelze vrátit.
+trash.confirmEmptyTitle	Vysypat koš?
+trash.confirmEmptyMessage	Vše v koši bude trvale odstraněno. Tuto akci nelze vrátit.
+trash.restored#one	Obnoveno položek: %lld
+trash.restored#few	Obnoveno položek: %lld
+trash.restored#many	Obnoveno položek: %lld
+trash.restored#other	Obnoveno položek: %lld
+trash.renamed	„%1$@“ bylo obnoveno jako „%2$@“: název byl obsazený.
+trash.notRestored#one	Nepodařilo se obnovit položek: %lld.
+trash.notRestored#few	Nepodařilo se obnovit položek: %lld.
+trash.notRestored#many	Nepodařilo se obnovit položek: %lld.
+trash.notRestored#other	Nepodařilo se obnovit položek: %lld.
+trash.deletedPermanently#one	Trvale smazáno položek: %lld
+trash.deletedPermanently#few	Trvale smazáno položek: %lld
+trash.deletedPermanently#many	Trvale smazáno položek: %lld
+trash.deletedPermanently#other	Trvale smazáno položek: %lld
+trash.notDeleted#one	Nepodařilo se smazat položek: %lld.
+trash.notDeleted#few	Nepodařilo se smazat položek: %lld.
+trash.notDeleted#many	Nepodařilo se smazat položek: %lld.
+trash.notDeleted#other	Nepodařilo se smazat položek: %lld.
+trash.emptied#one	Koš vysypán, odstraněno položek: %lld
+trash.emptied#few	Koš vysypán, odstraněno položek: %lld
+trash.emptied#many	Koš vysypán, odstraněno položek: %lld
+trash.emptied#other	Koš vysypán, odstraněno položek: %lld
+trash.leftBehind#one	Nepodařilo se odstranit položek: %lld. Zůstávají na místě.
+trash.leftBehind#few	Nepodařilo se odstranit položek: %lld. Zůstávají na místě.
+trash.leftBehind#many	Nepodařilo se odstranit položek: %lld. Zůstávají na místě.
+trash.leftBehind#other	Nepodařilo se odstranit položek: %lld. Zůstávají na místě.
+trash.failureForbidden	Do původního místa už nemůžete zapisovat.
+trash.failureBlocked	Na místě jeho složky je teď něco jiného.
+trash.failureUnavailable	Jeho svazek není dostupný.
+trash.failureBusy	Už se zpracovává.
+trash.failureLost	Jeho obsah zmizel.
+trash.failureNotFound	Už není v koši.
+trash.failureDestinationForbidden	V této složce nemůžete vytvářet položky.
+trash.failureInvalidDestination	Tato složka ho nemůže přijmout.
+trash.failureCancelled	Obnovení se zastavilo dřív, než se k němu dostalo.
+trash.failureUnknown	Nepodařilo se ho zpracovat.
+trash.sharesBadge	Sdíleno
+trash.sharesChooseTitle	Co se sdílenými odkazy?
+trash.sharesChooseMessage#one	K obnovovanému obsahu patřily sdílené odkazy (počet: %lld). Od smazání nefungují.
+trash.sharesChooseMessage#few	K obnovovanému obsahu patřily sdílené odkazy (počet: %lld). Od smazání nefungují.
+trash.sharesChooseMessage#many	K obnovovanému obsahu patřily sdílené odkazy (počet: %lld). Od smazání nefungují.
+trash.sharesChooseMessage#other	K obnovovanému obsahu patřily sdílené odkazy (počet: %lld). Od smazání nefungují.
+trash.sharesChooseElsewhere	Po vrácení budou odkazovat na nové umístění.
+trash.sharesKeep	Obnovit sdílené odkazy
+trash.sharesDrop	Smazat sdílené odkazy
+trash.sharesRestored#one	Vrácené sdílené odkazy: %lld
+trash.sharesRestored#few	Vrácené sdílené odkazy: %lld
+trash.sharesRestored#many	Vrácené sdílené odkazy: %lld
+trash.sharesRestored#other	Vrácené sdílené odkazy: %lld
+trash.sharesDropped#one	Smazané sdílené odkazy: %lld
+trash.sharesDropped#few	Smazané sdílené odkazy: %lld
+trash.sharesDropped#many	Smazané sdílené odkazy: %lld
+trash.sharesDropped#other	Smazané sdílené odkazy: %lld
+trash.loadFailed	Koš se nepodařilo načíst.
+trash.folderLoadFailed	Složku se nepodařilo otevřít.
+trash.folderEmpty	Složka je prázdná.
+trash.restoring	Obnovování…
+trash.columnOriginalLocation	Původní umístění
+trash.columnDeletedBy	Smazal(a)
+trash.columnDeletedOn	Smazáno
+trash.columnRemoved	Odstranění

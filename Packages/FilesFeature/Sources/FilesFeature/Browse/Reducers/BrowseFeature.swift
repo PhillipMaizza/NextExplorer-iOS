@@ -55,6 +55,8 @@ public struct BrowseFeature {
         /// The server has personal folders on (`features.personal.enabled`). Only the root screen
         /// asks, since the root volume listing never includes the account's own folder.
         public var isPersonalSpaceEnabled = false
+        /// The server has a trash (any server since mid September 2026): the root offers a Trash row.
+        public var isTrashAvailable = false
         public var access: FileAccess?
         /// The folder listing load lifecycle. `phase.hasLoaded` flips true the first time a
         /// browse response lands (success or failure), so the view shows the loading skeleton
@@ -189,6 +191,11 @@ public struct BrowseFeature {
         public var selectedItemIDs: Set<FileItem.ID> = []
         public var isBulkActionInFlight = false
         public var bulkDeleteConfirmationIsPresented = false
+        /// Items the trash refused during the last delete, still on disk. Non empty puts up the
+        /// prompt that offers to delete them for good.
+        public var keptDeletes: [KeptDelete] = []
+        /// Set after a delete sent anything to the trash; becomes a toast that opens the trash.
+        public var trashNotice: MovedToTrashNotice?
         /// Drives a persistent progress toast: `nil` when no extract/compress/download is
         /// running. Rename/delete don't set this: they're fast enough, and already have their
         /// own alert-driven confirm flow, that a progress indicator would just flicker.
@@ -436,6 +443,7 @@ public struct BrowseFeature {
         case keptListingResolved(CachedDirectory?)
         case serverFeaturesResponse(ServerFeatures)
         case personalSpaceTapped
+        case trashTapped
         case rowTapped(FileItem)
         case searchQueryChanged(String)
         case searchScopeChanged(SearchScope)
@@ -476,6 +484,11 @@ public struct BrowseFeature {
         /// Confirm came from a full-screen preview: dismiss the cover, then delete after a
         /// short settle so the list row animates out where the user can see it.
         case deleteConfirmedFromPreview
+        /// Delete Permanently on a confirmation that would otherwise move the item to the trash.
+        case deletePermanentlyConfirmed(fromPreview: Bool)
+        /// The prompt about items the trash refused: delete them for good, or leave them.
+        case keptDeletePermanentlyConfirmed
+        case keptDeleteDismissed
         case deleteImpactResponse(Result<DeleteImpact, FilesClientError>)
         case deleteResponse(Result<DeleteResult, FilesClientError>)
         case extractZipTapped(FileItem)
@@ -505,7 +518,8 @@ public struct BrowseFeature {
         case bulkDeleteTapped
         case bulkDeleteCancelled
         case bulkDeleteConfirmed
-        case bulkDeleteResponse(Result<BulkDeleteResult, FilesClientError>)
+        case bulkDeletePermanentlyConfirmed
+        case bulkDeleteResponse(Result<DeleteResult, FilesClientError>)
         case bulkFavoriteTapped
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped
@@ -594,6 +608,8 @@ public struct BrowseFeature {
             /// The "Open" button on the download-success toast: switches to the Downloads
             /// tab so the user can see where the file landed.
             case openDownloadsTapped
+            /// "Open Trash" on the toast after a delete moved items to the trash.
+            case openTrashTapped
             /// "View in Shared" on the created-share-link sheet: switches to the Shared tab.
             case goToSharedTab
             /// An Offline tab screen took its own folder off the device with its last items: the

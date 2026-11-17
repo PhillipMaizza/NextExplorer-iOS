@@ -111,7 +111,7 @@ struct SelectionActionsMenu: View {
                     Button(role: .destructive, action: onDelete) {
                         Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
                     }
-                    .tint(Color.negativeText)
+                    .tint(.red)
                 }
             }
         } label: {

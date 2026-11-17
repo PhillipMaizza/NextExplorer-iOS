@@ -1111,3 +1111,80 @@ shareUpload.nameLabel	파일 이름
 shareUpload.namesLabel	파일 이름
 shareUpload.nameHint	파일이 업로드될 때 사용할 이름입니다. 확장자는 그대로 유지됩니다.
 spotlight.placeholder	파일 및 폴더 검색
+trash.title	휴지통
+trash.rowSubtitle	복원할 수 있는 삭제된 항목
+trash.moveToTrash	휴지통으로 이동
+trash.deletePermanently	영구 삭제
+trash.deleteMessage#other	휴지통으로 이동하며, 휴지통은 삭제된 항목을 %lld일 동안 보관하므로 복원할 수 있습니다.
+trash.deleteMessageGeneric	휴지통으로 이동하며, 삭제된 항목은 휴지통에서 복원할 수 있습니다.
+trash.deleteSomePermanent#other	그중 %lld개는 휴지통으로 이동할 수 없어 영구 삭제됩니다.
+trash.reasonDisabled	휴지통이 꺼져 있습니다.
+trash.reasonOtherDevice	볼륨의 휴지통과 다른 디스크에 있습니다.
+trash.reasonTooLarge	볼륨의 휴지통 전체보다 큽니다.
+trash.reasonZoneRoot	볼륨 전체는 자신의 휴지통으로 이동할 수 없습니다.
+trash.reasonZoneUnwritable	볼륨의 휴지통에 쓸 수 없습니다.
+trash.reasonNoZone	휴지통이 있는 위치에 있지 않습니다.
+trash.reasonUnknown	서버가 이유를 알려 주지 않았습니다.
+trash.deleteLinkedShares#other	이 콘텐츠에는 공유 링크 %lld개가 있습니다. 콘텐츠가 휴지통에 있는 동안에는 작동하지 않으며, 복원할 때 되살릴 수 있습니다.
+trash.keptTitle	휴지통으로 이동할 수 없음
+trash.keptTooLarge	“%1$@”의 크기는 %2$@로, 볼륨 휴지통이 보관할 수 있는 %3$@보다 큽니다.
+trash.keptReason	“%1$@”: %2$@
+trash.movedToTrash#other	항목 %lld개를 휴지통으로 이동함
+trash.openTrash	휴지통 열기
+trash.replaceKept	“%@”을(를) 휴지통으로 옮길 수 없어 아무것도 대체하지 않았습니다.
+trash.subtitle#other	항목은 삭제 후 %lld일이 지나면 영구 삭제됩니다.
+trash.emptyState	휴지통이 비어 있습니다.
+trash.disabledNotice	휴지통이 꺼져 있습니다. 삭제하면 영구적으로 제거됩니다. 여기에 남은 항목은 복원할 수 있습니다.
+trash.unavailable	볼륨을 사용할 수 없음
+trash.removedToday	오늘 삭제됨
+trash.removedIn#other	%lld일 후 삭제됨
+trash.locationPersonal	개인 폴더
+trash.locationUnknown	알 수 없음
+trash.deletedByYou	나
+trash.deletedByShareLink	공유 링크
+trash.deletedByUnknown	알 수 없음
+trash.deletedBy	삭제한 사람: %@
+trash.restore	복원
+trash.restoreTo	다른 위치에 복원…
+trash.restoreHere	여기에 복원
+trash.restoreFolder	폴더 전체 복원
+trash.openLocation	원래 위치 열기
+trash.emptyTrash	휴지통 비우기
+trash.forget	잊기
+trash.confirmDeleteTitle	영구 삭제하시겠습니까?
+trash.confirmDeleteMessage#other	항목 %lld개가 영구 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
+trash.confirmEmptyTitle	휴지통을 비우시겠습니까?
+trash.confirmEmptyMessage	휴지통의 모든 항목이 영구 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
+trash.restored#other	항목 %lld개 복원됨
+trash.renamed	"%1$@"은(는) 이름이 이미 사용 중이어서 "%2$@"(으)로 복원되었습니다.
+trash.notRestored#other	항목 %lld개를 복원할 수 없음.
+trash.deletedPermanently#other	항목 %lld개 영구 삭제됨
+trash.notDeleted#other	항목 %lld개를 삭제할 수 없음.
+trash.emptied#other	휴지통을 비웠습니다: 항목 %lld개 삭제됨
+trash.leftBehind#other	항목 %lld개를 삭제할 수 없어 아직 남아 있습니다.
+trash.failureForbidden	원래 위치에 더 이상 쓸 수 없습니다.
+trash.failureBlocked	원래 폴더 자리에 이제 다른 것이 있습니다.
+trash.failureUnavailable	볼륨을 사용할 수 없습니다.
+trash.failureBusy	이미 처리 중입니다.
+trash.failureLost	내용이 사라졌습니다.
+trash.failureNotFound	더 이상 휴지통에 없습니다.
+trash.failureDestinationForbidden	그 폴더에 항목을 만들 수 없습니다.
+trash.failureInvalidDestination	그 폴더로는 옮길 수 없습니다.
+trash.failureCancelled	복원이 이 항목에 이르기 전에 중지되었습니다.
+trash.failureUnknown	처리할 수 없습니다.
+trash.sharesBadge	공유됨
+trash.sharesChooseTitle	공유 링크는 어떻게 할까요?
+trash.sharesChooseMessage#other	복원하는 항목에 공유 링크 %lld개가 있었습니다. 삭제된 뒤로 작동하지 않습니다.
+trash.sharesChooseElsewhere	되살리면 새 위치를 가리킵니다.
+trash.sharesKeep	공유 링크 복원
+trash.sharesDrop	공유 링크 삭제
+trash.sharesRestored#other	공유 링크 %lld개를 되살렸습니다
+trash.sharesDropped#other	공유 링크 %lld개를 삭제했습니다
+trash.loadFailed	휴지통을 불러올 수 없습니다.
+trash.folderLoadFailed	이 폴더를 열 수 없습니다.
+trash.folderEmpty	이 폴더는 비어 있습니다.
+trash.restoring	복원하는 중…
+trash.columnOriginalLocation	원래 위치
+trash.columnDeletedBy	삭제한 사람
+trash.columnDeletedOn	삭제한 날짜
+trash.columnRemoved	영구 삭제

@@ -215,6 +215,8 @@ public struct FavoritesFeature {
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
+            /// "Open Trash" on the toast after a delete in a folder opened here.
+            case openTrashTapped
             case favoritesChanged
             case openDownloadsTapped
             case goToSharedTab
@@ -524,7 +526,7 @@ public struct FavoritesFeature {
                 // The preview follows the new name; the results behind it search again so they do too.
                 return .send(.searchRetryTapped)
 
-            case .previewHost(.presented(.deleteResponse(.success))):
+            case let .previewHost(.presented(.deleteResponse(.success(result)))) where !result.removedIDs.isEmpty:
                 // The previewed file is gone: back to the results, which search again without it.
                 state.previewHost = nil
                 return .send(.searchRetryTapped)
@@ -605,6 +607,9 @@ public struct FavoritesFeature {
 
             case .path(.element(id: _, action: .delegate(.goToSharedTab))):
                 return .send(.delegate(.goToSharedTab))
+
+            case .path(.element(id: _, action: .delegate(.openTrashTapped))):
+                return .send(.delegate(.openTrashTapped))
 
             case let .path(.element(id: _, action: .delegate(.uploadRequested(files)))):
                 return .send(.delegate(.uploadRequested(files)))

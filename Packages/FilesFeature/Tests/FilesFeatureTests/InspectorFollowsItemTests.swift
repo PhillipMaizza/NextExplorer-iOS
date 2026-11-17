@@ -53,7 +53,7 @@ struct InspectorFollowsItemTests {
     func deletingTheInspectedItemClosesTheInspector() async {
         let store = makeStore(showing: report, among: [report, notes])
 
-        await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(itemID: "Docs/report.pdf")))) {
+        await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(removedIDs: ["Docs/report.pdf"])))) {
             $0.items = [notes]
             $0.infoItem = nil
             $0.infoPhase = .idle
@@ -64,7 +64,7 @@ struct InspectorFollowsItemTests {
     func removingAnotherItemKeepsTheInspectorOpen() async {
         let store = makeStore(showing: report, among: [report, notes])
 
-        await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(itemID: TestPath.docsNotes)))) {
+        await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(removedIDs: [TestPath.docsNotes])))) {
             $0.items = [report]
         }
     }

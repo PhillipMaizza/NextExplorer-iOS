@@ -47,7 +47,15 @@ enum CoreModelsFixture: String, FixtureFile {
     // MARK: delete-impact
 
     case deleteImpactMissingShareCount = "delete-impact/missing-share-count"
+    case deleteImpactTrashAll = "delete-impact/trash-all"
+    case deleteImpactTrashDisabled = "delete-impact/trash-disabled"
+    case deleteImpactTrashMixed = "delete-impact/trash-mixed"
     case deleteImpactTwoLinks = "delete-impact/two-links"
+
+    // MARK: delete outcome
+
+    case deleteOutcomeEachStatus = "delete-outcome/each-status"
+    case deleteOutcomeLegacySuccess = "delete-outcome/legacy-success"
 
     // MARK: favorite
 
@@ -105,6 +113,15 @@ enum CoreModelsFixture: String, FixtureFile {
     case serverFeaturesEditorExtensions = "server-features/editor-extensions"
     case serverFeaturesPersonalEnabled = "server-features/personal-enabled"
     case serverFeaturesVolumeUsageEnabledUserVolumesDisabled = "server-features/volume-usage-enabled-user-volumes-disabled"
+    case serverFeaturesTrashEnabled = "server-features/trash-enabled"
+    case serverFeaturesTrashErrorShape = "server-features/trash-error-shape"
+
+    // MARK: trash
+
+    case trashActionResultStatuses = "trash/action-result-statuses"
+    case trashEmptySummary = "trash/empty-summary"
+    case trashFolderEntries = "trash/folder-entries"
+    case trashListing = "trash/listing"
 
     // MARK: server-settings
 

@@ -15,7 +15,7 @@ public struct DestinationPickerFeature {
         static let searchLimit = 50
     }
 
-    public enum Purpose: Equatable, Sendable { case move, upload }
+    public enum Purpose: Equatable, Sendable { case move, upload, restore }
 
     @ObservableState
     public struct State: Equatable, Sendable {
@@ -83,6 +83,14 @@ public struct DestinationPickerFeature {
             directoryPath = startPath
         }
 
+        /// A folder to restore trashed items into, starting at the root location list.
+        public init(serverURL: URL, restoringFrom startPath: String) {
+            self.serverURL = serverURL
+            purpose = .restore
+            items = []
+            directoryPath = startPath
+        }
+
         /// The leading toolbar button steps back up the drill path while there is one,
         /// otherwise it dismisses the sheet.
         public var canNavigateBack: Bool {
@@ -100,6 +108,9 @@ public struct DestinationPickerFeature {
                 // `nil` while the folder's listing is still loading: confirm stays disabled
                 // until the server says uploads are allowed here.
                 !directoryPath.isEmpty && (currentAccess?.canUpload ?? false)
+            case .restore:
+                // The server checks the right to create each item; this only rules out the root.
+                !directoryPath.isEmpty && currentAccess != nil
             }
         }
     }

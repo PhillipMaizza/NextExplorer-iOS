@@ -24,6 +24,8 @@
                 )
             case .settings:
                 SettingsView(store: store.scope(state: \.settings, action: \.settings))
+            case .trash:
+                MacTrashView(store: store.scope(state: \.trash, action: \.trash))
             }
         }
     }

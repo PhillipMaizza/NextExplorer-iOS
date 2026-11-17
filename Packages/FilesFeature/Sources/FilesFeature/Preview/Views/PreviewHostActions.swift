@@ -22,7 +22,14 @@ struct PreviewHostActions: ViewModifier {
     }
 
     private var isConfirmingDelete: Binding<Bool> {
-        Binding(get: { host.deleteConfirmationItem != nil }, set: { _ in })
+        Binding(
+            get: { host.deleteConfirmationItem != nil && BrowseDeleteCopy.isReady(host.deleteImpactCheck) },
+            set: { _ in }
+        )
+    }
+
+    private var isShowingKept: Binding<Bool> {
+        Binding(get: { !host.keptDeletes.isEmpty }, set: { _ in })
     }
 
     func body(content: Content) -> some View {
@@ -40,17 +47,19 @@ struct PreviewHostActions: ViewModifier {
                 )
             }
             .dsAlert(isPresented: isConfirmingDelete) {
-                DSAlertSheet(
-                    icon: IconKit.delete,
-                    title: host.deleteConfirmationItem.map { L10n.Browse.deleteConfirmOne($0.name) }
-                        ?? L10n.Browse.deleteConfirmTitle,
-                    message: L10n.Browse.deleteMessage,
-                    confirmTitle: L10n.Common.delete,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
+                BrowseDeleteCopy.alert(
+                    title: BrowseDeleteCopy.title(host),
+                    check: host.deleteImpactCheck,
                     onConfirm: { host.send(.deleteConfirmed) },
+                    onDeletePermanently: { host.send(.deletePermanentlyConfirmed(fromPreview: false)) },
                     onDismiss: { host.send(.deleteCancelled) }
+                )
+            }
+            .dsAlert(isPresented: isShowingKept) {
+                BrowseDeleteCopy.keptAlert(
+                    host.keptDeletes,
+                    onDeletePermanently: { host.send(.keptDeletePermanentlyConfirmed) },
+                    onDismiss: { host.send(.keptDeleteDismissed) }
                 )
             }
             .dsSheet(item: $shareTarget) { item in

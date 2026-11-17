@@ -1111,3 +1111,80 @@ shareUpload.nameLabel	檔案名稱
 shareUpload.namesLabel	檔案名稱
 shareUpload.nameHint	上傳時使用的檔案名稱。副檔名維持不變。
 spotlight.placeholder	搜尋檔案和資料夾
+trash.title	資源回收筒
+trash.rowSubtitle	可回復的已刪除項目
+trash.moveToTrash	移至資源回收筒
+trash.deletePermanently	永久刪除
+trash.deleteMessage#other	它會移到資源回收筒，資源回收筒會將已刪除項目保留 %lld 天，以便回復。
+trash.deleteMessageGeneric	它會移到資源回收筒，已刪除的項目可從資源回收筒回復。
+trash.deleteSomePermanent#other	其中 %lld 個項目無法移至資源回收筒，將被永久刪除。
+trash.reasonDisabled	資源回收筒已關閉。
+trash.reasonOtherDevice	它與所在磁碟區的資源回收筒不在同一顆磁碟上。
+trash.reasonTooLarge	它比所在磁碟區的整個資源回收筒還大。
+trash.reasonZoneRoot	整個磁碟區無法移至自己的資源回收筒。
+trash.reasonZoneUnwritable	無法寫入所在磁碟區的資源回收筒。
+trash.reasonNoZone	它不在有資源回收筒的位置。
+trash.reasonUnknown	伺服器未說明原因。
+trash.deleteLinkedShares#other	此內容有 %lld 個分享連結。內容在資源回收筒中時連結失效，還原時可以恢復。
+trash.keptTitle	無法移至資源回收筒
+trash.keptTooLarge	「%1$@」大小為 %2$@，超過其卷宗資源回收筒可容納的 %3$@。
+trash.keptReason	「%1$@」：%2$@
+trash.movedToTrash#other	已將 %lld 個項目移到資源回收筒
+trash.openTrash	打開資源回收筒
+trash.replaceKept	「%@」無法移到資源回收筒，因此未取代任何內容。
+trash.subtitle#other	項目會在刪除 %lld 天後被永久刪除。
+trash.emptyState	資源回收筒是空的。
+trash.disabledNotice	資源回收筒已關閉：刪除會永久移除項目。這裡仍有的項目可以還原。
+trash.unavailable	磁碟區無法使用
+trash.removedToday	今天刪除
+trash.removedIn#other	%lld 天後刪除
+trash.locationPersonal	個人資料夾
+trash.locationUnknown	未知
+trash.deletedByYou	你
+trash.deletedByShareLink	分享連結
+trash.deletedByUnknown	未知
+trash.deletedBy	刪除者：%@
+trash.restore	還原
+trash.restoreTo	還原到…
+trash.restoreHere	回復到這裡
+trash.restoreFolder	還原整個資料夾
+trash.openLocation	開啟原始位置
+trash.emptyTrash	清空資源回收筒
+trash.forget	忘記
+trash.confirmDeleteTitle	永久刪除？
+trash.confirmDeleteMessage#other	%lld 個項目將被永久刪除。此動作無法還原。
+trash.confirmEmptyTitle	清空資源回收筒？
+trash.confirmEmptyMessage	資源回收筒中的所有內容都將被永久刪除。此動作無法還原。
+trash.restored#other	已還原 %lld 個項目
+trash.renamed	"%1$@" 已還原為 "%2$@"：原名稱已被使用。
+trash.notRestored#other	%lld 個項目無法還原.
+trash.deletedPermanently#other	已永久刪除 %lld 個項目
+trash.notDeleted#other	%lld 個項目無法刪除.
+trash.emptied#other	資源回收筒已清空：刪除了 %lld 個項目
+trash.leftBehind#other	%lld 個項目無法刪除，仍在資源回收筒中。
+trash.failureForbidden	你已無法寫入其原始位置。
+trash.failureBlocked	其資料夾的位置現在已被其他內容佔用。
+trash.failureUnavailable	其所在磁碟區無法使用。
+trash.failureBusy	它正在處理中。
+trash.failureLost	其內容已消失。
+trash.failureNotFound	它已不在資源回收筒中。
+trash.failureDestinationForbidden	你無法在該資料夾中建立項目。
+trash.failureInvalidDestination	該資料夾無法接收它。
+trash.failureCancelled	回復在處理到它之前已停止。
+trash.failureUnknown	無法處理。
+trash.sharesBadge	已分享
+trash.sharesChooseTitle	如何處理分享連結？
+trash.sharesChooseMessage#other	你要還原的內容有 %lld 個分享連結，自刪除起已失效。
+trash.sharesChooseElsewhere	恢復後，連結將指向新位置。
+trash.sharesKeep	恢復分享連結
+trash.sharesDrop	刪除分享連結
+trash.sharesRestored#other	已恢復 %lld 個分享連結
+trash.sharesDropped#other	已刪除 %lld 個分享連結
+trash.loadFailed	無法載入資源回收筒。
+trash.folderLoadFailed	無法開啟此資料夾。
+trash.folderEmpty	此資料夾是空的。
+trash.restoring	正在回復…
+trash.columnOriginalLocation	原始位置
+trash.columnDeletedBy	刪除者
+trash.columnDeletedOn	刪除時間
+trash.columnRemoved	永久刪除

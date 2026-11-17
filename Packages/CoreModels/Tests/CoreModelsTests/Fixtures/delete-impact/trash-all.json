@@ -1,0 +1,12 @@
+{
+  "shareCount": 1,
+  "shares": [],
+  "trash": {
+    "enabled": true,
+    "retentionDays": 30,
+    "items": [
+      { "path": "Files/a.txt", "disposition": "trash", "reason": null, "shareCount": 1 },
+      { "path": "Files/b", "disposition": "trash", "reason": null, "shareCount": 0 }
+    ]
+  }
+}

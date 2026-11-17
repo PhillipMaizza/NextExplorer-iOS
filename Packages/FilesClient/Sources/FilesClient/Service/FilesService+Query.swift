@@ -9,7 +9,12 @@ extension FilesService {
 
     /// The address of `path` under the server with `items` as its query, in the order given.
     static func url(serverURL: URL, path: String, items: [(String, String)]) throws -> URL {
-        var components = URLComponents(url: serverURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
+        try url(serverURL.appendingPathComponent(path), items: items)
+    }
+
+    /// `base` with the query items added, encoded as above.
+    static func url(_ base: URL, items: [(String, String)]) throws -> URL {
+        var components = URLComponents(url: base, resolvingAgainstBaseURL: false)
         components?.percentEncodedQueryItems = items.map { name, value in
             URLQueryItem(
                 name: name,

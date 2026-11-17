@@ -2,6 +2,12 @@ import CoreModels
 import Foundation
 import NetworkClient
 
+private enum Constants {
+    /// The Mac's delete alert waits for the delete check; a slow server gets the alert's safe wording
+    /// instead of a Delete key that seems to do nothing.
+    static let deleteImpactMacTimeout: TimeInterval = 3
+}
+
 extension FilesService {
     /// `POST /api/files/rename`, confirmed against `backend/src/routes/files/rename.js`:
     /// `path` is the item's *parent* directory, `name` its current name: matching `FileItem`'s
@@ -385,6 +391,9 @@ extension FilesService {
     func deleteImpact(serverURL: URL, items: [FileItem]) async throws -> DeleteImpact {
         let url = serverURL.appendingPathComponent(APIPath.filesDeleteImpact)
         var request = Self.makeRequest(url: url, method: .post)
+        #if os(macOS)
+            request.timeoutInterval = Constants.deleteImpactMacTimeout
+        #endif
         request.setJSONContentType()
         do {
             let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(
@@ -400,28 +409,35 @@ extension FilesService {
     }
 
     /// `DELETE /api/files`, confirmed against `backend/src/routes/files/delete.js` and
-    /// `fileTransferService.resolveDeleteTargets`: each item is `{path, name}`; again exactly
-    /// `FileItem`'s own fields, `kind` included as the server's fallback for already missing items.
-    func deleteItems(serverURL: URL, items: [FileItem]) async throws {
+    /// `fileTransferService.deleteItems`: each item is `{path, name}`; again exactly `FileItem`'s own
+    /// fields, `kind` included as the server's fallback for already missing items. On a server with a
+    /// trash the items go there unless `permanent`; the answer says, per item, where each went.
+    func deleteItems(serverURL: URL, items: [FileItem], permanent: Bool) async throws -> DeleteOutcome {
         let scope = activeScope()
         let url = serverURL.appendingPathComponent(APIPath.files)
         var request = Self.makeRequest(url: url, method: .delete, isMutation: true)
         request.setJSONContentType()
         do {
-            let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(
-                path: $0.path,
-                name: $0.name,
-                kind: $0.kind
-            ) })
+            let body = DeleteItemsBody(
+                items: items.map { DeleteItemsBody.Item(
+                    path: $0.path,
+                    name: $0.name,
+                    kind: $0.kind
+                ) },
+                permanent: permanent ? true : nil
+            )
             request.httpBody = try JSONEncoder().encode(body)
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
-        let (_, response) = try await performSend(request)
+        let (data, response) = try await performSend(request)
         try Self.validate(response)
-        for item in items {
+        let outcome = (try? Self.makeDecoder().decode(DeleteOutcome.self, from: data)) ?? DeleteOutcome()
+        let kept = Set(outcome.kept(of: items).map(\.id))
+        for item in items where !kept.contains(item.id) {
             textEditorETags.forget(scope: scope, serverURL: serverURL, path: item.id)
         }
+        return outcome
     }
 
     /// `POST /api/files/copy` and `POST /api/files/move`, confirmed against

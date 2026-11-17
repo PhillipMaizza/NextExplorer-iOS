@@ -14,6 +14,8 @@ public struct BrowseTabFeature {
         /// Folders left by going back, nearest last, so Forward (⌘]) can reopen them. Any
         /// other navigation clears it, as in Finder.
         public var forwardStack: [BrowseFeature.State] = []
+        /// The trash, pushed over the root from its row or a delete's Open Trash.
+        @Presents public var trash: TrashFeature.State?
 
         public init(serverURL: URL) {
             root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
@@ -60,6 +62,9 @@ public struct BrowseTabFeature {
         case offlineAvailabilityChanged
         /// Files another app shared in, handed to the topmost screen.
         case receiveSharedFiles([URL])
+        /// Opens the trash: pushed over the root on iPhone and iPad, the sidebar's Trash on the Mac.
+        case openTrash
+        case trash(PresentationAction<TrashFeature.Action>)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -71,6 +76,8 @@ public struct BrowseTabFeature {
             case offlinePinRequested([FileItem])
             case offlineUnpinRequested(path: String)
             case saveRequested([DownloadSaveRequest])
+            /// Mac: the trash lives in the sidebar, outside this tab.
+            case openTrashTapped
         }
     }
 
@@ -190,6 +197,29 @@ public struct BrowseTabFeature {
                  let .path(.element(id: _, action: .delegate(.saveRequested(requests)))):
                 return .send(.delegate(.saveRequested(requests)))
 
+            case .root(.delegate(.openTrashTapped)), .path(.element(id: _, action: .delegate(.openTrashTapped))):
+                return .send(.openTrash)
+
+            case .openTrash:
+                #if os(macOS)
+                    return .send(.delegate(.openTrashTapped))
+                #else
+                    state.forwardStack = []
+                    state.path.removeAll()
+                    state.trash = TrashFeature.State(serverURL: state.root.serverURL)
+                    return .none
+                #endif
+
+            case let .trash(.presented(.delegate(.openPath(path, title)))):
+                state.trash = nil
+                return .send(.navigateToDirectory(path: path, title: title))
+
+            case .trash(.presented(.delegate(.restored))):
+                return .send(.syncPathStack)
+
+            case .trash:
+                return .none
+
             case .offlineAvailabilityChanged:
                 return .merge(
                     [.send(.root(.computeOfflineAvailability))]
@@ -248,6 +278,9 @@ public struct BrowseTabFeature {
         }
         .forEach(\.path, action: \.path) {
             BrowseFeature()
+        }
+        .ifLet(\.$trash, action: \.trash) {
+            TrashFeature()
         }
     }
 

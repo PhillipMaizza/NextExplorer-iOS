@@ -90,15 +90,15 @@ struct ThumbnailImage: View {
     @Dependency(\.date) private var date
     @Dependency(\.continuousClock) private var clock
 
-    /// Whether files of this kind are drawn from their own content, which the server makes no
-    /// thumbnail of: an audio file's cover art and a text file's first lines.
     /// How long to wait before asking again: what the server asked, kept within bounds so a wrong
     /// value from it can neither hammer it nor park the thumbnail for good.
-    static func pendingDelay(asked: Duration?) -> Duration {
+    nonisolated static func pendingDelay(asked: Duration?) -> Duration {
         min(max(asked ?? Constants.pendingRetryDelay, Constants.pendingMinDelay), Constants.pendingMaxDelay)
     }
 
-    static func readsOwnContent(kind: String) -> Bool {
+    /// Whether files of this kind are drawn from their own content, which the server makes no
+    /// thumbnail of: an audio file's cover art and a text file's first lines.
+    nonisolated static func readsOwnContent(kind: String) -> Bool {
         FileItem.isAudioKind(kind) || TextSnippet.isTextKind(kind)
     }
 

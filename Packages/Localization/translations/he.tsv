@@ -1110,3 +1110,112 @@ shareUpload.nameLabel	שם הקובץ
 shareUpload.namesLabel	שמות הקבצים
 shareUpload.nameHint	השם שתחתיו הקובץ יועלה. הסיומת נשארת זהה.
 spotlight.placeholder	חיפוש קבצים ותיקיות
+trash.title	פח אשפה
+trash.rowSubtitle	פריטים שנמחקו וניתן לשחזר
+trash.moveToTrash	העברה לפח
+trash.deletePermanently	מחיקה לצמיתות
+trash.deleteMessage#one	הפריט יעבור לפח, שמחזיק פריטים שנמחקו (ימים: %lld) כדי שאפשר יהיה לשחזר אותם.
+trash.deleteMessage#two	הפריט יעבור לפח, שמחזיק פריטים שנמחקו (ימים: %lld) כדי שאפשר יהיה לשחזר אותם.
+trash.deleteMessage#other	הפריט יעבור לפח, שמחזיק פריטים שנמחקו (ימים: %lld) כדי שאפשר יהיה לשחזר אותם.
+trash.deleteMessageGeneric	הפריט יעבור לפח, שממנו אפשר לשחזר פריטים שנמחקו.
+trash.deleteSomePermanent#one	פריטים שלא יכולים לעבור לפח וימחקו לצמיתות: %lld.
+trash.deleteSomePermanent#two	פריטים שלא יכולים לעבור לפח וימחקו לצמיתות: %lld.
+trash.deleteSomePermanent#other	פריטים שלא יכולים לעבור לפח וימחקו לצמיתות: %lld.
+trash.reasonDisabled	הפח כבוי.
+trash.reasonOtherDevice	הוא נמצא בדיסק אחר מזה של הפח של הכרך שלו.
+trash.reasonTooLarge	הוא גדול מכל הפח של הכרך שלו.
+trash.reasonZoneRoot	כרך שלם לא יכול לעבור לפח של עצמו.
+trash.reasonZoneUnwritable	אי אפשר לכתוב לפח של הכרך שלו.
+trash.reasonNoZone	הוא לא נמצא במקום שיש בו פח.
+trash.reasonUnknown	השרת לא ציין סיבה.
+trash.deleteLinkedShares#one	קישורי שיתוף לתוכן הזה: %lld. הם לא פועלים כל עוד התוכן בפח, ואפשר להחזיר אותם בשחזור.
+trash.deleteLinkedShares#two	קישורי שיתוף לתוכן הזה: %lld. הם לא פועלים כל עוד התוכן בפח, ואפשר להחזיר אותם בשחזור.
+trash.deleteLinkedShares#other	קישורי שיתוף לתוכן הזה: %lld. הם לא פועלים כל עוד התוכן בפח, ואפשר להחזיר אותם בשחזור.
+trash.keptTitle	לא ניתן להעביר לפח
+trash.keptTooLarge	‏„%1$@” בגודל %2$@, יותר מה־%3$@ שהפח של הכרך שלו יכול להכיל.
+trash.keptReason	‏„%1$@”: %2$@
+trash.movedToTrash#one	פריטים שהועברו לפח: %lld
+trash.movedToTrash#two	פריטים שהועברו לפח: %lld
+trash.movedToTrash#other	פריטים שהועברו לפח: %lld
+trash.openTrash	פתיחת הפח
+trash.replaceKept	‏„%@” לא יכול היה לעבור לפח, לכן שום דבר לא הוחלף.
+trash.subtitle#one	פריטים נמחקים לצמיתות כעבור ימים מהמחיקה: %lld.
+trash.subtitle#two	פריטים נמחקים לצמיתות כעבור ימים מהמחיקה: %lld.
+trash.subtitle#other	פריטים נמחקים לצמיתות כעבור ימים מהמחיקה: %lld.
+trash.emptyState	הפח ריק.
+trash.disabledNotice	הפח כבוי: מחיקה מסירה פריטים לצמיתות. מה שעדיין כאן ניתן לשחזור.
+trash.unavailable	הכרך אינו זמין
+trash.removedToday	יוסר היום
+trash.removedIn#one	יוסר בעוד (ימים): %lld
+trash.removedIn#two	יוסר בעוד (ימים): %lld
+trash.removedIn#other	יוסר בעוד (ימים): %lld
+trash.locationPersonal	תיקייה אישית
+trash.locationUnknown	מיקום לא ידוע
+trash.deletedByYou	את/ה
+trash.deletedByShareLink	קישור שיתוף
+trash.deletedByUnknown	לא ידוע
+trash.deletedBy	נמחק על ידי %@
+trash.restore	שחזור
+trash.restoreTo	שחזור אל…
+trash.restoreHere	שחזור לכאן
+trash.restoreFolder	שחזור התיקייה כולה
+trash.openLocation	פתיחת המיקום המקורי
+trash.emptyTrash	ריקון הפח
+trash.forget	שכחה
+trash.confirmDeleteTitle	למחוק לצמיתות?
+trash.confirmDeleteMessage#one	פריטים יוסרו לצמיתות (מספר: %lld). אי אפשר לבטל את הפעולה.
+trash.confirmDeleteMessage#two	פריטים יוסרו לצמיתות (מספר: %lld). אי אפשר לבטל את הפעולה.
+trash.confirmDeleteMessage#other	פריטים יוסרו לצמיתות (מספר: %lld). אי אפשר לבטל את הפעולה.
+trash.confirmEmptyTitle	לרוקן את הפח?
+trash.confirmEmptyMessage	כל מה שבפח יוסר לצמיתות. אי אפשר לבטל את הפעולה.
+trash.restored#one	פריטים ששוחזרו: %lld
+trash.restored#two	פריטים ששוחזרו: %lld
+trash.restored#other	פריטים ששוחזרו: %lld
+trash.renamed	‏„%1$@” שוחזר בשם „%2$@”: השם היה תפוס.
+trash.notRestored#one	פריטים שלא ניתן היה לשחזר: %lld.
+trash.notRestored#two	פריטים שלא ניתן היה לשחזר: %lld.
+trash.notRestored#other	פריטים שלא ניתן היה לשחזר: %lld.
+trash.deletedPermanently#one	פריטים שנמחקו לצמיתות: %lld
+trash.deletedPermanently#two	פריטים שנמחקו לצמיתות: %lld
+trash.deletedPermanently#other	פריטים שנמחקו לצמיתות: %lld
+trash.notDeleted#one	פריטים שלא ניתן היה למחוק: %lld.
+trash.notDeleted#two	פריטים שלא ניתן היה למחוק: %lld.
+trash.notDeleted#other	פריטים שלא ניתן היה למחוק: %lld.
+trash.emptied#one	הפח רוקן, פריטים שהוסרו: %lld
+trash.emptied#two	הפח רוקן, פריטים שהוסרו: %lld
+trash.emptied#other	הפח רוקן, פריטים שהוסרו: %lld
+trash.leftBehind#one	פריטים שלא ניתן היה להסיר ועדיין שם: %lld.
+trash.leftBehind#two	פריטים שלא ניתן היה להסיר ועדיין שם: %lld.
+trash.leftBehind#other	פריטים שלא ניתן היה להסיר ועדיין שם: %lld.
+trash.failureForbidden	אין לך עוד הרשאת כתיבה במקום שבו היה.
+trash.failureBlocked	משהו אחר נמצא עכשיו במקום התיקייה שלו.
+trash.failureUnavailable	הכרך שלו אינו זמין.
+trash.failureBusy	הוא כבר בטיפול.
+trash.failureLost	התוכן שלו נעלם.
+trash.failureNotFound	הוא כבר לא בפח.
+trash.failureDestinationForbidden	אי אפשר ליצור פריטים בתיקייה הזו.
+trash.failureInvalidDestination	התיקייה הזו לא יכולה לקבל אותו.
+trash.failureCancelled	השחזור נעצר לפני שהגיע אליו.
+trash.failureUnknown	לא ניתן היה לטפל בו.
+trash.sharesBadge	משותף
+trash.sharesChooseTitle	מה לעשות בקישורי השיתוף?
+trash.sharesChooseMessage#one	קישורי שיתוף ששייכים למה שמשוחזר: %lld. הם לא פועלים מאז המחיקה.
+trash.sharesChooseMessage#two	קישורי שיתוף ששייכים למה שמשוחזר: %lld. הם לא פועלים מאז המחיקה.
+trash.sharesChooseMessage#other	קישורי שיתוף ששייכים למה שמשוחזר: %lld. הם לא פועלים מאז המחיקה.
+trash.sharesChooseElsewhere	אם יוחזרו, הם יצביעו למיקום החדש.
+trash.sharesKeep	שחזור קישורי השיתוף
+trash.sharesDrop	מחיקת קישורי השיתוף
+trash.sharesRestored#one	קישורי שיתוף שהוחזרו: %lld
+trash.sharesRestored#two	קישורי שיתוף שהוחזרו: %lld
+trash.sharesRestored#other	קישורי שיתוף שהוחזרו: %lld
+trash.sharesDropped#one	קישורי שיתוף שנמחקו: %lld
+trash.sharesDropped#two	קישורי שיתוף שנמחקו: %lld
+trash.sharesDropped#other	קישורי שיתוף שנמחקו: %lld
+trash.loadFailed	לא ניתן היה לטעון את הפח.
+trash.folderLoadFailed	לא ניתן היה לפתוח את התיקייה.
+trash.folderEmpty	התיקייה ריקה.
+trash.restoring	משחזר…
+trash.columnOriginalLocation	מיקום מקורי
+trash.columnDeletedBy	נמחק על ידי
+trash.columnDeletedOn	תאריך מחיקה
+trash.columnRemoved	הסרה

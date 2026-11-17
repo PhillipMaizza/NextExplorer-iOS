@@ -7,7 +7,8 @@ import NetworkClient
 @Reducer
 public struct MainTabFeature {
     public enum Tab: Equatable, Hashable, Sendable {
-        case browse, favorites, shared, downloads, settings
+        /// `trash` is a sidebar section on iPad and the Mac; a phone reaches the trash from the Browse root.
+        case browse, favorites, shared, downloads, settings, trash
     }
 
     /// The "Upload complete" toast shown app-wide once the queue drains. `openDestination` is
@@ -34,6 +35,8 @@ public struct MainTabFeature {
         public var shared: SharedFeature.State
         public var downloads = OfflineTabFeature.State()
         public var settings: SettingsFeature.State
+        /// The trash as a sidebar section (iPad, Mac). Kept in memory only, so it ends with the session.
+        public var trash: TrashFeature.State
         public var uploads: UploadsFeature.State
         public var downloadQueue: DownloadQueueFeature.State
         /// The offline download engine, a session lifetime sibling so its long running download
@@ -66,9 +69,16 @@ public struct MainTabFeature {
             downloads = OfflineTabFeature.State(serverURL: serverURL)
             shared = SharedFeature.State(serverURL: serverURL)
             settings = SettingsFeature.State(serverURL: serverURL, user: user)
+            trash = TrashFeature.State(serverURL: serverURL)
             uploads = UploadsFeature.State(serverURL: serverURL)
             downloadQueue = DownloadQueueFeature.State(serverURL: serverURL)
             offline = OfflineDownloadsFeature.State(serverURL: serverURL)
+        }
+
+        /// The tab bar's selection: the phone has no Trash tab, so a sidebar selection carried into
+        /// compact width shows Browse.
+        public var phoneTab: Tab {
+            selectedTab == .trash ? .browse : selectedTab
         }
 
         /// An upload or download the user started is still running, so quitting would stop it.
@@ -127,6 +137,7 @@ public struct MainTabFeature {
         case shared(SharedFeature.Action)
         case downloads(OfflineTabFeature.Action)
         case settings(SettingsFeature.Action)
+        case trash(TrashFeature.Action)
         case uploads(UploadsFeature.Action)
         case downloadQueue(DownloadQueueFeature.Action)
         case offline(OfflineDownloadsFeature.Action)
@@ -196,6 +207,9 @@ public struct MainTabFeature {
             Scope(state: \.settings, action: \.settings) {
                 SettingsFeature()
             }
+            Scope(state: \.trash, action: \.trash) {
+                TrashFeature()
+            }
             Scope(state: \.uploads, action: \.uploads) {
                 UploadsFeature()
             }
@@ -212,7 +226,7 @@ public struct MainTabFeature {
                 switch action {
                 case let .tabSelected(tab):
                     state.selectedTab = tab
-                    return .none
+                    return tab == .trash ? Self.refreshTrashIfLoaded(state) : .none
 
                 case .refreshSelectedTab:
                     switch state.selectedTab {
@@ -221,6 +235,7 @@ public struct MainTabFeature {
                     case .shared: return .send(.shared(.refreshRequested))
                     case .downloads: return .send(.downloads(.refreshButtonTapped))
                     case .settings: return .none
+                    case .trash: return .send(.trash(.refreshPulled))
                     }
 
                 case .newFolderRequested:
@@ -239,14 +254,14 @@ public struct MainTabFeature {
                     switch state.selectedTab {
                     case .browse: return .send(.browse(.goBack))
                     case .favorites: return .send(.favorites(.goBack))
-                    case .shared, .downloads, .settings: return .none
+                    case .shared, .downloads, .settings, .trash: return .none
                     }
 
                 case .forwardRequested:
                     switch state.selectedTab {
                     case .browse: return .send(.browse(.goForward))
                     case .favorites: return .send(.favorites(.goForward))
-                    case .shared, .downloads, .settings: return .none
+                    case .shared, .downloads, .settings, .trash: return .none
                     }
 
                 case .goToFolderPrompted:
@@ -296,7 +311,7 @@ public struct MainTabFeature {
                     switch state.selectedTab {
                     case .browse: return .send(.browse(.goToEnclosingFolder))
                     case .favorites: return .send(.favorites(.goToEnclosingFolder))
-                    case .shared, .downloads, .settings: return .none
+                    case .shared, .downloads, .settings, .trash: return .none
                     }
 
                 case .sharedFilesArrived:
@@ -451,7 +466,8 @@ public struct MainTabFeature {
                         .send(.favorites(.syncPathStack)),
                         .send(.shared(.refreshRequested)),
                         // Back online: pull any files added to pinned folders while offline.
-                        .send(.offline(.autoSync(force: true)))
+                        .send(.offline(.autoSync(force: true))),
+                        Self.refreshTrashIfLoaded(state)
                     )
 
                 case .browse(.delegate(.favoritesChanged)),
@@ -462,6 +478,24 @@ public struct MainTabFeature {
                 case .browse(.delegate(.openDownloadsTapped)), .favorites(.delegate(.openDownloadsTapped)):
                     state.selectedTab = .downloads
                     return .send(.downloads(.refreshButtonTapped))
+
+                case .browse(.delegate(.openTrashTapped)),
+                     .favorites(.delegate(.openTrashTapped)),
+                     .downloads(.delegate(.openTrashTapped)):
+                    #if os(macOS)
+                        // The Mac shows the trash as its sidebar section.
+                        return .send(.tabSelected(.trash))
+                    #else
+                        state.selectedTab = .browse
+                        return .send(.browse(.openTrash))
+                    #endif
+
+                case .trash(.delegate(.restored)):
+                    return .send(.browse(.syncPathStack))
+
+                case let .trash(.delegate(.openPath(path, title))):
+                    state.selectedTab = .browse
+                    return .send(.browse(.navigateToDirectory(path: path, title: title)))
 
                 case .browse(.delegate(.goToSharedTab)),
                      .favorites(.delegate(.goToSharedTab)),
@@ -513,7 +547,7 @@ public struct MainTabFeature {
                         )
                 #endif
 
-                case .browse, .favorites, .shared, .downloads, .settings, .uploads, .downloadQueue, .offline,
+                case .browse, .favorites, .shared, .downloads, .settings, .trash, .uploads, .downloadQueue, .offline,
                      .offlineManage, .delegate,
                      .deviceExportFinished:
                     return .none
@@ -606,6 +640,12 @@ public struct MainTabFeature {
             }
             return .none
         #endif
+    }
+
+    /// The trash changes behind the screen (deletes elsewhere, expiry, another device): a trash
+    /// section already shown reads it again; one never opened loads when it first appears.
+    static func refreshTrashIfLoaded(_ state: State) -> Effect<Action> {
+        state.trash.phase.hasLoaded ? .send(.trash(.refreshPulled)) : .none
     }
 
     /// As many as Finder's Recent Folders menu keeps by default.

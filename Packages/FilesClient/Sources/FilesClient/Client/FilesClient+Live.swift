@@ -126,8 +126,8 @@ public extension FilesClient {
             deleteImpact: { serverURL, items in
                 try await service.deleteImpact(serverURL: serverURL, items: items)
             },
-            deleteItems: { serverURL, items in
-                try await service.deleteItems(serverURL: serverURL, items: items)
+            deleteItems: { serverURL, items, permanent in
+                try await service.deleteItems(serverURL: serverURL, items: items, permanent: permanent)
             },
             transferItems: { serverURL, items, destination, operation in
                 try await service.transferItems(
@@ -327,6 +327,30 @@ public extension FilesClient {
             },
             runTrashMaintenance: { serverURL in
                 try await service.runTrashMaintenance(serverURL: serverURL)
+            },
+            fetchTrash: { serverURL in
+                try await service.fetchTrash(serverURL: serverURL)
+            },
+            fetchTrashEntries: { serverURL, itemID, path in
+                try await service.fetchTrashEntries(serverURL: serverURL, itemID: itemID, path: path)
+            },
+            fetchTrashText: { serverURL, itemID, path in
+                try await service.fetchTrashText(serverURL: serverURL, itemID: itemID, path: path)
+            },
+            restoreTrash: { serverURL, target, destination, shares, onProgress in
+                try await service.restoreTrash(
+                    serverURL: serverURL,
+                    target: target,
+                    destination: destination,
+                    shares: shares,
+                    onProgress: onProgress
+                )
+            },
+            purgeTrash: { serverURL, ids, forgetUnavailable in
+                try await service.purgeTrash(serverURL: serverURL, ids: ids, forgetUnavailable: forgetUnavailable)
+            },
+            emptyTrash: { serverURL in
+                try await service.emptyTrash(serverURL: serverURL)
             },
             updateSystemSettings: { serverURL, patch in
                 try await service.updateSystemSettings(serverURL: serverURL, patch: patch)

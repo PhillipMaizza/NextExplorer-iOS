@@ -20,6 +20,9 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
     /// `folderSize.mode`, and `folderSize.lockedBy` when `FOLDER_SIZE_MODE` decided it.
     public let folderSizeMode: FolderSizeMode
     public let folderSizeLockedBy: String?
+    /// `trash`: whether deleting goes to the trash and for how long it keeps things. `nil` on a server
+    /// older than the trash, which has no trash to show.
+    public let trash: TrashAvailability?
 
     public init(
         isUserVolumesEnabled: Bool = false,
@@ -30,7 +33,8 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         isSearchIndexEnabled: Bool = false,
         searchIndexLockedBy: String? = nil,
         folderSizeMode: FolderSizeMode = .off,
-        folderSizeLockedBy: String? = nil
+        folderSizeLockedBy: String? = nil,
+        trash: TrashAvailability? = nil
     ) {
         self.isUserVolumesEnabled = isUserVolumesEnabled
         self.isVolumeUsageEnabled = isVolumeUsageEnabled
@@ -41,6 +45,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         self.searchIndexLockedBy = searchIndexLockedBy
         self.folderSizeMode = folderSizeMode
         self.folderSizeLockedBy = folderSizeLockedBy
+        self.trash = trash
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -51,6 +56,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         case uploads
         case search
         case folderSize
+        case trash
     }
 
     private struct FlagSection: Decodable {
@@ -96,5 +102,27 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         let folderSize = try? container.decodeIfPresent(FolderSizeSection.self, forKey: .folderSize)
         folderSizeMode = folderSize?.mode.flatMap(FolderSizeMode.init(rawValue:)) ?? .off
         folderSizeLockedBy = folderSize?.lockedBy
+        trash = try? container.decodeIfPresent(TrashAvailability.self, forKey: .trash)
+    }
+}
+
+/// The `trash` section of `GET /api/features`.
+public struct TrashAvailability: Equatable, Sendable, Decodable {
+    public let isEnabled: Bool
+    public let retentionDays: Int?
+
+    public init(isEnabled: Bool, retentionDays: Int?) {
+        self.isEnabled = isEnabled
+        self.retentionDays = retentionDays
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case enabled, retentionDays
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        isEnabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? false
+        retentionDays = try container.decodeIfPresent(Int.self, forKey: .retentionDays)
     }
 }

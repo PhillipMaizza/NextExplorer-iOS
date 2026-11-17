@@ -44,8 +44,10 @@ private enum Constants {
     static let chevronTrailingInset: CGFloat = .space12
     /// The wash behind the Mac account card.
     static let accountCardOpacity: Double = 0.06
-    static let macSidebarMinWidth: CGFloat = 200
-    static let macSidebarIdealWidth: CGFloat = 250
+    /// The Mac opens the sidebar at its minimum rather than its ideal, so the minimum is what
+    /// keeps the account name and the ⌘ hints from crowding.
+    static let macSidebarMinWidth: CGFloat = 250
+    static let macSidebarIdealWidth: CGFloat = 270
     static let macSidebarMaxWidth: CGFloat = 360
     #if os(macOS)
         /// The Mac rows carry their own inset inside their pill, so the footer sits on the sections' edge.
@@ -74,6 +76,7 @@ struct MainTabSidebar: View {
         case .shared: AccessibilityIdentifiers.Tab.shared
         case .downloads: AccessibilityIdentifiers.Tab.downloads
         case .settings: AccessibilityIdentifiers.Tab.settings
+        case .trash: AccessibilityIdentifiers.Tab.trash
         }
     }
 
@@ -84,6 +87,11 @@ struct MainTabSidebar: View {
             (.shared, L10n.Tab.shared, IconKit.tabShare),
             (.downloads, L10n.Tab.offline, IconKit.tabDownloads),
         ]
+    }
+
+    /// The sections this server offers: Trash only where the server has a trash.
+    static func sectionItems(showsTrash: Bool) -> [(tab: MainTabFeature.Tab, title: String, icon: Image)] {
+        showsTrash ? sectionItems + [(.trash, L10n.Trash.title, IconKit.delete)] : sectionItems
     }
 
     var body: some View {
@@ -132,7 +140,7 @@ struct MainTabSidebar: View {
                     appIdentity
                 }
                 Section {
-                    ForEach(Self.sectionItems, id: \.tab) { item in
+                    ForEach(Self.sectionItems(showsTrash: store.browse.root.isTrashAvailable), id: \.tab) { item in
                         sidebarRow(item)
                     }
                 }

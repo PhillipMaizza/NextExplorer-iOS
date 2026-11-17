@@ -26,15 +26,19 @@ public struct DestinationPickerView: View {
         guard store.directoryPath.isEmpty else {
             return (store.directoryPath as NSString).lastPathComponent
         }
-        return store.purpose == .upload
-            ? L10n.Uploads.destinationTitle
-            : L10n.Browse.destinationPickerMoveTitle
+        return switch store.purpose {
+        case .upload: L10n.Uploads.destinationTitle
+        case .move: L10n.Browse.destinationPickerMoveTitle
+        case .restore: L10n.Trash.restoreTo
+        }
     }
 
     private var confirmLabel: String {
-        store.purpose == .upload
-            ? L10n.Uploads.destinationConfirm
-            : L10n.Browse.destinationPickerConfirmMove
+        switch store.purpose {
+        case .upload: L10n.Uploads.destinationConfirm
+        case .move: L10n.Browse.destinationPickerConfirmMove
+        case .restore: L10n.Trash.restoreHere
+        }
     }
 
     public var body: some View {

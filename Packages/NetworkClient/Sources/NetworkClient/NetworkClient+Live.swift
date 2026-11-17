@@ -206,9 +206,56 @@ public extension NetworkClient {
             }
         }
 
+        // Line by line as the server writes them, for a progress stream; the body stays capped like `send`'s.
+        @Sendable func sendLines(
+            _ request: URLRequest, onLine: @escaping @Sendable (Data) -> Void
+        ) async throws -> (Data, HTTPURLResponse) {
+            let holder = DownloadTaskHolder()
+            let body: Data
+            let response: URLResponse?
+            do {
+                (body, response) = try await withTaskCancellationHandler {
+                    try await withCheckedThrowingContinuation { continuation in
+                        let task = session.current.dataTask(with: request)
+                        task.delegate = LineStreamDelegate(maxBytes: maxInMemoryResponseBytes, onLine: onLine) {
+                            continuation.resume(with: $0)
+                        }
+                        if holder.store(task) {
+                            task.resume()
+                        } else {
+                            // Cancelled before it started: cancelling ends it through the delegate, no leak.
+                            task.cancel()
+                        }
+                    }
+                } onCancel: {
+                    holder.cancel()
+                }
+            } catch let error as NetworkError {
+                throw error
+            } catch {
+                throw NetworkError.from(
+                    error,
+                    url: request.url,
+                    isMutation: NetworkClient.isMutation(request),
+                    certificates: certificates
+                )
+            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw NetworkError.invalidResponse
+            }
+            if let error = certificates.certificateError(
+                status: httpResponse.statusCode, bodyPrefix: body, url: request.url
+            ) {
+                throw error
+            }
+            certificates.recordResponse(for: request.url)
+            return (body, httpResponse)
+        }
+
         return NetworkClient(
             send: { try await sendInMemory($0, using: session) },
             lowPrioritySend: { try await sendInMemory($0, using: lowPrioritySession) },
+            sendStreamingLines: { request, onLine in try await sendLines(request, onLine: onLine) },
             upload: { originalRequest, bodyFileURL, onProgress in
                 let request = NetworkClient.markingAsMutation(originalRequest)
                 let data: Data

@@ -7,6 +7,8 @@ import SwiftUI
 
 /// A folder or its search results as a grouped list.
 struct BrowseListContent<Menu: View>: View {
+    /// A split view's sidebar lists the Trash itself, so the root row is only for the iPhone layout.
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
     let store: StoreOf<BrowseFeature>
     let source: BrowsePreviewSource
     let keepsClipboard: Bool
@@ -53,6 +55,12 @@ struct BrowseListContent<Menu: View>: View {
                         }
                     }
                 }
+                if store.showsTrashRow, !isSplitViewDetail {
+                    Section {
+                        TrashRootRow { store.send(.trashTapped) }
+                            .listRowBackground(Color.backgroundSecondary)
+                    }
+                }
                 if store.isSearching, BrowseSearchFooter.isShown(store) {
                     BrowseSearchFooter(store: store)
                         .listRowInsets(EdgeInsets())
@@ -78,6 +86,8 @@ struct BrowseListContent<Menu: View>: View {
 
 /// A folder or its search results as a grid of tiles.
 struct BrowseGridContent<Menu: View>: View {
+    /// A split view's sidebar lists the Trash itself, so the root row is only for the iPhone layout.
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
     let store: StoreOf<BrowseFeature>
     let source: BrowsePreviewSource
     let iconSize: CGFloat
@@ -121,6 +131,11 @@ struct BrowseGridContent<Menu: View>: View {
                         } header: {
                             if store.showsPersonalSpace {
                                 BrowseRootSectionHeader(title: L10n.Browse.locations)
+                            }
+                        }
+                        if store.showsTrashRow, !isSplitViewDetail {
+                            TrashRootGridCell(iconSize: iconSize, cellPadding: FileGridMetrics.cellPadding) {
+                                store.send(.trashTapped)
                             }
                         }
                     }

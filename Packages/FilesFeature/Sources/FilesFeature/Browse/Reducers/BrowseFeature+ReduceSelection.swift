@@ -56,19 +56,14 @@ extension BrowseFeature {
         case .bulkDeleteConfirmed:
             return confirmBulkDelete(&state)
 
+        case .bulkDeletePermanentlyConfirmed:
+            return confirmBulkDelete(&state, permanent: true)
+
         case let .bulkDeleteResponse(.success(result)):
             state.isBulkActionInFlight = false
-            for itemID in result.itemIDs {
-                state.items.remove(id: itemID)
-            }
-            var hadFavorited = false
-            for itemID in result.itemIDs where state.favoritePaths.remove(itemID) != nil {
-                hadFavorited = true
-            }
             state.isSelecting = false
             state.selectedItemIDs = []
-            syncListingCache(state)
-            return hadFavorited ? .send(.delegate(.favoritesChanged)) : .none
+            return applyDeleteResult(&state, result)
 
         case let .bulkDeleteResponse(.failure(error)):
             state.isBulkActionInFlight = false

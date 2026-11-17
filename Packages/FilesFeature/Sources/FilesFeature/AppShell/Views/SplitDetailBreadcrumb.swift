@@ -19,7 +19,7 @@ extension MainTabFeature.State {
         case .favorites:
             directoryPath = favorites.path.last?.directoryPath ?? ""
             isSelecting = favorites.path.last?.isSelecting ?? false
-        case .shared, .downloads, .settings:
+        case .shared, .downloads, .settings, .trash:
             return nil
         }
         return directoryPath.isEmpty || isSelecting ? nil : directoryPath

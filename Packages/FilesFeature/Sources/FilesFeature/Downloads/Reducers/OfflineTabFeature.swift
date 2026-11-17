@@ -155,6 +155,8 @@ public struct OfflineTabFeature {
 
         /// What a folder opened from this tab asks of the rest of the app, as from Browse.
         public enum Delegate: Equatable, Sendable {
+            /// "Open Trash" on the toast after a delete in a folder opened here.
+            case openTrashTapped
             case offlinePinRequested([FileItem])
             case offlineUnpinRequested(path: String)
             case uploadRequested([PendingUpload])
@@ -384,9 +386,12 @@ public struct OfflineTabFeature {
                 state.previewHost = nil
                 return .send(.delegate(.goToSharedTab))
 
-            case .previewHost(.presented(.previewDismissed)),
-                 .previewHost(.presented(.deleteResponse(.success))):
-                // Closing the preview, or deleting its file, returns to the tab.
+            case .previewHost(.presented(.previewDismissed)):
+                state.previewHost = nil
+                return .none
+
+            case let .previewHost(.presented(.deleteResponse(.success(result)))) where !result.removedIDs.isEmpty:
+                // Deleting its file returns to the tab; a file the trash refused stays open.
                 state.previewHost = nil
                 return .none
 
@@ -429,6 +434,9 @@ public struct OfflineTabFeature {
 
             case .path(.element(id: _, action: .delegate(.goToSharedTab))):
                 return .send(.delegate(.goToSharedTab))
+
+            case .path(.element(id: _, action: .delegate(.openTrashTapped))):
+                return .send(.delegate(.openTrashTapped))
 
             case let .path(.element(id: id, action: .delegate(.keptFolderEmptied(removedPaths)))):
                 state.path.pop(from: id)

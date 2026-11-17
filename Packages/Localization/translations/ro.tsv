@@ -1137,3 +1137,112 @@ shareUpload.nameLabel	Numele fișierului
 shareUpload.namesLabel	Numele fișierelor
 shareUpload.nameHint	Numele sub care se încarcă fișierul. Extensia rămâne aceeași.
 spotlight.placeholder	Caută fișiere și foldere
+trash.title	Coș de gunoi
+trash.rowSubtitle	Elemente șterse pe care le poți restaura
+trash.moveToTrash	Mută în coșul de gunoi
+trash.deletePermanently	Șterge definitiv
+trash.deleteMessage#one	Ajunge în coșul de gunoi, care păstrează elementele șterse (zile: %lld) ca să poată fi restaurate.
+trash.deleteMessage#few	Ajunge în coșul de gunoi, care păstrează elementele șterse (zile: %lld) ca să poată fi restaurate.
+trash.deleteMessage#other	Ajunge în coșul de gunoi, care păstrează elementele șterse (zile: %lld) ca să poată fi restaurate.
+trash.deleteMessageGeneric	Ajunge în coșul de gunoi, de unde elementele șterse pot fi restaurate.
+trash.deleteSomePermanent#one	%lld dintre ele nu poate ajunge în coșul de gunoi și va fi șters definitiv.
+trash.deleteSomePermanent#few	%lld dintre ele nu pot ajunge în coșul de gunoi și vor fi șterse definitiv.
+trash.deleteSomePermanent#other	%lld dintre ele nu pot ajunge în coșul de gunoi și vor fi șterse definitiv.
+trash.reasonDisabled	Coșul de gunoi este dezactivat.
+trash.reasonOtherDevice	Se află pe alt disc decât coșul de gunoi al volumului său.
+trash.reasonTooLarge	Este mai mare decât întregul coș de gunoi al volumului său.
+trash.reasonZoneRoot	Un volum întreg nu poate ajunge în propriul coș de gunoi.
+trash.reasonZoneUnwritable	Nu se poate scrie în coșul de gunoi al volumului său.
+trash.reasonNoZone	Nu se află într-un loc cu coș de gunoi.
+trash.reasonUnknown	Serverul nu a spus de ce.
+trash.deleteLinkedShares#one	Acest conținut are %lld link de partajare. Nu funcționează cât timp conținutul este în coșul de gunoi și poate fi readus la restaurare.
+trash.deleteLinkedShares#few	Acest conținut are %lld linkuri de partajare. Nu funcționează cât timp conținutul este în coșul de gunoi și pot fi readuse la restaurare.
+trash.deleteLinkedShares#other	Acest conținut are %lld linkuri de partajare. Nu funcționează cât timp conținutul este în coșul de gunoi și pot fi readuse la restaurare.
+trash.keptTitle	Nu a putut fi mutat în coșul de gunoi
+trash.keptTooLarge	„%1$@” are %2$@, mai mult decât cei %3$@ pe care îi poate păstra coșul volumului său.
+trash.keptReason	„%1$@”: %2$@
+trash.movedToTrash#one	Elemente mutate în coșul de gunoi: %lld
+trash.movedToTrash#few	Elemente mutate în coșul de gunoi: %lld
+trash.movedToTrash#other	Elemente mutate în coșul de gunoi: %lld
+trash.openTrash	Deschide coșul de gunoi
+trash.replaceKept	„%@” nu a putut ajunge în coșul de gunoi, așa că nu s-a înlocuit nimic.
+trash.subtitle#one	Elementele sunt șterse definitiv la %lld zi după ștergere.
+trash.subtitle#few	Elementele sunt șterse definitiv la %lld zile după ștergere.
+trash.subtitle#other	Elementele sunt șterse definitiv la %lld zile după ștergere.
+trash.emptyState	Coșul de gunoi este gol.
+trash.disabledNotice	Coșul de gunoi este dezactivat: ștergerea elimină definitiv. Ce se află încă aici poate fi restaurat.
+trash.unavailable	Volum indisponibil
+trash.removedToday	Se elimină azi
+trash.removedIn#one	Se elimină peste (zile): %lld
+trash.removedIn#few	Se elimină peste (zile): %lld
+trash.removedIn#other	Se elimină peste (zile): %lld
+trash.locationPersonal	Folder personal
+trash.locationUnknown	Necunoscut
+trash.deletedByYou	Dvs.
+trash.deletedByShareLink	Link de partajare
+trash.deletedByUnknown	Necunoscut
+trash.deletedBy	Șters de %@
+trash.restore	Restaurează
+trash.restoreTo	Restaurează în…
+trash.restoreHere	Restaurează aici
+trash.restoreFolder	Restaurează tot dosarul
+trash.openLocation	Deschide locația originală
+trash.emptyTrash	Golește coșul de gunoi
+trash.forget	Uită
+trash.confirmDeleteTitle	Ștergeți definitiv?
+trash.confirmDeleteMessage#one	%lld element va fi eliminat definitiv. Acțiunea nu poate fi anulată.
+trash.confirmDeleteMessage#few	Aceste %lld elemente vor fi șterse definitiv. Acțiunea nu poate fi anulată.
+trash.confirmDeleteMessage#other	Aceste %lld elemente vor fi șterse definitiv. Acțiunea nu poate fi anulată.
+trash.confirmEmptyTitle	Goliți coșul de gunoi?
+trash.confirmEmptyMessage	Tot ce se află în coșul dvs. de gunoi va fi șters definitiv. Acțiunea nu poate fi anulată.
+trash.restored#one	%lld element restaurat
+trash.restored#few	%lld elemente restaurate
+trash.restored#other	%lld elemente restaurate
+trash.renamed	"%1$@" a fost restaurat ca "%2$@": numele era ocupat.
+trash.notRestored#one	%lld element nu a putut fi restaurat.
+trash.notRestored#few	%lld elemente nu au putut fi restaurate.
+trash.notRestored#other	%lld elemente nu au putut fi restaurate.
+trash.deletedPermanently#one	%lld element șters definitiv
+trash.deletedPermanently#few	%lld elemente șterse definitiv
+trash.deletedPermanently#other	%lld elemente șterse definitiv
+trash.notDeleted#one	%lld element nu a putut fi șters.
+trash.notDeleted#few	%lld elemente nu au putut fi șterse.
+trash.notDeleted#other	%lld elemente nu au putut fi șterse.
+trash.emptied#one	Coș de gunoi golit: %lld element eliminat
+trash.emptied#few	Coș de gunoi golit: %lld elemente eliminate
+trash.emptied#other	Coș de gunoi golit: %lld elemente eliminate
+trash.leftBehind#one	%lld element nu a putut fi eliminat și este încă acolo.
+trash.leftBehind#few	%lld elemente nu au putut fi eliminate și sunt încă acolo.
+trash.leftBehind#other	%lld elemente nu au putut fi eliminate și sunt încă acolo.
+trash.failureForbidden	Nu mai puteți scrie unde se afla.
+trash.failureBlocked	Acum altceva ocupă locul folderului său.
+trash.failureUnavailable	Volumul său nu este disponibil.
+trash.failureBusy	Este deja în lucru.
+trash.failureLost	Conținutul său dispăruse.
+trash.failureNotFound	Nu mai este în coșul de gunoi.
+trash.failureDestinationForbidden	Nu puteți crea elemente în acel dosar.
+trash.failureInvalidDestination	Acel dosar nu îl poate primi.
+trash.failureCancelled	Restaurarea s-a oprit înainte să ajungă la el.
+trash.failureUnknown	Nu a putut fi procesat.
+trash.sharesBadge	Partajat
+trash.sharesChooseTitle	Ce se întâmplă cu linkurile de partajare?
+trash.sharesChooseMessage#one	%lld link de partajare aparținea celor pe care le restaurați. Nu mai funcționează de la ștergere.
+trash.sharesChooseMessage#few	%lld linkuri de partajare aparțineau celor pe care le restaurați. Nu mai funcționează de la ștergere.
+trash.sharesChooseMessage#other	%lld linkuri de partajare aparțineau celor pe care le restaurați. Nu mai funcționează de la ștergere.
+trash.sharesChooseElsewhere	Readuse, vor indica noua locație.
+trash.sharesKeep	Restaurează linkurile de partajare
+trash.sharesDrop	Șterge linkurile de partajare
+trash.sharesRestored#one	%lld link de partajare readus
+trash.sharesRestored#few	%lld linkuri de partajare readuse
+trash.sharesRestored#other	%lld linkuri de partajare readuse
+trash.sharesDropped#one	%lld link de partajare șters
+trash.sharesDropped#few	%lld linkuri de partajare șterse
+trash.sharesDropped#other	%lld linkuri de partajare șterse
+trash.loadFailed	Coșul de gunoi nu a putut fi încărcat.
+trash.folderLoadFailed	Acest dosar nu a putut fi deschis.
+trash.folderEmpty	Acest dosar este gol.
+trash.restoring	Se restaurează…
+trash.columnOriginalLocation	Locația originală
+trash.columnDeletedBy	Șters de
+trash.columnDeletedOn	Șters la
+trash.columnRemoved	Eliminare

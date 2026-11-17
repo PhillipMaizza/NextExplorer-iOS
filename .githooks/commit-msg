@@ -1,0 +1,2 @@
+#!/bin/sh
+exec python3 "$(git rev-parse --show-toplevel)/Scripts/check-house-rules.py" --commit-msg "$1"

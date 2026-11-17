@@ -27,6 +27,7 @@ struct BrowseActionSheets: ViewModifier {
                     .onAppear { isDestinationPickerOnScreen = true }
             }
             .dsAlert(isPresented: deleteBinding) { deleteSheet }
+            .dsAlert(isPresented: keptBinding) { keptSheet }
             .dsSheet(item: renameBinding) { renameSheet($0) }
             .dsSheet(item: shareBinding) { shareSheet($0) }
             .dsAlert(isPresented: transferConflictBinding) {
@@ -51,29 +52,38 @@ struct BrowseActionSheets: ViewModifier {
     /// No op setter: the sheet is dismiss disabled and only closes through one of
     /// `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var deleteBinding: Binding<Bool> {
-        Binding(get: { store.deleteConfirmationItem != nil && isFrontmost }, set: { _ in })
+        Binding(
+            get: {
+                store.deleteConfirmationItem != nil && isFrontmost && BrowseDeleteCopy.isReady(store.deleteImpactCheck)
+            },
+            set: { _ in }
+        )
     }
 
     private var deleteSheet: DSAlertSheet {
-        DSAlertSheet(
-            icon: IconKit.delete,
+        // A single item preview dismisses the cover and defers the delete so the row animates out
+        // on the list. The gallery (and the list) delete in place. Either way
+        // `deleteConfirmationItem` clears synchronously, so no binding flicker.
+        let fromPreview = inPreview && !store.isPreviewInGallery
+        return BrowseDeleteCopy.alert(
             title: BrowseDeleteCopy.title(store),
-            message: BrowseDeleteCopy.message(store),
-            confirmTitle: L10n.Common.delete,
-            dismissTitle: L10n.Common.cancel,
-            role: .destructive,
-            closeAccessibilityLabel: L10n.Common.close,
-            onConfirm: {
-                // A single item preview dismisses the cover and defers the delete so the row
-                // animates out on the list. The gallery (and the list) delete in place. Either
-                // way `deleteConfirmationItem` clears synchronously, so no binding flicker.
-                if inPreview, !store.isPreviewInGallery {
-                    store.send(.deleteConfirmedFromPreview)
-                } else {
-                    store.send(.deleteConfirmed)
-                }
-            },
+            check: store.deleteImpactCheck,
+            onConfirm: { store.send(fromPreview ? .deleteConfirmedFromPreview : .deleteConfirmed) },
+            onDeletePermanently: { store.send(.deletePermanentlyConfirmed(fromPreview: fromPreview)) },
             onDismiss: { store.send(.deleteCancelled) }
+        )
+    }
+
+    /// Up once a delete left items the trash refused; only the surface on screen shows it.
+    private var keptBinding: Binding<Bool> {
+        Binding(get: { !store.keptDeletes.isEmpty && isFrontmost }, set: { _ in })
+    }
+
+    private var keptSheet: DSAlertSheet {
+        BrowseDeleteCopy.keptAlert(
+            store.keptDeletes,
+            onDeletePermanently: { store.send(.keptDeletePermanentlyConfirmed) },
+            onDismiss: { store.send(.keptDeleteDismissed) }
         )
     }
 
@@ -154,16 +164,15 @@ struct BrowseListSheets: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .dsAlert(isPresented: Binding(get: { store.bulkDeleteConfirmationIsPresented }, set: { _ in })) {
-                DSAlertSheet(
-                    icon: IconKit.delete,
+            .dsAlert(isPresented: Binding(
+                get: { store.bulkDeleteConfirmationIsPresented && BrowseDeleteCopy.isReady(store.deleteImpactCheck) },
+                set: { _ in }
+            )) {
+                BrowseDeleteCopy.alert(
                     title: BrowseDeleteCopy.bulkTitle(store),
-                    message: BrowseDeleteCopy.message(store),
-                    confirmTitle: L10n.Common.delete,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
+                    check: store.deleteImpactCheck,
                     onConfirm: { store.send(.bulkDeleteConfirmed) },
+                    onDeletePermanently: { store.send(.bulkDeletePermanentlyConfirmed) },
                     onDismiss: { store.send(.bulkDeleteCancelled) }
                 )
             }

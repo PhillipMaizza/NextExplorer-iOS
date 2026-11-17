@@ -79,12 +79,12 @@ import TestUtils
                 ),
                 ChangeCase(
                     name: "delete",
-                    action: .deleteResponse(.success(.init(itemID: "Docs/a.txt"))),
+                    action: .deleteResponse(.success(.init(removedIDs: ["Docs/a.txt"]))),
                     expected: .folders([TestFolder.docs])
                 ),
                 ChangeCase(
                     name: "bulk delete",
-                    action: .bulkDeleteResponse(.success(.init(itemIDs: ["Docs/a.txt"]))),
+                    action: .bulkDeleteResponse(.success(.init(removedIDs: ["Docs/a.txt"]))),
                     expected: .folders([TestFolder.docs])
                 ),
                 ChangeCase(

@@ -15,12 +15,13 @@ func selectSortToolbar(
     isAllSelected: Bool,
     isSelectAvailable: Bool,
     isGridView: Bool,
+    isViewModeAvailable: Bool = true,
     onSelectModeToggled: @escaping () -> Void,
     onSelectAllToggled: @escaping () -> Void,
     onCancel: @escaping () -> Void,
     onToggleViewMode: @escaping () -> Void,
     hasClipboardItems: Bool = false,
-    @ViewBuilder extraViewModes: () -> some View = { EmptyView() },
+    @ViewBuilder extraMenuItems: () -> some View = { EmptyView() },
     @ViewBuilder clipboardMenu: () -> some View = { EmptyView() },
     @ViewBuilder sortMenu: () -> some View
 ) -> some ToolbarContent {
@@ -70,14 +71,16 @@ func selectSortToolbar(
                         }
                     }
                     sortMenu()
-                    Button(action: onToggleViewMode) {
-                        Label {
-                            Text(isGridView ? L10n.Select.listView : L10n.Select.gridView)
-                        } icon: {
-                            isGridView ? IconKit.listBullet : IconKit.squareGrid
+                    if isViewModeAvailable {
+                        Button(action: onToggleViewMode) {
+                            Label {
+                                Text(isGridView ? L10n.Select.listView : L10n.Select.gridView)
+                            } icon: {
+                                isGridView ? IconKit.listBullet : IconKit.squareGrid
+                            }
                         }
                     }
-                    extraViewModes()
+                    extraMenuItems()
                 } label: {
                     IconKit.moreOptions.foregroundStyle(Color.primaryDS)
                 }

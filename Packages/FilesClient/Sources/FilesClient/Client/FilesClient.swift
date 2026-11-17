@@ -68,7 +68,11 @@ public struct FilesClient: Sendable {
     /// `POST /api/files/delete-impact`: how many share links deleting `items` would break.
     /// A warning source for the delete confirmation; the delete itself is never gated on it.
     public var deleteImpact: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> DeleteImpact
-    public var deleteItems: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> Void
+    /// `DELETE /api/files`: to the trash when the server has one, unless `permanent`. The answer
+    /// says per item where it went; an item the trash refused stays on disk as `kept`.
+    public var deleteItems: @Sendable (
+        _ serverURL: URL, _ items: [FileItem], _ permanent: Bool
+    ) async throws -> DeleteOutcome
     /// `POST /api/files/copy` or `/api/files/move` depending on `operation`. `destination` is
     /// the target directory's relative path; the server rejects an empty one ("Cannot copy or
     /// move items to the root path").
@@ -265,6 +269,31 @@ public struct FilesClient: Sendable {
     public var verifyTrash: @Sendable (_ serverURL: URL) async throws -> [TrashVerification]
     /// `POST /api/trash/maintenance` (admin only): runs the maintenance pass now.
     public var runTrashMaintenance: @Sendable (_ serverURL: URL) async throws -> Void
+    /// `GET /api/trash`: the person's trash, newest first. Never cached.
+    public var fetchTrash: @Sendable (_ serverURL: URL) async throws -> TrashListing
+    /// `GET /api/trash/items/:id/entries`: a deleted folder's content at `path` inside it ("" for its top).
+    public var fetchTrashEntries: @Sendable (
+        _ serverURL: URL, _ itemID: String, _ path: String
+    ) async throws -> TrashFolderListing
+    /// `GET /api/trash/items/:id/text`: a text file in the trash, the item itself (`path` "") or an entry.
+    public var fetchTrashText: @Sendable (_ serverURL: URL, _ itemID: String, _ path: String) async throws -> TrashText
+    /// Restores where each came from, or into the `destination` folder when set. `shares` is always sent:
+    /// the server drops the share links when it is missing. A restore into a folder copies and reports
+    /// how far it is (0 to 1) through `onProgress` as it goes.
+    public var restoreTrash: @Sendable (
+        _ serverURL: URL,
+        _ target: TrashTarget,
+        _ destination: String?,
+        _ shares: ShareLinkChoice,
+        _ onProgress: @Sendable @escaping (Double) -> Void
+    ) async throws -> TrashActionResult
+    /// `POST /api/trash/delete`: removes items for good; `forgetUnavailable` (administrators only)
+    /// drops the record of an item whose volume is gone.
+    public var purgeTrash: @Sendable (
+        _ serverURL: URL, _ ids: [String], _ forgetUnavailable: Bool
+    ) async throws -> TrashActionResult
+    /// `POST /api/trash/empty`: everything the person can see in the trash, for good.
+    public var emptyTrash: @Sendable (_ serverURL: URL) async throws -> TrashEmptySummary
     /// `PATCH /api/settings` with only the sections set on the patch (admin only). The server merges
     /// each one and echoes the settings back, which is returned so the caller keeps what it saved.
     public var updateSystemSettings: @Sendable (

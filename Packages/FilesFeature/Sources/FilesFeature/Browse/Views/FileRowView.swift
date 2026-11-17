@@ -17,6 +17,9 @@ struct FileRowView: View {
     let dateModified: Date?
     let size: Int64?
     let customSubtitle: String?
+    /// Whether the name and subtitle wrap instead of being cut to one line each: where the row's
+    /// details matter more than an even list (the trash).
+    var wrapsText = false
     /// A small semibold line rendered under the subtitle, e.g. "Line 58" for a search content
     /// match. `nil` hides it.
     let lineLabel: String?
@@ -71,8 +74,10 @@ struct FileRowView: View {
         isOpening: Bool = false,
         isAvailableOffline: Bool = false,
         dateModified: Date? = nil,
-        size: Int64? = nil
+        size: Int64? = nil,
+        wrapsText: Bool = false
     ) {
+        self.wrapsText = wrapsText
         self.name = name
         self.isDirectory = isDirectory
         self.isAvailableOffline = isAvailableOffline
@@ -170,11 +175,11 @@ struct FileRowView: View {
             VStack(alignment: .leading, spacing: .space2) {
                 Text(displayName)
                     .type(.body2(.semibold), style: isHidden ? .tertiary : .primaryOnSurface)
-                    .lineLimit(1)
+                    .lineLimit(wrapsText ? nil : 1)
                 if let subtitle {
                     Text(subtitle)
                         .type(.body3(.regular), style: isHidden ? .tertiary : .secondary)
-                        .lineLimit(1)
+                        .lineLimit(wrapsText ? nil : 1)
                 }
                 if let lineLabel {
                     Text(lineLabel)

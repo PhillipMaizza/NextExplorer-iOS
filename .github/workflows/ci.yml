@@ -55,6 +55,11 @@ jobs:
           python3 Scripts/test_check_test_determinism.py
           python3 Scripts/check-test-determinism.py
 
+      - name: Check the house rules on the branch
+        run: |
+          python3 Scripts/test_check_house_rules.py
+          python3 Scripts/check-house-rules.py --base origin/main
+
       - name: Self check the platform filter
         run: python3 Scripts/test_ci_platforms.py
 
