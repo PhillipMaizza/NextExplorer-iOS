@@ -24,7 +24,6 @@
             NavigationStack {
                 content
                     .navigationTitle(L10n.Trash.title)
-                    .navigationSubtitle(subtitle)
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
                             Button(role: .destructive) { store.send(.emptyTrashTapped) } label: {
@@ -57,9 +56,10 @@
             }
         }
 
-        private var subtitle: String {
+        /// How long items stay, or that the trash is off, under the table as on iOS.
+        private var footnote: String? {
             guard store.isEnabled else { return L10n.Trash.disabledNotice }
-            return store.retentionDays.map { L10n.Trash.subtitle($0) } ?? ""
+            return store.retentionDays.map { L10n.Trash.subtitle($0) }
         }
 
         private var content: some View {
@@ -68,11 +68,20 @@
             } loaded: {
                 table
             }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if let footnote {
+                    Text(footnote)
+                        .type(.body3(.regular), style: .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, .space16)
+                        .padding(.vertical, .space8)
+                }
+            }
         }
 
         private var table: some View {
-            Table(store.items, selection: $selection) {
-                TableColumn(L10n.Sort.name) { item in
+            Table(store.displayedItems, selection: $selection, sortOrder: sortOrder) {
+                TableColumn(L10n.Sort.name, value: \.name) { item in
                     HStack(spacing: .space8) {
                         icon(for: item)
                         Text(item.name).lineLimit(1).truncationMode(.middle)
@@ -100,7 +109,7 @@
                     Text(TrashRowText.deletedBy(item)).foregroundStyle(Color.secondaryDS)
                 }
                 .width(Metrics.deletedByColumnWidth)
-                TableColumn(L10n.Trash.columnDeletedOn) { item in
+                TableColumn(L10n.Trash.columnDeletedOn, value: \.sortDeletedAt) { item in
                     Text(TrashRowText.deletedOn(item) ?? "").foregroundStyle(Color.secondaryDS)
                 }
                 .width(MacBrowseTableMetrics.dateColumnWidth)
@@ -109,7 +118,7 @@
                         .foregroundStyle(Color.secondaryDS)
                 }
                 .width(Metrics.removedColumnWidth)
-                TableColumn(L10n.Sort.size) { item in
+                TableColumn(L10n.Sort.size, value: \.sortSize) { item in
                     Text(item.size.map(FileSizeFormat.string) ?? "")
                         .foregroundStyle(Color.secondaryDS)
                         .monospacedDigit()
@@ -130,6 +139,30 @@
             .clipped()
             .disabled(store.isBusy)
             .onChange(of: store.items) { _, items in selection.formIntersection(items.ids) }
+        }
+
+        /// The store owns the sort; the table renders it and reports header clicks.
+        private var sortOrder: Binding<[KeyPathComparator<TrashItem>]> {
+            Binding(
+                get: {
+                    let order: SortOrder = store.sortDirection == .ascending ? .forward : .reverse
+                    return switch store.sortOption {
+                    case .name: [KeyPathComparator(\.name, order: order)]
+                    case .size: [KeyPathComparator(\.sortSize, order: order)]
+                    case .deletedOn: [KeyPathComparator(\.sortDeletedAt, order: order)]
+                    }
+                },
+                set: { newValue in
+                    guard let first = newValue.first else { return }
+                    let option: TrashSortOption = switch first.keyPath {
+                    case \TrashItem.sortSize: .size
+                    case \TrashItem.sortDeletedAt: .deletedOn
+                    default: .name
+                    }
+                    store.send(.sortOptionChanged(option))
+                    store.send(.sortDirectionChanged(first.order == .forward ? .ascending : .descending))
+                }
+            )
         }
 
         @ViewBuilder
