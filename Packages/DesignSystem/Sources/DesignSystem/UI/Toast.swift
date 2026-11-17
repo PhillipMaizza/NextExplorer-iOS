@@ -6,7 +6,8 @@ private enum Constants {
     static let spacing: CGFloat = .space8
     static let actionHorizontalPadding: CGFloat = .space12
     static let actionVerticalPadding: CGFloat = .space4
-    static let actionFillOpacity: Double = 0.16
+    static let actionFillOpacity: Double = 0.2
+    static let actionFillOpacityDark: Double = 0.32
     // The tertiary level on the toast's own tint in light mode; dark mode uses full strength, as the text on
     // its mid tone green has less room. The app's tertiary gray would vanish on either.
     static let actionTextOpacity: Double = 0.75
@@ -230,12 +231,14 @@ private struct DSToastOverlay: View {
                     action()
                 }
                 .buttonStyle(DSPressableButtonStyle())
-                .type(.body3(.bold))
+                .type(.caption(.bold))
                 .foregroundStyle(Color.primaryInverted.opacity(colorScheme == .dark ? 1 : Constants.actionTextOpacity))
                 .textCase(.uppercase)
                 .padding(.horizontal, Constants.actionHorizontalPadding)
                 .padding(.vertical, Constants.actionVerticalPadding)
-                .background(Capsule().fill(Color.primaryInverted.opacity(Constants.actionFillOpacity)))
+                .background(Capsule().fill(Color.white.opacity(colorScheme == .dark
+                        ? Constants.actionFillOpacityDark
+                        : Constants.actionFillOpacity)))
             }
         }
         .foregroundStyle(Color.primaryInverted)
