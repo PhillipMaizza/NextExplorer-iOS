@@ -22,6 +22,17 @@ enum BrowseDeleteCopy {
         return L10n.Browse.deleteConfirmMany(store.selectedItemIDs.count)
     }
 
+    /// Whether the confirmation can show. The Mac's native alert keeps the buttons it opened with,
+    /// so there it waits for the check that decides between Move to Trash and Delete; the iOS sheet
+    /// follows the check as it lands.
+    static func isReady(_ check: BrowseFeature.DeleteImpactCheck) -> Bool {
+        #if os(macOS)
+            check != .checking
+        #else
+            true
+        #endif
+    }
+
     /// The confirmation. Where the trash will take anything, the main button moves to the trash and
     /// a second one deletes for good; otherwise one button deletes, as before the trash.
     static func alert(

@@ -52,7 +52,12 @@ struct BrowseActionSheets: ViewModifier {
     /// No op setter: the sheet is dismiss disabled and only closes through one of
     /// `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var deleteBinding: Binding<Bool> {
-        Binding(get: { store.deleteConfirmationItem != nil && isFrontmost }, set: { _ in })
+        Binding(
+            get: {
+                store.deleteConfirmationItem != nil && isFrontmost && BrowseDeleteCopy.isReady(store.deleteImpactCheck)
+            },
+            set: { _ in }
+        )
     }
 
     private var deleteSheet: DSAlertSheet {
@@ -159,7 +164,10 @@ struct BrowseListSheets: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .dsAlert(isPresented: Binding(get: { store.bulkDeleteConfirmationIsPresented }, set: { _ in })) {
+            .dsAlert(isPresented: Binding(
+                get: { store.bulkDeleteConfirmationIsPresented && BrowseDeleteCopy.isReady(store.deleteImpactCheck) },
+                set: { _ in }
+            )) {
                 BrowseDeleteCopy.alert(
                     title: BrowseDeleteCopy.bulkTitle(store),
                     check: store.deleteImpactCheck,

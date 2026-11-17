@@ -22,7 +22,10 @@ struct PreviewHostActions: ViewModifier {
     }
 
     private var isConfirmingDelete: Binding<Bool> {
-        Binding(get: { host.deleteConfirmationItem != nil }, set: { _ in })
+        Binding(
+            get: { host.deleteConfirmationItem != nil && BrowseDeleteCopy.isReady(host.deleteImpactCheck) },
+            set: { _ in }
+        )
     }
 
     private var isShowingKept: Binding<Bool> {
