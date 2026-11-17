@@ -129,6 +129,11 @@ public extension FilesClient {
             deleteItems: { serverURL, items, permanent in
                 try await service.deleteItems(serverURL: serverURL, items: items, permanent: permanent)
             },
+            deleteItemsWithProgress: { serverURL, items, permanent, onProgress in
+                try await service.deleteItems(
+                    serverURL: serverURL, items: items, permanent: permanent, onProgress: onProgress
+                )
+            },
             transferItems: { serverURL, items, destination, operation in
                 try await service.transferItems(
                     serverURL: serverURL, items: items, destination: destination, operation: operation

@@ -73,6 +73,11 @@ public struct FilesClient: Sendable {
     public var deleteItems: @Sendable (
         _ serverURL: URL, _ items: [FileItem], _ permanent: Bool
     ) async throws -> DeleteOutcome
+    /// The streamed delete route: the same delete, answering with progress (0 to 1) as the
+    /// server works through the items. A server without the route (404) gets the plain delete instead.
+    public var deleteItemsWithProgress: @Sendable (
+        _ serverURL: URL, _ items: [FileItem], _ permanent: Bool, _ onProgress: @escaping @Sendable (Double) -> Void
+    ) async throws -> DeleteOutcome
     /// `POST /api/files/copy` or `/api/files/move` depending on `operation`. `destination` is
     /// the target directory's relative path; the server rejects an empty one ("Cannot copy or
     /// move items to the root path").

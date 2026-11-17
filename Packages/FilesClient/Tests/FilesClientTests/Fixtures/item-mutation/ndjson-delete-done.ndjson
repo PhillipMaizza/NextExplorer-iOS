@@ -1,0 +1,4 @@
+{"type":"start","phase":"preparing","totalItems":2}
+{"type":"progress","completedItems":1,"totalItems":2,"currentName":"a.txt","percent":50}
+{"type":"progress","completedItems":2,"totalItems":2,"currentName":"b.txt","percent":100}
+{"type":"done","success":true,"items":[{"path":"Files/a.txt","status":"trashed","trashItemId":"t1"},{"path":"Files/b.txt","status":"trashed","trashItemId":"t2"}]}

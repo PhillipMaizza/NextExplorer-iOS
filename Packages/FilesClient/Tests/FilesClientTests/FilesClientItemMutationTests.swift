@@ -118,6 +118,53 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func deleteItemsWithProgressPostsToTheStreamRouteAndReportsEachStep() async throws {
+            try stub(
+                statusCode: 200,
+                body: FilesClientFixture.itemMutationNdjsonDeleteDone.data(),
+                headers: [HTTPHeaderField.contentType: "application/x-ndjson; charset=utf-8"]
+            )
+            let item = FileItem(
+                name: TestFile.aText,
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 0,
+                kind: TestKind.text
+            )
+            let steps = LockIsolated<[Double]>([])
+
+            let outcome = try await makeClient().deleteItemsWithProgress(serverURL, [item], false) { fraction in
+                steps.withValue { $0.append(fraction) }
+            }
+
+            #expect(outcome.items.map(\.status) == [.trashed, .trashed])
+            #expect(steps.value == [0.5, 1])
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
+            #expect(request.url?.path == "/api/files/delete-stream")
+        }
+
+        @Test
+        func deleteItemsWithProgressFallsBackToThePlainDeleteWhenTheStreamRouteIsMissing() async throws {
+            try stub(statusCode: 404, body: Data())
+            let item = FileItem(
+                name: TestFile.aText,
+                path: TestFolder.docs,
+                dateModified: MockDate.date,
+                size: 0,
+                kind: TestKind.text
+            )
+
+            await #expect(throws: FilesClientError.server(statusCode: 404)) {
+                _ = try await makeClient().deleteItemsWithProgress(serverURL, [item], false) { _ in }
+            }
+
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == HTTPMethod.delete.rawValue)
+            #expect(request.url?.path == "/api/files")
+        }
+
+        @Test
         func deleteItemsMapsAForbiddenResponseToAServerError() async throws {
             stub(statusCode: 403, body: Data())
             let item = FileItem(

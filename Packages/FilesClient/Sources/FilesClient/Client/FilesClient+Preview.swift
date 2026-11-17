@@ -96,6 +96,7 @@ public extension FilesClient {
         },
         deleteImpact: { _, _ in DeleteImpact(shareCount: 0) },
         deleteItems: { _, _, _ in DeleteOutcome() },
+        deleteItemsWithProgress: { _, _, _, _ in DeleteOutcome() },
         transferItems: { _, items, destination, _ in
             TransferResult(
                 destination: destination,
