@@ -28,10 +28,10 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
     @Published var position: Float = 0
     @Published var elapsedText = "0:00"
     @Published var durationText = "0:00"
-    @Published private(set) var audioTracks: [VLCTrackChoice] = []
-    @Published private(set) var subtitleTracks: [VLCTrackChoice] = []
-    @Published private(set) var selectedAudioID: Int32 = -1
-    @Published private(set) var selectedSubtitleID: Int32 = -1
+    @Published var audioTracks: [VLCTrackChoice] = []
+    @Published var subtitleTracks: [VLCTrackChoice] = []
+    @Published var selectedAudioID: Int32 = -1
+    @Published var selectedSubtitleID: Int32 = -1
 
     /// While the user drags the scrubber, ignore incoming time updates so the thumb doesn't
     /// fight the drag.
@@ -87,7 +87,9 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
         if subtitles != subtitleTracks {
             subtitleTracks = subtitles
         }
-        selectedAudioID = player.currentAudioTrackIndex
+        // A current index missing from the list would leave the picker without a selection.
+        let currentAudio = player.currentAudioTrackIndex
+        selectedAudioID = audio.contains { $0.id == currentAudio } ? currentAudio : (audio.first?.id ?? -1)
         selectedSubtitleID = player.currentVideoSubTitleIndex
     }
 
