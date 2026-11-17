@@ -93,6 +93,8 @@ public struct SharedItemsClient: Sendable {
         _ renames: [Int: String],
         _ onProgress: @Sendable @escaping (PreparationProgress) -> Void
     ) async throws -> PreparationReport
+    /// How many files of the pending batch are too big to send from the extension and wait for the app.
+    public var deferredCount: @Sendable () -> Int = { 0 }
     /// Hands the pending batch to the background uploader. Returns how many files went out.
     public var start: @Sendable () throws -> Int
     /// Drops the pending batch and everything staged for it. Once `start` has taken the batch there
@@ -105,6 +107,7 @@ extension SharedItemsClient: TestDependencyKey {
         var client = SharedItemsClient()
         client.livePhotoCount = { 0 }
         client.names = { [] }
+        client.deferredCount = { 0 }
         return client
     }()
 }
@@ -173,6 +176,7 @@ public extension SharedItemsClient {
                     throw error
                 }
             },
+            deferredCount: { pending.batch?.deferredCount ?? 0 },
             start: {
                 guard let batch = pending.take() else { throw CocoaError(.fileNoSuchFile) }
                 do {

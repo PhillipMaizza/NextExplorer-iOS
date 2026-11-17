@@ -63,6 +63,8 @@ public struct ShareUploadFeature {
         public var progress = PreparationProgress()
         /// How many files are staged and waiting, across every pass.
         public var stagedCount = 0
+        /// How many of them are too big to send from here and wait for the app.
+        public var deferredCount = 0
         /// The items the last pass could not prepare, by name.
         public var failures: [ItemFailure] = []
         public var notice: Notice?
@@ -78,6 +80,11 @@ public struct ShareUploadFeature {
         @Presents public var folderPicker: DestinationPickerFeature.State?
 
         public init() {}
+
+        /// What the extension says once the files are handed over: files kept for the app need it opened.
+        public var startedMessage: String {
+            deferredCount > 0 ? L10n.ShareUpload.startedDeferred : L10n.ShareUpload.started
+        }
 
         public var canUpload: Bool {
             phase == .ready && credentials != nil && !destination.isEmpty && names.allSatisfy(\.isAcceptable)
@@ -200,6 +207,8 @@ public struct ShareUploadFeature {
         case preparationFinished(Result<PreparationReport, UploadFailure>)
         case uploadReadyTapped
         case uploadResponse(Result<Int, UploadFailure>)
+        /// How many of the files are kept for the app instead of being sent; sent only when some are.
+        case deferredCounted(Int)
         case retryTapped
         case openAppTapped
         case cancelTapped
@@ -343,6 +352,10 @@ public struct ShareUploadFeature {
     private func startBatch() -> Effect<Action> {
         let sharedItems = sharedItems
         return .run { send in
+            let deferred = sharedItems.deferredCount()
+            if deferred > 0 {
+                await send(.deferredCounted(deferred))
+            }
             do {
                 try await send(.uploadResponse(.success(sharedItems.start())))
             } catch {
@@ -522,6 +535,10 @@ public struct ShareUploadFeature {
                 state.progress = PreparationProgress(completed: state.preparingTotal)
                 return startBatch()
 
+            case let .deferredCounted(count):
+                state.deferredCount = count
+                return .none
+
             case .uploadResponse where state.phase != .handingOff:
                 return .none
 
@@ -535,7 +552,7 @@ public struct ShareUploadFeature {
                 let delay = isAssistive ? Constants.assistiveCloseDelay : Constants.closeDelay
                 let clock = clock
                 return .merge(
-                    announce(L10n.ShareUpload.started),
+                    announce(state.startedMessage),
                     .run { send in
                         try await clock.sleep(for: delay)
                         await send(.delegate(.close(completed: true)))

@@ -189,7 +189,7 @@
 
         private var notice: ShareUploadMacNotice.Notice? {
             switch store.phase {
-            case .started: .done(L10n.ShareUpload.started)
+            case .started: .done(store.startedMessage)
             case .signedOut: .problem(L10n.ShareUpload.signedOut)
             case .sessionUnreadable: .problem(L10n.ShareUpload.sessionUnreadable)
             case .nothingToUpload: .problem(L10n.ShareUpload.nothingToUpload)
