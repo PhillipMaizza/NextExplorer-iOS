@@ -334,5 +334,33 @@ extension FilesClientLiveTests {
 
             #expect(StubURLProtocol.requests.map(\.httpMethod) == ["GET", "POST", "PATCH"])
         }
+
+        @Test
+        func cancellingAnUploadAsksTheServerToDropIt() async throws {
+            resetStubs()
+            try stubForcedChunking()
+            StubURLProtocol.heldMethodKeys = ["PATCH \(uploadPath)"]
+            StubURLProtocol.methodStubs["DELETE \(uploadPath)"] = tusStub(204)
+            let fileURL = try makeTempFile(contents: "abcd")
+            defer { try? FileManager.default.removeItem(at: fileURL) }
+            let service = FilesService(networkClient: .live(protocolClasses: [StubURLProtocol.self]))
+            let upload = Task {
+                try await service.uploadChunked(
+                    serverURL: serverURL, fileURL: fileURL, fileName: TestFile.notes,
+                    destination: TestFolder.inbox, chunkSizeBytes: 4
+                ) { _ in }
+            }
+
+            while !StubURLProtocol.requests.contains(where: { $0.httpMethod == "PATCH" }) {
+                await Task.yield()
+            }
+            upload.cancel()
+            _ = await upload.result
+            while !StubURLProtocol.requests.contains(where: { $0.httpMethod == "DELETE" }) {
+                await Task.yield()
+            }
+
+            #expect(StubURLProtocol.requests.map(\.httpMethod) == ["POST", "PATCH", "DELETE"])
+        }
     }
 }

@@ -19,6 +19,8 @@ final class StubURLProtocol: URLProtocol {
     nonisolated(unsafe) static var methodStubs: [String: Stub] = [:]
     /// Per `"METHOD /path"` answers handed out one per request, in order, before `methodStubs` takes over.
     nonisolated(unsafe) static var methodSequences: [String: [Stub]] = [:]
+    /// `"METHOD /path"` keys whose requests are recorded and then left unanswered until cancelled.
+    nonisolated(unsafe) static var heldMethodKeys: Set<String> = []
     /// Every intercepted request in order, for tests asserting on a multi request flow.
     nonisolated(unsafe) static var requests: [URLRequest] = []
     nonisolated(unsafe) static var failure: URLError?
@@ -57,6 +59,9 @@ final class StubURLProtocol: URLProtocol {
             return
         }
         let methodKey = "\(request.httpMethod ?? "GET") \(request.url?.path ?? "")"
+        if Self.heldMethodKeys.contains(methodKey) {
+            return
+        }
         var sequenced: Stub?
         if var queue = Self.methodSequences[methodKey], !queue.isEmpty {
             sequenced = queue.removeFirst()
