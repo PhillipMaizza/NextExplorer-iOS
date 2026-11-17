@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Sposta in…
 browse.destinationPickerConfirmMove	Sposta qui
 browse.destinationPickerNoFolders	Nessuna cartella qui
 browse.destinationPickerLoadFailed	Impossibile caricare le cartelle.
+browse.destinationPickerRecent	Recenti
 browse.actionMove	Sposta
 browse.actionPaste	Incolla
 browse.actionPasteCount	Incolla %lld elementi

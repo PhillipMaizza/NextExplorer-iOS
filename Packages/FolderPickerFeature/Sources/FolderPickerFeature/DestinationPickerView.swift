@@ -139,19 +139,32 @@ public struct DestinationPickerView: View {
                 store.send(.retryTapped)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if store.folders.isEmpty {
+        } else if store.folders.isEmpty, !store.showsRecentsSection {
             EmptyStateView(icon: IconKit.folder, message: L10n.Browse.destinationPickerNoFolders)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if store.displayedFolders.isEmpty {
+        } else if store.displayedFolders.isEmpty, !store.showsRecentsSection {
             EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             DSGroupedList {
-                ForEach(store.displayedFolders) { folder in
-                    Button {
-                        store.send(.folderTapped(folder))
-                    } label: {
-                        folderRow(folder.name, subtitle: nil)
+                if store.showsRecentsSection {
+                    Section(L10n.Browse.destinationPickerRecent) {
+                        ForEach(store.displayedRecents, id: \.self) { path in
+                            Button {
+                                store.send(.recentTapped(path))
+                            } label: {
+                                folderRow((path as NSString).lastPathComponent, subtitle: path, icon: IconKit.time)
+                            }
+                        }
+                    }
+                }
+                Section {
+                    ForEach(store.displayedFolders) { folder in
+                        Button {
+                            store.send(.folderTapped(folder))
+                        } label: {
+                            folderRow(folder.name, subtitle: nil)
+                        }
                     }
                 }
             }
@@ -190,9 +203,9 @@ public struct DestinationPickerView: View {
         }
     }
 
-    private func folderRow(_ name: String, subtitle: String?) -> some View {
+    private func folderRow(_ name: String, subtitle: String?, icon: Image = IconKit.folder) -> some View {
         HStack(spacing: .space12) {
-            IconKit.folder
+            icon
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(Color.accent)
@@ -253,6 +266,21 @@ public struct DestinationPickerView: View {
     state.searchQuery = "Pho"
     state.isSearching = true
     return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
+}
+
+#Preview("Recent destinations") {
+    var state = DestinationPickerFeature.State(
+        serverURL: URL(string: "https://example.com")!,
+        items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
+    )
+    state.recents = ["Documents/Projects", "Media/Photos"]
+    return DestinationPickerView(
+        store: Store(initialState: state) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.filesClient = .previewValue
+        }
+    )
 }
 
 #Preview("Folders") {

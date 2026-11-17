@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	移动到…
 browse.destinationPickerConfirmMove	移动到此处
 browse.destinationPickerNoFolders	此处没有文件夹
 browse.destinationPickerLoadFailed	无法加载文件夹。
+browse.destinationPickerRecent	最近使用
 browse.actionMove	移动
 browse.actionPaste	粘贴
 browse.actionPasteCount	粘贴 %lld 项

@@ -93,6 +93,8 @@ extension FilesService {
         let destination: String
     }
 
+    struct RecentDestinationsEnvelope: Decodable { let items: [String] }
+
     struct DeleteItemsBody: Encodable {
         struct Item: Encodable {
             let path: String

@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Mută în…
 browse.destinationPickerConfirmMove	Mută aici
 browse.destinationPickerNoFolders	Niciun dosar aici
 browse.destinationPickerLoadFailed	Nu s-au putut încărca dosarele.
+browse.destinationPickerRecent	Recente
 browse.actionMove	Mută
 browse.actionPaste	Lipește
 browse.actionPasteCount	Lipește %lld elemente

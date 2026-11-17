@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Mover a…
 browse.destinationPickerConfirmMove	Mover aquí
 browse.destinationPickerNoFolders	No hay carpetas aquí
 browse.destinationPickerLoadFailed	No se pudieron cargar las carpetas.
+browse.destinationPickerRecent	Recientes
 browse.actionMove	Mover
 browse.actionPaste	Pegar
 browse.actionPasteCount	Pegar %lld elementos

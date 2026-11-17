@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	移動先…
 browse.destinationPickerConfirmMove	ここに移動
 browse.destinationPickerNoFolders	ここにフォルダはありません
 browse.destinationPickerLoadFailed	フォルダを読み込めませんでした。
+browse.destinationPickerRecent	最近使った項目
 browse.actionMove	移動
 browse.actionPaste	ペースト
 browse.actionPasteCount	%lld 項目をペースト

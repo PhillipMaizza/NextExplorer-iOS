@@ -41,6 +41,20 @@ public struct DestinationPickerFeature {
         /// `directoryPath`, not just the current level.
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
         public var isSearching = false
+        /// Folders this user last moved or copied into, newest first. Best effort: empty until the
+        /// server answers, and left empty when it can't.
+        public var recents: [String] = []
+
+        /// The recents worth offering from here: the folder already on screen is not a shortcut.
+        public var displayedRecents: [String] {
+            recents.filter { $0 != directoryPath }
+        }
+
+        /// Whether the list leads with a Recent section: on the folder the picker opened on, with
+        /// nothing typed, so a deep folder is not cluttered by it.
+        public var showsRecentsSection: Bool {
+            navigationHistory.isEmpty && searchQuery.isEmpty && !displayedRecents.isEmpty
+        }
 
         /// True once the term is long enough for the server: the folder search replaces the listing.
         public var showsSearchResults: Bool {
@@ -121,6 +135,8 @@ public struct DestinationPickerFeature {
         case searchQueryChanged(String)
         case searchResultsResponse(Result<[SearchResultItem], FilesClientError>)
         case searchResultTapped(SearchResultItem)
+        case recentsResponse([String])
+        case recentTapped(String)
         case folderTapped(FileItem)
         /// A breadcrumb segment tap: jump straight to `path` (same behavior as the bottom
         /// `BrowseBreadcrumbBar`).
@@ -140,7 +156,7 @@ public struct DestinationPickerFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.continuousClock) var clock
-    private enum CancelID { case load, search }
+    private enum CancelID { case load, search, recents }
 
     public init() {}
 
@@ -150,7 +166,9 @@ public struct DestinationPickerFeature {
             case .onAppear:
                 guard state.folders.isEmpty, state.phase.errorMessage == nil,
                       state.phase != .loading else { return .none }
-                return load(&state)
+                // One after the other: the folders are what the user is waiting for, and a fixed order
+                // keeps the two answers from racing each other.
+                return .concatenate(load(&state), loadRecents(state))
 
             case .retryTapped:
                 return load(&state)
@@ -191,19 +209,24 @@ public struct DestinationPickerFeature {
                 return .none
 
             case let .searchResultTapped(result):
-                state.navigationHistory.append(state.directoryPath)
-                state.directoryPath = result.id
-                state.searchQuery = ""
-                state.searchResults = nil
-                return load(&state)
+                return drill(&state, into: result.id)
 
             case let .folderTapped(folder):
                 guard folder.isDirectory else { return .none }
-                state.navigationHistory.append(state.directoryPath)
-                state.directoryPath = folder.id
-                state.searchQuery = ""
-                state.searchResults = nil
-                return load(&state)
+                return drill(&state, into: folder.id)
+
+            case let .recentsResponse(paths):
+                // Paths come from the server; a blank or repeated one would only break the list.
+                state.recents = paths.reduce(into: []) { result, path in
+                    if !path.isEmpty, !result.contains(path) {
+                        result.append(path)
+                    }
+                }
+                return .none
+
+            case let .recentTapped(path):
+                guard path != state.directoryPath else { return .none }
+                return drill(&state, into: path)
 
             case let .breadcrumbTapped(path):
                 guard path != state.directoryPath else { return .none }
@@ -231,6 +254,25 @@ public struct DestinationPickerFeature {
                 return .none
             }
         }
+    }
+
+    /// Steps into `path`, remembering where it came from so Back returns there.
+    private func drill(_ state: inout State, into path: String) -> Effect<Action> {
+        state.navigationHistory.append(state.directoryPath)
+        state.directoryPath = path
+        state.searchQuery = ""
+        state.searchResults = nil
+        return load(&state)
+    }
+
+    /// The recent destinations are a convenience: a failed load leaves the list empty without a word.
+    private func loadRecents(_ state: State) -> Effect<Action> {
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            await send(.recentsResponse((try? filesClient.recentDestinations(serverURL)) ?? []))
+        }
+        .cancellable(id: CancelID.recents, cancelInFlight: true)
     }
 
     /// A breadcrumb jump lands on an ancestor of the current folder, so the drill path is

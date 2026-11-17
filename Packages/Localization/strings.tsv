@@ -121,6 +121,7 @@ browse.destinationPickerMoveTitle	Move to…
 browse.destinationPickerConfirmMove	Move Here
 browse.destinationPickerNoFolders	No folders here
 browse.destinationPickerLoadFailed	Couldn't load folders.
+browse.destinationPickerRecent	Recent
 browse.actionMove	Move
 browse.actionPaste	Paste
 browse.actionPasteCount	Paste %lld items

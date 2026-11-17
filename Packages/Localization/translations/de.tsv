@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Bewegen nach…
 browse.destinationPickerConfirmMove	Hierher bewegen
 browse.destinationPickerNoFolders	Keine Ordner hier
 browse.destinationPickerLoadFailed	Ordner konnten nicht geladen werden.
+browse.destinationPickerRecent	Zuletzt
 browse.actionMove	Bewegen
 browse.actionPaste	Einsetzen
 browse.actionPasteCount	%lld Objekte einsetzen

@@ -101,6 +101,7 @@ browse.destinationPickerMoveTitle	Mover para…
 browse.destinationPickerConfirmMove	Mover para cá
 browse.destinationPickerNoFolders	Nenhuma pasta aqui
 browse.destinationPickerLoadFailed	Não foi possível carregar as pastas.
+browse.destinationPickerRecent	Recentes
 browse.actionMove	movimentação
 browse.actionPaste	Colar
 browse.actionPasteCount	Colar %lld itens

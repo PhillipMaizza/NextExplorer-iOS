@@ -64,6 +64,7 @@ enum APIPath {
     static let files = "api/files"
     static let filesCopy = "api/files/copy"
     static let filesMove = "api/files/move"
+    static let filesRecentDestinations = "api/files/recent-destinations"
     static let zipExtract = "api/files/zip/extract"
     static let zipCompress = "api/files/zip/compress"
 

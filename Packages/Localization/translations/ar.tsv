@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	نقل إلى…
 browse.destinationPickerConfirmMove	النقل إلى هنا
 browse.destinationPickerNoFolders	لا مجلدات هنا
 browse.destinationPickerLoadFailed	تعذّر تحميل المجلدات.
+browse.destinationPickerRecent	الأخيرة
 browse.actionMove	نقل
 browse.actionPaste	لصق
 browse.actionPasteCount	لصق %lld عنصر

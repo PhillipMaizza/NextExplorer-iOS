@@ -472,4 +472,12 @@ extension FilesService {
         }
         return result
     }
+
+    /// `GET /api/files/recent-destinations`: the folders this user last moved or copied into,
+    /// newest first, `{ items: [path] }`. The server has already dropped any it can no longer reach.
+    func recentDestinations(serverURL: URL) async throws -> [String] {
+        let url = serverURL.appendingPathComponent(APIPath.filesRecentDestinations)
+        let request = Self.makeRequest(url: url, method: .get)
+        return try await send(request, decoding: RecentDestinationsEnvelope.self).items
+    }
 }

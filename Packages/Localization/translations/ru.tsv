@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Переместить в…
 browse.destinationPickerConfirmMove	Переместить сюда
 browse.destinationPickerNoFolders	Здесь нет папок
 browse.destinationPickerLoadFailed	Не удалось загрузить папки.
+browse.destinationPickerRecent	Недавние
 browse.actionMove	Переместить
 browse.actionPaste	Вставить
 browse.actionPasteCount	Вставить объектов: %lld

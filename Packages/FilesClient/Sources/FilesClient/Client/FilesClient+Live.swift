@@ -134,6 +134,9 @@ public extension FilesClient {
                     serverURL: serverURL, items: items, destination: destination, operation: operation
                 )
             },
+            recentDestinations: { serverURL in
+                try await service.recentDestinations(serverURL: serverURL)
+            },
             fetchMetadata: { serverURL, path in
                 try await service.fetchMetadata(serverURL: serverURL, path: path)
             },
