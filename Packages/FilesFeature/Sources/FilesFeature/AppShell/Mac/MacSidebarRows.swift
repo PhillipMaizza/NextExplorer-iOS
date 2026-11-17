@@ -178,6 +178,7 @@
         }
     }
 
+    @MainActor
     private func previewSections(selectedTab: MainTabFeature.Tab) -> some View {
         var state = MainTabFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),

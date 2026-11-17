@@ -244,6 +244,7 @@
         }
     }
 
+    @MainActor
     private enum PreviewFixture {
         static let serverURL = URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
 
