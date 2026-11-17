@@ -1,9 +1,11 @@
 #if os(macOS)
     import AppKit
+    import ComposableArchitecture
     import CoreModels
     import Dependencies
     import DesignSystem
     import FilesClient
+    import FolderPickerFeature
     import Localization
     import Observation
     import SwiftUI
@@ -15,12 +17,18 @@
     final class MacVersionsModel {
         private(set) var history: FileVersionHistory?
         var errorMessage: String?
+        /// What the last change did, shown under the versions until the next one.
+        var statusMessage: String?
         var versionToRestore: FileVersion?
         var versionToDelete: FileVersion?
         var versionToRename: FileVersion?
         var renameDraft = ""
         /// The version being read as text, shown in a sheet.
         var textPreview: VersionTextPreview?
+        /// The file chooser open for "Replace Another File", `nil` otherwise.
+        var replacePicker: StoreOf<DestinationPickerFeature>?
+        /// A version and the file picked to receive it, asked about before anything is written.
+        var replacement: VersionReplacement?
         var isConfirmingDeleteAll = false
 
         @ObservationIgnored @Dependency(\.filesClient) private var filesClient
@@ -36,6 +44,7 @@
             self.serverURL = serverURL
             history = nil
             errorMessage = nil
+            statusMessage = nil
             guard !item.isDirectory else { return }
             if settle > .zero {
                 try? await Task.sleep(for: settle)
@@ -45,6 +54,8 @@
             guard !Task.isCancelled, self.item?.id == item.id else { return }
             history = loaded
         }
+
+        private static let textCharacterLimit = 200_000
 
         /// Whether versions of this file can be read as text: the editor's own list of text files.
         var canViewText: Bool {
@@ -56,17 +67,54 @@
         func viewText(_ version: FileVersion) -> Task<Void, Never>? {
             guard let serverURL, let item else { return nil }
             let client = filesClient
+            statusMessage = nil
             return Task {
                 do {
                     let text = try await client.versionText(serverURL, item.id, version.id)
                     guard self.item?.id == item.id else { return }
                     errorMessage = nil
                     let title = version.label ?? Self.date(text.modifiedAt)
-                    textPreview = VersionTextPreview(id: version.id, title: title, content: text.content)
+                    // One huge `Text` would stall the main thread, so only the start is shown.
+                    let head = text.content.prefix(Self.textCharacterLimit)
+                    textPreview = VersionTextPreview(
+                        id: version.id,
+                        title: title,
+                        content: String(head),
+                        isTruncated: head.endIndex != text.content.endIndex
+                    )
                 } catch {
                     guard self.item?.id == item.id else { return }
                     errorMessage = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
                 }
+            }
+        }
+
+        /// Opens the file chooser, starting in the file's own folder, to pick what the version replaces.
+        func beginReplace(_ version: FileVersion) {
+            guard let serverURL, let item else { return }
+            replacePicker = Store(initialState: DestinationPickerFeature.State(serverURL: serverURL, replacing: item)) {
+                VersionReplacePicker { [weak self] delegate in
+                    self?.pickerFinished(delegate, version: version)
+                }
+            }
+        }
+
+        func pickerFinished(_ delegate: DestinationPickerFeature.Action.Delegate, version: FileVersion) {
+            replacePicker = nil
+            if case let .confirmed(destination) = delegate {
+                replacement = VersionReplacement(version: version, targetPath: destination)
+            }
+        }
+
+        @discardableResult
+        func replaceConfirmed(_ replacement: VersionReplacement) -> Task<Void, Never>? {
+            self.replacement = nil
+            let name = (replacement.targetPath as NSString).lastPathComponent
+            return perform(
+                changesFiles: true,
+                success: L10n.FileInfo.versionReplaced(name)
+            ) { client, serverURL, path in
+                try await client.replaceWithVersion(serverURL, path, replacement.version.id, replacement.targetPath)
             }
         }
 
@@ -135,11 +183,13 @@
         @discardableResult
         private func perform(
             changesFiles: Bool = false,
+            success: String? = nil,
             _ operation: @escaping @Sendable (FilesClient, URL, String) async throws -> Void
         ) -> Task<Void, Never>? {
             guard let serverURL, let item else { return nil }
             let client = filesClient
             let onFilesChanged = onFilesChanged
+            statusMessage = nil
             return Task {
                 do {
                     try await operation(client, serverURL, item.id)
@@ -151,6 +201,7 @@
                     // history over the next one's.
                     guard self.item?.id == item.id else { return }
                     errorMessage = nil
+                    statusMessage = success
                     history = refreshed
                 } catch {
                     guard self.item?.id == item.id else { return }
@@ -173,11 +224,34 @@
         }
     }
 
+    /// A version going into another file, ready to confirm.
+    struct VersionReplacement: Equatable {
+        let version: FileVersion
+        let targetPath: String
+    }
+
+    /// The file chooser's own reducer plus a hook that hands its answer to the versions model.
+    private struct VersionReplacePicker: Reducer {
+        typealias State = DestinationPickerFeature.State
+        typealias Action = DestinationPickerFeature.Action
+
+        let onFinish: @MainActor @Sendable (DestinationPickerFeature.Action.Delegate) -> Void
+
+        var body: some ReducerOf<Self> {
+            DestinationPickerFeature()
+            Reduce { _, action in
+                guard case let .delegate(delegate) = action else { return .none }
+                return .run { _ in await onFinish(delegate) }
+            }
+        }
+    }
+
     /// One version's text, ready for the sheet.
     struct VersionTextPreview: Identifiable, Equatable {
         let id: String
         let title: String
         let content: String
+        let isTruncated: Bool
     }
 
     /// The Versions section's confirmations and rename prompt, attached to the inspector.
@@ -215,6 +289,24 @@
                 } message: { _ in
                     Text(L10n.FileInfo.deleteMessage)
                 }
+                .sheet(isPresented: isPresented(\.replacePicker)) {
+                    if let store = model.replacePicker {
+                        DestinationPickerView(store: store)
+                    }
+                }
+                .alert(
+                    L10n.FileInfo.replaceTitle,
+                    isPresented: isPresented(\.replacement),
+                    presenting: model.replacement
+                ) { replacement in
+                    Button(L10n.Browse.transferConflictReplace) { model.replaceConfirmed(replacement) }
+                    Button(L10n.Common.cancel, role: .cancel) {}
+                } message: { replacement in
+                    Text(L10n.FileInfo.replaceMessage(
+                        (replacement.targetPath as NSString).lastPathComponent,
+                        MacVersionsModel.date(replacement.version.modifiedAt)
+                    ))
+                }
                 .sheet(item: $model.textPreview) { preview in
                     MacVersionTextSheet(preview: preview)
                 }
@@ -226,7 +318,7 @@
                 }
         }
 
-        private func isPresented(_ keyPath: ReferenceWritableKeyPath<MacVersionsModel, FileVersion?>) -> Binding<Bool> {
+        private func isPresented(_ keyPath: ReferenceWritableKeyPath<MacVersionsModel, (some Any)?>) -> Binding<Bool> {
             Binding(get: { model[keyPath: keyPath] != nil }, set: {
                 if !$0 {
                     model[keyPath: keyPath] = nil

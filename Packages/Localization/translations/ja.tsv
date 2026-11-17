@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	ここに移動
 browse.destinationPickerNoFolders	ここにフォルダはありません
 browse.destinationPickerLoadFailed	フォルダを読み込めませんでした。
 browse.destinationPickerRecent	最近使った項目
+browse.destinationPickerReplaceTitle	どのファイルを置き換えますか?
 browse.actionMove	移動
 browse.actionPaste	ペースト
 browse.actionPasteCount	%lld 項目をペースト
@@ -670,9 +671,14 @@ fileInfo.sectionSharing	共有
 fileInfo.notShared	共有リンクはありません
 fileInfo.versionActions	バージョンの操作
 fileInfo.versionViewText	テキストを表示
+fileInfo.versionTextTruncated	このバージョンの先頭部分のみ表示しています。
+fileInfo.versionReplaced	%@ を置き換えました。
 fileInfo.versionDownload	ダウンロード…
 fileInfo.versionSaveCopy	コピーとして保存
 fileInfo.versionRename	名前を変更…
+fileInfo.versionReplace	別のファイルを置き換える…
+fileInfo.replaceTitle	このファイルを置き換えますか?
+fileInfo.replaceMessage	%1$@ を %2$@ のバージョンで置き換えます。現在の内容はバージョンとして保持されます。
 fileInfo.renameTitle	バージョン名を変更
 fileInfo.renamePlaceholder	バージョン名
 fileInfo.versionPin	このバージョンを保持

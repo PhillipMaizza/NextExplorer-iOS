@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	移動到此處
 browse.destinationPickerNoFolders	此處沒有檔案夾
 browse.destinationPickerLoadFailed	無法載入檔案夾。
 browse.destinationPickerRecent	最近使用
+browse.destinationPickerReplaceTitle	要取代哪個檔案？
 browse.actionMove	移動
 browse.actionPaste	貼上
 browse.actionPasteCount	貼上 %lld 個項目
@@ -670,9 +671,14 @@ fileInfo.sectionSharing	共享
 fileInfo.notShared	沒有共享連結
 fileInfo.versionActions	版本操作
 fileInfo.versionViewText	檢視文字
+fileInfo.versionTextTruncated	僅顯示此版本的開頭部分。
+fileInfo.versionReplaced	已取代 %@。
 fileInfo.versionDownload	下載…
 fileInfo.versionSaveCopy	儲存為拷貝
 fileInfo.versionRename	重新命名…
+fileInfo.versionReplace	取代其他檔案…
+fileInfo.replaceTitle	取代此檔案？
+fileInfo.replaceMessage	%1$@ 將被 %2$@ 的版本取代，其目前內容會保留為一個版本。
 fileInfo.renameTitle	重新命名版本
 fileInfo.renamePlaceholder	版本名稱
 fileInfo.versionPin	保留此版本

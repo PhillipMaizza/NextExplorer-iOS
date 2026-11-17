@@ -121,6 +121,11 @@ public struct FilesClient: Sendable {
         _ versionID: String,
         _ destination: String
     ) async throws -> String
+    /// `POST /api/versions/:id/replace`: the version's content goes into the existing file at
+    /// `target`, and what that file held becomes a version of it. The versioned file is untouched.
+    public var replaceWithVersion: @Sendable (
+        _ serverURL: URL, _ path: String, _ versionID: String, _ target: String
+    ) async throws -> Void
     /// `PATCH /api/versions/:id`: a nil `label` or `pinned` is left as it is; `""` clears the label.
     public var updateVersion: @Sendable (
         _ serverURL: URL, _ path: String, _ versionID: String, _ label: String?, _ pinned: Bool?

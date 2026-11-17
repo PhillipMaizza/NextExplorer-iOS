@@ -28,6 +28,13 @@
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(Metrics.padding)
+                    if preview.isTruncated {
+                        Text(L10n.FileInfo.versionTextTruncated)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding([.horizontal, .bottom], Metrics.padding)
+                    }
                 }
                 Divider()
                 MacDialogButtons(
@@ -47,12 +54,19 @@
             preview: VersionTextPreview(
                 id: "v1",
                 title: "Nov 17, 2026 at 10:30",
-                content: "Line one\nLine two\nLine three"
+                content: "Line one\nLine two\nLine three",
+                isTruncated: false
             )
         )
     }
 
     #Preview("Empty text version") {
-        MacVersionTextSheet(preview: VersionTextPreview(id: "v2", title: "Kept", content: ""))
+        MacVersionTextSheet(preview: VersionTextPreview(id: "v2", title: "Kept", content: "", isTruncated: false))
+    }
+
+    #Preview("Truncated text version") {
+        MacVersionTextSheet(
+            preview: VersionTextPreview(id: "v3", title: "Big log", content: "start of a long file", isTruncated: true)
+        )
     }
 #endif

@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	Sposta qui
 browse.destinationPickerNoFolders	Nessuna cartella qui
 browse.destinationPickerLoadFailed	Impossibile caricare le cartelle.
 browse.destinationPickerRecent	Recenti
+browse.destinationPickerReplaceTitle	Quale file sostituire?
 browse.actionMove	Sposta
 browse.actionPaste	Incolla
 browse.actionPasteCount	Incolla %lld elementi
@@ -677,9 +678,14 @@ fileInfo.sectionSharing	Condivisione
 fileInfo.notShared	Nessun link di condivisione
 fileInfo.versionActions	Azioni versione
 fileInfo.versionViewText	Mostra testo
+fileInfo.versionTextTruncated	Viene mostrata solo la prima parte di questa versione.
+fileInfo.versionReplaced	%@ sostituito.
 fileInfo.versionDownload	Scarica…
 fileInfo.versionSaveCopy	Salva come copia
 fileInfo.versionRename	Rinomina…
+fileInfo.versionReplace	Sostituisci un altro file…
+fileInfo.replaceTitle	Sostituire questo file?
+fileInfo.replaceMessage	%1$@ viene sostituito con la versione del %2$@. Il contenuto attuale viene conservato come versione.
 fileInfo.renameTitle	Rinomina versione
 fileInfo.renamePlaceholder	Nome della versione
 fileInfo.versionPin	Conserva questa versione

@@ -177,6 +177,11 @@ public extension FilesClient {
                     destination: destination
                 )
             },
+            replaceWithVersion: { serverURL, path, versionID, target in
+                try await service.replaceWithVersion(
+                    serverURL: serverURL, path: path, versionID: versionID, target: target
+                )
+            },
             updateVersion: { serverURL, path, versionID, label, pinned in
                 try await service.updateVersion(
                     serverURL: serverURL,

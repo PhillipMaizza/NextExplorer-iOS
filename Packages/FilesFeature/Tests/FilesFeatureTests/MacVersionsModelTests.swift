@@ -5,6 +5,7 @@ import TestUtils
     import FilesClient
     @testable import FilesFeature
     import Foundation
+    import Localization
     import Testing
 
     @MainActor
@@ -123,6 +124,134 @@ import TestUtils
             }
             await model.load(item: Self.file("photo.jpg"), serverURL: serverURL)
             #expect(!model.canViewText)
+        }
+
+        @Test
+        func pickingAFileAsksBeforeReplacingAndThenWritesThroughTheClient() async throws {
+            let replaced = LockIsolated<[String]>([])
+            let didChangeFiles = LockIsolated(false)
+            let model = withDependencies {
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path) }
+                $0.filesClient.replaceWithVersion = { _, path, versionID, target in
+                    replaced.withValue { $0.append("\(path)|\(versionID)|\(target)") }
+                }
+            } operation: {
+                MacVersionsModel()
+            }
+            model.onFilesChanged = { didChangeFiles.setValue(true) }
+            let item = Self.file(TestFile.aText)
+            await model.load(item: item, serverURL: serverURL)
+            let version = try #require(model.history?.versions.first)
+
+            model.beginReplace(version)
+            #expect(model.replacePicker != nil)
+
+            model.pickerFinished(.confirmed(destination: TestPath.docsNotes), version: version)
+            #expect(model.replacePicker == nil)
+            let replacement = try #require(model.replacement)
+            #expect(replacement.targetPath == TestPath.docsNotes)
+            #expect(replaced.value.isEmpty)
+
+            await model.replaceConfirmed(replacement)?.value
+            #expect(model.statusMessage == L10n.FileInfo.versionReplaced("notes.txt"))
+            #expect(replaced.value == ["\(item.id)|\(version.id)|\(TestPath.docsNotes)"])
+            #expect(model.replacement == nil)
+            #expect(didChangeFiles.value)
+        }
+
+        @Test
+        func cancellingTheFileChooserWritesNothing() async throws {
+            let model = withDependencies {
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path) }
+            } operation: {
+                MacVersionsModel()
+            }
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            let version = try #require(model.history?.versions.first)
+
+            model.beginReplace(version)
+            model.pickerFinished(.cancelled, version: version)
+
+            #expect(model.replacePicker == nil)
+            #expect(model.replacement == nil)
+        }
+
+        @Test
+        func aFailedReplaceShowsTheServerMessage() async throws {
+            let model = withDependencies {
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path) }
+                $0.filesClient.replaceWithVersion = { _, _, _, _ in
+                    throw FilesClientError.serverMessage(
+                        statusCode: 400,
+                        message: "The file to replace must be an existing file."
+                    )
+                }
+            } operation: {
+                MacVersionsModel()
+            }
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            let version = try #require(model.history?.versions.first)
+
+            await model.replaceConfirmed(VersionReplacement(
+                version: version,
+                targetPath: TestPath.docsNotes
+            ))?.value
+
+            #expect(model.errorMessage == "The file to replace must be an existing file.")
+        }
+
+        @Test
+        func aLongTextVersionIsCutShortAndSaysSo() async throws {
+            let long = String(repeating: "a", count: 200_001)
+            let model = withDependencies {
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path) }
+                $0.filesClient.versionText = { _, _, _ in
+                    FileVersionText(name: TestFile.aText, size: 200_001, modifiedAt: MockDate.date, content: long)
+                }
+            } operation: {
+                MacVersionsModel()
+            }
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            let version = try #require(model.history?.versions.first)
+
+            await model.viewText(version)?.value
+
+            #expect(model.textPreview?.isTruncated == true)
+            #expect(model.textPreview?.content.count == 200_000)
+        }
+
+        @Test
+        func theNextChangeClearsTheStatusMessage() async throws {
+            let model = withDependencies {
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path) }
+                $0.filesClient.replaceWithVersion = { _, _, _, _ in }
+                $0.filesClient.versionText = { _, _, _ in
+                    FileVersionText(name: TestFile.aText, size: 1, modifiedAt: MockDate.date, content: "x")
+                }
+                $0.filesClient.updateVersion = { _, _, _, _, _ in
+                    FileVersion(id: "v", size: 1, modifiedAt: MockDate.date, capturedAt: MockDate.date)
+                }
+            } operation: {
+                MacVersionsModel()
+            }
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            let version = try #require(model.history?.versions.first)
+            await model.replaceConfirmed(VersionReplacement(
+                version: version,
+                targetPath: TestPath.docsNotes
+            ))?.value
+            #expect(model.statusMessage != nil)
+
+            model.togglePin(version)
+            #expect(model.statusMessage == nil)
+
+            await model.replaceConfirmed(VersionReplacement(
+                version: version,
+                targetPath: TestPath.docsNotes
+            ))?.value
+            #expect(model.statusMessage != nil)
+            model.viewText(version)
+            #expect(model.statusMessage == nil)
         }
     }
 #endif

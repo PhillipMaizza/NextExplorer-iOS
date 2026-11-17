@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	Hierher bewegen
 browse.destinationPickerNoFolders	Keine Ordner hier
 browse.destinationPickerLoadFailed	Ordner konnten nicht geladen werden.
 browse.destinationPickerRecent	Zuletzt
+browse.destinationPickerReplaceTitle	Welche Datei ersetzen?
 browse.actionMove	Bewegen
 browse.actionPaste	Einsetzen
 browse.actionPasteCount	%lld Objekte einsetzen
@@ -677,9 +678,14 @@ fileInfo.sectionSharing	Freigabe
 fileInfo.notShared	Keine Freigabelinks
 fileInfo.versionActions	Versionsaktionen
 fileInfo.versionViewText	Text ansehen
+fileInfo.versionTextTruncated	Es wird nur der Anfang dieser Version angezeigt.
+fileInfo.versionReplaced	%@ ersetzt.
 fileInfo.versionDownload	Laden …
 fileInfo.versionSaveCopy	Als Kopie sichern
 fileInfo.versionRename	Umbenennen …
+fileInfo.versionReplace	Andere Datei ersetzen …
+fileInfo.replaceTitle	Diese Datei ersetzen?
+fileInfo.replaceMessage	%1$@ wird durch die Version vom %2$@ ersetzt. Der aktuelle Inhalt bleibt als Version erhalten.
 fileInfo.renameTitle	Version umbenennen
 fileInfo.renamePlaceholder	Versionsname
 fileInfo.versionPin	Diese Version behalten

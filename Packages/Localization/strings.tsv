@@ -122,6 +122,7 @@ browse.destinationPickerConfirmMove	Move Here
 browse.destinationPickerNoFolders	No folders here
 browse.destinationPickerLoadFailed	Couldn't load folders.
 browse.destinationPickerRecent	Recent
+browse.destinationPickerReplaceTitle	Replace Which File?
 browse.actionMove	Move
 browse.actionPaste	Paste
 browse.actionPasteCount	Paste %lld items
@@ -1072,9 +1073,14 @@ fileInfo.sectionSharing	Sharing
 fileInfo.notShared	No share links
 fileInfo.versionActions	Version actions
 fileInfo.versionViewText	View Text
+fileInfo.versionTextTruncated	Showing the first part of this version.
+fileInfo.versionReplaced	Replaced %@.
 fileInfo.versionDownload	Download…
 fileInfo.versionSaveCopy	Save as Copy
 fileInfo.versionRename	Rename…
+fileInfo.versionReplace	Replace Another File…
+fileInfo.replaceTitle	Replace This File?
+fileInfo.replaceMessage	%1$@ is replaced with the version from %2$@. What it holds now is kept as a version.
 fileInfo.renameTitle	Rename Version
 fileInfo.renamePlaceholder	Version name
 fileInfo.versionPin	Keep This Version

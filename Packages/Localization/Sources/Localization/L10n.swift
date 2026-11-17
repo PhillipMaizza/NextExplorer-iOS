@@ -168,6 +168,7 @@ public enum L10n {
         public static var destinationPickerMoveTitle: String { tr("browse.destinationPickerMoveTitle") }  // "Move to…"
         public static var destinationPickerNoFolders: String { tr("browse.destinationPickerNoFolders") }  // "No folders here"
         public static var destinationPickerRecent: String { tr("browse.destinationPickerRecent") }  // "Recent"
+        public static var destinationPickerReplaceTitle: String { tr("browse.destinationPickerReplaceTitle") }  // "Replace Which File?"
         public static func downloadSavedAllTo(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.downloadSavedAllTo", a0, a1) }
         public static func downloadSavedTo(_ a0: CVarArg) -> String { tr("browse.downloadSavedTo", a0) }
         public static var locations: String { tr("browse.locations") }  // "Locations"
@@ -428,6 +429,8 @@ public enum L10n {
         public static var partialScan: String { tr("fileInfo.partialScan") }  // "Counted a partial scan: this folder is very large."
         public static var renamePlaceholder: String { tr("fileInfo.renamePlaceholder") }  // "Version name"
         public static var renameTitle: String { tr("fileInfo.renameTitle") }  // "Rename Version"
+        public static func replaceMessage(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("fileInfo.replaceMessage", a0, a1) }
+        public static var replaceTitle: String { tr("fileInfo.replaceTitle") }  // "Replace This File?"
         public static var restoreConfirm: String { tr("fileInfo.restoreConfirm") }  // "Restore"
         public static func restoreMessage(_ a0: CVarArg) -> String { tr("fileInfo.restoreMessage", a0) }
         public static var restoreTitle: String { tr("fileInfo.restoreTitle") }  // "Restore this version?"
@@ -454,8 +457,11 @@ public enum L10n {
         public static var versionKept: String { tr("fileInfo.versionKept") }  // "Kept"
         public static var versionPin: String { tr("fileInfo.versionPin") }  // "Keep This Version"
         public static var versionRename: String { tr("fileInfo.versionRename") }  // "Rename…"
+        public static var versionReplace: String { tr("fileInfo.versionReplace") }  // "Replace Another File…"
+        public static func versionReplaced(_ a0: CVarArg) -> String { tr("fileInfo.versionReplaced", a0) }
         public static var versionRestore: String { tr("fileInfo.versionRestore") }  // "Restore…"
         public static var versionSaveCopy: String { tr("fileInfo.versionSaveCopy") }  // "Save as Copy"
+        public static var versionTextTruncated: String { tr("fileInfo.versionTextTruncated") }  // "Showing the first part of this version."
         public static var versionUnpin: String { tr("fileInfo.versionUnpin") }  // "Stop Keeping This Version"
         public static var versionViewText: String { tr("fileInfo.versionViewText") }  // "View Text"
         public static var versionsNone: String { tr("fileInfo.versionsNone") }  // "No earlier versions"

@@ -18,7 +18,7 @@ extension FilesClientLiveTests {
 
             case listUsers, createUser, updateUser, setUserPassword, deleteUser, recentDestinations
             case resetUserSecurity
-            case versionText
+            case versionText, replaceWithVersion
             case userVolumes, addUserVolume, updateUserVolume, removeUserVolume
             case browseAdminDirectories, serverFeatures
             case fetchPermissions, changePermissions, changeOwnership
@@ -39,6 +39,12 @@ extension FilesClientLiveTests {
                 case .recentDestinations: _ = try await client.recentDestinations(serverURL)
                 case .resetUserSecurity: try await client.resetUserSecurity(serverURL, Self.userID, .passkeys)
                 case .versionText: _ = try await client.versionText(serverURL, "Docs/notes.txt", "v1")
+                case .replaceWithVersion: try await client.replaceWithVersion(
+                        serverURL,
+                        "Docs/notes.txt",
+                        "v1",
+                        "Docs/other.txt"
+                    )
                 case .userVolumes: _ = try await client.userVolumes(serverURL, Self.userID)
                 case .addUserVolume: _ = try await client.addUserVolume(
                         serverURL,

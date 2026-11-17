@@ -15,7 +15,7 @@ public struct DestinationPickerFeature {
         static let searchLimit = 50
     }
 
-    public enum Purpose: Equatable, Sendable { case move, upload, restore }
+    public enum Purpose: Equatable, Sendable { case move, upload, restore, replaceFile }
 
     @ObservableState
     public struct State: Equatable, Sendable {
@@ -33,6 +33,11 @@ public struct DestinationPickerFeature {
         public var folders: IdentifiedArrayOf<FileItem> = []
         /// Access of the folder currently shown: gates "Upload here".
         public var currentAccess: FileAccess?
+        /// `.replaceFile` only: the file picked in the folder on screen. Folders are never picked,
+        /// they are opened; changing folder clears it.
+        public var selectedFilePath: String?
+        /// `.replaceFile` only: a file found by search, picked once its folder has been listed.
+        public var pendingFileSelection: String?
         public var phase: DataPhase = .idle
         /// Searches folders recursively under `directoryPath` (`/api/search`, directories
         /// only): cleared whenever the shown folder changes.
@@ -90,6 +95,15 @@ public struct DestinationPickerFeature {
             directoryPath = items.first?.path ?? ""
         }
 
+        /// Picks an existing file to overwrite with a version of `file`, starting in its folder.
+        /// `file` itself is left out of the choices.
+        public init(serverURL: URL, replacing file: FileItem) {
+            self.serverURL = serverURL
+            purpose = .replaceFile
+            items = [file]
+            directoryPath = file.path
+        }
+
         public init(serverURL: URL, uploadStartingAt startPath: String) {
             self.serverURL = serverURL
             purpose = .upload
@@ -125,6 +139,8 @@ public struct DestinationPickerFeature {
             case .restore:
                 // The server checks the right to create each item; this only rules out the root.
                 !directoryPath.isEmpty && currentAccess != nil
+            case .replaceFile:
+                selectedFilePath != nil && (currentAccess?.canWrite ?? false)
             }
         }
     }
@@ -138,6 +154,8 @@ public struct DestinationPickerFeature {
         case recentsResponse([String])
         case recentTapped(String)
         case folderTapped(FileItem)
+        /// `.replaceFile`: the row now highlighted, a file to pick or a folder to ignore.
+        case rowSelected(String?)
         /// A breadcrumb segment tap: jump straight to `path` (same behavior as the bottom
         /// `BrowseBreadcrumbBar`).
         case breadcrumbTapped(path: String)
@@ -176,9 +194,10 @@ public struct DestinationPickerFeature {
             case let .foldersResponse(.success(result)):
                 state.phase = .loaded
                 state.currentAccess = result.access
-                state.folders = IdentifiedArray(
-                    uniqueElements: result.items.filter(\.isDirectory).sorted(by: Self.byName)
-                )
+                state.folders = IdentifiedArray(uniqueElements: Self.choices(from: result.items, for: state))
+                state.selectedFilePath = state.pendingFileSelection.flatMap { state.folders[id: $0] }
+                    .flatMap { $0.isDirectory ? nil : $0.id }
+                state.pendingFileSelection = nil
                 return .none
 
             case let .foldersResponse(.failure(error)):
@@ -198,8 +217,11 @@ public struct DestinationPickerFeature {
 
             case let .searchResultsResponse(.success(results)):
                 state.isSearching = false
+                let source = state.purpose == .replaceFile ? state.items.first?.id : nil
                 state.searchResults = IdentifiedArray(
-                    uniqueElements: results.filter(\.isDirectory).sorted(by: Self.byName)
+                    uniqueElements: results
+                        .filter { ($0.isDirectory || state.purpose == .replaceFile) && $0.id != source }
+                        .sorted(by: Self.byName)
                 )
                 return .none
 
@@ -209,6 +231,12 @@ public struct DestinationPickerFeature {
                 return .none
 
             case let .searchResultTapped(result):
+                guard result.isDirectory else {
+                    // A file found while replacing one: open its folder and pick it once listed.
+                    let effect = drill(&state, into: result.path)
+                    state.pendingFileSelection = result.id
+                    return effect
+                }
                 return drill(&state, into: result.id)
 
             case let .folderTapped(folder):
@@ -243,8 +271,17 @@ public struct DestinationPickerFeature {
                 state.searchResults = nil
                 return load(&state)
 
+            case let .rowSelected(id):
+                guard state.purpose == .replaceFile else { return .none }
+                state.selectedFilePath = id.flatMap { state.folders[id: $0] }.flatMap { $0.isDirectory ? nil : $0.id }
+                return .none
+
             case .confirmTapped:
                 guard state.canConfirm else { return .none }
+                if state.purpose == .replaceFile {
+                    guard let file = state.selectedFilePath else { return .none }
+                    return .send(.delegate(.confirmed(destination: file)))
+                }
                 return .send(.delegate(.confirmed(destination: state.directoryPath)))
 
             case .cancelTapped:
@@ -258,6 +295,7 @@ public struct DestinationPickerFeature {
 
     /// Steps into `path`, remembering where it came from so Back returns there.
     private func drill(_ state: inout State, into path: String) -> Effect<Action> {
+        state.pendingFileSelection = nil
         state.navigationHistory.append(state.directoryPath)
         state.directoryPath = path
         state.searchQuery = ""
@@ -283,6 +321,17 @@ public struct DestinationPickerFeature {
         }
     }
 
+    /// What a listing offers: folders to open, plus the files that can be picked when replacing one.
+    private static func choices(from items: [FileItem], for state: State) -> [FileItem] {
+        guard state.purpose == .replaceFile else {
+            return items.filter(\.isDirectory).sorted(by: byName)
+        }
+        let source = state.items.first?.id
+        return items
+            .filter { $0.id != source }
+            .sorted { $0.isDirectory == $1.isDirectory ? byName($0, $1) : $0.isDirectory }
+    }
+
     private static func byName(_ lhs: some FolderNamed, _ rhs: some FolderNamed) -> Bool {
         lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
     }
@@ -292,6 +341,7 @@ public struct DestinationPickerFeature {
         state.isSearching = false
         // Drop the previous folder's access so an upload confirm can't fire against stale info.
         state.currentAccess = nil
+        state.selectedFilePath = nil
         let serverURL = state.serverURL
         let directoryPath = state.directoryPath
         let filesClient = filesClient

@@ -169,6 +169,7 @@ public extension FilesClient {
         },
         downloadVersion: { _, _, _, _ in },
         copyVersion: { _, path, _, _ in path },
+        replaceWithVersion: { _, _, _, _ in },
         updateVersion: { _, _, versionID, label, pinned in
             FileVersion(
                 id: versionID,

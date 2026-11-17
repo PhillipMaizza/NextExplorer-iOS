@@ -10,6 +10,7 @@ extension FilesService {
         static let content = "content"
         static let copy = "copy"
         static let text = "text"
+        static let replace = "replace"
         static let delete = "delete"
         static let pathQueryName = "path"
         static let urlFailureMessage = "Could not build versions URL."
@@ -78,6 +79,18 @@ extension FilesService {
         request.setJSONContentType()
         request.httpBody = try Self.encode(VersionCopyBody(path: path, destination: destination))
         return try await sendReportingMessage(request, decoding: VersionCopyResponse.self).path
+    }
+
+    /// `POST /api/versions/:id/replace` with `{ path, target }`: puts the version's content into
+    /// another existing file, whose own content becomes a version.
+    func replaceWithVersion(serverURL: URL, path: String, versionID: String, target: String) async throws {
+        try await sendVersionWrite(
+            serverURL,
+            versionID,
+            VersionRoute.replace,
+            method: .post,
+            body: VersionReplaceBody(path: path, target: target)
+        )
     }
 
     /// `PATCH /api/versions/:id` with `{ path, label?, pinned? }`.

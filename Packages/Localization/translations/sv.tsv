@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	Flytta hit
 browse.destinationPickerNoFolders	Inga mappar här
 browse.destinationPickerLoadFailed	Det gick inte att läsa in mapparna.
 browse.destinationPickerRecent	Senaste
+browse.destinationPickerReplaceTitle	Vilken fil ska ersättas?
 browse.actionMove	Flytta
 browse.actionPaste	Klistra in
 browse.actionPasteCount	Klistra in %lld objekt
@@ -677,9 +678,14 @@ fileInfo.sectionSharing	Delning
 fileInfo.notShared	Inga delningslänkar
 fileInfo.versionActions	Versionsåtgärder
 fileInfo.versionViewText	Visa text
+fileInfo.versionTextTruncated	Bara början av den här versionen visas.
+fileInfo.versionReplaced	%@ ersatt.
 fileInfo.versionDownload	Hämta…
 fileInfo.versionSaveCopy	Spara som kopia
 fileInfo.versionRename	Byt namn…
+fileInfo.versionReplace	Ersätt en annan fil…
+fileInfo.replaceTitle	Ersätta den här filen?
+fileInfo.replaceMessage	%1$@ ersätts med versionen från %2$@. Det nuvarande innehållet sparas som en version.
 fileInfo.renameTitle	Byt namn på version
 fileInfo.renamePlaceholder	Versionsnamn
 fileInfo.versionPin	Behåll den här versionen

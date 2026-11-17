@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	Mută aici
 browse.destinationPickerNoFolders	Niciun dosar aici
 browse.destinationPickerLoadFailed	Nu s-au putut încărca dosarele.
 browse.destinationPickerRecent	Recente
+browse.destinationPickerReplaceTitle	Ce fișier înlocuiești?
 browse.actionMove	Mută
 browse.actionPaste	Lipește
 browse.actionPasteCount	Lipește %lld elemente
@@ -684,9 +685,14 @@ fileInfo.sectionSharing	Partajare
 fileInfo.notShared	Niciun link de partajare
 fileInfo.versionActions	Acțiuni versiune
 fileInfo.versionViewText	Vezi textul
+fileInfo.versionTextTruncated	Se afișează doar începutul acestei versiuni.
+fileInfo.versionReplaced	%@ a fost înlocuit.
 fileInfo.versionDownload	Descarcă…
 fileInfo.versionSaveCopy	Salvează ca copie
 fileInfo.versionRename	Redenumește…
+fileInfo.versionReplace	Înlocuiește alt fișier…
+fileInfo.replaceTitle	Înlocuiești acest fișier?
+fileInfo.replaceMessage	%1$@ este înlocuit cu versiunea din %2$@. Conținutul actual este păstrat ca versiune.
 fileInfo.renameTitle	Redenumește versiunea
 fileInfo.renamePlaceholder	Numele versiunii
 fileInfo.versionPin	Păstrează această versiune

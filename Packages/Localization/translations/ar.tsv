@@ -93,6 +93,7 @@ browse.destinationPickerConfirmMove	النقل إلى هنا
 browse.destinationPickerNoFolders	لا مجلدات هنا
 browse.destinationPickerLoadFailed	تعذّر تحميل المجلدات.
 browse.destinationPickerRecent	الأخيرة
+browse.destinationPickerReplaceTitle	أي ملف تريد استبداله؟
 browse.actionMove	نقل
 browse.actionPaste	لصق
 browse.actionPasteCount	لصق %lld عنصر
@@ -705,9 +706,14 @@ fileInfo.sectionSharing	المشاركة
 fileInfo.notShared	لا توجد روابط مشاركة
 fileInfo.versionActions	إجراءات الإصدار
 fileInfo.versionViewText	عرض النص
+fileInfo.versionTextTruncated	يُعرض الجزء الأول فقط من هذا الإصدار.
+fileInfo.versionReplaced	تم استبدال %@.
 fileInfo.versionDownload	تنزيل…
 fileInfo.versionSaveCopy	حفظ كنسخة
 fileInfo.versionRename	إعادة تسمية…
+fileInfo.versionReplace	استبدال ملف آخر…
+fileInfo.replaceTitle	استبدال هذا الملف؟
+fileInfo.replaceMessage	سيتم استبدال %1$@ بالإصدار الصادر في %2$@. يُحفظ محتواه الحالي كإصدار.
 fileInfo.renameTitle	إعادة تسمية الإصدار
 fileInfo.renamePlaceholder	اسم الإصدار
 fileInfo.versionPin	الاحتفاظ بهذا الإصدار
