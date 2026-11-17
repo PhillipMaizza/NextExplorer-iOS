@@ -1343,3 +1343,10 @@ trash.columnRemoved	Removed
 media.audioTrack	Audio Track
 media.subtitles	Subtitles
 media.tracks	Audio and Subtitles
+serverTools.navigationTitle	Server tools
+serverTools.subtitle	Optional programs the server uses for thumbnails, search and archives.
+serverTools.installed	Installed
+serverTools.missing	Missing
+serverTools.notUsed	Not used
+serverTools.package	Package: %@
+serverTools.missingFormats	Cannot open: %@

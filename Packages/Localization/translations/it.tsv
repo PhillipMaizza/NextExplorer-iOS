@@ -1247,3 +1247,10 @@ trash.columnRemoved	Rimozione
 media.audioTrack	Traccia audio
 media.subtitles	Sottotitoli
 media.tracks	Audio e sottotitoli
+serverTools.navigationTitle	Strumenti del server
+serverTools.subtitle	Programmi facoltativi che il server usa per miniature, ricerca e archivi.
+serverTools.installed	Installato
+serverTools.missing	Mancante
+serverTools.notUsed	Non usato
+serverTools.package	Pacchetto: %@
+serverTools.missingFormats	Non apribili: %@

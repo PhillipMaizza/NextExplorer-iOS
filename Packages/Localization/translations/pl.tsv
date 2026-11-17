@@ -1305,3 +1305,10 @@ trash.columnRemoved	Trwałe usunięcie
 media.audioTrack	Ścieżka audio
 media.subtitles	Napisy
 media.tracks	Dźwięk i napisy
+serverTools.navigationTitle	Narzędzia serwera
+serverTools.subtitle	Opcjonalne programy używane przez serwer do miniatur, wyszukiwania i archiwów.
+serverTools.installed	Zainstalowano
+serverTools.missing	Brak
+serverTools.notUsed	Nieużywane
+serverTools.package	Pakiet: %@
+serverTools.missingFormats	Nie można otworzyć: %@

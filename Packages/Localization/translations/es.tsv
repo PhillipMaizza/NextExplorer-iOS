@@ -1247,3 +1247,10 @@ trash.columnRemoved	Eliminación
 media.audioTrack	Pista de audio
 media.subtitles	Subtítulos
 media.tracks	Audio y subtítulos
+serverTools.navigationTitle	Herramientas del servidor
+serverTools.subtitle	Programas opcionales que el servidor usa para miniaturas, búsqueda y archivos comprimidos.
+serverTools.installed	Instalado
+serverTools.missing	Falta
+serverTools.notUsed	No se usa
+serverTools.package	Paquete: %@
+serverTools.missingFormats	No puede abrir: %@

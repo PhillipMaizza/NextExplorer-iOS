@@ -1218,3 +1218,10 @@ trash.columnRemoved	永久刪除
 media.audioTrack	音軌
 media.subtitles	字幕
 media.tracks	音訊和字幕
+serverTools.navigationTitle	伺服器工具
+serverTools.subtitle	伺服器用於縮圖、搜尋和壓縮檔的選用程式。
+serverTools.installed	已安裝
+serverTools.missing	缺少
+serverTools.notUsed	未使用
+serverTools.package	套件：%@
+serverTools.missingFormats	無法開啟：%@

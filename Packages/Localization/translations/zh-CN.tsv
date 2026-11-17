@@ -1218,3 +1218,10 @@ trash.columnRemoved	永久删除
 media.audioTrack	音轨
 media.subtitles	字幕
 media.tracks	音频和字幕
+serverTools.navigationTitle	服务器工具
+serverTools.subtitle	服务器用于缩略图、搜索和压缩包的可选程序。
+serverTools.installed	已安装
+serverTools.missing	缺失
+serverTools.notUsed	未使用
+serverTools.package	软件包：%@
+serverTools.missingFormats	无法打开：%@

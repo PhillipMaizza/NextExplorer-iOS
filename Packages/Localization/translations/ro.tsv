@@ -1276,3 +1276,10 @@ trash.columnRemoved	Eliminare
 media.audioTrack	Pistă audio
 media.subtitles	Subtitrări
 media.tracks	Audio și subtitrări
+serverTools.navigationTitle	Instrumentele serverului
+serverTools.subtitle	Programe opționale pe care serverul le folosește pentru miniaturi, căutare și arhive.
+serverTools.installed	Instalat
+serverTools.missing	Lipsește
+serverTools.notUsed	Nefolosit
+serverTools.package	Pachet: %@
+serverTools.missingFormats	Nu poate deschide: %@

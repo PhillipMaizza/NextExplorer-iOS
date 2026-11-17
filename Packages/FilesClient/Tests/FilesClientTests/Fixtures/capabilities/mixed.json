@@ -1,0 +1,11 @@
+{
+  "capabilities": [
+    { "name": "ffmpeg", "available": true, "version": "7.1", "enables": "videoThumbnails", "install": "ffmpeg" },
+    { "name": "ripgrep", "available": false, "version": null, "enables": "fastSearch", "install": "ripgrep" },
+    { "name": "rsync", "available": false, "version": null, "used": false, "enables": "copyProgress", "install": "rsync" },
+    {
+      "name": "7-Zip", "available": true, "version": "24.08", "enables": "archives", "install": "7zip",
+      "missingFormats": ["rar"], "installMissing": "7zip-rar"
+    }
+  ]
+}

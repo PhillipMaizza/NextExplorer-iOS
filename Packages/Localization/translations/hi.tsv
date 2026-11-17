@@ -1247,3 +1247,10 @@ trash.columnRemoved	स्थायी रूप से हटना
 media.audioTrack	ऑडियो ट्रैक
 media.subtitles	उपशीर्षक
 media.tracks	ऑडियो और उपशीर्षक
+serverTools.navigationTitle	सर्वर टूल
+serverTools.subtitle	वैकल्पिक प्रोग्राम जिन्हें सर्वर थंबनेल, खोज और आर्काइव के लिए इस्तेमाल करता है।
+serverTools.installed	इंस्टॉल है
+serverTools.missing	अनुपस्थित
+serverTools.notUsed	उपयोग में नहीं
+serverTools.package	पैकेज: %@
+serverTools.missingFormats	नहीं खुल सकते: %@
