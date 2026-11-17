@@ -6,8 +6,10 @@ public enum UploadFailureCause: String, Codable, CaseIterable, Sendable {
     case unauthorized
     /// 403: signed in, but not allowed to add files to that folder.
     case forbidden
-    /// 507 or 413: the server cannot hold the file.
+    /// 507: the server cannot hold the file.
     case serverFull
+    /// 413: a proxy in front of the server refuses a request this big, so the app sends it in pieces.
+    case tooLarge
     case network
     case other
 
@@ -29,7 +31,8 @@ public enum UploadFailureCause: String, Codable, CaseIterable, Sendable {
         switch statusCode {
         case StatusCode.unauthorized: return .unauthorized
         case StatusCode.forbidden: return .forbidden
-        case StatusCode.payloadTooLarge, StatusCode.insufficientStorage: return .serverFull
+        case StatusCode.payloadTooLarge: return .tooLarge
+        case StatusCode.insufficientStorage: return .serverFull
         default: break
         }
         if let code = (error as? URLError)?.code, networkErrors.contains(code) {

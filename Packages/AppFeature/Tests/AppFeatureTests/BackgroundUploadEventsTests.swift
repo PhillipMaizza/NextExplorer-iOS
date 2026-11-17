@@ -42,7 +42,7 @@ struct BackgroundUploadEventsTests {
                 retried.withValue { $0.append(credentials) }
                 return 1
             },
-            claimDeferred: { _, _ in [] }
+            pendingDeferred: { _ in [] }
         )
     }
 

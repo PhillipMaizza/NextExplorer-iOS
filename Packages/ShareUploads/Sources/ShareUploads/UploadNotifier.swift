@@ -90,6 +90,7 @@ extension UploadNotification {
         case .unauthorized: L10n.ShareUpload.failureUnauthorized(count)
         case .forbidden: L10n.ShareUpload.failureForbidden(count)
         case .serverFull: L10n.ShareUpload.failureServerFull(count)
+        case .tooLarge: L10n.ShareUpload.failureTooLarge(count)
         case .network: L10n.ShareUpload.failureNetwork(count)
         case .other: L10n.ShareUpload.failureOther(count)
         }

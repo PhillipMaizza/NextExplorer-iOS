@@ -120,6 +120,7 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
             availableCapacity: availableCapacity
         )
         batch.deferredUploads = deferredUploads
+        batch.deferralBytes = DeferredUploads.directLimitBytes(for: credentials.serverBaseURL, defaults: defaults)
         return batch
     }
 
@@ -562,6 +563,12 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
             && Manifest.results(in: directory)[index]?.cause != nil
         if result == .failure(.unauthorized) {
             flagNeedsSignIn(accountID: manifest.accountID)
+        }
+        if result == .failure(.tooLarge) {
+            let envelope = directory.appendingPathComponent(manifest.envelopes[index])
+            DeferredUploads.learnRefusal(
+                ofBytes: DiskSpace.size(of: envelope), serverURL: manifest.serverURL, defaults: defaults
+            )
         }
         let results = Manifest.record(index: index, result: result, in: directory)
         if result == .success {

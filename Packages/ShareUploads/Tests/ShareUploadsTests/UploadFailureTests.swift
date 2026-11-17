@@ -9,7 +9,7 @@ struct UploadFailureTests {
         #expect(UploadFailureCause.classify(statusCode: 401, error: nil) == .unauthorized)
         #expect(UploadFailureCause.classify(statusCode: 403, error: nil) == .forbidden)
         #expect(UploadFailureCause.classify(statusCode: 507, error: nil) == .serverFull)
-        #expect(UploadFailureCause.classify(statusCode: 413, error: nil) == .serverFull)
+        #expect(UploadFailureCause.classify(statusCode: 413, error: nil) == .tooLarge)
         #expect(UploadFailureCause.classify(statusCode: 500, error: nil) == .other)
         #expect(
             UploadFailureCause.classify(statusCode: 302, error: nil) == .other,

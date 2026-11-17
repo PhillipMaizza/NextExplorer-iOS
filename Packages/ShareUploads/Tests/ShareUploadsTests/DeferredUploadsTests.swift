@@ -22,41 +22,47 @@ struct DeferredUploadsTests {
         return (DeferredUploads(root: root.appendingPathComponent("Deferred", isDirectory: true)), root, source)
     }
 
-    @Test("A claim moves the file out with its name and destination, and a second claim finds nothing")
-    func claimMovesOnce() throws {
+    @Test("Pending lists the file in place with its name and destination, and drops folders whose file is gone")
+    func pendingListsFilesInPlace() throws {
         let (store, root, source) = try makeStore()
         defer { try? FileManager.default.removeItem(at: root) }
-        _ = try store.stage(
+        let folder = try store.stage(
             copying: source, fileName: Value.bigName, accountID: Harness.credentials.accountID,
             destination: TestPath.photos2026
         )
-        let target = root.appendingPathComponent("scratch", isDirectory: true)
 
-        let first = store.claim(accountID: Harness.credentials.accountID, into: target, now: TestClock.reference)
-        let second = store.claim(accountID: Harness.credentials.accountID, into: target)
+        let first = store.pending(accountID: Harness.credentials.accountID)
+        let again = store.pending(accountID: Harness.credentials.accountID)
 
+        #expect(first == again, "listing never moves anything, so a force quit loses nothing")
         #expect(first.map(\.fileName) == [Value.bigName])
         #expect(first.map(\.destination) == [TestPath.photos2026])
         #expect(first.first.flatMap { try? String(contentsOf: $0.fileURL, encoding: .utf8) } == Value.bytes)
-        #expect(second.isEmpty)
-        #expect(store.isEmpty)
-        let moved = first.first.flatMap { try? $0.fileURL.resourceValues(forKeys: [.contentModificationDateKey]) }
-        #expect(moved?.contentModificationDate == TestClock.reference, "a fresh date, so the app's sweep keeps it")
+
+        try FileManager.default.removeItem(at: folder.appendingPathComponent("payload"))
+        #expect(store.pending(accountID: Harness.credentials.accountID).isEmpty)
+        #expect(store.isEmpty, "the upload deleted its file, so its folder goes")
     }
 
-    @Test("A claim leaves another account's files where they are")
-    func claimIsPerAccount() throws {
+    @Test("Another account's files are not listed")
+    func pendingIsPerAccount() throws {
         let (store, root, source) = try makeStore()
         defer { try? FileManager.default.removeItem(at: root) }
         _ = try store.stage(copying: source, fileName: Value.bigName, accountID: Value.otherAccount, destination: "")
 
-        let claimed = store.claim(
-            accountID: Harness.credentials.accountID,
-            into: root.appendingPathComponent("scratch")
+        #expect(store.pending(accountID: Harness.credentials.accountID).isEmpty)
+        #expect(!store.isEmpty)
+    }
+
+    @Test("A name that tries to leave the destination folder is cut to its last component")
+    func pendingCutsTraversalNames() throws {
+        let (store, root, source) = try makeStore()
+        defer { try? FileManager.default.removeItem(at: root) }
+        _ = try store.stage(
+            copying: source, fileName: "../../evil.mov", accountID: Harness.credentials.accountID, destination: ""
         )
 
-        #expect(claimed.isEmpty)
-        #expect(!store.isEmpty)
+        #expect(store.pending(accountID: Harness.credentials.accountID).map(\.fileName) == ["evil.mov"])
     }
 
     @Test("Signing out deletes the files of accounts that left and keeps the others")
@@ -70,8 +76,8 @@ struct DeferredUploadsTests {
 
         store.discard(keepingAccounts: [Harness.credentials.accountID])
 
-        let left = store.claim(accountID: Value.otherAccount, into: root.appendingPathComponent("a"))
-        let kept = store.claim(accountID: Harness.credentials.accountID, into: root.appendingPathComponent("b"))
+        let left = store.pending(accountID: Value.otherAccount)
+        let kept = store.pending(accountID: Harness.credentials.accountID)
         #expect(left.isEmpty)
         #expect(kept.count == 1)
     }
@@ -84,7 +90,7 @@ struct DeferredUploadsTests {
         try FileManager.default.createDirectory(at: partial, withIntermediateDirectories: true)
         try FileManager.default.setAttributes([.modificationDate: TestClock.reference], ofItemAtPath: partial.path)
 
-        #expect(store.claim(accountID: Harness.credentials.accountID, into: root).isEmpty)
+        #expect(store.pending(accountID: Harness.credentials.accountID).isEmpty)
         store.discard(keepingAccounts: [], now: TestClock.reference)
         #expect(FileManager.default.fileExists(atPath: partial.path), "a young one may still be filling")
         store.discard(keepingAccounts: [], now: TestClock.reference.addingTimeInterval(2 * 60 * 60))
@@ -139,5 +145,44 @@ struct DeferredUploadsTests {
         harness.uploader.cancel(keepingAccounts: [])
 
         #expect(store.isEmpty)
+    }
+
+    @Test("A refused size lowers the limit for that server only, never below the proxy floor")
+    func learnedLimit() throws {
+        let suite = "DeferredLimit-\(TestID.uuid().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let server = Harness.credentials.serverBaseURL
+        let other = try #require(URL(string: "https://other.example.com"))
+        let mebibyte = Int64(UploadSettings.bytesPerMiB)
+
+        #expect(DeferredUploads.directLimitBytes(for: server, defaults: defaults) == DeferredUploads.thresholdBytes)
+
+        DeferredUploads.learnRefusal(ofBytes: 60 * mebibyte, serverURL: server, defaults: defaults)
+        #expect(DeferredUploads.directLimitBytes(for: server, defaults: defaults) == 30 * mebibyte)
+        #expect(DeferredUploads.directLimitBytes(for: other, defaults: defaults) == DeferredUploads.thresholdBytes)
+
+        DeferredUploads.learnRefusal(ofBytes: 80 * mebibyte, serverURL: server, defaults: defaults)
+        #expect(DeferredUploads.directLimitBytes(for: server, defaults: defaults) == 30 * mebibyte, "never raised")
+
+        DeferredUploads.learnRefusal(ofBytes: mebibyte, serverURL: server, defaults: defaults)
+        #expect(DeferredUploads.directLimitBytes(for: server, defaults: defaults) == Int64(UploadMode.largeFileBytes))
+    }
+
+    @Test("A file a proxy refused as too large lowers the limit, so sharing it again keeps it for the app")
+    func refusalIsLearnedFromTheBatch() throws {
+        let harness = try Harness()
+        defer { harness.tearDown() }
+        let batch = try harness.makeBatch(names: [TestFile.aPhoto])
+        let envelope = batch.directory.appendingPathComponent(batch.manifest.envelopes[0])
+        let size = 40 * UploadSettings.bytesPerMiB
+        let handle = try FileHandle(forWritingTo: envelope)
+        try handle.truncate(atOffset: UInt64(size))
+        try handle.close()
+
+        harness.uploader.complete(batchID: batch.id, index: 0, result: .failure(.tooLarge))
+
+        let limit = DeferredUploads.directLimitBytes(for: batch.manifest.serverURL, defaults: harness.defaults)
+        #expect(limit == Int64(size / 2))
     }
 }

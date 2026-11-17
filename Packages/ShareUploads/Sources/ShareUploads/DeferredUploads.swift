@@ -1,3 +1,4 @@
+import CoreModels
 import Foundation
 
 /// A shared file too big to send as one request through a typical proxy, kept whole in the App
@@ -5,7 +6,7 @@ import Foundation
 public struct DeferredUpload: Equatable, Sendable {
     public let id: String
     public let accountID: String
-    /// Where the file's bytes are now: the destination folder the claim moved them to.
+    /// Where the file's bytes are, inside the App Group.
     public let fileURL: URL
     public let fileName: String
     public let destination: String
@@ -24,8 +25,7 @@ public struct DeferredUpload: Equatable, Sendable {
 /// big file is copied here untouched and the app, which already uploads in pieces, finishes it.
 ///
 /// Each file is its own folder (`<id>/payload` plus `<id>/meta.json`) written under a dot name and
-/// renamed when complete, so a claim never sees a half written one. A claim moves the payload out
-/// and removes the folder, so two claims never both get a file.
+/// renamed when complete, so a reader never sees a half written one.
 public struct DeferredUploads: Sendable {
     /// Just under the 100 MB a Cloudflare tunnel accepts, so anything over it goes in pieces.
     public static let thresholdBytes: Int64 = 90 * 1024 * 1024
@@ -44,7 +44,30 @@ public struct DeferredUploads: Sendable {
         static let partialAge: TimeInterval = 60 * 60
     }
 
+    private static let limitKeyPrefix = "shareUploads.directLimitBytes."
+
     let root: URL
+
+    /// The size above which a file for `serverURL` is kept for the app: the fixed limit, lowered to
+    /// half of the smallest file this origin's proxy has refused (a self hosted proxy may cap lower
+    /// than a Cloudflare tunnel), never below what a proxy cuts off anyway.
+    static func directLimitBytes(for serverURL: URL, defaults: UserDefaults) -> Int64 {
+        let learned = Int64(defaults.integer(forKey: limitKey(serverURL)))
+        return learned > 0 ? min(thresholdBytes, learned) : thresholdBytes
+    }
+
+    /// A direct upload of `bytes` was refused as too large: files over half that size are kept for
+    /// the app from now on.
+    static func learnRefusal(ofBytes bytes: Int64, serverURL: URL, defaults: UserDefaults) {
+        let learned = max(Int64(UploadMode.largeFileBytes), bytes / 2)
+        let known = directLimitBytes(for: serverURL, defaults: defaults)
+        defaults.set(Int(min(known, learned)), forKey: limitKey(serverURL))
+    }
+
+    private static func limitKey(_ serverURL: URL) -> String {
+        let origin = [serverURL.host, serverURL.port.map(String.init)].compactMap(\.self).joined(separator: ":")
+        return limitKeyPrefix + origin
+    }
 
     /// `nil` when this build has no App Group to share through.
     public static let live: DeferredUploads? = AppGroup.containerURL.map {
@@ -69,34 +92,30 @@ public struct DeferredUploads: Sendable {
         return folder
     }
 
-    /// Moves `accountID`'s files into `directory` and returns them. Another account's files stay
-    /// where they are: they only ever upload as the account that shared them.
-    public func claim(accountID: String, into directory: URL, now: Date = Date()) -> [DeferredUpload] {
-        var claimed: [DeferredUpload] = []
+    /// `accountID`'s waiting files, where they are: the app uploads them in place, so one that was
+    /// cut off by a force quit is simply found again at the next launch. Another account's files
+    /// stay untouched: they only ever upload as the account that shared them. A folder whose file
+    /// is gone (uploaded, cancelled or failed for good) is removed.
+    public func pending(accountID: String) -> [DeferredUpload] {
+        var found: [DeferredUpload] = []
         for folder in folders() {
             guard
                 let data = try? Data(contentsOf: folder.appendingPathComponent(Constants.metaFile)),
                 let meta = try? JSONDecoder().decode(Meta.self, from: data),
                 meta.accountID == accountID
             else { continue }
-            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            let id = folder.lastPathComponent
-            let target = directory.appendingPathComponent(id)
-            do {
-                try FileManager.default.moveItem(at: folder.appendingPathComponent(Constants.payload), to: target)
-            } catch {
+            let payload = folder.appendingPathComponent(Constants.payload)
+            guard FileManager.default.fileExists(atPath: payload.path) else {
+                try? FileManager.default.removeItem(at: folder)
                 continue
             }
-            // The copy keeps the original's old date, and the app sweeps scratch files by date.
-            try? FileManager.default.setAttributes([.modificationDate: now], ofItemAtPath: target.path)
-            try? FileManager.default.removeItem(at: folder)
             // App Group contents are untrusted: a name can never reach outside the destination folder.
-            claimed.append(DeferredUpload(
-                id: id, accountID: accountID, fileURL: target, fileName: meta.fileName.lastPathComponentOnly,
-                destination: meta.destination
+            found.append(DeferredUpload(
+                id: folder.lastPathComponent, accountID: accountID, fileURL: payload,
+                fileName: (meta.fileName as NSString).lastPathComponent, destination: meta.destination
             ))
         }
-        return claimed
+        return found
     }
 
     /// Signing out: deletes the files of every account not in `accountIDs`, and any half written
@@ -130,11 +149,5 @@ public struct DeferredUploads: Sendable {
         let names = (try? FileManager.default.contentsOfDirectory(atPath: root.path)) ?? []
         return names.filter { !$0.hasPrefix(Constants.partialPrefix) }
             .map { root.appendingPathComponent($0, isDirectory: true) }
-    }
-}
-
-private extension String {
-    var lastPathComponentOnly: String {
-        (self as NSString).lastPathComponent
     }
 }

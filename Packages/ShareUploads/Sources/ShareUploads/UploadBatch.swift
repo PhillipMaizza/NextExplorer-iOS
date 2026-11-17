@@ -142,7 +142,7 @@ public struct UploadBatch: Sendable {
 
     let ledger = SpaceLedger()
     private(set) var staged: [StagedFile] = []
-    private(set) var deferredCount = 0
+    public private(set) var deferredCount = 0
 
     /// Every file the user shared, whether it goes out now or waits for the app.
     public var count: Int {
