@@ -15,17 +15,22 @@ struct BrowseTabTrashTests {
         BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: (path as NSString).lastPathComponent)
     }
 
-    @Test("Open Trash from a pushed folder returns to the root and pushes the trash")
+    @Test("Open Trash from a pushed folder returns to the root and pushes the trash; the Mac opens its sidebar section")
     func openTrashFromAFolder() async {
         var state = BrowseTabFeature.State(serverURL: serverURL)
         state.path.append(screen("A"))
         let store = TestStore(initialState: state) { BrowseTabFeature() }
 
         await store.send(.path(.element(id: 0, action: .delegate(.openTrashTapped))))
-        await store.receive(\.openTrash) {
-            $0.path = StackState()
-            $0.trash = TrashFeature.State(serverURL: serverURL)
-        }
+        #if os(macOS)
+            await store.receive(\.openTrash)
+            await store.receive(.delegate(.openTrashTapped))
+        #else
+            await store.receive(\.openTrash) {
+                $0.path = StackState()
+                $0.trash = TrashFeature.State(serverURL: serverURL)
+            }
+        #endif
     }
 
     @Test("Open Original Location closes the trash and opens the folder")

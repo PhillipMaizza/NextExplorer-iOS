@@ -78,8 +78,38 @@ struct MockFileTreeTests {
     func deletingAFolderForgetsWhatWasInside() {
         let tree = MockFileTree(template: template, seededDepth: 1)
         let reports = tree.createFolder(in: Constants.docs, named: Constants.reports)
-        tree.delete([reports])
+        _ = tree.delete([reports], permanent: true)
         #expect(!tree.list(Constants.docs).contains { $0.name == Constants.reports })
         #expect(tree.list(reports.id).isEmpty)
+        #expect(tree.trashListing().items.isEmpty)
+    }
+
+    @Test
+    func aTrashedFolderComesBackWithWhatWasInsideUnderAFreeName() {
+        let tree = MockFileTree(template: template, seededDepth: 1)
+        let reports = tree.createFolder(in: Constants.docs, named: Constants.reports)
+        let notes = tree.createFolder(in: reports.id, named: "Notes")
+
+        let outcome = tree.delete([reports], permanent: false)
+        #expect(outcome.trashedCount == 1)
+        let trashed = tree.trashListing().items
+        #expect(trashed.map(\.name) == [Constants.reports])
+        _ = tree.createFolder(in: Constants.docs, named: Constants.reports)
+
+        let result = tree.restore(trashed.map(\.id))
+
+        #expect(result.items.first?.restoredName == "\(Constants.reports) (2)")
+        #expect(tree.list("\(Constants.docs)/\(Constants.reports) (2)").map(\.name) == [notes.name])
+        #expect(tree.trashListing().items.isEmpty)
+    }
+
+    @Test
+    func emptyingTheTrashCountsWhatWent() {
+        let tree = MockFileTree(template: template, seededDepth: 1)
+        let reports = tree.createFolder(in: Constants.docs, named: Constants.reports)
+        _ = tree.delete([reports], permanent: false)
+
+        #expect(tree.emptyTrash() == TrashEmptySummary(purged: 1))
+        #expect(tree.purge(["missing"]).items.first?.status == .notFound)
     }
 }
