@@ -80,11 +80,28 @@ struct FilesService: Sendable {
     /// `/extract`). Current backends answer 200 with an NDJSON stream (`start`, `progress`, then
     /// `done` carrying the result, or `error`; see `backend/src/utils/ndjsonStream.js`) instead of
     /// one JSON body, so the result is decoded from the `done` line. A plain JSON body from an
-    /// older server still works.
+    /// older server still works. With `onProgress`, the stream is read as it arrives and each
+    /// `progress` event reports how far the work is (0 to 1).
     func sendStreamedOperation<Response: Decodable>(
-        _ request: URLRequest, decoding _: Response.Type
+        _ request: URLRequest,
+        decoding _: Response.Type,
+        onProgress: (@Sendable (Double) -> Void)? = nil
     ) async throws -> Response {
-        let (data, response) = try await performSend(request)
+        let (data, response): (Data, HTTPURLResponse)
+        if let onProgress {
+            let decoder = Self.makeDecoder()
+            do {
+                (data, response) = try await networkClient.sendStreamingLines(request) { line in
+                    if let fraction = (try? decoder.decode(OperationStreamEvent.self, from: line))?.fraction {
+                        onProgress(fraction)
+                    }
+                }
+            } catch {
+                throw Self.mapTransportError(error)
+            }
+        } else {
+            (data, response) = try await performSend(request)
+        }
         try Self.validateReportingMessage(data, response)
         return try Self.decodeStreamedOperation(Response.self, from: data)
     }

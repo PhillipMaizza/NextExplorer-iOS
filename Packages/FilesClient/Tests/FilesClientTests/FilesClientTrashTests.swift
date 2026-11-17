@@ -1,4 +1,5 @@
 import CoreModels
+import Dependencies
 @testable import FilesClient
 import Foundation
 import NetworkClient
@@ -53,7 +54,7 @@ extension FilesClientLiveTests {
         func restoreAlwaysSendsTheShareChoice() async throws {
             try prepare(statusCode: 200, fixture: .trashRestoreRenamed)
 
-            let result = try await makeClient().restoreTrash(serverURL, .items([Constants.itemID]), nil, .drop)
+            let result = try await makeClient().restoreTrash(serverURL, .items([Constants.itemID]), nil, .drop) { _ in }
 
             #expect(result.items.first?.isRenamed == true)
             try expectRequest(.post, "/api/trash/restore")
@@ -69,7 +70,7 @@ extension FilesClientLiveTests {
                 .entries(itemID: Constants.itemID, paths: [Constants.entryPath]),
                 nil,
                 .restore
-            )
+            ) { _ in }
 
             try expectRequest(.post, "/api/trash/items/t1/restore")
             try expectJSONBody(["paths": [Constants.entryPath], "shares": "restore"])
@@ -78,15 +79,18 @@ extension FilesClientLiveTests {
         @Test
         func restoreIntoAFolderReadsTheStreamedResult() async throws {
             try prepare(statusCode: 200, fixture: .trashRestoreToDone)
+            let fractions = LockIsolated<[Double]>([])
 
             let result = try await makeClient().restoreTrash(
                 serverURL,
                 .items([Constants.itemID]),
                 Constants.destination,
                 .restore
-            )
+            ) { fraction in fractions.withValue { $0.append(fraction) } }
 
+            #expect(fractions.value == [0.5, 1])
             #expect(result.succeeded.count == 1)
+            #expect(result.items.first?.path == Constants.destination)
             try expectRequest(.post, "/api/trash/restore-to")
             try expectJSONBody(["ids": [Constants.itemID], "destination": Constants.destination, "shares": "restore"])
         }
@@ -100,7 +104,7 @@ extension FilesClientLiveTests {
                 .entries(itemID: Constants.itemID, paths: [Constants.entryPath]),
                 Constants.destination,
                 .drop
-            )
+            ) { _ in }
 
             try expectRequest(.post, "/api/trash/items/t1/restore-to")
         }
@@ -115,7 +119,7 @@ extension FilesClientLiveTests {
                     .items([Constants.itemID]),
                     Constants.destination,
                     .drop
-                )
+                ) { _ in }
             }
         }
 
@@ -129,7 +133,7 @@ extension FilesClientLiveTests {
                     .items([Constants.itemID]),
                     Constants.destination,
                     .drop
-                )
+                ) { _ in }
             }
         }
 
@@ -138,7 +142,7 @@ extension FilesClientLiveTests {
             try prepare(statusCode: 200, fixture: .trashRestoreRenamed)
             let ids = (0 ... FilesService.trashBatchLimit).map(String.init)
 
-            let result = try await makeClient().restoreTrash(serverURL, .items(ids), nil, .drop)
+            let result = try await makeClient().restoreTrash(serverURL, .items(ids), nil, .drop) { _ in }
 
             #expect(StubURLProtocol.requests.count == 2)
             #expect(result.items.count == 2)

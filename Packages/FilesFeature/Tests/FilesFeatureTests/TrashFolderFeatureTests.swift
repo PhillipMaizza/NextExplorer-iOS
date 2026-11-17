@@ -97,7 +97,7 @@ struct TrashFolderFeatureTests {
         let store = TestStore(initialState: state) {
             TrashFolderFeature()
         } withDependencies: {
-            $0.filesClient.restoreTrash = { _, target, _, shares in
+            $0.filesClient.restoreTrash = { _, target, _, shares, _ in
                 #expect(target == .entries(itemID: "t2", paths: ["Summer/beach.jpg", "Summer/itinerary.md"]))
                 #expect(shares == .drop)
                 return TrashActionResult(items: [
@@ -110,9 +110,9 @@ struct TrashFolderFeatureTests {
         }
 
         await store.send(.restoreTapped([beach, itinerary]))
-        await store.receive(\.restore.restore) { $0.restore.isRestoring = true }
+        await store.receive(\.restore.restore) { $0.restore.phase = .inPlace }
         await store.receive(\.restore.response.success) {
-            $0.restore.isRestoring = false
+            $0.restore.phase = .idle
             $0.restore.notice = TrashNotice(text: L10n.Trash.restored(2), isFailure: false, sequence: 1)
         }
         await store.receive(.restore(.delegate(.finished))) {
@@ -130,7 +130,7 @@ struct TrashFolderFeatureTests {
         let store = TestStore(initialState: state) {
             TrashFolderFeature()
         } withDependencies: {
-            $0.filesClient.restoreTrash = { _, target, _, shares in
+            $0.filesClient.restoreTrash = { _, target, _, shares, _ in
                 #expect(target == .items(["t2"]))
                 #expect(shares == .restore)
                 return TrashActionResult(items: [.init(key: "t2", status: .restored)])
@@ -143,10 +143,10 @@ struct TrashFolderFeatureTests {
         }
         await store.send(.restore(.shareChoiceMade(.restore))) {
             $0.restore.awaitingShareChoice = nil
-            $0.restore.isRestoring = true
+            $0.restore.phase = .inPlace
         }
         await store.receive(\.restore.response.success) {
-            $0.restore.isRestoring = false
+            $0.restore.phase = .idle
             $0.restore.notice = TrashNotice(text: L10n.Trash.restored(1), isFailure: false, sequence: 1)
         }
         await store.receive(.restore(.delegate(.finished))) { $0.isRestoringWholeFolder = false }

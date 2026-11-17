@@ -32,7 +32,6 @@
                             .disabled(store.items.isEmpty || store.isBusy)
                         }
                     }
-                    .toolbar { TrashRestoreCancelButton(store: store.scope(state: \.restore, action: \.restore)) }
                     .navigationDestination(item: $store.scope(state: \.folder, action: \.folder)) { folderStore in
                         TrashFolderView(store: folderStore)
                     }

@@ -325,7 +325,7 @@
                     )
                 }
                 client.fetchTrash = { _ in store.trashListing() }
-                client.restoreTrash = { _, target, _, _ in
+                client.restoreTrash = { _, target, _, _, _ in
                     guard case let .items(ids) = target else { return TrashActionResult(items: []) }
                     return store.restore(ids)
                 }

@@ -278,9 +278,14 @@ public struct FilesClient: Sendable {
     /// `GET /api/trash/items/:id/text`: a text file in the trash, the item itself (`path` "") or an entry.
     public var fetchTrashText: @Sendable (_ serverURL: URL, _ itemID: String, _ path: String) async throws -> TrashText
     /// Restores where each came from, or into the `destination` folder when set. `shares` is always sent:
-    /// the server drops the share links when it is missing.
+    /// the server drops the share links when it is missing. A restore into a folder copies and reports
+    /// how far it is (0 to 1) through `onProgress` as it goes.
     public var restoreTrash: @Sendable (
-        _ serverURL: URL, _ target: TrashTarget, _ destination: String?, _ shares: ShareLinkChoice
+        _ serverURL: URL,
+        _ target: TrashTarget,
+        _ destination: String?,
+        _ shares: ShareLinkChoice,
+        _ onProgress: @Sendable @escaping (Double) -> Void
     ) async throws -> TrashActionResult
     /// `POST /api/trash/delete`: removes items for good; `forgetUnavailable` (administrators only)
     /// drops the record of an item whose volume is gone.

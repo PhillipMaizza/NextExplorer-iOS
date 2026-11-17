@@ -134,7 +134,7 @@ struct TrashFeatureTests {
     func restoreWithoutLinks() async {
         let sent = LockIsolated<[ShareLinkChoice]>([])
         let store = store(loadedState([notes])) {
-            $0.filesClient.restoreTrash = { _, target, destination, shares in
+            $0.filesClient.restoreTrash = { _, target, destination, shares, _ in
                 #expect(target == .items(["t3"]))
                 #expect(destination == nil)
                 sent.withValue { $0.append(shares) }
@@ -144,9 +144,9 @@ struct TrashFeatureTests {
         }
 
         await store.send(.restoreTapped([notes]))
-        await store.receive(\.restore.restore) { $0.restore.isRestoring = true }
+        await store.receive(\.restore.restore) { $0.restore.phase = .inPlace }
         await store.receive(\.restore.response.success) {
-            $0.restore.isRestoring = false
+            $0.restore.phase = .idle
             $0.restore.notice = TrashNotice(text: L10n.Trash.restored(1), isFailure: false, sequence: 1)
         }
         await store.receive(.restore(.delegate(.finished)))
@@ -158,7 +158,7 @@ struct TrashFeatureTests {
     @Test("Restoring an item with share links asks first and sends the answer")
     func restoreAsksAboutLinks() async {
         let store = store(loadedState([report])) {
-            $0.filesClient.restoreTrash = { _, _, _, shares in
+            $0.filesClient.restoreTrash = { _, _, _, shares, _ in
                 #expect(shares == .restore)
                 return TrashActionResult(items: [
                     .init(
@@ -180,10 +180,10 @@ struct TrashFeatureTests {
         }
         await store.send(.restore(.shareChoiceMade(.restore))) {
             $0.restore.awaitingShareChoice = nil
-            $0.restore.isRestoring = true
+            $0.restore.phase = .inPlace
         }
         await store.receive(\.restore.response.success) {
-            $0.restore.isRestoring = false
+            $0.restore.phase = .idle
             $0.restore.notice = TrashNotice(
                 text: [
                     L10n.Trash.restored(1),
@@ -212,7 +212,7 @@ struct TrashFeatureTests {
     @Test("Restore To picks a folder, then restores into it and reports a refusal")
     func restoreTo() async {
         let store = store(loadedState([notes])) {
-            $0.filesClient.restoreTrash = { _, _, destination, _ in
+            $0.filesClient.restoreTrash = { _, _, destination, _, _ in
                 #expect(destination == Constants.destination)
                 return TrashActionResult(items: [.init(key: "t3", status: .destinationForbidden, name: "notes.txt")])
             }
@@ -231,12 +231,10 @@ struct TrashFeatureTests {
             .send(.restore(.destinationPicker(.presented(.delegate(.confirmed(destination: Constants.destination)))))) {
                 $0.restore.destinationPicker = nil
                 $0.restore.awaitingDestination = nil
-                $0.restore.isRestoring = true
-                $0.restore.isRestoringToFolder = true
+                $0.restore.phase = .toFolder(progress: nil)
             }
         await store.receive(\.restore.response.success) {
-            $0.restore.isRestoring = false
-            $0.restore.isRestoringToFolder = false
+            $0.restore.phase = .idle
             $0.restore.notice = TrashNotice(
                 text: L10n.Trash.notRestored(1) + " " + L10n.Trash.failureDestinationForbidden,
                 isFailure: true,
@@ -257,7 +255,7 @@ struct TrashFeatureTests {
             restoringFrom: ""
         )
         let store = store(state) {
-            $0.filesClient.restoreTrash = { _, _, _, _ in
+            $0.filesClient.restoreTrash = { _, _, _, _, _ in
                 try await suspendUntilCancelled()
                 return TrashActionResult(items: [])
             }
@@ -268,12 +266,10 @@ struct TrashFeatureTests {
             .send(.restore(.destinationPicker(.presented(.delegate(.confirmed(destination: Constants.destination)))))) {
                 $0.restore.destinationPicker = nil
                 $0.restore.awaitingDestination = nil
-                $0.restore.isRestoring = true
-                $0.restore.isRestoringToFolder = true
+                $0.restore.phase = .toFolder(progress: nil)
             }
         await store.send(.restore(.cancelTapped)) {
-            $0.restore.isRestoring = false
-            $0.restore.isRestoringToFolder = false
+            $0.restore.phase = .idle
         }
         await store.receive(.restore(.delegate(.finished)))
         await store.receive(.delegate(.restored))

@@ -356,7 +356,7 @@ public extension FilesClient {
             TrashFolderListing(item: TrashItem(id: itemID, name: itemID, isDirectory: true), path: path, entries: [])
         },
         fetchTrashText: { _, itemID, _ in TrashText(name: itemID, content: "") },
-        restoreTrash: { _, _, _, _ in TrashActionResult(items: []) },
+        restoreTrash: { _, _, _, _, _ in TrashActionResult(items: []) },
         purgeTrash: { _, _, _ in TrashActionResult(items: []) },
         emptyTrash: { _ in TrashEmptySummary(purged: 0) },
         updateSystemSettings: { _, _ in SystemSettings() },

@@ -337,12 +337,13 @@ public extension FilesClient {
             fetchTrashText: { serverURL, itemID, path in
                 try await service.fetchTrashText(serverURL: serverURL, itemID: itemID, path: path)
             },
-            restoreTrash: { serverURL, target, destination, shares in
+            restoreTrash: { serverURL, target, destination, shares, onProgress in
                 try await service.restoreTrash(
                     serverURL: serverURL,
                     target: target,
                     destination: destination,
-                    shares: shares
+                    shares: shares,
+                    onProgress: onProgress
                 )
             },
             purgeTrash: { serverURL, ids, forgetUnavailable in

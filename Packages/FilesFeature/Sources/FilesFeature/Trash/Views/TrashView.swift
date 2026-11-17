@@ -48,7 +48,6 @@ struct TrashView: View {
                     onToggleViewMode: toggleViewMode
                 )
             }
-            .toolbar { TrashRestoreCancelButton(store: store.scope(state: \.restore, action: \.restore)) }
             // Below the toolbar, so its Cancel can hide the circles before select mode ends.
             .selectModeChrome(isSelecting: store.isSelecting)
             .task { store.send(.task) }

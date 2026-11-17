@@ -18,9 +18,7 @@ public struct TrashRestoreFeature {
         /// Restore To: the target waiting for the folder picker's answer.
         public var awaitingDestination: Request?
         @Presents public var destinationPicker: DestinationPickerFeature.State?
-        public var isRestoring = false
-        /// Whether the running restore goes into a chosen folder, which can take a while and can be stopped.
-        public var isRestoringToFolder = false
+        public var phase: Phase = .idle
         public var notice: TrashNotice?
         /// What the last restore brought back, for the toast's Undo to move to the trash again.
         public var undoable: [FileItem] = []
@@ -28,6 +26,18 @@ public struct TrashRestoreFeature {
         public init(serverURL: URL) {
             self.serverURL = serverURL
         }
+
+        public var isRestoring: Bool {
+            phase != .idle
+        }
+    }
+
+    /// A restore in place is quick; one into a chosen folder copies, reports how far it is (`nil`
+    /// until the server says) and can be stopped.
+    public enum Phase: Equatable, Sendable {
+        case idle
+        case inPlace
+        case toFolder(progress: Double?)
     }
 
     public struct Request: Equatable, Sendable {
@@ -43,6 +53,7 @@ public struct TrashRestoreFeature {
         case shareChoiceMade(ShareLinkChoice)
         case shareChoiceDismissed
         case cancelTapped
+        case progressed(Double)
         case undoTapped
         case undoResponse(Result<DeleteOutcome, FilesClientError>)
         case response(Result<TrashActionResult, FilesClientError>)
@@ -101,13 +112,16 @@ public struct TrashRestoreFeature {
             case .cancelTapped:
                 // Closing the request stops the server; what had not started stays in the trash.
                 guard state.isRestoring else { return .none }
-                state.isRestoring = false
-                state.isRestoringToFolder = false
+                state.phase = .idle
                 return .merge(.cancel(id: CancelID.restore), .send(.delegate(.finished)))
 
+            case let .progressed(fraction):
+                guard case .toFolder = state.phase else { return .none }
+                state.phase = .toFolder(progress: fraction)
+                return .none
+
             case let .response(.success(result)):
-                state.isRestoring = false
-                state.isRestoringToFolder = false
+                state.phase = .idle
                 state.undoable = Self.restoredItems(in: result)
                 state.notice = TrashNotice.after(
                     state.notice,
@@ -144,8 +158,7 @@ public struct TrashRestoreFeature {
                 return .send(.delegate(.finished))
 
             case let .response(.failure(error)):
-                state.isRestoring = false
-                state.isRestoringToFolder = false
+                state.phase = .idle
                 state.undoable = []
                 state.notice = TrashNotice.after(state.notice, text: error.userMessage, isFailure: true)
                 return .send(.delegate(.finished))
@@ -170,14 +183,28 @@ public struct TrashRestoreFeature {
     }
 
     private func run(_ state: inout State, _ request: Request, shares: ShareLinkChoice) -> Effect<Action> {
-        state.isRestoring = true
-        state.isRestoringToFolder = request.destination != nil
+        state.phase = request.destination == nil ? .inPlace : .toFolder(progress: nil)
         let serverURL = state.serverURL
         let filesClient = filesClient
         return .run { send in
-            try await send(.response(apiResult {
-                try await filesClient.restoreTrash(serverURL, request.target, request.destination, shares)
-            }))
+            // Only the latest position matters: a bar cannot show the ones it skipped.
+            let (progress, continuation) = AsyncStream<Double>.makeStream(bufferingPolicy: .bufferingNewest(1))
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                defer { continuation.finish() }
+                group.addTask {
+                    for await fraction in progress {
+                        await send(.progressed(fraction))
+                    }
+                }
+                let result = try await apiResult {
+                    try await filesClient.restoreTrash(serverURL, request.target, request.destination, shares) {
+                        continuation.yield($0)
+                    }
+                }
+                continuation.finish()
+                try await group.waitForAll()
+                await send(.response(result))
+            }
         }
         .cancellable(id: CancelID.restore, cancelInFlight: true)
     }

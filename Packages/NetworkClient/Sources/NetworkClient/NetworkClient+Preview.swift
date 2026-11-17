@@ -14,6 +14,9 @@ extension NetworkClient {
         lowPrioritySend: { request in
             try Self.cannedResponse(for: request)
         },
+        sendStreamingLines: { request, _ in
+            try Self.cannedResponse(for: request)
+        },
         upload: { request, _, onProgress in
             onProgress(1)
             return try Self.cannedResponse(for: request)

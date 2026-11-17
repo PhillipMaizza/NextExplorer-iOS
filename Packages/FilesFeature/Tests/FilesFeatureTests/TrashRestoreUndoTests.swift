@@ -42,7 +42,7 @@ struct TrashRestoreUndoTests {
     func undoMovesBackToTrash() async {
         let sent = LockIsolated<[FileItem]>([])
         let store = store {
-            $0.filesClient.restoreTrash = { _, _, _, _ in TrashActionResult(items: [restored]) }
+            $0.filesClient.restoreTrash = { _, _, _, _, _ in TrashActionResult(items: [restored]) }
             $0.filesClient.deleteItems = { _, items, permanent in
                 #expect(!permanent)
                 sent.setValue(items)
@@ -50,9 +50,9 @@ struct TrashRestoreUndoTests {
             }
         }
 
-        await store.send(.restore(.items(["t3"]), shareCount: 0)) { $0.isRestoring = true }
+        await store.send(.restore(.items(["t3"]), shareCount: 0)) { $0.phase = .inPlace }
         await store.receive(\.response.success) {
-            $0.isRestoring = false
+            $0.phase = .idle
             $0.undoable = [FileItem(
                 name: Constants.restoredName,
                 path: Constants.folder,
@@ -76,14 +76,14 @@ struct TrashRestoreUndoTests {
     @Test("A restore the server gave no folder for offers no Undo")
     func noFolderNoUndo() async {
         let store = store {
-            $0.filesClient.restoreTrash = { _, _, _, _ in
+            $0.filesClient.restoreTrash = { _, _, _, _, _ in
                 TrashActionResult(items: [.init(key: "t3", status: .restored, name: "notes.txt")])
             }
         }
 
-        await store.send(.restore(.items(["t3"]), shareCount: 0)) { $0.isRestoring = true }
+        await store.send(.restore(.items(["t3"]), shareCount: 0)) { $0.phase = .inPlace }
         await store.receive(\.response.success) {
-            $0.isRestoring = false
+            $0.phase = .idle
             $0.notice = TrashNotice(text: L10n.Trash.restored(1), isFailure: false, sequence: 1)
         }
         await store.receive(.delegate(.finished))
@@ -93,13 +93,13 @@ struct TrashRestoreUndoTests {
     @Test("An Undo the server refuses says why and reloads")
     func undoFailure() async {
         let store = store {
-            $0.filesClient.restoreTrash = { _, _, _, _ in TrashActionResult(items: [restored]) }
+            $0.filesClient.restoreTrash = { _, _, _, _, _ in TrashActionResult(items: [restored]) }
             $0.filesClient.deleteItems = { _, _, _ in throw FilesClientError.offline }
         }
 
-        await store.send(.restore(.items(["t3"]), shareCount: 0)) { $0.isRestoring = true }
+        await store.send(.restore(.items(["t3"]), shareCount: 0)) { $0.phase = .inPlace }
         await store.receive(\.response.success) {
-            $0.isRestoring = false
+            $0.phase = .idle
             $0.undoable = TrashRestoreFeature.restoredItems(in: TrashActionResult(items: [restored]))
             $0.notice = TrashNotice(text: summary, isFailure: false, isUndoable: true, sequence: 1)
         }

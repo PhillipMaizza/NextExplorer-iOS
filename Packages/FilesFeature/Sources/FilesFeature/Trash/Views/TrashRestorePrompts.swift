@@ -6,7 +6,7 @@ import Localization
 import SwiftUI
 
 /// What a restore asks and shows, on the trash list and inside a deleted folder alike: the share
-/// link question, the folder picker for Restore To, a progress toast while it runs, and the result.
+/// link question, the folder picker for Restore To, its progress while it runs, and the result.
 struct TrashRestorePrompts: ViewModifier {
     @Bindable var store: StoreOf<TrashRestoreFeature>
     /// The screen's own result, beside the restore's: one toast shows whichever changed last.
@@ -19,6 +19,7 @@ struct TrashRestorePrompts: ViewModifier {
             .sheet(item: $store.scope(state: \.destinationPicker, action: \.destinationPicker)) { pickerStore in
                 DestinationPickerView(store: pickerStore)
             }
+            .safeAreaInset(edge: .bottom, spacing: 0) { folderProgressBar }
             .dsToast(progressBinding)
             .dsToast($toast)
             .onChange(of: store.notice) { _, notice in show(notice) }
@@ -60,21 +61,26 @@ struct TrashRestorePrompts: ViewModifier {
         )
     }
 
-    /// Read only: the restore clears it when it ends.
+    /// Read only: the restore clears it when it ends. A quick restore in place only says it runs.
     private var progressBinding: Binding<DSToastMessage?> {
-        Binding(get: { store.isRestoring ? .progress(L10n.Trash.restoring) : nil }, set: { _ in })
+        Binding(get: { store.phase == .inPlace ? .progress(L10n.Trash.restoring) : nil }, set: { _ in })
     }
-}
 
-/// Stop for a restore into a folder, which copies across disks and can take a while.
-struct TrashRestoreCancelButton: ToolbarContent {
-    let store: StoreOf<TrashRestoreFeature>
-
-    var body: some ToolbarContent {
-        if store.isRestoringToFolder {
-            ToolbarItem(placement: .cancellationAction) {
-                Button(L10n.Common.cancel) { store.send(.cancelTapped) }
-            }
+    /// A restore into a folder copies and can take a while: the transfer bar with how far it is and Cancel.
+    @ViewBuilder
+    private var folderProgressBar: some View {
+        if case let .toFolder(progress) = store.phase {
+            TransferProgressBar(
+                icon: IconKit.restoreTo,
+                title: L10n.Trash.restoring,
+                progress: progress,
+                cancelLabel: L10n.Common.cancel,
+                onTap: {},
+                onCancelAll: { store.send(.cancelTapped) }
+            )
+            .padding(.horizontal, .space16)
+            .padding(.bottom, .space16)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }
 }
@@ -138,11 +144,36 @@ struct TrashTextSheet: View {
         .modifier(TrashRestorePrompts(
             store: Store(initialState: {
                 var state = TrashRestoreFeature.State(serverURL: TrashPreviewData.serverURL)
-                state.isRestoring = true
+                state.phase = .inPlace
                 return state
             }()) { TrashRestoreFeature() },
             screenNotice: nil
         ))
+}
+
+#Preview("Restoring into a folder") {
+    Color.backgroundPrimary
+        .modifier(TrashRestorePrompts(
+            store: Store(initialState: {
+                var state = TrashRestoreFeature.State(serverURL: TrashPreviewData.serverURL)
+                state.phase = .toFolder(progress: 0.4)
+                return state
+            }()) { TrashRestoreFeature() },
+            screenNotice: nil
+        ))
+}
+
+#Preview("Restoring into a folder, waiting, dark") {
+    Color.backgroundPrimary
+        .modifier(TrashRestorePrompts(
+            store: Store(initialState: {
+                var state = TrashRestoreFeature.State(serverURL: TrashPreviewData.serverURL)
+                state.phase = .toFolder(progress: nil)
+                return state
+            }()) { TrashRestoreFeature() },
+            screenNotice: nil
+        ))
+        .preferredColorScheme(.dark)
 }
 
 #Preview("Text file") {

@@ -15,7 +15,6 @@ struct TrashFolderView: View {
             .backgroundGradient()
             .navigationTitle(store.title)
             .toolbar { toolbar }
-            .toolbar { TrashRestoreCancelButton(store: store.scope(state: \.restore, action: \.restore)) }
             .task { store.send(.task) }
             .modifier(TrashRestorePrompts(
                 store: store.scope(state: \.restore, action: \.restore),

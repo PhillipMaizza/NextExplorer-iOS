@@ -59,9 +59,24 @@ extension FilesService {
     struct OperationStreamEvent: Decodable {
         static let doneType = "done"
         static let errorType = "error"
+        static let progressType = "progress"
 
         let type: String?
         let message: String?
+        /// A transfer's progress (`copiedBytes` of `totalBytes`), or an archive's (`percent`).
+        let copiedBytes: Int64?
+        let totalBytes: Int64?
+        let percent: Double?
+
+        /// How far a `progress` event says the work is, from 0 to 1; `nil` for any other event or
+        /// one with nothing to measure yet.
+        var fraction: Double? {
+            guard type == Self.progressType else { return nil }
+            if let totalBytes, totalBytes > 0, let copiedBytes {
+                return min(max(Double(copiedBytes) / Double(totalBytes), 0), 1)
+            }
+            return percent.map { min(max($0 / 100, 0), 1) }
+        }
     }
 
     struct CompressItemEnvelope: Decodable {

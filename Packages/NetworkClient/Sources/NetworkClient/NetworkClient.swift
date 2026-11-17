@@ -9,6 +9,14 @@ public struct NetworkClient: Sendable {
     /// prefetch while browsing) can never take slots from the main session's interactive
     /// pool. Cookie jar and server trust handling are shared with `send`.
     public var lowPrioritySend: @Sendable (_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
+    /// Same as `send`, but hands each line of the body to `onLine` as it arrives: an NDJSON stream
+    /// that reports progress while the server works. The whole body is still returned, capped like
+    /// `send`'s. Cancelling the task closes the request. Session, cookie and trust handling are the
+    /// same as `send`.
+    public var sendStreamingLines: @Sendable (
+        _ request: URLRequest,
+        _ onLine: @Sendable @escaping (Data) -> Void
+    ) async throws -> (Data, HTTPURLResponse)
     /// Uploads `bodyFileURL` as the request body, reporting fractional progress (0...1) as the
     /// bytes go out. The body file is streamed from disk, so its size does not translate into
     /// resident memory (the caller is responsible for what that file contains, and for its

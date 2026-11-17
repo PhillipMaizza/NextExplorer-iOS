@@ -56,7 +56,8 @@ extension FilesService {
         serverURL: URL,
         target: TrashTarget,
         destination: String?,
-        shares: ShareLinkChoice
+        shares: ShareLinkChoice,
+        onProgress: @Sendable @escaping (Double) -> Void = { _ in }
     ) async throws -> TrashActionResult {
         var entries: [TrashActionResult.Entry] = []
         for batch in Self.trashBatches(target) {
@@ -75,10 +76,9 @@ extension FilesService {
             var request = Self.makeRequest(url: url, method: .post, isMutation: true)
             request.setJSONContentType()
             request.httpBody = try Self.encode(body)
-            // shortcut: a restore into a folder streams progress, read here only once it ends; a live bar needs an incremental NDJSON reader.
             let result = destination == nil
                 ? try await sendReportingMessage(request, decoding: TrashActionResult.self)
-                : try await sendStreamedOperation(request, decoding: TrashActionResult.self)
+                : try await sendStreamedOperation(request, decoding: TrashActionResult.self, onProgress: onProgress)
             entries += result.items
         }
         return TrashActionResult(items: entries)
