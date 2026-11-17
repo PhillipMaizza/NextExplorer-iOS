@@ -22,6 +22,8 @@ public struct TrashRestoreFeature {
         /// Whether the running restore goes into a chosen folder, which can take a while and can be stopped.
         public var isRestoringToFolder = false
         public var notice: TrashNotice?
+        /// What the last restore brought back, for the toast's Undo to move to the trash again.
+        public var undoable: [FileItem] = []
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
@@ -41,6 +43,8 @@ public struct TrashRestoreFeature {
         case shareChoiceMade(ShareLinkChoice)
         case shareChoiceDismissed
         case cancelTapped
+        case undoTapped
+        case undoResponse(Result<DeleteOutcome, FilesClientError>)
         case response(Result<TrashActionResult, FilesClientError>)
         case delegate(Delegate)
 
@@ -51,7 +55,7 @@ public struct TrashRestoreFeature {
     }
 
     enum CancelID {
-        case restore
+        case restore, undo
     }
 
     @Dependency(\.filesClient) var filesClient
@@ -104,16 +108,45 @@ public struct TrashRestoreFeature {
             case let .response(.success(result)):
                 state.isRestoring = false
                 state.isRestoringToFolder = false
+                state.undoable = Self.restoredItems(in: result)
                 state.notice = TrashNotice.after(
                     state.notice,
                     text: Self.summary(of: result),
-                    isFailure: result.succeeded.isEmpty
+                    isFailure: result.succeeded.isEmpty,
+                    isUndoable: !state.undoable.isEmpty
                 )
+                return .send(.delegate(.finished))
+
+            case .undoTapped:
+                guard !state.isRestoring, !state.undoable.isEmpty else { return .none }
+                let items = state.undoable
+                state.undoable = []
+                let serverURL = state.serverURL
+                let filesClient = filesClient
+                return .run { send in
+                    try await send(.undoResponse(apiResult {
+                        try await filesClient.deleteItems(serverURL, items, false)
+                    }))
+                }
+                .cancellable(id: CancelID.undo, cancelInFlight: true)
+
+            case let .undoResponse(.success(outcome)):
+                let moved = outcome.trashedCount
+                state.notice = TrashNotice.after(
+                    state.notice,
+                    text: moved > 0 ? L10n.Trash.movedToTrash(moved) : L10n.Trash.failureUnknown,
+                    isFailure: moved == 0
+                )
+                return .send(.delegate(.finished))
+
+            case let .undoResponse(.failure(error)):
+                state.notice = TrashNotice.after(state.notice, text: error.userMessage, isFailure: true)
                 return .send(.delegate(.finished))
 
             case let .response(.failure(error)):
                 state.isRestoring = false
                 state.isRestoringToFolder = false
+                state.undoable = []
                 state.notice = TrashNotice.after(state.notice, text: error.userMessage, isFailure: true)
                 return .send(.delegate(.finished))
 
@@ -149,6 +182,15 @@ public struct TrashRestoreFeature {
         .cancellable(id: CancelID.restore, cancelInFlight: true)
     }
 
+    /// The restored items as Browse addresses them (parent folder and name), for Undo. An item the
+    /// server gave no folder for (one this user cannot open) cannot be sent back.
+    static func restoredItems(in result: TrashActionResult) -> [FileItem] {
+        result.succeeded.compactMap { entry in
+            guard let parent = entry.path, let name = entry.restoredName ?? entry.name else { return nil }
+            return FileItem(name: name, path: parent, dateModified: .distantPast, size: 0, kind: "")
+        }
+    }
+
     /// Counts, renamed items, share links and failures, one line each.
     static func summary(of result: TrashActionResult) -> String {
         var lines: [String] = []
@@ -175,10 +217,17 @@ public struct TrashRestoreFeature {
 public struct TrashNotice: Equatable, Sendable {
     public let text: String
     public let isFailure: Bool
+    /// A restore the toast offers to undo.
+    public var isUndoable = false
     public let sequence: Int
 
-    static func after(_ previous: TrashNotice?, text: String, isFailure: Bool) -> TrashNotice {
-        TrashNotice(text: text, isFailure: isFailure, sequence: (previous?.sequence ?? 0) + 1)
+    static func after(
+        _ previous: TrashNotice?,
+        text: String,
+        isFailure: Bool,
+        isUndoable: Bool = false
+    ) -> TrashNotice {
+        TrashNotice(text: text, isFailure: isFailure, isUndoable: isUndoable, sequence: (previous?.sequence ?? 0) + 1)
     }
 }
 

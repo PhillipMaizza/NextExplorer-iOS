@@ -27,7 +27,13 @@ struct TrashRestorePrompts: ViewModifier {
 
     private func show(_ notice: TrashNotice?) {
         guard let notice else { return }
-        toast = notice.isFailure ? .failure(notice.text) : .success(notice.text)
+        if notice.isFailure {
+            toast = .failure(notice.text)
+        } else if notice.isUndoable {
+            toast = .success(notice.text, actionTitle: L10n.Menu.undo) { store.send(.undoTapped) }
+        } else {
+            toast = .success(notice.text)
+        }
     }
 
     private var shareChoiceBinding: Binding<Bool> {

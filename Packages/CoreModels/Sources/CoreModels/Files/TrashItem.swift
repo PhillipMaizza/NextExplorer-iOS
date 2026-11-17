@@ -255,6 +255,8 @@ public struct TrashActionResult: Decodable, Equatable, Sendable {
         public let status: Status
         public let name: String?
         public let restoredName: String?
+        /// The folder a restored item went back into, when the server lets this user open it.
+        public let path: String?
         public let isRenamed: Bool
         public let sharesRestored: Int
         public let sharesDropped: Int
@@ -264,6 +266,7 @@ public struct TrashActionResult: Decodable, Equatable, Sendable {
             status: Status,
             name: String? = nil,
             restoredName: String? = nil,
+            path: String? = nil,
             isRenamed: Bool = false,
             sharesRestored: Int = 0,
             sharesDropped: Int = 0
@@ -272,13 +275,14 @@ public struct TrashActionResult: Decodable, Equatable, Sendable {
             self.status = status
             self.name = name
             self.restoredName = restoredName
+            self.path = path
             self.isRenamed = isRenamed
             self.sharesRestored = sharesRestored
             self.sharesDropped = sharesDropped
         }
 
         private enum CodingKeys: String, CodingKey {
-            case id, entry, status, reason, name, restoredName, renamed, sharesRestored, sharesDropped
+            case id, entry, status, reason, name, restoredName, path, renamed, sharesRestored, sharesDropped
         }
 
         public init(from decoder: Decoder) throws {
@@ -291,6 +295,7 @@ public struct TrashActionResult: Decodable, Equatable, Sendable {
             self.status = Status(serverValue: status, reason: reason)
             name = try container.decodeIfPresent(String.self, forKey: .name)
             restoredName = try container.decodeIfPresent(String.self, forKey: .restoredName)
+            path = try container.decodeIfPresent(String.self, forKey: .path)
             isRenamed = try container.decodeIfPresent(Bool.self, forKey: .renamed) ?? false
             sharesRestored = try container.decodeIfPresent(Int.self, forKey: .sharesRestored) ?? 0
             sharesDropped = try container.decodeIfPresent(Int.self, forKey: .sharesDropped) ?? 0

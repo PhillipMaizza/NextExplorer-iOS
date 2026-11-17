@@ -127,6 +127,7 @@
                         status: .restored,
                         name: trashed.original.name,
                         restoredName: name,
+                        path: parent,
                         isRenamed: name != trashed.original.name
                     )
                 })
