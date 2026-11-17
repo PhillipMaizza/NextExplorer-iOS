@@ -14,6 +14,9 @@
             app.menuBars.menuBarItems[Constants.editMenu].click()
             let item = app.menuItems[title]
             XCTAssertTrue(item.waitToAppear(), "The Edit menu should offer \(title)")
+            // Redo is enabled only once the undo it follows has been recorded, which can trail the file
+            // coming back. A click on a disabled item does nothing, so wait for it.
+            XCTAssertTrue(item.isEnabled(within: UITestTimeout.slow), "\(title) should be enabled in the Edit menu")
             item.click()
         }
 
