@@ -84,6 +84,18 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func versionTextGetsTheTextRouteAndDecodesTheContent() async throws {
+            try stub(statusCode: 200, body: FilesClientFixture.versionsTextResult.data())
+            let text = try await makeClient().versionText(serverURL, TestPath.docsNotes, TestETag.first)
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == HTTPMethod.get.rawValue)
+            #expect(request.url?.path == "/api/versions/v1/text")
+            #expect(request.url?.query?.contains("path=Docs/notes.txt") == true)
+            #expect(text.content == Constants.oldText)
+            #expect(text.size == 8)
+        }
+
+        @Test
         func downloadVersionReadsTheContentRouteIntoTheDestination() async throws {
             stub(statusCode: 200, body: Data(Constants.oldText.utf8))
             let destination = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name()).txt")

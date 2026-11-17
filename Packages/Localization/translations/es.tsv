@@ -676,6 +676,7 @@ fileInfo.restoreConfirm	Restaurar
 fileInfo.sectionSharing	Compartir
 fileInfo.notShared	No hay enlaces compartidos
 fileInfo.versionActions	Acciones de versión
+fileInfo.versionViewText	Ver texto
 fileInfo.versionDownload	Descargar…
 fileInfo.versionSaveCopy	Guardar como copia
 fileInfo.versionRename	Renombrar…

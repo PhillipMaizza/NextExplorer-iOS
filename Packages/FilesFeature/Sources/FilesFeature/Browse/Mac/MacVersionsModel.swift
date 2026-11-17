@@ -19,6 +19,8 @@
         var versionToDelete: FileVersion?
         var versionToRename: FileVersion?
         var renameDraft = ""
+        /// The version being read as text, shown in a sheet.
+        var textPreview: VersionTextPreview?
         var isConfirmingDeleteAll = false
 
         @ObservationIgnored @Dependency(\.filesClient) private var filesClient
@@ -42,6 +44,30 @@
             let loaded = try? await filesClient.fetchVersions(serverURL, item.id)
             guard !Task.isCancelled, self.item?.id == item.id else { return }
             history = loaded
+        }
+
+        /// Whether versions of this file can be read as text: the editor's own list of text files.
+        var canViewText: Bool {
+            item.map { EditableTextFiles.isEditable(name: $0.name) } ?? false
+        }
+
+        /// Reads a version as text and opens it in a sheet. Nothing on the server changes.
+        @discardableResult
+        func viewText(_ version: FileVersion) -> Task<Void, Never>? {
+            guard let serverURL, let item else { return nil }
+            let client = filesClient
+            return Task {
+                do {
+                    let text = try await client.versionText(serverURL, item.id, version.id)
+                    guard self.item?.id == item.id else { return }
+                    errorMessage = nil
+                    let title = version.label ?? Self.date(text.modifiedAt)
+                    textPreview = VersionTextPreview(id: version.id, title: title, content: text.content)
+                } catch {
+                    guard self.item?.id == item.id else { return }
+                    errorMessage = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
+                }
+            }
         }
 
         /// The confirmations hand their version in: an alert may clear its binding before the
@@ -147,6 +173,13 @@
         }
     }
 
+    /// One version's text, ready for the sheet.
+    struct VersionTextPreview: Identifiable, Equatable {
+        let id: String
+        let title: String
+        let content: String
+    }
+
     /// The Versions section's confirmations and rename prompt, attached to the inspector.
     struct MacVersionsDialogs: ViewModifier {
         @Bindable var model: MacVersionsModel
@@ -181,6 +214,9 @@
                     Button(L10n.Common.cancel, role: .cancel) {}
                 } message: { _ in
                     Text(L10n.FileInfo.deleteMessage)
+                }
+                .sheet(item: $model.textPreview) { preview in
+                    MacVersionTextSheet(preview: preview)
                 }
                 .alert(L10n.FileInfo.deleteAllTitle, isPresented: $model.isConfirmingDeleteAll) {
                     Button(L10n.Common.delete, role: .destructive) { model.deleteAllConfirmed() }

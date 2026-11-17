@@ -676,6 +676,7 @@ fileInfo.restoreConfirm	Zet terug
 fileInfo.sectionSharing	Delen
 fileInfo.notShared	Geen deellinks
 fileInfo.versionActions	Versieacties
+fileInfo.versionViewText	Tekst bekijken
 fileInfo.versionDownload	Download…
 fileInfo.versionSaveCopy	Bewaar als kopie
 fileInfo.versionRename	Wijzig naam…

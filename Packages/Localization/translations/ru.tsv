@@ -690,6 +690,7 @@ fileInfo.restoreConfirm	Восстановить
 fileInfo.sectionSharing	Общий доступ
 fileInfo.notShared	Нет ссылок общего доступа
 fileInfo.versionActions	Действия с версией
+fileInfo.versionViewText	Показать текст
 fileInfo.versionDownload	Загрузить…
 fileInfo.versionSaveCopy	Сохранить как копию
 fileInfo.versionRename	Переименовать…

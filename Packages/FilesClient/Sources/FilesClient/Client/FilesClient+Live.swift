@@ -158,6 +158,9 @@ public extension FilesClient {
             restoreVersion: { serverURL, path, versionID in
                 try await service.restoreVersion(serverURL: serverURL, path: path, versionID: versionID)
             },
+            versionText: { serverURL, path, versionID in
+                try await service.versionText(serverURL: serverURL, path: path, versionID: versionID)
+            },
             downloadVersion: { serverURL, path, versionID, destination in
                 try await service.downloadVersion(
                     serverURL: serverURL,

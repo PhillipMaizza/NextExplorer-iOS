@@ -704,6 +704,7 @@ fileInfo.restoreConfirm	استعادة
 fileInfo.sectionSharing	المشاركة
 fileInfo.notShared	لا توجد روابط مشاركة
 fileInfo.versionActions	إجراءات الإصدار
+fileInfo.versionViewText	عرض النص
 fileInfo.versionDownload	تنزيل…
 fileInfo.versionSaveCopy	حفظ كنسخة
 fileInfo.versionRename	إعادة تسمية…

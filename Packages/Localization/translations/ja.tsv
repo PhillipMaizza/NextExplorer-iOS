@@ -669,6 +669,7 @@ fileInfo.restoreConfirm	復元
 fileInfo.sectionSharing	共有
 fileInfo.notShared	共有リンクはありません
 fileInfo.versionActions	バージョンの操作
+fileInfo.versionViewText	テキストを表示
 fileInfo.versionDownload	ダウンロード…
 fileInfo.versionSaveCopy	コピーとして保存
 fileInfo.versionRename	名前を変更…

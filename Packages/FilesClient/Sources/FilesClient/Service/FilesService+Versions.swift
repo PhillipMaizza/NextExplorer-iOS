@@ -9,6 +9,7 @@ extension FilesService {
         static let restore = "restore"
         static let content = "content"
         static let copy = "copy"
+        static let text = "text"
         static let delete = "delete"
         static let pathQueryName = "path"
         static let urlFailureMessage = "Could not build versions URL."
@@ -18,6 +19,16 @@ extension FilesService {
     func fetchVersions(serverURL: URL, path: String) async throws -> FileVersionHistory {
         let request = try Self.makeRequest(url: Self.versionsURL(serverURL, query: path), method: .get)
         return try await sendReportingMessage(request, decoding: FileVersionHistory.self)
+    }
+
+    /// `GET /api/versions/:id/text?path=`: the version read as text, `{ name, size, modifiedAt, content }`.
+    func versionText(serverURL: URL, path: String, versionID: String) async throws -> FileVersionText {
+        let base = Self.versionURL(serverURL, versionID, VersionRoute.text)
+        let request = try Self.makeRequest(
+            url: Self.versionsURL(base, query: path, appendingAPIPath: false),
+            method: .get
+        )
+        return try await sendReportingMessage(request, decoding: FileVersionText.self)
     }
 
     /// `POST /api/versions/:id/restore` with `{ path }`.

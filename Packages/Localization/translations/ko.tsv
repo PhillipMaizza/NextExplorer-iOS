@@ -669,6 +669,7 @@ fileInfo.restoreConfirm	복원
 fileInfo.sectionSharing	공유
 fileInfo.notShared	공유 링크 없음
 fileInfo.versionActions	버전 작업
+fileInfo.versionViewText	텍스트 보기
 fileInfo.versionDownload	다운로드…
 fileInfo.versionSaveCopy	사본으로 저장
 fileInfo.versionRename	이름 변경…

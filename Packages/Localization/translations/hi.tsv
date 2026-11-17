@@ -676,6 +676,7 @@ fileInfo.restoreConfirm	पुनर्स्थापित करें
 fileInfo.sectionSharing	साझाकरण
 fileInfo.notShared	कोई साझा लिंक नहीं
 fileInfo.versionActions	संस्करण कार्रवाइयाँ
+fileInfo.versionViewText	टेक्स्ट देखें
 fileInfo.versionDownload	डाउनलोड करें…
 fileInfo.versionSaveCopy	प्रति के रूप में सहेजें
 fileInfo.versionRename	नाम बदलें…

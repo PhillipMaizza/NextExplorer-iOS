@@ -676,6 +676,7 @@ fileInfo.restoreConfirm	Wiederherstellen
 fileInfo.sectionSharing	Freigabe
 fileInfo.notShared	Keine Freigabelinks
 fileInfo.versionActions	Versionsaktionen
+fileInfo.versionViewText	Text ansehen
 fileInfo.versionDownload	Laden …
 fileInfo.versionSaveCopy	Als Kopie sichern
 fileInfo.versionRename	Umbenennen …

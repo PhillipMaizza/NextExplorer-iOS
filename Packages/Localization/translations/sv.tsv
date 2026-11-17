@@ -676,6 +676,7 @@ fileInfo.restoreConfirm	Återställ
 fileInfo.sectionSharing	Delning
 fileInfo.notShared	Inga delningslänkar
 fileInfo.versionActions	Versionsåtgärder
+fileInfo.versionViewText	Visa text
 fileInfo.versionDownload	Hämta…
 fileInfo.versionSaveCopy	Spara som kopia
 fileInfo.versionRename	Byt namn…

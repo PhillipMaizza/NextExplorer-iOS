@@ -95,6 +95,10 @@
                     Button(L10n.FileInfo.versionRestore) { model.versionToRestore = version }
                         .disabled(!isAvailable)
                 }
+                if model.canViewText {
+                    Button(L10n.FileInfo.versionViewText) { model.viewText(version) }
+                        .disabled(!isAvailable)
+                }
                 if history.rights.canDownload {
                     Button(L10n.FileInfo.versionDownload) { model.download(version) }
                         .disabled(!isAvailable)

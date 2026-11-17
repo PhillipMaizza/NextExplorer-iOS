@@ -73,5 +73,56 @@ import TestUtils
             #expect(model.history?.versions.first?.id == item.id)
             #expect(didChangeFiles.value)
         }
+
+        @Test
+        func viewingATextVersionOpensItsContentInASheet() async throws {
+            let model = withDependencies {
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path) }
+                $0.filesClient.versionText = { _, _, _ in
+                    FileVersionText(name: TestFile.aText, size: 4, modifiedAt: MockDate.date, content: "body")
+                }
+            } operation: {
+                MacVersionsModel()
+            }
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            let version = try #require(model.history?.versions.first)
+
+            #expect(model.canViewText)
+            await model.viewText(version)?.value
+
+            #expect(model.textPreview?.content == "body")
+            #expect(model.textPreview?.id == version.id)
+            #expect(model.errorMessage == nil)
+        }
+
+        @Test
+        func aFailedTextReadShowsTheServerMessageAndNoSheet() async throws {
+            let model = withDependencies {
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path) }
+                $0.filesClient.versionText = { _, _, _ in
+                    throw FilesClientError.serverMessage(statusCode: 400, message: "Too large to read as text.")
+                }
+            } operation: {
+                MacVersionsModel()
+            }
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            let version = try #require(model.history?.versions.first)
+
+            await model.viewText(version)?.value
+
+            #expect(model.textPreview == nil)
+            #expect(model.errorMessage == "Too large to read as text.")
+        }
+
+        @Test
+        func onlyTextFilesOfferTheirVersionsAsText() async {
+            let model = withDependencies {
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path) }
+            } operation: {
+                MacVersionsModel()
+            }
+            await model.load(item: Self.file("photo.jpg"), serverURL: serverURL)
+            #expect(!model.canViewText)
+        }
     }
 #endif

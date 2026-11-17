@@ -44,6 +44,22 @@ public struct FileVersionHistory: Decodable, Equatable, Sendable {
     }
 }
 
+/// `GET /api/versions/:id/text`: a version's content read as text, to look at before deciding
+/// what to do with it. Nothing is written.
+public struct FileVersionText: Decodable, Equatable, Sendable {
+    public let name: String
+    public let size: Int64
+    public let modifiedAt: Date
+    public let content: String
+
+    public init(name: String, size: Int64, modifiedAt: Date, content: String) {
+        self.name = name
+        self.size = size
+        self.modifiedAt = modifiedAt
+        self.content = content
+    }
+}
+
 /// One saved version of a file (`presentVersion` on the server).
 public struct FileVersion: Decodable, Equatable, Identifiable, Sendable {
     public let id: String

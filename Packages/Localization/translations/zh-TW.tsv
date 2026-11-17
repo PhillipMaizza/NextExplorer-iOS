@@ -669,6 +669,7 @@ fileInfo.restoreConfirm	回復
 fileInfo.sectionSharing	共享
 fileInfo.notShared	沒有共享連結
 fileInfo.versionActions	版本操作
+fileInfo.versionViewText	檢視文字
 fileInfo.versionDownload	下載…
 fileInfo.versionSaveCopy	儲存為拷貝
 fileInfo.versionRename	重新命名…

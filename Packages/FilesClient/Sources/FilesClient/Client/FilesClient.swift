@@ -104,6 +104,9 @@ public struct FilesClient: Sendable {
     /// `POST /api/versions/:id/restore` with `{ path }`: puts the file back as that version had
     /// it; what it held becomes a version itself.
     public var restoreVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String) async throws -> Void
+    /// `GET /api/versions/:id/text?path=`: a text version's content, to read before restoring it.
+    public var versionText: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String) async throws
+        -> FileVersionText
     /// `GET /api/versions/:id/content?path=`, saved to `destination`.
     public var downloadVersion: @Sendable (
         _ serverURL: URL,

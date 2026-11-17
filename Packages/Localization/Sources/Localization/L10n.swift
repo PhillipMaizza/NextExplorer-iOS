@@ -457,6 +457,7 @@ public enum L10n {
         public static var versionRestore: String { tr("fileInfo.versionRestore") }  // "Restore…"
         public static var versionSaveCopy: String { tr("fileInfo.versionSaveCopy") }  // "Save as Copy"
         public static var versionUnpin: String { tr("fileInfo.versionUnpin") }  // "Stop Keeping This Version"
+        public static var versionViewText: String { tr("fileInfo.versionViewText") }  // "View Text"
         public static var versionsNone: String { tr("fileInfo.versionsNone") }  // "No earlier versions"
     }
     public enum Filter {

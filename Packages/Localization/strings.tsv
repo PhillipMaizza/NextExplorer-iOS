@@ -1071,6 +1071,7 @@ fileInfo.restoreConfirm	Restore
 fileInfo.sectionSharing	Sharing
 fileInfo.notShared	No share links
 fileInfo.versionActions	Version actions
+fileInfo.versionViewText	View Text
 fileInfo.versionDownload	Download…
 fileInfo.versionSaveCopy	Save as Copy
 fileInfo.versionRename	Rename…

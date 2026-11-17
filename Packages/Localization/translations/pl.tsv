@@ -690,6 +690,7 @@ fileInfo.restoreConfirm	Przywróć
 fileInfo.sectionSharing	Udostępnianie
 fileInfo.notShared	Brak linków udostępniania
 fileInfo.versionActions	Działania wersji
+fileInfo.versionViewText	Pokaż tekst
 fileInfo.versionDownload	Pobierz…
 fileInfo.versionSaveCopy	Zapisz jako kopię
 fileInfo.versionRename	Zmień nazwę…

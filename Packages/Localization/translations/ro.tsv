@@ -683,6 +683,7 @@ fileInfo.restoreConfirm	Restaurează
 fileInfo.sectionSharing	Partajare
 fileInfo.notShared	Niciun link de partajare
 fileInfo.versionActions	Acțiuni versiune
+fileInfo.versionViewText	Vezi textul
 fileInfo.versionDownload	Descarcă…
 fileInfo.versionSaveCopy	Salvează ca copie
 fileInfo.versionRename	Redenumește…
