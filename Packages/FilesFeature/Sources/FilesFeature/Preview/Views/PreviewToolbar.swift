@@ -159,7 +159,7 @@ private struct PreviewChrome: ViewModifier {
                             Button(role: .destructive) { onDelete() } label: {
                                 Label { Text(L10n.PreviewToolbar.delete) } icon: { IconKit.delete }
                             }
-                            .tint(Color.negativeText)
+                            .tint(.red)
                         }
                     }
                 }

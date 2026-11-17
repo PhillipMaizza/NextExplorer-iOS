@@ -36,7 +36,7 @@ struct TrashToolbar: ToolbarContent {
                 Button(role: .destructive) { store.send(.emptyTrashTapped) } label: {
                     Label { Text(L10n.Trash.emptyTrash) } icon: { IconKit.delete }
                 }
-                .tint(Color.negativeText)
+                .tint(.red)
                 .disabled(store.items.isEmpty || store.isBusy)
             }
         ) {
