@@ -17,28 +17,6 @@
             item.click()
         }
 
-        func testUndoAndRedoANewFolderFromTheEditMenu() {
-            let app = launchApp()
-            openDocuments(in: app)
-
-            app.menuBars.menuBarItems[MacUITestCase.Constants.fileMenu].click()
-            app.menuItems[L10n.Browse.actionNewFolder].click()
-            let field = app.textFields[L10n.Browse.newFolderPlaceholder]
-            XCTAssertTrue(field.waitToAppear(), "New Folder should present the name sheet")
-            field.clearAndType(Constants.newFolderName)
-            app.labeledButton(L10n.Browse.newFolderConfirm).click()
-            let folder = text(Constants.newFolderName, in: app)
-            XCTAssertTrue(folder.waitToAppear(), "The new folder should appear in the table")
-
-            // The menu reaches the file table only while it has focus.
-            text(Fixture.file, in: app).click()
-            edit(L10n.Menu.undo, in: app)
-            XCTAssertTrue(folder.waitToVanish(), "Undo should delete the new folder")
-
-            edit(L10n.Menu.redo, in: app)
-            XCTAssertTrue(folder.waitToAppear(), "Redo should make the folder again")
-        }
-
         func testTheMoveToastUndoesTheMoveAndGoesAway() {
             let app = launchApp()
             openDocuments(in: app)

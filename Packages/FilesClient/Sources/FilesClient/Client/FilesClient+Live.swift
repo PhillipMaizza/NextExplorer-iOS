@@ -152,6 +152,7 @@ public extension FilesClient {
             fetchUsage: { serverURL, path in
                 try await service.fetchUsage(serverURL: serverURL, path: path)
             },
+            fetchCapabilities: { serverURL in try await service.fetchCapabilities(serverURL: serverURL) },
             fetchPermissions: { serverURL, path in
                 try await service.fetchPermissions(serverURL: serverURL, path: path)
             },

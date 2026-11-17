@@ -1302,3 +1302,10 @@ trash.columnOriginalLocation	Pierwotna lokalizacja
 trash.columnDeletedBy	Usunięte przez
 trash.columnDeletedOn	Data usunięcia
 trash.columnRemoved	Trwałe usunięcie
+serverTools.navigationTitle	Narzędzia serwera
+serverTools.subtitle	Opcjonalne programy używane przez serwer do miniatur, wyszukiwania i archiwów.
+serverTools.installed	Zainstalowano
+serverTools.missing	Brak
+serverTools.notUsed	Nieużywane
+serverTools.package	Pakiet: %@
+serverTools.missingFormats	Nie można otworzyć: %@

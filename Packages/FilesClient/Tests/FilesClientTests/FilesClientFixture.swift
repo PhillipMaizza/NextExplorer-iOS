@@ -205,6 +205,7 @@ enum FilesClientFixture: String, FixtureFile {
     case uploadErrorForbidden = "upload/error-forbidden"
     case uploadRenamedNotesCopy = "upload/renamed-notes-copy"
     case uploadRenamedWeirdName = "upload/renamed-weird-name"
+    case capabilitiesMixed = "capabilities/mixed"
 
     // MARK: versioned-files
 

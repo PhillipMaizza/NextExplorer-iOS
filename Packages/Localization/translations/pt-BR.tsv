@@ -1239,3 +1239,10 @@ trash.columnOriginalLocation	Local original
 trash.columnDeletedBy	Excluído por
 trash.columnDeletedOn	Excluído em
 trash.columnRemoved	Remoção
+serverTools.navigationTitle	Ferramentas do servidor
+serverTools.subtitle	Programas opcionais que o servidor usa para miniaturas, busca e arquivos compactados.
+serverTools.installed	Instalado
+serverTools.missing	Ausente
+serverTools.notUsed	Não usado
+serverTools.package	Pacote: %@
+serverTools.missingFormats	Não consegue abrir: %@
