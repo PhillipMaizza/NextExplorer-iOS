@@ -48,6 +48,7 @@ extension FilesClientLiveHarness {
         StubURLProtocol.failure = nil
         StubURLProtocol.pathStubs = [:]
         StubURLProtocol.methodStubs = [:]
+        StubURLProtocol.methodSequences = [:]
         StubURLProtocol.requests = []
     }
 

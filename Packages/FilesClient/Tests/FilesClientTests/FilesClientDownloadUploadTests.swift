@@ -96,18 +96,15 @@ extension FilesClientLiveTests {
         }
 
         @Test
-        func uploadFilePostsAMultipartEnvelopeToTheUploadEndpointAndDecodesTheStoredFile() async throws {
+        func uploadFilePostsAMultipartEnvelopeToTheUploadEndpoint() async throws {
             let responseJSON = try FilesClientFixture.uploadRenamedNotesCopy.string()
             stub(statusCode: 200, body: Data(responseJSON.utf8))
             StubURLProtocol.capturedRequest = nil
             let fileURL = try makeTempFile(TestFile.notes, contents: Constants.uploadBody)
             defer { try? FileManager.default.removeItem(at: fileURL) }
 
-            let stored = try await makeClient()
+            try await makeClient()
                 .uploadFile(serverURL, fileURL, TestFile.notes, TestFolder.inbox) { _ in }
-
-            #expect(stored.name == "notes (1).txt")
-            #expect(stored.path == TestFolder.inbox)
 
             let request = try #require(StubURLProtocol.capturedRequest)
             #expect(request.httpMethod == HTTPMethod.post.rawValue)
@@ -134,7 +131,7 @@ extension FilesClientLiveTests {
             let fileURL = try makeTempFile("weird.txt", contents: "x")
             defer { try? FileManager.default.removeItem(at: fileURL) }
 
-            _ = try await makeClient().uploadFile(serverURL, fileURL, "we\"ir\nd.txt", TestFolder.inbox) { _ in }
+            try await makeClient().uploadFile(serverURL, fileURL, "we\"ir\nd.txt", TestFolder.inbox) { _ in }
 
             let body = try #require(StubURLProtocol.capturedRequestBody)
             let bodyString = try #require(String(data: body, encoding: .utf8))
@@ -151,7 +148,7 @@ extension FilesClientLiveTests {
             defer { try? FileManager.default.removeItem(at: fileURL) }
 
             await #expect(throws: FilesClientError.forbidden(message: "Cannot upload files to this path.")) {
-                _ = try await makeClient().uploadFile(serverURL, fileURL, TestFile.notes, TestFolder.inbox) { _ in }
+                try await makeClient().uploadFile(serverURL, fileURL, TestFile.notes, TestFolder.inbox) { _ in }
             }
         }
     }

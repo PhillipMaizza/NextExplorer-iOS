@@ -35,3 +35,13 @@ public struct ThumbnailPendingError: Error, Equatable, Sendable {
         self.retryAfter = retryAfter
     }
 }
+
+extension FilesClientError {
+    /// The server or a proxy in front of it refused the request for its size (413).
+    var isPayloadTooLarge: Bool {
+        switch self {
+        case let .server(statusCode), let .serverMessage(statusCode, _): statusCode == 413
+        default: false
+        }
+    }
+}

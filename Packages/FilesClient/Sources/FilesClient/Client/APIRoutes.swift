@@ -36,6 +36,7 @@ enum APIPath {
     static let raw = "api/raw"
     static let download = "api/download"
     static let upload = "api/upload"
+    static let tusUpload = "api/upload/tus"
     static let editor = "api/editor"
     static let changeOwnPassword = "api/auth/password"
     static let addOwnPassword = "api/auth/password/add"

@@ -245,16 +245,7 @@ public extension FilesClient {
             return fileURL
         },
         flushDownloadConnections: {},
-        uploadFile: { _, _, fileName, destination, onProgress in
-            onProgress(1)
-            return FileItem(
-                name: fileName,
-                path: destination,
-                dateModified: Date(),
-                size: 0,
-                kind: (fileName as NSString).pathExtension.lowercased()
-            )
-        },
+        uploadFile: { _, _, _, _, onProgress in onProgress(1) },
         compressItem: { _, item in
             FileItem(name: "\(item.name).zip", path: item.path, dateModified: Date(), size: 0, kind: "zip")
         },

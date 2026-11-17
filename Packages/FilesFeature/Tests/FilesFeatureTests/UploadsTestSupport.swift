@@ -48,10 +48,6 @@ extension UploadsTestSupport {
         URL(fileURLWithPath: "/staging/\(name)")
     }
 
-    nonisolated func uploaded(_ name: String, destination: String = TestFolder.inbox) -> FileItem {
-        FileItem(name: name, path: destination, dateModified: MockDate.date, size: 10, kind: TestKind.text)
-    }
-
     nonisolated func job(
         _ name: String, _ id: Int, _ status: Job.Status,
         destination: String = TestFolder.inbox, isTransportFailure: Bool = false, autoRetryCount: Int = 0,
@@ -83,15 +79,7 @@ extension UploadsTestSupport {
     func makeStore(
         _ state: State,
         isSourcePresent: Bool = true,
-        upload: @escaping @Sendable (UploadCall, @Sendable (Double) -> Void) async throws -> FileItem = { call, _ in
-            FileItem(
-                name: call.fileName,
-                path: call.destination,
-                dateModified: MockDate.date,
-                size: 10,
-                kind: TestKind.text
-            )
-        }
+        upload: @escaping @Sendable (UploadCall, @Sendable (Double) -> Void) async throws -> Void = { _, _ in }
     ) -> Store {
         let uploadCalls = uploadCalls
         let discarded = discarded
