@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -9,24 +10,54 @@ private enum Constants {
     static let unavailableOpacity: Double = 0.5
 }
 
-/// The trash on iPhone and iPad, pushed from the Browse root's Trash row.
+/// The trash on iPhone and iPad, pushed from the Browse root's Trash row: the Browse rows, grid,
+/// selection and sort, with the retention note under the list.
 struct TrashView: View {
     @Bindable var store: StoreOf<TrashFeature>
+    @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
+    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
+    @State private var isSortSheetPresented = false
     @Dependency(\.date) private var date
     @Dependency(\.calendar) private var calendar
 
+    private var isGridView: Bool {
+        viewModeRaw == FileListViewMode.grid.rawValue
+    }
+
     var body: some View {
         content
-            .background(Color.backgroundPrimary)
-            .navigationTitle(L10n.Trash.title)
-            .toolbar { toolbar }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .backgroundGradient()
+            .safeAreaInset(edge: .top, spacing: 0) {
+                PinnedTitleSearchHeader(
+                    title: L10n.Trash.title,
+                    selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedIDs.count) : nil,
+                    searchText: .constant(""),
+                    showsSearchField: false
+                )
+            }
+            .navigationHistoryTitle(L10n.Trash.title)
+        #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+        #endif
+            .toolbar {
+                TrashToolbar(
+                    store: store,
+                    isGridView: isGridView,
+                    onSort: { isSortSheetPresented = true },
+                    onToggleViewMode: toggleViewMode
+                )
+            }
             .toolbar { TrashRestoreCancelButton(store: store.scope(state: \.restore, action: \.restore)) }
+            // Below the toolbar, so its Cancel can hide the circles before select mode ends.
+            .selectModeChrome(isSelecting: store.isSelecting)
             .task { store.send(.task) }
             .modifier(TrashRestorePrompts(
                 store: store.scope(state: \.restore, action: \.restore),
                 screenNotice: store.notice
             ))
             .dsAlert(isPresented: confirmationBinding) { confirmationAlert }
+            .dsSheet(isPresented: $isSortSheetPresented) { sortSheet }
             .sheet(isPresented: textBinding) {
                 TrashTextSheet(state: store.text) { store.send(.textDismissed) }
             }
@@ -38,95 +69,152 @@ struct TrashView: View {
     private var content: some View {
         TrashPhaseContent(phase: store.phase, isEmpty: store.items.isEmpty, onRetry: { store.send(.retryTapped) }) {
             VStack(spacing: .space24) {
-                header
                 EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
+                footer
             }
             .padding(.space16)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .refreshable { await store.send(.refreshPulled).finish() }
         } loaded: {
-            List {
-                Section {
-                    ForEach(store.items) { item in
-                        row(item)
-                    }
-                } header: {
-                    header
-                        .textCase(nil)
+            Group {
+                if isGridView {
+                    grid
+                } else {
+                    list
                 }
             }
-            .listStyle(.plain)
+            .dragToSelect(
+                isEnabled: store.isSelecting,
+                selection: store.selectedIDs,
+                order: { store.displayedItems.map(\.id) },
+                onChange: { store.send(.selectionSwept($0)) }
+            )
             .refreshable { await store.send(.refreshPulled).finish() }
         }
     }
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: .space8) {
-            if !store.isEnabled {
-                DSInfoCard(L10n.Trash.disabledNotice)
-            } else if let days = store.retentionDays {
-                Text(L10n.Trash.subtitle(days))
-                    .type(.body3(.regular), style: .secondary)
+    private var list: some View {
+        let items = store.displayedItems
+        let firstID = items.first?.id
+        let lastID = items.last?.id
+        return DSGroupedList {
+            Section {
+                ForEach(items) { item in
+                    row(item, isFirst: item.id == firstID, isLast: item.id == lastID)
+                }
+            } footer: {
+                footer
+                    .textCase(nil)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .animation(DSMotion.listDiff, value: items)
     }
 
-    private func row(_ item: TrashItem) -> some View {
-        Button { store.send(.itemTapped(item)) } label: {
-            HStack(spacing: .space12) {
-                if store.isSelecting {
-                    DSSelectionIndicator(isSelected: store.selectedIDs.contains(item.id))
+    private var grid: some View {
+        ScrollView {
+            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
+                ForEach(store.displayedItems) { item in
+                    cell(item)
                 }
-                FileRowView(
-                    name: item.name,
-                    isDirectory: item.isDirectory,
-                    subtitle: TrashRowText.subtitle(item, now: date.now, calendar: calendar),
-                    kind: TrashRowText.kind(item.name, isDirectory: item.isDirectory)
-                )
             }
-            .opacity(item.isAvailable ? 1 : Constants.unavailableOpacity)
+            .padding(FileGridMetrics.spacing)
+            .animation(DSMotion.listDiff, value: store.displayedItems)
+            footer
+                .padding(.horizontal, FileGridMetrics.spacing)
+                .padding(.bottom, FileGridMetrics.spacing)
         }
-        .buttonStyle(.plain)
-        .disabled(store.isBusy)
-        .contextMenu { TrashItemMenu(item: item, store: store) }
-        .swipeActions(edge: .trailing) {
-            if item.isAvailable {
-                Button(role: .destructive) { store.send(.deletePermanentlyTapped([item])) } label: {
-                    Label { Text(L10n.Trash.deletePermanently) } icon: { IconKit.delete }
-                }
-                Button { store.send(.restoreTapped([item])) } label: {
-                    Label { Text(L10n.Trash.restore) } icon: { IconKit.restore }
-                }
-                .tint(.accent)
-            }
-        }
-        .accessibilityAction(named: L10n.Trash.restore) { store.send(.restoreTapped([item])) }
-        .accessibilityAction(named: L10n.Trash.deletePermanently) { store.send(.deletePermanentlyTapped([item])) }
     }
 
-    @ToolbarContentBuilder
-    private var toolbar: some ToolbarContent {
-        if !store.items.isEmpty {
-            ToolbarItem(placement: .primaryAction) {
-                Button(store.isSelecting ? L10n.Common.done : L10n.Common.select) {
-                    store.send(.selectModeToggled)
-                }
-            }
-            ToolbarItem(placement: .secondaryAction) {
-                Button(role: .destructive) { store.send(.emptyTrashTapped) } label: {
-                    Label { Text(L10n.Trash.emptyTrash) } icon: { IconKit.delete }
-                }
-                .disabled(store.isBusy)
-            }
+    /// How long items stay, or that the trash is off, under the list as Browse notes its own.
+    @ViewBuilder
+    private var footer: some View {
+        if !store.isEnabled {
+            DSInfoCard(L10n.Trash.disabledNotice)
+        } else if let days = store.retentionDays {
+            Text(L10n.Trash.subtitle(days))
+                .type(.body3(.regular), style: .secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        if store.isSelecting {
-            TrashSelectionToolbar(
-                isDisabled: store.selectedIDs.isEmpty || store.isBusy,
-                onRestore: { store.send(.restoreTapped(store.selectedItems)) },
-                onRestoreTo: { store.send(.restoreToTapped(store.selectedItems)) },
-                onDelete: { store.send(.deletePermanentlyTapped(store.selectedItems)) }
+    }
+
+    private func row(_ item: TrashItem, isFirst: Bool, isLast: Bool) -> some View {
+        SelectableListRow(
+            selectionID: item.id,
+            isSelecting: store.isSelecting,
+            isSelected: store.selectedIDs.contains(item.id),
+            isFirst: isFirst,
+            isLast: isLast,
+            onTap: { store.send(.itemTapped(item)) }
+        ) {
+            FileRowView(
+                name: item.name,
+                isDirectory: item.isDirectory,
+                subtitle: TrashRowText.subtitle(item, now: date.now, calendar: calendar),
+                kind: TrashRowText.kind(item.name, isDirectory: item.isDirectory)
             )
+            .opacity(item.isAvailable ? 1 : Constants.unavailableOpacity)
+        } trailingSwipe: {
+            BrowseQuickActionButtons(actions: BrowseQuickAction.trashActions(for: item, store: store), style: .swipe)
+        } contextMenu: {
+            if !store.isSelecting {
+                TrashItemMenu(item: item, store: store)
+            }
+        }
+        .accessibilityActions {
+            BrowseQuickActionButtons(
+                actions: BrowseQuickAction.trashActions(for: item, store: store),
+                style: .accessibility
+            )
+        }
+    }
+
+    private func cell(_ item: TrashItem) -> some View {
+        SelectableGridCell(
+            selectionID: item.id,
+            isSelecting: store.isSelecting,
+            isSelected: store.selectedIDs.contains(item.id),
+            onTap: { store.send(.itemTapped(item)) }
+        ) {
+            GridCellView(
+                name: item.name,
+                isDirectory: item.isDirectory,
+                kind: TrashRowText.kind(item.name, isDirectory: item.isDirectory),
+                iconSize: (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).iconSize
+            )
+            .opacity(item.isAvailable ? 1 : Constants.unavailableOpacity)
+        } contextMenu: {
+            if !store.isSelecting {
+                TrashItemMenu(item: item, store: store)
+            }
+        }
+        .accessibilityActions {
+            BrowseQuickActionButtons(
+                actions: BrowseQuickAction.trashActions(for: item, store: store),
+                style: .accessibility
+            )
+        }
+    }
+
+    private var sortSheet: some View {
+        SortSheet(
+            options: TrashSortOption.allCases,
+            directions: BrowseFeature.SortDirection.allCases,
+            sortOption: store.sortOption,
+            sortDirection: store.sortDirection,
+            optionIcon: { $0.icon },
+            optionTitle: { $0.title },
+            directionIcon: { $0.icon },
+            directionTitle: { $0.title },
+            onSelectOption: { store.send(.sortOptionChanged($0), animation: DSMotion.listChange) },
+            onSelectDirection: { store.send(.sortDirectionChanged($0), animation: DSMotion.listChange) },
+            onDismiss: { isSortSheetPresented = false }
+        )
+    }
+
+    private func toggleViewMode() {
+        withAnimation(DSMotion.contentReveal) {
+            viewModeRaw = (isGridView ? FileListViewMode.list : .grid).rawValue
         }
     }
 
@@ -169,6 +257,13 @@ struct TrashView: View {
             $0.selectedIDs = ["t1"]
         })
     }
+}
+
+#Preview("Grid") {
+    let defaults = UserDefaults(suiteName: "TrashGridPreview") ?? .standard
+    defaults.set(FileListViewMode.grid.rawValue, forKey: AppStorageKeys.browseViewMode)
+    return NavigationStack { TrashView(store: TrashPreviewData.trash()) }
+        .defaultAppStorage(defaults)
 }
 
 #Preview("Switched off with leftovers") {

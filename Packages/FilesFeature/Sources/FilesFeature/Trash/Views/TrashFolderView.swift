@@ -11,7 +11,8 @@ struct TrashFolderView: View {
 
     var body: some View {
         content
-            .background(Color.backgroundPrimary)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .backgroundGradient()
             .navigationTitle(store.title)
             .toolbar { toolbar }
             .toolbar { TrashRestoreCancelButton(store: store.scope(state: \.restore, action: \.restore)) }
@@ -29,41 +30,55 @@ struct TrashFolderView: View {
         TrashPhaseContent(phase: store.phase, isEmpty: store.entries.isEmpty, onRetry: { store.send(.retryTapped) }) {
             EmptyStateView(icon: IconKit.folder, message: L10n.Trash.folderEmpty)
         } loaded: {
-            List {
-                ForEach(store.entries) { entry in
-                    row(entry)
+            let entries = store.entries
+            DSGroupedList {
+                ForEach(entries) { entry in
+                    row(entry, isFirst: entry.id == entries.first?.id, isLast: entry.id == entries.last?.id)
                 }
             }
-            .listStyle(.plain)
+            #if os(iOS)
+            .listStyle(.insetGrouped)
+            #endif
+            .scrollContentBackground(.hidden)
         }
     }
 
-    private func row(_ entry: TrashEntry) -> some View {
-        Button { store.send(.entryTapped(entry)) } label: {
-            HStack(spacing: .space12) {
-                if store.isSelecting {
-                    DSSelectionIndicator(isSelected: store.selectedNames.contains(entry.id))
+    private func row(_ entry: TrashEntry, isFirst: Bool, isLast: Bool) -> some View {
+        SelectableListRow(
+            selectionID: entry.id,
+            isSelecting: store.isSelecting,
+            isSelected: store.selectedNames.contains(entry.id),
+            isFirst: isFirst,
+            isLast: isLast,
+            onTap: { store.send(.entryTapped(entry)) }
+        ) {
+            FileRowView(
+                name: entry.name,
+                isDirectory: entry.isDirectory,
+                subtitle: entry.shareCount > 0 ? L10n.Trash.sharesBadge : nil,
+                kind: TrashRowText.kind(entry.name, isDirectory: entry.isDirectory),
+                dateModified: entry.modifiedAt,
+                size: entry.size
+            )
+        } trailingSwipe: {
+            if !store.isSelecting {
+                Button { store.send(.restoreTapped([entry])) } label: {
+                    IconKit.restore
                 }
-                FileRowView(
-                    name: entry.name,
-                    isDirectory: entry.isDirectory,
-                    subtitle: entry.shareCount > 0 ? L10n.Trash.sharesBadge : nil,
-                    kind: TrashRowText.kind(entry.name, isDirectory: entry.isDirectory),
-                    dateModified: entry.modifiedAt,
-                    size: entry.size
-                )
+                .tint(.accent)
+                .accessibilityLabel(L10n.Trash.restore)
+            }
+        } contextMenu: {
+            if !store.isSelecting {
+                Button { store.send(.restoreTapped([entry])) } label: {
+                    Label { Text(L10n.Trash.restore) } icon: { IconKit.restore }
+                }
+                Button { store.send(.restoreToTapped([entry])) } label: {
+                    Label { Text(L10n.Trash.restoreTo) } icon: { IconKit.restoreTo }
+                }
             }
         }
-        .buttonStyle(.plain)
         .disabled(store.restore.isRestoring)
-        .contextMenu {
-            Button { store.send(.restoreTapped([entry])) } label: {
-                Label { Text(L10n.Trash.restore) } icon: { IconKit.restore }
-            }
-            Button { store.send(.restoreToTapped([entry])) } label: {
-                Label { Text(L10n.Trash.restoreTo) } icon: { IconKit.restoreTo }
-            }
-        }
         .accessibilityAction(named: L10n.Trash.restore) { store.send(.restoreTapped([entry])) }
     }
 

@@ -92,7 +92,7 @@ func selectSortToolbar(
 
 /// Cancel while selecting: hides the circles first through the screen's `selectModeChrome`, then
 /// ends select mode; with no chrome around it, it ends select mode at once.
-private struct SelectModeCancelButton: View {
+struct SelectModeCancelButton: View {
     let action: () -> Void
     @Environment(\.leaveSelectMode) private var leaveSelectMode
 

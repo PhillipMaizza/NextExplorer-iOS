@@ -20,6 +20,9 @@ public struct TrashFeature {
         public var retentionDays: Int?
         public var isSelecting = false
         public var selectedIDs: Set<TrashItem.ID> = []
+        /// Newest deletions first until the user picks another order; kept for the screen's life.
+        public var sortOption: TrashSortOption = .deletedOn
+        public var sortDirection: BrowseFeature.SortDirection = .descending
         /// A delete for good or Empty Trash waiting for its confirmation, then running.
         public var confirmation: Confirmation?
         public var confirmPhase: ConfirmPhase = .idle
@@ -40,6 +43,15 @@ public struct TrashFeature {
         public var selectedItems: [TrashItem] {
             items.filter { selectedIDs.contains($0.id) }
         }
+
+        /// The items in the order the list shows them.
+        public var displayedItems: [TrashItem] {
+            items.elements.sorted(by: sortOption, sortDirection)
+        }
+
+        public var isAllSelected: Bool {
+            !items.isEmpty && selectedIDs.count == items.count
+        }
     }
 
     public enum Confirmation: Equatable, Sendable {
@@ -57,6 +69,9 @@ public struct TrashFeature {
         case selectModeToggled
         case selectionToggled(TrashItem.ID)
         case selectAllTapped
+        case selectionSwept(Set<TrashItem.ID>)
+        case sortOptionChanged(TrashSortOption)
+        case sortDirectionChanged(BrowseFeature.SortDirection)
         case restoreTapped([TrashItem])
         case restoreToTapped([TrashItem])
         case deletePermanentlyTapped([TrashItem])
@@ -176,7 +191,20 @@ public struct TrashFeature {
                 return .none
 
             case .selectAllTapped:
-                state.selectedIDs = state.selectedIDs.count == state.items.count ? [] : Set(state.items.ids)
+                state.selectedIDs = state.isAllSelected ? [] : Set(state.items.ids)
+                return .none
+
+            case let .selectionSwept(ids):
+                guard state.isSelecting else { return .none }
+                state.selectedIDs = ids.intersection(state.items.ids)
+                return .none
+
+            case let .sortOptionChanged(option):
+                state.sortOption = option
+                return .none
+
+            case let .sortDirectionChanged(direction):
+                state.sortDirection = direction
                 return .none
 
             case let .restoreTapped(items):

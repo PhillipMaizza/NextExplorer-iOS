@@ -13,7 +13,7 @@ struct TrashRootRow: View {
                 isDirectory: true,
                 subtitle: L10n.Trash.rowSubtitle,
                 customIcon: IconKit.delete,
-                customIconTint: .secondaryDS
+                customIconTint: .negative
             )
         }
         .buttonStyle(.plain)
@@ -34,7 +34,7 @@ struct TrashRootGridCell: View {
                 isDirectory: true,
                 iconSize: iconSize,
                 customIcon: IconKit.delete,
-                customIconTint: .secondaryDS
+                customIconTint: .negative
             )
             .dsGridTile(padding: cellPadding)
         }

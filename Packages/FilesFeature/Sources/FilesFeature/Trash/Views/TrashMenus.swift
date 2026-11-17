@@ -35,6 +35,31 @@ struct TrashItemMenu: View {
     }
 }
 
+@MainActor
+extension BrowseQuickAction {
+    /// A trashed item's swipe, drawn as Browse draws its own: delete for good in red, restore in the
+    /// accent. Nothing while selecting, or for an item whose volume is gone.
+    static func trashActions(for item: TrashItem, store: StoreOf<TrashFeature>) -> [BrowseQuickAction] {
+        guard !store.isSelecting, item.isAvailable else { return [] }
+        return [
+            BrowseQuickAction(
+                title: L10n.Trash.deletePermanently,
+                icon: IconKit.delete,
+                tint: .negative,
+                isEnabled: !store.isBusy,
+                perform: { store.send(.deletePermanentlyTapped([item])) }
+            ),
+            BrowseQuickAction(
+                title: L10n.Trash.restore,
+                icon: IconKit.restore,
+                tint: .accent,
+                isEnabled: !store.isBusy,
+                perform: { store.send(.restoreTapped([item])) }
+            ),
+        ]
+    }
+}
+
 /// The select mode bar: restore in place, restore into a folder, delete for good.
 struct TrashSelectionToolbar: ToolbarContent {
     let isDisabled: Bool
