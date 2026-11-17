@@ -95,6 +95,8 @@ public struct FilesClient: Sendable {
     /// `GET /api/usage/<path>` (`backend/src/routes/usage.js`): the folder's recursive size
     /// plus the free/total of the filesystem it's on. A denied path comes back all zeros.
     public var fetchUsage: @Sendable (_ serverURL: URL, _ path: String) async throws -> StorageUsage
+    /// `GET /api/capabilities` (admin only): which optional programs the server found.
+    public var fetchCapabilities: @Sendable (_ serverURL: URL) async throws -> [ServerCapability]
     /// `GET /api/permissions/<path>` (`backend/src/routes/permissions.js`): the file's raw
     /// `stat` mode plus resolved owner/group. Needs read access to the path.
     public var fetchPermissions: @Sendable (_ serverURL: URL, _ path: String) async throws -> FilePermissions

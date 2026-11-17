@@ -1273,3 +1273,10 @@ trash.columnOriginalLocation	Locația originală
 trash.columnDeletedBy	Șters de
 trash.columnDeletedOn	Șters la
 trash.columnRemoved	Eliminare
+serverTools.navigationTitle	Instrumentele serverului
+serverTools.subtitle	Programe opționale pe care serverul le folosește pentru miniaturi, căutare și arhive.
+serverTools.installed	Instalat
+serverTools.missing	Lipsește
+serverTools.notUsed	Nefolosit
+serverTools.package	Pachet: %@
+serverTools.missingFormats	Nu poate deschide: %@
