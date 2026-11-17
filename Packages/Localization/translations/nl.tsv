@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Verplaatsen naar…
 browse.destinationPickerConfirmMove	Hierheen verplaatsen
 browse.destinationPickerNoFolders	Geen mappen hier
 browse.destinationPickerLoadFailed	Kan de mappen niet laden.
+browse.destinationPickerRecent	Recent
 browse.actionMove	Verplaatsen
 browse.actionPaste	Plakken
 browse.actionPasteCount	%lld items plakken

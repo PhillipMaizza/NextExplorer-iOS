@@ -75,6 +75,8 @@ public struct FilesClient: Sendable {
     public var transferItems: @Sendable (
         _ serverURL: URL, _ items: [FileItem], _ destination: String, _ operation: TransferOperation
     ) async throws -> TransferResult
+    /// `GET /api/files/recent-destinations`: relative folder paths, most recent first.
+    public var recentDestinations: @Sendable (_ serverURL: URL) async throws -> [String]
     public var fetchMetadata: @Sendable (_ serverURL: URL, _ path: String) async throws -> FileMetadata
     /// `GET /api/usage/<path>` (`backend/src/routes/usage.js`): the folder's recursive size
     /// plus the free/total of the filesystem it's on. A denied path comes back all zeros.

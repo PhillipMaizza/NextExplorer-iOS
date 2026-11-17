@@ -16,7 +16,7 @@ extension FilesClientLiveTests {
             private static let volumeID = "v1"
             private static let password = "pw"
 
-            case listUsers, createUser, updateUser, setUserPassword, deleteUser
+            case listUsers, createUser, updateUser, setUserPassword, deleteUser, recentDestinations
             case userVolumes, addUserVolume, updateUserVolume, removeUserVolume
             case browseAdminDirectories, serverFeatures
             case fetchPermissions, changePermissions, changeOwnership
@@ -34,6 +34,7 @@ extension FilesClientLiveTests {
                 case .updateUser: _ = try await client.updateUser(serverURL, Self.userID, UpdateUserRequest())
                 case .setUserPassword: try await client.setUserPassword(serverURL, Self.userID, Self.password)
                 case .deleteUser: try await client.deleteUser(serverURL, Self.userID)
+                case .recentDestinations: _ = try await client.recentDestinations(serverURL)
                 case .userVolumes: _ = try await client.userVolumes(serverURL, Self.userID)
                 case .addUserVolume: _ = try await client.addUserVolume(
                         serverURL,

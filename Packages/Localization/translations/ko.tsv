@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	이동할 위치…
 browse.destinationPickerConfirmMove	여기로 이동
 browse.destinationPickerNoFolders	여기에 폴더가 없습니다
 browse.destinationPickerLoadFailed	폴더를 불러올 수 없습니다.
+browse.destinationPickerRecent	최근 항목
 browse.actionMove	이동
 browse.actionPaste	붙여넣기
 browse.actionPasteCount	항목 %lld개 붙여넣기

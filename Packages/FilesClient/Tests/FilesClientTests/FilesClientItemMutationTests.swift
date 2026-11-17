@@ -148,6 +148,19 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func recentDestinationsGetsTheRouteAndReturnsThePathsNewestFirst() async throws {
+            try stub(statusCode: 200, body: FilesClientFixture.itemMutationRecentDestinations.data())
+            StubURLProtocol.capturedRequest = nil
+
+            let paths = try await makeClient().recentDestinations(serverURL)
+
+            #expect(paths == ["Documents/Work", "Media"])
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == "GET")
+            #expect(request.url?.path == "/api/files/recent-destinations")
+        }
+
+        @Test
         func transferItemsMovePostsToMoveEndpoint() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.itemMutationTransferToArchive.data())
             StubURLProtocol.capturedRequest = nil

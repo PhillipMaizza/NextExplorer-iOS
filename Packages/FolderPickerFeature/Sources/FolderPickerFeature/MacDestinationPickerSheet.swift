@@ -69,6 +69,14 @@
                 if store.isRefiningSearch {
                     DSSpinner(size: .small)
                 }
+                if !store.displayedRecents.isEmpty {
+                    Menu(L10n.Browse.destinationPickerRecent) {
+                        ForEach(store.displayedRecents, id: \.self) { path in
+                            Button(path) { store.send(.recentTapped(path)) }
+                        }
+                    }
+                    .fixedSize()
+                }
                 TextField(
                     L10n.Common.search,
                     text: $store.searchQuery.sending(\.searchQueryChanged),

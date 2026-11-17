@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Flytta till…
 browse.destinationPickerConfirmMove	Flytta hit
 browse.destinationPickerNoFolders	Inga mappar här
 browse.destinationPickerLoadFailed	Det gick inte att läsa in mapparna.
+browse.destinationPickerRecent	Senaste
 browse.actionMove	Flytta
 browse.actionPaste	Klistra in
 browse.actionPasteCount	Klistra in %lld objekt

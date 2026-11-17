@@ -9,27 +9,7 @@ import TestUtils
 
 @Suite(.isolatedDependencies)
 @MainActor
-struct DestinationPickerFeatureTests {
-    private let serverURL = URL(string: TestHost.exampleURLString)!
-
-    private nonisolated func folder(_ name: String, path: String = "") -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: FileItem.directoryKind)
-    }
-
-    private nonisolated func file(_ name: String, path: String = "") -> FileItem {
-        FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: TestKind.text)
-    }
-
-    private nonisolated func access() -> FileAccess {
-        FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
-    }
-
-    private func finishLoad(_ state: inout DestinationPickerFeature.State, folders: [FileItem]) {
-        state.phase = .loaded
-        state.currentAccess = access()
-        state.folders = IdentifiedArray(uniqueElements: folders)
-    }
-
+struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
     @Test
     func onAppearLoadsFoldersOnlyDroppingFiles() async {
         let store = TestStore(
@@ -40,6 +20,7 @@ struct DestinationPickerFeatureTests {
         ) {
             DestinationPickerFeature()
         } withDependencies: {
+            $0.filesClient.recentDestinations = { _ in [] }
             $0.filesClient.browse = { _, _ in
                 BrowseResult(items: [folder(TestFolder.documents), file("readme.txt")], access: access(), path: "")
             }
@@ -47,6 +28,7 @@ struct DestinationPickerFeatureTests {
 
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.documents)]) }
+        await store.receive(\.recentsResponse)
     }
 
     @Test
@@ -109,6 +91,7 @@ struct DestinationPickerFeatureTests {
         ) {
             DestinationPickerFeature()
         } withDependencies: {
+            $0.filesClient.recentDestinations = { _ in [] }
             $0.filesClient.browse = { _, path in
                 BrowseResult(
                     items: path == TestFolder.documents
@@ -121,6 +104,7 @@ struct DestinationPickerFeatureTests {
 
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.documents)]) }
+        await store.receive(\.recentsResponse)
         await store.send(.folderTapped(folder(TestFolder.documents))) {
             $0.directoryPath = TestFolder.documents
             $0.navigationHistory = [TestFolder.inbox]
@@ -246,6 +230,7 @@ struct DestinationPickerFeatureTests {
         ) {
             DestinationPickerFeature()
         } withDependencies: {
+            $0.filesClient.recentDestinations = { _ in [] }
             $0.filesClient.browse = { _, _ in throw FilesClientError.server(statusCode: 500) }
         }
 
@@ -253,6 +238,7 @@ struct DestinationPickerFeatureTests {
         await store.receive(\.foldersResponse.failure) {
             $0.phase = .failed(L10n.Browse.destinationPickerLoadFailed)
         }
+        await store.receive(\.recentsResponse)
         await store.send(.retryTapped) { $0.phase = .loading }
         await store.receive(\.foldersResponse.failure) {
             $0.phase = .failed(L10n.Browse.destinationPickerLoadFailed)
@@ -326,6 +312,7 @@ struct DestinationPickerFeatureTests {
         ) {
             DestinationPickerFeature()
         } withDependencies: {
+            $0.filesClient.recentDestinations = { _ in [] }
             $0.continuousClock = clock
             $0.filesClient.browse = { _, _ in
                 BrowseResult(
@@ -352,6 +339,7 @@ struct DestinationPickerFeatureTests {
             &$0,
             folders: [folder(TestFolder.photos, path: TestFolder.media)]
         ) }
+        await store.receive(\.recentsResponse)
 
         await store.send(.searchQueryChanged("sum")) {
             $0.searchQuery = "sum"
@@ -399,6 +387,7 @@ struct DestinationPickerFeatureTests {
         ) {
             DestinationPickerFeature()
         } withDependencies: {
+            $0.filesClient.recentDestinations = { _ in [] }
             $0.continuousClock = clock
             $0.filesClient.search = { _, _, query, _ in
                 queries.withValue { $0.append(query) }

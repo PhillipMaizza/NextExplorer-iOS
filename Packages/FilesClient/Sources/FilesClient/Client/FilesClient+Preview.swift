@@ -102,6 +102,7 @@ public extension FilesClient {
                 items: items.map { TransferResult.Entry(from: $0.id, to: "\(destination)/\($0.name)") }
             )
         },
+        recentDestinations: { _ in ["Documents/Projects", "Media/Photos"] },
         fetchMetadata: { _, path in
             FileMetadata(
                 path: path,

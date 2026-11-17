@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	移動到…
 browse.destinationPickerConfirmMove	移動到此處
 browse.destinationPickerNoFolders	此處沒有檔案夾
 browse.destinationPickerLoadFailed	無法載入檔案夾。
+browse.destinationPickerRecent	最近使用
 browse.actionMove	移動
 browse.actionPaste	貼上
 browse.actionPasteCount	貼上 %lld 個項目

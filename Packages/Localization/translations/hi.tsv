@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	यहां ले जाएं…
 browse.destinationPickerConfirmMove	यहां ले जाएं
 browse.destinationPickerNoFolders	यहां कोई फ़ोल्डर नहीं
 browse.destinationPickerLoadFailed	फ़ोल्डर लोड नहीं कर सके।
+browse.destinationPickerRecent	हाल के
 browse.actionMove	ले जाएं
 browse.actionPaste	पेस्ट करें
 browse.actionPasteCount	%lld आइटम पेस्ट करें

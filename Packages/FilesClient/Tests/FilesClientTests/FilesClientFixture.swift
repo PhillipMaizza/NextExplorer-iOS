@@ -90,6 +90,7 @@ enum FilesClientFixture: String, FixtureFile {
     case itemMutationNdjsonExtractDone = "item-mutation/ndjson-extract-done"
     case itemMutationNdjsonMoveDone = "item-mutation/ndjson-move-done"
     case itemMutationNdjsonMoveError = "item-mutation/ndjson-move-error"
+    case itemMutationRecentDestinations = "item-mutation/recent-destinations"
     case itemMutationRenameMTxt = "item-mutation/rename-m-txt"
     case itemMutationRenameVacation = "item-mutation/rename-vacation"
     case itemMutationTransferCopyToDocuments = "item-mutation/transfer-copy-to-documents"

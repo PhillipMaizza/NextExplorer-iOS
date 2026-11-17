@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Déplacer vers…
 browse.destinationPickerConfirmMove	Déplacer ici
 browse.destinationPickerNoFolders	Aucun dossier ici
 browse.destinationPickerLoadFailed	Impossible de charger les dossiers.
+browse.destinationPickerRecent	Récents
 browse.actionMove	Déplacer
 browse.actionPaste	Coller
 browse.actionPasteCount	Coller %lld éléments

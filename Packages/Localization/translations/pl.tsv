@@ -92,6 +92,7 @@ browse.destinationPickerMoveTitle	Przenieś do…
 browse.destinationPickerConfirmMove	Przenieś tutaj
 browse.destinationPickerNoFolders	Brak folderów tutaj
 browse.destinationPickerLoadFailed	Nie można wczytać folderów.
+browse.destinationPickerRecent	Ostatnie
 browse.actionMove	Przenieś
 browse.actionPaste	Wklej
 browse.actionPasteCount	Wklej %lld elementów
