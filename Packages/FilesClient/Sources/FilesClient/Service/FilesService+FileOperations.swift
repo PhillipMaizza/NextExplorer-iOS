@@ -2,6 +2,12 @@ import CoreModels
 import Foundation
 import NetworkClient
 
+private enum Constants {
+    /// The Mac's delete alert waits for the delete check; a slow server gets the alert's safe wording
+    /// instead of a Delete key that seems to do nothing.
+    static let deleteImpactMacTimeout: TimeInterval = 3
+}
+
 extension FilesService {
     /// `POST /api/files/rename`, confirmed against `backend/src/routes/files/rename.js`:
     /// `path` is the item's *parent* directory, `name` its current name: matching `FileItem`'s
@@ -385,6 +391,9 @@ extension FilesService {
     func deleteImpact(serverURL: URL, items: [FileItem]) async throws -> DeleteImpact {
         let url = serverURL.appendingPathComponent(APIPath.filesDeleteImpact)
         var request = Self.makeRequest(url: url, method: .post)
+        #if os(macOS)
+            request.timeoutInterval = Constants.deleteImpactMacTimeout
+        #endif
         request.setJSONContentType()
         do {
             let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(
