@@ -84,6 +84,11 @@ public struct FilesClient: Sendable {
     public var transferItems: @Sendable (
         _ serverURL: URL, _ items: [FileItem], _ destination: String, _ operation: TransferOperation
     ) async throws -> TransferResult
+    /// The same copy or move, reporting progress (0 to 1, by bytes) as the server works.
+    public var transferItemsWithProgress: @Sendable (
+        _ serverURL: URL, _ items: [FileItem], _ destination: String, _ operation: TransferOperation,
+        _ onProgress: @escaping @Sendable (Double) -> Void
+    ) async throws -> TransferResult
     /// `GET /api/files/recent-destinations`: relative folder paths, most recent first.
     public var recentDestinations: @Sendable (_ serverURL: URL) async throws -> [String]
     /// The folder size batch route: the indexed size of the first 500 folders, keyed by the path asked for.

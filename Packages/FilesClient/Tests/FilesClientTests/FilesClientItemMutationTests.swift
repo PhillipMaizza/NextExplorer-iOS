@@ -145,6 +145,33 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func transferItemsWithProgressReportsTheBytesCopiedAsAFraction() async throws {
+            try stub(
+                statusCode: 200,
+                body: FilesClientFixture.itemMutationNdjsonMoveDone.data(),
+                headers: [HTTPHeaderField.contentType: "application/x-ndjson; charset=utf-8"]
+            )
+            let item = FileItem(
+                name: TestValue.outdated,
+                path: "",
+                dateModified: MockDate.date,
+                size: 0,
+                kind: FileItem.directoryKind
+            )
+            let steps = LockIsolated<[Double]>([])
+
+            let result = try await makeClient().transferItemsWithProgress(
+                serverURL, [item], TestFolder.archive, .move
+            ) { fraction in
+                steps.withValue { $0.append(fraction) }
+            }
+
+            #expect(steps.value == [0, 1])
+            #expect(result.movedCount == 1)
+            #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/files/move")
+        }
+
+        @Test
         func deleteItemsWithProgressFallsBackToThePlainDeleteWhenTheStreamRouteIsMissing() async throws {
             try stub(statusCode: 404, body: Data())
             let item = FileItem(

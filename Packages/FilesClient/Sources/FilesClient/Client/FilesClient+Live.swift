@@ -139,6 +139,12 @@ public extension FilesClient {
                     serverURL: serverURL, items: items, destination: destination, operation: operation
                 )
             },
+            transferItemsWithProgress: { serverURL, items, destination, operation, onProgress in
+                try await service.transferItems(
+                    serverURL: serverURL, items: items, destination: destination, operation: operation,
+                    onProgress: onProgress
+                )
+            },
             recentDestinations: { serverURL in
                 try await service.recentDestinations(serverURL: serverURL)
             },
