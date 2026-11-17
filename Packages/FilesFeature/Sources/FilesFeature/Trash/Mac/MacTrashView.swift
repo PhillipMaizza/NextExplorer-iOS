@@ -62,19 +62,10 @@
             return store.retentionDays.map { L10n.Trash.subtitle($0) } ?? ""
         }
 
-        @ViewBuilder
         private var content: some View {
-            if store.items.isEmpty {
-                switch store.phase {
-                case .idle, .loading:
-                    DSSpinner()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                case let .failed(message):
-                    EmptyStateView(icon: IconKit.warning, message: message) { store.send(.retryTapped) }
-                case .loaded:
-                    EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
-                }
-            } else {
+            TrashPhaseContent(phase: store.phase, isEmpty: store.items.isEmpty, onRetry: { store.send(.retryTapped) }) {
+                EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
+            } loaded: {
                 table
             }
         }

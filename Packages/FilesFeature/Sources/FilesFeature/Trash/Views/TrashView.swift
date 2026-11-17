@@ -35,25 +35,16 @@ struct TrashView: View {
             }
     }
 
-    @ViewBuilder
     private var content: some View {
-        if store.items.isEmpty {
-            switch store.phase {
-            case .idle, .loading:
-                DSSpinner()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            case let .failed(message):
-                EmptyStateView(icon: IconKit.warning, message: message) { store.send(.retryTapped) }
-            case .loaded:
-                VStack(spacing: .space24) {
-                    header
-                    EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
-                }
-                .padding(.space16)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .refreshable { await store.send(.refreshPulled).finish() }
+        TrashPhaseContent(phase: store.phase, isEmpty: store.items.isEmpty, onRetry: { store.send(.retryTapped) }) {
+            VStack(spacing: .space24) {
+                header
+                EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
             }
-        } else {
+            .padding(.space16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .refreshable { await store.send(.refreshPulled).finish() }
+        } loaded: {
             List {
                 Section {
                     ForEach(store.items) { item in

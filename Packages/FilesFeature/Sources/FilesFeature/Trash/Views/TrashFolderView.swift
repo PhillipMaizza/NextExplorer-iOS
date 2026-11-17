@@ -25,17 +25,10 @@ struct TrashFolderView: View {
             }
     }
 
-    @ViewBuilder
     private var content: some View {
-        switch store.phase {
-        case .idle, .loading:
-            DSSpinner()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        case let .failed(message):
-            EmptyStateView(icon: IconKit.warning, message: message) { store.send(.retryTapped) }
-        case .loaded where store.entries.isEmpty:
+        TrashPhaseContent(phase: store.phase, isEmpty: store.entries.isEmpty, onRetry: { store.send(.retryTapped) }) {
             EmptyStateView(icon: IconKit.folder, message: L10n.Trash.folderEmpty)
-        case .loaded:
+        } loaded: {
             List {
                 ForEach(store.entries) { entry in
                     row(entry)
