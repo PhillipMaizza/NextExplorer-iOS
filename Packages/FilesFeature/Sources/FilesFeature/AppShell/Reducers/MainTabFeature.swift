@@ -226,8 +226,7 @@ public struct MainTabFeature {
                 switch action {
                 case let .tabSelected(tab):
                     state.selectedTab = tab
-                    // The trash changes behind the screen (deletes elsewhere, expiry): read it again on return.
-                    return tab == .trash && state.trash.phase.hasLoaded ? .send(.trash(.refreshPulled)) : .none
+                    return tab == .trash ? Self.refreshTrashIfLoaded(state) : .none
 
                 case .refreshSelectedTab:
                     switch state.selectedTab {
@@ -467,7 +466,8 @@ public struct MainTabFeature {
                         .send(.favorites(.syncPathStack)),
                         .send(.shared(.refreshRequested)),
                         // Back online: pull any files added to pinned folders while offline.
-                        .send(.offline(.autoSync(force: true)))
+                        .send(.offline(.autoSync(force: true))),
+                        Self.refreshTrashIfLoaded(state)
                     )
 
                 case .browse(.delegate(.favoritesChanged)),
@@ -640,6 +640,12 @@ public struct MainTabFeature {
             }
             return .none
         #endif
+    }
+
+    /// The trash changes behind the screen (deletes elsewhere, expiry, another device): a trash
+    /// section already shown reads it again; one never opened loads when it first appears.
+    static func refreshTrashIfLoaded(_ state: State) -> Effect<Action> {
+        state.trash.phase.hasLoaded ? .send(.trash(.refreshPulled)) : .none
     }
 
     /// As many as Finder's Recent Folders menu keeps by default.
