@@ -60,6 +60,7 @@ browse.open	Openen
 browse.actionGetInfo	Toon info
 browse.actionPermissions	Rechten
 browse.actionRename	Naam wijzigen
+browse.actionRefreshSize	Grootte vernieuwen
 browse.actionExtract	Uitpakken
 browse.actionCompress	Comprimeren
 browse.actionDownload	Downloaden

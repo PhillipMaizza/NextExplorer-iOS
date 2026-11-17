@@ -60,6 +60,7 @@ browse.open	खोलें
 browse.actionGetInfo	जानकारी
 browse.actionPermissions	अनुमतियां
 browse.actionRename	नाम बदलें
+browse.actionRefreshSize	आकार रीफ़्रेश करें
 browse.actionExtract	निकालें
 browse.actionCompress	संपीड़ित करें
 browse.actionDownload	डाउनलोड करें

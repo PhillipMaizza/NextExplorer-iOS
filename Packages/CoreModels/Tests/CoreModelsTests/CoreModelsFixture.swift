@@ -57,6 +57,11 @@ enum CoreModelsFixture: String, FixtureFile {
     case deleteOutcomeEachStatus = "delete-outcome/each-status"
     case deleteOutcomeLegacySuccess = "delete-outcome/legacy-success"
 
+    // MARK: FolderSize
+
+    case folderSizeBatchEntries = "folder-size/batch-entries"
+    case folderSizeNegativeSize = "folder-size/negative-size"
+
     // MARK: favorite
 
     case favoriteFullRow = "favorite/full-row"

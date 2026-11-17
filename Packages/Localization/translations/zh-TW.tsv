@@ -60,6 +60,7 @@ browse.open	打開
 browse.actionGetInfo	顯示簡介
 browse.actionPermissions	權限
 browse.actionRename	重新命名
+browse.actionRefreshSize	重新整理大小
 browse.actionExtract	解壓縮
 browse.actionCompress	壓縮
 browse.actionDownload	下載

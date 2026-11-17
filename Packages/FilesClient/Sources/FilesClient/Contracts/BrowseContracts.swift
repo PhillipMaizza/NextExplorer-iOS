@@ -3,6 +3,12 @@ import Foundation
 
 /// Wire types for the Browse/search endpoints. See `FilesService+Browse.swift`.
 extension FilesService {
+    struct FolderSizeBatchBody: Encodable { let paths: [String] }
+
+    struct FolderSizeBatchEnvelope: Decodable {
+        let results: [FolderSize]
+    }
+
     struct SearchEnvelope: Decodable {
         let items: [SearchResultItem]
         let truncated: Bool?

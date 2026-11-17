@@ -103,6 +103,10 @@ public extension FilesClient {
             )
         },
         recentDestinations: { _ in ["Documents/Projects", "Media/Photos"] },
+        folderSizes: { _, paths in
+            Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(sizeBytes: 48_000_000, indexed: true)) })
+        },
+        refreshFolderSize: { _, _ in FolderSize(sizeBytes: 48_000_000, indexed: true) },
         fetchMetadata: { _, path in
             FileMetadata(
                 path: path,

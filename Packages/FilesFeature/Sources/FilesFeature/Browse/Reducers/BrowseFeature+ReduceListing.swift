@@ -116,6 +116,7 @@ extension BrowseFeature {
             return .merge(
                 recheckArrivals(&state),
                 computeOfflineAvailability(&state),
+                loadFolderSizes(state),
                 prefetch(
                     serverURL: state.serverURL,
                     paths: result.items.filter(\.isDirectory).map(\.id),
@@ -196,18 +197,23 @@ extension BrowseFeature {
         case let .serverFeaturesResponse(features):
             state.isPersonalSpaceEnabled = features.isPersonalEnabled
             state.isTrashAvailable = features.trash != nil
+            let modeSaved = rememberFolderSizeMode(&state, features.folderSizeMode)
             let jsonCacheStore = jsonCacheStore
             let serverURL = state.serverURL
             let cacheScope = state.cacheScope
-            return .run { _ in
-                ListCache.save(
-                    jsonCacheStore,
-                    Self.personalSpaceCacheNamespace,
-                    serverURL: serverURL,
-                    scope: cacheScope,
-                    value: features.isPersonalEnabled
-                )
-            }
+            return .merge(
+                .run { _ in
+                    ListCache.save(
+                        jsonCacheStore,
+                        Self.personalSpaceCacheNamespace,
+                        serverURL: serverURL,
+                        scope: cacheScope,
+                        value: features.isPersonalEnabled
+                    )
+                },
+                modeSaved,
+                loadFolderSizes(state)
+            )
 
         case .personalSpaceTapped:
             return .send(.delegate(.openPath(path: PersonalSpace.rootPath, title: L10n.Browse.myFiles)))

@@ -81,6 +81,7 @@ browse.open	Open
 browse.actionGetInfo	Get Info
 browse.actionPermissions	Permissions
 browse.actionRename	Rename
+browse.actionRefreshSize	Refresh Size
 browse.actionExtract	Extract
 browse.actionCompress	Compress
 browse.actionDownload	Download

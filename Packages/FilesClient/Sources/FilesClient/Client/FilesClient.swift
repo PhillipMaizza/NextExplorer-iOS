@@ -81,6 +81,11 @@ public struct FilesClient: Sendable {
     ) async throws -> TransferResult
     /// `GET /api/files/recent-destinations`: relative folder paths, most recent first.
     public var recentDestinations: @Sendable (_ serverURL: URL) async throws -> [String]
+    /// The folder size batch route: the indexed size of the first 500 folders, keyed by the path asked for.
+    /// A 404 while the server has folder sizes off, so gate on `ServerFeatures.folderSizeMode`.
+    public var folderSizes: @Sendable (_ serverURL: URL, _ paths: [String]) async throws -> [String: FolderSize]
+    /// The folder size refresh route: rescans one folder in the background (202).
+    public var refreshFolderSize: @Sendable (_ serverURL: URL, _ path: String) async throws -> FolderSize
     public var fetchMetadata: @Sendable (_ serverURL: URL, _ path: String) async throws -> FileMetadata
     /// `GET /api/usage/<path>` (`backend/src/routes/usage.js`): the folder's recursive size
     /// plus the free/total of the filesystem it's on. A denied path comes back all zeros.

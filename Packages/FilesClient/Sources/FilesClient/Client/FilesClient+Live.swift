@@ -137,6 +137,12 @@ public extension FilesClient {
             recentDestinations: { serverURL in
                 try await service.recentDestinations(serverURL: serverURL)
             },
+            folderSizes: { serverURL, paths in
+                try await service.folderSizes(serverURL: serverURL, paths: paths)
+            },
+            refreshFolderSize: { serverURL, path in
+                try await service.refreshFolderSize(serverURL: serverURL, path: path)
+            },
             fetchMetadata: { serverURL, path in
                 try await service.fetchMetadata(serverURL: serverURL, path: path)
             },

@@ -60,6 +60,7 @@ browse.open	열기
 browse.actionGetInfo	정보 보기
 browse.actionPermissions	권한
 browse.actionRename	이름 변경
+browse.actionRefreshSize	크기 새로 고침
 browse.actionExtract	압축 풀기
 browse.actionCompress	압축
 browse.actionDownload	다운로드

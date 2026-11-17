@@ -145,6 +145,7 @@ public enum L10n {
         public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
         public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
         public static var actionPermissions: String { tr("browse.actionPermissions") }  // "Permissions"
+        public static var actionRefreshSize: String { tr("browse.actionRefreshSize") }  // "Refresh Size"
         public static var actionRemoveFromFavorites: String { tr("browse.actionRemoveFromFavorites") }  // "Remove from Favorites"
         public static var actionRemoveFromOffline: String { tr("browse.actionRemoveFromOffline") }  // "Remove from Offline"
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
