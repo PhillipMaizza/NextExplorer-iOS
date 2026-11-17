@@ -376,6 +376,9 @@ public extension FilesClient {
             deleteUser: { serverURL, userID in
                 try await service.deleteUser(serverURL: serverURL, userID: userID)
             },
+            resetUserSecurity: { serverURL, userID, reset in
+                try await service.resetUserSecurity(serverURL: serverURL, userID: userID, reset: reset)
+            },
             userVolumes: { serverURL, userID in
                 try await service.userVolumes(serverURL: serverURL, userID: userID)
             },

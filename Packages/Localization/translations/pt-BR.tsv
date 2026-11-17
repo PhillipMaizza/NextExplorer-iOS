@@ -608,6 +608,9 @@ userManagement.setPasswordSetIntro	Dê a %@ uma senha local para poder entrar se
 userManagement.toastProfileUpdated	Perfil atualizado
 userManagement.toastAdminGranted	Administrador concedido
 userManagement.toastUserRemoved	Usuário removido
+userManagement.toastUnlocked	Conta desbloqueada
+userManagement.toastTwoFactorReset	Autenticação em duas etapas redefinida
+userManagement.toastPasskeysRemoved	Passkeys removidas
 userManagement.toastUserCreated	Usuário criado
 userManagement.toastPasswordUpdated	Senha atualizada
 userManagement.toastVolumeSaved	Volume salvo
@@ -653,6 +656,20 @@ userDetail.removeVolumeTitle	Remover o volume?
 userDetail.removeVolumeMessage	%@ é desvinculado deste usuário. O diretório em si não é afetado.
 userDetail.removeUserTitle	Remover o usuário?
 userDetail.removeUserMessage	%@ perde o acesso imediatamente. Os arquivos dele no servidor não são excluídos.
+userDetail.sectionAccountRecovery	Recuperação da conta
+userDetail.lockTitle	Bloqueio de login
+userDetail.lockedUntil	Bloqueada após muitas tentativas de login malsucedidas até %@.
+userDetail.lockRelease	Desbloquear
+userDetail.twoFactorTitle	Autenticação em duas etapas
+userDetail.twoFactorOn	Ativa. Redefina se o usuário perdeu o dispositivo e os códigos de recuperação.
+userDetail.twoFactorReset	Redefinir
+userDetail.passkeysTitle	Passkeys
+userDetail.passkeysSubtitle	Remove todas as passkeys. O usuário entra com a senha e depois pode adicionar uma nova passkey.
+userDetail.passkeysRemove	Remover todas
+userDetail.resetTwoFactorTitle	Redefinir a autenticação em duas etapas?
+userDetail.resetTwoFactorMessage	%@ pode entrar sem uma segunda etapa até configurá-la novamente.
+userDetail.resetPasskeysTitle	Remover passkeys?
+userDetail.resetPasskeysMessage	Todas as passkeys de %@ serão removidas. O usuário entra com a senha.
 userDetail.grantAdminTitle	Conceder permissões de administrador?
 userDetail.grantAdminMessage	%@ passa a ser administrador, com controle total sobre arquivos, compartilhamentos e usuários. Administradores não podem ser rebaixados pelo app.
 userDetail.volumeSheetLabelField	Rótulo

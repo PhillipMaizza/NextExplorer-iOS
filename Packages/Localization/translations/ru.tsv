@@ -404,6 +404,9 @@ userManagement.setPasswordSetIntro	Задайте пользователю %@ л
 userManagement.toastProfileUpdated	Профиль обновлён
 userManagement.toastAdminGranted	Права администратора предоставлены
 userManagement.toastUserRemoved	Пользователь удалён
+userManagement.toastUnlocked	Аккаунт разблокирован
+userManagement.toastTwoFactorReset	Двухфакторная аутентификация сброшена
+userManagement.toastPasskeysRemoved	Ключи доступа удалены
 userManagement.toastUserCreated	Пользователь создан
 userManagement.toastPasswordUpdated	Пароль обновлён
 userManagement.toastVolumeSaved	Том сохранён
@@ -449,6 +452,20 @@ userDetail.removeVolumeTitle	Удалить том?
 userDetail.removeVolumeMessage	%@ отвязывается от этого пользователя. Сам каталог не затрагивается.
 userDetail.removeUserTitle	Удалить пользователя?
 userDetail.removeUserMessage	%@ немедленно теряет доступ. Его файлы на сервере не удаляются.
+userDetail.sectionAccountRecovery	Восстановление аккаунта
+userDetail.lockTitle	Блокировка входа
+userDetail.lockedUntil	Заблокирован из-за множества неудачных попыток входа до %@.
+userDetail.lockRelease	Разблокировать
+userDetail.twoFactorTitle	Двухфакторная аутентификация
+userDetail.twoFactorOn	Включена. Сбросьте, если пользователь потерял устройство и коды восстановления.
+userDetail.twoFactorReset	Сбросить
+userDetail.passkeysTitle	Ключи доступа
+userDetail.passkeysSubtitle	Удаляет все ключи доступа. Пользователь входит по паролю и позже может добавить новый ключ.
+userDetail.passkeysRemove	Удалить все
+userDetail.resetTwoFactorTitle	Сбросить двухфакторную аутентификацию?
+userDetail.resetTwoFactorMessage	%@ сможет войти без второго шага, пока не настроит её заново.
+userDetail.resetPasskeysTitle	Удалить ключи доступа?
+userDetail.resetPasskeysMessage	Все ключи доступа пользователя %@ будут удалены. Вход выполняется по паролю.
 userDetail.grantAdminTitle	Предоставить права администратора?
 userDetail.grantAdminMessage	%@ станет администратором с полным контролем над файлами, общим доступом и пользователями. Из приложения нельзя лишить прав администратора.
 userDetail.volumeSheetLabelField	Метка

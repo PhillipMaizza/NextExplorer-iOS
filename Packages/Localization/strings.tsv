@@ -686,6 +686,9 @@ userManagement.setPasswordSetIntro	Give %@ a local password so they can sign in 
 userManagement.toastProfileUpdated	Profile updated
 userManagement.toastAdminGranted	Admin granted
 userManagement.toastUserRemoved	User removed
+userManagement.toastUnlocked	Account unlocked
+userManagement.toastTwoFactorReset	Two factor reset
+userManagement.toastPasskeysRemoved	Passkeys removed
 userManagement.toastUserCreated	User created
 userManagement.toastPasswordUpdated	Password updated
 userManagement.toastVolumeSaved	Volume saved
@@ -733,6 +736,20 @@ userDetail.removeVolumeTitle	Remove Volume?
 userDetail.removeVolumeMessage	%@ is unassigned from this user. The directory itself is untouched.
 userDetail.removeUserTitle	Remove User?
 userDetail.removeUserMessage	%@ loses access immediately. Their files on the server are not deleted.
+userDetail.sectionAccountRecovery	Account Recovery
+userDetail.lockTitle	Sign In Lock
+userDetail.lockedUntil	Locked after too many failed sign in attempts until %@.
+userDetail.lockRelease	Unlock
+userDetail.twoFactorTitle	Two Factor Authentication
+userDetail.twoFactorOn	On. Reset it if the user lost their device and recovery codes.
+userDetail.twoFactorReset	Reset
+userDetail.passkeysTitle	Passkeys
+userDetail.passkeysSubtitle	Removes every passkey. The user signs in with their password and can add a new passkey afterwards.
+userDetail.passkeysRemove	Remove All
+userDetail.resetTwoFactorTitle	Reset Two Factor?
+userDetail.resetTwoFactorMessage	%@ can sign in without a second step until they set it up again.
+userDetail.resetPasskeysTitle	Remove Passkeys?
+userDetail.resetPasskeysMessage	All passkeys of %@ are removed. They sign in with their password.
 userDetail.grantAdminTitle	Grant Admin?
 userDetail.grantAdminMessage	%@ becomes an administrator with full control over files, shares and users. Administrators can't be demoted from the app.
 userDetail.volumeSheetLabelField	Label

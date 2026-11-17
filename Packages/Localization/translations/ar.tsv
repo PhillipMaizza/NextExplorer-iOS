@@ -416,6 +416,9 @@ userManagement.setPasswordSetIntro	امنح %@ كلمة سر محلية ليتم
 userManagement.toastProfileUpdated	تم تحديث الملف الشخصي
 userManagement.toastAdminGranted	تم منح صلاحية المسؤول
 userManagement.toastUserRemoved	تمت إزالة المستخدم
+userManagement.toastUnlocked	تم إلغاء قفل الحساب
+userManagement.toastTwoFactorReset	تمت إعادة تعيين المصادقة الثنائية
+userManagement.toastPasskeysRemoved	تمت إزالة مفاتيح المرور
 userManagement.toastUserCreated	تم إنشاء المستخدم
 userManagement.toastPasswordUpdated	تم تحديث كلمة السر
 userManagement.toastVolumeSaved	تم حفظ وحدة التخزين
@@ -461,6 +464,20 @@ userDetail.removeVolumeTitle	إزالة وحدة التخزين؟
 userDetail.removeVolumeMessage	تم إلغاء تعيين %@ من هذا المستخدم. لا يتأثر الدليل نفسه.
 userDetail.removeUserTitle	إزالة المستخدم؟
 userDetail.removeUserMessage	يفقد %@ الوصول فورًا. لا تُحذف ملفاته على الخادم.
+userDetail.sectionAccountRecovery	استرداد الحساب
+userDetail.lockTitle	قفل تسجيل الدخول
+userDetail.lockedUntil	مقفل بعد محاولات تسجيل دخول فاشلة كثيرة حتى %@.
+userDetail.lockRelease	إلغاء القفل
+userDetail.twoFactorTitle	المصادقة الثنائية
+userDetail.twoFactorOn	مفعّلة. أعد تعيينها إذا فقد المستخدم جهازه ورموز الاسترداد.
+userDetail.twoFactorReset	إعادة تعيين
+userDetail.passkeysTitle	مفاتيح المرور
+userDetail.passkeysSubtitle	يزيل كل مفاتيح المرور. يسجّل المستخدم الدخول بكلمة المرور ويمكنه إضافة مفتاح مرور جديد بعد ذلك.
+userDetail.passkeysRemove	إزالة الكل
+userDetail.resetTwoFactorTitle	إعادة تعيين المصادقة الثنائية؟
+userDetail.resetTwoFactorMessage	يمكن لـ %@ تسجيل الدخول دون خطوة ثانية حتى يعيد إعدادها.
+userDetail.resetPasskeysTitle	إزالة مفاتيح المرور؟
+userDetail.resetPasskeysMessage	ستتم إزالة كل مفاتيح المرور الخاصة بـ %@. سيسجّل الدخول بكلمة المرور.
 userDetail.grantAdminTitle	منح صلاحيات المسؤول؟
 userDetail.grantAdminMessage	%@ سيصبح مسؤولاً بتحكم كامل في الملفات والمشاركات والمستخدمين. لا يمكن إزالة صلاحيات المسؤول من التطبيق.
 userDetail.volumeSheetLabelField	التسمية

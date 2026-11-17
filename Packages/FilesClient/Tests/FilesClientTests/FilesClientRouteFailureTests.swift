@@ -17,6 +17,7 @@ extension FilesClientLiveTests {
             private static let password = "pw"
 
             case listUsers, createUser, updateUser, setUserPassword, deleteUser, recentDestinations
+            case resetUserSecurity
             case userVolumes, addUserVolume, updateUserVolume, removeUserVolume
             case browseAdminDirectories, serverFeatures
             case fetchPermissions, changePermissions, changeOwnership
@@ -35,6 +36,7 @@ extension FilesClientLiveTests {
                 case .setUserPassword: try await client.setUserPassword(serverURL, Self.userID, Self.password)
                 case .deleteUser: try await client.deleteUser(serverURL, Self.userID)
                 case .recentDestinations: _ = try await client.recentDestinations(serverURL)
+                case .resetUserSecurity: try await client.resetUserSecurity(serverURL, Self.userID, .passkeys)
                 case .userVolumes: _ = try await client.userVolumes(serverURL, Self.userID)
                 case .addUserVolume: _ = try await client.addUserVolume(
                         serverURL,

@@ -386,6 +386,9 @@ userManagement.setPasswordSetIntro	SSO なしでサインインできるよう�
 userManagement.toastProfileUpdated	プロフィールを更新しました
 userManagement.toastAdminGranted	管理者権限を付与しました
 userManagement.toastUserRemoved	ユーザを削除しました
+userManagement.toastUnlocked	アカウントのロックを解除しました
+userManagement.toastTwoFactorReset	2 要素認証をリセットしました
+userManagement.toastPasskeysRemoved	パスキーを削除しました
 userManagement.toastUserCreated	ユーザを作成しました
 userManagement.toastPasswordUpdated	パスワードを更新しました
 userManagement.toastVolumeSaved	ボリュームを保存しました
@@ -431,6 +434,20 @@ userDetail.removeVolumeTitle	ボリュームを削除しますか？
 userDetail.removeVolumeMessage	%@ はこのユーザから割り当て解除されます。ディレクトリ自体には影響しません。
 userDetail.removeUserTitle	ユーザを削除しますか？
 userDetail.removeUserMessage	%@ はすぐにアクセス権を失います。サーバー上のファイルは削除されません。
+userDetail.sectionAccountRecovery	アカウントの復旧
+userDetail.lockTitle	サインインのロック
+userDetail.lockedUntil	サインインの失敗が続いたため %@ までロックされています。
+userDetail.lockRelease	ロック解除
+userDetail.twoFactorTitle	2 要素認証
+userDetail.twoFactorOn	オン。ユーザが端末とリカバリコードを紛失した場合はリセットします。
+userDetail.twoFactorReset	リセット
+userDetail.passkeysTitle	パスキー
+userDetail.passkeysSubtitle	すべてのパスキーを削除します。ユーザはパスワードでサインインし、その後新しいパスキーを追加できます。
+userDetail.passkeysRemove	すべて削除
+userDetail.resetTwoFactorTitle	2 要素認証をリセットしますか?
+userDetail.resetTwoFactorMessage	再設定するまで、%@ は第 2 のステップなしでサインインできます。
+userDetail.resetPasskeysTitle	パスキーを削除しますか?
+userDetail.resetPasskeysMessage	%@ のパスキーをすべて削除します。パスワードでサインインします。
 userDetail.grantAdminTitle	管理者権限を付与しますか？
 userDetail.grantAdminMessage	%@ は、ファイル、共有、ユーザを完全に管理できる管理者になります。管理者の権限はアプリから取り消せません。
 userDetail.volumeSheetLabelField	ラベル

@@ -10,6 +10,7 @@ import TestUtils
 enum UserManagementCall: Equatable, Sendable {
     case updateUser(id: String, request: UpdateUserRequest)
     case deleteUser(id: String)
+    case resetSecurity(userID: String, reset: UserSecurityReset)
     case createUser(CreateUserRequest)
     case setPassword(userID: String, password: String)
     case addVolume(userID: String, request: AddUserVolumeRequest)
@@ -43,7 +44,14 @@ extension UserManagementTestSupport {
         UserVolume(id: "v9", userId: "2", label: TestFolder.media, path: "/srv/media", accessMode: .readonly)
     }
 
-    func makeUser(id: String, admin: Bool = false, password: Bool = true, oidc: Bool = false) -> User {
+    func makeUser(
+        id: String,
+        admin: Bool = false,
+        password: Bool = true,
+        oidc: Bool = false,
+        lockedUntil: Date? = nil,
+        twoFactor: Bool = false
+    ) -> User {
         var methods: [AuthMethod] = []
         if password {
             methods.append(AuthMethod(method: "local_password"))
@@ -57,7 +65,9 @@ extension UserManagementTestSupport {
             email: "user\(id)@example.com",
             displayName: "User \(id)",
             roles: admin ? ["admin"] : [],
-            authMethods: methods
+            authMethods: methods,
+            lockedUntil: lockedUntil,
+            twoFactorEnabled: twoFactor
         )
     }
 
@@ -93,6 +103,7 @@ extension UserManagementTestSupport {
         volumes: @escaping @Sendable (String) async throws -> [UserVolume] = { _ in throw FilesClientError.offline },
         updateUser: @escaping @Sendable () async throws -> User = { throw FilesClientError.offline },
         deleteUser: @escaping @Sendable () async throws -> Void = { throw FilesClientError.offline },
+        resetSecurity: @escaping @Sendable () async throws -> Void = { throw FilesClientError.offline },
         createUser: @escaping @Sendable () async throws -> User = { throw FilesClientError.offline },
         setPassword: @escaping @Sendable () async throws -> Void = { throw FilesClientError.offline },
         addVolume: @escaping @Sendable () async throws -> UserVolume = { throw FilesClientError.offline },
@@ -125,6 +136,10 @@ extension UserManagementTestSupport {
             $0.filesClient.deleteUser = { _, id in
                 calls.withValue { $0.append(.deleteUser(id: id)) }
                 try await deleteUser()
+            }
+            $0.filesClient.resetUserSecurity = { _, id, reset in
+                calls.withValue { $0.append(.resetSecurity(userID: id, reset: reset)) }
+                try await resetSecurity()
             }
             $0.filesClient.createUser = { _, request in
                 calls.withValue { $0.append(.createUser(request)) }

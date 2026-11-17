@@ -392,6 +392,9 @@ userManagement.setPasswordSetIntro	Geef %@ een lokaal wachtwoord zodat aanmelden
 userManagement.toastProfileUpdated	Profiel bijgewerkt
 userManagement.toastAdminGranted	Beheerder verleend
 userManagement.toastUserRemoved	Gebruiker verwijderd
+userManagement.toastUnlocked	Account gedeblokkeerd
+userManagement.toastTwoFactorReset	Tweestapsverificatie teruggezet
+userManagement.toastPasskeysRemoved	Passkeys verwijderd
 userManagement.toastUserCreated	Gebruiker aangemaakt
 userManagement.toastPasswordUpdated	Wachtwoord bijgewerkt
 userManagement.toastVolumeSaved	Volume bewaard
@@ -437,6 +440,20 @@ userDetail.removeVolumeTitle	Volume verwijderen?
 userDetail.removeVolumeMessage	%@ wordt van deze gebruiker losgekoppeld. De map zelf blijft ongemoeid.
 userDetail.removeUserTitle	Gebruiker verwijderen?
 userDetail.removeUserMessage	%@ verliest onmiddellijk de toegang. Zijn bestanden op de server worden niet verwijderd.
+userDetail.sectionAccountRecovery	Accountherstel
+userDetail.lockTitle	Aanmeldblokkade
+userDetail.lockedUntil	Geblokkeerd na te veel mislukte aanmeldpogingen tot %@.
+userDetail.lockRelease	Deblokkeren
+userDetail.twoFactorTitle	Tweestapsverificatie
+userDetail.twoFactorOn	Aan. Zet haar terug als de gebruiker zijn apparaat en herstelcodes kwijt is.
+userDetail.twoFactorReset	Terugzetten
+userDetail.passkeysTitle	Passkeys
+userDetail.passkeysSubtitle	Verwijdert elke passkey. De gebruiker meldt zich aan met een wachtwoord en kan daarna een nieuwe passkey toevoegen.
+userDetail.passkeysRemove	Alles verwijderen
+userDetail.resetTwoFactorTitle	Tweestapsverificatie terugzetten?
+userDetail.resetTwoFactorMessage	%@ kan zich zonder tweede stap aanmelden totdat dit opnieuw is ingesteld.
+userDetail.resetPasskeysTitle	Passkeys verwijderen?
+userDetail.resetPasskeysMessage	Alle passkeys van %@ worden verwijderd. De gebruiker meldt zich aan met een wachtwoord.
 userDetail.grantAdminTitle	Beheerdersrechten verlenen?
 userDetail.grantAdminMessage	%@ wordt beheerder met volledige controle over bestanden, shares en gebruikers. Beheerders kunnen niet vanuit de app worden gedegradeerd.
 userDetail.volumeSheetLabelField	Label

@@ -392,6 +392,9 @@ userManagement.setPasswordSetIntro	%@ को स्थानीय पासव�
 userManagement.toastProfileUpdated	प्रोफ़ाइल अपडेट की गई
 userManagement.toastAdminGranted	व्यवस्थापक अनुदत्त
 userManagement.toastUserRemoved	उपयोगकर्ता निकाला गया
+userManagement.toastUnlocked	खाता अनलॉक हो गया
+userManagement.toastTwoFactorReset	दो चरणीय प्रमाणीकरण रीसेट हुआ
+userManagement.toastPasskeysRemoved	पासकी हटा दी गईं
 userManagement.toastUserCreated	उपयोगकर्ता बनाया गया
 userManagement.toastPasswordUpdated	पासवर्ड अपडेट किया गया
 userManagement.toastVolumeSaved	वॉल्यूम सहेजा गया
@@ -437,6 +440,20 @@ userDetail.removeVolumeTitle	वॉल्यूम निकालें?
 userDetail.removeVolumeMessage	%@ इस उपयोगकर्ता से अनिर्दिष्ट किया जाता है। निर्देशिका स्वयं अछूती रहती है।
 userDetail.removeUserTitle	उपयोगकर्ता निकालें?
 userDetail.removeUserMessage	%@ तुरंत एक्सेस खो देता है। सर्वर पर उसकी फ़ाइलें नहीं हटाई जातीं।
+userDetail.sectionAccountRecovery	खाता पुनर्प्राप्ति
+userDetail.lockTitle	साइन इन लॉक
+userDetail.lockedUntil	साइन इन के बहुत अधिक असफल प्रयासों के कारण %@ तक लॉक।
+userDetail.lockRelease	अनलॉक करें
+userDetail.twoFactorTitle	दो चरणीय प्रमाणीकरण
+userDetail.twoFactorOn	चालू। यदि उपयोगकर्ता ने अपना डिवाइस और रिकवरी कोड खो दिए हैं तो इसे रीसेट करें।
+userDetail.twoFactorReset	रीसेट करें
+userDetail.passkeysTitle	पासकी
+userDetail.passkeysSubtitle	सभी पासकी हटाता है। उपयोगकर्ता पासवर्ड से साइन इन करता है और बाद में नई पासकी जोड़ सकता है।
+userDetail.passkeysRemove	सभी हटाएँ
+userDetail.resetTwoFactorTitle	दो चरणीय प्रमाणीकरण रीसेट करें?
+userDetail.resetTwoFactorMessage	दोबारा सेट करने तक %@ दूसरे चरण के बिना साइन इन कर सकेगा।
+userDetail.resetPasskeysTitle	पासकी हटाएँ?
+userDetail.resetPasskeysMessage	%@ की सभी पासकी हटा दी जाएँगी। वे पासवर्ड से साइन इन करेंगे।
 userDetail.grantAdminTitle	एडमिन अधिकार दें?
 userDetail.grantAdminMessage	%@ फ़ाइलों, शेयर और उपयोगकर्ताओं पर पूर्ण नियंत्रण के साथ एडमिन बन जाएगा। ऐप से किसी एडमिन की भूमिका घटाई नहीं जा सकती।
 userDetail.volumeSheetLabelField	लेबल

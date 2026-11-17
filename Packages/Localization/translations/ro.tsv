@@ -398,6 +398,9 @@ userManagement.setPasswordSetIntro	Dă-i lui %@ o parolă locală pentru a se pu
 userManagement.toastProfileUpdated	Profil actualizat
 userManagement.toastAdminGranted	Administrator acordat
 userManagement.toastUserRemoved	Utilizator eliminat
+userManagement.toastUnlocked	Cont deblocat
+userManagement.toastTwoFactorReset	Autentificare în doi pași resetată
+userManagement.toastPasskeysRemoved	Chei de acces eliminate
 userManagement.toastUserCreated	Utilizator creat
 userManagement.toastPasswordUpdated	Parolă actualizată
 userManagement.toastVolumeSaved	Volum salvat
@@ -443,6 +446,20 @@ userDetail.removeVolumeTitle	Elimini volumul?
 userDetail.removeVolumeMessage	%@ este dezatribuit de la acest utilizator. Directorul în sine nu este afectat.
 userDetail.removeUserTitle	Elimini utilizatorul?
 userDetail.removeUserMessage	%@ pierde accesul imediat. Fișierele sale de pe server nu sunt șterse.
+userDetail.sectionAccountRecovery	Recuperarea contului
+userDetail.lockTitle	Blocare la autentificare
+userDetail.lockedUntil	Blocat după prea multe încercări eșuate de autentificare până la %@.
+userDetail.lockRelease	Deblochează
+userDetail.twoFactorTitle	Autentificare în doi pași
+userDetail.twoFactorOn	Activă. Resetează-o dacă utilizatorul și-a pierdut dispozitivul și codurile de recuperare.
+userDetail.twoFactorReset	Resetează
+userDetail.passkeysTitle	Chei de acces
+userDetail.passkeysSubtitle	Elimină toate cheile de acces. Utilizatorul se autentifică cu parola și poate adăuga apoi o cheie nouă.
+userDetail.passkeysRemove	Elimină toate
+userDetail.resetTwoFactorTitle	Resetezi autentificarea în doi pași?
+userDetail.resetTwoFactorMessage	%@ se poate autentifica fără al doilea pas până o configurează din nou.
+userDetail.resetPasskeysTitle	Elimini cheile de acces?
+userDetail.resetPasskeysMessage	Toate cheile de acces ale lui %@ sunt eliminate. Se autentifică cu parola.
 userDetail.grantAdminTitle	Acorzi drepturi de administrator?
 userDetail.grantAdminMessage	%@ devine administrator, cu control deplin asupra fișierelor, partajărilor și utilizatorilor. Administratorii nu pot fi retrogradați din aplicație.
 userDetail.volumeSheetLabelField	Etichetă

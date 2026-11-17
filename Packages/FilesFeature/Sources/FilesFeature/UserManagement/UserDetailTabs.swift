@@ -154,6 +154,33 @@ struct SecurityTabView: View {
                 }
             }
 
+            if !store.isViewingOwnAccount {
+                Card(L10n.UserDetail.sectionAccountRecovery) {
+                    VStack(alignment: .leading, spacing: .space24) {
+                        ForEach(UserRecoveryRow.rows(for: user)) { row in
+                            VStack(alignment: .leading, spacing: .space8) {
+                                HStack(alignment: .top, spacing: .space8) {
+                                    row.icon
+                                        .resizable().scaledToFit()
+                                        .foregroundStyle(Color.secondaryDS)
+                                        .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
+                                        .padding(.top, .space2)
+                                    VStack(alignment: .leading, spacing: .space2) {
+                                        Text(row.title).type(.body2(.semibold), style: .primaryOnSurface)
+                                        Text(row.subtitle).type(.body3(.regular), style: .secondary)
+                                    }
+                                    Spacer(minLength: .space8)
+                                }
+                                DSButton(row.reset.actionTitle, style: .secondary) {
+                                    store.send(.securityResetTapped(row.reset))
+                                }
+                                .disabled(store.isResettingSecurity)
+                            }
+                        }
+                    }
+                }
+            }
+
             Card(L10n.UserDetail.sectionSSO) {
                 if user.oidcMethods.isEmpty {
                     HStack(spacing: .space8) {

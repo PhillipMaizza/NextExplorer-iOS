@@ -392,6 +392,9 @@ userManagement.setPasswordSetIntro	Ge %@ ett lokalt lösenord så att inloggning
 userManagement.toastProfileUpdated	Profil uppdaterad
 userManagement.toastAdminGranted	Administratör beviljad
 userManagement.toastUserRemoved	Användare borttagen
+userManagement.toastUnlocked	Kontot är upplåst
+userManagement.toastTwoFactorReset	Tvåfaktorsautentisering återställd
+userManagement.toastPasskeysRemoved	Passkeys borttagna
 userManagement.toastUserCreated	Användare skapad
 userManagement.toastPasswordUpdated	Lösenord uppdaterat
 userManagement.toastVolumeSaved	Volym sparad
@@ -437,6 +440,20 @@ userDetail.removeVolumeTitle	Ta bort volym?
 userDetail.removeVolumeMessage	%@ avtilldelas från den här användaren. Själva katalogen rörs inte.
 userDetail.removeUserTitle	Ta bort användare?
 userDetail.removeUserMessage	%@ förlorar åtkomsten omedelbart. Deras filer på servern raderas inte.
+userDetail.sectionAccountRecovery	Kontoåterställning
+userDetail.lockTitle	Inloggningsspärr
+userDetail.lockedUntil	Spärrat efter för många misslyckade inloggningsförsök till %@.
+userDetail.lockRelease	Lås upp
+userDetail.twoFactorTitle	Tvåfaktorsautentisering
+userDetail.twoFactorOn	På. Återställ den om användaren har tappat bort sin enhet och återställningskoderna.
+userDetail.twoFactorReset	Återställ
+userDetail.passkeysTitle	Passkeys
+userDetail.passkeysSubtitle	Tar bort alla passkeys. Användaren loggar in med sitt lösenord och kan sedan lägga till en ny passkey.
+userDetail.passkeysRemove	Ta bort alla
+userDetail.resetTwoFactorTitle	Återställa tvåfaktorsautentisering?
+userDetail.resetTwoFactorMessage	%@ kan logga in utan ett andra steg tills det ställs in igen.
+userDetail.resetPasskeysTitle	Ta bort passkeys?
+userDetail.resetPasskeysMessage	Alla passkeys för %@ tas bort. Användaren loggar in med lösenordet.
 userDetail.grantAdminTitle	Ge administratörsbehörighet?
 userDetail.grantAdminMessage	%@ blir administratör med full kontroll över filer, delningar och användare. Administratörer kan inte nedgraderas från appen.
 userDetail.volumeSheetLabelField	Etikett

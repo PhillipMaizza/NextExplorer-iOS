@@ -391,6 +391,7 @@ public extension FilesClient {
         },
         setUserPassword: { _, _, _ in },
         deleteUser: { _, _ in },
+        resetUserSecurity: { _, _, _ in },
         userVolumes: { _, userID in UserVolume.previewVolumes(userID: userID) },
         addUserVolume: { _, userID, request in
             UserVolume(
