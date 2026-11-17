@@ -33,10 +33,10 @@
             // The menu reaches the file table only while it has focus.
             text(Fixture.file, in: app).click()
             edit(L10n.Menu.undo, in: app)
-            XCTAssertTrue(folder.waitToVanish(UITestTimeout.slow), "Undo should delete the new folder")
+            XCTAssertTrue(folder.waitToVanish(), "Undo should delete the new folder")
 
             edit(L10n.Menu.redo, in: app)
-            XCTAssertTrue(folder.waitToAppear(UITestTimeout.slow), "Redo should make the folder again")
+            XCTAssertTrue(folder.waitToAppear(), "Redo should make the folder again")
         }
 
         func testTheMoveToastUndoesTheMoveAndGoesAway() {
@@ -73,14 +73,14 @@
             undo.click()
 
             XCTAssertTrue(undo.waitToVanish(), "Tapping Undo should dismiss the toast")
-            XCTAssertTrue(file.waitToAppear(UITestTimeout.slow), "Undo should bring the file back")
+            XCTAssertTrue(file.waitToAppear(), "Undo should bring the file back")
 
             target.click()
             edit(L10n.Menu.redo, in: app)
-            XCTAssertTrue(file.waitToVanish(UITestTimeout.slow), "Redo should move the file again")
+            XCTAssertTrue(file.waitToVanish(), "Redo should move the file again")
 
             target.doubleClick()
-            XCTAssertTrue(file.waitToAppear(UITestTimeout.slow), "The file should be in the folder it was moved to")
+            XCTAssertTrue(file.waitToAppear(), "The file should be in the folder it was moved to")
         }
 
         /// Selects a folder in the Move picker and opens it with ⌘↓.
