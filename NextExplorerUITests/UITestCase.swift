@@ -60,6 +60,7 @@ class UITestCase: XCTestCase {
         case error
         case sessionExpired
         case gallery
+        case slowOperations
     }
 
     #if os(macOS)

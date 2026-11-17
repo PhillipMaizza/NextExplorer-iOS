@@ -59,14 +59,27 @@ extension BrowseFeature {
         case .bulkDeletePermanentlyConfirmed:
             return confirmBulkDelete(&state, permanent: true)
 
+        case let .bulkDeleteProgressed(fraction):
+            state.bulkDeleteProgress = fraction
+            return .none
+
+        case .bulkDeleteCancelTapped:
+            guard state.bulkDeleteProgress != nil else { return .none }
+            state.isBulkActionInFlight = false
+            state.bulkDeleteProgress = nil
+            // The server stops where it was: what it already removed is gone, so read the folder again.
+            return .merge(.cancel(id: CancelID.bulkDelete), load(&state))
+
         case let .bulkDeleteResponse(.success(result)):
             state.isBulkActionInFlight = false
+            state.bulkDeleteProgress = nil
             state.isSelecting = false
             state.selectedItemIDs = []
             return applyDeleteResult(&state, result)
 
         case let .bulkDeleteResponse(.failure(error)):
             state.isBulkActionInFlight = false
+            state.bulkDeleteProgress = nil
             state.fileActionErrorMessage = error.userMessage
             return refetchAfterAmbiguousFailure(&state, error)
 

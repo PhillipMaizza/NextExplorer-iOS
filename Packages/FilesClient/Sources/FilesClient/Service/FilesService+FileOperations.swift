@@ -412,10 +412,16 @@ extension FilesService {
     /// `fileTransferService.deleteItems`: each item is `{path, name}`; again exactly `FileItem`'s own
     /// fields, `kind` included as the server's fallback for already missing items. On a server with a
     /// trash the items go there unless `permanent`; the answer says, per item, where each went.
-    func deleteItems(serverURL: URL, items: [FileItem], permanent: Bool) async throws -> DeleteOutcome {
+    /// With `onProgress` the call goes to the streamed delete route instead (`APIPath.filesDeleteStream`): same body,
+    /// and the
+    /// `done` line carries the same answer while `progress` lines report `percent` as items finish.
+    func deleteItems(
+        serverURL: URL, items: [FileItem], permanent: Bool, onProgress: (@Sendable (Double) -> Void)? = nil
+    ) async throws -> DeleteOutcome {
         let scope = activeScope()
-        let url = serverURL.appendingPathComponent(APIPath.files)
-        var request = Self.makeRequest(url: url, method: .delete, isMutation: true)
+        let streamed = onProgress != nil
+        let url = serverURL.appendingPathComponent(streamed ? APIPath.filesDeleteStream : APIPath.files)
+        var request = Self.makeRequest(url: url, method: streamed ? .post : .delete, isMutation: true)
         request.setJSONContentType()
         do {
             let body = DeleteItemsBody(
@@ -430,9 +436,19 @@ extension FilesService {
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
-        let (data, response) = try await performSend(request)
-        try Self.validate(response)
-        let outcome = (try? Self.makeDecoder().decode(DeleteOutcome.self, from: data)) ?? DeleteOutcome()
+        let outcome: DeleteOutcome
+        if let onProgress {
+            do {
+                outcome = try await sendStreamedOperation(request, decoding: DeleteOutcome.self, onProgress: onProgress)
+            } catch FilesClientError.server(statusCode: 404), FilesClientError.serverMessage(statusCode: 404, _) {
+                // A server older than the stream route: the plain delete does the same work.
+                return try await deleteItems(serverURL: serverURL, items: items, permanent: permanent)
+            }
+        } else {
+            let (data, response) = try await performSend(request)
+            try Self.validate(response)
+            outcome = (try? Self.makeDecoder().decode(DeleteOutcome.self, from: data)) ?? DeleteOutcome()
+        }
         let kept = Set(outcome.kept(of: items).map(\.id))
         for item in items where !kept.contains(item.id) {
             textEditorETags.forget(scope: scope, serverURL: serverURL, path: item.id)

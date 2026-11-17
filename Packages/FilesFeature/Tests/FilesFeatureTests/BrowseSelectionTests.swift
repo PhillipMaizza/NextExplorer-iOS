@@ -100,7 +100,8 @@ struct BrowseSelectionTests {
         state.favoritePaths = [folder.id]
         let deleted = LockIsolated<[Set<String>]>([])
         let store = BrowseFixtures.store(state) {
-            $0.filesClient.deleteItems = { _, items, _ in
+            $0.filesClient.deleteItemsWithProgress = { _, items, _, onProgress in
+                onProgress(0.5)
                 deleted.withValue { $0.append(Set(items.map(\.id))) }
                 return DeleteOutcome()
             }
@@ -109,9 +110,14 @@ struct BrowseSelectionTests {
         await store.send(.bulkDeleteConfirmed) {
             $0.bulkDeleteConfirmationIsPresented = false
             $0.isBulkActionInFlight = true
+            $0.bulkDeleteProgress = 0
+        }
+        await store.receive(\.bulkDeleteProgressed) {
+            $0.bulkDeleteProgress = 0.5
         }
         await store.receive(\.bulkDeleteResponse.success) {
             $0.isBulkActionInFlight = false
+            $0.bulkDeleteProgress = nil
             $0.items = []
             $0.favoritePaths = []
             $0.isSelecting = false
@@ -124,17 +130,55 @@ struct BrowseSelectionTests {
     @Test("A failed bulk delete shows a readable message and keeps the selection")
     func bulkDeleteConfirmedFailureSurfacesAReadableErrorMessage() async {
         let store = BrowseFixtures.store(selectingState(selected: [folder.id])) {
-            $0.filesClient.deleteItems = { _, _, _ in throw FilesClientError.server(statusCode: 403) }
+            $0.filesClient.deleteItemsWithProgress = { _, _, _, _ in throw FilesClientError.server(statusCode: 403) }
         }
 
         await store.send(.bulkDeleteConfirmed) {
             $0.bulkDeleteConfirmationIsPresented = false
             $0.isBulkActionInFlight = true
+            $0.bulkDeleteProgress = 0
         }
         await store.receive(\.bulkDeleteResponse.failure) {
             $0.isBulkActionInFlight = false
+            $0.bulkDeleteProgress = nil
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
         }
+    }
+
+    @Test("Cancel during a bulk delete ends the run and reads the folder again")
+    func bulkDeleteCancelEndsTheRunAndReloads() async {
+        var state = selectingState(selected: [folder.id])
+        state.isBulkActionInFlight = true
+        state.bulkDeleteProgress = 0.3
+        let favorites = AsyncGate()
+        let store = BrowseFixtures.store(state) {
+            $0.serveEmptyFolders()
+            $0.serveListing([])
+            $0.holdFavorites(favorites)
+        }
+
+        await store.send(.bulkDeleteCancelTapped) {
+            $0.isBulkActionInFlight = false
+            $0.bulkDeleteProgress = nil
+            $0.phase = .loading
+        }
+        await store.receive(\.itemsResponse.success) {
+            $0.phase = .loaded
+            $0.access = BrowseTestSupport.readOnlyAccess
+            $0.items = []
+        }
+        favorites.open()
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
+        await store.finish()
+    }
+
+    @Test("Cancel with no bulk delete running does nothing")
+    func bulkDeleteCancelWithNothingRunningDoesNothing() async {
+        let store = BrowseFixtures.store(selectingState(selected: [folder.id]))
+
+        await store.send(.bulkDeleteCancelTapped)
     }
 
     // MARK: Downloads

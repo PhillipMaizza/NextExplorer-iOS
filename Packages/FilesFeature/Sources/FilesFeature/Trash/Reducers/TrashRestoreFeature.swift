@@ -187,24 +187,18 @@ public struct TrashRestoreFeature {
         let serverURL = state.serverURL
         let filesClient = filesClient
         return .run { send in
-            // Only the latest position matters: a bar cannot show the ones it skipped.
-            let (progress, continuation) = AsyncStream<Double>.makeStream(bufferingPolicy: .bufferingNewest(1))
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                defer { continuation.finish() }
-                group.addTask {
-                    for await fraction in progress {
-                        await send(.progressed(fraction))
-                    }
+            let result = try await apiResult {
+                try await withProgressActions(send: send, action: Action.progressed) { onProgress in
+                    try await filesClient.restoreTrash(
+                        serverURL,
+                        request.target,
+                        request.destination,
+                        shares,
+                        onProgress
+                    )
                 }
-                let result = try await apiResult {
-                    try await filesClient.restoreTrash(serverURL, request.target, request.destination, shares) {
-                        continuation.yield($0)
-                    }
-                }
-                continuation.finish()
-                try await group.waitForAll()
-                await send(.response(result))
             }
+            await send(.response(result))
         }
         .cancellable(id: CancelID.restore, cancelInFlight: true)
     }
