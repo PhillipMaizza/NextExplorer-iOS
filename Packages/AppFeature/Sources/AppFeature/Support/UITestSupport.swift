@@ -346,6 +346,9 @@
                 client.transferItems = { _, items, destination, operation in
                     store.transfer(items, to: destination, operation: operation)
                 }
+                client.transferItemsWithProgress = { _, items, destination, operation, _ in
+                    store.transfer(items, to: destination, operation: operation)
+                }
                 client.compressItem = { _, item in store.compress(item) }
                 // Offline: a folder's estimate and a per file "download" that completes instantly, so
                 // the offline picker + download flow is exercisable without a backend or disk writes.
