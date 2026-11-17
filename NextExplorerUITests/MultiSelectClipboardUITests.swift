@@ -60,5 +60,29 @@
             // The stateful mock removes both; the listing drops them.
             XCTAssertTrue(browse.item(Fixture.file).waitToVanish(), "A bulk delete should remove the selected rows")
         }
+
+        func testCancellingARunningBulkDeleteKeepsTheRows() {
+            let app = launchApp(auth: .loggedIn, scenario: .slowOperations)
+            let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+
+            openMenu({ browse.moreMenu.tap() }, until: browse.selectMenuItem)
+            browse.selectMenuItem.tap()
+            XCTAssertTrue(browse.row(Fixture.file).waitToAppear())
+            browse.row(Fixture.file).tap()
+            browse.row(Fixture.imageFile).tap()
+            openMenu({ browse.selectionActionsMenu.tap() }, until: browse.bulkDeleteButton)
+            browse.bulkDeleteButton.tap()
+            XCTAssertTrue(browse.deleteConfirmButton.waitToAppear())
+            browse.deleteConfirmButton.tap()
+
+            // The pill shows after a short delay and exposes Cancel only as its trailing button.
+            let pill = browse.deleteProgressPill
+            XCTAssertTrue(pill.waitToAppear(), "A running delete should show its progress bar")
+            pill.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
+
+            XCTAssertTrue(pill.waitToVanish(), "Cancel should remove the progress bar")
+            XCTAssertTrue(browse.item(Fixture.file).exists, "A cancelled delete keeps the rows")
+        }
     }
 #endif
