@@ -71,7 +71,7 @@ public struct DeferredUploads: Sendable {
 
     /// Moves `accountID`'s files into `directory` and returns them. Another account's files stay
     /// where they are: they only ever upload as the account that shared them.
-    public func claim(accountID: String, into directory: URL) -> [DeferredUpload] {
+    public func claim(accountID: String, into directory: URL, now: Date = Date()) -> [DeferredUpload] {
         var claimed: [DeferredUpload] = []
         for folder in folders() {
             guard
@@ -87,6 +87,8 @@ public struct DeferredUploads: Sendable {
             } catch {
                 continue
             }
+            // The copy keeps the original's old date, and the app sweeps scratch files by date.
+            try? FileManager.default.setAttributes([.modificationDate: now], ofItemAtPath: target.path)
             try? FileManager.default.removeItem(at: folder)
             // App Group contents are untrusted: a name can never reach outside the destination folder.
             claimed.append(DeferredUpload(

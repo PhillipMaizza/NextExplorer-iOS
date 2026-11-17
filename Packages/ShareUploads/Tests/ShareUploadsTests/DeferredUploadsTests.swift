@@ -18,6 +18,7 @@ struct DeferredUploadsTests {
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         let source = root.appendingPathComponent("source.mov")
         try Data(Value.bytes.utf8).write(to: source)
+        try FileManager.default.setAttributes([.modificationDate: MockDate.date], ofItemAtPath: source.path)
         return (DeferredUploads(root: root.appendingPathComponent("Deferred", isDirectory: true)), root, source)
     }
 
@@ -31,7 +32,7 @@ struct DeferredUploadsTests {
         )
         let target = root.appendingPathComponent("scratch", isDirectory: true)
 
-        let first = store.claim(accountID: Harness.credentials.accountID, into: target)
+        let first = store.claim(accountID: Harness.credentials.accountID, into: target, now: TestClock.reference)
         let second = store.claim(accountID: Harness.credentials.accountID, into: target)
 
         #expect(first.map(\.fileName) == [Value.bigName])
@@ -39,6 +40,8 @@ struct DeferredUploadsTests {
         #expect(first.first.flatMap { try? String(contentsOf: $0.fileURL, encoding: .utf8) } == Value.bytes)
         #expect(second.isEmpty)
         #expect(store.isEmpty)
+        let moved = first.first.flatMap { try? $0.fileURL.resourceValues(forKeys: [.contentModificationDateKey]) }
+        #expect(moved?.contentModificationDate == TestClock.reference, "a fresh date, so the app's sweep keeps it")
     }
 
     @Test("A claim leaves another account's files where they are")
