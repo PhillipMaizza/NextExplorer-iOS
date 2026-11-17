@@ -6,11 +6,6 @@ private enum Constants {
     static let spacing: CGFloat = .space8
     static let actionHorizontalPadding: CGFloat = .space12
     static let actionVerticalPadding: CGFloat = .space4
-    static let actionFillOpacity: Double = 0.2
-    static let actionFillOpacityDark: Double = 0.32
-    // The tertiary level on the toast's own tint in light mode; dark mode uses full strength, as the text on
-    // its mid tone green has less room. The app's tertiary gray would vanish on either.
-    static let actionTextOpacity: Double = 0.75
     static let iconSize: CGFloat = .iconSmall
     static let bottomInset: CGFloat = .space16
     static let autoDismissDelay: Duration = .seconds(4.5)
@@ -176,7 +171,6 @@ private struct DSToastModifier: ViewModifier {
 
 /// A `View`, not modifier code, so the body reliably tracks `DSToastPresenter`.
 private struct DSToastOverlay: View {
-    @Environment(\.colorScheme) private var colorScheme
     @Binding var message: DSToastMessage?
     let extraBottomInset: CGFloat
 
@@ -231,14 +225,12 @@ private struct DSToastOverlay: View {
                     action()
                 }
                 .buttonStyle(DSPressableButtonStyle())
-                .type(.caption(.bold))
-                .foregroundStyle(Color.primaryInverted.opacity(colorScheme == .dark ? 1 : Constants.actionTextOpacity))
+                .type(.body3(.bold))
+                .foregroundStyle(Color.primaryInverted)
                 .textCase(.uppercase)
                 .padding(.horizontal, Constants.actionHorizontalPadding)
                 .padding(.vertical, Constants.actionVerticalPadding)
-                .background(Capsule().fill(Color.white.opacity(colorScheme == .dark
-                        ? Constants.actionFillOpacityDark
-                        : Constants.actionFillOpacity)))
+                .background(DSFrostedTint(Capsule(), tint: message.backgroundColor, tintOpacity: 1))
             }
         }
         .foregroundStyle(Color.primaryInverted)
