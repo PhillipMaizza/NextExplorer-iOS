@@ -1215,3 +1215,5 @@ trash.columnOriginalLocation	原位置
 trash.columnDeletedBy	删除者
 trash.columnDeletedOn	删除时间
 trash.columnRemoved	永久删除
+media.audioTrack	音轨
+media.subtitles	字幕

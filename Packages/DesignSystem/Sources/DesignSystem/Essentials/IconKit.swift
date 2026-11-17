@@ -152,6 +152,7 @@ public enum IconKit {
     public static let filter = Image(systemName: "line.3.horizontal.decrease.circle")
     public static let filterFill = Image(systemName: "line.3.horizontal.decrease.circle.fill")
     public static let film = Image(systemName: "film")
+    public static let subtitles = Image(systemName: "captions.bubble")
     public static let music = Image(systemName: "music.note")
     public static let minus = Image(systemName: "minus")
     public static let removeCircle = Image(systemName: "minus.circle.fill")

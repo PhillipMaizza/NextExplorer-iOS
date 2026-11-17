@@ -256,6 +256,8 @@ private struct VLCPlaybackControls: View {
                     .type(.caption(.regular))
                     .foregroundStyle(.white)
                     .monospacedDigit()
+
+                VLCTrackMenu(controller: controller)
             }
             .padding(.horizontal, .space24)
             .padding(.bottom, .space24)
@@ -322,4 +324,39 @@ private struct VLCScrubBar: View {
 #Preview("Controls") {
     VLCPlaybackControls(controller: VLCPlaybackController())
         .background(Color.black)
+}
+
+/// Audio and subtitle choices for the open media, shown only when it has more than one of either.
+private struct VLCTrackMenu: View {
+    @ObservedObject var controller: VLCPlaybackController
+
+    var body: some View {
+        if controller.audioTracks.count > 1 || !controller.subtitleTracks.isEmpty {
+            Menu {
+                if controller.audioTracks.count > 1 {
+                    Picker(L10n.Media.audioTrack, selection: audioBinding) {
+                        ForEach(controller.audioTracks) { Text($0.name).tag($0.id) }
+                    }
+                }
+                if !controller.subtitleTracks.isEmpty {
+                    Picker(L10n.Media.subtitles, selection: subtitleBinding) {
+                        ForEach(controller.subtitleTracks) { Text($0.name).tag($0.id) }
+                    }
+                }
+            } label: {
+                IconKit.subtitles
+                    .foregroundStyle(.white)
+                    .frame(minWidth: .size44, minHeight: .size44)
+            }
+            .accessibilityLabel(L10n.Media.subtitles)
+        }
+    }
+
+    private var audioBinding: Binding<Int32> {
+        Binding(get: { controller.selectedAudioID }, set: { controller.selectAudio($0) })
+    }
+
+    private var subtitleBinding: Binding<Int32> {
+        Binding(get: { controller.selectedSubtitleID }, set: { controller.selectSubtitle($0) })
+    }
 }

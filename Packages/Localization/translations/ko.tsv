@@ -1215,3 +1215,5 @@ trash.columnOriginalLocation	원래 위치
 trash.columnDeletedBy	삭제한 사람
 trash.columnDeletedOn	삭제한 날짜
 trash.columnRemoved	영구 삭제
+media.audioTrack	오디오 트랙
+media.subtitles	자막

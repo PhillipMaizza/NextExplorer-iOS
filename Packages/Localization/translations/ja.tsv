@@ -1215,3 +1215,5 @@ trash.columnOriginalLocation	元の場所
 trash.columnDeletedBy	削除したユーザ
 trash.columnDeletedOn	削除日
 trash.columnRemoved	削除予定
+media.audioTrack	音声トラック
+media.subtitles	字幕

@@ -1302,3 +1302,5 @@ trash.columnOriginalLocation	Исходное расположение
 trash.columnDeletedBy	Кем удалено
 trash.columnDeletedOn	Дата удаления
 trash.columnRemoved	Окончательное удаление
+media.audioTrack	Звуковая дорожка
+media.subtitles	Субтитры

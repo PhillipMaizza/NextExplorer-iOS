@@ -8,6 +8,12 @@ private enum Constants {
     static let networkCachingMilliseconds = 3000
 }
 
+/// One audio or subtitle track libvlc reports for the open media.
+struct VLCTrackChoice: Equatable, Identifiable {
+    let id: Int32
+    let name: String
+}
+
 /// Bridges `VLCMediaPlayer` (delegate/KVO, ObjC) into observable SwiftUI state and owns the
 /// player for the view's lifetime. `@MainActor`, so it's `Sendable`: libvlc fires its delegate
 /// callbacks on a background thread, and each hops back to the main actor before touching the
@@ -22,6 +28,10 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
     @Published var position: Float = 0
     @Published var elapsedText = "0:00"
     @Published var durationText = "0:00"
+    @Published private(set) var audioTracks: [VLCTrackChoice] = []
+    @Published private(set) var subtitleTracks: [VLCTrackChoice] = []
+    @Published private(set) var selectedAudioID: Int32 = -1
+    @Published private(set) var selectedSubtitleID: Int32 = -1
 
     /// While the user drags the scrubber, ignore incoming time updates so the thumb doesn't
     /// fight the drag.
@@ -53,6 +63,30 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
         }
         player.media = media
         player.play()
+    }
+
+    func selectAudio(_ id: Int32) {
+        player.currentAudioTrackIndex = id
+        selectedAudioID = id
+    }
+
+    /// A negative id turns subtitles off, as libvlc does.
+    func selectSubtitle(_ id: Int32) {
+        player.currentVideoSubTitleIndex = id
+        selectedSubtitleID = id
+    }
+
+    /// The tracks only exist once playback has started, so this runs from the state callback.
+    private func refreshTracks() {
+        audioTracks = Self.choices(names: player.audioTrackNames, ids: player.audioTrackIndexes)
+        subtitleTracks = Self.choices(names: player.videoSubTitlesNames, ids: player.videoSubTitlesIndexes)
+        selectedAudioID = player.currentAudioTrackIndex
+        selectedSubtitleID = player.currentVideoSubTitleIndex
+    }
+
+    static func choices(names: [Any]?, ids: [Any]?) -> [VLCTrackChoice] {
+        guard let names = names as? [String], let ids = ids as? [NSNumber] else { return [] }
+        return zip(ids, names).map { VLCTrackChoice(id: $0.int32Value, name: $1) }
     }
 
     func stop() {
@@ -95,6 +129,9 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
                 isBuffering = false
             }
             durationText = player.media?.length.stringValue ?? durationText
+            if player.state == .playing, audioTracks.isEmpty, subtitleTracks.isEmpty {
+                refreshTracks()
+            }
         }
     }
 
