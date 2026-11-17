@@ -60,6 +60,7 @@ browse.open	Apri
 browse.actionGetInfo	Informazioni
 browse.actionPermissions	Autorizzazioni
 browse.actionRename	Rinomina
+browse.actionRefreshSize	Aggiorna dimensione
 browse.actionExtract	Estrai
 browse.actionCompress	Comprimi
 browse.actionDownload	Scarica

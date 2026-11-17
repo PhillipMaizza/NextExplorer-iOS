@@ -22,10 +22,9 @@
         static let kindColumnWidth: CGFloat = 90
     }
 
-    /// Browse's Mac only table mode: sortable columns backed by the store's own sort, double click
-    /// to open, and the same file actions menu as the list and grid. Rows arrive already sorted
-    /// by `BrowseFeature`, so a header click only forwards the new sort to the store. Right click
-    /// hands `contextMenu` the clicked rows, empty for the table's empty space.
+    /// Browse's Mac only table: sortable columns on the store's own sort, double click to open, and the
+    /// file actions menu of the list and grid. Rows arrive sorted by `BrowseFeature`, so a header click
+    /// only forwards the new sort. Right click hands `contextMenu` the clicked rows, none for empty space.
     struct MacBrowseTableView<ContextMenu: View>: View {
         let items: IdentifiedArrayOf<FileItem>
         let sortOption: BrowseFeature.SortOption
@@ -38,6 +37,7 @@
         let offlineItemIDs: Set<FileItem.ID>
         /// Favorited items, starred like the iOS rows.
         var favoriteItemIDs: Set<FileItem.ID> = []
+        var folderSizes: [FileItem.ID: Int64] = [:]
         let onOpen: (FileItem) -> Void
         let keyboardActions: BrowseKeyboardActions
         let serverURL: URL
@@ -123,7 +123,7 @@
                 }
                 .width(MacBrowseTableMetrics.dateColumnWidth)
                 TableColumn(L10n.Sort.size, value: \.size) { item in
-                    Text(item.isDirectory ? "" : FileSizeFormat.string(item.size))
+                    Text(FileSizeFormat.string(for: item, folderSize: folderSizes[item.id]))
                         .foregroundStyle(Color.secondaryDS)
                         .monospacedDigit()
                         .opacity(opacity(for: item))

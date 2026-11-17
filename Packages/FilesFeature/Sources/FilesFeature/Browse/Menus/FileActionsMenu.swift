@@ -101,6 +101,14 @@ struct FileActionsMenu: View {
 
     @ViewBuilder
     private var editActions: some View {
+        if item.isDirectory, store.folderSizeMode != .off {
+            Button {
+                store.send(.folderSizeRefreshTapped(item.id))
+            } label: {
+                Label { Text(L10n.Browse.actionRefreshSize) } icon: { IconKit.retry }
+            }
+            .tint(.primaryDS)
+        }
         if store.access?.canWrite ?? false {
             Button {
                 store.send(.renameTapped(item))

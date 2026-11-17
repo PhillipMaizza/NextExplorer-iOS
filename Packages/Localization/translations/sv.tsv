@@ -60,6 +60,7 @@ browse.open	Öppna
 browse.actionGetInfo	Visa info
 browse.actionPermissions	Behörigheter
 browse.actionRename	Byt namn
+browse.actionRefreshSize	Uppdatera storlek
 browse.actionExtract	Extrahera
 browse.actionCompress	Komprimera
 browse.actionDownload	Ladda ner

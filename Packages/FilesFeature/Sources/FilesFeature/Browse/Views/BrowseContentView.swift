@@ -21,10 +21,9 @@ private enum Constants {
     static let emptyUploadButtonMaxWidth: CGFloat = 360
 }
 
-/// The list body shown at every depth of Browse: root and every pushed subfolder
-/// render this same view, scoped to their own `BrowseFeature` store. The list/grid
-/// choice is a per-device display preference, not per-folder state, so it's stored
-/// directly here rather than threaded through `BrowseFeature.State`.
+/// The list body shown at every depth of Browse: root and every pushed subfolder render this
+/// same view, scoped to their own `BrowseFeature` store. The list/grid choice is a per device
+/// display preference, so it's stored here rather than in `BrowseFeature.State`.
 struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
     /// Observed only to refresh the offline badges when a download completes.
@@ -522,6 +521,7 @@ struct BrowseContentView: View {
                 cutItemIDs: store.clipboard?.operation == .move ? store.clipboard?.sourceItemPaths ?? [] : [],
                 offlineItemIDs: store.offlineItemIDs,
                 favoriteItemIDs: store.favoritePaths,
+                folderSizes: store.folderSizes,
                 onOpen: handleTap,
                 keyboardActions: BrowseKeyboardActions(
                     store: store,

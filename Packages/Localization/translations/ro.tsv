@@ -60,6 +60,7 @@ browse.open	Deschide
 browse.actionGetInfo	Informații
 browse.actionPermissions	Permisiuni
 browse.actionRename	Redenumește
+browse.actionRefreshSize	Reîmprospătează dimensiunea
 browse.actionExtract	Extrage
 browse.actionCompress	Comprimă
 browse.actionDownload	Descarcă

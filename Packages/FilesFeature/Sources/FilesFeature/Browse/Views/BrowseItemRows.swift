@@ -156,7 +156,8 @@ struct BrowseFolderRows<Menu: View>: View {
             showThumbnails: store.preferences.showThumbnails,
             matchedSource: source.matched(item.id),
             isOpening: source.isOpening(item.id, in: store),
-            isAvailableOffline: store.offlineItemIDs.contains(item.id)
+            isAvailableOffline: store.offlineItemIDs.contains(item.id),
+            folderSize: store.folderSizes[item.id]
         )
     }
 }

@@ -57,6 +57,14 @@ public struct BrowseFeature {
         public var isPersonalSpaceEnabled = false
         /// The server has a trash (any server since mid September 2026): the root offers a Trash row.
         public var isTrashAvailable = false
+        /// How far the server's folder size index goes, from its last features answer (kept on disk so
+        /// a pushed folder knows without asking). Folder rows show a size only while this is not `.off`.
+        public var folderSizeMode: FolderSizeMode = .off
+        /// The size to show for each folder in this listing, by item id. Only folders the server has
+        /// counted are here, and it is empty while the feature is off.
+        public var folderSizes: [FileItem.ID: Int64] = [:]
+        /// Folders whose rescan was asked for and is still being read back.
+        var refreshingFolderSizeIDs: Set<FileItem.ID> = []
         public var access: FileAccess?
         /// The folder listing load lifecycle. `phase.hasLoaded` flips true the first time a
         /// browse response lands (success or failure), so the view shows the loading skeleton
@@ -341,7 +349,7 @@ public struct BrowseFeature {
         /// and sorted by `sortOption`.
         public var displayedItems: IdentifiedArrayOf<FileItem> {
             IdentifiedArray(
-                BrowseFeature.sorted(visibleItems, by: sortOption, direction: sortDirection),
+                BrowseFeature.sorted(visibleItems, by: sortOption, direction: sortDirection, folderSizes: folderSizes),
                 id: \.id,
                 uniquingIDsWith: { first, _ in first }
             )
@@ -406,8 +414,12 @@ public struct BrowseFeature {
             cacheScope = cacheScopeSource.current()
             // The last known answer paints with the first frame, so the entry never pops in above
             // the volumes (shifting them under the user's finger) once the features call returns.
+            @Dependency(\.jsonCacheStore) var jsonCacheStore
+            folderSizeMode = ListCache.load(
+                jsonCacheStore, BrowseFeature.folderSizeModeCacheNamespace, serverURL: serverURL, scope: cacheScope,
+                as: FolderSizeMode.self
+            )?.value ?? .off
             if directoryPath.isEmpty {
-                @Dependency(\.jsonCacheStore) var jsonCacheStore
                 isPersonalSpaceEnabled = ListCache.load(
                     jsonCacheStore, BrowseFeature.personalSpaceCacheNamespace, serverURL: serverURL, scope: cacheScope,
                     as: Bool.self
@@ -442,6 +454,11 @@ public struct BrowseFeature {
         /// The listing kept with a pinned folder, read for an Offline tab screen; `nil` when none is kept.
         case keptListingResolved(CachedDirectory?)
         case serverFeaturesResponse(ServerFeatures)
+        case folderSizesResponse(attempt: Int, [FileItem.ID: FolderSize])
+        case folderSizesDue(attempt: Int)
+        case folderSizeRefreshTapped(FileItem.ID)
+        case folderSizeRefreshResponse(FileItem.ID, Result<FolderSize, FilesClientError>)
+        case folderSizesUnavailable
         case personalSpaceTapped
         case trashTapped
         case rowTapped(FileItem)
@@ -622,6 +639,7 @@ public struct BrowseFeature {
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     static let personalSpaceCacheNamespace = "personalSpace"
+    static let folderSizeModeCacheNamespace = "folderSizeMode"
     @Dependency(\.continuousClock) var clock
     @Dependency(\.date) var date
     @Dependency(\.uploadStaging) var uploadStaging
@@ -634,7 +652,7 @@ public struct BrowseFeature {
     /// can reference these cancel ids across files.
     enum CancelID: Hashable {
         case search, searchSavedItems, transfer, googleDocsPointer, deleteImpact, load, preview, info,
-             previewDeferredAction
+             previewDeferredAction, folderSizes
         case prefetchChildren, prefetchFavorites, offlineAvailability, searchOnDevice, arrivalRecheck, newFileExtensions
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
@@ -651,6 +669,7 @@ public struct BrowseFeature {
             Reduce(reduceSelection)
             Reduce(reduceMoves)
             Reduce(reduceInfo)
+            Reduce(reduceFolderSizes)
         }
         .ifLet(\.$destinationPicker, action: \.destinationPicker) {
             DestinationPickerFeature()
@@ -747,9 +766,13 @@ public struct BrowseFeature {
     static func sorted(
         _ items: some Collection<FileItem>,
         by option: SortOption,
-        direction: SortDirection
+        direction: SortDirection,
+        folderSizes: [FileItem.ID: Int64] = [:]
     ) -> [FileItem] {
-        items.sorted { lhs, rhs in
+        func size(_ item: FileItem) -> Int64 {
+            item.isDirectory ? folderSizes[item.id] ?? 0 : item.size
+        }
+        return items.sorted { lhs, rhs in
             guard lhs.isDirectory == rhs.isDirectory else { return lhs.isDirectory }
             let isAscending: Bool
             switch option {
@@ -758,8 +781,8 @@ public struct BrowseFeature {
                 guard order != .orderedSame else { return false }
                 isAscending = order == .orderedAscending
             case .size:
-                guard lhs.size != rhs.size else { return false }
-                isAscending = lhs.size < rhs.size
+                guard size(lhs) != size(rhs) else { return false }
+                isAscending = size(lhs) < size(rhs)
             case .dateModified:
                 guard lhs.dateModified != rhs.dateModified else { return false }
                 isAscending = lhs.dateModified < rhs.dateModified

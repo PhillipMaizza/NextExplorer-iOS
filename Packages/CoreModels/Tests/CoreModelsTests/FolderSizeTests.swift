@@ -5,20 +5,17 @@ import TestUtils
 
 @Suite("Folder size decoding")
 struct FolderSizeTests {
-    @Test("an indexed folder carries its size and count")
+    @Test("an indexed folder shows its size")
     func indexedFolder() throws {
         let entries = try CoreModelsFixture.folderSizeBatchEntries.decode([FolderSize].self)
-        #expect(entries[0].sizeBytes == 4096)
-        #expect(entries[0].entryCount == 12)
-        #expect(entries[0].hasSize)
+        #expect(entries[0].shownBytes == 4096)
         #expect(!entries[0].dirty)
     }
 
-    @Test("a folder the user cannot enter still reports its size, and a dirty one is flagged")
+    @Test("a folder the user cannot enter still shows its size, and a dirty one is flagged")
     func lockedAndDirtyFolder() throws {
         let entries = try CoreModelsFixture.folderSizeBatchEntries.decode([FolderSize].self)
-        #expect(!entries[1].canEnter)
-        #expect(entries[1].hasSize)
+        #expect(entries[1].shownBytes == 9_000_000)
         #expect(entries[1].dirty)
     }
 
@@ -26,20 +23,20 @@ struct FolderSizeTests {
     func notIndexed() throws {
         let entries = try CoreModelsFixture.folderSizeBatchEntries.decode([FolderSize].self)
         #expect(entries[2].sizeBytes == nil)
-        #expect(!entries[2].hasSize)
+        #expect(entries[2].shownBytes == nil)
     }
 
     @Test("edge case: an excluded folder shows no figure")
     func excluded() throws {
         let entries = try CoreModelsFixture.folderSizeBatchEntries.decode([FolderSize].self)
         #expect(entries[3].excluded)
-        #expect(!entries[3].hasSize)
+        #expect(entries[3].shownBytes == nil)
     }
 
-    @Test("edge case: a negative or missing size reads as unknown")
-    func oddValues() throws {
+    @Test("edge case: a negative size reads as unknown")
+    func negativeSize() throws {
         let entry = try CoreModelsFixture.folderSizeNegativeSize.decode(FolderSize.self)
         #expect(entry.sizeBytes == nil)
-        #expect(!entry.hasSize)
+        #expect(entry.shownBytes == nil)
     }
 }

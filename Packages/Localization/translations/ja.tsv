@@ -60,6 +60,7 @@ browse.open	開く
 browse.actionGetInfo	情報を見る
 browse.actionPermissions	アクセス権
 browse.actionRename	名称変更
+browse.actionRefreshSize	サイズを更新
 browse.actionExtract	展開
 browse.actionCompress	圧縮
 browse.actionDownload	ダウンロード

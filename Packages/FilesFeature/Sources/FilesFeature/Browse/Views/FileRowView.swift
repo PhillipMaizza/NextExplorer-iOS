@@ -107,13 +107,14 @@ struct FileRowView: View {
         showThumbnails: Bool = false,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
-        isAvailableOffline: Bool = false
+        isAvailableOffline: Bool = false,
+        folderSize: Int64? = nil
     ) {
         name = item.name
         self.isAvailableOffline = isAvailableOffline
         isDirectory = item.isDirectory
         dateModified = item.hasKnownDate ? item.dateModified : nil
-        size = item.isDirectory ? nil : item.size
+        size = item.isDirectory ? folderSize : item.size
         customSubtitle = nil
         lineLabel = nil
         self.isFavorite = isFavorite

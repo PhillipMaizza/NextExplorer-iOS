@@ -18,7 +18,20 @@ extension FilesClientLiveTests {
             try expectRequest(.post, "/api/folder-size/batch")
             try expectJSONBody(["paths": ["Docs", "Photos"]])
             #expect(sizes["Docs"]?.sizeBytes == 4096)
-            #expect(sizes["Photos"]?.hasSize == false)
+            #expect(sizes["Photos"]?.shownBytes == nil)
+        }
+
+        @Test
+        func onlyTheFirstFiveHundredPathsAreAsked() async throws {
+            try prepare(statusCode: 200, fixture: .folderSizeBatch)
+            let paths = (0 ..< 501).map { "Folder\($0)" }
+
+            _ = try await makeClient().folderSizes(serverURL, paths)
+
+            let sent = try #require(StubURLProtocol.capturedRequestBody)
+            let object = try #require(JSONSerialization.jsonObject(with: sent) as? [String: [String]])
+            #expect(object["paths"]?.count == 500)
+            #expect(object["paths"]?.last == "Folder499")
         }
 
         @Test

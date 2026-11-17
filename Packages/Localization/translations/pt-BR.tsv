@@ -65,6 +65,7 @@ browse.open	Abrir
 browse.actionGetInfo	Obter Informações
 browse.actionPermissions	Permissões
 browse.actionRename	Renomear
+browse.actionRefreshSize	Atualizar tamanho
 browse.actionExtract	Extrair
 browse.actionCompress	Comprimir
 browse.actionDownload	Baixar
