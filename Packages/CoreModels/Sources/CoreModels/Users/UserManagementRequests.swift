@@ -53,7 +53,8 @@ public struct AddUserVolumeRequest: Equatable, Sendable {
     }
 }
 
-/// The admin account recovery calls: `DELETE /api/users/:id/{lock,two-factor,passkeys}`, each a 204.
+/// The admin account recovery calls: three `DELETE` routes under `/api/users/:id/` (lock, passkeys and the second
+/// factor one), each a 204.
 public enum UserSecurityReset: String, Equatable, Hashable, Sendable {
     case lock
     case twoFactor = "two-factor"
