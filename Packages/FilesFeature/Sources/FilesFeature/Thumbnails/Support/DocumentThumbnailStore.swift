@@ -47,6 +47,9 @@ final class DocumentThumbnailStore {
         case ready(PlatformImage)
         /// Too large, or fetched but nothing could draw it. The cell shows the kind's icon.
         case unavailable
+        /// Not downloaded on a metered network, and never drawn before. The cell shows the kind's
+        /// icon; its next appearance asks again, so it fills in once on WiFi.
+        case skipped
 
         var isReady: Bool {
             if case .ready = self {
@@ -64,7 +67,7 @@ final class DocumentThumbnailStore {
 
     private var entries: [String: Entry] = [:]
     private var order: [String] = []
-    private var inFlight: Set<String> = []
+    private var tasks: [String: Task<Void, Never>] = [:]
 
     init() {}
 
@@ -81,12 +84,13 @@ final class DocumentThumbnailStore {
         return item.size > 0 && item.size <= Constants.maxQuickLookBytes
     }
 
-    /// Drops every entry, so no drawn page outlives a session. Loads still running land in
-    /// entries nothing shows any more.
+    /// Drops every entry and stops every load still running, so no download or drawn page
+    /// outlives a session: a load finishing after a logout's wipe would write it back to disk.
     func removeAll() {
+        tasks.values.forEach { $0.cancel() }
+        tasks.removeAll()
         entries.removeAll()
         order.removeAll()
-        inFlight.removeAll()
     }
 
     func entry(forKey key: String) -> Entry {
@@ -111,22 +115,26 @@ final class DocumentThumbnailStore {
         filesClient: FilesClient,
         cache: DocumentThumbnailCache,
         localThumbnails: LocalThumbnailStore,
-        now: Date
+        now: Date,
+        isMetered: Bool = false
     ) -> Task<Void, Never>? {
         switch entry.state {
         case .ready, .unavailable: return nil
-        case .loading: break
+        case .loading, .skipped: break
         }
-        guard !inFlight.contains(key) else { return nil }
+        guard tasks[key] == nil else { return nil }
 
         guard Self.isEligible(item) else {
             entry.state = .unavailable
             return nil
         }
-        inFlight.insert(key)
-
-        return Task(priority: Constants.fetchPriority) { [weak self] in
-            defer { self?.inFlight.remove(key) }
+        let task = Task(priority: Constants.fetchPriority) { [weak self] in
+            // A cancelled load was already dropped by `removeAll`, and a newer one may hold its key.
+            defer {
+                if !Task.isCancelled {
+                    self?.tasks[key] = nil
+                }
+            }
             // A PDF just shared into the app has its first page seeded from the local copy: the
             // same render, without downloading the file.
             let seeded = await SeededThumbnail.image(
@@ -135,6 +143,12 @@ final class DocumentThumbnailStore {
             )
             if let seeded {
                 entry.state = .ready(seeded)
+                return
+            }
+            // On mobile data nothing is downloaded just to draw a thumbnail: a page drawn before
+            // still shows from the render cache.
+            if isMetered {
+                entry.state = await cache.firstPageImage(key, Constants.renderPixel, nil).map { .ready($0) } ?? .skipped
                 return
             }
             // The server previews only media and PDFs; any other document comes down raw.
@@ -151,5 +165,7 @@ final class DocumentThumbnailStore {
                 entry.state = .unavailable
             }
         }
+        tasks[key] = task
+        return task
     }
 }

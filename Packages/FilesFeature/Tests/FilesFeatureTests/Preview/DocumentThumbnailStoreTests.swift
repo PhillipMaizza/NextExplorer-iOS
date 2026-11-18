@@ -35,13 +35,14 @@ struct DocumentThumbnailStoreTests {
 
     private func load(
         _ store: DocumentThumbnailStore, key: String, item: FileItem,
-        client: FilesClient, cache: DocumentThumbnailCache, localThumbnails: LocalThumbnailStore = .testValue
+        client: FilesClient, cache: DocumentThumbnailCache, localThumbnails: LocalThumbnailStore = .testValue,
+        isMetered: Bool = false
     ) -> (entry: DocumentThumbnailStore.Entry, task: Task<Void, Never>?) {
         let entry = store.entry(forKey: key)
         let task = store.load(
             entry: entry, key: key, item: item,
             serverURL: URL(string: TestHost.exampleURLString)!, filesClient: client, cache: cache,
-            localThumbnails: localThumbnails, now: MockDate.date
+            localThumbnails: localThumbnails, now: MockDate.date, isMetered: isMetered
         )
         return (entry, task)
     }
@@ -197,6 +198,63 @@ struct DocumentThumbnailStoreTests {
         #expect(readyImage(entry) != nil)
         #expect(drawnFrom.value == rawURL)
         #expect(previewCount.value == 0)
+    }
+
+    @Test
+    func onMobileDataNothingDownloadsAndOnlyAnEarlierRenderShows() async throws {
+        let store = DocumentThumbnailStore()
+        let page = try #require(ThumbnailRendering.firstPDFPage(at: makePDF(), maxPixel: 16))
+        let downloads = LockIsolated(0)
+        var client = FilesClient.previewValue
+        client.downloadRawFileLowPriority = { _, _ in
+            downloads.withValue { $0 += 1 }
+            throw FilesClientError.offline
+        }
+        let neverDrawn = item(size: 5, kind: TestKind.word)
+        let drawnBefore = item(size: 6, kind: TestKind.word)
+        let drawnBeforeKey = DocumentThumbnailCache.cacheKey(id: drawnBefore.id, signature: drawnBefore.cacheSignature)
+        let cache = DocumentThumbnailCache { key, _, fileURL in
+            fileURL == nil && key == drawnBeforeKey ? PlatformImage(cgImage: page) : nil
+        }
+
+        let skipped = load(
+            store, key: DocumentThumbnailCache.cacheKey(id: neverDrawn.id, signature: neverDrawn.cacheSignature),
+            item: neverDrawn, client: client, cache: cache, isMetered: true
+        )
+        await skipped.task?.value
+        let shown = load(store, key: drawnBeforeKey, item: drawnBefore, client: client, cache: cache, isMetered: true)
+        await shown.task?.value
+
+        if case .skipped = skipped.entry.state {} else {
+            Issue.record("Expected skipped, got \(skipped.entry.state)")
+        }
+        #expect(readyImage(shown.entry) != nil)
+        #expect(downloads.value == 0)
+    }
+
+    @Test
+    func removeAllStopsALoadStillRunningSoNothingIsDrawnAfterTheWipe() async {
+        let store = DocumentThumbnailStore()
+        let draws = LockIsolated(0)
+        var client = FilesClient.previewValue
+        client.downloadRawFileLowPriority = { _, _ in
+            try await suspendUntilCancelled()
+            return URL(fileURLWithPath: "/")
+        }
+        let cache = DocumentThumbnailCache { _, _, _ in
+            draws.withValue { $0 += 1 }
+            return nil
+        }
+        let file = item(size: 5, kind: TestKind.word)
+
+        let (_, task) = load(
+            store, key: DocumentThumbnailCache.cacheKey(id: file.id, signature: file.cacheSignature),
+            item: file, client: client, cache: cache
+        )
+        store.removeAll()
+        await task?.value
+
+        #expect(draws.value == 0)
     }
 
     @Test

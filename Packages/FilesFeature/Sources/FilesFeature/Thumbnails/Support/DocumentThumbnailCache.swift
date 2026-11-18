@@ -33,15 +33,15 @@ private enum Constants {
 /// live grid needs in memory; this layer only re-reads/re-renders on a store eviction.
 public struct DocumentThumbnailCache: Sendable {
     /// `key` uniquely identifies the source file + its content signature; `maxPixel` bounds
-    /// the render's longest side; `fileURL` is the local document to draw. Returns `nil` when
-    /// nothing can draw it.
+    /// the render's longest side; `fileURL` is the local document to draw, or `nil` to read only
+    /// an earlier render. Returns `nil` when nothing can draw it.
     public var firstPageImage: @Sendable (
-        _ key: String, _ maxPixel: CGFloat, _ fileURL: URL
+        _ key: String, _ maxPixel: CGFloat, _ fileURL: URL?
     ) async -> PlatformImage?
 
     public init(
         firstPageImage: @escaping @Sendable (
-            _ key: String, _ maxPixel: CGFloat, _ fileURL: URL
+            _ key: String, _ maxPixel: CGFloat, _ fileURL: URL?
         ) async -> PlatformImage?
     ) {
         self.firstPageImage = firstPageImage
@@ -144,12 +144,16 @@ extension DocumentThumbnailCache {
                 return PlatformImage(data: data).map { $0.preparingForDisplay() ?? $0 }
             }
 
+            guard let fileURL else {
+                return nil
+            }
             let rendered = if fileURL.pathExtension.lowercased() == Constants.pdfExtension {
                 await PDFPageRenderer.shared.render(pdfAt: fileURL, maxPixel: maxPixel)
             } else {
                 await renderQuickLookThumbnail(of: fileURL, maxPixel: maxPixel)
             }
-            guard let rendered else {
+            // A load stopped by a logout must not write its page back after the wipe.
+            guard let rendered, !Task.isCancelled else {
                 return nil
             }
             if let renderCacheURL, let jpeg = rendered.jpegData(compressionQuality: Constants.renderJPEGQuality) {

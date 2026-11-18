@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import NetworkClient
 import ShareUploads
 import SwiftUI
 #if os(iOS)
@@ -34,6 +35,7 @@ struct DocumentThumbnailImage<Fallback: View>: View {
     @Dependency(\.documentThumbnailCache) private var documentThumbnailCache
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
     @Dependency(\.date) private var date
+    @Dependency(\.connectivity) private var connectivity
     private let store = DocumentThumbnailStore.shared
 
     private var cacheKey: String {
@@ -54,7 +56,8 @@ struct DocumentThumbnailImage<Fallback: View>: View {
             store.load(
                 entry: entry, key: cacheKey, item: item, serverURL: serverURL,
                 filesClient: filesClient, cache: documentThumbnailCache, localThumbnails: localThumbnailStore,
-                now: date.now
+                now: date.now,
+                isMetered: connectivity.isMetered()
             )
         }
     }
@@ -73,7 +76,7 @@ struct DocumentThumbnailImage<Fallback: View>: View {
                 insertion: .scale(scale: Constants.revealInitialScale).combined(with: .opacity),
                 removal: .opacity
             ))
-        case .unavailable:
+        case .unavailable, .skipped:
             fallback()
                 .transition(.opacity)
         case .loading:
