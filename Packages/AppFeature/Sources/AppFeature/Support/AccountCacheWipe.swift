@@ -77,7 +77,8 @@ struct AccountCacheWipe: Sendable {
     }
 
     func wipe(_ accountID: String) {
-        // A thumbnail download still landing after this is cleared by the second pass.
+        // A download still landing for this account is dropped by its `CacheAccountScope.wipeStamp`.
+        CacheAccountScope.markWiped(accountID)
         // One cache for every account, so it is dropped whole: the active account refills it.
         thumbnailCache.clearMemory()
         directoryCacheStore.clear(scope: accountID)

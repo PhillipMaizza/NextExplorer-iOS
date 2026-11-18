@@ -31,6 +31,8 @@ final class StubURLProtocol: URLProtocol {
     }
 
     nonisolated(unsafe) static var failure: URLError?
+    /// Runs as each request arrives, for tests that change app state while a transfer is in flight.
+    nonisolated(unsafe) static var onRequest: (@Sendable () -> Void)?
     /// Last intercepted request, for tests asserting on URL/method/body construction.
     nonisolated(unsafe) static var capturedRequest: URLRequest?
     nonisolated(unsafe) static var capturedRequestBody: Data?
@@ -44,6 +46,7 @@ final class StubURLProtocol: URLProtocol {
     }
 
     override func startLoading() {
+        Self.onRequest?()
         Self.capturedRequest = request
         Self.requestsLock.withLock { Self.recordedRequests.append(request) }
         Self.capturedRequestBody = request.httpBody ?? request.httpBodyStream.map { stream -> Data in

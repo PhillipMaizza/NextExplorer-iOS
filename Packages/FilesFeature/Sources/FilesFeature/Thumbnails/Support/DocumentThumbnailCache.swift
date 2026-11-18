@@ -138,6 +138,7 @@ extension DocumentThumbnailCache {
     static func live(renderCacheDirectory: URL?) -> DocumentThumbnailCache {
         DocumentThumbnailCache { key, maxPixel, fileURL in
             let scope = CacheAccountScope.current
+            let wipeStamp = CacheAccountScope.wipeStamp(scope)
             let renderCacheURL = renderCacheDirectory.map { renderCacheFileURL(in: $0, for: key) }
             if let renderCacheURL, let data = try? Data(contentsOf: renderCacheURL) {
                 // Force the decode here, off the caller's thread: `UIImage(data:)` alone
@@ -157,7 +158,7 @@ extension DocumentThumbnailCache {
             guard let rendered, !Task.isCancelled else {
                 return nil
             }
-            if let renderCacheURL, !CacheAccountScope.isSignedOut(since: scope),
+            if let renderCacheURL, CacheAccountScope.wipeStamp(scope) == wipeStamp,
                let jpeg = rendered.jpegData(compressionQuality: Constants.renderJPEGQuality)
             {
                 try? FileManager.default.createDirectory(

@@ -568,6 +568,7 @@ public struct AppFeature {
         state.$fileRedoStack.withLock { $0 = [] }
         state.$downloadScope.withLock { $0 = "" }
         CacheAccountScope.set("")
+        CacheAccountScope.markEveryAccountWiped()
         state.didAuthenticateFromLogin = false
         state.addAccount = nil
         state.pendingAddedAccount = nil
@@ -593,7 +594,7 @@ public struct AppFeature {
             refreshAccounts,
             .run { _ in
                 await authClient.clearAllSessions()
-                // A thumbnail download still landing is dropped by `CacheAccountScope.isSignedOut`.
+                // A download still landing is dropped by its `CacheAccountScope.wipeStamp`.
                 thumbnailCache.clearMemory()
                 directoryCacheStore.clearAll()
                 jsonCacheStore.clearAll()

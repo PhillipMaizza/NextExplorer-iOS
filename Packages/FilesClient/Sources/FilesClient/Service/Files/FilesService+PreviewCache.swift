@@ -253,8 +253,8 @@ extension FilesService {
         lowPriority: Bool = false
     ) async throws -> URL {
         let networkClient = networkClient
-        let activeScope = activeScope
         return try await downloadCoordinator.run(forFileAt: fileURL) {
+            let wipeStamp = CacheAccountScope.wipeStamp(scope)
             let downloadedURL: URL
             let response: HTTPURLResponse
             do {
@@ -266,8 +266,8 @@ extension FilesService {
             }
             defer { try? FileManager.default.removeItem(at: downloadedURL) }
             try Self.validate(response)
-            // A shared transfer runs on past its callers' cancellation, so it checks for a sign out itself.
-            if CacheAccountScope.isSignedOut(since: scope, now: activeScope()) {
+            // A shared transfer runs on past its callers' cancellation, so it checks for a wipe itself.
+            if CacheAccountScope.wipeStamp(scope) != wipeStamp {
                 throw CancellationError()
             }
 

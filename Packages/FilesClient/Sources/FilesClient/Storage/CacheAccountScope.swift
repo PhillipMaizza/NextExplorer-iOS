@@ -13,6 +13,8 @@ import Foundation
 public enum CacheAccountScope {
     private static let lock = NSLock()
     private nonisolated(unsafe) static var _value = ""
+    private nonisolated(unsafe) static var accountWipes: [String: Int] = [:]
+    private nonisolated(unsafe) static var everyAccountWipes = 0
     @TaskLocal private static var pinnedScope: String?
 
     /// The scope pinned to the running task by `withPinned`, else the process wide one.
@@ -37,10 +39,20 @@ public enum CacheAccountScope {
         lock.withLock { _value = value }
     }
 
-    /// Whether every account signed out after work for `scope` began. A cache write it makes now
-    /// would land after the sign out wipe and outlive the session, so the writer drops it.
-    public static func isSignedOut(since scope: String, now current: String = CacheAccountScope.current) -> Bool {
-        !scope.isEmpty && current.isEmpty
+    /// Changes whenever `scope`'s caches, or every account's, are wiped. A writer stamps its work when
+    /// it starts and drops the write if the stamp moved, so nothing lands after the wipe.
+    public static func wipeStamp(_ scope: String) -> Int {
+        lock.withLock { accountWipes[scope, default: 0] + everyAccountWipes }
+    }
+
+    /// Call before wiping one account's caches.
+    public static func markWiped(_ scope: String) {
+        lock.withLock { accountWipes[scope, default: 0] += 1 }
+    }
+
+    /// Call before wiping every account's caches.
+    public static func markEveryAccountWiped() {
+        lock.withLock { everyAccountWipes += 1 }
     }
 
     /// Removes one account's preview and raw download slots from `Library/Caches/PreviewCache`.
