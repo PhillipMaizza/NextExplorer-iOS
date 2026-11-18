@@ -293,6 +293,37 @@ struct DocumentThumbnailStoreTests {
     }
 
     @Test
+    func aLoadWhoseAccountIsWipedWhileItFetchesDrawsNothing() async {
+        let store = DocumentThumbnailStore()
+        // A scope of its own, so marking it wiped touches no other test.
+        let scope = TestID.name()
+        let draws = LockIsolated(0)
+        var client = FilesClient.previewValue
+        client.downloadRawFileLowPriority = { _, _ in
+            CacheAccountScope.markWiped(scope)
+            return URL(fileURLWithPath: "/")
+        }
+        let cache = DocumentThumbnailCache { _, _, _ in
+            draws.withValue { $0 += 1 }
+            return nil
+        }
+        let file = item(size: 5, kind: TestKind.word)
+
+        let (entry, task) = CacheAccountScope.withPinned(scope) {
+            load(
+                store, key: DocumentThumbnailCache.cacheKey(id: file.id, signature: file.cacheSignature),
+                item: file, client: client, cache: cache
+            )
+        }
+        await task?.value
+
+        #expect(draws.value == 0)
+        if case .loading = entry.state {} else {
+            Issue.record("Expected loading, got \(entry.state)")
+        }
+    }
+
+    @Test
     func removeAllForgetsEveryEntry() {
         let store = DocumentThumbnailStore()
         let first = store.entry(forKey: "a")

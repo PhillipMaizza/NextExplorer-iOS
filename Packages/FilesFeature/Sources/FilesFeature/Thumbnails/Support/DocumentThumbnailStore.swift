@@ -129,6 +129,10 @@ final class DocumentThumbnailStore {
             entry.state = .unavailable
             return nil
         }
+        // Read as the load starts: after a wipe or an account switch its page must not be drawn
+        // into the cache, or be drawn under the next account's name.
+        let scope = CacheAccountScope.current
+        let wipeStamp = CacheAccountScope.wipeStamp(scope)
         let task = Task(priority: Constants.fetchPriority) { [weak self] in
             // A cancelled load was already dropped by `removeAll`, and a newer one may hold its key.
             defer {
@@ -139,6 +143,14 @@ final class DocumentThumbnailStore {
             // An entry dropped past the cap and taken again by its cell gets the result, not the dropped box.
             @MainActor func publish(_ state: State) {
                 (self?.entries[key] ?? entry).state = state
+            }
+            func isWiped() -> Bool {
+                CacheAccountScope.wipeStamp(scope) != wipeStamp
+            }
+            func draw(_ fileURL: URL?) async -> PlatformImage? {
+                await CacheAccountScope.withPinned(scope) {
+                    await cache.firstPageImage(key, Constants.renderPixel, fileURL)
+                }
             }
             // A PDF just shared into the app has its first page seeded from the local copy: the
             // same render, without downloading the file.
@@ -154,7 +166,10 @@ final class DocumentThumbnailStore {
             // from disk, anything else shows only a page drawn before.
             if isMetered {
                 let kept = await Task.detached(priority: Constants.fetchPriority) { offlineFiles.localURL(item) }.value
-                if let image = await cache.firstPageImage(key, Constants.renderPixel, kept) {
+                guard !isWiped() else {
+                    return
+                }
+                if let image = await draw(kept) {
                     publish(.ready(image))
                 } else if kept != nil {
                     publish(.unavailable)
@@ -168,7 +183,10 @@ final class DocumentThumbnailStore {
                 // the next appearance of a cell with this key tries again.
                 return
             }
-            if let image = await cache.firstPageImage(key, Constants.renderPixel, fileURL) {
+            guard !isWiped() else {
+                return
+            }
+            if let image = await draw(fileURL) {
                 publish(.ready(image))
             } else {
                 // Downloaded, but nothing could draw it: it won't get better on a retry.
