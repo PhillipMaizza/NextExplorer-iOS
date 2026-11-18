@@ -21,7 +21,7 @@ private enum Constants {
     static let renderPixel: CGFloat = 320
     /// The fetch runs at this priority so it yields to whatever the user is interacting with.
     static let fetchPriority: TaskPriority = .utility
-    /// Per-key entries kept for the live grid (a `ready` image is ~0.5 MB). Past this the
+    /// Per key entries kept for the live grid (a `ready` image is ~0.5 MB). Past this the
     /// oldest are dropped; they resolve again fast from `DocumentThumbnailCache`'s disk layer.
     static let retainedKeyCount = 60
 }
@@ -72,18 +72,20 @@ final class DocumentThumbnailStore {
     /// Whether `item` gets a drawn first page: a PDF, or a document Quick Look can draw, within its
     /// kind's size cap. One rule for every list row and grid tile.
     nonisolated static func isEligible(_ item: FileItem) -> Bool {
+        // A search hit reports no size, so nothing would hold its download to the cap.
+        guard item.size > 0 else {
+            return false
+        }
         if item.isPDF {
             return item.size <= Constants.maxPDFBytes
         }
         guard item.isOfficeDocument || Constants.quickLookKinds.contains(item.kind.lowercased()) else {
             return false
         }
-        // A search hit reports no size, so nothing would hold its download to the cap.
-        return item.size > 0 && item.size <= Constants.maxQuickLookBytes
+        return item.size <= Constants.maxQuickLookBytes
     }
 
-    /// Drops every entry and stops every load still running, so no download or drawn page
-    /// outlives a session: a load finishing after a logout's wipe would write it back to disk.
+    /// Drops every entry and stops every load still running, so no drawn page outlives a session.
     func removeAll() {
         tasks.values.forEach { $0.cancel() }
         tasks.removeAll()
@@ -115,7 +117,8 @@ final class DocumentThumbnailStore {
         localThumbnails: LocalThumbnailStore,
         offlineFiles: OfflineFileStore,
         now: Date,
-        isMetered: Bool = false
+        isMetered: Bool = false,
+        scope: String = CacheAccountScope.current
     ) -> Task<Void, Never>? {
         switch entry.state {
         case .ready, .unavailable: return nil
@@ -127,11 +130,26 @@ final class DocumentThumbnailStore {
             entry.state = .unavailable
             return nil
         }
+        // Read as the load starts: after a wipe or an account switch it neither fetches with the next
+        // account's session nor draws into the cache.
+        let wipeStamp = CacheAccountScope.wipeStamp(scope)
         let task = Task(priority: Constants.fetchPriority) { [weak self] in
             // A cancelled load was already dropped by `removeAll`, and a newer one may hold its key.
             defer {
                 if !Task.isCancelled {
                     self?.tasks[key] = nil
+                }
+            }
+            // An entry dropped past the cap and taken again by its cell gets the result, not the dropped box.
+            @MainActor func publish(_ state: State) {
+                (self?.entries[key] ?? entry).state = state
+            }
+            func isStale() -> Bool {
+                CacheAccountScope.current != scope || CacheAccountScope.wipeStamp(scope) != wipeStamp
+            }
+            func draw(_ fileURL: URL?) async -> PlatformImage? {
+                await CacheAccountScope.withPinned(scope) {
+                    await cache.firstPageImage(key, Constants.renderPixel, fileURL)
                 }
             }
             // A PDF just shared into the app has its first page seeded from the local copy: the
@@ -141,18 +159,24 @@ final class DocumentThumbnailStore {
                 maxPixel: Constants.renderPixel, priority: Constants.fetchPriority, now: now
             )
             if let seeded {
-                entry.state = .ready(seeded)
+                publish(.ready(seeded))
                 return
             }
             // On mobile data nothing is downloaded just to draw a thumbnail: a kept copy is drawn
             // from disk, anything else shows only a page drawn before.
             if isMetered {
                 let kept = await Task.detached(priority: Constants.fetchPriority) { offlineFiles.localURL(item) }.value
-                if let image = await cache.firstPageImage(key, Constants.renderPixel, kept) {
-                    entry.state = .ready(image)
-                } else if kept != nil {
-                    entry.state = .unavailable
+                guard !isStale() else {
+                    return
                 }
+                if let image = await draw(kept) {
+                    publish(.ready(image))
+                } else if kept != nil {
+                    publish(.unavailable)
+                }
+                return
+            }
+            guard !isStale() else {
                 return
             }
             // The server previews only media and PDFs; any other document comes down raw.
@@ -162,11 +186,14 @@ final class DocumentThumbnailStore {
                 // the next appearance of a cell with this key tries again.
                 return
             }
-            if let image = await cache.firstPageImage(key, Constants.renderPixel, fileURL) {
-                entry.state = .ready(image)
+            guard !isStale() else {
+                return
+            }
+            if let image = await draw(fileURL) {
+                publish(.ready(image))
             } else {
                 // Downloaded, but nothing could draw it: it won't get better on a retry.
-                entry.state = .unavailable
+                publish(.unavailable)
             }
         }
         tasks[key] = task

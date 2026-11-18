@@ -92,7 +92,7 @@ extension FilesService {
         do {
             return try await downloadToCache(
                 request, directory: slot.directory, fileURL: slot.fileURL, metaURL: slot.metaURL,
-                item: item, lowPriority: lowPriority
+                item: item, scope: scope, lowPriority: lowPriority
             )
         } catch let error as FilesClientError where error == .offline {
             // Offline and the metadata checked pin missed (e.g. a Favorites direct open seeds a
@@ -143,6 +143,7 @@ extension FilesService {
                 fileURL: fileURL,
                 metaURL: metaURL,
                 item: item,
+                scope: scope,
                 lowPriority: lowPriority
             )
         } catch let error as FilesClientError where error == .offline {
@@ -248,11 +249,12 @@ extension FilesService {
     /// staleness sidecar, or returns the existing cache entry untouched. Concurrent calls for
     /// the same `fileURL` share a single download via `downloadCoordinator`.
     private func downloadToCache(
-        _ request: URLRequest, directory: URL, fileURL: URL, metaURL: URL, item: FileItem,
+        _ request: URLRequest, directory: URL, fileURL: URL, metaURL: URL, item: FileItem, scope: String,
         lowPriority: Bool = false
     ) async throws -> URL {
         let networkClient = networkClient
         return try await downloadCoordinator.run(forFileAt: fileURL) {
+            let wipeStamp = CacheAccountScope.wipeStamp(scope)
             let downloadedURL: URL
             let response: HTTPURLResponse
             do {
@@ -264,6 +266,10 @@ extension FilesService {
             }
             defer { try? FileManager.default.removeItem(at: downloadedURL) }
             try Self.validate(response)
+            // A shared transfer runs on past its callers' cancellation, so it checks for a wipe itself.
+            if CacheAccountScope.wipeStamp(scope) != wipeStamp {
+                throw CancellationError()
+            }
 
             do {
                 try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

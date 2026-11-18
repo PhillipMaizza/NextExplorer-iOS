@@ -310,7 +310,7 @@ struct BrowseContentView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
                 title: displayTitle,
-                selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : nil,
+                selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedItems.count) : nil,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
                 shouldFadeIntoContent: viewMode != .table,
                 isSearchPending: store.isSearchPending
@@ -428,7 +428,7 @@ struct BrowseContentView: View {
                     }
                 #endif
                 // One menu holds every action, and only once something is picked.
-                if !store.selectedItemIDs.isEmpty {
+                if store.hasSelectionOnScreen {
                     ToolbarItem(placement: .selectionBar) {
                         SelectionActionsMenu(
                             availability: store.selectionAvailability,
@@ -568,7 +568,7 @@ struct BrowseContentView: View {
     #endif
 
     private var isAllSelected: Bool {
-        store.hasDisplayedItems && store.selectedItemIDs.count == store.displayedItemCount
+        store.hasDisplayedItems && store.selectedItems.count == store.displayedItemCount
     }
 
     private func fileActionsMenu(for item: FileItem) -> some View {

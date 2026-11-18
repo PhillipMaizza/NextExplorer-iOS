@@ -47,7 +47,7 @@ public struct BrowseFeature {
         /// What the selection bar's Available Offline button does right now.
         var selectedOfflineAction: OfflineBulkAction? {
             OfflineBulkAction.resolve(
-                selectedIDs: items.filter { selectedItemIDs.contains($0.id) }.map(\.id),
+                selectedIDs: selectedItems.map(\.id),
                 offlineIDs: offlineItemIDs
             )
         }

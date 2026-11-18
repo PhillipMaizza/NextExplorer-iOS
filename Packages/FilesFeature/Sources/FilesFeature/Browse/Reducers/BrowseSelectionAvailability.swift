@@ -7,15 +7,15 @@ extension BrowseFeature.State {
     /// Rename only makes sense for a single target: `nil` (hiding the toolbar icon) for
     /// zero or multiple selected items.
     var singleSelectedItem: FileItem? {
-        guard selectedItemIDs.count == 1, let id = selectedItemIDs.first else { return nil }
-        return items[id: id]
+        let selected = selectedItems
+        return selected.count == 1 ? selected.first : nil
     }
 
     /// What the selection menu offers for the items picked now.
     var selectionAvailability: SelectionActionsMenu.Availability {
         // Device content offers only what works on kept files, and only once every pick is kept.
         let isDevice = showsDeviceContent
-        let isAllKept = selectedItemIDs.allSatisfy(offlineItemIDs.contains)
+        let isAllKept = selectedItems.allSatisfy { offlineItemIDs.contains($0.id) }
         return SelectionActionsMenu.Availability(
             single: singleSelectedItem,
             canGetInfo: !isDevice,
@@ -65,9 +65,10 @@ extension BrowseFeature.State {
         canUploadHere || (!directoryPath.isEmpty && (canCreateFileHere || canCreateFolderHere))
     }
 
-    /// The selected items, in listing order.
+    /// The selected items on screen, in listing order: every bulk action and count reads these, so a
+    /// pick a setting has since hidden (hidden files turned off in another window) is never acted on.
     var selectedItems: [FileItem] {
-        items.filter { selectedItemIDs.contains($0.id) }
+        filteredItems.filter { selectedItemIDs.contains($0.id) }
     }
 
     /// The Mac's share menu needs a button to anchor to, so kept files are shared from iOS only.
@@ -83,29 +84,27 @@ extension BrowseFeature.State {
     /// no well defined bulk target: the icon disappears entirely rather than silently
     /// ignoring the file, which a merely disabled icon would leave ambiguous.
     var isFavoriteActionVisible: Bool {
-        !showsDeviceContent && !selectedItemIDs.isEmpty && selectedItemIDs.allSatisfy { id in
-            items[id: id]?.isDirectory ?? false
-        }
+        let picked = selectedItems
+        return !showsDeviceContent && !picked.isEmpty && picked.allSatisfy(\.isDirectory)
     }
 
     /// Filled when tapping the toolbar star would unfavorite the whole selection, matching
     /// the single item context menu icon's own filled or outline convention.
     var isEntireSelectionAlreadyFavorited: Bool {
-        !selectedItemIDs.isEmpty && selectedItemIDs.allSatisfy(favoritePaths.contains)
+        let picked = selectedItems
+        return !picked.isEmpty && picked.allSatisfy { favoritePaths.contains($0.id) }
     }
 
     var isDownloadActionVisible: Bool {
-        !selectedItemIDs.isEmpty && (access?.canDownload ?? false)
+        hasSelectionOnScreen && (access?.canDownload ?? false)
     }
 
     var isSaveActionVisible: Bool {
-        isDownloadActionVisible && items.contains {
-            selectedItemIDs.contains($0.id) && SaveActionStyle.isAvailable(for: $0.isDirectory)
-        }
+        isDownloadActionVisible && selectedItems.contains { SaveActionStyle.isAvailable(for: $0.isDirectory) }
     }
 
     var isDeleteActionVisible: Bool {
-        !selectedItemIDs.isEmpty && (access?.canDelete ?? false)
+        hasSelectionOnScreen && (access?.canDelete ?? false)
     }
 
     /// Copy/Move from the selection toolbar: available whenever anything is selected, except
@@ -113,6 +112,11 @@ extension BrowseFeature.State {
     /// `isSoleRootLocation`). Copy needs no permission; the Move button adds a
     /// `canWrite && canDelete` gate at its site.
     var isTransferActionVisible: Bool {
-        !selectedItemIDs.isEmpty && !(directoryPath.isEmpty && items.count <= 1)
+        hasSelectionOnScreen && !(directoryPath.isEmpty && items.count <= 1)
+    }
+
+    /// Whether any pick is on screen: a selection only a setting has since hidden offers nothing.
+    var hasSelectionOnScreen: Bool {
+        !selectedItems.isEmpty
     }
 }

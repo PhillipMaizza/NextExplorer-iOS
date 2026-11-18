@@ -65,6 +65,34 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func aDownloadLandingAfterItsAccountWasWipedIsNotCached() async throws {
+            stub(statusCode: 200, body: Data("raw file bytes".utf8))
+            let item = FileItem(
+                name: "\(TestID.name()).\(TestKind.word)", path: TestFolder.docs,
+                dateModified: MockDate.date, size: 14, kind: TestKind.word
+            )
+            // A scope of its own, so marking it wiped touches no other test.
+            let scope = TestID.name()
+            let client = FilesClient.live(
+                networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+                directoryCacheStore: .testValue,
+                activeScope: { scope }
+            )
+            StubURLProtocol.onRequest = { CacheAccountScope.markWiped(scope) }
+            defer { StubURLProtocol.onRequest = nil }
+
+            await #expect(throws: CancellationError.self) {
+                try await client.downloadRawFileLowPriority(serverURL, item)
+            }
+
+            StubURLProtocol.onRequest = nil
+            StubURLProtocol.capturedRequest = nil
+            let downloaded = try await client.downloadRawFileLowPriority(serverURL, item)
+            defer { try? FileManager.default.removeItem(at: downloaded.deletingLastPathComponent()) }
+            #expect(StubURLProtocol.capturedRequest != nil)
+        }
+
+        @Test
         func downloadRawFileMapsAccessDeniedToAServerError() async throws {
             stub(statusCode: 403, body: Data())
             let item = FileItem(name: "secret.docx", path: "", dateModified: MockDate.date, size: 0, kind: "docx")

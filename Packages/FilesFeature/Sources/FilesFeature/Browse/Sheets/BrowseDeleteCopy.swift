@@ -15,11 +15,11 @@ enum BrowseDeleteCopy {
     }
 
     static func bulkTitle(_ store: StoreOf<BrowseFeature>) -> String {
-        let selected = store.items.filter { store.selectedItemIDs.contains($0.id) }
+        let selected = store.selectedItems
         if selected.count == 1, let item = selected.first {
             return L10n.Browse.deleteConfirmOne(item.name)
         }
-        return L10n.Browse.deleteConfirmMany(store.selectedItemIDs.count)
+        return L10n.Browse.deleteConfirmMany(selected.count)
     }
 
     /// Whether the confirmation can show. The Mac's native alert keeps the buttons it opened with,

@@ -50,6 +50,7 @@ extension FilesClientLiveHarness {
         StubURLProtocol.methodStubs = [:]
         StubURLProtocol.methodSequences = [:]
         StubURLProtocol.heldMethodKeys = []
+        StubURLProtocol.onRequest = nil
         StubURLProtocol.requests = []
     }
 

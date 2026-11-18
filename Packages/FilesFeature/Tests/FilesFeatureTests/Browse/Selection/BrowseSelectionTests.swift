@@ -127,6 +127,53 @@ struct BrowseSelectionTests {
         #expect(deleted.value == [["A", "B.txt"]])
     }
 
+    @Test("A pick hidden since it was selected is left out of a bulk delete and its count")
+    func bulkDeleteLeavesOutAPickHiddenFilesNowHide() async {
+        let dotfile = BrowseFixtures.file(".env")
+        var state = BrowseFixtures.state(items: [folder, file, dotfile])
+        state.isSelecting = true
+        state.selectedItemIDs = [folder.id, file.id, dotfile.id]
+        state.bulkDeleteConfirmationIsPresented = true
+        // Turned off in another window while the three were selected.
+        state.$preferences.withLock { $0.showHiddenFiles = false }
+        let deleted = LockIsolated<[Set<String>]>([])
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.deleteItems = { _, items, _, _ in
+                deleted.withValue { $0.append(Set(items.map(\.id))) }
+                return DeleteOutcome()
+            }
+        }
+        #expect(store.state.selectedItems.map(\.id) == [folder.id, file.id])
+
+        await store.send(.bulkDeleteConfirmed) {
+            $0.bulkDeleteConfirmationIsPresented = false
+            $0.isBulkActionInFlight = true
+            $0.bulkDeleteProgress = 0
+        }
+        await store.receive(\.bulkDeleteResponse.success) {
+            $0.isBulkActionInFlight = false
+            $0.bulkDeleteProgress = nil
+            $0.items = [dotfile]
+            $0.isSelecting = false
+            $0.selectedItemIDs = []
+        }
+        #expect(deleted.value == [[folder.id, file.id]])
+    }
+
+    @Test("A selection a setting has since hidden offers no actions and asks no delete")
+    func aSelectionOnlyHiddenPicksMakeOffersNothing() async {
+        let dotfile = BrowseFixtures.file(".env")
+        var state = BrowseFixtures.state(items: [folder, file, dotfile])
+        state.isSelecting = true
+        state.selectedItemIDs = [dotfile.id]
+        state.$preferences.withLock { $0.showHiddenFiles = false }
+        let store = BrowseFixtures.store(state)
+        #expect(!store.state.hasSelectionOnScreen)
+        #expect(!store.state.isDeleteActionVisible)
+
+        await store.send(.bulkDeleteTapped)
+    }
+
     @Test("A failed bulk delete shows a readable message and keeps the selection")
     func bulkDeleteConfirmedFailureSurfacesAReadableErrorMessage() async {
         let store = BrowseFixtures.store(selectingState(selected: [folder.id])) {

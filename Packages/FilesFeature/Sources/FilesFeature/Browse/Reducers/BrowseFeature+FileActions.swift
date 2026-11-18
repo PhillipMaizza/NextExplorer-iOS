@@ -131,7 +131,7 @@ extension BrowseFeature {
         state.bulkDeleteConfirmationIsPresented = false
         state.deleteImpactCheck = .idle
         guard !state.isBulkActionInFlight else { return .none }
-        let itemsToDelete = state.selectedItemIDs.compactMap { state.items[id: $0] }
+        let itemsToDelete = state.selectedItems
         guard !itemsToDelete.isEmpty else { return .none }
         state.isBulkActionInFlight = true
         state.bulkDeleteProgress = 0
@@ -199,7 +199,7 @@ extension BrowseFeature {
     func startBulkFavorite(_ state: inout State) -> Effect<Action> {
         guard !state.isBulkActionInFlight else { return .none }
         // Listing order, not Set order: the server sees the favorites in the order the user sees the rows.
-        let targets = state.items.filter { state.selectedItemIDs.contains($0.id) && $0.isDirectory }
+        let targets = state.selectedItems.filter(\.isDirectory)
         guard !targets.isEmpty else { return .none }
         state.isBulkActionInFlight = true
         let serverURL = state.serverURL

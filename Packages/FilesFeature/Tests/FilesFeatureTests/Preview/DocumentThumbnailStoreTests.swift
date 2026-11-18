@@ -36,13 +36,15 @@ struct DocumentThumbnailStoreTests {
     private func load(
         _ store: DocumentThumbnailStore, key: String, item: FileItem,
         client: FilesClient, cache: DocumentThumbnailCache, localThumbnails: LocalThumbnailStore = .testValue,
-        offlineFiles: OfflineFileStore = .testValue, isMetered: Bool = false
+        offlineFiles: OfflineFileStore = .testValue, isMetered: Bool = false,
+        scope: String = CacheAccountScope.current
     ) -> (entry: DocumentThumbnailStore.Entry, task: Task<Void, Never>?) {
         let entry = store.entry(forKey: key)
         let task = store.load(
             entry: entry, key: key, item: item,
             serverURL: URL(string: TestHost.exampleURLString)!, filesClient: client, cache: cache,
-            localThumbnails: localThumbnails, offlineFiles: offlineFiles, now: MockDate.date, isMetered: isMetered
+            localThumbnails: localThumbnails, offlineFiles: offlineFiles, now: MockDate.date, isMetered: isMetered,
+            scope: scope
         )
         return (entry, task)
     }
@@ -164,6 +166,7 @@ struct DocumentThumbnailStoreTests {
         let megabyte: Int64 = 1_024 * 1_024
         #expect(DocumentThumbnailStore.isEligible(item(size: 40 * megabyte)))
         #expect(!DocumentThumbnailStore.isEligible(item(size: 40 * megabyte + 1)))
+        #expect(!DocumentThumbnailStore.isEligible(item(size: 0)))
         #expect(DocumentThumbnailStore.isEligible(item(size: 10 * megabyte, kind: TestKind.word)))
         #expect(!DocumentThumbnailStore.isEligible(item(size: 10 * megabyte + 1, kind: TestKind.word)))
         #expect(DocumentThumbnailStore.isEligible(item(size: 5, kind: "pages")))
@@ -268,6 +271,91 @@ struct DocumentThumbnailStoreTests {
     }
 
     @Test
+    func aLoadFinishingAfterItsEntryWasDroppedFillsTheEntryTakenSince() async {
+        let store = DocumentThumbnailStore()
+        let pdfURL = makePDF()
+        defer { try? FileManager.default.removeItem(at: pdfURL) }
+        var client = FilesClient.previewValue
+        client.previewFileLowPriority = { _, _ in pdfURL }
+        let file = item(size: 5)
+        let key = DocumentThumbnailCache.cacheKey(id: file.id, signature: file.cacheSignature)
+        let (cache, cacheDirectory) = isolatedCache()
+        defer { try? FileManager.default.removeItem(at: cacheDirectory) }
+
+        let (dropped, task) = load(store, key: key, item: file, client: client, cache: cache)
+        // A wide grid asks for more keys than the store keeps while this one still loads.
+        for index in 0 ..< Constants.keysPastTheCap {
+            _ = store.entry(forKey: "\(index)")
+        }
+        let taken = store.entry(forKey: key)
+        await task?.value
+
+        #expect(taken !== dropped)
+        #expect(readyImage(taken) != nil)
+    }
+
+    @Test
+    func aLoadWhoseAccountIsWipedWhileItFetchesDrawsNothing() async {
+        let store = DocumentThumbnailStore()
+        // A scope of its own, so marking it wiped touches no other test.
+        let scope = TestID.name()
+        let draws = LockIsolated(0)
+        var client = FilesClient.previewValue
+        client.downloadRawFileLowPriority = { _, _ in
+            CacheAccountScope.markWiped(scope)
+            return URL(fileURLWithPath: "/")
+        }
+        let cache = DocumentThumbnailCache { _, _, _ in
+            draws.withValue { $0 += 1 }
+            return nil
+        }
+        let file = item(size: 5, kind: TestKind.word)
+
+        let (entry, task) = CacheAccountScope.withPinned(scope) {
+            load(
+                store, key: DocumentThumbnailCache.cacheKey(id: file.id, signature: file.cacheSignature),
+                item: file, client: client, cache: cache
+            )
+        }
+        await task?.value
+
+        #expect(draws.value == 0)
+        if case .loading = entry.state {} else {
+            Issue.record("Expected loading, got \(entry.state)")
+        }
+    }
+
+    @Test
+    func aLoadStartedForAnAccountNoLongerActiveFetchesAndDrawsNothing() async {
+        let store = DocumentThumbnailStore()
+        let fetches = LockIsolated(0)
+        let draws = LockIsolated(0)
+        var client = FilesClient.previewValue
+        client.downloadRawFileLowPriority = { _, _ in
+            fetches.withValue { $0 += 1 }
+            return URL(fileURLWithPath: "/")
+        }
+        let cache = DocumentThumbnailCache { _, _, _ in
+            draws.withValue { $0 += 1 }
+            return nil
+        }
+        let file = item(size: 5, kind: TestKind.word)
+
+        // Started for another account than the one now active, as after a switch.
+        let (entry, task) = load(
+            store, key: DocumentThumbnailCache.cacheKey(id: file.id, signature: file.cacheSignature),
+            item: file, client: client, cache: cache, scope: TestID.name()
+        )
+        await task?.value
+
+        #expect(fetches.value == 0)
+        #expect(draws.value == 0)
+        if case .loading = entry.state {} else {
+            Issue.record("Expected loading, got \(entry.state)")
+        }
+    }
+
+    @Test
     func removeAllForgetsEveryEntry() {
         let store = DocumentThumbnailStore()
         let first = store.entry(forKey: "a")
@@ -281,4 +369,9 @@ struct DocumentThumbnailStoreTests {
         let first = store.entry(forKey: "a")
         #expect(store.entry(forKey: "a") === first)
     }
+}
+
+private enum Constants {
+    /// The store keeps 60 keys; one past that drops the oldest.
+    static let keysPastTheCap = 60
 }
