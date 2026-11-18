@@ -428,7 +428,7 @@ struct BrowseContentView: View {
                     }
                 #endif
                 // One menu holds every action, and only once something is picked.
-                if !store.selectedItemIDs.isEmpty {
+                if store.hasSelectionOnScreen {
                     ToolbarItem(placement: .selectionBar) {
                         SelectionActionsMenu(
                             availability: store.selectionAvailability,

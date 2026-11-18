@@ -42,10 +42,10 @@ extension BrowseFeature {
             return .none
 
         case .bulkDeleteTapped:
-            guard !state.selectedItemIDs.isEmpty else { return .none }
+            let selected = state.selectedItems
+            guard !selected.isEmpty else { return .none }
             state.bulkDeleteConfirmationIsPresented = true
             state.deleteImpactCheck = .checking
-            let selected = state.selectedItems
             return checkDeleteImpact(&state, items: selected)
 
         case .bulkDeleteCancelled:

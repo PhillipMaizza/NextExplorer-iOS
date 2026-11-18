@@ -160,6 +160,20 @@ struct BrowseSelectionTests {
         #expect(deleted.value == [[folder.id, file.id]])
     }
 
+    @Test("A selection a setting has since hidden offers no actions and asks no delete")
+    func aSelectionOnlyHiddenPicksMakeOffersNothing() async {
+        let dotfile = BrowseFixtures.file(".env")
+        var state = BrowseFixtures.state(items: [folder, file, dotfile])
+        state.isSelecting = true
+        state.selectedItemIDs = [dotfile.id]
+        state.$preferences.withLock { $0.showHiddenFiles = false }
+        let store = BrowseFixtures.store(state)
+        #expect(!store.state.hasSelectionOnScreen)
+        #expect(!store.state.isDeleteActionVisible)
+
+        await store.send(.bulkDeleteTapped)
+    }
+
     @Test("A failed bulk delete shows a readable message and keeps the selection")
     func bulkDeleteConfirmedFailureSurfacesAReadableErrorMessage() async {
         let store = BrowseFixtures.store(selectingState(selected: [folder.id])) {
