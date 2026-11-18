@@ -55,6 +55,12 @@ directLinkMode.download	ดาวน์โหลด
 thumbnailSize.small	เล็ก
 thumbnailSize.medium	กลาง
 thumbnailSize.large	ใหญ่
+grid.sectionFolders	โฟลเดอร์
+grid.sectionFiles	ไฟล์
+grid.settingsTitle	ตาราง
+grid.settingsButton	การตั้งค่าตาราง
+grid.sizeTitle	ขนาด
+grid.perRow	%lld ต่อแถว
 dateFormat.automatic	อัตโนมัติ
 browse.navigationTitle	เรียกดู
 browse.scopeThisFolder	โฟลเดอร์นี้

@@ -51,6 +51,12 @@ directLinkMode.download	Descargar
 thumbnailSize.small	Pequeña
 thumbnailSize.medium	Mediana
 thumbnailSize.large	Grande
+grid.sectionFolders	Carpetas
+grid.sectionFiles	Archivos
+grid.settingsTitle	Cuadrícula
+grid.settingsButton	Ajustes de cuadrícula
+grid.sizeTitle	Tamaño
+grid.perRow	%lld por fila
 dateFormat.automatic	Automático
 browse.navigationTitle	Explorar
 browse.scopeThisFolder	Esta carpeta

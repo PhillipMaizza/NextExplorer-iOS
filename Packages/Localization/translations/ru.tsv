@@ -51,6 +51,12 @@ directLinkMode.download	Загрузка
 thumbnailSize.small	Маленькие
 thumbnailSize.medium	Средние
 thumbnailSize.large	Большие
+grid.sectionFolders	Папки
+grid.sectionFiles	Файлы
+grid.settingsTitle	Сетка
+grid.settingsButton	Настройки сетки
+grid.sizeTitle	Размер
+grid.perRow	%lld в ряд
 dateFormat.automatic	Автоматически
 browse.navigationTitle	Обзор
 browse.scopeThisFolder	Эта папка

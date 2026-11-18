@@ -13,6 +13,8 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     public let supportsThumbnail: Bool
 
     public static let directoryKind = "directory"
+    /// The kind the server reports for a file with no extension, or an overlong one.
+    public static let unknownKind = "unknown"
 
     /// Stands in for a date the server never sent (a volume from `GET /api/volumes` has none);
     /// rows leave the date out rather than print it.

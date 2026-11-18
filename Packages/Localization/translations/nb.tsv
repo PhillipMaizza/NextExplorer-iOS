@@ -55,6 +55,12 @@ directLinkMode.download	Last ned
 thumbnailSize.small	Liten
 thumbnailSize.medium	Middels
 thumbnailSize.large	Stor
+grid.sectionFolders	Mapper
+grid.sectionFiles	Filer
+grid.settingsTitle	Rutenett
+grid.settingsButton	Rutenettinnstillinger
+grid.sizeTitle	Størrelse
+grid.perRow	%lld per rad
 dateFormat.automatic	Automatisk
 browse.navigationTitle	Utforsk
 browse.scopeThisFolder	Denne mappen

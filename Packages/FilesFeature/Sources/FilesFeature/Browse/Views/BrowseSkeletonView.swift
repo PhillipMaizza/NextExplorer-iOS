@@ -20,8 +20,6 @@ private enum Constants {
 /// disabled. Non-interactive; the shine is suppressed under Reduce Motion by `.shimmering()`.
 struct BrowseSkeletonView: View {
     let isGridView: Bool
-    let gridColumns: [GridItem]
-    let iconSize: CGFloat
 
     /// All plain files: a redacted directory row keeps its accent tinted folder glyph and
     /// trailing chevron, which survive `.redacted` as gold blocks. Uniform file rows read as
@@ -61,15 +59,12 @@ struct BrowseSkeletonView: View {
     private var content: some View {
         if isGridView {
             ScrollView {
-                LazyVGrid(columns: gridColumns, spacing: FileGridMetrics.spacing) {
+                FileGrid {
                     ForEach(Self.placeholderItems) { item in
-                        placeholderRow(
-                            GridCellView(item: item, iconSize: iconSize)
-                                .dsCard(padding: FileGridMetrics.cellPadding)
-                        )
+                        placeholderRow(GridCellView(item: item))
                     }
                 }
-                .padding(FileGridMetrics.spacing)
+                .padding(FileGridMetrics.margin)
             }
             .scrollDisabled(true)
         } else {
@@ -89,13 +84,9 @@ struct BrowseSkeletonView: View {
 }
 
 #Preview("List") {
-    BrowseSkeletonView(isGridView: false, gridColumns: [], iconSize: .iconLarge)
+    BrowseSkeletonView(isGridView: false)
 }
 
 #Preview("Grid") {
-    BrowseSkeletonView(
-        isGridView: true,
-        gridColumns: [GridItem(.adaptive(minimum: .size96), spacing: .space16)],
-        iconSize: .iconLarge
-    )
+    BrowseSkeletonView(isGridView: true)
 }

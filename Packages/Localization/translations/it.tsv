@@ -51,6 +51,12 @@ directLinkMode.download	Scarica
 thumbnailSize.small	Piccola
 thumbnailSize.medium	Media
 thumbnailSize.large	Grande
+grid.sectionFolders	Cartelle
+grid.sectionFiles	File
+grid.settingsTitle	Griglia
+grid.settingsButton	Impostazioni griglia
+grid.sizeTitle	Dimensione
+grid.perRow	%lld per riga
 dateFormat.automatic	Automatico
 browse.navigationTitle	Esplora
 browse.scopeThisFolder	Questa cartella

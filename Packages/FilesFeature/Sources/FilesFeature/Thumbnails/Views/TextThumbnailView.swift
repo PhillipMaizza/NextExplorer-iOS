@@ -8,15 +8,22 @@ private enum Constants {
     static let topInsetShareOfHeight: CGFloat = 0.2
     static let textOpacity: Double = 0.85
     static let pageStrokeWidth: CGFloat = 1
+    static let fullShare: CGFloat = 1
 }
 
 /// A text or code file drawn as a small page of its own first lines, the way Finder shows one.
 struct TextThumbnailView: View {
     let snippet: String
+    /// Puts the file's extension banner along the page's foot, as its type icon has.
+    var kind: String?
 
     var body: some View {
         GeometryReader { proxy in
             let width = proxy.size.width
+            let hasBanner = kind.map(FileTypeIcon.hasBanner) ?? false
+            // With a banner, the lines stop at its top edge instead of running on under it.
+            let bannerShare = hasBanner ? FileTypeBanner.slimHeightFraction : 0
+            let textHeight = proxy.size.height * (Constants.fullShare - bannerShare)
             FilePageShape()
                 .fill(Color.backgroundSecondary)
                 .overlay(FilePageShape().stroke(Color.tertiaryDS, lineWidth: Constants.pageStrokeWidth))
@@ -26,12 +33,19 @@ struct TextThumbnailView: View {
                         .font(.system(size: width * Constants.fontShareOfWidth, design: .monospaced))
                         .foregroundStyle(Color.primaryDS.opacity(Constants.textOpacity))
                         .lineLimit(nil)
-                        .fixedSize(horizontal: true, vertical: false)
+                        // Long lines wrap inside the page; whatever runs past its foot is clipped.
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, width * Constants.insetShareOfWidth)
                         .padding(.top, proxy.size.height * Constants.topInsetShareOfHeight)
-                        // A fixed frame: a flexible one grows to a long line's width and the clip with it.
+                        .frame(width: width, height: textHeight, alignment: .topLeading)
+                        .clipped()
                         .frame(width: width, height: proxy.size.height, alignment: .topLeading)
                         .clipShape(FilePageShape())
+                }
+                .overlay {
+                    if let kind {
+                        FileTypeBanner(kind: kind, heightFraction: FileTypeBanner.slimHeightFraction)
+                    }
                 }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -48,7 +62,7 @@ struct TextThumbnailView: View {
 }
 
 #Preview("Row size") {
-    TextThumbnailView(snippet: "# Notes\n\n- one\n- two\n- three")
+    TextThumbnailView(snippet: "# Notes\n\n- one\n- two\n- three", kind: "md")
         .frame(width: 44, height: 44)
         .padding()
 }

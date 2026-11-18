@@ -41,7 +41,7 @@ struct SkeletonGridCells: View {
     var body: some View {
         ForEach(Array(entries.enumerated()), id: \.offset) { _, entry in
             GridCellView(name: entry.name, isDirectory: entry.isDirectory, kind: entry.isDirectory ? nil : "")
-                .dsGridTile(padding: FileGridMetrics.cellPadding)
+                .dsGridTile()
                 .redacted(reason: .placeholder)
                 .shimmering()
         }
@@ -65,7 +65,7 @@ struct SkeletonGridCells: View {
 
 #Preview("Grid cells") {
     ScrollView {
-        LazyVGrid(columns: FileGridMetrics.columns) {
+        FileGrid {
             SkeletonGridCells(entries: [6, 12, 4, 9].map { SkeletonEntry(name: SkeletonEntry.text($0)) })
         }
     }

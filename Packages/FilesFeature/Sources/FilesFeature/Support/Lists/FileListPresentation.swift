@@ -7,17 +7,33 @@ enum FileListViewMode: String {
     case list, grid
 }
 
-/// The grid geometry every file listing shares (Browse, Favorites, Downloads): one adaptive
-/// column spec and the tile inset, so the numbers live in one place instead of a `private enum
-/// Constants` copy per view.
+/// The grid geometry every file listing shares (Browse, Favorites, Offline), so the numbers live in
+/// one place instead of a `private enum Constants` copy per view.
 enum FileGridMetrics {
-    static let spacing: CGFloat = .space16
-    /// Inset between a grid tile's content and its `backgroundSecondary` card edge.
-    static let cellPadding: CGFloat = .space12
-    static let adaptiveMinimum: CGFloat = 100
+    /// Between columns, and around the grid.
+    static let spacing: CGFloat = .space12
+    /// Between rows of files: a little more than between columns, since each tile ends in text.
+    static let rowSpacing: CGFloat = 18
+    static let margin: CGFloat = .space16
+    static let sectionSpacing: CGFloat = .space24
+    static let headerSpacing: CGFloat = .space8
+    /// What a grid holds decides its columns: both follow the grid size, folder cards a step roomier.
+    enum Content {
+        case files
+        case folders
+    }
 
-    static var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: adaptiveMinimum), spacing: spacing)]
+    static func columns(for content: Content, size: ThumbnailSize, isCompact: Bool) -> [GridItem] {
+        switch (content, isCompact) {
+        case (.files, true):
+            Array(repeating: GridItem(.flexible(), spacing: spacing, alignment: .top), count: size.columnCount)
+        case (.folders, true):
+            Array(repeating: GridItem(.flexible(), spacing: spacing, alignment: .top), count: size.folderColumnCount)
+        case (.files, false):
+            [GridItem(.adaptive(minimum: size.minimumColumnWidth), spacing: spacing, alignment: .top)]
+        case (.folders, false):
+            [GridItem(.adaptive(minimum: size.minimumFolderColumnWidth), spacing: spacing, alignment: .top)]
+        }
     }
 }
 
@@ -81,12 +97,11 @@ struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View,
 }
 
 /// The grid tile counterpart to `SelectableListRow`: the same tap, selection and context
-/// menu behavior, laid out as an outlined `dsGridTile` that wiggles while selecting.
+/// menu behavior, laid out as a `dsGridTile`.
 struct SelectableGridCell<Content: View, Menu: View>: View {
     private let selectionID: String
     private let isSelecting: Bool
     private let isSelected: Bool
-    private let padding: CGFloat
     private let onTap: () -> Void
     private let content: Content
     private let menu: Menu
@@ -95,7 +110,6 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
         selectionID: String,
         isSelecting: Bool,
         isSelected: Bool,
-        padding: CGFloat = FileGridMetrics.cellPadding,
         onTap: @escaping () -> Void,
         @ViewBuilder content: () -> Content,
         @ViewBuilder contextMenu: () -> Menu = { EmptyView() }
@@ -103,7 +117,6 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
         self.selectionID = selectionID
         self.isSelecting = isSelecting
         self.isSelected = isSelected
-        self.padding = padding
         self.onTap = onTap
         self.content = content()
         menu = contextMenu()
@@ -112,7 +125,7 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
     var body: some View {
         Button(action: onTap) {
             content
-                .dsGridTile(padding: padding, isSelecting: isSelecting, isSelected: isSelected, seed: selectionID)
+                .dsGridTile(isSelecting: isSelecting, isSelected: isSelected)
                 .dragSelectable(id: selectionID)
         }
         .buttonStyle(DSPressableButtonStyle())

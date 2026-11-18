@@ -1,4 +1,3 @@
-import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -74,7 +73,6 @@ struct FavoriteListRow: View {
 struct FavoriteGridCell: View {
     let store: StoreOf<FavoritesFeature>
     let favorite: Favorite
-    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
 
     var body: some View {
         SelectableGridCell(
@@ -86,11 +84,11 @@ struct FavoriteGridCell: View {
             GridCellView(
                 name: favorite.displayName,
                 isDirectory: true,
-                iconSize: (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).iconSize,
                 customIcon: FavoriteIcon.symbol(for: favorite.icon),
                 customIconTint: FavoriteColor.resolve(favorite.color),
                 customIconFilled: FavoriteIcon.isFilled(favorite.icon),
-                isAvailableOffline: store.offlineFavoriteIDs.contains(favorite.id)
+                isAvailableOffline: store.offlineFavoriteIDs.contains(favorite.id),
+                subtitle: favorite.locationText
             )
         } contextMenu: {
             if !store.isSelecting {
@@ -105,6 +103,13 @@ struct FavoriteGridCell: View {
         } else {
             store.send(.rowTapped(favorite))
         }
+    }
+}
+
+extension Favorite {
+    /// Where the favorite lives, shown under its name in the grid: its path without the leading slash.
+    var locationText: String {
+        String(path.drop { $0 == "/" })
     }
 }
 

@@ -51,6 +51,12 @@ directLinkMode.download	تنزيل
 thumbnailSize.small	صغير
 thumbnailSize.medium	متوسط
 thumbnailSize.large	كبير
+grid.sectionFolders	المجلدات
+grid.sectionFiles	الملفات
+grid.settingsTitle	الشبكة
+grid.settingsButton	إعدادات الشبكة
+grid.sizeTitle	الحجم
+grid.perRow	%lld في كل صف
 dateFormat.automatic	تلقائي
 browse.navigationTitle	تصفح
 browse.scopeThisFolder	هذا المجلد

@@ -9,11 +9,6 @@ struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
     /// One list or grid choice for Browse, Favorites and Offline, so switching it in one is switching it everywhere.
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
-    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-
-    private var thumbnailSize: ThumbnailSize {
-        ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium
-    }
 
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
@@ -291,14 +286,14 @@ struct FavoritesView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
+            FileGrid(.folders) {
                 if listPhase == .loading {
                     SkeletonGridCells(entries: FavoritesSkeleton.entries)
                 } else {
                     favoriteCells
                 }
             }
-            .padding(FileGridMetrics.spacing)
+            .padding(FileGridMetrics.margin)
             .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
         }
         .modifier(FavoritesDragToSelect(store: store))

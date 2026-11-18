@@ -55,6 +55,12 @@ directLinkMode.download	Baixar
 thumbnailSize.small	Pequena
 thumbnailSize.medium	Média
 thumbnailSize.large	Grande
+grid.sectionFolders	Pastas
+grid.sectionFiles	Arquivos
+grid.settingsTitle	Grade
+grid.settingsButton	Ajustes da grade
+grid.sizeTitle	Tamanho
+grid.perRow	%lld por linha
 dateFormat.automatic	Automático
 browse.navigationTitle	Explorar
 browse.scopeThisFolder	Esta pasta

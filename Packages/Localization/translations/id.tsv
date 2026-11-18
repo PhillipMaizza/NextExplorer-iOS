@@ -55,6 +55,12 @@ directLinkMode.download	Unduh
 thumbnailSize.small	Kecil
 thumbnailSize.medium	Sedang
 thumbnailSize.large	Besar
+grid.sectionFolders	Folder
+grid.sectionFiles	File
+grid.settingsTitle	Kisi
+grid.settingsButton	Pengaturan Kisi
+grid.sizeTitle	Ukuran
+grid.perRow	%lld per baris
 dateFormat.automatic	Otomatis
 browse.navigationTitle	Jelajahi
 browse.scopeThisFolder	Folder Ini

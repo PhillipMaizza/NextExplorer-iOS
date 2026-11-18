@@ -55,6 +55,12 @@ directLinkMode.download	Λήψη
 thumbnailSize.small	Μικρό
 thumbnailSize.medium	Μεσαίο
 thumbnailSize.large	Μεγάλο
+grid.sectionFolders	Φάκελοι
+grid.sectionFiles	Αρχεία
+grid.settingsTitle	Πλέγμα
+grid.settingsButton	Ρυθμίσεις πλέγματος
+grid.sizeTitle	Μέγεθος
+grid.perRow	%lld ανά σειρά
 dateFormat.automatic	Αυτόματα
 browse.navigationTitle	Περιήγηση
 browse.scopeThisFolder	Αυτός ο φάκελος

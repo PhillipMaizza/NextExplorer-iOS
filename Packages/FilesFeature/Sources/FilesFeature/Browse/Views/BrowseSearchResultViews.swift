@@ -12,7 +12,6 @@ private struct BrowseSearchResultCell: View {
     let row: SearchResultItem
     let isGrid: Bool
     let source: BrowsePreviewSource
-    var iconSize: CGFloat = 0
 
     var body: some View {
         Group {
@@ -23,7 +22,6 @@ private struct BrowseSearchResultCell: View {
                     thumbnailFile: row.thumbnailFile,
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
-                    iconSize: iconSize,
                     matchedSource: source.matched(row.id),
                     isOpening: source.isOpening(row.id, in: store)
                 )
@@ -61,19 +59,18 @@ struct BrowseSearchResultCells: View {
     let store: StoreOf<BrowseFeature>
     let results: [SearchResultItem]
     let source: BrowsePreviewSource
-    let iconSize: CGFloat
 
     var body: some View {
         ForEach(results) { result in
             Button {
                 store.send(.searchResultTapped(result))
             } label: {
-                BrowseSearchResultCell(store: store, row: result, isGrid: true, source: source, iconSize: iconSize)
-                    .dsGridTile(padding: FileGridMetrics.cellPadding)
+                BrowseSearchResultCell(store: store, row: result, isGrid: true, source: source)
+                    .dsGridTile()
             }
             .buttonStyle(DSPressableButtonStyle())
+            .dsTapFlashSource()
             .contextMenu { BrowseSearchResultActions(store: store, result: result) }
-            .dsTapFlash()
         }
     }
 }

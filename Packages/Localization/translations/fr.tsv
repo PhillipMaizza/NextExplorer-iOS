@@ -51,6 +51,12 @@ directLinkMode.download	Télécharger
 thumbnailSize.small	Petite
 thumbnailSize.medium	Moyenne
 thumbnailSize.large	Grande
+grid.sectionFolders	Dossiers
+grid.sectionFiles	Fichiers
+grid.settingsTitle	Grille
+grid.settingsButton	Réglages de la grille
+grid.sizeTitle	Taille
+grid.perRow	%lld par ligne
 dateFormat.automatic	Automatique
 browse.navigationTitle	Explorer
 browse.scopeThisFolder	Ce dossier

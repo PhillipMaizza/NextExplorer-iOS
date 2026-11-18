@@ -55,6 +55,12 @@ directLinkMode.download	Stáhnout
 thumbnailSize.small	Malé
 thumbnailSize.medium	Střední
 thumbnailSize.large	Velké
+grid.sectionFolders	Složky
+grid.sectionFiles	Soubory
+grid.settingsTitle	Mřížka
+grid.settingsButton	Nastavení mřížky
+grid.sizeTitle	Velikost
+grid.perRow	%lld na řádek
 dateFormat.automatic	Automaticky
 browse.navigationTitle	Procházet
 browse.scopeThisFolder	Tato složka

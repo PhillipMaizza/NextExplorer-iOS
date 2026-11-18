@@ -51,6 +51,12 @@ directLinkMode.download	Downloaden
 thumbnailSize.small	Klein
 thumbnailSize.medium	Gemiddeld
 thumbnailSize.large	Groot
+grid.sectionFolders	Mappen
+grid.sectionFiles	Bestanden
+grid.settingsTitle	Raster
+grid.settingsButton	Rasterinstellingen
+grid.sizeTitle	Grootte
+grid.perRow	%lld per rij
 dateFormat.automatic	Automatisch
 browse.navigationTitle	Verkennen
 browse.scopeThisFolder	Deze map

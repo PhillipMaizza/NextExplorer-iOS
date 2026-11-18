@@ -55,6 +55,12 @@ directLinkMode.download	İndir
 thumbnailSize.small	Küçük
 thumbnailSize.medium	Orta
 thumbnailSize.large	Büyük
+grid.sectionFolders	Klasörler
+grid.sectionFiles	Dosyalar
+grid.settingsTitle	Izgara
+grid.settingsButton	Izgara Ayarları
+grid.sizeTitle	Boyut
+grid.perRow	Satır başına %lld
 dateFormat.automatic	Otomatik
 browse.navigationTitle	Gözat
 browse.scopeThisFolder	Bu Klasör

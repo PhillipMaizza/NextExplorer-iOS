@@ -55,6 +55,12 @@ directLinkMode.download	הורדה
 thumbnailSize.small	קטן
 thumbnailSize.medium	בינוני
 thumbnailSize.large	גדול
+grid.sectionFolders	תיקיות
+grid.sectionFiles	קבצים
+grid.settingsTitle	רשת
+grid.settingsButton	הגדרות רשת
+grid.sizeTitle	גודל
+grid.perRow	%lld בכל שורה
 dateFormat.automatic	אוטומטי
 browse.navigationTitle	עיון
 browse.scopeThisFolder	התיקייה הזו

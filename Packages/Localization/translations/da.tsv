@@ -55,6 +55,12 @@ directLinkMode.download	Hent
 thumbnailSize.small	Lille
 thumbnailSize.medium	Mellem
 thumbnailSize.large	Stor
+grid.sectionFolders	Mapper
+grid.sectionFiles	Filer
+grid.settingsTitle	Gitter
+grid.settingsButton	Gitterindstillinger
+grid.sizeTitle	Størrelse
+grid.perRow	%lld pr. række
 dateFormat.automatic	Automatisk
 browse.navigationTitle	Gennemse
 browse.scopeThisFolder	Denne mappe

@@ -12,91 +12,29 @@ private enum Constants {
     static let badgeHorizontalInset: CGFloat = 0.05
     static let badgeFontMinScale: CGFloat = 0.5
     static let badgeMinFontSize: CGFloat = 6
+    static let plainLabelMaxLength = 5
+    /// Faint text lines on a big empty page, as shares of its width, so it reads as a written sheet.
+    static let lineWidths: [CGFloat] = [0.6, 0.72, 0.5, 0.66]
+    static let lineHeightShare: CGFloat = 0.04
+    static let lineSpacingShare: CGFloat = 0.06
+    static let lineInsetShare: CGFloat = 0.14
+    static let linesTopShare: CGFloat = 0.38
+    static let lineOpacity: Double = 0.5
+    static let pageTintOpacity: Double = 0.14
+    static let kindGlyphShare: CGFloat = 0.34
+    static let kindGlyphCenterShare: CGFloat = 0.42
+    static let javaArchiveKinds: Set<String> = ["jar", "war", "ear"]
+    static let installerKinds: Set<String> = ["exe", "msi", "apk", "dmg", "pkg", "deb", "rpm", "ipa", "appimage"]
+    static let fontKinds: Set<String> = ["ttf", "otf", "woff", "woff2"]
+    static let databaseKinds: Set<String> = ["db", "sqlite", "sqlite3", "sql"]
+    static let spreadsheetKinds: Set<String> = ["xls", "xlsx", "csv", "gsheet", "numbers", "ods"]
+    static let keyKinds: Set<String> = ["key", "pem", "crt", "cer", "pub", "p12", "pfx", "gpg", "asc"]
+    static let documentKinds: Set<String> = [
+        "doc", "docx", "rtf", "pdf", "txt", "md", "markdown", "pages", "odt", "gdoc", "log",
+    ]
 }
 
-/// A colored text badge for an extension the web app dedicates a distinct color to
-/// (`frontend/src/icons/FileIcon.vue`'s `badge` switch): kept as raw hex to match that
-/// source 1:1 rather than re-deriving DS semantic colors for ~50 one-off brand colors.
-private struct FileBadge {
-    let label: String
-    let background: Color
-    let foreground: Color
-}
-
-private extension FileItem {
-    /// Mirrors the web client's per-extension badge table exactly (`FileIcon.vue`'s `badge`
-    /// computed property), same labels, same hex colors, so a `.py` file looks the same
-    /// shade of blue here as it does on the web.
-    static func badge(forKind kind: String) -> FileBadge? {
-        switch kind.lowercased() {
-        case "pdf": FileBadge(label: "PDF", background: Color(hex: 0xE81123), foreground: .white)
-        case "doc", "docx", "rtf": FileBadge(label: "DOC", background: Color(hex: 0x2563EB), foreground: .white)
-        case "xls", "xlsx": FileBadge(label: "XLS", background: Color(hex: 0x16A34A), foreground: .white)
-        case "ppt", "pptx": FileBadge(label: "PPT", background: Color(hex: 0xF97316), foreground: .white)
-        case "csv": FileBadge(label: "CSV", background: Color(hex: 0x22C55E), foreground: .white)
-        case "txt": FileBadge(label: "TXT", background: Color(hex: 0x6B7280), foreground: .white)
-        case "md", "markdown": FileBadge(label: "MD", background: Color(hex: 0x0EA5E9), foreground: .white)
-        case "html", "htm": FileBadge(label: "HTML", background: Color(hex: 0xE44D26), foreground: .white)
-        case "gsheet": FileBadge(label: "SHEET", background: Color(hex: 0x188038), foreground: .white)
-        case "gdoc": FileBadge(label: "DOC", background: Color(hex: 0x1A73E8), foreground: .white)
-        case "gslides": FileBadge(label: "SLIDES", background: Color(hex: 0xF9AB00), foreground: Color(hex: 0x111827))
-        case "gform": FileBadge(label: "FORM", background: Color(hex: 0x7627BB), foreground: .white)
-        case "gdraw": FileBadge(label: "DRAW", background: Color(hex: 0xEA4335), foreground: .white)
-        case "css": FileBadge(label: "CSS", background: Color(hex: 0x2965F1), foreground: .white)
-        case "scss": FileBadge(label: "SCSS", background: Color(hex: 0xC6538C), foreground: .white)
-        case "less": FileBadge(label: "LESS", background: Color(hex: 0x1D365D), foreground: .white)
-        case "js": FileBadge(label: "JS", background: Color(hex: 0xF7DF1E), foreground: .black)
-        case "ts": FileBadge(label: "TS", background: Color(hex: 0x3178C6), foreground: .white)
-        case "jsx": FileBadge(label: "JSX", background: Color(hex: 0x61DAFB), foreground: .black)
-        case "tsx": FileBadge(label: "TSX", background: Color(hex: 0x3178C6), foreground: .white)
-        case "vue": FileBadge(label: "VUE", background: Color(hex: 0x41B883), foreground: Color(hex: 0x0B1921))
-        case "json": FileBadge(label: "JSON", background: Color(hex: 0x8B5CF6), foreground: .white)
-        case "yml", "yaml": FileBadge(label: "YAML", background: Color(hex: 0x14B8A6), foreground: Color(hex: 0x073B3A))
-        case "xml": FileBadge(label: "XML", background: Color(hex: 0xEC4899), foreground: .white)
-        case "sh", "bash", "zsh": FileBadge(label: "SH", background: Color(hex: 0x374151), foreground: .white)
-        case "py": FileBadge(label: "PY", background: Color(hex: 0x3776AB), foreground: .white)
-        case "rb": FileBadge(label: "RB", background: Color(hex: 0xCC342D), foreground: .white)
-        case "php": FileBadge(label: "PHP", background: Color(hex: 0x777BB4), foreground: .white)
-        case "go": FileBadge(label: "GO", background: Color(hex: 0x00ADD8), foreground: Color(hex: 0x073B4C))
-        case "rs": FileBadge(label: "RS", background: Color(hex: 0xDEA584), foreground: .black)
-        case "java": FileBadge(label: "JAVA", background: Color(hex: 0xE11D48), foreground: .white)
-        case "kt", "kts": FileBadge(label: "KT", background: Color(hex: 0x7F52FF), foreground: .white)
-        case "swift": FileBadge(label: "SWIFT", background: Color(hex: 0xFA7343), foreground: .white)
-        case "c": FileBadge(label: "C", background: Color(hex: 0x5C6BC0), foreground: .white)
-        case "cpp", "cc", "cxx": FileBadge(label: "CPP", background: Color(hex: 0x00599C), foreground: .white)
-        case "cs": FileBadge(label: "CS", background: Color(hex: 0x239120), foreground: .white)
-        case "sql": FileBadge(label: "SQL", background: Color(hex: 0x0EA5E9), foreground: .white)
-        case "db", "sqlite", "sqlite3": FileBadge(label: "DB", background: Color(hex: 0x0EA5E9), foreground: .white)
-        case "ini", "conf", "cfg": FileBadge(label: "CFG", background: Color(hex: 0x6B7280), foreground: .white)
-        case "toml": FileBadge(label: "TOML", background: Color(hex: 0x0F766E), foreground: .white)
-        case "env": FileBadge(label: "ENV", background: Color(hex: 0x059669), foreground: .white)
-        case "svg": FileBadge(label: "SVG", background: Color(hex: 0x8B5CF6), foreground: .white)
-        case "ttf", "otf", "woff", "woff2": FileBadge(
-                label: "FONT",
-                background: Color(hex: 0x9CA3AF),
-                foreground: Color(hex: 0x111827)
-            )
-        case "lock": FileBadge(label: "LOCK", background: Color(hex: 0x6B7280), foreground: .white)
-        case "psd": FileBadge(label: "PSD", background: Color(hex: 0x001E36), foreground: Color(hex: 0x00C8FF))
-        case "ai": FileBadge(label: "AI", background: Color(hex: 0x300000), foreground: Color(hex: 0xFF9A00))
-        case "fig": FileBadge(label: "FIG", background: Color(hex: 0xA259FF), foreground: .white)
-        case "sketch": FileBadge(label: "SKETCH", background: Color(hex: 0xFDB300), foreground: Color(hex: 0x111827))
-        case "exe": FileBadge(label: "EXE", background: Color(hex: 0x111827), foreground: .white)
-        case "msi": FileBadge(label: "MSI", background: Color(hex: 0x0EA5E9), foreground: .white)
-        case "apk": FileBadge(label: "APK", background: Color(hex: 0x34D399), foreground: Color(hex: 0x073B3A))
-        case "dmg": FileBadge(label: "DMG", background: Color(hex: 0x6B7280), foreground: .white)
-        case "pkg": FileBadge(label: "PKG", background: Color(hex: 0xF59E0B), foreground: Color(hex: 0x111827))
-        case "deb": FileBadge(label: "DEB", background: Color(hex: 0xCC0000), foreground: .white)
-        case "rpm": FileBadge(label: "RPM", background: Color(hex: 0xEE0000), foreground: .white)
-        case "log": FileBadge(label: "LOG", background: Color(hex: 0x9CA3AF), foreground: Color(hex: 0x111827))
-        case "tmp": FileBadge(label: "TMP", background: Color(hex: 0xD1D5DB), foreground: Color(hex: 0x111827))
-        case "bak": FileBadge(label: "BAK", background: Color(hex: 0xD1D5DB), foreground: Color(hex: 0x111827))
-        default: nil
-        }
-    }
-}
-
-/// A page silhouette with a folded top-right corner: the same base shape the web app's
+/// A page silhouette with a folded top right corner: the same base shape the web app's
 /// `FileBadgeIcon.vue`/`txt-icon.vue`/etc. all share, just as a native `Shape` instead of a
 /// literal SVG path.
 struct FilePageShape: Shape {
@@ -126,35 +64,151 @@ struct FilePageShape: Shape {
     }
 }
 
-/// A real per-file-type icon: a page silhouette with a colored bottom banner showing the
-/// extension itself (Google Drive's file-icon style: every kind reads its own format, not
-/// just a generic category glyph), falling back to a plain page for extensions with no
-/// dedicated color.
+/// A real per file type icon: a page silhouette with a bottom banner showing the extension
+/// itself, so every kind reads its own format. Kinds with no dedicated colour get a neutral
+/// banner; a missing or overlong extension falls back to a plain page.
 struct FileTypeIcon: View {
     let kind: String
+    /// The banner's share of the page's height; a page drawn big takes `FileTypeBanner.slimHeightFraction`.
+    var bannerHeightFraction: CGFloat = Constants.badgeHeightFraction
+
+    /// A page drawn big (a grid well, with a slim banner) has room to say what the file is; a row
+    /// icon stays clean.
+    private var isBig: Bool {
+        bannerHeightFraction < Constants.badgeHeightFraction
+    }
 
     var body: some View {
         FilePageShape()
             .fill(Color.backgroundSecondary)
+            .overlay {
+                if isBig, let tint = Self.bannerBadge(forKind: kind)?.background {
+                    FilePageShape().fill(tint.opacity(Constants.pageTintOpacity))
+                }
+            }
             .overlay(FilePageShape().stroke(Color.tertiaryDS, lineWidth: Constants.pageStrokeWidth))
             .overlay(overlayContent)
     }
 
     @ViewBuilder
     private var overlayContent: some View {
-        if FileItem.isImageKind(kind) || FileItem.isRawImageKind(kind) {
-            badgeBanner(FileBadge(label: kind.uppercased(), background: Color(hex: 0x10B981), foreground: .white))
-        } else if FileItem.isVideoKind(kind) {
-            badgeBanner(FileBadge(label: kind.uppercased(), background: Color(hex: 0x7C3AED), foreground: .white))
-        } else if FileItem.isAudioKind(kind) {
-            badgeBanner(FileBadge(label: kind.uppercased(), background: Color(hex: 0x06B6D4), foreground: .white))
-        } else if FileItem.isArchiveKind(kind) {
-            badgeBanner(FileBadge(label: kind.uppercased(), background: Color(hex: 0xF59E0B), foreground: .white))
-        } else if let badge = FileItem.badge(forKind: kind) {
-            badgeBanner(badge)
+        if Self.hasBanner(forKind: kind) {
+            if isBig {
+                if let glyph = Self.kindGlyph(forKind: kind) {
+                    kindGlyphView(glyph)
+                } else if Constants.documentKinds.contains(kind.lowercased()) {
+                    placeholderLines
+                }
+            }
+            FileTypeBanner(kind: kind, heightFraction: bannerHeightFraction)
         } else {
             glyph(IconKit.document, tint: Color.secondaryDS)
         }
+    }
+
+    /// The colour a kind is known by: its banner here, and the tint of a grid tile's picture well for
+    /// files with no picture of their own. `nil` for kinds drawn as a plain page.
+    static func tint(forKind kind: String) -> Color? {
+        badge(forKind: kind)?.background
+    }
+
+    /// Whether a kind's page carries an extension banner, or stays a plain page.
+    nonisolated static func hasBanner(forKind kind: String) -> Bool {
+        bannerBadge(forKind: kind) != nil
+    }
+
+    fileprivate nonisolated static func bannerBadge(forKind kind: String) -> FileBadge? {
+        badge(forKind: kind) ?? plainBadge(forKind: kind)
+    }
+
+    /// A kind with no colour of its own still reads its extension, on a neutral banner. Kinds too long
+    /// for a banner, or none at all, keep the plain page.
+    private nonisolated static func plainBadge(forKind kind: String) -> FileBadge? {
+        guard kind != FileItem.unknownKind,
+              (1 ... Constants.plainLabelMaxLength).contains(kind.count),
+              kind.allSatisfy({ $0.isLetter || $0.isNumber })
+        else { return nil }
+        return FileBadge(label: kind.uppercased(), background: .secondaryDS, foreground: .backgroundPrimary)
+    }
+
+    private nonisolated static func badge(forKind kind: String) -> FileBadge? {
+        if FileItem.isImageKind(kind) || FileItem.isRawImageKind(kind) {
+            FileBadge(label: kind.uppercased(), background: Color(hex: 0x10B981), foreground: .white)
+        } else if FileItem.isVideoKind(kind) {
+            FileBadge(label: kind.uppercased(), background: Color(hex: 0x7C3AED), foreground: .white)
+        } else if FileItem.isAudioKind(kind) {
+            FileBadge(label: kind.uppercased(), background: Color(hex: 0x06B6D4), foreground: .white)
+        } else if FileItem.isArchiveKind(kind) {
+            FileBadge(label: kind.uppercased(), background: Color(hex: 0xF59E0B), foreground: .white)
+        } else {
+            FileItem.badge(forKind: kind)
+        }
+    }
+
+    /// What a file is, for a big page: archives, installers, code, fonts, databases, sheets, keys and
+    /// media each get their glyph. Documents get faint text lines instead; anything else stays plain.
+    private static func kindGlyph(forKind kind: String) -> Image? {
+        let kind = kind.lowercased()
+        if FileItem.isArchiveKind(kind) || Constants.javaArchiveKinds.contains(kind) {
+            return IconKit.kindArchive
+        }
+        if FileItem.isImageKind(kind) || FileItem.isRawImageKind(kind) {
+            return IconKit.photo
+        }
+        if FileItem.isVideoKind(kind) {
+            return IconKit.film
+        }
+        if FileItem.isAudioKind(kind) {
+            return IconKit.music
+        }
+        if Constants.installerKinds.contains(kind) {
+            return IconKit.kindInstaller
+        }
+        if Constants.fontKinds.contains(kind) {
+            return IconKit.kindFont
+        }
+        if Constants.databaseKinds.contains(kind) {
+            return IconKit.kindDatabase
+        }
+        if Constants.spreadsheetKinds.contains(kind) {
+            return IconKit.table
+        }
+        if Constants.keyKinds.contains(kind) {
+            return IconKit.key
+        }
+        if !Constants.documentKinds.contains(kind), TextSnippet.isTextKind(kind) {
+            return IconKit.kindCode
+        }
+        return nil
+    }
+
+    private func kindGlyphView(_ glyph: Image) -> some View {
+        GeometryReader { proxy in
+            let side = proxy.size.width * Constants.kindGlyphShare
+            glyph
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(Self.bannerBadge(forKind: kind)?.background ?? Color.secondaryDS)
+                .frame(width: side, height: side)
+                .position(x: proxy.size.width / 2, y: proxy.size.height * Constants.kindGlyphCenterShare)
+        }
+        .accessibilityHidden(true)
+    }
+
+    private var placeholderLines: some View {
+        GeometryReader { proxy in
+            let width = proxy.size.width
+            VStack(alignment: .leading, spacing: width * Constants.lineSpacingShare) {
+                ForEach(Constants.lineWidths, id: \.self) { share in
+                    Capsule()
+                        .fill(Color.tertiaryDS.opacity(Constants.lineOpacity))
+                        .frame(width: width * share, height: width * Constants.lineHeightShare)
+                }
+            }
+            .padding(.leading, width * Constants.lineInsetShare)
+            .padding(.top, proxy.size.height * Constants.linesTopShare)
+        }
+        .accessibilityHidden(true)
     }
 
     private func glyph(_ image: Image, tint: Color) -> some View {
@@ -170,6 +224,23 @@ struct FileTypeIcon: View {
                 .frame(width: proxy.size.width, height: proxy.size.height)
         }
     }
+}
+
+/// The extension banner along a page's foot, the same in a type icon and over a text file's own
+/// lines. Draws nothing for a kind that keeps the plain page.
+struct FileTypeBanner: View {
+    /// The banner's share of a page drawn big (a grid well), so its label stays the size of a row icon's.
+    static let slimHeightFraction: CGFloat = 0.2
+
+    let kind: String
+    /// The banner's share of the page's height.
+    var heightFraction: CGFloat = Constants.badgeHeightFraction
+
+    var body: some View {
+        if let badge = FileTypeIcon.bannerBadge(forKind: kind) {
+            badgeBanner(badge)
+        }
+    }
 
     private func badgeBanner(_ badge: FileBadge) -> some View {
         GeometryReader { proxy in
@@ -177,13 +248,13 @@ struct FileTypeIcon: View {
                 Spacer()
                 RoundedRectangle(cornerRadius: Constants.badgeCornerRadius)
                     .fill(badge.background)
-                    .frame(height: proxy.size.height * Constants.badgeHeightFraction)
+                    .frame(height: proxy.size.height * heightFraction)
                     .overlay(
                         Text(badge.label)
                             .font(.system(
                                 size: max(
                                     Constants.badgeMinFontSize,
-                                    proxy.size.height * Constants.badgeHeightFraction * 0.62
+                                    proxy.size.height * heightFraction * 0.62
                                 ),
                                 weight: .heavy
                             ))
@@ -240,8 +311,15 @@ struct FileTypeIcon: View {
     .padding(.space16)
 }
 
-#Preview("Unknown extension falls back to a plain page") {
-    FileTypeIcon(kind: "xyz123")
-        .frame(width: .iconLarge, height: .iconLarge)
-        .padding(.space16)
+#Preview("Neutral banner, then a plain page") {
+    HStack(spacing: .space16) {
+        FileTypeIcon(kind: "jar", bannerHeightFraction: FileTypeBanner.slimHeightFraction)
+        FileTypeIcon(kind: "exe", bannerHeightFraction: FileTypeBanner.slimHeightFraction)
+        FileTypeIcon(kind: "docx", bannerHeightFraction: FileTypeBanner.slimHeightFraction)
+        FileTypeIcon(kind: "jar")
+        FileTypeIcon(kind: "xyz123")
+        FileTypeIcon(kind: FileItem.unknownKind)
+    }
+    .frame(height: .iconLarge)
+    .padding(.space16)
 }

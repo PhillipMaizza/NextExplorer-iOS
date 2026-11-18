@@ -29,11 +29,6 @@ struct OfflineTabView: View {
     @State private var offlinePhase = OfflineDownloadProgress.Phase.idle
     /// The same list or grid choice as Browse and Favorites, so a folder opened from this tab keeps it.
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
-    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-
-    private var thumbnailSize: ThumbnailSize {
-        ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium
-    }
 
     @State private var previewedDownload: LocalDownload?
     /// Native `.zoom` open + swipe to dismiss morph between a kept file or download and its preview.
@@ -161,25 +156,30 @@ struct OfflineTabView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
+            VStack(alignment: .leading, spacing: FileGridMetrics.sectionSpacing) {
                 if listPhase == .loading {
-                    SkeletonGridCells(entries: Constants.skeletonEntries)
+                    FileGrid {
+                        SkeletonGridCells(entries: Constants.skeletonEntries)
+                    }
                 } else {
-                    OfflinePinnedGridCells(
-                        store: offlineStore,
-                        usages: displayedPinned,
-                        favorites: favorites,
-                        serverURL: store.serverURL,
-                        showThumbnails: store.preferences.showThumbnails,
-                        isSelecting: store.isSelecting,
-                        selectedPaths: store.selectedPinnedPaths,
-                        zoom: zoom,
-                        onOpen: pinnedTapped
-                    )
-                    downloadCells
+                    OfflinePinnedGrid(
+                        cells: OfflinePinnedGridCells(
+                            store: offlineStore,
+                            usages: displayedPinned,
+                            favorites: favorites,
+                            serverURL: store.serverURL,
+                            showThumbnails: store.preferences.showThumbnails,
+                            isSelecting: store.isSelecting,
+                            selectedPaths: store.selectedPinnedPaths,
+                            zoom: zoom,
+                            onOpen: pinnedTapped
+                        )
+                    ) {
+                        downloadCells
+                    }
                 }
             }
-            .padding(FileGridMetrics.spacing)
+            .padding(FileGridMetrics.margin)
             .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
         }
         .modifier(OfflineTabDragToSelect(store: store, pinnedPaths: displayedPinned.map(\.root.path)))

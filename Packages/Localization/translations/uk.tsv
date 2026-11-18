@@ -55,6 +55,12 @@ directLinkMode.download	Завантажити
 thumbnailSize.small	Малий
 thumbnailSize.medium	Середній
 thumbnailSize.large	Великий
+grid.sectionFolders	Папки
+grid.sectionFiles	Файли
+grid.settingsTitle	Сітка
+grid.settingsButton	Налаштування сітки
+grid.sizeTitle	Розмір
+grid.perRow	%lld у ряд
 dateFormat.automatic	Автоматично
 browse.navigationTitle	Огляд
 browse.scopeThisFolder	Ця папка

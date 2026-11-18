@@ -51,6 +51,12 @@ directLinkMode.download	다운로드
 thumbnailSize.small	작게
 thumbnailSize.medium	보통
 thumbnailSize.large	크게
+grid.sectionFolders	폴더
+grid.sectionFiles	파일
+grid.settingsTitle	격자
+grid.settingsButton	격자 설정
+grid.sizeTitle	크기
+grid.perRow	한 줄에 %lld개
 dateFormat.automatic	자동
 browse.navigationTitle	탐색
 browse.scopeThisFolder	이 폴더

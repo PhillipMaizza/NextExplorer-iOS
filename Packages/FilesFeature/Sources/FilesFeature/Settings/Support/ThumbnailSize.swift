@@ -1,10 +1,9 @@
-import DesignSystem
 import Foundation
 import Localization
 
-/// User-facing grid thumbnail size, persisted locally (`AppStorageKeys.thumbnailSize`): a
-/// purely client display preference the real server has no concept of, same as
-/// `DateDisplayFormat`/`browseViewMode`.
+/// User facing grid size, persisted locally (`AppStorageKeys.thumbnailSize`, named for its first
+/// meaning): how many files share a row. A purely client display preference the real server has no
+/// concept of, same as `DateDisplayFormat`/`browseViewMode`.
 public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {
     case small
     case medium
@@ -22,13 +21,47 @@ public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Size of the icon or thumbnail within a grid tile. The tile itself keeps one size, so the
-    /// setting grows the picture, not the grid.
-    public var iconSize: CGFloat {
+    /// Files per row on a compact width screen (an iPhone): the grid size the user picks.
+    public var columnCount: Int {
         switch self {
-        case .small: .iconLarge
-        case .medium: .size56
-        case .large: .size72
+        case .small: 4
+        case .medium: 3
+        case .large: 2
         }
+    }
+
+    /// A file column's narrowest width on a regular width screen (an iPad, an open Duo), where a
+    /// fixed count would make each tile huge: columns are added as the width allows instead.
+    public var minimumColumnWidth: CGFloat {
+        switch self {
+        case .small: 96
+        case .medium: 128
+        case .large: 192
+        }
+    }
+
+    /// Folder cards per row on a compact width screen: one fewer than files, never under two, as a card
+    /// carries its name beside more room than a tile.
+    public var folderColumnCount: Int {
+        max(columnCount - 1, 2)
+    }
+
+    /// A folder column's narrowest width on a regular width screen.
+    public var minimumFolderColumnWidth: CGFloat {
+        switch self {
+        case .small: 160
+        case .medium: 200
+        case .large: 260
+        }
+    }
+
+    /// The roomiest size: wider pictures and bigger names, as two to a row allows.
+    public var isRoomy: Bool {
+        self == .large
+    }
+
+    /// The densest size: folder cards shrink to fit three to a row.
+    public var isDense: Bool {
+        self == .small
     }
 }
