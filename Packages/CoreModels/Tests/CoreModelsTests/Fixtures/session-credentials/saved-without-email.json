@@ -1,0 +1,10 @@
+{
+  "serverBaseURL": "https://files.example.com",
+  "authMode": "local",
+  "cookieName": "connect.sid",
+  "cookieValue": "abc",
+  "cookieDomain": "files.example.com",
+  "cookiePath": "/",
+  "cookieIsSecure": true,
+  "username": "phillip"
+}

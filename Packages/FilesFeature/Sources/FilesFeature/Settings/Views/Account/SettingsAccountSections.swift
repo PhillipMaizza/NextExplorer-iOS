@@ -53,7 +53,7 @@ struct SettingsAccountsSection: View {
                 }
                 signOutRow
             }
-            ForEach(store.accounts.filter { !$0.isActive }) { account in
+            ForEach(store.accountRows.filter { !$0.isActive }) { account in
                 switchableAccountRow(account)
             }
             addAccountRow
@@ -74,10 +74,12 @@ struct SettingsAccountsSection: View {
 
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(account.displayName).type(.body2(.bold), style: .primaryOnSurface)
-                    Text(account.serverHost)
-                        .type(.body3(.regular), style: .secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                    if let server = account.serverSubtitle {
+                        Text(server)
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                 }
 
                 Spacer()
@@ -112,10 +114,12 @@ struct SettingsAccountsSection: View {
                 VStack(alignment: .leading, spacing: .space2) {
                     // Secondary color (not primary) so an inactive account reads as dimmed.
                     Text(account.displayName).type(.body2(.regular), style: .secondary)
-                    Text(account.serverHost)
-                        .type(.body3(.regular), style: .secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                    if let server = account.serverSubtitle {
+                        Text(server)
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                 }
 
                 Spacer()
@@ -191,18 +195,32 @@ struct SettingsAccountsSection: View {
 }
 
 extension SettingsFeature.State {
-    /// The active account. Falls back to one synthesized from the signed in user + server when the
-    /// shared account list hasn't been populated yet (a fresh mount before the switcher refresh, or
-    /// a preview), so the active account row, password change and sign out are always present.
-    var activeAccount: AccountSummary {
-        if let active = accounts.first(where: \.isActive) {
-            return active
+    /// Every account to list. Falls back to one synthesized from the signed in user + server when
+    /// the shared account list hasn't been populated yet (a fresh mount before the switcher
+    /// refresh, or a preview), so the active account row, password change and sign out are always
+    /// present. The active account shows the signed in user's current email over the one saved
+    /// with its session, which can be stale or missing.
+    var accountRows: [AccountSummary] {
+        guard !accounts.isEmpty else { return [signedInAccount] }
+        return accounts.map { account in
+            guard account.isActive else { return account }
+            var current = account
+            current.email = user.email ?? account.email
+            return current
         }
-        return AccountSummary(
+    }
+
+    var activeAccount: AccountSummary {
+        accountRows.first(where: \.isActive) ?? signedInAccount
+    }
+
+    private var signedInAccount: AccountSummary {
+        AccountSummary(
             id: serverURL.absoluteString + "|" + user.username,
-            username: displayName,
+            username: user.username,
             serverURL: serverURL,
-            isActive: true
+            isActive: true,
+            email: user.email
         )
     }
 }

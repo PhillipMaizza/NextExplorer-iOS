@@ -123,45 +123,8 @@ private struct PreviewChrome: ViewModifier {
                 .toolbarBackground(.bar, for: .navigationBar, .bottomBar)
                 .toolbarBackgroundVisibility(hasFrostedBars ? .visible : .hidden, for: .navigationBar)
                 .toolbarBackgroundVisibility(hasFrostedBars ? .visible : .automatic, for: .bottomBar)
-                // The file's actions live in the title's menu, grouped: about the
-                // file, sending it, keeping it, removing it.
                 .toolbarTitleMenu {
-                    Section {
-                        menuButton(L10n.Browse.actionGetInfo, icon: IconKit.info, action: onInfo)
-                        menuButton(L10n.PreviewToolbar.rename, icon: IconKit.rename, action: onRename)
-                        menuButton(L10n.Browse.actionMove, icon: IconKit.move, action: onMove)
-                        menuButton(L10n.Browse.actionCopy, icon: IconKit.copy, action: onCopy)
-                    }
-                    Section {
-                        menuButton(L10n.PreviewToolbar.createShareLink, icon: IconKit.shareLink, action: onShareLink)
-                        if !hasBottomBar, hasSystemShare {
-                            Button { shareModel.prepare(systemShare) } label: {
-                                Label { Text(L10n.PreviewToolbar.share) } icon: { menuIcon(IconKit.share) }
-                            }
-                            .disabled(shareModel.isPreparing)
-                        }
-                        menuButton(downloadTitle, icon: downloadIcon, action: onDownload)
-                    }
-                    if let offlineAction {
-                        Section {
-                            RemovableMenuButton(
-                                title: offlineAction.isOn
-                                    ? L10n.Browse.actionRemoveFromOffline
-                                    : L10n.Browse.actionAvailableOffline,
-                                icon: IconKit.availableOffline,
-                                isRemoval: offlineAction.isOn,
-                                action: offlineAction.toggle
-                            )
-                        }
-                    }
-                    if !hasBottomBar, let onDelete {
-                        Section {
-                            Button(role: .destructive) { onDelete() } label: {
-                                Label { Text(L10n.PreviewToolbar.delete) } icon: { IconKit.delete }
-                            }
-                            .tint(.red)
-                        }
-                    }
+                    fileActions(includesShare: !hasBottomBar, includesDelete: !hasBottomBar)
                 }
                 .tint(Color.primaryDS)
                 .toolbar {
@@ -204,65 +167,94 @@ private struct PreviewChrome: ViewModifier {
         #endif
     }
 
-    #if os(iOS)
-        /// One plain title menu entry in the primary color; `nil` leaves it out.
-        @ViewBuilder
-        private func menuButton(_ title: String, icon: Image, action: (() -> Void)?) -> some View {
-            if let action {
-                Button { action() } label: {
-                    Label { Text(title) } icon: { menuIcon(icon) }
+    private var hasFileActions: Bool {
+        [onInfo, onRename, onMove, onCopy, onShareLink, onDownload, onDelete].contains { $0 != nil }
+            || offlineAction != nil
+    }
+
+    /// The file's actions, grouped: about the file, sending it, keeping it, removing it. The
+    /// title menu on iOS, the More menu on the Mac.
+    @ViewBuilder
+    private func fileActions(includesShare: Bool, includesDelete: Bool) -> some View {
+        Section {
+            menuButton(L10n.Browse.actionGetInfo, icon: IconKit.info, action: onInfo)
+            menuButton(L10n.PreviewToolbar.rename, icon: IconKit.rename, action: onRename)
+            menuButton(L10n.Browse.actionMove, icon: IconKit.move, action: onMove)
+            menuButton(L10n.Browse.actionCopy, icon: IconKit.copy, action: onCopy)
+        }
+        Section {
+            menuButton(L10n.PreviewToolbar.createShareLink, icon: IconKit.shareLink, action: onShareLink)
+            if includesShare, hasSystemShare {
+                Button { shareModel.prepare(systemShare) } label: {
+                    Label { Text(L10n.PreviewToolbar.share) } icon: { menuIcon(IconKit.share) }
                 }
+                .disabled(shareModel.isPreparing)
+            }
+            menuButton(downloadTitle, icon: downloadIcon, action: onDownload)
+        }
+        if let offlineAction {
+            Section {
+                RemovableMenuButton(
+                    title: offlineAction.isOn
+                        ? L10n.Browse.actionRemoveFromOffline
+                        : L10n.Browse.actionAvailableOffline,
+                    icon: IconKit.availableOffline,
+                    isRemoval: offlineAction.isOn,
+                    action: offlineAction.toggle
+                )
             }
         }
-    #endif
+        if includesDelete, let onDelete {
+            Section {
+                Button(role: .destructive) { onDelete() } label: {
+                    Label { Text(L10n.PreviewToolbar.delete) } icon: { IconKit.delete }
+                }
+                .tint(.red)
+            }
+        }
+    }
+
+    /// One plain menu entry in the primary color; `nil` leaves it out.
+    @ViewBuilder
+    private func menuButton(_ title: String, icon: Image, action: (() -> Void)?) -> some View {
+        if let action {
+            Button { action() } label: {
+                Label { Text(title) } icon: { menuIcon(icon) }
+            }
+        }
+    }
 
     #if os(macOS)
-        /// Close (Esc) on the leading edge, the file name in the middle, the actions trailing in
-        /// plain system glyphs, Delete marked destructive.
+        /// Close (Esc) on the leading edge, the file name in the middle, then Edit, Open With and
+        /// Share as buttons and every other action in one More menu, like Finder's toolbar.
         private var macBar: some View {
             MacPreviewBar(title: title, onClose: onClose) {
                 EmptyView()
             } trailing: {
                 if let onEdit {
-                    macButton(L10n.Common.edit, icon: IconKit.rename, action: onEdit)
+                    Button(action: onEdit) {
+                        Label { Text(L10n.Common.edit) } icon: { IconKit.rename }
+                    }
+                    .help(L10n.Common.edit)
                 }
                 if hasSystemShare {
                     MacOpenWithMenu(source: systemShare)
                         .fixedSize()
                     SystemShareButton(source: systemShare)
                 }
-                if let onShareLink {
-                    macButton(L10n.PreviewToolbar.createShareLink, icon: IconKit.shareLink, action: onShareLink)
-                }
-                if let onRename {
-                    macButton(L10n.PreviewToolbar.rename, icon: IconKit.rename, action: onRename)
-                }
-                if let onDownload {
-                    macButton(L10n.PreviewToolbar.download, icon: IconKit.download, action: onDownload)
-                }
-                if let offlineAction {
-                    macButton(
-                        offlineAction.isOn ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
-                        icon: IconKit.availableOffline,
-                        action: offlineAction.toggle
-                    )
-                }
-                if let onDelete {
-                    macButton(L10n.PreviewToolbar.delete, icon: IconKit.delete, role: .destructive, action: onDelete)
+                if hasFileActions {
+                    Menu {
+                        fileActions(includesShare: false, includesDelete: true)
+                    } label: {
+                        IconKit.moreOptions
+                    }
+                    .menuStyle(.borderlessButton)
+                    .menuIndicator(.hidden)
+                    .fixedSize()
+                    .tint(Color.primaryDS)
+                    .accessibilityLabelWithTooltip(L10n.Common.more)
                 }
             }
-        }
-
-        private func macButton(
-            _ title: String,
-            icon: Image,
-            role: ButtonRole? = nil,
-            action: @escaping () -> Void
-        ) -> some View {
-            Button(role: role, action: action) {
-                Label { Text(title) } icon: { icon }
-            }
-            .help(title)
         }
     #endif
 }

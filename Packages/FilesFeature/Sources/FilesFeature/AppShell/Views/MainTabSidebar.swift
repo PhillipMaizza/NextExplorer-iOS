@@ -23,7 +23,7 @@ private enum Constants {
             .body1(.bold)
         }
 
-        static var profileEmailType: Typography.TextType {
+        static var profileServerType: Typography.TextType {
             .body3(.regular)
         }
     #elseif os(macOS)
@@ -32,12 +32,10 @@ private enum Constants {
             .body3(.bold)
         }
 
-        static var profileEmailType: Typography.TextType {
+        static var profileServerType: Typography.TextType {
             .caption(.regular)
         }
     #endif
-    /// The Mac sidebar column opens wider than the system default, since a Mac window has the
-    /// space an iPad split view does not.
     /// Where the system's selection pill sits inside a sidebar row, so the hover wash lines up with it.
     static let macPillInset: CGFloat = .space16
     /// Keeps the account chevron off the Mac card's edge.
@@ -46,8 +44,8 @@ private enum Constants {
     static let accountCardOpacity: Double = 0.06
     /// The Mac opens the sidebar at its minimum rather than its ideal, so the minimum is what
     /// keeps the account name and the ⌘ hints from crowding.
-    static let macSidebarMinWidth: CGFloat = 250
-    static let macSidebarIdealWidth: CGFloat = 270
+    static let macSidebarMinWidth: CGFloat = 280
+    static let macSidebarIdealWidth: CGFloat = 300
     static let macSidebarMaxWidth: CGFloat = 360
     #if os(macOS)
         /// The Mac rows carry their own inset inside their pill, so the footer sits on the sections' edge.
@@ -291,7 +289,7 @@ struct MainTabSidebar: View {
         #endif
     }
 
-    /// Signed in identity at the foot of the sidebar: avatar, name and email. It opens the account
+    /// Signed in identity at the foot of the sidebar: avatar, name and server address. It opens the account
     /// popover, for switching, adding and signing out without a trip to Settings.
     private var sidebarProfile: some View {
         SidebarAccountMenu(
@@ -321,16 +319,16 @@ struct MainTabSidebar: View {
 
     private var profileSummary: some View {
         HStack(spacing: .space12) {
-            AvatarView(displayName: store.settings.displayName, size: Constants.avatarSize)
+            AvatarView(displayName: store.settings.activeAccount.displayName, size: Constants.avatarSize)
             VStack(alignment: .leading, spacing: .space2) {
-                Text(store.settings.displayName)
+                Text(store.settings.activeAccount.displayName)
                     .type(Constants.profileNameType, style: .primaryOnSurface)
                     .lineLimit(1)
-                if let email = store.settings.user.email {
-                    Text(email)
-                        .type(Constants.profileEmailType, style: .secondary)
+                if let server = store.settings.activeAccount.serverSubtitle {
+                    Text(server)
+                        .type(Constants.profileServerType, style: .secondary)
                         .lineLimit(1)
-                        .truncationMode(.tail)
+                        .truncationMode(.middle)
                 }
             }
             Spacer(minLength: 0)

@@ -75,6 +75,11 @@ extension ShareUploadFeatureTests {
             #expect(ShareUploadFeature.State.name(for: anonymous) == TestHost.server)
             anonymous.username = ""
             #expect(ShareUploadFeature.State.name(for: anonymous) == TestHost.server)
+            anonymous.email = TestAccount.email
+            #expect(ShareUploadFeature.State.name(for: anonymous) == L10n.ShareUpload.accountSummary(
+                TestAccount.email,
+                TestHost.server
+            ))
         }
 
         @Test

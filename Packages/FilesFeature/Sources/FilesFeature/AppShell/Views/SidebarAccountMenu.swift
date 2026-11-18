@@ -40,7 +40,7 @@ struct SidebarAccountMenu<Label: View>: View {
         .buttonStyle(.plain)
         .accessibilityLabel(L10n.Settings.sectionAccounts)
         // The label is the signed in identity; VoiceOver reads it as the button's value.
-        .accessibilityValue(store.displayName)
+        .accessibilityValue(store.activeAccount.displayName)
         .popover(isPresented: $isPresented, arrowEdge: .bottom) {
             AccountPopover(store: store, revealSettings: revealSettings) { action in
                 isPresented = false
@@ -65,7 +65,7 @@ private struct AccountPopover: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: .space4) {
-            ForEach(accounts) { account in
+            ForEach(store.accountRows) { account in
                 AccountRow(
                     account: account,
                     onSwitch: { dismissThen { store.send(.switchAccountTapped(account.id)) } },
@@ -121,17 +121,6 @@ private struct AccountPopover: View {
             store.send(.removeAccountTapped(account))
         }
     }
-
-    /// Falls back to the signed in user before the shared account list has loaded.
-    private var accounts: [AccountSummary] {
-        guard store.accounts.isEmpty else { return store.accounts }
-        return [AccountSummary(
-            id: store.serverURL.absoluteString + "|" + store.user.username,
-            username: store.displayName,
-            serverURL: store.serverURL,
-            isActive: true
-        )]
-    }
 }
 
 /// One account: avatar, name above server, and Sign Out on hover for an inactive one. The
@@ -174,11 +163,13 @@ private struct AccountRow: View {
                     )
                     .lineLimit(1)
                 // Shrinks a long host to fit before falling back to truncating it.
-                Text(account.serverHost)
-                    .type(.body3(.regular), style: .secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(Metrics.serverMinimumScale)
-                    .truncationMode(.middle)
+                if let server = account.serverSubtitle {
+                    Text(server)
+                        .type(.body3(.regular), style: .secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(Metrics.serverMinimumScale)
+                        .truncationMode(.middle)
+                }
             }
             Spacer(minLength: 0)
             if !account.isActive {
