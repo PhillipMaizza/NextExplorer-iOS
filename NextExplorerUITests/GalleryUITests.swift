@@ -21,8 +21,6 @@
             /// The first line of what a text file reads back (mirrors `UITestSupport.galleryNotesText`).
             static let notesText = "Gallery notes"
             static let renamedDocument = "summary.pdf"
-            /// The system share sheet's list (UIKit's own identifier, not app text).
-            static let activityList = "ActivityListView"
             static let everyFile = [archive, video, unsupported, text, document, image]
             static let saveTitles = [
                 L10n.PreviewToolbar.savePhoto,
@@ -244,7 +242,7 @@
             let app = openGallery(at: Fixture.document)
             choose(L10n.PreviewToolbar.share, from: Fixture.document, in: app)
             XCTAssertTrue(
-                waitUntil(NSPredicate(format: "isHittable == true"), on: app.otherElements[Fixture.activityList]),
+                app.descendants(matching: .any)[AccessibilityIdentifiers.Share.sheet].waitToAppear(),
                 "Share downloads the file and opens the system share sheet"
             )
             keepScreenshot(of: "system share", in: app)

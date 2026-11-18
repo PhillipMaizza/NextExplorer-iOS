@@ -1,3 +1,4 @@
+import CoreModels
 import SwiftUI
 
 private enum Constants {
@@ -217,7 +218,9 @@ private struct DSToastOverlay: View {
                 DSSpinner()
                     .tint(Color.primaryInverted)
             }
-            Text(message.text).type(.body2(.semibold))
+            Text(message.text)
+                .type(.body2(.semibold))
+                .accessibilityIdentifier(AccessibilityIdentifiers.Toast.message)
             if let actionTitle = message.actionTitle, let action = message.action {
                 // The toast has done its job once its button is used: it goes, then the action runs.
                 Button(actionTitle) {
@@ -231,6 +234,7 @@ private struct DSToastOverlay: View {
                 .padding(.horizontal, Constants.actionHorizontalPadding)
                 .padding(.vertical, Constants.actionVerticalPadding)
                 .background(DSFrostedTint(Capsule(), tint: message.backgroundColor, tintOpacity: 1))
+                .accessibilityIdentifier(AccessibilityIdentifiers.Toast.action)
             }
         }
         .foregroundStyle(Color.primaryInverted)

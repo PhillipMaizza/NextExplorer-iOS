@@ -36,6 +36,21 @@ public enum AccessibilityIdentifiers {
         public static let spotlightField = "search.spotlightField"
     }
 
+    public enum Toast {
+        public static let message = "toast.message"
+        public static let action = "toast.action"
+    }
+
+    public enum Offline {
+        /// The select mode bar's Remove from Offline button.
+        public static let removeSelection = "offline.removeSelection"
+    }
+
+    public enum Share {
+        /// The system share sheet's host, which the app controls: the sheet's own list loads out of process.
+        public static let sheet = "share.sheet"
+    }
+
     public enum Browse {
         public static let uploadMenu = "browse.uploadMenu"
         public static let moreMenu = "browse.moreMenu"

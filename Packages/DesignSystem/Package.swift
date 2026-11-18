@@ -11,11 +11,12 @@ let package = Package(
         .package(path: "../TestUtils"),
         .package(path: "../AppStorageKeys"),
         .package(path: "../Localization"),
+        .package(path: "../CoreModels"),
     ],
     targets: [
         .target(
             name: "DesignSystem",
-            dependencies: ["AppStorageKeys", "Localization"],
+            dependencies: ["AppStorageKeys", "Localization", "CoreModels"],
             resources: [
                 .process("Resources/Colors.xcassets"),
                 .process("Resources/Images.xcassets"),
