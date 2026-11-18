@@ -173,7 +173,7 @@ extension FilesClientLiveTests {
 
         @Test
         func deleteItemsFallsBackToThePlainDeleteWhenTheStreamRouteIsMissing() async throws {
-            try stub(statusCode: 404, body: Data())
+            stub(statusCode: 404, body: Data())
             let item = FileItem(
                 name: TestFile.aText,
                 path: TestFolder.docs,

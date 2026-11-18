@@ -4,6 +4,7 @@ import SwiftUI
 import Testing
 import TestUtils
 
+@MainActor
 struct FileKindChipTests {
     @Test
     func anExtensionAlwaysPicksTheSameColour() {
