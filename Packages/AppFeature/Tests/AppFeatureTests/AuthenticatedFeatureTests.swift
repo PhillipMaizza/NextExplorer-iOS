@@ -155,10 +155,10 @@ extension AppSuites {
             #expect(
                 recorder.events.value == [
                     .accountRemoved(AppFixtures.accountA),
+                    .thumbnailMemoryCleared,
                     .previewAccountCleared(AppFixtures.accountA),
                     .offlineAccountCleared(AppFixtures.accountA),
                     .uploadThumbnailsAccountCleared(AppFixtures.accountA),
-                    .thumbnailMemoryCleared,
                 ],
                 "the account is removed from the keychain before its caches go, and the next account's stay"
             )

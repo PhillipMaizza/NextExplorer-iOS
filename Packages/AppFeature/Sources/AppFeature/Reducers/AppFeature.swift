@@ -593,10 +593,11 @@ public struct AppFeature {
             refreshAccounts,
             .run { _ in
                 await authClient.clearAllSessions()
+                // Stops thumbnail loads before the disk wipe, so none writes a download back.
+                thumbnailCache.clearMemory()
                 directoryCacheStore.clearAll()
                 jsonCacheStore.clearAll()
                 try? previewCacheStore.clear()
-                thumbnailCache.clearMemory()
                 textEditorETagStore.clearAll()
                 localThumbnailStore.clearAll()
                 offlineFileStore.removeAll()

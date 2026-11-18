@@ -333,11 +333,11 @@ extension AppSuites {
                 "an entry written after the first wipe is removed by the second pass"
             )
             let accountWipeWithoutDirectory: [WipeRecorder.Event] = [
+                .thumbnailMemoryCleared,
                 .jsonAccountCleared(AppFixtures.accountA),
                 .previewAccountCleared(AppFixtures.accountA),
                 .offlineAccountCleared(AppFixtures.accountA),
                 .uploadThumbnailsAccountCleared(AppFixtures.accountA),
-                .thumbnailMemoryCleared,
             ]
             #expect(
                 recorder.events
