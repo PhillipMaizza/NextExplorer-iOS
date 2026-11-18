@@ -36,8 +36,6 @@ private enum Constants {
             .caption(.regular)
         }
     #endif
-    /// The Mac sidebar column opens wider than the system default, since a Mac window has the
-    /// space an iPad split view does not.
     /// Where the system's selection pill sits inside a sidebar row, so the hover wash lines up with it.
     static let macPillInset: CGFloat = .space16
     /// Keeps the account chevron off the Mac card's edge.
@@ -46,8 +44,8 @@ private enum Constants {
     static let accountCardOpacity: Double = 0.06
     /// The Mac opens the sidebar at its minimum rather than its ideal, so the minimum is what
     /// keeps the account name and the ⌘ hints from crowding.
-    static let macSidebarMinWidth: CGFloat = 250
-    static let macSidebarIdealWidth: CGFloat = 270
+    static let macSidebarMinWidth: CGFloat = 280
+    static let macSidebarIdealWidth: CGFloat = 300
     static let macSidebarMaxWidth: CGFloat = 360
     #if os(macOS)
         /// The Mac rows carry their own inset inside their pill, so the footer sits on the sections' edge.
