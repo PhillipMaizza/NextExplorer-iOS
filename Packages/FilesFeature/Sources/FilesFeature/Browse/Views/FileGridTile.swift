@@ -40,7 +40,6 @@ struct FileGridTile<Picture: View>: View {
     @ViewBuilder let picture: () -> Picture
     @Environment(\.gridTileSelection) private var selection
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.self) private var environment
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
 
     private var isRoomy: Bool {
@@ -53,6 +52,10 @@ struct FileGridTile<Picture: View>: View {
     }
 
     private var needsOutline: Bool {
+        // Only the colour scheme matters here; reading the whole environment would redraw every
+        // tile on any change to it.
+        var environment = EnvironmentValues()
+        environment.colorScheme = colorScheme
         let page = Color.backgroundPrimary.resolve(in: environment)
         guard let tint else {
             return Self.isLowContrast(Color.backgroundSecondary.resolve(in: environment), page)

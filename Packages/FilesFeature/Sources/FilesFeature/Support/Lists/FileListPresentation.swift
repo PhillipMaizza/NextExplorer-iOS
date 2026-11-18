@@ -10,7 +10,7 @@ enum FileListViewMode: String {
 /// The grid geometry every file listing shares (Browse, Favorites, Offline), so the numbers live in
 /// one place instead of a `private enum Constants` copy per view.
 enum FileGridMetrics {
-    /// Between columns, and around the grid.
+    /// Between columns, and between folder cards.
     static let spacing: CGFloat = .space12
     /// Between rows of files: a little more than between columns, since each tile ends in text.
     static let rowSpacing: CGFloat = 18

@@ -126,7 +126,7 @@ struct FileTypeIcon: View {
     private nonisolated static func plainBadge(forKind kind: String) -> FileBadge? {
         guard kind != FileItem.unknownKind,
               (1 ... Constants.plainLabelMaxLength).contains(kind.count),
-              kind.allSatisfy({ $0.isLetter || $0.isNumber })
+              kind.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber) })
         else { return nil }
         return FileBadge(label: kind.uppercased(), background: .secondaryDS, foreground: .backgroundPrimary)
     }

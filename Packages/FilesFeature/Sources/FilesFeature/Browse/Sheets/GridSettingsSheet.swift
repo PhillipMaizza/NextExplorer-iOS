@@ -77,6 +77,7 @@
                 .padding(.horizontal, Constants.horizontalPadding)
                 .padding(.vertical, Constants.verticalPadding)
             }
+            .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
         }
 
         private func sizeCard(_ size: ThumbnailSize) -> some View {
@@ -110,7 +111,6 @@
             .animation(DSMotion.stateFade, value: isSelected)
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(isSelected ? .isSelected : [])
-            .hapticFeedback(.selection, trigger: isSelected)
         }
 
         private func miniGrid(columns: Int, isSelected: Bool) -> some View {
