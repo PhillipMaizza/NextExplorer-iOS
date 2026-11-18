@@ -116,7 +116,7 @@ extension FilesService {
     /// at all: the server has no listing-only endpoint, so the whole archive has to come down
     /// first. Reuses `previewFile`'s cache layout (same staleness key) but under its own
     /// `namespace`, so the two endpoints never share a cache slot for the same item.
-    func downloadRawFile(serverURL: URL, item: FileItem) async throws -> URL {
+    func downloadRawFile(serverURL: URL, item: FileItem, lowPriority: Bool = false) async throws -> URL {
         let scope = activeScope()
         if let offline = OfflineCache.localURL(for: item, scope: scope) {
             return offline
@@ -142,7 +142,8 @@ extension FilesService {
                 directory: directory,
                 fileURL: fileURL,
                 metaURL: metaURL,
-                item: item
+                item: item,
+                lowPriority: lowPriority
             )
         } catch let error as FilesClientError where error == .offline {
             if let fallback = OfflineCache.localURL(forPath: item.id, scope: scope) {

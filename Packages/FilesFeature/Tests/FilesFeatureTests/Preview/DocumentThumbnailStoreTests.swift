@@ -26,10 +26,10 @@ struct DocumentThumbnailStoreTests {
         return url
     }
 
-    private func item(size: Int64) -> FileItem {
+    private func item(size: Int64, kind: String = TestKind.pdf) -> FileItem {
         FileItem(
-            name: "\(TestID.name()).pdf", path: TestFolder.docs,
-            dateModified: MockDate.date.addingTimeInterval(2), size: size, kind: TestKind.pdf
+            name: "\(TestID.name()).\(kind)", path: TestFolder.docs,
+            dateModified: MockDate.date.addingTimeInterval(2), size: size, kind: kind
         )
     }
 
@@ -156,6 +156,55 @@ struct DocumentThumbnailStoreTests {
 
         await task?.value
         #expect(isUnavailable(entry))
+    }
+
+    @Test
+    func eligibilityFollowsTheKindAndItsSizeCap() {
+        let megabyte: Int64 = 1_024 * 1_024
+        #expect(DocumentThumbnailStore.isEligible(item(size: 40 * megabyte)))
+        #expect(!DocumentThumbnailStore.isEligible(item(size: 40 * megabyte + 1)))
+        #expect(DocumentThumbnailStore.isEligible(item(size: 10 * megabyte, kind: TestKind.word)))
+        #expect(!DocumentThumbnailStore.isEligible(item(size: 10 * megabyte + 1, kind: TestKind.word)))
+        #expect(DocumentThumbnailStore.isEligible(item(size: 5, kind: "pages")))
+        #expect(!DocumentThumbnailStore.isEligible(item(size: 0, kind: TestKind.word)))
+        #expect(!DocumentThumbnailStore.isEligible(item(size: 5, kind: TestKind.archive)))
+    }
+
+    @Test
+    func aWordDocumentComesDownRawAndIsDrawnFromThatFile() async throws {
+        let store = DocumentThumbnailStore()
+        let rawURL = makePDF()
+        defer { try? FileManager.default.removeItem(at: rawURL) }
+        let page = try #require(ThumbnailRendering.firstPDFPage(at: rawURL, maxPixel: 16))
+        let previewCount = LockIsolated(0)
+        let drawnFrom = LockIsolated<URL?>(nil)
+        var client = FilesClient.previewValue
+        client.previewFileLowPriority = { _, _ in
+            previewCount.withValue { $0 += 1 }
+            return rawURL
+        }
+        client.downloadRawFileLowPriority = { _, _ in rawURL }
+        let cache = DocumentThumbnailCache { _, _, fileURL in
+            drawnFrom.setValue(fileURL)
+            return PlatformImage(cgImage: page)
+        }
+        let file = item(size: 5, kind: TestKind.word)
+        let key = DocumentThumbnailCache.cacheKey(id: file.id, signature: file.cacheSignature)
+
+        let (entry, task) = load(store, key: key, item: file, client: client, cache: cache)
+        await task?.value
+
+        #expect(readyImage(entry) != nil)
+        #expect(drawnFrom.value == rawURL)
+        #expect(previewCount.value == 0)
+    }
+
+    @Test
+    func removeAllForgetsEveryEntry() {
+        let store = DocumentThumbnailStore()
+        let first = store.entry(forKey: "a")
+        store.removeAll()
+        #expect(store.entry(forKey: "a") !== first)
     }
 
     @Test

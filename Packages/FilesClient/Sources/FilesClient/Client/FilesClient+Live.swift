@@ -225,6 +225,9 @@ public extension FilesClient {
             downloadRawFile: { serverURL, item in
                 try await service.downloadRawFile(serverURL: serverURL, item: item)
             },
+            downloadRawFileLowPriority: { serverURL, item in
+                try await service.downloadRawFile(serverURL: serverURL, item: item, lowPriority: true)
+            },
             offlineDownloadFile: { serverURL, item, onProgress in
                 try await service.offlineDownloadFile(
                     serverURL: serverURL, item: item, onProgress: onProgress

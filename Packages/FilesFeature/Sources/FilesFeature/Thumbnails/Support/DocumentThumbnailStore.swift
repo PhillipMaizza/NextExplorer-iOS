@@ -11,7 +11,11 @@ import ShareUploads
 private enum Constants {
     /// Don't fetch or rasterize page one of PDFs past this size: a huge scanned document
     /// isn't worth the bandwidth or the render cost for a list thumbnail.
-    static let maxSourceBytes: Int64 = 40 * 1_024 * 1_024
+    static let maxPDFBytes: Int64 = 40 * 1_024 * 1_024
+    /// Other documents are downloaded whole for Quick Look to draw, so they get a tighter cap.
+    static let maxQuickLookBytes: Int64 = 10 * 1_024 * 1_024
+    /// Kinds Quick Look draws beside the Office documents the app opens.
+    static let quickLookKinds: Set<String> = ["pages", "numbers", "epub", "usdz", "ttf", "otf"]
     /// Longest side of the render, in pixels. Sized for the biggest grid cell at ~3x, no
     /// more: these are list thumbnails, and every extra pixel is ~4 bytes per image held.
     static let renderPixel: CGFloat = 320
@@ -41,7 +45,7 @@ final class DocumentThumbnailStore {
         /// Being fetched/rendered (or not asked for yet). The cell shows a loading placeholder.
         case loading
         case ready(PlatformImage)
-        /// Too large, or fetched but not a readable PDF. The cell shows the plain PDF icon.
+        /// Too large, or fetched but nothing could draw it. The cell shows the kind's icon.
         case unavailable
 
         var isReady: Bool {
@@ -63,6 +67,27 @@ final class DocumentThumbnailStore {
     private var inFlight: Set<String> = []
 
     init() {}
+
+    /// Whether `item` gets a drawn first page: a PDF, or a document Quick Look can draw, within its
+    /// kind's size cap. One rule for every list row and grid tile.
+    nonisolated static func isEligible(_ item: FileItem) -> Bool {
+        if item.isPDF {
+            return item.size <= Constants.maxPDFBytes
+        }
+        guard item.isOfficeDocument || Constants.quickLookKinds.contains(item.kind.lowercased()) else {
+            return false
+        }
+        // A search hit reports no size, so nothing would hold its download to the cap.
+        return item.size > 0 && item.size <= Constants.maxQuickLookBytes
+    }
+
+    /// Drops every entry, so no drawn page outlives a session. Loads still running land in
+    /// entries nothing shows any more.
+    func removeAll() {
+        entries.removeAll()
+        order.removeAll()
+        inFlight.removeAll()
+    }
 
     func entry(forKey key: String) -> Entry {
         if let existing = entries[key] {
@@ -94,7 +119,7 @@ final class DocumentThumbnailStore {
         }
         guard !inFlight.contains(key) else { return nil }
 
-        guard item.size <= Constants.maxSourceBytes else {
+        guard Self.isEligible(item) else {
             entry.state = .unavailable
             return nil
         }
@@ -112,15 +137,17 @@ final class DocumentThumbnailStore {
                 entry.state = .ready(seeded)
                 return
             }
-            guard let pdfURL = try? await filesClient.previewFileLowPriority(serverURL, item) else {
+            // The server previews only media and PDFs; any other document comes down raw.
+            let fetch = item.isPDF ? filesClient.previewFileLowPriority : filesClient.downloadRawFileLowPriority
+            guard let fileURL = try? await fetch(serverURL, item) else {
                 // Cancelled or a transient network failure: leave the entry in `loading` so
                 // the next appearance of a cell with this key tries again.
                 return
             }
-            if let image = await cache.firstPageImage(key, Constants.renderPixel, pdfURL) {
+            if let image = await cache.firstPageImage(key, Constants.renderPixel, fileURL) {
                 entry.state = .ready(image)
             } else {
-                // Downloaded, but PDFKit couldn't open it: it won't get better on a retry.
+                // Downloaded, but nothing could draw it: it won't get better on a retry.
                 entry.state = .unavailable
             }
         }
