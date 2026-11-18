@@ -198,6 +198,8 @@ public enum TestKind {
     public static let pdf = "pdf"
     public static let photo = "jpg"
     public static let video = "mp4"
+    public static let word = "docx"
+    public static let archive = "zip"
 }
 
 /// Points in the 350 ms search debounce (`FilesClient.searchDebounce`), so a test proves the wait

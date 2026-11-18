@@ -14,6 +14,7 @@
         let image: Image
         var isAccented = false
         @Environment(\.backgroundProminence) private var backgroundProminence
+        @Environment(\.colorScheme) private var colorScheme
 
         var body: some View {
             image
@@ -21,7 +22,7 @@
                 .frame(width: Constants.columnWidth)
                 .foregroundStyle(backgroundProminence == .increased
                     ? Color.white
-                    : isAccented ? Color.accentText : Color.primaryDS)
+                    : isAccented ? colorScheme == .light ? Color.accentText : .accent : Color.primaryDS)
         }
     }
 

@@ -4,7 +4,6 @@ import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let pdfInset: CGFloat = .space8
     static let previewWidth: CGFloat = 120
     static let previewFolderWidth: CGFloat = 180
 }
@@ -25,7 +24,7 @@ struct GridCellView: View {
     let size: Int64?
     /// Shown under the name in place of the size, such as a favorite's location.
     var subtitle: String?
-    /// The full item, when built from one: needed for the on device PDF first page render,
+    /// The full item, when built from one: needed for the on device document first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
     /// Favorites grid: a favorite's custom icon, weight + colour in place of the folder glyph.
@@ -39,11 +38,14 @@ struct GridCellView: View {
     /// the preview holds off until ready.
     var isOpening: Bool = false
     var isAvailableOffline: Bool = false
+    /// Shown in place of an unknown size, as a list row does.
+    private let dateModified: Date?
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
+    @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
 
     /// `thumbnailFile` opts a caller with only a name/kind (a search hit) into the same thumbnail
     /// rendering a browse tile gets. Server thumbnails still need the file to report
-    /// `supportsThumbnail`; the on device PDF render only needs its kind.
+    /// `supportsThumbnail`; the on device document render needs its kind and size.
     init(
         name: String,
         isDirectory: Bool,
@@ -74,6 +76,7 @@ struct GridCellView: View {
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
         file = thumbnailFile
+        dateModified = thumbnailFile.flatMap { $0.hasKnownDate ? $0.dateModified : nil }
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled
@@ -103,6 +106,7 @@ struct GridCellView: View {
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
         file = item
+        dateModified = item.hasKnownDate ? item.dateModified : nil
         customIcon = nil
         customIconTint = nil
         customIconFilled = false
@@ -119,7 +123,16 @@ struct GridCellView: View {
     }
 
     private var sizeText: String? {
-        subtitle ?? size.map { FileSizeFormat.string($0) }
+        if let subtitle {
+            return subtitle
+        }
+        if let size {
+            return FileSizeFormat.string(size)
+        }
+        return dateModified.map { (DateDisplayFormat(rawValue: dateFormatRaw) ?? .system).string(
+            from: $0,
+            includeTime: false
+        ) }
     }
 
     private var isEligibleForThumbnail: Bool {
@@ -131,14 +144,8 @@ struct GridCellView: View {
         kind.map(ThumbnailImage.readsOwnContent) ?? false
     }
 
-    private var isEligibleForPDFThumbnail: Bool {
-        showThumbnails && serverURL != nil && (file?.isPDF ?? false)
-    }
-
-    /// Only a file with no picture of its own takes its kind's colour; pictures sit on a neutral well.
-    private var wellTint: Color? {
-        guard !isEligibleForThumbnail, !isEligibleForPDFThumbnail, let kind else { return nil }
-        return FileTypeIcon.tint(forKind: kind)
+    private var isEligibleForDocumentThumbnail: Bool {
+        showThumbnails && serverURL != nil && file.map(DocumentThumbnailStore.isEligible) == true
     }
 
     var body: some View {
@@ -159,7 +166,6 @@ struct GridCellView: View {
                 name: displayName,
                 isHidden: isHidden,
                 sizeText: sizeText,
-                tint: wellTint,
                 isFavorite: isFavorite,
                 isAvailableOffline: isAvailableOffline,
                 isOpening: isOpening,
@@ -189,27 +195,18 @@ struct GridCellView: View {
     @ViewBuilder
     private var picture: some View {
         if isEligibleForThumbnail, let serverURL, let itemID {
-            GeometryReader { proxy in
-                // A text file draws a page of its own lines: it sits inside the well like a sheet.
-                let pageSide = min(proxy.size.width, proxy.size.height) * GridWellTypeIcon.pageFraction
-                let isPage = kind.map(TextSnippet.isTextKind) ?? false
-                ThumbnailImage(
-                    serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
-                    fallbackKind: kind,
-                    fallbackBannerFraction: FileTypeBanner.slimHeightFraction,
-                    iconTint: Color.secondaryDS,
-                    fallbackSize: pageSide,
-                    fileSize: file?.size, modified: file?.dateModified,
-                    fillsFrame: !isPage
-                )
-                .frame(width: isPage ? pageSide : proxy.size.width, height: isPage ? pageSide : proxy.size.height)
-                .frame(width: proxy.size.width, height: proxy.size.height)
+            ThumbnailImage(
+                serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
+                iconTint: Color.secondaryDS,
+                fileSize: file?.size, modified: file?.dateModified,
+                isGridWell: true
+            )
+        } else if isEligibleForDocumentThumbnail, let serverURL, let file {
+            DocumentThumbnailImage(serverURL: serverURL, item: file, isGridWell: true) {
+                FileKindChip(kind: file.kind)
             }
-        } else if isEligibleForPDFThumbnail, let serverURL, let file {
-            PDFThumbnailImage(serverURL: serverURL, item: file)
-                .padding(Constants.pdfInset)
         } else {
-            GridWellTypeIcon(kind: kind ?? "")
+            FileKindChip(kind: kind ?? "")
         }
     }
 }

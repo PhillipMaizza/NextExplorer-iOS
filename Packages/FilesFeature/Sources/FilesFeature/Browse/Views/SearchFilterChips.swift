@@ -5,15 +5,15 @@ import SwiftUI
 
 private enum Constants {
     static let rowSpacing: CGFloat = .space8
-    static let chipSpacing: CGFloat = .space8
-    static let chipHorizontalPadding: CGFloat = .space12
+    static let chipHorizontalPadding: CGFloat = .space16
     static let chipVerticalPadding: CGFloat = .space8
-    static let iconSize: CGFloat = .iconXSmall
+    /// The header's side margin, which the row reaches past.
+    static let edgeInset: CGFloat = .space16
 }
 
-/// Horizontally scrolling "Filter by type" chip row shown below the search scope control while
-/// searching. A leading "All" chip resets the filter; one chip per `FileCategory` actually present
-/// in the results (`availableCategories`) toggles independently. An empty selection means "all",
+/// Horizontally scrolling "Filter by type" chip row under the search field, over search results or
+/// a folder's own items. A leading "All" chip resets the filter; one chip per `FileCategory`
+/// actually present (`availableCategories`) toggles independently. An empty selection means "all",
 /// so the "All" chip reads selected exactly when no category is picked. Replaces the old
 /// focus gated filter button + `SearchFilterSheet`.
 struct SearchFilterChips: View {
@@ -26,14 +26,12 @@ struct SearchFilterChips: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Constants.rowSpacing) {
                 chip(
-                    icon: IconKit.selectAll,
                     title: L10n.Filter.all,
                     isSelected: selectedCategories.isEmpty,
                     action: onSelectAll
                 )
                 ForEach(availableCategories, id: \.self) { category in
                     chip(
-                        icon: category.icon,
                         title: category.title,
                         isSelected: selectedCategories.contains(category)
                     ) {
@@ -42,36 +40,28 @@ struct SearchFilterChips: View {
                 }
             }
         }
+        // Runs to the screen edges, starting in line with the header's text.
+        .contentMargins(.horizontal, Constants.edgeInset, for: .scrollContent)
+        .padding(.horizontal, -Constants.edgeInset)
         .animation(
             DSMotion.pop,
             value: selectedCategories
         )
     }
 
-    private func chip(icon: Image, title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+    private func chip(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: Constants.chipSpacing) {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Constants.iconSize, height: Constants.iconSize)
-                Text(title)
-                    .type(.body3(isSelected ? .semibold : .regular))
-            }
-            .foregroundStyle(Color.secondaryDS)
-            .padding(.horizontal, Constants.chipHorizontalPadding)
-            .padding(.vertical, Constants.chipVerticalPadding)
-            // Same `backgroundSecondary` track as the scope segmented control, but selection reads
-            // as an accent outline instead of a filled pill, so the two rows never look alike.
-            .background(
-                RoundedRectangle(cornerRadius: .radiusFull)
-                    .fill(Color.backgroundSecondary)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: .radiusFull)
-                    .strokeBorder(isSelected ? Color.accent : Color.clear, lineWidth: .borderWidthFocused)
-            )
-            .contentShape(Rectangle())
+            Text(title)
+                .type(.body3(isSelected ? .semibold : .regular))
+                .foregroundStyle(isSelected ? Color.primaryInverted : Color.secondaryDS)
+                .padding(.horizontal, Constants.chipHorizontalPadding)
+                .padding(.vertical, Constants.chipVerticalPadding)
+                // A filled pill: the picked chip in the text colour, the rest on the surface.
+                .background(
+                    Capsule()
+                        .fill(isSelected ? Color.primaryDS : Color.backgroundSecondary)
+                )
+                .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .hapticFeedback(.selection, trigger: isSelected)
@@ -113,6 +103,18 @@ extension FileCategory {
         onSelectAll: {}
     )
     .padding()
+}
+
+#Preview("No filter, dark") {
+    SearchFilterChips(
+        availableCategories: [.folder, .image, .video, .document],
+        selectedCategories: [],
+        onToggle: { _ in },
+        onSelectAll: {}
+    )
+    .padding()
+    .background(Color.backgroundPrimary)
+    .preferredColorScheme(.dark)
 }
 
 #Preview("Filtered") {

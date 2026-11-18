@@ -16,14 +16,19 @@ private struct BrowseSearchResultCell: View {
     var body: some View {
         Group {
             if isGrid {
+                // A search hit reports no size of its own: it comes from this folder's listing or a
+                // saved one, and a hit in neither says where it lives instead.
+                let known = store.items[id: row.id] ?? store.searchSavedItems?[row.id]
                 GridCellView(
                     name: row.name, isDirectory: row.isDirectory,
                     isFavorite: store.favoritePaths.contains(row.id), kind: row.displayKind,
+                    size: known.flatMap { $0.isDirectory ? store.folderSizes[$0.id] : $0.size },
                     thumbnailFile: row.thumbnailFile,
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
                     matchedSource: source.matched(row.id),
-                    isOpening: source.isOpening(row.id, in: store)
+                    isOpening: source.isOpening(row.id, in: store),
+                    subtitle: known == nil ? searchResultLocation(row) : nil
                 )
             } else {
                 SearchResultRow(

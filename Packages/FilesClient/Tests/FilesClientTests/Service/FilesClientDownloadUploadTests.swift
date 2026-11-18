@@ -44,6 +44,27 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func downloadRawFileLowPrioritySharesTheCacheSlotWithDownloadRawFile() async throws {
+            stub(statusCode: 200, body: Data("raw file bytes".utf8))
+            let item = FileItem(
+                name: "\(TestID.name()).\(TestKind.word)", path: TestFolder.docs,
+                dateModified: MockDate.date, size: 14, kind: TestKind.word
+            )
+            let client = makeClient()
+
+            StubURLProtocol.capturedRequest = nil
+            let downloaded = try await client.downloadRawFileLowPriority(serverURL, item)
+            defer { try? FileManager.default.removeItem(at: downloaded.deletingLastPathComponent()) }
+            #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/download")
+            #expect(downloaded.pathExtension == TestKind.word)
+
+            StubURLProtocol.capturedRequest = nil
+            let interactive = try await client.downloadRawFile(serverURL, item)
+            #expect(interactive == downloaded)
+            #expect(StubURLProtocol.capturedRequest == nil)
+        }
+
+        @Test
         func downloadRawFileMapsAccessDeniedToAServerError() async throws {
             stub(statusCode: 403, body: Data())
             let item = FileItem(name: "secret.docx", path: "", dateModified: MockDate.date, size: 0, kind: "docx")

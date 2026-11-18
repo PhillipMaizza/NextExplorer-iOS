@@ -154,6 +154,9 @@ public struct FilesClient: Sendable {
     public var saveTextContent: @Sendable (_ serverURL: URL, _ path: String, _ content: String) async throws -> Void
     public var extractZip: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
     public var downloadRawFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
+    /// `downloadRawFile` over the low priority session, for document thumbnails while browsing. Same
+    /// cache slot, so a later tap to open reuses whatever this downloaded.
+    public var downloadRawFileLowPriority: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     /// Streams `item`'s verbatim bytes into the durable offline store (`OfflineFileStore`), so it
     /// later opens with no network. Returns the local file; a file already pinned returns
     /// immediately. Used by the offline download engine to walk a pinned folder file by file.

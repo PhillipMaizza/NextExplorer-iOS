@@ -77,6 +77,9 @@ struct AccountCacheWipe: Sendable {
     }
 
     func wipe(_ accountID: String) {
+        // Stops thumbnail loads first, so none writes a download back after the disk wipe below.
+        // One cache for every account, so it is dropped whole: the active account refills it.
+        thumbnailCache.clearMemory()
         directoryCacheStore.clear(scope: accountID)
         jsonCacheStore.clear(scope: accountID)
         previewCacheStore.clearAccount(accountID)
@@ -86,8 +89,6 @@ struct AccountCacheWipe: Sendable {
         localThumbnailStore.clearScope(accountID)
         // Files staged for the Save to Files panel belong to the account that fetched them.
         deviceSaver.discardAll()
-        // One cache for every account, so it is dropped whole: the active account refills it.
-        thumbnailCache.clearMemory()
     }
 }
 

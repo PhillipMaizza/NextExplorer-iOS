@@ -3,7 +3,7 @@ import Testing
 /// Serializes every suite that reads, writes, or clears the shared
 /// `Library/Caches/PreviewCache` directory. `PreviewCacheStoreTests` deletes the whole tree
 /// and asserts on its exact byte count; without coordination it races any concurrent
-/// reader/writer (`ThumbnailCacheTests`, `PDFThumbnailCacheTests`, `PDFThumbnailStoreTests`).
+/// reader/writer (`ThumbnailCacheTests`, `DocumentThumbnailCacheTests`, `DocumentThumbnailStoreTests`).
 /// Swift Testing's built-in `.serialized` only orders tests *within* one suite, so this
 /// coordinates them all on one process-wide gate.
 struct SerializedPreviewCacheAccess: SuiteTrait, TestScoping {

@@ -232,6 +232,16 @@ public extension FilesClient {
             try? Data().write(to: fileURL)
             return fileURL
         },
+        downloadRawFileLowPriority: { _, item in
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "Downloads-Preview",
+                isDirectory: true
+            )
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            let fileURL = directory.appendingPathComponent(item.name)
+            try? Data().write(to: fileURL)
+            return fileURL
+        },
         offlineDownloadFile: { _, item, onProgress in
             let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
                 "Offline-Preview",

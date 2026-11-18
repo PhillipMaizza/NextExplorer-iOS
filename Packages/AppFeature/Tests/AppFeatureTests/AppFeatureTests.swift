@@ -477,11 +477,11 @@ extension AppSuites {
             #expect(json.bound(to: AppFixtures.accountA).read(key: TestCacheKey.favorites) == nil)
             #expect(json.bound(to: AppFixtures.accountB).read(key: TestCacheKey.favorites) != nil)
             let expiredAccountWipe: [WipeRecorder.Event] = [
+                .thumbnailMemoryCleared,
                 .directoryAccountCleared(AppFixtures.accountA),
                 .previewAccountCleared(AppFixtures.accountA),
                 .offlineAccountCleared(AppFixtures.accountA),
                 .uploadThumbnailsAccountCleared(AppFixtures.accountA),
-                .thumbnailMemoryCleared,
             ]
             #expect(
                 recorder.events.value == [.activeSessionCleared] + expiredAccountWipe + expiredAccountWipe,

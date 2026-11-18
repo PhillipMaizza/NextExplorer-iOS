@@ -34,6 +34,7 @@ enum ThumbnailMemoryCache {
         shared.removeAllObjects()
         ThumbnailMisses.removeAll()
         TextSnippetCache.removeAll()
+        Task { @MainActor in DocumentThumbnailStore.shared.removeAll() }
     }
 }
 
@@ -41,14 +42,17 @@ private enum Constants {
     /// How often a thumbnail the server is still making is asked for, and how long to wait between
     /// asks when the server doesn't say. About 40 seconds in all, enough for a long video.
     static let pendingAttempts = 20
+    /// The longest side, in pixels, of a picture drawn as an icon in a grid well (favicons run 16 to 128).
+    static let iconSizedMaxPixels = 128
     static let pendingRetryDelay = Duration.seconds(2)
     static let pendingMinDelay = Duration.milliseconds(500)
     static let pendingMaxDelay = Duration.seconds(10)
 }
 
-/// Lazily resolves and displays a thumbnail for one file: a small spinner while the request
-/// is in flight, then either the image or `fallbackIcon`: on failure or once resolved to no
-/// thumbnail (`GET /api/thumbnails/*` legitimately returns `{ thumbnail: "" }` for e.g. PDFs
+/// Lazily resolves and displays a thumbnail for one file: the typed icon when there is one (else
+/// a small spinner) while the request is in flight, then either the image or `fallbackIcon`: on
+/// failure or once resolved to no thumbnail (`GET /api/thumbnails/*` legitimately returns `{ thumbnail: "" }` for e.g.
+/// PDFs
 /// or when thumbnails are disabled server-side). One request per instance: the API has no
 /// bulk/listing variant, matching how the real web client also loads these per-file.
 ///
@@ -65,8 +69,6 @@ struct ThumbnailImage: View {
     /// When set, a file with no thumbnail shows its typed page icon (like every other file row and
     /// tile) instead of the generic `fallbackIcon` glyph.
     var fallbackKind: String?
-    /// The fallback type icon's banner share, for a page drawn big (a grid well).
-    var fallbackBannerFraction: CGFloat?
     let iconTint: Color
     /// The fallback's side when the image would fill a large frame (a video poster), so a missing
     /// thumbnail shows an icon at icon size rather than one stretched across the screen.
@@ -80,8 +82,9 @@ struct ThumbnailImage: View {
     /// own is in, but only if these say it is the file that was uploaded.
     var fileSize: Int64?
     var modified: Date?
-    /// A grid tile's picture well: the picture covers the frame (cropped) instead of fitting inside it.
-    var fillsFrame = false
+    /// A grid tile's well: a picture covers it (cropped, a video frame with the play badge), first
+    /// lines sit on a sheet, and a file with nothing to show takes the kind chip.
+    var isGridWell = false
 
     /// The first lines of a text file, drawn as a small page.
     @State private var snippet: String?
@@ -100,6 +103,12 @@ struct ThumbnailImage: View {
         min(max(asked ?? Constants.pendingRetryDelay, Constants.pendingMinDelay), Constants.pendingMaxDelay)
     }
 
+    /// Whether a picture is icon sized, too small to fill a grid well without blurring.
+    nonisolated static func isIconSized(_ image: PlatformImage) -> Bool {
+        guard let cgImage = image.cgImage else { return false }
+        return max(cgImage.width, cgImage.height) <= Constants.iconSizedMaxPixels
+    }
+
     /// Whether files of this kind are drawn from their own content, which the server makes no
     /// thumbnail of: an audio file's cover art and a text file's first lines.
     nonisolated static func readsOwnContent(kind: String) -> Bool {
@@ -108,13 +117,40 @@ struct ThumbnailImage: View {
 
     var body: some View {
         Group {
-            if let snippet {
-                TextThumbnailView(snippet: snippet, kind: fileItem.kind)
+            if let snippet, isGridWell {
+                GridWellSymbol(kind: fileItem.kind) { _ in
+                    TextThumbnailView(snippet: snippet)
+                }
+            } else if let snippet {
+                TextThumbnailView(snippet: snippet)
             } else if let uiImage {
-                Image(platformImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: fillsFrame ? .fill : .fit)
-            } else if didResolve {
+                if isGridWell, Self.isIconSized(uiImage) {
+                    // A favicon or an icon stretched across the well would blur; it sits in the
+                    // symbol box like a page instead.
+                    GridWellSymbol(kind: fileItem.kind) { _ in
+                        Image(platformImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                    }
+                } else if isGridWell {
+                    // Cropped to the well first, so the badge sits in the well's corner and not
+                    // in the corner of a wider frame hanging off its sides.
+                    Image(platformImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .clipped()
+                        .overlay(alignment: .bottomLeading) {
+                            if fileItem.isVideo || fileItem.isAudio {
+                                GridPlayBadge()
+                            }
+                        }
+                } else {
+                    Image(platformImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                }
+            } else if didResolve || isGridWell || fallbackKind != nil {
                 fallbackImage
             } else {
                 ThumbnailLoadingPlaceholder()
@@ -152,7 +188,7 @@ struct ThumbnailImage: View {
             }
             let thumbnailURL = await resolveThumbnailURL()
             // A cancelled task (the row scrolled away, or the tab was switched mid load) is not
-            // a failure: leave the loading placeholder so re-appearing retries, instead of
+            // a failure: leave it loading so appearing again retries, instead of
             // marking it resolved and dropping to the generic fallback icon.
             if Task.isCancelled {
                 return
@@ -296,8 +332,8 @@ struct ThumbnailImage: View {
 
     private var fallbackImage: some View {
         Group {
-            if let fallbackKind, let fallbackBannerFraction {
-                FileTypeIcon(kind: fallbackKind, bannerHeightFraction: fallbackBannerFraction)
+            if isGridWell {
+                FileKindChip(kind: fileItem.kind)
             } else if let fallbackKind {
                 FileTypeIcon(kind: fallbackKind)
             } else {

@@ -121,6 +121,9 @@ public struct BrowseFeature {
         /// otherwise a result shows only if its category is in the set. Only relevant while
         /// searching, and pruned to the categories actually present as results change.
         public var selectedSearchCategories: Set<FileCategory> = []
+        /// The kinds the folder's own items are narrowed to, the same way. Empty means everything;
+        /// a kind the folder no longer holds is ignored rather than leaving an empty list.
+        public var selectedFolderCategories: Set<FileCategory> = []
         /// How many results the search asks for; Show more steps it through
         /// `FilesClient.searchLimitSteps`, and a new query or scope starts over.
         public var searchLimit = FilesClient.searchLimitSteps[0]
@@ -353,7 +356,7 @@ public struct BrowseFeature {
         /// and sorted by `sortOption`.
         public var displayedItems: IdentifiedArrayOf<FileItem> {
             IdentifiedArray(
-                BrowseFeature.sorted(visibleItems, by: sortOption, direction: sortDirection, folderSizes: folderSizes),
+                BrowseFeature.sorted(filteredItems, by: sortOption, direction: sortDirection, folderSizes: folderSizes),
                 id: \.id,
                 uniquingIDsWith: { first, _ in first }
             )
@@ -364,15 +367,43 @@ public struct BrowseFeature {
             preferences.showHiddenFiles ? items.elements : items.elements.filter { !isHiddenFileName($0.name) }
         }
 
+        /// `visibleItems` narrowed to the picked kinds the folder still holds.
+        var filteredItems: [FileItem] {
+            let active = activeFolderCategories
+            guard !active.isEmpty else { return visibleItems }
+            return visibleItems.filter { active.contains(Self.category(of: $0)) }
+        }
+
+        private var activeFolderCategories: Set<FileCategory> {
+            guard !selectedFolderCategories.isEmpty else { return [] }
+            return selectedFolderCategories.intersection(availableFolderCategories)
+        }
+
+        /// The kinds in this folder, in display order, offered as filter chips. A folder holding
+        /// only one kind (only folders, say) or nothing has nothing to narrow, so it offers none.
+        public var availableFolderCategories: [FileCategory] {
+            let present = Set(visibleItems.map(Self.category(of:)))
+            guard present.count > 1 else { return [] }
+            return FileCategory.allCases.filter(present.contains)
+        }
+
+        static func category(of item: FileItem) -> FileCategory {
+            FileCategory.of(kind: item.kind, isDirectory: item.isDirectory)
+        }
+
         /// Whether `displayedItems` would be non empty, and how many entries it would hold,
-        /// without paying `displayedItems`' filter+sort. Used for the toolbar/selection/empty
+        /// without paying `displayedItems`' sort. Used for the toolbar/selection/empty
         /// state checks that only need emptiness or a count, not the ordered list.
         public var hasDisplayedItems: Bool {
-            preferences.showHiddenFiles ? !items.isEmpty : items.contains { !isHiddenFileName($0.name) }
+            guard selectedFolderCategories.isEmpty else { return !filteredItems.isEmpty }
+            return preferences.showHiddenFiles ? !items.isEmpty : items.contains { !isHiddenFileName($0.name) }
         }
 
         public var displayedItemCount: Int {
-            preferences.showHiddenFiles ? items.count : items.reduce(0) { isHiddenFileName($1.name) ? $0 : $0 + 1 }
+            guard selectedFolderCategories.isEmpty else { return filteredItems.count }
+            return preferences.showHiddenFiles
+                ? items.count
+                : items.reduce(0) { isHiddenFileName($1.name) ? $0 : $0 + 1 }
         }
 
         /// `searchResults`, with hidden entries dropped unless the preference is on, then narrowed
@@ -470,6 +501,8 @@ public struct BrowseFeature {
         case searchScopeChanged(SearchScope)
         case searchCategoryToggled(FileCategory)
         case searchFilterCleared
+        case folderCategoryToggled(FileCategory)
+        case folderFilterCleared
         case searchResultTapped(SearchResultItem)
         case searchShowMoreTapped
         /// Retry under a search that could not answer: asks again at once.

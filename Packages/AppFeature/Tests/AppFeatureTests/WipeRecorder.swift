@@ -39,12 +39,12 @@ final class WipeRecorder: Sendable {
     /// What dropping one account wipes while other accounts stay signed in.
     static func accountWipe(_ accountID: String) -> [Event] {
         [
+            .thumbnailMemoryCleared,
             .directoryAccountCleared(accountID),
             .jsonAccountCleared(accountID),
             .previewAccountCleared(accountID),
             .offlineAccountCleared(accountID),
             .uploadThumbnailsAccountCleared(accountID),
-            .thumbnailMemoryCleared,
         ]
     }
 
@@ -54,10 +54,10 @@ final class WipeRecorder: Sendable {
     /// What the full teardown to the login screen wipes, in order.
     static let fullTeardown: [Event] = [
         .sessionsCleared,
+        .thumbnailMemoryCleared,
         .directoryCacheCleared,
         .jsonCacheCleared,
         .previewCacheCleared,
-        .thumbnailMemoryCleared,
         .uploadThumbnailsCleared,
         .offlineFilesCleared,
         .scratchPurged(.everything),

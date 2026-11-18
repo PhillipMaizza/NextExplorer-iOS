@@ -31,7 +31,7 @@
             Button {
                 isPresented = true
             } label: {
-                IconKit.squareGrid
+                IconKit.gridOptions
                     .foregroundStyle(Color.primaryDS)
             }
             .buttonStyle(DSPressableButtonStyle())
@@ -60,7 +60,7 @@
             DSDynamicHeightSheet {
                 VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                     DSSheetHeader(
-                        icon: IconKit.squareGrid,
+                        icon: IconKit.gridOptions,
                         title: L10n.Grid.settingsTitle,
                         closeAccessibilityLabel: L10n.Common.close,
                         onClose: onDismiss
