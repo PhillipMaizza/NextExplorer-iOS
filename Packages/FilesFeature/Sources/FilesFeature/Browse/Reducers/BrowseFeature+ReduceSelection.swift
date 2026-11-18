@@ -45,7 +45,7 @@ extension BrowseFeature {
             guard !state.selectedItemIDs.isEmpty else { return .none }
             state.bulkDeleteConfirmationIsPresented = true
             state.deleteImpactCheck = .checking
-            let selected = state.selectedItemIDs.compactMap { state.items[id: $0] }
+            let selected = state.selectedItems
             return checkDeleteImpact(&state, items: selected)
 
         case .bulkDeleteCancelled:
@@ -100,7 +100,7 @@ extension BrowseFeature {
             return didChangeAnything ? .send(.delegate(.favoritesChanged)) : .none
 
         case .bulkDownloadTapped:
-            let targets = state.items.filter { state.selectedItemIDs.contains($0.id) }
+            let targets = state.selectedItems
             guard !targets.isEmpty else { return .none }
             state.isSelecting = false
             state.selectedItemIDs = []
@@ -113,7 +113,7 @@ extension BrowseFeature {
             #endif
 
         case .bulkOfflineTapped:
-            let targets = state.items.filter { state.selectedItemIDs.contains($0.id) }
+            let targets = state.selectedItems
             guard !targets.isEmpty else { return .none }
             state.isSelecting = false
             state.selectedItemIDs = []

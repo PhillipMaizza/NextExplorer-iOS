@@ -160,9 +160,7 @@
                 getInfo: { store.send(.infoSelectionTapped) },
                 canPaste: canPaste,
                 open: {
-                    guard store.selectedItemIDs.count == 1,
-                          let item = store.displayedItems.first(where: { store.selectedItemIDs.contains($0.id) })
-                    else { return }
+                    guard let item = store.singleSelectedItem else { return }
                     open(item)
                 },
                 copyPath: {

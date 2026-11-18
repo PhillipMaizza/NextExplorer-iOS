@@ -114,7 +114,7 @@ extension BrowseFeature {
             return .none
 
         case .bulkCopyTapped:
-            let items = Array(state.items.filter { state.selectedItemIDs.contains($0.id) })
+            let items = state.selectedItems
             guard !items.isEmpty else { return .none }
             state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .copy) }
             state.clipboardStagedMessage = items.count == 1
@@ -125,7 +125,7 @@ extension BrowseFeature {
             return .none
 
         case .bulkMoveTapped:
-            let items = Array(state.items.filter { state.selectedItemIDs.contains($0.id) })
+            let items = state.selectedItems
             guard !items.isEmpty else { return .none }
             state.destinationPicker = DestinationPickerFeature.State(serverURL: state.serverURL, items: items)
             state.isSelecting = false

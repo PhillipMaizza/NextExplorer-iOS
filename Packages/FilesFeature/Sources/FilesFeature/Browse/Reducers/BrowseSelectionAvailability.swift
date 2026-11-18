@@ -7,8 +7,8 @@ extension BrowseFeature.State {
     /// Rename only makes sense for a single target: `nil` (hiding the toolbar icon) for
     /// zero or multiple selected items.
     var singleSelectedItem: FileItem? {
-        guard selectedItemIDs.count == 1, let id = selectedItemIDs.first else { return nil }
-        return items[id: id]
+        let selected = selectedItems
+        return selected.count == 1 ? selected.first : nil
     }
 
     /// What the selection menu offers for the items picked now.
@@ -65,9 +65,10 @@ extension BrowseFeature.State {
         canUploadHere || (!directoryPath.isEmpty && (canCreateFileHere || canCreateFolderHere))
     }
 
-    /// The selected items, in listing order.
+    /// The selected items on screen, in listing order: every bulk action and count reads these, so a
+    /// pick a setting has since hidden (hidden files turned off in another window) is never acted on.
     var selectedItems: [FileItem] {
-        items.filter { selectedItemIDs.contains($0.id) }
+        filteredItems.filter { selectedItemIDs.contains($0.id) }
     }
 
     /// The Mac's share menu needs a button to anchor to, so kept files are shared from iOS only.
