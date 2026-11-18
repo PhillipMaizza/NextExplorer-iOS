@@ -263,24 +263,32 @@ def check_lint(changed):
 
 
 def changed_files(diff_args):
-    out = git("diff", "--name-status", "--no-renames", *diff_args)
-    return {line.split("\t")[1]: line.split("\t")[0] for line in out.splitlines() if "\t" in line}
+    """Path to (status, the path it had before). A moved file is a modification of its old self, so a
+    folder reshuffle is not a pile of new files."""
+    changed = {}
+    for line in git("diff", "--name-status", "--find-renames", *diff_args).splitlines():
+        parts = line.split("\t")
+        if len(parts) == 3 and parts[0].startswith("R"):
+            changed[parts[2]] = ("M", parts[1])
+        elif len(parts) == 2:
+            changed[parts[1]] = (parts[0], parts[1])
+    return changed
 
 
 def check_change(diff_args, old_spec, new_spec, denylist):
     findings = []
     statuses = changed_files(diff_args)
-    added = parse_diff(git("diff", "-U0", "--no-color", "--no-renames", *diff_args))
-    for path, status in sorted(statuses.items()):
+    added = parse_diff(git("diff", "-U0", "--no-color", "--find-renames", *diff_args))
+    for path, (status, was) in sorted(statuses.items()):
         if status == "D":
             continue
         new = blob(new_spec(path))
-        old = None if status == "A" else blob(old_spec(path))
+        old = None if status == "A" else blob(old_spec(was))
         findings += check_lines(path, added.get(path, []), new, denylist)
         findings += check_size(path, old, new)
         if status == "A":
             findings += check_new_file(path, new)
-    return findings, [path for path, status in statuses.items() if status != "D"]
+    return findings, [path for path, (status, _) in statuses.items() if status != "D"]
 
 
 def main():
