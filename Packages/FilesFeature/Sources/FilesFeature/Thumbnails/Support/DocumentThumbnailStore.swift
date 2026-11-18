@@ -117,7 +117,8 @@ final class DocumentThumbnailStore {
         localThumbnails: LocalThumbnailStore,
         offlineFiles: OfflineFileStore,
         now: Date,
-        isMetered: Bool = false
+        isMetered: Bool = false,
+        scope: String = CacheAccountScope.current
     ) -> Task<Void, Never>? {
         switch entry.state {
         case .ready, .unavailable: return nil
@@ -129,9 +130,8 @@ final class DocumentThumbnailStore {
             entry.state = .unavailable
             return nil
         }
-        // Read as the load starts: after a wipe or an account switch its page must not be drawn
-        // into the cache, or be drawn under the next account's name.
-        let scope = CacheAccountScope.current
+        // Read as the load starts: after a wipe or an account switch it neither fetches with the next
+        // account's session nor draws into the cache.
         let wipeStamp = CacheAccountScope.wipeStamp(scope)
         let task = Task(priority: Constants.fetchPriority) { [weak self] in
             // A cancelled load was already dropped by `removeAll`, and a newer one may hold its key.
@@ -144,8 +144,8 @@ final class DocumentThumbnailStore {
             @MainActor func publish(_ state: State) {
                 (self?.entries[key] ?? entry).state = state
             }
-            func isWiped() -> Bool {
-                CacheAccountScope.wipeStamp(scope) != wipeStamp
+            func isStale() -> Bool {
+                CacheAccountScope.current != scope || CacheAccountScope.wipeStamp(scope) != wipeStamp
             }
             func draw(_ fileURL: URL?) async -> PlatformImage? {
                 await CacheAccountScope.withPinned(scope) {
@@ -166,7 +166,7 @@ final class DocumentThumbnailStore {
             // from disk, anything else shows only a page drawn before.
             if isMetered {
                 let kept = await Task.detached(priority: Constants.fetchPriority) { offlineFiles.localURL(item) }.value
-                guard !isWiped() else {
+                guard !isStale() else {
                     return
                 }
                 if let image = await draw(kept) {
@@ -176,6 +176,9 @@ final class DocumentThumbnailStore {
                 }
                 return
             }
+            guard !isStale() else {
+                return
+            }
             // The server previews only media and PDFs; any other document comes down raw.
             let fetch = item.isPDF ? filesClient.previewFileLowPriority : filesClient.downloadRawFileLowPriority
             guard let fileURL = try? await fetch(serverURL, item) else {
@@ -183,7 +186,7 @@ final class DocumentThumbnailStore {
                 // the next appearance of a cell with this key tries again.
                 return
             }
-            guard !isWiped() else {
+            guard !isStale() else {
                 return
             }
             if let image = await draw(fileURL) {
