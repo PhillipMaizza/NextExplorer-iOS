@@ -119,7 +119,7 @@
             VStack(alignment: .leading, spacing: .space4) {
                 Text(status)
                     .lineLimit(1)
-                    .truncationMode(.middle)
+                    .truncationMode(.tail)
                 if progress.phase == .preparing {
                     ProgressView().progressViewStyle(.linear)
                 } else {

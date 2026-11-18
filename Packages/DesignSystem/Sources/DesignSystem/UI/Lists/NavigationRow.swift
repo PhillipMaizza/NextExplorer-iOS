@@ -131,7 +131,7 @@ public struct DSNavigationRow: View {
                 .type(.body2(.regular), style: .secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(Constants.detailMinScale)
-                .truncationMode(.middle)
+                .truncationMode(.tail)
                 .contentTransition(.numericText())
                 .animation(DSMotion.quickFade, value: text)
         case .none:
