@@ -37,6 +37,12 @@ public enum CacheAccountScope {
         lock.withLock { _value = value }
     }
 
+    /// Whether every account signed out after work for `scope` began. A cache write it makes now
+    /// would land after the sign out wipe and outlive the session, so the writer drops it.
+    public static func isSignedOut(since scope: String, now current: String = CacheAccountScope.current) -> Bool {
+        !scope.isEmpty && current.isEmpty
+    }
+
     /// Removes one account's preview and raw download slots from `Library/Caches/PreviewCache`.
     public static func clearPreviewCache(scope: String) {
         FilesService.clearPreviewCache(scope: scope)

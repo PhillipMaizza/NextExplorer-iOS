@@ -593,7 +593,7 @@ public struct AppFeature {
             refreshAccounts,
             .run { _ in
                 await authClient.clearAllSessions()
-                // Stops thumbnail loads before the disk wipe, so none writes a download back.
+                // A thumbnail download still landing is dropped by `CacheAccountScope.isSignedOut`.
                 thumbnailCache.clearMemory()
                 directoryCacheStore.clearAll()
                 jsonCacheStore.clearAll()

@@ -65,6 +65,36 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func aDownloadLandingAfterEveryAccountSignedOutIsNotCached() async throws {
+            stub(statusCode: 200, body: Data("raw file bytes".utf8))
+            let item = FileItem(
+                name: "\(TestID.name()).\(TestKind.word)", path: TestFolder.docs,
+                dateModified: MockDate.date, size: 14, kind: TestKind.word
+            )
+            StubURLProtocol.capturedRequest = nil
+            // Signed in when the request goes out, signed out by the time the bytes are back.
+            let signedOutMidDownload = FilesClient.live(
+                networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+                directoryCacheStore: .testValue,
+                activeScope: { StubURLProtocol.capturedRequest == nil ? Constants.account : "" }
+            )
+
+            await #expect(throws: CancellationError.self) {
+                try await signedOutMidDownload.downloadRawFileLowPriority(serverURL, item)
+            }
+
+            StubURLProtocol.capturedRequest = nil
+            let signedIn = FilesClient.live(
+                networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+                directoryCacheStore: .testValue,
+                activeScope: { Constants.account }
+            )
+            let downloaded = try await signedIn.downloadRawFileLowPriority(serverURL, item)
+            defer { try? FileManager.default.removeItem(at: downloaded.deletingLastPathComponent()) }
+            #expect(StubURLProtocol.capturedRequest != nil)
+        }
+
+        @Test
         func downloadRawFileMapsAccessDeniedToAServerError() async throws {
             stub(statusCode: 403, body: Data())
             let item = FileItem(name: "secret.docx", path: "", dateModified: MockDate.date, size: 0, kind: "docx")
@@ -176,6 +206,7 @@ extension FilesClientLiveTests {
 }
 
 private enum Constants {
+    static let account = "account-a"
     static let uploadBody = "hello upload"
     static let zipBytes = "PK-zip-bytes"
 }

@@ -82,8 +82,7 @@ final class DocumentThumbnailStore {
         return item.size > 0 && item.size <= Constants.maxQuickLookBytes
     }
 
-    /// Drops every entry and stops every load still running, so no download or drawn page
-    /// outlives a session: a load finishing after a logout's wipe would write it back to disk.
+    /// Drops every entry and stops every load still running, so no drawn page outlives a session.
     func removeAll() {
         tasks.values.forEach { $0.cancel() }
         tasks.removeAll()
