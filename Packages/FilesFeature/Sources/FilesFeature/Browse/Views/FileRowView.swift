@@ -30,7 +30,7 @@ struct FileRowView: View {
     let thumbnailSignature: String
     let serverURL: URL?
     let showThumbnails: Bool
-    /// The full item, when built from one: needed for the on device PDF first page render,
+    /// The full item, when built from one: needed for the on device document first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
     /// When set, replaces the folder/file-type glyph: used by the Favorites list to show a
@@ -56,7 +56,7 @@ struct FileRowView: View {
     /// `thumbnailFile` opts a caller with only a name/kind (a search hit, which carries no size or
     /// modified date) into the same thumbnail rendering a browse row gets, while keeping a custom
     /// `subtitle` (e.g. a search match line) and no date/size line. Server thumbnails still need
-    /// the file to report `supportsThumbnail`; the on device PDF render only needs its kind.
+    /// the file to report `supportsThumbnail`; the on device document render needs its kind and size.
     init(
         name: String,
         isDirectory: Bool,
@@ -164,7 +164,7 @@ struct FileRowView: View {
     }
 
     private var isEligibleForDocumentThumbnail: Bool {
-        showThumbnails && serverURL != nil && (file?.isPDF ?? false)
+        showThumbnails && serverURL != nil && file.map(DocumentThumbnailStore.isEligible) == true
     }
 
     var body: some View {
@@ -255,8 +255,10 @@ struct FileRowView: View {
             )
             .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isEligibleForDocumentThumbnail, let serverURL, let file {
-            DocumentThumbnailImage(serverURL: serverURL, item: file)
-                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+            DocumentThumbnailImage(serverURL: serverURL, item: file) {
+                FileTypeIcon(kind: file.kind)
+            }
+            .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isDirectory {
             IconKit.folderFill
                 .resizable()

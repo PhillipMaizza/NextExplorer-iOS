@@ -130,7 +130,15 @@ struct ImageGalleryPage: View {
                 }
             case let .streaming(uiImage), let .loaded(uiImage):
                 ZoomableScrollView(onZoomChange: onZoomChange) {
+                    // An icon sized picture shows one point per pixel, as Quick Look does,
+                    // instead of blown up to the screen; pinch still zooms it.
+                    let iconSide = ThumbnailImage.isIconSized(uiImage) ? uiImage.cgImage : nil
                     Image(platformImage: uiImage).resizable().scaledToFit()
+                        .frame(
+                            maxWidth: iconSide.map { CGFloat($0.width) },
+                            maxHeight: iconSide.map { CGFloat($0.height) }
+                        )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .accessibilityLabel(item.name)
                 }
                 .transition(.opacity)
