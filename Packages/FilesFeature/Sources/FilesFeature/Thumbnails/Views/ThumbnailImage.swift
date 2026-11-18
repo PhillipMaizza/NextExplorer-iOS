@@ -49,9 +49,10 @@ private enum Constants {
     static let pendingMaxDelay = Duration.seconds(10)
 }
 
-/// Lazily resolves and displays a thumbnail for one file: a small spinner while the request
-/// is in flight, then either the image or `fallbackIcon`: on failure or once resolved to no
-/// thumbnail (`GET /api/thumbnails/*` legitimately returns `{ thumbnail: "" }` for e.g. PDFs
+/// Lazily resolves and displays a thumbnail for one file: the typed icon when there is one (else
+/// a small spinner) while the request is in flight, then either the image or `fallbackIcon`: on
+/// failure or once resolved to no thumbnail (`GET /api/thumbnails/*` legitimately returns `{ thumbnail: "" }` for e.g.
+/// PDFs
 /// or when thumbnails are disabled server-side). One request per instance: the API has no
 /// bulk/listing variant, matching how the real web client also loads these per-file.
 ///
@@ -149,7 +150,7 @@ struct ThumbnailImage: View {
                         .resizable()
                         .scaledToFit()
                 }
-            } else if didResolve {
+            } else if didResolve || isGridWell || fallbackKind != nil {
                 fallbackImage
             } else {
                 ThumbnailLoadingPlaceholder()
@@ -187,7 +188,7 @@ struct ThumbnailImage: View {
             }
             let thumbnailURL = await resolveThumbnailURL()
             // A cancelled task (the row scrolled away, or the tab was switched mid load) is not
-            // a failure: leave the loading placeholder so re-appearing retries, instead of
+            // a failure: leave it loading so appearing again retries, instead of
             // marking it resolved and dropping to the generic fallback icon.
             if Task.isCancelled {
                 return

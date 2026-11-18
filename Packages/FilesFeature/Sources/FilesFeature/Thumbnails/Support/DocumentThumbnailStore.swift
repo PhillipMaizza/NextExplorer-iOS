@@ -42,14 +42,12 @@ final class DocumentThumbnailStore {
     static let shared = DocumentThumbnailStore()
 
     enum State {
-        /// Being fetched/rendered (or not asked for yet). The cell shows a loading placeholder.
+        /// Being fetched/rendered, not asked for yet, or not downloaded on a metered network (its
+        /// next appearance asks again). The cell shows the kind's icon.
         case loading
         case ready(PlatformImage)
         /// Too large, or fetched but nothing could draw it. The cell shows the kind's icon.
         case unavailable
-        /// Not downloaded on a metered network, and never drawn before. The cell shows the kind's
-        /// icon; its next appearance asks again, so it fills in once on WiFi.
-        case skipped
 
         var isReady: Bool {
             if case .ready = self {
@@ -120,7 +118,7 @@ final class DocumentThumbnailStore {
     ) -> Task<Void, Never>? {
         switch entry.state {
         case .ready, .unavailable: return nil
-        case .loading, .skipped: break
+        case .loading: break
         }
         guard tasks[key] == nil else { return nil }
 
@@ -148,7 +146,9 @@ final class DocumentThumbnailStore {
             // On mobile data nothing is downloaded just to draw a thumbnail: a page drawn before
             // still shows from the render cache.
             if isMetered {
-                entry.state = await cache.firstPageImage(key, Constants.renderPixel, nil).map { .ready($0) } ?? .skipped
+                if let image = await cache.firstPageImage(key, Constants.renderPixel, nil) {
+                    entry.state = .ready(image)
+                }
                 return
             }
             // The server previews only media and PDFs; any other document comes down raw.

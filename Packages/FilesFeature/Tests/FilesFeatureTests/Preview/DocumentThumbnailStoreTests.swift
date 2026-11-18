@@ -11,7 +11,7 @@ import TestUtils
 @MainActor
 @Suite(.serialized)
 struct DocumentThumbnailStoreTests {
-    /// Isolated render-cache dir so nothing lands in the shared `PreviewCache` root.
+    /// Isolated render cache dir so nothing lands in the shared `PreviewCache` root.
     private func isolatedCache() -> (cache: DocumentThumbnailCache, directory: URL) {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("pdf-thumb-store-cache-\(TestID.name())", isDirectory: true)
@@ -225,8 +225,8 @@ struct DocumentThumbnailStoreTests {
         let shown = load(store, key: drawnBeforeKey, item: drawnBefore, client: client, cache: cache, isMetered: true)
         await shown.task?.value
 
-        if case .skipped = skipped.entry.state {} else {
-            Issue.record("Expected skipped, got \(skipped.entry.state)")
+        if case .loading = skipped.entry.state {} else {
+            Issue.record("Expected loading, got \(skipped.entry.state)")
         }
         #expect(readyImage(shown.entry) != nil)
         #expect(downloads.value == 0)

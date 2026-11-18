@@ -12,14 +12,14 @@ import SwiftUI
 private enum Constants {
     static let cornerRadius: CGFloat = .size4
     /// The reveal when a render lands: the page springs up from a slight shrink while the
-    /// placeholder fades out under it.
+    /// type icon fades out under it.
     static let revealAnimation: Animation = DSMotion.pop
     static let revealInitialScale: CGFloat = 0.86
 }
 
-/// A document's browse thumbnail: a loading placeholder while its first page is fetched and
-/// drawn on device in the background, then the drawn page on its own. Falls back to `fallback`
-/// (the kind's type icon) for a file nothing can draw.
+/// A document's browse thumbnail: `fallback` (the kind's type icon) while its first page is
+/// fetched and drawn on device in the background, then the drawn page on its own. The icon
+/// stays for a file nothing can draw.
 ///
 /// The work is owned by `DocumentThumbnailStore`, not this view: the fetch + render run in a task
 /// a scroll or navigation doesn't cancel, and the result is published back through this
@@ -27,7 +27,7 @@ private enum Constants {
 struct DocumentThumbnailImage<Fallback: View>: View {
     let serverURL: URL
     let item: FileItem
-    /// A grid tile's well: the page and its placeholder sit in the shared symbol box.
+    /// A grid tile's well: the page sits in the shared symbol box.
     var isGridWell = false
     @ViewBuilder let fallback: () -> Fallback
 
@@ -43,7 +43,7 @@ struct DocumentThumbnailImage<Fallback: View>: View {
     }
 
     var body: some View {
-        // `entry(forKey:)` is a stable per-key box; only its `state` is observed, so a
+        // `entry(forKey:)` is a stable box per key; only its `state` is observed, so a
         // resolving thumbnail redraws just this cell.
         let entry = store.entry(forKey: cacheKey)
         let state = entry.state
@@ -76,15 +76,10 @@ struct DocumentThumbnailImage<Fallback: View>: View {
                 insertion: .scale(scale: Constants.revealInitialScale).combined(with: .opacity),
                 removal: .opacity
             ))
-        case .unavailable, .skipped:
+        case .loading, .unavailable:
+            // The kind's icon stands in while the page loads, so a cell never flashes a spinner.
             fallback()
                 .transition(.opacity)
-        case .loading:
-            inWell {
-                ThumbnailLoadingPlaceholder()
-                    .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
-            }
-            .transition(.opacity)
         }
     }
 
@@ -98,7 +93,7 @@ struct DocumentThumbnailImage<Fallback: View>: View {
     }
 }
 
-#Preview("Loading placeholder (previewValue never produces a render)") {
+#Preview("Loading shows the type icon (previewValue never produces a render)") {
     DocumentThumbnailImage(
         serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
         item: FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 800_000, kind: "pdf")
