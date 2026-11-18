@@ -101,6 +101,57 @@ def upcoming_version(options)
   next_version(latest, options[:bump])
 end
 
+# The version App Store Connect already has open for editing per platform (one you created by hand,
+# or a rejected one), or nothing when there is none. Spaceship's edit version covers every state
+# that can still take a new build, so a platform in review or live has none.
+def store_versions_in_progress(platforms)
+  app = Spaceship::ConnectAPI::App.find(CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier))
+  platforms.each_with_object({}) do |platform, found|
+    connect_platform = platform == "mac" ? Spaceship::ConnectAPI::Platform::MAC_OS : Spaceship::ConnectAPI::Platform::IOS
+    version = app.get_edit_app_store_version(platform: connect_platform)&.version_string
+    found[platform] = version if version
+  end
+end
+
+# The version to ship once App Store Connect is known: the one already open there, or `computed`
+# when none is. An explicit `version:` or `bump:` that disagrees with an open version is an error,
+# because submitting would silently rename it. Pure, so it needs no network to reason about.
+def reconcile_store_version(computed, in_progress, explicit:, latest: nil)
+  open_versions = in_progress.values.uniq
+  if open_versions.size > 1
+    UI.user_error!("App Store Connect has different versions open (#{in_progress.map { |p, v| "#{p} #{v}" }.join(', ')}); make them match first")
+  end
+  return computed if open_versions.empty?
+  open_version = open_versions.first
+  if explicit && open_version != computed
+    UI.user_error!("App Store Connect has #{open_version} open but this release is #{computed}; pass version:#{open_version}, or delete the open version there")
+  end
+  if latest && Gem::Version.new(open_version) <= Gem::Version.new(latest)
+    UI.user_error!("App Store Connect has #{open_version} open, not newer than the released #{latest}")
+  end
+  UI.important("Using #{open_version}, the version already open in App Store Connect") if open_version != computed
+  open_version
+end
+
+# `upcoming_version`, reconciled with what App Store Connect already has open. A failed lookup
+# leaves the git tag based version, as the TestFlight build check does.
+def release_version(options, platforms)
+  computed = upcoming_version(options)
+  in_progress = begin
+    Spaceship::ConnectAPI.token = Spaceship::ConnectAPI::Token.from(hash: asc_api_key)
+    store_versions_in_progress(platforms)
+  rescue StandardError => e
+    UI.important("Couldn't check App Store Connect for an open version (#{e.message}); using #{computed}")
+    {}
+  end
+  reconcile_store_version(
+    computed,
+    in_progress,
+    explicit: !(options[:version] || options[:bump]).nil?,
+    latest: latest_released_version
+  )
+end
+
 platform :ios do
   desc "Run every package's unit tests in one build, as CI does (options: device)"
   lane :unit_tests do |options|
@@ -136,7 +187,7 @@ platform :ios do
     ensure_git_status_clean
     sh("git", "fetch", "--tags", "--quiet", "origin")
     platforms = release_platforms(options)
-    version = upcoming_version(options)
+    version = release_version(options, platforms)
     upload_betas(version: version, platforms: platforms)
     UI.success("#{version} for #{platforms.join(' and ')} uploaded to TestFlight")
   end
@@ -147,7 +198,7 @@ platform :ios do
     ensure_git_status_clean
     sh("git", "fetch", "--tags", "--quiet", "origin")
     platforms = release_platforms(options)
-    version = upcoming_version(options)
+    version = release_version(options, platforms)
     ensure_version_unreleased(version: version)
     unit_tests(device: DEFAULT_DEVICE)
     build_release(version: version) if platforms.include?("ios")
@@ -168,7 +219,7 @@ platform :ios do
 
     sh("git", "fetch", "--tags", "--quiet", "origin")
     platforms = release_platforms(options)
-    version = upcoming_version(options)
+    version = release_version(options, platforms)
     ensure_version_unreleased(version: version)
     head = sh("git", "rev-parse", "HEAD", log: false).strip
     if ci_passed?(head)
@@ -209,6 +260,8 @@ platform :ios do
     UI.user_error!("No user facing notes for #{version}; nothing to put in What's New") if whats_new.empty?
 
     platforms = release_platforms(options)
+    # Submitting renames whatever version is open in App Store Connect, so it has to be this one.
+    release_version({ version: version }, platforms)
     platforms.each do |platform|
       # The Mac app's first version has no What's New to fill in.
       first_version = platform == "mac" && version == FIRST_MAC_VERSION
@@ -379,7 +432,7 @@ platform :mac do
   lane :beta do |options|
     ensure_git_status_clean
     sh("git", "fetch", "--tags", "--quiet", "origin")
-    version = upcoming_version(options)
+    version = release_version(options, ["mac"])
     upload_betas(version: version, platforms: ["mac"])
   end
 
@@ -387,7 +440,7 @@ platform :mac do
   lane :release_dry_run do |options|
     ensure_git_status_clean
     sh("git", "fetch", "--tags", "--quiet", "origin")
-    version = upcoming_version(options)
+    version = release_version(options, ["mac"])
     unit_tests
     build_mac_release(version: version)
     UI.success("Would release #{version} for the Mac")
