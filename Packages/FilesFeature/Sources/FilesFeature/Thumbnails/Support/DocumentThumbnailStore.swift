@@ -72,14 +72,17 @@ final class DocumentThumbnailStore {
     /// Whether `item` gets a drawn first page: a PDF, or a document Quick Look can draw, within its
     /// kind's size cap. One rule for every list row and grid tile.
     nonisolated static func isEligible(_ item: FileItem) -> Bool {
+        // A search hit reports no size, so nothing would hold its download to the cap.
+        guard item.size > 0 else {
+            return false
+        }
         if item.isPDF {
             return item.size <= Constants.maxPDFBytes
         }
         guard item.isOfficeDocument || Constants.quickLookKinds.contains(item.kind.lowercased()) else {
             return false
         }
-        // A search hit reports no size, so nothing would hold its download to the cap.
-        return item.size > 0 && item.size <= Constants.maxQuickLookBytes
+        return item.size <= Constants.maxQuickLookBytes
     }
 
     /// Drops every entry and stops every load still running, so no drawn page outlives a session.

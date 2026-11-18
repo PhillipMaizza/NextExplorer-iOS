@@ -164,6 +164,7 @@ struct DocumentThumbnailStoreTests {
         let megabyte: Int64 = 1_024 * 1_024
         #expect(DocumentThumbnailStore.isEligible(item(size: 40 * megabyte)))
         #expect(!DocumentThumbnailStore.isEligible(item(size: 40 * megabyte + 1)))
+        #expect(!DocumentThumbnailStore.isEligible(item(size: 0)))
         #expect(DocumentThumbnailStore.isEligible(item(size: 10 * megabyte, kind: TestKind.word)))
         #expect(!DocumentThumbnailStore.isEligible(item(size: 10 * megabyte + 1, kind: TestKind.word)))
         #expect(DocumentThumbnailStore.isEligible(item(size: 5, kind: "pages")))
