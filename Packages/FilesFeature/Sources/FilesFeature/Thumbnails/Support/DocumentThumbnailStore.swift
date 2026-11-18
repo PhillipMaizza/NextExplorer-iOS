@@ -113,6 +113,7 @@ final class DocumentThumbnailStore {
         filesClient: FilesClient,
         cache: DocumentThumbnailCache,
         localThumbnails: LocalThumbnailStore,
+        offlineFiles: OfflineFileStore,
         now: Date,
         isMetered: Bool = false
     ) -> Task<Void, Never>? {
@@ -143,11 +144,14 @@ final class DocumentThumbnailStore {
                 entry.state = .ready(seeded)
                 return
             }
-            // On mobile data nothing is downloaded just to draw a thumbnail: a page drawn before
-            // still shows from the render cache.
+            // On mobile data nothing is downloaded just to draw a thumbnail: a kept copy is drawn
+            // from disk, anything else shows only a page drawn before.
             if isMetered {
-                if let image = await cache.firstPageImage(key, Constants.renderPixel, nil) {
+                let kept = await Task.detached(priority: Constants.fetchPriority) { offlineFiles.localURL(item) }.value
+                if let image = await cache.firstPageImage(key, Constants.renderPixel, kept) {
                     entry.state = .ready(image)
+                } else if kept != nil {
+                    entry.state = .unavailable
                 }
                 return
             }

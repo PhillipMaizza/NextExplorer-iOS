@@ -36,13 +36,13 @@ struct DocumentThumbnailStoreTests {
     private func load(
         _ store: DocumentThumbnailStore, key: String, item: FileItem,
         client: FilesClient, cache: DocumentThumbnailCache, localThumbnails: LocalThumbnailStore = .testValue,
-        isMetered: Bool = false
+        offlineFiles: OfflineFileStore = .testValue, isMetered: Bool = false
     ) -> (entry: DocumentThumbnailStore.Entry, task: Task<Void, Never>?) {
         let entry = store.entry(forKey: key)
         let task = store.load(
             entry: entry, key: key, item: item,
             serverURL: URL(string: TestHost.exampleURLString)!, filesClient: client, cache: cache,
-            localThumbnails: localThumbnails, now: MockDate.date, isMetered: isMetered
+            localThumbnails: localThumbnails, offlineFiles: offlineFiles, now: MockDate.date, isMetered: isMetered
         )
         return (entry, task)
     }
@@ -201,7 +201,7 @@ struct DocumentThumbnailStoreTests {
     }
 
     @Test
-    func onMobileDataNothingDownloadsAndOnlyAnEarlierRenderShows() async throws {
+    func onMobileDataNothingDownloadsAndOnlyKeptCopiesOrEarlierRendersShow() async throws {
         let store = DocumentThumbnailStore()
         let page = try #require(ThumbnailRendering.firstPDFPage(at: makePDF(), maxPixel: 16))
         let downloads = LockIsolated(0)
@@ -212,9 +212,13 @@ struct DocumentThumbnailStoreTests {
         }
         let neverDrawn = item(size: 5, kind: TestKind.word)
         let drawnBefore = item(size: 6, kind: TestKind.word)
+        let keptOffline = item(size: 7, kind: TestKind.word)
+        let keptURL = URL(fileURLWithPath: "/kept/\(keptOffline.name)")
+        var offlineFiles = OfflineFileStore.testValue
+        offlineFiles.localURL = { $0.id == keptOffline.id ? keptURL : nil }
         let drawnBeforeKey = DocumentThumbnailCache.cacheKey(id: drawnBefore.id, signature: drawnBefore.cacheSignature)
         let cache = DocumentThumbnailCache { key, _, fileURL in
-            fileURL == nil && key == drawnBeforeKey ? PlatformImage(cgImage: page) : nil
+            fileURL == keptURL || fileURL == nil && key == drawnBeforeKey ? PlatformImage(cgImage: page) : nil
         }
 
         let skipped = load(
@@ -224,11 +228,17 @@ struct DocumentThumbnailStoreTests {
         await skipped.task?.value
         let shown = load(store, key: drawnBeforeKey, item: drawnBefore, client: client, cache: cache, isMetered: true)
         await shown.task?.value
+        let kept = load(
+            store, key: DocumentThumbnailCache.cacheKey(id: keptOffline.id, signature: keptOffline.cacheSignature),
+            item: keptOffline, client: client, cache: cache, offlineFiles: offlineFiles, isMetered: true
+        )
+        await kept.task?.value
 
         if case .loading = skipped.entry.state {} else {
             Issue.record("Expected loading, got \(skipped.entry.state)")
         }
         #expect(readyImage(shown.entry) != nil)
+        #expect(readyImage(kept.entry) != nil)
         #expect(downloads.value == 0)
     }
 

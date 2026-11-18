@@ -36,6 +36,7 @@ struct DocumentThumbnailImage<Fallback: View>: View {
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
     @Dependency(\.date) private var date
     @Dependency(\.connectivity) private var connectivity
+    @Dependency(\.offlineFileStore) private var offlineFileStore
     private let store = DocumentThumbnailStore.shared
 
     private var cacheKey: String {
@@ -56,6 +57,7 @@ struct DocumentThumbnailImage<Fallback: View>: View {
             store.load(
                 entry: entry, key: cacheKey, item: item, serverURL: serverURL,
                 filesClient: filesClient, cache: documentThumbnailCache, localThumbnails: localThumbnailStore,
+                offlineFiles: offlineFileStore,
                 now: date.now,
                 isMetered: connectivity.isMetered()
             )
