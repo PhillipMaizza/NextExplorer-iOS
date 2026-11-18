@@ -1168,6 +1168,9 @@ shareUpload.notificationDoneTitle	Upload finished
 shareUpload.notificationFailedTitle	Some files didn't upload
 shareUpload.notificationDoneBody#one	%lld file uploaded to “%@”.
 shareUpload.notificationDoneBody#other	%lld files uploaded to “%@”.
+shareUpload.deferredTitle	Large files are waiting
+shareUpload.deferredBody#one	Open NextExplorer to upload %lld large file.
+shareUpload.deferredBody#other	Open NextExplorer to upload %lld large files.
 shareUpload.notificationAllFailedTitle	Upload failed
 shareUpload.failureUnauthorized#one	%lld file wasn't uploaded. Sign in again, then retry.
 shareUpload.failureUnauthorized#other	%lld files weren't uploaded. Sign in again, then retry.
@@ -1175,6 +1178,9 @@ shareUpload.failureForbidden#one	%lld file wasn't uploaded. You don't have permi
 shareUpload.failureForbidden#other	%lld files weren't uploaded. You don't have permission to add files to that folder.
 shareUpload.failureServerFull#one	%lld file wasn't uploaded. The server is out of storage space.
 shareUpload.failureServerFull#other	%lld files weren't uploaded. The server is out of storage space.
+shareUpload.failureTooLarge#one	%lld file wasn't uploaded. Your server connection refuses files this big. Share it again and NextExplorer will send it in pieces.
+shareUpload.failureTooLarge#other	%lld files weren't uploaded. Your server connection refuses files this big. Share them again and NextExplorer will send them in pieces.
+shareUpload.startedDeferred	Saved for NextExplorer. Open the app to upload your large files.
 shareUpload.failureNetwork#one	%lld file wasn't uploaded. The connection failed. Retry when you're back online.
 shareUpload.failureNetwork#other	%lld files weren't uploaded. The connection failed. Retry when you're back online.
 shareUpload.failureOther#one	%lld file couldn't be uploaded.

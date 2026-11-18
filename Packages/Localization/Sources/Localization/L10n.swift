@@ -838,6 +838,8 @@ public enum L10n {
         public static var certificateRequired: String { tr("shareUpload.certificateRequired") }
         public static func checking(_ a0: CVarArg) -> String { tr("shareUpload.checking", a0) }
         public static var defaultFolderUnavailable: String { tr("shareUpload.defaultFolderUnavailable") }
+        public static func deferredBody(_ a0: CVarArg) -> String { tr("shareUpload.deferredBody", a0) }
+        public static var deferredTitle: String { tr("shareUpload.deferredTitle") }  // "Large files are waiting"
         public static var failed: String { tr("shareUpload.failed") }  // "The files couldn't be prepared for upload."
         public static func failedItemLine(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.failedItemLine", a0, a1) }
         public static var failedItemsHeader: String { tr("shareUpload.failedItemsHeader") }  // "These files couldn't be prepared:"
@@ -845,6 +847,7 @@ public enum L10n {
         public static func failureNetwork(_ a0: CVarArg) -> String { tr("shareUpload.failureNetwork", a0) }
         public static func failureOther(_ a0: CVarArg) -> String { tr("shareUpload.failureOther", a0) }
         public static func failureServerFull(_ a0: CVarArg) -> String { tr("shareUpload.failureServerFull", a0) }
+        public static func failureTooLarge(_ a0: CVarArg) -> String { tr("shareUpload.failureTooLarge", a0) }
         public static func failureUnauthorized(_ a0: CVarArg) -> String { tr("shareUpload.failureUnauthorized", a0) }
         public static func fallbackItemName(_ a0: CVarArg) -> String { tr("shareUpload.fallbackItemName", a0) }
         public static var folderChoose: String { tr("shareUpload.folderChoose") }  // "Choose a Folder"
@@ -876,6 +879,7 @@ public enum L10n {
         public static var sessionUnreadable: String { tr("shareUpload.sessionUnreadable") }
         public static var signedOut: String { tr("shareUpload.signedOut") }  // "Sign in to NextExplorer first, then share again."
         public static var started: String { tr("shareUpload.started") }
+        public static var startedDeferred: String { tr("shareUpload.startedDeferred") }
         public static var title: String { tr("shareUpload.title") }  // "Upload to NextExplorer"
         public static var upload: String { tr("shareUpload.upload") }  // "Upload"
         public static var uploadReady: String { tr("shareUpload.uploadReady") }  // "Upload Ready Files"

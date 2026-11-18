@@ -1248,3 +1248,11 @@ trash.columnOriginalLocation	Початкове розташування
 trash.columnDeletedBy	Видалив
 trash.columnDeletedOn	Дата видалення
 trash.columnRemoved	Видалення
+shareUpload.deferredBody#one	Відкрийте NextExplorer, щоб вивантажити %lld великий файл.
+shareUpload.deferredBody#other	Відкрийте NextExplorer, щоб вивантажити %lld великого файлу.
+shareUpload.deferredBody#few	Відкрийте NextExplorer, щоб вивантажити %lld великі файли.
+shareUpload.deferredBody#many	Відкрийте NextExplorer, щоб вивантажити %lld великих файлів.
+shareUpload.failureTooLarge#one	%lld файл не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами.
+shareUpload.failureTooLarge#other	%lld файлу не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами.
+shareUpload.failureTooLarge#few	%lld файли не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами.
+shareUpload.failureTooLarge#many	%lld файлів не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами.

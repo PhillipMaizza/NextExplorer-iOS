@@ -51,6 +51,15 @@ struct UploadsQueueTests: UploadsTestSupport {
     }
 
     @Test
+    func aFileAlreadyInTheQueueIsNotQueuedAgain() async {
+        let store = makeStore(state([job(TestFile.aText, 0, .failed("nope"))]))
+
+        await store.send(.enqueue([pending(TestFile.aText, 0)]))
+
+        #expect(uploadCalls.value.isEmpty, "the Share Extension's kept files are offered at every foreground")
+    }
+
+    @Test
     func aFreshBatchDropsTheFinishedRowsOfThePreviousOne() async {
         let store = makeStore(state([
             job("old.txt", 0, .completed),

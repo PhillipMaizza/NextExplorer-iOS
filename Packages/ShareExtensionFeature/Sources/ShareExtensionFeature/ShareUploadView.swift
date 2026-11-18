@@ -166,7 +166,8 @@ extension StoreOf<ShareUploadFeature> {
         notice: ShareUploadFeature.Notice? = nil,
         failures: [ItemFailure] = [],
         livePhotos: Int = 0,
-        names: [String] = []
+        names: [String] = [],
+        deferredCount: Int = 0
     ) -> StoreOf<ShareUploadFeature> {
         var state = ShareUploadFeature.State()
         state.accounts = Array([SessionCredentials.preview, .previewSecond].prefix(accounts))
@@ -176,6 +177,7 @@ extension StoreOf<ShareUploadFeature> {
         state.preparingTotal = 12
         state.progress = PreparationProgress(completed: 4, fraction: 0.4)
         state.stagedCount = 9
+        state.deferredCount = deferredCount
         state
             .failures = phase == .failed || phase == .partiallyPrepared
             ? (failures.isEmpty ? ItemFailure.previews : failures)
@@ -224,6 +226,10 @@ extension SessionCredentials {
 #Preview("Preparing") { ShareUploadView(store: .preview(.preparing)) }
 #Preview("Handing off") { ShareUploadView(store: .preview(.handingOff)) }
 #Preview("Started") { ShareUploadView(store: .preview(.started)) }
+#Preview("Started, big files kept for the app") {
+    ShareUploadView(store: .preview(.started, deferredCount: 2))
+}
+
 #Preview("Loading") { ShareUploadView(store: .preview(.loading)) }
 #Preview("Checking the server") { ShareUploadView(store: .preview(.checking)) }
 #Preview("Partly prepared") { ShareUploadView(store: .preview(.partiallyPrepared)) }

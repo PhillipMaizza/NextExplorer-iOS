@@ -1247,3 +1247,11 @@ trash.columnOriginalLocation	Původní umístění
 trash.columnDeletedBy	Smazal(a)
 trash.columnDeletedOn	Smazáno
 trash.columnRemoved	Odstranění
+shareUpload.deferredBody#one	Otevřete NextExplorer a nahrajte %lld velký soubor.
+shareUpload.deferredBody#other	Otevřete NextExplorer a nahrajte %lld velkých souborů.
+shareUpload.deferredBody#few	Otevřete NextExplorer a nahrajte %lld velké soubory.
+shareUpload.deferredBody#many	Otevřete NextExplorer a nahrajte %lld velkého souboru.
+shareUpload.failureTooLarge#one	%lld soubor se nenahrál. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech.
+shareUpload.failureTooLarge#other	%lld souborů se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech.
+shareUpload.failureTooLarge#few	%lld soubory se nenahrály. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech.
+shareUpload.failureTooLarge#many	%lld souboru se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech.

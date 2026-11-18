@@ -83,7 +83,7 @@ struct ShareUploadStatus: View {
                 .accessibilityElement(children: .combine)
             case .started:
                 Label {
-                    Text(L10n.ShareUpload.started).type(.body2(.regular))
+                    Text(store.startedMessage).type(.body2(.regular))
                 } icon: {
                     IconKit.checkmark.foregroundStyle(Color.positiveText)
                 }

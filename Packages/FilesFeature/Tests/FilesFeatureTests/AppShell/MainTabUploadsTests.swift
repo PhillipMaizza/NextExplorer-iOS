@@ -4,6 +4,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Localization
+import ShareUploads
 import Testing
 import TestUtils
 
@@ -134,5 +135,59 @@ struct MainTabUploadsTests: MainTabTestSupport {
         await store.receive(\.browse.refreshDirectory)
         await store.receive(\.favorites.refreshDirectory)
         await store.receive(\.offline.uploadsLanded)
+    }
+
+    @Test("Big files the Share Extension kept are queued when the app comes forward")
+    func appBecameActiveQueuesTheFilesTheExtensionKept() async throws {
+        let kept = DeferredUpload(
+            id: UUID(0).uuidString, accountID: "a", fileURL: URL(fileURLWithPath: "/tmp/big.txt"),
+            fileName: TestFile.aText, destination: TestFolder.inbox
+        )
+        let asked = LockIsolated<[String]>([])
+        let started = AsyncGate()
+        let store = makeStore {
+            $0.serveEmptyFolders()
+            $0.shareUploads.pendingDeferred = { accountID in
+                asked.withValue { $0.append(accountID) }
+                return [kept]
+            }
+            $0.filesClient.uploadFile = { _, _, _, _, _ in
+                started.open()
+                try await suspendUntilCancelled()
+                throw CancellationError()
+            }
+        }
+
+        await store.send(.appBecameActive)
+        await store.receive(\.browse.syncPathStack)
+        await store.receive(\.favorites.syncPathStack)
+        await store.receive(\.uploads.appResumed)
+        await store.receive(\.offline.autoSync)
+        await store.receive(\.browse.root.refreshButtonTapped) {
+            $0.browse.root.phase = .loading
+        }
+        await store.receive(\.uploads.enqueue) {
+            $0.uploads.jobs = [UploadsFeature.UploadJob(
+                id: UUID(0), fileURL: kept.fileURL, fileName: TestFile.aText,
+                destination: TestFolder.inbox, progress: 0, status: .queued
+            )]
+        }
+        await store.receive(\.uploads.startNextIfIdle) {
+            $0.uploads.jobs[id: UUID(0)]?.status = .uploading
+            $0.uploads.jobs[id: UUID(0)]?.startedAt = MockDate.date
+        }
+        await store.receive(\.browse.root.itemsResponse.success) {
+            $0.browse.root.phase = .loaded
+            $0.browse.root.access = BrowseTestSupport.readOnlyAccess
+        }
+        await store.receive(\.browse.root.favoritesResponse) {
+            $0.browse.root.hasLoadedFavorites = true
+        }
+        try await started.wait()
+        await store.send(.uploads(.cancelAllTapped)) {
+            $0.uploads.jobs = []
+        }
+        await store.finish()
+        #expect(asked.value == [store.state.settings.uploadDefaults.accountID])
     }
 }

@@ -87,6 +87,7 @@ extension ShareUploadHarness {
         browse: (@Sendable (URL, String) async throws -> BrowseResult)? = nil,
         clock: any Clock<Duration> = TestClock(),
         isAssistive: Bool = false,
+        deferredCount: Int = 0,
         announcements: LockIsolated<[String]> = LockIsolated([])
     ) -> ShareUploadFeatureTests.Store {
         // Read before the closures: a closure that reaches `Self` captures a non Sendable metatype.
@@ -104,6 +105,7 @@ extension ShareUploadHarness {
                 calls.record("start")
                 return report?.stagedCount ?? count
             }
+            $0.sharedItems.deferredCount = { deferredCount }
             $0.sharedItems.discard = { calls.record("discard") }
             $0.authClient.loadSession = { credentials }
             $0.authClient.listSessions = { credentials.map { [$0] } ?? [] }
@@ -149,7 +151,7 @@ extension ShareUploadHarness {
     }
 
     /// Taps Upload on a ready sheet and lets a clean pass hand off, ending started.
-    func uploadCleanly(_ store: ShareUploadFeatureTests.Store, count: Int = 3) async {
+    func uploadCleanly(_ store: ShareUploadFeatureTests.Store, count: Int = 3, deferred: Int = 0) async {
         await store.send(.uploadTapped) {
             $0.phase = .preparing
             $0.preparingTotal = count
@@ -157,6 +159,9 @@ extension ShareUploadHarness {
         await store.receive(\.preparationFinished) {
             $0.stagedCount = count
             $0.phase = .handingOff
+        }
+        if deferred > 0 {
+            await store.receive(\.deferredCounted) { $0.deferredCount = deferred }
         }
         await store.receive(\.uploadResponse.success) { $0.phase = .started }
     }
