@@ -53,4 +53,16 @@ struct BrowseFolderFilterTests {
         #expect(state.displayedItems.count == 2)
         #expect(state.hasDisplayedItems)
     }
+
+    @Test("Narrowing the folder drops picks it hides, so a bulk action never reaches a hidden file")
+    func narrowingDropsHiddenPicks() async {
+        var initial = state([folder, photo, report])
+        initial.selectedItemIDs = [photo.id, report.id]
+        let store = BrowseFixtures.store(initial)
+
+        await store.send(.folderCategoryToggled(.document)) {
+            $0.selectedFolderCategories = [.document]
+            $0.selectedItemIDs = [report.id]
+        }
+    }
 }

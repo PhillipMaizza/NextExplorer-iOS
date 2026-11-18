@@ -197,7 +197,6 @@ struct GridCellView: View {
         if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(
                 serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
-                fallbackKind: kind,
                 iconTint: Color.secondaryDS,
                 fileSize: file?.size, modified: file?.dateModified,
                 isGridWell: true

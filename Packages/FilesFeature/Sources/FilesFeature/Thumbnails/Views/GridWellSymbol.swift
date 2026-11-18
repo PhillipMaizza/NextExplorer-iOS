@@ -24,18 +24,12 @@ struct GridWellSymbol<Content: View>: View {
     var showsLabel = false
     @ViewBuilder let content: (_ wellSide: CGFloat) -> Content
 
-    /// The largest a page may be in a well of `side`.
-    static func pageBox(wellSide side: CGFloat) -> CGSize {
-        CGSize(width: side * Constants.widthFraction, height: side * Constants.heightFraction)
-    }
-
     var body: some View {
         GeometryReader { proxy in
             let side = min(proxy.size.width, proxy.size.height)
-            let box = Self.pageBox(wellSide: side)
             VStack(spacing: Constants.spacing) {
                 content(side)
-                    .frame(maxWidth: box.width, maxHeight: box.height)
+                    .frame(maxWidth: side * Constants.widthFraction, maxHeight: side * Constants.heightFraction)
                 if showsLabel, !kind.isEmpty, kind != FileItem.unknownKind {
                     Text(kind.uppercased())
                         .type(.caption(.semibold), style: .secondary)

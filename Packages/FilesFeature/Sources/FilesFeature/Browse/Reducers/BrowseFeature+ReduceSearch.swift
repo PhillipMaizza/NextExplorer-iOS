@@ -91,6 +91,8 @@ extension BrowseFeature {
             } else {
                 state.selectedFolderCategories.insert(category)
             }
+            // A pick the filter hides is dropped, so a bulk action never reaches a file off screen.
+            state.selectedItemIDs.formIntersection(state.displayedItems.ids)
             return .none
 
         case .folderFilterCleared:
