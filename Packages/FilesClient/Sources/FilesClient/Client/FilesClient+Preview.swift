@@ -192,24 +192,10 @@ public extension FilesClient {
         deleteVersions: { _, _, _, _ in },
         thumbnailURL: { _, _ in nil },
         previewFile: { _, item in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
-                "Previews-Preview",
-                isDirectory: true
-            )
-            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            let fileURL = directory.appendingPathComponent(item.name)
-            try? Data().write(to: fileURL)
-            return fileURL
+            emptyStandIn(named: item.name, in: "Previews-Preview")
         },
         previewFileLowPriority: { _, item in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
-                "Previews-Preview",
-                isDirectory: true
-            )
-            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            let fileURL = directory.appendingPathComponent(item.name)
-            try? Data().write(to: fileURL)
-            return fileURL
+            emptyStandIn(named: item.name, in: "Previews-Preview")
         },
         fetchTextContent: { _, _ in "" },
         saveTextContent: { _, _, _ in },
@@ -223,33 +209,13 @@ public extension FilesClient {
             )
         },
         downloadRawFile: { _, item in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
-                "Downloads-Preview",
-                isDirectory: true
-            )
-            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            let fileURL = directory.appendingPathComponent(item.name)
-            try? Data().write(to: fileURL)
-            return fileURL
+            emptyStandIn(named: item.name, in: "Downloads-Preview")
         },
         downloadRawFileLowPriority: { _, item in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
-                "Downloads-Preview",
-                isDirectory: true
-            )
-            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            let fileURL = directory.appendingPathComponent(item.name)
-            try? Data().write(to: fileURL)
-            return fileURL
+            emptyStandIn(named: item.name, in: "Downloads-Preview")
         },
         offlineDownloadFile: { _, item, onProgress in
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
-                "Offline-Preview",
-                isDirectory: true
-            )
-            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            let fileURL = directory.appendingPathComponent(item.name)
-            try? Data().write(to: fileURL)
+            let fileURL = emptyStandIn(named: item.name, in: "Offline-Preview")
             onProgress(1)
             return fileURL
         },
@@ -573,4 +539,13 @@ private func previewTransfer(_ items: [FileItem], _ destination: String) -> Tran
         destination: destination,
         items: items.map { TransferResult.Entry(from: $0.id, to: "\(destination)/\($0.name)") }
     )
+}
+
+/// An empty file named `name` in the temporary folder `folder`, standing in for a download.
+private func emptyStandIn(named name: String, in folder: String) -> URL {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(folder, isDirectory: true)
+    try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    let fileURL = directory.appendingPathComponent(name)
+    try? Data().write(to: fileURL)
+    return fileURL
 }
