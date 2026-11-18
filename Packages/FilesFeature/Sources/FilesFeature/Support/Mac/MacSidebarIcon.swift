@@ -21,7 +21,7 @@
                 .frame(width: Constants.columnWidth)
                 .foregroundStyle(backgroundProminence == .increased
                     ? Color.white
-                    : isAccented ? Color.accent : Color.primaryDS)
+                    : isAccented ? Color.accentText : Color.primaryDS)
         }
     }
 
