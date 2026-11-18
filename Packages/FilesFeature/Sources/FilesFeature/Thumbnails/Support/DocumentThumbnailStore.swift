@@ -21,7 +21,7 @@ private enum Constants {
     static let renderPixel: CGFloat = 320
     /// The fetch runs at this priority so it yields to whatever the user is interacting with.
     static let fetchPriority: TaskPriority = .utility
-    /// Per-key entries kept for the live grid (a `ready` image is ~0.5 MB). Past this the
+    /// Per key entries kept for the live grid (a `ready` image is ~0.5 MB). Past this the
     /// oldest are dropped; they resolve again fast from `DocumentThumbnailCache`'s disk layer.
     static let retainedKeyCount = 60
 }
