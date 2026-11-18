@@ -53,7 +53,7 @@ struct DocumentThumbnailImage<Fallback: View>: View {
                 .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .animation(Constants.revealAnimation, value: state.isReady)
-        .task(id: cacheKey) {
+        .task(id: ObjectIdentifier(entry)) {
             store.load(
                 entry: entry, key: cacheKey, item: item, serverURL: serverURL,
                 filesClient: filesClient, cache: documentThumbnailCache, localThumbnails: localThumbnailStore,

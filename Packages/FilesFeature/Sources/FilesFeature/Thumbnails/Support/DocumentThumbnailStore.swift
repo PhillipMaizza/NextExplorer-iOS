@@ -136,6 +136,10 @@ final class DocumentThumbnailStore {
                     self?.tasks[key] = nil
                 }
             }
+            // An entry dropped past the cap and taken again by its cell gets the result, not the dropped box.
+            @MainActor func publish(_ state: State) {
+                (self?.entries[key] ?? entry).state = state
+            }
             // A PDF just shared into the app has its first page seeded from the local copy: the
             // same render, without downloading the file.
             let seeded = await SeededThumbnail.image(
@@ -143,7 +147,7 @@ final class DocumentThumbnailStore {
                 maxPixel: Constants.renderPixel, priority: Constants.fetchPriority, now: now
             )
             if let seeded {
-                entry.state = .ready(seeded)
+                publish(.ready(seeded))
                 return
             }
             // On mobile data nothing is downloaded just to draw a thumbnail: a kept copy is drawn
@@ -151,9 +155,9 @@ final class DocumentThumbnailStore {
             if isMetered {
                 let kept = await Task.detached(priority: Constants.fetchPriority) { offlineFiles.localURL(item) }.value
                 if let image = await cache.firstPageImage(key, Constants.renderPixel, kept) {
-                    entry.state = .ready(image)
+                    publish(.ready(image))
                 } else if kept != nil {
-                    entry.state = .unavailable
+                    publish(.unavailable)
                 }
                 return
             }
@@ -165,10 +169,10 @@ final class DocumentThumbnailStore {
                 return
             }
             if let image = await cache.firstPageImage(key, Constants.renderPixel, fileURL) {
-                entry.state = .ready(image)
+                publish(.ready(image))
             } else {
                 // Downloaded, but nothing could draw it: it won't get better on a retry.
-                entry.state = .unavailable
+                publish(.unavailable)
             }
         }
         tasks[key] = task
