@@ -44,6 +44,14 @@ struct SessionCredentialsTests {
         let cookie = try #require(credentials.httpCookie)
         #expect(cookie.isSecure == false)
     }
+
+    @Test("a session saved before the email was kept still loads, with no email")
+    func decodesSessionSavedWithoutEmail() throws {
+        let credentials = try CoreModelsFixture.sessionCredentialsSavedWithoutEmail.decode(SessionCredentials.self)
+        #expect(credentials.username == TestAccount.username)
+        #expect(credentials.cookieValue == TestSession.cookieValue)
+        #expect(credentials.email == nil)
+    }
 }
 
 private enum Constants {

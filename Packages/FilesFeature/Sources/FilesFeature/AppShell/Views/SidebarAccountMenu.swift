@@ -163,11 +163,13 @@ private struct AccountRow: View {
                     )
                     .lineLimit(1)
                 // Shrinks a long host to fit before falling back to truncating it.
-                Text(account.serverHost)
-                    .type(.body3(.regular), style: .secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(Metrics.serverMinimumScale)
-                    .truncationMode(.middle)
+                if let server = account.serverSubtitle {
+                    Text(server)
+                        .type(.body3(.regular), style: .secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(Metrics.serverMinimumScale)
+                        .truncationMode(.middle)
+                }
             }
             Spacer(minLength: 0)
             if !account.isActive {

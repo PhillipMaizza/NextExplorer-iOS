@@ -324,10 +324,12 @@ struct MainTabSidebar: View {
                 Text(store.settings.activeAccount.displayName)
                     .type(Constants.profileNameType, style: .primaryOnSurface)
                     .lineLimit(1)
-                Text(store.settings.activeAccount.serverHost)
-                    .type(Constants.profileServerType, style: .secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+                if let server = store.settings.activeAccount.serverSubtitle {
+                    Text(server)
+                        .type(Constants.profileServerType, style: .secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
             }
             Spacer(minLength: 0)
         }

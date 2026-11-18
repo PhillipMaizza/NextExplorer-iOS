@@ -135,6 +135,10 @@ enum CoreModelsFixture: String, FixtureFile {
     case serverSettingsSystemSettingsFourBackgroundSections = "server-settings/system-settings-four-background-sections"
     case serverSettingsSystemSettingsUserOnly = "server-settings/system-settings-user-only"
 
+    // MARK: session credentials
+
+    case sessionCredentialsSavedWithoutEmail = "session-credentials/saved-without-email"
+
     // MARK: share
 
     case shareAnyoneOwnerString = "share/anyone-owner-string"

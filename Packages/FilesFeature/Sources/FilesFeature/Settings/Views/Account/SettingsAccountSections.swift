@@ -74,10 +74,12 @@ struct SettingsAccountsSection: View {
 
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(account.displayName).type(.body2(.bold), style: .primaryOnSurface)
-                    Text(account.serverHost)
-                        .type(.body3(.regular), style: .secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                    if let server = account.serverSubtitle {
+                        Text(server)
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                 }
 
                 Spacer()
@@ -112,10 +114,12 @@ struct SettingsAccountsSection: View {
                 VStack(alignment: .leading, spacing: .space2) {
                     // Secondary color (not primary) so an inactive account reads as dimmed.
                     Text(account.displayName).type(.body2(.regular), style: .secondary)
-                    Text(account.serverHost)
-                        .type(.body3(.regular), style: .secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                    if let server = account.serverSubtitle {
+                        Text(server)
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                 }
 
                 Spacer()

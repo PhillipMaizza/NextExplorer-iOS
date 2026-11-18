@@ -46,4 +46,10 @@ struct AccountSummaryTests {
         #expect(noUsername.displayName == TestAccount.email)
         #expect(summary(url: TestHost.serverURL, username: "", email: "").displayName == TestHost.server)
     }
+
+    @Test("the server line is left out when the name already is the server")
+    func serverSubtitleSkipsADuplicate() {
+        #expect(summary(url: TestHost.serverURL).serverSubtitle == TestHost.server)
+        #expect(summary(url: TestHost.serverURL, username: "").serverSubtitle == nil)
+    }
 }

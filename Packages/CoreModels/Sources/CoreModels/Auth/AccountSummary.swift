@@ -38,6 +38,11 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
         }
         return serverHost
     }
+
+    /// The server line under the name, left out when the name already is the server.
+    public var serverSubtitle: String? {
+        displayName == serverHost ? nil : serverHost
+    }
 }
 
 public extension URL {

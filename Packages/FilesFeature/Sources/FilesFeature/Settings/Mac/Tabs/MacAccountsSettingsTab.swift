@@ -81,11 +81,13 @@
                 VStack(alignment: .leading) {
                     Text(account.displayName)
                         .lineLimit(1)
-                    Text(account.serverHost)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                    if let server = account.serverSubtitle {
+                        Text(server)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                 }
             }
             .accessibilityElement(children: .combine)
