@@ -28,7 +28,6 @@ struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
     /// Observed only to refresh the offline badges when a download completes.
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
-    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardPreference = false
     @State private var isSortSheetPresented = false
     @State private var toastMessage: DSToastMessage?
@@ -79,10 +78,6 @@ struct BrowseContentView: View {
             let mode = BrowseViewMode(rawValue: viewModeRaw) ?? .list
             return mode == .table ? .list : mode
         #endif
-    }
-
-    private var thumbnailSize: ThumbnailSize {
-        ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium
     }
 
     /// The root's title is re-derived from `L10n` here rather than read from `store.title` (which
@@ -237,11 +232,7 @@ struct BrowseContentView: View {
                 MacBrowseTableSkeleton()
             #endif
         } else {
-            BrowseSkeletonView(
-                isGridView: viewMode == .grid,
-                gridColumns: FileGridMetrics.columns,
-                iconSize: thumbnailSize.iconSize
-            )
+            BrowseSkeletonView(isGridView: viewMode == .grid)
         }
     }
 
@@ -274,7 +265,6 @@ struct BrowseContentView: View {
                 BrowseGridContent(
                     store: store,
                     source: previewSource,
-                    iconSize: thumbnailSize.iconSize,
                     keepsClipboard: shouldKeepClipboardAfterCopy,
                     bottomClearance: bottomChromeClearance,
                     scrollTargetID: galleryCurrentItemID,
@@ -356,6 +346,7 @@ struct BrowseContentView: View {
                         viewModeRaw = (viewMode == .grid ? BrowseViewMode.list : .grid).rawValue
                     }
                 },
+                onTrash: store.showsTrashButton && !isSplitViewDetail ? { store.send(.trashTapped) } : nil,
                 hasClipboardItems: store.clipboard != nil && !store.directoryPath.isEmpty,
                 clipboardMenu: {
                     if store.clipboard != nil, !store.directoryPath.isEmpty {

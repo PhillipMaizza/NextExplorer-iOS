@@ -51,6 +51,12 @@ directLinkMode.download	Laden
 thumbnailSize.small	Klein
 thumbnailSize.medium	Mittel
 thumbnailSize.large	Groß
+grid.sectionFolders	Ordner
+grid.sectionFiles	Dateien
+grid.settingsTitle	Raster
+grid.settingsButton	Rastereinstellungen
+grid.sizeTitle	Größe
+grid.perRow	%lld pro Zeile
 dateFormat.automatic	Automatisch
 browse.navigationTitle	Durchsuchen
 browse.scopeThisFolder	Dieser Ordner

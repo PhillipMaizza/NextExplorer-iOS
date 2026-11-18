@@ -55,6 +55,12 @@ directLinkMode.download	Letöltés
 thumbnailSize.small	Kicsi
 thumbnailSize.medium	Közepes
 thumbnailSize.large	Nagy
+grid.sectionFolders	Mappák
+grid.sectionFiles	Fájlok
+grid.settingsTitle	Rács
+grid.settingsButton	Rácsbeállítások
+grid.sizeTitle	Méret
+grid.perRow	Soronként %lld
 dateFormat.automatic	Automatikus
 browse.navigationTitle	Böngészés
 browse.scopeThisFolder	Ez a mappa

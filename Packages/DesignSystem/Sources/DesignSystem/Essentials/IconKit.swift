@@ -152,6 +152,12 @@ public enum IconKit {
     public static let filter = Image(systemName: "line.3.horizontal.decrease.circle")
     public static let filterFill = Image(systemName: "line.3.horizontal.decrease.circle.fill")
     public static let film = Image(systemName: "film")
+    /// What a file is, drawn on its page in a grid well when it has no picture of its own.
+    public static let kindArchive = Image(systemName: "archivebox")
+    public static let kindInstaller = Image(systemName: "shippingbox")
+    public static let kindCode = Image(systemName: "chevron.left.forwardslash.chevron.right")
+    public static let kindFont = Image(systemName: "textformat")
+    public static let kindDatabase = Image(systemName: "cylinder.split.1x2")
     public static let subtitles = Image(systemName: "captions.bubble")
     public static let music = Image(systemName: "music.note")
     public static let minus = Image(systemName: "minus")

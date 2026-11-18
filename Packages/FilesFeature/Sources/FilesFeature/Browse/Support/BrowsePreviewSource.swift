@@ -27,8 +27,8 @@ extension BrowseFeature.State {
         directoryPath.isEmpty && isPersonalSpaceEnabled && !isSearching && !isSelecting
     }
 
-    /// The Trash row closes the root list on iPhone and iPad; the Mac has a sidebar row instead.
-    var showsTrashRow: Bool {
+    /// The Trash button sits in the root's toolbar on iPhone and iPad; the Mac has a sidebar row instead.
+    var showsTrashButton: Bool {
         #if os(iOS)
             directoryPath.isEmpty && isTrashAvailable && !isSearching && !isSelecting
         #else

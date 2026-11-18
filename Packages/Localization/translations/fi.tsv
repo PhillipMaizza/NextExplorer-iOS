@@ -55,6 +55,12 @@ directLinkMode.download	Lataa
 thumbnailSize.small	Pieni
 thumbnailSize.medium	Keskikokoinen
 thumbnailSize.large	Suuri
+grid.sectionFolders	Kansiot
+grid.sectionFiles	Tiedostot
+grid.settingsTitle	Ruudukko
+grid.settingsButton	Ruudukon asetukset
+grid.sizeTitle	Koko
+grid.perRow	%lld rivillä
 dateFormat.automatic	Automaattinen
 browse.navigationTitle	Selaa
 browse.scopeThisFolder	Tämä kansio

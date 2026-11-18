@@ -7,8 +7,6 @@ import SwiftUI
 
 /// A folder or its search results as a grouped list.
 struct BrowseListContent<Menu: View>: View {
-    /// A split view's sidebar lists the Trash itself, so the root row is only for the iPhone layout.
-    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
     let store: StoreOf<BrowseFeature>
     let source: BrowsePreviewSource
     let keepsClipboard: Bool
@@ -55,12 +53,6 @@ struct BrowseListContent<Menu: View>: View {
                         }
                     }
                 }
-                if store.showsTrashRow, !isSplitViewDetail {
-                    Section {
-                        TrashRootRow { store.send(.trashTapped) }
-                            .listRowBackground(Color.backgroundSecondary)
-                    }
-                }
                 if store.isSearching, BrowseSearchFooter.isShown(store) {
                     BrowseSearchFooter(store: store)
                         .listRowInsets(EdgeInsets())
@@ -84,13 +76,11 @@ struct BrowseListContent<Menu: View>: View {
     }
 }
 
-/// A folder or its search results as a grid of tiles.
+/// A folder or its search results as a grid of tiles: folders as roomy cards first, then the files
+/// at the grid size the user picked. Folders always sort first, so the split keeps the sort order.
 struct BrowseGridContent<Menu: View>: View {
-    /// A split view's sidebar lists the Trash itself, so the root row is only for the iPhone layout.
-    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
     let store: StoreOf<BrowseFeature>
     let source: BrowsePreviewSource
-    let iconSize: CGFloat
     let keepsClipboard: Bool
     let bottomClearance: CGFloat
     let scrollTargetID: String?
@@ -101,46 +91,37 @@ struct BrowseGridContent<Menu: View>: View {
         // Bind once: `store.displayedItems` filters + localized sorts on every read, and this
         // builder would otherwise hit it for the ForEach and the animation value separately.
         let displayedItems = store.displayedItems
+        let groups = BrowseGridGroups(items: displayedItems)
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
+                VStack(alignment: .leading, spacing: FileGridMetrics.sectionSpacing) {
                     if store.isSearching {
                         searchCells
                     } else {
                         if store.showsPersonalSpace {
-                            Section {
-                                PersonalSpaceGridCell(
-                                    iconSize: iconSize,
-                                    cellPadding: FileGridMetrics.cellPadding
-                                ) {
-                                    store.send(.personalSpaceTapped)
+                            section(L10n.Browse.sectionPersonal) {
+                                FileGrid(.folders) {
+                                    PersonalSpaceGridCell { store.send(.personalSpaceTapped) }
                                 }
-                            } header: {
-                                BrowseRootSectionHeader(title: L10n.Browse.sectionPersonal)
                             }
                         }
-                        Section {
-                            BrowseGridCells(
-                                store: store,
-                                items: displayedItems,
-                                source: source,
-                                iconSize: iconSize,
-                                onTap: onTap,
-                                menu: menu
-                            )
-                        } header: {
-                            if store.showsPersonalSpace {
-                                BrowseRootSectionHeader(title: L10n.Browse.locations)
+                        if !groups.folders.isEmpty {
+                            section(store.showsPersonalSpace ? L10n.Browse.locations : L10n.Grid.sectionFolders) {
+                                FileGrid(.folders) {
+                                    cells(groups.folders)
+                                }
                             }
                         }
-                        if store.showsTrashRow, !isSplitViewDetail {
-                            TrashRootGridCell(iconSize: iconSize, cellPadding: FileGridMetrics.cellPadding) {
-                                store.send(.trashTapped)
+                        if !groups.files.isEmpty {
+                            section(L10n.Grid.sectionFiles) {
+                                FileGrid {
+                                    cells(groups.files)
+                                }
                             }
                         }
                     }
                 }
-                .padding(FileGridMetrics.spacing)
+                .padding(FileGridMetrics.margin)
                 .animation(
                     DSMotion.listDiff,
                     value: displayedItems
@@ -164,24 +145,48 @@ struct BrowseGridContent<Menu: View>: View {
         }
     }
 
+    private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
+        VStack(alignment: .leading, spacing: FileGridMetrics.headerSpacing) {
+            BrowseRootSectionHeader(title: title)
+            content()
+        }
+    }
+
+    private func cells(_ items: IdentifiedArrayOf<FileItem>) -> some View {
+        BrowseGridCells(store: store, items: items, source: source, onTap: onTap, menu: menu)
+    }
+
     @ViewBuilder
     private var searchCells: some View {
         let sections = store.searchResultSections
         if sections.isSplit {
-            Section {
-                BrowseSearchResultCells(store: store, results: sections.onDevice, source: source, iconSize: iconSize)
-            } header: {
-                BrowseRootSectionHeader(title: L10n.Search.onDevice)
+            section(L10n.Search.onDevice) {
+                FileGrid {
+                    BrowseSearchResultCells(store: store, results: sections.onDevice, source: source)
+                }
             }
             if !sections.remote.isEmpty {
-                Section {
-                    BrowseSearchResultCells(store: store, results: sections.remote, source: source, iconSize: iconSize)
-                } header: {
-                    BrowseRootSectionHeader(title: L10n.Search.remote)
+                section(L10n.Search.remote) {
+                    FileGrid {
+                        BrowseSearchResultCells(store: store, results: sections.remote, source: source)
+                    }
                 }
             }
         } else {
-            BrowseSearchResultCells(store: store, results: sections.remote, source: source, iconSize: iconSize)
+            FileGrid {
+                BrowseSearchResultCells(store: store, results: sections.remote, source: source)
+            }
         }
+    }
+}
+
+/// A folder's items split for the grid: folder cards, then file tiles, each keeping its sort order.
+struct BrowseGridGroups: Equatable {
+    let folders: IdentifiedArrayOf<FileItem>
+    let files: IdentifiedArrayOf<FileItem>
+
+    init(items: IdentifiedArrayOf<FileItem>) {
+        folders = items.filter(\.isDirectory)
+        files = items.filter { !$0.isDirectory }
     }
 }

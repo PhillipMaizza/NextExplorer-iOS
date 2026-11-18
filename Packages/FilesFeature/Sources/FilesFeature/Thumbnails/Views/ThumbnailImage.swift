@@ -65,6 +65,8 @@ struct ThumbnailImage: View {
     /// When set, a file with no thumbnail shows its typed page icon (like every other file row and
     /// tile) instead of the generic `fallbackIcon` glyph.
     var fallbackKind: String?
+    /// The fallback type icon's banner share, for a page drawn big (a grid well).
+    var fallbackBannerFraction: CGFloat?
     let iconTint: Color
     /// The fallback's side when the image would fill a large frame (a video poster), so a missing
     /// thumbnail shows an icon at icon size rather than one stretched across the screen.
@@ -78,6 +80,8 @@ struct ThumbnailImage: View {
     /// own is in, but only if these say it is the file that was uploaded.
     var fileSize: Int64?
     var modified: Date?
+    /// A grid tile's picture well: the picture covers the frame (cropped) instead of fitting inside it.
+    var fillsFrame = false
 
     /// The first lines of a text file, drawn as a small page.
     @State private var snippet: String?
@@ -105,11 +109,11 @@ struct ThumbnailImage: View {
     var body: some View {
         Group {
             if let snippet {
-                TextThumbnailView(snippet: snippet)
+                TextThumbnailView(snippet: snippet, kind: fileItem.kind)
             } else if let uiImage {
                 Image(platformImage: uiImage)
                     .resizable()
-                    .scaledToFit()
+                    .aspectRatio(contentMode: fillsFrame ? .fill : .fit)
             } else if didResolve {
                 fallbackImage
             } else {
@@ -292,7 +296,9 @@ struct ThumbnailImage: View {
 
     private var fallbackImage: some View {
         Group {
-            if let fallbackKind {
+            if let fallbackKind, let fallbackBannerFraction {
+                FileTypeIcon(kind: fallbackKind, bannerHeightFraction: fallbackBannerFraction)
+            } else if let fallbackKind {
                 FileTypeIcon(kind: fallbackKind)
             } else {
                 fallbackIcon

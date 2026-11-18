@@ -69,6 +69,12 @@ directLinkMode.download	Download
 thumbnailSize.small	Small
 thumbnailSize.medium	Medium
 thumbnailSize.large	Large
+grid.sectionFolders	Folders
+grid.sectionFiles	Files
+grid.settingsTitle	Grid
+grid.settingsButton	Grid Settings
+grid.sizeTitle	Size
+grid.perRow	%lld per row
 dateFormat.automatic	Automatic
 
 # ---- browse ----

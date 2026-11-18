@@ -262,6 +262,11 @@ struct BrowseScreen {
         app.buttons[AccessibilityIdentifiers.Browse.moreMenu]
     }
 
+    /// The Browse root's toolbar Trash button (iPhone; the iPad sidebar lists the Trash instead).
+    var trashButton: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Browse.trashButton]
+    }
+
     var selectMenuItem: XCUIElement {
         app.labeledButton(L10n.Common.select)
     }

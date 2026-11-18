@@ -51,6 +51,12 @@ directLinkMode.download	Ladda ner
 thumbnailSize.small	Liten
 thumbnailSize.medium	Mellan
 thumbnailSize.large	Stor
+grid.sectionFolders	Mappar
+grid.sectionFiles	Filer
+grid.settingsTitle	Rutnät
+grid.settingsButton	Rutnätsinställningar
+grid.sizeTitle	Storlek
+grid.perRow	%lld per rad
 dateFormat.automatic	Automatisk
 browse.navigationTitle	Bläddra
 browse.scopeThisFolder	Den här mappen

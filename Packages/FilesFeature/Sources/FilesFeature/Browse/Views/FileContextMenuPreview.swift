@@ -3,7 +3,6 @@ import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let iconSize: CGFloat = 160
     static let width: CGFloat = 240
 }
 
@@ -15,7 +14,7 @@ struct FileContextMenuPreview: View {
     let showThumbnails: Bool
 
     var body: some View {
-        GridCellView(item: item, serverURL: serverURL, showThumbnails: showThumbnails, iconSize: Constants.iconSize)
+        GridCellView(item: item, serverURL: serverURL, showThumbnails: showThumbnails)
             .padding(.space16)
             .frame(width: Constants.width)
             .background(Color.backgroundSecondary)

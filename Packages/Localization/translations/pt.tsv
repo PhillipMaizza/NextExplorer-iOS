@@ -51,6 +51,12 @@ directLinkMode.download	Transferir
 thumbnailSize.small	Pequena
 thumbnailSize.medium	Média
 thumbnailSize.large	Grande
+grid.sectionFolders	Pastas
+grid.sectionFiles	Ficheiros
+grid.settingsTitle	Grelha
+grid.settingsButton	Definições da grelha
+grid.sizeTitle	Tamanho
+grid.perRow	%lld por linha
 dateFormat.automatic	Automático
 browse.navigationTitle	Explorar
 browse.scopeThisFolder	Esta pasta

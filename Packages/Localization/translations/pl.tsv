@@ -51,6 +51,12 @@ directLinkMode.download	Pobierz
 thumbnailSize.small	Mała
 thumbnailSize.medium	Średnia
 thumbnailSize.large	Duża
+grid.sectionFolders	Foldery
+grid.sectionFiles	Pliki
+grid.settingsTitle	Siatka
+grid.settingsButton	Ustawienia siatki
+grid.sizeTitle	Rozmiar
+grid.perRow	%lld w rzędzie
 dateFormat.automatic	Automatycznie
 browse.navigationTitle	Przeglądaj
 browse.scopeThisFolder	Ten folder

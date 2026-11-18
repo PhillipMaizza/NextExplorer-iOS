@@ -1,4 +1,3 @@
-import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -93,7 +92,6 @@ struct DownloadGridCell: View {
     let download: LocalDownload
     let zoom: PreviewZoomContext
     let onPreview: () -> Void
-    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
 
     var body: some View {
         SelectableGridCell(
@@ -106,7 +104,7 @@ struct DownloadGridCell: View {
                 name: download.fileName,
                 isDirectory: false,
                 kind: (download.fileName as NSString).pathExtension,
-                iconSize: (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).iconSize,
+                size: download.size,
                 matchedSource: zoom.source(for: download.id)
             )
         } contextMenu: {

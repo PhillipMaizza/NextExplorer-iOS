@@ -38,31 +38,52 @@ private struct TapFlash: ViewModifier {
     }
 }
 
-private struct TapFlashOverlay: ViewModifier {
-    let cornerRadius: CGFloat
+/// Hands the flash of `dsTapFlashSource` down to the content, which draws it with
+/// `dsTapFlashHighlight` on only the part that should light up.
+private struct TapFlashSource: ViewModifier {
+    let isEnabled: Bool
     @State private var isFlashing = false
 
     func body(content: Content) -> some View {
         content
-            .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Color.accent.opacity(Constants.flashOpacity))
-                    .opacity(isFlashing ? 1 : 0)
-                    .allowsHitTesting(false)
-            }
+            .environment(\.isTapFlashing, isEnabled && isFlashing)
             .modifier(TapFlash(isFlashing: $isFlashing))
     }
 }
 
+private struct TapFlashHighlight: ViewModifier {
+    let cornerRadius: CGFloat
+    @Environment(\.isTapFlashing) private var isFlashing
+
+    func body(content: Content) -> some View {
+        content.overlay {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(Color.accent.opacity(Constants.flashOpacity))
+                .opacity(isFlashing ? 1 : 0)
+                .allowsHitTesting(false)
+        }
+    }
+}
+
+public extension EnvironmentValues {
+    @Entry var isTapFlashing = false
+}
+
 public extension View {
-    /// Flashes over the whole view when it is tapped (iOS). Apply to the view that is the cell,
-    /// such as a card, so the flash is as wide and tall as the cell.
-    func dsTapFlash(cornerRadius: CGFloat = .radiusCard) -> some View {
+    /// Catches the tap for a flash but leaves drawing it to the content (iOS). Apply to the button,
+    /// not inside its label: a tap gesture inside a label takes the tap from the button. Off while
+    /// `isEnabled` is false, such as in select mode, where the selection itself answers the tap.
+    func dsTapFlashSource(isEnabled: Bool = true) -> some View {
         #if os(iOS)
-            modifier(TapFlashOverlay(cornerRadius: cornerRadius))
+            modifier(TapFlashSource(isEnabled: isEnabled))
         #else
             self
         #endif
+    }
+
+    /// Draws the flash of the nearest `dsTapFlashSource` over this view only, such as a tile's picture.
+    func dsTapFlashHighlight(cornerRadius: CGFloat = .radiusCard) -> some View {
+        modifier(TapFlashHighlight(cornerRadius: cornerRadius))
     }
 }
 
@@ -101,7 +122,8 @@ public struct DSFlashingListRow<Content: View>: View {
                     Color.backgroundSecondary,
                     in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous)
                 )
-                .dsTapFlash()
+                .dsTapFlashHighlight()
+                .dsTapFlashSource()
             List {
                 DSFlashingListRow { Text("Documents") }
                 DSFlashingListRow { Text("Photos") }

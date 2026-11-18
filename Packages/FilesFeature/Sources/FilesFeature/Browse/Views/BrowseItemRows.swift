@@ -25,7 +25,6 @@ struct BrowseGridCells<Menu: View>: View {
     let store: StoreOf<BrowseFeature>
     let items: IdentifiedArrayOf<FileItem>
     let source: BrowsePreviewSource
-    let iconSize: CGFloat
     let onTap: (FileItem) -> Void
     @ViewBuilder let menu: (FileItem) -> Menu
 
@@ -40,10 +39,8 @@ struct BrowseGridCells<Menu: View>: View {
             } label: {
                 cell(for: item)
                     .dsGridTile(
-                        padding: FileGridMetrics.cellPadding,
                         isSelecting: store.isSelecting,
-                        isSelected: store.selectedItemIDs.contains(item.id),
-                        seed: item.id
+                        isSelected: store.selectedItemIDs.contains(item.id)
                     )
                     .dragSelectable(id: item.id)
                 #if os(macOS)
@@ -53,7 +50,7 @@ struct BrowseGridCells<Menu: View>: View {
                 #endif
             }
             .buttonStyle(DSPressableButtonStyle())
-            .dsTapFlash()
+            .dsTapFlashSource(isEnabled: !store.isSelecting)
             .contextMenu {
                 if !store.isSelecting {
                     menu(item)
@@ -81,7 +78,7 @@ struct BrowseGridCells<Menu: View>: View {
             isFavorite: store.favoritePaths.contains(item.id),
             serverURL: store.serverURL,
             showThumbnails: store.preferences.showThumbnails,
-            iconSize: iconSize,
+            folderSize: store.folderSizes[item.id],
             matchedSource: source.matched(item.id),
             isOpening: source.isOpening(item.id, in: store),
             isAvailableOffline: store.offlineItemIDs.contains(item.id)

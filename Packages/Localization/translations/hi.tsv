@@ -51,6 +51,12 @@ directLinkMode.download	डाउनलोड
 thumbnailSize.small	छोटा
 thumbnailSize.medium	मध्यम
 thumbnailSize.large	बड़ा
+grid.sectionFolders	फ़ोल्डर
+grid.sectionFiles	फ़ाइलें
+grid.settingsTitle	ग्रिड
+grid.settingsButton	ग्रिड सेटिंग्स
+grid.sizeTitle	आकार
+grid.perRow	प्रति पंक्ति %lld
 dateFormat.automatic	स्वचालित
 browse.navigationTitle	ब्राउज़ करें
 browse.scopeThisFolder	यह फ़ोल्डर

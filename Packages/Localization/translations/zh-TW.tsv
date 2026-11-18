@@ -51,6 +51,12 @@ directLinkMode.download	下載
 thumbnailSize.small	小
 thumbnailSize.medium	中
 thumbnailSize.large	大
+grid.sectionFolders	檔案夾
+grid.sectionFiles	檔案
+grid.settingsTitle	網格
+grid.settingsButton	網格設定
+grid.sizeTitle	大小
+grid.perRow	每列 %lld 個
 dateFormat.automatic	自動
 browse.navigationTitle	瀏覽
 browse.scopeThisFolder	此檔案夾

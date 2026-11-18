@@ -55,6 +55,12 @@ directLinkMode.download	Tải xuống
 thumbnailSize.small	Nhỏ
 thumbnailSize.medium	Vừa
 thumbnailSize.large	Lớn
+grid.sectionFolders	Thư mục
+grid.sectionFiles	Tệp
+grid.settingsTitle	Lưới
+grid.settingsButton	Cài đặt lưới
+grid.sizeTitle	Kích thước
+grid.perRow	%lld mỗi hàng
 dateFormat.automatic	Tự động
 browse.navigationTitle	Duyệt
 browse.scopeThisFolder	Thư mục này

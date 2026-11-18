@@ -14,9 +14,8 @@
             browse.deleteConfirmButton.tap()
             XCTAssertTrue(browse.item(Fixture.file).waitToVanish(), "A confirmed delete should remove the row")
 
-            let trashRow = browse.row(L10n.Trash.title)
-            XCTAssertTrue(scrollTo(trashRow, in: app), "The Browse root should end with the Trash row")
-            trashRow.tap()
+            XCTAssertTrue(browse.trashButton.waitToAppear(), "The Browse root toolbar should offer the Trash")
+            browse.trashButton.tap()
             XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "The deleted file should be in the trash")
 
             let restore = app.labeledButton(L10n.Trash.restore)
@@ -41,9 +40,8 @@
             browse.deleteConfirmButton.tap()
             XCTAssertTrue(browse.item(Fixture.file).waitToVanish())
 
-            let trashRow = browse.row(L10n.Trash.title)
-            XCTAssertTrue(scrollTo(trashRow, in: app))
-            trashRow.tap()
+            XCTAssertTrue(browse.trashButton.waitToAppear(), "The Browse root toolbar should offer the Trash")
+            browse.trashButton.tap()
             XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
 
             let empty = app.labeledButton(L10n.Trash.emptyTrash)

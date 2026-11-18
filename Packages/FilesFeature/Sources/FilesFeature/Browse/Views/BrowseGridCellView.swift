@@ -1,23 +1,16 @@
 import AppStorageKeys
 import CoreModels
 import DesignSystem
-import Localization
 import SwiftUI
 
 private enum Constants {
-    static let cellSpacing: CGFloat = .space8
-    static let defaultIconSize: CGFloat = .iconLarge
-    static let nameMinimumScale: CGFloat = 0.7
-    static let favoriteBadgeSize: CGFloat = .iconXSmall
-    static let favoriteBadgePadding: CGFloat = .space2
-    static let favoriteBadgeBackgroundSize: CGFloat = .size20
-    static let favoriteBadgeShadowRadius: CGFloat = 0.5
-    static let fullOpacity: Double = 1.0
-    static let halfOpacity: Double = 0.5
+    static let pdfInset: CGFloat = .space8
+    static let previewWidth: CGFloat = 120
+    static let previewFolderWidth: CGFloat = 180
 }
 
-/// One tile of `BrowseContentView`'s grid display mode: icon (dimmed if hidden, badged if
-/// favorited) over a name, matching `FileRowView`'s list-mode information at a glance.
+/// One tile of a file grid (Browse, Favorites, Offline, search): a `FolderGridTile` card for a folder,
+/// a `FileGridTile` picture well for a file, with the same information `FileRowView` shows in a list.
 struct GridCellView: View {
     let name: String
     let isDirectory: Bool
@@ -28,7 +21,10 @@ struct GridCellView: View {
     let thumbnailSignature: String
     let serverURL: URL?
     let showThumbnails: Bool
-    let iconSize: CGFloat
+    /// A file's size, or a folder's counted size; `nil` shows no size.
+    let size: Int64?
+    /// Shown under the name in place of the size, such as a favorite's location.
+    var subtitle: String?
     /// The full item, when built from one: needed for the on device PDF first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
@@ -36,11 +32,11 @@ struct GridCellView: View {
     var customIcon: Image?
     var customIconTint: Color?
     var customIconFilled: Bool
-    /// When set, the icon/thumbnail is the source the preview cover's `.zoom` transition
-    /// grows from and shrinks back to.
+    /// When set, the picture is the source the preview cover's `.zoom` transition grows from and
+    /// shrinks back to.
     var matchedSource: PreviewMatchedSource?
-    /// True while this file's content is downloading after a tap: a small spinner sits in the
-    /// cell's bottom-trailing corner (not over the icon) and the preview holds off until ready.
+    /// True while this file's content is downloading after a tap: the well dims under a spinner and
+    /// the preview holds off until ready.
     var isOpening: Bool = false
     var isAvailableOffline: Bool = false
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
@@ -53,28 +49,30 @@ struct GridCellView: View {
         isDirectory: Bool,
         isFavorite: Bool = false,
         kind: String? = nil,
+        size: Int64? = nil,
         thumbnailFile: FileItem? = nil,
         serverURL: URL? = nil,
         showThumbnails: Bool = false,
-        iconSize: CGFloat = Constants.defaultIconSize,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
         customIconFilled: Bool = false,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
-        isAvailableOffline: Bool = false
+        isAvailableOffline: Bool = false,
+        subtitle: String? = nil
     ) {
+        self.subtitle = subtitle
         self.name = name
         self.isDirectory = isDirectory
         self.isAvailableOffline = isAvailableOffline
         self.isFavorite = isFavorite
         itemID = thumbnailFile?.id
         self.kind = kind
+        self.size = size ?? (isDirectory ? nil : thumbnailFile?.size)
         supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
         thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
-        self.iconSize = iconSize
         file = thumbnailFile
         self.customIcon = customIcon
         self.customIconTint = customIconTint
@@ -88,7 +86,7 @@ struct GridCellView: View {
         isFavorite: Bool = false,
         serverURL: URL? = nil,
         showThumbnails: Bool = false,
-        iconSize: CGFloat = Constants.defaultIconSize,
+        folderSize: Int64? = nil,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
         isAvailableOffline: Bool = false
@@ -99,11 +97,11 @@ struct GridCellView: View {
         self.isFavorite = isFavorite
         itemID = item.id
         kind = item.kind
+        size = item.isDirectory ? folderSize : item.size
         supportsThumbnail = item.supportsThumbnail
         thumbnailSignature = item.cacheSignature
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
-        self.iconSize = iconSize
         file = item
         customIcon = nil
         customIconTint = nil
@@ -120,6 +118,10 @@ struct GridCellView: View {
         displayFileName(name, isDirectory: isDirectory, showExtension: shouldShowFilenameExtensions)
     }
 
+    private var sizeText: String? {
+        subtitle ?? size.map { FileSizeFormat.string($0) }
+    }
+
     private var isEligibleForThumbnail: Bool {
         !isDirectory && (supportsThumbnail || readsOwnContent) && showThumbnails && serverURL != nil && itemID != nil
     }
@@ -133,152 +135,120 @@ struct GridCellView: View {
         showThumbnails && serverURL != nil && (file?.isPDF ?? false)
     }
 
+    /// Only a file with no picture of its own takes its kind's colour; pictures sit on a neutral well.
+    private var wellTint: Color? {
+        guard !isEligibleForThumbnail, !isEligibleForPDFThumbnail, let kind else { return nil }
+        return FileTypeIcon.tint(forKind: kind)
+    }
+
     var body: some View {
-        VStack(spacing: Constants.cellSpacing) {
-            icon
-                .opacity(isHidden ? Constants.halfOpacity : Constants.fullOpacity)
-                .previewMatchedSource(matchedSource)
-                .overlay(alignment: .topTrailing) {
-                    if isFavorite {
-                        IconKit.starFill
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(Color.accent)
-                            .frame(width: Constants.favoriteBadgeSize, height: Constants.favoriteBadgeSize)
-                            .padding(Constants.favoriteBadgePadding)
-                            .background(
-                                Circle()
-                                    .fill(Color.backgroundPrimary)
-                                    .frame(
-                                        width: Constants.favoriteBadgeBackgroundSize,
-                                        height: Constants.favoriteBadgeBackgroundSize
-                                    )
-                                    .shadow(radius: Constants.favoriteBadgeShadowRadius)
-                            )
-                            .symbolEffect(.bounce, value: isFavorite)
-                            .transition(.scale.combined(with: .opacity))
-                            .accessibilityLabel(L10n.Favorites.accessibilityBadge)
-                    }
-                }
-                .overlay(alignment: .bottomLeading) {
-                    if isAvailableOffline {
-                        IconKit.availableOffline
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(Color.accent)
-                            .frame(width: Constants.favoriteBadgeSize, height: Constants.favoriteBadgeSize)
-                            .padding(Constants.favoriteBadgePadding)
-                            .background(
-                                Circle()
-                                    .fill(Color.backgroundPrimary)
-                                    .frame(
-                                        width: Constants.favoriteBadgeBackgroundSize,
-                                        height: Constants.favoriteBadgeBackgroundSize
-                                    )
-                                    .shadow(radius: Constants.favoriteBadgeShadowRadius)
-                            )
-                            .symbolEffect(.bounce, value: isAvailableOffline)
-                            .transition(.scale.combined(with: .opacity))
-                            .accessibilityLabel(L10n.Offline.badgeAvailable)
-                    }
-                }
-                .animation(
-                    DSMotion.pop,
-                    value: isFavorite
-                )
-                .animation(
-                    DSMotion.pop,
-                    value: isAvailableOffline
-                )
-            // One line that shrinks a little to fit, then truncates in the middle (keeping the extension
-            // visible). The hidden line sets the height at full size, so a shrunk name never makes its
-            // tile shorter than the others.
-            Text(" ")
-                .type(.body2(.semibold), style: .primaryOnSurface)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity)
-                .hidden()
-                .overlay {
-                    Text(displayName)
-                        .type(.body2(.semibold), style: isHidden ? .tertiary : .primaryOnSurface)
-                        .lineLimit(1)
-                        .minimumScaleFactor(Constants.nameMinimumScale)
-                        .truncationMode(.middle)
-                        .multilineTextAlignment(.center)
-                }
-        }
-        .frame(maxWidth: .infinity)
-        .overlay(alignment: .bottomTrailing) {
-            if isOpening {
-                DSSpinner()
-                    .controlSize(.small)
-                    .padding(Constants.favoriteBadgePadding)
-                    .background(Circle().fill(Color.backgroundPrimary)
-                        .shadow(radius: Constants.favoriteBadgeShadowRadius))
+        if isDirectory {
+            FolderGridTile(
+                name: displayName,
+                isHidden: isHidden,
+                sizeText: sizeText,
+                isFavorite: isFavorite,
+                isAvailableOffline: isAvailableOffline,
+                isOpening: isOpening,
+                matchedSource: matchedSource
+            ) {
+                folderIcon
+            }
+        } else {
+            FileGridTile(
+                name: displayName,
+                isHidden: isHidden,
+                sizeText: sizeText,
+                tint: wellTint,
+                isFavorite: isFavorite,
+                isAvailableOffline: isAvailableOffline,
+                isOpening: isOpening,
+                matchedSource: matchedSource
+            ) {
+                picture
             }
         }
     }
 
     @ViewBuilder
-    private var icon: some View {
+    private var folderIcon: some View {
         if let customIcon {
             customIcon
                 .resizable()
                 .scaledToFit()
                 .symbolVariant(customIconFilled ? .fill : .none)
                 .foregroundStyle(customIconTint ?? Color.accent)
-                .frame(width: iconSize, height: iconSize)
-        } else if isEligibleForThumbnail, let serverURL, let itemID {
-            ThumbnailImage(
-                serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
-                fallbackKind: kind,
-                iconTint: Color.secondaryDS, fileSize: file?.size, modified: file?.dateModified
-            )
-            .frame(width: iconSize, height: iconSize)
-        } else if isEligibleForPDFThumbnail, let serverURL, let file {
-            PDFThumbnailImage(serverURL: serverURL, item: file)
-                .frame(width: iconSize, height: iconSize)
-        } else if isDirectory {
+        } else {
             IconKit.folderFill
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(Color.accent)
-                .frame(width: iconSize, height: iconSize)
+        }
+    }
+
+    @ViewBuilder
+    private var picture: some View {
+        if isEligibleForThumbnail, let serverURL, let itemID {
+            GeometryReader { proxy in
+                // A text file draws a page of its own lines: it sits inside the well like a sheet.
+                let pageSide = min(proxy.size.width, proxy.size.height) * GridWellTypeIcon.pageFraction
+                let isPage = kind.map(TextSnippet.isTextKind) ?? false
+                ThumbnailImage(
+                    serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
+                    fallbackKind: kind,
+                    fallbackBannerFraction: FileTypeBanner.slimHeightFraction,
+                    iconTint: Color.secondaryDS,
+                    fallbackSize: pageSide,
+                    fileSize: file?.size, modified: file?.dateModified,
+                    fillsFrame: !isPage
+                )
+                .frame(width: isPage ? pageSide : proxy.size.width, height: isPage ? pageSide : proxy.size.height)
+                .frame(width: proxy.size.width, height: proxy.size.height)
+            }
+        } else if isEligibleForPDFThumbnail, let serverURL, let file {
+            PDFThumbnailImage(serverURL: serverURL, item: file)
+                .padding(Constants.pdfInset)
         } else {
-            FileTypeIcon(kind: kind ?? "")
-                .frame(width: iconSize, height: iconSize)
+            GridWellTypeIcon(kind: kind ?? "")
         }
     }
 }
 
-#Preview("Directory") {
-    GridCellView(name: "Photos", isDirectory: true)
+#Preview("Folders") {
+    HStack(alignment: .top, spacing: .space12) {
+        GridCellView(name: "Photos", isDirectory: true, size: 2_400_000_000)
+        GridCellView(name: "Documents", isDirectory: true, isFavorite: true, isAvailableOffline: true)
+    }
+    .frame(width: Constants.previewFolderWidth * 2 + .space12)
+    .padding(.space16)
+    .background(Color.backgroundPrimary)
 }
 
-#Preview("File") {
-    GridCellView(name: "vacation.jpg", isDirectory: false)
+#Preview("Files") {
+    HStack(alignment: .top, spacing: .space12) {
+        GridCellView(name: "vacation.jpg", isDirectory: false, kind: "jpg", size: 2_400_000)
+        GridCellView(name: "report.pdf", isDirectory: false, isFavorite: true, kind: "pdf", size: 180_000)
+        GridCellView(name: "A very long file name that should wrap.zip", isDirectory: false, kind: "zip")
+    }
+    .frame(width: Constants.previewWidth * 3 + .space12 * 2)
+    .padding(.space16)
+    .background(Color.backgroundPrimary)
 }
 
-#Preview("Favorited directory") {
-    GridCellView(name: "Documents", isDirectory: true, isFavorite: true)
-}
-
-#Preview("Hidden directory") {
-    GridCellView(name: ".config", isDirectory: true)
-}
-
-#Preview("Hidden file") {
-    GridCellView(name: ".env", isDirectory: false)
-}
-
-#Preview("Long name wraps to two lines") {
-    GridCellView(name: "A very long file name that should wrap.pdf", isDirectory: false)
+#Preview("Hidden, dark") {
+    HStack(alignment: .top, spacing: .space12) {
+        GridCellView(name: ".config", isDirectory: true)
+        GridCellView(name: ".env", isDirectory: false, kind: "env", size: 120)
+    }
+    .frame(width: Constants.previewFolderWidth + Constants.previewWidth + .space12)
+    .padding(.space16)
+    .background(Color.backgroundPrimary)
+    .preferredColorScheme(.dark)
 }
 
 #Preview("Thumbnails on") {
-    // `.previewValue`'s `thumbnailURL` always resolves to `nil`, so this renders the same
-    // fallback icon as any other file: it documents/exercises the code path rather than
-    // showing an actual image.
+    // `.previewValue`'s `thumbnailURL` always resolves to `nil`, so this renders the fallback icon
+    // on a neutral well: it documents the code path rather than showing a picture.
     GridCellView(
         item: FileItem(
             name: "vacation.jpg",
@@ -291,52 +261,19 @@ struct GridCellView: View {
         serverURL: URL(string: "https://nextexplorer.example.com"),
         showThumbnails: true
     )
-}
-
-#Preview("Thumbnails off (falls back to the plain icon even though the file supports one)") {
-    GridCellView(
-        item: FileItem(
-            name: "vacation.jpg",
-            path: "",
-            dateModified: Date(),
-            size: 2_400_000,
-            kind: "jpg",
-            supportsThumbnail: true
-        ),
-        serverURL: URL(string: "https://nextexplorer.example.com"),
-        showThumbnails: false
-    )
-}
-
-#Preview("Thumbnail sizes: small, medium, large") {
-    VStack(spacing: .space24) {
-        ForEach(ThumbnailSize.allCases) { size in
-            GridCellView(
-                item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg"),
-                iconSize: size.iconSize
-            )
-        }
-    }
+    .frame(width: Constants.previewWidth)
     .padding(.space16)
 }
 
 #Preview("Select mode tiles") {
-    HStack(spacing: .space16) {
+    HStack(alignment: .top, spacing: .space12) {
         GridCellView(name: "Photos", isDirectory: true)
-            .dsGridTile(isSelecting: true, isSelected: false, seed: "Photos")
-        GridCellView(name: "vacation.jpg", isDirectory: false)
-            .dsGridTile(isSelecting: true, isSelected: true, seed: "vacation.jpg")
+            .dsGridTile(isSelecting: true, isSelected: false)
+            .frame(width: Constants.previewFolderWidth)
+        GridCellView(name: "vacation.jpg", isDirectory: false, kind: "jpg")
+            .dsGridTile(isSelecting: true, isSelected: true)
+            .frame(width: Constants.previewWidth)
     }
     .padding(.space16)
-}
-
-#Preview("All variants") {
-    LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: .space16) {
-        GridCellView(name: "Photos", isDirectory: true)
-        GridCellView(name: "Documents", isDirectory: true, isFavorite: true)
-        GridCellView(name: "vacation.jpg", isDirectory: false)
-        GridCellView(name: ".hidden", isDirectory: true)
-        GridCellView(name: ".hidden", isDirectory: false)
-    }
-    .padding(.space16)
+    .background(Color.backgroundPrimary)
 }

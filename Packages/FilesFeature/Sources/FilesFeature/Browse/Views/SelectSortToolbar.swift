@@ -5,8 +5,9 @@ import SwiftUI
 
 /// The "Select / Sort / Grid-List" toolbar chrome shared by Browse, Favorites, and Downloads:
 /// the ellipsis menu with a "Select" entry, the top-left Select All/Deselect All button plus
-/// trailing Cancel once selecting, and the grid/list toggle. What differs per screen: the
-/// sort menu's actual options, and what shows in the bottom bar while selecting: stays with
+/// trailing Cancel once selecting, the grid/list toggle, the grid settings button in grid mode, and
+/// the Trash button when the caller passes `onTrash`. What differs per screen: the sort menu's actual options, and what
+/// shows in the bottom bar while selecting: stays with
 /// each caller rather than being forced into this shared shape.
 @MainActor
 @ToolbarContentBuilder
@@ -20,6 +21,7 @@ func selectSortToolbar(
     onSelectAllToggled: @escaping () -> Void,
     onCancel: @escaping () -> Void,
     onToggleViewMode: @escaping () -> Void,
+    onTrash: (() -> Void)? = nil,
     hasClipboardItems: Bool = false,
     @ViewBuilder extraMenuItems: () -> some View = { EmptyView() },
     @ViewBuilder clipboardMenu: () -> some View = { EmptyView() },
@@ -55,6 +57,27 @@ func selectSortToolbar(
                 SelectModeCancelButton(action: onCancel)
             }
         } else {
+            if let onTrash {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: onTrash) {
+                        IconKit.delete
+                    }
+                    .buttonStyle(DSPressableButtonStyle())
+                    .accessibilityLabelWithTooltip(L10n.Trash.title)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Browse.trashButton)
+                }
+                if #available(iOS 26.0, *) {
+                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                }
+            }
+            if isGridView, isViewModeAvailable {
+                ToolbarItem(placement: .topBarTrailing) {
+                    GridSettingsButton()
+                }
+                if #available(iOS 26.0, *) {
+                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     clipboardMenu()

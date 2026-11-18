@@ -499,6 +499,14 @@ public enum L10n {
     public enum Gallery {
         public static var loadFailed: String { tr("gallery.loadFailed") }  // "Couldn't load this image."
     }
+    public enum Grid {
+        public static func perRow(_ a0: CVarArg) -> String { tr("grid.perRow", a0) }
+        public static var sectionFiles: String { tr("grid.sectionFiles") }  // "Files"
+        public static var sectionFolders: String { tr("grid.sectionFolders") }  // "Folders"
+        public static var settingsButton: String { tr("grid.settingsButton") }  // "Grid Settings"
+        public static var settingsTitle: String { tr("grid.settingsTitle") }  // "Grid"
+        public static var sizeTitle: String { tr("grid.sizeTitle") }  // "Size"
+    }
     public enum Language {
         public static var navigationTitle: String { tr("language.navigationTitle") }  // "Language"
         public static var systemDefault: String { tr("language.systemDefault") }  // "System Default"

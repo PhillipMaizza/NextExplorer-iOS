@@ -51,6 +51,12 @@ directLinkMode.download	ダウンロード
 thumbnailSize.small	小
 thumbnailSize.medium	中
 thumbnailSize.large	大
+grid.sectionFolders	フォルダ
+grid.sectionFiles	ファイル
+grid.settingsTitle	グリッド
+grid.settingsButton	グリッド設定
+grid.sizeTitle	サイズ
+grid.perRow	1行に%lld個
 dateFormat.automatic	自動
 browse.navigationTitle	ブラウズ
 browse.scopeThisFolder	このフォルダ

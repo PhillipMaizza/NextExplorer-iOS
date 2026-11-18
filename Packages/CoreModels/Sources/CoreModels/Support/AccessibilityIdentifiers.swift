@@ -54,6 +54,8 @@ public enum AccessibilityIdentifiers {
     public enum Browse {
         public static let uploadMenu = "browse.uploadMenu"
         public static let moreMenu = "browse.moreMenu"
+        public static let gridSettingsButton = "browse.gridSettingsButton"
+        public static let trashButton = "browse.trashButton"
     }
 
     public enum Settings {

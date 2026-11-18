@@ -51,6 +51,12 @@ directLinkMode.download	Descarcă
 thumbnailSize.small	Mică
 thumbnailSize.medium	Medie
 thumbnailSize.large	Mare
+grid.sectionFolders	Dosare
+grid.sectionFiles	Fișiere
+grid.settingsTitle	Grilă
+grid.settingsButton	Setări grilă
+grid.sizeTitle	Dimensiune
+grid.perRow	%lld pe rând
 dateFormat.automatic	Automat
 browse.navigationTitle	Explorează
 browse.scopeThisFolder	Acest dosar

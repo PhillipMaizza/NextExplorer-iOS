@@ -35,8 +35,6 @@ struct PersonalSpaceRow: View {
 
 /// The grid mode counterpart of `PersonalSpaceRow`.
 struct PersonalSpaceGridCell: View {
-    let iconSize: CGFloat
-    let cellPadding: CGFloat
     let onTap: () -> Void
 
     var body: some View {
@@ -44,11 +42,10 @@ struct PersonalSpaceGridCell: View {
             GridCellView(
                 name: L10n.Browse.myFiles,
                 isDirectory: true,
-                iconSize: iconSize,
                 customIcon: IconKit.person,
                 customIconTint: .accent
             )
-            .dsGridTile(padding: cellPadding)
+            .dsGridTile()
         }
         .buttonStyle(DSPressableButtonStyle())
         .accessibilityHint(L10n.Browse.myFilesSubtitle)
@@ -66,7 +63,7 @@ struct PersonalSpaceGridCell: View {
 }
 
 #Preview("Grid cell") {
-    PersonalSpaceGridCell(iconSize: .size56, cellPadding: .space8, onTap: {})
-        .frame(width: 120)
+    PersonalSpaceGridCell(onTap: {})
+        .frame(width: 180)
         .padding()
 }
