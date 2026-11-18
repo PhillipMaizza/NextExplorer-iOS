@@ -30,13 +30,12 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
     /// The name the account is shown by: the username, else the email (a single sign on user can
     /// have no username), else the server host as a last resort.
     public var displayName: String {
-        if !username.isEmpty {
-            return username
-        }
-        if let email, !email.isEmpty {
-            return email
-        }
-        return serverHost
+        Self.name(username: username, email: email) ?? serverHost
+    }
+
+    /// The username, else the email, for any place that names an account; `nil` when both are blank.
+    public static func name(username: String?, email: String?) -> String? {
+        [username, email].compactMap(\.self).first { !$0.isEmpty }
     }
 
     /// The server line under the name, left out when the name already is the server.
