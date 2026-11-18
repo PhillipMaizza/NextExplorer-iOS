@@ -148,10 +148,6 @@ public struct SettingsFeature {
         public var isVolumeUsageEnabled = false
         public var serverUsage: IdentifiedArrayOf<VolumeUsage> = []
 
-        public var displayName: String {
-            user.displayLabel
-        }
-
         public init(serverURL: URL, user: User) {
             self.serverURL = serverURL
             self.user = user

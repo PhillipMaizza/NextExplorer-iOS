@@ -23,7 +23,7 @@
         @State private var selectedID: String?
 
         private var accounts: [AccountSummary] {
-            store.accounts.isEmpty ? [store.activeAccount] : store.accounts
+            store.accountRows
         }
 
         private var selectedAccount: AccountSummary {

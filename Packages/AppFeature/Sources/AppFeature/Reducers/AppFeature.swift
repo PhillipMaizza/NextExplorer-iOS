@@ -554,7 +554,8 @@ public struct AppFeature {
                 id: $0.accountID,
                 username: $0.username ?? "",
                 serverURL: $0.serverBaseURL,
-                isActive: $0.accountID == activeID
+                isActive: $0.accountID == activeID,
+                email: $0.email
             )
         }
     }

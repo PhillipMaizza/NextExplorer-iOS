@@ -40,7 +40,7 @@ struct SidebarAccountMenu<Label: View>: View {
         .buttonStyle(.plain)
         .accessibilityLabel(L10n.Settings.sectionAccounts)
         // The label is the signed in identity; VoiceOver reads it as the button's value.
-        .accessibilityValue(store.displayName)
+        .accessibilityValue(store.activeAccount.displayName)
         .popover(isPresented: $isPresented, arrowEdge: .bottom) {
             AccountPopover(store: store, revealSettings: revealSettings) { action in
                 isPresented = false
@@ -65,7 +65,7 @@ private struct AccountPopover: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: .space4) {
-            ForEach(accounts) { account in
+            ForEach(store.accountRows) { account in
                 AccountRow(
                     account: account,
                     onSwitch: { dismissThen { store.send(.switchAccountTapped(account.id)) } },
@@ -120,17 +120,6 @@ private struct AccountPopover: View {
         } else {
             store.send(.removeAccountTapped(account))
         }
-    }
-
-    /// Falls back to the signed in user before the shared account list has loaded.
-    private var accounts: [AccountSummary] {
-        guard store.accounts.isEmpty else { return store.accounts }
-        return [AccountSummary(
-            id: store.serverURL.absoluteString + "|" + store.user.username,
-            username: store.displayName,
-            serverURL: store.serverURL,
-            isActive: true
-        )]
     }
 }
 

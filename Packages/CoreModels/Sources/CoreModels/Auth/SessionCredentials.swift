@@ -14,6 +14,8 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
     /// liveness is then determined solely by calling `/api/auth/me`, never by local clock math.
     public var expiresAt: Date?
     public var username: String?
+    /// Shown for the account when the server has no username for it, as with some single sign on users.
+    public var email: String?
 
     public init(
         serverBaseURL: URL,
@@ -24,7 +26,8 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         cookiePath: String,
         cookieIsSecure: Bool,
         expiresAt: Date?,
-        username: String?
+        username: String?,
+        email: String? = nil
     ) {
         self.serverBaseURL = serverBaseURL
         self.authMode = authMode
@@ -35,6 +38,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         self.cookieIsSecure = cookieIsSecure
         self.expiresAt = expiresAt
         self.username = username
+        self.email = email
     }
 
     /// Stable identity of the account this session belongs to, so the multi-server switcher can

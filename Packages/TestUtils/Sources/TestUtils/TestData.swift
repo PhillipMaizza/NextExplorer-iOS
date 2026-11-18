@@ -36,6 +36,7 @@ public enum TestFile {
 
 public enum TestAccount {
     public static let username = "phillip"
+    public static let email = "phillip@example.com"
     public static let password = "hunter2"
     /// A six digit authenticator code.
     public static let totpCode = "123456"

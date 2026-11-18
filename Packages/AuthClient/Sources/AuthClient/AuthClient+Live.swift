@@ -48,13 +48,20 @@ public extension AuthClient {
         }
 
         @Sendable
-        func captureAndPersist(serverURL: URL, authMode: AuthMode, cookieName: String, username: String?) async throws {
+        func captureAndPersist(
+            serverURL: URL,
+            authMode: AuthMode,
+            cookieName: String,
+            username: String?,
+            email: String?
+        ) async throws {
             try await onCookieQueue {
                 guard let credentials = cookieStore.capture(
                     serverURL: serverURL,
                     authMode: authMode,
                     cookieName: cookieName,
-                    username: username
+                    username: username,
+                    email: email
                 ) else {
                     throw AuthClientError.sessionCookieMissing
                 }
@@ -80,7 +87,8 @@ public extension AuthClient {
                     serverURL: serverURL,
                     authMode: .local,
                     cookieName: AuthClientConfiguration.CookieName.local,
-                    username: user.username
+                    username: user.username,
+                    email: user.email
                 )
                 return user
             },
@@ -90,7 +98,8 @@ public extension AuthClient {
                     serverURL: serverURL,
                     authMode: .local,
                     cookieName: AuthClientConfiguration.CookieName.local,
-                    username: user.username
+                    username: user.username,
+                    email: user.email
                 )
                 return user
             },
@@ -133,7 +142,8 @@ public extension AuthClient {
                     serverURL: serverURL,
                     authMode: .oidc,
                     cookieName: AuthClientConfiguration.CookieName.local,
-                    username: user.username
+                    username: user.username,
+                    email: user.email
                 )
                 return user
             },

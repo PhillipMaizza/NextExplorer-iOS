@@ -23,7 +23,7 @@ private enum Constants {
             .body1(.bold)
         }
 
-        static var profileEmailType: Typography.TextType {
+        static var profileServerType: Typography.TextType {
             .body3(.regular)
         }
     #elseif os(macOS)
@@ -32,7 +32,7 @@ private enum Constants {
             .body3(.bold)
         }
 
-        static var profileEmailType: Typography.TextType {
+        static var profileServerType: Typography.TextType {
             .caption(.regular)
         }
     #endif
@@ -289,7 +289,7 @@ struct MainTabSidebar: View {
         #endif
     }
 
-    /// Signed in identity at the foot of the sidebar: avatar, name and email. It opens the account
+    /// Signed in identity at the foot of the sidebar: avatar, name and server address. It opens the account
     /// popover, for switching, adding and signing out without a trip to Settings.
     private var sidebarProfile: some View {
         SidebarAccountMenu(
@@ -319,17 +319,15 @@ struct MainTabSidebar: View {
 
     private var profileSummary: some View {
         HStack(spacing: .space12) {
-            AvatarView(displayName: store.settings.displayName, size: Constants.avatarSize)
+            AvatarView(displayName: store.settings.activeAccount.displayName, size: Constants.avatarSize)
             VStack(alignment: .leading, spacing: .space2) {
-                Text(store.settings.displayName)
+                Text(store.settings.activeAccount.displayName)
                     .type(Constants.profileNameType, style: .primaryOnSurface)
                     .lineLimit(1)
-                if let email = store.settings.user.email {
-                    Text(email)
-                        .type(Constants.profileEmailType, style: .secondary)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                }
+                Text(store.settings.activeAccount.serverHost)
+                    .type(Constants.profileServerType, style: .secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
             }
             Spacer(minLength: 0)
         }
