@@ -67,9 +67,9 @@
             }
             CommandMenu(L10n.Menu.go) {
                 Button(L10n.Common.back) { send(.backRequested) }
-                    .keyboardShortcut("[")
+                    .keyboardShortcut("[", modifiers: .command, localization: .withoutMirroring)
                 Button(L10n.Menu.forward) { send(.forwardRequested) }
-                    .keyboardShortcut("]")
+                    .keyboardShortcut("]", modifiers: .command, localization: .withoutMirroring)
                 Button(L10n.Menu.enclosingFolder) { send(.enclosingFolderRequested) }
                     .keyboardShortcut(.upArrow)
                 Divider()

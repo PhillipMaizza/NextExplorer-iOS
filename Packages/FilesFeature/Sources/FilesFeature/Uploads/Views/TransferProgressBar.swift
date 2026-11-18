@@ -50,7 +50,7 @@ struct TransferProgressBar: View {
                 Text(title)
                     .type(.body3(.semibold), style: .primaryOnSurface)
                     .lineLimit(1)
-                    .truncationMode(.middle)
+                    .truncationMode(.tail)
                 if let progress {
                     ProgressView(value: progress)
                         .tint(Color.positive)

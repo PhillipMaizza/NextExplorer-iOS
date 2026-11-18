@@ -145,9 +145,9 @@
             // Finder's Go menu: up a level, back, and the sidebar sections.
             CommandMenu(L10n.Menu.go) {
                 Button(L10n.Common.back) { sendToFrontWindow({ $0.back() }, otherwise: .backRequested) }
-                    .keyboardShortcut("[")
+                    .keyboardShortcut("[", modifiers: .command, localization: .withoutMirroring)
                 Button(L10n.Menu.forward) { sendToFrontWindow({ $0.forward() }, otherwise: .forwardRequested) }
-                    .keyboardShortcut("]")
+                    .keyboardShortcut("]", modifiers: .command, localization: .withoutMirroring)
                 Button(L10n.Menu.enclosingFolder) { sendToFrontWindow(
                     { $0.enclosingFolder() },
                     otherwise: .enclosingFolderRequested
