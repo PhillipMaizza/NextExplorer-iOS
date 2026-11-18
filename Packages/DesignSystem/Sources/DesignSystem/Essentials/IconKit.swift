@@ -85,6 +85,8 @@ public enum IconKit {
     public static let server = Image(systemName: "macpro.gen3.server")
     public static let listBullet = Image(systemName: "list.bullet")
     public static let squareGrid = Image(systemName: "square.grid.2x2")
+    /// The grid's size and display options.
+    public static let gridOptions = Image(systemName: "slider.horizontal.below.square.and.square.filled")
     public static let table = Image(systemName: "tablecells")
     public static let openInApp = Image(systemName: "arrow.up.forward.app")
     public static let print = Image(systemName: "printer")

@@ -121,6 +121,9 @@ struct BrowseGridContent<Menu: View>: View {
                         }
                     }
                 }
+                // An empty folder has no grid to stretch the column, which would shrink to its
+                // margins and leave the screen behind it showing.
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(FileGridMetrics.margin)
                 .animation(
                     DSMotion.listDiff,

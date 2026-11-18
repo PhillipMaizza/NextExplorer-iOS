@@ -10,10 +10,13 @@ private enum Constants {
         (11, 780), (5, 240_000), (14, 9_100), (8, 1_600_000), (10, 33), (6, 128_000),
     ]
     static let placeholderNameChar = "M"
+    /// Folder cards in the grid skeleton, a row's worth on a phone at any size.
+    static let placeholderFolderCount = 2
+    static let placeholderSizeText = "MMMMM"
     static let skeleton = "skeleton/"
 }
 
-/// Redacted `FileRowView` / `GridCellView` stand-ins shown while a folder's first page loads
+/// Redacted `FileRowView` / grid tile placeholders shown while a folder's first page loads
 /// (`BrowseContentView` swaps it in for the list), so the shape of what's coming is already on
 /// screen instead of a bare spinner. Reuses the real `List`/`ScrollView` containers so
 /// margins, row height and the `backgroundSecondary` surface line up exactly, with scrolling
@@ -58,10 +61,38 @@ struct BrowseSkeletonView: View {
     @ViewBuilder
     private var content: some View {
         if isGridView {
+            // Shaped like the grid that loads in: folder cards, then plain file wells, so
+            // nothing jumps when it arrives. A blank well claims no file type.
             ScrollView {
-                FileGrid {
-                    ForEach(Self.placeholderItems) { item in
-                        placeholderRow(GridCellView(item: item))
+                VStack(alignment: .leading, spacing: FileGridMetrics.sectionSpacing) {
+                    FileGrid(.folders) {
+                        ForEach(Self.placeholderItems.prefix(Constants.placeholderFolderCount)) { item in
+                            placeholderRow(
+                                FolderGridTile(
+                                    name: item.name,
+                                    isHidden: false,
+                                    sizeText: Constants.placeholderSizeText
+                                ) {
+                                    IconKit.folderFill
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(Color.tertiaryDS)
+                                }
+                            )
+                        }
+                    }
+                    FileGrid {
+                        ForEach(Self.placeholderItems) { item in
+                            placeholderRow(
+                                FileGridTile(
+                                    name: item.name,
+                                    isHidden: false,
+                                    sizeText: FileSizeFormat.string(item.size)
+                                ) {
+                                    Color.clear
+                                }
+                            )
+                        }
                     }
                 }
                 .padding(FileGridMetrics.margin)
@@ -89,4 +120,9 @@ struct BrowseSkeletonView: View {
 
 #Preview("Grid") {
     BrowseSkeletonView(isGridView: true)
+}
+
+#Preview("Grid, dark") {
+    BrowseSkeletonView(isGridView: true)
+        .preferredColorScheme(.dark)
 }
