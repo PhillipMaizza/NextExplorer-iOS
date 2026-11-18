@@ -5,8 +5,8 @@ import Foundation
 import SwiftUI
 
 /// The type chips under the browse header: over search results while searching, over the
-/// folder's own items otherwise (not while picking, so the picks stay what is on screen), and
-/// nothing when there is only one kind to show.
+/// folder's own items otherwise (shown but locked while picking, so the picks stay what is on
+/// screen and an active filter stays visible), and nothing when there is only one kind to show.
 struct BrowseFilterChipRow: View {
     let store: StoreOf<BrowseFeature>
 
@@ -18,13 +18,14 @@ struct BrowseFilterChipRow: View {
                 onToggle: { store.send(.searchCategoryToggled($0), animation: DSMotion.listDiff) },
                 onSelectAll: { store.send(.searchFilterCleared, animation: DSMotion.listDiff) }
             )
-        } else if !store.isSearching, !store.isSelecting, !store.availableFolderCategories.isEmpty {
+        } else if !store.isSearching, !store.availableFolderCategories.isEmpty {
             SearchFilterChips(
                 availableCategories: store.availableFolderCategories,
                 selectedCategories: store.selectedFolderCategories,
                 onToggle: { store.send(.folderCategoryToggled($0), animation: DSMotion.listDiff) },
                 onSelectAll: { store.send(.folderFilterCleared, animation: DSMotion.listDiff) }
             )
+            .disabled(store.isSelecting)
         }
     }
 }
