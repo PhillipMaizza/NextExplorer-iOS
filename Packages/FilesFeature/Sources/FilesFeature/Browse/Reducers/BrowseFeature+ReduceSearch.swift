@@ -85,6 +85,18 @@ extension BrowseFeature {
             state.selectedSearchCategories = []
             return .none
 
+        case let .folderCategoryToggled(category):
+            if state.selectedFolderCategories.contains(category) {
+                state.selectedFolderCategories.remove(category)
+            } else {
+                state.selectedFolderCategories.insert(category)
+            }
+            return .none
+
+        case .folderFilterCleared:
+            state.selectedFolderCategories = []
+            return .none
+
         case let .searchResultTapped(result):
             guard !result.isDirectory else {
                 // Opening a folder ends the search, as in Finder, so the search never carries

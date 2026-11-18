@@ -317,14 +317,7 @@ struct BrowseContentView: View {
             ) {
                 // The Mac shows these natively, as a scope bar and search field tokens.
                 #if os(iOS)
-                    if store.isSearching, !store.availableSearchCategories.isEmpty {
-                        SearchFilterChips(
-                            availableCategories: store.availableSearchCategories,
-                            selectedCategories: store.selectedSearchCategories,
-                            onToggle: { store.send(.searchCategoryToggled($0)) },
-                            onSelectAll: { store.send(.searchFilterCleared) }
-                        )
-                    }
+                    BrowseFilterChipRow(store: store)
                 #endif
             }
         }
