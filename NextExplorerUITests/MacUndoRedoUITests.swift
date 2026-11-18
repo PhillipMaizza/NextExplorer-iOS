@@ -46,7 +46,7 @@
             moveHere.click()
             XCTAssertTrue(file.waitToVanish(), "Moving the file into the folder should take it out of this one")
 
-            let undo = app.buttons[L10n.Menu.undo].firstMatch
+            let undo = app.buttons[AccessibilityIdentifiers.Toast.action].firstMatch
             XCTAssertTrue(undo.waitToAppear(), "The move toast should offer Undo")
             undo.click()
 

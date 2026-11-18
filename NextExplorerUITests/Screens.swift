@@ -416,7 +416,7 @@ struct BrowseScreen {
 
     /// The "Sync completed" toast, raised on the Mac only; iOS confirms a refresh with a haptic.
     var syncCompletedToast: XCUIElement {
-        app.staticTexts[L10n.Common.syncCompleted]
+        app.staticTexts[AccessibilityIdentifiers.Toast.message]
     }
 
     /// Delete inside the selection menu.
@@ -496,7 +496,7 @@ struct OfflineTabScreen {
 
     /// The select mode bar's Remove from Offline, for the picked pinned items.
     var removeFromOfflineSelectionButton: XCUIElement {
-        app.labeledButton(L10n.Browse.actionRemoveFromOffline)
+        app.buttons[AccessibilityIdentifiers.Offline.removeSelection]
     }
 }
 

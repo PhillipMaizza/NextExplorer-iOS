@@ -1,3 +1,4 @@
+import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
@@ -25,6 +26,7 @@ struct OfflineSelectionToolbar: ToolbarContent {
             ) {
                 onRemoveFromOffline(selectedPinnedPaths)
             }
+            .accessibilityIdentifier(AccessibilityIdentifiers.Offline.removeSelection)
         }
         ToolbarItem(placement: .bottomBar) {
             ShareLink(items: selectedDownloadURLs) {

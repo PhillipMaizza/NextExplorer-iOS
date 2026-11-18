@@ -117,7 +117,9 @@ struct IdentifiedURL: Identifiable {
         /// Presents the system share sheet once `model` has the file on disk.
         func systemShareSheet(_ model: SystemShareModel) -> some View {
             sheet(item: Binding(get: { model.shareURL }, set: { model.shareURL = $0 })) { wrapped in
-                ActivityShareSheet(items: [wrapped.url]).systemSharePresentation()
+                ActivityShareSheet(items: [wrapped.url])
+                    .systemSharePresentation()
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Share.sheet)
             }
         }
 
