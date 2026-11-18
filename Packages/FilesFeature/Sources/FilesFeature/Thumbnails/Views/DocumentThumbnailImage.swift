@@ -23,21 +23,21 @@ private enum Constants {
 /// `FileTypeIcon(kind: "pdf")` (which carries its own "PDF" banner) for a file that is too
 /// large or that PDFKit can't open.
 ///
-/// The work is owned by `PDFThumbnailStore`, not this view: the fetch + render run in a task
+/// The work is owned by `DocumentThumbnailStore`, not this view: the fetch + render run in a task
 /// a scroll or navigation doesn't cancel, and the result is published back through this
 /// key's observed `Entry`, so revisiting a folder finds its thumbnails already done.
-struct PDFThumbnailImage: View {
+struct DocumentThumbnailImage: View {
     let serverURL: URL
     let item: FileItem
 
     @Dependency(\.filesClient) private var filesClient
-    @Dependency(\.pdfThumbnailCache) private var pdfThumbnailCache
+    @Dependency(\.documentThumbnailCache) private var documentThumbnailCache
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
     @Dependency(\.date) private var date
-    private let store = PDFThumbnailStore.shared
+    private let store = DocumentThumbnailStore.shared
 
     private var cacheKey: String {
-        PDFThumbnailCache.cacheKey(id: item.id, signature: item.cacheSignature)
+        DocumentThumbnailCache.cacheKey(id: item.id, signature: item.cacheSignature)
     }
 
     var body: some View {
@@ -53,14 +53,14 @@ struct PDFThumbnailImage: View {
         .task(id: cacheKey) {
             store.load(
                 entry: entry, key: cacheKey, item: item, serverURL: serverURL,
-                filesClient: filesClient, cache: pdfThumbnailCache, localThumbnails: localThumbnailStore,
+                filesClient: filesClient, cache: documentThumbnailCache, localThumbnails: localThumbnailStore,
                 now: date.now
             )
         }
     }
 
     @ViewBuilder
-    private func content(state: PDFThumbnailStore.State) -> some View {
+    private func content(state: DocumentThumbnailStore.State) -> some View {
         switch state {
         case let .ready(image):
             Image(platformImage: image)
@@ -83,7 +83,7 @@ struct PDFThumbnailImage: View {
 }
 
 #Preview("Loading placeholder (previewValue never produces a render)") {
-    PDFThumbnailImage(
+    DocumentThumbnailImage(
         serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
         item: FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 800_000, kind: "pdf")
     )

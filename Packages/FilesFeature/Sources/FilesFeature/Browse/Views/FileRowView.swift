@@ -163,7 +163,7 @@ struct FileRowView: View {
         kind.map(ThumbnailImage.readsOwnContent) ?? false
     }
 
-    private var isEligibleForPDFThumbnail: Bool {
+    private var isEligibleForDocumentThumbnail: Bool {
         showThumbnails && serverURL != nil && (file?.isPDF ?? false)
     }
 
@@ -254,8 +254,8 @@ struct FileRowView: View {
                 iconTint: Color.secondaryDS, fileSize: file?.size, modified: file?.dateModified
             )
             .frame(width: Constants.iconFrame, height: Constants.iconFrame)
-        } else if isEligibleForPDFThumbnail, let serverURL, let file {
-            PDFThumbnailImage(serverURL: serverURL, item: file)
+        } else if isEligibleForDocumentThumbnail, let serverURL, let file {
+            DocumentThumbnailImage(serverURL: serverURL, item: file)
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isDirectory {
             IconKit.folderFill

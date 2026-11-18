@@ -22,12 +22,12 @@ private enum Constants {
 /// Renders and caches the first page of a PDF as a bitmap, for use as its browse thumbnail.
 /// The server has no PDF thumbnail endpoint (`backend/src/routes/thumbnails.js` rejects the
 /// extension), so the page is rasterized on device from a local PDF the caller supplies
-/// (`PDFThumbnailStore` hands over what `previewFileLowPriority` downloaded).
+/// (`DocumentThumbnailStore` hands over what `previewFileLowPriority` downloaded).
 ///
 /// Renders are cached as JPEGs under the shared `Library/Caches/PreviewCache` root, so
-/// "Clear Cache" in Settings covers them. `PDFThumbnailStore` keeps the decoded images the
+/// "Clear Cache" in Settings covers them. `DocumentThumbnailStore` keeps the decoded images the
 /// live grid needs in memory; this layer only re-reads/re-renders on a store eviction.
-public struct PDFThumbnailCache: Sendable {
+public struct DocumentThumbnailCache: Sendable {
     /// `key` uniquely identifies the source file + its content signature; `maxPixel` bounds
     /// the render's longest side; `pdfURL` is the local PDF to rasterize. Returns `nil` when
     /// the file isn't a readable PDF.
@@ -54,11 +54,11 @@ private actor PDFPageRenderer {
     static let shared = PDFPageRenderer()
 
     func render(pdfAt url: URL, maxPixel: CGFloat) -> PlatformImage? {
-        PDFThumbnailCache.renderFirstPage(of: url, maxPixel: maxPixel)
+        DocumentThumbnailCache.renderFirstPage(of: url, maxPixel: maxPixel)
     }
 }
 
-extension PDFThumbnailCache {
+extension DocumentThumbnailCache {
     /// The cache key for a file: its id plus a content signature, so an edited file renders
     /// afresh rather than serving the stale page.
     static func cacheKey(id: String, signature: String) -> String {
@@ -66,7 +66,7 @@ extension PDFThumbnailCache {
     }
 }
 
-extension PDFThumbnailCache {
+extension DocumentThumbnailCache {
     private static func hexDigest(of string: String) -> String {
         SHA256.hash(data: Data(string.utf8)).map { String(format: "%02x", $0) }.joined()
     }
@@ -97,8 +97,8 @@ extension PDFThumbnailCache {
 
     /// A cache backed by an on-disk render directory. `renderCacheDirectory` is a seam for
     /// tests: production uses `defaultRenderCacheDirectory`.
-    static func live(renderCacheDirectory: URL?) -> PDFThumbnailCache {
-        PDFThumbnailCache { key, maxPixel, pdfURL in
+    static func live(renderCacheDirectory: URL?) -> DocumentThumbnailCache {
+        DocumentThumbnailCache { key, maxPixel, pdfURL in
             let renderCacheURL = renderCacheDirectory.map { renderCacheFileURL(in: $0, for: key) }
             if let renderCacheURL, let data = try? Data(contentsOf: renderCacheURL) {
                 // Force the decode here, off the caller's thread: `UIImage(data:)` alone
@@ -121,15 +121,15 @@ extension PDFThumbnailCache {
     }
 }
 
-extension PDFThumbnailCache: DependencyKey {
-    public static let liveValue = PDFThumbnailCache.live(renderCacheDirectory: defaultRenderCacheDirectory)
-    public static let testValue = PDFThumbnailCache { _, _, _ in nil }
-    public static let previewValue = PDFThumbnailCache { _, _, _ in nil }
+extension DocumentThumbnailCache: DependencyKey {
+    public static let liveValue = DocumentThumbnailCache.live(renderCacheDirectory: defaultRenderCacheDirectory)
+    public static let testValue = DocumentThumbnailCache { _, _, _ in nil }
+    public static let previewValue = DocumentThumbnailCache { _, _, _ in nil }
 }
 
 public extension DependencyValues {
-    var pdfThumbnailCache: PDFThumbnailCache {
-        get { self[PDFThumbnailCache.self] }
-        set { self[PDFThumbnailCache.self] = newValue }
+    var documentThumbnailCache: DocumentThumbnailCache {
+        get { self[DocumentThumbnailCache.self] }
+        set { self[DocumentThumbnailCache.self] = newValue }
     }
 }

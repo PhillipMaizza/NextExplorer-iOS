@@ -131,13 +131,13 @@ struct GridCellView: View {
         kind.map(ThumbnailImage.readsOwnContent) ?? false
     }
 
-    private var isEligibleForPDFThumbnail: Bool {
+    private var isEligibleForDocumentThumbnail: Bool {
         showThumbnails && serverURL != nil && (file?.isPDF ?? false)
     }
 
     /// Only a file with no picture of its own takes its kind's colour; pictures sit on a neutral well.
     private var wellTint: Color? {
-        guard !isEligibleForThumbnail, !isEligibleForPDFThumbnail, let kind else { return nil }
+        guard !isEligibleForThumbnail, !isEligibleForDocumentThumbnail, let kind else { return nil }
         return FileTypeIcon.tint(forKind: kind)
     }
 
@@ -205,8 +205,8 @@ struct GridCellView: View {
                 .frame(width: isPage ? pageSide : proxy.size.width, height: isPage ? pageSide : proxy.size.height)
                 .frame(width: proxy.size.width, height: proxy.size.height)
             }
-        } else if isEligibleForPDFThumbnail, let serverURL, let file {
-            PDFThumbnailImage(serverURL: serverURL, item: file)
+        } else if isEligibleForDocumentThumbnail, let serverURL, let file {
+            DocumentThumbnailImage(serverURL: serverURL, item: file)
                 .padding(Constants.pdfInset)
         } else {
             GridWellTypeIcon(kind: kind ?? "")

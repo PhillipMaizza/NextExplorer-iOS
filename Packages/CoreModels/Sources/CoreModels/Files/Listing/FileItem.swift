@@ -137,7 +137,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
 
     /// A PDF. The server refuses to thumbnail these (`backend/src/routes/thumbnails.js`
     /// rejects the `pdf` extension outright), so the client renders the first page itself
-    /// from the downloaded file, see `PDFThumbnailImage`.
+    /// from the downloaded file, see `DocumentThumbnailImage`.
     public var isPDF: Bool {
         lowercaseKind == "pdf"
     }

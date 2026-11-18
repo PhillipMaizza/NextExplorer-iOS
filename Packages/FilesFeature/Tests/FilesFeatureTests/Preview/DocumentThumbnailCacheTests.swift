@@ -5,9 +5,9 @@ import Foundation
 import Testing
 import TestUtils
 
-/// Covers the two pieces of `PDFThumbnailCache` that run without a live server: rasterizing
+/// Covers the two pieces of `DocumentThumbnailCache` that run without a live server: rasterizing
 /// page one of a real PDF, and the short circuit that skips re-rendering on a hit.
-struct PDFThumbnailCacheTests {
+struct DocumentThumbnailCacheTests {
     /// An isolated render-cache directory per test, so nothing lands in the shared
     /// `PreviewCache` root the `PreviewCacheStoreTests` size/clear assertions depend on.
     private func makeCacheDirectory() -> URL {
@@ -31,7 +31,7 @@ struct PDFThumbnailCacheTests {
         let url = makePDF(pageSize: CGSize(width: 200, height: 400))
         defer { try? FileManager.default.removeItem(at: url) }
 
-        let image = try #require(PDFThumbnailCache.renderFirstPage(of: url, maxPixel: 512))
+        let image = try #require(DocumentThumbnailCache.renderFirstPage(of: url, maxPixel: 512))
 
         // Longest side scaled to maxPixel, aspect kept (portrait: 256 x 512).
         #expect(abs(image.size.height - 512) < 1)
@@ -68,10 +68,10 @@ struct PDFThumbnailCacheTests {
 
     @Test
     func firstPageImageRendersOnceThenServesTheCachedResult() async throws {
-        let key = PDFThumbnailCache.cacheKey(id: "Documents/\(TestID.name()).pdf", signature: "1.0|2048")
+        let key = DocumentThumbnailCache.cacheKey(id: "Documents/\(TestID.name()).pdf", signature: "1.0|2048")
         let cacheDirectory = makeCacheDirectory()
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
-        let cache = PDFThumbnailCache.live(renderCacheDirectory: cacheDirectory)
+        let cache = DocumentThumbnailCache.live(renderCacheDirectory: cacheDirectory)
         let pdfURL = makePDF(pageSize: CGSize(width: 200, height: 300))
 
         let first = await cache.firstPageImage(key, 256, pdfURL)
@@ -83,7 +83,7 @@ struct PDFThumbnailCacheTests {
         #expect(first != nil)
         #expect(second != nil)
         #expect(FileManager.default
-            .fileExists(atPath: PDFThumbnailCache.renderCacheFileURL(in: cacheDirectory, for: key).path))
+            .fileExists(atPath: DocumentThumbnailCache.renderCacheFileURL(in: cacheDirectory, for: key).path))
     }
 
     // MARK: Edge cases
@@ -95,6 +95,6 @@ struct PDFThumbnailCacheTests {
         try? Data("plain text".utf8).write(to: url)
         defer { try? FileManager.default.removeItem(at: url) }
 
-        #expect(PDFThumbnailCache.renderFirstPage(of: url, maxPixel: 512) == nil)
+        #expect(DocumentThumbnailCache.renderFirstPage(of: url, maxPixel: 512) == nil)
     }
 }

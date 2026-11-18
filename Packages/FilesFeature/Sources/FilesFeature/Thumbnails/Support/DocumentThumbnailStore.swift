@@ -18,11 +18,11 @@ private enum Constants {
     /// The fetch runs at this priority so it yields to whatever the user is interacting with.
     static let fetchPriority: TaskPriority = .utility
     /// Per-key entries kept for the live grid (a `ready` image is ~0.5 MB). Past this the
-    /// oldest are dropped; they re-resolve fast from `PDFThumbnailCache`'s disk layer.
+    /// oldest are dropped; they resolve again fast from `DocumentThumbnailCache`'s disk layer.
     static let retainedKeyCount = 60
 }
 
-/// Process-wide store of PDF first-page thumbnails, keyed by `PDFThumbnailCache.cacheKey`.
+/// Process wide store of document first page thumbnails, keyed by `DocumentThumbnailCache.cacheKey`.
 ///
 /// Each key gets an `Entry`: a tiny `@Observable` box holding just that key's `State`. A
 /// cell observes only its own entry, so one thumbnail resolving redraws one cell, not the
@@ -34,8 +34,8 @@ private enum Constants {
 /// `load` runs the fetch + render in a standalone `Task` that a scroll or navigation does
 /// not cancel, so revisiting a folder finds the work already done or still progressing.
 @MainActor
-final class PDFThumbnailStore {
-    static let shared = PDFThumbnailStore()
+final class DocumentThumbnailStore {
+    static let shared = DocumentThumbnailStore()
 
     enum State {
         /// Being fetched/rendered (or not asked for yet). The cell shows a loading placeholder.
@@ -84,7 +84,7 @@ final class PDFThumbnailStore {
         item: FileItem,
         serverURL: URL,
         filesClient: FilesClient,
-        cache: PDFThumbnailCache,
+        cache: DocumentThumbnailCache,
         localThumbnails: LocalThumbnailStore,
         now: Date
     ) -> Task<Void, Never>? {
