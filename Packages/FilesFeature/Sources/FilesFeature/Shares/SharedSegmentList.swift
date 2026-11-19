@@ -138,7 +138,7 @@ struct SharedSegmentList: View {
         }
     }
 
-    private static let placeholderItems: [SharedFeature.Item] = placeholderShares.map { share in
+    static let placeholderItems: [SharedFeature.Item] = placeholderShares.map { share in
         SharedFeature.Item(
             id: share.id,
             name: share.displayName,
@@ -234,7 +234,7 @@ private struct SharedScrollFollower<Content: View>: View {
     segmentListPreview {
         $0.byMe = IdentifiedArray(uniqueElements: Share.previewSharedByMe)
         $0.phases[.byMe] = .loaded
-        $0.filters[.byMe] = .person("u6")
+        $0.filters[.byMe] = .people(["u6"])
     }
 }
 

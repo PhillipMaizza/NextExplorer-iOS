@@ -241,6 +241,8 @@ shared.peopleCount#one	%lld व्यक्ति
 shared.peopleCount#other	%lld लोग
 shared.downloadCount#one	%lld डाउनलोड
 shared.downloadCount#other	%lld डाउनलोड
+shared.showMore	और दिखाएँ
+shared.showLess	कम दिखाएं
 shared.badgeExpired	समाप्त
 shared.emptyByMe	इसका लिंक यहां देखने के लिए कोई फ़ाइल या फ़ोल्डर साझा करें।
 shared.emptyWithMe	अन्य लोग आपके साथ जो लिंक साझा करते हैं वे यहां दिखते हैं।
@@ -249,7 +251,6 @@ shared.deleteTitle	साझा लिंक हटाएं?
 shared.deleteMessage	लिंक तुरंत काम करना बंद कर देता है। फ़ाइल या फ़ोल्डर स्वयं प्रभावित नहीं होता।
 shared.sharedByUnknown	कोई
 shared.metaAccess	एक्सेस
-shared.metaExpiration	समाप्ति
 shared.metaSharedBy	साझाकर्ता
 shared.metaSharedWith	इनके साथ साझा
 shared.anyoneWithLink	लिंक वाला कोई भी व्यक्ति

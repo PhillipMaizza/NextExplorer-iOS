@@ -246,6 +246,8 @@ shared.peopleCount#one	%lld άτομο
 shared.peopleCount#other	%lld άτομα
 shared.downloadCount#one	%lld λήψη
 shared.downloadCount#other	%lld λήψεις
+shared.showMore	Εμφάνιση περισσότερων
+shared.showLess	Εμφάνιση λιγότερων
 shared.badgeExpired	έληξε
 shared.emptyByMe	Κοινοποιήστε ένα αρχείο ή φάκελο για να δείτε εδώ τον σύνδεσμό του.
 shared.emptyWithMe	Οι σύνδεσμοι που κοινοποιούν σε εσάς άλλοι εμφανίζονται εδώ.
@@ -254,7 +256,6 @@ shared.deleteTitle	Διαγραφή συνδέσμου κοινοποίησης;
 shared.deleteMessage	Ο σύνδεσμος σταματά να λειτουργεί αμέσως. Το ίδιο το αρχείο ή ο φάκελος δεν επηρεάζεται.
 shared.sharedByUnknown	Κάποιος
 shared.metaAccess	Πρόσβαση
-shared.metaExpiration	Λήξη
 shared.metaSharedBy	Κοινοποιήθηκε από
 shared.metaSharedWith	Κοινοποιήθηκε σε
 shared.anyoneWithLink	Όποιος έχει τον σύνδεσμο

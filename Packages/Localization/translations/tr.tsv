@@ -246,6 +246,8 @@ shared.peopleCount#one	%lld kişi
 shared.peopleCount#other	%lld kişi
 shared.downloadCount#one	%lld indirme
 shared.downloadCount#other	%lld indirme
+shared.showMore	Daha Fazla Göster
+shared.showLess	Daha Az Göster
 shared.badgeExpired	süresi doldu
 shared.emptyByMe	Bağlantısını burada görmek için bir dosya veya klasör paylaşın.
 shared.emptyWithMe	Başkalarının sizinle paylaştığı bağlantılar burada görünür.
@@ -254,7 +256,6 @@ shared.deleteTitle	Paylaşım Bağlantısı Silinsin mi?
 shared.deleteMessage	Bağlantı hemen çalışmayı durdurur. Dosya veya klasörün kendisine dokunulmaz.
 shared.sharedByUnknown	Biri
 shared.metaAccess	Erişim
-shared.metaExpiration	Son Kullanma
 shared.metaSharedBy	Paylaşan
 shared.metaSharedWith	Paylaşılan kişi
 shared.anyoneWithLink	Bağlantıya sahip herkes

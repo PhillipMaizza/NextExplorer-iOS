@@ -45,10 +45,7 @@ struct SharedShareList: View {
                             share: share,
                             badge: item.badges.first { $0.id == share.id },
                             notice: store.state.expiryNotice(for: share),
-                            onCopy: {
-                                PlatformPasteboard.copy(share.shareLink(serverURL: store.serverURL))
-                                onCopied(L10n.Shared.copiedShareLink)
-                            }
+                            onCopy: { onCopied(share.copyShareLink(serverURL: store.serverURL)) }
                         )
                     }
                     .disabled(store.deletingIDs.contains(share.id))
@@ -65,9 +62,7 @@ struct SharedShareList: View {
     }
 
     private var subtitle: String {
-        let downloads = L10n.Shared.downloadCount(item.shares.reduce(0) { $0 + $1.downloadCount })
-        guard let path = SharedDetailHero.fullPath(of: item.shares[0]) else { return downloads }
-        return L10n.Shared.statusStep(path, downloads)
+        SharedDetailHero.summary(of: item)
     }
 }
 

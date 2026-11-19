@@ -99,14 +99,9 @@ extension Share {
     }
 }
 
-/// A Shared store over the mock lists, opened on one item's sheet, for the sheet's previews.
+/// Shared state over the mock lists, loaded, with names resolved, for previews.
 @MainActor
-func sharedDetailPreview(
-    _ segment: SharedFeature.Segment,
-    _ itemID: SharedFeature.Item.ID,
-    pushed: Share.ID? = nil,
-    mutate: (inout SharedFeature.State) -> Void = { _ in }
-) -> some View {
+func sharedPreviewState(mutate: (inout SharedFeature.State) -> Void = { _ in }) -> SharedFeature.State {
     var state = SharedFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"))
     state.now = Date()
     state.userNames = Dictionary(uniqueKeysWithValues: Share.previewShareableUsers.map { (
@@ -116,11 +111,29 @@ func sharedDetailPreview(
     state.byMe = IdentifiedArray(uniqueElements: Share.previewSharedByMe)
     state.withMe = IdentifiedArray(uniqueElements: Share.previewSharedWithMe)
     state.phases = [.byMe: .loaded, .withMe: .loaded]
-    let detail = SharedFeature.Detail(segment: segment, id: itemID, pushedShareID: pushed)
-    state.detail = detail
     mutate(&state)
-    let store = Store(initialState: state) { SharedFeature() } withDependencies: {
+    return state
+}
+
+@MainActor
+func sharedPreviewStore(mutate: (inout SharedFeature.State) -> Void = { _ in }) -> StoreOf<SharedFeature> {
+    Store(initialState: sharedPreviewState(mutate: mutate)) { SharedFeature() } withDependencies: {
         $0.filesClient = .previewValue
+    }
+}
+
+/// A Shared store over the mock lists, opened on one item's sheet, for the sheet's previews.
+@MainActor
+func sharedDetailPreview(
+    _ segment: SharedFeature.Segment,
+    _ itemID: SharedFeature.Item.ID,
+    pushed: Share.ID? = nil,
+    mutate: (inout SharedFeature.State) -> Void = { _ in }
+) -> some View {
+    let detail = SharedFeature.Detail(segment: segment, id: itemID, pushedShareID: pushed)
+    let store = sharedPreviewStore { state in
+        state.detail = detail
+        mutate(&state)
     }
     return SharedDetailSheet(store: store, presented: detail)
 }

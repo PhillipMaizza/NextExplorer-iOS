@@ -246,6 +246,8 @@ shared.peopleCount#one	%lld henkilö
 shared.peopleCount#other	%lld henkilöä
 shared.downloadCount#one	%lld lataus
 shared.downloadCount#other	%lld latausta
+shared.showMore	Näytä lisää
+shared.showLess	Näytä vähemmän
 shared.badgeExpired	vanhentunut
 shared.emptyByMe	Jaa tiedosto tai kansio nähdäksesi sen linkin täällä.
 shared.emptyWithMe	Muiden kanssasi jakamat linkit näkyvät täällä.
@@ -254,7 +256,6 @@ shared.deleteTitle	Poistetaanko jakolinkki?
 shared.deleteMessage	Linkki lakkaa toimimasta heti. Itse tiedostoon tai kansioon ei kosketa.
 shared.sharedByUnknown	Joku
 shared.metaAccess	Käyttöoikeus
-shared.metaExpiration	Vanheneminen
 shared.metaSharedBy	Jakaja
 shared.metaSharedWith	Jaettu henkilölle
 shared.anyoneWithLink	Kuka tahansa, jolla on linkki

@@ -263,6 +263,8 @@ shared.downloadCount#one	%lld загрузка
 shared.downloadCount#few	%lld загрузки
 shared.downloadCount#many	%lld загрузок
 shared.downloadCount#other	%lld загрузки
+shared.showMore	Показать ещё
+shared.showLess	Показать меньше
 shared.badgeExpired	истёк
 shared.emptyByMe	Откройте доступ к файлу или папке, чтобы увидеть ссылку здесь.
 shared.emptyWithMe	Ссылки, которыми с вами делятся другие, появятся здесь.
@@ -271,7 +273,6 @@ shared.deleteTitle	Удалить ссылку доступа?
 shared.deleteMessage	Ссылка сразу перестанет работать. Сам файл или папка не затрагиваются.
 shared.sharedByUnknown	Кто-то
 shared.metaAccess	Доступ
-shared.metaExpiration	Срок действия
 shared.metaSharedBy	Поделился
 shared.metaSharedWith	Доступ открыт
 shared.anyoneWithLink	Любой, у кого есть ссылка

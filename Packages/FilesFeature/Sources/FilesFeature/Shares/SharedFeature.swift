@@ -154,21 +154,6 @@ public struct SharedFeature {
             )
         }
 
-        /// One filter and sort pass, split into active and expired, so the Mac table orders both
-        /// groups from a single run of the localized sort.
-        public func displayedSharesPartition(
-            for segment: Segment
-        ) -> (all: IdentifiedArrayOf<Share>, active: IdentifiedArrayOf<Share>, expired: IdentifiedArrayOf<Share>) {
-            let all = displayedShares(for: segment)
-            let active = IdentifiedArray(
-                all.filter { !isExpired($0) },
-                id: \.id,
-                uniquingIDsWith: { first, _ in first }
-            )
-            let expired = IdentifiedArray(all.filter(isExpired), id: \.id, uniquingIDsWith: { first, _ in first })
-            return (all, active, expired)
-        }
-
         /// No shares in the current segment at all (before search): drives the empty state.
         public var isCurrentSegmentEmpty: Bool {
             isEmpty(for: segment)
@@ -178,31 +163,13 @@ public struct SharedFeature {
             shares(for: segment).isEmpty
         }
 
-        /// A search that filtered everything out.
-        public var isSearchWithoutResults: Bool {
-            isSearchWithoutResults(for: segment)
-        }
-
+        /// A search that, with the people row's filter, left nothing to show.
         public func isSearchWithoutResults(for segment: Segment) -> Bool {
-            isSearching && !shares(for: segment).isEmpty && displayedShares(for: segment).isEmpty
+            isSearching && !shares(for: segment).isEmpty && items(for: segment).isEmpty
         }
 
         public func emptyMessage(for segment: Segment) -> String {
             segment == .byMe ? L10n.Shared.emptyByMe : L10n.Shared.emptyWithMe
-        }
-
-        /// How a share's audience renders in the "Shared with" row.
-        public enum Audience: Equatable, Sendable {
-            case anyone
-            /// Resolved recipient names plus a count of any that couldn't be named yet.
-            case users(names: [String], unnamed: Int)
-        }
-
-        public func audience(for share: Share) -> Audience {
-            guard share.sharingType == .users else { return .anyone }
-            let ids = share.permittedUserIds ?? []
-            let names = ids.compactMap { userNames[$0] }
-            return .users(names: names, unnamed: ids.count - names.count)
         }
 
         /// Owner display name for a "With me" share: the recipient payload only carries
@@ -292,7 +259,8 @@ public struct SharedFeature {
                 state.searchQuery = query
                 return .none
 
-            case let .filterChanged(segment, filter):
+            case let .filterChanged(segment, tapped):
+                let filter = state.filter(afterTapping: tapped, in: segment)
                 state.filters[segment] = filter == .all ? nil : filter
                 return .none
 

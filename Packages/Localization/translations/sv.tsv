@@ -241,6 +241,8 @@ shared.peopleCount#one	%lld person
 shared.peopleCount#other	%lld personer
 shared.downloadCount#one	%lld hämtning
 shared.downloadCount#other	%lld hämtningar
+shared.showMore	Visa fler
+shared.showLess	Visa mindre
 shared.badgeExpired	utgången
 shared.emptyByMe	Dela en fil eller mapp för att se dess länk här.
 shared.emptyWithMe	Länkar som andra delar med dig visas här.
@@ -249,7 +251,6 @@ shared.deleteTitle	Radera delningslänk?
 shared.deleteMessage	Länken slutar fungera omedelbart. Själva filen eller mappen påverkas inte.
 shared.sharedByUnknown	Någon
 shared.metaAccess	Åtkomst
-shared.metaExpiration	Upphör
 shared.metaSharedBy	Delad av
 shared.metaSharedWith	Delad med
 shared.anyoneWithLink	Alla med länken

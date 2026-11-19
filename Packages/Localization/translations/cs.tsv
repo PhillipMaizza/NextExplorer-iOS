@@ -268,6 +268,8 @@ shared.downloadCount#one	%lld stažení
 shared.downloadCount#few	%lld stažení
 shared.downloadCount#many	%lld stažení
 shared.downloadCount#other	%lld stažení
+shared.showMore	Zobrazit další
+shared.showLess	Zobrazit méně
 shared.badgeExpired	platnost vypršela
 shared.emptyByMe	Nasdílejte soubor nebo složku a uvidíte zde jeho odkaz.
 shared.emptyWithMe	Odkazy, které s vámi sdílejí ostatní, se zobrazí zde.
@@ -276,7 +278,6 @@ shared.deleteTitle	Smazat odkaz ke sdílení?
 shared.deleteMessage	Odkaz okamžitě přestane fungovat. Samotného souboru ani složky se to netýká.
 shared.sharedByUnknown	Někdo
 shared.metaAccess	Přístup
-shared.metaExpiration	Vypršení platnosti
 shared.metaSharedBy	Sdílí
 shared.metaSharedWith	Sdíleno s
 shared.anyoneWithLink	Kdokoli s odkazem

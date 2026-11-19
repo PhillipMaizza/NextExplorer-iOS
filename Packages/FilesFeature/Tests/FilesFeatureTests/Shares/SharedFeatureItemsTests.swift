@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
@@ -22,6 +23,8 @@ struct SharedFeatureItemsTests {
         space: String? = nil,
         users: [String]? = nil,
         expiresAt: Date? = nil,
+        downloads: Int = 0,
+        openedAt: Date? = nil,
         age: TimeInterval = 0
     ) -> Share {
         Share(
@@ -35,6 +38,8 @@ struct SharedFeatureItemsTests {
             sharingType: users == nil ? .anyone : .users,
             hasPassword: false,
             expiresAt: expiresAt,
+            downloadCount: downloads,
+            lastAccessedAt: openedAt,
             permittedUserIds: users,
             createdAt: MockDate.date.addingTimeInterval(age),
             updatedAt: MockDate.date
@@ -132,7 +137,7 @@ struct SharedFeatureItemsTests {
 
         let options = state(byMe: shares).filterOptions(for: .byMe)
 
-        #expect(options.map(\.filter) == [.all, .anyone, .person("u2"), .person("u1"), .person("u3")])
+        #expect(options.map(\.filter) == [.all, .anyone, .people(["u2"]), .people(["u1"]), .people(["u3"])])
         #expect(options.map(\.count) == [3, 1, 2, 1, 1])
     }
 
@@ -142,7 +147,7 @@ struct SharedFeatureItemsTests {
 
         let options = state(withMe: shares).filterOptions(for: .withMe)
 
-        #expect(options.map(\.filter) == [.all, .person("u1"), .person("u2")])
+        #expect(options.map(\.filter) == [.all, .people(["u1"]), .people(["u2"])])
     }
 
     @Test
@@ -150,7 +155,7 @@ struct SharedFeatureItemsTests {
         let onePerson = state(byMe: [byMe("a", path: "A", users: ["u1"])])
         let twoPeople = state(byMe: [byMe("a", path: "A", users: ["u1"]), byMe("b", path: "B", users: ["u2"])])
         var filtered = onePerson
-        filtered.filters[.byMe] = .person("u1")
+        filtered.filters[.byMe] = .people(["u1"])
 
         #expect(!onePerson.isFilterRowVisible(for: .byMe))
         #expect(twoPeople.isFilterRowVisible(for: .byMe))
@@ -168,7 +173,7 @@ struct SharedFeatureItemsTests {
             SharedFeature()
         }
 
-        await store.send(.filterChanged(.byMe, .person("u2"))) { $0.filters[.byMe] = .person("u2") }
+        await store.send(.filterChanged(.byMe, .people(["u2"]))) { $0.filters[.byMe] = .people(["u2"]) }
         #expect(store.state.items(for: .byMe).map(\.name) == ["Budget.xlsx"])
         #expect(store.state.items(for: .withMe).isEmpty)
 
@@ -181,9 +186,63 @@ struct SharedFeatureItemsTests {
     }
 
     @Test
+    func peopleWithASharedItemJoinThePickAndOthersStartANewOne() async {
+        let shares = [
+            byMe("a", path: "Roadmap", users: ["u1", "u2"], age: 30),
+            byMe("b", path: "Budget.xlsx", users: ["u1"], age: 20),
+            byMe("c", path: "Notes.md", users: ["u3"], age: 10),
+        ]
+        let store = TestStore(initialState: state(byMe: shares)) {
+            SharedFeature()
+        }
+
+        await store.send(.filterChanged(.byMe, .people(["u1"]))) { $0.filters[.byMe] = .people(["u1"]) }
+        let dimmed = store.state.filterOptions(for: .byMe).filter(\.isDimmed).compactMap(\.filter.personID)
+        #expect(dimmed == ["u3"])
+
+        await store.send(.filterChanged(.byMe, .people(["u2"]))) { $0.filters[.byMe] = .people(["u1", "u2"]) }
+        #expect(store.state.items(for: .byMe).map(\.name) == ["Roadmap"])
+
+        await store.send(.filterChanged(.byMe, .people(["u1"]))) { $0.filters[.byMe] = .people(["u2"]) }
+        await store.send(.filterChanged(.byMe, .people(["u3"]))) { $0.filters[.byMe] = .people(["u3"]) }
+        await store.send(.filterChanged(.byMe, .people(["u3"]))) { $0.filters[.byMe] = nil }
+    }
+
+    @Test
+    func withMeKeepsWhatAnyPickedSharerShared() async {
+        let shares = [
+            withMe("w1", owner: "u1", name: "Q3.pdf"),
+            withMe("w2", owner: "u2", name: "Plan.md"),
+            withMe("w3", owner: "u3", name: "Notes.md"),
+        ]
+        let store = TestStore(initialState: state(withMe: shares)) {
+            SharedFeature()
+        }
+
+        await store.send(.filterChanged(.withMe, .people(["u1"]))) { $0.filters[.withMe] = .people(["u1"]) }
+        await store.send(.filterChanged(.withMe, .people(["u2"]))) { $0.filters[.withMe] = .people(["u1", "u2"]) }
+        #expect(Set(store.state.items(for: .withMe).map(\.name)) == ["Q3.pdf", "Plan.md"])
+        #expect(!store.state.filterOptions(for: .withMe).contains { $0.isDimmed })
+    }
+
+    @Test
+    func aPickWithNoCommonShareLeftResets() async {
+        var initial = state(byMe: [byMe("a", path: "A", users: ["u1", "u2"]), byMe("b", path: "B", users: ["u1"])])
+        initial.filters[.byMe] = .people(["u1", "u2"])
+        let store = TestStore(initialState: initial) {
+            SharedFeature()
+        }
+
+        await store.send(.deleteResponse("a", .success(true))) {
+            $0.byMe.remove(id: "a")
+            $0.filters[.byMe] = nil
+        }
+    }
+
+    @Test
     func deletingThePersonsLastShareResetsTheirFilter() async {
         var initial = state(byMe: [byMe("a", path: "A", users: ["u1"]), byMe("b", path: "B", users: ["u2"])])
-        initial.filters[.byMe] = .person("u1")
+        initial.filters[.byMe] = .people(["u1"])
         let store = TestStore(initialState: initial) {
             SharedFeature()
         }
@@ -197,7 +256,7 @@ struct SharedFeatureItemsTests {
     @Test
     func aPersonLeavingTheUserListResetsTheirFilter() async {
         var initial = state(byMe: [byMe("a", path: "A", users: ["u1"]), byMe("b", path: "B", users: ["u2"])])
-        initial.filters[.byMe] = .person("u1")
+        initial.filters[.byMe] = .people(["u1"])
         let store = TestStore(initialState: initial) {
             SharedFeature()
         }
@@ -243,5 +302,119 @@ struct SharedFeatureItemsTests {
         let lapsed = expiresAt.addingTimeInterval(1)
         await store.send(.expiryTick(lapsed)) { $0.now = lapsed }
         #expect(store.state.items(for: .byMe)[0].isExpired)
+    }
+
+    @Test
+    func theNearestExpiryIsTheSoonestLiveShareOrTheLastToEnd() {
+        let current = state()
+        let item = { (shares: [Share], isExpired: Bool) in
+            SharedFeature.Item(id: "A", name: "A", location: nil, shares: shares, badges: [], isExpired: isExpired)
+        }
+        let soon = byMe("soon", path: "A", expiresAt: MockDate.date.addingTimeInterval(day))
+        let later = byMe("later", path: "A", expiresAt: MockDate.date.addingTimeInterval(day * 9))
+        let never = byMe("never", path: "A")
+        let lapsed = byMe("lapsed", path: "A", expiresAt: MockDate.date.addingTimeInterval(-day))
+        let older = byMe("older", path: "A", expiresAt: MockDate.date.addingTimeInterval(-day * 3))
+
+        #expect(current.nearestExpiringShare(in: item([later, soon, never, lapsed], false))?.id == "soon")
+        #expect(current.nearestExpiringShare(in: item([never, lapsed], false)) == nil)
+        #expect(current.nearestExpiringShare(in: item([older, lapsed], true))?.id == "lapsed")
+    }
+
+    @Test
+    func anItemSumsDownloadsAndKeepsTheLatestOpen() {
+        let current = state(byMe: [
+            byMe("a", path: "A", downloads: 3, openedAt: MockDate.date.addingTimeInterval(-day)),
+            byMe("b", path: "A", downloads: 24, openedAt: MockDate.date.addingTimeInterval(-60), age: 1),
+            byMe("c", path: "A", age: 2),
+        ])
+        let item = current.items(for: .byMe)[0]
+
+        #expect(item.downloadCount == 27)
+        #expect(item.lastOpenedAt == MockDate.date.addingTimeInterval(-60))
+        #expect(state(byMe: [byMe("d", path: "D")]).items(for: .byMe)[0].lastOpenedAt == nil)
+    }
+
+    @Test
+    func aSearchThatTheFilterEmptiesCountsAsNoResults() {
+        var current = state(byMe: [
+            byMe("a", path: "Roadmap", users: ["u1"]),
+            byMe("b", path: "Budget", users: ["u2"], age: 1),
+        ])
+        current.searchQuery = "Budget"
+        #expect(!current.isSearchWithoutResults(for: .byMe))
+
+        current.filters[.byMe] = .people(["u1"])
+        #expect(current.isSearchWithoutResults(for: .byMe))
+    }
+
+    @Test
+    func theFactsNameTheExpiryAndExplainAnExpiredLink() {
+        let share = byMe("a", path: "A", expiresAt: MockDate.date.addingTimeInterval(-day))
+        let expired = SharedShareFacts(share: share, notice: .expired, dateFormat: .dashYearMonthDay)
+        let soon = SharedShareFacts(share: share, notice: .daysLeft(2), dateFormat: .dashYearMonthDay)
+        let undated = SharedShareFacts(share: byMe("b", path: "B"), notice: nil, dateFormat: .dashYearMonthDay)
+
+        #expect(expired.isExpired)
+        #expect(expired.expiresTitle == L10n.Shared.metaExpired)
+        #expect(expired.expiredNote != nil)
+        #expect(soon.expiresTitle == L10n.Shared.metaExpires)
+        #expect(soon.expiredNote == nil)
+        #expect(undated.expires == L10n.Common.never)
+        #expect(undated.lastOpened == L10n.Common.never)
+        #expect(undated.password == L10n.Common.off)
+        guard case .warning = soon.expiresStyle, case .error = expired.expiresStyle,
+              case .secondary = undated.expiresStyle
+        else {
+            Issue.record("Expiry colours should follow the notice")
+            return
+        }
+    }
+
+    @Test
+    func theAudienceTitleCountsPeopleOrNamesThePublicLink() {
+        #expect(byMe("a", path: "A").audienceTitle == L10n.Shared.anyoneWithLink)
+        #expect(byMe("b", path: "B", users: ["u1", "u2"]).audienceTitle == L10n.Shared.peopleCount(2))
+    }
+
+    @Test
+    func aMacRowActsOnOneShareOnlyAndListsSeveralAsChildren() {
+        let current = state(byMe: [
+            byMe("a", path: "Roadmap", downloads: 4, openedAt: MockDate.date),
+            byMe("b", path: "Roadmap", users: ["u1", "u2"], downloads: 6, age: 1),
+            byMe("c", path: "Budget", age: 2),
+        ])
+        let items = current.items(for: .byMe)
+        let budget = MacSharedRow(item: items[0], expiringShare: nil)
+        let roadmap = MacSharedRow(item: items[1], expiringShare: nil)
+
+        #expect(budget.share?.id == "c")
+        #expect(budget.children == nil)
+        #expect(roadmap.share == nil)
+        #expect(roadmap.children?.map(\.id) == [
+            .share("a", item: ":Roadmap"),
+            .share("b", item: ":Roadmap"),
+        ])
+        #expect(roadmap.children?.map { $0.share?.id } == ["a", "b"])
+        #expect(roadmap.children?.first?.children == nil)
+        #expect(MacSharedRow.ID.share("a", item: ":Roadmap").itemID == ":Roadmap")
+    }
+
+    @Test
+    func macRowsSortByTheirOwnSharesOrTheWholeItem() {
+        let current = state(byMe: [
+            byMe("a", path: "Roadmap", downloads: 4, openedAt: MockDate.date),
+            byMe("b", path: "Roadmap", users: ["u1", "u2"], downloads: 6, age: 1),
+        ])
+        let roadmap = MacSharedRow(item: current.items(for: .byMe)[0], expiringShare: nil)
+        let second = roadmap.children?[1]
+
+        #expect(roadmap.downloadCount == 10)
+        #expect(roadmap.recipientCount == 2)
+        #expect(roadmap.lastOpenedSortDate == MockDate.date)
+        #expect(roadmap.expirySortDate == .distantFuture)
+        #expect(second?.downloadCount == 6)
+        #expect(second?.lastOpenedAt == nil)
+        #expect(second?.lastOpenedSortDate == .distantPast)
     }
 }

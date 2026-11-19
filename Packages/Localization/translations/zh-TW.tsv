@@ -230,6 +230,8 @@ shared.statusStep	%1$@ · %2$@
 shared.shareCount#other	%lld 個共享
 shared.peopleCount#other	%lld 人
 shared.downloadCount#other	%lld 次下載
+shared.showMore	顯示更多
+shared.showLess	收合
 shared.badgeExpired	已過期
 shared.emptyByMe	共享檔案或檔案夾後即可在此處查看其連結。
 shared.emptyWithMe	他人與您共享的連結會顯示在此處。
@@ -238,7 +240,6 @@ shared.deleteTitle	刪除共享連結？
 shared.deleteMessage	連結會立即停止運作。檔案或檔案夾本身不受影響。
 shared.sharedByUnknown	某人
 shared.metaAccess	取用權限
-shared.metaExpiration	到期
 shared.metaSharedBy	共享者
 shared.metaSharedWith	共享給
 shared.anyoneWithLink	任何擁有連結的人

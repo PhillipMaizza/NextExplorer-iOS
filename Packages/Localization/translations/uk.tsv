@@ -268,6 +268,8 @@ shared.downloadCount#one	%lld завантаження
 shared.downloadCount#few	%lld завантаження
 shared.downloadCount#many	%lld завантажень
 shared.downloadCount#other	%lld завантаження
+shared.showMore	Показати більше
+shared.showLess	Показати менше
 shared.badgeExpired	термін дії минув
 shared.emptyByMe	Поділіться файлом або папкою, щоб побачити тут посилання.
 shared.emptyWithMe	Посилання, якими з вами діляться інші, з’являються тут.
@@ -276,7 +278,6 @@ shared.deleteTitle	Видалити посилання для спільного
 shared.deleteMessage	Посилання одразу перестане працювати. Сам файл чи папка не змінюються.
 shared.sharedByUnknown	Хтось
 shared.metaAccess	Доступ
-shared.metaExpiration	Термін дії
 shared.metaSharedBy	Від кого
 shared.metaSharedWith	Кому
 shared.anyoneWithLink	Будь-хто з посиланням

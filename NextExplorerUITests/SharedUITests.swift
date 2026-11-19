@@ -58,8 +58,9 @@
             let shared = SharedScreen(app: app)
             selectTab(TabBar(app: app).shared, until: shared.item(ShareFixture.byMe))
 
-            app.swipeUp()
-            app.swipeUp()
+            for _ in 0 ..< 4 where !shared.expiredHeader.exists {
+                app.swipeUp()
+            }
             XCTAssertTrue(shared.expiredHeader.waitToAppear(), "Expired items sit under their own heading")
         }
 

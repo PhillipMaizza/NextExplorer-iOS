@@ -1,4 +1,5 @@
 import CoreModels
+import DesignSystem
 import Foundation
 import Localization
 
@@ -43,6 +44,25 @@ extension Share {
     func directLink(serverURL: URL, mode: DirectLinkMode) -> String {
         let base = "\(Self.origin(of: serverURL))/api/share/\(shareToken)/file"
         return mode == .auto ? base : "\(base)?mode=\(mode.rawValue)"
+    }
+
+    /// Copies the share link and returns the toast that confirms it.
+    @MainActor
+    func copyShareLink(serverURL: URL) -> String {
+        PlatformPasteboard.copy(shareLink(serverURL: serverURL))
+        return L10n.Shared.copiedShareLink
+    }
+
+    /// Copies the direct file or folder ZIP link and returns the toast that confirms it.
+    @MainActor
+    func copyDirectLink(serverURL: URL, mode: DirectLinkMode) -> String {
+        PlatformPasteboard.copy(directLink(serverURL: serverURL, mode: mode))
+        return isDirectory ? L10n.Shared.copiedFolderZip : L10n.Shared.copiedDirectFile
+    }
+
+    /// Who it reaches, as a title: anyone with the link, or how many people.
+    var audienceTitle: String {
+        sharingType == .anyone ? L10n.Shared.anyoneWithLink : L10n.Shared.peopleCount(permittedUserIds?.count ?? 0)
     }
 
     /// The label as shown: trimmed, nil when blank.

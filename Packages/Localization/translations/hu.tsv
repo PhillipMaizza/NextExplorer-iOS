@@ -246,6 +246,8 @@ shared.peopleCount#one	%lld személy
 shared.peopleCount#other	%lld személy
 shared.downloadCount#one	%lld letöltés
 shared.downloadCount#other	%lld letöltés
+shared.showMore	Továbbiak megjelenítése
+shared.showLess	Kevesebb megjelenítése
 shared.badgeExpired	lejárt
 shared.emptyByMe	Ossza meg egy fájlt vagy mappát, hogy itt lássa a hivatkozását.
 shared.emptyWithMe	A mások által Önnel megosztott hivatkozások itt jelennek meg.
@@ -254,7 +256,6 @@ shared.deleteTitle	Törli a megosztási hivatkozást?
 shared.deleteMessage	A hivatkozás azonnal megszűnik működni. Magához a fájlhoz vagy mappához nem nyúlunk.
 shared.sharedByUnknown	Valaki
 shared.metaAccess	Hozzáférés
-shared.metaExpiration	Lejárat
 shared.metaSharedBy	Megosztotta
 shared.metaSharedWith	Megosztva vele
 shared.anyoneWithLink	Bárki, aki rendelkezik a hivatkozással

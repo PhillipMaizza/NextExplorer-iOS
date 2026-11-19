@@ -75,13 +75,11 @@ struct SharedCopyLinkButton: View {
     }
 
     private func copyShareLink() {
-        PlatformPasteboard.copy(share.shareLink(serverURL: serverURL))
-        onCopied(L10n.Shared.copiedShareLink)
+        onCopied(share.copyShareLink(serverURL: serverURL))
     }
 
     private func copyDirectLink() {
-        PlatformPasteboard.copy(share.directLink(serverURL: serverURL, mode: directLinkMode))
-        onCopied(share.isDirectory ? L10n.Shared.copiedFolderZip : L10n.Shared.copiedDirectFile)
+        onCopied(share.copyDirectLink(serverURL: serverURL, mode: directLinkMode))
     }
 }
 

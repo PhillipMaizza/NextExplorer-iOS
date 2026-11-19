@@ -7,17 +7,11 @@ import SwiftUI
 private enum Constants {
     static let iconSize: CGFloat = 36
     static let folderGlyphSize: CGFloat = 30
-    static let avatarSize: CGFloat = 22
-    static let avatarOverlap: CGFloat = -6
-    static let avatarRing: CGFloat = 2
-    static let maxAvatars = 3
-    static let globeSize: CGFloat = 12
     static var dividerInset: CGFloat {
         .space16 + iconSize + .space12
     }
 
     static let sharerAvatarSize: CGFloat = 20
-    static let badgeGroupSpacing: CGFloat = 4
     static let expiredOpacity: Double = 0.45
     static let deletingOpacity: Double = 0.4
 }
@@ -49,13 +43,7 @@ struct SharedItemRow: View {
                             .opacity(item.isExpired ? Constants.expiredOpacity : 1)
                         Spacer(minLength: .space4)
                         if isByMe {
-                            HStack(spacing: Constants.badgeGroupSpacing) {
-                                if let linkBadge {
-                                    SharedLinkCircle(isExpired: linkBadge.expiry == .expired)
-                                }
-                                ForEach(peopleBadges) { SharedPeopleStack(badge: $0) }
-                            }
-                            .fixedSize()
+                            SharedAudienceBadgeRow(badges: item.badges)
                         }
                     }
                     locationText
@@ -103,16 +91,6 @@ struct SharedItemRow: View {
     private static func pathText(_ location: String) -> String {
         let parts = location.split(separator: "/").map(String.init)
         return parts.dropFirst().reduce(parts.first ?? location) { L10n.Shared.pathStep($0, $1) }
-    }
-
-    /// The public link on this item, live first, drawn as a globe circle before the people.
-    private var linkBadge: SharedFeature.ShareBadge? {
-        let links = item.badges.filter(\.isAnyone)
-        return links.first { $0.expiry != .expired } ?? links.first
-    }
-
-    private var peopleBadges: [SharedFeature.ShareBadge] {
-        item.badges.filter { !$0.isAnyone }
     }
 
     /// The soonest countdown among the shares still live.
@@ -168,75 +146,9 @@ struct SharedItemIcon: View {
     }
 }
 
-/// A public link as a circle the size of an avatar, red when it has expired.
-private struct SharedLinkCircle: View {
-    let isExpired: Bool
-
-    var body: some View {
-        IconKit.web
-            .resizable().scaledToFit()
-            .fontWeight(.semibold)
-            .foregroundStyle(isExpired ? Color.negative : Color.secondaryDS)
-            .frame(width: Constants.globeSize, height: Constants.globeSize)
-            .frame(width: Constants.avatarSize, height: Constants.avatarSize)
-            .background(Circle().fill(Color.backgroundPrimary))
-            .opacity(isExpired ? Constants.expiredOpacity : 1)
-            .accessibilityLabel(L10n.Shared.anyoneWithLink)
-    }
-}
-
-/// The recipients of one share as overlapping avatars, with a `+N` for the rest.
-private struct SharedPeopleStack: View {
-    let badge: SharedFeature.ShareBadge
-
-    private var shownPeople: ArraySlice<SharedFeature.Person> {
-        badge.people.prefix(Constants.maxAvatars)
-    }
-
-    private var hiddenCount: Int {
-        badge.people.count - shownPeople.count + badge.unnamedCount
-    }
-
-    var body: some View {
-        avatars
-            .opacity(badge.expiry == .expired ? Constants.expiredOpacity : 1)
-            .accessibilityElement(children: .combine)
-    }
-
-    private var avatars: some View {
-        HStack(spacing: Constants.avatarOverlap) {
-            ForEach(shownPeople) { person in
-                AvatarView(
-                    displayName: person.name,
-                    size: Constants.avatarSize,
-                    tint: Color.categorical(for: person.name)
-                )
-                .overlay(Circle().strokeBorder(Color.backgroundSecondary, lineWidth: Constants.avatarRing))
-                .accessibilityLabel(person.name)
-            }
-            if hiddenCount > 0 {
-                AvatarLabel(
-                    text: L10n.Shared.moreRecipients(hiddenCount),
-                    size: Constants.avatarSize,
-                    color: Color.primaryInverted
-                )
-                .background(Circle().fill(Color.secondaryDS))
-                .overlay(Circle().strokeBorder(Color.backgroundSecondary, lineWidth: Constants.avatarRing))
-            }
-        }
-    }
-}
-
 @MainActor
 private func itemRowsPreview(segment: SharedFeature.Segment) -> some View {
-    var state = SharedFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"))
-    state.now = Date()
-    state.userNames = Dictionary(uniqueKeysWithValues: Share.previewShareableUsers.map { (
-        $0.id,
-        $0.displayName ?? $0.username
-    ) })
-    state.byMe = IdentifiedArray(uniqueElements: Share.previewSharedByMe)
-    state.withMe = IdentifiedArray(uniqueElements: Share.previewSharedWithMe)
+    let state = sharedPreviewState()
     let items = state.items(for: segment)
     return ScrollView {
         VStack(spacing: 0) {

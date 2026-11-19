@@ -229,7 +229,6 @@ shared.deleteTitle	حذف رابط المشاركة؟
 shared.deleteMessage	يتوقف الرابط عن العمل فورًا. لا يتأثر الملف أو المجلد نفسه.
 shared.sharedByUnknown	شخص ما
 shared.metaAccess	الوصول
-shared.metaExpiration	انتهاء الصلاحية
 shared.metaSharedBy	تمت المشاركة بواسطة
 shared.metaSharedWith	تمت المشاركة مع
 shared.anyoneWithLink	أي شخص لديه الرابط
@@ -301,6 +300,8 @@ shared.downloadCount#two	%lld تنزيل
 shared.downloadCount#few	%lld تنزيلات
 shared.downloadCount#many	%lld تنزيلًا
 shared.downloadCount#other	%lld تنزيل
+shared.showMore	عرض المزيد
+shared.showLess	عرض أقل
 shared.copiedShareLink	تم نسخ رابط المشاركة
 shared.copiedFolderZip	تم نسخ رابط ZIP للمجلد
 shared.copiedDirectFile	تم نسخ رابط الملف المباشر

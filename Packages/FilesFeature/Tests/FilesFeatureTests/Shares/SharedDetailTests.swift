@@ -65,7 +65,7 @@ struct SharedDetailTests {
     func theSheetListsEveryShareOnTheItemDespiteTheFilterAndSearch() {
         var state = state([roadmap("a"), roadmap("b", users: ["u1"], age: 1)])
         state.userNames = ["u1": "Anna Moreau"]
-        state.filters[.byMe] = .person("u1")
+        state.filters[.byMe] = .people(["u1"])
         state.searchQuery = "zzz"
 
         let item = state.item(for: SharedFeature.Detail(segment: .byMe, id: Constants.itemID))

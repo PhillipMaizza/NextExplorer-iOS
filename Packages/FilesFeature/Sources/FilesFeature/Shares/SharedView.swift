@@ -17,14 +17,24 @@ struct SharedView: View {
     @Bindable var store: StoreOf<SharedFeature>
     @State private var toastMessage: DSToastMessage?
     @State private var isSortSheetPresented = false
+    #if os(macOS)
+        @FocusState private var isSearchFocused: Bool
+    #endif
 
     /// Drives both the segmented control and the paged `TabView`. A tap on the control and a
     /// swipe between pages land on the same reducer action; `withAnimation` gives the tap the
-    /// same slide the swipe gets for free.
+    /// same slide the swipe gets for free. The Mac swaps tables instead, with no animation, so the
+    /// new table never lays out mid transition.
     private var segment: Binding<SharedFeature.Segment> {
         Binding(
             get: { store.segment },
-            set: { newValue in withAnimation(DSMotion.disclosure) { _ = store.send(.segmentChanged(newValue)) } }
+            set: { newValue in
+                #if os(iOS)
+                    withAnimation(DSMotion.disclosure) { _ = store.send(.segmentChanged(newValue)) }
+                #elseif os(macOS)
+                    withTransaction(\.disablesAnimations, true) { _ = store.send(.segmentChanged(newValue)) }
+                #endif
+            }
         )
     }
 
@@ -38,14 +48,6 @@ struct SharedView: View {
                 }
             }
         )
-    }
-
-    private static var shouldShowTable: Bool {
-        #if os(macOS)
-            true
-        #else
-            false
-        #endif
     }
 
     var body: some View {
@@ -64,12 +66,7 @@ struct SharedView: View {
                 #endif
 
                 #if os(macOS)
-                    MacSharedTableView(
-                        store: store,
-                        segment: store.segment,
-                        onToast: { toastMessage = $0 }
-                    )
-                    .id(store.segment)
+                    MacSharedContent(store: store, onToast: { toastMessage = $0 })
                 #else
                     TabView(selection: segment) {
                         ForEach(SharedFeature.Segment.allCases, id: \.self) { pageSegment in
@@ -85,24 +82,37 @@ struct SharedView: View {
             // the search field visible above the paged By-me/With-me lists.
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .safeAreaInset(edge: .top, spacing: 0) {
-                PinnedTitleSearchHeader(
-                    title: L10n.Shared.navigationTitle,
-                    searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                    shouldFadeIntoContent: !Self.shouldShowTable
-                )
-            }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                if case let .cached(fetchedAt) = store.dataSources[store.segment] ?? .live {
-                    DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
-                        .padding(.horizontal, .space16)
-                        .padding(.vertical, .space8)
-                        .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+            #if os(iOS)
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    PinnedTitleSearchHeader(
+                        title: L10n.Shared.navigationTitle,
+                        searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                    )
                 }
-            }
-            .animation(DSMotion.stateFade, value: store.dataSources[store.segment])
-            .prefersToolbarItemsInVerticalBar()
+            #elseif os(macOS)
+                // A field of its own that filters the table in place, instead of the app wide
+                // search panel; ⌘F focuses it.
+                .searchable(
+                    text: $store.searchQuery.sending(\.searchQueryChanged),
+                    placement: .toolbar,
+                    prompt: L10n.Common.search
+                )
+                .searchFocused($isSearchFocused)
+                .focusedSceneValue(\.focusSearchField, FocusSearchAction(showsToolbarButton: false) {
+                    isSearchFocused = true
+                })
+            #endif
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if case let .cached(fetchedAt) = store.dataSources[store.segment] ?? .live {
+                        DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
+                            .padding(.horizontal, .space16)
+                            .padding(.vertical, .space8)
+                            .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+                .animation(DSMotion.stateFade, value: store.dataSources[store.segment])
+                .prefersToolbarItemsInVerticalBar()
             // The Mac table sorts from its column headers instead.
             #if os(iOS)
                 .toolbar {
@@ -110,21 +120,9 @@ struct SharedView: View {
                         SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
                     }
                 }
-            #else
-                .toolbar {
-                    // Beside the title: a centered (principal) picker would pull the window's
-                    // refresh and search in from the trailing edge to sit before it.
-                    ToolbarItem(placement: .navigation) {
-                        Picker(L10n.Shared.navigationTitle, selection: segment) {
-                            ForEach(SharedFeature.Segment.allCases, id: \.self) { segment in
-                                Text(segment.title).tag(segment)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .labelsHidden()
-                        .fixedSize()
-                    }
-                }
+            #elseif os(macOS)
+                // The window toolbar draws the picker centered (`macWindowToolbar`).
+                .focusedSceneValue(\.sharedSegment, segment)
             #endif
                 .dsSheet(isPresented: $isSortSheetPresented) {
                     SortSheet(

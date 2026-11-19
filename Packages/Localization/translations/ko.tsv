@@ -230,6 +230,8 @@ shared.statusStep	%1$@ · %2$@
 shared.shareCount#other	공유 %lld개
 shared.peopleCount#other	%lld명
 shared.downloadCount#other	다운로드 %lld회
+shared.showMore	더 보기
+shared.showLess	간단히 보기
 shared.badgeExpired	만료됨
 shared.emptyByMe	파일이나 폴더를 공유하면 여기에 링크가 표시됩니다.
 shared.emptyWithMe	다른 사람이 나와 공유한 링크가 여기에 표시됩니다.
@@ -238,7 +240,6 @@ shared.deleteTitle	공유 링크를 삭제할까요?
 shared.deleteMessage	링크가 즉시 작동을 멈춥니다. 파일이나 폴더 자체는 영향을 받지 않습니다.
 shared.sharedByUnknown	누군가
 shared.metaAccess	접근
-shared.metaExpiration	만료
 shared.metaSharedBy	공유한 사람
 shared.metaSharedWith	공유 대상
 shared.anyoneWithLink	링크가 있는 모든 사용자

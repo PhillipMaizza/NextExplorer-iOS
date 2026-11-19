@@ -263,6 +263,8 @@ shared.downloadCount#one	%lld pobranie
 shared.downloadCount#few	%lld pobrania
 shared.downloadCount#many	%lld pobrań
 shared.downloadCount#other	%lld pobrania
+shared.showMore	Pokaż więcej
+shared.showLess	Pokaż mniej
 shared.badgeExpired	wygasłe
 shared.emptyByMe	Udostępnij plik lub folder, aby zobaczyć jego link tutaj.
 shared.emptyWithMe	Linki udostępnione Ci przez innych pojawią się tutaj.
@@ -271,7 +273,6 @@ shared.deleteTitle	Usunąć link do udostępniania?
 shared.deleteMessage	Link natychmiast przestaje działać. Sam plik ani folder nie zostaje naruszony.
 shared.sharedByUnknown	Ktoś
 shared.metaAccess	Dostęp
-shared.metaExpiration	Wygasa
 shared.metaSharedBy	Udostępnione przez
 shared.metaSharedWith	Udostępnione dla
 shared.anyoneWithLink	Każdy z linkiem

@@ -241,6 +241,8 @@ shared.peopleCount#one	%lld persoon
 shared.peopleCount#other	%lld personen
 shared.downloadCount#one	%lld download
 shared.downloadCount#other	%lld downloads
+shared.showMore	Meer tonen
+shared.showLess	Toon minder
 shared.badgeExpired	verlopen
 shared.emptyByMe	Deel een bestand of map om de link hier te zien.
 shared.emptyWithMe	Links die anderen met je delen verschijnen hier.
@@ -249,7 +251,6 @@ shared.deleteTitle	Deellink verwijderen?
 shared.deleteMessage	De link werkt onmiddellijk niet meer. Het bestand of de map zelf blijft ongemoeid.
 shared.sharedByUnknown	Iemand
 shared.metaAccess	Toegang
-shared.metaExpiration	Verloopt
 shared.metaSharedBy	Gedeeld door
 shared.metaSharedWith	Gedeeld met
 shared.anyoneWithLink	Iedereen met de link

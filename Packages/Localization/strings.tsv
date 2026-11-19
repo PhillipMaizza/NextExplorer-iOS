@@ -246,7 +246,6 @@ shared.deleteTitle	Delete Share Link?
 shared.deleteMessage	The link stops working immediately. The file or folder itself isn't touched.
 shared.sharedByUnknown	Someone
 shared.metaAccess	Access
-shared.metaExpiration	Expiration
 shared.metaSharedBy	Shared by
 shared.metaSharedWith	Shared with
 shared.anyoneWithLink	Anyone with link
@@ -302,6 +301,8 @@ shared.peopleCount#one	%lld person
 shared.peopleCount#other	%lld people
 shared.downloadCount#one	%lld download
 shared.downloadCount#other	%lld downloads
+shared.showMore	Show More
+shared.showLess	Show Less
 
 # ---- create share ----
 createShare.title	Create Share Link

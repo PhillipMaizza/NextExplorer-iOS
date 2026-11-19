@@ -246,6 +246,8 @@ shared.peopleCount#one	%lld person
 shared.peopleCount#other	%lld personer
 shared.downloadCount#one	%lld nedlasting
 shared.downloadCount#other	%lld nedlastinger
+shared.showMore	Vis mer
+shared.showLess	Vis mindre
 shared.badgeExpired	utløpt
 shared.emptyByMe	Del en fil eller mappe for å se lenken her.
 shared.emptyWithMe	Lenker andre deler med deg, vises her.
@@ -254,7 +256,6 @@ shared.deleteTitle	Slette delingslenken?
 shared.deleteMessage	Lenken slutter å virke umiddelbart. Selve filen eller mappen berøres ikke.
 shared.sharedByUnknown	Noen
 shared.metaAccess	Tilgang
-shared.metaExpiration	Utløp
 shared.metaSharedBy	Delt av
 shared.metaSharedWith	Delt med
 shared.anyoneWithLink	Alle med lenken

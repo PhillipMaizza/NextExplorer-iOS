@@ -15,8 +15,9 @@ public extension SharedFeature {
         case all
         /// By me only: items with a public link.
         case anyone
-        /// A recipient (By me) or a sharer (With me), by user id.
-        case person(String)
+        /// Recipients (By me) or sharers (With me), by user id. By me keeps the shares that reach
+        /// every one of them; With me keeps what any of them shared, as each share has one sharer.
+        case people(Set<String>)
     }
 
     /// One circle in the people row.
@@ -26,6 +27,9 @@ public extension SharedFeature {
         public let name: String
         /// Items this option keeps.
         public let count: Int
+        /// A person no share reaches together with the people already picked; tapping them
+        /// starts a new pick instead of joining it.
+        public var isDimmed = false
 
         public var id: Filter {
             filter
@@ -89,6 +93,18 @@ public extension SharedFeature {
     }
 }
 
+public extension SharedFeature.Item {
+    /// Downloads across every share on it.
+    var downloadCount: Int {
+        shares.reduce(0) { $0 + $1.downloadCount }
+    }
+
+    /// The latest open across every share on it.
+    var lastOpenedAt: Date? {
+        shares.compactMap(\.lastAccessedAt).max()
+    }
+}
+
 public extension SharedFeature.State {
     func filter(for segment: SharedFeature.Segment) -> SharedFeature.Filter {
         filters[segment] ?? .all
@@ -101,6 +117,16 @@ public extension SharedFeature.State {
         }
         let days = Int((expiresAt.timeIntervalSince(now) / Constants.secondsPerDay).rounded(.up))
         return days <= Constants.expiryWarningDays ? .daysLeft(days) : nil
+    }
+
+    /// The share whose expiry speaks for the item: the live one ending soonest, or the last to
+    /// end once every share has expired. Nil when no live share has a date.
+    func nearestExpiringShare(in item: SharedFeature.Item) -> Share? {
+        let dated = item.shares.compactMap { share in share.expiresAt.map { (share, $0) } }
+        if item.isExpired {
+            return dated.max { $0.1 < $1.1 }?.0
+        }
+        return dated.filter { !isExpired($0.0) }.min { $0.1 < $1.1 }?.0
     }
 
     /// The searched and sorted list, narrowed by the segment's filter and grouped into items,
@@ -129,10 +155,19 @@ public extension SharedFeature.State {
                 personCounts[id, default: 0] += 1
             }
         }
+        var picked: Set<String> = []
+        if segment == .byMe, case let .people(ids) = filter(for: segment) {
+            picked = ids
+        }
         var people: [SharedFeature.FilterOption] = []
         for (id, count) in personCounts {
             if let name = userNames[id] {
-                people.append(SharedFeature.FilterOption(filter: .person(id), name: name, count: count))
+                people.append(SharedFeature.FilterOption(
+                    filter: .people([id]),
+                    name: name,
+                    count: count,
+                    isDimmed: !picked.isEmpty && !picked.contains(id) && !hasCommonShare(picked.union([id]))
+                ))
             }
         }
         people.sort { lhs, rhs in
@@ -148,13 +183,45 @@ public extension SharedFeature.State {
         filter(for: segment) != .all || filterOptions(for: segment).count > Constants.minimumFilterOptions
     }
 
-    /// Drops a filter whose person or public link no longer exists after a reload or delete,
+    /// What a tap on a people row option leaves active. A person joins, or leaves, the people
+    /// already picked; on By me only while one share still reaches them all. Otherwise the tap
+    /// replaces the filter, and tapping the only active choice again clears it back to All.
+    func filter(afterTapping tapped: SharedFeature.Filter, in segment: SharedFeature.Segment) -> SharedFeature.Filter {
+        let current = filter(for: segment)
+        if tapped == current {
+            return .all
+        }
+        guard case let .people(picked) = current, case let .people(ids) = tapped else {
+            return tapped
+        }
+        let combined = picked.symmetricDifference(ids)
+        if combined.isEmpty {
+            return .all
+        }
+        return segment == .withMe || hasCommonShare(combined) ? .people(combined) : tapped
+    }
+
+    /// Drops a filter whose people or public link no longer exist after a reload or delete,
     /// and fits the open detail sheet to what is left.
     mutating func sharesChanged() {
-        for (segment, filter) in filters where !filterOptions(for: segment).contains(where: { $0.filter == filter }) {
+        for (segment, filter) in filters where !isStillValid(filter, in: segment) {
             filters[segment] = nil
         }
         reconcileDetail()
+    }
+
+    private func isStillValid(_ filter: SharedFeature.Filter, in segment: SharedFeature.Segment) -> Bool {
+        let options = filterOptions(for: segment)
+        guard case let .people(ids) = filter else {
+            return options.contains { $0.filter == filter }
+        }
+        let known = Set(options.compactMap(\.filter.personID))
+        return ids.isSubset(of: known) && (segment == .withMe || hasCommonShare(ids))
+    }
+
+    /// Whether one By me share reaches every one of these people.
+    private func hasCommonShare(_ ids: Set<String>) -> Bool {
+        shares(for: .byMe).contains { ids.isSubset(of: $0.permittedUserIds ?? []) }
     }
 
     /// The item behind a detail sheet with every share on it, ignoring the search and the people
@@ -190,8 +257,10 @@ public extension SharedFeature.State {
             true
         case .anyone:
             share.sharingType == .anyone
-        case let .person(id):
-            segment == .byMe ? (share.permittedUserIds ?? []).contains(id) : share.ownerId == id
+        case let .people(ids) where segment == .byMe:
+            ids.isSubset(of: share.permittedUserIds ?? [])
+        case let .people(ids):
+            ids.contains(share.ownerId)
         }
     }
 

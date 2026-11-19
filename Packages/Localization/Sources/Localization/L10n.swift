@@ -927,7 +927,6 @@ public enum L10n {
         public static var listFooter: String { tr("shared.listFooter") }
         public static var metaAccess: String { tr("shared.metaAccess") }  // "Access"
         public static var metaDownloads: String { tr("shared.metaDownloads") }  // "Downloads"
-        public static var metaExpiration: String { tr("shared.metaExpiration") }  // "Expiration"
         public static var metaExpired: String { tr("shared.metaExpired") }  // "Expired"
         public static var metaExpires: String { tr("shared.metaExpires") }  // "Expires"
         public static var metaLabel: String { tr("shared.metaLabel") }  // "Label"
@@ -952,6 +951,8 @@ public enum L10n {
         public static var setNewDate: String { tr("shared.setNewDate") }  // "Set a new date"
         public static func shareCount(_ a0: CVarArg) -> String { tr("shared.shareCount", a0) }
         public static var sharedByUnknown: String { tr("shared.sharedByUnknown") }  // "Someone"
+        public static var showLess: String { tr("shared.showLess") }  // "Show Less"
+        public static var showMore: String { tr("shared.showMore") }  // "Show More"
         public static var statusPassword: String { tr("shared.statusPassword") }  // "password"
         public static func statusStep(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shared.statusStep", a0, a1) }
         public static var viewOnly: String { tr("shared.viewOnly") }  // "view only"

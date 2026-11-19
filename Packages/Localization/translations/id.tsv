@@ -235,6 +235,8 @@ shared.statusStep	%1$@ · %2$@
 shared.shareCount#other	%lld berbagi
 shared.peopleCount#other	%lld orang
 shared.downloadCount#other	%lld unduhan
+shared.showMore	Tampilkan Lebih Banyak
+shared.showLess	Tampilkan Lebih Sedikit
 shared.badgeExpired	kedaluwarsa
 shared.emptyByMe	Bagikan file atau folder untuk melihat tautannya di sini.
 shared.emptyWithMe	Tautan yang dibagikan orang lain kepada Anda muncul di sini.
@@ -243,7 +245,6 @@ shared.deleteTitle	Hapus Tautan Berbagi?
 shared.deleteMessage	Tautan langsung berhenti berfungsi. File atau folder itu sendiri tidak terpengaruh.
 shared.sharedByUnknown	Seseorang
 shared.metaAccess	Akses
-shared.metaExpiration	Kedaluwarsa
 shared.metaSharedBy	Dibagikan oleh
 shared.metaSharedWith	Dibagikan kepada
 shared.anyoneWithLink	Siapa saja dengan tautan

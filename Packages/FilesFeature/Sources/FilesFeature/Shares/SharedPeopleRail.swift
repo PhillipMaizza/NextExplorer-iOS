@@ -13,14 +13,21 @@ private enum Constants {
     static let badgeBorder: CGFloat = 2
     static let badgeOffset = CGSize(width: 3, height: 2)
     static let allFillOpacity: Double = 0.2
+    static let compactCircleSize: CGFloat = .size40
+    static let compactIconSize: CGFloat = .iconSmall
+    static let compactItemWidth: CGFloat = .size48
+    static let dimmedOpacity: Double = 0.4
 }
 
 /// The filter row above the Shared list: All, Anyone, then each person with the number of
-/// items they appear on. Tapping one narrows the list to it; tapping it again clears it.
+/// items they appear on. Tapping one narrows the list to it; tapping it again clears it. On By
+/// me, people who share an item join the pick (`SharedFeature.State.filter(afterTapping:in:)`).
 struct SharedPeopleRail: View {
     let options: [SharedFeature.FilterOption]
     let selection: SharedFeature.Filter
     let onSelect: (SharedFeature.Filter) -> Void
+    /// Smaller circles for the Mac strip above the table.
+    var isCompact = false
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -28,9 +35,9 @@ struct SharedPeopleRail: View {
                 ForEach(options) { option in
                     SharedRailButton(
                         option: option,
-                        isSelected: option.filter == selection,
-                        // Tapping the active filter again clears it back to All.
-                        onTap: { onSelect(option.filter == selection ? .all : option.filter) }
+                        isSelected: isSelected(option.filter),
+                        isCompact: isCompact,
+                        onTap: { onSelect(option.filter) }
                     )
                 }
             }
@@ -38,22 +45,30 @@ struct SharedPeopleRail: View {
         }
         .scrollClipDisabled()
     }
+
+    private func isSelected(_ filter: SharedFeature.Filter) -> Bool {
+        guard let id = filter.personID, case let .people(picked) = selection else {
+            return filter == selection
+        }
+        return picked.contains(id)
+    }
 }
 
 private struct SharedRailButton: View {
     let option: SharedFeature.FilterOption
     let isSelected: Bool
+    let isCompact: Bool
     let onTap: () -> Void
 
     private var innerSize: CGFloat {
-        Constants.circleSize - 2 * (Constants.ringWidth + Constants.ringGap)
+        (isCompact ? Constants.compactCircleSize : Constants.circleSize) - 2 * (Constants.ringWidth + Constants.ringGap)
     }
 
     private var label: String {
         switch option.filter {
         case .all: L10n.Shared.filterAll
         case .anyone: L10n.Shared.filterAnyone
-        case .person: option.name.split(separator: " ").first.map(String.init) ?? option.name
+        case .people: option.name.split(separator: " ").first.map(String.init) ?? option.name
         }
     }
 
@@ -75,8 +90,9 @@ private struct SharedRailButton: View {
                     .type(.caption(isSelected ? .bold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
                     .lineLimit(1)
             }
-            .frame(width: Constants.itemWidth)
+            .frame(width: isCompact ? Constants.compactItemWidth : Constants.itemWidth)
             .contentShape(Rectangle())
+            .opacity(option.isDimmed ? Constants.dimmedOpacity : 1)
         }
         .buttonStyle(DSPressableButtonStyle())
         .accessibilityLabel(option.filter.personID == nil ? label : option.name)
@@ -98,7 +114,7 @@ private struct SharedRailButton: View {
                 .overlay {
                     Circle().strokeBorder(Color.borderPrimary, lineWidth: .borderWidthHairline)
                 }
-        case .person:
+        case .people:
             AvatarView(displayName: option.name, size: innerSize, tint: Color.categorical(for: option.name))
         }
     }
@@ -108,7 +124,10 @@ private struct SharedRailButton: View {
             .resizable().scaledToFit()
             .fontWeight(.semibold)
             .foregroundStyle(tint)
-            .frame(width: Constants.iconSize, height: Constants.iconSize)
+            .frame(
+                width: isCompact ? Constants.compactIconSize : Constants.iconSize,
+                height: isCompact ? Constants.compactIconSize : Constants.iconSize
+            )
     }
 
     private var countBadge: some View {
@@ -125,9 +144,10 @@ private struct SharedRailButton: View {
 }
 
 extension SharedFeature.Filter {
+    /// The one person a people row circle stands for.
     var personID: String? {
-        if case let .person(id) = self {
-            return id
+        if case let .people(ids) = self, ids.count == 1 {
+            return ids.first
         }
         return nil
     }
@@ -136,7 +156,7 @@ extension SharedFeature.Filter {
         switch self {
         case .all: "all"
         case .anyone: "anyone"
-        case let .person(id): "person.\(id)"
+        case let .people(ids): "person.\(ids.sorted().joined(separator: "."))"
         }
     }
 }
@@ -144,9 +164,9 @@ extension SharedFeature.Filter {
 private let previewOptions: [SharedFeature.FilterOption] = [
     .init(filter: .all, name: "", count: 6),
     .init(filter: .anyone, name: "", count: 4),
-    .init(filter: .person("u1"), name: "Anna Moreau", count: 2),
-    .init(filter: .person("u2"), name: "Jonas Keller", count: 2),
-    .init(filter: .person("u3"), name: "Lea Sato", count: 1),
+    .init(filter: .people(["u1"]), name: "Anna Moreau", count: 2),
+    .init(filter: .people(["u2"]), name: "Jonas Keller", count: 2),
+    .init(filter: .people(["u3"]), name: "Lea Sato", count: 1, isDimmed: true),
 ]
 
 #Preview("Rail: All") {
@@ -162,8 +182,15 @@ private let previewOptions: [SharedFeature.FilterOption] = [
         .preferredColorScheme(.dark)
 }
 
-#Preview("Rail: person") {
-    SharedPeopleRail(options: previewOptions, selection: .person("u2"), onSelect: { _ in })
+#Preview("Rail: two people") {
+    SharedPeopleRail(options: previewOptions, selection: .people(["u1", "u2"]), onSelect: { _ in })
         .padding(.vertical)
         .background(Color.backgroundPrimary)
+}
+
+#Preview("Rail: compact, dark") {
+    SharedPeopleRail(options: previewOptions, selection: .people(["u1"]), onSelect: { _ in }, isCompact: true)
+        .padding(.vertical)
+        .background(Color.backgroundPrimary)
+        .preferredColorScheme(.dark)
 }

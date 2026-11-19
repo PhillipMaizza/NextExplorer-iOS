@@ -9,7 +9,6 @@
 
     private enum Metrics {
         static let iconSize: CGFloat = .size44
-        static let width: CGFloat = 300
         /// Matches `BrowseFeature`'s follow delay: rows skipped past with the arrow keys never
         /// load their permissions or versions.
         static let followDelay: Duration = .milliseconds(200)
@@ -86,7 +85,7 @@
                 }
             }
             .formStyle(.grouped)
-            .frame(width: Metrics.width)
+            .frame(width: MacInspectorMetrics.width)
             .task(id: PermissionsLoad(path: item.id, isEditing: isEditingPermissions)) {
                 permissions = nil
                 try? await Task.sleep(for: Metrics.followDelay)
@@ -133,26 +132,26 @@
         @ViewBuilder
         private func details(_ metadata: FileMetadata) -> some View {
             Section {
-                row(
+                MacInfoRow(
                     L10n.FileInfo.rowKind,
                     metadata.isDirectory ? L10n.FileInfo.navigationTitleFolder : metadata.kind.uppercased()
                 )
-                row(L10n.FileInfo.rowSize, Self.bytes(metadata.size))
-                row(L10n.FileInfo.rowLocation, metadata.path)
-                row(
+                MacInfoRow(L10n.FileInfo.rowSize, Self.bytes(metadata.size))
+                MacInfoRow(L10n.FileInfo.rowLocation, metadata.path)
+                MacInfoRow(
                     L10n.FileInfo.rowDateModified,
                     dateFormat.string(from: metadata.dateModified, includeTime: shouldIncludeTime)
                 )
-                row(
+                MacInfoRow(
                     L10n.FileInfo.rowDateCreated,
                     dateFormat.string(from: metadata.dateCreated, includeTime: shouldIncludeTime)
                 )
             }
             if let directory = metadata.directory {
                 Section {
-                    row(L10n.FileInfo.rowFiles, directory.fileCount.formatted())
-                    row(L10n.FileInfo.rowFolders, directory.dirCount.formatted())
-                    row(L10n.FileInfo.rowTotalSize, Self.bytes(directory.totalSize))
+                    MacInfoRow(L10n.FileInfo.rowFiles, directory.fileCount.formatted())
+                    MacInfoRow(L10n.FileInfo.rowFolders, directory.dirCount.formatted())
+                    MacInfoRow(L10n.FileInfo.rowTotalSize, Self.bytes(directory.totalSize))
                 } footer: {
                     if directory.truncated {
                         Text(L10n.FileInfo.partialScan).font(.callout).foregroundStyle(.secondary)
@@ -172,38 +171,38 @@
             if let image = metadata.image {
                 Section {
                     if let width = image.width, let height = image.height {
-                        row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
+                        MacInfoRow(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
                     }
                     if let model = image.cameraModel {
-                        row(
+                        MacInfoRow(
                             L10n.FileInfo.rowCamera,
                             [image.cameraMake, model].compactMap(\.self).joined(separator: " ")
                         )
                     }
                     if let lensModel = image.lensModel {
-                        row(L10n.FileInfo.rowLens, lensModel)
+                        MacInfoRow(L10n.FileInfo.rowLens, lensModel)
                     }
                     if let software = image.software {
-                        row(L10n.FileInfo.rowSoftware, software)
+                        MacInfoRow(L10n.FileInfo.rowSoftware, software)
                     }
                     if let dateTaken = image.dateTaken {
-                        row(
+                        MacInfoRow(
                             L10n.FileInfo.rowDateTaken,
                             dateFormat.string(from: dateTaken, includeTime: shouldIncludeTime)
                         )
                     }
                     if let gps = image.gps {
-                        row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
+                        MacInfoRow(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
                     }
                 }
             }
             if let video = metadata.video {
                 Section {
                     if let width = video.width, let height = video.height {
-                        row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
+                        MacInfoRow(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
                     }
                     if let duration = video.duration {
-                        row(L10n.FileInfo.rowDuration, Self.durationFormatter.string(from: duration) ?? "-")
+                        MacInfoRow(L10n.FileInfo.rowDuration, Self.durationFormatter.string(from: duration) ?? "-")
                     }
                 }
             }
@@ -215,9 +214,9 @@
         private var permissionsSection: some View {
             if let permissions {
                 Section(L10n.Permissions.title) {
-                    row(L10n.Permissions.fieldOwner, permissions.owner)
-                    row(L10n.Permissions.fieldGroup, permissions.group)
-                    row(L10n.Permissions.sectionMode, Self.modeString(permissions.mode))
+                    MacInfoRow(L10n.Permissions.fieldOwner, permissions.owner)
+                    MacInfoRow(L10n.Permissions.fieldGroup, permissions.group)
+                    MacInfoRow(L10n.Permissions.sectionMode, Self.modeString(permissions.mode))
                     HStack {
                         Spacer()
                         Button(L10n.Common.edit + "…", action: onEditPermissions)
@@ -234,16 +233,6 @@
                 bits & (1 << (8 - index)) != 0 ? symbols[index % 3] : "-"
             }.joined()
             return "\(text) (\(String(bits, radix: 8)))"
-        }
-
-        private func row(_ label: String, _ value: String) -> some View {
-            LabeledContent(label) {
-                Text(value)
-                    .lineLimit(2)
-                    .truncationMode(.middle)
-                    .multilineTextAlignment(.trailing)
-                    .textSelection(.enabled)
-            }
         }
 
         private static func bytes(_ count: Int64) -> String {

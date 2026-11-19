@@ -230,6 +230,8 @@ shared.statusStep	%1$@ · %2$@
 shared.shareCount#other	%lld件の共有
 shared.peopleCount#other	%lld人
 shared.downloadCount#other	%lld回ダウンロード
+shared.showMore	さらに表示
+shared.showLess	表示を減らす
 shared.badgeExpired	期限切れ
 shared.emptyByMe	ファイルやフォルダを共有すると、そのリンクがここに表示されます。
 shared.emptyWithMe	他の人があなたと共有したリンクがここに表示されます。
@@ -238,7 +240,6 @@ shared.deleteTitle	共有リンクを削除しますか？
 shared.deleteMessage	リンクはすぐに機能しなくなります。ファイルやフォルダ自体には影響しません。
 shared.sharedByUnknown	誰か
 shared.metaAccess	アクセス
-shared.metaExpiration	有効期限
 shared.metaSharedBy	共有者
 shared.metaSharedWith	共有相手
 shared.anyoneWithLink	リンクを知っている全員

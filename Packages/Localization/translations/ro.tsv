@@ -252,6 +252,8 @@ shared.peopleCount#other	%lld de persoane
 shared.downloadCount#one	%lld descărcare
 shared.downloadCount#few	%lld descărcări
 shared.downloadCount#other	%lld de descărcări
+shared.showMore	Afișează mai multe
+shared.showLess	Afișează mai puțin
 shared.badgeExpired	expirat
 shared.emptyByMe	Partajează un fișier sau dosar pentru a-i vedea linkul aici.
 shared.emptyWithMe	Linkurile pe care alții le partajează cu tine apar aici.
@@ -260,7 +262,6 @@ shared.deleteTitle	Ștergi linkul de partajare?
 shared.deleteMessage	Linkul încetează să funcționeze imediat. Fișierul sau dosarul în sine nu este afectat.
 shared.sharedByUnknown	Cineva
 shared.metaAccess	Acces
-shared.metaExpiration	Expirare
 shared.metaSharedBy	Partajat de
 shared.metaSharedWith	Partajat cu
 shared.anyoneWithLink	Oricine are linkul

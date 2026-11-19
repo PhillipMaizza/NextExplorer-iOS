@@ -1,5 +1,6 @@
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -48,6 +49,13 @@ struct SharedDetailHero: View {
     static func fullPath(of share: Share) -> String? {
         guard let path = share.trimmedSourcePath, !path.isEmpty else { return nil }
         return "/" + path
+    }
+
+    /// The full path and every share's downloads together, for an item with several shares.
+    static func summary(of item: SharedFeature.Item) -> String {
+        let downloads = L10n.Shared.downloadCount(item.downloadCount)
+        guard let path = fullPath(of: item.shares[0]) else { return downloads }
+        return L10n.Shared.statusStep(path, downloads)
     }
 }
 

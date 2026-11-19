@@ -550,6 +550,69 @@ public extension Share {
             make("s12", "Invoice Oct.pdf", ageDays: 10, downloads: 1_284, openedHoursAgo: 120),
             make("s13", "Design/Brand/Logo final.png", days: -2, ageDays: 11, downloads: 41, openedHoursAgo: 460),
             make("s4", "Old/invoice.pdf", days: -1, ageDays: 12),
+            make(
+                "s17",
+                "Finance/Rent receipts",
+                folder: true,
+                users: ["u4"],
+                readWrite: true,
+                ageDays: 9,
+                label: "Landlord",
+                downloads: 5,
+                openedHoursAgo: 300
+            ),
+            make(
+                "s18",
+                "Finance/Rent receipts",
+                folder: true,
+                password: true,
+                days: 0.3,
+                ageDays: 8.5,
+                label: "Accountant",
+                downloads: 2,
+                openedHoursAgo: 5
+            ),
+            make(
+                "s19",
+                "Finance/Rent receipts",
+                folder: true,
+                days: -4,
+                ageDays: 20,
+                label: "Tax 2025",
+                downloads: 11,
+                openedHoursAgo: 900
+            ),
+            make(
+                "s20",
+                "Archive/Old drafts",
+                folder: true,
+                days: -10,
+                ageDays: 30,
+                label: "Review round 1",
+                downloads: 8
+            ),
+            make("s21", "Archive/Old drafts", folder: true, users: ["u3", "u5"], days: -5, ageDays: 25),
+            make(
+                "s22",
+                "Company/Handbook.pdf",
+                users: ["u2", "u3", "u4", "u5", "u6", "u7", "u8", "u9", "u10", "u11", "u12", "u13", "u98", "u99"],
+                ageDays: 14,
+                label: "All staff",
+                downloads: 312,
+                openedHoursAgo: 1
+            ),
+            make("s23", "Projects/Secret plan.key", users: ["u97"], days: 20, ageDays: 13.5),
+            make(
+                "s24",
+                "Uploads/Drop box",
+                folder: true,
+                readWrite: true,
+                password: true,
+                days: 45,
+                ageDays: 13,
+                label: "Client uploads",
+                downloads: 0
+            ),
         ]
     }
 
@@ -596,6 +659,9 @@ public extension Share {
                 days: 2.5,
                 ageDays: 7
             ),
+            make("w8", "Sprint board", owner: "u5", folder: true, readWrite: true, days: 0.2, ageDays: 8),
+            make("w9", "Wedding Photos", owner: "u6", folder: true, password: true, days: 40, ageDays: 9),
+            make("w10", "Tax return 2025.pdf", owner: "u2", days: -12, ageDays: 20, label: "For review"),
         ]
     }
 
@@ -612,6 +678,11 @@ public extension Share {
             email: "max@example.com",
             displayName: "Maximilianus Bartholomew von Hohenberg"
         ),
+        User(id: "u9", username: "noah", email: "noah@example.com", displayName: "Noah Fischer"),
+        User(id: "u10", username: "emma", email: "emma@example.com", displayName: "Emma Laurent"),
+        User(id: "u11", username: "liam", email: "liam@example.com", displayName: "Liam Walsh"),
+        User(id: "u12", username: "sofia", email: "sofia@example.com", displayName: "Sofia Marino"),
+        User(id: "u13", username: "kenji", email: "kenji@example.com", displayName: "Kenji Tanaka"),
     ]
 }
 

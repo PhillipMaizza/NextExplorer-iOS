@@ -241,6 +241,8 @@ shared.peopleCount#one	%lld pessoa
 shared.peopleCount#other	%lld pessoas
 shared.downloadCount#one	%lld transferência
 shared.downloadCount#other	%lld transferências
+shared.showMore	Mostrar mais
+shared.showLess	Mostrar menos
 shared.badgeExpired	expirado
 shared.emptyByMe	Partilhe um ficheiro ou pasta para ver a ligação aqui.
 shared.emptyWithMe	As ligações que outras pessoas partilham consigo aparecem aqui.
@@ -249,7 +251,6 @@ shared.deleteTitle	Eliminar a ligação de partilha?
 shared.deleteMessage	A ligação deixa de funcionar de imediato. O ficheiro ou pasta em si não é afetado.
 shared.sharedByUnknown	Alguém
 shared.metaAccess	Acesso
-shared.metaExpiration	Validade
 shared.metaSharedBy	Partilhado por
 shared.metaSharedWith	Partilhado com
 shared.anyoneWithLink	Qualquer pessoa com a ligação

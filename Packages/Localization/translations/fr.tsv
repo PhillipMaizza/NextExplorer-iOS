@@ -241,6 +241,8 @@ shared.peopleCount#one	%lld personne
 shared.peopleCount#other	%lld personnes
 shared.downloadCount#one	%lld téléchargement
 shared.downloadCount#other	%lld téléchargements
+shared.showMore	Afficher plus
+shared.showLess	Afficher moins
 shared.badgeExpired	expiré
 shared.emptyByMe	Partagez un fichier ou un dossier pour voir son lien ici.
 shared.emptyWithMe	Les liens que d'autres partagent avec vous apparaissent ici.
@@ -249,7 +251,6 @@ shared.deleteTitle	Supprimer le lien de partage ?
 shared.deleteMessage	Le lien cesse de fonctionner immédiatement. Le fichier ou le dossier lui-même n'est pas touché.
 shared.sharedByUnknown	Quelqu'un
 shared.metaAccess	Accès
-shared.metaExpiration	Expiration
 shared.metaSharedBy	Partagé par
 shared.metaSharedWith	Partagé avec
 shared.anyoneWithLink	Toute personne disposant du lien

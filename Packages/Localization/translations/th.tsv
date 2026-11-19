@@ -235,6 +235,8 @@ shared.statusStep	%1$@ · %2$@
 shared.shareCount#other	%lld การแชร์
 shared.peopleCount#other	%lld คน
 shared.downloadCount#other	ดาวน์โหลด %lld ครั้ง
+shared.showMore	แสดงเพิ่มเติม
+shared.showLess	แสดงน้อยลง
 shared.badgeExpired	หมดอายุแล้ว
 shared.emptyByMe	แชร์ไฟล์หรือโฟลเดอร์เพื่อดูลิงก์ที่นี่
 shared.emptyWithMe	ลิงก์ที่ผู้อื่นแชร์ให้คุณจะแสดงที่นี่
@@ -243,7 +245,6 @@ shared.deleteTitle	ลบลิงก์แชร์หรือไม่
 shared.deleteMessage	ลิงก์จะหยุดทำงานทันที ตัวไฟล์หรือโฟลเดอร์จะไม่ได้รับผลกระทบ
 shared.sharedByUnknown	บางคน
 shared.metaAccess	การเข้าถึง
-shared.metaExpiration	วันหมดอายุ
 shared.metaSharedBy	แชร์โดย
 shared.metaSharedWith	แชร์กับ
 shared.anyoneWithLink	ทุกคนที่มีลิงก์

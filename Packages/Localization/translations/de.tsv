@@ -241,6 +241,8 @@ shared.peopleCount#one	%lld Person
 shared.peopleCount#other	%lld Personen
 shared.downloadCount#one	%lld Download
 shared.downloadCount#other	%lld Downloads
+shared.showMore	Mehr anzeigen
+shared.showLess	Weniger anzeigen
 shared.badgeExpired	abgelaufen
 shared.emptyByMe	Teile eine Datei oder einen Ordner, um den Link hier zu sehen.
 shared.emptyWithMe	Links, die andere mit dir teilen, erscheinen hier.
@@ -249,7 +251,6 @@ shared.deleteTitle	Freigabelink löschen?
 shared.deleteMessage	Der Link funktioniert sofort nicht mehr. Die Datei oder der Ordner selbst wird nicht berührt.
 shared.sharedByUnknown	Jemand
 shared.metaAccess	Zugriff
-shared.metaExpiration	Ablauf
 shared.metaSharedBy	Geteilt von
 shared.metaSharedWith	Geteilt mit
 shared.anyoneWithLink	Jeder mit dem Link

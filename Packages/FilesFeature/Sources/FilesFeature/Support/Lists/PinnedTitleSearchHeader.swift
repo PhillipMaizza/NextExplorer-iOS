@@ -244,6 +244,8 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
 
     /// Focuses the visible screen's search field; published by `PinnedTitleSearchHeader`.
     public struct FocusSearchAction {
+        /// False when the screen draws its own search field in the toolbar.
+        var showsToolbarButton = true
         let perform: () -> Void
 
         public func callAsFunction() {

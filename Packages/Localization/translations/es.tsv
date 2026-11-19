@@ -241,6 +241,8 @@ shared.peopleCount#one	%lld persona
 shared.peopleCount#other	%lld personas
 shared.downloadCount#one	%lld descarga
 shared.downloadCount#other	%lld descargas
+shared.showMore	Mostrar más
+shared.showLess	Mostrar menos
 shared.badgeExpired	caducado
 shared.emptyByMe	Comparte un archivo o carpeta para ver su enlace aquí.
 shared.emptyWithMe	Los enlaces que otras personas comparten contigo aparecen aquí.
@@ -249,7 +251,6 @@ shared.deleteTitle	¿Eliminar el enlace de compartición?
 shared.deleteMessage	El enlace deja de funcionar de inmediato. El archivo o carpeta en sí no se modifica.
 shared.sharedByUnknown	Alguien
 shared.metaAccess	Acceso
-shared.metaExpiration	Caducidad
 shared.metaSharedBy	Compartido por
 shared.metaSharedWith	Compartido con
 shared.anyoneWithLink	Cualquiera con el enlace

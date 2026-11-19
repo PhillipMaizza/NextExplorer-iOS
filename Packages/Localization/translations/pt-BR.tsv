@@ -252,6 +252,8 @@ shared.peopleCount#one	%lld pessoa
 shared.peopleCount#other	%lld pessoas
 shared.downloadCount#one	%lld download
 shared.downloadCount#other	%lld downloads
+shared.showMore	Mostrar mais
+shared.showLess	Mostrar menos
 shared.badgeExpired	Expirado
 shared.emptyByMe	Compartilhe um arquivo ou pasta para ver o link aqui.
 shared.emptyWithMe	Os links que outras pessoas compartilham com você aparecem aqui.
@@ -260,7 +262,6 @@ shared.deleteTitle	Excluir o link de compartilhamento?
 shared.deleteMessage	O link deixa de funcionar imediatamente. O arquivo ou a pasta em si não é afetado.
 shared.sharedByUnknown	Alguém
 shared.metaAccess	Acesso
-shared.metaExpiration	Validade
 shared.metaSharedBy	Compartilhado por
 shared.metaSharedWith	Compartilhado com
 shared.anyoneWithLink	Qualquer pessoa com o link

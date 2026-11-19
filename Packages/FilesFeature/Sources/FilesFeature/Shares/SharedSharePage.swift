@@ -40,6 +40,10 @@ struct SharedSharePage: View {
         DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
     }
 
+    private var facts: SharedShareFacts {
+        SharedShareFacts(share: share, notice: store.state.expiryNotice(for: share), dateFormat: dateFormat)
+    }
+
     private var badge: SharedFeature.ShareBadge? {
         item.badges.first { $0.id == share.id }
     }
@@ -49,6 +53,7 @@ struct SharedSharePage: View {
     }
 
     var body: some View {
+        let facts = facts
         DSGroupedList {
             Section {
                 SharedDetailHero(
@@ -88,36 +93,30 @@ struct SharedSharePage: View {
 
             Section {
                 fact(L10n.Shared.metaAccess, share.accessMode.title)
-                fact(L10n.Common.password, share.hasPassword ? L10n.Common.on : L10n.Common.off)
-                fact(isExpired ? L10n.Shared.metaExpired : L10n.Shared.metaExpires, expiresValue, style: expiresStyle)
+                fact(L10n.Common.password, facts.password)
+                fact(facts.expiresTitle, facts.expires, style: facts.expiresStyle)
                 if isByMe {
                     DSMenuPickerRow(selection: $directLinkMode, value: directLinkMode.title) {
                         ForEach(DirectLinkMode.allCases) { Text($0.title).tag($0) }
                     } label: {
-                        Text(share.isDirectory ? L10n.Shared.folderLinkOpensAs : L10n.Shared.fileLinkOpensAs)
+                        Text(facts.linkModeTitle)
                             .type(.body2(.regular), style: .primaryOnSurface)
                     }
                     .tint(Color.secondaryDS)
                 }
             } footer: {
-                if isByMe, isExpired, let expiresAt = share.expiresAt {
-                    Text(L10n.Shared.expiredFooter(dateFormat.string(from: expiresAt)))
+                if isByMe, let note = facts.expiredNote {
+                    Text(note)
                         .type(.body3(.regular), style: .error)
                 }
             }
 
             Section {
-                fact(L10n.Shared.metaLabel, share.trimmedLabel ?? L10n.Common.none)
-                fact(
-                    isByMe ? L10n.Shared.metaShared : L10n.Shared.metaReceived,
-                    dateFormat.string(from: share.createdAt)
-                )
+                fact(L10n.Shared.metaLabel, facts.label)
+                fact(isByMe ? L10n.Shared.metaShared : L10n.Shared.metaReceived, facts.created)
                 if isByMe {
-                    fact(
-                        L10n.Shared.metaLastOpened,
-                        share.lastAccessedAt.map(OfflineRelativeTime.string(from:)) ?? L10n.Common.never
-                    )
-                    fact(L10n.Shared.metaDownloads, share.downloadCount.formatted())
+                    fact(L10n.Shared.metaLastOpened, facts.lastOpened)
+                    fact(L10n.Shared.metaDownloads, facts.downloads)
                 }
             } footer: {
                 if !isByMe {
@@ -143,23 +142,6 @@ struct SharedSharePage: View {
         .disabled(isDeleting)
         .navigationTitle(isPushed ? item.name : "")
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private var expiresValue: String {
-        guard let expiresAt = share.expiresAt else { return L10n.Common.never }
-        let date = dateFormat.string(from: expiresAt)
-        if case let .daysLeft(days) = store.state.expiryNotice(for: share) {
-            return L10n.Shared.statusStep(date, L10n.Shared.daysLeft(days))
-        }
-        return date
-    }
-
-    private var expiresStyle: Typography.TextStyle {
-        switch store.state.expiryNotice(for: share) {
-        case .expired: .error
-        case .daysLeft: .warning
-        case nil: .secondary
-        }
     }
 
     private func fact(_ label: String, _ value: String, style: Typography.TextStyle = .secondary) -> some View {

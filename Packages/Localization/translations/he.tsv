@@ -257,6 +257,8 @@ shared.peopleCount#other	%lld אנשים
 shared.downloadCount#one	%lld הורדה
 shared.downloadCount#two	%lld הורדות
 shared.downloadCount#other	%lld הורדות
+shared.showMore	הצגת עוד
+shared.showLess	הצג פחות
 shared.badgeExpired	פג תוקף
 shared.emptyByMe	שתפו קובץ או תיקייה כדי לראות כאן את הקישור שלהם.
 shared.emptyWithMe	קישורים שאחרים משתפים איתכם יופיעו כאן.
@@ -265,7 +267,6 @@ shared.deleteTitle	למחוק את קישור השיתוף?
 shared.deleteMessage	הקישור מפסיק לעבוד מיד. הקובץ או התיקייה עצמם לא ייפגעו.
 shared.sharedByUnknown	מישהו
 shared.metaAccess	גישה
-shared.metaExpiration	תפוגה
 shared.metaSharedBy	שותף על ידי
 shared.metaSharedWith	שותף עם
 shared.anyoneWithLink	כל מי שיש לו את הקישור

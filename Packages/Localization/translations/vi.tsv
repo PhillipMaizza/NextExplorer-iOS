@@ -235,6 +235,8 @@ shared.statusStep	%1$@ · %2$@
 shared.shareCount#other	%lld lượt chia sẻ
 shared.peopleCount#other	%lld người
 shared.downloadCount#other	%lld lượt tải
+shared.showMore	Xem thêm
+shared.showLess	Thu gọn
 shared.badgeExpired	đã hết hạn
 shared.emptyByMe	Hãy chia sẻ một tệp hoặc thư mục để xem liên kết của nó ở đây.
 shared.emptyWithMe	Các liên kết người khác chia sẻ với bạn sẽ hiển thị ở đây.
@@ -243,7 +245,6 @@ shared.deleteTitle	Xóa liên kết chia sẻ?
 shared.deleteMessage	Liên kết sẽ ngừng hoạt động ngay lập tức. Bản thân tệp hoặc thư mục không bị ảnh hưởng.
 shared.sharedByUnknown	Ai đó
 shared.metaAccess	Quyền truy cập
-shared.metaExpiration	Hết hạn
 shared.metaSharedBy	Chia sẻ bởi
 shared.metaSharedWith	Chia sẻ với
 shared.anyoneWithLink	Bất kỳ ai có liên kết
