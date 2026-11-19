@@ -11,8 +11,8 @@
             selectTab(TabBar(app: app).settings, until: settings.root)
 
             // With nothing downloaded yet Offline is a single item, so its Settings row opens the picker.
-            XCTAssertTrue(scrollTo(settings.pageRow("offline"), in: app))
-            settings.pageRow("offline").tap()
+            XCTAssertTrue(scrollTo(settings.pageRow(.offline), in: app))
+            settings.pageRow(.offline).tap()
 
             let picker = OfflineSelectionScreen(app: app)
             XCTAssertTrue(picker.itemRow("vacation.jpg").waitToAppear())
@@ -23,7 +23,7 @@
 
             picker.downloadButton.tap()
             XCTAssertTrue(
-                settings.pageRow("offline").waitToAppear(),
+                settings.pageRow(.offline).waitToAppear(),
                 "Confirming should dismiss the picker back to Settings"
             )
         }

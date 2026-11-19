@@ -1,4 +1,5 @@
 #if os(iOS)
+    import CoreModels
     import XCTest
 
     /// Critical path: browsing a directory, navigating into a folder, opening a file preview, plus
@@ -9,9 +10,11 @@
             let browse = BrowseScreen(app: app)
             XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
             browse.item(Fixture.folder).tap()
-            // The fixture returns the same items at every depth, so the listing stays populated after
-            // pushing a folder: proof the navigation resolved rather than dead ended.
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "Navigating into a folder should load its contents")
+            // A folder only Documents holds proves the navigation resolved rather than dead ended.
+            XCTAssertTrue(
+                browse.item(UITestFixture.Folder.invoices.name).waitToAppear(),
+                "Navigating into a folder should load its contents"
+            )
         }
 
         func testOpenFilePreview() {

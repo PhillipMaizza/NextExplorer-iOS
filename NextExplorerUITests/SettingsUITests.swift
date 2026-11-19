@@ -10,10 +10,10 @@
             selectTab(TabBar(app: app).settings, until: settings.root)
 
             XCTAssertTrue(
-                scrollTo(settings.pageRow("general"), in: app),
+                scrollTo(settings.pageRow(.general), in: app),
                 "General should be a row on the Settings root"
             )
-            settings.pageRow("general").tap()
+            settings.pageRow(.general).tap()
             XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be on the General page")
             settings.languageRow.tap()
 
@@ -28,8 +28,8 @@
             let settings = SettingsScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.root)
 
-            XCTAssertTrue(scrollTo(settings.pageRow("administration"), in: app), "An admin should see the Admin row")
-            settings.pageRow("administration").tap()
+            XCTAssertTrue(scrollTo(settings.pageRow(.administration), in: app), "An admin should see the Admin row")
+            settings.pageRow(.administration).tap()
             XCTAssertTrue(settings.thumbnailsRow.waitToAppear(), "The Admin page should expose the Thumbnails row")
             settings.thumbnailsRow.tap()
             XCTAssertTrue(settings.thumbnailSettingsTitle.waitToAppear(), "Thumbnails should push its settings screen")

@@ -28,8 +28,9 @@
             XCTAssertTrue(browse.sectionHeader(L10n.Search.remote).exists, "The others are under Remote")
             XCTAssertTrue(browse.item(Fixture.file).exists, "The pinned file is listed")
             XCTAssertTrue(browse.item(Fixture.searchHit).waitToAppear(), "Server hits are listed too")
+            // The remote search also finds the other notes.txt in Documents; the kept one heads the list.
             XCTAssertLessThan(
-                browse.item(Fixture.file).frame.minY,
+                browse.item(Fixture.file).firstMatch.frame.minY,
                 browse.item(Fixture.searchHit).frame.minY,
                 "What is on the device comes first"
             )

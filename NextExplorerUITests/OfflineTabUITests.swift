@@ -83,8 +83,7 @@
             XCTAssertTrue(offline.row(Fixture.file).waitToVanish(), "The file is no longer listed as offline")
         }
 
-        /// The mocked listing is the same in every folder, so the file under the pinned folder is
-        /// reached through search, whose hits sit under Documents.
+        /// The file under the pinned folder is reached through search, whose hits sit under Documents.
         func testAFileFoundInsideAPinnedFolderCanTakeTheFolderOffTheDeviceFromItsPreview() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)

@@ -10,7 +10,8 @@
             let browse = BrowseScreen(app: app)
 
             XCTAssertTrue(browse.item(Fixture.folder).waitToAppear(), "The saved listing shows, not the login")
-            XCTAssertTrue(savedCopyNote(in: app).waitToAppear(), "It says the listing is a saved copy")
+            // The note is the listing's last row, below the fold of a full root.
+            XCTAssertTrue(scrollTo(savedCopyNote(in: app), in: app), "It says the listing is a saved copy")
         }
 
         func testAPinnedFileListsAndOpensWithoutAConnection() {

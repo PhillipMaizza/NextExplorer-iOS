@@ -1,3 +1,4 @@
+import CoreModels
 import Localization
 import XCTest
 
@@ -5,47 +6,45 @@ import XCTest
 /// backend free dependency graph wired in `AppFeature.prepareUITestDependencies`, driven
 /// entirely through the launch environment so no network, keychain or disk state is touched.
 class UITestCase: XCTestCase {
-    /// Names the mock backend serves, mirroring `FileItem.previewItems` in the files client and
-    /// the search echo in `UITestSupport`. Test owned data, kept here as the single source so a
-    /// fixture rename touches one place.
+    /// Names the mock backend serves; the browse and search names come from `UITestFixture`,
+    /// which the mock app reads too.
     enum Fixture {
-        static let folder = "Documents"
-        static let file = "notes.txt"
+        static let folder = UITestFixture.Folder.documents.name
+        static let file = UITestFixture.File.notes.name
         /// An image file in the root fixture listing.
-        static let imageFile = "vacation.jpg"
-        static let searchQuery = "vacation"
+        static let imageFile = UITestFixture.File.vacation.name
+        static let searchQuery = UITestFixture.File.vacation.stem
         /// Part of `file`'s name, so it is among the search results.
-        static let fileSearchTerm = "notes"
-        /// Stable first hit the mocked search returns (mirrors `UITestSupport.searchHitName`).
-        static let searchHit = "Quarterly Report.txt"
+        static let fileSearchTerm = UITestFixture.File.notes.stem
+        /// Stable first hit the mocked search returns.
+        static let searchHit = UITestFixture.File.quarterlyReport.name
         /// The shortest query the server searches (mirrors `FilesClient.minimumSearchTermLength`).
         static let minimumSearchLength = 3
-        /// Image hit the mocked search returns (mirrors `UITestSupport.imageSearchHitName`).
-        static let imageSearchHit = "Beach.jpg"
-        /// Hit only a search from the root returns (mirrors `UITestSupport.widerSearchHitName`).
-        static let widerSearchHit = "Archive Notes.txt"
-        /// A folder the mocked backend rejects, driving the create failure path (mirrors
-        /// `UITestSupport.failingFolderName`).
-        static let failingFolderName = "__uitest_fail__"
+        /// Image hit the mocked search returns.
+        static let imageSearchHit = UITestFixture.File.beach.name
+        /// Hit only a search from the root returns.
+        static let widerSearchHit = UITestFixture.File.archiveNotes.name
+        /// A folder the mocked backend rejects, driving the create failure path.
+        static let failingFolderName = UITestFixture.failingFolderName
         /// A folder used as a long pressable favorite target (folders only can be favorited).
-        static let folderAlt = "Photos"
-        /// A sign in name the mocked login answers with "send a code" (mirrors
-        /// `UITestSupport.secondFactorIdentifier`), the code and recovery code it then accepts.
-        static let secondFactorIdentifier = "phillip.2fa"
-        /// A sign in name the mocked login refuses as wrong credentials (mirrors
-        /// `UITestSupport.rejectedIdentifier`).
-        static let rejectedIdentifier = "phillip.rejected"
-        static let validCode = "123456"
-        static let wrongCode = "000000"
-        static let validRecoveryCode = "AAAAA-BBBBB"
-        /// The password the mocked account routes accept (mirrors `UITestSupport.accountPassword`).
-        static let accountPassword = "hunter2"
+        static let folderAlt = UITestFixture.Folder.photos.name
+        typealias Credential = UITestFixture.Credential
+        /// A sign in name the mocked login answers with "send a code", the code and recovery code
+        /// it then accepts.
+        static let secondFactorIdentifier = Credential.secondFactorUser.rawValue
+        /// A sign in name the mocked login refuses as wrong credentials.
+        static let rejectedIdentifier = Credential.rejectedUser.rawValue
+        static let validCode = Credential.validCode.rawValue
+        static let wrongCode = Credential.wrongCode.rawValue
+        static let validRecoveryCode = Credential.recoveryCode.rawValue
+        /// The password the mocked account routes accept.
+        static let accountPassword = Credential.password.rawValue
+        static let wrongPassword = Credential.wrongPassword.rawValue
         /// The server address and sign in name the mocked login accepts.
-        static let serverHost = "nextexplorer.example.com"
-        static let accountIdentifier = "phillip@example.com"
+        static let serverHost = UITestFixture.Host.primary.rawValue
+        static let accountIdentifier = UITestFixture.SignedInAccount.email.rawValue
         /// A second server, for adding another account.
-        static let otherServerHost = "other.example.com"
-        static let wrongPassword = "not-the-password"
+        static let otherServerHost = UITestFixture.Host.other.rawValue
     }
 
     enum Auth: String {
@@ -215,21 +214,6 @@ class UITestCase: XCTestCase {
     /// zoom), so their code still runs but finishes near instantly. 0 leaves them at real time.
     static let fastAnimationSpeed: Double = 12
 
-    /// The launch environment the app's `UITestSupport` reads (mirrors its keys).
-    private enum LaunchKey {
-        static let mock = "UITEST_MOCK"
-        static let auth = "UITEST_AUTH"
-        static let scenario = "UITEST_SCENARIO"
-        static let animationSpeed = "UITEST_ANIM_SPEED"
-        static let disableAnimations = "UITEST_DISABLE_ANIMATIONS"
-        static let orientation = "UITEST_ORIENTATION"
-        static let legacyDownloads = "UITEST_LEGACY_DOWNLOADS"
-        static let searchOffline = "UITEST_SEARCH_OFFLINE"
-        static let offlineLaunch = "UITEST_OFFLINE_LAUNCH"
-        static let on = "1"
-        static let landscape = "landscape"
-    }
-
     /// How far one `scrollTo` step scrolls on the Mac, which has no swipe.
     static let macScrollStep: CGFloat = 300
 
@@ -241,32 +225,40 @@ class UITestCase: XCTestCase {
         landscape: Bool = false,
         legacyDownloads: Bool = false,
         searchOffline: Bool = false,
-        offlineLaunch: Bool = false
+        offlineLaunch: Bool = false,
+        failing: Set<UITestArea> = [],
+        empty: Set<UITestArea> = []
     ) -> XCUIApplication {
         let app = XCUIApplication()
+        if !failing.isEmpty {
+            app.launchEnvironment[UITestLaunchKey.failingAreas.rawValue] = UITestArea.launchValue(failing)
+        }
+        if !empty.isEmpty {
+            app.launchEnvironment[UITestLaunchKey.emptyAreas.rawValue] = UITestArea.launchValue(empty)
+        }
         if legacyDownloads {
-            app.launchEnvironment[LaunchKey.legacyDownloads] = LaunchKey.on
+            app.launchEnvironment[UITestLaunchKey.legacyDownloads.rawValue] = UITestLaunchKey.on
         }
         if searchOffline {
-            app.launchEnvironment[LaunchKey.searchOffline] = LaunchKey.on
+            app.launchEnvironment[UITestLaunchKey.searchOffline.rawValue] = UITestLaunchKey.on
         }
         if offlineLaunch {
-            app.launchEnvironment[LaunchKey.offlineLaunch] = LaunchKey.on
+            app.launchEnvironment[UITestLaunchKey.offlineLaunch.rawValue] = UITestLaunchKey.on
         }
-        app.launchEnvironment[LaunchKey.mock] = LaunchKey.on
-        app.launchEnvironment[LaunchKey.auth] = auth.rawValue
-        app.launchEnvironment[LaunchKey.scenario] = scenario.rawValue
+        app.launchEnvironment[UITestLaunchKey.mock.rawValue] = UITestLaunchKey.on
+        app.launchEnvironment[UITestLaunchKey.auth.rawValue] = auth.rawValue
+        app.launchEnvironment[UITestLaunchKey.scenario.rawValue] = scenario.rawValue
         // UIKit animations (pushes, sheets, alerts, context menus) are always off. A context menu
         // animating beside a sped up window never reported done, so XCUITest waited its full
         // minute for the app to idle on every menu open and close (146 s for a rename test, 25 s
         // now). SwiftUI animations still run, sped up, so their code is exercised. iPhone Duo (two
         // screens) skips the speed up: there a sped up layer left the idle wait hanging too.
-        app.launchEnvironment[LaunchKey.disableAnimations] = LaunchKey.on
+        app.launchEnvironment[UITestLaunchKey.disableAnimations.rawValue] = UITestLaunchKey.on
         if animationSpeed > 0, XCUIScreen.screens.count < 2 {
-            app.launchEnvironment[LaunchKey.animationSpeed] = String(animationSpeed)
+            app.launchEnvironment[UITestLaunchKey.animationSpeed.rawValue] = String(animationSpeed)
         }
         if landscape {
-            app.launchEnvironment[LaunchKey.orientation] = LaunchKey.landscape
+            app.launchEnvironment[UITestLaunchKey.orientation.rawValue] = UITestLaunchKey.landscape
         }
         // Force English so localized visible text the tests match on is deterministic.
         app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
