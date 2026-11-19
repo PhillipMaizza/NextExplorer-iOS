@@ -66,6 +66,7 @@ struct SearchFilterChips: View {
         .buttonStyle(.plain)
         .hapticFeedback(.selection, trigger: isSelected)
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Browse.filterChip)
     }
 }
 

@@ -71,6 +71,8 @@ public enum AccessibilityIdentifiers {
         public static let moreMenu = "browse.moreMenu"
         public static let gridSettingsButton = "browse.gridSettingsButton"
         public static let trashButton = "browse.trashButton"
+        /// Every type chip over a folder or search results, so row lookups can skip a chip named like a folder.
+        public static let filterChip = "browse.filterChip"
     }
 
     public enum Settings {

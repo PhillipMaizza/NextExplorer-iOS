@@ -239,9 +239,14 @@ struct BrowseScreen {
     }
 
     /// The tappable/long-pressable row button (its label bundles name + metadata, so match on a
-    /// substring). Long press this, not the name label, to open the row's context menu.
+    /// substring). Long press this, not the name label, to open the row's context menu. Type chips
+    /// are skipped: the Documents chip would otherwise match the Documents folder.
     func row(_ name: String) -> XCUIElement {
-        app.buttons.containing(name)
+        app.buttons.matching(NSPredicate(
+            format: "label CONTAINS[c] %@ AND identifier != %@",
+            name,
+            AccessibilityIdentifiers.Browse.filterChip
+        )).firstMatch
     }
 
     /// New folder flow. Menu and sheet buttons are matched by label (icon identifiers shadow them).
