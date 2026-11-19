@@ -11,6 +11,11 @@
         private typealias Person = UITestFixture.ManagedUser
         private typealias Entry = UITestFixture.TrashEntry
 
+        private enum Constants {
+            /// Every row of the Settings sidebar, the most arrow presses any pane needs.
+            static let settingsSidebarRows = 17
+        }
+
         private func open(_ folder: Folder, in app: XCUIApplication) {
             let row = text(folder.name, in: app)
             XCTAssertTrue(row.waitToAppear(), "\(folder) is listed")
@@ -22,11 +27,27 @@
             app.staticTexts.showingPart(part)
         }
 
-        /// The Settings window on one of its panes, picked in its sidebar.
+        /// Whether the open context menu offers `title`: the menu bar's Edit menu always holds a Delete
+        /// of its own, so only an item beyond the menu bar's count is the context menu's.
+        private func contextMenuOffers(_ title: String, in app: XCUIApplication) -> Bool {
+            let titled = NSPredicate(format: "title == %@ AND enabled == true", title)
+            return app.menuItems.matching(titled).count > app.menuBars.menuItems.matching(titled).count
+        }
+
+        /// The Settings window on one of its panes, picked in its sidebar. Sidebar rows read their
+        /// names as a value, and the lower ones only exist once scrolled to, so the arrow keys walk
+        /// down from General, which is always in view.
         private func openSettingsPane(_ title: String, in app: XCUIApplication) {
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
-            let pane = app.windows.descendants(matching: .any).titled(title)
-            openSettingsWindow(in: app, until: pane)
+            let general = text(L10n.Settings.sectionGeneral, in: app)
+            openSettingsWindow(in: app, until: general)
+            general.click()
+            let pane = text(title, in: app)
+            var steps = 0
+            while !(pane.exists && pane.isHittable), steps < Constants.settingsSidebarRows {
+                app.typeKey(XCUIKeyboardKey.downArrow, modifierFlags: [])
+                steps += 1
+            }
             pane.click()
         }
 
@@ -39,8 +60,7 @@
             XCTAssertTrue(handbook.waitToAppear())
             openMenu({ handbook.rightClick() }, until: app.menuItems[L10n.Browse.open])
             for action in [L10n.Browse.actionRename, L10n.Browse.actionDelete, L10n.Trash.moveToTrash] {
-                let item = app.menuItems[action]
-                XCTAssertFalse(item.exists && item.isEnabled, "Nothing in a read only folder offers \(action)")
+                XCTAssertFalse(contextMenuOffers(action, in: app), "Nothing in a read only folder offers \(action)")
             }
             app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
         }
@@ -150,8 +170,21 @@
         func testTheVersionsPaneListsEveryFileWithAHistory() {
             let app = launchApp()
             openSettingsPane(L10n.VersionedFiles.navigationTitle, in: app)
+            // The main window behind lists some of the same names, so look only in the Settings window.
+            let pane = app.windows.containing(NSPredicate(
+                format: "value == %@",
+                L10n.Settings.sectionGeneral
+            )).firstMatch
+            var previous: XCUIElement?
             for file in UITestFixture.VersionedFile.allCases {
-                XCTAssertTrue(shows(file.file.name, in: app).waitToAppear(), "\(file) is listed")
+                // Each file is one disclosure button whose label joins its name and facts.
+                let row = pane.buttons.showingPart(file.file.name)
+                // Rows below the fold of a short window come in on scroll: scroll from the row above.
+                if let previous, !row.appears(within: UITestTimeout.short) {
+                    previous.scroll(byDeltaX: 0, deltaY: -Self.macScrollStep)
+                }
+                XCTAssertTrue(row.waitToAppear(), "\(file) is listed")
+                previous = row
             }
         }
 

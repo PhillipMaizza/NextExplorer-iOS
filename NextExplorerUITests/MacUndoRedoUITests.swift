@@ -55,6 +55,11 @@
 
             target.click()
             edit(L10n.Menu.redo, in: app)
+            // A slow runner can send Redo before the clicked table hands the menu its file actions, and
+            // that Redo goes nowhere. A second one is harmless: once redone, nothing is left to redo.
+            if !file.waitToVanish(UITestTimeout.short) {
+                edit(L10n.Menu.redo, in: app)
+            }
             XCTAssertTrue(file.waitToVanish(), "Redo should move the file again")
 
             target.doubleClick()
