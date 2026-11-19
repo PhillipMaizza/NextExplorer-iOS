@@ -2,15 +2,15 @@
     import CoreModels
     import FilesClient
     import Foundation
+    import NetworkClient
 
     extension UITestSupport {
-        /// The account password the mocked two factor and token routes accept. Mirrored by
-        /// `Fixture.accountPassword`.
-        static let accountPassword = "hunter2"
+        /// The account password the mocked two factor and token routes accept.
+        static let accountPassword = UITestFixture.Credential.password.rawValue
         /// The message the mocked routes answer a wrong code or password with, as the server does.
         static let wrongCodeMessage = "Invalid code"
         static let wrongPasswordMessage = "That password is not right."
-        static let twoFactorSecret = "JBSWY3DPEHPK3PXP"
+        static let twoFactorSecret = UITestFixture.Credential.twoFactorSecret.rawValue
         static let recoveryCodes = ["2HSMP-G9ZSJ", "K3QWE-7RTYU", "ABCDE-FGHJK", "MNPQR-STUVW"]
 
         /// The signed in account's second factor and API tokens, kept in memory for one app launch so
@@ -76,8 +76,14 @@
 
         static func installAccountMocks(into client: inout FilesClient) {
             let account = MockAccountStore()
-            let wrongCode = FilesClientError.serverMessage(statusCode: 401, message: wrongCodeMessage)
-            let wrongPassword = FilesClientError.serverMessage(statusCode: 401, message: wrongPasswordMessage)
+            let wrongCode = FilesClientError.serverMessage(
+                statusCode: HTTPStatus.unauthorized.rawValue,
+                message: wrongCodeMessage
+            )
+            let wrongPassword = FilesClientError.serverMessage(
+                statusCode: HTTPStatus.unauthorized.rawValue,
+                message: wrongPasswordMessage
+            )
 
             client.fetchTwoFactorStatus = { _ in account.twoFactorStatus }
             client.beginTwoFactorSetup = { _ in
@@ -108,7 +114,7 @@
             client.renameAPIToken = { _, id, name in
                 guard let token = account.renameToken(id: id, to: name) else {
                     throw FilesClientError.serverMessage(
-                        statusCode: 404,
+                        statusCode: HTTPStatus.notFound.rawValue,
                         message: "There is no such token on this account."
                     )
                 }
