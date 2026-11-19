@@ -84,9 +84,23 @@ public enum AccessibilityIdentifiers {
         public static let apiTokensRow = "settings.apiTokensRow"
         public static let apiTokenNameField = "settings.apiTokenNameField"
         public static let twoFactorCodeField = "settings.twoFactorCodeField"
-        /// A root row that opens one section page ("general", "offline", ...).
-        public static func page(_ name: String) -> String {
-            "settings.page." + name
+        /// The section pages the Settings root opens.
+        public enum Page: String, CaseIterable, Sendable {
+            case general
+            case display
+            case sharedFiles
+            case storage
+            case offline
+            case administration
+            case users
+            case support
+            case legal
+            case licenses
+        }
+
+        /// A root row that opens one section page.
+        public static func page(_ page: Page) -> String {
+            "settings.page." + page.rawValue
         }
     }
 }

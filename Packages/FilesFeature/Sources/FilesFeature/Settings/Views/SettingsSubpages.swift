@@ -85,16 +85,16 @@ enum SettingsMenuEntry: CaseIterable {
         switch self {
         // Kept from when API Tokens was its own row, so the token UI tests still find it.
         case .developers: AccessibilityIdentifiers.Settings.apiTokensRow
-        case .general: AccessibilityIdentifiers.Settings.page("general")
-        case .display: AccessibilityIdentifiers.Settings.page("display")
-        case .sharedFiles: AccessibilityIdentifiers.Settings.page("sharedFiles")
-        case .storage: AccessibilityIdentifiers.Settings.page("storage")
-        case .offline: AccessibilityIdentifiers.Settings.page("offline")
-        case .administration: AccessibilityIdentifiers.Settings.page("administration")
-        case .users: AccessibilityIdentifiers.Settings.page("users")
-        case .support: AccessibilityIdentifiers.Settings.page("support")
-        case .legal: AccessibilityIdentifiers.Settings.page("legal")
-        case .licenses: AccessibilityIdentifiers.Settings.page("licenses")
+        case .general: AccessibilityIdentifiers.Settings.page(.general)
+        case .display: AccessibilityIdentifiers.Settings.page(.display)
+        case .sharedFiles: AccessibilityIdentifiers.Settings.page(.sharedFiles)
+        case .storage: AccessibilityIdentifiers.Settings.page(.storage)
+        case .offline: AccessibilityIdentifiers.Settings.page(.offline)
+        case .administration: AccessibilityIdentifiers.Settings.page(.administration)
+        case .users: AccessibilityIdentifiers.Settings.page(.users)
+        case .support: AccessibilityIdentifiers.Settings.page(.support)
+        case .legal: AccessibilityIdentifiers.Settings.page(.legal)
+        case .licenses: AccessibilityIdentifiers.Settings.page(.licenses)
         }
     }
 
