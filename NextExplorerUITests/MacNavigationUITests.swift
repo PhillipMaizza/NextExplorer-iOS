@@ -104,10 +104,10 @@
             app.typeKey(Constants.goToFolderKey, modifierFlags: [.command, .shift])
             let field = app.textFields[L10n.Menu.goToFolderTitle]
             XCTAssertTrue(field.waitToAppear(), "⇧⌘G should ask for a folder")
-            field.clearAndType("\(Fixture.folder)/\(Fixture.folderAlt)")
+            field.clearAndType(UITestFixture.Folder.invoices.path)
             app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
             XCTAssertTrue(
-                windowTitled(Fixture.folderAlt, in: app).waitToAppear(),
+                windowTitled(UITestFixture.Folder.invoices.name, in: app).waitToAppear(),
                 "Go to Folder should open the nested folder"
             )
 

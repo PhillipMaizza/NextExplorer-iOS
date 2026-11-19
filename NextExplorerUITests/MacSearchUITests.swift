@@ -76,8 +76,8 @@
             XCTAssertTrue(panelField(in: app).waitToVanish(), "Choosing a result should close the panel")
             XCTAssertTrue(backButton(in: app).waitToAppear(), "Opening the result should push the folder")
             XCTAssertTrue(
-                text(Fixture.file, in: app).waitToAppear(),
-                "The opened folder should load its files, not stay on the skeleton"
+                text(UITestFixture.Folder.cameraRoll.name, in: app).waitToAppear(),
+                "The opened folder should load what it holds, not stay on the skeleton"
             )
         }
 
