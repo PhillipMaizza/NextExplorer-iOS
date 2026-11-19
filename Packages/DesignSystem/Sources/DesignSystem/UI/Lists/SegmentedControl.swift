@@ -1,20 +1,25 @@
 import SwiftUI
 
 private enum SegmentedControlConstants {
-    static let height: CGFloat = .size40
-    /// Softens the track's hairline border so it defines the control without reading as a hard line.
-    static let borderOpacity: Double = 0.5
+    static let segmentHeight: CGFloat = 30
+    static let trackInset: CGFloat = 2
+    /// Track tint over whatever surface the control sits on, so it reads on the background and in sheets.
+    static let trackOpacity: Double = 0.07
+    /// The dark mode pill: a lighter step above the track instead of the surface color.
+    static let darkPillOpacity: Double = 0.22
+    static let pillShadowAlpha: Double = 0.18
 }
 
-/// A pill-shaped segmented control: accent-filled selected segment on a `backgroundSecondary`
-/// track. Generic over any `Hashable` option set (e.g. an enum of modes). The accent pill is a
-/// single view that slides between segments via `matchedGeometryEffect` rather than each
-/// segment independently fading its own background in/out.
+/// A compact pill shaped segmented control: a raised neutral pill on a softly tinted track.
+/// Generic over any `Hashable` option set (e.g. an enum of modes). The selected pill is a single
+/// view that slides between segments via `matchedGeometryEffect` rather than each segment
+/// independently fading its own background in and out.
 public struct DSSegmentedControl<Option: Hashable>: View {
     private let options: [Option]
     private let label: (Option) -> String
     @Binding private var selection: Option
     @Namespace private var pillNamespace
+    @Environment(\.colorScheme) private var colorScheme
     private static var pillID: String {
         "pill"
     }
@@ -64,22 +69,32 @@ public struct DSSegmentedControl<Option: Hashable>: View {
         }
     #endif
 
+    private var pillFill: Color {
+        colorScheme == .dark
+            ? Color.primaryDS.opacity(SegmentedControlConstants.darkPillOpacity)
+            : Color.backgroundSecondary
+    }
+
     private var pillControl: some View {
-        HStack(spacing: .space4) {
+        HStack(spacing: 0) {
             ForEach(options, id: \.self) { option in
                 let isSelected = option == selection
                 Button {
                     selection = option
                 } label: {
                     Text(label(option))
-                        .type(.body2(isSelected ? .bold : .regular))
-                        .foregroundStyle(Color.primaryDS)
+                        .type(.body3(.semibold), style: isSelected ? .primaryOnSurface : .secondary)
+                        .lineLimit(1)
                         .frame(maxWidth: .infinity)
-                        .frame(height: SegmentedControlConstants.height)
+                        .frame(height: SegmentedControlConstants.segmentHeight)
                         .background {
                             if isSelected {
                                 RoundedRectangle(cornerRadius: .radiusFull)
-                                    .fill(Color.accent)
+                                    .fill(pillFill)
+                                    .elevation(
+                                        colorScheme == .dark ? .level0 : .level1,
+                                        alpha: SegmentedControlConstants.pillShadowAlpha
+                                    )
                                     .matchedGeometryEffect(id: Self.pillID, in: pillNamespace)
                             }
                         }
@@ -90,16 +105,10 @@ public struct DSSegmentedControl<Option: Hashable>: View {
                 .accessibilityAddTraits(isSelected ? [.isSelected] : [])
             }
         }
-        .padding(.space4)
-        .background(RoundedRectangle(cornerRadius: .radiusFull).fill(Color.backgroundSecondary))
-        // Hairline border (matching the input fields) so the track stays legible even on a
-        // same colored surface, e.g. the iPad login card, which is also backgroundSecondary.
-        .overlay(
+        .padding(SegmentedControlConstants.trackInset)
+        .background(
             RoundedRectangle(cornerRadius: .radiusFull)
-                .stroke(
-                    Color.borderPrimary.opacity(SegmentedControlConstants.borderOpacity),
-                    lineWidth: .borderWidthHairline
-                )
+                .fill(Color.primaryDS.opacity(SegmentedControlConstants.trackOpacity))
         )
         .animation(
             DSMotion.controlMorph,
