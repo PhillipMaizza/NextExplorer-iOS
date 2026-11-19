@@ -250,7 +250,6 @@ shared.metaExpiration	Expiration
 shared.metaSharedBy	Shared by
 shared.metaSharedWith	Shared with
 shared.anyoneWithLink	Anyone with link
-shared.linkMode	Link mode
 shared.actionShareLink	Share link
 shared.actionFolderLink	Folder link
 shared.actionFileLink	File link
@@ -266,6 +265,43 @@ shared.itemCount#one	%lld item
 shared.itemCount#other	%lld items
 # A parent folder and the folder inside it on a Shared row, e.g. Work › Roadmap.
 shared.pathStep	%1$@ › %2$@
+common.on	On
+common.off	Off
+common.none	None
+shared.copyLink	Copy link
+shared.copyShareLink	Copy share link
+shared.copyFolderLink	Copy folder link
+shared.copyFileLink	Copy file link
+shared.moreLinks	More links
+shared.setNewDate	Set a new date
+shared.noAccountNeeded	No account needed to open it
+shared.metaExpires	Expires
+shared.metaExpired	Expired
+shared.folderLinkOpensAs	Folder link opens as
+shared.fileLinkOpensAs	File link opens as
+shared.metaLabel	Label
+shared.metaShared	Shared
+shared.metaLastOpened	Last opened
+shared.metaDownloads	Downloads
+shared.metaReceived	Received
+shared.expiredFooter	This link stopped working on %@. Set a new date to bring it back.
+shared.controlsShare	%@ controls this share.
+shared.listFooter	Tap a share for everything about it. The link button copies without opening.
+shared.publicLink	Public link
+shared.people	People
+shared.canEdit	can edit
+shared.viewOnly	view only
+shared.statusPassword	password
+shared.neverExpires	never expires
+shared.expiresUntil	until %@
+shared.fromSharer	From %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld share
+shared.shareCount#other	%lld shares
+shared.peopleCount#one	%lld person
+shared.peopleCount#other	%lld people
+shared.downloadCount#one	%lld download
+shared.downloadCount#other	%lld downloads
 
 # ---- create share ----
 createShare.title	Create Share Link

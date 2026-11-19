@@ -204,6 +204,43 @@ shared.daysLeft#other	Noch %lld Tage
 shared.itemCount#one	%lld Objekt
 shared.itemCount#other	%lld Objekte
 shared.pathStep	%1$@ › %2$@
+common.on	Ein
+common.off	Aus
+common.none	Keine
+shared.copyLink	Link kopieren
+shared.copyShareLink	Freigabelink kopieren
+shared.copyFolderLink	Ordnerlink kopieren
+shared.copyFileLink	Dateilink kopieren
+shared.moreLinks	Weitere Links
+shared.setNewDate	Neues Datum festlegen
+shared.noAccountNeeded	Zum Öffnen ist kein Konto nötig
+shared.metaExpires	Läuft ab
+shared.metaExpired	Abgelaufen
+shared.folderLinkOpensAs	Ordnerlink öffnet als
+shared.fileLinkOpensAs	Dateilink öffnet als
+shared.metaLabel	Bezeichnung
+shared.metaShared	Geteilt
+shared.metaLastOpened	Zuletzt geöffnet
+shared.metaDownloads	Downloads
+shared.metaReceived	Erhalten
+shared.expiredFooter	Dieser Link funktioniert seit %@ nicht mehr. Lege ein neues Datum fest, um ihn wieder zu aktivieren.
+shared.controlsShare	%@ verwaltet diese Freigabe.
+shared.listFooter	Tippe auf eine Freigabe, um alles darüber zu sehen. Die Linktaste kopiert, ohne zu öffnen.
+shared.publicLink	Öffentlicher Link
+shared.people	Personen
+shared.canEdit	kann bearbeiten
+shared.viewOnly	nur ansehen
+shared.statusPassword	Passwort
+shared.neverExpires	läuft nie ab
+shared.expiresUntil	bis %@
+shared.fromSharer	Von %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld Freigabe
+shared.shareCount#other	%lld Freigaben
+shared.peopleCount#one	%lld Person
+shared.peopleCount#other	%lld Personen
+shared.downloadCount#one	%lld Download
+shared.downloadCount#other	%lld Downloads
 shared.badgeExpired	abgelaufen
 shared.emptyByMe	Teile eine Datei oder einen Ordner, um den Link hier zu sehen.
 shared.emptyWithMe	Links, die andere mit dir teilen, erscheinen hier.
@@ -216,7 +253,6 @@ shared.metaExpiration	Ablauf
 shared.metaSharedBy	Geteilt von
 shared.metaSharedWith	Geteilt mit
 shared.anyoneWithLink	Jeder mit dem Link
-shared.linkMode	Linkmodus
 shared.actionShareLink	Link teilen
 shared.actionFolderLink	Ordnerlink
 shared.actionFileLink	Dateilink

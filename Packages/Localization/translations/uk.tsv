@@ -225,6 +225,49 @@ shared.itemCount#few	%lld об’єкти
 shared.itemCount#many	%lld об’єктів
 shared.itemCount#other	%lld об’єкта
 shared.pathStep	%1$@ › %2$@
+common.on	Увімк.
+common.off	Вимк.
+common.none	Немає
+shared.copyLink	Скопіювати посилання
+shared.copyShareLink	Скопіювати посилання доступу
+shared.copyFolderLink	Скопіювати посилання на папку
+shared.copyFileLink	Скопіювати посилання на файл
+shared.moreLinks	Інші посилання
+shared.setNewDate	Задати нову дату
+shared.noAccountNeeded	Для відкриття не потрібен обліковий запис
+shared.metaExpires	Спливає
+shared.metaExpired	Сплив
+shared.folderLinkOpensAs	Посилання на папку відкривається як
+shared.fileLinkOpensAs	Посилання на файл відкривається як
+shared.metaLabel	Мітка
+shared.metaShared	Надіслано
+shared.metaLastOpened	Востаннє відкрито
+shared.metaDownloads	Завантаження
+shared.metaReceived	Отримано
+shared.expiredFooter	Це посилання перестало працювати %@. Задайте нову дату, щоб повернути його.
+shared.controlsShare	%@ керує цим доступом.
+shared.listFooter	Торкніться посилання, щоб побачити все про нього. Кнопка посилання копіює без відкриття.
+shared.publicLink	Публічне посилання
+shared.people	Люди
+shared.canEdit	може редагувати
+shared.viewOnly	лише перегляд
+shared.statusPassword	пароль
+shared.neverExpires	безстроково
+shared.expiresUntil	до %@
+shared.fromSharer	Від %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld посилання
+shared.shareCount#few	%lld посилання
+shared.shareCount#many	%lld посилань
+shared.shareCount#other	%lld посилання
+shared.peopleCount#one	%lld особа
+shared.peopleCount#few	%lld особи
+shared.peopleCount#many	%lld осіб
+shared.peopleCount#other	%lld особи
+shared.downloadCount#one	%lld завантаження
+shared.downloadCount#few	%lld завантаження
+shared.downloadCount#many	%lld завантажень
+shared.downloadCount#other	%lld завантаження
 shared.badgeExpired	термін дії минув
 shared.emptyByMe	Поділіться файлом або папкою, щоб побачити тут посилання.
 shared.emptyWithMe	Посилання, якими з вами діляться інші, з’являються тут.
@@ -237,7 +280,6 @@ shared.metaExpiration	Термін дії
 shared.metaSharedBy	Від кого
 shared.metaSharedWith	Кому
 shared.anyoneWithLink	Будь-хто з посиланням
-shared.linkMode	Режим посилання
 shared.actionShareLink	Посилання для спільного доступу
 shared.actionFolderLink	Посилання на папку
 shared.actionFileLink	Посилання на файл

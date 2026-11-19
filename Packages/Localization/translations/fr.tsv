@@ -204,6 +204,43 @@ shared.daysLeft#other	%lld jours restants
 shared.itemCount#one	%lld élément
 shared.itemCount#other	%lld éléments
 shared.pathStep	%1$@ › %2$@
+common.on	Activé
+common.off	Désactivé
+common.none	Aucun
+shared.copyLink	Copier le lien
+shared.copyShareLink	Copier le lien de partage
+shared.copyFolderLink	Copier le lien du dossier
+shared.copyFileLink	Copier le lien du fichier
+shared.moreLinks	Plus de liens
+shared.setNewDate	Choisir une nouvelle date
+shared.noAccountNeeded	Aucun compte requis pour l’ouvrir
+shared.metaExpires	Expire le
+shared.metaExpired	Expiré
+shared.folderLinkOpensAs	Le lien du dossier s’ouvre en
+shared.fileLinkOpensAs	Le lien du fichier s’ouvre en
+shared.metaLabel	Libellé
+shared.metaShared	Partagé
+shared.metaLastOpened	Dernière ouverture
+shared.metaDownloads	Téléchargements
+shared.metaReceived	Reçu
+shared.expiredFooter	Ce lien ne fonctionne plus depuis le %@. Choisissez une nouvelle date pour le réactiver.
+shared.controlsShare	%@ gère ce partage.
+shared.listFooter	Touchez un partage pour tout voir. Le bouton de lien copie sans ouvrir.
+shared.publicLink	Lien public
+shared.people	Personnes
+shared.canEdit	peut modifier
+shared.viewOnly	lecture seule
+shared.statusPassword	mot de passe
+shared.neverExpires	n’expire jamais
+shared.expiresUntil	jusqu’au %@
+shared.fromSharer	De %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld partage
+shared.shareCount#other	%lld partages
+shared.peopleCount#one	%lld personne
+shared.peopleCount#other	%lld personnes
+shared.downloadCount#one	%lld téléchargement
+shared.downloadCount#other	%lld téléchargements
 shared.badgeExpired	expiré
 shared.emptyByMe	Partagez un fichier ou un dossier pour voir son lien ici.
 shared.emptyWithMe	Les liens que d'autres partagent avec vous apparaissent ici.
@@ -216,7 +253,6 @@ shared.metaExpiration	Expiration
 shared.metaSharedBy	Partagé par
 shared.metaSharedWith	Partagé avec
 shared.anyoneWithLink	Toute personne disposant du lien
-shared.linkMode	Mode de lien
 shared.actionShareLink	Partager le lien
 shared.actionFolderLink	Lien du dossier
 shared.actionFileLink	Lien du fichier

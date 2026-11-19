@@ -196,6 +196,40 @@ shared.filterAnyone	누구나
 shared.daysLeft#other	%lld일 남음
 shared.itemCount#other	항목 %lld개
 shared.pathStep	%1$@ › %2$@
+common.on	켬
+common.off	끔
+common.none	없음
+shared.copyLink	링크 복사
+shared.copyShareLink	공유 링크 복사
+shared.copyFolderLink	폴더 링크 복사
+shared.copyFileLink	파일 링크 복사
+shared.moreLinks	추가 링크
+shared.setNewDate	새 날짜 설정
+shared.noAccountNeeded	열 때 계정이 필요 없음
+shared.metaExpires	만료
+shared.metaExpired	만료됨
+shared.folderLinkOpensAs	폴더 링크 열기 방식
+shared.fileLinkOpensAs	파일 링크 열기 방식
+shared.metaLabel	레이블
+shared.metaShared	공유일
+shared.metaLastOpened	마지막 열람
+shared.metaDownloads	다운로드
+shared.metaReceived	받은 날짜
+shared.expiredFooter	이 링크는 %@에 작동이 중지되었습니다. 새 날짜를 설정하면 다시 사용할 수 있습니다.
+shared.controlsShare	이 공유는 %@ 님이 관리합니다.
+shared.listFooter	공유를 탭하면 모든 정보를 볼 수 있습니다. 링크 버튼은 열지 않고 복사합니다.
+shared.publicLink	공개 링크
+shared.people	사용자
+shared.canEdit	편집 가능
+shared.viewOnly	보기 전용
+shared.statusPassword	암호
+shared.neverExpires	만료 없음
+shared.expiresUntil	%@까지
+shared.fromSharer	%@ 님이 보냄
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#other	공유 %lld개
+shared.peopleCount#other	%lld명
+shared.downloadCount#other	다운로드 %lld회
 shared.badgeExpired	만료됨
 shared.emptyByMe	파일이나 폴더를 공유하면 여기에 링크가 표시됩니다.
 shared.emptyWithMe	다른 사람이 나와 공유한 링크가 여기에 표시됩니다.
@@ -208,7 +242,6 @@ shared.metaExpiration	만료
 shared.metaSharedBy	공유한 사람
 shared.metaSharedWith	공유 대상
 shared.anyoneWithLink	링크가 있는 모든 사용자
-shared.linkMode	링크 모드
 shared.actionShareLink	링크 공유
 shared.actionFolderLink	폴더 링크
 shared.actionFileLink	파일 링크

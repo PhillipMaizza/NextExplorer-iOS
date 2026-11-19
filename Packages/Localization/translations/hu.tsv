@@ -209,6 +209,43 @@ shared.daysLeft#other	%lld nap van hátra
 shared.itemCount#one	%lld elem
 shared.itemCount#other	%lld elem
 shared.pathStep	%1$@ › %2$@
+common.on	Be
+common.off	Ki
+common.none	Nincs
+shared.copyLink	Link másolása
+shared.copyShareLink	Megosztási link másolása
+shared.copyFolderLink	Mappalink másolása
+shared.copyFileLink	Fájllink másolása
+shared.moreLinks	További linkek
+shared.setNewDate	Új dátum beállítása
+shared.noAccountNeeded	A megnyitásához nem kell fiók
+shared.metaExpires	Lejár
+shared.metaExpired	Lejárt
+shared.folderLinkOpensAs	A mappalink így nyílik meg
+shared.fileLinkOpensAs	A fájllink így nyílik meg
+shared.metaLabel	Címke
+shared.metaShared	Megosztva
+shared.metaLastOpened	Utoljára megnyitva
+shared.metaDownloads	Letöltések
+shared.metaReceived	Fogadva
+shared.expiredFooter	Ez a link %@ óta nem működik. Állíts be új dátumot a visszaállításhoz.
+shared.controlsShare	%@ kezeli ezt a megosztást.
+shared.listFooter	Koppints egy megosztásra a részletekért. A link gomb megnyitás nélkül másol.
+shared.publicLink	Nyilvános link
+shared.people	Személyek
+shared.canEdit	szerkesztheti
+shared.viewOnly	csak megtekintés
+shared.statusPassword	jelszó
+shared.neverExpires	nem jár le
+shared.expiresUntil	eddig: %@
+shared.fromSharer	Feladó: %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld megosztás
+shared.shareCount#other	%lld megosztás
+shared.peopleCount#one	%lld személy
+shared.peopleCount#other	%lld személy
+shared.downloadCount#one	%lld letöltés
+shared.downloadCount#other	%lld letöltés
 shared.badgeExpired	lejárt
 shared.emptyByMe	Ossza meg egy fájlt vagy mappát, hogy itt lássa a hivatkozását.
 shared.emptyWithMe	A mások által Önnel megosztott hivatkozások itt jelennek meg.
@@ -221,7 +258,6 @@ shared.metaExpiration	Lejárat
 shared.metaSharedBy	Megosztotta
 shared.metaSharedWith	Megosztva vele
 shared.anyoneWithLink	Bárki, aki rendelkezik a hivatkozással
-shared.linkMode	Hivatkozás módja
 shared.actionShareLink	Megosztási hivatkozás
 shared.actionFolderLink	Mappahivatkozás
 shared.actionFileLink	Fájlhivatkozás

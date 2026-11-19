@@ -11,6 +11,9 @@
             /// Shared only with Lea, whose filter id is `person.u6`.
             static let leaOnly = "Contract draft.pdf"
             static let lea = "person.u6"
+            /// Two shares, so its sheet opens on a list; one of them carries this label.
+            static let twoShares = "Vacation Photos"
+            static let twoSharesLabel = "Family trip"
         }
 
         func testSharedByMeListShowsItems() {
@@ -58,6 +61,26 @@
             app.swipeUp()
             app.swipeUp()
             XCTAssertTrue(shared.expiredHeader.waitToAppear(), "Expired items sit under their own heading")
+        }
+
+        func testTappingAnItemOpensItsSheetAndTheListPushesAShare() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal)
+            let shared = SharedScreen(app: app)
+            selectTab(TabBar(app: app).shared, until: shared.item(ShareFixture.byMe))
+
+            shared.item(ShareFixture.byMe).tap()
+            XCTAssertTrue(shared.copyLinkButton.waitToAppear(), "A one share item opens straight on its page")
+            shared.closeSheetButton.tap()
+            XCTAssertTrue(shared.copyLinkButton.waitToVanish(), "Close dismisses the sheet")
+
+            shared.item(ShareFixture.twoShares).tap()
+            XCTAssertTrue(
+                shared.item(ShareFixture.twoSharesLabel).waitToAppear(),
+                "An item with two shares opens on their list"
+            )
+            XCTAssertFalse(shared.copyLinkButton.exists, "The list has no page level copy button")
+            shared.item(ShareFixture.twoSharesLabel).tap()
+            XCTAssertTrue(shared.copyLinkButton.waitToAppear(), "A row pushes its share page")
         }
 
         func testSharedEmptyState() {

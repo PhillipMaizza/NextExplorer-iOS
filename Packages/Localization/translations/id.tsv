@@ -201,6 +201,40 @@ shared.filterAnyone	Siapa saja
 shared.daysLeft#other	%lld hari lagi
 shared.itemCount#other	%lld item
 shared.pathStep	%1$@ › %2$@
+common.on	Aktif
+common.off	Mati
+common.none	Tidak ada
+shared.copyLink	Salin tautan
+shared.copyShareLink	Salin tautan berbagi
+shared.copyFolderLink	Salin tautan folder
+shared.copyFileLink	Salin tautan file
+shared.moreLinks	Tautan lainnya
+shared.setNewDate	Atur tanggal baru
+shared.noAccountNeeded	Tidak perlu akun untuk membukanya
+shared.metaExpires	Kedaluwarsa
+shared.metaExpired	Sudah kedaluwarsa
+shared.folderLinkOpensAs	Tautan folder dibuka sebagai
+shared.fileLinkOpensAs	Tautan file dibuka sebagai
+shared.metaLabel	Label
+shared.metaShared	Dibagikan
+shared.metaLastOpened	Terakhir dibuka
+shared.metaDownloads	Unduhan
+shared.metaReceived	Diterima
+shared.expiredFooter	Tautan ini berhenti berfungsi pada %@. Atur tanggal baru untuk mengaktifkannya lagi.
+shared.controlsShare	%@ mengelola berbagi ini.
+shared.listFooter	Ketuk berbagi untuk melihat semua detailnya. Tombol tautan menyalin tanpa membuka.
+shared.publicLink	Tautan publik
+shared.people	Orang
+shared.canEdit	dapat mengedit
+shared.viewOnly	hanya lihat
+shared.statusPassword	kata sandi
+shared.neverExpires	tidak pernah kedaluwarsa
+shared.expiresUntil	hingga %@
+shared.fromSharer	Dari %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#other	%lld berbagi
+shared.peopleCount#other	%lld orang
+shared.downloadCount#other	%lld unduhan
 shared.badgeExpired	kedaluwarsa
 shared.emptyByMe	Bagikan file atau folder untuk melihat tautannya di sini.
 shared.emptyWithMe	Tautan yang dibagikan orang lain kepada Anda muncul di sini.
@@ -213,7 +247,6 @@ shared.metaExpiration	Kedaluwarsa
 shared.metaSharedBy	Dibagikan oleh
 shared.metaSharedWith	Dibagikan kepada
 shared.anyoneWithLink	Siapa saja dengan tautan
-shared.linkMode	Mode tautan
 shared.actionShareLink	Tautan berbagi
 shared.actionFolderLink	Tautan folder
 shared.actionFileLink	Tautan file

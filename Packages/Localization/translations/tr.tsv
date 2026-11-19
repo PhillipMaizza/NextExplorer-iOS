@@ -209,6 +209,43 @@ shared.daysLeft#other	%lld gün kaldı
 shared.itemCount#one	%lld öge
 shared.itemCount#other	%lld öge
 shared.pathStep	%1$@ › %2$@
+common.on	Açık
+common.off	Kapalı
+common.none	Yok
+shared.copyLink	Bağlantıyı kopyala
+shared.copyShareLink	Paylaşım bağlantısını kopyala
+shared.copyFolderLink	Klasör bağlantısını kopyala
+shared.copyFileLink	Dosya bağlantısını kopyala
+shared.moreLinks	Diğer bağlantılar
+shared.setNewDate	Yeni tarih belirle
+shared.noAccountNeeded	Açmak için hesap gerekmez
+shared.metaExpires	Sona erer
+shared.metaExpired	Süresi doldu
+shared.folderLinkOpensAs	Klasör bağlantısı şöyle açılır
+shared.fileLinkOpensAs	Dosya bağlantısı şöyle açılır
+shared.metaLabel	Etiket
+shared.metaShared	Paylaşıldı
+shared.metaLastOpened	Son açılma
+shared.metaDownloads	İndirmeler
+shared.metaReceived	Alındı
+shared.expiredFooter	Bu bağlantı %@ tarihinde çalışmayı bıraktı. Geri getirmek için yeni bir tarih belirleyin.
+shared.controlsShare	Bu paylaşımı %@ yönetiyor.
+shared.listFooter	Her şeyi görmek için bir paylaşıma dokunun. Bağlantı düğmesi açmadan kopyalar.
+shared.publicLink	Herkese açık bağlantı
+shared.people	Kişiler
+shared.canEdit	düzenleyebilir
+shared.viewOnly	yalnızca görüntüleme
+shared.statusPassword	parola
+shared.neverExpires	süresi dolmaz
+shared.expiresUntil	%@ tarihine kadar
+shared.fromSharer	Gönderen: %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld paylaşım
+shared.shareCount#other	%lld paylaşım
+shared.peopleCount#one	%lld kişi
+shared.peopleCount#other	%lld kişi
+shared.downloadCount#one	%lld indirme
+shared.downloadCount#other	%lld indirme
 shared.badgeExpired	süresi doldu
 shared.emptyByMe	Bağlantısını burada görmek için bir dosya veya klasör paylaşın.
 shared.emptyWithMe	Başkalarının sizinle paylaştığı bağlantılar burada görünür.
@@ -221,7 +258,6 @@ shared.metaExpiration	Son Kullanma
 shared.metaSharedBy	Paylaşan
 shared.metaSharedWith	Paylaşılan kişi
 shared.anyoneWithLink	Bağlantıya sahip herkes
-shared.linkMode	Bağlantı modu
 shared.actionShareLink	Paylaşım bağlantısı
 shared.actionFolderLink	Klasör bağlantısı
 shared.actionFileLink	Dosya bağlantısı

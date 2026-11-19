@@ -11,7 +11,7 @@ private enum Constants {
 
 /// The header every presented card sheet shares, modeled on the upload review sheet: a
 /// leading accent-tinted icon and a trailing circular close button on one row, with an
-/// optional `.headline3` title underneath.
+/// optional `.headline3` title underneath in the primary text color; only the icon takes `tint`.
 ///
 /// Place it as the first child of the sheet's content stack; the stack's own spacing then
 /// separates the header from the first field. Full-screen covers over media use
@@ -68,7 +68,7 @@ public struct DSSheetHeader: View {
             if let title {
                 Text(title)
                     .type(.headline3)
-                    .foregroundColor(tint)
+                    .foregroundStyle(Color.primaryDS)
                     .lineLimit(Constants.titleLineLimit)
             }
         }

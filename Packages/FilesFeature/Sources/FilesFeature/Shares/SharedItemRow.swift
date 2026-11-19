@@ -24,7 +24,7 @@ private enum Constants {
 
 /// One shared file or folder on the Shared list: icon, name and parent folder, who each share
 /// reaches in the top right corner (By me) or the sharer under the name (With me), and the
-/// nearest countdown on its own line. Fully expired items fade. Tap toggles the share details.
+/// nearest countdown on its own line. Fully expired items fade. Tap opens the item sheet.
 struct SharedItemRow: View {
     let item: SharedFeature.Item
     let serverURL: URL
@@ -32,10 +32,10 @@ struct SharedItemRow: View {
     let isDeleting: Bool
     /// A hairline above the row, inset to the text, between items.
     var showsDivider = false
-    let onToggle: () -> Void
+    let onTap: () -> Void
 
     var body: some View {
-        Button(action: onToggle) {
+        Button(action: onTap) {
             HStack(alignment: .top, spacing: .space12) {
                 SharedItemIcon(share: item.shares[0], name: item.name, serverURL: serverURL, isByMe: isByMe)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
@@ -133,13 +133,14 @@ struct SharedItemIcon: View {
     let name: String
     let serverURL: URL
     let isByMe: Bool
+    var folderGlyphSize: CGFloat = Constants.folderGlyphSize
 
     var body: some View {
         if share.isDirectory {
             IconKit.folderFill
                 .resizable().scaledToFit()
                 .foregroundStyle(Color.accentText)
-                .frame(width: Constants.folderGlyphSize, height: Constants.folderGlyphSize)
+                .frame(width: folderGlyphSize, height: folderGlyphSize)
         } else if let thumbnailPath {
             ThumbnailImage(
                 serverURL: serverURL,
@@ -245,7 +246,7 @@ private func itemRowsPreview(segment: SharedFeature.Segment) -> some View {
                     serverURL: state.serverURL,
                     isByMe: segment == .byMe,
                     isDeleting: false,
-                    onToggle: {}
+                    onTap: {}
                 )
                 Divider()
             }

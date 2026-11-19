@@ -209,6 +209,43 @@ shared.daysLeft#other	Απομένουν %lld ημέρες
 shared.itemCount#one	%lld στοιχείο
 shared.itemCount#other	%lld στοιχεία
 shared.pathStep	%1$@ › %2$@
+common.on	Ενεργό
+common.off	Ανενεργό
+common.none	Καμία
+shared.copyLink	Αντιγραφή συνδέσμου
+shared.copyShareLink	Αντιγραφή συνδέσμου κοινοποίησης
+shared.copyFolderLink	Αντιγραφή συνδέσμου φακέλου
+shared.copyFileLink	Αντιγραφή συνδέσμου αρχείου
+shared.moreLinks	Περισσότεροι σύνδεσμοι
+shared.setNewDate	Ορισμός νέας ημερομηνίας
+shared.noAccountNeeded	Δεν χρειάζεται λογαριασμός για άνοιγμα
+shared.metaExpires	Λήγει
+shared.metaExpired	Έληξε
+shared.folderLinkOpensAs	Ο σύνδεσμος φακέλου ανοίγει ως
+shared.fileLinkOpensAs	Ο σύνδεσμος αρχείου ανοίγει ως
+shared.metaLabel	Ετικέτα
+shared.metaShared	Κοινοποιήθηκε
+shared.metaLastOpened	Τελευταίο άνοιγμα
+shared.metaDownloads	Λήψεις
+shared.metaReceived	Ελήφθη
+shared.expiredFooter	Αυτός ο σύνδεσμος σταμάτησε να λειτουργεί στις %@. Ορίστε νέα ημερομηνία για να τον επαναφέρετε.
+shared.controlsShare	Ο χρήστης %@ ελέγχει αυτή την κοινοποίηση.
+shared.listFooter	Πατήστε μια κοινοποίηση για όλες τις λεπτομέρειες. Το κουμπί συνδέσμου αντιγράφει χωρίς άνοιγμα.
+shared.publicLink	Δημόσιος σύνδεσμος
+shared.people	Άτομα
+shared.canEdit	μπορεί να επεξεργαστεί
+shared.viewOnly	μόνο προβολή
+shared.statusPassword	κωδικός
+shared.neverExpires	δεν λήγει
+shared.expiresUntil	έως %@
+shared.fromSharer	Από %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld κοινοποίηση
+shared.shareCount#other	%lld κοινοποιήσεις
+shared.peopleCount#one	%lld άτομο
+shared.peopleCount#other	%lld άτομα
+shared.downloadCount#one	%lld λήψη
+shared.downloadCount#other	%lld λήψεις
 shared.badgeExpired	έληξε
 shared.emptyByMe	Κοινοποιήστε ένα αρχείο ή φάκελο για να δείτε εδώ τον σύνδεσμό του.
 shared.emptyWithMe	Οι σύνδεσμοι που κοινοποιούν σε εσάς άλλοι εμφανίζονται εδώ.
@@ -221,7 +258,6 @@ shared.metaExpiration	Λήξη
 shared.metaSharedBy	Κοινοποιήθηκε από
 shared.metaSharedWith	Κοινοποιήθηκε σε
 shared.anyoneWithLink	Όποιος έχει τον σύνδεσμο
-shared.linkMode	Λειτουργία συνδέσμου
 shared.actionShareLink	Σύνδεσμος κοινοποίησης
 shared.actionFolderLink	Σύνδεσμος φακέλου
 shared.actionFileLink	Σύνδεσμος αρχείου

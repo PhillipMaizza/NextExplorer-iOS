@@ -16,6 +16,8 @@
         static let dateColumnIdealWidth: CGFloat = 160
         static let deletingOpacity: Double = 0.4
         static let expiredBadgeFillOpacity: Double = 0.15
+        static let badgeHorizontalPadding: CGFloat = .space8
+        static let badgeVerticalPadding: CGFloat = .space2
     }
 
     /// One Shared segment as a Mac table, matching Browse's: sortable columns backed by the
@@ -306,8 +308,8 @@
         var body: some View {
             Text(L10n.Shared.badgeExpired.uppercased())
                 .type(.caption(.semibold), style: .error)
-                .padding(.horizontal, SharedLinkMetrics.badgeHorizontalPadding)
-                .padding(.vertical, SharedLinkMetrics.badgeVerticalPadding)
+                .padding(.horizontal, Metrics.badgeHorizontalPadding)
+                .padding(.vertical, Metrics.badgeVerticalPadding)
                 .background(RoundedRectangle(cornerRadius: .radiusXSmall)
                     .fill(Color.negative.opacity(Metrics.expiredBadgeFillOpacity)))
                 .fixedSize()

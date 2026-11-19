@@ -10,7 +10,6 @@ import SwiftUI
 struct SharedSegmentList: View {
     let store: StoreOf<SharedFeature>
     let segment: SharedFeature.Segment
-    let onToast: (DSToastMessage) -> Void
 
     private enum Constants {
         /// Redacted skeleton rows, keyed by the placeholder name length. Uneven so the skeleton
@@ -21,10 +20,6 @@ struct SharedSegmentList: View {
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull to refresh rubber band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
-    /// Which items are expanded. Kept here (not in the row) so the item and its share details
-    /// are separate list rows: the item row's height never changes, so it stays fixed while the
-    /// detail rows animate in and out.
-    @State private var expandedIDs: Set<SharedFeature.Item.ID> = []
 
     private var phase: DataPhase {
         store.state.phase(for: segment)
@@ -130,7 +125,7 @@ struct SharedSegmentList: View {
                     serverURL: store.serverURL,
                     isByMe: segment == .byMe,
                     isDeleting: false,
-                    onToggle: {}
+                    onTap: {}
                 )
                 .redacted(reason: .placeholder)
                 .shimmering()
@@ -175,8 +170,7 @@ struct SharedSegmentList: View {
     private func section(for items: [SharedFeature.Item], header: String?) -> some View {
         let firstID = items.first?.id
         return Section {
-            // Each item is its row plus, when expanded, one detail row per share on it. The row
-            // draws its own divider on top of every item but the first, so a pair reads as one card.
+            // The row draws its own divider on top of every item but the first.
             ForEach(items) { item in
                 SharedItemRow(
                     item: item,
@@ -184,45 +178,15 @@ struct SharedSegmentList: View {
                     isByMe: segment == .byMe,
                     isDeleting: item.shares.allSatisfy { store.deletingIDs.contains($0.id) },
                     showsDivider: item.id != firstID,
-                    onToggle: { toggleExpanded(item.id) }
+                    onTap: { store.send(.detailOpened(segment, item.id)) }
                 )
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.backgroundSecondary)
                 .listRowSeparator(.hidden)
-
-                if expandedIDs.contains(item.id) {
-                    ForEach(item.shares) { share in
-                        SharedLinkDetailRow(
-                            share: share,
-                            serverURL: store.serverURL,
-                            isByMe: segment == .byMe,
-                            isExpired: store.state.isExpired(share),
-                            audience: store.state.audience(for: share),
-                            sharedByText: store.state.sharedByLabel(for: share),
-                            isDeleting: store.deletingIDs.contains(share.id),
-                            onDelete: { store.send(.deleteTapped(share)) },
-                            onEdit: { store.send(.editTapped(share)) },
-                            onCopied: { onToast(.success($0)) }
-                        )
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.backgroundSecondary)
-                        .listRowSeparator(.hidden)
-                    }
-                }
             }
         } header: {
             if let header {
                 DSFieldLabel(header)
-            }
-        }
-    }
-
-    private func toggleExpanded(_ id: SharedFeature.Item.ID) {
-        withAnimation(SharedLinkMetrics.expand) {
-            if expandedIDs.contains(id) {
-                expandedIDs.remove(id)
-            } else {
-                expandedIDs.insert(id)
             }
         }
     }
@@ -244,7 +208,7 @@ private func segmentListPreview(
     let store = Store(initialState: state) { SharedFeature() } withDependencies: {
         $0.filesClient = .previewValue
     }
-    return SharedSegmentList(store: store, segment: .byMe, onToast: { _ in })
+    return SharedSegmentList(store: store, segment: .byMe)
         .backgroundGradient()
 }
 

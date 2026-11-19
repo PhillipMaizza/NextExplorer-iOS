@@ -225,6 +225,49 @@ shared.itemCount#few	%lld položky
 shared.itemCount#many	%lld položky
 shared.itemCount#other	%lld položek
 shared.pathStep	%1$@ › %2$@
+common.on	Zapnuto
+common.off	Vypnuto
+common.none	Žádný
+shared.copyLink	Kopírovat odkaz
+shared.copyShareLink	Kopírovat odkaz ke sdílení
+shared.copyFolderLink	Kopírovat odkaz na složku
+shared.copyFileLink	Kopírovat odkaz na soubor
+shared.moreLinks	Další odkazy
+shared.setNewDate	Nastavit nové datum
+shared.noAccountNeeded	K otevření není potřeba účet
+shared.metaExpires	Vyprší
+shared.metaExpired	Vypršelo
+shared.folderLinkOpensAs	Odkaz na složku se otevře jako
+shared.fileLinkOpensAs	Odkaz na soubor se otevře jako
+shared.metaLabel	Popisek
+shared.metaShared	Sdíleno
+shared.metaLastOpened	Naposledy otevřeno
+shared.metaDownloads	Stažení
+shared.metaReceived	Přijato
+shared.expiredFooter	Tento odkaz přestal fungovat %@. Nastavte nové datum a obnovte ho.
+shared.controlsShare	%@ spravuje toto sdílení.
+shared.listFooter	Klepnutím na sdílení zobrazíte vše o něm. Tlačítko odkazu kopíruje bez otevření.
+shared.publicLink	Veřejný odkaz
+shared.people	Lidé
+shared.canEdit	může upravovat
+shared.viewOnly	jen zobrazení
+shared.statusPassword	heslo
+shared.neverExpires	nikdy nevyprší
+shared.expiresUntil	do %@
+shared.fromSharer	Od %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld sdílení
+shared.shareCount#few	%lld sdílení
+shared.shareCount#many	%lld sdílení
+shared.shareCount#other	%lld sdílení
+shared.peopleCount#one	%lld osoba
+shared.peopleCount#few	%lld osoby
+shared.peopleCount#many	%lld osoby
+shared.peopleCount#other	%lld osob
+shared.downloadCount#one	%lld stažení
+shared.downloadCount#few	%lld stažení
+shared.downloadCount#many	%lld stažení
+shared.downloadCount#other	%lld stažení
 shared.badgeExpired	platnost vypršela
 shared.emptyByMe	Nasdílejte soubor nebo složku a uvidíte zde jeho odkaz.
 shared.emptyWithMe	Odkazy, které s vámi sdílejí ostatní, se zobrazí zde.
@@ -237,7 +280,6 @@ shared.metaExpiration	Vypršení platnosti
 shared.metaSharedBy	Sdílí
 shared.metaSharedWith	Sdíleno s
 shared.anyoneWithLink	Kdokoli s odkazem
-shared.linkMode	Režim odkazu
 shared.actionShareLink	Odkaz ke sdílení
 shared.actionFolderLink	Odkaz na složku
 shared.actionFileLink	Odkaz na soubor

@@ -464,6 +464,15 @@ struct SharedScreen {
         app.descendants(matching: .any)[AccessibilityIdentifiers.Shared.filter(suffix)].firstMatch
     }
 
+    /// The item sheet's main action, on a share page.
+    var copyLinkButton: XCUIElement {
+        app.buttons[L10n.Shared.copyLink].firstMatch
+    }
+
+    var closeSheetButton: XCUIElement {
+        app.buttons[L10n.Common.close].firstMatch
+    }
+
     var expiredHeader: XCUIElement {
         app.staticTexts[L10n.Shared.sectionExpired.uppercased()].exists
             ? app.staticTexts[L10n.Shared.sectionExpired.uppercased()]

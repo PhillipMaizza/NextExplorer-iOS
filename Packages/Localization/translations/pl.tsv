@@ -220,6 +220,49 @@ shared.itemCount#few	%lld elementy
 shared.itemCount#many	%lld elementów
 shared.itemCount#other	%lld elementu
 shared.pathStep	%1$@ › %2$@
+common.on	Wł.
+common.off	Wył.
+common.none	Brak
+shared.copyLink	Kopiuj link
+shared.copyShareLink	Kopiuj link udostępniania
+shared.copyFolderLink	Kopiuj link do folderu
+shared.copyFileLink	Kopiuj link do pliku
+shared.moreLinks	Więcej linków
+shared.setNewDate	Ustaw nową datę
+shared.noAccountNeeded	Do otwarcia nie trzeba konta
+shared.metaExpires	Wygasa
+shared.metaExpired	Wygasł
+shared.folderLinkOpensAs	Link do folderu otwiera się jako
+shared.fileLinkOpensAs	Link do pliku otwiera się jako
+shared.metaLabel	Etykieta
+shared.metaShared	Udostępniono
+shared.metaLastOpened	Ostatnio otwarto
+shared.metaDownloads	Pobrania
+shared.metaReceived	Otrzymano
+shared.expiredFooter	Ten link przestał działać %@. Ustaw nową datę, aby go przywrócić.
+shared.controlsShare	%@ zarządza tym udostępnieniem.
+shared.listFooter	Stuknij udostępnienie, aby zobaczyć wszystko. Przycisk linku kopiuje bez otwierania.
+shared.publicLink	Link publiczny
+shared.people	Osoby
+shared.canEdit	może edytować
+shared.viewOnly	tylko podgląd
+shared.statusPassword	hasło
+shared.neverExpires	nigdy nie wygasa
+shared.expiresUntil	do %@
+shared.fromSharer	Od %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld udostępnienie
+shared.shareCount#few	%lld udostępnienia
+shared.shareCount#many	%lld udostępnień
+shared.shareCount#other	%lld udostępnienia
+shared.peopleCount#one	%lld osoba
+shared.peopleCount#few	%lld osoby
+shared.peopleCount#many	%lld osób
+shared.peopleCount#other	%lld osoby
+shared.downloadCount#one	%lld pobranie
+shared.downloadCount#few	%lld pobrania
+shared.downloadCount#many	%lld pobrań
+shared.downloadCount#other	%lld pobrania
 shared.badgeExpired	wygasłe
 shared.emptyByMe	Udostępnij plik lub folder, aby zobaczyć jego link tutaj.
 shared.emptyWithMe	Linki udostępnione Ci przez innych pojawią się tutaj.
@@ -232,7 +275,6 @@ shared.metaExpiration	Wygasa
 shared.metaSharedBy	Udostępnione przez
 shared.metaSharedWith	Udostępnione dla
 shared.anyoneWithLink	Każdy z linkiem
-shared.linkMode	Tryb linku
 shared.actionShareLink	Udostępnij link
 shared.actionFolderLink	Link do folderu
 shared.actionFileLink	Link do pliku

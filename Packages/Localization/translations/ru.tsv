@@ -220,6 +220,49 @@ shared.itemCount#few	%lld объекта
 shared.itemCount#many	%lld объектов
 shared.itemCount#other	%lld объекта
 shared.pathStep	%1$@ › %2$@
+common.on	Вкл.
+common.off	Выкл.
+common.none	Нет
+shared.copyLink	Скопировать ссылку
+shared.copyShareLink	Скопировать ссылку доступа
+shared.copyFolderLink	Скопировать ссылку на папку
+shared.copyFileLink	Скопировать ссылку на файл
+shared.moreLinks	Другие ссылки
+shared.setNewDate	Задать новую дату
+shared.noAccountNeeded	Для открытия не нужна учётная запись
+shared.metaExpires	Истекает
+shared.metaExpired	Истёк
+shared.folderLinkOpensAs	Ссылка на папку открывается как
+shared.fileLinkOpensAs	Ссылка на файл открывается как
+shared.metaLabel	Метка
+shared.metaShared	Отправлено
+shared.metaLastOpened	Последнее открытие
+shared.metaDownloads	Загрузки
+shared.metaReceived	Получено
+shared.expiredFooter	Эта ссылка перестала работать %@. Задайте новую дату, чтобы вернуть её.
+shared.controlsShare	%@ управляет этим доступом.
+shared.listFooter	Коснитесь ссылки, чтобы увидеть всё о ней. Кнопка ссылки копирует, не открывая.
+shared.publicLink	Публичная ссылка
+shared.people	Люди
+shared.canEdit	может редактировать
+shared.viewOnly	только просмотр
+shared.statusPassword	пароль
+shared.neverExpires	бессрочно
+shared.expiresUntil	до %@
+shared.fromSharer	От %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld ссылка
+shared.shareCount#few	%lld ссылки
+shared.shareCount#many	%lld ссылок
+shared.shareCount#other	%lld ссылки
+shared.peopleCount#one	%lld человек
+shared.peopleCount#few	%lld человека
+shared.peopleCount#many	%lld человек
+shared.peopleCount#other	%lld человека
+shared.downloadCount#one	%lld загрузка
+shared.downloadCount#few	%lld загрузки
+shared.downloadCount#many	%lld загрузок
+shared.downloadCount#other	%lld загрузки
 shared.badgeExpired	истёк
 shared.emptyByMe	Откройте доступ к файлу или папке, чтобы увидеть ссылку здесь.
 shared.emptyWithMe	Ссылки, которыми с вами делятся другие, появятся здесь.
@@ -232,7 +275,6 @@ shared.metaExpiration	Срок действия
 shared.metaSharedBy	Поделился
 shared.metaSharedWith	Доступ открыт
 shared.anyoneWithLink	Любой, у кого есть ссылка
-shared.linkMode	Режим ссылки
 shared.actionShareLink	Поделиться ссылкой
 shared.actionFolderLink	Ссылка на папку
 shared.actionFileLink	Ссылка на файл

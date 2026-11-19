@@ -467,32 +467,66 @@ public extension Share {
             readWrite: Bool = false,
             password: Bool = false,
             days: Double? = nil,
-            ageDays: Double = 0
+            ageDays: Double = 0,
+            label: String? = nil,
+            downloads: Int? = nil,
+            openedHoursAgo: Double? = nil
         ) -> Share {
             Share(
                 id: id, shareToken: "tok\(id)", ownerId: "preview-user",
                 sourcePath: path, sourceSpace: "personal", isDirectory: folder,
                 accessMode: readWrite ? .readwrite : .readonly,
                 sharingType: users == nil ? .anyone : .users, hasPassword: password,
-                expiresAt: days.map { now.addingTimeInterval($0 * 86_400) }, label: nil,
-                downloadCount: id.count * 3, lastAccessedAt: nil, permittedUserIds: users,
+                expiresAt: days.map { now.addingTimeInterval($0 * 86_400) }, label: label,
+                downloadCount: downloads ?? id.count * 3,
+                lastAccessedAt: openedHoursAgo.map { now.addingTimeInterval(-$0 * 3600) },
+                permittedUserIds: users,
                 createdAt: now.addingTimeInterval(-ageDays * 86_400), updatedAt: now
             )
         }
         return [
-            make("s1", "Documents/Bills/Electricity", folder: true, ageDays: 1),
+            make("s1", "Documents/Bills/Electricity", folder: true, ageDays: 1, downloads: 3, openedHoursAgo: 0.5),
             make(
                 "s5",
                 "Work/Team Roadmap",
                 folder: true,
                 users: ["u4", "u5", "u6", "u2", "u3"],
                 readWrite: true,
-                ageDays: 2
+                ageDays: 2,
+                label: "Q1 planning",
+                downloads: 27,
+                openedHoursAgo: 0.2
             ),
-            make("s6", "Work/Team Roadmap", folder: true, password: true, ageDays: 3),
-            make("s7", "Photos/2026/Vacation Photos", folder: true, days: 2.5, ageDays: 4),
-            make("s8", "Finance/Budget 2027.xlsx", readWrite: true, password: true, ageDays: 5),
-            make("s9", "Legal/Contracts/Contract draft.pdf", users: ["u6"], days: 1.5, ageDays: 6),
+            make(
+                "s6",
+                "Work/Team Roadmap",
+                folder: true,
+                password: true,
+                days: 12,
+                ageDays: 3,
+                label: "Board preview",
+                downloads: 0
+            ),
+            make(
+                "s7",
+                "Photos/2026/Vacation Photos",
+                folder: true,
+                days: 2.5,
+                ageDays: 4,
+                label: "Family trip",
+                downloads: 14,
+                openedHoursAgo: 2
+            ),
+            make("s16", "Photos/2026/Vacation Photos", folder: true, users: ["u2", "u7"], ageDays: 3.5, downloads: 2),
+            make("s8", "Finance/Budget 2027.xlsx", readWrite: true, password: true, ageDays: 5, openedHoursAgo: 30),
+            make(
+                "s9",
+                "Legal/Contracts/Contract draft.pdf",
+                users: ["u6"],
+                days: 1.5,
+                ageDays: 6,
+                label: "For signature"
+            ),
             make(
                 "s14",
                 "Clients/Northwind Traders International/Proposals and Contracts/2027/Quarterly financial statements and board presentation final v3.pdf",
@@ -500,7 +534,8 @@ public extension Share {
                 readWrite: true,
                 password: true,
                 days: 4.5,
-                ageDays: 6
+                ageDays: 6,
+                label: "Board pack for the quarterly review with the whole leadership team"
             ),
             make(
                 "s15",
@@ -510,10 +545,10 @@ public extension Share {
                 ageDays: 7
             ),
             make("s2", "Photos/2024/passport.pdf", users: ["u2", "u3"], password: true, days: 6.5, ageDays: 7),
-            make("s10", "Work/Meeting notes.md", users: ["u7", "u99"], ageDays: 8),
+            make("s10", "Work/Meeting notes.md", users: ["u7", "u99"], ageDays: 8, label: "Weekly sync"),
             make("s11", "Design/Brand/Keynote deck.key", users: ["u4"], days: 30, ageDays: 9),
-            make("s12", "Invoice Oct.pdf", ageDays: 10),
-            make("s13", "Design/Brand/Logo final.png", days: -2, ageDays: 11),
+            make("s12", "Invoice Oct.pdf", ageDays: 10, downloads: 1_284, openedHoursAgo: 120),
+            make("s13", "Design/Brand/Logo final.png", days: -2, ageDays: 11, downloads: 41, openedHoursAgo: 460),
             make("s4", "Old/invoice.pdf", days: -1, ageDays: 12),
         ]
     }
@@ -526,21 +561,31 @@ public extension Share {
             owner: String,
             folder: Bool = false,
             readWrite: Bool = false,
+            password: Bool = false,
             days: Double? = nil,
-            ageDays: Double = 0
+            ageDays: Double = 0,
+            label: String? = nil
         ) -> Share {
             Share(
                 id: id, shareToken: "tok\(id)", ownerId: owner, sourceName: name, isDirectory: folder,
-                accessMode: readWrite ? .readwrite : .readonly, sharingType: .users, hasPassword: false,
-                expiresAt: days.map { now.addingTimeInterval($0 * 86_400) }, label: nil, downloadCount: 0,
+                accessMode: readWrite ? .readwrite : .readonly, sharingType: .users, hasPassword: password,
+                expiresAt: days.map { now.addingTimeInterval($0 * 86_400) }, label: label, downloadCount: 0,
                 lastAccessedAt: nil, createdAt: now.addingTimeInterval(-ageDays * 86_400), updatedAt: now
             )
         }
         return [
-            make("s3", "Team Roadmap", owner: "u4", folder: true, readWrite: true, ageDays: 1),
+            make("s3", "Team Roadmap", owner: "u4", folder: true, readWrite: true, ageDays: 1, label: "Q1 planning"),
             make("w2", "Q3 Report.pdf", owner: "u5", days: 0.5, ageDays: 2),
             make("w3", "Recipes", owner: "u7", folder: true, ageDays: 3),
-            make("w4", "Floor plan.png", owner: "u4", days: 5.5, ageDays: 4),
+            make(
+                "w4",
+                "Floor plan.png",
+                owner: "u4",
+                password: true,
+                days: 5.5,
+                ageDays: 4,
+                label: "Numbers for review"
+            ),
             make("w5", "Mixtape.mp3", owner: "someone-else", ageDays: 5),
             make("w6", "Holiday plan.docx", owner: "u5", readWrite: true, days: -3, ageDays: 6),
             make(

@@ -209,6 +209,43 @@ shared.daysLeft#other	%lld dager igjen
 shared.itemCount#one	%lld element
 shared.itemCount#other	%lld elementer
 shared.pathStep	%1$@ › %2$@
+common.on	På
+common.off	Av
+common.none	Ingen
+shared.copyLink	Kopier lenke
+shared.copyShareLink	Kopier delingslenke
+shared.copyFolderLink	Kopier mappelenke
+shared.copyFileLink	Kopier fillenke
+shared.moreLinks	Flere lenker
+shared.setNewDate	Angi ny dato
+shared.noAccountNeeded	Ingen konto trengs for å åpne den
+shared.metaExpires	Utløper
+shared.metaExpired	Utløpt
+shared.folderLinkOpensAs	Mappelenken åpnes som
+shared.fileLinkOpensAs	Fillenken åpnes som
+shared.metaLabel	Etikett
+shared.metaShared	Delt
+shared.metaLastOpened	Sist åpnet
+shared.metaDownloads	Nedlastinger
+shared.metaReceived	Mottatt
+shared.expiredFooter	Denne lenken sluttet å virke %@. Angi en ny dato for å få den tilbake.
+shared.controlsShare	%@ styrer denne delingen.
+shared.listFooter	Trykk på en deling for å se alt om den. Lenkeknappen kopierer uten å åpne.
+shared.publicLink	Offentlig lenke
+shared.people	Personer
+shared.canEdit	kan redigere
+shared.viewOnly	kun visning
+shared.statusPassword	passord
+shared.neverExpires	utløper aldri
+shared.expiresUntil	til %@
+shared.fromSharer	Fra %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld deling
+shared.shareCount#other	%lld delinger
+shared.peopleCount#one	%lld person
+shared.peopleCount#other	%lld personer
+shared.downloadCount#one	%lld nedlasting
+shared.downloadCount#other	%lld nedlastinger
 shared.badgeExpired	utløpt
 shared.emptyByMe	Del en fil eller mappe for å se lenken her.
 shared.emptyWithMe	Lenker andre deler med deg, vises her.
@@ -221,7 +258,6 @@ shared.metaExpiration	Utløp
 shared.metaSharedBy	Delt av
 shared.metaSharedWith	Delt med
 shared.anyoneWithLink	Alle med lenken
-shared.linkMode	Lenkemodus
 shared.actionShareLink	Delingslenke
 shared.actionFolderLink	Mappelenke
 shared.actionFileLink	Fillenke

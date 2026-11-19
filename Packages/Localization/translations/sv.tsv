@@ -204,6 +204,43 @@ shared.daysLeft#other	%lld dagar kvar
 shared.itemCount#one	%lld objekt
 shared.itemCount#other	%lld objekt
 shared.pathStep	%1$@ › %2$@
+common.on	På
+common.off	Av
+common.none	Ingen
+shared.copyLink	Kopiera länk
+shared.copyShareLink	Kopiera delningslänk
+shared.copyFolderLink	Kopiera mapplänk
+shared.copyFileLink	Kopiera fillänk
+shared.moreLinks	Fler länkar
+shared.setNewDate	Ange nytt datum
+shared.noAccountNeeded	Inget konto behövs för att öppna den
+shared.metaExpires	Upphör
+shared.metaExpired	Har upphört
+shared.folderLinkOpensAs	Mapplänken öppnas som
+shared.fileLinkOpensAs	Fillänken öppnas som
+shared.metaLabel	Etikett
+shared.metaShared	Delad
+shared.metaLastOpened	Senast öppnad
+shared.metaDownloads	Hämtningar
+shared.metaReceived	Mottagen
+shared.expiredFooter	Länken slutade fungera %@. Ange ett nytt datum för att få tillbaka den.
+shared.controlsShare	%@ styr den här delningen.
+shared.listFooter	Tryck på en delning för att se allt om den. Länkknappen kopierar utan att öppna.
+shared.publicLink	Offentlig länk
+shared.people	Personer
+shared.canEdit	kan redigera
+shared.viewOnly	endast visa
+shared.statusPassword	lösenord
+shared.neverExpires	upphör aldrig
+shared.expiresUntil	till %@
+shared.fromSharer	Från %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld delning
+shared.shareCount#other	%lld delningar
+shared.peopleCount#one	%lld person
+shared.peopleCount#other	%lld personer
+shared.downloadCount#one	%lld hämtning
+shared.downloadCount#other	%lld hämtningar
 shared.badgeExpired	utgången
 shared.emptyByMe	Dela en fil eller mapp för att se dess länk här.
 shared.emptyWithMe	Länkar som andra delar med dig visas här.
@@ -216,7 +253,6 @@ shared.metaExpiration	Upphör
 shared.metaSharedBy	Delad av
 shared.metaSharedWith	Delad med
 shared.anyoneWithLink	Alla med länken
-shared.linkMode	Länkläge
 shared.actionShareLink	Dela länk
 shared.actionFolderLink	Mapplänk
 shared.actionFileLink	Fillänk

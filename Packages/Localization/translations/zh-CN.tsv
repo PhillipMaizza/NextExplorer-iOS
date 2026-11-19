@@ -196,6 +196,40 @@ shared.filterAnyone	任何人
 shared.daysLeft#other	剩余 %lld 天
 shared.itemCount#other	%lld 个项目
 shared.pathStep	%1$@ › %2$@
+common.on	开
+common.off	关
+common.none	无
+shared.copyLink	拷贝链接
+shared.copyShareLink	拷贝共享链接
+shared.copyFolderLink	拷贝文件夹链接
+shared.copyFileLink	拷贝文件链接
+shared.moreLinks	更多链接
+shared.setNewDate	设置新日期
+shared.noAccountNeeded	无需账户即可打开
+shared.metaExpires	到期
+shared.metaExpired	已过期
+shared.folderLinkOpensAs	文件夹链接打开方式
+shared.fileLinkOpensAs	文件链接打开方式
+shared.metaLabel	标签
+shared.metaShared	共享于
+shared.metaLastOpened	上次打开
+shared.metaDownloads	下载次数
+shared.metaReceived	接收于
+shared.expiredFooter	此链接已于%@失效。设置新日期即可恢复。
+shared.controlsShare	此共享由%@管理。
+shared.listFooter	轻点共享查看全部详情。链接按钮会直接拷贝而不打开。
+shared.publicLink	公开链接
+shared.people	用户
+shared.canEdit	可编辑
+shared.viewOnly	仅查看
+shared.statusPassword	密码
+shared.neverExpires	永不过期
+shared.expiresUntil	至%@
+shared.fromSharer	来自%@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#other	%lld 个共享
+shared.peopleCount#other	%lld 人
+shared.downloadCount#other	%lld 次下载
 shared.badgeExpired	已过期
 shared.emptyByMe	共享文件或文件夹后即可在此处查看其链接。
 shared.emptyWithMe	他人与您共享的链接会显示在此处。
@@ -208,7 +242,6 @@ shared.metaExpiration	到期
 shared.metaSharedBy	共享者
 shared.metaSharedWith	共享给
 shared.anyoneWithLink	任何拥有链接的人
-shared.linkMode	链接模式
 shared.actionShareLink	共享链接
 shared.actionFolderLink	文件夹链接
 shared.actionFileLink	文件链接

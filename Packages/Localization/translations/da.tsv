@@ -209,6 +209,43 @@ shared.daysLeft#other	%lld dage tilbage
 shared.itemCount#one	%lld element
 shared.itemCount#other	%lld elementer
 shared.pathStep	%1$@ › %2$@
+common.on	Til
+common.off	Fra
+common.none	Ingen
+shared.copyLink	Kopiér link
+shared.copyShareLink	Kopiér delingslink
+shared.copyFolderLink	Kopiér mappelink
+shared.copyFileLink	Kopiér fillink
+shared.moreLinks	Flere links
+shared.setNewDate	Vælg ny dato
+shared.noAccountNeeded	Ingen konto nødvendig for at åbne det
+shared.metaExpires	Udløber
+shared.metaExpired	Udløbet
+shared.folderLinkOpensAs	Mappelink åbner som
+shared.fileLinkOpensAs	Fillink åbner som
+shared.metaLabel	Etiket
+shared.metaShared	Delt
+shared.metaLastOpened	Sidst åbnet
+shared.metaDownloads	Downloads
+shared.metaReceived	Modtaget
+shared.expiredFooter	Dette link holdt op med at virke %@. Vælg en ny dato for at få det tilbage.
+shared.controlsShare	%@ styrer denne deling.
+shared.listFooter	Tryk på en deling for at se alt om den. Linkknappen kopierer uden at åbne.
+shared.publicLink	Offentligt link
+shared.people	Personer
+shared.canEdit	kan redigere
+shared.viewOnly	kun visning
+shared.statusPassword	adgangskode
+shared.neverExpires	udløber aldrig
+shared.expiresUntil	indtil %@
+shared.fromSharer	Fra %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld deling
+shared.shareCount#other	%lld delinger
+shared.peopleCount#one	%lld person
+shared.peopleCount#other	%lld personer
+shared.downloadCount#one	%lld download
+shared.downloadCount#other	%lld downloads
 shared.badgeExpired	udløbet
 shared.emptyByMe	Del en fil eller mappe for at se dens link her.
 shared.emptyWithMe	Links, andre deler med dig, vises her.
@@ -221,7 +258,6 @@ shared.metaExpiration	Udløb
 shared.metaSharedBy	Delt af
 shared.metaSharedWith	Delt med
 shared.anyoneWithLink	Alle med linket
-shared.linkMode	Linktilstand
 shared.actionShareLink	Delingslink
 shared.actionFolderLink	Mappelink
 shared.actionFileLink	Fillink

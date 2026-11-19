@@ -233,7 +233,6 @@ shared.metaExpiration	انتهاء الصلاحية
 shared.metaSharedBy	تمت المشاركة بواسطة
 shared.metaSharedWith	تمت المشاركة مع
 shared.anyoneWithLink	أي شخص لديه الرابط
-shared.linkMode	وضع الرابط
 shared.actionShareLink	مشاركة الرابط
 shared.actionFolderLink	رابط المجلد
 shared.actionFileLink	رابط الملف
@@ -253,6 +252,55 @@ shared.itemCount#few	%lld عناصر
 shared.itemCount#many	%lld عنصرًا
 shared.itemCount#other	%lld عنصر
 shared.pathStep	%1$@ › %2$@
+common.on	تشغيل
+common.off	إيقاف
+common.none	لا شيء
+shared.copyLink	نسخ الرابط
+shared.copyShareLink	نسخ رابط المشاركة
+shared.copyFolderLink	نسخ رابط المجلد
+shared.copyFileLink	نسخ رابط الملف
+shared.moreLinks	روابط أخرى
+shared.setNewDate	تعيين تاريخ جديد
+shared.noAccountNeeded	لا حاجة إلى حساب لفتحه
+shared.metaExpires	ينتهي في
+shared.metaExpired	انتهت صلاحيته
+shared.folderLinkOpensAs	يُفتح رابط المجلد بوضع
+shared.fileLinkOpensAs	يُفتح رابط الملف بوضع
+shared.metaLabel	التسمية
+shared.metaShared	تمت المشاركة
+shared.metaLastOpened	آخر فتح
+shared.metaDownloads	التنزيلات
+shared.metaReceived	تم الاستلام
+shared.expiredFooter	توقف هذا الرابط عن العمل في %@. عيّن تاريخًا جديدًا لإعادته.
+shared.controlsShare	يتحكم %@ في هذه المشاركة.
+shared.listFooter	اضغط على مشاركة لرؤية كل تفاصيلها. زر الرابط ينسخ دون فتح.
+shared.publicLink	رابط عام
+shared.people	أشخاص
+shared.canEdit	يمكنه التعديل
+shared.viewOnly	عرض فقط
+shared.statusPassword	كلمة مرور
+shared.neverExpires	لا تنتهي صلاحيته
+shared.expiresUntil	حتى %@
+shared.fromSharer	من %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#zero	%lld مشاركة
+shared.shareCount#one	%lld مشاركة
+shared.shareCount#two	%lld مشاركة
+shared.shareCount#few	%lld مشاركات
+shared.shareCount#many	%lld مشاركة
+shared.shareCount#other	%lld مشاركة
+shared.peopleCount#zero	%lld شخص
+shared.peopleCount#one	%lld شخص
+shared.peopleCount#two	%lld شخص
+shared.peopleCount#few	%lld أشخاص
+shared.peopleCount#many	%lld شخصًا
+shared.peopleCount#other	%lld شخص
+shared.downloadCount#zero	%lld تنزيل
+shared.downloadCount#one	%lld تنزيل
+shared.downloadCount#two	%lld تنزيل
+shared.downloadCount#few	%lld تنزيلات
+shared.downloadCount#many	%lld تنزيلًا
+shared.downloadCount#other	%lld تنزيل
 shared.copiedShareLink	تم نسخ رابط المشاركة
 shared.copiedFolderZip	تم نسخ رابط ZIP للمجلد
 shared.copiedDirectFile	تم نسخ رابط الملف المباشر

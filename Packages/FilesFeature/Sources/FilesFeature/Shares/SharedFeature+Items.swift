@@ -68,6 +68,20 @@ public extension SharedFeature {
         public let isExpired: Bool
     }
 
+    /// The open detail sheet: which item, and the share pushed over its list when it has several.
+    /// Identified by the item alone, so pushing or popping never presents the sheet again.
+    struct Detail: Equatable, Identifiable, Sendable {
+        public let segment: Segment
+        public let id: Item.ID
+        public var pushedShareID: Share.ID?
+
+        public init(segment: Segment, id: Item.ID, pushedShareID: Share.ID? = nil) {
+            self.segment = segment
+            self.id = id
+            self.pushedShareID = pushedShareID
+        }
+    }
+
     /// Every instant a share's row text changes: the expiry itself and each whole day before
     /// it inside the warning window.
     static func expiryBoundaries(of expiresAt: Date) -> [Date] {
@@ -134,10 +148,35 @@ public extension SharedFeature.State {
         filter(for: segment) != .all || filterOptions(for: segment).count > Constants.minimumFilterOptions
     }
 
-    /// Drops a filter whose person or public link no longer exists after a reload or delete.
-    mutating func pruneFilters() {
+    /// Drops a filter whose person or public link no longer exists after a reload or delete,
+    /// and fits the open detail sheet to what is left.
+    mutating func sharesChanged() {
         for (segment, filter) in filters where !filterOptions(for: segment).contains(where: { $0.filter == filter }) {
             filters[segment] = nil
+        }
+        reconcileDetail()
+    }
+
+    /// The item behind a detail sheet with every share on it, ignoring the search and the people
+    /// row, so the sheet never hides a share the row filtered out.
+    func item(for detail: SharedFeature.Detail) -> SharedFeature.Item? {
+        grouped(Array(shares(for: detail.segment)), segment: detail.segment)
+            .first { $0.0 == detail.id }
+            .map { item(id: $0.0, shares: $0.1, segment: detail.segment) }
+    }
+
+    /// Closes the sheet once its item is gone; pops the pushed share once it is gone or is the
+    /// only one left, since the root then opens straight on it.
+    private mutating func reconcileDetail() {
+        guard let detail else { return }
+        guard let item = item(for: detail) else {
+            self.detail = nil
+            return
+        }
+        if let pushed = detail.pushedShareID,
+           item.shares.count < 2 || !item.shares.contains(where: { $0.id == pushed })
+        {
+            self.detail?.pushedShareID = nil
         }
     }
 
@@ -175,18 +214,14 @@ public extension SharedFeature.State {
     }
 
     private func itemKey(of share: Share, segment: SharedFeature.Segment) -> String {
-        guard segment == .byMe, let path = Self.trimmedPath(share), !path.isEmpty else { return share.id }
+        guard segment == .byMe, let path = share.trimmedSourcePath, !path.isEmpty else { return share.id }
         return "\(share.sourceSpace ?? ""):\(path)"
-    }
-
-    private static func trimmedPath(_ share: Share) -> String? {
-        share.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
     }
 
     private func item(id: String, shares: [Share], segment: SharedFeature.Segment) -> SharedFeature.Item {
         let ordered = shares.sorted { $0.createdAt < $1.createdAt }
         let first = ordered[0]
-        let components = Self.trimmedPath(first)?.split(separator: "/").map(String.init) ?? []
+        let components = first.trimmedSourcePath?.split(separator: "/").map(String.init) ?? []
         let name: String = if segment == .byMe, let leaf = components.last {
             leaf
         } else if let sourceName = first.sourceName, !sourceName.isEmpty {

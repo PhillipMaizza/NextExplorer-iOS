@@ -28,11 +28,16 @@ struct SharedView: View {
         )
     }
 
-    private var deleteConfirmationBinding: Binding<Bool> {
-        // No op setter: the sheet is dismiss disabled and only ever closes through one of
-        // `DSAlertSheet`'s own buttons, each of which drives the reducer directly. This keeps
-        // SwiftUI from firing a stray dismiss action into a torn down presentation.
-        Binding(get: { store.deleteConfirmationShare != nil }, set: { _ in })
+    /// The item sheet. Only the reducer closes it: a swipe down arrives here as `nil`.
+    private var detailBinding: Binding<SharedFeature.Detail?> {
+        Binding(
+            get: { store.detail },
+            set: { newValue in
+                if newValue == nil, store.detail != nil {
+                    store.send(.detailDismissed)
+                }
+            }
+        )
     }
 
     private static var shouldShowTable: Bool {
@@ -68,12 +73,8 @@ struct SharedView: View {
                 #else
                     TabView(selection: segment) {
                         ForEach(SharedFeature.Segment.allCases, id: \.self) { pageSegment in
-                            SharedSegmentList(
-                                store: store,
-                                segment: pageSegment,
-                                onToast: { toastMessage = $0 }
-                            )
-                            .tag(pageSegment)
+                            SharedSegmentList(store: store, segment: pageSegment)
+                                .tag(pageSegment)
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
@@ -140,22 +141,14 @@ struct SharedView: View {
                         onDismiss: { isSortSheetPresented = false }
                     )
                 }
-                .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
-                    EditShareSheet(store: editStore)
+            #if os(macOS)
+                .modifier(SharedActionPresentations(store: store, toast: $toastMessage))
+            #else
+                .sheet(item: detailBinding) { detail in
+                    SharedDetailSheet(store: store, presented: detail)
                 }
-                .dsAlert(isPresented: deleteConfirmationBinding) {
-                    DSAlertSheet(
-                        icon: IconKit.delete,
-                        title: L10n.Shared.deleteTitle,
-                        message: L10n.Shared.deleteMessage,
-                        confirmTitle: L10n.Common.delete,
-                        dismissTitle: L10n.Common.cancel,
-                        role: .destructive,
-                        closeAccessibilityLabel: L10n.Common.close,
-                        onConfirm: { store.send(.deleteConfirmed) },
-                        onDismiss: { store.send(.deleteCancelled) }
-                    )
-                }
+                .sharedActionErrorToast(store: store, toast: $toastMessage, isActive: store.detail == nil)
+            #endif
                 .dsToast($toastMessage)
                 .task { store.send(.onAppear) }
                 .task {
@@ -165,11 +158,6 @@ struct SharedView: View {
                     }
                 }
                 .onChange(of: store.externalRevision) { _, _ in store.send(.externalRevisionChanged) }
-                .onChange(of: store.actionErrorMessage) { _, newValue in
-                    if let newValue {
-                        toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)
-                    }
-                }
         }
         .tint(Color.accent)
     }

@@ -45,6 +45,17 @@ extension Share {
         return mode == .auto ? base : "\(base)?mode=\(mode.rawValue)"
     }
 
+    /// The label as shown: trimmed, nil when blank.
+    var trimmedLabel: String? {
+        guard let label = label?.trimmingCharacters(in: .whitespacesAndNewlines), !label.isEmpty else { return nil }
+        return label
+    }
+
+    /// The shared path without its leading or trailing slashes.
+    var trimmedSourcePath: String? {
+        sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+    }
+
     private static func origin(of serverURL: URL) -> String {
         if let scheme = serverURL.scheme, let host = serverURL.host {
             let port = serverURL.port.map { ":\($0)" } ?? ""

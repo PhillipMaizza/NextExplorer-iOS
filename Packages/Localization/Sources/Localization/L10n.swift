@@ -284,6 +284,9 @@ public enum L10n {
         public static var logOut: String { tr("common.logOut") }  // "Log Out"
         public static var more: String { tr("common.more") }  // "More"
         public static var never: String { tr("common.never") }  // "Never"
+        public static var none: String { tr("common.none") }  // "None"
+        public static var off: String { tr("common.off") }  // "Off"
+        public static var on: String { tr("common.on") }  // "On"
         public static var openSettings: String { tr("common.openSettings") }  // "Open Settings"
         public static var password: String { tr("common.password") }  // "Password"
         public static var remove: String { tr("common.remove") }  // "Remove"
@@ -898,30 +901,60 @@ public enum L10n {
         public static var actionShareLink: String { tr("shared.actionShareLink") }  // "Share link"
         public static var anyoneWithLink: String { tr("shared.anyoneWithLink") }  // "Anyone with link"
         public static var badgeExpired: String { tr("shared.badgeExpired") }  // "expired"
+        public static var canEdit: String { tr("shared.canEdit") }  // "can edit"
+        public static func controlsShare(_ a0: CVarArg) -> String { tr("shared.controlsShare", a0) }
         public static var copiedDirectFile: String { tr("shared.copiedDirectFile") }  // "Direct file link copied"
         public static var copiedFolderZip: String { tr("shared.copiedFolderZip") }  // "Folder ZIP link copied"
         public static var copiedShareLink: String { tr("shared.copiedShareLink") }  // "Share link copied"
+        public static var copyFileLink: String { tr("shared.copyFileLink") }  // "Copy file link"
+        public static var copyFolderLink: String { tr("shared.copyFolderLink") }  // "Copy folder link"
+        public static var copyLink: String { tr("shared.copyLink") }  // "Copy link"
+        public static var copyShareLink: String { tr("shared.copyShareLink") }  // "Copy share link"
         public static func daysLeft(_ a0: CVarArg) -> String { tr("shared.daysLeft", a0) }
         public static var deleteMessage: String { tr("shared.deleteMessage") }
         public static var deleteTitle: String { tr("shared.deleteTitle") }  // "Delete Share Link?"
+        public static func downloadCount(_ a0: CVarArg) -> String { tr("shared.downloadCount", a0) }
         public static var emptyByMe: String { tr("shared.emptyByMe") }  // "Share a file or folder to see its link here."
         public static var emptyWithMe: String { tr("shared.emptyWithMe") }  // "Links other people share with you show up here."
+        public static func expiredFooter(_ a0: CVarArg) -> String { tr("shared.expiredFooter", a0) }
+        public static func expiresUntil(_ a0: CVarArg) -> String { tr("shared.expiresUntil", a0) }
+        public static var fileLinkOpensAs: String { tr("shared.fileLinkOpensAs") }  // "File link opens as"
         public static var filterAll: String { tr("shared.filterAll") }  // "All"
         public static var filterAnyone: String { tr("shared.filterAnyone") }  // "Anyone"
+        public static var folderLinkOpensAs: String { tr("shared.folderLinkOpensAs") }  // "Folder link opens as"
+        public static func fromSharer(_ a0: CVarArg) -> String { tr("shared.fromSharer", a0) }
         public static func itemCount(_ a0: CVarArg) -> String { tr("shared.itemCount", a0) }
-        public static var linkMode: String { tr("shared.linkMode") }  // "Link mode"
+        public static var listFooter: String { tr("shared.listFooter") }
         public static var metaAccess: String { tr("shared.metaAccess") }  // "Access"
+        public static var metaDownloads: String { tr("shared.metaDownloads") }  // "Downloads"
         public static var metaExpiration: String { tr("shared.metaExpiration") }  // "Expiration"
+        public static var metaExpired: String { tr("shared.metaExpired") }  // "Expired"
+        public static var metaExpires: String { tr("shared.metaExpires") }  // "Expires"
+        public static var metaLabel: String { tr("shared.metaLabel") }  // "Label"
+        public static var metaLastOpened: String { tr("shared.metaLastOpened") }  // "Last opened"
+        public static var metaReceived: String { tr("shared.metaReceived") }  // "Received"
+        public static var metaShared: String { tr("shared.metaShared") }  // "Shared"
         public static var metaSharedBy: String { tr("shared.metaSharedBy") }  // "Shared by"
         public static var metaSharedWith: String { tr("shared.metaSharedWith") }  // "Shared with"
+        public static var moreLinks: String { tr("shared.moreLinks") }  // "More links"
         public static func moreRecipients(_ a0: CVarArg) -> String { tr("shared.moreRecipients", a0) }
         public static var navigationTitle: String { tr("shared.navigationTitle") }  // "Shared"
+        public static var neverExpires: String { tr("shared.neverExpires") }  // "never expires"
+        public static var noAccountNeeded: String { tr("shared.noAccountNeeded") }  // "No account needed to open it"
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("shared.noSearchMatches", a0) }
         public static func pathStep(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shared.pathStep", a0, a1) }
+        public static var people: String { tr("shared.people") }  // "People"
+        public static func peopleCount(_ a0: CVarArg) -> String { tr("shared.peopleCount", a0) }
+        public static var publicLink: String { tr("shared.publicLink") }  // "Public link"
         public static var sectionExpired: String { tr("shared.sectionExpired") }  // "Expired"
         public static var segmentByMe: String { tr("shared.segmentByMe") }  // "By me"
         public static var segmentWithMe: String { tr("shared.segmentWithMe") }  // "With me"
+        public static var setNewDate: String { tr("shared.setNewDate") }  // "Set a new date"
+        public static func shareCount(_ a0: CVarArg) -> String { tr("shared.shareCount", a0) }
         public static var sharedByUnknown: String { tr("shared.sharedByUnknown") }  // "Someone"
+        public static var statusPassword: String { tr("shared.statusPassword") }  // "password"
+        public static func statusStep(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shared.statusStep", a0, a1) }
+        public static var viewOnly: String { tr("shared.viewOnly") }  // "view only"
     }
     public enum Sort {
         public static var ascending: String { tr("sort.ascending") }  // "Ascending"

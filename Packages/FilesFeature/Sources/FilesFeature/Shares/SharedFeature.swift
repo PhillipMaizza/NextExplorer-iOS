@@ -67,11 +67,14 @@ public struct SharedFeature {
         /// lands. Absent means `.live`.
         public var dataSources: [Segment: CachedListSource] = [:]
         /// A failed delete, or a refresh failure over an already populated segment, shown as a
-        /// toast rather than the full screen `errorMessage`.
+        /// toast rather than the full screen `errorMessage`. Cleared once shown, so the same
+        /// failure twice toasts twice.
         public var actionErrorMessage: String?
         public var deleteConfirmationShare: Share?
         public var deletingIDs: Set<Share.ID> = []
         @Presents public var editSheet: EditShareFeature.State?
+        /// The item sheet opened from a row; Edit and Delete stack on top of it.
+        public var detail: Detail?
         public var searchQuery = ""
         /// The people row's pick per segment; absent means `.all`.
         public var filters: [Segment: Filter] = [:]
@@ -231,6 +234,10 @@ public struct SharedFeature {
         case deleteResponse(Share.ID, Result<Bool, FilesClientError>)
         case editTapped(Share)
         case editSheet(PresentationAction<EditShareFeature.Action>)
+        case actionErrorShown
+        case detailOpened(Segment, Item.ID)
+        case detailDismissed
+        case detailShareSelected(Share.ID?)
     }
 
     @Dependency(\.filesClient) var filesClient
@@ -310,7 +317,7 @@ public struct SharedFeature {
                 } else {
                     state.withMe = identified
                 }
-                state.pruneFilters()
+                state.sharesChanged()
                 syncCache(state, segment: segment)
                 return .none
 
@@ -347,7 +354,7 @@ public struct SharedFeature {
                 }
                 state.phases[segment] = .loaded
                 state.dataSources[segment] = .cached(fetchedAt: fetchedAt)
-                state.pruneFilters()
+                state.sharesChanged()
                 return .none
 
             case let .cachedSharesPainted(segment, cached):
@@ -359,7 +366,7 @@ public struct SharedFeature {
                 } else {
                     state.withMe = identified
                 }
-                state.pruneFilters()
+                state.sharesChanged()
                 return .none
 
             case let .usersResponse(users):
@@ -367,7 +374,7 @@ public struct SharedFeature {
                     users.map { ($0.id, $0.displayName ?? $0.username) },
                     uniquingKeysWith: { first, _ in first }
                 )
-                state.pruneFilters()
+                state.sharesChanged()
                 return .none
 
             case let .deleteTapped(share):
@@ -394,7 +401,7 @@ public struct SharedFeature {
             case let .deleteResponse(id, .success):
                 state.deletingIDs.remove(id)
                 state.byMe.remove(id: id)
-                state.pruneFilters()
+                state.sharesChanged()
                 syncCache(state, segment: .byMe)
                 return .none
 
@@ -410,10 +417,26 @@ public struct SharedFeature {
             case let .editSheet(.presented(.delegate(.updated(share)))):
                 state.byMe[id: share.id] = share
                 state.editSheet = nil
-                state.pruneFilters()
+                state.sharesChanged()
                 return .none
 
             case .editSheet:
+                return .none
+
+            case .actionErrorShown:
+                state.actionErrorMessage = nil
+                return .none
+
+            case let .detailOpened(segment, id):
+                state.detail = Detail(segment: segment, id: id)
+                return .none
+
+            case .detailDismissed:
+                state.detail = nil
+                return .none
+
+            case let .detailShareSelected(id):
+                state.detail?.pushedShareID = id
                 return .none
             }
         }

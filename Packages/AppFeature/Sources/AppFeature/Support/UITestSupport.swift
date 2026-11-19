@@ -294,6 +294,7 @@
             switch scenario {
             case .normal, .gallery, .slowOperations:
                 installAccountMocks(into: &client)
+                installShareMocks(into: &client)
                 // An in memory file tree so writes (create, rename, delete, move, copy, compress) land
                 // in the folder they name and show in the next listing, as on the server.
                 // The root and its folders hold the fixture (the gallery only its root, whose one folder
