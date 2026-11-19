@@ -191,6 +191,17 @@ struct MockWorldTests {
     }
 
     @Test
+    func emptyAccessRulesKeepARuleSavedAfterwards() async throws {
+        var client = UITestSupport.filesClient(.normal)
+        let seeded = try await client.fetchSystemSettings(serverURL).accessRules
+        UITestSupport.empty([.accessRules], in: &client)
+        #expect(try await client.fetchSystemSettings(serverURL).accessRules.isEmpty)
+
+        _ = try await client.updateAccessRules(serverURL, Array(seeded.prefix(1)))
+        #expect(try await client.fetchSystemSettings(serverURL).accessRules == Array(seeded.prefix(1)))
+    }
+
+    @Test
     func anEmptyAreaListsNothingAndAFailingOneThrows() async throws {
         var client = UITestSupport.filesClient(.normal)
         UITestSupport.empty([.trash, .users], in: &client)

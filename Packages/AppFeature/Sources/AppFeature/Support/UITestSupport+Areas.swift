@@ -1,4 +1,5 @@
 #if DEBUG
+    import ComposableArchitecture
     import CoreModels
     import FilesClient
     import Foundation
@@ -30,11 +31,16 @@
                 case .versions:
                     client.fetchVersionedFiles = { _, _, _, _ in VersionedFilesPage() }
                 case .accessRules:
+                    // Cleared once, so a rule saved afterwards still loads back.
                     let base = client.fetchSystemSettings
+                    let update = client.updateAccessRules
+                    let isCleared = LockIsolated(false)
                     client.fetchSystemSettings = { serverURL in
-                        var settings = try await base(serverURL)
-                        settings.accessRules = []
-                        return settings
+                        if !isCleared.value {
+                            _ = try await update(serverURL, [])
+                            isCleared.setValue(true)
+                        }
+                        return try await base(serverURL)
                     }
                 case .apiTokens:
                     client.fetchAPITokens = { _ in [] }
