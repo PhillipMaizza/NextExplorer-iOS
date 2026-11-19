@@ -458,6 +458,17 @@ struct SharedScreen {
     func item(_ name: String) -> XCUIElement {
         app.staticTexts[name]
     }
+
+    /// A circle in the people row, by `AccessibilityIdentifiers.Shared.filter` suffix.
+    func filter(_ suffix: String) -> XCUIElement {
+        app.descendants(matching: .any)[AccessibilityIdentifiers.Shared.filter(suffix)].firstMatch
+    }
+
+    var expiredHeader: XCUIElement {
+        app.staticTexts[L10n.Shared.sectionExpired.uppercased()].exists
+            ? app.staticTexts[L10n.Shared.sectionExpired.uppercased()]
+            : app.staticTexts[L10n.Shared.sectionExpired]
+    }
 }
 
 /// The Offline tab: pinned files and folders, plus files an earlier version saved into the app.

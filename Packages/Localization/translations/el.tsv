@@ -202,6 +202,13 @@ shared.navigationTitle	Κοινόχρηστα
 shared.segmentByMe	Από εμένα
 shared.segmentWithMe	Με εμένα
 shared.sectionExpired	Έληξε
+shared.filterAll	Όλα
+shared.filterAnyone	Οποιοσδήποτε
+shared.daysLeft#one	Απομένει %lld ημέρα
+shared.daysLeft#other	Απομένουν %lld ημέρες
+shared.itemCount#one	%lld στοιχείο
+shared.itemCount#other	%lld στοιχεία
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	έληξε
 shared.emptyByMe	Κοινοποιήστε ένα αρχείο ή φάκελο για να δείτε εδώ τον σύνδεσμό του.
 shared.emptyWithMe	Οι σύνδεσμοι που κοινοποιούν σε εσάς άλλοι εμφανίζονται εδώ.

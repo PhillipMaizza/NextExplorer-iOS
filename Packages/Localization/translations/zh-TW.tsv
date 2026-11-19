@@ -191,6 +191,11 @@ shared.navigationTitle	共享
 shared.segmentByMe	由我共享
 shared.segmentWithMe	與我共享
 shared.sectionExpired	已過期
+shared.filterAll	全部
+shared.filterAnyone	任何人
+shared.daysLeft#other	剩餘 %lld 天
+shared.itemCount#other	%lld 個項目
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	已過期
 shared.emptyByMe	共享檔案或檔案夾後即可在此處查看其連結。
 shared.emptyWithMe	他人與您共享的連結會顯示在此處。

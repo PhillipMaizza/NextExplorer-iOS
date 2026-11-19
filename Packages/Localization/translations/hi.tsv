@@ -197,6 +197,13 @@ shared.navigationTitle	साझा किए गए
 shared.segmentByMe	मेरे द्वारा
 shared.segmentWithMe	मेरे साथ
 shared.sectionExpired	समाप्त
+shared.filterAll	सभी
+shared.filterAnyone	कोई भी
+shared.daysLeft#one	%lld दिन बाकी
+shared.daysLeft#other	%lld दिन बाकी
+shared.itemCount#one	%lld आइटम
+shared.itemCount#other	%lld आइटम
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	समाप्त
 shared.emptyByMe	इसका लिंक यहां देखने के लिए कोई फ़ाइल या फ़ोल्डर साझा करें।
 shared.emptyWithMe	अन्य लोग आपके साथ जो लिंक साझा करते हैं वे यहां दिखते हैं।

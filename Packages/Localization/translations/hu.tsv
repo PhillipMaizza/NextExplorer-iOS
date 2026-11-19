@@ -202,6 +202,13 @@ shared.navigationTitle	Megosztott
 shared.segmentByMe	Általam
 shared.segmentWithMe	Velem
 shared.sectionExpired	Lejárt
+shared.filterAll	Mind
+shared.filterAnyone	Bárki
+shared.daysLeft#one	%lld nap van hátra
+shared.daysLeft#other	%lld nap van hátra
+shared.itemCount#one	%lld elem
+shared.itemCount#other	%lld elem
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	lejárt
 shared.emptyByMe	Ossza meg egy fájlt vagy mappát, hogy itt lássa a hivatkozását.
 shared.emptyWithMe	A mások által Önnel megosztott hivatkozások itt jelennek meg.

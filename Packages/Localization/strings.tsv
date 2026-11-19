@@ -258,6 +258,14 @@ shared.moreRecipients	+%lld
 shared.copiedShareLink	Share link copied
 shared.copiedFolderZip	Folder ZIP link copied
 shared.copiedDirectFile	Direct file link copied
+shared.filterAll	All
+shared.filterAnyone	Anyone
+shared.daysLeft#one	%lld day left
+shared.daysLeft#other	%lld days left
+shared.itemCount#one	%lld item
+shared.itemCount#other	%lld items
+# A parent folder and the folder inside it on a Shared row, e.g. Work › Roadmap.
+shared.pathStep	%1$@ › %2$@
 
 # ---- create share ----
 createShare.title	Create Share Link

@@ -48,7 +48,7 @@ public struct SharedFeature {
     }
 
     /// Bumped by `CreateShareLinkFeature` whenever a link is created, so the Shared tab
-    /// reloads without a manual pull-to-refresh.
+    /// reloads without a manual pull to refresh.
     public static let revisionKey = "shareLinksRevision"
 
     @ObservableState
@@ -73,13 +73,15 @@ public struct SharedFeature {
         public var deletingIDs: Set<Share.ID> = []
         @Presents public var editSheet: EditShareFeature.State?
         public var searchQuery = ""
+        /// The people row's pick per segment; absent means `.all`.
+        public var filters: [Segment: Filter] = [:]
         public var sortOption: SortOption = .dateShared
         public var sortDirection: BrowseFeature.SortDirection = .descending
         /// `userId -> display name`, resolved from `GET /api/users/shareable` so a
         /// user-specific share can name its recipients instead of just "Specific users".
         public var userNames: [String: String] = [:]
-        /// Ticked on a timer (`expiryTick`) so a link that expires while the tab is open
-        /// slides into the "Expired" section on its own. Starts at `.distantPast`, so nothing
+        /// Ticked on a timer (`expiryTick`) so a link that expires, or whose day countdown
+        /// changes, while the tab is open updates on its own. Starts at `.distantPast`, so nothing
         /// reads as expired until the view's `TimelineView` sends the first real `now`, which
         /// it does immediately on appear. A non `Date()` default keeps `State()` deterministic.
         public var now: Date = .distantPast
@@ -165,9 +167,8 @@ public struct SharedFeature {
             displayedSharesPartition(for: segment).expired
         }
 
-        /// One filter+sort pass, split into active/expired. `activeShares`, `expiredShares` and
-        /// the list's `.animation(value:)` all need slices of the same ordered list; deriving
-        /// each independently ran the localized sort three times per render.
+        /// One filter and sort pass, split into active and expired. `activeShares`, `expiredShares`
+        /// and the Mac table all need slices of the same ordered list, so the localized sort runs once.
         public func displayedSharesPartition(
             for segment: Segment
         ) -> (all: IdentifiedArrayOf<Share>, active: IdentifiedArrayOf<Share>, expired: IdentifiedArrayOf<Share>) {
@@ -230,6 +231,7 @@ public struct SharedFeature {
         case externalRevisionChanged
         case segmentChanged(Segment)
         case searchQueryChanged(String)
+        case filterChanged(Segment, Filter)
         case refreshRequested
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(BrowseFeature.SortDirection)
@@ -268,14 +270,14 @@ public struct SharedFeature {
                 return .concatenate(load(&state, segment: state.segment), loadUsers(state))
 
             case let .expiryTick(now):
-                // Advancing `now` re-renders the whole list. Only do it when a share actually
-                // crosses its expiry in this interval, so a quiet list stays still between ticks.
+                // Advancing `now` redraws the whole list. Only do it when a share crosses its
+                // expiry or a day of its countdown in this interval, so a quiet list stays still.
                 // The first tick always lands: it arrives before the first load, and shares that
                 // load already expired must read as expired then, not on the next tick.
                 let previousNow = state.now
                 let crossesExpiry: (Share) -> Bool = { share in
                     guard let expiresAt = share.expiresAt else { return false }
-                    return expiresAt > previousNow && expiresAt <= now
+                    return Self.expiryBoundaries(of: expiresAt).contains { $0 > previousNow && $0 <= now }
                 }
                 guard previousNow == .distantPast
                     || state.byMe.contains(where: crossesExpiry)
@@ -299,6 +301,10 @@ public struct SharedFeature {
                 state.searchQuery = query
                 return .none
 
+            case let .filterChanged(segment, filter):
+                state.filters[segment] = filter == .all ? nil : filter
+                return .none
+
             case .refreshRequested:
                 state.phases.removeAll()
                 return .concatenate(load(&state, segment: state.segment), loadUsers(state))
@@ -320,6 +326,7 @@ public struct SharedFeature {
                 } else {
                     state.withMe = identified
                 }
+                state.pruneFilters()
                 syncCache(state, segment: segment)
                 return .none
 
@@ -356,6 +363,7 @@ public struct SharedFeature {
                 }
                 state.phases[segment] = .loaded
                 state.dataSources[segment] = .cached(fetchedAt: fetchedAt)
+                state.pruneFilters()
                 return .none
 
             case let .cachedSharesPainted(segment, cached):
@@ -367,6 +375,7 @@ public struct SharedFeature {
                 } else {
                     state.withMe = identified
                 }
+                state.pruneFilters()
                 return .none
 
             case let .usersResponse(users):
@@ -374,6 +383,7 @@ public struct SharedFeature {
                     users.map { ($0.id, $0.displayName ?? $0.username) },
                     uniquingKeysWith: { first, _ in first }
                 )
+                state.pruneFilters()
                 return .none
 
             case let .deleteTapped(share):
@@ -400,6 +410,7 @@ public struct SharedFeature {
             case let .deleteResponse(id, .success):
                 state.deletingIDs.remove(id)
                 state.byMe.remove(id: id)
+                state.pruneFilters()
                 syncCache(state, segment: .byMe)
                 return .none
 
@@ -415,6 +426,7 @@ public struct SharedFeature {
             case let .editSheet(.presented(.delegate(.updated(share)))):
                 state.byMe[id: share.id] = share
                 state.editSheet = nil
+                state.pruneFilters()
                 return .none
 
             case .editSheet:

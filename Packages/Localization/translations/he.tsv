@@ -208,6 +208,15 @@ shared.navigationTitle	משותפים
 shared.segmentByMe	ששיתפתי
 shared.segmentWithMe	ששותפו איתי
 shared.sectionExpired	פג תוקף
+shared.filterAll	הכול
+shared.filterAnyone	כל אחד
+shared.daysLeft#one	נותר %lld יום
+shared.daysLeft#two	נותרו %lld ימים
+shared.daysLeft#other	נותרו %lld ימים
+shared.itemCount#one	%lld פריט
+shared.itemCount#two	%lld פריטים
+shared.itemCount#other	%lld פריטים
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	פג תוקף
 shared.emptyByMe	שתפו קובץ או תיקייה כדי לראות כאן את הקישור שלהם.
 shared.emptyWithMe	קישורים שאחרים משתפים איתכם יופיעו כאן.

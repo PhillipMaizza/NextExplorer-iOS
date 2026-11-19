@@ -202,6 +202,13 @@ shared.navigationTitle	Delt
 shared.segmentByMe	Af mig
 shared.segmentWithMe	Med mig
 shared.sectionExpired	Udløbet
+shared.filterAll	Alle
+shared.filterAnyone	Enhver
+shared.daysLeft#one	%lld dag tilbage
+shared.daysLeft#other	%lld dage tilbage
+shared.itemCount#one	%lld element
+shared.itemCount#other	%lld elementer
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	udløbet
 shared.emptyByMe	Del en fil eller mappe for at se dens link her.
 shared.emptyWithMe	Links, andre deler med dig, vises her.

@@ -196,6 +196,11 @@ shared.navigationTitle	Đã chia sẻ
 shared.segmentByMe	Bởi tôi
 shared.segmentWithMe	Với tôi
 shared.sectionExpired	Đã hết hạn
+shared.filterAll	Tất cả
+shared.filterAnyone	Bất kỳ ai
+shared.daysLeft#other	Còn %lld ngày
+shared.itemCount#other	%lld mục
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	đã hết hạn
 shared.emptyByMe	Hãy chia sẻ một tệp hoặc thư mục để xem liên kết của nó ở đây.
 shared.emptyWithMe	Các liên kết người khác chia sẻ với bạn sẽ hiển thị ở đây.

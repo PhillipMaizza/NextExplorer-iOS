@@ -197,6 +197,13 @@ shared.navigationTitle	Geteilt
 shared.segmentByMe	Von mir
 shared.segmentWithMe	Mit mir
 shared.sectionExpired	Abgelaufen
+shared.filterAll	Alle
+shared.filterAnyone	Jeder
+shared.daysLeft#one	Noch %lld Tag
+shared.daysLeft#other	Noch %lld Tage
+shared.itemCount#one	%lld Objekt
+shared.itemCount#other	%lld Objekte
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	abgelaufen
 shared.emptyByMe	Teile eine Datei oder einen Ordner, um den Link hier zu sehen.
 shared.emptyWithMe	Links, die andere mit dir teilen, erscheinen hier.

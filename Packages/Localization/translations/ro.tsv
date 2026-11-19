@@ -203,6 +203,15 @@ shared.navigationTitle	Partajate
 shared.segmentByMe	De mine
 shared.segmentWithMe	Cu mine
 shared.sectionExpired	Expirate
+shared.filterAll	Toate
+shared.filterAnyone	Oricine
+shared.daysLeft#one	%lld zi rămasă
+shared.daysLeft#few	%lld zile rămase
+shared.daysLeft#other	%lld de zile rămase
+shared.itemCount#one	%lld element
+shared.itemCount#few	%lld elemente
+shared.itemCount#other	%lld de elemente
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	expirat
 shared.emptyByMe	Partajează un fișier sau dosar pentru a-i vedea linkul aici.
 shared.emptyWithMe	Linkurile pe care alții le partajează cu tine apar aici.

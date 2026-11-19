@@ -197,6 +197,13 @@ shared.navigationTitle	Delade
 shared.segmentByMe	Av mig
 shared.segmentWithMe	Med mig
 shared.sectionExpired	Utgångna
+shared.filterAll	Alla
+shared.filterAnyone	Vem som helst
+shared.daysLeft#one	%lld dag kvar
+shared.daysLeft#other	%lld dagar kvar
+shared.itemCount#one	%lld objekt
+shared.itemCount#other	%lld objekt
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	utgången
 shared.emptyByMe	Dela en fil eller mapp för att se dess länk här.
 shared.emptyWithMe	Länkar som andra delar med dig visas här.

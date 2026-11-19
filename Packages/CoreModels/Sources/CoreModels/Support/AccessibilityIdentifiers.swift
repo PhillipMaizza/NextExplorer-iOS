@@ -51,6 +51,13 @@ public enum AccessibilityIdentifiers {
         public static let sheet = "share.sheet"
     }
 
+    public enum Shared {
+        /// One circle in the people row, by `all`, `anyone` or `person.<id>`.
+        public static func filter(_ suffix: String) -> String {
+            "shared.filter.\(suffix)"
+        }
+    }
+
     public enum Browse {
         public static let uploadMenu = "browse.uploadMenu"
         public static let moreMenu = "browse.moreMenu"

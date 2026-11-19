@@ -196,6 +196,11 @@ shared.navigationTitle	ที่แชร์
 shared.segmentByMe	โดยฉัน
 shared.segmentWithMe	กับฉัน
 shared.sectionExpired	หมดอายุแล้ว
+shared.filterAll	ทั้งหมด
+shared.filterAnyone	ทุกคน
+shared.daysLeft#other	เหลืออีก %lld วัน
+shared.itemCount#other	%lld รายการ
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	หมดอายุแล้ว
 shared.emptyByMe	แชร์ไฟล์หรือโฟลเดอร์เพื่อดูลิงก์ที่นี่
 shared.emptyWithMe	ลิงก์ที่ผู้อื่นแชร์ให้คุณจะแสดงที่นี่

@@ -238,6 +238,21 @@ shared.actionShareLink	مشاركة الرابط
 shared.actionFolderLink	رابط المجلد
 shared.actionFileLink	رابط الملف
 shared.moreRecipients	+%lld
+shared.filterAll	الكل
+shared.filterAnyone	أي شخص
+shared.daysLeft#zero	متبقٍ %lld يوم
+shared.daysLeft#one	متبقٍ %lld يوم
+shared.daysLeft#two	متبقٍ %lld يوم
+shared.daysLeft#few	متبقية %lld أيام
+shared.daysLeft#many	متبقٍ %lld يومًا
+shared.daysLeft#other	متبقٍ %lld يوم
+shared.itemCount#zero	%lld عنصر
+shared.itemCount#one	%lld عنصر
+shared.itemCount#two	%lld عنصر
+shared.itemCount#few	%lld عناصر
+shared.itemCount#many	%lld عنصرًا
+shared.itemCount#other	%lld عنصر
+shared.pathStep	%1$@ › %2$@
 shared.copiedShareLink	تم نسخ رابط المشاركة
 shared.copiedFolderZip	تم نسخ رابط ZIP للمجلد
 shared.copiedDirectFile	تم نسخ رابط الملف المباشر

@@ -202,6 +202,13 @@ shared.navigationTitle	Jaetut
 shared.segmentByMe	Minun
 shared.segmentWithMe	Minulle jaetut
 shared.sectionExpired	Vanhentunut
+shared.filterAll	Kaikki
+shared.filterAnyone	Kuka tahansa
+shared.daysLeft#one	%lld päivä jäljellä
+shared.daysLeft#other	%lld päivää jäljellä
+shared.itemCount#one	%lld kohde
+shared.itemCount#other	%lld kohdetta
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	vanhentunut
 shared.emptyByMe	Jaa tiedosto tai kansio nähdäksesi sen linkin täällä.
 shared.emptyWithMe	Muiden kanssasi jakamat linkit näkyvät täällä.

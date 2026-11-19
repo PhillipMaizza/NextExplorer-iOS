@@ -196,6 +196,11 @@ shared.navigationTitle	Dibagikan
 shared.segmentByMe	Oleh saya
 shared.segmentWithMe	Dengan saya
 shared.sectionExpired	Kedaluwarsa
+shared.filterAll	Semua
+shared.filterAnyone	Siapa saja
+shared.daysLeft#other	%lld hari lagi
+shared.itemCount#other	%lld item
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	kedaluwarsa
 shared.emptyByMe	Bagikan file atau folder untuk melihat tautannya di sini.
 shared.emptyWithMe	Tautan yang dibagikan orang lain kepada Anda muncul di sini.

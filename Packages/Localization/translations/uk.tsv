@@ -214,6 +214,17 @@ shared.navigationTitle	Спільні
 shared.segmentByMe	Мої
 shared.segmentWithMe	Зі мною
 shared.sectionExpired	Термін дії минув
+shared.filterAll	Усі
+shared.filterAnyone	Будь-хто
+shared.daysLeft#one	Залишився %lld день
+shared.daysLeft#few	Залишилося %lld дні
+shared.daysLeft#many	Залишилося %lld днів
+shared.daysLeft#other	Залишилося %lld дня
+shared.itemCount#one	%lld об’єкт
+shared.itemCount#few	%lld об’єкти
+shared.itemCount#many	%lld об’єктів
+shared.itemCount#other	%lld об’єкта
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	термін дії минув
 shared.emptyByMe	Поділіться файлом або папкою, щоб побачити тут посилання.
 shared.emptyWithMe	Посилання, якими з вами діляться інші, з’являються тут.

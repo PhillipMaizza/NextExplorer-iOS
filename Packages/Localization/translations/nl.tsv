@@ -197,6 +197,13 @@ shared.navigationTitle	Gedeeld
 shared.segmentByMe	Door mij
 shared.segmentWithMe	Met mij
 shared.sectionExpired	Verlopen
+shared.filterAll	Alles
+shared.filterAnyone	Iedereen
+shared.daysLeft#one	Nog %lld dag
+shared.daysLeft#other	Nog %lld dagen
+shared.itemCount#one	%lld item
+shared.itemCount#other	%lld items
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	verlopen
 shared.emptyByMe	Deel een bestand of map om de link hier te zien.
 shared.emptyWithMe	Links die anderen met je delen verschijnen hier.

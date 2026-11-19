@@ -901,10 +901,14 @@ public enum L10n {
         public static var copiedDirectFile: String { tr("shared.copiedDirectFile") }  // "Direct file link copied"
         public static var copiedFolderZip: String { tr("shared.copiedFolderZip") }  // "Folder ZIP link copied"
         public static var copiedShareLink: String { tr("shared.copiedShareLink") }  // "Share link copied"
+        public static func daysLeft(_ a0: CVarArg) -> String { tr("shared.daysLeft", a0) }
         public static var deleteMessage: String { tr("shared.deleteMessage") }
         public static var deleteTitle: String { tr("shared.deleteTitle") }  // "Delete Share Link?"
         public static var emptyByMe: String { tr("shared.emptyByMe") }  // "Share a file or folder to see its link here."
         public static var emptyWithMe: String { tr("shared.emptyWithMe") }  // "Links other people share with you show up here."
+        public static var filterAll: String { tr("shared.filterAll") }  // "All"
+        public static var filterAnyone: String { tr("shared.filterAnyone") }  // "Anyone"
+        public static func itemCount(_ a0: CVarArg) -> String { tr("shared.itemCount", a0) }
         public static var linkMode: String { tr("shared.linkMode") }  // "Link mode"
         public static var metaAccess: String { tr("shared.metaAccess") }  // "Access"
         public static var metaExpiration: String { tr("shared.metaExpiration") }  // "Expiration"
@@ -913,6 +917,7 @@ public enum L10n {
         public static func moreRecipients(_ a0: CVarArg) -> String { tr("shared.moreRecipients", a0) }
         public static var navigationTitle: String { tr("shared.navigationTitle") }  // "Shared"
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("shared.noSearchMatches", a0) }
+        public static func pathStep(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shared.pathStep", a0, a1) }
         public static var sectionExpired: String { tr("shared.sectionExpired") }  // "Expired"
         public static var segmentByMe: String { tr("shared.segmentByMe") }  // "By me"
         public static var segmentWithMe: String { tr("shared.segmentWithMe") }  // "With me"

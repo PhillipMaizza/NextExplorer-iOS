@@ -197,6 +197,13 @@ shared.navigationTitle	Partilhados
 shared.segmentByMe	Por mim
 shared.segmentWithMe	Comigo
 shared.sectionExpired	Expirados
+shared.filterAll	Tudo
+shared.filterAnyone	Qualquer pessoa
+shared.daysLeft#one	Falta %lld dia
+shared.daysLeft#other	Faltam %lld dias
+shared.itemCount#one	%lld item
+shared.itemCount#other	%lld itens
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	expirado
 shared.emptyByMe	Partilhe um ficheiro ou pasta para ver a ligação aqui.
 shared.emptyWithMe	As ligações que outras pessoas partilham consigo aparecem aqui.

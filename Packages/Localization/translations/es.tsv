@@ -197,6 +197,13 @@ shared.navigationTitle	Compartidos
 shared.segmentByMe	Por mí
 shared.segmentWithMe	Conmigo
 shared.sectionExpired	Caducados
+shared.filterAll	Todo
+shared.filterAnyone	Cualquiera
+shared.daysLeft#one	Queda %lld día
+shared.daysLeft#other	Quedan %lld días
+shared.itemCount#one	%lld elemento
+shared.itemCount#other	%lld elementos
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	caducado
 shared.emptyByMe	Comparte un archivo o carpeta para ver su enlace aquí.
 shared.emptyWithMe	Los enlaces que otras personas comparten contigo aparecen aquí.

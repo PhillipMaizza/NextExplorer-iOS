@@ -202,6 +202,13 @@ shared.navigationTitle	Paylaşılanlar
 shared.segmentByMe	Benim paylaştıklarım
 shared.segmentWithMe	Benimle paylaşılanlar
 shared.sectionExpired	Süresi doldu
+shared.filterAll	Tümü
+shared.filterAnyone	Herkes
+shared.daysLeft#one	%lld gün kaldı
+shared.daysLeft#other	%lld gün kaldı
+shared.itemCount#one	%lld öge
+shared.itemCount#other	%lld öge
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	süresi doldu
 shared.emptyByMe	Bağlantısını burada görmek için bir dosya veya klasör paylaşın.
 shared.emptyWithMe	Başkalarının sizinle paylaştığı bağlantılar burada görünür.

@@ -191,6 +191,11 @@ shared.navigationTitle	共有
 shared.segmentByMe	自分から
 shared.segmentWithMe	自分宛て
 shared.sectionExpired	期限切れ
+shared.filterAll	すべて
+shared.filterAnyone	誰でも
+shared.daysLeft#other	残り%lld日
+shared.itemCount#other	%lld件
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	期限切れ
 shared.emptyByMe	ファイルやフォルダを共有すると、そのリンクがここに表示されます。
 shared.emptyWithMe	他の人があなたと共有したリンクがここに表示されます。

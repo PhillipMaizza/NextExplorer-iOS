@@ -191,6 +191,11 @@ shared.navigationTitle	공유됨
 shared.segmentByMe	내가 공유
 shared.segmentWithMe	나와 공유됨
 shared.sectionExpired	만료됨
+shared.filterAll	전체
+shared.filterAnyone	누구나
+shared.daysLeft#other	%lld일 남음
+shared.itemCount#other	항목 %lld개
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	만료됨
 shared.emptyByMe	파일이나 폴더를 공유하면 여기에 링크가 표시됩니다.
 shared.emptyWithMe	다른 사람이 나와 공유한 링크가 여기에 표시됩니다.

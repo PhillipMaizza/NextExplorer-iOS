@@ -214,6 +214,17 @@ shared.navigationTitle	Sdílené
 shared.segmentByMe	Mnou
 shared.segmentWithMe	Se mnou
 shared.sectionExpired	Platnost vypršela
+shared.filterAll	Vše
+shared.filterAnyone	Kdokoli
+shared.daysLeft#one	Zbývá %lld den
+shared.daysLeft#few	Zbývají %lld dny
+shared.daysLeft#many	Zbývá %lld dne
+shared.daysLeft#other	Zbývá %lld dní
+shared.itemCount#one	%lld položka
+shared.itemCount#few	%lld položky
+shared.itemCount#many	%lld položky
+shared.itemCount#other	%lld položek
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	platnost vypršela
 shared.emptyByMe	Nasdílejte soubor nebo složku a uvidíte zde jeho odkaz.
 shared.emptyWithMe	Odkazy, které s vámi sdílejí ostatní, se zobrazí zde.

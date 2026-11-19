@@ -209,6 +209,17 @@ shared.navigationTitle	Udostępnione
 shared.segmentByMe	Przeze mnie
 shared.segmentWithMe	Ze mną
 shared.sectionExpired	Wygasłe
+shared.filterAll	Wszystko
+shared.filterAnyone	Każdy
+shared.daysLeft#one	Został %lld dzień
+shared.daysLeft#few	Zostały %lld dni
+shared.daysLeft#many	Zostało %lld dni
+shared.daysLeft#other	Zostało %lld dnia
+shared.itemCount#one	%lld element
+shared.itemCount#few	%lld elementy
+shared.itemCount#many	%lld elementów
+shared.itemCount#other	%lld elementu
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	wygasłe
 shared.emptyByMe	Udostępnij plik lub folder, aby zobaczyć jego link tutaj.
 shared.emptyWithMe	Linki udostępnione Ci przez innych pojawią się tutaj.

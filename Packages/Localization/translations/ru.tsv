@@ -209,6 +209,17 @@ shared.navigationTitle	Общие
 shared.segmentByMe	Мной
 shared.segmentWithMe	Со мной
 shared.sectionExpired	Истёкшие
+shared.filterAll	Все
+shared.filterAnyone	Любой
+shared.daysLeft#one	Остался %lld день
+shared.daysLeft#few	Осталось %lld дня
+shared.daysLeft#many	Осталось %lld дней
+shared.daysLeft#other	Осталось %lld дня
+shared.itemCount#one	%lld объект
+shared.itemCount#few	%lld объекта
+shared.itemCount#many	%lld объектов
+shared.itemCount#other	%lld объекта
+shared.pathStep	%1$@ › %2$@
 shared.badgeExpired	истёк
 shared.emptyByMe	Откройте доступ к файлу или папке, чтобы увидеть ссылку здесь.
 shared.emptyWithMe	Ссылки, которыми с вами делятся другие, появятся здесь.
