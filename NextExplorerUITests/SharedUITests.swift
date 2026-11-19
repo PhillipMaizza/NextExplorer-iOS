@@ -83,6 +83,23 @@
             XCTAssertTrue(shared.copyLinkButton.waitToAppear(), "A row pushes its share page")
         }
 
+        func testDeletingTheOnlyShareFromItsSheetClosesItAndDropsTheRow() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal)
+            let shared = SharedScreen(app: app)
+            selectTab(TabBar(app: app).shared, until: shared.item(ShareFixture.byMe))
+
+            shared.item(ShareFixture.byMe).tap()
+            XCTAssertTrue(shared.copyLinkButton.waitToAppear(), "A one share item opens straight on its page")
+            app.swipeUp()
+            XCTAssertTrue(shared.deleteShareButton.waitToAppear(), "The share page ends with Delete")
+            shared.deleteShareButton.tap()
+            XCTAssertTrue(shared.confirmDeleteButton.waitToAppear(), "Delete asks first, on top of the sheet")
+            shared.confirmDeleteButton.tap()
+
+            XCTAssertTrue(shared.copyLinkButton.waitToVanish(), "Deleting the last share closes the sheet")
+            XCTAssertTrue(shared.item(ShareFixture.byMe).waitToVanish(), "The item leaves the list")
+        }
+
         func testSharedEmptyState() {
             let app = launchApp(auth: .loggedIn, scenario: .empty)
             let shared = SharedScreen(app: app)

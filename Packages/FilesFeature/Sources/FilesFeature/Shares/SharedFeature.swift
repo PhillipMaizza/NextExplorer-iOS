@@ -10,7 +10,7 @@ import SwiftUI
 /// The "Shared" tab: a segmented view over share links the user created ("By me") and
 /// links others granted them ("With me"). Backed by `GET /api/shares` and
 /// `GET /api/shares/shared-with-me`: see [[share-link-api]]. Deleting is owner-only, so
-/// it's offered on the "By me" list only.
+/// it's offered on a "By me" share page only.
 @Reducer
 public struct SharedFeature {
     public enum Segment: String, Hashable, Sendable, CaseIterable {

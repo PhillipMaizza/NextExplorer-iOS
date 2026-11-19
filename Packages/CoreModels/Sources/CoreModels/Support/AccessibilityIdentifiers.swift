@@ -56,6 +56,9 @@ public enum AccessibilityIdentifiers {
         public static func filter(_ suffix: String) -> String {
             "shared.filter.\(suffix)"
         }
+
+        /// A share page's Delete, apart from the confirm button of the same name.
+        public static let deleteShare = "shared.deleteShare"
     }
 
     public enum Browse {

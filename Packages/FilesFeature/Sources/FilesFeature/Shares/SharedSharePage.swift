@@ -130,6 +130,7 @@ struct SharedSharePage: View {
                     HStack(spacing: .space8) {
                         action(L10n.Common.edit, style: .primaryOnSurface) { store.send(.editTapped(share)) }
                         action(L10n.Common.delete, style: .error) { store.send(.deleteTapped(share)) }
+                            .accessibilityIdentifier(AccessibilityIdentifiers.Shared.deleteShare)
                     }
                     .clearRow()
                 }

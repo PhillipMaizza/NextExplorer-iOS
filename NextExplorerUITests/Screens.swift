@@ -473,6 +473,19 @@ struct SharedScreen {
         app.buttons[L10n.Common.close].firstMatch
     }
 
+    var deleteShareButton: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Shared.deleteShare].firstMatch
+    }
+
+    /// The delete alert's confirm button, which shares its title with the page's Delete.
+    var confirmDeleteButton: XCUIElement {
+        app.buttons.matching(NSPredicate(
+            format: "label == %@ AND identifier != %@",
+            L10n.Common.delete,
+            AccessibilityIdentifiers.Shared.deleteShare
+        )).firstMatch
+    }
+
     var expiredHeader: XCUIElement {
         app.staticTexts[L10n.Shared.sectionExpired.uppercased()].exists
             ? app.staticTexts[L10n.Shared.sectionExpired.uppercased()]
