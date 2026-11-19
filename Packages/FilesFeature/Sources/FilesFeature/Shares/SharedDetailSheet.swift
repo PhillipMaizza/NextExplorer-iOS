@@ -137,7 +137,7 @@ let sharedPreviewServerURL = URL(string: "https://cloud.example.com") ?? URL(fil
 /// Shared state over the mock lists, loaded, with names resolved, for previews.
 @MainActor
 func sharedPreviewState(mutate: (inout SharedFeature.State) -> Void = { _ in }) -> SharedFeature.State {
-    var state = SharedFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"))
+    var state = SharedFeature.State(serverURL: sharedPreviewServerURL)
     state.now = Date()
     state.userNames = Dictionary(uniqueKeysWithValues: Share.previewShareableUsers.map { (
         $0.id,

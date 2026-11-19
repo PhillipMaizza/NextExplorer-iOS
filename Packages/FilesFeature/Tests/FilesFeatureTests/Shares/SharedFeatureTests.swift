@@ -10,7 +10,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct SharedFeatureTests {
-    private let serverURL = URL(fileURLWithPath: "/")
+    private let serverURL = TestHost.serverURL
 
     private func makeShare(id: String = "1", byMe: Bool = true, expiresAt: Date? = nil) -> Share {
         Share(

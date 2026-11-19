@@ -56,9 +56,7 @@ struct SharedShareList: View {
                 Text(L10n.Shared.listFooter).type(.body3(.regular), style: .secondary)
             }
         }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(Color.backgroundPrimary)
+        .sharedSheetList()
     }
 
     private var subtitle: String {

@@ -10,7 +10,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct EditShareFeatureTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private let serverURL = TestHost.serverURL
     private let fixedNow = MockDate.date.addingTimeInterval(100_000_000)
 
     private nonisolated func share(
@@ -80,7 +80,7 @@ struct EditShareFeatureTests {
             EditShareFeature()
         } withDependencies: {
             $0.filesClient.shareableUsers = { _ in
-                [User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")]
+                [User.jamieFixture]
             }
         }
 
@@ -90,7 +90,7 @@ struct EditShareFeatureTests {
         }
         await store.receive(\.shareableUsersResponse.success) {
             $0.usersPhase = .loaded
-            $0.shareableUsers = [User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")]
+            $0.shareableUsers = [User.jamieFixture]
         }
 
         // Toggling away and back doesn't refetch.

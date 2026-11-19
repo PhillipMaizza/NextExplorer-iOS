@@ -9,7 +9,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct SharedFeatureItemsTests {
-    private let serverURL = URL(fileURLWithPath: "/")
+    private let serverURL = TestHost.serverURL
     private let day: TimeInterval = 86_400
     private let anna = User(id: "u1", username: "anna", email: nil, displayName: "Anna Moreau")
     private let jonas = User(id: "u2", username: "jonas", email: nil, displayName: "Jonas Keller")

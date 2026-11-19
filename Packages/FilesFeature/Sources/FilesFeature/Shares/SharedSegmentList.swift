@@ -197,7 +197,7 @@ private func segmentListPreview(
     _ mutate: (inout SharedFeature.State) -> Void
 ) -> some View {
     var state = SharedFeature.State(
-        serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
+        serverURL: sharedPreviewServerURL
     )
     state.now = Date()
     state.userNames = Dictionary(uniqueKeysWithValues: Share.previewShareableUsers.map { (

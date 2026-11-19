@@ -10,7 +10,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct CreateShareLinkFeatureTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private let serverURL = TestHost.serverURL
     private let now = MockDate.date
 
     private func makeState() -> CreateShareLinkFeature.State {
@@ -117,7 +117,7 @@ struct CreateShareLinkFeatureTests {
 
     @Test
     func choosingSpecificUsersLoadsUsersAndBlocksCreationUntilOneIsPicked() async {
-        let jamie = User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")
+        let jamie = User.jamieFixture
         let store = TestStore(initialState: makeState()) {
             CreateShareLinkFeature()
         } withDependencies: {
@@ -143,7 +143,7 @@ struct CreateShareLinkFeatureTests {
 
     @Test
     func specificUsersAreSentInTheCreateRequest() async {
-        let jamie = User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")
+        let jamie = User.jamieFixture
         let created = makeCreated(target: .users)
         var state = makeState()
         state.target = .users

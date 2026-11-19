@@ -184,7 +184,7 @@
 
     #Preview("Create") {
         MacCreateShareLinkSheet(store: Store(initialState: CreateShareLinkFeature.State(
-            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            serverURL: sharedPreviewServerURL,
             itemName: "Electricity",
             itemPath: "Documents/Bills",
             isDirectory: true
@@ -193,7 +193,7 @@
 
     #Preview("Edit") {
         MacEditShareSheet(store: Store(initialState: EditShareFeature.State(
-            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            serverURL: sharedPreviewServerURL,
             share: .previewCard(hasPassword: true, expiresAt: Date().addingTimeInterval(86_400 * 7))
         )) { EditShareFeature() } withDependencies: { $0.filesClient = .previewValue })
     }

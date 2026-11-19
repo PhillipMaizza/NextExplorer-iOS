@@ -16,7 +16,7 @@ struct SharedDetailTests {
         static let itemID = "personal:Work/Roadmap"
     }
 
-    private let serverURL = URL(fileURLWithPath: "/")
+    private let serverURL = TestHost.serverURL
 
     /// A By me link on the roadmap folder, `age` seconds after the mock date.
     private func roadmap(_ id: String, users: [String]? = nil, age: TimeInterval = 0) -> Share {

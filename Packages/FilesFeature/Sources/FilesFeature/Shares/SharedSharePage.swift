@@ -136,9 +136,7 @@ struct SharedSharePage: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(Color.backgroundPrimary)
+        .sharedSheetList()
         .opacity(isDeleting ? Constants.deletingOpacity : 1)
         .disabled(isDeleting)
         .navigationTitle(isPushed ? item.name : "")

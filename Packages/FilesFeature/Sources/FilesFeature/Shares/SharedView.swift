@@ -167,7 +167,7 @@ private func sharedPreview(
     mutateState: (inout SharedFeature.State) -> Void = { _ in }
 ) -> some View {
     var state = SharedFeature.State(
-        serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
+        serverURL: sharedPreviewServerURL
     )
     mutateState(&state)
     var client = FilesClient.previewValue
