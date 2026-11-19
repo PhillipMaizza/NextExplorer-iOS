@@ -78,26 +78,29 @@
         .backgroundGradient()
     }
 
-    #Preview("Content: by me") {
-        macSharedPreview(.byMe) { MacSharedContent(store: $0, onToast: { _ in }) }
+    @MainActor
+    private func contentPreview(
+        _ segment: SharedFeature.Segment,
+        mutate: (inout SharedFeature.State) -> Void = { _ in }
+    ) -> some View {
+        macSharedPreview(segment, mutate: mutate) { MacSharedContent(store: $0, onToast: { _ in }) }
             .previewCanvas(.window)
     }
 
+    #Preview("Content: by me") {
+        contentPreview(.byMe)
+    }
+
     #Preview("Content: by me, dark") {
-        macSharedPreview(.byMe) { MacSharedContent(store: $0, onToast: { _ in }) }
-            .previewCanvas(.window)
+        contentPreview(.byMe)
             .preferredColorScheme(.dark)
     }
 
     #Preview("Content: with me") {
-        macSharedPreview(.withMe) { MacSharedContent(store: $0, onToast: { _ in }) }
-            .previewCanvas(.window)
+        contentPreview(.withMe)
     }
 
-    #Preview("Content: person filter") {
-        macSharedPreview(.byMe, mutate: { $0.filters[.byMe] = .people(["u6"]) }) {
-            MacSharedContent(store: $0, onToast: { _ in })
-        }
-        .previewCanvas(.window)
+    #Preview("Content: two people picked") {
+        contentPreview(.byMe) { $0.filters[.byMe] = .people(["u2", "u6"]) }
     }
 #endif

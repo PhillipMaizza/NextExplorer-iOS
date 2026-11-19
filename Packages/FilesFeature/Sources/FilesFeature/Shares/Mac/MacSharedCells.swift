@@ -20,7 +20,7 @@
             HStack(spacing: .space8) {
                 if let share = row.child {
                     MacTableFolderIcon(
-                        image: share.sharingType == .anyone ? IconKit.web : IconKit.people,
+                        image: share.audienceIcon,
                         tint: Color.secondaryDS,
                         isFilled: false,
                         size: Metrics.audienceGlyphSize

@@ -377,13 +377,17 @@ struct SharedFeatureItemsTests {
         #expect(byMe("b", path: "B", users: ["u1", "u2"]).audienceTitle == L10n.Shared.peopleCount(2))
     }
 
-    @Test
-    func aMacRowActsOnOneShareOnlyAndListsSeveralAsChildren() {
-        let current = state(byMe: [
+    /// One item with two shares: a link opened once, and a people share downloaded more.
+    private var roadmapShares: [Share] {
+        [
             byMe("a", path: "Roadmap", downloads: 4, openedAt: MockDate.date),
             byMe("b", path: "Roadmap", users: ["u1", "u2"], downloads: 6, age: 1),
-            byMe("c", path: "Budget", age: 2),
-        ])
+        ]
+    }
+
+    @Test
+    func aMacRowActsOnOneShareOnlyAndListsSeveralAsChildren() {
+        let current = state(byMe: roadmapShares + [byMe("c", path: "Budget", age: 2)])
         let items = current.items(for: .byMe)
         let budget = MacSharedRow(item: items[0], expiringShare: nil)
         let roadmap = MacSharedRow(item: items[1], expiringShare: nil)
@@ -402,10 +406,7 @@ struct SharedFeatureItemsTests {
 
     @Test
     func macRowsSortByTheirOwnSharesOrTheWholeItem() {
-        let current = state(byMe: [
-            byMe("a", path: "Roadmap", downloads: 4, openedAt: MockDate.date),
-            byMe("b", path: "Roadmap", users: ["u1", "u2"], downloads: 6, age: 1),
-        ])
+        let current = state(byMe: roadmapShares)
         let roadmap = MacSharedRow(item: current.items(for: .byMe)[0], expiringShare: nil)
         let second = roadmap.children?[1]
 
@@ -416,5 +417,7 @@ struct SharedFeatureItemsTests {
         #expect(second?.downloadCount == 6)
         #expect(second?.lastOpenedAt == nil)
         #expect(second?.lastOpenedSortDate == .distantPast)
+        let byDownloads = roadmap.children?.sorted(using: KeyPathComparator(\.downloadCount, order: .reverse))
+        #expect(byDownloads?.map { $0.share?.id } == ["b", "a"])
     }
 }

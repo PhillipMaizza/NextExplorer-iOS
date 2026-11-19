@@ -1,7 +1,7 @@
 import CoreModels
 import DesignSystem
-import Foundation
 import Localization
+import SwiftUI
 
 /// Presentation titles for the share enums. Kept out of `CoreModels` so the model layer
 /// stays free of user-facing copy.
@@ -63,6 +63,11 @@ extension Share {
     /// Who it reaches, as a title: anyone with the link, or how many people.
     var audienceTitle: String {
         sharingType == .anyone ? L10n.Shared.anyoneWithLink : L10n.Shared.peopleCount(permittedUserIds?.count ?? 0)
+    }
+
+    /// Who it reaches, as a glyph: a globe for a public link, people otherwise.
+    var audienceIcon: Image {
+        sharingType == .anyone ? IconKit.web : IconKit.people
     }
 
     /// The label as shown: trimmed, nil when blank.

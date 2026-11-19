@@ -19,8 +19,8 @@
     }
 
     /// One Shared segment as a Mac outline table grouped by item: an item with several shares opens
-    /// to a row per share. Sortable columns drive the store's own sort. Right click, double click and
-    /// Delete act on one share you own; With me stays read only, as on iOS and the web.
+    /// to a row per share. Every column sorts, items and their shares alike. Right click and Delete
+    /// act on one share you own; With me stays read only, as on iOS and the web.
     struct MacSharedTable: View {
         let store: StoreOf<SharedFeature>
         let segment: SharedFeature.Segment
@@ -75,11 +75,13 @@
         var body: some View {
             let rows = (isLoading ? SharedSegmentList.placeholderItems : store.state.items(for: segment))
                 .map { item in
-                    MacSharedRow(
+                    var row = MacSharedRow(
                         item: item,
                         expiringShare: store.state.nearestExpiringShare(in: item),
                         sharer: isByMe ? "" : store.state.sharedByLabel(for: item.shares[0])
                     )
+                    row.children?.sort(using: sortOrder)
+                    return row
                 }
                 .sorted(using: sortOrder)
             table(rows)
@@ -234,54 +236,46 @@
         }
     }
 
-    #Preview("Table: by me") {
-        macSharedPreview(.byMe) { MacSharedTable(store: $0, segment: .byMe, selection: .constant([]), onToast: { _ in
-        }) }
+    @MainActor
+    private func tablePreview(
+        _ segment: SharedFeature.Segment,
+        mutate: (inout SharedFeature.State) -> Void = { _ in }
+    ) -> some View {
+        macSharedPreview(segment, mutate: mutate) {
+            MacSharedTable(store: $0, segment: segment, selection: .constant([]), onToast: { _ in })
+        }
         .previewCanvas(.table)
+    }
+
+    #Preview("Table: by me") {
+        tablePreview(.byMe)
     }
 
     #Preview("Table: by me, dark") {
-        macSharedPreview(.byMe) { MacSharedTable(store: $0, segment: .byMe, selection: .constant([]), onToast: { _ in
-        }) }
-        .previewCanvas(.table)
-        .preferredColorScheme(.dark)
+        tablePreview(.byMe)
+            .preferredColorScheme(.dark)
     }
 
     #Preview("Table: with me") {
-        macSharedPreview(.withMe) {
-            MacSharedTable(store: $0, segment: .withMe, selection: .constant([]), onToast: { _ in })
-        }
-        .previewCanvas(.table)
+        tablePreview(.withMe)
     }
 
     #Preview("Table: loading") {
-        macSharedPreview(.byMe, mutate: { $0.phases[.byMe] = .loading }) {
-            MacSharedTable(store: $0, segment: .byMe, selection: .constant([]), onToast: { _ in })
-        }
-        .previewCanvas(.table)
+        tablePreview(.byMe) { $0.phases[.byMe] = .loading }
     }
 
     #Preview("Table: empty") {
-        macSharedPreview(.byMe, mutate: { $0.byMe = [] }) {
-            MacSharedTable(store: $0, segment: .byMe, selection: .constant([]), onToast: { _ in })
-        }
-        .previewCanvas(.table)
+        tablePreview(.byMe) { $0.byMe = [] }
     }
 
     #Preview("Table: error") {
-        macSharedPreview(.byMe, mutate: {
+        tablePreview(.byMe) {
             $0.byMe = []
             $0.phases[.byMe] = .failed(L10n.EmptyState.loadFailed)
-        }) {
-            MacSharedTable(store: $0, segment: .byMe, selection: .constant([]), onToast: { _ in })
         }
-        .previewCanvas(.table)
     }
 
     #Preview("Table: no search results") {
-        macSharedPreview(.byMe, mutate: { $0.searchQuery = "zzzznomatch" }) {
-            MacSharedTable(store: $0, segment: .byMe, selection: .constant([]), onToast: { _ in })
-        }
-        .previewCanvas(.table)
+        tablePreview(.byMe) { $0.searchQuery = "zzzznomatch" }
     }
 #endif

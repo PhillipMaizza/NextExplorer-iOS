@@ -292,7 +292,7 @@ struct CreateShareLinkSheet: View {
         VStack(alignment: .leading, spacing: .space12) {
             summaryRow(IconKit.lock, L10n.CreateShare.summaryAccess, created.share.accessMode.title)
             summaryRow(
-                created.share.sharingType == .anyone ? IconKit.web : IconKit.people,
+                created.share.audienceIcon,
                 L10n.CreateShare.summarySharedWith,
                 created.share.sharingType == .anyone ? L10n.Shared.anyoneWithLink : recipientNames
             )

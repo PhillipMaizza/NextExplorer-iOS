@@ -154,7 +154,7 @@
 
         private var audience: some View {
             HStack(spacing: .space8) {
-                (share.sharingType == .anyone ? IconKit.web : IconKit.people)
+                share.audienceIcon
                     .resizable().scaledToFit()
                     .foregroundStyle(.secondary)
                     .frame(width: Metrics.audienceGlyphSize, height: Metrics.audienceGlyphSize)

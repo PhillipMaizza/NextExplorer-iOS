@@ -24,27 +24,28 @@ struct MacSharedRow: Identifiable {
     /// Who shared it, for With me; empty for By me.
     let sharer: String
 
+    /// One child row per share, oldest first, only when the item has several. The table sorts
+    /// them with the same columns as the items.
+    var children: [MacSharedRow]?
+
     init(item: SharedFeature.Item, child: Share? = nil, expiringShare: Share?, sharer: String = "") {
         self.item = item
         self.child = child
         self.expiringShare = expiringShare
         self.sharer = sharer
+        if child == nil, item.shares.count > 1 {
+            children = item.shares.map { MacSharedRow(item: item, child: $0, expiringShare: $0, sharer: sharer) }
+        }
     }
 
     var id: ID {
         child.map { .share($0.id, item: item.id) } ?? .item(item.id)
     }
 
-    /// What right click, double click and Delete act on: the child's share, or a single share
+    /// What right click and Delete act on: the child's share, or a single share
     /// item's own. Nil on an item with several shares, whose shares each have their own row.
     var share: Share? {
         child ?? (item.shares.count == 1 ? item.shares[0] : nil)
-    }
-
-    /// One child row per share, oldest first, only when the item has several.
-    var children: [MacSharedRow]? {
-        guard child == nil, item.shares.count > 1 else { return nil }
-        return item.shares.map { MacSharedRow(item: item, child: $0, expiringShare: $0, sharer: sharer) }
     }
 
     private var shares: [Share] {
