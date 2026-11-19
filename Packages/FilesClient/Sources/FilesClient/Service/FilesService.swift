@@ -123,9 +123,9 @@ struct FilesService: Sendable {
         }
         if let (failure, _) = events.last(where: { $0.0.type == OperationStreamEvent.errorType }) {
             guard let message = failure.message, !message.isEmpty else {
-                throw FilesClientError.server(statusCode: 500)
+                throw FilesClientError.server(statusCode: HTTPStatus.internalServerError.rawValue)
             }
-            throw FilesClientError.serverMessage(statusCode: 500, message: message)
+            throw FilesClientError.serverMessage(statusCode: HTTPStatus.internalServerError.rawValue, message: message)
         }
         guard let (_, doneLine) = events.last(where: { $0.0.type == OperationStreamEvent.doneType }) else {
             throw FilesClientError.decoding("The server ended the operation without a result.")
@@ -152,13 +152,13 @@ struct FilesService: Sendable {
 
     static func validate(_ response: HTTPURLResponse) throws {
         switch response.statusCode {
-        case 200 ..< 300:
+        case HTTPStatus.success:
             return
-        case 401:
+        case HTTPStatus.unauthorized:
             throw FilesClientError.sessionExpired
-        case 403:
+        case HTTPStatus.forbidden:
             throw FilesClientError.forbidden(message: nil)
-        case 429:
+        case HTTPStatus.tooManyRequests:
             throw FilesClientError.rateLimited
         default:
             throw FilesClientError.server(statusCode: response.statusCode)
@@ -175,13 +175,13 @@ struct FilesService: Sendable {
 
     static func validateReportingMessage(_ data: Data, _ response: HTTPURLResponse) throws {
         switch response.statusCode {
-        case 200 ..< 300:
+        case HTTPStatus.success:
             return
-        case 401:
+        case HTTPStatus.unauthorized:
             throw FilesClientError.sessionExpired
-        case 403:
+        case HTTPStatus.forbidden:
             throw FilesClientError.forbidden(message: errorMessage(from: data))
-        case 429:
+        case HTTPStatus.tooManyRequests:
             throw FilesClientError.rateLimited
         default:
             if let message = errorMessage(from: data) {

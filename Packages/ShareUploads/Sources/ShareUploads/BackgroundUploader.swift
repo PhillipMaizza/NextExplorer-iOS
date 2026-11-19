@@ -39,7 +39,6 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
 
     private enum Constants {
         static let removingPrefix = ".removing-"
-        static let successStatusCodes = 200 ..< 300
     }
 
     let root: URL
@@ -553,7 +552,7 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     /// Any 2xx means the server stored the file, whatever the reply body says: treating an
     /// undecodable reply as a failure would let Retry upload the same file twice.
     static func result(response: HTTPURLResponse?, error: (any Error)?) -> UploadResult {
-        if error == nil, let response, Constants.successStatusCodes.contains(response.statusCode) {
+        if error == nil, let response, HTTPStatus.success.contains(response.statusCode) {
             return .success
         }
         return .failure(.classify(statusCode: response?.statusCode, error: error))

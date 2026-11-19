@@ -21,7 +21,7 @@ extension FilesService {
         let (data, response) = try await performSend(request, isLowPriority: isLowPriority)
         let etag = response.value(forHTTPHeaderField: HTTPHeaderField.etag)
 
-        if response.statusCode == 304 {
+        if response.statusCode == HTTPStatus.notModified {
             return .notModified(etag: etag)
         }
         try Self.validate(response)

@@ -25,7 +25,7 @@ public extension FilesClient {
                 return try await resolveDirectory(
                     serverURL: serverURL, path: path, isLowPriority: isLowPriority, cache: directoryCacheStore
                 )
-            } catch FilesClientError.server(statusCode: 404) where path.isEmpty {
+            } catch FilesClientError.server(statusCode: HTTPStatus.notFound) where path.isEmpty {
                 // USER_VOLUMES refuses a non admin the root itself; the volumes list is the root then.
                 let result = try await service.volumeRoot(serverURL: serverURL)
                 directoryCacheStore.write(serverURL: serverURL, path: path, result: result, etag: nil, fetchedAt: now())

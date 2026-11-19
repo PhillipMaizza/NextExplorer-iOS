@@ -49,9 +49,9 @@ extension FilesService {
     func sendAccountRequest(_ request: URLRequest) async throws -> Data {
         let (data, response) = try await performSend(request)
         switch response.statusCode {
-        case 200 ..< 300:
+        case HTTPStatus.success:
             return data
-        case 429:
+        case HTTPStatus.tooManyRequests:
             throw FilesClientError.rateLimited
         default:
             if let message = Self.errorMessage(from: data) {

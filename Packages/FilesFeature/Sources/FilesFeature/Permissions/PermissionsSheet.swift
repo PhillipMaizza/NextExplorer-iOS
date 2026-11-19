@@ -3,6 +3,7 @@ import CoreModels
 import DesignSystem
 import FilesClient
 import Localization
+import NetworkClient
 import SwiftUI
 
 private enum Constants {
@@ -282,7 +283,10 @@ private let folderPermissions = FilePermissions(
 #Preview("Load error") {
     permissionsPreview(previewState()) {
         $0.fetchPermissions = { _, _ in
-            throw FilesClientError.serverMessage(statusCode: 403, message: "You don't have access to this path.")
+            throw FilesClientError.serverMessage(
+                statusCode: HTTPStatus.forbidden.rawValue,
+                message: "You don't have access to this path."
+            )
         }
     }
 }
@@ -297,7 +301,7 @@ private let folderPermissions = FilePermissions(
         $0.fetchPermissions = { _, _ in filePermissions }
         $0.changeOwnership = { _, _, _, _ in
             throw FilesClientError.serverMessage(
-                statusCode: 403,
+                statusCode: HTTPStatus.forbidden.rawValue,
                 message: "Permission denied. Changing ownership typically requires root/admin privileges."
             )
         }

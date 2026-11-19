@@ -100,7 +100,7 @@ extension ThumbnailCache: DependencyKey {
                 // priority session: its two connection cap would fill a grid two at a time.
                 let (downloadedURL, httpResponse) = try await networkClient.download(URLRequest(url: url))
                 defer { try? FileManager.default.removeItem(at: downloadedURL) }
-                guard 200 ..< 300 ~= httpResponse.statusCode else {
+                guard HTTPStatus.success ~= httpResponse.statusCode else {
                     throw URLError(.badServerResponse)
                 }
                 let downloadedSize = (try? downloadedURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0

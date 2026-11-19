@@ -1,3 +1,5 @@
+import NetworkClient
+
 public enum FilesClientError: Error, Equatable, Sendable {
     case sessionExpired
     /// HTTP 403: the session is valid but the account lacks the right (non admin, non root,
@@ -40,7 +42,7 @@ extension FilesClientError {
     /// The server or a proxy in front of it refused the request for its size (413).
     var isPayloadTooLarge: Bool {
         switch self {
-        case let .server(statusCode), let .serverMessage(statusCode, _): statusCode == 413
+        case let .server(statusCode), let .serverMessage(statusCode, _): statusCode == HTTPStatus.payloadTooLarge
         default: false
         }
     }
