@@ -247,7 +247,7 @@ struct VersionedFilesFeatureTests: VersionedFilesTestSupport {
 
     @Test
     func aNonAdminCannotOpenTheVersionsList() async {
-        let user = User(id: "1", username: "jdoe", email: nil, roles: [])
+        let user = User.jdoeFixture
         let store = TestStore(initialState: SettingsFeature.State(serverURL: serverURL, user: user)) {
             SettingsFeature()
         }

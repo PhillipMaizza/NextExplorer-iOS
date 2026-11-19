@@ -111,7 +111,7 @@ struct NetworkClientCancellationTests {
 }
 
 private enum Constants {
-    static let uploadURLString = "https://example.com/api/upload"
+    static let uploadURLString = "\(TestHost.exampleURLString)/api/upload"
     static let uploadBody = "payload"
     static let uploadAnswer = "stored"
     static let badRequestBody = "400 Bad Request"

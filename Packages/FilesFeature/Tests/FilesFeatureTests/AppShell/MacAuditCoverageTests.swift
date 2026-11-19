@@ -206,7 +206,7 @@ import TestUtils
 
         @Test("Quitting asks only while an upload or download runs")
         func quittingAsksOnlyWhileAnUploadOrDownloadRuns() {
-            let user = User(id: "1", username: "jdoe", email: nil, displayName: nil, roles: [])
+            let user = User.jdoeFixture
             var state = MainTabFeature.State(serverURL: serverURL, user: user)
             #expect(!state.hasTransfersInFlight)
             let item = FileItem(

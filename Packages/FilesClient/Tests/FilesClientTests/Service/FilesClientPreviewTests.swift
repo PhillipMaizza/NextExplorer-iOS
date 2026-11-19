@@ -52,14 +52,14 @@ extension FilesClientLiveTests {
         func thumbnailURLResolvesAStaticCachedPathAgainstTheServerURL() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.previewThumbnailStaticPath.data())
             let url = try await makeClient().thumbnailURL(serverURL, Constants.vacationPhoto)
-            #expect(url == URL(string: "https://example.com/static/thumbnails/abc123.webp"))
+            #expect(url == URL(string: "\(TestHost.exampleURLString)/static/thumbnails/abc123.webp"))
         }
 
         @Test
         func thumbnailURLResolvesThePreviewFallbackPath() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.previewThumbnailPreviewQuery.data())
             let url = try await makeClient().thumbnailURL(serverURL, Constants.vacationPhoto)
-            #expect(url?.absoluteString == "https://example.com/api/preview?path=Photos%2Fvacation.jpg")
+            #expect(url?.absoluteString == "\(TestHost.exampleURLString)/api/preview?path=Photos%2Fvacation.jpg")
         }
 
         @Test

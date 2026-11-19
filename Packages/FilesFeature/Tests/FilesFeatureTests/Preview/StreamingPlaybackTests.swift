@@ -7,7 +7,7 @@ import TestUtils
 @MainActor
 struct StreamingPlaybackTests {
     private enum Constants {
-        static let remoteURL = "https://files.example.com/api/preview?path=Media/clip.mp4"
+        static let remoteURL = "\(TestHost.serverURLString)/api/preview?path=Media/clip.mp4"
         static let fileExtension = "mp4"
     }
 

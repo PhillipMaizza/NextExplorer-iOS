@@ -45,7 +45,7 @@ struct StoredSessionsLookupTests {
 
     @Test("a missing username is part of the account id as an empty suffix")
     func accountIDWithoutUsername() {
-        #expect(credentials(host: TestHost.server, username: nil).accountID == "https://files.example.com|")
+        #expect(credentials(host: TestHost.server, username: nil).accountID == "\(TestHost.serverURLString)|")
     }
 
     @Test("a persisted expiry is carried onto the reconstructed cookie")

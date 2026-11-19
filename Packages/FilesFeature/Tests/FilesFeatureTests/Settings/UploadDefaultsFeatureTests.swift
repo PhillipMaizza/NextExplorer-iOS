@@ -12,8 +12,8 @@ struct UploadDefaultsFeatureTests {
     private typealias Store = TestStoreOf<UploadDefaultsFeature>
 
     private enum Constants {
-        static let accountID = "https://files.example.com|alice"
-        static let otherAccountID = "https://files.example.com|bob"
+        static let accountID = TestAccountID.alice
+        static let otherAccountID = TestAccountID.bob
         static let uploadFolder = "Inbox/Shared"
     }
 

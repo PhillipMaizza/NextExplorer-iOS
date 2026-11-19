@@ -11,7 +11,7 @@ import TestUtils
 @Suite("Cache file names")
 struct CacheFileNameTests {
     private enum Fixture {
-        static let account = "https://example.com|alice"
+        static let account = TestAccountID.alice
         static let server = URL(fileURLWithPath: "/")
         static let path = TestPath.docsLowercase
         static let fetchedAt = MockDate.date.addingTimeInterval(1000)

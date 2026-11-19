@@ -14,7 +14,7 @@ import UniformTypeIdentifiers
 struct LocalThumbnailStoreTests {
     private enum Constants {
         static let photo = "Photos/2026/beach.png"
-        static let otherAccount = "https://other.example.com|bob"
+        static let otherAccount = "\(TestHost.otherServerURLString)|\(TestUser.bob)"
         static let halfHour: TimeInterval = 30 * 60
         static let twoHours: TimeInterval = 2 * 60 * 60
         static let eightDays: TimeInterval = 8 * 24 * 60 * 60

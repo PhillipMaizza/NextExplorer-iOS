@@ -13,8 +13,8 @@ import TestUtils
 @MainActor
 struct CacheScopeCaptureTests {
     private enum Fixture {
-        static let accountA = "https://files.example.com|alice"
-        static let accountB = "https://files.example.com|bob"
+        static let accountA = TestAccountID.alice
+        static let accountB = TestAccountID.bob
         static let server = URL(fileURLWithPath: "/")
         static let timestamp = MockDate.date
         static let path = TestFolder.docs

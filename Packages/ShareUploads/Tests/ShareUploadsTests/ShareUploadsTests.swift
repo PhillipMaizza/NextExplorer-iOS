@@ -101,7 +101,7 @@ struct ShareUploadsTests {
         #expect(envelope.contains(TestPath.photos2026))
         #expect(envelope.contains(Constants.numberedPhoto))
         #expect(envelope.contains(Constants.photoBytes))
-        #expect(staged.request.url?.absoluteString == "https://files.example.com/api/upload")
+        #expect(staged.request.url?.absoluteString == "\(TestHost.serverURLString)/api/upload")
         #expect(staged.request.httpMethod == "POST")
         #expect(staged.request.value(forHTTPHeaderField: ShareUploadsTestValue.cookieHeader) == nil)
         #expect(batch.count == 1)

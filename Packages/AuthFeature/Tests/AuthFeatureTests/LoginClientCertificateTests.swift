@@ -146,11 +146,11 @@ struct LoginClientCertificateTests {
         "A redirect to https carries the answered port, not the typed one",
         arguments: [
             RedirectCase(typed: Constants.serverWithOtherPort, answeredPort: nil, expected: TestHost.server),
-            RedirectCase(typed: Constants.serverWithOtherPort, answeredPort: 9443, expected: "files.example.com:9443"),
+            RedirectCase(typed: Constants.serverWithOtherPort, answeredPort: 9443, expected: "\(TestHost.server):9443"),
             RedirectCase(typed: TestHost.serverWithPort, answeredPort: 8443, expected: TestHost.serverWithPort),
             RedirectCase(typed: TestHost.server, answeredPort: nil, expected: TestHost.server),
             RedirectCase(typed: TestHost.server, answeredPort: 8443, expected: TestHost.serverWithPort),
-            RedirectCase(typed: "http://files.example.com:8080/path", answeredPort: nil, expected: TestHost.server),
+            RedirectCase(typed: "http://\(TestHost.server):8080/path", answeredPort: nil, expected: TestHost.server),
             RedirectCase(typed: "[::1]:8080", answeredPort: 9443, expected: "[::1]:9443"),
             RedirectCase(typed: Constants.lanHostWithPort, answeredPort: nil, expected: Constants.lanHost),
         ]
@@ -247,8 +247,8 @@ struct LoginClientCertificateTests {
             clock: TestClock()
         )
 
-        await store.send(.hostChanged("files.example.com:844")) {
-            $0.host = "files.example.com:844"
+        await store.send(.hostChanged("\(TestHost.server):844")) {
+            $0.host = "\(TestHost.server):844"
             $0.certificatePrompt = nil
             $0.certificateInUse = nil
         }
@@ -314,5 +314,5 @@ struct LoginClientCertificateTests {
 private enum Constants {
     static let lanHost = "192.168.1.5"
     static let lanHostWithPort = "192.168.1.5:3000"
-    static let serverWithOtherPort = "files.example.com:8080"
+    static let serverWithOtherPort = "\(TestHost.server):8080"
 }

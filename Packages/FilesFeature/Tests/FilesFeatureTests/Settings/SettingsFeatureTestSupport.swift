@@ -19,7 +19,7 @@ extension SettingsFeatureTestSupport {
     }
 
     var user: User {
-        User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+        User.janeDoeFixture
     }
 
     var admin: User {

@@ -17,7 +17,7 @@ extension FilesClientLiveTests {
             _ = try await makeClient().updateShareLink(serverURL, "s1", request)
             let request = try #require(StubURLProtocol.capturedRequest)
             #expect(request.httpMethod == HTTPMethod.put.rawValue)
-            #expect(request.url?.absoluteString == "https://example.com/api/shares/s1")
+            #expect(request.url?.absoluteString == "\(TestHost.exampleURLString)/api/shares/s1")
             let data = try #require(StubURLProtocol.capturedRequestBody)
             return try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
         }

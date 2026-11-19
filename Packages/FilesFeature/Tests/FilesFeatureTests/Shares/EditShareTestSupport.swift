@@ -23,8 +23,3 @@ extension Share {
         )
     }
 }
-
-extension User {
-    /// The one other account the share tests offer as someone to share with.
-    static let jamieFixture = User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")
-}

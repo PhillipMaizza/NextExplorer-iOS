@@ -10,7 +10,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct ServerDetailsFeatureTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private let serverURL = TestHost.serverURL
 
     private func makeState(
         branding: Branding = Branding(appName: "Explorer", appLogoUrl: Branding.defaultLogoPath)

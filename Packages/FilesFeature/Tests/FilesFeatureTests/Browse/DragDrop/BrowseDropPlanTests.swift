@@ -97,7 +97,7 @@ struct BrowseDropPlanTests {
     @Test("Only file URLs are uploaded")
     func onlyFileURLsAreUploaded() throws {
         let local = URL(fileURLWithPath: "/tmp/a.jpg")
-        let remote = try #require(URL(string: "https://example.com/a.jpg"))
+        let remote = try #require(URL(string: "\(TestHost.exampleURLString)/a.jpg"))
         let plan = BrowseDropPlan(
             drops: [.file(local), .file(remote)],
             listed: [],

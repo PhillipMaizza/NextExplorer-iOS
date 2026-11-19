@@ -10,8 +10,8 @@ struct LegacyDownloadStoreTests {
         /// Account folders are named by `DownloadAccountScope.identifier`: 32 lowercase hex characters.
         static let scopeA = "0123456789abcdef0123456789abcdef"
         static let scopeB = "fedcba9876543210fedcba9876543210"
-        static let accountA = "https://files.example.com|alice"
-        static let accountB = "https://files.example.com|bob"
+        static let accountA = TestAccountID.alice
+        static let accountB = TestAccountID.bob
         static let contents = "hello"
         static let fileName = "report.pdf"
         static let otherFileName = "notes.pdf"

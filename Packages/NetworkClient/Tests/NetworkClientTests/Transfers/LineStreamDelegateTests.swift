@@ -1,11 +1,12 @@
 import Foundation
 @testable import NetworkClient
 import Testing
+import TestUtils
 
 @Suite("LineStreamDelegate")
 struct LineStreamDelegateTests {
     private enum Constants {
-        static let url = URL(string: "https://files.example.com/stream")!
+        static let url = URL(string: "\(TestHost.serverURLString)/stream")!
         static let maxBytes = 64
     }
 

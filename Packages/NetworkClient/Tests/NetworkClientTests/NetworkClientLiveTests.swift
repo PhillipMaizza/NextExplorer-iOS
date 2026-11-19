@@ -1,6 +1,7 @@
 import Foundation
 @testable import NetworkClient
 import Testing
+import TestUtils
 
 @Suite("NetworkClient live implementation", .serialized)
 struct NetworkClientLiveTests {
@@ -32,7 +33,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 401, headers: [:], body: Data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/me")!)
+        let request = URLRequest(url: URL(string: "\(TestHost.exampleURLString)/api/auth/me")!)
         let (_, response) = try await client.send(request)
 
         #expect(response.statusCode == 401)
@@ -54,7 +55,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 429, headers: [:], body: Data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/login")!)
+        let request = URLRequest(url: URL(string: "\(TestHost.exampleURLString)/api/auth/login")!)
         let (_, response) = try await client.send(request)
 
         #expect(response.statusCode == 429)
@@ -76,7 +77,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 204, headers: [:], body: Data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/logout")!)
+        let request = URLRequest(url: URL(string: "\(TestHost.exampleURLString)/api/auth/logout")!)
         let (data, response) = try await client.send(request)
 
         #expect(data.isEmpty)
@@ -115,7 +116,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: payload)
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/preview?path=x.jpg")!)
+        let request = URLRequest(url: URL(string: "\(TestHost.exampleURLString)/api/preview?path=x.jpg")!)
         let (fileURL, response) = try await client.download(request)
         defer { try? FileManager.default.removeItem(at: fileURL) }
 
@@ -133,7 +134,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 404, headers: [:], body: Data("not found".utf8))
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/preview?path=missing")!)
+        let request = URLRequest(url: URL(string: "\(TestHost.exampleURLString)/api/preview?path=missing")!)
         let (fileURL, response) = try await client.download(request)
         defer { try? FileManager.default.removeItem(at: fileURL) }
 
@@ -153,7 +154,7 @@ struct NetworkClientLiveTests {
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
         let reports = LockIsolatedBox<[TransferProgress]>([])
-        let request = URLRequest(url: URL(string: "https://example.com/api/download")!)
+        let request = URLRequest(url: URL(string: "\(TestHost.exampleURLString)/api/download")!)
         let (fileURL, response) = try await client.downloadWithProgress(request) { progress in
             reports.withValue { $0.append(progress) }
         }
@@ -179,5 +180,5 @@ struct NetworkClientLiveTests {
 }
 
 private enum Constants {
-    static let statusURLString = "https://example.com/api/auth/status"
+    static let statusURLString = "\(TestHost.exampleURLString)/api/auth/status"
 }

@@ -33,7 +33,7 @@ struct ThumbnailCacheTests {
 
     @Test
     func dataReturnsThePreCachedBytesWithoutHittingTheNetwork() async throws {
-        let url = URL(string: "https://example.com/static/thumbnails/\(TestID.name()).webp")!
+        let url = URL(string: "\(TestHost.exampleURLString)/static/thumbnails/\(TestID.name()).webp")!
         let directory = try cacheDirectory()
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 
@@ -62,7 +62,7 @@ struct ThumbnailCacheTests {
             try Data("thumb".utf8).write(to: file)
             return (file, HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!)
         }
-        let url = URL(string: "https://example.com/static/thumbnails/\(TestID.name()).webp")!
+        let url = URL(string: "\(TestHost.exampleURLString)/static/thumbnails/\(TestID.name()).webp")!
 
         let data = try await ThumbnailCache.live(networkClient: network).data(url)
 
@@ -89,7 +89,7 @@ struct ThumbnailCacheTests {
     func resolvedURLCallsTheResolverOnAMissAndRemembersTheResultForNextTime() async throws {
         let path = "Photos/\(TestID.name()).jpg"
         defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
-        let resolved = URL(string: "https://example.com/static/thumbnails/abc.webp")!
+        let resolved = URL(string: "\(TestHost.exampleURLString)/static/thumbnails/abc.webp")!
         let callCount = LockIsolated(0)
 
         let first = try await store.resolvedURL(path, "100.0|4096") {
@@ -112,8 +112,8 @@ struct ThumbnailCacheTests {
     func resolvedURLReResolvesWhenTheFileSignatureChanges() async throws {
         let path = "Photos/\(TestID.name()).jpg"
         defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
-        let old = URL(string: "https://example.com/static/thumbnails/v1.webp")!
-        let new = URL(string: "https://example.com/static/thumbnails/v2.webp")!
+        let old = URL(string: "\(TestHost.exampleURLString)/static/thumbnails/v1.webp")!
+        let new = URL(string: "\(TestHost.exampleURLString)/static/thumbnails/v2.webp")!
 
         _ = try await store.resolvedURL(path, "1.0|10") { old }
         let afterEdit = try await store.resolvedURL(path, "2.0|20") { new }
@@ -145,7 +145,7 @@ struct ThumbnailCacheTests {
     func resolvedURLRemembersNothingWhenTheResolverThrowsSoAPendingThumbnailIsAskedAgain() async throws {
         let path = "Videos/\(TestID.name()).mp4"
         defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
-        let resolved = URL(string: "https://example.com/static/thumbnails/frame.webp")!
+        let resolved = URL(string: "\(TestHost.exampleURLString)/static/thumbnails/frame.webp")!
 
         await #expect(throws: ThumbnailPendingError.self) {
             _ = try await store.resolvedURL(path, "7.0|9") { throw ThumbnailPendingError() }
@@ -159,7 +159,7 @@ struct ThumbnailCacheTests {
     func resolvedURLAsksAgainOnceAnEmptyRecordIsOlderThanItsLifetime() async throws {
         let path = "Videos/\(TestID.name()).mp4"
         defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
-        let resolved = URL(string: "https://example.com/static/thumbnails/frame.webp")!
+        let resolved = URL(string: "\(TestHost.exampleURLString)/static/thumbnails/frame.webp")!
 
         _ = try await store.resolvedURL(path, "8.0|3") { nil }
         // The record an older release wrote for a thumbnail that was only not made yet.

@@ -12,8 +12,8 @@ import TestUtils
 @Suite("Account cache wipe")
 struct AccountCacheWipeTests {
     private enum Fixture {
-        static let account = "https://files.example.com|alice"
-        static let otherAccount = "https://files.example.com|bob"
+        static let account = TestAccountID.alice
+        static let otherAccount = TestAccountID.bob
         static let server = URL(fileURLWithPath: "/")
         static let path = TestFolder.docs
         static let fetchedAt = MockDate.date

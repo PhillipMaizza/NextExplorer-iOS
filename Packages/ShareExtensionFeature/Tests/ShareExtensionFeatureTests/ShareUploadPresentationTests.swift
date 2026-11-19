@@ -68,7 +68,7 @@ extension ShareUploadFeatureTests {
         func theAccountIsNamedWithItsUserAndServerThroughTheLocalizedFormat() {
             #expect(ShareUploadFeature.State.name(for: .preview) == L10n.ShareUpload.accountSummary(
                 "phillip",
-                "files.example.com"
+                TestHost.server
             ))
             var anonymous = SessionCredentials.preview
             anonymous.username = nil

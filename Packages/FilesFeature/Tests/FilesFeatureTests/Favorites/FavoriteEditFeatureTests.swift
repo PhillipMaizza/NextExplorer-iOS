@@ -9,7 +9,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct FavoriteEditFeatureTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private let serverURL = TestHost.serverURL
 
     private nonisolated func favorite(
         label: String? = TestFolder.docs, icon: String = "outline:StarIcon", color: String? = nil

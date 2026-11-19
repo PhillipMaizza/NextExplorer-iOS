@@ -40,7 +40,7 @@ struct LocalAuthServiceTests {
 
         #expect(user.username == TestAccount.username)
         let request = try #require(captured.value)
-        #expect(request.url?.absoluteString == "https://files.example.com/api/auth/oidc/exchange")
+        #expect(request.url?.absoluteString == "\(TestHost.serverURLString)/api/auth/oidc/exchange")
         #expect(request.httpMethod == "POST")
         #expect(request.value(forHTTPHeaderField: "Content-Type") == "application/json")
         #expect(request.value(forHTTPHeaderField: "Accept") == "application/json")

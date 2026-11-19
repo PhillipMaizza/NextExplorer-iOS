@@ -13,7 +13,7 @@ import TestUtils
 struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
     private func accounts() -> (a: String, b: String) {
         let id = TestID.name()
-        return ("https://files.example.com|alice-\(id)", "https://files.example.com|bob-\(id)")
+        return ("\(TestHost.serverURLString)|alice-\(id)", "\(TestHost.serverURLString)|bob-\(id)")
     }
 
     private final class ScopeBox: @unchecked Sendable {

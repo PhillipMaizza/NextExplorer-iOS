@@ -44,8 +44,8 @@ extension FilesClientLiveTests {
             ])
             #expect(created.share.id == Constants.shareID)
             #expect(created.share.shareToken == "AbC123xyz0")
-            #expect(created.shareUrl.absoluteString == "https://example.com/share/AbC123xyz0")
-            #expect(created.directFileUrl.absoluteString == "https://example.com/api/share/AbC123xyz0/file")
+            #expect(created.shareUrl.absoluteString == "\(TestHost.exampleURLString)/share/AbC123xyz0")
+            #expect(created.directFileUrl.absoluteString == "\(TestHost.exampleURLString)/api/share/AbC123xyz0/file")
         }
 
         @Test

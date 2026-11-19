@@ -389,7 +389,7 @@ extension FilesClientLiveTests {
             _ = try await makeClient().fetchVersionedFile(serverURL, "a/../b")
 
             let url = try #require(StubURLProtocol.capturedRequest?.url?.absoluteString)
-            #expect(url == "https://example.com/api/versions/admin/files/a%2F..%2Fb")
+            #expect(url == "\(TestHost.exampleURLString)/api/versions/admin/files/a%2F..%2Fb")
         }
     }
 }

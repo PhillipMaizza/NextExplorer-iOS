@@ -75,6 +75,8 @@ public enum TestHost {
     public static let nextExplorerURLString = "https://nextexplorer.example.com"
     /// A short host used where only the shape of the address matters.
     public static let shortHost = "a.com"
+    /// A server address no test signs in to, for cross server checks.
+    public static let otherServerURLString = "https://other.example.com"
 
     public static var serverURL: URL {
         httpsURL(server)
@@ -121,6 +123,20 @@ public enum TestUser {
     public static let asmith = "asmith"
     /// An account name that differs from the signed in one.
     public static let someoneElse = "someone else"
+    /// The signed in account name of the settings and shell tests.
+    public static let jdoe = "jdoe"
+}
+
+/// Account identifiers in the server address and user name form the app keys its stores by.
+public enum TestAccountID {
+    /// Alice on the default test server.
+    public static let alice = "\(TestHost.serverURLString)|\(TestUser.alice)"
+    /// Bob on the default test server.
+    public static let bob = "\(TestHost.serverURLString)|\(TestUser.bob)"
+    /// Alice on the first of two servers.
+    public static let firstServerAlice = "\(TestHost.firstServerURLString)|\(TestUser.alice)"
+    /// Bob on the second of two servers.
+    public static let secondServerBob = "\(TestHost.secondServerURLString)|\(TestUser.bob)"
 }
 
 public enum TestFailure {

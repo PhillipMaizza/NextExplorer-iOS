@@ -8,8 +8,8 @@ import TestUtils
 @Suite("Account scoped cache clearing")
 struct AccountScopedCacheTests {
     private let serverURL = URL(string: TestHost.exampleURLString) ?? URL(fileURLWithPath: "/")
-    private let accountA = "https://example.com|alice"
-    private let accountB = "https://example.com|bob"
+    private let accountA = TestAccountID.alice
+    private let accountB = TestAccountID.bob
     private let fetchedAt = MockDate.date.addingTimeInterval(1000)
 
     private func makeRoot() -> URL {
