@@ -66,10 +66,6 @@ public extension SharedFeature {
         public let badges: [ShareBadge]
         /// Every share on it has expired.
         public let isExpired: Bool
-
-        public var isDirectory: Bool {
-            shares.first?.isDirectory ?? false
-        }
     }
 
     /// Every instant a share's row text changes: the expiry itself and each whole day before

@@ -151,24 +151,8 @@ public struct SharedFeature {
             )
         }
 
-        public var activeShares: IdentifiedArrayOf<Share> {
-            activeShares(for: segment)
-        }
-
-        public func activeShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
-            displayedSharesPartition(for: segment).active
-        }
-
-        public var expiredShares: IdentifiedArrayOf<Share> {
-            expiredShares(for: segment)
-        }
-
-        public func expiredShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
-            displayedSharesPartition(for: segment).expired
-        }
-
-        /// One filter and sort pass, split into active and expired. `activeShares`, `expiredShares`
-        /// and the Mac table all need slices of the same ordered list, so the localized sort runs once.
+        /// One filter and sort pass, split into active and expired, so the Mac table orders both
+        /// groups from a single run of the localized sort.
         public func displayedSharesPartition(
             for segment: Segment
         ) -> (all: IdentifiedArrayOf<Share>, active: IdentifiedArrayOf<Share>, expired: IdentifiedArrayOf<Share>) {

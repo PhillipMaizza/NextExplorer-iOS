@@ -6,7 +6,7 @@ private enum Constants {
     /// Tinted avatars below this diameter lay out their caption at this size, then scale down
     /// as a whole, so every name in a row shrinks by the same amount.
     static let compactDiameter: CGFloat = 32
-    /// Lets two letters shrink to fit the smallest avatars (a 16 pt sharer badge).
+    /// Lets two letters shrink to fit the smallest avatars (the 20 pt sharer avatar on a Shared row).
     static let minimumTextScale: CGFloat = 0.4
     static let textInsetFraction: CGFloat = 0.2
 }

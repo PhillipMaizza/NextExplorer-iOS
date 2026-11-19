@@ -59,18 +59,19 @@ struct SharedSegmentList: View {
     }
 
     var body: some View {
-        list
+        let showsRail = isRailShown
+        list(showsRail: showsRail)
             .overlay(alignment: .top) {
-                if isRailShown {
-                    rail
-                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { railHeight = $0 }
-                        .offset(y: -scrollOffset)
+                if showsRail {
+                    SharedScrollFollower(offset: $scrollOffset) {
+                        rail.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { railHeight = $0 }
+                    }
                 }
             }
             .clipped()
     }
 
-    private var list: some View {
+    private func list(showsRail: Bool) -> some View {
         let items = store.state.items(for: segment)
         return DSGroupedList {
             if listPhase == .loading {
@@ -85,7 +86,7 @@ struct SharedSegmentList: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
-        .contentMargins(.top, (isRailShown ? railHeight : 0) + .space4, for: .scrollContent)
+        .contentMargins(.top, (showsRail ? railHeight : 0) + .space4, for: .scrollContent)
         .onScrollGeometryChange(for: CGFloat.self) {
             $0.contentOffset.y + $0.contentInsets.top
         } action: { _, offset in
@@ -245,6 +246,17 @@ private func segmentListPreview(
     }
     return SharedSegmentList(store: store, segment: .byMe, onToast: { _ in })
         .backgroundGradient()
+}
+
+/// Shifts its content up by the list's scroll offset. The offset is read here, not in the list's
+/// body, so scrolling redraws only the people row instead of rebuilding every item each frame.
+private struct SharedScrollFollower<Content: View>: View {
+    @Binding var offset: CGFloat
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        content.offset(y: -offset)
+    }
 }
 
 #Preview("Segment: content") {
