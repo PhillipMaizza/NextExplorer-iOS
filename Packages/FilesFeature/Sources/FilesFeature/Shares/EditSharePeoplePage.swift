@@ -46,6 +46,8 @@
                     DSSpinner()
                     Text(L10n.CreateShare.loadingUsers).type(.body3(.regular), style: .secondary)
                 }
+            } else if let errorMessage = store.usersPhase.errorMessage {
+                Text(errorMessage).type(.body3(.regular), style: .error)
             } else if shownUsers.isEmpty {
                 Text(L10n.CreateShare.noOtherUsers).type(.body3(.regular), style: .secondary)
             } else {

@@ -167,7 +167,6 @@ public struct CreateShareLinkFeature {
 
             case let .shareableUsersResponse(.failure(error)):
                 state.usersPhase = .failed(error.userMessage)
-                state.errorMessage = error.userMessage
                 return .none
 
             case let .userToggled(id):

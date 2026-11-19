@@ -197,6 +197,36 @@ struct EditShareFlowTests {
     }
 
     @Test
+    func aFailedPeopleLoadRetriesOnTheNextVisitAndLeavesNoStaleError() async {
+        let jamie = User.jamieFixture
+        let attempts = LockIsolated(0)
+        let store = TestStore(
+            initialState: state(.editFixture(target: .users, permittedUserIds: ["u2"]))
+        ) {
+            EditShareFeature()
+        } withDependencies: {
+            $0.filesClient.shareableUsers = { _ in
+                attempts.withValue { $0 += 1 }
+                if attempts.value == 1 {
+                    throw FilesClientError.offline
+                }
+                return [jamie]
+            }
+        }
+
+        await store.send(.task) { $0.usersPhase = .loading }
+        await store.receive(\.shareableUsersResponse.failure) {
+            $0.usersPhase = .failed(FilesClientError.offline.userMessage)
+        }
+        await store.send(.task) { $0.usersPhase = .loading }
+        await store.receive(\.shareableUsersResponse.success) {
+            $0.usersPhase = .loaded
+            $0.shareableUsers = [jamie]
+        }
+        #expect(store.state.errorMessage == nil)
+    }
+
+    @Test
     func openingAnAnyoneShareLoadsNothing() async {
         let store = TestStore(initialState: state()) { EditShareFeature() }
 

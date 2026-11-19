@@ -222,7 +222,6 @@ public struct EditShareFeature {
 
             case let .shareableUsersResponse(.failure(error)):
                 state.usersPhase = .failed(error.userMessage)
-                state.errorMessage = error.userMessage
                 return .none
 
             case let .userToggled(id):
@@ -299,7 +298,7 @@ public struct EditShareFeature {
                     accessMode: state.accessMode,
                     target: state.target,
                     expiresAt: state.isExpiryEnabled ? state.expiresAt : nil,
-                    userIds: state.target == .users ? Array(state.selectedUserIDs) : [],
+                    userIds: state.target == .users ? state.selectedUserIDs.sorted() : [],
                     password: state.passwordChange
                 )
                 let serverURL = state.serverURL

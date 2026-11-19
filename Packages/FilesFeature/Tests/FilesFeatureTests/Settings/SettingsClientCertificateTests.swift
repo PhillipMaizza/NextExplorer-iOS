@@ -17,7 +17,7 @@ struct SettingsClientCertificateTests {
     private let summary = ClientCertificateSummary(subject: TestCertificate.subject)
 
     init() throws {
-        serverURL = try #require(URL(string: "\(TestHost.serverURLString):8443"))
+        serverURL = try #require(URL(string: "https://\(TestHost.serverWithPort)"))
     }
 
     private func state(

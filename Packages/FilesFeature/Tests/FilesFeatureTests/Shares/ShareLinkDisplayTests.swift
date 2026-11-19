@@ -23,7 +23,7 @@ struct ShareLinkDisplayTests {
 
     nonisolated static let origins = [
         OriginCase(server: TestHost.serverURLString, expectedOrigin: TestHost.serverURLString),
-        OriginCase(server: "https://\(TestHost.serverWithPort)", expectedOrigin: "\(TestHost.serverURLString):8443"),
+        OriginCase(server: "https://\(TestHost.serverWithPort)", expectedOrigin: "https://\(TestHost.serverWithPort)"),
         OriginCase(server: "http://\(TestHost.server)/nextcloud/sub?x=1", expectedOrigin: "http://\(TestHost.server)"),
     ]
 
