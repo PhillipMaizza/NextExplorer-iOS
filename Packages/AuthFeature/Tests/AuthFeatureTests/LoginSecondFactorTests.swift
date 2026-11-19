@@ -67,7 +67,7 @@ struct LoginSecondFactorTests {
             $0.currentPage = .secondFactor
         }
 
-        #expect(calls.value == ["https://nextexplorer.example.com|asmith|hunter2"])
+        #expect(calls.value == ["\(TestHost.nextExplorerURLString)|\(TestUser.asmith)|\(TestAccount.password)"])
         #expect(store.state.diagnostics.entries == [
             Support.entry("sign in: sending, name username shaped, 6 characters, password set"),
             Support.entry("sign in: password accepted, server asks for a second factor code"),

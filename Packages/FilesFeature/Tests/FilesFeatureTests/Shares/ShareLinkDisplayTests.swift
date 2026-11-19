@@ -22,9 +22,9 @@ struct ShareLinkDisplayTests {
     }
 
     nonisolated static let origins = [
-        OriginCase(server: TestHost.serverURLString, expectedOrigin: "https://files.example.com"),
-        OriginCase(server: "https://\(TestHost.serverWithPort)", expectedOrigin: "https://files.example.com:8443"),
-        OriginCase(server: "http://files.example.com/nextcloud/sub?x=1", expectedOrigin: "http://files.example.com"),
+        OriginCase(server: TestHost.serverURLString, expectedOrigin: TestHost.serverURLString),
+        OriginCase(server: "https://\(TestHost.serverWithPort)", expectedOrigin: "https://\(TestHost.serverWithPort)"),
+        OriginCase(server: "http://\(TestHost.server)/nextcloud/sub?x=1", expectedOrigin: "http://\(TestHost.server)"),
     ]
 
     @Test(arguments: origins)
@@ -36,9 +36,9 @@ struct ShareLinkDisplayTests {
 
     @Test
     func aServerAddressWithoutAHostIsUsedAsWritten() throws {
-        let serverURL = try #require(URL(string: "files.example.com"))
+        let serverURL = try #require(URL(string: TestHost.server))
 
-        #expect(share().shareLink(serverURL: serverURL) == "files.example.com/share/\(Constants.token)")
+        #expect(share().shareLink(serverURL: serverURL) == "\(TestHost.server)/share/\(Constants.token)")
     }
 
     struct ModeCase: Sendable {
@@ -57,7 +57,7 @@ struct ShareLinkDisplayTests {
     func theDirectLinkOnlyCarriesAModeQueryWhenTheModeIsNotAuto(_ testCase: ModeCase) {
         #expect(
             share().directLink(serverURL: TestHost.serverURL, mode: testCase.mode)
-                == "https://files.example.com/api/share/\(Constants.token)/file\(testCase.expectedSuffix)"
+                == "\(TestHost.serverURLString)/api/share/\(Constants.token)/file\(testCase.expectedSuffix)"
         )
     }
 }

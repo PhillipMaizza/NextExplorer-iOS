@@ -203,6 +203,57 @@ shared.navigationTitle	Partajate
 shared.segmentByMe	De mine
 shared.segmentWithMe	Cu mine
 shared.sectionExpired	Expirate
+shared.filterAll	Toate
+shared.filterAnyone	Oricine
+shared.daysLeft#one	%lld zi rămasă
+shared.daysLeft#few	%lld zile rămase
+shared.daysLeft#other	%lld de zile rămase
+shared.itemCount#one	%lld element
+shared.itemCount#few	%lld elemente
+shared.itemCount#other	%lld de elemente
+shared.pathStep	%1$@ › %2$@
+common.on	Activat
+common.off	Dezactivat
+common.none	Niciuna
+shared.copyLink	Copiază linkul
+shared.copyShareLink	Copiază linkul de partajare
+shared.copyFolderLink	Copiază linkul dosarului
+shared.copyFileLink	Copiază linkul fișierului
+shared.moreLinks	Mai multe linkuri
+shared.setNewDate	Setează o dată nouă
+shared.noAccountNeeded	Nu e nevoie de cont pentru a-l deschide
+shared.metaExpires	Expiră
+shared.metaExpired	Expirat
+shared.folderLinkOpensAs	Linkul dosarului se deschide ca
+shared.fileLinkOpensAs	Linkul fișierului se deschide ca
+shared.metaLabel	Etichetă
+shared.metaShared	Partajat
+shared.metaLastOpened	Deschis ultima dată
+shared.metaDownloads	Descărcări
+shared.metaReceived	Primit
+shared.expiredFooter	Acest link nu mai funcționează din %@. Setează o dată nouă pentru a-l readuce.
+shared.controlsShare	%@ controlează această partajare.
+shared.listFooter	Atinge o partajare pentru toate detaliile. Butonul de link copiază fără să deschidă.
+shared.publicLink	Link public
+shared.people	Persoane
+shared.canEdit	poate edita
+shared.viewOnly	doar vizualizare
+shared.statusPassword	parolă
+shared.neverExpires	nu expiră
+shared.expiresUntil	până la %@
+shared.fromSharer	De la %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld partajare
+shared.shareCount#few	%lld partajări
+shared.shareCount#other	%lld de partajări
+shared.peopleCount#one	%lld persoană
+shared.peopleCount#few	%lld persoane
+shared.peopleCount#other	%lld de persoane
+shared.downloadCount#one	%lld descărcare
+shared.downloadCount#few	%lld descărcări
+shared.downloadCount#other	%lld de descărcări
+shared.showMore	Afișează mai multe
+shared.showLess	Afișează mai puțin
 shared.badgeExpired	expirat
 shared.emptyByMe	Partajează un fișier sau dosar pentru a-i vedea linkul aici.
 shared.emptyWithMe	Linkurile pe care alții le partajează cu tine apar aici.
@@ -211,11 +262,9 @@ shared.deleteTitle	Ștergi linkul de partajare?
 shared.deleteMessage	Linkul încetează să funcționeze imediat. Fișierul sau dosarul în sine nu este afectat.
 shared.sharedByUnknown	Cineva
 shared.metaAccess	Acces
-shared.metaExpiration	Expirare
 shared.metaSharedBy	Partajat de
 shared.metaSharedWith	Partajat cu
 shared.anyoneWithLink	Oricine are linkul
-shared.linkMode	Mod link
 shared.actionShareLink	Partajează linkul
 shared.actionFolderLink	Link dosar
 shared.actionFileLink	Link fișier
@@ -250,6 +299,17 @@ createShare.errorPastExpiration	Alege o dată de expirare în viitor.
 editShare.title	Editează linkul de partajare
 editShare.save	Salvează modificările
 editShare.passwordKeepHint	Lasă gol pentru a păstra parola actuală
+editShare.saved	Modificări salvate
+editShare.custom	Personalizat
+editShare.neverFooter	Linkul funcționează până îl ștergi.
+editShare.usersHint	Doar persoanele alese, după autentificare.
+editShare.readOnlyHint	Persoanele pot deschide și descărca.
+editShare.readWriteHint	Persoanele pot și încărca, redenumi și șterge în interior.
+editShare.readWriteFileHint	Persoanele pot și edita fișierul.
+editShare.discardTitle	Renunți la modificări?
+editShare.discardMessage	Modificările acestui link nu au fost salvate.
+editShare.discard	Renunță
+editShare.keepEditing	Continuă editarea
 thumbnailSettings.navigationTitle	Miniaturi
 thumbnailSettings.subtitle	Controlează modul în care serverul generează miniaturile de imagine pentru fiecare client.
 thumbnailSettings.enable	Generează miniaturi

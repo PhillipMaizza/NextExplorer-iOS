@@ -5,21 +5,40 @@ import FolderPickerFeature
 import Foundation
 import Localization
 
-/// Drives the "Edit Share Link" sheet (`EditShareSheet`): the counterpart of
-/// `CreateShareLinkFeature` for an existing share, saving via `PUT /api/shares/:id`. The
-/// shared path can't change; the password's current value is never shown (only a hash
-/// exists server side), so the field is keep / change / remove.
+/// Drives editing an existing share (the pushed `EditSharePage` on iOS, `MacEditShareSheet` on the
+/// Mac), saving via `PUT /api/shares/:id`. The shared path can't change; the password's current
+/// value is never shown (only a hash exists server side), so the field is keep / change / remove.
 @Reducer
 public struct EditShareFeature {
+    /// The expiry choices above the calendar. `never` turns expiry off; `custom` is any date the
+    /// presets don't produce.
+    public enum ExpiryPreset: CaseIterable, Equatable, Sendable {
+        case never
+        case day
+        case month
+        case custom
+    }
+
+    /// A form problem shown beside the field it belongs to.
+    public enum FieldError: Equatable, Sendable {
+        case pastExpiration
+        case passwordRequired
+    }
+
     @ObservableState
     public struct State: Equatable, Identifiable {
         public let serverURL: URL
         public let share: Share
+        /// When the page opened: the reference for the days left line and for an expired share.
+        public let openedAt: Date
+        /// The expiry the page opened on, which differs from the saved one for an expired share.
+        let openedExpiryPreset: ExpiryPreset
+        let openedExpiresAt: Date
 
         public var label: String
         public var accessMode: ShareAccessMode
         public var target: ShareTarget
-        public var isExpiryEnabled: Bool
+        public var expiryPreset: ExpiryPreset
         public var expiresAt: Date
         public var wantsPassword: Bool
         public var newPassword = ""
@@ -29,6 +48,8 @@ public struct EditShareFeature {
         public var usersPhase: DataPhase = .idle
 
         public var isSaving = false
+        public var isConfirmingDiscard = false
+        public var fieldError: FieldError?
         public var errorMessage: String?
         @Shared(.inMemory(SharedFeature.revisionKey)) var shareLinksRevision = 0
 
@@ -36,33 +57,100 @@ public struct EditShareFeature {
             share.id
         }
 
+        /// The label opens filled with the share's name. An expired share opens on Custom with a
+        /// fresh date a week out, so bringing it back is one tap on Save.
         public init(serverURL: URL, share: Share, now: Date = Date()) {
             self.serverURL = serverURL
             self.share = share
-            label = share.label ?? ""
+            openedAt = now
+            label = share.displayName
             accessMode = share.accessMode
             target = share.sharingType
-            isExpiryEnabled = share.expiresAt != nil
-            expiresAt = share.expiresAt ?? now
-                .addingTimeInterval(CreateShareLinkFeature.defaultExpiryDays * 24 * 60 * 60)
             wantsPassword = share.hasPassword
             selectedUserIDs = Set(share.permittedUserIds ?? [])
+            let defaultExpiry = now.addingTimeInterval(CreateShareLinkFeature.defaultExpiryDays * Self.secondsPerDay)
+            let opened: (preset: ExpiryPreset, date: Date) = switch share.expiresAt {
+            case nil: (.never, defaultExpiry)
+            case let date? where date <= now: (.custom, defaultExpiry)
+            case let date?: (.custom, date)
+            }
+            expiryPreset = opened.preset
+            expiresAt = opened.date
+            openedExpiryPreset = opened.preset
+            openedExpiresAt = opened.date
+        }
+
+        static let secondsPerDay: TimeInterval = 24 * 60 * 60
+
+        public var isExpiryEnabled: Bool {
+            expiryPreset != .never
+        }
+
+        /// The share had already stopped working when the page opened.
+        public var isExpired: Bool {
+            share.expiresAt.map { $0 <= openedAt } ?? false
+        }
+
+        /// Whole days from opening the page to the chosen expiry, rounded up.
+        public var daysLeft: Int {
+            max(0, Int((expiresAt.timeIntervalSince(openedAt) / Self.secondsPerDay).rounded(.up)))
         }
 
         var trimmedLabel: String {
             label.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
+        /// The label to send: none while an unlabeled share still shows its prefilled name, so the
+        /// link keeps following the item's own name.
+        var savedLabel: String? {
+            share.trimmedLabel == nil && trimmedLabel == share.displayName ? nil : trimmedLabel
+        }
+
+        /// Whether the draft differs from the share as saved, which is what Save sends.
+        public var hasChanges: Bool {
+            let isExpiryChanged = isExpiryEnabled
+                ? share.expiresAt != expiresAt
+                : share.expiresAt != nil
+            return isChangedApartFromExpiry || isExpiryChanged
+        }
+
+        /// Whether the person changed anything since the page opened. An expired share opens
+        /// already renewed, which Save would send, but leaving it untouched loses nothing.
+        public var hasEdits: Bool {
+            let isExpiryEdited = expiryPreset != openedExpiryPreset
+                || (isExpiryEnabled && expiresAt != openedExpiresAt)
+            return isChangedApartFromExpiry || isExpiryEdited
+        }
+
+        private var isChangedApartFromExpiry: Bool {
+            let isPeopleChanged = target == .users && selectedUserIDs != Set(share.permittedUserIds ?? [])
+            return savedLabel != share.trimmedLabel
+                || accessMode != share.accessMode
+                || target != share.sharingType
+                || isPeopleChanged
+                || wantsPassword != share.hasPassword
+                || !newPassword.isEmpty
+        }
+
+        /// Back and the sheet's swipe down ask first while there is something to lose.
+        public var isLeavingGuarded: Bool {
+            hasEdits || isSaving
+        }
+
         var isSaveEnabled: Bool {
-            guard !isSaving else { return false }
+            guard !isSaving, hasChanges, !trimmedLabel.isEmpty else { return false }
             if target == .users {
                 return !selectedUserIDs.isEmpty
             }
             return true
         }
 
-        /// What to do with the password on save. A still-on field left blank keeps the
-        /// current password; turning the toggle off on a protected share removes it.
+        var selectedUsers: [User] {
+            shareableUsers.filter { selectedUserIDs.contains($0.id) }
+        }
+
+        /// What to do with the password on save. A field left blank with the toggle still on keeps
+        /// the current password; turning the toggle off on a protected share removes it.
         var passwordChange: UpdateShareRequest.PasswordChange {
             if wantsPassword, !newPassword.isEmpty {
                 return .set(newPassword)
@@ -75,15 +163,20 @@ public struct EditShareFeature {
     }
 
     public enum Action: Equatable, Sendable {
+        case task
         case labelChanged(String)
         case accessModeChanged(ShareAccessMode)
         case targetChanged(ShareTarget)
         case wantsPasswordChanged(Bool)
         case newPasswordChanged(String)
+        case expiryPresetTapped(ExpiryPreset)
         case expiryEnabledChanged(Bool)
         case expiresAtChanged(Date)
         case userToggled(User.ID)
         case shareableUsersResponse(Result<[User], FilesClientError>)
+        case cancelTapped
+        case discardConfirmed
+        case discardCancelled
         case saveTapped
         case saveResponse(Result<Share, FilesClientError>)
         case delegate(Delegate)
@@ -95,6 +188,8 @@ public struct EditShareFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.date) var date
+    @Dependency(\.calendar) var calendar
+    @Dependency(\.dismiss) var dismiss
 
     private enum CancelID { case save }
 
@@ -103,6 +198,9 @@ public struct EditShareFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .task:
+                return loadUsersIfNeeded(&state)
+
             case let .labelChanged(label):
                 state.label = label
                 return .none
@@ -115,15 +213,7 @@ public struct EditShareFeature {
             case let .targetChanged(target):
                 state.target = target
                 state.errorMessage = nil
-                guard target == .users, state.usersPhase.shouldLoadOnAppear else { return .none }
-                state.usersPhase = .loading
-                let serverURL = state.serverURL
-                let filesClient = filesClient
-                return .run { send in
-                    try await send(.shareableUsersResponse(apiResult {
-                        try await filesClient.shareableUsers(serverURL)
-                    }))
-                }
+                return loadUsersIfNeeded(&state)
 
             case let .shareableUsersResponse(.success(users)):
                 state.usersPhase = .loaded
@@ -132,7 +222,6 @@ public struct EditShareFeature {
 
             case let .shareableUsersResponse(.failure(error)):
                 state.usersPhase = .failed(error.userMessage)
-                state.errorMessage = error.userMessage
                 return .none
 
             case let .userToggled(id):
@@ -147,35 +236,69 @@ public struct EditShareFeature {
                 state.wantsPassword = isOn
                 if !isOn {
                     state.newPassword = ""
+                    clear(.passwordRequired, in: &state)
                 }
                 return .none
 
             case let .newPasswordChanged(password):
                 state.newPassword = password
+                clear(.passwordRequired, in: &state)
+                return .none
+
+            case let .expiryPresetTapped(preset):
+                state.expiryPreset = preset
+                clear(.pastExpiration, in: &state)
+                if let component = preset.component,
+                   let presetDate = calendar.date(byAdding: component, value: 1, to: date.now)
+                {
+                    state.expiresAt = presetDate
+                }
                 return .none
 
             case let .expiryEnabledChanged(isEnabled):
-                state.isExpiryEnabled = isEnabled
+                state.expiryPreset = isEnabled ? .custom : .never
+                clear(.pastExpiration, in: &state)
                 return .none
 
             case let .expiresAtChanged(newDate):
                 state.expiresAt = newDate
+                state.expiryPreset = .custom
+                clear(.pastExpiration, in: &state)
                 return .none
+
+            case .cancelTapped:
+                guard !state.isSaving else { return .none }
+                guard state.hasEdits else { return leave() }
+                state.isConfirmingDiscard = true
+                return .none
+
+            case .discardCancelled:
+                state.isConfirmingDiscard = false
+                return .none
+
+            case .discardConfirmed:
+                state.isConfirmingDiscard = false
+                return leave()
 
             case .saveTapped:
                 guard state.isSaveEnabled else { return .none }
+                if state.wantsPassword, !state.share.hasPassword, state.newPassword.isEmpty {
+                    state.fieldError = .passwordRequired
+                    return .none
+                }
                 if state.isExpiryEnabled, state.expiresAt <= date.now {
-                    state.errorMessage = L10n.CreateShare.errorPastExpiration
+                    state.fieldError = .pastExpiration
                     return .none
                 }
                 state.isSaving = true
+                state.fieldError = nil
                 state.errorMessage = nil
                 let request = UpdateShareRequest(
-                    label: state.trimmedLabel.isEmpty ? nil : state.trimmedLabel,
+                    label: state.savedLabel,
                     accessMode: state.accessMode,
                     target: state.target,
                     expiresAt: state.isExpiryEnabled ? state.expiresAt : nil,
-                    userIds: state.target == .users ? Array(state.selectedUserIDs) : [],
+                    userIds: state.target == .users ? state.selectedUserIDs.sorted() : [],
                     password: state.passwordChange
                 )
                 let serverURL = state.serverURL
@@ -201,6 +324,41 @@ public struct EditShareFeature {
             case .delegate:
                 return .none
             }
+        }
+    }
+
+    /// Specific users needs the list of people to pick from; it loads once per page.
+    private func loadUsersIfNeeded(_ state: inout State) -> Effect<Action> {
+        guard state.target == .users, state.usersPhase.shouldLoadOnAppear else { return .none }
+        state.usersPhase = .loading
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            try await send(.shareableUsersResponse(apiResult {
+                try await filesClient.shareableUsers(serverURL)
+            }))
+        }
+    }
+
+    private func leave() -> Effect<Action> {
+        let dismiss = dismiss
+        return .run { _ in await dismiss() }
+    }
+
+    private func clear(_ error: FieldError, in state: inout State) {
+        if state.fieldError == error {
+            state.fieldError = nil
+        }
+    }
+}
+
+extension EditShareFeature.ExpiryPreset {
+    /// How far a preset reaches from now; nil for the two that set no date of their own.
+    var component: Calendar.Component? {
+        switch self {
+        case .day: .day
+        case .month: .month
+        case .never, .custom: nil
         }
     }
 }

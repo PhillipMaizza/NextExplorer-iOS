@@ -370,7 +370,7 @@ extension AppSuites {
 
         @Test("A non file URL is ignored")
         func incomingNonFileURLIsIgnored() async throws {
-            let web = try #require(URL(string: "https://example.com/doc.pdf"))
+            let web = try #require(URL(string: "\(TestHost.exampleURLString)/doc.pdf"))
             let store = makeStore(AppFeature.State(destination: .unauthenticated(.init())))
 
             await store.send(.incomingFiles([web]))

@@ -77,9 +77,13 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
         "The port the server answered on is kept only when it is not the default https port",
         arguments: [
             (Constants.authStatusURLWithPort, Constants.authStatusURL, nil as Int?),
-            (Constants.authStatusURLWithPort, "https://files.example.com:443/api/auth/status", nil as Int?),
-            (Constants.authStatusURLWithPort, "https://files.example.com:9443/api/auth/status", 9443),
-            ("http://files.example.com:8443/api/auth/status", "https://files.example.com:8443/api/auth/status", 8443),
+            (Constants.authStatusURLWithPort, "\(TestHost.serverURLString):443/api/auth/status", nil as Int?),
+            (Constants.authStatusURLWithPort, "\(TestHost.serverURLString):9443/api/auth/status", 9443),
+            (
+                "http://\(TestHost.server):8443/api/auth/status",
+                "\(TestHost.serverURLString):8443/api/auth/status",
+                8443
+            ),
             (Constants.statusURLString, Constants.authStatusURL, nil as Int?),
         ]
     )
@@ -104,7 +108,7 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
             let body = try AuthClientFixture.statusLocalOnly.data()
             return try (body, response(statusCode: 200, url: answered))
         }
-        let requested = try #require(URL(string: "http://files.example.com:8080"))
+        let requested = try #require(URL(string: "http://\(TestHost.server):8080"))
         let status = try await client.fetchStatus(requested)
         #expect(status.redirectsToHTTPS)
         #expect(status.redirectedPort == 9443)
@@ -124,7 +128,7 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
 }
 
 private enum Constants {
-    static let statusURLString = "http://files.example.com/api/auth/status"
-    static let authStatusURL = "https://files.example.com/api/auth/status"
-    static let authStatusURLWithPort = "http://files.example.com:8080/api/auth/status"
+    static let statusURLString = "http://\(TestHost.server)/api/auth/status"
+    static let authStatusURL = "\(TestHost.serverURLString)/api/auth/status"
+    static let authStatusURLWithPort = "http://\(TestHost.server):8080/api/auth/status"
 }

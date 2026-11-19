@@ -231,7 +231,7 @@ extension AppSuites {
             await store.receive(\.accountChangeResolved, credentialsB)
             await store.receive(\.delegate.activeAccountChanged, credentialsB)
 
-            #expect(requestedID.value == "https://b.example.com|bob")
+            #expect(requestedID.value == TestAccountID.secondServerBob)
             #expect(recorder.events.value.isEmpty, "switching wipes nothing")
         }
 

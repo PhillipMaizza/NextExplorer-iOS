@@ -191,6 +191,47 @@ shared.navigationTitle	共享
 shared.segmentByMe	由我共享
 shared.segmentWithMe	与我共享
 shared.sectionExpired	已过期
+shared.filterAll	全部
+shared.filterAnyone	任何人
+shared.daysLeft#other	剩余 %lld 天
+shared.itemCount#other	%lld 个项目
+shared.pathStep	%1$@ › %2$@
+common.on	开
+common.off	关
+common.none	无
+shared.copyLink	拷贝链接
+shared.copyShareLink	拷贝共享链接
+shared.copyFolderLink	拷贝文件夹链接
+shared.copyFileLink	拷贝文件链接
+shared.moreLinks	更多链接
+shared.setNewDate	设置新日期
+shared.noAccountNeeded	无需账户即可打开
+shared.metaExpires	到期
+shared.metaExpired	已过期
+shared.folderLinkOpensAs	文件夹链接打开方式
+shared.fileLinkOpensAs	文件链接打开方式
+shared.metaLabel	标签
+shared.metaShared	共享于
+shared.metaLastOpened	上次打开
+shared.metaDownloads	下载次数
+shared.metaReceived	接收于
+shared.expiredFooter	此链接已于%@失效。设置新日期即可恢复。
+shared.controlsShare	此共享由%@管理。
+shared.listFooter	轻点共享查看全部详情。链接按钮会直接拷贝而不打开。
+shared.publicLink	公开链接
+shared.people	用户
+shared.canEdit	可编辑
+shared.viewOnly	仅查看
+shared.statusPassword	密码
+shared.neverExpires	永不过期
+shared.expiresUntil	至%@
+shared.fromSharer	来自%@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#other	%lld 个共享
+shared.peopleCount#other	%lld 人
+shared.downloadCount#other	%lld 次下载
+shared.showMore	显示更多
+shared.showLess	收起
 shared.badgeExpired	已过期
 shared.emptyByMe	共享文件或文件夹后即可在此处查看其链接。
 shared.emptyWithMe	他人与您共享的链接会显示在此处。
@@ -199,11 +240,9 @@ shared.deleteTitle	删除共享链接？
 shared.deleteMessage	链接会立即停止工作。文件或文件夹本身不受影响。
 shared.sharedByUnknown	某人
 shared.metaAccess	访问权限
-shared.metaExpiration	到期
 shared.metaSharedBy	共享者
 shared.metaSharedWith	共享给
 shared.anyoneWithLink	任何拥有链接的人
-shared.linkMode	链接模式
 shared.actionShareLink	共享链接
 shared.actionFolderLink	文件夹链接
 shared.actionFileLink	文件链接
@@ -238,6 +277,17 @@ createShare.errorPastExpiration	请选择将来的到期日期。
 editShare.title	编辑共享链接
 editShare.save	保存更改
 editShare.passwordKeepHint	留空以保留当前密码
+editShare.saved	已保存更改
+editShare.custom	自定义
+editShare.neverFooter	链接在你删除前一直有效。
+editShare.usersHint	仅限你选择的人，登录后可用。
+editShare.readOnlyHint	可以打开和下载。
+editShare.readWriteHint	还可以在其中上传、重命名和删除。
+editShare.readWriteFileHint	还可以编辑该文件。
+editShare.discardTitle	放弃更改？
+editShare.discardMessage	你对此链接的修改尚未保存。
+editShare.discard	放弃
+editShare.keepEditing	继续编辑
 thumbnailSettings.navigationTitle	缩略图
 thumbnailSettings.subtitle	控制服务器为每个客户端生成图像缩略图的方式。
 thumbnailSettings.enable	生成缩略图

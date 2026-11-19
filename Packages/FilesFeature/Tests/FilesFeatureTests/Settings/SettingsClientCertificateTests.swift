@@ -13,11 +13,11 @@ import TestUtils
 struct SettingsClientCertificateTests {
     private let serverURL: URL
     private let origin = ClientCertificateOrigin(host: TestHost.server, port: 8443)
-    private let user = User(id: "1", username: "jdoe", email: nil, roles: [])
+    private let user = User.jdoeFixture
     private let summary = ClientCertificateSummary(subject: TestCertificate.subject)
 
     init() throws {
-        serverURL = try #require(URL(string: "https://files.example.com:8443"))
+        serverURL = try #require(URL(string: "https://\(TestHost.serverWithPort)"))
     }
 
     private func state(

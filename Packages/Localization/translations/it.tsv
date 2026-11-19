@@ -197,6 +197,52 @@ shared.navigationTitle	Condivisi
 shared.segmentByMe	Da me
 shared.segmentWithMe	Con me
 shared.sectionExpired	Scaduti
+shared.filterAll	Tutti
+shared.filterAnyone	Chiunque
+shared.daysLeft#one	%lld giorno rimasto
+shared.daysLeft#other	%lld giorni rimasti
+shared.itemCount#one	%lld elemento
+shared.itemCount#other	%lld elementi
+shared.pathStep	%1$@ › %2$@
+common.on	Attivo
+common.off	Disattivo
+common.none	Nessuna
+shared.copyLink	Copia link
+shared.copyShareLink	Copia link di condivisione
+shared.copyFolderLink	Copia link cartella
+shared.copyFileLink	Copia link file
+shared.moreLinks	Altri link
+shared.setNewDate	Imposta una nuova data
+shared.noAccountNeeded	Non serve un account per aprirlo
+shared.metaExpires	Scade
+shared.metaExpired	Scaduto
+shared.folderLinkOpensAs	Il link cartella si apre come
+shared.fileLinkOpensAs	Il link file si apre come
+shared.metaLabel	Etichetta
+shared.metaShared	Condiviso
+shared.metaLastOpened	Ultima apertura
+shared.metaDownloads	Download
+shared.metaReceived	Ricevuto
+shared.expiredFooter	Questo link ha smesso di funzionare il %@. Imposta una nuova data per riattivarlo.
+shared.controlsShare	%@ gestisce questa condivisione.
+shared.listFooter	Tocca una condivisione per vedere tutto. Il pulsante link copia senza aprire.
+shared.publicLink	Link pubblico
+shared.people	Persone
+shared.canEdit	può modificare
+shared.viewOnly	solo lettura
+shared.statusPassword	password
+shared.neverExpires	non scade mai
+shared.expiresUntil	fino al %@
+shared.fromSharer	Da %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld condivisione
+shared.shareCount#other	%lld condivisioni
+shared.peopleCount#one	%lld persona
+shared.peopleCount#other	%lld persone
+shared.downloadCount#one	%lld download
+shared.downloadCount#other	%lld download
+shared.showMore	Mostra altri
+shared.showLess	Mostra meno
 shared.badgeExpired	scaduto
 shared.emptyByMe	Condividi un file o una cartella per vederne il link qui.
 shared.emptyWithMe	I link che altri condividono con te appaiono qui.
@@ -205,11 +251,9 @@ shared.deleteTitle	Eliminare il link di condivisione?
 shared.deleteMessage	Il link smette di funzionare immediatamente. Il file o la cartella non viene toccato.
 shared.sharedByUnknown	Qualcuno
 shared.metaAccess	Accesso
-shared.metaExpiration	Scadenza
 shared.metaSharedBy	Condiviso da
 shared.metaSharedWith	Condiviso con
 shared.anyoneWithLink	Chiunque abbia il link
-shared.linkMode	Modalità link
 shared.actionShareLink	Condividi link
 shared.actionFolderLink	Link cartella
 shared.actionFileLink	Link file
@@ -244,6 +288,17 @@ createShare.errorPastExpiration	Scegli una data di scadenza futura.
 editShare.title	Modifica link di condivisione
 editShare.save	Salva modifiche
 editShare.passwordKeepHint	Lascia vuoto per mantenere la password attuale
+editShare.saved	Modifiche salvate
+editShare.custom	Personalizzata
+editShare.neverFooter	Il link funziona finché non lo elimini.
+editShare.usersHint	Solo le persone che scegli, dopo l'accesso.
+editShare.readOnlyHint	Le persone possono aprire e scaricare.
+editShare.readWriteHint	Le persone possono anche caricare, rinominare ed eliminare al suo interno.
+editShare.readWriteFileHint	Le persone possono anche modificare il file.
+editShare.discardTitle	Annullare le modifiche?
+editShare.discardMessage	Le modifiche a questo link non sono state salvate.
+editShare.discard	Annulla modifiche
+editShare.keepEditing	Continua a modificare
 thumbnailSettings.navigationTitle	Miniature
 thumbnailSettings.subtitle	Controlla come il server genera le miniature delle immagini per ogni client.
 thumbnailSettings.enable	Genera miniature

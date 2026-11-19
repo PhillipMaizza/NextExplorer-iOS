@@ -122,8 +122,8 @@ enum AppFixtures {
     static let serverB = URL(string: TestHost.secondServerURLString) ?? URL(fileURLWithPath: "/")
     static let userA = User(id: "1", username: TestUser.alice, email: nil, roles: [])
     static let userB = User(id: "2", username: TestUser.bob, email: nil, roles: [])
-    static let accountA = "https://a.example.com|alice"
-    static let accountB = "https://b.example.com|bob"
+    static let accountA = TestAccountID.firstServerAlice
+    static let accountB = TestAccountID.secondServerBob
     static let downloadScopeA = "afedf24dbf2fc23413b9282ff0b95bae"
     static let downloadScopeB = "c7934fa255b1a9cb66884b5a6730585e"
     static let originA = ClientCertificateOrigin(host: TestHost.firstServer, port: 443)

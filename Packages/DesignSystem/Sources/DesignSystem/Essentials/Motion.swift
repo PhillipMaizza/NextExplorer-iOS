@@ -94,11 +94,6 @@ public enum DSMotion {
         reduceMotion ? .easeInOut(duration: 0.25) : .smooth(duration: 0.45)
     }
 
-    /// A card opening to show its details, without a spring's overshoot.
-    public static var cardExpand: Animation {
-        .easeInOut(duration: 0.5)
-    }
-
     /// Something that turns or sweeps for as long as work runs: a spinner, a shimmer, a busy bar.
     public static func loop(duration: Double) -> Animation {
         .linear(duration: duration).repeatForever(autoreverses: false)

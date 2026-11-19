@@ -51,11 +51,28 @@ public enum AccessibilityIdentifiers {
         public static let sheet = "share.sheet"
     }
 
+    public enum Shared {
+        /// One circle in the people row, by `all`, `anyone` or `person.<id>`.
+        public static func filter(_ suffix: String) -> String {
+            "shared.filter.\(suffix)"
+        }
+
+        /// A share page's Delete, apart from the confirm button of the same name.
+        public static let deleteShare = "shared.deleteShare"
+        /// The Edit page's Save check in the navigation bar.
+        public static let saveEdit = "shared.saveEdit"
+        /// The Edit page's People row, which pushes the people picker.
+        public static let editPeople = "shared.editPeople"
+        public static let editLabel = "shared.editLabel"
+    }
+
     public enum Browse {
         public static let uploadMenu = "browse.uploadMenu"
         public static let moreMenu = "browse.moreMenu"
         public static let gridSettingsButton = "browse.gridSettingsButton"
         public static let trashButton = "browse.trashButton"
+        /// Every type chip over a folder or search results, so row lookups can skip a chip named like a folder.
+        public static let filterChip = "browse.filterChip"
     }
 
     public enum Settings {

@@ -152,7 +152,7 @@ extension AppSuites {
 
         @Test("Removing an account drops certificates for servers no remaining account uses")
         func accountRemovalPrunesCertificates() async throws {
-            let remainingServer = try #require(URL(string: "https://b.example.com:8443"))
+            let remainingServer = try #require(URL(string: "\(TestHost.secondServerURLString):8443"))
             let remaining = AppFixtures.credentials(remainingServer, TestUser.bob)
             let confirmation = AsyncGate()
             let accountList = AsyncGate()
@@ -182,7 +182,7 @@ extension AppSuites {
             #expect(
                 recorder.events.value == WipeRecorder.prune(
                     origins: [ClientCertificateOrigin(host: TestHost.secondServer, port: 8443)],
-                    accounts: ["https://b.example.com:8443|bob"]
+                    accounts: ["\(TestHost.secondServerURLString):8443|\(TestUser.bob)"]
                 )
             )
         }

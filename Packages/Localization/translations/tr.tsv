@@ -202,6 +202,52 @@ shared.navigationTitle	Paylaşılanlar
 shared.segmentByMe	Benim paylaştıklarım
 shared.segmentWithMe	Benimle paylaşılanlar
 shared.sectionExpired	Süresi doldu
+shared.filterAll	Tümü
+shared.filterAnyone	Herkes
+shared.daysLeft#one	%lld gün kaldı
+shared.daysLeft#other	%lld gün kaldı
+shared.itemCount#one	%lld öge
+shared.itemCount#other	%lld öge
+shared.pathStep	%1$@ › %2$@
+common.on	Açık
+common.off	Kapalı
+common.none	Yok
+shared.copyLink	Bağlantıyı kopyala
+shared.copyShareLink	Paylaşım bağlantısını kopyala
+shared.copyFolderLink	Klasör bağlantısını kopyala
+shared.copyFileLink	Dosya bağlantısını kopyala
+shared.moreLinks	Diğer bağlantılar
+shared.setNewDate	Yeni tarih belirle
+shared.noAccountNeeded	Açmak için hesap gerekmez
+shared.metaExpires	Sona erer
+shared.metaExpired	Süresi doldu
+shared.folderLinkOpensAs	Klasör bağlantısı şöyle açılır
+shared.fileLinkOpensAs	Dosya bağlantısı şöyle açılır
+shared.metaLabel	Etiket
+shared.metaShared	Paylaşıldı
+shared.metaLastOpened	Son açılma
+shared.metaDownloads	İndirmeler
+shared.metaReceived	Alındı
+shared.expiredFooter	Bu bağlantı %@ tarihinde çalışmayı bıraktı. Geri getirmek için yeni bir tarih belirleyin.
+shared.controlsShare	Bu paylaşımı %@ yönetiyor.
+shared.listFooter	Her şeyi görmek için bir paylaşıma dokunun. Bağlantı düğmesi açmadan kopyalar.
+shared.publicLink	Herkese açık bağlantı
+shared.people	Kişiler
+shared.canEdit	düzenleyebilir
+shared.viewOnly	yalnızca görüntüleme
+shared.statusPassword	parola
+shared.neverExpires	süresi dolmaz
+shared.expiresUntil	%@ tarihine kadar
+shared.fromSharer	Gönderen: %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld paylaşım
+shared.shareCount#other	%lld paylaşım
+shared.peopleCount#one	%lld kişi
+shared.peopleCount#other	%lld kişi
+shared.downloadCount#one	%lld indirme
+shared.downloadCount#other	%lld indirme
+shared.showMore	Daha Fazla Göster
+shared.showLess	Daha Az Göster
 shared.badgeExpired	süresi doldu
 shared.emptyByMe	Bağlantısını burada görmek için bir dosya veya klasör paylaşın.
 shared.emptyWithMe	Başkalarının sizinle paylaştığı bağlantılar burada görünür.
@@ -210,11 +256,9 @@ shared.deleteTitle	Paylaşım Bağlantısı Silinsin mi?
 shared.deleteMessage	Bağlantı hemen çalışmayı durdurur. Dosya veya klasörün kendisine dokunulmaz.
 shared.sharedByUnknown	Biri
 shared.metaAccess	Erişim
-shared.metaExpiration	Son Kullanma
 shared.metaSharedBy	Paylaşan
 shared.metaSharedWith	Paylaşılan kişi
 shared.anyoneWithLink	Bağlantıya sahip herkes
-shared.linkMode	Bağlantı modu
 shared.actionShareLink	Paylaşım bağlantısı
 shared.actionFolderLink	Klasör bağlantısı
 shared.actionFileLink	Dosya bağlantısı
@@ -248,6 +292,17 @@ createShare.errorPastExpiration	Gelecekte bir son kullanma tarihi seçin.
 editShare.title	Paylaşım Bağlantısını Düzenle
 editShare.save	Değişiklikleri Kaydet
 editShare.passwordKeepHint	Mevcut parolayı korumak için boş bırakın
+editShare.saved	Değişiklikler kaydedildi
+editShare.custom	Özel
+editShare.neverFooter	Bağlantı siz silene kadar çalışır.
+editShare.usersHint	Yalnızca seçtiğiniz kişiler, oturum açtıktan sonra.
+editShare.readOnlyHint	Kişiler açabilir ve indirebilir.
+editShare.readWriteHint	Kişiler içine yükleyebilir, yeniden adlandırabilir ve silebilir.
+editShare.readWriteFileHint	Kişiler dosyayı düzenleyebilir de.
+editShare.discardTitle	Değişiklikler atılsın mı?
+editShare.discardMessage	Bu bağlantıdaki düzenlemeleriniz kaydedilmedi.
+editShare.discard	At
+editShare.keepEditing	Düzenlemeye devam et
 thumbnailSettings.navigationTitle	Küçük Resimler
 thumbnailSettings.subtitle	Sunucunun her istemci için küçük resimleri nasıl oluşturacağını denetleyin.
 thumbnailSettings.enable	Küçük Resim Oluştur

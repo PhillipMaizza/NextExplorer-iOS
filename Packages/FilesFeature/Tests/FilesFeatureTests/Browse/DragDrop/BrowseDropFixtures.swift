@@ -8,7 +8,7 @@ import TestUtils
 enum BrowseDropFixtures {
     static let receiver = DragOrigin(serverURL: BrowseTestSupport.serverURL.absoluteString, scope: "scope-a")
     static let otherAccount = DragOrigin(serverURL: BrowseTestSupport.serverURL.absoluteString, scope: "scope-b")
-    static let otherServer = DragOrigin(serverURL: "https://other.example.com", scope: "scope-a")
+    static let otherServer = DragOrigin(serverURL: TestHost.otherServerURLString, scope: "scope-a")
 
     /// A row of a dragged listing: a PDF of ten bytes, or a folder.
     static func entry(_ name: String, in path: String = TestFolder.docs, isFolder: Bool = false) -> FileItem {

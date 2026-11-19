@@ -202,6 +202,52 @@ shared.navigationTitle	Delt
 shared.segmentByMe	Av meg
 shared.segmentWithMe	Med meg
 shared.sectionExpired	Utløpt
+shared.filterAll	Alle
+shared.filterAnyone	Enhver
+shared.daysLeft#one	%lld dag igjen
+shared.daysLeft#other	%lld dager igjen
+shared.itemCount#one	%lld element
+shared.itemCount#other	%lld elementer
+shared.pathStep	%1$@ › %2$@
+common.on	På
+common.off	Av
+common.none	Ingen
+shared.copyLink	Kopier lenke
+shared.copyShareLink	Kopier delingslenke
+shared.copyFolderLink	Kopier mappelenke
+shared.copyFileLink	Kopier fillenke
+shared.moreLinks	Flere lenker
+shared.setNewDate	Angi ny dato
+shared.noAccountNeeded	Ingen konto trengs for å åpne den
+shared.metaExpires	Utløper
+shared.metaExpired	Utløpt
+shared.folderLinkOpensAs	Mappelenken åpnes som
+shared.fileLinkOpensAs	Fillenken åpnes som
+shared.metaLabel	Etikett
+shared.metaShared	Delt
+shared.metaLastOpened	Sist åpnet
+shared.metaDownloads	Nedlastinger
+shared.metaReceived	Mottatt
+shared.expiredFooter	Denne lenken sluttet å virke %@. Angi en ny dato for å få den tilbake.
+shared.controlsShare	%@ styrer denne delingen.
+shared.listFooter	Trykk på en deling for å se alt om den. Lenkeknappen kopierer uten å åpne.
+shared.publicLink	Offentlig lenke
+shared.people	Personer
+shared.canEdit	kan redigere
+shared.viewOnly	kun visning
+shared.statusPassword	passord
+shared.neverExpires	utløper aldri
+shared.expiresUntil	til %@
+shared.fromSharer	Fra %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld deling
+shared.shareCount#other	%lld delinger
+shared.peopleCount#one	%lld person
+shared.peopleCount#other	%lld personer
+shared.downloadCount#one	%lld nedlasting
+shared.downloadCount#other	%lld nedlastinger
+shared.showMore	Vis mer
+shared.showLess	Vis mindre
 shared.badgeExpired	utløpt
 shared.emptyByMe	Del en fil eller mappe for å se lenken her.
 shared.emptyWithMe	Lenker andre deler med deg, vises her.
@@ -210,11 +256,9 @@ shared.deleteTitle	Slette delingslenken?
 shared.deleteMessage	Lenken slutter å virke umiddelbart. Selve filen eller mappen berøres ikke.
 shared.sharedByUnknown	Noen
 shared.metaAccess	Tilgang
-shared.metaExpiration	Utløp
 shared.metaSharedBy	Delt av
 shared.metaSharedWith	Delt med
 shared.anyoneWithLink	Alle med lenken
-shared.linkMode	Lenkemodus
 shared.actionShareLink	Delingslenke
 shared.actionFolderLink	Mappelenke
 shared.actionFileLink	Fillenke
@@ -248,6 +292,17 @@ createShare.errorPastExpiration	Velg en utløpsdato i fremtiden.
 editShare.title	Rediger delingslenke
 editShare.save	Lagre endringer
 editShare.passwordKeepHint	La feltet stå tomt for å beholde gjeldende passord
+editShare.saved	Endringer lagret
+editShare.custom	Egendefinert
+editShare.neverFooter	Lenken virker til du sletter den.
+editShare.usersHint	Bare personene du velger, etter at de logger inn.
+editShare.readOnlyHint	Personer kan åpne og laste ned.
+editShare.readWriteHint	Personer kan også laste opp, gi nytt navn og slette inni.
+editShare.readWriteFileHint	Personer kan også redigere filen.
+editShare.discardTitle	Forkaste endringer?
+editShare.discardMessage	Endringene dine i denne lenken er ikke lagret.
+editShare.discard	Forkast
+editShare.keepEditing	Fortsett å redigere
 thumbnailSettings.navigationTitle	Miniatyrbilder
 thumbnailSettings.subtitle	Styr hvordan serveren lager miniatyrbilder av bilder for alle klienter.
 thumbnailSettings.enable	Lag miniatyrbilder

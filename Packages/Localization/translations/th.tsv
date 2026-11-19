@@ -196,6 +196,47 @@ shared.navigationTitle	ที่แชร์
 shared.segmentByMe	โดยฉัน
 shared.segmentWithMe	กับฉัน
 shared.sectionExpired	หมดอายุแล้ว
+shared.filterAll	ทั้งหมด
+shared.filterAnyone	ทุกคน
+shared.daysLeft#other	เหลืออีก %lld วัน
+shared.itemCount#other	%lld รายการ
+shared.pathStep	%1$@ › %2$@
+common.on	เปิด
+common.off	ปิด
+common.none	ไม่มี
+shared.copyLink	คัดลอกลิงก์
+shared.copyShareLink	คัดลอกลิงก์แชร์
+shared.copyFolderLink	คัดลอกลิงก์โฟลเดอร์
+shared.copyFileLink	คัดลอกลิงก์ไฟล์
+shared.moreLinks	ลิงก์เพิ่มเติม
+shared.setNewDate	ตั้งวันที่ใหม่
+shared.noAccountNeeded	ไม่ต้องใช้บัญชีในการเปิด
+shared.metaExpires	หมดอายุ
+shared.metaExpired	หมดอายุแล้ว
+shared.folderLinkOpensAs	ลิงก์โฟลเดอร์เปิดเป็น
+shared.fileLinkOpensAs	ลิงก์ไฟล์เปิดเป็น
+shared.metaLabel	ป้ายกำกับ
+shared.metaShared	แชร์เมื่อ
+shared.metaLastOpened	เปิดล่าสุด
+shared.metaDownloads	ดาวน์โหลด
+shared.metaReceived	ได้รับเมื่อ
+shared.expiredFooter	ลิงก์นี้หยุดทำงานเมื่อ %@ ตั้งวันที่ใหม่เพื่อให้กลับมาใช้ได้
+shared.controlsShare	%@ ควบคุมการแชร์นี้
+shared.listFooter	แตะการแชร์เพื่อดูรายละเอียดทั้งหมด ปุ่มลิงก์จะคัดลอกโดยไม่เปิด
+shared.publicLink	ลิงก์สาธารณะ
+shared.people	ผู้คน
+shared.canEdit	แก้ไขได้
+shared.viewOnly	ดูอย่างเดียว
+shared.statusPassword	รหัสผ่าน
+shared.neverExpires	ไม่มีวันหมดอายุ
+shared.expiresUntil	ถึง %@
+shared.fromSharer	จาก %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#other	%lld การแชร์
+shared.peopleCount#other	%lld คน
+shared.downloadCount#other	ดาวน์โหลด %lld ครั้ง
+shared.showMore	แสดงเพิ่มเติม
+shared.showLess	แสดงน้อยลง
 shared.badgeExpired	หมดอายุแล้ว
 shared.emptyByMe	แชร์ไฟล์หรือโฟลเดอร์เพื่อดูลิงก์ที่นี่
 shared.emptyWithMe	ลิงก์ที่ผู้อื่นแชร์ให้คุณจะแสดงที่นี่
@@ -204,11 +245,9 @@ shared.deleteTitle	ลบลิงก์แชร์หรือไม่
 shared.deleteMessage	ลิงก์จะหยุดทำงานทันที ตัวไฟล์หรือโฟลเดอร์จะไม่ได้รับผลกระทบ
 shared.sharedByUnknown	บางคน
 shared.metaAccess	การเข้าถึง
-shared.metaExpiration	วันหมดอายุ
 shared.metaSharedBy	แชร์โดย
 shared.metaSharedWith	แชร์กับ
 shared.anyoneWithLink	ทุกคนที่มีลิงก์
-shared.linkMode	โหมดลิงก์
 shared.actionShareLink	ลิงก์แชร์
 shared.actionFolderLink	ลิงก์โฟลเดอร์
 shared.actionFileLink	ลิงก์ไฟล์
@@ -242,6 +281,17 @@ createShare.errorPastExpiration	เลือกวันหมดอายุใ
 editShare.title	แก้ไขลิงก์แชร์
 editShare.save	บันทึกการเปลี่ยนแปลง
 editShare.passwordKeepHint	เว้นว่างไว้เพื่อใช้รหัสผ่านปัจจุบันต่อ
+editShare.saved	บันทึกการเปลี่ยนแปลงแล้ว
+editShare.custom	กำหนดเอง
+editShare.neverFooter	ลิงก์ใช้งานได้จนกว่าคุณจะลบ
+editShare.usersHint	เฉพาะคนที่คุณเลือก หลังจากลงชื่อเข้าใช้
+editShare.readOnlyHint	ผู้คนเปิดและดาวน์โหลดได้
+editShare.readWriteHint	ผู้คนยังอัปโหลด เปลี่ยนชื่อ และลบภายในได้
+editShare.readWriteFileHint	ผู้คนยังแก้ไขไฟล์ได้
+editShare.discardTitle	ละทิ้งการเปลี่ยนแปลง?
+editShare.discardMessage	การแก้ไขลิงก์นี้ยังไม่ได้บันทึก
+editShare.discard	ละทิ้ง
+editShare.keepEditing	แก้ไขต่อ
 thumbnailSettings.navigationTitle	ภาพขนาดย่อ
 thumbnailSettings.subtitle	ควบคุมวิธีที่เซิร์ฟเวอร์สร้างภาพขนาดย่อสำหรับไคลเอนต์ทั้งหมด
 thumbnailSettings.enable	สร้างภาพขนาดย่อ

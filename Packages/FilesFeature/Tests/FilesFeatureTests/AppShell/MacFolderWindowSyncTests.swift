@@ -12,13 +12,7 @@ import TestUtils
     @Suite(.isolatedDependencies)
     struct MacFolderWindowSyncTests {
         private let serverURL = BrowseTestSupport.serverURL
-        private let user = User(
-            id: "1",
-            username: "jdoe",
-            email: "jane.doe@example.com",
-            displayName: "Jane Doe",
-            roles: []
-        )
+        private let user = User.janeDoeFixture
 
         private func makeStore(
             _ mutate: (inout MainTabFeature.State) -> Void = { _ in },

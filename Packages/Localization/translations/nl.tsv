@@ -197,6 +197,52 @@ shared.navigationTitle	Gedeeld
 shared.segmentByMe	Door mij
 shared.segmentWithMe	Met mij
 shared.sectionExpired	Verlopen
+shared.filterAll	Alles
+shared.filterAnyone	Iedereen
+shared.daysLeft#one	Nog %lld dag
+shared.daysLeft#other	Nog %lld dagen
+shared.itemCount#one	%lld item
+shared.itemCount#other	%lld items
+shared.pathStep	%1$@ › %2$@
+common.on	Aan
+common.off	Uit
+common.none	Geen
+shared.copyLink	Link kopiëren
+shared.copyShareLink	Deellink kopiëren
+shared.copyFolderLink	Maplink kopiëren
+shared.copyFileLink	Bestandslink kopiëren
+shared.moreLinks	Meer links
+shared.setNewDate	Nieuwe datum instellen
+shared.noAccountNeeded	Geen account nodig om te openen
+shared.metaExpires	Verloopt
+shared.metaExpired	Verlopen
+shared.folderLinkOpensAs	Maplink opent als
+shared.fileLinkOpensAs	Bestandslink opent als
+shared.metaLabel	Label
+shared.metaShared	Gedeeld
+shared.metaLastOpened	Laatst geopend
+shared.metaDownloads	Downloads
+shared.metaReceived	Ontvangen
+shared.expiredFooter	Deze link werkt niet meer sinds %@. Stel een nieuwe datum in om hem terug te brengen.
+shared.controlsShare	%@ beheert deze deellink.
+shared.listFooter	Tik op een deellink voor alle details. De linkknop kopieert zonder te openen.
+shared.publicLink	Openbare link
+shared.people	Personen
+shared.canEdit	kan bewerken
+shared.viewOnly	alleen bekijken
+shared.statusPassword	wachtwoord
+shared.neverExpires	verloopt nooit
+shared.expiresUntil	tot %@
+shared.fromSharer	Van %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld deellink
+shared.shareCount#other	%lld deellinks
+shared.peopleCount#one	%lld persoon
+shared.peopleCount#other	%lld personen
+shared.downloadCount#one	%lld download
+shared.downloadCount#other	%lld downloads
+shared.showMore	Meer tonen
+shared.showLess	Toon minder
 shared.badgeExpired	verlopen
 shared.emptyByMe	Deel een bestand of map om de link hier te zien.
 shared.emptyWithMe	Links die anderen met je delen verschijnen hier.
@@ -205,11 +251,9 @@ shared.deleteTitle	Deellink verwijderen?
 shared.deleteMessage	De link werkt onmiddellijk niet meer. Het bestand of de map zelf blijft ongemoeid.
 shared.sharedByUnknown	Iemand
 shared.metaAccess	Toegang
-shared.metaExpiration	Verloopt
 shared.metaSharedBy	Gedeeld door
 shared.metaSharedWith	Gedeeld met
 shared.anyoneWithLink	Iedereen met de link
-shared.linkMode	Linkmodus
 shared.actionShareLink	Link delen
 shared.actionFolderLink	Maplink
 shared.actionFileLink	Bestandslink
@@ -244,6 +288,17 @@ createShare.errorPastExpiration	Kies een vervaldatum in de toekomst.
 editShare.title	Deellink bewerken
 editShare.save	Wijzigingen bewaren
 editShare.passwordKeepHint	Laat leeg om het huidige wachtwoord te behouden
+editShare.saved	Wijzigingen bewaard
+editShare.custom	Aangepast
+editShare.neverFooter	De link werkt tot je hem verwijdert.
+editShare.usersHint	Alleen de mensen die je kiest, na inloggen.
+editShare.readOnlyHint	Mensen kunnen openen en downloaden.
+editShare.readWriteHint	Mensen kunnen er ook in uploaden, hernoemen en verwijderen.
+editShare.readWriteFileHint	Mensen kunnen het bestand ook bewerken.
+editShare.discardTitle	Wijzigingen weggooien?
+editShare.discardMessage	Je wijzigingen aan deze link zijn niet bewaard.
+editShare.discard	Weggooien
+editShare.keepEditing	Verder bewerken
 thumbnailSettings.navigationTitle	Miniaturen
 thumbnailSettings.subtitle	Bepaal hoe de server afbeeldingsminiaturen genereert voor elke client.
 thumbnailSettings.enable	Miniaturen genereren

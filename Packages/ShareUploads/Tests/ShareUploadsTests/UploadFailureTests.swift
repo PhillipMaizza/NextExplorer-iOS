@@ -1,6 +1,7 @@
 import Foundation
 @testable import ShareUploads
 import Testing
+import TestUtils
 
 @Suite("Upload failures")
 struct UploadFailureTests {
@@ -45,7 +46,7 @@ struct UploadFailureTests {
     }
 
     private func response(_ status: Int) throws -> HTTPURLResponse {
-        let url = try #require(URL(string: "https://files.example.com/api/upload"))
+        let url = try #require(URL(string: "\(TestHost.serverURLString)/api/upload"))
         return try #require(HTTPURLResponse(url: url, statusCode: status, httpVersion: nil, headerFields: nil))
     }
 

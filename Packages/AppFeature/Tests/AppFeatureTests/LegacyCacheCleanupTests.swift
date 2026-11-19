@@ -7,7 +7,7 @@ import TestUtils
 @Suite("Legacy cache cleanup")
 struct LegacyCacheCleanupTests {
     private enum Fixture {
-        static let account = "https://files.example.com|alice"
+        static let account = TestAccountID.alice
         static let scopedName = CacheAccountScope.scopedFileName("payload.json", scope: account)
         static let legacyName = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.json"
         static let rootPrefix = "legacy-cleanup-"

@@ -10,7 +10,7 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct CreateShareLinkFeatureTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private let serverURL = TestHost.serverURL
     private let now = MockDate.date
 
     private func makeState() -> CreateShareLinkFeature.State {
@@ -31,8 +31,8 @@ struct CreateShareLinkFeatureTests {
                 accessMode: .readonly, sharingType: target, hasPassword: false,
                 createdAt: now, updatedAt: now
             ),
-            shareUrl: URL(string: "https://cloud.example.com/share/TOK123")!,
-            directFileUrl: URL(string: "https://cloud.example.com/api/share/TOK123/file")!
+            shareUrl: URL(string: "\(TestHost.serverURLString)/share/TOK123")!,
+            directFileUrl: URL(string: "\(TestHost.serverURLString)/api/share/TOK123/file")!
         )
     }
 
@@ -117,7 +117,7 @@ struct CreateShareLinkFeatureTests {
 
     @Test
     func choosingSpecificUsersLoadsUsersAndBlocksCreationUntilOneIsPicked() async {
-        let jamie = User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")
+        let jamie = User.jamieFixture
         let store = TestStore(initialState: makeState()) {
             CreateShareLinkFeature()
         } withDependencies: {
@@ -143,7 +143,7 @@ struct CreateShareLinkFeatureTests {
 
     @Test
     func specificUsersAreSentInTheCreateRequest() async {
-        let jamie = User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")
+        let jamie = User.jamieFixture
         let created = makeCreated(target: .users)
         var state = makeState()
         state.target = .users
@@ -260,8 +260,8 @@ struct CreateShareLinkFeatureTests {
         var state = makeState()
         state.step = .created(makeCreated())
         state.directLinkMode = .download
-        #expect(state.directLink?.absoluteString == "https://cloud.example.com/api/share/TOK123/file?mode=download")
+        #expect(state.directLink?.absoluteString == "\(TestHost.serverURLString)/api/share/TOK123/file?mode=download")
         state.directLinkMode = .auto
-        #expect(state.directLink?.absoluteString == "https://cloud.example.com/api/share/TOK123/file")
+        #expect(state.directLink?.absoluteString == "\(TestHost.serverURLString)/api/share/TOK123/file")
     }
 }

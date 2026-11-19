@@ -14,7 +14,7 @@ struct OfflineTabRenameAndDeleteTests {
         static let oldName = "old.pdf"
         static let newName = "new.pdf"
         static let folderPath = "/tmp/Downloads/"
-        static let scope = "https://files.example.com|alice"
+        static let scope = TestAccountID.alice
     }
 
     private func download(_ name: String) -> LocalDownload {

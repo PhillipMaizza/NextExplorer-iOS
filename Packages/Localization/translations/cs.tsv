@@ -214,6 +214,62 @@ shared.navigationTitle	Sdílené
 shared.segmentByMe	Mnou
 shared.segmentWithMe	Se mnou
 shared.sectionExpired	Platnost vypršela
+shared.filterAll	Vše
+shared.filterAnyone	Kdokoli
+shared.daysLeft#one	Zbývá %lld den
+shared.daysLeft#few	Zbývají %lld dny
+shared.daysLeft#many	Zbývá %lld dne
+shared.daysLeft#other	Zbývá %lld dní
+shared.itemCount#one	%lld položka
+shared.itemCount#few	%lld položky
+shared.itemCount#many	%lld položky
+shared.itemCount#other	%lld položek
+shared.pathStep	%1$@ › %2$@
+common.on	Zapnuto
+common.off	Vypnuto
+common.none	Žádný
+shared.copyLink	Kopírovat odkaz
+shared.copyShareLink	Kopírovat odkaz ke sdílení
+shared.copyFolderLink	Kopírovat odkaz na složku
+shared.copyFileLink	Kopírovat odkaz na soubor
+shared.moreLinks	Další odkazy
+shared.setNewDate	Nastavit nové datum
+shared.noAccountNeeded	K otevření není potřeba účet
+shared.metaExpires	Vyprší
+shared.metaExpired	Vypršelo
+shared.folderLinkOpensAs	Odkaz na složku se otevře jako
+shared.fileLinkOpensAs	Odkaz na soubor se otevře jako
+shared.metaLabel	Popisek
+shared.metaShared	Sdíleno
+shared.metaLastOpened	Naposledy otevřeno
+shared.metaDownloads	Stažení
+shared.metaReceived	Přijato
+shared.expiredFooter	Tento odkaz přestal fungovat %@. Nastavte nové datum a obnovte ho.
+shared.controlsShare	%@ spravuje toto sdílení.
+shared.listFooter	Klepnutím na sdílení zobrazíte vše o něm. Tlačítko odkazu kopíruje bez otevření.
+shared.publicLink	Veřejný odkaz
+shared.people	Lidé
+shared.canEdit	může upravovat
+shared.viewOnly	jen zobrazení
+shared.statusPassword	heslo
+shared.neverExpires	nikdy nevyprší
+shared.expiresUntil	do %@
+shared.fromSharer	Od %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld sdílení
+shared.shareCount#few	%lld sdílení
+shared.shareCount#many	%lld sdílení
+shared.shareCount#other	%lld sdílení
+shared.peopleCount#one	%lld osoba
+shared.peopleCount#few	%lld osoby
+shared.peopleCount#many	%lld osoby
+shared.peopleCount#other	%lld osob
+shared.downloadCount#one	%lld stažení
+shared.downloadCount#few	%lld stažení
+shared.downloadCount#many	%lld stažení
+shared.downloadCount#other	%lld stažení
+shared.showMore	Zobrazit další
+shared.showLess	Zobrazit méně
 shared.badgeExpired	platnost vypršela
 shared.emptyByMe	Nasdílejte soubor nebo složku a uvidíte zde jeho odkaz.
 shared.emptyWithMe	Odkazy, které s vámi sdílejí ostatní, se zobrazí zde.
@@ -222,11 +278,9 @@ shared.deleteTitle	Smazat odkaz ke sdílení?
 shared.deleteMessage	Odkaz okamžitě přestane fungovat. Samotného souboru ani složky se to netýká.
 shared.sharedByUnknown	Někdo
 shared.metaAccess	Přístup
-shared.metaExpiration	Vypršení platnosti
 shared.metaSharedBy	Sdílí
 shared.metaSharedWith	Sdíleno s
 shared.anyoneWithLink	Kdokoli s odkazem
-shared.linkMode	Režim odkazu
 shared.actionShareLink	Odkaz ke sdílení
 shared.actionFolderLink	Odkaz na složku
 shared.actionFileLink	Odkaz na soubor
@@ -260,6 +314,17 @@ createShare.errorPastExpiration	Vyberte datum vypršení v budoucnosti.
 editShare.title	Upravit odkaz ke sdílení
 editShare.save	Uložit změny
 editShare.passwordKeepHint	Nechte prázdné, aby zůstalo stávající heslo
+editShare.saved	Změny uloženy
+editShare.custom	Vlastní
+editShare.neverFooter	Odkaz funguje, dokud ho nesmažete.
+editShare.usersHint	Jen lidé, které vyberete, po přihlášení.
+editShare.readOnlyHint	Lidé mohou otevírat a stahovat.
+editShare.readWriteHint	Lidé mohou uvnitř také nahrávat, přejmenovávat a mazat.
+editShare.readWriteFileHint	Lidé mohou soubor také upravovat.
+editShare.discardTitle	Zahodit změny?
+editShare.discardMessage	Úpravy tohoto odkazu nebyly uloženy.
+editShare.discard	Zahodit
+editShare.keepEditing	Pokračovat v úpravách
 thumbnailSettings.navigationTitle	Miniatury
 thumbnailSettings.subtitle	Určete, jak server vytváří miniatury obrázků pro všechny klienty.
 thumbnailSettings.enable	Vytvářet miniatury

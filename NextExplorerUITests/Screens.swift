@@ -239,9 +239,14 @@ struct BrowseScreen {
     }
 
     /// The tappable/long-pressable row button (its label bundles name + metadata, so match on a
-    /// substring). Long press this, not the name label, to open the row's context menu.
+    /// substring). Long press this, not the name label, to open the row's context menu. Type chips
+    /// are skipped: the Documents chip would otherwise match the Documents folder.
     func row(_ name: String) -> XCUIElement {
-        app.buttons.containing(name)
+        app.buttons.matching(NSPredicate(
+            format: "label CONTAINS[c] %@ AND identifier != %@",
+            name,
+            AccessibilityIdentifiers.Browse.filterChip
+        )).firstMatch
     }
 
     /// New folder flow. Menu and sheet buttons are matched by label (icon identifiers shadow them).
@@ -457,6 +462,75 @@ struct SharedScreen {
 
     func item(_ name: String) -> XCUIElement {
         app.staticTexts[name]
+    }
+
+    /// A circle in the people row, by `AccessibilityIdentifiers.Shared.filter` suffix.
+    func filter(_ suffix: String) -> XCUIElement {
+        app.descendants(matching: .any)[AccessibilityIdentifiers.Shared.filter(suffix)].firstMatch
+    }
+
+    /// The item sheet's main action, on a share page.
+    var copyLinkButton: XCUIElement {
+        app.buttons[L10n.Shared.copyLink].firstMatch
+    }
+
+    var closeSheetButton: XCUIElement {
+        app.buttons[L10n.Common.close].firstMatch
+    }
+
+    var deleteShareButton: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Shared.deleteShare].firstMatch
+    }
+
+    /// The delete alert's confirm button, which shares its title with the page's Delete.
+    var confirmDeleteButton: XCUIElement {
+        app.buttons.matching(NSPredicate(
+            format: "label == %@ AND identifier != %@",
+            L10n.Common.delete,
+            AccessibilityIdentifiers.Shared.deleteShare
+        )).firstMatch
+    }
+
+    /// The share page's Edit, which pushes the edit page.
+    var editShareButton: XCUIElement {
+        app.labeledButton(L10n.Common.edit)
+    }
+
+    var labelField: XCUIElement {
+        app.textFields[AccessibilityIdentifiers.Shared.editLabel].firstMatch
+    }
+
+    /// The edit page's Save check, enabled once something changed.
+    var saveEditButton: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Shared.saveEdit].firstMatch
+    }
+
+    /// The edit page's Back, which asks first while there are unsaved changes.
+    var backEditButton: XCUIElement {
+        app.labeledButton(L10n.Common.back)
+    }
+
+    /// An expiry choice on the edit page, by its title.
+    func expiryPreset(_ title: String) -> XCUIElement {
+        app.labeledButton(title)
+    }
+
+    var discardTitle: XCUIElement {
+        app.staticTexts[L10n.EditShare.discardTitle]
+    }
+
+    var keepEditingButton: XCUIElement {
+        app.labeledButton(L10n.EditShare.keepEditing)
+    }
+
+    var savedToast: XCUIElement {
+        app.staticTexts[L10n.EditShare.saved]
+    }
+
+    var expiredHeader: XCUIElement {
+        app.staticTexts[L10n.Shared.sectionExpired.uppercased()].exists
+            ? app.staticTexts[L10n.Shared.sectionExpired.uppercased()]
+            : app.staticTexts[L10n.Shared.sectionExpired]
     }
 }
 

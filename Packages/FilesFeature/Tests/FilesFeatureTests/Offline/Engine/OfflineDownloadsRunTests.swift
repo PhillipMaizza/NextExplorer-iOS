@@ -1,3 +1,4 @@
+import Combine
 import ComposableArchitecture
 import CoreModels
 import FilesClient
@@ -229,7 +230,11 @@ struct OfflineDownloadsRunTests: OfflineDownloadsTestSupport {
         _ = await iterator.next()
 
         #expect(run.phase == .downloading)
-        #expect(run.progress.wrappedValue.currentName == TestFile.aText)
+        // The name reaches state through the progress stream, so it can land just after the
+        // download starts. The publisher replays the current value, so this wait cannot miss it.
+        for await progress in run.progress.publisher.values where progress.currentName == TestFile.aText {
+            break
+        }
         #expect(offline.wasInterrupted())
 
         downloadGate.open()

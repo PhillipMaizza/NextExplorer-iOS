@@ -52,14 +52,14 @@ struct LoginFormFeatureTests {
             AcceptedAddress(scheme: .https, typed: TestHost.nextExplorer, expected: TestHost.nextExplorerURLString),
             AcceptedAddress(
                 scheme: .https,
-                typed: "nextexplorer.example.com///",
+                typed: "\(TestHost.nextExplorer)///",
                 expected: TestHost.nextExplorerURLString
             ),
             AcceptedAddress(scheme: .http, typed: "  192.168.1.50:3000  ", expected: LoginFormConstants.lanURLString),
             AcceptedAddress(
                 scheme: .http,
                 typed: TestHost.nextExplorerURLString,
-                expected: "http://nextexplorer.example.com"
+                expected: "http://\(TestHost.nextExplorer)"
             ),
             AcceptedAddress(
                 scheme: .https,

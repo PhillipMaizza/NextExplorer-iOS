@@ -208,6 +208,52 @@ shared.navigationTitle	Compartilhado
 shared.segmentByMe	Por mim
 shared.segmentWithMe	Comigo
 shared.sectionExpired	Expirado
+shared.filterAll	Tudo
+shared.filterAnyone	Qualquer pessoa
+shared.daysLeft#one	Resta %lld dia
+shared.daysLeft#other	Restam %lld dias
+shared.itemCount#one	%lld item
+shared.itemCount#other	%lld itens
+shared.pathStep	%1$@ › %2$@
+common.on	Ativado
+common.off	Desativado
+common.none	Nenhum
+shared.copyLink	Copiar link
+shared.copyShareLink	Copiar link de compartilhamento
+shared.copyFolderLink	Copiar link da pasta
+shared.copyFileLink	Copiar link do arquivo
+shared.moreLinks	Mais links
+shared.setNewDate	Definir nova data
+shared.noAccountNeeded	Não precisa de conta para abrir
+shared.metaExpires	Expira
+shared.metaExpired	Expirado
+shared.folderLinkOpensAs	O link da pasta abre como
+shared.fileLinkOpensAs	O link do arquivo abre como
+shared.metaLabel	Rótulo
+shared.metaShared	Compartilhado
+shared.metaLastOpened	Última abertura
+shared.metaDownloads	Downloads
+shared.metaReceived	Recebido
+shared.expiredFooter	Este link parou de funcionar em %@. Defina uma nova data para reativá-lo.
+shared.controlsShare	%@ controla este compartilhamento.
+shared.listFooter	Toque em um compartilhamento para ver tudo sobre ele. O botão de link copia sem abrir.
+shared.publicLink	Link público
+shared.people	Pessoas
+shared.canEdit	pode editar
+shared.viewOnly	somente leitura
+shared.statusPassword	senha
+shared.neverExpires	nunca expira
+shared.expiresUntil	até %@
+shared.fromSharer	De %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld compartilhamento
+shared.shareCount#other	%lld compartilhamentos
+shared.peopleCount#one	%lld pessoa
+shared.peopleCount#other	%lld pessoas
+shared.downloadCount#one	%lld download
+shared.downloadCount#other	%lld downloads
+shared.showMore	Mostrar mais
+shared.showLess	Mostrar menos
 shared.badgeExpired	Expirado
 shared.emptyByMe	Compartilhe um arquivo ou pasta para ver o link aqui.
 shared.emptyWithMe	Os links que outras pessoas compartilham com você aparecem aqui.
@@ -216,11 +262,9 @@ shared.deleteTitle	Excluir o link de compartilhamento?
 shared.deleteMessage	O link deixa de funcionar imediatamente. O arquivo ou a pasta em si não é afetado.
 shared.sharedByUnknown	Alguém
 shared.metaAccess	Acesso
-shared.metaExpiration	Validade
 shared.metaSharedBy	Compartilhado por
 shared.metaSharedWith	Compartilhado com
 shared.anyoneWithLink	Qualquer pessoa com o link
-shared.linkMode	Modo do link
 shared.actionShareLink	Link de compartilhamento
 shared.actionFolderLink	Link da pasta
 shared.actionFileLink	Link do arquivo
@@ -255,6 +299,17 @@ createShare.errorPastExpiration	Escolha uma data de validade futura.
 editShare.title	Editar o link de compartilhamento
 editShare.save	Salvar as alterações
 editShare.passwordKeepHint	Deixe em branco para manter a senha atual
+editShare.saved	Alterações salvas
+editShare.custom	Personalizado
+editShare.neverFooter	O link funciona até você excluí-lo.
+editShare.usersHint	Somente as pessoas que você escolher, depois de entrarem.
+editShare.readOnlyHint	As pessoas podem abrir e baixar.
+editShare.readWriteHint	As pessoas também podem enviar, renomear e excluir dentro.
+editShare.readWriteFileHint	As pessoas também podem editar o arquivo.
+editShare.discardTitle	Descartar alterações?
+editShare.discardMessage	Suas alterações neste link não foram salvas.
+editShare.discard	Descartar
+editShare.keepEditing	Continuar editando
 thumbnailSettings.navigationTitle	Miniaturas
 thumbnailSettings.subtitle	Controle como o servidor gera as miniaturas de imagem para todos os clientes.
 thumbnailSettings.enable	Gerar miniaturas

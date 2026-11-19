@@ -214,6 +214,62 @@ shared.navigationTitle	Спільні
 shared.segmentByMe	Мої
 shared.segmentWithMe	Зі мною
 shared.sectionExpired	Термін дії минув
+shared.filterAll	Усі
+shared.filterAnyone	Будь-хто
+shared.daysLeft#one	Залишився %lld день
+shared.daysLeft#few	Залишилося %lld дні
+shared.daysLeft#many	Залишилося %lld днів
+shared.daysLeft#other	Залишилося %lld дня
+shared.itemCount#one	%lld об’єкт
+shared.itemCount#few	%lld об’єкти
+shared.itemCount#many	%lld об’єктів
+shared.itemCount#other	%lld об’єкта
+shared.pathStep	%1$@ › %2$@
+common.on	Увімк.
+common.off	Вимк.
+common.none	Немає
+shared.copyLink	Скопіювати посилання
+shared.copyShareLink	Скопіювати посилання доступу
+shared.copyFolderLink	Скопіювати посилання на папку
+shared.copyFileLink	Скопіювати посилання на файл
+shared.moreLinks	Інші посилання
+shared.setNewDate	Задати нову дату
+shared.noAccountNeeded	Для відкриття не потрібен обліковий запис
+shared.metaExpires	Спливає
+shared.metaExpired	Сплив
+shared.folderLinkOpensAs	Посилання на папку відкривається як
+shared.fileLinkOpensAs	Посилання на файл відкривається як
+shared.metaLabel	Мітка
+shared.metaShared	Надіслано
+shared.metaLastOpened	Востаннє відкрито
+shared.metaDownloads	Завантаження
+shared.metaReceived	Отримано
+shared.expiredFooter	Це посилання перестало працювати %@. Задайте нову дату, щоб повернути його.
+shared.controlsShare	%@ керує цим доступом.
+shared.listFooter	Торкніться посилання, щоб побачити все про нього. Кнопка посилання копіює без відкриття.
+shared.publicLink	Публічне посилання
+shared.people	Люди
+shared.canEdit	може редагувати
+shared.viewOnly	лише перегляд
+shared.statusPassword	пароль
+shared.neverExpires	безстроково
+shared.expiresUntil	до %@
+shared.fromSharer	Від %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld посилання
+shared.shareCount#few	%lld посилання
+shared.shareCount#many	%lld посилань
+shared.shareCount#other	%lld посилання
+shared.peopleCount#one	%lld особа
+shared.peopleCount#few	%lld особи
+shared.peopleCount#many	%lld осіб
+shared.peopleCount#other	%lld особи
+shared.downloadCount#one	%lld завантаження
+shared.downloadCount#few	%lld завантаження
+shared.downloadCount#many	%lld завантажень
+shared.downloadCount#other	%lld завантаження
+shared.showMore	Показати більше
+shared.showLess	Показати менше
 shared.badgeExpired	термін дії минув
 shared.emptyByMe	Поділіться файлом або папкою, щоб побачити тут посилання.
 shared.emptyWithMe	Посилання, якими з вами діляться інші, з’являються тут.
@@ -222,11 +278,9 @@ shared.deleteTitle	Видалити посилання для спільного
 shared.deleteMessage	Посилання одразу перестане працювати. Сам файл чи папка не змінюються.
 shared.sharedByUnknown	Хтось
 shared.metaAccess	Доступ
-shared.metaExpiration	Термін дії
 shared.metaSharedBy	Від кого
 shared.metaSharedWith	Кому
 shared.anyoneWithLink	Будь-хто з посиланням
-shared.linkMode	Режим посилання
 shared.actionShareLink	Посилання для спільного доступу
 shared.actionFolderLink	Посилання на папку
 shared.actionFileLink	Посилання на файл
@@ -260,6 +314,17 @@ createShare.errorPastExpiration	Виберіть дату завершення �
 editShare.title	Змінити посилання для спільного доступу
 editShare.save	Зберегти зміни
 editShare.passwordKeepHint	Залиште порожнім, щоб зберегти поточний пароль
+editShare.saved	Зміни збережено
+editShare.custom	Своя дата
+editShare.neverFooter	Посилання працює, доки ви його не видалите.
+editShare.usersHint	Лише вибрані люди після входу.
+editShare.readOnlyHint	Можна відкривати й завантажувати.
+editShare.readWriteHint	Можна також вивантажувати, перейменовувати й видаляти всередині.
+editShare.readWriteFileHint	Можна також редагувати файл.
+editShare.discardTitle	Скасувати зміни?
+editShare.discardMessage	Зміни цього посилання не збережено.
+editShare.discard	Скасувати
+editShare.keepEditing	Продовжити
 thumbnailSettings.navigationTitle	Мініатюри
 thumbnailSettings.subtitle	Керуйте тим, як сервер створює мініатюри зображень для всіх клієнтів.
 thumbnailSettings.enable	Створювати мініатюри

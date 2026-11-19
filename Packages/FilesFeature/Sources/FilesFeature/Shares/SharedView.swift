@@ -17,30 +17,37 @@ struct SharedView: View {
     @Bindable var store: StoreOf<SharedFeature>
     @State private var toastMessage: DSToastMessage?
     @State private var isSortSheetPresented = false
+    #if os(macOS)
+        @FocusState private var isSearchFocused: Bool
+    #endif
 
     /// Drives both the segmented control and the paged `TabView`. A tap on the control and a
     /// swipe between pages land on the same reducer action; `withAnimation` gives the tap the
-    /// same slide the swipe gets for free.
+    /// same slide the swipe gets for free. The Mac swaps tables instead, with no animation, so the
+    /// new table never lays out mid transition.
     private var segment: Binding<SharedFeature.Segment> {
         Binding(
             get: { store.segment },
-            set: { newValue in withAnimation(DSMotion.disclosure) { _ = store.send(.segmentChanged(newValue)) } }
+            set: { newValue in
+                #if os(iOS)
+                    withAnimation(DSMotion.disclosure) { _ = store.send(.segmentChanged(newValue)) }
+                #elseif os(macOS)
+                    withTransaction(\.disablesAnimations, true) { _ = store.send(.segmentChanged(newValue)) }
+                #endif
+            }
         )
     }
 
-    private var deleteConfirmationBinding: Binding<Bool> {
-        // No op setter: the sheet is dismiss disabled and only ever closes through one of
-        // `DSAlertSheet`'s own buttons, each of which drives the reducer directly. This keeps
-        // SwiftUI from firing a stray dismiss action into a torn down presentation.
-        Binding(get: { store.deleteConfirmationShare != nil }, set: { _ in })
-    }
-
-    private static var shouldShowTable: Bool {
-        #if os(macOS)
-            true
-        #else
-            false
-        #endif
+    /// The item sheet. Only the reducer closes it: a swipe down arrives here as `nil`.
+    private var detailBinding: Binding<SharedFeature.Detail?> {
+        Binding(
+            get: { store.detail },
+            set: { newValue in
+                if newValue == nil, store.detail != nil {
+                    store.send(.detailDismissed)
+                }
+            }
+        )
     }
 
     var body: some View {
@@ -59,21 +66,12 @@ struct SharedView: View {
                 #endif
 
                 #if os(macOS)
-                    MacSharedTableView(
-                        store: store,
-                        segment: store.segment,
-                        onToast: { toastMessage = $0 }
-                    )
-                    .id(store.segment)
+                    MacSharedContent(store: store, onToast: { toastMessage = $0 })
                 #else
                     TabView(selection: segment) {
                         ForEach(SharedFeature.Segment.allCases, id: \.self) { pageSegment in
-                            SharedSegmentList(
-                                store: store,
-                                segment: pageSegment,
-                                onToast: { toastMessage = $0 }
-                            )
-                            .tag(pageSegment)
+                            SharedSegmentList(store: store, segment: pageSegment)
+                                .tag(pageSegment)
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
@@ -84,24 +82,37 @@ struct SharedView: View {
             // the search field visible above the paged By-me/With-me lists.
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .safeAreaInset(edge: .top, spacing: 0) {
-                PinnedTitleSearchHeader(
-                    title: L10n.Shared.navigationTitle,
-                    searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                    shouldFadeIntoContent: !Self.shouldShowTable
-                )
-            }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                if case let .cached(fetchedAt) = store.dataSources[store.segment] ?? .live {
-                    DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
-                        .padding(.horizontal, .space16)
-                        .padding(.vertical, .space8)
-                        .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+            #if os(iOS)
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    PinnedTitleSearchHeader(
+                        title: L10n.Shared.navigationTitle,
+                        searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                    )
                 }
-            }
-            .animation(DSMotion.stateFade, value: store.dataSources[store.segment])
-            .prefersToolbarItemsInVerticalBar()
+            #elseif os(macOS)
+                // A field of its own that filters the table in place, instead of the app wide
+                // search panel; ⌘F focuses it.
+                .searchable(
+                    text: $store.searchQuery.sending(\.searchQueryChanged),
+                    placement: .toolbar,
+                    prompt: L10n.Common.search
+                )
+                .searchFocused($isSearchFocused)
+                .focusedSceneValue(\.focusSearchField, FocusSearchAction(showsToolbarButton: false) {
+                    isSearchFocused = true
+                })
+            #endif
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if case let .cached(fetchedAt) = store.dataSources[store.segment] ?? .live {
+                        DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
+                            .padding(.horizontal, .space16)
+                            .padding(.vertical, .space8)
+                            .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+                .animation(DSMotion.stateFade, value: store.dataSources[store.segment])
+                .prefersToolbarItemsInVerticalBar()
             // The Mac table sorts from its column headers instead.
             #if os(iOS)
                 .toolbar {
@@ -109,21 +120,9 @@ struct SharedView: View {
                         SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
                     }
                 }
-            #else
-                .toolbar {
-                    // Beside the title: a centered (principal) picker would pull the window's
-                    // refresh and search in from the trailing edge to sit before it.
-                    ToolbarItem(placement: .navigation) {
-                        Picker(L10n.Shared.navigationTitle, selection: segment) {
-                            ForEach(SharedFeature.Segment.allCases, id: \.self) { segment in
-                                Text(segment.title).tag(segment)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .labelsHidden()
-                        .fixedSize()
-                    }
-                }
+            #elseif os(macOS)
+                // The window toolbar draws the picker centered (`macWindowToolbar`).
+                .focusedSceneValue(\.sharedSegment, segment)
             #endif
                 .dsSheet(isPresented: $isSortSheetPresented) {
                     SortSheet(
@@ -140,22 +139,14 @@ struct SharedView: View {
                         onDismiss: { isSortSheetPresented = false }
                     )
                 }
-                .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
-                    EditShareSheet(store: editStore)
+            #if os(macOS)
+                .modifier(SharedActionPresentations(store: store, toast: $toastMessage))
+            #else
+                .sheet(item: detailBinding) { detail in
+                    SharedDetailSheet(store: store, presented: detail)
                 }
-                .dsAlert(isPresented: deleteConfirmationBinding) {
-                    DSAlertSheet(
-                        icon: IconKit.delete,
-                        title: L10n.Shared.deleteTitle,
-                        message: L10n.Shared.deleteMessage,
-                        confirmTitle: L10n.Common.delete,
-                        dismissTitle: L10n.Common.cancel,
-                        role: .destructive,
-                        closeAccessibilityLabel: L10n.Common.close,
-                        onConfirm: { store.send(.deleteConfirmed) },
-                        onDismiss: { store.send(.deleteCancelled) }
-                    )
-                }
+                .sharedActionToast(store: store, toast: $toastMessage, isActive: store.detail == nil)
+            #endif
                 .dsToast($toastMessage)
                 .task { store.send(.onAppear) }
                 .task {
@@ -165,11 +156,6 @@ struct SharedView: View {
                     }
                 }
                 .onChange(of: store.externalRevision) { _, _ in store.send(.externalRevisionChanged) }
-                .onChange(of: store.actionErrorMessage) { _, newValue in
-                    if let newValue {
-                        toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)
-                    }
-                }
         }
         .tint(Color.accent)
     }
@@ -181,7 +167,7 @@ private func sharedPreview(
     mutateState: (inout SharedFeature.State) -> Void = { _ in }
 ) -> some View {
     var state = SharedFeature.State(
-        serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
+        serverURL: sharedPreviewServerURL
     )
     mutateState(&state)
     var client = FilesClient.previewValue

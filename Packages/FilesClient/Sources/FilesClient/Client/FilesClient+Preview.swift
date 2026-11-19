@@ -256,28 +256,10 @@ public extension FilesClient {
         sharedWithMeLinks: { _ in Share.previewSharedWithMe },
         updateShareLink: { _, shareID, request in
             let base = Share.previewSharedByMe.first { $0.id == shareID } ?? Share.previewSharedByMe[0]
-            let hasPassword: Bool = switch request.password {
-            case .keep: base.hasPassword
-            case .remove: false
-            case .set: true
-            }
-            return Share(
-                id: base.id, shareToken: base.shareToken, ownerId: base.ownerId,
-                sourcePath: base.sourcePath, sourceName: base.sourceName, isDirectory: base.isDirectory,
-                accessMode: request.accessMode, sharingType: request.target, hasPassword: hasPassword,
-                expiresAt: request.expiresAt, label: request.label,
-                downloadCount: base.downloadCount, lastAccessedAt: base.lastAccessedAt,
-                permittedUserIds: request.target == .users ? request.userIds : nil,
-                createdAt: base.createdAt, updatedAt: Date()
-            )
+            return base.applying(request, at: Date())
         },
         deleteShareLink: { _, _ in },
-        shareableUsers: { _ in
-            [
-                User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie Rivera"),
-                User(id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor"),
-            ]
-        },
+        shareableUsers: { _ in Share.previewShareableUsers },
         resolveShareLink: { _, token in
             ShareInfo(shareToken: token, label: "Q3 Report", isDirectory: true, sharingType: .anyone)
         },
@@ -459,40 +441,235 @@ public extension UserVolume {
     }
 }
 
-extension Share {
-    static let previewSharedByMe: [Share] = [
-        Share(
-            id: "s1", shareToken: "UrkLIGIHMF", ownerId: "preview-user",
-            sourcePath: "Documents/Bills/Electricity", isDirectory: true,
-            accessMode: .readonly, sharingType: .anyone, hasPassword: false,
-            expiresAt: nil, label: "Electricity", downloadCount: 3,
-            lastAccessedAt: Date(), createdAt: Date(), updatedAt: Date()
-        ),
-        Share(
-            id: "s2", shareToken: "9fKq2Lm0xP", ownerId: "preview-user",
-            sourcePath: "Photos/2024/passport.pdf", isDirectory: false,
-            accessMode: .readonly, sharingType: .users, hasPassword: true,
-            expiresAt: Date().addingTimeInterval(86_400 * 7), label: nil,
-            downloadCount: 0, lastAccessedAt: nil,
-            permittedUserIds: ["u2", "u3"], createdAt: Date(), updatedAt: Date()
-        ),
-        Share(
-            id: "s4", shareToken: "eXp1r3dTok", ownerId: "preview-user",
-            sourcePath: "Old/invoice.pdf", isDirectory: false,
-            accessMode: .readonly, sharingType: .anyone, hasPassword: false,
-            expiresAt: Date().addingTimeInterval(-86_400), label: "invoice.pdf",
-            downloadCount: 12, lastAccessedAt: nil, createdAt: Date(), updatedAt: Date()
-        ),
-    ]
+public extension Share {
+    /// Mock Shared tab: folders and files, public links and people shares, two shares on one
+    /// item, read and write, passwords, countdowns, expired links and an unresolved recipient.
+    static var previewSharedByMe: [Share] {
+        let now = Date()
+        func make(
+            _ id: String,
+            _ path: String,
+            folder: Bool = false,
+            users: [String]? = nil,
+            readWrite: Bool = false,
+            password: Bool = false,
+            days: Double? = nil,
+            ageDays: Double = 0,
+            label: String? = nil,
+            downloads: Int? = nil,
+            openedHoursAgo: Double? = nil
+        ) -> Share {
+            Share(
+                id: id, shareToken: "tok\(id)", ownerId: "preview-user",
+                sourcePath: path, sourceSpace: "personal", isDirectory: folder,
+                accessMode: readWrite ? .readwrite : .readonly,
+                sharingType: users == nil ? .anyone : .users, hasPassword: password,
+                expiresAt: days.map { now.addingTimeInterval($0 * 86_400) }, label: label,
+                downloadCount: downloads ?? id.count * 3,
+                lastAccessedAt: openedHoursAgo.map { now.addingTimeInterval(-$0 * 3600) },
+                permittedUserIds: users,
+                createdAt: now.addingTimeInterval(-ageDays * 86_400), updatedAt: now
+            )
+        }
+        return [
+            make("s1", "Documents/Bills/Electricity", folder: true, ageDays: 1, downloads: 3, openedHoursAgo: 0.5),
+            make(
+                "s5",
+                "Work/Team Roadmap",
+                folder: true,
+                users: ["u4", "u5", "u6", "u2", "u3"],
+                readWrite: true,
+                ageDays: 2,
+                label: "Q1 planning",
+                downloads: 27,
+                openedHoursAgo: 0.2
+            ),
+            make(
+                "s6",
+                "Work/Team Roadmap",
+                folder: true,
+                password: true,
+                days: 12,
+                ageDays: 3,
+                label: "Board preview",
+                downloads: 0
+            ),
+            make(
+                "s7",
+                "Photos/2026/Vacation Photos",
+                folder: true,
+                days: 2.5,
+                ageDays: 4,
+                label: "Family trip",
+                downloads: 14,
+                openedHoursAgo: 2
+            ),
+            make("s16", "Photos/2026/Vacation Photos", folder: true, users: ["u2", "u7"], ageDays: 3.5, downloads: 2),
+            make("s8", "Finance/Budget 2027.xlsx", readWrite: true, password: true, ageDays: 5, openedHoursAgo: 30),
+            make(
+                "s9",
+                "Legal/Contracts/Contract draft.pdf",
+                users: ["u6"],
+                days: 1.5,
+                ageDays: 6,
+                label: "For signature"
+            ),
+            make(
+                "s14",
+                "Clients/Northwind Traders International/Proposals and Contracts/2027/Quarterly financial statements and board presentation final v3.pdf",
+                users: ["u8", "u2", "u4", "u5", "u6", "u7"],
+                readWrite: true,
+                password: true,
+                days: 4.5,
+                ageDays: 6,
+                label: "Board pack for the quarterly review with the whole leadership team"
+            ),
+            make(
+                "s15",
+                "Clients/Northwind Traders International/Proposals and Contracts/2027/Quarterly financial statements and board presentation final v3.pdf",
+                password: true,
+                days: -1,
+                ageDays: 7
+            ),
+            make("s2", "Photos/2024/passport.pdf", users: ["u2", "u3"], password: true, days: 6.5, ageDays: 7),
+            make("s10", "Work/Meeting notes.md", users: ["u7", "u99"], ageDays: 8, label: "Weekly sync"),
+            make("s11", "Design/Brand/Keynote deck.key", users: ["u4"], days: 30, ageDays: 9),
+            make("s12", "Invoice Oct.pdf", ageDays: 10, downloads: 1_284, openedHoursAgo: 120),
+            make("s13", "Design/Brand/Logo final.png", days: -2, ageDays: 11, downloads: 41, openedHoursAgo: 460),
+            make("s4", "Old/invoice.pdf", days: -1, ageDays: 12),
+            make(
+                "s17",
+                "Finance/Rent receipts",
+                folder: true,
+                users: ["u4"],
+                readWrite: true,
+                ageDays: 9,
+                label: "Landlord",
+                downloads: 5,
+                openedHoursAgo: 300
+            ),
+            make(
+                "s18",
+                "Finance/Rent receipts",
+                folder: true,
+                password: true,
+                days: 0.3,
+                ageDays: 8.5,
+                label: "Accountant",
+                downloads: 2,
+                openedHoursAgo: 5
+            ),
+            make(
+                "s19",
+                "Finance/Rent receipts",
+                folder: true,
+                days: -4,
+                ageDays: 20,
+                label: "Tax 2025",
+                downloads: 11,
+                openedHoursAgo: 900
+            ),
+            make(
+                "s20",
+                "Archive/Old drafts",
+                folder: true,
+                days: -10,
+                ageDays: 30,
+                label: "Review round 1",
+                downloads: 8
+            ),
+            make("s21", "Archive/Old drafts", folder: true, users: ["u3", "u5"], days: -5, ageDays: 25),
+            make(
+                "s22",
+                "Company/Handbook.pdf",
+                users: ["u2", "u3", "u4", "u5", "u6", "u7", "u8", "u9", "u10", "u11", "u12", "u13", "u98", "u99"],
+                ageDays: 14,
+                label: "All staff",
+                downloads: 312,
+                openedHoursAgo: 1
+            ),
+            make("s23", "Projects/Secret plan.key", users: ["u97"], days: 20, ageDays: 13.5),
+            make(
+                "s24",
+                "Uploads/Drop box",
+                folder: true,
+                readWrite: true,
+                password: true,
+                days: 45,
+                ageDays: 13,
+                label: "Client uploads",
+                downloads: 0
+            ),
+        ]
+    }
 
-    static let previewSharedWithMe: [Share] = [
-        Share(
-            id: "s3", shareToken: "abc123XYZ0", ownerId: "someone-else",
-            sourceName: "Team Roadmap", isDirectory: true,
-            accessMode: .readwrite, sharingType: .users, hasPassword: false,
-            expiresAt: nil, label: "Team Roadmap", downloadCount: 0,
-            lastAccessedAt: nil, createdAt: Date(), updatedAt: Date()
+    static var previewSharedWithMe: [Share] {
+        let now = Date()
+        func make(
+            _ id: String,
+            _ name: String,
+            owner: String,
+            folder: Bool = false,
+            readWrite: Bool = false,
+            password: Bool = false,
+            days: Double? = nil,
+            ageDays: Double = 0,
+            label: String? = nil
+        ) -> Share {
+            Share(
+                id: id, shareToken: "tok\(id)", ownerId: owner, sourceName: name, isDirectory: folder,
+                accessMode: readWrite ? .readwrite : .readonly, sharingType: .users, hasPassword: password,
+                expiresAt: days.map { now.addingTimeInterval($0 * 86_400) }, label: label, downloadCount: 0,
+                lastAccessedAt: nil, createdAt: now.addingTimeInterval(-ageDays * 86_400), updatedAt: now
+            )
+        }
+        return [
+            make("s3", "Team Roadmap", owner: "u4", folder: true, readWrite: true, ageDays: 1, label: "Q1 planning"),
+            make("w2", "Q3 Report.pdf", owner: "u5", days: 0.5, ageDays: 2),
+            make("w3", "Recipes", owner: "u7", folder: true, ageDays: 3),
+            make(
+                "w4",
+                "Floor plan.png",
+                owner: "u4",
+                password: true,
+                days: 5.5,
+                ageDays: 4,
+                label: "Numbers for review"
+            ),
+            make("w5", "Mixtape.mp3", owner: "someone-else", ageDays: 5),
+            make("w6", "Holiday plan.docx", owner: "u5", readWrite: true, days: -3, ageDays: 6),
+            make(
+                "w7",
+                "Architecture review notes for the platform migration program and rollout plan.docx",
+                owner: "u8",
+                readWrite: true,
+                days: 2.5,
+                ageDays: 7
+            ),
+            make("w8", "Sprint board", owner: "u5", folder: true, readWrite: true, days: 0.2, ageDays: 8),
+            make("w9", "Wedding Photos", owner: "u6", folder: true, password: true, days: 40, ageDays: 9),
+            make("w10", "Tax return 2025.pdf", owner: "u2", days: -12, ageDays: 20, label: "For review"),
+        ]
+    }
+
+    static let previewShareableUsers: [User] = [
+        User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie Rivera"),
+        User(id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor"),
+        User(id: "u4", username: "anna", email: "anna@example.com", displayName: "Anna Moreau"),
+        User(id: "u5", username: "jonas", email: "jonas@example.com", displayName: "Jonas Keller"),
+        User(id: "u6", username: "lea", email: "lea@example.com", displayName: "Lea Sato"),
+        User(id: "u7", username: "mia", email: "mia@example.com", displayName: "Mia Rossi"),
+        User(
+            id: "u8",
+            username: "max",
+            email: "max@example.com",
+            displayName: "Maximilianus Bartholomew von Hohenberg"
         ),
+        User(id: "u9", username: "noah", email: "noah@example.com", displayName: "Noah Fischer"),
+        User(id: "u10", username: "emma", email: "emma@example.com", displayName: "Emma Laurent"),
+        User(id: "u11", username: "liam", email: "liam@example.com", displayName: "Liam Walsh"),
+        User(id: "u12", username: "sofia", email: "sofia@example.com", displayName: "Sofia Marino"),
+        User(id: "u13", username: "kenji", email: "kenji@example.com", displayName: "Kenji Tanaka"),
     ]
 }
 
@@ -548,4 +725,24 @@ private func emptyStandIn(named name: String, in folder: String) -> URL {
     let fileURL = directory.appendingPathComponent(name)
     try? Data().write(to: fileURL)
     return fileURL
+}
+
+public extension Share {
+    /// This share as the server returns it after `PUT /api/shares/:id`, for the mock services.
+    func applying(_ request: UpdateShareRequest, at date: Date) -> Share {
+        let hasPassword: Bool = switch request.password {
+        case .keep: self.hasPassword
+        case .remove: false
+        case .set: true
+        }
+        return Share(
+            id: id, shareToken: shareToken, ownerId: ownerId,
+            sourcePath: sourcePath, sourceSpace: sourceSpace, sourceName: sourceName, isDirectory: isDirectory,
+            accessMode: request.accessMode, sharingType: request.target, hasPassword: hasPassword,
+            expiresAt: request.expiresAt, label: request.label,
+            downloadCount: downloadCount, lastAccessedAt: lastAccessedAt,
+            permittedUserIds: request.target == .users ? request.userIds : nil,
+            createdAt: createdAt, updatedAt: date
+        )
+    }
 }

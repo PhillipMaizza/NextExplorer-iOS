@@ -197,6 +197,52 @@ shared.navigationTitle	Partilhados
 shared.segmentByMe	Por mim
 shared.segmentWithMe	Comigo
 shared.sectionExpired	Expirados
+shared.filterAll	Tudo
+shared.filterAnyone	Qualquer pessoa
+shared.daysLeft#one	Falta %lld dia
+shared.daysLeft#other	Faltam %lld dias
+shared.itemCount#one	%lld item
+shared.itemCount#other	%lld itens
+shared.pathStep	%1$@ › %2$@
+common.on	Ativado
+common.off	Desativado
+common.none	Nenhuma
+shared.copyLink	Copiar ligação
+shared.copyShareLink	Copiar ligação de partilha
+shared.copyFolderLink	Copiar ligação da pasta
+shared.copyFileLink	Copiar ligação do ficheiro
+shared.moreLinks	Mais ligações
+shared.setNewDate	Definir nova data
+shared.noAccountNeeded	Não é preciso conta para abrir
+shared.metaExpires	Expira
+shared.metaExpired	Expirado
+shared.folderLinkOpensAs	A ligação da pasta abre como
+shared.fileLinkOpensAs	A ligação do ficheiro abre como
+shared.metaLabel	Etiqueta
+shared.metaShared	Partilhado
+shared.metaLastOpened	Última abertura
+shared.metaDownloads	Transferências
+shared.metaReceived	Recebido
+shared.expiredFooter	Esta ligação deixou de funcionar a %@. Defina uma nova data para a reativar.
+shared.controlsShare	%@ controla esta partilha.
+shared.listFooter	Toque numa partilha para ver tudo sobre ela. O botão de ligação copia sem abrir.
+shared.publicLink	Ligação pública
+shared.people	Pessoas
+shared.canEdit	pode editar
+shared.viewOnly	só leitura
+shared.statusPassword	palavra-passe
+shared.neverExpires	nunca expira
+shared.expiresUntil	até %@
+shared.fromSharer	De %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld partilha
+shared.shareCount#other	%lld partilhas
+shared.peopleCount#one	%lld pessoa
+shared.peopleCount#other	%lld pessoas
+shared.downloadCount#one	%lld transferência
+shared.downloadCount#other	%lld transferências
+shared.showMore	Mostrar mais
+shared.showLess	Mostrar menos
 shared.badgeExpired	expirado
 shared.emptyByMe	Partilhe um ficheiro ou pasta para ver a ligação aqui.
 shared.emptyWithMe	As ligações que outras pessoas partilham consigo aparecem aqui.
@@ -205,11 +251,9 @@ shared.deleteTitle	Eliminar a ligação de partilha?
 shared.deleteMessage	A ligação deixa de funcionar de imediato. O ficheiro ou pasta em si não é afetado.
 shared.sharedByUnknown	Alguém
 shared.metaAccess	Acesso
-shared.metaExpiration	Validade
 shared.metaSharedBy	Partilhado por
 shared.metaSharedWith	Partilhado com
 shared.anyoneWithLink	Qualquer pessoa com a ligação
-shared.linkMode	Modo da ligação
 shared.actionShareLink	Partilhar ligação
 shared.actionFolderLink	Ligação da pasta
 shared.actionFileLink	Ligação do ficheiro
@@ -244,6 +288,17 @@ createShare.errorPastExpiration	Escolha uma data de validade futura.
 editShare.title	Editar ligação de partilha
 editShare.save	Guardar alterações
 editShare.passwordKeepHint	Deixe em branco para manter a palavra-passe atual
+editShare.saved	Alterações guardadas
+editShare.custom	Personalizado
+editShare.neverFooter	A ligação funciona até a eliminar.
+editShare.usersHint	Apenas as pessoas que escolher, depois de iniciarem sessão.
+editShare.readOnlyHint	As pessoas podem abrir e transferir.
+editShare.readWriteHint	As pessoas também podem carregar, mudar o nome e eliminar dentro.
+editShare.readWriteFileHint	As pessoas também podem editar o ficheiro.
+editShare.discardTitle	Descartar alterações?
+editShare.discardMessage	As suas alterações a esta ligação não foram guardadas.
+editShare.discard	Descartar
+editShare.keepEditing	Continuar a editar
 thumbnailSettings.navigationTitle	Miniaturas
 thumbnailSettings.subtitle	Controle como o servidor gera as miniaturas de imagem para todos os clientes.
 thumbnailSettings.enable	Gerar miniaturas

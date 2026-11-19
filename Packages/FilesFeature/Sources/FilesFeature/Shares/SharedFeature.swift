@@ -10,7 +10,7 @@ import SwiftUI
 /// The "Shared" tab: a segmented view over share links the user created ("By me") and
 /// links others granted them ("With me"). Backed by `GET /api/shares` and
 /// `GET /api/shares/shared-with-me`: see [[share-link-api]]. Deleting is owner-only, so
-/// it's offered on the "By me" list only.
+/// it's offered on a "By me" share page only.
 @Reducer
 public struct SharedFeature {
     public enum Segment: String, Hashable, Sendable, CaseIterable {
@@ -48,7 +48,7 @@ public struct SharedFeature {
     }
 
     /// Bumped by `CreateShareLinkFeature` whenever a link is created, so the Shared tab
-    /// reloads without a manual pull-to-refresh.
+    /// reloads without a manual pull to refresh.
     public static let revisionKey = "shareLinksRevision"
 
     @ObservableState
@@ -67,19 +67,27 @@ public struct SharedFeature {
         /// lands. Absent means `.live`.
         public var dataSources: [Segment: CachedListSource] = [:]
         /// A failed delete, or a refresh failure over an already populated segment, shown as a
-        /// toast rather than the full screen `errorMessage`.
+        /// toast rather than the full screen `errorMessage`. Cleared once shown, so the same
+        /// failure twice toasts twice.
         public var actionErrorMessage: String?
+        /// A saved edit, confirmed with a toast once and then cleared like `actionErrorMessage`.
+        public var actionSuccessMessage: String?
         public var deleteConfirmationShare: Share?
         public var deletingIDs: Set<Share.ID> = []
+        /// The share being edited: a page pushed inside the detail sheet on iOS, a sheet on the Mac.
         @Presents public var editSheet: EditShareFeature.State?
+        /// The item sheet opened from a row; Edit and Delete stack on top of it.
+        public var detail: Detail?
         public var searchQuery = ""
+        /// The people row's pick per segment; absent means `.all`.
+        public var filters: [Segment: Filter] = [:]
         public var sortOption: SortOption = .dateShared
         public var sortDirection: BrowseFeature.SortDirection = .descending
         /// `userId -> display name`, resolved from `GET /api/users/shareable` so a
         /// user-specific share can name its recipients instead of just "Specific users".
         public var userNames: [String: String] = [:]
-        /// Ticked on a timer (`expiryTick`) so a link that expires while the tab is open
-        /// slides into the "Expired" section on its own. Starts at `.distantPast`, so nothing
+        /// Ticked on a timer (`expiryTick`) so a link that expires, or whose day countdown
+        /// changes, while the tab is open updates on its own. Starts at `.distantPast`, so nothing
         /// reads as expired until the view's `TimelineView` sends the first real `now`, which
         /// it does immediately on appear. A non `Date()` default keeps `State()` deterministic.
         public var now: Date = .distantPast
@@ -149,38 +157,6 @@ public struct SharedFeature {
             )
         }
 
-        public var activeShares: IdentifiedArrayOf<Share> {
-            activeShares(for: segment)
-        }
-
-        public func activeShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
-            displayedSharesPartition(for: segment).active
-        }
-
-        public var expiredShares: IdentifiedArrayOf<Share> {
-            expiredShares(for: segment)
-        }
-
-        public func expiredShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
-            displayedSharesPartition(for: segment).expired
-        }
-
-        /// One filter+sort pass, split into active/expired. `activeShares`, `expiredShares` and
-        /// the list's `.animation(value:)` all need slices of the same ordered list; deriving
-        /// each independently ran the localized sort three times per render.
-        public func displayedSharesPartition(
-            for segment: Segment
-        ) -> (all: IdentifiedArrayOf<Share>, active: IdentifiedArrayOf<Share>, expired: IdentifiedArrayOf<Share>) {
-            let all = displayedShares(for: segment)
-            let active = IdentifiedArray(
-                all.filter { !isExpired($0) },
-                id: \.id,
-                uniquingIDsWith: { first, _ in first }
-            )
-            let expired = IdentifiedArray(all.filter(isExpired), id: \.id, uniquingIDsWith: { first, _ in first })
-            return (all, active, expired)
-        }
-
         /// No shares in the current segment at all (before search): drives the empty state.
         public var isCurrentSegmentEmpty: Bool {
             isEmpty(for: segment)
@@ -190,31 +166,13 @@ public struct SharedFeature {
             shares(for: segment).isEmpty
         }
 
-        /// A search that filtered everything out.
-        public var isSearchWithoutResults: Bool {
-            isSearchWithoutResults(for: segment)
-        }
-
+        /// A search that, with the people row's filter, left nothing to show.
         public func isSearchWithoutResults(for segment: Segment) -> Bool {
-            isSearching && !shares(for: segment).isEmpty && displayedShares(for: segment).isEmpty
+            isSearching && !shares(for: segment).isEmpty && items(for: segment).isEmpty
         }
 
         public func emptyMessage(for segment: Segment) -> String {
             segment == .byMe ? L10n.Shared.emptyByMe : L10n.Shared.emptyWithMe
-        }
-
-        /// How a share's audience renders in the "Shared with" row.
-        public enum Audience: Equatable, Sendable {
-            case anyone
-            /// Resolved recipient names plus a count of any that couldn't be named yet.
-            case users(names: [String], unnamed: Int)
-        }
-
-        public func audience(for share: Share) -> Audience {
-            guard share.sharingType == .users else { return .anyone }
-            let ids = share.permittedUserIds ?? []
-            let names = ids.compactMap { userNames[$0] }
-            return .users(names: names, unnamed: ids.count - names.count)
         }
 
         /// Owner display name for a "With me" share: the recipient payload only carries
@@ -230,6 +188,7 @@ public struct SharedFeature {
         case externalRevisionChanged
         case segmentChanged(Segment)
         case searchQueryChanged(String)
+        case filterChanged(Segment, Filter)
         case refreshRequested
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(BrowseFeature.SortDirection)
@@ -245,10 +204,15 @@ public struct SharedFeature {
         case deleteResponse(Share.ID, Result<Bool, FilesClientError>)
         case editTapped(Share)
         case editSheet(PresentationAction<EditShareFeature.Action>)
+        case actionToastShown
+        case detailOpened(Segment, Item.ID)
+        case detailDismissed
+        case detailShareSelected(Share.ID?)
     }
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.jsonCacheStore) var jsonCacheStore
+    @Dependency(\.date) var date
 
     static func cacheNamespace(_ segment: Segment) -> String {
         "shares.\(segment.rawValue)"
@@ -268,14 +232,14 @@ public struct SharedFeature {
                 return .concatenate(load(&state, segment: state.segment), loadUsers(state))
 
             case let .expiryTick(now):
-                // Advancing `now` re-renders the whole list. Only do it when a share actually
-                // crosses its expiry in this interval, so a quiet list stays still between ticks.
+                // Advancing `now` redraws the whole list. Only do it when a share crosses its
+                // expiry or a day of its countdown in this interval, so a quiet list stays still.
                 // The first tick always lands: it arrives before the first load, and shares that
                 // load already expired must read as expired then, not on the next tick.
                 let previousNow = state.now
                 let crossesExpiry: (Share) -> Bool = { share in
                     guard let expiresAt = share.expiresAt else { return false }
-                    return expiresAt > previousNow && expiresAt <= now
+                    return Self.expiryBoundaries(of: expiresAt).contains { $0 > previousNow && $0 <= now }
                 }
                 guard previousNow == .distantPast
                     || state.byMe.contains(where: crossesExpiry)
@@ -299,6 +263,11 @@ public struct SharedFeature {
                 state.searchQuery = query
                 return .none
 
+            case let .filterChanged(segment, tapped):
+                let filter = state.filter(afterTapping: tapped, in: segment)
+                state.filters[segment] = filter == .all ? nil : filter
+                return .none
+
             case .refreshRequested:
                 state.phases.removeAll()
                 return .concatenate(load(&state, segment: state.segment), loadUsers(state))
@@ -320,6 +289,7 @@ public struct SharedFeature {
                 } else {
                     state.withMe = identified
                 }
+                state.sharesChanged()
                 syncCache(state, segment: segment)
                 return .none
 
@@ -356,6 +326,7 @@ public struct SharedFeature {
                 }
                 state.phases[segment] = .loaded
                 state.dataSources[segment] = .cached(fetchedAt: fetchedAt)
+                state.sharesChanged()
                 return .none
 
             case let .cachedSharesPainted(segment, cached):
@@ -367,6 +338,7 @@ public struct SharedFeature {
                 } else {
                     state.withMe = identified
                 }
+                state.sharesChanged()
                 return .none
 
             case let .usersResponse(users):
@@ -374,6 +346,7 @@ public struct SharedFeature {
                     users.map { ($0.id, $0.displayName ?? $0.username) },
                     uniquingKeysWith: { first, _ in first }
                 )
+                state.sharesChanged()
                 return .none
 
             case let .deleteTapped(share):
@@ -400,6 +373,7 @@ public struct SharedFeature {
             case let .deleteResponse(id, .success):
                 state.deletingIDs.remove(id)
                 state.byMe.remove(id: id)
+                state.sharesChanged()
                 syncCache(state, segment: .byMe)
                 return .none
 
@@ -409,15 +383,38 @@ public struct SharedFeature {
                 return .none
 
             case let .editTapped(share):
-                state.editSheet = EditShareFeature.State(serverURL: state.serverURL, share: share)
+                state.editSheet = EditShareFeature.State(serverURL: state.serverURL, share: share, now: date.now)
                 return .none
 
             case let .editSheet(.presented(.delegate(.updated(share)))):
                 state.byMe[id: share.id] = share
                 state.editSheet = nil
+                state.actionSuccessMessage = L10n.EditShare.saved
+                state.sharesChanged()
                 return .none
 
             case .editSheet:
+                return .none
+
+            case .actionToastShown:
+                state.actionErrorMessage = nil
+                state.actionSuccessMessage = nil
+                return .none
+
+            case let .detailOpened(segment, id):
+                state.detail = Detail(segment: segment, id: id)
+                return .none
+
+            case .detailDismissed:
+                state.detail = nil
+                state.editSheet = nil
+                return .none
+
+            case let .detailShareSelected(id):
+                if id != state.detail?.pushedShareID {
+                    state.editSheet = nil
+                }
+                state.detail?.pushedShareID = id
                 return .none
             }
         }

@@ -1,6 +1,7 @@
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("ClientCertificateAssetLoader")
 struct ClientCertificateAssetLoaderTests {
@@ -13,7 +14,7 @@ struct ClientCertificateAssetLoaderTests {
 
     @Test("The total length comes from Content-Range, else the body length")
     func totalLength() throws {
-        let url = URL(string: "https://files.example.com/api/preview")!
+        let url = URL(string: "\(TestHost.serverURLString)/api/preview")!
         let partial = try #require(HTTPURLResponse(url: url, statusCode: 206, httpVersion: nil, headerFields: [
             "Content-Range": "bytes 0-1/52428800", "Content-Length": "2",
         ]))
@@ -43,14 +44,14 @@ struct ClientCertificateAssetLoaderTests {
     @Test("Only https URLs are rewritten to the loader scheme")
     func scheme() {
         let loader = ClientCertificateAssetLoader(
-            remoteURL: URL(string: "https://files.example.com/api/preview?path=a.mp4")!, cookies: [],
+            remoteURL: URL(string: "\(TestHost.serverURLString)/api/preview?path=a.mp4")!, cookies: [],
             fileExtension: "mp4"
         )
         #expect(loader?.asset.url.scheme == ClientCertificateAssetLoader.scheme)
         #expect(loader?.asset.url.query == "path=a.mp4")
         loader?.invalidate()
         #expect(ClientCertificateAssetLoader(
-            remoteURL: URL(string: "http://files.example.com/a.mp4")!,
+            remoteURL: URL(string: "http://\(TestHost.server)/a.mp4")!,
             cookies: [],
             fileExtension: "mp4"
         ) == nil)

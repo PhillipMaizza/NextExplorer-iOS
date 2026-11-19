@@ -186,7 +186,7 @@ struct DeferredUploadsTests {
         let defaults = try #require(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
         let server = Harness.credentials.serverBaseURL
-        let other = try #require(URL(string: "https://other.example.com"))
+        let other = try #require(URL(string: TestHost.otherServerURLString))
         let mebibyte = Int64(UploadSettings.bytesPerMiB)
 
         #expect(DeferredUploads.directLimitBytes(for: server, defaults: defaults) == DeferredUploads.thresholdBytes)

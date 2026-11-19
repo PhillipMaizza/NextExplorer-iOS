@@ -1,10 +1,11 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Branding")
 struct BrandingTests {
-    private let serverURL = URL(string: "https://cloud.example.com")!
+    private let serverURL = TestHost.serverURL
 
     @Test("decodes a full branding object")
     func decodesFullObject() throws {
@@ -32,7 +33,7 @@ struct BrandingTests {
         let branding = Branding(appName: "X", appLogoUrl: Constants.customLogoPath)
         #expect(branding.hasCustomLogo)
         #expect(branding.resolvedLogoURL(serverURL: serverURL)?.absoluteString
-            == "https://cloud.example.com/static/logos/custom-logo.png")
+            == "\(TestHost.serverURLString)/static/logos/custom-logo.png")
     }
 
     @Test("an absolute custom logo URL is used as is")

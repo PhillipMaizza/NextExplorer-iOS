@@ -14,8 +14,8 @@ import TestUtils
 struct SharedFileInboxTests {
     private typealias Review = UploadReviewFeature.State
 
-    private let serverURL = URL(fileURLWithPath: "/")
-    private let user = User(id: "1", username: "jdoe", email: nil, roles: [])
+    private let serverURL = TestHost.serverURL
+    private let user = User.jdoeFixture
     private let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
     private let receipt = URL(fileURLWithPath: "/tmp/Receipt.jpg")
 

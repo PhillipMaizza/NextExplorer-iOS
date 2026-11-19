@@ -46,7 +46,7 @@ extension FilesClientLiveTests {
             _ = try await makeClient().fetchPermissions(serverURL, "Docs/My File #1.txt")
 
             #expect(StubURLProtocol.capturedRequest?.url?
-                .absoluteString == "https://example.com/api/permissions/Docs/My%20File%20%231.txt")
+                .absoluteString == "\(TestHost.exampleURLString)/api/permissions/Docs/My%20File%20%231.txt")
         }
 
         @Test
@@ -55,7 +55,8 @@ extension FilesClientLiveTests {
 
             _ = try await makeClient().fetchPermissions(serverURL, "")
 
-            #expect(StubURLProtocol.capturedRequest?.url?.absoluteString == "https://example.com/api/permissions/")
+            #expect(StubURLProtocol.capturedRequest?.url?
+                .absoluteString == "\(TestHost.exampleURLString)/api/permissions/")
         }
 
         @Test

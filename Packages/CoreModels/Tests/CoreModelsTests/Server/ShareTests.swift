@@ -126,7 +126,7 @@ struct CreatedShareTests {
         let value = try created()
         #expect(value.share.id == "s5")
         #expect(value.share.sourcePath == "Docs/a.txt")
-        #expect(value.shareUrl.absoluteString == "https://files.example.com/share/tok5")
+        #expect(value.shareUrl.absoluteString == "\(TestHost.serverURLString)/share/tok5")
         #expect(value.directFileUrl.absoluteString == Constants.directFileURL)
     }
 
@@ -153,12 +153,12 @@ struct CreatedShareTests {
         let value = try CreatedShare(
             share: share,
             shareUrl: TestHost.serverURL,
-            directFileUrl: #require(URL(string: "https://files.example.com/file?mode=raw&x=1"))
+            directFileUrl: #require(URL(string: "\(TestHost.serverURLString)/file?mode=raw&x=1"))
         )
-        #expect(value.directLink(mode: .download).absoluteString == "https://files.example.com/file?mode=download")
+        #expect(value.directLink(mode: .download).absoluteString == "\(TestHost.serverURLString)/file?mode=download")
     }
 }
 
 private enum Constants {
-    static let directFileURL = "https://files.example.com/api/share/tok5/file"
+    static let directFileURL = "\(TestHost.serverURLString)/api/share/tok5/file"
 }

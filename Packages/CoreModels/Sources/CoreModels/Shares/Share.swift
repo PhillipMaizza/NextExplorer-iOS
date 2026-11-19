@@ -34,8 +34,11 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     public let id: String
     public let shareToken: String
     public let ownerId: String
-    /// Present only in the shared-by-me list.
+    /// Present only in the shared by me list.
     public let sourcePath: String?
+    /// Storage space `sourcePath` is relative to (`volume`, `personal`, `user_volume`). Present only
+    /// in the shared by me list; the same relative path can exist in two spaces.
+    public let sourceSpace: String?
     /// Present only in the shared-with-me list (leaf folder/file name).
     public let sourceName: String?
     public let isDirectory: Bool
@@ -57,6 +60,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         shareToken: String,
         ownerId: String,
         sourcePath: String? = nil,
+        sourceSpace: String? = nil,
         sourceName: String? = nil,
         isDirectory: Bool,
         accessMode: ShareAccessMode,
@@ -74,6 +78,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         self.shareToken = shareToken
         self.ownerId = ownerId
         self.sourcePath = sourcePath
+        self.sourceSpace = sourceSpace
         self.sourceName = sourceName
         self.isDirectory = isDirectory
         self.accessMode = accessMode
@@ -89,7 +94,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, shareToken, ownerId, sourcePath, sourceName, isDirectory, accessMode
+        case id, shareToken, ownerId, sourcePath, sourceSpace, sourceName, isDirectory, accessMode
         case sharingType, hasPassword, expiresAt, label, downloadCount, lastAccessedAt
         case permittedUserIds, createdAt, updatedAt
     }
@@ -100,6 +105,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         shareToken = try container.decode(String.self, forKey: .shareToken)
         ownerId = try Self.decodeStringOrInt(container, forKey: .ownerId)
         sourcePath = try container.decodeIfPresent(String.self, forKey: .sourcePath)
+        sourceSpace = try container.decodeIfPresent(String.self, forKey: .sourceSpace)
         sourceName = try container.decodeIfPresent(String.self, forKey: .sourceName)
         isDirectory = try container.decode(Bool.self, forKey: .isDirectory)
         accessMode = try container.decode(ShareAccessMode.self, forKey: .accessMode)

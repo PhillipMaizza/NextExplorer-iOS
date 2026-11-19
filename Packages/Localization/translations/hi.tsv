@@ -197,6 +197,52 @@ shared.navigationTitle	साझा किए गए
 shared.segmentByMe	मेरे द्वारा
 shared.segmentWithMe	मेरे साथ
 shared.sectionExpired	समाप्त
+shared.filterAll	सभी
+shared.filterAnyone	कोई भी
+shared.daysLeft#one	%lld दिन बाकी
+shared.daysLeft#other	%lld दिन बाकी
+shared.itemCount#one	%lld आइटम
+shared.itemCount#other	%lld आइटम
+shared.pathStep	%1$@ › %2$@
+common.on	चालू
+common.off	बंद
+common.none	कोई नहीं
+shared.copyLink	लिंक कॉपी करें
+shared.copyShareLink	शेयर लिंक कॉपी करें
+shared.copyFolderLink	फ़ोल्डर लिंक कॉपी करें
+shared.copyFileLink	फ़ाइल लिंक कॉपी करें
+shared.moreLinks	और लिंक
+shared.setNewDate	नई तारीख सेट करें
+shared.noAccountNeeded	खोलने के लिए खाते की ज़रूरत नहीं
+shared.metaExpires	समाप्त होता है
+shared.metaExpired	समाप्त
+shared.folderLinkOpensAs	फ़ोल्डर लिंक इस रूप में खुलता है
+shared.fileLinkOpensAs	फ़ाइल लिंक इस रूप में खुलता है
+shared.metaLabel	लेबल
+shared.metaShared	शेयर किया गया
+shared.metaLastOpened	आख़िरी बार खोला गया
+shared.metaDownloads	डाउनलोड
+shared.metaReceived	प्राप्त
+shared.expiredFooter	यह लिंक %@ को काम करना बंद कर चुका है। इसे वापस लाने के लिए नई तारीख सेट करें।
+shared.controlsShare	%@ इस शेयर को नियंत्रित करते हैं।
+shared.listFooter	सब कुछ देखने के लिए किसी शेयर पर टैप करें। लिंक बटन बिना खोले कॉपी करता है।
+shared.publicLink	सार्वजनिक लिंक
+shared.people	लोग
+shared.canEdit	संपादित कर सकते हैं
+shared.viewOnly	सिर्फ़ देखें
+shared.statusPassword	पासवर्ड
+shared.neverExpires	कभी समाप्त नहीं
+shared.expiresUntil	%@ तक
+shared.fromSharer	%@ से
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld शेयर
+shared.shareCount#other	%lld शेयर
+shared.peopleCount#one	%lld व्यक्ति
+shared.peopleCount#other	%lld लोग
+shared.downloadCount#one	%lld डाउनलोड
+shared.downloadCount#other	%lld डाउनलोड
+shared.showMore	और दिखाएँ
+shared.showLess	कम दिखाएं
 shared.badgeExpired	समाप्त
 shared.emptyByMe	इसका लिंक यहां देखने के लिए कोई फ़ाइल या फ़ोल्डर साझा करें।
 shared.emptyWithMe	अन्य लोग आपके साथ जो लिंक साझा करते हैं वे यहां दिखते हैं।
@@ -205,11 +251,9 @@ shared.deleteTitle	साझा लिंक हटाएं?
 shared.deleteMessage	लिंक तुरंत काम करना बंद कर देता है। फ़ाइल या फ़ोल्डर स्वयं प्रभावित नहीं होता।
 shared.sharedByUnknown	कोई
 shared.metaAccess	एक्सेस
-shared.metaExpiration	समाप्ति
 shared.metaSharedBy	साझाकर्ता
 shared.metaSharedWith	इनके साथ साझा
 shared.anyoneWithLink	लिंक वाला कोई भी व्यक्ति
-shared.linkMode	लिंक मोड
 shared.actionShareLink	लिंक साझा करें
 shared.actionFolderLink	फ़ोल्डर लिंक
 shared.actionFileLink	फ़ाइल लिंक
@@ -244,6 +288,17 @@ createShare.errorPastExpiration	भविष्य की समाप्ति 
 editShare.title	साझा लिंक संपादित करें
 editShare.save	परिवर्तन सहेजें
 editShare.passwordKeepHint	वर्तमान पासवर्ड रखने के लिए खाली छोड़ें
+editShare.saved	बदलाव सहेजे गए
+editShare.custom	कस्टम
+editShare.neverFooter	लिंक तब तक काम करता है जब तक आप इसे हटा नहीं देते।
+editShare.usersHint	केवल वे लोग जिन्हें आप चुनें, साइन इन करने के बाद।
+editShare.readOnlyHint	लोग खोल और डाउनलोड कर सकते हैं।
+editShare.readWriteHint	लोग इसके अंदर अपलोड, नाम बदल और हटा भी सकते हैं।
+editShare.readWriteFileHint	लोग फ़ाइल को संपादित भी कर सकते हैं।
+editShare.discardTitle	बदलाव छोड़ें?
+editShare.discardMessage	इस लिंक में आपके बदलाव सहेजे नहीं गए हैं।
+editShare.discard	छोड़ें
+editShare.keepEditing	संपादन जारी रखें
 thumbnailSettings.navigationTitle	थंबनेल
 thumbnailSettings.subtitle	नियंत्रित करें कि सर्वर हर क्लाइंट के लिए छवि थंबनेल कैसे बनाता है।
 thumbnailSettings.enable	थंबनेल बनाएं

@@ -208,6 +208,57 @@ shared.navigationTitle	משותפים
 shared.segmentByMe	ששיתפתי
 shared.segmentWithMe	ששותפו איתי
 shared.sectionExpired	פג תוקף
+shared.filterAll	הכול
+shared.filterAnyone	כל אחד
+shared.daysLeft#one	נותר %lld יום
+shared.daysLeft#two	נותרו %lld ימים
+shared.daysLeft#other	נותרו %lld ימים
+shared.itemCount#one	%lld פריט
+shared.itemCount#two	%lld פריטים
+shared.itemCount#other	%lld פריטים
+shared.pathStep	%1$@ › %2$@
+common.on	פועל
+common.off	כבוי
+common.none	ללא
+shared.copyLink	העתקת קישור
+shared.copyShareLink	העתקת קישור שיתוף
+shared.copyFolderLink	העתקת קישור לתיקייה
+shared.copyFileLink	העתקת קישור לקובץ
+shared.moreLinks	קישורים נוספים
+shared.setNewDate	הגדרת תאריך חדש
+shared.noAccountNeeded	אין צורך בחשבון כדי לפתוח
+shared.metaExpires	תפוגה
+shared.metaExpired	פג תוקף
+shared.folderLinkOpensAs	קישור התיקייה נפתח כ
+shared.fileLinkOpensAs	קישור הקובץ נפתח כ
+shared.metaLabel	תווית
+shared.metaShared	שותף
+shared.metaLastOpened	נפתח לאחרונה
+shared.metaDownloads	הורדות
+shared.metaReceived	התקבל
+shared.expiredFooter	הקישור הזה הפסיק לעבוד ב %@. הגדירו תאריך חדש כדי להחזיר אותו.
+shared.controlsShare	%@ שולט בשיתוף הזה.
+shared.listFooter	הקישו על שיתוף כדי לראות הכול עליו. כפתור הקישור מעתיק בלי לפתוח.
+shared.publicLink	קישור ציבורי
+shared.people	אנשים
+shared.canEdit	יכול לערוך
+shared.viewOnly	צפייה בלבד
+shared.statusPassword	סיסמה
+shared.neverExpires	ללא תפוגה
+shared.expiresUntil	עד %@
+shared.fromSharer	מאת %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld שיתוף
+shared.shareCount#two	%lld שיתופים
+shared.shareCount#other	%lld שיתופים
+shared.peopleCount#one	%lld אדם
+shared.peopleCount#two	%lld אנשים
+shared.peopleCount#other	%lld אנשים
+shared.downloadCount#one	%lld הורדה
+shared.downloadCount#two	%lld הורדות
+shared.downloadCount#other	%lld הורדות
+shared.showMore	הצגת עוד
+shared.showLess	הצג פחות
 shared.badgeExpired	פג תוקף
 shared.emptyByMe	שתפו קובץ או תיקייה כדי לראות כאן את הקישור שלהם.
 shared.emptyWithMe	קישורים שאחרים משתפים איתכם יופיעו כאן.
@@ -216,11 +267,9 @@ shared.deleteTitle	למחוק את קישור השיתוף?
 shared.deleteMessage	הקישור מפסיק לעבוד מיד. הקובץ או התיקייה עצמם לא ייפגעו.
 shared.sharedByUnknown	מישהו
 shared.metaAccess	גישה
-shared.metaExpiration	תפוגה
 shared.metaSharedBy	שותף על ידי
 shared.metaSharedWith	שותף עם
 shared.anyoneWithLink	כל מי שיש לו את הקישור
-shared.linkMode	מצב קישור
 shared.actionShareLink	קישור שיתוף
 shared.actionFolderLink	קישור לתיקייה
 shared.actionFileLink	קישור לקובץ
@@ -254,6 +303,17 @@ createShare.errorPastExpiration	בחרו תאריך תפוגה בעתיד.
 editShare.title	עריכת קישור שיתוף
 editShare.save	שמירת שינויים
 editShare.passwordKeepHint	השאירו ריק כדי לשמור את הסיסמה הנוכחית
+editShare.saved	השינויים נשמרו
+editShare.custom	מותאם אישית
+editShare.neverFooter	הקישור פועל עד שתמחק אותו.
+editShare.usersHint	רק האנשים שתבחר, לאחר שיתחברו.
+editShare.readOnlyHint	אנשים יכולים לפתוח ולהוריד.
+editShare.readWriteHint	אנשים יכולים גם להעלות, לשנות שם ולמחוק בתוכו.
+editShare.readWriteFileHint	אנשים יכולים גם לערוך את הקובץ.
+editShare.discardTitle	לבטל את השינויים?
+editShare.discardMessage	העריכות שלך בקישור זה לא נשמרו.
+editShare.discard	בטל שינויים
+editShare.keepEditing	המשך לערוך
 thumbnailSettings.navigationTitle	תמונות ממוזערות
 thumbnailSettings.subtitle	שליטה באופן שבו השרת יוצר תמונות ממוזערות לכל הלקוחות.
 thumbnailSettings.enable	יצירת תמונות ממוזערות

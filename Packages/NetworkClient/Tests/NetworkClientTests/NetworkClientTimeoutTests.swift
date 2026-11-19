@@ -104,5 +104,5 @@ extension NetworkClientLiveTests {
 }
 
 private enum Constants {
-    static let transferURLString = "https://example.com/api/files/transfer"
+    static let transferURLString = "\(TestHost.exampleURLString)/api/files/transfer"
 }

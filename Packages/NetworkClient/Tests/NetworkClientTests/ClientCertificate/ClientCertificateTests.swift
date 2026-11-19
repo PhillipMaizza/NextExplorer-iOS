@@ -73,7 +73,7 @@ struct ClientCertificateTests {
     @Test("nginx's own 400 pages are recognized")
     func nginxPages() {
         let handler = ClientCertificateChallengeHandler(store: ClientIdentityStore(keychain: .inMemory()))
-        let url = URL(string: "https://example.com/")!
+        let url = URL(string: "\(TestHost.exampleURLString)/")!
         let missing = Data("<html><head><title>400 No required SSL certificate was sent</title>".utf8)
         let refused = Data("<html><head><title>400 The SSL certificate error</title>".utf8)
         #expect(handler.certificateError(status: 400, bodyPrefix: missing, url: url) == .clientCertificateRequired)
@@ -135,7 +135,7 @@ struct ClientCertificateTests {
     @Test("A real 400 from the server is never taken for a certificate refusal")
     func ordinary400() throws {
         let handler = ClientCertificateChallengeHandler(store: ClientIdentityStore(keychain: .inMemory()))
-        let url = URL(string: "https://example.com/api/files")!
+        let url = URL(string: "\(TestHost.exampleURLString)/api/files")!
         _ = handler.handle(ClientCertificateChallengeFixture.make(host: TestHost.example, port: 443))
         let json = try NetworkClientFixture.responseErrorNameRequired.data()
         #expect(handler.certificateError(status: 400, bodyPrefix: json, url: url) == nil)
@@ -242,7 +242,7 @@ struct ClientCertificateTests {
             host: TestHost.example,
             port: 443
         ))
-        #expect(ClientCertificateOrigin(url: URL(string: "http://example.com/api")!) == ClientCertificateOrigin(
+        #expect(ClientCertificateOrigin(url: URL(string: "http://\(TestHost.example)/api")!) == ClientCertificateOrigin(
             host: TestHost.example,
             port: 80
         ))
@@ -266,7 +266,7 @@ struct ClientCertificateTests {
         #expect(NetworkError.from(dropped, url: url, certificates: handler) == .clientCertificateRequired)
         #expect(NetworkError.from(URLError(.notConnectedToInternet), url: url, certificates: handler) == .offline)
         #expect(NetworkError
-            .from(dropped, url: URL(string: "https://other.example.com")!, certificates: handler) == .offline)
+            .from(dropped, url: URL(string: TestHost.otherServerURLString)!, certificates: handler) == .offline)
 
         clock.advance(by: 60)
         #expect(NetworkError.from(dropped, url: url, certificates: handler) == .offline)
@@ -411,5 +411,5 @@ private final class MutableClock: @unchecked Sendable {
 }
 
 private enum Constants {
-    static let apiBaseURLString = "https://example.com/api"
+    static let apiBaseURLString = "\(TestHost.exampleURLString)/api"
 }

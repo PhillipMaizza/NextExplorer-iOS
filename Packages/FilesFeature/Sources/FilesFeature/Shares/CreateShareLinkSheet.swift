@@ -292,7 +292,7 @@ struct CreateShareLinkSheet: View {
         VStack(alignment: .leading, spacing: .space12) {
             summaryRow(IconKit.lock, L10n.CreateShare.summaryAccess, created.share.accessMode.title)
             summaryRow(
-                created.share.sharingType == .anyone ? IconKit.web : IconKit.people,
+                created.share.audienceIcon,
                 L10n.CreateShare.summarySharedWith,
                 created.share.sharingType == .anyone ? L10n.Shared.anyoneWithLink : recipientNames
             )
@@ -385,7 +385,7 @@ struct CreateShareLinkSheet: View {
         CreateShareLinkSheet(
             store: Store(
                 initialState: CreateShareLinkFeature.State(
-                    serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+                    serverURL: sharedPreviewServerURL,
                     itemName: "Electricity",
                     itemPath: "Documents/Bills",
                     isDirectory: true
@@ -405,7 +405,7 @@ struct CreateShareLinkSheet: View {
             store: Store(
                 initialState: {
                     var state = CreateShareLinkFeature.State(
-                        serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+                        serverURL: sharedPreviewServerURL,
                         itemName: "Electricity",
                         itemPath: "Documents/Bills",
                         isDirectory: true

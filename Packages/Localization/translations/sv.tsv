@@ -197,6 +197,52 @@ shared.navigationTitle	Delade
 shared.segmentByMe	Av mig
 shared.segmentWithMe	Med mig
 shared.sectionExpired	Utgångna
+shared.filterAll	Alla
+shared.filterAnyone	Vem som helst
+shared.daysLeft#one	%lld dag kvar
+shared.daysLeft#other	%lld dagar kvar
+shared.itemCount#one	%lld objekt
+shared.itemCount#other	%lld objekt
+shared.pathStep	%1$@ › %2$@
+common.on	På
+common.off	Av
+common.none	Ingen
+shared.copyLink	Kopiera länk
+shared.copyShareLink	Kopiera delningslänk
+shared.copyFolderLink	Kopiera mapplänk
+shared.copyFileLink	Kopiera fillänk
+shared.moreLinks	Fler länkar
+shared.setNewDate	Ange nytt datum
+shared.noAccountNeeded	Inget konto behövs för att öppna den
+shared.metaExpires	Upphör
+shared.metaExpired	Har upphört
+shared.folderLinkOpensAs	Mapplänken öppnas som
+shared.fileLinkOpensAs	Fillänken öppnas som
+shared.metaLabel	Etikett
+shared.metaShared	Delad
+shared.metaLastOpened	Senast öppnad
+shared.metaDownloads	Hämtningar
+shared.metaReceived	Mottagen
+shared.expiredFooter	Länken slutade fungera %@. Ange ett nytt datum för att få tillbaka den.
+shared.controlsShare	%@ styr den här delningen.
+shared.listFooter	Tryck på en delning för att se allt om den. Länkknappen kopierar utan att öppna.
+shared.publicLink	Offentlig länk
+shared.people	Personer
+shared.canEdit	kan redigera
+shared.viewOnly	endast visa
+shared.statusPassword	lösenord
+shared.neverExpires	upphör aldrig
+shared.expiresUntil	till %@
+shared.fromSharer	Från %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#one	%lld delning
+shared.shareCount#other	%lld delningar
+shared.peopleCount#one	%lld person
+shared.peopleCount#other	%lld personer
+shared.downloadCount#one	%lld hämtning
+shared.downloadCount#other	%lld hämtningar
+shared.showMore	Visa fler
+shared.showLess	Visa mindre
 shared.badgeExpired	utgången
 shared.emptyByMe	Dela en fil eller mapp för att se dess länk här.
 shared.emptyWithMe	Länkar som andra delar med dig visas här.
@@ -205,11 +251,9 @@ shared.deleteTitle	Radera delningslänk?
 shared.deleteMessage	Länken slutar fungera omedelbart. Själva filen eller mappen påverkas inte.
 shared.sharedByUnknown	Någon
 shared.metaAccess	Åtkomst
-shared.metaExpiration	Upphör
 shared.metaSharedBy	Delad av
 shared.metaSharedWith	Delad med
 shared.anyoneWithLink	Alla med länken
-shared.linkMode	Länkläge
 shared.actionShareLink	Dela länk
 shared.actionFolderLink	Mapplänk
 shared.actionFileLink	Fillänk
@@ -244,6 +288,17 @@ createShare.errorPastExpiration	Välj ett utgångsdatum i framtiden.
 editShare.title	Redigera delningslänk
 editShare.save	Spara ändringar
 editShare.passwordKeepHint	Lämna tomt för att behålla det nuvarande lösenordet
+editShare.saved	Ändringar sparade
+editShare.custom	Anpassad
+editShare.neverFooter	Länken fungerar tills du raderar den.
+editShare.usersHint	Endast personerna du väljer, efter inloggning.
+editShare.readOnlyHint	Personer kan öppna och ladda ner.
+editShare.readWriteHint	Personer kan även ladda upp, byta namn och radera inuti.
+editShare.readWriteFileHint	Personer kan även redigera filen.
+editShare.discardTitle	Ignorera ändringar?
+editShare.discardMessage	Dina ändringar av den här länken har inte sparats.
+editShare.discard	Ignorera
+editShare.keepEditing	Fortsätt redigera
 thumbnailSettings.navigationTitle	Miniatyrer
 thumbnailSettings.subtitle	Styr hur servern genererar bildminiatyrer för alla klienter.
 thumbnailSettings.enable	Generera miniatyrer

@@ -196,6 +196,47 @@ shared.navigationTitle	Đã chia sẻ
 shared.segmentByMe	Bởi tôi
 shared.segmentWithMe	Với tôi
 shared.sectionExpired	Đã hết hạn
+shared.filterAll	Tất cả
+shared.filterAnyone	Bất kỳ ai
+shared.daysLeft#other	Còn %lld ngày
+shared.itemCount#other	%lld mục
+shared.pathStep	%1$@ › %2$@
+common.on	Bật
+common.off	Tắt
+common.none	Không có
+shared.copyLink	Sao chép liên kết
+shared.copyShareLink	Sao chép liên kết chia sẻ
+shared.copyFolderLink	Sao chép liên kết thư mục
+shared.copyFileLink	Sao chép liên kết tệp
+shared.moreLinks	Thêm liên kết
+shared.setNewDate	Đặt ngày mới
+shared.noAccountNeeded	Không cần tài khoản để mở
+shared.metaExpires	Hết hạn
+shared.metaExpired	Đã hết hạn
+shared.folderLinkOpensAs	Liên kết thư mục mở dưới dạng
+shared.fileLinkOpensAs	Liên kết tệp mở dưới dạng
+shared.metaLabel	Nhãn
+shared.metaShared	Đã chia sẻ
+shared.metaLastOpened	Mở lần cuối
+shared.metaDownloads	Lượt tải
+shared.metaReceived	Đã nhận
+shared.expiredFooter	Liên kết này ngừng hoạt động vào %@. Đặt ngày mới để dùng lại.
+shared.controlsShare	%@ quản lý lượt chia sẻ này.
+shared.listFooter	Chạm vào một lượt chia sẻ để xem mọi thông tin. Nút liên kết sao chép mà không mở.
+shared.publicLink	Liên kết công khai
+shared.people	Mọi người
+shared.canEdit	có thể sửa
+shared.viewOnly	chỉ xem
+shared.statusPassword	mật khẩu
+shared.neverExpires	không bao giờ hết hạn
+shared.expiresUntil	đến %@
+shared.fromSharer	Từ %@
+shared.statusStep	%1$@ · %2$@
+shared.shareCount#other	%lld lượt chia sẻ
+shared.peopleCount#other	%lld người
+shared.downloadCount#other	%lld lượt tải
+shared.showMore	Xem thêm
+shared.showLess	Thu gọn
 shared.badgeExpired	đã hết hạn
 shared.emptyByMe	Hãy chia sẻ một tệp hoặc thư mục để xem liên kết của nó ở đây.
 shared.emptyWithMe	Các liên kết người khác chia sẻ với bạn sẽ hiển thị ở đây.
@@ -204,11 +245,9 @@ shared.deleteTitle	Xóa liên kết chia sẻ?
 shared.deleteMessage	Liên kết sẽ ngừng hoạt động ngay lập tức. Bản thân tệp hoặc thư mục không bị ảnh hưởng.
 shared.sharedByUnknown	Ai đó
 shared.metaAccess	Quyền truy cập
-shared.metaExpiration	Hết hạn
 shared.metaSharedBy	Chia sẻ bởi
 shared.metaSharedWith	Chia sẻ với
 shared.anyoneWithLink	Bất kỳ ai có liên kết
-shared.linkMode	Chế độ liên kết
 shared.actionShareLink	Liên kết chia sẻ
 shared.actionFolderLink	Liên kết thư mục
 shared.actionFileLink	Liên kết tệp
@@ -242,6 +281,17 @@ createShare.errorPastExpiration	Hãy chọn một ngày hết hạn trong tươn
 editShare.title	Sửa liên kết chia sẻ
 editShare.save	Lưu thay đổi
 editShare.passwordKeepHint	Để trống để giữ mật khẩu hiện tại
+editShare.saved	Đã lưu thay đổi
+editShare.custom	Tùy chỉnh
+editShare.neverFooter	Liên kết hoạt động cho đến khi bạn xóa.
+editShare.usersHint	Chỉ những người bạn chọn, sau khi đăng nhập.
+editShare.readOnlyHint	Mọi người có thể mở và tải xuống.
+editShare.readWriteHint	Mọi người cũng có thể tải lên, đổi tên và xóa bên trong.
+editShare.readWriteFileHint	Mọi người cũng có thể chỉnh sửa tệp.
+editShare.discardTitle	Bỏ thay đổi?
+editShare.discardMessage	Các chỉnh sửa liên kết này chưa được lưu.
+editShare.discard	Bỏ
+editShare.keepEditing	Tiếp tục sửa
 thumbnailSettings.navigationTitle	Ảnh thu nhỏ
 thumbnailSettings.subtitle	Kiểm soát cách máy chủ tạo ảnh thu nhỏ cho mọi máy khách.
 thumbnailSettings.enable	Tạo ảnh thu nhỏ

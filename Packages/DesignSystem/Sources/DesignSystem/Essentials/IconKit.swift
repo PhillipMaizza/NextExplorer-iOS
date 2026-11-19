@@ -16,7 +16,6 @@ public enum IconKit {
     public static let back = Image(systemName: "chevron.backward")
     public static let envelope = Image(systemName: "envelope")
     public static let lock = Image(systemName: "lock")
-    public static let lockOpen = Image(systemName: "lock.open")
     public static let eye = Image(systemName: "eye")
     public static let eyeSlash = Image(systemName: "eye.slash")
     public static let person = Image(systemName: "person")
@@ -68,6 +67,7 @@ public enum IconKit {
     // (Arabic) so disclosure and breadcrumb chevrons point into the content the correct way.
     public static let chevronRight = Image(systemName: "chevron.forward")
     public static let chevronDown = Image(systemName: "chevron.down")
+    public static let chevronUp = Image(systemName: "chevron.up")
     public static let chevronUpDown = Image(systemName: "chevron.up.chevron.down")
     public static let externalLink = Image(systemName: "arrow.up.right")
     public static let warning = Image(systemName: "exclamationmark.triangle")
@@ -111,6 +111,7 @@ public enum IconKit {
     public static let restoreTo = Image(systemName: "arrow.uturn.backward.circle")
     public static let time = Image(systemName: "clock")
     public static let rename = Image(systemName: "square.and.pencil")
+    public static let pencil = Image(systemName: "pencil")
     public static let haptics = Image(systemName: "waveform")
     /// Copies a file out of the app (Save to Device, Mac Download).
     public static let download = Image(systemName: "square.and.arrow.down")
