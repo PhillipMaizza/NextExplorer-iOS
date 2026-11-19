@@ -111,6 +111,7 @@ public enum IconKit {
     public static let restoreTo = Image(systemName: "arrow.uturn.backward.circle")
     public static let time = Image(systemName: "clock")
     public static let rename = Image(systemName: "square.and.pencil")
+    public static let pencil = Image(systemName: "pencil")
     public static let haptics = Image(systemName: "waveform")
     /// Copies a file out of the app (Save to Device, Mac Download).
     public static let download = Image(systemName: "square.and.arrow.down")

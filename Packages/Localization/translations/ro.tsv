@@ -299,6 +299,17 @@ createShare.errorPastExpiration	Alege o dată de expirare în viitor.
 editShare.title	Editează linkul de partajare
 editShare.save	Salvează modificările
 editShare.passwordKeepHint	Lasă gol pentru a păstra parola actuală
+editShare.saved	Modificări salvate
+editShare.custom	Personalizat
+editShare.neverFooter	Linkul funcționează până îl ștergi.
+editShare.usersHint	Doar persoanele alese, după autentificare.
+editShare.readOnlyHint	Persoanele pot deschide și descărca.
+editShare.readWriteHint	Persoanele pot și încărca, redenumi și șterge în interior.
+editShare.readWriteFileHint	Persoanele pot și edita fișierul.
+editShare.discardTitle	Renunți la modificări?
+editShare.discardMessage	Modificările acestui link nu au fost salvate.
+editShare.discard	Renunță
+editShare.keepEditing	Continuă editarea
 thumbnailSettings.navigationTitle	Miniaturi
 thumbnailSettings.subtitle	Controlează modul în care serverul generează miniaturile de imagine pentru fiecare client.
 thumbnailSettings.enable	Generează miniaturi

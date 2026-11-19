@@ -288,6 +288,17 @@ createShare.errorPastExpiration	Wähle ein Ablaufdatum in der Zukunft.
 editShare.title	Freigabelink bearbeiten
 editShare.save	Änderungen sichern
 editShare.passwordKeepHint	Leer lassen, um das aktuelle Passwort zu behalten
+editShare.saved	Änderungen gesichert
+editShare.custom	Eigene
+editShare.neverFooter	Der Link funktioniert, bis du ihn löschst.
+editShare.usersHint	Nur die Personen, die du auswählst, nach der Anmeldung.
+editShare.readOnlyHint	Personen können öffnen und herunterladen.
+editShare.readWriteHint	Personen können darin auch hochladen, umbenennen und löschen.
+editShare.readWriteFileHint	Personen können die Datei auch bearbeiten.
+editShare.discardTitle	Änderungen verwerfen?
+editShare.discardMessage	Deine Änderungen an diesem Link wurden nicht gesichert.
+editShare.discard	Verwerfen
+editShare.keepEditing	Weiter bearbeiten
 thumbnailSettings.navigationTitle	Miniaturen
 thumbnailSettings.subtitle	Steuere, wie der Server Bildminiaturen für jeden Client erzeugt.
 thumbnailSettings.enable	Miniaturen erzeugen

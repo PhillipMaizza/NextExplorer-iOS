@@ -67,7 +67,7 @@ extension Share {
 
     /// Who it reaches, as a glyph: a globe for a public link, people otherwise.
     var audienceIcon: Image {
-        sharingType == .anyone ? IconKit.web : IconKit.people
+        sharingType.icon
     }
 
     /// The label as shown: trimmed, nil when blank.

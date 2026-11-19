@@ -281,6 +281,17 @@ createShare.errorPastExpiration	Pilih tanggal kedaluwarsa di masa depan.
 editShare.title	Ubah Tautan Berbagi
 editShare.save	Simpan Perubahan
 editShare.passwordKeepHint	Biarkan kosong untuk mempertahankan kata sandi saat ini
+editShare.saved	Perubahan disimpan
+editShare.custom	Kustom
+editShare.neverFooter	Tautan tetap berfungsi sampai Anda menghapusnya.
+editShare.usersHint	Hanya orang yang Anda pilih, setelah mereka masuk.
+editShare.readOnlyHint	Orang dapat membuka dan mengunduh.
+editShare.readWriteHint	Orang juga dapat mengunggah, mengganti nama, dan menghapus di dalamnya.
+editShare.readWriteFileHint	Orang juga dapat mengedit file.
+editShare.discardTitle	Buang perubahan?
+editShare.discardMessage	Perubahan Anda pada tautan ini belum disimpan.
+editShare.discard	Buang
+editShare.keepEditing	Lanjutkan mengedit
 thumbnailSettings.navigationTitle	Gambar Mini
 thumbnailSettings.subtitle	Atur cara server membuat gambar mini untuk setiap klien.
 thumbnailSettings.enable	Buat Gambar Mini

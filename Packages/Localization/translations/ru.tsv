@@ -310,6 +310,17 @@ createShare.errorPastExpiration	Выберите дату истечения в 
 editShare.title	Изменить ссылку доступа
 editShare.save	Сохранить изменения
 editShare.passwordKeepHint	Оставьте пустым, чтобы сохранить текущий пароль
+editShare.saved	Изменения сохранены
+editShare.custom	Своя дата
+editShare.neverFooter	Ссылка работает, пока вы её не удалите.
+editShare.usersHint	Только выбранные люди после входа.
+editShare.readOnlyHint	Можно открывать и скачивать.
+editShare.readWriteHint	Можно также загружать, переименовывать и удалять внутри.
+editShare.readWriteFileHint	Можно также редактировать файл.
+editShare.discardTitle	Отменить изменения?
+editShare.discardMessage	Изменения этой ссылки не сохранены.
+editShare.discard	Отменить
+editShare.keepEditing	Продолжить
 thumbnailSettings.navigationTitle	Миниатюры
 thumbnailSettings.subtitle	Управляйте тем, как сервер создаёт миниатюры изображений для всех клиентов.
 thumbnailSettings.enable	Создавать миниатюры

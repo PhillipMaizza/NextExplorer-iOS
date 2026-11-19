@@ -314,6 +314,17 @@ createShare.errorPastExpiration	Виберіть дату завершення �
 editShare.title	Змінити посилання для спільного доступу
 editShare.save	Зберегти зміни
 editShare.passwordKeepHint	Залиште порожнім, щоб зберегти поточний пароль
+editShare.saved	Зміни збережено
+editShare.custom	Своя дата
+editShare.neverFooter	Посилання працює, доки ви його не видалите.
+editShare.usersHint	Лише вибрані люди після входу.
+editShare.readOnlyHint	Можна відкривати й завантажувати.
+editShare.readWriteHint	Можна також вивантажувати, перейменовувати й видаляти всередині.
+editShare.readWriteFileHint	Можна також редагувати файл.
+editShare.discardTitle	Скасувати зміни?
+editShare.discardMessage	Зміни цього посилання не збережено.
+editShare.discard	Скасувати
+editShare.keepEditing	Продовжити
 thumbnailSettings.navigationTitle	Мініатюри
 thumbnailSettings.subtitle	Керуйте тим, як сервер створює мініатюри зображень для всіх клієнтів.
 thumbnailSettings.enable	Створювати мініатюри

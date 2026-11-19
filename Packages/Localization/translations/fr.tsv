@@ -288,6 +288,17 @@ createShare.errorPastExpiration	Choisissez une date d'expiration future.
 editShare.title	Modifier le lien de partage
 editShare.save	Enregistrer les modifications
 editShare.passwordKeepHint	Laissez vide pour conserver le mot de passe actuel
+editShare.saved	Modifications enregistrées
+editShare.custom	Personnalisé
+editShare.neverFooter	Le lien fonctionne jusqu'à ce que vous le supprimiez.
+editShare.usersHint	Seulement les personnes choisies, après connexion.
+editShare.readOnlyHint	Les personnes peuvent ouvrir et télécharger.
+editShare.readWriteHint	Les personnes peuvent aussi importer, renommer et supprimer à l'intérieur.
+editShare.readWriteFileHint	Les personnes peuvent aussi modifier le fichier.
+editShare.discardTitle	Abandonner les modifications ?
+editShare.discardMessage	Vos modifications de ce lien n'ont pas été enregistrées.
+editShare.discard	Abandonner
+editShare.keepEditing	Continuer
 thumbnailSettings.navigationTitle	Miniatures
 thumbnailSettings.subtitle	Contrôlez la façon dont le serveur génère les miniatures d'image pour tous les clients.
 thumbnailSettings.enable	Générer des miniatures

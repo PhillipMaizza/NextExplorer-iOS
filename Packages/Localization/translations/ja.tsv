@@ -277,6 +277,17 @@ createShare.errorPastExpiration	将来の有効期限を選択してください
 editShare.title	共有リンクを編集
 editShare.save	変更を保存
 editShare.passwordKeepHint	現在のパスワードを保持するには空のままにします
+editShare.saved	変更を保存しました
+editShare.custom	カスタム
+editShare.neverFooter	削除するまでリンクは有効です。
+editShare.usersHint	選んだユーザーのみ（サインイン後）。
+editShare.readOnlyHint	開いてダウンロードできます。
+editShare.readWriteHint	中でアップロード、名前変更、削除もできます。
+editShare.readWriteFileHint	ファイルの編集もできます。
+editShare.discardTitle	変更を破棄しますか？
+editShare.discardMessage	このリンクへの変更は保存されていません。
+editShare.discard	破棄
+editShare.keepEditing	編集を続ける
 thumbnailSettings.navigationTitle	サムネール
 thumbnailSettings.subtitle	サーバーがすべてのクライアント向けに画像サムネールを生成する方法を制御します。
 thumbnailSettings.enable	サムネールを生成

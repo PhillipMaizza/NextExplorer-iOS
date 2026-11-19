@@ -292,6 +292,17 @@ createShare.errorPastExpiration	Válasszon lejárati dátumot a jövőben.
 editShare.title	Megosztási hivatkozás szerkesztése
 editShare.save	Módosítások mentése
 editShare.passwordKeepHint	Hagyja üresen a jelenlegi jelszó megtartásához
+editShare.saved	Változások mentve
+editShare.custom	Egyéni
+editShare.neverFooter	A link addig működik, amíg nem törlöd.
+editShare.usersHint	Csak a kiválasztott személyek, bejelentkezés után.
+editShare.readOnlyHint	A személyek megnyithatják és letölthetik.
+editShare.readWriteHint	A személyek feltölthetnek, átnevezhetnek és törölhetnek is benne.
+editShare.readWriteFileHint	A személyek a fájlt is szerkeszthetik.
+editShare.discardTitle	Elveted a módosításokat?
+editShare.discardMessage	A link módosításai nincsenek mentve.
+editShare.discard	Elvetés
+editShare.keepEditing	Szerkesztés folytatása
 thumbnailSettings.navigationTitle	Miniatűrök
 thumbnailSettings.subtitle	Szabályozza, hogyan hozza létre a kiszolgáló a képek miniatűrjeit az összes kliens számára.
 thumbnailSettings.enable	Miniatűrök létrehozása

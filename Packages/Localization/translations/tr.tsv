@@ -292,6 +292,17 @@ createShare.errorPastExpiration	Gelecekte bir son kullanma tarihi seçin.
 editShare.title	Paylaşım Bağlantısını Düzenle
 editShare.save	Değişiklikleri Kaydet
 editShare.passwordKeepHint	Mevcut parolayı korumak için boş bırakın
+editShare.saved	Değişiklikler kaydedildi
+editShare.custom	Özel
+editShare.neverFooter	Bağlantı siz silene kadar çalışır.
+editShare.usersHint	Yalnızca seçtiğiniz kişiler, oturum açtıktan sonra.
+editShare.readOnlyHint	Kişiler açabilir ve indirebilir.
+editShare.readWriteHint	Kişiler içine yükleyebilir, yeniden adlandırabilir ve silebilir.
+editShare.readWriteFileHint	Kişiler dosyayı düzenleyebilir de.
+editShare.discardTitle	Değişiklikler atılsın mı?
+editShare.discardMessage	Bu bağlantıdaki düzenlemeleriniz kaydedilmedi.
+editShare.discard	At
+editShare.keepEditing	Düzenlemeye devam et
 thumbnailSettings.navigationTitle	Küçük Resimler
 thumbnailSettings.subtitle	Sunucunun her istemci için küçük resimleri nasıl oluşturacağını denetleyin.
 thumbnailSettings.enable	Küçük Resim Oluştur

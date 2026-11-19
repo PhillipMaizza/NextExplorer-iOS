@@ -332,6 +332,17 @@ createShare.errorPastExpiration	اختر تاريخ انتهاء صلاحية ف
 editShare.title	تحرير رابط المشاركة
 editShare.save	حفظ التغييرات
 editShare.passwordKeepHint	اتركه فارغًا للاحتفاظ بكلمة السر الحالية
+editShare.saved	تم حفظ التغييرات
+editShare.custom	مخصص
+editShare.neverFooter	يبقى الرابط صالحًا حتى تحذفه.
+editShare.usersHint	فقط الأشخاص الذين تختارهم، بعد تسجيل دخولهم.
+editShare.readOnlyHint	يمكن للأشخاص الفتح والتنزيل.
+editShare.readWriteHint	يمكن للأشخاص أيضًا الرفع وإعادة التسمية والحذف بداخله.
+editShare.readWriteFileHint	يمكن للأشخاص أيضًا تعديل الملف.
+editShare.discardTitle	تجاهل التغييرات؟
+editShare.discardMessage	لم يتم حفظ تعديلاتك على هذا الرابط.
+editShare.discard	تجاهل
+editShare.keepEditing	متابعة التعديل
 thumbnailSettings.navigationTitle	الصور المصغّرة
 thumbnailSettings.subtitle	تحكّم في كيفية إنشاء الخادم للصور المصغّرة لكل عميل.
 thumbnailSettings.enable	إنشاء صور مصغّرة

@@ -145,7 +145,7 @@ struct SharedView: View {
                 .sheet(item: detailBinding) { detail in
                     SharedDetailSheet(store: store, presented: detail)
                 }
-                .sharedActionErrorToast(store: store, toast: $toastMessage, isActive: store.detail == nil)
+                .sharedActionToast(store: store, toast: $toastMessage, isActive: store.detail == nil)
             #endif
                 .dsToast($toastMessage)
                 .task { store.send(.onAppear) }

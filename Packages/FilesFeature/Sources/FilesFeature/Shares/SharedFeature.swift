@@ -70,8 +70,11 @@ public struct SharedFeature {
         /// toast rather than the full screen `errorMessage`. Cleared once shown, so the same
         /// failure twice toasts twice.
         public var actionErrorMessage: String?
+        /// A saved edit, confirmed with a toast once and then cleared like `actionErrorMessage`.
+        public var actionSuccessMessage: String?
         public var deleteConfirmationShare: Share?
         public var deletingIDs: Set<Share.ID> = []
+        /// The share being edited: a page pushed inside the detail sheet on iOS, a sheet on the Mac.
         @Presents public var editSheet: EditShareFeature.State?
         /// The item sheet opened from a row; Edit and Delete stack on top of it.
         public var detail: Detail?
@@ -201,7 +204,7 @@ public struct SharedFeature {
         case deleteResponse(Share.ID, Result<Bool, FilesClientError>)
         case editTapped(Share)
         case editSheet(PresentationAction<EditShareFeature.Action>)
-        case actionErrorShown
+        case actionToastShown
         case detailOpened(Segment, Item.ID)
         case detailDismissed
         case detailShareSelected(Share.ID?)
@@ -209,6 +212,7 @@ public struct SharedFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.jsonCacheStore) var jsonCacheStore
+    @Dependency(\.date) var date
 
     static func cacheNamespace(_ segment: Segment) -> String {
         "shares.\(segment.rawValue)"
@@ -379,20 +383,22 @@ public struct SharedFeature {
                 return .none
 
             case let .editTapped(share):
-                state.editSheet = EditShareFeature.State(serverURL: state.serverURL, share: share)
+                state.editSheet = EditShareFeature.State(serverURL: state.serverURL, share: share, now: date.now)
                 return .none
 
             case let .editSheet(.presented(.delegate(.updated(share)))):
                 state.byMe[id: share.id] = share
                 state.editSheet = nil
+                state.actionSuccessMessage = L10n.EditShare.saved
                 state.sharesChanged()
                 return .none
 
             case .editSheet:
                 return .none
 
-            case .actionErrorShown:
+            case .actionToastShown:
                 state.actionErrorMessage = nil
+                state.actionSuccessMessage = nil
                 return .none
 
             case let .detailOpened(segment, id):
@@ -401,9 +407,13 @@ public struct SharedFeature {
 
             case .detailDismissed:
                 state.detail = nil
+                state.editSheet = nil
                 return .none
 
             case let .detailShareSelected(id):
+                if id != state.detail?.pushedShareID {
+                    state.editSheet = nil
+                }
                 state.detail?.pushedShareID = id
                 return .none
             }

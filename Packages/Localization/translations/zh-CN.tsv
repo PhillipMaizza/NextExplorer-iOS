@@ -277,6 +277,17 @@ createShare.errorPastExpiration	请选择将来的到期日期。
 editShare.title	编辑共享链接
 editShare.save	保存更改
 editShare.passwordKeepHint	留空以保留当前密码
+editShare.saved	已保存更改
+editShare.custom	自定义
+editShare.neverFooter	链接在你删除前一直有效。
+editShare.usersHint	仅限你选择的人，登录后可用。
+editShare.readOnlyHint	可以打开和下载。
+editShare.readWriteHint	还可以在其中上传、重命名和删除。
+editShare.readWriteFileHint	还可以编辑该文件。
+editShare.discardTitle	放弃更改？
+editShare.discardMessage	你对此链接的修改尚未保存。
+editShare.discard	放弃
+editShare.keepEditing	继续编辑
 thumbnailSettings.navigationTitle	缩略图
 thumbnailSettings.subtitle	控制服务器为每个客户端生成图像缩略图的方式。
 thumbnailSettings.enable	生成缩略图

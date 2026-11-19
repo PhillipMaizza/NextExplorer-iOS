@@ -235,6 +235,9 @@ public extension SharedFeature.State {
     /// Closes the sheet once its item is gone; pops the pushed share once it is gone or is the
     /// only one left, since the root then opens straight on it.
     private mutating func reconcileDetail() {
+        if let editing = editSheet, byMe[id: editing.share.id] == nil {
+            editSheet = nil
+        }
         guard let detail else { return }
         guard let item = item(for: detail) else {
             self.detail = nil

@@ -486,6 +486,42 @@ struct SharedScreen {
         )).firstMatch
     }
 
+    /// The share page's Edit, which pushes the edit page.
+    var editShareButton: XCUIElement {
+        app.labeledButton(L10n.Common.edit)
+    }
+
+    var labelField: XCUIElement {
+        app.textFields[AccessibilityIdentifiers.Shared.editLabel].firstMatch
+    }
+
+    /// The edit page's Save check, enabled once something changed.
+    var saveEditButton: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Shared.saveEdit].firstMatch
+    }
+
+    /// The edit page's Back, which asks first while there are unsaved changes.
+    var backEditButton: XCUIElement {
+        app.labeledButton(L10n.Common.back)
+    }
+
+    /// An expiry choice on the edit page, by its title.
+    func expiryPreset(_ title: String) -> XCUIElement {
+        app.labeledButton(title)
+    }
+
+    var discardTitle: XCUIElement {
+        app.staticTexts[L10n.EditShare.discardTitle]
+    }
+
+    var keepEditingButton: XCUIElement {
+        app.labeledButton(L10n.EditShare.keepEditing)
+    }
+
+    var savedToast: XCUIElement {
+        app.staticTexts[L10n.EditShare.saved]
+    }
+
     var expiredHeader: XCUIElement {
         app.staticTexts[L10n.Shared.sectionExpired.uppercased()].exists
             ? app.staticTexts[L10n.Shared.sectionExpired.uppercased()]

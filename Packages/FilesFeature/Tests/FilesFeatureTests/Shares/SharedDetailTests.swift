@@ -3,6 +3,7 @@ import CoreModels
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
@@ -177,15 +178,61 @@ struct SharedDetailTests {
         await store.send(.editSheet(.presented(.delegate(.updated(updated))))) {
             $0.byMe[id: "a"] = updated
             $0.editSheet = nil
+            $0.actionSuccessMessage = L10n.EditShare.saved
         }
     }
 
     @Test
-    func aShownErrorIsClearedSoTheSameFailureToastsAgain() async {
-        var initial = state([roadmap("a")])
-        initial.actionErrorMessage = FilesClientError.server(statusCode: 500).userMessage
+    func closingOrLeavingTheShareDropsItsEditPage() async {
+        let share = roadmap("a")
+        var initial = state(
+            [share, roadmap("b", age: 1)],
+            detail: SharedFeature.Detail(segment: .byMe, id: Constants.itemID, pushedShareID: "a")
+        )
+        initial.editSheet = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
+        let store = TestStore(initialState: initial) { SharedFeature() } withDependencies: {
+            $0.date = .constant(MockDate.date)
+        }
+
+        await store.send(.detailShareSelected("a"))
+        await store.send(.detailShareSelected(nil)) {
+            $0.detail?.pushedShareID = nil
+            $0.editSheet = nil
+        }
+        await store.send(.editTapped(share)) {
+            $0.editSheet = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
+        }
+        await store.send(.detailDismissed) {
+            $0.detail = nil
+            $0.editSheet = nil
+        }
+    }
+
+    @Test
+    func aReloadWithoutTheEditedShareDropsItsEditPage() async {
+        let share = roadmap("a")
+        let other = roadmap("b", age: 1)
+        var initial = state([share, other])
+        initial.editSheet = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
         let store = TestStore(initialState: initial) { SharedFeature() }
 
-        await store.send(.actionErrorShown) { $0.actionErrorMessage = nil }
+        await store.send(.sharesResponse(.byMe, .success([other]))) {
+            $0.byMe = [other]
+            $0.dataSources[.byMe] = .live
+            $0.editSheet = nil
+        }
+    }
+
+    @Test
+    func aShownToastIsClearedSoTheSameOutcomeToastsAgain() async {
+        var initial = state([roadmap("a")])
+        initial.actionErrorMessage = FilesClientError.server(statusCode: 500).userMessage
+        initial.actionSuccessMessage = L10n.EditShare.saved
+        let store = TestStore(initialState: initial) { SharedFeature() }
+
+        await store.send(.actionToastShown) {
+            $0.actionErrorMessage = nil
+            $0.actionSuccessMessage = nil
+        }
     }
 }

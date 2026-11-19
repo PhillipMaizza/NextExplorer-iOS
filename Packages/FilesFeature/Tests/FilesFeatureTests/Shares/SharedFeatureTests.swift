@@ -3,6 +3,7 @@ import CoreModels
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
@@ -178,15 +179,16 @@ struct SharedFeatureTests {
 
     @Test
     func editTappedPresentsTheSheetSeededFromTheShareAndAnUpdateSwapsTheRow() async {
-        // The sheet's default expiry reads the real clock when a share has none, so this share has one.
         let share = makeShare(id: "s1", expiresAt: MockDate.date.addingTimeInterval(3_600))
         var state = SharedFeature.State(serverURL: serverURL)
         state.byMe = [share]
         state.phases[.byMe] = .loaded
-        let store = TestStore(initialState: state) { SharedFeature() }
+        let store = TestStore(initialState: state) { SharedFeature() } withDependencies: {
+            $0.date = .constant(MockDate.date)
+        }
 
         await store.send(.editTapped(share)) {
-            $0.editSheet = EditShareFeature.State(serverURL: serverURL, share: share)
+            $0.editSheet = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
         }
 
         let updated = Share(
@@ -198,6 +200,7 @@ struct SharedFeatureTests {
         await store.send(.editSheet(.presented(.delegate(.updated(updated))))) {
             $0.byMe[id: "s1"] = updated
             $0.editSheet = nil
+            $0.actionSuccessMessage = L10n.EditShare.saved
         }
     }
 

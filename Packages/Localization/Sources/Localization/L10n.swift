@@ -366,9 +366,20 @@ public enum L10n {
         public static var errorNameExists: String { tr("downloads.errorNameExists") }  // "A file with that name already exists."
     }
     public enum EditShare {
+        public static var custom: String { tr("editShare.custom") }  // "Custom"
+        public static var discard: String { tr("editShare.discard") }  // "Discard"
+        public static var discardMessage: String { tr("editShare.discardMessage") }  // "Your edits to this link haven't been saved."
+        public static var discardTitle: String { tr("editShare.discardTitle") }  // "Discard changes?"
+        public static var keepEditing: String { tr("editShare.keepEditing") }  // "Keep editing"
+        public static var neverFooter: String { tr("editShare.neverFooter") }  // "The link keeps working until you delete it."
         public static var passwordKeepHint: String { tr("editShare.passwordKeepHint") }  // "Leave blank to keep the current password"
+        public static var readOnlyHint: String { tr("editShare.readOnlyHint") }  // "People can open and download."
+        public static var readWriteFileHint: String { tr("editShare.readWriteFileHint") }  // "People can also edit the file."
+        public static var readWriteHint: String { tr("editShare.readWriteHint") }  // "People can also upload, rename and delete inside it."
         public static var save: String { tr("editShare.save") }  // "Save Changes"
+        public static var saved: String { tr("editShare.saved") }  // "Changes saved"
         public static var title: String { tr("editShare.title") }  // "Edit Share Link"
+        public static var usersHint: String { tr("editShare.usersHint") }  // "Only the people you pick, after they sign in."
     }
     public enum EmptyState {
         public static var folderEmpty: String { tr("emptyState.folderEmpty") }  // "This folder is empty."

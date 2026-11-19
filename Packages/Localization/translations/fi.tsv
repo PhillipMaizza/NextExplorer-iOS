@@ -292,6 +292,17 @@ createShare.errorPastExpiration	Valitse vanhenemispäivä tulevaisuudesta.
 editShare.title	Muokkaa jakolinkkiä
 editShare.save	Tallenna muutokset
 editShare.passwordKeepHint	Jätä tyhjäksi säilyttääksesi nykyisen salasanan
+editShare.saved	Muutokset tallennettu
+editShare.custom	Mukautettu
+editShare.neverFooter	Linkki toimii, kunnes poistat sen.
+editShare.usersHint	Vain valitsemasi henkilöt kirjautumisen jälkeen.
+editShare.readOnlyHint	Henkilöt voivat avata ja ladata.
+editShare.readWriteHint	Henkilöt voivat myös ladata palvelimelle, nimetä uudelleen ja poistaa sisällä.
+editShare.readWriteFileHint	Henkilöt voivat myös muokata tiedostoa.
+editShare.discardTitle	Hylätäänkö muutokset?
+editShare.discardMessage	Tämän linkin muutoksia ei ole tallennettu.
+editShare.discard	Hylkää
+editShare.keepEditing	Jatka muokkausta
 thumbnailSettings.navigationTitle	Pikkukuvat
 thumbnailSettings.subtitle	Määritä, miten palvelin luo kuvien pikkukuvat kaikille asiakkaille.
 thumbnailSettings.enable	Luo pikkukuvat

@@ -156,7 +156,7 @@
                 confirmTitle: L10n.EditShare.save,
                 isConfirmEnabled: store.isSaveEnabled,
                 isWorking: store.isSaving,
-                errorMessage: store.errorMessage ?? store.usersPhase.errorMessage,
+                errorMessage: store.fieldError?.message ?? store.errorMessage ?? store.usersPhase.errorMessage,
                 width: Metrics.width,
                 onCancel: { dismiss() },
                 onConfirm: { store.send(.saveTapped) }
@@ -178,6 +178,7 @@
                     expiresAt: $store.expiresAt.sending(\.expiresAtChanged)
                 )
             }
+            .task { store.send(.task) }
         }
     }
 

@@ -288,6 +288,17 @@ createShare.errorPastExpiration	Elige una fecha de caducidad futura.
 editShare.title	Editar enlace de compartición
 editShare.save	Guardar cambios
 editShare.passwordKeepHint	Déjalo en blanco para mantener la contraseña actual
+editShare.saved	Cambios guardados
+editShare.custom	Personalizado
+editShare.neverFooter	El enlace funciona hasta que lo elimines.
+editShare.usersHint	Solo las personas que elijas, tras iniciar sesión.
+editShare.readOnlyHint	Las personas pueden abrir y descargar.
+editShare.readWriteHint	Las personas también pueden subir, renombrar y eliminar dentro.
+editShare.readWriteFileHint	Las personas también pueden editar el archivo.
+editShare.discardTitle	¿Descartar los cambios?
+editShare.discardMessage	Tus cambios en este enlace no se han guardado.
+editShare.discard	Descartar
+editShare.keepEditing	Seguir editando
 thumbnailSettings.navigationTitle	Miniaturas
 thumbnailSettings.subtitle	Controla cómo el servidor genera las miniaturas de imagen para todos los clientes.
 thumbnailSettings.enable	Generar miniaturas

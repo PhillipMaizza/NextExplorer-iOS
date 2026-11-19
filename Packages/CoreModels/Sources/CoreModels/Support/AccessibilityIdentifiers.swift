@@ -59,6 +59,11 @@ public enum AccessibilityIdentifiers {
 
         /// A share page's Delete, apart from the confirm button of the same name.
         public static let deleteShare = "shared.deleteShare"
+        /// The Edit page's Save check in the navigation bar.
+        public static let saveEdit = "shared.saveEdit"
+        /// The Edit page's People row, which pushes the people picker.
+        public static let editPeople = "shared.editPeople"
+        public static let editLabel = "shared.editLabel"
     }
 
     public enum Browse {

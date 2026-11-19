@@ -11,10 +11,11 @@ private enum Constants {
 }
 
 /// One share in the item sheet: the item, the copy split button, who it reaches, then its facts
-/// and Edit and Delete. With me drops every owner control and says who controls the share. The
-/// sheet's root when the item has one share, otherwise pushed from the share list.
+/// and Edit and Delete. Edit pushes `EditSharePage` on top of it. With me drops every owner control
+/// and says who controls the share. The sheet's root when the item has one share, otherwise pushed
+/// from the share list.
 struct SharedSharePage: View {
-    let store: StoreOf<SharedFeature>
+    @Bindable var store: StoreOf<SharedFeature>
     let segment: SharedFeature.Segment
     let item: SharedFeature.Item
     let share: Share
@@ -142,6 +143,11 @@ struct SharedSharePage: View {
         .disabled(isDeleting)
         .navigationTitle(isPushed ? item.name : "")
         .navigationBarTitleDisplayMode(.inline)
+        #if os(iOS)
+            .navigationDestination(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
+                EditSharePage(store: editStore)
+            }
+        #endif
     }
 
     private func fact(_ label: String, _ value: String, style: Typography.TextStyle = .secondary) -> some View {
@@ -169,6 +175,13 @@ struct SharedSharePage: View {
 }
 
 extension View {
+    /// The grouped look every page of the Shared sheet uses: inset cards on the app background.
+    func sharedSheetList() -> some View {
+        listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(Color.backgroundPrimary)
+    }
+
     /// A list row with no card behind it, for content that draws its own surface.
     func clearRow() -> some View {
         listRowInsets(EdgeInsets())

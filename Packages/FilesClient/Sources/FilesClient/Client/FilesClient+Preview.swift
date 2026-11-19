@@ -256,20 +256,7 @@ public extension FilesClient {
         sharedWithMeLinks: { _ in Share.previewSharedWithMe },
         updateShareLink: { _, shareID, request in
             let base = Share.previewSharedByMe.first { $0.id == shareID } ?? Share.previewSharedByMe[0]
-            let hasPassword: Bool = switch request.password {
-            case .keep: base.hasPassword
-            case .remove: false
-            case .set: true
-            }
-            return Share(
-                id: base.id, shareToken: base.shareToken, ownerId: base.ownerId,
-                sourcePath: base.sourcePath, sourceName: base.sourceName, isDirectory: base.isDirectory,
-                accessMode: request.accessMode, sharingType: request.target, hasPassword: hasPassword,
-                expiresAt: request.expiresAt, label: request.label,
-                downloadCount: base.downloadCount, lastAccessedAt: base.lastAccessedAt,
-                permittedUserIds: request.target == .users ? request.userIds : nil,
-                createdAt: base.createdAt, updatedAt: Date()
-            )
+            return base.applying(request, at: Date())
         },
         deleteShareLink: { _, _ in },
         shareableUsers: { _ in Share.previewShareableUsers },
@@ -738,4 +725,24 @@ private func emptyStandIn(named name: String, in folder: String) -> URL {
     let fileURL = directory.appendingPathComponent(name)
     try? Data().write(to: fileURL)
     return fileURL
+}
+
+public extension Share {
+    /// This share as the server returns it after `PUT /api/shares/:id`, for the mock services.
+    func applying(_ request: UpdateShareRequest, at date: Date) -> Share {
+        let hasPassword: Bool = switch request.password {
+        case .keep: self.hasPassword
+        case .remove: false
+        case .set: true
+        }
+        return Share(
+            id: id, shareToken: shareToken, ownerId: ownerId,
+            sourcePath: sourcePath, sourceSpace: sourceSpace, sourceName: sourceName, isDirectory: isDirectory,
+            accessMode: request.accessMode, sharingType: request.target, hasPassword: hasPassword,
+            expiresAt: request.expiresAt, label: request.label,
+            downloadCount: downloadCount, lastAccessedAt: lastAccessedAt,
+            permittedUserIds: request.target == .users ? request.userIds : nil,
+            createdAt: createdAt, updatedAt: date
+        )
+    }
 }

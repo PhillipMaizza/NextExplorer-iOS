@@ -21,14 +21,13 @@ struct EditShareFeatureTests {
         expiresAt: Date? = nil,
         permittedUserIds: [String]? = nil
     ) -> Share {
-        Share(
-            id: "s1", shareToken: "AbC123xyz0", ownerId: "u1",
-            sourcePath: "Docs/Report", isDirectory: true,
-            accessMode: accessMode, sharingType: target, hasPassword: hasPassword,
-            expiresAt: expiresAt, label: label, downloadCount: 2, lastAccessedAt: nil,
-            permittedUserIds: permittedUserIds,
-            createdAt: MockDate.date,
-            updatedAt: MockDate.date
+        .editFixture(
+            label: label,
+            accessMode: accessMode,
+            target: target,
+            hasPassword: hasPassword,
+            expiresAt: expiresAt,
+            permittedUserIds: permittedUserIds
         )
     }
 
@@ -44,7 +43,8 @@ struct EditShareFeatureTests {
                 hasPassword: true,
                 expiresAt: expiry,
                 permittedUserIds: ["u2", "u3"]
-            )
+            ),
+            now: fixedNow
         )
         #expect(state.label == "Bills")
         #expect(state.accessMode == .readwrite)
@@ -104,7 +104,6 @@ struct EditShareFeatureTests {
         initial.$shareLinksRevision.withLock { $0 = 0 }
         initial.label = "Renamed"
         initial.accessMode = .readwrite
-        initial.isExpiryEnabled = false
         let updated = share(label: "Renamed", accessMode: .readwrite)
 
         let recorded = LockIsolated<UpdateShareRequest?>(nil)
@@ -139,7 +138,7 @@ struct EditShareFeatureTests {
     @Test
     func aPastExpiryBlocksSaving() async {
         var initial = EditShareFeature.State(serverURL: serverURL, share: share())
-        initial.isExpiryEnabled = true
+        initial.expiryPreset = .custom
         initial.expiresAt = fixedNow.addingTimeInterval(-3600)
         let store = TestStore(initialState: initial) {
             EditShareFeature()
@@ -148,7 +147,7 @@ struct EditShareFeatureTests {
         }
 
         await store.send(.saveTapped) {
-            $0.errorMessage = L10n.CreateShare.errorPastExpiration
+            $0.fieldError = .pastExpiration
         }
     }
 

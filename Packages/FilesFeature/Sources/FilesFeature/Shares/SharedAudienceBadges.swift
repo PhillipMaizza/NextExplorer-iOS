@@ -52,7 +52,8 @@ private struct SharedLinkCircle: View {
 }
 
 /// The recipients of one share as overlapping avatars, with a `+N` for the rest.
-private struct SharedPeopleStack: View {
+/// Overlapping avatars for one share's people, with a grey `+N` past the first few.
+struct SharedPeopleStack: View {
     let badge: SharedFeature.ShareBadge
     /// The surface behind the row, drawn as a ring so overlapping avatars read apart.
     var ringColor = Color.backgroundSecondary

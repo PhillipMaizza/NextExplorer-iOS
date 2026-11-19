@@ -3,8 +3,9 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// Edit and Delete for a share, presented over whatever started them so they stack on top: the
-/// detail sheet on iOS, the table on the Mac. Only one surface applies it at a time.
+/// Delete for a share, plus Edit as a sheet on the Mac, presented over whatever started them so they
+/// stack on top: the detail sheet on iOS, the table on the Mac. Only one surface applies it at a
+/// time. On iOS Edit is a page the share page pushes instead.
 struct SharedActionPresentations: ViewModifier {
     @Bindable var store: StoreOf<SharedFeature>
     @Binding var toast: DSToastMessage?
@@ -18,9 +19,11 @@ struct SharedActionPresentations: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+        #if os(macOS)
             .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
-                EditShareSheet(store: editStore)
+                MacEditShareSheet(store: editStore)
             }
+        #endif
             .dsAlert(isPresented: deleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
@@ -34,14 +37,15 @@ struct SharedActionPresentations: ViewModifier {
                     onDismiss: { store.send(.deleteCancelled) }
                 )
             }
-            .sharedActionErrorToast(store: store, toast: $toast)
+            .sharedActionToast(store: store, toast: $toast)
     }
 }
 
 extension View {
-    /// Shows a failed delete or refresh as a red toast once, then clears it so the same failure
-    /// toasts again. `isActive` keeps a covered surface from toasting under the one on top.
-    func sharedActionErrorToast(
+    /// Shows a failed delete or refresh as a red toast, or a saved edit as a green one, once, then
+    /// clears it so the same outcome toasts again. `isActive` keeps a covered surface from toasting
+    /// under the one on top.
+    func sharedActionToast(
         store: StoreOf<SharedFeature>,
         toast: Binding<DSToastMessage?>,
         isActive: Bool = true
@@ -49,7 +53,12 @@ extension View {
         onChange(of: store.actionErrorMessage) { _, message in
             guard isActive, let message else { return }
             toast.wrappedValue = .failure(message)
-            store.send(.actionErrorShown)
+            store.send(.actionToastShown)
+        }
+        .onChange(of: store.actionSuccessMessage) { _, message in
+            guard isActive, let message else { return }
+            toast.wrappedValue = .success(message)
+            store.send(.actionToastShown)
         }
     }
 }

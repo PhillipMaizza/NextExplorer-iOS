@@ -292,6 +292,17 @@ createShare.errorPastExpiration	Velg en utløpsdato i fremtiden.
 editShare.title	Rediger delingslenke
 editShare.save	Lagre endringer
 editShare.passwordKeepHint	La feltet stå tomt for å beholde gjeldende passord
+editShare.saved	Endringer lagret
+editShare.custom	Egendefinert
+editShare.neverFooter	Lenken virker til du sletter den.
+editShare.usersHint	Bare personene du velger, etter at de logger inn.
+editShare.readOnlyHint	Personer kan åpne og laste ned.
+editShare.readWriteHint	Personer kan også laste opp, gi nytt navn og slette inni.
+editShare.readWriteFileHint	Personer kan også redigere filen.
+editShare.discardTitle	Forkaste endringer?
+editShare.discardMessage	Endringene dine i denne lenken er ikke lagret.
+editShare.discard	Forkast
+editShare.keepEditing	Fortsett å redigere
 thumbnailSettings.navigationTitle	Miniatyrbilder
 thumbnailSettings.subtitle	Styr hvordan serveren lager miniatyrbilder av bilder for alle klienter.
 thumbnailSettings.enable	Lag miniatyrbilder

@@ -288,6 +288,17 @@ createShare.errorPastExpiration	भविष्य की समाप्ति 
 editShare.title	साझा लिंक संपादित करें
 editShare.save	परिवर्तन सहेजें
 editShare.passwordKeepHint	वर्तमान पासवर्ड रखने के लिए खाली छोड़ें
+editShare.saved	बदलाव सहेजे गए
+editShare.custom	कस्टम
+editShare.neverFooter	लिंक तब तक काम करता है जब तक आप इसे हटा नहीं देते।
+editShare.usersHint	केवल वे लोग जिन्हें आप चुनें, साइन इन करने के बाद।
+editShare.readOnlyHint	लोग खोल और डाउनलोड कर सकते हैं।
+editShare.readWriteHint	लोग इसके अंदर अपलोड, नाम बदल और हटा भी सकते हैं।
+editShare.readWriteFileHint	लोग फ़ाइल को संपादित भी कर सकते हैं।
+editShare.discardTitle	बदलाव छोड़ें?
+editShare.discardMessage	इस लिंक में आपके बदलाव सहेजे नहीं गए हैं।
+editShare.discard	छोड़ें
+editShare.keepEditing	संपादन जारी रखें
 thumbnailSettings.navigationTitle	थंबनेल
 thumbnailSettings.subtitle	नियंत्रित करें कि सर्वर हर क्लाइंट के लिए छवि थंबनेल कैसे बनाता है।
 thumbnailSettings.enable	थंबनेल बनाएं

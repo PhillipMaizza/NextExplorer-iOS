@@ -14,6 +14,9 @@
             /// Two shares, so its sheet opens on a list; one of them carries this label.
             static let twoShares = "Vacation Photos"
             static let twoSharesLabel = "Family trip"
+            /// The edit page's one month expiry choice, as the system duration formatter spells it.
+            static let monthPreset = "1 month"
+            static let renamedLabel = "Summer 2026"
         }
 
         func testSharedByMeListShowsItems() {
@@ -99,6 +102,58 @@
 
             XCTAssertTrue(shared.copyLinkButton.waitToVanish(), "Deleting the last share closes the sheet")
             XCTAssertTrue(shared.item(ShareFixture.byMe).waitToVanish(), "The item leaves the list")
+        }
+
+        func testEditingAShareAsksBeforeDiscardingAndSavesBackToItsPage() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal)
+            let shared = SharedScreen(app: app)
+            selectTab(TabBar(app: app).shared, until: shared.item(ShareFixture.byMe))
+
+            shared.item(ShareFixture.byMe).tap()
+            XCTAssertTrue(shared.copyLinkButton.waitToAppear(), "A one share item opens straight on its page")
+            app.swipeUp()
+            XCTAssertTrue(shared.editShareButton.waitToAppear(), "The share page offers Edit")
+            shared.editShareButton.tap()
+            XCTAssertTrue(shared.saveEditButton.waitToAppear(), "Edit pushes its page inside the sheet")
+            XCTAssertFalse(shared.saveEditButton.isEnabled, "Nothing to save before a change")
+
+            app.swipeUp()
+            let month = shared.expiryPreset(ShareFixture.monthPreset)
+            XCTAssertTrue(month.waitToAppear(), "Expiry offers presets")
+            month.tap()
+            XCTAssertTrue(shared.saveEditButton.isEnabled, "A change lights up Save")
+
+            shared.backEditButton.tap()
+            XCTAssertTrue(shared.discardTitle.waitToAppear(), "Back with changes asks first")
+            shared.keepEditingButton.tap()
+            XCTAssertTrue(shared.discardTitle.waitToVanish(), "Keep editing returns to the form")
+
+            shared.saveEditButton.tap()
+            XCTAssertTrue(shared.savedToast.waitToAppear(), "Saving confirms with a toast")
+            XCTAssertTrue(shared.saveEditButton.waitToVanish(), "Saving pops back to the share page")
+        }
+
+        func testSavingAPushedShareShowsTheNewValuesOnItsPage() {
+            let app = launchApp(auth: .loggedIn, scenario: .normal)
+            let shared = SharedScreen(app: app)
+            selectTab(TabBar(app: app).shared, until: shared.item(ShareFixture.byMe))
+
+            shared.item(ShareFixture.twoShares).tap()
+            XCTAssertTrue(shared.item(ShareFixture.twoSharesLabel).waitToAppear(), "Two shares open on their list")
+            shared.item(ShareFixture.twoSharesLabel).tap()
+            XCTAssertTrue(shared.copyLinkButton.waitToAppear(), "A row pushes its share page")
+            app.swipeUp()
+            XCTAssertTrue(shared.editShareButton.waitToAppear(), "The share page offers Edit")
+            shared.editShareButton.tap()
+            XCTAssertTrue(shared.labelField.waitToAppear(), "Edit opens on the label")
+            shared.labelField.clearAndType(ShareFixture.renamedLabel)
+            shared.saveEditButton.tap()
+
+            XCTAssertTrue(shared.saveEditButton.waitToVanish(), "Saving pops back to the share page")
+            XCTAssertTrue(
+                shared.item(ShareFixture.renamedLabel).waitToAppear(),
+                "The pushed page shows the saved label without reopening"
+            )
         }
 
         func testSharedEmptyState() {

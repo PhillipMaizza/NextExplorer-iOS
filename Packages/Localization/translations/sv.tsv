@@ -288,6 +288,17 @@ createShare.errorPastExpiration	Välj ett utgångsdatum i framtiden.
 editShare.title	Redigera delningslänk
 editShare.save	Spara ändringar
 editShare.passwordKeepHint	Lämna tomt för att behålla det nuvarande lösenordet
+editShare.saved	Ändringar sparade
+editShare.custom	Anpassad
+editShare.neverFooter	Länken fungerar tills du raderar den.
+editShare.usersHint	Endast personerna du väljer, efter inloggning.
+editShare.readOnlyHint	Personer kan öppna och ladda ner.
+editShare.readWriteHint	Personer kan även ladda upp, byta namn och radera inuti.
+editShare.readWriteFileHint	Personer kan även redigera filen.
+editShare.discardTitle	Ignorera ändringar?
+editShare.discardMessage	Dina ändringar av den här länken har inte sparats.
+editShare.discard	Ignorera
+editShare.keepEditing	Fortsätt redigera
 thumbnailSettings.navigationTitle	Miniatyrer
 thumbnailSettings.subtitle	Styr hur servern genererar bildminiatyrer för alla klienter.
 thumbnailSettings.enable	Generera miniatyrer

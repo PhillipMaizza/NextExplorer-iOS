@@ -310,6 +310,17 @@ createShare.errorPastExpiration	Wybierz przyszłą datę wygaśnięcia.
 editShare.title	Edytuj link do udostępniania
 editShare.save	Zapisz zmiany
 editShare.passwordKeepHint	Pozostaw puste, aby zachować obecne hasło
+editShare.saved	Zapisano zmiany
+editShare.custom	Własna
+editShare.neverFooter	Link działa, dopóki go nie usuniesz.
+editShare.usersHint	Tylko wybrane osoby, po zalogowaniu.
+editShare.readOnlyHint	Osoby mogą otwierać i pobierać.
+editShare.readWriteHint	Osoby mogą też przesyłać, zmieniać nazwy i usuwać w środku.
+editShare.readWriteFileHint	Osoby mogą też edytować plik.
+editShare.discardTitle	Odrzucić zmiany?
+editShare.discardMessage	Zmiany w tym linku nie zostały zapisane.
+editShare.discard	Odrzuć
+editShare.keepEditing	Edytuj dalej
 thumbnailSettings.navigationTitle	Miniatury
 thumbnailSettings.subtitle	Kontroluj sposób generowania miniatur obrazów przez serwer dla każdego klienta.
 thumbnailSettings.enable	Generuj miniatury

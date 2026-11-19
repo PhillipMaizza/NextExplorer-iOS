@@ -292,6 +292,17 @@ createShare.errorPastExpiration	Επιλέξτε ημερομηνία λήξης
 editShare.title	Επεξεργασία συνδέσμου κοινοποίησης
 editShare.save	Αποθήκευση αλλαγών
 editShare.passwordKeepHint	Αφήστε το κενό για να διατηρηθεί ο τρέχων κωδικός πρόσβασης
+editShare.saved	Οι αλλαγές αποθηκεύτηκαν
+editShare.custom	Προσαρμογή
+editShare.neverFooter	Ο σύνδεσμος λειτουργεί μέχρι να τον διαγράψετε.
+editShare.usersHint	Μόνο τα άτομα που επιλέγετε, αφού συνδεθούν.
+editShare.readOnlyHint	Τα άτομα μπορούν να ανοίγουν και να κατεβάζουν.
+editShare.readWriteHint	Τα άτομα μπορούν επίσης να ανεβάζουν, να μετονομάζουν και να διαγράφουν μέσα.
+editShare.readWriteFileHint	Τα άτομα μπορούν επίσης να επεξεργάζονται το αρχείο.
+editShare.discardTitle	Απόρριψη αλλαγών;
+editShare.discardMessage	Οι αλλαγές σας σε αυτόν τον σύνδεσμο δεν έχουν αποθηκευτεί.
+editShare.discard	Απόρριψη
+editShare.keepEditing	Συνέχεια επεξεργασίας
 thumbnailSettings.navigationTitle	Μικρογραφίες
 thumbnailSettings.subtitle	Ελέγξτε πώς ο διακομιστής δημιουργεί μικρογραφίες εικόνων για όλους τους πελάτες.
 thumbnailSettings.enable	Δημιουργία μικρογραφιών

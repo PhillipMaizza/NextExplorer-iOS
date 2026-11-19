@@ -303,6 +303,17 @@ createShare.errorPastExpiration	בחרו תאריך תפוגה בעתיד.
 editShare.title	עריכת קישור שיתוף
 editShare.save	שמירת שינויים
 editShare.passwordKeepHint	השאירו ריק כדי לשמור את הסיסמה הנוכחית
+editShare.saved	השינויים נשמרו
+editShare.custom	מותאם אישית
+editShare.neverFooter	הקישור פועל עד שתמחק אותו.
+editShare.usersHint	רק האנשים שתבחר, לאחר שיתחברו.
+editShare.readOnlyHint	אנשים יכולים לפתוח ולהוריד.
+editShare.readWriteHint	אנשים יכולים גם להעלות, לשנות שם ולמחוק בתוכו.
+editShare.readWriteFileHint	אנשים יכולים גם לערוך את הקובץ.
+editShare.discardTitle	לבטל את השינויים?
+editShare.discardMessage	העריכות שלך בקישור זה לא נשמרו.
+editShare.discard	בטל שינויים
+editShare.keepEditing	המשך לערוך
 thumbnailSettings.navigationTitle	תמונות ממוזערות
 thumbnailSettings.subtitle	שליטה באופן שבו השרת יוצר תמונות ממוזערות לכל הלקוחות.
 thumbnailSettings.enable	יצירת תמונות ממוזערות

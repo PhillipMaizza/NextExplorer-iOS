@@ -281,6 +281,17 @@ createShare.errorPastExpiration	Hãy chọn một ngày hết hạn trong tươn
 editShare.title	Sửa liên kết chia sẻ
 editShare.save	Lưu thay đổi
 editShare.passwordKeepHint	Để trống để giữ mật khẩu hiện tại
+editShare.saved	Đã lưu thay đổi
+editShare.custom	Tùy chỉnh
+editShare.neverFooter	Liên kết hoạt động cho đến khi bạn xóa.
+editShare.usersHint	Chỉ những người bạn chọn, sau khi đăng nhập.
+editShare.readOnlyHint	Mọi người có thể mở và tải xuống.
+editShare.readWriteHint	Mọi người cũng có thể tải lên, đổi tên và xóa bên trong.
+editShare.readWriteFileHint	Mọi người cũng có thể chỉnh sửa tệp.
+editShare.discardTitle	Bỏ thay đổi?
+editShare.discardMessage	Các chỉnh sửa liên kết này chưa được lưu.
+editShare.discard	Bỏ
+editShare.keepEditing	Tiếp tục sửa
 thumbnailSettings.navigationTitle	Ảnh thu nhỏ
 thumbnailSettings.subtitle	Kiểm soát cách máy chủ tạo ảnh thu nhỏ cho mọi máy khách.
 thumbnailSettings.enable	Tạo ảnh thu nhỏ

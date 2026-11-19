@@ -292,6 +292,17 @@ createShare.errorPastExpiration	Vælg en udløbsdato i fremtiden.
 editShare.title	Rediger delingslink
 editShare.save	Gem ændringer
 editShare.passwordKeepHint	Lad feltet stå tomt for at beholde den nuværende adgangskode
+editShare.saved	Ændringer gemt
+editShare.custom	Tilpasset
+editShare.neverFooter	Linket virker, indtil du sletter det.
+editShare.usersHint	Kun de personer, du vælger, efter de logger ind.
+editShare.readOnlyHint	Personer kan åbne og downloade.
+editShare.readWriteHint	Personer kan også uploade, omdøbe og slette indeni.
+editShare.readWriteFileHint	Personer kan også redigere filen.
+editShare.discardTitle	Kassér ændringer?
+editShare.discardMessage	Dine ændringer af dette link er ikke gemt.
+editShare.discard	Kassér
+editShare.keepEditing	Fortsæt redigering
 thumbnailSettings.navigationTitle	Miniaturer
 thumbnailSettings.subtitle	Styr, hvordan serveren opretter miniaturer af billeder til alle klienter.
 thumbnailSettings.enable	Opret miniaturer

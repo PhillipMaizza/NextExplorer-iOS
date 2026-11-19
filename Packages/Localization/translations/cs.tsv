@@ -314,6 +314,17 @@ createShare.errorPastExpiration	Vyberte datum vypršení v budoucnosti.
 editShare.title	Upravit odkaz ke sdílení
 editShare.save	Uložit změny
 editShare.passwordKeepHint	Nechte prázdné, aby zůstalo stávající heslo
+editShare.saved	Změny uloženy
+editShare.custom	Vlastní
+editShare.neverFooter	Odkaz funguje, dokud ho nesmažete.
+editShare.usersHint	Jen lidé, které vyberete, po přihlášení.
+editShare.readOnlyHint	Lidé mohou otevírat a stahovat.
+editShare.readWriteHint	Lidé mohou uvnitř také nahrávat, přejmenovávat a mazat.
+editShare.readWriteFileHint	Lidé mohou soubor také upravovat.
+editShare.discardTitle	Zahodit změny?
+editShare.discardMessage	Úpravy tohoto odkazu nebyly uloženy.
+editShare.discard	Zahodit
+editShare.keepEditing	Pokračovat v úpravách
 thumbnailSettings.navigationTitle	Miniatury
 thumbnailSettings.subtitle	Určete, jak server vytváří miniatury obrázků pro všechny klienty.
 thumbnailSettings.enable	Vytvářet miniatury

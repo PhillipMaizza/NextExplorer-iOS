@@ -9,16 +9,15 @@
         /// delete from the Shared tab shows in the next listing, as on the server.
         static func installShareMocks(into client: inout FilesClient) {
             let shares = LockIsolated(Share.previewSharedByMe)
-            let update = client.updateShareLink
             client.mySharedLinks = { _ in shares.value }
-            client.updateShareLink = { serverURL, shareID, request in
-                let updated = try await update(serverURL, shareID, request)
-                shares.withValue { list in
-                    if let index = list.firstIndex(where: { $0.id == shareID }) {
-                        list[index] = updated
+            client.updateShareLink = { _, shareID, request in
+                try shares.withValue { list in
+                    guard let index = list.firstIndex(where: { $0.id == shareID }) else {
+                        throw FilesClientError.server(statusCode: 404)
                     }
+                    list[index] = list[index].applying(request, at: Date())
+                    return list[index]
                 }
-                return updated
             }
             client.deleteShareLink = { _, shareID in
                 shares.withValue { $0.removeAll { $0.id == shareID } }

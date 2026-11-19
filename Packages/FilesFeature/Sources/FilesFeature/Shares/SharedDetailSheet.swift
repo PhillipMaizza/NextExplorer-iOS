@@ -5,8 +5,8 @@ import Localization
 import SwiftUI
 
 /// The sheet a Shared row opens, one per item. It holds its own navigation: an item with one
-/// share opens straight on that share's page, several open on a list that pushes each page. Edit,
-/// Delete and the toasts present from here so they stack on top of the sheet.
+/// share opens straight on that share's page, several open on a list that pushes each page, and a
+/// page pushes Edit. Delete and the toasts present from here so they stack on top of the sheet.
 struct SharedDetailSheet: View {
     @Bindable var store: StoreOf<SharedFeature>
     /// The detail as presented, kept for the slide out after the store has cleared it.
@@ -36,7 +36,7 @@ struct SharedDetailSheet: View {
                     if item.shares.count > 1 {
                         SharedShareList(store: store, item: item, onCopied: showCopied)
                     } else {
-                        page(item: item, share: item.shares[0], isPushed: false)
+                        page(item: item, share: item.shares[0])
                     }
                 }
             }
@@ -49,12 +49,17 @@ struct SharedDetailSheet: View {
                 }
             }
             .navigationDestination(for: Share.ID.self) { id in
-                if let item, let share = item.shares.first(where: { $0.id == id }) {
-                    page(item: item, share: share, isPushed: true)
-                }
+                SharedPushedPage(
+                    store: store,
+                    presented: presented,
+                    shareID: id,
+                    fallback: item,
+                    onCopied: showCopied
+                )
             }
         }
         .tint(Color.accent)
+        .interactiveDismissDisabled(store.editSheet?.isLeavingGuarded == true)
         .modifier(SharedActionPresentations(store: store, toast: $toast))
         .dsToast($toast)
         .onChange(of: item, initial: true) { _, newItem in
@@ -64,19 +69,46 @@ struct SharedDetailSheet: View {
         }
     }
 
-    private func page(item: SharedFeature.Item, share: Share, isPushed: Bool) -> some View {
+    private func page(item: SharedFeature.Item, share: Share) -> some View {
         SharedSharePage(
             store: store,
             segment: detail.segment,
             item: item,
             share: share,
-            isPushed: isPushed,
+            isPushed: false,
             onCopied: showCopied
         )
     }
 
     private func showCopied(_ text: String) {
         toast = .success(text)
+    }
+}
+
+/// A pushed share page that reads its share from the store itself. SwiftUI keeps a pushed
+/// destination as it was built, so a share handed in from the sheet's body would go stale and
+/// miss a saved edit.
+private struct SharedPushedPage: View {
+    let store: StoreOf<SharedFeature>
+    let presented: SharedFeature.Detail
+    let shareID: Share.ID
+    let fallback: SharedFeature.Item?
+    let onCopied: (String) -> Void
+
+    var body: some View {
+        let detail = store.detail ?? presented
+        if let item = store.state.item(for: detail) ?? fallback,
+           let share = item.shares.first(where: { $0.id == shareID })
+        {
+            SharedSharePage(
+                store: store,
+                segment: detail.segment,
+                item: item,
+                share: share,
+                isPushed: true,
+                onCopied: onCopied
+            )
+        }
     }
 }
 
@@ -98,6 +130,9 @@ extension Share {
         )
     }
 }
+
+/// The server every Shared preview pretends to talk to.
+let sharedPreviewServerURL = URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
 
 /// Shared state over the mock lists, loaded, with names resolved, for previews.
 @MainActor

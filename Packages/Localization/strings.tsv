@@ -334,6 +334,17 @@ createShare.errorPastExpiration	Pick an expiration date in the future.
 editShare.title	Edit Share Link
 editShare.save	Save Changes
 editShare.passwordKeepHint	Leave blank to keep the current password
+editShare.saved	Changes saved
+editShare.custom	Custom
+editShare.neverFooter	The link keeps working until you delete it.
+editShare.usersHint	Only the people you pick, after they sign in.
+editShare.readOnlyHint	People can open and download.
+editShare.readWriteHint	People can also upload, rename and delete inside it.
+editShare.readWriteFileHint	People can also edit the file.
+editShare.discardTitle	Discard changes?
+editShare.discardMessage	Your edits to this link haven't been saved.
+editShare.discard	Discard
+editShare.keepEditing	Keep editing
 
 # ---- open share link ----
 
