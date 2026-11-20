@@ -190,6 +190,8 @@ private struct ArchiveTextEntryPreviewView: View {
                     let text = String(decoding: data, as: UTF8.self)
                     return (text, shouldRenderMarkdown ? MarkdownRenderer.html(from: text) : "")
                 }.value
+                // A detached task ignores the view's cancellation: a closed preview commits nothing.
+                guard !Task.isCancelled else { return }
                 guard let loaded else {
                     loadErrorMessage = L10n.Archive.openFailed
                     return
