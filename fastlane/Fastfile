@@ -256,7 +256,7 @@ platform :ios do
 
     # Store text stays in App Store Connect, except what an update can't be submitted without:
     # What's New (the version's user facing notes) and the copyright year.
-    whats_new = release_notes(version).gsub(/^- /, "• ")
+    whats_new = release_notes(version, ref: commit).gsub(/^- /, "• ")
     UI.user_error!("No user facing notes for #{version}; nothing to put in What's New") if whats_new.empty?
 
     platforms = release_platforms(options)
@@ -289,7 +289,7 @@ platform :ios do
     push_git_tags(tag: tag)
     with_gh do
       sh("gh", "release", "create", tag, "--verify-tag", "--title", version,
-         "--notes", release_notes(version, links: true))
+         "--notes", release_notes(version, links: true, ref: commit))
     end
     UI.success("#{version} (#{build_number}) for #{platforms.join(' and ')} submitted for review and tagged #{tag}")
     bump_project_version(version)
@@ -450,7 +450,7 @@ end
 
 # What's New for the App Store and TestFlight, and the GitHub Release text. RELEASE_NOTES_FILE, a
 # hand written list of user facing changes, wins over the notes generated from main's history.
-def release_notes(version, links: false)
+def release_notes(version, links: false, ref: nil)
   file = ENV["RELEASE_NOTES_FILE"].to_s
   unless file.empty?
     notes = File.read(File.expand_path(file)).strip
@@ -461,6 +461,8 @@ def release_notes(version, links: false)
   script = File.join(repo_root, "Scripts/gen-changelog.py")
   args = ["python3", script, "--notes", version]
   args << "--links" if links
+  # The build's commit, not HEAD: a resumed submit may run from a main that moved on.
+  args += ["--ref", ref] if ref
   Fastlane::Actions.sh(*args, log: false).strip
 end
 

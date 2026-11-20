@@ -16,8 +16,11 @@ Notes speak to users. A title is split into its comma separated clauses; the tec
 (tests, CI, lint, tooling, refactors, dependency pins, docs) and the maintenance ones (fixes,
 audits, crashes, hardening, performance) are not listed one by one but folded into a single
 closing line, GENERIC_NOTE, so a version made only of such work still gets a note. A title that
-opens with a fix or an audit ("Fixes from a QA pass over X, Y") is folded whole, since the rest
-only lists what was fixed. Version numbers in titles are dropped.
+opens with a fix or an audit ("Fixes from a QA pass over X, Y") or with technical work ("UI tests
+find the toast, share sheet") is folded whole, since the rest only lists what that first clause
+covers. A PR is folded whole when it changes no app source (only tests, CI, tooling, docs or file
+moves), and so is an old merge whose branch name reads as technical or maintenance work. Version
+numbers in titles are dropped.
 """
 import argparse, pathlib, re, subprocess, sys
 
@@ -33,20 +36,25 @@ GENERIC_NOTE = "Bug fixes and improvements"
 TECHNICAL = re.compile(
     r"\b(tests?|ui ?tests?|xcuitests?|ci|lint|linting|swiftformat|swiftlint|flakes?|flaky|de-?flake|"
     r"testflight|fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
-    r"package\.resolved|pins?|dependenc(y|ies)|swiftpm|node \d+ actions|readme|contributing|license|workflows?|"
-    r"build[- ]phase|instrument\w*|warnings?|docs?|dto|dataphase|domain split|reorg|"
-    r"main[- ]thread|bool clusters?|typography rename)\b",
+    r"package\.resolved|(package|dependency|version) pins?|dependenc(y|ies)|swiftpm|node \d+ actions|readme|contributing|license|workflows?|"
+    r"build[- ]phase|instrument\w*|(compiler|concurrency|build|lint|test) warnings?|(?<!google )docs?|dto|dataphase|domain split|reorg|"
+    r"main[- ]thread|bool clusters?|typography rename|shards?|by identifier)\b",
     re.IGNORECASE,
 )
 # Maintenance users only notice as "it works better": folded into GENERIC_NOTE.
 MAINTENANCE = re.compile(
     r"\b(fix\w*|bugs?|bugfix\w*|crash\w*|regressions?|qa pass|audit\w*|harden\w*|stabili\w*|"
-    r"reliab\w*|leaks?|polish\w*|clean ?up|optimi[sz]\w*|performance|tweaks?|again)\b",
+    r"reliab\w*|leaks?|polish\w*|clean ?up|optimi[sz]\w*|performance|tweaks?|again|after an? wipe)\b",
     re.IGNORECASE,
 )
 # A first clause like this means the rest of the title only lists what was fixed.
 FIX_TITLE = re.compile(r"^(fix\w*|bugs?|bugfix\w*)\b|\b(qa pass|audit\w*)\b", re.IGNORECASE)
-MERGE_PR = re.compile(r"^Merge pull request #(\d+)")
+MERGE_PR = re.compile(r"^Merge pull request #(\d+)(?: from (\S+))?")
+# Paths that never reach users: a PR touching only these is folded whole.
+NON_APP_PATH = re.compile(
+    r"Tests/|^\.github/|^Scripts/|^fastlane/|^Screenshots/|\.md$|^LICENSE$|^Gemfile|Package\.resolved$|"
+    r"project\.pbxproj$|\.xcscheme$|\.xcworkspace/|^\.swift(lint|format)|UITestSupport|AccessibilityIdentifiers",
+)
 TRAILING_PR = re.compile(r"\s*\(#(\d+)\)\s*$")
 TICKET = re.compile(r"^NXTIOS-\d+(?:/\d+)*:\s*")
 # An app version in a title: "version 1.1.2" or "v1.0.5" anywhere, or a bare number as the last
@@ -98,6 +106,8 @@ def entry(subject, body):
     merge = MERGE_PR.match(subject)
     if merge:
         pr = merge.group(1)
+        if merge.group(2) and folds(merge.group(2).replace("-", " ")):
+            return "", pr, True
         lines = [line.strip() for line in body.splitlines() if line.strip()]
         subject = lines[0] if lines else subject
     else:
@@ -140,18 +150,38 @@ def user_facing(title):
     parts = re.split(r",|\s\+\s", title)
     clauses = [re.sub(r"^(and|plus)\s+", "", part.strip(), flags=re.IGNORECASE) for part in parts]
     clauses = [clause for clause in clauses if clause]
-    if clauses and FIX_TITLE.search(clauses[0]):
+    if clauses and (FIX_TITLE.search(clauses[0]) or TECHNICAL.search(clauses[0])):
         return "", True
     kept = [clause for clause in clauses if not folds(clause)]
     return ", ".join(kept), len(kept) < len(clauses)
 
 
-def releases(ref, upcoming=UPCOMING):
+def app_lines(ref):
+    """{commit: lines changed in app source} for main's first parent history, in one git call.
+
+    A pure rename counts 0, a binary file 1."""
+    out = git("log", "--first-parent", "-M", "--numstat", "--diff-merges=first-parent", "--format=@%H", ref)
+    counts, commit = {}, None
+    for line in out.splitlines():
+        if line.startswith("@"):
+            commit = line[1:]
+            counts[commit] = 0
+        elif line and commit:
+            added, deleted, path = line.split("\t", 2)
+            if not NON_APP_PATH.search(path):
+                counts[commit] += 1 if added == "-" else int(added) + int(deleted)
+    return counts
+
+
+def releases(ref, upcoming=UPCOMING, only=None):
     """[(version, date, [(text, [pr])])], newest first; untagged commits first under `upcoming`.
 
-    A version made only of folded PRs gets GENERIC_NOTE, carrying those PRs, so it still has a note."""
+    A version made only of folded PRs gets GENERIC_NOTE, carrying those PRs, so it still has a note.
+    With `only`, the walk stops at the release tag after that version, since the older history
+    (one git call per untagged commit) is not needed."""
     log = git("log", "--first-parent", "--format=%H%x1f%cs%x1f%s%x1f%b%x1e", ref)
     tags = release_tags()
+    changed = app_lines(ref)
     oldest = min(tags, key=lambda commit: version_key(tags[commit])) if tags else None
     cache, groups, order = {}, {}, []
     current = upcoming
@@ -159,6 +189,8 @@ def releases(ref, upcoming=UPCOMING):
     for record in filter(None, (r.strip("\n") for r in log.split("\x1e"))):
         commit, date, subject, body = record.split("\x1f", 3)
         if commit in tags:
+            if only in groups and tags[commit] != only:
+                break
             current = tags[commit]
         if commit == oldest:
             in_tagged_era = False
@@ -170,6 +202,8 @@ def releases(ref, upcoming=UPCOMING):
             groups[version] = {"date": date, "entries": [], "folded": []}
             order.append(version)
         text, pr, folded = made
+        if changed.get(commit) == 0:
+            text, folded = "", True
         group = groups[version]
         if text:
             group["entries"].append((text, [pr] if pr else []))
@@ -224,7 +258,7 @@ def main():
     # Notes for a version not tagged yet are the commits since the newest tag.
     tagged = set(release_tags().values())
     upcoming = args.notes if args.notes and args.notes not in tagged else args.upcoming
-    history = releases(args.ref, upcoming=upcoming)
+    history = releases(args.ref, upcoming=upcoming, only=args.notes)
     if args.notes:
         print(notes(history, args.notes, links=args.links))
         return
