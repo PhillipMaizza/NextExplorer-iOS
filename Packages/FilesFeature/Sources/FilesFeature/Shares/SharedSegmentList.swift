@@ -102,8 +102,8 @@ struct SharedSegmentList: View {
                 pullOffset: pullOffset,
                 onRetry: { store.send(.refreshRequested) }
             )
+            .animation(DSMotion.contentReveal, value: listPhase)
         }
-        .animation(DSMotion.contentReveal, value: listPhase)
     }
 
     /// Redacted stand ins that sit in the same grouped `List` as the real rows (and the Mac
