@@ -30,7 +30,7 @@ struct UserManagementLoadingTests: UserManagementTestSupport {
             $0.users = IdentifiedArray(uniqueElements: users)
         }
         await store.receive(\.featuresResponse) {
-            $0.hasLoadedFeatures = true
+            $0.featuresPhase = .loaded
             $0.isUserVolumesEnabled = true
         }
     }
@@ -45,7 +45,7 @@ struct UserManagementLoadingTests: UserManagementTestSupport {
 
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.usersResponse.failure) { $0.phase = .failed(L10n.Error.server(403)) }
-        await store.receive(\.featuresResponse) { $0.hasLoadedFeatures = true }
+        await store.receive(\.featuresResponse) { $0.featuresPhase = .loaded }
     }
 
     @Test
@@ -63,7 +63,7 @@ struct UserManagementLoadingTests: UserManagementTestSupport {
             $0.users = IdentifiedArray(uniqueElements: users)
         }
         await store.finish()
-        #expect(!store.state.hasLoadedFeatures)
+        #expect(store.state.featuresPhase == .idle)
         #expect(featureCalls.value == 1)
     }
 
@@ -82,7 +82,7 @@ struct UserManagementLoadingTests: UserManagementTestSupport {
             $0.phase = .loaded
             $0.users = [first]
         }
-        await store.receive(\.featuresResponse) { $0.hasLoadedFeatures = true }
+        await store.receive(\.featuresResponse) { $0.featuresPhase = .loaded }
     }
 
     @Test

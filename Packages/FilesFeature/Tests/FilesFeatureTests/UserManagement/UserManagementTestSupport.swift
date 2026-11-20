@@ -81,7 +81,7 @@ extension UserManagementTestSupport {
         var state = State(serverURL: serverURL, currentUserID: "me")
         state.users = IdentifiedArray(uniqueElements: users)
         state.phase = .loaded
-        state.hasLoadedFeatures = true
+        state.featuresPhase = .loaded
         state.isUserVolumesEnabled = isVolumesEnabled
         if let detail, let user = state.users[id: detail] {
             state.detailUserID = detail

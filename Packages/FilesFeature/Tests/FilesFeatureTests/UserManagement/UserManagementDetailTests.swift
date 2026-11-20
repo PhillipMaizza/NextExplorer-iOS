@@ -44,7 +44,7 @@ struct UserManagementDetailTests: UserManagementTestSupport {
     @Test
     func openingDetailRetriesAFailedFeatureFlagLoad() async {
         var state = loadedState([makeUser(id: "2")])
-        state.hasLoadedFeatures = false
+        state.featuresPhase = .idle
         let store = makeStore(state, features: { ServerFeatures(isUserVolumesEnabled: true) })
 
         await store.send(.userTapped("2")) {
@@ -54,7 +54,7 @@ struct UserManagementDetailTests: UserManagementTestSupport {
             $0.editEmail = "user2@example.com"
         }
         await store.receive(\.featuresResponse) {
-            $0.hasLoadedFeatures = true
+            $0.featuresPhase = .loaded
             $0.isUserVolumesEnabled = true
         }
         #expect(featureCalls.value == 1)

@@ -156,10 +156,9 @@ public struct UserManagementFeature {
         public var sortOption: SortOption = .type
         public var sortDirection: BrowseFeature.SortDirection = .ascending
         public var isUserVolumesEnabled = false
-        /// Whether `GET /api/features` has answered at least once. The flag load is best effort
-        /// and shouldn't block the user list, so a failed one is retried once when a detail
-        /// screen opens.
-        public var hasLoadedFeatures = false
+        /// `GET /api/features`, loaded once it has answered. The flag load is best effort and
+        /// shouldn't block the user list, so a failed one is retried once when a detail screen opens.
+        public var featuresPhase: DataPhase = .idle
 
         public var detailUserID: User.ID?
         public var detailTab: DetailTab = .profile
@@ -376,7 +375,7 @@ public struct UserManagementFeature {
                 return .none
 
             case let .featuresResponse(features):
-                state.hasLoadedFeatures = true
+                state.featuresPhase = .loaded
                 state.isUserVolumesEnabled = features.isUserVolumesEnabled
                 return .none
 
@@ -403,7 +402,7 @@ public struct UserManagementFeature {
                 var effects: [Effect<Action>] = []
                 // Recover from a failed initial feature flag load: retry once here so the
                 // Volumes tab can still turn up on a detail screen.
-                if !state.hasLoadedFeatures {
+                if !state.featuresPhase.hasLoaded {
                     let serverURL = state.serverURL
                     let filesClient = filesClient
                     effects.append(.run { send in
