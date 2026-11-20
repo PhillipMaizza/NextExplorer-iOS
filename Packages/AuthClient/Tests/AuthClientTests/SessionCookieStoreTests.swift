@@ -94,6 +94,31 @@ struct SessionCookieStoreTests {
         )
     }
 
+    @Test("install replaces the server's dated cookie with one that is never written to disk")
+    func installReplacesTheDatedServerCookie() throws {
+        let serverURL = makeUniqueServerURL()
+        let host = try #require(serverURL.host)
+        let dated = try #require(HTTPCookie(properties: [
+            .name: AuthClientConfiguration.CookieName.local,
+            .value: TestSession.cookieValue,
+            .domain: host,
+            .path: "/",
+            .expires: Date.distantFuture,
+        ]))
+        HTTPCookieStorage.shared.setCookie(dated)
+
+        try makeStore().install(credentials(
+            serverURL: serverURL,
+            value: TestSession.cookieValue,
+            username: TestAccount.username
+        ))
+
+        let installed = HTTPCookieStorage.shared.cookies(for: serverURL)?
+            .filter { $0.name == AuthClientConfiguration.CookieName.local } ?? []
+        #expect(installed.count == 1)
+        #expect(installed.first?.isSessionOnly == true)
+    }
+
     // MARK: - persist / activeCredentials
 
     @Test("persist happy path: round-trips through the keychain and installs the cookie")
