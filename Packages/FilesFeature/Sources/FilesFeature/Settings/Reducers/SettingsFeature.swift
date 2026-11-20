@@ -137,7 +137,7 @@ public struct SettingsFeature {
         /// Durable offline store size for this account, read from `OfflineFileStore` on appear and
         /// refreshed when a download run completes.
         public var offlineSize: Int64 = 0
-        public var removeOfflineConfirmationIsPresented = false
+        public var removeOfflinePhase: ConfirmPhase = .idle
         /// Live offline download progress, published by the session lifetime engine so this screen
         /// reflects a run started here even after the user navigated away and back.
         @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var offlineProgress = OfflineDownloadProgress()
@@ -540,15 +540,15 @@ public struct SettingsFeature {
             return .send(.delegate(.resyncOffline))
 
         case .removeOfflineTapped:
-            state.removeOfflineConfirmationIsPresented = true
+            state.removeOfflinePhase = .confirming
             return .none
 
         case .removeOfflineCancelled:
-            state.removeOfflineConfirmationIsPresented = false
+            state.removeOfflinePhase = .idle
             return .none
 
         case .removeOfflineConfirmed:
-            state.removeOfflineConfirmationIsPresented = false
+            state.removeOfflinePhase = .idle
             state.offlineSize = 0
             return .send(.delegate(.removeOfflineFiles))
 

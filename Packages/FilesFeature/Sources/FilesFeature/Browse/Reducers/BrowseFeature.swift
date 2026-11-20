@@ -205,7 +205,7 @@ public struct BrowseFeature {
         public var bulkDeleteProgress: Double?
         /// How far the running copy or move is (0 to 1); nil when none runs.
         public var transferProgress: Double?
-        public var bulkDeleteConfirmationIsPresented = false
+        public var bulkDeletePhase: ConfirmPhase = .idle
         /// Items the trash refused during the last delete, still on disk. Non empty puts up the
         /// prompt that offers to delete them for good.
         public var keptDeletes: [KeptDelete] = []

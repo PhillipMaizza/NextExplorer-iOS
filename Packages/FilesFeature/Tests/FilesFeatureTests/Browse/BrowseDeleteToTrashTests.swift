@@ -204,7 +204,7 @@ struct BrowseDeleteToTrashTests {
         var state = BrowseFixtures.state(items: [photo])
         state.selectedItemIDs = [photo.id]
         state.isSelecting = true
-        state.bulkDeleteConfirmationIsPresented = true
+        state.bulkDeletePhase = .confirming
         let asked = LockIsolated<[Bool]>([])
         let store = BrowseFixtures.store(state) {
             $0.filesClient.deleteItems = { _, _, permanent, _ in
@@ -214,7 +214,7 @@ struct BrowseDeleteToTrashTests {
         }
 
         await store.send(.bulkDeletePermanentlyConfirmed) {
-            $0.bulkDeleteConfirmationIsPresented = false
+            $0.bulkDeletePhase = .idle
             $0.isBulkActionInFlight = true
             $0.bulkDeleteProgress = 0
         }

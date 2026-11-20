@@ -109,7 +109,7 @@ struct BrowseKeyboardActionsTests {
 
         await store.send(.deleteSelectionTapped)
         await store.receive(.bulkDeleteTapped) {
-            $0.bulkDeleteConfirmationIsPresented = true
+            $0.bulkDeletePhase = .confirming
             $0.deleteImpactCheck = .checking
         }
         await store.receive(\.deleteImpactResponse.success) {

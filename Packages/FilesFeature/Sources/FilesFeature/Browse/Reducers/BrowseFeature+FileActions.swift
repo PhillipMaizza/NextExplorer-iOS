@@ -128,7 +128,7 @@ extension BrowseFeature {
     }
 
     func confirmBulkDelete(_ state: inout State, permanent: Bool = false) -> Effect<Action> {
-        state.bulkDeleteConfirmationIsPresented = false
+        state.bulkDeletePhase = .idle
         state.deleteImpactCheck = .idle
         guard !state.isBulkActionInFlight else { return .none }
         let itemsToDelete = state.selectedItems

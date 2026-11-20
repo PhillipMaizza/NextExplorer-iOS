@@ -75,7 +75,7 @@ struct FavoritesView: View {
     private var bulkRemoveConfirmationBinding: Binding<Bool> {
         // No op setter: the sheet is dismiss disabled and only closes through `DSAlertSheet`'s
         // own buttons, each driving the reducer directly.
-        Binding(get: { store.bulkRemoveConfirmationIsPresented }, set: { _ in })
+        Binding(get: { store.bulkRemovePhase.isConfirming }, set: { _ in })
     }
 
     private var bulkRemoveConfirmationTitle: String {

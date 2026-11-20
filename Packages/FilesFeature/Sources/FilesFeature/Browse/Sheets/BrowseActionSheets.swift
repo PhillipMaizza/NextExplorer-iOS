@@ -165,7 +165,7 @@ struct BrowseListSheets: ViewModifier {
     func body(content: Content) -> some View {
         content
             .dsAlert(isPresented: Binding(
-                get: { store.bulkDeleteConfirmationIsPresented && BrowseDeleteCopy.isReady(store.deleteImpactCheck) },
+                get: { store.bulkDeletePhase.isConfirming && BrowseDeleteCopy.isReady(store.deleteImpactCheck) },
                 set: { _ in }
             )) {
                 BrowseDeleteCopy.alert(

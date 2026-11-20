@@ -44,12 +44,12 @@ extension BrowseFeature {
         case .bulkDeleteTapped:
             let selected = state.selectedItems
             guard !selected.isEmpty else { return .none }
-            state.bulkDeleteConfirmationIsPresented = true
+            state.bulkDeletePhase = .confirming
             state.deleteImpactCheck = .checking
             return checkDeleteImpact(&state, items: selected)
 
         case .bulkDeleteCancelled:
-            state.bulkDeleteConfirmationIsPresented = false
+            state.bulkDeletePhase = .idle
             state.deleteImpactCheck = .idle
             return .cancel(id: CancelID.deleteImpact)
 

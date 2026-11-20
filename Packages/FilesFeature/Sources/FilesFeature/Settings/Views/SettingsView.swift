@@ -58,7 +58,7 @@ struct SettingsView: View {
     }
 
     private var isConfirmingRemoveOffline: Binding<Bool> {
-        Binding(get: { store.removeOfflineConfirmationIsPresented }, set: { _ in })
+        Binding(get: { store.removeOfflinePhase.isConfirming }, set: { _ in })
     }
 
     /// The Mac shows Change Password as a window sheet (`AccountConfirmations`), opened from the

@@ -122,10 +122,10 @@ struct FavoritesSelectionAndRemovalTests: FavoritesTestSupport {
         }
 
         await store.send(.bulkRemoveTapped) {
-            $0.bulkRemoveConfirmationIsPresented = true
+            $0.bulkRemovePhase = .confirming
         }
         await store.send(.bulkRemoveConfirmed) {
-            $0.bulkRemoveConfirmationIsPresented = false
+            $0.bulkRemovePhase = .idle
         }
         await store.receive(\.bulkRemoveResponse) {
             $0.favorites = []
