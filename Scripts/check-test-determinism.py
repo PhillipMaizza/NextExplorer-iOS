@@ -6,6 +6,8 @@ Tests must give the same result on every run, on any machine. Scans Packages/*/T
   Date()                       use MockDate.date, or Date(timeIntervalSince1970:)
   Date.now                     same
   Date(timeIntervalSince1970:) in a test   use MockDate.date plus an offset, one fixed date for every test
+  Date(timeIntervalSinceNow:)  wall clock relative: use MockDate.date plus an offset
+  Date(timeIntervalSinceReferenceDate:)   same as a literal epoch date
   UUID()                       use UUID(0), UUID(1), ... or the .incrementing dependency
   Task.sleep, Thread.sleep     inject a clock and use TestClock / ImmediateClock
   ContinuousClock(), SuspendingClock()   same
@@ -38,6 +40,8 @@ PATTERNS = {
     "Date()": r"(?<![A-Za-z0-9_.])Date\(\)",
     "Date.now": r"\bDate\.now\b",
     "Date(timeIntervalSince1970:)": r"(?<![A-Za-z0-9_.])Date\(timeIntervalSince1970:",
+    "Date(timeIntervalSinceNow:)": r"(?<![A-Za-z0-9_.])Date\(timeIntervalSinceNow:",
+    "Date(timeIntervalSinceReferenceDate:)": r"(?<![A-Za-z0-9_.])Date\(timeIntervalSinceReferenceDate:",
     "UUID()": r"(?<![A-Za-z0-9_.])UUID\(\)",
     "Task.sleep": r"\bTask\.sleep\b",
     "clock.sleep": r"(?<!Task)(?<!Thread)\.sleep\(",
@@ -67,10 +71,26 @@ MAX_LINES = 600
 TOO_LONG = f"lines over {MAX_LINES}"
 
 
+def strip_comment(line):
+    """The line up to a `//` that is outside a string, so `http://` in a literal is still code."""
+    in_string = False
+    escaped = False
+    for index, char in enumerate(line):
+        if escaped:
+            escaped = False
+        elif char == "\\":
+            escaped = True
+        elif char == '"':
+            in_string = not in_string
+        elif not in_string and line.startswith("//", index):
+            return line[:index]
+    return line
+
+
 def count_patterns(text, patterns):
     counts = {}
     for line in text.splitlines():
-        code = line.split("//", 1)[0]
+        code = strip_comment(line)
         for name, pattern in patterns.items():
             found = len(re.findall(pattern, code))
             if found:
