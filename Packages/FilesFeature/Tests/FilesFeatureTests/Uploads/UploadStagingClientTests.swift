@@ -17,18 +17,24 @@ struct UploadStagingClientTests {
     }
 
     @Test
-    func sweepStaleDeletesOldStagedFilesButKeepsRecentOnes() async throws {
-        let directory = UploadStagingLocation.directory
-        let old = directory.appendingPathComponent("\(TestID.name())-old.txt")
-        let fresh = directory.appendingPathComponent("\(TestID.name())-fresh.txt")
+    func sweepStaleDeletesOldStagedFilesButKeepsRecentOnes() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name())
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let old = directory.appendingPathComponent(TestFile.notes)
+        let fresh = directory.appendingPathComponent(TestFile.report)
         try Data("x".utf8).write(to: old)
         try Data("x".utf8).write(to: fresh)
         try FileManager.default.setAttributes(
-            [.modificationDate: Date(timeIntervalSinceNow: -48 * 60 * 60)], ofItemAtPath: old.path
+            [.modificationDate: MockDate.date.addingTimeInterval(-1)],
+            ofItemAtPath: old.path
         )
-        defer { try? FileManager.default.removeItem(at: fresh) }
+        try FileManager.default.setAttributes(
+            [.modificationDate: MockDate.date.addingTimeInterval(1)],
+            ofItemAtPath: fresh.path
+        )
 
-        await UploadStagingClient.liveValue.sweepStale()
+        UploadStagingLocation.sweepStale(in: [directory], olderThan: MockDate.date)
 
         #expect(FileManager.default.fileExists(atPath: old.path) == false)
         #expect(FileManager.default.fileExists(atPath: fresh.path) == true)

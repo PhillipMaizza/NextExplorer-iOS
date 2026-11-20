@@ -7,7 +7,7 @@ import Testing
 import TestUtils
 
 func makeUniqueServerURL() -> URL {
-    URL(string: "http://test-\(UUID().uuidString.lowercased()).invalid:3000") ?? URL(fileURLWithPath: "/")
+    URL(string: "http://\(TestID.name()).invalid:3000") ?? URL(fileURLWithPath: "/")
 }
 
 /// Fixtures shared by the AuthClient live suites. Each suite owns a unique `serverURL` so cookies
