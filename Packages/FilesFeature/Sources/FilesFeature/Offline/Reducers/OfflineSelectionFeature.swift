@@ -66,9 +66,16 @@ public struct OfflineSelectionFeature {
         }
     }
 
+    /// A folder's listing and which of its items are already offline, checked on disk off the main
+    /// thread before the listing reaches the reducer.
+    public struct Listing: Equatable, Sendable {
+        public let items: [FileItem]
+        public let alreadyOfflineIDs: Set<String>
+    }
+
     public enum Action: Equatable, Sendable {
         case onAppear
-        case itemsResponse(Result<BrowseResult, FilesClientError>)
+        case itemsResponse(Result<Listing, FilesClientError>)
         case folderTapped(FileItem)
         case backTapped
         case breadcrumbTapped(path: String)
@@ -101,23 +108,12 @@ public struct OfflineSelectionFeature {
             case .retryTapped:
                 return load(&state)
 
-            case let .itemsResponse(.success(result)):
+            case let .itemsResponse(.success(listing)):
                 state.phase = .loaded
                 state.items = IdentifiedArray(
-                    uniqueElements: BrowseFeature.sortedAlphabetically(result.items)
+                    uniqueElements: BrowseFeature.sortedAlphabetically(listing.items)
                 )
-                // Items already available offline are shown pre checked and dimmed, and are never re
-                // downloaded: a file whose bytes are pinned, or a folder covered by a pinned root
-                // (the folder itself was pinned, or an ancestor of it was).
-                let pinnedRoots = offlineFileStore.pinnedRoots()
-                state.alreadyOfflineIDs = Set(
-                    result.items.compactMap { item in
-                        if item.isDirectory {
-                            return pinnedRoots.keeps(item.id) ? item.id : nil
-                        }
-                        return offlineFileStore.localURL(item) != nil ? item.id : nil
-                    }
-                )
+                state.alreadyOfflineIDs = listing.alreadyOfflineIDs
                 return .none
 
             case let .itemsResponse(.failure(error)):
@@ -194,9 +190,26 @@ public struct OfflineSelectionFeature {
         let serverURL = state.serverURL
         let directoryPath = state.directoryPath
         let filesClient = filesClient
+        let offlineFileStore = offlineFileStore
         return .run { send in
-            try await send(.itemsResponse(apiResult { try await filesClient.browse(serverURL, directoryPath) }))
+            let response = try await apiResult { try await filesClient.browse(serverURL, directoryPath) }
+            await send(.itemsResponse(response.map { result in
+                Listing(items: result.items, alreadyOfflineIDs: Self.alreadyOffline(result.items, in: offlineFileStore))
+            }))
         }
         .cancellable(id: CancelID.load, cancelInFlight: true)
+    }
+
+    /// Items already available offline are shown pre checked and dimmed, and are never re downloaded:
+    /// a file whose bytes are pinned, or a folder covered by a pinned root (the folder itself was
+    /// pinned, or an ancestor of it was).
+    private static func alreadyOffline(_ items: [FileItem], in offlineFileStore: OfflineFileStore) -> Set<String> {
+        let pinnedRoots = offlineFileStore.pinnedRoots()
+        return Set(items.compactMap { item in
+            if item.isDirectory {
+                return pinnedRoots.keeps(item.id) ? item.id : nil
+            }
+            return offlineFileStore.localURL(item) != nil ? item.id : nil
+        })
     }
 }
