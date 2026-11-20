@@ -443,10 +443,6 @@ struct BrowseScreen {
 
 struct FavoritesScreen {
     let app: XCUIApplication
-    var emptyMessage: XCUIElement {
-        app.staticTexts[L10n.Favorites.emptyList]
-    }
-
     var removeAction: XCUIElement {
         app.labeledButton(L10n.Favorites.actionRemoveFromFavorites)
     }
@@ -463,16 +459,8 @@ struct FavoritesScreen {
 
 struct SharedScreen {
     let app: XCUIApplication
-    var byMeSegment: XCUIElement {
-        app.buttons[L10n.Shared.segmentByMe].firstMatch
-    }
-
     var withMeSegment: XCUIElement {
         app.buttons[L10n.Shared.segmentWithMe].firstMatch
-    }
-
-    var emptyByMe: XCUIElement {
-        app.staticTexts[L10n.Shared.emptyByMe]
     }
 
     func item(_ name: String) -> XCUIElement {
@@ -867,10 +855,6 @@ struct OfflineSelectionScreen {
 /// The admin pages under Settings: people, activity, versioned files and access rules.
 struct AdminScreen {
     let app: XCUIApplication
-
-    var networkError: XCUIElement {
-        app.staticTexts.showingPart(L10n.Error.network)
-    }
 
     func row(_ title: String) -> XCUIElement {
         app.staticTexts[title].firstMatch

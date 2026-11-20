@@ -4,9 +4,12 @@
     /// Critical path: the Settings tab renders and its controls respond. The mocked preferences and
     /// system settings back every row.
     final class SettingsUITests: UITestCase {
-        func testOpenLanguagePicker() {
+        /// General pushes the language picker, Admin pushes Thumbnails, and the version footer's tip
+        /// presents the tip jar.
+        func testSettingsPagesAndTheTipJarOpen() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
+            let back = app.navigationBars.buttons.firstMatch
             selectTab(TabBar(app: app).settings, until: settings.root)
 
             XCTAssertTrue(
@@ -16,34 +19,24 @@
             settings.pageRow(.general).tap()
             XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be on the General page")
             settings.languageRow.tap()
-
             XCTAssertTrue(
                 settings.languagePickerSystemDefaultSubtitle.waitToAppear(),
                 "Tapping Language should push its picker"
             )
-        }
-
-        func testOpenThumbnailSettings() {
-            let app = launchApp(auth: .loggedIn)
-            let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.root)
+            back.tap()
+            back.tap()
 
             XCTAssertTrue(scrollTo(settings.pageRow(.administration), in: app), "An admin should see the Admin row")
             settings.pageRow(.administration).tap()
             XCTAssertTrue(settings.thumbnailsRow.waitToAppear(), "The Admin page should expose the Thumbnails row")
             settings.thumbnailsRow.tap()
             XCTAssertTrue(settings.thumbnailSettingsTitle.waitToAppear(), "Thumbnails should push its settings screen")
-        }
-
-        func testTipJarSheetOpens() {
-            let app = launchApp(auth: .loggedIn)
-            let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.root)
+            back.tap()
+            back.tap()
 
             // The tip button lives in the version footer at the very bottom of the List.
             XCTAssertTrue(scrollTo(settings.tipButton, in: app), "The version footer should offer a tip button")
             settings.tipButton.tap()
-
             // The purchase itself is a StoreKit system flow; assert only that the sheet presents.
             XCTAssertTrue(settings.tipJarTitle.waitToAppear(), "Tapping the tip prompt should present the tip jar")
         }

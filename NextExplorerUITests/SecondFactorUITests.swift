@@ -24,14 +24,6 @@
             return (app, login)
         }
 
-        func testLastDigitSignsIn() {
-            let (app, login) = reachCodePage()
-            login.codeField.tap()
-            login.codeField.typeText(Fixture.validCode)
-
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "The sixth digit should sign in without a tap")
-        }
-
         /// Copies text inside the app, so the system's "Allow Paste" prompt (cross app pasteboard
         /// access) never appears: type it into the recovery field, select it, copy it.
         func testPastedCodeFillsEveryBoxAndSignsIn() {
@@ -74,7 +66,10 @@
                 "The keyboard should come back after a wrong code, so the retry needs no extra tap"
             )
             login.codeField.typeText(Fixture.validCode)
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "Retrying with the right code should sign in")
+            XCTAssertTrue(
+                TabBar(app: app).browse.waitToAppear(),
+                "Retrying with the right code should sign in on its sixth digit, without a tap"
+            )
         }
 
         func testRecoveryCodeSignsInWithVerifyButton() {

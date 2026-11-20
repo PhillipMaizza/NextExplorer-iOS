@@ -14,6 +14,12 @@ cd "$(dirname "$0")/.."
 SIM_NAME="${SIM_NAME:-iPhone 17 Pro (QA 27.2)}"
 RESULTS="$(mktemp -d)"
 
+# Local walkthroughs in NextExplorerUITests/QA are untracked screenshot tools, not checks.
+SKIP=()
+while read -r name; do
+    SKIP+=("-skip-testing:NextExplorerUITests/${name}")
+done < <(grep -hoE "^\s*(final )?class [A-Za-z]+" NextExplorerUITests/QA/*.swift 2>/dev/null | awk '{ print $NF }')
+
 run() {
     local name="$1"
     shift
@@ -22,6 +28,7 @@ run() {
         -workspace PackageTests.xcworkspace \
         -scheme NextExplorer \
         -only-testing:NextExplorerUITests \
+        ${SKIP[@]+"${SKIP[@]}"} \
         -enableCodeCoverage NO \
         -resultBundlePath "${RESULTS}/${name}.xcresult" \
         "$@" | xcbeautify
