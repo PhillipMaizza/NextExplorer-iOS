@@ -59,7 +59,7 @@ struct BrowseSearchTests {
         #expect(scopePath.value == [TestFolder.photos])
     }
 
-    @Test("A query shorter than the server minimum keeps the instant matches and never asks the server")
+    @Test("A query shorter than the minimum keeps the instant matches and never asks the server")
     func queriesShorterThanTheServerMinimumKeepTheInstantMatchesWithoutASearchRequest() async {
         let clock = TestClock()
         let calls = LockIsolated(0)
@@ -74,9 +74,9 @@ struct BrowseSearchTests {
             }
         }
 
-        // The backend answers 400 under three characters, so the instant match is all there is.
-        await store.send(.searchQueryChanged("pa")) {
-            $0.searchQuery = "pa"
+        // One character is never searched, so the instant match is all there is.
+        await store.send(.searchQueryChanged("p")) {
+            $0.searchQuery = "p"
             $0.searchResults = [SearchResultItem(
                 name: Constants.payslips,
                 path: "",
@@ -264,7 +264,7 @@ struct BrowseSearchTests {
             }
         }
 
-        // Both at least the server's three characters, so both would really be sent.
+        // Both long enough to search, so both would really be sent.
         await store.send(.searchQueryChanged(TestSearch.term)) {
             $0.searchQuery = TestSearch.term
             $0.searchResults = [SearchResultItem(
@@ -453,12 +453,12 @@ struct BrowseSearchTests {
         #expect(!store.state.canShowMoreSearchResults)
     }
 
-    @Test("A term under three characters is flagged as too short for the server, an empty one is not")
+    @Test("A one character term is flagged as too short to search, an empty one is not")
     func aTermTooShortForTheServerIsFlagged() {
         var state = BrowseFixtures.state()
         state.searchQuery = " p "
         #expect(state.isSearchTermTooShort)
-        state.searchQuery = "pay"
+        state.searchQuery = "pa"
         #expect(!state.isSearchTermTooShort)
         state.searchQuery = ""
         #expect(!state.isSearchTermTooShort)

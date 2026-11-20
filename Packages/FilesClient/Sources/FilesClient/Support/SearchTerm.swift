@@ -2,9 +2,10 @@ import CoreModels
 import Foundation
 
 /// A typed search query as `GET /api/search` reads it (`backend/src/routes/search.js`,
-/// `backend/src/utils/searchTerm.js`): trimmed, and searchable only from `MIN_TERM_LENGTH`
-/// characters as JavaScript counts them (UTF16 code units), so the app asks exactly when the server
-/// would answer and never sends a term it refuses with 400.
+/// `backend/src/utils/searchTerm.js`): trimmed, and searchable from `MIN_TERM_LENGTH` characters as
+/// JavaScript counts them (UTF16 code units). A plain two character term is sent as the shape
+/// `*term*` (see `serverQuery`), which passes that check and finds the same names, so a folder
+/// called `AI` can be found; the app never sends a term the server refuses with 400.
 ///
 /// Matching and ranking mirror the server too, so what the app finds on its own (the instant
 /// matches, a filter over a list) agrees with what the server answers. A term holding `*` or `?` is
@@ -31,12 +32,29 @@ public struct SearchTerm: Equatable, Sendable {
         text.isEmpty
     }
 
-    /// Long enough for the server to search.
+    /// Long enough for the server to search, itself or as `serverQuery`.
     public var isSearchable: Bool {
-        text.utf16.count >= FilesClient.minimumSearchTermLength
+        text.utf16.count >= Self.serverMinimumLength || isWrappable
     }
 
-    /// Typed, but too short for the server to search.
+    /// What `q` carries: the term, or a plain term too short for the server wrapped as `*term*`.
+    /// The server answers a shape by names only, so a two character search finds no contents.
+    public var serverQuery: String {
+        isWrappable ? "*\(text)*" : text
+    }
+
+    /// `MIN_TERM_LENGTH` in backend `routes/search.js`.
+    private static let serverMinimumLength = 3
+
+    /// A plain term the server would refuse that still reads the same as `*term*`; one holding `/`
+    /// would turn into a path shape.
+    private var isWrappable: Bool {
+        let count = text.utf16.count
+        return count >= FilesClient.minimumSearchTermLength && count < Self.serverMinimumLength
+            && glob == nil && !text.contains("/")
+    }
+
+    /// Typed, but too short to search.
     public var isTooShort: Bool {
         !isEmpty && !isSearchable
     }

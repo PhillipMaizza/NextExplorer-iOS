@@ -18,8 +18,8 @@ class UITestCase: XCTestCase {
         static let fileSearchTerm = UITestFixture.File.notes.stem
         /// Stable first hit the mocked search returns.
         static let searchHit = UITestFixture.File.quarterlyReport.name
-        /// The shortest query the server searches (mirrors `FilesClient.minimumSearchTermLength`).
-        static let minimumSearchLength = 3
+        /// The shortest query the app searches (mirrors `FilesClient.minimumSearchTermLength`).
+        static let minimumSearchLength = 2
         /// Image hit the mocked search returns.
         static let imageSearchHit = UITestFixture.File.beach.name
         /// Hit only a search from the root returns.

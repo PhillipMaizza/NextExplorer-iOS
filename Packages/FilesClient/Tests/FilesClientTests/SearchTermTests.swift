@@ -4,7 +4,7 @@ import Testing
 import TestUtils
 
 /// A typed query read the way `GET /api/search` reads `q`: trimmed, and long enough by
-/// JavaScript's `length` (UTF16 code units).
+/// JavaScript's `length` (UTF16 code units), a plain two unit term going out as `*term*`.
 @Suite("Search term")
 struct SearchTermTests {
     private enum Constants {
@@ -25,26 +25,31 @@ struct SearchTermTests {
         let text: String
         let isSearchable: Bool
         let isTooShort: Bool
+        let serverQuery: String
         var testDescription: String {
             "\"\(query)\""
         }
     }
 
     private static let cases = [
-        Case(query: "", text: "", isSearchable: false, isTooShort: false),
-        Case(query: " \n\t ", text: "", isSearchable: false, isTooShort: false),
-        Case(query: "ab", text: "ab", isSearchable: false, isTooShort: true),
-        Case(query: "  ab  ", text: "ab", isSearchable: false, isTooShort: true),
-        Case(query: "abc", text: "abc", isSearchable: true, isTooShort: false),
-        Case(query: " report \n", text: "report", isSearchable: true, isTooShort: false),
-        Case(query: "a b", text: "a b", isSearchable: true, isTooShort: false),
-        // Two emoji are four UTF16 units, which the server accepts.
-        Case(query: "👍👍", text: "👍👍", isSearchable: true, isTooShort: false),
-        // One emoji is two units, which it refuses.
-        Case(query: "👍", text: "👍", isSearchable: false, isTooShort: true),
-        // An accent typed as its own mark counts as its own unit, as on the server.
-        Case(query: "e\u{301}e", text: "e\u{301}e", isSearchable: true, isTooShort: false),
-        Case(query: "日本", text: "日本", isSearchable: false, isTooShort: true),
+        Case(query: "", text: "", isSearchable: false, isTooShort: false, serverQuery: ""),
+        Case(query: " \n\t ", text: "", isSearchable: false, isTooShort: false, serverQuery: ""),
+        Case(query: "a", text: "a", isSearchable: false, isTooShort: true, serverQuery: "a"),
+        // Two units go out as a shape for names, which the server accepts.
+        Case(query: "  ab  ", text: "ab", isSearchable: true, isTooShort: false, serverQuery: "*ab*"),
+        Case(query: "abc", text: "abc", isSearchable: true, isTooShort: false, serverQuery: "abc"),
+        Case(query: " report \n", text: "report", isSearchable: true, isTooShort: false, serverQuery: "report"),
+        Case(query: "a b", text: "a b", isSearchable: true, isTooShort: false, serverQuery: "a b"),
+        Case(query: "👍👍", text: "👍👍", isSearchable: true, isTooShort: false, serverQuery: "👍👍"),
+        // One emoji is two units, as is an accent typed as its own mark.
+        Case(query: "👍", text: "👍", isSearchable: true, isTooShort: false, serverQuery: "*👍*"),
+        Case(query: "e\u{301}", text: "e\u{301}", isSearchable: true, isTooShort: false, serverQuery: "*e\u{301}*"),
+        Case(query: "日本", text: "日本", isSearchable: true, isTooShort: false, serverQuery: "*日本*"),
+        // A short shape is sent as typed, so it must reach the server's own length.
+        Case(query: "*a", text: "*a", isSearchable: false, isTooShort: true, serverQuery: "*a"),
+        Case(query: "*.a", text: "*.a", isSearchable: true, isTooShort: false, serverQuery: "*.a"),
+        // Wrapped, a slash would make a path shape.
+        Case(query: "a/", text: "a/", isSearchable: false, isTooShort: true, serverQuery: "a/"),
     ]
 
     @Test("A query is trimmed and counted like the server counts it", arguments: cases)
@@ -55,6 +60,17 @@ struct SearchTermTests {
         #expect(term.isEmpty == testCase.text.isEmpty)
         #expect(term.isSearchable == testCase.isSearchable)
         #expect(term.isTooShort == testCase.isTooShort)
+        #expect(term.serverQuery == testCase.serverQuery)
+    }
+
+    @Test("A two letter term finds the names its shape finds")
+    func aTwoLetterTermMatchesLikeItsShape() {
+        let term = SearchTerm(TestSearch.twoLetterTerm)
+        let shape = SearchTerm(TestSearch.twoLetterQuery)
+
+        for name in ["AI", "ai", "Maintenance", "Docs"] {
+            #expect(term.matches(name) == shape.matches(name))
+        }
     }
 
     @Test("Queries that differ only by surrounding spaces are the same term")

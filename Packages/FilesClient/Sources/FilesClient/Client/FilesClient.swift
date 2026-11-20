@@ -385,9 +385,9 @@ public extension FilesClient {
 }
 
 public extension FilesClient {
-    /// The shortest term `GET /api/search` accepts (`MIN_TERM_LENGTH` in backend
-    /// `routes/search.js`); a shorter one answers 400, so callers never send it.
-    static let minimumSearchTermLength = 3
+    /// The shortest term the app searches. The server's own floor is 3 (`MIN_TERM_LENGTH` in
+    /// backend `routes/search.js`); a two character term goes out as `SearchTerm.serverQuery`.
+    static let minimumSearchTermLength = 2
     /// How far Show more widens a search, as the web client steps it (`LIMIT_STEPS` in
     /// `SearchResultsView.vue`); the last step is the backend's own `MAX_LIMIT`.
     static let searchLimitSteps = [100, 300, 500]

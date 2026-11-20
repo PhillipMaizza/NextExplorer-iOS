@@ -282,7 +282,7 @@
     }
 
     #Preview("Too short") {
-        SpotlightView(store: PreviewFixture.store(query: "bu", phase: .idle)).frame(width: 800, height: 400)
+        SpotlightView(store: PreviewFixture.store(query: "b", phase: .idle)).frame(width: 800, height: 400)
     }
 
     #Preview("Loading") {

@@ -242,7 +242,7 @@ public struct DestinationPickerView: View {
         serverURL: URL(string: "https://example.com")!,
         items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
     )
-    state.searchQuery = "Ph"
+    state.searchQuery = "P"
     return DestinationPickerView(
         store: Store(initialState: state) {
             DestinationPickerFeature()
