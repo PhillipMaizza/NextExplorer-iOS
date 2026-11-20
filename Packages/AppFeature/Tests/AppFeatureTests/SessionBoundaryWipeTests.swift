@@ -180,7 +180,7 @@ extension AppSuites {
             )
 
             #expect(
-                recorder.events.value == WipeRecorder.prune(
+                recorder.events.value == [.thumbnailMemoryCleared] + WipeRecorder.prune(
                     origins: [ClientCertificateOrigin(host: TestHost.secondServer, port: 8443)],
                     accounts: ["\(TestHost.secondServerURLString):8443|\(TestUser.bob)"]
                 )
@@ -284,7 +284,10 @@ extension AppSuites {
                 confirmation: confirmation
             )
 
-            #expect(recorder.events.value.isEmpty, "no store is wiped and nothing is pruned")
+            #expect(
+                recorder.events.value == [.thumbnailMemoryCleared],
+                "only the decoded thumbnails shared by every account go, nothing is pruned"
+            )
         }
     }
 }

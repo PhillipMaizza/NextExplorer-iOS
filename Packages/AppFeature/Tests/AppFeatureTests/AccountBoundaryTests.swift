@@ -341,7 +341,8 @@ extension AppSuites {
             ]
             #expect(
                 recorder.events
-                    .value == [.activeSessionCleared] + accountWipeWithoutDirectory + accountWipeWithoutDirectory,
+                    .value == [.activeSessionCleared] + accountWipeWithoutDirectory + [.thumbnailMemoryCleared]
+                    + accountWipeWithoutDirectory,
                 "wiped once on expiry and once more by the second pass"
             )
         }
@@ -392,7 +393,10 @@ extension AppSuites {
             #expect(pending.accounts().isEmpty)
             #expect(directory.bound(to: AppFixtures.accountA)
                 .read(serverURL: AppFixtures.serverA, path: Fixture.path) != nil)
-            #expect(recorder.events.value.isEmpty, "the account was signed back in, so nothing is wiped")
+            #expect(
+                recorder.events.value == [.thumbnailMemoryCleared],
+                "the account was signed back in, so only the decoded thumbnails shared by every account go"
+            )
         }
 
         @Test("Restoring a session at launch unlists a stale pending entry for it, so it is never wiped")
@@ -504,7 +508,10 @@ extension AppSuites {
             #expect(directory.bound(to: AppFixtures.accountB)
                 .read(serverURL: AppFixtures.serverB, path: Fixture.path) != nil)
             #expect(
-                recorder.events.value == WipeRecorder.prune(origins: [AppFixtures.originB], accounts: []),
+                recorder.events.value == [.thumbnailMemoryCleared] + WipeRecorder.prune(
+                    origins: [AppFixtures.originB],
+                    accounts: []
+                ),
                 "the account that was added is not wiped, and the stored list is empty here on purpose so the pending entry can only be saved by unlisting"
             )
         }
