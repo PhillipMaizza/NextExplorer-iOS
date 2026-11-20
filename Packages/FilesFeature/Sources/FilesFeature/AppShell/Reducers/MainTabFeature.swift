@@ -163,6 +163,7 @@ public struct MainTabFeature {
     @Dependency(\.connectivity) var connectivity
     @Dependency(\.deviceSaver) var deviceSaver
     @Dependency(\.shareUploads) var shareUploads
+    @Dependency(\.uuid) var uuid
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     private enum CancelID { case connectivity }
@@ -654,12 +655,13 @@ public struct MainTabFeature {
     func queueDeferredShares(_ state: State) -> Effect<Action> {
         let accountID = state.settings.uploadDefaults.accountID
         let shareUploads = shareUploads
+        let uuid = uuid
         return .run { send in
             let kept = shareUploads.pendingDeferred(accountID)
             guard !kept.isEmpty else { return }
             await send(.uploads(.enqueue(kept.map {
                 PendingUpload(
-                    id: UUID(uuidString: $0.id) ?? UUID(), fileURL: $0.fileURL, fileName: $0.fileName,
+                    id: UUID(uuidString: $0.id) ?? uuid(), fileURL: $0.fileURL, fileName: $0.fileName,
                     destination: $0.destination
                 )
             })))
