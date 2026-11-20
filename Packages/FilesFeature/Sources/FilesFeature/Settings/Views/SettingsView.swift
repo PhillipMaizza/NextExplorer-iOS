@@ -372,16 +372,7 @@ struct SettingsView: View {
 private func settingsPreview(
     configureClient: @Sendable (inout FilesClient) -> Void = { _ in }
 ) -> some View {
-    let state = SettingsFeature.State(
-        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-        user: User(
-            id: "preview-user",
-            username: "jdoe",
-            email: "jane.doe@example.com",
-            displayName: "Jane Doe",
-            roles: [UserRole.admin]
-        )
-    )
+    let state = SettingsFeature.State.preview
     var client = FilesClient.previewValue
     configureClient(&client)
     return SettingsView(
