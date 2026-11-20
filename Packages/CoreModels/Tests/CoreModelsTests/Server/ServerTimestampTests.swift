@@ -21,4 +21,12 @@ struct ServerTimestampTests {
     func anythingElseIsNil(text: String) {
         #expect(ServerTimestamp.date(from: text) == nil)
     }
+
+    @Test
+    func writesWhatItReadsBack() throws {
+        let text = "2026-11-11T07:00:00.250Z"
+        let date = try #require(ServerTimestamp.date(from: text))
+
+        #expect(ServerTimestamp.string(from: date) == text)
+    }
 }

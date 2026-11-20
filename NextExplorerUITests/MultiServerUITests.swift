@@ -5,7 +5,7 @@
     /// the add account login sheet, and adding a second server so it appears alongside the first: all
     /// against the stateful mocked auth client.
     final class MultiServerUITests: UITestCase {
-        func testSwitcherShowsActiveAccountAndAddRow() {
+        func testTheSwitcherListsTheActiveAccountAndAddsASecond() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.root)
@@ -13,15 +13,6 @@
 
             XCTAssertTrue(settings.addAccountRow.waitToAppear(), "The switcher should offer an Add Account row")
             XCTAssertTrue(settings.accountRow(host: Fixture.serverHost).exists, "The active account should be listed")
-        }
-
-        func testAddingSecondServerListsBothAccounts() {
-            let app = launchApp(auth: .loggedIn)
-            let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.root)
-            settings.openAccounts()
-
-            XCTAssertTrue(settings.addAccountRow.waitToAppear())
             settings.addAccountRow.tap()
 
             LoginScreen(app: app).signIn(host: Fixture.otherServerHost)

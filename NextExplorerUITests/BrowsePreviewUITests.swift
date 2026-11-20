@@ -1,27 +1,9 @@
 #if os(iOS)
     import XCTest
 
-    /// Critical path: browsing a directory, navigating into a folder, opening a file preview, plus
-    /// the empty and error states. Data comes from the mocked files client fixture.
+    /// Critical path: the Browse area's empty and error states. Opening files and folders is in
+    /// `BrowseWorldUITests`.
     final class BrowsePreviewUITests: UITestCase {
-        func testNavigateIntoFolderKeepsListing() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-            browse.item(Fixture.folder).tap()
-            // The fixture returns the same items at every depth, so the listing stays populated after
-            // pushing a folder: proof the navigation resolved rather than dead ended.
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "Navigating into a folder should load its contents")
-        }
-
-        func testOpenFilePreview() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-            // The first tap after launch is occasionally dropped, so retry once (see `openMenu`).
-            openMenu({ browse.item(Fixture.file).tap() }, until: browse.previewBackButton)
-        }
-
         func testEmptyStateWhenNoItems() {
             let app = launchApp(auth: .loggedIn, scenario: .empty)
             let browse = BrowseScreen(app: app)

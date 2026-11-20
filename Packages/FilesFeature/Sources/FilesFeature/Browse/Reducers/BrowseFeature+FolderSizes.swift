@@ -3,12 +3,13 @@ import CoreModels
 import FilesClient
 import FolderPickerFeature
 import Foundation
+import NetworkClient
 
 private extension FilesClientError {
     /// The folder size routes answer 404 while the server has the feature off.
     var isMissingRoute: Bool {
         switch self {
-        case let .server(statusCode), let .serverMessage(statusCode, _): statusCode == 404
+        case let .server(statusCode), let .serverMessage(statusCode, _): statusCode == HTTPStatus.notFound
         default: false
         }
     }

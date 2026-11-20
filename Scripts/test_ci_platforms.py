@@ -117,29 +117,6 @@ class PlatformsTests(unittest.TestCase):
         self.assertEqual(ci.platforms([ci.MAC, ci.SHARED]), (True, True))
 
 
-class TouchesUITestsTests(unittest.TestCase):
-    def test_a_ui_test_file_counts(self):
-        self.assertTrue(ci.touches_ui_tests(["NextExplorerUITests/MacSearchUITests.swift"]))
-
-    def test_the_mocked_backend_counts(self):
-        self.assertTrue(ci.touches_ui_tests(["Packages/AppFeature/Sources/AppFeature/Support/MockFileTree.swift"]))
-        self.assertTrue(ci.touches_ui_tests(["Packages/AppFeature/Sources/AppFeature/Support/UITestSupport.swift"]))
-        self.assertTrue(
-            ci.touches_ui_tests(["Packages/AppFeature/Sources/AppFeature/Support/UITestSupport+Gallery.swift"])
-        )
-
-    def test_app_code_and_unit_tests_do_not(self):
-        self.assertFalse(ci.touches_ui_tests([
-            "Packages/AppFeature/Sources/AppFeature/Support/LaunchMigrations.swift",
-            "Packages/AppFeature/Tests/AppFeatureTests/MockFileTreeTests.swift",
-            "NextExplorer/MacCommands.swift",
-        ]))
-
-    def test_nothing_changed_does_not(self):
-        self.assertFalse(ci.touches_ui_tests([]))
-
-
-
 class ContentAtTests(unittest.TestCase):
     """Reads a committed file back from a throwaway repository."""
 

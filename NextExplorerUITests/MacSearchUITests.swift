@@ -9,47 +9,35 @@
             app.textFields[AccessibilityIdentifiers.Search.spotlightField]
         }
 
-        func testToolbarSearchIconOpensThePanel() {
-            let app = launchApp()
-            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
-
-            app.buttons[AccessibilityIdentifiers.Search.field].firstMatch.click()
-
-            XCTAssertTrue(panelField(in: app).waitToAppear(), "The search icon should open the search panel")
-            XCTAssertFalse(app.textFields[AccessibilityIdentifiers.Search.field].exists, "No inline search field")
-        }
-
-        /// A pushed folder keeps the search icon in its toolbar, and it opens the panel.
-        func testSearchIconStaysInsideAFolder() {
+        /// The toolbar's search icon opens the panel, in a pushed folder and at the root, where there
+        /// is no inline field.
+        func testTheSearchIconOpensThePanelInAFolderAndAtTheRoot() {
             let app = launchApp()
             openDocuments(in: app)
             XCTAssertTrue(backButton(in: app).waitToAppear())
-
             let icon = app.buttons[AccessibilityIdentifiers.Search.field].firstMatch
             XCTAssertTrue(icon.waitToAppear(), "A folder's toolbar should show the search icon")
             icon.click()
             XCTAssertTrue(panelField(in: app).waitToAppear())
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+            XCTAssertTrue(panelField(in: app).waitToVanish())
+
+            backButton(in: app).click()
+            XCTAssertTrue(backButton(in: app).waitToVanish())
+            icon.click()
+            XCTAssertTrue(panelField(in: app).waitToAppear(), "The search icon should open the search panel")
+            XCTAssertFalse(app.textFields[AccessibilityIdentifiers.Search.field].exists, "No inline search field")
         }
 
-        func testFindOpensThePanelAndTypingSearches() {
-            let app = launchApp()
-            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
-            focusWindow(app)
-
-            app.typeKey(Constants.findKey, modifierFlags: .command)
-            XCTAssertTrue(panelField(in: app).isFocused(within: UITestTimeout.standard), "⌘F should open the panel")
-            app.typeText(Fixture.searchQuery)
-            XCTAssertTrue(searchHit(in: app).waitToAppear(), "Typing should show the search results")
-        }
-
-        /// Typing in the panel, letting the search run between keys, keeps every keystroke in the field.
-        func testTypingInThePanelKeepsTheFieldFocused() {
+        /// ⌘F focuses the panel; typing, letting the search run between keys, keeps every keystroke,
+        /// and a folder found opens and loads like one opened from the table.
+        func testFindTypesIntoThePanelAndOpensAFolderFound() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             focusWindow(app)
             app.typeKey(Constants.findKey, modifierFlags: .command)
             let field = panelField(in: app)
-            XCTAssertTrue(field.waitToAppear())
+            XCTAssertTrue(field.isFocused(within: UITestTimeout.standard), "⌘F should open the panel")
 
             for (typed, character) in Fixture.folderAlt.enumerated() {
                 app.typeText(String(character))
@@ -59,30 +47,21 @@
             }
             XCTAssertTrue(field.isFocused(within: UITestTimeout.short), "The field should keep focus while typing")
             XCTAssertEqual(field.value as? String, Fixture.folderAlt, "Every keystroke should land in the field")
-        }
-
-        /// A folder found by search opens and loads like one opened from the table, and the panel goes.
-        func testOpeningAFolderFromSearchLoadsIt() {
-            let app = launchApp()
-            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
-            focusWindow(app)
-            app.typeKey(Constants.findKey, modifierFlags: .command)
-            app.typeText(Fixture.folderAlt)
 
             let hit = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", Fixture.folderAlt)).firstMatch
             XCTAssertTrue(hit.waitToAppear(), "The folder should be among the results")
             hit.click()
-
-            XCTAssertTrue(panelField(in: app).waitToVanish(), "Choosing a result should close the panel")
+            XCTAssertTrue(field.waitToVanish(), "Choosing a result should close the panel")
             XCTAssertTrue(backButton(in: app).waitToAppear(), "Opening the result should push the folder")
             XCTAssertTrue(
-                text(Fixture.file, in: app).waitToAppear(),
-                "The opened folder should load its files, not stay on the skeleton"
+                text(UITestFixture.Folder.cameraRoll.name, in: app).waitToAppear(),
+                "The opened folder should load what it holds, not stay on the skeleton"
             )
         }
 
-        /// A file found by search opens the folder that holds it, loaded, from another folder.
-        func testOpeningAFileFromSearchShowsItsFolder() {
+        /// A file found by search from another folder opens the folder that holds it, loaded, and ⌘R
+        /// there refreshes and confirms it.
+        func testAFileFoundOpensItsFolderAndRefreshConfirmsTheSync() {
             let app = launchApp()
             openDocuments(in: app)
             app.typeKey(Constants.findKey, modifierFlags: .command)
@@ -93,19 +72,12 @@
             let hit = app.buttons.matching(NSPredicate(format: "label ENDSWITH %@", "\(Fixture.file), /")).firstMatch
             XCTAssertTrue(hit.waitToAppear(), "The file should be among the results")
             hit.click()
-
             XCTAssertTrue(panelField(in: app).waitToVanish(), "Choosing a result should close the panel")
             XCTAssertTrue(backButton(in: app).waitToVanish(), "Its folder (the root) should open")
             XCTAssertTrue(
                 text(Fixture.folder, in: app).waitToAppear(),
                 "The folder's listing should show, not a skeleton"
             )
-        }
-
-        func testRefreshShortcutConfirmsTheSync() {
-            let app = launchApp()
-            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
-            focusWindow(app)
 
             app.typeKey(Constants.refreshKey, modifierFlags: .command)
             XCTAssertTrue(text(L10n.Common.syncCompleted, in: app).waitToAppear(), "⌘R should refresh and confirm it")

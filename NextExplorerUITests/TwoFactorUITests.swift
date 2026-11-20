@@ -25,33 +25,15 @@
             return (app, screen)
         }
 
-        private func turnOn(_ screen: TwoFactorScreen) {
+        /// A wrong code is refused and cleared, the right one shows the recovery codes and lands on
+        /// On; new codes need the password; turning off refuses a wrong password and takes the right one.
+        func testTwoFactorTurnsOnRenewsItsCodesAndTurnsOff() {
+            let (_, screen) = openTwoFactor()
             screen.turnOnButton.tap()
             XCTAssertTrue(screen.setupKey.waitToAppear(), "Turning on should show the setup key")
             XCTAssertTrue(screen.codeField.waitToAppear(), "Turning on should show the code boxes")
             screen.codeField.tap()
-            screen.codeField.typeText(UITestCase.Fixture.validCode)
-            XCTAssertTrue(
-                screen.recoveryTitle.waitToAppear(),
-                "The sixth digit should confirm and show the recovery codes"
-            )
-        }
-
-        func testTurningOnShowsTheRecoveryCodesThenLandsOnOn() {
-            let (_, screen) = openTwoFactor()
-            turnOn(screen)
-
-            screen.recoveryDoneButton.tap()
-            XCTAssertTrue(screen.onTitle.waitToAppear(), "Done should land on the on screen")
-        }
-
-        func testAWrongCodeShowsTheMessageAndClearsTheBoxes() {
-            let (_, screen) = openTwoFactor()
-            screen.turnOnButton.tap()
-            XCTAssertTrue(screen.codeField.waitToAppear())
-            screen.codeField.tap()
             screen.codeField.typeText(UITestCase.Fixture.wrongCode)
-
             XCTAssertTrue(screen.wrongCodeMessage.waitToAppear(), "A wrong code should show the server's message")
             XCTAssertFalse(screen.recoveryTitle.appears(), "A wrong code must not turn it on")
             XCTAssertEqual(
@@ -59,11 +41,22 @@
                 "",
                 "A wrong code should be cleared so it can be typed again"
             )
-        }
 
-        func testTurningOffAsksForThePasswordAndAWrongOneKeepsItOn() {
-            let (_, screen) = openTwoFactor()
-            turnOn(screen)
+            screen.codeField.tap()
+            screen.codeField.typeText(UITestCase.Fixture.validCode)
+            XCTAssertTrue(
+                screen.recoveryTitle.waitToAppear(),
+                "The sixth digit should confirm and show the recovery codes"
+            )
+            screen.recoveryDoneButton.tap()
+            XCTAssertTrue(screen.onTitle.waitToAppear(), "Done should land on the on screen")
+
+            screen.newCodesButton.tap()
+            XCTAssertTrue(screen.passwordField.waitToAppear())
+            screen.passwordField.tap()
+            screen.passwordField.typeText(UITestCase.Fixture.accountPassword)
+            screen.passwordConfirmButton.tap()
+            XCTAssertTrue(screen.recoveryTitle.waitToAppear(), "The right password should show the new recovery codes")
             screen.recoveryDoneButton.tap()
             XCTAssertTrue(screen.onTitle.waitToAppear())
 
@@ -77,24 +70,9 @@
                 "A wrong password should show the server's message"
             )
             XCTAssertTrue(screen.onTitle.exists, "A wrong password must leave it on")
-
             screen.passwordField.clearAndType(UITestCase.Fixture.accountPassword)
             screen.passwordConfirmButton.tap()
             XCTAssertTrue(screen.offTitle.waitToAppear(), "The right password should turn it off")
-        }
-
-        func testNewRecoveryCodesAreShownAfterThePassword() {
-            let (_, screen) = openTwoFactor()
-            turnOn(screen)
-            screen.recoveryDoneButton.tap()
-            XCTAssertTrue(screen.onTitle.waitToAppear())
-
-            screen.newCodesButton.tap()
-            XCTAssertTrue(screen.passwordField.waitToAppear())
-            screen.passwordField.tap()
-            screen.passwordField.typeText(UITestCase.Fixture.accountPassword)
-            screen.passwordConfirmButton.tap()
-            XCTAssertTrue(screen.recoveryTitle.waitToAppear(), "The right password should show the new recovery codes")
         }
     }
 #endif

@@ -4,12 +4,6 @@ import NetworkClient
 
 extension FilesService {
     private enum TusConstants {
-        static let created = 201
-        static let noContent = 204
-        static let conflict = 409
-        static let gone = 410
-        static let notFound = 404
-        static let locked = 423
         static let maxRetries = 3
         static let maxRestarts = 1
         static let copyBlockBytes = 1_048_576
@@ -48,7 +42,7 @@ extension FilesService {
             } catch TusFailure.gone {
                 restarts += 1
                 guard restarts <= TusConstants.maxRestarts else {
-                    throw FilesClientError.server(statusCode: TusConstants.notFound)
+                    throw FilesClientError.server(statusCode: HTTPStatus.notFound.rawValue)
                 }
             }
         }
@@ -104,7 +98,7 @@ extension FilesService {
             serverURL: serverURL, length: size, fileName: fileName, destination: destination
         )
         let (data, response) = try await performSend(request)
-        guard response.statusCode == TusConstants.created else { throw Self.tusFailure(data, response) }
+        guard response.statusCode == HTTPStatus.created else { throw Self.tusFailure(data, response) }
         let location = response.value(forHTTPHeaderField: TusUpload.Header.location)
         guard let url = TusUpload.uploadURL(serverURL: serverURL, location: location) else {
             throw FilesClientError.decoding(TusUpload.Header.location)
@@ -151,20 +145,22 @@ extension FilesService {
         }
 
         switch response.statusCode {
-        case TusConstants.noContent, 200:
+        case HTTPStatus.noContent, HTTPStatus.ok:
             guard let next = TusUpload.offset(of: response), next > offset else {
                 throw FilesClientError.decoding(TusUpload.Header.uploadOffset)
             }
             return next
-        case TusConstants.notFound, TusConstants.gone:
+        case HTTPStatus.notFound, HTTPStatus.gone:
             throw TusFailure.gone
-        case TusConstants.conflict:
+        case HTTPStatus.conflict:
             throw TusFailure.retryable(Self.tusFailure(data, response))
         default:
             let failure = Self.tusFailure(data, response)
             // A finalize refusal says a retry cannot help; any other 5xx may be a proxy hiccup.
             let isFinalizeRefusal = TusUpload.finalizeError(of: response) != nil
-            if response.statusCode >= 500, response.statusCode != 507, !isFinalizeRefusal {
+            if HTTPStatus.serverError ~= response.statusCode,
+               response.statusCode != HTTPStatus.insufficientStorage, !isFinalizeRefusal
+            {
                 throw TusFailure.retryable(failure)
             }
             throw failure
@@ -174,12 +170,12 @@ extension FilesService {
     private func tusOffset(uploadURL: URL) async throws -> Int {
         let (data, response) = try await performSend(TusUpload.headRequest(uploadURL: uploadURL))
         switch response.statusCode {
-        case 200:
+        case HTTPStatus.ok:
             guard let offset = TusUpload.offset(of: response) else {
                 throw FilesClientError.decoding(TusUpload.Header.uploadOffset)
             }
             return offset
-        case TusConstants.notFound, TusConstants.gone:
+        case HTTPStatus.notFound, HTTPStatus.gone:
             throw TusFailure.gone
         default:
             throw Self.tusFailure(data, response)

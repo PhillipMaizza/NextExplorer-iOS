@@ -4,43 +4,34 @@
     /// Critical path: multi select mode and the copy/paste clipboard, driven against the mocked
     /// transfer endpoint.
     final class MultiSelectClipboardUITests: UITestCase {
-        func testEnterSelectModeAndSelectAll() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-
-            openMenu({ browse.moreMenu.tap() }, until: browse.selectMenuItem)
-            browse.selectMenuItem.tap()
-
-            XCTAssertTrue(browse.selectAllButton.waitToAppear(), "Select mode should expose Select All")
-            browse.selectAllButton.tap()
-
-            XCTAssertTrue(browse.cancelButton.waitToAppear(), "Select mode should expose Cancel")
-            browse.cancelButton.tap()
-            XCTAssertTrue(browse.selectAllButton.waitToVanish(), "Cancel should leave select mode")
-        }
-
-        func testCopyThenPasteIntoFolder() {
+        /// A copied file pastes into a folder, asking first about the name it already holds; back at
+        /// the root, select mode selects all and cancels out, and two picked rows offer Available
+        /// Offline and delete in bulk.
+        func testCopyPasteThenSelectModeDeletesInBulk() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
             XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
 
             openMenu({ browse.row(Fixture.file).longPress() }, until: browse.copyAction)
             browse.copyAction.tap()
-
             // Paste is only offered inside a folder, so push into one.
-            browse.item(Fixture.folder).tap()
-            XCTAssertTrue(browse.moreMenu.waitToAppear())
+            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.folderNavigationBar(Fixture.folder))
             openMenu({ browse.moreMenu.tap() }, until: browse.pasteMenuItem)
-
             browse.pasteMenuItem.tap()
-            XCTAssertTrue(browse.pasteMenuItem.waitToVanish(), "Pasting should dismiss the menu")
-        }
-
-        func testSelectMultipleThenBulkDelete() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
+            // The mocked folder already holds notes.txt, so the collision prompt comes first.
+            XCTAssertTrue(browse.keepBothButton.waitToAppear(), "Pasting onto a name in use should ask first")
+            browse.keepBothButton.tap()
+            XCTAssertTrue(browse.keepBothButton.waitToVanish())
+            app.navigationBars.buttons.firstMatch.tap()
             XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+
+            openMenu({ browse.moreMenu.tap() }, until: browse.selectMenuItem)
+            browse.selectMenuItem.tap()
+            XCTAssertTrue(browse.selectAllButton.waitToAppear(), "Select mode should expose Select All")
+            browse.selectAllButton.tap()
+            XCTAssertTrue(browse.cancelButton.waitToAppear(), "Select mode should expose Cancel")
+            browse.cancelButton.tap()
+            XCTAssertTrue(browse.selectAllButton.waitToVanish(), "Cancel should leave select mode")
 
             openMenu({ browse.moreMenu.tap() }, until: browse.selectMenuItem)
             browse.selectMenuItem.tap()
@@ -52,6 +43,10 @@
             browse.row(Fixture.imageFile).tap()
 
             openMenu({ browse.selectionActionsMenu.tap() }, until: browse.bulkDeleteButton)
+            XCTAssertTrue(
+                browse.offlineSelectionButton.isEnabled(within: UITestTimeout.standard),
+                "A selection enables Available Offline"
+            )
             browse.bulkDeleteButton.tap()
 
             XCTAssertTrue(browse.deleteConfirmButton.waitToAppear(), "Bulk delete should confirm first")

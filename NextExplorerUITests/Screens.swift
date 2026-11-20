@@ -38,6 +38,12 @@ extension XCUIElementQuery {
     func containing(_ text: String) -> XCUIElement {
         matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
     }
+
+    /// The first element whose label or value contains `text`: a row that joins several facts, on
+    /// an iPhone (label) or in a Mac table cell (value).
+    func showingPart(_ text: String) -> XCUIElement {
+        matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", text, text)).firstMatch
+    }
 }
 
 struct TabBar {
@@ -437,27 +443,24 @@ struct BrowseScreen {
 
 struct FavoritesScreen {
     let app: XCUIApplication
-    var emptyMessage: XCUIElement {
-        app.staticTexts[L10n.Favorites.emptyList]
+    var removeAction: XCUIElement {
+        app.labeledButton(L10n.Favorites.actionRemoveFromFavorites)
     }
 
     func item(_ name: String) -> XCUIElement {
         app.staticTexts[name]
     }
+
+    /// The long pressable row, whose label bundles the name with its details.
+    func row(_ name: String) -> XCUIElement {
+        app.buttons.containing(name)
+    }
 }
 
 struct SharedScreen {
     let app: XCUIApplication
-    var byMeSegment: XCUIElement {
-        app.buttons[L10n.Shared.segmentByMe].firstMatch
-    }
-
     var withMeSegment: XCUIElement {
         app.buttons[L10n.Shared.segmentWithMe].firstMatch
-    }
-
-    var emptyByMe: XCUIElement {
-        app.staticTexts[L10n.Shared.emptyByMe]
     }
 
     func item(_ name: String) -> XCUIElement {
@@ -732,8 +735,8 @@ struct SettingsScreen {
 
     /// A root row that opens one section page: "general", "display", "storage", "offline" or
     /// "administration".
-    func pageRow(_ name: String) -> XCUIElement {
-        app.descendants(matching: .any)[AccessibilityIdentifiers.Settings.page(name)].firstMatch
+    func pageRow(_ page: AccessibilityIdentifiers.Settings.Page) -> XCUIElement {
+        app.descendants(matching: .any)[AccessibilityIdentifiers.Settings.page(page)].firstMatch
     }
 
     var languageRow: XCUIElement {
@@ -746,7 +749,7 @@ struct SettingsScreen {
 
     /// Settings is on screen: its General row, on every layout.
     var root: XCUIElement {
-        pageRow("general")
+        pageRow(.general)
     }
 
     /// iPad keeps the accounts in the sidebar's account popover; iPhone lists them in Settings.
@@ -846,5 +849,14 @@ struct OfflineSelectionScreen {
 
     var closeButton: XCUIElement {
         app.buttons[L10n.Common.close].firstMatch
+    }
+}
+
+/// The admin pages under Settings: people, activity, versioned files and access rules.
+struct AdminScreen {
+    let app: XCUIApplication
+
+    func row(_ title: String) -> XCUIElement {
+        app.staticTexts[title].firstMatch
     }
 }

@@ -89,7 +89,7 @@ final class ClientCertificateAssetLoader: NSObject, @unchecked Sendable {
     /// unknown, and a partial body's own length is never the file size), else the body length of
     /// a plain 200.
     static func totalLength(of response: HTTPURLResponse) -> Int64? {
-        if response.statusCode == 206 {
+        if response.statusCode == HTTPStatus.partialContent {
             let range = response.value(forHTTPHeaderField: "Content-Range")
             return range?.split(separator: "/").last.flatMap { Int64($0) }
         }
@@ -163,7 +163,7 @@ extension ClientCertificateAssetLoader: URLSessionDataDelegate {
             completionHandler(.cancel)
             return
         }
-        guard let http = response as? HTTPURLResponse, 200 ..< 300 ~= http.statusCode else {
+        guard let http = response as? HTTPURLResponse, HTTPStatus.success ~= http.statusCode else {
             pending[dataTask.taskIdentifier] = nil
             entry.loadingRequest.finishLoading(with: URLError(.badServerResponse))
             completionHandler(.cancel)
@@ -174,9 +174,9 @@ extension ClientCertificateAssetLoader: URLSessionDataDelegate {
             if let total = Self.totalLength(of: http) {
                 info.contentLength = total
             }
-            info.isByteRangeAccessSupported = http.statusCode == 206
+            info.isByteRangeAccessSupported = http.statusCode == HTTPStatus.partialContent
         }
-        if http.statusCode == 200 {
+        if http.statusCode == HTTPStatus.ok {
             entry.bytesToSkip = entry.requestedOffset
             pending[dataTask.taskIdentifier] = entry
         }

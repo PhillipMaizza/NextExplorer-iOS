@@ -45,7 +45,12 @@ extension NetworkClient {
     private static func cannedResponse(for request: URLRequest) throws -> (Data, HTTPURLResponse) {
         guard
             let url = request.url ?? URL(string: Constants.fallbackURLString),
-            let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+            let response = HTTPURLResponse(
+                url: url,
+                statusCode: HTTPStatus.ok.rawValue,
+                httpVersion: nil,
+                headerFields: nil
+            )
         else {
             throw NetworkError.invalidResponse
         }

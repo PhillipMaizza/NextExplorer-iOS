@@ -6,6 +6,7 @@
     import FilesClient
     import FilesFeature
     import Foundation
+    import NetworkClient
     import SwiftUI
     #if os(iOS)
         import UIKit
@@ -39,23 +40,23 @@
     ///                                 media viewers) allow landscape, so elsewhere it is a no op.
     public enum UITestSupport {
         public static let mockFlag = UITestEnvironment.mockKey
-        public static let authKey = "UITEST_AUTH"
-        public static let scenarioKey = "UITEST_SCENARIO"
+        public static let authKey = UITestLaunchKey.auth.rawValue
+        public static let scenarioKey = UITestLaunchKey.scenario.rawValue
         public static let disableAnimationsFlag = UITestEnvironment.disableAnimationsKey
-        public static let animationSpeedKey = "UITEST_ANIM_SPEED"
-        public static let orientationKey = "UITEST_ORIENTATION"
-        /// `1` seeds one file saved by an earlier version into the Offline tab's "Saved earlier" list.
-        public static let legacyDownloadsKey = "UITEST_LEGACY_DOWNLOADS"
-        public static let searchOfflineKey = "UITEST_SEARCH_OFFLINE"
-        public static let offlineLaunchKey = "UITEST_OFFLINE_LAUNCH"
-        /// The file the offline launch finds pinned. Mirrored by `Fixture.file`.
-        static let pinnedFileName = "notes.txt"
+        public static let animationSpeedKey = UITestLaunchKey.animationSpeed.rawValue
+        public static let orientationKey = UITestLaunchKey.orientation.rawValue
+        public static let legacyDownloadsKey = UITestLaunchKey.legacyDownloads.rawValue
+        public static let searchOfflineKey = UITestLaunchKey.searchOffline.rawValue
+        public static let offlineLaunchKey = UITestLaunchKey.offlineLaunch.rawValue
+        /// The file the offline launch finds pinned.
+        static let pinnedFileName = UITestFixture.File.notes.name
         public static let legacyDownloadName = "legacy-report.pdf"
 
         /// Whether this launch runs under XCUITest with animations off.
         public static let disablesAnimations: Bool = {
             let environment = ProcessInfo.processInfo.environment
-            return environment[mockFlag] == "1" && environment[disableAnimationsFlag] == "1"
+            return environment[mockFlag] == UITestLaunchKey.on && environment[disableAnimationsFlag] == UITestLaunchKey
+                .on
         }()
 
         /// Drops a transaction's animation when the launch asks for no animations. Nonisolated: SwiftUI
@@ -127,7 +128,7 @@
         public static func applyAnimationSpeedIfNeeded(
             from environment: [String: String] = ProcessInfo.processInfo.environment
         ) {
-            guard environment[mockFlag] == "1",
+            guard environment[mockFlag] == UITestLaunchKey.on,
                   let raw = environment[animationSpeedKey],
                   let speed = Float(raw), speed > 0 else { return }
             // Called from the app's `onAppear` (via `DispatchQueue.main.async`) and the UI test
@@ -156,7 +157,8 @@
             from environment: [String: String] = ProcessInfo.processInfo.environment
         ) {
             #if os(iOS)
-                guard environment[mockFlag] == "1", environment[orientationKey] == "landscape" else { return }
+                guard environment[mockFlag] == UITestLaunchKey.on,
+                      environment[orientationKey] == UITestLaunchKey.landscape else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + orientationDelay) {
                     MainActor.assumeIsolated {
                         ActiveWindowScene.current?
@@ -166,36 +168,24 @@
             #endif
         }
 
-        public static let serverURL = URL(string: "https://nextexplorer.example.com")!
-        /// First hit the mocked search returns for any non empty query. Kept stable so a UI test
-        /// asserts a fixed name. Mirrored by `Fixture.searchHit` in the test target.
-        static let searchHitName = "Quarterly Report.txt"
-        /// An image hit the mocked search returns alongside the document hits, so a filter chip test
-        /// can assert selecting Images hides the documents. Mirrored by `Fixture.imageSearchHit`.
-        static let imageSearchHitName = "Beach.jpg"
-        /// A hit only a search from the root returns, so a UI test can tell a search widened to
-        /// everywhere from one inside a folder. Mirrored by `Fixture.widerSearchHit`.
-        static let widerSearchHitName = "Archive Notes.txt"
-        /// A folder name the mocked `createFolder` rejects, so a UI test can drive the failure path
-        /// (the new folder sheet stays open on error). Mirrored by `Fixture.failingFolderName`.
-        static let failingFolderName = "__uitest_fail__"
+        public static let serverURL = URL(string: "https://\(UITestFixture.Host.primary.rawValue)")!
         /// What `slowOperations` reports before it waits, and how long it waits (a cancel ends it sooner).
         static let heldProgress = 0.4
         static let heldSeconds = 600
         /// Signing in as this name answers "the password is right, now send a code", so a UI test
-        /// can drive the second factor page. Mirrored by `Fixture.secondFactorIdentifier`.
-        static let secondFactorIdentifier = "phillip.2fa"
+        /// can drive the second factor page.
+        static let secondFactorIdentifier = UITestFixture.Credential.secondFactorUser.rawValue
         /// Signing in as this name is refused as wrong credentials, so a UI test can drive the
-        /// failure path. Mirrored by `Fixture.rejectedIdentifier`.
-        static let rejectedIdentifier = "phillip.rejected"
-        /// The authenticator code the mocked `loginTOTP` accepts. Mirrored by `Fixture.validCode`.
-        static let validCode = "123456"
-        /// The recovery code the mocked `loginTOTP` accepts. Mirrored by `Fixture.validRecoveryCode`.
-        static let validRecoveryCode = "AAAAA-BBBBB"
+        /// failure path.
+        static let rejectedIdentifier = UITestFixture.Credential.rejectedUser.rawValue
+        /// The authenticator code the mocked `loginTOTP` accepts.
+        static let validCode = UITestFixture.Credential.validCode.rawValue
+        /// The recovery code the mocked `loginTOTP` accepts.
+        static let validRecoveryCode = UITestFixture.Credential.recoveryCode.rawValue
         public static let user = User(
-            id: "uitest-user",
-            username: "phillip",
-            email: "phillip@example.com",
+            id: UITestFixture.SignedInAccount.id.rawValue,
+            username: UITestFixture.SignedInAccount.username.rawValue,
+            email: UITestFixture.SignedInAccount.email.rawValue,
             roles: ["admin"]
         )
 
@@ -229,7 +219,7 @@
                 authMode: .local,
                 cookieName: "connect.sid",
                 cookieValue: "uitest-cookie",
-                cookieDomain: serverURL.host ?? "nextexplorer.example.com",
+                cookieDomain: serverURL.host ?? UITestFixture.Host.primary.rawValue,
                 cookiePath: "/",
                 cookieIsSecure: true,
                 expiresAt: nil,
@@ -295,23 +285,25 @@
             case .normal, .gallery, .slowOperations:
                 installAccountMocks(into: &client)
                 installShareMocks(into: &client)
+                installFavoriteMocks(into: &client, now: Date())
+                installAdminMocks(into: &client, now: Date())
                 // An in memory file tree so writes (create, rename, delete, move, copy, compress) land
                 // in the folder they name and show in the next listing, as on the server.
                 // The root and its folders hold the fixture (the gallery only its root, whose one folder
                 // is where a move lands); deeper folders start empty.
                 let store = scenario == .gallery
-                    ? MockFileTree(template: galleryItems, seededDepth: 0)
-                    : MockFileTree(template: rootItems, seededDepth: 1)
+                    ? MockFileTree(seed: ["": galleryItems])
+                    : MockFileTree(seed: MockBrowseTree.seed(now: Date()), trash: MockBrowseTree.trash(now: Date()))
                 if scenario == .gallery {
                     installGalleryFiles(into: &client)
                 }
                 client.browse = { _, path in
-                    BrowseResult(items: store.list(path), access: fullAccess, path: path)
+                    BrowseResult(items: store.list(path), access: MockBrowseTree.access(for: path), path: path)
                 }
                 client.createFolder = { _, path, name in
                     // A sentinel name lets a test exercise the failure path (sheet stays open).
-                    if name == failingFolderName {
-                        throw FilesClientError.network("UITest injected failure")
+                    if name == UITestFixture.failingFolderName {
+                        throw FilesClientError.network(injectedFailure)
                     }
                     return store.createFolder(in: path, named: name)
                 }
@@ -325,7 +317,7 @@
                 client.deleteImpact = { _, items in
                     DeleteImpact(shareCount: 0, trash: DeleteImpact.TrashPlan(
                         isEnabled: true,
-                        retentionDays: 30,
+                        retentionDays: trashRetentionDays,
                         items: items.map { DeleteImpact.Disposition(path: $0.id, goesToTrash: true) }
                     ))
                 }
@@ -334,13 +326,27 @@
                     ServerFeatures(
                         isUserVolumesEnabled: true,
                         isVolumeUsageEnabled: true,
-                        trash: TrashAvailability(isEnabled: true, retentionDays: 30)
+                        trash: TrashAvailability(isEnabled: true, retentionDays: trashRetentionDays)
                     )
                 }
                 client.fetchTrash = { _ in store.trashListing() }
+                client.fetchTrashEntries = { _, itemID, path in
+                    guard let listing = store.trashEntries(itemID, path: path) else {
+                        throw FilesClientError.server(statusCode: HTTPStatus.notFound.rawValue)
+                    }
+                    return listing
+                }
+                client.fetchTrashText = { _, itemID, path in
+                    guard let text = store.trashText(itemID, path: path) else {
+                        throw FilesClientError.server(statusCode: HTTPStatus.notFound.rawValue)
+                    }
+                    return text
+                }
                 client.restoreTrash = { _, target, _, _, _ in
-                    guard case let .items(ids) = target else { return TrashActionResult(items: []) }
-                    return store.restore(ids)
+                    switch target {
+                    case let .items(ids): store.restore(ids)
+                    case let .entries(itemID, paths): store.restoreEntries(itemID, paths: paths)
+                    }
                 }
                 client.purgeTrash = { _, ids, _ in store.purge(ids) }
                 client.emptyTrash = { _ in store.emptyTrash() }
@@ -353,74 +359,36 @@
                     return store.transfer(items, to: destination, operation: operation)
                 }
                 client.compressItem = { _, item in store.compress(item) }
-                // Offline: a folder's estimate and a per file "download" that completes instantly, so
-                // the offline picker + download flow is exercisable without a backend or disk writes.
-                client.fetchUsage = { _, path in StorageUsage(path: path, size: 12_000_000, free: 0, total: 0) }
-                client.fetchMetadata = { _, path in
-                    FileMetadata(
-                        path: path, name: (path as NSString).lastPathComponent, kind: FileItem.directoryKind, size: 0,
-                        dateModified: Date(), dateCreated: Date(),
-                        directory: FileMetadata.DirectorySummary(
-                            totalSize: 12_000_000,
-                            fileCount: 2,
-                            dirCount: 0,
-                            truncated: false
-                        )
+                // Sizes and counts come from the tree; a per file "download" completes at once, so the
+                // offline flow runs without a backend or disk writes.
+                client.fetchUsage = { _, path in
+                    StorageUsage(
+                        path: path,
+                        size: store.metadata(at: path).directory?.totalSize ?? 0,
+                        free: 0,
+                        total: 0
                     )
                 }
+                client.fetchMetadata = { _, path in store.metadata(at: path) }
                 client.offlineDownloadFile = { _, item, onProgress in
                     onProgress(1)
                     return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(item.name)
                 }
-                // previewValue returns no search hits; give the search path deterministic results
-                // derived from the query so a UI test can assert on them.
-                // Stable result names (not echoed from the query) so a UI test asserting on them
-                // is immune to which debounced keystroke the search actually fired on.
+                // Searches the tree itself. The search fixtures match any phrase, so a test asserts
+                // fixed names whichever debounced keystroke the search fired on.
                 client.search = { _, scopePath, query, _ in
                     let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmed.isEmpty else { return [] }
-                    let widerHits = scopePath.isEmpty
-                        ? [SearchResultItem(
-                            name: widerSearchHitName,
-                            path: "Archive/\(widerSearchHitName)",
-                            kind: "txt"
-                        )]
-                        : []
-                    // Like the server, names in the folder that match come first, so a folder
-                    // found by search stays in the results and can be opened from there.
-                    let nameMatches = store.list(scopePath)
-                        .filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
-                        .map { SearchResultItem(
-                            name: $0.name,
-                            path: $0.path,
-                            kind: $0.isDirectory ? "dir" : "file",
-                            isNameMatch: true
-                        ) }
-                    return SearchPage(items: nameMatches + [
-                        SearchResultItem(
-                            name: searchHitName, path: "Documents/\(searchHitName)", kind: "txt",
-                            matchLine: trimmed, matchLineNumber: 1, isContentMatch: true
-                        ),
-                        SearchResultItem(name: "Meeting Notes.md", path: "Documents/Meeting Notes.md", kind: "md"),
-                        // A mixed type hit so a filter chip test can prove it narrows the results.
-                        SearchResultItem(
-                            name: imageSearchHitName,
-                            path: "Documents/\(imageSearchHitName)",
-                            kind: "jpg"
-                        ),
-                    ] + widerHits)
+                    return store.search(
+                        trimmed,
+                        under: scopePath,
+                        contentMatches: Set(UITestFixture.File.searchFixtures.map(\.name))
+                    )
                 }
             case .empty:
-                client.browse = { _, path in
-                    BrowseResult(items: [], access: fullAccess, path: path)
-                }
-                client.favorites = { _ in [] }
-                client.mySharedLinks = { _ in [] }
-                client.sharedWithMeLinks = { _ in [] }
-                client.search = { _, _, _, _ in [] }
+                empty([.browse, .search, .favorites, .shares], in: &client)
             case .error:
-                client.browse = { _, _ in throw FilesClientError.network("UITest injected failure") }
-                client.search = { _, _, _, _ in throw FilesClientError.network("UITest injected failure") }
+                fail([.browse, .search], in: &client)
             case .sessionExpired:
                 client.browse = { _, _ in
                     expiry.reject()
@@ -430,26 +398,19 @@
             return client
         }
 
-        private static let fullAccess = FileAccess(
+        /// The message every injected network failure carries.
+        static let injectedFailure = "UITest injected failure"
+        /// How long the mocked trash keeps an item.
+        static let trashRetentionDays = 30
+
+        static let fullAccess = FileAccess(
             canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true
         )
 
-        /// The root directory the stateful `.normal` store starts from. Mirrors
-        /// `FilesClient.FileItem.previewItems` (internal to FilesClient) and the `Fixture` names in
-        /// the test target, so a rename here touches those two sites.
-        static let rootItems: [FileItem] = [
-            FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory"),
-            FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory"),
-            FileItem(
-                name: "vacation.jpg",
-                path: "",
-                dateModified: Date(),
-                size: 2_400_000,
-                kind: "jpg",
-                supportsThumbnail: true
-            ),
-            FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 1_024, kind: "txt"),
-        ]
+        /// The root listing a launch without a server shows from its cache.
+        static var rootItems: [FileItem] {
+            MockBrowseTree.seed(now: Date())[""] ?? []
+        }
     }
 
     /// Flips once the server "rejects" the session, so the auth client's `me` check agrees with a 401
@@ -533,7 +494,7 @@
         /// Idempotent: safe to call once at launch. A no op unless `UITEST_MOCK=1` is set.
         static func prepareUITestDependencies(from environment: [String: String] = ProcessInfo.processInfo.environment)
         {
-            guard environment[UITestSupport.mockFlag] == "1" else { return }
+            guard environment[UITestSupport.mockFlag] == UITestLaunchKey.on else { return }
 
             // Wipe persisted defaults so @AppStorage state (view mode, thumbnail size, ...) can't
             // leak between launches and make the suite order dependent: every test starts from the
@@ -542,7 +503,7 @@
                 UserDefaults.standard.removePersistentDomain(forName: bundleID)
             }
 
-            if environment[UITestSupport.disableAnimationsFlag] == "1" {
+            if environment[UITestSupport.disableAnimationsFlag] == UITestLaunchKey.on {
                 #if os(iOS)
                     MainActor.assumeIsolated {
                         UIView.setAnimationsEnabled(false)
@@ -557,7 +518,15 @@
             prepareDependencies {
                 $0.authClient = UITestSupport.authClient(auth, expiry: expiry)
                 $0.filesClient = UITestSupport.filesClient(scenario, expiry: expiry)
-                if environment[UITestSupport.searchOfflineKey] == "1" {
+                UITestSupport.empty(
+                    UITestArea.parse(environment[UITestLaunchKey.emptyAreas.rawValue]),
+                    in: &$0.filesClient
+                )
+                UITestSupport.fail(
+                    UITestArea.parse(environment[UITestLaunchKey.failingAreas.rawValue]),
+                    in: &$0.filesClient
+                )
+                if environment[UITestSupport.searchOfflineKey] == UITestLaunchKey.on {
                     $0.filesClient.search = { _, _, _, _ in throw FilesClientError.offline }
                 }
                 $0.directoryCacheStore = .inMemory()
@@ -565,10 +534,10 @@
                 $0.previewCacheStore = .testValue
                 $0.thumbnailCache = .testValue
                 $0.offlineFileStore = .inMemory()
-                if environment[UITestSupport.legacyDownloadsKey] == "1" {
+                if environment[UITestSupport.legacyDownloadsKey] == UITestLaunchKey.on {
                     $0.localDownloadStore = UITestSupport.legacyDownloadStore()
                 }
-                if environment[UITestSupport.offlineLaunchKey] == "1" {
+                if environment[UITestSupport.offlineLaunchKey] == UITestLaunchKey.on {
                     UITestSupport.startOffline(&$0)
                 }
             }

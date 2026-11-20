@@ -3,6 +3,7 @@
     import CoreModels
     import FilesClient
     import Foundation
+    import NetworkClient
 
     extension UITestSupport {
         /// The signed in account's share links, kept in memory for one app launch so an edit or a
@@ -13,7 +14,7 @@
             client.updateShareLink = { _, shareID, request in
                 try shares.withValue { list in
                     guard let index = list.firstIndex(where: { $0.id == shareID }) else {
-                        throw FilesClientError.server(statusCode: 404)
+                        throw FilesClientError.server(statusCode: HTTPStatus.notFound.rawValue)
                     }
                     list[index] = list[index].applying(request, at: Date())
                     return list[index]

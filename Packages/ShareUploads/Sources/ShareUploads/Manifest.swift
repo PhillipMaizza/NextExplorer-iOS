@@ -1,4 +1,5 @@
 import Foundation
+import NetworkClient
 
 /// Why an upload did not go through, as far as the user can act on it.
 public enum UploadFailureCause: String, Codable, CaseIterable, Sendable {
@@ -13,13 +14,6 @@ public enum UploadFailureCause: String, Codable, CaseIterable, Sendable {
     case network
     case other
 
-    private enum StatusCode {
-        static let unauthorized = 401
-        static let forbidden = 403
-        static let payloadTooLarge = 413
-        static let insufficientStorage = 507
-    }
-
     private static let networkErrors: Set<URLError.Code> = [
         .notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotConnectToHost,
         .cannotFindHost, .dnsLookupFailed, .internationalRoamingOff, .dataNotAllowed,
@@ -29,10 +23,10 @@ public enum UploadFailureCause: String, Codable, CaseIterable, Sendable {
     /// An HTTP status wins over the transport error.
     static func classify(statusCode: Int?, error: (any Error)?) -> UploadFailureCause {
         switch statusCode {
-        case StatusCode.unauthorized: return .unauthorized
-        case StatusCode.forbidden: return .forbidden
-        case StatusCode.payloadTooLarge: return .tooLarge
-        case StatusCode.insufficientStorage: return .serverFull
+        case HTTPStatus.unauthorized: return .unauthorized
+        case HTTPStatus.forbidden: return .forbidden
+        case HTTPStatus.payloadTooLarge: return .tooLarge
+        case HTTPStatus.insufficientStorage: return .serverFull
         default: break
         }
         if let code = (error as? URLError)?.code, networkErrors.contains(code) {

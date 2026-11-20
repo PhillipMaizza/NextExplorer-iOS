@@ -268,8 +268,6 @@ extension FilesService {
 
     private enum EditorPreflight {
         static let notModifiedStatus = 304
-        static let clientErrorStatuses = 400 ..< 500
-        static let successStatuses = 200 ..< 300
         /// Answers the shared validation turns into their own errors instead of a conflict prompt.
         static let reportedStatuses: Set<Int> = [401, 403, 429]
     }
@@ -337,10 +335,10 @@ extension FilesService {
         if status == EditorPreflight.notModifiedStatus {
             return false
         }
-        if EditorPreflight.successStatuses.contains(status) {
+        if HTTPStatus.success.contains(status) {
             return true
         }
-        if EditorPreflight.clientErrorStatuses.contains(status), !EditorPreflight.reportedStatuses.contains(status) {
+        if HTTPStatus.clientError.contains(status), !EditorPreflight.reportedStatuses.contains(status) {
             return true
         }
         try Self.validate(response)
@@ -440,7 +438,10 @@ extension FilesService {
         if let onProgress {
             do {
                 outcome = try await sendStreamedOperation(request, decoding: DeleteOutcome.self, onProgress: onProgress)
-            } catch FilesClientError.server(statusCode: 404), FilesClientError.serverMessage(statusCode: 404, _) {
+            } catch FilesClientError.server(statusCode: HTTPStatus.notFound), FilesClientError.serverMessage(
+                statusCode: HTTPStatus.notFound,
+                _
+            ) {
                 // A server older than the stream route: the plain delete does the same work.
                 return try await deleteItems(serverURL: serverURL, items: items, permanent: permanent)
             }

@@ -24,14 +24,6 @@
             return (app, login)
         }
 
-        func testLastDigitSignsIn() {
-            let (app, login) = reachCodePage()
-            login.codeField.tap()
-            login.codeField.typeText(Fixture.validCode)
-
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "The sixth digit should sign in without a tap")
-        }
-
         /// Copies text inside the app, so the system's "Allow Paste" prompt (cross app pasteboard
         /// access) never appears: type it into the recovery field, select it, copy it.
         func testPastedCodeFillsEveryBoxAndSignsIn() {
@@ -55,8 +47,17 @@
             )
         }
 
-        func testWrongCodeClearsTheBoxesAndShowsTheLog() {
+        /// Back from the code page returns to the password; signing in again reaches the code page,
+        /// where a wrong code clears the boxes and offers the log, and the right one signs in.
+        func testBackReturnsToPasswordAndAWrongCodeClearsTheBoxes() {
             let (app, login) = reachCodePage()
+            app.buttons[L10n.Common.back].tap()
+            XCTAssertTrue(
+                login.passwordField.waitToAppear(),
+                "Back from the code page should return to the password page"
+            )
+            login.submitCredentials(identifier: Fixture.secondFactorIdentifier)
+            XCTAssertTrue(login.codeField.waitToAppear(), "Signing in again should reach the code page")
             XCTAssertFalse(login.diagnosticsButton.appears(), "The sign in log stays hidden until something fails")
 
             login.codeField.tap()
@@ -74,7 +75,10 @@
                 "The keyboard should come back after a wrong code, so the retry needs no extra tap"
             )
             login.codeField.typeText(Fixture.validCode)
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "Retrying with the right code should sign in")
+            XCTAssertTrue(
+                TabBar(app: app).browse.waitToAppear(),
+                "Retrying with the right code should sign in on its sixth digit, without a tap"
+            )
         }
 
         func testRecoveryCodeSignsInWithVerifyButton() {
@@ -87,16 +91,6 @@
             XCTAssertTrue(
                 TabBar(app: app).browse.waitToAppear(),
                 "A recovery code should sign in from the Verify button"
-            )
-        }
-
-        func testBackReturnsToPassword() {
-            let (app, login) = reachCodePage()
-            app.buttons[L10n.Common.back].tap()
-
-            XCTAssertTrue(
-                login.passwordField.waitToAppear(),
-                "Back from the code page should return to the password page"
             )
         }
     }

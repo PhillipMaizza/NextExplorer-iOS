@@ -5,26 +5,12 @@
 
     /// Shared links, the Settings window, About and the account menu on the Mac.
     final class MacSettingsUITests: MacUITestCase {
-        func testSharedSegmentsAndEditFromTheContextMenu() {
-            let app = launchApp()
-            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
-            focusWindow(app)
-            sidebarItem(L10n.Tab.shared, in: app).click()
-            XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear())
-
-            segment(L10n.Shared.segmentWithMe, in: app).click()
-            XCTAssertTrue(text(Self.withMeShare, in: app).waitToAppear(), "With me should list links shared with me")
-
-            segment(L10n.Shared.segmentByMe, in: app).click()
-            XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear())
-            text(Self.byMeShare, in: app).rightClick()
-            XCTAssertTrue(app.menuItems[L10n.Common.edit].waitToAppear(), "A share I own should offer Edit")
-            app.menuItems[L10n.Common.edit].click()
-
-            XCTAssertTrue(text(L10n.EditShare.title, in: app).waitToAppear(), "Edit should open the edit share sheet")
-        }
-
-        func testSettingsWindowToggleFlips() {
+        /// The Settings window's toggles flip, and picking another language rebuilds the window in
+        /// it, not only the main window.
+        func testSettingsWindowToggleFlipsAndLanguageReachesIt() {
+            LocalizationOverride.apply(Constants.otherLanguage)
+            let germanGeneral = L10n.Settings.sectionGeneral
+            LocalizationOverride.apply(nil)
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             let toggle = app.descendants(matching: .any)
@@ -38,21 +24,11 @@
             openSettingsWindow(in: app, until: toggle)
             let before = toggle.value as? Int
             toggle.click()
-
             let flipped = NSPredicate(format: "value != %@", NSNumber(value: before ?? 0))
             XCTAssertTrue(waitUntil(flipped, on: toggle), "Clicking should flip the toggle")
-        }
 
-        /// Picking another language in Settings rebuilds the Settings window in it, not only
-        /// the main window.
-        func testLanguageChangeReachesTheSettingsWindow() {
-            LocalizationOverride.apply(Constants.otherLanguage)
-            let germanGeneral = L10n.Settings.sectionGeneral
-            LocalizationOverride.apply(nil)
-            let app = launchApp()
-            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             let picker = app.popUpButtons[AccessibilityIdentifiers.Settings.languagePicker]
-            openSettingsWindow(in: app, until: picker)
+            XCTAssertTrue(picker.waitToAppear())
             picker.click()
             let german = app.menuItems[LocalizationOverride.displayName(for: Constants.otherLanguage)]
             XCTAssertTrue(german.waitToAppear())

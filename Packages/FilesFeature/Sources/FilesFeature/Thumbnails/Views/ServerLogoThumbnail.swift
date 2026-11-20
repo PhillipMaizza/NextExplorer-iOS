@@ -71,7 +71,7 @@ struct ServerLogoThumbnail: View {
         }
         guard
             let (data, response) = try? await networkClient.send(URLRequest(url: url)),
-            200 ..< 300 ~= response.statusCode
+            HTTPStatus.success ~= response.statusCode
         else { return }
         let target = maxPixelDimension
         let image = await Task.detached(priority: .utility) {

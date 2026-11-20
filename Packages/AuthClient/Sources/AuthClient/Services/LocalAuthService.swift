@@ -69,7 +69,7 @@ struct LocalAuthService: Sendable {
             throw AuthClientError.decoding(error.localizedDescription)
         }
         let (data, response) = try await performSend(request)
-        if response.statusCode == 401 {
+        if response.statusCode == HTTPStatus.unauthorized {
             let errorCode = (try? JSONDecoder().decode(ErrorEnvelope.self, from: data))?.error?.code
             throw errorCode == Self.invalidTOTPCode ? AuthClientError.invalidCode : AuthClientError.secondFactorExpired
         }
@@ -161,11 +161,11 @@ struct LocalAuthService: Sendable {
 
     private static func validate(_ response: HTTPURLResponse, unauthorizedError: AuthClientError) throws {
         switch response.statusCode {
-        case 200 ..< 300:
+        case HTTPStatus.success:
             return
-        case 401:
+        case HTTPStatus.unauthorized:
             throw unauthorizedError
-        case 429:
+        case HTTPStatus.tooManyRequests:
             throw AuthClientError.rateLimited
         default:
             throw AuthClientError.server(statusCode: response.statusCode)

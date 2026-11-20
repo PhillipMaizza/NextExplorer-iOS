@@ -71,7 +71,7 @@ enum ProgressiveImageLoader {
             _: URLSession, dataTask _: URLSessionDataTask, didReceive response: URLResponse,
             completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
         ) {
-            if let http = response as? HTTPURLResponse, !(200 ..< 300 ~= http.statusCode) {
+            if let http = response as? HTTPURLResponse, !(HTTPStatus.success ~= http.statusCode) {
                 didFail = true
                 completionHandler(.cancel)
                 return
