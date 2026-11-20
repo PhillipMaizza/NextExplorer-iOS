@@ -373,24 +373,14 @@ public extension FilesClient {
     /// using the server's existing HTTP Range support for seeking, without buffering the
     /// whole file into memory first the way a full download would.
     static func previewURL(serverURL: URL, item: FileItem) -> URL? {
-        var components = URLComponents(
-            url: serverURL.appendingPathComponent(APIPath.preview),
-            resolvingAgainstBaseURL: false
-        )
-        components?.queryItems = [URLQueryItem(name: QueryKey.path, value: item.id)]
-        return components?.url
+        try? FilesService.url(serverURL: serverURL, path: APIPath.preview, items: [(QueryKey.path, item.id)])
     }
 
     /// `GET /api/raw?path=...`: the file served verbatim (`text/plain`, `nosniff`). Handed to
     /// Safari for "Open in Browser": the server has no rendered-HTML endpoint, and cookie auth
     /// means Safari may hit a login page first (or 401 if the server requires auth).
     static func rawFileURL(serverURL: URL, item: FileItem) -> URL? {
-        var components = URLComponents(
-            url: serverURL.appendingPathComponent(APIPath.raw),
-            resolvingAgainstBaseURL: false
-        )
-        components?.queryItems = [URLQueryItem(name: QueryKey.path, value: item.id)]
-        return components?.url
+        try? FilesService.url(serverURL: serverURL, path: APIPath.raw, items: [(QueryKey.path, item.id)])
     }
 }
 

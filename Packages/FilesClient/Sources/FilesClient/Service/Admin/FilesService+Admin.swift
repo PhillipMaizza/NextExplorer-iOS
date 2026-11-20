@@ -180,14 +180,8 @@ extension FilesService {
     /// `GET /api/admin/browse-directories?path=`. Omit `path` to start at the server's
     /// configured volume root.
     func browseAdminDirectories(serverURL: URL, path: String?) async throws -> AdminDirectoryListing {
-        var components = URLComponents(
-            url: serverURL.appendingPathComponent(APIPath.adminBrowseDirectories),
-            resolvingAgainstBaseURL: false
-        )
-        if let path, !path.isEmpty {
-            components?.queryItems = [URLQueryItem(name: QueryKey.path, value: path)]
-        }
-        guard let url = components?.url else { throw FilesClientError.network("Bad URL") }
+        let items = path.flatMap { $0.isEmpty ? nil : [(QueryKey.path, $0)] } ?? []
+        let url = try Self.url(serverURL: serverURL, path: APIPath.adminBrowseDirectories, items: items)
         let request = Self.makeRequest(url: url, method: .get)
         return try await sendReportingMessage(request, decoding: AdminDirectoryListing.self)
     }

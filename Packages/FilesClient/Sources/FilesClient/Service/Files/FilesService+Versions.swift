@@ -13,7 +13,6 @@ extension FilesService {
         static let replace = "replace"
         static let delete = "delete"
         static let pathQueryName = "path"
-        static let urlFailureMessage = "Could not build versions URL."
     }
 
     /// `GET /api/versions?path=`.
@@ -138,9 +137,6 @@ extension FilesService {
 
     private static func versionsURL(_ base: URL, query path: String, appendingAPIPath: Bool = true) throws -> URL {
         let url = appendingAPIPath ? base.appendingPathComponent(APIPath.versions) : base
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: VersionRoute.pathQueryName, value: path)]
-        guard let built = components?.url else { throw FilesClientError.decoding(VersionRoute.urlFailureMessage) }
-        return built
+        return try Self.url(url, items: [(VersionRoute.pathQueryName, path)])
     }
 }

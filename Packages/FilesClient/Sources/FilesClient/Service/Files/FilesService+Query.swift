@@ -15,12 +15,15 @@ extension FilesService {
     /// `base` with the query items added, encoded as above.
     static func url(_ base: URL, items: [(String, String)]) throws -> URL {
         var components = URLComponents(url: base, resolvingAgainstBaseURL: false)
-        components?.percentEncodedQueryItems = items.map { name, value in
-            URLQueryItem(
-                name: name,
-                value: value.addingPercentEncoding(withAllowedCharacters: unreservedQueryCharacters)
-            )
-        }
+        // No items means no query at all, not a bare `?`.
+        components?.percentEncodedQueryItems = items.isEmpty
+            ? nil
+            : items.map { name, value in
+                URLQueryItem(
+                    name: name,
+                    value: value.addingPercentEncoding(withAllowedCharacters: unreservedQueryCharacters)
+                )
+            }
         guard let url = components?.url else {
             throw FilesClientError.decoding("Could not build the request URL.")
         }
