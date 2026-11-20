@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import FolderPickerFeature
 import Localization
 import SwiftUI
 
@@ -339,7 +340,10 @@ struct ArchiveBrowserView: View {
             let fileURL: URL = if let localFileURL {
                 localFileURL
             } else {
-                try await filesClient.downloadRawFile(serverURL, item)
+                try await apiResult { @Sendable [filesClient, serverURL, item] in try await filesClient.downloadRawFile(
+                    serverURL,
+                    item
+                ) }.get()
             }
             let kind = item.kind
             // Opening the container and listing its entries parses the whole archive; keep both

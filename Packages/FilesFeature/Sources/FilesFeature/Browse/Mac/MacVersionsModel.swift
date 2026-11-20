@@ -70,7 +70,11 @@
             statusMessage = nil
             return Task {
                 do {
-                    let text = try await client.versionText(serverURL, item.id, version.id)
+                    let text = try await apiResult { @Sendable in try await client.versionText(
+                        serverURL,
+                        item.id,
+                        version.id
+                    ) }.get()
                     guard self.item?.id == item.id else { return }
                     errorMessage = nil
                     let title = version.label ?? Self.date(text.modifiedAt)
@@ -193,7 +197,7 @@
             statusMessage = nil
             return Task {
                 do {
-                    try await operation(client, serverURL, item.id)
+                    try await apiResult { @Sendable in try await operation(client, serverURL, item.id) }.get()
                     if changesFiles {
                         onFilesChanged()
                     }

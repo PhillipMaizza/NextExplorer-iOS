@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+import FolderPickerFeature
 import Foundation
 import Localization
 import NetworkClient
@@ -577,12 +578,12 @@ public struct OfflineDownloadsFeature {
                 while active < Constants.maxConcurrentBrowses, let dir = queue.popLast() {
                     group.addTask {
                         guard skipsUnreadableFolders else {
-                            let result = try await filesClient.browse(serverURL, dir.id)
+                            let result = try await apiResult { try await filesClient.browse(serverURL, dir.id) }.get()
                             onListing?(dir.id, result)
                             return (dir.id, .items(result.items))
                         }
                         do {
-                            let result = try await filesClient.browse(serverURL, dir.id)
+                            let result = try await apiResult { try await filesClient.browse(serverURL, dir.id) }.get()
                             onListing?(dir.id, result)
                             return (dir.id, .items(result.items))
                         } catch is CancellationError {

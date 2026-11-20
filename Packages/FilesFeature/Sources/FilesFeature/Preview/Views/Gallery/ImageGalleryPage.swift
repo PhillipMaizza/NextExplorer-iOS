@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import FolderPickerFeature
 import Localization
 import NetworkClient
 import SwiftUI
@@ -177,7 +178,12 @@ struct ImageGalleryPage: View {
         // GIFs animate from a file (offline/cache aware); a decoded still would freeze on frame one.
         if item.kind.lowercased() == "gif" {
             do {
-                let fileURL = try await filesClient.previewFile(serverURL, item)
+                let fileURL = try await apiResult { @Sendable [filesClient, serverURL, item] in
+                    try await filesClient.previewFile(
+                        serverURL,
+                        item
+                    )
+                }.get()
                 if !Task.isCancelled {
                     phase = .gif(fileURL)
                 }
@@ -253,7 +259,12 @@ struct ImageGalleryPage: View {
     @MainActor
     private func decodeViaPreviewFile(target: CGFloat) async {
         do {
-            let fileURL = try await filesClient.previewFile(serverURL, item)
+            let fileURL = try await apiResult { @Sendable [filesClient, serverURL, item] in
+                try await filesClient.previewFile(
+                    serverURL,
+                    item
+                )
+            }.get()
             let decoded = await Task.detached(priority: .userInitiated) {
                 ImageDownsampling.image(from: fileURL, maxPixelDimension: target)
             }.value
