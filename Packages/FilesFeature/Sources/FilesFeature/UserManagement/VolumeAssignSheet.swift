@@ -15,8 +15,7 @@ struct VolumeAssignSheet: View {
     @Dependency(\.filesClient) private var filesClient
 
     @State private var listing: AdminDirectoryListing?
-    @State private var isBrowsing = false
-    @State private var browseError: String?
+    @State private var browsePhase: DataPhase = .idle
     /// The directory currently being listed; `nil` is the server's volume root. Bound to a
     /// `.task(id:)` so drilling in or out cancels any in flight listing before the next one,
     /// since rapid taps otherwise race and the slower one wins.
@@ -150,9 +149,9 @@ struct VolumeAssignSheet: View {
                         .accessibilityLabel(L10n.UserDetail.directoryPickerOpen(directory.name))
                     }
                 }
-            } else if isBrowsing {
+            } else if browsePhase == .loading {
                 DSSpinner().frame(maxWidth: .infinity).padding(.vertical, .space8)
-            } else if let browseError {
+            } else if let browseError = browsePhase.errorMessage {
                 Text(browseError).type(.body3(.semibold), style: .error)
             }
         }
@@ -174,16 +173,15 @@ struct VolumeAssignSheet: View {
     }
 
     private func loadDirectories(path: String?) async {
-        isBrowsing = true
-        browseError = nil
-        defer { isBrowsing = false }
+        browsePhase = .loading
         do {
             let next = try await filesClient.browseAdminDirectories(store.serverURL, path)
             guard !Task.isCancelled else { return }
             listing = next
+            browsePhase = .loaded
         } catch {
             guard !Task.isCancelled else { return }
-            browseError = (error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed
+            browsePhase = .failed((error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed)
         }
     }
 }
