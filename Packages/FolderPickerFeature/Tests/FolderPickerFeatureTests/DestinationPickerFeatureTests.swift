@@ -343,11 +343,11 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
 
         await store.send(.searchQueryChanged("sum")) {
             $0.searchQuery = "sum"
-            $0.isSearching = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearching = false
+            $0.searchPhase = .loaded
             $0.searchResults = [SearchResultItem(
                 name: Constants.summerFolder,
                 path: TestPath.mediaPhotos2024,
@@ -363,7 +363,8 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
         ))) {
             $0.directoryPath = "Media/Photos/2024/Summer"
             $0.searchQuery = ""
-            $0.searchResults = nil
+            $0.searchResults = []
+            $0.searchPhase = .idle
             $0.navigationHistory = [TestFolder.media]
             $0.phase = .loading
             $0.currentAccess = nil
@@ -408,14 +409,14 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
 
         await store.send(.searchQueryChanged(Constants.searchTerm)) {
             $0.searchQuery = Constants.searchTerm
-            $0.isSearching = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: TestSearchTiming.justBeforeDebounce)
         #expect(queries.value.isEmpty)
 
         await clock.advance(by: TestSearchTiming.lastMoment)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearching = false
+            $0.searchPhase = .loaded
             $0.searchResults = [SearchResultItem(
                 name: Constants.summerFolder,
                 path: TestFolder.media,
@@ -433,7 +434,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
 
         await store.send(.searchQueryChanged(Constants.searchTerm)) {
             $0.searchQuery = Constants.searchTerm
-            $0.isSearching = true
+            $0.searchPhase = .loading
         }
         await clock.advance(by: TestSearchTiming.partOfDebounce)
         await store.send(.searchQueryChanged(Constants.searchTermWithSpace)) {
@@ -441,7 +442,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
         }
         await clock.advance(by: TestSearchTiming.restOfDebounce)
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearching = false
+            $0.searchPhase = .loaded
             $0.searchResults = [SearchResultItem(
                 name: Constants.summerFolder,
                 path: TestFolder.media,
@@ -508,7 +509,7 @@ extension DestinationPickerFeatureTests {
     func aRefineNeedsResultsOnScreen() {
         var state = DestinationPickerFeature.State(serverURL: URL(string: TestHost.exampleURLString)!, items: [])
         state.searchQuery = Constants.searchTerm
-        state.isSearching = true
+        state.searchPhase = .loading
         #expect(!state.isRefiningSearch)
         state.searchResults = []
         #expect(!state.isRefiningSearch)
@@ -518,7 +519,7 @@ extension DestinationPickerFeatureTests {
             kind: SearchResultItem.directoryKind
         )]
         #expect(state.isRefiningSearch)
-        state.isSearching = false
+        state.searchPhase = .loaded
         #expect(!state.isRefiningSearch)
     }
 }
@@ -531,4 +532,21 @@ private enum Constants {
     static let workFolder = "Work"
     static let childFolder = "Child"
     static let documentsReports = "Documents/Reports"
+}
+
+extension DestinationPickerFeatureTests {
+    @Test("A failed folder search says so instead of showing no matches")
+    func aFailedSearchIsAnError() async {
+        var state = DestinationPickerFeature.State(serverURL: URL(string: TestHost.exampleURLString)!, items: [])
+        state.searchQuery = Constants.searchTerm
+        state.searchPhase = .loading
+        let store = TestStore(initialState: state) { DestinationPickerFeature() }
+
+        await store.send(.searchResultsResponse(.failure(.server(statusCode: 500)))) {
+            $0.searchPhase = .failed(L10n.Browse.searchFailed)
+        }
+        await store.send(.searchResultsResponse(.failure(.sessionExpired))) {
+            $0.searchPhase = .failed(L10n.Error.sessionExpired)
+        }
+    }
 }

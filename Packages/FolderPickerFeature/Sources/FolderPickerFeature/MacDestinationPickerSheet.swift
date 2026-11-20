@@ -99,13 +99,15 @@
         @ViewBuilder
         private var content: some View {
             if store.showsSearchResults {
-                if store.isSearching, store.searchResults?.isEmpty ?? true {
+                if store.searchPhase == .loading, store.searchResults.isEmpty {
                     MacSpinner()
-                } else if let results = store.searchResults, results.isEmpty {
+                } else if let errorMessage = store.searchPhase.errorMessage {
+                    EmptyStateView(icon: IconKit.warning, message: errorMessage)
+                } else if store.searchResults.isEmpty {
                     ContentUnavailableView.search(text: store.searchQuery)
                 } else {
                     // Selectable rows: a double click or Return opens one, and VoiceOver can too.
-                    List(store.searchResults ?? [], selection: $selectedResultID) { result in
+                    List(store.searchResults, selection: $selectedResultID) { result in
                         MacItemLabel(
                             name: result.name,
                             subtitle: result.path.isEmpty ? nil : result.path,
@@ -114,7 +116,7 @@
                         .accessibilityAction(named: L10n.Browse.open) { store.send(.searchResultTapped(result)) }
                     }
                     .contextMenu(forSelectionType: SearchResultItem.ID.self, menu: { _ in }, primaryAction: { ids in
-                        guard let id = ids.first, let result = store.searchResults?[id: id] else { return }
+                        guard let id = ids.first, let result = store.searchResults[id: id] else { return }
                         store.send(.searchResultTapped(result))
                     })
                 }
@@ -146,7 +148,7 @@
 
         private func openSelection() {
             if store.showsSearchResults {
-                if let id = selectedResultID, let result = store.searchResults?[id: id] {
+                if let id = selectedResultID, let result = store.searchResults[id: id] {
                     store.send(.searchResultTapped(result))
                 }
             } else if let id = selectedFolderID, let folder = store.folders[id: id] {

@@ -134,13 +134,13 @@ struct DestinationPickerReplaceTests: DestinationPickerTestHelpers {
     func searchOffersFilesButNotTheSourceFileWhenReplacing() async {
         var state = loadedState()
         state.searchQuery = "note"
-        state.isSearching = true
+        state.searchPhase = .loading
         let store = TestStore(initialState: state) { DestinationPickerFeature() }
         let hit = SearchResultItem(name: TestFile.bText, path: TestFolder.documents, kind: TestKind.text)
         let sourceHit = SearchResultItem(name: TestFile.aText, path: TestFolder.inbox, kind: TestKind.text)
 
         await store.send(.searchResultsResponse(.success([hit, sourceHit]))) {
-            $0.isSearching = false
+            $0.searchPhase = .loaded
             $0.searchResults = [hit]
         }
     }
@@ -160,7 +160,7 @@ struct DestinationPickerReplaceTests: DestinationPickerTestHelpers {
             $0.directoryPath = TestFolder.documents
             $0.navigationHistory = [TestFolder.inbox]
             $0.searchQuery = ""
-            $0.searchResults = nil
+            $0.searchResults = []
             $0.pendingFileSelection = picked.id
             $0.phase = .loading
             $0.currentAccess = nil
