@@ -178,16 +178,12 @@ struct ImageGalleryPage: View {
         // GIFs animate from a file (offline/cache aware); a decoded still would freeze on frame one.
         if item.kind.lowercased() == "gif" {
             do {
-                let fileURL = try await apiResult { @Sendable [filesClient, serverURL, item] in
-                    try await filesClient.previewFile(
-                        serverURL,
-                        item
-                    )
-                }.get()
+                let fileURL = try await filesClient.previewFile(serverURL, item)
                 if !Task.isCancelled {
                     phase = .gif(fileURL)
                 }
             } catch {
+                noteSessionExpiry(error)
                 if !Task.isCancelled {
                     phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed)
                 }
@@ -259,12 +255,7 @@ struct ImageGalleryPage: View {
     @MainActor
     private func decodeViaPreviewFile(target: CGFloat) async {
         do {
-            let fileURL = try await apiResult { @Sendable [filesClient, serverURL, item] in
-                try await filesClient.previewFile(
-                    serverURL,
-                    item
-                )
-            }.get()
+            let fileURL = try await filesClient.previewFile(serverURL, item)
             let decoded = await Task.detached(priority: .userInitiated) {
                 ImageDownsampling.image(from: fileURL, maxPixelDimension: target)
             }.value
@@ -273,6 +264,7 @@ struct ImageGalleryPage: View {
             }
             phase = decoded.map(GalleryImagePhase.loaded) ?? .failed(L10n.Gallery.loadFailed)
         } catch {
+            noteSessionExpiry(error)
             if !Task.isCancelled {
                 phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed)
             }

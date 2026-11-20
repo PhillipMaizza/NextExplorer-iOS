@@ -340,10 +340,7 @@ struct ArchiveBrowserView: View {
             let fileURL: URL = if let localFileURL {
                 localFileURL
             } else {
-                try await apiResult { @Sendable [filesClient, serverURL, item] in try await filesClient.downloadRawFile(
-                    serverURL,
-                    item
-                ) }.get()
+                try await filesClient.downloadRawFile(serverURL, item)
             }
             let kind = item.kind
             // Opening the container and listing its entries parses the whole archive; keep both
@@ -357,6 +354,7 @@ struct ArchiveBrowserView: View {
             entries = listed
             isLoading = false
         } catch {
+            noteSessionExpiry(error)
             // Backing out mid download cancels this; not an open failure, so don't flash the
             // "couldn't open archive" screen on the way out.
             guard !Task.isCancelled else { return }
