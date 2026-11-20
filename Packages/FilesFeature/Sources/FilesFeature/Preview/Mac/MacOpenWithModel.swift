@@ -249,8 +249,12 @@
                     }
                     operation = pdfOperation
                 case .image:
-                    let data = try await Task.detached(priority: .userInitiated) { try Data(contentsOf: url) }.value
-                    guard let image = NSImage(data: data) else { throw CocoaError(.fileReadCorruptFile) }
+                    let image = try await Task.detached(priority: .userInitiated) {
+                        guard let image = try NSImage(data: Data(contentsOf: url)) else {
+                            throw CocoaError(.fileReadCorruptFile)
+                        }
+                        return image
+                    }.value
                     let imageView = NSImageView(frame: NSRect(origin: .zero, size: printInfo.imageablePageBounds.size))
                     imageView.image = image
                     imageView.imageScaling = .scaleProportionallyUpOrDown
