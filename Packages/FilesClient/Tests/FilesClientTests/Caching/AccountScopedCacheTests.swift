@@ -150,6 +150,19 @@ struct AccountScopedCacheTests {
         #expect(store.bound(to: accountB).read(key: TestCacheKey.favorites) == nil)
     }
 
+    @Test("JSONCacheStore on disk: a write queued just before clearAll never lands after it")
+    func jsonClearAllWinsOverAQueuedWrite() {
+        let root = makeRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let store = JSONCacheStore.onDisk(rootDirectory: root)
+
+        store.bound(to: accountA).write(key: TestCacheKey.favorites, data: Data("a".utf8))
+        store.clearAll()
+
+        #expect(store.bound(to: accountA).read(key: TestCacheKey.favorites) == nil)
+        #expect(store.totalSizeBytes() == 0)
+    }
+
     @Test("JSONCacheStore in memory: clear(scope:) keeps other accounts")
     func jsonInMemoryClearScope() {
         let store = JSONCacheStore.inMemory()
