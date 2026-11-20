@@ -108,7 +108,20 @@ struct Manifest: Codable, Equatable {
         guard let data = try? Data(contentsOf: directory.appendingPathComponent(fileName)) else { return nil }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
-        return try? decoder.decode(Manifest.self, from: data)
+        guard let manifest = try? decoder.decode(Manifest.self, from: data), manifest.isWellFormed else { return nil }
+        return manifest
+    }
+
+    /// The App Group is shared with another process, so a manifest is untrusted: its lists must line
+    /// up by index and every envelope must be a plain file name inside the batch folder.
+    var isWellFormed: Bool {
+        envelopes.count == fileNames.count
+            && contentTypes.count == fileNames.count
+            && envelopes.allSatisfy(Self.isPlainFileName)
+    }
+
+    private static func isPlainFileName(_ name: String) -> Bool {
+        !name.isEmpty && name != "." && name != ".." && !name.contains("/")
     }
 
     /// Records one upload's result and returns every result so far, by file index.

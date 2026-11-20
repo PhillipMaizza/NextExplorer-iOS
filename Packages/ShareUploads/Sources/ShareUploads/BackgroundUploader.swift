@@ -181,8 +181,9 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         for indices: [Int], of manifest: Manifest, in directory: URL, credentials: SessionCredentials
     ) -> [UploadTaskSpec] {
         indices.map { index in
+            // The cookie only ever goes to its own account's server, never to the manifest's word for it.
             var request = UploadRequest.request(
-                serverURL: manifest.serverURL,
+                serverURL: credentials.serverBaseURL,
                 contentType: manifest.contentTypes[index]
             )
             // A background session keeps no cookie jar of its own: the session cookie rides here.
