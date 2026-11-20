@@ -31,7 +31,7 @@
                     Button(L10n.ActivityLog.clear, role: .destructive) { store.send(.clearTapped) }
                         .disabled(store.clearPhase.isRunning)
                 }
-                if let error = store.settingsError ?? store.listError {
+                if let error = store.bannerError {
                     Text(error).foregroundStyle(Color.negativeText)
                 }
             }

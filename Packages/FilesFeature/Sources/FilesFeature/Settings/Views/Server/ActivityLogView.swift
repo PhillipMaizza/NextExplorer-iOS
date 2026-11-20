@@ -45,7 +45,7 @@ struct ActivityLogView: View {
             unavailableMessage: L10n.ActivityLog.unavailable,
             isUnavailable: store.isUnavailable,
             failureMessage: store.phase.errorMessage,
-            errorMessage: store.settingsError ?? store.listError,
+            errorMessage: store.bannerError,
             isLoadingFirstTime: store.phase == .loading && store.events.isEmpty,
             isBusy: store.isSavingSettings,
             onAppear: { store.send(.onAppear) }

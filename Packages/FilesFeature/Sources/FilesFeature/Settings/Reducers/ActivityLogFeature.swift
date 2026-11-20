@@ -27,7 +27,9 @@ public struct ActivityLogFeature {
         /// search typed but not submitted never mixes into the next page of the old one.
         public var submittedFilter = ActivityFilter()
         public var phase: DataPhase = .idle
-        public var isLoadingMore = false
+        /// Show more: running, or failed with its message, after the first page landed.
+        public var morePhase: DataPhase = .idle
+        /// A refresh or clear that failed over a list already on screen.
         public var listError: String?
 
         public var clearPhase: ConfirmPhase = .idle
@@ -57,6 +59,15 @@ public struct ActivityLogFeature {
 
         var canLoadMore: Bool {
             nextBefore != nil && !isLoadingMore
+        }
+
+        var isLoadingMore: Bool {
+            morePhase == .loading
+        }
+
+        /// What the banner says: the settings error first, then the list's, then Show more's.
+        var bannerError: String? {
+            settingsError ?? listError ?? morePhase.errorMessage
         }
     }
 
@@ -89,8 +100,9 @@ public struct ActivityLogFeature {
     private func loadPage(_ state: inout State, more: Bool) -> Effect<Action> {
         if more {
             guard state.canLoadMore else { return .none }
-            state.isLoadingMore = true
+            state.morePhase = .loading
         } else {
+            state.morePhase = .idle
             state.phase.beginReload()
             state.nextBefore = nil
             state.submittedFilter = state.filter
@@ -143,7 +155,7 @@ public struct ActivityLogFeature {
 
             case let .pageResponse(.success(page), isMore):
                 state.phase = .loaded
-                state.isLoadingMore = false
+                state.morePhase = .idle
                 state.events = isMore ? state.events + page.events : page.events
                 state.actions = page.actions
                 state.isLogEnabled = page.isEnabled
@@ -151,8 +163,9 @@ public struct ActivityLogFeature {
                 return .none
 
             case let .pageResponse(.failure(error), isMore):
-                state.isLoadingMore = false
-                if isMore || state.phase.hasLoaded {
+                if isMore {
+                    state.morePhase = .failed(error.userMessage)
+                } else if state.phase.hasLoaded {
                     state.listError = error.userMessage
                 } else {
                     state.phase = .failed(error.userMessage)
