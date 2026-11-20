@@ -52,7 +52,7 @@ public struct CreateShareLinkFeature {
         /// Shared with `SharedFeature`: bumping it makes the Shared tab reload.
         @Shared(.inMemory(SharedFeature.revisionKey)) var shareLinksRevision = 0
 
-        public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date = Date()) {
+        public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date) {
             self.serverURL = serverURL
             self.itemName = itemName
             self.itemPath = itemPath

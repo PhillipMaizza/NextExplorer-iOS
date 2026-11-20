@@ -222,7 +222,7 @@
         _ share: Share,
         mutate: (inout EditShareFeature.State) -> Void = { _ in }
     ) -> StoreOf<EditShareFeature> {
-        var state = EditShareFeature.State(serverURL: sharedPreviewServerURL, share: share)
+        var state = EditShareFeature.State(serverURL: sharedPreviewServerURL, share: share, now: .now)
         mutate(&state)
         return Store(initialState: state) { EditShareFeature() } withDependencies: {
             $0.filesClient = .previewValue

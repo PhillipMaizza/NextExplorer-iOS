@@ -18,7 +18,6 @@ private enum Constants {
     static let fieldHorizontalPadding: CGFloat = .space12
     static let copyButtonWidth: CGFloat = .size48
     static let copyIconSize: CGFloat = .iconSmall
-    static let userAvatarSize: CGFloat = .size32
     static let copyFeedbackSeconds: Double = 2
     static let maxHeightFraction: CGFloat = 0.9
     /// Password / expiration fields fade in and out under their toggle. Opacity only: a
@@ -135,7 +134,7 @@ struct CreateShareLinkSheet: View {
                     label: { $0.title }
                 )
                 if store.target == .users {
-                    userPicker
+                    ShareUserPicker(store: store)
                 }
             }
 
@@ -172,48 +171,6 @@ struct CreateShareLinkSheet: View {
         }
         .animation(Constants.fieldRevealAnimation, value: store.isPasswordEnabled)
         .animation(Constants.fieldRevealAnimation, value: store.isExpiryEnabled)
-    }
-
-    @ViewBuilder
-    private var userPicker: some View {
-        if store.usersPhase == .loading {
-            HStack(spacing: .space8) {
-                DSSpinner()
-                Text(L10n.CreateShare.loadingUsers).type(.body3(.regular), style: .secondary)
-            }
-            .padding(.vertical, .space8)
-        } else if store.shareableUsers.isEmpty {
-            Text(L10n.CreateShare.noOtherUsers)
-                .type(.body3(.regular), style: .secondary)
-                .padding(.vertical, .space8)
-        } else {
-            VStack(spacing: 0) {
-                ForEach(store.shareableUsers) { user in
-                    let isSelected = store.selectedUserIDs.contains(user.id)
-                    Button {
-                        store.send(.userToggled(user.id))
-                    } label: {
-                        HStack(spacing: .space12) {
-                            AvatarView(displayName: user.displayName ?? user.username, size: Constants.userAvatarSize)
-                            VStack(alignment: .leading, spacing: .space2) {
-                                Text(user.displayName ?? user.username)
-                                    .type(.body3(.semibold), style: .primaryOnSurface)
-                                    .lineLimit(1)
-                                if let email = user.email {
-                                    Text(email).type(.caption(.regular), style: .secondary).lineLimit(1)
-                                }
-                            }
-                            Spacer(minLength: 0)
-                            DSSelectionIndicator(isSelected: isSelected, size: Constants.copyIconSize)
-                        }
-                        .padding(.vertical, .space8)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(DSPressableButtonStyle())
-                    .hapticFeedback(.selection, trigger: isSelected)
-                }
-            }
-        }
     }
 
     private var sourceCard: some View {
@@ -388,7 +345,8 @@ struct CreateShareLinkSheet: View {
                     serverURL: sharedPreviewServerURL,
                     itemName: "Electricity",
                     itemPath: "Documents/Bills",
-                    isDirectory: true
+                    isDirectory: true,
+                    now: .now
                 )
             ) {
                 CreateShareLinkFeature()
@@ -408,7 +366,8 @@ struct CreateShareLinkSheet: View {
                         serverURL: sharedPreviewServerURL,
                         itemName: "Electricity",
                         itemPath: "Documents/Bills",
-                        isDirectory: true
+                        isDirectory: true,
+                        now: .now
                     )
                     state.step = .created(CreatedShare(
                         share: Share(

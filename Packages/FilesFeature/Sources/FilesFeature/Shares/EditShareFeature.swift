@@ -59,7 +59,7 @@ public struct EditShareFeature {
 
         /// The label opens filled with the share's name. An expired share opens on Custom with a
         /// fresh date a week out, so bringing it back is one tap on Save.
-        public init(serverURL: URL, share: Share, now: Date = Date()) {
+        public init(serverURL: URL, share: Share, now: Date) {
             self.serverURL = serverURL
             self.share = share
             openedAt = now

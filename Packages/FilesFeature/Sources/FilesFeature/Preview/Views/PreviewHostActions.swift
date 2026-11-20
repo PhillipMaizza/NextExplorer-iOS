@@ -8,6 +8,7 @@ import SwiftUI
 /// it: the rename sheet, the delete confirmation and Create Share Link, plus the file action toasts.
 /// The host `BrowseFeature` sets the state; without these its toolbar buttons did nothing.
 struct PreviewHostActions: ViewModifier {
+    @Dependency(\.date) private var date
     let host: StoreOf<BrowseFeature>
     /// Set by the preview's Create Share Link button.
     @Binding var shareTarget: FileItem?
@@ -69,7 +70,8 @@ struct PreviewHostActions: ViewModifier {
                             serverURL: host.serverURL,
                             itemName: item.name,
                             itemPath: item.path,
-                            isDirectory: item.isDirectory
+                            isDirectory: item.isDirectory,
+                            now: date.now
                         )
                     ) {
                         CreateShareLinkFeature()

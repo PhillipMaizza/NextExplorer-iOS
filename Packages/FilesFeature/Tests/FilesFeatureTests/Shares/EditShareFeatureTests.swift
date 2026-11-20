@@ -57,7 +57,7 @@ struct EditShareFeatureTests {
 
     @Test
     func passwordChangeReflectsTheTogglesAndField() {
-        var state = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: true))
+        var state = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: true), now: fixedNow)
         #expect(state.passwordChange == .keep) // on, blank
 
         state.newPassword = TestAccount.password
@@ -67,7 +67,7 @@ struct EditShareFeatureTests {
         state.wantsPassword = false
         #expect(state.passwordChange == .remove) // was protected, now off
 
-        var fresh = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: false))
+        var fresh = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: false), now: fixedNow)
         fresh.wantsPassword = false
         #expect(fresh.passwordChange == .keep) // never had one
     }
@@ -75,7 +75,7 @@ struct EditShareFeatureTests {
     @Test
     func switchingToUsersLoadsTheShareableListOnce() async {
         let store = TestStore(
-            initialState: EditShareFeature.State(serverURL: serverURL, share: share())
+            initialState: EditShareFeature.State(serverURL: serverURL, share: share(), now: fixedNow)
         ) {
             EditShareFeature()
         } withDependencies: {
@@ -100,7 +100,7 @@ struct EditShareFeatureTests {
 
     @Test
     func saveSendsAnUpdateRequestMatchingTheFormAndPublishesTheResult() async {
-        var initial = EditShareFeature.State(serverURL: serverURL, share: share())
+        var initial = EditShareFeature.State(serverURL: serverURL, share: share(), now: fixedNow)
         initial.$shareLinksRevision.withLock { $0 = 0 }
         initial.label = "Renamed"
         initial.accessMode = .readwrite
@@ -137,7 +137,7 @@ struct EditShareFeatureTests {
 
     @Test
     func aPastExpiryBlocksSaving() async {
-        var initial = EditShareFeature.State(serverURL: serverURL, share: share())
+        var initial = EditShareFeature.State(serverURL: serverURL, share: share(), now: fixedNow)
         initial.expiryPreset = .custom
         initial.expiresAt = fixedNow.addingTimeInterval(-3600)
         let store = TestStore(initialState: initial) {
@@ -153,7 +153,7 @@ struct EditShareFeatureTests {
 
     @Test
     func aSaveFailureSurfacesAMessage() async {
-        var initial = EditShareFeature.State(serverURL: serverURL, share: share())
+        var initial = EditShareFeature.State(serverURL: serverURL, share: share(), now: fixedNow)
         initial.label = "x"
         let store = TestStore(initialState: initial) {
             EditShareFeature()

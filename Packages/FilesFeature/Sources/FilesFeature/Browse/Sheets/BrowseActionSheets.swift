@@ -10,6 +10,7 @@ import SwiftUI
 /// the preview cover. One reducer state drives both, so each presentation is bound only while its
 /// surface is the one on screen.
 struct BrowseActionSheets: ViewModifier {
+    @Dependency(\.date) private var date
     @Bindable var store: StoreOf<BrowseFeature>
     let inPreview: Bool
     @Binding var shareTarget: FileItem?
@@ -124,7 +125,8 @@ struct BrowseActionSheets: ViewModifier {
                     serverURL: store.serverURL,
                     itemName: item.name,
                     itemPath: item.path,
-                    isDirectory: item.isDirectory
+                    isDirectory: item.isDirectory,
+                    now: date.now
                 )
             ) {
                 CreateShareLinkFeature()

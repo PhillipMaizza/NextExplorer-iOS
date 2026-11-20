@@ -187,14 +187,16 @@
             serverURL: sharedPreviewServerURL,
             itemName: "Electricity",
             itemPath: "Documents/Bills",
-            isDirectory: true
+            isDirectory: true,
+            now: .now
         )) { CreateShareLinkFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 
     #Preview("Edit") {
         MacEditShareSheet(store: Store(initialState: EditShareFeature.State(
             serverURL: sharedPreviewServerURL,
-            share: .previewCard(hasPassword: true, expiresAt: Date().addingTimeInterval(86_400 * 7))
+            share: .previewCard(hasPassword: true, expiresAt: Date().addingTimeInterval(86_400 * 7)),
+            now: .now
         )) { EditShareFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 #endif
