@@ -114,7 +114,7 @@ public struct SettingsFeature {
         /// Set when the user taps to sign an account out of the switcher, driving the confirm
         /// dialog; cleared on cancel or confirm.
         public var accountPendingRemoval: AccountSummary?
-        public var isLoadingPreferences = false
+        public var preferencesPhase: DataPhase = .idle
         public var removeAllDownloadsPhase: ConfirmPhase = .idle
         /// Checked independently of the Downloads tab's own state (which may never have
         /// loaded, if the user hasn't visited that tab this session): this is what actually
@@ -677,7 +677,7 @@ public struct SettingsFeature {
                 await send(.clientCertificateStatusLoaded(clientCertificateClient.summary(certificateOrigin)))
             }
             let loadUploadDefaults = Effect<Action>.send(.uploadDefaults(.onAppear))
-            guard !state.isLoadingPreferences else {
+            guard state.preferencesPhase != .loading else {
                 return .merge(
                     checkDownloads,
                     checkCacheSize,
@@ -686,7 +686,7 @@ public struct SettingsFeature {
                     loadUploadDefaults
                 )
             }
-            state.isLoadingPreferences = true
+            state.preferencesPhase = .loading
             let serverURL = state.serverURL
             let filesClient = filesClient
             return .merge(
@@ -711,12 +711,12 @@ public struct SettingsFeature {
             )
 
         case let .preferencesResponse(.success(preferences)):
-            state.isLoadingPreferences = false
+            state.preferencesPhase = .loaded
             state.$preferences.withLock { $0 = preferences }
             return .none
 
-        case .preferencesResponse(.failure):
-            state.isLoadingPreferences = false
+        case let .preferencesResponse(.failure(error)):
+            state.preferencesPhase = .failed(error.userMessage)
             return .none
 
         case let .setShowHiddenFiles(value):
