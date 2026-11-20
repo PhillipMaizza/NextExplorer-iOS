@@ -406,19 +406,10 @@ public struct ShareUploadFeature {
                 state.shouldUploadWithoutAsking = false
                 state.phase = .checking
                 // This extension's own cookie jar only: the app's active account stays as it is.
-                // Set in an effect: `setCookie` blocks on the storage's own queue.
-                let cookieStorage = cookieStorage
-                return .merge(
-                    .cancel(id: CancelID.folder),
-                    .concatenate(
-                        .run { _ in
-                            if let cookie = credentials.httpCookie {
-                                cookieStorage.setCookie(cookie)
-                            }
-                        },
-                        checkConnection(credentials)
-                    )
-                )
+                if let cookie = credentials.httpCookie {
+                    cookieStorage.setCookie(cookie)
+                }
+                return .merge(.cancel(id: CancelID.folder), checkConnection(credentials))
 
             case let .sessionLoaded(credentials, defaults):
                 guard let credentials else {
