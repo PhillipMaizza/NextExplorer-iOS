@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CryptoKit
+import DesignSystem
 import FilesClient
 @testable import FilesFeature
 import Foundation
@@ -170,6 +171,23 @@ struct ThumbnailCacheTests {
         let later = try await store.resolvedURL(path, "8.0|3") { resolved }
 
         #expect(later == resolved)
+    }
+
+    // MARK: Session boundary
+
+    @Test("Clearing memory at a session boundary drops decoded thumbnails, known misses and file text snippets")
+    func clearMemoryEmptiesEveryInMemoryCache() throws {
+        let url = try #require(URL(string: "\(TestHost.exampleURLString)/static/thumbnails/\(TestID.name()).webp"))
+        let key = TestID.name()
+        ThumbnailMemoryCache.shared.setObject(PlatformImage(), forKey: url as NSURL)
+        ThumbnailMisses.insert(key)
+        TextSnippetCache.shared.setObject(key as NSString, forKey: key as NSString)
+
+        store.clearMemory()
+
+        #expect(ThumbnailMemoryCache.shared.object(forKey: url as NSURL) == nil)
+        #expect(!ThumbnailMisses.contains(key))
+        #expect(TextSnippetCache.shared.object(forKey: key as NSString) == nil)
     }
 }
 
