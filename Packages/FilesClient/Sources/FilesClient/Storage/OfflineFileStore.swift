@@ -156,8 +156,13 @@ enum OfflineCache {
     }
 
     static func pinnedRoots() -> [OfflinePinnedRoot] {
-        guard let scope = scopeDirectory(create: false) else { return [] }
-        let manifestURL = scope.appendingPathComponent(manifestFileName)
+        let scope = CacheAccountScope.current
+        return OfflineManifestState.shared.value(\.roots, scope: scope) { readPinnedRoots(scope: scope) }
+    }
+
+    private static func readPinnedRoots(scope: String) -> [OfflinePinnedRoot] {
+        guard let directory = scopeDirectory(create: false, scope: scope) else { return [] }
+        let manifestURL = directory.appendingPathComponent(manifestFileName)
         guard let data = try? Data(contentsOf: manifestURL) else { return [] }
         if let roots = try? JSONDecoder().decode([OfflinePinnedRoot].self, from: data) {
             return roots
@@ -171,8 +176,13 @@ enum OfflineCache {
     }
 
     static func setPinnedRoots(_ roots: [OfflinePinnedRoot]) {
-        guard let scope = scopeDirectory(create: true) else { return }
-        let manifestURL = scope.appendingPathComponent(manifestFileName)
+        let scope = CacheAccountScope.current
+        OfflineManifestState.shared.set(\.roots, roots, scope: scope) { writePinnedRoots(roots, scope: scope) }
+    }
+
+    private static func writePinnedRoots(_ roots: [OfflinePinnedRoot], scope: String) {
+        guard let directory = scopeDirectory(create: true, scope: scope) else { return }
+        let manifestURL = directory.appendingPathComponent(manifestFileName)
         guard let data = try? JSONEncoder().encode(roots) else { return }
         try? data.write(to: manifestURL, options: .atomic)
         FileProtection.apply(to: manifestURL)
@@ -182,26 +192,27 @@ enum OfflineCache {
     /// teardown, fresh sign in) where no other account stays active, mirroring the other cache
     /// stores' `clearAll`.
     static func removeAll() {
-        guard let rootURL = root(), FileManager.default.fileExists(atPath: rootURL.path) else { return }
-        try? FileManager.default.removeItem(at: rootURL)
+        OfflineManifestState.shared.remove(scope: nil) {
+            guard let rootURL = root(), FileManager.default.fileExists(atPath: rootURL.path) else { return }
+            try? FileManager.default.removeItem(at: rootURL)
+        }
     }
 
     /// Wipes only the active account's offline files (its slots and manifest), for the Settings
     /// "Remove Offline Files" action, so removing on one account never touches another account's
     /// pinned files on a shared device.
     static func removeCurrentScope() {
-        guard let scope = scopeDirectory(create: false),
-              FileManager.default.fileExists(atPath: scope.path) else { return }
-        try? FileManager.default.removeItem(at: scope)
+        removeScope(CacheAccountScope.current)
     }
 
     /// Wipes one named account's offline files, for removing an account that is not (or no longer)
     /// the active scope while other accounts stay signed in.
     static func removeScope(_ scope: String) {
-        guard let rootURL = root() else { return }
-        let directory = rootURL.appendingPathComponent(hex(scope), isDirectory: true)
-        guard FileManager.default.fileExists(atPath: directory.path) else { return }
-        try? FileManager.default.removeItem(at: directory)
+        OfflineManifestState.shared.remove(scope: scope) {
+            guard let directory = scopeDirectory(create: false, scope: scope),
+                  FileManager.default.fileExists(atPath: directory.path) else { return }
+            try? FileManager.default.removeItem(at: directory)
+        }
     }
 
     private static func slotsRoot(create: Bool) -> URL? {
@@ -333,14 +344,21 @@ enum OfflineCache {
         }
     }
 
-    private static func flagURL(_ name: String, create: Bool = true) -> URL? {
-        scopeDirectory(create: create)?.appendingPathComponent(name)
+    private static func flagURL(_ name: String, create: Bool, scope: String) -> URL? {
+        scopeDirectory(create: create, scope: scope)?.appendingPathComponent(name)
     }
 
     /// A run in progress marker, set when a download starts and cleared on completion, so the next
     /// launch can show a "resuming" state (and auto-sync) after an app kill mid download.
     static func setInterrupted(_ value: Bool) {
-        guard let url = flagURL(interruptedFileName) else { return }
+        let scope = CacheAccountScope.current
+        OfflineManifestState.shared.set(\.isInterrupted, value, scope: scope) {
+            writeInterrupted(value, scope: scope)
+        }
+    }
+
+    private static func writeInterrupted(_ value: Bool, scope: String) {
+        guard let url = flagURL(interruptedFileName, create: value, scope: scope) else { return }
         if value {
             try? Data().write(to: url)
             FileProtection.apply(to: url)
@@ -350,12 +368,20 @@ enum OfflineCache {
     }
 
     static func wasInterrupted() -> Bool {
-        guard let url = flagURL(interruptedFileName, create: false) else { return false }
-        return FileManager.default.fileExists(atPath: url.path)
+        let scope = CacheAccountScope.current
+        return OfflineManifestState.shared.value(\.isInterrupted, scope: scope) {
+            guard let url = flagURL(interruptedFileName, create: false, scope: scope) else { return false }
+            return FileManager.default.fileExists(atPath: url.path)
+        }
     }
 
     static func lastAutoSyncAt() -> Date? {
-        guard let url = flagURL(lastSyncFileName, create: false),
+        let scope = CacheAccountScope.current
+        return OfflineManifestState.shared.value(\.lastSync, scope: scope) { readLastAutoSyncAt(scope: scope) }
+    }
+
+    private static func readLastAutoSyncAt(scope: String) -> Date? {
+        guard let url = flagURL(lastSyncFileName, create: false, scope: scope),
               let text = try? String(contentsOf: url, encoding: .utf8),
               let seconds = Double(text)
         else { return nil }
@@ -363,7 +389,12 @@ enum OfflineCache {
     }
 
     static func setLastAutoSyncAt(_ date: Date) {
-        guard let url = flagURL(lastSyncFileName) else { return }
+        let scope = CacheAccountScope.current
+        OfflineManifestState.shared.set(\.lastSync, date, scope: scope) { writeLastAutoSyncAt(date, scope: scope) }
+    }
+
+    private static func writeLastAutoSyncAt(_ date: Date, scope: String) {
+        guard let url = flagURL(lastSyncFileName, create: true, scope: scope) else { return }
         try? String(date.timeIntervalSince1970).write(to: url, atomically: true, encoding: .utf8)
         FileProtection.apply(to: url)
     }
