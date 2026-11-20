@@ -173,10 +173,12 @@ def app_lines(ref):
     return counts
 
 
-def releases(ref, upcoming=UPCOMING):
+def releases(ref, upcoming=UPCOMING, only=None):
     """[(version, date, [(text, [pr])])], newest first; untagged commits first under `upcoming`.
 
-    A version made only of folded PRs gets GENERIC_NOTE, carrying those PRs, so it still has a note."""
+    A version made only of folded PRs gets GENERIC_NOTE, carrying those PRs, so it still has a note.
+    With `only`, the walk stops at the release tag after that version, since the older history
+    (one git call per untagged commit) is not needed."""
     log = git("log", "--first-parent", "--format=%H%x1f%cs%x1f%s%x1f%b%x1e", ref)
     tags = release_tags()
     changed = app_lines(ref)
@@ -187,6 +189,8 @@ def releases(ref, upcoming=UPCOMING):
     for record in filter(None, (r.strip("\n") for r in log.split("\x1e"))):
         commit, date, subject, body = record.split("\x1f", 3)
         if commit in tags:
+            if only in groups and tags[commit] != only:
+                break
             current = tags[commit]
         if commit == oldest:
             in_tagged_era = False
@@ -254,7 +258,7 @@ def main():
     # Notes for a version not tagged yet are the commits since the newest tag.
     tagged = set(release_tags().values())
     upcoming = args.notes if args.notes and args.notes not in tagged else args.upcoming
-    history = releases(args.ref, upcoming=upcoming)
+    history = releases(args.ref, upcoming=upcoming, only=args.notes)
     if args.notes:
         print(notes(history, args.notes, links=args.links))
         return

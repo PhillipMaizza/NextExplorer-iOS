@@ -151,6 +151,28 @@ class AppLinesTests(unittest.TestCase):
             gen.git = original
 
 
+class OnlyTests(unittest.TestCase):
+    def test_notes_for_the_newest_version_stop_at_its_tag(self):
+        log = "".join(
+            f"{commit}\x1f2026-11-09\x1fNXTIOS-0001: {title} (#{index})\x1f\x1e"
+            for index, (commit, title) in enumerate([("c" * 40, "dark mode"), ("b" * 40, "trash"), ("a" * 40, "old")])
+        )
+        originals = (gen.git, gen.release_tags, gen.app_version, gen.app_lines)
+        gen.git = lambda *args: log
+        gen.release_tags = lambda: {"b" * 40: "1.0.0", "a" * 40: "0.9.0"}
+        gen.app_lines = lambda ref: {}
+
+        def untagged_history(commit, cache):
+            raise AssertionError("walked past the tag")
+
+        gen.app_version = untagged_history
+        try:
+            history = gen.releases("HEAD", upcoming="1.1.0", only="1.1.0")
+        finally:
+            gen.git, gen.release_tags, gen.app_version, gen.app_lines = originals
+        self.assertEqual(history, [("1.1.0", "2026-11-09", [("Dark mode", ["0"])])])
+
+
 class NotesLimitTests(unittest.TestCase):
     def test_long_notes_are_cut_at_a_line_boundary(self):
         entries = [(f"Note number {index} " + "x" * 50, []) for index in range(200)]
