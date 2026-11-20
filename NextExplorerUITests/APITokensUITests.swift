@@ -6,6 +6,7 @@
     /// keeps the account's tokens in memory and accepts `Fixture.accountPassword`.
     final class APITokensUITests: UITestCase {
         private static let tokenName = "backup script"
+        private static let renamedName = "nightly"
 
         private func openTokens() -> APITokensScreen {
             let app = launchApp(auth: .loggedIn)
@@ -34,60 +35,39 @@
             screen.createButton.tap()
         }
 
-        func testMakingATokenShowsTheSecretOnceThenListsIt() {
-            let screen = openTokens()
-            makeToken(screen)
-
-            XCTAssertTrue(screen.issuedTitle.waitToAppear(), "A new token should show its secret")
-            XCTAssertTrue(screen.copyButton.exists, "The secret should offer Copy")
-            screen.issuedDoneButton.tap()
-
-            XCTAssertTrue(screen.token(named: Self.tokenName).waitToAppear(), "The new token should be in the list")
-            XCTAssertFalse(screen.emptyTitle.appears(), "The empty state should be gone")
-        }
-
-        func testAWrongPasswordShowsTheMessageAndMakesNothing() {
+        /// A wrong password makes nothing; the right one shows the secret once and lists the token,
+        /// which then renames, and revoking it asks first and brings back the empty state.
+        func testATokenIsMadeRenamedAndRevoked() {
             let screen = openTokens()
             makeToken(screen, password: UITestCase.Fixture.wrongPassword)
-
             XCTAssertTrue(
                 screen.wrongPasswordMessage.waitToAppear(),
                 "A wrong password should show the server's message"
             )
             XCTAssertFalse(screen.issuedTitle.appears(), "A wrong password must not make a token")
-        }
 
-        func testRenamingATokenChangesItsName() {
-            let screen = openTokens()
-            makeToken(screen)
-            XCTAssertTrue(screen.issuedTitle.waitToAppear())
+            screen.passwordField.clearAndType(UITestCase.Fixture.accountPassword)
+            screen.createButton.tap()
+            XCTAssertTrue(screen.issuedTitle.waitToAppear(), "A new token should show its secret")
+            XCTAssertTrue(screen.copyButton.exists, "The secret should offer Copy")
             screen.issuedDoneButton.tap()
-            XCTAssertTrue(screen.menu(for: Self.tokenName).waitToAppear())
+            XCTAssertTrue(screen.token(named: Self.tokenName).waitToAppear(), "The new token should be in the list")
+            XCTAssertFalse(screen.emptyTitle.appears(), "The empty state should be gone")
 
             screen.menu(for: Self.tokenName).tap()
             screen.renameAction.tap()
             XCTAssertTrue(screen.renameField.waitToAppear(), "Rename should ask for a new name")
-            screen.renameField.clearAndType("nightly")
+            screen.renameField.clearAndType(Self.renamedName)
             screen.renameSaveButton.tap()
-
-            XCTAssertTrue(screen.token(named: "nightly").waitToAppear(), "The token should show its new name")
+            XCTAssertTrue(screen.token(named: Self.renamedName).waitToAppear(), "The token should show its new name")
             XCTAssertFalse(screen.token(named: Self.tokenName).appears(), "The old name should be gone")
-        }
 
-        func testRevokingATokenAsksFirstThenRemovesIt() {
-            let screen = openTokens()
-            makeToken(screen)
-            XCTAssertTrue(screen.issuedTitle.waitToAppear())
-            screen.issuedDoneButton.tap()
-            XCTAssertTrue(screen.menu(for: Self.tokenName).waitToAppear())
-
-            screen.menu(for: Self.tokenName).tap()
+            screen.menu(for: Self.renamedName).tap()
             screen.revokeAction.tap()
             XCTAssertTrue(screen.revokeConfirmButton.waitToAppear(), "Revoke should ask before it acts")
             screen.revokeConfirmButton.tap()
-
             XCTAssertTrue(screen.emptyTitle.waitToAppear(), "Revoking the only token should bring back the empty state")
-            XCTAssertFalse(screen.token(named: Self.tokenName).appears())
+            XCTAssertFalse(screen.token(named: Self.renamedName).appears())
         }
     }
 #endif

@@ -9,20 +9,9 @@
     /// which reliably crosses the refresh threshold, and asserts on the "Sync completed" toast the
     /// refresh raises rather than on the gesture itself.
     final class BrowseToolbarUITests: UITestCase {
-        func testGridViewToggleKeepsItems() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-
-            openMenu({ browse.moreMenu.tap() }, until: browse.gridViewToggle)
-            browse.gridViewToggle.tap()
-
-            // Switching to grid lays out again the same items; they should still be on screen.
-            XCTAssertTrue(browse.item(Fixture.folder).waitToAppear(), "Grid view should still render the items")
-            XCTAssertTrue(browse.item(Fixture.file).exists)
-        }
-
-        func testSortDescendingReordersFolders() {
+        /// Sort descending flips the folders, grid view keeps the items, and pull to refresh keeps the
+        /// listing without a toast.
+        func testSortGridAndRefreshKeepTheListing() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
             // The two folder row buttons carry distinct frames; comparison is by reading order (top
@@ -51,13 +40,12 @@
                 precedesInReadingOrder(photos, documents),
                 "Name descending should place Photos before Documents"
             )
-        }
 
-        func testPullToRefreshKeepsTheListingWithoutAToast() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            let documents = browse.item(Fixture.folder)
-            XCTAssertTrue(documents.waitToAppear())
+            openMenu({ browse.moreMenu.tap() }, until: browse.gridViewToggle)
+            browse.gridViewToggle.tap()
+            // Switching to grid lays out again the same items; they should still be on screen.
+            XCTAssertTrue(browse.item(Fixture.folder).waitToAppear(), "Grid view should still render the items")
+            XCTAssertTrue(browse.item(Fixture.file).exists)
 
             // A held coordinate drag downward trips the refresh control where a plain swipeDown only
             // catches it intermittently. The terminal hold (not the drag speed) is what pushes

@@ -170,21 +170,5 @@
             XCTAssertTrue(remove.waitToVanish(), "Select mode ends once it is removed")
             XCTAssertTrue(offline.row(legacyName).exists, "Files saved earlier stay")
         }
-
-        func testTheSelectionMenuAppearsOnlyOnceSomethingIsSelected() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-            openMenu({ browse.moreMenu.tap() }, until: browse.selectMenuItem)
-            browse.selectMenuItem.tap()
-
-            let offlineButton = browse.offlineSelectionButton
-            XCTAssertTrue(browse.row(Fixture.file).waitToAppear())
-            XCTAssertFalse(browse.selectionActionsMenu.exists, "With nothing selected the menu is not offered")
-
-            browse.row(Fixture.file).tap()
-            openMenu({ browse.selectionActionsMenu.tap() }, until: offlineButton)
-            XCTAssertTrue(offlineButton.isEnabled(within: UITestTimeout.standard), "A selection enables it")
-        }
     }
 #endif

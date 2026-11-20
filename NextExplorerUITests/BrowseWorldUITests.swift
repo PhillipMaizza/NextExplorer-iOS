@@ -25,19 +25,16 @@
             XCTAssertFalse(browse.deleteAction.exists, "Nothing in a read only folder can be deleted")
         }
 
-        func testAnEmptyFolderShowsTheEmptyState() {
+        /// An empty folder says so, and folders four deep open and Back walks up the chain.
+        func testAnEmptyFolderAndFoldersFourDeepWalkBackUp() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
             open(.projects, in: browse)
             open(.drafts, in: browse)
-
             XCTAssertTrue(browse.emptyStateMessage.waitToAppear(), "A folder with nothing in it says so")
-        }
+            app.navigationBars.buttons.firstMatch.tap()
+            XCTAssertTrue(browse.folderNavigationBar(Folder.projects.name).waitToAppear())
 
-        func testFoldersFourDeepOpenAndBackWalksUpTheChain() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            open(.projects, in: browse)
             for folder in Folder.nestedChain {
                 open(folder, in: browse)
             }
@@ -65,10 +62,22 @@
             )
         }
 
-        func testAFileNothingCanOpenSaysSo() {
+        /// A file opens its preview and goes back, a folder opens to its own contents, and a file
+        /// nothing can open there says so.
+        func testFilesAndFoldersOpenAndAFileNothingCanOpenSaysSo() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+            // The first tap after launch is occasionally dropped, so retry once (see `openMenu`).
+            openMenu({ browse.item(Fixture.file).tap() }, until: browse.previewBackButton)
+            browse.previewBackButton.tap()
+
             open(.documents, in: browse)
+            // A folder only Documents holds proves the navigation resolved rather than dead ended.
+            XCTAssertTrue(
+                browse.item(Folder.invoices.name).waitToAppear(),
+                "Navigating into a folder should load its contents"
+            )
             XCTAssertTrue(scrollTo(browse.item(File.export.name), in: app))
 
             openMenu(

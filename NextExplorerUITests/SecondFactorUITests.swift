@@ -47,8 +47,17 @@
             )
         }
 
-        func testWrongCodeClearsTheBoxesAndShowsTheLog() {
+        /// Back from the code page returns to the password; signing in again reaches the code page,
+        /// where a wrong code clears the boxes and offers the log, and the right one signs in.
+        func testBackReturnsToPasswordAndAWrongCodeClearsTheBoxes() {
             let (app, login) = reachCodePage()
+            app.buttons[L10n.Common.back].tap()
+            XCTAssertTrue(
+                login.passwordField.waitToAppear(),
+                "Back from the code page should return to the password page"
+            )
+            login.submitCredentials(identifier: Fixture.secondFactorIdentifier)
+            XCTAssertTrue(login.codeField.waitToAppear(), "Signing in again should reach the code page")
             XCTAssertFalse(login.diagnosticsButton.appears(), "The sign in log stays hidden until something fails")
 
             login.codeField.tap()
@@ -82,16 +91,6 @@
             XCTAssertTrue(
                 TabBar(app: app).browse.waitToAppear(),
                 "A recovery code should sign in from the Verify button"
-            )
-        }
-
-        func testBackReturnsToPassword() {
-            let (app, login) = reachCodePage()
-            app.buttons[L10n.Common.back].tap()
-
-            XCTAssertTrue(
-                login.passwordField.waitToAppear(),
-                "Back from the code page should return to the password page"
             )
         }
     }

@@ -154,8 +154,24 @@
         }
 
         /// Get Info, Copy and Create Share Link each come up over the gallery, which stays put.
-        func testSheetsAndConfirmationsOpenOverTheGallery() {
+        /// Available Offline turns into a removal that asks first and back; Get Info, Copy and Create
+        /// Share Link then open over the gallery on the same file.
+        func testOfflineSheetsAndConfirmationsOpenOverTheGallery() {
             let app = openGallery(at: Fixture.document)
+            let browse = BrowseScreen(app: app)
+            choose(L10n.Browse.actionAvailableOffline, from: Fixture.document, in: app)
+            // The mocked download finishes at once, so the menu offers the removal next time.
+            openMenu({ title(Fixture.document, in: app).tap() }, until: browse.removeFromOfflineAction)
+            XCTAssertFalse(browse.availableOfflineAction.exists, "A pinned file no longer offers Available Offline")
+            keepScreenshot(of: "offline on", in: app)
+            browse.removeFromOfflineAction.tap()
+            XCTAssertTrue(browse.removeOfflineConfirmButton.waitToAppear(), "Removing asks first")
+            browse.removeOfflineConfirmButton.tap()
+            XCTAssertTrue(browse.removeOfflineConfirmButton.waitToVanish())
+            openMenu({ title(Fixture.document, in: app).tap() }, until: browse.availableOfflineAction)
+            XCTAssertFalse(browse.removeFromOfflineAction.exists, "A removed file offers Available Offline again")
+            dismissMenu(showing: L10n.Browse.actionAvailableOffline, in: app)
+
             choose(L10n.Browse.actionGetInfo, from: Fixture.document, in: app)
             XCTAssertTrue(
                 app.staticTexts[L10n.FileInfo.rowDateModified].waitToAppear(),
@@ -235,25 +251,6 @@
             )
             XCTAssertTrue(browse.previewBackButton.exists, "The gallery stays open")
         }
-
-        func testOfflineToggleTurnsIntoARemoval() {
-            let app = openGallery(at: Fixture.document)
-            let browse = BrowseScreen(app: app)
-            choose(L10n.Browse.actionAvailableOffline, from: Fixture.document, in: app)
-
-            // The mocked download finishes at once, so the menu offers the removal next time.
-            openMenu({ title(Fixture.document, in: app).tap() }, until: browse.removeFromOfflineAction)
-            XCTAssertFalse(browse.availableOfflineAction.exists, "A pinned file no longer offers Available Offline")
-            keepScreenshot(of: "offline on", in: app)
-            browse.removeFromOfflineAction.tap()
-            XCTAssertTrue(browse.removeOfflineConfirmButton.waitToAppear(), "Removing asks first")
-            browse.removeOfflineConfirmButton.tap()
-
-            openMenu({ title(Fixture.document, in: app).tap() }, until: browse.availableOfflineAction)
-            XCTAssertFalse(browse.removeFromOfflineAction.exists, "A removed file offers Available Offline again")
-        }
-
-        // MARK: Helpers
 
         /// Opens the title menu of the file on screen and taps `action`.
         private func choose(_ action: String, from name: String, in app: XCUIApplication) {

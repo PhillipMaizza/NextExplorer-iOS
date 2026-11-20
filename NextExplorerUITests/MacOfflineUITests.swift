@@ -17,10 +17,13 @@
             text(name, in: app)
         }
 
-        func testTheOfflineSectionIsInTheSidebarAndStartsEmpty() {
+        /// One launch through the section: it starts empty with no Sort button; the file menu keeps
+        /// Download next to Available Offline; a pin marks the sidebar until Offline opens, lists
+        /// there and opens its preview; removing asks first, Cancel keeps it, and confirming empties
+        /// the section again.
+        func testAPinListsOpensAndLeavesTheOfflineSection() {
             let app = launchApp()
             openOffline(in: app)
-
             XCTAssertTrue(
                 text(L10n.Offline.tabEmpty, in: app).waitToAppear(),
                 "With nothing pinned the Offline section says so"
@@ -29,30 +32,47 @@
                 app.toolbars.buttons[L10n.Common.sort].exists,
                 "The table sorts from its headers, so the section has no Sort button"
             )
-        }
 
-        func testPinningFromTheContextMenuListsTheFileInTheOfflineSection() {
-            let app = launchApp()
+            sidebarItem(L10n.Tab.browse, in: app).click()
+            XCTAssertTrue(text(Fixture.file, in: app).waitToAppear())
+            openMenu({ text(Fixture.file, in: app).rightClick() }, until: app.menuItems[L10n.Browse.actionDownload])
+            XCTAssertTrue(app.menuItems[L10n.Browse.actionAvailableOffline].exists)
+            XCTAssertFalse(app.menuItems[L10n.Browse.actionSaveToDevice].exists, "Save to Device is the phone's action")
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+
             pinForOffline(Fixture.file, in: app)
-
+            let dot = newFilesDot(in: app)
+            XCTAssertTrue(dot.exists, "A finished run marks Offline in the sidebar")
             openOffline(in: app)
-
             XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear(), "A pinned file is listed in Offline")
+            XCTAssertTrue(dot.waitToVanish(), "Opening Offline clears it")
             XCTAssertFalse(
                 app.toolbars.buttons[L10n.Menu.activity].exists,
                 "An offline run shows in the bottom bar, never as the toolbar's transfers button"
             )
-            XCTAssertFalse(text(L10n.Offline.tabEmpty, in: app).exists)
-        }
 
-        func testTheMacKeepsDownloadNextToAvailableOffline() {
-            let app = launchApp()
-            XCTAssertTrue(text(Fixture.file, in: app).waitToAppear())
-            openMenu({ text(Fixture.file, in: app).rightClick() }, until: app.menuItems[L10n.Browse.actionDownload])
+            offlineRow(Fixture.file, in: app).doubleClick()
+            let sheet = app.sheets.firstMatch
+            XCTAssertTrue(sheet.waitToAppear(), "Double clicking a pinned file opens its preview")
+            XCTAssertTrue(sheet.buttons.labeled(L10n.PreviewToolbar.close).waitToAppear())
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+            XCTAssertTrue(sheet.waitToVanish(), "Esc closes it, back on the Offline section")
 
-            XCTAssertTrue(app.menuItems[L10n.Browse.actionDownload].exists, "The Mac still downloads to a folder")
-            XCTAssertTrue(app.menuItems[L10n.Browse.actionAvailableOffline].exists)
-            XCTAssertFalse(app.menuItems[L10n.Browse.actionSaveToDevice].exists, "Save to Device is the phone's action")
+            let remove = app.menuItems[L10n.Common.remove]
+            let confirm = app.labeledButton(L10n.Offline.removeConfirm)
+            openMenu({ offlineRow(Fixture.file, in: app).rightClick() }, until: remove)
+            remove.click()
+            XCTAssertTrue(confirm.waitToAppear(), "Removing asks first")
+            XCTAssertTrue(offlineRow(Fixture.file, in: app).exists, "The file stays while the question is open")
+            app.labeledButton(L10n.Common.cancel).click()
+            XCTAssertTrue(confirm.waitToVanish())
+            XCTAssertTrue(offlineRow(Fixture.file, in: app).exists, "Cancel keeps the pin")
+
+            openMenu({ offlineRow(Fixture.file, in: app).rightClick() }, until: remove)
+            remove.click()
+            XCTAssertTrue(confirm.waitToAppear())
+            confirm.click()
+            XCTAssertTrue(text(L10n.Offline.tabEmpty, in: app).waitToAppear(), "The last pin is gone")
         }
 
         func testAPinnedFolderOpensFromTheOfflineSectionAndGoesBack() {
@@ -66,67 +86,6 @@
             XCTAssertTrue(backButton(in: app).waitToAppear(UITestTimeout.standard, "A pinned folder opens in place"))
             backButton(in: app).click()
             XCTAssertTrue(offlineRow(Fixture.folder, in: app).waitToAppear(), "Back returns to the Offline list")
-        }
-
-        func testAPinnedFileOpensItsPreviewFromTheOfflineSection() {
-            let app = launchApp()
-            pinForOffline(Fixture.file, in: app)
-            openOffline(in: app)
-            XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
-
-            offlineRow(Fixture.file, in: app).doubleClick()
-
-            let sheet = app.sheets.firstMatch
-            XCTAssertTrue(sheet.waitToAppear(), "Double clicking a pinned file opens its preview")
-            XCTAssertTrue(sheet.buttons.labeled(L10n.PreviewToolbar.close).waitToAppear())
-            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
-            XCTAssertTrue(sheet.waitToVanish(), "Esc closes it, back on the Offline section")
-        }
-
-        func testNewOfflineFilesPutADotBesideOfflineUntilItIsOpened() {
-            let app = launchApp()
-            pinForOffline(Fixture.file, in: app)
-
-            let dot = newFilesDot(in: app)
-            XCTAssertTrue(dot.exists, "A finished run marks Offline in the sidebar")
-            openOffline(in: app)
-            XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
-            XCTAssertTrue(dot.waitToVanish(), "Opening Offline clears it")
-        }
-
-        func testRemovingAPinAsksFirstAndCancelKeepsIt() {
-            let app = launchApp()
-            pinForOffline(Fixture.file, in: app)
-            openOffline(in: app)
-            XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
-
-            openMenu(
-                { offlineRow(Fixture.file, in: app).rightClick() },
-                until: app.menuItems[L10n.Common.remove]
-            )
-            app.menuItems[L10n.Common.remove].click()
-
-            let confirm = app.labeledButton(L10n.Offline.removeConfirm)
-            XCTAssertTrue(confirm.waitToAppear(), "Removing asks first")
-            XCTAssertTrue(offlineRow(Fixture.file, in: app).exists, "The file stays while the question is open")
-            app.labeledButton(L10n.Common.cancel).click()
-            XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear(), "Cancel keeps the pin")
-        }
-
-        func testConfirmingTheRemovalEmptiesTheOfflineSection() {
-            let app = launchApp()
-            pinForOffline(Fixture.file, in: app)
-            openOffline(in: app)
-            XCTAssertTrue(offlineRow(Fixture.file, in: app).waitToAppear())
-
-            openMenu(
-                { offlineRow(Fixture.file, in: app).rightClick() },
-                until: app.menuItems[L10n.Common.remove]
-            )
-            app.menuItems[L10n.Common.remove].click()
-            app.labeledButton(L10n.Offline.removeConfirm).click()
-
-            XCTAssertTrue(text(L10n.Offline.tabEmpty, in: app).waitToAppear(), "The last pin is gone")
         }
     }
 #endif

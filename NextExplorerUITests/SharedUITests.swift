@@ -54,8 +54,10 @@
         }
 
         /// A one share item opens straight on its page; an item with two opens on their list, a row
-        /// pushes its page, and saving an edit there shows the new values without reopening.
-        func testItemSheetsOpenOnAPageOrAListAndAPushedPageSaves() {
+        /// pushes its page, and saving an edit there shows the new values without reopening. Back on
+        /// the one share item, editing asks before discarding and saves, and deleting its only share
+        /// closes the sheet and drops the row.
+        func testItemSheetsEditSaveAndDeleteTheirShares() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let shared = SharedScreen(app: app)
             selectTab(TabBar(app: app).shared, until: shared.item(ShareFixture.byMe))
@@ -85,14 +87,8 @@
                 shared.item(ShareFixture.renamedLabel).waitToAppear(),
                 "The pushed page shows the saved label without reopening"
             )
-        }
-
-        /// Editing asks before discarding and saves back to the page; deleting the only share then
-        /// closes the sheet and drops the row.
-        func testEditingThenDeletingTheOnlyShare() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let shared = SharedScreen(app: app)
-            selectTab(TabBar(app: app).shared, until: shared.item(ShareFixture.byMe))
+            shared.closeSheetButton.tap()
+            XCTAssertTrue(shared.copyLinkButton.waitToVanish(), "Close dismisses the sheet")
 
             shared.item(ShareFixture.byMe).tap()
             XCTAssertTrue(shared.copyLinkButton.waitToAppear(), "A one share item opens straight on its page")

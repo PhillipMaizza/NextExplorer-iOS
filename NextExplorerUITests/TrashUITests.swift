@@ -5,29 +5,6 @@
 
     /// The trash against the mocked server: a deleted file lands there and comes back from it.
     final class TrashUITests: UITestCase {
-        func testADeletedFileIsRestoredFromTheTrash() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.deleteAction)
-            browse.deleteAction.tap()
-            XCTAssertTrue(browse.deleteConfirmButton.waitToAppear())
-            browse.deleteConfirmButton.tap()
-            XCTAssertTrue(browse.item(Fixture.file).waitToVanish(), "A confirmed delete should remove the row")
-
-            XCTAssertTrue(browse.trashButton.waitToAppear(), "The Browse root toolbar should offer the Trash")
-            browse.trashButton.tap()
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "The deleted file should be in the trash")
-
-            let restore = app.labeledButton(L10n.Trash.restore)
-            openMenu({ browse.row(Fixture.file).longPress() }, until: restore)
-            restore.tap()
-            XCTAssertTrue(browse.item(Fixture.file).waitToVanish(), "The restored file should leave the trash")
-
-            app.navigationBars.buttons.element(boundBy: 0).tap()
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "The restored file should be back in its folder")
-        }
-
         private typealias Entry = UITestFixture.TrashEntry
 
         private func openTrash(_ app: XCUIApplication) -> BrowseScreen {
@@ -37,11 +14,25 @@
             return browse
         }
 
-        /// The seeded trash shows one row per state, a deleted folder opens to what it held, and
-        /// Empty Trash asks first and then clears it all.
-        func testTheSeededTrashShowsEveryStateOpensAFolderAndEmpties() {
+        /// A file deleted in Browse is restored from the trash; the seeded trash shows one row per
+        /// state, a deleted folder opens to what it held, and Empty Trash asks first and clears it
+        /// all, with the restored file back in its folder.
+        func testADeletedFileIsRestoredAndTheSeededTrashOpensAFolderAndEmpties() {
             let app = launchApp()
-            let browse = openTrash(app)
+            let browse = BrowseScreen(app: app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.deleteAction)
+            browse.deleteAction.tap()
+            XCTAssertTrue(browse.deleteConfirmButton.waitToAppear())
+            browse.deleteConfirmButton.tap()
+            XCTAssertTrue(browse.item(Fixture.file).waitToVanish(), "A confirmed delete should remove the row")
+
+            _ = openTrash(app)
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "The deleted file should be in the trash")
+            let restore = app.labeledButton(L10n.Trash.restore)
+            openMenu({ browse.row(Fixture.file).longPress() }, until: restore)
+            restore.tap()
+            XCTAssertTrue(browse.item(Fixture.file).waitToVanish(), "The restored file should leave the trash")
             for entry in Entry.allCases {
                 XCTAssertTrue(scrollTo(browse.item(entry.name), in: app), "\(entry) is in the trash")
             }
@@ -78,6 +69,9 @@
             )
             app.labeledButton(L10n.Trash.emptyTrash).tap()
             XCTAssertTrue(app.staticTexts[L10n.Trash.emptyState].waitToAppear(), "The trash should be empty")
+
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "The restored file should be back in its folder")
         }
     }
 #endif

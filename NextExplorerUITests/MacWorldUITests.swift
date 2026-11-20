@@ -51,7 +51,9 @@
 
         // MARK: Browse
 
-        func testAReadOnlyFolderOffersNoRenameOrDelete() {
+        /// A read only folder offers no Rename or Delete, an empty folder says so, and folders four
+        /// deep open and ⌘↑ walks back up the chain.
+        func testAReadOnlyFolderAnEmptyFolderAndFoldersFourDeep() {
             let app = launchApp()
             open(.teamLibrary, in: app)
             let handbook = text(UITestFixture.File.handbook.name, in: app)
@@ -61,11 +63,8 @@
                 XCTAssertFalse(contextMenuOffers(action, in: app), "Nothing in a read only folder offers \(action)")
             }
             app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
-        }
+            app.typeKey(XCUIKeyboardKey.upArrow, modifierFlags: .command)
 
-        /// An empty folder says so, and folders four deep open and ⌘↑ walks back up the chain.
-        func testAnEmptyFolderAndFoldersFourDeepWalkBackUp() {
-            let app = launchApp()
             open(.projects, in: app)
             open(.drafts, in: app)
             XCTAssertTrue(text(L10n.EmptyState.folderEmpty, in: app).waitToAppear(), "An empty folder says so")
@@ -94,8 +93,9 @@
 
         // MARK: Sidebar sections
 
-        /// The trash lists one row per seeded state, and Favorites shows labels and nested names.
-        func testTheTrashAndFavoritesSectionsListTheirSeededData() {
+        /// The trash lists one row per seeded state, Favorites shows labels and nested names, and
+        /// Shared switches segments and edits a share from its context menu.
+        func testTheTrashFavoritesAndSharedSectionsListTheirSeededData() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             sidebarItem(L10n.Trash.title, in: app).click()
@@ -109,6 +109,17 @@
             XCTAssertTrue(shows(UITestFixture.FavoriteLabel.invoices.rawValue, in: app).waitToAppear())
             XCTAssertTrue(shows(UITestFixture.FavoriteLabel.teamLibrary.rawValue, in: app).exists)
             XCTAssertTrue(shows(Folder.website.name, in: app).exists)
+
+            sidebarItem(L10n.Tab.shared, in: app).click()
+            XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear())
+            segment(L10n.Shared.segmentWithMe, in: app).click()
+            XCTAssertTrue(text(Self.withMeShare, in: app).waitToAppear(), "With me should list links shared with me")
+            segment(L10n.Shared.segmentByMe, in: app).click()
+            XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear())
+            text(Self.byMeShare, in: app).rightClick()
+            XCTAssertTrue(app.menuItems[L10n.Common.edit].waitToAppear(), "A share I own should offer Edit")
+            app.menuItems[L10n.Common.edit].click()
+            XCTAssertTrue(text(L10n.EditShare.title, in: app).waitToAppear(), "Edit should open the edit share sheet")
         }
 
         // MARK: Admin

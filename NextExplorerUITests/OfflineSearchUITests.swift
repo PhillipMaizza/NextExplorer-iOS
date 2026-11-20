@@ -17,13 +17,25 @@
             browse.searchField.clearAndType(Fixture.fileSearchTerm)
         }
 
-        func testAPinnedFileHeadsTheResultsUnderOnDeviceAndTheRestAreRemote() {
+        private func clearSearch(_ browse: BrowseScreen) {
+            browse.searchField.clearAndType("")
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
+        }
+
+        /// One plain list while nothing is kept; once a file is pinned it heads the results under On
+        /// device with the rest under Remote, in the list and in the grid.
+        func testAPinnedFileHeadsTheResultsInTheListAndTheGrid() {
             let app = launchApp()
             let browse = BrowseScreen(app: app)
-            pinFile(browse)
-
+            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
             search(browse)
+            XCTAssertTrue(browse.item(Fixture.searchHit).waitToAppear())
+            XCTAssertFalse(browse.sectionHeader(L10n.Search.onDevice).exists, "One plain list when nothing is kept")
+            XCTAssertFalse(browse.sectionHeader(L10n.Search.remote).exists)
+            clearSearch(browse)
 
+            pinFile(browse)
+            search(browse)
             XCTAssertTrue(browse.sectionHeader(L10n.Search.onDevice).waitToAppear(), "Kept files get their own heading")
             XCTAssertTrue(browse.sectionHeader(L10n.Search.remote).exists, "The others are under Remote")
             XCTAssertTrue(browse.item(Fixture.file).exists, "The pinned file is listed")
@@ -34,39 +46,22 @@
                 browse.item(Fixture.searchHit).frame.minY,
                 "What is on the device comes first"
             )
-        }
+            clearSearch(browse)
 
-        func testTheGridSplitsTheResultsTheSameWay() {
-            let app = launchApp()
-            let browse = BrowseScreen(app: app)
-            pinFile(browse)
             openMenu({ browse.moreMenu.tap() }, until: browse.gridViewToggle)
             browse.gridViewToggle.tap()
-
             search(browse)
-
             XCTAssertTrue(browse.sectionHeader(L10n.Search.onDevice).waitToAppear(), "The grid has the heading too")
             XCTAssertTrue(browse.sectionHeader(L10n.Search.remote).exists)
             XCTAssertTrue(browse.item(Fixture.searchHit).waitToAppear())
         }
 
-        func testWithNothingKeptThereAreNoHeadings() {
-            let app = launchApp()
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-
-            search(browse)
-
-            XCTAssertTrue(browse.item(Fixture.searchHit).waitToAppear())
-            XCTAssertFalse(browse.sectionHeader(L10n.Search.onDevice).exists, "One plain list when nothing is kept")
-            XCTAssertFalse(browse.sectionHeader(L10n.Search.remote).exists)
-        }
-
-        func testOfflineAPinnedFileIsStillFoundUnderOnDevice() {
+        /// When search cannot reach the server, the kept file is still found under On device, nothing
+        /// is invented, and it opens from the results.
+        func testOfflineAPinnedFileIsStillFoundAndOpens() {
             let app = launchApp(searchOffline: true)
             let browse = BrowseScreen(app: app)
             pinFile(browse)
-
             search(browse)
 
             XCTAssertTrue(
@@ -75,17 +70,8 @@
             )
             XCTAssertTrue(browse.item(Fixture.file).exists)
             XCTAssertFalse(browse.item(Fixture.searchHit).exists, "Nothing the server alone knows is invented")
-        }
-
-        func testOfflineAPinnedFileFoundBySearchOpens() {
-            let app = launchApp(searchOffline: true)
-            let browse = BrowseScreen(app: app)
-            pinFile(browse)
-            search(browse)
-            XCTAssertTrue(browse.sectionHeader(L10n.Search.onDevice).waitToAppear())
 
             browse.item(Fixture.file).tap()
-
             XCTAssertTrue(browse.previewBackButton.waitToAppear(), "The kept file opens from the results")
         }
     }
