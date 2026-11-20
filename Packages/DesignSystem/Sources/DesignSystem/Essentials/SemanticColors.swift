@@ -13,6 +13,8 @@ public extension Color {
     /// mode, but a darker gold in light mode where the brand gold on white measures ~2:1 and
     /// fails WCAG AA. `Color.accent` stays the brand fill; this is only for foreground text.
     static let accentText = Color("AccentText", bundle: .module)
+    /// Text, icons and spinners on an `accent` fill, which stays light in both appearances.
+    static let onAccent = Color.black
     /// Primary text/icons.
     static let primaryDS = Color("TextPrimary", bundle: .module)
     /// Secondary text, placeholders, subtitles.

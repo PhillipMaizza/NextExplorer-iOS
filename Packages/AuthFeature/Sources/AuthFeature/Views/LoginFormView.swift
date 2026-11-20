@@ -772,14 +772,14 @@ public struct LoginFormView: View {
                 case .idle:
                     Text(L10n.Login.submit)
                         .type(.label3)
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(Color.onAccent)
                 case .submitting:
-                    DSSpinner(color: .black)
+                    DSSpinner(color: .onAccent)
                 case .success:
                     IconKit.checkmark
                         .resizable()
                         .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(Color.onAccent)
                         .bold()
                 case .failure:
                     IconKit.close
@@ -842,7 +842,7 @@ public struct LoginFormView: View {
                     IconKit.checkmark
                         .resizable()
                         .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(Color.onAccent)
                         .bold()
                 }
             }
