@@ -32,9 +32,9 @@ final class StreamingPlayback {
         if url.isFileURL {
             player = AVPlayer(url: url)
         } else {
-            // `AVPlayer(url:)` does NOT send cookies from `HTTPCookieStorage.shared`, so the session
+            // `AVPlayer(url:)` does NOT send cookies from `HTTPCookieStorage.appSession`, so the session
             // cookie `GET /api/preview` is authorized by would never go out and the stream 401s.
-            let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
+            let cookies = HTTPCookieStorage.appSession.cookies(for: url) ?? []
             if ClientIdentityStore.shared.hasCertificate(for: url),
                let loader = ClientCertificateAssetLoader(remoteURL: url, cookies: cookies, fileExtension: fileExtension)
             {

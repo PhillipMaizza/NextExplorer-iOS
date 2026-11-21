@@ -227,7 +227,7 @@ struct ImageGalleryPage: View {
             // Online: stream progressively so the image ramps from rough to sharp with no spinner.
             url = streamURL
         }
-        let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
+        let cookies = HTTPCookieStorage.appSession.cookies(for: url) ?? []
         var lastFrame: PlatformImage?
         for await frame in ProgressiveImageLoader.frames(url: url, cookies: cookies, maxPixelDimension: target) {
             if Task.isCancelled {

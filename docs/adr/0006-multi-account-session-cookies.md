@@ -16,7 +16,8 @@ a cookie name, domain and path and cannot coexist there.
 - A keychain that cannot be read throws on change paths, so a removal never saves over accounts
   it could not see.
 
-## Consequences
-A cookie the server sets later can persist on disk; tracked as issue #215.
+- The app's URL sessions share `HTTPCookieStorage.appSession`, an in memory jar. The shared jar
+  writes cookies with an expiry to disk, where a cookie the server set later would outlive sign
+  out until reinstall. Launch empties the shared jar of what older releases left there.
 
 Code: `SessionCookieStore`, `StoredSessions`.

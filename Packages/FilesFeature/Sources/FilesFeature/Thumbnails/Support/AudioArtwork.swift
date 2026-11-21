@@ -49,7 +49,7 @@ enum AudioArtwork {
             asset = AVURLAsset(url: url)
         } else {
             // The same sources the player uses: the session cookie, or the client certificate loader.
-            let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
+            let cookies = HTTPCookieStorage.appSession.cookies(for: url) ?? []
             if ClientIdentityStore.shared.hasCertificate(for: url),
                let made = ClientCertificateAssetLoader(remoteURL: url, cookies: cookies, fileExtension: fileExtension)
             {

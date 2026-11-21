@@ -38,7 +38,7 @@ public extension NetworkClient {
     static func live(
         trustEvaluator: ServerTrustEvaluating = DefaultServerTrustEvaluator(),
         certificates: ClientCertificateChallengeHandler = .shared,
-        cookieStorage: HTTPCookieStorage = .shared,
+        cookieStorage: HTTPCookieStorage = .appSession,
         protocolClasses: [AnyClass] = [],
         maxInMemoryResponseBytes: Int = NetworkClient.defaultMaxInMemoryResponseBytes
     ) -> NetworkClient {
