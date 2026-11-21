@@ -69,7 +69,7 @@ struct FileInfoSheet: View {
                         totalSize: 10_485_760,
                         fileCount: 42,
                         dirCount: 3,
-                        truncated: false
+                        isTruncated: false
                     )
                 ),
                 errorMessage: nil,
@@ -94,7 +94,7 @@ struct FileInfoSheet: View {
                         totalSize: 41_000_000_000,
                         fileCount: 1_200,
                         dirCount: 60,
-                        truncated: false
+                        isTruncated: false
                     )
                 ),
                 usage: StorageUsage(path: "Media", size: 41_000_000_000, free: 59_000_000_000, total: 100_000_000_000),
@@ -116,7 +116,7 @@ struct FileInfoSheet: View {
                         totalSize: 78_000_000_000,
                         fileCount: 320,
                         dirCount: 40,
-                        truncated: false
+                        isTruncated: false
                     )
                 ),
                 usage: StorageUsage(
@@ -143,7 +143,7 @@ struct FileInfoSheet: View {
                         totalSize: 94_000_000_000,
                         fileCount: 8,
                         dirCount: 0,
-                        truncated: false
+                        isTruncated: false
                     )
                 ),
                 usage: StorageUsage(path: "Backups", size: 94_000_000_000, free: 6_000_000_000, total: 100_000_000_000),

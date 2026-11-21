@@ -104,6 +104,11 @@ extension FilesService {
 
         let items: [Item]
         /// Sent only as `true`: left out, the server uses the trash when it has one.
-        var permanent: Bool?
+        var isPermanent: Bool?
+
+        private enum CodingKeys: String, CodingKey {
+            case items
+            case isPermanent = "permanent"
+        }
     }
 }

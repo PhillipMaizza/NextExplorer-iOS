@@ -11,16 +11,27 @@ extension FilesService {
 
     struct SearchEnvelope: Decodable {
         let items: [SearchResultItem]
-        let truncated: Bool?
+        let isTruncated: Bool?
         let limit: Int?
-        let complete: Bool?
+        let isComplete: Bool?
+
+        private enum CodingKeys: String, CodingKey {
+            case items, limit
+            case isTruncated = "truncated"
+            case isComplete = "complete"
+        }
     }
 
     struct ThumbnailEnvelope: Decodable {
         let thumbnail: String
         /// `true` while the server still makes the thumbnail (a video's first frame takes ffmpeg a
         /// moment): the empty `thumbnail` then means "not yet", not "none".
-        let pending: Bool?
+        let isPending: Bool?
         let retryAfterMs: Int?
+
+        private enum CodingKeys: String, CodingKey {
+            case thumbnail, retryAfterMs
+            case isPending = "pending"
+        }
     }
 }

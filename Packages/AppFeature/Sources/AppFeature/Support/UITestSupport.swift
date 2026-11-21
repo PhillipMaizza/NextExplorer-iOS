@@ -221,7 +221,7 @@
                 cookieValue: "uitest-cookie",
                 cookieDomain: serverURL.host ?? UITestFixture.Host.primary.rawValue,
                 cookiePath: "/",
-                cookieIsSecure: true,
+                isCookieSecure: true,
                 expiresAt: nil,
                 username: username
             )

@@ -59,7 +59,7 @@ struct BrowseGridCells<Menu: View>: View {
                 FileContextMenuPreview(
                     item: item,
                     serverURL: store.serverURL,
-                    showThumbnails: store.preferences.showThumbnails
+                    shouldShowThumbnails: store.preferences.shouldShowThumbnails
                 )
             }
             // A tile has no swipe, so VoiceOver gets the row's swipe actions as its own.
@@ -77,7 +77,7 @@ struct BrowseGridCells<Menu: View>: View {
             item: item,
             isFavorite: store.favoritePaths.contains(item.id),
             serverURL: store.serverURL,
-            showThumbnails: store.preferences.showThumbnails,
+            shouldShowThumbnails: store.preferences.shouldShowThumbnails,
             folderSize: store.folderSizes[item.id],
             matchedSource: source.matched(item.id),
             isOpening: source.isOpening(item.id, in: store),
@@ -133,7 +133,7 @@ struct BrowseFolderRows<Menu: View>: View {
                     FileContextMenuPreview(
                         item: item,
                         serverURL: store.serverURL,
-                        showThumbnails: store.preferences.showThumbnails
+                        shouldShowThumbnails: store.preferences.shouldShowThumbnails
                     )
                 }
                 .swipeActions(edge: .trailing) {
@@ -150,7 +150,7 @@ struct BrowseFolderRows<Menu: View>: View {
             item: item,
             isFavorite: store.favoritePaths.contains(item.id),
             serverURL: store.serverURL,
-            showThumbnails: store.preferences.showThumbnails,
+            shouldShowThumbnails: store.preferences.shouldShowThumbnails,
             matchedSource: source.matched(item.id),
             isOpening: source.isOpening(item.id, in: store),
             isAvailableOffline: store.offlineItemIDs.contains(item.id),

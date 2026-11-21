@@ -18,7 +18,7 @@ extension FilesService {
         let url = serverURL.appendingPathComponent(APIPath.permissionsChmod)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(ChmodBody(path: path, mode: mode, recursive: recursive))
+        request.httpBody = try Self.encode(ChmodBody(path: path, mode: mode, isRecursive: recursive))
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
     }

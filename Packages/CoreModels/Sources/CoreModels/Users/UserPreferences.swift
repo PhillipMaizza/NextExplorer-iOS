@@ -8,19 +8,19 @@ import Foundation
 /// A brand new user has no rows in `user_settings` at all, so any key can be absent from
 /// the response; decoding falls back to this client's own defaults rather than failing.
 public struct UserPreferences: Decodable, Equatable, Sendable {
-    public var showHiddenFiles: Bool
-    public var showThumbnails: Bool
+    public var shouldShowHiddenFiles: Bool
+    public var shouldShowThumbnails: Bool
     /// The user's preferred default lifetime for a new share link, or `nil` when they
     /// haven't set one. `backend` stores it as `{ value, unit }` or `null`.
     public var defaultShareExpiration: ShareExpiration?
 
     public init(
-        showHiddenFiles: Bool = false,
-        showThumbnails: Bool = true,
+        shouldShowHiddenFiles: Bool = false,
+        shouldShowThumbnails: Bool = true,
         defaultShareExpiration: ShareExpiration? = nil
     ) {
-        self.showHiddenFiles = showHiddenFiles
-        self.showThumbnails = showThumbnails
+        self.shouldShowHiddenFiles = shouldShowHiddenFiles
+        self.shouldShowThumbnails = shouldShowThumbnails
         self.defaultShareExpiration = defaultShareExpiration
     }
 
@@ -55,13 +55,15 @@ public struct UserPreferences: Decodable, Equatable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case showHiddenFiles, showThumbnails, defaultShareExpiration
+        case shouldShowHiddenFiles = "showHiddenFiles"
+        case shouldShowThumbnails = "showThumbnails"
+        case defaultShareExpiration
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        showHiddenFiles = try container.decodeIfPresent(Bool.self, forKey: .showHiddenFiles) ?? false
-        showThumbnails = try container.decodeIfPresent(Bool.self, forKey: .showThumbnails) ?? true
+        shouldShowHiddenFiles = try container.decodeIfPresent(Bool.self, forKey: .shouldShowHiddenFiles) ?? false
+        shouldShowThumbnails = try container.decodeIfPresent(Bool.self, forKey: .shouldShowThumbnails) ?? true
         defaultShareExpiration = try container.decodeIfPresent(ShareExpiration.self, forKey: .defaultShareExpiration)
     }
 }

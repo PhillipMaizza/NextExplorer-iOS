@@ -23,13 +23,13 @@ struct SettingsPreferencesTests: SettingsFeatureTestSupport {
             action: .setShowHiddenFiles(true),
             key: .showHiddenFiles,
             value: true,
-            expected: UserPreferences(showHiddenFiles: true, showThumbnails: true)
+            expected: UserPreferences(shouldShowHiddenFiles: true, shouldShowThumbnails: true)
         ),
         ToggleCase(
             action: .setShowThumbnails(false),
             key: .showThumbnails,
             value: false,
-            expected: UserPreferences(showHiddenFiles: false, showThumbnails: false)
+            expected: UserPreferences(shouldShowHiddenFiles: false, shouldShowThumbnails: false)
         ),
     ])
     func aToggleUpdatesTheSharedPreferencesAndPersistsOptimistically(_ testCase: ToggleCase) async {
@@ -60,11 +60,12 @@ struct SettingsPreferencesTests: SettingsFeatureTestSupport {
         }
 
         await store.send(.setShowHiddenFiles(true)) { state in
-            state.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: true, showThumbnails: true) }
+            state.$preferences
+                .withLock { $0 = UserPreferences(shouldShowHiddenFiles: true, shouldShowThumbnails: true) }
         }
         await store.receive(\.updatePreferenceResponse)
 
-        #expect(store.state.preferences.showHiddenFiles)
+        #expect(store.state.preferences.shouldShowHiddenFiles)
     }
 
     @Test
@@ -88,11 +89,13 @@ struct SettingsPreferencesTests: SettingsFeatureTestSupport {
         }
 
         await store.send(.setShowHiddenFiles(true)) { state in
-            state.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: true, showThumbnails: true) }
+            state.$preferences
+                .withLock { $0 = UserPreferences(shouldShowHiddenFiles: true, shouldShowThumbnails: true) }
         }
         try await firstStarted.wait()
         await store.send(.setShowHiddenFiles(false)) { state in
-            state.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: false, showThumbnails: true) }
+            state.$preferences
+                .withLock { $0 = UserPreferences(shouldShowHiddenFiles: false, shouldShowThumbnails: true) }
         }
         await store.receive(\.updatePreferenceResponse)
         await store.finish()

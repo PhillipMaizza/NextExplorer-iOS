@@ -264,7 +264,7 @@ struct UploadStagingFailureTests {
         await #expect(throws: CancellationError.self) {
             try await SharedItemLoader.stageFile(at: file, in: batch, access: access)
         }
-        #expect(!batch.exists, "the discarded batch folder is not made again")
+        #expect(!batch.isOnDisk, "the discarded batch folder is not made again")
     }
 
     @Test("A task cancelled during the coordinated read writes no envelope")

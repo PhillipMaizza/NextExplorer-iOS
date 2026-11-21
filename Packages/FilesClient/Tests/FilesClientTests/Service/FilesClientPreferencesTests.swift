@@ -22,7 +22,7 @@ extension FilesClientLiveTests {
         func fetchPreferencesFallsBackPerFieldWhenOnlyOneKeyIsPresent() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.preferencesShowHiddenFiles.data())
             let preferences = try await makeClient().fetchPreferences(serverURL)
-            #expect(preferences == UserPreferences(showHiddenFiles: true, showThumbnails: true))
+            #expect(preferences == UserPreferences(shouldShowHiddenFiles: true, shouldShowThumbnails: true))
         }
 
         @Test

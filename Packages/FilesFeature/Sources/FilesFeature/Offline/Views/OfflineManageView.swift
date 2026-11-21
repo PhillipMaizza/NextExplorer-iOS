@@ -57,7 +57,7 @@ struct OfflineManageRow: View {
     var syncState = OfflineSyncState.upToDate
     /// Set where the row can draw its file's thumbnail (the Offline tab), from the kept copy first.
     var serverURL: URL?
-    var showThumbnails = false
+    var shouldShowThumbnails = false
     /// The Offline tab's select mode: a tap picks the row, and its swipe and menu step aside.
     var isSelecting = false
     var isSelected = false
@@ -98,7 +98,7 @@ struct OfflineManageRow: View {
                 kind: usage.kind,
                 thumbnailFile: usage.thumbnailFile,
                 serverURL: serverURL,
-                showThumbnails: showThumbnails,
+                shouldShowThumbnails: shouldShowThumbnails,
                 customIcon: favorite.map { FavoriteIcon.symbol(for: $0.icon) },
                 customIconTint: favorite.flatMap { FavoriteColor.resolve($0.color) },
                 isCustomIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,

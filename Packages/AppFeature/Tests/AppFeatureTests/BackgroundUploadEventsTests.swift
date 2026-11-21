@@ -15,7 +15,7 @@ struct BackgroundUploadEventsTests {
         SessionCredentials(
             serverBaseURL: server, authMode: .local, cookieName: TestSession.cookieName,
             cookieValue: TestSession.cookieValue,
-            cookieDomain: TestHost.server, cookiePath: "/", cookieIsSecure: true, expiresAt: nil, username: username
+            cookieDomain: TestHost.server, cookiePath: "/", isCookieSecure: true, expiresAt: nil, username: username
         )
     }
 

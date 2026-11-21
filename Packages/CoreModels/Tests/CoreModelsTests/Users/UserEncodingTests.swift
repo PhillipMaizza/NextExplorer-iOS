@@ -18,12 +18,12 @@ struct UserEncodingTests {
             email: "p@example.com",
             displayName: "Phillip",
             roles: [UserRole.admin],
-            emailVerified: true,
+            isEmailVerified: true,
             createdAt: MockDate.date,
             updatedAt: MockDate.date.addingTimeInterval(60),
             authMethods: [AuthMethod(method: "password"), AuthMethod(method: "oidc", provider: "google")],
             lockedUntil: MockDate.date.addingTimeInterval(120),
-            twoFactorEnabled: true
+            isTwoFactorEnabled: true
         )
         let data = try JSONEncoder().encode(user)
         #expect(try JSONDecoder().decode(User.self, from: data) == user)

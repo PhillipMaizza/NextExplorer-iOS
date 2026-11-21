@@ -47,11 +47,11 @@ struct SettingsAppearTests: SettingsFeatureTestSupport {
         let store = makeStore(state: state)
 
         await store.send(.preferencesResponse(.success(UserPreferences(
-            showHiddenFiles: true,
-            showThumbnails: false
+            shouldShowHiddenFiles: true,
+            shouldShowThumbnails: false
         )))) {
             $0.preferencesPhase = .loaded
-            $0.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: true, showThumbnails: false) }
+            $0.$preferences.withLock { $0 = UserPreferences(shouldShowHiddenFiles: true, shouldShowThumbnails: false) }
         }
     }
 

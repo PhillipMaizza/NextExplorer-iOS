@@ -29,7 +29,7 @@ struct FileRowView: View {
     let supportsThumbnail: Bool
     let thumbnailSignature: String
     let serverURL: URL?
-    let showThumbnails: Bool
+    let shouldShowThumbnails: Bool
     /// The full item, when built from one: needed for the on device document first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
@@ -66,7 +66,7 @@ struct FileRowView: View {
         kind: String? = nil,
         thumbnailFile: FileItem? = nil,
         serverURL: URL? = nil,
-        showThumbnails: Bool = false,
+        shouldShowThumbnails: Bool = false,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
         isCustomIconFilled: Bool = false,
@@ -91,7 +91,7 @@ struct FileRowView: View {
         supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
         thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
         self.serverURL = serverURL
-        self.showThumbnails = showThumbnails
+        self.shouldShowThumbnails = shouldShowThumbnails
         file = thumbnailFile
         self.customIcon = customIcon
         self.customIconTint = customIconTint
@@ -104,7 +104,7 @@ struct FileRowView: View {
         item: FileItem,
         isFavorite: Bool = false,
         serverURL: URL? = nil,
-        showThumbnails: Bool = false,
+        shouldShowThumbnails: Bool = false,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
         isAvailableOffline: Bool = false,
@@ -123,7 +123,7 @@ struct FileRowView: View {
         supportsThumbnail = item.supportsThumbnail
         thumbnailSignature = item.cacheSignature
         self.serverURL = serverURL
-        self.showThumbnails = showThumbnails
+        self.shouldShowThumbnails = shouldShowThumbnails
         file = item
         customIcon = nil
         customIconTint = nil
@@ -155,7 +155,8 @@ struct FileRowView: View {
     }
 
     private var isEligibleForThumbnail: Bool {
-        !isDirectory && (supportsThumbnail || shouldReadOwnContent) && showThumbnails && serverURL != nil && itemID !=
+        !isDirectory && (supportsThumbnail || shouldReadOwnContent) && shouldShowThumbnails && serverURL != nil &&
+            itemID !=
             nil
     }
 
@@ -165,7 +166,7 @@ struct FileRowView: View {
     }
 
     private var isEligibleForDocumentThumbnail: Bool {
-        showThumbnails && serverURL != nil && file.map(DocumentThumbnailStore.isEligible) == true
+        shouldShowThumbnails && serverURL != nil && file.map(DocumentThumbnailStore.isEligible) == true
     }
 
     var body: some View {
@@ -362,7 +363,7 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
             supportsThumbnail: true
         ),
         serverURL: URL(string: "https://nextexplorer.example.com"),
-        showThumbnails: true
+        shouldShowThumbnails: true
     )
     .padding(.space16)
 }
@@ -378,7 +379,7 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
             supportsThumbnail: true
         ),
         serverURL: URL(string: "https://nextexplorer.example.com"),
-        showThumbnails: false
+        shouldShowThumbnails: false
     )
     .padding(.space16)
 }

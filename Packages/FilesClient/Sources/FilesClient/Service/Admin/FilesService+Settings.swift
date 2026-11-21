@@ -37,7 +37,7 @@ extension FilesService {
         request.setJSONContentType()
         do {
             let body = PatchThumbnailsBody(thumbnails: .init(
-                enabled: settings.isEnabled,
+                isEnabled: settings.isEnabled,
                 size: settings.size,
                 quality: settings.quality,
                 concurrency: settings.concurrency

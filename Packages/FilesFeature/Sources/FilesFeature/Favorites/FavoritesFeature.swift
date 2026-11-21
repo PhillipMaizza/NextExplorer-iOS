@@ -140,12 +140,12 @@ public struct FavoritesFeature {
 
         public var displayedSearchResults: [SearchResultItem] {
             guard let fileSearchResults else { return [] }
-            return fileSearchResults.filter { showHiddenFiles || !isHiddenFileName($0.name) }
+            return fileSearchResults.filter { shouldShowHiddenFiles || !isHiddenFileName($0.name) }
         }
 
         /// Mirrors the browse preference so a hidden file inside a favorite doesn't surface in
         /// results unless the user opted in. Kept here so the reducer test can flip it.
-        public var showHiddenFiles = false
+        public var shouldShowHiddenFiles = false
     }
 
     public enum Action: Equatable, Sendable {

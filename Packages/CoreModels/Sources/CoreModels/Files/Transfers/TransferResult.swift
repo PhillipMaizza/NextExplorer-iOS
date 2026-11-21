@@ -6,23 +6,24 @@ public struct TransferResult: Codable, Equatable, Sendable {
     public struct Entry: Codable, Equatable, Sendable {
         public let from: String
         public let to: String
-        public let skipped: Bool
+        public let isSkipped: Bool
 
-        public init(from: String, to: String, skipped: Bool = false) {
+        public init(from: String, to: String, isSkipped: Bool = false) {
             self.from = from
             self.to = to
-            self.skipped = skipped
+            self.isSkipped = isSkipped
         }
 
         private enum CodingKeys: String, CodingKey {
-            case from, to, skipped
+            case from, to
+            case isSkipped = "skipped"
         }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             from = try container.decode(String.self, forKey: .from)
             to = try container.decode(String.self, forKey: .to)
-            skipped = try container.decodeIfPresent(Bool.self, forKey: .skipped) ?? false
+            isSkipped = try container.decodeIfPresent(Bool.self, forKey: .isSkipped) ?? false
         }
     }
 
@@ -36,10 +37,10 @@ public struct TransferResult: Codable, Equatable, Sendable {
 
     /// Entries the server actually acted on.
     public var movedCount: Int {
-        items.filter { !$0.skipped }.count
+        items.filter { !$0.isSkipped }.count
     }
 
     public var skippedCount: Int {
-        items.filter(\.skipped).count
+        items.filter(\.isSkipped).count
     }
 }

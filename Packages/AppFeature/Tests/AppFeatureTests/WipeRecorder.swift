@@ -139,7 +139,7 @@ enum AppFixtures {
             cookieValue: "v",
             cookieDomain: serverURL.host ?? "",
             cookiePath: "/",
-            cookieIsSecure: true,
+            isCookieSecure: true,
             expiresAt: nil,
             username: username
         )

@@ -9,13 +9,19 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
     public var cookieValue: String
     public var cookieDomain: String
     public var cookiePath: String
-    public var cookieIsSecure: Bool
+    public var isCookieSecure: Bool
     /// `nil` when the server issued a session-scoped cookie with no explicit Expires/Max-Age:
     /// liveness is then determined solely by calling `/api/auth/me`, never by local clock math.
     public var expiresAt: Date?
     public var username: String?
     /// Shown for the account when the server has no username for it, as with some single sign on users.
     public var email: String?
+
+    /// The Keychain blob keeps the names earlier releases wrote, so stored sessions still read.
+    private enum CodingKeys: String, CodingKey {
+        case serverBaseURL, authMode, cookieName, cookieValue, cookieDomain, cookiePath, expiresAt, username, email
+        case isCookieSecure = "cookieIsSecure"
+    }
 
     public init(
         serverBaseURL: URL,
@@ -24,7 +30,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         cookieValue: String,
         cookieDomain: String,
         cookiePath: String,
-        cookieIsSecure: Bool,
+        isCookieSecure: Bool,
         expiresAt: Date?,
         username: String?,
         email: String? = nil
@@ -35,7 +41,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         self.cookieValue = cookieValue
         self.cookieDomain = cookieDomain
         self.cookiePath = cookiePath
-        self.cookieIsSecure = cookieIsSecure
+        self.isCookieSecure = isCookieSecure
         self.expiresAt = expiresAt
         self.username = username
         self.email = email
@@ -68,7 +74,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         ]
         // `HTTPCookiePropertyKey.secure`'s mere PRESENCE marks the cookie secure, regardless
         // of its string value: it must be omitted entirely to produce a non-secure cookie.
-        if cookieIsSecure {
+        if isCookieSecure {
             properties[.secure] = "TRUE"
         }
         return HTTPCookie(properties: properties)

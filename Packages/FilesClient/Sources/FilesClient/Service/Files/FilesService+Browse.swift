@@ -46,8 +46,8 @@ extension FilesService {
         let envelope = try await send(request, decoding: SearchEnvelope.self)
         return SearchPage(
             items: envelope.items,
-            isTruncated: envelope.truncated ?? false,
-            isComplete: envelope.complete ?? true,
+            isTruncated: envelope.isTruncated ?? false,
+            isComplete: envelope.isComplete ?? true,
             limit: envelope.limit
         )
     }
@@ -65,7 +65,7 @@ extension FilesService {
         let request = Self.makeRequest(url: url, method: .get)
         let envelope = try await send(request, decoding: ThumbnailEnvelope.self)
         guard !envelope.thumbnail.isEmpty else {
-            if envelope.pending == true {
+            if envelope.isPending == true {
                 throw ThumbnailPendingError(retryAfter: envelope.retryAfterMs.map(Duration.milliseconds))
             }
             return nil

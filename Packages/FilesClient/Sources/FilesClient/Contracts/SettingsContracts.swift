@@ -25,10 +25,15 @@ extension FilesService {
 
     struct PatchThumbnailsBody: Encodable {
         struct Thumbnails: Encodable {
-            let enabled: Bool
+            let isEnabled: Bool
             let size: Int
             let quality: Int
             let concurrency: Int
+
+            private enum CodingKeys: String, CodingKey {
+                case size, quality, concurrency
+                case isEnabled = "enabled"
+            }
         }
 
         let thumbnails: Thumbnails

@@ -133,7 +133,7 @@ struct OfflineTabView: View {
                         phase: offlinePhase,
                         favorites: favorites,
                         serverURL: store.serverURL,
-                        showThumbnails: store.preferences.showThumbnails,
+                        shouldShowThumbnails: store.preferences.shouldShowThumbnails,
                         isSelecting: store.isSelecting,
                         selectedPaths: store.selectedPinnedPaths,
                         zoom: zoom,
@@ -168,7 +168,7 @@ struct OfflineTabView: View {
                             usages: displayedPinned,
                             favorites: favorites,
                             serverURL: store.serverURL,
-                            showThumbnails: store.preferences.showThumbnails,
+                            shouldShowThumbnails: store.preferences.shouldShowThumbnails,
                             isSelecting: store.isSelecting,
                             selectedPaths: store.selectedPinnedPaths,
                             zoom: zoom,
@@ -379,7 +379,7 @@ struct OfflineTabView: View {
                         store.send(.shownPinnedPathsChanged(paths))
                     }
                 }
-                .onOfflinePhaseChange(initial: true) { offlinePhase = $0 }
+                .onOfflinePhaseChange(isInitial: true) { offlinePhase = $0 }
                 // Only a run finishing while the tab is up reads it again; `.task` covers appearing.
                 .onOfflinePhaseChange { phase in
                     if phase == .completed {

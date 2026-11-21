@@ -99,9 +99,9 @@ public extension FilesClient {
         transferItems: { _, items, destination, _, _ in previewTransfer(items, destination) },
         recentDestinations: { _ in ["Documents/Projects", "Media/Photos"] },
         folderSizes: { _, paths in
-            Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(sizeBytes: 48_000_000, indexed: true)) })
+            Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(sizeBytes: 48_000_000, isIndexed: true)) })
         },
-        refreshFolderSize: { _, _ in FolderSize(sizeBytes: 48_000_000, indexed: true) },
+        refreshFolderSize: { _, _ in FolderSize(sizeBytes: 48_000_000, isIndexed: true) },
         fetchMetadata: { _, path in
             FileMetadata(
                 path: path,
@@ -114,7 +114,7 @@ public extension FilesClient {
                     totalSize: 10_485_760,
                     fileCount: 42,
                     dirCount: 3,
-                    truncated: false
+                    isTruncated: false
                 )
             )
         },
@@ -345,7 +345,7 @@ public extension FilesClient {
                 email: request.email ?? base.email,
                 displayName: request.displayName ?? base.displayName,
                 roles: request.roles ?? base.roles,
-                emailVerified: base.emailVerified,
+                isEmailVerified: base.isEmailVerified,
                 createdAt: base.createdAt,
                 updatedAt: Date(),
                 authMethods: base.authMethods
@@ -397,12 +397,12 @@ public extension User {
     static let previewManagedUsers: [User] = [
         User(
             id: "u1", username: "admin", email: "admin@example.com", displayName: "Site Admin",
-            roles: ["admin"], emailVerified: true, createdAt: Date(timeIntervalSinceNow: -86_400 * 90),
+            roles: ["admin"], isEmailVerified: true, createdAt: Date(timeIntervalSinceNow: -86_400 * 90),
             updatedAt: Date(), authMethods: [AuthMethod(method: "local_password")]
         ),
         User(
             id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie Rivera",
-            roles: [], emailVerified: true, createdAt: Date(timeIntervalSinceNow: -86_400 * 30),
+            roles: [], isEmailVerified: true, createdAt: Date(timeIntervalSinceNow: -86_400 * 30),
             updatedAt: Date(), authMethods: [
                 AuthMethod(method: "local_password"),
                 AuthMethod(method: "oidc", provider: "Authentik"),
@@ -410,7 +410,7 @@ public extension User {
         ),
         User(
             id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor",
-            roles: [], emailVerified: false, createdAt: Date(timeIntervalSinceNow: -86_400 * 5),
+            roles: [], isEmailVerified: false, createdAt: Date(timeIntervalSinceNow: -86_400 * 5),
             updatedAt: Date(), authMethods: [AuthMethod(method: "oidc", provider: "Google")]
         ),
     ]

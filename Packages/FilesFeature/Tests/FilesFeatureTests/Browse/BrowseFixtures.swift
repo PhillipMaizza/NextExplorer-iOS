@@ -99,7 +99,7 @@ enum BrowseFixtures {
         TransferResult(
             destination: destination,
             items: sources.map { .init(from: $0.id, to: "\(destination)/\(renamedTo[$0.name] ?? $0.name)") }
-                + skipped.map { .init(from: $0.id, to: $0.id, skipped: true) }
+                + skipped.map { .init(from: $0.id, to: $0.id, isSkipped: true) }
         )
     }
 

@@ -25,7 +25,7 @@ private struct BrowseSearchResultCell: View {
                     size: known.flatMap { $0.isDirectory ? store.folderSizes[$0.id] : $0.size },
                     thumbnailFile: row.thumbnailFile,
                     serverURL: store.serverURL,
-                    showThumbnails: store.preferences.showThumbnails,
+                    shouldShowThumbnails: store.preferences.shouldShowThumbnails,
                     matchedSource: source.matched(row.id),
                     isOpening: source.isOpening(row.id, in: store),
                     subtitle: known == nil ? searchResultLocation(row) : nil
@@ -37,7 +37,7 @@ private struct BrowseSearchResultCell: View {
                     currentFolder: store.directoryPath,
                     isFavorite: store.favoritePaths.contains(row.id),
                     serverURL: store.serverURL,
-                    showThumbnails: store.preferences.showThumbnails,
+                    shouldShowThumbnails: store.preferences.shouldShowThumbnails,
                     matchedSource: source.matched(row.id),
                     isOpening: source.isOpening(row.id, in: store)
                 )

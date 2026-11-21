@@ -76,7 +76,7 @@ struct TransferProgressBar: View {
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .dsGlass(interactive: true, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+        .dsGlass(isInteractive: true, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .onTapGesture(perform: onTap)
         .accessibilityElement(children: .ignore)
@@ -124,7 +124,7 @@ struct TransferFailedBar: View {
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .dsGlass(interactive: true, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+        .dsGlass(isInteractive: true, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .onTapGesture(perform: onTap)
         .accessibilityElement(children: .ignore)

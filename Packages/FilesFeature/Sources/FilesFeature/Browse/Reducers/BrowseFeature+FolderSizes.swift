@@ -68,7 +68,7 @@ extension BrowseFeature {
             for (id, entry) in sizes {
                 state.folderSizes[id] = entry.shownBytes
             }
-            let isSettling = sizes.values.contains(where: \.dirty) || !state.refreshingFolderSizeIDs.isEmpty
+            let isSettling = sizes.values.contains(where: \.isDirty) || !state.refreshingFolderSizeIDs.isEmpty
             guard isSettling, attempt < Self.folderSizeRetryDelays.count else {
                 state.refreshingFolderSizeIDs = []
                 return .none

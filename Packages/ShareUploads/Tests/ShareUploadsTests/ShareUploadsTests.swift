@@ -14,7 +14,7 @@ struct ShareUploadsTests {
         cookieValue: TestSession.uploadCookieValue,
         cookieDomain: TestHost.server,
         cookiePath: "/",
-        cookieIsSecure: true,
+        isCookieSecure: true,
         expiresAt: nil,
         username: TestAccount.username
     )

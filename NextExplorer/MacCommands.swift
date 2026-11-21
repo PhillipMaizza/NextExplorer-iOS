@@ -119,7 +119,7 @@
             }
             CommandGroup(before: .sidebar) {
                 sortMenu
-                Toggle(L10n.Settings.toggleShowHiddenFiles, isOn: showHiddenFiles)
+                Toggle(L10n.Settings.toggleShowHiddenFiles, isOn: shouldShowHiddenFiles)
                     .keyboardShortcut(".", modifiers: [.command, .shift])
                 Divider()
                 Button(L10n.Menu.refresh) {
@@ -207,11 +207,11 @@
         }
 
         /// The signed in account's Show Hidden Files preference, the same one Settings edits.
-        private var showHiddenFiles: Binding<Bool> {
+        private var shouldShowHiddenFiles: Binding<Bool> {
             Binding(
                 get: {
                     guard case let .authenticated(session) = store.destination else { return false }
-                    return session.mainTab.settings.preferences.showHiddenFiles
+                    return session.mainTab.settings.preferences.shouldShowHiddenFiles
                 },
                 set: { send(.settings(.setShowHiddenFiles($0))) }
             )

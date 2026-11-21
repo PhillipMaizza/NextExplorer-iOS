@@ -209,7 +209,7 @@ extension SessionCredentials {
             cookieValue: PreviewConstants.cookieValue,
             cookieDomain: host,
             cookiePath: PreviewConstants.cookiePath,
-            cookieIsSecure: true,
+            isCookieSecure: true,
             expiresAt: nil,
             username: username
         )

@@ -176,7 +176,12 @@ struct OfflineSelectionFeatureTests {
         FileMetadata(
             path: path, name: path, kind: FileItem.directoryKind, size: 4096,
             dateModified: MockDate.date, dateCreated: MockDate.date,
-            directory: FileMetadata.DirectorySummary(totalSize: totalSize, fileCount: 3, dirCount: 1, truncated: false)
+            directory: FileMetadata.DirectorySummary(
+                totalSize: totalSize,
+                fileCount: 3,
+                dirCount: 1,
+                isTruncated: false
+            )
         )
     }
 

@@ -116,7 +116,7 @@ extension BrowseFeature {
         let destination = result.destination.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         directoryCacheStore.bound(to: state.cacheScope).remove(state.serverURL, destination)
         guard destination == state.directoryPath else { return }
-        state.awaitedArrivalIDs = Set(result.items.filter { !$0.skipped }.map {
+        state.awaitedArrivalIDs = Set(result.items.filter { !$0.isSkipped }.map {
             $0.to.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         })
         state.arrivalChecksLeft = Constants.arrivalRechecks

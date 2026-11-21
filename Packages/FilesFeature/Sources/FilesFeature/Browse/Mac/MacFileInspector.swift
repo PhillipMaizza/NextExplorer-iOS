@@ -153,7 +153,7 @@
                     MacInfoRow(L10n.FileInfo.rowFolders, directory.dirCount.formatted())
                     MacInfoRow(L10n.FileInfo.rowTotalSize, Self.bytes(directory.totalSize))
                 } footer: {
-                    if directory.truncated {
+                    if directory.isTruncated {
                         Text(L10n.FileInfo.partialScan).font(.callout).foregroundStyle(.secondary)
                     }
                 }

@@ -155,7 +155,7 @@ public struct UploadBatch: Sendable {
     }
 
     /// `false` once the batch was discarded.
-    var exists: Bool {
+    var isOnDisk: Bool {
         FileManager.default.fileExists(atPath: directory.path)
     }
 
@@ -164,7 +164,7 @@ public struct UploadBatch: Sendable {
     /// `CancellationError` when the batch was discarded meanwhile (it is never recreated). Whatever
     /// goes wrong, no partial envelope stays behind.
     public func envelope(for fileURL: URL, fileName: String) throws -> StagedFile {
-        guard exists else { throw CancellationError() }
+        guard isOnDisk else { throw CancellationError() }
         let size = DiskSpace.size(of: fileURL)
         guard ledger.reserve(size, available: availableCapacity(directory)) else {
             throw ShareUploadError.insufficientSpace

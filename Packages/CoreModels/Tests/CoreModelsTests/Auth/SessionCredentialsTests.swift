@@ -14,7 +14,7 @@ struct SessionCredentialsTests {
             cookieValue: "xyz",
             cookieDomain: Constants.homeServerHost,
             cookiePath: "/",
-            cookieIsSecure: true,
+            isCookieSecure: true,
             expiresAt: nil,
             username: nil
         )
@@ -37,7 +37,7 @@ struct SessionCredentialsTests {
             cookieValue: TestSession.cookieValue,
             cookieDomain: "192.168.1.50",
             cookiePath: "/",
-            cookieIsSecure: false,
+            isCookieSecure: false,
             expiresAt: nil,
             username: nil
         )
@@ -51,6 +51,16 @@ struct SessionCredentialsTests {
         #expect(credentials.username == TestAccount.username)
         #expect(credentials.cookieValue == TestSession.cookieValue)
         #expect(credentials.email == nil)
+        #expect(credentials.isCookieSecure)
+    }
+
+    @Test("a session saved again keeps the stored key names, so an older build still reads it")
+    func encodesTheStoredKeyNames() throws {
+        let credentials = try CoreModelsFixture.sessionCredentialsSavedWithoutEmail.decode(SessionCredentials.self)
+        let json = try #require(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(credentials)) as? [String: Any]
+        )
+        #expect(json["cookieIsSecure"] as? Bool == true)
     }
 }
 

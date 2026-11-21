@@ -720,11 +720,11 @@ public struct SettingsFeature {
             return .none
 
         case let .setShowHiddenFiles(value):
-            state.$preferences.withLock { $0.showHiddenFiles = value }
+            state.$preferences.withLock { $0.shouldShowHiddenFiles = value }
             return updatePreference(.showHiddenFiles, value, state: &state)
 
         case let .setShowThumbnails(value):
-            state.$preferences.withLock { $0.showThumbnails = value }
+            state.$preferences.withLock { $0.shouldShowThumbnails = value }
             return updatePreference(.showThumbnails, value, state: &state)
 
         case .updatePreferenceResponse:

@@ -128,7 +128,7 @@ public struct SearchIndexSettingsFeature {
 
             case let .enabledChanged(isOn):
                 guard state.lockedBy == nil, !state.isSaving, isOn != state.isEnabled else { return .none }
-                return save(&state, patch: .init(enabled: isOn), replacesPaths: false)
+                return save(&state, patch: .init(isEnabled: isOn), replacesPaths: false)
 
             case let .newPathChanged(path):
                 state.newPath = path
