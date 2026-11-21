@@ -46,6 +46,19 @@ class UserFacingTests(unittest.TestCase):
         made = gen.entry("NXTIOS-0180: House rules across the codebase (#207)", "")
         self.assertEqual(made, ("", "207", True))
 
+    def test_internal_cleanup_is_not_user_facing(self):
+        for title, pr in [
+            ("NXTIOS-0185: Caches share one hash helper and the server timestamp formats (#212)", "212"),
+            ("NXTIOS-0184: Code nothing calls is deleted (#211)", "211"),
+            ("NXTIOS-0188: Dead properties go and repeated kind and version reads share one copy (#215)", "215"),
+            ("NXTIOS-0189: One call clears every rebuildable cache (#216)", "216"),
+        ]:
+            self.assertEqual(gen.entry(title, ""), ("", pr, True), title)
+
+    def test_a_search_fix_users_notice_is_kept(self):
+        self.assertEqual(text_of("NXTIOS-0190: Browse search never shows an older term's results for the typed one (#217)"),
+                         "Browse search never shows an older term's results for the typed one")
+
     def test_bump_commits_are_skipped(self):
         self.assertIsNone(gen.entry("Bump version to 1.1.4", ""))
 
