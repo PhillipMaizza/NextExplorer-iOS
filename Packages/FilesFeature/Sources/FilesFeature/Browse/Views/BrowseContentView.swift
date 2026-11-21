@@ -161,7 +161,7 @@ struct BrowseContentView: View {
                         shouldKeepClipboard: shouldKeepClipboardAfterCopy,
                         isFilesPickerPresented: $isFilesPickerPresented,
                         onOpen: handleTap,
-                        onQuickLookUnavailable: { toastMessage = DSToastMessage(icon: IconKit.warning, text: $0) }
+                        onQuickLookUnavailable: { toastMessage = DSToastMessage(icon: IconKit.errorFill, text: $0) }
                     ) { fileActionsMenu(for: $0) }
                 #endif
             } else if viewMode != .grid {

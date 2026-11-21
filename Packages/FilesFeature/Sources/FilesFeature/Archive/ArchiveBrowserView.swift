@@ -282,7 +282,7 @@ struct ArchiveBrowserView: View {
             kind: (rowName as NSString).pathExtension
         )
         guard let destination = SafeDestination.within(Self.temporaryDirectory(for: item), rowName) else {
-            toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.openFailed)
+            toastMessage = DSToastMessage(icon: IconKit.errorFill, text: L10n.Archive.openFailed)
             return
         }
         extractingRow = rowName
@@ -311,9 +311,9 @@ struct ArchiveBrowserView: View {
             case .success:
                 previewingEntry = ArchiveEntryPreview(item: entryItem, fileURL: destination, sourceID: rowName)
             case .tooLarge:
-                toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.entryTooLarge)
+                toastMessage = DSToastMessage(icon: IconKit.errorFill, text: L10n.Archive.entryTooLarge)
             case .failed:
-                toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.openFailed)
+                toastMessage = DSToastMessage(icon: IconKit.errorFill, text: L10n.Archive.openFailed)
             }
         }
     }
