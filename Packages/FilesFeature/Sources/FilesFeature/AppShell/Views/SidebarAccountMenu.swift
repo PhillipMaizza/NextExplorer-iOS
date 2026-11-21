@@ -208,7 +208,7 @@ private struct AccountRow: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(account.isActive
             ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
-            : L10n.Settings.accountLabel(account.displayName, account.serverHost))
+            : L10n.Common.pair(account.displayName, account.serverHost))
             .accessibilityAddTraits(account.isActive ? .isSelected : .isButton)
             // The tap gesture is pointer only; VoiceOver's press switches like a click does.
             .accessibilityAction {

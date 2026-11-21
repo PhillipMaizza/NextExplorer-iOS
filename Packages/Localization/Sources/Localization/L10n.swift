@@ -288,6 +288,7 @@ public enum L10n {
         public static var off: String { tr("common.off") }  // "Off"
         public static var on: String { tr("common.on") }  // "On"
         public static var openSettings: String { tr("common.openSettings") }  // "Open Settings"
+        public static func pair(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("common.pair", a0, a1) }
         public static var password: String { tr("common.password") }  // "Password"
         public static var remove: String { tr("common.remove") }  // "Remove"
         public static var retry: String { tr("common.retry") }  // "Try Again"
@@ -614,6 +615,7 @@ public enum L10n {
         public static var forward: String { tr("menu.forward") }  // "Forward"
         public static var go: String { tr("menu.go") }  // "Go"
         public static var goToFolder: String { tr("menu.goToFolder") }  // "Go to Folder…"
+        public static var goToFolderPlaceholder: String { tr("menu.goToFolderPlaceholder") }  // "Documents/Reports"
         public static var goToFolderTitle: String { tr("menu.goToFolderTitle") }  // "Go to the folder:"
         public static var newTab: String { tr("menu.newTab") }  // "New Tab"
         public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
@@ -771,7 +773,6 @@ public enum L10n {
     public enum Settings {
         public static func accountActiveLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountActiveLabel", a0, a1) }
         public static var accountChangeFailed: String { tr("settings.accountChangeFailed") }  // "Couldn't change your accounts right now. Please try again."
-        public static func accountLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountLabel", a0, a1) }
         public static var accountSignOut: String { tr("settings.accountSignOut") }  // "Sign Out"
         public static func accountSignOutMessage(_ a0: CVarArg) -> String { tr("settings.accountSignOutMessage", a0) }
         public static var accountSignOutTitle: String { tr("settings.accountSignOutTitle") }  // "Sign Out?"

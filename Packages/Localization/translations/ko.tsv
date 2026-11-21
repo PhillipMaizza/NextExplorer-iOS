@@ -617,7 +617,7 @@ settings.accountSignOut	로그아웃
 settings.accountSignOutTitle	로그아웃하시겠어요?
 settings.accountSignOutMessage	이 기기에서 %@ 계정을 로그아웃할까요? 이 계정을 사용하려면 다시 로그인해야 합니다.
 settings.accountChangeFailed	지금은 계정을 변경할 수 없습니다. 다시 시도해 주세요.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 활성 계정
 settings.badgeActive	활성
 
@@ -1285,3 +1285,4 @@ shareUpload.deferredTitle	큰 파일 대기 중
 shareUpload.deferredBody#other	NextExplorer를 열어 큰 파일 %lld개를 업로드하세요.
 shareUpload.failureTooLarge#other	파일 %lld개를 업로드하지 못했습니다. 서버 연결이 이 크기의 파일을 거부했습니다. 다시 공유하면 NextExplorer가 나누어 전송합니다.
 shareUpload.startedDeferred	NextExplorer용으로 저장했습니다. 앱을 열어 큰 파일을 업로드하세요.
+menu.goToFolderPlaceholder	문서/보고서

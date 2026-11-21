@@ -93,7 +93,7 @@
             .accessibilityElement(children: .combine)
             .accessibilityLabel(account.isActive
                 ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
-                : L10n.Settings.accountLabel(account.displayName, account.serverHost))
+                : L10n.Common.pair(account.displayName, account.serverHost))
         }
     }
 

@@ -628,7 +628,7 @@ settings.accountSignOut	Abmelden
 settings.accountSignOutTitle	Abmelden?
 settings.accountSignOutMessage	%@ auf diesem Gerät abmelden? Du musst dich erneut anmelden, um dieses Konto zu verwenden.
 settings.accountChangeFailed	Deine Konten konnten gerade nicht geändert werden. Bitte versuche es erneut.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktives Konto
 settings.badgeActive	Aktiv
 
@@ -1321,3 +1321,4 @@ shareUpload.deferredBody#other	Öffne NextExplorer, um %lld große Dateien hochz
 shareUpload.failureTooLarge#one	%lld Datei wurde nicht hochgeladen. Deine Serververbindung lehnt so große Dateien ab. Teile sie erneut, dann sendet NextExplorer sie in Teilen.
 shareUpload.failureTooLarge#other	%lld Dateien wurden nicht hochgeladen. Deine Serververbindung lehnt so große Dateien ab. Teile sie erneut, dann sendet NextExplorer sie in Teilen.
 shareUpload.startedDeferred	Für NextExplorer gesichert. Öffne die App, um deine großen Dateien hochzuladen.
+menu.goToFolderPlaceholder	Dokumente/Berichte

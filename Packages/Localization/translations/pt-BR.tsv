@@ -576,7 +576,7 @@ settings.accountSignOut	Sair
 settings.accountSignOutTitle	Sair?
 settings.accountSignOutMessage	Sair da conta de %@ neste dispositivo? Você precisará entrar novamente para usar esta conta.
 settings.accountChangeFailed	Não foi possível alterar suas contas agora. Tente novamente.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, conta ativa
 settings.badgeActive	Ativo
 settings.dateFormatNavigationTitle	Formato de data
@@ -1316,3 +1316,4 @@ shareUpload.deferredBody#other	Abra o NextExplorer para enviar %lld arquivos gra
 shareUpload.failureTooLarge#one	%lld arquivo não foi enviado. A conexão com seu servidor recusa arquivos tão grandes. Compartilhe de novo e o NextExplorer envia em partes.
 shareUpload.failureTooLarge#other	%lld arquivos não foram enviados. A conexão com seu servidor recusa arquivos tão grandes. Compartilhe de novo e o NextExplorer envia em partes.
 shareUpload.startedDeferred	Salvo para o NextExplorer. Abra o app para enviar os arquivos grandes.
+menu.goToFolderPlaceholder	Documentos/Relatórios

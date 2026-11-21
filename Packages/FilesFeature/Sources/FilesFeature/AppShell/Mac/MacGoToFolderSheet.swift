@@ -18,7 +18,7 @@
                 onCancel: onCancel,
                 onConfirm: { onGo(path) }
             ) {
-                TextField(L10n.Menu.goToFolderTitle, text: $path, prompt: Text(verbatim: "Documents/Reports"))
+                TextField(L10n.Menu.goToFolderTitle, text: $path, prompt: Text(L10n.Menu.goToFolderPlaceholder))
                     .labelsHidden()
                     .autocorrectionDisabled()
                     .focused($isFocused)

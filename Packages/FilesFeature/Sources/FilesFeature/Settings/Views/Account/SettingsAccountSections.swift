@@ -129,7 +129,7 @@ struct SettingsAccountsSection: View {
         .buttonStyle(.plain)
         .disabled(store.isSigningOut)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(L10n.Settings.accountLabel(account.displayName, account.serverHost))
+        .accessibilityLabel(L10n.Common.pair(account.displayName, account.serverHost))
         .accessibilityAddTraits(.isButton)
         .swipeActions(edge: .trailing) {
             removeAccountButton(account)

@@ -617,7 +617,7 @@ settings.accountSignOut	退出登录
 settings.accountSignOutTitle	退出登录？
 settings.accountSignOutMessage	在此设备上退出 %@ 吗？您需要重新登录才能使用此账户。
 settings.accountChangeFailed	暂时无法更改您的账户，请重试。
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 当前账户
 settings.badgeActive	使用中
 
@@ -1285,3 +1285,4 @@ shareUpload.deferredTitle	大文件等待中
 shareUpload.deferredBody#other	打开 NextExplorer 以上传 %lld 个大文件。
 shareUpload.failureTooLarge#other	%lld 个文件未能上传。 服务器连接拒绝这么大的文件。请再次分享，NextExplorer 会分段发送。
 shareUpload.startedDeferred	已为 NextExplorer 保存。请打开应用上传大文件。
+menu.goToFolderPlaceholder	文稿/报告

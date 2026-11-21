@@ -628,7 +628,7 @@ settings.accountSignOut	Cerrar sesión
 settings.accountSignOutTitle	¿Cerrar sesión?
 settings.accountSignOutMessage	¿Cerrar la sesión de %@ en este dispositivo? Deberás iniciar sesión de nuevo para usar esta cuenta.
 settings.accountChangeFailed	No se han podido cambiar tus cuentas ahora mismo. Inténtalo de nuevo.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, cuenta activa
 settings.badgeActive	Activa
 
@@ -1321,3 +1321,4 @@ shareUpload.deferredBody#other	Abre NextExplorer para subir %lld archivos grande
 shareUpload.failureTooLarge#one	%lld archivo no se subió. La conexión con tu servidor rechaza archivos tan grandes. Compártelos de nuevo y NextExplorer los enviará por partes.
 shareUpload.failureTooLarge#other	%lld archivos no se subieron. La conexión con tu servidor rechaza archivos tan grandes. Compártelos de nuevo y NextExplorer los enviará por partes.
 shareUpload.startedDeferred	Guardado para NextExplorer. Abre la app para subir tus archivos grandes.
+menu.goToFolderPlaceholder	Documentos/Informes

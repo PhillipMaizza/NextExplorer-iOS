@@ -617,7 +617,7 @@ settings.accountSignOut	サインアウト
 settings.accountSignOutTitle	サインアウトしますか？
 settings.accountSignOutMessage	このデバイスで %@ をサインアウトしますか？このアカウントを使うには再度サインインする必要があります。
 settings.accountChangeFailed	現在アカウントを変更できませんでした。もう一度お試しください。
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 使用中のアカウント
 settings.badgeActive	アクティブ
 
@@ -1285,3 +1285,4 @@ shareUpload.deferredTitle	大きなファイルが待機中
 shareUpload.deferredBody#other	NextExplorer を開いて、%lld 個の大きなファイルをアップロードしてください。
 shareUpload.failureTooLarge#other	%lld 個のファイルをアップロードできませんでした。 サーバー接続がこの大きさのファイルを拒否しました。もう一度共有すると、NextExplorer が分割して送信します。
 shareUpload.startedDeferred	NextExplorer 用に保存しました。アプリを開いて大きなファイルをアップロードしてください。
+menu.goToFolderPlaceholder	書類/レポート
