@@ -38,7 +38,7 @@ TECHNICAL = re.compile(
     r"testflight|fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
     r"package\.resolved|(package|dependency|version) pins?|dependenc(y|ies)|swiftpm|node \d+ actions|readme|contributing|license|workflows?|"
     r"build[- ]phase|instrument\w*|(compiler|concurrency|build|lint|test) warnings?|(?<!google )docs?|dto|dataphase|domain split|reorg|"
-    r"main[- ]thread|bool clusters?|typography rename|shards?|by identifier)\b",
+    r"main[- ]thread|bool clusters?|typography rename|shards?|by identifier|house rules?)\b",
     re.IGNORECASE,
 )
 # Maintenance users only notice as "it works better": folded into GENERIC_NOTE.

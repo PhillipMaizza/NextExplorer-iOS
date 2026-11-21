@@ -42,6 +42,10 @@ class UserFacingTests(unittest.TestCase):
         made = gen.entry("NXTIOS-0084: TestFlight builds go to the external testers only (#114)", "")
         self.assertEqual(made, ("", "114", True))
 
+    def test_house_rules_work_is_not_user_facing(self):
+        made = gen.entry("NXTIOS-0180: House rules across the codebase (#207)", "")
+        self.assertEqual(made, ("", "207", True))
+
     def test_bump_commits_are_skipped(self):
         self.assertIsNone(gen.entry("Bump version to 1.1.4", ""))
 
