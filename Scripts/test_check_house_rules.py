@@ -67,6 +67,10 @@ class SourceRuleTests(unittest.TestCase):
         found = lines_of(SOURCE, "var isLoading = false", "public var hasLoaded: Bool", "var isLoading: Bool { phase.isLoading }")
         self.assertEqual(len(found), 2)
 
+    def test_a_suffixed_loading_flag_is_found(self):
+        found = lines_of(SOURCE, "var isLoadingMore = false", "var isLoadingMore: Bool { morePhase == .loading }")
+        self.assertEqual(len(found), 1)
+
     def test_a_negated_platform_check_is_found(self):
         self.assertEqual(len(lines_of(SOURCE, "#if !os(macOS)", "#if os(iOS)")), 1)
 
