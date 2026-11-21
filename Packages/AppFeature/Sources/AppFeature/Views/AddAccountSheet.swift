@@ -54,16 +54,20 @@ struct AddAccountSheet: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(item: sheetStore, onDismiss: { store.send(.addAccountSheetDismissed) }) { addAccountStore in
-                LoginFormView(store: addAccountStore, autoFocus: true, shouldFloodIntoApp: !shouldAddAccountInDialog)
+                LoginFormView(
+                    store: addAccountStore,
+                    shouldAutoFocus: true,
+                    shouldFloodIntoApp: !shouldAddAccountInDialog
+                )
                 #if os(macOS)
-                    // A Mac sheet sizes to its content's ideal size, which the flexible login
-                    // layout collapses to nothing; and there is no swipe down, so it needs Cancel.
-                    .frame(width: Metrics.width, height: Metrics.height)
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button(L10n.Common.cancel) { store.send(.addAccount(.dismiss)) }
-                        }
+                // A Mac sheet sizes to its content's ideal size, which the flexible login
+                // layout collapses to nothing; and there is no swipe down, so it needs Cancel.
+                .frame(width: Metrics.width, height: Metrics.height)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(L10n.Common.cancel) { store.send(.addAccount(.dismiss)) }
                     }
+                }
                 #endif
             }
         #if os(macOS)

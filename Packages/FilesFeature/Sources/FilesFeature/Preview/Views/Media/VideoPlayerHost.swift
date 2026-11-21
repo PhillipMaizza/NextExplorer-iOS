@@ -19,7 +19,7 @@ struct VideoPlayerHost: View {
     let url: URL
     let serverURL: URL
     /// Whether to try AVFoundation first. `false` (a non native container) starts on libvlc directly.
-    let preferNative: Bool
+    let shouldPreferNative: Bool
     /// A pinned copy to fall back to when the primary stream fails (offline). `nil` when the primary
     /// is already a local file, or nothing is pinned.
     var offlineFallbackURL: URL?
@@ -32,14 +32,14 @@ struct VideoPlayerHost: View {
     let isEmbedded: Bool
 
     @State private var currentURL: URL
-    @State private var useVLCFallback: Bool
-    @State private var didUseOfflineFallback = false
+    @State private var shouldUseVLCFallback: Bool
+    @State private var hasUsedOfflineFallback = false
 
     init(
         item: FileItem,
         url: URL,
         serverURL: URL,
-        preferNative: Bool,
+        shouldPreferNative: Bool,
         offlineFallbackURL: URL? = nil,
         onDismiss: @escaping () -> Void,
         onShare: (() -> Void)? = nil,
@@ -51,7 +51,7 @@ struct VideoPlayerHost: View {
         self.item = item
         self.url = url
         self.serverURL = serverURL
-        self.preferNative = preferNative
+        self.shouldPreferNative = shouldPreferNative
         self.offlineFallbackURL = offlineFallbackURL
         self.onDismiss = onDismiss
         self.onShare = onShare
@@ -60,12 +60,12 @@ struct VideoPlayerHost: View {
         self.onDelete = onDelete
         self.isEmbedded = isEmbedded
         _currentURL = State(initialValue: url)
-        _useVLCFallback = State(initialValue: !preferNative)
+        _shouldUseVLCFallback = State(initialValue: !shouldPreferNative)
     }
 
     var body: some View {
         Group {
-            if useVLCFallback {
+            if shouldUseVLCFallback {
                 VLCPlayerView(
                     item: item,
                     url: currentURL,
@@ -100,12 +100,12 @@ struct VideoPlayerHost: View {
     private func handlePlaybackFailure() {
         // A failed stream with a pinned copy in hand means we're offline: play the local copy rather
         // than dead ending. Otherwise it's a decode issue, so retry the same URL through libvlc.
-        if let offlineFallbackURL, !didUseOfflineFallback, currentURL != offlineFallbackURL {
-            didUseOfflineFallback = true
+        if let offlineFallbackURL, !hasUsedOfflineFallback, currentURL != offlineFallbackURL {
+            hasUsedOfflineFallback = true
             currentURL = offlineFallbackURL
-            useVLCFallback = !preferNative
+            shouldUseVLCFallback = !shouldPreferNative
         } else {
-            useVLCFallback = true
+            shouldUseVLCFallback = true
         }
     }
 }

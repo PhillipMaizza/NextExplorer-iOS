@@ -89,7 +89,7 @@ struct ThumbnailImage: View {
     /// The first lines of a text file, drawn as a small page.
     @State private var snippet: String?
     @State private var uiImage: PlatformImage?
-    @State private var didResolve = false
+    @State private var hasResolved = false
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.thumbnailCache) private var thumbnailCache
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
@@ -111,7 +111,7 @@ struct ThumbnailImage: View {
 
     /// Whether files of this kind are drawn from their own content, which the server makes no
     /// thumbnail of: an audio file's cover art and a text file's first lines.
-    nonisolated static func readsOwnContent(kind: String) -> Bool {
+    nonisolated static func shouldReadOwnContent(kind: String) -> Bool {
         FileItem.isAudioKind(kind) || TextSnippet.isTextKind(kind)
     }
 
@@ -150,7 +150,7 @@ struct ThumbnailImage: View {
                         .resizable()
                         .scaledToFit()
                 }
-            } else if didResolve || isGridWell || fallbackKind != nil {
+            } else if hasResolved || isGridWell || fallbackKind != nil {
                 fallbackImage
             } else {
                 ThumbnailLoadingPlaceholder()
@@ -162,14 +162,14 @@ struct ThumbnailImage: View {
             if fileItem.isAudio {
                 uiImage = await loader.audioArtwork()
                 if !Task.isCancelled {
-                    didResolve = true
+                    hasResolved = true
                 }
                 return
             }
             if TextSnippet.isTextKind(fileItem.kind) {
                 snippet = await loader.textSnippet()
                 if !Task.isCancelled {
-                    didResolve = true
+                    hasResolved = true
                 }
                 return
             }
@@ -198,7 +198,7 @@ struct ThumbnailImage: View {
                 // decodes the picture itself.
                 uiImage = await loader.deviceDecodedImage()
                 if !Task.isCancelled {
-                    didResolve = true
+                    hasResolved = true
                 }
                 return
             }
@@ -214,7 +214,7 @@ struct ThumbnailImage: View {
                 data = try await thumbnailCache.data(thumbnailURL)
             } catch {
                 if !Task.isCancelled {
-                    didResolve = true
+                    hasResolved = true
                 }
                 return
             }
@@ -239,7 +239,7 @@ struct ThumbnailImage: View {
                 }
             }
             uiImage = decoded ?? seeded
-            didResolve = true
+            hasResolved = true
         }
     }
 

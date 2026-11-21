@@ -17,7 +17,7 @@ struct LoginServerPage: View {
     @Bindable var store: StoreOf<LoginFormFeature>
     /// `false` while the launch splash still covers the screen: focusing the host field then
     /// would slide the keyboard up over the splash.
-    let autoFocus: Bool
+    let shouldAutoFocus: Bool
     let horizontalSizeClass: UserInterfaceSizeClass?
     let shakeTrigger: CGFloat
     let displayedErrorMessage: String?
@@ -87,11 +87,11 @@ struct LoginServerPage: View {
                     .accessibilityIdentifier(AccessibilityIdentifiers.Login.hostField)
                     .focused($isHostFocused)
                     .onAppear {
-                        if autoFocus {
+                        if shouldAutoFocus {
                             isHostFocused = true
                         }
                     }
-                    .onChange(of: autoFocus) {
+                    .onChange(of: shouldAutoFocus) {
                         _, ready in if ready {
                             isHostFocused = true
                         }
@@ -252,7 +252,7 @@ struct LoginServerPage: View {
 #Preview("Empty") {
     LoginServerPage(
         store: Store(initialState: LoginFormFeature.State()) { LoginFormFeature() },
-        autoFocus: false,
+        shouldAutoFocus: false,
         horizontalSizeClass: .compact,
         shakeTrigger: 0,
         displayedErrorMessage: nil
@@ -264,7 +264,7 @@ struct LoginServerPage: View {
         store: Store(initialState: LoginFormFeature.State(scheme: .http, host: "192.168.1.50")) {
             LoginFormFeature()
         },
-        autoFocus: false,
+        shouldAutoFocus: false,
         horizontalSizeClass: .compact,
         shakeTrigger: 0,
         displayedErrorMessage: nil
@@ -279,7 +279,7 @@ struct LoginServerPage: View {
         )) {
             LoginFormFeature()
         },
-        autoFocus: false,
+        shouldAutoFocus: false,
         horizontalSizeClass: .compact,
         shakeTrigger: 0,
         displayedErrorMessage: L10n.Login.portHint

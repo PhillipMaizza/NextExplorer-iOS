@@ -84,7 +84,7 @@ private struct AccountPopover: View {
             }
             #if os(iOS)
                 // The Mac keeps the second factor in its Settings window.
-                if store.showsTwoFactorRow {
+                if store.shouldShowTwoFactorRow {
                     PopoverActionRow(title: L10n.TwoFactor.navigationTitle, icon: IconKit.shield) {
                         dismissThen {
                             revealSettings()
@@ -94,7 +94,7 @@ private struct AccountPopover: View {
                     .accessibilityIdentifier(AccessibilityIdentifiers.Settings.twoFactorRow)
                 }
             #endif
-            if store.showsPasswordRow {
+            if store.shouldShowPasswordRow {
                 PopoverActionRow(
                     title: L10n.Settings.rowChangePassword,
                     icon: IconKit.key,

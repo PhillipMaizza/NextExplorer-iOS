@@ -61,7 +61,7 @@ struct MediaPreview: View {
             item: item,
             url: url,
             serverURL: serverURL,
-            preferNative: item.isNativelyPlayable,
+            shouldPreferNative: item.isNativelyPlayable,
             offlineFallbackURL: offlineFallbackURL,
             onDismiss: onDismiss,
             onShare: onShare,

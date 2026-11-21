@@ -115,7 +115,7 @@ import TestUtils
                 $0.isPerformingFileAction = true
                 $0.transferProgress = 0
                 $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                    items: [elsewhere], destination: TestFolder.docs, operation: .move, clearClipboard: false,
+                    items: [elsewhere], destination: TestFolder.docs, operation: .move, shouldClearClipboard: false,
                     resolution: .keepBoth, itemsToReplace: []
                 )
             }

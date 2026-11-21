@@ -69,7 +69,7 @@
                     .padding(.vertical, .space2)
                 }
                 .border(Color(nsColor: .separatorColor))
-                if store.stagingFailed, store.files.isEmpty {
+                if store.hasStagingFailed, store.files.isEmpty {
                     Text(L10n.Uploads.stagingFailed).foregroundStyle(Color.negativeText)
                 }
                 MacDialogButtons(

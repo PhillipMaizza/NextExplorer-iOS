@@ -60,7 +60,7 @@ public struct APITokensFeature {
     public struct State: Equatable {
         public let serverURL: URL
         /// Whether the account has a password to ask for. The server only checks one when it does.
-        public let requiresPassword: Bool
+        public let isPasswordRequired: Bool
         public var phase: Phase = .loading
         public var tokens: [APIToken] = []
         /// One request in flight at a time: the screen has a single action under way.
@@ -71,9 +71,9 @@ public struct APITokensFeature {
         public var rename: Rename?
         public var tokenPendingRevoke: APIToken?
 
-        public init(serverURL: URL, requiresPassword: Bool = true, phase: Phase = .loading, tokens: [APIToken] = []) {
+        public init(serverURL: URL, isPasswordRequired: Bool = true, phase: Phase = .loading, tokens: [APIToken] = []) {
             self.serverURL = serverURL
-            self.requiresPassword = requiresPassword
+            self.isPasswordRequired = isPasswordRequired
             self.phase = phase
             self.tokens = tokens
         }
@@ -84,7 +84,7 @@ public struct APITokensFeature {
 
         public var isCreateEnabled: Bool {
             guard let form = createForm, !isWorking else { return false }
-            return APITokensFeature.isValid(name: form.name) && (!requiresPassword || !form.password.isEmpty)
+            return APITokensFeature.isValid(name: form.name) && (!isPasswordRequired || !form.password.isEmpty)
         }
 
         public var isRenameEnabled: Bool {
@@ -188,7 +188,7 @@ public struct APITokensFeature {
                 state.errorMessage = nil
                 let serverURL = state.serverURL
                 let name = form.name.trimmingCharacters(in: .whitespacesAndNewlines)
-                let password = state.requiresPassword ? form.password : nil
+                let password = state.isPasswordRequired ? form.password : nil
                 let filesClient = filesClient
                 return .run { send in
                     try await send(.createResponse(apiResult {

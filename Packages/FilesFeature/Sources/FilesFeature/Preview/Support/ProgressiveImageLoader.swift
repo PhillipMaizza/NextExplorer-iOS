@@ -60,7 +60,7 @@ enum ProgressiveImageLoader {
         /// New bytes since the last decode, throttled so a big file doesn't decode a thumbnail on
         /// every small chunk.
         private var bytesSinceLastEmit = 0
-        private var didFail = false
+        private var hasFailed = false
 
         init(maxPixelDimension: CGFloat, continuation: AsyncStream<PlatformImage>.Continuation) {
             self.maxPixelDimension = maxPixelDimension
@@ -72,7 +72,7 @@ enum ProgressiveImageLoader {
             completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
         ) {
             if let http = response as? HTTPURLResponse, !(HTTPStatus.success ~= http.statusCode) {
-                didFail = true
+                hasFailed = true
                 completionHandler(.cancel)
                 return
             }
@@ -82,7 +82,7 @@ enum ProgressiveImageLoader {
         func urlSession(_: URLSession, dataTask _: URLSessionDataTask, didReceive data: Data) {
             buffer.append(data)
             guard buffer.count <= Constants.maxResponseBytes else {
-                didFail = true
+                hasFailed = true
                 continuation.finish()
                 return
             }
@@ -103,7 +103,7 @@ enum ProgressiveImageLoader {
         }
 
         func urlSession(_: URLSession, task _: URLSessionTask, didCompleteWithError error: Error?) {
-            if error != nil || didFail {
+            if error != nil || hasFailed {
                 continuation.finish()
                 return
             }

@@ -125,7 +125,7 @@ public struct LoginFormFeature {
         public var host: String
         /// Set once the user taps the scheme picker themselves, so typing doesn't then move it
         /// back under them. Cleared when the host is emptied or an explicit `http(s)://` is typed.
-        var schemeWasSetByUser: Bool = false
+        var isSchemeSetByUser: Bool = false
         public var identifier: String
         public var password: String
         /// The authenticator code or recovery code typed on the second factor page.
@@ -279,7 +279,7 @@ public struct LoginFormFeature {
                 // would contradict the picker, so it goes.
                 state.host = Self.strippingSchemePrefix(state.host)
                 state.scheme = scheme
-                state.schemeWasSetByUser = true
+                state.isSchemeSetByUser = true
                 state.resetConnection()
                 return Self.cancelInFlightWork()
 
@@ -292,14 +292,14 @@ public struct LoginFormFeature {
                 state.host = text
                 let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
                 if trimmed.isEmpty {
-                    state.schemeWasSetByUser = false
+                    state.isSchemeSetByUser = false
                 } else if trimmed.hasPrefix("http://") {
                     state.scheme = .http
-                    state.schemeWasSetByUser = false
+                    state.isSchemeSetByUser = false
                 } else if trimmed.hasPrefix("https://") {
                     state.scheme = .https
-                    state.schemeWasSetByUser = false
-                } else if !state.schemeWasSetByUser, let first = trimmed.first {
+                    state.isSchemeSetByUser = false
+                } else if !state.isSchemeSetByUser, let first = trimmed.first {
                     // A leading digit is an IP (a homelab box, so http); a hostname is a
                     // public server (so https). A LAN hostname that needs http is the one
                     // case the user fixes with the picker: and then it sticks.

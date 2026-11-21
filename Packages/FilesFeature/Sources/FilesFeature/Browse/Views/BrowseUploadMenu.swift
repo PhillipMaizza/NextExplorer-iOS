@@ -29,7 +29,7 @@ struct BrowseUploadMenu: View {
                     }
                 }
             },
-            includesUploadSources: store.canUploadHere,
+            shouldIncludeUploadSources: store.canUploadHere,
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,

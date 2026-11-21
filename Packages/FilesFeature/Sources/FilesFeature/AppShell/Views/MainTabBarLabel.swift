@@ -6,14 +6,14 @@ import SwiftUI
 /// A tab bar item: the title with a smaller glyph when "Show Tab Labels" is on, the full size icon on
 /// its own otherwise. The title carries the accessibility label in both modes.
 struct MainTabBarLabel: View {
-    let showsTitle: Bool
+    let shouldShowTitle: Bool
     let title: String
     let icon: Image
     let smallIcon: Image
     let identifier: String
 
     var body: some View {
-        if showsTitle {
+        if shouldShowTitle {
             Label {
                 Text(title)
             } icon: {
@@ -37,7 +37,7 @@ struct MainTabBarLabel: View {
 
 extension MainTabBarLabel {
     /// The item for `tab`, filled while it is the selected one.
-    init(tab: MainTabFeature.Tab, isSelected: Bool, showsTitle: Bool) {
+    init(tab: MainTabFeature.Tab, isSelected: Bool, shouldShowTitle: Bool) {
         let (title, icons): (String, (fill: Image, line: Image, smallFill: Image, smallLine: Image)) = switch tab {
         case .browse: (
                 L10n.Tab.browse,
@@ -72,7 +72,7 @@ extension MainTabBarLabel {
         case .trash: (L10n.Trash.title, (IconKit.delete, IconKit.delete, IconKit.delete, IconKit.delete))
         }
         self.init(
-            showsTitle: showsTitle,
+            shouldShowTitle: shouldShowTitle,
             title: title,
             icon: isSelected ? icons.fill : icons.line,
             smallIcon: isSelected ? icons.smallFill : icons.smallLine,
@@ -83,7 +83,7 @@ extension MainTabBarLabel {
 
 #Preview("Icon only") {
     MainTabBarLabel(
-        showsTitle: false,
+        shouldShowTitle: false,
         title: L10n.Tab.offline,
         icon: IconKit.tabDownloads,
         smallIcon: IconKit.tabDownloadsSmall,
@@ -94,7 +94,7 @@ extension MainTabBarLabel {
 
 #Preview("With title") {
     MainTabBarLabel(
-        showsTitle: true,
+        shouldShowTitle: true,
         title: L10n.Tab.offline,
         icon: IconKit.tabDownloads,
         smallIcon: IconKit.tabDownloadsSmall,
@@ -103,5 +103,5 @@ extension MainTabBarLabel {
 }
 
 #Preview("Selected, with title") {
-    MainTabBarLabel(tab: .favorites, isSelected: true, showsTitle: true)
+    MainTabBarLabel(tab: .favorites, isSelected: true, shouldShowTitle: true)
 }

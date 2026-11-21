@@ -121,14 +121,14 @@ struct BrowseGalleryTests {
     @Test("Every file opens in the gallery, the editor only while editing")
     func everyFileOpensInTheGallery() {
         var state = galleryState(previewing: notes)
-        #expect(!state.showsTextEditor)
+        #expect(!state.shouldShowTextEditor)
         #if os(iOS)
             #expect(state.isPreviewInGallery)
         #else
             #expect(!state.isPreviewInGallery)
         #endif
         state.isPreviewEditing = true
-        #expect(state.showsTextEditor)
+        #expect(state.shouldShowTextEditor)
         #expect(!state.isPreviewInGallery)
     }
 
@@ -166,7 +166,7 @@ struct BrowseGalleryTests {
             $0.textSaveError = nil
         }
         #expect(store.state.previewItem == notes)
-        #expect(!store.state.showsTextEditor)
+        #expect(!store.state.shouldShowTextEditor)
     }
 
     @Test("Closing the cover while editing ends editing")

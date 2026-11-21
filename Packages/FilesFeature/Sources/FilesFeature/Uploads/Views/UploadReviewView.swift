@@ -194,7 +194,7 @@ struct UploadReviewView: View {
                 }
                 .padding(.vertical, .space4)
             }
-            if store.stagingFailed, store.files.isEmpty {
+            if store.hasStagingFailed, store.files.isEmpty {
                 HStack(spacing: Constants.rowTextSpacing * 2) {
                     IconKit.warning
                         .resizable()
@@ -321,7 +321,7 @@ private func previewFile(_ name: String, size: Int64) -> PickedFile {
                         serverURL: URL(string: "https://example.com")!,
                         startingDestination: "Documents"
                     )
-                    state.stagingFailed = true
+                    state.hasStagingFailed = true
                     return state
                 }()
             ) { UploadReviewFeature() }

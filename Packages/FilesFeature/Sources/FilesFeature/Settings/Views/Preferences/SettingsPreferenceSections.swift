@@ -52,7 +52,7 @@ struct GeneralSettingsSection: View {
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
     @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
     @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
-    @AppStorage(AppStorageKeys.hapticsEnabled) private var hapticsEnabled = true
+    @AppStorage(AppStorageKeys.hapticsEnabled) private var isHapticsEnabled = true
     @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
     private var currentLanguageLabel: String {
@@ -134,7 +134,7 @@ struct GeneralSettingsSection: View {
                 }
                 #if os(iOS)
                     if filter.matches(L10n.Settings.toggleHaptics) {
-                        DSToggleRow(title: L10n.Settings.toggleHaptics, icon: IconKit.haptics, isOn: $hapticsEnabled)
+                        DSToggleRow(title: L10n.Settings.toggleHaptics, icon: IconKit.haptics, isOn: $isHapticsEnabled)
                     }
                 #endif
             } header: {
@@ -155,15 +155,15 @@ struct DisplaySettingsSection: View {
     @AppStorage(AppStorageKeys.prefersDarkMode) private var isDarkAppearanceOverride = false
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
-    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
+    @AppStorage(AppStorageKeys.showTabLabels) private var shouldShowTabLabels = false
     @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     private var appearance: Binding<AppearanceMode> {
         Binding(
-            get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: isDarkAppearanceOverride) },
+            get: { AppearanceMode(hasOverride: hasAppearanceOverride, isDark: isDarkAppearanceOverride) },
             set: { mode in
                 hasAppearanceOverride = mode.hasOverride
-                isDarkAppearanceOverride = mode.prefersDark
+                isDarkAppearanceOverride = mode.isDark
             }
         )
     }
@@ -239,7 +239,11 @@ struct DisplaySettingsSection: View {
                 // Tab labels only exist on the bottom tab bar (compact). iPad uses the sidebar,
                 // so the toggle is meaningless there.
                 if !isMac, !isSplitViewDetail, filter.matches(L10n.Settings.toggleShowTabLabels) {
-                    DSToggleRow(title: L10n.Settings.toggleShowTabLabels, icon: IconKit.tabBrowse, isOn: $showTabLabels)
+                    DSToggleRow(
+                        title: L10n.Settings.toggleShowTabLabels,
+                        icon: IconKit.tabBrowse,
+                        isOn: $shouldShowTabLabels
+                    )
                 }
             } header: {
                 SettingsSectionHeader(L10n.Settings.sectionDisplay)

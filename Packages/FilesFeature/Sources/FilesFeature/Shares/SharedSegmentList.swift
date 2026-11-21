@@ -89,7 +89,7 @@ struct SharedSegmentList: View {
         }
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        .syncRefreshFeedback(errorMessage: errorMessage, signalsErrorHaptic: false) {
+        .syncRefreshFeedback(errorMessage: errorMessage, shouldSignalErrorHaptic: false) {
             await store.send(.refreshRequested).finish()
         }
         .overlay {
@@ -177,7 +177,7 @@ struct SharedSegmentList: View {
                     serverURL: store.serverURL,
                     isByMe: segment == .byMe,
                     isDeleting: item.shares.allSatisfy { store.deletingIDs.contains($0.id) },
-                    showsDivider: item.id != firstID,
+                    shouldShowDivider: item.id != firstID,
                     onTap: { store.send(.detailOpened(segment, item.id)) }
                 )
                 .listRowInsets(EdgeInsets())

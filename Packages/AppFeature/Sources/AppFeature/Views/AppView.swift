@@ -12,7 +12,7 @@ private enum Constants {}
 /// Identity for the authenticated subtree: it remounts when the splash finishes (to relayout nav
 /// bars) and when the active account changes (to play the switch transition).
 private struct AuthenticatedIdentity: Hashable {
-    let splashPresented: Bool
+    let isSplashPresented: Bool
     let accountID: String?
 }
 
@@ -22,7 +22,7 @@ public struct AppView: View {
     // zero), since the authenticated tree mounting under the splash and remounting once it has
     // left is what gives the tab bar items their identifiers.
     #if DEBUG
-        private static let splashTimeScale: Double = UITestSupport.disablesAnimations ? 0.05 : 1
+        private static let splashTimeScale: Double = UITestSupport.shouldDisableAnimations ? 0.05 : 1
     #else
         private static let splashTimeScale: Double = 1
     #endif
@@ -35,7 +35,7 @@ public struct AppView: View {
     /// Flipped the moment the splash commits to its exit, while it still covers the screen:
     /// the authenticated tree mounts then (not after the splash is gone) so its wing opening
     /// reveal uncovers the real Browse screen with its skeleton, not a blank frame.
-    @State private var splashIsExiting = false
+    @State private var isSplashExiting = false
     /// Opacity of the full screen accent layer that takes over from `LoginFormView`'s
     /// expanding button circle, then fades to reveal the authenticated app.
     @State private var authFillOpacity: Double = 0
@@ -95,7 +95,7 @@ public struct AppView: View {
                 SplashView(
                     isReady: store.destination != .loading,
                     timeScale: Self.splashTimeScale,
-                    onExitStarted: { splashIsExiting = true }
+                    onExitStarted: { isSplashExiting = true }
                 ) {
                     isSplashPresented = false
                 }
@@ -166,7 +166,7 @@ public struct AppView: View {
                     state: \.destination.unauthenticated,
                     action: \.destination.unauthenticated
                 ) {
-                    LoginFormView(store: scopedStore, autoFocus: !isSplashPresented)
+                    LoginFormView(store: scopedStore, shouldAutoFocus: !isSplashPresented)
                         .transition(.opacity)
                 }
 
@@ -179,7 +179,7 @@ public struct AppView: View {
                 // each nav bar's layout on screen the moment the splash is gone; the TCA store
                 // state survives the identity change, so the content stays put and only the
                 // nav bars relayout, no reload flash.
-                if !isSplashPresented || splashIsExiting,
+                if !isSplashPresented || isSplashExiting,
                    let scopedStore = store.scope(
                        state: \.destination.authenticated,
                        action: \.destination.authenticated
@@ -191,7 +191,7 @@ public struct AppView: View {
                         // A plain quick fade (not the zoom reveal): the switch should feel light.
                         // The TCA store state survives the identity change.
                         .id(AuthenticatedIdentity(
-                            splashPresented: isSplashPresented,
+                            isSplashPresented: isSplashPresented,
                             accountID: store.currentAccountID
                         ))
                     #if os(macOS)

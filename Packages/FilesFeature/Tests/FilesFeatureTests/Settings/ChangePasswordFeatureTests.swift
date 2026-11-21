@@ -109,7 +109,7 @@ struct ChangePasswordFeatureTests {
         await store.receive(\.response.failure) {
             $0.phase = .failed("You already have password authentication.")
         }
-        #expect(!store.state.didSucceed)
+        #expect(!store.state.hasSucceeded)
         #expect(store.state.newPassword == Constants.newPassword)
     }
 

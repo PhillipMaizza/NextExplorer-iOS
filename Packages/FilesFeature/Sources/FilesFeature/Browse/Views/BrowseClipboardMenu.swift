@@ -6,13 +6,13 @@ import SwiftUI
 /// The toolbar's clipboard section: paste what was copied or cut, or forget it.
 struct BrowseClipboardMenu: View {
     let store: StoreOf<BrowseFeature>
-    let keepsClipboard: Bool
+    let shouldKeepClipboard: Bool
 
     var body: some View {
         if store.clipboard != nil, !store.directoryPath.isEmpty {
             Section {
                 Button {
-                    store.send(.pasteTapped(keepItemsAfterCopy: keepsClipboard), animation: DSMotion.listDiff)
+                    store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboard), animation: DSMotion.listDiff)
                 } label: {
                     Label { Text(BrowsePasteMenu.actionTitle(store)) } icon: { IconKit.paste }
                 }
@@ -31,7 +31,7 @@ struct BrowseClipboardMenu: View {
     Menu(L10n.Browse.actionClearClipboard) {
         BrowseClipboardMenu(
             store: Store(initialState: .preview(items: browsePreviewItems)) { BrowseFeature() },
-            keepsClipboard: false
+            shouldKeepClipboard: false
         )
     }
 }

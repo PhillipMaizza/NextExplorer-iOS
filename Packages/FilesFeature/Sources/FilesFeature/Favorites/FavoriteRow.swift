@@ -27,7 +27,7 @@ struct FavoriteListRow: View {
                 isDirectory: true,
                 customIcon: FavoriteIcon.symbol(for: favorite.icon),
                 customIconTint: FavoriteColor.resolve(favorite.color),
-                customIconFilled: FavoriteIcon.isFilled(favorite.icon),
+                isCustomIconFilled: FavoriteIcon.isFilled(favorite.icon),
                 isAvailableOffline: store.offlineFavoriteIDs.contains(favorite.id)
             )
         } leadingSwipe: {
@@ -86,7 +86,7 @@ struct FavoriteGridCell: View {
                 isDirectory: true,
                 customIcon: FavoriteIcon.symbol(for: favorite.icon),
                 customIconTint: FavoriteColor.resolve(favorite.color),
-                customIconFilled: FavoriteIcon.isFilled(favorite.icon),
+                isCustomIconFilled: FavoriteIcon.isFilled(favorite.icon),
                 isAvailableOffline: store.offlineFavoriteIDs.contains(favorite.id),
                 subtitle: favorite.locationText
             )

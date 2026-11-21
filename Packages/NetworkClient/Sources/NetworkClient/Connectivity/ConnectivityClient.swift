@@ -30,7 +30,7 @@ extension ConnectivityClient: DependencyKey {
     public static let liveValue: ConnectivityClient = {
         let monitor = Monitor()
         return ConnectivityClient(
-            isOnline: { monitor.currentIsOnline },
+            isOnline: { monitor.isCurrentlyOnline },
             events: { monitor.stream() },
             isMetered: { monitor.isCurrentlyMetered }
         )
@@ -69,7 +69,7 @@ extension ConnectivityClient: DependencyKey {
             monitor.start(queue: queue)
         }
 
-        var currentIsOnline: Bool {
+        var isCurrentlyOnline: Bool {
             lock.lock(); defer { lock.unlock() }
             return isOnline
         }

@@ -53,14 +53,17 @@ private struct Stores {
 /// data protection keychain, with the legacy file keychain behind it.
 private func makeStores(configuration: KeychainConfiguration) -> Stores {
     #if os(macOS)
-        let usesDataProtectionKeychain = true
+        let shouldUseDataProtectionKeychain = true
     #else
-        let usesDataProtectionKeychain = false
+        let shouldUseDataProtectionKeychain = false
     #endif
     func store(group: String?) -> SecurityKeychainStore {
         var grouped = configuration
         grouped.accessGroup = group
-        return SecurityKeychainStore(configuration: grouped, usesDataProtectionKeychain: usesDataProtectionKeychain)
+        return SecurityKeychainStore(
+            configuration: grouped,
+            shouldUseDataProtectionKeychain: shouldUseDataProtectionKeychain
+        )
     }
     var sharedGroupStore: SharedGroupKeychainStore?
     let modern: any KeychainStore

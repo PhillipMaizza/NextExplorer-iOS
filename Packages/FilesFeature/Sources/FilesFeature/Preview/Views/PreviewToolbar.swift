@@ -158,8 +158,8 @@ private struct PreviewChrome: ViewModifier {
                 .systemShareSheet(shareModel)
                 .onDisappear { shareModel.cancel() }
                 .onChange(of: systemShare.fileID) { shareModel.cancel() }
-                .onChange(of: shareModel.didFail) { _, didFail in
-                    guard didFail else { return }
+                .onChange(of: shareModel.hasFailed) { _, hasFailed in
+                    guard hasFailed else { return }
                     shareFailureToast = .failure(L10n.OpenWith.failed)
                     shareModel.clearFailure()
                 }

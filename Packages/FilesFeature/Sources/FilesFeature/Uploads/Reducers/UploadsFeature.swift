@@ -183,8 +183,8 @@ public struct UploadsFeature {
                 }
                 guard !stalled.isEmpty else { return sweep }
                 var effects: [Effect<Action>] = [sweep]
-                var didRequeue = false
-                var didNewlyFail = false
+                var hasRequeued = false
+                var hasNewlyFailed = false
                 for job in stalled {
                     effects.append(.cancel(id: CancelID.job(job.id)))
                     guard job.autoRetryCount < Constants.maxAutoRetries, uploadStaging.sourceExists(job.fileURL) else {
@@ -192,7 +192,7 @@ public struct UploadsFeature {
                         // never produced one, gets the generic message.
                         if !job.status.isFailed {
                             state.jobs[id: job.id]?.status = .failed(L10n.Uploads.failedGeneric)
-                            didNewlyFail = true
+                            hasNewlyFailed = true
                         }
                         state.jobs[id: job.id]?.isTransportFailure = false
                         continue
@@ -200,11 +200,11 @@ public struct UploadsFeature {
                     state.jobs[id: job.id]?.status = .queued
                     state.jobs[id: job.id]?.progress = 0
                     state.jobs[id: job.id]?.autoRetryCount += 1
-                    didRequeue = true
+                    hasRequeued = true
                 }
-                effects.append(didRequeue ? .send(.startNextIfIdle) : .none)
+                effects.append(hasRequeued ? .send(.startNextIfIdle) : .none)
                 // A wedged upload that is given up on has no response to announce the drained queue.
-                if didNewlyFail, !state.isActive {
+                if hasNewlyFailed, !state.isActive {
                     effects.append(.send(.delegate(.queueFinished(state.finishSummary))))
                 }
                 return .merge(effects)

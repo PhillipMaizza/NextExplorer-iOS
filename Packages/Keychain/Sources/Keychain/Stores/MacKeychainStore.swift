@@ -18,7 +18,7 @@ struct MacKeychainStore: KeychainStore {
 
     init(configuration: KeychainConfiguration) {
         self.init(
-            modern: SecurityKeychainStore(configuration: configuration, usesDataProtectionKeychain: true),
+            modern: SecurityKeychainStore(configuration: configuration, shouldUseDataProtectionKeychain: true),
             legacy: SecurityKeychainStore(configuration: configuration)
         )
     }

@@ -53,7 +53,7 @@ struct SystemShareButton: View {
             if model.isPreparing {
                 DSSpinner()
             } else {
-                IconKit.share.foregroundStyle(model.didFail ? Color.negative : Color.primaryDS)
+                IconKit.share.foregroundStyle(model.hasFailed ? Color.negative : Color.primaryDS)
             }
         }
     #endif
@@ -75,13 +75,13 @@ struct SystemShareButton: View {
                     if model.isPreparing {
                         MacSpinner()
                     } else {
-                        IconKit.share.foregroundStyle(model.didFail ? Color.negativeText : Color.primaryDS)
+                        IconKit.share.foregroundStyle(model.hasFailed ? Color.negativeText : Color.primaryDS)
                     }
                 }
             }
             .help(L10n.PreviewToolbar.share)
             // The red glyph alone says the file couldn't be fetched; VoiceOver hears it too.
-            .accessibilityValue(model.didFail ? L10n.OpenWith.failed : "")
+            .accessibilityValue(model.hasFailed ? L10n.OpenWith.failed : "")
             .disabled(isDisabled)
             .background(MacViewAnchorView(anchor: anchor))
             .onChange(of: model.shareURL?.id) { _, _ in
@@ -99,7 +99,7 @@ struct SystemShareButton: View {
                 }
             }
             .accessibilityLabelWithTooltip(L10n.PreviewToolbar.share)
-            .accessibilityValue(model.didFail ? L10n.OpenWith.failed : "")
+            .accessibilityValue(model.hasFailed ? L10n.OpenWith.failed : "")
             .systemShareSheet(model)
             .onDisappear { model.cancel() }
             .onChange(of: source.fileID) { model.cancel() }

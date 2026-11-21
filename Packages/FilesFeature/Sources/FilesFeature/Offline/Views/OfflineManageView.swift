@@ -101,7 +101,7 @@ struct OfflineManageRow: View {
                 showThumbnails: showThumbnails,
                 customIcon: favorite.map { FavoriteIcon.symbol(for: $0.icon) },
                 customIconTint: favorite.flatMap { FavoriteColor.resolve($0.color) },
-                customIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,
+                isCustomIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,
                 matchedSource: matchedSource
             )
         } trailingSwipe: {

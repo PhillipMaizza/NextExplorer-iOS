@@ -23,12 +23,12 @@ struct BrowsePreviewSource {
 extension BrowseFeature.State {
     /// Root only, outside search and select mode: the account's private folder is not a volume,
     /// so it is not something a bulk action over the listing should touch.
-    var showsPersonalSpace: Bool {
+    var shouldShowPersonalSpace: Bool {
         directoryPath.isEmpty && isPersonalSpaceEnabled && !isSearching && !isSelecting
     }
 
     /// The Trash button sits in the root's toolbar on iPhone and iPad; the Mac has a sidebar row instead.
-    var showsTrashButton: Bool {
+    var shouldShowTrashButton: Bool {
         #if os(iOS)
             directoryPath.isEmpty && isTrashAvailable && !isSearching && !isSelecting
         #else
@@ -37,7 +37,7 @@ extension BrowseFeature.State {
     }
 
     /// The Mac folder table renames in place; search results and previews keep the sheet.
-    var renamesInTable: Bool {
+    var shouldRenameInTable: Bool {
         #if os(macOS)
             previewItem == nil && !isSearching
         #else

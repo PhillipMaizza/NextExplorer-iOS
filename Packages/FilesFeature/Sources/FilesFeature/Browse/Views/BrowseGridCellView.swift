@@ -30,7 +30,7 @@ struct GridCellView: View {
     /// Favorites grid: a favorite's custom icon, weight + colour in place of the folder glyph.
     var customIcon: Image?
     var customIconTint: Color?
-    var customIconFilled: Bool
+    var isCustomIconFilled: Bool
     /// When set, the picture is the source the preview cover's `.zoom` transition grows from and
     /// shrinks back to.
     var matchedSource: PreviewMatchedSource?
@@ -57,7 +57,7 @@ struct GridCellView: View {
         showThumbnails: Bool = false,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
-        customIconFilled: Bool = false,
+        isCustomIconFilled: Bool = false,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
         isAvailableOffline: Bool = false,
@@ -79,7 +79,7 @@ struct GridCellView: View {
         dateModified = thumbnailFile.flatMap { $0.hasKnownDate ? $0.dateModified : nil }
         self.customIcon = customIcon
         self.customIconTint = customIconTint
-        self.customIconFilled = customIconFilled
+        self.isCustomIconFilled = isCustomIconFilled
         self.matchedSource = matchedSource
         self.isOpening = isOpening
     }
@@ -109,7 +109,7 @@ struct GridCellView: View {
         dateModified = item.hasKnownDate ? item.dateModified : nil
         customIcon = nil
         customIconTint = nil
-        customIconFilled = false
+        isCustomIconFilled = false
         self.matchedSource = matchedSource
         self.isOpening = isOpening
     }
@@ -136,12 +136,13 @@ struct GridCellView: View {
     }
 
     private var isEligibleForThumbnail: Bool {
-        !isDirectory && (supportsThumbnail || readsOwnContent) && showThumbnails && serverURL != nil && itemID != nil
+        !isDirectory && (supportsThumbnail || shouldReadOwnContent) && showThumbnails && serverURL != nil && itemID !=
+            nil
     }
 
     /// Audio (cover art) and text (its first lines) have no server thumbnail: the app draws their own.
-    private var readsOwnContent: Bool {
-        kind.map(ThumbnailImage.readsOwnContent) ?? false
+    private var shouldReadOwnContent: Bool {
+        kind.map(ThumbnailImage.shouldReadOwnContent) ?? false
     }
 
     private var isEligibleForDocumentThumbnail: Bool {
@@ -182,7 +183,7 @@ struct GridCellView: View {
             customIcon
                 .resizable()
                 .scaledToFit()
-                .symbolVariant(customIconFilled ? .fill : .none)
+                .symbolVariant(isCustomIconFilled ? .fill : .none)
                 .foregroundStyle(customIconTint ?? Color.accent)
         } else {
             IconKit.folderFill

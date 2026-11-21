@@ -44,11 +44,11 @@ struct SettingsAccountsSection: View {
             activeAccountRow(activeAccount)
             // Outside the disclosure: the second factor protects the account, so it is not
             // something to find by expanding it.
-            if store.showsTwoFactorRow {
+            if store.shouldShowTwoFactorRow {
                 twoFactorRow
             }
             if isActiveAccountExpanded {
-                if store.showsPasswordRow {
+                if store.shouldShowPasswordRow {
                     changePasswordRow
                 }
                 signOutRow

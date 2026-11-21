@@ -77,7 +77,7 @@ struct FileUndoTests {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [misc], destination: TestFolder.docs, operation: .copy, clearClipboard: false,
+                items: [misc], destination: TestFolder.docs, operation: .copy, shouldClearClipboard: false,
                 resolution: .keepBoth, itemsToReplace: []
             )
         }
@@ -139,7 +139,7 @@ struct FileUndoTests {
             }
         }
         let retry = BrowseFeature.TransferRetry(
-            items: [report], destination: "Docs/Archive", operation: .move, clearClipboard: false
+            items: [report], destination: "Docs/Archive", operation: .move, shouldClearClipboard: false
         )
 
         await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive)) {

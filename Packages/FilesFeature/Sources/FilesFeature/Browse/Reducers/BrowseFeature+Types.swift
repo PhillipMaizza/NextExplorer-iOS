@@ -186,7 +186,7 @@ public extension BrowseFeature {
     struct TransferOutcome: Equatable, Sendable {
         public let result: TransferResult
         public let operation: TransferOperation
-        public let clearClipboard: Bool
+        public let shouldClearClipboard: Bool
     }
 
     /// Everything needed to rerun a failed transfer from the "Retry" action on its toast, and
@@ -200,14 +200,14 @@ public extension BrowseFeature {
         public let items: [FileItem]
         public let destination: String
         public let operation: TransferOperation
-        public let clearClipboard: Bool
+        public let shouldClearClipboard: Bool
         public var resolution: Resolution = .ask
         public var itemsToReplace: [FileItem] = []
 
         func resolved(_ resolution: Resolution, replacing itemsToReplace: [FileItem] = []) -> TransferRetry {
             TransferRetry(
                 items: items, destination: destination, operation: operation,
-                clearClipboard: clearClipboard, resolution: resolution, itemsToReplace: itemsToReplace
+                shouldClearClipboard: shouldClearClipboard, resolution: resolution, itemsToReplace: itemsToReplace
             )
         }
     }

@@ -249,7 +249,7 @@ struct UploadReviewFeatureTests {
         await store.receive(.stagingBatchFinished(requested: 1, staged: 0)) {
             $0.preparingCount = 0
             $0.skippedCount = 1
-            $0.stagingFailed = true
+            $0.hasStagingFailed = true
         }
     }
 
@@ -261,7 +261,7 @@ struct UploadReviewFeatureTests {
         await store.receive(.stagingBatchFinished(requested: 1, staged: 0)) {
             $0.preparingCount = 0
             $0.skippedCount = 1
-            $0.stagingFailed = true
+            $0.hasStagingFailed = true
         }
         #expect(!store.state.canUpload)
     }
@@ -287,7 +287,7 @@ struct UploadReviewFeatureTests {
             $0.preparingCount = 0
         }
         #expect(store.state.canUpload)
-        #expect(!store.state.stagingFailed)
+        #expect(!store.state.hasStagingFailed)
     }
 
     @Test
@@ -301,18 +301,18 @@ struct UploadReviewFeatureTests {
             $0.skippedCount = 1
         }
         #expect(store.state.files == [a])
-        #expect(!store.state.stagingFailed)
+        #expect(!store.state.hasStagingFailed)
     }
 
     @Test
     func aNewPickClearsAPreviousStagingError() async {
         var failed = state()
-        failed.stagingFailed = true
+        failed.hasStagingFailed = true
         let a = file(TestFile.aPhoto, id: 0, size: 10)
         let store = makeStore(failed, documents: [a])
 
         await store.send(.stage(.documents([URL(fileURLWithPath: "/picked/a.jpg")]))) {
-            $0.stagingFailed = false
+            $0.hasStagingFailed = false
             $0.preparingCount = 1
         }
         await store.receive(\.filePrepared) {

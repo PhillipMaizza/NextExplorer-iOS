@@ -21,7 +21,7 @@ struct TextFilePreviewView: View {
     let onRetry: () -> Void
     let onDismiss: () -> Void
     /// A file the user just created opens ready to type, once; any other file opens to read.
-    var startsEditing = false
+    var shouldStartEditing = false
 
     /// The edit buffer, `nil` until the user first types. While `nil`, the editor reads `content`
     /// directly, so a freshly mounted `CodeEditorView` gets the full document on its very first
@@ -107,7 +107,7 @@ struct TextFilePreviewView: View {
             // the editor follows the authoritative `content` again.
             .onChange(of: content) { _, _ in draft = nil }
             .onAppear {
-                if startsEditing {
+                if shouldStartEditing {
                     isEditing = true
                 }
             }

@@ -26,7 +26,7 @@ struct TrashView: View {
                     title: L10n.Trash.title,
                     selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedIDs.count) : nil,
                     searchText: .constant(""),
-                    showsSearchField: false
+                    shouldShowSearchField: false
                 )
             }
             .navigationHistoryTitle(L10n.Trash.title)
@@ -115,7 +115,7 @@ struct TrashView: View {
                 isDirectory: item.isDirectory,
                 subtitle: TrashRowText.subtitle(item, now: date.now, calendar: calendar),
                 kind: TrashRowText.kind(item.name, isDirectory: item.isDirectory),
-                wrapsText: true
+                shouldWrapText: true
             )
             .opacity(item.isAvailable ? 1 : Constants.unavailableOpacity)
         } trailingSwipe: {

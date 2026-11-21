@@ -26,7 +26,7 @@ struct BrowseSelectionAvailabilityTests {
 
         #expect(availability.canGetInfo)
         #expect(availability.canShare)
-        #expect(!availability.sharesKeptFiles)
+        #expect(!availability.canShareKept)
         #expect(availability.canTransfer)
         #expect(availability.canMove)
         #expect(availability.canDelete)
@@ -41,7 +41,7 @@ struct BrowseSelectionAvailabilityTests {
 
         #expect(!availability.canGetInfo)
         #expect(!availability.canShare)
-        #expect(availability.sharesKeptFiles == BrowseFeature.State.canShareKeptFiles)
+        #expect(availability.canShareKept == BrowseFeature.State.canShareKeptFiles)
         #expect(!availability.canTransfer)
         #expect(!availability.canMove)
         #expect(!availability.canDelete)
@@ -55,7 +55,7 @@ struct BrowseSelectionAvailabilityTests {
     func aPickNotKeptYetOffersNothing() {
         let availability = state(isKeptOffline: true, kept: [photo.id]).selectionAvailability
 
-        #expect(!availability.sharesKeptFiles)
+        #expect(!availability.canShareKept)
         #expect(!availability.canSave)
         #expect(!availability.canKeepOffline)
     }

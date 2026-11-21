@@ -55,7 +55,7 @@
                             MacRefreshToolbarButton(isRefreshing: refresh.isRefreshing) { refresh() }
                         }
                     }
-                    if let search, search.showsToolbarButton {
+                    if let search, search.shouldShowToolbarButton {
                         ToolbarItem(placement: .primaryAction) {
                             MacSearchButton(action: search)
                         }

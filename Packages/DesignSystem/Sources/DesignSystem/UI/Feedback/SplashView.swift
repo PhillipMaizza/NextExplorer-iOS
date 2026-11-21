@@ -56,8 +56,8 @@ public struct SplashView: View {
 
     /// `@State` mirrors so the exit trigger only ever reads live values: a captured `isReady`
     /// inside `.task` goes stale and would strand the splash on screen.
-    @State private var readyLatch = false
-    @State private var didSettle = false
+    @State private var isReadyLatched = false
+    @State private var hasSettled = false
     @State private var isExiting = false
 
     public var body: some View {
@@ -75,16 +75,16 @@ public struct SplashView: View {
         .task { await run() }
         .onAppear {
             if isReady {
-                readyLatch = true
+                isReadyLatched = true
             }
         }
         .onChange(of: isReady) {
             _, new in if new {
-                readyLatch = true
+                isReadyLatched = true
             }
         }
-        .onChange(of: readyLatch) { _, _ in maybeExit() }
-        .onChange(of: didSettle) { _, _ in maybeExit() }
+        .onChange(of: isReadyLatched) { _, _ in maybeExit() }
+        .onChange(of: hasSettled) { _, _ in maybeExit() }
     }
 
     private var mark: some View {
@@ -113,7 +113,7 @@ public struct SplashView: View {
         withAnimation(DSMotion.splashStep(duration: Constants.shineDuration)) { shine = 1 }
         await pause(Constants.shineDuration)
 
-        didSettle = true
+        hasSettled = true
         maybeExit()
 
         // Safety net: clear no matter what.
@@ -130,7 +130,7 @@ public struct SplashView: View {
     }
 
     private func maybeExit() {
-        guard didSettle, readyLatch, !isExiting else { return }
+        guard hasSettled, isReadyLatched, !isExiting else { return }
         isExiting = true
         onExitStarted()
 

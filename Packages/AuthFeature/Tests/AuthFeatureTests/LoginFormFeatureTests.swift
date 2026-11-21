@@ -280,7 +280,7 @@ struct LoginFormFeatureTests {
         // The user forces http for a LAN hostname.
         await store.send(.schemeChanged(.http)) {
             $0.scheme = .http
-            $0.schemeWasSetByUser = true
+            $0.isSchemeSetByUser = true
         }
         await store.send(.hostChanged(LoginFormConstants.nasHost)) { $0.host = LoginFormConstants.nasHost }
         await store.send(.hostChanged(LoginFormConstants.nasLocalHost)) { $0.host = LoginFormConstants.nasLocalHost }
@@ -288,7 +288,7 @@ struct LoginFormFeatureTests {
         // Clearing the field drops the override, so inference takes over again.
         await store.send(.hostChanged("")) {
             $0.host = ""
-            $0.schemeWasSetByUser = false
+            $0.isSchemeSetByUser = false
         }
         await store.send(.hostChanged(TestHost.example)) {
             $0.host = TestHost.example
@@ -306,7 +306,7 @@ struct LoginFormFeatureTests {
         }
         await store.send(.schemeChanged(.https)) {
             $0.scheme = .https
-            $0.schemeWasSetByUser = true
+            $0.isSchemeSetByUser = true
         }
         await store.send(.hostChanged("192.168.1.187:36621")) { $0.host = "192.168.1.187:36621" }
     }
@@ -322,7 +322,7 @@ struct LoginFormFeatureTests {
         await store.send(.schemeChanged(.https)) {
             $0.host = LoginFormConstants.boxHostWithPort
             $0.scheme = .https
-            $0.schemeWasSetByUser = true
+            $0.isSchemeSetByUser = true
         }
     }
 

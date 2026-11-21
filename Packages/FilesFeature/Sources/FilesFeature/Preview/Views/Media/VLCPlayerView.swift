@@ -45,7 +45,7 @@ struct VLCPlayerView: View {
         /// reaches it, while the arrow keys still bubble up to the router.
         @FocusState private var isKeyboardFocused: Bool
     #endif
-    @State private var controlsVisible = true
+    @State private var areControlsVisible = true
     /// libvlc runs its own HTTP stack, which can't present a TLS client certificate, so a server
     /// behind mTLS would just drop the stream. Say so up front instead of a generic failure.
     @State private var isBlockedByClientCertificate = false
@@ -127,11 +127,11 @@ struct VLCPlayerView: View {
                 }
             } else {
                 VLCPlaybackControls(controller: controller)
-                    .opacity(controlsVisible ? 1 : 0)
-                    .allowsHitTesting(controlsVisible)
+                    .opacity(areControlsVisible ? 1 : 0)
+                    .allowsHitTesting(areControlsVisible)
                     .animation(
                         DSMotion.galleryFade,
-                        value: controlsVisible
+                        value: areControlsVisible
                     )
             }
         }
@@ -141,7 +141,7 @@ struct VLCPlayerView: View {
         chrome
             // Every play start shows the controls, and they stay until a tap hides them.
             .onChange(of: controller.isPlaying) { _, _ in
-                controlsVisible = true
+                areControlsVisible = true
             }
         #if os(macOS)
             // Space plays and pauses, as a Mac player does; the arrows keep stepping through the folder.
@@ -172,7 +172,7 @@ struct VLCPlayerView: View {
     }
 
     private func toggleControls() {
-        controlsVisible.toggle()
+        areControlsVisible.toggle()
     }
 }
 

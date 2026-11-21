@@ -32,7 +32,7 @@ struct BrowseContentView: View {
     /// The item whose "Create Share Link" sheet is open; the sheet owns its own store.
     @State private var shareTarget: FileItem?
     /// Flipped when a pull to refresh completes, only as a `.hapticFeedback` trigger.
-    @State private var didFinishRefreshing = false
+    @State private var hasFinishedRefreshing = false
     @State private var isFilesPickerPresented = false
     @State private var isPhotosPickerPresented = false
     @State private var isCameraPresented = false
@@ -120,14 +120,14 @@ struct BrowseContentView: View {
             }
             .modifier(BrowseActionSheets(
                 store: store,
-                inPreview: false,
+                isInPreview: false,
                 shareTarget: $shareTarget,
                 isDestinationPickerOnScreen: $isDestinationPickerOnScreen
             ))
             .modifier(BrowseToasts(
                 store: store,
                 toastMessage: $toastMessage,
-                inPreview: false,
+                isInPreview: false,
                 extraBottomInset: bottomChromeClearance
             ))
             .modifier(BrowseToastEvents(store: store, toastMessage: $toastMessage))
@@ -164,7 +164,7 @@ struct BrowseContentView: View {
                 #if os(macOS)
                     MacBrowseContentTable(
                         store: store,
-                        keepsClipboard: shouldKeepClipboardAfterCopy,
+                        shouldKeepClipboard: shouldKeepClipboardAfterCopy,
                         isFilesPickerPresented: $isFilesPickerPresented,
                         onOpen: handleTap,
                         onQuickLookUnavailable: { toastMessage = DSToastMessage(icon: IconKit.warning, text: $0) }
@@ -174,7 +174,7 @@ struct BrowseContentView: View {
                 BrowseListContent(
                     store: store,
                     source: previewSource,
-                    keepsClipboard: shouldKeepClipboardAfterCopy,
+                    shouldKeepClipboard: shouldKeepClipboardAfterCopy,
                     bottomClearance: bottomChromeClearance,
                     scrollTargetID: galleryCurrentItemID,
                     onTap: handleTap
@@ -184,7 +184,7 @@ struct BrowseContentView: View {
                 BrowseGridContent(
                     store: store,
                     source: previewSource,
-                    keepsClipboard: shouldKeepClipboardAfterCopy,
+                    shouldKeepClipboard: shouldKeepClipboardAfterCopy,
                     bottomClearance: bottomChromeClearance,
                     scrollTargetID: galleryCurrentItemID,
                     onTap: handleTap
@@ -197,11 +197,11 @@ struct BrowseContentView: View {
         .platformAccentTint()
         .refreshable {
             await store.send(.refreshButtonTapped).finish()
-            didFinishRefreshing.toggle()
+            hasFinishedRefreshing.toggle()
         }
         #if os(macOS)
         .macToolbarRefresh(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
-            didFinishRefreshing.toggle()
+            hasFinishedRefreshing.toggle()
         }
         .focusedSceneValue(
             \.uploadToVisibleFolder,
@@ -210,12 +210,12 @@ struct BrowseContentView: View {
                 : nil
         )
         .syncCompletedToast(
-            trigger: didFinishRefreshing,
+            trigger: hasFinishedRefreshing,
             isErrorFree: store.phase.errorMessage == nil,
             extraBottomInset: bottomChromeClearance
         )
         #endif
-        .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.phase.errorMessage == nil }
+        .hapticFeedback(.success, trigger: hasFinishedRefreshing) { _, _ in store.phase.errorMessage == nil }
         .hapticFeedback(.error, trigger: store.phase.errorMessage) { _, newValue in newValue != nil }
         .overlay {
             overlayStateContent
@@ -258,10 +258,10 @@ struct BrowseContentView: View {
                         viewModeRaw = (viewMode == .grid ? BrowseViewMode.list : .grid).rawValue
                     }
                 },
-                onTrash: store.showsTrashButton && !isSplitViewDetail ? { store.send(.trashTapped) } : nil,
+                onTrash: store.shouldShowTrashButton && !isSplitViewDetail ? { store.send(.trashTapped) } : nil,
                 hasClipboardItems: store.clipboard != nil && !store.directoryPath.isEmpty,
                 clipboardMenu: {
-                    BrowseClipboardMenu(store: store, keepsClipboard: shouldKeepClipboardAfterCopy)
+                    BrowseClipboardMenu(store: store, shouldKeepClipboard: shouldKeepClipboardAfterCopy)
                 }
             ) {
                 // The Mac table sorts from its column headers, so only the other modes need this.

@@ -13,7 +13,7 @@
     struct MacBrowseTableContextMenu<RowActions: View>: View {
         let store: StoreOf<BrowseFeature>
         let ids: Set<FileItem.ID>
-        let keepsClipboard: Bool
+        let shouldKeepClipboard: Bool
         @Binding var isFilesPickerPresented: Bool
         @ViewBuilder let fileActions: (FileItem) -> RowActions
 
@@ -134,7 +134,7 @@
             }
             if store.clipboard != nil, !store.directoryPath.isEmpty {
                 Divider()
-                BrowsePasteMenu(store: store, keepsClipboard: keepsClipboard)
+                BrowsePasteMenu(store: store, shouldKeepClipboard: shouldKeepClipboard)
                     .tint(.primaryDS)
             }
         }
@@ -143,7 +143,7 @@
     @MainActor
     extension BrowseKeyboardActions {
         /// The Edit and File menu actions for the table's selection in `store`.
-        init(store: StoreOf<BrowseFeature>, keepsClipboard: Bool, open: @escaping (FileItem) -> Void) {
+        init(store: StoreOf<BrowseFeature>, shouldKeepClipboard: Bool, open: @escaping (FileItem) -> Void) {
             let canPaste = store.clipboard != nil && !store.directoryPath.isEmpty
             self.init(
                 cut: { store.send(.cutSelectionTapped) },
@@ -152,7 +152,7 @@
                 undo: { store.send(.undoTapped, animation: DSMotion.listDiff) },
                 paste: {
                     guard canPaste else { return }
-                    store.send(.pasteTapped(keepItemsAfterCopy: keepsClipboard), animation: DSMotion.listDiff)
+                    store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboard), animation: DSMotion.listDiff)
                 },
                 delete: { store.send(.deleteSelectionTapped) },
                 rename: { store.send(.renameSelectionTapped) },

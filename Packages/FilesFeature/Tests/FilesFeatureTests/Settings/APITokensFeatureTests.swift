@@ -39,7 +39,7 @@ struct APITokensFeatureTests {
     private let revokeCalls = LockIsolated<[String]>([])
 
     private func makeStore(
-        requiresPassword: Bool = true,
+        isPasswordRequired: Bool = true,
         phase: APITokensFeature.Phase = .loaded,
         tokens: [APIToken]? = nil,
         list: @escaping @Sendable () async throws -> [APIToken] = { throw FilesClientError.offline },
@@ -50,7 +50,7 @@ struct APITokensFeatureTests {
     ) -> Store {
         var state = APITokensFeature.State(
             serverURL: serverURL,
-            requiresPassword: requiresPassword,
+            isPasswordRequired: isPasswordRequired,
             phase: phase,
             tokens: tokens ?? [backup]
         )
@@ -199,7 +199,7 @@ struct APITokensFeatureTests {
 
     @Test
     func anAccountWithoutAPasswordIsNotAskedForOne() async {
-        let store = makeStore(requiresPassword: false)
+        let store = makeStore(isPasswordRequired: false)
 
         await openedForm(store)
 
@@ -256,7 +256,7 @@ struct APITokensFeatureTests {
     @Test
     func anAccountWithoutAPasswordSendsNone() async {
         let issued = IssuedAPIToken(token: nightly, secret: "s")
-        let store = makeStore(requiresPassword: false, create: { issued })
+        let store = makeStore(isPasswordRequired: false, create: { issued })
 
         await openedForm(store, password: "left over")
         await store.send(.createSubmitted) { $0.isWorking = true }

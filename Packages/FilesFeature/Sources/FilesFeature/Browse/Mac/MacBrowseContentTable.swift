@@ -9,7 +9,7 @@
     /// no footer row), or while searching, the scope bar over a results table of its own.
     struct MacBrowseContentTable<FileActions: View>: View {
         let store: StoreOf<BrowseFeature>
-        let keepsClipboard: Bool
+        let shouldKeepClipboard: Bool
         @Binding var isFilesPickerPresented: Bool
         let onOpen: (FileItem) -> Void
         let onQuickLookUnavailable: (String) -> Void
@@ -76,7 +76,7 @@
                 onOpen: onOpen,
                 keyboardActions: BrowseKeyboardActions(
                     store: store,
-                    keepsClipboard: keepsClipboard,
+                    shouldKeepClipboard: shouldKeepClipboard,
                     open: onOpen
                 ),
                 serverURL: store.serverURL,
@@ -92,14 +92,14 @@
                     MacBrowseTableContextMenu(
                         store: store,
                         ids: ids,
-                        keepsClipboard: keepsClipboard,
+                        shouldKeepClipboard: shouldKeepClipboard,
                         isFilesPickerPresented: $isFilesPickerPresented
                     ) { fileActions($0) }
                 },
-                renamingItemID: store.renamesInTable ? store.renameSheetItem?.id : nil,
+                renamingItemID: store.shouldRenameInTable ? store.renameSheetItem?.id : nil,
                 onRenameCommit: { store.send(.renameConfirmed($0)) },
                 onRenameCancel: { store.send(.renameCancelled) },
-                personalSpace: store.showsPersonalSpace ? Self.personalSpaceItem : nil,
+                personalSpace: store.shouldShowPersonalSpace ? Self.personalSpaceItem : nil,
                 onOpenPersonalSpace: { store.send(.personalSpaceTapped) },
                 onQuickLookUnavailable: onQuickLookUnavailable,
                 scrollTargetID: store.scrollTargetID
@@ -116,7 +116,7 @@
     #Preview("Table") {
         MacBrowseContentTable(
             store: Store(initialState: .preview(items: browsePreviewItems)) { BrowseFeature() },
-            keepsClipboard: true,
+            shouldKeepClipboard: true,
             isFilesPickerPresented: .constant(false),
             onOpen: { _ in },
             onQuickLookUnavailable: { _ in },
@@ -130,7 +130,7 @@
             store: Store(initialState: .preview(items: browsePreviewItems, mutate: { $0.searchQuery = "notes" })) {
                 BrowseFeature()
             },
-            keepsClipboard: true,
+            shouldKeepClipboard: true,
             isFilesPickerPresented: .constant(false),
             onOpen: { _ in },
             onQuickLookUnavailable: { _ in },

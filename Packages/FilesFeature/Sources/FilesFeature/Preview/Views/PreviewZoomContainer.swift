@@ -110,13 +110,13 @@ struct ZoomingPreview<Content: View>: View {
     let context: PreviewZoomContext
     @ViewBuilder let content: Content
 
-    @State private var frozenZoom: Bool?
+    @State private var isZoomFrozen: Bool?
 
     var body: some View {
-        let zooms = frozenZoom ?? context.visibility.canZoom(from: sourceID)
+        let zooms = isZoomFrozen ?? context.visibility.canZoom(from: sourceID)
         PreviewZoomContainer(sourceID: sourceID, namespace: context.namespace, zooms: zooms) {
             content
         }
-        .onAppear { frozenZoom = zooms }
+        .onAppear { isZoomFrozen = zooms }
     }
 }

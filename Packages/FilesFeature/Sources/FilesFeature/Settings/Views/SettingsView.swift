@@ -141,7 +141,7 @@ struct SettingsView: View {
                     title: L10n.Settings.navigationTitle,
                     searchText: $settingsSearch,
                     extraTopPadding: titleTopPadding,
-                    showsSearchField: false
+                    shouldShowSearchField: false
                 )
             }
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`).

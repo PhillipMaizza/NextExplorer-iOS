@@ -31,7 +31,7 @@ struct BrowsePreviewCover: View {
         }
         .modifier(BrowseActionSheets(
             store: store,
-            inPreview: true,
+            isInPreview: true,
             shareTarget: $shareTarget,
             isDestinationPickerOnScreen: $isDestinationPickerOnScreen
         ))
@@ -41,7 +41,7 @@ struct BrowsePreviewCover: View {
         .modifier(BrowseToasts(
             store: store,
             toastMessage: $toastMessage,
-            inPreview: true,
+            isInPreview: true,
             extraBottomInset: Self.toolbarToastInset
         ))
     }

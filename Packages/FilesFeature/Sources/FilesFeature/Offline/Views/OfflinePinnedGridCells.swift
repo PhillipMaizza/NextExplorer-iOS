@@ -38,7 +38,7 @@ struct OfflinePinnedGridCells: View {
                     showThumbnails: showThumbnails,
                     customIcon: usage.root.isDirectory ? favorite.map { FavoriteIcon.symbol(for: $0.icon) } : nil,
                     customIconTint: favorite.flatMap { FavoriteColor.resolve($0.color) },
-                    customIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,
+                    isCustomIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,
                     matchedSource: usage.root.isDirectory ? nil : zoom?.source(for: usage.root.path)
                 )
             } contextMenu: {

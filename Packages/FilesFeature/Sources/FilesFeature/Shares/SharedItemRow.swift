@@ -25,7 +25,7 @@ struct SharedItemRow: View {
     let isByMe: Bool
     let isDeleting: Bool
     /// A hairline above the row, inset to the text, between items.
-    var showsDivider = false
+    var shouldShowDivider = false
     let onTap: () -> Void
 
     var body: some View {
@@ -66,7 +66,7 @@ struct SharedItemRow: View {
             .padding(.horizontal, .space16)
             .padding(.vertical, .space16)
             .overlay(alignment: .top) {
-                if showsDivider {
+                if shouldShowDivider {
                     Divider().padding(.leading, Constants.dividerInset)
                 }
             }

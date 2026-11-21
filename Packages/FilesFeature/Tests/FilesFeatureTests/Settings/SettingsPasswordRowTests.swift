@@ -70,8 +70,8 @@ struct SettingsPasswordRowTests: SettingsFeatureTestSupport {
         state.localSignInStatus = testCase.signIn
         state.passwordStatus = testCase.password
 
-        #expect(state.showsPasswordRow == testCase.showsPassword)
-        #expect(state.showsTwoFactorRow == testCase.showsTwoFactor)
+        #expect(state.shouldShowPasswordRow == testCase.showsPassword)
+        #expect(state.shouldShowTwoFactorRow == testCase.showsTwoFactor)
     }
 
     @Test("The sign in rows stay hidden until the server answers, so none shows for a moment")
@@ -80,8 +80,8 @@ struct SettingsPasswordRowTests: SettingsFeatureTestSupport {
 
         #expect(state.passwordStatus == .unknown)
         #expect(state.localSignInStatus == .unknown)
-        #expect(!state.showsPasswordRow)
-        #expect(!state.showsTwoFactorRow)
+        #expect(!state.shouldShowPasswordRow)
+        #expect(!state.shouldShowTwoFactorRow)
     }
 
     @Test("A failed refetch keeps the answer the server already gave")
@@ -138,14 +138,14 @@ struct SettingsPasswordRowTests: SettingsFeatureTestSupport {
     ])
     func aSingleSignOnAccountIsNotAskedForAPasswordToMakeAToken(
         status: SettingsFeature.PasswordStatus,
-        requiresPassword: Bool
+        isPasswordRequired: Bool
     ) async {
         var state = makeState()
         state.passwordStatus = status
         let store = makeStore(state: state)
 
         await store.send(.apiTokensButtonTapped) {
-            $0.apiTokens = APITokensFeature.State(serverURL: serverURL, requiresPassword: requiresPassword)
+            $0.apiTokens = APITokensFeature.State(serverURL: serverURL, isPasswordRequired: isPasswordRequired)
         }
     }
 

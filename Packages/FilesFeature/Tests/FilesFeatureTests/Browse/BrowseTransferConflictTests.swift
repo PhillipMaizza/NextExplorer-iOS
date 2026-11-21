@@ -31,7 +31,7 @@ struct BrowseTransferConflictTests {
             items: [incoming],
             destination: TestFolder.documents,
             operation: .copy,
-            clearClipboard: true
+            shouldClearClipboard: true
         )
     }
 
@@ -72,7 +72,7 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
+                items: [incoming], destination: TestFolder.documents, operation: .copy, shouldClearClipboard: true,
                 resolution: .replace, itemsToReplace: [existing]
             )
         }
@@ -103,7 +103,7 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
+                items: [incoming], destination: TestFolder.documents, operation: .copy, shouldClearClipboard: true,
                 resolution: .replace, itemsToReplace: [existing]
             )
         }
@@ -134,7 +134,7 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: true,
+                items: [incoming], destination: TestFolder.documents, operation: .copy, shouldClearClipboard: true,
                 resolution: .keepBoth
             )
         }
@@ -172,7 +172,7 @@ struct BrowseTransferConflictTests {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [existing], destination: TestFolder.documents, operation: .copy, clearClipboard: false,
+                items: [existing], destination: TestFolder.documents, operation: .copy, shouldClearClipboard: false,
                 resolution: .keepBoth
             )
         }

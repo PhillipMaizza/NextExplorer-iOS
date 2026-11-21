@@ -43,7 +43,7 @@ public extension View {
 private struct ListSelectionModifier: ViewModifier {
     let isSelecting: Bool
     let isSelected: Bool
-    @Environment(\.selectionIndicatorsShown) private var indicatorsShown
+    @Environment(\.areSelectionIndicatorsShown) private var indicatorsShown
 
     /// Seeded from `isSelecting`, so a row that appears while selecting has its circle from its first
     /// frame instead of sliding it in.

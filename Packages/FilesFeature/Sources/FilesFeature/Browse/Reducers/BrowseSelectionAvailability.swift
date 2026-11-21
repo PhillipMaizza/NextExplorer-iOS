@@ -14,14 +14,14 @@ extension BrowseFeature.State {
     /// What the selection menu offers for the items picked now.
     var selectionAvailability: SelectionActionsMenu.Availability {
         // Device content offers only what works on kept files, and only once every pick is kept.
-        let isDevice = showsDeviceContent
+        let isDevice = shouldShowDeviceContent
         let isAllKept = selectedItems.allSatisfy { offlineItemIDs.contains($0.id) }
         return SelectionActionsMenu.Availability(
             single: singleSelectedItem,
             canGetInfo: !isDevice,
             canWrite: access?.canWrite ?? false,
             canShare: !isDevice && (access?.canShare ?? false),
-            sharesKeptFiles: isDevice && isAllKept && Self.canShareKeptFiles && selectedItems
+            canShareKept: isDevice && isAllKept && Self.canShareKeptFiles && selectedItems
                 .contains { !$0.isDirectory },
             canTransfer: !isDevice && isTransferActionVisible,
             canMove: isTransferActionVisible && (access?.canWrite ?? false) && (access?.canDelete ?? false),
@@ -38,7 +38,7 @@ extension BrowseFeature.State {
     /// Select mode is offered only where a pick can lead to an action: device content acts on kept
     /// files alone, so a saved copy shown with no network and nothing kept in it has nothing to select.
     var canSelectItems: Bool {
-        hasDisplayedItems && (!showsDeviceContent || items.contains { offlineItemIDs.contains($0.id) })
+        hasDisplayedItems && (!shouldShowDeviceContent || items.contains { offlineItemIDs.contains($0.id) })
     }
 
     var canMoveHere: Bool {
@@ -49,15 +49,15 @@ extension BrowseFeature.State {
     /// frame. A screen of device content offers nothing to add, also before its access lands, so
     /// its toolbar never shows the `+` only to take it away again.
     var canUploadHere: Bool {
-        access?.canUpload ?? !showsDeviceContent
+        access?.canUpload ?? !shouldShowDeviceContent
     }
 
     var canCreateFileHere: Bool {
-        access?.canCreateFile ?? !showsDeviceContent
+        access?.canCreateFile ?? !shouldShowDeviceContent
     }
 
     var canCreateFolderHere: Bool {
-        access?.canCreateFolder ?? !showsDeviceContent
+        access?.canCreateFolder ?? !shouldShowDeviceContent
     }
 
     /// The `+` appears when anything can be added here: an upload, a new folder or a new file.
@@ -85,7 +85,7 @@ extension BrowseFeature.State {
     /// ignoring the file, which a merely disabled icon would leave ambiguous.
     var isFavoriteActionVisible: Bool {
         let picked = selectedItems
-        return !showsDeviceContent && !picked.isEmpty && picked.allSatisfy(\.isDirectory)
+        return !shouldShowDeviceContent && !picked.isEmpty && picked.allSatisfy(\.isDirectory)
     }
 
     /// Filled when tapping the toolbar star would unfavorite the whole selection, matching

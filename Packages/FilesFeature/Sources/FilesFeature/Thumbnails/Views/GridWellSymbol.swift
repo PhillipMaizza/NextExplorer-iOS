@@ -21,7 +21,7 @@ private enum Constants {
 struct GridWellSymbol<Content: View>: View {
     let kind: String
     /// Names the type under the symbol, for a file with no preview; a page says what it is already.
-    var showsLabel = false
+    var shouldShowLabel = false
     @ViewBuilder let content: (_ wellSide: CGFloat) -> Content
 
     var body: some View {
@@ -30,7 +30,7 @@ struct GridWellSymbol<Content: View>: View {
             VStack(spacing: Constants.spacing) {
                 content(side)
                     .frame(maxWidth: side * Constants.widthFraction, maxHeight: side * Constants.heightFraction)
-                if showsLabel, !kind.isEmpty, kind != FileItem.unknownKind {
+                if shouldShowLabel, !kind.isEmpty, kind != FileItem.unknownKind {
                     Text(kind.uppercased())
                         .type(.caption(.semibold), style: .secondary)
                         .lineLimit(1)
@@ -69,7 +69,7 @@ struct GridPlayBadge: View {
 }
 
 #Preview("Page and label") {
-    GridWellSymbol(kind: "md", showsLabel: true) { _ in
+    GridWellSymbol(kind: "md", shouldShowLabel: true) { _ in
         RoundedRectangle(cornerRadius: .size2)
             .fill(Color.white)
     }

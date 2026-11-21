@@ -53,14 +53,14 @@ public struct SettingsFeature {
 
         /// A password does nothing on a server that has password sign in off (`AUTH_MODE=oidc`).
         /// Hidden until the server answers, so a row the account cannot use never shows for a moment.
-        public var showsPasswordRow: Bool {
+        public var shouldShowPasswordRow: Bool {
             localSignInStatus == .enabled || localSignInStatus == .unconfirmed
         }
 
         /// The second factor guards the password sign in, so it needs both the server to allow
         /// that sign in and the account to have a password. The web app hides it the same way.
-        public var showsTwoFactorRow: Bool {
-            showsPasswordRow && (passwordStatus == .present || passwordStatus == .unconfirmed)
+        public var shouldShowTwoFactorRow: Bool {
+            shouldShowPasswordRow && (passwordStatus == .present || passwordStatus == .unconfirmed)
         }
 
         /// Both answers are in, so asking again would change nothing.
@@ -393,7 +393,7 @@ public struct SettingsFeature {
         case .apiTokensButtonTapped:
             state.apiTokens = APITokensFeature.State(
                 serverURL: state.serverURL,
-                requiresPassword: state.passwordStatus != .absent
+                isPasswordRequired: state.passwordStatus != .absent
             )
             return .none
 

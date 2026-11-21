@@ -105,7 +105,7 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     private let leadingActions: () -> LeadingActions
     /// `false` in a folder that allows creating files or folders but not uploading: the menu
     /// then offers only the leading actions.
-    private let includesUploadSources: Bool
+    private let shouldIncludeUploadSources: Bool
     @Binding private var isFilesPickerPresented: Bool
     @Binding private var isPhotosPickerPresented: Bool
     @Binding private var isCameraPresented: Bool
@@ -114,7 +114,7 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     init(
         @ViewBuilder label: @escaping () -> MenuLabel,
         @ViewBuilder leadingActions: @escaping () -> LeadingActions,
-        includesUploadSources: Bool = true,
+        shouldIncludeUploadSources: Bool = true,
         isFilesPickerPresented: Binding<Bool>,
         isPhotosPickerPresented: Binding<Bool>,
         isCameraPresented: Binding<Bool>,
@@ -122,7 +122,7 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     ) {
         self.label = label
         self.leadingActions = leadingActions
-        self.includesUploadSources = includesUploadSources
+        self.shouldIncludeUploadSources = shouldIncludeUploadSources
         _isFilesPickerPresented = isFilesPickerPresented
         _isPhotosPickerPresented = isPhotosPickerPresented
         _isCameraPresented = isCameraPresented
@@ -147,7 +147,7 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
         // button, where the menu opens upward and the default order would flip.
         Menu {
             leadingActions()
-            if includesUploadSources {
+            if shouldIncludeUploadSources {
                 uploadSources
             }
         } label: {

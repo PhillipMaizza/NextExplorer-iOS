@@ -91,16 +91,16 @@ final class ArchiveSource: @unchecked Sendable {
             let fileHandle = try FileHandle(forWritingTo: destinationURL)
             defer { try? fileHandle.close() }
             var written: UInt64 = 0
-            var overflowed = false
+            var hasOverflowed = false
             var writeError: (any Error)?
             // `Unrar`'s handler can't throw, so once the running count passes the ceiling or a write
             // fails (a full disk) we stop writing and report afterward: the decoder keeps running
             // but nothing more hits disk.
             try archive.extract(entry) { chunk, _ in
-                guard !overflowed, writeError == nil else { return }
+                guard !hasOverflowed, writeError == nil else { return }
                 written += UInt64(chunk.count)
                 if written > ArchiveReader.maxEntrySize {
-                    overflowed = true
+                    hasOverflowed = true
                     return
                 }
                 do {
@@ -109,7 +109,7 @@ final class ArchiveSource: @unchecked Sendable {
                     writeError = error
                 }
             }
-            if overflowed {
+            if hasOverflowed {
                 throw ArchiveReaderError.entryTooLarge
             }
             if let writeError {

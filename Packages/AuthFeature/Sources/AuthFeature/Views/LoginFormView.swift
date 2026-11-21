@@ -41,7 +41,7 @@ public struct LoginFormView: View {
     @Bindable var store: StoreOf<LoginFormFeature>
     /// `false` while the launch splash still covers the screen: auto focusing the host field
     /// then would slide the keyboard up over the splash.
-    private let autoFocus: Bool
+    private let shouldAutoFocus: Bool
     /// Whether a successful sign in floods the screen with accent into the app. Off where the
     /// form is a dialog (the Mac Add Account sheet), which simply closes instead.
     private let shouldFloodIntoApp: Bool
@@ -71,9 +71,9 @@ public struct LoginFormView: View {
     @State private var isIdentifierFieldInvalid = false
     @State private var isPasswordFieldInvalid = false
 
-    public init(store: StoreOf<LoginFormFeature>, autoFocus: Bool = true, shouldFloodIntoApp: Bool = true) {
+    public init(store: StoreOf<LoginFormFeature>, shouldAutoFocus: Bool = true, shouldFloodIntoApp: Bool = true) {
         self.store = store
-        self.autoFocus = autoFocus
+        self.shouldAutoFocus = shouldAutoFocus
         self.shouldFloodIntoApp = shouldFloodIntoApp
     }
 
@@ -223,7 +223,7 @@ public struct LoginFormView: View {
             if store.currentPage == .server {
                 LoginServerPage(
                     store: store,
-                    autoFocus: autoFocus,
+                    shouldAutoFocus: shouldAutoFocus,
                     horizontalSizeClass: horizontalSizeClass,
                     shakeTrigger: shakeTrigger,
                     displayedErrorMessage: displayedErrorMessage

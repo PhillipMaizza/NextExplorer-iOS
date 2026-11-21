@@ -449,10 +449,10 @@ public struct MainTabFeature {
                             }
                         },
                         .run { send in
-                            var wasOnline = true
+                            var isPreviouslyOnline = true
                             for await online in connectivity.events() {
-                                defer { wasOnline = online }
-                                if online, !wasOnline {
+                                defer { isPreviouslyOnline = online }
+                                if online, !isPreviouslyOnline {
                                     await send(.connectivityRestored)
                                 }
                             }
@@ -686,13 +686,13 @@ public struct MainTabFeature {
 extension MainTabFeature.State {
     /// The Available Offline pill shows while a run works or after one failed.
     var isOfflineBarVisible: Bool {
-        offlineProgress.phase.showsOfflineBar
+        offlineProgress.phase.shouldShowOfflineBar
     }
 }
 
 extension OfflineDownloadProgress.Phase {
     /// The Available Offline pill shows while a run works or after one failed.
-    var showsOfflineBar: Bool {
+    var shouldShowOfflineBar: Bool {
         switch self {
         case .preparing, .downloading, .failed: true
         case .idle, .completed, .waitingForNetwork: false

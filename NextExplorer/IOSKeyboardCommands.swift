@@ -13,7 +13,7 @@
     struct IOSKeyboardCommands: Commands {
         let store: StoreOf<AppFeature>
 
-        @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
+        @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardAfterCopy = false
         /// Read by `body`, so every menu title is rebuilt in a newly chosen language.
         @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
@@ -41,7 +41,7 @@
                 .keyboardShortcut("c")
                 Button(L10n.Browse.actionPaste) {
                     perform(
-                        .paste(keepItemsAfterCopy: keepClipboardAfterCopy),
+                        .paste(keepItemsAfterCopy: shouldKeepClipboardAfterCopy),
                         textAction: #selector(UIResponderStandardEditActions.paste)
                     )
                 }

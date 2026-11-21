@@ -48,7 +48,7 @@ public struct MainTabView: View {
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
     /// Settings → "Show Tab Labels": titles under each tab icon (with the smaller glyph set),
     /// or the full size icons on their own.
-    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
+    @AppStorage(AppStorageKeys.showTabLabels) private var shouldShowTabLabels = false
     /// Regular width (iPad) renders a `NavigationSplitView` sidebar; compact (iPhone, iPad
     /// narrow multitasking) keeps the bottom tab bar. Gated on size class, never device idiom.
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -93,7 +93,7 @@ public struct MainTabView: View {
             .animation(DSMotion.stateFade, value: store.uploads.isActive)
             .animation(DSMotion.stateFade, value: store.downloadQueue.isBarVisible)
             .animation(DSMotion.stateFade, value: store.downloadQueue.isActive)
-            .animation(DSMotion.stateFade, value: offlinePhase.showsOfflineBar)
+            .animation(DSMotion.stateFade, value: offlinePhase.shouldShowOfflineBar)
             .onOfflinePhaseChange(initial: true) { offlinePhase = $0 }
             .animation(DSMotion.stateFade, value: breadcrumbClearance)
             .onChange(of: shouldShowTransferBars) { _, visible in
@@ -197,7 +197,7 @@ public struct MainTabView: View {
         #if os(macOS)
             false
         #else
-            store.uploads.isBarVisible || store.downloadQueue.isBarVisible || offlinePhase.showsOfflineBar
+            store.uploads.isBarVisible || store.downloadQueue.isBarVisible || offlinePhase.shouldShowOfflineBar
         #endif
     }
 
@@ -284,7 +284,11 @@ public struct MainTabView: View {
             Tab(value: MainTabFeature.Tab.browse) {
                 BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
             } label: {
-                MainTabBarLabel(tab: .browse, isSelected: store.selectedTab == .browse, showsTitle: showTabLabels)
+                MainTabBarLabel(
+                    tab: .browse,
+                    isSelected: store.selectedTab == .browse,
+                    shouldShowTitle: shouldShowTabLabels
+                )
             }
 
             Tab(value: MainTabFeature.Tab.favorites) {
@@ -292,7 +296,11 @@ public struct MainTabView: View {
                     FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
                 }
             } label: {
-                MainTabBarLabel(tab: .favorites, isSelected: store.selectedTab == .favorites, showsTitle: showTabLabels)
+                MainTabBarLabel(
+                    tab: .favorites,
+                    isSelected: store.selectedTab == .favorites,
+                    shouldShowTitle: shouldShowTabLabels
+                )
             }
 
             Tab(value: MainTabFeature.Tab.shared) {
@@ -300,7 +308,11 @@ public struct MainTabView: View {
                     SharedView(store: store.scope(state: \.shared, action: \.shared))
                 }
             } label: {
-                MainTabBarLabel(tab: .shared, isSelected: store.selectedTab == .shared, showsTitle: showTabLabels)
+                MainTabBarLabel(
+                    tab: .shared,
+                    isSelected: store.selectedTab == .shared,
+                    shouldShowTitle: shouldShowTabLabels
+                )
             }
 
             Tab(value: MainTabFeature.Tab.downloads) {
@@ -312,8 +324,12 @@ public struct MainTabView: View {
                     )
                 }
             } label: {
-                MainTabBarLabel(tab: .downloads, isSelected: store.selectedTab == .downloads, showsTitle: showTabLabels)
-                    .accessibilityValue(store.hasUnseenOfflineFiles ? L10n.Offline.newFilesBadge : "")
+                MainTabBarLabel(
+                    tab: .downloads,
+                    isSelected: store.selectedTab == .downloads,
+                    shouldShowTitle: shouldShowTabLabels
+                )
+                .accessibilityValue(store.hasUnseenOfflineFiles ? L10n.Offline.newFilesBadge : "")
             }
             // An empty badge is the tab bar's dot: new files were kept since Offline was last opened.
             .badge(store.hasUnseenOfflineFiles ? Text(verbatim: "") : nil)
@@ -323,14 +339,18 @@ public struct MainTabView: View {
                     SettingsView(store: store.scope(state: \.settings, action: \.settings))
                 }
             } label: {
-                MainTabBarLabel(tab: .settings, isSelected: store.selectedTab == .settings, showsTitle: showTabLabels)
+                MainTabBarLabel(
+                    tab: .settings,
+                    isSelected: store.selectedTab == .settings,
+                    shouldShowTitle: shouldShowTabLabels
+                )
             }
         }
         .tint(Color.accent)
         // The tab bar caches its item views; without a fresh identity when the preference flips,
         // toggling labels off leaves the old titled items on screen. Rebuild on the toggle.
         // `visitedTabs` (MainTabView @State) and the store bound selection both survive it.
-        .id(showTabLabels)
+        .id(shouldShowTabLabels)
     }
 
     /// Room for the split view's `SplitDetailBreadcrumb` under the upload bar (none on iPhone,

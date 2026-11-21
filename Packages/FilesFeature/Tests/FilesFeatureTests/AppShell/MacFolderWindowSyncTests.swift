@@ -101,7 +101,7 @@ import TestUtils
                     action: .transferResponse(.success(.init(
                         result: transferred,
                         operation: .move,
-                        clearClipboard: false
+                        shouldClearClipboard: false
                     ))),
                     expected: .everything
                 ),

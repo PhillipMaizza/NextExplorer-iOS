@@ -32,10 +32,10 @@ public struct SearchIndexSettingsFeature {
 
         /// What the server is doing now. An environment variable can decide this, in which case
         /// the stored choice in the settings is not what runs.
-        public var effectiveIsEnabled: Bool?
+        public var isEffectivelyEnabled: Bool?
 
         var isEnabled: Bool {
-            effectiveIsEnabled ?? loaded?.isEnabled ?? false
+            isEffectivelyEnabled ?? loaded?.isEnabled ?? false
         }
 
         var isSwitchLocked: Bool {
@@ -107,7 +107,7 @@ public struct SearchIndexSettingsFeature {
                 state.isUnavailable = false
                 if let features = snapshot.features {
                     state.lockedBy = features.searchIndexLockedBy
-                    state.effectiveIsEnabled = features.isSearchIndexEnabled
+                    state.isEffectivelyEnabled = features.isSearchIndexEnabled
                 }
                 guard let settings = snapshot.settings.searchIndex else {
                     state.isUnavailable = true
@@ -155,7 +155,7 @@ public struct SearchIndexSettingsFeature {
                 let keepsEdits = state.keepsUnsavedEdits(whenReplacing: replacesPaths)
                 state.loaded = settings
                 if !replacesPaths {
-                    state.effectiveIsEnabled = settings.isEnabled
+                    state.isEffectivelyEnabled = settings.isEnabled
                 }
                 state.adopt(serverPaths: settings.excluded.paths, keepingUnsavedEdits: keepsEdits)
                 return .send(.delegate(.saved))

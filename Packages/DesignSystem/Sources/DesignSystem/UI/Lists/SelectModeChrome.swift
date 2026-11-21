@@ -3,7 +3,7 @@ import SwiftUI
 public extension EnvironmentValues {
     /// Whether the selection circles are out, set by `selectModeChrome`; `nil` outside it, where each
     /// row follows its own `isSelecting`.
-    @Entry var selectionIndicatorsShown: Bool?
+    @Entry var areSelectionIndicatorsShown: Bool?
     /// Leaves select mode in order, set by `selectModeChrome`; `nil` outside it.
     @Entry var leaveSelectMode: DSSelectModeExit?
 }
@@ -64,7 +64,7 @@ private struct SelectModeChrome: ViewModifier {
     func body(content: Content) -> some View {
         content
             .hidesTabBar(isTabBarHidden)
-            .environment(\.selectionIndicatorsShown, areIndicatorsShown)
+            .environment(\.areSelectionIndicatorsShown, areIndicatorsShown)
             .environment(\.leaveSelectMode, exit)
             .onAppear {
                 exit.hideIndicators = {

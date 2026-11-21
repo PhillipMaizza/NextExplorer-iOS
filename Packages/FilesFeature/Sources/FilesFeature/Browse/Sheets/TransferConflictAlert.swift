@@ -42,7 +42,7 @@ private enum PreviewSample {
                 items: items,
                 destination: "Docs",
                 operation: .move,
-                clearClipboard: false
+                shouldClearClipboard: false
             ),
             collidingItems: items
         )

@@ -172,11 +172,11 @@ extension BrowseFeature {
     /// Drops the rows a delete removed, keeps the ones the trash refused for the follow up
     /// prompt, and announces what went to the trash.
     func applyDeleteResult(_ state: inout State, _ result: DeleteResult) -> Effect<Action> {
-        var hadFavorited = false
+        var hasFavorited = false
         for itemID in result.removedIDs {
             state.items.remove(id: itemID)
             if state.favoritePaths.remove(itemID) != nil {
-                hadFavorited = true
+                hasFavorited = true
             }
         }
         state.keptDeletes = result.kept
@@ -189,7 +189,7 @@ extension BrowseFeature {
         if !result.removedIDs.isEmpty {
             syncListingCache(state)
         }
-        return hadFavorited ? .send(.delegate(.favoritesChanged)) : .none
+        return hasFavorited ? .send(.delegate(.favoritesChanged)) : .none
     }
 
     /// Every selected directory is toggled, mirroring the single item context menu action:

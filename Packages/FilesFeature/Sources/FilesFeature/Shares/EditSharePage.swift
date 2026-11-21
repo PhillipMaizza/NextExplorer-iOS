@@ -195,9 +195,9 @@
                 DSToggleRow(
                     title: L10n.CreateShare.togglePasswordProtect,
                     icon: IconKit.lock,
-                    isOn: $store.wantsPassword.sending(\.wantsPasswordChanged).animation(DSMotion.stateFade)
+                    isOn: $store.isPasswordEnabled.sending(\.wantsPasswordChanged).animation(DSMotion.stateFade)
                 )
-                if store.wantsPassword {
+                if store.isPasswordEnabled {
                     SecureField(
                         L10n.Common.password,
                         text: $store.newPassword.sending(\.newPasswordChanged),
@@ -257,7 +257,7 @@
 
     #Preview("Password required") {
         editSharePreview(.previewCard()) {
-            $0.wantsPassword = true
+            $0.isPasswordEnabled = true
             $0.fieldError = .passwordRequired
         }
     }

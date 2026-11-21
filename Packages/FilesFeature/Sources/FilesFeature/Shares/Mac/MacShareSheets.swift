@@ -171,7 +171,7 @@
                     selectedUserIDs: store.selectedUserIDs,
                     usersPhase: store.usersPhase,
                     onToggleUser: { store.send(.userToggled($0)) },
-                    isPasswordOn: $store.wantsPassword.sending(\.wantsPasswordChanged),
+                    isPasswordOn: $store.isPasswordEnabled.sending(\.wantsPasswordChanged),
                     password: $store.newPassword.sending(\.newPasswordChanged),
                     passwordPrompt: store.share.hasPassword ? L10n.EditShare.passwordKeepHint : L10n.Common.password,
                     isExpiryOn: $store.isExpiryEnabled.sending(\.expiryEnabledChanged),

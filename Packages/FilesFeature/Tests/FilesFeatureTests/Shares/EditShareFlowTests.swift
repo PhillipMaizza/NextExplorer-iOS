@@ -121,7 +121,7 @@ struct EditShareFlowTests {
     @Test
     func turningOnAPasswordWithoutTypingOneStopsSave() async {
         var initial = state()
-        initial.wantsPassword = true
+        initial.isPasswordEnabled = true
         let store = TestStore(initialState: initial) { EditShareFeature() } withDependencies: {
             $0.date = .constant(fixedNow)
         }

@@ -250,7 +250,7 @@ public struct BrowseFeature {
         public var isKeptOffline = false
         /// The listing comes from the device (an Offline tab screen, or a saved copy shown with no
         /// network): only actions on kept files are offered, done from those files, not the server.
-        var showsDeviceContent: Bool {
+        var shouldShowDeviceContent: Bool {
             isKeptOffline || dataSource != .live
         }
 

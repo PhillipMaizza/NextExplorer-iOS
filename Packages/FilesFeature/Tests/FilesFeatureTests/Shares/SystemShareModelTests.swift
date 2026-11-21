@@ -44,7 +44,7 @@ struct SystemShareModelTests {
         await model.download?.value
         #expect(model.shareURL?.url == Constants.downloaded)
         #expect(!model.isPreparing)
-        #expect(!model.didFail)
+        #expect(!model.hasFailed)
     }
 
     @Test("A failed download is marked, and clearing it resets the mark")
@@ -52,10 +52,10 @@ struct SystemShareModelTests {
         let model = model { _, _ in throw FilesClientError.offline }
         model.prepare(.remote(report, serverURL: BrowseTestSupport.serverURL))
         await model.download?.value
-        #expect(model.didFail)
+        #expect(model.hasFailed)
         #expect(model.shareURL == nil)
         model.clearFailure()
-        #expect(!model.didFail)
+        #expect(!model.hasFailed)
     }
 
     @Test("A 401 while downloading signs the user out")
@@ -66,7 +66,7 @@ struct SystemShareModelTests {
         model.prepare(.remote(report, serverURL: BrowseTestSupport.serverURL))
         await model.download?.value
         #expect(sessionDidExpire)
-        #expect(model.didFail)
+        #expect(model.hasFailed)
     }
 
     @Test("A download that still lands after leaving shares nothing and is not a failure")
@@ -83,7 +83,7 @@ struct SystemShareModelTests {
         model.cancel()
         gate.open()
         await download?.value
-        #expect(!model.didFail)
+        #expect(!model.hasFailed)
         #expect(model.shareURL == nil)
         #expect(!model.isPreparing)
     }

@@ -49,7 +49,7 @@ struct EditShareFeatureTests {
         #expect(state.label == "Bills")
         #expect(state.accessMode == .readwrite)
         #expect(state.target == .users)
-        #expect(state.wantsPassword)
+        #expect(state.isPasswordEnabled)
         #expect(state.isExpiryEnabled)
         #expect(state.expiresAt == expiry)
         #expect(state.selectedUserIDs == ["u2", "u3"])
@@ -64,11 +64,11 @@ struct EditShareFeatureTests {
         #expect(state.passwordChange == .set(TestAccount.password))
 
         state.newPassword = ""
-        state.wantsPassword = false
+        state.isPasswordEnabled = false
         #expect(state.passwordChange == .remove) // was protected, now off
 
         var fresh = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: false), now: fixedNow)
-        fresh.wantsPassword = false
+        fresh.isPasswordEnabled = false
         #expect(fresh.passwordChange == .keep) // never had one
     }
 

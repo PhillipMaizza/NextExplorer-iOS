@@ -11,12 +11,12 @@ extension BrowseFeature {
         guard let clipboard = state.clipboard,
               clipboard.canPaste(into: state.directoryPath, canWrite: state.access?.canWrite ?? false)
         else { return .none }
-        let clearClipboard = clipboard.operation == .move || !keepItemsAfterCopy
+        let shouldClearClipboard = clipboard.operation == .move || !keepItemsAfterCopy
         return runTransfer(&state, retry: TransferRetry(
             items: clipboard.items,
             destination: state.directoryPath,
             operation: clipboard.operation,
-            clearClipboard: clearClipboard
+            shouldClearClipboard: shouldClearClipboard
         ))
     }
 
@@ -100,7 +100,11 @@ extension BrowseFeature {
                         onProgress
                     )
                 }
-                return TransferOutcome(result: result, operation: retry.operation, clearClipboard: retry.clearClipboard)
+                return TransferOutcome(
+                    result: result,
+                    operation: retry.operation,
+                    shouldClearClipboard: retry.shouldClearClipboard
+                )
             }), animation: DSMotion.listDiff)
         }
         .cancellable(id: CancelID.transfer)

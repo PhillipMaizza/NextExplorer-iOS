@@ -53,7 +53,7 @@
         public static let legacyDownloadName = "legacy-report.pdf"
 
         /// Whether this launch runs under XCUITest with animations off.
-        public static let disablesAnimations: Bool = {
+        public static let shouldDisableAnimations: Bool = {
             let environment = ProcessInfo.processInfo.environment
             return environment[mockFlag] == UITestLaunchKey.on && environment[disableAnimationsFlag] == UITestLaunchKey
                 .on
@@ -62,7 +62,7 @@
         /// Drops a transaction's animation when the launch asks for no animations. Nonisolated: SwiftUI
         /// calls it from whichever thread renders.
         nonisolated static func stripAnimations(_ transaction: inout Transaction) {
-            guard disablesAnimations else { return }
+            guard shouldDisableAnimations else { return }
             transaction.animation = nil
             #if os(iOS)
                 transaction.disablesAnimations = true

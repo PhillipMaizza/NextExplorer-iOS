@@ -98,7 +98,7 @@ struct SharedView: View {
                     prompt: L10n.Common.search
                 )
                 .searchFocused($isSearchFocused)
-                .focusedSceneValue(\.focusSearchField, FocusSearchAction(showsToolbarButton: false) {
+                .focusedSceneValue(\.focusSearchField, FocusSearchAction(shouldShowToolbarButton: false) {
                     isSearchFocused = true
                 })
             #endif

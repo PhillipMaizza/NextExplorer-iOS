@@ -12,13 +12,13 @@ import SwiftUI
 struct BrowseActionSheets: ViewModifier {
     @Dependency(\.date) private var date
     @Bindable var store: StoreOf<BrowseFeature>
-    let inPreview: Bool
+    let isInPreview: Bool
     @Binding var shareTarget: FileItem?
     /// From the folder picker appearing until its sheet has fully closed.
     @Binding var isDestinationPickerOnScreen: Bool
 
     private var isFrontmost: Bool {
-        (store.previewItem != nil) == inPreview
+        (store.previewItem != nil) == isInPreview
     }
 
     func body(content: Content) -> some View {
@@ -65,7 +65,7 @@ struct BrowseActionSheets: ViewModifier {
         // A single item preview dismisses the cover and defers the delete so the row animates out
         // on the list. The gallery (and the list) delete in place. Either way
         // `deleteConfirmationItem` clears synchronously, so no binding flicker.
-        let fromPreview = inPreview && !store.isPreviewInGallery
+        let fromPreview = isInPreview && !store.isPreviewInGallery
         return BrowseDeleteCopy.alert(
             title: BrowseDeleteCopy.title(store),
             check: store.deleteImpactCheck,
@@ -92,7 +92,7 @@ struct BrowseActionSheets: ViewModifier {
     /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
     private var renameBinding: Binding<FileItem?> {
         Binding(
-            get: { isFrontmost && !(store.renamesInTable && !inPreview) ? store.renameSheetItem : nil },
+            get: { isFrontmost && !(store.shouldRenameInTable && !isInPreview) ? store.renameSheetItem : nil },
             set: {
                 if $0 == nil {
                     store.send(.renameCancelled)
@@ -131,7 +131,7 @@ struct BrowseActionSheets: ViewModifier {
             ) {
                 CreateShareLinkFeature()
             },
-            onViewShares: { store.send(inPreview ? .goToSharedTabFromPreview : .delegate(.goToSharedTab)) }
+            onViewShares: { store.send(isInPreview ? .goToSharedTabFromPreview : .delegate(.goToSharedTab)) }
         )
     }
 
@@ -216,7 +216,7 @@ struct BrowseListSheets: ViewModifier {
                             ? nil
                             : L10n.Browse.newFileTypeHint
                     },
-                    capitalizesWords: false,
+                    shouldCapitalizeWords: false,
                     onConfirm: { store.send(.newFileConfirmed($0)) },
                     onCancel: { store.send(.newFileCancelled) }
                 )

@@ -341,7 +341,7 @@ private enum PreviewFixtures {
     PreviewFixtures.view({
         var state = APITokensFeature.State(
             serverURL: PreviewFixtures.serverURL,
-            requiresPassword: false,
+            isPasswordRequired: false,
             phase: .loaded
         )
         state.createForm = .init(name: "ci runner")
