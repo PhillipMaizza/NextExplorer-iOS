@@ -7,8 +7,11 @@ import TestUtils
 
 @Suite("SessionCookieStore")
 struct SessionCookieStoreTests {
+    /// A jar of this test's own: Swift Testing builds the suite once per test.
+    private let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: TestID.name())
+
     private func makeStore(keychainClient: KeychainClient = .inMemory()) -> SessionCookieStore {
-        SessionCookieStore(keychainClient: keychainClient, cookieStorage: .shared)
+        SessionCookieStore(keychainClient: keychainClient, cookieStorage: cookieStorage)
     }
 
     // MARK: - capture
@@ -37,7 +40,7 @@ struct SessionCookieStoreTests {
             .domain: host,
             .path: "/",
         ]))
-        HTTPCookieStorage.shared.setCookie(cookie)
+        cookieStorage.setCookie(cookie)
 
         let credentials = store.capture(
             serverURL: serverURL,
@@ -62,7 +65,7 @@ struct SessionCookieStoreTests {
             .path: "/",
             .expires: expiresAt,
         ]))
-        HTTPCookieStorage.shared.setCookie(cookie)
+        cookieStorage.setCookie(cookie)
 
         let credentials = try #require(store.capture(
             serverURL: serverURL,
@@ -105,7 +108,7 @@ struct SessionCookieStoreTests {
             .path: "/",
             .expires: Date.distantFuture,
         ]))
-        HTTPCookieStorage.shared.setCookie(dated)
+        cookieStorage.setCookie(dated)
 
         try makeStore().install(credentials(
             serverURL: serverURL,
@@ -113,7 +116,7 @@ struct SessionCookieStoreTests {
             username: TestAccount.username
         ))
 
-        let installed = HTTPCookieStorage.shared.cookies(for: serverURL)?
+        let installed = cookieStorage.cookies(for: serverURL)?
             .filter { $0.name == AuthClientConfiguration.CookieName.local } ?? []
         #expect(installed.count == 1)
         #expect(installed.first?.isSessionOnly == true)
@@ -136,7 +139,7 @@ struct SessionCookieStoreTests {
 
         let loaded = try #require(store.activeCredentials())
         #expect(loaded.cookieValue == Constants.persistedValue)
-        let installedCookies = try #require(HTTPCookieStorage.shared.cookies(for: serverURL))
+        let installedCookies = try #require(cookieStorage.cookies(for: serverURL))
         #expect(installedCookies.contains { $0.value == Constants.persistedValue })
     }
 
@@ -253,7 +256,7 @@ struct SessionCookieStoreTests {
         let switched = try #require(try store.setActive(id: credsA.accountID))
         #expect(switched.accountID == credsA.accountID)
         #expect(store.activeCredentials()?.accountID == credsA.accountID)
-        #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.contains { $0.value == "aaa" } == true)
+        #expect(cookieStorage.cookies(for: serverA)?.contains { $0.value == "aaa" } == true)
     }
 
     @Test("remove happy path: removing the active account returns the next remaining account and drops its cookie")
@@ -273,7 +276,7 @@ struct SessionCookieStoreTests {
         let next = try #require(try store.remove(id: credsB.accountID))
         #expect(next.accountID == credsA.accountID)
         #expect(store.allSessions().count == 1)
-        #expect(HTTPCookieStorage.shared.cookies(for: serverB)?.contains { $0.value == "bbb" } != true)
+        #expect(cookieStorage.cookies(for: serverB)?.contains { $0.value == "bbb" } != true)
     }
 
     @Test("remove edge case: removing the last account returns nil")
@@ -307,7 +310,7 @@ struct SessionCookieStoreTests {
         store.clearAll()
 
         #expect(try keychainClient.load(TestStorageKey.storedSessions) == nil)
-        #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.isEmpty ?? true)
+        #expect(cookieStorage.cookies(for: serverA)?.isEmpty ?? true)
         #expect(store.activeCredentials() == nil)
     }
 
@@ -349,7 +352,6 @@ struct SessionCookieStoreTests {
 
     @Test("clearAll with an unreadable keychain still drops every session cookie")
     func clearAllUnreadableDropsEveryCookie() throws {
-        let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: TestID.name())
         let store = SessionCookieStore(
             keychainClient: unreadableKeychain(writes: Recorded<String>()),
             cookieStorage: cookieStorage
