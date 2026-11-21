@@ -83,6 +83,7 @@
                         isTruncated: head.endIndex != text.content.endIndex
                     )
                 } catch {
+                    noteSessionExpiry(error)
                     guard self.item?.id == item.id else { return }
                     errorMessage = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
                 }
@@ -205,6 +206,7 @@
                     statusMessage = success
                     history = refreshed
                 } catch {
+                    noteSessionExpiry(error)
                     guard self.item?.id == item.id else { return }
                     errorMessage = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
                 }

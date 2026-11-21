@@ -176,7 +176,7 @@ public struct DestinationPickerView: View {
 
     @ViewBuilder
     private var searchContent: some View {
-        if store.isSearching, store.searchResults?.isEmpty ?? true {
+        if store.searchPhase == .loading, store.searchResults.isEmpty {
             // Placeholder folder rows for the answer to come, not a second spinner.
             DSGroupedList {
                 ForEach(Array(Constants.skeletonNames.enumerated()), id: \.offset) { _, name in
@@ -188,12 +188,15 @@ public struct DestinationPickerView: View {
             .listStyle(.insetGrouped)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
-        } else if let results = store.searchResults, results.isEmpty {
+        } else if let errorMessage = store.searchPhase.errorMessage {
+            EmptyStateView(icon: IconKit.warning, message: errorMessage)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if store.searchResults.isEmpty {
             EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             DSGroupedList {
-                ForEach(store.searchResults ?? []) { result in
+                ForEach(store.searchResults) { result in
                     Button {
                         store.send(.searchResultTapped(result))
                     } label: {
@@ -255,7 +258,7 @@ public struct DestinationPickerView: View {
         items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
     )
     state.searchQuery = "Pho"
-    state.isSearching = true
+    state.searchPhase = .loading
     state.searchResults = [SearchResultItem(name: "Photos", path: "Media", kind: "dir")]
     return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
 }
@@ -266,7 +269,17 @@ public struct DestinationPickerView: View {
         items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
     )
     state.searchQuery = "Pho"
-    state.isSearching = true
+    state.searchPhase = .loading
+    return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
+}
+
+#Preview("Search failed") {
+    var state = DestinationPickerFeature.State(
+        serverURL: URL(string: "https://example.com")!,
+        items: [FileItem(name: "report.pdf", path: "Documents", dateModified: .now, size: 0, kind: "pdf")]
+    )
+    state.searchQuery = "Pho"
+    state.searchPhase = .failed(L10n.Browse.searchFailed)
     return DestinationPickerView(store: Store(initialState: state) { EmptyReducer() })
 }
 

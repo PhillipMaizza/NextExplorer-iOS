@@ -42,7 +42,7 @@ struct ShareExtensionDependenciesTests {
                 path: TestFolder.photos,
                 result: listing,
                 etag: "\"v1\"",
-                fetchedAt: MockClock.now
+                fetchedAt: MockDate.date
             )
             #expect(store.read(serverURL: serverURL, path: TestFolder.photos) == nil)
             #expect(store.totalSizeBytes() == 0)
@@ -77,8 +77,4 @@ struct ShareExtensionDependenciesTests {
         let validators = requests.value.map { $0.value(forHTTPHeaderField: HTTPHeaderField.ifNoneMatch) }
         #expect(validators == [nil, nil], "nothing was cached, so nothing is revalidated")
     }
-}
-
-private enum MockClock {
-    static let now = Date(timeIntervalSinceReferenceDate: 800_000_000)
 }

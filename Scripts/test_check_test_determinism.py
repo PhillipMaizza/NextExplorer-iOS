@@ -54,6 +54,17 @@ class CountTests(unittest.TestCase):
     def test_a_comment_is_not_code(self):
         self.assertEqual(check.count_in("// Date() is not used here\nlet x = 1 // UUID()\n"), {})
 
+    def test_a_url_in_a_string_does_not_hide_the_rest_of_the_line(self):
+        text = 'let url = "http://test-\\(UUID().uuidString)" // Date()\n'
+        self.assertEqual(check.count_in(text), {"UUID()": 1})
+
+    def test_relative_and_reference_dates_are_found(self):
+        text = "Date(timeIntervalSinceNow: 60)\nDate(timeIntervalSinceReferenceDate: 8)\n"
+        self.assertEqual(
+            check.count_in(text),
+            {"Date(timeIntervalSinceNow:)": 1, "Date(timeIntervalSinceReferenceDate:)": 1},
+        )
+
 
 class UITestTests(unittest.TestCase):
     def test_a_ui_test_sleep_is_found(self):

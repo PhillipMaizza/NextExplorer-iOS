@@ -346,6 +346,24 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func searchKeepsAPlusAndAnAmpersandInsideTheTerm() async throws {
+            try stub(statusCode: 200, body: FilesClientFixture.commonItemsEmpty.data())
+            StubURLProtocol.capturedRequest = nil
+            _ = try await makeClient().search(serverURL, "", Constants.reservedTerm, nil)
+            let url = try #require(StubURLProtocol.capturedRequest?.url)
+            #expect(url.query(percentEncoded: true) == Constants.reservedTermQuery)
+        }
+
+        @Test
+        func previewAndRawURLsKeepAPlusInsideThePath() throws {
+            let item = FileItem(name: Constants.plusName, path: "", dateModified: MockDate.date, size: 1, kind: "txt")
+            let preview = try #require(FilesClient.previewURL(serverURL: serverURL, item: item))
+            let raw = try #require(FilesClient.rawFileURL(serverURL: serverURL, item: item))
+            #expect(preview.query(percentEncoded: true) == Constants.plusNameQuery)
+            #expect(raw.query(percentEncoded: true) == Constants.plusNameQuery)
+        }
+
+        @Test
         func searchKeepsTheServerOrderAndSaysWhyItFallsShort() async throws {
             let body = try FilesClientFixture.searchMixedMatches.string()
             stub(statusCode: 200, body: Data(body.utf8))
@@ -372,4 +390,9 @@ private enum Constants {
     static let accountA = "account-a"
     static let accountB = "account-b"
     static let docsSubPath = "docs/sub"
+    /// A server reads a raw `+` as a space and a raw `&` as the next item.
+    static let reservedTerm = "C++ a&b"
+    static let reservedTermQuery = "q=C%2B%2B%20a%26b"
+    static let plusName = "a+b.txt"
+    static let plusNameQuery = "path=a%2Bb.txt"
 }

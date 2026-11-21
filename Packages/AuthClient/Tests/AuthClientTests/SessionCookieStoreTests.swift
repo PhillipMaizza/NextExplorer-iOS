@@ -7,10 +7,6 @@ import TestUtils
 
 @Suite("SessionCookieStore")
 struct SessionCookieStoreTests {
-    private func uniqueServerURL() -> URL {
-        URL(string: "http://test-\(UUID().uuidString.lowercased()).invalid:3000") ?? URL(fileURLWithPath: "/")
-    }
-
     private func makeStore(keychainClient: KeychainClient = .inMemory()) -> SessionCookieStore {
         SessionCookieStore(keychainClient: keychainClient, cookieStorage: .shared)
     }
@@ -20,7 +16,7 @@ struct SessionCookieStoreTests {
     @Test("capture edge case: no cookies at all for the host returns nil")
     func captureNoCookiesReturnsNil() {
         let store = makeStore()
-        let serverURL = uniqueServerURL()
+        let serverURL = makeUniqueServerURL()
         let credentials = store.capture(
             serverURL: serverURL,
             authMode: .local,
@@ -33,7 +29,7 @@ struct SessionCookieStoreTests {
     @Test("capture edge case: cookies present but none match the expected name returns nil")
     func captureNoMatchingCookieNameReturnsNil() throws {
         let store = makeStore()
-        let serverURL = uniqueServerURL()
+        let serverURL = makeUniqueServerURL()
         let host = try #require(serverURL.host)
         let cookie = try #require(HTTPCookie(properties: [
             .name: "some-other-cookie",
@@ -55,9 +51,10 @@ struct SessionCookieStoreTests {
     @Test("capture happy path: builds credentials from the matching cookie, preserving its attributes")
     func captureBuildsMatchingCredentials() throws {
         let store = makeStore()
-        let serverURL = uniqueServerURL()
+        let serverURL = makeUniqueServerURL()
         let host = try #require(serverURL.host)
-        let expiresAt = Date(timeIntervalSinceNow: 3600)
+        // The live cookie storage drops an expired cookie, so the fixed date is the far future.
+        let expiresAt = Date.distantFuture
         let cookie = try #require(HTTPCookie(properties: [
             .name: AuthClientConfiguration.CookieName.local,
             .value: "s%3Aabc123",
@@ -97,13 +94,38 @@ struct SessionCookieStoreTests {
         )
     }
 
+    @Test("install replaces the server's dated cookie with one that is never written to disk")
+    func installReplacesTheDatedServerCookie() throws {
+        let serverURL = makeUniqueServerURL()
+        let host = try #require(serverURL.host)
+        let dated = try #require(HTTPCookie(properties: [
+            .name: AuthClientConfiguration.CookieName.local,
+            .value: TestSession.cookieValue,
+            .domain: host,
+            .path: "/",
+            .expires: Date.distantFuture,
+        ]))
+        HTTPCookieStorage.shared.setCookie(dated)
+
+        try makeStore().install(credentials(
+            serverURL: serverURL,
+            value: TestSession.cookieValue,
+            username: TestAccount.username
+        ))
+
+        let installed = HTTPCookieStorage.shared.cookies(for: serverURL)?
+            .filter { $0.name == AuthClientConfiguration.CookieName.local } ?? []
+        #expect(installed.count == 1)
+        #expect(installed.first?.isSessionOnly == true)
+    }
+
     // MARK: - persist / activeCredentials
 
     @Test("persist happy path: round-trips through the keychain and installs the cookie")
     func persistRoundTripsAndInstalls() throws {
         let keychainClient = KeychainClient.inMemory()
         let store = makeStore(keychainClient: keychainClient)
-        let serverURL = uniqueServerURL()
+        let serverURL = makeUniqueServerURL()
         let creds = try credentials(
             serverURL: serverURL,
             value: Constants.persistedValue,
@@ -137,7 +159,7 @@ struct SessionCookieStoreTests {
     @Test("migration: a legacy single-session blob is folded into the stored set and made active")
     func migratesLegacySingleSession() throws {
         let keychainClient = KeychainClient.inMemory()
-        let serverURL = uniqueServerURL()
+        let serverURL = makeUniqueServerURL()
         let legacy = try credentials(
             serverURL: serverURL,
             value: Constants.legacyCookieValue,
@@ -172,7 +194,7 @@ struct SessionCookieStoreTests {
         let keychainClient = KeychainClient.inMemory()
         try keychainClient.save(TestStorageKey.storedSessions, Data(Constants.corruptBlob.utf8))
         let legacy = try credentials(
-            serverURL: uniqueServerURL(),
+            serverURL: makeUniqueServerURL(),
             value: Constants.legacyCookieValue,
             username: TestAccount.username
         )
@@ -196,7 +218,7 @@ struct SessionCookieStoreTests {
     func legacyKeptWhenSaveFails() throws {
         let inner = KeychainClient.inMemory()
         let legacy = try credentials(
-            serverURL: uniqueServerURL(),
+            serverURL: makeUniqueServerURL(),
             value: Constants.legacyCookieValue,
             username: TestAccount.username
         )
@@ -214,8 +236,8 @@ struct SessionCookieStoreTests {
     @Test("two accounts coexist; setActive switches the active one and installs its cookie")
     func switchesBetweenAccounts() throws {
         let store = makeStore(keychainClient: .inMemory())
-        let serverA = uniqueServerURL()
-        let serverB = uniqueServerURL()
+        let serverA = makeUniqueServerURL()
+        let serverB = makeUniqueServerURL()
         let credsA = try credentials(
             serverURL: serverA,
             value: Constants.firstCookieValue,
@@ -237,8 +259,8 @@ struct SessionCookieStoreTests {
     @Test("remove happy path: removing the active account returns the next remaining account and drops its cookie")
     func removeActiveReturnsNext() throws {
         let store = makeStore(keychainClient: .inMemory())
-        let serverA = uniqueServerURL()
-        let serverB = uniqueServerURL()
+        let serverA = makeUniqueServerURL()
+        let serverB = makeUniqueServerURL()
         let credsA = try credentials(
             serverURL: serverA,
             value: Constants.firstCookieValue,
@@ -257,7 +279,7 @@ struct SessionCookieStoreTests {
     @Test("remove edge case: removing the last account returns nil")
     func removeLastReturnsNil() throws {
         let store = makeStore(keychainClient: .inMemory())
-        let serverA = uniqueServerURL()
+        let serverA = makeUniqueServerURL()
         let credsA = try credentials(
             serverURL: serverA,
             value: Constants.firstCookieValue,
@@ -275,7 +297,7 @@ struct SessionCookieStoreTests {
     func clearAllRemovesEverything() throws {
         let keychainClient = KeychainClient.inMemory()
         let store = makeStore(keychainClient: keychainClient)
-        let serverA = uniqueServerURL()
+        let serverA = makeUniqueServerURL()
         try store.persist(credentials(
             serverURL: serverA,
             value: Constants.firstCookieValue,
@@ -305,7 +327,7 @@ struct SessionCookieStoreTests {
         let writes = Recorded<String>()
         let store = makeStore(keychainClient: unreadableKeychain(writes: writes))
         let credentials = try credentials(
-            serverURL: uniqueServerURL(),
+            serverURL: makeUniqueServerURL(),
             value: Constants.firstCookieValue,
             username: TestAccount.username
         )
@@ -333,7 +355,7 @@ struct SessionCookieStoreTests {
             cookieStorage: cookieStorage
         )
         let credentials = try credentials(
-            serverURL: uniqueServerURL(),
+            serverURL: makeUniqueServerURL(),
             value: Constants.firstCookieValue,
             username: TestAccount.username
         )

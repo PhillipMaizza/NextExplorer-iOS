@@ -223,7 +223,7 @@ struct BrowsePreviewTests {
         await store.send(.openInBrowserTapped(page))
         await store.finish()
 
-        #expect(opened.value == [URL(string: "\(TestHost.exampleURLString)/api/raw?path=site/index.html")])
+        #expect(opened.value == [URL(string: "\(TestHost.exampleURLString)/api/raw?path=site%2Findex.html")])
     }
 
     @Test("Open in Safari ignores a file that is not HTML")

@@ -42,10 +42,10 @@ public struct DestinationPickerFeature {
         /// Searches folders recursively under `directoryPath` (`/api/search`, directories
         /// only): cleared whenever the shown folder changes.
         public var searchQuery = ""
-        /// Non nil once a search has run for the current query; folders found anywhere under
-        /// `directoryPath`, not just the current level.
-        public var searchResults: IdentifiedArrayOf<SearchResultItem>?
-        public var isSearching = false
+        /// Folders found anywhere under `directoryPath`, not just the current level.
+        public var searchResults: IdentifiedArrayOf<SearchResultItem> = []
+        /// The folder search for the current query: idle until a searchable term is typed.
+        public var searchPhase: DataPhase = .idle
         /// Folders this user last moved or copied into, newest first. Best effort: empty until the
         /// server answers, and left empty when it can't.
         public var recents: [String] = []
@@ -69,7 +69,7 @@ public struct DestinationPickerFeature {
         /// A newer folder search is running over results already on screen. With nothing on
         /// screen yet the whole list is a spinner instead.
         public var isRefiningSearch: Bool {
-            isSearching && searchResults?.isEmpty == false
+            searchPhase == .loading && !searchResults.isEmpty
         }
 
         /// Typed, but too short for the server: this level's folders are filtered by name and a
@@ -216,7 +216,7 @@ public struct DestinationPickerFeature {
                 return search(&state)
 
             case let .searchResultsResponse(.success(results)):
-                state.isSearching = false
+                state.searchPhase = .loaded
                 let source = state.purpose == .replaceFile ? state.items.first?.id : nil
                 state.searchResults = IdentifiedArray(
                     uniqueElements: results
@@ -225,9 +225,11 @@ public struct DestinationPickerFeature {
                 )
                 return .none
 
-            case .searchResultsResponse(.failure):
-                state.isSearching = false
+            case let .searchResultsResponse(.failure(error)):
                 state.searchResults = []
+                state.searchPhase = .failed(error == .sessionExpired
+                    ? L10n.Error.sessionExpired
+                    : L10n.Browse.searchFailed)
                 return .none
 
             case let .searchResultTapped(result):
@@ -261,14 +263,14 @@ public struct DestinationPickerFeature {
                 truncateHistory(&state, to: path)
                 state.directoryPath = path
                 state.searchQuery = ""
-                state.searchResults = nil
+                state.searchResults = []
                 return load(&state)
 
             case .backTapped:
                 guard let previous = state.navigationHistory.popLast() else { return .none }
                 state.directoryPath = previous
                 state.searchQuery = ""
-                state.searchResults = nil
+                state.searchResults = []
                 return load(&state)
 
             case let .rowSelected(id):
@@ -299,7 +301,7 @@ public struct DestinationPickerFeature {
         state.navigationHistory.append(state.directoryPath)
         state.directoryPath = path
         state.searchQuery = ""
-        state.searchResults = nil
+        state.searchResults = []
         return load(&state)
     }
 
@@ -338,7 +340,7 @@ public struct DestinationPickerFeature {
 
     private func load(_ state: inout State) -> Effect<Action> {
         state.phase = .loading
-        state.isSearching = false
+        state.searchPhase = .idle
         // Drop the previous folder's access so an upload confirm can't fire against stale info.
         state.currentAccess = nil
         state.selectedFilePath = nil
@@ -359,11 +361,11 @@ public struct DestinationPickerFeature {
         let term = SearchTerm(state.searchQuery)
         // The server only searches from three characters on.
         guard term.isSearchable else {
-            state.searchResults = nil
-            state.isSearching = false
+            state.searchResults = []
+            state.searchPhase = .idle
             return .cancel(id: CancelID.search)
         }
-        state.isSearching = true
+        state.searchPhase = .loading
         let serverURL = state.serverURL
         let scope = state.directoryPath
         let query = term.text

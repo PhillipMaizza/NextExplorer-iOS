@@ -342,6 +342,8 @@ public struct AppFeature {
                 }
                 CacheAccountScope.set(credentials.accountID)
                 pendingAccountWipes.remove(credentials.accountID)
+                // Decoded thumbnails are keyed by URL alone, and two accounts on one server share paths.
+                thumbnailCache.clearMemory()
                 // Finalized once `me` confirms the user id; empty in the meantime.
                 state.$downloadScope.withLock { $0 = "" }
                 state.didAuthenticateFromLogin = false
@@ -483,6 +485,7 @@ public struct AppFeature {
                 let leavingAccountID = state.currentAccountID
                 CacheAccountScope.set(accountID)
                 pendingAccountWipes.remove(accountID)
+                thumbnailCache.clearMemory()
                 let recordOwner = beginDownloadScope(
                     &state,
                     accountID: accountID,

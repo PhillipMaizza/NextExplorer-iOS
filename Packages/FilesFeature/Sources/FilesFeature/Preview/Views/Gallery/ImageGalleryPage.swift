@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import FolderPickerFeature
 import Localization
 import NetworkClient
 import SwiftUI
@@ -182,6 +183,7 @@ struct ImageGalleryPage: View {
                     phase = .gif(fileURL)
                 }
             } catch {
+                noteSessionExpiry(error)
                 if !Task.isCancelled {
                     phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed)
                 }
@@ -262,6 +264,7 @@ struct ImageGalleryPage: View {
             }
             phase = decoded.map(GalleryImagePhase.loaded) ?? .failed(L10n.Gallery.loadFailed)
         } catch {
+            noteSessionExpiry(error)
             if !Task.isCancelled {
                 phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed)
             }

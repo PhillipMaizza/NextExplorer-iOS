@@ -26,10 +26,15 @@ public func apiResult<T>(_ operation: () async throws -> T) async throws -> Resu
             throw CancellationError()
         }
         let filesError = (error as? FilesClientError) ?? .network(String(describing: error))
-        if filesError == .sessionExpired {
-            @Shared(.inMemory(SessionExpiry.sharedKey)) var sessionDidExpire = false
-            $sessionDidExpire.withLock { $0 = true }
-        }
+        noteSessionExpiry(filesError)
         return .failure(filesError)
     }
+}
+
+/// Trips `SessionExpiry` when a call answered 401: for callers that keep their own error handling
+/// instead of going through `apiResult`.
+public func noteSessionExpiry(_ error: any Error) {
+    guard (error as? FilesClientError) == .sessionExpired else { return }
+    @Shared(.inMemory(SessionExpiry.sharedKey)) var sessionDidExpire = false
+    $sessionDidExpire.withLock { $0 = true }
 }

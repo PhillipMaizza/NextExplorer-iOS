@@ -345,8 +345,8 @@ extension FilesClientLiveTests {
         nonisolated static let directoryQueries = [
             DirectoryQuery(path: nil, expectedQuery: nil),
             DirectoryQuery(path: "", expectedQuery: nil),
-            DirectoryQuery(path: Constants.serverRoot, expectedQuery: "path=/srv"),
-            DirectoryQuery(path: "/srv/my folder", expectedQuery: "path=/srv/my%20folder"),
+            DirectoryQuery(path: Constants.serverRoot, expectedQuery: "path=%2Fsrv"),
+            DirectoryQuery(path: "/srv/my folder", expectedQuery: "path=%2Fsrv%2Fmy%20folder"),
         ]
 
         @Test(arguments: directoryQueries)

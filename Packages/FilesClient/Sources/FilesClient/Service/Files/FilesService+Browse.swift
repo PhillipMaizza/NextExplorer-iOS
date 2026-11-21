@@ -34,21 +34,14 @@ extension FilesService {
     }
 
     func search(serverURL: URL, path: String, query: String, limit: Int?) async throws -> SearchPage {
-        var components = URLComponents(
-            url: serverURL.appendingPathComponent(APIPath.search),
-            resolvingAgainstBaseURL: false
-        )
-        var queryItems = [URLQueryItem(name: QueryKey.query, value: query)]
+        var items = [(QueryKey.query, query)]
         if !path.isEmpty {
-            queryItems.append(URLQueryItem(name: QueryKey.path, value: path))
+            items.append((QueryKey.path, path))
         }
         if let limit {
-            queryItems.append(URLQueryItem(name: QueryKey.limit, value: String(limit)))
+            items.append((QueryKey.limit, String(limit)))
         }
-        components?.queryItems = queryItems
-        guard let url = components?.url else {
-            throw FilesClientError.decoding("Could not build search URL.")
-        }
+        let url = try Self.url(serverURL: serverURL, path: APIPath.search, items: items)
         let request = Self.makeRequest(url: url, method: .get)
         let envelope = try await send(request, decoding: SearchEnvelope.self)
         return SearchPage(

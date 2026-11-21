@@ -283,7 +283,7 @@ extension AppSuites {
             await store.finish()
 
             #expect(
-                recorder.events.value == WipeRecorder.prune(
+                recorder.events.value == [.thumbnailMemoryCleared] + WipeRecorder.prune(
                     origins: [AppFixtures.originA, AppFixtures.originB], accounts: [
                         AppFixtures.accountA,
                         AppFixtures.accountB,
@@ -416,7 +416,7 @@ extension AppSuites {
             await store.finish()
 
             #expect(
-                recorder.events.value == WipeRecorder.prune(
+                recorder.events.value == [.thumbnailMemoryCleared] + WipeRecorder.prune(
                     origins: [AppFixtures.originA, AppFixtures.originB], accounts: [
                         AppFixtures.accountA,
                         AppFixtures.accountB,
@@ -484,7 +484,8 @@ extension AppSuites {
                 .uploadThumbnailsAccountCleared(AppFixtures.accountA),
             ]
             #expect(
-                recorder.events.value == [.activeSessionCleared] + expiredAccountWipe + expiredAccountWipe,
+                recorder.events.value == [.activeSessionCleared] + expiredAccountWipe + [.thumbnailMemoryCleared]
+                    + expiredAccountWipe,
                 "the expired account is wiped on expiry and again by the second pass, the next account's caches stay"
             )
             #expect(pending.accounts().isEmpty)

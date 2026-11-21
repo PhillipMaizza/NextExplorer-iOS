@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import FolderPickerFeature
 import Localization
 import SwiftUI
 
@@ -353,6 +354,7 @@ struct ArchiveBrowserView: View {
             entries = listed
             isLoading = false
         } catch {
+            noteSessionExpiry(error)
             // Backing out mid download cancels this; not an open failure, so don't flash the
             // "couldn't open archive" screen on the way out.
             guard !Task.isCancelled else { return }

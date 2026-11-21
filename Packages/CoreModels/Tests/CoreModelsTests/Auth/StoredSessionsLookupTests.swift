@@ -48,12 +48,12 @@ struct StoredSessionsLookupTests {
         #expect(credentials(host: TestHost.server, username: nil).accountID == "\(TestHost.serverURLString)|")
     }
 
-    @Test("a persisted expiry is carried onto the reconstructed cookie")
-    func cookieCarriesExpiry() throws {
+    @Test("a persisted expiry stays in the Keychain: the reconstructed cookie is never written to disk")
+    func cookieWithExpiryIsSessionOnly() throws {
         let cookie = try #require(credentials(host: TestHost.server, username: nil, expiresAt: MockDate.date)
             .httpCookie)
-        #expect(cookie.expiresDate == MockDate.date)
-        #expect(!cookie.isSessionOnly)
+        #expect(cookie.expiresDate == nil)
+        #expect(cookie.isSessionOnly)
     }
 
     @Test("a session scoped cookie has no expiry after reconstruction")

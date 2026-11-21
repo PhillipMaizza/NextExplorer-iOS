@@ -90,7 +90,7 @@ extension FilesClientLiveTests {
             let request = try #require(StubURLProtocol.capturedRequest)
             #expect(request.httpMethod == HTTPMethod.get.rawValue)
             #expect(request.url?.path == "/api/versions/v1/text")
-            #expect(request.url?.query?.contains("path=Docs/notes.txt") == true)
+            #expect(request.url?.query?.contains("path=Docs%2Fnotes.txt") == true)
             #expect(text.content == Constants.oldText)
             #expect(text.size == 8)
         }
@@ -115,7 +115,7 @@ extension FilesClientLiveTests {
             try await makeClient().downloadVersion(serverURL, TestPath.docsNotes, TestETag.first, destination)
             let url = try #require(StubURLProtocol.capturedRequest?.url)
             #expect(url.path == "/api/versions/v1/content")
-            #expect(url.query?.contains("path=Docs/notes.txt") == true)
+            #expect(url.query?.contains("path=Docs%2Fnotes.txt") == true)
             #expect(try String(contentsOf: destination, encoding: .utf8) == Constants.oldText)
         }
     }

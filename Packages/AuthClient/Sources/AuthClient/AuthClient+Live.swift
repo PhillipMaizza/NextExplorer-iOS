@@ -110,8 +110,8 @@ public extension AuthClient {
                     resolvingAgainstBaseURL: false
                 )
                 components?.queryItems = [
-                    URLQueryItem(name: "code_challenge", value: pkce.challenge),
-                    URLQueryItem(name: "code_challenge_method", value: "S256"),
+                    URLQueryItem(name: OIDCCallback.QueryKey.codeChallenge, value: pkce.challenge),
+                    URLQueryItem(name: OIDCCallback.QueryKey.codeChallengeMethod, value: OIDCCallback.challengeMethod),
                 ]
                 guard let authURL = components?.url else {
                     throw AuthClientError.oidcFailed("could not build authorization URL")
@@ -123,13 +123,7 @@ public extension AuthClient {
                     callbackURLScheme: AuthClientConfiguration.oidcCallbackScheme
                 )
 
-                let items = URLComponents(url: callbackURL, resolvingAgainstBaseURL: false)?.queryItems ?? []
-                if let serverError = items.first(where: { $0.name == "error" })?.value {
-                    throw AuthClientError.oidcFailed(serverError)
-                }
-                guard let code = items.first(where: { $0.name == "code" })?.value, !code.isEmpty else {
-                    throw AuthClientError.oidcFailed("callback missing code")
-                }
+                let code = try OIDCCallback.code(from: callbackURL)
 
                 let user = try await localAuthService.exchangeOIDC(
                     serverURL: serverURL,
