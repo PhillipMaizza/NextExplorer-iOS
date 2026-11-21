@@ -284,7 +284,7 @@ struct VersionedFilesView: View {
     }
 }
 
-private enum PreviewVersions {
+enum PreviewVersions {
     static let zone = VersionedZone(id: "z1", name: "Photos")
     static let files = [
         VersionedFile(

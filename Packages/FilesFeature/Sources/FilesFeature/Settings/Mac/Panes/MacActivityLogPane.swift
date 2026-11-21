@@ -2,6 +2,7 @@
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
+    import FilesClient
     import Localization
     import SwiftUI
 
@@ -139,5 +140,26 @@
                 }
             }
         }
+    }
+
+    #Preview("Events") {
+        let settings = ActivitySettings(isEnabled: true, retentionDays: 90)
+        var state = ActivityLogFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.loadedSettings = settings
+        state.isEnabledDraft = settings.isEnabled
+        state.events = PreviewEvents.all
+        state.isLogEnabled = true
+        state.phase = .loaded
+        return MacActivityLogPane(store: Store(initialState: state) { ActivityLogFeature() } withDependencies: {
+            $0.filesClient.fetchSystemSettings = { _ in SystemSettings(activity: settings) }
+        })
+    }
+
+    #Preview("Failed") {
+        var state = ActivityLogFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.phase = .failed("The server could not be reached.")
+        return MacActivityLogPane(store: Store(initialState: state) { ActivityLogFeature() } withDependencies: {
+            $0.filesClient.fetchSystemSettings = { _ in throw FilesClientError.offline }
+        })
     }
 #endif

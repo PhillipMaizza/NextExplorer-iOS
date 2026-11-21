@@ -275,7 +275,7 @@ enum TrashEventLabel {
     }
 }
 
-private extension TrashSettingsFeature.State {
+extension TrashSettingsFeature.State {
     static func preview(
         zones: [TrashZone] = [],
         verification: [TrashVerification]? = nil,
@@ -297,7 +297,7 @@ private extension TrashSettingsFeature.State {
     }
 }
 
-private enum PreviewZones {
+enum PreviewZones {
     static let available = TrashZone(
         id: "z1", name: "Photos", itemCount: 3, usedBytes: 120_000_000, versionCount: 5, versionBytes: 30_000_000,
         budgetBytes: 1_000_000_000, lastPass: TrashPass(at: "2026-11-11T07:00:00.000Z", purged: 2),

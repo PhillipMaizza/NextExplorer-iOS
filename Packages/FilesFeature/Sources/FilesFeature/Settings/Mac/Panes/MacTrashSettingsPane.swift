@@ -2,6 +2,7 @@
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
+    import FilesClient
     import Localization
     import SwiftUI
 
@@ -244,5 +245,16 @@
             default: return L10n.TrashSettings.unavailableMissing
             }
         }
+    }
+
+    #Preview("Volumes") {
+        let state = TrashSettingsFeature.State.preview(zones: [PreviewZones.available, PreviewZones.missing])
+        MacTrashSettingsPane(store: Store(initialState: state) { TrashSettingsFeature() } withDependencies: {
+            $0.filesClient.fetchSystemSettings = { _ in SystemSettings(
+                trash: TrashSettings(),
+                versions: VersionsSettings()
+            ) }
+            $0.filesClient.fetchTrashZones = { _ in state.zones }
+        })
     }
 #endif

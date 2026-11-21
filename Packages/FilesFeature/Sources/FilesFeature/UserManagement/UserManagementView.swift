@@ -204,7 +204,7 @@ struct LabeledField<Content: View>: View {
     }
 }
 
-private func previewListState(
+func previewListState(
     _ mutate: (inout UserManagementFeature.State) -> Void
 ) -> UserManagementFeature.State {
     var state = UserManagementFeature.State(

@@ -185,3 +185,28 @@ struct VolumeAssignSheet: View {
         }
     }
 }
+
+@MainActor
+private func volumeSheetPreview(_ sheet: UserManagementFeature.VolumeSheetState) -> some View {
+    Color.clear.dsSheet(isPresented: .constant(true)) {
+        VolumeAssignSheet(store: Store(initialState: previewListState { $0.volumeSheet = sheet }) {
+            UserManagementFeature()
+        } withDependencies: {
+            $0.filesClient = .previewValue
+        })
+    }
+}
+
+#Preview("New volume") {
+    volumeSheetPreview(UserManagementFeature.VolumeSheetState(userID: "u2"))
+}
+
+#Preview("Editing volume") {
+    volumeSheetPreview(UserManagementFeature.VolumeSheetState(
+        userID: "u2",
+        editingVolumeID: "v1",
+        label: "Media",
+        selectedPath: "/mnt/media",
+        accessMode: .readonly
+    ))
+}
