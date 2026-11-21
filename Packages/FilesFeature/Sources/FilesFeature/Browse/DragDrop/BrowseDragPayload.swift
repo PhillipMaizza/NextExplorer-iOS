@@ -161,11 +161,6 @@ enum BrowseDrop: Transferable {
     }
 }
 
-/// The system deletes a received file once the drop closure returns, so it is staged somewhere
-/// the upload staging can still read it: moved when the system handed over its own temporary
-/// copy, copied only when it is the user's original. Upload staging then makes its own copy and
-/// deletes this one (`discardCopy`); a drop the browser refuses discards it at once, and a copy
-/// that never reaches staging is removed by the session purge and the stale sweep.
 enum DroppedFileStaging {
     static let directoryName = SessionScratchLocation.droppedFiles
     private static let pathSeparator = DragConstants.pathSeparator

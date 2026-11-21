@@ -18,9 +18,6 @@ extension FilesService {
         case retryable(FilesClientError)
     }
 
-    /// Sends one file as a resumable upload in `chunkSizeBytes` pieces. A piece that fails in
-    /// transit is resumed from the offset the server reports; an upload the server forgot is
-    /// started once more from the beginning.
     func uploadChunked(
         serverURL: URL,
         fileURL: URL,

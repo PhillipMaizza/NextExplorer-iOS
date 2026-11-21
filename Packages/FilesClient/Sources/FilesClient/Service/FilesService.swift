@@ -191,9 +191,6 @@ struct FilesService: Sendable {
         }
     }
 
-    /// NextExplorer's error handler wraps operational errors as `{ error: { message } }`; the
-    /// auth middleware uses a bare `{ error: "..." }` string; a few legacy routes use
-    /// `{ message }`. Accept all three.
     static func errorMessage(from data: Data) -> String? {
         guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
         if let error = object[ErrorBodyKey.error] as? [String: Any],

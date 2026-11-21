@@ -2,13 +2,6 @@ import CoreModels
 import Dependencies
 import Foundation
 
-/// On disk cache of directory listings, one JSON file per `(server, path)`, so browsing keeps
-/// working offline. Every operation is best effort: a read miss, a write failure or a corrupt
-/// entry must never surface as a browsing error, so nothing here throws.
-///
-/// Entries live under `Application Support` (not `Caches`, which the OS purges under pressure
-/// exactly when an offline user needs them) and are held under a size / count cap with
-/// least recently written eviction.
 public struct DirectoryCacheStore: Sendable {
     public var read: @Sendable (_ serverURL: URL, _ path: String) -> CachedDirectory?
     /// When `path` was last written, from the entry's file timestamp: a cheap freshness probe
@@ -19,10 +12,6 @@ public struct DirectoryCacheStore: Sendable {
     public var write: @Sendable (
         _ serverURL: URL, _ path: String, _ result: BrowseResult, _ etag: String?, _ fetchedAt: Date
     ) -> Void
-    /// Refreshes only the freshness stamp of an existing entry after a `304 Not Modified`,
-    /// and only when the stored `etag` still equals `expectedETag`. This is a compare and set:
-    /// it never rewrites the items, so a stale in flight `304` handler cannot clobber a newer
-    /// listing a concurrent browse just wrote (the etag will no longer match).
     public var touch: @Sendable (
         _ serverURL: URL, _ path: String, _ expectedETag: String?, _ fetchedAt: Date
     ) -> Void
@@ -84,8 +73,6 @@ public extension DirectoryCacheStore {
         clearScope(scope)
     }
 
-    /// A view of this store pinned to `scope`, so an async request can read and write the
-    /// namespace that was active when it started even if the active account changes meanwhile.
     func bound(to scope: String) -> DirectoryCacheStore {
         bindToScope?(scope) ?? self
     }
@@ -97,20 +84,10 @@ extension DirectoryCacheStore: DependencyKey {
         static let fileExtension = "json"
         static let maxEntries = 4000
         static let maxTotalBytes: Int64 = 40 * 1024 * 1024
-        /// A single directory's JSON is capped so `read` stays a cheap synchronous decode on
-        /// the browse path. ~2 MB is roughly 12k entries; a folder larger than that simply
-        /// isn't cached for offline use (the server response itself is capped at 32 MB, and a
-        /// listing that size is not meaningfully browsable offline anyway).
         static let maxEntryBytes = 2 * 1024 * 1024
-        /// A cheap upper bound checked before encoding, so a pathologically large listing
-        /// never pays the cost of a full `JSONEncoder` pass just to be rejected on byte count.
-        /// Deliberately generous relative to `maxEntryBytes`; the byte check is the real gate.
         static let maxEntryItems = 20_000
     }
 
-    /// Serialises filesystem access so concurrent browse effects can't race on the same file
-    /// or on eviction. The work itself is fast (KB scale JSON), so a lock is simpler than a
-    /// queue and keeps the API synchronous.
     final class Storage: @unchecked Sendable {
         private let lock = NSLock()
         private let fileManager = FileManager.default
@@ -139,8 +116,6 @@ extension DirectoryCacheStore: DependencyKey {
         private func fileURL(scope: String, serverURL: URL, path: String) -> URL? {
             guard let directory else { return nil }
             let normalizedPath = path.trimmingCharacters(in: CacheLayout.pathTrimCharacters)
-            // The active account is folded into the key so several signed in accounts keep
-            // separate entries and a switch reads the right account's cache without a wipe.
             let key = CacheLayout.key(scope, serverURL.absoluteString, normalizedPath)
             let name = key.sha256Hex()
             return directory
@@ -174,9 +149,6 @@ extension DirectoryCacheStore: DependencyKey {
             lock.lock()
             defer { lock.unlock() }
             guard let fileURL = fileURL(scope: scope, serverURL: serverURL, path: path) else { return }
-            // A folder too large to cache cheaply: drop any earlier copy so a stale listing
-            // can't linger, and skip the write. Checked on item count first (free) then on
-            // encoded size (the real gate, since name lengths vary).
             guard result.items.count <= Constants.maxEntryItems else {
                 try? fileManager.removeItem(at: fileURL)
                 return

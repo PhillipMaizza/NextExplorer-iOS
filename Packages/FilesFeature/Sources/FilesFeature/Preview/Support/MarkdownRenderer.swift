@@ -1,15 +1,6 @@
 import DesignSystem
 import Markdown
 
-/// Converts Markdown to HTML for the "Render Markdown Files" setting: `swift-markdown` only
-/// parses to an AST, it doesn't ship an HTML renderer, so this walks the tree itself. The
-/// resulting HTML feeds straight into `HTMLRenderedView`, the same component "Render HTML
-/// Pages" uses, so relative image references resolve the same way relative CSS/JS does there.
-///
-/// Deliberately doesn't conform to `MarkupVisitor`: its `visit`/`accept` requirements take
-/// `inout Self`, which forces every recursive call site to hold the visitor in a mutable `var`
-/// binding, including `self` inside the visitor's own methods (a `let` bound `self`, which
-/// every instance method has). A plain type switch sidesteps that entirely.
 enum MarkdownRenderer {
     static func html(from markdown: String) -> String {
         """

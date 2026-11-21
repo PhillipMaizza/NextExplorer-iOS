@@ -1,17 +1,6 @@
 import CoreModels
 import Foundation
 
-/// A typed search query as `GET /api/search` reads it (`backend/src/routes/search.js`,
-/// `backend/src/utils/searchTerm.js`): trimmed, and searchable from `MIN_TERM_LENGTH` characters as
-/// JavaScript counts them (UTF16 code units). A plain two character term is sent as the shape
-/// `*term*` (see `serverQuery`), which passes that check and finds the same names, so a folder
-/// called `AI` can be found; the app never sends a term the server refuses with 400.
-///
-/// Matching and ranking mirror the server too, so what the app finds on its own (the instant
-/// matches, a filter over a list) agrees with what the server answers. A term holding `*` or `?` is
-/// a shape for names, not text: `*.pdf` names every PDF. One holding `/` as well is a shape for a
-/// path below the search's folder, which no folder answers. Both sides are compared in the composed
-/// form (NFC), since a name written by a Mac and one typed on a phone can spell `é` differently.
 public struct SearchTerm: Equatable, Sendable {
     public let text: String
     /// The term folded the way names are folded before comparing: composed and lowercased.

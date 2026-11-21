@@ -129,8 +129,6 @@ public enum SharedItemLoader {
         return (Double(position) + fraction) / Double(count)
     }
 
-    /// The provider's temporary copy only lives for its callback, so the envelope is written there.
-    /// Cancelling stops the copy itself, not just the wait for it.
     static func stageRepresentation(
         type: UTType,
         suggestedName: String?,

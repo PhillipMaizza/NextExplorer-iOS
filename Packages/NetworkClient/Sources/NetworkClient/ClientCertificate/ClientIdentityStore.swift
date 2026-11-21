@@ -1,13 +1,6 @@
 import Foundation
 import Keychain
 
-/// Holds the client certificates the user imported, one per server origin, and answers TLS
-/// client certificate challenges with them. The PKCS#12 bytes and their passphrase persist in
-/// the keychain (`ThisDeviceOnly`, so they never sync or restore onto another device); the
-/// decoded identity is kept in memory after first use so a challenge never repeats the key
-/// derivation. Every URLSession in the app shares the one live instance.
-///
-/// `@unchecked Sendable`: all mutable state is behind `lock`.
 public final class ClientIdentityStore: @unchecked Sendable {
     private struct Record: Codable, Equatable {
         var pkcs12: Data

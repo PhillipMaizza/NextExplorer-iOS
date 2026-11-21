@@ -1,9 +1,6 @@
 import FilesClient
 import Foundation
 
-/// Removes the cache entries an older release wrote before the caches were account scoped. Those
-/// files carry no account prefix, so no account wipe can ever reach them: they would sit on disk,
-/// holding listings and file bytes of whoever used the app then, until the app is deleted.
 public enum LegacyCacheCleanup {
     private enum Constants {
         static let didRunKey = "legacyUnscopedCacheCleanupDidRun"

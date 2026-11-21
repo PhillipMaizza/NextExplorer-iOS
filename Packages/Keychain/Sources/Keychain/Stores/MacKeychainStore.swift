@@ -1,12 +1,6 @@
 import Foundation
 import Security
 
-/// The Mac keeps items in the data protection keychain, as iOS does, so `ThisDeviceOnly`
-/// holds and nothing ever asks for keychain access. Releases up to 1.1.0 wrote the legacy file
-/// keychain: an item still there moves across the first time it is read, and every save or
-/// delete also clears the legacy copy, so signing out leaves nothing behind in either. A build
-/// without the keychain entitlement (unsigned local and CI builds) can't reach the data
-/// protection keychain and keeps using the legacy one.
 struct MacKeychainStore: KeychainStore {
     let modern: any KeychainStore
     let legacy: any KeychainStore

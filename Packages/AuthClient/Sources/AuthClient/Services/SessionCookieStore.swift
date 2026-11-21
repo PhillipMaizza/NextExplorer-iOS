@@ -3,14 +3,6 @@ import Foundation
 import Keychain
 import OSLog
 
-/// Bridges NextExplorer's session cookies between three places: the Keychain (durable, read at
-/// cold launch), `HTTPCookieStorage` (what `URLSessionConfiguration.default` actually attaches to
-/// outgoing requests), and the `StoredSessions` value the rest of AuthClient works with.
-///
-/// Multi-server: every signed-in account's credentials are kept in the Keychain at once, with one
-/// marked active. Only the active account's cookie is installed into `HTTPCookieStorage`: accounts
-/// on the same server share a cookie name/domain/path and cannot coexist there, so switching
-/// reinstalls the target's cookie. Switching never re-authenticates.
 struct SessionCookieStore: Sendable {
     let keychainClient: KeychainClient
     let cookieStorage: HTTPCookieStorage
@@ -193,9 +185,6 @@ struct SessionCookieStore: Sendable {
 
     func install(_ credentials: SessionCredentials) {
         guard let cookie = credentials.httpCookie else { return }
-        // `HTTPCookieStorage.cookieAcceptPolicy` is a separate gate from
-        // `URLSessionConfiguration.httpCookieAcceptPolicy` and silently no-ops `setCookie`
-        // if left at a restrictive default (observed in headless/CLI test processes).
         cookieStorage.cookieAcceptPolicy = .always
         cookieStorage.setCookie(cookie)
     }

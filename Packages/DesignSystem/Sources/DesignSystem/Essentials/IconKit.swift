@@ -21,11 +21,6 @@ public enum IconKit {
     public static let person = Image(systemName: "person")
     public static let logo = Image("logo", bundle: .module)
 
-    /// Static vector artwork exported from Symbols.app (Template rendering, single scale),
-    /// not `Image(systemName:)`; `Tab(value:)`'s automatic outline/filled swap by selection
-    /// does not hold on iOS 26+'s "Liquid Glass" tab bar, which renders every tab icon filled
-    /// regardless of API or symbol variant used (verified on a real iOS 27 device). `MainTabView`
-    /// picks the outline/filled pair explicitly by selection state instead.
     public static let tabBrowse = Image("tabBrowse", bundle: .module).renderingMode(.template)
     public static let tabBrowseFill = Image("tabBrowseFill", bundle: .module).renderingMode(.template)
     public static let tabFavorites = Image("tabFavorites", bundle: .module).renderingMode(.template)
