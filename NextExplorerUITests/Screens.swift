@@ -481,6 +481,11 @@ struct SharedScreen {
         app.buttons[L10n.Common.close].firstMatch
     }
 
+    /// A pushed share page offers Back; Close sits on the sheet's first page.
+    var backButton: XCUIElement {
+        app.navigationBars.buttons.firstMatch
+    }
+
     var deleteShareButton: XCUIElement {
         app.buttons[AccessibilityIdentifiers.Shared.deleteShare].firstMatch
     }

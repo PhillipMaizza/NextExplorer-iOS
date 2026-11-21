@@ -135,7 +135,7 @@ jobs:
         run: swiftformat . --lint
 
       - name: SwiftLint
-        run: swiftlint lint --quiet
+        run: swiftlint lint --strict --quiet
 
       - name: Dependency pins match the app
         run: python3 Scripts/sync-package-pins.py --check
