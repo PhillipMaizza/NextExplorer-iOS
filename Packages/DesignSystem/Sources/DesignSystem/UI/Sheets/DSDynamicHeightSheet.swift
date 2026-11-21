@@ -171,3 +171,14 @@ public extension DSDynamicHeightSheet where Footer == EmptyView {
         self.init(maxHeightFraction: maxHeightFraction, content: content, footer: { EmptyView() })
     }
 }
+
+#Preview {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        DSDynamicHeightSheet {
+            Text(verbatim: "Sheet content that sizes the sheet to fit.")
+                .padding(.space24)
+        } footer: {
+            Text(verbatim: "Footer").padding(.space24)
+        }
+    }
+}

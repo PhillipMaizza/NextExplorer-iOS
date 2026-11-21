@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 /// One glyph button in a multi-select bottom toolbar. A single definition so the bars in
@@ -87,4 +88,12 @@ private struct OptionalAccessibilityLabel: ViewModifier {
             content
         }
     }
+}
+
+#Preview("Enabled") {
+    SelectionToolbarButton(icon: IconKit.share, accessibilityLabel: L10n.Common.share) {}
+}
+
+#Preview("Destructive, disabled") {
+    SelectionToolbarButton(icon: IconKit.delete, role: .destructive, isDisabled: true) {}
 }

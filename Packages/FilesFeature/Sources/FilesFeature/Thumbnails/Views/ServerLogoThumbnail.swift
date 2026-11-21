@@ -82,3 +82,11 @@ struct ServerLogoThumbnail: View {
         }
     }
 }
+
+#Preview {
+    ServerLogoThumbnail(
+        branding: Branding(appName: Branding.defaultAppName, appLogoUrl: Branding.defaultLogoPath),
+        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+        size: .size48
+    )
+}
