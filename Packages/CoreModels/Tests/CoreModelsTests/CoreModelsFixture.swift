@@ -103,9 +103,12 @@ enum CoreModelsFixture: String, FixtureFile {
     // MARK: google-docs-pointer
 
     case googleDocsPointerDriveStub = "google-docs-pointer/drive-stub"
+    case googleDocsPointerDriveHost = "google-docs-pointer/drive-host"
+    case googleDocsPointerLookalikeHost = "google-docs-pointer/lookalike-host"
     case googleDocsPointerMissingUrl = "google-docs-pointer/missing-url"
     case googleDocsPointerNonHttpLink = "google-docs-pointer/non-http-link"
     case googleDocsPointerNotJson = "google-docs-pointer/not-json"
+    case googleDocsPointerPlainHttp = "google-docs-pointer/plain-http"
 
     // MARK: search-result-item
 

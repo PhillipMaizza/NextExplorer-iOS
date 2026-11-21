@@ -26,4 +26,14 @@ struct GoogleDocsPointerTests {
         #expect(GoogleDocsPointer.targetURL(fromContents: withoutURL) == nil)
         #expect(GoogleDocsPointer.targetURL(fromContents: nonHTTPLink) == nil)
     }
+
+    @Test("security: a stub opens Google over https only, so a shared file cannot send the user to a lookalike page")
+    func opensOnlyGoogleOverHTTPS() throws {
+        let drive = try CoreModelsFixture.googleDocsPointerDriveHost.string()
+        let lookalike = try CoreModelsFixture.googleDocsPointerLookalikeHost.string()
+        let plainHTTP = try CoreModelsFixture.googleDocsPointerPlainHttp.string()
+        #expect(GoogleDocsPointer.targetURL(fromContents: drive)?.host() == "drive.google.com")
+        #expect(GoogleDocsPointer.targetURL(fromContents: lookalike) == nil)
+        #expect(GoogleDocsPointer.targetURL(fromContents: plainHTTP) == nil)
+    }
 }

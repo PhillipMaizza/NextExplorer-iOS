@@ -15,16 +15,20 @@ public enum GoogleDocsPointer {
         extensions.contains(kind.lowercased())
     }
 
-    /// The link a stub file points at, or `nil` if the contents don't parse or the `url`
-    /// isn't http(s): the caller then falls back to showing the file as text.
+    /// The link a stub file points at, or `nil` if the contents don't parse or the `url` isn't
+    /// Google over https: the caller then falls back to showing the file as text. The stub sits on
+    /// a server others can write to, so a link elsewhere could open a lookalike sign in page.
     public static func targetURL(fromContents contents: String) -> URL? {
         guard let data = contents.data(using: .utf8),
               let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let raw = object["url"] as? String,
               let url = URL(string: raw),
-              let scheme = url.scheme?.lowercased(),
-              scheme == "https" || scheme == "http"
+              url.scheme?.lowercased() == "https",
+              let host = url.host()?.lowercased(),
+              host == googleHost || host.hasSuffix("." + googleHost)
         else { return nil }
         return url
     }
+
+    private static let googleHost = "google.com"
 }
