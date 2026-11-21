@@ -149,8 +149,9 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
     func loadSessionReturnsTheActiveAccount() async throws {
         let keychain = KeychainClient.inMemory()
         let stored = try credentials()
-        try SessionCookieStore(keychainClient: keychain, cookieStorage: makeCookieStorage()).persist(stored)
-        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychain, handler: okHandler())
+        let cookieStorage = makeCookieStorage()
+        try SessionCookieStore(keychainClient: keychain, cookieStorage: cookieStorage).persist(stored)
+        let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychain, handler: okHandler())
 
         #expect(try await client.loadSession() == stored)
     }
@@ -178,8 +179,9 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
     func listSessionsOrThrowReturnsTheStoredAccounts() async throws {
         let keychain = KeychainClient.inMemory()
         let stored = try credentials()
-        try SessionCookieStore(keychainClient: keychain, cookieStorage: makeCookieStorage()).persist(stored)
-        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychain, handler: okHandler())
+        let cookieStorage = makeCookieStorage()
+        try SessionCookieStore(keychainClient: keychain, cookieStorage: cookieStorage).persist(stored)
+        let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychain, handler: okHandler())
 
         #expect(try await client.listSessionsOrThrow() == [stored])
     }

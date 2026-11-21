@@ -10,15 +10,15 @@ func makeUniqueServerURL() -> URL {
     URL(string: "http://\(TestID.name()).invalid:3000") ?? URL(fileURLWithPath: "/")
 }
 
-/// Fixtures shared by the AuthClient live suites. Each suite owns a unique `serverURL` so cookies
-/// written to the shared cookie storage never collide between tests.
+/// Fixtures shared by the AuthClient live suites. Each test gets its own cookie jar, so no cookie
+/// leaks between tests running in parallel or into the next run.
 protocol AuthClientLiveHarness {
     var serverURL: URL { get }
 }
 
 extension AuthClientLiveHarness {
     func makeCookieStorage() -> HTTPCookieStorage {
-        .shared
+        .sharedCookieStorage(forGroupContainerIdentifier: TestID.name())
     }
 
     func makeClient(
