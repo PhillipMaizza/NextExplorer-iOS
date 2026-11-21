@@ -97,14 +97,9 @@ public struct AppFeature {
     }
 
     @Dependency(\.authClient) var authClient
-    @Dependency(\.directoryCacheStore) var directoryCacheStore
-    @Dependency(\.jsonCacheStore) var jsonCacheStore
-    @Dependency(\.previewCacheStore) var previewCacheStore
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.localDownloadStore) var localDownloadStore
-    @Dependency(\.textEditorETagStore) var textEditorETagStore
-    @Dependency(\.localThumbnailStore) var localThumbnailStore
     @Dependency(\.pendingAccountWipes) var pendingAccountWipes
     @Dependency(\.sessionScratchStore) var sessionScratchStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
@@ -387,26 +382,21 @@ public struct AppFeature {
                     serverURL: serverURL,
                     userID: user.id
                 )
-                // A fresh sign in on the login screen means no account is currently active, so
-                // clear every cache: on a shared device this must not expose a previous account's
-                // cached listings for the same server before its own namespace takes over.
-                directoryCacheStore.clearAll()
-                jsonCacheStore.clearAll()
-                thumbnailCache.clearMemory()
-                textEditorETagStore.clearAll()
-                localThumbnailStore.clearAll()
                 state.didAuthenticateFromLogin = true
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
                 )
-                let previewCacheStore = previewCacheStore
+                // A fresh sign in on the login screen means no account is currently active, so
+                // clear every cache: on a shared device this must not expose a previous account's
+                // cached listings. Every store is scoped by account, so the new one reads only its own.
+                let caches = RebuildableCaches.fromDependencies
                 let offlineFileStore = offlineFileStore
                 let localDownloadStore = localDownloadStore
                 let sessionScratchStore = sessionScratchStore
                 return .merge(
                     refreshAccounts,
                     .run { _ in
-                        try? previewCacheStore.clear()
+                        caches.clearAll()
                         offlineFileStore.removeAll()
                         // Files of accounts signed out in a version that kept them; the owner is
                         // recorded after, so the new account starts its own empty folder.
@@ -572,15 +562,10 @@ public struct AppFeature {
             state.destination = .unauthenticated(.init())
         }
         let authClient = authClient
-        let directoryCacheStore = directoryCacheStore
-        let jsonCacheStore = jsonCacheStore
-        let previewCacheStore = previewCacheStore
-        let thumbnailCache = thumbnailCache
+        let caches = RebuildableCaches.fromDependencies
         let offlineFileStore = offlineFileStore
         let localDownloadStore = localDownloadStore
         let sessionScratchStore = sessionScratchStore
-        let textEditorETagStore = textEditorETagStore
-        let localThumbnailStore = localThumbnailStore
         let pendingAccountWipes = pendingAccountWipes
         let clientCertificateClient = clientCertificateClient
         let uploadDefaults = uploadDefaults
@@ -591,12 +576,7 @@ public struct AppFeature {
             .run { _ in
                 await authClient.clearAllSessions()
                 // A download still landing is dropped by its `CacheAccountScope.wipeStamp`.
-                thumbnailCache.clearMemory()
-                directoryCacheStore.clearAll()
-                jsonCacheStore.clearAll()
-                try? previewCacheStore.clear()
-                textEditorETagStore.clearAll()
-                localThumbnailStore.clearAll()
+                caches.clearAll()
                 offlineFileStore.removeAll()
                 localDownloadStore.removeAll()
                 sessionScratchStore.purge(.everything)

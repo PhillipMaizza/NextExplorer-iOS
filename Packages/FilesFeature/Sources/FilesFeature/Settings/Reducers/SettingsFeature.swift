@@ -284,11 +284,9 @@ public struct SettingsFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.previewCacheStore) var previewCacheStore
-    @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     @Dependency(\.localThumbnailStore) var localThumbnailStore
-    @Dependency(\.textEditorETagStore) var textEditorETagStore
 
     /// What "Clear Cache" frees: previews and downloads in the preview cache, the saved folder and
     /// list copies, and the thumbnails seeded for files shared into the app.
@@ -815,19 +813,11 @@ public struct SettingsFeature {
 
         case .clearCacheConfirmed:
             state.clearCachePhase = .running
-            let previewCacheStore = previewCacheStore
-            let directoryCacheStore = directoryCacheStore
-            let jsonCacheStore = jsonCacheStore
-            let thumbnailCache = thumbnailCache
-            let localThumbnailStore = localThumbnailStore
-            let textEditorETagStore = textEditorETagStore
+            let caches = RebuildableCaches.fromDependencies
             return .run { send in
-                try? previewCacheStore.clear()
-                directoryCacheStore.clearAll()
-                jsonCacheStore.clearAll()
-                thumbnailCache.clearMemory()
-                textEditorETagStore.clearAll()
-                localThumbnailStore.clearAll()
+                // A thumbnail or preview still landing must not write itself back after the clear.
+                CacheAccountScope.markEveryAccountWiped()
+                caches.clearAll()
                 await send(.clearCacheResponse)
             }
 
