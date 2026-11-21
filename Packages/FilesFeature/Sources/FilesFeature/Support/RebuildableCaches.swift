@@ -9,6 +9,7 @@ public struct RebuildableCaches: Sendable {
     let thumbnailCache: ThumbnailCache
     let textEditorETagStore: TextEditorETagStore
     let localThumbnailStore: LocalThumbnailStore
+    var forgetUploadResumes: @Sendable () -> Void = { UploadResumeLinks.forgetAll() }
 
     public static var fromDependencies: RebuildableCaches {
         @Dependency(\.directoryCacheStore) var directoryCacheStore
@@ -34,5 +35,6 @@ public struct RebuildableCaches: Sendable {
         try? previewCacheStore.clear()
         textEditorETagStore.clearAll()
         localThumbnailStore.clearAll()
+        forgetUploadResumes()
     }
 }

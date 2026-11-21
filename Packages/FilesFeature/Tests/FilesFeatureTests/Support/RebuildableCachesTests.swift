@@ -8,7 +8,7 @@ import TestUtils
 
 struct RebuildableCachesTests {
     private enum Store: CaseIterable {
-        case thumbnailMemory, directories, lists, previews, uploadThumbnails
+        case thumbnailMemory, directories, lists, previews, uploadThumbnails, uploadResumes
     }
 
     @Test
@@ -39,7 +39,8 @@ struct RebuildableCachesTests {
             previewCacheStore: PreviewCacheStore(size: { 0 }, clear: { record(.previews) }),
             thumbnailCache: thumbnails,
             textEditorETagStore: etags,
-            localThumbnailStore: uploadThumbnails
+            localThumbnailStore: uploadThumbnails,
+            forgetUploadResumes: { record(.uploadResumes) }
         ).clearAll()
 
         #expect(Set(cleared.value) == Set(Store.allCases))

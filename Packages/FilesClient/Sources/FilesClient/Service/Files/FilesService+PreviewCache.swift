@@ -433,10 +433,8 @@ extension FilesService {
         onProgress: @Sendable @escaping (Double) -> Void
     ) async throws {
         let size = (try? Self.fileSize(of: fileURL)) ?? 0
-        var settings: UploadSettings?
-        if size > UploadMode.largeFileBytes {
-            settings = try? await fetchSystemSettings(serverURL: serverURL).uploads
-        }
+        let fetchSettings = { try? await fetchSystemSettings(serverURL: serverURL).uploads }
+        var settings = await uploadSettings.settings(for: serverURL, fetch: fetchSettings)
         let memory = UploadFallbackMemory(serverURL: serverURL)
         func chunked(_ chunkSizeBytes: Int) async throws {
             try await uploadChunked(
@@ -454,8 +452,9 @@ extension FilesService {
                 destination: destination, onProgress: onProgress
             )
         } catch let error as FilesClientError where error.isPayloadTooLarge {
-            if settings == nil {
-                settings = try? await fetchSystemSettings(serverURL: serverURL).uploads
+            settings = await uploadSettings.refresh(for: serverURL, fetch: fetchSettings)
+            if let settings, settings.isChunkedEnabled {
+                return try await chunked(settings.chunkSizeBytes)
             }
             guard settings?.isChunkedAutoFallback == true,
                   let next = UploadMode.nextFallbackMiB(current: memory.mebibytes, refusedBytes: size)

@@ -13,13 +13,23 @@ and the admin can force chunked uploads.
   the root as a destination and auto renames on collision.
 - The request is written to a temporary multipart envelope on disk and streamed from it, so a
   large file never sits in memory.
-- Files under `UploadMode.largeFileBytes` (8 MiB) go direct. Larger files use TUS
-  (`/api/upload/tus`) when the admin forces chunks, or after a direct request is refused for its
-  size with auto fallback on. A piece that fails in transit resumes from the server's offset; an
-  upload the server forgot restarts once.
+- The server's `uploads` settings are read once per server for the life of the client and again
+  after any refusal for size. Forced chunking sends every file as TUS pieces, as the web client
+  does. Otherwise a file goes direct, or as pieces of the size this origin taught the app after a
+  refusal (auto fallback).
+- A TUS upload's URL is remembered per account, server, destination, name and a fingerprint of
+  the file (its size plus the first and last MiB), so an upload cut off by the app ending resumes
+  from the server's offset. It is forgotten on success, on cancel, on any failure that is not
+  a lost connection, and at every account boundary (`RebuildableCaches.clearAll()`).
+- A piece that fails in transit, times out (the 300 s inactivity budget of an upload) or meets a
+  retryable 5xx resumes from the offset the server reports, three times at most. A piece refused
+  with 413 is sent again at the next smaller rung of the fallback ladder. An upload the server
+  forgot restarts once.
 
-## Consequences
-Known limits are tracked as issues #216 (small files ignore forced chunking), #217 (upload id
-not persisted across launches) and #218 (no stall watchdog or 413 step down).
+Verified against the upstream server in Docker: a 400 MB upload killed at 56% resumed at the
+server's offset with identical bytes; behind nginx with a 10 MB body limit a 16 MiB piece got 413
+and the upload finished in 8 MiB pieces; a 4 KB file went through TUS when chunking was forced.
+The server sets no TUS piece limit of its own, so a 413 on a piece comes from a proxy.
 
-Code: `FilesService+PreviewCache.uploadFile`, `FilesService+TusUpload`, `UploadMode`.
+Code: `FilesService+PreviewCache.uploadFile`, `FilesService+TusUpload`, `TusResumeMemory`,
+`UploadSettingsMemo`, `UploadMode`.

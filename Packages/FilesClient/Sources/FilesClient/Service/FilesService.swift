@@ -5,7 +5,7 @@ import NetworkClient
 /// Plain JSON REST calls against NextExplorer's file browsing endpoints
 /// (`/api/browse`, `/api/search`, `/api/favorites`, `/api/volumes`). Auth is
 /// implicit: the session cookie captured by `AuthClient` rides along on
-/// every request via the shared `HTTPCookieStorage`.
+/// every request via `HTTPCookieStorage.appSession`.
 ///
 /// The endpoint surface is split by domain across `FilesService+*.swift` extensions
 /// (Browse, Favorites, FileOperations, Shares, Permissions, Admin, Settings, PreviewCache);
@@ -16,6 +16,7 @@ struct FilesService: Sendable {
     /// background thumbnail fetch and a tap to open of the same file. Without it both would
     /// download the bytes and then race on the `moveItem` into the shared slot.
     let downloadCoordinator = PreviewDownloadCoordinator()
+    let uploadSettings = UploadSettingsMemo()
     /// The ETag each text file had when the editor last read or saved it, so a save can tell that
     /// someone else changed the file in between.
     let textEditorETags: TextEditorETagStore
