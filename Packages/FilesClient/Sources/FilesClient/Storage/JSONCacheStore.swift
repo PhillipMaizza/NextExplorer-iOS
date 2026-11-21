@@ -87,8 +87,11 @@ extension JSONCacheStore: DependencyKey {
         static let maxEntryBytes = 2 * 1024 * 1024
     }
 
+    /// Every disk access runs on one serial queue: a write is queued and returns at once, so a reducer
+    /// saving a list never waits on the disk; a read, removal or clear waits for the writes queued
+    /// before it, so it sees them and none lands after it.
     final class Storage: @unchecked Sendable {
-        private let lock = NSLock()
+        private let queue = DispatchQueue(label: "JSONCacheStore.Storage", qos: .utility)
         private let fileManager = FileManager.default
         private let rootOverride: URL?
         private let maxEntries: Int
@@ -124,8 +127,10 @@ extension JSONCacheStore: DependencyKey {
         }
 
         func read(scope: String, key: String) -> CachedPayload? {
-            lock.lock()
-            defer { lock.unlock() }
+            queue.sync { readNow(scope: scope, key: key) }
+        }
+
+        private func readNow(scope: String, key: String) -> CachedPayload? {
             guard
                 let fileURL = fileURL(scope: scope, key: key),
                 let data = try? Data(contentsOf: fileURL),
@@ -135,11 +140,15 @@ extension JSONCacheStore: DependencyKey {
         }
 
         func write(scope: String, key: String, data: Data) {
-            lock.lock()
-            defer { lock.unlock() }
-            guard let fileURL = fileURL(scope: scope, key: key) else { return }
-            let envelope = Envelope(fetchedAt: Date().timeIntervalSince1970, payload: data)
-            guard let encoded = try? JSONEncoder().encode(envelope) else { return }
+            let fetchedAt = Date().timeIntervalSince1970
+            queue
+                .async { self.writeNow(scope: scope, key: key, envelope: Envelope(fetchedAt: fetchedAt, payload: data))
+                }
+        }
+
+        private func writeNow(scope: String, key: String, envelope: Envelope) {
+            guard let fileURL = fileURL(scope: scope, key: key),
+                  let encoded = try? JSONEncoder().encode(envelope) else { return }
             guard encoded.count <= Constants.maxEntryBytes else {
                 try? fileManager.removeItem(at: fileURL)
                 return
@@ -148,28 +157,22 @@ extension JSONCacheStore: DependencyKey {
         }
 
         func remove(scope: String, key: String) {
-            lock.lock()
-            defer { lock.unlock() }
-            guard let fileURL = fileURL(scope: scope, key: key) else { return }
-            try? fileManager.removeItem(at: fileURL)
+            queue.sync {
+                guard let fileURL = fileURL(scope: scope, key: key) else { return }
+                try? fileManager.removeItem(at: fileURL)
+            }
         }
 
         func clearAll() {
-            lock.lock()
-            defer { lock.unlock() }
-            cacheDirectory?.removeAll()
+            queue.sync { cacheDirectory?.removeAll() }
         }
 
         func clear(scope: String) {
-            lock.lock()
-            defer { lock.unlock() }
-            cacheDirectory?.removeEntries(withPrefix: CacheAccountScope.namePrefix(for: scope))
+            queue.sync { cacheDirectory?.removeEntries(withPrefix: CacheAccountScope.namePrefix(for: scope)) }
         }
 
         func totalSizeBytes() -> Int64 {
-            lock.lock()
-            defer { lock.unlock() }
-            return cacheDirectory?.totalSizeBytes() ?? 0
+            queue.sync { cacheDirectory?.totalSizeBytes() ?? 0 }
         }
 
         func asStore(scope pinnedScope: String? = nil) -> JSONCacheStore {

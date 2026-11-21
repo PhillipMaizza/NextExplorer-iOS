@@ -65,10 +65,10 @@ struct CacheFileNameTests {
     func listCacheNames() throws {
         let root = makeRoot()
         defer { try? FileManager.default.removeItem(at: root) }
-        JSONCacheStore.onDisk(rootDirectory: root).bound(to: Fixture.account).write(
-            key: TestCacheKey.favorites,
-            data: Fixture.payload
-        )
+        let store = JSONCacheStore.onDisk(rootDirectory: root).bound(to: Fixture.account)
+        store.write(key: TestCacheKey.favorites, data: Fixture.payload)
+        // A read waits for the queued write.
+        #expect(store.read(key: TestCacheKey.favorites)?.data == Fixture.payload)
 
         let written = try names(in: root.appendingPathComponent(CacheLayout.listCacheName, isDirectory: true))
 

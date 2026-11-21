@@ -29,6 +29,9 @@
 
         final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
             private let onCapture: (URL?) -> Void
+            /// The photo is encoded off the main thread while the camera stays on screen, so a second
+            /// tap on Use Photo must not stage and upload it again.
+            private var isSavingPhoto = false
 
             init(onCapture: @escaping (URL?) -> Void) {
                 self.onCapture = onCapture
@@ -43,13 +46,22 @@
                     return
                 }
                 let image = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage
-                guard let image, let data = image.jpegData(compressionQuality: 0.9) else {
+                guard let image else {
                     onCapture(nil)
                     return
                 }
+                guard !isSavingPhoto else { return }
+                isSavingPhoto = true
                 let url = UploadStagingLocation.directory
                     .appendingPathComponent("Photo_\(Int(Date().timeIntervalSince1970)).jpg")
-                onCapture((try? data.write(to: url)) != nil ? url : nil)
+                let onCapture = onCapture
+                Task {
+                    let isSaved = await Task.detached(priority: .userInitiated) {
+                        guard let data = image.jpegData(compressionQuality: 0.9) else { return false }
+                        return (try? data.write(to: url)) != nil
+                    }.value
+                    onCapture(isSaved ? url : nil)
+                }
             }
 
             func imagePickerControllerDidCancel(_: UIImagePickerController) {
