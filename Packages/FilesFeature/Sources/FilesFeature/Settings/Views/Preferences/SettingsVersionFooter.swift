@@ -14,13 +14,6 @@ private enum Constants {
 struct SettingsVersionFooter: View {
     let store: StoreOf<SettingsFeature>
 
-    private var appVersionText: String {
-        let info = Bundle.main.infoDictionary
-        let version = info?["CFBundleShortVersionString"] as? String ?? "-"
-        let build = info?["CFBundleVersion"] as? String ?? "-"
-        return L10n.Settings.appVersion(version, build)
-    }
-
     /// "Like the app? Buy me a coffee ☕️" as one wrapping line. Only the coffee half is bold and
     /// accented so it reads as the tappable part; the lead in stays regular weight.
     private var tipPrompt: Text {
@@ -35,7 +28,7 @@ struct SettingsVersionFooter: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: Constants.versionLogoSize, height: Constants.versionLogoSize)
-                Text(appVersionText)
+                Text(AppDiagnostics.versionText)
                     .type(.label4, style: .tertiary)
             }
             VStack(spacing: .space4) {

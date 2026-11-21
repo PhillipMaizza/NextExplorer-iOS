@@ -1,14 +1,23 @@
+import CoreModels
 import Foundation
+import Localization
 
 /// What a support message needs to reproduce a problem: the app, the device and the system. Nothing
 /// about the account or the server.
 enum AppDiagnostics {
+    private static let missingValue = "-"
+
     static var appVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        Bundle.main.marketingVersion ?? missingValue
     }
 
     private static var build: String {
-        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+        Bundle.main.buildNumber ?? missingValue
+    }
+
+    /// The version and build line Settings and About show.
+    static var versionText: String {
+        L10n.Settings.appVersion(appVersion, build)
     }
 
     /// The hardware identifier, such as `Mac15,3`.

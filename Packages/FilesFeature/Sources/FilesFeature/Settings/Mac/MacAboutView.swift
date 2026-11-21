@@ -92,7 +92,7 @@
             VStack(alignment: .leading, spacing: Metrics.infoSpacing) {
                 Text(AppIdentity.name)
                     .font(.title2.weight(.semibold))
-                Text(Self.versionText)
+                Text(AppDiagnostics.versionText)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
                 VStack(alignment: .leading, spacing: Metrics.linkSpacing) {
@@ -108,13 +108,6 @@
                 }
                 .controlSize(.large)
             }
-        }
-
-        private static var versionText: String {
-            let info = Bundle.main.infoDictionary
-            let version = info?["CFBundleShortVersionString"] as? String ?? "-"
-            let build = info?["CFBundleVersion"] as? String ?? "-"
-            return L10n.Settings.appVersion(version, build)
         }
     }
 

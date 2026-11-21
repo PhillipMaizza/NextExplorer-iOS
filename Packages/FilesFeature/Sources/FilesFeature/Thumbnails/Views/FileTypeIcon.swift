@@ -16,7 +16,6 @@ private enum Constants {
     static let blueWeight: Double = 0.0722
     static let javaArchiveKinds: Set<String> = ["jar", "war", "ear"]
     static let installerKinds: Set<String> = ["exe", "msi", "apk", "dmg", "pkg", "deb", "rpm", "ipa", "appimage"]
-    static let fontKinds: Set<String> = ["ttf", "otf", "woff", "woff2"]
     static let databaseKinds: Set<String> = ["db", "sqlite", "sqlite3", "sql"]
     static let spreadsheetKinds: Set<String> = ["xls", "xlsx", "csv", "gsheet", "numbers", "ods"]
     static let keyKinds: Set<String> = ["key", "pem", "crt", "cer", "pub", "p12", "pfx", "gpg", "asc"]
@@ -111,7 +110,7 @@ struct FileTypeIcon: View {
         if Constants.installerKinds.contains(kind) {
             return IconKit.kindInstaller
         }
-        if Constants.fontKinds.contains(kind) {
+        if FileItem.fontExtensions.contains(kind) {
             return IconKit.kindFont
         }
         if Constants.databaseKinds.contains(kind) {

@@ -23,7 +23,6 @@ struct ShareInfoTests {
         #expect(info.sharingType == .anyone)
         #expect(info.expiresAt != nil)
         #expect(!info.isExpired)
-        #expect(!info.isRestrictedToUsers)
     }
 
     @Test
@@ -35,6 +34,6 @@ struct ShareInfoTests {
         #expect(info.expiresAt == nil)
         #expect(info.hasPassword)
         #expect(info.isExpired)
-        #expect(info.isRestrictedToUsers)
+        #expect(info.sharingType == .users)
     }
 }

@@ -196,8 +196,6 @@ public struct TrashZone: Equatable, Sendable, Decodable, Identifiable {
         case userVolume = "user-volume"
     }
 
-    public static let fullPercent: Double = 100
-
     public let id: String
     public let kind: Kind
     public let name: String
@@ -276,12 +274,6 @@ public struct TrashZone: Equatable, Sendable, Decodable, Identifiable {
     public var usedFraction: Double {
         guard let budgetBytes, budgetBytes > 0 else { return 0 }
         return min(1, Double(heldBytes) / Double(budgetBytes))
-    }
-
-    /// The share of the budget held, 0 to 100, or 0 when there is no limit.
-    public var usedPercent: Int {
-        guard let budgetBytes, budgetBytes > 0 else { return 0 }
-        return Int(min(Self.fullPercent, (Double(heldBytes) / Double(budgetBytes) * Self.fullPercent).rounded()))
     }
 }
 

@@ -130,12 +130,10 @@ struct SearchTermTests {
     func aPathShapeMatchesFilesByTheirPath() {
         let term = SearchTerm(Constants.pathGlob)
 
-        #expect(term.isGlob)
         #expect(term.matches(name: Constants.log, relativePath: Constants.stacksLog, isDirectory: false))
         #expect(!term.matches(name: Constants.log, relativePath: Constants.otherLog, isDirectory: false))
         #expect(!term.matches(name: Constants.stacks, relativePath: Constants.stacks, isDirectory: true))
         #expect(SearchTerm("*.log").matches(name: Constants.log, relativePath: Constants.stacksLog, isDirectory: false))
-        #expect(!SearchTerm(TestSearch.rankTerm).isGlob)
     }
 
     @Test("A name is closest whole, then by its start, then anywhere; every name a shape fits is equal")

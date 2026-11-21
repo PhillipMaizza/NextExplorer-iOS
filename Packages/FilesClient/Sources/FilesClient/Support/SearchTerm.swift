@@ -59,11 +59,6 @@ public struct SearchTerm: Equatable, Sendable {
         !isEmpty && !isSearchable
     }
 
-    /// A shape for names (`*` or `?`) rather than text to look for.
-    public var isGlob: Bool {
-        glob != nil
-    }
-
     /// Whether a name answers the term: holds it, or fits its shape. A path shape fits no single
     /// name. An empty term matches everything.
     public func matches(_ name: String) -> Bool {
