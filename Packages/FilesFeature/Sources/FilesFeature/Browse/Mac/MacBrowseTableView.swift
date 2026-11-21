@@ -340,34 +340,15 @@
         /// The store owns the sort; the table only renders it and reports header clicks.
         private var sortOrder: Binding<[KeyPathComparator<FileItem>]> {
             Binding(
-                get: { [Self.comparator(for: sortOption, direction: sortDirection)] },
+                get: { [sortOption.tableComparator(sortDirection)] },
                 set: { newValue in
                     guard let first = newValue.first else { return }
-                    onSortChanged(Self.option(for: first), first.order == .forward ? .ascending : .descending)
+                    onSortChanged(
+                        BrowseFeature.SortOption(tableComparator: first),
+                        first.order == .forward ? .ascending : .descending
+                    )
                 }
             )
-        }
-
-        private static func comparator(
-            for option: BrowseFeature.SortOption,
-            direction: BrowseFeature.SortDirection
-        ) -> KeyPathComparator<FileItem> {
-            let order: SortOrder = direction == .ascending ? .forward : .reverse
-            return switch option {
-            case .name: KeyPathComparator(\.name, order: order)
-            case .dateModified: KeyPathComparator(\.dateModified, order: order)
-            case .size: KeyPathComparator(\.size, order: order)
-            case .kind: KeyPathComparator(\.kind, order: order)
-            }
-        }
-
-        private static func option(for comparator: KeyPathComparator<FileItem>) -> BrowseFeature.SortOption {
-            switch comparator.keyPath {
-            case \FileItem.dateModified: .dateModified
-            case \FileItem.size: .size
-            case \FileItem.kind: .kind
-            default: .name
-            }
         }
     }
 
