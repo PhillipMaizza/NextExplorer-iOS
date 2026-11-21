@@ -1141,7 +1141,6 @@ shareUpload.namesLabel	ชื่อไฟล์
 shareUpload.nameHint	ชื่อที่ใช้อัปโหลดไฟล์ นามสกุลไฟล์ยังคงเหมือนเดิม
 spotlight.placeholder	ค้นหาไฟล์และโฟลเดอร์
 trash.title	ถังขยะ
-trash.rowSubtitle	รายการที่ลบซึ่งคุณกู้คืนได้
 trash.moveToTrash	ย้ายไปที่ถังขยะ
 trash.deletePermanently	ลบถาวร
 trash.deleteMessage#other	รายการจะไปที่ถังขยะ ซึ่งเก็บรายการที่ลบไว้ %lld วันเพื่อให้กู้คืนได้

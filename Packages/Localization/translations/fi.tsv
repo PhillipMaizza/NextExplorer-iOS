@@ -1159,7 +1159,6 @@ shareUpload.namesLabel	Tiedostonimet
 shareUpload.nameHint	Nimi, jolla tiedosto ladataan. Tiedostopääte pysyy samana.
 spotlight.placeholder	Hae tiedostoja ja kansioita
 trash.title	Roskakori
-trash.rowSubtitle	Poistetut kohteet, jotka voit palauttaa
 trash.moveToTrash	Siirrä roskakoriin
 trash.deletePermanently	Poista pysyvästi
 trash.deleteMessage#one	Se siirtyy roskakoriin, joka säilyttää poistettuja kohteita %lld päivän, jotta ne voi palauttaa.

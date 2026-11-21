@@ -190,11 +190,6 @@ public extension View {
     func type(_ type: Typography.TextType, style: Typography.TextStyle) -> some View {
         modifier(DSTextTypeModifier(type: type)).foregroundColor(style.color)
     }
-
-    /// Applies a Design System text style (color) to any view.
-    func style(_ style: Typography.TextStyle) -> some View {
-        foregroundColor(style.color)
-    }
 }
 
 /// Applies a text tier's font and Bold Text aware weight. A `ViewModifier` (not a `Text`

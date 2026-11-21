@@ -1159,7 +1159,6 @@ shareUpload.namesLabel	Filnavn
 shareUpload.nameHint	Navnet filen lastes opp med. Filtypen forblir den samme.
 spotlight.placeholder	Søk i filer og mapper
 trash.title	Papirkurv
-trash.rowSubtitle	Slettede elementer du kan gjenopprette
 trash.moveToTrash	Flytt til papirkurven
 trash.deletePermanently	Slett permanent
 trash.deleteMessage#one	Det havner i papirkurven, som tar vare på slettede elementer i %lld dag slik at de kan gjenopprettes.

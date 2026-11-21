@@ -1159,7 +1159,6 @@ shareUpload.namesLabel	Filnavne
 shareUpload.nameHint	Navnet, filen uploades med. Filtypenavnet forbliver det samme.
 spotlight.placeholder	Søg i filer og mapper
 trash.title	Papirkurv
-trash.rowSubtitle	Slettede emner, du kan gendanne
 trash.moveToTrash	Flyt til papirkurven
 trash.deletePermanently	Slet permanent
 trash.deleteMessage#one	Det havner i papirkurven, som gemmer slettede emner i %lld dag, så de kan gendannes.

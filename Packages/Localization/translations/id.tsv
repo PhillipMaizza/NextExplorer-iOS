@@ -1141,7 +1141,6 @@ shareUpload.namesLabel	Nama File
 shareUpload.nameHint	Nama yang digunakan saat file diunggah. Ekstensinya tetap sama.
 spotlight.placeholder	Cari file dan folder
 trash.title	Sampah
-trash.rowSubtitle	Item terhapus yang dapat Anda pulihkan
 trash.moveToTrash	Pindahkan ke Sampah
 trash.deletePermanently	Hapus Permanen
 trash.deleteMessage#other	Item akan masuk ke sampah, yang menyimpan item terhapus selama %lld hari agar bisa dipulihkan.
