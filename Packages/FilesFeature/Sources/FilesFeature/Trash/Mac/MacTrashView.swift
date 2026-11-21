@@ -101,25 +101,25 @@
                     Text(item.isAvailable ? TrashRowText.location(item) : L10n.Trash.unavailable)
                         .lineLimit(1)
                         .truncationMode(.head)
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.locationColumnMinWidth, ideal: Metrics.locationColumnIdealWidth)
                 TableColumn(L10n.Trash.columnDeletedBy) { item in
-                    Text(TrashRowText.deletedBy(item)).foregroundStyle(Color.secondaryDS)
+                    Text(TrashRowText.deletedBy(item)).foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.deletedByColumnMinWidth, ideal: Metrics.deletedByColumnIdealWidth)
                 TableColumn(L10n.Trash.columnDeletedOn, value: \.sortDeletedAt) { item in
-                    Text(TrashRowText.deletedOn(item) ?? "").foregroundStyle(Color.secondaryDS)
+                    Text(TrashRowText.deletedOn(item) ?? "").foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.dateColumnMinWidth, ideal: MacBrowseTableMetrics.dateColumnWidth)
                 TableColumn(L10n.Trash.columnRemoved) { item in
                     Text(TrashRowText.removal(item, now: date.now, calendar: calendar) ?? "")
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.removedColumnMinWidth, ideal: Metrics.removedColumnIdealWidth)
                 TableColumn(L10n.Sort.size, value: \.sortSize) { item in
                     Text(item.size.map(FileSizeFormat.string) ?? "")
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
                 .width(min: Metrics.sizeColumnMinWidth, ideal: MacBrowseTableMetrics.sizeColumnWidth)

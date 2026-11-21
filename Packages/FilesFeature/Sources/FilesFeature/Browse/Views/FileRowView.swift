@@ -243,12 +243,7 @@ struct FileRowView: View {
     @ViewBuilder
     private var leadingIcon: some View {
         if let customIcon {
-            customIcon
-                .resizable()
-                .scaledToFit()
-                .symbolVariant(isCustomIconFilled ? .fill : .none)
-                .foregroundStyle(customIconTint ?? Color.accent)
-                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+            FavoriteGlyph(icon: customIcon, tint: customIconTint, isFilled: isCustomIconFilled)
         } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(
                 serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
@@ -368,7 +363,7 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
     .padding(.space16)
 }
 
-#Preview("Thumbnails off (falls back to the plain icon even though the file supports one)") {
+#Preview("Thumbnails off (with fallback)") {
     FileRowView(
         item: FileItem(
             name: "vacation.jpg",

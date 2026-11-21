@@ -47,7 +47,7 @@
                     Text(favorite.path)
                         .lineLimit(1)
                         .truncationMode(.head)
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.locationColumnMinWidth)
             } rows: {
