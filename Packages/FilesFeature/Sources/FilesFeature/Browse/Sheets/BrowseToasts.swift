@@ -10,11 +10,11 @@ import SwiftUI
 struct BrowseToasts: ViewModifier {
     let store: StoreOf<BrowseFeature>
     @Binding var toastMessage: DSToastMessage?
-    let inPreview: Bool
+    let isInPreview: Bool
     let extraBottomInset: CGFloat
 
     private var isFrontmost: Bool {
-        (store.previewItem != nil) == inPreview
+        (store.previewItem != nil) == isInPreview
     }
 
     func body(content: Content) -> some View {
@@ -49,17 +49,17 @@ struct BrowseToastEvents: ViewModifier {
         content
             // `fileActionErrorMessage` (rename/delete/extract/compress failures) was set on
             // `State` but never actually read by any view: silently swallowed. Mirrored into
-            // the same toast the unsupported-file-type warning uses.
+            // the same toast the unsupported file type warning uses.
             .onChange(of: store.fileActionErrorMessage) { _, newValue in
                 guard let newValue else { return }
                 toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)
             }
             .onChange(of: store.downloadSuccessMessage) { _, newValue in
                 guard let newValue else { return }
-                let inPreview = store.previewItem != nil
+                let isInPreview = store.previewItem != nil
                 toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
                     // From a preview, close the cover first, then switch tabs after a settle.
-                    store.send(inPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
+                    store.send(isInPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
                 }
             }
             .onChange(of: store.transferSuccessMessage) { _, newValue in

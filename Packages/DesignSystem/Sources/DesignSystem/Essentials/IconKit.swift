@@ -37,8 +37,8 @@ public enum IconKit {
     public static let tabSettings = Image("tabSettings", bundle: .module).renderingMode(.template)
     public static let tabSettingsFill = Image("tabSettingsFill", bundle: .module).renderingMode(.template)
 
-    /// Smaller-weight variants of the tab glyphs, paired with a text label when the tab bar
-    /// shows titles (Settings → "Show Tab Labels"); the full-size set above is used icon-only.
+    /// Smaller weight variants of the tab glyphs, paired with a text label when the tab bar
+    /// shows titles (Settings → "Show Tab Labels"); the full size set above is used icon only.
     public static let tabBrowseSmall = Image("tabBrowse_small", bundle: .module).renderingMode(.template)
     public static let tabBrowseFillSmall = Image("tabBrowseFill_small", bundle: .module).renderingMode(.template)
     public static let tabFavoritesSmall = Image("tabFavorites_small", bundle: .module).renderingMode(.template)

@@ -4,8 +4,8 @@ import Testing
 /// `Library/Caches/PreviewCache` directory. `PreviewCacheStoreTests` deletes the whole tree
 /// and asserts on its exact byte count; without coordination it races any concurrent
 /// reader/writer (`ThumbnailCacheTests`, `DocumentThumbnailCacheTests`, `DocumentThumbnailStoreTests`).
-/// Swift Testing's built-in `.serialized` only orders tests *within* one suite, so this
-/// coordinates them all on one process-wide gate.
+/// Swift Testing's built in `.serialized` only orders tests *within* one suite, so this
+/// coordinates them all on one process wide gate.
 struct SerializedPreviewCacheAccess: SuiteTrait, TestScoping {
     func provideScope(
         for _: Test,

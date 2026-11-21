@@ -30,7 +30,7 @@ private enum Constants {
 ///
 /// Renders are cached as JPEGs under the shared `Library/Caches/PreviewCache` root, so
 /// "Clear Cache" in Settings covers them. `DocumentThumbnailStore` keeps the decoded images the
-/// live grid needs in memory; this layer only re-reads/re-renders on a store eviction.
+/// live grid needs in memory; this layer only rereads/rerenders on a store eviction.
 public struct DocumentThumbnailCache: Sendable {
     /// `key` uniquely identifies the source file + its content signature; `maxPixel` bounds
     /// the render's longest side; `fileURL` is the local document to draw, or `nil` to read only
@@ -49,7 +49,7 @@ public struct DocumentThumbnailCache: Sendable {
 }
 
 /// Serializes PDF rasterization. `PDFDocument`/`PDFPage` and the CoreGraphics PDF stack are
-/// not guaranteed safe to drive concurrently even from separate instances, and one-at-a-time
+/// not guaranteed safe to drive concurrently even from separate instances, and one at a time
 /// keeps a folder of PDFs from pegging every core on an older device. `render` has no `await`
 /// inside, so the actor runs each call to completion before the next: true serialization,
 /// no reentrancy. Downloads stay parallel (their own capped `URLSession`), which is the slow
@@ -75,7 +75,7 @@ extension DocumentThumbnailCache {
         SHA256.hash(data: Data(string.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 
-    /// The production render-cache directory, under the shared `PreviewCache` root.
+    /// The production render cache directory, under the shared `PreviewCache` root.
     static var defaultRenderCacheDirectory: URL? {
         guard let cachesDirectory = try? FileManager.default.url(
             for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true
@@ -133,7 +133,7 @@ extension DocumentThumbnailCache {
         return context.makeImage()
     }
 
-    /// A cache backed by an on-disk render directory. `renderCacheDirectory` is a seam for
+    /// A cache backed by an on disk render directory. `renderCacheDirectory` is a seam for
     /// tests: production uses `defaultRenderCacheDirectory`.
     static func live(renderCacheDirectory: URL?) -> DocumentThumbnailCache {
         DocumentThumbnailCache { key, maxPixel, fileURL in
@@ -142,7 +142,7 @@ extension DocumentThumbnailCache {
             let renderCacheURL = renderCacheDirectory.map { renderCacheFileURL(in: $0, for: key) }
             if let renderCacheURL, let data = try? Data(contentsOf: renderCacheURL) {
                 // Force the decode here, off the caller's thread: `UIImage(data:)` alone
-                // defers it to first draw, which would land on the main thread mid-scroll.
+                // defers it to first draw, which would land on the main thread mid scroll.
                 return PlatformImage(data: data).map { $0.preparingForDisplay() ?? $0 }
             }
 

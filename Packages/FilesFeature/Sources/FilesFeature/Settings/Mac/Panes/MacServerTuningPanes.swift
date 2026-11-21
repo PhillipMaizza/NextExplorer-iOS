@@ -2,6 +2,7 @@
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
+    import FilesClient
     import Localization
     import SwiftUI
 
@@ -242,5 +243,59 @@
             case .full: L10n.FolderSizeSettings.modeFull
             }
         }
+    }
+
+    #Preview("Uploads") {
+        let uploads = UploadSettings(isChunkedEnabled: true, chunkSizeBytes: 16 * UploadSettings.bytesPerMiB)
+        var state = UploadSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.loaded = uploads
+        state.draft = uploads
+        state.phase = .loaded
+        return MacUploadSettingsPane(store: Store(initialState: state) { UploadSettingsFeature() } withDependencies: {
+            $0.filesClient.fetchSystemSettings = { _ in SystemSettings(uploads: uploads) }
+        })
+    }
+
+    #Preview("FFmpeg") {
+        let ffmpeg = FFmpegSettings(ffmpegPath: "/usr/local/bin/ffmpeg", ffprobePath: "/usr/local/bin/ffprobe")
+        var state = FFmpegSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.loaded = ffmpeg
+        state.draft = ffmpeg
+        state.phase = .loaded
+        return MacFFmpegSettingsPane(store: Store(initialState: state) { FFmpegSettingsFeature() } withDependencies: {
+            $0.filesClient.fetchSystemSettings = { _ in SystemSettings(ffmpeg: ffmpeg) }
+        })
+    }
+
+    #Preview("Search index") {
+        let value = SearchIndexSettings(
+            isEnabled: true,
+            excluded: ExcludedPaths(paths: ["Backups", "tmp/cache"], environmentPaths: ["node_modules"])
+        )
+        var state = SearchIndexSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.loaded = value
+        state.draftPaths = value.excluded.paths
+        state.phase = .loaded
+        return MacSearchIndexSettingsPane(store: Store(initialState: state) {
+            SearchIndexSettingsFeature()
+        } withDependencies: {
+            $0.filesClient.fetchSystemSettings = { _ in SystemSettings(searchIndex: value) }
+        })
+    }
+
+    #Preview("Folder sizes") {
+        let value = FolderSizeSettings(
+            mode: .shallow,
+            excluded: ExcludedPaths(paths: ["Backups"], environmentPaths: ["node_modules"])
+        )
+        var state = FolderSizeSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.loaded = value
+        state.draftPaths = value.excluded.paths
+        state.phase = .loaded
+        return MacFolderSizeSettingsPane(store: Store(initialState: state) {
+            FolderSizeSettingsFeature()
+        } withDependencies: {
+            $0.filesClient.fetchSystemSettings = { _ in SystemSettings(folderSize: value) }
+        })
     }
 #endif

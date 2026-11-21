@@ -16,7 +16,7 @@ private enum Metrics {
     static let concurrencyStep = 1
 }
 
-/// Admin-only editor for the server's thumbnail generation config, pushed from the Settings
+/// Admin only editor for the server's thumbnail generation config, pushed from the Settings
 /// admin section. Mirrors the web client's `SettingsFilesThumbnails.vue`.
 struct ThumbnailSettingsView: View {
     @Bindable var store: StoreOf<ThumbnailSettingsFeature>

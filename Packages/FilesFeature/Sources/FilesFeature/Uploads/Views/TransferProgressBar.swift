@@ -12,7 +12,7 @@ private enum Constants {
 }
 
 /// Shared flags/metrics so screens deep in the tree can reserve bottom scroll clearance for
-/// the app-level upload bar without plumbing `MainTabFeature`'s state down to them.
+/// the app level upload bar without plumbing `MainTabFeature`'s state down to them.
 enum UploadBarChrome {
     /// `@Shared(.inMemory)` key: `true` while a bar is on screen. Written by `MainTabView`,
     /// read by list screens for their bottom inset.

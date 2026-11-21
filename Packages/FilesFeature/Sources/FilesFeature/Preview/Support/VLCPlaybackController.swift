@@ -51,7 +51,7 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
             // the default was too shallow and stuttered.
             media.addOption(":network-caching=\(Constants.networkCachingMilliseconds)")
             media.addOption(":http-reconnect")
-            // libvlc has no `:http-cookie` option; its http access reads only the per-media
+            // libvlc has no http cookie option; its http access reads only the per media
             // cookie jar, which must be populated before play(). Feed each session cookie as a
             // Set-Cookie value scoped to the request host.
             let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []

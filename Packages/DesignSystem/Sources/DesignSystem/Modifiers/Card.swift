@@ -3,7 +3,7 @@ import SwiftUI
 /// Wraps content as a card: uniform padding on a `backgroundSecondary` fill rounded to
 /// `.radiusCard`, stretched full width and leading aligned. The shape sheets already use to
 /// group a form section or a summary block (`UploadReviewView`'s path/size block is the
-/// reference); use this instead of re-inlining the background each time.
+/// reference); use this instead of reinlining the background each time.
 public struct DSCardModifier: ViewModifier {
     private let padding: CGFloat
 

@@ -4,7 +4,7 @@ import SwiftUI
 
 /// The single screen state a scrollable list is in. The view computes one of these from its
 /// store; `ListStatePlaceholder` renders the message for `.error` / `.empty` / `.noResults`
-/// and nothing for `.loading` (a per-tab skeleton covers that) or `.content` (the list shows
+/// and nothing for `.loading` (a per tab skeleton covers that) or `.content` (the list shows
 /// through). Browse, Favorites, Downloads and Shared all map to the same set.
 enum ListPhase: Equatable {
     case loading, error, empty, noResults, content
@@ -14,11 +14,11 @@ enum ListPhase: Equatable {
         self == .error || self == .empty || self == .noResults
     }
 
-    /// The one screen-state precedence every listing tab shares: a first-load error wins, then
+    /// The one screen state precedence every listing tab shares: a first load error wins, then
     /// the skeleton until the first response lands, then the empty state, then a search that
     /// matched nothing, else the list. Callers pass the four predicates their store derives, so
-    /// the ordering lives here once instead of being re-spelled (and drifting) per view. A tab
-    /// with a bespoke branch (e.g. Favorites' search-results mode) computes that itself and
+    /// the ordering lives here once instead of being respelled (and drifting) per view. A tab
+    /// with a bespoke branch (e.g. Favorites' search results mode) computes that itself and
     /// falls back to this for the ordinary path.
     static func derive(hasError: Bool, hasLoaded: Bool, isEmpty: Bool, hasNoResults: Bool) -> ListPhase {
         if hasError {
@@ -38,10 +38,10 @@ enum ListPhase: Equatable {
 }
 
 /// The centred message for a list's `.error` / `.empty` / `.noResults` states. Rendered as an
-/// `.overlay` on the list, but fed the list's live pull-to-refresh drag (`pullOffset`) so it
-/// translates with the rubber-band instead of staying pinned while the list stretches under
-/// it. Each message stays mounted at zero opacity: a phase flip that lands mid-layout can't
-/// then drag one in from a corner. The caller owns the cross-fade
+/// `.overlay` on the list, but fed the list's live pull to refresh drag (`pullOffset`) so it
+/// translates with the rubber band instead of staying pinned while the list stretches under
+/// it. Each message stays mounted at zero opacity: a phase flip that lands mid layout can't
+/// then drag one in from a corner. The caller owns the cross fade
 /// (`.animation(_:value: listPhase)` around the `Group { list }.overlay { … }`).
 struct ListStateOverlay: View {
     let phase: ListPhase
@@ -71,7 +71,7 @@ struct ListStateOverlay: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .offset(y: pullOffset)
-        // Let list-row taps through whenever the list itself is on screen; capture them (and
+        // Let list row taps through whenever the list itself is on screen; capture them (and
         // keep the retry button live) only while a placeholder is up.
         .allowsHitTesting(phase.isPlaceholder)
     }
@@ -85,9 +85,9 @@ private extension View {
 }
 
 /// Tracks how far a scroll view has been pulled below its resting offset (0 at rest or when
-/// scrolled up), for feeding an `.overlay` that should follow a pull-to-refresh rubber-band.
+/// scrolled up), for feeding an `.overlay` that should follow a pull to refresh rubber band.
 /// Keyed off `contentOffset + contentInset`, which is 0 at rest regardless of how far the
-/// large title has collapsed and only goes negative on an over-pull.
+/// large title has collapsed and only goes negative on an over pull.
 struct ScrollPullOffset: ViewModifier {
     @Binding var pull: CGFloat
 

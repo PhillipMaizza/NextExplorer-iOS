@@ -9,7 +9,7 @@ public enum Elevation: CaseIterable {
     case level1
     /// Cards, sticky bars, menus.
     case level4
-    /// Map-style overlay buttons, tooltips.
+    /// Map style overlay buttons, tooltips.
     case level8
     /// Bottom sheets, pickers, dialogs.
     case level16
@@ -50,7 +50,7 @@ public extension Elevation {
 }
 
 public extension View {
-    /// Applies the design system's two-layer elevation shadow.
+    /// Applies the design system's two layer elevation shadow.
     func elevation(_ level: Elevation, alpha: Double = Elevation.defaultAlpha) -> some View {
         shadow(
             color: Elevation.shadowColor.opacity(alpha),

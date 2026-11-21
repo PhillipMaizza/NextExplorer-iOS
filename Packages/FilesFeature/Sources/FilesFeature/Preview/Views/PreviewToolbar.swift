@@ -9,7 +9,7 @@ import SwiftUI
 /// actions, a top leading close, and a bottom bar with system share and delete (or those two in
 /// the title menu too, `hasBottomBar: false`). These are
 /// plain `.toolbar` items inside the caller's `NavigationStack`, so the OS gives them Liquid
-/// Glass, correct sizing/spacing, safe-area insets and accessibility for free: the preview
+/// Glass, correct sizing/spacing, safe area insets and accessibility for free: the preview
 /// only supplies the actions.
 extension View {
     func previewChrome(
@@ -158,8 +158,8 @@ private struct PreviewChrome: ViewModifier {
                 .systemShareSheet(shareModel)
                 .onDisappear { shareModel.cancel() }
                 .onChange(of: systemShare.fileID) { shareModel.cancel() }
-                .onChange(of: shareModel.didFail) { _, didFail in
-                    guard didFail else { return }
+                .onChange(of: shareModel.hasFailed) { _, hasFailed in
+                    guard hasFailed else { return }
                     shareFailureToast = .failure(L10n.OpenWith.failed)
                     shareModel.clearFailure()
                 }

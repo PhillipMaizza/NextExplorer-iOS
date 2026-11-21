@@ -8,9 +8,9 @@ import SwiftUI
     import UIKit
 #endif
 
-/// Process-wide in-memory cache of decoded thumbnails, keyed by the thumbnail's own
-/// (content-hashed) URL. Without it, every time a row scrolls back into view `ThumbnailImage`
-/// re-reads the bytes off disk and rebuilds the `UIImage`: needless churn on a large grid.
+/// Process wide in memory cache of decoded thumbnails, keyed by the thumbnail's own
+/// (content hashed) URL. Without it, every time a row scrolls back into view `ThumbnailImage`
+/// rereads the bytes off disk and rebuilds the `UIImage`: needless churn on a large grid.
 /// `NSCache` evicts itself under memory pressure.
 enum ThumbnailMemoryCache {
     nonisolated(unsafe) static let shared: NSCache<NSURL, PlatformImage> = {
@@ -53,17 +53,17 @@ private enum Constants {
 /// a small spinner) while the request is in flight, then either the image or `fallbackIcon`: on
 /// failure or once resolved to no thumbnail (`GET /api/thumbnails/*` legitimately returns `{ thumbnail: "" }` for e.g.
 /// PDFs
-/// or when thumbnails are disabled server-side). One request per instance: the API has no
-/// bulk/listing variant, matching how the real web client also loads these per-file.
+/// or when thumbnails are disabled server side). One request per instance: the API has no
+/// bulk/listing variant, matching how the real web client also loads these per file.
 ///
 /// Loads through `ThumbnailCache` rather than `AsyncImage(url:)` directly, so a thumbnail
-/// already seen this session (or a prior one) is read from disk instead of re-hitting the
+/// already seen this session (or a prior one) is read from disk instead of rehitting the
 /// server every time the row scrolls back into view.
 struct ThumbnailImage: View {
     let serverURL: URL
     let path: String
     /// `FileItem.cacheSignature`: lets the resolved thumbnail URL be remembered on disk and
-    /// re-checked only when the file itself changes.
+    /// rechecked only when the file itself changes.
     let signature: String
     let fallbackIcon: Image
     /// When set, a file with no thumbnail shows its typed page icon (like every other file row and
@@ -89,7 +89,7 @@ struct ThumbnailImage: View {
     /// The first lines of a text file, drawn as a small page.
     @State private var snippet: String?
     @State private var uiImage: PlatformImage?
-    @State private var didResolve = false
+    @State private var hasResolved = false
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.thumbnailCache) private var thumbnailCache
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
@@ -111,7 +111,7 @@ struct ThumbnailImage: View {
 
     /// Whether files of this kind are drawn from their own content, which the server makes no
     /// thumbnail of: an audio file's cover art and a text file's first lines.
-    nonisolated static func readsOwnContent(kind: String) -> Bool {
+    nonisolated static func shouldReadOwnContent(kind: String) -> Bool {
         FileItem.isAudioKind(kind) || TextSnippet.isTextKind(kind)
     }
 
@@ -150,7 +150,7 @@ struct ThumbnailImage: View {
                         .resizable()
                         .scaledToFit()
                 }
-            } else if didResolve || isGridWell || fallbackKind != nil {
+            } else if hasResolved || isGridWell || fallbackKind != nil {
                 fallbackImage
             } else {
                 ThumbnailLoadingPlaceholder()
@@ -162,14 +162,14 @@ struct ThumbnailImage: View {
             if fileItem.isAudio {
                 uiImage = await loader.audioArtwork()
                 if !Task.isCancelled {
-                    didResolve = true
+                    hasResolved = true
                 }
                 return
             }
             if TextSnippet.isTextKind(fileItem.kind) {
                 snippet = await loader.textSnippet()
                 if !Task.isCancelled {
-                    didResolve = true
+                    hasResolved = true
                 }
                 return
             }
@@ -198,7 +198,7 @@ struct ThumbnailImage: View {
                 // decodes the picture itself.
                 uiImage = await loader.deviceDecodedImage()
                 if !Task.isCancelled {
-                    didResolve = true
+                    hasResolved = true
                 }
                 return
             }
@@ -214,7 +214,7 @@ struct ThumbnailImage: View {
                 data = try await thumbnailCache.data(thumbnailURL)
             } catch {
                 if !Task.isCancelled {
-                    didResolve = true
+                    hasResolved = true
                 }
                 return
             }
@@ -239,7 +239,7 @@ struct ThumbnailImage: View {
                 }
             }
             uiImage = decoded ?? seeded
-            didResolve = true
+            hasResolved = true
         }
     }
 

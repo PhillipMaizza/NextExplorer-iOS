@@ -45,7 +45,7 @@ struct SettingsPresentationTests: SettingsFeatureTestSupport {
             description: "api tokens",
             tap: .apiTokensButtonTapped,
             dismiss: .apiTokens(.dismiss),
-            present: { $0.apiTokens = APITokensFeature.State(serverURL: $1, requiresPassword: true) },
+            present: { $0.apiTokens = APITokensFeature.State(serverURL: $1, isPasswordRequired: true) },
             clear: { $0.apiTokens = nil }
         ),
     ])

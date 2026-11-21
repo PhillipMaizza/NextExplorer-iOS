@@ -9,9 +9,9 @@ private enum Constants {
     static let detailMinScale: CGFloat = 0.6
 }
 
-/// A tappable settings-style row: a leading icon, a title, and a trailing accessory
+/// A tappable settings style row: a leading icon, a title, and a trailing accessory
 /// (disclosure chevron, a trailing detail string, or nothing). The whole row width is the
-/// hit target: the shape every `Button`-driven Settings row shares, so taps land the same
+/// hit target: the shape every `Button` driven Settings row shares, so taps land the same
 /// way on every one of them.
 ///
 /// For a switch use `DSToggleRow`; for a plain push segue a `NavigationLink` in a `List` is
@@ -27,9 +27,9 @@ public struct DSNavigationRow: View {
 
     public enum Role {
         case standard
-        /// Accent-tinted title and icon: a soft-destructive action (clear cache, ...).
+        /// Accent tinted title and icon: a soft destructive action (clear cache, ...).
         case accent
-        /// Error-red title and icon.
+        /// Error red title and icon.
         case destructive
     }
 
@@ -38,7 +38,7 @@ public struct DSNavigationRow: View {
     private let accessory: Accessory
     private let role: Role
     private let isLoading: Bool
-    /// `nil` renders a static, non-interactive row (a read-only info line in the same shape).
+    /// `nil` renders a static, non interactive row (a read only info line in the same shape).
     private let action: (() -> Void)?
 
     public init(
@@ -125,7 +125,7 @@ public struct DSNavigationRow: View {
                 .foregroundStyle(Color.tertiaryDS)
                 .frame(width: Constants.chevronSize, height: Constants.chevronSize)
         case let .detail(text):
-            // A numeric-text transition so a changing value (a cache/offline size after a clear)
+            // A numeric text transition so a changing value (a cache/offline size after a clear)
             // rolls over instead of snapping.
             Text(text)
                 .type(.body2(.regular), style: .secondary)

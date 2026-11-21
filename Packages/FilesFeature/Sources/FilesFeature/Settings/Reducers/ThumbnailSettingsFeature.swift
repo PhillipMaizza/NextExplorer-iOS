@@ -7,7 +7,7 @@ import Foundation
 /// An admin editing the server's thumbnail generation config via `PATCH /api/settings`.
 /// Mirrors the web client's `SettingsFilesThumbnails.vue`. These settings affect every
 /// client that pulls from `GET /api/thumbnails/*`, this app included. Reached from the
-/// Settings admin section; non-admins never get here (and the server would 403 the write).
+/// Settings admin section; non admins never get here (and the server would 403 the write).
 @Reducer
 public struct ThumbnailSettingsFeature {
     @ObservableState

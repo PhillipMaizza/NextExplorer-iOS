@@ -6,17 +6,32 @@ import Foundation
 import Localization
 import SwiftUI
 
+extension BrowseFeature.State {
+    /// A folder on an example server holding `items`, for previews.
+    static func preview(
+        directoryPath: String = "Documents",
+        items: [FileItem] = [],
+        mutate: (inout Self) -> Void = { _ in }
+    ) -> Self {
+        var state = Self(
+            serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+            directoryPath: directoryPath,
+            title: L10n.Browse.navigationTitle
+        )
+        state.items = IdentifiedArray(uniqueElements: items)
+        state.phase = items.isEmpty ? .idle : .loaded
+        mutate(&state)
+        return state
+    }
+}
+
 @MainActor
 private func browsePreview(
     directoryPath: String = "Documents",
     configureClient: (inout FilesClient) -> Void = { _ in },
     mutateState: (inout BrowseFeature.State) -> Void = { _ in }
 ) -> some View {
-    var state = BrowseFeature.State(
-        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-        directoryPath: directoryPath,
-        title: L10n.Browse.navigationTitle
-    )
+    var state = BrowseFeature.State.preview(directoryPath: directoryPath)
     mutateState(&state)
     var client = FilesClient.previewValue
     configureClient(&client)
@@ -31,7 +46,7 @@ private func browsePreview(
     }
 }
 
-private let browsePreviewItems: [FileItem] = [
+let browsePreviewItems: [FileItem] = [
     FileItem(name: "Projects", path: "Documents", dateModified: Date(), size: 0, kind: "directory"),
     FileItem(name: "budget.xlsx", path: "Documents", dateModified: Date(), size: 44_000, kind: "xlsx"),
     FileItem(name: "notes.txt", path: "Documents", dateModified: Date(), size: 1_200, kind: "txt"),

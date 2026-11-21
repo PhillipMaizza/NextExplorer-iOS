@@ -56,7 +56,7 @@ public struct ChangePasswordFeature {
             phase == .submitting
         }
 
-        var didSucceed: Bool {
+        var hasSucceeded: Bool {
             phase == .succeeded
         }
 

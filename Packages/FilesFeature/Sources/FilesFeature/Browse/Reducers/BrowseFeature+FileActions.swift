@@ -128,7 +128,7 @@ extension BrowseFeature {
     }
 
     func confirmBulkDelete(_ state: inout State, permanent: Bool = false) -> Effect<Action> {
-        state.bulkDeleteConfirmationIsPresented = false
+        state.bulkDeletePhase = .idle
         state.deleteImpactCheck = .idle
         guard !state.isBulkActionInFlight else { return .none }
         let itemsToDelete = state.selectedItems
@@ -172,11 +172,11 @@ extension BrowseFeature {
     /// Drops the rows a delete removed, keeps the ones the trash refused for the follow up
     /// prompt, and announces what went to the trash.
     func applyDeleteResult(_ state: inout State, _ result: DeleteResult) -> Effect<Action> {
-        var hadFavorited = false
+        var hasFavorited = false
         for itemID in result.removedIDs {
             state.items.remove(id: itemID)
             if state.favoritePaths.remove(itemID) != nil {
-                hadFavorited = true
+                hasFavorited = true
             }
         }
         state.keptDeletes = result.kept
@@ -189,12 +189,12 @@ extension BrowseFeature {
         if !result.removedIDs.isEmpty {
             syncListingCache(state)
         }
-        return hadFavorited ? .send(.delegate(.favoritesChanged)) : .none
+        return hasFavorited ? .send(.delegate(.favoritesChanged)) : .none
     }
 
-    /// Every selected directory is toggled, mirroring the single-item context-menu action:
-    /// already-favorited directories are removed, the rest are added. Best-effort per item,
-    /// matching the same philosophy the sign-out flow already uses elsewhere: one failure
+    /// Every selected directory is toggled, mirroring the single item context menu action:
+    /// already favorited directories are removed, the rest are added. Best effort per item,
+    /// matching the same philosophy the sign out flow already uses elsewhere: one failure
     /// shouldn't block toggling the rest.
     func startBulkFavorite(_ state: inout State) -> Effect<Action> {
         guard !state.isBulkActionInFlight else { return .none }

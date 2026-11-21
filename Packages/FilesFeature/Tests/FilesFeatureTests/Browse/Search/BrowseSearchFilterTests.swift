@@ -89,7 +89,7 @@ struct BrowseSearchFilterTests {
 
     @Test("The instant pre-fill keeps a selected category the current folder lacks, and so does the server answer")
     func theInstantPreFillDoesNotDropASelectedCategoryTheCurrentFolderLacks() async {
-        // The pre-fill only sees the current folder, so pruning the selection against it would
+        // The prefill only sees the current folder, so pruning the selection against it would
         // wrongly clear a category that the server's subtree contains and this folder does not.
         let videoHit = SearchResultItem(
             name: Constants.clip,

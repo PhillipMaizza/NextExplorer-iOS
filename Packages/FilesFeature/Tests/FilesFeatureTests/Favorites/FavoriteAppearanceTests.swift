@@ -22,8 +22,8 @@ struct FavoriteAppearanceTests {
     func favoriteColorResolvesPaletteEntriesAndArbitraryHex() {
         #expect(FavoriteColor.resolve(nil) == nil)
         #expect(FavoriteColor.resolve("") == nil)
-        #expect(FavoriteColor.resolve("#009CFF") != nil) // palette, case-insensitive
-        #expect(FavoriteColor.resolve("#123456") != nil) // off-palette but valid
+        #expect(FavoriteColor.resolve("#009CFF") != nil) // palette, case insensitive
+        #expect(FavoriteColor.resolve("#123456") != nil) // off palette but valid
         #expect(FavoriteColor.resolve("bogus") == nil)
     }
 

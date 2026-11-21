@@ -22,7 +22,7 @@ struct SettingsView: View {
     /// here, above every `.navigationDestination`, is the only spot a bottom overlay isn't
     /// occluded by a pushed screen, so those two views don't each need their own.
     @State private var userManagementToast: DSToastMessage?
-    /// View-local filter for the settings list: no reducer state needed, it only hides rows.
+    /// View local filter for the settings list: no reducer state needed, it only hides rows.
     @State private var settingsSearch = ""
 
     private var filter: SettingsSearchFilter {
@@ -58,7 +58,7 @@ struct SettingsView: View {
     }
 
     private var isConfirmingRemoveOffline: Binding<Bool> {
-        Binding(get: { store.removeOfflineConfirmationIsPresented }, set: { _ in })
+        Binding(get: { store.removeOfflinePhase.isConfirming }, set: { _ in })
     }
 
     /// The Mac shows Change Password as a window sheet (`AccountConfirmations`), opened from the
@@ -141,7 +141,7 @@ struct SettingsView: View {
                     title: L10n.Settings.navigationTitle,
                     searchText: $settingsSearch,
                     extraTopPadding: titleTopPadding,
-                    showsSearchField: false
+                    shouldShowSearchField: false
                 )
             }
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
@@ -213,7 +213,8 @@ struct SettingsView: View {
                 OfflineSettingsSection(store: store, filter: filter)
             })
         case .administration:
-            adminDestinations(SettingsSubpage(title: page.title) { SettingsServerAdminSection(store: store) })
+            SettingsSubpage(title: page.title) { SettingsServerAdminSection(store: store) }
+                .modifier(SettingsAdminDestinations(store: store))
         case .sharedFiles:
             SettingsSubpage(title: page.title) {
                 SettingsUploadDefaultsSection(
@@ -228,58 +229,6 @@ struct SettingsView: View {
         case .licenses:
             LicensesView()
         }
-    }
-
-    private func adminDestinations(_ content: some View) -> some View {
-        content
-            .navigationDestination(item: $store.scope(
-                state: \.thumbnailSettings,
-                action: \.thumbnailSettings
-            )) { thumbnailStore in
-                ThumbnailSettingsView(store: thumbnailStore)
-            }
-            .navigationDestination(item: $store.scope(
-                state: \.accessRules,
-                action: \.accessRules
-            )) { accessRulesStore in
-                AccessRulesView(store: accessRulesStore)
-            }
-            .navigationDestination(item: $store.scope(
-                state: \.uploadSettings,
-                action: \.uploadSettings
-            )) { uploadStore in
-                UploadSettingsView(store: uploadStore)
-            }
-            .navigationDestination(item: $store.scope(
-                state: \.ffmpegSettings,
-                action: \.ffmpegSettings
-            )) { ffmpegStore in
-                FFmpegSettingsView(store: ffmpegStore)
-            }
-            .navigationDestination(item: $store.scope(
-                state: \.searchIndexSettings,
-                action: \.searchIndexSettings
-            )) { searchIndexStore in
-                SearchIndexSettingsView(store: searchIndexStore)
-            }
-            .navigationDestination(item: $store.scope(
-                state: \.folderSizeSettings,
-                action: \.folderSizeSettings
-            )) { folderSizeStore in
-                FolderSizeSettingsView(store: folderSizeStore)
-            }
-            .navigationDestination(item: $store.scope(state: \.activityLog, action: \.activityLog)) { activityStore in
-                ActivityLogView(store: activityStore)
-            }
-            .navigationDestination(item: $store.scope(state: \.trashSettings, action: \.trashSettings)) { trashStore in
-                TrashSettingsView(store: trashStore)
-            }
-            .navigationDestination(item: $store.scope(
-                state: \.versionedFiles,
-                action: \.versionedFiles
-            )) { versionedStore in
-                VersionedFilesView(store: versionedStore)
-            }
     }
 
     /// Confirmations, sheets and the load task, attached once around the whole Settings UI.
@@ -372,16 +321,7 @@ struct SettingsView: View {
 private func settingsPreview(
     configureClient: @Sendable (inout FilesClient) -> Void = { _ in }
 ) -> some View {
-    let state = SettingsFeature.State(
-        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-        user: User(
-            id: "preview-user",
-            username: "jdoe",
-            email: "jane.doe@example.com",
-            displayName: "Jane Doe",
-            roles: [UserRole.admin]
-        )
-    )
+    let state = SettingsFeature.State.preview
     var client = FilesClient.previewValue
     configureClient(&client)
     return SettingsView(
@@ -394,7 +334,7 @@ private func settingsPreview(
 }
 
 // The default `.previewValue` reports `volumeUsage` enabled with two volumes, so the
-// server-storage section fills in from `onAppear` like the real thing.
+// server storage section fills in from `onAppear` like the real thing.
 #Preview {
     settingsPreview()
 }

@@ -628,7 +628,7 @@ settings.accountSignOut	साइन आउट
 settings.accountSignOutTitle	साइन आउट करें?
 settings.accountSignOutMessage	इस डिवाइस पर %@ को साइन आउट करें? इस खाते का उपयोग करने के लिए आपको फिर से साइन इन करना होगा.
 settings.accountChangeFailed	अभी आपके खाते नहीं बदले जा सके. कृपया फिर से कोशिश करें.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, सक्रिय खाता
 settings.badgeActive	सक्रिय
 
@@ -1321,3 +1321,4 @@ shareUpload.deferredBody#other	%lld बड़ी फ़ाइलें अपल
 shareUpload.failureTooLarge#one	%lld फ़ाइल अपलोड नहीं हुई। आपके सर्वर का कनेक्शन इतनी बड़ी फ़ाइलें मना करता है। इन्हें फिर से शेयर करें, NextExplorer इन्हें हिस्सों में भेजेगा।
 shareUpload.failureTooLarge#other	%lld फ़ाइलें अपलोड नहीं हुईं। आपके सर्वर का कनेक्शन इतनी बड़ी फ़ाइलें मना करता है। इन्हें फिर से शेयर करें, NextExplorer इन्हें हिस्सों में भेजेगा।
 shareUpload.startedDeferred	NextExplorer के लिए सहेजा गया। बड़ी फ़ाइलें अपलोड करने के लिए ऐप खोलें।
+menu.goToFolderPlaceholder	दस्तावेज़/रिपोर्ट

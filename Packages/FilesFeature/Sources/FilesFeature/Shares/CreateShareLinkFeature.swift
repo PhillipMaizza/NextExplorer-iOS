@@ -35,7 +35,7 @@ public struct CreateShareLinkFeature {
         public var password = ""
         public var isExpiryEnabled = false
         public var expiresAt: Date
-        /// Set once the user changes the expiry toggle or date, so a late-arriving
+        /// Set once the user changes the expiry toggle or date, so a late arriving
         /// preferences fetch doesn't stomp on their choice.
         var hasTouchedExpiry = false
 
@@ -45,14 +45,14 @@ public struct CreateShareLinkFeature {
         public var errorMessage: String?
         public var directLinkMode: DirectLinkMode = .auto
 
-        /// Shareable-users list, loaded the first time "Specific users" is chosen.
+        /// Shareable users list, loaded the first time "Specific users" is chosen.
         public var shareableUsers: IdentifiedArrayOf<User> = []
         public var selectedUserIDs: Set<User.ID> = []
         public var usersPhase: DataPhase = .idle
         /// Shared with `SharedFeature`: bumping it makes the Shared tab reload.
         @Shared(.inMemory(SharedFeature.revisionKey)) var shareLinksRevision = 0
 
-        public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date = Date()) {
+        public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date) {
             self.serverURL = serverURL
             self.itemName = itemName
             self.itemPath = itemPath

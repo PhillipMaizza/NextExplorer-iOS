@@ -1,6 +1,6 @@
 import Foundation
 
-/// A cookie-free view of one signed-in account, published by `AppFeature` for the Settings
+/// A cookie free view of one signed in account, published by `AppFeature` for the Settings
 /// account switcher to render. Deliberately carries no session cookie or token: the switcher only
 /// needs identity and which account is active, and secrets must not spread into the feature layer.
 public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
@@ -20,7 +20,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
         self.email = email
     }
 
-    /// `@Shared(.inMemory(...))` key holding the current signed-in account list.
+    /// `@Shared(.inMemory(...))` key holding the current signed in account list.
     public static let sharedKey = "signedInAccounts"
 
     public var serverHost: String {

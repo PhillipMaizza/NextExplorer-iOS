@@ -34,7 +34,7 @@ struct SharedSegmentList: View {
     }
 
     /// The card skeleton until this segment has been fetched once, then error / empty /
-    /// no-results / list.
+    /// no results / list.
     private var listPhase: ListPhase {
         .derive(
             hasError: errorMessage != nil,
@@ -89,7 +89,7 @@ struct SharedSegmentList: View {
         }
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        .syncRefreshFeedback(errorMessage: errorMessage, signalsErrorHaptic: false) {
+        .syncRefreshFeedback(errorMessage: errorMessage, shouldSignalErrorHaptic: false) {
             await store.send(.refreshRequested).finish()
         }
         .overlay {
@@ -102,8 +102,8 @@ struct SharedSegmentList: View {
                 pullOffset: pullOffset,
                 onRetry: { store.send(.refreshRequested) }
             )
+            .animation(DSMotion.contentReveal, value: listPhase)
         }
-        .animation(DSMotion.contentReveal, value: listPhase)
     }
 
     /// Redacted stand ins that sit in the same grouped `List` as the real rows (and the Mac
@@ -177,7 +177,7 @@ struct SharedSegmentList: View {
                     serverURL: store.serverURL,
                     isByMe: segment == .byMe,
                     isDeleting: item.shares.allSatisfy { store.deletingIDs.contains($0.id) },
-                    showsDivider: item.id != firstID,
+                    shouldShowDivider: item.id != firstID,
                     onTap: { store.send(.detailOpened(segment, item.id)) }
                 )
                 .listRowInsets(EdgeInsets())

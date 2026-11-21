@@ -21,7 +21,7 @@ private enum Constants {
     static let progressIDPrefix = "progress:"
 }
 
-/// A brief message overlaid at the bottom of the screen: either a self-dismissing warning
+/// A brief message overlaid at the bottom of the screen: either a self dismissing warning
 /// (e.g. "Unsupported file type") or a persistent progress indicator (e.g. "Extracting…")
 /// that stays until whoever's driving it clears the binding themselves.
 public struct DSToastMessage: Equatable, Identifiable {
@@ -38,11 +38,11 @@ public struct DSToastMessage: Equatable, Identifiable {
     public let actionTitle: String?
     public let action: (() -> Void)?
 
-    /// A brief, auto-dismissing warning-style toast.
+    /// A brief, auto dismissing warning style toast.
     public init(icon: Image, text: String) {
         // A fresh id per instance, not derived from `text`: `.task(id:)` below only restarts
-        // the auto-dismiss timer when `id` changes, so two identical-text toasts triggered
-        // back-to-back (e.g. tapping two different unsupported files in a row) need distinct
+        // the auto dismiss timer when `id` changes, so two identical text toasts triggered
+        // back to back (e.g. tapping two different unsupported files in a row) need distinct
         // ids or the second tap's toast silently inherits whatever time was left on the
         // first one's timer instead of a fresh window.
         id = UUID().uuidString
@@ -55,14 +55,14 @@ public struct DSToastMessage: Equatable, Identifiable {
         action = nil
     }
 
-    /// A persistent progress toast: no auto-dismiss timer at all, since there's no fixed
+    /// A persistent progress toast: no auto dismiss timer at all, since there's no fixed
     /// duration for e.g. an archive extract/compress to know in advance. Stays until the
     /// caller's own state (driving the binding) clears it.
     public static func progress(_ text: String) -> DSToastMessage {
         DSToastMessage(progressText: text)
     }
 
-    /// A brief, auto-dismissing success confirmation (e.g. "Saved to Documents"). `actionTitle`/
+    /// A brief, auto dismissing success confirmation (e.g. "Saved to Documents"). `actionTitle`/
     /// `action` add a trailing button (e.g. "Open"): omit both for a plain confirmation.
     public static func success(
         _ text: String,
@@ -72,7 +72,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         DSToastMessage(successText: text, actionTitle: actionTitle, action: action)
     }
 
-    /// A brief, auto-dismissing failure toast (warning icon, `.negative` background) with an
+    /// A brief, auto dismissing failure toast (warning icon, `.negative` background) with an
     /// optional trailing action: e.g. "Retry" on a copy/move that didn't go through.
     public static func failure(
         _ text: String,
@@ -264,7 +264,7 @@ private struct DSToastOverlay: View {
 }
 
 public extension View {
-    /// Shows `message` as a bottom toast while non-`nil`, auto-clearing the binding after a
+    /// Shows `message` as a bottom toast while not `nil`, auto clearing the binding after a
     /// few seconds. Set `message` to `nil` yourself to dismiss early. `extraBottomInset` lifts
     /// the toast above any of the screen's own bottom chrome (e.g. a breadcrumb bar) that a
     /// plain overlay wouldn't otherwise know to clear.

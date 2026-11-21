@@ -7,8 +7,8 @@ import SwiftUI
     import AppKit
 #endif
 
-/// The `…` / long-press action menu for one file or folder, shared by the Browse list rows and
-/// grid cells. Sends straight into `BrowseFeature`; the one piece of view-local state it can't
+/// The `…` / long press action menu for one file or folder, shared by the Browse list rows and
+/// grid cells. Sends straight into `BrowseFeature`; the one piece of view local state it can't
 /// own (the share sheet target) is handed back through `onShare`.
 struct FileActionsMenu: View {
     let store: StoreOf<BrowseFeature>
@@ -57,7 +57,7 @@ struct FileActionsMenu: View {
         // otherwise cascade into the menu and color every icon/label gold instead of the
         // system's normal label color: only removals and Delete stand out, in red.
         // Device content offers only actions on kept files.
-        if !store.showsDeviceContent {
+        if !store.shouldShowDeviceContent {
             Section { aboutActions }
         }
         Section { editActions }
@@ -118,7 +118,7 @@ struct FileActionsMenu: View {
             .tint(.primaryDS)
             // Extract only offers `.zip`: the server's own extract route 415s anything else
             // ("Only .zip archives are supported"), `.rar` included despite this app being
-            // able to browse rar contents client-side.
+            // able to browse rar contents client side.
             if item.kind.lowercased() == "zip" {
                 Button {
                     store.send(.extractZipTapped(item))
@@ -138,7 +138,7 @@ struct FileActionsMenu: View {
         // paste); move has to delete the original, so it mirrors the web client's
         // `canWrite && canDelete` gate. A lone root location has nowhere to go and can't be
         // left absent, so neither is offered for it.
-        if !isSoleRootLocation, !store.showsDeviceContent {
+        if !isSoleRootLocation, !store.shouldShowDeviceContent {
             Button {
                 store.send(.copyTapped(item), animation: DSMotion.listDiff)
             } label: {
@@ -185,7 +185,7 @@ struct FileActionsMenu: View {
     @ViewBuilder
     private var sendActions: some View {
         if store.access?.canDownload ?? false, SaveActionStyle.isAvailable(for: item.isDirectory),
-           !store.showsDeviceContent || isKept
+           !store.shouldShowDeviceContent || isKept
         {
             Button {
                 store.send(.downloadTapped(item))
@@ -194,7 +194,7 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
         }
-        if store.showsDeviceContent {
+        if store.shouldShowDeviceContent {
             if isKept, !item.isDirectory, BrowseFeature.State.canShareKeptFiles {
                 Button {
                     store.send(.keptShareTapped([item]))
@@ -217,7 +217,7 @@ struct FileActionsMenu: View {
     /// removal: red, like Delete.
     @ViewBuilder
     private var keepActions: some View {
-        if store.access?.canDownload ?? false, !store.showsDeviceContent || isKept {
+        if store.access?.canDownload ?? false, !store.shouldShowDeviceContent || isKept {
             // A file kept through a pinned folder removes that folder, after a confirmation naming it.
             let isRemoval = store.offlineItemIDs.contains(item.id)
             RemovableMenuButton(
@@ -229,7 +229,7 @@ struct FileActionsMenu: View {
             }
         }
         // Only folders can be favorited: the server 400s on anything else.
-        if item.isDirectory, !store.showsDeviceContent {
+        if item.isDirectory, !store.shouldShowDeviceContent {
             let isFavorite = store.favoritePaths.contains(item.id)
             RemovableMenuButton(
                 title: isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,
@@ -242,7 +242,7 @@ struct FileActionsMenu: View {
         }
     }
 
-    /// A top-level location (root screen) that is the only one there: it has nowhere to be
+    /// A top level location (root screen) that is the only one there: it has nowhere to be
     /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
     private var isSoleRootLocation: Bool {
         store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1

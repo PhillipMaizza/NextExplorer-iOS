@@ -32,7 +32,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         path.isEmpty ? name : "\(path)/\(name)"
     }
 
-    /// A cheap content fingerprint (modified date + byte size) used to key on-disk caches of
+    /// A cheap content fingerprint (modified date + byte size) used to key on disk caches of
     /// derived data: the preview/download cache staleness sidecars, and the thumbnail URL
     /// resolution cache. Two loads of an unchanged file produce the same value.
     public var cacheSignature: String {
@@ -58,15 +58,15 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     private static let nativelyPlayableVideoExtensions: Set<String> = ["mp4", "mov", "m4v"]
     private static let nativelyPlayableAudioExtensions: Set<String> = ["mp3", "wav", "aac", "m4a", "flac"]
     // Mirrors the web client's `archiveExts` (`frontend/src/icons/FileIcon.vue`): purely a
-    // client-side icon grouping, not a server-enforced list like the preview extensions above.
+    // client side icon grouping, not a server enforced list like the preview extensions above.
     private static let archiveExtensions: Set<String> = [
         "zip", "rar", "7z", "tar", "gz", "bz2", "xz", "tgz",
     ]
     // Extensions the server's own `/api/editor` route (`readTextFileBuffer` in
     // `backend/src/routes/editor.js`) would reject: it 415s videos outright and sniffs
-    // everything else for null/control bytes, but checking client-side avoids a round trip
+    // everything else for null/control bytes, but checking client side avoids a round trip
     // just to be told a `.exe` isn't text. Not exhaustive: genuinely unrecognized binary
-    // content still gets caught server-side by that same sniff.
+    // content still gets caught server side by that same sniff.
     // Rich documents outside the server's `PREVIEWABLE_EXTENSIONS` that QuickLook
     // (`QLPreviewController`) renders natively once the raw bytes are on disk: Word, Excel,
     // PowerPoint, the OpenDocument trio, and RTF. They come down via the unrestricted
@@ -92,7 +92,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     }
 
     /// RAW camera formats: `GET /api/preview` always converts these to a JPEG stream
-    /// server-side (`rawPreviewService`), regardless of the original extension.
+    /// server side (`rawPreviewService`), regardless of the original extension.
     public var isRawImage: Bool {
         Self.isRawImageKind(kind)
     }
@@ -109,17 +109,17 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         Self.isArchiveKind(kind)
     }
 
-    /// Archive formats this app can actually list the contents of client-side
+    /// Archive formats this app can actually list the contents of client side
     /// (`ZIPFoundation`/`Unrar.swift`): a strict subset of `isArchive`. The other archive
-    /// kinds (7z, tar, gz, bz2, xz, tgz) still get the folder-style icon, but tapping them
-    /// does nothing: no decoder for those, and the server has no listing-only endpoint either.
+    /// kinds (7z, tar, gz, bz2, xz, tgz) still get the folder style icon, but tapping them
+    /// does nothing: no decoder for those, and the server has no listing only endpoint either.
     public var isBrowsableArchive: Bool {
         lowercaseKind == "zip" || lowercaseKind == "rar"
     }
 
     /// SVGs are `isImage` (the server's own `PREVIEWABLE_EXTENSIONS` treats them as one) but
     /// unlike raster formats, `UIImage`/`AsyncImage` can't rasterize them: they need
-    /// `QLPreviewController`'s WebKit-backed renderer instead, same path as PDFs.
+    /// `QLPreviewController`'s WebKit backed renderer instead, same path as PDFs.
     public var isSVG: Bool {
         lowercaseKind == "svg"
     }
@@ -128,7 +128,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// these natively, but unlike images/PDF they're outside `PREVIEWABLE_EXTENSIONS`, so they
     /// come down via the generic `POST /api/download` (`FilesClient.downloadRawFile`), not
     /// `GET /api/preview`. Note the real path is `/api/download`, not `/api/files/download`:
-    /// the latter looks right by pattern-matching the backend's own `routes/files/download.js`
+    /// the latter looks right by pattern matching the backend's own `routes/files/download.js`
     /// filename, but that file is mounted at plain `/api` in `routes/index.js`. Got this wrong
     /// once already.
     public var isOfficeDocument: Bool {
@@ -189,7 +189,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
             .contains(lowercaseKind)
     }
 
-    /// Download-then-`QLPreviewController` kinds: images/RAW/PDF via `GET /api/preview`
+    /// Kinds that download, then open in `QLPreviewController`: images/RAW/PDF via `GET /api/preview`
     /// (`FilesClient.previewFile`), Word documents via the unrestricted
     /// `POST /api/files/download` (`FilesClient.downloadRawFile`) instead: see
     /// `isOfficeDocument`.
@@ -199,7 +199,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
 
     /// Whether tapping this file should attempt any preview/edit UI at all. `false` for
     /// archives and known binary formats: there's nothing useful to show, and for the
-    /// text-editor fallback specifically, no point round-tripping to `/api/editor` just to
+    /// text editor fallback specifically, no point round tripping to `/api/editor` just to
     /// have the server reject it as binary.
     public var isPreviewable: Bool {
         isStreamableMedia || isPreviewableViaDownload ||
@@ -207,7 +207,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     }
 
     /// The single source of truth for "tapping this should show a toast instead of opening
-    /// anything": shared by the top-level browse list and `ArchiveBrowserView`'s in-archive
+    /// anything": shared by the top level browse list and `ArchiveBrowserView`'s in archive
     /// rows, so the two don't drift on what counts as unsupported.
     public var isUnsupportedForPreview: Bool {
         // Non native media is no longer unsupported: `VLCPlayerView` handles the containers and

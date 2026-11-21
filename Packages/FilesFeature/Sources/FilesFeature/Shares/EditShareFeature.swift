@@ -40,7 +40,7 @@ public struct EditShareFeature {
         public var target: ShareTarget
         public var expiryPreset: ExpiryPreset
         public var expiresAt: Date
-        public var wantsPassword: Bool
+        public var isPasswordEnabled: Bool
         public var newPassword = ""
 
         public var shareableUsers: IdentifiedArrayOf<User> = []
@@ -59,14 +59,14 @@ public struct EditShareFeature {
 
         /// The label opens filled with the share's name. An expired share opens on Custom with a
         /// fresh date a week out, so bringing it back is one tap on Save.
-        public init(serverURL: URL, share: Share, now: Date = Date()) {
+        public init(serverURL: URL, share: Share, now: Date) {
             self.serverURL = serverURL
             self.share = share
             openedAt = now
             label = share.displayName
             accessMode = share.accessMode
             target = share.sharingType
-            wantsPassword = share.hasPassword
+            isPasswordEnabled = share.hasPassword
             selectedUserIDs = Set(share.permittedUserIds ?? [])
             let defaultExpiry = now.addingTimeInterval(CreateShareLinkFeature.defaultExpiryDays * Self.secondsPerDay)
             let opened: (preset: ExpiryPreset, date: Date) = switch share.expiresAt {
@@ -128,7 +128,7 @@ public struct EditShareFeature {
                 || accessMode != share.accessMode
                 || target != share.sharingType
                 || isPeopleChanged
-                || wantsPassword != share.hasPassword
+                || isPasswordEnabled != share.hasPassword
                 || !newPassword.isEmpty
         }
 
@@ -152,10 +152,10 @@ public struct EditShareFeature {
         /// What to do with the password on save. A field left blank with the toggle still on keeps
         /// the current password; turning the toggle off on a protected share removes it.
         var passwordChange: UpdateShareRequest.PasswordChange {
-            if wantsPassword, !newPassword.isEmpty {
+            if isPasswordEnabled, !newPassword.isEmpty {
                 return .set(newPassword)
             }
-            if !wantsPassword, share.hasPassword {
+            if !isPasswordEnabled, share.hasPassword {
                 return .remove
             }
             return .keep
@@ -233,7 +233,7 @@ public struct EditShareFeature {
                 return .none
 
             case let .wantsPasswordChanged(isOn):
-                state.wantsPassword = isOn
+                state.isPasswordEnabled = isOn
                 if !isOn {
                     state.newPassword = ""
                     clear(.passwordRequired, in: &state)
@@ -282,7 +282,7 @@ public struct EditShareFeature {
 
             case .saveTapped:
                 guard state.isSaveEnabled else { return .none }
-                if state.wantsPassword, !state.share.hasPassword, state.newPassword.isEmpty {
+                if state.isPasswordEnabled, !state.share.hasPassword, state.newPassword.isEmpty {
                     state.fieldError = .passwordRequired
                     return .none
                 }

@@ -23,7 +23,7 @@ struct OfflineSettingsSection: View {
     let filter: SettingsSearchFilter
     @AppStorage(AppStorageKeys.preferOfflineMedia) private var shouldPreferOfflineMedia = true
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var statusPulse = false
+    @State private var isStatusPulsing = false
 
     private var progress: OfflineDownloadProgress {
         store.offlineProgress
@@ -125,9 +125,9 @@ struct OfflineSettingsSection: View {
                     ? nil
                     : DSMotion.pulse(duration: Constants.statusPulseDuration))
                 {
-                    $0.opacity(statusPulse ? Constants.statusPulseOpacity : 1)
+                    $0.opacity(isStatusPulsing ? Constants.statusPulseOpacity : 1)
                 }
-                .onAppear { statusPulse = true }
+                .onAppear { isStatusPulsing = true }
             if progress.phase == .preparing {
                 // No count yet while we walk the folders: an indeterminate shimmer reads as "working".
                 Capsule()

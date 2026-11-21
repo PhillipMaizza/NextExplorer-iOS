@@ -6,7 +6,7 @@ import Foundation
 /// the browser), not render the JSON in the text viewer.
 public enum GoogleDocsPointer {
     /// Extensions Drive uses for these stubs. Every one is a small UTF-8 JSON file with a
-    /// top-level `url`.
+    /// top level `url`.
     public static let extensions: Set<String> = [
         "gdoc", "gsheet", "gslides", "gdraw", "gform", "gtable", "gmap", "gsite", "gjam", "glink",
     ]

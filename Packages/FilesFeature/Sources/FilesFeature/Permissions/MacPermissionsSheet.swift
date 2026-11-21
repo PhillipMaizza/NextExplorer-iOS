@@ -76,7 +76,7 @@
                                 .labelsHidden()
                                 .toggleStyle(.checkbox)
                                 .frame(width: Metrics.gridColumnWidth)
-                                .accessibilityLabel("\(title) \(rightTitle)")
+                                .accessibilityLabel(L10n.Common.pair(title, rightTitle))
                             }
                         }
                     }

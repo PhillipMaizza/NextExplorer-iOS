@@ -18,10 +18,10 @@
 
         private var appearance: Binding<AppearanceMode> {
             Binding(
-                get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: isDarkAppearanceOverride) },
+                get: { AppearanceMode(hasOverride: hasAppearanceOverride, isDark: isDarkAppearanceOverride) },
                 set: { mode in
                     hasAppearanceOverride = mode.hasOverride
-                    isDarkAppearanceOverride = mode.prefersDark
+                    isDarkAppearanceOverride = mode.isDark
                 }
             )
         }

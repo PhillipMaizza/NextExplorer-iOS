@@ -84,7 +84,7 @@ private struct AccountPopover: View {
             }
             #if os(iOS)
                 // The Mac keeps the second factor in its Settings window.
-                if store.showsTwoFactorRow {
+                if store.shouldShowTwoFactorRow {
                     PopoverActionRow(title: L10n.TwoFactor.navigationTitle, icon: IconKit.shield) {
                         dismissThen {
                             revealSettings()
@@ -94,7 +94,7 @@ private struct AccountPopover: View {
                     .accessibilityIdentifier(AccessibilityIdentifiers.Settings.twoFactorRow)
                 }
             #endif
-            if store.showsPasswordRow {
+            if store.shouldShowPasswordRow {
                 PopoverActionRow(
                     title: L10n.Settings.rowChangePassword,
                     icon: IconKit.key,
@@ -208,7 +208,7 @@ private struct AccountRow: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(account.isActive
             ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
-            : L10n.Settings.accountLabel(account.displayName, account.serverHost))
+            : L10n.Common.pair(account.displayName, account.serverHost))
             .accessibilityAddTraits(account.isActive ? .isSelected : .isButton)
             // The tap gesture is pointer only; VoiceOver's press switches like a click does.
             .accessibilityAction {

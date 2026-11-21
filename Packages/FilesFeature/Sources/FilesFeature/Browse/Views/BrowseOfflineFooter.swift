@@ -42,3 +42,11 @@ struct BrowseOfflineFooter: View {
         #endif
     }
 }
+
+#Preview("Saved copy") {
+    BrowseOfflineFooter(dataSource: .cached(fetchedAt: .now.addingTimeInterval(-3600)))
+}
+
+#Preview("Live") {
+    BrowseOfflineFooter(dataSource: .live)
+}

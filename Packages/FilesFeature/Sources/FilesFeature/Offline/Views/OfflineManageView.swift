@@ -5,7 +5,7 @@ import FilesClient
 import Localization
 import SwiftUI
 
-/// The "Manage Offline Files" screen: one row per pinned root with its size and a swipe-to-remove.
+/// The "Manage Offline Files" screen: one row per pinned root with its size and a swipe to remove.
 struct OfflineManageView: View {
     @Bindable var store: StoreOf<OfflineManageFeature>
 
@@ -101,7 +101,7 @@ struct OfflineManageRow: View {
                 showThumbnails: showThumbnails,
                 customIcon: favorite.map { FavoriteIcon.symbol(for: $0.icon) },
                 customIconTint: favorite.flatMap { FavoriteColor.resolve($0.color) },
-                customIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,
+                isCustomIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,
                 matchedSource: matchedSource
             )
         } trailingSwipe: {

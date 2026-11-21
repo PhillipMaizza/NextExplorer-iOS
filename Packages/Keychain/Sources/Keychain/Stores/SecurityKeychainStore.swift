@@ -16,13 +16,13 @@ extension KeychainStore {
     }
 }
 
-/// Thin wrapper over `Security`'s generic-password item calls. Not a singleton: callers
+/// Thin wrapper over `Security`'s generic password item calls. Not a singleton: callers
 /// construct one with an explicit `KeychainConfiguration` and hand it to `KeychainClient`.
 struct SecurityKeychainStore: KeychainStore {
     let configuration: KeychainConfiguration
     /// macOS only: the data protection keychain (the iOS style one, device bound, no access
     /// prompts) instead of the legacy file keychain. iOS only has the former.
-    var usesDataProtectionKeychain = false
+    var shouldUseDataProtectionKeychain = false
 
     func save(key: String, data: Data) throws {
         var query = baseQuery(for: key)
@@ -106,9 +106,9 @@ struct SecurityKeychainStore: KeychainStore {
             // Always explicit on the Mac: with keychain access groups in the entitlements, a query
             // that leaves this out goes to the data protection keychain too, so clearing the legacy
             // copy after a save deleted the item that had just been saved there.
-            query[kSecUseDataProtectionKeychain] = usesDataProtectionKeychain
+            query[kSecUseDataProtectionKeychain] = shouldUseDataProtectionKeychain
         #else
-            if usesDataProtectionKeychain {
+            if shouldUseDataProtectionKeychain {
                 query[kSecUseDataProtectionKeychain] = true
             }
         #endif

@@ -16,7 +16,7 @@ public struct DeleteImpact: Decodable, Equatable, Sendable {
     }
 
     /// Whether a delete of these items would send any of them to the trash.
-    public var movesAnyToTrash: Bool {
+    public var hasTrashBoundItems: Bool {
         (trash?.trashCount ?? 0) > 0
     }
 
@@ -44,7 +44,7 @@ public struct DeleteImpact: Decodable, Equatable, Sendable {
         }
 
         public var trashCount: Int {
-            items.count(where: \.goesToTrash)
+            items.count(where: \.isTrashBound)
         }
 
         public var permanentCount: Int {
@@ -54,7 +54,7 @@ public struct DeleteImpact: Decodable, Equatable, Sendable {
         /// The distinct reasons the items that skip the trash give, in the order they first appear.
         public var permanentReasons: [TrashRefusal] {
             var seen: [TrashRefusal] = []
-            for item in items where !item.goesToTrash {
+            for item in items where !item.isTrashBound {
                 if let reason = item.reason, !seen.contains(reason) {
                     seen.append(reason)
                 }
@@ -66,13 +66,13 @@ public struct DeleteImpact: Decodable, Equatable, Sendable {
     public struct Disposition: Decodable, Equatable, Sendable {
         public let path: String
         /// `disposition` is `trash`; anything else, an unknown value included, is read as gone for good.
-        public let goesToTrash: Bool
+        public let isTrashBound: Bool
         public let reason: TrashRefusal?
         public let shareCount: Int
 
-        public init(path: String, goesToTrash: Bool, reason: TrashRefusal? = nil, shareCount: Int = 0) {
+        public init(path: String, isTrashBound: Bool, reason: TrashRefusal? = nil, shareCount: Int = 0) {
             self.path = path
-            self.goesToTrash = goesToTrash
+            self.isTrashBound = isTrashBound
             self.reason = reason
             self.shareCount = shareCount
         }
@@ -84,7 +84,7 @@ public struct DeleteImpact: Decodable, Equatable, Sendable {
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             path = try container.decode(String.self, forKey: .path)
-            goesToTrash = try container.decodeIfPresent(String.self, forKey: .disposition) == "trash"
+            isTrashBound = try container.decodeIfPresent(String.self, forKey: .disposition) == "trash"
             reason = try container.decodeIfPresent(String.self, forKey: .reason).map(TrashRefusal.init(serverValue:))
             shareCount = try container.decodeIfPresent(Int.self, forKey: .shareCount) ?? 0
         }

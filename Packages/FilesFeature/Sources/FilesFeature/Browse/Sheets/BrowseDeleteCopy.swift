@@ -42,18 +42,18 @@ enum BrowseDeleteCopy {
         onDeletePermanently: @escaping () -> Void,
         onDismiss: @escaping () -> Void
     ) -> DSAlertSheet {
-        let movesToTrash = impact(check)?.movesAnyToTrash ?? false
+        let isTrashBound = impact(check)?.hasTrashBoundItems ?? false
         return DSAlertSheet(
             icon: IconKit.delete,
             title: title,
             message: message(check),
-            confirmTitle: movesToTrash ? L10n.Trash.moveToTrash : L10n.Common.delete,
+            confirmTitle: isTrashBound ? L10n.Trash.moveToTrash : L10n.Common.delete,
             dismissTitle: L10n.Common.cancel,
-            neutralTitle: movesToTrash ? L10n.Trash.deletePermanently : nil,
+            neutralTitle: isTrashBound ? L10n.Trash.deletePermanently : nil,
             role: .destructive,
             closeAccessibilityLabel: L10n.Common.close,
             onConfirm: onConfirm,
-            onNeutral: movesToTrash ? onDeletePermanently : nil,
+            onNeutral: isTrashBound ? onDeletePermanently : nil,
             onDismiss: onDismiss
         )
     }
@@ -106,7 +106,7 @@ enum BrowseDeleteCopy {
 
     private static func shareLine(_ check: BrowseFeature.DeleteImpactCheck) -> String? {
         switch check {
-        case let .loaded(impact) where impact.shareCount > 0 && impact.movesAnyToTrash:
+        case let .loaded(impact) where impact.shareCount > 0 && impact.hasTrashBoundItems:
             L10n.Trash.deleteLinkedShares(impact.shareCount)
         case let .loaded(impact) where impact.shareCount == 1:
             L10n.Browse.deleteLinkedSharesOne

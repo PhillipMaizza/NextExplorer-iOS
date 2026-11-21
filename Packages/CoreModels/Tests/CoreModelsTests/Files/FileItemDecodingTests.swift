@@ -156,7 +156,7 @@ struct FileItemDecodingTests {
         "happy path: previewable kinds (native and VLC media, downloadable, plain text, browsable archives) are never flagged unsupported"
     )
     func supportedKindsAreNotUnsupportedForPreview() {
-        // Includes the VLC-only containers (mkv, webm, avi, ogg, wma): they play through
+        // Includes the VLC only containers (mkv, webm, avi, ogg, wma): they play through
         // VLCPlayerView, so they are previewable and must never report unsupported.
         for kind in [
             "mp4",

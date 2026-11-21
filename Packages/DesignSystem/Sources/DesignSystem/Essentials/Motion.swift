@@ -6,12 +6,12 @@ import SwiftUI
 #endif
 
 /// Shared animation tokens for list screens, so Browse / Favorites / Downloads / Shared
-/// cross-fade and reorder identically instead of each carrying its own copy of the numbers.
+/// cross fade and reorder identically instead of each carrying its own copy of the numbers.
 public enum DSMotion {
-    /// Skeleton → content (and any list-state) cross-fade.
+    /// Skeleton → content (and any list state) cross fade.
     public static let contentRevealDuration: Double = 0.3
 
-    /// The cross-fade animation itself.
+    /// The cross fade animation itself.
     public static var contentReveal: Animation {
         .easeInOut(duration: contentRevealDuration)
     }

@@ -12,7 +12,7 @@ final class SystemShareModel {
     /// The file to hand to the share sheet; set once it is on disk.
     var shareURL: IdentifiedURL?
     private(set) var isPreparing = false
-    private(set) var didFail = false
+    private(set) var hasFailed = false
 
     @ObservationIgnored
     @Dependency(\.filesClient) private var filesClient
@@ -30,7 +30,7 @@ final class SystemShareModel {
         case let .remote(item, serverURL):
             guard !isPreparing else { return }
             isPreparing = true
-            didFail = false
+            hasFailed = false
             let filesClient = filesClient
             download = Task {
                 // Through `apiResult`, so a 401 signs the user out like every other request; a
@@ -45,7 +45,7 @@ final class SystemShareModel {
                 case let .success(url):
                     shareURL = IdentifiedURL(url: url)
                 case .failure:
-                    didFail = true
+                    hasFailed = true
                 }
             }
         }
@@ -60,6 +60,6 @@ final class SystemShareModel {
     }
 
     func clearFailure() {
-        didFail = false
+        hasFailed = false
     }
 }

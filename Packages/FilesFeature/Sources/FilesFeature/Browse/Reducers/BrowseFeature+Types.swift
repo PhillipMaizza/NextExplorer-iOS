@@ -19,7 +19,7 @@ public extension BrowseFeature {
         /// "Name (2)" missing until a manual refresh.
         static let arrivalRechecks = 3
         static let arrivalRecheckDelay: Duration = .milliseconds(700)
-        /// An action taken from a full-screen preview that also dismisses the cover (delete,
+        /// An action taken from a full screen preview that also dismisses the cover (delete,
         /// "Open" on the download toast, "View in Shared") waits this long before it runs, so the
         /// cover finishes dismissing first and the effect: a row sliding out, a tab switch:
         /// plays on the list the user is now looking at, not mid transition.
@@ -39,7 +39,7 @@ public extension BrowseFeature {
     }
 
     /// Where `.searchable`'s scope bar points the search request. "This Folder" is
-    /// answered instantly from `items`, already loaded client-side, so no network round
+    /// answered instantly from `items`, already loaded client side, so no network round
     /// trip or debounce is needed. "Everywhere" mirrors the web client's own root search
     /// (`backend/src/routes/search.js`) and still needs one.
     enum SearchScope: Hashable, Sendable, CaseIterable {
@@ -186,33 +186,33 @@ public extension BrowseFeature {
     struct TransferOutcome: Equatable, Sendable {
         public let result: TransferResult
         public let operation: TransferOperation
-        public let clearClipboard: Bool
+        public let shouldClearClipboard: Bool
     }
 
-    /// Everything needed to re-run a failed transfer from the "Retry" action on its toast, and
-    /// to remember how a name-collision prompt was answered so a retry doesn't ask again.
+    /// Everything needed to rerun a failed transfer from the "Retry" action on its toast, and
+    /// to remember how a name collision prompt was answered so a retry doesn't ask again.
     struct TransferRetry: Equatable, Sendable {
         /// How a name collision at the destination should be handled. `.ask` means the check
-        /// hasn't run yet; `.keepBoth` lets the server auto-rename (`file (1).txt`); `.replace`
+        /// hasn't run yet; `.keepBoth` lets the server auto rename (`file (1).txt`); `.replace`
         /// deletes `itemsToReplace` first, then transfers onto the freed names.
         public enum Resolution: Equatable, Sendable { case ask, keepBoth, replace }
 
         public let items: [FileItem]
         public let destination: String
         public let operation: TransferOperation
-        public let clearClipboard: Bool
+        public let shouldClearClipboard: Bool
         public var resolution: Resolution = .ask
         public var itemsToReplace: [FileItem] = []
 
         func resolved(_ resolution: Resolution, replacing itemsToReplace: [FileItem] = []) -> TransferRetry {
             TransferRetry(
                 items: items, destination: destination, operation: operation,
-                clearClipboard: clearClipboard, resolution: resolution, itemsToReplace: itemsToReplace
+                shouldClearClipboard: shouldClearClipboard, resolution: resolution, itemsToReplace: itemsToReplace
             )
         }
     }
 
-    /// A pending transfer that's blocked on the user answering a name-collision prompt.
+    /// A pending transfer that's blocked on the user answering a name collision prompt.
     struct TransferConflict: Equatable, Sendable {
         public let retry: TransferRetry
         /// The destination items that share a name with something being transferred: deleted
@@ -227,7 +227,7 @@ public extension BrowseFeature {
         }
     }
 
-    /// The answer to a name-collision prompt. `nil` (in the action payload) is "Cancel".
+    /// The answer to a name collision prompt. `nil` (in the action payload) is "Cancel".
     enum TransferConflictChoice: Equatable, Sendable { case replace, keepBoth }
 
     /// Where the currently displayed listing came from.

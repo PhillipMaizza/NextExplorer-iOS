@@ -672,7 +672,7 @@ settings.accountSignOut	تسجيل الخروج
 settings.accountSignOutTitle	تسجيل الخروج؟
 settings.accountSignOutMessage	تسجيل خروج %@ من هذا الجهاز؟ ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام هذا الحساب.
 settings.accountChangeFailed	تعذّر تغيير حساباتك الآن. يُرجى المحاولة مرة أخرى.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, الحساب النشط
 settings.badgeActive	نشط
 
@@ -1465,3 +1465,4 @@ shareUpload.failureTooLarge#few	لم يتم رفع %lld ملفات. اتصال �
 shareUpload.failureTooLarge#many	لم يتم رفع %lld ملفًا. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
 shareUpload.failureTooLarge#other	لم يتم رفع %lld ملف. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
 shareUpload.startedDeferred	تم الحفظ لـ NextExplorer. افتح التطبيق لرفع ملفاتك الكبيرة.
+menu.goToFolderPlaceholder	المستندات/التقارير

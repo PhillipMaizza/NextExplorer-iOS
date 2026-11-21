@@ -1,7 +1,7 @@
 import CoreModels
 import Foundation
 
-/// Wire types for the file-operation endpoints (rename, folder, zip, editor, delete, transfer).
+/// Wire types for the file operation endpoints (rename, folder, zip, editor, delete, transfer).
 /// See `FilesService+FileOperations.swift`.
 extension FilesService {
     struct RenameItemBody: Encodable {

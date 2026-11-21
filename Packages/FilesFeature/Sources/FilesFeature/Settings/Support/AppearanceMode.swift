@@ -13,9 +13,9 @@ public enum AppearanceMode: String, CaseIterable, Identifiable, Sendable {
         rawValue
     }
 
-    public init(hasOverride: Bool, prefersDark: Bool) {
+    public init(hasOverride: Bool, isDark: Bool) {
         if hasOverride {
-            self = prefersDark ? .dark : .light
+            self = isDark ? .dark : .light
         } else {
             self = .system
         }
@@ -33,7 +33,7 @@ public enum AppearanceMode: String, CaseIterable, Identifiable, Sendable {
         self != .system
     }
 
-    public var prefersDark: Bool {
+    public var isDark: Bool {
         self == .dark
     }
 

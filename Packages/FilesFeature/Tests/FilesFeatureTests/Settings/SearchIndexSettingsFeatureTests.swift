@@ -77,7 +77,7 @@ struct SearchIndexSettingsFeatureTests {
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
             $0.lockedBy = "SEARCH_INDEX"
-            $0.effectiveIsEnabled = true
+            $0.isEffectivelyEnabled = true
             $0.loaded = loaded
             $0.draftPaths = ["Backups"]
         }
@@ -100,7 +100,7 @@ struct SearchIndexSettingsFeatureTests {
         }
 
         #expect(store.state.lockedBy == nil)
-        #expect(store.state.effectiveIsEnabled == nil)
+        #expect(store.state.isEffectivelyEnabled == nil)
         #expect(store.state.isEnabled)
     }
 
@@ -111,7 +111,7 @@ struct SearchIndexSettingsFeatureTests {
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
-            $0.effectiveIsEnabled = false
+            $0.isEffectivelyEnabled = false
             $0.isUnavailable = true
         }
     }
@@ -140,7 +140,7 @@ struct SearchIndexSettingsFeatureTests {
 
         await store.send(.onAppear)
         await store.receive(\.loadResponse.success) {
-            $0.effectiveIsEnabled = false
+            $0.isEffectivelyEnabled = false
             $0.loaded = SearchIndexSettings(isEnabled: false, excluded: ExcludedPaths(paths: ["a", "server"]))
         }
 
@@ -176,7 +176,7 @@ struct SearchIndexSettingsFeatureTests {
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
             $0.lockedBy = "SEARCH_INDEX"
-            $0.effectiveIsEnabled = true
+            $0.isEffectivelyEnabled = true
             $0.loaded = loaded
         }
 
@@ -199,7 +199,7 @@ struct SearchIndexSettingsFeatureTests {
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
             $0.isSaving = false
             $0.loaded = echoed
-            $0.effectiveIsEnabled = true
+            $0.isEffectivelyEnabled = true
         }
         await store.receive(.delegate(.saved))
 
@@ -265,7 +265,7 @@ struct SearchIndexSettingsFeatureTests {
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
             $0.isSaving = false
             $0.loaded = echoed
-            $0.effectiveIsEnabled = true
+            $0.isEffectivelyEnabled = true
         }
         await store.receive(.delegate(.saved))
 
@@ -276,7 +276,7 @@ struct SearchIndexSettingsFeatureTests {
     @Test
     func theSwitchFollowsTheSavedValueAndAPathsSaveLeavesItAlone() async {
         var state = loadedState(settings(enabled: true))
-        state.effectiveIsEnabled = true
+        state.isEffectivelyEnabled = true
         let echoed = settings(enabled: false)
         let store = store(state: state, update: { _ in SystemSettings(searchIndex: echoed) })
 
@@ -284,7 +284,7 @@ struct SearchIndexSettingsFeatureTests {
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
             $0.isSaving = false
             $0.loaded = echoed
-            $0.effectiveIsEnabled = false
+            $0.isEffectivelyEnabled = false
         }
         await store.receive(.delegate(.saved))
 

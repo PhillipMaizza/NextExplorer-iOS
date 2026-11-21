@@ -22,7 +22,7 @@ public struct AuthClient: Sendable {
     /// instead of looking like "no account", so the Share Extension can tell a signed out user
     /// from a session it can't reach. `nil` still means nothing is stored.
     public var loadSession: @Sendable () async throws -> SessionCredentials?
-    /// Every signed-in account, active first is not guaranteed; callers match `activeAccountID`.
+    /// Every signed in account, active first is not guaranteed; callers match `activeAccountID`.
     public var listSessions: @Sendable () async -> [SessionCredentials] = { [] }
     /// Like `listSessions`, but a keychain that can't be read throws `AuthClientError.keychain`
     /// instead of looking like "no accounts". Callers that delete data for every account not in the
@@ -30,11 +30,11 @@ public struct AuthClient: Sendable {
     public var listSessionsOrThrow: @Sendable () async throws -> [SessionCredentials] = { [] }
     /// The `accountID` of the active account, or `nil` when none.
     public var activeAccountID: @Sendable () async -> String?
-    /// Switches the active account and installs its cookie (no re-authentication). Returns the
+    /// Switches the active account and installs its cookie (no reauthentication). Returns the
     /// now active credentials, or `nil` if the id is unknown. A keychain that can't be read throws
     /// `AuthClientError.keychain` and changes nothing.
     public var switchAccount: @Sendable (_ accountID: String) async throws -> SessionCredentials?
-    /// Signs one account out: best-effort server logout, drops its stored credentials and cookie,
+    /// Signs one account out: best effort server logout, drops its stored credentials and cookie,
     /// and returns whatever account is active afterwards (`nil` when none remain). A keychain that
     /// can't be read throws `AuthClientError.keychain` and changes nothing, instead of reading as
     /// "no account left".

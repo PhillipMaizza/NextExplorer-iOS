@@ -19,8 +19,8 @@ enum SafeDestination {
 /// Renders HTML as a real compiled page: the "Rendered" side of the Settings "HTML Files"
 /// toggle. `loadHTMLString(_:baseURL:)` alone can't resolve relative `<link href>`/`<script
 /// src>` references (there's no real base URL, the content is a fetched string, not a local
-/// file): so `resolveAsset` fetches same-folder assets first (from the server or, for
-/// archive-internal HTML, from the same open archive: see the two call sites), writes
+/// file): so `resolveAsset` fetches same folder assets first (from the server or, for
+/// archive internal HTML, from the same open archive: see the two call sites), writes
 /// everything into one local directory, and loads via `loadFileURL` instead, which does
 /// resolve relative paths against its neighbors on disk.
 struct HTMLRenderedView: View {
@@ -109,8 +109,8 @@ struct HTMLRenderedView: View {
     }
 
     /// Every `href="..."`/`src="..."` value that isn't already absolute (`http(s)://`,
-    /// protocol-relative `//`, `data:`, `mailto:`) or an in-page anchor (`#section`); the
-    /// same-folder assets a fetched HTML string alone has no way to reach.
+    /// protocol relative `//`, `data:`, `mailto:`) or an in page anchor (`#section`); the
+    /// same folder assets a fetched HTML string alone has no way to reach.
     nonisolated static func relativeAssetPaths(in html: String) -> [String] {
         guard let regex = try? NSRegularExpression(
             pattern: #"(?:href|src)\s*=\s*["']([^"'#][^"']*)["']"#,
@@ -129,9 +129,9 @@ struct HTMLRenderedView: View {
     }
 }
 
-/// Resolves a relative (or root-absolute) asset reference against a file's own containing
-/// folder: shared by the server-backed and archive-backed `resolveAsset` closures so the
-/// same path-joining logic (and the same root-absolute-becomes-folder-relative heuristic)
+/// Resolves a relative (or root absolute) asset reference against a file's own containing
+/// folder: shared by the server backed and archive backed `resolveAsset` closures so the
+/// same path joining logic (and the same root absolute becomes folder relative heuristic)
 /// isn't duplicated between them.
 enum RelativeAssetPath {
     /// - Parameters:
@@ -141,8 +141,8 @@ enum RelativeAssetPath {
     /// - Returns: `(parent, name)` split of the resolved path, or `nil` if it resolves to
     ///   nothing sensible (e.g. an empty reference).
     static func resolve(_ relativePath: String, relativeTo directory: String) -> (parent: String, name: String)? {
-        // Root-absolute references have no real site root to anchor to here: treat them as
-        // relative to the file's own folder, the same heuristic a typical single-folder
+        // Root absolute references have no real site root to anchor to here: treat them as
+        // relative to the file's own folder, the same heuristic a typical single folder
         // static site upload effectively already assumes.
         let cleanedReference = relativePath.hasPrefix("/") ? String(relativePath.dropFirst()) : relativePath
         // `URL(fileURLWithPath:)` resolves a relative path against the process's working

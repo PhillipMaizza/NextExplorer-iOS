@@ -49,7 +49,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     public let label: String?
     public let downloadCount: Int
     public let lastAccessedAt: Date?
-    /// The users a `.users` share is granted to: the owner-side lists (`GET /api/shares`,
+    /// The users a `.users` share is granted to: the owner side lists (`GET /api/shares`,
     /// `GET /api/shares/:id`) add this; nil for `.anyone` shares and the recipient list.
     public let permittedUserIds: [String]?
     public let createdAt: Date
@@ -120,7 +120,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 
-    /// `owner_id` follows the same unconfirmed int-vs-string shape as `User.id`.
+    /// `owner_id` follows the same unconfirmed int vs string shape as `User.id`.
     private static func decodeStringOrInt(
         _ container: KeyedDecodingContainer<CodingKeys>,
         forKey key: CodingKeys
@@ -131,8 +131,8 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         return try String(container.decode(Int.self, forKey: key))
     }
 
-    /// Explicit label, else the recipient-only leaf name, else the last component of the
-    /// owner-side path, else the token.
+    /// Explicit label, else the recipient only leaf name, else the last component of the
+    /// owner side path, else the token.
     public var displayName: String {
         if let label, !label.isEmpty {
             return label

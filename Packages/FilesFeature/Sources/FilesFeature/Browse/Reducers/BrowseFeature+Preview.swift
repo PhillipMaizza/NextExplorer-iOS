@@ -32,7 +32,7 @@ extension BrowseFeature {
         .cancellable(id: CancelID.info, cancelInFlight: true)
     }
 
-    /// Only reached for non-streamable items: `rowTapped` already set `state.previewItem`
+    /// Only reached for non streamable items: `rowTapped` already set `state.previewItem`
     /// and skipped this for video/audio, which play live instead of downloading.
     func loadPreview(_ state: inout State, item: FileItem) -> Effect<Action> {
         state.previewFileURL = nil
@@ -102,7 +102,7 @@ extension BrowseFeature {
 extension BrowseFeature.State {
     /// The cover shows the text editor instead of the gallery: a file New File just made, a Google
     /// Drive stub whose link could not be read, or a text file the gallery's Edit handed over.
-    var showsTextEditor: Bool {
+    var shouldShowTextEditor: Bool {
         guard let item = previewItem else { return false }
         return isPreviewEditing || newlyCreatedFileID == item.id || item.isGoogleDocsPointer
     }
@@ -111,7 +111,7 @@ extension BrowseFeature.State {
     /// neighbour. iPhone and iPad page through every file; the Mac steps with the arrow keys and
     /// pages only its images.
     var isPreviewInGallery: Bool {
-        guard let item = previewItem, !showsTextEditor else { return false }
+        guard let item = previewItem, !shouldShowTextEditor else { return false }
         #if os(iOS)
             return true
         #else

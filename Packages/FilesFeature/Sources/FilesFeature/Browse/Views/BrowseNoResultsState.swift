@@ -64,3 +64,15 @@ private enum Constants {
     static let emptyStateSpacing: CGFloat = .space8
     static let emptyStateIconSize: CGFloat = .superIcon
 }
+
+#Preview("No matches") {
+    BrowseNoResultsState(store: Store(initialState: .preview(mutate: { $0.searchQuery = "invoice" })) {
+        BrowseFeature()
+    })
+}
+
+#Preview("Term too short") {
+    BrowseNoResultsState(store: Store(initialState: .preview(mutate: { $0.searchQuery = "v" })) {
+        BrowseFeature()
+    })
+}

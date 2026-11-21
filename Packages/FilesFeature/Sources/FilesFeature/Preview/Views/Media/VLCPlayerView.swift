@@ -10,12 +10,12 @@ import VLCKitSPM
     import AppKit
 #endif
 
-/// Full-screen player for the video/audio containers and codecs AVFoundation can't decode
+/// Full screen player for the video/audio containers and codecs AVFoundation can't decode
 /// (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma), backed by libvlc via VLCKit: parity
 /// with the web client's player. `StreamingPreviewView` (AVPlayer) still handles the natively
 /// decodable formats.
 ///
-/// Streams from `GET /api/preview` (Range-seekable) so large videos play without a full download.
+/// Streams from `GET /api/preview` (Range seekable) so large videos play without a full download.
 /// libvlc uses its own HTTP stack, not `URLSession`'s shared cookie storage, so the session cookie
 /// is passed explicitly as an `:http-cookie` option or the stream 401s. Archive entries pass a
 /// local file URL, which needs no cookie.
@@ -45,7 +45,7 @@ struct VLCPlayerView: View {
         /// reaches it, while the arrow keys still bubble up to the router.
         @FocusState private var isKeyboardFocused: Bool
     #endif
-    @State private var controlsVisible = true
+    @State private var areControlsVisible = true
     /// libvlc runs its own HTTP stack, which can't present a TLS client certificate, so a server
     /// behind mTLS would just drop the stream. Say so up front instead of a generic failure.
     @State private var isBlockedByClientCertificate = false
@@ -127,11 +127,11 @@ struct VLCPlayerView: View {
                 }
             } else {
                 VLCPlaybackControls(controller: controller)
-                    .opacity(controlsVisible ? 1 : 0)
-                    .allowsHitTesting(controlsVisible)
+                    .opacity(areControlsVisible ? 1 : 0)
+                    .allowsHitTesting(areControlsVisible)
                     .animation(
                         DSMotion.galleryFade,
-                        value: controlsVisible
+                        value: areControlsVisible
                     )
             }
         }
@@ -141,7 +141,7 @@ struct VLCPlayerView: View {
         chrome
             // Every play start shows the controls, and they stay until a tap hides them.
             .onChange(of: controller.isPlaying) { _, _ in
-                controlsVisible = true
+                areControlsVisible = true
             }
         #if os(macOS)
             // Space plays and pauses, as a Mac player does; the arrows keep stepping through the folder.
@@ -172,7 +172,7 @@ struct VLCPlayerView: View {
     }
 
     private func toggleControls() {
-        controlsVisible.toggle()
+        areControlsVisible.toggle()
     }
 }
 

@@ -2,7 +2,7 @@ import Foundation
 
 /// Collapses concurrent downloads that would land in the same cache file into one shared
 /// transfer. Keyed by the destination file path, so a PDF's opportunistic thumbnail fetch
-/// (`previewFileLowPriority`) and a tap-to-open of that same PDF (`previewFile`) run the
+/// (`previewFileLowPriority`) and a tap to open of that same PDF (`previewFile`) run the
 /// bytes down once and both get the result: instead of two transfers racing on the
 /// `moveItem` into the shared slot, where the loser throws a spurious error.
 actor PreviewDownloadCoordinator {
@@ -32,7 +32,7 @@ actor PreviewDownloadCoordinator {
         inFlight[key] = task
         let result = await task.result
         // Only the call that owns the task clears it; a shared waiter's clear is a harmless
-        // no-op (already gone, or replaced by a newer download for the same path).
+        // no op (already gone, or replaced by a newer download for the same path).
         if inFlight[key] == task {
             inFlight[key] = nil
         }

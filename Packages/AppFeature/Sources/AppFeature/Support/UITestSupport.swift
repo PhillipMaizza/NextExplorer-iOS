@@ -53,7 +53,7 @@
         public static let legacyDownloadName = "legacy-report.pdf"
 
         /// Whether this launch runs under XCUITest with animations off.
-        public static let disablesAnimations: Bool = {
+        public static let shouldDisableAnimations: Bool = {
             let environment = ProcessInfo.processInfo.environment
             return environment[mockFlag] == UITestLaunchKey.on && environment[disableAnimationsFlag] == UITestLaunchKey
                 .on
@@ -62,7 +62,7 @@
         /// Drops a transaction's animation when the launch asks for no animations. Nonisolated: SwiftUI
         /// calls it from whichever thread renders.
         nonisolated static func stripAnimations(_ transaction: inout Transaction) {
-            guard disablesAnimations else { return }
+            guard shouldDisableAnimations else { return }
             transaction.animation = nil
             #if os(iOS)
                 transaction.disablesAnimations = true
@@ -229,7 +229,7 @@
 
         static func authClient(_ auth: Auth, expiry: MockSessionExpiry = MockSessionExpiry()) -> AuthClient {
             var client = AuthClient.previewValue
-            // A stateful account set so the multi-server switcher behaves for real in UI tests:
+            // A stateful account set so the multiserver switcher behaves for real in UI tests:
             // adding a server appends a row, switching/removing update the active account.
             let sessions = MockSessionStore(seed: auth == .loggedOut ? [] : [credentials()])
             client.me = { _ in
@@ -318,7 +318,7 @@
                     DeleteImpact(shareCount: 0, trash: DeleteImpact.TrashPlan(
                         isEnabled: true,
                         retentionDays: trashRetentionDays,
-                        items: items.map { DeleteImpact.Disposition(path: $0.id, goesToTrash: true) }
+                        items: items.map { DeleteImpact.Disposition(path: $0.id, isTrashBound: true) }
                     ))
                 }
                 // A server with its trash on: deletes land there and can be restored or purged.
@@ -430,7 +430,7 @@
         }
     }
 
-    /// A tiny mutable multi-account set backing the mocked auth client, so the multi-server
+    /// A tiny mutable multiaccount set backing the mocked auth client, so the multiserver
     /// switcher (add / switch / remove) works end to end in UI tests. One instance per launch.
     final class MockSessionStore: @unchecked Sendable {
         private let lock = NSLock()

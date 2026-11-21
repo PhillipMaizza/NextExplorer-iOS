@@ -22,14 +22,14 @@ struct BrowseDeleteToTrashTests {
 
     private var allToTrash: DeleteImpact {
         DeleteImpact(shareCount: 1, trash: .init(isEnabled: true, retentionDays: Constants.retentionDays, items: [
-            .init(path: photo.id, goesToTrash: true, shareCount: 1),
+            .init(path: photo.id, isTrashBound: true, shareCount: 1),
         ]))
     }
 
     private var mixed: DeleteImpact {
         DeleteImpact(shareCount: 0, trash: .init(isEnabled: true, retentionDays: Constants.retentionDays, items: [
-            .init(path: photo.id, goesToTrash: true),
-            .init(path: notes.id, goesToTrash: false, reason: .otherDevice),
+            .init(path: photo.id, isTrashBound: true),
+            .init(path: notes.id, isTrashBound: false, reason: .otherDevice),
         ]))
     }
 
@@ -69,7 +69,7 @@ struct BrowseDeleteToTrashTests {
         let impact = DeleteImpact(
             shareCount: 0,
             trash: .init(isEnabled: false, retentionDays: Constants.retentionDays, items: [
-                .init(path: photo.id, goesToTrash: false, reason: .disabled),
+                .init(path: photo.id, isTrashBound: false, reason: .disabled),
             ])
         )
         #expect(BrowseDeleteCopy.message(.loaded(impact)) == L10n.Browse.deleteMessage)
@@ -204,7 +204,7 @@ struct BrowseDeleteToTrashTests {
         var state = BrowseFixtures.state(items: [photo])
         state.selectedItemIDs = [photo.id]
         state.isSelecting = true
-        state.bulkDeleteConfirmationIsPresented = true
+        state.bulkDeletePhase = .confirming
         let asked = LockIsolated<[Bool]>([])
         let store = BrowseFixtures.store(state) {
             $0.filesClient.deleteItems = { _, _, permanent, _ in
@@ -214,7 +214,7 @@ struct BrowseDeleteToTrashTests {
         }
 
         await store.send(.bulkDeletePermanentlyConfirmed) {
-            $0.bulkDeleteConfirmationIsPresented = false
+            $0.bulkDeletePhase = .idle
             $0.isBulkActionInFlight = true
             $0.bulkDeleteProgress = 0
         }

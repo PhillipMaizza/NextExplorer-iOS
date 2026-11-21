@@ -13,7 +13,7 @@ private enum Constants {
     static let tabItemSize: CGFloat = 12
     static let tabItemNormalWeight: CGFloat = 400
     static let tabItemSelectedWeight: CGFloat = 600
-    /// UIKit variation-axis fallback threshold: below this, `weightedFont` falls back to
+    /// UIKit variation axis fallback threshold: below this, `weightedFont` falls back to
     /// `.systemFont(weight: .regular)` rather than `.semibold`.
     static let systemFontSemiboldThreshold: CGFloat = 600
 }
@@ -25,14 +25,14 @@ public enum DesignSystemFonts {
 
     /// Registers the Inter variable font from this package's resource bundle with the system
     /// font manager. Call once at app launch, before any `Font.custom(familyName, ...)`
-    /// is used: package-bundled fonts aren't picked up by Info.plist `UIAppFonts`, which
+    /// is used: package bundled fonts aren't picked up by Info.plist `UIAppFonts`, which
     /// only sees fonts in the main app bundle, so this has to happen at runtime instead.
     ///
     /// `NextExplorerApp.init()` calls this eagerly, and `Typography.TextType.fontsRegistered`
     /// also calls it lazily on first use (for Xcode previews, which never run `init()`): in a
     /// real app run both fire, possibly concurrently. Backed by a `static let` rather than a
-    /// hand-rolled bool guard so the once-only registration is the compiler-guaranteed atomic
-    /// lazy-init Swift already provides, instead of an unsynchronized flag.
+    /// hand rolled bool guard so the once only registration is the compiler guaranteed atomic
+    /// lazy init Swift already provides, instead of an unsynchronized flag.
     public static func registerAll() {
         _ = registerOnce
     }
@@ -49,7 +49,7 @@ public enum DesignSystemFonts {
         CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error)
     }()
 
-    /// Applies Inter to the UIKit-rendered chrome SwiftUI's `.font()` modifier can't
+    /// Applies Inter to the UIKit rendered chrome SwiftUI's `.font()` modifier can't
     /// reach (navigation bar titles and tab bar item labels) via the shared appearance
     /// proxies. Call once at launch, after `registerAll()`. Only text attributes are set;
     /// background/translucency are left at their defaults so this doesn't fight the

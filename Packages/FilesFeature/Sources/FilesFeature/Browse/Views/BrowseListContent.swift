@@ -9,7 +9,7 @@ import SwiftUI
 struct BrowseListContent<Menu: View>: View {
     let store: StoreOf<BrowseFeature>
     let source: BrowsePreviewSource
-    let keepsClipboard: Bool
+    let shouldKeepClipboard: Bool
     let bottomClearance: CGFloat
     let scrollTargetID: String?
     let onTap: (FileItem) -> Void
@@ -18,7 +18,7 @@ struct BrowseListContent<Menu: View>: View {
     var body: some View {
         ScrollViewReader { proxy in
             DSGroupedList {
-                if store.showsPersonalSpace {
+                if store.shouldShowPersonalSpace {
                     Section {
                         PersonalSpaceRow { store.send(.personalSpaceTapped) }
                             .listRowBackground(Color.backgroundSecondary)
@@ -48,7 +48,7 @@ struct BrowseListContent<Menu: View>: View {
                     Section {
                         BrowseFolderRows(store: store, source: source, onTap: onTap, menu: menu)
                     } header: {
-                        if store.showsPersonalSpace {
+                        if store.shouldShowPersonalSpace {
                             BrowseRootSectionHeader(title: L10n.Browse.locations)
                         }
                     }
@@ -60,7 +60,7 @@ struct BrowseListContent<Menu: View>: View {
                         .listRowSeparator(.hidden)
                 }
                 BrowseOfflineFooter(dataSource: store.dataSource, isListRow: true)
-                BrowsePasteTarget(store: store, keepsClipboard: keepsClipboard, isListRow: true)
+                BrowsePasteTarget(store: store, shouldKeepClipboard: shouldKeepClipboard, isListRow: true)
             }
             .listStyle(.insetGrouped)
             .groupedListRowHover()
@@ -81,7 +81,7 @@ struct BrowseListContent<Menu: View>: View {
 struct BrowseGridContent<Menu: View>: View {
     let store: StoreOf<BrowseFeature>
     let source: BrowsePreviewSource
-    let keepsClipboard: Bool
+    let shouldKeepClipboard: Bool
     let bottomClearance: CGFloat
     let scrollTargetID: String?
     let onTap: (FileItem) -> Void
@@ -98,7 +98,7 @@ struct BrowseGridContent<Menu: View>: View {
                     if store.isSearching {
                         searchCells
                     } else {
-                        if store.showsPersonalSpace {
+                        if store.shouldShowPersonalSpace {
                             section(L10n.Browse.sectionPersonal) {
                                 FileGrid(.folders) {
                                     PersonalSpaceGridCell { store.send(.personalSpaceTapped) }
@@ -106,7 +106,7 @@ struct BrowseGridContent<Menu: View>: View {
                             }
                         }
                         if !groups.folders.isEmpty {
-                            section(store.showsPersonalSpace ? L10n.Browse.locations : L10n.Grid.sectionFolders) {
+                            section(store.shouldShowPersonalSpace ? L10n.Browse.locations : L10n.Grid.sectionFolders) {
                                 FileGrid(.folders) {
                                     cells(groups.folders)
                                 }
@@ -137,7 +137,7 @@ struct BrowseGridContent<Menu: View>: View {
                     BrowseSearchFooter(store: store)
                 }
                 BrowseOfflineFooter(dataSource: store.dataSource)
-                BrowsePasteTarget(store: store, keepsClipboard: keepsClipboard)
+                BrowsePasteTarget(store: store, shouldKeepClipboard: shouldKeepClipboard)
             }
             .scrollDismissesKeyboard(.immediately)
             .modifier(BrowseDragToSelect(store: store))

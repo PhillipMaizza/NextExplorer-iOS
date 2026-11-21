@@ -7,7 +7,7 @@ import Localization
 import TestUtils
 
 extension DependencyValues {
-    /// The folder answers with `items` and `access`. A listing of non-empty items starts an offline
+    /// The folder answers with `items` and `access`. A listing of non empty items starts an offline
     /// availability check whose answer arrives on its own, so tests that follow it with the favorites
     /// answer hold that behind `holdFavorites(_:)`.
     mutating func serveListing(_ items: [FileItem], access: FileAccess = BrowseTestSupport.readOnlyAccess) {

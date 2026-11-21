@@ -13,7 +13,7 @@ public struct FavoriteEditFeature {
         case outline, solid
     }
 
-    /// Semantic name-field error; the view maps it to `L10n`.
+    /// Semantic name field error; the view maps it to `L10n`.
     public enum NameError: Equatable, Sendable {
         case empty
     }

@@ -63,7 +63,7 @@ public struct FavoritesFeature {
         @Presents public var previewHost: BrowseFeature.State?
         public var isSelecting = false
         public var selectedFavoriteIDs: Set<Favorite.ID> = []
-        public var bulkRemoveConfirmationIsPresented = false
+        public var bulkRemovePhase: ConfirmPhase = .idle
         /// Browsing into a favorited folder pushes here, same shape as `BrowseTabFeature`:
         /// this keeps navigation inside the Favorites tab rather than jumping to Browse.
         public var path = StackState<BrowseFeature.State>()
@@ -562,11 +562,11 @@ public struct FavoritesFeature {
 
             case .bulkRemoveTapped:
                 guard !state.selectedFavoriteIDs.isEmpty else { return .none }
-                state.bulkRemoveConfirmationIsPresented = true
+                state.bulkRemovePhase = .confirming
                 return .none
 
             case .bulkRemoveCancelled:
-                state.bulkRemoveConfirmationIsPresented = false
+                state.bulkRemovePhase = .idle
                 return .none
 
             case .bulkRemoveConfirmed:
@@ -877,7 +877,7 @@ public struct FavoritesFeature {
     /// Best-effort, matching the sign-out flow's philosophy: one failure shouldn't block
     /// removing the rest of the selection.
     private func confirmBulkRemove(_ state: inout State) -> Effect<Action> {
-        state.bulkRemoveConfirmationIsPresented = false
+        state.bulkRemovePhase = .idle
         let targets = state.favorites.filter { state.selectedFavoriteIDs.contains($0.id) }
         guard !targets.isEmpty else { return .none }
         let serverURL = state.serverURL

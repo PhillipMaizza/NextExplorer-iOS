@@ -41,7 +41,7 @@ public extension View {
 }
 
 @MainActor
-private var usesCardSheet: Bool {
+private var shouldUseCardSheet: Bool {
     OrientationLock.shared.isFoldable
 }
 
@@ -55,7 +55,7 @@ private struct DSSheetModifier<SheetContent: View>: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(
-                isPresented: Binding(get: { isPresented && !usesCardSheet }, set: { isPresented = $0 }),
+                isPresented: Binding(get: { isPresented && !shouldUseCardSheet }, set: { isPresented = $0 }),
                 onDismiss: onDismiss,
                 content: sheetContent
             )
@@ -65,7 +65,7 @@ private struct DSSheetModifier<SheetContent: View>: ViewModifier {
                 }
             }
             .onChange(of: isPresented, initial: true) { _, presented in
-                guard usesCardSheet else { return }
+                guard shouldUseCardSheet else { return }
                 DSCardSheetState.update($card, presented: presented)
             }
     }
@@ -83,7 +83,7 @@ private struct DSItemSheetModifier<Item: Identifiable, SheetContent: View>: View
     func body(content: Content) -> some View {
         content
             .sheet(
-                item: Binding(get: { usesCardSheet ? nil : item }, set: { item = $0 }),
+                item: Binding(get: { shouldUseCardSheet ? nil : item }, set: { item = $0 }),
                 onDismiss: onDismiss,
                 content: sheetContent
             )
@@ -95,7 +95,7 @@ private struct DSItemSheetModifier<Item: Identifiable, SheetContent: View>: View
                 }
             }
             .onChange(of: item?.id, initial: true) { _, _ in
-                guard usesCardSheet else { return }
+                guard shouldUseCardSheet else { return }
                 if let item {
                     shownItem = item
                 }

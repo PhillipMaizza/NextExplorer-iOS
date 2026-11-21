@@ -1,8 +1,8 @@
 import CryptoKit
 import Foundation
 
-/// Process-wide identifier of the account whose cached data the disk stores read and write, so
-/// several signed-in accounts (multiple servers, or two users on one server) never share cache
+/// Process wide identifier of the account whose cached data the disk stores read and write, so
+/// several signed in accounts (multiple servers, or two users on one server) never share cache
 /// entries. Folded into every cache key by `DirectoryCacheStore`, `JSONCacheStore` and the preview
 /// cache, so switching the active account transparently reads that account's own cache instead of
 /// the previous one's: no wipe, both accounts' caches survive a switch.

@@ -56,7 +56,7 @@ extension FilesService {
     }
 
     /// `PUT /api/shares/:id`, confirmed against `backend/src/routes/shares.js` +
-    /// `sharesService.updateShare`: owner-only, `'key' in body` semantics, returns the
+    /// `sharesService.updateShare`: owner only, `'key' in body` semantics, returns the
     /// updated share unwrapped.
     func updateShareLink(serverURL: URL, shareID: String, request: UpdateShareRequest) async throws -> Share {
         let url = serverURL.appendingPathComponent(APIPath.shares).appendingPathComponent(shareID)
@@ -82,7 +82,7 @@ extension FilesService {
         try Self.validate(response)
     }
 
-    /// Share-expiry wire format is plain `withInternetDateTime` (no fractional seconds, unlike
+    /// Share expiry wire format is plain `withInternetDateTime` (no fractional seconds, unlike
     /// the decode path). Cached like `iso8601Formatter`: safe to format from concurrently.
     private nonisolated(unsafe) static let shareExpiryFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()

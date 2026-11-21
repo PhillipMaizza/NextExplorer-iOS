@@ -3,7 +3,7 @@ import Foundation
 /// Mirrors `GET /api/metadata/*`, confirmed against `backend/src/routes/metadata.js`. Unlike
 /// `FileItem`, `path` here is the item's *own full* logical path (`resolved.relativePath`),
 /// not its parent directory. There is no owner/group/permissions data anywhere in this
-/// response: the real server simply doesn't expose OS-level file ownership, only what's
+/// response: the real server simply doesn't expose OS level file ownership, only what's
 /// below.
 public struct FileMetadata: Codable, Equatable, Sendable {
     public let path: String
@@ -43,7 +43,7 @@ public struct FileMetadata: Codable, Equatable, Sendable {
     }
 
     /// Only present for directories: a recursive scan of everything inside, capped
-    /// server-side at 200,000 visited entries (`truncated` flags when that cap was hit).
+    /// server side at 200,000 visited entries (`truncated` flags when that cap was hit).
     public struct DirectorySummary: Codable, Equatable, Sendable {
         public let totalSize: Int64
         public let fileCount: Int
@@ -58,7 +58,7 @@ public struct FileMetadata: Codable, Equatable, Sendable {
         }
     }
 
-    /// Only present for image files: `sharp` dimensions plus best-effort EXIF (absent
+    /// Only present for image files: `sharp` dimensions plus best effort EXIF (absent
     /// entirely when the file has none, individual fields absent when EXIF lacks them).
     public struct ImageMetadata: Codable, Equatable, Sendable {
         public let width: Int?

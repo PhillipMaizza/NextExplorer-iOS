@@ -8,23 +8,23 @@ import SwiftUI
 /// don't each carry a `didFinishRefreshing` `@State`.
 private struct SyncRefreshFeedback: ViewModifier {
     let errorMessage: String?
-    let signalsErrorHaptic: Bool
+    let shouldSignalErrorHaptic: Bool
     let onRefresh: @Sendable () async -> Void
     /// Meaningless value; only the fact that it just changed drives the success haptic.
-    @State private var didFinishRefreshing = false
+    @State private var hasFinishedRefreshing = false
 
     func body(content: Content) -> some View {
         content
             .refreshable {
                 await onRefresh()
-                didFinishRefreshing.toggle()
+                hasFinishedRefreshing.toggle()
             }
         #if os(macOS)
-            .macToolbarRefresh(onRefresh: onRefresh) { didFinishRefreshing.toggle() }
-            .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: errorMessage == nil)
+            .macToolbarRefresh(onRefresh: onRefresh) { hasFinishedRefreshing.toggle() }
+            .syncCompletedToast(trigger: hasFinishedRefreshing, isErrorFree: errorMessage == nil)
         #endif
-            .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in errorMessage == nil }
-            .hapticFeedback(.error, trigger: errorMessage) { _, newValue in signalsErrorHaptic && newValue != nil }
+            .hapticFeedback(.success, trigger: hasFinishedRefreshing) { _, _ in errorMessage == nil }
+            .hapticFeedback(.error, trigger: errorMessage) { _, newValue in shouldSignalErrorHaptic && newValue != nil }
     }
 }
 
@@ -34,12 +34,12 @@ extension View {
     /// tabs that deliberately stay silent on a refresh failure.
     func syncRefreshFeedback(
         errorMessage: String?,
-        signalsErrorHaptic: Bool = true,
+        shouldSignalErrorHaptic: Bool = true,
         onRefresh: @escaping @Sendable () async -> Void
     ) -> some View {
         modifier(SyncRefreshFeedback(
             errorMessage: errorMessage,
-            signalsErrorHaptic: signalsErrorHaptic,
+            shouldSignalErrorHaptic: shouldSignalErrorHaptic,
             onRefresh: onRefresh
         ))
     }

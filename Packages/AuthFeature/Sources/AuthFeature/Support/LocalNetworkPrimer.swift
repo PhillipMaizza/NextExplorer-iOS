@@ -6,8 +6,8 @@ import os
 /// Nudges iOS to show the Local Network permission alert while the user is still typing the
 /// server address, rather than springing it on them the moment they tap "Test connection".
 ///
-/// Opening a UDP socket to the limited-broadcast address and sending one datagram is enough
-/// for the system to class the app as a local-network client and prompt. The datagram goes
+/// Opening a UDP socket to the limited broadcast address and sending one datagram is enough
+/// for the system to class the app as a local network client and prompt. The datagram goes
 /// nowhere useful, port 9 is discard, it exists only to touch the network.
 enum LocalNetworkPrimer {
     private static let connection = OSAllocatedUnfairLock<NWConnection?>(initialState: nil)

@@ -33,7 +33,7 @@ public struct MainTabView: View {
     /// a genuine later background→active resume triggers a sync.
     @State private var hasBecomeActiveBefore = false
     @State private var lastActiveSync = Date.distantPast
-    /// Tabs whose content has actually been selected at least once. A non-Browse `Tab` builds
+    /// Tabs whose content has actually been selected at least once. A non Browse `Tab` builds
     /// its `NavigationStack` off screen while the launch splash still covers the window, and
     /// UIKit lays that nav bar out at the wrong size and never revisits it (large title stuck
     /// inline until a manual tab switch forces a relayout: the NXTIOS-0018 bug class). Gating
@@ -47,8 +47,8 @@ public struct MainTabView: View {
     /// guessed constant so the clearance stays right under Dynamic Type.
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
     /// Settings → "Show Tab Labels": titles under each tab icon (with the smaller glyph set),
-    /// or the full-size icons on their own.
-    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
+    /// or the full size icons on their own.
+    @AppStorage(AppStorageKeys.showTabLabels) private var shouldShowTabLabels = false
     /// Regular width (iPad) renders a `NavigationSplitView` sidebar; compact (iPhone, iPad
     /// narrow multitasking) keeps the bottom tab bar. Gated on size class, never device idiom.
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -93,7 +93,7 @@ public struct MainTabView: View {
             .animation(DSMotion.stateFade, value: store.uploads.isActive)
             .animation(DSMotion.stateFade, value: store.downloadQueue.isBarVisible)
             .animation(DSMotion.stateFade, value: store.downloadQueue.isActive)
-            .animation(DSMotion.stateFade, value: offlinePhase.showsOfflineBar)
+            .animation(DSMotion.stateFade, value: offlinePhase.shouldShowOfflineBar)
             .onOfflinePhaseChange(initial: true) { offlinePhase = $0 }
             .animation(DSMotion.stateFade, value: breadcrumbClearance)
             .onChange(of: shouldShowTransferBars) { _, visible in
@@ -197,7 +197,7 @@ public struct MainTabView: View {
         #if os(macOS)
             false
         #else
-            store.uploads.isBarVisible || store.downloadQueue.isBarVisible || offlinePhase.showsOfflineBar
+            store.uploads.isBarVisible || store.downloadQueue.isBarVisible || offlinePhase.shouldShowOfflineBar
         #endif
     }
 
@@ -212,7 +212,7 @@ public struct MainTabView: View {
     }
 
     /// One `NavigationSplitView` PER tab rather than a single split view whose detail swaps
-    /// between sections. Hosting a path-bound `NavigationStack` (TCA `StackState`) in a split
+    /// between sections. Hosting a path bound `NavigationStack` (TCA `StackState`) in a split
     /// view detail and then replacing it with another section's stack traps in
     /// `NavigationColumnState.boundPathChange` (EXC_BREAKPOINT) on the switch. Each `switch`
     /// branch is a distinct `NavigationSplitView` type, so changing tab tears the whole split
@@ -285,11 +285,9 @@ public struct MainTabView: View {
                 BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
             } label: {
                 MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.browse,
-                    icon: store.selectedTab == .browse ? IconKit.tabBrowseFill : IconKit.tabBrowse,
-                    smallIcon: store.selectedTab == .browse ? IconKit.tabBrowseFillSmall : IconKit.tabBrowseSmall,
-                    identifier: AccessibilityIdentifiers.Tab.browse
+                    tab: .browse,
+                    isSelected: store.selectedTab == .browse,
+                    shouldShowTitle: shouldShowTabLabels
                 )
             }
 
@@ -299,13 +297,9 @@ public struct MainTabView: View {
                 }
             } label: {
                 MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.favorites,
-                    icon: store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites,
-                    smallIcon: store.selectedTab == .favorites
-                        ? IconKit.tabFavoritesFillSmall
-                        : IconKit.tabFavoritesSmall,
-                    identifier: AccessibilityIdentifiers.Tab.favorites
+                    tab: .favorites,
+                    isSelected: store.selectedTab == .favorites,
+                    shouldShowTitle: shouldShowTabLabels
                 )
             }
 
@@ -315,11 +309,9 @@ public struct MainTabView: View {
                 }
             } label: {
                 MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.shared,
-                    icon: store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare,
-                    smallIcon: store.selectedTab == .shared ? IconKit.tabShareFillSmall : IconKit.tabShareSmall,
-                    identifier: AccessibilityIdentifiers.Tab.shared
+                    tab: .shared,
+                    isSelected: store.selectedTab == .shared,
+                    shouldShowTitle: shouldShowTabLabels
                 )
             }
 
@@ -333,13 +325,9 @@ public struct MainTabView: View {
                 }
             } label: {
                 MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.offline,
-                    icon: store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads,
-                    smallIcon: store.selectedTab == .downloads
-                        ? IconKit.tabDownloadsFillSmall
-                        : IconKit.tabDownloadsSmall,
-                    identifier: AccessibilityIdentifiers.Tab.downloads
+                    tab: .downloads,
+                    isSelected: store.selectedTab == .downloads,
+                    shouldShowTitle: shouldShowTabLabels
                 )
                 .accessibilityValue(store.hasUnseenOfflineFiles ? L10n.Offline.newFilesBadge : "")
             }
@@ -352,19 +340,17 @@ public struct MainTabView: View {
                 }
             } label: {
                 MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.settings,
-                    icon: store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings,
-                    smallIcon: store.selectedTab == .settings ? IconKit.tabSettingsFillSmall : IconKit.tabSettingsSmall,
-                    identifier: AccessibilityIdentifiers.Tab.settings
+                    tab: .settings,
+                    isSelected: store.selectedTab == .settings,
+                    shouldShowTitle: shouldShowTabLabels
                 )
             }
         }
         .tint(Color.accent)
         // The tab bar caches its item views; without a fresh identity when the preference flips,
         // toggling labels off leaves the old titled items on screen. Rebuild on the toggle.
-        // `visitedTabs` (MainTabView @State) and the store-bound selection both survive it.
-        .id(showTabLabels)
+        // `visitedTabs` (MainTabView @State) and the store bound selection both survive it.
+        .id(shouldShowTabLabels)
     }
 
     /// Room for the split view's `SplitDetailBreadcrumb` under the upload bar (none on iPhone,

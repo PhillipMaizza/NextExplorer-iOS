@@ -628,7 +628,7 @@ settings.accountSignOut	Esci
 settings.accountSignOutTitle	Uscire?
 settings.accountSignOutMessage	Disconnettere %@ da questo dispositivo? Dovrai accedere di nuovo per usare questo account.
 settings.accountChangeFailed	Impossibile modificare i tuoi account in questo momento. Riprova.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, account attivo
 settings.badgeActive	Attivo
 
@@ -1321,3 +1321,4 @@ shareUpload.deferredBody#other	Apri NextExplorer per caricare %lld file grandi.
 shareUpload.failureTooLarge#one	%lld file non è stato caricato. La connessione al tuo server rifiuta file così grandi. Condividili di nuovo e NextExplorer li invierà a blocchi.
 shareUpload.failureTooLarge#other	%lld file non sono stati caricati. La connessione al tuo server rifiuta file così grandi. Condividili di nuovo e NextExplorer li invierà a blocchi.
 shareUpload.startedDeferred	Salvato per NextExplorer. Apri l'app per caricare i file grandi.
+menu.goToFolderPlaceholder	Documenti/Report

@@ -4,7 +4,7 @@ import Localization
 import SwiftUI
 
 /// Presentation titles for the share enums. Kept out of `CoreModels` so the model layer
-/// stays free of user-facing copy.
+/// stays free of user facing copy.
 extension ShareAccessMode {
     var title: String {
         switch self {

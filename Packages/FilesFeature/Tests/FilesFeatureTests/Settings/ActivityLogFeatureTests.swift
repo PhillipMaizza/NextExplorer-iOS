@@ -230,9 +230,9 @@ struct ActivityLogFeatureTests {
         let page = ActivityPage(events: [second], nextBefore: nil, isEnabled: true)
         let store = makeStore(state, page: { _, _ in page })
 
-        await store.send(.loadMoreTapped) { $0.isLoadingMore = true }
+        await store.send(.loadMoreTapped) { $0.morePhase = .loading }
         await store.receive(.pageResponse(.success(page), isMore: true)) {
-            $0.isLoadingMore = false
+            $0.morePhase = .idle
             $0.events = [event("1"), second]
             $0.isLogEnabled = true
             $0.nextBefore = nil
@@ -253,7 +253,7 @@ struct ActivityLogFeatureTests {
     func showMoreIsIgnoredWhileAPageIsAlreadyLoading() async {
         var state = loadedState()
         state.nextBefore = "cursor"
-        state.isLoadingMore = true
+        state.morePhase = .loading
         let store = makeStore(state)
 
         await store.send(.loadMoreTapped)
@@ -268,10 +268,9 @@ struct ActivityLogFeatureTests {
         state.nextBefore = "cursor"
         let store = makeStore(state, page: { _, _ in throw FilesClientError.offline })
 
-        await store.send(.loadMoreTapped) { $0.isLoadingMore = true }
+        await store.send(.loadMoreTapped) { $0.morePhase = .loading }
         await store.receive(.pageResponse(.failure(.offline), isMore: true)) {
-            $0.isLoadingMore = false
-            $0.listError = L10n.Error.offline
+            $0.morePhase = .failed(L10n.Error.offline)
         }
         #expect(store.state.events.map(\.id) == ["1"])
         #expect(store.state.nextBefore == "cursor")
@@ -288,9 +287,9 @@ struct ActivityLogFeatureTests {
         let store = makeStore(state, page: { _, _ in page })
 
         await store.send(.queryChanged("typed but not submitted")) { $0.filter.query = "typed but not submitted" }
-        await store.send(.loadMoreTapped) { $0.isLoadingMore = true }
+        await store.send(.loadMoreTapped) { $0.morePhase = .loading }
         await store.receive(.pageResponse(.success(page), isMore: true)) {
-            $0.isLoadingMore = false
+            $0.morePhase = .idle
             $0.events = [event("1"), second]
             $0.isLogEnabled = true
             $0.nextBefore = nil

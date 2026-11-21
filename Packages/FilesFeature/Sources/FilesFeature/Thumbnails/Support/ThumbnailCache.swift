@@ -4,7 +4,7 @@ import FilesClient
 import Foundation
 import NetworkClient
 
-/// Disk-backed cache for thumbnail image bytes, keyed by the thumbnail's own URL. Safe to key
+/// Disk backed cache for thumbnail image bytes, keyed by the thumbnail's own URL. Safe to key
 /// on the URL alone (rather than the source file's `dateModified`/`size`, which aren't
 /// available here) because the server itself bakes a content hash into that URL: see
 /// `FilesService.thumbnailURL`'s doc comment: a changed file gets a *different* URL, so a
@@ -13,20 +13,20 @@ import NetworkClient
 /// in Settings covers thumbnails too.
 public struct ThumbnailCache: Sendable {
     public var data: @Sendable (_ url: URL) async throws -> Data
-    /// Resolves and remembers a file's thumbnail URL, so re-opening a folder doesn't re-hit
+    /// Resolves and remembers a file's thumbnail URL, so reopening a folder doesn't rehit
     /// `GET /api/thumbnails/*` once per file. The server bakes the file's content hash into
     /// the URL it returns, so a remembered mapping is valid only while the file is unchanged:
     /// `signature` (`FileItem.cacheSignature`) keys that. `resolve` runs only on a cache miss
     /// or a changed signature. A `nil` result (the server says the file has none) is remembered
-    /// for `emptyRecordLifetime`, so an un-thumbnailable file isn't asked about again on every
+    /// for `emptyRecordLifetime`, so an unthumbnailable file isn't asked about again on every
     /// scroll yet a thumbnail made later is found. A throw (still being made, offline, a failed
     /// request) is passed on and remembers nothing.
     public var resolvedURL: @Sendable (
         _ path: String, _ signature: String, _ resolve: @Sendable () async throws -> URL?
     ) async throws -> URL?
-    /// Empties the process-wide in-memory decoded-thumbnail cache. Called at every session
+    /// Empties the process wide in memory decoded thumbnail cache. Called at every session
     /// boundary (sign out, session expiry, fresh sign in) and from "Clear Cache" so no decoded
-    /// image survives an account switch. The on-disk bytes live under the preview cache root and
+    /// image survives an account switch. The on disk bytes live under the preview cache root and
     /// are cleared separately by `PreviewCacheStore`.
     public var clearMemory: @Sendable () -> Void
 

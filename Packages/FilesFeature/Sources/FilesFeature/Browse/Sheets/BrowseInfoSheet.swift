@@ -8,7 +8,7 @@ import SwiftUI
 
 /// Distinct identities for "still loading" vs. "have a result", so swapping between the
 /// two (once the fetch resolves) is a genuinely fresh sheet presentation rather than an
-/// in-place content change: see `FileInfoLoadingSheet`'s doc comment for why that
+/// in place content change: see `FileInfoLoadingSheet`'s doc comment for why that
 /// matters for getting the right height.
 enum BrowseInfoSheetPhase: Identifiable, Equatable {
     case loading(FileItem)

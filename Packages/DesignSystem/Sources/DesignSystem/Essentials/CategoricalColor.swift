@@ -1,7 +1,7 @@
 import SwiftUI
 
 public extension Color {
-    /// Hand-tuned categorical swatches for labelling distinct entities (recipient names,
+    /// Hand tuned categorical swatches for labelling distinct entities (recipient names,
     /// tags): each one stays legible as both a chip tint (~15% alpha fill) and the chip's
     /// text color in light and dark mode. Not derived from the accent/neutral ramps: those
     /// only span one hue, so adjacent chips wouldn't read as different.

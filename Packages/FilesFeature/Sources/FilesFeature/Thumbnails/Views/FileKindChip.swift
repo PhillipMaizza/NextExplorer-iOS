@@ -14,7 +14,7 @@ struct FileKindChip: View {
     let kind: String
 
     var body: some View {
-        GridWellSymbol(kind: kind, showsLabel: true) { wellSide in
+        GridWellSymbol(kind: kind, shouldShowLabel: true) { wellSide in
             FileTypeIcon(kind: kind)
                 .frame(width: wellSide * Constants.chipFraction, height: wellSide * Constants.chipFraction)
         }

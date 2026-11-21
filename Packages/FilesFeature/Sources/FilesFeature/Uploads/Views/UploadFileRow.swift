@@ -71,3 +71,16 @@ struct UploadFileRow: View {
         }
     }
 }
+
+#Preview {
+    UploadFileRow(
+        file: PickedFile(
+            fileURL: URL(fileURLWithPath: "/tmp/holiday.jpg"),
+            fileName: "holiday.jpg",
+            size: 2_400_000
+        ),
+        onPreview: {},
+        onRemove: {}
+    )
+    .padding()
+}

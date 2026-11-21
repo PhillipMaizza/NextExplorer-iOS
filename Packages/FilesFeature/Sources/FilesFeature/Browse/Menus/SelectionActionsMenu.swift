@@ -18,7 +18,7 @@ struct SelectionActionsMenu: View {
         var canShare = false
         /// Share hands the kept copies to the system share sheet (device content), for any number of
         /// files, instead of creating a link for one.
-        var sharesKeptFiles = false
+        var canShareKept = false
         var canTransfer = false
         /// A move deletes the original, so it also needs the right to delete.
         var canMove = false
@@ -34,7 +34,7 @@ struct SelectionActionsMenu: View {
         /// disabled rather than opening an empty menu (device content with no kept pick).
         var hasActions: Bool {
             let singleActions = single != nil && (canGetInfo || canWrite || canShare)
-            return singleActions || canTransfer || sharesKeptFiles || canSave || canKeepOffline || canFavorite
+            return singleActions || canTransfer || canShareKept || canSave || canKeepOffline || canFavorite
                 || canDelete
         }
     }
@@ -74,7 +74,7 @@ struct SelectionActionsMenu: View {
                 }
             }
             Section {
-                if availability.sharesKeptFiles {
+                if availability.canShareKept {
                     item(L10n.PreviewToolbar.share, IconKit.share, action: onShareKept)
                 } else if let single = availability.single, availability.canShare {
                     item(L10n.Browse.actionShare, IconKit.shareLink) { onShareLink(single) }
@@ -184,7 +184,7 @@ private enum PreviewSample {
     PreviewSample.menu(.init(
         single: PreviewSample.report,
         canGetInfo: false,
-        sharesKeptFiles: true,
+        canShareKept: true,
         canSave: true,
         canKeepOffline: true,
         offlineAction: .remove

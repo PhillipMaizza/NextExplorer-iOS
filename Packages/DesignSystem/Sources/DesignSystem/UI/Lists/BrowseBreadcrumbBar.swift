@@ -36,11 +36,11 @@ public enum BrowseBreadcrumbBarMetrics {
 /// `rootPath`/`rootTitle`/`rootIcon` default to true server root ("Home") for Browse, but
 /// Favorites overrides them to the favorited folder itself: browsing there is scoped to
 /// that subtree, so the leftmost crumb should anchor on the favorite, not imply a tap on it
-/// would leave the tab (server-root "Home" isn't reachable from inside Favorites at all).
+/// would leave the tab (server root "Home" isn't reachable from inside Favorites at all).
 ///
 /// `containerCrumb` prepends one more crumb *before* the root: Favorites uses it for the
 /// tab's own list screen ("Favorites", `path` ""), so there's always a crumb that leaves the
-/// favorited folder entirely instead of the leftmost tap just re-opening that same folder.
+/// favorited folder entirely instead of the leftmost tap just reopening that same folder.
 public struct BrowseBreadcrumbBar: View {
     let directoryPath: String
     var rootTitle: String = L10n.Browse.locations

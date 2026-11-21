@@ -33,7 +33,7 @@ public enum PermissionRight: CaseIterable, Hashable, Sendable {
 }
 
 /// Response from `GET /api/permissions/*`, confirmed against
-/// `backend/src/routes/permissions.js`. `mode` is the raw `stat` integer (file-type bits
+/// `backend/src/routes/permissions.js`. `mode` is the raw `stat` integer (file type bits
 /// included, e.g. `33188`); the POSIX permission triad is `mode & 0o777`. `owner`/`group`
 /// are resolved names where the server could look them up, otherwise the numeric id as a
 /// string. This is the only endpoint that exposes ownership at all: `/api/metadata`
@@ -65,12 +65,12 @@ public struct FilePermissions: Decodable, Equatable, Sendable {
         self.isDirectory = isDirectory
     }
 
-    /// Just the nine permission bits, file-type bits masked off.
+    /// Just the nine permission bits, file type bits masked off.
     public var permissionBits: Int {
         mode & 0o777
     }
 
-    /// Three-digit, zero-padded octal: the exact shape `POST /api/permissions/chmod`
+    /// Three digit, zero padded octal: the exact shape `POST /api/permissions/chmod`
     /// requires (`/^[0-7]{3}$/`).
     public var octalString: String {
         let raw = String(permissionBits, radix: 8)
@@ -91,7 +91,7 @@ public struct FilePermissions: Decodable, Equatable, Sendable {
         return result
     }
 
-    /// The three-digit octal string a grid of rights maps to, for POSTing back to `chmod`.
+    /// The three digit octal string a grid of rights maps to, for POSTing back to `chmod`.
     public static func octalString(from grid: [PermissionScope: Set<PermissionRight>]) -> String {
         PermissionScope.allCases.map { scope in
             let digit = (grid[scope] ?? []).reduce(0) { $0 | $1.bit }

@@ -51,9 +51,9 @@ struct DateDisplayFormatTests {
     @Test
     func allCasesProduceADistinctNonEmptyStringForADayAndMonthThatDiffer() {
         // Uses the fixed `date` (day 15, month 11), not the live `.example`: on any day where
-        // day-of-month == month number, the day/month-order pairs (dd/MM vs. MM/dd,
+        // day of month == month number, the day/month order pairs (dd/MM vs. MM/dd,
         // dd-MM vs. MM-dd) legitimately render identically, which would make an
-        // `.example`-based uniqueness check flaky depending on which day it runs.
+        // `.example` based uniqueness check flaky depending on which day it runs.
         let strings = DateDisplayFormat.allCases.filter { $0 != .system }.map { $0.string(from: date) }
         #expect(Set(strings).count == strings.count)
         #expect(strings.allSatisfy { !$0.isEmpty })

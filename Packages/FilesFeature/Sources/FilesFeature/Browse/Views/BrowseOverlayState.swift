@@ -7,7 +7,7 @@ import Localization
 import SwiftUI
 
 /// Which branch of `BrowseOverlayContent` is currently showing: a plain discriminant so the
-/// overlay can cross-fade between states instead of hard-cutting between them.
+/// overlay can cross fade between states instead of hard cutting between them.
 enum BrowseOverlayState: Hashable {
     case none, error, empty, searching, searchFailed, noResults
 

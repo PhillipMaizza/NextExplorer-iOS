@@ -22,9 +22,10 @@ struct BrowseClipboardTests {
         BrowseFixtures.state(path, title: TestFolder.docs, access: access)
     }
 
-    private func pasteRetry(clearClipboard: Bool) -> BrowseFeature.TransferRetry {
+    private func pasteRetry(shouldClearClipboard: Bool) -> BrowseFeature.TransferRetry {
         BrowseFeature.TransferRetry(
-            items: [incoming], destination: TestFolder.documents, operation: .copy, clearClipboard: clearClipboard,
+            items: [incoming], destination: TestFolder.documents, operation: .copy,
+            shouldClearClipboard: shouldClearClipboard,
             resolution: .keepBoth
         )
     }
@@ -98,7 +99,7 @@ struct BrowseClipboardTests {
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
-            $0.pendingTransferRetry = pasteRetry(clearClipboard: true)
+            $0.pendingTransferRetry = pasteRetry(shouldClearClipboard: true)
         }
         gate.open()
         await BrowseFixtures.receiveCopyIntoOpenFolder(
@@ -123,7 +124,7 @@ struct BrowseClipboardTests {
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
-            $0.pendingTransferRetry = pasteRetry(clearClipboard: true)
+            $0.pendingTransferRetry = pasteRetry(shouldClearClipboard: true)
         }
         await store.receive(\.transferProgressed) {
             $0.transferProgress = 0.5
@@ -139,7 +140,7 @@ struct BrowseClipboardTests {
         var state = makeState()
         state.isPerformingFileAction = true
         state.transferProgress = 0.3
-        state.pendingTransferRetry = pasteRetry(clearClipboard: false)
+        state.pendingTransferRetry = pasteRetry(shouldClearClipboard: false)
         let favorites = AsyncGate()
         let store = BrowseFixtures.store(state) {
             $0.serveEmptyFolders()
@@ -187,7 +188,7 @@ struct BrowseClipboardTests {
         await store.send(.pasteTapped(keepItemsAfterCopy: true)) {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
-            $0.pendingTransferRetry = pasteRetry(clearClipboard: false)
+            $0.pendingTransferRetry = pasteRetry(shouldClearClipboard: false)
         }
         gate.open()
         await BrowseFixtures.receiveCopyIntoOpenFolder(
@@ -214,7 +215,7 @@ struct BrowseClipboardTests {
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [incoming, second, third], destination: TestFolder.documents, operation: .copy,
-                clearClipboard: true, resolution: .keepBoth
+                shouldClearClipboard: true, resolution: .keepBoth
             )
         }
         gate.open()
@@ -240,7 +241,7 @@ struct BrowseClipboardTests {
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
-            $0.pendingTransferRetry = pasteRetry(clearClipboard: true)
+            $0.pendingTransferRetry = pasteRetry(shouldClearClipboard: true)
         }
         await store.receive(\.transferResponse.failure) {
             $0.isPerformingFileAction = false
@@ -272,7 +273,7 @@ struct BrowseClipboardTests {
         await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
-            $0.pendingTransferRetry = pasteRetry(clearClipboard: true)
+            $0.pendingTransferRetry = pasteRetry(shouldClearClipboard: true)
         }
         await store.receive(\.transferResponse.failure) {
             $0.isPerformingFileAction = false
@@ -348,7 +349,7 @@ struct BrowseClipboardTests {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [original], destination: TestFolder.documents, operation: .copy, clearClipboard: false,
+                items: [original], destination: TestFolder.documents, operation: .copy, shouldClearClipboard: false,
                 resolution: .keepBoth
             )
         }

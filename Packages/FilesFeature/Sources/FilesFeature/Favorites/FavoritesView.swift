@@ -11,7 +11,7 @@ struct FavoritesView: View {
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
 
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
-    /// pull-to-refresh rubber-band instead of staying pinned.
+    /// pull to refresh rubber band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
     /// A file opened from a search hit grows from its row, as it does in Browse.
     @Namespace private var previewTransition
@@ -43,12 +43,12 @@ struct FavoritesView: View {
     }
 
     /// The one screen state, derived from the store: skeleton until the first response lands
-    /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
+    /// (`store.phase`), then error / empty / no results / the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
     private var listPhase: ListPhase {
         // The favorites list's own error / loading / empty precedence comes first (same shape as
         // every tab). Only once that resolves to `.content` while a query is active does the
-        // screen follow the recursive-search sub-machine instead: it shows file results across the
+        // screen follow the recursive search submachine instead: it shows file results across the
         // favorited folders, keyed off `searchPhase`/results rather than the favorites list.
         let base = ListPhase.derive(
             hasError: store.errorMessage != nil,
@@ -75,7 +75,7 @@ struct FavoritesView: View {
     private var bulkRemoveConfirmationBinding: Binding<Bool> {
         // No op setter: the sheet is dismiss disabled and only closes through `DSAlertSheet`'s
         // own buttons, each driving the reducer directly.
-        Binding(get: { store.bulkRemoveConfirmationIsPresented }, set: { _ in })
+        Binding(get: { store.bulkRemovePhase.isConfirming }, set: { _ in })
     }
 
     private var bulkRemoveConfirmationTitle: String {
@@ -141,8 +141,8 @@ struct FavoritesView: View {
             await store.send(.refreshButtonTapped).finish()
         }
         // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the
-        // empty/error message is an overlay fed the list's pull-to-refresh drag so it
-        // rubber-bands with it. One animation cross-fades the whole state change.
+        // empty/error message is an overlay fed the list's pull to refresh drag so it
+        // rubber bands with it. One animation cross fades the whole state change.
         .overlay {
             ListStateOverlay(
                 phase: listPhase,
@@ -257,7 +257,7 @@ struct FavoritesView: View {
     }
 
     private var listContent: some View {
-        // Bound once: the separator checks below would otherwise re-filter the list per row.
+        // Bound once: the separator checks below would otherwise refilter the list per row.
         let favorites = store.displayedFavorites
         let firstID = favorites.first?.id
         let lastID = favorites.last?.id

@@ -25,7 +25,7 @@ extension BrowseQuickAction {
         guard !store.isSelecting else { return [] }
         var actions: [BrowseQuickAction] = []
         // Device content cannot be deleted, only taken off the device, as on the tab's own rows.
-        if store.showsDeviceContent, store.offlineItemIDs.contains(item.id) {
+        if store.shouldShowDeviceContent, store.offlineItemIDs.contains(item.id) {
             actions.append(BrowseQuickAction(
                 title: L10n.Browse.actionRemoveFromOffline,
                 icon: IconKit.delete,
@@ -42,7 +42,7 @@ extension BrowseQuickAction {
             ))
         }
         // Only folders can be favorited: the server 400s on anything else.
-        if item.isDirectory, !store.showsDeviceContent {
+        if item.isDirectory, !store.shouldShowDeviceContent {
             let isFavorite = store.favoritePaths.contains(item.id)
             actions.append(BrowseQuickAction(
                 title: isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,

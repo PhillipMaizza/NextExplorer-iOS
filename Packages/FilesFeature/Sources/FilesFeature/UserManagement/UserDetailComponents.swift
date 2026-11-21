@@ -66,3 +66,13 @@ struct AccessModeBadge: View {
             .background(Capsule().fill(tint.opacity(0.15)))
     }
 }
+
+#Preview {
+    Card(L10n.UserDetail.volumeSheetTitleNew) {
+        HStack {
+            AccessModeBadge(mode: .readwrite)
+            AccessModeBadge(mode: .readonly)
+        }
+    }
+    .padding()
+}

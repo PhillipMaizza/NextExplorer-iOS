@@ -43,14 +43,14 @@ struct SettingsAppearTests: SettingsFeatureTestSupport {
     @Test
     func theLoadedPreferencesReplaceTheSharedOnes() async {
         var state = makeState()
-        state.isLoadingPreferences = true
+        state.preferencesPhase = .loading
         let store = makeStore(state: state)
 
         await store.send(.preferencesResponse(.success(UserPreferences(
             showHiddenFiles: true,
             showThumbnails: false
         )))) {
-            $0.isLoadingPreferences = false
+            $0.preferencesPhase = .loaded
             $0.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: true, showThumbnails: false) }
         }
     }
@@ -58,10 +58,12 @@ struct SettingsAppearTests: SettingsFeatureTestSupport {
     @Test
     func aFailedPreferencesLoadKeepsTheSharedOnes() async {
         var state = makeState()
-        state.isLoadingPreferences = true
+        state.preferencesPhase = .loading
         let store = makeStore(state: state)
 
-        await store.send(.preferencesResponse(.failure(.sessionExpired))) { $0.isLoadingPreferences = false }
+        await store.send(.preferencesResponse(.failure(.sessionExpired))) {
+            $0.preferencesPhase = .failed(FilesClientError.sessionExpired.userMessage)
+        }
 
         #expect(store.state.preferences == UserPreferences())
     }

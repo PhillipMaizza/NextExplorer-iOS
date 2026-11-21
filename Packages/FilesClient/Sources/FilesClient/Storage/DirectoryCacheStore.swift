@@ -3,13 +3,13 @@ import CryptoKit
 import Dependencies
 import Foundation
 
-/// On-disk cache of directory listings, one JSON file per `(server, path)`, so browsing keeps
+/// On disk cache of directory listings, one JSON file per `(server, path)`, so browsing keeps
 /// working offline. Every operation is best effort: a read miss, a write failure or a corrupt
 /// entry must never surface as a browsing error, so nothing here throws.
 ///
 /// Entries live under `Application Support` (not `Caches`, which the OS purges under pressure
 /// exactly when an offline user needs them) and are held under a size / count cap with
-/// least-recently-written eviction.
+/// least recently written eviction.
 public struct DirectoryCacheStore: Sendable {
     public var read: @Sendable (_ serverURL: URL, _ path: String) -> CachedDirectory?
     /// When `path` was last written, from the entry's file timestamp: a cheap freshness probe
@@ -110,7 +110,7 @@ extension DirectoryCacheStore: DependencyKey {
     }
 
     /// Serialises filesystem access so concurrent browse effects can't race on the same file
-    /// or on eviction. The work itself is fast (KB-scale JSON), so a lock is simpler than a
+    /// or on eviction. The work itself is fast (KB scale JSON), so a lock is simpler than a
     /// queue and keeps the API synchronous.
     final class Storage: @unchecked Sendable {
         private let lock = NSLock()
@@ -140,7 +140,7 @@ extension DirectoryCacheStore: DependencyKey {
         private func fileURL(scope: String, serverURL: URL, path: String) -> URL? {
             guard let directory else { return nil }
             let normalizedPath = path.trimmingCharacters(in: CacheLayout.pathTrimCharacters)
-            // The active account is folded into the key so several signed-in accounts keep
+            // The active account is folded into the key so several signed in accounts keep
             // separate entries and a switch reads the right account's cache without a wipe.
             let key = CacheLayout.key(scope, serverURL.absoluteString, normalizedPath)
             let digest = SHA256.hash(data: Data(key.utf8))

@@ -97,7 +97,7 @@ struct TipJarSheet: View {
         }
         .buttonStyle(DSPressableButtonStyle())
         .disabled(store.purchasingID != nil)
-        .accessibilityLabel("\(product.displayName), \(product.displayPrice)")
+        .accessibilityLabel(L10n.Common.pair(product.displayName, product.displayPrice))
     }
 }
 

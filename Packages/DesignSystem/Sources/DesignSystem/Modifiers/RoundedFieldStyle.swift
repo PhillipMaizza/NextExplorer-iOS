@@ -3,7 +3,7 @@ import SwiftUI
 private struct RoundedFieldModifier: ViewModifier {
     var height: CGFloat
     var isFocused: Bool
-    var bordered: Bool
+    var isBordered: Bool
     var cornerRadius: CGFloat
 
     private var borderStyle: AnyShapeStyle {
@@ -22,7 +22,7 @@ private struct RoundedFieldModifier: ViewModifier {
             .overlay {
                 // Search fields sit on the gray page, where the white fill alone separates them,
                 // so they opt out of the border entirely (matches the system search field).
-                if bordered {
+                if isBordered {
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .strokeBorder(borderStyle, lineWidth: isFocused ? .borderWidthFocused : .borderWidthHairline)
                 }
@@ -42,13 +42,13 @@ public extension View {
     func roundedFieldStyle(
         height: CGFloat = .size48,
         isFocused: Bool = false,
-        bordered: Bool = true,
+        isBordered: Bool = true,
         cornerRadius: CGFloat = .radiusControl
     ) -> some View {
         modifier(RoundedFieldModifier(
             height: height,
             isFocused: isFocused,
-            bordered: bordered,
+            isBordered: isBordered,
             cornerRadius: cornerRadius
         ))
     }

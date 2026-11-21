@@ -21,7 +21,7 @@ struct APITokenCreateSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Metrics.sectionSpacing) {
-                    if !store.requiresPassword {
+                    if !store.isPasswordRequired {
                         noPasswordWarning
                     }
                     LabeledField(L10n.ApiTokens.fieldName, uppercased: false) {
@@ -45,7 +45,7 @@ struct APITokenCreateSheet: View {
                         )
                         .dsCard()
                     }
-                    if store.requiresPassword {
+                    if store.isPasswordRequired {
                         LabeledField(L10n.ApiTokens.fieldPassword, uppercased: false) {
                             DSSecureField(
                                 L10n.ApiTokens.fieldPassword,
@@ -120,11 +120,11 @@ private extension APIToken.Scope {
 }
 
 @MainActor
-private func createSheetPreview(requiresPassword: Bool, configure: (inout APITokensFeature.State) -> Void = { _ in
+private func createSheetPreview(isPasswordRequired: Bool, configure: (inout APITokensFeature.State) -> Void = { _ in
 }) -> some View {
     var state = APITokensFeature.State(
         serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-        requiresPassword: requiresPassword,
+        isPasswordRequired: isPasswordRequired,
         phase: .loaded
     )
     state.createForm = .init(name: "ci runner", scope: .write)
@@ -132,10 +132,10 @@ private func createSheetPreview(requiresPassword: Bool, configure: (inout APITok
     return APITokenCreateSheet(store: Store(initialState: state) { EmptyReducer() })
 }
 
-#Preview("With password") { createSheetPreview(requiresPassword: true) }
-#Preview("No password: warning") { createSheetPreview(requiresPassword: false) }
+#Preview("With password") { createSheetPreview(isPasswordRequired: true) }
+#Preview("No password: warning") { createSheetPreview(isPasswordRequired: false) }
 #Preview("Wrong password") {
-    createSheetPreview(requiresPassword: true) { $0.errorMessage = "That password is not right." }
+    createSheetPreview(isPasswordRequired: true) { $0.errorMessage = "That password is not right." }
 }
 
-#Preview("Creating") { createSheetPreview(requiresPassword: true) { $0.isWorking = true } }
+#Preview("Creating") { createSheetPreview(isPasswordRequired: true) { $0.isWorking = true } }

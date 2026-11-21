@@ -273,7 +273,7 @@ struct BrowseTabFeatureTests {
             $0.path[id: id]?.isPerformingFileAction = true
             $0.path[id: id]?.transferProgress = 0
             $0.path[id: id]?.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [misc], destination: TestFolder.docs, operation: .copy, clearClipboard: true,
+                items: [misc], destination: TestFolder.docs, operation: .copy, shouldClearClipboard: true,
                 resolution: .keepBoth, itemsToReplace: []
             )
         }

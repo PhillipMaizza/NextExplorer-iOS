@@ -628,7 +628,7 @@ settings.accountSignOut	Logga ut
 settings.accountSignOutTitle	Logga ut?
 settings.accountSignOutMessage	Logga ut %@ på den här enheten? Du måste logga in igen för att använda det här kontot.
 settings.accountChangeFailed	Det gick inte att ändra dina konton just nu. Försök igen.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktivt konto
 settings.badgeActive	Aktiv
 
@@ -1321,3 +1321,4 @@ shareUpload.deferredBody#other	Öppna NextExplorer för att ladda upp %lld stora
 shareUpload.failureTooLarge#one	%lld fil laddades inte upp. Anslutningen till din server nekar så stora filer. Dela dem igen så skickar NextExplorer dem i delar.
 shareUpload.failureTooLarge#other	%lld filer laddades inte upp. Anslutningen till din server nekar så stora filer. Dela dem igen så skickar NextExplorer dem i delar.
 shareUpload.startedDeferred	Sparat för NextExplorer. Öppna appen för att ladda upp dina stora filer.
+menu.goToFolderPlaceholder	Dokument/Rapporter

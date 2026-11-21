@@ -48,7 +48,7 @@ public struct OfflineManageFeature {
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
-            /// The pinned set changed; Settings should re-read its offline size.
+            /// The pinned set changed; Settings should reread its offline size.
             case changed
         }
     }

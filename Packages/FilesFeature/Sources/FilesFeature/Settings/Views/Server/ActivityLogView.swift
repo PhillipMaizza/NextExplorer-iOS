@@ -45,7 +45,7 @@ struct ActivityLogView: View {
             unavailableMessage: L10n.ActivityLog.unavailable,
             isUnavailable: store.isUnavailable,
             failureMessage: store.phase.errorMessage,
-            errorMessage: store.settingsError ?? store.listError,
+            errorMessage: store.bannerError,
             isLoadingFirstTime: store.phase == .loading && store.events.isEmpty,
             isBusy: store.isSavingSettings,
             onAppear: { store.send(.onAppear) }
@@ -209,7 +209,7 @@ struct ActivityLogView: View {
     }
 }
 
-private enum PreviewEvents {
+enum PreviewEvents {
     static let all = [
         ActivityEvent(id: "1", at: "2026-11-11T07:00:00.000Z", action: "sign-in", actor: "phillip", ip: "192.168.1.20"),
         ActivityEvent(

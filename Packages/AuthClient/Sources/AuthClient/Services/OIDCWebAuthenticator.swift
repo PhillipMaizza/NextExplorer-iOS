@@ -51,7 +51,7 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
                 continuation.resume(returning: callbackURL)
             }
             session.presentationContextProvider = self
-            // Share the system browser session so an existing IdP/SSO sign-in (and its passkey
+            // Share the system browser session so an existing IdP/SSO sign in (and its passkey
             // association) is reused rather than forcing a fresh authentication every time.
             session.prefersEphemeralWebBrowserSession = false
             self.session = session

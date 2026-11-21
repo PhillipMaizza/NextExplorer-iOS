@@ -2,6 +2,7 @@
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
+    import FilesClient
     import Localization
     import SwiftUI
 
@@ -267,5 +268,26 @@
             }
             return parts.isEmpty ? nil : ServerSettingsMetrics.joined(parts)
         }
+    }
+
+    #Preview("Files with history") {
+        var state = VersionedFilesFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.page = PreviewVersions.page
+        state.phase = .loaded
+        state.expanded = ["f1"]
+        state.details = ["f1": PreviewVersions.detail]
+        return MacVersionedFilesPane(store: Store(initialState: state) { VersionedFilesFeature() } withDependencies: {
+            $0.filesClient.fetchVersionedFiles = { _, _, _, _ in PreviewVersions.page }
+            $0.filesClient.fetchVersionedFile = { _, _ in PreviewVersions.detail }
+        })
+    }
+
+    #Preview("Empty") {
+        var state = VersionedFilesFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.page = VersionedFilesPage()
+        state.phase = .loaded
+        return MacVersionedFilesPane(store: Store(initialState: state) { VersionedFilesFeature() } withDependencies: {
+            $0.filesClient.fetchVersionedFiles = { _, _, _, _ in VersionedFilesPage() }
+        })
     }
 #endif

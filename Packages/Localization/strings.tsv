@@ -639,7 +639,7 @@ settings.accountSignOut	Sign Out
 settings.accountSignOutTitle	Sign Out?
 settings.accountSignOutMessage	Sign %@ out on this device? You'll need to sign in again to use this account.
 settings.accountChangeFailed	Couldn't change your accounts right now. Please try again.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, active account
 settings.badgeActive	Active
 settings.dateFormatNavigationTitle	Date Format
@@ -1159,6 +1159,7 @@ macSettings.choose	Choose…
 menu.forward	Forward
 menu.goToFolder	Go to Folder…
 menu.goToFolderTitle	Go to the folder:
+menu.goToFolderPlaceholder	Documents/Reports
 menu.copyPath	Copy Path
 menu.recentFolders	Recent Folders
 menu.clearRecent	Clear Menu

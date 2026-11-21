@@ -4,7 +4,7 @@ import FilesClient
 import FolderPickerFeature
 import Foundation
 
-/// An admin editing the server's path-scoped access rules via `PATCH /api/settings`. Mirrors
+/// An admin editing the server's path scoped access rules via `PATCH /api/settings`. Mirrors
 /// the web client's `SettingsAccessControl.vue`. The rule array is replaced wholesale on
 /// save; the server normalises paths and drops empty ones, then echoes the result.
 @Reducer
@@ -77,7 +77,7 @@ public struct AccessRulesFeature {
 
             case let .settingsResponse(.success(settings)):
                 state.phase = .loaded
-                // `access.rules` is admin only; an empty array from a non-admin is
+                // `access.rules` is admin only; an empty array from a non admin is
                 // indistinguishable from an admin with no rules, so treat a response that
                 // also lacks `thumbnails` as "not an admin".
                 if settings.thumbnails == nil, settings.accessRules.isEmpty {

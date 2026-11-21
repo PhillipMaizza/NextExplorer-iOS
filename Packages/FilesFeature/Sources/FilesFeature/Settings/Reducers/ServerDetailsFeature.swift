@@ -7,7 +7,7 @@ import Localization
 
 /// An admin editing the server's branding, app name and logo, via `PATCH /api/settings`
 /// (and `POST /api/settings/upload-logo` for a new image). Mirrors the web client's
-/// `SettingsBranding.vue`. Reached from the server row in Settings; non-admins never get here.
+/// `SettingsBranding.vue`. Reached from the server row in Settings; non admins never get here.
 ///
 /// The server URL itself is fixed (it's the authenticated session's) and shown read only.
 @Reducer
@@ -17,7 +17,7 @@ public struct ServerDetailsFeature {
     /// The server rejects a logo over 2 MB; the client enforces the same before uploading.
     static let maxLogoBytes = 2 * 1024 * 1024
 
-    /// Semantic name-field error; the view maps it to `L10n`.
+    /// Semantic name field error; the view maps it to `L10n`.
     public enum NameError: Equatable, Sendable {
         case empty
     }
@@ -28,7 +28,7 @@ public struct ServerDetailsFeature {
         /// Branding as last known from the server: the baseline the form edits against.
         public var branding: Branding
         public var nameDraft: String
-        /// A picked-but-unsaved logo, already downscaled and JPEG encoded by the view.
+        /// A picked but unsaved logo, already downscaled and JPEG encoded by the view.
         public var pendingLogoData: Data?
         public var isSaving = false
         public var errorMessage: String?

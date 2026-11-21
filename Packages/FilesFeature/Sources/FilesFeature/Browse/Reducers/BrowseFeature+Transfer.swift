@@ -11,16 +11,16 @@ extension BrowseFeature {
         guard let clipboard = state.clipboard,
               clipboard.canPaste(into: state.directoryPath, canWrite: state.access?.canWrite ?? false)
         else { return .none }
-        let clearClipboard = clipboard.operation == .move || !keepItemsAfterCopy
+        let shouldClearClipboard = clipboard.operation == .move || !keepItemsAfterCopy
         return runTransfer(&state, retry: TransferRetry(
             items: clipboard.items,
             destination: state.directoryPath,
             operation: clipboard.operation,
-            clearClipboard: clearClipboard
+            shouldClearClipboard: shouldClearClipboard
         ))
     }
 
-    /// Entry point for every copy/move. Runs the name-collision check first (unless the retry
+    /// Entry point for every copy/move. Runs the name collision check first (unless the retry
     /// already carries an answer), then either prompts or hands off to `performTransfer`.
     func runTransfer(_ state: inout State, retry: TransferRetry) -> Effect<Action> {
         guard !retry.items.isEmpty, !state.isPerformingFileAction else { return .none }
@@ -51,7 +51,7 @@ extension BrowseFeature {
         .cancellable(id: CancelID.transfer)
     }
 
-    /// No collisions → straight through (server auto-rename is a no-op when nothing clashes).
+    /// No collisions → straight through (server auto rename is a no op when nothing clashes).
     /// Otherwise stash the pending transfer and let `BrowseContentView` raise the prompt.
     func resolveTransfer(_ state: inout State, retry: TransferRetry, colliding: [FileItem]) -> Effect<Action> {
         guard !colliding.isEmpty else { return performTransfer(&state, retry: retry.resolved(.keepBoth)) }
@@ -71,7 +71,7 @@ extension BrowseFeature {
         state.transferErrorMessage = nil
         state.transferConflict = nil
         // Kept until the transfer confirms success, so the "Retry" action on a failure toast
-        // always has the exact params to re-run.
+        // always has the exact params to rerun.
         state.pendingTransferRetry = retry
         let serverURL = state.serverURL
         let filesClient = filesClient
@@ -100,7 +100,11 @@ extension BrowseFeature {
                         onProgress
                     )
                 }
-                return TransferOutcome(result: result, operation: retry.operation, clearClipboard: retry.clearClipboard)
+                return TransferOutcome(
+                    result: result,
+                    operation: retry.operation,
+                    shouldClearClipboard: retry.shouldClearClipboard
+                )
             }), animation: DSMotion.listDiff)
         }
         .cancellable(id: CancelID.transfer)

@@ -10,12 +10,12 @@ import SwiftUI
 /// Present only while something is staged, so an empty menu never opens.
 struct BrowsePasteMenu: View {
     let store: StoreOf<BrowseFeature>
-    let keepsClipboard: Bool
+    let shouldKeepClipboard: Bool
 
     var body: some View {
         if store.clipboard != nil, !store.directoryPath.isEmpty {
             Button {
-                store.send(.pasteTapped(keepItemsAfterCopy: keepsClipboard), animation: DSMotion.listDiff)
+                store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboard), animation: DSMotion.listDiff)
             } label: {
                 Label { Text(L10n.Browse.actionPasteHere) } icon: { IconKit.paste }
             }
@@ -40,12 +40,12 @@ struct BrowsePasteMenu: View {
     }
 }
 
-/// Invisible long-press target filling the space past the last row: a plain `.contextMenu` on
-/// the whole list or scroll container lifts a snapshot of the entire list on long-press, which
+/// Invisible long press target filling the space past the last row: a plain `.contextMenu` on
+/// the whole list or scroll container lifts a snapshot of the entire list on long press, which
 /// reads as the list jumping. Scoping it to this transparent trailing area keeps the list still.
 struct BrowsePasteTarget: View {
     let store: StoreOf<BrowseFeature>
-    let keepsClipboard: Bool
+    let shouldKeepClipboard: Bool
     var isListRow = false
 
     var body: some View {
@@ -65,7 +65,7 @@ struct BrowsePasteTarget: View {
         Color.clear
             .frame(maxWidth: .infinity, minHeight: Constants.minHeight)
             .contentShape(Rectangle())
-            .contextMenu { BrowsePasteMenu(store: store, keepsClipboard: keepsClipboard) }
+            .contextMenu { BrowsePasteMenu(store: store, shouldKeepClipboard: shouldKeepClipboard) }
     }
 
     private enum Constants {

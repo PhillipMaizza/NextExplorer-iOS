@@ -56,7 +56,7 @@ public struct OfflineTabFeature {
         public var selectedDownloadIDs: Set<LocalDownload.ID> = []
         /// Pinned items picked in select mode; they can only be removed from offline, never deleted.
         public var selectedPinnedPaths: Set<String> = []
-        public var bulkDeleteConfirmationIsPresented = false
+        public var bulkDeletePhase: ConfirmPhase = .idle
         /// Current account's downloads scope, so the tab lists only this account's files.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// The Thumbnails setting, so pinned files draw theirs like Browse does.
@@ -78,7 +78,7 @@ public struct OfflineTabFeature {
         }
 
         /// Filter and sort on the device, same shape as `BrowseFeature.displayedItems`: search
-        /// only ever matches against already-downloaded file names, never the server.
+        /// only ever matches against already downloaded file names, never the server.
         public var displayedDownloads: [LocalDownload] {
             let matches = searchQuery.isEmpty
                 ? Array(downloads)
@@ -311,11 +311,11 @@ public struct OfflineTabFeature {
 
             case .bulkDeleteTapped:
                 guard !state.selectedDownloadIDs.isEmpty else { return .none }
-                state.bulkDeleteConfirmationIsPresented = true
+                state.bulkDeletePhase = .confirming
                 return .none
 
             case .bulkDeleteCancelled:
-                state.bulkDeleteConfirmationIsPresented = false
+                state.bulkDeletePhase = .idle
                 return .none
 
             case .bulkDeleteConfirmed:
@@ -554,10 +554,10 @@ public struct OfflineTabFeature {
         return .serverMessage(statusCode: 0, message: message)
     }
 
-    /// Best effort, matching the sign-out flow's philosophy: one file refusing to delete
+    /// Best effort, matching the sign out flow's philosophy: one file refusing to delete
     /// shouldn't block removing the rest of the selection.
     private func confirmBulkDelete(_ state: inout State) -> Effect<Action> {
-        state.bulkDeleteConfirmationIsPresented = false
+        state.bulkDeletePhase = .idle
         let targets = state.downloads.filter { state.selectedDownloadIDs.contains($0.id) }
         guard !targets.isEmpty else { return .none }
         let localDownloadStore = localDownloadStore

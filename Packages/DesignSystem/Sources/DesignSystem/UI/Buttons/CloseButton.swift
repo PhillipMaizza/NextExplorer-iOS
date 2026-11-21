@@ -61,9 +61,9 @@ enum DSHitTarget {
     }
 }
 
-/// The dismiss button every full-screen preview/cover uses: a plain `xmark` on a frosted
+/// The dismiss button every full screen preview/cover uses: a plain `xmark` on a frosted
 /// material chip, legible over any content behind it (photos, video, dark code editors)
-/// without needing a theme-adaptive tint.
+/// without needing a theme adaptive tint.
 public struct DSCloseButton: View {
     private let action: () -> Void
     private let accessibilityLabel: String

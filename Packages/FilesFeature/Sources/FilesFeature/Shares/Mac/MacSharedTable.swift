@@ -105,7 +105,7 @@
                 .onChange(of: Self.allIDs(of: rows)) { _, ids in
                     selection.formIntersection(ids)
                 }
-                .syncRefreshFeedback(errorMessage: phase.errorMessage, signalsErrorHaptic: false) {
+                .syncRefreshFeedback(errorMessage: phase.errorMessage, shouldSignalErrorHaptic: false) {
                     await store.send(.refreshRequested).finish()
                 }
                 .overlay {

@@ -639,7 +639,7 @@ settings.accountSignOut	Deconectare
 settings.accountSignOutTitle	Deconectare?
 settings.accountSignOutMessage	Deconectezi %@ de pe acest dispozitiv? Va trebui să te autentifici din nou pentru a folosi acest cont.
 settings.accountChangeFailed	Conturile tale nu au putut fi modificate acum. Încearcă din nou.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, cont activ
 settings.badgeActive	Activ
 
@@ -1357,3 +1357,4 @@ shareUpload.failureTooLarge#one	%lld fișier nu a fost încărcat. Conexiunea la
 shareUpload.failureTooLarge#few	%lld fișiere nu au fost încărcate. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți.
 shareUpload.failureTooLarge#other	%lld de fișiere nu au fost încărcate. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți.
 shareUpload.startedDeferred	Salvat pentru NextExplorer. Deschide aplicația pentru a încărca fișierele mari.
+menu.goToFolderPlaceholder	Documente/Rapoarte

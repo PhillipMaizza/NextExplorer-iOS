@@ -52,7 +52,12 @@ struct BrowseDropReducerTests {
     }
 
     private func movingRetry(_ items: [FileItem], to destination: String) -> BrowseFeature.TransferRetry {
-        BrowseFeature.TransferRetry(items: items, destination: destination, operation: .move, clearClipboard: false)
+        BrowseFeature.TransferRetry(
+            items: items,
+            destination: destination,
+            operation: .move,
+            shouldClearClipboard: false
+        )
     }
 
     /// A move into another folder checks that folder for name clashes, then transfers, and records

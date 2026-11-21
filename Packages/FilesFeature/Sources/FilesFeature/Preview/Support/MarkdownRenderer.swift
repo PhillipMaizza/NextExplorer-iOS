@@ -8,8 +8,8 @@ import Markdown
 ///
 /// Deliberately doesn't conform to `MarkupVisitor`: its `visit`/`accept` requirements take
 /// `inout Self`, which forces every recursive call site to hold the visitor in a mutable `var`
-/// binding, including `self` inside the visitor's own methods (a `let`-bound `self`, which
-/// every instance method has). A plain type-switch sidesteps that entirely.
+/// binding, including `self` inside the visitor's own methods (a `let` bound `self`, which
+/// every instance method has). A plain type switch sidesteps that entirely.
 enum MarkdownRenderer {
     static func html(from markdown: String) -> String {
         """
@@ -28,10 +28,10 @@ enum MarkdownRenderer {
     }
 
     /// Without an explicit charset WebKit guesses Latin-1 for a bare fragment and mangles every
-    /// non-ASCII byte (em dashes turn into "\u{00E2}\u{20AC}\u{201D}"). The rest is just enough
+    /// non ASCII byte (em dashes turn into "\u{00E2}\u{20AC}\u{201D}"). The rest is just enough
     /// to make the page readable: the app's own font first (Inter, never fetched from the web, so
     /// the system stack takes over where the page cannot see the bundled copy), with sane width
-    /// and visible table borders. `body`'s `font-family` is the lowest-specificity rule in the
+    /// and visible table borders. `body`'s font family is the lowest specificity rule in the
     /// document, so a `<style>` block inside the Markdown source still wins the cascade.
     private static let documentCSS = """
     :root { color-scheme: light dark; }

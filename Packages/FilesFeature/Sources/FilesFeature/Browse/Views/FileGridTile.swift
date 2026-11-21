@@ -42,7 +42,7 @@ struct FileGridTile<Picture: View>: View {
         (ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium).isRoomy
     }
 
-    private var needsOutline: Bool {
+    private var shouldShowOutline: Bool {
         // Only the colour scheme matters here; reading the whole environment would redraw every
         // tile on any change to it.
         var environment = EnvironmentValues()
@@ -118,7 +118,7 @@ struct FileGridTile<Picture: View>: View {
                 }
             }
             .overlay {
-                if needsOutline {
+                if shouldShowOutline {
                     shape.strokeBorder(Color.borderPrimary, lineWidth: .borderWidthHairline)
                 }
             }

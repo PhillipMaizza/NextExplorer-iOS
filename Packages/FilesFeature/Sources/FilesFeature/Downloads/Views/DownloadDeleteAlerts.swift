@@ -20,7 +20,7 @@ private struct DownloadDeleteAlerts: ViewModifier {
     }
 
     private var bulkDeleteConfirmationBinding: Binding<Bool> {
-        Binding(get: { store.bulkDeleteConfirmationIsPresented }, set: { _ in })
+        Binding(get: { store.bulkDeletePhase.isConfirming }, set: { _ in })
     }
 
     private var bulkDeleteConfirmationTitle: String {
@@ -85,6 +85,6 @@ extension View {
 #Preview("Delete several") {
     var state = OfflineTabFeature.State()
     state.selectedDownloadIDs = ["/tmp/a.pdf", "/tmp/b.pdf"]
-    state.bulkDeleteConfirmationIsPresented = true
+    state.bulkDeletePhase = .confirming
     return Color.clear.downloadDeleteAlerts(store: Store(initialState: state) { OfflineTabFeature() })
 }

@@ -46,7 +46,7 @@ extension BrowseFeature {
                 item.path != destination && item.id != destination && !destination.hasPrefix(item.id + "/")
             }
             return runTransfer(&state, retry: TransferRetry(
-                items: items, destination: destination, operation: .move, clearClipboard: false
+                items: items, destination: destination, operation: .move, shouldClearClipboard: false
             ))
 
         case let .filesDroppedOnFolder(urls, folder):
@@ -203,7 +203,7 @@ extension BrowseFeature {
                 items: items,
                 destination: state.directoryPath,
                 operation: .copy,
-                clearClipboard: false,
+                shouldClearClipboard: false,
                 resolution: .keepBoth
             ))
 
@@ -226,7 +226,7 @@ extension BrowseFeature {
                 ids.contains(item.id) && item.id != folder.id && !folder.id.hasPrefix(item.id + "/")
             }
             return runTransfer(&state, retry: TransferRetry(
-                items: Array(items), destination: folder.id, operation: .move, clearClipboard: false
+                items: Array(items), destination: folder.id, operation: .move, shouldClearClipboard: false
             ))
 
         case .infoSelectionTapped:
@@ -243,7 +243,7 @@ extension BrowseFeature {
             let items = picker.items
             state.destinationPicker = nil
             return runTransfer(&state, retry: TransferRetry(
-                items: items, destination: destination, operation: .move, clearClipboard: false
+                items: items, destination: destination, operation: .move, shouldClearClipboard: false
             ))
 
         case .destinationPicker(.presented(.delegate(.cancelled))):
@@ -267,7 +267,7 @@ extension BrowseFeature {
                     colliding: Self.collidingItems(for: retry, in: destinationItems)
                 )
             case .failure:
-                // The listing failed: fall back to the server's safe auto-rename rather
+                // The listing failed: fall back to the server's safe auto rename rather
                 // than blocking the transfer on a check we couldn't run.
                 return performTransfer(&state, retry: retry.resolved(.keepBoth))
             }
@@ -306,7 +306,7 @@ extension BrowseFeature {
             state.transferProgress = nil
             state.pendingTransferRetry = nil
             state.transferErrorMessage = nil
-            if outcome.clearClipboard {
+            if outcome.shouldClearClipboard {
                 state.$clipboard.withLock { $0 = nil }
             }
             state.transferSuccessMessage = Self.transferSuccessMessage(for: outcome)

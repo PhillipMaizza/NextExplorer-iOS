@@ -11,7 +11,7 @@ private enum Metrics {
     static let emptyPadding: CGFloat = .space32
 }
 
-/// Admin-only editor for the server's path access rules, pushed from the Settings admin
+/// Admin only editor for the server's path access rules, pushed from the Settings admin
 /// section. Mirrors the web client's `SettingsAccessControl.vue`.
 struct AccessRulesView: View {
     @Bindable var store: StoreOf<AccessRulesFeature>

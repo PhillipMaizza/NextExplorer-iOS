@@ -4,7 +4,7 @@ import NetworkClient
 
 extension FilesService {
     /// `GET /api/permissions/*`, confirmed against `backend/src/routes/permissions.js`: one
-    /// wildcard path segment, same per-segment encoding as `fetchMetadata` / `fetchUsage`. A
+    /// wildcard path segment, same per segment encoding as `fetchMetadata` / `fetchUsage`. A
     /// denied path 403s with the server's denial reason, worth surfacing verbatim.
     func fetchPermissions(serverURL: URL, path: String) async throws -> FilePermissions {
         let url = Self.appendingPathSegments(of: path, to: serverURL.appendingPathComponent(APIPath.permissions))

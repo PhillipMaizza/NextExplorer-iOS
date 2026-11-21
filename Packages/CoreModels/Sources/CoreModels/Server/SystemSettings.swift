@@ -1,6 +1,6 @@
 import Foundation
 
-/// Server-side thumbnail generation config from `GET /api/settings` (admin only). Controls
+/// Server side thumbnail generation config from `GET /api/settings` (admin only). Controls
 /// how `GET /api/thumbnails/*` builds images for every client. Verified against
 /// `backend/src/services/settingsService.js` `sanitizeThumbnails`.
 public struct ThumbnailSettings: Equatable, Sendable, Decodable {
@@ -37,7 +37,7 @@ public struct ThumbnailSettings: Equatable, Sendable, Decodable {
     }
 }
 
-/// One path-scoped access override from `GET /api/settings`'s `access.rules` (admin only).
+/// One path scoped access override from `GET /api/settings`'s `access.rules` (admin only).
 /// The server applies these on top of filesystem permissions. Verified against
 /// `sanitizeAccessRules` in `backend/src/services/settingsService.js`.
 public struct AccessRule: Equatable, Sendable, Codable, Identifiable {
@@ -82,7 +82,7 @@ public struct AccessRule: Equatable, Sendable, Codable, Identifiable {
     }
 }
 
-/// The admin-only slice of `GET /api/settings`. Both fields are absent for non-admins, so a
+/// The admin only slice of `GET /api/settings`. Both fields are absent for non admins, so a
 /// nil `thumbnails` / empty `accessRules` means "not available to this user".
 public struct SystemSettings: Equatable, Sendable, Decodable {
     public var thumbnails: ThumbnailSettings?

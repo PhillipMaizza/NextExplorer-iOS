@@ -74,10 +74,10 @@ struct TextSnippetTests {
     }
 
     @Test("Audio and text files read their own content for a thumbnail")
-    func readsOwnContent() {
-        #expect(ThumbnailImage.readsOwnContent(kind: "mp3"))
-        #expect(ThumbnailImage.readsOwnContent(kind: "swift"))
-        #expect(!ThumbnailImage.readsOwnContent(kind: "jpg"))
-        #expect(!ThumbnailImage.readsOwnContent(kind: "mp4"))
+    func shouldReadOwnContent() {
+        #expect(ThumbnailImage.shouldReadOwnContent(kind: "mp3"))
+        #expect(ThumbnailImage.shouldReadOwnContent(kind: "swift"))
+        #expect(!ThumbnailImage.shouldReadOwnContent(kind: "jpg"))
+        #expect(!ThumbnailImage.shouldReadOwnContent(kind: "mp4"))
     }
 }

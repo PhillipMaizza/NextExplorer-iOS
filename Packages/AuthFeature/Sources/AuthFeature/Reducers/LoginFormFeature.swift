@@ -7,12 +7,12 @@ import Localization
 import NetworkClient
 
 private enum Constants {
-    /// A real homelab call can resolve near-instantly on a warm connection: hold the
+    /// A real homelab call can resolve near instantly on a warm connection: hold the
     /// spinner up briefly so the loading animation is actually visible.
     static let minimumSpinnerDuration: Duration = .seconds(0.25)
-    /// How long the green checkmark stays on screen before auto-advancing to credentials.
+    /// How long the green checkmark stays on screen before auto advancing to credentials.
     static let successDisplayDuration: Duration = .seconds(0.5)
-    /// How long the red X stays on screen before the button re-expands so the user can retry.
+    /// How long the red X stays on screen before the button reexpands so the user can retry.
     static let failureDisplayDuration: Duration = .seconds(1)
     /// How long an error message stays on screen before it clears itself.
     static let errorDismissDuration: Duration = .seconds(4)
@@ -30,8 +30,8 @@ private enum Constants {
 
 @Reducer
 public struct LoginFormFeature {
-    /// Effect identities so a stale in-flight call from a host/scheme the user has since
-    /// abandoned can never land its result (or an auto-advance) on the current screen.
+    /// Effect identities so a stale in flight call from a host/scheme the user has since
+    /// abandoned can never land its result (or an auto advance) on the current screen.
     private enum CancelID {
         case connectionTest
         case certificateLookup
@@ -70,10 +70,10 @@ public struct LoginFormFeature {
         case failure
     }
 
-    /// The credentials-page submit button's morph state: full pill (`idle`), collapsed
+    /// The credentials page submit button's morph state: full pill (`idle`), collapsed
     /// spinner (`submitting`), collapsed checkmark (`success`, held briefly so it reads before
-    /// the app zooms in), collapsed X (`failure`, then re-expands to `idle`). Mirrors
-    /// `ConnectionPhase`'s role for the server-page button.
+    /// the app zooms in), collapsed X (`failure`, then reexpands to `idle`). Mirrors
+    /// `ConnectionPhase`'s role for the server page button.
     /// What the second factor page asks for: the six digits from an authenticator app, or one of
     /// the recovery codes the account was given when it turned the second factor on.
     public enum CodeMode: Equatable, Sendable {
@@ -110,8 +110,8 @@ public struct LoginFormFeature {
         }
     }
 
-    /// Which credential field(s) should shake/red-border for the current `errorMessage`: a
-    /// server-rejected email or username and password implicates both (the server never says
+    /// Which credential field(s) should shake/red border for the current `errorMessage`: a
+    /// server rejected email or username and password implicates both (the server never says
     /// which one was actually wrong).
     public enum InvalidFieldScope: Equatable, Sendable {
         case identifierAndPassword
@@ -125,7 +125,7 @@ public struct LoginFormFeature {
         public var host: String
         /// Set once the user taps the scheme picker themselves, so typing doesn't then move it
         /// back under them. Cleared when the host is emptied or an explicit `http(s)://` is typed.
-        var schemeWasSetByUser: Bool = false
+        var isSchemeSetByUser: Bool = false
         public var identifier: String
         public var password: String
         /// The authenticator code or recovery code typed on the second factor page.
@@ -279,7 +279,7 @@ public struct LoginFormFeature {
                 // would contradict the picker, so it goes.
                 state.host = Self.strippingSchemePrefix(state.host)
                 state.scheme = scheme
-                state.schemeWasSetByUser = true
+                state.isSchemeSetByUser = true
                 state.resetConnection()
                 return Self.cancelInFlightWork()
 
@@ -292,14 +292,14 @@ public struct LoginFormFeature {
                 state.host = text
                 let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
                 if trimmed.isEmpty {
-                    state.schemeWasSetByUser = false
+                    state.isSchemeSetByUser = false
                 } else if trimmed.hasPrefix("http://") {
                     state.scheme = .http
-                    state.schemeWasSetByUser = false
+                    state.isSchemeSetByUser = false
                 } else if trimmed.hasPrefix("https://") {
                     state.scheme = .https
-                    state.schemeWasSetByUser = false
-                } else if !state.schemeWasSetByUser, let first = trimmed.first {
+                    state.isSchemeSetByUser = false
+                } else if !state.isSchemeSetByUser, let first = trimmed.first {
                     // A leading digit is an IP (a homelab box, so http); a hostname is a
                     // public server (so https). A LAN hostname that needs http is the one
                     // case the user fixes with the picker: and then it sticks.
@@ -382,13 +382,13 @@ public struct LoginFormFeature {
             case let .testConnectionResponse(.success(status)):
                 state.authStatus = status
                 state.diagnostics.record(
-                    "server status: password sign in \(status.isLocalEnabled ? "on" : "off"), single sign on \(status.isOIDCEnabled ? "on" : "off"), redirected to https \(status.redirectsToHTTPS)",
+                    "server status: password sign in \(status.isLocalEnabled ? "on" : "off"), single sign on \(status.isOIDCEnabled ? "on" : "off"), redirected to https \(status.isRedirectedToHTTPS)",
                     at: now
                 )
                 state.certificatePrompt = nil
                 // The server sent http to https: sign in there directly, or the password is lost
                 // in the redirect (and would travel unencrypted first).
-                if status.redirectsToHTTPS {
+                if status.isRedirectedToHTTPS {
                     state.scheme = .https
                     if let host = Self.hostText(state.host, port: status.redirectedPort) {
                         state.host = host
@@ -527,7 +527,7 @@ public struct LoginFormFeature {
                 }
                 state.errorMessage = Self.message(for: error)
                 state.invalidFieldsScope = (error == .invalidCredentials) ? .identifierAndPassword : nil
-                // `.sessionCookieMissing` means the sign-in itself completed but the app
+                // `.sessionCookieMissing` means the sign in itself completed but the app
                 // couldn't pick up a session from it: not a typo the user can just retry past.
                 // It stays on screen until the next submit attempt or navigation reset clears
                 // it, instead of silently vanishing after a few seconds.
@@ -649,10 +649,10 @@ public struct LoginFormFeature {
         return CertificatePrompt(origin: origin, isRejected: isRejected)
     }
 
-    /// Cancels every in-flight network/timer effect this feature can have running.
+    /// Cancels every in flight network/timer effect this feature can have running.
     /// Called whenever the user abandons the current handshake (edits the host/scheme,
     /// or backs out) so a stale response can never land on a screen the user has since
-    /// moved on from: e.g. an old Test Connection call auto-advancing to credentials
+    /// moved on from: e.g. an old Test Connection call auto advancing to credentials
     /// after the user has already typed a different host.
     static func cancelInFlightWork() -> Effect<Action> {
         .merge(
@@ -667,7 +667,7 @@ public struct LoginFormFeature {
         )
     }
 
-    /// After a failed Test Connection, the button briefly shows a red X, then re-expands to
+    /// After a failed Test Connection, the button briefly shows a red X, then reexpands to
     /// the idle "Test connection" label so the user can retry: `errorMessage` stays set and
     /// visible independent of this, so the failure reason doesn't disappear along with it.
     static func scheduleRevertToIdle(_ clock: any Clock<Duration>) -> Effect<Action> {
@@ -678,8 +678,8 @@ public struct LoginFormFeature {
         .cancellable(id: CancelID.failureRevert, cancelInFlight: true)
     }
 
-    /// The credentials-page counterpart to `scheduleRevertToIdle`: after a failed login the
-    /// submit button holds a red X, then re-expands to the idle label so the user can retry.
+    /// The credentials page counterpart to `scheduleRevertToIdle`: after a failed login the
+    /// submit button holds a red X, then reexpands to the idle label so the user can retry.
     static func scheduleSubmitRevert(_ clock: any Clock<Duration>) -> Effect<Action> {
         .run { send in
             try await clock.sleep(for: Constants.failureDisplayDuration)
@@ -688,7 +688,7 @@ public struct LoginFormFeature {
         .cancellable(id: CancelID.submitRevert, cancelInFlight: true)
     }
 
-    /// Auto-dismisses whatever error message is currently showing after a few seconds, so the
+    /// Auto dismisses whatever error message is currently showing after a few seconds, so the
     /// user isn't left staring at a stale failure reason indefinitely.
     static func scheduleErrorDismiss(_ clock: any Clock<Duration>) -> Effect<Action> {
         .run { send in
@@ -759,8 +759,8 @@ public struct LoginFormFeature {
 
         var components = URLComponents()
         components.scheme = scheme.rawValue
-        // Foundation does not auto-bracket an IPv6 literal, and an unbracketed one yields a
-        // malformed URL: so re-wrap it before handing the host back to URLComponents.
+        // Foundation does not auto bracket an IPv6 literal, and an unbracketed one yields a
+        // malformed URL: so rewrap it before handing the host back to URLComponents.
         components.host = hostPart.contains(":") ? "[\(hostPart)]" : hostPart
         components.port = portPart.flatMap { Int($0) }
         guard let url = components.url else { return nil }
@@ -779,17 +779,17 @@ public struct LoginFormFeature {
         return "\(bare):\(port)"
     }
 
-    /// A hostname, IPv4 address, or (bracket-stripped) IPv6 literal. Rejects spaces, punctuation
-    /// and other junk that `URLComponents` would otherwise silently percent-encode into a host
+    /// A hostname, IPv4 address, or (bracket stripped) IPv6 literal. Rejects spaces, punctuation
+    /// and other junk that `URLComponents` would otherwise silently percent encode into a host
     /// that can never resolve.
     static func isValidHost(_ host: String) -> Bool {
         guard !host.isEmpty else { return false }
         if host.contains(":") {
-            // Only reached for a bracket-stripped IPv6 literal.
+            // Only reached for a bracket stripped IPv6 literal.
             return host.range(of: #"^[0-9A-Fa-f:.]+$"#, options: .regularExpression) != nil
                 && host.filter { $0 == ":" }.count >= 2
         }
-        // Dot-separated labels of [A-Za-z0-9_-], no leading/trailing hyphen per label, ≤253 total.
+        // Dot separated labels of letters, digits, underscores and hyphens, none at either end of a label, ≤253 total.
         return host.range(
             of: #"^(?=.{1,253}$)([A-Za-z0-9_](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9_])?)(\.[A-Za-z0-9_](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9_])?)*$"#,
             options: .regularExpression

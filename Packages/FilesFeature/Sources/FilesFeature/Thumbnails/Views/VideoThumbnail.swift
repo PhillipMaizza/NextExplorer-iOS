@@ -22,18 +22,31 @@ struct VideoThumbnailView: View {
     let url: URL
     let size: CGFloat
 
-    @State private var frame: PlatformImage?
-    @State private var didFail = false
+    private enum FramePhase {
+        case loading
+        case loaded(PlatformImage)
+        case failed
+    }
+
+    @State private var phase: FramePhase = .loading
+
+    private var frame: PlatformImage? {
+        if case let .loaded(image) = phase {
+            return image
+        }
+        return nil
+    }
 
     var body: some View {
         ZStack {
-            if let frame {
+            switch phase {
+            case let .loaded(frame):
                 Image(platformImage: frame)
                     .resizable()
                     .scaledToFill()
-            } else if didFail {
+            case .failed:
                 FileTypeIcon(kind: url.pathExtension)
-            } else {
+            case .loading:
                 ThumbnailLoadingPlaceholder()
             }
             IconKit.playCircle
@@ -48,11 +61,11 @@ struct VideoThumbnailView: View {
         .clipShape(RoundedRectangle(cornerRadius: .radiusSmall))
         .task(id: url) {
             if let image = await Self.firstFrame(of: url, maxPixelSize: size * Constants.renderScale) {
-                frame = image
+                phase = .loaded(image)
             } else if !Task.isCancelled {
                 // A cancelled generate (row scrolled away) is not a failure; leave the
-                // placeholder so re-appearing retries instead of dropping to the generic icon.
-                didFail = true
+                // placeholder so reappearing retries instead of dropping to the generic icon.
+                phase = .failed
             }
         }
     }

@@ -8,8 +8,8 @@ private enum Constants {
     static let fillAlpha: Double = 0.12
 }
 
-/// A full-width inline error card: a leading warning icon and an error-styled message on a
-/// red-tinted rounded background. Used wherever a screen surfaces a failed action without an
+/// A full width inline error card: a leading warning icon and an error styled message on a
+/// red tinted rounded background. Used wherever a screen surfaces a failed action without an
 /// alert (form submits, panel loads).
 public struct DSErrorCard: View {
     private let message: String

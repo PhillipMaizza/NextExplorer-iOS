@@ -23,7 +23,7 @@ struct NameInputSheet: View {
     /// A rule on top of the file name rules, such as "an extension the editor opens" for a new
     /// file: returns why the trimmed name can't be used, or `nil`.
     let additionalRule: ((String) -> String?)?
-    let capitalizesWords: Bool
+    let shouldCapitalizeWords: Bool
     let onConfirm: (String) -> Void
     let onCancel: () -> Void
 
@@ -38,7 +38,7 @@ struct NameInputSheet: View {
         initialName: String = "",
         isBusy: Bool,
         additionalRule: ((String) -> String?)? = nil,
-        capitalizesWords: Bool = true,
+        shouldCapitalizeWords: Bool = true,
         onConfirm: @escaping (String) -> Void,
         onCancel: @escaping () -> Void
     ) {
@@ -48,7 +48,7 @@ struct NameInputSheet: View {
         self.confirmTitle = confirmTitle
         self.isBusy = isBusy
         self.additionalRule = additionalRule
-        self.capitalizesWords = capitalizesWords
+        self.shouldCapitalizeWords = shouldCapitalizeWords
         self.onConfirm = onConfirm
         self.onCancel = onCancel
         _name = State(initialValue: initialName)
@@ -106,7 +106,7 @@ struct NameInputSheet: View {
                 DSSheetHeader(icon: icon, title: title, closeAccessibilityLabel: L10n.Common.close, onClose: onCancel)
                 VStack(alignment: .leading, spacing: .space8) {
                     DSTextField(placeholder, text: $name, focused: $isFieldFocused)
-                        .textInputAutocapitalization(capitalizesWords ? .words : .never)
+                        .textInputAutocapitalization(shouldCapitalizeWords ? .words : .never)
                         .autocorrectionDisabled()
                         .submitLabel(.done)
                         .onSubmit(submit)
@@ -160,7 +160,7 @@ struct NameInputSheet: View {
                 EditableTextFiles
                     .isEditable(name: $0) ? nil : "Use a file type the editor can open, such as .txt, .md or .js."
             },
-            capitalizesWords: false,
+            shouldCapitalizeWords: false,
             onConfirm: { _ in },
             onCancel: {}
         )

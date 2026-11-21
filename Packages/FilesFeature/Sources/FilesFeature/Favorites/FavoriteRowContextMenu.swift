@@ -4,8 +4,8 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// The `…` / long-press action menu for one favorite, shared by the Favorites list rows and
-/// grid cells. Edit (rename/recolor), then remove-from-favorites.
+/// The `…` / long press action menu for one favorite, shared by the Favorites list rows and
+/// grid cells. Edit (rename/recolor), then remove from favorites.
 struct FavoriteRowContextMenu: View {
     let store: StoreOf<FavoritesFeature>
     let favorite: Favorite

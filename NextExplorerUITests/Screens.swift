@@ -244,7 +244,7 @@ struct BrowseScreen {
         app.staticTexts[name]
     }
 
-    /// The tappable/long-pressable row button (its label bundles name + metadata, so match on a
+    /// The tappable/long pressable row button (its label bundles name + metadata, so match on a
     /// substring). Long press this, not the name label, to open the row's context menu. Type chips
     /// are skipped: the Documents chip would otherwise match the Documents folder.
     func row(_ name: String) -> XCUIElement {
@@ -593,7 +593,7 @@ struct TextPreviewScreen {
     }
 }
 
-/// The Two-Factor Authentication screen, reached from the accounts: in Settings on iPhone, in the
+/// The Two Factor Authentication screen, reached from the accounts: in Settings on iPhone, in the
 /// sidebar's account popover on iPad.
 struct TwoFactorScreen {
     let app: XCUIApplication
@@ -792,7 +792,7 @@ struct SettingsScreen {
         app.staticTexts[L10n.Language.systemDefaultSubtitle]
     }
 
-    /// Multi-server switcher: the Accounts section header and the "Add Account" row.
+    /// Multiserver switcher: the Accounts section header and the "Add Account" row.
     var addAccountRow: XCUIElement {
         app.buttons[L10n.Settings.addAccount].firstMatch
     }

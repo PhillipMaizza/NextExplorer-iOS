@@ -19,7 +19,7 @@ struct FileRowView: View {
     let customSubtitle: String?
     /// Whether the name and subtitle wrap instead of being cut to one line each: where the row's
     /// details matter more than an even list (the trash).
-    var wrapsText = false
+    var shouldWrapText = false
     /// A small semibold line rendered under the subtitle, e.g. "Line 58" for a search content
     /// match. `nil` hides it.
     let lineLabel: String?
@@ -33,21 +33,21 @@ struct FileRowView: View {
     /// The full item, when built from one: needed for the on device document first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
-    /// When set, replaces the folder/file-type glyph: used by the Favorites list to show a
+    /// When set, replaces the folder/file type glyph: used by the Favorites list to show a
     /// favorite's custom icon, weight and colour.
     var customIcon: Image?
     var customIconTint: Color?
-    var customIconFilled: Bool
+    var isCustomIconFilled: Bool
     /// When set, the leading thumbnail/icon is the source the preview cover's `.zoom`
     /// transition grows from and shrinks back to.
     var matchedSource: PreviewMatchedSource?
     /// True while this file's content is downloading after a tap: the row shows a trailing
-    /// spinner and the full-screen preview holds off until it's ready.
+    /// spinner and the full screen preview holds off until it's ready.
     var isOpening: Bool = false
     /// True when this item is downloaded (or covered by a pinned folder) for offline use: the row
     /// shows a small offline badge so the user can tell what's available without a connection.
     var isAvailableOffline: Bool = false
-    /// Read live so an already-visible row updates immediately when the user changes the
+    /// Read live so an already visible row updates immediately when the user changes the
     /// date format in Settings, rather than only on the next fetch.
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
     @AppStorage(AppStorageKeys.includeTimeInDates) private var shouldIncludeTime = false
@@ -69,15 +69,15 @@ struct FileRowView: View {
         showThumbnails: Bool = false,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
-        customIconFilled: Bool = false,
+        isCustomIconFilled: Bool = false,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
         isAvailableOffline: Bool = false,
         dateModified: Date? = nil,
         size: Int64? = nil,
-        wrapsText: Bool = false
+        shouldWrapText: Bool = false
     ) {
-        self.wrapsText = wrapsText
+        self.shouldWrapText = shouldWrapText
         self.name = name
         self.isDirectory = isDirectory
         self.isAvailableOffline = isAvailableOffline
@@ -95,7 +95,7 @@ struct FileRowView: View {
         file = thumbnailFile
         self.customIcon = customIcon
         self.customIconTint = customIconTint
-        self.customIconFilled = customIconFilled
+        self.isCustomIconFilled = isCustomIconFilled
         self.matchedSource = matchedSource
         self.isOpening = isOpening
     }
@@ -127,7 +127,7 @@ struct FileRowView: View {
         file = item
         customIcon = nil
         customIconTint = nil
-        customIconFilled = false
+        isCustomIconFilled = false
         self.matchedSource = matchedSource
         self.isOpening = isOpening
     }
@@ -155,12 +155,13 @@ struct FileRowView: View {
     }
 
     private var isEligibleForThumbnail: Bool {
-        !isDirectory && (supportsThumbnail || readsOwnContent) && showThumbnails && serverURL != nil && itemID != nil
+        !isDirectory && (supportsThumbnail || shouldReadOwnContent) && showThumbnails && serverURL != nil && itemID !=
+            nil
     }
 
     /// Audio (cover art) and text (its first lines) have no server thumbnail: the app draws their own.
-    private var readsOwnContent: Bool {
-        kind.map(ThumbnailImage.readsOwnContent) ?? false
+    private var shouldReadOwnContent: Bool {
+        kind.map(ThumbnailImage.shouldReadOwnContent) ?? false
     }
 
     private var isEligibleForDocumentThumbnail: Bool {
@@ -176,11 +177,11 @@ struct FileRowView: View {
             VStack(alignment: .leading, spacing: .space2) {
                 Text(displayName)
                     .type(.body2(.semibold), style: isHidden ? .tertiary : .primaryOnSurface)
-                    .lineLimit(wrapsText ? nil : 1)
+                    .lineLimit(shouldWrapText ? nil : 1)
                 if let subtitle {
                     Text(subtitle)
                         .type(.body3(.regular), style: isHidden ? .tertiary : .secondary)
-                        .lineLimit(wrapsText ? nil : 1)
+                        .lineLimit(shouldWrapText ? nil : 1)
                 }
                 if let lineLabel {
                     Text(lineLabel)
@@ -244,7 +245,7 @@ struct FileRowView: View {
             customIcon
                 .resizable()
                 .scaledToFit()
-                .symbolVariant(customIconFilled ? .fill : .none)
+                .symbolVariant(isCustomIconFilled ? .fill : .none)
                 .foregroundStyle(customIconTint ?? Color.accent)
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isEligibleForThumbnail, let serverURL, let itemID {

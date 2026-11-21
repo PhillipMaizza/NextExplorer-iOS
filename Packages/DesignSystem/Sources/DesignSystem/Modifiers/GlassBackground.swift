@@ -2,9 +2,9 @@ import SwiftUI
 
 public extension View {
     /// Liquid Glass on iOS 26, frosted `.ultraThinMaterial` fallback below it. For floating
-    /// controls that sit over arbitrary content: full-screen preview toolbars, close-button
+    /// controls that sit over arbitrary content: full screen preview toolbars, close button
     /// chips: where the system toolbar can't reach (custom `fullScreenCover` with its own
-    /// swipe-to-dismiss). Pass `interactive: true` on a tappable control so the glass reacts
+    /// swipe to dismiss). Pass `interactive: true` on a tappable control so the glass reacts
     /// to touch the way system glass buttons do.
     ///
     /// Honors Reduce Transparency: when that setting is on, both the glass and the material are

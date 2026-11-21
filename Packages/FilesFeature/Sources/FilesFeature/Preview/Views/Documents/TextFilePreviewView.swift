@@ -4,7 +4,7 @@ import FilesClient
 import Localization
 import SwiftUI
 
-/// Full-screen viewer/editor for plain-text and code files: the only "edit docs" scope the
+/// Full screen viewer/editor for plain text and code files: the only "edit docs" scope the
 /// user confirmed. The real `/api/preview` endpoint only serves images/RAW/video/audio/PDF,
 /// so these kinds never go through `FilesClient.previewFile`; content comes from
 /// `GET /api/editor` as raw text and saves back via `PUT /api/editor` instead.
@@ -21,7 +21,7 @@ struct TextFilePreviewView: View {
     let onRetry: () -> Void
     let onDismiss: () -> Void
     /// A file the user just created opens ready to type, once; any other file opens to read.
-    var startsEditing = false
+    var shouldStartEditing = false
 
     /// The edit buffer, `nil` until the user first types. While `nil`, the editor reads `content`
     /// directly, so a freshly mounted `CodeEditorView` gets the full document on its very first
@@ -107,7 +107,7 @@ struct TextFilePreviewView: View {
             // the editor follows the authoritative `content` again.
             .onChange(of: content) { _, _ in draft = nil }
             .onAppear {
-                if startsEditing {
+                if shouldStartEditing {
                     isEditing = true
                 }
             }
@@ -161,7 +161,7 @@ struct TextFilePreviewView: View {
         #endif
     }
 
-    /// Leading nav-bar item: toggles the Runestone editor between read-only and editable; the
+    /// Leading nav bar item: toggles the Runestone editor between read only and editable; the
     /// checkmark state saves on tap. Hidden until there's content to edit.
     @ViewBuilder
     private var editToggleButton: some View {
@@ -176,8 +176,8 @@ struct TextFilePreviewView: View {
         }
     }
 
-    /// Trailing nav-bar item for `.html` files: hands the file's `/api/raw` URL to Safari.
-    /// The server has no rendered-HTML endpoint, so Safari shows the source (and a login page
+    /// Trailing nav bar item for `.html` files: hands the file's `/api/raw` URL to Safari.
+    /// The server has no rendered HTML endpoint, so Safari shows the source (and a login page
     /// first if the server requires auth).
     @ViewBuilder
     private var openInBrowserButton: some View {
@@ -192,7 +192,7 @@ struct TextFilePreviewView: View {
     }
 
     private func toggleEditing() {
-        // Saving updates `content` upstream, which re-fires the markdown render task above.
+        // Saving updates `content` upstream, which refires the markdown render task above.
         if isEditing {
             onSave(currentText)
         }

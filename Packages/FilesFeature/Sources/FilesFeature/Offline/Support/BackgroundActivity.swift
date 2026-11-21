@@ -3,13 +3,13 @@ import Foundation
     import UIKit
 #endif
 
-/// Holds a UIKit background task assertion around a piece of async work, so an in-flight offline sync
-/// keeps running through the OS-granted execution window (typically ~30s) after the app is
+/// Holds a UIKit background task assertion around a piece of async work, so an in flight offline sync
+/// keeps running through the OS granted execution window (typically ~30s) after the app is
 /// backgrounded, instead of being suspended the instant the user leaves. Anything not finished in that
-/// window is picked up by the next auto-sync when the app returns.
+/// window is picked up by the next auto sync when the app returns.
 ///
 /// A true "downloads continue indefinitely while suspended" experience would need a background
-/// `URLSession` plus app relaunch handling; this is the bounded, self-contained step toward it.
+/// `URLSession` plus app relaunch handling; this is the bounded, self contained step toward it.
 enum BackgroundActivity {
     /// A user's upload or download: on the Mac the system must not idle sleep or nap the app
     /// partway through it, as Safari keeps a download going. iOS runs it as is; its transfer

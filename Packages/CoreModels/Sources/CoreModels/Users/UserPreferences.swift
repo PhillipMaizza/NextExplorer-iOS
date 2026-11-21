@@ -1,11 +1,11 @@
 import Foundation
 
-/// The per-user subset of `GET /api/settings`'s `user` object that this client acts on
+/// The per user subset of `GET /api/settings`'s `user` object that this client acts on
 /// (`backend/src/services/settingsService.js`'s `getUserSettings`). The server also
-/// stores sidebar-visibility keys under the same object, but those only apply to the web
+/// stores sidebar visibility keys under the same object, but those only apply to the web
 /// client's own navigation, so they're left undecoded rather than mirrored inertly.
 ///
-/// A brand-new user has no rows in `user_settings` at all, so any key can be absent from
+/// A brand new user has no rows in `user_settings` at all, so any key can be absent from
 /// the response; decoding falls back to this client's own defaults rather than failing.
 public struct UserPreferences: Decodable, Equatable, Sendable {
     public var showHiddenFiles: Bool
@@ -24,7 +24,7 @@ public struct UserPreferences: Decodable, Equatable, Sendable {
         self.defaultShareExpiration = defaultShareExpiration
     }
 
-    /// A relative share-link lifetime: `value` of `unit` from now.
+    /// A relative share link lifetime: `value` of `unit` from now.
     public struct ShareExpiration: Decodable, Equatable, Sendable {
         public let value: Int
         public let unit: Unit
@@ -40,7 +40,7 @@ public struct UserPreferences: Decodable, Equatable, Sendable {
 
         /// The concrete date this lifetime lands on, measured from `now`. Calendar based so
         /// `months` respects varying month lengths, matching the web client's
-        /// `calculateExpirationDate`. Returns `nil` for a non-positive `value`.
+        /// `calculateExpirationDate`. Returns `nil` for a non positive `value`.
         public func expirationDate(from now: Date, calendar: Calendar = .current) -> Date? {
             guard value > 0 else { return nil }
             let component: Calendar.Component

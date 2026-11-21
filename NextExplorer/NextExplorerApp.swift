@@ -64,7 +64,7 @@ struct NextExplorerApp: App {
     @AppStorage(AppStorageKeys.prefersDarkMode) private var isDarkAppearanceOverride = false
 
     private var appearanceMode: AppearanceMode {
-        AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: isDarkAppearanceOverride)
+        AppearanceMode(hasOverride: hasAppearanceOverride, isDark: isDarkAppearanceOverride)
     }
 
     @Environment(\.scenePhase) private var scenePhase

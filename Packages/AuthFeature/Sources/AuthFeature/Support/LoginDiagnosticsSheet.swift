@@ -69,7 +69,7 @@ struct LoginDiagnosticsSheet: View {
                     ShareLink(item: text) {
                         Text(L10n.Common.share)
                             .type(.label3)
-                            .foregroundStyle(Color.black)
+                            .foregroundStyle(Color.onAccent)
                             .frame(maxWidth: .infinity)
                             .frame(height: .size48)
                             .background(

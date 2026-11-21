@@ -39,7 +39,7 @@ public struct UploadReviewFeature {
         public var preparingCount: Int
         /// `true` when the last staging batch produced nothing and there's nothing else
         /// pending: the sheet stays open showing an error rather than vanishing.
-        public var stagingFailed = false
+        public var hasStagingFailed = false
         /// How many picked items failed to copy out of the picker across this session. Surfaced
         /// as a warning so the user knows fewer files arrived than they selected.
         public var skippedCount = 0
@@ -113,7 +113,7 @@ public struct UploadReviewFeature {
             case let .stage(source):
                 let requested = source.count
                 guard requested > 0 else { return .none }
-                state.stagingFailed = false
+                state.hasStagingFailed = false
                 state.preparingCount += requested
                 let uploadStaging = uploadStaging
                 return .run { send in
@@ -142,7 +142,7 @@ public struct UploadReviewFeature {
             case let .filePrepared(file):
                 state.files.append(file)
                 state.preparingCount = max(0, state.preparingCount - 1)
-                state.stagingFailed = false
+                state.hasStagingFailed = false
                 return .none
 
             case let .stagingBatchFinished(requested, staged):
@@ -151,7 +151,7 @@ public struct UploadReviewFeature {
                 state.preparingCount = max(0, state.preparingCount - max(0, requested - staged))
                 guard state.files.isEmpty, state.preparingCount == 0 else { return .none }
                 if staged == 0, requested > 0 {
-                    state.stagingFailed = true
+                    state.hasStagingFailed = true
                     return .none
                 }
                 return .send(.delegate(.cancelled))

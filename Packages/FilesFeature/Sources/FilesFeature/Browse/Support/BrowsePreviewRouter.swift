@@ -9,7 +9,7 @@ import SwiftUI
 /// gallery, which pages through every file in the folder, or the text editor while editing. A Mac
 /// shows one file at a time by its `PreviewKind` (unsupported screen, player, archive browser, image
 /// gallery, document, editor) and steps through the folder with the arrow keys. The share sheet
-/// target is view-local to `BrowseContentView`, so it's handed back through `onShareTarget`.
+/// target is view local to `BrowseContentView`, so it's handed back through `onShareTarget`.
 struct BrowsePreviewRouter: View {
     let store: StoreOf<BrowseFeature>
     let item: FileItem
@@ -98,7 +98,7 @@ struct BrowsePreviewRouter: View {
         #if os(iOS)
             // Every file opens in the gallery and pages through the folder; only
             // editing a text file (or a file New File just made) shows the editor.
-            if store.showsTextEditor {
+            if store.shouldShowTextEditor {
                 textEditor
             } else {
                 FileGalleryView(
@@ -120,7 +120,7 @@ struct BrowsePreviewRouter: View {
         @ViewBuilder
         private var macRouted: some View {
             let actions = actions
-            switch store.showsTextEditor ? .text : PreviewKind(item) {
+            switch store.shouldShowTextEditor ? .text : PreviewKind(item) {
             case .unsupported:
                 UnsupportedFilePreviewView(
                     item: item,
@@ -182,7 +182,7 @@ struct BrowsePreviewRouter: View {
             onRetry: { store.send(.textContentRetryTapped) },
             // Opened from the gallery's Edit, closing goes back to the gallery on this file.
             onDismiss: { store.send(store.isPreviewEditing ? .previewEditorClosed : .previewDismissed) },
-            startsEditing: store.newlyCreatedFileID == item.id || store.isPreviewEditing
+            shouldStartEditing: store.newlyCreatedFileID == item.id || store.isPreviewEditing
         )
         .dsAlert(isPresented: Binding(get: { store.isTextSaveConflictPresented }, set: { _ in })) {
             DSAlertSheet(

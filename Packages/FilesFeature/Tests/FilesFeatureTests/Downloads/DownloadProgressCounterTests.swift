@@ -5,7 +5,7 @@ struct DownloadProgressCounterTests {
     @Test
     func inFlightFractionsAccumulateAsPartialUnits() {
         let counter = DownloadProgressCounter()
-        // Two files in flight: one 50%, one 25% -> 0.75 of a file processed, none done yet.
+        // Two files in flight: one 50%, one 25% makes 0.75 of a file processed, none done yet.
         _ = counter.progress(key: 0, fileFraction: 0.5)
         let snapshot = counter.progress(key: 1, fileFraction: 0.25)
         #expect(snapshot?.unitsDone == 0.75)
@@ -43,7 +43,7 @@ struct DownloadProgressCounterTests {
     func aLateProgressForACompletedKeyIsIgnored() {
         let counter = DownloadProgressCounter()
         _ = counter.complete(key: 0, success: true)
-        // A callback arriving after completion must not re-add the slot and double count.
+        // A callback arriving after completion must not re add the slot and double count.
         #expect(counter.progress(key: 0, fileFraction: 0.3) == nil)
         let done = counter.complete(key: 1, success: true)
         #expect(done.unitsDone == 2)

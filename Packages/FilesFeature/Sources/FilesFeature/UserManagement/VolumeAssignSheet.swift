@@ -7,7 +7,7 @@ import SwiftUI
 
 private typealias Metrics = UserDetailMetrics
 
-/// Assign or edit a user volume: label, access mode, and (for a new volume) a drill-down
+/// Assign or edit a user volume: label, access mode, and (for a new volume) a drill down
 /// admin directory picker. Presented from `UserDetailView`'s Volumes tab.
 struct VolumeAssignSheet: View {
     @Bindable var store: StoreOf<UserManagementFeature>
@@ -15,8 +15,7 @@ struct VolumeAssignSheet: View {
     @Dependency(\.filesClient) private var filesClient
 
     @State private var listing: AdminDirectoryListing?
-    @State private var isBrowsing = false
-    @State private var browseError: String?
+    @State private var browsePhase: DataPhase = .idle
     /// The directory currently being listed; `nil` is the server's volume root. Bound to a
     /// `.task(id:)` so drilling in or out cancels any in flight listing before the next one,
     /// since rapid taps otherwise race and the slower one wins.
@@ -150,9 +149,9 @@ struct VolumeAssignSheet: View {
                         .accessibilityLabel(L10n.UserDetail.directoryPickerOpen(directory.name))
                     }
                 }
-            } else if isBrowsing {
+            } else if browsePhase == .loading {
                 DSSpinner().frame(maxWidth: .infinity).padding(.vertical, .space8)
-            } else if let browseError {
+            } else if let browseError = browsePhase.errorMessage {
                 Text(browseError).type(.body3(.semibold), style: .error)
             }
         }
@@ -174,16 +173,40 @@ struct VolumeAssignSheet: View {
     }
 
     private func loadDirectories(path: String?) async {
-        isBrowsing = true
-        browseError = nil
-        defer { isBrowsing = false }
+        browsePhase = .loading
         do {
             let next = try await filesClient.browseAdminDirectories(store.serverURL, path)
             guard !Task.isCancelled else { return }
             listing = next
+            browsePhase = .loaded
         } catch {
             guard !Task.isCancelled else { return }
-            browseError = (error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed
+            browsePhase = .failed((error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed)
         }
     }
+}
+
+@MainActor
+private func volumeSheetPreview(_ sheet: UserManagementFeature.VolumeSheetState) -> some View {
+    Color.clear.dsSheet(isPresented: .constant(true)) {
+        VolumeAssignSheet(store: Store(initialState: previewListState { $0.volumeSheet = sheet }) {
+            UserManagementFeature()
+        } withDependencies: {
+            $0.filesClient = .previewValue
+        })
+    }
+}
+
+#Preview("New volume") {
+    volumeSheetPreview(UserManagementFeature.VolumeSheetState(userID: "u2"))
+}
+
+#Preview("Editing volume") {
+    volumeSheetPreview(UserManagementFeature.VolumeSheetState(
+        userID: "u2",
+        editingVolumeID: "v1",
+        label: "Media",
+        selectedPath: "/mnt/media",
+        accessMode: .readonly
+    ))
 }

@@ -131,7 +131,7 @@ struct BrowseMoveAndUploadReviewTests {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: TestFolder.archive, operation: .move, clearClipboard: false
+                items: [incoming], destination: TestFolder.archive, operation: .move, shouldClearClipboard: false
             )
         }
         await receiveMoveToArchive(store, moved: ["a.txt"], message: L10n.Browse.transferMoved(1), gate: gate)
@@ -166,7 +166,7 @@ struct BrowseMoveAndUploadReviewTests {
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
                 items: [incoming, second, third], destination: TestFolder.archive, operation: .move,
-                clearClipboard: false
+                shouldClearClipboard: false
             )
         }
         await receiveMoveToArchive(

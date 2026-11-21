@@ -650,7 +650,7 @@ settings.accountSignOut	Wyloguj
 settings.accountSignOutTitle	Wylogować?
 settings.accountSignOutMessage	Wylogować %@ na tym urządzeniu? Aby korzystać z tego konta, trzeba będzie zalogować się ponownie.
 settings.accountChangeFailed	Nie udało się teraz zmienić kont. Spróbuj ponownie.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktywne konto
 settings.badgeActive	Aktywne
 
@@ -1393,3 +1393,4 @@ shareUpload.failureTooLarge#few	%lld pliki nie zostały przesłane. Połączenie
 shareUpload.failureTooLarge#many	%lld plików nie zostało przesłanych. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach.
 shareUpload.failureTooLarge#other	%lld pliku nie zostało przesłane. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach.
 shareUpload.startedDeferred	Zapisano dla NextExplorer. Otwórz aplikację, aby przesłać duże pliki.
+menu.goToFolderPlaceholder	Dokumenty/Raporty

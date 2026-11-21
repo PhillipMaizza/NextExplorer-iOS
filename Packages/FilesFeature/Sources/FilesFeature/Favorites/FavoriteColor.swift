@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The favorite-colour swatches, mirroring `FavoriteEditDialog.vue`'s `COLOR_PALETTE`. The
+/// The favorite colour swatches, mirroring `FavoriteEditDialog.vue`'s `COLOR_PALETTE`. The
 /// stored value is a `"#rrggbb"` string (or `nil` for the default); anything the palette
 /// doesn't recognise still renders via `Color(hexString:)`.
 enum FavoriteColor {
@@ -36,7 +36,7 @@ enum FavoriteColor {
         return Color(hexString: hex)
     }
 
-    /// Whether `stored` refers to the same swatch as `hex` (case-insensitive, both optional).
+    /// Whether `stored` refers to the same swatch as `hex` (case insensitive, both optional).
     static func matches(_ stored: String?, _ hex: String?) -> Bool {
         switch (stored?.lowercased(), hex?.lowercased()) {
         case (nil, nil): true

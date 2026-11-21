@@ -30,7 +30,7 @@ public struct NetworkClient: Sendable {
     /// in memory, and hands back that file's URL. The caller owns the returned file: move it
     /// where it belongs (or delete it) before the enclosing scope ends. Session/cookie
     /// handling is the same as `send`. Use for large payloads (previews, downloads, archives)
-    /// where `send`'s in-memory `Data` would spike resident memory.
+    /// where `send`'s in memory `Data` would spike resident memory.
     public var download: @Sendable (_ request: URLRequest) async throws -> (URL, HTTPURLResponse)
     /// Same as `download`, but reports receive progress in bytes as the body streams to disk, so a
     /// long transfer drives a live progress bar with sizes and an estimate. Progress is throttled to

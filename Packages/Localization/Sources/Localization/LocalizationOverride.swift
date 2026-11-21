@@ -1,9 +1,9 @@
 import Foundation
 import os
 
-/// Runtime language override backing the in-app language switch. `apply(_:)` points every `tr()`
+/// Runtime language override backing the in app language switch. `apply(_:)` points every `tr()`
 /// lookup at the chosen language's compiled `.lproj` inside this package's bundle; with no override
-/// (or an unknown code) it falls back to `.module`, i.e. the system-resolved language. Generated
+/// (or an unknown code) it falls back to `.module`, i.e. the system resolved language. Generated
 /// `L10n.swift` reads `bundle`/`locale` here.
 public enum LocalizationOverride {
     /// The app's UI languages, mirroring the web app's set. `en` is the source language.
@@ -121,7 +121,7 @@ public enum LocalizationOverride {
 
     /// Whether the UI lays out right to left: the language picked inside the app, else the language
     /// the system resolved for the app. Without the system fallback an Arabic or Hebrew phone with
-    /// no in-app choice would come out left to right.
+    /// no in app choice would come out left to right.
     public static func usesRightToLeftLayout(
         selectedLanguage: String?,
         systemLanguage: String? = Bundle.main.preferredLocalizations.first

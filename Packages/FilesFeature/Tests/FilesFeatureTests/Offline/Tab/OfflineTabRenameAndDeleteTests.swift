@@ -158,8 +158,8 @@ struct OfflineTabRenameAndDeleteTests {
         initial.selectedDownloadIDs = [item.id]
         let store = TestStore(initialState: initial) { OfflineTabFeature() }
 
-        await store.send(.bulkDeleteTapped) { $0.bulkDeleteConfirmationIsPresented = true }
-        await store.send(.bulkDeleteCancelled) { $0.bulkDeleteConfirmationIsPresented = false }
+        await store.send(.bulkDeleteTapped) { $0.bulkDeletePhase = .confirming }
+        await store.send(.bulkDeleteCancelled) { $0.bulkDeletePhase = .idle }
 
         #expect(store.state.selectedDownloadIDs == [item.id])
     }
@@ -172,7 +172,7 @@ struct OfflineTabRenameAndDeleteTests {
         var initial = state(downloads: [first, stuck, last])
         initial.isSelecting = true
         initial.selectedDownloadIDs = [first.id, stuck.id, last.id]
-        initial.bulkDeleteConfirmationIsPresented = true
+        initial.bulkDeletePhase = .confirming
         let deleted = LockIsolated<[URL]>([])
         let store = TestStore(initialState: initial) {
             OfflineTabFeature()
@@ -185,7 +185,7 @@ struct OfflineTabRenameAndDeleteTests {
             }
         }
 
-        await store.send(.bulkDeleteConfirmed) { $0.bulkDeleteConfirmationIsPresented = false }
+        await store.send(.bulkDeleteConfirmed) { $0.bulkDeletePhase = .idle }
         await store.receive(\.bulkDeleteResponse) {
             $0.downloads = [stuck]
             $0.isSelecting = false
@@ -198,10 +198,10 @@ struct OfflineTabRenameAndDeleteTests {
     @Test
     func confirmingBulkDeleteWithNothingSelectedOnlyDismissesTheDialog() async {
         var initial = state(downloads: [download(Constants.oldName)])
-        initial.bulkDeleteConfirmationIsPresented = true
+        initial.bulkDeletePhase = .confirming
         let store = TestStore(initialState: initial) { OfflineTabFeature() }
 
-        await store.send(.bulkDeleteConfirmed) { $0.bulkDeleteConfirmationIsPresented = false }
+        await store.send(.bulkDeleteConfirmed) { $0.bulkDeletePhase = .idle }
     }
 
     // MARK: refresh failures

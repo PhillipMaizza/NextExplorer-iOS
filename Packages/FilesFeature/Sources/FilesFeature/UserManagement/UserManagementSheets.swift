@@ -149,3 +149,47 @@ struct SetPasswordSheet: View {
         }
     }
 }
+
+@MainActor
+private func sheetPreview(
+    _ sheet: (StoreOf<UserManagementFeature>) -> some View,
+    mutate: (inout UserManagementFeature.State) -> Void
+) -> some View {
+    let content = sheet(Store(initialState: previewListState(mutate)) { UserManagementFeature() })
+    return Color.clear.dsSheet(isPresented: .constant(true)) { content }
+}
+
+#Preview("Create user") {
+    sheetPreview(CreateUserSheet.init) { $0.createSheet = UserManagementFeature.CreateUserState() }
+}
+
+#Preview("Create user: error") {
+    sheetPreview(CreateUserSheet.init) {
+        var sheet = UserManagementFeature.CreateUserState()
+        sheet.email = "jane@"
+        sheet.username = "jane"
+        sheet.errorMessage = L10n.UserManagement.errorEmailInvalid
+        $0.createSheet = sheet
+    }
+}
+
+#Preview("Set password") {
+    sheetPreview(SetPasswordSheet.init) {
+        $0.passwordSheet = UserManagementFeature.PasswordSheetState(
+            userID: "u2",
+            userLabel: "Jane Doe",
+            hasExistingPassword: false
+        )
+    }
+}
+
+#Preview("Replace password") {
+    sheetPreview(SetPasswordSheet.init) {
+        $0.passwordSheet = UserManagementFeature.PasswordSheetState(
+            userID: "u2",
+            userLabel: "Jane Doe",
+            hasExistingPassword: true,
+            password: "short"
+        )
+    }
+}

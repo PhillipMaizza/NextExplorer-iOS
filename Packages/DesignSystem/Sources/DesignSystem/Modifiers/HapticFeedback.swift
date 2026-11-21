@@ -4,7 +4,7 @@ import SwiftUI
 private struct HapticFeedbackModifier<T: Equatable>: ViewModifier {
     /// Mirrors the same key `SettingsView`'s "Haptics" toggle writes: read live here
     /// rather than threaded through the environment, so every call site stays a plain
-    /// one-line modifier.
+    /// one line modifier.
     @AppStorage(AppStorageKeys.hapticsEnabled) private var isHapticsEnabled = true
 
     let feedback: SensoryFeedback
@@ -19,7 +19,7 @@ private struct HapticFeedbackModifier<T: Equatable>: ViewModifier {
 }
 
 public extension View {
-    /// Drop-in replacement for `.sensoryFeedback(_:trigger:)` that additionally respects the
+    /// Drop in replacement for `.sensoryFeedback(_:trigger:)` that additionally respects the
     /// user's "Haptics" setting: every haptic in the app should go through this, never the
     /// raw SwiftUI modifier directly, or it'll keep buzzing after the user turns them off.
     func hapticFeedback(_ feedback: SensoryFeedback, trigger: some Equatable) -> some View {

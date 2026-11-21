@@ -120,7 +120,7 @@
                 isConfirmEnabled: store.isSubmitEnabled,
                 isWorking: store.isSubmitting,
                 errorMessage: store.errorMessage,
-                cancelTitle: store.didSucceed ? L10n.Common.close : L10n.Common.cancel,
+                cancelTitle: store.hasSucceeded ? L10n.Common.close : L10n.Common.cancel,
                 onCancel: onClose,
                 onConfirm: { store.send(.submitTapped) }
             ) {
@@ -156,7 +156,7 @@
                     .textContentType(.newPassword)
                     MacFieldError(message: confirmError)
                 }
-                if store.didSucceed {
+                if store.hasSucceeded {
                     Text(L10n.ChangePassword.success).foregroundStyle(Color.positiveText)
                 }
             }

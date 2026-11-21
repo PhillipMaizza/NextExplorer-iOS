@@ -84,7 +84,7 @@ struct BrowseSelectionTests {
         }
 
         await store.send(.bulkDeleteTapped) {
-            $0.bulkDeleteConfirmationIsPresented = true
+            $0.bulkDeletePhase = .confirming
             $0.deleteImpactCheck = .checking
         }
         await store.receive(\.deleteImpactResponse.success) {
@@ -96,7 +96,7 @@ struct BrowseSelectionTests {
     @Test("Confirming a bulk delete deletes every selected item in one call and leaves select mode")
     func bulkDeleteConfirmedDeletesEverySelectedItemInOneCall() async {
         var state = selectingState(selected: [folder.id, file.id])
-        state.bulkDeleteConfirmationIsPresented = true
+        state.bulkDeletePhase = .confirming
         state.favoritePaths = [folder.id]
         let deleted = LockIsolated<[Set<String>]>([])
         let store = BrowseFixtures.store(state) {
@@ -108,7 +108,7 @@ struct BrowseSelectionTests {
         }
 
         await store.send(.bulkDeleteConfirmed) {
-            $0.bulkDeleteConfirmationIsPresented = false
+            $0.bulkDeletePhase = .idle
             $0.isBulkActionInFlight = true
             $0.bulkDeleteProgress = 0
         }
@@ -133,7 +133,7 @@ struct BrowseSelectionTests {
         var state = BrowseFixtures.state(items: [folder, file, dotfile])
         state.isSelecting = true
         state.selectedItemIDs = [folder.id, file.id, dotfile.id]
-        state.bulkDeleteConfirmationIsPresented = true
+        state.bulkDeletePhase = .confirming
         // Turned off in another window while the three were selected.
         state.$preferences.withLock { $0.showHiddenFiles = false }
         let deleted = LockIsolated<[Set<String>]>([])
@@ -146,7 +146,7 @@ struct BrowseSelectionTests {
         #expect(store.state.selectedItems.map(\.id) == [folder.id, file.id])
 
         await store.send(.bulkDeleteConfirmed) {
-            $0.bulkDeleteConfirmationIsPresented = false
+            $0.bulkDeletePhase = .idle
             $0.isBulkActionInFlight = true
             $0.bulkDeleteProgress = 0
         }
@@ -181,7 +181,7 @@ struct BrowseSelectionTests {
         }
 
         await store.send(.bulkDeleteConfirmed) {
-            $0.bulkDeleteConfirmationIsPresented = false
+            $0.bulkDeletePhase = .idle
             $0.isBulkActionInFlight = true
             $0.bulkDeleteProgress = 0
         }

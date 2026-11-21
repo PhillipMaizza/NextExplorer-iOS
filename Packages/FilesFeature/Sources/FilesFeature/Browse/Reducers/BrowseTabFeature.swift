@@ -39,7 +39,7 @@ public struct BrowseTabFeature {
         /// A search hit: opens the folder (or the one holding the file, then selects and opens it) on top
         /// of the folders already open, so Back returns to the previous one.
         case navigateToItem(folder: String, title: String, revealing: String?)
-        /// Re-fetches the root folder and every pushed subfolder currently on the live
+        /// Refetches the root folder and every pushed subfolder currently on the live
         /// navigation stack: sent when the app becomes active again after being backgrounded.
         case syncPathStack
         /// Refetches only the screens (root or pushed) whose `directoryPath` equals `path`.

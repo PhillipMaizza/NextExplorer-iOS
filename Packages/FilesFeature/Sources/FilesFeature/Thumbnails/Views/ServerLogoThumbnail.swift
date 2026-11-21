@@ -9,12 +9,12 @@ import SwiftUI
 
 /// The server's logo as a circle: the branding image once it loads, `IconKit.server`
 /// until then / on failure / when no custom logo is set. Fetches `branding.appLogoUrl` with a
-/// plain `URLSession` request: one small image, re-fetched when the URL changes.
+/// plain `URLSession` request: one small image, refetched when the URL changes.
 struct ServerLogoThumbnail: View {
     let branding: Branding
     let serverURL: URL
     var size: CGFloat
-    /// A picked-but-unsaved logo, shown in place of the fetched one.
+    /// A picked but unsaved logo, shown in place of the fetched one.
     var overrideImageData: Data?
 
     @State private var fetched: PlatformImage?
@@ -81,4 +81,12 @@ struct ServerLogoThumbnail: View {
             fetched = image
         }
     }
+}
+
+#Preview {
+    ServerLogoThumbnail(
+        branding: Branding(appName: Branding.defaultAppName, appLogoUrl: Branding.defaultLogoPath),
+        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+        size: .size48
+    )
 }

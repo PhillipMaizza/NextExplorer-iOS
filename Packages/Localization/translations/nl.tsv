@@ -628,7 +628,7 @@ settings.accountSignOut	Afmelden
 settings.accountSignOutTitle	Afmelden?
 settings.accountSignOutMessage	%@ afmelden op dit apparaat? Je moet opnieuw inloggen om dit account te gebruiken.
 settings.accountChangeFailed	Je accounts konden nu niet worden gewijzigd. Probeer het opnieuw.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, actief account
 settings.badgeActive	Actief
 
@@ -1321,3 +1321,4 @@ shareUpload.deferredBody#other	Open NextExplorer om %lld grote bestanden te uplo
 shareUpload.failureTooLarge#one	%lld bestand is niet geüpload. De verbinding met je server weigert zulke grote bestanden. Deel ze opnieuw en NextExplorer verstuurt ze in delen.
 shareUpload.failureTooLarge#other	%lld bestanden zijn niet geüpload. De verbinding met je server weigert zulke grote bestanden. Deel ze opnieuw en NextExplorer verstuurt ze in delen.
 shareUpload.startedDeferred	Bewaard voor NextExplorer. Open de app om je grote bestanden te uploaden.
+menu.goToFolderPlaceholder	Documenten/Rapporten

@@ -93,7 +93,7 @@
             .accessibilityElement(children: .combine)
             .accessibilityLabel(account.isActive
                 ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
-                : L10n.Settings.accountLabel(account.displayName, account.serverHost))
+                : L10n.Common.pair(account.displayName, account.serverHost))
         }
     }
 
@@ -145,7 +145,7 @@
                 if account.isActive {
                     MacUploadDefaultsSection(store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults))
                 }
-                if account.isActive, store.showsTwoFactorRow {
+                if account.isActive, store.shouldShowTwoFactorRow {
                     Section {
                         LabeledContent(L10n.TwoFactor.navigationTitle) {
                             Button(L10n.TwoFactor.manageButton) { store.send(.twoFactorButtonTapped) }
@@ -155,7 +155,7 @@
                 Section {
                     HStack {
                         if account.isActive {
-                            if store.showsPasswordRow {
+                            if store.shouldShowPasswordRow {
                                 Button(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
                             }
                         } else {

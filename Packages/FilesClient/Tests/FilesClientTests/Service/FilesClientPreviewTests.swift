@@ -11,7 +11,7 @@ import TestUtils
 /// `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     struct FilesClientPreviewTests: FilesClientLiveHarness {
-        /// A distinct name per call (`UUID`-suffixed) keeps each test's cache slot
+        /// A distinct name per call (`UUID` suffixed) keeps each test's cache slot
         /// (`Library/Caches/PreviewCache/<item.id>`) isolated from every other test and from any
         /// prior run: the cache is real, persistent disk state, not reset between test runs.
         func uniquePreviewItem(name: String, path: String = "", kind: String = "txt") -> FileItem {
@@ -41,7 +41,7 @@ extension FilesClientLiveTests {
             #expect(again == downloaded)
             #expect(StubURLProtocol.capturedRequest == nil)
 
-            // The interactive path lands in the same slot, so tap-to-open reuses the download.
+            // The interactive path lands in the same slot, so tap to open reuses the download.
             StubURLProtocol.capturedRequest = nil
             let interactive = try await client.previewFile(serverURL, item)
             #expect(interactive == downloaded)
@@ -162,7 +162,7 @@ extension FilesClientLiveTests {
             let secondURL = try await makeClient().previewFile(serverURL, changed)
 
             #expect(firstURL == secondURL) // same cache slot (same item path)...
-            #expect(try Data(contentsOf: secondURL) == Data("second".utf8)) // ...but re-downloaded
+            #expect(try Data(contentsOf: secondURL) == Data("second".utf8)) // ...but redownloaded
             try? FileManager.default.removeItem(at: firstURL.deletingLastPathComponent())
         }
 

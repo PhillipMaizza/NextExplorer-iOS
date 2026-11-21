@@ -628,7 +628,7 @@ settings.accountSignOut	Se déconnecter
 settings.accountSignOutTitle	Se déconnecter ?
 settings.accountSignOutMessage	Déconnecter %@ de cet appareil ? Vous devrez vous reconnecter pour utiliser ce compte.
 settings.accountChangeFailed	Impossible de modifier vos comptes pour le moment. Veuillez réessayer.
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, compte actif
 settings.badgeActive	Actif
 
@@ -1321,3 +1321,4 @@ shareUpload.deferredBody#other	Ouvrez NextExplorer pour envoyer %lld fichiers vo
 shareUpload.failureTooLarge#one	%lld fichier n'a pas été envoyé. La connexion à votre serveur refuse les fichiers de cette taille. Partagez-les de nouveau et NextExplorer les enverra par morceaux.
 shareUpload.failureTooLarge#other	%lld fichiers n'ont pas été envoyés. La connexion à votre serveur refuse les fichiers de cette taille. Partagez-les de nouveau et NextExplorer les enverra par morceaux.
 shareUpload.startedDeferred	Enregistré pour NextExplorer. Ouvrez l'app pour envoyer vos gros fichiers.
+menu.goToFolderPlaceholder	Documents/Rapports

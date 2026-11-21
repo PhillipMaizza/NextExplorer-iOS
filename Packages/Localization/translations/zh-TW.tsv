@@ -617,7 +617,7 @@ settings.accountSignOut	登出
 settings.accountSignOutTitle	登出？
 settings.accountSignOutMessage	要在此裝置上登出 %@ 嗎？您需要重新登入才能使用此帳戶。
 settings.accountChangeFailed	目前無法變更您的帳戶，請再試一次。
-settings.accountLabel	%1$@, %2$@
+common.pair	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 使用中的帳戶
 settings.badgeActive	使用中
 
@@ -1285,3 +1285,4 @@ shareUpload.deferredTitle	大型檔案等待中
 shareUpload.deferredBody#other	打開 NextExplorer 以上傳 %lld 個大型檔案。
 shareUpload.failureTooLarge#other	%lld 個檔案未能上傳。 伺服器連線拒絕這麼大的檔案。請再次分享，NextExplorer 會分段傳送。
 shareUpload.startedDeferred	已為 NextExplorer 儲存。請打開 App 上傳大型檔案。
+menu.goToFolderPlaceholder	文件/報告

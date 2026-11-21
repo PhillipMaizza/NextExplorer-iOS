@@ -49,9 +49,9 @@ let package = Package(
                 "DesignSystem",
                 "Localization",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                // Client-side archive listing (`ArchiveBrowserView`): the server has no
-                // listing-only endpoint (`POST /api/files/zip/extract` fully unpacks to disk),
-                // so reading a .zip/.rar's contents happens entirely on-device instead.
+                // Client side archive listing (`ArchiveBrowserView`): the server has no
+                // listing only endpoint (`POST /api/files/zip/extract` fully unpacks to disk),
+                // so reading a .zip/.rar's contents happens entirely on device instead.
                 .product(name: "ZIPFoundation", package: "ZIPFoundation"),
                 .product(name: "Unrar", package: "Unrar.swift"),
                 .product(name: "VLCKitSPM", package: "vlckit-spm"),

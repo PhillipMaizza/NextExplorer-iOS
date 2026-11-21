@@ -7,7 +7,7 @@ public enum DSButtonStyle: CaseIterable, Hashable {
     case primary
     /// Filled surface background: secondary action.
     case secondary
-    /// Transparent background, accent text: low-emphasis inline action.
+    /// Transparent background, accent text: low emphasis inline action.
     case tertiary
     /// Transparent, no border, no lift, neutral text: a dismiss ("Cancel") that shouldn't
     /// compete with the primary CTA beside it. Unlike `.tertiary` the label isn't accent.
@@ -20,7 +20,7 @@ public enum DSButtonStyle: CaseIterable, Hashable {
     /// Filled negative background: flags a failed action.
     case failure
     /// Fixed dark charcoal fill, white text: SSO/secondary CTAs that should read as a
-    /// distinct, high-contrast brand element in both light and dark mode, rather than
+    /// distinct, high contrast brand element in both light and dark mode, rather than
     /// flipping to whichever color currently contrasts with the background.
     case inverted
 
@@ -38,7 +38,7 @@ public enum DSButtonStyle: CaseIterable, Hashable {
     var foregroundColor: Color {
         switch self {
         // `.accent` is a pale gold: white text on it fails contrast in both appearances,
-        // so its label stays fixed-dark rather than following the semantic on-fill color.
+        // so its label stays fixed dark rather than following the semantic on fill color.
         case .primary: .black
         case .success, .failure, .inverted: .white
         case .secondary, .outline: .primaryDS
@@ -69,9 +69,9 @@ public enum DSButtonSize: CaseIterable, Hashable {
 private enum Constants {
     static let loadingOpacity: Double = 0.7
     static let disabledOpacity: Double = 0.4
-    /// Fixed dark charcoal fill for `.inverted`, deliberately not theme-adaptive.
+    /// Fixed dark charcoal fill for `.inverted`, deliberately not theme adaptive.
     static let invertedFillWhite: Double = 0.15
-    /// Press-down feedback: a subtle scale-down over this duration.
+    /// Press down feedback: a subtle scale down over this duration.
     static let pressedScale: CGFloat = 0.97
 }
 
@@ -168,8 +168,8 @@ public struct DSButton: View {
     }
 }
 
-/// A CTA button that morphs between a full-width `.radiusControl`-cornered rectangle (matching
-/// `DSButton`) and a `size`-wide circle: for async actions that show a spinner while in
+/// A CTA button that morphs between a full width rectangle with `.radiusControl` corners (matching
+/// `DSButton`) and a circle `size` wide: for async actions that show a spinner while in
 /// flight and a distinct end state (e.g. a checkmark or an X) in place, like "Test Connection".
 public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
     @Environment(\.isEnabled) private var isEnabled
@@ -235,7 +235,7 @@ public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
 }
 
 /// Derives frame width and corner radius from one interpolated `progress` (0 = expanded
-/// `.radiusControl` rectangle, 1 = collapsed `height`-wide circle) so they animate in lockstep.
+/// `.radiusControl` rectangle, 1 = collapsed circle `height` wide) so they animate in lockstep.
 struct MorphingButtonChrome: Animatable, ViewModifier {
     var progress: CGFloat
     let expandedWidth: CGFloat

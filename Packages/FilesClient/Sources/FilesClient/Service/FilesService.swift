@@ -2,7 +2,7 @@ import CoreModels
 import Foundation
 import NetworkClient
 
-/// Plain JSON REST calls against NextExplorer's file-browsing endpoints
+/// Plain JSON REST calls against NextExplorer's file browsing endpoints
 /// (`/api/browse`, `/api/search`, `/api/favorites`, `/api/volumes`). Auth is
 /// implicit: the session cookie captured by `AuthClient` rides along on
 /// every request via the shared `HTTPCookieStorage`.
@@ -12,8 +12,8 @@ import NetworkClient
 /// this file holds only the shared request plumbing they all build on.
 struct FilesService: Sendable {
     let networkClient: NetworkClient
-    /// De-duplicates concurrent downloads that target the same cache file: e.g. a PDF's
-    /// background thumbnail fetch and a tap-to-open of the same file. Without it both would
+    /// Deduplicates concurrent downloads that target the same cache file: e.g. a PDF's
+    /// background thumbnail fetch and a tap to open of the same file. Without it both would
     /// download the bytes and then race on the `moveItem` into the shared slot.
     let downloadCoordinator = PreviewDownloadCoordinator()
     /// The ETag each text file had when the editor last read or saved it, so a save can tell that
@@ -210,11 +210,11 @@ struct FilesService: Sendable {
         return nil
     }
 
-    /// Appends each `/`-separated segment of `path` to `base` as its own path component, so
-    /// each is percent-encoded individually and a name with `/`-unsafe characters survives.
+    /// Appends each `/` separated segment of `path` to `base` as its own path component, so
+    /// each is percent encoded individually and a name with `/` unsafe characters survives.
     /// An empty `path` yields `base` with a trailing slash: several wildcard routes
     /// (`/api/browse/`, `/api/usage/`) need that to mean "the root". Shared by every
-    /// `/api/<route>/*` wildcard-path endpoint.
+    /// `/api/<route>/*` wildcard path endpoint.
     static func appendingPathSegments(of path: String, to base: URL) -> URL {
         let segments = path.split(separator: "/", omittingEmptySubsequences: true)
         guard !segments.isEmpty else { return base.appendingPathComponent("") }
