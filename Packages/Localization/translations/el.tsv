@@ -1250,3 +1250,5 @@ trash.columnOriginalLocation	Αρχική θέση
 trash.columnDeletedBy	Διαγράφηκε από
 trash.columnDeletedOn	Ημερομηνία διαγραφής
 trash.columnRemoved	Αφαίρεση
+emptyState.dropHintFiles	Μπορείτε επίσης να σύρετε αρχεία εδώ από τα Αρχεία ή τις Φωτογραφίες.
+emptyState.dropHintFinder	Μπορείτε επίσης να σύρετε αρχεία εδώ από το Finder.

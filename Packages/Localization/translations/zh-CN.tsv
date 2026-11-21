@@ -1285,3 +1285,5 @@ shareUpload.deferredBody#other	打开 NextExplorer 以上传 %lld 个大文件�
 shareUpload.failureTooLarge#other	%lld 个文件未能上传。 服务器连接拒绝这么大的文件。请再次分享，NextExplorer 会分段发送。
 shareUpload.startedDeferred	已为 NextExplorer 保存。请打开应用上传大文件。
 menu.goToFolderPlaceholder	文稿/报告
+emptyState.dropHintFiles	你也可以从“文件”或“照片”将文件拖到这里。
+emptyState.dropHintFinder	你也可以从“访达”将文件拖到这里。

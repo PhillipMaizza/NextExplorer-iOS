@@ -1325,3 +1325,5 @@ shareUpload.failureTooLarge#one	%lld soubor se nenahrál. Připojení k serveru 
 shareUpload.failureTooLarge#other	%lld souborů se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech.
 shareUpload.failureTooLarge#few	%lld soubory se nenahrály. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech.
 shareUpload.failureTooLarge#many	%lld souboru se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech.
+emptyState.dropHintFiles	Soubory sem můžete přetáhnout také z aplikace Soubory nebo Fotky.
+emptyState.dropHintFinder	Soubory sem můžete přetáhnout také z Finderu.

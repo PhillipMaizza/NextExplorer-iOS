@@ -1216,3 +1216,5 @@ trash.columnOriginalLocation	ตำแหน่งเดิม
 trash.columnDeletedBy	ลบโดย
 trash.columnDeletedOn	วันที่ลบ
 trash.columnRemoved	ลบถาวร
+emptyState.dropHintFiles	คุณยังลากไฟล์มาที่นี่จากแอปไฟล์หรือรูปภาพได้
+emptyState.dropHintFinder	คุณยังลากไฟล์มาที่นี่จาก Finder ได้

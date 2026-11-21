@@ -1357,3 +1357,5 @@ shareUpload.failureTooLarge#few	%lld fișiere nu au fost încărcate. Conexiunea
 shareUpload.failureTooLarge#other	%lld de fișiere nu au fost încărcate. Conexiunea la server refuză fișiere atât de mari. Distribuie-le din nou și NextExplorer le trimite în bucăți.
 shareUpload.startedDeferred	Salvat pentru NextExplorer. Deschide aplicația pentru a încărca fișierele mari.
 menu.goToFolderPlaceholder	Documente/Rapoarte
+emptyState.dropHintFiles	Poți trage aici fișiere și din Fișiere sau Poze.
+emptyState.dropHintFinder	Poți trage aici fișiere și din Finder.

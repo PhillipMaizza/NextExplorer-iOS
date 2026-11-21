@@ -383,6 +383,8 @@ public enum L10n {
         public static var usersHint: String { tr("editShare.usersHint") }  // "Only the people you pick, after they sign in."
     }
     public enum EmptyState {
+        public static var dropHintFiles: String { tr("emptyState.dropHintFiles") }  // "You can also drag files here from Files or Photos."
+        public static var dropHintFinder: String { tr("emptyState.dropHintFinder") }  // "You can also drag files here from Finder."
         public static var folderEmpty: String { tr("emptyState.folderEmpty") }  // "This folder is empty."
         public static var loadFailed: String { tr("emptyState.loadFailed") }  // "Couldn't reach the server."
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("emptyState.noSearchMatches", a0) }

@@ -1393,3 +1393,5 @@ shareUpload.failureTooLarge#many	%lld файлов не загружено. Со
 shareUpload.failureTooLarge#other	%lld файла не загружено. Соединение с сервером отклоняет такие большие файлы. Поделитесь ими снова, и NextExplorer отправит их по частям.
 shareUpload.startedDeferred	Сохранено для NextExplorer. Откройте приложение, чтобы загрузить большие файлы.
 menu.goToFolderPlaceholder	Документы/Отчёты
+emptyState.dropHintFiles	Вы также можете перетащить сюда файлы из «Файлов» или «Фото».
+emptyState.dropHintFinder	Вы также можете перетащить сюда файлы из Finder.

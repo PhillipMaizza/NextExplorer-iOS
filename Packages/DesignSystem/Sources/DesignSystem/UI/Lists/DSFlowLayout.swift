@@ -6,10 +6,12 @@ import SwiftUI
 public struct DSFlowLayout: Layout {
     private let horizontalSpacing: CGFloat
     private let verticalSpacing: CGFloat
+    private let isRowCentered: Bool
 
-    public init(horizontalSpacing: CGFloat = 4, verticalSpacing: CGFloat = 4) {
+    public init(horizontalSpacing: CGFloat = 4, verticalSpacing: CGFloat = 4, isRowCentered: Bool = false) {
         self.horizontalSpacing = horizontalSpacing
         self.verticalSpacing = verticalSpacing
+        self.isRowCentered = isRowCentered
     }
 
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache _: inout Void) -> CGSize {
@@ -42,20 +44,27 @@ public struct DSFlowLayout: Layout {
         subviews: Subviews,
         cache _: inout Void
     ) {
-        var x = bounds.minX
-        var y = bounds.minY
-        var rowHeight: CGFloat = 0
-
+        var rows: [[(subview: LayoutSubview, size: CGSize)]] = [[]]
+        var rowWidth: CGFloat = 0
         for subview in subviews {
             let size = subview.sizeThatFits(.unspecified)
-            if x > bounds.minX, x + size.width > bounds.maxX {
-                x = bounds.minX
-                y += rowHeight + verticalSpacing
-                rowHeight = 0
+            if rowWidth > 0, rowWidth + horizontalSpacing + size.width > bounds.width {
+                rows.append([])
+                rowWidth = 0
             }
-            subview.place(at: CGPoint(x: x, y: y), anchor: .topLeading, proposal: ProposedViewSize(size))
-            x += size.width + horizontalSpacing
-            rowHeight = max(rowHeight, size.height)
+            rowWidth += (rowWidth > 0 ? horizontalSpacing : 0) + size.width
+            rows[rows.count - 1].append((subview, size))
+        }
+        var y = bounds.minY
+        for row in rows {
+            let width = row.map(\.size.width).reduce(0, +) + horizontalSpacing * CGFloat(max(row.count - 1, 0))
+            var x = isRowCentered ? bounds.minX + max(bounds.width - width, 0) / 2 : bounds.minX
+            let height = row.map(\.size.height).max() ?? 0
+            for item in row {
+                item.subview.place(at: CGPoint(x: x, y: y), anchor: .topLeading, proposal: ProposedViewSize(item.size))
+                x += item.size.width + horizontalSpacing
+            }
+            y += height + verticalSpacing
         }
     }
 }
@@ -74,5 +83,19 @@ public struct DSFlowLayout: Layout {
                 .foregroundStyle(Color.categorical(for: tag))
         }
     }
+    .padding()
+}
+
+#Preview("Centered rows") {
+    DSFlowLayout(horizontalSpacing: .space8, verticalSpacing: .space8, isRowCentered: true) {
+        ForEach(["Create Folder", "Create File", "Paste 3 items"], id: \.self) { title in
+            Text(title)
+                .type(.label4)
+                .padding(.horizontal, .space12)
+                .padding(.vertical, .space8)
+                .background(Capsule().fill(Color.backgroundSecondary))
+        }
+    }
+    .frame(width: 280)
     .padding()
 }

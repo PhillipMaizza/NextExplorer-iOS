@@ -53,6 +53,8 @@ select.listView	List View
 select.gridView	Grid View
 
 # ---- empty states ----
+emptyState.dropHintFiles	You can also drag files here from Files or Photos.
+emptyState.dropHintFinder	You can also drag files here from Finder.
 emptyState.folderEmpty	This folder is empty.
 emptyState.loadFailed	Couldn't reach the server.
 emptyState.noSearchMatches	No matches for “%@”.

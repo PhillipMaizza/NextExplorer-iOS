@@ -13,12 +13,6 @@ private enum BrowseViewMode: String {
     case list, grid, table
 }
 
-private enum Constants {
-    static let emptyUploadButtonHPadding: CGFloat = .space24
-    /// Keeps the empty folder's dashed upload button from spanning an iPad's full width.
-    static let emptyUploadButtonMaxWidth: CGFloat = 360
-}
-
 /// The list body shown at every depth of Browse: root and every pushed subfolder render this
 /// same view, scoped to their own `BrowseFeature` store. The list/grid choice is a per device
 /// display preference, so it's stored here rather than in `BrowseFeature.State`.
@@ -215,6 +209,7 @@ struct BrowseContentView: View {
             extraBottomInset: bottomChromeClearance
         )
         #endif
+        .focusedSceneValue(\.browseCreateAvailability, store.createAvailability)
         .hapticFeedback(.success, trigger: hasFinishedRefreshing) { _, _ in store.phase.errorMessage == nil }
         .hapticFeedback(.error, trigger: store.phase.errorMessage) { _, newValue in newValue != nil }
         .overlay {
@@ -364,11 +359,11 @@ struct BrowseContentView: View {
     }
 
     private var overlayStateContent: some View {
-        BrowseOverlayContent(store: store, skeleton: { loadingSkeleton }, uploadButton: { emptyStateUploadButton })
+        BrowseOverlayContent(store: store, skeleton: { loadingSkeleton }, emptyFolder: { emptyFolderActions })
     }
 
     private var isInitialLoad: Bool {
-        !store.phase.hasLoaded && store.items.isEmpty && store.phase.errorMessage == nil
+        !store.isListingKnown && store.items.isEmpty && store.phase.errorMessage == nil
     }
 
     /// Bottom scroll clearance for the chrome floating under this list: the split view's path
@@ -383,18 +378,15 @@ struct BrowseContentView: View {
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
     }
 
-    /// The empty folder's call to action: the same camera / Photos / Files menu as the `+`,
-    /// behind an accent pill so a first time user has somewhere obvious to start.
-    private var emptyStateUploadButton: some View {
-        UploadSourceMenu(
-            label: { UploadDashedLabel(title: L10n.Uploads.menuTitle) },
+    private var emptyFolderActions: some View {
+        BrowseEmptyFolderActions(
+            store: store,
+            title: displayTitle,
+            shouldKeepClipboard: shouldKeepClipboardAfterCopy,
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,
             isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
         )
-        .frame(maxWidth: Constants.emptyUploadButtonMaxWidth)
-        .padding(.horizontal, Constants.emptyUploadButtonHPadding)
-        .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
     }
 }

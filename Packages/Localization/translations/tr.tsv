@@ -1249,3 +1249,5 @@ trash.columnOriginalLocation	Özgün Konum
 trash.columnDeletedBy	Silen
 trash.columnDeletedOn	Silinme Tarihi
 trash.columnRemoved	Kaldırılma
+emptyState.dropHintFiles	Dosyaları buraya Dosyalar veya Fotoğraflar'dan da sürükleyebilirsiniz.
+emptyState.dropHintFinder	Dosyaları buraya Finder'dan da sürükleyebilirsiniz.

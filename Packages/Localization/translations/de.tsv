@@ -1321,3 +1321,5 @@ shareUpload.failureTooLarge#one	%lld Datei wurde nicht hochgeladen. Deine Server
 shareUpload.failureTooLarge#other	%lld Dateien wurden nicht hochgeladen. Deine Serververbindung lehnt so große Dateien ab. Teile sie erneut, dann sendet NextExplorer sie in Teilen.
 shareUpload.startedDeferred	Für NextExplorer gesichert. Öffne die App, um deine großen Dateien hochzuladen.
 menu.goToFolderPlaceholder	Dokumente/Berichte
+emptyState.dropHintFiles	Du kannst auch Dateien aus „Dateien“ oder „Fotos“ hierher ziehen.
+emptyState.dropHintFinder	Du kannst auch Dateien aus dem Finder hierher ziehen.

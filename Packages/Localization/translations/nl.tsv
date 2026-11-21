@@ -1321,3 +1321,5 @@ shareUpload.failureTooLarge#one	%lld bestand is niet geüpload. De verbinding me
 shareUpload.failureTooLarge#other	%lld bestanden zijn niet geüpload. De verbinding met je server weigert zulke grote bestanden. Deel ze opnieuw en NextExplorer verstuurt ze in delen.
 shareUpload.startedDeferred	Bewaard voor NextExplorer. Open de app om je grote bestanden te uploaden.
 menu.goToFolderPlaceholder	Documenten/Rapporten
+emptyState.dropHintFiles	Je kunt ook bestanden hierheen slepen vanuit Bestanden of Foto's.
+emptyState.dropHintFinder	Je kunt ook bestanden hierheen slepen vanuit de Finder.
