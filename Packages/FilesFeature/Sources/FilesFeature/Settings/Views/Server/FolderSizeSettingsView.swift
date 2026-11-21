@@ -33,9 +33,9 @@ struct FolderSizeSettingsView: View {
                     items: FolderSizeMode.allCases,
                     title: { label(for: $0) },
                     isSelected: { store.mode == $0 },
-                    isDisabled: store.isModeLocked,
+                    isDisabled: store.isChoiceLocked,
                     edges: .bottom,
-                    onSelect: { store.send(.modeChanged($0)) }
+                    onSelect: { store.send(.choiceChanged($0)) }
                 )
             }
 

@@ -136,13 +136,13 @@
                 onAppear: { store.send(.onAppear) }
             ) {
                 Section {
-                    Toggle(isOn: Binding(get: { store.isEnabled }, set: { store.send(.enabledChanged($0)) })) {
+                    Toggle(isOn: Binding(get: { store.isEnabled }, set: { store.send(.choiceChanged($0)) })) {
                         MacRowTitle(
                             title: L10n.SearchIndexSettings.running,
                             subtitle: L10n.SearchIndexSettings.runningHelp
                         )
                     }
-                    .disabled(store.isSwitchLocked)
+                    .disabled(store.isChoiceLocked)
                 } footer: {
                     if let lockedBy = store.lockedBy {
                         MacSectionFooter(L10n.SearchIndexSettings.locked(lockedBy))
@@ -195,7 +195,7 @@
                 Section {
                     Picker(
                         L10n.FolderSizeSettings.running,
-                        selection: Binding(get: { store.mode }, set: { store.send(.modeChanged($0)) })
+                        selection: Binding(get: { store.mode }, set: { store.send(.choiceChanged($0)) })
                     ) {
                         ForEach(FolderSizeMode.allCases, id: \.self) { mode in
                             Text(Self.label(for: mode)).tag(mode)
@@ -203,7 +203,7 @@
                     }
                     .pickerStyle(.inline)
                     .labelsHidden()
-                    .disabled(store.isModeLocked)
+                    .disabled(store.isChoiceLocked)
                 } header: {
                     Text(L10n.FolderSizeSettings.running)
                 } footer: {
