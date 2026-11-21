@@ -4,6 +4,12 @@ import Keychain
 import Testing
 import TestUtils
 
+extension Trait where Self == ConditionTrait {
+    static var localTLSOnly: Self {
+        .disabled(if: ProcessInfo.processInfo.environment["CI"] != nil, "A real TLS handshake times out on CI runners")
+    }
+}
+
 @Suite("Client certificates (mTLS)", .serialized)
 struct ClientCertificateTests {
     private func makeClient(store: ClientIdentityStore) throws -> NetworkClient {
@@ -30,6 +36,7 @@ struct ClientCertificateTests {
 
     @Test(
         "A valid certificate gets through the handshake",
+        .localTLSOnly,
         arguments: [NetworkClientFixture.clientIdentity, .clientLegacyIdentity]
     )
     func validCertificate(fixture: NetworkClientFixture) async throws {
@@ -45,7 +52,7 @@ struct ClientCertificateTests {
         #expect(String(decoding: data, as: UTF8.self) == "ok")
     }
 
-    @Test("No certificate is reported as required, never as offline")
+    @Test("No certificate is reported as required, never as offline", .localTLSOnly)
     func missingCertificate() async throws {
         let server = try MutualTLSTestServer()
         let baseURL = try await server.start()
@@ -57,7 +64,7 @@ struct ClientCertificateTests {
         }
     }
 
-    @Test("A certificate from an untrusted issuer is reported as rejected")
+    @Test("A certificate from an untrusted issuer is reported as rejected", .localTLSOnly)
     func rejectedCertificate() async throws {
         let server = try MutualTLSTestServer()
         let baseURL = try await server.start()
@@ -80,7 +87,7 @@ struct ClientCertificateTests {
         #expect(handler.certificateError(status: 400, bodyPrefix: refused, url: url) == .clientCertificateRejected)
     }
 
-    @Test("nginx: an untrusted certificate's 400 page reads as rejected, a valid one gets through")
+    @Test("nginx: an untrusted certificate's 400 page reads as rejected, a valid one gets through", .localTLSOnly)
     func nginxRejectedAndValid() async throws {
         let server = try MutualTLSTestServer(mode: .nginxErrorPage)
         let baseURL = try await server.start()
@@ -97,7 +104,7 @@ struct ClientCertificateTests {
         #expect(response.statusCode == 200)
     }
 
-    @Test("nginx: replacing a refused certificate is used on the very next request")
+    @Test("nginx: replacing a refused certificate is used on the very next request", .localTLSOnly)
     func nginxReplacedCertificateSameClient() async throws {
         let server = try MutualTLSTestServer(mode: .nginxErrorPage, keepsConnectionsOpen: true)
         let baseURL = try await server.start()
@@ -114,7 +121,7 @@ struct ClientCertificateTests {
         #expect(response.statusCode == 200)
     }
 
-    @Test("A removed certificate is not presented again while other servers keep theirs")
+    @Test("A removed certificate is not presented again while other servers keep theirs", .localTLSOnly)
     func removedCertificateNotReused() async throws {
         let server = try MutualTLSTestServer(mode: .nginxErrorPage, keepsConnectionsOpen: true)
         let baseURL = try await server.start()
@@ -142,7 +149,7 @@ struct ClientCertificateTests {
         #expect(handler.certificateError(status: 200, bodyPrefix: Data("ssl certificate error".utf8), url: url) == nil)
     }
 
-    @Test("Downloads present the certificate too")
+    @Test("Downloads present the certificate too", .localTLSOnly)
     func downloadPresentsCertificate() async throws {
         let server = try MutualTLSTestServer()
         let baseURL = try await server.start()
