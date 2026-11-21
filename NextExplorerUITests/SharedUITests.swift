@@ -87,6 +87,8 @@
                 shared.item(ShareFixture.renamedLabel).waitToAppear(),
                 "The pushed page shows the saved label without reopening"
             )
+            shared.backButton.tap()
+            XCTAssertTrue(shared.closeSheetButton.waitToAppear(), "Back returns to the share list")
             shared.closeSheetButton.tap()
             XCTAssertTrue(shared.copyLinkButton.waitToVanish(), "Close dismisses the sheet")
 
