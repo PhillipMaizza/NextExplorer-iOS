@@ -192,7 +192,9 @@ struct BrowseFileOperationsTests {
     @Test("A folder just made opens on its empty state, with no loading skeleton")
     func aFolderJustMadeOpensKnownEmpty() {
         let folder = BrowseFixtures.folder("Reports", in: TestFolder.docs)
-        let screen = BrowseNavigation.screen(for: folder, serverURL: BrowseTestSupport.serverURL, isKnownEmpty: true)
+        var opener = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)
+        opener.createdFolderIDs = [folder.id]
+        let screen = BrowseNavigation.screen(for: folder, serverURL: BrowseTestSupport.serverURL, openedFrom: opener)
         #expect(screen.isListingKnown)
         #expect(!BrowseNavigation.screen(for: folder, serverURL: BrowseTestSupport.serverURL).isListingKnown)
     }

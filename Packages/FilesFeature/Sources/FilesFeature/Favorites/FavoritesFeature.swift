@@ -596,7 +596,7 @@ public struct FavoritesFeature {
                 state.path.append(BrowseNavigation.screen(
                     for: item,
                     serverURL: state.serverURL,
-                    isKnownEmpty: state.path[id: id]?.createdFolderIDs.contains(item.id) ?? false
+                    openedFrom: state.path[id: id]
                 ))
                 return .none
 

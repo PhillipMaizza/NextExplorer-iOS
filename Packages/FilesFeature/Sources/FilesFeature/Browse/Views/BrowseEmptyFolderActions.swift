@@ -149,36 +149,16 @@ struct BrowseEmptyFolderActions: View {
                     EmptyFolderTile(title: L10n.Uploads.menuTitle, icon: IconKit.upload, shortcut: nil)
                 }
             }
-            if canCreateFolder {
-                Button { store.send(.newFolderTapped) } label: {
+            ForEach(createActions) { action in
+                Button(action: action.perform) {
                     EmptyFolderTile(
-                        title: L10n.Browse.actionNewFolder,
-                        icon: IconKit.newFolder,
-                        shortcut: showsShortcuts ? BrowseShortcut.newFolder.glyphs : nil
+                        title: action.title,
+                        icon: action.icon,
+                        shortcut: showsShortcuts ? action.shortcut.glyphs : nil
                     )
                 }
                 .buttonStyle(DSPressableButtonStyle())
-            }
-            if canCreateFile {
-                Button { store.send(.newFileTapped) } label: {
-                    EmptyFolderTile(
-                        title: L10n.Browse.actionNewFile,
-                        icon: IconKit.newFile,
-                        shortcut: showsShortcuts ? BrowseShortcut.newFile.glyphs : nil
-                    )
-                }
-                .buttonStyle(DSPressableButtonStyle())
-            }
-            if showsPaste {
-                Button(action: paste) {
-                    EmptyFolderTile(
-                        title: pasteTitle,
-                        icon: IconKit.paste,
-                        shortcut: showsShortcuts ? BrowseShortcut.paste.glyphs : nil
-                    )
-                }
-                .buttonStyle(DSPressableButtonStyle())
-                .disabled(!BrowsePasteMenu.canPaste(store))
+                .disabled(!action.isEnabled)
             }
         }
     }
@@ -189,32 +169,57 @@ struct BrowseEmptyFolderActions: View {
                 uploadMenu { EmptyFolderUploadLabel() }
             }
             DSFlowLayout(horizontalSpacing: .space8, verticalSpacing: .space8, isRowCentered: true) {
-                pills
+                ForEach(createActions) { action in
+                    Button(action: action.perform) {
+                        EmptyFolderPill(title: action.title, icon: action.icon)
+                    }
+                    .buttonStyle(DSPressableButtonStyle())
+                    .disabled(!action.isEnabled)
+                }
             }
         }
     }
 
-    @ViewBuilder
-    private var pills: some View {
+    private var createActions: [EmptyFolderAction] {
+        var actions: [EmptyFolderAction] = []
         if canCreateFolder {
-            Button { store.send(.newFolderTapped) } label: {
-                EmptyFolderPill(title: L10n.Browse.actionNewFolder, icon: IconKit.newFolder)
-            }
-            .buttonStyle(DSPressableButtonStyle())
+            actions.append(EmptyFolderAction(
+                title: L10n.Browse.actionNewFolder,
+                icon: IconKit.newFolder,
+                shortcut: BrowseShortcut.newFolder,
+                perform: { store.send(.newFolderTapped) }
+            ))
         }
         if canCreateFile {
-            Button { store.send(.newFileTapped) } label: {
-                EmptyFolderPill(title: L10n.Browse.actionNewFile, icon: IconKit.newFile)
-            }
-            .buttonStyle(DSPressableButtonStyle())
+            actions.append(EmptyFolderAction(
+                title: L10n.Browse.actionNewFile,
+                icon: IconKit.newFile,
+                shortcut: BrowseShortcut.newFile,
+                perform: { store.send(.newFileTapped) }
+            ))
         }
         if showsPaste {
-            Button(action: paste) {
-                EmptyFolderPill(title: pasteTitle, icon: IconKit.paste)
-            }
-            .buttonStyle(DSPressableButtonStyle())
-            .disabled(!BrowsePasteMenu.canPaste(store))
+            actions.append(EmptyFolderAction(
+                title: pasteTitle,
+                icon: IconKit.paste,
+                shortcut: BrowseShortcut.paste,
+                isEnabled: BrowsePasteMenu.canPaste(store),
+                perform: paste
+            ))
         }
+        return actions
+    }
+}
+
+private struct EmptyFolderAction: Identifiable {
+    let title: String
+    let icon: Image
+    let shortcut: KeyboardShortcut
+    var isEnabled = true
+    let perform: () -> Void
+
+    var id: String {
+        title
     }
 }
 

@@ -13,11 +13,11 @@ enum BrowseNavigation {
         for item: FileItem,
         serverURL: URL,
         isKeptOffline: Bool = false,
-        isKnownEmpty: Bool = false
+        openedFrom opener: BrowseFeature.State? = nil
     ) -> BrowseFeature.State {
         var screen = BrowseFeature.State(serverURL: serverURL, directoryPath: item.id, title: item.name)
         screen.isKeptOffline = isKeptOffline
-        screen.isShowingCachePaint = isKnownEmpty
+        screen.isShowingCachePaint = opener?.createdFolderIDs.contains(item.id) ?? false
         return screen
     }
 

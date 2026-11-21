@@ -157,7 +157,7 @@ public struct BrowseTabFeature {
                 state.path.append(BrowseNavigation.screen(
                     for: item,
                     serverURL: state.root.serverURL,
-                    isKnownEmpty: state.root.createdFolderIDs.contains(item.id)
+                    openedFrom: state.root
                 ))
                 return .none
 
@@ -235,7 +235,7 @@ public struct BrowseTabFeature {
                 state.path.append(BrowseNavigation.screen(
                     for: item,
                     serverURL: state.root.serverURL,
-                    isKnownEmpty: state.path[id: id]?.createdFolderIDs.contains(item.id) ?? false
+                    openedFrom: state.path[id: id]
                 ))
                 return .none
 
