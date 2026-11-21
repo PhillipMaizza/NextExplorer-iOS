@@ -25,7 +25,7 @@ extension BrowseFeature {
             return .merge(.cancel(id: CancelID.search), .cancel(id: CancelID.searchSavedItems))
         }
 
-        // The server only searches from three characters on; until then the instant matches stand.
+        // A term too short to search is never sent; until then the instant matches stand.
         guard term.isSearchable else {
             showInstantMatches(&state, query: query)
             state.searchPhase = .idle

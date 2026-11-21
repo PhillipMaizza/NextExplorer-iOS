@@ -18,8 +18,8 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         static let billsID = "1"
         static let photosID = "2"
         static let termWithSpace = "internet "
-        static let shortTerm = "Bi"
-        static let unmatchedShortTerm = "zq"
+        static let shortTerm = "B"
+        static let unmatchedShortTerm = "z"
     }
 
     private let hit = SearchResultItem(
@@ -310,7 +310,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         #expect(queries.value == [Constants.term])
     }
 
-    @Test("A term too short for the server filters the favorites by name, asks nothing and shows no skeleton")
+    @Test("A term too short to search filters the favorites by name, asks nothing and shows no skeleton")
     func aShortTermFiltersTheFavoritesByName() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.favorites = [

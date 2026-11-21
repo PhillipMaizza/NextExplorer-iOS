@@ -576,7 +576,7 @@ login.errorServer	De server heeft een probleem ondervonden (fout %lld). Probeer 
 browse.nameErrorReserved	Die naam is niet toegestaan.
 browse.nameErrorSeparators	Een naam mag geen / of \ bevatten.
 browse.searchMatchLineLabel	Regel %lld
-browse.searchTooShort	Typ minstens %lld tekens om in submappen en bestandsinhoud te zoeken.
+browse.searchTooShort	Typ minstens %lld tekens om in submappen te zoeken.
 browse.searchStoppedEarly	De zoekopdracht is gestopt bij de tijdslimiet. Dit zijn de resultaten die tot nu toe zijn gevonden.
 browse.searchFirstOnly	Eerste %lld resultaten. Verfijn de zoekopdracht om meer te zien.
 browse.searchShowMore	Meer tonen

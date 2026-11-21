@@ -575,7 +575,7 @@ login.errorServer	O servidor teve um problema (erro %lld). Tente novamente mais 
 browse.nameErrorReserved	Esse nome não é permitido.
 browse.nameErrorSeparators	Um nome não pode conter / ou \.
 browse.searchMatchLineLabel	Linha %lld
-browse.searchTooShort	Escreva pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos ficheiros.
+browse.searchTooShort	Escreva pelo menos %lld caracteres para pesquisar subpastas.
 browse.searchStoppedEarly	A pesquisa parou no limite de tempo. Estes são os resultados encontrados até agora.
 browse.searchFirstOnly	Primeiros %lld resultados. Refine a pesquisa para ver mais.
 browse.searchShowMore	Mostrar mais

@@ -852,7 +852,7 @@ login.diagnosticsIntro	Αυτό το αρχείο καταγραφής δείχ�
 browse.nameErrorReserved	Αυτό το όνομα δεν επιτρέπεται.
 browse.nameErrorSeparators	Ένα όνομα δεν μπορεί να περιέχει / ή \.
 browse.searchMatchLineLabel	Γραμμή %lld
-browse.searchTooShort	Πληκτρολογήστε τουλάχιστον %lld χαρακτήρες για αναζήτηση σε υποφακέλους και περιεχόμενο αρχείων.
+browse.searchTooShort	Πληκτρολογήστε τουλάχιστον %lld χαρακτήρες για αναζήτηση σε υποφακέλους.
 browse.searchStoppedEarly	Η αναζήτηση σταμάτησε στο χρονικό της όριο. Αυτά είναι τα αποτελέσματα που βρέθηκαν μέχρι τώρα.
 browse.searchFirstOnly	Πρώτα %lld αποτελέσματα. Περιορίστε την αναζήτηση για να δείτε περισσότερα.
 browse.searchShowMore	Εμφάνιση περισσότερων

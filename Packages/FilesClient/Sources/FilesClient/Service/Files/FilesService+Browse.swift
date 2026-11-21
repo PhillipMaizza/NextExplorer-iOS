@@ -34,7 +34,7 @@ extension FilesService {
     }
 
     func search(serverURL: URL, path: String, query: String, limit: Int?) async throws -> SearchPage {
-        var items = [(QueryKey.query, query)]
+        var items = [(QueryKey.query, SearchTerm(query).serverQuery)]
         if !path.isEmpty {
             items.append((QueryKey.path, path))
         }

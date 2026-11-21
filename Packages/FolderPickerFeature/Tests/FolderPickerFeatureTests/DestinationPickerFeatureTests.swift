@@ -452,7 +452,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
         #expect(queries.value == [Constants.searchTerm])
     }
 
-    @Test("A term too short for the server filters this level's folders by name instead of a blank search")
+    @Test("A term too short to search filters this level's folders by name instead of a blank search")
     func aShortTermFiltersTheFoldersByName() async {
         var state = DestinationPickerFeature.State(
             serverURL: serverURL,
@@ -525,7 +525,7 @@ extension DestinationPickerFeatureTests {
 }
 
 private enum Constants {
-    static let shortTerm = "ph"
+    static let shortTerm = "p"
     static let searchTerm = "sum"
     static let searchTermWithSpace = "sum "
     static let summerFolder = "Summer"

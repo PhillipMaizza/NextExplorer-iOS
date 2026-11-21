@@ -335,6 +335,16 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func searchSendsATwoLetterTermAsAShapeForNames() async throws {
+            try stub(statusCode: 200, body: FilesClientFixture.commonItemsEmpty.data())
+            StubURLProtocol.capturedRequest = nil
+            _ = try await makeClient().search(serverURL, "", TestSearch.twoLetterTerm, nil)
+            let url = try #require(StubURLProtocol.capturedRequest?.url)
+            let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+            #expect(queryItems.contains(URLQueryItem(name: "q", value: TestSearch.twoLetterQuery)))
+        }
+
+        @Test
         func searchIncludesPathAndLimitWhenProvided() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.commonItemsEmpty.data())
             StubURLProtocol.capturedRequest = nil

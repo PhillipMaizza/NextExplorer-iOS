@@ -841,7 +841,7 @@ login.diagnosticsIntro	Nhật ký này cho thấy máy chủ đã trả lời g�
 browse.nameErrorReserved	Tên đó không được phép.
 browse.nameErrorSeparators	Tên không được chứa / hoặc \.
 browse.searchMatchLineLabel	Dòng %lld
-browse.searchTooShort	Nhập ít nhất %lld ký tự để tìm trong thư mục con và nội dung tệp.
+browse.searchTooShort	Nhập ít nhất %lld ký tự để tìm trong thư mục con.
 browse.searchStoppedEarly	Tìm kiếm đã dừng ở giới hạn thời gian. Đây là các kết quả tìm được cho đến nay.
 browse.searchFirstOnly	%lld kết quả đầu tiên. Hãy thu hẹp tìm kiếm để xem thêm.
 browse.searchShowMore	Xem thêm

@@ -852,7 +852,7 @@ login.diagnosticsIntro	Tämä loki näyttää, mitä palvelin vastasi kussakin v
 browse.nameErrorReserved	Tuo nimi ei ole sallittu.
 browse.nameErrorSeparators	Nimi ei voi sisältää merkkiä / tai \.
 browse.searchMatchLineLabel	Rivi %lld
-browse.searchTooShort	Kirjoita vähintään %lld merkkiä hakeaksesi alikansioista ja tiedostojen sisällöstä.
+browse.searchTooShort	Kirjoita vähintään %lld merkkiä hakeaksesi alikansioista.
 browse.searchStoppedEarly	Haku pysähtyi aikarajaansa. Nämä ovat toistaiseksi löydetyt tulokset.
 browse.searchFirstOnly	Ensimmäiset %lld tulosta. Rajaa hakua nähdäksesi lisää.
 browse.searchShowMore	Näytä lisää

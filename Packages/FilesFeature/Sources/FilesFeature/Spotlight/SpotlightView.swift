@@ -4,6 +4,7 @@
     import CoreModels
     import DesignSystem
     import FilesClient
+    import FolderPickerFeature
     import Localization
     import SwiftUI
 
@@ -127,7 +128,7 @@
         /// What the panel says while there is nothing to list, or after the list.
         private var statusText: String? {
             if store.isTooShort {
-                return L10n.Browse.searchTooShort(FilesClient.minimumSearchTermLength)
+                return SearchHint.tooShort
             }
             switch store.phase {
             case .idle: return nil
@@ -282,7 +283,7 @@
     }
 
     #Preview("Too short") {
-        SpotlightView(store: PreviewFixture.store(query: "bu", phase: .idle)).frame(width: 800, height: 400)
+        SpotlightView(store: PreviewFixture.store(query: "b", phase: .idle)).frame(width: 800, height: 400)
     }
 
     #Preview("Loading") {

@@ -852,7 +852,7 @@ login.diagnosticsIntro	Ez a napló azt mutatja, mit válaszolt a kiszolgáló az
 browse.nameErrorReserved	Ez a név nem engedélyezett.
 browse.nameErrorSeparators	A név nem tartalmazhat / vagy \ jelet.
 browse.searchMatchLineLabel	%lld. sor
-browse.searchTooShort	Írjon be legalább %lld karaktert az almappákban és a fájlok tartalmában való kereséshez.
+browse.searchTooShort	Írjon be legalább %lld karaktert az almappákban való kereséshez.
 browse.searchStoppedEarly	A keresés elérte az időkorlátját. Ezek az eddig talált eredmények.
 browse.searchFirstOnly	Első %lld találat. Szűkítse a keresést, hogy többet lásson.
 browse.searchShowMore	Továbbiak megjelenítése

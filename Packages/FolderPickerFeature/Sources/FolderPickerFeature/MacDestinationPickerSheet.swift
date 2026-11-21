@@ -173,7 +173,7 @@
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
             uploadStartingAt: ""
         )
-        state.searchQuery = "Ph"
+        state.searchQuery = "P"
         return MacDestinationPickerSheet(
             store: Store(initialState: state) { DestinationPickerFeature() } withDependencies: {
                 $0.filesClient = .previewValue

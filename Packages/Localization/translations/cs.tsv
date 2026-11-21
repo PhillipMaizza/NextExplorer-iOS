@@ -874,7 +874,7 @@ login.diagnosticsIntro	Tento protokol ukazuje, co server odpověděl v každém 
 browse.nameErrorReserved	Tento název není povolen.
 browse.nameErrorSeparators	Název nesmí obsahovat / ani \.
 browse.searchMatchLineLabel	Řádek %lld
-browse.searchTooShort	Pro hledání v podsložkách a obsahu souborů zadejte alespoň znaků: %lld.
+browse.searchTooShort	Pro hledání v podsložkách zadejte alespoň znaků: %lld.
 browse.searchStoppedEarly	Hledání se zastavilo na časovém limitu. Toto jsou dosud nalezené výsledky.
 browse.searchFirstOnly	Prvních výsledků: %lld. Zúžte hledání, abyste viděli další.
 browse.searchShowMore	Zobrazit další

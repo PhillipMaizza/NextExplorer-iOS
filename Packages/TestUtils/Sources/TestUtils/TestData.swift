@@ -237,8 +237,11 @@ public enum TestSearch {
     public static let term = "vac"
     /// `term` typed one letter further.
     public static let longerTerm = "vaca"
-    /// `term` one letter short of what the server searches.
-    public static let shortTerm = "va"
+    /// `term` cut to one letter, too short to search.
+    public static let shortTerm = "v"
+    /// A plain term the server alone refuses, sent as `twoLetterQuery`.
+    public static let twoLetterTerm = "AI"
+    public static let twoLetterQuery = "*AI*"
     /// A shape for every PDF.
     public static let pdfGlob = "*.pdf"
     /// The server's hit below the photos folder that no local listing holds.

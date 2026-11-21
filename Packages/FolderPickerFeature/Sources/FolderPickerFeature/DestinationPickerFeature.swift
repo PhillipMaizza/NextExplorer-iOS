@@ -359,7 +359,7 @@ public struct DestinationPickerFeature {
     /// Recursive folder search scoped to the subtree under `directoryPath`, debounced.
     private func search(_ state: inout State) -> Effect<Action> {
         let term = SearchTerm(state.searchQuery)
-        // The server only searches from three characters on.
+        // A term too short to search is never sent.
         guard term.isSearchable else {
             state.searchResults = []
             state.searchPhase = .idle

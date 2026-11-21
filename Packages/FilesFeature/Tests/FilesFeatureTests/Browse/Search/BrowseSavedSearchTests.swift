@@ -19,7 +19,7 @@ struct BrowseSavedSearchTests {
         static let unopened = "Unopened"
         static let unopenedPath = "Docs/Unopened"
         static let serverError = 500
-        static let oneLetter = "v"
+        static let shortTermOtherCase = "V"
     }
 
     private let photo = BrowseFixtures.file(TestFile.vacationPhoto, in: TestFolder.docs)
@@ -235,8 +235,8 @@ struct BrowseSavedSearchTests {
             $0.searchResults = [photoMatch, deepMatch]
         }
         let readsForOneSearch = reads.value
-        await store.send(.searchQueryChanged(Constants.oneLetter)) {
-            $0.searchQuery = Constants.oneLetter
+        await store.send(.searchQueryChanged(Constants.shortTermOtherCase)) {
+            $0.searchQuery = Constants.shortTermOtherCase
             $0.searchResults = [photoMatch, deepMatch]
         }
         #expect(reads.value == readsForOneSearch)

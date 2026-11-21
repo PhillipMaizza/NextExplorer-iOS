@@ -874,7 +874,7 @@ login.diagnosticsIntro	Цей журнал показує, що відповів
 browse.nameErrorReserved	Така назва недопустима.
 browse.nameErrorSeparators	Назва не може містити / або \.
 browse.searchMatchLineLabel	Рядок %lld
-browse.searchTooShort	Введіть щонайменше символів: %lld, щоб шукати в підпапках і вмісті файлів.
+browse.searchTooShort	Введіть щонайменше символів: %lld, щоб шукати в підпапках.
 browse.searchStoppedEarly	Пошук зупинився через обмеження часу. Це результати, знайдені на цей момент.
 browse.searchFirstOnly	Перші результати: %lld. Звузьте пошук, щоб побачити більше.
 browse.searchShowMore	Показати більше

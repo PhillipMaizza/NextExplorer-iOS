@@ -7,7 +7,7 @@ import Testing
 import TestUtils
 
 /// A listing of the folder on screen landing during a search (live after the saved copy, a
-/// refresh, a failure) only feeds the instant matches of a term too short for the server; it never
+/// refresh, a failure) only feeds the instant matches of a term too short to search; it never
 /// restarts the server search. An explicit refresh while searching refreshes the results at once.
 @Suite(.isolatedDependencies)
 @MainActor

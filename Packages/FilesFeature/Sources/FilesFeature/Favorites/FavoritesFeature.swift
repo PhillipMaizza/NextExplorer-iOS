@@ -764,7 +764,7 @@ public struct FavoritesFeature {
     }
 
     /// Searches the typed term again at once, keeping the results on screen: a refresh while
-    /// searching refreshes what is on screen. Nothing happens under three characters.
+    /// searching refreshes what is on screen. Nothing happens for a term too short to search.
     private func refreshSearch(_ state: inout State) -> Effect<Action> {
         guard SearchTerm(state.searchQuery).isSearchable else { return .none }
         return favoriteSearch(&state, isDebounced: false)
@@ -778,7 +778,7 @@ public struct FavoritesFeature {
     private func favoriteSearch(_ state: inout State, isDebounced: Bool = true) -> Effect<Action> {
         let term = SearchTerm(state.searchQuery)
         let query = term.text
-        // The server only searches from three characters on.
+        // A term too short to search is never sent.
         guard term.isSearchable else {
             state.fileSearchResults = nil
             state.searchPhase = .idle
