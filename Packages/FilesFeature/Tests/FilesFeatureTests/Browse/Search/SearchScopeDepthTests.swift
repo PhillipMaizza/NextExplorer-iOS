@@ -46,7 +46,7 @@ struct SearchScopeDepthTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.query
             $0.searchPhase = .loaded
         }
@@ -94,7 +94,7 @@ struct SearchScopeDepthTests {
             $0.searchPhase = .loading
             $0.searchAnsweredTerm = nil
         }
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchAnsweredTerm = Constants.query
         }

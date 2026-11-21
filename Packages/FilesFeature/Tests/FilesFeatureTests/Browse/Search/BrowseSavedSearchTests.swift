@@ -170,7 +170,7 @@ struct BrowseSavedSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.failure) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .failed(FilesClientError.offline.userMessage)
         }
         #expect(store.state.isSearchOffline)
@@ -200,7 +200,7 @@ struct BrowseSavedSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.failure) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .failed(L10n.Browse.searchFailed)
         }
         #expect(store.state.searchResults == [photoMatch])

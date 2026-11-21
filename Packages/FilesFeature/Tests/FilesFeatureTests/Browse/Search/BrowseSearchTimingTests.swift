@@ -62,7 +62,7 @@ struct BrowseSearchTimingTests {
         #expect(queries.value.isEmpty)
 
         await clock.advance(by: TestSearchTiming.lastMoment)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.term
             $0.searchPhase = .loaded
             $0.searchResults = [hit]
@@ -85,7 +85,7 @@ struct BrowseSearchTimingTests {
         #expect(queries.value.isEmpty)
 
         await clock.advance(by: TestSearchTiming.restOfDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.longerTerm
             $0.searchPhase = .loaded
             $0.searchResults = [hit]
@@ -105,7 +105,7 @@ struct BrowseSearchTimingTests {
             $0.searchQuery = Constants.termWithSpace
         }
         await clock.advance(by: TestSearchTiming.restOfDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.term
             $0.searchPhase = .loaded
             $0.searchResults = [hit]
@@ -125,7 +125,7 @@ struct BrowseSearchTimingTests {
 
         await type(Constants.term, into: store)
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.term
             $0.searchPhase = .loaded
             $0.searchResults = [hit]
@@ -135,7 +135,7 @@ struct BrowseSearchTimingTests {
             $0.searchLimit = 300
             $0.searchPhase = .loading
         }
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.term
             $0.searchPhase = .loaded
         }
@@ -172,7 +172,7 @@ struct BrowseSearchTimingTests {
         await type(Constants.emojiTerm, into: store)
         #expect(!store.state.isSearchTermTooShort)
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.emojiTerm
             $0.searchPhase = .loaded
             $0.searchResults = [hit]
@@ -198,11 +198,48 @@ struct BrowseSearchTimingTests {
         await type(Constants.term, into: store)
         #expect(store.state.isSearchPending)
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.term
             $0.searchPhase = .loaded
             $0.searchResults = [hit]
         }
         #expect(!store.state.isSearchPending)
+    }
+
+    /// The fetches of one burst of typing can start out of order, so an earlier term's fetch may
+    /// outlive the typed term's and cancel it.
+    @Test("An earlier term's answer landing late is dropped and the typed term is asked at once")
+    func anEarlierTermsLateAnswerIsDroppedAndTheTypedTermAskedAgain() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await type(Constants.longerTerm, into: store)
+        await store.send(.searchResultsResponse(.success(SearchPage(items: [hit])), term: Constants.term))
+        await store.receive(\.searchResultsResponse) {
+            $0.searchAnsweredTerm = Constants.longerTerm
+            $0.searchPhase = .loaded
+            $0.searchResults = [hit]
+        }
+        #expect(queries.value == [Constants.longerTerm], "asked without waiting out the debounce")
+
+        await store.send(.searchResultsResponse(.success(SearchPage(items: [])), term: Constants.term))
+        #expect(queries.value == [Constants.longerTerm], "nothing pending, so nothing is asked again")
+    }
+
+    @Test("An earlier term's late failure neither fails the typed term nor reads the saved listings")
+    func anEarlierTermsLateFailureIsDropped() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await type(Constants.longerTerm, into: store)
+        await store.send(.searchResultsResponse(.failure(.offline), term: Constants.term))
+        await store.receive(\.searchResultsResponse) {
+            $0.searchAnsweredTerm = Constants.longerTerm
+            $0.searchPhase = .loaded
+            $0.searchResults = [hit]
+        }
+        #expect(queries.value == [Constants.longerTerm])
     }
 }

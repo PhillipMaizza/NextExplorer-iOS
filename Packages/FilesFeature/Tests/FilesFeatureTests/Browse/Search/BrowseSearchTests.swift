@@ -51,7 +51,7 @@ struct BrowseSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = TestSearch.term
             $0.searchPhase = .loaded
             $0.searchResults = [deepHit]
@@ -127,7 +127,7 @@ struct BrowseSearchTests {
                 ),
             ]
         }
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = TestSearch.term
             $0.searchPhase = .loaded
             $0.searchResults = []
@@ -153,7 +153,7 @@ struct BrowseSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = TestSearch.term
             $0.searchPhase = .loaded
             $0.searchResults = [deepHit]
@@ -211,7 +211,7 @@ struct BrowseSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = TestSearch.term
             $0.searchPhase = .loaded
             $0.searchResults = [result]
@@ -278,7 +278,7 @@ struct BrowseSearchTests {
             $0.searchQuery = TestSearch.longerTerm
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = TestSearch.longerTerm
             $0.searchPhase = .loaded
             $0.searchResults = [result]
@@ -301,7 +301,7 @@ struct BrowseSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.failure) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .failed(L10n.Browse.searchFailed)
         }
         #expect(store.state.searchFailureMessage == L10n.Browse.searchFailed)
@@ -328,7 +328,7 @@ struct BrowseSearchTests {
             $0.searchResults = []
             $0.searchPhase = .loading
         }
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchAnsweredTerm = TestSearch.term
             $0.searchResults = [result]
@@ -379,7 +379,7 @@ struct BrowseSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.zeta
             $0.searchPhase = .loaded
             $0.searchResults = [closest, content]
@@ -392,7 +392,7 @@ struct BrowseSearchTests {
             $0.searchLimit = 300
             $0.searchPhase = .loading
         }
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.zeta
             $0.searchPhase = .loaded
             $0.searchResults = [closest, content, more]
@@ -408,7 +408,7 @@ struct BrowseSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.zetas
             $0.searchPhase = .loaded
             $0.searchResults = [closest, content]
@@ -444,7 +444,7 @@ struct BrowseSearchTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = TestSearch.term
             $0.searchPhase = .loaded
             $0.searchResults = [hit]
