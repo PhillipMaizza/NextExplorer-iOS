@@ -11,25 +11,11 @@
         static let iconSize: CGFloat = 16
     }
 
-    /// One row of a transfer queue, whichever queue it comes from.
-    struct MacTransferRow: Identifiable {
-        enum Status {
-            case waiting
-            case running(progress: Double?, detail: String?)
-            case done(String)
-            case failed(String)
-        }
-
-        let id: UUID
-        let name: String
-        let status: Status
-    }
-
     /// The upload or download queue as a native Mac sheet: a table of items with their
     /// progress and Cancel or Retry, then Clear and Done.
     struct MacTransferQueueSheet: View {
         let title: String
-        let rows: [MacTransferRow]
+        let rows: [TransferQueueRow]
         let emptyMessage: String
         let canClear: Bool
         let onCancel: (UUID) -> Void
@@ -76,7 +62,7 @@
         }
 
         @ViewBuilder
-        private func status(_ status: MacTransferRow.Status) -> some View {
+        private func status(_ status: TransferQueueRow.Status) -> some View {
             switch status {
             case .waiting:
                 Text(L10n.Uploads.statusWaiting).foregroundStyle(.secondary)
@@ -103,7 +89,7 @@
         }
 
         @ViewBuilder
-        private func action(_ row: MacTransferRow) -> some View {
+        private func action(_ row: TransferQueueRow) -> some View {
             switch row.status {
             case .waiting, .running:
                 Button(L10n.Common.cancel) { onCancel(row.id) }.controlSize(.small)
@@ -116,7 +102,7 @@
     }
 
     @MainActor
-    private func queuePreview(_ rows: [MacTransferRow]) -> some View {
+    private func queuePreview(_ rows: [TransferQueueRow]) -> some View {
         MacTransferQueueSheet(
             title: "Uploads",
             rows: rows,
@@ -131,10 +117,14 @@
 
     #Preview("Queue") {
         queuePreview([
-            MacTransferRow(id: UUID(), name: "beach.jpg", status: .running(progress: 0.42, detail: "1.2 MB of 2.8 MB")),
-            MacTransferRow(id: UUID(), name: "itinerary.pdf", status: .waiting),
-            MacTransferRow(id: UUID(), name: "notes.txt", status: .done("Uploaded")),
-            MacTransferRow(id: UUID(), name: "movie.mkv", status: .failed("The connection was lost.")),
+            TransferQueueRow(
+                id: UUID(),
+                name: "beach.jpg",
+                status: .running(progress: 0.42, detail: "1.2 MB of 2.8 MB")
+            ),
+            TransferQueueRow(id: UUID(), name: "itinerary.pdf", status: .waiting),
+            TransferQueueRow(id: UUID(), name: "notes.txt", status: .done("Uploaded")),
+            TransferQueueRow(id: UUID(), name: "movie.mkv", status: .failed("The connection was lost.")),
         ])
     }
 

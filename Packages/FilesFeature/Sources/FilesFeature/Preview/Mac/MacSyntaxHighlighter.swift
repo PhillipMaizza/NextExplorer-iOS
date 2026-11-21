@@ -54,25 +54,25 @@
         let language: UnsafePointer<TSLanguage>?
         let queryURLs: [URL]
 
-        /// Same curated kinds as the iOS editor's `CodeEditorLanguage`.
         static func forKind(_ kind: String) -> MacSyntaxLanguage? {
-            switch kind.lowercased() {
-            case "json": MacSyntaxLanguage(
+            guard let language = CodeLanguage(kind: kind) else { return nil }
+            return switch language {
+            case .json: MacSyntaxLanguage(
                     language: tree_sitter_json(),
                     queryURLs: [TreeSitterJSONQueries.Query.highlightsFileURL]
                 )
-            case "js", "jsx": MacSyntaxLanguage(
+            case .javaScript: MacSyntaxLanguage(
                     language: tree_sitter_javascript(),
                     queryURLs: [TreeSitterJavaScriptQueries.Query.highlightsFileURL]
                 )
-            case "ts": MacSyntaxLanguage(
+            case .typeScript: MacSyntaxLanguage(
                     language: tree_sitter_typescript(),
                     queryURLs: [
                         TreeSitterJavaScriptQueries.Query.highlightsFileURL,
                         TreeSitterTypeScriptQueries.Query.highlightsFileURL,
                     ]
                 )
-            case "tsx": MacSyntaxLanguage(
+            case .tsx: MacSyntaxLanguage(
                     language: tree_sitter_tsx(),
                     queryURLs: [
                         TreeSitterJavaScriptQueries.Query.highlightsFileURL,
@@ -80,85 +80,84 @@
                         TreeSitterTSXQueries.Query.highlightsFileURL,
                     ]
                 )
-            case "html", "htm": MacSyntaxLanguage(
+            case .html: MacSyntaxLanguage(
                     language: tree_sitter_html(),
                     queryURLs: [TreeSitterHTMLQueries.Query.highlightsFileURL]
                 )
-            case "css": MacSyntaxLanguage(
+            case .css: MacSyntaxLanguage(
                     language: tree_sitter_css(),
                     queryURLs: [TreeSitterCSSQueries.Query.highlightsFileURL]
                 )
-            case "scss": MacSyntaxLanguage(
+            case .scss: MacSyntaxLanguage(
                     language: tree_sitter_scss(),
                     queryURLs: [
                         TreeSitterCSSQueries.Query.highlightsFileURL,
                         TreeSitterSCSSQueries.Query.highlightsFileURL,
                     ]
                 )
-            case "py": MacSyntaxLanguage(
+            case .python: MacSyntaxLanguage(
                     language: tree_sitter_python(),
                     queryURLs: [TreeSitterPythonQueries.Query.highlightsFileURL]
                 )
-            case "rb": MacSyntaxLanguage(
+            case .ruby: MacSyntaxLanguage(
                     language: tree_sitter_ruby(),
                     queryURLs: [TreeSitterRubyQueries.Query.highlightsFileURL]
                 )
-            case "php": MacSyntaxLanguage(
+            case .php: MacSyntaxLanguage(
                     language: tree_sitter_php(),
                     queryURLs: [TreeSitterPHPQueries.Query.highlightsFileURL]
                 )
-            case "go": MacSyntaxLanguage(
+            case .go: MacSyntaxLanguage(
                     language: tree_sitter_go(),
                     queryURLs: [TreeSitterGoQueries.Query.highlightsFileURL]
                 )
-            case "rs": MacSyntaxLanguage(
+            case .rust: MacSyntaxLanguage(
                     language: tree_sitter_rust(),
                     queryURLs: [TreeSitterRustQueries.Query.highlightsFileURL]
                 )
-            case "java": MacSyntaxLanguage(
+            case .java: MacSyntaxLanguage(
                     language: tree_sitter_java(),
                     queryURLs: [TreeSitterJavaQueries.Query.highlightsFileURL]
                 )
-            case "c": MacSyntaxLanguage(
+            case .c: MacSyntaxLanguage(
                     language: tree_sitter_c(),
                     queryURLs: [TreeSitterCQueries.Query.highlightsFileURL]
                 )
-            case "cpp", "cc", "cxx": MacSyntaxLanguage(
+            case .cpp: MacSyntaxLanguage(
                     language: tree_sitter_cpp(),
                     queryURLs: [
                         TreeSitterCQueries.Query.highlightsFileURL,
                         TreeSitterCPPQueries.Query.highlightsFileURL,
                     ]
                 )
-            case "cs": MacSyntaxLanguage(
+            case .cSharp: MacSyntaxLanguage(
                     language: tree_sitter_c_sharp(),
                     queryURLs: [TreeSitterCSharpQueries.Query.highlightsFileURL]
                 )
-            case "sql": MacSyntaxLanguage(
+            case .sql: MacSyntaxLanguage(
                     language: tree_sitter_sql(),
                     queryURLs: [TreeSitterSQLQueries.Query.highlightsFileURL]
                 )
-            case "yml", "yaml": MacSyntaxLanguage(
+            case .yaml: MacSyntaxLanguage(
                     language: tree_sitter_yaml(),
                     queryURLs: [TreeSitterYAMLQueries.Query.highlightsFileURL]
                 )
-            case "toml": MacSyntaxLanguage(
+            case .toml: MacSyntaxLanguage(
                     language: tree_sitter_toml(),
                     queryURLs: [TreeSitterTOMLQueries.Query.highlightsFileURL]
                 )
-            case "md", "markdown": MacSyntaxLanguage(
+            case .markdown: MacSyntaxLanguage(
                     language: tree_sitter_markdown(),
                     queryURLs: [TreeSitterMarkdownQueries.Query.highlightsFileURL]
                 )
-            case "sh", "bash", "zsh": MacSyntaxLanguage(
+            case .bash: MacSyntaxLanguage(
                     language: tree_sitter_bash(),
                     queryURLs: [TreeSitterBashQueries.Query.highlightsFileURL]
                 )
-            case "swift": MacSyntaxLanguage(
+            case .swift: MacSyntaxLanguage(
                     language: tree_sitter_swift(),
                     queryURLs: [TreeSitterSwiftQueries.Query.highlightsFileURL]
                 )
-            default: nil
             }
         }
     }

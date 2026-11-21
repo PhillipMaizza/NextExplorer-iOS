@@ -24,35 +24,34 @@
     import TreeSitterTypeScriptRunestone
     import TreeSitterYAMLRunestone
 
-    /// Maps a `FileItem.kind` extension to the `TreeSitterLanguage` that renders it correctly:
-    /// the same curated set of code kinds `FileTypeIcon`'s badge table dedicates a color to.
-    /// `nil` falls back to plain, unhighlighted text (still fully editable).
+    /// The `TreeSitterLanguage` that renders a `FileItem.kind`; `nil` falls back to plain,
+    /// unhighlighted text (still fully editable).
     enum CodeEditorLanguage {
         static func language(forKind kind: String) -> TreeSitterLanguage? {
-            switch kind.lowercased() {
-            case "json": .json
-            case "js", "jsx": .javaScript
-            case "ts": .typeScript
-            case "tsx": .tsx
-            case "html", "htm": .html
-            case "css": .css
-            case "scss": .scss
-            case "py": .python
-            case "rb": .ruby
-            case "php": .php
-            case "go": .go
-            case "rs": .rust
-            case "java": .java
-            case "c": .c
-            case "cpp", "cc", "cxx": .cpp
-            case "cs": .cSharp
-            case "sql": .sql
-            case "yml", "yaml": .yaml
-            case "toml": .toml
-            case "md", "markdown": .markdown
-            case "sh", "bash", "zsh": .bash
-            case "swift": .swift
-            default: nil
+            guard let language = CodeLanguage(kind: kind) else { return nil }
+            return switch language {
+            case .json: .json
+            case .javaScript: .javaScript
+            case .typeScript: .typeScript
+            case .tsx: .tsx
+            case .html: .html
+            case .css: .css
+            case .scss: .scss
+            case .python: .python
+            case .ruby: .ruby
+            case .php: .php
+            case .go: .go
+            case .rust: .rust
+            case .java: .java
+            case .c: .c
+            case .cpp: .cpp
+            case .cSharp: .cSharp
+            case .sql: .sql
+            case .yaml: .yaml
+            case .toml: .toml
+            case .markdown: .markdown
+            case .bash: .bash
+            case .swift: .swift
             }
         }
     }

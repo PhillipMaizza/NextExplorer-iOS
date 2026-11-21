@@ -69,7 +69,7 @@ struct TipJarPresentation: ViewModifier {
 #Preview("Tip jar") {
     var state = SettingsFeature.State(
         serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-        user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com")
+        user: User.preview
     )
     state.tipJar = TipJarFeature.State()
     return Color.clear

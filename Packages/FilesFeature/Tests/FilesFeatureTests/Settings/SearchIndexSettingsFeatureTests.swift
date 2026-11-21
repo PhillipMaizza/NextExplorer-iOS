@@ -77,7 +77,7 @@ struct SearchIndexSettingsFeatureTests {
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
             $0.lockedBy = "SEARCH_INDEX"
-            $0.isEffectivelyEnabled = true
+            $0.effectiveChoice = true
             $0.loaded = loaded
             $0.draftPaths = ["Backups"]
         }
@@ -100,7 +100,7 @@ struct SearchIndexSettingsFeatureTests {
         }
 
         #expect(store.state.lockedBy == nil)
-        #expect(store.state.isEffectivelyEnabled == nil)
+        #expect(store.state.effectiveChoice == nil)
         #expect(store.state.isEnabled)
     }
 
@@ -111,7 +111,7 @@ struct SearchIndexSettingsFeatureTests {
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
-            $0.isEffectivelyEnabled = false
+            $0.effectiveChoice = false
             $0.isUnavailable = true
         }
     }
@@ -140,7 +140,7 @@ struct SearchIndexSettingsFeatureTests {
 
         await store.send(.onAppear)
         await store.receive(\.loadResponse.success) {
-            $0.isEffectivelyEnabled = false
+            $0.effectiveChoice = false
             $0.loaded = SearchIndexSettings(isEnabled: false, excluded: ExcludedPaths(paths: ["a", "server"]))
         }
 
@@ -176,13 +176,13 @@ struct SearchIndexSettingsFeatureTests {
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
             $0.lockedBy = "SEARCH_INDEX"
-            $0.isEffectivelyEnabled = true
+            $0.effectiveChoice = true
             $0.loaded = loaded
         }
 
         #expect(!(store.state.loaded?.isEnabled ?? true))
         #expect(store.state.isEnabled)
-        #expect(store.state.isSwitchLocked)
+        #expect(store.state.isChoiceLocked)
     }
 
     // MARK: The switch
@@ -195,11 +195,11 @@ struct SearchIndexSettingsFeatureTests {
             update: { _ in SystemSettings(searchIndex: echoed) }
         )
 
-        await store.send(.enabledChanged(true)) { $0.isSaving = true }
+        await store.send(.choiceChanged(true)) { $0.isSaving = true }
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
             $0.isSaving = false
             $0.loaded = echoed
-            $0.isEffectivelyEnabled = true
+            $0.effectiveChoice = true
         }
         await store.receive(.delegate(.saved))
 
@@ -210,7 +210,7 @@ struct SearchIndexSettingsFeatureTests {
     func aLockedSwitchDoesNotMoveOrCallTheServer() async {
         let store = store(state: loadedState(settings(enabled: true), lockedBy: "SEARCH_INDEX"))
 
-        await store.send(.enabledChanged(false))
+        await store.send(.choiceChanged(false))
 
         #expect(store.state.isEnabled)
         #expect(patches.value.isEmpty)
@@ -220,7 +220,7 @@ struct SearchIndexSettingsFeatureTests {
     func choosingTheValueAlreadyInForceDoesNothing() async {
         let store = store(state: loadedState(settings(enabled: true)))
 
-        await store.send(.enabledChanged(true))
+        await store.send(.choiceChanged(true))
 
         #expect(patches.value.isEmpty)
     }
@@ -231,7 +231,7 @@ struct SearchIndexSettingsFeatureTests {
         state.isSaving = true
         let store = store(state: state)
 
-        await store.send(.enabledChanged(true))
+        await store.send(.choiceChanged(true))
 
         #expect(patches.value.isEmpty)
     }
@@ -242,7 +242,7 @@ struct SearchIndexSettingsFeatureTests {
             throw FilesClientError.serverMessage(statusCode: 403, message: "Admin access required.")
         })
 
-        await store.send(.enabledChanged(true)) { $0.isSaving = true }
+        await store.send(.choiceChanged(true)) { $0.isSaving = true }
         await store.receive(.saveResponse(
             .failure(.serverMessage(statusCode: 403, message: "Admin access required.")),
             replacesPaths: false
@@ -261,11 +261,11 @@ struct SearchIndexSettingsFeatureTests {
         let echoed = settings(enabled: true, paths: ["a"])
         let store = store(state: state, update: { _ in SystemSettings(searchIndex: echoed) })
 
-        await store.send(.enabledChanged(true)) { $0.isSaving = true }
+        await store.send(.choiceChanged(true)) { $0.isSaving = true }
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
             $0.isSaving = false
             $0.loaded = echoed
-            $0.isEffectivelyEnabled = true
+            $0.effectiveChoice = true
         }
         await store.receive(.delegate(.saved))
 
@@ -276,15 +276,15 @@ struct SearchIndexSettingsFeatureTests {
     @Test
     func theSwitchFollowsTheSavedValueAndAPathsSaveLeavesItAlone() async {
         var state = loadedState(settings(enabled: true))
-        state.isEffectivelyEnabled = true
+        state.effectiveChoice = true
         let echoed = settings(enabled: false)
         let store = store(state: state, update: { _ in SystemSettings(searchIndex: echoed) })
 
-        await store.send(.enabledChanged(false)) { $0.isSaving = true }
+        await store.send(.choiceChanged(false)) { $0.isSaving = true }
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
             $0.isSaving = false
             $0.loaded = echoed
-            $0.isEffectivelyEnabled = false
+            $0.effectiveChoice = false
         }
         await store.receive(.delegate(.saved))
 
@@ -427,7 +427,7 @@ struct SearchIndexSettingsFeatureTests {
     func anEchoWithoutTheSearchIndexIsAFailedSave() async {
         let store = store(state: loadedState(settings()), update: { _ in SystemSettings() })
 
-        await store.send(.enabledChanged(true)) { $0.isSaving = true }
+        await store.send(.choiceChanged(true)) { $0.isSaving = true }
         await store.receive(.saveResponse(
             .failure(.decoding("Settings response carried no search index.")),
             replacesPaths: false

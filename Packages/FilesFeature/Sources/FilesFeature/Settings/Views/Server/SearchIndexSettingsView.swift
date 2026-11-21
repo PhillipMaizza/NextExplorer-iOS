@@ -27,9 +27,9 @@ struct SearchIndexSettingsView: View {
                     title: L10n.SearchIndexSettings.running,
                     subtitle: L10n.SearchIndexSettings.runningHelp,
                     icon: IconKit.search,
-                    isOn: Binding(get: { store.isEnabled }, set: { store.send(.enabledChanged($0)) })
+                    isOn: Binding(get: { store.isEnabled }, set: { store.send(.choiceChanged($0)) })
                 )
-                .disabled(store.isSwitchLocked)
+                .disabled(store.isChoiceLocked)
                 if let lockedBy = store.lockedBy {
                     Text(L10n.SearchIndexSettings.locked(lockedBy))
                         .type(.body3(.regular), style: .tertiary)

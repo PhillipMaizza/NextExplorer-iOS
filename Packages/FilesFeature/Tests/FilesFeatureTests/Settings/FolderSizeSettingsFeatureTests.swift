@@ -77,7 +77,7 @@ struct FolderSizeSettingsFeatureTests {
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
             $0.lockedBy = "FOLDER_SIZE_MODE"
-            $0.effectiveMode = .full
+            $0.effectiveChoice = .full
             $0.loaded = loaded
             $0.draftPaths = ["docker"]
         }
@@ -100,7 +100,7 @@ struct FolderSizeSettingsFeatureTests {
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
-            $0.effectiveMode = FolderSizeMode.off
+            $0.effectiveChoice = FolderSizeMode.off
             $0.isUnavailable = true
         }
     }
@@ -117,7 +117,7 @@ struct FolderSizeSettingsFeatureTests {
         }
 
         #expect(store.state.lockedBy == nil)
-        #expect(store.state.effectiveMode == nil)
+        #expect(store.state.effectiveChoice == nil)
         #expect(store.state.mode == .shallow)
     }
 
@@ -133,13 +133,13 @@ struct FolderSizeSettingsFeatureTests {
         await store.receive(\.loadResponse.success) {
             $0.phase = .loaded
             $0.lockedBy = "FOLDER_SIZE_MODE"
-            $0.effectiveMode = .full
+            $0.effectiveChoice = .full
             $0.loaded = loaded
         }
 
         #expect(store.state.loaded?.mode == FolderSizeMode.off)
         #expect(store.state.mode == .full)
-        #expect(store.state.isModeLocked)
+        #expect(store.state.isChoiceLocked)
     }
 
     @Test
@@ -166,7 +166,7 @@ struct FolderSizeSettingsFeatureTests {
 
         await store.send(.onAppear)
         await store.receive(\.loadResponse.success) {
-            $0.effectiveMode = FolderSizeMode.off
+            $0.effectiveChoice = FolderSizeMode.off
             $0.loaded = FolderSizeSettings(mode: .off, excluded: ExcludedPaths(paths: ["a", "server"]))
         }
 
@@ -204,14 +204,14 @@ struct FolderSizeSettingsFeatureTests {
             SystemSettings(folderSize: FolderSizeSettings(mode: to, excluded: ExcludedPaths(paths: ["a"])))
         })
 
-        await store.send(.modeChanged(to)) { $0.isSaving = true }
+        await store.send(.choiceChanged(to)) { $0.isSaving = true }
         await store.receive(.saveResponse(
             .success(FolderSizeSettings(mode: to, excluded: ExcludedPaths(paths: ["a"]))),
             replacesPaths: false
         )) {
             $0.isSaving = false
             $0.loaded = FolderSizeSettings(mode: to, excluded: ExcludedPaths(paths: ["a"]))
-            $0.effectiveMode = to
+            $0.effectiveChoice = to
         }
         await store.receive(.delegate(.saved))
 
@@ -222,7 +222,7 @@ struct FolderSizeSettingsFeatureTests {
     func aLockedModeDoesNotChangeOrCallTheServer() async {
         let store = store(state: loadedState(settings(mode: .full), lockedBy: "FOLDER_SIZE_MODE"))
 
-        await store.send(.modeChanged(.off))
+        await store.send(.choiceChanged(.off))
 
         #expect(store.state.mode == .full)
         #expect(patches.value.isEmpty)
@@ -232,7 +232,7 @@ struct FolderSizeSettingsFeatureTests {
     func choosingTheModeAlreadyInForceDoesNothing() async {
         let store = store(state: loadedState(settings(mode: .shallow)))
 
-        await store.send(.modeChanged(.shallow))
+        await store.send(.choiceChanged(.shallow))
 
         #expect(patches.value.isEmpty)
     }
@@ -243,7 +243,7 @@ struct FolderSizeSettingsFeatureTests {
         state.isSaving = true
         let store = store(state: state)
 
-        await store.send(.modeChanged(.full))
+        await store.send(.choiceChanged(.full))
 
         #expect(patches.value.isEmpty)
     }
@@ -254,7 +254,7 @@ struct FolderSizeSettingsFeatureTests {
             throw FilesClientError.serverMessage(statusCode: 403, message: "Admin access required.")
         })
 
-        await store.send(.modeChanged(.full)) { $0.isSaving = true }
+        await store.send(.choiceChanged(.full)) { $0.isSaving = true }
         await store.receive(.saveResponse(
             .failure(.serverMessage(statusCode: 403, message: "Admin access required.")),
             replacesPaths: false
@@ -273,11 +273,11 @@ struct FolderSizeSettingsFeatureTests {
         let echoed = settings(mode: .full, paths: ["a"])
         let store = store(state: state, update: { _ in SystemSettings(folderSize: echoed) })
 
-        await store.send(.modeChanged(.full)) { $0.isSaving = true }
+        await store.send(.choiceChanged(.full)) { $0.isSaving = true }
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
             $0.isSaving = false
             $0.loaded = echoed
-            $0.effectiveMode = .full
+            $0.effectiveChoice = .full
         }
         await store.receive(.delegate(.saved))
 
@@ -288,15 +288,15 @@ struct FolderSizeSettingsFeatureTests {
     @Test
     func theModeFollowsTheSavedValueAndAPathsSaveLeavesItAlone() async {
         var state = loadedState(settings(mode: .shallow))
-        state.effectiveMode = .shallow
+        state.effectiveChoice = .shallow
         let echoed = settings(mode: .full)
         let store = store(state: state, update: { _ in SystemSettings(folderSize: echoed) })
 
-        await store.send(.modeChanged(.full)) { $0.isSaving = true }
+        await store.send(.choiceChanged(.full)) { $0.isSaving = true }
         await store.receive(.saveResponse(.success(echoed), replacesPaths: false)) {
             $0.isSaving = false
             $0.loaded = echoed
-            $0.effectiveMode = .full
+            $0.effectiveChoice = .full
         }
         await store.receive(.delegate(.saved))
 
@@ -431,7 +431,7 @@ struct FolderSizeSettingsFeatureTests {
     func anEchoWithoutFolderSizeIsAFailedSave() async {
         let store = store(state: loadedState(settings()), update: { _ in SystemSettings() })
 
-        await store.send(.modeChanged(.full)) { $0.isSaving = true }
+        await store.send(.choiceChanged(.full)) { $0.isSaving = true }
         await store.receive(.saveResponse(
             .failure(.decoding("Settings response carried no folder size.")),
             replacesPaths: false

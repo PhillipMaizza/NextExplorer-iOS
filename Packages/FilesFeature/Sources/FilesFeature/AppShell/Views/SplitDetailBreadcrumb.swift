@@ -82,7 +82,7 @@ private enum PreviewSample {
     static func store(tab: MainTabFeature.Tab, pushed: [(path: String, title: String)]) -> StoreOf<MainTabFeature> {
         var state = MainTabFeature.State(
             serverURL: serverURL,
-            user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com")
+            user: User.preview
         )
         state.selectedTab = tab
         for screen in pushed {

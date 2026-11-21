@@ -378,13 +378,7 @@ public struct MainTabView: View {
         store: Store(
             initialState: MainTabFeature.State(
                 serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                user: User(
-                    id: "preview-user",
-                    username: "jdoe",
-                    email: "jane.doe@example.com",
-                    displayName: "Jane Doe",
-                    roles: []
-                )
+                user: User.preview
             )
         ) {
             MainTabFeature()

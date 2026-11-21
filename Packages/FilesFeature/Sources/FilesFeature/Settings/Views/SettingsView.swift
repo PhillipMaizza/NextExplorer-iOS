@@ -345,7 +345,7 @@ private func settingsPreview(
         $0 = [
             AccountSummary(
                 id: "a",
-                username: "jdoe",
+                username: User.preview.username,
                 serverURL: URL(string: "https://home.example.com") ?? URL(fileURLWithPath: "/"),
                 isActive: true
             ),

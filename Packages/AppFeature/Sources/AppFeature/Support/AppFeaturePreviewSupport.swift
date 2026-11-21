@@ -10,7 +10,7 @@ extension AppFeature.State {
         var state = Self()
         state.destination = .authenticated(AuthenticatedFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-            user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe")
+            user: User.preview
         ))
         return state
     }

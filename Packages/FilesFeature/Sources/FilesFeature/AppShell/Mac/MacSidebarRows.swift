@@ -190,7 +190,7 @@
     private func previewSections(selectedTab: MainTabFeature.Tab) -> some View {
         var state = MainTabFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-            user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe")
+            user: User.preview
         )
         state.selectedTab = selectedTab
         return MacSidebarSections(store: Store(initialState: state) { MainTabFeature() })
