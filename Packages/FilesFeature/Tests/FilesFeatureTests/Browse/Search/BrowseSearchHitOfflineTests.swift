@@ -11,7 +11,6 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseSearchHitOfflineTests {
-    /// The file the hit opens as.
     private let opened = FileItem(
         name: TestFile.clip,
         path: TestFolder.media,

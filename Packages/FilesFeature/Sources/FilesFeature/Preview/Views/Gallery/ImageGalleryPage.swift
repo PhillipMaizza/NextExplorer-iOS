@@ -55,9 +55,6 @@ struct ImageGalleryPage: View {
     var isNear: Bool = true
     var onZoomChange: (Bool) -> Void = { _ in }
 
-    /// One lifecycle for the page, not a spread of `image` + `gifURL` + `errorMessage` +
-    /// `didFinishLoading` bools that could disagree. `streaming` is a progressive frame still sharpening,
-    /// `loaded` is the final full quality image, which is what drives the settle animation.
     @State private var phase: GalleryImagePhase = .loading
     /// The date and size the shown image was loaded for, so a file replaced on the server loads again.
     @State private var loadedSignature: String?

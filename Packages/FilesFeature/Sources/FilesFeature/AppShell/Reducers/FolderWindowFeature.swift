@@ -19,9 +19,7 @@
 
         public enum Action {
             case browse(BrowseTabFeature.Action)
-            /// Another window changed folders this one may show.
             case otherWindowChanged(FolderContentsChange)
-            /// Go ▸ Go to Folder… with this window in front.
             case goToFolderRequested(String)
         }
 

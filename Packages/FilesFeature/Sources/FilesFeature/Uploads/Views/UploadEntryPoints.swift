@@ -29,9 +29,6 @@ enum CameraAccess {
     }
 }
 
-/// The three upload pickers (camera / Photos / Files) plus the camera denied alert, with no
-/// UI of its own: the trigger (a toolbar `+`, an "Add more" row) lives at the call site and
-/// flips these bindings. Shared by `UploadEntryPoints` and `UploadReviewView`.
 struct UploadPickers: ViewModifier {
     @Binding var isFilesPickerPresented: Bool
     @Binding var isPhotosPickerPresented: Bool

@@ -51,7 +51,6 @@ public struct ServerCapability: Equatable, Sendable, Decodable, Identifiable {
     }
 }
 
-/// The envelope of `GET /api/capabilities`.
 public struct ServerCapabilitiesEnvelope: Decodable, Sendable {
     public let capabilities: [ServerCapability]
 }

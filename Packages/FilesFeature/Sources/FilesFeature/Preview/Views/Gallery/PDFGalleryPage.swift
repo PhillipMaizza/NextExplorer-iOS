@@ -20,7 +20,6 @@
         var contentInsets = EdgeInsets()
 
         @State private var phase = Phase.loading
-        /// The page shown and the page count, while the pill is up.
         @State private var pill: PageCount?
 
         private enum Phase {

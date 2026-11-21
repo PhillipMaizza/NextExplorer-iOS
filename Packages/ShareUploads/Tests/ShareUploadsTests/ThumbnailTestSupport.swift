@@ -11,7 +11,6 @@ enum ThumbnailFixture {
     static let imageSize = CGSize(width: 64, height: 48)
     static let pageSize = CGSize(width: 120, height: 160)
 
-    /// A filled PNG of `imageSize` in `root`, and its byte size.
     static func png(in root: URL) throws -> (url: URL, size: Int64) {
         let image = try filledImage(size: imageSize)
         let url = root.appendingPathComponent(pngName)

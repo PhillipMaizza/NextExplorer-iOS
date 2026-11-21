@@ -123,7 +123,6 @@ struct IdentifiedURL: Identifiable {
             }
         }
 
-        /// Presents the system share sheet for files kept on the device.
         func keptFilesShareSheet(_ share: KeptFilesShare?, onDismiss: @escaping () -> Void) -> some View {
             sheet(item: Binding(get: { share }, set: {
                 if $0 == nil {

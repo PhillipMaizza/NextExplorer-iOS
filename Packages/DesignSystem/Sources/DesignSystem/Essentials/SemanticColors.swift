@@ -15,16 +15,12 @@ public extension Color {
     static let accentText = Color("AccentText", bundle: .module)
     /// Text, icons and spinners on an `accent` fill, which stays light in both appearances.
     static let onAccent = Color.black
-    /// Primary text/icons.
     static let primaryDS = Color("TextPrimary", bundle: .module)
-    /// Secondary text, placeholders, subtitles.
     static let secondaryDS = Color("TextSecondary", bundle: .module)
     /// Tertiary text, dimmer than `secondaryDS`, no asset of its own so it stays a
     /// derived tone rather than a third hand tuned light/dark pair to maintain.
     static let tertiaryDS = Color.secondaryDS.opacity(Constants.tertiaryOpacity)
-    /// Positive/success feedback.
     static let positive = Color("Success", bundle: .module)
-    /// Warning/attention feedback.
     static let attention = Color("Warning", bundle: .module)
     /// Negative/error feedback.
     static let negative = Color("Danger", bundle: .module)
@@ -36,7 +32,6 @@ public extension Color {
     static let positiveText = Color("SuccessText", bundle: .module)
     /// Default screen background.
     static let backgroundPrimary = Color("Background", bundle: .module)
-    /// Secondary surface background (cards, grouped rows).
     static let backgroundSecondary = Color("Surface", bundle: .module)
     /// Default element divider/border (input fields, dividers).
     static let borderPrimary = Color("Border", bundle: .module)

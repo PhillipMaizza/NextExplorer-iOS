@@ -29,7 +29,6 @@ final class CacheTrimSchedule: Sendable {
         }
     }
 
-    /// Records one write and, when due, trims the cache in the background.
     func recordWriteAndTrimIfDue() {
         guard recordWrite() else { return }
         Task.detached(priority: .background) {

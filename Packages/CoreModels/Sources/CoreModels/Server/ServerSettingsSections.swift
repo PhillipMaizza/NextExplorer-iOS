@@ -92,7 +92,6 @@ public struct FFmpegSettings: Equatable, Sendable, Codable {
     }
 }
 
-/// How far a folder size count goes (`folderSize.mode`).
 public enum FolderSizeMode: String, CaseIterable, Sendable, Codable {
     case off
     case shallow
@@ -129,7 +128,6 @@ public struct ExcludedPaths: Equatable, Sendable, Decodable {
     }
 }
 
-/// The `searchIndex` object of `GET /api/settings`.
 public struct SearchIndexSettings: Equatable, Sendable, Decodable {
     public var isEnabled: Bool
     public var excluded: ExcludedPaths
@@ -150,7 +148,6 @@ public struct SearchIndexSettings: Equatable, Sendable, Decodable {
     }
 }
 
-/// The `folderSize` object of `GET /api/settings`.
 public struct FolderSizeSettings: Equatable, Sendable, Decodable {
     public var mode: FolderSizeMode
     public var excluded: ExcludedPaths

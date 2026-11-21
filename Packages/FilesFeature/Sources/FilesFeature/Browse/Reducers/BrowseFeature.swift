@@ -92,7 +92,6 @@ public struct BrowseFeature {
             folderDepth > 0 && searchScope == .thisFolder
         }
 
-        /// The scope a search actually runs with.
         public var effectiveSearchScope: SearchScope {
             folderDepth == 0 ? .everywhere : searchScope
         }
@@ -550,7 +549,6 @@ public struct BrowseFeature {
             /// Files opened from Finder name no folder, so they always go through the review sheet.
             case reviewUpload(UploadReviewFeature.PickSource)
         #endif
-        /// A search result's Show in Enclosing Folder: ends the search and opens its folder.
         case searchResultEnclosingFolderTapped(SearchResultItem)
         /// Files dropped on a folder row (Finder on a Mac, the Files app on an iPad).
         case filesDroppedOnFolder([URL], folder: FileItem)

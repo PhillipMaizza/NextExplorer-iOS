@@ -80,7 +80,6 @@ struct BrowseSearchResultCells: View {
     }
 }
 
-/// Search hits as list rows.
 struct BrowseSearchResultRows: View {
     let store: StoreOf<BrowseFeature>
     let results: [SearchResultItem]

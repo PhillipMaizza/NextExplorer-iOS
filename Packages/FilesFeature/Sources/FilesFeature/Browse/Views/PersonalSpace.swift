@@ -33,7 +33,6 @@ struct PersonalSpaceRow: View {
     }
 }
 
-/// The grid mode counterpart of `PersonalSpaceRow`.
 struct PersonalSpaceGridCell: View {
     let onTap: () -> Void
 

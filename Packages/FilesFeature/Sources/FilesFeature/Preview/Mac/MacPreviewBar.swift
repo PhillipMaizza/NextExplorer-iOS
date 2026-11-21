@@ -37,7 +37,6 @@
     }
 
     extension View {
-        /// Pins a `MacPreviewBar` above the preview's content.
         func macPreviewBar(
             title: String?,
             onClose: @escaping () -> Void,

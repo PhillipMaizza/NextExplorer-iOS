@@ -15,7 +15,6 @@ extension FilesService {
         static let pathQueryName = "path"
     }
 
-    /// `GET /api/versions?path=`.
     func fetchVersions(serverURL: URL, path: String) async throws -> FileVersionHistory {
         let request = try Self.makeRequest(url: Self.versionsURL(serverURL, query: path), method: .get)
         return try await sendReportingMessage(request, decoding: FileVersionHistory.self)
@@ -31,7 +30,6 @@ extension FilesService {
         return try await sendReportingMessage(request, decoding: FileVersionText.self)
     }
 
-    /// `POST /api/versions/:id/restore` with `{ path }`.
     func restoreVersion(serverURL: URL, path: String, versionID: String) async throws {
         try await sendVersionWrite(
             serverURL,
@@ -106,7 +104,6 @@ extension FilesService {
         return try await sendReportingMessage(request, decoding: FileVersion.self)
     }
 
-    /// `POST /api/versions/delete` with `{ path, ids }` or `{ path, all: true }`.
     func deleteVersions(serverURL: URL, path: String, ids: [String]?, all: Bool) async throws {
         let url = serverURL.appendingPathComponent(APIPath.versions).appendingPathComponent(VersionRoute.delete)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)

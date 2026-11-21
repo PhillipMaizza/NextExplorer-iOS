@@ -41,7 +41,6 @@ public enum SharedItemLoader {
         return [still, movie].compactMap { $0 }
     }
 
-    /// The paired movie shares the still's name, with the movie's own extension.
     static func pairedMovieName(stillName: String, movieType: UTType) -> String {
         let base = (stillName as NSString).deletingPathExtension
         guard let fileExtension = movieType.preferredFilenameExtension else { return base }

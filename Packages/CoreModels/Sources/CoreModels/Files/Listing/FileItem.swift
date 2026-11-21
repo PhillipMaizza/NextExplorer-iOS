@@ -62,11 +62,6 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     private static let archiveExtensions: Set<String> = [
         "zip", "rar", "7z", "tar", "gz", "bz2", "xz", "tgz",
     ]
-    // Extensions the server's own `/api/editor` route (`readTextFileBuffer` in
-    // `backend/src/routes/editor.js`) would reject: it 415s videos outright and sniffs
-    // everything else for null/control bytes, but checking client side avoids a round trip
-    // just to be told a `.exe` isn't text. Not exhaustive: genuinely unrecognized binary
-    // content still gets caught server side by that same sniff.
     // Rich documents outside the server's `PREVIEWABLE_EXTENSIONS` that QuickLook
     // (`QLPreviewController`) renders natively once the raw bytes are on disk: Word, Excel,
     // PowerPoint, the OpenDocument trio, and RTF. They come down via the unrestricted
@@ -221,8 +216,6 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// anything": shared by the top level browse list and `ArchiveBrowserView`'s in archive
     /// rows, so the two don't drift on what counts as unsupported.
     public var isUnsupportedForPreview: Bool {
-        // Non native media is no longer unsupported: `VLCPlayerView` handles the containers and
-        // codecs AVFoundation can't (`isNativelyPlayable` only chooses which player opens).
         (isArchive && !isBrowsableArchive) || (!isPreviewable && !isBrowsableArchive)
     }
 

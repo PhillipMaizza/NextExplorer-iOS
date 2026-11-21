@@ -40,7 +40,6 @@
             XCTAssertTrue(backButton(in: app).waitToAppear(), "The opened folder should still have Back")
         }
 
-        /// Back leaves a folder; ⌘] and ⌘[ and the Go menu's Forward and Back walk the history.
         func testBackAndForwardFromTheButtonShortcutsAndGoMenu() {
             let app = launchApp()
             openDocuments(in: app)

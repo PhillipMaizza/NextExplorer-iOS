@@ -126,7 +126,6 @@ public enum DSMotion {
         isReduceMotionEnabled ? contentReveal : listDiff
     }
 
-    /// How long one select mode step takes to settle with `selectModeStep`.
     public static let selectModeStepDuration: Duration = .milliseconds(250)
 
     /// How long a toolbar menu takes to close back into its button.

@@ -10,7 +10,6 @@
         static let zoomStepFactor: CGFloat = 1.25
     }
 
-    /// One step of View ▸ Zoom In, Zoom Out or Zoom to Fit.
     enum MacZoomStep {
         case zoomIn, zoomOut, fit
     }

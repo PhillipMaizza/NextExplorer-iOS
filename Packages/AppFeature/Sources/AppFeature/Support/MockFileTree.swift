@@ -197,7 +197,6 @@
             }
         }
 
-        /// Lists every folder on `path` in its parent, adding the ones that are missing.
         private func addMissingFolders(_ path: String, dated date: Date) {
             var parent = ""
             for component in path.split(separator: "/").map(String.init) {

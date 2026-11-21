@@ -11,11 +11,6 @@ private enum Constants {
     static let edgeInset: CGFloat = .space16
 }
 
-/// Horizontally scrolling "Filter by type" chip row under the search field, over search results or
-/// a folder's own items. A leading "All" chip resets the filter; one chip per `FileCategory`
-/// actually present (`availableCategories`) toggles independently. An empty selection means "all",
-/// so the "All" chip reads selected exactly when no category is picked. Replaces the old
-/// focus gated filter button + `SearchFilterSheet`.
 struct SearchFilterChips: View {
     let availableCategories: [FileCategory]
     let selectedCategories: Set<FileCategory>

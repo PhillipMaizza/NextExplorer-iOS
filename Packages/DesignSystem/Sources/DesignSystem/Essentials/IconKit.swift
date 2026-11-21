@@ -146,7 +146,6 @@ public enum IconKit {
     public static let unfavorite = Image(systemName: "star.slash")
     public static let info = Image(systemName: "info.circle")
     public static let extract = Image(systemName: "archivebox")
-    /// `doc.zipper`.
     public static let archiveDocument = Image(systemName: "doc.zipper")
     public static let size = Image(systemName: "internaldrive")
     public static let sparkle = Image(systemName: "sparkles")

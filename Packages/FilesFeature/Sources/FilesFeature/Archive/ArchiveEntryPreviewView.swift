@@ -55,9 +55,6 @@ struct ArchiveEntryPreviewView: View {
     }
 }
 
-/// Full-screen image viewer for an archive entry: mirrors `ImageGalleryView`'s single-page
-/// behavior (`ZoomableScrollView`, full-bleed, tap toggles the chrome) but reads straight
-/// from the already-extracted local file rather than the server.
 private struct ArchiveImagePreviewView: View {
     let fileName: String
     let fileURL: URL

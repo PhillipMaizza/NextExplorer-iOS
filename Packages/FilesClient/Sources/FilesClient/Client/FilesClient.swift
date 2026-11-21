@@ -235,7 +235,6 @@ public struct FilesClient: Sendable {
     public var beginTwoFactorSetup: @Sendable (_ serverURL: URL) async throws -> TwoFactorSetup
     /// `POST /api/auth/totp/confirm`: turns it on with a code from the app; answers the recovery codes.
     public var confirmTwoFactorSetup: @Sendable (_ serverURL: URL, _ code: String) async throws -> [String]
-    /// `POST /api/auth/totp/recovery-codes`: new recovery codes, with the password.
     public var replaceRecoveryCodes: @Sendable (_ serverURL: URL, _ password: String) async throws -> [String]
     /// `DELETE /api/auth/totp`: turns it off, with the password.
     public var disableTwoFactor: @Sendable (_ serverURL: URL, _ password: String) async throws -> Void
@@ -347,7 +346,6 @@ public struct FilesClient: Sendable {
 
     // MARK: Admin per user volumes (also require the `USER_VOLUMES` feature)
 
-    /// `GET /api/users/:id/volumes`.
     public var userVolumes: @Sendable (_ serverURL: URL, _ userID: String) async throws -> [UserVolume]
     /// `POST /api/users/:id/volumes`.
     public var addUserVolume: @Sendable (

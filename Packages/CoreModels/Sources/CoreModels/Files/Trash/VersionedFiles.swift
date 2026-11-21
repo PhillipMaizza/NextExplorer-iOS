@@ -204,7 +204,6 @@ public struct VersionedFileDetail: Equatable, Sendable, Decodable {
     }
 }
 
-/// The answer to deleting versions of a history.
 public struct VersionsDeletion: Equatable, Sendable, Decodable {
     public let deleted: Int
     public let remaining: Int

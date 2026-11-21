@@ -183,7 +183,6 @@ struct LoginScreen {
         ))
     }
 
-    /// Fills the credentials page and submits it.
     func submitCredentials(
         identifier: String = UITestCase.Fixture.accountIdentifier,
         password: String = UITestCase.Fixture.accountPassword,
@@ -316,7 +315,6 @@ struct BrowseScreen {
         app.labeledButton(L10n.Browse.transferConflictKeepBoth)
     }
 
-    /// The floating pill of a running copy.
     var copyProgressPill: XCUIElement {
         app.labeledButton(L10n.Browse.progressCopying)
     }
@@ -357,7 +355,6 @@ struct BrowseScreen {
         app.labeledButton(L10n.Offline.removeConfirm)
     }
 
-    /// Rename sheet.
     var renameNameField: XCUIElement {
         app.textFields[L10n.Browse.renameNamePlaceholder]
     }
@@ -797,7 +794,6 @@ struct SettingsScreen {
         app.staticTexts[L10n.Language.systemDefaultSubtitle]
     }
 
-    /// Multiserver switcher: the Accounts section header and the "Add Account" row.
     var addAccountRow: XCUIElement {
         app.buttons[L10n.Settings.addAccount].firstMatch
     }

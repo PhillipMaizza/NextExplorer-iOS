@@ -16,7 +16,6 @@ public enum PermissionScope: CaseIterable, Hashable, Sendable {
     }
 }
 
-/// One of the three POSIX permission rights.
 public enum PermissionRight: CaseIterable, Hashable, Sendable {
     case read
     case write
@@ -82,7 +81,6 @@ public struct FilePermissions: Decodable, Equatable, Sendable {
         permissionBits & (right.bit << scope.shift) != 0
     }
 
-    /// This mode as an editable grid of rights per scope.
     public var grid: [PermissionScope: Set<PermissionRight>] {
         var result: [PermissionScope: Set<PermissionRight>] = [:]
         for scope in PermissionScope.allCases {

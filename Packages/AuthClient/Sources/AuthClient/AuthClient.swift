@@ -28,7 +28,6 @@ public struct AuthClient: Sendable {
     /// instead of looking like "no accounts". Callers that delete data for every account not in the
     /// list use this one, so an unreadable keychain never reads as "nobody is signed in".
     public var listSessionsOrThrow: @Sendable () async throws -> [SessionCredentials] = { [] }
-    /// The `accountID` of the active account, or `nil` when none.
     public var activeAccountID: @Sendable () async -> String?
     /// Switches the active account and installs its cookie (no reauthentication). Returns the
     /// now active credentials, or `nil` if the id is unknown. A keychain that can't be read throws

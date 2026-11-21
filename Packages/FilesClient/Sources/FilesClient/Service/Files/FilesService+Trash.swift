@@ -26,7 +26,6 @@ extension FilesService {
         }
     }
 
-    /// `/api/trash/items/<id>/<component>`, the id encoded as one segment.
     private static func trashItemURL(_ serverURL: URL, id: String, component: String) -> URL {
         let base = serverURL.appendingPathComponent(APIPath.trashItems)
         return URL(string: base.absoluteString + "/" + encodedSegment(id) + "/" + component) ?? base
@@ -38,7 +37,6 @@ extension FilesService {
         return try await sendReportingMessage(request, decoding: TrashListing.self)
     }
 
-    /// `GET /api/trash/items/:id/entries?path=`.
     func fetchTrashEntries(serverURL: URL, itemID: String, path: String) async throws -> TrashFolderListing {
         let base = Self.trashItemURL(serverURL, id: itemID, component: APIPath.Component.entries)
         let url = try Self.url(base, items: [(QueryKey.path, path)])
@@ -112,7 +110,6 @@ extension FilesService {
         return TrashActionResult(items: entries)
     }
 
-    /// `POST /api/trash/empty`.
     func emptyTrash(serverURL: URL) async throws -> TrashEmptySummary {
         let request = Self.makeRequest(
             url: serverURL.appendingPathComponent(APIPath.trashEmpty),

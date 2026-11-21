@@ -36,9 +36,7 @@ public struct UserManagementFeature {
         /// Removal of one volume, cancelled with the detail. Per volume so confirming the same one twice
         /// runs a single DELETE (the second would 404) while two different volumes both complete.
         case volumeRemoval(String)
-        /// Create user sheet submission.
         case createUser
-        /// Set password sheet submission.
         case setPassword
     }
 
@@ -78,7 +76,6 @@ public struct UserManagementFeature {
         }
     }
 
-    /// Local state for the "Create User" sheet.
     public struct CreateUserState: Equatable, Sendable {
         public var email = ""
         public var username = ""
@@ -106,7 +103,6 @@ public struct UserManagementFeature {
         }
     }
 
-    /// Local state for the set or reset password sheet.
     public struct PasswordSheetState: Equatable, Sendable {
         public var userID: String
         public var userLabel: String
@@ -180,7 +176,6 @@ public struct UserManagementFeature {
             securityResetToConfirm?.confirmTitle != nil
         }
 
-        /// Volumes tab.
         public var volumes: IdentifiedArrayOf<UserVolume> = []
         /// The current detail user's volumes load. `.loaded` stops a user with genuinely zero
         /// volumes from hitting the endpoint again on every tab switch.

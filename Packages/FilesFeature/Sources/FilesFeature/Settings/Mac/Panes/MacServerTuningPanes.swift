@@ -117,7 +117,6 @@
         }
     }
 
-    /// The Search Index pane: the switch, and the folders the index leaves alone.
     struct MacSearchIndexSettingsPane: View {
         @Bindable var store: StoreOf<SearchIndexSettingsFeature>
 

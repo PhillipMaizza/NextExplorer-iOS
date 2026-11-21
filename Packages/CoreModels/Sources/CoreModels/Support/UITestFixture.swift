@@ -163,7 +163,6 @@
             case other = "other.example.com"
         }
 
-        /// The signed in account.
         public enum SignedInAccount: String, Sendable {
             case id = "uitest-user"
             case username = "phillip"
@@ -332,7 +331,6 @@
             public static let otherPerson = ManagedUser.jamie
             /// What `dropped` reads.
             public static let droppedText = "Uploaded through the link before it was taken down."
-            /// The volume `offlineArchive` sat on.
             public static let offlineVolume = ManagedVolume.archive
         }
 
@@ -347,7 +345,6 @@
                 rawValue
             }
 
-            /// What `shotList` reads.
             public static let shotListText = "Beach day: sunrise, pier, dunes."
         }
 
