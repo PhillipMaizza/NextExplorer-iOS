@@ -1,8 +1,8 @@
 import DesignSystem
 import SwiftUI
 
-/// Identifies the exact source view a full-screen preview's `.zoom` transition should grow
-/// from: the file's thumbnail/icon inside its row or grid cell, not the whole-width row.
+/// Identifies the exact source view a full screen preview's `.zoom` transition should grow
+/// from: the file's thumbnail/icon inside its row or grid cell, not the whole width row.
 /// Threaded from `BrowseContentView` / `OfflineTabView` into `FileRowView` / `GridCellView`.
 struct PreviewMatchedSource {
     let id: AnyHashable
@@ -13,7 +13,7 @@ struct PreviewMatchedSource {
 }
 
 /// Which zoom sources are on screen right now. A plain reference, not observed, so rows
-/// appearing and disappearing while scrolling never re-render the screen that owns it.
+/// appearing and disappearing while scrolling never rerender the screen that owns it.
 final class PreviewSourceVisibility {
     private var visibleIDs = Set<AnyHashable>()
     var isScreenVisible = false
@@ -51,8 +51,8 @@ extension View {
 
 extension View {
     /// Scrolls the file whose id matches the open gallery's current page to center, so the
-    /// cover's `.zoom` dismiss morphs back to an on-screen cell after the user swipes between
-    /// images. Runs while the full-screen cover covers the list, so the reposition is unseen.
+    /// cover's `.zoom` dismiss morphs back to an on screen cell after the user swipes between
+    /// images. Runs while the full screen cover covers the list, so the reposition is unseen.
     func scrollGalleryPageIntoView(_ proxy: ScrollViewProxy, id: String?) -> some View {
         onChange(of: id) { _, newID in
             guard let newID else { return }
@@ -61,7 +61,7 @@ extension View {
     }
 }
 
-/// Wraps a full-screen file preview presented in a `.fullScreenCover` so its native `.zoom`
+/// Wraps a full screen file preview presented in a `.fullScreenCover` so its native `.zoom`
 /// open/dismiss morph (see `BrowseContentView` / `OfflineTabView`) reads against the app
 /// background gradient rather than the cover's default black: the content is pinned full
 /// bleed over `backgroundGradient()`, and the whole stack, gradient included, is the

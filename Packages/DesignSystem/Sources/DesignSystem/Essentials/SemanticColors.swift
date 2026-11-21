@@ -20,7 +20,7 @@ public extension Color {
     /// Secondary text, placeholders, subtitles.
     static let secondaryDS = Color("TextSecondary", bundle: .module)
     /// Tertiary text, dimmer than `secondaryDS`, no asset of its own so it stays a
-    /// derived tone rather than a third hand-tuned light/dark pair to maintain.
+    /// derived tone rather than a third hand tuned light/dark pair to maintain.
     static let tertiaryDS = Color.secondaryDS.opacity(Constants.tertiaryOpacity)
     /// Positive/success feedback.
     static let positive = Color("Success", bundle: .module)
@@ -29,9 +29,9 @@ public extension Color {
     /// Negative/error feedback.
     static let negative = Color("Danger", bundle: .module)
     /// Danger/success tuned for use AS TEXT: lighter in dark mode so error/success copy stays
-    /// AA-legible on the elevated dark `backgroundSecondary` surface, where the saturated fill
+    /// AA legible on the elevated dark `backgroundSecondary` surface, where the saturated fill
     /// colors fall below 4.5:1. `Color.negative`/`Color.positive` stay the fill/icon colors,
-    /// which must keep white-on-fill contrast.
+    /// which must keep white on fill contrast.
     static let negativeText = Color("DangerText", bundle: .module)
     static let positiveText = Color("SuccessText", bundle: .module)
     /// Default screen background.

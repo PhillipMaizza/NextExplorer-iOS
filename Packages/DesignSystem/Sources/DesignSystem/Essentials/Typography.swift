@@ -197,7 +197,7 @@ public extension View {
     }
 }
 
-/// Applies a text tier's font and Bold-Text-aware weight. A `ViewModifier` (not a `Text`
+/// Applies a text tier's font and Bold Text aware weight. A `ViewModifier` (not a `Text`
 /// extension) so it can read `legibilityWeight` from the environment.
 private struct DSTextTypeModifier: ViewModifier {
     let type: Typography.TextType

@@ -20,14 +20,14 @@ private enum Constants {
 /// (`BrowseContentView` swaps it in for the list), so the shape of what's coming is already on
 /// screen instead of a bare spinner. Reuses the real `List`/`ScrollView` containers so
 /// margins, row height and the `backgroundSecondary` surface line up exactly, with scrolling
-/// disabled. Non-interactive; the shine is suppressed under Reduce Motion by `.shimmering()`.
+/// disabled. Non interactive; the shine is suppressed under Reduce Motion by `.shimmering()`.
 struct BrowseSkeletonView: View {
     let isGridView: Bool
 
     /// All plain files: a redacted directory row keeps its accent tinted folder glyph and
     /// trailing chevron, which survive `.redacted` as gold blocks. Uniform file rows read as
     /// a clean skeleton. Built once: this view can stay mounted at zero opacity behind a
-    /// crossfade, so a per-render rebuild would be wasted work.
+    /// crossfade, so a per render rebuild would be wasted work.
     static let placeholderItems: [FileItem] = Constants.placeholderShapes.enumerated().map { index, shape in
         FileItem(
             name: String(repeating: Constants.placeholderNameChar, count: shape.nameLength),

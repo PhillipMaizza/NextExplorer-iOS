@@ -23,7 +23,7 @@ private enum Metrics {
     static let logoJPEGQuality: CGFloat = 0.85
 }
 
-/// Admin-only editor for the server's app name and logo, pushed from the Settings server row.
+/// Admin only editor for the server's app name and logo, pushed from the Settings server row.
 /// Mirrors the web client's `SettingsBranding.vue`. The server address is fixed and read only.
 struct ServerDetailsView: View {
     @Bindable var store: StoreOf<ServerDetailsFeature>
@@ -222,7 +222,7 @@ struct ServerDetailsView: View {
         }
     }
 
-    /// Square-crop-agnostic downscale + JPEG encode, rejecting anything still over the 2 MB
+    /// Square crop agnostic downscale + JPEG encode, rejecting anything still over the 2 MB
     /// the server (and `ServerDetailsFeature`) cap uploads at.
     /// Runs off the main actor: it decodes and redraws the whole image.
     nonisolated static func prepareLogo(_ image: PlatformImage) -> Data? {

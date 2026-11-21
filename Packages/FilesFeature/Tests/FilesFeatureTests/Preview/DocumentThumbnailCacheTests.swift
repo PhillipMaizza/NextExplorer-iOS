@@ -6,9 +6,9 @@ import Testing
 import TestUtils
 
 /// Covers the two pieces of `DocumentThumbnailCache` that run without a live server: rasterizing
-/// page one of a real PDF, and the short circuit that skips re-rendering on a hit.
+/// page one of a real PDF, and the short circuit that skips rerendering on a hit.
 struct DocumentThumbnailCacheTests {
-    /// An isolated render-cache directory per test, so nothing lands in the shared
+    /// An isolated render cache directory per test, so nothing lands in the shared
     /// `PreviewCache` root the `PreviewCacheStoreTests` size/clear assertions depend on.
     private func makeCacheDirectory() -> URL {
         let url = FileManager.default.temporaryDirectory
@@ -36,7 +36,7 @@ struct DocumentThumbnailCacheTests {
         // Longest side scaled to maxPixel, aspect kept (portrait: 256 x 512).
         #expect(abs(image.size.height - 512) < 1)
         #expect(abs(image.size.width - 256) < 1)
-        // Rendered at an explicit scale of 1, not the main-screen scale, so the pixel
+        // Rendered at an explicit scale of 1, not the main screen scale, so the pixel
         // buffer is exactly the point size, not 4x/9x it.
         #if os(iOS)
             #expect(image.scale == 1)
@@ -75,8 +75,8 @@ struct DocumentThumbnailCacheTests {
         let pdfURL = makePDF(pageSize: CGSize(width: 200, height: 300))
 
         let first = await cache.firstPageImage(key, 256, pdfURL)
-        // Same key, but pointed at a file that no longer exists: a re-render would fail, so a
-        // non-nil result proves the first render was cached (memory, or the isolated disk dir).
+        // Same key, but pointed at a file that no longer exists: a rerender would fail, so a
+        // non nil result proves the first render was cached (memory, or the isolated disk dir).
         try FileManager.default.removeItem(at: pdfURL)
         let second = await cache.firstPageImage(key, 256, pdfURL)
 

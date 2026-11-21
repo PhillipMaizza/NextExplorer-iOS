@@ -95,7 +95,7 @@ struct BrowseFolderRows<Menu: View>: View {
 
     var body: some View {
         // `store.displayedItems` filters + sorts on every read: bind it once here rather than
-        // re-deriving it per row (the separator checks below alone made it O(n^2 log n)).
+        // rederiving it per row (the separator checks below alone made it O(n^2 log n)).
         let items = store.displayedItems
         let firstItemID = items.first?.id
         let lastItemID = items.last?.id

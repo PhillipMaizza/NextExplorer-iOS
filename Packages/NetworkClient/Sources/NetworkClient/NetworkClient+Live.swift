@@ -2,7 +2,7 @@ import Dependencies
 import Foundation
 
 private enum Constants {
-    /// A dead or far-away server shouldn't hang an interactive request for the URLSession
+    /// A dead or far away server shouldn't hang an interactive request for the URLSession
     /// default of 60s: the launch session check and every tap has to give up sooner.
     static let interactiveRequestTimeout: TimeInterval = 15
     /// Opportunistic page fetches (PDF thumbnails) can be genuinely slow; let them run to
@@ -50,7 +50,7 @@ public extension NetworkClient {
 
 public extension NetworkClient {
     /// Ceiling on a response buffered by `send`. The `send` path exists only for JSON control
-    /// responses (listings, share lists, editor content): anything file-sized goes through
+    /// responses (listings, share lists, editor content): anything file sized goes through
     /// `download`, which streams to disk. 32 MB is far above any legitimate JSON payload while
     /// still cutting off a hostile server trying to exhaust memory here.
     static let defaultMaxInMemoryResponseBytes = 32 * 1024 * 1024
@@ -166,9 +166,9 @@ public extension NetworkClient {
         }
 
         // Stream to a temp file rather than `session.data(for:)` so response size is bounded
-        // by disk, not resident memory; then size-check before loading it in. This path only
-        // ever carries JSON control responses, file-sized payloads use `download`, so the
-        // extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
+        // by disk, not resident memory; then size check before loading it in. This path only
+        // ever carries JSON control responses, file sized payloads use `download`, so the
+        // extra temp file round trip is a submillisecond cost on a KB scale body.
         @Sendable func sendInMemory(
             _ originalRequest: URLRequest, using inMemorySession: ReplaceableSession
         ) async throws -> (Data, HTTPURLResponse) {

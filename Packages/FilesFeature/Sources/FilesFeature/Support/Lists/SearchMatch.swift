@@ -1,7 +1,7 @@
 import FilesClient
 import Foundation
 
-/// Case-insensitive substring matching, mirroring the backend search
+/// Case insensitive substring matching, mirroring the backend search
 /// (`backend/src/routes/search.js`, `name.toLowerCase().includes(query.toLowerCase())`) so a
 /// client side filter (Browse "This Folder", Favorites, Shared, Downloads) matches exactly what a
 /// server side "Everywhere" search would return for the same names. A contiguous run, not a

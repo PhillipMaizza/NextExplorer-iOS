@@ -32,7 +32,7 @@ extension BrowseFeature {
         .cancellable(id: CancelID.info, cancelInFlight: true)
     }
 
-    /// Only reached for non-streamable items: `rowTapped` already set `state.previewItem`
+    /// Only reached for non streamable items: `rowTapped` already set `state.previewItem`
     /// and skipped this for video/audio, which play live instead of downloading.
     func loadPreview(_ state: inout State, item: FileItem) -> Effect<Action> {
         state.previewFileURL = nil

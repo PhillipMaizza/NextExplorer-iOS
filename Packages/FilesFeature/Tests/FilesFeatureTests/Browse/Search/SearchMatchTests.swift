@@ -18,12 +18,12 @@ struct SearchMatchTests {
         #expect(SearchMatch.matches(query: "Cat", in: "vaCATion.jpg"))
     }
 
-    // MARK: Error / no-match path
+    // MARK: Error / no match path
 
     @Test
     func aScatteredSubsequenceDoesNotMatch() {
         // Matches the backend `.includes` contract: only a contiguous run counts, not a
-        // command-palette style subsequence.
+        // command palette style subsequence.
         #expect(!SearchMatch.matches(query: "vjpg", in: TestFile.vacationPhoto))
         #expect(!SearchMatch.matches(query: "vcto", in: TestFile.vacationPhoto))
     }

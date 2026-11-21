@@ -7,8 +7,8 @@ import SwiftUI
     import AppKit
 #endif
 
-/// The `…` / long-press action menu for one file or folder, shared by the Browse list rows and
-/// grid cells. Sends straight into `BrowseFeature`; the one piece of view-local state it can't
+/// The `…` / long press action menu for one file or folder, shared by the Browse list rows and
+/// grid cells. Sends straight into `BrowseFeature`; the one piece of view local state it can't
 /// own (the share sheet target) is handed back through `onShare`.
 struct FileActionsMenu: View {
     let store: StoreOf<BrowseFeature>
@@ -118,7 +118,7 @@ struct FileActionsMenu: View {
             .tint(.primaryDS)
             // Extract only offers `.zip`: the server's own extract route 415s anything else
             // ("Only .zip archives are supported"), `.rar` included despite this app being
-            // able to browse rar contents client-side.
+            // able to browse rar contents client side.
             if item.kind.lowercased() == "zip" {
                 Button {
                     store.send(.extractZipTapped(item))
@@ -242,7 +242,7 @@ struct FileActionsMenu: View {
         }
     }
 
-    /// A top-level location (root screen) that is the only one there: it has nowhere to be
+    /// A top level location (root screen) that is the only one there: it has nowhere to be
     /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
     private var isSoleRootLocation: Bool {
         store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1

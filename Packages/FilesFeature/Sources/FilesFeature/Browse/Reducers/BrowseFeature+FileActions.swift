@@ -192,9 +192,9 @@ extension BrowseFeature {
         return hadFavorited ? .send(.delegate(.favoritesChanged)) : .none
     }
 
-    /// Every selected directory is toggled, mirroring the single-item context-menu action:
-    /// already-favorited directories are removed, the rest are added. Best-effort per item,
-    /// matching the same philosophy the sign-out flow already uses elsewhere: one failure
+    /// Every selected directory is toggled, mirroring the single item context menu action:
+    /// already favorited directories are removed, the rest are added. Best effort per item,
+    /// matching the same philosophy the sign out flow already uses elsewhere: one failure
     /// shouldn't block toggling the rest.
     func startBulkFavorite(_ state: inout State) -> Effect<Action> {
         guard !state.isBulkActionInFlight else { return .none }

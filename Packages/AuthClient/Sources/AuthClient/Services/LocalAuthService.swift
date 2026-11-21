@@ -2,7 +2,7 @@ import CoreModels
 import Foundation
 import NetworkClient
 
-/// Plain JSON REST calls against NextExplorer's own session-cookie auth endpoints (`/api/auth/*`).
+/// Plain JSON REST calls against NextExplorer's own session cookie auth endpoints (`/api/auth/*`).
 struct LocalAuthService: Sendable {
     let networkClient: NetworkClient
 

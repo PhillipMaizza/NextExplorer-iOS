@@ -141,7 +141,7 @@ struct NetworkClientLiveTests {
         #expect(response.statusCode == 404)
     }
 
-    // MARK: downloadWithProgress (completion handler + KVO progress, no per-chunk delegate)
+    // MARK: downloadWithProgress (completion handler + KVO progress, no per chunk delegate)
 
     @Test("downloadWithProgress lands the body on disk, returns the response, and reports final progress")
     func downloadWithProgressStreamsAndReports() async throws {

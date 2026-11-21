@@ -18,7 +18,7 @@ struct VideoPlayerHost: View {
     let item: FileItem
     let url: URL
     let serverURL: URL
-    /// Whether to try AVFoundation first. `false` (a non-native container) starts on libvlc directly.
+    /// Whether to try AVFoundation first. `false` (a non native container) starts on libvlc directly.
     let preferNative: Bool
     /// A pinned copy to fall back to when the primary stream fails (offline). `nil` when the primary
     /// is already a local file, or nothing is pinned.
@@ -92,14 +92,14 @@ struct VideoPlayerHost: View {
                 )
             }
         }
-        // A new identity when the URL switches, so the player view re-initialises against the new
+        // A new identity when the URL switches, so the player view reinitialises against the new
         // source (its `AVPlayer` is built once in `init`).
         .id(currentURL)
     }
 
     private func handlePlaybackFailure() {
         // A failed stream with a pinned copy in hand means we're offline: play the local copy rather
-        // than dead-ending. Otherwise it's a decode issue, so retry the same URL through libvlc.
+        // than dead ending. Otherwise it's a decode issue, so retry the same URL through libvlc.
         if let offlineFallbackURL, !didUseOfflineFallback, currentURL != offlineFallbackURL {
             didUseOfflineFallback = true
             currentURL = offlineFallbackURL

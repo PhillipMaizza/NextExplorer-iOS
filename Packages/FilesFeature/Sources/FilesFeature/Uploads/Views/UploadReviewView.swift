@@ -79,15 +79,15 @@ struct UploadReviewView: View {
     }
 
     /// `http` server: reachable only where the box is (typically the user's LAN), so an
-    /// upload started away from that network just fails. The plaintext-security angle is
-    /// already covered on the login screen; this is the "won't work from the coffee shop" heads-up.
+    /// upload started away from that network just fails. The plaintext security angle is
+    /// already covered on the login screen; this is the "won't work from the coffee shop" heads up.
     private var isServerConnectionInsecure: Bool {
         store.serverURL.scheme?.lowercased() == "http"
     }
 
     /// The whole sheet as one measured stack (header, the destination + size rows, the file
     /// list, then the two buttons) so `DSDynamicHeightSheet` sizes to exactly this: no
-    /// per-piece height guesses.
+    /// per piece height guesses.
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             DSSheetHeader(

@@ -229,7 +229,7 @@
 
         static func authClient(_ auth: Auth, expiry: MockSessionExpiry = MockSessionExpiry()) -> AuthClient {
             var client = AuthClient.previewValue
-            // A stateful account set so the multi-server switcher behaves for real in UI tests:
+            // A stateful account set so the multiserver switcher behaves for real in UI tests:
             // adding a server appends a row, switching/removing update the active account.
             let sessions = MockSessionStore(seed: auth == .loggedOut ? [] : [credentials()])
             client.me = { _ in
@@ -430,7 +430,7 @@
         }
     }
 
-    /// A tiny mutable multi-account set backing the mocked auth client, so the multi-server
+    /// A tiny mutable multiaccount set backing the mocked auth client, so the multiserver
     /// switcher (add / switch / remove) works end to end in UI tests. One instance per launch.
     final class MockSessionStore: @unchecked Sendable {
         private let lock = NSLock()

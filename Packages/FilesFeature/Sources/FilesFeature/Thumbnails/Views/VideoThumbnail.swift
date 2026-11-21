@@ -64,7 +64,7 @@ struct VideoThumbnailView: View {
                 phase = .loaded(image)
             } else if !Task.isCancelled {
                 // A cancelled generate (row scrolled away) is not a failure; leave the
-                // placeholder so re-appearing retries instead of dropping to the generic icon.
+                // placeholder so reappearing retries instead of dropping to the generic icon.
                 phase = .failed
             }
         }

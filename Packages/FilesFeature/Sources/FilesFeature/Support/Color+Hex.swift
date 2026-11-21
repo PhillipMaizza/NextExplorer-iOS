@@ -11,7 +11,7 @@ extension Color {
     }
 
     /// `"#rrggbb"` or `"rrggbb"` string (as the backend stores a favorite's colour).
-    /// `nil` for anything that isn't a 6-digit hex.
+    /// `nil` for anything that isn't a 6 digit hex.
     init?(hexString: String) {
         var hex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
         if hex.hasPrefix("#") {

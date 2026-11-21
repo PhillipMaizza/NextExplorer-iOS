@@ -78,7 +78,7 @@ public struct OfflineTabFeature {
         }
 
         /// Filter and sort on the device, same shape as `BrowseFeature.displayedItems`: search
-        /// only ever matches against already-downloaded file names, never the server.
+        /// only ever matches against already downloaded file names, never the server.
         public var displayedDownloads: [LocalDownload] {
             let matches = searchQuery.isEmpty
                 ? Array(downloads)
@@ -554,7 +554,7 @@ public struct OfflineTabFeature {
         return .serverMessage(statusCode: 0, message: message)
     }
 
-    /// Best effort, matching the sign-out flow's philosophy: one file refusing to delete
+    /// Best effort, matching the sign out flow's philosophy: one file refusing to delete
     /// shouldn't block removing the rest of the selection.
     private func confirmBulkDelete(_ state: inout State) -> Effect<Action> {
         state.bulkDeletePhase = .idle

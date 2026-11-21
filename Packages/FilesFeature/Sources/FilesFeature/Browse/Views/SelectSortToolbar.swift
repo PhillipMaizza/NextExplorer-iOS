@@ -3,8 +3,8 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// The "Select / Sort / Grid-List" toolbar chrome shared by Browse, Favorites, and Downloads:
-/// the ellipsis menu with a "Select" entry, the top-left Select All/Deselect All button plus
+/// The "Select / Sort / Grid List" toolbar chrome shared by Browse, Favorites, and Downloads:
+/// the ellipsis menu with a "Select" entry, the top left Select All/Deselect All button plus
 /// trailing Cancel once selecting, the grid/list toggle, the grid settings button in grid mode, and
 /// the Trash button when the caller passes `onTrash`. What differs per screen: the sort menu's actual options, and what
 /// shows in the bottom bar while selecting: stays with

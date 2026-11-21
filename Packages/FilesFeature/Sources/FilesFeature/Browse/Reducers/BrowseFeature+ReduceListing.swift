@@ -15,7 +15,7 @@ extension BrowseFeature {
         switch action {
         case .onAppear:
             // Guard on the phase, not `items.isEmpty`: a folder that is genuinely empty
-            // would otherwise re-fetch on every return to it. A failed load stays put too
+            // would otherwise refetch on every return to it. A failed load stays put too
             // (retry is the refresh button), so only `.idle` triggers a fetch.
             guard state.phase == .idle else { return .none }
             return load(&state)

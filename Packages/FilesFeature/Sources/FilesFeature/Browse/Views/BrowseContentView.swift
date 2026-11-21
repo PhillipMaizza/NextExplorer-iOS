@@ -73,8 +73,8 @@ struct BrowseContentView: View {
         #endif
     }
 
-    /// The root's title is re-derived from `L10n` here rather than read from `store.title` (which
-    /// captured it once at login) so it re-localizes live when the language changes. Pushed
+    /// The root's title is rederived from `L10n` here rather than read from `store.title` (which
+    /// captured it once at login) so it relocalizes live when the language changes. Pushed
     /// subfolders show their real folder name from `store.title`.
     private var displayTitle: String {
         store.directoryPath.isEmpty ? L10n.Browse.navigationTitle : store.title
@@ -85,7 +85,7 @@ struct BrowseContentView: View {
     }
 
     private func handleTap(_ item: FileItem) {
-        // A second tap while the row spinner is up cancels the in-flight open (a slow fetch
+        // A second tap while the row spinner is up cancels the in flight open (a slow fetch
         // has no other way out: the cover isn't presented yet).
         if previewSource.isOpening(item.id, in: store) {
             store.send(.previewDismissed)
@@ -104,8 +104,8 @@ struct BrowseContentView: View {
                 PermissionsSheet(store: permissionsStore)
             }
             .fullScreenCover(isPresented: previewPresentedBinding) {
-                // `isPresented`, not `item:`; so an in-place rename (which changes the item's
-                // id) updates the cover's content instead of dismissing and re-presenting it.
+                // `isPresented`, not `item:`; so an in place rename (which changes the item's
+                // id) updates the cover's content instead of dismissing and re presenting it.
                 if let item = store.previewItem {
                     BrowsePreviewCover(
                         store: store,

@@ -40,8 +40,8 @@ struct BrowsePasteMenu: View {
     }
 }
 
-/// Invisible long-press target filling the space past the last row: a plain `.contextMenu` on
-/// the whole list or scroll container lifts a snapshot of the entire list on long-press, which
+/// Invisible long press target filling the space past the last row: a plain `.contextMenu` on
+/// the whole list or scroll container lifts a snapshot of the entire list on long press, which
 /// reads as the list jumping. Scoping it to this transparent trailing area keeps the list still.
 struct BrowsePasteTarget: View {
     let store: StoreOf<BrowseFeature>

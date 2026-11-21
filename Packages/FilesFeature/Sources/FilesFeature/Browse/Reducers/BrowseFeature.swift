@@ -132,8 +132,8 @@ public struct BrowseFeature {
         public var searchShortfall: SearchShortfall?
         public var sortOption: SortOption = .name
         public var sortDirection: SortDirection = .ascending
-        /// Read live from the same in-memory key `SettingsFeature` writes, so toggling
-        /// "Show Hidden Files" is reflected here immediately, even in an already-open folder,
+        /// Read live from the same in memory key `SettingsFeature` writes, so toggling
+        /// "Show Hidden Files" is reflected here immediately, even in an already open folder,
         /// with no manual refresh needed.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
         /// App wide "Copy" staging, shared under `FileClipboard.sharedKey` so the Paste
@@ -160,7 +160,7 @@ public struct BrowseFeature {
         /// Set on a failed transfer alongside `pendingTransferRetry`; `BrowseContentView`
         /// turns this into a failure toast with a "Retry" action.
         public var transferErrorMessage: String?
-        /// The params to re-run when the user taps "Retry" on a failed transfer's toast. The
+        /// The params to rerun when the user taps "Retry" on a failed transfer's toast. The
         /// staged clipboard is never emptied while this is non nil, so a retry always has
         /// something to act on.
         public var pendingTransferRetry: TransferRetry?
@@ -168,12 +168,12 @@ public struct BrowseFeature {
         /// and how many more refetches may wait for them (`Constants.arrivalRechecks`).
         public var awaitedArrivalIDs: Set<FileItem.ID> = []
         public var arrivalChecksLeft = 0
-        /// Non nil while a transfer is waiting on the user's answer to a name-collision prompt.
+        /// Non nil while a transfer is waiting on the user's answer to a name collision prompt.
         public var transferConflict: TransferConflict?
         /// Set when an item is staged with "Copy"; `BrowseContentView` turns it into a brief
         /// "<name> copied" toast.
         public var clipboardStagedMessage: String?
-        /// Item currently being renamed via the native rename alert. The in-progress text
+        /// Item currently being renamed via the native rename alert. The in progress text
         /// itself lives in `BrowseContentView`'s own `@State`, not here: a `.alert`'s
         /// `TextField` bound through a TCA `.sending` binding didn't reliably propagate
         /// keystrokes back out, so `renameConfirmed` is sent the final text directly instead.
@@ -190,13 +190,13 @@ public struct BrowseFeature {
         public var newlyCreatedFileID: FileItem.ID?
         /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
         public var deleteConfirmationItem: FileItem?
-        /// Share-link fallout of the pending delete, single or bulk: only one confirmation is
+        /// Share link fallout of the pending delete, single or bulk: only one confirmation is
         /// ever on screen at once, so one field covers both. Filled in by `delete-impact` while
         /// the alert is up; reset to `.idle` when the alert is dismissed.
         public var deleteImpactCheck: DeleteImpactCheck = .idle
         public var isPerformingFileAction = false
         public var fileActionErrorMessage: String?
-        /// Whether the list/grid is in multi-select mode: toggled from the toolbar, not tied
+        /// Whether the list/grid is in multiselect mode: toggled from the toolbar, not tied
         /// to any particular item. `selectedItemIDs` is always cleared when this flips off.
         public var isSelecting = false
         public var selectedItemIDs: Set<FileItem.ID> = []
@@ -213,14 +213,14 @@ public struct BrowseFeature {
         public var trashNotice: MovedToTrashNotice?
         /// Drives a persistent progress toast: `nil` when no extract/compress/download is
         /// running. Rename/delete don't set this: they're fast enough, and already have their
-        /// own alert-driven confirm flow, that a progress indicator would just flicker.
+        /// own alert driven confirm flow, that a progress indicator would just flicker.
         public var fileActionProgressMessage: String?
         /// Set when a download is queued from a preview cover, which hides the app level progress
         /// bar; `BrowseContentView` turns it into a toast with an Open action. Never cleared by the
         /// reducer, only overwritten by the next one.
         public var downloadSuccessMessage: String?
         /// Item the "Get Info" sheet is showing, alongside its fetched metadata (or the
-        /// still-loading/error state while `GET /api/metadata/*` is in flight).
+        /// still loading/error state while `GET /api/metadata/*` is in flight).
         public var infoItem: FileItem?
         public var infoMetadata: FileMetadata?
         /// Server disk usage for `infoItem` when it's a directory and the endpoint returned
@@ -239,7 +239,7 @@ public struct BrowseFeature {
 
         /// Item being downloaded for the QuickLook viewer (tapping a file), alongside the
         /// local temp file `previewFile` produces once `GET /api/preview` finishes. Only
-        /// used for PDFs: images/RAW load themselves per-page in the gallery view, and
+        /// used for PDFs: images/RAW load themselves per page in the gallery view, and
         /// video/audio stream directly, neither going through this at all.
         public var previewItem: FileItem?
         /// The open file came from a search hit, not this folder's listing: it can live in another
@@ -266,7 +266,7 @@ public struct BrowseFeature {
             previewPhase.errorMessage
         }
 
-        /// Text content for `previewItem` when it's neither previewable-via-download nor
+        /// Text content for `previewItem` when it's neither previewable via download nor
         /// streamable (anything `GET /api/preview` 415s on): fetched/saved via the real
         /// `/api/editor` endpoint, the server's actual text view+edit path.
         public var textContent: String?
@@ -521,7 +521,7 @@ public struct BrowseFeature {
         /// "Open" tapped on the download toast while a preview cover is up: dismiss the cover,
         /// then jump to the Downloads tab once it's gone.
         case openDownloadsFromPreview
-        /// "View in Shared" tapped on the created-share-link sheet while a preview cover is up.
+        /// "View in Shared" tapped on the created share link sheet while a preview cover is up.
         case goToSharedTabFromPreview
         case renameResponse(Result<RenameResult, FilesClientError>)
         case newFolderTapped
@@ -535,7 +535,7 @@ public struct BrowseFeature {
         case newFileResponse(Result<FileItem, FilesClientError>)
         case deleteCancelled
         case deleteConfirmed
-        /// Confirm came from a full-screen preview: dismiss the cover, then delete after a
+        /// Confirm came from a full screen preview: dismiss the cover, then delete after a
         /// short settle so the list row animates out where the user can see it.
         case deleteConfirmedFromPreview
         /// Delete Permanently on a confirmation that would otherwise move the item to the trash.
@@ -650,7 +650,7 @@ public struct BrowseFeature {
             case openPath(path: String, title: String)
             case favoritesChanged
             /// Files the user picked from the `+` menu, each already carrying its destination
-            /// folder: bubbled up to `MainTabFeature`'s app-wide upload queue.
+            /// folder: bubbled up to `MainTabFeature`'s app wide upload queue.
             case uploadRequested([PendingUpload])
             /// Items handed to `MainTabFeature`'s app wide download queue.
             case downloadRequested([FileItem])
@@ -659,16 +659,16 @@ public struct BrowseFeature {
             case offlineUnpinRequested(path: String)
             /// Mac: items placed in Finder through the save panel, for the same queue.
             case saveRequested([DownloadSaveRequest])
-            /// A copy/move just changed what's on the server. `BrowseTabFeature` re-fetches
+            /// A copy/move just changed what's on the server. `BrowseTabFeature` refetches
             /// the whole live navigation stack so both the source and destination listings
             /// reflect the new state.
             case directoryContentsChanged
-            /// The "Open" button on the download-success toast: switches to the Downloads
+            /// The "Open" button on the download success toast: switches to the Downloads
             /// tab so the user can see where the file landed.
             case openDownloadsTapped
             /// "Open Trash" on the toast after a delete moved items to the trash.
             case openTrashTapped
-            /// "View in Shared" on the created-share-link sheet: switches to the Shared tab.
+            /// "View in Shared" on the created share link sheet: switches to the Shared tab.
             case goToSharedTab
             /// An Offline tab screen took its own folder off the device with its last items: the
             /// parent closes it and drops `removedPaths` from the screens below.
@@ -802,7 +802,7 @@ public struct BrowseFeature {
 
     /// Folders before files always; `option`/`direction` only decide order within each of
     /// those groups. Equal elements return `false` regardless of direction: negating a `<`
-    /// comparator to get `>` breaks `sorted`'s strict-weak-ordering requirement exactly when
+    /// comparator to get `>` breaks `sorted`'s strict weak ordering requirement exactly when
     /// two elements compare equal, since both `(a, b)` and `(b, a)` would otherwise flip true.
     static func sorted(
         _ items: some Collection<FileItem>,

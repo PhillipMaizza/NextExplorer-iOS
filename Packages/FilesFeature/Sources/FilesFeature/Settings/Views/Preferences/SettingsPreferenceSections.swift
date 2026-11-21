@@ -11,8 +11,8 @@ private enum Constants {
     static let disabledOpacity: Double = 0.5
 }
 
-/// View-local settings search: hides individual preference rows, and whole sections once none
-/// of their rows match. Empty query shows everything and re-reveals the contextual sections.
+/// View local settings search: hides individual preference rows, and whole sections once none
+/// of their rows match. Empty query shows everything and rereveals the contextual sections.
 struct SettingsSearchFilter {
     let query: String
 

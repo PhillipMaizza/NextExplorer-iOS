@@ -1,6 +1,6 @@
 import CoreGraphics
 
-/// Corner-radius tokens.
+/// Corner radius tokens.
 public extension CGFloat {
     /// 0pt: no rounding.
     static let radiusNone: CGFloat = 0

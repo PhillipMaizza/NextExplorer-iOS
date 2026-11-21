@@ -21,8 +21,8 @@ extension FilesService {
         try Self.validate(response)
     }
 
-    /// `GET /api/settings`: extracts the admin-only `thumbnails` + `access.rules`. A
-    /// non-admin session just gets no such keys, decoded as nil / empty.
+    /// `GET /api/settings`: extracts the admin only `thumbnails` + `access.rules`. A
+    /// non admin session just gets no such keys, decoded as nil / empty.
     func fetchSystemSettings(serverURL: URL) async throws -> SystemSettings {
         let url = serverURL.appendingPathComponent(APIPath.settings)
         let request = Self.makeRequest(url: url, method: .get)
@@ -67,7 +67,7 @@ extension FilesService {
     }
 
     /// `PATCH /api/settings` with `{ access: { rules: [...] } }`; the whole array replaces the
-    /// stored rules. The echo's `access.rules` is the server-normalised result.
+    /// stored rules. The echo's `access.rules` is the server normalised result.
     func updateAccessRules(serverURL: URL, rules: [AccessRule]) async throws -> [AccessRule] {
         let url = serverURL.appendingPathComponent(APIPath.settings)
         var request = Self.makeRequest(url: url, method: .patch)

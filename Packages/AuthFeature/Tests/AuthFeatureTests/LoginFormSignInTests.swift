@@ -243,7 +243,7 @@ struct LoginFormSignInTests {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorIncomplete
         }
-        // The button still re-expands so the user can retry: only the message is sticky.
+        // The button still reexpands so the user can retry: only the message is sticky.
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertSubmitToIdle) { $0.submitPhase = .idle }
 

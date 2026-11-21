@@ -1,7 +1,7 @@
 import Foundation
 
 /// Local copy of `NetworkClientTests`' stub: test targets can't import another target's
-/// test-only sources, so this intentionally mirrors `NetworkClient/Tests/.../StubURLProtocol.swift`.
+/// test only sources, so this intentionally mirrors `NetworkClient/Tests/.../StubURLProtocol.swift`.
 ///
 /// Safe only because `FilesClientLiveTests` (the only suite that touches these statics) is
 /// declared `@Suite(.serialized)`: tests never run concurrently against this shared state.

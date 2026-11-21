@@ -39,7 +39,7 @@ public struct Branding: Codable, Equatable, Sendable {
     }
 
     /// The logo as an absolute URL. `appLogoUrl` is usually server relative
-    /// (`/static/logos/custom-logo.png`); an already-absolute value is returned as is.
+    /// (a file under `/static/logos/`); an already absolute value is returned as is.
     public func resolvedLogoURL(serverURL: URL) -> URL? {
         guard hasCustomLogo else { return nil }
         if let absolute = URL(string: appLogoUrl), absolute.scheme != nil {

@@ -2,7 +2,7 @@ import DesignSystem
 import SwiftUI
 
 /// List vs grid layout for a file listing tab, persisted per tab via `@AppStorage`. Shared so
-/// Favorites, Downloads (and any future listing tab) don't each re-declare the same two cases.
+/// Favorites, Downloads (and any future listing tab) don't each redeclare the same two cases.
 enum FileListViewMode: String {
     case list, grid
 }
@@ -37,11 +37,11 @@ enum FileGridMetrics {
     }
 }
 
-/// The shared shell for one row in a multi-select file listing (Favorites, Downloads): the
+/// The shared shell for one row in a multiselect file listing (Favorites, Downloads): the
 /// leading selection glyph while selecting, the pressable button, the grouped card background, the
 /// `.isSelected` trait, and the first/last separator suppression that makes the group read as one
-/// card. Callers supply the row content plus the feature-specific swipes and context menu; the
-/// shell owns nothing feature-specific, so both tabs' rows collapse to one implementation.
+/// card. Callers supply the row content plus the feature specific swipes and context menu; the
+/// shell owns nothing feature specific, so both tabs' rows collapse to one implementation.
 struct SelectableListRow<Content: View, LeadingSwipe: View, TrailingSwipe: View, Menu: View>: View {
     /// What a finger slide in select mode knows this row by (see `dragToSelect`).
     private let selectionID: String

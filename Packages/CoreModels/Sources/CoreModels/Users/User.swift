@@ -134,7 +134,7 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         return withFraction.date(from: raw) ?? plain.date(from: raw)
     }
 
-    /// The server's `id` type isn't confirmed (DB auto-increment integer vs. string):
+    /// The server's `id` type isn't confirmed (DB auto increment integer vs. string):
     /// accept either rather than fail decoding over it.
     private static func decodeIDAsString(
         _ container: KeyedDecodingContainer<CodingKeys>,

@@ -7,7 +7,7 @@ import SwiftUI
 
 private typealias Metrics = UserDetailMetrics
 
-/// Assign or edit a user volume: label, access mode, and (for a new volume) a drill-down
+/// Assign or edit a user volume: label, access mode, and (for a new volume) a drill down
 /// admin directory picker. Presented from `UserDetailView`'s Volumes tab.
 struct VolumeAssignSheet: View {
     @Bindable var store: StoreOf<UserManagementFeature>

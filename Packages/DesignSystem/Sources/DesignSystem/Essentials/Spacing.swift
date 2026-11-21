@@ -1,6 +1,6 @@
 import CoreGraphics
 
-/// 4pt-grid spacing scale.
+/// 4pt grid spacing scale.
 public extension CGFloat {
     /// 2pt
     static let space2: CGFloat = 2

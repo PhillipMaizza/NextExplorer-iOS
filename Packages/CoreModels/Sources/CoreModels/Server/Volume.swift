@@ -1,5 +1,5 @@
 /// Mirrors an entry from `GET /api/volumes` (`backend/src/routes/volumes.js`), the
-/// top-level roots a user can browse into. `actualPath` only appears for per-user
+/// top level roots a user can browse into. `actualPath` only appears for per user
 /// volume assignments and isn't meaningful to the client.
 public struct Volume: Codable, Equatable, Identifiable, Sendable {
     public let name: String

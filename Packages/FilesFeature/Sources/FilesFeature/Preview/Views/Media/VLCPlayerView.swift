@@ -10,12 +10,12 @@ import VLCKitSPM
     import AppKit
 #endif
 
-/// Full-screen player for the video/audio containers and codecs AVFoundation can't decode
+/// Full screen player for the video/audio containers and codecs AVFoundation can't decode
 /// (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma), backed by libvlc via VLCKit: parity
 /// with the web client's player. `StreamingPreviewView` (AVPlayer) still handles the natively
 /// decodable formats.
 ///
-/// Streams from `GET /api/preview` (Range-seekable) so large videos play without a full download.
+/// Streams from `GET /api/preview` (Range seekable) so large videos play without a full download.
 /// libvlc uses its own HTTP stack, not `URLSession`'s shared cookie storage, so the session cookie
 /// is passed explicitly as an `:http-cookie` option or the stream 401s. Archive entries pass a
 /// local file URL, which needs no cookie.

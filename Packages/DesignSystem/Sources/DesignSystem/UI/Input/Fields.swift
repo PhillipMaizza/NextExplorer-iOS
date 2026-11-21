@@ -4,10 +4,10 @@ private enum FieldConstants {
     static let invalidBorderWidth: CGFloat = 2
 }
 
-/// Chrome shared by every labeled input field in the app: a label above a leading-icon,
-/// `.radiusControl`-bordered box, with an optional shake-on-error and a red border while
+/// Chrome shared by every labeled input field in the app: a label above a leading icon,
+/// box bordered at `.radiusControl`, with an optional shake on error and a red border while
 /// `isInvalid` is set. The actual `TextField`/`SecureField` (focus, content type,
-/// autocorrection, etc. all stay call-site concerns) is supplied via `content`.
+/// autocorrection, etc. all stay call site concerns) is supplied via `content`.
 public struct DSFieldContainer<Content: View>: View {
     private let label: String
     private let icon: Image
@@ -184,7 +184,7 @@ public struct DSSecureField: View {
 
 /// A placeholder `Text` that's guaranteed to render in `Color.secondaryDS` regardless of its
 /// content: `Text("literal")` resolves to the `LocalizedStringKey` initializer, which
-/// auto-detects and linkifies email/URL-shaped literals (blue, underlined) no matter what
+/// auto detects and linkifies email/URL shaped literals (blue, underlined) no matter what
 /// `.foregroundStyle` says. `Text(verbatim:)` skips that parsing entirely.
 public struct DSPlaceholderText: View {
     private let text: String

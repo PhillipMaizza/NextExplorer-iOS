@@ -5,7 +5,7 @@ private enum Constants {
     static let titleSpacing: CGFloat = .space2
 }
 
-/// A labeled `Toggle` with a leading icon, the shape every settings-style switch row in
+/// A labeled `Toggle` with a leading icon, the shape every settings style switch row in
 /// the app shares (dark mode, show hidden files, show thumbnails, ...). `subtitle` adds a
 /// secondary explanatory line under the title, for options whose effect isn't obvious from
 /// the title alone.

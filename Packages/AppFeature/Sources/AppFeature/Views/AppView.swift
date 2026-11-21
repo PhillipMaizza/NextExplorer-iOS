@@ -33,15 +33,15 @@ public struct AppView: View {
     /// splash just holds the frame until then.
     @State private var isSplashPresented = true
     /// Flipped the moment the splash commits to its exit, while it still covers the screen:
-    /// the authenticated tree mounts then (not after the splash is gone) so its wing-opening
+    /// the authenticated tree mounts then (not after the splash is gone) so its wing opening
     /// reveal uncovers the real Browse screen with its skeleton, not a blank frame.
     @State private var splashIsExiting = false
-    /// Opacity of the full-screen accent layer that takes over from `LoginFormView`'s
+    /// Opacity of the full screen accent layer that takes over from `LoginFormView`'s
     /// expanding button circle, then fades to reveal the authenticated app.
     @State private var authFillOpacity: Double = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// Chosen UI language ("" = follow system). Drives `LocalizationOverride`, the SwiftUI locale,
-    /// and a full rebuild of the content on change so every `L10n` string re-resolves live.
+    /// and a full rebuild of the content on change so every `L10n` string reresolves live.
     @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
     public init(store: StoreOf<AppFeature>) {
@@ -60,9 +60,9 @@ public struct AppView: View {
         LocalizationOverride.usesRightToLeftLayout(selectedLanguage: selectedLanguage) ? .rightToLeft : .leftToRight
     }
 
-    /// A gentle zoom-and-fade used when the whole content is swapped out from under the user: an
+    /// A gentle zoom and fade used when the whole content is swapped out from under the user: an
     /// account switch (the authenticated tree remounts for the new account) and a language change
-    /// (the tree remounts so every string re-resolves). New content scales up as the old fades,
+    /// (the tree remounts so every string reresolves). New content scales up as the old fades,
     /// so the change reads as a deliberate reveal rather than a hard cut. Flattened to a plain
     /// fade under Reduce Motion.
     private var contentSwapTransition: AnyTransition {
@@ -172,10 +172,10 @@ public struct AppView: View {
 
             case .authenticated:
                 // Mount as the splash starts to leave (still covering the screen) so the
-                // wing-opening reveal uncovers the real Browse skeleton, not a blank frame.
+                // wing opening reveal uncovers the real Browse skeleton, not a blank frame.
                 // But a `NavigationStack` that does its first layout under the splash has its
                 // large titles sized collapsed by UIKit and never revisited (every tab stuck
-                // inline until a manual tab switch). `.id(isSplashPresented)` re-establishes
+                // inline until a manual tab switch). `.id(isSplashPresented)` reestablishes
                 // each nav bar's layout on screen the moment the splash is gone; the TCA store
                 // state survives the identity change, so the content stays put and only the
                 // nav bars relayout, no reload flash.
@@ -187,7 +187,7 @@ public struct AppView: View {
                 {
                     AuthenticatedView(store: scopedStore)
                         // Keying on the active account too means switching accounts remounts the
-                        // authenticated tree, so the swap cross-fades instead of updating in place.
+                        // authenticated tree, so the swap cross fades instead of updating in place.
                         // A plain quick fade (not the zoom reveal): the switch should feel light.
                         // The TCA store state survives the identity change.
                         .id(AuthenticatedIdentity(
@@ -206,8 +206,8 @@ public struct AppView: View {
             }
         }
         .animation(DSMotion.contentReveal, value: store.destination)
-        // Remount when the language changes so every cached string and UIKit-backed title
-        // (nav bars, tab bar) re-resolves through the new `LocalizationOverride` bundle. The TCA
+        // Remount when the language changes so every cached string and UIKit backed title
+        // (nav bars, tab bar) reresolves through the new `LocalizationOverride` bundle. The TCA
         // store state lives outside the view tree, so navigation and data survive the swap.
         .id(appLanguage)
         .transition(contentSwapTransition)

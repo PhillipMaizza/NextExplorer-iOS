@@ -1,8 +1,8 @@
 import Foundation
 
-/// The Keychain-persisted set of every signed-in account plus which one is active, so the app
-/// can keep multiple servers logged in at once and switch between them without re-authenticating.
-/// Replaces the single-session blob; a legacy single `SessionCredentials` is migrated into this
+/// The Keychain persisted set of every signed in account plus which one is active, so the app
+/// can keep multiple servers logged in at once and switch between them without reauthenticating.
+/// Replaces the single session blob; a legacy single `SessionCredentials` is migrated into this
 /// on first read (see `SessionCookieStore`).
 public struct StoredSessions: Codable, Equatable, Sendable {
     public var sessions: [SessionCredentials]

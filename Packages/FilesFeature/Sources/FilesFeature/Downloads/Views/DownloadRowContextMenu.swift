@@ -4,7 +4,7 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// The `…` / long-press action menu for one local download, shared by the Downloads list rows
+/// The `…` / long press action menu for one local download, shared by the Downloads list rows
 /// and grid cells: system share, rename, delete.
 struct DownloadRowContextMenu: View {
     let store: StoreOf<OfflineTabFeature>

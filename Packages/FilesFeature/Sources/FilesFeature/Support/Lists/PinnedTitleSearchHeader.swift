@@ -9,9 +9,9 @@ private enum Constants {
     static let fadeHeight: CGFloat = .space8
 }
 
-/// A large title and an always-visible search field pinned ABOVE the scrolling list, instead of
+/// A large title and an always visible search field pinned ABOVE the scrolling list, instead of
 /// in the navigation bar. A system large title only stays large while the scroll offset is 0 and
-/// collapses to inline the instant the content settles below an always-on `.searchable` drawer
+/// collapses to inline the instant the content settles below an always on `.searchable` drawer
 /// (or a fresh scroll container lands its offset there on load). Rendering the title and search
 /// as ordinary pinned content sidesteps that entirely: the title never collapses and the search
 /// field never scrolls away.
@@ -39,7 +39,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     /// spinner (a thin bar under the header on the Mac, whose field is in the toolbar), so a list
     /// already on screen still says a newer answer is coming.
     var isSearchPending: Bool = false
-    /// Rendered below the search field, e.g. a search-scope segmented control plus type filter
+    /// Rendered below the search field, e.g. a search scope segmented control plus type filter
     /// chips while searching.
     @ViewBuilder var accessory: () -> Accessory
 

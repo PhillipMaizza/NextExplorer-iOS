@@ -1,7 +1,7 @@
 import CoreModels
 import Foundation
 
-/// Wire types for the local session-cookie auth endpoints (`/api/auth/*`).
+/// Wire types for the local session cookie auth endpoints (`/api/auth/*`).
 /// See `LocalAuthService.swift`.
 extension LocalAuthService {
     /// The server's `/api/auth/login` route takes `identifier || email || username` and matches

@@ -16,7 +16,7 @@ extension KeychainStore {
     }
 }
 
-/// Thin wrapper over `Security`'s generic-password item calls. Not a singleton: callers
+/// Thin wrapper over `Security`'s generic password item calls. Not a singleton: callers
 /// construct one with an explicit `KeychainConfiguration` and hand it to `KeychainClient`.
 struct SecurityKeychainStore: KeychainStore {
     let configuration: KeychainConfiguration

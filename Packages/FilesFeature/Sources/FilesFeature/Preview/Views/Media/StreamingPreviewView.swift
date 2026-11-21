@@ -3,8 +3,8 @@ import CoreModels
 import DesignSystem
 import SwiftUI
 
-/// Full-screen video/audio player for `FileItem.isStreamableMedia` files that AVFoundation can
-/// decode. Plays directly from a URL (`FilesClient.previewURL`, the same Range-seekable
+/// Full screen video/audio player for `FileItem.isStreamableMedia` files that AVFoundation can
+/// decode. Plays directly from a URL (`FilesClient.previewURL`, the same Range seekable
 /// `GET /api/preview` the web client scrubs, or a local file for a pinned/offline copy) rather than
 /// downloading the whole file first.
 ///
@@ -172,7 +172,7 @@ struct StreamingPreviewView: View {
     }
 
     /// Report a decode/load failure exactly once, so the host swaps to the libvlc player. Guarded so
-    /// the several failure signals (status, failed-to-end notification) don't fire it repeatedly.
+    /// the several failure signals (status, failed to end notification) don't fire it repeatedly.
     private func reportFailureOnce() {
         guard !didReportFailure, let onPlaybackFailed else { return }
         didReportFailure = true

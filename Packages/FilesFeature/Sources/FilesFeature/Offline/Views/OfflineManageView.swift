@@ -5,7 +5,7 @@ import FilesClient
 import Localization
 import SwiftUI
 
-/// The "Manage Offline Files" screen: one row per pinned root with its size and a swipe-to-remove.
+/// The "Manage Offline Files" screen: one row per pinned root with its size and a swipe to remove.
 struct OfflineManageView: View {
     @Bindable var store: StoreOf<OfflineManageFeature>
 

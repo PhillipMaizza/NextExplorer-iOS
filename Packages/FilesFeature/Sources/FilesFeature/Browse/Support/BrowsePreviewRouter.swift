@@ -9,7 +9,7 @@ import SwiftUI
 /// gallery, which pages through every file in the folder, or the text editor while editing. A Mac
 /// shows one file at a time by its `PreviewKind` (unsupported screen, player, archive browser, image
 /// gallery, document, editor) and steps through the folder with the arrow keys. The share sheet
-/// target is view-local to `BrowseContentView`, so it's handed back through `onShareTarget`.
+/// target is view local to `BrowseContentView`, so it's handed back through `onShareTarget`.
 struct BrowsePreviewRouter: View {
     let store: StoreOf<BrowseFeature>
     let item: FileItem

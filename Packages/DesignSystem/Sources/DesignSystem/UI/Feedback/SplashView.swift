@@ -23,7 +23,7 @@ private enum Constants {
 /// `isReady`) gives it two quick butterfly flaps and opens the wings apart, sliding them off
 /// while the gradient fades to reveal whatever is behind. `onFinished` fires when it clears.
 ///
-/// Minimum on-screen time is the flourish length (~2s) even when `isReady` is already true;
+/// Minimum on screen time is the flourish length (~2s) even when `isReady` is already true;
 /// maximum is `Constants.maxOnScreen`, after which it clears regardless.
 public struct SplashView: View {
     private let isReady: Bool
@@ -33,7 +33,7 @@ public struct SplashView: View {
 
     /// `onExitStarted` fires the instant the splash commits to leaving, while it still fully
     /// covers the screen: the moment for the caller to mount whatever is behind it, so the
-    /// wing-opening reveal uncovers real content rather than a blank frame. `onFinished`
+    /// wing opening reveal uncovers real content rather than a blank frame. `onFinished`
     /// fires once it has cleared. `timeScale` scales the flourish and the exit (0 runs them
     /// instantly, for UI tests); the safety net keeps real time.
     public init(

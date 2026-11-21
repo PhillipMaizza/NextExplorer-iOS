@@ -125,7 +125,7 @@ struct ProfileTabView: View {
 
 // MARK: Security tab
 
-/// Local password state (set/reset) and the linked SSO providers, both read-only summaries
+/// Local password state (set/reset) and the linked SSO providers, both read only summaries
 /// with a single action.
 struct SecurityTabView: View {
     let store: StoreOf<UserManagementFeature>

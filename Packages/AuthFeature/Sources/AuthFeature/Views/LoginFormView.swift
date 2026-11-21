@@ -39,7 +39,7 @@ enum LoginCoordinateSpace {
 
 public struct LoginFormView: View {
     @Bindable var store: StoreOf<LoginFormFeature>
-    /// `false` while the launch splash still covers the screen: auto-focusing the host field
+    /// `false` while the launch splash still covers the screen: auto focusing the host field
     /// then would slide the keyboard up over the splash.
     private let autoFocus: Bool
     /// Whether a successful sign in floods the screen with accent into the app. Off where the
@@ -50,12 +50,12 @@ public struct LoginFormView: View {
     @State private var submitButtonRect: CGRect = .zero
     /// Scale of that flooding circle: 1 == exactly the collapsed button, grows to cover.
     @State private var submitFloodScale: CGFloat = 1
-    /// SSO button's rect + its own flood circle scale, so an SSO sign-in floods from the SSO
+    /// SSO button's rect + its own flood circle scale, so an SSO sign in floods from the SSO
     /// button the same way a password one floods from the submit button.
     @State private var ssoButtonRect: CGRect = .zero
     @State private var ssoFloodScale: CGFloat = 1
-    /// When Reduce Motion is on, the full-screen accent flood (a large scaling animation) is
-    /// suppressed; `AppView` already hands sign-in an instant, motion-free reveal instead.
+    /// When Reduce Motion is on, the full screen accent flood (a large scaling animation) is
+    /// suppressed; `AppView` already hands sign in an instant, motion free reveal instead.
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// Regular width gets the centered login card; compact (iPhone, iPad narrow multitasking)
     /// stays full bleed. Gated on size class, never device idiom, so Split View / Slide Over
@@ -66,7 +66,7 @@ public struct LoginFormView: View {
     @State private var passwordShakeTrigger: CGFloat = 0
     /// Mirrors `store.errorMessage`, delayed on the way in and immediate on the way out.
     @State private var displayedErrorMessage: String?
-    /// Red-borders the email/password fields for a couple seconds after a login failure; which
+    /// Red borders the email/password fields for a couple seconds after a login failure; which
     /// field(s) light up follows `store.invalidFieldsScope`.
     @State private var isIdentifierFieldInvalid = false
     @State private var isPasswordFieldInvalid = false
@@ -90,7 +90,7 @@ public struct LoginFormView: View {
                     .frame(width: submitButtonRect.height, height: submitButtonRect.height)
                     .scaleEffect(submitFloodScale, anchor: .center)
                     // No `.ignoresSafeArea()`: `submitButtonRect` is measured in this view's
-                    // safe-area-inset `loginRoot` space, so `.position` must resolve in that
+                    // safe area inset `loginRoot` space, so `.position` must resolve in that
                     // same space. Adding `.ignoresSafeArea()` here shifted the circle up by
                     // the top inset, so the flood started above the button. `.scaleEffect`
                     // alone blows it well past every screen edge.
@@ -193,9 +193,9 @@ public struct LoginFormView: View {
     @ViewBuilder
     private var cardWrappedPages: some View {
         if horizontalSizeClass == .regular {
-            // Wrap the floating card in a keyboard-aware ScrollView: with the fields inside the
+            // Wrap the floating card in a keyboard aware ScrollView: with the fields inside the
             // page's own scroll view, SwiftUI's keyboard avoidance only shifts that inner scroll,
-            // so a fixed-height centered card keeps its lower half (the field + button) behind the
+            // so a fixed height centered card keeps its lower half (the field + button) behind the
             // keyboard in iPad landscape. This outer scroll can lift the whole card instead;
             // `containerRelativeFrame` keeps it centered when there's room to spare.
             ScrollView {

@@ -50,7 +50,7 @@ public struct QAHarness: View {
             ])
         }
 
-        // Pre-seed the Browse root loaded so the hero shot has a rich tree with no skeleton flash.
+        // Preseed the Browse root loaded so the hero shot has a rich tree with no skeleton flash.
         state.browse.root.phase = .loaded
         state.browse.root.access = FileAccess(
             canRead: true,

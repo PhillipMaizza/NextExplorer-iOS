@@ -19,7 +19,7 @@ private enum Metrics {
     static let codeColumns = 2
 }
 
-/// Turn two-factor authentication on or off for the signed in account, mirroring the web
+/// Turn two factor authentication on or off for the signed in account, mirroring the web
 /// client's two factor settings.
 struct TwoFactorView: View {
     @Bindable var store: StoreOf<TwoFactorFeature>

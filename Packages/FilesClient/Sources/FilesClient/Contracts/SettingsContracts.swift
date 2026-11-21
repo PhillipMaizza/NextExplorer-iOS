@@ -4,7 +4,7 @@ import Foundation
 /// Wire types for the Settings/branding endpoints. See `FilesService+Settings.swift`.
 extension FilesService {
     /// `GET /api/settings` / the `PATCH` echo. Only `user` and `branding` are decoded;
-    /// the admin-only `thumbnails`/`access` objects aren't modeled by this envelope.
+    /// the admin only `thumbnails`/`access` objects aren't modeled by this envelope.
     struct SettingsEnvelope: Decodable {
         let user: UserPreferences?
         let branding: Branding?

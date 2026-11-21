@@ -2,7 +2,7 @@
     import Localization
     import XCTest
 
-    /// Turning two-factor authentication on and off from Settings, against the mocked files client
+    /// Turning two factor authentication on and off from Settings, against the mocked files client
     /// that keeps the account's second factor in memory and accepts `Fixture.validCode` and
     /// `Fixture.accountPassword`.
     final class TwoFactorUITests: UITestCase {

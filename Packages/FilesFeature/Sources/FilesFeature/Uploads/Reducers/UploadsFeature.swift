@@ -5,7 +5,7 @@ import FolderPickerFeature
 import Foundation
 import Localization
 
-/// The app-wide upload queue. Owned by `MainTabFeature` so its state and effects outlive any
+/// The app wide upload queue. Owned by `MainTabFeature` so its state and effects outlive any
 /// folder screen or tab switch. Files upload one at a time (sequential, matching
 /// `BrowseFeature.startBulkDownload`); each job targets the folder it was started from. When
 /// the queue drains, the parent is told which folders changed so it can refetch just those.

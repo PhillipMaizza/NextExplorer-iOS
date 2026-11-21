@@ -34,7 +34,7 @@ struct SharedSegmentList: View {
     }
 
     /// The card skeleton until this segment has been fetched once, then error / empty /
-    /// no-results / list.
+    /// no results / list.
     private var listPhase: ListPhase {
         .derive(
             hasError: errorMessage != nil,

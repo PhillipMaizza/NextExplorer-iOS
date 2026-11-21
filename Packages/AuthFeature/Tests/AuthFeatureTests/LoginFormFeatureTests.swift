@@ -102,7 +102,7 @@ struct LoginFormFeatureTests {
             for scheme in [LoginFormFeature.URLScheme.https, .http] {
                 // The only hard requirement: this must not trap on any input.
                 guard let url = LoginFormFeature.normalizedURL(scheme: scheme, host: junk) else { continue }
-                // Anything that survives is a clean authority-only URL.
+                // Anything that survives is a clean authority only URL.
                 #expect(url.scheme == scheme.rawValue)
                 #expect(!(url.host ?? "").isEmpty, "host missing for \(junk.debugDescription)")
                 #expect(url.path.isEmpty, "path leaked for \(junk.debugDescription): \(url.path)")

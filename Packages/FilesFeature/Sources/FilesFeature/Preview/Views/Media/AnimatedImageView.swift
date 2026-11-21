@@ -10,7 +10,7 @@ private enum Constants {
     /// source frames are sampled evenly and each kept frame's delay is scaled up to preserve
     /// the overall loop duration.
     static let maxFrameCount = 300
-    /// Per-frame ceiling before the decoded-bytes budget tightens it further.
+    /// Per frame ceiling before the decoded bytes budget tightens it further.
     static let maxFramePixelDimension: CGFloat = 1024
     /// Ceiling on the total decoded bitmap held for playback (~4 bytes/px). A backstop against
     /// a huge or deliberately crafted "GIF": a real animated GIF is far under this. Frames
@@ -29,7 +29,7 @@ enum AnimatedImageDecoder {
     }
 
     static func decode(at url: URL) -> Frames? {
-        // `CGImageSourceCreateWithURL` memory-maps the file rather than reading it all into a
+        // `CGImageSourceCreateWithURL` memory maps the file rather than reading it all into a
         // resident `Data` first.
         let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions) else { return nil }
@@ -75,7 +75,7 @@ enum AnimatedImageDecoder {
 
     /// Mirrors how browsers/Apple's own GIF decoders read frame timing: prefer the
     /// unclamped delay, fall back to the clamped one, and treat anything under ~20ms as a
-    /// (common, deliberately-abused) authoring bug rather than a real near-zero delay.
+    /// (common, deliberately abused) authoring bug rather than a real near zero delay.
     private static func frameDuration(source: CGImageSource, index: Int) -> Double {
         guard let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [CFString: Any],
               let gifProperties = properties[kCGImagePropertyGIFDictionary] as? [CFString: Any]

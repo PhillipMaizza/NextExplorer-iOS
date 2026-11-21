@@ -5,8 +5,8 @@ import Localization
 import SwiftUI
 
 /// Size subtitle for a local download. The `ByteCountFormatter` is shared across
-/// the list row and grid cell, so its holder is `@MainActor` (a bare module-level static is not
-/// concurrency-safe, rule #10 §17).
+/// the list row and grid cell, so its holder is `@MainActor` (a bare module level static is not
+/// concurrency safe, rule #10 §17).
 @MainActor
 enum DownloadFormatting {
     static func subtitle(for download: LocalDownload) -> String {
@@ -43,10 +43,10 @@ struct DownloadListRow: View {
             )
         } trailingSwipe: {
             if !store.isSelecting {
-                // No `role: .destructive`; a destructive-role swipe button makes `List`
+                // No `role: .destructive`; a destructive role swipe button makes `List`
                 // collapse the row itself the moment it's tapped, before the confirmation
                 // alert is answered. On Cancel the row is already gone, and the next data
-                // update crashes the collection view with a section-count mismatch.
+                // update crashes the collection view with a section count mismatch.
                 Button {
                     store.send(.deleteTapped(download))
                 } label: {
@@ -61,7 +61,7 @@ struct DownloadListRow: View {
                 }
                 .tint(.positive)
                 .accessibilityLabel(L10n.Browse.actionRename)
-                // The plain system share sheet: local downloads have no server-side
+                // The plain system share sheet: local downloads have no server side
                 // sharing semantics to worry about, unlike Browse's items.
                 ShareLink(item: download.url) {
                     IconKit.share

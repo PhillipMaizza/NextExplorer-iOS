@@ -21,13 +21,13 @@ extension BrowseFeature {
                     return openGoogleDocsPointer(serverURL: state.serverURL, item: item)
                 }
                 // Sets `previewItem` unconditionally so the viewer presents immediately.
-                // - Files the app has no viewer for (archives it can't browse, known
+                // • Files the app has no viewer for (archives it can't browse, known
                 //   binaries, undecodable video) get `UnsupportedFilePreviewView`: the
                 //   name/type/size + download/share actions, no fetch.
-                // - Streamable media (video/audio) plays live from `FilesClient.previewURL`.
-                // - Images/RAW load themselves per-page in the gallery view.
-                // - Browsable archives (.zip/.rar) list themselves in `ArchiveBrowserView`.
-                // Only PDFs and plain-text files need a fetch here.
+                // • Streamable media (video/audio) plays live from `FilesClient.previewURL`.
+                // • Images/RAW load themselves per page in the gallery view.
+                // • Browsable archives (.zip/.rar) list themselves in `ArchiveBrowserView`.
+                // Only PDFs and plain text files need a fetch here.
                 state.previewItem = item
                 state.isPreviewEditing = false
                 switch PreviewKind(item) {

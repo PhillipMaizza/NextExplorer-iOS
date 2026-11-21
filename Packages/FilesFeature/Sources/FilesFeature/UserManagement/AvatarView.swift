@@ -11,7 +11,7 @@ private enum Constants {
     static let textInsetFraction: CGFloat = 0.2
 }
 
-/// Circular avatar. The server has no profile-picture field today (confirmed against
+/// Circular avatar. The server has no profile picture field today (confirmed against
 /// `backend/src/services/users/utils.js`'s `toClientUser`), so `imageURL` is always nil in
 /// practice and this always falls back to initials. `imageURL` still exists so this
 /// doesn't need to change the day one ships.

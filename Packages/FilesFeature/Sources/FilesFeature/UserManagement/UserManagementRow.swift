@@ -13,7 +13,7 @@ private enum Metrics {
     static let tagBorderWidth: CGFloat = 1
 }
 
-/// One row in the admin user list: avatar, name (+ admin pill), email, and the sign-in method
+/// One row in the admin user list: avatar, name (+ admin pill), email, and the sign in method
 /// chips.
 struct UserRow: View {
     let user: User

@@ -9,7 +9,7 @@ import SwiftUI
 
 /// The "Shared" tab: a segmented view over share links the user created ("By me") and
 /// links others granted them ("With me"). Backed by `GET /api/shares` and
-/// `GET /api/shares/shared-with-me`: see [[share-link-api]]. Deleting is owner-only, so
+/// its shared with me variant. Deleting is owner only, so
 /// it's offered on a "By me" share page only.
 @Reducer
 public struct SharedFeature {
@@ -60,7 +60,7 @@ public struct SharedFeature {
         public var byMe: IdentifiedArrayOf<Share> = []
         public var withMe: IdentifiedArrayOf<Share> = []
         /// Per segment load lifecycle. Each segment loads once on first view (`.loaded`);
-        /// switching back doesn't re-hit the server unless the user pulls to refresh or the
+        /// switching back doesn't rehit the server unless the user pulls to refresh or the
         /// last attempt `.failed`.
         public var phases: [Segment: DataPhase] = [:]
         /// Per segment: `.cached` while that segment shows an offline copy, `.live` once a fetch
@@ -84,7 +84,7 @@ public struct SharedFeature {
         public var sortOption: SortOption = .dateShared
         public var sortDirection: BrowseFeature.SortDirection = .descending
         /// `userId -> display name`, resolved from `GET /api/users/shareable` so a
-        /// user-specific share can name its recipients instead of just "Specific users".
+        /// user specific share can name its recipients instead of just "Specific users".
         public var userNames: [String: String] = [:]
         /// Ticked on a timer (`expiryTick`) so a link that expires, or whose day countdown
         /// changes, while the tab is open updates on its own. Starts at `.distantPast`, so nothing
@@ -176,7 +176,7 @@ public struct SharedFeature {
         }
 
         /// Owner display name for a "With me" share: the recipient payload only carries
-        /// `ownerId`, resolved against the shareable-users list.
+        /// `ownerId`, resolved against the shareable users list.
         public func sharedByLabel(for share: Share) -> String {
             userNames[share.ownerId] ?? L10n.Shared.sharedByUnknown
         }
@@ -487,7 +487,7 @@ public struct SharedFeature {
         )
     }
 
-    /// Best-effort: recipient names are a nicety, not worth surfacing an error for.
+    /// Best effort: recipient names are a nicety, not worth surfacing an error for.
     private func loadUsers(_ state: State) -> Effect<Action> {
         let serverURL = state.serverURL
         let filesClient = filesClient

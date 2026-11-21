@@ -28,7 +28,7 @@ extension FilesService {
     /// The on disk cache slot for `item`'s downloaded preview: the directory, the file
     /// itself, and its staleness sidecar. RAW formats always come back as a JPEG stream
     /// (`rawPreviewService`) whatever the original extension, so they're stored with a
-    /// matching name or QuickLook's extension-based UTI detection tries to render JPEG bytes
+    /// matching name or QuickLook's extension based UTI detection tries to render JPEG bytes
     /// as e.g. `.nef` and fails.
     private func previewCacheSlot(
         for item: FileItem, scope: String
@@ -43,7 +43,7 @@ extension FilesService {
         )
     }
 
-    /// The already-downloaded preview file for `item`, or `nil` when it isn't cached (or the
+    /// The already downloaded preview file for `item`, or `nil` when it isn't cached (or the
     /// cache entry is stale). Pure disk check, no network.
     func cachedPreviewFileURL(item: FileItem) -> URL? {
         cachedPreviewFileURL(item: item, scope: activeScope())
@@ -66,7 +66,7 @@ extension FilesService {
 
     /// `previewFile` served over the low priority session: for opportunistic fetches (PDF
     /// first page thumbnails) that must not compete with interactive traffic. Same cache
-    /// slot, so a later tap-to-open reuses the download and a cache hit here returns with no
+    /// slot, so a later tap to open reuses the download and a cache hit here returns with no
     /// network.
     func previewFileLowPriority(serverURL: URL, item: FileItem) async throws -> URL {
         try await fetchPreviewFile(serverURL: serverURL, item: item, lowPriority: true)
@@ -108,12 +108,12 @@ extension FilesService {
 
     /// `POST /api/download`, confirmed against `backend/src/routes/files/download.js` mounted
     /// at plain `/api` (not `/api/files`) in `backend/src/routes/index.js`: easy to get wrong
-    /// by pattern-matching the file's own path (`routes/files/download.js`) instead of its
+    /// by pattern matching the file's own path (`routes/files/download.js`) instead of its
     /// actual mount point.
     /// unlike `GET /api/preview`, this isn't restricted to `PREVIEWABLE_EXTENSIONS`: a single
-    /// non-directory target streams back as the raw file (`res.download`), whatever its kind.
-    /// That's what makes client-side archive browsing (`ZIPFoundation`/`Unrar.swift`) possible
-    /// at all: the server has no listing-only endpoint, so the whole archive has to come down
+    /// non directory target streams back as the raw file (`res.download`), whatever its kind.
+    /// That's what makes client side archive browsing (`ZIPFoundation`/`Unrar.swift`) possible
+    /// at all: the server has no listing only endpoint, so the whole archive has to come down
     /// first. Reuses `previewFile`'s cache layout (same staleness key) but under its own
     /// `namespace`, so the two endpoints never share a cache slot for the same item.
     func downloadRawFile(serverURL: URL, item: FileItem, lowPriority: Bool = false) async throws -> URL {
@@ -482,8 +482,8 @@ extension FilesService {
     /// storage reads `req.body` inside `_handleFile`, so a file part that arrives first sees an
     /// empty body. The whole request is first written to a temporary multipart envelope on
     /// disk (one extra copy of the payload), then streamed from that file, so the upload never
-    /// sits in memory even for large files. Response is a one-element array of the stored file
-    /// (auto-renamed on collision).
+    /// sits in memory even for large files. Response is a one element array of the stored file
+    /// (auto renamed on collision).
     func uploadDirect(
         serverURL: URL,
         fileURL: URL,

@@ -14,11 +14,11 @@ private enum Constants {
     static let inactiveOpacity: Double = 0.35
 }
 
-// MARK: Accounts (multi-server switcher)
+// MARK: Accounts (multiserver switcher)
 
-/// The signed-in servers/accounts. The active account sits on top with a disclosure chevron;
-/// expanding it reveals self-service password change and sign out (which act on the active
-/// session). The other accounts follow, each switching on tap (no re-auth) with a trailing swipe
+/// The signed in servers/accounts. The active account sits on top with a disclosure chevron;
+/// expanding it reveals self service password change and sign out (which act on the active
+/// session). The other accounts follow, each switching on tap (no reauth) with a trailing swipe
 /// to sign it out, then a row to add another. The switch / remove / add work is owned upstream
 /// where `authClient` lives; this only renders `store.accounts` and emits intent. Hidden while
 /// searching.
@@ -152,7 +152,7 @@ struct SettingsAccountsSection: View {
     }
 
     /// Self service password change (`POST /api/auth/password`), nested under the active account.
-    /// No profile editing here: the backend has no self-service profile endpoint, so an admin
+    /// No profile editing here: the backend has no self service profile endpoint, so an admin
     /// changes that from User Management instead.
     private var changePasswordRow: some View {
         DSNavigationRow(
@@ -229,7 +229,7 @@ extension SettingsFeature.State {
 
 /// The bound server, in its own section below the accounts (no header). The host is shown on the
 /// account row, so it isn't repeated here. Admins tap through to `ServerDetailsView` to edit
-/// branding; everyone else gets the same row read-only. Hidden while searching.
+/// branding; everyone else gets the same row read only. Hidden while searching.
 struct SettingsProfileSection: View {
     let store: StoreOf<SettingsFeature>
 
@@ -251,7 +251,7 @@ struct SettingsProfileSection: View {
 
 // MARK: Server admin
 
-/// Admin-only server config that isn't per-user: thumbnail generation and folder access
+/// Admin only server config that isn't per user: thumbnail generation and folder access
 /// rules, each a pushed detail screen. Mirrors the web client's admin settings pages.
 struct SettingsServerAdminSection: View {
     @Bindable var store: StoreOf<SettingsFeature>
@@ -302,7 +302,7 @@ struct SettingsServerAdminSection: View {
 
 // MARK: Server storage
 
-/// One disk-usage bar per volume: iOS's take on the web client's volume list. Only
+/// One disk usage bar per volume: iOS's take on the web client's volume list. Only
 /// present when the server reports `volumeUsage.enabled` and has returned volumes.
 struct SettingsServerStorageSection: View {
     let store: StoreOf<SettingsFeature>

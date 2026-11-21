@@ -49,7 +49,7 @@ struct BrowseToastEvents: ViewModifier {
         content
             // `fileActionErrorMessage` (rename/delete/extract/compress failures) was set on
             // `State` but never actually read by any view: silently swallowed. Mirrored into
-            // the same toast the unsupported-file-type warning uses.
+            // the same toast the unsupported file type warning uses.
             .onChange(of: store.fileActionErrorMessage) { _, newValue in
                 guard let newValue else { return }
                 toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)

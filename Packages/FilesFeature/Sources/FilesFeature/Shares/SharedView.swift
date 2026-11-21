@@ -9,7 +9,7 @@ private enum Constants {
     static let segmentedControlHorizontalPadding: CGFloat = .space16
     static let segmentedControlTopPadding: CGFloat = .space8
     static let segmentedControlBottomPadding: CGFloat = .space12
-    /// How often the view re-checks whether an open link has crossed its expiry.
+    /// How often the view rechecks whether an open link has crossed its expiry.
     static let expiryCheckInterval: TimeInterval = 30
 }
 
@@ -79,7 +79,7 @@ struct SharedView: View {
             }
             .backgroundGradient()
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`), which also keeps
-            // the search field visible above the paged By-me/With-me lists.
+            // the search field visible above the paged By me/With me lists.
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             #if os(iOS)

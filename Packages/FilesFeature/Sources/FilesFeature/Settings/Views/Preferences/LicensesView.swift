@@ -7,7 +7,7 @@ private enum Constants {
     static let detailSpacing: CGFloat = .space8
 }
 
-/// One open-source dependency this app ships, with its real license text embedded verbatim
+/// One open source dependency this app ships, with its real license text embedded verbatim
 /// (fetched from each project's own `LICENSE`/`OFL.txt`, not paraphrased): not just a name
 /// and a guessed license type.
 struct OpenSourceLicense: Identifiable {
@@ -21,7 +21,7 @@ struct OpenSourceLicense: Identifiable {
 }
 
 extension OpenSourceLicense {
-    /// The MIT body text is identical verbatim across every MIT-licensed dependency below
+    /// The MIT body text is identical verbatim across every MIT licensed dependency below
     /// (confirmed against each project's own `LICENSE` file): only the copyright line
     /// differs, so it's kept as one shared constant rather than duplicated five times.
     private static func mitText(copyright: String) -> String {

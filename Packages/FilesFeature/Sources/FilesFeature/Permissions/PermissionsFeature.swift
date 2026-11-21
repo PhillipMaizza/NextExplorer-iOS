@@ -6,8 +6,8 @@ import Foundation
 
 /// Drives the "Permissions" sheet (`PermissionsSheet`) for one file or folder: view the
 /// POSIX mode / owner / group from `GET /api/permissions/*`, then chmod and chown via
-/// `POST /api/permissions/{chmod,chown}`. Every successful write re-fetches so the grid
-/// reflects what actually stuck (a recursive `chmod -R` is best-effort server side).
+/// `POST /api/permissions/{chmod,chown}`. Every successful write refetches so the grid
+/// reflects what actually stuck (a recursive `chmod` is best effort server side).
 @Reducer
 public struct PermissionsFeature {
     @ObservableState
@@ -37,7 +37,7 @@ public struct PermissionsFeature {
             self.item = item
         }
 
-        /// The grid as the 3-digit octal string `chmod` wants.
+        /// The grid as the 3 digit octal string `chmod` wants.
         public var octalString: String {
             FilePermissions.octalString(from: grid)
         }

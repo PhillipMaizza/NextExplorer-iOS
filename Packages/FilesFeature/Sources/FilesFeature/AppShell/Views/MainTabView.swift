@@ -33,7 +33,7 @@ public struct MainTabView: View {
     /// a genuine later background→active resume triggers a sync.
     @State private var hasBecomeActiveBefore = false
     @State private var lastActiveSync = Date.distantPast
-    /// Tabs whose content has actually been selected at least once. A non-Browse `Tab` builds
+    /// Tabs whose content has actually been selected at least once. A non Browse `Tab` builds
     /// its `NavigationStack` off screen while the launch splash still covers the window, and
     /// UIKit lays that nav bar out at the wrong size and never revisits it (large title stuck
     /// inline until a manual tab switch forces a relayout: the NXTIOS-0018 bug class). Gating
@@ -47,7 +47,7 @@ public struct MainTabView: View {
     /// guessed constant so the clearance stays right under Dynamic Type.
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
     /// Settings → "Show Tab Labels": titles under each tab icon (with the smaller glyph set),
-    /// or the full-size icons on their own.
+    /// or the full size icons on their own.
     @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
     /// Regular width (iPad) renders a `NavigationSplitView` sidebar; compact (iPhone, iPad
     /// narrow multitasking) keeps the bottom tab bar. Gated on size class, never device idiom.
@@ -212,7 +212,7 @@ public struct MainTabView: View {
     }
 
     /// One `NavigationSplitView` PER tab rather than a single split view whose detail swaps
-    /// between sections. Hosting a path-bound `NavigationStack` (TCA `StackState`) in a split
+    /// between sections. Hosting a path bound `NavigationStack` (TCA `StackState`) in a split
     /// view detail and then replacing it with another section's stack traps in
     /// `NavigationColumnState.boundPathChange` (EXC_BREAKPOINT) on the switch. Each `switch`
     /// branch is a distinct `NavigationSplitView` type, so changing tab tears the whole split
@@ -329,7 +329,7 @@ public struct MainTabView: View {
         .tint(Color.accent)
         // The tab bar caches its item views; without a fresh identity when the preference flips,
         // toggling labels off leaves the old titled items on screen. Rebuild on the toggle.
-        // `visitedTabs` (MainTabView @State) and the store-bound selection both survive it.
+        // `visitedTabs` (MainTabView @State) and the store bound selection both survive it.
         .id(showTabLabels)
     }
 

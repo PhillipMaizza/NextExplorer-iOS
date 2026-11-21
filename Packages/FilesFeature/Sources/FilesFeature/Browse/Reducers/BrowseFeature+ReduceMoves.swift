@@ -267,7 +267,7 @@ extension BrowseFeature {
                     colliding: Self.collidingItems(for: retry, in: destinationItems)
                 )
             case .failure:
-                // The listing failed: fall back to the server's safe auto-rename rather
+                // The listing failed: fall back to the server's safe auto rename rather
                 // than blocking the transfer on a check we couldn't run.
                 return performTransfer(&state, retry: retry.resolved(.keepBoth))
             }

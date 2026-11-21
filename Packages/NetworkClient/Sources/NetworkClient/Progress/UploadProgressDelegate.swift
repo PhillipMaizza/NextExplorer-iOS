@@ -1,8 +1,8 @@
 import Foundation
 
-/// Per-task delegate for `URLSession.upload(for:fromFile:delegate:)` that forwards fractional
-/// send progress (0...1). Deliberately does not implement the auth-challenge method, so the
-/// session-level `URLSessionAuthDelegate` still handles server-trust evaluation.
+/// Per task delegate for `URLSession.upload(for:fromFile:delegate:)` that forwards fractional
+/// send progress (0...1). Deliberately does not implement the auth challenge method, so the
+/// session level `URLSessionAuthDelegate` still handles server trust evaluation.
 final class UploadProgressDelegate: NSObject, URLSessionTaskDelegate {
     private let onProgress: @Sendable (Double) -> Void
 

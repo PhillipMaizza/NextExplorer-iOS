@@ -21,8 +21,8 @@ private enum Constants {
     static let copyFeedbackSeconds: Double = 2
     static let maxHeightFraction: CGFloat = 0.9
     /// Password / expiration fields fade in and out under their toggle. Opacity only: a
-    /// height-interpolating transition (`.move`/`.scale`) makes the capped `DSDynamicHeightSheet`
-    /// re-measure and re-propose its detent every frame, which reads as lag.
+    /// height interpolating transition (`.move`/`.scale`) makes the capped `DSDynamicHeightSheet`
+    /// remeasure and repropose its detent every frame, which reads as lag.
     static var fieldReveal: AnyTransition {
         .opacity
     }
@@ -35,7 +35,7 @@ private enum Constants {
 /// created link confirmation.
 struct CreateShareLinkSheet: View {
     @Bindable var store: StoreOf<CreateShareLinkFeature>
-    /// When set, the created-link state shows a "View in Shared" button that runs this
+    /// When set, the created link state shows a "View in Shared" button that runs this
     /// (the caller dismisses the preview / switches to the Shared tab).
     var onViewShares: (() -> Void)?
     @Environment(\.dismiss) private var dismiss

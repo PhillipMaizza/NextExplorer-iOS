@@ -22,7 +22,7 @@ struct SettingsView: View {
     /// here, above every `.navigationDestination`, is the only spot a bottom overlay isn't
     /// occluded by a pushed screen, so those two views don't each need their own.
     @State private var userManagementToast: DSToastMessage?
-    /// View-local filter for the settings list: no reducer state needed, it only hides rows.
+    /// View local filter for the settings list: no reducer state needed, it only hides rows.
     @State private var settingsSearch = ""
 
     private var filter: SettingsSearchFilter {
@@ -334,7 +334,7 @@ private func settingsPreview(
 }
 
 // The default `.previewValue` reports `volumeUsage` enabled with two volumes, so the
-// server-storage section fills in from `onAppear` like the real thing.
+// server storage section fills in from `onAppear` like the real thing.
 #Preview {
     settingsPreview()
 }

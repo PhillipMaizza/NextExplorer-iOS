@@ -33,7 +33,7 @@ struct FileRowView: View {
     /// The full item, when built from one: needed for the on device document first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
-    /// When set, replaces the folder/file-type glyph: used by the Favorites list to show a
+    /// When set, replaces the folder/file type glyph: used by the Favorites list to show a
     /// favorite's custom icon, weight and colour.
     var customIcon: Image?
     var customIconTint: Color?
@@ -42,12 +42,12 @@ struct FileRowView: View {
     /// transition grows from and shrinks back to.
     var matchedSource: PreviewMatchedSource?
     /// True while this file's content is downloading after a tap: the row shows a trailing
-    /// spinner and the full-screen preview holds off until it's ready.
+    /// spinner and the full screen preview holds off until it's ready.
     var isOpening: Bool = false
     /// True when this item is downloaded (or covered by a pinned folder) for offline use: the row
     /// shows a small offline badge so the user can tell what's available without a connection.
     var isAvailableOffline: Bool = false
-    /// Read live so an already-visible row updates immediately when the user changes the
+    /// Read live so an already visible row updates immediately when the user changes the
     /// date format in Settings, rather than only on the next fetch.
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
     @AppStorage(AppStorageKeys.includeTimeInDates) private var shouldIncludeTime = false

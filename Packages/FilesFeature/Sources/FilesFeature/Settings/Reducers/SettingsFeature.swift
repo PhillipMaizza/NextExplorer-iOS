@@ -11,7 +11,7 @@ import ShareUploads
 
 /// Account info, the two `user_settings` preferences that affect anything this app has
 /// built (`showHiddenFiles`, `showThumbnails`, see `UserPreferences`), and sign out.
-/// The sign-out network call itself is owned by the parent (`AuthenticatedFeature`,
+/// The sign out network call itself is owned by the parent (`AuthenticatedFeature`,
 /// which already holds `authClient`); this only surfaces the confirmed tap and
 /// displays whatever `isSigningOut` the parent drives back down.
 @Reducer
@@ -101,13 +101,13 @@ public struct SettingsFeature {
         /// Server branding, fetched on appear and shared with `ServerDetailsFeature` so an
         /// admin's edit there is reflected in the server row the moment it saves.
         @Shared(.inMemory(Branding.sharedKey)) public var branding = Branding()
-        /// Shared with `BrowseFeature` under the same in-memory key, so toggling
-        /// "Show Hidden Files" here is reflected immediately in an already-open folder.
+        /// Shared with `BrowseFeature` under the same in memory key, so toggling
+        /// "Show Hidden Files" here is reflected immediately in an already open folder.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
         /// Current account's downloads scope, so the size/existence checks count only this
         /// account's files. Shared with `BrowseFeature`/`OfflineTabFeature` under one key.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
-        /// Every signed-in account for the multi-server switcher, published by `AppFeature`. The
+        /// Every signed in account for the multiserver switcher, published by `AppFeature`. The
         /// actual switch / remove / add work is owned upstream (it needs `authClient`); this only
         /// renders the list and emits intent.
         @Shared(.inMemory(AccountSummary.sharedKey)) public var accounts: [AccountSummary] = []
@@ -265,9 +265,9 @@ public struct SettingsFeature {
             /// Pinned roots were removed from the manage list: the engine drops a run that still holds them.
             case offlineRootsRemoved
             /// Every local download was just deleted: `MainTabFeature` clears the
-            /// Downloads tab's list without waiting for it to re-scan the (now empty) disk.
+            /// Downloads tab's list without waiting for it to rescan the (now empty) disk.
             case allDownloadsRemoved
-            /// Multi-server switcher intent, handled upstream where `authClient` lives.
+            /// Multiserver switcher intent, handled upstream where `authClient` lives.
             case switchAccount(String)
             case removeAccount(String)
             case addAccountRequested
@@ -745,7 +745,7 @@ public struct SettingsFeature {
             return .send(.delegate(.signOutButtonTapped))
 
         case let .switchAccountTapped(id):
-            // Tapping the already-active account is a no-op.
+            // Tapping the already active account is a no op.
             guard state.accounts.first(where: { $0.id == id })?.isActive != true else { return .none }
             return .send(.delegate(.switchAccount(id)))
 
@@ -778,7 +778,7 @@ public struct SettingsFeature {
             let localDownloadStore = localDownloadStore
             let downloadScope = state.downloadScope
             return .run { send in
-                // Best-effort, matching the sign-out flow's philosophy: one file
+                // Best effort, matching the sign out flow's philosophy: one file
                 // refusing to delete shouldn't block clearing the rest.
                 let downloads = (try? localDownloadStore.list(downloadScope)) ?? []
                 for download in downloads {
@@ -908,7 +908,7 @@ public struct SettingsFeature {
             }
     }
 
-    /// Fire-and-forget: the toggle already updated optimistically, so a failed PATCH just
+    /// Fire and forget: the toggle already updated optimistically, so a failed PATCH just
     /// means the server falls out of sync with the switch until the next successful one.
     private func updatePreference(_ key: UserPreferenceKey, _ value: Bool, state: inout State) -> Effect<Action> {
         let serverURL = state.serverURL

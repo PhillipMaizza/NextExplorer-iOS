@@ -12,7 +12,7 @@ public struct MainTabFeature {
         case browse, favorites, shared, downloads, settings, trash
     }
 
-    /// The "Upload complete" toast shown app-wide once the queue drains. `openDestination` is
+    /// The "Upload complete" toast shown app wide once the queue drains. `openDestination` is
     /// the folder to jump to when the user taps "Open": `nil` hides that button (they're
     /// already looking at it, or nothing succeeded).
     public struct UploadToast: Equatable, Sendable {
@@ -123,10 +123,10 @@ public struct MainTabFeature {
             case folderWindowChanged(FolderContentsChange, origin: UUID)
         #endif
         /// Sent when the scene becomes active again after being backgrounded: `BrowseTabFeature`
-        /// re-fetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
-        /// deliberately no-ops once a folder already has items loaded.
+        /// refetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
+        /// deliberately no ops once a folder already has items loaded.
         case appBecameActive
-        /// Long-lived subscription to reachability, started once from the view's `.task`.
+        /// Long lived subscription to reachability, started once from the view's `.task`.
         case observeConnectivity
         /// Drains `SharedFileInbox` into an upload review on the Browse tab.
         case sharedFilesArrived
@@ -153,7 +153,7 @@ public struct MainTabFeature {
 
         public enum Delegate: Equatable, Sendable {
             case signOutButtonTapped
-            /// Multi-server account switcher (Settings): activate, remove, or add another account.
+            /// Multiserver account switcher (Settings): activate, remove, or add another account.
             case switchAccount(String)
             case removeAccount(String)
             case addAccountRequested
@@ -387,7 +387,7 @@ public struct MainTabFeature {
                         effects.append(.send(.favorites(.refreshDirectory(path: path))))
                     }
                     // Failures are surfaced by the persistent failed bar (with its own Retry), so
-                    // the toast is only the all-succeeded confirmation.
+                    // the toast is only the all succeeded confirmation.
                     if summary.failedCount == 0, summary.uploadedCount > 0 {
                         let message = summary.uploadedCount == 1
                             ? L10n.Uploads.complete
@@ -433,7 +433,7 @@ public struct MainTabFeature {
                     // so it is cleared whatever it says, then the pinned folders are checked.
                     state.$offlineProgress.withLock { $0 = OfflineDownloadProgress() }
                     // First value is the current state (ignored); refresh only on a real
-                    // offline -> online transition.
+                    // offline to online transition.
                     let connectivity = connectivity
                     let clientCertificateClient = clientCertificateClient
                     let certificateOrigin = ClientCertificateOrigin(url: state.browse.root.serverURL)
@@ -461,7 +461,7 @@ public struct MainTabFeature {
                     )
 
                 case .connectivityRestored:
-                    // Refresh every list tab (each is cancel-in-flight, so this is cheap) so no tab
+                    // Refresh every list tab (each is cancel in flight, so this is cheap) so no tab
                     // is left showing a stale offline copy after the connection returns. Both tabs
                     // that own a browse stack refresh their root and every pushed subfolder, matching
                     // `appBecameActive`; Favorites needs `syncPathStack` too or a folder pushed inside
