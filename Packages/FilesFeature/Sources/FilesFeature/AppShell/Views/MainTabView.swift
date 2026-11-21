@@ -245,6 +245,13 @@ public struct MainTabView: View {
                 .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxX } action: {
                     sidebarTrailingEdge = $0
                 }
+            #if os(macOS)
+                .navigationSplitViewColumnWidth(
+                    min: MacSidebarWidth.min,
+                    ideal: MacSidebarWidth.ideal,
+                    max: MacSidebarWidth.max
+                )
+            #endif
         } detail: {
             detail()
                 .environment(\.isSplitViewDetail, true)
