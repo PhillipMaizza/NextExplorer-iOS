@@ -226,8 +226,8 @@ extension AppSuites {
 
             #expect(
                 recorder.events.value == [
-                    .directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared, .uploadThumbnailsCleared,
-                    .previewCacheCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers),
+                    .thumbnailMemoryCleared, .directoryCacheCleared, .jsonCacheCleared, .previewCacheCleared,
+                    .uploadThumbnailsCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers),
                 ] + WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA]),
                 "the sign in wipes every store, then the pruning keeps only the accounts that remain"
             )
