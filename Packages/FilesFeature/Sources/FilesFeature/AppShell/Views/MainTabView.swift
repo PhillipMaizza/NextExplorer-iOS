@@ -284,13 +284,7 @@ public struct MainTabView: View {
             Tab(value: MainTabFeature.Tab.browse) {
                 BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
             } label: {
-                MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.browse,
-                    icon: store.selectedTab == .browse ? IconKit.tabBrowseFill : IconKit.tabBrowse,
-                    smallIcon: store.selectedTab == .browse ? IconKit.tabBrowseFillSmall : IconKit.tabBrowseSmall,
-                    identifier: AccessibilityIdentifiers.Tab.browse
-                )
+                MainTabBarLabel(tab: .browse, isSelected: store.selectedTab == .browse, showsTitle: showTabLabels)
             }
 
             Tab(value: MainTabFeature.Tab.favorites) {
@@ -298,15 +292,7 @@ public struct MainTabView: View {
                     FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
                 }
             } label: {
-                MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.favorites,
-                    icon: store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites,
-                    smallIcon: store.selectedTab == .favorites
-                        ? IconKit.tabFavoritesFillSmall
-                        : IconKit.tabFavoritesSmall,
-                    identifier: AccessibilityIdentifiers.Tab.favorites
-                )
+                MainTabBarLabel(tab: .favorites, isSelected: store.selectedTab == .favorites, showsTitle: showTabLabels)
             }
 
             Tab(value: MainTabFeature.Tab.shared) {
@@ -314,13 +300,7 @@ public struct MainTabView: View {
                     SharedView(store: store.scope(state: \.shared, action: \.shared))
                 }
             } label: {
-                MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.shared,
-                    icon: store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare,
-                    smallIcon: store.selectedTab == .shared ? IconKit.tabShareFillSmall : IconKit.tabShareSmall,
-                    identifier: AccessibilityIdentifiers.Tab.shared
-                )
+                MainTabBarLabel(tab: .shared, isSelected: store.selectedTab == .shared, showsTitle: showTabLabels)
             }
 
             Tab(value: MainTabFeature.Tab.downloads) {
@@ -332,16 +312,8 @@ public struct MainTabView: View {
                     )
                 }
             } label: {
-                MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.offline,
-                    icon: store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads,
-                    smallIcon: store.selectedTab == .downloads
-                        ? IconKit.tabDownloadsFillSmall
-                        : IconKit.tabDownloadsSmall,
-                    identifier: AccessibilityIdentifiers.Tab.downloads
-                )
-                .accessibilityValue(store.hasUnseenOfflineFiles ? L10n.Offline.newFilesBadge : "")
+                MainTabBarLabel(tab: .downloads, isSelected: store.selectedTab == .downloads, showsTitle: showTabLabels)
+                    .accessibilityValue(store.hasUnseenOfflineFiles ? L10n.Offline.newFilesBadge : "")
             }
             // An empty badge is the tab bar's dot: new files were kept since Offline was last opened.
             .badge(store.hasUnseenOfflineFiles ? Text(verbatim: "") : nil)
@@ -351,13 +323,7 @@ public struct MainTabView: View {
                     SettingsView(store: store.scope(state: \.settings, action: \.settings))
                 }
             } label: {
-                MainTabBarLabel(
-                    showsTitle: showTabLabels,
-                    title: L10n.Tab.settings,
-                    icon: store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings,
-                    smallIcon: store.selectedTab == .settings ? IconKit.tabSettingsFillSmall : IconKit.tabSettingsSmall,
-                    identifier: AccessibilityIdentifiers.Tab.settings
-                )
+                MainTabBarLabel(tab: .settings, isSelected: store.selectedTab == .settings, showsTitle: showTabLabels)
             }
         }
         .tint(Color.accent)
