@@ -803,7 +803,7 @@ login.errorClientCertificateRejected	O servidor recusou este certificado de clie
 browse.nameErrorReserved	Esse nome não é permitido.
 browse.nameErrorSeparators	Um nome não pode conter / ou \.
 browse.searchMatchLineLabel	Linha %lld
-browse.searchTooShort	Digite pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos arquivos.
+browse.searchTooShort	Digite pelo menos %lld caracteres para pesquisar subpastas.
 browse.searchStoppedEarly	A pesquisa parou no limite de tempo. Estes são os resultados encontrados até agora.
 browse.searchFirstOnly	Os primeiros %lld resultados. Refine a busca para ver mais.
 browse.searchShowMore	Mostrar mais

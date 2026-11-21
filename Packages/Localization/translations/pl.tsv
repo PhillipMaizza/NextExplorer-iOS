@@ -598,7 +598,7 @@ login.errorServer	Serwer napotkał problem (błąd %lld). Spróbuj ponownie pó�
 browse.nameErrorReserved	Ta nazwa jest niedozwolona.
 browse.nameErrorSeparators	Nazwa nie może zawierać / ani \.
 browse.searchMatchLineLabel	Wiersz %lld
-browse.searchTooShort	Wpisz co najmniej %lld znaki, aby przeszukać podfoldery i zawartość plików.
+browse.searchTooShort	Wpisz co najmniej %lld znaki, aby przeszukać podfoldery.
 browse.searchStoppedEarly	Wyszukiwanie zatrzymało się na limicie czasu. Oto wyniki znalezione do tej pory.
 browse.searchFirstOnly	Pierwsze wyniki: %lld. Zawęź wyszukiwanie, aby zobaczyć więcej.
 browse.searchShowMore	Pokaż więcej

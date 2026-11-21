@@ -598,7 +598,7 @@ login.errorServer	На сервере возникла проблема (оши�
 browse.nameErrorReserved	Это имя недопустимо.
 browse.nameErrorSeparators	Имя не может содержать / или \.
 browse.searchMatchLineLabel	Строка %lld
-browse.searchTooShort	Введите не менее %lld символов, чтобы искать во вложенных папках и содержимом файлов.
+browse.searchTooShort	Введите не менее %lld символов, чтобы искать во вложенных папках.
 browse.searchStoppedEarly	Поиск остановлен по истечении лимита времени. Вот результаты, найденные на данный момент.
 browse.searchFirstOnly	Первые результаты: %lld. Уточните запрос, чтобы увидеть больше.
 browse.searchShowMore	Показать ещё

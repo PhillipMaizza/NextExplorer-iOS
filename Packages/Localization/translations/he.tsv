@@ -863,7 +863,7 @@ login.diagnosticsIntro	היומן הזה מראה מה השרת השיב בכל 
 browse.nameErrorReserved	השם הזה אינו מותר.
 browse.nameErrorSeparators	שם לא יכול להכיל / או \.
 browse.searchMatchLineLabel	שורה %lld
-browse.searchTooShort	הקלידו לפחות %lld תווים כדי לחפש בתיקיות משנה ובתוכן קבצים.
+browse.searchTooShort	הקלידו לפחות %lld תווים כדי לחפש בתיקיות משנה.
 browse.searchStoppedEarly	החיפוש נעצר במגבלת הזמן שלו. אלה התוצאות שנמצאו עד כה.
 browse.searchFirstOnly	%lld התוצאות הראשונות. צמצמו את החיפוש כדי לראות עוד.
 browse.searchShowMore	הצגת עוד

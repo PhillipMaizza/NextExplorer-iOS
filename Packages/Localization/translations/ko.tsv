@@ -565,7 +565,7 @@ login.errorServer	서버에 문제가 발생했습니다 (오류 %lld). 나중�
 browse.nameErrorReserved	해당 이름은 허용되지 않습니다.
 browse.nameErrorSeparators	이름에는 / 또는 \를 포함할 수 없습니다.
 browse.searchMatchLineLabel	%lld번째 줄
-browse.searchTooShort	하위 폴더와 파일 내용을 검색하려면 %lld자 이상 입력하세요.
+browse.searchTooShort	하위 폴더를 검색하려면 %lld자 이상 입력하세요.
 browse.searchStoppedEarly	검색이 시간 제한에 도달해 중단되었습니다. 지금까지 찾은 결과입니다.
 browse.searchFirstOnly	처음 %lld개 결과입니다. 더 보려면 검색 범위를 좁히세요.
 browse.searchShowMore	더 보기

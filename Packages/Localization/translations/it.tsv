@@ -575,7 +575,7 @@ login.errorServer	Il server ha riscontrato un problema (errore %lld). Riprova pi
 browse.nameErrorReserved	Quel nome non è consentito.
 browse.nameErrorSeparators	Un nome non può contenere / o \.
 browse.searchMatchLineLabel	Riga %lld
-browse.searchTooShort	Digita almeno %lld caratteri per cercare nelle sottocartelle e nel contenuto dei file.
+browse.searchTooShort	Digita almeno %lld caratteri per cercare nelle sottocartelle.
 browse.searchStoppedEarly	La ricerca si è fermata al limite di tempo. Questi sono i risultati trovati finora.
 browse.searchFirstOnly	Primi %lld risultati. Restringi la ricerca per vederne altri.
 browse.searchShowMore	Mostra altri

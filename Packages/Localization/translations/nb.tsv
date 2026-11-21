@@ -852,7 +852,7 @@ login.diagnosticsIntro	Denne loggen viser hva serveren svarte i hvert trinn, for
 browse.nameErrorReserved	Det navnet er ikke tillatt.
 browse.nameErrorSeparators	Et navn kan ikke inneholde / eller \.
 browse.searchMatchLineLabel	Linje %lld
-browse.searchTooShort	Skriv minst %lld tegn for å søke i undermapper og filinnhold.
+browse.searchTooShort	Skriv minst %lld tegn for å søke i undermapper.
 browse.searchStoppedEarly	Søket stoppet ved tidsgrensen. Dette er resultatene som er funnet så langt.
 browse.searchFirstOnly	De første %lld resultatene. Begrens søket for å se flere.
 browse.searchShowMore	Vis mer

@@ -576,7 +576,7 @@ login.errorServer	Auf dem Server ist ein Problem aufgetreten (Fehler %lld). Bitt
 browse.nameErrorReserved	Dieser Name ist nicht zulässig.
 browse.nameErrorSeparators	Ein Name darf kein / oder \ enthalten.
 browse.searchMatchLineLabel	Zeile %lld
-browse.searchTooShort	Gib mindestens %lld Zeichen ein, um Unterordner und Dateiinhalte zu durchsuchen.
+browse.searchTooShort	Gib mindestens %lld Zeichen ein, um Unterordner zu durchsuchen.
 browse.searchStoppedEarly	Die Suche wurde am Zeitlimit beendet. Das sind die bisher gefundenen Ergebnisse.
 browse.searchFirstOnly	Erste %lld Ergebnisse. Grenze die Suche ein, um mehr zu sehen.
 browse.searchShowMore	Mehr anzeigen

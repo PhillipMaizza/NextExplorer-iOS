@@ -841,7 +841,7 @@ login.diagnosticsIntro	Log ini menunjukkan jawaban server pada setiap langkah, u
 browse.nameErrorReserved	Nama itu tidak diizinkan.
 browse.nameErrorSeparators	Nama tidak boleh berisi / atau \.
 browse.searchMatchLineLabel	Baris %lld
-browse.searchTooShort	Ketik minimal %lld karakter untuk mencari di subfolder dan isi file.
+browse.searchTooShort	Ketik minimal %lld karakter untuk mencari di subfolder.
 browse.searchStoppedEarly	Pencarian berhenti pada batas waktunya. Ini hasil yang ditemukan sejauh ini.
 browse.searchFirstOnly	%lld hasil pertama. Persempit pencarian untuk melihat lebih banyak.
 browse.searchShowMore	Tampilkan Lebih Banyak

@@ -576,7 +576,7 @@ login.errorServer	Servern stötte på ett problem (fel %lld). Försök igen sena
 browse.nameErrorReserved	Det namnet är inte tillåtet.
 browse.nameErrorSeparators	Ett namn får inte innehålla / eller \.
 browse.searchMatchLineLabel	Rad %lld
-browse.searchTooShort	Skriv minst %lld tecken för att söka i undermappar och filinnehåll.
+browse.searchTooShort	Skriv minst %lld tecken för att söka i undermappar.
 browse.searchStoppedEarly	Sökningen stoppades vid tidsgränsen. Det här är resultaten som hittats hittills.
 browse.searchFirstOnly	Första %lld resultaten. Begränsa sökningen för att se fler.
 browse.searchShowMore	Visa fler

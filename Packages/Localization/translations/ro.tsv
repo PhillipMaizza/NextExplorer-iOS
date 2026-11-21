@@ -587,7 +587,7 @@ login.errorServer	Serverul a întâmpinat o problemă (eroare %lld). Încearcă 
 browse.nameErrorReserved	Acest nume nu este permis.
 browse.nameErrorSeparators	Un nume nu poate conține / sau \.
 browse.searchMatchLineLabel	Linia %lld
-browse.searchTooShort	Tastează cel puțin %lld caractere pentru a căuta în subfoldere și în conținutul fișierelor.
+browse.searchTooShort	Tastează cel puțin %lld caractere pentru a căuta în subfoldere.
 browse.searchStoppedEarly	Căutarea s-a oprit la limita de timp. Acestea sunt rezultatele găsite până acum.
 browse.searchFirstOnly	Primele %lld rezultate. Restrânge căutarea pentru a vedea mai multe.
 browse.searchShowMore	Afișează mai multe

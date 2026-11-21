@@ -620,7 +620,7 @@ login.errorServer	واجه الخادم مشكلة (خطأ %lld). يُرجى إ�
 browse.nameErrorReserved	هذا الاسم غير مسموح به.
 browse.nameErrorSeparators	لا يمكن أن يحتوي الاسم على / أو \.
 browse.searchMatchLineLabel	السطر %lld
-browse.searchTooShort	اكتب %lld أحرف على الأقل للبحث في المجلدات الفرعية ومحتوى الملفات.
+browse.searchTooShort	اكتب %lld أحرف على الأقل للبحث في المجلدات الفرعية.
 browse.searchStoppedEarly	توقف البحث عند حده الزمني. هذه هي النتائج التي عُثر عليها حتى الآن.
 browse.searchFirstOnly	أول %lld نتيجة. ضيّق البحث لرؤية المزيد.
 browse.searchShowMore	عرض المزيد

@@ -35527,181 +35527,181 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Type at least %lld characters to search subfolders and file contents."
+            "value": "Type at least %lld characters to search subfolders."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "اكتب %lld أحرف على الأقل للبحث في المجلدات الفرعية ومحتوى الملفات."
+            "value": "اكتب %lld أحرف على الأقل للبحث في المجلدات الفرعية."
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pro hledání v podsložkách a obsahu souborů zadejte alespoň znaků: %lld."
+            "value": "Pro hledání v podsložkách zadejte alespoň znaků: %lld."
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Skriv mindst %lld tegn for at søge i undermapper og filindhold."
+            "value": "Skriv mindst %lld tegn for at søge i undermapper."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gib mindestens %lld Zeichen ein, um Unterordner und Dateiinhalte zu durchsuchen."
+            "value": "Gib mindestens %lld Zeichen ein, um Unterordner zu durchsuchen."
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Πληκτρολογήστε τουλάχιστον %lld χαρακτήρες για αναζήτηση σε υποφακέλους και περιεχόμενο αρχείων."
+            "value": "Πληκτρολογήστε τουλάχιστον %lld χαρακτήρες για αναζήτηση σε υποφακέλους."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escribe al menos %lld caracteres para buscar en subcarpetas y en el contenido de los archivos."
+            "value": "Escribe al menos %lld caracteres para buscar en subcarpetas."
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kirjoita vähintään %lld merkkiä hakeaksesi alikansioista ja tiedostojen sisällöstä."
+            "value": "Kirjoita vähintään %lld merkkiä hakeaksesi alikansioista."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Saisissez au moins %lld caractères pour rechercher dans les sous-dossiers et le contenu des fichiers."
+            "value": "Saisissez au moins %lld caractères pour rechercher dans les sous-dossiers."
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "הקלידו לפחות %lld תווים כדי לחפש בתיקיות משנה ובתוכן קבצים."
+            "value": "הקלידו לפחות %lld תווים כדי לחפש בתיקיות משנה."
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "सबफ़ोल्डर और फ़ाइलों की सामग्री में खोजने के लिए कम से कम %lld अक्षर लिखें।"
+            "value": "सबफ़ोल्डर में खोजने के लिए कम से कम %lld अक्षर लिखें।"
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "Írjon be legalább %lld karaktert az almappákban és a fájlok tartalmában való kereséshez."
+            "value": "Írjon be legalább %lld karaktert az almappákban való kereséshez."
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ketik minimal %lld karakter untuk mencari di subfolder dan isi file."
+            "value": "Ketik minimal %lld karakter untuk mencari di subfolder."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Digita almeno %lld caratteri per cercare nelle sottocartelle e nel contenuto dei file."
+            "value": "Digita almeno %lld caratteri per cercare nelle sottocartelle."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サブフォルダとファイルの内容を検索するには、%lld 文字以上入力してください。"
+            "value": "サブフォルダを検索するには、%lld 文字以上入力してください。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "하위 폴더와 파일 내용을 검색하려면 %lld자 이상 입력하세요."
+            "value": "하위 폴더를 검색하려면 %lld자 이상 입력하세요."
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Skriv minst %lld tegn for å søke i undermapper og filinnhold."
+            "value": "Skriv minst %lld tegn for å søke i undermapper."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Typ minstens %lld tekens om in submappen en bestandsinhoud te zoeken."
+            "value": "Typ minstens %lld tekens om in submappen te zoeken."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wpisz co najmniej %lld znaki, aby przeszukać podfoldery i zawartość plików."
+            "value": "Wpisz co najmniej %lld znaki, aby przeszukać podfoldery."
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escreva pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos ficheiros."
+            "value": "Escreva pelo menos %lld caracteres para pesquisar subpastas."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Digite pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos arquivos."
+            "value": "Digite pelo menos %lld caracteres para pesquisar subpastas."
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tastează cel puțin %lld caractere pentru a căuta în subfoldere și în conținutul fișierelor."
+            "value": "Tastează cel puțin %lld caractere pentru a căuta în subfoldere."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Введите не менее %lld символов, чтобы искать во вложенных папках и содержимом файлов."
+            "value": "Введите не менее %lld символов, чтобы искать во вложенных папках."
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Skriv minst %lld tecken för att söka i undermappar och filinnehåll."
+            "value": "Skriv minst %lld tecken för att söka i undermappar."
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "พิมพ์อย่างน้อย %lld อักขระเพื่อค้นหาในโฟลเดอร์ย่อยและเนื้อหาไฟล์"
+            "value": "พิมพ์อย่างน้อย %lld อักขระเพื่อค้นหาในโฟลเดอร์ย่อย"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alt klasörlerde ve dosya içeriklerinde aramak için en az %lld karakter yazın."
+            "value": "Alt klasörlerde aramak için en az %lld karakter yazın."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Введіть щонайменше символів: %lld, щоб шукати в підпапках і вмісті файлів."
+            "value": "Введіть щонайменше символів: %lld, щоб шукати в підпапках."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nhập ít nhất %lld ký tự để tìm trong thư mục con và nội dung tệp."
+            "value": "Nhập ít nhất %lld ký tự để tìm trong thư mục con."
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "至少输入 %lld 个字符以搜索子文件夹和文件内容。"
+            "value": "至少输入 %lld 个字符以搜索子文件夹。"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "至少輸入 %lld 個字元以搜尋子資料夾和檔案內容。"
+            "value": "至少輸入 %lld 個字元以搜尋子資料夾。"
           }
         }
       }

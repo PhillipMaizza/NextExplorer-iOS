@@ -841,7 +841,7 @@ login.diagnosticsIntro	บันทึกนี้แสดงสิ่งที
 browse.nameErrorReserved	ไม่อนุญาตให้ใช้ชื่อนั้น
 browse.nameErrorSeparators	ชื่อต้องไม่มี / หรือ \
 browse.searchMatchLineLabel	บรรทัด %lld
-browse.searchTooShort	พิมพ์อย่างน้อย %lld อักขระเพื่อค้นหาในโฟลเดอร์ย่อยและเนื้อหาไฟล์
+browse.searchTooShort	พิมพ์อย่างน้อย %lld อักขระเพื่อค้นหาในโฟลเดอร์ย่อย
 browse.searchStoppedEarly	การค้นหาหยุดที่ขีดจำกัดเวลา นี่คือผลลัพธ์ที่พบจนถึงตอนนี้
 browse.searchFirstOnly	%lld ผลลัพธ์แรก จำกัดการค้นหาให้แคบลงเพื่อดูเพิ่มเติม
 browse.searchShowMore	แสดงเพิ่มเติม

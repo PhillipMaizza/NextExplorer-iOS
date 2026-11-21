@@ -852,7 +852,7 @@ login.diagnosticsIntro	Bu günlük, oturum açmanın neden başarısız olduğun
 browse.nameErrorReserved	Bu ada izin verilmiyor.
 browse.nameErrorSeparators	Bir ad / veya \ içeremez.
 browse.searchMatchLineLabel	Satır %lld
-browse.searchTooShort	Alt klasörlerde ve dosya içeriklerinde aramak için en az %lld karakter yazın.
+browse.searchTooShort	Alt klasörlerde aramak için en az %lld karakter yazın.
 browse.searchStoppedEarly	Arama zaman sınırında durdu. Şimdiye kadar bulunan sonuçlar bunlar.
 browse.searchFirstOnly	İlk %lld sonuç. Daha fazlasını görmek için aramayı daraltın.
 browse.searchShowMore	Daha Fazla Göster

@@ -980,7 +980,7 @@ login.diagnosticsIntro	This log shows what the server answered at each step, to 
 browse.nameErrorReserved	That name isn't allowed.
 browse.nameErrorSeparators	A name can't contain / or \.
 browse.searchMatchLineLabel	Line %lld
-browse.searchTooShort	Type at least %lld characters to search subfolders and file contents.
+browse.searchTooShort	Type at least %lld characters to search subfolders.
 browse.searchStoppedEarly	The search stopped at its time limit. These are the results found so far.
 browse.searchFirstOnly	First %lld results. Narrow the search to see more.
 browse.searchShowMore	Show More
