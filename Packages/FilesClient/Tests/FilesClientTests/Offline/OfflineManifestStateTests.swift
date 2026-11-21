@@ -60,4 +60,23 @@ struct OfflineManifestStateTests {
         #expect(pinned.pinnedRoots().isEmpty)
         #expect(!pinned.wasInterrupted())
     }
+
+    @Test
+    func aPreloadedAccountAnswersWithoutReadingTheDiskAgain() {
+        let scope = makeScope()
+        defer { store.removeAccount(scope) }
+
+        OfflineCache.preloadManifest(scope: scope)
+
+        let roots = OfflineManifestState.shared.value(\.roots, scope: scope) {
+            Issue.record("pinned roots read from disk after the preload")
+            return []
+        }
+        let isInterrupted = OfflineManifestState.shared.value(\.isInterrupted, scope: scope) {
+            Issue.record("run marker read from disk after the preload")
+            return false
+        }
+        #expect(roots.isEmpty)
+        #expect(!isInterrupted)
+    }
 }

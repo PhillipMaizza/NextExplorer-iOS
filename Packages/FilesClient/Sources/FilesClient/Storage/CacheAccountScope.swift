@@ -28,6 +28,8 @@ public enum CacheAccountScope {
 
     public static func set(_ value: String) {
         lock.withLock { _value = value }
+        guard !value.isEmpty else { return }
+        Task.detached(priority: .utility) { OfflineCache.preloadManifest(scope: value) }
     }
 
     /// Changes whenever `scope`'s caches, or every account's, are wiped. A writer stamps its work when

@@ -154,6 +154,14 @@ enum OfflineCache {
         return FileManager.default.fileExists(atPath: directory.appendingPathComponent(fileName(forPath: path)).path)
     }
 
+    static func preloadManifest(scope: String) {
+        CacheAccountScope.withPinned(scope) {
+            _ = pinnedRoots()
+            _ = wasInterrupted()
+            _ = lastAutoSyncAt()
+        }
+    }
+
     static func pinnedRoots() -> [OfflinePinnedRoot] {
         let scope = CacheAccountScope.current
         return OfflineManifestState.shared.value(\.roots, scope: scope) { readPinnedRoots(scope: scope) }
