@@ -199,6 +199,7 @@ import TestUtils
             await store.send(.favorites(.path(.element(id: pushedID, action: .newFolderResponse(.success(folder)))))) {
                 $0.favorites.path[id: pushedID]?.items = [folder]
                 $0.favorites.path[id: pushedID]?.$undoStack.withLock { $0 = [FileUndoEntry(.madeNew(folder))] }
+                $0.favorites.path[id: pushedID]?.createdFolderIDs = [folder.id]
                 $0.folderWindowSync = FolderWindowSync(revision: 1, change: .folders([TestFolder.docs]), origin: nil)
             }
             await store.receive(\.browse.refreshDirectory)

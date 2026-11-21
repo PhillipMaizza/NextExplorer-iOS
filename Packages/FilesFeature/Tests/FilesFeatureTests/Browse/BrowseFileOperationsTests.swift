@@ -139,6 +139,7 @@ struct BrowseFileOperationsTests {
             $0.isNewFolderSheetPresented = false
             $0.items = [existing, created]
             $0.$undoStack.withLock { $0.record(FileUndoEntry(.madeNew(created))) }
+            $0.createdFolderIDs = [created.id]
         }
         #expect(requested.value == ["Docs/Reports"])
     }
@@ -178,6 +179,7 @@ struct BrowseFileOperationsTests {
         await store.send(.newFolderResponse(.success(newFolder))) {
             $0.items = [existing, newFolder]
             $0.$undoStack.withLock { $0.record(FileUndoEntry(.madeNew(newFolder))) }
+            $0.createdFolderIDs = [newFolder.id]
         }
 
         let cached = cache.read(serverURL: BrowseTestSupport.serverURL, path: TestFolder.docs)
@@ -185,6 +187,32 @@ struct BrowseFileOperationsTests {
         #expect(cached?.access == BrowseTestSupport.fullAccess)
         #expect(cached?.fetchedAt == MockDate.date)
         #expect(cached?.etag == nil, "etag must be nil so the next online browse revalidates cleanly")
+    }
+
+    @Test("A folder just made opens on its empty state, with no loading skeleton")
+    func aFolderJustMadeOpensKnownEmpty() {
+        let folder = BrowseFixtures.folder("Reports", in: TestFolder.docs)
+        let screen = BrowseNavigation.screen(for: folder, serverURL: BrowseTestSupport.serverURL, isKnownEmpty: true)
+        #expect(screen.isListingKnown)
+        #expect(!BrowseNavigation.screen(for: folder, serverURL: BrowseTestSupport.serverURL).isListingKnown)
+    }
+
+    @Test("Opening a folder saved as empty shows the empty state at once, not the loading skeleton")
+    func anEmptySavedListingIsKnownBeforeTheFetchAnswers() async {
+        var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs)
+        state.phase = .loading
+        let store = BrowseFixtures.store(state)
+        await store.send(.cachedListingPainted(CachedDirectory(
+            path: TestFolder.docs,
+            items: [],
+            access: BrowseTestSupport.fullAccess,
+            fetchedAt: MockDate.date,
+            etag: nil
+        ))) {
+            $0.access = BrowseTestSupport.fullAccess
+            $0.isShowingCachePaint = true
+        }
+        #expect(store.state.isListingKnown)
     }
 
     // MARK: New file

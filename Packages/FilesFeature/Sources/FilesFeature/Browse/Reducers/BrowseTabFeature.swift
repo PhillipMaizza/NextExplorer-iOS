@@ -154,7 +154,11 @@ public struct BrowseTabFeature {
 
             case let .root(.delegate(.openFolder(item))):
                 state.forwardStack = []
-                state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))
+                state.path.append(BrowseNavigation.screen(
+                    for: item,
+                    serverURL: state.root.serverURL,
+                    isKnownEmpty: state.root.createdFolderIDs.contains(item.id)
+                ))
                 return .none
 
             case let .root(.delegate(.openPath(path, title))):
@@ -226,9 +230,13 @@ public struct BrowseTabFeature {
                         + state.path.ids.map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) }
                 )
 
-            case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
+            case let .path(.element(id: id, action: .delegate(.openFolder(item)))):
                 state.forwardStack = []
-                state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))
+                state.path.append(BrowseNavigation.screen(
+                    for: item,
+                    serverURL: state.root.serverURL,
+                    isKnownEmpty: state.path[id: id]?.createdFolderIDs.contains(item.id) ?? false
+                ))
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):

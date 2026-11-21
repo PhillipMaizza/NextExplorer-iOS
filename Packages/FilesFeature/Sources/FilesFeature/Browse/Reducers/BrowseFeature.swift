@@ -78,6 +78,7 @@ public struct BrowseFeature {
         /// derivable from `phase` and `dataSource`: a refresh over live items is also `.loading` and
         /// `.live`, and only this flag tells those items apart from an unconfirmed saved copy.
         public var isShowingCachePaint = false
+        public var createdFolderIDs: Set<FileItem.ID> = []
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
 

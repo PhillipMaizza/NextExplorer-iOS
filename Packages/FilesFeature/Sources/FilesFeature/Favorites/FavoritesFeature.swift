@@ -591,9 +591,13 @@ public struct FavoritesFeature {
                 syncCache(state)
                 return .none
 
-            case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
+            case let .path(.element(id: id, action: .delegate(.openFolder(item)))):
                 state.forwardStack = []
-                state.path.append(BrowseNavigation.screen(for: item, serverURL: state.serverURL))
+                state.path.append(BrowseNavigation.screen(
+                    for: item,
+                    serverURL: state.serverURL,
+                    isKnownEmpty: state.path[id: id]?.createdFolderIDs.contains(item.id) ?? false
+                ))
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):

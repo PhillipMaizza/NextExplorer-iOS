@@ -171,6 +171,7 @@ struct FileRedoTests {
             $0.items = [made]
             $0.$undoStack.withLock { $0 = [FileUndoEntry(.madeNew(made))] }
             $0.$redoStack.withLock { $0 = [] }
+            $0.createdFolderIDs = [made.id]
         }
     }
 
