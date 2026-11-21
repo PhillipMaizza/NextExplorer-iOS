@@ -39,6 +39,10 @@ class RatchetTests(unittest.TestCase):
         findings = check.grown({"A.swift": 3, "B.swift": 1, "C.swift": 2}, {"A.swift": 2, "C.swift": 5})
         self.assertEqual([finding.split(":")[0] for finding in findings], ["A.swift", "B.swift"])
 
+    def test_a_comment_moved_to_a_new_file_does_not_raise_the_total(self):
+        self.assertFalse(check.rose({"A.swift": 1, "B.swift": 3}, {"A.swift": 4}))
+        self.assertTrue(check.rose({"A.swift": 4, "B.swift": 1}, {"A.swift": 4}))
+
     def test_fewer_comments_pass(self):
         self.assertEqual(check.grown({"A.swift": 1}, {"A.swift": 4}), [])
 

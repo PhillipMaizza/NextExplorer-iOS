@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Hold the number of Swift comment lines to a ratchet that only goes down.
 
-Code says what it does; a decision that needs words goes in docs/adr, and a known limit goes in a
-GitHub issue. Comments already in the tree are counted per file in Scripts/comment-baseline.json; a
+Code says what it does; a decision that needs words goes in docs/adr, and a shortcut gets fixed.
+Comments already in the tree are counted per file in Scripts/comment-baseline.json; a
 file may lose comment lines but never gain them, and a file missing from the baseline may have none.
 MARK, swiftlint and swiftformat directives are not counted, nor the generated L10n.swift.
 
   python3 Scripts/check-comments.py                    fail when a file has more than its baseline
-  python3 Scripts/check-comments.py --update-baseline  write the current counts (refused if any rose)
+  python3 Scripts/check-comments.py --update-baseline  write the current counts (refused if the total rose;
+                                                        run it after moving a file or splitting a view)
   python3 Scripts/check-comments.py --list             one TSV row per comment block, for a sweep
   python3 Scripts/check-comments.py --delete LEDGER    delete the blocks a ledger names (path<TAB>line)
 
@@ -113,10 +114,15 @@ def counts():
 
 def grown(current, baseline):
     return sorted(
-        f"{path}: {number} comment lines (baseline {baseline.get(path, 0)}); explain it in code, docs/adr or an issue"
+        f"{path}: {number} comment lines (baseline {baseline.get(path, 0)}); explain it in code or docs/adr, or run --update-baseline if it only moved"
         for path, number in current.items()
         if number > baseline.get(path, 0)
     )
+
+
+def rose(current, baseline):
+    """More comment lines in total: a comment moved to another file (a split view, a rename) is not."""
+    return sum(current.values()) > sum(baseline.values())
 
 
 def blocks(source):
@@ -181,7 +187,7 @@ def main():
     baseline = json.loads(BASELINE.read_text()) if BASELINE.exists() else {}
     findings = grown(current, baseline)
     if args.update_baseline:
-        if findings and BASELINE.exists():
+        if BASELINE.exists() and rose(current, baseline):
             print("\n".join(findings))
             print("Comments: baseline not raised; remove the new comments first")
             return 1
