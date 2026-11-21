@@ -16,9 +16,6 @@ struct LoginSecondFactorPage: View {
     @FocusState private var isCodeFocused: Bool
 
     private enum Constants {
-        static let navBarHeight: CGFloat = .size44
-        static let backChevronSize: CGFloat = .iconSmall
-        static let backChevronWeight: Font.Weight = .semibold
         static let checkmarkSize: CGFloat = .iconSmall
         static let autoFocusDelay: Duration = .seconds(0.4)
         static let recoveryCodePlaceholder = "XXXXX-XXXXX"
@@ -30,23 +27,7 @@ struct LoginSecondFactorPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button {
-                    store.send(.secondFactorBackButtonTapped)
-                } label: {
-                    IconKit.back
-                        .font(.system(size: Constants.backChevronSize, weight: Constants.backChevronWeight))
-                        .foregroundStyle(Color.primaryDS)
-                        .frame(width: .size44, height: .size44, alignment: .leading)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(DSPressableButtonStyle())
-                .accessibilityLabel(L10n.Common.back)
-                Spacer()
-            }
-            .frame(height: Constants.navBarHeight)
-            .padding(.horizontal, .space16)
-            .padding(.top, .space16)
+            LoginBackBar(title: nil) { store.send(.secondFactorBackButtonTapped) }
 
             ScrollView {
                 VStack(alignment: .leading, spacing: .space24) {

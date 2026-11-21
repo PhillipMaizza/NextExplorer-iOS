@@ -5,10 +5,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let navBarHeight: CGFloat = .size44
-    static let navBarTitleHorizontalPadding: CGFloat = .size44
-    static let backChevronSize: CGFloat = .iconSmall
-    static let backChevronWeight: Font.Weight = .semibold
     static let checkmarkSize: CGFloat = .iconSmall
     static let ssoIconSize: CGFloat = .iconSmall
     static let maskedPasswordPlaceholder = "••••••••"
@@ -42,34 +38,7 @@ struct LoginCredentialsPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ZStack {
-                Text(store.host)
-                    .type(.body1(.semibold), style: .primaryOnSurface)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                    .padding(.horizontal, Constants.navBarTitleHorizontalPadding)
-
-                HStack {
-                    Button {
-                        store.send(.backButtonTapped)
-                    } label: {
-                        // Sized via font, not `.resizable()` into a square frame: a chevron is
-                        // not square, so a square resizable frame stretches the glyph. The 44pt
-                        // frame is the tap target.
-                        IconKit.back
-                            .font(.system(size: Constants.backChevronSize, weight: Constants.backChevronWeight))
-                            .foregroundStyle(Color.primaryDS)
-                            .frame(width: .size44, height: .size44, alignment: .leading)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(DSPressableButtonStyle())
-                    .accessibilityLabel(L10n.Common.back)
-                    Spacer()
-                }
-            }
-            .frame(height: Constants.navBarHeight)
-            .padding(.horizontal, .space16)
-            .padding(.top, .space16)
+            LoginBackBar(title: store.host) { store.send(.backButtonTapped) }
 
             ScrollView {
                 VStack(alignment: .leading, spacing: .space24) {
