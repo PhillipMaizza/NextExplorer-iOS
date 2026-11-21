@@ -1208,7 +1208,6 @@ shareUpload.namesLabel	Nomes dos arquivos
 shareUpload.nameHint	O nome com que o arquivo é enviado. A extensão continua a mesma.
 spotlight.placeholder	Pesquisar arquivos e pastas
 trash.title	Lixeira
-trash.rowSubtitle	Itens excluídos que você pode restaurar
 trash.moveToTrash	Mover para a lixeira
 trash.deletePermanently	Excluir permanentemente
 trash.deleteMessage#one	Vai para a lixeira, que guarda os itens excluídos por %lld dia para que possam ser restaurados.

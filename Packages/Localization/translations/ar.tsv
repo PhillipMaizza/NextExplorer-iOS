@@ -1285,7 +1285,6 @@ shareUpload.namesLabel	أسماء الملفات
 shareUpload.nameHint	الاسم الذي يُرفع به الملف. يبقى الامتداد كما هو.
 spotlight.placeholder	البحث في الملفات والمجلدات
 trash.title	سلة المحذوفات
-trash.rowSubtitle	عناصر محذوفة يمكنك استعادتها
 trash.moveToTrash	نقل إلى سلة المحذوفات
 trash.deletePermanently	حذف نهائي
 trash.deleteMessage#zero	سينتقل إلى سلة المحذوفات التي تحتفظ بالعناصر المحذوفة (عدد الأيام: %lld) ليمكن استعادتها.

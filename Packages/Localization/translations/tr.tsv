@@ -1158,7 +1158,6 @@ shareUpload.namesLabel	Dosya Adları
 shareUpload.nameHint	Dosyanın yükleneceği ad. Uzantı aynı kalır.
 spotlight.placeholder	Dosyalarda ve klasörlerde ara
 trash.title	Çöp Kutusu
-trash.rowSubtitle	Geri yükleyebileceğiniz silinmiş öğeler
 trash.moveToTrash	Çöp Kutusuna Taşı
 trash.deletePermanently	Kalıcı Olarak Sil
 trash.deleteMessage#one	Çöp kutusuna gider; çöp kutusu silinen öğeleri geri yüklenebilmeleri için %lld gün saklar.

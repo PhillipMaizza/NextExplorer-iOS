@@ -55,13 +55,6 @@ public struct AppFeature {
             self.destination = destination
         }
 
-        public var isAuthenticated: Bool {
-            if case .authenticated = destination {
-                return true
-            }
-            return false
-        }
-
         var currentAccountID: String? {
             guard case let .authenticated(authenticated) = destination else { return nil }
             return authenticated.accountID

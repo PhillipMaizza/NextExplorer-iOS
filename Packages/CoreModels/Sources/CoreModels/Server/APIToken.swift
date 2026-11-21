@@ -62,6 +62,5 @@ public struct IssuedAPIToken: Codable, Equatable, Sendable, Identifiable {
 /// Limits the server enforces, so the form can say so before a round trip does.
 public enum APITokenLimits {
     public static let maxNameLength = 60
-    public static let maxExpiryDays = 3650
     public static let maxTokensPerAccount = 50
 }

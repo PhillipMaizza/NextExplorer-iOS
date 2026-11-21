@@ -1249,7 +1249,6 @@ shareUpload.namesLabel	Имена файлов
 shareUpload.nameHint	Имя, под которым файл будет загружен. Расширение не изменится.
 spotlight.placeholder	Поиск файлов и папок
 trash.title	Корзина
-trash.rowSubtitle	Удалённые объекты, которые можно восстановить
 trash.moveToTrash	В корзину
 trash.deletePermanently	Удалить навсегда
 trash.deleteMessage#one	Объект попадёт в корзину, где удалённые объекты хранятся (дней: %lld), чтобы их можно было восстановить.

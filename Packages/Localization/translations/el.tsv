@@ -1159,7 +1159,6 @@ shareUpload.namesLabel	Ονόματα αρχείων
 shareUpload.nameHint	Το όνομα με το οποίο ανεβαίνει το αρχείο. Η επέκταση μένει ίδια.
 spotlight.placeholder	Αναζήτηση αρχείων και φακέλων
 trash.title	Κάδος απορριμμάτων
-trash.rowSubtitle	Διαγραμμένα στοιχεία που μπορείτε να επαναφέρετε
 trash.moveToTrash	Μεταφορά στον κάδο
 trash.deletePermanently	Οριστική διαγραφή
 trash.deleteMessage#one	Θα πάει στον κάδο, που κρατά τα διαγραμμένα στοιχεία για %lld ημέρα ώστε να μπορούν να επανέλθουν.

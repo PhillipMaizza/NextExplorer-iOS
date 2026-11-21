@@ -1249,7 +1249,6 @@ shareUpload.namesLabel	Nazwy plików
 shareUpload.nameHint	Nazwa, pod którą plik zostanie przesłany. Rozszerzenie pozostaje bez zmian.
 spotlight.placeholder	Szukaj plików i folderów
 trash.title	Kosz
-trash.rowSubtitle	Usunięte elementy, które możesz przywrócić
 trash.moveToTrash	Przenieś do kosza
 trash.deletePermanently	Usuń trwale
 trash.deleteMessage#one	Trafi do kosza, który przechowuje usunięte elementy (dni: %lld), aby można je było przywrócić.

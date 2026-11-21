@@ -7,8 +7,6 @@ import FilesFeature
 import Localization
 import SwiftUI
 
-private enum Constants {}
-
 /// Identity for the authenticated subtree: it remounts when the splash finishes (to relayout nav
 /// bars) and when the active account changes (to play the switch transition).
 private struct AuthenticatedIdentity: Hashable {

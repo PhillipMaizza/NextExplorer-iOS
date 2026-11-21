@@ -47,10 +47,6 @@ public struct VersionedFilesFeature {
             page?.files ?? []
         }
 
-        func file(withID id: String) -> VersionedFile? {
-            files.first { $0.id == id }
-        }
-
         func chosen(_ fileID: String) -> Set<String> {
             selection[fileID] ?? []
         }
