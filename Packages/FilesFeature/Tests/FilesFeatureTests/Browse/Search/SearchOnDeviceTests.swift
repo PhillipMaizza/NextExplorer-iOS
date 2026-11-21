@@ -184,7 +184,7 @@ struct SearchOnDeviceTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.failure) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .failed(FilesClientError.offline.userMessage)
         }
         await store.receive(\.searchSavedItemsLoaded) {
@@ -228,7 +228,7 @@ struct SearchOnDeviceTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.failure) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .failed(FilesClientError.offline.userMessage)
         }
         await store.receive(\.searchSavedItemsLoaded) {
@@ -323,7 +323,7 @@ struct SearchOnDeviceTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = [photoHit, planHit]
             $0.searchPhase = .loaded
         }
@@ -352,7 +352,7 @@ struct SearchOnDeviceTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.fileSearchResponse.failure) {
+        await store.receive(\.fileSearchResponse) {
             $0.searchPhase = .failed(FilesClientError.offline.userMessage)
         }
     }
@@ -384,7 +384,7 @@ struct SearchOnDeviceTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = []
             $0.searchPhase = .loaded
         }

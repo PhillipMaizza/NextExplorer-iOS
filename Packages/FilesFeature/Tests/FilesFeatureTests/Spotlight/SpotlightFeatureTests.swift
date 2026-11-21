@@ -97,6 +97,27 @@ struct SpotlightFeatureTests {
         #expect(asked.value.isEmpty)
     }
 
+    /// The fetches of one burst of typing can start out of order, so an earlier term's fetch may
+    /// outlive the typed term's and cancel it.
+    @Test("An earlier term's answer landing late is dropped and the typed term is asked at once")
+    func anEarlierTermsLateAnswerIsDroppedAndTheTypedTermAskedAgain() async {
+        let clock = TestClock<Duration>()
+        let asked = LockIsolated<[Ask]>([])
+        let store = store(state(basePath: ""), clock: clock, asked: asked, page: SearchPage(items: [fileHit]))
+
+        await store.send(.queryChanged(Constants.longerTerm)) {
+            $0.query = Constants.longerTerm
+            $0.phase = .loading
+        }
+        await store.send(.searchResponse(.success(SearchPage(items: [otherHit])), term: Constants.term))
+        await store.receive(\.searchResponse) {
+            $0.results = [fileHit]
+            $0.phase = .loaded
+        }
+        await store.receive(\.onDeviceComputed)
+        #expect(asked.value.map(\.query) == [Constants.longerTerm], "asked without waiting out the debounce")
+    }
+
     @Test("Typing waits 350 ms, then asks the folder and everywhere with the first limit")
     func typingWaitsThenAsks() async {
         let clock = TestClock<Duration>()
@@ -111,7 +132,7 @@ struct SpotlightFeatureTests {
         #expect(asked.value.isEmpty)
 
         await clock.advance(by: TestSearchTiming.lastMoment)
-        await store.receive(\.searchResponse.success) {
+        await store.receive(\.searchResponse) {
             $0.results = [folderHit, fileHit]
             $0.phase = .loaded
         }
@@ -138,7 +159,7 @@ struct SpotlightFeatureTests {
             $0.phase = .loading
         }
         await clock.advance(by: .milliseconds(350))
-        await store.receive(\.searchResponse.success) {
+        await store.receive(\.searchResponse) {
             $0.results = [otherHit, folderHit, fileHit]
             $0.phase = .loaded
         }
@@ -164,7 +185,7 @@ struct SpotlightFeatureTests {
             $0.phase = .loading
         }
         await clock.advance(by: .milliseconds(350))
-        await store.receive(\.searchResponse.success) {
+        await store.receive(\.searchResponse) {
             $0.results = [folderHit, fileHit]
             $0.phase = .loaded
         }
@@ -182,7 +203,7 @@ struct SpotlightFeatureTests {
             $0.phase = .loading
         }
         await clock.advance(by: .milliseconds(350))
-        await store.receive(\.searchResponse.success) {
+        await store.receive(\.searchResponse) {
             $0.results = [fileHit]
             $0.phase = .loaded
         }
@@ -212,7 +233,7 @@ struct SpotlightFeatureTests {
             $0.query = Constants.longerTerm
         }
         await clock.advance(by: .milliseconds(350))
-        await store.receive(\.searchResponse.success) {
+        await store.receive(\.searchResponse) {
             $0.results = [fileHit]
             $0.phase = .loaded
         }
@@ -235,7 +256,7 @@ struct SpotlightFeatureTests {
             $0.phase = .loading
         }
         await clock.advance(by: .milliseconds(350))
-        await store.receive(\.searchResponse.failure) {
+        await store.receive(\.searchResponse) {
             $0.results = []
             $0.phase = .failed(searchFailureMessage(.network(TestHost.example)))
         }
@@ -251,7 +272,7 @@ struct SpotlightFeatureTests {
             $0.phase = .loading
         }
         await clock.advance(by: .milliseconds(350))
-        await store.receive(\.searchResponse.success) {
+        await store.receive(\.searchResponse) {
             $0.results = [fileHit, otherHit]
             $0.phase = .loaded
         }
@@ -287,7 +308,7 @@ struct SpotlightFeatureTests {
             $0.phase = .loading
         }
         await clock.advance(by: .milliseconds(350))
-        await store.receive(\.searchResponse.failure)
+        await store.receive(\.searchResponse)
         await store.receive(\.savedMatchesLoaded) { $0.phase = .loaded }
     }
 
@@ -307,7 +328,7 @@ struct SpotlightFeatureTests {
             $0.limit = Constants.secondStep
             $0.phase = .loading
         }
-        await store.receive(\.searchResponse.success) {
+        await store.receive(\.searchResponse) {
             $0.results = [fileHit, otherHit]
             $0.shortfall = nil
             $0.phase = .loaded

@@ -70,7 +70,7 @@ struct BrowseSearchRefreshTests {
         }
         await store.receive(\.offlineAvailabilityComputed)
         await clock.advance(by: TestSearchTiming.restOfDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.term
             $0.searchPhase = .loaded
             $0.searchResults = [deepHit]
@@ -199,7 +199,7 @@ struct BrowseSearchRefreshTests {
         }
         await store.receive(\.offlineAvailabilityComputed)
         search.open()
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchResults = [refreshed]
         }

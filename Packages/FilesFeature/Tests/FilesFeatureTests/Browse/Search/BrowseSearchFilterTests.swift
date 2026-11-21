@@ -14,6 +14,7 @@ struct BrowseSearchFilterTests {
     private enum Constants {
         static let clip = "clip.mp4"
         static let clipTerm = "clip"
+        static let letterTerm = "a"
     }
 
     private let image = SearchResultItem(name: TestFile.photo, path: "", kind: SearchResultItem.fileKind)
@@ -22,7 +23,7 @@ struct BrowseSearchFilterTests {
 
     private func searchingState(_ results: [SearchResultItem]) -> BrowseFeature.State {
         var state = BrowseFixtures.state("", title: TestFolder.files)
-        state.searchQuery = "a"
+        state.searchQuery = Constants.letterTerm
         state.searchResults = IdentifiedArray(uniqueElements: results)
         return state
     }
@@ -114,7 +115,7 @@ struct BrowseSearchFilterTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.clipTerm
             $0.searchPhase = .loaded
             $0.searchResults = [videoHit]
@@ -130,9 +131,9 @@ struct BrowseSearchFilterTests {
         let store = BrowseFixtures.store(state)
 
         // Image and video are pruned instead of stranding the list on an empty, unofferable filter.
-        await store.send(.searchResultsResponse(.success([document]))) {
+        await store.send(.searchResultsResponse(.success([document]), term: Constants.letterTerm)) {
             $0.searchPhase = .loaded
-            $0.searchAnsweredTerm = "a"
+            $0.searchAnsweredTerm = Constants.letterTerm
             $0.searchResults = [document]
             $0.selectedSearchCategories = []
         }

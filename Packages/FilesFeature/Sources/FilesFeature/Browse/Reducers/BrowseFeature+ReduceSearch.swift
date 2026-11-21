@@ -124,24 +124,28 @@ extension BrowseFeature {
             }
             return .send(.rowTapped(item))
 
-        case let .searchResultsResponse(.success(page)):
+        case let .searchResultsResponse(_, term) where term != SearchTerm(state.searchQuery).text:
+            // The fetches of one burst of typing can start out of order, and the one that starts
+            // last cancels the rest: an older term's answer then lands and the typed term's fetch
+            // is gone. Drop that answer and ask again for the term on screen.
+            return state.searchPhase == .loading ? fetchSearchResults(state, isDebounced: false) : .none
+
+        case let .searchResultsResponse(.success(page), term):
             state.searchPhase = .loaded
             // The server ranks its answer (names first, closest first, then contents by
-            // relevance), so it stays in that order. A newer term cancels the request, so an
-            // answer that arrives is always for the term typed now.
+            // relevance), so it stays in that order.
             state.searchResults = IdentifiedArray(page.items, id: \.id, uniquingIDsWith: { first, _ in first })
-            state.searchAnsweredTerm = SearchTerm(state.searchQuery).text
+            state.searchAnsweredTerm = term
             state.searchShortfall = SearchShortfall(page)
             // Drop any selected category the new results no longer contain, so the filter
             // can't strand the list on an empty set the sheet doesn't even offer.
             state.selectedSearchCategories.formIntersection(Set(state.availableSearchCategories))
             return .none
 
-        case let .searchResultsResponse(.failure(error)):
+        case let .searchResultsResponse(.failure(error), term):
             // Said under the results with Retry, otherwise a network blip during a search is
             // indistinguishable from a genuine empty result.
             state.searchPhase = .failed(searchFailureMessage(error))
-            let term = SearchTerm(state.searchQuery).text
             // Offline, the saved listings stand in (read now if this search has not yet).
             let readSaved = loadSavedSearchItemsIfNeeded(state)
             // This term's own answer (a failed refresh or Show more) stays; an earlier term's

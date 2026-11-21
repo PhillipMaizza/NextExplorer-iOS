@@ -107,9 +107,10 @@ extension BrowseFeature {
             if isDebounced {
                 try await clock.sleep(for: FilesClient.searchDebounce)
             }
-            try await send(.searchResultsResponse(apiResult {
-                try await filesClient.search(serverURL, scopePath, query, limit)
-            }))
+            try await send(.searchResultsResponse(
+                apiResult { try await filesClient.search(serverURL, scopePath, query, limit) },
+                term: query
+            ))
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)
     }

@@ -12,6 +12,7 @@ import TestUtils
 struct FavoritesSearchTests: FavoritesTestSupport {
     private enum Constants {
         static let term = "internet"
+        static let earlierTerm = "inter"
         static let bills = "Bills"
         static let internetPDF = "internet.pdf"
         static let photosInternet = "photos-internet.png"
@@ -72,7 +73,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         #expect(store.state.displayedFavorites == [vacation])
 
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = []
             $0.searchPhase = .loaded
         }
@@ -115,7 +116,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         }
         await clock.advance(by: FilesClient.searchDebounce)
         // Both hits merged into the results, alphabetically.
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = [billsHit, photosHit]
             $0.searchPhase = .loaded
         }
@@ -163,11 +164,31 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         #expect(queries.value.isEmpty)
 
         await clock.advance(by: TestSearchTiming.lastMoment)
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = [hit]
             $0.searchPhase = .loaded
         }
         #expect(queries.value == [Constants.term])
+    }
+
+    /// The fetches of one burst of typing can start out of order, so an earlier term's fetch may
+    /// outlive the typed term's and cancel it.
+    @Test("An earlier term's answer landing late is dropped and the typed term is asked at once")
+    func anEarlierTermsLateAnswerIsDroppedAndTheTypedTermAskedAgain() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await store.send(.searchQueryChanged(Constants.term)) {
+            $0.searchQuery = Constants.term
+            $0.searchPhase = .loading
+        }
+        await store.send(.fileSearchResponse(.success([]), term: Constants.earlierTerm))
+        await store.receive(\.fileSearchResponse) {
+            $0.fileSearchResults = [hit]
+            $0.searchPhase = .loaded
+        }
+        #expect(queries.value == [Constants.term], "asked without waiting out the debounce")
     }
 
     @Test("A typed space leaves the server's term unchanged, so the pending search keeps its wait")
@@ -185,7 +206,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
             $0.searchQuery = Constants.termWithSpace
         }
         await clock.advance(by: TestSearchTiming.restOfDebounce)
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = [hit]
             $0.searchPhase = .loaded
         }
@@ -204,7 +225,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         await store.send(.searchRetryTapped) {
             $0.searchPhase = .loading
         }
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = [hit]
             $0.searchPhase = .loaded
         }
@@ -254,7 +275,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         #expect(store.state.isSearchPending)
         await store.receive(\.offlineAvailabilityComputed)
         gate.open()
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = [hit]
             $0.searchPhase = .loaded
         }
@@ -302,7 +323,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         }
         await store.receive(\.offlineAvailabilityComputed)
         gate.open()
-        await store.receive(\.fileSearchResponse.success) {
+        await store.receive(\.fileSearchResponse) {
             $0.fileSearchResults = [hit]
             $0.searchPhase = .loaded
         }
@@ -393,7 +414,7 @@ struct FavoritesSearchTests: FavoritesTestSupport {
             FavoritesFeature()
         }
 
-        await store.send(.fileSearchResponse(.success([content, contains, hit]))) {
+        await store.send(.fileSearchResponse(.success([content, contains, hit]), term: Constants.term)) {
             $0.fileSearchResults = [hit, contains, content]
             $0.searchPhase = .loaded
         }

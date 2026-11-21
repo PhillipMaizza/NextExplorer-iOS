@@ -149,7 +149,7 @@ public struct DestinationPickerFeature {
         case onAppear
         case foldersResponse(Result<BrowseResult, FilesClientError>)
         case searchQueryChanged(String)
-        case searchResultsResponse(Result<[SearchResultItem], FilesClientError>)
+        case searchResultsResponse(Result<[SearchResultItem], FilesClientError>, term: String)
         case searchResultTapped(SearchResultItem)
         case recentsResponse([String])
         case recentTapped(String)
@@ -215,7 +215,12 @@ public struct DestinationPickerFeature {
                 guard isNewTerm else { return .none }
                 return search(&state)
 
-            case let .searchResultsResponse(.success(results)):
+            case let .searchResultsResponse(_, term) where term != SearchTerm(state.searchQuery).text:
+                // The fetches of one burst of typing can start out of order, and the one that starts
+                // last cancels the rest: drop an older term's answer and ask again for the typed one.
+                return state.searchPhase == .loading ? search(&state, isDebounced: false) : .none
+
+            case let .searchResultsResponse(.success(results), _):
                 state.searchPhase = .loaded
                 let source = state.purpose == .replaceFile ? state.items.first?.id : nil
                 state.searchResults = IdentifiedArray(
@@ -225,7 +230,7 @@ public struct DestinationPickerFeature {
                 )
                 return .none
 
-            case let .searchResultsResponse(.failure(error)):
+            case let .searchResultsResponse(.failure(error), _):
                 state.searchResults = []
                 state.searchPhase = .failed(error == .sessionExpired
                     ? L10n.Error.sessionExpired
@@ -357,7 +362,7 @@ public struct DestinationPickerFeature {
     }
 
     /// Recursive folder search scoped to the subtree under `directoryPath`, debounced.
-    private func search(_ state: inout State) -> Effect<Action> {
+    private func search(_ state: inout State, isDebounced: Bool = true) -> Effect<Action> {
         let term = SearchTerm(state.searchQuery)
         // A term too short to search is never sent.
         guard term.isSearchable else {
@@ -372,10 +377,13 @@ public struct DestinationPickerFeature {
         let filesClient = filesClient
         let clock = clock
         return .run { send in
-            try await clock.sleep(for: FilesClient.searchDebounce)
-            try await send(.searchResultsResponse(apiResult {
-                try await filesClient.search(serverURL, scope, query, Constants.searchLimit).items
-            }))
+            if isDebounced {
+                try await clock.sleep(for: FilesClient.searchDebounce)
+            }
+            try await send(.searchResultsResponse(
+                apiResult { try await filesClient.search(serverURL, scope, query, Constants.searchLimit).items },
+                term: query
+            ))
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)
     }

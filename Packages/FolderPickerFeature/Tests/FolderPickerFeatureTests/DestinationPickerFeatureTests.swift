@@ -346,7 +346,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchResults = [SearchResultItem(
                 name: Constants.summerFolder,
@@ -415,7 +415,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
         #expect(queries.value.isEmpty)
 
         await clock.advance(by: TestSearchTiming.lastMoment)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchResults = [SearchResultItem(
                 name: Constants.summerFolder,
@@ -441,7 +441,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
             $0.searchQuery = Constants.searchTermWithSpace
         }
         await clock.advance(by: TestSearchTiming.restOfDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchResults = [SearchResultItem(
                 name: Constants.summerFolder,
@@ -527,6 +527,7 @@ extension DestinationPickerFeatureTests {
 private enum Constants {
     static let shortTerm = "p"
     static let searchTerm = "sum"
+    static let longerSearchTerm = "summ"
     static let searchTermWithSpace = "sum "
     static let summerFolder = "Summer"
     static let workFolder = "Work"
@@ -542,11 +543,35 @@ extension DestinationPickerFeatureTests {
         state.searchPhase = .loading
         let store = TestStore(initialState: state) { DestinationPickerFeature() }
 
-        await store.send(.searchResultsResponse(.failure(.server(statusCode: 500)))) {
+        await store.send(.searchResultsResponse(.failure(.server(statusCode: 500)), term: Constants.searchTerm)) {
             $0.searchPhase = .failed(L10n.Browse.searchFailed)
         }
-        await store.send(.searchResultsResponse(.failure(.sessionExpired))) {
+        await store.send(.searchResultsResponse(.failure(.sessionExpired), term: Constants.searchTerm)) {
             $0.searchPhase = .failed(L10n.Error.sessionExpired)
         }
+    }
+
+    /// The fetches of one burst of typing can start out of order, so an earlier term's fetch may
+    /// outlive the typed term's and cancel it.
+    @Test("An earlier term's answer landing late is dropped and the typed term is asked at once")
+    func anEarlierTermsLateAnswerIsDroppedAndTheTypedTermAskedAgain() async {
+        let clock = TestClock()
+        let queries = LockIsolated<[String]>([])
+        let store = searchingStore(clock: clock, queries: queries)
+
+        await store.send(.searchQueryChanged(Constants.longerSearchTerm)) {
+            $0.searchQuery = Constants.longerSearchTerm
+            $0.searchPhase = .loading
+        }
+        await store.send(.searchResultsResponse(.success([]), term: Constants.searchTerm))
+        await store.receive(\.searchResultsResponse) {
+            $0.searchPhase = .loaded
+            $0.searchResults = [SearchResultItem(
+                name: Constants.summerFolder,
+                path: TestFolder.media,
+                kind: SearchResultItem.directoryKind
+            )]
+        }
+        #expect(queries.value == [Constants.longerSearchTerm], "asked without waiting out the debounce")
     }
 }

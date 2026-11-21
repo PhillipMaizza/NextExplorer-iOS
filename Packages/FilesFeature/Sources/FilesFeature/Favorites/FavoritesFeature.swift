@@ -173,7 +173,7 @@ public struct FavoritesFeature {
         case favoritesMoved(IndexSet, Int)
         case reorderResponse(Result<[Favorite], FilesClientError>)
         case searchQueryChanged(String)
-        case fileSearchResponse(Result<[SearchResultItem], FilesClientError>)
+        case fileSearchResponse(Result<[SearchResultItem], FilesClientError>, term: String)
         case searchRetryTapped
         /// The results changed, or what is kept offline did: find which results are on the device.
         case computeSearchOnDevice
@@ -439,7 +439,12 @@ public struct FavoritesFeature {
                 guard isNewTerm else { return .none }
                 return favoriteSearch(&state)
 
-            case let .fileSearchResponse(.success(results)):
+            case let .fileSearchResponse(_, term) where term != SearchTerm(state.searchQuery).text:
+                // The fetches of one burst of typing can start out of order, and the one that starts
+                // last cancels the rest: drop an older term's answer and ask again for the typed one.
+                return state.searchPhase == .loading ? favoriteSearch(&state, isDebounced: false) : .none
+
+            case let .fileSearchResponse(.success(results), _):
                 // Each favorite's answer is ranked on its own; merged, they are ranked again the way
                 // the server ranks one answer, closest name first, rather than alphabetically.
                 state.fileSearchResults = IdentifiedArray(
@@ -448,7 +453,7 @@ public struct FavoritesFeature {
                 state.searchPhase = .loaded
                 return .none
 
-            case let .fileSearchResponse(.failure(error)):
+            case let .fileSearchResponse(.failure(error), _):
                 // A first search with nothing on screen shows the full screen failure; a refine over
                 // existing results keeps them and surfaces a toast instead.
                 if state.fileSearchResults == nil {
@@ -850,13 +855,13 @@ public struct FavoritesFeature {
                 // Nothing saved at all is "offline"; saved data that matches nothing is an empty answer.
                 await send(
                     kept.matches.isEmpty && !kept.heldItems
-                        ? .fileSearchResponse(.failure(.offline))
-                        : .fileSearchResponse(.success(kept.matches))
+                        ? .fileSearchResponse(.failure(.offline), term: query)
+                        : .fileSearchResponse(.success(kept.matches), term: query)
                 )
             } else if hits.isEmpty, let firstFailure {
-                await send(.fileSearchResponse(.failure(firstFailure)))
+                await send(.fileSearchResponse(.failure(firstFailure), term: query))
             } else {
-                await send(.fileSearchResponse(.success(hits)))
+                await send(.fileSearchResponse(.success(hits), term: query))
             }
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)

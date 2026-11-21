@@ -502,7 +502,7 @@ public struct BrowseFeature {
         case searchRetryTapped
         /// The listings saved below the search's folder, read off the main actor.
         case searchSavedItemsLoaded([FileItem])
-        case searchResultsResponse(Result<SearchPage, FilesClientError>)
+        case searchResultsResponse(Result<SearchPage, FilesClientError>, term: String)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
         case renameTapped(FileItem)

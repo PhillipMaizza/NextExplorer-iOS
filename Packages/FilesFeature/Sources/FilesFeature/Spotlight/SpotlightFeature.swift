@@ -59,7 +59,7 @@ public struct SpotlightFeature {
 
     public enum Action: Equatable, Sendable {
         case queryChanged(String)
-        case searchResponse(Result<SearchPage, FilesClientError>)
+        case searchResponse(Result<SearchPage, FilesClientError>, term: String)
         case savedMatchesLoaded([SearchResultItem])
         case onDeviceComputed(Set<String>)
         case showMoreTapped
@@ -112,14 +112,19 @@ public struct SpotlightFeature {
                 state.phase = .loading
                 return search(state, isDebounced: true)
 
-            case let .searchResponse(.success(page)):
+            case let .searchResponse(_, term) where term != SearchTerm(state.query).text:
+                // The fetches of one burst of typing can start out of order, and the one that starts
+                // last cancels the rest: drop an older term's answer and ask again for the typed one.
+                return state.phase == .loading ? search(state, isDebounced: false) : .none
+
+            case let .searchResponse(.success(page), _):
                 state.results = IdentifiedArray(page.items, uniquingIDsWith: { first, _ in first })
                 state.shortfall = SearchShortfall(page)
                 state.activeIndex = nil
                 state.phase = .loaded
                 return findOnDevice(&state)
 
-            case .searchResponse(.failure(.offline)):
+            case .searchResponse(.failure(.offline), _):
                 // Without a connection what is kept on the device is still found, never invented.
                 state.results = []
                 state.shortfall = nil
@@ -136,7 +141,7 @@ public struct SpotlightFeature {
                 state.onDeviceIDs = ids
                 return .none
 
-            case let .searchResponse(.failure(error)):
+            case let .searchResponse(.failure(error), _):
                 state.results = []
                 state.onDeviceIDs = []
                 state.shortfall = nil
@@ -246,7 +251,7 @@ public struct SpotlightFeature {
                 page.items = folderItems + everywherePage.items
                 return page
             },
-            response: Action.searchResponse
+            response: { .searchResponse($0, term: term) }
         )
     }
 }

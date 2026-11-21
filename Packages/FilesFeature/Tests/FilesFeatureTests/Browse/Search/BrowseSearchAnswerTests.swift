@@ -72,7 +72,7 @@ struct BrowseSearchAnswerTests {
         #expect(store.state.isSearchPending)
 
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchResults = [newerHit]
             $0.searchAnsweredTerm = Constants.longerTerm
@@ -91,7 +91,7 @@ struct BrowseSearchAnswerTests {
             $0.searchAnsweredTerm = nil
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchResults = []
             $0.searchAnsweredTerm = Constants.longerTerm
@@ -125,7 +125,7 @@ struct BrowseSearchAnswerTests {
             $0.searchPhase = .loading
         }
         await clock.advance(by: FilesClient.searchDebounce)
-        await store.receive(\.searchResultsResponse.failure) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .failed(L10n.Browse.searchFailed)
             $0.searchResults = [photoMatch]
             $0.searchAnsweredTerm = nil
@@ -143,7 +143,7 @@ struct BrowseSearchAnswerTests {
         await store.send(.searchRetryTapped) {
             $0.searchPhase = .loading
         }
-        await store.receive(\.searchResultsResponse.failure) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .failed(L10n.Browse.searchFailed)
         }
         #expect(store.state.searchResults == [deepHit])
@@ -159,7 +159,7 @@ struct BrowseSearchAnswerTests {
         await store.send(.searchRetryTapped) {
             $0.searchPhase = .loading
         }
-        await store.receive(\.searchResultsResponse.success) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchResults = [newerHit]
         }
@@ -174,7 +174,7 @@ struct BrowseSearchAnswerTests {
         await store.send(.searchRetryTapped) {
             $0.searchPhase = .loading
         }
-        await store.receive(\.searchResultsResponse.failure) {
+        await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .failed(FilesClientError.sessionExpired.userMessage)
         }
     }
