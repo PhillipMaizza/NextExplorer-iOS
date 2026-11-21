@@ -25,3 +25,4 @@ refactor. Number it after the last one and keep it short. A record that stops ho
 | [0014](0014-mac-ui-tests-type-on-abc.md) | Mac UI tests type on the ABC layout |
 | [0015](0015-fixed-beat-polling.md) | Polling runs on fixed beats |
 | [0016](0016-code-comments-ratchet.md) | Code carries no comments; a ratchet holds the rest |
+| [0017](0017-search-answers-carry-their-term.md) | Search answers carry their term |

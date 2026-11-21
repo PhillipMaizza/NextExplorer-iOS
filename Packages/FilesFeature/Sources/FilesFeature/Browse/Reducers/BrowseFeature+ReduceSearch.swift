@@ -125,15 +125,10 @@ extension BrowseFeature {
             return .send(.rowTapped(item))
 
         case let .searchResultsResponse(_, term) where term != SearchTerm(state.searchQuery).text:
-            // The fetches of one burst of typing can start out of order, and the one that starts
-            // last cancels the rest: an older term's answer then lands and the typed term's fetch
-            // is gone. Drop that answer and ask again for the term on screen.
             return state.searchPhase == .loading ? fetchSearchResults(state, isDebounced: false) : .none
 
         case let .searchResultsResponse(.success(page), term):
             state.searchPhase = .loaded
-            // The server ranks its answer (names first, closest first, then contents by
-            // relevance), so it stays in that order.
             state.searchResults = IdentifiedArray(page.items, id: \.id, uniquingIDsWith: { first, _ in first })
             state.searchAnsweredTerm = term
             state.searchShortfall = SearchShortfall(page)

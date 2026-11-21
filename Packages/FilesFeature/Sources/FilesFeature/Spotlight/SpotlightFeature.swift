@@ -113,8 +113,6 @@ public struct SpotlightFeature {
                 return search(state, isDebounced: true)
 
             case let .searchResponse(_, term) where term != SearchTerm(state.query).text:
-                // The fetches of one burst of typing can start out of order, and the one that starts
-                // last cancels the rest: drop an older term's answer and ask again for the typed one.
                 return state.phase == .loading ? search(state, isDebounced: false) : .none
 
             case let .searchResponse(.success(page), _):

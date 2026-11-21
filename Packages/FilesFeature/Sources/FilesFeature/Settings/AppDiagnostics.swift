@@ -15,7 +15,6 @@ enum AppDiagnostics {
         Bundle.main.buildNumber ?? missingValue
     }
 
-    /// The version and build line Settings and About show.
     static var versionText: String {
         L10n.Settings.appVersion(appVersion, build)
     }

@@ -1,7 +1,6 @@
 @testable import FilesFeature
 import Testing
 
-/// The one table both editors read: an extension alias reaches the same language on iPhone and Mac.
 struct CodeLanguageTests {
     private enum Kind {
         static let jsx = "jsx"

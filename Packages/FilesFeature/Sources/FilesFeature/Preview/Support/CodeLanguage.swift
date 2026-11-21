@@ -1,11 +1,7 @@
-/// The code kinds the editor highlights on every platform, and the file extensions that name
-/// each: the same curated set `FileTypeIcon`'s badge table dedicates a color to. Each platform
-/// maps a case to its own grammar, and the exhaustive switch makes it cover every one.
 enum CodeLanguage: CaseIterable {
     case json, javaScript, typeScript, tsx, html, css, scss, python, ruby, php, go, rust, java, c, cpp
     case cSharp, sql, yaml, toml, markdown, bash, swift
 
-    /// `nil` falls back to plain, unhighlighted text.
     init?(kind: String) {
         switch kind.lowercased() {
         case "json": self = .json

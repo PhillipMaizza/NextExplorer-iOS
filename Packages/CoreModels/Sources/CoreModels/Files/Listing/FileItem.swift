@@ -71,7 +71,6 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     private static let officeDocumentExtensions: Set<String> = [
         "doc", "docx", "xls", "xlsx", "ppt", "pptx", "odt", "ods", "odp", "rtf",
     ]
-    /// Font files, which the text viewer can't read and the type icon draws as a font.
     public static let fontExtensions: Set<String> = ["ttf", "otf", "woff", "woff2"]
     private static let knownBinaryExtensions: Set<String> = fontExtensions.union([
         "exe", "msi", "apk", "dmg", "pkg", "deb", "rpm",
@@ -144,12 +143,10 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         Self.isHTML(kind: kind)
     }
 
-    /// `kind` names a web page, `html` or `htm`, in any case.
     public static func isHTML(kind: String) -> Bool {
         ["html", "htm"].contains(kind.lowercased())
     }
 
-    /// `kind` names a Markdown file, `md` or `markdown`, in any case.
     public static func isMarkdown(kind: String) -> Bool {
         ["md", "markdown"].contains(kind.lowercased())
     }

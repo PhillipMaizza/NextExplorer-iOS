@@ -20,6 +20,11 @@ A cache entry read under the wrong account shows one person's files to another.
 - Entries written by releases before scoping carry no prefix, so no account wipe reaches them.
   `LegacyCacheCleanup` removes them once, using the names in `CacheLayout`.
 
+- `RebuildableCaches.clearAll()` empties every store the server can refill (listings, saved lists,
+  previews, decoded and upload thumbnails, editor ETags) at fresh sign in, teardown and Clear
+  Cache, off main inside the effect. Offline pins and downloads are the user's files; callers
+  that also drop those do it themselves.
+
 ## Consequences
 An empty scope is the legacy unscoped namespace; tests that never set a scope use it. Wipe stamps
 on account boundaries (`markEveryAccountWiped`) make in flight downloads of the old account fail

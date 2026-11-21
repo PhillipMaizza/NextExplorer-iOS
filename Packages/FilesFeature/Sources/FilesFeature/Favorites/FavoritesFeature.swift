@@ -440,8 +440,6 @@ public struct FavoritesFeature {
                 return favoriteSearch(&state)
 
             case let .fileSearchResponse(_, term) where term != SearchTerm(state.searchQuery).text:
-                // The fetches of one burst of typing can start out of order, and the one that starts
-                // last cancels the rest: drop an older term's answer and ask again for the typed one.
                 return state.searchPhase == .loading ? favoriteSearch(&state, isDebounced: false) : .none
 
             case let .fileSearchResponse(.success(results), _):
