@@ -1,6 +1,5 @@
 import Foundation
 
-/// One row of a transfer queue, whichever queue it comes from.
 struct TransferQueueRow: Identifiable {
     enum Status {
         case waiting

@@ -60,7 +60,6 @@ public struct FileVersionText: Decodable, Equatable, Sendable {
     }
 }
 
-/// One saved version of a file (`presentVersion` on the server).
 public struct FileVersion: Decodable, Equatable, Identifiable, Sendable {
     public let id: String
     public let size: Int64

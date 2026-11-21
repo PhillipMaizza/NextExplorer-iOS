@@ -106,7 +106,6 @@ extension FilesService {
         return try await sendReportingMessage(httpRequest, decoding: UserEnvelope.self).user
     }
 
-    /// `POST /api/users/:id/password` (admin) → 204.
     func setUserPassword(serverURL: URL, userID: String, newPassword: String) async throws {
         let url = serverURL.appendingPathComponent(APIPath.users).appendingPathComponent(userID)
             .appendingPathComponent(APIPath.Component.password)
@@ -137,14 +136,12 @@ extension FilesService {
         try Self.validateReportingMessage(data, response)
     }
 
-    /// `GET /api/users/:id/volumes` (admin, `USER_VOLUMES` feature).
     func userVolumes(serverURL: URL, userID: String) async throws -> [UserVolume] {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID)
         let request = Self.makeRequest(url: url, method: .get)
         return try await sendReportingMessage(request, decoding: UserVolumesEnvelope.self).volumes
     }
 
-    /// `POST /api/users/:id/volumes` → 201 `{ volume }`.
     func addUserVolume(serverURL: URL, userID: String, request: AddUserVolumeRequest) async throws -> UserVolume {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID)
         var httpRequest = Self.makeRequest(url: url, method: .post)
@@ -169,7 +166,6 @@ extension FilesService {
         return try await sendReportingMessage(httpRequest, decoding: UserVolumeEnvelope.self).volume
     }
 
-    /// `DELETE /api/users/:id/volumes/:volumeID` → 204.
     func removeUserVolume(serverURL: URL, userID: String, volumeID: String) async throws {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID).appendingPathComponent(volumeID)
         let request = Self.makeRequest(url: url, method: .delete)

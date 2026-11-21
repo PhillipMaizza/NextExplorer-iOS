@@ -1,5 +1,6 @@
 import AuthClient
 import FilesClient
+import Foundation
 
 /// Work the app does once at launch, before any screen reads stored data.
 public enum LaunchMigrations {
@@ -26,6 +27,7 @@ public enum LaunchMigrations {
         _ = start(steps: .live)
         Task.detached(priority: .utility) {
             LegacyCacheCleanup.runIfNeeded()
+            HTTPCookieStorage.shared.removeCookies(since: .distantPast)
             await PendingAccountWipeRecovery.runAtLaunch()
             // What an earlier run's thumbnails left over the cap goes before this run adds more.
             CacheAccountScope.trimPreviewCache()

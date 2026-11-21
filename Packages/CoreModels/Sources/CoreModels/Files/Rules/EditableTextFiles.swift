@@ -1,9 +1,5 @@
 import Foundation
 
-/// Which files the text editor opens, as the web client decides it
-/// (`frontend/src/config/editor.js`): its default list plus whatever the server adds through
-/// `EDITOR_EXTENSIONS` (`GET /api/features` → `editor.extensions`). Creating a new file is limited
-/// to these, since an empty `.jpg` or `.docx` is not something anyone can open and fill in.
 public enum EditableTextFiles {
     public static let defaultExtensions: Set<String> = [
         "txt", "md", "markdown", "csv", "tsv", "json", "json5", "yml", "yaml", "xml", "log", "ini",

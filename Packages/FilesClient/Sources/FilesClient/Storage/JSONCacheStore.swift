@@ -14,12 +14,6 @@ public struct CachedPayload: Equatable, Sendable {
     }
 }
 
-/// A small keyed disk cache for the list endpoints that have no directory of their own
-/// (Favorites, Shared). Each caller owns its key namespace; the store only hashes the key, writes
-/// the payload atomically, and evicts by age once it outgrows its caps. Every operation is best
-/// effort: a miss, a write failure or a corrupt entry is swallowed so the caller falls back to
-/// the network. Mirrors `DirectoryCacheStore`'s disk hygiene (encrypted at rest, excluded from
-/// backup) since these payloads are the user's data too.
 public struct JSONCacheStore: Sendable {
     public var read: @Sendable (_ key: String) -> CachedPayload?
     /// The store stamps `fetchedAt` itself (write time), so callers need no clock dependency.
@@ -62,8 +56,6 @@ public struct JSONCacheStore: Sendable {
         clearScope(scope)
     }
 
-    /// A view of this store pinned to `scope`, so an async request can write the namespace that
-    /// was active when it started even if the active account changes meanwhile.
     public func bound(to scope: String) -> JSONCacheStore {
         bindToScope?(scope) ?? self
     }
@@ -83,9 +75,6 @@ extension JSONCacheStore: DependencyKey {
         static let maxEntryBytes = 2 * 1024 * 1024
     }
 
-    /// Every disk access runs on one serial queue: a write is queued and returns at once, so a reducer
-    /// saving a list never waits on the disk; a read, removal or clear waits for the writes queued
-    /// before it, so it sees them and none lands after it.
     final class Storage: @unchecked Sendable {
         private let queue = DispatchQueue(label: "JSONCacheStore.Storage", qos: .utility)
         private let fileManager = FileManager.default
@@ -113,8 +102,6 @@ extension JSONCacheStore: DependencyKey {
 
         private func fileURL(scope: String, key: String) -> URL? {
             guard let directory else { return nil }
-            // The caller's key (favorites, shares.byMe, ...) carries no server, so fold the active
-            // account in: two servers' Favorites/Shared lists must not share one cache entry.
             let name = CacheLayout.key(scope, key).sha256Hex()
             return directory
                 .appendingPathComponent(CacheAccountScope.scopedFileName(name, scope: scope))

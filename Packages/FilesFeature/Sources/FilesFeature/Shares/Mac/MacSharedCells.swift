@@ -89,7 +89,6 @@
         }
     }
 
-    /// The Shared by cell: the sharer's avatar and name.
     struct MacSharedSharerCell: View {
         let name: String
 

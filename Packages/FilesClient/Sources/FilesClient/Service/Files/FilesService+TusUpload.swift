@@ -16,13 +16,9 @@ extension FilesService {
         case gone
         /// Worth another attempt from the offset the server reports.
         case retryable(FilesClientError)
+        case pieceTooLarge(FilesClientError)
     }
 
-    // shortcut: the upload id is not saved across launches, so a killed app restarts the file; persist it when Share Extension uploads move to TUS.
-    // shortcut: no stall watchdog and no step down when a piece gets a 413, only a refused direct upload walks the ladder.
-    /// Sends one file as a resumable upload in `chunkSizeBytes` pieces. A piece that fails in
-    /// transit is resumed from the offset the server reports; an upload the server forgot is
-    /// started once more from the beginning.
     func uploadChunked(
         serverURL: URL,
         fileURL: URL,
@@ -57,14 +53,26 @@ extension FilesService {
         onProgress: @Sendable @escaping (Double) -> Void
     ) async throws {
         let size = try Self.fileSize(of: fileURL)
-        let uploadURL = try await createTusUpload(
-            serverURL: serverURL, size: size, fileName: fileName, destination: destination
+        let resume = try TusResumeMemory(
+            serverURL: serverURL, scope: activeScope(), destination: destination, fileName: fileName,
+            fingerprint: TusResumeMemory.fingerprint(of: fileURL, size: size)
         )
+        var offset = 0
+        let uploadURL: URL
+        if let saved = resume.uploadURL, let savedOffset = try? await tusOffset(uploadURL: saved), savedOffset <= size {
+            uploadURL = saved
+            offset = savedOffset
+        } else {
+            uploadURL = try await createTusUpload(
+                serverURL: serverURL, size: size, fileName: fileName, destination: destination
+            )
+            resume.uploadURL = uploadURL
+        }
         do {
-            var offset = 0
             var failures = 0
+            var pieceBytes = chunkSizeBytes
             while offset < size {
-                let length = min(chunkSizeBytes, size - offset)
+                let length = min(pieceBytes, size - offset)
                 do {
                     offset = try await sendTusChunk(
                         uploadURL: uploadURL, fileURL: fileURL, offset: offset, length: length,
@@ -75,10 +83,19 @@ extension FilesService {
                     failures += 1
                     guard failures <= TusConstants.maxRetries else { throw error }
                     offset = try await tusOffset(uploadURL: uploadURL)
+                } catch let TusFailure.pieceTooLarge(error) {
+                    guard let smaller = UploadMode.fallbackLadderMiB
+                        .first(where: { $0 * UploadSettings.bytesPerMiB < length })
+                    else { throw error }
+                    pieceBytes = smaller * UploadSettings.bytesPerMiB
                 }
             }
+            resume.uploadURL = nil
             onProgress(1)
         } catch {
+            if !Self.isTransient(error) {
+                resume.uploadURL = nil
+            }
             if Task.isCancelled || error is CancellationError {
                 let request = TusUpload.deleteRequest(uploadURL: uploadURL)
                 let service = self
@@ -152,6 +169,8 @@ extension FilesService {
             return next
         case HTTPStatus.notFound, HTTPStatus.gone:
             throw TusFailure.gone
+        case HTTPStatus.payloadTooLarge:
+            throw TusFailure.pieceTooLarge(Self.tusFailure(data, response))
         case HTTPStatus.conflict:
             throw TusFailure.retryable(Self.tusFailure(data, response))
         default:
@@ -207,6 +226,14 @@ extension FilesService {
               !text.isEmpty, !text.hasPrefix("{"), !text.hasPrefix("<")
         else { return nil }
         return text
+    }
+
+    private static func isTransient(_ error: Error) -> Bool {
+        guard !Task.isCancelled, let error = error as? FilesClientError else { return false }
+        switch error {
+        case .network, .timedOut: return true
+        default: return false
+        }
     }
 
     static func fileSize(of url: URL) throws -> Int {

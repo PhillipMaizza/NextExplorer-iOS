@@ -62,7 +62,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
     }
 
     /// Reconstructs the `HTTPCookie` this session was captured from, so it can be
-    /// reinstalled into `HTTPCookieStorage.shared` on app relaunch. It is always session only:
+    /// reinstalled into `HTTPCookieStorage.appSession` on app relaunch. It is always session only:
     /// a cookie with an expiry is written to `Library/Cookies`, and the token belongs in the Keychain
     /// alone. `expiresAt` stays on the credentials for the app's own expiry handling.
     public var httpCookie: HTTPCookie? {

@@ -7,7 +7,6 @@ public enum PreviewCanvas {
     case window
     /// The Mac Settings window, sidebar included.
     case settingsWindow
-    /// One pane of the Mac Settings window.
     case settingsPane
     /// A file table on its own.
     case table
@@ -35,7 +34,6 @@ public enum PreviewCanvas {
 }
 
 public extension View {
-    /// Sizes a preview to a named canvas.
     func previewCanvas(_ canvas: PreviewCanvas) -> some View {
         frame(width: canvas.size.width, height: canvas.size.height)
     }

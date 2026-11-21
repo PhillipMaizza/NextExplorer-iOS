@@ -188,7 +188,7 @@ extension FilesClientLiveTests {
 
             try await makeClient().uploadFile(serverURL, fileURL, TestFile.notes, TestFolder.inbox) { _ in }
 
-            #expect(StubURLProtocol.requests.map(\.httpMethod) == ["POST", "GET", "POST", "PATCH"])
+            #expect(StubURLProtocol.requests.map(\.httpMethod) == ["GET", "POST", "GET", "POST", "PATCH"])
             #expect(memory.mebibytes == 96)
         }
 
@@ -333,6 +333,75 @@ extension FilesClientLiveTests {
             try await makeClient().uploadFile(serverURL, fileURL, TestFile.notes, TestFolder.inbox) { _ in }
 
             #expect(StubURLProtocol.requests.map(\.httpMethod) == ["GET", "POST", "PATCH"])
+        }
+
+        @Test
+        func aSmallFileGoesAsPiecesWhenTheAdminForcedChunking() async throws {
+            resetStubs()
+            try stubForcedChunking()
+            StubURLProtocol.methodStubs["PATCH \(uploadPath)"] = tusStub(
+                204, headers: [TusUpload.Header.uploadOffset: "4"]
+            )
+            let fileURL = try makeTempFile(contents: "abcd")
+            defer { try? FileManager.default.removeItem(at: fileURL) }
+
+            try await makeClient().uploadFile(serverURL, fileURL, TestFile.notes, TestFolder.inbox) { _ in }
+
+            #expect(StubURLProtocol.requests.map(\.httpMethod) == ["GET", "POST", "PATCH"])
+        }
+
+        @Test
+        func anUploadCutOffByAnEndedProcessResumesFromTheServerOffset() async throws {
+            resetStubs()
+            StubURLProtocol.methodStubs["HEAD \(uploadPath)"] = tusStub(
+                200, headers: [TusUpload.Header.uploadOffset: "2"]
+            )
+            StubURLProtocol.methodStubs["PATCH \(uploadPath)"] = tusStub(
+                204, headers: [TusUpload.Header.uploadOffset: "4"]
+            )
+            let fileURL = try makeTempFile(contents: "abcd")
+            defer { try? FileManager.default.removeItem(at: fileURL) }
+            let service = FilesService(networkClient: .live(protocolClasses: [StubURLProtocol.self]))
+            let resume = try TusResumeMemory(
+                serverURL: serverURL, scope: service.activeScope(), destination: TestFolder.inbox,
+                fileName: TestFile.notes, fingerprint: TusResumeMemory.fingerprint(of: fileURL, size: 4)
+            )
+            resume.uploadURL = TusUpload.uploadURL(serverURL: serverURL, location: uploadPath)
+            defer { resume.uploadURL = nil }
+
+            try await service.uploadChunked(
+                serverURL: serverURL, fileURL: fileURL, fileName: TestFile.notes,
+                destination: TestFolder.inbox, chunkSizeBytes: 4
+            ) { _ in }
+
+            let sent = StubURLProtocol.requests
+            #expect(sent.map(\.httpMethod) == ["HEAD", "PATCH"])
+            #expect(sent[1].value(forHTTPHeaderField: TusUpload.Header.uploadOffset) == "2")
+            #expect(resume.uploadURL == nil)
+        }
+
+        @Test
+        func aPieceRefusedForItsSizeIsSentAgainSmaller() async throws {
+            resetStubs()
+            try stubForcedChunking()
+            let size = UploadMode.largeFileBytes + 1
+            StubURLProtocol.methodSequences["PATCH \(uploadPath)"] = [
+                tusStub(413),
+                tusStub(204, headers: [TusUpload.Header.uploadOffset: String(UploadMode.largeFileBytes)]),
+                tusStub(204, headers: [TusUpload.Header.uploadOffset: String(size)]),
+            ]
+            let fileURL = try makeSparseFile(bytes: size)
+            defer { try? FileManager.default.removeItem(at: fileURL) }
+            let service = FilesService(networkClient: .live(protocolClasses: [StubURLProtocol.self]))
+
+            try await service.uploadChunked(
+                serverURL: serverURL, fileURL: fileURL, fileName: TestFile.notes,
+                destination: TestFolder.inbox, chunkSizeBytes: 16 * UploadSettings.bytesPerMiB
+            ) { _ in }
+
+            let offsets = StubURLProtocol.requests.filter { $0.httpMethod == "PATCH" }
+                .map { $0.value(forHTTPHeaderField: TusUpload.Header.uploadOffset) }
+            #expect(offsets == ["0", "0", String(UploadMode.largeFileBytes)])
         }
 
         @Test

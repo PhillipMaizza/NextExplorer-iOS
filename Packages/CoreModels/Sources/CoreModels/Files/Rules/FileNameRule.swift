@@ -1,8 +1,5 @@
 import Foundation
 
-/// Client side mirror of the backend `ensureValidName` (`backend/src/utils/pathUtils.js`), so an
-/// obviously bad file or folder name is caught before a round trip. The server stays the final
-/// authority: a name that passes here can still be refused (a duplicate, a permission).
 public enum FileNameRule {
     public enum Problem: Equatable, Sendable {
         /// `.` or `..`.

@@ -93,7 +93,6 @@ final class ShareViewController: PlatformViewController {
 }
 
 private extension Reducer where State == ShareUploadFeature.State, Action == ShareUploadFeature.Action {
-    /// Runs `perform` on the main actor when the feature asks to close.
     func onClose(_ perform: @escaping @MainActor (Bool) -> Void) -> some ReducerOf<ShareUploadFeature> {
         CombineReducers {
             self

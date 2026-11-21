@@ -3,10 +3,6 @@ import FilesClient
 import SwiftUI
 import WebKit
 
-/// Joins an attacker influenceable relative path (archive entry name, HTML `src`/`href`
-/// value) under a trusted base directory and returns it only when the standardized result
-/// stays inside that base: blocks `..` traversal that would otherwise let a crafted archive
-/// or HTML file write outside its sandbox folder.
 enum SafeDestination {
     static func within(_ baseDirectory: URL, _ relativePath: String) -> URL? {
         let base = baseDirectory.standardizedFileURL
@@ -16,13 +12,6 @@ enum SafeDestination {
     }
 }
 
-/// Renders HTML as a real compiled page: the "Rendered" side of the Settings "HTML Files"
-/// toggle. `loadHTMLString(_:baseURL:)` alone can't resolve relative `<link href>`/`<script
-/// src>` references (there's no real base URL, the content is a fetched string, not a local
-/// file): so `resolveAsset` fetches same folder assets first (from the server or, for
-/// archive internal HTML, from the same open archive: see the two call sites), writes
-/// everything into one local directory, and loads via `loadFileURL` instead, which does
-/// resolve relative paths against its neighbors on disk.
 struct HTMLRenderedView: View {
     let cacheKey: String
     let html: String
@@ -69,10 +58,6 @@ struct HTMLRenderedView: View {
         into directory: URL,
         resolveAsset: (String) async -> URL?
     ) async -> URL? {
-        // Always `.html`, never `fileName`'s real extension: `loadFileURL` has WebKit infer
-        // MIME type from the file's own extension, and the content written here is always
-        // HTML, Markdown included (converted upstream). Written out as `README.md`, WebKit
-        // showed the converted HTML source as plain text instead of rendering it.
         let mainFileURL = directory.appendingPathComponent(Constants.pageFileName)
         let assetPaths: [String]? = await Task.detached(priority: .userInitiated) {
             try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -83,9 +68,6 @@ struct HTMLRenderedView: View {
         for relativePath in assetPaths {
             guard !Task.isCancelled else { return nil }
             guard let downloadedURL = await resolveAsset(relativePath) else { continue }
-            // Root absolute references (`/assets/app.js`) are resolved by `resolveAsset`
-            // relative to the file's own folder too (there's no real site root to anchor
-            // them to): strip the leading slash to place them the same way on disk.
             let localRelativePath = relativePath.hasPrefix("/") ? String(relativePath.dropFirst()) : relativePath
             guard let destinationURL = SafeDestination.within(directory, localRelativePath) else { continue }
             await Task.detached(priority: .userInitiated) {
@@ -159,10 +141,6 @@ enum RelativeAssetPath {
     }
 }
 
-/// Blocks every load that is not a local file or inline data (one rule each: WebKit's rule
-/// patterns have no alternation). The navigation delegate only sees
-/// page navigations: images, stylesheets, fonts and media in an untrusted page would otherwise
-/// still reach the network, telling a stranger the reader's address and when the file was opened.
 @MainActor
 enum LocalOnlyContentRules {
     private static let identifier = "LocalOnly"

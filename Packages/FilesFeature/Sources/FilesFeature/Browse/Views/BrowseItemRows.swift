@@ -86,7 +86,6 @@ struct BrowseGridCells<Menu: View>: View {
     }
 }
 
-/// The rows of a folder in list mode.
 struct BrowseFolderRows<Menu: View>: View {
     let store: StoreOf<BrowseFeature>
     let source: BrowsePreviewSource

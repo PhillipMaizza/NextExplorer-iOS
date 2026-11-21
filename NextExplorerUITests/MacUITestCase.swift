@@ -87,7 +87,6 @@
             return app.buttons[identifiers[title] ?? title].firstMatch
         }
 
-        /// An item of the Go menu, opened first.
         func goMenuItem(_ title: String, in app: XCUIApplication) -> XCUIElement {
             app.menuBars.menuBarItems[L10n.Menu.go].click()
             return app.menuBars.menuItems[title]

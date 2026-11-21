@@ -7,7 +7,6 @@ import SwiftUI
 private enum Constants {
     /// Inset of a footer row's icon inside its pill, lining it up with the section rows above.
     static let footerRowInset: CGFloat = .space16
-    /// Icon size for the iPad sidebar rows.
     static let sidebarIconSize: CGFloat = .iconMedium
     /// Space between a sidebar row's icon and its title, the same in every row.
     static let iconTitleSpacing: CGFloat = .space12

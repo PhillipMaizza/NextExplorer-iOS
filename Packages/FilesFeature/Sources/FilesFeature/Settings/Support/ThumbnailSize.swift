@@ -46,7 +46,6 @@ public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {
         max(columnCount - 1, 2)
     }
 
-    /// A folder column's narrowest width on a regular width screen.
     public var minimumFolderColumnWidth: CGFloat {
         switch self {
         case .small: 160

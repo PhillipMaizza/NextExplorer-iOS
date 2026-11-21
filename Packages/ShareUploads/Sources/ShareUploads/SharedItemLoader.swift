@@ -41,7 +41,6 @@ public enum SharedItemLoader {
         return [still, movie].compactMap { $0 }
     }
 
-    /// The paired movie shares the still's name, with the movie's own extension.
     static func pairedMovieName(stillName: String, movieType: UTType) -> String {
         let base = (stillName as NSString).deletingPathExtension
         guard let fileExtension = movieType.preferredFilenameExtension else { return base }
@@ -130,8 +129,6 @@ public enum SharedItemLoader {
         return (Double(position) + fraction) / Double(count)
     }
 
-    /// The provider's temporary copy only lives for its callback, so the envelope is written there.
-    /// Cancelling stops the copy itself, not just the wait for it.
     static func stageRepresentation(
         type: UTType,
         suggestedName: String?,

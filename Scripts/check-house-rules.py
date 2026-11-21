@@ -21,6 +21,7 @@ or an oversized file grows, so older code is never blocked; it is fixed when tou
                         a line "!prefix" there exempts paths starting with prefix
   localization drift    strings.tsv or a translation changed but the generated files were not regenerated
   test determinism      Scripts/check-test-determinism.py on the staged tests
+  comment ratchet       Scripts/check-comments.py: no Swift file gains comment lines over its baseline
   lint                  swiftformat and swiftlint on the staged Swift files
   commit message        "NXTIOS-1234: what changed", a body saying why, no co author or generator lines
   branch name           feature/NXTIOS-1234-short-slug, main or release/*
@@ -266,6 +267,23 @@ def check_determinism(changed):
     return [] if run.returncode == 0 else [(run.stdout + run.stderr).strip()]
 
 
+def check_comments(changed, ref):
+    """The comment ratchet over the tree as staged (`ref` None) or as in a commit."""
+    if not any(path.endswith(".swift") or path.startswith("Scripts/comment") for path in changed):
+        return []
+    with tempfile.TemporaryDirectory() as temp:
+        into = pathlib.Path(temp)
+        files = tracked(["."], ref)
+        if "Scripts/comment-baseline.json" not in files:
+            return []
+        swift = [path for path in files if path.endswith(".swift")]
+        materialize([*swift, "Scripts/check-comments.py", "Scripts/comment-baseline.json"], ref, into)
+        subprocess.run(["git", "init", "-q"], cwd=into, check=True)
+        subprocess.run(["git", "add", "-A"], cwd=into, check=True)
+        run = subprocess.run([sys.executable, str(into / "Scripts/check-comments.py")], capture_output=True, text=True)
+    return [] if run.returncode == 0 else [(run.stdout + run.stderr).strip()]
+
+
 def check_lint(changed):
     swift = [path for path in changed if path.endswith(".swift") and path not in GENERATED_L10N]
     if not swift:
@@ -329,6 +347,7 @@ def main():
         findings += check_branch(git("branch", "--show-current").strip())
         findings += check_localization(changed, None)
         findings += check_determinism(changed)
+        findings += check_comments(changed, None)
         findings += check_lint(changed)
     else:
         base = git("merge-base", args.base, "HEAD").strip()
@@ -339,6 +358,7 @@ def main():
             return 0
         findings, changed = check_change([f"{base}...HEAD"], lambda p: f"{base}:{p}", lambda p: f"HEAD:{p}", denylist)
         findings += check_localization(changed, "HEAD")
+        findings += check_comments(changed, "HEAD")
         for sha in git("rev-list", "--no-merges", f"{base}..HEAD").split():
             for finding in check_commit_message(git("log", "-1", "--format=%B", sha), denylist):
                 findings.append(f"{sha[:8]}: {finding}")

@@ -1,10 +1,5 @@
 import Foundation
 
-/// Response from `POST /api/files/delete-impact`, confirmed against
-/// `backend/src/services/fileTransferService.js`'s `getDeleteImpact`: the share links anchored to
-/// the items about to be deleted, and, on a server with a trash, where each item would go. Only
-/// counts are modelled: the server also returns the share rows, but the confirmation, like the
-/// web client's, only says how many links are affected.
 public struct DeleteImpact: Decodable, Equatable, Sendable {
     public let shareCount: Int
     /// `nil` on a server older than the trash, which deletes for good.

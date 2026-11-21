@@ -718,7 +718,6 @@ private func previewTransfer(_ items: [FileItem], _ destination: String) -> Tran
     )
 }
 
-/// An empty file named `name` in the temporary folder `folder`, standing in for a download.
 private func emptyStandIn(named name: String, in folder: String) -> URL {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(folder, isDirectory: true)
     try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

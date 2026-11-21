@@ -1,7 +1,5 @@
 import Foundation
 
-/// Where the disk caches live and how their entries are named, in one place so the stores that
-/// write them and the one time cleanup of the entries an older release wrote agree.
 public enum CacheLayout {
     /// Under Application Support.
     public static let directoryCacheName = "DirectoryCache"

@@ -42,7 +42,6 @@ public enum UITestArea: String, CaseIterable, Sendable {
         Set((value ?? "").split(separator: separator).compactMap { UITestArea(rawValue: String($0)) })
     }
 
-    /// The launch value naming `areas`.
     public static func launchValue(_ areas: Set<UITestArea>) -> String {
         areas.map(\.rawValue).sorted().joined(separator: String(separator))
     }

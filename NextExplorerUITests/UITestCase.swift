@@ -11,7 +11,6 @@ class UITestCase: XCTestCase {
     enum Fixture {
         static let folder = UITestFixture.Folder.documents.name
         static let file = UITestFixture.File.notes.name
-        /// An image file in the root fixture listing.
         static let imageFile = UITestFixture.File.vacation.name
         static let searchQuery = UITestFixture.File.vacation.stem
         /// Part of `file`'s name, so it is among the search results.
@@ -20,7 +19,6 @@ class UITestCase: XCTestCase {
         static let searchHit = UITestFixture.File.quarterlyReport.name
         /// The shortest query the app searches (mirrors `FilesClient.minimumSearchTermLength`).
         static let minimumSearchLength = 2
-        /// Image hit the mocked search returns.
         static let imageSearchHit = UITestFixture.File.beach.name
         /// Hit only a search from the root returns.
         static let widerSearchHit = UITestFixture.File.archiveNotes.name

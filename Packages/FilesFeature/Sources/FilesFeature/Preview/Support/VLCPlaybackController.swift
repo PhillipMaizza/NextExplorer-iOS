@@ -54,7 +54,7 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
             // libvlc has no http cookie option; its http access reads only the per media
             // cookie jar, which must be populated before play(). Feed each session cookie as a
             // Set-Cookie value scoped to the request host.
-            let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
+            let cookies = HTTPCookieStorage.appSession.cookies(for: url) ?? []
             if let host = url.host {
                 for cookie in cookies {
                     media.storeCookie("\(cookie.name)=\(cookie.value)", forHost: host, path: cookie.path)

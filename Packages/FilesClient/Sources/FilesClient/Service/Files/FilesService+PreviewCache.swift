@@ -17,9 +17,6 @@ extension FilesService {
     /// rendered PDF first pages.
     static let flatScopedCacheSubdirectories = CacheLayout.flatScopedDirectories
 
-    /// Total byte ceiling for the on disk preview + raw download cache. Without it the cache
-    /// only ever grows (each previewed/downloaded file is added, never reclaimed) and can fill
-    /// the device, since `Library/Caches` is only purged under severe OS storage pressure.
     static let previewCacheMaxBytes: Int64 = 512 * 1024 * 1024
 
     private static let evictionLock = NSLock()
@@ -428,12 +425,6 @@ extension FilesService {
         "\(item.dateModified.timeIntervalSince1970)|\(item.size)"
     }
 
-    // shortcut: files up to 8 MiB always go direct even when chunking is forced, since no proxy cuts them off; check size first if that changes.
-    /// Uploads one file the way the server and this origin's history call for: a single multipart
-    /// request (`uploadDirect`), or resumable pieces (`uploadChunked`) when the admin forced them
-    /// or a direct request was refused for its size and auto fallback is on. Files under
-    /// `UploadMode.largeFileBytes` always go direct unless a refusal says otherwise, so a folder of
-    /// small files never asks for the settings.
     func uploadFile(
         serverURL: URL,
         fileURL: URL,
@@ -442,10 +433,8 @@ extension FilesService {
         onProgress: @Sendable @escaping (Double) -> Void
     ) async throws {
         let size = (try? Self.fileSize(of: fileURL)) ?? 0
-        var settings: UploadSettings?
-        if size > UploadMode.largeFileBytes {
-            settings = try? await fetchSystemSettings(serverURL: serverURL).uploads
-        }
+        let fetchSettings = { try? await fetchSystemSettings(serverURL: serverURL).uploads }
+        var settings = await uploadSettings.settings(for: serverURL, fetch: fetchSettings)
         let memory = UploadFallbackMemory(serverURL: serverURL)
         func chunked(_ chunkSizeBytes: Int) async throws {
             try await uploadChunked(
@@ -463,8 +452,9 @@ extension FilesService {
                 destination: destination, onProgress: onProgress
             )
         } catch let error as FilesClientError where error.isPayloadTooLarge {
-            if settings == nil {
-                settings = try? await fetchSystemSettings(serverURL: serverURL).uploads
+            settings = await uploadSettings.refresh(for: serverURL, fetch: fetchSettings)
+            if let settings, settings.isChunkedEnabled {
+                return try await chunked(settings.chunkSizeBytes)
             }
             guard settings?.isChunkedAutoFallback == true,
                   let next = UploadMode.nextFallbackMiB(current: memory.mebibytes, refusedBytes: size)
@@ -474,14 +464,6 @@ extension FilesService {
         }
     }
 
-    /// `POST /api/upload`, confirmed against `backend/src/routes/upload.js` +
-    /// `services/uploadService.js`. One `multipart/form-data` request per file: the text
-    /// fields (`uploadTo`, `relativePath`) MUST precede the `filedata` part: multer's custom
-    /// storage reads `req.body` inside `_handleFile`, so a file part that arrives first sees an
-    /// empty body. The whole request is first written to a temporary multipart envelope on
-    /// disk (one extra copy of the payload), then streamed from that file, so the upload never
-    /// sits in memory even for large files. Response is a one element array of the stored file
-    /// (auto renamed on collision).
     func uploadDirect(
         serverURL: URL,
         fileURL: URL,

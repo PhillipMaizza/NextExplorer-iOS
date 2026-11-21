@@ -2,10 +2,6 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// The single screen state a scrollable list is in. The view computes one of these from its
-/// store; `ListStatePlaceholder` renders the message for `.error` / `.empty` / `.noResults`
-/// and nothing for `.loading` (a per tab skeleton covers that) or `.content` (the list shows
-/// through). Browse, Favorites, Downloads and Shared all map to the same set.
 enum ListPhase: Equatable {
     case loading, error, empty, noResults, content
 

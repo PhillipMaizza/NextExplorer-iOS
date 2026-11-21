@@ -12,11 +12,9 @@ public enum AppStorageKeys {
     /// The chosen override, meaningful only once `appearanceOverrideSet` is true.
     public static let prefersDarkMode = "prefersDarkMode"
 
-    /// `DateDisplayFormat.rawValue`.
     public static let dateDisplayFormat = "dateDisplayFormat"
     public static let includeTimeInDates = "includeTimeInDates"
 
-    /// `ThumbnailSize.rawValue`.
     public static let thumbnailSize = "thumbnailSize"
 
     public static let renderHTMLPages = "renderHTMLPages"

@@ -90,7 +90,6 @@ struct PreviewHostCover: ViewModifier {
     @Binding var host: StoreOf<BrowseFeature>?
     var zoom: PreviewZoomContext?
     let onViewShares: () -> Void
-    /// The file the preview asked to share.
     @State private var shareTarget: FileItem?
     /// The page the gallery shows, so closing it zooms back to that file's row.
     @State private var galleryItemID: String?

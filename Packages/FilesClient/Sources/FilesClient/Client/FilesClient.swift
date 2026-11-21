@@ -176,17 +176,7 @@ public struct FilesClient: Sendable {
         _ item: FileItem,
         _ onProgress: @Sendable @escaping (_ progress: TransferProgress) -> Void
     ) async throws -> URL
-    /// Drops pooled download connections so the next offline transfer opens a fresh socket. The engine
-    /// calls this at the start of a run: after the app has sat idle, a reused keep alive connection may
-    /// be dead and would otherwise stall the first file until it times out.
     public var flushDownloadConnections: @Sendable () async -> Void
-    /// `POST /api/upload` (`backend/src/routes/upload.js`): one `multipart/form-data` request
-    /// per file: `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
-    /// the file at `fileURL`. `destination` must not be empty (the server rejects the root).
-    /// The request is first assembled into a temporary multipart envelope on disk (one extra
-    /// copy of the payload), then streamed from that file, so nothing buffers the whole file
-    /// in memory. Reports fractional progress (0...1). A large file goes as resumable pieces
-    /// (`/api/upload/tus`) when the server forces them or refused a direct request for its size.
     public var uploadFile: @Sendable (
         _ serverURL: URL,
         _ fileURL: URL,
@@ -235,7 +225,6 @@ public struct FilesClient: Sendable {
     public var beginTwoFactorSetup: @Sendable (_ serverURL: URL) async throws -> TwoFactorSetup
     /// `POST /api/auth/totp/confirm`: turns it on with a code from the app; answers the recovery codes.
     public var confirmTwoFactorSetup: @Sendable (_ serverURL: URL, _ code: String) async throws -> [String]
-    /// `POST /api/auth/totp/recovery-codes`: new recovery codes, with the password.
     public var replaceRecoveryCodes: @Sendable (_ serverURL: URL, _ password: String) async throws -> [String]
     /// `DELETE /api/auth/totp`: turns it off, with the password.
     public var disableTwoFactor: @Sendable (_ serverURL: URL, _ password: String) async throws -> Void
@@ -347,7 +336,6 @@ public struct FilesClient: Sendable {
 
     // MARK: Admin per user volumes (also require the `USER_VOLUMES` feature)
 
-    /// `GET /api/users/:id/volumes`.
     public var userVolumes: @Sendable (_ serverURL: URL, _ userID: String) async throws -> [UserVolume]
     /// `POST /api/users/:id/volumes`.
     public var addUserVolume: @Sendable (

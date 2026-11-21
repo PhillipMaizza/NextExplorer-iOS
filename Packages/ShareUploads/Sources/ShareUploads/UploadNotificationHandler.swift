@@ -1,11 +1,9 @@
 import Foundation
 import UserNotifications
 
-/// The notification center's delegate for upload results.
 final class UploadNotificationHandler: NSObject, UNUserNotificationCenterDelegate, Sendable {
     enum Decision: Equatable {
         case retry(batchID: String)
-        /// Open the app on the folder the batch went to, in its account.
         case open(accountID: String, folder: String)
         case ignore
     }

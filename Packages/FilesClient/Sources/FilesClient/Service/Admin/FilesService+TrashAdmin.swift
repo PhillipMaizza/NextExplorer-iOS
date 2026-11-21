@@ -13,13 +13,11 @@ extension FilesService {
         let zones: [TrashVerification]
     }
 
-    /// `GET /api/trash/zones`.
     func fetchTrashZones(serverURL: URL) async throws -> [TrashZone] {
         let request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.trashZones), method: .get)
         return try await sendReportingMessage(request, decoding: ZonesEnvelope.self).zones
     }
 
-    /// `POST /api/trash/verify`.
     func verifyTrash(serverURL: URL) async throws -> [TrashVerification] {
         let request = Self.makeRequest(
             url: serverURL.appendingPathComponent(APIPath.trashVerify),
@@ -29,7 +27,6 @@ extension FilesService {
         return try await sendReportingMessage(request, decoding: VerificationEnvelope.self).zones
     }
 
-    /// `POST /api/trash/maintenance`.
     func runTrashMaintenance(serverURL: URL) async throws {
         let request = Self.makeRequest(
             url: serverURL.appendingPathComponent(APIPath.trashMaintenance),

@@ -1,11 +1,6 @@
 import DesignSystem
 import SwiftUI
 
-/// The pull to refresh feedback every file listing tab shares (Favorites, Downloads, Shared): run
-/// the refresh, then a success or error haptic keyed off whether `errorMessage` is nil once it
-/// finishes. No toast on iOS: the haptic and the refreshed list are the confirmation; the Mac, which
-/// has no haptics, keeps its "Sync completed" toast. Owns its own completion trigger, so callers
-/// don't each carry a `didFinishRefreshing` `@State`.
 private struct SyncRefreshFeedback: ViewModifier {
     let errorMessage: String?
     let shouldSignalErrorHaptic: Bool
@@ -29,9 +24,6 @@ private struct SyncRefreshFeedback: ViewModifier {
 }
 
 extension View {
-    /// Attach the shared refresh feedback. `errorMessage` is the tab's current load or action error
-    /// (nil when clear); it picks the success or error haptic. `signalsErrorHaptic` is false for
-    /// tabs that deliberately stay silent on a refresh failure.
     func syncRefreshFeedback(
         errorMessage: String?,
         shouldSignalErrorHaptic: Bool = true,

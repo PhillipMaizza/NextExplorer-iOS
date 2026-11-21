@@ -211,15 +211,6 @@ public struct MainTabView: View {
         }
     }
 
-    /// One `NavigationSplitView` PER tab rather than a single split view whose detail swaps
-    /// between sections. Hosting a path bound `NavigationStack` (TCA `StackState`) in a split
-    /// view detail and then replacing it with another section's stack traps in
-    /// `NavigationColumnState.boundPathChange` (EXC_BREAKPOINT) on the switch. Each `switch`
-    /// branch is a distinct `NavigationSplitView` type, so changing tab tears the whole split
-    /// view down and builds the next one fresh: the detail's bound path is never rebound in
-    /// place. The shared `MainTabSidebar` + `columnVisibility` keep the sidebar (and its show/hide
-    /// toggle) identical across tabs; TCA store state lives outside the view tree and survives.
-    /// The Mac too: one split view with only `.id` on the swapped detail still traps there.
     private var splitView: some View {
         #if os(macOS)
             split { MacTabDetail(store: store) }

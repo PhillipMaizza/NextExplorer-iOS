@@ -11,8 +11,6 @@
         static let progressWidth: CGFloat = 96
     }
 
-    /// The upload or download queue on iPhone and iPad: one row per item with its progress,
-    /// Cancel while it runs, Retry on failure, then Close and Clear in the bar.
     struct PhoneTransferQueueSheet: View {
         let title: String
         let rows: [TransferQueueRow]

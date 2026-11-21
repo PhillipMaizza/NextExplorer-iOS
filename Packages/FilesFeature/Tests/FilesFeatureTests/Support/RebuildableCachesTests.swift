@@ -6,11 +6,9 @@ import ShareUploads
 import Testing
 import TestUtils
 
-/// Every account boundary empties these stores through one call, so a store left out of it would
-/// keep one account's cache readable by the next.
 struct RebuildableCachesTests {
     private enum Store: CaseIterable {
-        case thumbnailMemory, directories, lists, previews, uploadThumbnails
+        case thumbnailMemory, directories, lists, previews, uploadThumbnails, uploadResumes
     }
 
     @Test
@@ -41,7 +39,8 @@ struct RebuildableCachesTests {
             previewCacheStore: PreviewCacheStore(size: { 0 }, clear: { record(.previews) }),
             thumbnailCache: thumbnails,
             textEditorETagStore: etags,
-            localThumbnailStore: uploadThumbnails
+            localThumbnailStore: uploadThumbnails,
+            forgetUploadResumes: { record(.uploadResumes) }
         ).clearAll()
 
         #expect(Set(cleared.value) == Set(Store.allCases))

@@ -1,4 +1,3 @@
-/// The signed in user the SwiftUI previews show, so every preview names the same person.
 public extension User {
     static let preview = User(
         id: "preview-user",

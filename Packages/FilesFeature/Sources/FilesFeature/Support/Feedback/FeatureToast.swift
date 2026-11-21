@@ -1,10 +1,6 @@
 import DesignSystem
 import SwiftUI
 
-/// Bridges a reducer's transient message strings to a bottom toast, so a screen doesn't need
-/// its own `@State` + `.onChange` + `.dsToast` boilerplate. Pass the store's optional
-/// `error` and `success` strings; whenever one changes to a non nil value it's shown, and
-/// `DSToast`'s timer clears it. Two identical messages in a row don't re trigger.
 private struct FeatureToastModifier: ViewModifier {
     let error: String?
     let success: String?

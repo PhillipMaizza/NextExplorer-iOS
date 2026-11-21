@@ -4,29 +4,21 @@ import FilesClient
 import FolderPickerFeature
 import Foundation
 
-/// A section of `PATCH /api/settings` an admin edits as one choice that saves as soon as it
-/// changes, plus the folders it leaves alone, saved with the Save button. The server's
-/// environment can decide the choice, which is then shown and cannot be changed.
 public protocol ExcludedPathsSection: SendableMetatype {
     associatedtype Settings: Equatable, Sendable
     associatedtype Choice: Equatable, Sendable
 
-    /// What runs when nothing is loaded yet.
     static var defaultChoice: Choice { get }
-    /// The decoding error when a saved settings echo lacks this section.
     static var missingMessage: String { get }
     static func section(of settings: SystemSettings) -> Settings?
     static func choice(of settings: Settings) -> Choice
     static func excluded(of settings: Settings) -> ExcludedPaths
-    /// The environment variable that decided the choice, if one did.
     static func lockedBy(_ features: ServerFeatures) -> String?
-    /// What the server runs now, whatever the settings store.
     static func effectiveChoice(_ features: ServerFeatures) -> Choice
     static func patch(choice: Choice) -> SystemSettingsPatch
     static func patch(excludedPaths: [String]) -> SystemSettingsPatch
 }
 
-/// The admin screen for one `ExcludedPathsSection`: folder sizes and the search index.
 @Reducer
 public struct ExcludedPathsSettingsFeature<Section: ExcludedPathsSection> {
     @ObservableState
@@ -40,8 +32,6 @@ public struct ExcludedPathsSettingsFeature<Section: ExcludedPathsSection> {
         public var isSaving = false
         public var errorMessage: String?
         public var isUnavailable = false
-        /// What the server is doing now. An environment variable can decide this, in which case
-        /// the stored choice in the settings is not what runs.
         public var effectiveChoice: Section.Choice?
 
         public init(serverURL: URL) {

@@ -3,11 +3,6 @@ import Foundation
 import NetworkClient
 
 extension FilesService {
-    /// A conditional `GET /api/browse/*`. `ifNoneMatch` is the `ETag` from a previously cached
-    /// listing; the server answers `304` (`.notModified`) when the directory is unchanged,
-    /// sparing the transfer and the decode. `isLowPriority` routes the request through the
-    /// capped background session for prefetch. `.reloadIgnoringLocalCacheData` keeps
-    /// URLSession's own cache out of the way so the app's cache stays authoritative.
     func browse(
         serverURL: URL, path: String, ifNoneMatch: String?, isLowPriority: Bool = false
     ) async throws -> BrowseFetchOutcome {

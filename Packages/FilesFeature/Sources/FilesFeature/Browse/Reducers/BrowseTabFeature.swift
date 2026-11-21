@@ -284,7 +284,6 @@ public struct BrowseTabFeature {
         }
     }
 
-    /// Hands an action to the folder on screen.
     private static func sendToVisibleFolder(_ state: State, _ action: BrowseFeature.Action) -> Effect<Action> {
         if let id = state.path.ids.last {
             return .send(.path(.element(id: id, action: action)))

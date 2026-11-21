@@ -42,7 +42,6 @@ public enum TestAccount {
     public static let totpCode = "123456"
     /// A password the server rejects.
     public static let wrongPassword = "wrong"
-    /// A second password or passphrase that is rejected.
     public static let rejectedPassword = "nope"
     /// A backup code in the dashed eleven character form.
     public static let recoveryCode = "2HSMP-G9ZSJ"
@@ -61,11 +60,9 @@ public enum TestHost {
     public static let serverURLString = "https://files.example.com"
     /// The default test server with an explicit port.
     public static let serverWithPort = "files.example.com:8443"
-    /// First of two distinct servers.
     public static let firstServer = "a.example.com"
     /// First of two distinct servers as an address.
     public static let firstServerURLString = "https://a.example.com"
-    /// Second of two distinct servers.
     public static let secondServer = "b.example.com"
     /// Second of two distinct servers as an address.
     public static let secondServerURLString = "https://b.example.com"
@@ -93,11 +90,8 @@ public enum TestHost {
 public enum TestSession {
     /// The session cookie name the local auth path uses.
     public static let cookieName = "connect.sid"
-    /// A session cookie value.
     public static let cookieValue = "abc"
-    /// The cookie value a successful login returns.
     public static let loginCookieValue = "abc123"
-    /// The cookie value background uploads authenticate with.
     public static let uploadCookieValue = "secret"
     /// A cookie value that replaced the stored one after a relogin.
     public static let refreshedCookieValue = "fresh"
@@ -129,13 +123,9 @@ public enum TestUser {
 
 /// Account identifiers in the server address and user name form the app keys its stores by.
 public enum TestAccountID {
-    /// Alice on the default test server.
     public static let alice = "\(TestHost.serverURLString)|\(TestUser.alice)"
-    /// Bob on the default test server.
     public static let bob = "\(TestHost.serverURLString)|\(TestUser.bob)"
-    /// Alice on the first of two servers.
     public static let firstServerAlice = "\(TestHost.firstServerURLString)|\(TestUser.alice)"
-    /// Bob on the second of two servers.
     public static let secondServerBob = "\(TestHost.secondServerURLString)|\(TestUser.bob)"
 }
 
@@ -152,7 +142,6 @@ public enum TestValue {
 }
 
 public enum TestCertificate {
-    /// The subject of the test client certificate.
     public static let subject = "Dev Client"
 }
 
@@ -177,9 +166,7 @@ public enum TestPath {
     public static let docsLowercase = "docs"
     /// A photo inside Photos, pinned on its own in the Offline tab tests.
     public static let photosPhoto = "Photos/a.jpg"
-    /// A note inside Docs.
     public static let docsNote = "Docs/n.txt"
-    /// A notes file inside Docs.
     public static let docsNotes = "Docs/notes.txt"
     /// A file inside Docs that does not exist yet.
     public static let docsNew = "Docs/new.txt"
@@ -223,7 +210,6 @@ public enum TestKind {
 public enum TestSearchTiming {
     /// One millisecond short of the debounce: nothing may be asked yet.
     public static let justBeforeDebounce: Duration = .milliseconds(349)
-    /// The last millisecond of the debounce.
     public static let lastMoment: Duration = .milliseconds(1)
     /// Part way into the debounce, where the next keystroke lands.
     public static let partOfDebounce: Duration = .milliseconds(200)

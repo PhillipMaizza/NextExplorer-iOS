@@ -23,14 +23,6 @@ private enum Constants {
     static let quickLookScale: CGFloat = 1
 }
 
-/// Renders and caches the first page of a document as a bitmap, for use as its browse thumbnail.
-/// The server thumbnails only pictures and videos (`backend/src/routes/thumbnails.js`), so the page
-/// is drawn on device from a local file the caller supplies: PDFKit for a PDF, Quick Look for the
-/// rest (`DocumentThumbnailStore` hands over what it downloaded).
-///
-/// Renders are cached as JPEGs under the shared `Library/Caches/PreviewCache` root, so
-/// "Clear Cache" in Settings covers them. `DocumentThumbnailStore` keeps the decoded images the
-/// live grid needs in memory; this layer only rereads/rerenders on a store eviction.
 public struct DocumentThumbnailCache: Sendable {
     /// `key` uniquely identifies the source file + its content signature; `maxPixel` bounds
     /// the render's longest side; `fileURL` is the local document to draw, or `nil` to read only
@@ -48,12 +40,6 @@ public struct DocumentThumbnailCache: Sendable {
     }
 }
 
-/// Serializes PDF rasterization. `PDFDocument`/`PDFPage` and the CoreGraphics PDF stack are
-/// not guaranteed safe to drive concurrently even from separate instances, and one at a time
-/// keeps a folder of PDFs from pegging every core on an older device. `render` has no `await`
-/// inside, so the actor runs each call to completion before the next: true serialization,
-/// no reentrancy. Downloads stay parallel (their own capped `URLSession`), which is the slow
-/// part anyway.
 private actor PDFPageRenderer {
     static let shared = PDFPageRenderer()
 
@@ -91,17 +77,10 @@ extension DocumentThumbnailCache {
             .appendingPathExtension(Constants.renderCacheFileExtension)
     }
 
-    /// Rasterizes page one of the PDF at `url`, scaled so its longest side is `maxPixel`, with
-    /// the CoreGraphics renderer the share extension uses too (`ThumbnailRendering`): an exact
-    /// pixel size rather than `PDFPage.thumbnail(of:for:)`, which rasterizes at the main screen
-    /// scale (a 9x area bitmap on a 3x device). Opaque, white backed: no alpha channel to carry.
     static func renderFirstPage(of url: URL, maxPixel: CGFloat) -> PlatformImage? {
         ThumbnailRendering.firstPDFPage(at: url, maxPixel: maxPixel).map { PlatformImage(cgImage: $0) }
     }
 
-    /// Quick Look's drawing of any other document, laid on white because the render cache is
-    /// JPEG and a transparent edge would turn black. Asks for `.thumbnail` alone: the icon
-    /// representations are the system's generic file icon, not the file's content.
     static func renderQuickLookThumbnail(of url: URL, maxPixel: CGFloat) async -> PlatformImage? {
         let request = QLThumbnailGenerator.Request(
             fileAt: url,

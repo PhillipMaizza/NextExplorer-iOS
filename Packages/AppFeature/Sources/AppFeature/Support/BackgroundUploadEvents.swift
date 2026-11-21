@@ -154,10 +154,6 @@ public enum BackgroundUploadEvents {
     }
 }
 
-/// Runs `perform` every `interval` until stopped, one timer at a time. The beats are fixed when it
-/// starts (start plus one interval, plus two, ...), not measured from whenever the loop gets to
-/// sleep, so a slow `perform` or a late start never shifts them. A loop more than an interval
-/// behind (a Mac waking from sleep) skips the missed beats instead of firing them in a burst.
 final class PeriodicTask: @unchecked Sendable {
     private let lock = NSLock()
     private var task: Task<Void, Never>?

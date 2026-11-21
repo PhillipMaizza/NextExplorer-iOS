@@ -1,9 +1,6 @@
 #if os(macOS)
     import Carbon
 
-    /// XCUITest types with US key codes, so on another layout (Italian puts [ and ] elsewhere)
-    /// ⌘[ becomes some other shortcut and typed names come out wrong. Each Mac test switches to
-    /// the ABC layout and puts the person's own layout back when it ends.
     enum KeyboardLayout {
         private static let usLayoutID = "com.apple.keylayout.ABC"
 

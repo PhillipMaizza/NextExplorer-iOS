@@ -97,8 +97,6 @@ struct SpotlightFeatureTests {
         #expect(asked.value.isEmpty)
     }
 
-    /// The fetches of one burst of typing can start out of order, so an earlier term's fetch may
-    /// outlive the typed term's and cancel it.
     @Test("An earlier term's answer landing late is dropped and the typed term is asked at once")
     func anEarlierTermsLateAnswerIsDroppedAndTheTypedTermAskedAgain() async {
         let clock = TestClock<Duration>()

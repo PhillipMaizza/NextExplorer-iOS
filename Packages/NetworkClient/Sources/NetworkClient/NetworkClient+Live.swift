@@ -2,40 +2,15 @@ import Dependencies
 import Foundation
 
 private enum Constants {
-    /// A dead or far away server shouldn't hang an interactive request for the URLSession
-    /// default of 60s: the launch session check and every tap has to give up sooner.
     static let interactiveRequestTimeout: TimeInterval = 15
-    /// Opportunistic page fetches (PDF thumbnails) can be genuinely slow; let them run to
-    /// the URLSession default rather than sharing the interactive budget.
     static let lowPriorityRequestTimeout: TimeInterval = 60
-    /// Connection cap for the low priority session: small, so however many fetches the UI
-    /// kicks off they never take slots from the main session's 6 per host interactive pool.
     static let lowPriorityMaxConnectionsPerHost = 2
-    /// File downloads (previews, offline sync) stream to disk and can take a long time: a big file,
-    /// a slow link, a server that buffers before its first byte, or several concurrent transfers where
-    /// one waits behind the others. `timeoutIntervalForRequest` is an *inactivity* timer (reset on
-    /// every packet), so it never fires mid transfer; it only bounds a genuinely stalled connection.
-    /// The interactive 15s value is right for a tap sized API call but wrong here: it was timing large
-    /// downloads out (NSURLErrorTimedOut, -1001) and making them appear to crawl as they retried.
-    /// A file actively transferring resets this on every packet, so a real download of any size never
-    /// hits it (downloads run one at a time, so there is always a packet flowing). It fires only on a
-    /// genuinely stalled socket, most importantly a stale keep alive connection the server already
-    /// dropped: 60s bounds how long such a dead connection stalls before failing, instead of hanging
-    /// for minutes. Connections are also flushed before each batch (see `flushDownloadConnections`).
     static let downloadRequestTimeout: TimeInterval = 60
 }
 
 public extension NetworkClient {
-    /// Inactivity budget for a mutation or an upload. A single shot server operation (move, copy,
-    /// delete, compress, extract) sends no bytes until the server finishes, and an upload sends none
-    /// while the server finalizes after the body, so the interactive 15s would cut off work that is
-    /// still running.
     static let mutationRequestTimeout: TimeInterval = 300
 
-    /// Marks a request as a server side mutation (transfer, delete, compress, extract, rename,
-    /// upload) by giving it the long budget, unless the caller already asked for a longer one. The
-    /// method does not decide this: an editor read is a POST and login is a POST, and both must keep
-    /// the interactive budget and the `.offline` mapping.
     static func markingAsMutation(_ request: URLRequest) -> URLRequest {
         var request = request
         request.timeoutInterval = max(request.timeoutInterval, mutationRequestTimeout)
@@ -49,14 +24,8 @@ public extension NetworkClient {
 }
 
 public extension NetworkClient {
-    /// Ceiling on a response buffered by `send`. The `send` path exists only for JSON control
-    /// responses (listings, share lists, editor content): anything file sized goes through
-    /// `download`, which streams to disk. 32 MB is far above any legitimate JSON payload while
-    /// still cutting off a hostile server trying to exhaust memory here.
     static let defaultMaxInMemoryResponseBytes = 32 * 1024 * 1024
 
-    /// Names the temporary files `download` streams bodies into, so a session boundary can sweep
-    /// up any a crash left behind (`SessionScratchStore`).
     static let downloadTemporaryFilePrefix = "download-"
 
     /// The first few kilobytes of a downloaded body, enough to recognize a proxy's error page.
@@ -69,7 +38,7 @@ public extension NetworkClient {
     static func live(
         trustEvaluator: ServerTrustEvaluating = DefaultServerTrustEvaluator(),
         certificates: ClientCertificateChallengeHandler = .shared,
-        cookieStorage: HTTPCookieStorage = .shared,
+        cookieStorage: HTTPCookieStorage = .appSession,
         protocolClasses: [AnyClass] = [],
         maxInMemoryResponseBytes: Int = NetworkClient.defaultMaxInMemoryResponseBytes
     ) -> NetworkClient {
@@ -79,8 +48,6 @@ public extension NetworkClient {
             maxConnectionsPerHost: Int? = nil
         ) -> URLSessionConfiguration {
             let configuration = URLSessionConfiguration.default
-            // No HTTP cache: the app keeps its own caches, which are cleared at every session boundary.
-            // `URLCache.shared` is not, so a response stored there could outlive the account it was for.
             configuration.urlCache = nil
             configuration.httpCookieStorage = cookieStorage
             configuration.httpCookieAcceptPolicy = .always
@@ -101,11 +68,6 @@ public extension NetworkClient {
             delegate: delegate
         )
 
-        // A second session for opportunistic background fetches (PDF thumbnail page
-        // downloads). Its own connection pool, capped low, so however many the UI kicks off
-        // they can't take slots from the main session's interactive traffic. Deliberately
-        // NOT `networkServiceType = .background`: that lets the system defer requests
-        // indefinitely, even in the foreground, so thumbnails would just never appear.
         let lowPrioritySession = ReplaceableSession(
             configuration: makeConfiguration(
                 requestTimeout: Constants.lowPriorityRequestTimeout,
@@ -114,10 +76,6 @@ public extension NetworkClient {
             delegate: delegate
         )
 
-        // A dedicated session for file downloads (previews, offline sync). Same cookie jar and trust
-        // handling as the main session, but a generous request (inactivity) timeout so a large or slow
-        // transfer isn't killed by the interactive 15s budget. This was the cause of "downloads are
-        // hyper slow": on the main session, large downloads timed out at 15s and retried in a loop.
         let downloadSession = ReplaceableSession(
             configuration: makeConfiguration(requestTimeout: Constants.downloadRequestTimeout),
             delegate: delegate
@@ -165,10 +123,6 @@ public extension NetworkClient {
             return try finishDownload(request, temporaryURL: temporaryURL, response: response)
         }
 
-        // Stream to a temp file rather than `session.data(for:)` so response size is bounded
-        // by disk, not resident memory; then size check before loading it in. This path only
-        // ever carries JSON control responses, file sized payloads use `download`, so the
-        // extra temp file round trip is a submillisecond cost on a KB scale body.
         @Sendable func sendInMemory(
             _ originalRequest: URLRequest, using inMemorySession: ReplaceableSession
         ) async throws -> (Data, HTTPURLResponse) {
@@ -297,11 +251,6 @@ public extension NetworkClient {
                         (URL, HTTPURLResponse),
                         Error
                     >) in
-                        // A completion handler task, NOT a download delegate: the delegate's per chunk
-                        // `didWriteData` runs on the session's serial delegate queue and applies
-                        // backpressure to the socket, which throttled the transfer. Progress instead
-                        // comes from the task's own `NSProgress` via KVO, which never touches that
-                        // queue. Server trust still falls through to the session `URLSessionAuthDelegate`.
                         let task = downloadSession.current
                             .downloadTask(with: request) { temporaryURL, response, error in
                                 observationBox.invalidate()
@@ -321,8 +270,6 @@ public extension NetworkClient {
                                     try finishDownload(request, temporaryURL: temporaryURL, response: response)
                                 })
                             }
-                        // The task's byte counters, not its `NSProgress` (which counts in percent units
-                        // and stalls when the length is unknown), so a streamed archive still reports.
                         let observation = task.observe(\.countOfBytesReceived, options: [.new]) { task, _ in
                             let expected = task.countOfBytesExpectedToReceive
                             throttle.report(TransferProgress(
