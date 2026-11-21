@@ -249,12 +249,13 @@
 
     #Preview("Volumes") {
         let state = TrashSettingsFeature.State.preview(zones: [PreviewZones.available, PreviewZones.missing])
+        let zones = state.zones
         MacTrashSettingsPane(store: Store(initialState: state) { TrashSettingsFeature() } withDependencies: {
             $0.filesClient.fetchSystemSettings = { _ in SystemSettings(
                 trash: TrashSettings(),
                 versions: VersionsSettings()
             ) }
-            $0.filesClient.fetchTrashZones = { _ in state.zones }
+            $0.filesClient.fetchTrashZones = { _ in zones }
         })
     }
 #endif
