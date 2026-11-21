@@ -160,7 +160,7 @@ struct LoginClientCertificateTests {
         let status = AuthStatus(
             localEnabled: true,
             oidcEnabled: false,
-            redirectsToHTTPS: true,
+            isRedirectedToHTTPS: true,
             redirectedPort: testCase.answeredPort
         )
         let store = makeStore(
@@ -180,7 +180,12 @@ struct LoginClientCertificateTests {
     @Test("Without a redirect the typed host and port stay as they are")
     func noRedirectKeepsTheTypedAddress() async {
         let clock = TestClock()
-        let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: false, redirectedPort: 9443)
+        let status = AuthStatus(
+            localEnabled: true,
+            oidcEnabled: false,
+            isRedirectedToHTTPS: false,
+            redirectedPort: 9443
+        )
         let store = makeStore(
             LoginFormFeature.State(connectionPhase: .testing, scheme: .http, host: Constants.serverWithOtherPort),
             clock: clock
@@ -196,7 +201,7 @@ struct LoginClientCertificateTests {
     @Test("A redirect on a host that isn't a valid address switches to https but leaves the field alone")
     func redirectOnAnInvalidHostKeepsIt() async {
         let clock = TestClock()
-        let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: true, redirectedPort: 9443)
+        let status = AuthStatus(localEnabled: true, oidcEnabled: false, isRedirectedToHTTPS: true, redirectedPort: 9443)
         let store = makeStore(
             LoginFormFeature.State(connectionPhase: .testing, scheme: .http, host: AuthFeatureTestValue.invalidHost),
             clock: clock

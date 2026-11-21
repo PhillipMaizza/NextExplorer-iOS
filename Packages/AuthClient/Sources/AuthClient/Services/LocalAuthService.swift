@@ -16,8 +16,8 @@ struct LocalAuthService: Sendable {
         } catch {
             throw AuthClientError.decoding(error.localizedDescription)
         }
-        status.redirectsToHTTPS = Self.redirectsToHTTPS(requested: serverURL, answered: response.url)
-        if status.redirectsToHTTPS {
+        status.isRedirectedToHTTPS = Self.isRedirectedToHTTPS(requested: serverURL, answered: response.url)
+        if status.isRedirectedToHTTPS {
             status.redirectedPort = Self.answeredPort(response.url)
         }
         return status
@@ -32,7 +32,7 @@ struct LocalAuthService: Sendable {
         return port
     }
 
-    static func redirectsToHTTPS(requested: URL, answered: URL?) -> Bool {
+    static func isRedirectedToHTTPS(requested: URL, answered: URL?) -> Bool {
         guard let answered, requested.scheme?.lowercased() == "http", answered.scheme?.lowercased() == "https" else {
             return false
         }
@@ -51,7 +51,7 @@ struct LocalAuthService: Sendable {
             throw AuthClientError.decoding(error.localizedDescription)
         }
         let envelope = try await send(request, decoding: UserEnvelope.self, unauthorizedError: .invalidCredentials)
-        if envelope.totpRequired == true {
+        if envelope.isTOTPRequired == true {
             throw AuthClientError.secondFactorRequired
         }
         guard let user = envelope.user else {

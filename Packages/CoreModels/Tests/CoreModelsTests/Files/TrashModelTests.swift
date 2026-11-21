@@ -14,7 +14,7 @@ struct DeleteToTrashModelTests {
         #expect(plan.trashCount == 2)
         #expect(plan.permanentCount == 0)
         #expect(plan.items.first?.shareCount == 1)
-        #expect(impact.movesAnyToTrash)
+        #expect(impact.hasTrashBoundItems)
     }
 
     @Test("a mixed plan counts what skips the trash and lists each reason once, unknown values read as permanent")
@@ -30,14 +30,14 @@ struct DeleteToTrashModelTests {
         let impact = try CoreModelsFixture.deleteImpactTrashDisabled.decode(DeleteImpact.self)
         #expect(impact.trash?.isEnabled == false)
         #expect(impact.trash?.permanentReasons == [.disabled])
-        #expect(!impact.movesAnyToTrash)
+        #expect(!impact.hasTrashBoundItems)
     }
 
     @Test("a server older than the trash has no plan")
     func legacyImpact() throws {
         let impact = try CoreModelsFixture.deleteImpactTwoLinks.decode(DeleteImpact.self)
         #expect(impact.trash == nil)
-        #expect(!impact.movesAnyToTrash)
+        #expect(!impact.hasTrashBoundItems)
     }
 
     @Test("a delete outcome reads every status, an unknown one included, and the sizes of a refused folder")

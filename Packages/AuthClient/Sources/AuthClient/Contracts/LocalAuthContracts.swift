@@ -34,7 +34,12 @@ extension LocalAuthService {
         /// `true` when the password was right and the account also asks for a code: the login
         /// route then answers 200 with this flag and no user (`twoFactorRequired` in
         /// `backend/src/routes/auth.js`).
-        let totpRequired: Bool?
+        let isTOTPRequired: Bool?
+
+        private enum CodingKeys: String, CodingKey {
+            case user
+            case isTOTPRequired = "totpRequired"
+        }
     }
 
     /// The body of `POST /api/auth/login/totp`: the six digit code, or a recovery code.

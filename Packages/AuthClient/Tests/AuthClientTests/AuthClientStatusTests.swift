@@ -60,17 +60,17 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
     @Test("Only an http address answered from https on the same host counts as upgraded")
     func redirectToHTTPS() {
         let http = URL(string: Constants.statusURLString)!
-        #expect(LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: Constants.authStatusURL)))
-        #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: http))
-        #expect(!LocalAuthService.redirectsToHTTPS(
+        #expect(LocalAuthService.isRedirectedToHTTPS(requested: http, answered: URL(string: Constants.authStatusURL)))
+        #expect(!LocalAuthService.isRedirectedToHTTPS(requested: http, answered: http))
+        #expect(!LocalAuthService.isRedirectedToHTTPS(
             requested: http,
             answered: URL(string: "https://elsewhere.example.com/api/auth/status")
         ))
-        #expect(!LocalAuthService.redirectsToHTTPS(
+        #expect(!LocalAuthService.isRedirectedToHTTPS(
             requested: URL(string: TestHost.serverURLString)!,
             answered: URL(string: TestHost.serverURLString)
         ))
-        #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: nil))
+        #expect(!LocalAuthService.isRedirectedToHTTPS(requested: http, answered: nil))
     }
 
     @Test(
@@ -90,7 +90,7 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
     func redirectedPort(requested: String, answered: String, expected: Int?) throws {
         let requestedURL = try #require(URL(string: requested))
         let answeredURL = try #require(URL(string: answered))
-        #expect(LocalAuthService.redirectsToHTTPS(requested: requestedURL, answered: answeredURL))
+        #expect(LocalAuthService.isRedirectedToHTTPS(requested: requestedURL, answered: answeredURL))
         #expect(LocalAuthService.answeredPort(answeredURL) == expected)
     }
 
@@ -110,7 +110,7 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
         }
         let requested = try #require(URL(string: "http://\(TestHost.server):8080"))
         let status = try await client.fetchStatus(requested)
-        #expect(status.redirectsToHTTPS)
+        #expect(status.isRedirectedToHTTPS)
         #expect(status.redirectedPort == 9443)
     }
 
@@ -122,7 +122,7 @@ struct AuthClientStatusTests: AuthClientLiveHarness {
             return try (body, response(statusCode: 200, url: url))
         }
         let status = try await client.fetchStatus(serverURL)
-        #expect(!status.redirectsToHTTPS)
+        #expect(!status.isRedirectedToHTTPS)
         #expect(status.redirectedPort == nil)
     }
 }

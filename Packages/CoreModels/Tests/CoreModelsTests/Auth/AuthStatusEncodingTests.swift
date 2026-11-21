@@ -15,7 +15,7 @@ struct AuthStatusEncodingTests {
         let json = try object(AuthStatus(
             localEnabled: true,
             oidcEnabled: false,
-            redirectsToHTTPS: true,
+            isRedirectedToHTTPS: true,
             redirectedPort: 8443
         ))
         #expect(Set(json.keys) == ["strategies"])
@@ -25,11 +25,11 @@ struct AuthStatusEncodingTests {
 
     @Test("an encoded status decodes back to the same flags and drops the client only redirect fields")
     func roundTripDropsRedirectFields() throws {
-        let status = AuthStatus(localEnabled: false, oidcEnabled: true, redirectsToHTTPS: true, redirectedPort: 8443)
+        let status = AuthStatus(localEnabled: false, oidcEnabled: true, isRedirectedToHTTPS: true, redirectedPort: 8443)
         let data = try JSONEncoder().encode(status)
         let decoded = try JSONDecoder().decode(AuthStatus.self, from: data)
         #expect(decoded == AuthStatus(localEnabled: false, oidcEnabled: true))
-        #expect(!decoded.redirectsToHTTPS)
+        #expect(!decoded.isRedirectedToHTTPS)
         #expect(decoded.redirectedPort == nil)
     }
 }

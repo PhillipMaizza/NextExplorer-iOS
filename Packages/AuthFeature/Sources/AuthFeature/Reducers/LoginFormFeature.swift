@@ -382,13 +382,13 @@ public struct LoginFormFeature {
             case let .testConnectionResponse(.success(status)):
                 state.authStatus = status
                 state.diagnostics.record(
-                    "server status: password sign in \(status.isLocalEnabled ? "on" : "off"), single sign on \(status.isOIDCEnabled ? "on" : "off"), redirected to https \(status.redirectsToHTTPS)",
+                    "server status: password sign in \(status.isLocalEnabled ? "on" : "off"), single sign on \(status.isOIDCEnabled ? "on" : "off"), redirected to https \(status.isRedirectedToHTTPS)",
                     at: now
                 )
                 state.certificatePrompt = nil
                 // The server sent http to https: sign in there directly, or the password is lost
                 // in the redirect (and would travel unencrypted first).
-                if status.redirectsToHTTPS {
+                if status.isRedirectedToHTTPS {
                     state.scheme = .https
                     if let host = Self.hostText(state.host, port: status.redirectedPort) {
                         state.host = host

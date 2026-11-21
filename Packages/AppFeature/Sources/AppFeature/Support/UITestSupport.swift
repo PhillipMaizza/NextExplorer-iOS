@@ -318,7 +318,7 @@
                     DeleteImpact(shareCount: 0, trash: DeleteImpact.TrashPlan(
                         isEnabled: true,
                         retentionDays: trashRetentionDays,
-                        items: items.map { DeleteImpact.Disposition(path: $0.id, goesToTrash: true) }
+                        items: items.map { DeleteImpact.Disposition(path: $0.id, isTrashBound: true) }
                     ))
                 }
                 // A server with its trash on: deletes land there and can be restored or purged.
