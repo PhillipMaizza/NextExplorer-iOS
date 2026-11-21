@@ -169,13 +169,7 @@ struct OfflineSettingsSection: View {
 
 private enum PreviewFixture {
     static let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
-    static let user = User(
-        id: "preview-user",
-        username: "jdoe",
-        email: "jane.doe@example.com",
-        displayName: "Jane Doe",
-        roles: []
-    )
+    static let user = User.preview
     static let offlineSizeBytes: Int64 = 48_000_000
     static let filesTotal = 12
     static let filesDone = 5

@@ -258,7 +258,7 @@
     private func transferPreviewStore() -> StoreOf<MainTabFeature> {
         Store(initialState: MainTabFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-            user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com")
+            user: User.preview
         )) { MainTabFeature() } withDependencies: { $0.filesClient = .previewValue }
     }
 

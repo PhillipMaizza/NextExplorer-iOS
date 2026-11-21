@@ -111,7 +111,7 @@
     private func statusBarPreviewStore(_ phase: OfflineDownloadProgress.Phase) -> StoreOf<MainTabFeature> {
         let state = MainTabFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-            user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com")
+            user: User.preview
         )
         state.$offlineProgress.withLock {
             $0 = OfflineDownloadProgress()

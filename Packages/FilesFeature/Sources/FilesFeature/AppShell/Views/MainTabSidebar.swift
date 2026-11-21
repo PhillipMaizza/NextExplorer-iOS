@@ -358,7 +358,7 @@ struct MainTabSidebar: View {
 private func previewSidebar(selectedTab: MainTabFeature.Tab = .browse) -> some View {
     var state = MainTabFeature.State(
         serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-        user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe")
+        user: User.preview
     )
     state.selectedTab = selectedTab
     let store = Store(initialState: state) { MainTabFeature() } withDependencies: {

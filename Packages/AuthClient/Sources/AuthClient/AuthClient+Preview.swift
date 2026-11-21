@@ -4,10 +4,10 @@ import Foundation
 public extension AuthClient {
     static let previewValue = AuthClient(
         fetchStatus: { _ in AuthStatus(localEnabled: true, oidcEnabled: true) },
-        login: { _, _, _ in User.preview },
-        loginTOTP: { _, _ in User.preview },
-        loginOIDC: { _ in User.preview },
-        me: { _ in User.preview },
+        login: { _, _, _ in User.previewAdmin },
+        loginTOTP: { _, _ in User.previewAdmin },
+        loginOIDC: { _ in User.previewAdmin },
+        me: { _ in User.previewAdmin },
         logout: { _ in },
         restoreSession: { nil },
         loadSession: { nil },
@@ -19,8 +19,4 @@ public extension AuthClient {
         clearActiveSession: { nil },
         clearAllSessions: {}
     )
-}
-
-extension User {
-    static let preview = User(id: "preview-user", username: "phillip", email: "phillip@example.com", roles: ["admin"])
 }
