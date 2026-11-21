@@ -82,15 +82,8 @@ extension FilesService {
         try Self.validate(response)
     }
 
-    /// Share expiry wire format is plain `withInternetDateTime` (no fractional seconds, unlike
-    /// the decode path). Cached like `iso8601Formatter`: safe to format from concurrently.
-    private nonisolated(unsafe) static let shareExpiryFormatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
-        return formatter
-    }()
-
+    /// Share expiry wire format has no fractional seconds, unlike the decode path.
     static func formatShareExpiry(_ date: Date) -> String {
-        shareExpiryFormatter.string(from: date)
+        ServerTimestamp.wholeSecondString(from: date)
     }
 }

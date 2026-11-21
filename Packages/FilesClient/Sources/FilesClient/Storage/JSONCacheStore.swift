@@ -1,4 +1,4 @@
-import CryptoKit
+import CoreModels
 import Dependencies
 import Foundation
 
@@ -115,8 +115,7 @@ extension JSONCacheStore: DependencyKey {
             guard let directory else { return nil }
             // The caller's key (favorites, shares.byMe, ...) carries no server, so fold the active
             // account in: two servers' Favorites/Shared lists must not share one cache entry.
-            let digest = SHA256.hash(data: Data(CacheLayout.key(scope, key).utf8))
-            let name = digest.map { String(format: "%02x", $0) }.joined()
+            let name = CacheLayout.key(scope, key).sha256Hex()
             return directory
                 .appendingPathComponent(CacheAccountScope.scopedFileName(name, scope: scope))
                 .appendingPathExtension(Constants.fileExtension)

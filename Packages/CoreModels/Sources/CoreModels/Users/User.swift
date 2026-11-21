@@ -127,11 +127,7 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         guard let raw = try? container.decodeIfPresent(String.self, forKey: key) else {
             return nil
         }
-        let withFraction = ISO8601DateFormatter()
-        withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let plain = ISO8601DateFormatter()
-        plain.formatOptions = [.withInternetDateTime]
-        return withFraction.date(from: raw) ?? plain.date(from: raw)
+        return ServerTimestamp.date(from: raw)
     }
 
     /// The server's `id` type isn't confirmed (DB auto increment integer vs. string):

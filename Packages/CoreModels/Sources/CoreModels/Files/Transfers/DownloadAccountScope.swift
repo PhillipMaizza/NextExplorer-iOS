@@ -1,4 +1,3 @@
-import CryptoKit
 import Foundation
 
 /// A stable per account folder name for locally saved downloads, so two accounts on the same
@@ -12,6 +11,6 @@ public enum DownloadAccountScope {
 
     public static func identifier(serverURL: URL, userID: String) -> String {
         let raw = serverURL.absoluteString + "\n" + userID
-        return SHA256.hash(data: Data(raw.utf8)).prefix(16).map { String(format: "%02x", $0) }.joined()
+        return raw.sha256Hex(byteCount: 16)
     }
 }

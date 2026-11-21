@@ -17,11 +17,7 @@ private typealias Metrics = APITokensMetrics
 /// Turns the server's ISO 8601 timestamps into something to read, and says whether one has passed.
 enum APITokenDates {
     private static func parse(_ iso: String) -> Date? {
-        let withFraction = ISO8601DateFormatter()
-        withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let plain = ISO8601DateFormatter()
-        plain.formatOptions = [.withInternetDateTime]
-        return withFraction.date(from: iso) ?? plain.date(from: iso)
+        ServerTimestamp.date(from: iso)
     }
 
     /// `nil` for a timestamp that is not a date, so the row leaves the line out instead of showing noise.
