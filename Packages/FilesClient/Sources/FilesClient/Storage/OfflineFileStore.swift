@@ -1,5 +1,4 @@
 import CoreModels
-import CryptoKit
 import Dependencies
 import Foundation
 
@@ -35,7 +34,7 @@ enum OfflineCache {
     }
 
     private static func hex(_ string: String) -> String {
-        SHA256.hash(data: Data(string.utf8)).map { String(format: "%02x", $0) }.joined()
+        string.sha256Hex()
     }
 
     /// The current account's offline area. Created (and hardened: encrypted at rest, excluded from

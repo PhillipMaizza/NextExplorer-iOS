@@ -23,4 +23,9 @@ public enum ServerTimestamp {
     public static func string(from date: Date) -> String {
         withFraction.string(from: date)
     }
+
+    /// `date` in whole seconds, for the fields the server reads without a fraction.
+    public static func wholeSecondString(from date: Date) -> String {
+        plain.string(from: date)
+    }
 }

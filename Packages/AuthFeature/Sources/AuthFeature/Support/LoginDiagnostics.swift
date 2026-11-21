@@ -1,5 +1,6 @@
 import AuthClient
 import ComposableArchitecture
+import CoreModels
 import Foundation
 
 /// What the sign in screen saw at each step, kept in memory so someone whose sign in fails can
@@ -42,10 +43,10 @@ struct LoginDiagnostics: Equatable, Sendable {
     }
 
     func rendered(header: [String]) -> String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let lines = entries
-            .map { "\(formatter.string(from: $0.timestamp)) \($0.isProblem ? Constants.problemMarker : "")\($0.text)" }
+            .map {
+                "\(ServerTimestamp.string(from: $0.timestamp)) \($0.isProblem ? Constants.problemMarker : "")\($0.text)"
+            }
         return (header + [""] + lines).joined(separator: "\n")
     }
 

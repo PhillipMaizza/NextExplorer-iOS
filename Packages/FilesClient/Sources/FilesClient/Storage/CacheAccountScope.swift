@@ -1,4 +1,4 @@
-import CryptoKit
+import CoreModels
 import Foundation
 
 /// Process wide identifier of the account whose cached data the disk stores read and write, so
@@ -84,6 +84,6 @@ public enum CacheAccountScope {
     /// Stable filename prefix for one account's cache files, so a single account's entries can be
     /// removed without touching another's.
     static func filePrefix(for scope: String) -> String {
-        SHA256.hash(data: Data(scope.utf8)).prefix(prefixByteCount).map { String(format: "%02x", $0) }.joined()
+        scope.sha256Hex(byteCount: prefixByteCount)
     }
 }

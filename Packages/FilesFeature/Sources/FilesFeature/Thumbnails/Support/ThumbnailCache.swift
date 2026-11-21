@@ -1,5 +1,5 @@
 import ComposableArchitecture
-import CryptoKit
+import CoreModels
 import FilesClient
 import Foundation
 import NetworkClient
@@ -51,7 +51,7 @@ extension ThumbnailCache: DependencyKey {
     private static let maxResponseBytes = 32 * 1024 * 1024
 
     private static func hexDigest(of string: String) -> String {
-        SHA256.hash(data: Data(string.utf8)).map { String(format: "%02x", $0) }.joined()
+        string.sha256Hex()
     }
 
     private static func previewCacheSubdirectory(_ name: String) throws -> URL {
