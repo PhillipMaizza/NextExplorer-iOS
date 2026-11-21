@@ -221,39 +221,16 @@ struct FilesService: Sendable {
         return segments.reduce(base) { $0.appendingPathComponent(String($1)) }
     }
 
-    /// `dateModified`/`createdAt`/`updatedAt` cross the wire as `Date.toISOString()`
-    /// output (millisecond fractional seconds); the default `.iso8601` strategy's
-    /// formatter rejects the fractional part, so fractional seconds must be opted in.
-    ///
-    /// Both the formatter and the fully configured decoder are built once and shared. A big
-    /// browse listing carries a `dateModified` on every entry; allocating an
-    /// `ISO8601DateFormatter` (and a `JSONDecoder`) per field, or per request, was pure
-    /// overhead on large directories. `ISO8601DateFormatter` is documented as safe to use for
-    /// parsing from multiple threads even though it is not marked `Sendable`.
-    private nonisolated(unsafe) static let iso8601Formatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
-    }()
-
-    /// Fallback for a whole second date (no fractional part). The backend always emits
-    /// millisecond fractions via `toISOString()`, but one non fractional date anywhere must
-    /// not abort a whole screen's decode.
-    private nonisolated(unsafe) static let iso8601FormatterNoFractional: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
-        return formatter
-    }()
-
+    /// `dateModified`/`createdAt`/`updatedAt` cross the wire as `Date.toISOString()` output
+    /// (millisecond fractional seconds), which the default `.iso8601` strategy rejects;
+    /// `ServerTimestamp` reads it and falls back to whole seconds, so one such date never aborts a
+    /// whole screen's decode. The decoder is built once: a big listing dates every entry.
     private static let sharedDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { keyedDecoder in
             let container = try keyedDecoder.singleValueContainer()
             let dateString = try container.decode(String.self)
-            if let date = iso8601Formatter.date(from: dateString) {
-                return date
-            }
-            if let date = iso8601FormatterNoFractional.date(from: dateString) {
+            if let date = ServerTimestamp.date(from: dateString) {
                 return date
             }
             throw DecodingError.dataCorruptedError(

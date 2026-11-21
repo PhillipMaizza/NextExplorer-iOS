@@ -1,5 +1,4 @@
 import CoreModels
-import CryptoKit
 import Dependencies
 import Foundation
 
@@ -143,8 +142,7 @@ extension DirectoryCacheStore: DependencyKey {
             // The active account is folded into the key so several signed in accounts keep
             // separate entries and a switch reads the right account's cache without a wipe.
             let key = CacheLayout.key(scope, serverURL.absoluteString, normalizedPath)
-            let digest = SHA256.hash(data: Data(key.utf8))
-            let name = digest.map { String(format: "%02x", $0) }.joined()
+            let name = key.sha256Hex()
             return directory
                 .appendingPathComponent(CacheAccountScope.scopedFileName(name, scope: scope))
                 .appendingPathExtension(Constants.fileExtension)

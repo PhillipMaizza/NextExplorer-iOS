@@ -1,5 +1,5 @@
 import ComposableArchitecture
-import CryptoKit
+import CoreModels
 import DesignSystem
 import FilesClient
 import Foundation
@@ -72,7 +72,7 @@ extension DocumentThumbnailCache {
 
 extension DocumentThumbnailCache {
     private static func hexDigest(of string: String) -> String {
-        SHA256.hash(data: Data(string.utf8)).map { String(format: "%02x", $0) }.joined()
+        string.sha256Hex()
     }
 
     /// The production render cache directory, under the shared `PreviewCache` root.

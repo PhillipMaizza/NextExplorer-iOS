@@ -1,5 +1,4 @@
 import CoreModels
-import CryptoKit
 import Foundation
 import NetworkClient
 
@@ -391,8 +390,7 @@ extension FilesService {
             ?? FileManager.default.temporaryDirectory
         // The account is folded into the slot key so two accounts never serve each other's
         // downloaded preview/raw bytes for a matching item id.
-        let digest = SHA256.hash(data: Data(CacheLayout.key(scope, item.id).utf8))
-        let key = digest.map { String(format: "%02x", $0) }.joined()
+        let key = CacheLayout.key(scope, item.id).sha256Hex()
         return cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
             .appendingPathComponent(namespace, isDirectory: true)
             .appendingPathComponent(CacheAccountScope.scopedFileName(key, scope: scope), isDirectory: true)

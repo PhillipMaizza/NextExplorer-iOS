@@ -1,4 +1,4 @@
-import CryptoKit
+import CoreModels
 import Dependencies
 import FilesClient
 import Foundation
@@ -119,8 +119,7 @@ extension LocalThumbnailStore {
         private func fileURL(scope: String, path: String) -> URL? {
             guard let directory = cacheDirectory?.url else { return nil }
             let normalized = path.trimmingCharacters(in: CacheLayout.pathTrimCharacters)
-            let digest = SHA256.hash(data: Data("\(scope)\u{0}\(normalized)".utf8)).map { String(format: "%02x", $0) }
-                .joined()
+            let digest = "\(scope)\u{0}\(normalized)".sha256Hex()
             return directory
                 .appendingPathComponent(CacheAccountScope.scopedFileName(digest, scope: scope))
                 .appendingPathExtension(Constants.fileExtension)
