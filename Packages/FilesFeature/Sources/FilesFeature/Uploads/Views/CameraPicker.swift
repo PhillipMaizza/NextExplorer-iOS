@@ -29,6 +29,9 @@
 
         final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
             private let onCapture: (URL?) -> Void
+            /// The photo is encoded off the main thread while the camera stays on screen, so a second
+            /// tap on Use Photo must not stage and upload it again.
+            private var isSavingPhoto = false
 
             init(onCapture: @escaping (URL?) -> Void) {
                 self.onCapture = onCapture
@@ -47,6 +50,8 @@
                     onCapture(nil)
                     return
                 }
+                guard !isSavingPhoto else { return }
+                isSavingPhoto = true
                 let url = UploadStagingLocation.directory
                     .appendingPathComponent("Photo_\(Int(Date().timeIntervalSince1970)).jpg")
                 let onCapture = onCapture
