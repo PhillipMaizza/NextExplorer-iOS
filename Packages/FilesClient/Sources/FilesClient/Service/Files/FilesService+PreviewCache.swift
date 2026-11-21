@@ -428,7 +428,6 @@ extension FilesService {
         "\(item.dateModified.timeIntervalSince1970)|\(item.size)"
     }
 
-    // shortcut: files up to 8 MiB always go direct even when chunking is forced, since no proxy cuts them off; check size first if that changes.
     /// Uploads one file the way the server and this origin's history call for: a single multipart
     /// request (`uploadDirect`), or resumable pieces (`uploadChunked`) when the admin forced them
     /// or a direct request was refused for its size and auto fallback is on. Files under

@@ -197,8 +197,6 @@ struct SessionCookieStore: Sendable {
         // `URLSessionConfiguration.httpCookieAcceptPolicy` and silently no-ops `setCookie`
         // if left at a restrictive default (observed in headless/CLI test processes).
         cookieStorage.cookieAcceptPolicy = .always
-        // shortcut: a cookie the server sets later with an expiry is stored on disk until the next install;
-        // give NetworkClient a storage that never persists if the server starts rolling its cookie.
         cookieStorage.setCookie(cookie)
     }
 

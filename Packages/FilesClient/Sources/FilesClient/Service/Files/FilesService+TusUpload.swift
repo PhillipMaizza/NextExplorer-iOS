@@ -18,8 +18,6 @@ extension FilesService {
         case retryable(FilesClientError)
     }
 
-    // shortcut: the upload id is not saved across launches, so a killed app restarts the file; persist it when Share Extension uploads move to TUS.
-    // shortcut: no stall watchdog and no step down when a piece gets a 413, only a refused direct upload walks the ladder.
     /// Sends one file as a resumable upload in `chunkSizeBytes` pieces. A piece that fails in
     /// transit is resumed from the offset the server reports; an upload the server forgot is
     /// started once more from the beginning.

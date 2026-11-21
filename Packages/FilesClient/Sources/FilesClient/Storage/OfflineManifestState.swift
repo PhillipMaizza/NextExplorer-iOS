@@ -17,8 +17,6 @@ final class OfflineManifestState: @unchecked Sendable {
     private let writes = DispatchQueue(label: "OfflineManifestState.writes", qos: .utility)
 
     /// The cached value, or what `load` reads from disk the first time a scope is asked.
-    /// shortcut: that first read per scope still runs on the calling thread; preload at account
-    /// activation if it ever shows up in a trace.
     func value<Value>(_ key: WritableKeyPath<Entry, Value?>, scope: String, load: () -> Value) -> Value {
         lock.withLock {
             if let cached = entries[scope, default: Entry()][keyPath: key] {
