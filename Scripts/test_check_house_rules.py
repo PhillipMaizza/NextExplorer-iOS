@@ -37,11 +37,13 @@ class DiffTests(unittest.TestCase):
 
 
 class CommentTests(unittest.TestCase):
-    def test_a_hyphen_in_a_comment_is_found(self):
-        self.assertEqual(len(lines_of(SOURCE, "let a = 1 // a well-known case", "/// Pre-check")), 2)
+    def test_a_dash_as_punctuation_in_a_comment_is_found(self):
+        lines = ["let a = 1 // a case - the common one", "/// Checks first \u2014 then saves", "// one--two", " * re-read \u2013 twice"]
+        self.assertEqual(len(lines_of(SOURCE, *lines)), 4)
 
-    def test_a_block_comment_line_is_a_comment(self):
-        self.assertEqual(len(lines_of(SOURCE, " * re-read")), 1)
+    def test_hyphenated_words_marks_and_docc_items_pass(self):
+        lines = ["// a well-known case", "/// Pre-check", "// MARK: - Section", "/// - Parameters:", "///   - name: the file", "// rwx r-x r--"]
+        self.assertEqual(lines_of(SOURCE, *lines), [])
 
     def test_links_and_code_hyphens_pass(self):
         self.assertEqual(lines_of(SOURCE, "// see https://example.com/a-b", "let a = b - c"), [])
@@ -70,6 +72,14 @@ class SourceRuleTests(unittest.TestCase):
     def test_a_suffixed_loading_flag_is_found(self):
         found = lines_of(SOURCE, "var isLoadingMore = false", "var isLoadingMore: Bool { morePhase == .loading }")
         self.assertEqual(len(found), 1)
+
+    def test_a_bool_not_named_as_a_question_is_found(self):
+        found = lines_of(SOURCE, "let enabled: Bool", "public var showThumbnails: Bool?", "@State private var dirty: Bool = false")
+        self.assertEqual(len(found), 3)
+
+    def test_a_bool_named_as_a_question_passes(self):
+        lines = ["let isEnabled: Bool", "var hasItems: Bool", "let shouldShowThumbnails: Bool?", "let supportsThumbnail: Bool"]
+        self.assertEqual(lines_of(SOURCE, *lines), [])
 
     def test_a_negated_platform_check_is_found(self):
         self.assertEqual(len(lines_of(SOURCE, "#if !os(macOS)", "#if os(iOS)")), 1)
@@ -119,6 +129,11 @@ class SizeTests(unittest.TestCase):
 
     def test_an_oversized_view_file_that_grows_fails(self):
         self.assertEqual(len(check.check_size(SOURCE, self.VIEW, self.VIEW + "\n")), 1)
+
+    def test_a_test_file_crossing_its_limit_fails(self):
+        test = "Packages/A/Tests/ATests/TrashTests.swift"
+        self.assertEqual(len(check.check_size(test, "", "struct TrashTests {\n" + "\n" * 620)), 1)
+        self.assertEqual(check.check_size(test, "", "struct TrashTests {\n" + "\n" * 500), [])
 
     def test_a_large_non_view_file_passes(self):
         self.assertEqual(check.check_size(SOURCE, None, "struct Reducer {\n" + "\n" * 500), [])
