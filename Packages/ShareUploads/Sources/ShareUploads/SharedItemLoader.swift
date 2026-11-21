@@ -155,7 +155,7 @@ public enum SharedItemLoader {
                         let name = stillName.map { pairedMovieName(stillName: $0, movieType: type) }
                             ?? renamed(fileName(fileURL: url, suggestedName: suggestedName, type: type), to: base)
                         let file = try batch.envelope(for: url, fileName: name)
-                        guard loading.isActive, batch.exists else {
+                        guard loading.isActive, batch.isOnDisk else {
                             file.removeEnvelope()
                             throw CancellationError()
                         }
@@ -204,7 +204,7 @@ public enum SharedItemLoader {
     ) throws -> UploadBatch.StagedFile {
         try flag.throwIfCancelled()
         let file = try batch.envelope(for: url, fileName: fileName)
-        if flag.isCancelled || !batch.exists {
+        if flag.isCancelled || !batch.isOnDisk {
             file.removeEnvelope()
             throw CancellationError()
         }

@@ -76,7 +76,7 @@ struct SessionCookieStoreTests {
         #expect(credentials.cookieValue == "s%3Aabc123")
         #expect(credentials.cookieDomain == host)
         #expect(credentials.cookiePath == "/")
-        #expect(credentials.cookieIsSecure == false)
+        #expect(credentials.isCookieSecure == false)
         #expect(credentials.username == TestAccount.username)
         #expect(credentials.authMode == .local)
         #expect(credentials.expiresAt != nil)
@@ -91,7 +91,7 @@ struct SessionCookieStoreTests {
             cookieValue: value,
             cookieDomain: host,
             cookiePath: "/",
-            cookieIsSecure: false,
+            isCookieSecure: false,
             expiresAt: nil,
             username: username
         )

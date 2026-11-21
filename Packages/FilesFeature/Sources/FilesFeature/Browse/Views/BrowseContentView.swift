@@ -210,7 +210,7 @@ struct BrowseContentView: View {
                 : nil
         )
         .syncCompletedToast(
-            trigger: hasFinishedRefreshing,
+            hasFinishedRefreshing: hasFinishedRefreshing,
             isErrorFree: store.phase.errorMessage == nil,
             extraBottomInset: bottomChromeClearance
         )

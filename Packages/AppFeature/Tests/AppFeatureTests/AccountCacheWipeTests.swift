@@ -245,7 +245,7 @@ struct AccountCacheWipeTests {
             cookieValue: "v",
             cookieDomain: TestHost.server,
             cookiePath: "/",
-            cookieIsSecure: true,
+            isCookieSecure: true,
             expiresAt: nil,
             username: parts.last
         )

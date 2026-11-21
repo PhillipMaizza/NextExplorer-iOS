@@ -231,12 +231,17 @@ public struct SystemSettingsPatch: Equatable, Sendable, Encodable {
     }
 
     public struct SearchIndexPatch: Equatable, Sendable, Encodable {
-        public var enabled: Bool?
+        public var isEnabled: Bool?
         public var excludedPaths: [String]?
 
-        public init(enabled: Bool? = nil, excludedPaths: [String]? = nil) {
-            self.enabled = enabled
+        public init(isEnabled: Bool? = nil, excludedPaths: [String]? = nil) {
+            self.isEnabled = isEnabled
             self.excludedPaths = excludedPaths
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case excludedPaths
+            case isEnabled = "enabled"
         }
     }
 

@@ -12,7 +12,7 @@ struct OfflinePinnedGridCells: View {
     var usages: [OfflinePinnedRootUsage]
     var favorites: IdentifiedArrayOf<Favorite> = []
     var serverURL: URL?
-    var showThumbnails = false
+    var shouldShowThumbnails = false
     var isSelecting = false
     var selectedPaths: Set<String> = []
     /// The tab's preview zoom, so a kept file grows from its tile when opened.
@@ -35,7 +35,7 @@ struct OfflinePinnedGridCells: View {
                     size: usage.sizeBytes,
                     thumbnailFile: usage.thumbnailFile,
                     serverURL: serverURL,
-                    showThumbnails: showThumbnails,
+                    shouldShowThumbnails: shouldShowThumbnails,
                     customIcon: usage.root.isDirectory ? favorite.map { FavoriteIcon.symbol(for: $0.icon) } : nil,
                     customIconTint: favorite.flatMap { FavoriteColor.resolve($0.color) },
                     isCustomIconFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? false,

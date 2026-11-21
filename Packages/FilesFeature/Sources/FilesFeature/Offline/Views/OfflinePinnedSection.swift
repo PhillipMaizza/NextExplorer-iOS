@@ -15,7 +15,7 @@ struct OfflinePinnedSection: View {
     var phase = OfflineDownloadProgress.Phase.idle
     var favorites: IdentifiedArrayOf<Favorite> = []
     var serverURL: URL?
-    var showThumbnails = false
+    var shouldShowThumbnails = false
     var isSelecting = false
     var selectedPaths: Set<String> = []
     /// The tab's preview zoom, so a kept file grows from its row when opened.
@@ -37,7 +37,7 @@ struct OfflinePinnedSection: View {
                     favorite: favorites.first { $0.path == usage.root.path },
                     syncState: OfflineSyncState(phase: phase),
                     serverURL: serverURL,
-                    showThumbnails: showThumbnails,
+                    shouldShowThumbnails: shouldShowThumbnails,
                     isSelecting: isSelecting,
                     isSelected: selectedPaths.contains(usage.root.path),
                     matchedSource: usage.root.isDirectory ? nil : zoom?.source(for: usage.root.path)

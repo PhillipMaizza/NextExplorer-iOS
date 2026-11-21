@@ -4,13 +4,17 @@
 Line rules look only at lines a change adds, and size rules fail only when a file crosses its limit
 or an oversized file grows, so older code is never blocked; it is fixed when touched.
 
-  comment hyphen        a Swift comment with a hyphen (links excepted)
+  comment dash          a Swift comment using a dash as punctuation (hyphenated words, MARK
+                        separators and DocC list items are fine)
   raw string            Text("..."), Label, Button, navigationTitle, accessibilityLabel or help with
                         a literal outside previews; use L10n
   loading flags         a stored isLoading or hasLoaded; model a DataPhase
   negated platform      #if !os(...); name the platform
   byte streaming        URLSession bytes; download the file instead
+  bool name             a stored Bool not named as a question (is, has, should, can, did...); a server
+                        field keeps its wire name as a CodingKeys raw value
   view size             a view file over 400 lines, newly or growing
+  test size             a test file over 600 lines, newly or growing
   missing preview       a new file declaring a View without a #Preview
   key material          a private key, App Store Connect key, GitHub token or signing file
   denylisted term       a term listed in .git/info/house-rules-denylist (local only, never committed);
@@ -39,11 +43,20 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 MAX_VIEW_LINES = 400
+MAX_TEST_LINES = 600
 SUBJECT = re.compile(r"^NXTIOS-\d{4}: \S")
 BRANCH = re.compile(r"^(feature/NXTIOS-\d{4}-[a-z0-9-]+|main|release/.+)$")
 URL = re.compile(r"[a-z]+://\S+")
+# A dash standing in for a comma or colon: an em or en dash, or a spaced or doubled hyphen.
+PUNCTUATION_DASH = re.compile(r"[\u2014\u2013]|\s--?\s|\w--\w")
+# A MARK separator or a DocC list item opens with a dash that is markup, not punctuation.
+MARKUP_DASH = re.compile(r"^//[/!]?\s*(MARK:\s*-|-\s)")
 RAW_STRING = re.compile(r"\b(Text|Label|Button|navigationTitle|accessibilityLabel|help)\(\s*\"[^\"]*[A-Za-z]")
 LOADING_FLAG = re.compile(r"\bvar\s+(isLoading|hasLoaded)\w*\b")
+BOOL_DECL = re.compile(r"\b(?:let|var)\s+(\w+)\s*:\s*Bool\b")
+BOOL_PREFIX = re.compile(
+    r"^(is|are|has|had|should|can|could|may|did|does|will|was|were|shows|supports|needs|allows|requires|wants|must|uses)[A-Z]"
+)
 NEGATED_PLATFORM = re.compile(r"#(if|elseif)\s+!os\(")
 BYTE_STREAM = re.compile(r"URLSession\.bytes|\.bytes\((for|from):")
 VIEW_DECL = re.compile(r"\bstruct\s+\w+(<[^>]*>)?\s*:\s*([\w.]+\s*,\s*)*View\b")
@@ -125,8 +138,8 @@ def check_lines(path, lines, content, denylist):
         where = f"{path}:{number}"
         if path.endswith(".swift"):
             comment = comment_of(text)
-            if comment and "-" in URL.sub("", comment):
-                findings.append(f"{where}: comment hyphen: {text.strip()}")
+            if comment and PUNCTUATION_DASH.search(MARKUP_DASH.sub("", URL.sub("", comment))):
+                findings.append(f"{where}: comment dash: {text.strip()}")
             if NEGATED_PLATFORM.search(text):
                 findings.append(f"{where}: negated platform check, name the platform")
         if is_source(path):
@@ -136,6 +149,9 @@ def check_lines(path, lines, content, denylist):
                 findings.append(f"{where}: raw string, use L10n: {text.strip()}")
             if LOADING_FLAG.search(code) and "{" not in code:
                 findings.append(f"{where}: stored loading flag, model a DataPhase")
+            for name in BOOL_DECL.findall(code):
+                if not BOOL_PREFIX.match(name):
+                    findings.append(f"{where}: Bool '{name}' should read as a question (is, has, should...)")
             if BYTE_STREAM.search(code):
                 findings.append(f"{where}: byte by byte streaming, download instead")
         if KEY_MATERIAL.search(text):
@@ -149,12 +165,18 @@ def check_lines(path, lines, content, denylist):
 
 
 def check_size(path, old, new):
-    if not is_source(path) or new is None or not VIEW_DECL.search(new):
+    if new is None:
+        return []
+    if is_source(path) and VIEW_DECL.search(new):
+        kind, limit = "view", MAX_VIEW_LINES
+    elif is_test(path):
+        kind, limit = "test", MAX_TEST_LINES
+    else:
         return []
     old_count = len(old.splitlines()) if old is not None else 0
     new_count = len(new.splitlines())
-    if new_count > MAX_VIEW_LINES and (old_count <= MAX_VIEW_LINES or new_count > old_count):
-        return [f"{path}: view file at {new_count} lines (limit {MAX_VIEW_LINES}, was {old_count}); split it"]
+    if new_count > limit and (old_count <= limit or new_count > old_count):
+        return [f"{path}: {kind} file at {new_count} lines (limit {limit}, was {old_count}); split it"]
     return []
 
 

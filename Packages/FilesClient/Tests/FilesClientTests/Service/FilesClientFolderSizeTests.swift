@@ -42,7 +42,7 @@ extension FilesClientLiveTests {
 
             try expectRequest(.post, "/api/folder-size/refresh/Work/Docs")
             expectNoBody()
-            #expect(entry.dirty)
+            #expect(entry.isDirty)
             #expect(entry.sizeBytes == 4096)
         }
 

@@ -8,22 +8,22 @@ struct UserPreferencesDecodingTests {
     @Test("happy path: explicit values override the defaults")
     func decodesExplicitValues() throws {
         let prefs = try CoreModelsFixture.userPreferencesExplicitValues.decode(UserPreferences.self)
-        #expect(prefs.showHiddenFiles == true)
-        #expect(prefs.showThumbnails == false)
+        #expect(prefs.shouldShowHiddenFiles == true)
+        #expect(prefs.shouldShowThumbnails == false)
     }
 
     @Test("edge case: a brand-new user with no settings row decodes to client defaults")
     func decodesEmptyObjectToDefaults() throws {
         let prefs = try CoreModelsFixture.userPreferencesEmptyObject.decode(UserPreferences.self)
-        #expect(prefs.showHiddenFiles == false)
-        #expect(prefs.showThumbnails == true)
+        #expect(prefs.shouldShowHiddenFiles == false)
+        #expect(prefs.shouldShowThumbnails == true)
     }
 
     @Test("edge case: only one key present, the other still falls back to default")
     func decodesPartialObject() throws {
         let prefs = try CoreModelsFixture.userPreferencesPartialObject.decode(UserPreferences.self)
-        #expect(prefs.showHiddenFiles == true)
-        #expect(prefs.showThumbnails == true)
+        #expect(prefs.shouldShowHiddenFiles == true)
+        #expect(prefs.shouldShowThumbnails == true)
         #expect(prefs.defaultShareExpiration == nil)
     }
 

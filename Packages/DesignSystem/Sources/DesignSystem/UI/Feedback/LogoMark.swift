@@ -17,7 +17,7 @@ private enum LogoGeometry {
     private static let deep = Color(red: 0xF8 / 255, green: 0xBA / 255, blue: 0x37 / 255)
     private static let deepLow = Color(red: 0xF9 / 255, green: 0xA2 / 255, blue: 0x2F / 255)
 
-    /// Facets 0–1 form the left wing, 2–3 the right.
+    /// Facets 0 and 1 form the left wing, 2 and 3 the right.
     static let leftWing: [Facet] = [
         Facet(
             points: [CGPoint(x: 43.57, y: 66.49), CGPoint(x: 16.15, y: 76.66), CGPoint(x: 16.15, y: 19.34)],

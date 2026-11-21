@@ -47,7 +47,7 @@ extension AuthClientLiveHarness {
             cookieValue: TestSession.loginCookieValue,
             cookieDomain: #require(serverURL.host),
             cookiePath: "/",
-            cookieIsSecure: false,
+            isCookieSecure: false,
             expiresAt: nil,
             username: TestAccount.username
         )

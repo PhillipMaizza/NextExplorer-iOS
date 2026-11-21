@@ -357,7 +357,7 @@ public struct BrowseFeature {
 
         /// `items` with hidden entries dropped unless the preference is on, in listing order.
         var visibleItems: [FileItem] {
-            preferences.showHiddenFiles ? items.elements : items.elements.filter { !isHiddenFileName($0.name) }
+            preferences.shouldShowHiddenFiles ? items.elements : items.elements.filter { !isHiddenFileName($0.name) }
         }
 
         /// `visibleItems` narrowed to the picked kinds the folder still holds.
@@ -389,12 +389,12 @@ public struct BrowseFeature {
         /// state checks that only need emptiness or a count, not the ordered list.
         public var hasDisplayedItems: Bool {
             guard selectedFolderCategories.isEmpty else { return !filteredItems.isEmpty }
-            return preferences.showHiddenFiles ? !items.isEmpty : items.contains { !isHiddenFileName($0.name) }
+            return preferences.shouldShowHiddenFiles ? !items.isEmpty : items.contains { !isHiddenFileName($0.name) }
         }
 
         public var displayedItemCount: Int {
             guard selectedFolderCategories.isEmpty else { return filteredItems.count }
-            return preferences.showHiddenFiles
+            return preferences.shouldShowHiddenFiles
                 ? items.count
                 : items.reduce(0) { isHiddenFileName($1.name) ? $0 : $0 + 1 }
         }
@@ -403,7 +403,7 @@ public struct BrowseFeature {
         /// to `selectedSearchCategories` when the type filter is active.
         public var displayedSearchResults: IdentifiedArrayOf<SearchResultItem>? {
             guard let searchResults else { return nil }
-            let visible = preferences.showHiddenFiles
+            let visible = preferences.shouldShowHiddenFiles
                 ? searchResults
                 : searchResults.filter { !isHiddenFileName($0.name) }
             guard !selectedSearchCategories.isEmpty else { return visible }
@@ -420,7 +420,7 @@ public struct BrowseFeature {
         /// toggling a category off doesn't make it vanish from the sheet.
         public var availableSearchCategories: [FileCategory] {
             guard let searchResults else { return [] }
-            let visible = preferences.showHiddenFiles
+            let visible = preferences.shouldShowHiddenFiles
                 ? searchResults
                 : searchResults.filter { !isHiddenFileName($0.name) }
             let present = Set(visible.map(Self.category(of:)))

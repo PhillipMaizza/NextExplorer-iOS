@@ -43,18 +43,23 @@ public struct FileMetadata: Codable, Equatable, Sendable {
     }
 
     /// Only present for directories: a recursive scan of everything inside, capped
-    /// server side at 200,000 visited entries (`truncated` flags when that cap was hit).
+    /// server side at 200,000 visited entries (`isTruncated` flags when that cap was hit).
     public struct DirectorySummary: Codable, Equatable, Sendable {
         public let totalSize: Int64
         public let fileCount: Int
         public let dirCount: Int
-        public let truncated: Bool
+        public let isTruncated: Bool
 
-        public init(totalSize: Int64, fileCount: Int, dirCount: Int, truncated: Bool) {
+        public init(totalSize: Int64, fileCount: Int, dirCount: Int, isTruncated: Bool) {
             self.totalSize = totalSize
             self.fileCount = fileCount
             self.dirCount = dirCount
-            self.truncated = truncated
+            self.isTruncated = isTruncated
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case totalSize, fileCount, dirCount
+            case isTruncated = "truncated"
         }
     }
 

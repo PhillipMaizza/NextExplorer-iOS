@@ -6,7 +6,7 @@ import SwiftUI
 /// haptics, so the toast is the confirmation of a toolbar or ⌘R refresh. iOS confirms with the
 /// success haptic alone.
 private struct SyncCompletedToast: ViewModifier {
-    let trigger: Bool
+    let hasFinishedRefreshing: Bool
     let isErrorFree: Bool
     let extraBottomInset: CGFloat
 
@@ -15,7 +15,7 @@ private struct SyncCompletedToast: ViewModifier {
     func body(content: Content) -> some View {
         content
             .dsToast($toast, extraBottomInset: extraBottomInset)
-            .onChange(of: trigger) { _, _ in
+            .onChange(of: hasFinishedRefreshing) { _, _ in
                 guard isErrorFree else { return }
                 toast = .success(L10n.Common.syncCompleted)
             }
@@ -23,10 +23,17 @@ private struct SyncCompletedToast: ViewModifier {
 }
 
 extension View {
-    /// - Parameters:
-    ///   - trigger: the view's `didFinishRefreshing` toggle, flipped once a refresh resolves.
-    ///   - isErrorFree: whether the just-finished refresh left the list without an error.
-    func syncCompletedToast(trigger: Bool, isErrorFree: Bool, extraBottomInset: CGFloat = 0) -> some View {
-        modifier(SyncCompletedToast(trigger: trigger, isErrorFree: isErrorFree, extraBottomInset: extraBottomInset))
+    /// `hasFinishedRefreshing` is the view's toggle, flipped once a refresh resolves; `isErrorFree`
+    /// says the refresh left the list without an error.
+    func syncCompletedToast(
+        hasFinishedRefreshing: Bool,
+        isErrorFree: Bool,
+        extraBottomInset: CGFloat = 0
+    ) -> some View {
+        modifier(SyncCompletedToast(
+            hasFinishedRefreshing: hasFinishedRefreshing,
+            isErrorFree: isErrorFree,
+            extraBottomInset: extraBottomInset
+        ))
     }
 }

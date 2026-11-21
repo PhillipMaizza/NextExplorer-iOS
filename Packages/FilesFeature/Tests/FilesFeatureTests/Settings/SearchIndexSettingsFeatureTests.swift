@@ -203,7 +203,7 @@ struct SearchIndexSettingsFeatureTests {
         }
         await store.receive(.delegate(.saved))
 
-        #expect(patches.value.map(\.searchIndex) == [SystemSettingsPatch.SearchIndexPatch(enabled: true)])
+        #expect(patches.value.map(\.searchIndex) == [SystemSettingsPatch.SearchIndexPatch(isEnabled: true)])
     }
 
     @Test

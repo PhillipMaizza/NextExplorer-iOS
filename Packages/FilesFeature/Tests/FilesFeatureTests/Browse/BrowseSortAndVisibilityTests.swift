@@ -11,13 +11,16 @@ import TestUtils
 @MainActor
 struct BrowseSortAndVisibilityTests {
     private func makeState(
-        showHiddenFiles: Bool = true,
+        shouldShowHiddenFiles: Bool = true,
         sortOption: BrowseFeature.SortOption = .name,
         sortDirection: BrowseFeature.SortDirection = .ascending,
         items: [FileItem] = []
     ) -> BrowseFeature.State {
         var state = BrowseFixtures.state(items: items)
-        state.$preferences.withLock { $0 = UserPreferences(showHiddenFiles: showHiddenFiles, showThumbnails: true) }
+        state.$preferences.withLock { $0 = UserPreferences(
+            shouldShowHiddenFiles: shouldShowHiddenFiles,
+            shouldShowThumbnails: true
+        ) }
         state.sortOption = sortOption
         state.sortDirection = sortDirection
         return state
@@ -135,23 +138,23 @@ struct BrowseSortAndVisibilityTests {
     // MARK: Hidden files
 
     struct HiddenCase: Sendable, CustomTestStringConvertible {
-        let showHiddenFiles: Bool
+        let shouldShowHiddenFiles: Bool
         let expected: Set<String>
 
         var testDescription: String {
-            "showHiddenFiles \(showHiddenFiles)"
+            "showHiddenFiles \(shouldShowHiddenFiles)"
         }
     }
 
     private nonisolated static let hiddenCases = [
-        HiddenCase(showHiddenFiles: false, expected: ["visible.txt"]),
-        HiddenCase(showHiddenFiles: true, expected: ["visible.txt", ".hidden"]),
+        HiddenCase(shouldShowHiddenFiles: false, expected: ["visible.txt"]),
+        HiddenCase(shouldShowHiddenFiles: true, expected: ["visible.txt", ".hidden"]),
     ]
 
     @Test("Hidden files show only when the preference is on", arguments: hiddenCases)
     func hiddenFilesFollowThePreference(_ hidden: HiddenCase) {
         let state = makeState(
-            showHiddenFiles: hidden.showHiddenFiles,
+            shouldShowHiddenFiles: hidden.shouldShowHiddenFiles,
             items: [BrowseFixtures.file("visible.txt"), BrowseFixtures.file(".hidden", kind: TestKind.text)]
         )
 
@@ -161,7 +164,7 @@ struct BrowseSortAndVisibilityTests {
 
     @Test("Hidden search results show only when the preference is on", arguments: hiddenCases)
     func displayedSearchResultsFollowThePreference(_ hidden: HiddenCase) {
-        var state = makeState(showHiddenFiles: hidden.showHiddenFiles)
+        var state = makeState(shouldShowHiddenFiles: hidden.shouldShowHiddenFiles)
         state.searchResults = [
             SearchResultItem(name: "visible.txt", path: "", kind: TestKind.text),
             SearchResultItem(name: ".hidden", path: "", kind: TestKind.text),

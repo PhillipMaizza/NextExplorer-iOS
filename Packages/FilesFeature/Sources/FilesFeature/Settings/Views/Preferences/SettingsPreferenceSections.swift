@@ -80,7 +80,7 @@ struct GeneralSettingsSection: View {
                     DSToggleRow(
                         title: L10n.Settings.toggleShowHiddenFiles,
                         icon: IconKit.eye,
-                        isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles)
+                        isOn: $store.preferences.shouldShowHiddenFiles.sending(\.setShowHiddenFiles)
                     )
                 }
                 if filter.matches(L10n.Settings.toggleRenderHTML) {
@@ -207,7 +207,7 @@ struct DisplaySettingsSection: View {
                     DSToggleRow(
                         title: L10n.Settings.toggleShowThumbnails,
                         icon: IconKit.photo,
-                        isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
+                        isOn: $store.preferences.shouldShowThumbnails.sending(\.setShowThumbnails)
                     )
                 }
                 if !isMac, filter.matches(L10n.Settings.rowThumbnailSize) {

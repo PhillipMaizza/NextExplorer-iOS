@@ -10,8 +10,8 @@ struct TransferResultDecodingTests {
         let result = try CoreModelsFixture.transferResultMoveWithSkippedItem.decode(TransferResult.self)
         #expect(result.destination == TestPath.documentsWork)
         #expect(result.items.count == 2)
-        #expect(result.items[0].skipped == false)
-        #expect(result.items[1].skipped == true)
+        #expect(result.items[0].isSkipped == false)
+        #expect(result.items[1].isSkipped == true)
         #expect(result.movedCount == 1)
         #expect(result.skippedCount == 1)
     }
@@ -19,7 +19,7 @@ struct TransferResultDecodingTests {
     @Test("edge case: missing skipped defaults to false")
     func missingSkippedDefaultsFalse() throws {
         let result = try CoreModelsFixture.transferResultMissingSkipped.decode(TransferResult.self)
-        #expect(result.items[0].skipped == false)
+        #expect(result.items[0].isSkipped == false)
         #expect(result.movedCount == 1)
         #expect(result.skippedCount == 0)
     }

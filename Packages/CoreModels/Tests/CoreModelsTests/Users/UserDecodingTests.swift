@@ -38,7 +38,7 @@ struct UserDecodingTests {
     func isoTimestampsDoNotBreakAPlainDecode() throws {
         let user = try CoreModelsFixture.userLoginResponseIsoTimestamps.decode(User.self)
         #expect(user.username == TestAccount.username)
-        #expect(user.emailVerified == true)
+        #expect(user.isEmailVerified == true)
         #expect(user.createdAt != nil)
         #expect(user.updatedAt != nil)
     }
@@ -48,11 +48,11 @@ struct UserDecodingTests {
         let user = try CoreModelsFixture.userAdminListLockedTwoFactor.decode(User.self)
         #expect(user.isLocked)
         #expect(user.lockedUntil == ServerTimestamp.date(from: "2027-01-15T10:30:00.000Z"))
-        #expect(user.twoFactorEnabled)
+        #expect(user.isTwoFactorEnabled)
 
         let plain = try CoreModelsFixture.userAdminWithEmail.decode(User.self)
         #expect(!plain.isLocked)
-        #expect(!plain.twoFactorEnabled)
+        #expect(!plain.isTwoFactorEnabled)
     }
 
     @Test("afterReset drops only what the reset clears")
@@ -61,11 +61,11 @@ struct UserDecodingTests {
 
         let unlocked = user.afterReset(.lock)
         #expect(!unlocked.isLocked)
-        #expect(unlocked.twoFactorEnabled)
+        #expect(unlocked.isTwoFactorEnabled)
 
         let withoutSecondFactor = user.afterReset(.twoFactor)
         #expect(withoutSecondFactor.isLocked)
-        #expect(!withoutSecondFactor.twoFactorEnabled)
+        #expect(!withoutSecondFactor.isTwoFactorEnabled)
 
         #expect(user.afterReset(.passkeys) == user)
     }

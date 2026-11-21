@@ -100,7 +100,7 @@ struct MockWorldTests {
         #expect(seeded.map(\.username) == [UITestFixture.SignedInAccount.username.rawValue] + Person.allCases
             .map(\.username))
         #expect(seeded.contains { $0.isLocked })
-        #expect(seeded.contains { $0.twoFactorEnabled && $0.isAdmin })
+        #expect(seeded.contains { $0.isTwoFactorEnabled && $0.isAdmin })
 
         let newUser = UITestFixture.NewUser.casey
         let added = try await client.createUser(serverURL, CreateUserRequest(

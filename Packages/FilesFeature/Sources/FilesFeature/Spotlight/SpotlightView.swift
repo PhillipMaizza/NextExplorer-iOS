@@ -158,7 +158,7 @@
                 SpotlightResultRow(
                     result: result,
                     serverURL: store.serverURL,
-                    showThumbnails: store.preferences.showThumbnails,
+                    shouldShowThumbnails: store.preferences.shouldShowThumbnails,
                     isActive: store.activeIndex == index,
                     onHover: { isInside in
                         // Entering a row highlights it; leaving never clears, since the exit of the row
@@ -219,7 +219,7 @@
     private struct SpotlightResultRow: View {
         let result: SearchResultItem
         let serverURL: URL
-        let showThumbnails: Bool
+        let shouldShowThumbnails: Bool
         let isActive: Bool
         let onHover: (Bool) -> Void
         let onOpen: () -> Void
@@ -229,7 +229,7 @@
                 SearchResultRow(
                     result: result,
                     serverURL: serverURL,
-                    showThumbnails: showThumbnails
+                    shouldShowThumbnails: shouldShowThumbnails
                 )
                 .padding(.horizontal, .space8)
                 .frame(maxWidth: .infinity, alignment: .leading)

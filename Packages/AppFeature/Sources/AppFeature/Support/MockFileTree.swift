@@ -307,7 +307,7 @@
                         totalSize: files.reduce(0) { $0 + $1.size },
                         fileCount: files.count,
                         dirCount: below.count - files.count,
-                        truncated: false
+                        isTruncated: false
                     )
                 )
             }

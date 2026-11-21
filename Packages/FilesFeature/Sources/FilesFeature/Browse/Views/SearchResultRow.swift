@@ -12,7 +12,7 @@ struct SearchResultRow: View {
     var currentFolder: String?
     var isFavorite = false
     var serverURL: URL?
-    var showThumbnails = false
+    var shouldShowThumbnails = false
     var matchedSource: PreviewMatchedSource?
     var isOpening = false
 
@@ -32,7 +32,7 @@ struct SearchResultRow: View {
             kind: result.displayKind,
             thumbnailFile: result.thumbnailFile,
             serverURL: serverURL,
-            showThumbnails: showThumbnails,
+            shouldShowThumbnails: shouldShowThumbnails,
             matchedSource: matchedSource,
             isOpening: isOpening,
             dateModified: shownItem.flatMap { $0.hasKnownDate ? $0.dateModified : nil },

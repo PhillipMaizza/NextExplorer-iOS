@@ -18,7 +18,7 @@ struct StoredSessionsLookupTests {
             cookieValue: TestSession.cookieValue,
             cookieDomain: host,
             cookiePath: "/",
-            cookieIsSecure: isSecure,
+            isCookieSecure: isSecure,
             expiresAt: expiresAt,
             username: username
         )

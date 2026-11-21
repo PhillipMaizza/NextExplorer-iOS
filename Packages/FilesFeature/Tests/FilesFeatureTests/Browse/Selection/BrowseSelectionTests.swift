@@ -135,7 +135,7 @@ struct BrowseSelectionTests {
         state.selectedItemIDs = [folder.id, file.id, dotfile.id]
         state.bulkDeletePhase = .confirming
         // Turned off in another window while the three were selected.
-        state.$preferences.withLock { $0.showHiddenFiles = false }
+        state.$preferences.withLock { $0.shouldShowHiddenFiles = false }
         let deleted = LockIsolated<[Set<String>]>([])
         let store = BrowseFixtures.store(state) {
             $0.filesClient.deleteItems = { _, items, _, _ in
@@ -166,7 +166,7 @@ struct BrowseSelectionTests {
         var state = BrowseFixtures.state(items: [folder, file, dotfile])
         state.isSelecting = true
         state.selectedItemIDs = [dotfile.id]
-        state.$preferences.withLock { $0.showHiddenFiles = false }
+        state.$preferences.withLock { $0.shouldShowHiddenFiles = false }
         let store = BrowseFixtures.store(state)
         #expect(!store.state.hasSelectionOnScreen)
         #expect(!store.state.isDeleteActionVisible)

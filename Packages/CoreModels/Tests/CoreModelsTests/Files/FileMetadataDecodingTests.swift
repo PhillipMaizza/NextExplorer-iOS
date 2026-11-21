@@ -21,7 +21,7 @@ struct FileMetadataDecodingTests {
         #expect(metadata.isDirectory == true)
         #expect(metadata.directory?.fileCount == 42)
         #expect(metadata.directory?.dirCount == 3)
-        #expect(metadata.directory?.truncated == false)
+        #expect(metadata.directory?.isTruncated == false)
     }
 
     @Test("decodes full image EXIF data including GPS")

@@ -18,7 +18,12 @@ extension FilesService {
 
     private struct PurgeBody: Encodable {
         let ids: [String]
-        let forgetUnavailable: Bool?
+        let shouldForgetUnavailable: Bool?
+
+        private enum CodingKeys: String, CodingKey {
+            case ids
+            case shouldForgetUnavailable = "forgetUnavailable"
+        }
     }
 
     /// `/api/trash/items/<id>/<component>`, the id encoded as one segment.
@@ -98,7 +103,7 @@ extension FilesService {
             request.setJSONContentType()
             request.httpBody = try Self.encode(PurgeBody(
                 ids: batchIDs,
-                forgetUnavailable: forgetUnavailable
+                shouldForgetUnavailable: forgetUnavailable
                     ? true
                     : nil
             ))

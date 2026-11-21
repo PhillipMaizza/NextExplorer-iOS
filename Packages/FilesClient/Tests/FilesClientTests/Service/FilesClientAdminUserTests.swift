@@ -36,7 +36,7 @@ extension FilesClientLiveTests {
             #expect(users[0].email == "alice@example.com")
             #expect(users[0].displayName == Constants.displayName)
             #expect(users[0].isAdmin)
-            #expect(users[0].emailVerified)
+            #expect(users[0].isEmailVerified)
             #expect(users[0].createdAt != nil)
             #expect(users[0].updatedAt != nil)
         }

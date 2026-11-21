@@ -43,7 +43,7 @@ struct SessionCookieStore: Sendable {
             cookieValue: cookie.value,
             cookieDomain: cookie.domain.isEmpty ? host : cookie.domain,
             cookiePath: cookie.path.isEmpty ? "/" : cookie.path,
-            cookieIsSecure: cookie.isSecure,
+            isCookieSecure: cookie.isSecure,
             expiresAt: cookie.expiresDate,
             username: username,
             email: email

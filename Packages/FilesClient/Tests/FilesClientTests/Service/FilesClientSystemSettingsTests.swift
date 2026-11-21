@@ -35,7 +35,7 @@ extension FilesClientLiveTests {
 
             let echoed = try await makeClient().updateSystemSettings(
                 serverURL,
-                SystemSettingsPatch(searchIndex: .init(enabled: true))
+                SystemSettingsPatch(searchIndex: .init(isEnabled: true))
             )
 
             #expect(echoed.searchIndex?.isEnabled == true)

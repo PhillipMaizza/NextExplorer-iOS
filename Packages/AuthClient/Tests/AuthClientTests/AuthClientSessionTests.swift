@@ -54,7 +54,7 @@ struct AuthClientSessionTests: AuthClientLiveHarness {
             cookieValue: Constants.restoredValue,
             cookieDomain: #require(serverURL.host),
             cookiePath: "/",
-            cookieIsSecure: false,
+            isCookieSecure: false,
             expiresAt: nil,
             username: TestAccount.username
         )

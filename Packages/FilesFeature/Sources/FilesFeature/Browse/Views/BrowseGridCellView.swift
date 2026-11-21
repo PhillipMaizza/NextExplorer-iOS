@@ -19,7 +19,7 @@ struct GridCellView: View {
     let supportsThumbnail: Bool
     let thumbnailSignature: String
     let serverURL: URL?
-    let showThumbnails: Bool
+    let shouldShowThumbnails: Bool
     /// A file's size, or a folder's counted size; `nil` shows no size.
     let size: Int64?
     /// Shown under the name in place of the size, such as a favorite's location.
@@ -54,7 +54,7 @@ struct GridCellView: View {
         size: Int64? = nil,
         thumbnailFile: FileItem? = nil,
         serverURL: URL? = nil,
-        showThumbnails: Bool = false,
+        shouldShowThumbnails: Bool = false,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
         isCustomIconFilled: Bool = false,
@@ -74,7 +74,7 @@ struct GridCellView: View {
         supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
         thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
         self.serverURL = serverURL
-        self.showThumbnails = showThumbnails
+        self.shouldShowThumbnails = shouldShowThumbnails
         file = thumbnailFile
         dateModified = thumbnailFile.flatMap { $0.hasKnownDate ? $0.dateModified : nil }
         self.customIcon = customIcon
@@ -88,7 +88,7 @@ struct GridCellView: View {
         item: FileItem,
         isFavorite: Bool = false,
         serverURL: URL? = nil,
-        showThumbnails: Bool = false,
+        shouldShowThumbnails: Bool = false,
         folderSize: Int64? = nil,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
@@ -104,7 +104,7 @@ struct GridCellView: View {
         supportsThumbnail = item.supportsThumbnail
         thumbnailSignature = item.cacheSignature
         self.serverURL = serverURL
-        self.showThumbnails = showThumbnails
+        self.shouldShowThumbnails = shouldShowThumbnails
         file = item
         dateModified = item.hasKnownDate ? item.dateModified : nil
         customIcon = nil
@@ -136,7 +136,8 @@ struct GridCellView: View {
     }
 
     private var isEligibleForThumbnail: Bool {
-        !isDirectory && (supportsThumbnail || shouldReadOwnContent) && showThumbnails && serverURL != nil && itemID !=
+        !isDirectory && (supportsThumbnail || shouldReadOwnContent) && shouldShowThumbnails && serverURL != nil &&
+            itemID !=
             nil
     }
 
@@ -146,7 +147,7 @@ struct GridCellView: View {
     }
 
     private var isEligibleForDocumentThumbnail: Bool {
-        showThumbnails && serverURL != nil && file.map(DocumentThumbnailStore.isEligible) == true
+        shouldShowThumbnails && serverURL != nil && file.map(DocumentThumbnailStore.isEligible) == true
     }
 
     var body: some View {
@@ -257,7 +258,7 @@ struct GridCellView: View {
             supportsThumbnail: true
         ),
         serverURL: URL(string: "https://nextexplorer.example.com"),
-        showThumbnails: true
+        shouldShowThumbnails: true
     )
     .frame(width: Constants.previewWidth)
     .padding(.space16)

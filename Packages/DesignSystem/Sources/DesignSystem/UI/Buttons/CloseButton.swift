@@ -82,7 +82,7 @@ public struct DSCloseButton: View {
                 .foregroundStyle(Color.primaryDS)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
                 .padding(Constants.padding)
-                .dsGlass(interactive: true, in: Circle())
+                .dsGlass(isInteractive: true, in: Circle())
                 .dsMinimumHitTarget()
         }
         .buttonStyle(DSPressableButtonStyle())

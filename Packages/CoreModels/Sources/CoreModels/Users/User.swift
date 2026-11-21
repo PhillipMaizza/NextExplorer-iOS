@@ -9,7 +9,7 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
     public let email: String?
     public let displayName: String?
     public let roles: [String]
-    public let emailVerified: Bool
+    public let isEmailVerified: Bool
     public let createdAt: Date?
     public let updatedAt: Date?
     /// Only populated by the admin `GET /api/users` list; empty for `/api/auth/me`.
@@ -17,7 +17,7 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
     /// Only populated by the admin `GET /api/users` list: the end of an active sign in lock.
     public private(set) var lockedUntil: Date?
     /// Only populated by the admin `GET /api/users` list.
-    public private(set) var twoFactorEnabled: Bool
+    public private(set) var isTwoFactorEnabled: Bool
 
     public var isLocked: Bool {
         lockedUntil != nil
@@ -42,24 +42,24 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         email: String?,
         displayName: String? = nil,
         roles: [String] = [],
-        emailVerified: Bool = false,
+        isEmailVerified: Bool = false,
         createdAt: Date? = nil,
         updatedAt: Date? = nil,
         authMethods: [AuthMethod] = [],
         lockedUntil: Date? = nil,
-        twoFactorEnabled: Bool = false
+        isTwoFactorEnabled: Bool = false
     ) {
         self.id = id
         self.username = username
         self.email = email
         self.displayName = displayName
         self.roles = roles
-        self.emailVerified = emailVerified
+        self.isEmailVerified = isEmailVerified
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.authMethods = authMethods
         self.lockedUntil = lockedUntil
-        self.twoFactorEnabled = twoFactorEnabled
+        self.isTwoFactorEnabled = isTwoFactorEnabled
     }
 
     /// This user once the server has applied `reset`, so the list and detail can drop the lock or
@@ -68,15 +68,16 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         var user = self
         switch reset {
         case .lock: user.lockedUntil = nil
-        case .twoFactor: user.twoFactorEnabled = false
+        case .twoFactor: user.isTwoFactorEnabled = false
         case .passkeys: break
         }
         return user
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, username, email, displayName, roles, emailVerified, createdAt, updatedAt, authMethods, lockedUntil,
-             twoFactorEnabled
+        case id, username, email, displayName, roles, createdAt, updatedAt, authMethods, lockedUntil
+        case isEmailVerified = "emailVerified"
+        case isTwoFactorEnabled = "twoFactorEnabled"
     }
 
     public init(from decoder: Decoder) throws {
@@ -89,12 +90,12 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         email = try container.decodeIfPresent(String.self, forKey: .email)
         displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
         roles = try container.decodeIfPresent([String].self, forKey: .roles) ?? []
-        emailVerified = (try? container.decodeIfPresent(Bool.self, forKey: .emailVerified)) ?? false
+        isEmailVerified = (try? container.decodeIfPresent(Bool.self, forKey: .isEmailVerified)) ?? false
         createdAt = Self.decodeTimestamp(container, forKey: .createdAt)
         updatedAt = Self.decodeTimestamp(container, forKey: .updatedAt)
         authMethods = (try? container.decodeIfPresent([AuthMethod].self, forKey: .authMethods)) ?? []
         lockedUntil = Self.decodeTimestamp(container, forKey: .lockedUntil)
-        twoFactorEnabled = (try? container.decodeIfPresent(Bool.self, forKey: .twoFactorEnabled)) ?? false
+        isTwoFactorEnabled = (try? container.decodeIfPresent(Bool.self, forKey: .isTwoFactorEnabled)) ?? false
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -104,12 +105,12 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         try container.encodeIfPresent(email, forKey: .email)
         try container.encodeIfPresent(displayName, forKey: .displayName)
         try container.encode(roles, forKey: .roles)
-        try container.encode(emailVerified, forKey: .emailVerified)
+        try container.encode(isEmailVerified, forKey: .isEmailVerified)
         try container.encodeIfPresent(createdAt, forKey: .createdAt)
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try container.encode(authMethods, forKey: .authMethods)
         try container.encodeIfPresent(lockedUntil, forKey: .lockedUntil)
-        try container.encode(twoFactorEnabled, forKey: .twoFactorEnabled)
+        try container.encode(isTwoFactorEnabled, forKey: .isTwoFactorEnabled)
     }
 
     /// `createdAt` and `updatedAt` are metadata the admin user list shows and nothing else

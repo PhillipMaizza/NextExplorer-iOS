@@ -132,7 +132,7 @@
                 return .handled
             }
             .onDeleteCommand { remove(selection) }
-            .onOfflinePhaseChange(initial: true) { phase = $0 }
+            .onOfflinePhaseChange(isInitial: true) { phase = $0 }
             .onChange(of: rows.map(\.id)) { _, ids in
                 selection.formIntersection(ids)
             }

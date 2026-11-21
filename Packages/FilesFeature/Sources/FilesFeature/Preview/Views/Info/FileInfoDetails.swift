@@ -59,7 +59,7 @@ struct FileInfoDetails: View {
                     row(L10n.FileInfo.rowFiles, "\(directory.fileCount)")
                     row(L10n.FileInfo.rowFolders, "\(directory.dirCount)")
                     row(L10n.FileInfo.rowTotalSize, FileSizeFormat.string(directory.totalSize))
-                    if directory.truncated {
+                    if directory.isTruncated {
                         Text(L10n.FileInfo.partialScan)
                             .type(.body3(.regular), style: .tertiary)
                             .padding(.top, .space4)
@@ -203,7 +203,7 @@ struct FileInfoDetails: View {
                     totalSize: 41_000_000_000,
                     fileCount: 1_200,
                     dirCount: 60,
-                    truncated: true
+                    isTruncated: true
                 )
             ),
             usage: StorageUsage(path: "Media", size: 41_000_000_000, free: 59_000_000_000, total: 100_000_000_000)

@@ -6,7 +6,12 @@ extension FilesService {
     struct ChmodBody: Encodable {
         let path: String
         let mode: String
-        let recursive: Bool
+        let isRecursive: Bool
+
+        private enum CodingKeys: String, CodingKey {
+            case path, mode
+            case isRecursive = "recursive"
+        }
     }
 
     /// A nil `owner`/`group` is left out by the synthesized encoder (`encodeIfPresent`), which

@@ -94,7 +94,7 @@ public struct MainTabView: View {
             .animation(DSMotion.stateFade, value: store.downloadQueue.isBarVisible)
             .animation(DSMotion.stateFade, value: store.downloadQueue.isActive)
             .animation(DSMotion.stateFade, value: offlinePhase.shouldShowOfflineBar)
-            .onOfflinePhaseChange(initial: true) { offlinePhase = $0 }
+            .onOfflinePhaseChange(isInitial: true) { offlinePhase = $0 }
             .animation(DSMotion.stateFade, value: breadcrumbClearance)
             .onChange(of: shouldShowTransferBars) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }

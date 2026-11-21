@@ -26,7 +26,7 @@ struct BrowseFolderSizeTests {
                 asked.withValue { $0 = paths }
                 return Dictionary(uniqueKeysWithValues: paths.map { (
                     $0,
-                    FolderSize(sizeBytes: 2048, indexed: true)
+                    FolderSize(sizeBytes: 2048, isIndexed: true)
                 ) })
             }
         }
@@ -64,7 +64,7 @@ struct BrowseFolderSizeTests {
                     return value
                 }
                 return Dictionary(uniqueKeysWithValues: paths.map {
-                    ($0, FolderSize(sizeBytes: Int64(call), indexed: true, dirty: call == 1))
+                    ($0, FolderSize(sizeBytes: Int64(call), isIndexed: true, isDirty: call == 1))
                 })
             }
         }
@@ -120,7 +120,7 @@ struct BrowseFolderSizeTests {
     func contentsChangedReadsAgain() async {
         let store = BrowseFixtures.store(loadedState()) {
             $0.filesClient.folderSizes = { _, paths in
-                Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(sizeBytes: 7, indexed: true)) })
+                Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(sizeBytes: 7, isIndexed: true)) })
             }
         }
 
@@ -168,10 +168,10 @@ struct BrowseFolderSizeTests {
             $0.continuousClock = clock
             $0.filesClient.refreshFolderSize = { _, path in
                 refreshed.withValue { $0.append(path) }
-                return FolderSize(sizeBytes: 1, indexed: true, dirty: true)
+                return FolderSize(sizeBytes: 1, isIndexed: true, isDirty: true)
             }
             $0.filesClient.folderSizes = { _, paths in
-                Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(sizeBytes: 9, indexed: true)) })
+                Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(sizeBytes: 9, isIndexed: true)) })
             }
         }
 

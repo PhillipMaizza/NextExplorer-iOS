@@ -10,13 +10,13 @@ public extension View {
     /// Honors Reduce Transparency: when that setting is on, both the glass and the material are
     /// swapped for an opaque `backgroundSecondary` fill so nothing behind the control bleeds
     /// through.
-    func dsGlass(interactive: Bool = false, in shape: some Shape = Capsule()) -> some View {
-        modifier(DSGlassModifier(interactive: interactive, shape: shape))
+    func dsGlass(isInteractive: Bool = false, in shape: some Shape = Capsule()) -> some View {
+        modifier(DSGlassModifier(isInteractive: isInteractive, shape: shape))
     }
 }
 
 private struct DSGlassModifier<S: Shape>: ViewModifier {
-    let interactive: Bool
+    let isInteractive: Bool
     let shape: S
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
@@ -24,7 +24,7 @@ private struct DSGlassModifier<S: Shape>: ViewModifier {
         if reduceTransparency {
             content.background(shape.fill(Color.backgroundSecondary))
         } else if #available(iOS 26.0, macOS 26.0, *) {
-            content.glassEffect(interactive ? .regular.interactive() : .regular, in: shape)
+            content.glassEffect(isInteractive ? .regular.interactive() : .regular, in: shape)
         } else {
             content.background(shape.fill(.ultraThinMaterial))
         }

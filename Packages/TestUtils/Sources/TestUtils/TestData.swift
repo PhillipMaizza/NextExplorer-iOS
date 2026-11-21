@@ -99,7 +99,7 @@ public enum TestSession {
     public static let loginCookieValue = "abc123"
     /// The cookie value background uploads authenticate with.
     public static let uploadCookieValue = "secret"
-    /// A cookie value that replaced the stored one after a re-login.
+    /// A cookie value that replaced the stored one after a relogin.
     public static let refreshedCookieValue = "fresh"
 }
 

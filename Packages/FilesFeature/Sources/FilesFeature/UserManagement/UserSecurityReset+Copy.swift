@@ -64,7 +64,7 @@ struct UserRecoveryRow: Identifiable {
                 subtitle: L10n.UserDetail.lockedUntil(until.formatted(date: .abbreviated, time: .shortened))
             ))
         }
-        if user.twoFactorEnabled {
+        if user.isTwoFactorEnabled {
             rows.append(UserRecoveryRow(
                 reset: .twoFactor,
                 icon: IconKit.shield,

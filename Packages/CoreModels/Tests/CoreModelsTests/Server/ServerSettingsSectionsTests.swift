@@ -113,7 +113,7 @@ struct ServerSettingsSectionsTests {
 
     @Test
     func aPatchEncodesOnlyTheSectionsThatAreSet() throws {
-        let json = try encoded(SystemSettingsPatch(searchIndex: .init(enabled: true)))
+        let json = try encoded(SystemSettingsPatch(searchIndex: .init(isEnabled: true)))
 
         #expect(Set(json.keys) == ["searchIndex"])
         let searchIndex = try #require(json["searchIndex"] as? [String: Any])

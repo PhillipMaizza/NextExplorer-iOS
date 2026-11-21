@@ -34,7 +34,7 @@ struct UserManagementRecoveryTests: UserManagementTestSupport {
             $0.toast = L10n.UserManagement.toastUnlocked
         }
         #expect(calls.value == [.resetSecurity(userID: "2", reset: .lock)])
-        #expect(store.state.users[id: "2"]?.twoFactorEnabled == true)
+        #expect(store.state.users[id: "2"]?.isTwoFactorEnabled == true)
     }
 
     @Test

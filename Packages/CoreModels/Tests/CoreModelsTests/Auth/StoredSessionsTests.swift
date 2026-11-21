@@ -13,7 +13,7 @@ struct StoredSessionsTests {
             cookieValue: "v",
             cookieDomain: URL(string: server)?.host ?? "",
             cookiePath: "/",
-            cookieIsSecure: true,
+            isCookieSecure: true,
             expiresAt: nil,
             username: username
         )

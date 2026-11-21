@@ -60,7 +60,11 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
     }
 
     private struct FlagSection: Decodable {
-        let enabled: Bool
+        let isEnabled: Bool
+
+        private enum CodingKeys: String, CodingKey {
+            case isEnabled = "enabled"
+        }
     }
 
     private struct EditorSection: Decodable {
@@ -73,8 +77,13 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
 
     private struct SearchSection: Decodable {
         struct Index: Decodable {
-            let enabled: Bool?
+            let isEnabled: Bool?
             let lockedBy: String?
+
+            private enum CodingKeys: String, CodingKey {
+                case lockedBy
+                case isEnabled = "enabled"
+            }
         }
 
         let index: Index?
@@ -89,15 +98,15 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let userVolumes = try container.decodeIfPresent(FlagSection.self, forKey: .userVolumes)
         let volumeUsage = try container.decodeIfPresent(FlagSection.self, forKey: .volumeUsage)
-        isUserVolumesEnabled = userVolumes?.enabled ?? false
-        isVolumeUsageEnabled = volumeUsage?.enabled ?? false
-        isPersonalEnabled = try container.decodeIfPresent(FlagSection.self, forKey: .personal)?.enabled ?? false
+        isUserVolumesEnabled = userVolumes?.isEnabled ?? false
+        isVolumeUsageEnabled = volumeUsage?.isEnabled ?? false
+        isPersonalEnabled = try container.decodeIfPresent(FlagSection.self, forKey: .personal)?.isEnabled ?? false
         let editor = try? container.decodeIfPresent(EditorSection.self, forKey: .editor)
         editorExtensions = (editor?.extensions ?? []).map { $0.lowercased() }
         maxUploadChunkSizeBytes = (try? container.decodeIfPresent(UploadsSection.self, forKey: .uploads))?
             .maxChunkSizeBytes
         let searchIndex = (try? container.decodeIfPresent(SearchSection.self, forKey: .search))?.index
-        isSearchIndexEnabled = searchIndex?.enabled ?? false
+        isSearchIndexEnabled = searchIndex?.isEnabled ?? false
         searchIndexLockedBy = searchIndex?.lockedBy
         let folderSize = try? container.decodeIfPresent(FolderSizeSection.self, forKey: .folderSize)
         folderSizeMode = folderSize?.mode.flatMap(FolderSizeMode.init(rawValue:)) ?? .off

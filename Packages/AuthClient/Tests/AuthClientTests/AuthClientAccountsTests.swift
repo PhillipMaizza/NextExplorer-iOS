@@ -19,7 +19,7 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
             cookieValue: cookieValue,
             cookieDomain: #require(url.host),
             cookiePath: "/",
-            cookieIsSecure: false,
+            isCookieSecure: false,
             expiresAt: nil,
             username: username
         )

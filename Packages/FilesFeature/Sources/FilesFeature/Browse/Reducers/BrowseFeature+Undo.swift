@@ -11,7 +11,7 @@ extension BrowseFeature {
         let destination = Self.trimmedPath(outcome.result.destination)
         let sourcesByID = Dictionary(sources.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let landed: [(source: FileItem, item: FileItem)] = outcome.result.items.compactMap { entry in
-            guard !entry.skipped, let source = sourcesByID[Self.trimmedPath(entry.from)] else { return nil }
+            guard !entry.isSkipped, let source = sourcesByID[Self.trimmedPath(entry.from)] else { return nil }
             let path = Self.trimmedPath(entry.to)
             let item = FileItem(
                 name: (path as NSString).lastPathComponent,

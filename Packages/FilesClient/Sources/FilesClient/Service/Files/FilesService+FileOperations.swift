@@ -428,7 +428,7 @@ extension FilesService {
                     name: $0.name,
                     kind: $0.kind
                 ) },
-                permanent: permanent ? true : nil
+                isPermanent: permanent ? true : nil
             )
             request.httpBody = try JSONEncoder().encode(body)
         } catch {

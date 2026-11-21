@@ -54,7 +54,7 @@ public extension Color {
     static let accent200 = Color("Accent200", bundle: .module)
     static let accent300 = Color("Accent300", bundle: .module)
     static let accent400 = Color("Accent400", bundle: .module)
-    /// Same value as `Color.accent`, included so the 50–900 ramp reads as one continuous scale.
+    /// Same value as `Color.accent`, included so the 50 to 900 ramp reads as one continuous scale.
     static let accent500 = Color("Accent", bundle: .module)
     static let accent600 = Color("Accent600", bundle: .module)
     static let accent700 = Color("Accent700", bundle: .module)

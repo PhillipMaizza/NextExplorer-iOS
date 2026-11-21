@@ -8,7 +8,12 @@ import NetworkClient
 extension FilesService {
     private struct DeleteVersionsBody: Encodable {
         let ids: [String]?
-        let all: Bool?
+        let isAll: Bool?
+
+        private enum CodingKeys: String, CodingKey {
+            case ids
+            case isAll = "all"
+        }
     }
 
     /// One history's address. The id is encoded as a single segment, so one holding a slash
@@ -58,9 +63,9 @@ extension FilesService {
         let url = Self.versionsAdminURL(serverURL, id: id).appendingPathComponent("delete")
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(ids.map { DeleteVersionsBody(ids: $0, all: nil) } ?? DeleteVersionsBody(
+        request.httpBody = try Self.encode(ids.map { DeleteVersionsBody(ids: $0, isAll: nil) } ?? DeleteVersionsBody(
             ids: nil,
-            all: true
+            isAll: true
         ))
         return try await sendReportingMessage(request, decoding: VersionsDeletion.self)
     }

@@ -34,7 +34,7 @@
                     username: base.username,
                     email: base.email,
                     displayName: base.name,
-                    emailVerified: true,
+                    isEmailVerified: true,
                     createdAt: now.addingTimeInterval(-30 * Age.day),
                     updatedAt: now,
                     authMethods: [
@@ -64,7 +64,7 @@
                     username: base.username,
                     email: base.email,
                     displayName: base.name,
-                    emailVerified: true,
+                    isEmailVerified: true,
                     createdAt: now.addingTimeInterval(-60 * Age.day),
                     updatedAt: now,
                     authMethods: [password],
@@ -77,11 +77,11 @@
                     email: base.email,
                     displayName: base.name,
                     roles: [UserRole.admin],
-                    emailVerified: true,
+                    isEmailVerified: true,
                     createdAt: now.addingTimeInterval(-120 * Age.day),
                     updatedAt: now,
                     authMethods: [password],
-                    twoFactorEnabled: true
+                    isTwoFactorEnabled: true
                 )
             }
         }
@@ -136,12 +136,12 @@
                         email: request.email ?? old.email,
                         displayName: request.displayName ?? old.displayName,
                         roles: request.roles ?? old.roles,
-                        emailVerified: old.emailVerified,
+                        isEmailVerified: old.isEmailVerified,
                         createdAt: old.createdAt,
                         updatedAt: now,
                         authMethods: old.authMethods,
                         lockedUntil: old.lockedUntil,
-                        twoFactorEnabled: old.twoFactorEnabled
+                        isTwoFactorEnabled: old.isTwoFactorEnabled
                     )
                     return list[index]
                 }
@@ -163,12 +163,12 @@
                         email: old.email,
                         displayName: old.displayName,
                         roles: old.roles,
-                        emailVerified: old.emailVerified,
+                        isEmailVerified: old.isEmailVerified,
                         createdAt: old.createdAt,
                         updatedAt: now,
                         authMethods: old.authMethods,
                         lockedUntil: reset == .lock ? nil : old.lockedUntil,
-                        twoFactorEnabled: reset == .twoFactor ? false : old.twoFactorEnabled
+                        isTwoFactorEnabled: reset == .twoFactor ? false : old.isTwoFactorEnabled
                     )
                 }
             }

@@ -67,7 +67,7 @@ extension UserManagementTestSupport {
             roles: admin ? ["admin"] : [],
             authMethods: methods,
             lockedUntil: lockedUntil,
-            twoFactorEnabled: twoFactor
+            isTwoFactorEnabled: twoFactor
         )
     }
 
