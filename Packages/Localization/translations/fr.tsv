@@ -1213,7 +1213,6 @@ shareUpload.namesLabel	Noms des fichiers
 shareUpload.nameHint	Le nom sous lequel le fichier est envoyé. L’extension reste la même.
 spotlight.placeholder	Rechercher des fichiers et des dossiers
 trash.title	Corbeille
-trash.rowSubtitle	Éléments supprimés que vous pouvez restaurer
 trash.moveToTrash	Mettre à la corbeille
 trash.deletePermanently	Supprimer définitivement
 trash.deleteMessage#one	Il ira dans la corbeille, qui conserve les éléments supprimés %lld jour pour pouvoir les restaurer.

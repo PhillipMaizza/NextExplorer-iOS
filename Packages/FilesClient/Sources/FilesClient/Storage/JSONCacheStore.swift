@@ -58,10 +58,6 @@ public struct JSONCacheStore: Sendable {
         write(key, data)
     }
 
-    public func remove(key: String) {
-        remove(key)
-    }
-
     public func clear(scope: String) {
         clearScope(scope)
     }

@@ -1194,7 +1194,6 @@ shareUpload.namesLabel	Názvy souborů
 shareUpload.nameHint	Název, pod kterým se soubor nahraje. Přípona zůstane stejná.
 spotlight.placeholder	Hledat soubory a složky
 trash.title	Koš
-trash.rowSubtitle	Smazané položky, které můžete obnovit
 trash.moveToTrash	Přesunout do koše
 trash.deletePermanently	Smazat trvale
 trash.deleteMessage#one	Přesune se do koše, který smazané položky uchovává (dní: %lld), aby šly obnovit.

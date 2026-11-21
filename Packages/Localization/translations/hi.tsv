@@ -1213,7 +1213,6 @@ shareUpload.namesLabel	फ़ाइलों के नाम
 shareUpload.nameHint	वह नाम जिससे फ़ाइल अपलोड होगी। एक्सटेंशन वही रहता है।
 spotlight.placeholder	फ़ाइलें और फ़ोल्डर खोजें
 trash.title	रीसायकल बिन
-trash.rowSubtitle	हटाए गए आइटम जिन्हें आप पुनर्स्थापित कर सकते हैं
 trash.moveToTrash	रीसायकल बिन में ले जाएँ
 trash.deletePermanently	स्थायी रूप से हटाएँ
 trash.deleteMessage#one	यह रीसायकल बिन में जाएगा, जो हटाए गए आइटम %lld दिन तक रखता है ताकि उन्हें पुनर्स्थापित किया जा सके।

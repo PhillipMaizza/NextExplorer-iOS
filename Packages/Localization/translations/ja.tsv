@@ -1195,7 +1195,6 @@ shareUpload.namesLabel	ファイル名
 shareUpload.nameHint	アップロード時のファイル名です。拡張子は変わりません。
 spotlight.placeholder	ファイルとフォルダを検索
 trash.title	ゴミ箱
-trash.rowSubtitle	復元できる削除済み項目
 trash.moveToTrash	ゴミ箱に移動
 trash.deletePermanently	完全に削除
 trash.deleteMessage#other	ゴミ箱に移動します。ゴミ箱は削除した項目を %lld 日間保管するので、復元できます。

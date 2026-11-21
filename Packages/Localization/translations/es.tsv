@@ -1213,7 +1213,6 @@ shareUpload.namesLabel	Nombres de los archivos
 shareUpload.nameHint	El nombre con el que se sube el archivo. La extensión no cambia.
 spotlight.placeholder	Buscar archivos y carpetas
 trash.title	Papelera
-trash.rowSubtitle	Elementos eliminados que puedes restaurar
 trash.moveToTrash	Mover a la papelera
 trash.deletePermanently	Eliminar definitivamente
 trash.deleteMessage#one	Irá a la papelera, que conserva los elementos eliminados %lld día para poder restaurarlos.

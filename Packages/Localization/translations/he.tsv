@@ -1177,7 +1177,6 @@ shareUpload.namesLabel	שמות הקבצים
 shareUpload.nameHint	השם שתחתיו הקובץ יועלה. הסיומת נשארת זהה.
 spotlight.placeholder	חיפוש קבצים ותיקיות
 trash.title	פח אשפה
-trash.rowSubtitle	פריטים שנמחקו וניתן לשחזר
 trash.moveToTrash	העברה לפח
 trash.deletePermanently	מחיקה לצמיתות
 trash.deleteMessage#one	הפריט יעבור לפח, שמחזיק פריטים שנמחקו (ימים: %lld) כדי שאפשר יהיה לשחזר אותם.

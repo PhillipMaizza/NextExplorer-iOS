@@ -1317,7 +1317,6 @@ shareUpload.nameHint	The name the file uploads under. Its extension stays the sa
 spotlight.placeholder	Search files and folders
 # Trash: delete confirmations, the trash screen and its Mac table
 trash.title	Trash
-trash.rowSubtitle	Deleted items you can restore
 trash.moveToTrash	Move to Trash
 trash.deletePermanently	Delete Permanently
 trash.deleteMessage#one	It goes to the trash, which keeps deleted items for %lld day so they can be restored.

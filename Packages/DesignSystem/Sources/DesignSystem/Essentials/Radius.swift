@@ -3,7 +3,6 @@ import CoreGraphics
 /// Corner radius tokens.
 public extension CGFloat {
     /// 0pt: no rounding.
-    static let radiusNone: CGFloat = 0
     /// 4pt: extra small rounding, used for tags.
     static let radiusXSmall: CGFloat = 4
     /// 8pt: small rounding, used for input fields.

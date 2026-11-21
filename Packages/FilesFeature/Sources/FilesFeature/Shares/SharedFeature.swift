@@ -117,11 +117,6 @@ public struct SharedFeature {
             share.isExpired(now: now)
         }
 
-        /// The current segment's raw (unfiltered, unsorted) list.
-        public var segmentShares: IdentifiedArrayOf<Share> {
-            shares(for: segment)
-        }
-
         public func shares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             segment == .byMe ? byMe : withMe
         }

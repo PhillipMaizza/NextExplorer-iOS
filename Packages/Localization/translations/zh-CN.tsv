@@ -1195,7 +1195,6 @@ shareUpload.namesLabel	文件名
 shareUpload.nameHint	上传时使用的文件名。扩展名保持不变。
 spotlight.placeholder	搜索文件和文件夹
 trash.title	回收站
-trash.rowSubtitle	可恢复的已删除项目
 trash.moveToTrash	移至回收站
 trash.deletePermanently	永久删除
 trash.deleteMessage#other	它会进入回收站，回收站会将已删除项目保留 %lld 天，以便恢复。

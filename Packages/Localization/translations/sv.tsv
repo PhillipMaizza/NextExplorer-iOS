@@ -1213,7 +1213,6 @@ shareUpload.namesLabel	Filnamn
 shareUpload.nameHint	Namnet som filen laddas upp med. Filändelsen förblir densamma.
 spotlight.placeholder	Sök efter filer och mappar
 trash.title	Papperskorg
-trash.rowSubtitle	Raderade objekt som du kan återställa
 trash.moveToTrash	Flytta till papperskorgen
 trash.deletePermanently	Radera permanent
 trash.deleteMessage#one	Det hamnar i papperskorgen, som sparar raderade objekt i %lld dag så att de kan återställas.

@@ -1159,7 +1159,6 @@ shareUpload.namesLabel	Fájlnevek
 shareUpload.nameHint	A név, amelyen a fájl feltöltődik. A kiterjesztés nem változik.
 spotlight.placeholder	Fájlok és mappák keresése
 trash.title	Kuka
-trash.rowSubtitle	Visszaállítható törölt elemek
 trash.moveToTrash	Áthelyezés a kukába
 trash.deletePermanently	Végleges törlés
 trash.deleteMessage#one	A kukába kerül, amely %lld napig őrzi a törölt elemeket, hogy visszaállíthatók legyenek.

@@ -1141,7 +1141,6 @@ shareUpload.namesLabel	Tên tệp
 shareUpload.nameHint	Tên dùng khi tải tệp lên. Phần mở rộng giữ nguyên.
 spotlight.placeholder	Tìm tệp và thư mục
 trash.title	Thùng rác
-trash.rowSubtitle	Mục đã xóa mà bạn có thể khôi phục
 trash.moveToTrash	Chuyển vào thùng rác
 trash.deletePermanently	Xóa vĩnh viễn
 trash.deleteMessage#other	Mục sẽ vào thùng rác, nơi giữ các mục đã xóa trong %lld ngày để có thể khôi phục.

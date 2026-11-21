@@ -187,10 +187,6 @@ public struct LoginFormFeature {
             self.clientCertificate = clientCertificate
         }
 
-        public var isSubmitting: Bool {
-            submitPhase == .submitting
-        }
-
         /// The server's host, only so a network error in the sign in log can have it blanked out.
         var serverHost: String? {
             LoginFormFeature.normalizedURL(scheme: scheme, host: host)?.host(percentEncoded: false)

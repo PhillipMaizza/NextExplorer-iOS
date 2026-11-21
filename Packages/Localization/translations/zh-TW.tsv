@@ -1195,7 +1195,6 @@ shareUpload.namesLabel	檔案名稱
 shareUpload.nameHint	上傳時使用的檔案名稱。副檔名維持不變。
 spotlight.placeholder	搜尋檔案和資料夾
 trash.title	資源回收筒
-trash.rowSubtitle	可回復的已刪除項目
 trash.moveToTrash	移至資源回收筒
 trash.deletePermanently	永久刪除
 trash.deleteMessage#other	它會移到資源回收筒，資源回收筒會將已刪除項目保留 %lld 天，以便回復。

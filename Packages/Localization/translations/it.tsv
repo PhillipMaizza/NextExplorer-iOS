@@ -1213,7 +1213,6 @@ shareUpload.namesLabel	Nomi dei file
 shareUpload.nameHint	Il nome con cui il file viene caricato. L’estensione resta la stessa.
 spotlight.placeholder	Cerca file e cartelle
 trash.title	Cestino
-trash.rowSubtitle	Elementi eliminati che puoi ripristinare
 trash.moveToTrash	Sposta nel cestino
 trash.deletePermanently	Elimina definitivamente
 trash.deleteMessage#one	Andrà nel cestino, che conserva gli elementi eliminati per %lld giorno così da poterli ripristinare.

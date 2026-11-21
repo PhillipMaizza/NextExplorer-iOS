@@ -1213,7 +1213,6 @@ shareUpload.namesLabel	Bestandsnamen
 shareUpload.nameHint	De naam waaronder het bestand wordt geüpload. De extensie blijft hetzelfde.
 spotlight.placeholder	Bestanden en mappen zoeken
 trash.title	Prullenbak
-trash.rowSubtitle	Verwijderde onderdelen die je kunt terugzetten
 trash.moveToTrash	Naar prullenbak verplaatsen
 trash.deletePermanently	Definitief verwijderen
 trash.deleteMessage#one	Het gaat naar de prullenbak, die verwijderde onderdelen %lld dag bewaart zodat ze teruggezet kunnen worden.

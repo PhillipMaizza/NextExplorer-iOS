@@ -1213,7 +1213,6 @@ shareUpload.namesLabel	Dateinamen
 shareUpload.nameHint	Der Name, unter dem die Datei hochgeladen wird. Die Dateiendung bleibt gleich.
 spotlight.placeholder	Dateien und Ordner durchsuchen
 trash.title	Papierkorb
-trash.rowSubtitle	Gelöschte Objekte, die du wiederherstellen kannst
 trash.moveToTrash	In den Papierkorb
 trash.deletePermanently	Endgültig löschen
 trash.deleteMessage#one	Es kommt in den Papierkorb, der gelöschte Objekte %lld Tag aufbewahrt, damit sie wiederhergestellt werden können.

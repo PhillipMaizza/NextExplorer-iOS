@@ -1095,7 +1095,6 @@ public enum L10n {
         public static var restoreTo: String { tr("trash.restoreTo") }  // "Restore To…"
         public static func restored(_ a0: CVarArg) -> String { tr("trash.restored", a0) }
         public static var restoring: String { tr("trash.restoring") }  // "Restoring…"
-        public static var rowSubtitle: String { tr("trash.rowSubtitle") }  // "Deleted items you can restore"
         public static var sharesBadge: String { tr("trash.sharesBadge") }  // "Shared"
         public static var sharesChooseElsewhere: String { tr("trash.sharesChooseElsewhere") }  // "Brought back, they will point to the new location."
         public static func sharesChooseMessage(_ a0: CVarArg) -> String { tr("trash.sharesChooseMessage", a0) }

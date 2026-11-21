@@ -40,7 +40,6 @@ enum ServerSettingsMetrics {
     static let indicatorSize: CGFloat = .iconSmall
     static let choiceRowVerticalPadding: CGFloat = .space16
     static let choiceRowSpacing: CGFloat = .space12
-    static let selectionAnimationDuration: Double = 0.2
 }
 
 /// The scrolling page every admin settings screen shares: a subtitle, the page's own cards, an

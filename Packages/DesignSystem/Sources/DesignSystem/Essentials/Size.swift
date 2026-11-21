@@ -19,7 +19,6 @@ public extension CGFloat {
     /// 6dp
     static let size6: CGFloat = 6.0
     /// 8dp
-    static let size8: CGFloat = 8.0
     /// 12dp
     static let size12: CGFloat = 12.0
     /// 16dp
@@ -41,7 +40,6 @@ public extension CGFloat {
     /// 64dp
     static let size64: CGFloat = 64.0
     /// 72dp
-    static let size72: CGFloat = 72.0
     /// 96dp
     static let size96: CGFloat = 96.0
     static let size192: CGFloat = 192.0

@@ -1213,7 +1213,6 @@ shareUpload.namesLabel	Nomes dos ficheiros
 shareUpload.nameHint	O nome com que o ficheiro é carregado. A extensão mantém-se.
 spotlight.placeholder	Pesquisar ficheiros e pastas
 trash.title	Reciclagem
-trash.rowSubtitle	Itens eliminados que pode restaurar
 trash.moveToTrash	Mover para a reciclagem
 trash.deletePermanently	Eliminar definitivamente
 trash.deleteMessage#one	Vai para a reciclagem, que guarda os itens eliminados durante %lld dia para poderem ser restaurados.

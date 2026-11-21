@@ -226,12 +226,9 @@ public struct BrowseFeature {
         /// Server disk usage for `infoItem` when it's a directory and the endpoint returned
         /// real figures: drives the Get Info sheet's "Server disk" section.
         public var infoUsage: StorageUsage?
-        /// The `GET /api/metadata/*` load lifecycle for the Get Info sheet. `isLoadingInfoMetadata`
-        /// / `infoErrorMessage` are derived from it (rule #8: one phase, not a bool + error pair).
+        /// The `GET /api/metadata/*` load lifecycle for the Get Info sheet; `infoErrorMessage` is
+        /// derived from it.
         public var infoPhase: DataPhase = .idle
-        public var isLoadingInfoMetadata: Bool {
-            infoPhase == .loading
-        }
 
         public var infoErrorMessage: String? {
             infoPhase.errorMessage
@@ -255,12 +252,8 @@ public struct BrowseFeature {
         }
 
         public var previewFileURL: URL?
-        /// The `GET /api/preview` download lifecycle. `isLoadingPreview` / `previewErrorMessage`
-        /// are derived from it.
+        /// The `GET /api/preview` download lifecycle; `previewErrorMessage` is derived from it.
         public var previewPhase: DataPhase = .idle
-        public var isLoadingPreview: Bool {
-            previewPhase == .loading
-        }
 
         public var previewErrorMessage: String? {
             previewPhase.errorMessage
