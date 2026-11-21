@@ -142,13 +142,11 @@ private struct ArchiveTextEntryPreviewView: View {
     @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
 
     private var isHTML: Bool {
-        let lowercaseKind = item.kind.lowercased()
-        return lowercaseKind == "html" || lowercaseKind == "htm"
+        item.isHTML
     }
 
     private var isMarkdown: Bool {
-        let lowercaseKind = item.kind.lowercased()
-        return lowercaseKind == "md" || lowercaseKind == "markdown"
+        FileItem.isMarkdown(kind: item.kind)
     }
 
     private var chrome: some View {

@@ -76,8 +76,7 @@ struct TextFilePreviewView: View {
     }
 
     private var isHTML: Bool {
-        let lowercaseKind = kind.lowercased()
-        return lowercaseKind == "html" || lowercaseKind == "htm"
+        FileItem.isHTML(kind: kind)
     }
 
     var body: some View {

@@ -28,13 +28,11 @@ struct TextDocumentBody: View {
     @Dependency(\.filesClient) private var filesClient
 
     private var isHTML: Bool {
-        let lowercaseKind = kind.lowercased()
-        return lowercaseKind == "html" || lowercaseKind == "htm"
+        FileItem.isHTML(kind: kind)
     }
 
     private var isMarkdown: Bool {
-        let lowercaseKind = kind.lowercased()
-        return lowercaseKind == "md" || lowercaseKind == "markdown"
+        FileItem.isMarkdown(kind: kind)
     }
 
     var body: some View {

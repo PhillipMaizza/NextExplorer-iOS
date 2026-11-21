@@ -76,13 +76,14 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     private static let officeDocumentExtensions: Set<String> = [
         "doc", "docx", "xls", "xlsx", "ppt", "pptx", "odt", "ods", "odp", "rtf",
     ]
-    private static let knownBinaryExtensions: Set<String> = [
+    /// Font files, which the text viewer can't read and the type icon draws as a font.
+    public static let fontExtensions: Set<String> = ["ttf", "otf", "woff", "woff2"]
+    private static let knownBinaryExtensions: Set<String> = fontExtensions.union([
         "exe", "msi", "apk", "dmg", "pkg", "deb", "rpm",
-        "ttf", "otf", "woff", "woff2",
         "psd", "ai", "fig", "sketch",
         "db", "sqlite", "sqlite3",
         "bin", "iso", "dll", "dylib", "so", "class", "jar", "a", "o",
-    ]
+    ])
     private var lowercaseKind: String {
         kind.lowercased()
     }
@@ -145,7 +146,17 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// A web page: offered an "Open in Browser" action that renders it in a `WKWebView`
     /// (the server has no URL an external browser could open; auth is a private cookie).
     public var isHTML: Bool {
-        lowercaseKind == "html" || lowercaseKind == "htm"
+        Self.isHTML(kind: kind)
+    }
+
+    /// `kind` names a web page, `html` or `htm`, in any case.
+    public static func isHTML(kind: String) -> Bool {
+        ["html", "htm"].contains(kind.lowercased())
+    }
+
+    /// `kind` names a Markdown file, `md` or `markdown`, in any case.
+    public static func isMarkdown(kind: String) -> Bool {
+        ["md", "markdown"].contains(kind.lowercased())
     }
 
     /// A Google Drive stub file (`.gsheet`, `.gdoc`, …): tapping it opens the linked Google

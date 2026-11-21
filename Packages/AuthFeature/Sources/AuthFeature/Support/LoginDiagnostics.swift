@@ -51,8 +51,8 @@ struct LoginDiagnostics: Equatable, Sendable {
     }
 
     static func environmentHeader(bundle: Bundle = .main, processInfo: ProcessInfo = .processInfo) -> [String] {
-        let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? Constants.unknown
-        let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? Constants.unknown
+        let version = bundle.marketingVersion ?? Constants.unknown
+        let build = bundle.buildNumber ?? Constants.unknown
         return [
             "NextExplorer \(version) (\(build))",
             "OS: \(processInfo.operatingSystemVersionString)",

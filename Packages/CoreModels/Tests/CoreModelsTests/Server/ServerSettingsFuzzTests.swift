@@ -67,7 +67,6 @@ struct ServerSettingsFuzzTests {
             let versions = Int(rng.next() >> 2)
             let budget = rng.next().isMultiple(of: 5) ? nil : Int(rng.next() >> 2)
             let zone = TrashZone(id: "z", name: "z", usedBytes: used, versionBytes: versions, budgetBytes: budget)
-            #expect((0 ... 100).contains(zone.usedPercent))
             #expect((0 ... 1).contains(zone.usedFraction))
         }
     }

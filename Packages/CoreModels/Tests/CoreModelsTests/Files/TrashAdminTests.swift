@@ -90,7 +90,7 @@ struct TrashAdminTests {
         #expect(zone.kind == .personal)
         #expect(zone.isAvailable)
         #expect(zone.heldBytes == 1500)
-        #expect(zone.usedPercent == 15)
+        #expect(zone.usedFraction == 0.15)
         #expect(zone.lastPass?.purged == 4)
         #expect(zone.events.first?.id == "7")
         #expect(zone.events.first?.kind == "version-evicted")
@@ -104,7 +104,7 @@ struct TrashAdminTests {
         #expect(!zone.isAvailable)
         #expect(zone.reason == "replaced")
         #expect(zone.budgetBytes == nil)
-        #expect(zone.usedPercent == 0)
+        #expect(zone.usedFraction == 0)
     }
 
     @Test
@@ -112,14 +112,14 @@ struct TrashAdminTests {
         #expect(try CoreModelsFixture.trashAdminZoneUnknownKind.decode(TrashZone.self).kind == .volume)
     }
 
-    @Test(arguments: [(0, 1000, 0), (500, 1000, 50), (1000, 1000, 100), (5000, 1000, 100), (1, 1000, 0)])
-    func theUsedShareIsCappedAtAHundred(held: Int, budget: Int, percent: Int) {
-        #expect(TrashZone(id: "z", name: "x", usedBytes: held, budgetBytes: budget).usedPercent == percent)
+    @Test(arguments: [(0, 1000, 0.0), (500, 1000, 0.5), (1000, 1000, 1.0), (5000, 1000, 1.0)])
+    func theUsedShareIsCappedAtTheWholeBudget(held: Int, budget: Int, fraction: Double) {
+        #expect(TrashZone(id: "z", name: "x", usedBytes: held, budgetBytes: budget).usedFraction == fraction)
     }
 
     @Test
     func aZeroBudgetIsNoShare() {
-        #expect(TrashZone(id: "z", name: "x", usedBytes: 100, budgetBytes: 0).usedPercent == 0)
+        #expect(TrashZone(id: "z", name: "x", usedBytes: 100, budgetBytes: 0).usedFraction == 0)
     }
 
     // MARK: Verification
