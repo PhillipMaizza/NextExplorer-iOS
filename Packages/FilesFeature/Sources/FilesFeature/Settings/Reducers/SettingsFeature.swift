@@ -815,8 +815,6 @@ public struct SettingsFeature {
             state.clearCachePhase = .running
             let caches = RebuildableCaches.fromDependencies
             return .run { send in
-                // A thumbnail or preview still landing must not write itself back after the clear.
-                CacheAccountScope.markEveryAccountWiped()
                 caches.clearAll()
                 await send(.clearCacheResponse)
             }
