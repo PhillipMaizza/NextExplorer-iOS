@@ -1,5 +1,6 @@
 #if os(macOS)
     import AppKit
+    import CoreModels
     import DesignSystem
     import Localization
     import StoreKit
