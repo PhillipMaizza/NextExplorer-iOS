@@ -1260,3 +1260,6 @@ login.stepCode	Kód
 apiTokens.badgeExpired	Lejárt
 common.decrease	Csökkentés
 common.increase	Növelés
+common.moreInfo	További információ
+versionedFiles.pathHeader	Útvonal
+versionedFiles.versionsHeader	Verziók

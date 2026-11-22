@@ -1260,3 +1260,6 @@ login.stepCode	Kode
 apiTokens.badgeExpired	Udløbet
 common.decrease	Formindsk
 common.increase	Forøg
+common.moreInfo	Flere oplysninger
+versionedFiles.pathHeader	Sti
+versionedFiles.versionsHeader	Versioner

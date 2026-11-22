@@ -1259,3 +1259,6 @@ login.stepCode	Kod
 apiTokens.badgeExpired	Süresi doldu
 common.decrease	Azalt
 common.increase	Artır
+common.moreInfo	Daha Fazla Bilgi
+versionedFiles.pathHeader	Yol
+versionedFiles.versionsHeader	Sürümler

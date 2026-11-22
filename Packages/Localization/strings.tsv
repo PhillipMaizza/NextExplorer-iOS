@@ -541,6 +541,8 @@ versionedFiles.summary	Files: %1$lld · Versions: %2$lld · %3$@
 versionedFiles.searchPlaceholder	A name or a path
 versionedFiles.zone	Volume
 versionedFiles.anyZone	Any volume
+versionedFiles.pathHeader	Path
+versionedFiles.versionsHeader	Versions
 versionedFiles.stateHeader	State
 versionedFiles.anyState	Any state
 versionedFiles.stateLive	File still there
@@ -1267,6 +1269,7 @@ settings.uploadDefaultsWithoutAsking	Upload Without Asking
 settings.uploadDefaultsFooter	Photos and files you share to NextExplorer from other apps start in this folder. With Upload Without Asking on, they upload straight there.
 settings.uploadDefaultsClear	Ask Each Time
 common.change	Change
+common.moreInfo	More Info
 shareUpload.sessionUnreadable	NextExplorer couldn't read your sign in on this device. Open NextExplorer once, then share again.
 shareUpload.keepOpen	Keep this open until preparing finishes.
 shareUpload.checking	Checking connection to %@…

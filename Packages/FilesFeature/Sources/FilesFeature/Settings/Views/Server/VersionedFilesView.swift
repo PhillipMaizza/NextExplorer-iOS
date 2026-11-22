@@ -59,12 +59,12 @@ struct VersionedFilesView: View {
             Card(L10n.VersionedFiles.zone) {
                 ChoiceMenuRow(
                     selection: $store.filter.zoneID.sending(\.zoneFilterChanged),
-                    valueTitle: zones.first { $0.id == store.filter.zoneID }.map(zoneLabel)
+                    valueTitle: zones.first { $0.id == store.filter.zoneID }.map(VersionedFileWords.zone)
                         ?? L10n.VersionedFiles.anyZone
                 ) {
                     Text(L10n.VersionedFiles.anyZone).tag(String?.none)
                     ForEach(zones) { zone in
-                        Text(zoneLabel(zone)).tag(String?.some(zone.id))
+                        Text(VersionedFileWords.zone(zone)).tag(String?.some(zone.id))
                     }
                 }
             }
@@ -76,7 +76,7 @@ struct VersionedFilesView: View {
         Card(L10n.VersionedFiles.stateHeader) {
             ChoiceRowList(
                 items: [VersionedFileState?.none] + VersionedFileState.allCases.map { Optional($0) },
-                title: stateTitle,
+                title: VersionedFileWords.state,
                 isSelected: { store.filter.state == $0 },
                 edges: .both,
                 onSelect: { store.send(.stateFilterChanged($0)) }
@@ -85,7 +85,7 @@ struct VersionedFilesView: View {
         Card(L10n.VersionedFiles.sortHeader) {
             ChoiceRowList(
                 items: VersionedFileSort.allCases,
-                title: sortTitle,
+                title: VersionedFileWords.sort,
                 isSelected: { store.filter.sort == $0 },
                 edges: .both,
                 onSelect: { store.send(.sortChanged($0)) }
@@ -114,8 +114,11 @@ struct VersionedFilesView: View {
                         if !file.folder.isEmpty {
                             Text(file.folder).type(.body3(.regular), style: .secondary).monospaced()
                         }
-                        Text(zoneLabel(file.zone)).type(.body3(.regular), style: .secondary)
-                        Text(stateTitle(file.state)).type(.body3(.semibold), style: stateStyle(file.state))
+                        Text(VersionedFileWords.zone(file.zone)).type(.body3(.regular), style: .secondary)
+                        Text(VersionedFileWords.state(file.state)).type(
+                            .body3(.semibold),
+                            style: stateStyle(file.state)
+                        )
                         Text(L10n.VersionedFiles.rowSummary(file.versions, TrashSettingsView.bytes(file.bytes)))
                             .type(.body3(.regular), style: .tertiary)
                         if let newest = Self.date(file.newest) {
@@ -151,7 +154,7 @@ struct VersionedFilesView: View {
             ChoiceRowList(
                 items: detail.versions.map(\.id),
                 title: { byID[$0].map(versionTitle) ?? $0 },
-                subtitle: { byID[$0].flatMap(versionSubtitle) },
+                subtitle: { byID[$0].flatMap(VersionedFileWords.subtitle) },
                 isSelected: { store.selection[file.id]?.contains($0) ?? false },
                 indicator: .check,
                 isDisabled: store.isWorking,
@@ -200,24 +203,6 @@ struct VersionedFilesView: View {
 
     // MARK: Words
 
-    private func zoneLabel(_ zone: VersionedZone?) -> String {
-        guard let zone else { return L10n.VersionedFiles.zoneUnknown }
-        switch zone.kind {
-        case .personal: return L10n.VersionedFiles.zoneKindPersonal(zone.name)
-        case .userVolume: return L10n.VersionedFiles.zoneKindUserVolume(zone.name)
-        case .volume: return zone.name
-        }
-    }
-
-    private func stateTitle(_ state: VersionedFileState?) -> String {
-        switch state {
-        case .none: L10n.VersionedFiles.anyState
-        case .live: L10n.VersionedFiles.stateLive
-        case .trashed: L10n.VersionedFiles.stateTrashed
-        case .orphaned: L10n.VersionedFiles.stateOrphaned
-        }
-    }
-
     private func stateStyle(_ state: VersionedFileState) -> Typography.TextStyle {
         switch state {
         case .live: .secondary
@@ -226,34 +211,8 @@ struct VersionedFilesView: View {
         }
     }
 
-    private func sortTitle(_ sort: VersionedFileSort) -> String {
-        switch sort {
-        case .bytes: L10n.VersionedFiles.sortBytes
-        case .versions: L10n.VersionedFiles.sortVersions
-        case .newest: L10n.VersionedFiles.sortNewest
-        case .path: L10n.VersionedFiles.sortPath
-        }
-    }
-
     private func versionTitle(_ version: FileVersion) -> String {
         "\(version.modifiedAt.formatted(date: .abbreviated, time: .shortened)) · \(TrashSettingsView.bytes(Int(version.size)))"
-    }
-
-    private func versionSubtitle(_ version: FileVersion) -> String? {
-        var parts: [String] = []
-        if let label = version.label, !label.isEmpty {
-            parts.append(label)
-        }
-        if version.isPinned {
-            parts.append(L10n.VersionedFiles.versionPinned)
-        }
-        if version.isAvailable == false {
-            parts.append(L10n.VersionedFiles.versionUnavailable)
-        }
-        if let author = version.author?.label, !author.isEmpty {
-            parts.append(L10n.VersionedFiles.versionBy(author))
-        }
-        return parts.isEmpty ? nil : ServerSettingsMetrics.joined(parts)
     }
 
     private static func date(_ iso: String?) -> String? {

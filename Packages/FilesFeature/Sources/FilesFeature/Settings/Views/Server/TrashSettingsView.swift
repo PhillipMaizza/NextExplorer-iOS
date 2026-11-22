@@ -169,8 +169,8 @@ struct TrashSettingsView: View {
     private func zoneCard(_ zone: TrashZone) -> some View {
         Card {
             VStack(alignment: .leading, spacing: .space4) {
-                Text(label(for: zone)).type(.body2(.semibold), style: .primaryOnSurface)
-                Text(state(for: zone))
+                Text(Self.label(for: zone)).type(.body2(.semibold), style: .primaryOnSurface)
+                Text(Self.state(for: zone))
                     .type(.body3(.regular), style: zone.isAvailable ? .secondary : .error)
             }
             VStack(alignment: .leading, spacing: .space8) {
@@ -189,7 +189,7 @@ struct TrashSettingsView: View {
                 }
             }
             VStack(alignment: .leading, spacing: .space4) {
-                Text(L10n.TrashSettings.lastPass(lastPass(for: zone)))
+                Text(L10n.TrashSettings.lastPass(Self.lastPass(for: zone)))
                     .type(.body3(.regular), style: .tertiary)
                 if let violations = store.verification?.first(where: { $0.zoneID == zone.id })?.violations,
                    !violations.isEmpty
@@ -217,7 +217,7 @@ struct TrashSettingsView: View {
         }
     }
 
-    private func label(for zone: TrashZone) -> String {
+    static func label(for zone: TrashZone) -> String {
         switch zone.kind {
         case .personal: L10n.TrashSettings.zoneKindPersonal(zone.name)
         case .userVolume: L10n.TrashSettings.zoneKindUserVolume(zone.name)
@@ -225,7 +225,7 @@ struct TrashSettingsView: View {
         }
     }
 
-    private func state(for zone: TrashZone) -> String {
+    static func state(for zone: TrashZone) -> String {
         guard !zone.isAvailable else { return L10n.TrashSettings.available }
         switch zone.reason {
         case "replaced": return L10n.TrashSettings.unavailableReplaced
@@ -238,7 +238,7 @@ struct TrashSettingsView: View {
         zone.budgetBytes.map(Self.bytes) ?? L10n.TrashSettings.noBudget
     }
 
-    private func lastPass(for zone: TrashZone) -> String {
+    static func lastPass(for zone: TrashZone) -> String {
         guard let pass = zone.lastPass else { return L10n.TrashSettings.never }
         let when = Self.date(pass.at) ?? L10n.TrashSettings.never
         return L10n.TrashSettings.lastPassPurged(when, pass.purged)

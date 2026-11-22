@@ -103,7 +103,13 @@
                     }
                     .buttonStyle(.macDS(.primary))
                 }
-            case .general, .storage, .serverTools, .trash, .versions, .about:
+            case .trash:
+                if let trash = store.scope(state: \.trashSettings, action: \.trashSettings.presented),
+                   !trash.isUnavailable
+                {
+                    MacTrashSettingsTools(store: trash)
+                }
+            case .general, .storage, .serverTools, .versions, .about:
                 EmptyView()
             }
         }

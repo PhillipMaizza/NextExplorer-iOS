@@ -1336,3 +1336,6 @@ login.stepCode	Код
 apiTokens.badgeExpired	Сплив
 common.decrease	Зменшити
 common.increase	Збільшити
+common.moreInfo	Докладніше
+versionedFiles.pathHeader	Шлях
+versionedFiles.versionsHeader	Версії

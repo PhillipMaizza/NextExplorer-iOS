@@ -1295,3 +1295,6 @@ login.stepCode	コード
 apiTokens.badgeExpired	期限切れ
 common.decrease	減らす
 common.increase	増やす
+common.moreInfo	詳細情報
+versionedFiles.pathHeader	パス
+versionedFiles.versionsHeader	バージョン

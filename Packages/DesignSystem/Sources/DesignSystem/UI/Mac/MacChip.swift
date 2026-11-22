@@ -58,7 +58,7 @@
 
         private var pill: some View {
             Text(text)
-                .font(Typography.TextType.body3(.semibold).font())
+                .type(.body3(.semibold))
                 .lineLimit(1)
                 .padding(.horizontal, .space8)
                 .padding(.vertical, .space2)

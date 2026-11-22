@@ -31,17 +31,24 @@
 
     public struct MacFormGroup<Content: View>: View {
         private let title: String?
+        private let info: [String]
         private let content: () -> Content
 
-        public init(_ title: String? = nil, @ViewBuilder content: @escaping () -> Content) {
+        public init(_ title: String? = nil, info: [String] = [], @ViewBuilder content: @escaping () -> Content) {
             self.title = title
+            self.info = info
             self.content = content
         }
 
         public var body: some View {
             VStack(alignment: .leading, spacing: .space8) {
                 if let title {
-                    MacFormGroupTitle(title)
+                    HStack(spacing: .zero) {
+                        MacFormGroupTitle(title)
+                        if !info.isEmpty {
+                            MacInfoButton(lines: info)
+                        }
+                    }
                 }
                 MacFormRows(content: content)
                     .background(Constants.groupShape.fill(Color.macRow))

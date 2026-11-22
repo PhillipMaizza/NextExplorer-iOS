@@ -4,6 +4,7 @@
     public enum MacTableMetrics {
         public static let rowHeight: CGFloat = .size40
         public static let columnSpacing: CGFloat = 14
+        static let rowInset: CGFloat = .space12
         static let headerHeight: CGFloat = 30
         static let sortGlyphSize: CGFloat = 9
         static let selectionOpacity: Double = 0.22
@@ -22,7 +23,7 @@
             HStack(spacing: MacTableMetrics.columnSpacing) {
                 content()
             }
-            .padding(.horizontal, .space12)
+            .padding(.horizontal, MacTableMetrics.rowInset)
             .frame(height: MacTableMetrics.headerHeight)
             .overlay(alignment: .bottom) {
                 Rectangle()
@@ -30,6 +31,20 @@
                     .frame(height: .borderWidthHairline)
             }
             .padding(.bottom, .space4)
+        }
+    }
+
+    public struct MacTableColumnTitle: View {
+        private let title: String
+
+        public init(_ title: String) {
+            self.title = title
+        }
+
+        public var body: some View {
+            Text(title)
+                .type(.body3(.semibold))
+                .foregroundStyle(Color.macChromeSecondary)
         }
     }
 
@@ -68,7 +83,7 @@
 
     public extension View {
         func macTableRow(isShaded: Bool, isSelected: Bool = false) -> some View {
-            padding(.horizontal, .space12)
+            padding(.horizontal, MacTableMetrics.rowInset)
                 .frame(height: MacTableMetrics.rowHeight)
                 .background(
                     MacTableMetrics.rowShape
@@ -79,8 +94,12 @@
                 .contentShape(MacTableMetrics.rowShape)
         }
 
+        func macTableBleed() -> some View {
+            padding(.horizontal, -MacTableMetrics.rowInset)
+        }
+
         func macListRow(isSelected: Bool) -> some View {
-            padding(.horizontal, .space12)
+            padding(.horizontal, MacTableMetrics.rowInset)
                 .frame(minHeight: MacTableMetrics.listRowHeight)
                 .background(isSelected ? Color.accent.opacity(MacTableMetrics.selectionOpacity) : .clear)
                 .contentShape(Rectangle())
@@ -92,7 +111,7 @@
             MacTableHeader {
                 MacTableSortHeader("Name", isSorted: true, isAscending: true) {}
                     .frame(maxWidth: .infinity, alignment: .leading)
-                MacTableSortHeader("Email", isSorted: false, isAscending: true) {}
+                MacTableColumnTitle("Email")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             ForEach(0 ..< 4) { index in
@@ -105,7 +124,7 @@
             }
         }
         .padding()
-        .frame(width: 420)
+        .previewCanvasWidth(.dialog)
         .background(Color.macCard)
     }
 
@@ -122,7 +141,7 @@
         }
         .background(Color.macField)
         .padding()
-        .frame(width: 320)
+        .previewCanvasWidth(.control)
         .background(Color.macCard)
     }
 #endif

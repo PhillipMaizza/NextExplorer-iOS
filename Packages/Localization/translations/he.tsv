@@ -1300,3 +1300,6 @@ login.stepCode	קוד
 apiTokens.badgeExpired	פג תוקף
 common.decrease	הקטנה
 common.increase	הגדלה
+common.moreInfo	מידע נוסף
+versionedFiles.pathHeader	נתיב
+versionedFiles.versionsHeader	גרסאות

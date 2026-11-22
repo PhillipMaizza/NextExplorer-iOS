@@ -1331,3 +1331,6 @@ login.stepCode	Code
 apiTokens.badgeExpired	Verlopen
 common.decrease	Verlagen
 common.increase	Verhogen
+common.moreInfo	Meer info
+versionedFiles.pathHeader	Pad
+versionedFiles.versionsHeader	Versies
