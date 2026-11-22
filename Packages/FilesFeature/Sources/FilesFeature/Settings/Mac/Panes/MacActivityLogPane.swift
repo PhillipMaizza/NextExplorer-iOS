@@ -63,8 +63,6 @@
                 if !store.isRetentionValid {
                     Text(L10n.ActivityLog.retentionInvalid).foregroundStyle(Color.negativeText)
                 }
-            } footer: {
-                MacSectionFooter(L10n.ActivityLog.subtitle)
             }
         }
 

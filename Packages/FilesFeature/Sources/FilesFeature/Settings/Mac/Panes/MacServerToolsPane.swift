@@ -31,8 +31,6 @@
                             }
                         }
                     }
-                } footer: {
-                    MacSectionFooter(L10n.ServerTools.subtitle)
                 }
             }
         }

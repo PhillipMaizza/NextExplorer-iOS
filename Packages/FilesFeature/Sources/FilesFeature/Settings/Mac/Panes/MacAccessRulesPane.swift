@@ -47,8 +47,6 @@
                         Spacer()
                         Button(L10n.AccessRules.addRule) { store.send(.addRuleTapped, animation: DSMotion.listDiff) }
                     }
-                } footer: {
-                    MacSectionFooter(L10n.AccessRules.subtitle)
                 }
                 if let error = store.errorMessage ?? store.phase.errorMessage {
                     Text(error).foregroundStyle(Color.negativeText)
