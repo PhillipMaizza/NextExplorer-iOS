@@ -13,7 +13,7 @@ private struct FeatureToastModifier: ViewModifier {
             .dsToast($message, extraBottomInset: extraBottomInset)
             .onChange(of: error) { _, newValue in
                 if let newValue {
-                    message = DSToastMessage(icon: IconKit.warning, text: newValue)
+                    message = DSToastMessage(icon: IconKit.errorFill, text: newValue)
                 }
             }
             .onChange(of: success) { _, newValue in

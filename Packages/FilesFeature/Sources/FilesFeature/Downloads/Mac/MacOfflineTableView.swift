@@ -90,7 +90,7 @@
                             )
                             .accessibilityLabel(L10n.Offline.badgeAvailable)
                             if let title = OfflineSyncState(phase: phase).title {
-                                Text(title).type(.body3(.regular), style: .secondary)
+                                Text(title).type(.body3(.regular)).foregroundStyle(.secondary)
                             }
                         }
                     }
@@ -101,12 +101,12 @@
                     Text(location(of: row))
                         .lineLimit(1)
                         .truncationMode(.head)
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.locationColumnMinWidth)
                 TableColumn(L10n.Sort.size, value: \.sortSize) { row in
                     Text(FileSizeFormat.string(row.sortSize))
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
                 .width(MacBrowseTableMetrics.sizeColumnWidth)

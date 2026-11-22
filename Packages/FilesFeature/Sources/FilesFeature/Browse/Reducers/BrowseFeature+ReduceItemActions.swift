@@ -116,6 +116,7 @@ extension BrowseFeature {
             state.items.append(folder)
             recordUndo(&state, FileUndoEntry(.madeNew(folder)))
             syncListingCache(state)
+            state.createdFolderIDs.insert(folder.id)
             return .none
 
         case let .newFolderResponse(.failure(error)):

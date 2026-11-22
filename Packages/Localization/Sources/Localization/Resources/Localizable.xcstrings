@@ -66404,6 +66404,376 @@
         }
       }
     },
+    "emptyState.dropHintFiles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can also drag files here from Files or Photos."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يمكنك أيضًا سحب الملفات إلى هنا من الملفات أو الصور."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soubory sem můžete přetáhnout také z aplikace Soubory nebo Fotky."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan også trække filer hertil fra Filer eller Fotos."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kannst auch Dateien aus „Dateien“ oder „Fotos“ hierher ziehen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Μπορείτε επίσης να σύρετε αρχεία εδώ από τα Αρχεία ή τις Φωτογραφίες."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "También puedes arrastrar archivos aquí desde Archivos o Fotos."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voit myös vetää tiedostoja tähän Tiedostot- tai Kuvat-apista."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous pouvez aussi glisser des fichiers ici depuis Fichiers ou Photos."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "אפשר גם לגרור לכאן קבצים מ״קבצים״ או מ״תמונות״."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "आप Files या Photos से भी फ़ाइलें यहाँ खींच सकते हैं।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fájlokat a Fájlok vagy a Fotók appból is idehúzhat."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anda juga dapat menyeret file ke sini dari File atau Foto."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puoi anche trascinare qui i file da File o Foto."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「ファイル」や「写真」からファイルをここにドラッグすることもできます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일 또는 사진 앱에서 파일을 여기로 드래그할 수도 있습니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan også dra filer hit fra Filer eller Bilder."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je kunt ook bestanden hierheen slepen vanuit Bestanden of Foto's."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Możesz też przeciągnąć tu pliki z aplikacji Pliki lub Zdjęcia."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Também pode arrastar ficheiros para aqui a partir de Ficheiros ou Fotografias."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você também pode arrastar arquivos para cá do app Arquivos ou Fotos."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poți trage aici fișiere și din Fișiere sau Poze."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вы также можете перетащить сюда файлы из «Файлов» или «Фото»."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan också dra filer hit från Filer eller Bilder."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คุณยังลากไฟล์มาที่นี่จากแอปไฟล์หรือรูปภาพได้"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyaları buraya Dosyalar veya Fotoğraflar'dan da sürükleyebilirsiniz."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ви також можете перетягнути сюди файли з «Файлів» або «Фото»."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn cũng có thể kéo tệp vào đây từ Tệp hoặc Ảnh."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你也可以从“文件”或“照片”将文件拖到这里。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你也可以從「檔案」或「照片」將檔案拖移到這裡。"
+          }
+        }
+      }
+    },
+    "emptyState.dropHintFinder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can also drag files here from Finder."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يمكنك أيضًا سحب الملفات إلى هنا من Finder."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soubory sem můžete přetáhnout také z Finderu."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan også trække filer hertil fra Finder."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kannst auch Dateien aus dem Finder hierher ziehen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Μπορείτε επίσης να σύρετε αρχεία εδώ από το Finder."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "También puedes arrastrar archivos aquí desde el Finder."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voit myös vetää tiedostoja tähän Finderista."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous pouvez aussi glisser des fichiers ici depuis le Finder."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "אפשר גם לגרור לכאן קבצים מ־Finder."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "आप Finder से भी फ़ाइलें यहाँ खींच सकते हैं।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fájlokat a Finderből is idehúzhat."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anda juga dapat menyeret file ke sini dari Finder."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puoi anche trascinare qui i file dal Finder."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finderからファイルをここにドラッグすることもできます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finder에서 파일을 여기로 드래그할 수도 있습니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan også dra filer hit fra Finder."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je kunt ook bestanden hierheen slepen vanuit de Finder."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Możesz też przeciągnąć tu pliki z Findera."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Também pode arrastar ficheiros para aqui a partir do Finder."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você também pode arrastar arquivos para cá do Finder."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poți trage aici fișiere și din Finder."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вы также можете перетащить сюда файлы из Finder."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan också dra filer hit från Finder."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คุณยังลากไฟล์มาที่นี่จาก Finder ได้"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyaları buraya Finder'dan da sürükleyebilirsiniz."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ви також можете перетягнути сюди файли з Finder."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn cũng có thể kéo tệp vào đây từ Finder."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你也可以从“访达”将文件拖到这里。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你也可以從「Finder」將檔案拖移到這裡。"
+          }
+        }
+      }
+    },
     "emptyState.folderEmpty": {
       "extractionState": "manual",
       "localizations": {

@@ -9,9 +9,15 @@ enum BrowseNavigation {
     /// A pushed screen for drilling into `item`.
     /// `isKeptOffline` marks a screen pushed from the Offline tab, which offers only what works on
     /// files kept on the device.
-    static func screen(for item: FileItem, serverURL: URL, isKeptOffline: Bool = false) -> BrowseFeature.State {
+    static func screen(
+        for item: FileItem,
+        serverURL: URL,
+        isKeptOffline: Bool = false,
+        openedFrom opener: BrowseFeature.State? = nil
+    ) -> BrowseFeature.State {
         var screen = BrowseFeature.State(serverURL: serverURL, directoryPath: item.id, title: item.name)
         screen.isKeptOffline = isKeptOffline
+        screen.isShowingCachePaint = opener?.createdFolderIDs.contains(item.id) ?? false
         return screen
     }
 

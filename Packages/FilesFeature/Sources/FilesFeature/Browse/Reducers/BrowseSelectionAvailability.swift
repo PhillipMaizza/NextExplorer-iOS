@@ -4,6 +4,10 @@ import Foundation
 /// What the selection menu offers, worked out from the screen's state so it can be tested apart from
 /// the view.
 extension BrowseFeature.State {
+    var isListingKnown: Bool {
+        phase.hasLoaded || isShowingCachePaint
+    }
+
     /// Rename only makes sense for a single target: `nil` (hiding the toolbar icon) for
     /// zero or multiple selected items.
     var singleSelectedItem: FileItem? {

@@ -1216,3 +1216,5 @@ trash.columnOriginalLocation	Vị trí ban đầu
 trash.columnDeletedBy	Người xóa
 trash.columnDeletedOn	Ngày xóa
 trash.columnRemoved	Xóa vĩnh viễn
+emptyState.dropHintFiles	Bạn cũng có thể kéo tệp vào đây từ Tệp hoặc Ảnh.
+emptyState.dropHintFinder	Bạn cũng có thể kéo tệp vào đây từ Finder.

@@ -10,7 +10,7 @@
 
     /// Column layout shared with `MacBrowseTableSkeleton`, so loading and loaded line up.
     enum MacBrowseTableMetrics {
-        static let iconSize: CGFloat = .iconMedium
+        static let iconSize: CGFloat = .size20
         /// Extra room above and below each row's content, for rows taller than AppKit's default.
         static let rowVerticalPadding: CGFloat = .space4
         static let badgeSize: CGFloat = .iconXSmall
@@ -118,20 +118,20 @@
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
                 TableColumn(L10n.Sort.dateModified, value: \.dateModified) { item in
                     Text(isPersonalSpace(item) ? "" : dateFormat.string(from: item.dateModified, includeTime: true))
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                         .opacity(opacity(for: item))
                 }
                 .width(MacBrowseTableMetrics.dateColumnWidth)
                 TableColumn(L10n.Sort.size, value: \.size) { item in
                     Text(FileSizeFormat.string(for: item, folderSize: folderSizes[item.id]))
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                         .monospacedDigit()
                         .opacity(opacity(for: item))
                 }
                 .width(MacBrowseTableMetrics.sizeColumnWidth)
                 TableColumn(L10n.Sort.kind, value: \.kind) { item in
                     Text(item.isDirectory ? L10n.FileInfo.navigationTitleFolder : item.kind.uppercased())
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(.secondary)
                         .opacity(opacity(for: item))
                 }
                 .width(MacBrowseTableMetrics.kindColumnWidth)

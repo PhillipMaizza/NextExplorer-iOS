@@ -52,7 +52,7 @@ struct BrowseToastEvents: ViewModifier {
             // the same toast the unsupported file type warning uses.
             .onChange(of: store.fileActionErrorMessage) { _, newValue in
                 guard let newValue else { return }
-                toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)
+                toastMessage = DSToastMessage(icon: IconKit.errorFill, text: newValue)
             }
             .onChange(of: store.downloadSuccessMessage) { _, newValue in
                 guard let newValue else { return }

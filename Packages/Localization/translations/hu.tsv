@@ -1250,3 +1250,5 @@ trash.columnOriginalLocation	Eredeti hely
 trash.columnDeletedBy	Törölte
 trash.columnDeletedOn	Törlés dátuma
 trash.columnRemoved	Törlődik
+emptyState.dropHintFiles	Fájlokat a Fájlok vagy a Fotók appból is idehúzhat.
+emptyState.dropHintFinder	Fájlokat a Finderből is idehúzhat.

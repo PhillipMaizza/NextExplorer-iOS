@@ -1290,3 +1290,5 @@ shareUpload.deferredBody#two	פתחו את NextExplorer כדי להעלות %lld
 shareUpload.failureTooLarge#one	קובץ %lld לא הועלה. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים.
 shareUpload.failureTooLarge#other	%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים.
 shareUpload.failureTooLarge#two	%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים.
+emptyState.dropHintFiles	אפשר גם לגרור לכאן קבצים מ״קבצים״ או מ״תמונות״.
+emptyState.dropHintFinder	אפשר גם לגרור לכאן קבצים מ־Finder.

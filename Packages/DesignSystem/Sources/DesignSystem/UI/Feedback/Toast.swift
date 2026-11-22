@@ -7,12 +7,14 @@ private enum Constants {
     static let spacing: CGFloat = .space8
     static let actionHorizontalPadding: CGFloat = .space12
     static let actionVerticalPadding: CGFloat = .space4
+    static let actionFillOpacity: Double = 0.12
+    static let borderOpacity: Double = 0.25
+    static let darkBorderOpacity: Double = 0.12
     static let iconSize: CGFloat = .iconSmall
     static let bottomInset: CGFloat = .space16
     static let autoDismissDelay: Duration = .seconds(4.5)
-    // How much of the toast's color sits over the frosted glass: enough to keep its meaning and
-    // the white text legible, little enough to let the glass through. Solid on the Mac, whose
-    // windows are already frosted.
+    // How much of the surface color sits over the frosted glass: enough to keep the text legible,
+    // little enough to let the glass through. Solid on the Mac, whose windows are already frosted.
     #if os(macOS)
         static let tintOpacity: Double = 1
     #else
@@ -28,7 +30,7 @@ public struct DSToastMessage: Equatable, Identifiable {
     public let id: String
     public let icon: Image?
     public let text: String
-    public let backgroundColor: Color
+    public let tint: Color
     public let isPersistent: Bool
     /// Distinguishes a success confirmation from a warning: both are brief and
     /// auto dismissing, but only one should play a success haptic instead of an error one.
@@ -48,7 +50,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         id = UUID().uuidString
         self.icon = icon
         self.text = text
-        backgroundColor = .negative
+        tint = .negativeText
         isPersistent = false
         isSuccess = false
         actionTitle = nil
@@ -72,7 +74,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         DSToastMessage(successText: text, actionTitle: actionTitle, action: action)
     }
 
-    /// A brief, auto dismissing failure toast (warning icon, `.negative` background) with an
+    /// A brief, auto dismissing failure toast (warning icon in `.negativeText`) with an
     /// optional trailing action: e.g. "Retry" on a copy/move that didn't go through.
     public static func failure(
         _ text: String,
@@ -88,7 +90,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         id = Constants.progressIDPrefix + progressText
         icon = nil
         text = progressText
-        backgroundColor = .secondaryDS
+        tint = .tertiaryDS
         isPersistent = true
         isSuccess = false
         actionTitle = nil
@@ -97,9 +99,9 @@ public struct DSToastMessage: Equatable, Identifiable {
 
     private init(successText: String, actionTitle: String?, action: (() -> Void)?) {
         id = UUID().uuidString
-        icon = IconKit.checkmark
+        icon = IconKit.checkmarkCircleFill
         text = successText
-        backgroundColor = .positive
+        tint = .positiveText
         isPersistent = false
         isSuccess = true
         self.actionTitle = actionTitle
@@ -108,9 +110,9 @@ public struct DSToastMessage: Equatable, Identifiable {
 
     private init(failureText: String, actionTitle: String?, action: (() -> Void)?) {
         id = UUID().uuidString
-        icon = IconKit.warning
+        icon = IconKit.errorFill
         text = failureText
-        backgroundColor = .negative
+        tint = .negativeText
         isPersistent = false
         isSuccess = false
         self.actionTitle = actionTitle
@@ -176,6 +178,7 @@ private struct DSToastOverlay: View {
     let extraBottomInset: CGFloat
 
     @State private var owner = UUID()
+    @Environment(\.colorScheme) private var colorScheme
     private let presenter = DSToastPresenter.shared
 
     /// The message, only while it is the one on screen.
@@ -214,9 +217,9 @@ private struct DSToastOverlay: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
+                    .foregroundStyle(message.tint)
             } else {
                 DSSpinner()
-                    .tint(Color.primaryInverted)
             }
             Text(message.text)
                 .type(.body2(.semibold))
@@ -229,18 +232,30 @@ private struct DSToastOverlay: View {
                 }
                 .buttonStyle(DSPressableButtonStyle())
                 .type(.body3(.bold))
-                .foregroundStyle(Color.primaryInverted)
+                .foregroundStyle(Color.accentText)
                 .textCase(.uppercase)
                 .padding(.horizontal, Constants.actionHorizontalPadding)
                 .padding(.vertical, Constants.actionVerticalPadding)
-                .background(DSFrostedTint(Capsule(), tint: message.backgroundColor, tintOpacity: 1))
+                .background(Capsule().fill(Color.accent.opacity(Constants.actionFillOpacity)))
                 .accessibilityIdentifier(AccessibilityIdentifiers.Toast.action)
             }
         }
-        .foregroundStyle(Color.primaryInverted)
+        .foregroundStyle(Color.primaryDS)
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .background { DSFrostedTint(Capsule(), tint: message.backgroundColor, tintOpacity: Constants.tintOpacity) }
+        .background {
+            DSFrostedTint(Capsule(), tint: .backgroundSecondary, tintOpacity: Constants.tintOpacity)
+                .overlay {
+                    Capsule().stroke(
+                        Color.borderPrimary.opacity(
+                            colorScheme == .dark ? Constants.darkBorderOpacity : Constants.borderOpacity
+                        ),
+                        lineWidth: .borderWidthHairline
+                    )
+                }
+                .compositingGroup()
+                .elevation(.level4)
+        }
         .padding(.bottom, Constants.bottomInset + extraBottomInset)
         .transition(.move(edge: .bottom).combined(with: .opacity))
         // One VoiceOver element, spoken as a status announcement the moment it appears, since a
@@ -275,7 +290,7 @@ public extension View {
 
 #Preview("Warning") {
     @Previewable @State var message: DSToastMessage? = DSToastMessage(
-        icon: IconKit.warning,
+        icon: IconKit.errorFill,
         text: "Unsupported file type"
     )
 

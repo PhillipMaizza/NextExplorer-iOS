@@ -1321,3 +1321,5 @@ shareUpload.failureTooLarge#one	%lld फ़ाइल अपलोड नही�
 shareUpload.failureTooLarge#other	%lld फ़ाइलें अपलोड नहीं हुईं। आपके सर्वर का कनेक्शन इतनी बड़ी फ़ाइलें मना करता है। इन्हें फिर से शेयर करें, NextExplorer इन्हें हिस्सों में भेजेगा।
 shareUpload.startedDeferred	NextExplorer के लिए सहेजा गया। बड़ी फ़ाइलें अपलोड करने के लिए ऐप खोलें।
 menu.goToFolderPlaceholder	दस्तावेज़/रिपोर्ट
+emptyState.dropHintFiles	आप Files या Photos से भी फ़ाइलें यहाँ खींच सकते हैं।
+emptyState.dropHintFinder	आप Finder से भी फ़ाइलें यहाँ खींच सकते हैं।

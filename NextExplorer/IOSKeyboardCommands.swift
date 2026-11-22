@@ -16,6 +16,7 @@
         @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardAfterCopy = false
         /// Read by `body`, so every menu title is rebuilt in a newly chosen language.
         @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
+        @FocusedValue(\.browseCreateAvailability) private var createAvailability
 
         private static var sections: [AppMenu.Section] {
             AppMenu.sections(includingOffline: true)
@@ -24,11 +25,13 @@
         var body: some Commands {
             CommandGroup(replacing: .newItem) {
                 Button(L10n.Browse.actionNewFolder) { send(.newFolderRequested) }
-                    .keyboardShortcut("n", modifiers: [.command, .shift])
+                    .keyboardShortcut(BrowseShortcut.newFolder)
+                    .disabled(createAvailability?.canCreateFolder == false)
                     // Reading the language here rebuilds every menu in a newly chosen one.
                     .id(appLanguage)
                 Button(L10n.Browse.actionNewFile) { send(.newFileRequested) }
-                    .keyboardShortcut("n", modifiers: [.command, .option])
+                    .keyboardShortcut(BrowseShortcut.newFile)
+                    .disabled(createAvailability?.canCreateFile == false)
             }
             CommandGroup(replacing: .pasteboard) {
                 Button(L10n.Browse.actionCut) {
@@ -45,7 +48,7 @@
                         textAction: #selector(UIResponderStandardEditActions.paste)
                     )
                 }
-                .keyboardShortcut("v")
+                .keyboardShortcut(BrowseShortcut.paste)
                 Button(L10n.Common.delete) {
                     perform(.delete, textAction: #selector(UIResponderStandardEditActions.delete))
                 }

@@ -26,6 +26,7 @@
         @FocusedValue(\.previewZoom) private var previewZoom
         /// Present while an extra Browse window is in front; the Go menu then moves that window.
         @FocusedValue(\.folderWindowCommands) private var folderWindow
+        @FocusedValue(\.browseCreateAvailability) private var createAvailability
         @Environment(\.openWindow) private var openWindow
         /// Read by `body`, so every menu title is rebuilt in a newly chosen language.
         @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
@@ -57,9 +58,11 @@
                     { $0.newFolder() },
                     otherwise: .newFolderRequested
                 ) }
-                .keyboardShortcut("n", modifiers: [.command, .shift])
+                .keyboardShortcut(BrowseShortcut.newFolder)
+                .disabled(createAvailability?.canCreateFolder == false)
                 Button(L10n.Browse.actionNewFile) { sendToFrontWindow({ $0.newFile() }, otherwise: .newFileRequested) }
-                    .keyboardShortcut("n", modifiers: [.command, .option])
+                    .keyboardShortcut(BrowseShortcut.newFile)
+                    .disabled(createAvailability?.canCreateFile == false)
                 Divider()
                 Button(L10n.Browse.actionDuplicate) { fileActions?.duplicate() }
                     .keyboardShortcut("d")
@@ -97,7 +100,7 @@
                         fallback: #selector(NSText.paste(_:))
                     )
                 }
-                .keyboardShortcut("v")
+                .keyboardShortcut(BrowseShortcut.paste)
                 Button(L10n.Common.delete) { perform(fileActions?.delete, fallback: #selector(NSText.delete(_:))) }
                     .keyboardShortcut(.delete)
                 Button(L10n.Select.selectAll) { perform(

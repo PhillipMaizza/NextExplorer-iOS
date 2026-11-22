@@ -22,6 +22,9 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  TEST_RUNNER_CI: "true"
+
 jobs:
   # Whether anything that can change a build or a test changed, and for which platform
   # (Scripts/ci-platforms.py). A change to docs, screenshots, store text or issue templates skips

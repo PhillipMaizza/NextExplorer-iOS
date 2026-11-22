@@ -1250,3 +1250,5 @@ trash.columnOriginalLocation	Alkuperäinen sijainti
 trash.columnDeletedBy	Poistaja
 trash.columnDeletedOn	Poistettu
 trash.columnRemoved	Poistetaan
+emptyState.dropHintFiles	Voit myös vetää tiedostoja tähän Tiedostot- tai Kuvat-apista.
+emptyState.dropHintFinder	Voit myös vetää tiedostoja tähän Finderista.
