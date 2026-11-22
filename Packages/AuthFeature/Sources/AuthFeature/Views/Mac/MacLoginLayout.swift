@@ -21,6 +21,7 @@
                     MacLoginSidebar(store: store)
                 }
                 pages()
+                    .defaultScrollAnchor(.center)
                     .frame(maxWidth: Constants.contentMaxWidth)
                     .padding(.horizontal, Constants.cardPadding)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
