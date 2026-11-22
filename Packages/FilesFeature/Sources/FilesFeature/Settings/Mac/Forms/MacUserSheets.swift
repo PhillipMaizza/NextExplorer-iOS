@@ -21,41 +21,47 @@
                 onConfirm: { store.send(.createSubmitTapped) }
             ) {
                 MacSettingsRow(L10n.UserManagement.createEmailField) {
-                    TextField(
+                    MacTextField(
                         L10n.UserManagement.createEmailField,
                         text: field(\.email, UserManagementFeature.Action.createEmailChanged),
-                        prompt: Text(L10n.UserManagement.createEmailPlaceholder)
+                        prompt: L10n.UserManagement.createEmailPlaceholder
                     )
-                    .labelsHidden()
                     .textContentType(.emailAddress)
                     .autocorrectionDisabled()
                     MacFieldError(message: sheet?.emailError)
                 }
                 MacSettingsRow(L10n.UserManagement.createUsernameField) {
-                    TextField(
+                    MacTextField(
                         L10n.UserManagement.createUsernameField,
                         text: field(\.username, UserManagementFeature.Action.createUsernameChanged),
-                        prompt: Text(L10n.UserManagement.createUsernamePlaceholder)
+                        prompt: L10n.UserManagement.createUsernamePlaceholder
                     )
-                    .labelsHidden()
                     .autocorrectionDisabled()
                 }
                 MacSettingsRow(L10n.Common.password) {
-                    SecureField(
+                    MacSecureField(
                         L10n.Common.password,
                         text: field(\.password, UserManagementFeature.Action.createPasswordChanged),
                         prompt: Text(L10n.UserManagement
                             .createPasswordPlaceholder(CredentialRules.minimumPasswordLength))
                     )
-                    .labelsHidden()
                     MacFieldError(message: sheet?.passwordError)
                 }
-                MacSettingsRow(L10n.UserDetail.sectionRoles) {
-                    Toggle(L10n.UserManagement.createGrantAdminToggle, isOn: Binding(
-                        get: { store.createSheet?.isAdmin ?? false },
-                        set: { store.send(.createIsAdminChanged($0)) }
-                    ))
-                    MacSettingsNote(L10n.UserManagement.createGrantAdminSubtitle)
+            } below: {
+                MacFormGroup(L10n.UserDetail.sectionRoles) {
+                    MacFormRow {
+                        MacRowTitle(
+                            title: L10n.UserManagement.createGrantAdminToggle,
+                            subtitle: L10n.UserManagement.createGrantAdminSubtitle
+                        )
+                    } control: {
+                        Toggle(L10n.UserManagement.createGrantAdminToggle, isOn: Binding(
+                            get: { store.createSheet?.isAdmin ?? false },
+                            set: { store.send(.createIsAdminChanged($0)) }
+                        ))
+                        .labelsHidden()
+                        .toggleStyle(.macSwitch)
+                    }
                 }
             }
         }
@@ -77,6 +83,11 @@
             let isReset = sheet?.hasExistingPassword ?? false
             MacFormSheet(
                 title: isReset ? L10n.UserManagement.setPasswordResetTitle : L10n.UserManagement.setPasswordSetTitle,
+                message: sheet.map {
+                    isReset
+                        ? L10n.UserManagement.setPasswordResetIntro($0.userLabel)
+                        : L10n.UserManagement.setPasswordSetIntro($0.userLabel)
+                },
                 confirmTitle: isReset
                     ? L10n.UserManagement.setPasswordResetTitle
                     : L10n.UserManagement.setPasswordSetTitle,
@@ -86,18 +97,11 @@
                 onCancel: { store.send(.passwordSheetDismissed) },
                 onConfirm: { store.send(.passwordSubmitTapped) }
             ) {
-                if let sheet {
-                    MacSettingsNote(isReset
-                        ? L10n.UserManagement.setPasswordResetIntro(sheet.userLabel)
-                        : L10n.UserManagement.setPasswordSetIntro(sheet.userLabel))
-                        .padding(.bottom, .space8)
-                }
                 MacSettingsRow(L10n.UserManagement.setPasswordNewField) {
-                    SecureField(L10n.UserManagement.setPasswordNewField, text: Binding(
+                    MacSecureField(L10n.UserManagement.setPasswordNewField, text: Binding(
                         get: { store.passwordSheet?.password ?? "" },
                         set: { store.send(.passwordFieldChanged($0)) }
                     ), prompt: Text(L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength)))
-                        .labelsHidden()
                     MacFieldError(message: sheet?.passwordError)
                 }
             }
@@ -114,6 +118,7 @@
                 title: store.mode == .add
                     ? L10n.ChangePassword.addNavigationTitle
                     : L10n.ChangePassword.navigationTitle,
+                message: store.mode == .add ? L10n.ChangePassword.addIntro : L10n.ChangePassword.intro,
                 confirmTitle: store.mode == .add
                     ? L10n.ChangePassword.addSubmitButton
                     : L10n.ChangePassword.submitButton,
@@ -124,35 +129,30 @@
                 onCancel: onClose,
                 onConfirm: { store.send(.submitTapped) }
             ) {
-                MacSettingsNote(store.mode == .add ? L10n.ChangePassword.addIntro : L10n.ChangePassword.intro)
-                    .padding(.bottom, .space8)
                 if store.mode == .change {
                     MacSettingsRow(L10n.ChangePassword.fieldCurrentPassword) {
-                        SecureField(
+                        MacSecureField(
                             L10n.ChangePassword.fieldCurrentPassword,
                             text: $store.currentPassword.sending(\.currentPasswordChanged)
                         )
-                        .labelsHidden()
                         .textContentType(.password)
                     }
                 }
                 MacSettingsRow(L10n.ChangePassword.fieldNewPasswordLabel) {
-                    SecureField(
+                    MacSecureField(
                         L10n.ChangePassword.fieldNewPasswordLabel,
                         text: $store.newPassword.sending(\.newPasswordChanged),
                         prompt: Text(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength))
                     )
-                    .labelsHidden()
                     .textContentType(.newPassword)
                     MacFieldError(message: newPasswordError)
                 }
                 MacSettingsRow(L10n.ChangePassword.fieldConfirmPasswordLabel) {
-                    SecureField(
+                    MacSecureField(
                         L10n.ChangePassword.fieldConfirmPasswordLabel,
                         text: $store.confirmPassword.sending(\.confirmPasswordChanged),
                         prompt: Text(L10n.ChangePassword.fieldConfirmPassword)
                     )
-                    .labelsHidden()
                     .textContentType(.newPassword)
                     MacFieldError(message: confirmError)
                 }

@@ -95,7 +95,15 @@
                 if let activity = store.scope(state: \.activityLog, action: \.activityLog.presented) {
                     MacActivityLogClearButton(store: activity)
                 }
-            case .general, .storage, .users, .serverTools, .trash, .versions, .about:
+            case .users:
+                if let users = store.scope(state: \.userManagement, action: \.userManagement.presented) {
+                    Button { users.send(.createUserTapped) } label: {
+                        Label { Text(L10n.UserManagement.createUser) } icon: { IconKit.plus }
+                            .labelStyle(.titleAndIcon)
+                    }
+                    .buttonStyle(.macDS(.primary))
+                }
+            case .general, .storage, .serverTools, .trash, .versions, .about:
                 EmptyView()
             }
         }
