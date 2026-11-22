@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Salvato per NextExplorer. Apri l'app per caricare i 
 menu.goToFolderPlaceholder	Documenti/Report
 emptyState.dropHintFiles	Puoi anche trascinare qui i file da File o Foto.
 emptyState.dropHintFinder	Puoi anche trascinare qui i file dal Finder.
+login.stepServer	Server
+login.stepLogIn	Accedi
+login.stepCode	Codice

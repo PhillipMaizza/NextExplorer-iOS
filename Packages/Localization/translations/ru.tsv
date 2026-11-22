@@ -1395,3 +1395,6 @@ shareUpload.startedDeferred	Сохранено для NextExplorer. Открой
 menu.goToFolderPlaceholder	Документы/Отчёты
 emptyState.dropHintFiles	Вы также можете перетащить сюда файлы из «Файлов» или «Фото».
 emptyState.dropHintFinder	Вы также можете перетащить сюда файлы из Finder.
+login.stepServer	Сервер
+login.stepLogIn	Войти
+login.stepCode	Код

@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	NextExplorer के लिए सहेजा गय
 menu.goToFolderPlaceholder	दस्तावेज़/रिपोर्ट
 emptyState.dropHintFiles	आप Files या Photos से भी फ़ाइलें यहाँ खींच सकते हैं।
 emptyState.dropHintFinder	आप Finder से भी फ़ाइलें यहाँ खींच सकते हैं।
+login.stepServer	सर्वर
+login.stepLogIn	साइन इन करें
+login.stepCode	कोड

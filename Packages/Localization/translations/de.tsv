@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Für NextExplorer gesichert. Öffne die App, um dein
 menu.goToFolderPlaceholder	Dokumente/Berichte
 emptyState.dropHintFiles	Du kannst auch Dateien aus „Dateien“ oder „Fotos“ hierher ziehen.
 emptyState.dropHintFinder	Du kannst auch Dateien aus dem Finder hierher ziehen.
+login.stepServer	Server
+login.stepLogIn	Anmelden
+login.stepCode	Code

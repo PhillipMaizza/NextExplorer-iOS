@@ -1287,3 +1287,6 @@ shareUpload.startedDeferred	NextExplorer 用に保存しました。アプリを
 menu.goToFolderPlaceholder	書類/レポート
 emptyState.dropHintFiles	「ファイル」や「写真」からファイルをここにドラッグすることもできます。
 emptyState.dropHintFinder	Finderからファイルをここにドラッグすることもできます。
+login.stepServer	サーバー
+login.stepLogIn	ログイン
+login.stepCode	コード

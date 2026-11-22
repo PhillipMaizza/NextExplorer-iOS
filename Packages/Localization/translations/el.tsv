@@ -1252,3 +1252,6 @@ trash.columnDeletedOn	Ημερομηνία διαγραφής
 trash.columnRemoved	Αφαίρεση
 emptyState.dropHintFiles	Μπορείτε επίσης να σύρετε αρχεία εδώ από τα Αρχεία ή τις Φωτογραφίες.
 emptyState.dropHintFinder	Μπορείτε επίσης να σύρετε αρχεία εδώ από το Finder.
+login.stepServer	Διακομιστής
+login.stepLogIn	Σύνδεση
+login.stepCode	Κωδικός

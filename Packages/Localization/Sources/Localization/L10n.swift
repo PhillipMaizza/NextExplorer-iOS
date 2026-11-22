@@ -575,6 +575,9 @@ public enum L10n {
         public static var showPassword: String { tr("login.showPassword") }  // "Show Password"
         public static var ssoButton: String { tr("login.ssoButton") }  // "Sign in with SSO"
         public static var ssoClientCertificateNote: String { tr("login.ssoClientCertificateNote") }
+        public static var stepCode: String { tr("login.stepCode") }  // "Code"
+        public static var stepLogIn: String { tr("login.stepLogIn") }  // "Log In"
+        public static var stepServer: String { tr("login.stepServer") }  // "Server"
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
         public static func usingClientCertificate(_ a0: CVarArg) -> String { tr("login.usingClientCertificate", a0) }

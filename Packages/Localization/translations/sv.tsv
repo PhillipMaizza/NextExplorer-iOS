@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Sparat för NextExplorer. Öppna appen för att ladd
 menu.goToFolderPlaceholder	Dokument/Rapporter
 emptyState.dropHintFiles	Du kan också dra filer hit från Filer eller Bilder.
 emptyState.dropHintFinder	Du kan också dra filer hit från Finder.
+login.stepServer	Server
+login.stepLogIn	Logga in
+login.stepCode	Kod

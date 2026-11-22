@@ -1287,3 +1287,6 @@ shareUpload.startedDeferred	NextExplorer용으로 저장했습니다. 앱을 열
 menu.goToFolderPlaceholder	문서/보고서
 emptyState.dropHintFiles	파일 또는 사진 앱에서 파일을 여기로 드래그할 수도 있습니다.
 emptyState.dropHintFinder	Finder에서 파일을 여기로 드래그할 수도 있습니다.
+login.stepServer	서버
+login.stepLogIn	로그인
+login.stepCode	코드
