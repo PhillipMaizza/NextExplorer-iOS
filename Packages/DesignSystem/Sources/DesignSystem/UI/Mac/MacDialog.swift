@@ -64,10 +64,10 @@
         public var body: some View {
             VStack(alignment: .leading, spacing: Metrics.spacing) {
                 VStack(alignment: .leading, spacing: Metrics.messageSpacing) {
-                    Text(title).font(.headline)
+                    Text(title).type(.label3)
                     if let message {
                         Text(message)
-                            .foregroundStyle(.secondary)
+                            .type(.body2(.regular), style: .secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
@@ -76,7 +76,7 @@
                 }
                 .formStyle(.columns)
                 if let errorMessage {
-                    Text(errorMessage).foregroundStyle(Color.negativeText)
+                    Text(errorMessage).type(.body2(.regular), style: .error)
                 }
                 MacDialogButtons(
                     confirmTitle: confirmTitle,
@@ -104,7 +104,7 @@
 
         public var body: some View {
             if let message {
-                Text(message).font(.callout).foregroundStyle(Color.negativeText)
+                Text(message).type(.body3(.regular), style: .error)
             }
         }
     }
@@ -155,13 +155,16 @@
                 }
                 if let secondaryTitle {
                     Button(secondaryTitle, action: onSecondary)
+                        .buttonStyle(.macDS(.secondary))
                 }
                 if let cancelTitle {
                     Button(cancelTitle, action: onCancel)
+                        .buttonStyle(.macDS(.secondary))
                         .keyboardShortcut(.cancelAction)
                 }
                 if let confirmTitle {
                     Button(confirmTitle, action: onConfirm)
+                        .buttonStyle(.macDS(.primary))
                         .keyboardShortcut(.defaultAction)
                         .disabled(!isConfirmEnabled || isWorking)
                 }

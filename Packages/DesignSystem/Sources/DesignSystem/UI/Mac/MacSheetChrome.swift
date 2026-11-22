@@ -34,11 +34,10 @@
                     .disabled(!canGoBack)
                     .accessibilityLabelWithTooltip(backLabel)
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(title).font(.headline).lineLimit(1).truncationMode(.head)
+                    Text(title).type(.label3).lineLimit(1).truncationMode(.head)
                     if let subtitle, !subtitle.isEmpty {
                         Text(subtitle)
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
+                            .type(.body3(.regular), style: .secondary)
                             .lineLimit(1)
                             .truncationMode(.head)
                     }
@@ -80,9 +79,12 @@
         public var body: some View {
             Label {
                 VStack(alignment: .leading) {
-                    Text(name).lineLimit(1).truncationMode(.middle)
+                    Text(name).type(.body2(.regular)).lineLimit(1).truncationMode(.middle)
                     if let subtitle {
-                        Text(subtitle).font(.callout).foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
+                        Text(subtitle)
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.head)
                     }
                 }
             } icon: {
