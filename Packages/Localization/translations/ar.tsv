@@ -867,6 +867,7 @@ clientCertificate.removeMessage	سيتوقف NextExplorer عن تقديمها إ
 clientCertificate.removeConfirm	إزالة
 clientCertificate.expiredWarning	انتهت صلاحية هذه الشهادة. من المرجح أن يرفضها الخادم.
 clientCertificate.errorRemove	تعذّرت إزالة الشهادة من هذا الجهاز.
+login.clientCertificateAdded	تمت إضافة الشهادة
 login.usingClientCertificate	يتم استخدام شهادة العميل %@
 login.changeClientCertificate	تغيير
 login.ssoClientCertificateNote	يُفتح تسجيل الدخول الموحد في Safari، الذي لا يمكنه استخدام شهادة العميل الخاصة بهذا التطبيق. سجّل الدخول بكلمة السر، أو ثبّت الشهادة على هذا الجهاز لاستخدام تسجيل الدخول الموحد.

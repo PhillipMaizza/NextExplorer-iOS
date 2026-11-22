@@ -1048,6 +1048,7 @@ login.addClientCertificate	Lisää varmenne
 login.manageClientCertificate	Hallinnoi varmennetta
 settings.clientCertificate	Asiakasvarmenne
 settings.clientCertificateNone	Ei mitään
+login.clientCertificateAdded	Varmenne lisätty
 login.usingClientCertificate	Käytetään asiakasvarmennetta %@
 login.changeClientCertificate	Vaihda
 login.ssoClientCertificateNote	Kertakirjautuminen avautuu Safarissa, joka ei voi käyttää tämän sovelluksen asiakasvarmennetta. Kirjaudu salasanallasi tai asenna varmenne tälle laitteelle käyttääksesi kertakirjautumista.

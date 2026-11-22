@@ -1072,6 +1072,7 @@ login.addClientCertificate	Додати сертифікат
 login.manageClientCertificate	Керувати сертифікатом
 settings.clientCertificate	Клієнтський сертифікат
 settings.clientCertificateNone	Немає
+login.clientCertificateAdded	Сертифікат додано
 login.usingClientCertificate	Використовується клієнтський сертифікат %@
 login.changeClientCertificate	Змінити
 login.ssoClientCertificateNote	Єдиний вхід відкривається в Safari, який не може використовувати клієнтський сертифікат цього застосунку. Увійдіть із паролем або встановіть сертифікат на цьому пристрої, щоб користуватися єдиним входом.

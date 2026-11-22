@@ -1048,6 +1048,7 @@ login.addClientCertificate	Tanúsítvány hozzáadása
 login.manageClientCertificate	Tanúsítvány kezelése
 settings.clientCertificate	Kliens tanúsítvány
 settings.clientCertificateNone	Nincs
+login.clientCertificateAdded	Tanúsítvány hozzáadva
 login.usingClientCertificate	Kliens tanúsítvány használatban: %@
 login.changeClientCertificate	Módosítás
 login.ssoClientCertificateNote	Az egyszeri bejelentkezés Safariban nyílik meg, amely nem tudja használni az alkalmazás kliens tanúsítványát. Jelentkezzen be jelszóval, vagy telepítse a tanúsítványt ezen az eszközön az egyszeri bejelentkezés használatához.

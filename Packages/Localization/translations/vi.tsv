@@ -1036,6 +1036,7 @@ login.addClientCertificate	Thêm chứng chỉ
 login.manageClientCertificate	Quản lý chứng chỉ
 settings.clientCertificate	Chứng chỉ máy khách
 settings.clientCertificateNone	Không có
+login.clientCertificateAdded	Đã thêm chứng chỉ
 login.usingClientCertificate	Đang dùng chứng chỉ máy khách %@
 login.changeClientCertificate	Thay đổi
 login.ssoClientCertificateNote	Đăng nhập một lần mở trong Safari, vốn không dùng được chứng chỉ máy khách của ứng dụng này. Hãy đăng nhập bằng mật khẩu, hoặc cài chứng chỉ trên thiết bị này để dùng đăng nhập một lần.

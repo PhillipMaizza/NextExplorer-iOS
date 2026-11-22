@@ -819,6 +819,7 @@ clientCertificate.removeMessage	NextExplorer इसे %@ को दिखान
 clientCertificate.removeConfirm	हटाएँ
 clientCertificate.expiredWarning	यह सर्टिफ़िकेट समाप्त हो चुका है। सर्वर शायद इसे अस्वीकार कर देगा।
 clientCertificate.errorRemove	इस डिवाइस से सर्टिफ़िकेट हटाया नहीं जा सका।
+login.clientCertificateAdded	प्रमाणपत्र जोड़ा गया
 login.usingClientCertificate	क्लाइंट सर्टिफ़िकेट %@ इस्तेमाल हो रहा है
 login.changeClientCertificate	बदलें
 login.ssoClientCertificateNote	सिंगल साइन-ऑन Safari में खुलता है, जो इस ऐप का क्लाइंट सर्टिफ़िकेट इस्तेमाल नहीं कर सकता। अपने पासवर्ड से साइन इन करें, या सिंगल साइन-ऑन के लिए इस डिवाइस पर सर्टिफ़िकेट इंस्टॉल करें।

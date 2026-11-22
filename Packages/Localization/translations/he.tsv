@@ -1060,6 +1060,7 @@ login.addClientCertificate	הוספת אישור
 login.manageClientCertificate	ניהול אישור
 settings.clientCertificate	אישור לקוח
 settings.clientCertificateNone	ללא
+login.clientCertificateAdded	האישור נוסף
 login.usingClientCertificate	משתמש באישור הלקוח %@
 login.changeClientCertificate	שינוי
 login.ssoClientCertificateNote	כניסה יחידה נפתחת ב-Safari, שאינו יכול להשתמש באישור הלקוח של האפליקציה הזו. התחברו עם הסיסמה שלכם, או התקינו את האישור במכשיר הזה כדי להשתמש בכניסה יחידה.

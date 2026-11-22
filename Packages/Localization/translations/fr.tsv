@@ -819,6 +819,7 @@ clientCertificate.removeMessage	NextExplorer ne le présentera plus à %@. Si ce
 clientCertificate.removeConfirm	Supprimer
 clientCertificate.expiredWarning	Ce certificat a expiré. Le serveur va probablement le refuser.
 clientCertificate.errorRemove	Impossible de supprimer le certificat de cet appareil.
+login.clientCertificateAdded	Certificat ajouté
 login.usingClientCertificate	Certificat client utilisé : %@
 login.changeClientCertificate	Modifier
 login.ssoClientCertificateNote	L’authentification unique s’ouvre dans Safari, qui ne peut pas utiliser le certificat client de cette app. Connectez-vous avec votre mot de passe, ou installez le certificat sur cet appareil pour utiliser l’authentification unique.

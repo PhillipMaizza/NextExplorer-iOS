@@ -1036,6 +1036,7 @@ login.addClientCertificate	เพิ่มใบรับรอง
 login.manageClientCertificate	จัดการใบรับรอง
 settings.clientCertificate	ใบรับรองไคลเอนต์
 settings.clientCertificateNone	ไม่มี
+login.clientCertificateAdded	เพิ่มใบรับรองแล้ว
 login.usingClientCertificate	กำลังใช้ใบรับรองไคลเอนต์ %@
 login.changeClientCertificate	เปลี่ยน
 login.ssoClientCertificateNote	การลงชื่อเข้าใช้ครั้งเดียวเปิดใน Safari ซึ่งใช้ใบรับรองไคลเอนต์ของแอปนี้ไม่ได้ เข้าสู่ระบบด้วยรหัสผ่านของคุณ หรือติดตั้งใบรับรองบนอุปกรณ์เครื่องนี้เพื่อใช้การลงชื่อเข้าใช้ครั้งเดียว

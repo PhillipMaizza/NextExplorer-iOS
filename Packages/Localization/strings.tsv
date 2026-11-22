@@ -1212,6 +1212,7 @@ login.addClientCertificate	Add Certificate
 login.manageClientCertificate	Manage Certificate
 settings.clientCertificate	Client Certificate
 settings.clientCertificateNone	None
+login.clientCertificateAdded	Certificate added
 login.usingClientCertificate	Using client certificate %@
 login.changeClientCertificate	Change
 login.ssoClientCertificateNote	Single sign-on opens in Safari, which can't use this app's client certificate. Sign in with your password, or install the certificate on this device to use single sign-on.

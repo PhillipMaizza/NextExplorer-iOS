@@ -1048,6 +1048,7 @@ login.addClientCertificate	Προσθήκη πιστοποιητικού
 login.manageClientCertificate	Διαχείριση πιστοποιητικού
 settings.clientCertificate	Πιστοποιητικό πελάτη
 settings.clientCertificateNone	Κανένα
+login.clientCertificateAdded	Το πιστοποιητικό προστέθηκε
 login.usingClientCertificate	Χρήση πιστοποιητικού πελάτη %@
 login.changeClientCertificate	Αλλαγή
 login.ssoClientCertificateNote	Το single sign-on ανοίγει στο Safari, το οποίο δεν μπορεί να χρησιμοποιήσει το πιστοποιητικό πελάτη αυτής της εφαρμογής. Συνδεθείτε με τον κωδικό πρόσβασής σας ή εγκαταστήστε το πιστοποιητικό σε αυτήν τη συσκευή για να χρησιμοποιήσετε το single sign-on.

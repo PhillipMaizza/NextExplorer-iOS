@@ -819,6 +819,7 @@ clientCertificate.removeMessage	NextExplorer smetterà di presentarlo a %@. Se q
 clientCertificate.removeConfirm	Rimuovi
 clientCertificate.expiredWarning	Questo certificato è scaduto. Probabilmente il server lo rifiuterà.
 clientCertificate.errorRemove	Impossibile rimuovere il certificato da questo dispositivo.
+login.clientCertificateAdded	Certificato aggiunto
 login.usingClientCertificate	Certificato client in uso: %@
 login.changeClientCertificate	Cambia
 login.ssoClientCertificateNote	Il single sign-on si apre in Safari, che non può usare il certificato client di questa app. Accedi con la password oppure installa il certificato su questo dispositivo per usare il single sign-on.

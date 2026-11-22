@@ -11,23 +11,57 @@ struct LoginCertificateStatus: View {
     let onChange: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: .space4) {
-            HStack(alignment: .firstTextBaseline, spacing: .space8) {
-                IconKit.accessRules
-                    .foregroundStyle(Color.accentText)
-                    .accessibilityHidden(true)
-                Text(L10n.Login.usingClientCertificate(summary.subject))
-                    .type(.body3(.regular), style: .secondary)
-                    .lineLimit(2)
+        #if os(macOS)
+            VStack(alignment: .leading, spacing: .space8) {
+                HStack(spacing: .space12) {
+                    IconKit.accessRules
+                        .foregroundStyle(Color.accentText)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: .space2) {
+                        Text(L10n.Login.clientCertificateAdded)
+                            .type(.body3(.semibold))
+                        Text(summary.subject)
+                            .type(.caption(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Button(L10n.Login.changeClientCertificate, action: onChange)
-                    .buttonStyle(.borderless)
-                    .type(.body3(.semibold), style: .custom(.accentText))
+                    .accessibilityElement(children: .combine)
+                    Button(L10n.Login.changeClientCertificate, action: onChange)
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                }
+                .padding(.space12)
+                .background(
+                    RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                        .fill(Color.macRow)
+                )
+                ClientCertificateExpiryWarning(summary: summary)
             }
-            ClientCertificateExpiryWarning(summary: summary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        #else
+            iosBody
+        #endif
     }
+
+    #if os(iOS)
+        private var iosBody: some View {
+            VStack(alignment: .leading, spacing: .space4) {
+                HStack(alignment: .firstTextBaseline, spacing: .space8) {
+                    IconKit.accessRules
+                        .foregroundStyle(Color.accentText)
+                        .accessibilityHidden(true)
+                    Text(L10n.Login.usingClientCertificate(summary.subject))
+                        .type(.body3(.regular), style: .secondary)
+                        .lineLimit(2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button(L10n.Login.changeClientCertificate, action: onChange)
+                        .buttonStyle(.borderless)
+                        .type(.body3(.semibold), style: .custom(.accentText))
+                }
+                ClientCertificateExpiryWarning(summary: summary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    #endif
 }
 
 #Preview("In use") {

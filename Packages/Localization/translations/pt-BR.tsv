@@ -1008,6 +1008,7 @@ login.addClientCertificate	Adicionar certificado
 login.manageClientCertificate	Gerenciar certificado
 settings.clientCertificate	Certificado de cliente
 settings.clientCertificateNone	Nenhum
+login.clientCertificateAdded	Certificado adicionado
 login.usingClientCertificate	Usando o certificado de cliente %@
 login.changeClientCertificate	Alterar
 login.ssoClientCertificateNote	O login único abre no Safari, que não consegue usar o certificado de cliente deste app. Entre com senha ou instale o certificado neste dispositivo para usar o login único.

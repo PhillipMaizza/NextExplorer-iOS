@@ -38,8 +38,10 @@ struct LoginServerPage: View {
     @FocusState private var isHostFocused: Bool
     /// Only floors the centered content's `minHeight`.
     @State private var serverScrollHeight: CGFloat = 0
-    /// The "What is a server?" sheet behind the `(i)` beside the title.
-    @State private var isServerInfoPresented = false
+    #if os(iOS)
+        /// The "What is a server?" sheet behind the `(i)` beside the title.
+        @State private var isServerInfoPresented = false
+    #endif
 
     var body: some View {
         ScrollView {
