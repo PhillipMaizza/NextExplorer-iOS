@@ -1,0 +1,219 @@
+#if os(macOS)
+    import Localization
+    import SwiftUI
+
+    private enum Constants {
+        static let largeHeight: CGFloat = .size44
+        static let regularHeight: CGFloat = 36
+        static let smallHeight: CGFloat = 28
+        static let toolbarDiameter: CGFloat = .size40
+        static let hoverOpacity: Double = 0.06
+        static let pressedOpacity: Double = 0.12
+        static let disabledOpacity: Double = 0.4
+        static let invertedFillWhite: Double = 0.15
+    }
+
+    extension DSButtonSize {
+        var macHeight: CGFloat {
+            switch self {
+            case .large: Constants.largeHeight
+            case .medium: Constants.regularHeight
+            case .small: Constants.smallHeight
+            }
+        }
+
+        var macPadding: CGFloat {
+            self == .small ? .space12 : .space16
+        }
+
+        var macTextType: Typography.TextType {
+            self == .small ? .label4 : .label3
+        }
+    }
+
+    extension DSButtonStyle {
+        var macFill: Color {
+            switch self {
+            case .primary: .accent
+            case .secondary: .macSegment
+            case .tertiary, .ghost, .outline: .clear
+            case .success: .positive
+            case .failure: .negative
+            case .inverted: Color(white: Constants.invertedFillWhite)
+            }
+        }
+
+        func macForeground(isDestructive: Bool) -> Color {
+            switch self {
+            case .primary: .onAccent
+            case .success, .failure, .inverted: .white
+            case .secondary, .outline, .ghost: isDestructive ? .negativeText : .macChromeText
+            case .tertiary: isDestructive ? .negativeText : .accentText
+            }
+        }
+
+        var macBorder: Color {
+            self == .outline ? .macLine : .clear
+        }
+    }
+
+    public struct MacDSButtonStyle: ButtonStyle {
+        let style: DSButtonStyle
+        let size: DSButtonSize
+
+        public init(style: DSButtonStyle, size: DSButtonSize) {
+            self.style = style
+            self.size = size
+        }
+
+        public func makeBody(configuration: Configuration) -> some View {
+            MacDSButtonBody(
+                label: configuration.label,
+                isPressed: configuration.isPressed,
+                isDestructive: configuration.role == .destructive,
+                style: style,
+                size: size
+            )
+        }
+    }
+
+    public extension ButtonStyle where Self == MacDSButtonStyle {
+        static func macDS(_ style: DSButtonStyle = .secondary, size: DSButtonSize = .medium) -> MacDSButtonStyle {
+            MacDSButtonStyle(style: style, size: size)
+        }
+    }
+
+    private struct MacDSButtonBody<Label: View>: View {
+        let label: Label
+        let isPressed: Bool
+        let isDestructive: Bool
+        let style: DSButtonStyle
+        let size: DSButtonSize
+
+        var body: some View {
+            label
+                .type(size.macTextType)
+                .lineLimit(1)
+                .foregroundStyle(style.macForeground(isDestructive: isDestructive))
+                .padding(.horizontal, size.macPadding)
+                .frame(minHeight: size.macHeight)
+                .background(MacButtonShape.pill.fill(style.macFill))
+                .overlay(MacButtonShape.pill.strokeBorder(style.macBorder, lineWidth: .borderWidthHairline))
+                .modifier(MacButtonInteraction(shape: MacButtonShape.pill, isPressed: isPressed))
+        }
+    }
+
+    public struct MacToolbarButtonStyle: ButtonStyle {
+        let isAccent: Bool
+
+        public init(isAccent: Bool = false) {
+            self.isAccent = isAccent
+        }
+
+        public func makeBody(configuration: Configuration) -> some View {
+            MacToolbarButtonBody(label: configuration.label, isPressed: configuration.isPressed, isAccent: isAccent)
+        }
+    }
+
+    public extension ButtonStyle where Self == MacToolbarButtonStyle {
+        static var macToolbar: MacToolbarButtonStyle {
+            MacToolbarButtonStyle()
+        }
+
+        static var macToolbarAccent: MacToolbarButtonStyle {
+            MacToolbarButtonStyle(isAccent: true)
+        }
+    }
+
+    private struct MacToolbarButtonBody<Label: View>: View {
+        let label: Label
+        let isPressed: Bool
+        let isAccent: Bool
+
+        var body: some View {
+            label
+                .labelStyle(.iconOnly)
+                .frame(width: .iconSmall, height: .iconSmall)
+                .foregroundStyle(isAccent ? Color.onAccent : Color.macChromeText)
+                .frame(width: Constants.toolbarDiameter, height: Constants.toolbarDiameter)
+                .background(Circle().fill(isAccent ? Color.accent : Color.macChromeButton))
+                .modifier(MacButtonInteraction(shape: Circle(), isPressed: isPressed))
+        }
+    }
+
+    enum MacButtonShape {
+        static let pill = RoundedRectangle(cornerRadius: .radiusLarge, style: .continuous)
+    }
+
+    struct MacButtonInteraction<S: InsettableShape>: ViewModifier {
+        let shape: S
+        let isPressed: Bool
+        @Environment(\.isEnabled) private var isEnabled
+        @Environment(\.isFocused) private var isFocused
+        @State private var isHovered = false
+
+        func body(content: Content) -> some View {
+            content
+                .overlay(shape.fill(Color.macChromeText.opacity(tintOpacity)))
+                .macFocusRing(isFocused, in: shape)
+                .contentShape(shape)
+                .opacity(isEnabled ? 1 : Constants.disabledOpacity)
+                .onHover { isHovered = $0 }
+                .animation(DSMotion.quickFade, value: isHovered)
+                .animation(DSMotion.quickFade, value: isPressed)
+        }
+
+        private var tintOpacity: Double {
+            guard isEnabled else { return 0 }
+            if isPressed {
+                return Constants.pressedOpacity
+            }
+            return isHovered ? Constants.hoverOpacity : 0
+        }
+    }
+
+    extension View {
+        func macFocusRing(_ isFocused: Bool, in shape: some InsettableShape) -> some View {
+            focusEffectDisabled()
+                .overlay(
+                    shape
+                        .strokeBorder(Color(nsColor: .keyboardFocusIndicatorColor), lineWidth: .borderWidthFocused)
+                        .opacity(isFocused ? 1 : 0)
+                )
+        }
+    }
+
+    #Preview("Buttons") {
+        VStack(alignment: .leading, spacing: .space16) {
+            ForEach(DSButtonSize.allCases, id: \.self) { size in
+                HStack(spacing: .space8) {
+                    Button(L10n.Common.save) {}.buttonStyle(.macDS(.primary, size: size))
+                    Button(L10n.Common.cancel) {}.buttonStyle(.macDS(.secondary, size: size))
+                    Button(L10n.Common.delete, role: .destructive) {}.buttonStyle(.macDS(.secondary, size: size))
+                    Button(L10n.Common.remove) {}.buttonStyle(.macDS(.failure, size: size))
+                    Button(L10n.Common.edit) {}.buttonStyle(.macDS(.outline, size: size))
+                    Button(L10n.Common.share) {}.buttonStyle(.macDS(.tertiary, size: size))
+                }
+            }
+            HStack(spacing: .space8) {
+                Button(L10n.Common.save) {}.buttonStyle(.macDS(.primary)).disabled(true)
+                Button(L10n.Common.cancel) {}.buttonStyle(.macDS(.secondary)).disabled(true)
+            }
+        }
+        .padding(.space24)
+        .background(Color.macCard)
+    }
+
+    #Preview("Toolbar buttons") {
+        HStack(spacing: .space12) {
+            Button {} label: { Label { Text(L10n.Common.more) } icon: { IconKit.moreOptions } }.buttonStyle(.macToolbar)
+            Button {} label: { Label { Text(L10n.Common.share) } icon: { IconKit.link } }.buttonStyle(.macToolbar)
+            Button {} label: { Label { Text(L10n.Common.download) } icon: { IconKit.upload } }
+                .buttonStyle(.macToolbarAccent)
+            Button {} label: { Label { Text(L10n.Common.more) } icon: { IconKit.moreOptions } }.buttonStyle(.macToolbar)
+                .disabled(true)
+        }
+        .padding(.space24)
+        .background(Color.macChrome)
+    }
+#endif
