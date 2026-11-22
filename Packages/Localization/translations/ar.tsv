@@ -1471,6 +1471,7 @@ shareUpload.failureTooLarge#many	لم يتم رفع %lld ملفًا. اتصال 
 shareUpload.failureTooLarge#other	لم يتم رفع %lld ملف. اتصال الخادم يرفض ملفات بهذا الحجم. شاركها مرة أخرى وسيرسلها NextExplorer على أجزاء.
 shareUpload.startedDeferred	تم الحفظ لـ NextExplorer. افتح التطبيق لرفع ملفاتك الكبيرة.
 menu.goToFolderPlaceholder	المستندات/التقارير
+menu.toggleSidebar	إظهار أو إخفاء الشريط الجانبي
 emptyState.dropHintFiles	يمكنك أيضًا سحب الملفات إلى هنا من الملفات أو الصور.
 emptyState.dropHintFinder	يمكنك أيضًا سحب الملفات إلى هنا من Finder.
 login.stepServer	الخادم

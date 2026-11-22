@@ -699,3 +699,21 @@ extension OfflineDownloadProgress.Phase {
         }
     }
 }
+
+extension MainTabFeature.State {
+    var canGoBack: Bool {
+        switch selectedTab {
+        case .browse: browse.canGoBackFromScreen
+        case .favorites: favorites.canGoBack
+        case .shared, .downloads, .settings, .trash: false
+        }
+    }
+
+    var canGoForward: Bool {
+        switch selectedTab {
+        case .browse: browse.canGoForward
+        case .favorites: favorites.canGoForward
+        case .shared, .downloads, .settings, .trash: false
+        }
+    }
+}

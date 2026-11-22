@@ -1327,6 +1327,7 @@ shareUpload.failureTooLarge#one	%lld fil laddades inte upp. Anslutningen till di
 shareUpload.failureTooLarge#other	%lld filer laddades inte upp. Anslutningen till din server nekar så stora filer. Dela dem igen så skickar NextExplorer dem i delar.
 shareUpload.startedDeferred	Sparat för NextExplorer. Öppna appen för att ladda upp dina stora filer.
 menu.goToFolderPlaceholder	Dokument/Rapporter
+menu.toggleSidebar	Visa eller göm sidofält
 emptyState.dropHintFiles	Du kan också dra filer hit från Filer eller Bilder.
 emptyState.dropHintFinder	Du kan också dra filer hit från Finder.
 login.stepServer	Server

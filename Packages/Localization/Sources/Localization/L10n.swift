@@ -639,6 +639,7 @@ public enum L10n {
         public static var refresh: String { tr("menu.refresh") }  // "Refresh"
         public static var showAll: String { tr("menu.showAll") }  // "Show All"
         public static var support: String { tr("menu.support") }  // "NextExplorer Support"
+        public static var toggleSidebar: String { tr("menu.toggleSidebar") }  // "Show or Hide Sidebar"
         public static var undo: String { tr("menu.undo") }  // "Undo"
         public static var zoomIn: String { tr("menu.zoomIn") }  // "Zoom In"
         public static var zoomOut: String { tr("menu.zoomOut") }  // "Zoom Out"

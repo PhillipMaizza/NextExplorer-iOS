@@ -13,9 +13,11 @@ struct BrowseTabView: View {
             BrowseContentView(store: store.scope(state: \.root, action: \.root))
                 .navigationDestination(item: $store.scope(state: \.trash, action: \.trash)) { trashStore in
                     TrashView(store: trashStore)
+                        .hidesSystemBackOnMac()
                 }
         } destination: { store in
             BrowseContentView(store: store)
+                .hidesSystemBackOnMac()
         }
         .platformAccentTint()
     }

@@ -60,6 +60,14 @@ protocol BrowseHistoryState {
 }
 
 extension BrowseHistoryState {
+    var canGoBack: Bool {
+        !path.isEmpty
+    }
+
+    var canGoForward: Bool {
+        !forwardStack.isEmpty
+    }
+
     /// Back (⌘[): the visible folder leaves the stack, and Forward can reopen it.
     mutating func goBack() {
         guard let id = path.ids.last else { return }

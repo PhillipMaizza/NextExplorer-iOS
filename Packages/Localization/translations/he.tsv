@@ -1031,6 +1031,7 @@ menu.zoomToFit	התאמה לחלון
 menu.quitTransfersTitle	לצאת מ-NextExplorer?
 menu.quitTransfersMessage	העלאות או הורדות עדיין מתבצעות. יציאה עכשיו תעצור אותן.
 menu.quitTransfersConfirm	יציאה
+menu.toggleSidebar	הצגה או הסתרה של סרגל הצד
 media.play	הפעלה
 media.pause	השהיה
 media.position	מיקום ההפעלה

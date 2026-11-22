@@ -1291,6 +1291,7 @@ shareUpload.deferredBody#other	打開 NextExplorer 以上傳 %lld 個大型檔�
 shareUpload.failureTooLarge#other	%lld 個檔案未能上傳。 伺服器連線拒絕這麼大的檔案。請再次分享，NextExplorer 會分段傳送。
 shareUpload.startedDeferred	已為 NextExplorer 儲存。請打開 App 上傳大型檔案。
 menu.goToFolderPlaceholder	文件/報告
+menu.toggleSidebar	顯示或隱藏側邊欄
 emptyState.dropHintFiles	你也可以從「檔案」或「照片」將檔案拖移到這裡。
 emptyState.dropHintFinder	你也可以從「Finder」將檔案拖移到這裡。
 login.stepServer	伺服器

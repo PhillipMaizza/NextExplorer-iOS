@@ -246,6 +246,7 @@ public struct MainTabView: View {
                     sidebarTrailingEdge = $0
                 }
             #if os(macOS)
+                .modifier(MacSidebarToolbar(store: store, columnVisibility: $columnVisibility))
                 .navigationSplitViewColumnWidth(
                     min: MacSidebarWidth.min,
                     ideal: MacSidebarWidth.ideal,
@@ -269,7 +270,8 @@ public struct MainTabView: View {
         #if os(macOS)
             .modifier(MacSplitChrome(
                 store: store,
-                sidebarInset: columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge)
+                sidebarInset: columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge),
+                columnVisibility: $columnVisibility
             ))
         #endif
     }

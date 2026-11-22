@@ -1007,6 +1007,7 @@ menu.zoomToFit	ซูมให้พอดี
 menu.quitTransfersTitle	ออกจาก NextExplorer หรือไม่
 menu.quitTransfersMessage	การอัปโหลดหรือการดาวน์โหลดยังดำเนินอยู่ การออกตอนนี้จะหยุดการทำงานเหล่านั้น
 menu.quitTransfersConfirm	ออก
+menu.toggleSidebar	แสดงหรือซ่อนแถบด้านข้าง
 media.play	เล่น
 media.pause	หยุดชั่วคราว
 media.position	ตำแหน่งการเล่น

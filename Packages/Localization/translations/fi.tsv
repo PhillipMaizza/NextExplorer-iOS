@@ -1019,6 +1019,7 @@ menu.zoomToFit	Sovita ikkunaan
 menu.quitTransfersTitle	Lopetetaanko NextExplorer?
 menu.quitTransfersMessage	Lähetyksiä tai latauksia on yhä kesken. Lopettaminen nyt pysäyttää ne.
 menu.quitTransfersConfirm	Lopeta
+menu.toggleSidebar	Näytä tai kätke sivupalkki
 media.play	Toista
 media.pause	Tauko
 media.position	Toiston kohta

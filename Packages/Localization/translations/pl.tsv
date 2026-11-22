@@ -1399,6 +1399,7 @@ shareUpload.failureTooLarge#many	%lld plików nie zostało przesłanych. Połąc
 shareUpload.failureTooLarge#other	%lld pliku nie zostało przesłane. Połączenie z serwerem odrzuca tak duże pliki. Udostępnij je ponownie, a NextExplorer wyśle je w częściach.
 shareUpload.startedDeferred	Zapisano dla NextExplorer. Otwórz aplikację, aby przesłać duże pliki.
 menu.goToFolderPlaceholder	Dokumenty/Raporty
+menu.toggleSidebar	Pokaż lub ukryj pasek boczny
 emptyState.dropHintFiles	Możesz też przeciągnąć tu pliki z aplikacji Pliki lub Zdjęcia.
 emptyState.dropHintFinder	Możesz też przeciągnąć tu pliki z Findera.
 login.stepServer	Serwer

@@ -1327,6 +1327,7 @@ shareUpload.failureTooLarge#one	%lld file non è stato caricato. La connessione 
 shareUpload.failureTooLarge#other	%lld file non sono stati caricati. La connessione al tuo server rifiuta file così grandi. Condividili di nuovo e NextExplorer li invierà a blocchi.
 shareUpload.startedDeferred	Salvato per NextExplorer. Apri l'app per caricare i file grandi.
 menu.goToFolderPlaceholder	Documenti/Report
+menu.toggleSidebar	Mostra o nascondi barra laterale
 emptyState.dropHintFiles	Puoi anche trascinare qui i file da File o Foto.
 emptyState.dropHintFinder	Puoi anche trascinare qui i file dal Finder.
 login.stepServer	Server

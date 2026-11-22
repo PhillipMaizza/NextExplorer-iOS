@@ -36,9 +36,15 @@
         let store: StoreOf<MainTabFeature>
         /// Where the sidebar ends, so the offline bar spans only the content beside it.
         let sidebarInset: CGFloat
+        @Binding var columnVisibility: NavigationSplitViewVisibility
 
         func body(content: Content) -> some View {
             content
+                .toolbar {
+                    if columnVisibility == .detailOnly {
+                        MacNavigationToolbar(store: store, columnVisibility: $columnVisibility)
+                    }
+                }
                 .environment(\.openSpotlight, OpenSpotlightAction { store.send(.spotlightOpened) })
                 .modifier(MacOfflineStatusBar(store: store, leadingInset: sidebarInset))
                 .toolbar {
@@ -63,7 +69,8 @@
                 serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
                 user: User.preview
             )) { MainTabFeature() },
-            sidebarInset: 0
+            sidebarInset: 0,
+            columnVisibility: .constant(.all)
         ))
     }
 
