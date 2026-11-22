@@ -33,7 +33,7 @@
                     isFocused = true
                 } label: {
                     (isRevealed ? IconKit.eyeSlash : IconKit.eye)
-                        .foregroundStyle(Color.secondaryDS)
+                        .foregroundStyle(Color.macChromeSecondary)
                         .frame(width: .iconSmall, height: .iconSmall)
                 }
                 .buttonStyle(.borderless)

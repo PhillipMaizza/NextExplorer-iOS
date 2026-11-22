@@ -1,5 +1,11 @@
 import SwiftUI
 
+#if os(macOS)
+    private enum Constants {
+        static let macTertiaryOpacity: Double = 0.6
+    }
+#endif
+
 public enum Typography {
     public enum Trait {
         case bold
@@ -172,13 +178,21 @@ public enum Typography {
         case warning
         case custom(Color)
 
+        #if os(macOS)
+            private static let secondaryColor = Color.macChromeSecondary
+            private static let tertiaryColor = Color.macChromeSecondary.opacity(Constants.macTertiaryOpacity)
+        #else
+            private static let secondaryColor = Color.secondaryDS
+            private static let tertiaryColor = Color.tertiaryDS
+        #endif
+
         public var color: Color {
             switch self {
             case .primaryOnSurface: .primaryDS
             case .primaryOnAccent: .primaryInverted
-            case .secondary: .secondaryDS
-            case .tertiary: .tertiaryDS
-            case .disabled: .tertiaryDS
+            case .secondary: Self.secondaryColor
+            case .tertiary: Self.tertiaryColor
+            case .disabled: Self.tertiaryColor
             case .inverted: .primaryInverted
             case .invertedSecondary: .secondaryInverted
             case .success: .positiveText
