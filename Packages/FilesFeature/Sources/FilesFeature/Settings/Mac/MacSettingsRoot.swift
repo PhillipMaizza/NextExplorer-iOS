@@ -120,7 +120,7 @@
         }
 
         var body: some View {
-            NavigationSplitView {
+            HStack(spacing: .zero) {
                 List(selection: Binding(get: { visibleSelection }, set: {
                     if let category = $0 {
                         selection = category
@@ -138,16 +138,9 @@
                         ForEach(MacSettingsCategory.app) { sidebarRow($0) }
                     }
                 }
+                .listStyle(.sidebar)
                 .scrollContentBackground(.hidden)
-                .toolbar(removing: .sidebarToggle)
-                // Must come after the toolbar change, which otherwise drops it and lets AppKit
-                // shrink the column until the category names truncate.
-                .navigationSplitViewColumnWidth(
-                    min: Metrics.sidebarWidth,
-                    ideal: Metrics.sidebarWidth,
-                    max: Metrics.sidebarWidth
-                )
-            } detail: {
+                .frame(width: Metrics.sidebarWidth)
                 NavigationStack {
                     MacSettingsPaneCard(title: visibleSelection.title, subtitle: visibleSelection.subtitle) {
                         pane(visibleSelection)
