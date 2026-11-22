@@ -6,8 +6,11 @@
     import Localization
     import SwiftUI
 
-    /// The Uploads pane: chunked uploads, the chunk size within the server's ceiling, and the auto
-    /// fallback.
+    private enum Metrics {
+        static let pathFieldWidth: CGFloat = 340
+        static let modeRowHeight: CGFloat = .size64
+    }
+
     struct MacUploadSettingsPane: View {
         @Bindable var store: StoreOf<UploadSettingsFeature>
 
@@ -17,49 +20,54 @@
                 unavailableMessage: L10n.UploadSettings.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.loaded == nil,
-                save: MacAdminSave(
-                    title: L10n.UploadSettings.saveButton,
-                    isSaving: store.isSaving,
-                    isEnabled: store.isSaveEnabled,
-                    action: { store.send(.saveTapped) }
-                ),
+                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
-                Section {
-                    Toggle(isOn: $store.draft.isChunkedEnabled.sending(\.chunkedChanged)) {
+                MacFormGroup {
+                    MacFormRow {
                         MacRowTitle(
                             title: L10n.UploadSettings.chunkedEnable,
                             subtitle: L10n.UploadSettings.chunkedEnableHelp
                         )
+                    } control: {
+                        Toggle(
+                            L10n.UploadSettings.chunkedEnable,
+                            isOn: $store.draft.isChunkedEnabled.sending(\.chunkedChanged)
+                        )
+                        .labelsHidden()
                     }
-                    LabeledContent {
-                        MacNumberStepper(
+                    MacFormRow {
+                        MacRowTitle(title: L10n.UploadSettings.chunkSize, subtitle: L10n.UploadSettings.chunkSizeHelp)
+                    } control: {
+                        MacStepper(
                             label: L10n.UploadSettings.chunkSize,
                             value: store.chunkSizeMiB,
                             range: UploadSettings.minChunkSizeMiB ... store.maxChunkSizeMiB,
                             step: 1
                         ) { store.send(.chunkSizeChanged($0)) }
-                    } label: {
-                        MacRowTitle(title: L10n.UploadSettings.chunkSize, subtitle: L10n.UploadSettings.chunkSizeHelp)
                     }
                     .disabled(!store.draft.isChunkedEnabled)
-                }
-                Section {
-                    Toggle(isOn: $store.draft.isChunkedAutoFallback.sending(\.autoFallbackChanged)) {
+                    MacFormRow {
                         MacRowTitle(
                             title: L10n.UploadSettings.autoFallback,
                             subtitle: L10n.UploadSettings.autoFallbackHelp
                         )
+                    } control: {
+                        Toggle(
+                            L10n.UploadSettings.autoFallback,
+                            isOn: $store.draft.isChunkedAutoFallback.sending(\.autoFallbackChanged)
+                        )
+                        .labelsHidden()
                     }
                 }
                 if let error = store.errorMessage {
-                    Text(error).foregroundStyle(Color.negativeText)
+                    MacNote(error, kind: .error)
                 }
             }
+            .disabled(store.isSaving)
         }
     }
 
-    /// The FFmpeg pane: the two executables the server uses for media previews and metadata.
     struct MacFFmpegSettingsPane: View {
         @Bindable var store: StoreOf<FFmpegSettingsFeature>
 
@@ -69,47 +77,40 @@
                 unavailableMessage: L10n.FfmpegSettings.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.loaded == nil,
-                save: MacAdminSave(
-                    title: L10n.FfmpegSettings.saveButton,
-                    isSaving: store.isSaving,
-                    isEnabled: store.isSaveEnabled,
-                    action: { store.send(.saveTapped) }
-                ),
+                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
-                Section {
-                    pathField(
-                        L10n.FfmpegSettings.ffmpegPath,
-                        L10n.FfmpegSettings.ffmpegPlaceholder,
-                        $store.draft.ffmpegPath.sending(\.ffmpegPathChanged)
-                    )
-                    pathField(
-                        L10n.FfmpegSettings.ffprobePath,
-                        L10n.FfmpegSettings.ffprobePlaceholder,
-                        $store.draft.ffprobePath.sending(\.ffprobePathChanged)
-                    )
-                } footer: {
-                    MacSectionFooter(
-                        L10n.FfmpegSettings.containerPathHelp,
-                        L10n.FfmpegSettings.defaultHelp
-                    )
+                VStack(alignment: .leading, spacing: .space8) {
+                    MacFormGroup {
+                        pathRow(
+                            L10n.FfmpegSettings.ffmpegPath,
+                            L10n.FfmpegSettings.ffmpegPlaceholder,
+                            $store.draft.ffmpegPath.sending(\.ffmpegPathChanged)
+                        )
+                        pathRow(
+                            L10n.FfmpegSettings.ffprobePath,
+                            L10n.FfmpegSettings.ffprobePlaceholder,
+                            $store.draft.ffprobePath.sending(\.ffprobePathChanged)
+                        )
+                    }
+                    MacFormFootnote(L10n.FfmpegSettings.containerPathHelp, L10n.FfmpegSettings.defaultHelp)
                 }
                 if !store.isValid {
-                    Text(L10n.FfmpegSettings.invalid).foregroundStyle(Color.negativeText)
+                    MacNote(L10n.FfmpegSettings.invalid, kind: .error)
                 }
                 if let error = store.errorMessage {
-                    Text(error).foregroundStyle(Color.negativeText)
+                    MacNote(error, kind: .error)
                 }
             }
+            .disabled(store.isSaving)
         }
 
-        private func pathField(_ title: String, _ placeholder: String, _ text: Binding<String>) -> some View {
-            LabeledContent(title) {
-                TextField(title, text: text, prompt: Text(placeholder))
-                    .labelsHidden()
-                    .textFieldStyle(.roundedBorder)
+        private func pathRow(_ title: String, _ placeholder: String, _ text: Binding<String>) -> some View {
+            MacFormRow(title) {
+                MacTextField(title, text: text, prompt: placeholder)
                     .autocorrectionDisabled()
                     .monospaced()
+                    .frame(width: Metrics.pathFieldWidth)
             }
         }
     }
@@ -123,52 +124,51 @@
                 unavailableMessage: L10n.SearchIndexSettings.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.loaded == nil,
-                save: MacAdminSave(
-                    title: L10n.SearchIndexSettings.saveButton,
-                    isSaving: store.isSaving,
-                    isEnabled: store.isSaveEnabled,
-                    action: { store.send(.saveTapped) }
-                ),
+                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
-                Section {
-                    Toggle(isOn: Binding(get: { store.isEnabled }, set: { store.send(.choiceChanged($0)) })) {
-                        MacRowTitle(
-                            title: L10n.SearchIndexSettings.running,
-                            subtitle: L10n.SearchIndexSettings.runningHelp
-                        )
+                VStack(alignment: .leading, spacing: .space8) {
+                    MacFormGroup {
+                        MacFormRow {
+                            MacRowTitle(
+                                title: L10n.SearchIndexSettings.running,
+                                subtitle: L10n.SearchIndexSettings.runningHelp
+                            )
+                        } control: {
+                            Toggle(
+                                L10n.SearchIndexSettings.running,
+                                isOn: Binding(get: { store.isEnabled }, set: { store.send(.choiceChanged($0)) })
+                            )
+                            .labelsHidden()
+                            .disabled(store.isChoiceLocked)
+                        }
                     }
-                    .disabled(store.isChoiceLocked)
-                } footer: {
                     if let lockedBy = store.lockedBy {
-                        MacSectionFooter(L10n.SearchIndexSettings.locked(lockedBy))
+                        MacFormFootnote(L10n.SearchIndexSettings.locked(lockedBy))
                     }
                 }
-                MacExcludedPathsSections(
+                MacExcludedPathsGroups(
                     environmentTitle: L10n.SearchIndexSettings.environment,
                     additionalTitle: L10n.SearchIndexSettings.additional,
                     emptyTitle: L10n.SearchIndexSettings.none,
                     placeholder: L10n.SearchIndexSettings.placeholder,
                     addTitle: L10n.SearchIndexSettings.addButton,
-                    discardTitle: L10n.SearchIndexSettings.discardButton,
                     environmentPaths: store.environmentPaths,
                     displayedPaths: store.displayedPaths,
                     checkedPaths: store.draftPaths,
                     newPath: $store.newPath.sending(\.newPathChanged),
-                    isDirty: store.isDirty,
                     isEnabled: store.isEnabled,
                     onAdd: { store.send(.addPathTapped) },
-                    onToggle: { store.send(.pathToggled($0)) },
-                    onDiscard: { store.send(.discardTapped) }
+                    onToggle: { store.send(.pathToggled($0)) }
                 )
                 if let error = store.errorMessage {
-                    Text(error).foregroundStyle(Color.negativeText)
+                    MacNote(error, kind: .error)
                 }
             }
+            .disabled(store.isSaving)
         }
     }
 
-    /// The Folder Sizes pane: how far a count goes, and the folders it skips.
     struct MacFolderSizeSettingsPane: View {
         @Bindable var store: StoreOf<FolderSizeSettingsFeature>
 
@@ -178,56 +178,49 @@
                 unavailableMessage: L10n.FolderSizeSettings.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.loaded == nil,
-                save: MacAdminSave(
-                    title: L10n.FolderSizeSettings.saveButton,
-                    isSaving: store.isSaving,
-                    isEnabled: store.isSaveEnabled,
-                    action: { store.send(.saveTapped) }
-                ),
+                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
-                Section {
-                    Picker(
-                        L10n.FolderSizeSettings.running,
-                        selection: Binding(get: { store.mode }, set: { store.send(.choiceChanged($0)) })
-                    ) {
-                        ForEach(FolderSizeMode.allCases, id: \.self) { mode in
-                            Text(Self.label(for: mode)).tag(mode)
+                VStack(alignment: .leading, spacing: .space8) {
+                    MacFormGroup {
+                        MacFormRow {
+                            MacRowTitle(
+                                title: L10n.FolderSizeSettings.running,
+                                subtitle: L10n.FolderSizeSettings.runningHelp
+                            )
+                        } control: {
+                            MacSegmentedPicker(
+                                L10n.FolderSizeSettings.running,
+                                options: FolderSizeMode.allCases,
+                                selection: Binding(get: { store.mode }, set: { store.send(.choiceChanged($0)) })
+                            ) { Self.label(for: $0) }
+                                .disabled(store.isChoiceLocked)
                         }
+                        .frame(minHeight: Metrics.modeRowHeight)
                     }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
-                    .disabled(store.isChoiceLocked)
-                } header: {
-                    Text(L10n.FolderSizeSettings.running)
-                } footer: {
                     if let lockedBy = store.lockedBy {
-                        MacSectionFooter(L10n.FolderSizeSettings.runningHelp, L10n.FolderSizeSettings.locked(lockedBy))
-                    } else {
-                        MacSectionFooter(L10n.FolderSizeSettings.runningHelp)
+                        MacFormFootnote(L10n.FolderSizeSettings.locked(lockedBy))
                     }
                 }
-                MacExcludedPathsSections(
+                MacExcludedPathsGroups(
                     environmentTitle: L10n.FolderSizeSettings.environment,
                     additionalTitle: L10n.FolderSizeSettings.additional,
                     emptyTitle: L10n.FolderSizeSettings.none,
                     placeholder: L10n.FolderSizeSettings.placeholder,
                     addTitle: L10n.FolderSizeSettings.addButton,
-                    discardTitle: L10n.FolderSizeSettings.discardButton,
                     environmentPaths: store.environmentPaths,
                     displayedPaths: store.displayedPaths,
                     checkedPaths: store.draftPaths,
                     newPath: $store.newPath.sending(\.newPathChanged),
-                    isDirty: store.isDirty,
                     isEnabled: store.mode != .off,
                     onAdd: { store.send(.addPathTapped) },
-                    onToggle: { store.send(.pathToggled($0)) },
-                    onDiscard: { store.send(.discardTapped) }
+                    onToggle: { store.send(.pathToggled($0)) }
                 )
                 if let error = store.errorMessage {
-                    Text(error).foregroundStyle(Color.negativeText)
+                    MacNote(error, kind: .error)
                 }
             }
+            .disabled(store.isSaving)
         }
 
         private static func label(for mode: FolderSizeMode) -> String {
@@ -248,6 +241,24 @@
         return MacUploadSettingsPane(store: Store(initialState: state) { UploadSettingsFeature() } withDependencies: {
             $0.filesClient.fetchSystemSettings = { _ in SystemSettings(uploads: uploads) }
         })
+    }
+
+    #Preview("Uploads loading") {
+        var state = UploadSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.phase = .loading
+        return MacUploadSettingsPane(store: Store(initialState: state) { EmptyReducer() })
+    }
+
+    #Preview("Uploads failed") {
+        var state = UploadSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.phase = .failed(L10n.Common.retry)
+        return MacUploadSettingsPane(store: Store(initialState: state) { EmptyReducer() })
+    }
+
+    #Preview("Uploads unavailable") {
+        var state = UploadSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.isUnavailable = true
+        return MacUploadSettingsPane(store: Store(initialState: state) { EmptyReducer() })
     }
 
     #Preview("FFmpeg") {

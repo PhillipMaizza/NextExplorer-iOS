@@ -25,9 +25,6 @@
         let action: () -> Void
     }
 
-    /// The shell every admin pane shares: a message for a non admin, a failed first load with a retry
-    /// instead of a form of defaults, a spinner over a first load, and the save bar when the pane
-    /// has something to save.
     struct MacAdminPane<Content: View>: View {
         let isUnavailable: Bool
         let unavailableMessage: String
@@ -40,7 +37,22 @@
 
         var body: some View {
             Group {
-                if isUnavailable {
+                if isFormPage {
+                    MacFormPage {
+                        if isUnavailable {
+                            MacNote(unavailableMessage, kind: .info)
+                        } else if let failureMessage {
+                            MacNote(failureMessage, kind: .error)
+                            Button(L10n.Common.retry, action: onAppear)
+                                .buttonStyle(.macDS(.secondary, size: .small))
+                        } else if isLoadingFirstTime {
+                            MacSpinner()
+                                .frame(maxWidth: .infinity)
+                        } else {
+                            content()
+                        }
+                    }
+                } else if isUnavailable {
                     MacSettingsForm { MacSettingsNote(unavailableMessage) }
                 } else if let failureMessage {
                     MacSettingsForm {
@@ -48,87 +60,89 @@
                         Button(L10n.Common.retry, action: onAppear)
                     }
                 } else if let save {
-                    form.macSettingsSaveBar(
+                    MacSettingsPane(content: content).macSettingsSaveBar(
                         save.title,
                         isSaving: save.isSaving,
                         isEnabled: save.isEnabled,
                         action: save.action
                     )
                 } else {
-                    form
-                }
-            }
-            .overlay {
-                if isLoadingFirstTime, !isUnavailable {
-                    MacSpinner()
-                }
-            }
-            .onAppear(perform: onAppear)
-        }
-
-        private var form: some View {
-            Group {
-                if isFormPage {
-                    MacFormPage(content: content)
-                } else {
                     MacSettingsPane(content: content)
                 }
             }
+            .overlay {
+                if isLoadingFirstTime, !isUnavailable, !isFormPage {
+                    MacSpinner()
+                }
+            }
             .disabled(save?.isSaving ?? false)
+            .onAppear(perform: onAppear)
         }
     }
 
-    /// The folders a feature skips, as grouped sections: the environment's own, then the admin's,
-    /// each a checkbox that is ticked while the folder is excluded, and a field to add another.
-    struct MacExcludedPathsSections: View {
+    struct MacExcludedPathsGroups: View {
         let environmentTitle: String
         let additionalTitle: String
         let emptyTitle: String
         let placeholder: String
         let addTitle: String
-        let discardTitle: String
         let environmentPaths: [String]
         let displayedPaths: [String]
         let checkedPaths: [String]
         @Binding var newPath: String
-        let isDirty: Bool
         let isEnabled: Bool
         let onAdd: () -> Void
         let onToggle: (String) -> Void
-        let onDiscard: () -> Void
 
         var body: some View {
-            if !environmentPaths.isEmpty {
-                Section(environmentTitle) {
-                    ForEach(environmentPaths, id: \.self) { path in
+            MacFormGroup(environmentTitle) {
+                if environmentPaths.isEmpty {
+                    MacFormRow {
+                        Text(emptyTitle).foregroundStyle(Color.macChromeSecondary)
+                    } control: {
+                        EmptyView()
+                    }
+                }
+                ForEach(environmentPaths, id: \.self) { path in
+                    MacFormRow {
                         Text(path).monospaced()
+                    } control: {
+                        EmptyView()
                     }
                 }
             }
-            Section(additionalTitle) {
-                if displayedPaths.isEmpty {
-                    Text(emptyTitle).foregroundStyle(.secondary)
-                }
+            MacFormGroup(additionalTitle) {
                 ForEach(displayedPaths, id: \.self) { path in
-                    Toggle(isOn: Binding(get: { checkedPaths.contains(path) }, set: { _ in onToggle(path) })) {
-                        Text(path).monospaced()
-                    }
-                    .toggleStyle(.checkbox)
+                    pathRow(path, isExcluded: checkedPaths.contains(path))
                 }
-                HStack(spacing: .space8) {
-                    TextField(placeholder, text: $newPath, prompt: Text(placeholder))
-                        .labelsHidden()
-                        .textFieldStyle(.roundedBorder)
+                MacFormRow {
+                    MacTextField(placeholder, text: $newPath, prompt: placeholder)
                         .autocorrectionDisabled()
                         .onSubmit(onAdd)
+                } control: {
                     Button(addTitle, action: onAdd)
+                        .buttonStyle(.macDS(.secondary, size: .small))
                         .disabled(newPath.trimmingCharacters(in: .whitespaces).isEmpty)
-                    if isDirty {
-                        Button(discardTitle, action: onDiscard)
-                    }
                 }
             }
             .disabled(!isEnabled)
+        }
+
+        private func pathRow(_ path: String, isExcluded: Bool) -> some View {
+            MacFormRow {
+                Text(path)
+                    .monospaced()
+                    .strikethrough(!isExcluded)
+                    .foregroundStyle(isExcluded ? Color.macChromeText : .macChromeSecondary)
+            } control: {
+                if isExcluded {
+                    Button(L10n.Common.remove, role: .destructive) { onToggle(path) }
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                } else {
+                    Button(addTitle) { onToggle(path) }
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                }
+            }
         }
     }
 #endif

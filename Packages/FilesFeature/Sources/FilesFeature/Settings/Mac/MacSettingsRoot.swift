@@ -142,7 +142,7 @@
                     MacSettingsPaneCard(title: visibleSelection.title, subtitle: visibleSelection.subtitle) {
                         pane(visibleSelection)
                     } tools: {
-                        headerTools(visibleSelection)
+                        MacSettingsHeaderTools(store: store, category: visibleSelection)
                     }
                     .navigationTitle(visibleSelection.title)
                     .toolbar(removing: .title)
@@ -196,57 +196,6 @@
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
-        }
-
-        @ViewBuilder
-        private func headerTools(_ category: MacSettingsCategory) -> some View {
-            if category == .accounts {
-                Button(L10n.MacSettings.addAccount) { store.send(.addAccountTapped) }
-                    .buttonStyle(.macDS(.secondary))
-                    .disabled(store.isSigningOut)
-            } else if category == .apiTokens,
-                      let tokensStore = store.scope(state: \.apiTokens, action: \.apiTokens.presented)
-            {
-                MacAPITokensNewButton(store: tokensStore)
-            } else if category == .server,
-                      let serverStore = store.scope(state: \.serverDetails, action: \.serverDetails.presented)
-            {
-                MacPaneSaveButton(
-                    title: L10n.ServerDetails.updateButton,
-                    isSaving: serverStore.isSaving,
-                    isEnabled: serverStore.isSaveEnabled
-                ) { serverStore.send(.updateTapped) }
-            } else if category == .thumbnails,
-                      let thumbnailStore = store.scope(
-                          state: \.thumbnailSettings,
-                          action: \.thumbnailSettings.presented
-                      ),
-                      !thumbnailStore.isUnavailable
-            {
-                MacPaneSaveButton(
-                    title: L10n.ThumbnailSettings.saveButton,
-                    isSaving: thumbnailStore.isSaving,
-                    isEnabled: thumbnailStore.isSaveEnabled
-                ) { thumbnailStore.send(.saveTapped) }
-            } else if category == .accessRules,
-                      let rulesStore = store.scope(state: \.accessRules, action: \.accessRules.presented),
-                      !rulesStore.isUnavailable
-            {
-                HStack(spacing: .space8) {
-                    Button(L10n.AccessRules.addRule) { rulesStore.send(.addRuleTapped, animation: DSMotion.listDiff) }
-                        .buttonStyle(.macDS(.secondary))
-                        .disabled(rulesStore.isSaving)
-                    MacPaneSaveButton(
-                        title: L10n.AccessRules.saveButton,
-                        isSaving: rulesStore.isSaving,
-                        isEnabled: rulesStore.isSaveEnabled
-                    ) { rulesStore.send(.saveTapped) }
-                }
-            } else if category == .activity,
-                      let activityStore = store.scope(state: \.activityLog, action: \.activityLog.presented)
-            {
-                MacActivityLogClearButton(store: activityStore)
-            }
         }
 
         @ViewBuilder
