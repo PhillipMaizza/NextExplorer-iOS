@@ -98256,6 +98256,191 @@
         }
       }
     },
+    "login.ssoOnlyNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This server uses single sign-on. You sign in with your organization account in a secure window."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يستخدم هذا الخادم تسجيل الدخول الموحّد. سجّل الدخول بحساب مؤسستك في نافذة آمنة."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tento server používá jednotné přihlášení. Přihlásíte se účtem své organizace v zabezpečeném okně."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denne server bruger single sign-on. Du logger ind med din organisationskonto i et sikkert vindue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Server nutzt Single Sign-on. Du meldest dich in einem sicheren Fenster mit dem Konto deiner Organisation an."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Αυτός ο διακομιστής χρησιμοποιεί ενιαία σύνδεση. Συνδέεστε με τον λογαριασμό του οργανισμού σας σε ασφαλές παράθυρο."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este servidor usa inicio de sesión único. Inicias sesión con la cuenta de tu organización en una ventana segura."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tämä palvelin käyttää kertakirjautumista. Kirjaudut organisaatiosi tilillä suojatussa ikkunassa."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce serveur utilise l’authentification unique. Vous vous connectez avec le compte de votre organisation dans une fenêtre sécurisée."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "השרת הזה משתמש בכניסה יחידה. ההתחברות מתבצעת עם חשבון הארגון שלך בחלון מאובטח."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "यह सर्वर सिंगल साइन-ऑन का उपयोग करता है। आप एक सुरक्षित विंडो में अपने संगठन के खाते से साइन इन करते हैं।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ez a szerver egyszeri bejelentkezést használ. A szervezeted fiókjával jelentkezel be egy biztonságos ablakban."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server ini menggunakan sistem masuk tunggal. Anda masuk dengan akun organisasi Anda di jendela aman."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo server usa l’accesso unico. Accedi con l’account della tua organizzazione in una finestra sicura."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このサーバはシングルサインオンを使用しています。安全なウインドウで組織のアカウントを使ってサインインします。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 서버는 통합 로그인을 사용합니다. 보안 창에서 조직 계정으로 로그인합니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denne serveren bruker enkel pålogging. Du logger inn med organisasjonskontoen din i et sikkert vindu."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze server gebruikt single sign-on. Je logt in met het account van je organisatie in een beveiligd venster."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten serwer używa logowania jednokrotnego. Logujesz się kontem swojej organizacji w bezpiecznym oknie."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este servidor utiliza início de sessão único. Inicia sessão com a conta da sua organização numa janela segura."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este servidor usa login único. Você entra com a conta da sua organização em uma janela segura."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acest server folosește autentificarea unică. Te conectezi cu contul organizației tale într-o fereastră securizată."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Этот сервер использует единый вход. Вы входите с учётной записью своей организации в защищённом окне."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den här servern använder enkel inloggning. Du loggar in med organisationens konto i ett säkert fönster."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซิร์ฟเวอร์นี้ใช้การลงชื่อเข้าใช้ครั้งเดียว คุณลงชื่อเข้าใช้ด้วยบัญชีขององค์กรในหน้าต่างที่ปลอดภัย"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu sunucu tek oturum açma kullanır. Kuruluş hesabınızla güvenli bir pencerede oturum açarsınız."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цей сервер використовує єдиний вхід. Ви входите з обліковим записом своєї організації в захищеному вікні."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Máy chủ này dùng đăng nhập một lần. Bạn đăng nhập bằng tài khoản tổ chức trong một cửa sổ an toàn."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此服务器使用单点登录。你将在安全窗口中使用组织账户登录。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此伺服器使用單一登入。你將在安全視窗中使用組織帳號登入。"
+          }
+        }
+      }
+    },
     "login.stepCode": {
       "extractionState": "manual",
       "localizations": {

@@ -854,6 +854,7 @@ login.errorUnexpectedResponse	Несподівана відповідь серв
 login.errorKeychain	Не вдалося зберегти ваш сеанс на цьому пристрої.
 login.errorRateLimited	Забагато спроб. Зачекайте кілька хвилин і спробуйте ще раз.
 login.ssoButton	Увійти через SSO
+login.ssoOnlyNote	Цей сервер використовує єдиний вхід. Ви входите з обліковим записом своєї організації в захищеному вікні.
 login.orDivider	або
 login.errorSso	Єдиний вхід не завершено. Спробуйте ще раз.
 login.errorNoAuthMethods	На цьому сервері не ввімкнено жодного способу входу.

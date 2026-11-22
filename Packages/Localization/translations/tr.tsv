@@ -832,6 +832,7 @@ login.errorUnexpectedResponse	Sunucudan beklenmedik yanıt.
 login.errorKeychain	Oturumunuz bu cihaza kaydedilemedi.
 login.errorRateLimited	Çok fazla deneme. Lütfen birkaç dakika bekleyip tekrar deneyin.
 login.ssoButton	SSO ile oturum aç
+login.ssoOnlyNote	Bu sunucu tek oturum açma kullanır. Kuruluş hesabınızla güvenli bir pencerede oturum açarsınız.
 login.orDivider	veya
 login.errorSso	Tek oturum açma tamamlanamadı. Lütfen tekrar deneyin.
 login.errorNoAuthMethods	Bu sunucuda etkin oturum açma yöntemi yok.

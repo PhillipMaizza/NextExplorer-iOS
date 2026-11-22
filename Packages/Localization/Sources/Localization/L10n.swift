@@ -575,6 +575,7 @@ public enum L10n {
         public static var showPassword: String { tr("login.showPassword") }  // "Show Password"
         public static var ssoButton: String { tr("login.ssoButton") }  // "Sign in with SSO"
         public static var ssoClientCertificateNote: String { tr("login.ssoClientCertificateNote") }
+        public static var ssoOnlyNote: String { tr("login.ssoOnlyNote") }
         public static var stepCode: String { tr("login.stepCode") }  // "Code"
         public static var stepLogIn: String { tr("login.stepLogIn") }  // "Log In"
         public static var stepServer: String { tr("login.stepServer") }  // "Server"

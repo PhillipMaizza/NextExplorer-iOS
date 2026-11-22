@@ -596,6 +596,7 @@ login.serverInfoTitle	서버란 무엇인가요?
 login.serverInfoBody	NextExplorer는 사용자 소유의 NextExplorer 서버에 연결합니다. 관리자가 서버를 운영하고 계정을 만든 후 웹 주소를 알려줍니다. 로그인하려면 해당 주소를 입력하세요.\n\n아직 서버가 없나요? 설치 가이드에서 직접 호스팅하는 방법을 확인하세요.
 login.serverInfoGuide	설치 가이드 열기
 login.ssoButton	SSO로 로그인
+login.ssoOnlyNote	이 서버는 통합 로그인을 사용합니다. 보안 창에서 조직 계정으로 로그인합니다.
 login.errorSso	싱글 사인온을 완료하지 못했습니다. 다시 시도해 주세요.
 common.syncCompleted	동기화 완료
 settings.toggleShowTabLabels	탭 레이블 표시

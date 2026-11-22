@@ -821,6 +821,7 @@ login.errorUnexpectedResponse	Phản hồi bất ngờ từ máy chủ.
 login.errorKeychain	Không thể lưu phiên của bạn trên thiết bị này.
 login.errorRateLimited	Quá nhiều lần thử. Vui lòng đợi vài phút rồi thử lại.
 login.ssoButton	Đăng nhập bằng SSO
+login.ssoOnlyNote	Máy chủ này dùng đăng nhập một lần. Bạn đăng nhập bằng tài khoản tổ chức trong một cửa sổ an toàn.
 login.orDivider	hoặc
 login.errorSso	Đăng nhập một lần chưa hoàn tất. Vui lòng thử lại.
 login.errorNoAuthMethods	Máy chủ này chưa bật phương thức đăng nhập nào.

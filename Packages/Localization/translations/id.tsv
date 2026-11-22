@@ -821,6 +821,7 @@ login.errorUnexpectedResponse	Respons tak terduga dari server.
 login.errorKeychain	Tidak dapat menyimpan sesi Anda di perangkat ini.
 login.errorRateLimited	Terlalu banyak percobaan. Harap tunggu beberapa menit dan coba lagi.
 login.ssoButton	Masuk dengan SSO
+login.ssoOnlyNote	Server ini menggunakan sistem masuk tunggal. Anda masuk dengan akun organisasi Anda di jendela aman.
 login.orDivider	atau
 login.errorSso	Single sign-on tidak selesai. Silakan coba lagi.
 login.errorNoAuthMethods	Server ini tidak mengaktifkan metode masuk apa pun.

@@ -795,6 +795,7 @@ login.errorUnexpectedResponse	Resposta inesperada do servidor.
 login.errorKeychain	Não foi possível salvar sua sessão neste dispositivo.
 login.errorRateLimited	Muitas tentativas. Aguarde alguns minutos e tente novamente.
 login.ssoButton	Entrar com SSO
+login.ssoOnlyNote	Este servidor usa login único. Você entra com a conta da sua organização em uma janela segura.
 login.orDivider	ou
 login.errorSso	O login único não foi concluído. Tente novamente.
 login.errorNoAuthMethods	Este servidor não tem métodos de login ativados.

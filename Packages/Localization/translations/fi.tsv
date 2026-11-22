@@ -832,6 +832,7 @@ login.errorUnexpectedResponse	Odottamaton vastaus palvelimelta.
 login.errorKeychain	Istuntoasi ei voitu tallentaa tälle laitteelle.
 login.errorRateLimited	Liian monta yritystä. Odota muutama minuutti ja yritä uudelleen.
 login.ssoButton	Kirjaudu sisään SSO:lla
+login.ssoOnlyNote	Tämä palvelin käyttää kertakirjautumista. Kirjaudut organisaatiosi tilillä suojatussa ikkunassa.
 login.orDivider	tai
 login.errorSso	Kertakirjautuminen ei onnistunut. Yritä uudelleen.
 login.errorNoAuthMethods	Tällä palvelimella ei ole käytössä mitään kirjautumistapaa.
