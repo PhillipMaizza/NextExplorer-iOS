@@ -27,7 +27,7 @@
             let flipped = NSPredicate(format: "value != %@", NSNumber(value: before ?? 0))
             XCTAssertTrue(waitUntil(flipped, on: toggle), "Clicking should flip the toggle")
 
-            let picker = app.popUpButtons[AccessibilityIdentifiers.Settings.languagePicker]
+            let picker = app.menuButtons[AccessibilityIdentifiers.Settings.languagePicker]
             XCTAssertTrue(picker.waitToAppear())
             picker.click()
             let german = app.menuItems[LocalizationOverride.displayName(for: Constants.otherLanguage)]
