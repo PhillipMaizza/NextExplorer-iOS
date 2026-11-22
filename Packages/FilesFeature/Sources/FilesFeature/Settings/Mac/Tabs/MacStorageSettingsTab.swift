@@ -184,14 +184,7 @@
                 Text(status)
                     .lineLimit(1)
                     .truncationMode(.tail)
-                Group {
-                    if progress.phase == .preparing {
-                        ProgressView().progressViewStyle(.linear)
-                    } else {
-                        ProgressView(value: progress.fractionComplete)
-                    }
-                }
-                .tint(Color.accent)
+                MacProgressBar(value: progress.phase == .preparing ? nil : progress.fractionComplete)
                 HStack {
                     Text(L10n.Offline.progressCount(progress.currentFileNumber, progress.filesTotal))
                         .type(.body3(.regular), style: .secondary)
