@@ -237,7 +237,6 @@ private struct DSToastOverlay: View {
                 .padding(.horizontal, Constants.actionHorizontalPadding)
                 .padding(.vertical, Constants.actionVerticalPadding)
                 .background(Capsule().fill(Color.accent.opacity(Constants.actionFillOpacity)))
-                .accessibilityIdentifier(AccessibilityIdentifiers.Toast.action)
             }
         }
         .foregroundStyle(Color.primaryDS)
