@@ -121,11 +121,7 @@
 
         var body: some View {
             HStack(spacing: .zero) {
-                List(selection: Binding(get: { visibleSelection }, set: {
-                    if let category = $0 {
-                        selection = category
-                    }
-                })) {
+                List {
                     Section {
                         ForEach(MacSettingsCategory.everyone) { sidebarRow($0) }
                     }
@@ -185,14 +181,18 @@
             }
         }
 
-        /// Xcode style: an outline glyph in the app accent, white on the emphasized selection.
         private func sidebarRow(_ category: MacSettingsCategory) -> some View {
-            Label {
-                Text(category.title)
-            } icon: {
-                MacSidebarIcon(image: category.icon)
+            MacSidebarRow(
+                title: category.title,
+                icon: category.icon,
+                isSelected: category == visibleSelection
+            ) {
+                selection = category
+            } trailing: {
+                EmptyView()
             }
-            .tag(category)
+            .listRowInsets(EdgeInsets())
+            .listRowSeparator(.hidden)
         }
 
         @ViewBuilder

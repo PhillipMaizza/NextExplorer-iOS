@@ -7,31 +7,24 @@
         static let columnWidth: CGFloat = 20
     }
 
-    /// A sidebar row's glyph: the primary color, white only on the emphasized (blue) selection of
-    /// a focused sidebar, and the primary color again on the gray selection it shows while focus
-    /// is elsewhere. The Mac keeps the accent out of the sidebar.
     struct MacSidebarIcon: View {
         let image: Image
         var isAccented = false
-        @Environment(\.backgroundProminence) private var backgroundProminence
         @Environment(\.colorScheme) private var colorScheme
 
         var body: some View {
             image
                 .imageScale(.medium)
                 .frame(width: Constants.columnWidth)
-                .foregroundStyle(backgroundProminence == .increased
-                    ? Color.white
-                    : isAccented ? colorScheme == .light ? Color.accentText : .accent : Color.primaryDS)
+                .foregroundStyle(isAccented ? colorScheme == .light ? Color.accentText : .accent : Color.primaryDS)
         }
     }
 
     #Preview {
-        List(selection: .constant(1)) {
-            Label { Text(verbatim: "Browse") } icon: { MacSidebarIcon(image: IconKit.folder) }.tag(1)
-            Label { Text(verbatim: "Favorites") } icon: { MacSidebarIcon(image: IconKit.star) }.tag(2)
+        VStack(alignment: .leading) {
+            MacSidebarIcon(image: IconKit.folder, isAccented: true)
+            MacSidebarIcon(image: IconKit.star)
         }
-        .listStyle(.sidebar)
         .previewCanvas(.control)
     }
 #endif
