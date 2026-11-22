@@ -6,182 +6,253 @@
     import SwiftUI
 
     private enum Metrics {
-        static let avatarSize: CGFloat = 48
-        static let headerSpacing: CGFloat = .space12
+        static let avatarSize: CGFloat = .size40
+        static let fieldWidth: CGFloat = 300
+        static let tallRowHeight: CGFloat = .size64
     }
 
-    /// One user's settings on the Mac: profile and sign in options together in a single form
-    /// (iOS splits them into tabs), then their volumes, then removing them.
     struct MacUserDetailForm: View {
         @Bindable var store: StoreOf<UserManagementFeature>
         let user: User
 
+        private var tabs: [UserManagementFeature.DetailTab] {
+            UserManagementFeature.DetailTab.allCases.filter { $0 != .volumes || store.isUserVolumesEnabled }
+        }
+
         var body: some View {
-            MacSettingsPane {
-                Section {
-                    header
+            VStack(alignment: .leading, spacing: .space16) {
+                header
+                switch store.detailTab {
+                case .profile: profileTab
+                case .security: securityTab
+                case .volumes: volumesTab
                 }
-                profileSection
-                signInSection
-                if store.isUserVolumesEnabled {
-                    volumesSection
-                }
-                if !store.isViewingOwnAccount {
-                    Section {
-                        LabeledContent(L10n.UserDetail.dangerZoneTitle) {
-                            Button(L10n.UserDetail.dangerZoneRemoveUser + "…", role: .destructive) {
-                                store.send(.deleteUserTapped(user))
-                            }
-                        }
-                    } footer: {
-                        MacSectionFooter(L10n.UserDetail.dangerZoneSubtitle)
-                    }
+                if let error = store.detailErrorMessage {
+                    MacNote(error, kind: .error)
                 }
             }
         }
 
         private var header: some View {
-            HStack(spacing: Metrics.headerSpacing) {
-                AvatarView(displayName: user.displayLabel, size: Metrics.avatarSize)
-                VStack(alignment: .leading) {
-                    Text(user.displayLabel)
-                        .font(.title3.weight(.semibold))
-                        .lineLimit(1)
-                    if let email = user.email {
-                        Text(email).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
-                    }
-                }
-                Spacer()
+            HStack(spacing: .space12) {
+                AvatarView(
+                    displayName: user.displayLabel,
+                    size: Metrics.avatarSize,
+                    tint: Color.categorical(for: user.displayLabel)
+                )
+                MacRowTitle(title: user.displayLabel, subtitle: user.email ?? "")
+                Spacer(minLength: .space16)
+                MacSegmentedPicker(
+                    L10n.UserManagement.tabProfile,
+                    options: tabs,
+                    selection: Binding(get: { store.detailTab }, set: { store.send(.detailTabChanged($0)) })
+                ) { $0.title }
             }
+            .padding(.horizontal, .space4)
         }
 
-        private var profileSection: some View {
-            Section(L10n.UserDetail.sectionGeneralInfo) {
-                field(
-                    L10n.UserDetail.profileDisplayNameField,
-                    prompt: L10n.UserDetail.profileDisplayNamePlaceholder,
-                    \.editDisplayName,
-                    UserManagementFeature.Action.editDisplayNameChanged
-                )
-                field(
-                    L10n.UserDetail.profileUsernameField,
-                    prompt: L10n.UserDetail.profileUsernamePlaceholder,
-                    \.editUsername,
-                    UserManagementFeature.Action.editUsernameChanged
-                )
-                if store.isProfileDirty, let error = store.profileUsernameError {
-                    Text(error).foregroundStyle(Color.negativeText)
+        private var profileTab: some View {
+            VStack(alignment: .leading, spacing: .space8) {
+                MacFormGroup {
+                    profileFieldRows
                 }
-                field(
-                    L10n.UserDetail.profileEmailField,
-                    prompt: L10n.UserDetail.profileEmailPlaceholder,
-                    \.editEmail,
-                    UserManagementFeature.Action.editEmailChanged
-                )
-                if store.isProfileDirty, let error = store.profileEmailError {
-                    Text(error).foregroundStyle(Color.negativeText)
-                }
-                if let error = store.detailErrorMessage {
-                    Text(error).foregroundStyle(Color.negativeText)
-                }
+                profileNotes
                 HStack {
-                    Spacer()
-                    if store.isSavingProfile {
-                        MacSpinner()
-                    }
-                    Button(L10n.UserDetail.profileSave) { store.send(.saveProfileTapped) }
-                        .disabled(!store.isProfileSaveEnabled)
+                    Spacer(minLength: .zero)
+                    MacPaneSaveButton(
+                        title: L10n.UserDetail.profileSave,
+                        isSaving: store.isSavingProfile,
+                        isEnabled: store.isProfileSaveEnabled
+                    ) { store.send(.saveProfileTapped) }
                 }
+                MacFormGroup {
+                    accountRows
+                }
+                .padding(.top, .space8)
             }
         }
 
-        private var signInSection: some View {
-            Section(L10n.UserDetail.sectionRoles) {
-                LabeledContent {
-                    if store.isUpdatingRoles {
-                        MacSpinner()
-                    } else if !user.isAdmin {
-                        Button(L10n.UserDetail.roleGrantAdmin) { store.send(.grantAdminTapped) }
-                    }
-                } label: {
-                    // The backend refuses to demote an administrator, so there is no revoke.
-                    MacRowTitle(
-                        title: L10n.UserDetail.roleAdmin,
-                        subtitle: user.isAdmin ? L10n.UserDetail.roleAdminLocked : L10n.UserDetail.roleAdminSubtitle
-                    )
+        @ViewBuilder
+        private var profileFieldRows: some View {
+            profileField(
+                L10n.UserDetail.profileDisplayNameField,
+                prompt: L10n.UserDetail.profileDisplayNamePlaceholder,
+                \.editDisplayName,
+                UserManagementFeature.Action.editDisplayNameChanged
+            )
+            profileField(
+                L10n.UserDetail.profileUsernameField,
+                prompt: L10n.UserDetail.profileUsernamePlaceholder,
+                \.editUsername,
+                UserManagementFeature.Action.editUsernameChanged
+            )
+            profileField(
+                L10n.UserDetail.profileEmailField,
+                prompt: L10n.UserDetail.profileEmailPlaceholder,
+                \.editEmail,
+                UserManagementFeature.Action.editEmailChanged
+            )
+        }
+
+        @ViewBuilder
+        private var accountRows: some View {
+            MacFormRow {
+                MacRowTitle(
+                    title: L10n.UserDetail.roleAdmin,
+                    subtitle: user.isAdmin ? L10n.UserDetail.roleAdminLocked : L10n.UserDetail.roleAdminSubtitle
+                )
+            } control: {
+                if store.isUpdatingRoles {
+                    MacSpinner()
+                } else if !user.isAdmin {
+                    Button(L10n.UserDetail.roleGrantAdmin) { store.send(.grantAdminTapped) }
+                        .buttonStyle(.macDS(.secondary, size: .small))
                 }
-                LabeledContent {
-                    Button((user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet) +
-                        "…")
-                    {
-                        store.send(.setPasswordTapped)
+            }
+            .frame(minHeight: Metrics.tallRowHeight)
+            if !store.isViewingOwnAccount {
+                MacFormRow {
+                    VStack(alignment: .leading, spacing: .space2) {
+                        Text(L10n.UserDetail.dangerZoneTitle)
+                            .foregroundStyle(Color.negativeText)
+                        Text(L10n.UserDetail.dangerZoneSubtitle)
+                            .type(.body3(.regular), style: .secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                } label: {
-                    MacRowTitle(
-                        title: L10n.UserDetail.sectionLocalPassword,
-                        subtitle: user.hasLocalPassword
-                            ? L10n.UserDetail.passwordHasLocal
-                            : L10n.UserDetail.passwordSSOOnly
-                    )
+                } control: {
+                    Button(L10n.UserDetail.dangerZoneRemoveUser, role: .destructive) {
+                        store.send(.deleteUserTapped(user))
+                    }
+                    .buttonStyle(.macDS(.secondary, size: .small))
                 }
-                if !store.isViewingOwnAccount {
-                    ForEach(UserRecoveryRow.rows(for: user)) { row in
-                        LabeledContent {
-                            Button(row.reset.actionTitle + (row.reset == .lock ? "" : "…")) {
-                                store.send(.securityResetTapped(row.reset))
+                .frame(minHeight: Metrics.tallRowHeight)
+            }
+        }
+
+        private var securityTab: some View {
+            VStack(alignment: .leading, spacing: .space16) {
+                MacFormGroup(L10n.UserDetail.sectionLocalPassword) {
+                    MacFormRow {
+                        Text(user.hasLocalPassword ? L10n.UserDetail.passwordHasLocal : L10n.UserDetail.passwordSSOOnly)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } control: {
+                        Button(user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet) {
+                            store.send(.setPasswordTapped)
+                        }
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                    }
+                }
+                let recoveryRows = store.isViewingOwnAccount ? [] : UserRecoveryRow.rows(for: user)
+                if !recoveryRows.isEmpty {
+                    MacFormGroup(L10n.UserDetail.sectionAccountRecovery) {
+                        ForEach(recoveryRows) { row in
+                            MacFormRow {
+                                MacRowTitle(title: row.title, subtitle: row.subtitle)
+                            } control: {
+                                Button(row.reset.actionTitle, role: row.reset == .passkeys ? .destructive : nil) {
+                                    store.send(.securityResetTapped(row.reset))
+                                }
+                                .buttonStyle(.macDS(.secondary, size: .small))
+                                .disabled(store.isResettingSecurity)
                             }
-                            .disabled(store.isResettingSecurity)
-                        } label: {
-                            MacRowTitle(title: row.title, subtitle: row.subtitle)
+                            .frame(minHeight: Metrics.tallRowHeight)
                         }
                     }
                 }
-                LabeledContent(L10n.UserDetail.sectionSSO) {
-                    if user.oidcMethods.isEmpty {
-                        Text(L10n.UserDetail.ssoNone)
-                    } else {
-                        VStack(alignment: .trailing) {
-                            ForEach(Array(user.oidcMethods.enumerated()), id: \.offset) { _, method in
-                                HStack {
-                                    Text(method.provider ?? L10n.UserDetail.ssoBadge)
-                                    Text(L10n.UserDetail.ssoLinked).foregroundStyle(Color.positiveText)
+                MacFormGroup(L10n.UserDetail.sectionSSO) {
+                    MacFormRow {
+                        if user.oidcMethods.isEmpty {
+                            Text(L10n.UserDetail.ssoNone)
+                        } else {
+                            HStack(spacing: .space8) {
+                                ForEach(Array(user.oidcMethods.enumerated()), id: \.offset) { _, method in
+                                    MacChip(text: method.provider ?? L10n.UserDetail.ssoBadge, tone: .green)
                                 }
                             }
                         }
+                    } control: {
+                        EmptyView()
                     }
                 }
             }
         }
 
-        private var volumesSection: some View {
-            Section {
-                if store.volumesPhase == .loading {
-                    MacSpinner()
-                } else if store.volumes.isEmpty {
-                    Text(L10n.UserDetail.volumesNone).foregroundStyle(.secondary)
-                } else {
-                    ForEach(store.volumes) { volume in
-                        LabeledContent {
-                            HStack {
-                                AccessModeBadge(mode: volume.accessMode).fixedSize()
-                                Button(L10n.Common.edit + "…") { store.send(.editVolumeTapped(volume)) }
-                                    .accessibilityLabel(L10n.UserDetail.volumeEditAccessibility(volume.label))
-                                Button(L10n.Common.remove + "…") { store.send(.removeVolumeTapped(volume)) }
-                                    .accessibilityLabel(L10n.UserDetail.volumeRemoveAccessibility(volume.label))
-                            }
-                        } label: {
-                            MacRowTitle(title: volume.label, subtitle: volume.path)
+        private var volumesTab: some View {
+            VStack(alignment: .leading, spacing: .space8) {
+                MacFormGroup(L10n.UserDetail.sectionAssignedVolumes) {
+                    if store.volumesPhase == .loading {
+                        MacFormRow {
+                            MacSpinner()
+                        } control: {
+                            EmptyView()
+                        }
+                    } else if store.volumes.isEmpty {
+                        MacFormRow {
+                            Text(L10n.UserDetail.volumesNone).foregroundStyle(Color.macChromeSecondary)
+                        } control: {
+                            EmptyView()
                         }
                     }
+                    ForEach(store.volumes) { volume in
+                        volumeRow(volume)
+                    }
                 }
-                HStack {
-                    Spacer()
-                    Button(L10n.UserDetail.volumesAssign + "…") { store.send(.addVolumeTapped) }
+                MacFormFootnote(L10n.UserDetail.volumesFootnote)
+                Button(L10n.UserDetail.volumesAssign) { store.send(.addVolumeTapped) }
+                    .buttonStyle(.macDS(.primary, size: .small))
+                    .padding(.top, .space8)
+            }
+        }
+
+        private func volumeRow(_ volume: UserVolume) -> some View {
+            MacFormRow {
+                HStack(spacing: .space12) {
+                    MacItemIcon(kind: "", isDirectory: true)
+                    VStack(alignment: .leading, spacing: .space2) {
+                        Text(volume.label)
+                        Text(volume.path)
+                            .type(.body3(.regular), style: .secondary)
+                            .monospaced()
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                 }
-            } header: {
-                Text(L10n.UserDetail.sectionAssignedVolumes)
-            } footer: {
-                MacSectionFooter(L10n.UserDetail.volumesFootnote)
+            } control: {
+                HStack(spacing: .space8) {
+                    MacChip(
+                        text: volume.accessMode == .readonly ? L10n.AccessMode.readonly : L10n.AccessMode.readwrite,
+                        tone: volume.accessMode == .readonly ? .gray : .green
+                    )
+                    Button(L10n.Common.edit) { store.send(.editVolumeTapped(volume)) }
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                        .accessibilityLabel(L10n.UserDetail.volumeEditAccessibility(volume.label))
+                    Button(L10n.Common.remove, role: .destructive) { store.send(.removeVolumeTapped(volume)) }
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                        .accessibilityLabel(L10n.UserDetail.volumeRemoveAccessibility(volume.label))
+                }
+            }
+            .frame(minHeight: Metrics.tallRowHeight)
+        }
+
+        @ViewBuilder
+        private var profileNotes: some View {
+            if store.isProfileDirty, let error = store.profileUsernameError {
+                MacNote(error, kind: .error)
+            }
+            if store.isProfileDirty, let error = store.profileEmailError {
+                MacNote(error, kind: .error)
+            }
+        }
+
+        private func profileField(
+            _ title: String,
+            prompt: String,
+            _ keyPath: KeyPath<UserManagementFeature.State, String>,
+            _ action: @escaping @Sendable (String) -> UserManagementFeature.Action
+        ) -> some View {
+            MacFormRow(title) {
+                field(title, prompt: prompt, keyPath, action)
+                    .frame(width: Metrics.fieldWidth)
             }
         }
 
@@ -191,29 +262,52 @@
             _ keyPath: KeyPath<UserManagementFeature.State, String>,
             _ action: @escaping @Sendable (String) -> UserManagementFeature.Action
         ) -> some View {
-            TextField(
+            MacTextField(
                 title,
                 text: Binding(get: { store.state[keyPath: keyPath] }, set: { store.send(action($0)) }),
-                prompt: Text(prompt)
+                prompt: prompt
             )
             .autocorrectionDisabled()
         }
     }
 
-    #Preview("User") {
+    @MainActor
+    private func userDetailPreview(_ tab: UserManagementFeature.DetailTab) -> some View {
         var state = UserManagementFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
             currentUserID: "u1"
         )
         state.users = IdentifiedArray(uniqueElements: User.previewManagedUsers)
         state.phase = .loaded
+        state.isUserVolumesEnabled = true
+        state.detailTab = tab
+        state.volumesPhase = .loaded
         let user = User.previewManagedUsers.last ?? User(id: "u2", username: "jane", email: "jane@example.com")
-        return MacUserDetailForm(
-            store: Store(initialState: state) { UserManagementFeature() } withDependencies: {
-                $0.filesClient = .previewValue
-            },
-            user: user
-        )
-        .previewCanvas(.settingsPane)
+        state.detailUserID = user.id
+        state.editDisplayName = user.displayLabel
+        state.editEmail = user.email ?? ""
+        state.volumes = [UserVolume(
+            id: "v1",
+            userId: user.id,
+            label: "Media",
+            path: "/mnt/media",
+            accessMode: .readonly
+        )]
+        return MacUserDetailForm(store: Store(initialState: state) { EmptyReducer() }, user: user)
+            .padding(.space32)
+            .frame(width: 860)
+            .background(Color.macCard)
+    }
+
+    #Preview("Profile") {
+        userDetailPreview(.profile)
+    }
+
+    #Preview("Security") {
+        userDetailPreview(.security)
+    }
+
+    #Preview("Volumes") {
+        userDetailPreview(.volumes)
     }
 #endif
