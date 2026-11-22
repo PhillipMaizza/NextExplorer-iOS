@@ -15,6 +15,7 @@
         @Binding private var text: String
         private let prompt: String?
         @FocusState private var isFocused: Bool
+        @Environment(\.isEnabled) private var isEnabled
 
         public init(_ title: String, text: Binding<String>, prompt: String? = nil) {
             self.title = title
@@ -28,24 +29,26 @@
                 .labelsHidden()
                 .type(.body2(.regular))
                 .focused($isFocused)
+                .tint(Color.accent)
                 .padding(.horizontal, .space12)
                 .frame(height: Constants.fieldHeight)
                 .background(Constants.shape.fill(Color.macField))
                 .background(
                     Constants.shape
                         .stroke(
-                            Color.accentColor.opacity(Constants.focusHaloOpacity),
+                            Color.accent.opacity(Constants.focusHaloOpacity),
                             lineWidth: Constants.focusHaloWidth
                         )
                         .opacity(isFocused ? 1 : 0)
                 )
                 .overlay(
                     Constants.shape.strokeBorder(
-                        isFocused ? Color.accentColor : .macLine,
+                        isFocused ? Color.accent : .macLine,
                         lineWidth: .borderWidthHairline
                     )
                 )
                 .focusEffectDisabled()
+                .opacity(isEnabled ? 1 : MacOpacity.disabled)
         }
     }
 
@@ -54,6 +57,7 @@
         private let valueLabel: String
         @Binding private var selection: Value
         private let options: () -> Options
+        @Environment(\.isEnabled) private var isEnabled
 
         public init(
             _ title: String,
@@ -91,6 +95,7 @@
             .buttonStyle(.plain)
             .menuIndicator(.hidden)
             .fixedSize()
+            .opacity(isEnabled ? 1 : MacOpacity.disabled)
             .accessibilityLabel(title)
             .accessibilityValue(valueLabel)
         }
@@ -104,6 +109,10 @@
                 Text(verbatim: "Any kind").tag(0)
                 Text(verbatim: "Uploaded").tag(1)
             }
+            MacPopup("Outcome", valueLabel: "Any outcome", selection: .constant(0)) {
+                Text(verbatim: "Any outcome").tag(0)
+            }
+            .disabled(true)
         }
         .padding()
         .background(Color.macCard)
