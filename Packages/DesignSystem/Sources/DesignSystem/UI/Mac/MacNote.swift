@@ -2,7 +2,6 @@
     import SwiftUI
 
     private enum Constants {
-        static let washOpacity: Double = 0.14
         static let iconSize: CGFloat = .iconSmall
     }
 
@@ -28,17 +27,17 @@
                     .scaledToFit()
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .alignmentGuide(.firstTextBaseline) { $0[.bottom] - .space2 }
+                    .foregroundStyle(tint)
                     .accessibilityHidden(true)
                 Text(text)
-                    .type(.body3(.regular), style: textStyle)
+                    .type(.body3(.regular))
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .foregroundStyle(tint)
             .padding(.space12)
             .background(
                 RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
-                    .fill(fill)
+                    .fill(Color.macRow)
             )
             .accessibilityElement(children: .combine)
         }
@@ -53,25 +52,9 @@
 
         private var tint: Color {
             switch kind {
-            case .error: .negativeText
-            case .warning: .accentText
+            case .error: .negative
+            case .warning: .accent
             case .info: .macChromeSecondary
-            }
-        }
-
-        private var textStyle: Typography.TextStyle {
-            switch kind {
-            case .error: .error
-            case .warning: .link
-            case .info: .secondary
-            }
-        }
-
-        private var fill: Color {
-            switch kind {
-            case .error: .negative.opacity(Constants.washOpacity)
-            case .warning: .accent.opacity(Constants.washOpacity)
-            case .info: .macRow
             }
         }
     }
