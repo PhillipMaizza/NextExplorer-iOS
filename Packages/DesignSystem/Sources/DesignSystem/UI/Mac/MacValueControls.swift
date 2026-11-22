@@ -21,7 +21,6 @@
         private let range: ClosedRange<Int>
         private let step: Int
         private let onChange: (Int) -> Void
-        @Environment(\.isEnabled) private var isEnabled
 
         public init(
             label: String,
@@ -61,7 +60,7 @@
                 })
             }
             .frame(width: Constants.sliderWidth, height: Constants.knobSize)
-            .opacity(isEnabled ? 1 : MacOpacity.disabled)
+            .macDisabledDim()
             .accessibilityElement()
             .accessibilityLabel(label)
             .accessibilityValue("\(value)")
@@ -97,7 +96,6 @@
         private let range: ClosedRange<Int>
         private let step: Int
         private let onChange: (Int) -> Void
-        @Environment(\.isEnabled) private var isEnabled
 
         public init(
             label: String,
@@ -140,7 +138,7 @@
             .background(Constants.stepperShape.fill(Color.macField))
             .overlay(Constants.stepperShape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline))
             .clipShape(Constants.stepperShape)
-            .opacity(isEnabled ? 1 : MacOpacity.disabled)
+            .macDisabledDim()
         }
 
         private func stepButton(

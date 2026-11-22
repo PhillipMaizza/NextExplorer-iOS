@@ -1,9 +1,11 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FolderPickerFeature
 import Foundation
 import Localization
+import SwiftUI
 
 /// Every file that has a history, for an administrator: where the space of earlier versions has
 /// gone, including the histories of files that no longer exist. Mirrors the web client's
@@ -249,7 +251,8 @@ public struct VersionedFilesFeature {
                 return .api(
                     cancelID: CancelID.delete,
                     operation: { try await filesClient.deleteVersionsOfFile(serverURL, fileID, ids) },
-                    response: { .deleteResponse(fileID: fileID, $0) }
+                    response: { .deleteResponse(fileID: fileID, $0) },
+                    animation: DSMotion.listDiff
                 )
 
             case let .deleteResponse(fileID, .success(outcome)):

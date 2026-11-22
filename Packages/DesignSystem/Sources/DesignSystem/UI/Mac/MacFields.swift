@@ -9,7 +9,6 @@
         private let prompt: Text?
         @State private var isRevealed = false
         @FocusState private var isFocused: Bool
-        @Environment(\.isEnabled) private var isEnabled
 
         public init(_ title: String, text: Binding<String>, prompt: Text? = nil) {
             self.title = title
@@ -44,7 +43,7 @@
             }
             .padding(.leading, .space12)
             .padding(.trailing, .space8)
-            .macFieldChrome(isFocused: isFocused, isEnabled: isEnabled)
+            .macFieldChrome(isFocused: isFocused)
             .background(MacAccentCaret(isFocused: isFocused, isRevealed: isRevealed))
         }
 

@@ -148,7 +148,7 @@
                 .overlay(shape.fill(Color.macChromeText.opacity(tintOpacity)))
                 .macFocusRing(isFocused, in: shape)
                 .contentShape(shape)
-                .opacity(isEnabled ? 1 : MacOpacity.disabled)
+                .macDisabledDim()
                 .onHover { isHovered = $0 }
                 .animation(DSMotion.quickFade, value: isHovered)
                 .animation(DSMotion.quickFade, value: isPressed)

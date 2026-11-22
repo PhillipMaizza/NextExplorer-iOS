@@ -11,13 +11,12 @@
 
     private struct MacSwitch: View {
         let configuration: ToggleStyleConfiguration
-        @Environment(\.isEnabled) private var isEnabled
 
         var body: some View {
             Toggle(configuration)
                 .toggleStyle(.switch)
                 .tint(Color.accent)
-                .opacity(isEnabled ? 1 : MacOpacity.disabled)
+                .macDisabledDim()
         }
     }
 

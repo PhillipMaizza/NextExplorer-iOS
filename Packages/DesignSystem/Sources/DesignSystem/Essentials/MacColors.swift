@@ -12,6 +12,22 @@
         static let disabled: Double = 0.4
     }
 
+    struct MacDisabledDim: ViewModifier {
+        @Environment(\.isEnabled) private var isEnabled
+
+        func body(content: Content) -> some View {
+            content
+                .opacity(isEnabled ? 1 : MacOpacity.disabled)
+                .animation(DSMotion.stateFade, value: isEnabled)
+        }
+    }
+
+    extension View {
+        func macDisabledDim() -> some View {
+            modifier(MacDisabledDim())
+        }
+    }
+
     public extension Color {
         static let macChrome = Color("MacChrome", bundle: .module)
         static let macCard = Color("MacCard", bundle: .module)
