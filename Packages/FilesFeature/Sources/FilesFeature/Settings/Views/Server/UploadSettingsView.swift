@@ -104,7 +104,7 @@ struct UploadSettingsView: View {
     NavigationStack {
         UploadSettingsView(store: Store(initialState: {
             var state = UploadSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
-            state.phase = .failed("The server could not be reached.")
+            state.phase = .failed(ServerSettingsPreview.errorMessage)
             return state
         }()) { UploadSettingsFeature() } withDependencies: {
             $0.filesClient.fetchSystemSettings = { _ in throw FilesClientError.offline }
