@@ -200,8 +200,12 @@
 
         @ViewBuilder
         private func headerTools(_ category: MacSettingsCategory) -> some View {
-            if category == .activity,
-               let activityStore = store.scope(state: \.activityLog, action: \.activityLog.presented)
+            if category == .accounts {
+                Button(L10n.MacSettings.addAccount) { store.send(.addAccountTapped) }
+                    .buttonStyle(.macDS(.secondary))
+                    .disabled(store.isSigningOut)
+            } else if category == .activity,
+                      let activityStore = store.scope(state: \.activityLog, action: \.activityLog.presented)
             {
                 MacActivityLogClearButton(store: activityStore)
             }

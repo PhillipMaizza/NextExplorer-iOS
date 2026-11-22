@@ -7,169 +7,50 @@
     import SwiftUI
 
     private enum Metrics {
-        static let listWidth: CGFloat = 220
-        static let rowAvatarSize: CGFloat = .size32
-        static let detailAvatarSize: CGFloat = 48
-        static let statusDotSize: CGFloat = 10
-        static let rowStatusDotSize: CGFloat = 9
-        static let rowSpacing: CGFloat = .space8
-        static let footerPadding: CGFloat = .space8
+        static let avatarSize: CGFloat = .size32
+        static let accountRowHeight: CGFloat = .size56
     }
 
-    /// The Accounts tab: every signed in account on the left, the selected one's details and
-    /// actions on the right, and a button to add another below the list.
+    /// The Accounts tab: every signed in account, the chosen one's details below it, and for the
+    /// active account its security and Shared Files settings.
     struct MacAccountsSettingsTab: View {
         let store: StoreOf<SettingsFeature>
         @State private var selectedID: String?
 
-        private var accounts: [AccountSummary] {
-            store.accountRows
-        }
-
         private var selectedAccount: AccountSummary {
-            accounts.first { $0.id == selectedID } ?? store.activeAccount
+            store.accountRows.first { $0.id == selectedID } ?? store.activeAccount
         }
 
         var body: some View {
-            HStack(spacing: 0) {
-                accountList
-                Divider()
-                MacAccountDetail(store: store, account: selectedAccount)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            MacFormPage {
+                MacFormGroup {
+                    ForEach(store.accountRows) { account in
+                        MacAccountRow(
+                            store: store,
+                            account: account,
+                            isSelected: account.id == selectedAccount.id
+                        ) {
+                            selectedID = account.id
+                        }
+                    }
+                }
+                if selectedAccount.isActive {
+                    HStack(alignment: .top, spacing: .space24) {
+                        detailsGroup(selectedAccount)
+                            .frame(maxWidth: .infinity)
+                        VStack(spacing: .space24) {
+                            securityGroup
+                            MacUploadDefaultsSection(
+                                store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults)
+                            )
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                } else {
+                    detailsGroup(selectedAccount)
+                }
+                accountActions(selectedAccount)
             }
-            .onAppear { selectedID = selectedID ?? store.activeAccount.id }
-            .onChange(of: store.accounts.map(\.id)) { _, ids in
-                if let selectedID, !ids.contains(selectedID) {
-                    self.selectedID = store.activeAccount.id
-                }
-            }
-        }
-
-        private var accountList: some View {
-            VStack(spacing: 0) {
-                List(accounts, selection: $selectedID) { account in
-                    MacAccountRow(account: account)
-                        .tag(account.id)
-                }
-                .listStyle(.sidebar)
-                .scrollContentBackground(.hidden)
-
-                Button {
-                    store.send(.addAccountTapped)
-                } label: {
-                    Text(L10n.MacSettings.addAccount).frame(maxWidth: .infinity)
-                }
-                .controlSize(.large)
-                .padding(Metrics.footerPadding)
-                .disabled(store.isSigningOut)
-            }
-            .frame(width: Metrics.listWidth)
-        }
-    }
-
-    private struct MacAccountRow: View {
-        let account: AccountSummary
-
-        var body: some View {
-            HStack(spacing: Metrics.rowSpacing) {
-                AvatarView(displayName: account.displayName, size: Metrics.rowAvatarSize)
-                    .overlay(alignment: .bottomTrailing) {
-                        if account.isActive {
-                            StatusDot(size: Metrics.rowStatusDotSize)
-                        }
-                    }
-                VStack(alignment: .leading) {
-                    Text(account.displayName)
-                        .lineLimit(1)
-                    if let server = account.serverSubtitle {
-                        Text(server)
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                    }
-                }
-            }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(account.isActive
-                ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
-                : L10n.Common.pair(account.displayName, account.serverHost))
-        }
-    }
-
-    /// The selected account: who and where it is, and what can be done with it. The signed in
-    /// user's email and role are only known for the active account.
-    private struct MacAccountDetail: View {
-        let store: StoreOf<SettingsFeature>
-        let account: AccountSummary
-
-        var body: some View {
-            MacSettingsPane {
-                Section {
-                    HStack(spacing: .space12) {
-                        AvatarView(displayName: account.displayName, size: Metrics.detailAvatarSize)
-                        VStack(alignment: .leading) {
-                            Text(account.displayName).font(.title3.weight(.semibold))
-                            Text(account.serverHost).foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                    }
-                }
-                Section {
-                    LabeledContent(L10n.Settings.rowServer) { Text(account.serverHost).textSelection(.enabled) }
-                    LabeledContent(L10n.MacSettings.username) { Text(account.username).textSelection(.enabled) }
-                    if account.isActive {
-                        if let email = store.user.email, !email.isEmpty {
-                            LabeledContent(L10n.MacSettings.email) { Text(email).textSelection(.enabled) }
-                        }
-                        LabeledContent(L10n.MacSettings.role) {
-                            Text(store.user.isAdmin ? L10n.MacSettings.roleAdmin : L10n.MacSettings.roleUser)
-                        }
-                        LabeledContent(L10n.Settings.clientCertificate) {
-                            HStack(spacing: .space8) {
-                                Text(store.clientCertificateStatus.settingsDetail()).foregroundStyle(.secondary)
-                                Button(L10n.Login.manageClientCertificate) { store.send(.clientCertificateButtonTapped)
-                                }
-                            }
-                        }
-                    }
-                    LabeledContent(L10n.MacSettings.status) {
-                        HStack(spacing: .space4) {
-                            if account.isActive {
-                                StatusDot(size: Metrics.statusDotSize)
-                            }
-                            Text(account.isActive ? L10n.Settings.badgeActive : L10n.MacSettings.statusSignedIn)
-                        }
-                    }
-                }
-                if account.isActive {
-                    MacUploadDefaultsSection(store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults))
-                }
-                if account.isActive, store.shouldShowTwoFactorRow {
-                    Section {
-                        LabeledContent(L10n.TwoFactor.navigationTitle) {
-                            Button(L10n.TwoFactor.manageButton) { store.send(.twoFactorButtonTapped) }
-                        }
-                    }
-                }
-                Section {
-                    HStack {
-                        if account.isActive {
-                            if store.shouldShowPasswordRow {
-                                Button(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
-                            }
-                        } else {
-                            Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
-                        }
-                        Spacer()
-                        Button(L10n.MacSettings.signOut, role: .destructive) {
-                            store.send(account.isActive ? .signOutButtonTapped : .removeAccountTapped(account))
-                        }
-                    }
-                    .disabled(store.isSigningOut)
-                }
-            }
-            // On the pane, not its section: a sheet attached inside a form section may not present.
             .sheet(item: Bindable(store).scope(
                 state: \.uploadDefaults.folderPicker,
                 action: \.uploadDefaults.folderPicker
@@ -177,19 +58,143 @@
                 DestinationPickerView(store: pickerStore)
             }
             .task { store.send(.signInStatusRequested) }
+            .onChange(of: store.accounts.map(\.id)) { _, ids in
+                if let selectedID, !ids.contains(selectedID) {
+                    self.selectedID = nil
+                }
+            }
+        }
+
+        private func detailsGroup(_ account: AccountSummary) -> some View {
+            MacFormGroup(account.displayName) {
+                valueRow(L10n.MacSettings.username, account.username)
+                if account.isActive {
+                    if let email = store.user.email, !email.isEmpty {
+                        valueRow(L10n.MacSettings.email, email)
+                    }
+                    valueRow(
+                        L10n.MacSettings.role,
+                        store.user.isAdmin ? L10n.MacSettings.roleAdmin : L10n.MacSettings.roleUser
+                    )
+                }
+                valueRow(L10n.MacSettings.status, L10n.MacSettings.statusSignedIn)
+                valueRow(L10n.Settings.rowServer, account.serverHost)
+            }
+        }
+
+        private func accountActions(_ account: AccountSummary) -> some View {
+            HStack(spacing: .space8) {
+                if !account.isActive {
+                    Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
+                        .buttonStyle(.macDS(.primary))
+                }
+                Button(L10n.MacSettings.signOut, role: .destructive) {
+                    store.send(account.isActive ? .signOutButtonTapped : .removeAccountTapped(account))
+                }
+                .buttonStyle(.macDS(.secondary))
+            }
+            .disabled(store.isSigningOut)
+        }
+
+        private var securityGroup: some View {
+            MacFormGroup(L10n.UserManagement.tabSecurity) {
+                if store.shouldShowPasswordRow {
+                    MacFormRow(L10n.Common.password) {
+                        actionButton(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
+                    }
+                }
+                if store.shouldShowTwoFactorRow {
+                    MacFormRow(L10n.TwoFactor.navigationTitle) {
+                        actionButton(L10n.TwoFactor.manageButton) { store.send(.twoFactorButtonTapped) }
+                    }
+                }
+                MacFormRow {
+                    let detail = store.clientCertificateStatus.settingsDetail()
+                    if detail.isEmpty {
+                        Text(L10n.Settings.clientCertificate)
+                    } else {
+                        MacRowTitle(title: L10n.Settings.clientCertificate, subtitle: detail)
+                    }
+                } control: {
+                    actionButton(L10n.Login.manageClientCertificate) { store.send(.clientCertificateButtonTapped) }
+                }
+            }
+        }
+
+        private func valueRow(_ title: String, _ value: String) -> some View {
+            MacFormRow(title) {
+                Text(value)
+                    .type(.body2(.regular), style: .secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .textSelection(.enabled)
+            }
+        }
+
+        private func actionButton(_ title: String, action: @escaping () -> Void) -> some View {
+            Button(title, action: action)
+                .buttonStyle(.macDS(.secondary, size: .small))
+                .fixedSize()
         }
     }
 
-    /// The green "signed in and current" dot.
-    private struct StatusDot: View {
-        let size: CGFloat
+    private struct MacAccountRow: View {
+        let store: StoreOf<SettingsFeature>
+        let account: AccountSummary
+        let isSelected: Bool
+        let onSelect: () -> Void
 
         var body: some View {
-            Circle()
-                .fill(Color.positive)
-                .frame(width: size, height: size)
-                .overlay(Circle().strokeBorder(Color(nsColor: .windowBackgroundColor), lineWidth: .borderWidthFocused))
-                .accessibilityHidden(true)
+            MacFormRow {
+                HStack(spacing: .space12) {
+                    AvatarView(displayName: account.displayName, size: Metrics.avatarSize)
+                    VStack(alignment: .leading, spacing: .space2) {
+                        Text(account.displayName)
+                            .type(.body2(.semibold))
+                            .lineLimit(1)
+                        if let server = account.serverSubtitle {
+                            Text(server)
+                                .type(.body3(.regular), style: .secondary)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                        }
+                    }
+                }
+            } control: {
+                if account.isActive {
+                    MacChip(text: L10n.Settings.badgeActive, tone: .green)
+                } else {
+                    Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
+                        .buttonStyle(.macDS(.outline, size: .small))
+                        .fixedSize()
+                }
+            }
+            .frame(minHeight: Metrics.accountRowHeight)
+            .background {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                        .fill(Color.macSelection)
+                        .elevation(.level1)
+                        .padding(.space4)
+                }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onSelect)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(account.isActive
+                ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
+                : L10n.Common.pair(account.displayName, account.serverHost))
+                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+                .accessibilityAction(.default, onSelect)
+                .contextMenu {
+                    if !account.isActive {
+                        Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
+                        Button(L10n.MacSettings.signOut, role: .destructive) {
+                            store.send(.removeAccountTapped(account))
+                        }
+                    }
+                }
+                .disabled(store.isSigningOut)
         }
     }
 
@@ -212,6 +217,6 @@
             ]
         }
         return MacAccountsSettingsTab(store: Store(initialState: .macPreview) { SettingsFeature() })
-            .previewCanvas(.settingsPane)
+            .previewCanvas(.settingsWindow)
     }
 #endif
