@@ -136,6 +136,7 @@
                 }
                 .listStyle(.sidebar)
                 .scrollContentBackground(.hidden)
+                .clipped()
                 .frame(width: Metrics.sidebarWidth)
                 NavigationStack {
                     MacSettingsPaneCard(title: visibleSelection.title, subtitle: visibleSelection.subtitle) {
