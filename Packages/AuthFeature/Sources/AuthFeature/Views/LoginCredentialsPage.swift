@@ -147,6 +147,8 @@ struct LoginCredentialsPage: View {
             .textInputAutocapitalization(.never)
             .accessibilityIdentifier(AccessibilityIdentifiers.Login.identifierField)
             .focused($focusedField, equals: .identifier)
+            .submitLabel(.next)
+            .onSubmit { focusedField = .password }
             .task {
                 try? await DSMotion.waitForStep(Constants.identifierAutoFocusDelay)
                 guard !Task.isCancelled else { return }
@@ -204,6 +206,11 @@ struct LoginCredentialsPage: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .focused($focusedField, equals: .password)
+                .submitLabel(.go)
+                .onSubmit {
+                    guard isSubmitLocalEnabled, store.submitPhase == .idle else { return }
+                    submit(.continueButtonTapped)
+                }
 
                 if focusedField == .password {
                     Button {
