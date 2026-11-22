@@ -612,6 +612,10 @@ tipJar.toastThanks	感谢你支持这个项目！🙏
 tipJar.errorLoad	无法加载打赏选项。请重试。
 tipJar.errorPurchase	购买未完成。请重试。
 tipJar.pending	等待批准。批准后将进行扣款。
+tipJar.mostPopular	最受欢迎
+tipJar.noteCoffee	为一下午的修复加油
+tipJar.noteCake	助力下一个功能上线
+tipJar.noteGenerous	让 NextExplorer 对所有人免费
 settings.sectionAccounts	账户
 settings.addAccount	添加账户
 settings.accountSignOut	退出登录

@@ -645,6 +645,10 @@ tipJar.toastThanks	Dziękuję za wsparcie projektu! 🙏
 tipJar.errorLoad	Nie udało się wczytać opcji napiwku. Spróbuj ponownie.
 tipJar.errorPurchase	Zakup nie powiódł się. Spróbuj ponownie.
 tipJar.pending	Oczekiwanie na zatwierdzenie. Opłata zostanie pobrana po zatwierdzeniu.
+tipJar.mostPopular	Najpopularniejsze
+tipJar.noteCoffee	Paliwo na popołudnie poprawek
+tipJar.noteCake	Pomaga wydać kolejną funkcję
+tipJar.noteGenerous	Utrzymuje NextExplorer za darmo dla wszystkich
 settings.sectionAccounts	Konta
 settings.addAccount	Dodaj konto
 settings.accountSignOut	Wyloguj

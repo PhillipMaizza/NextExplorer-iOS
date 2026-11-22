@@ -880,6 +880,10 @@ tipJar.toastThanks	Köszönjük, hogy támogatja a projektet! 🙏
 tipJar.errorLoad	A borravaló-lehetőségeket nem sikerült betölteni. Próbálja újra.
 tipJar.errorPurchase	A vásárlás nem sikerült. Próbálja újra.
 tipJar.pending	Jóváhagyásra vár. A jóváhagyás után kerül levonásra az összeg.
+tipJar.mostPopular	Legnépszerűbb
+tipJar.noteCoffee	Üzemanyag egy délutánnyi javításhoz
+tipJar.noteCake	Segít kiadni a következő funkciót
+tipJar.noteGenerous	Mindenkinek ingyenesen tartja a NextExplorert
 offline.sectionTitle	Offline
 offline.settingsRow	Fájlok letöltése offline használatra
 offline.footnote	A letöltött fájlok kapcsolat nélkül is megnyílnak.

@@ -623,6 +623,10 @@ tipJar.toastThanks	Merci de soutenir le projet ! 🙏
 tipJar.errorLoad	Impossible de charger les options de pourboire. Veuillez réessayer.
 tipJar.errorPurchase	L’achat n’a pas abouti. Veuillez réessayer.
 tipJar.pending	En attente d’approbation. Vous serez débité une fois approuvé.
+tipJar.mostPopular	Le plus populaire
+tipJar.noteCoffee	De quoi tenir un après-midi de corrections
+tipJar.noteCake	Aide à sortir la prochaine fonctionnalité
+tipJar.noteGenerous	Garde NextExplorer gratuit pour tous
 settings.sectionAccounts	Comptes
 settings.addAccount	Ajouter un compte
 settings.accountSignOut	Se déconnecter

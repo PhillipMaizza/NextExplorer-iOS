@@ -891,6 +891,10 @@ tipJar.toastThanks	תודה על התמיכה בפרויקט! 🙏
 tipJar.errorLoad	לא ניתן היה לטעון את אפשרויות הטיפ. נסו שוב.
 tipJar.errorPurchase	הרכישה לא הושלמה. נסו שוב.
 tipJar.pending	ממתין לאישור. תחויבו לאחר האישור.
+tipJar.mostPopular	הכי פופולרי
+tipJar.noteCoffee	דלק לאחר צהריים של תיקונים
+tipJar.noteCake	עוזר להוציא את הפיצ׳ר הבא
+tipJar.noteGenerous	שומר על NextExplorer חינמי לכולם
 offline.sectionTitle	לא מקוון
 offline.settingsRow	הורדת קבצים לשימוש לא מקוון
 offline.footnote	קבצים שהורדו נפתחים גם ללא חיבור.

@@ -623,6 +623,10 @@ tipJar.toastThanks	Bedankt voor je steun aan het project! 🙏
 tipJar.errorLoad	Kan de fooiopties niet laden. Probeer het opnieuw.
 tipJar.errorPurchase	De aankoop is niet gelukt. Probeer het opnieuw.
 tipJar.pending	Wachten op goedkeuring. Er wordt afgeschreven zodra dit is goedgekeurd.
+tipJar.mostPopular	Meest gekozen
+tipJar.noteCoffee	Brandstof voor een middag vol fixes
+tipJar.noteCake	Helpt de volgende functie uit te brengen
+tipJar.noteGenerous	Houdt NextExplorer gratis voor iedereen
 settings.sectionAccounts	Accounts
 settings.addAccount	Account toevoegen
 settings.accountSignOut	Afmelden

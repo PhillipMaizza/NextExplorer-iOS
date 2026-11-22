@@ -880,6 +880,10 @@ tipJar.toastThanks	Ευχαριστούμε που στηρίζετε το έρ�
 tipJar.errorLoad	Δεν ήταν δυνατή η φόρτωση των επιλογών φιλοδωρήματος. Δοκιμάστε ξανά.
 tipJar.errorPurchase	Η αγορά δεν ολοκληρώθηκε. Δοκιμάστε ξανά.
 tipJar.pending	Αναμονή έγκρισης. Θα χρεωθείτε μόλις εγκριθεί.
+tipJar.mostPopular	Πιο δημοφιλές
+tipJar.noteCoffee	Καύσιμο για ένα απόγευμα διορθώσεων
+tipJar.noteCake	Βοηθά να κυκλοφορήσει η επόμενη λειτουργία
+tipJar.noteGenerous	Κρατά το NextExplorer δωρεάν για όλους
 offline.sectionTitle	Εκτός σύνδεσης
 offline.settingsRow	Λήψη αρχείων για χρήση εκτός σύνδεσης
 offline.footnote	Τα αρχεία που έχουν ληφθεί ανοίγουν ακόμη και χωρίς σύνδεση.

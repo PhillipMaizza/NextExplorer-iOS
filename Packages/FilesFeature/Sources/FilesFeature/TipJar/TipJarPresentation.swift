@@ -46,9 +46,15 @@ struct TipJarPresentation: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+        #if os(macOS)
+            .sheet(item: tipJarStore) { tipStore in
+                MacTipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
+            }
+        #elseif os(iOS)
             .dsSheet(item: tipJarStore) { tipStore in
                 TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
             }
+        #endif
             .dsToast($tipToast)
             .onChange(of: store.tipToast) { _, message in
                 guard let message, shouldShowToast else { return }

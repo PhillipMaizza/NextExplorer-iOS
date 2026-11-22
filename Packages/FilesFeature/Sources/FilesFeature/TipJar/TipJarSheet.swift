@@ -115,25 +115,27 @@ private func tipJarPreview(_ mutate: @Sendable (inout TipJarFeature.State) -> Vo
     }
 }
 
-private let sampleProducts = [
-    TipProduct(id: TipProductID.coffee, displayName: "Coffee", displayPrice: "$0.99"),
-    TipProduct(id: TipProductID.cake, displayName: "Cake", displayPrice: "$2.99"),
-    TipProduct(id: TipProductID.generous, displayName: "Generous", displayPrice: "$4.99"),
-]
+enum PreviewTips {
+    static let products = [
+        TipProduct(id: TipProductID.coffee, displayName: "Coffee", displayPrice: "$0.99"),
+        TipProduct(id: TipProductID.cake, displayName: "Cake", displayPrice: "$2.99"),
+        TipProduct(id: TipProductID.generous, displayName: "Generous", displayPrice: "$4.99"),
+    ]
+}
 
 #Preview("Loading") { tipJarPreview { $0.productsPhase = .loading } }
 
 #Preview("Loaded") {
     tipJarPreview {
         $0.productsPhase = .loaded
-        $0.products = sampleProducts
+        $0.products = PreviewTips.products
     }
 }
 
 #Preview("Purchasing") {
     tipJarPreview {
         $0.productsPhase = .loaded
-        $0.products = sampleProducts
+        $0.products = PreviewTips.products
         $0.purchasingID = TipProductID.cake
     }
 }
@@ -141,7 +143,7 @@ private let sampleProducts = [
 #Preview("Error") {
     tipJarPreview {
         $0.productsPhase = .loaded
-        $0.products = sampleProducts
+        $0.products = PreviewTips.products
         $0.errorMessage = "Purchase failed. Please try again."
     }
 }

@@ -902,6 +902,10 @@ tipJar.toastThanks	Děkujeme za podporu projektu! 🙏
 tipJar.errorLoad	Možnosti spropitného se nepodařilo načíst. Zkuste to prosím znovu.
 tipJar.errorPurchase	Nákup se nezdařil. Zkuste to prosím znovu.
 tipJar.pending	Čeká se na schválení. Platba proběhne po schválení.
+tipJar.mostPopular	Nejoblíbenější
+tipJar.noteCoffee	Pohon na odpoledne oprav
+tipJar.noteCake	Pomůže vydat další funkci
+tipJar.noteGenerous	Udrží NextExplorer zdarma pro všechny
 offline.sectionTitle	Offline
 offline.settingsRow	Stáhnout soubory pro offline použití
 offline.footnote	Stažené soubory se otevřou i bez připojení.

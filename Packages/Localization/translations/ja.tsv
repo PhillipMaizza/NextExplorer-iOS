@@ -612,6 +612,10 @@ tipJar.toastThanks	プロジェクトへのご支援ありがとうございま�
 tipJar.errorLoad	チップの項目を読み込めませんでした。もう一度お試しください。
 tipJar.errorPurchase	購入が完了しませんでした。もう一度お試しください。
 tipJar.pending	承認待ちです。承認されると課金されます。
+tipJar.mostPopular	一番人気
+tipJar.noteCoffee	午後の修正作業の燃料に
+tipJar.noteCake	次の機能のリリースを後押し
+tipJar.noteGenerous	NextExplorerをみんなに無料で
 settings.sectionAccounts	アカウント
 settings.addAccount	アカウントを追加
 settings.accountSignOut	サインアウト
