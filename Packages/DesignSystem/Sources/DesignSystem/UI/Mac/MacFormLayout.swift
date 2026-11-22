@@ -42,10 +42,7 @@
         public var body: some View {
             VStack(alignment: .leading, spacing: .space8) {
                 if let title {
-                    Text(title)
-                        .type(.body3(.semibold), style: .secondary)
-                        .padding(.horizontal, .space4)
-                        .accessibilityAddTraits(.isHeader)
+                    MacFormGroupTitle(title)
                 }
                 VStack(spacing: .zero) {
                     Group(subviews: content()) { subviews in
@@ -62,6 +59,21 @@
                 .background(Constants.groupShape.fill(Color.macRow))
                 .clipShape(Constants.groupShape)
             }
+        }
+    }
+
+    public struct MacFormGroupTitle: View {
+        private let title: String
+
+        public init(_ title: String) {
+            self.title = title
+        }
+
+        public var body: some View {
+            Text(title)
+                .type(.body2(.semibold), style: .secondary)
+                .padding(.horizontal, .space4)
+                .accessibilityAddTraits(.isHeader)
         }
     }
 
