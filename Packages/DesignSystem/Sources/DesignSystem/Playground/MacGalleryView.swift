@@ -22,6 +22,7 @@
                 VStack(alignment: .leading, spacing: .space24) {
                     MacGallerySection(title: "Fields") { MacGalleryFields() }
                     MacGallerySection(title: "Native controls") { MacGalleryNativeControls() }
+                    MacGallerySection(title: "Form group") { MacGalleryFormGroup() }
                     MacGallerySection(title: "Status") { MacGalleryStatus() }
                     MacGallerySample()
                 }
@@ -108,11 +109,19 @@
         @State private var name = ""
         @State private var secret = "hunter2"
         @State private var short = "abc"
+        @State private var choice = 0
 
         var body: some View {
             Form {
-                TextField(L10n.Common.search, text: $name, prompt: Text(L10n.Common.search))
-                    .textFieldStyle(.roundedBorder)
+                MacTextField(L10n.Common.search, text: $name, prompt: L10n.Common.search)
+                MacPopup(
+                    L10n.Common.sort,
+                    valueLabel: choice == 0 ? L10n.Common.on : L10n.Common.off,
+                    selection: $choice
+                ) {
+                    Text(L10n.Common.on).tag(0)
+                    Text(L10n.Common.off).tag(1)
+                }
                 LabeledContent(L10n.Common.password) {
                     MacSecureField(L10n.Common.password, text: $secret)
                 }
@@ -140,7 +149,7 @@
 
         var body: some View {
             Form {
-                Toggle(L10n.Common.on, isOn: $isOn).toggleStyle(.switch)
+                Toggle(L10n.Common.on, isOn: $isOn).toggleStyle(.macSwitch)
                 Toggle(L10n.Common.select, isOn: $isChecked).toggleStyle(.checkbox)
                 Picker(L10n.Common.sort, selection: $choice) {
                     Text(L10n.Common.on).tag(0)
@@ -151,6 +160,23 @@
                 Stepper(value: $count) { Text(count.formatted()) }
             }
             .formStyle(.columns)
+            .type(.body2(.regular))
+        }
+    }
+
+    private struct MacGalleryFormGroup: View {
+        @State private var isOn = true
+
+        var body: some View {
+            MacFormGroup {
+                MacFormRow(L10n.Common.on) {
+                    Toggle(L10n.Common.on, isOn: $isOn).labelsHidden()
+                }
+                MacFormRow(L10n.Common.password) {
+                    MacChip(text: L10n.Common.never, tone: .gray)
+                }
+            }
+            .toggleStyle(.macSwitch)
             .type(.body2(.regular))
         }
     }
@@ -166,6 +192,11 @@
                     MacChip(text: L10n.Common.on, tint: .positive, style: .success, kind: .pill)
                     MacChip(text: L10n.Common.never, tint: .accent, style: .link, kind: .pill)
                     MacChip(text: L10n.Common.off, kind: .pill)
+                }
+                HStack(spacing: .space8) {
+                    MacChip(text: L10n.Common.on, tone: .green)
+                    MacChip(text: L10n.Common.never, tone: .red)
+                    MacChip(text: L10n.Common.off, tone: .gray)
                 }
                 DSUsageBar(fraction: Constants.sampleProgress)
             }

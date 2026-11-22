@@ -13,8 +13,18 @@ with blue selection is not possible natively.
 ## Decision
 - Structure and behaviour stay native: `Table`, `List(.sidebar)`, `Form`, sheets, `.alert`,
   `.confirmationDialog`, menus, Quick Look.
-- Toggle, checkbox, radio, popup, segmented picker, date picker, stepper and slider keep their
-  native look and the system blue. The design system adds no styles for them.
+- Checkbox, radio, segmented picker, date picker, stepper and slider keep their native look and
+  the system blue. Switches keep the native control but take the accent tint (`.macSwitch`), by
+  the owner's choice; the tint is scoped to the switch so pickers beside it stay neutral.
+- Settings fields and popups are drawn by the design system to match the canvas: `MacTextField`
+  (34pt, field fill, hairline, system accent focus ring and halo) and `MacPopup` (a `Menu` over an
+  inline `Picker`, 32pt, muted up and down chevron), so VoiceOver and the keyboard keep the menu.
+- Status chips use tones (`MacChip.Tone`: green, red, gray) with their own text and fill tokens
+  (`MacTag*`), the canvas pills, rather than a tinted wash of the accent palette.
+- Settings panes that follow the canvas are a `MacFormPage` of `MacFormGroup`s and `MacFormRow`s:
+  rounded `MacRow` groups with hairlines between rows, 52pt rows, inset 40 from the card edge.
+  The system grouped `Form` cannot be widened to the card or hold a zebra table, so the canvas
+  panes leave it. The Settings window is the canvas size, 1200 by 780, with a 272 sidebar.
 - Orange is only on elements the design system draws itself: the primary button, the toolbar
   accent button, progress rings and bars, chips, badges, the logo, avatars and the selected
   sidebar row's glyph.
@@ -36,4 +46,5 @@ with blue selection is not possible natively.
   (border and halo) rather than the system blue ring.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
-`MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`.
+`MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`, `MacFormControls`,
+`MacFormLayout`, `MacSwitchToggleStyle`.

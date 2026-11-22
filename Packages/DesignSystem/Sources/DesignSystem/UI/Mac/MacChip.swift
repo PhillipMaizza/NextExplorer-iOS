@@ -13,10 +13,33 @@
             case pill
         }
 
+        public enum Tone: Sendable {
+            case green
+            case red
+            case gray
+
+            var text: Color {
+                switch self {
+                case .green: .macTagGreen
+                case .red: .macTagRed
+                case .gray: .macTagGray
+                }
+            }
+
+            var fill: Color {
+                switch self {
+                case .green: .macTagGreenFill
+                case .red: .macTagRedFill
+                case .gray: .macTagGrayFill
+                }
+            }
+        }
+
         private let text: String
         private let tint: Color
         private let style: Typography.TextStyle
         private let kind: Kind
+        private var tone: Tone?
 
         public init(
             text: String,
@@ -28,6 +51,19 @@
             self.tint = tint
             self.style = style
             self.kind = kind
+        }
+
+        private var pill: some View {
+            Text(text)
+                .font(Typography.TextType.body3(.semibold).font())
+                .lineLimit(1)
+                .padding(.horizontal, .space8)
+                .padding(.vertical, .space2)
+        }
+
+        public init(text: String, tone: Tone) {
+            self.init(text: text, kind: .pill)
+            self.tone = tone
         }
 
         public var body: some View {
@@ -43,14 +79,24 @@
                     )
                     .accessibilityHidden(true)
             case .pill:
-                Text(text)
-                    .type(.caption(.semibold), style: style)
-                    .lineLimit(1)
-                    .padding(.horizontal, .space8)
-                    .padding(.vertical, .space2)
-                    .background(Capsule().fill(tint.opacity(Constants.pillWashOpacity)))
+                if let tone {
+                    pill.foregroundStyle(tone.text)
+                        .background(Capsule().fill(tone.fill))
+                } else {
+                    pill.foregroundStyle(style.color)
+                        .background(Capsule().fill(tint.opacity(Constants.pillWashOpacity)))
+                }
             }
         }
+    }
+
+    #Preview("Tones") {
+        HStack {
+            MacChip(text: L10n.ActivityLog.outcomeOk, tone: .green)
+            MacChip(text: L10n.ActivityLog.outcomeRefused, tone: .red)
+            MacChip(text: L10n.ServerTools.notUsed, tone: .gray)
+        }
+        .padding()
     }
 
     #Preview("Tags") {
