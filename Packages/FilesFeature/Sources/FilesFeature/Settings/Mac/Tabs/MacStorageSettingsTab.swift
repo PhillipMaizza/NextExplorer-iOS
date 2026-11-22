@@ -36,10 +36,7 @@
                     .frame(maxWidth: .infinity)
                     VStack(alignment: .leading, spacing: .space8) {
                         offlineGroup
-                        Text(L10n.Offline.tunnelSpeedNote)
-                            .type(.body3(.regular), style: .secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.horizontal, .space4)
+                        MacFormFootnote(L10n.Offline.tunnelSpeedNote)
                     }
                     .frame(maxWidth: .infinity)
                 }

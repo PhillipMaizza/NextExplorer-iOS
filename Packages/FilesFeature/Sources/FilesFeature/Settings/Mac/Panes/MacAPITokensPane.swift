@@ -57,12 +57,11 @@
                         }
                     }
                 }
-                Text(store.hasReachedLimit
-                    ? L10n.ApiTokens.limitReached(APITokenLimits.maxTokensPerAccount)
-                    : L10n.ApiTokens.intro)
-                    .type(.body3(.regular), style: .secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, .space4)
+                MacFormFootnote(
+                    store.hasReachedLimit
+                        ? L10n.ApiTokens.limitReached(APITokenLimits.maxTokensPerAccount)
+                        : L10n.ApiTokens.intro
+                )
             }
         }
     }
