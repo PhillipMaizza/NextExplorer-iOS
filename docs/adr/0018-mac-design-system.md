@@ -53,6 +53,10 @@ with blue selection is not possible natively.
 - Confirmations the canvas draws as alerts are `MacAlertSheet`s: the app mark, the question, the
   message centred, then the full width confirm over Cancel (Esc). Return confirms nothing, so a
   destructive choice is never one keypress away.
+- A pane's save and discard buttons sit in its header, not in a bar under the form. Notes under a
+  group are one `MacFormFootnote`. In an excluded paths list a removed path stays, struck through
+  with Add beside it, until the pane is saved, so a removal can be taken back before it reaches
+  the server.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
 `MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`, `MacFormControls`,
