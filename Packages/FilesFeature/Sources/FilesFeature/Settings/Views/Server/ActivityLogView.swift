@@ -55,19 +55,7 @@ struct ActivityLogView: View {
             eventsCard
             clearButton
         }
-        .dsAlert(isPresented: Binding(get: { store.clearPhase.isConfirming }, set: { _ in })) {
-            DSAlertSheet(
-                icon: IconKit.delete,
-                title: L10n.ActivityLog.clearTitle,
-                message: L10n.ActivityLog.clearMessage,
-                confirmTitle: L10n.ActivityLog.clearConfirm,
-                dismissTitle: L10n.Common.cancel,
-                role: .destructive,
-                closeAccessibilityLabel: L10n.Common.close,
-                onConfirm: { store.send(.clearConfirmed) },
-                onDismiss: { store.send(.clearCancelled) }
-            )
-        }
+        .activityLogClearAlert(store)
     }
 
     private var settingsCard: some View {
@@ -287,4 +275,22 @@ private func activityPreview(
 
 #Preview("Not an admin") {
     activityPreview(events: [], nextBefore: nil, unavailable: true)
+}
+
+extension View {
+    func activityLogClearAlert(_ store: StoreOf<ActivityLogFeature>) -> some View {
+        dsAlert(isPresented: Binding(get: { store.clearPhase.isConfirming }, set: { _ in })) {
+            DSAlertSheet(
+                icon: IconKit.delete,
+                title: L10n.ActivityLog.clearTitle,
+                message: L10n.ActivityLog.clearMessage,
+                confirmTitle: L10n.ActivityLog.clearConfirm,
+                dismissTitle: L10n.Common.cancel,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.clearConfirmed) },
+                onDismiss: { store.send(.clearCancelled) }
+            )
+        }
+    }
 }
