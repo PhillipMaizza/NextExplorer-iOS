@@ -64,10 +64,7 @@
                                 .textSelection(.enabled)
                         }
                     }
-                    Text(L10n.ServerDetails.urlFootnote)
-                        .type(.body3(.regular), style: .secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, .space4)
+                    MacFormFootnote(L10n.ServerDetails.urlFootnote)
                 }
                 if let error = store.errorMessage {
                     MacNote(error, kind: .error)

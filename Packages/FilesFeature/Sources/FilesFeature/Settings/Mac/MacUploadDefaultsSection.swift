@@ -31,10 +31,7 @@
                         .disabled(!store.hasFolder)
                     }
                 }
-                Text(L10n.Settings.uploadDefaultsFooter)
-                    .type(.body3(.regular), style: .secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, .space4)
+                MacFormFootnote(L10n.Settings.uploadDefaultsFooter)
             }
             .onAppear { store.send(.onAppear) }
         }

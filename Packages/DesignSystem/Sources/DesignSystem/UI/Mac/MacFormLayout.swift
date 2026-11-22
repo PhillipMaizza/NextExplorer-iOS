@@ -96,6 +96,25 @@
         }
     }
 
+    public struct MacFormFootnote: View {
+        private let lines: [String]
+
+        public init(_ lines: String...) {
+            self.lines = lines
+        }
+
+        public var body: some View {
+            VStack(alignment: .leading, spacing: .space4) {
+                ForEach(lines, id: \.self) { line in
+                    Text(line)
+                        .type(.body3(.regular), style: .secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(.horizontal, .space4)
+        }
+    }
+
     public struct MacFormRow<Label: View, Control: View>: View {
         private let label: () -> Label
         private let control: () -> Control
@@ -133,6 +152,7 @@
                     Text(verbatim: "System Default").foregroundStyle(Color.macChromeSecondary)
                 }
             }
+            MacFormFootnote("Applies to every window.", "Changes take effect at once.")
         }
         .background(Color.macCard)
         .previewCanvas(.settingsPane)
