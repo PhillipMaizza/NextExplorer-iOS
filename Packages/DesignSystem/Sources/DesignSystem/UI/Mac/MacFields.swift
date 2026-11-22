@@ -71,6 +71,47 @@
         }
     }
 
+    private enum LargeFieldConstants {
+        static let height: CGFloat = .size48
+        static let shape = RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+        static let haloOpacity: Double = 0.3
+        static let haloWidth: CGFloat = .size6
+    }
+
+    public extension View {
+        func macLargeField(isFocused: Bool, isInvalid: Bool = false) -> some View {
+            textFieldStyle(.plain)
+                .type(.body1(.regular))
+                .padding(.horizontal, .space16)
+                .frame(height: LargeFieldConstants.height)
+                .background(LargeFieldConstants.shape.fill(Color.macField))
+                .background(
+                    LargeFieldConstants.shape
+                        .stroke(
+                            Color.accent.opacity(LargeFieldConstants.haloOpacity),
+                            lineWidth: LargeFieldConstants.haloWidth
+                        )
+                        .opacity(isFocused ? 1 : 0)
+                )
+                .overlay(
+                    LargeFieldConstants.shape.strokeBorder(
+                        macLargeFieldBorder(isFocused: isFocused, isInvalid: isInvalid),
+                        lineWidth: isFocused ? .borderWidthFocused : .borderWidthHairline
+                    )
+                )
+                .focusEffectDisabled()
+                .animation(DSMotion.quickFade, value: isFocused)
+                .animation(DSMotion.stateFade, value: isInvalid)
+        }
+    }
+
+    private func macLargeFieldBorder(isFocused: Bool, isInvalid: Bool) -> Color {
+        if isInvalid {
+            return .negative
+        }
+        return isFocused ? .accent : .macLine
+    }
+
     #Preview("Secure field") {
         struct Demo: View {
             @State private var empty = ""
@@ -94,6 +135,17 @@
             }
         }
         return Demo()
+    }
+
+    #Preview("Large field") {
+        VStack(spacing: .space12) {
+            TextField("", text: .constant(""), prompt: Text(L10n.Login.identifierField)).macLargeField(isFocused: false)
+            TextField("", text: .constant("phillip")).macLargeField(isFocused: true)
+            TextField("", text: .constant("phillip")).macLargeField(isFocused: false, isInvalid: true)
+        }
+        .padding(.space24)
+        .frame(width: MacFormSheetMetrics.width)
+        .macCard()
     }
 
     #Preview("Path field") {

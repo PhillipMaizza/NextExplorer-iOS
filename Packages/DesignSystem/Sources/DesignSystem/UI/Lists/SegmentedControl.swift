@@ -70,9 +70,21 @@ public struct DSSegmentedControl<Option: Hashable>: View {
     #endif
 
     private var pillFill: Color {
-        colorScheme == .dark
-            ? Color.primaryDS.opacity(SegmentedControlConstants.darkPillOpacity)
-            : Color.backgroundSecondary
+        #if os(macOS)
+            colorScheme == .dark ? Color.macChromeText.opacity(SegmentedControlConstants.darkPillOpacity) : .macCard
+        #else
+            colorScheme == .dark
+                ? Color.primaryDS.opacity(SegmentedControlConstants.darkPillOpacity)
+                : Color.backgroundSecondary
+        #endif
+    }
+
+    private var trackFill: Color {
+        #if os(macOS)
+            .macSegment
+        #else
+            Color.primaryDS.opacity(SegmentedControlConstants.trackOpacity)
+        #endif
     }
 
     private var pillControl: some View {
@@ -108,7 +120,7 @@ public struct DSSegmentedControl<Option: Hashable>: View {
         .padding(SegmentedControlConstants.trackInset)
         .background(
             RoundedRectangle(cornerRadius: .radiusFull)
-                .fill(Color.primaryDS.opacity(SegmentedControlConstants.trackOpacity))
+                .fill(trackFill)
         )
         .animation(
             DSMotion.controlMorph,

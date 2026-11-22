@@ -30,6 +30,7 @@ public struct DSCodeBoxes: View {
     private enum Constants {
         static let boxWidth: CGFloat = .size48
         static let boxHeight: CGFloat = .size56
+        static let macHiddenFieldOpacity: Double = 0.01
         static let idleBorderWidth: CGFloat = 1
         static let activeBorderWidth: CGFloat = 2
         static let idleBorderOpacity: Double = 0.35
@@ -58,9 +59,12 @@ public struct DSCodeBoxes: View {
             .accessibilityLabel(accessibilityLabel)
             .foregroundStyle(Color.clear)
             .tint(Color.clear)
-            .textContentType(.oneTimeCode)
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
+            #if os(macOS)
+                .opacity(Constants.macHiddenFieldOpacity)
+            #endif
+                .textContentType(.oneTimeCode)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
             #if os(iOS)
                 .keyboardType(.numberPad)
             #endif

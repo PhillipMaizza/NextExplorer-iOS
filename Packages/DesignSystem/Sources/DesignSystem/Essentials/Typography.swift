@@ -2,7 +2,7 @@ import SwiftUI
 
 #if os(macOS)
     private enum Constants {
-        static let macTertiaryOpacity: Double = 0.6
+        static let macDisplaySize: CGFloat = 34
     }
 #endif
 
@@ -138,7 +138,10 @@ public enum Typography {
             }
 
             private var macSize: CGFloat {
-                switch macTextStyle {
+                if case .display = self {
+                    return Constants.macDisplaySize
+                }
+                return switch macTextStyle {
                 case .largeTitle: 26
                 case .title: 22
                 case .title2: 17
@@ -178,21 +181,13 @@ public enum Typography {
         case warning
         case custom(Color)
 
-        #if os(macOS)
-            private static let secondaryColor = Color.macChromeSecondary
-            private static let tertiaryColor = Color.macChromeSecondary.opacity(Constants.macTertiaryOpacity)
-        #else
-            private static let secondaryColor = Color.secondaryDS
-            private static let tertiaryColor = Color.tertiaryDS
-        #endif
-
         public var color: Color {
             switch self {
             case .primaryOnSurface: .primaryDS
             case .primaryOnAccent: .primaryInverted
-            case .secondary: Self.secondaryColor
-            case .tertiary: Self.tertiaryColor
-            case .disabled: Self.tertiaryColor
+            case .secondary: .secondaryText
+            case .tertiary: .tertiaryText
+            case .disabled: .tertiaryText
             case .inverted: .primaryInverted
             case .invertedSecondary: .secondaryInverted
             case .success: .positiveText

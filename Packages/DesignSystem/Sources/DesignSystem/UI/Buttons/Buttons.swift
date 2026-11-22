@@ -261,10 +261,17 @@ struct MorphingButtonChrome: Animatable, ViewModifier {
 
     func body(content: Content) -> some View {
         let width = Self.width(progress: progress, expandedWidth: expandedWidth, height: height)
-        let radius = Self.radius(progress: progress, height: height)
         content
             .frame(width: width, height: height)
-            .background(RoundedRectangle(cornerRadius: radius).fill(fillColor))
-            .overlay(RoundedRectangle(cornerRadius: radius).stroke(borderColor, lineWidth: .borderWidthHairline))
+        #if os(macOS)
+            .background(Capsule().fill(fillColor))
+            .overlay(Capsule().strokeBorder(borderColor, lineWidth: .borderWidthHairline))
+        #else
+            .background(RoundedRectangle(cornerRadius: Self.radius(progress: progress, height: height)).fill(fillColor))
+            .overlay(
+                RoundedRectangle(cornerRadius: Self.radius(progress: progress, height: height))
+                    .stroke(borderColor, lineWidth: .borderWidthHairline)
+            )
+        #endif
     }
 }
