@@ -69,7 +69,7 @@
                             }
                         }
                         MacFormLinkRow(L10n.Settings.rowRateApp, icon: IconKit.star) { requestReview() }
-                        MacFormLinkRow(L10n.MacSettings.support, icon: IconKit.envelope, destination: .external) {
+                        MacFormLinkRow(L10n.MacSettings.support, icon: IconKit.macSidebarHelp, destination: .external) {
                             openURL(AppLinks.supportMail)
                         }
                     }
