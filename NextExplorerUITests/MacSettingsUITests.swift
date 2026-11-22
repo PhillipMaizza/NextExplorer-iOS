@@ -27,11 +27,13 @@
             let flipped = NSPredicate(format: "value != %@", NSNumber(value: before ?? 0))
             XCTAssertTrue(waitUntil(flipped, on: toggle), "Clicking should flip the toggle")
 
-            let picker = app.menuButtons[AccessibilityIdentifiers.Settings.languagePicker]
-            XCTAssertTrue(picker.waitToAppear())
-            picker.click()
-            let german = app.menuItems[LocalizationOverride.displayName(for: Constants.otherLanguage)]
+            let languages = app.scrollViews[AccessibilityIdentifiers.Settings.languagePicker]
+            XCTAssertTrue(languages.waitToAppear())
+            let german = languages.buttons[LocalizationOverride.displayName(for: Constants.otherLanguage)]
             XCTAssertTrue(german.waitToAppear())
+            if !german.isHittable {
+                languages.scroll(byDeltaX: 0, deltaY: -Constants.languageScroll)
+            }
             german.click()
             XCTAssertTrue(
                 text(germanGeneral, in: app).waitToAppear(),
