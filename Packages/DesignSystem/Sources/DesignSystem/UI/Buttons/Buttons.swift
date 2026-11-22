@@ -160,19 +160,27 @@ public struct DSButton: View {
             // taller and the pill grows with it instead of clipping the text.
             .fixedSize(horizontal: false, vertical: true)
             .frame(minHeight: size.height)
-            .background(RoundedRectangle(cornerRadius: .radiusControl).fill(style.backgroundColor))
+            .background(chromeShape.fill(style.backgroundColor))
             .overlay(
-                RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(
-                        style.borderColor,
-                        lineWidth: style == .secondary || style == .outline ? .borderWidthHairline : 0
-                    )
+                chromeShape.stroke(
+                    style.borderColor,
+                    lineWidth: style == .secondary || style == .outline ? .borderWidthHairline : 0
+                )
             )
+            .contentShape(chromeShape)
         }
         .buttonStyle(DSPressableButtonStyle())
         .allowsHitTesting(isEnabled && !isLoading)
         .opacity(!isEnabled ? Constants.disabledOpacity : isLoading ? Constants.loadingOpacity : 1)
         .animation(DSMotion.quickFade, value: isLoading)
+    }
+
+    private var chromeShape: AnyShape {
+        #if os(macOS)
+            AnyShape(Capsule())
+        #else
+            AnyShape(RoundedRectangle(cornerRadius: .radiusControl))
+        #endif
     }
 }
 
