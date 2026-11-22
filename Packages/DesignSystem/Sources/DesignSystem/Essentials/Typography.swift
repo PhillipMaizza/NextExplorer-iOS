@@ -130,11 +130,24 @@ public enum Typography {
                 case .caption: .caption
                 }
             }
+
+            private var macSize: CGFloat {
+                switch macTextStyle {
+                case .largeTitle: 26
+                case .title: 22
+                case .title2: 17
+                case .title3: 15
+                case .callout: 12
+                case .caption: 10
+                default: 13
+                }
+            }
         #endif
 
         public func font() -> Font {
             #if os(macOS)
-                return .system(macTextStyle)
+                _ = Self.fontsRegistered
+                return .custom(DesignSystemFonts.familyName, size: macSize, relativeTo: macTextStyle)
             #else
                 _ = Self.fontsRegistered
                 return .custom(DesignSystemFonts.familyName, size: size, relativeTo: relativeTextStyle)
