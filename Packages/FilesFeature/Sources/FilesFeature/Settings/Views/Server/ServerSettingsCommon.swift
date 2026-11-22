@@ -14,6 +14,7 @@ extension Character {
 
 enum ServerSettingsPreview {
     static let serverURL = URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/")
+    static let errorMessage = "The server could not be reached."
 }
 
 enum ServerSettingsMetrics {

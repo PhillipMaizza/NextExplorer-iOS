@@ -155,7 +155,7 @@
 
     #Preview("Failed") {
         var state = ActivityLogFeature.State(serverURL: ServerSettingsPreview.serverURL)
-        state.phase = .failed("The server could not be reached.")
+        state.phase = .failed(ServerSettingsPreview.errorMessage)
         return MacActivityLogPane(store: Store(initialState: state) { ActivityLogFeature() } withDependencies: {
             $0.filesClient.fetchSystemSettings = { _ in throw FilesClientError.offline }
         })
