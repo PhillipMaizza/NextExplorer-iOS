@@ -869,6 +869,10 @@ tipJar.toastThanks	ขอบคุณที่สนับสนุนโคร�
 tipJar.errorLoad	ไม่สามารถโหลดตัวเลือกทิปได้ โปรดลองอีกครั้ง
 tipJar.errorPurchase	การซื้อไม่สำเร็จ โปรดลองอีกครั้ง
 tipJar.pending	กำลังรอการอนุมัติ คุณจะถูกเรียกเก็บเงินเมื่ออนุมัติแล้ว
+tipJar.mostPopular	ยอดนิยม
+tipJar.noteCoffee	พลังงานสำหรับบ่ายแห่งการแก้บั๊ก
+tipJar.noteCake	ช่วยปล่อยฟีเจอร์ถัดไป
+tipJar.noteGenerous	ช่วยให้ NextExplorer ฟรีสำหรับทุกคน
 offline.sectionTitle	ออฟไลน์
 offline.settingsRow	ดาวน์โหลดไฟล์เพื่อใช้แบบออฟไลน์
 offline.footnote	ไฟล์ที่ดาวน์โหลดแล้วเปิดได้แม้ไม่มีการเชื่อมต่อ

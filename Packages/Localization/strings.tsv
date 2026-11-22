@@ -1018,6 +1018,10 @@ tipJar.toastThanks	Thank you for supporting the project! 🙏
 tipJar.errorLoad	Couldn't load the tip options. Please try again.
 tipJar.errorPurchase	The purchase didn't go through. Please try again.
 tipJar.pending	Waiting for approval. You'll be charged once it's approved.
+tipJar.mostPopular	Most Popular
+tipJar.noteCoffee	Fuels an afternoon of fixes
+tipJar.noteCake	Helps ship the next feature
+tipJar.noteGenerous	Keeps NextExplorer free for everyone
 
 # ---- offline ----
 offline.sectionTitle	Offline

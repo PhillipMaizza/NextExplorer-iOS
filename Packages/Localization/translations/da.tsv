@@ -880,6 +880,10 @@ tipJar.toastThanks	Tak fordi du støtter projektet! 🙏
 tipJar.errorLoad	Muligheder for drikkepenge kunne ikke indlæses. Prøv igen.
 tipJar.errorPurchase	Købet gik ikke igennem. Prøv igen.
 tipJar.pending	Venter på godkendelse. Du bliver først trukket, når det er godkendt.
+tipJar.mostPopular	Mest populære
+tipJar.noteCoffee	Brændstof til en eftermiddag med rettelser
+tipJar.noteCake	Hjælper med at udgive den næste funktion
+tipJar.noteGenerous	Holder NextExplorer gratis for alle
 offline.sectionTitle	Offline
 offline.settingsRow	Hent filer til offline brug
 offline.footnote	Hentede filer kan åbnes, selv uden forbindelse.

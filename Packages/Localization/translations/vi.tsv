@@ -869,6 +869,10 @@ tipJar.toastThanks	Cảm ơn bạn đã ủng hộ dự án! 🙏
 tipJar.errorLoad	Không thể tải các tùy chọn ủng hộ. Vui lòng thử lại.
 tipJar.errorPurchase	Giao dịch không thành công. Vui lòng thử lại.
 tipJar.pending	Đang chờ phê duyệt. Bạn sẽ bị tính phí sau khi được phê duyệt.
+tipJar.mostPopular	Phổ biến nhất
+tipJar.noteCoffee	Tiếp sức cho một buổi chiều sửa lỗi
+tipJar.noteCake	Giúp ra mắt tính năng tiếp theo
+tipJar.noteGenerous	Giữ NextExplorer miễn phí cho mọi người
 offline.sectionTitle	Ngoại tuyến
 offline.settingsRow	Tải tệp để dùng ngoại tuyến
 offline.footnote	Các tệp đã tải xuống vẫn mở được khi không có kết nối.

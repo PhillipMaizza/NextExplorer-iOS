@@ -880,6 +880,10 @@ tipJar.toastThanks	Takk for at du støtter prosjektet! 🙏
 tipJar.errorLoad	Kunne ikke laste tipsalternativene. Prøv igjen.
 tipJar.errorPurchase	Kjøpet gikk ikke gjennom. Prøv igjen.
 tipJar.pending	Venter på godkjenning. Du blir belastet når det er godkjent.
+tipJar.mostPopular	Mest populær
+tipJar.noteCoffee	Drivstoff til en ettermiddag med rettelser
+tipJar.noteCake	Hjelper med å lansere neste funksjon
+tipJar.noteGenerous	Holder NextExplorer gratis for alle
 offline.sectionTitle	Frakoblet
 offline.settingsRow	Last ned filer for frakoblet bruk
 offline.footnote	Nedlastede filer kan åpnes selv uten tilkobling.

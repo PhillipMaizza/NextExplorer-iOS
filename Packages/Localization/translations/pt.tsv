@@ -623,6 +623,10 @@ tipJar.toastThanks	Obrigado por apoiar o projeto! 🙏
 tipJar.errorLoad	Não foi possível carregar as opções de gorjeta. Tente novamente.
 tipJar.errorPurchase	A compra não foi concluída. Tente novamente.
 tipJar.pending	A aguardar aprovação. O valor será cobrado após a aprovação.
+tipJar.mostPopular	Mais popular
+tipJar.noteCoffee	Energia para uma tarde de correções
+tipJar.noteCake	Ajuda a lançar a próxima funcionalidade
+tipJar.noteGenerous	Mantém o NextExplorer gratuito para todos
 settings.sectionAccounts	Contas
 settings.addAccount	Adicionar conta
 settings.accountSignOut	Terminar sessão

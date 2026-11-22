@@ -623,6 +623,10 @@ tipJar.toastThanks	¡Gracias por apoyar el proyecto! 🙏
 tipJar.errorLoad	No se pudieron cargar las opciones de propina. Inténtalo de nuevo.
 tipJar.errorPurchase	La compra no se completó. Inténtalo de nuevo.
 tipJar.pending	Esperando aprobación. Se te cobrará una vez aprobada.
+tipJar.mostPopular	Más popular
+tipJar.noteCoffee	Energía para una tarde de arreglos
+tipJar.noteCake	Ayuda a lanzar la próxima función
+tipJar.noteGenerous	Mantiene NextExplorer gratis para todos
 settings.sectionAccounts	Cuentas
 settings.addAccount	Añadir cuenta
 settings.accountSignOut	Cerrar sesión

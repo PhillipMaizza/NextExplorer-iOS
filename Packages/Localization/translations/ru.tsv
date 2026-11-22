@@ -645,6 +645,10 @@ tipJar.toastThanks	Спасибо за поддержку проекта! 🙏
 tipJar.errorLoad	Не удалось загрузить варианты чаевых. Попробуйте ещё раз.
 tipJar.errorPurchase	Покупка не прошла. Попробуйте ещё раз.
 tipJar.pending	Ожидание подтверждения. Списание произойдёт после одобрения.
+tipJar.mostPopular	Самый популярный
+tipJar.noteCoffee	Заряд на день исправлений
+tipJar.noteCake	Помогает выпустить следующую функцию
+tipJar.noteGenerous	Сохраняет NextExplorer бесплатным для всех
 settings.sectionAccounts	Аккаунты
 settings.addAccount	Добавить аккаунт
 settings.accountSignOut	Выйти

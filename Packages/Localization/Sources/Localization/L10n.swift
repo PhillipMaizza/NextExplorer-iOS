@@ -1036,6 +1036,10 @@ public enum L10n {
         public static var errorLoad: String { tr("tipJar.errorLoad") }  // "Couldn't load the tip options. Please try again."
         public static var errorPurchase: String { tr("tipJar.errorPurchase") }  // "The purchase didn't go through. Please try again."
         public static var explanation: String { tr("tipJar.explanation") }
+        public static var mostPopular: String { tr("tipJar.mostPopular") }  // "Most Popular"
+        public static var noteCake: String { tr("tipJar.noteCake") }  // "Helps ship the next feature"
+        public static var noteCoffee: String { tr("tipJar.noteCoffee") }  // "Fuels an afternoon of fixes"
+        public static var noteGenerous: String { tr("tipJar.noteGenerous") }  // "Keeps NextExplorer free for everyone"
         public static var pending: String { tr("tipJar.pending") }  // "Waiting for approval. You'll be charged once it's approved."
         public static var title: String { tr("tipJar.title") }  // "Buy me a coffee"
         public static var toastThanks: String { tr("tipJar.toastThanks") }  // "Thank you for supporting the project! 🙏"

@@ -623,6 +623,10 @@ tipJar.toastThanks	Danke, dass du das Projekt unterstützt! 🙏
 tipJar.errorLoad	Die Trinkgeld-Optionen konnten nicht geladen werden. Bitte versuche es erneut.
 tipJar.errorPurchase	Der Kauf ist nicht durchgegangen. Bitte versuche es erneut.
 tipJar.pending	Warten auf Genehmigung. Die Zahlung erfolgt, sobald sie genehmigt ist.
+tipJar.mostPopular	Am beliebtesten
+tipJar.noteCoffee	Treibstoff für einen Nachmittag voller Fixes
+tipJar.noteCake	Hilft, die nächste Funktion zu veröffentlichen
+tipJar.noteGenerous	Hält NextExplorer für alle kostenlos
 settings.sectionAccounts	Konten
 settings.addAccount	Konto hinzufügen
 settings.accountSignOut	Abmelden

@@ -612,6 +612,10 @@ tipJar.toastThanks	프로젝트를 후원해 주셔서 감사합니다! 🙏
 tipJar.errorLoad	후원 옵션을 불러오지 못했습니다. 다시 시도해 주세요.
 tipJar.errorPurchase	구매가 완료되지 않았습니다. 다시 시도해 주세요.
 tipJar.pending	승인 대기 중입니다. 승인되면 결제됩니다.
+tipJar.mostPopular	가장 인기
+tipJar.noteCoffee	오후 내내 버그를 고칠 연료
+tipJar.noteCake	다음 기능 출시에 도움
+tipJar.noteGenerous	모두를 위해 NextExplorer를 무료로 유지
 settings.sectionAccounts	계정
 settings.addAccount	계정 추가
 settings.accountSignOut	로그아웃

@@ -869,6 +869,10 @@ tipJar.toastThanks	Terima kasih telah mendukung proyek ini! 🙏
 tipJar.errorLoad	Tidak dapat memuat opsi tip. Silakan coba lagi.
 tipJar.errorPurchase	Pembelian tidak berhasil. Silakan coba lagi.
 tipJar.pending	Menunggu persetujuan. Anda akan ditagih setelah disetujui.
+tipJar.mostPopular	Paling populer
+tipJar.noteCoffee	Bahan bakar untuk satu sore perbaikan
+tipJar.noteCake	Membantu merilis fitur berikutnya
+tipJar.noteGenerous	Menjaga NextExplorer tetap gratis untuk semua
 offline.sectionTitle	Offline
 offline.settingsRow	Unduh File untuk Penggunaan Offline
 offline.footnote	File yang diunduh terbuka walau tanpa koneksi.

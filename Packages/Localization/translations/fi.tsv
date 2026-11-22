@@ -880,6 +880,10 @@ tipJar.toastThanks	Kiitos projektin tukemisesta! 🙏
 tipJar.errorLoad	Juomarahavaihtoehtoja ei voitu ladata. Yritä uudelleen.
 tipJar.errorPurchase	Osto ei onnistunut. Yritä uudelleen.
 tipJar.pending	Odotetaan hyväksyntää. Veloitus tehdään hyväksynnän jälkeen.
+tipJar.mostPopular	Suosituin
+tipJar.noteCoffee	Polttoainetta iltapäivän korjauksiin
+tipJar.noteCake	Auttaa julkaisemaan seuraavan ominaisuuden
+tipJar.noteGenerous	Pitää NextExplorerin ilmaisena kaikille
 offline.sectionTitle	Offline
 offline.settingsRow	Lataa tiedostot offline-käyttöön
 offline.footnote	Ladatut tiedostot aukeavat myös ilman yhteyttä.

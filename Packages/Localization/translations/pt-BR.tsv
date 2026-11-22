@@ -831,6 +831,10 @@ tipJar.toastThanks	Obrigado por apoiar o projeto! 🙏
 tipJar.errorLoad	Não foi possível carregar as opções de gorjeta. Tente novamente.
 tipJar.errorPurchase	A compra não foi concluída. Tente novamente.
 tipJar.pending	Aguardando aprovação. A cobrança será feita após a aprovação.
+tipJar.mostPopular	Mais popular
+tipJar.noteCoffee	Energia para uma tarde de correções
+tipJar.noteCake	Ajuda a lançar o próximo recurso
+tipJar.noteGenerous	Mantém o NextExplorer gratuito para todos
 offline.sectionTitle	Offline
 offline.settingsRow	Baixar arquivos para uso offline
 offline.footnote	Os arquivos baixados abrem mesmo sem conexão.

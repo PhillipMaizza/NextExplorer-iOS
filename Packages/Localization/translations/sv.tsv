@@ -623,6 +623,10 @@ tipJar.toastThanks	Tack för att du stöttar projektet! 🙏
 tipJar.errorLoad	Det gick inte att läsa in dricksalternativen. Försök igen.
 tipJar.errorPurchase	Köpet gick inte igenom. Försök igen.
 tipJar.pending	Väntar på godkännande. Du debiteras när det har godkänts.
+tipJar.mostPopular	Mest populär
+tipJar.noteCoffee	Bränsle för en eftermiddag med fixar
+tipJar.noteCake	Hjälper till att släppa nästa funktion
+tipJar.noteGenerous	Håller NextExplorer gratis för alla
 settings.sectionAccounts	Konton
 settings.addAccount	Lägg till konto
 settings.accountSignOut	Logga ut

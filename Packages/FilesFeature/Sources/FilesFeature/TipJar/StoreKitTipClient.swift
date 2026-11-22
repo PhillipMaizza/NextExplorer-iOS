@@ -10,6 +10,7 @@ public enum TipProductID {
     public static let cake = "com.phillipmaizza.nextexplorer.tip.cake"
     public static let generous = "com.phillipmaizza.nextexplorer.tip.generous"
     public static let all = [coffee, cake, generous]
+    static let featured = cake
 
     /// A face for each tier, kept on the client side so a copy edit in App Store Connect can
     /// never drop the emoji from the row.

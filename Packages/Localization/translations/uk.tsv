@@ -902,6 +902,10 @@ tipJar.toastThanks	Дякуємо за підтримку проєкту! 🙏
 tipJar.errorLoad	Не вдалося завантажити варіанти чайових. Спробуйте ще раз.
 tipJar.errorPurchase	Покупку не завершено. Спробуйте ще раз.
 tipJar.pending	Очікується схвалення. Кошти буде списано після схвалення.
+tipJar.mostPopular	Найпопулярніше
+tipJar.noteCoffee	Пальне на день виправлень
+tipJar.noteCake	Допомагає випустити наступну функцію
+tipJar.noteGenerous	Зберігає NextExplorer безкоштовним для всіх
 offline.sectionTitle	Офлайн
 offline.settingsRow	Завантажувати файли для офлайн-використання
 offline.footnote	Завантажені файли відкриваються навіть без з’єднання.

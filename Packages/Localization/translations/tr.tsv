@@ -880,6 +880,10 @@ tipJar.toastThanks	Projeyi desteklediğiniz için teşekkürler! 🙏
 tipJar.errorLoad	Bahşiş seçenekleri yüklenemedi. Lütfen tekrar deneyin.
 tipJar.errorPurchase	Satın alma tamamlanmadı. Lütfen tekrar deneyin.
 tipJar.pending	Onay bekleniyor. Onaylandığında ücretlendirileceksiniz.
+tipJar.mostPopular	En popüler
+tipJar.noteCoffee	Bir öğleden sonralık düzeltmeye yakıt
+tipJar.noteCake	Bir sonraki özelliğin çıkmasına yardım eder
+tipJar.noteGenerous	NextExplorer'ı herkes için ücretsiz tutar
 offline.sectionTitle	Çevrimdışı
 offline.settingsRow	Dosyaları Çevrimdışı Kullanım İçin İndir
 offline.footnote	İndirilen dosyalar bağlantı olmasa bile açılır.
