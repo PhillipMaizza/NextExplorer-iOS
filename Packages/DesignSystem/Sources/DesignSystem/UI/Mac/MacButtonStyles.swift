@@ -9,7 +9,6 @@
         static let toolbarDiameter: CGFloat = .size40
         static let hoverOpacity: Double = 0.06
         static let pressedOpacity: Double = 0.12
-        static let disabledOpacity: Double = 0.4
     }
 
     extension DSButtonSize {
@@ -149,7 +148,7 @@
                 .overlay(shape.fill(Color.macChromeText.opacity(tintOpacity)))
                 .macFocusRing(isFocused, in: shape)
                 .contentShape(shape)
-                .opacity(isEnabled ? 1 : Constants.disabledOpacity)
+                .opacity(isEnabled ? 1 : MacOpacity.disabled)
                 .onHover { isHovered = $0 }
                 .animation(DSMotion.quickFade, value: isHovered)
                 .animation(DSMotion.quickFade, value: isPressed)

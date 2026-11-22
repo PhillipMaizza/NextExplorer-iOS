@@ -8,6 +8,10 @@
         static let tertiaryOpacity: Double = 0.6
     }
 
+    enum MacOpacity {
+        static let disabled: Double = 0.4
+    }
+
     public extension Color {
         static let macChrome = Color("MacChrome", bundle: .module)
         static let macCard = Color("MacCard", bundle: .module)
