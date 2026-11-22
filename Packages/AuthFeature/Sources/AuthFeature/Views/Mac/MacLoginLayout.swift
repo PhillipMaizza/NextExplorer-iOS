@@ -20,25 +20,36 @@
                 if hasStepsSidebar {
                     MacLoginSidebar(store: store)
                 }
-                VStack(spacing: .zero) {
-                    pages()
-                        .defaultScrollAnchor(.center)
-                        .frame(maxWidth: Constants.contentMaxWidth)
-                        .padding(.horizontal, Constants.cardPadding)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    if !hasStepsSidebar {
-                        MacLoginFooterLinks(store: store)
+                surface(
+                    VStack(spacing: .zero) {
+                        pages()
+                            .defaultScrollAnchor(.center)
+                            .frame(maxWidth: Constants.contentMaxWidth)
                             .padding(.horizontal, Constants.cardPadding)
-                            .padding(.bottom, .space16)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        if !hasStepsSidebar {
+                            MacLoginFooterLinks(store: store)
+                                .padding(.horizontal, Constants.cardPadding)
+                                .padding(.bottom, .space16)
+                        }
                     }
-                }
-                .macCard()
-                .padding(hasStepsSidebar ? Constants.windowPadding : 0)
+                )
             }
             .ignoresSafeArea(edges: hasStepsSidebar ? .top : [])
-            .background(Color.macChrome.ignoresSafeArea())
+            .background((hasStepsSidebar ? Color.macChrome : .macCard).ignoresSafeArea())
             .toolbar(removing: .title)
             .toolbarBackground(.hidden, for: .windowToolbar)
+        }
+
+        @ViewBuilder
+        private func surface(_ content: some View) -> some View {
+            if hasStepsSidebar {
+                content
+                    .macCard()
+                    .padding(Constants.windowPadding)
+            } else {
+                content
+            }
         }
     }
 
