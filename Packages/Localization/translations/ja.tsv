@@ -1293,3 +1293,5 @@ login.stepServer	サーバー
 login.stepLogIn	ログイン
 login.stepCode	コード
 apiTokens.badgeExpired	期限切れ
+common.decrease	減らす
+common.increase	増やす

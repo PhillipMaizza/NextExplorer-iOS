@@ -1258,3 +1258,5 @@ login.stepServer	Palvelin
 login.stepLogIn	Kirjaudu sisään
 login.stepCode	Koodi
 apiTokens.badgeExpired	Vanhentunut
+common.decrease	Vähennä
+common.increase	Lisää

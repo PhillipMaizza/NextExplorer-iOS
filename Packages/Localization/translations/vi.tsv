@@ -1224,3 +1224,5 @@ login.stepServer	Máy chủ
 login.stepLogIn	Đăng nhập
 login.stepCode	Mã
 apiTokens.badgeExpired	Đã hết hạn
+common.decrease	Giảm
+common.increase	Tăng

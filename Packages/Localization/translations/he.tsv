@@ -1298,3 +1298,5 @@ login.stepServer	שרת
 login.stepLogIn	התחברות
 login.stepCode	קוד
 apiTokens.badgeExpired	פג תוקף
+common.decrease	הקטנה
+common.increase	הגדלה

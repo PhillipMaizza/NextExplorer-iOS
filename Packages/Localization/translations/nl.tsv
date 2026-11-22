@@ -1329,3 +1329,5 @@ login.stepServer	Server
 login.stepLogIn	Inloggen
 login.stepCode	Code
 apiTokens.badgeExpired	Verlopen
+common.decrease	Verlagen
+common.increase	Verhogen

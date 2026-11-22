@@ -1258,3 +1258,5 @@ login.stepServer	Kiszolgáló
 login.stepLogIn	Bejelentkezés
 login.stepCode	Kód
 apiTokens.badgeExpired	Lejárt
+common.decrease	Csökkentés
+common.increase	Növelés

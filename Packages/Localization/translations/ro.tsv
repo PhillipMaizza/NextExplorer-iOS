@@ -1365,3 +1365,5 @@ login.stepServer	Server
 login.stepLogIn	Conectează-te
 login.stepCode	Cod
 apiTokens.badgeExpired	Expirat
+common.decrease	Micșorează
+common.increase	Mărește

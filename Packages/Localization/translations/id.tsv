@@ -1224,3 +1224,5 @@ login.stepServer	Server
 login.stepLogIn	Masuk
 login.stepCode	Kode
 apiTokens.badgeExpired	Sudah kedaluwarsa
+common.decrease	Kurangi
+common.increase	Tambah

@@ -1293,3 +1293,5 @@ login.stepServer	서버
 login.stepLogIn	로그인
 login.stepCode	코드
 apiTokens.badgeExpired	만료됨
+common.decrease	감소
+common.increase	증가
