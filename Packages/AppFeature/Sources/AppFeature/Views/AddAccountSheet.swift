@@ -9,6 +9,8 @@ import SwiftUI
     private enum Metrics {
         static let width: CGFloat = 520
         static let height: CGFloat = 640
+        static let cancelTrailing: CGFloat = .space32
+        static let cancelBottom: CGFloat = .space24
     }
 #endif
 
@@ -64,10 +66,12 @@ struct AddAccountSheet: ViewModifier {
                 // A Mac sheet sizes to its content's ideal size, which the flexible login
                 // layout collapses to nothing; and there is no swipe down, so it needs Cancel.
                 .frame(width: Metrics.width, height: Metrics.height)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button(L10n.Common.cancel) { store.send(.addAccount(.dismiss)) }
-                    }
+                .overlay(alignment: .bottomTrailing) {
+                    Button(L10n.Common.cancel) { store.send(.addAccount(.dismiss)) }
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                        .keyboardShortcut(.cancelAction)
+                        .padding(.trailing, Metrics.cancelTrailing)
+                        .padding(.bottom, Metrics.cancelBottom)
                 }
                 #endif
             }
