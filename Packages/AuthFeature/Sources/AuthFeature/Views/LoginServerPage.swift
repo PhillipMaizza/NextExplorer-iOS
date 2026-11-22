@@ -173,9 +173,6 @@ struct LoginServerPage: View {
         .dsSheet(isPresented: $isServerInfoPresented) {
             ServerInfoSheet(onClose: { isServerInfoPresented = false })
         }
-        .dsSheet(item: $store.scope(state: \.clientCertificate, action: \.clientCertificate)) { certificateStore in
-            ClientCertificateSheet(store: certificateStore)
-        }
     }
 
     private var testConnectionButton: some View {

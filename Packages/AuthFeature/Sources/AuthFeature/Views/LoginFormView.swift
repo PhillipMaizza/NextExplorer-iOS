@@ -131,6 +131,9 @@ public struct LoginFormView: View {
             }
         }
         .modifier(LoginHapticsModifier(errorMessage: store.errorMessage, connectionPhase: store.connectionPhase))
+        .dsSheet(item: $store.scope(state: \.clientCertificate, action: \.clientCertificate)) { certificateStore in
+            ClientCertificateSheet(store: certificateStore)
+        }
         .onChange(of: store.errorMessage) { _, newValue in
             guard newValue != nil else { return }
             withAnimation(DSMotion.stateFade) {
