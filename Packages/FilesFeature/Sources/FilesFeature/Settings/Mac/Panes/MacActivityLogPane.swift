@@ -13,8 +13,6 @@
         static let actorWidth: CGFloat = 120
         static let addressWidth: CGFloat = 140
         static let outcomeWidth: CGFloat = 96
-        static let columnSpacing: CGFloat = 14
-        static let rowHeight: CGFloat = 40
         static let dateStyle = Date.FormatStyle.dateTime.day().month(.abbreviated).hour().minute()
     }
 
@@ -149,7 +147,7 @@
             Text(text)
                 .type(.body2(.regular), style: .secondary)
                 .padding(.horizontal, .space12)
-                .frame(height: Metrics.rowHeight)
+                .frame(height: MacTableMetrics.rowHeight)
         }
     }
 
@@ -181,7 +179,7 @@
         }
 
         var body: some View {
-            HStack(spacing: Metrics.columnSpacing) {
+            HStack(spacing: MacTableMetrics.columnSpacing) {
                 Text(time)
                     .type(.body2(.regular), style: .secondary)
                     .frame(width: Metrics.timeWidth, alignment: .leading)
@@ -204,12 +202,7 @@
                 .frame(width: Metrics.outcomeWidth, alignment: .leading)
             }
             .lineLimit(1)
-            .padding(.horizontal, .space12)
-            .frame(height: Metrics.rowHeight)
-            .background(
-                RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
-                    .fill(isShaded ? Color.macRow : .clear)
-            )
+            .macTableRow(isShaded: isShaded)
             .accessibilityElement(children: .combine)
         }
     }

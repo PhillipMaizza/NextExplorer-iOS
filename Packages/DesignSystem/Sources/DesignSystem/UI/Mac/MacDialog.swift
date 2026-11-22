@@ -13,7 +13,7 @@
 
     /// A native Mac sheet around a form: its title, the labeled fields, any error, then Cancel
     /// (Esc) and the confirm button (Return) at the trailing edge.
-    public struct MacFormSheet<Content: View>: View {
+    public struct MacFormSheet<Content: View, Below: View>: View {
         let title: String
         /// Explanatory text under the title, across the full width of the sheet.
         var message: String?
@@ -30,6 +30,7 @@
         let onCancel: () -> Void
         let onConfirm: () -> Void
         @ViewBuilder let content: () -> Content
+        @ViewBuilder let below: () -> Below
 
         public init(
             title: String,
@@ -44,7 +45,8 @@
             width: CGFloat = MacFormSheetMetrics.width,
             onCancel: @escaping () -> Void,
             onConfirm: @escaping () -> Void,
-            @ViewBuilder content: @escaping () -> Content
+            @ViewBuilder content: @escaping () -> Content,
+            @ViewBuilder below: @escaping () -> Below
         ) {
             self.title = title
             self.message = message
@@ -59,6 +61,7 @@
             self.onCancel = onCancel
             self.onConfirm = onConfirm
             self.content = content
+            self.below = below
         }
 
         public var body: some View {
@@ -75,6 +78,7 @@
                     content()
                 }
                 .formStyle(.columns)
+                below()
                 if let errorMessage {
                     Text(errorMessage).type(.body2(.regular), style: .error)
                 }
@@ -91,6 +95,41 @@
             }
             .padding(Metrics.padding)
             .frame(width: width)
+        }
+    }
+
+    public extension MacFormSheet where Below == EmptyView {
+        init(
+            title: String,
+            message: String? = nil,
+            confirmTitle: String,
+            isConfirmEnabled: Bool = true,
+            isWorking: Bool = false,
+            errorMessage: String? = nil,
+            cancelTitle: String? = L10n.Common.cancel,
+            secondaryTitle: String? = nil,
+            onSecondary: @escaping () -> Void = {},
+            width: CGFloat = MacFormSheetMetrics.width,
+            onCancel: @escaping () -> Void,
+            onConfirm: @escaping () -> Void,
+            @ViewBuilder content: @escaping () -> Content
+        ) {
+            self.init(
+                title: title,
+                message: message,
+                confirmTitle: confirmTitle,
+                isConfirmEnabled: isConfirmEnabled,
+                isWorking: isWorking,
+                errorMessage: errorMessage,
+                cancelTitle: cancelTitle,
+                secondaryTitle: secondaryTitle,
+                onSecondary: onSecondary,
+                width: width,
+                onCancel: onCancel,
+                onConfirm: onConfirm,
+                content: content,
+                below: { EmptyView() }
+            )
         }
     }
 
