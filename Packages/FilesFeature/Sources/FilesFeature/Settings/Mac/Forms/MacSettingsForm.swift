@@ -4,10 +4,41 @@
     import SwiftUI
 
     private enum Metrics {
-        static let horizontalPadding: CGFloat = .space32
+        static let headerTop: CGFloat = .space32
         static let verticalPadding: CGFloat = .space24
         static let rowSpacing: CGFloat = .space8
         static let noteSpacing: CGFloat = .space2
+        static let cardInset: CGFloat = .space16
+        static let headerInset: CGFloat = .size40
+        static let groupedFormInset: CGFloat = .size20
+    }
+
+    struct MacSettingsPaneCard<Content: View>: View {
+        let title: String
+        let subtitle: String?
+        @ViewBuilder let content: () -> Content
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: .zero) {
+                VStack(alignment: .leading, spacing: .space8) {
+                    Text(title)
+                        .type(.display)
+                        .accessibilityAddTraits(.isHeader)
+                    if let subtitle {
+                        Text(subtitle)
+                            .type(.body2(.regular), style: .secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .padding(.horizontal, Metrics.headerInset)
+                .padding(.top, Metrics.headerTop)
+                content()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .macCard()
+            .padding([.trailing, .bottom], Metrics.cardInset)
+        }
     }
 
     /// A Settings pane in the System Settings style: rounded grouped sections, each row a label
@@ -20,6 +51,9 @@
                 content()
             }
             .formStyle(.grouped)
+            .scrollContentBackground(.hidden)
+            .font(Typography.TextType.body2(.regular).font())
+            .padding(.horizontal, Metrics.groupedFormInset)
         }
     }
 
@@ -33,10 +67,8 @@
 
         var body: some View {
             VStack(alignment: .leading, spacing: Metrics.noteSpacing) {
-                ForEach(lines, id: \.self) { Text($0) }
+                ForEach(lines, id: \.self) { Text($0).type(.body3(.regular), style: .secondary) }
             }
-            .font(.callout)
-            .foregroundStyle(.secondary)
         }
     }
 
@@ -48,7 +80,7 @@
         var body: some View {
             VStack(alignment: .leading, spacing: Metrics.noteSpacing) {
                 Text(title)
-                Text(subtitle).font(.callout).foregroundStyle(.secondary)
+                Text(subtitle).type(.body3(.regular), style: .secondary)
             }
         }
     }
@@ -63,7 +95,8 @@
                 content()
             }
             .formStyle(.columns)
-            .padding(.horizontal, Metrics.horizontalPadding)
+            .font(Typography.TextType.body2(.regular).font())
+            .padding(.horizontal, Metrics.headerInset)
             .padding(.vertical, Metrics.verticalPadding)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
@@ -100,10 +133,8 @@
 
         var body: some View {
             VStack(alignment: .leading, spacing: Metrics.noteSpacing) {
-                ForEach(lines, id: \.self) { Text($0) }
+                ForEach(lines, id: \.self) { Text($0).type(.body3(.regular), style: .secondary) }
             }
-            .font(.callout)
-            .foregroundStyle(.secondary)
         }
     }
 
@@ -123,14 +154,18 @@
                         MacSpinner()
                     }
                     Button(title, action: action)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.macDS(.primary))
                         .keyboardShortcut(.defaultAction)
                         .disabled(!isEnabled)
                 }
-                .padding(.horizontal, Metrics.horizontalPadding)
-                .padding(.vertical, Metrics.verticalPadding / 2)
-                .background(.bar)
-                .overlay(alignment: .top) { Divider() }
+                .padding(.horizontal, Metrics.headerInset)
+                .padding(.vertical, Metrics.cardInset)
+                .background(Color.macCard)
+                .overlay(alignment: .top) {
+                    Rectangle()
+                        .fill(Color.macLine)
+                        .frame(height: .borderWidthHairline)
+                }
             }
         }
     }
@@ -180,6 +215,30 @@
                 MacSettingsNote("Applies to every window.")
             }
         }
+        .previewCanvas(.settingsPane)
+    }
+
+    #Preview("Pane card") {
+        MacSettingsPaneCard(title: "Thumbnails", subtitle: "Control how previews are generated.") {
+            MacSettingsPane {
+                Section("General") {
+                    Toggle("Show Hidden Files", isOn: .constant(true))
+                }
+            }
+        }
+        .background(Color.macChrome)
+        .previewCanvas(.settingsPane)
+    }
+
+    #Preview("Pane card, no subtitle") {
+        MacSettingsPaneCard(title: "General", subtitle: nil) {
+            MacSettingsPane {
+                Section("General") {
+                    Toggle("Show Hidden Files", isOn: .constant(true))
+                }
+            }
+        }
+        .background(Color.macChrome)
         .previewCanvas(.settingsPane)
     }
 #endif
