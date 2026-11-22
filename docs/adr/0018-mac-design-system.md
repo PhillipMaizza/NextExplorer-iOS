@@ -45,7 +45,15 @@ with blue selection is not possible natively.
   `shouldAlwaysUsePill`) in the Mac colours, and its steps list shows Code only once the server asks
   the account for one. Its large fields are drawn by the design system, so they focus in the accent
   (border and halo) rather than the system blue ring.
+- Every field the design system draws, plain or secure, focuses in the accent, caret included. The
+  system leaves a secure field's caret blue, so `MacSecureField` tints its field editor directly.
+- Form sheets follow the canvas dialogs: a larger title, labels without colons, full width popups,
+  and a `MacSegmentedPicker` whose chosen option fills in the accent (the canvas shows the system
+  blue, which the app has no other use for).
+- Confirmations the canvas draws as alerts are `MacAlertSheet`s: the app mark, the question, the
+  message centred, then the full width confirm over Cancel (Esc). Return confirms nothing, so a
+  destructive choice is never one keypress away.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
 `MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`, `MacFormControls`,
-`MacFormLayout`, `MacSwitchToggleStyle`.
+`MacFormLayout`, `MacSwitchToggleStyle`, `MacSegmentedPicker`, `MacAlertSheet`.

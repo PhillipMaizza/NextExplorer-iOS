@@ -137,7 +137,7 @@
         }
 
         var body: some View {
-            LabeledContent(L10n.MacSettings.labelFormat(title)) {
+            LabeledContent(title) {
                 VStack(alignment: .leading, spacing: Metrics.rowSpacing) {
                     content()
                 }
