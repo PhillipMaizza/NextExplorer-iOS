@@ -25,29 +25,20 @@ private enum Constants {
         static var profileServerType: Typography.TextType {
             .body3(.regular)
         }
-    #elseif os(macOS)
-        static let avatarSize: CGFloat = .size32
-        static var profileNameType: Typography.TextType {
-            .body3(.bold)
-        }
-
-        static var profileServerType: Typography.TextType {
-            .caption(.regular)
-        }
     #endif
     /// Where the system's selection pill sits inside a sidebar row, so the hover wash lines up with it.
     static let macPillInset: CGFloat = .space16
-    /// Keeps the account chevron off the Mac card's edge.
     static let chevronTrailingInset: CGFloat = .space12
-    /// The wash behind the Mac account card.
-    static let accountCardOpacity: Double = 0.06
     #if os(macOS)
         /// The Mac rows carry their own inset inside their pill, so the footer sits on the sections' edge.
         static let footerHorizontalPadding: CGFloat = macPillInset
-        static let profileInset: CGFloat = .space8
+        static let coffeeIcon = IconKit.macSidebarCoffee
+        static let helpIcon = IconKit.macSidebarHelp
     #else
         static let footerHorizontalPadding: CGFloat = .space16
         static let profileInset: CGFloat = footerRowInset
+        static let coffeeIcon = IconKit.coffee
+        static let helpIcon = IconKit.help
     #endif
 }
 
@@ -94,13 +85,14 @@ struct MainTabSidebar: View {
 
     var body: some View {
         #if os(macOS)
-            // The system sidebar list: native selection, hover and vibrancy over the window's glass.
             // The footer is a sibling of the list, not an inset over it, so its rows get their own hover.
             VStack(spacing: 0) {
                 MacSidebarSections(store: store)
                     .listStyle(.sidebar)
+                    .scrollContentBackground(.hidden)
                 sidebarFooter
             }
+            .macChromeBackground()
         #else
             sidebarList
                 .listStyle(.sidebar)
@@ -205,26 +197,21 @@ struct MainTabSidebar: View {
     /// The tip jar, help and Settings, then a divider and the signed in account.
     private var sidebarFooter: some View {
         VStack(alignment: .leading, spacing: 0) {
-            footerButton(L10n.TipJar.title, icon: IconKit.coffee, action: openTipJar)
-            footerButton(L10n.Settings.rowSupport, icon: IconKit.help) {
+            footerButton(L10n.TipJar.title, icon: Constants.coffeeIcon, action: openTipJar)
+            footerButton(L10n.Settings.rowSupport, icon: Constants.helpIcon) {
                 openURL(AppLinks.supportMail)
             }
             #if os(iOS)
                 settingsButton
             #else
                 // Settings has its own window (⌘,) on the Mac.
-                footerButton(L10n.Tab.settings, icon: IconKit.gearshape, shortcut: "\u{2318} ,") {
+                footerButton(L10n.Tab.settings, icon: IconKit.macSidebarSettings, shortcut: "\u{2318},") {
                     openSettings()
                 }
             #endif
             #if os(macOS)
                 sidebarProfile
-                    .padding(.vertical, .space8)
-                    .background(
-                        RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
-                            .fill(Color.primaryDS.opacity(Constants.accountCardOpacity))
-                    )
-                    .padding(.top, .space12)
+                    .padding(.top, .space8)
             #else
                 Divider()
                     .padding(.top, .space16)
@@ -261,9 +248,9 @@ struct MainTabSidebar: View {
         action: @escaping () -> Void
     ) -> some View {
         #if os(macOS)
-            MacSidebarRow(title: title, icon: icon, action: action) {
+            MacSidebarRow(title: title, icon: icon, size: .regular, action: action) {
                 if let shortcut {
-                    MacChip(text: shortcut)
+                    MacKeyHint(shortcut)
                 }
             }
         #else
@@ -302,34 +289,43 @@ struct MainTabSidebar: View {
                 #endif
             }
         ) {
-            HStack(spacing: .space8) {
-                profileSummary
-                IconKit.chevronUpDown
-                    .foregroundStyle(Color.secondaryDS)
-                    .padding(.trailing, Constants.chevronTrailingInset)
-            }
-            .contentShape(Rectangle())
+            #if os(macOS)
+                MacSidebarAccountLabel(
+                    displayName: store.settings.activeAccount.displayName,
+                    server: store.settings.activeAccount.serverSubtitle
+                )
+            #else
+                HStack(spacing: .space8) {
+                    profileSummary
+                    IconKit.chevronUpDown
+                        .foregroundStyle(Color.secondaryDS)
+                        .padding(.trailing, Constants.chevronTrailingInset)
+                }
+                .contentShape(Rectangle())
+            #endif
         }
     }
 
-    private var profileSummary: some View {
-        HStack(spacing: .space12) {
-            AvatarView(displayName: store.settings.activeAccount.displayName, size: Constants.avatarSize)
-            VStack(alignment: .leading, spacing: .space2) {
-                Text(store.settings.activeAccount.displayName)
-                    .type(Constants.profileNameType, style: .primaryOnSurface)
-                    .lineLimit(1)
-                if let server = store.settings.activeAccount.serverSubtitle {
-                    Text(server)
-                        .type(Constants.profileServerType, style: .secondary)
+    #if os(iOS)
+        private var profileSummary: some View {
+            HStack(spacing: .space12) {
+                AvatarView(displayName: store.settings.activeAccount.displayName, size: Constants.avatarSize)
+                VStack(alignment: .leading, spacing: .space2) {
+                    Text(store.settings.activeAccount.displayName)
+                        .type(Constants.profileNameType, style: .primaryOnSurface)
                         .lineLimit(1)
-                        .truncationMode(.middle)
+                    if let server = store.settings.activeAccount.serverSubtitle {
+                        Text(server)
+                            .type(Constants.profileServerType, style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                 }
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
+            .padding(.horizontal, Constants.profileInset)
         }
-        .padding(.horizontal, Constants.profileInset)
-    }
+    #endif
 }
 
 #if os(iOS)

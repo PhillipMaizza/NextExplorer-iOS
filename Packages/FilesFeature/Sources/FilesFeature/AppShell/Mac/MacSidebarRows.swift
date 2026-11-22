@@ -6,97 +6,136 @@
     import SwiftUI
 
     private enum Constants {
-        /// A Mac sidebar row's height and hover wash, matching the system list rows.
-        static let macRowHeight: CGFloat = 28
-        static let macLogoSize: CGFloat = .size24
-        static let iconColumnWidth: CGFloat = 20
+        static let brandHeight: CGFloat = .size40
+        static let logoSize: CGFloat = 26
+        static let rowRadius: CGFloat = .radiusControl
+        static let selectionShadowRadius: CGFloat = 1
+        static let selectionShadowOffset: CGFloat = 1
+        static let avatarSize: CGFloat = .size32
+        static let chevronSize: CGFloat = .iconSmall
     }
 
-    /// The logo and name above the sections. Opens the About window, with the same hover pill as the rows.
     struct MacSidebarIdentity: View {
         let action: () -> Void
         @State private var isHovered = false
 
         var body: some View {
-            aboutButton
-        }
-
-        private var aboutButton: some View {
             Button(action: action) {
                 HStack(spacing: .space8) {
                     IconKit.logo
                         .resizable()
                         .scaledToFit()
-                        .frame(width: Constants.macLogoSize, height: Constants.macLogoSize)
+                        .frame(width: Constants.logoSize, height: Constants.logoSize)
                         .accessibilityHidden(true)
                     Text(AppIdentity.name)
-                        .type(.headline4, style: .primaryOnSurface)
+                        .type(.headline4)
+                        .foregroundStyle(Color.macChromeText)
                         .lineLimit(1)
-                    Spacer(minLength: 0)
+                    Spacer(minLength: .zero)
                 }
                 .padding(.horizontal, .space12)
-                .frame(maxWidth: .infinity, minHeight: Constants.macRowHeight, alignment: .leading)
+                .frame(maxWidth: .infinity, minHeight: Constants.brandHeight, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                    RoundedRectangle(cornerRadius: Constants.rowRadius, style: .continuous)
                         .fill(isHovered ? Color.macChromeHover : .clear)
                 )
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .padding(.vertical, .space8)
+            .padding(.bottom, .space8)
             .onHover { isHovered = $0 }
             .help(L10n.Menu.about)
             .accessibilityLabel(L10n.Menu.about)
         }
     }
 
-    /// A sidebar row drawn here rather than by the list, so the selected and hovered pills keep a gap
-    /// between rows. Used by the sections and the footer links alike.
     struct MacSidebarRow<Trailing: View>: View {
+        enum Size {
+            case compact
+            case regular
+
+            var height: CGFloat {
+                switch self {
+                case .compact: 28
+                case .regular: 36
+                }
+            }
+
+            var iconSize: CGFloat {
+                switch self {
+                case .compact: 17
+                case .regular: 18
+                }
+            }
+
+            var iconSpacing: CGFloat {
+                switch self {
+                case .compact: .space12
+                case .regular: .space8
+                }
+            }
+
+            var rowGap: CGFloat {
+                switch self {
+                case .compact: .space2
+                case .regular: .zero
+                }
+            }
+
+            func textType(isSelected: Bool) -> Typography.TextType {
+                switch self {
+                case .compact: .body2(isSelected ? .semibold : .regular)
+                case .regular: .body1(isSelected ? .semibold : .regular)
+                }
+            }
+        }
+
         let title: String
         let icon: Image
         var isSelected = false
+        var size: Size = .compact
         let action: () -> Void
         @ViewBuilder var trailing: () -> Trailing
         @State private var isHovered = false
-        @Environment(\.colorScheme) private var colorScheme
 
         var body: some View {
             Button(action: action) {
-                HStack {
-                    Label {
-                        Text(title)
-                            .type(.body2(isSelected ? .semibold : .regular))
-                    } icon: {
-                        icon
-                            .imageScale(.medium)
-                            .frame(width: Constants.iconColumnWidth)
-                            .foregroundStyle(isSelected
-                                ? colorScheme == .light
-                                    ? Color.accentText
-                                    : .accent
-                                : Color.primaryDS)
-                    }
-                    Spacer(minLength: 0)
+                HStack(spacing: size.iconSpacing) {
+                    icon
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: size.iconSize, height: size.iconSize)
+                        .foregroundStyle(isSelected ? Color.accentText : Color.macChromeSecondary)
+                        .accessibilityHidden(true)
+                    Text(title)
+                        .type(size.textType(isSelected: isSelected))
+                        .foregroundStyle(Color.macChromeText)
+                        .lineLimit(1)
+                    Spacer(minLength: .zero)
                     trailing()
                 }
                 .padding(.horizontal, .space12)
-                .frame(maxWidth: .infinity, minHeight: Constants.macRowHeight, alignment: .leading)
+                .frame(maxWidth: .infinity, minHeight: size.height, alignment: .leading)
                 .background {
                     if isSelected {
-                        RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                        RoundedRectangle(cornerRadius: Constants.rowRadius, style: .continuous)
                             .fill(Color.macSelection)
-                            .elevation(.level1)
+                            .shadow(
+                                color: .macCardShadow,
+                                radius: Constants.selectionShadowRadius,
+                                y: Constants.selectionShadowOffset
+                            )
                     } else if isHovered {
-                        RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                        RoundedRectangle(cornerRadius: Constants.rowRadius, style: .continuous)
                             .fill(Color.macChromeHover)
                     }
                 }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .padding(.vertical, .space2)
+            .padding(.vertical, size.rowGap)
             .onHover { isHovered = $0 }
+            .accessibilityLabel(title)
             .accessibilityAddTraits(isSelected ? .isSelected : [])
         }
     }
@@ -110,7 +149,7 @@
         private static func shortcutHint(for tab: MainTabFeature.Tab) -> String? {
             guard let index = MainTabSidebar.sectionItems(showsTrash: true).firstIndex(where: { $0.tab == tab })
             else { return nil }
-            return "\u{2318} \(index + 1)"
+            return "\u{2318}\(index + 1)"
         }
 
         /// The logo and name above the sections. Opens the About window, and is not a destination.
@@ -127,8 +166,9 @@
             let isSelected = store.selectedTab == item.tab
             return MacSidebarRow(
                 title: item.title,
-                icon: Self.macIcon(for: item.tab, isSelected: isSelected),
-                isSelected: isSelected
+                icon: Self.macIcon(for: item.tab),
+                isSelected: isSelected,
+                size: .regular
             ) {
                 store.send(.tabSelected(item.tab))
             } trailing: {
@@ -137,11 +177,7 @@
                         .accessibilityHidden(true)
                 }
                 if let hint = Self.shortcutHint(for: item.tab) {
-                    MacChip(
-                        text: hint,
-                        tint: isSelected ? .accent : .tertiaryDS,
-                        style: isSelected ? .link : .tertiary
-                    )
+                    MacKeyHint(hint, isHighlighted: isSelected)
                 }
             }
             .listRowInsets(EdgeInsets())
@@ -175,17 +211,55 @@
             }
         }
 
-        /// The tab bar artwork is drawn for iOS tab bars; the Mac sidebar uses system symbols
-        /// at the standard sidebar size instead.
-        private static func macIcon(for tab: MainTabFeature.Tab, isSelected: Bool) -> Image {
+        private static func macIcon(for tab: MainTabFeature.Tab) -> Image {
             switch tab {
-            case .browse: isSelected ? IconKit.folderFill : IconKit.folder
-            case .favorites: isSelected ? IconKit.starFill : IconKit.star
-            case .shared: isSelected ? IconKit.shareLinkFill : IconKit.shareLink
-            case .downloads: isSelected ? IconKit.availableOfflineFill : IconKit.availableOffline
-            case .settings: isSelected ? IconKit.gearshapeFill : IconKit.gearshape
-            case .trash: isSelected ? IconKit.deleteFill : IconKit.delete
+            case .browse: IconKit.macSidebarBrowse
+            case .favorites: IconKit.macSidebarFavorites
+            case .shared: IconKit.macSidebarShared
+            case .downloads: IconKit.macSidebarOffline
+            case .settings: IconKit.macSidebarSettings
+            case .trash: IconKit.macSidebarTrash
             }
+        }
+    }
+
+    struct MacSidebarAccountLabel: View {
+        let displayName: String
+        let server: String?
+        @State private var isHovered = false
+
+        var body: some View {
+            HStack(spacing: .space12) {
+                AvatarView(displayName: displayName, size: Constants.avatarSize)
+                VStack(alignment: .leading, spacing: .space2) {
+                    Text(displayName)
+                        .type(.body2(.semibold))
+                        .foregroundStyle(Color.macChromeText)
+                        .lineLimit(1)
+                    if let server {
+                        Text(server)
+                            .type(.body3(.regular))
+                            .foregroundStyle(Color.macChromeSecondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                }
+                Spacer(minLength: .zero)
+                IconKit.chevronUpDown
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                    .foregroundStyle(Color.macChromeSecondary)
+                    .accessibilityHidden(true)
+            }
+            .padding(.horizontal, .space12)
+            .padding(.vertical, .space8)
+            .background(
+                RoundedRectangle(cornerRadius: Constants.rowRadius, style: .continuous)
+                    .fill(isHovered ? Color.macChromeButton : Color.macChromeHover)
+            )
+            .contentShape(Rectangle())
+            .onHover { isHovered = $0 }
         }
     }
 
@@ -198,7 +272,7 @@
         state.selectedTab = selectedTab
         return MacSidebarSections(store: Store(initialState: state) { MainTabFeature() })
             .listStyle(.sidebar)
-            .frame(width: 250, height: 260)
+            .frame(width: MacSidebarWidth.ideal, height: MacSidebarWidth.ideal)
     }
 
     #Preview("Sections, Browse") {
@@ -209,20 +283,41 @@
         previewSections(selectedTab: .downloads)
     }
 
+    #Preview("Account") {
+        VStack(spacing: .space8) {
+            MacSidebarAccountLabel(displayName: "Phillip Maizza", server: "nextexplorer.example.com")
+            MacSidebarAccountLabel(displayName: "jdoe", server: nil)
+        }
+        .padding()
+        .frame(width: MacSidebarWidth.ideal)
+        .background(Color.macChrome)
+    }
+
     #Preview("Identity") {
         MacSidebarIdentity {}
             .padding()
-            .frame(width: 250)
+            .frame(width: MacSidebarWidth.ideal)
     }
 
     #Preview("Rows") {
         VStack(spacing: 0) {
-            MacSidebarRow(title: L10n.Tab.browse, icon: IconKit.tabBrowse, isSelected: true, action: {}) {
-                MacChip(text: "\u{2318} 1")
+            MacSidebarRow(
+                title: L10n.Tab.browse,
+                icon: IconKit.macSidebarBrowse,
+                isSelected: true,
+                size: .regular,
+                action: {}
+            ) {
+                MacKeyHint("\u{2318}1", isHighlighted: true)
             }
-            MacSidebarRow(title: L10n.Tab.favorites, icon: IconKit.tabFavorites, action: {}) { EmptyView() }
+            MacSidebarRow(title: L10n.Tab.favorites, icon: IconKit.macSidebarFavorites, size: .regular, action: {}) {
+                MacKeyHint("\u{2318}2")
+            }
+            MacSidebarRow(title: L10n.Tab.settings, icon: IconKit.macSidebarSettings, size: .regular, action: {}) {
+                EmptyView()
+            }
         }
         .padding()
-        .frame(width: 250)
+        .frame(width: MacSidebarWidth.ideal)
     }
 #endif
