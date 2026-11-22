@@ -19,6 +19,15 @@ struct LoginSecondFactorPage: View {
         static let checkmarkSize: CGFloat = .iconSmall
         static let autoFocusDelay: Duration = .seconds(0.4)
         static let recoveryCodePlaceholder = "XXXXX-XXXXX"
+        #if os(macOS)
+            static var titleType: Typography.TextType {
+                .headline1
+            }
+        #else
+            static var titleType: Typography.TextType {
+                .headline3
+            }
+        #endif
     }
 
     private var isSubmitEnabled: Bool {
@@ -27,13 +36,21 @@ struct LoginSecondFactorPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            LoginBackBar(title: nil) { store.send(.secondFactorBackButtonTapped) }
+            #if os(iOS)
+                LoginBackBar(title: nil) { store.send(.secondFactorBackButtonTapped) }
+            #endif
 
             ScrollView {
                 VStack(alignment: .leading, spacing: .space24) {
+                    #if os(macOS)
+                        MacLoginPageHeader(host: store.host, title: nil) {
+                            store.send(.secondFactorBackButtonTapped)
+                        }
+                    #endif
+
                     VStack(alignment: .leading, spacing: .space8) {
                         Text(L10n.Login.codeTitle)
-                            .type(.headline3)
+                            .type(Constants.titleType)
                         Text(store.codeMode == .authenticator
                             ? L10n.Login.codeIntroAuthenticator
                             : L10n.Login.codeIntroRecovery)
@@ -45,23 +62,23 @@ struct LoginSecondFactorPage: View {
 
                     verifyButton
 
-                    DSButton(
-                        store.codeMode == .authenticator ? L10n.Login.codeUseRecovery : L10n.Login.codeUseAuthenticator,
-                        style: .ghost,
-                        size: .small
-                    ) {
-                        store.send(.toggleCodeModeTapped)
-                    }
-                    .accessibilityIdentifier(AccessibilityIdentifiers.Login.codeModeButton)
+                    codeModeButton
 
                     if let errorMessage = store.errorMessage, !errorMessage.isEmpty {
-                        Text(errorMessage)
-                            .type(.body2(.semibold), style: .error)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .transition(.opacity)
+                        #if os(macOS)
+                            MacNote(errorMessage, kind: .error)
+                                .transition(.opacity)
+                        #else
+                            Text(errorMessage)
+                                .type(.body2(.semibold), style: .error)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .transition(.opacity)
+                        #endif
                     }
 
-                    LoginDiagnosticsButton(diagnostics: store.diagnostics)
+                    #if os(iOS)
+                        LoginDiagnosticsButton(diagnostics: store.diagnostics)
+                    #endif
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, .space16)
@@ -89,6 +106,24 @@ struct LoginSecondFactorPage: View {
         }
     }
 
+    private var codeModeTitle: String {
+        store.codeMode == .authenticator ? L10n.Login.codeUseRecovery : L10n.Login.codeUseAuthenticator
+    }
+
+    private var codeModeButton: some View {
+        #if os(macOS)
+            Button(codeModeTitle) { store.send(.toggleCodeModeTapped) }
+                .buttonStyle(.macDS(.ghost, size: .small))
+                .frame(maxWidth: .infinity)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Login.codeModeButton)
+        #else
+            DSButton(codeModeTitle, style: .ghost, size: .small) {
+                store.send(.toggleCodeModeTapped)
+            }
+            .accessibilityIdentifier(AccessibilityIdentifiers.Login.codeModeButton)
+        #endif
+    }
+
     private var codeBinding: Binding<String> {
         Binding(get: { store.code }, set: { store.send(.codeChanged($0)) })
     }
@@ -106,10 +141,10 @@ struct LoginSecondFactorPage: View {
                 accessibilityIdentifier: AccessibilityIdentifiers.Login.codeField
             )
         case .recovery:
-            DSFieldContainer(label: L10n.Login.codeField, icon: IconKit.key) {
+            DSFieldContainer(label: L10n.Login.codeField, icon: IconKit.key, isFocused: isCodeFocused) {
                 TextField(
                     text: codeBinding,
-                    prompt: Text(verbatim: Constants.recoveryCodePlaceholder).foregroundStyle(Color.secondaryDS)
+                    prompt: Text(verbatim: Constants.recoveryCodePlaceholder).foregroundStyle(Color.secondaryText)
                 ) {
                     EmptyView()
                 }

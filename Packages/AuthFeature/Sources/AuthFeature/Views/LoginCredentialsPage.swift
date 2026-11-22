@@ -7,7 +7,13 @@ import SwiftUI
 private enum Constants {
     static let checkmarkSize: CGFloat = .iconSmall
     static let ssoIconSize: CGFloat = .iconSmall
-    static let maskedPasswordPlaceholder = "••••••••"
+    #if os(macOS)
+        static let identifierPrompt = L10n.Login.identifierField
+        static let maskedPasswordPlaceholder = L10n.Login.passwordField
+    #else
+        static let identifierPrompt = "name@company.com"
+        static let maskedPasswordPlaceholder = "••••••••"
+    #endif
     /// Focusing the identifier the instant the page appears races its slide in: the field takes
     /// focus before its frame settles, and a keyboard AutoFill made then silently fails.
     /// Waiting out the page transition avoids that.
@@ -38,10 +44,18 @@ struct LoginCredentialsPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            LoginBackBar(title: store.host) { store.send(.backButtonTapped) }
+            #if os(iOS)
+                LoginBackBar(title: store.host) { store.send(.backButtonTapped) }
+            #endif
 
             ScrollView {
                 VStack(alignment: .leading, spacing: .space24) {
+                    #if os(macOS)
+                        MacLoginPageHeader(host: store.host, title: L10n.Login.submit) {
+                            store.send(.backButtonTapped)
+                        }
+                    #endif
+
                     if let summary = store.certificateInUse {
                         LoginCertificateStatus(summary: summary) {
                             focusedField = nil
@@ -56,7 +70,11 @@ struct LoginCredentialsPage: View {
                         // After the fields on purpose: a conditional sibling *above* them shifts
                         // their position in the container and drops the keyboard's AutoFill session.
                         if store.scheme == .http {
-                            DSInfoCard(L10n.Login.plaintextWarning)
+                            #if os(macOS)
+                                MacNote(L10n.Login.plaintextWarning, kind: .warning)
+                            #else
+                                DSInfoCard(L10n.Login.plaintextWarning)
+                            #endif
                         }
 
                         continueButton
@@ -75,13 +93,20 @@ struct LoginCredentialsPage: View {
                     }
 
                     if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
-                        Text(errorMessage)
-                            .type(.body2(.semibold), style: .error)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .transition(.opacity)
+                        #if os(macOS)
+                            MacNote(errorMessage, kind: .error)
+                                .transition(.opacity)
+                        #else
+                            Text(errorMessage)
+                                .type(.body2(.semibold), style: .error)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .transition(.opacity)
+                        #endif
                     }
 
-                    LoginDiagnosticsButton(diagnostics: store.diagnostics)
+                    #if os(iOS)
+                        LoginDiagnosticsButton(diagnostics: store.diagnostics)
+                    #endif
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, .space16)
@@ -97,7 +122,8 @@ struct LoginCredentialsPage: View {
             label: L10n.Login.identifierField,
             icon: IconKit.person,
             shakeTrigger: identifierShakeTrigger,
-            isInvalid: isIdentifierFieldInvalid
+            isInvalid: isIdentifierFieldInvalid,
+            isFocused: focusedField == .identifier
         ) {
             // Native `prompt:` rather than a ZStack placeholder overlay: a sibling view stacked
             // on the field is a documented AutoFill target resolution hazard.
@@ -105,7 +131,7 @@ struct LoginCredentialsPage: View {
                 text: Binding(get: { store.identifier }, set: { store.send(.identifierChanged($0)) }),
                 // `verbatim` so the email shaped placeholder isn't markdown/link inferred (iOS 18
                 // renders an inferred email as a blue link, ignoring the prompt's own color).
-                prompt: Text(verbatim: "name@company.com").foregroundStyle(Color.secondaryDS)
+                prompt: Text(verbatim: Constants.identifierPrompt).foregroundStyle(Color.secondaryText)
             ) {
                 EmptyView()
             }
@@ -130,7 +156,8 @@ struct LoginCredentialsPage: View {
             label: L10n.Login.passwordField,
             icon: IconKit.lock,
             shakeTrigger: passwordShakeTrigger,
-            isInvalid: isPasswordFieldInvalid
+            isInvalid: isPasswordFieldInvalid,
+            isFocused: focusedField == .password
         ) {
             HStack(spacing: .space8) {
                 // Both fields stay mounted at all times: swapping SecureField/TextField in and
@@ -141,7 +168,7 @@ struct LoginCredentialsPage: View {
                 ZStack(alignment: .leading) {
                     SecureField(
                         text: Binding(get: { store.password }, set: { store.send(.passwordChanged($0)) }),
-                        prompt: Text(Constants.maskedPasswordPlaceholder).foregroundColor(Color.secondaryDS)
+                        prompt: Text(Constants.maskedPasswordPlaceholder).foregroundColor(Color.secondaryText)
                     ) {
                         EmptyView()
                     }
@@ -157,7 +184,7 @@ struct LoginCredentialsPage: View {
 
                     TextField(
                         text: Binding(get: { store.password }, set: { store.send(.passwordChanged($0)) }),
-                        prompt: Text(Constants.maskedPasswordPlaceholder).foregroundColor(Color.secondaryDS)
+                        prompt: Text(Constants.maskedPasswordPlaceholder).foregroundColor(Color.secondaryText)
                     ) {
                         EmptyView()
                     }
@@ -179,7 +206,7 @@ struct LoginCredentialsPage: View {
                         store.send(.togglePasswordVisibility)
                     } label: {
                         (store.isPasswordVisible ? IconKit.eyeSlash : IconKit.eye)
-                            .foregroundStyle(Color.secondaryDS)
+                            .foregroundStyle(Color.secondaryText)
                             .frame(minWidth: .size44, minHeight: .size44)
                             .contentShape(Rectangle())
                     }
@@ -240,11 +267,11 @@ struct LoginCredentialsPage: View {
 
     private var orDivider: some View {
         HStack(spacing: .space12) {
-            Rectangle().fill(Color.secondaryDS.opacity(Constants.dividerOpacity)).frame(height: 1)
+            Rectangle().fill(Color.secondaryText.opacity(Constants.dividerOpacity)).frame(height: 1)
             Text(L10n.Login.orDivider)
                 .type(.body2(.semibold), style: .secondary)
                 .fixedSize()
-            Rectangle().fill(Color.secondaryDS.opacity(Constants.dividerOpacity)).frame(height: 1)
+            Rectangle().fill(Color.secondaryText.opacity(Constants.dividerOpacity)).frame(height: 1)
         }
         .accessibilityHidden(true)
     }

@@ -23,7 +23,11 @@ with blue selection is not possible natively.
   stays Mac like. Secondary text uses the warm chrome grey.
 - Buttons are pills (`MacDSButtonStyle` over `DSButtonStyle` and `DSButtonSize`), drawn with
   `.radiusLarge` so a 36pt button rounds fully. A destructive role turns a neutral label red.
-- The sign in screen and the sidebar account popover stay custom by the owner's choice.
+- The sign in screen and the sidebar account popover stay custom by the owner's choice. Sign in is
+  a branded screen: its https and http switch is the DS pill (`DSSegmentedControl` with
+  `shouldAlwaysUsePill`) in the Mac colours, and its steps list shows Code only once the server asks
+  the account for one. Its large fields are drawn by the design system, so they focus in the accent
+  (border and halo) rather than the system blue ring.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
 `MacCard`, `MacDialog`, `MacGalleryView`.

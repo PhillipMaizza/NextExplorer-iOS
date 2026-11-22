@@ -57,7 +57,8 @@ struct AddAccountSheet: ViewModifier {
                 LoginFormView(
                     store: addAccountStore,
                     shouldAutoFocus: true,
-                    shouldFloodIntoApp: !shouldAddAccountInDialog
+                    shouldFloodIntoApp: !shouldAddAccountInDialog,
+                    hasStepsSidebar: false
                 )
                 #if os(macOS)
                 // A Mac sheet sizes to its content's ideal size, which the flexible login

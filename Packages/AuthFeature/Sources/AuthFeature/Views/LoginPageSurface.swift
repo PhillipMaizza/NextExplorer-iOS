@@ -7,11 +7,15 @@ struct LoginPageSurface: View {
     let horizontalSizeClass: UserInterfaceSizeClass?
 
     var body: some View {
-        if horizontalSizeClass == .regular {
-            DSSheetSurface()
-        } else {
-            LinearGradient.backgroundPrimary.ignoresSafeArea()
-        }
+        #if os(macOS)
+            Color.macCard
+        #else
+            if horizontalSizeClass == .regular {
+                DSSheetSurface()
+            } else {
+                LinearGradient.backgroundPrimary.ignoresSafeArea()
+            }
+        #endif
     }
 }
 

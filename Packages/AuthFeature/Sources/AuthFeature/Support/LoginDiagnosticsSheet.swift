@@ -19,14 +19,26 @@ struct LoginDiagnosticsButton: View {
 
     var body: some View {
         if hasProblem {
+            diagnosticsButton
+                .accessibilityIdentifier(AccessibilityIdentifiers.Login.diagnosticsButton)
+                .dsSheet(isPresented: $isPresented) {
+                    LoginDiagnosticsSheet(text: text, onClose: { isPresented = false })
+                }
+        }
+    }
+}
+
+private extension LoginDiagnosticsButton {
+    var diagnosticsButton: some View {
+        #if os(macOS)
+            MacLoginFooterLink(title: L10n.Login.diagnosticsButton, icon: IconKit.document) {
+                isPresented = true
+            }
+        #else
             DSButton(L10n.Login.diagnosticsButton, icon: IconKit.document, style: .ghost, size: .small) {
                 isPresented = true
             }
-            .accessibilityIdentifier(AccessibilityIdentifiers.Login.diagnosticsButton)
-            .dsSheet(isPresented: $isPresented) {
-                LoginDiagnosticsSheet(text: text, onClose: { isPresented = false })
-            }
-        }
+        #endif
     }
 }
 
