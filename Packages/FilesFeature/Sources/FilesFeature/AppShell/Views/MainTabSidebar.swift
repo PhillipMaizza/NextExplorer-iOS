@@ -51,14 +51,14 @@ private enum Constants {
     #endif
 }
 
-/// The split view's sidebar on iPad and the Mac: the app's name, the sections, then the tip jar, help
-/// and Settings, and the signed in account at the foot. Compact width uses the bottom tab bar instead.
 enum MacSidebarWidth {
     static let min: CGFloat = 240
     static let ideal: CGFloat = 280
     static let max: CGFloat = 360
 }
 
+/// The split view's sidebar on iPad and the Mac: the app's name, the sections, then the tip jar, help
+/// and Settings, and the signed in account at the foot. Compact width uses the bottom tab bar instead.
 struct MainTabSidebar: View {
     let store: StoreOf<MainTabFeature>
     @Environment(\.openURL) private var openURL
