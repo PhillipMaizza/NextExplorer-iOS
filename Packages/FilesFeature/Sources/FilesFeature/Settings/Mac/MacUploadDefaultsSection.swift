@@ -13,23 +13,20 @@
                 MacFormGroup(L10n.Settings.uploadDefaultsRow) {
                     MacFormRow(L10n.Settings.uploadDefaultsFolder) {
                         MacPopupMenu(L10n.Settings.uploadDefaultsFolder, valueLabel: store.folderTitle) {
-                            Button(L10n.ShareUpload.folderChoose + "…") { store.send(.chooseFolderTapped) }
+                            Button(L10n.ellipsized(L10n.ShareUpload.folderChoose)) { store.send(.chooseFolderTapped) }
                             if store.hasFolder {
                                 Button(L10n.Settings.uploadDefaultsClear) { store.send(.askEachTimeTapped) }
                             }
                         }
                     }
-                    MacFormRow(L10n.Settings.uploadDefaultsWithoutAsking) {
-                        Toggle(
-                            L10n.Settings.uploadDefaultsWithoutAsking,
-                            isOn: Binding(
-                                get: { store.defaults.shouldUploadWithoutAsking },
-                                set: { store.send(.shouldUploadWithoutAskingChanged($0)) }
-                            )
+                    MacSwitchRow(
+                        L10n.Settings.uploadDefaultsWithoutAsking,
+                        isOn: Binding(
+                            get: { store.defaults.shouldUploadWithoutAsking },
+                            set: { store.send(.shouldUploadWithoutAskingChanged($0)) }
                         )
-                        .labelsHidden()
-                        .disabled(!store.hasFolder)
-                    }
+                    )
+                    .disabled(!store.hasFolder)
                 }
                 MacFormFootnote(L10n.Settings.uploadDefaultsFooter)
             }

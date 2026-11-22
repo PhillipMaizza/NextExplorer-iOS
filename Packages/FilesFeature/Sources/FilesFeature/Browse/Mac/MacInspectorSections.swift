@@ -26,7 +26,7 @@
                 if let onShare {
                     HStack {
                         Spacer()
-                        Button(L10n.Common.share + "…", action: onShare)
+                        Button(L10n.ellipsized(L10n.Common.share), action: onShare)
                     }
                 }
             }

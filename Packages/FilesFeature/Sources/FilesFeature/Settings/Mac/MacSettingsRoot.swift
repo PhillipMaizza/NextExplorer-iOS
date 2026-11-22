@@ -6,6 +6,7 @@
 
     private enum Metrics {
         static let sidebarWidth: CGFloat = 272
+        static let selectionKey = "macSettingsCategory"
     }
 
     /// One page of the Mac Settings window's sidebar.
@@ -113,7 +114,7 @@
     /// the app's own info.
     struct MacSettingsRoot: View {
         @Bindable var store: StoreOf<SettingsFeature>
-        @SceneStorage("macSettingsCategory") private var selection: MacSettingsCategory = .general
+        @SceneStorage(Metrics.selectionKey) private var selection: MacSettingsCategory = .general
 
         private var visibleSelection: MacSettingsCategory {
             store.user.isAdmin || !MacSettingsCategory.admin.contains(selection) ? selection : .general

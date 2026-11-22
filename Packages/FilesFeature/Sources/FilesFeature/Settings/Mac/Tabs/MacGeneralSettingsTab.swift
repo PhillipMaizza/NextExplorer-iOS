@@ -99,22 +99,16 @@
                     }
                     .frame(maxWidth: .infinity)
                     MacFormGroup(L10n.Settings.sectionDisplay) {
-                        switchRow(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
-                        switchRow(
+                        MacSwitchRow(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
+                        MacSwitchRow(
                             L10n.Settings.toggleShowHiddenFiles,
                             isOn: $store.preferences.shouldShowHiddenFiles.sending(\.setShowHiddenFiles)
                         )
-                        switchRow(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
-                        switchRow(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
+                        MacSwitchRow(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
+                        MacSwitchRow(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
                     }
                     .frame(maxWidth: .infinity)
                 }
-            }
-        }
-
-        private func switchRow(_ title: String, isOn: Binding<Bool>) -> some View {
-            MacFormRow(title) {
-                Toggle(title, isOn: isOn).labelsHidden()
             }
         }
     }

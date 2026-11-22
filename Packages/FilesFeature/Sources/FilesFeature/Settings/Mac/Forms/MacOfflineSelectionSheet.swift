@@ -62,7 +62,7 @@
                 }
                 TableColumn(L10n.Sort.size) { item in
                     Text(sizeText(item))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.macChromeSecondary)
                         .monospacedDigit()
                 }
                 .width(Metrics.sizeColumnWidth)
@@ -84,11 +84,11 @@
                 MacSpinner()
             } else if let errorMessage = store.phase.errorMessage {
                 VStack(spacing: .space8) {
-                    Text(errorMessage).foregroundStyle(.secondary)
+                    Text(errorMessage).foregroundStyle(Color.macChromeSecondary)
                     Button(L10n.Common.retry) { store.send(.retryTapped) }
                 }
             } else if store.items.isEmpty, store.phase == .loaded {
-                Text(L10n.Offline.selectionEmpty).foregroundStyle(.secondary)
+                Text(L10n.Offline.selectionEmpty).foregroundStyle(Color.macChromeSecondary)
             }
         }
 
@@ -100,10 +100,12 @@
                 onConfirm: { store.send(.confirmTapped) }
             ) {
                 VStack(alignment: .leading, spacing: .space2) {
-                    Text(L10n.MacSettings.labelFormat(L10n.Offline.selectionEstimate) + " " + estimateText)
-                        .monospacedDigit()
+                    HStack(spacing: .space4) {
+                        Text(L10n.MacSettings.labelFormat(L10n.Offline.selectionEstimate))
+                        Text(estimateText).monospacedDigit()
+                    }
                     if isOverFreeSpace {
-                        Text(L10n.Offline.selectionInsufficientSpace).font(.callout).foregroundStyle(Color.negativeText)
+                        Text(L10n.Offline.selectionInsufficientSpace).type(.body3(.regular), style: .error)
                     }
                 }
             }
@@ -112,7 +114,7 @@
 
         private func sizeText(_ item: FileItem) -> String {
             if item.isDirectory {
-                return store.folderSizes[item.id].map { FileSizeFormat.string($0) } ?? "--"
+                return store.folderSizes[item.id].map { FileSizeFormat.string($0) } ?? L10n.Common.loading
             }
             return FileSizeFormat.string(item.size)
         }

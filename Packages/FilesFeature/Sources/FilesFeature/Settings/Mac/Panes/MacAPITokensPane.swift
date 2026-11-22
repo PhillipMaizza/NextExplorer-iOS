@@ -70,9 +70,10 @@
         let token: APIToken
         let onRename: () -> Void
         let onRevoke: () -> Void
+        @Dependency(\.date.now) private var now
 
         var body: some View {
-            let isExpired = token.isExpired(now: Date())
+            let isExpired = token.isExpired(now: now)
             MacFormRow {
                 HStack(spacing: .space16) {
                     keyTile
@@ -135,9 +136,10 @@
         }
 
         private var details: String {
-            [token.createdLine, token.lastUsedAt == nil ? nil : token.usageLine, token.expiryLine(now: Date())]
-                .compactMap(\.self)
-                .joined(separator: " · ")
+            ServerSettingsMetrics.joined(
+                [token.createdLine, token.lastUsedAt == nil ? nil : token.usageLine, token.expiryLine(now: now)]
+                    .compactMap(\.self)
+            )
         }
     }
 

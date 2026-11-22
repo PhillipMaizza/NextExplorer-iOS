@@ -295,7 +295,7 @@
         )]
         return MacUserDetailForm(store: Store(initialState: state) { EmptyReducer() }, user: user)
             .padding(.space32)
-            .frame(width: 860)
+            .previewCanvasWidth(.table)
             .background(Color.macCard)
     }
 

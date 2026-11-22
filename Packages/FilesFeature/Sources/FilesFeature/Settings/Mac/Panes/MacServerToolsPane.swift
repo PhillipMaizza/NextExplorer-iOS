@@ -15,7 +15,6 @@
                 unavailableMessage: "",
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading,
-                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
                 MacFormGroup {
