@@ -5,9 +5,9 @@
     import SwiftUI
 
     private enum Metrics {
-        static let width: CGFloat = 920
+        static let width: CGFloat = 1200
         static let minHeight: CGFloat = 480
-        static let idealHeight: CGFloat = 560
+        static let idealHeight: CGFloat = 780
     }
 
     /// Content of the Mac's Settings window. It shows the signed in session's settings and

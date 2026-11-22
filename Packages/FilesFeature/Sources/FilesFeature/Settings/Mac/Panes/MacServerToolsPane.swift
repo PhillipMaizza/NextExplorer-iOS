@@ -15,15 +15,20 @@
                 unavailableMessage: "",
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading,
+                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
-                Section {
+                MacFormGroup {
                     ForEach(store.tools) { tool in
                         MacServerToolRow(tool: tool)
                     }
                 }
             }
         }
+    }
+
+    private enum Metrics {
+        static let rowMinHeight: CGFloat = .size64
     }
 
     private struct MacServerToolRow: View {
@@ -44,9 +49,11 @@
                     }
                 }
                 Spacer(minLength: .space8)
-                MacChip(text: tool.statusTitle, tint: tool.status.tint, style: tool.status.textStyle, kind: .pill)
+                MacChip(text: tool.statusTitle, tone: tool.status.tone)
             }
-            .padding(.vertical, .space4)
+            .padding(.horizontal, .space16)
+            .padding(.vertical, .space8)
+            .frame(minHeight: Metrics.rowMinHeight)
             .accessibilityElement(children: .combine)
         }
     }
@@ -68,11 +75,11 @@
             }
         }
 
-        var textStyle: Typography.TextStyle {
+        var tone: MacChip.Tone {
             switch self {
-            case .installed: .success
-            case .missing: .error
-            case .notUsed: .tertiary
+            case .installed: .green
+            case .missing: .red
+            case .notUsed: .gray
             }
         }
     }
