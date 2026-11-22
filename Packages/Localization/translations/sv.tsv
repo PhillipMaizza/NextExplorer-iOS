@@ -1331,3 +1331,6 @@ login.stepCode	Kod
 apiTokens.badgeExpired	Har upphört
 common.decrease	Minska
 common.increase	Öka
+common.moreInfo	Mer information
+versionedFiles.pathHeader	Sökväg
+versionedFiles.versionsHeader	Versioner

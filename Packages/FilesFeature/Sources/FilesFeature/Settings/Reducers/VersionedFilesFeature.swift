@@ -47,6 +47,10 @@ public struct VersionedFilesFeature {
             page?.files ?? []
         }
 
+        var isFilterDisabled: Bool {
+            page?.total == 0 && filter.query.isEmpty && filter.zoneID == nil && filter.state == nil
+        }
+
         func chosen(_ fileID: String) -> Set<String> {
             selection[fileID] ?? []
         }

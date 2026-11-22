@@ -1331,3 +1331,6 @@ login.stepCode	कोड
 apiTokens.badgeExpired	समाप्त
 common.decrease	घटाएँ
 common.increase	बढ़ाएँ
+common.moreInfo	अधिक जानकारी
+versionedFiles.pathHeader	पथ
+versionedFiles.versionsHeader	संस्करण

@@ -1260,3 +1260,6 @@ login.stepCode	Koodi
 apiTokens.badgeExpired	Vanhentunut
 common.decrease	Vähennä
 common.increase	Lisää
+common.moreInfo	Lisätietoja
+versionedFiles.pathHeader	Polku
+versionedFiles.versionsHeader	Versiot

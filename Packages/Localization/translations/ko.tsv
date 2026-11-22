@@ -1295,3 +1295,6 @@ login.stepCode	코드
 apiTokens.badgeExpired	만료됨
 common.decrease	감소
 common.increase	증가
+common.moreInfo	추가 정보
+versionedFiles.pathHeader	경로
+versionedFiles.versionsHeader	버전

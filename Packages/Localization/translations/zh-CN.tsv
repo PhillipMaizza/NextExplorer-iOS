@@ -1295,3 +1295,6 @@ login.stepCode	验证码
 apiTokens.badgeExpired	已过期
 common.decrease	减少
 common.increase	增加
+common.moreInfo	更多信息
+versionedFiles.pathHeader	路径
+versionedFiles.versionsHeader	版本

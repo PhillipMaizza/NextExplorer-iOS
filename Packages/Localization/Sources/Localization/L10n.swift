@@ -286,6 +286,7 @@ public enum L10n {
         public static var loading: String { tr("common.loading") }  // "Loading…"
         public static var logOut: String { tr("common.logOut") }  // "Log Out"
         public static var more: String { tr("common.more") }  // "More"
+        public static var moreInfo: String { tr("common.moreInfo") }  // "More Info"
         public static var never: String { tr("common.never") }  // "Never"
         public static var none: String { tr("common.none") }  // "None"
         public static var off: String { tr("common.off") }  // "Off"
@@ -1394,6 +1395,7 @@ public enum L10n {
         public static var next: String { tr("versionedFiles.next") }  // "Next"
         public static var none: String { tr("versionedFiles.none") }  // "No file has earlier versions."
         public static func pageRange(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("versionedFiles.pageRange", a0, a1, a2) }
+        public static var pathHeader: String { tr("versionedFiles.pathHeader") }  // "Path"
         public static var previous: String { tr("versionedFiles.previous") }  // "Previous"
         public static var refresh: String { tr("versionedFiles.refresh") }  // "Refresh"
         public static func rowSummary(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("versionedFiles.rowSummary", a0, a1) }
@@ -1413,6 +1415,7 @@ public enum L10n {
         public static func versionBy(_ a0: CVarArg) -> String { tr("versionedFiles.versionBy", a0) }
         public static var versionPinned: String { tr("versionedFiles.versionPinned") }  // "Pinned"
         public static var versionUnavailable: String { tr("versionedFiles.versionUnavailable") }  // "Unavailable"
+        public static var versionsHeader: String { tr("versionedFiles.versionsHeader") }  // "Versions"
         public static var zone: String { tr("versionedFiles.zone") }  // "Volume"
         public static func zoneKindPersonal(_ a0: CVarArg) -> String { tr("versionedFiles.zoneKindPersonal", a0) }
         public static func zoneKindUserVolume(_ a0: CVarArg) -> String { tr("versionedFiles.zoneKindUserVolume", a0) }

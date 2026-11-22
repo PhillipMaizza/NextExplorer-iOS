@@ -1403,3 +1403,6 @@ login.stepCode	Код
 apiTokens.badgeExpired	Истёк
 common.decrease	Уменьшить
 common.increase	Увеличить
+common.moreInfo	Подробнее
+versionedFiles.pathHeader	Путь
+versionedFiles.versionsHeader	Версии

@@ -1331,3 +1331,6 @@ login.stepCode	Codice
 apiTokens.badgeExpired	Scaduto
 common.decrease	Diminuisci
 common.increase	Aumenta
+common.moreInfo	Altre informazioni
+versionedFiles.pathHeader	Percorso
+versionedFiles.versionsHeader	Versioni

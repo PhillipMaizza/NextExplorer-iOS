@@ -46,6 +46,14 @@ import SwiftUI
     }
 #endif
 
+#if os(macOS)
+    private enum MacAppDefaults {
+        static let ignorePersistenceKey = "ApplePersistenceIgnoreState"
+        static let tooltipDelayKey = "NSInitialToolTipDelay"
+        static let tooltipDelayMilliseconds = 250
+    }
+#endif
+
 @main
 struct NextExplorerApp: App {
     #if os(iOS)
@@ -87,7 +95,10 @@ struct NextExplorerApp: App {
         #if os(macOS)
             // No window restores (each scene opts out), and leftover saved state from a crash,
             // Force Quit or test run made AppKit restore nothing, so no window opened at all.
-            UserDefaults.standard.register(defaults: ["ApplePersistenceIgnoreState": true])
+            UserDefaults.standard.register(defaults: [
+                MacAppDefaults.ignorePersistenceKey: true,
+                MacAppDefaults.tooltipDelayKey: MacAppDefaults.tooltipDelayMilliseconds,
+            ])
         #endif
         // Point localization at the saved language before the first view builds, so the splash and
         // login are already in the chosen language rather than flashing the system one first.

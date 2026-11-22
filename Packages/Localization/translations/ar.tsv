@@ -1475,3 +1475,6 @@ login.stepCode	الرمز
 apiTokens.badgeExpired	انتهت صلاحيته
 common.decrease	تقليل
 common.increase	زيادة
+common.moreInfo	مزيد من المعلومات
+versionedFiles.pathHeader	المسار
+versionedFiles.versionsHeader	الإصدارات

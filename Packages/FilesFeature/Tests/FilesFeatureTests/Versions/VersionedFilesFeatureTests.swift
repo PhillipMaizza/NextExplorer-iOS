@@ -36,6 +36,16 @@ struct VersionedFilesFeatureTests: VersionedFilesTestSupport {
     }
 
     @Test
+    func filtersAreDisabledOnlyWithNoHistoryAndNoFilter() {
+        var state = loadedState(total: 0)
+        #expect(state.isFilterDisabled)
+        state.filter.state = .orphaned
+        #expect(!state.isFilterDisabled)
+        state = loadedState(files: [file("f1")])
+        #expect(!state.isFilterDisabled)
+    }
+
+    @Test
     func appearingAgainDoesNotReload() async {
         let store = makeStore(loadedState(files: [file("f1")]))
 

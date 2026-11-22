@@ -1335,3 +1335,6 @@ login.stepCode	Kód
 apiTokens.badgeExpired	Vypršelo
 common.decrease	Snížit
 common.increase	Zvýšit
+common.moreInfo	Další informace
+versionedFiles.pathHeader	Cesta
+versionedFiles.versionsHeader	Verze
