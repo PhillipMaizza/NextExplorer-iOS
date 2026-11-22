@@ -48,7 +48,15 @@ public enum DSButtonStyle: CaseIterable, Hashable {
     }
 
     var borderColor: Color {
-        self == .secondary || self == .outline ? .borderPrimary : .clear
+        self == .secondary || self == .outline ? Self.hairline : .clear
+    }
+
+    private static var hairline: Color {
+        #if os(macOS)
+            .macLine
+        #else
+            .borderPrimary
+        #endif
     }
 }
 
