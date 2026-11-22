@@ -20,22 +20,34 @@
         var body: some View {
             HStack(spacing: 0) {
                 List(OpenSourceLicense.all, selection: $selection) { license in
-                    VStack(alignment: .leading) {
-                        Text(license.name).lineLimit(1)
-                        Text(license.licenseName).font(.callout).foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: .space2) {
+                        Text(license.name)
+                            .type(.body2(.semibold))
+                            .lineLimit(1)
+                        Text(license.licenseName)
+                            .type(.caption(.regular), style: .secondary)
                     }
+                    .padding(.vertical, .space4)
                     .tag(license.id)
                 }
                 .listStyle(.sidebar)
                 .frame(width: Metrics.listWidth)
                 Divider()
-                ScrollView {
+                ScrollView([.vertical, .horizontal]) {
                     if let selected {
-                        Text(selected.text)
-                            .font(.system(.callout, design: .monospaced))
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(Metrics.padding)
+                        VStack(alignment: .leading, spacing: .space12) {
+                            HStack(spacing: .space8) {
+                                Text(selected.name)
+                                    .type(.headline4)
+                                MacChip(text: selected.licenseName, kind: .pill)
+                            }
+                            Text(selected.text)
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundStyle(Color.secondaryText)
+                                .textSelection(.enabled)
+                                .fixedSize()
+                        }
+                        .padding(Metrics.padding)
                     }
                 }
             }
