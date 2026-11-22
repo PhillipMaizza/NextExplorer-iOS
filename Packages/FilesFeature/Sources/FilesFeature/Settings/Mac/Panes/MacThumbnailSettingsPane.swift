@@ -9,85 +9,90 @@
         static let sizeStep = 8
         static let qualityStep = 5
         static let concurrencyStep = 1
+        static let qualityRowHeight: CGFloat = .size64
+        static let qualityValueWidth: CGFloat = .size32
     }
 
-    /// The Thumbnails pane: the server's thumbnail generation, edited in place and saved with
-    /// the button under the form.
     struct MacThumbnailSettingsPane: View {
         @Bindable var store: StoreOf<ThumbnailSettingsFeature>
 
         var body: some View {
-            Group {
+            MacFormPage {
                 if store.isUnavailable {
-                    MacSettingsForm { MacSettingsNote(L10n.ThumbnailSettings.unavailable) }
-                } else {
-                    form.macSettingsSaveBar(
-                        L10n.ThumbnailSettings.saveButton,
-                        isSaving: store.isSaving,
-                        isEnabled: store.isSaveEnabled
-                    ) { store.send(.saveTapped) }
-                }
-            }
-            .overlay {
-                if store.phase == .loading, store.loaded == nil, !store.isUnavailable {
+                    MacNote(L10n.ThumbnailSettings.unavailable, kind: .info)
+                } else if store.phase == .loading, store.loaded == nil {
                     MacSpinner()
+                        .frame(maxWidth: .infinity)
+                } else {
+                    settingsGroup
+                    if let error = store.errorMessage ?? store.phase.errorMessage {
+                        MacNote(error, kind: .error)
+                    }
                 }
             }
+            .disabled(store.isSaving)
             .onAppear { store.send(.onAppear) }
         }
 
-        private var form: some View {
-            MacSettingsPane {
-                Section {
-                    Toggle(isOn: $store.draft.isEnabled.sending(\.enabledChanged)) {
-                        MacRowTitle(title: L10n.ThumbnailSettings.enable, subtitle: L10n.ThumbnailSettings.enableHelp)
-                    }
-                    .accessibilityLabel(L10n.ThumbnailSettings.enable)
+        private var settingsGroup: some View {
+            MacFormGroup {
+                MacFormRow {
+                    MacRowTitle(title: L10n.ThumbnailSettings.enable, subtitle: L10n.ThumbnailSettings.enableHelp)
+                } control: {
+                    Toggle(L10n.ThumbnailSettings.enable, isOn: $store.draft.isEnabled.sending(\.enabledChanged))
+                        .labelsHidden()
                 }
-                Section {
-                    numberRow(L10n.ThumbnailSettings.quality, help: L10n.ThumbnailSettings.qualityHelp) {
-                        MacNumberStepper(
-                            label: L10n.ThumbnailSettings.quality,
-                            value: store.draft.quality,
-                            range: ThumbnailSettings.qualityRange,
-                            step: Metrics.qualityStep
-                        ) {
-                            store.send(.qualityChanged($0))
+                Group {
+                    MacFormRow {
+                        MacRowTitle(title: L10n.ThumbnailSettings.quality, subtitle: L10n.ThumbnailSettings.qualityHelp)
+                    } control: {
+                        HStack(spacing: .space12) {
+                            MacSlider(
+                                label: L10n.ThumbnailSettings.quality,
+                                value: store.draft.quality,
+                                range: ThumbnailSettings.qualityRange,
+                                step: Metrics.qualityStep
+                            ) {
+                                store.send(.qualityChanged($0))
+                            }
+                            Text(store.draft.quality, format: .number)
+                                .type(.body2(.regular), style: .secondary)
+                                .monospacedDigit()
+                                .frame(width: Metrics.qualityValueWidth, alignment: .trailing)
                         }
                     }
-                    numberRow(L10n.ThumbnailSettings.maxDimension, help: L10n.ThumbnailSettings.maxDimensionHelp) {
-                        MacNumberStepper(
-                            label: L10n.ThumbnailSettings.maxDimension,
-                            value: store.draft.size,
-                            range: ThumbnailSettings.sizeRange,
-                            step: Metrics.sizeStep
-                        ) {
-                            store.send(.sizeChanged($0))
-                        }
-                    }
-                    numberRow(L10n.ThumbnailSettings.concurrency, help: L10n.ThumbnailSettings.concurrencyHelp) {
-                        MacNumberStepper(
-                            label: L10n.ThumbnailSettings.concurrency,
-                            value: store.draft.concurrency,
-                            range: ThumbnailSettings.concurrencyRange,
-                            step: Metrics.concurrencyStep
-                        ) {
-                            store.send(.concurrencyChanged($0))
-                        }
-                    }
+                    .frame(minHeight: Metrics.qualityRowHeight)
+                    stepperRow(
+                        L10n.ThumbnailSettings.maxDimension,
+                        help: L10n.ThumbnailSettings.maxDimensionHelp,
+                        value: store.draft.size,
+                        range: ThumbnailSettings.sizeRange,
+                        step: Metrics.sizeStep
+                    ) { store.send(.sizeChanged($0)) }
+                    stepperRow(
+                        L10n.ThumbnailSettings.concurrency,
+                        help: L10n.ThumbnailSettings.concurrencyHelp,
+                        value: store.draft.concurrency,
+                        range: ThumbnailSettings.concurrencyRange,
+                        step: Metrics.concurrencyStep
+                    ) { store.send(.concurrencyChanged($0)) }
                 }
                 .disabled(!store.draft.isEnabled)
-                if let error = store.errorMessage ?? store.phase.errorMessage {
-                    Text(error).foregroundStyle(Color.negativeText)
-                }
             }
         }
 
-        private func numberRow(_ title: String, help: String, @ViewBuilder control: () -> some View) -> some View {
-            LabeledContent {
-                control()
-            } label: {
+        private func stepperRow(
+            _ title: String,
+            help: String,
+            value: Int,
+            range: ClosedRange<Int>,
+            step: Int,
+            onChange: @escaping (Int) -> Void
+        ) -> some View {
+            MacFormRow {
                 MacRowTitle(title: title, subtitle: help)
+            } control: {
+                MacStepper(label: title, value: value, range: range, step: step, onChange: onChange)
             }
         }
     }
@@ -99,6 +104,6 @@
         state.draft = ThumbnailSettings()
         state.phase = .loaded
         return MacThumbnailSettingsPane(store: Store(initialState: state) { ThumbnailSettingsFeature() })
-            .previewCanvas(.settingsPane)
+            .previewCanvas(.settingsWindow)
     }
 #endif
