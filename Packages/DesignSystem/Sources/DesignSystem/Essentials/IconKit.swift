@@ -163,6 +163,8 @@ public enum IconKit {
     public static let pinFill = Image(systemName: "pin.fill")
     public static let error = Image(systemName: "exclamationmark.circle")
     public static let errorFill = Image(systemName: "exclamationmark.circle.fill")
+    public static let warningFill = Image(systemName: "exclamationmark.triangle.fill")
+    public static let infoFill = Image(systemName: "info.circle.fill")
     public static let transfers = Image(systemName: "arrow.up.arrow.down.circle")
     public static let photoLibrary = Image(systemName: "photo.on.rectangle")
     public static let cameraFill = Image(systemName: "camera.fill")
