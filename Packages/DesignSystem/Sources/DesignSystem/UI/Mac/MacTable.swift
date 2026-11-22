@@ -98,6 +98,13 @@
             padding(.horizontal, -MacTableMetrics.rowInset)
         }
 
+        func macListBox() -> some View {
+            let shape = RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
+            return background(shape.fill(Color.macField))
+                .clipShape(shape)
+                .overlay(shape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline))
+        }
+
         func macListRow(isSelected: Bool) -> some View {
             padding(.horizontal, MacTableMetrics.rowInset)
                 .frame(minHeight: MacTableMetrics.listRowHeight)
