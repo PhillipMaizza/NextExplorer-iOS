@@ -1184,6 +1184,7 @@ menu.zoomToFit	Zoom to Fit
 menu.quitTransfersTitle	Quit NextExplorer?
 menu.quitTransfersMessage	Uploads or downloads are still in progress. Quitting now stops them.
 menu.quitTransfersConfirm	Quit
+menu.toggleSidebar	Show or Hide Sidebar
 media.play	Play
 media.pause	Pause
 media.position	Playback Position

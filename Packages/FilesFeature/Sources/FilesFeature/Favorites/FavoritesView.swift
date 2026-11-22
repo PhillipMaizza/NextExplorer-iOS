@@ -89,6 +89,7 @@ struct FavoritesView: View {
             rootContent
         } destination: { store in
             BrowseContentView(store: store)
+                .hidesSystemBackOnMac()
         }
         .platformAccentTint()
     }

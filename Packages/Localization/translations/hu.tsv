@@ -1019,6 +1019,7 @@ menu.zoomToFit	Ablakhoz igazítás
 menu.quitTransfersTitle	Kilép a NextExplorerből?
 menu.quitTransfersMessage	Feltöltések vagy letöltések még folyamatban vannak. Ha most kilép, leállnak.
 menu.quitTransfersConfirm	Kilépés
+menu.toggleSidebar	Oldalsáv megjelenítése vagy elrejtése
 media.play	Lejátszás
 media.pause	Szünet
 media.position	Lejátszási pozíció

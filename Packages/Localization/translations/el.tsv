@@ -1019,6 +1019,7 @@ menu.zoomToFit	Προσαρμογή στο παράθυρο
 menu.quitTransfersTitle	Έξοδος από το NextExplorer;
 menu.quitTransfersMessage	Μεταφορτώσεις ή λήψεις βρίσκονται ακόμη σε εξέλιξη. Αν βγείτε τώρα, θα σταματήσουν.
 menu.quitTransfersConfirm	Έξοδος
+menu.toggleSidebar	Εμφάνιση ή απόκρυψη πλαϊνής στήλης
 media.play	Αναπαραγωγή
 media.pause	Παύση
 media.position	Θέση αναπαραγωγής

@@ -1043,6 +1043,7 @@ menu.zoomToFit	Вмістити у вікно
 menu.quitTransfersTitle	Вийти з NextExplorer?
 menu.quitTransfersMessage	Вивантаження або завантаження ще тривають. Вихід зараз їх зупинить.
 menu.quitTransfersConfirm	Вийти
+menu.toggleSidebar	Показати або сховати бічну панель
 media.play	Відтворити
 media.pause	Пауза
 media.position	Позиція відтворення

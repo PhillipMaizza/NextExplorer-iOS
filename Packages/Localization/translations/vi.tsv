@@ -1007,6 +1007,7 @@ menu.zoomToFit	Vừa khít
 menu.quitTransfersTitle	Thoát NextExplorer?
 menu.quitTransfersMessage	Các lượt tải lên hoặc tải xuống vẫn đang diễn ra. Thoát bây giờ sẽ dừng chúng.
 menu.quitTransfersConfirm	Thoát
+menu.toggleSidebar	Hiện hoặc ẩn thanh bên
 media.play	Phát
 media.pause	Tạm dừng
 media.position	Vị trí phát

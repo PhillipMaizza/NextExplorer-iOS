@@ -1019,6 +1019,7 @@ menu.zoomToFit	Sığacak Şekilde Yakınlaştır
 menu.quitTransfersTitle	NextExplorer'dan çıkılsın mı?
 menu.quitTransfersMessage	Yüklemeler veya indirmeler hâlâ sürüyor. Şimdi çıkmak bunları durdurur.
 menu.quitTransfersConfirm	Çık
+menu.toggleSidebar	Kenar çubuğunu göster veya gizle
 media.play	Oynat
 media.pause	Duraklat
 media.position	Oynatma Konumu

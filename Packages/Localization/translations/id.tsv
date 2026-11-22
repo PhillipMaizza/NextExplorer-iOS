@@ -1007,6 +1007,7 @@ menu.zoomToFit	Sesuaikan Ukuran
 menu.quitTransfersTitle	Keluar dari NextExplorer?
 menu.quitTransfersMessage	Unggahan atau unduhan masih berlangsung. Keluar sekarang akan menghentikannya.
 menu.quitTransfersConfirm	Keluar
+menu.toggleSidebar	Tampilkan atau sembunyikan bar samping
 media.play	Putar
 media.pause	Jeda
 media.position	Posisi Pemutaran

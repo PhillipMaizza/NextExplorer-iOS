@@ -1291,6 +1291,7 @@ shareUpload.deferredBody#other	NextExplorer を開いて、%lld 個の大きな�
 shareUpload.failureTooLarge#other	%lld 個のファイルをアップロードできませんでした。 サーバー接続がこの大きさのファイルを拒否しました。もう一度共有すると、NextExplorer が分割して送信します。
 shareUpload.startedDeferred	NextExplorer 用に保存しました。アプリを開いて大きなファイルをアップロードしてください。
 menu.goToFolderPlaceholder	書類/レポート
+menu.toggleSidebar	サイドバーの表示を切り替える
 emptyState.dropHintFiles	「ファイル」や「写真」からファイルをここにドラッグすることもできます。
 emptyState.dropHintFinder	Finderからファイルをここにドラッグすることもできます。
 login.stepServer	サーバー

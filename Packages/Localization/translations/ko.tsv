@@ -1291,6 +1291,7 @@ shareUpload.deferredBody#other	NextExplorer를 열어 큰 파일 %lld개를 업�
 shareUpload.failureTooLarge#other	파일 %lld개를 업로드하지 못했습니다. 서버 연결이 이 크기의 파일을 거부했습니다. 다시 공유하면 NextExplorer가 나누어 전송합니다.
 shareUpload.startedDeferred	NextExplorer용으로 저장했습니다. 앱을 열어 큰 파일을 업로드하세요.
 menu.goToFolderPlaceholder	문서/보고서
+menu.toggleSidebar	사이드바 보기 전환
 emptyState.dropHintFiles	파일 또는 사진 앱에서 파일을 여기로 드래그할 수도 있습니다.
 emptyState.dropHintFinder	Finder에서 파일을 여기로 드래그할 수도 있습니다.
 login.stepServer	서버

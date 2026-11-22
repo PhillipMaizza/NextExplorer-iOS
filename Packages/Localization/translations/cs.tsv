@@ -1042,6 +1042,7 @@ menu.zoomToFit	Přizpůsobit velikosti
 menu.quitTransfersTitle	Ukončit NextExplorer?
 menu.quitTransfersMessage	Nahrávání nebo stahování stále probíhá. Ukončením ho zastavíte.
 menu.quitTransfersConfirm	Ukončit
+menu.toggleSidebar	Zobrazit nebo skrýt boční panel
 media.play	Přehrát
 media.pause	Pozastavit
 media.position	Pozice přehrávání

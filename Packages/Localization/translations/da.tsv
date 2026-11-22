@@ -1019,6 +1019,7 @@ menu.zoomToFit	Tilpas til vindue
 menu.quitTransfersTitle	Afslut NextExplorer?
 menu.quitTransfersMessage	Uploads eller downloads er stadig i gang. Hvis du afslutter nu, stopper de.
 menu.quitTransfersConfirm	Afslut
+menu.toggleSidebar	Vis eller skjul indholdsoversigt
 media.play	Afspil
 media.pause	Pause
 media.position	Afspilningsposition

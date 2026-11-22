@@ -26,6 +26,10 @@ public struct BrowseTabFeature {
             visibleFolder.directoryPath
         }
 
+        var canGoBackFromScreen: Bool {
+            trash != nil || canGoBack
+        }
+
         /// The folder on screen: the top of the stack, or the root when nothing is pushed.
         var visibleFolder: BrowseFeature.State {
             path.last ?? root
@@ -100,7 +104,11 @@ public struct BrowseTabFeature {
         Reduce { state, action in
             switch action {
             case .goBack:
-                state.goBack()
+                if state.trash != nil {
+                    state.trash = nil
+                } else {
+                    state.goBack()
+                }
                 return .none
 
             case .goToEnclosingFolder:

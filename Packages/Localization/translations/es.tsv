@@ -1327,6 +1327,7 @@ shareUpload.failureTooLarge#one	%lld archivo no se subió. La conexión con tu s
 shareUpload.failureTooLarge#other	%lld archivos no se subieron. La conexión con tu servidor rechaza archivos tan grandes. Compártelos de nuevo y NextExplorer los enviará por partes.
 shareUpload.startedDeferred	Guardado para NextExplorer. Abre la app para subir tus archivos grandes.
 menu.goToFolderPlaceholder	Documentos/Informes
+menu.toggleSidebar	Mostrar u ocultar barra lateral
 emptyState.dropHintFiles	También puedes arrastrar archivos aquí desde Archivos o Fotos.
 emptyState.dropHintFinder	También puedes arrastrar archivos aquí desde el Finder.
 login.stepServer	Servidor
