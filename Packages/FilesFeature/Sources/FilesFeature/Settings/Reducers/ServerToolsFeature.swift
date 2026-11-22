@@ -44,7 +44,9 @@ public struct ServerToolsFeature {
                 .cancellable(id: CancelID.load, cancelInFlight: true)
 
             case let .loadResponse(.success(tools)):
-                state.tools = tools
+                state.tools = tools.sorted {
+                    ($0.status, $0.name.lowercased()) < ($1.status, $1.name.lowercased())
+                }
                 state.phase = .loaded
                 return .none
 

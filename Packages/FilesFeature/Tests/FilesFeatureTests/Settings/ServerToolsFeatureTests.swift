@@ -13,6 +13,10 @@ struct ServerToolsFeatureTests {
         ServerCapability(name: "ffmpeg", isAvailable: true, version: "7.1", installPackage: "ffmpeg"),
         ServerCapability(name: "rsync", isAvailable: false, isUsed: false),
     ]
+    private let ripgrep = ServerCapability(name: "ripgrep", isAvailable: false, installPackage: "ripgrep")
+    private let archive = ServerCapability(
+        name: "7-Zip", isAvailable: true, version: "24.08", missingFormats: ["rar", "7z"]
+    )
 
     @Test
     func theToolsLoadOnceAndStayOnTheNextAppearance() async {
@@ -66,12 +70,23 @@ struct ServerToolsFeatureTests {
     }
 
     @Test
-    func theRowsSayInstalledMissingOrNotUsedAndWhatToInstall() {
-        let ripgrep = ServerCapability(name: "ripgrep", isAvailable: false, installPackage: "ripgrep")
-        let archive = ServerCapability(
-            name: "7-Zip", isAvailable: true, version: "24.08", missingFormats: ["rar", "7z"]
-        )
+    func theToolsListMissingFirstThenInstalledThenNotUsedEachByName() async {
+        let unsorted = [tools[1], tools[0], ripgrep, archive]
+        let store = TestStore(initialState: ServerToolsFeature.State(serverURL: SettingsTestSupport.serverURL)) {
+            ServerToolsFeature()
+        } withDependencies: {
+            $0.filesClient.fetchCapabilities = { _ in unsorted }
+        }
 
+        await store.send(.onAppear) { $0.phase = .loading }
+        await store.receive(\.loadResponse) {
+            $0.tools = [ripgrep, archive, tools[0], tools[1]]
+            $0.phase = .loaded
+        }
+    }
+
+    @Test
+    func theRowsSayInstalledMissingOrNotUsedAndWhatToInstall() {
         #expect(tools[0].status == .installed && tools[0].detail == "7.1")
         #expect(ripgrep.status == .missing && ripgrep.detail?.contains("ripgrep") == true)
         #expect(tools[1].status == .notUsed && tools[1].detail == nil)

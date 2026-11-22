@@ -7,8 +7,8 @@ import SwiftUI
 /// What one program row says under its name: the version it printed, or what an admin needs to
 /// install it. Shared by the iOS page and the Mac pane.
 extension ServerCapability {
-    enum Status {
-        case installed, missing, notUsed
+    enum Status: Comparable {
+        case missing, installed, notUsed
     }
 
     var status: Status {
