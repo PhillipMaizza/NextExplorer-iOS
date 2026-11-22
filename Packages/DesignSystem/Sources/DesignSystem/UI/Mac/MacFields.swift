@@ -1,4 +1,5 @@
 #if os(macOS)
+    import AppKit
     import Localization
     import SwiftUI
 
@@ -8,6 +9,7 @@
         private let prompt: Text?
         @State private var isRevealed = false
         @FocusState private var isFocused: Bool
+        @Environment(\.isEnabled) private var isEnabled
 
         public init(_ title: String, text: Binding<String>, prompt: Text? = nil) {
             self.title = title
@@ -16,7 +18,7 @@
         }
 
         public var body: some View {
-            HStack(spacing: .space4) {
+            HStack(spacing: .space8) {
                 Group {
                     if isRevealed {
                         TextField(title, text: $text, prompt: prompt)
@@ -24,7 +26,7 @@
                         SecureField(title, text: $text, prompt: prompt)
                     }
                 }
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
                 .labelsHidden()
                 .type(.body2(.regular))
                 .focused($isFocused)
@@ -40,10 +42,30 @@
                 .help(revealLabel)
                 .accessibilityLabel(revealLabel)
             }
+            .padding(.leading, .space12)
+            .padding(.trailing, .space8)
+            .macFieldChrome(isFocused: isFocused, isEnabled: isEnabled)
+            .background(MacAccentCaret(isFocused: isFocused, isRevealed: isRevealed))
         }
 
         private var revealLabel: String {
             isRevealed ? L10n.Login.hidePassword : L10n.Login.showPassword
+        }
+    }
+
+    private struct MacAccentCaret: NSViewRepresentable {
+        let isFocused: Bool
+        let isRevealed: Bool
+
+        func makeNSView(context _: Context) -> NSView {
+            NSView()
+        }
+
+        func updateNSView(_ view: NSView, context _: Context) {
+            guard isFocused else { return }
+            Task { @MainActor in
+                (view.window?.firstResponder as? NSTextView)?.insertionPointColor = NSColor(Color.accent)
+            }
         }
     }
 

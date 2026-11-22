@@ -64,7 +64,7 @@
         public var body: some View {
             VStack(alignment: .leading, spacing: Metrics.spacing) {
                 VStack(alignment: .leading, spacing: Metrics.messageSpacing) {
-                    Text(title).type(.label3)
+                    Text(title).type(.headline4)
                     if let message {
                         Text(message)
                             .type(.body2(.regular), style: .secondary)

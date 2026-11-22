@@ -29,8 +29,14 @@
                 .labelsHidden()
                 .type(.body2(.regular))
                 .focused($isFocused)
-                .tint(Color.accent)
                 .padding(.horizontal, .space12)
+                .macFieldChrome(isFocused: isFocused, isEnabled: isEnabled)
+        }
+    }
+
+    extension View {
+        func macFieldChrome(isFocused: Bool, isEnabled: Bool) -> some View {
+            tint(Color.accent)
                 .frame(height: Constants.fieldHeight)
                 .background(Constants.shape.fill(Color.macField))
                 .background(
@@ -57,21 +63,24 @@
         private let valueLabel: String
         @Binding private var selection: Value
         private let options: () -> Options
+        private let shouldFillWidth: Bool
 
         public init(
             _ title: String,
             valueLabel: String,
             selection: Binding<Value>,
+            shouldFillWidth: Bool = false,
             @ViewBuilder options: @escaping () -> Options
         ) {
             self.title = title
             self.valueLabel = valueLabel
             _selection = selection
+            self.shouldFillWidth = shouldFillWidth
             self.options = options
         }
 
         public var body: some View {
-            MacPopupMenu(title, valueLabel: valueLabel) {
+            MacPopupMenu(title, valueLabel: valueLabel, shouldFillWidth: shouldFillWidth) {
                 Picker(title, selection: $selection) { options() }
                     .pickerStyle(.inline)
                     .labelsHidden()
@@ -83,22 +92,29 @@
         private let title: String
         private let valueLabel: String
         private let items: () -> Items
+        private let shouldFillWidth: Bool
         @Environment(\.isEnabled) private var isEnabled
 
-        public init(_ title: String, valueLabel: String, @ViewBuilder items: @escaping () -> Items) {
+        public init(
+            _ title: String,
+            valueLabel: String,
+            shouldFillWidth: Bool = false,
+            @ViewBuilder items: @escaping () -> Items
+        ) {
             self.title = title
             self.valueLabel = valueLabel
+            self.shouldFillWidth = shouldFillWidth
             self.items = items
         }
 
         public var body: some View {
             Menu(content: items) {
-                MacPopupLabel(valueLabel: valueLabel)
+                MacPopupLabel(valueLabel: valueLabel, shouldFillWidth: shouldFillWidth)
             }
             .menuStyle(.button)
             .buttonStyle(.plain)
             .menuIndicator(.hidden)
-            .fixedSize()
+            .fixedSize(horizontal: !shouldFillWidth, vertical: true)
             .opacity(isEnabled ? 1 : MacOpacity.disabled)
             .accessibilityLabel(title)
             .accessibilityValue(valueLabel)
@@ -107,6 +123,7 @@
 
     private struct MacPopupLabel: View {
         let valueLabel: String
+        let shouldFillWidth: Bool
 
         var body: some View {
             HStack(spacing: .space8) {
@@ -114,6 +131,7 @@
                     .type(.body2(.regular))
                     .lineLimit(1)
                     .truncationMode(.head)
+                    .frame(maxWidth: shouldFillWidth ? .infinity : nil, alignment: .leading)
                 IconKit.chevronUpDown
                     .imageScale(.small)
                     .foregroundStyle(Color.macChromeSecondary)
