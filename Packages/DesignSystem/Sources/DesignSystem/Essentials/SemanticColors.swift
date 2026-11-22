@@ -20,6 +20,13 @@ public extension Color {
     /// Tertiary text, dimmer than `secondaryDS`, no asset of its own so it stays a
     /// derived tone rather than a third hand tuned light/dark pair to maintain.
     static let tertiaryDS = Color.secondaryDS.opacity(Constants.tertiaryOpacity)
+    #if os(macOS)
+        static let secondaryText = Color.macChromeSecondary
+        static let tertiaryText = Color.macChromeTertiary
+    #else
+        static let secondaryText = Color.secondaryDS
+        static let tertiaryText = Color.tertiaryDS
+    #endif
     static let positive = Color("Success", bundle: .module)
     static let attention = Color("Warning", bundle: .module)
     /// Negative/error feedback.

@@ -13,6 +13,7 @@ public struct DSFieldContainer<Content: View>: View {
     private let icon: Image
     private let shakeTrigger: CGFloat
     private let isInvalid: Bool
+    private let isFocused: Bool
     private let content: Content
 
     public init(
@@ -20,16 +21,29 @@ public struct DSFieldContainer<Content: View>: View {
         icon: Image,
         shakeTrigger: CGFloat = 0,
         isInvalid: Bool = false,
+        isFocused: Bool = false,
         @ViewBuilder content: () -> Content
     ) {
         self.label = label
         self.icon = icon
         self.shakeTrigger = shakeTrigger
         self.isInvalid = isInvalid
+        self.isFocused = isFocused
         self.content = content()
     }
 
     public var body: some View {
+        #if os(macOS)
+            content
+                .macLargeField(isFocused: isFocused, isInvalid: isInvalid)
+                .accessibilityLabel(label)
+                .shake(trigger: shakeTrigger)
+        #else
+            labeledField
+        #endif
+    }
+
+    private var labeledField: some View {
         VStack(alignment: .leading, spacing: .space8) {
             Text(label)
                 .type(.body2(.semibold), style: .primaryOnSurface)
