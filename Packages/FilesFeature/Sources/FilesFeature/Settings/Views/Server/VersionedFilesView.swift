@@ -30,19 +30,7 @@ struct VersionedFilesView: View {
             filesList
             pager
         }
-        .dsAlert(isPresented: Binding(get: { store.confirmation != nil }, set: { _ in })) {
-            DSAlertSheet(
-                icon: IconKit.delete,
-                title: confirmationTitle,
-                message: L10n.VersionedFiles.confirmMessage,
-                confirmTitle: L10n.VersionedFiles.confirmDelete,
-                dismissTitle: L10n.Common.cancel,
-                role: .destructive,
-                closeAccessibilityLabel: L10n.Common.close,
-                onConfirm: { store.send(.confirmationConfirmed) },
-                onDismiss: { store.send(.confirmationCancelled) }
-            )
-        }
+        .versionedFilesDeleteAlert(store)
     }
 
     // MARK: Summary and filters
@@ -212,17 +200,6 @@ struct VersionedFilesView: View {
 
     // MARK: Words
 
-    private var confirmationTitle: String {
-        switch store.confirmation {
-        case let .all(fileID):
-            L10n.VersionedFiles.confirmAllTitle(store.files.first { $0.id == fileID }?.name ?? "")
-        case let .selected(_, versionIDs):
-            L10n.VersionedFiles.confirmSomeTitle(versionIDs.count)
-        case .none:
-            ""
-        }
-    }
-
     private func zoneLabel(_ zone: VersionedZone?) -> String {
         guard let zone else { return L10n.VersionedFiles.zoneUnknown }
         switch zone.kind {
@@ -366,4 +343,33 @@ private func versionsPreview(
 
 #Preview("Failed") {
     versionsPreview(page: nil, phase: .failed("The server could not be reached."))
+}
+
+extension View {
+    func versionedFilesDeleteAlert(_ store: StoreOf<VersionedFilesFeature>) -> some View {
+        dsAlert(isPresented: Binding(get: { store.confirmation != nil }, set: { _ in })) {
+            DSAlertSheet(
+                icon: IconKit.delete,
+                title: Self.versionedFilesConfirmationTitle(store),
+                message: L10n.VersionedFiles.confirmMessage,
+                confirmTitle: L10n.VersionedFiles.confirmDelete,
+                dismissTitle: L10n.Common.cancel,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.confirmationConfirmed) },
+                onDismiss: { store.send(.confirmationCancelled) }
+            )
+        }
+    }
+
+    private static func versionedFilesConfirmationTitle(_ store: StoreOf<VersionedFilesFeature>) -> String {
+        switch store.confirmation {
+        case let .all(fileID):
+            L10n.VersionedFiles.confirmAllTitle(store.files.first { $0.id == fileID }?.name ?? "")
+        case let .selected(_, versionIDs):
+            L10n.VersionedFiles.confirmSomeTitle(versionIDs.count)
+        case .none:
+            ""
+        }
+    }
 }

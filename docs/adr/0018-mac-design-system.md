@@ -53,6 +53,10 @@ with blue selection is not possible natively.
 - Confirmations the canvas draws as alerts are `MacAlertSheet`s: the app mark, the question, the
   message centred, then the full width confirm over Cancel (Esc). Return confirms nothing, so a
   destructive choice is never one keypress away.
+  Every confirmation goes through `dsAlert`, which shows this sheet on the Mac and closes it after
+  the chosen button, as a system alert would; while the confirm action runs, its spinner locks
+  the buttons. The quit prompt with transfers running stays an `NSAlert`: it answers
+  `applicationShouldTerminate`, where no window is sure to be open to hold a sheet.
 - A pane's save and discard buttons sit in its header, not in a bar under the form. Notes under a
   group are one `MacFormFootnote`. In an excluded paths list a removed path stays, struck through
   with Add beside it, until the pane is saved, so a removal can be taken back before it reaches

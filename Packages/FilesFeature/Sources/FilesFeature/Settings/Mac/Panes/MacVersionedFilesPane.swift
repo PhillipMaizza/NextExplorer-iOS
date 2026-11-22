@@ -33,15 +33,7 @@
                     Text(error).foregroundStyle(Color.negativeText)
                 }
             }
-            .confirmationDialog(
-                confirmationTitle,
-                isPresented: Binding(get: { store.confirmation != nil }, set: { _ in })
-            ) {
-                Button(L10n.VersionedFiles.confirmDelete, role: .destructive) { store.send(.confirmationConfirmed) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.confirmationCancelled) }
-            } message: {
-                Text(L10n.VersionedFiles.confirmMessage)
-            }
+            .versionedFilesDeleteAlert(store)
         }
 
         @ViewBuilder
@@ -216,15 +208,6 @@
         }
 
         // MARK: Words
-
-        private var confirmationTitle: String {
-            switch store.confirmation {
-            case let .all(fileID): L10n.VersionedFiles
-                .confirmAllTitle(store.files.first { $0.id == fileID }?.name ?? "")
-            case let .selected(_, versionIDs): L10n.VersionedFiles.confirmSomeTitle(versionIDs.count)
-            case .none: ""
-            }
-        }
 
         private func zoneLabel(_ zone: VersionedZone?) -> String {
             guard let zone else { return L10n.VersionedFiles.zoneUnknown }

@@ -39,15 +39,7 @@
                     MacNote(error, kind: .error)
                 }
             }
-            .confirmationDialog(
-                L10n.ActivityLog.clearTitle,
-                isPresented: Binding(get: { store.clearPhase.isConfirming }, set: { _ in })
-            ) {
-                Button(L10n.ActivityLog.clearConfirm, role: .destructive) { store.send(.clearConfirmed) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.clearCancelled) }
-            } message: {
-                Text(L10n.ActivityLog.clearMessage)
-            }
+            .activityLogClearAlert(store)
         }
 
         private var settingsGroup: some View {

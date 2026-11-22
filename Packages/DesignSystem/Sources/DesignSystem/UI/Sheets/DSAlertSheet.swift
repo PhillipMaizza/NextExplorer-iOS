@@ -44,7 +44,7 @@ public struct DSAlertSheet: View {
     let dismissTitle: String
     let neutralTitle: String?
     let role: Role
-    private let isConfirmLoading: Bool
+    let isConfirmLoading: Bool
     private let closeAccessibilityLabel: String
     let onConfirm: () -> Void
     let onNeutral: (() -> Void)?
