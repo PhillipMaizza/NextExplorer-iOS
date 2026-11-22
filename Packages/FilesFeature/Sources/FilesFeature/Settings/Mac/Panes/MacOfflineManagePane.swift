@@ -5,80 +5,71 @@
     import Localization
     import SwiftUI
 
-    private enum Metrics {
-        static let padding: CGFloat = .space24
-        static let sizeColumnWidth: CGFloat = 90
-    }
-
-    /// Manage Offline Files on the Mac: every item kept offline in a table, removed with the
-    /// minus button, Delete or the context menu.
     struct MacOfflineManagePane: View {
         let store: StoreOf<OfflineManageFeature>
-        @State private var selection: Set<OfflinePinnedRootUsage.ID> = []
+        @Environment(\.dismiss) private var dismiss
 
         var body: some View {
-            VStack(alignment: .leading, spacing: .space12) {
-                VStack(spacing: 0) {
-                    table
-                    Divider()
-                    HStack(spacing: 0) {
-                        MacTableBarButton(icon: IconKit.minus, label: L10n.Common.remove) { removeSelection() }
-                            .disabled(selection.isEmpty)
-                        Spacer()
+            MacSettingsPaneCard(
+                title: L10n.Offline.manageTitle,
+                subtitle: L10n.Offline.available(FileSizeFormat.string(store.totalBytes))
+            ) {
+                MacFormPage {
+                    MacFormGroup {
+                        if store.isEmpty {
+                            MacFormRow {
+                                Text(L10n.Offline.manageEmpty).foregroundStyle(Color.macChromeSecondary)
+                            } control: {
+                                EmptyView()
+                            }
+                        }
+                        ForEach(store.usages) { usage in
+                            row(usage)
+                        }
                     }
-                    .padding(.horizontal, .space4)
-                    .padding(.vertical, .space2)
                 }
-                .border(Color(nsColor: .separatorColor))
-                MacSettingsNote(L10n.Offline.available(FileSizeFormat.string(store.totalBytes)))
+            } tools: {
+                Button(action: { dismiss() }, label: {
+                    Label { Text(L10n.Settings.sectionStorage) } icon: { IconKit.back }
+                        .labelStyle(.titleAndIcon)
+                })
+                .buttonStyle(.macDS(.secondary))
             }
-            .padding(Metrics.padding)
             .navigationTitle(L10n.Offline.manageTitle)
-            .task { store.send(.onAppear) }
-        }
-
-        private var table: some View {
-            Table(store.usages, selection: $selection) {
-                TableColumn(L10n.Sort.name) { usage in
-                    MacItemLabel(name: usage.displayName, isDirectory: usage.root.isDirectory)
-                }
-                TableColumn(L10n.FileInfo.rowLocation) { usage in
-                    Text(usage.root.path).foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
-                }
-                TableColumn(L10n.Sort.size) { usage in
-                    Text(FileSizeFormat.string(usage.sizeBytes))
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                }
-                .width(Metrics.sizeColumnWidth)
-            }
-            .contextMenu(forSelectionType: OfflinePinnedRootUsage.ID.self) { ids in
-                Button(role: .destructive) { remove(ids) } label: {
-                    Label { Text(L10n.Common.remove) } icon: { IconKit.delete }
-                }
-                .labelStyle(.titleAndIcon)
-            }
-            .onDeleteCommand { removeSelection() }
+            .toolbar(removing: .title)
+            .navigationBarBackButtonHidden()
             .offlineRemovalAlert(
                 store.removal,
                 onConfirm: { store.send(.removeConfirmed, animation: DSMotion.listDiff) },
                 onCancel: { store.send(.removeCancelled) }
             )
-            .overlay {
-                if store.isEmpty {
-                    Text(L10n.Offline.manageEmpty).foregroundStyle(.secondary)
+            .task { store.send(.onAppear) }
+        }
+
+        private func row(_ usage: OfflinePinnedRootUsage) -> some View {
+            MacFormRow {
+                HStack(spacing: .space12) {
+                    MacItemIcon(name: usage.displayName, isDirectory: usage.root.isDirectory)
+                    MacRowTitle(title: usage.displayName, subtitle: Self.location(of: usage))
+                }
+            } control: {
+                HStack(spacing: .space16) {
+                    Text(FileSizeFormat.string(usage.sizeBytes))
+                        .foregroundStyle(Color.macChromeSecondary)
+                        .monospacedDigit()
+                    Button(L10n.Common.remove, role: .destructive) {
+                        store.send(.removeTapped(path: usage.root.path))
+                    }
+                    .buttonStyle(.macDS(.secondary, size: .small))
                 }
             }
         }
+    }
 
-        private func removeSelection() {
-            remove(selection)
-            selection = []
-        }
-
-        private func remove(_ ids: Set<OfflinePinnedRootUsage.ID>) {
-            let paths = ids.compactMap { store.usages[id: $0]?.root.path }
-            store.send(.removeSelectionTapped(paths: paths))
+    extension MacOfflineManagePane {
+        static func location(of usage: OfflinePinnedRootUsage) -> String {
+            let parent = (usage.root.path as NSString).deletingLastPathComponent
+            return parent.isEmpty ? L10n.Browse.myFiles : parent
         }
     }
 
@@ -94,12 +85,12 @@
                 sizeBytes: 3_200_000
             ),
         ]
-        return MacOfflineManagePane(store: Store(initialState: state) { OfflineManageFeature() })
+        return MacOfflineManagePane(store: Store(initialState: state) { EmptyReducer() })
             .previewCanvas(.settingsPane)
     }
 
     #Preview("Empty") {
-        MacOfflineManagePane(store: Store(initialState: OfflineManageFeature.State()) { OfflineManageFeature() })
+        MacOfflineManagePane(store: Store(initialState: OfflineManageFeature.State()) { EmptyReducer() })
             .previewCanvas(.settingsPane)
     }
 #endif
