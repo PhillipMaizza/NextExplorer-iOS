@@ -57,7 +57,6 @@
         private let valueLabel: String
         @Binding private var selection: Value
         private let options: () -> Options
-        @Environment(\.isEnabled) private var isEnabled
 
         public init(
             _ title: String,
@@ -72,24 +71,29 @@
         }
 
         public var body: some View {
-            Menu {
+            MacPopupMenu(title, valueLabel: valueLabel) {
                 Picker(title, selection: $selection) { options() }
                     .pickerStyle(.inline)
                     .labelsHidden()
-            } label: {
-                HStack(spacing: .space8) {
-                    Text(valueLabel)
-                        .type(.body2(.regular))
-                    IconKit.chevronUpDown
-                        .imageScale(.small)
-                        .foregroundStyle(Color.macChromeSecondary)
-                }
-                .padding(.leading, .space12)
-                .padding(.trailing, .space8)
-                .frame(height: Constants.popupHeight)
-                .background(Constants.shape.fill(Color.macField))
-                .overlay(Constants.shape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline))
-                .contentShape(Constants.shape)
+            }
+        }
+    }
+
+    public struct MacPopupMenu<Items: View>: View {
+        private let title: String
+        private let valueLabel: String
+        private let items: () -> Items
+        @Environment(\.isEnabled) private var isEnabled
+
+        public init(_ title: String, valueLabel: String, @ViewBuilder items: @escaping () -> Items) {
+            self.title = title
+            self.valueLabel = valueLabel
+            self.items = items
+        }
+
+        public var body: some View {
+            Menu(content: items) {
+                MacPopupLabel(valueLabel: valueLabel)
             }
             .menuStyle(.button)
             .buttonStyle(.plain)
@@ -98,6 +102,28 @@
             .opacity(isEnabled ? 1 : MacOpacity.disabled)
             .accessibilityLabel(title)
             .accessibilityValue(valueLabel)
+        }
+    }
+
+    private struct MacPopupLabel: View {
+        let valueLabel: String
+
+        var body: some View {
+            HStack(spacing: .space8) {
+                Text(valueLabel)
+                    .type(.body2(.regular))
+                    .lineLimit(1)
+                    .truncationMode(.head)
+                IconKit.chevronUpDown
+                    .imageScale(.small)
+                    .foregroundStyle(Color.macChromeSecondary)
+            }
+            .padding(.leading, .space12)
+            .padding(.trailing, .space8)
+            .frame(height: Constants.popupHeight)
+            .background(Constants.shape.fill(Color.macField))
+            .overlay(Constants.shape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline))
+            .contentShape(Constants.shape)
         }
     }
 
