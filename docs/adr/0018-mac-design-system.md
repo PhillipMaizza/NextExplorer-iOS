@@ -16,7 +16,13 @@ with blue selection is not possible natively.
 - Toggle, checkbox, radio, popup, segmented picker, date picker, stepper and slider keep their
   native look and the system blue. The design system adds no styles for them.
 - Orange is only on elements the design system draws itself: the primary button, the toolbar
-  accent button, progress rings and bars, chips, badges, the logo and avatars.
+  accent button, progress rings and bars, chips, badges, the logo, avatars and the selected
+  sidebar row's glyph.
+- Sidebar rows (main window and Settings) are drawn by the design system inside a plain list, by
+  the owner's choice: the selected row is a `MacSelection` pill (white in light, a soft wash in
+  dark) with a semibold title and an accent glyph, and hover is a `MacChromeHover` wash. The
+  Settings sidebar is a fixed column beside the pane card rather than a split view, so it sits on
+  the chrome without the system sidebar material or divider.
 - The Mac has its own warm colour tokens (`MacChrome`, `MacCard`, `MacRow`, `MacLine`,
   `MacSegment`, `MacField`, `MacChromeText`, `MacChromeSecondary`). iOS keeps its palette.
 - `.type()` renders Inter on the Mac at the Mac's text sizes (body 13, callout 12), so density
@@ -30,4 +36,4 @@ with blue selection is not possible natively.
   (border and halo) rather than the system blue ring.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
-`MacCard`, `MacDialog`, `MacGalleryView`.
+`MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`.

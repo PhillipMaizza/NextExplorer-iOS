@@ -8,8 +8,6 @@
     private enum Constants {
         /// A Mac sidebar row's height and hover wash, matching the system list rows.
         static let macRowHeight: CGFloat = 28
-        static let hoverOpacity: Double = 0.08
-        static let selectedOpacity: Double = 0.14
         static let macLogoSize: CGFloat = .size24
     }
 
@@ -39,7 +37,7 @@
                 .frame(maxWidth: .infinity, minHeight: Constants.macRowHeight, alignment: .leading)
                 .background(
                     RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
-                        .fill(Color.primaryDS.opacity(isHovered ? Constants.hoverOpacity : 0))
+                        .fill(isHovered ? Color.macChromeHover : .clear)
                 )
                 .contentShape(Rectangle())
             }
@@ -61,34 +59,30 @@
         @ViewBuilder var trailing: () -> Trailing
         @State private var isHovered = false
 
-        private var fillOpacity: Double {
-            if isSelected {
-                Constants.selectedOpacity
-            } else if isHovered {
-                Constants.hoverOpacity
-            } else {
-                0
-            }
-        }
-
         var body: some View {
             Button(action: action) {
                 HStack {
                     Label {
                         Text(title)
+                            .type(.body2(isSelected ? .semibold : .regular))
                     } icon: {
                         MacSidebarIcon(image: icon, isAccented: isSelected)
                     }
-                    .fontWeight(isSelected ? .semibold : .regular)
                     Spacer(minLength: 0)
                     trailing()
                 }
                 .padding(.horizontal, .space12)
                 .frame(maxWidth: .infinity, minHeight: Constants.macRowHeight, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
-                        .fill(Color.primaryDS.opacity(fillOpacity))
-                )
+                .background {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                            .fill(Color.macSelection)
+                            .elevation(.level1)
+                    } else if isHovered {
+                        RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                            .fill(Color.macChromeHover)
+                    }
+                }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
