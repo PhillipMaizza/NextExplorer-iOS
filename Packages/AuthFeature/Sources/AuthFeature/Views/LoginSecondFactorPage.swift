@@ -113,7 +113,7 @@ struct LoginSecondFactorPage: View {
     private var codeModeButton: some View {
         #if os(macOS)
             Button(codeModeTitle) { store.send(.toggleCodeModeTapped) }
-                .buttonStyle(.macDS(.ghost, size: .small))
+                .buttonStyle(.macDS(.tertiary, size: .small))
                 .frame(maxWidth: .infinity)
                 .accessibilityIdentifier(AccessibilityIdentifiers.Login.codeModeButton)
         #else

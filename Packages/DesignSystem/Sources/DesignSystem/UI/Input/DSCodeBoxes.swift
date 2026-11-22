@@ -34,6 +34,25 @@ public struct DSCodeBoxes: View {
         static let idleBorderWidth: CGFloat = 1
         static let activeBorderWidth: CGFloat = 2
         static let idleBorderOpacity: Double = 0.35
+        #if os(macOS)
+            static let alignment: Alignment = .leading
+            static var boxFill: Color {
+                .macField
+            }
+
+            static var idleBorder: Color {
+                .macLine
+            }
+        #else
+            static let alignment: Alignment = .center
+            static var boxFill: Color {
+                .backgroundSecondary
+            }
+
+            static var idleBorder: Color {
+                Color.secondaryDS.opacity(idleBorderOpacity)
+            }
+        #endif
     }
 
     private var activeIndex: Int {
@@ -46,7 +65,7 @@ public struct DSCodeBoxes: View {
                 box(at: index)
             }
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, alignment: Constants.alignment)
         // The hidden field is only as tall as one line of text, so a tap on the rest of a box
         // would miss it. The boxes take the tap themselves and hand focus to the field.
         .contentShape(Rectangle())
@@ -82,7 +101,7 @@ public struct DSCodeBoxes: View {
             .type(.headline3)
             .frame(width: Constants.boxWidth, height: Constants.boxHeight)
             .background(
-                Color.backgroundSecondary,
+                Constants.boxFill,
                 in: RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
             )
             .overlay {
@@ -99,7 +118,7 @@ public struct DSCodeBoxes: View {
         if isInvalid {
             return .negative
         }
-        return isActive ? .accent : Color.secondaryDS.opacity(Constants.idleBorderOpacity)
+        return isActive ? .accent : Constants.idleBorder
     }
 }
 
