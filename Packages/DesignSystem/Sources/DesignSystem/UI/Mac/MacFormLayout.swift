@@ -2,7 +2,6 @@
     import SwiftUI
 
     private enum Constants {
-        static let rowMinHeight: CGFloat = 52
         static let groupShape = RoundedRectangle(cornerRadius: .radiusMedium, style: .continuous)
     }
 
@@ -44,20 +43,40 @@
                 if let title {
                     MacFormGroupTitle(title)
                 }
-                VStack(spacing: .zero) {
-                    Group(subviews: content()) { subviews in
-                        ForEach(Array(subviews.enumerated()), id: \.element.id) { index, subview in
-                            if index > 0 {
-                                Rectangle()
-                                    .fill(Color.macLine)
-                                    .frame(height: .borderWidthHairline)
-                            }
-                            subview
+                MacFormRows(content: content)
+                    .background(Constants.groupShape.fill(Color.macRow))
+                    .clipShape(Constants.groupShape)
+            }
+        }
+    }
+
+    public enum MacFormMetrics {
+        public static let rowMinHeight: CGFloat = 52
+
+        public static func height(ofRows count: Int) -> CGFloat {
+            CGFloat(count) * rowMinHeight + CGFloat(max(count - 1, 0)) * .borderWidthHairline
+        }
+    }
+
+    public struct MacFormRows<Content: View>: View {
+        private let content: () -> Content
+
+        public init(@ViewBuilder content: @escaping () -> Content) {
+            self.content = content
+        }
+
+        public var body: some View {
+            VStack(spacing: .zero) {
+                Group(subviews: content()) { subviews in
+                    ForEach(Array(subviews.enumerated()), id: \.element.id) { index, subview in
+                        if index > 0 {
+                            Rectangle()
+                                .fill(Color.macLine)
+                                .frame(height: .borderWidthHairline)
                         }
+                        subview
                     }
                 }
-                .background(Constants.groupShape.fill(Color.macRow))
-                .clipShape(Constants.groupShape)
             }
         }
     }
@@ -94,7 +113,7 @@
             }
             .padding(.horizontal, .space16)
             .padding(.vertical, .space8)
-            .frame(minHeight: Constants.rowMinHeight)
+            .frame(minHeight: MacFormMetrics.rowMinHeight)
         }
     }
 
