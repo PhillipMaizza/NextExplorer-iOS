@@ -854,6 +854,7 @@ login.errorUnexpectedResponse	Neočekávaná odpověď serveru.
 login.errorKeychain	Relaci se nepodařilo uložit na tomto zařízení.
 login.errorRateLimited	Příliš mnoho pokusů. Počkejte prosím několik minut a zkuste to znovu.
 login.ssoButton	Přihlásit se přes SSO
+login.ssoOnlyNote	Tento server používá jednotné přihlášení. Přihlásíte se účtem své organizace v zabezpečeném okně.
 login.orDivider	nebo
 login.errorSso	Jednotné přihlášení nebylo dokončeno. Zkuste to prosím znovu.
 login.errorNoAuthMethods	Na tomto serveru není povolen žádný způsob přihlášení.

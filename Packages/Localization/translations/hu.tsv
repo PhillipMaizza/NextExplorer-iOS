@@ -832,6 +832,7 @@ login.errorUnexpectedResponse	Váratlan válasz a kiszolgálótól.
 login.errorKeychain	A munkamenetet nem sikerült elmenteni ezen az eszközön.
 login.errorRateLimited	Túl sok próbálkozás. Várjon néhány percet, és próbálja újra.
 login.ssoButton	Bejelentkezés SSO-val
+login.ssoOnlyNote	Ez a szerver egyszeri bejelentkezést használ. A szervezeted fiókjával jelentkezel be egy biztonságos ablakban.
 login.orDivider	vagy
 login.errorSso	Az egyszeri bejelentkezés nem fejeződött be. Próbálja újra.
 login.errorNoAuthMethods	Ezen a kiszolgálón nincs engedélyezett bejelentkezési mód.

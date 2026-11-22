@@ -843,6 +843,7 @@ login.errorUnexpectedResponse	תגובה בלתי צפויה מהשרת.
 login.errorKeychain	לא ניתן היה לשמור את הסשן שלכם במכשיר הזה.
 login.errorRateLimited	יותר מדי ניסיונות. אנא המתינו כמה דקות ונסו שוב.
 login.ssoButton	התחברות באמצעות SSO
+login.ssoOnlyNote	השרת הזה משתמש בכניסה יחידה. ההתחברות מתבצעת עם חשבון הארגון שלך בחלון מאובטח.
 login.orDivider	או
 login.errorSso	הכניסה היחידה לא הושלמה. אנא נסו שוב.
 login.errorNoAuthMethods	בשרת הזה לא מופעלות שיטות התחברות.

@@ -81,7 +81,11 @@ struct LoginCredentialsPage: View {
                     }
 
                     if store.authStatus?.isOIDCEnabled == true {
-                        if store.authStatus?.isLocalEnabled == true {
+                        if isSSOOnly {
+                            Text(L10n.Login.ssoOnlyNote)
+                                .type(.body2(.regular), style: .secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else {
                             orDivider
                         }
                         ssoButton
@@ -285,7 +289,7 @@ struct LoginCredentialsPage: View {
             // Outline while idle/authenticating so it stays visually secondary to Continue, then
             // `.primary` (accent) on success so the collapsed circle is the same object the
             // accent flood grows out of, exactly like the password button collapses and floods.
-            style: phase == .success ? .primary : .outline,
+            style: phase == .success || isSSOOnly ? .primary : .outline,
             size: .medium,
             isHitEnabled: !isCollapsed,
             action: { submit(.ssoButtonTapped) }
@@ -300,9 +304,9 @@ struct LoginCredentialsPage: View {
                         Text(L10n.Login.ssoButton)
                             .type(.label3)
                     }
-                    .foregroundStyle(Color.primaryDS)
+                    .foregroundStyle(ssoLabelColor)
                 case .authenticating:
-                    DSSpinner(color: .primaryDS)
+                    DSSpinner(color: ssoLabelColor)
                 case .success:
                     IconKit.checkmark
                         .resizable()
@@ -317,6 +321,14 @@ struct LoginCredentialsPage: View {
                 ssoButtonRect = newFrame
             }
         }
+    }
+
+    private var isSSOOnly: Bool {
+        store.authStatus?.isLocalEnabled != true
+    }
+
+    private var ssoLabelColor: Color {
+        isSSOOnly ? .onAccent : .primaryDS
     }
 
     private var isSubmitLocalEnabled: Bool {

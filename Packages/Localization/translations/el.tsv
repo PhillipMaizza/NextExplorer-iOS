@@ -832,6 +832,7 @@ login.errorUnexpectedResponse	Απροσδόκητη απάντηση από τ�
 login.errorKeychain	Δεν ήταν δυνατή η αποθήκευση της συνεδρίας σας σε αυτήν τη συσκευή.
 login.errorRateLimited	Πάρα πολλές προσπάθειες. Περιμένετε λίγα λεπτά και δοκιμάστε ξανά.
 login.ssoButton	Σύνδεση με SSO
+login.ssoOnlyNote	Αυτός ο διακομιστής χρησιμοποιεί ενιαία σύνδεση. Συνδέεστε με τον λογαριασμό του οργανισμού σας σε ασφαλές παράθυρο.
 login.orDivider	ή
 login.errorSso	Το single sign-on δεν ολοκληρώθηκε. Δοκιμάστε ξανά.
 login.errorNoAuthMethods	Αυτός ο διακομιστής δεν έχει ενεργοποιημένες μεθόδους σύνδεσης.

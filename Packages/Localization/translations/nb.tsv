@@ -832,6 +832,7 @@ login.errorUnexpectedResponse	Uventet svar fra serveren.
 login.errorKeychain	Kunne ikke lagre økten din på denne enheten.
 login.errorRateLimited	For mange forsøk. Vent noen minutter og prøv igjen.
 login.ssoButton	Logg inn med SSO
+login.ssoOnlyNote	Denne serveren bruker enkel pålogging. Du logger inn med organisasjonskontoen din i et sikkert vindu.
 login.orDivider	eller
 login.errorSso	Single sign-on ble ikke fullført. Prøv igjen.
 login.errorNoAuthMethods	Denne serveren har ingen innloggingsmåter slått på.

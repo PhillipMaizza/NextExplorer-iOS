@@ -960,6 +960,7 @@ login.errorUnexpectedResponse	Unexpected response from server.
 login.errorKeychain	Could not save your session on this device.
 login.errorRateLimited	Too many attempts. Please wait a few minutes and try again.
 login.ssoButton	Sign in with SSO
+login.ssoOnlyNote	This server uses single sign-on. You sign in with your organization account in a secure window.
 login.orDivider	or
 login.errorSso	Single sign-on didn't complete. Please try again.
 login.errorNoAuthMethods	This server has no sign-in methods enabled.
