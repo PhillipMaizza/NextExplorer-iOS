@@ -1401,3 +1401,5 @@ login.stepServer	Serwer
 login.stepLogIn	Zaloguj się
 login.stepCode	Kod
 apiTokens.badgeExpired	Wygasł
+common.decrease	Zmniejsz
+common.increase	Zwiększ

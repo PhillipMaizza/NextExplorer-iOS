@@ -1224,3 +1224,5 @@ login.stepServer	เซิร์ฟเวอร์
 login.stepLogIn	เข้าสู่ระบบ
 login.stepCode	รหัส
 apiTokens.badgeExpired	หมดอายุแล้ว
+common.decrease	ลด
+common.increase	เพิ่ม

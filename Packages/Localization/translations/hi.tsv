@@ -1329,3 +1329,5 @@ login.stepServer	सर्वर
 login.stepLogIn	साइन इन करें
 login.stepCode	कोड
 apiTokens.badgeExpired	समाप्त
+common.decrease	घटाएँ
+common.increase	बढ़ाएँ

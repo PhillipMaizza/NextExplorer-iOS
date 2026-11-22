@@ -1401,3 +1401,5 @@ login.stepServer	Сервер
 login.stepLogIn	Войти
 login.stepCode	Код
 apiTokens.badgeExpired	Истёк
+common.decrease	Уменьшить
+common.increase	Увеличить

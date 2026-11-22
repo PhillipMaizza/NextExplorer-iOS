@@ -1257,3 +1257,5 @@ login.stepServer	Sunucu
 login.stepLogIn	Oturum Aç
 login.stepCode	Kod
 apiTokens.badgeExpired	Süresi doldu
+common.decrease	Azalt
+common.increase	Artır

@@ -1258,3 +1258,5 @@ login.stepServer	Server
 login.stepLogIn	Logg inn
 login.stepCode	Kode
 apiTokens.badgeExpired	Utløpt
+common.decrease	Reduser
+common.increase	Øk

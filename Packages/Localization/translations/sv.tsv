@@ -1329,3 +1329,5 @@ login.stepServer	Server
 login.stepLogIn	Logga in
 login.stepCode	Kod
 apiTokens.badgeExpired	Har upphört
+common.decrease	Minska
+common.increase	Öka

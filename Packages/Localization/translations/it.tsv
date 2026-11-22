@@ -1329,3 +1329,5 @@ login.stepServer	Server
 login.stepLogIn	Accedi
 login.stepCode	Codice
 apiTokens.badgeExpired	Scaduto
+common.decrease	Diminuisci
+common.increase	Aumenta

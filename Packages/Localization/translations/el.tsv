@@ -1258,3 +1258,5 @@ login.stepServer	Διακομιστής
 login.stepLogIn	Σύνδεση
 login.stepCode	Κωδικός
 apiTokens.badgeExpired	Έληξε
+common.decrease	Μείωση
+common.increase	Αύξηση

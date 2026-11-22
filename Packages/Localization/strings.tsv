@@ -3,6 +3,8 @@
 
 # ---- common ----
 common.cancel	Cancel
+common.decrease	Decrease
+common.increase	Increase
 common.save	Save
 common.edit	Edit
 common.retry	Try Again

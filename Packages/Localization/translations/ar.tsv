@@ -1473,3 +1473,5 @@ login.stepServer	الخادم
 login.stepLogIn	تسجيل الدخول
 login.stepCode	الرمز
 apiTokens.badgeExpired	انتهت صلاحيته
+common.decrease	تقليل
+common.increase	زيادة

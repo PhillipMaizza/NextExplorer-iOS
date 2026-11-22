@@ -1293,3 +1293,5 @@ login.stepServer	服务器
 login.stepLogIn	登录
 login.stepCode	验证码
 apiTokens.badgeExpired	已过期
+common.decrease	减少
+common.increase	增加
