@@ -164,8 +164,7 @@ struct NextExplorerApp: App {
 
             Window(L10n.Menu.about, id: MacAboutView.windowID) {
                 MacAboutView(onTip: { Self.openTipJar() })
-                    .containerBackground(.ultraThinMaterial, for: .window)
-                    .macFrostedWindow()
+                    .containerBackground(Color.macCard, for: .window)
                     .followsAppLanguage()
                     .appAppearance(appearanceMode)
             }
