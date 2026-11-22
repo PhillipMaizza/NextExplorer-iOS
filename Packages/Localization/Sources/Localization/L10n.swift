@@ -535,6 +535,7 @@ public enum L10n {
     public enum Login {
         public static var addClientCertificate: String { tr("login.addClientCertificate") }  // "Add Certificate"
         public static var changeClientCertificate: String { tr("login.changeClientCertificate") }  // "Change"
+        public static var clientCertificateAdded: String { tr("login.clientCertificateAdded") }  // "Certificate added"
         public static var codeField: String { tr("login.codeField") }  // "Code"
         public static var codeIntroAuthenticator: String { tr("login.codeIntroAuthenticator") }
         public static var codeIntroRecovery: String { tr("login.codeIntroRecovery") }  // "Enter one of your recovery codes. Each one works only once."

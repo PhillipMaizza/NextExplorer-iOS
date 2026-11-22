@@ -1048,6 +1048,7 @@ login.addClientCertificate	Tilføj certifikat
 login.manageClientCertificate	Administrer certifikat
 settings.clientCertificate	Klientcertifikat
 settings.clientCertificateNone	Ingen
+login.clientCertificateAdded	Certifikat tilføjet
 login.usingClientCertificate	Bruger klientcertifikatet %@
 login.changeClientCertificate	Skift
 login.ssoClientCertificateNote	Single sign-on åbner i Safari, som ikke kan bruge denne apps klientcertifikat. Log ind med din adgangskode, eller installér certifikatet på denne enhed for at bruge single sign-on.

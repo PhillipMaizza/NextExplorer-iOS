@@ -1036,6 +1036,7 @@ login.addClientCertificate	Tambah Sertifikat
 login.manageClientCertificate	Kelola Sertifikat
 settings.clientCertificate	Sertifikat Klien
 settings.clientCertificateNone	Tidak ada
+login.clientCertificateAdded	Sertifikat ditambahkan
 login.usingClientCertificate	Menggunakan sertifikat klien %@
 login.changeClientCertificate	Ubah
 login.ssoClientCertificateNote	Single sign-on terbuka di Safari, yang tidak dapat memakai sertifikat klien aplikasi ini. Masuk dengan kata sandi, atau pasang sertifikat di perangkat ini untuk memakai single sign-on.

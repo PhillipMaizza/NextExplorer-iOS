@@ -16,7 +16,6 @@
 
     struct MacLoginSidebar: View {
         let store: StoreOf<LoginFormFeature>
-        @State private var isServerInfoPresented = false
 
         var body: some View {
             VStack(alignment: .leading, spacing: .zero) {
@@ -36,23 +35,32 @@
                 }
                 .padding(.top, .space32)
                 Spacer(minLength: .space24)
-                VStack(alignment: .leading, spacing: .space2) {
-                    MacLoginFooterLink(title: L10n.Login.serverInfoTitle, icon: IconKit.info) {
-                        isServerInfoPresented = true
-                    }
-                    .accessibilityHint(L10n.Login.serverInfoAccessibility)
-                    MacLoginFooterLink(title: certificateTitle, icon: IconKit.lock) {
-                        store.send(.changeClientCertificateTapped)
-                    }
-                    .disabled(!canManageCertificate)
-                    LoginDiagnosticsButton(diagnostics: store.diagnostics)
-                }
+                MacLoginFooterLinks(store: store)
             }
             .padding(.horizontal, .space32)
             .padding(.top, Constants.topPadding)
             .padding(.bottom, .space24)
             .frame(width: Constants.width, alignment: .leading)
             .frame(maxHeight: .infinity, alignment: .top)
+        }
+    }
+
+    struct MacLoginFooterLinks: View {
+        let store: StoreOf<LoginFormFeature>
+        @State private var isServerInfoPresented = false
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: .space2) {
+                MacLoginFooterLink(title: L10n.Login.serverInfoTitle, icon: IconKit.info) {
+                    isServerInfoPresented = true
+                }
+                .accessibilityHint(L10n.Login.serverInfoAccessibility)
+                MacLoginFooterLink(title: certificateTitle, icon: IconKit.lock) {
+                    store.send(.changeClientCertificateTapped)
+                }
+                .disabled(!canManageCertificate)
+                LoginDiagnosticsButton(diagnostics: store.diagnostics)
+            }
             .dsSheet(isPresented: $isServerInfoPresented) {
                 ServerInfoSheet(onClose: { isServerInfoPresented = false })
             }
@@ -145,6 +153,15 @@
         MacLoginSidebar(store: Store(initialState: LoginFormFeature.State()) { LoginFormFeature() })
             .frame(height: 640)
             .macChromeBackground()
+    }
+
+    #Preview("Footer links") {
+        MacLoginFooterLinks(store: Store(initialState: LoginFormFeature.State(host: "nextexplorer.example.com")) {
+            LoginFormFeature()
+        })
+        .padding(.space24)
+        .frame(width: 360)
+        .macCard()
     }
 
     #Preview("Code step, dark") {

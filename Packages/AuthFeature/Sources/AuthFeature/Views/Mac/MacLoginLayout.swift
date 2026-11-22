@@ -20,13 +20,20 @@
                 if hasStepsSidebar {
                     MacLoginSidebar(store: store)
                 }
-                pages()
-                    .defaultScrollAnchor(.center)
-                    .frame(maxWidth: Constants.contentMaxWidth)
-                    .padding(.horizontal, Constants.cardPadding)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .macCard()
-                    .padding(hasStepsSidebar ? Constants.windowPadding : 0)
+                VStack(spacing: .zero) {
+                    pages()
+                        .defaultScrollAnchor(.center)
+                        .frame(maxWidth: Constants.contentMaxWidth)
+                        .padding(.horizontal, Constants.cardPadding)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    if !hasStepsSidebar {
+                        MacLoginFooterLinks(store: store)
+                            .padding(.horizontal, Constants.cardPadding)
+                            .padding(.bottom, .space16)
+                    }
+                }
+                .macCard()
+                .padding(hasStepsSidebar ? Constants.windowPadding : 0)
             }
             .ignoresSafeArea(edges: hasStepsSidebar ? .top : [])
             .background(Color.macChrome.ignoresSafeArea())

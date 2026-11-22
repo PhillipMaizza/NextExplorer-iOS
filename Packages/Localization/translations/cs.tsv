@@ -1071,6 +1071,7 @@ login.addClientCertificate	Přidat certifikát
 login.manageClientCertificate	Spravovat certifikát
 settings.clientCertificate	Klientský certifikát
 settings.clientCertificateNone	Žádný
+login.clientCertificateAdded	Certifikát přidán
 login.usingClientCertificate	Používá se klientský certifikát %@
 login.changeClientCertificate	Změnit
 login.ssoClientCertificateNote	Jednotné přihlášení se otevírá v Safari, který klientský certifikát této aplikace použít nemůže. Přihlaste se heslem nebo nainstalujte certifikát do tohoto zařízení, abyste mohli jednotné přihlášení používat.

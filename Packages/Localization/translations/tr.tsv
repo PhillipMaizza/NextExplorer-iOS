@@ -1047,6 +1047,7 @@ clientCertificate.expiredWarning	Bu sertifikanın süresi doldu. Sunucu büyük 
 login.addClientCertificate	Sertifika Ekle
 login.manageClientCertificate	Sertifikayı Yönet
 settings.clientCertificate	İstemci Sertifikası
+login.clientCertificateAdded	Sertifika eklendi
 login.usingClientCertificate	İstemci sertifikası kullanılıyor: %@
 login.changeClientCertificate	Değiştir
 login.ssoClientCertificateNote	Tek oturum açma, bu uygulamanın istemci sertifikasını kullanamayan Safari'de açılır. Parolanızla oturum açın veya tek oturum açmayı kullanmak için sertifikayı bu cihaza yükleyin.
