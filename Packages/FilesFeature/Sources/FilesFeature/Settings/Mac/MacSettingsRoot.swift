@@ -204,6 +204,10 @@
                 Button(L10n.MacSettings.addAccount) { store.send(.addAccountTapped) }
                     .buttonStyle(.macDS(.secondary))
                     .disabled(store.isSigningOut)
+            } else if category == .server,
+                      let serverStore = store.scope(state: \.serverDetails, action: \.serverDetails.presented)
+            {
+                MacServerUpdateButton(store: serverStore)
             } else if category == .activity,
                       let activityStore = store.scope(state: \.activityLog, action: \.activityLog.presented)
             {
