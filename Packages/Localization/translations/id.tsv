@@ -1223,3 +1223,4 @@ emptyState.dropHintFinder	Anda juga dapat menyeret file ke sini dari Finder.
 login.stepServer	Server
 login.stepLogIn	Masuk
 login.stepCode	Kode
+apiTokens.badgeExpired	Sudah kedaluwarsa

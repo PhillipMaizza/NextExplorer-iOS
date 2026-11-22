@@ -1223,3 +1223,4 @@ emptyState.dropHintFinder	คุณยังลากไฟล์มาที่
 login.stepServer	เซิร์ฟเวอร์
 login.stepLogIn	เข้าสู่ระบบ
 login.stepCode	รหัส
+apiTokens.badgeExpired	หมดอายุแล้ว

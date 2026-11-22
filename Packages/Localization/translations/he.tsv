@@ -1297,3 +1297,4 @@ emptyState.dropHintFinder	אפשר גם לגרור לכאן קבצים מ־Finde
 login.stepServer	שרת
 login.stepLogIn	התחברות
 login.stepCode	קוד
+apiTokens.badgeExpired	פג תוקף

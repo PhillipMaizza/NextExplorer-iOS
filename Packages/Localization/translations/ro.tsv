@@ -1364,3 +1364,4 @@ emptyState.dropHintFinder	Poți trage aici fișiere și din Finder.
 login.stepServer	Server
 login.stepLogIn	Conectează-te
 login.stepCode	Cod
+apiTokens.badgeExpired	Expirat

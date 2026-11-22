@@ -1257,3 +1257,4 @@ emptyState.dropHintFinder	Voit myös vetää tiedostoja tähän Finderista.
 login.stepServer	Palvelin
 login.stepLogIn	Kirjaudu sisään
 login.stepCode	Koodi
+apiTokens.badgeExpired	Vanhentunut

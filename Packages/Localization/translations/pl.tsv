@@ -1400,3 +1400,4 @@ emptyState.dropHintFinder	Możesz też przeciągnąć tu pliki z Findera.
 login.stepServer	Serwer
 login.stepLogIn	Zaloguj się
 login.stepCode	Kod
+apiTokens.badgeExpired	Wygasł

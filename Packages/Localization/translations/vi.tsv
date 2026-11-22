@@ -1223,3 +1223,4 @@ emptyState.dropHintFinder	Bạn cũng có thể kéo tệp vào đây từ Finde
 login.stepServer	Máy chủ
 login.stepLogIn	Đăng nhập
 login.stepCode	Mã
+apiTokens.badgeExpired	Đã hết hạn

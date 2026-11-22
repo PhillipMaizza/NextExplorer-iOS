@@ -1292,3 +1292,4 @@ emptyState.dropHintFinder	你也可以從「Finder」將檔案拖移到這裡。
 login.stepServer	伺服器
 login.stepLogIn	登入
 login.stepCode	驗證碼
+apiTokens.badgeExpired	已過期

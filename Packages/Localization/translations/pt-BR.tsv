@@ -1323,3 +1323,4 @@ emptyState.dropHintFinder	Você também pode arrastar arquivos para cá do Finde
 login.stepServer	Servidor
 login.stepLogIn	Entrar
 login.stepCode	Código
+apiTokens.badgeExpired	Expirado

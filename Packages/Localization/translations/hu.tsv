@@ -1257,3 +1257,4 @@ emptyState.dropHintFinder	Fájlokat a Finderből is idehúzhat.
 login.stepServer	Kiszolgáló
 login.stepLogIn	Bejelentkezés
 login.stepCode	Kód
+apiTokens.badgeExpired	Lejárt

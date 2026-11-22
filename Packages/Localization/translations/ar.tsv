@@ -1472,3 +1472,4 @@ emptyState.dropHintFinder	يمكنك أيضًا سحب الملفات إلى ه�
 login.stepServer	الخادم
 login.stepLogIn	تسجيل الدخول
 login.stepCode	الرمز
+apiTokens.badgeExpired	انتهت صلاحيته

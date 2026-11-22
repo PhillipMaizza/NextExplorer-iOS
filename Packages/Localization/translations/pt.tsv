@@ -1328,3 +1328,4 @@ emptyState.dropHintFinder	Também pode arrastar ficheiros para aqui a partir do 
 login.stepServer	Servidor
 login.stepLogIn	Iniciar sessão
 login.stepCode	Código
+apiTokens.badgeExpired	Expirado
