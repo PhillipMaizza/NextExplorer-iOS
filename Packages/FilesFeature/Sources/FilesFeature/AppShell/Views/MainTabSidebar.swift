@@ -263,7 +263,7 @@ struct MainTabSidebar: View {
         #if os(macOS)
             MacSidebarRow(title: title, icon: icon, action: action) {
                 if let shortcut {
-                    MacTag(text: shortcut)
+                    MacChip(text: shortcut)
                 }
             }
         #else

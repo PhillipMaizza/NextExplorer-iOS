@@ -134,7 +134,7 @@
                         .accessibilityHidden(true)
                 }
                 if let hint = Self.shortcutHint(for: item.tab) {
-                    MacTag(
+                    MacChip(
                         text: hint,
                         tint: isSelected ? .accent : .tertiaryDS,
                         style: isSelected ? .link : .tertiary
@@ -215,7 +215,7 @@
     #Preview("Rows") {
         VStack(spacing: 0) {
             MacSidebarRow(title: L10n.Tab.browse, icon: IconKit.tabBrowse, isSelected: true, action: {}) {
-                MacTag(text: "\u{2318} 1")
+                MacChip(text: "\u{2318} 1")
             }
             MacSidebarRow(title: L10n.Tab.favorites, icon: IconKit.tabFavorites, action: {}) { EmptyView() }
         }

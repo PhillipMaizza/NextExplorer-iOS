@@ -55,13 +55,7 @@
                     (hasFailures && progress == nil ? IconKit.error : IconKit.transfers)
                         .foregroundStyle(hasFailures && progress == nil ? Color.negativeText : Color.primary)
                     if let progress {
-                        Circle()
-                            .trim(from: 0, to: progress)
-                            .stroke(
-                                Color.accentColor,
-                                style: StrokeStyle(lineWidth: Metrics.ringLineWidth, lineCap: .round)
-                            )
-                            .rotationEffect(.degrees(-90))
+                        MacProgressRing(progress: progress, lineWidth: Metrics.ringLineWidth)
                             .frame(width: Metrics.ringFrameSize, height: Metrics.ringFrameSize)
                     }
                 }
