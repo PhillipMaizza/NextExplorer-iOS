@@ -49,6 +49,20 @@
         ]
         static let app: [Self] = [.about]
 
+        var subtitle: String? {
+            switch self {
+            case .thumbnails: L10n.ThumbnailSettings.subtitle
+            case .accessRules: L10n.AccessRules.subtitle
+            case .uploads: L10n.UploadSettings.subtitle
+            case .searchIndex: L10n.SearchIndexSettings.subtitle
+            case .folderSize: L10n.FolderSizeSettings.subtitle
+            case .ffmpeg: L10n.FfmpegSettings.subtitle
+            case .activity: L10n.ActivityLog.subtitle
+            case .serverTools: L10n.ServerTools.subtitle
+            case .accounts, .general, .storage, .apiTokens, .server, .users, .trash, .versions, .about: nil
+            }
+        }
+
         var title: String {
             switch self {
             case .accounts: L10n.Settings.sectionAccounts
@@ -124,6 +138,7 @@
                         ForEach(MacSettingsCategory.app) { sidebarRow($0) }
                     }
                 }
+                .scrollContentBackground(.hidden)
                 .toolbar(removing: .sidebarToggle)
                 // Must come after the toolbar change, which otherwise drops it and lets AppKit
                 // shrink the column until the category names truncate.
@@ -134,14 +149,17 @@
                 )
             } detail: {
                 NavigationStack {
-                    pane(visibleSelection)
-                        .navigationTitle(visibleSelection.title)
-                        .navigationDestination(item: $store.scope(
-                            state: \.offlineManage,
-                            action: \.offlineManage
-                        )) { manageStore in
-                            MacOfflineManagePane(store: manageStore)
-                        }
+                    MacSettingsPaneCard(title: visibleSelection.title, subtitle: visibleSelection.subtitle) {
+                        pane(visibleSelection)
+                    }
+                    .navigationTitle(visibleSelection.title)
+                    .toolbar(removing: .title)
+                    .navigationDestination(item: $store.scope(
+                        state: \.offlineManage,
+                        action: \.offlineManage
+                    )) { manageStore in
+                        MacOfflineManagePane(store: manageStore)
+                    }
                 }
                 .id(visibleSelection)
             }
@@ -149,6 +167,8 @@
             // back loads it fresh: the Users list otherwise kept showing what it first loaded.
             .onChange(of: visibleSelection) { previous, _ in release(previous) }
             .onDisappear { release(visibleSelection) }
+            .containerBackground(Color.macChrome, for: .window)
+            .toolbarBackground(.hidden, for: .windowToolbar)
         }
 
         private func release(_ category: MacSettingsCategory) {
