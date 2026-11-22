@@ -9,6 +9,7 @@
         /// A Mac sidebar row's height and hover wash, matching the system list rows.
         static let macRowHeight: CGFloat = 28
         static let macLogoSize: CGFloat = .size24
+        static let iconColumnWidth: CGFloat = 20
     }
 
     /// The logo and name above the sections. Opens the About window, with the same hover pill as the rows.
@@ -58,6 +59,7 @@
         let action: () -> Void
         @ViewBuilder var trailing: () -> Trailing
         @State private var isHovered = false
+        @Environment(\.colorScheme) private var colorScheme
 
         var body: some View {
             Button(action: action) {
@@ -66,7 +68,14 @@
                         Text(title)
                             .type(.body2(isSelected ? .semibold : .regular))
                     } icon: {
-                        MacSidebarIcon(image: icon, isAccented: isSelected)
+                        icon
+                            .imageScale(.medium)
+                            .frame(width: Constants.iconColumnWidth)
+                            .foregroundStyle(isSelected
+                                ? colorScheme == .light
+                                    ? Color.accentText
+                                    : .accent
+                                : Color.primaryDS)
                     }
                     Spacer(minLength: 0)
                     trailing()
