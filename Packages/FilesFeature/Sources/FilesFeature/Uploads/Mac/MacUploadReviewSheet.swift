@@ -31,14 +31,10 @@
                 }
                 Form {
                     MacSettingsRow(L10n.Uploads.reviewSectionPath) {
-                        HStack {
-                            Text(store.hasDestination ? store.destination : L10n.Uploads.reviewChooseFolder)
-                                .lineLimit(1)
-                                .truncationMode(.head)
-                                .foregroundStyle(store.hasDestination ? .primary : .secondary)
-                            Spacer()
-                            Button(L10n.MacSettings.choose) { store.send(.pathTapped) }
-                        }
+                        MacPathField(
+                            path: store.hasDestination ? store.destination : nil,
+                            placeholder: L10n.Uploads.reviewChooseFolder
+                        ) { store.send(.pathTapped) }
                     }
                     MacSettingsRow(L10n.Uploads.reviewSectionSize) {
                         Text(FileSizeFormat.string(store.totalSize))
