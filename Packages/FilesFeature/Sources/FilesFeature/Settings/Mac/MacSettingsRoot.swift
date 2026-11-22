@@ -50,6 +50,10 @@
         ]
         static let app: [Self] = [.about]
 
+        var headerTitle: String? {
+            self == .about ? nil : title
+        }
+
         var subtitle: String? {
             switch self {
             case .thumbnails: L10n.ThumbnailSettings.subtitle
@@ -115,6 +119,7 @@
     struct MacSettingsRoot: View {
         @Bindable var store: StoreOf<SettingsFeature>
         @SceneStorage(Metrics.selectionKey) private var selection: MacSettingsCategory = .general
+        @State private var isShowingLicenses = false
 
         private var visibleSelection: MacSettingsCategory {
             store.user.isAdmin || !MacSettingsCategory.admin.contains(selection) ? selection : .general
@@ -140,7 +145,7 @@
                 .clipped()
                 .frame(width: Metrics.sidebarWidth)
                 NavigationStack {
-                    MacSettingsPaneCard(title: visibleSelection.title, subtitle: visibleSelection.subtitle) {
+                    MacSettingsPaneCard(title: visibleSelection.headerTitle, subtitle: visibleSelection.subtitle) {
                         pane(visibleSelection)
                     } tools: {
                         MacSettingsHeaderTools(store: store, category: visibleSelection)
@@ -162,6 +167,7 @@
             .onDisappear { release(visibleSelection) }
             .containerBackground(Color.macChrome, for: .window)
             .toolbarBackground(.hidden, for: .windowToolbar)
+            .macLicensesSheet(isPresented: $isShowingLicenses)
         }
 
         private func release(_ category: MacSettingsCategory) {
@@ -233,9 +239,10 @@
                     Color.clear.onAppear { store.send(.thumbnailSettingsButtonTapped) }
                 }
             case .about:
-                MacAboutContent { store.send(.tipJarButtonTapped) }
-                    .padding(.space32)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                MacSettingsInfoPane(
+                    onTip: { store.send(.tipJarButtonTapped) },
+                    onLicenses: { isShowingLicenses = true }
+                )
             case .accessRules:
                 if let detailStore = store.scope(state: \.accessRules, action: \.accessRules.presented) {
                     MacAccessRulesPane(store: detailStore)

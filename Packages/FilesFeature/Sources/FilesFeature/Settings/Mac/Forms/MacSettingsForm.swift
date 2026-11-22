@@ -12,13 +12,13 @@
     }
 
     struct MacSettingsPaneCard<Content: View, Tools: View>: View {
-        let title: String
+        let title: String?
         let subtitle: String?
         @ViewBuilder let content: () -> Content
         @ViewBuilder let tools: () -> Tools
 
         init(
-            title: String,
+            title: String?,
             subtitle: String?,
             @ViewBuilder content: @escaping () -> Content,
             @ViewBuilder tools: @escaping () -> Tools
@@ -31,22 +31,24 @@
 
         var body: some View {
             VStack(alignment: .leading, spacing: .zero) {
-                HStack(spacing: .space16) {
-                    VStack(alignment: .leading, spacing: .space8) {
-                        Text(title)
-                            .type(.display)
-                            .accessibilityAddTraits(.isHeader)
-                        if let subtitle {
-                            Text(subtitle)
-                                .type(.body2(.regular), style: .secondary)
-                                .fixedSize(horizontal: false, vertical: true)
+                if let title {
+                    HStack(spacing: .space16) {
+                        VStack(alignment: .leading, spacing: .space8) {
+                            Text(title)
+                                .type(.display)
+                                .accessibilityAddTraits(.isHeader)
+                            if let subtitle {
+                                Text(subtitle)
+                                    .type(.body2(.regular), style: .secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
+                        Spacer(minLength: .zero)
+                        tools()
                     }
-                    Spacer(minLength: .zero)
-                    tools()
+                    .padding(.horizontal, Metrics.headerInset)
+                    .padding(.top, Metrics.headerTop)
                 }
-                .padding(.horizontal, Metrics.headerInset)
-                .padding(.top, Metrics.headerTop)
                 content()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -57,7 +59,7 @@
     }
 
     extension MacSettingsPaneCard where Tools == EmptyView {
-        init(title: String, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
+        init(title: String?, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
             self.init(title: title, subtitle: subtitle, content: content) { EmptyView() }
         }
     }
