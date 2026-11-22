@@ -9,7 +9,6 @@
     private enum Metrics {
         static let width: CGFloat = 560
         static let browserHeight: CGFloat = 220
-        static let browserShape = RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
     }
 
     /// Assign or edit a user volume as a native sheet: a label, the access mode, and for a new
@@ -122,9 +121,7 @@
                 .padding(.vertical, .space8)
                 .macListRow(isSelected: false)
             }
-            .background(Metrics.browserShape.fill(Color.macField))
-            .clipShape(Metrics.browserShape)
-            .overlay(Metrics.browserShape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline))
+            .macListBox()
         }
 
         private var hairline: some View {

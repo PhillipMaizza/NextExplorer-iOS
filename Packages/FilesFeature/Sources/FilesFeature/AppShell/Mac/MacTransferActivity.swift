@@ -143,11 +143,7 @@
                         .foregroundStyle(isActive ? Color.accentColor : Color.negativeText)
                 }
                 if isActive {
-                    if let progress {
-                        ProgressView(value: progress)
-                    } else {
-                        ProgressView().progressViewStyle(.linear)
-                    }
+                    MacProgressBar(value: progress)
                 }
                 HStack {
                     Button(L10n.Menu.showAll, action: onShowAll)

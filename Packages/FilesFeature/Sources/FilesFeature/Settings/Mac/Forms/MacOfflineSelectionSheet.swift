@@ -6,76 +6,124 @@
     import SwiftUI
 
     private enum Metrics {
-        static let width: CGFloat = 620
-        static let height: CGFloat = 520
-        static let padding: CGFloat = .space16
-        static let checkColumnWidth: CGFloat = 28
+        static let width: CGFloat = 520
+        static let listHeight: CGFloat = 280
         static let sizeColumnWidth: CGFloat = 90
         static let alreadyOfflineOpacity: Double = 0.5
     }
 
-    /// Choosing what to keep offline, as a native sheet: a file table with a checkbox per row,
-    /// double click to open a folder, Back to go up, and the running size estimate by the
-    /// Download button.
     struct MacOfflineSelectionSheet: View {
         let store: StoreOf<OfflineSelectionFeature>
-        @State private var highlighted: Set<FileItem.ID> = []
+        @Dependency(\.deviceStorage) private var deviceStorage
 
         var body: some View {
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: .space16) {
                 header
-                Divider()
-                table
-                Divider()
-                footer
+                list
+                if isOverFreeSpace {
+                    Text(L10n.Offline.selectionInsufficientSpace).type(.body3(.regular), style: .error)
+                }
+                MacDialogButtons(
+                    confirmTitle: L10n.Offline.selectionDownload,
+                    isConfirmEnabled: store.canConfirm && !isOverFreeSpace,
+                    onCancel: { store.send(.cancelTapped) },
+                    onConfirm: { store.send(.confirmTapped) }
+                ) {
+                    estimate
+                }
             }
-            .frame(width: Metrics.width, height: Metrics.height)
+            .padding(.space24)
+            .frame(width: Metrics.width)
+            .background(Color.macCard)
             .task { store.send(.onAppear) }
         }
 
         private var header: some View {
-            MacSheetHeader(
-                title: L10n.Offline.selectionTitle,
-                subtitle: store.directoryPath,
-                canGoBack: store.canNavigateBack,
-                onBack: { store.send(.backTapped) }
-            )
-            .padding(Metrics.padding)
+            HStack(alignment: .center, spacing: .space8) {
+                if store.canNavigateBack {
+                    Button { store.send(.backTapped) } label: { IconKit.back }
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                        .accessibilityLabelWithTooltip(L10n.Common.back)
+                }
+                VStack(alignment: .leading, spacing: .space4) {
+                    Text(L10n.Offline.selectionTitle).type(.headline4)
+                    if !store.directoryPath.isEmpty {
+                        Text(store.directoryPath)
+                            .type(.body2(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.head)
+                    }
+                }
+            }
         }
 
-        private var table: some View {
-            Table(store.items, selection: $highlighted) {
-                TableColumn("") { item in
-                    let isOffline = store.state.isAlreadyOffline(item)
-                    // Named after its row, so VoiceOver says which item the checkbox selects.
-                    Toggle(item.name, isOn: Binding(
-                        get: { store.state.isSelected(item) || isOffline },
-                        set: { _ in store.send(.selectionToggled(item)) }
-                    ))
-                    .labelsHidden()
-                    .disabled(isOffline)
+        private var list: some View {
+            VStack(spacing: .zero) {
+                HStack(spacing: .space8) {
+                    MacTableColumnTitle(L10n.Sort.name)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    MacTableColumnTitle(L10n.Sort.size)
+                        .frame(width: Metrics.sizeColumnWidth, alignment: .trailing)
                 }
-                .width(Metrics.checkColumnWidth)
-                TableColumn(L10n.Sort.name) { item in
-                    MacItemLabel(name: item.name, isDirectory: item.isDirectory)
-                        .opacity(store.state.isAlreadyOffline(item) ? Metrics.alreadyOfflineOpacity : 1)
+                .padding(.horizontal, .space12)
+                .padding(.vertical, .space8)
+                Rectangle()
+                    .fill(Color.macLine)
+                    .frame(height: .borderWidthHairline)
+                ScrollView {
+                    LazyVStack(spacing: .zero) {
+                        ForEach(store.items) { row($0) }
+                    }
                 }
-                TableColumn(L10n.Sort.size) { item in
-                    Text(sizeText(item))
-                        .foregroundStyle(Color.macChromeSecondary)
-                        .monospacedDigit()
-                }
-                .width(Metrics.sizeColumnWidth)
+                .frame(height: Metrics.listHeight)
+                .overlay { overlay }
             }
-            .contextMenu(forSelectionType: FileItem.ID.self, menu: { _ in }, primaryAction: { ids in
-                guard let id = ids.first, let item = store.items[id: id] else { return }
+            .macListBox()
+        }
+
+        private func row(_ item: FileItem) -> some View {
+            let isOffline = store.state.isAlreadyOffline(item)
+            return HStack(spacing: .space8) {
+                Toggle(isOn: Binding(
+                    get: { store.state.isSelected(item) || isOffline },
+                    set: { _ in store.send(.selectionToggled(item)) }
+                )) {
+                    EmptyView()
+                }
+                .toggleStyle(.macCheckbox)
+                .disabled(isOffline)
+                .accessibilityLabel(item.name)
+                MacItemIcon(name: item.name, isDirectory: item.isDirectory)
+                Text(item.name)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text(sizeText(item))
+                    .foregroundStyle(Color.macChromeSecondary)
+                    .monospacedDigit()
+                    .frame(width: Metrics.sizeColumnWidth, alignment: .trailing)
+                if item.isDirectory {
+                    Button { store.send(.folderTapped(item)) } label: {
+                        IconKit.chevronRight.foregroundStyle(Color.macChromeSecondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabelWithTooltip(L10n.UserDetail.directoryPickerOpen(item.name))
+                }
+            }
+            .type(.body2(.regular))
+            .foregroundStyle(Color.macChromeText)
+            .opacity(isOffline ? Metrics.alreadyOfflineOpacity : 1)
+            .macListRow(isSelected: false)
+            .onTapGesture(count: 2) {
                 if item.isDirectory {
                     store.send(.folderTapped(item))
-                } else if !store.state.isAlreadyOffline(item) {
+                }
+            }
+            .onTapGesture {
+                if !isOffline {
                     store.send(.selectionToggled(item))
                 }
-            })
-            .overlay { overlay }
+            }
         }
 
         @ViewBuilder
@@ -86,30 +134,23 @@
                 VStack(spacing: .space8) {
                     Text(errorMessage).foregroundStyle(Color.macChromeSecondary)
                     Button(L10n.Common.retry) { store.send(.retryTapped) }
+                        .buttonStyle(.macDS(.secondary, size: .small))
                 }
             } else if store.items.isEmpty, store.phase == .loaded {
                 Text(L10n.Offline.selectionEmpty).foregroundStyle(Color.macChromeSecondary)
             }
         }
 
-        private var footer: some View {
-            MacDialogButtons(
-                confirmTitle: L10n.Offline.selectionDownload,
-                isConfirmEnabled: store.canConfirm && !isOverFreeSpace,
-                onCancel: { store.send(.cancelTapped) },
-                onConfirm: { store.send(.confirmTapped) }
-            ) {
-                VStack(alignment: .leading, spacing: .space2) {
-                    HStack(spacing: .space4) {
-                        Text(L10n.MacSettings.labelFormat(L10n.Offline.selectionEstimate))
-                        Text(estimateText).monospacedDigit()
-                    }
-                    if isOverFreeSpace {
-                        Text(L10n.Offline.selectionInsufficientSpace).type(.body3(.regular), style: .error)
-                    }
-                }
+        private var estimate: some View {
+            HStack(spacing: .space4) {
+                Text(L10n.Offline.selectionEstimate)
+                    .type(.body3(.regular))
+                    .foregroundStyle(Color.macChromeSecondary)
+                Text(estimateText)
+                    .type(.body3(.semibold))
+                    .foregroundStyle(Color.macChromeText)
+                    .monospacedDigit()
             }
-            .padding(Metrics.padding)
         }
 
         private func sizeText(_ item: FileItem) -> String {
@@ -121,19 +162,53 @@
 
         private var estimateText: String {
             let size = FileSizeFormat.string(store.estimatedBytes)
-            return store.isEstimating ? "\(size)…" : size
+            return store.isEstimating ? L10n.ellipsized(size) : size
         }
-
-        @Dependency(\.deviceStorage) private var deviceStorage
 
         private var isOverFreeSpace: Bool {
             !store.isEstimating && store.estimatedBytes > deviceStorage.freeBytes()
         }
     }
 
-    #Preview {
+    enum PreviewOfflineItems {
+        static let date = Date(timeIntervalSince1970: 1_767_225_600)
+        static let items: IdentifiedArrayOf<FileItem> = [
+            FileItem(name: "Albums", path: "Media", dateModified: date, size: 0, kind: FileItem.directoryKind),
+            FileItem(
+                name: "Podcast Episode 12.m4a",
+                path: "Media",
+                dateModified: date,
+                size: 50_300_000,
+                kind: "m4a"
+            ),
+            FileItem(name: "Song.mp3", path: "Media", dateModified: date, size: 7_300_000, kind: "mp3"),
+            FileItem(name: "Trailer.mp4", path: "Media", dateModified: date, size: 94_400_000, kind: "mp4"),
+        ]
+
+        static var loaded: OfflineSelectionFeature.State {
+            var state = OfflineSelectionFeature.State(serverURL: ServerSettingsPreview.serverURL)
+            state.directoryPath = "Media"
+            state.items = items
+            state.phase = .loaded
+            state.folderSizes = ["Media/Albums": 1_200_000_000]
+            state.selection = ["Media/Song.mp3": items[2]]
+            return state
+        }
+    }
+
+    #Preview("Loaded") {
+        MacOfflineSelectionSheet(store: Store(initialState: PreviewOfflineItems.loaded) { EmptyReducer() })
+    }
+
+    #Preview("Folder") {
         MacOfflineSelectionSheet(store: Store(initialState: OfflineSelectionFeature.State(
-            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
+            serverURL: ServerSettingsPreview.serverURL
         )) { OfflineSelectionFeature() } withDependencies: { $0.filesClient = .previewValue })
+    }
+
+    #Preview("Loading") {
+        MacOfflineSelectionSheet(store: Store(initialState: OfflineSelectionFeature.State(
+            serverURL: ServerSettingsPreview.serverURL
+        )) { EmptyReducer() })
     }
 #endif

@@ -86,14 +86,8 @@
                                 .foregroundStyle(Color.secondaryDS)
                                 .monospacedDigit()
                         }
-                        Group {
-                            if let fraction = titles.offlineBarProgress {
-                                ProgressView(value: fraction).tint(Color.accent)
-                            } else {
-                                ProgressView().progressViewStyle(.linear).tint(Color.accent)
-                            }
-                        }
-                        .frame(width: Metrics.progressWidth)
+                        MacProgressBar(value: titles.offlineBarProgress)
+                            .frame(width: Metrics.progressWidth)
                         Button(L10n.Common.cancel) { store.send(.offline(.cancelTapped), animation: DSMotion.stateFade)
                         }
                     }

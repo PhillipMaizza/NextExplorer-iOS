@@ -68,11 +68,7 @@
                 Text(L10n.Uploads.statusWaiting).foregroundStyle(.secondary)
             case let .running(progress, detail):
                 VStack(alignment: .leading, spacing: .space2) {
-                    if let progress {
-                        ProgressView(value: progress)
-                    } else {
-                        ProgressView().progressViewStyle(.linear)
-                    }
+                    MacProgressBar(value: progress)
                     if let detail {
                         Text(detail).font(.caption).foregroundStyle(.secondary).monospacedDigit().lineLimit(1)
                     }
