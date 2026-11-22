@@ -6,8 +6,7 @@
 
     private enum Metrics {
         static let width: CGFloat = 1200
-        static let minHeight: CGFloat = 480
-        static let idealHeight: CGFloat = 780
+        static let minHeight: CGFloat = 620
     }
 
     /// Content of the Mac's Settings window. It shows the signed in session's settings and
@@ -35,7 +34,7 @@
             .environment(\.horizontalSizeClass, .regular)
             .modifier(AddAccountSheet(store: mainStore))
             .frame(width: Metrics.width)
-            .frame(minHeight: Metrics.minHeight, idealHeight: Metrics.idealHeight)
+            .frame(minHeight: Metrics.minHeight)
             .onChange(of: mainStore.currentAccountID) { _, newValue in
                 if newValue == nil {
                     dismiss()

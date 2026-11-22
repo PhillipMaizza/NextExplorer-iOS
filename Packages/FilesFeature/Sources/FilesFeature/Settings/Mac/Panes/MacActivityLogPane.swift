@@ -125,6 +125,7 @@
                     .buttonStyle(.macDS(.secondary, size: .small))
                     .fixedSize()
             }
+            .disabled(!store.isLogEnabled)
         }
 
         private var eventsTable: some View {
@@ -167,7 +168,7 @@
             if !store.isUnavailable, store.phase.errorMessage == nil {
                 Button(L10n.ActivityLog.clear, role: .destructive) { store.send(.clearTapped) }
                     .buttonStyle(.macDS(.secondary))
-                    .disabled(store.clearPhase.isRunning)
+                    .disabled(store.clearPhase.isRunning || !store.isLogEnabled || store.events.isEmpty)
             }
         }
     }

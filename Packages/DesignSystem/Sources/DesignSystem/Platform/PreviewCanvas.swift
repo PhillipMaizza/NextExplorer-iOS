@@ -22,7 +22,7 @@ public enum PreviewCanvas {
     public var size: CGSize {
         switch self {
         case .window: CGSize(width: 900, height: 500)
-        case .settingsWindow: CGSize(width: 1200, height: 780)
+        case .settingsWindow: CGSize(width: 1200, height: 620)
         case .settingsPane: CGSize(width: 640, height: 440)
         case .table: CGSize(width: 900, height: 300)
         case .inspector: CGSize(width: 320, height: 320)
