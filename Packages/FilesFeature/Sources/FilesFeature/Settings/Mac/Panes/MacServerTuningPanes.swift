@@ -43,8 +43,6 @@
                         MacRowTitle(title: L10n.UploadSettings.chunkSize, subtitle: L10n.UploadSettings.chunkSizeHelp)
                     }
                     .disabled(!store.draft.isChunkedEnabled)
-                } footer: {
-                    MacSectionFooter(L10n.UploadSettings.subtitle)
                 }
                 Section {
                     Toggle(isOn: $store.draft.isChunkedAutoFallback.sending(\.autoFallbackChanged)) {
@@ -92,7 +90,6 @@
                     )
                 } footer: {
                     MacSectionFooter(
-                        L10n.FfmpegSettings.subtitle,
                         L10n.FfmpegSettings.containerPathHelp,
                         L10n.FfmpegSettings.defaultHelp
                     )
@@ -145,8 +142,6 @@
                 } footer: {
                     if let lockedBy = store.lockedBy {
                         MacSectionFooter(L10n.SearchIndexSettings.locked(lockedBy))
-                    } else {
-                        MacSectionFooter(L10n.SearchIndexSettings.subtitle)
                     }
                 }
                 MacExcludedPathsSections(

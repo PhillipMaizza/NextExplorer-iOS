@@ -43,8 +43,6 @@
                         MacRowTitle(title: L10n.ThumbnailSettings.enable, subtitle: L10n.ThumbnailSettings.enableHelp)
                     }
                     .accessibilityLabel(L10n.ThumbnailSettings.enable)
-                } footer: {
-                    MacSectionFooter(L10n.ThumbnailSettings.subtitle)
                 }
                 Section {
                     numberRow(L10n.ThumbnailSettings.quality, help: L10n.ThumbnailSettings.qualityHelp) {
