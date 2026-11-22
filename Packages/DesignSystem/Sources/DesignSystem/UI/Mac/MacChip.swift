@@ -13,6 +13,25 @@
             case pill
         }
 
+        public enum Size: Sendable {
+            case regular
+            case small
+
+            var textType: Typography.TextType {
+                switch self {
+                case .regular: .body3(.semibold)
+                case .small: .caption(.semibold)
+                }
+            }
+
+            var horizontalPadding: CGFloat {
+                switch self {
+                case .regular: .space8
+                case .small: .space4
+                }
+            }
+        }
+
         public enum Tone: Sendable {
             case green
             case red
@@ -43,6 +62,7 @@
         private let style: Typography.TextStyle
         private let kind: Kind
         private var tone: Tone?
+        private var size: Size = .regular
 
         public init(
             text: String,
@@ -58,15 +78,16 @@
 
         private var pill: some View {
             Text(text)
-                .type(.body3(.semibold))
+                .type(size.textType)
                 .lineLimit(1)
-                .padding(.horizontal, .space8)
+                .padding(.horizontal, size.horizontalPadding)
                 .padding(.vertical, .space2)
         }
 
-        public init(text: String, tone: Tone) {
+        public init(text: String, tone: Tone, size: Size = .regular) {
             self.init(text: text, kind: .pill)
             self.tone = tone
+            self.size = size
         }
 
         public var body: some View {
@@ -98,6 +119,7 @@
             MacChip(text: L10n.ActivityLog.outcomeOk, tone: .green)
             MacChip(text: L10n.ActivityLog.outcomeRefused, tone: .red)
             MacChip(text: L10n.ServerTools.notUsed, tone: .gray)
+            MacChip(text: L10n.ServerTools.notUsed, tone: .amber, size: .small)
             MacChip(text: L10n.UserManagement.badgeAdmin, tone: .amber)
         }
         .padding()
