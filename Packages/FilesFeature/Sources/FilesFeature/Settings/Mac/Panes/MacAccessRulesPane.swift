@@ -6,89 +6,84 @@
     import SwiftUI
 
     private enum Metrics {
-        static let permissionWidth: CGFloat = 130
+        static let rowHeight: CGFloat = .size64
+        static let permissionWidth: CGFloat = 150
     }
 
-    /// The Folder Access Rules pane: one grouped row per rule, Add Rule under them, and the save
-    /// button below.
     struct MacAccessRulesPane: View {
         let store: StoreOf<AccessRulesFeature>
 
         var body: some View {
-            Group {
+            MacFormPage {
                 if store.isUnavailable {
-                    MacSettingsForm { MacSettingsNote(L10n.AccessRules.unavailable) }
-                } else {
-                    content.macSettingsSaveBar(
-                        L10n.AccessRules.saveButton,
-                        isSaving: store.isSaving,
-                        isEnabled: store.isSaveEnabled
-                    ) { store.send(.saveTapped) }
-                }
-            }
-            .overlay {
-                if store.phase == .loading, store.loaded == nil, !store.isUnavailable {
+                    MacNote(L10n.AccessRules.unavailable, kind: .info)
+                } else if store.phase == .loading, store.loaded == nil {
                     MacSpinner()
+                        .frame(maxWidth: .infinity)
+                } else {
+                    MacFormGroup {
+                        if store.drafts.isEmpty {
+                            MacFormRow {
+                                MacRowTitle(title: L10n.AccessRules.empty, subtitle: L10n.AccessRules.emptyHint)
+                            } control: {
+                                EmptyView()
+                            }
+                        }
+                        ForEach(store.drafts) { rule in
+                            ruleRow(rule)
+                        }
+                    }
+                    if let error = store.errorMessage ?? store.phase.errorMessage {
+                        MacNote(error, kind: .error)
+                    }
                 }
             }
+            .disabled(store.isSaving)
             .onAppear { store.send(.onAppear) }
         }
 
-        private var content: some View {
-            MacSettingsPane {
-                Section {
-                    if store.drafts.isEmpty, store.phase != .loading {
-                        MacRowTitle(title: L10n.AccessRules.empty, subtitle: L10n.AccessRules.emptyHint)
-                    }
-                    ForEach(store.drafts) { rule in
-                        ruleRow(rule)
-                    }
-                    HStack {
-                        Spacer()
-                        Button(L10n.AccessRules.addRule) { store.send(.addRuleTapped, animation: DSMotion.listDiff) }
-                    }
-                }
-                if let error = store.errorMessage ?? store.phase.errorMessage {
-                    Text(error).foregroundStyle(Color.negativeText)
-                }
-            }
-        }
-
-        /// One rule on a row: its path, whether it reaches subfolders, the permission, and remove.
         private func ruleRow(_ rule: AccessRule) -> some View {
-            HStack(spacing: .space12) {
-                TextField(L10n.AccessRules.pathLabel, text: Binding(
-                    get: { store.drafts[id: rule.id]?.path ?? "" },
-                    set: { store.send(.pathChanged(id: rule.id, $0)) }
-                ), prompt: Text(L10n.AccessRules.pathPlaceholder))
-                    .labelsHidden()
-                    .textFieldStyle(.roundedBorder)
-                    .autocorrectionDisabled()
-                Toggle(L10n.AccessRules.recursive, isOn: Binding(
-                    get: { store.drafts[id: rule.id]?.isRecursive ?? false },
-                    set: { store.send(.recursiveToggled(id: rule.id, $0)) }
-                ))
-                .toggleStyle(.checkbox)
-                .fixedSize()
-                Picker(L10n.MacSettings.permission, selection: Binding(
-                    get: { store.drafts[id: rule.id]?.permission ?? .readWrite },
-                    set: { store.send(.permissionChanged(id: rule.id, $0)) }
-                )) {
-                    ForEach(AccessRule.Permission.allCases, id: \.self) { permission in
-                        Text(Self.permissionLabel(permission)).tag(permission)
+            let permission = store.drafts[id: rule.id]?.permission ?? .readWrite
+            return MacFormRow {
+                MacTextField(
+                    L10n.AccessRules.pathLabel,
+                    text: Binding(
+                        get: { store.drafts[id: rule.id]?.path ?? "" },
+                        set: { store.send(.pathChanged(id: rule.id, $0)) }
+                    ),
+                    prompt: L10n.AccessRules.pathPlaceholder
+                )
+                .autocorrectionDisabled()
+            } control: {
+                HStack(spacing: .space12) {
+                    MacPopup(
+                        L10n.MacSettings.permission,
+                        valueLabel: Self.permissionLabel(permission),
+                        selection: Binding(
+                            get: { permission },
+                            set: { store.send(.permissionChanged(id: rule.id, $0)) }
+                        ),
+                        shouldFillWidth: true
+                    ) {
+                        ForEach(AccessRule.Permission.allCases, id: \.self) { option in
+                            Text(Self.permissionLabel(option)).tag(option)
+                        }
                     }
+                    .frame(width: Metrics.permissionWidth)
+                    Toggle(L10n.AccessRules.recursive, isOn: Binding(
+                        get: { store.drafts[id: rule.id]?.isRecursive ?? false },
+                        set: { store.send(.recursiveToggled(id: rule.id, $0)) }
+                    ))
+                    .toggleStyle(.macCheckbox)
+                    .fixedSize()
+                    Button(L10n.AccessRules.remove, role: .destructive) {
+                        store.send(.removeRule(id: rule.id), animation: DSMotion.listDiff)
+                    }
+                    .buttonStyle(.macDS(.secondary, size: .small))
+                    .fixedSize()
                 }
-                .labelsHidden()
-                .frame(width: Metrics.permissionWidth)
-                Button(role: .destructive) {
-                    store.send(.removeRule(id: rule.id), animation: DSMotion.listDiff)
-                } label: {
-                    IconKit.removeCircle
-                }
-                .buttonStyle(.borderless)
-                .foregroundStyle(Color.negativeText)
-                .accessibilityLabelWithTooltip(L10n.AccessRules.remove)
             }
+            .frame(minHeight: Metrics.rowHeight)
         }
 
         static func permissionLabel(_ permission: AccessRule.Permission) -> String {
@@ -111,6 +106,6 @@
         state.drafts = IdentifiedArray(uniqueElements: rules)
         state.phase = .loaded
         return MacAccessRulesPane(store: Store(initialState: state) { AccessRulesFeature() })
-            .previewCanvas(.settingsPane)
+            .previewCanvas(.settingsWindow)
     }
 #endif

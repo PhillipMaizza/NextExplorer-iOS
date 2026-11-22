@@ -228,6 +228,20 @@
                     isSaving: thumbnailStore.isSaving,
                     isEnabled: thumbnailStore.isSaveEnabled
                 ) { thumbnailStore.send(.saveTapped) }
+            } else if category == .accessRules,
+                      let rulesStore = store.scope(state: \.accessRules, action: \.accessRules.presented),
+                      !rulesStore.isUnavailable
+            {
+                HStack(spacing: .space8) {
+                    Button(L10n.AccessRules.addRule) { rulesStore.send(.addRuleTapped, animation: DSMotion.listDiff) }
+                        .buttonStyle(.macDS(.secondary))
+                        .disabled(rulesStore.isSaving)
+                    MacPaneSaveButton(
+                        title: L10n.AccessRules.saveButton,
+                        isSaving: rulesStore.isSaving,
+                        isEnabled: rulesStore.isSaveEnabled
+                    ) { rulesStore.send(.saveTapped) }
+                }
             } else if category == .activity,
                       let activityStore = store.scope(state: \.activityLog, action: \.activityLog.presented)
             {
