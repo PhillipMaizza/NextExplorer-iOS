@@ -6,6 +6,11 @@
     import Localization
     import SwiftUI
 
+    private enum Metrics {
+        static let visibleLanguageRows = 4
+        static let flagWidth: CGFloat = .size20
+    }
+
     /// The General pane: what the file tables show, and the app's appearance and language.
     struct MacGeneralSettingsTab: View {
         @Bindable var store: StoreOf<SettingsFeature>
@@ -29,18 +34,57 @@
 
         /// Points the bundle at the new language before writing it, so the rebuild the write
         /// triggers already reads the new strings (see `LanguagePickerView`).
-        private var language: Binding<String> {
-            Binding(
-                get: { appLanguage },
-                set: { code in
-                    LocalizationOverride.apply(code.isEmpty ? nil : code)
-                    appLanguage = code
-                }
-            )
+        private func selectLanguage(_ code: String) {
+            LocalizationOverride.apply(code.isEmpty ? nil : code)
+            appLanguage = code
         }
 
-        private var languageLabel: String {
-            appLanguage.isEmpty ? L10n.Language.systemDefault : LocalizationOverride.displayName(for: appLanguage)
+        private var languageList: some View {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    MacFormRows {
+                        languageRow(L10n.Language.systemDefault, code: "") {
+                            IconKit.web.foregroundStyle(Color.macChromeSecondary)
+                        }
+                        ForEach(LocalizationOverride.supportedLanguages, id: \.self) { code in
+                            languageRow(LocalizationOverride.displayName(for: code), code: code) {
+                                Text(LocalizationOverride.flag(for: code) ?? "")
+                            }
+                        }
+                    }
+                }
+                .frame(height: MacFormMetrics.height(ofRows: Metrics.visibleLanguageRows))
+                .onAppear { proxy.scrollTo(appLanguage, anchor: .center) }
+            }
+            .accessibilityIdentifier(AccessibilityIdentifiers.Settings.languagePicker)
+        }
+
+        private func languageRow(
+            _ title: String,
+            code: String,
+            @ViewBuilder leading: () -> some View
+        ) -> some View {
+            let isSelected = appLanguage == code
+            let leadingView = leading()
+            return Button { selectLanguage(code) } label: {
+                MacFormRow {
+                    HStack(spacing: .space12) {
+                        leadingView
+                            .frame(width: Metrics.flagWidth)
+                            .accessibilityHidden(true)
+                        Text(title)
+                    }
+                } control: {
+                    if isSelected {
+                        IconKit.checkmark
+                            .foregroundStyle(Color.accent)
+                    }
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .id(code)
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
         }
 
         var body: some View {
@@ -50,17 +94,8 @@
                     MacAppearanceTiles(selection: appearance)
                 }
                 HStack(alignment: .top, spacing: .space24) {
-                    MacFormGroup(L10n.Settings.sectionGeneral) {
-                        MacFormRow(L10n.Settings.rowLanguage) {
-                            MacPopup(L10n.Settings.rowLanguage, valueLabel: languageLabel, selection: language) {
-                                Text(L10n.Language.systemDefault).tag("")
-                                Divider()
-                                ForEach(LocalizationOverride.supportedLanguages, id: \.self) { code in
-                                    Text(LocalizationOverride.displayName(for: code)).tag(code)
-                                }
-                            }
-                            .accessibilityIdentifier(AccessibilityIdentifiers.Settings.languagePicker)
-                        }
+                    MacFormGroup(L10n.Settings.rowLanguage) {
+                        languageList
                     }
                     .frame(maxWidth: .infinity)
                     MacFormGroup(L10n.Settings.sectionDisplay) {
