@@ -204,6 +204,10 @@
                 Button(L10n.MacSettings.addAccount) { store.send(.addAccountTapped) }
                     .buttonStyle(.macDS(.secondary))
                     .disabled(store.isSigningOut)
+            } else if category == .apiTokens,
+                      let tokensStore = store.scope(state: \.apiTokens, action: \.apiTokens.presented)
+            {
+                MacAPITokensNewButton(store: tokensStore)
             } else if category == .server,
                       let serverStore = store.scope(state: \.serverDetails, action: \.serverDetails.presented)
             {
@@ -226,7 +230,7 @@
                 MacStorageSettingsTab(store: store)
             case .apiTokens:
                 if let tokensStore = store.scope(state: \.apiTokens, action: \.apiTokens.presented) {
-                    APITokensView(store: tokensStore)
+                    MacAPITokensPane(store: tokensStore)
                 } else {
                     Color.clear.onAppear { store.send(.apiTokensButtonTapped) }
                 }

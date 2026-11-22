@@ -113,7 +113,7 @@ extension APITokensFeature.Expiry {
     }
 }
 
-private extension APIToken.Scope {
+extension APIToken.Scope {
     var title: String {
         self == .write ? L10n.ApiTokens.scopeWrite : L10n.ApiTokens.scopeRead
     }
