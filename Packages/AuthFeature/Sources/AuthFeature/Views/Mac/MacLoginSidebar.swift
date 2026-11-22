@@ -11,6 +11,7 @@
         static let stepRowHeight: CGFloat = .size40
         static let stepBadgeSize: CGFloat = .size24
         static let checkSize: CGFloat = .iconXSmall
+        static let linkIconSize: CGFloat = 18
         static let topPadding: CGFloat = .size56
     }
 
@@ -51,11 +52,11 @@
 
         var body: some View {
             VStack(alignment: .leading, spacing: .space2) {
-                MacLoginFooterLink(title: L10n.Login.serverInfoTitle, icon: IconKit.info) {
+                MacLoginFooterLink(title: L10n.Login.serverInfoTitle, icon: IconKit.macSidebarHelp) {
                     isServerInfoPresented = true
                 }
                 .accessibilityHint(L10n.Login.serverInfoAccessibility)
-                MacLoginFooterLink(title: certificateTitle, icon: IconKit.lock) {
+                MacLoginFooterLink(title: certificateTitle, icon: IconKit.macLock) {
                     store.send(.changeClientCertificateTapped)
                 }
                 .disabled(!canManageCertificate)
@@ -133,6 +134,9 @@
                     Text(title).type(.body2(.regular))
                 } icon: {
                     icon
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Constants.linkIconSize, height: Constants.linkIconSize)
                 }
                 .foregroundStyle(Color.macChromeText)
                 .padding(.horizontal, .space12)
