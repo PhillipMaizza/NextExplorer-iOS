@@ -1292,3 +1292,4 @@ emptyState.dropHintFinder	Finder에서 파일을 여기로 드래그할 수도 �
 login.stepServer	서버
 login.stepLogIn	로그인
 login.stepCode	코드
+apiTokens.badgeExpired	만료됨

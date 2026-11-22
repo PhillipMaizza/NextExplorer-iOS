@@ -1333,3 +1333,4 @@ emptyState.dropHintFinder	Ви також можете перетягнути с
 login.stepServer	Сервер
 login.stepLogIn	Увійти
 login.stepCode	Код
+apiTokens.badgeExpired	Сплив

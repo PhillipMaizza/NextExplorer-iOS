@@ -1332,3 +1332,4 @@ emptyState.dropHintFinder	Soubory sem můžete přetáhnout také z Finderu.
 login.stepServer	Server
 login.stepLogIn	Přihlásit se
 login.stepCode	Kód
+apiTokens.badgeExpired	Vypršelo

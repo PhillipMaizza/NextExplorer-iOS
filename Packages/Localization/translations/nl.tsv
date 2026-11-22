@@ -1328,3 +1328,4 @@ emptyState.dropHintFinder	Je kunt ook bestanden hierheen slepen vanuit de Finder
 login.stepServer	Server
 login.stepLogIn	Inloggen
 login.stepCode	Code
+apiTokens.badgeExpired	Verlopen

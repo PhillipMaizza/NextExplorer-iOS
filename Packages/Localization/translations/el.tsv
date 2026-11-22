@@ -1257,3 +1257,4 @@ emptyState.dropHintFinder	Μπορείτε επίσης να σύρετε αρχ
 login.stepServer	Διακομιστής
 login.stepLogIn	Σύνδεση
 login.stepCode	Κωδικός
+apiTokens.badgeExpired	Έληξε

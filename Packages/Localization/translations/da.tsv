@@ -1257,3 +1257,4 @@ emptyState.dropHintFinder	Du kan også trække filer hertil fra Finder.
 login.stepServer	Server
 login.stepLogIn	Log ind
 login.stepCode	Kode
+apiTokens.badgeExpired	Udløbet

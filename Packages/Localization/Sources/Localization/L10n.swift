@@ -70,6 +70,7 @@ public enum L10n {
         public static var unavailable: String { tr("activityLog.unavailable") }  // "The activity log is only available to administrators."
     }
     public enum ApiTokens {
+        public static var badgeExpired: String { tr("apiTokens.badgeExpired") }  // "Expired"
         public static var copiedToken: String { tr("apiTokens.copiedToken") }  // "Copied"
         public static var copyToken: String { tr("apiTokens.copyToken") }  // "Copy Token"
         public static var createSubmit: String { tr("apiTokens.createSubmit") }  // "Create Token"

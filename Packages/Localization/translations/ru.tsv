@@ -1400,3 +1400,4 @@ emptyState.dropHintFinder	Вы также можете перетащить сю
 login.stepServer	Сервер
 login.stepLogIn	Войти
 login.stepCode	Код
+apiTokens.badgeExpired	Истёк

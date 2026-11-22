@@ -1292,3 +1292,4 @@ emptyState.dropHintFinder	Finderからファイルをここにドラッグする
 login.stepServer	サーバー
 login.stepLogIn	ログイン
 login.stepCode	コード
+apiTokens.badgeExpired	期限切れ

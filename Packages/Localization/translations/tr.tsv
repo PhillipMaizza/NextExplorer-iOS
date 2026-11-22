@@ -1256,3 +1256,4 @@ emptyState.dropHintFinder	Dosyaları buraya Finder'dan da sürükleyebilirsiniz.
 login.stepServer	Sunucu
 login.stepLogIn	Oturum Aç
 login.stepCode	Kod
+apiTokens.badgeExpired	Süresi doldu
