@@ -1218,3 +1218,6 @@ trash.columnDeletedOn	Tanggal Dihapus
 trash.columnRemoved	Dihapus Permanen
 emptyState.dropHintFiles	Anda juga dapat menyeret file ke sini dari File atau Foto.
 emptyState.dropHintFinder	Anda juga dapat menyeret file ke sini dari Finder.
+login.stepServer	Server
+login.stepLogIn	Masuk
+login.stepCode	Kode

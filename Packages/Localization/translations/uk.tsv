@@ -1328,3 +1328,6 @@ shareUpload.failureTooLarge#few	%lld файли не вивантажено. З�
 shareUpload.failureTooLarge#many	%lld файлів не вивантажено. З’єднання із сервером відхиляє такі великі файли. Поділіться ними знову, і NextExplorer надішле їх частинами.
 emptyState.dropHintFiles	Ви також можете перетягнути сюди файли з «Файлів» або «Фото».
 emptyState.dropHintFinder	Ви також можете перетягнути сюди файли з Finder.
+login.stepServer	Сервер
+login.stepLogIn	Увійти
+login.stepCode	Код

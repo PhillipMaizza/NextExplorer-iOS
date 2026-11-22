@@ -1252,3 +1252,6 @@ trash.columnDeletedOn	Slettet
 trash.columnRemoved	Fjernes
 emptyState.dropHintFiles	Du kan også dra filer hit fra Filer eller Bilder.
 emptyState.dropHintFinder	Du kan også dra filer hit fra Finder.
+login.stepServer	Server
+login.stepLogIn	Logg inn
+login.stepCode	Kode

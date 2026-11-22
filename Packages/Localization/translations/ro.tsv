@@ -1359,3 +1359,6 @@ shareUpload.startedDeferred	Salvat pentru NextExplorer. Deschide aplicația pent
 menu.goToFolderPlaceholder	Documente/Rapoarte
 emptyState.dropHintFiles	Poți trage aici fișiere și din Fișiere sau Poze.
 emptyState.dropHintFinder	Poți trage aici fișiere și din Finder.
+login.stepServer	Server
+login.stepLogIn	Conectează-te
+login.stepCode	Cod

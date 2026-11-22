@@ -1287,3 +1287,6 @@ shareUpload.startedDeferred	已为 NextExplorer 保存。请打开应用上传�
 menu.goToFolderPlaceholder	文稿/报告
 emptyState.dropHintFiles	你也可以从“文件”或“照片”将文件拖到这里。
 emptyState.dropHintFinder	你也可以从“访达”将文件拖到这里。
+login.stepServer	服务器
+login.stepLogIn	登录
+login.stepCode	验证码

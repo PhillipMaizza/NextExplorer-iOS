@@ -1318,3 +1318,6 @@ shareUpload.startedDeferred	Salvo para o NextExplorer. Abra o app para enviar os
 menu.goToFolderPlaceholder	Documentos/Relatórios
 emptyState.dropHintFiles	Você também pode arrastar arquivos para cá do app Arquivos ou Fotos.
 emptyState.dropHintFinder	Você também pode arrastar arquivos para cá do Finder.
+login.stepServer	Servidor
+login.stepLogIn	Entrar
+login.stepCode	Código

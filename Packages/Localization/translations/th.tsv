@@ -1218,3 +1218,6 @@ trash.columnDeletedOn	วันที่ลบ
 trash.columnRemoved	ลบถาวร
 emptyState.dropHintFiles	คุณยังลากไฟล์มาที่นี่จากแอปไฟล์หรือรูปภาพได้
 emptyState.dropHintFinder	คุณยังลากไฟล์มาที่นี่จาก Finder ได้
+login.stepServer	เซิร์ฟเวอร์
+login.stepLogIn	เข้าสู่ระบบ
+login.stepCode	รหัส

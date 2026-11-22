@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Bewaard voor NextExplorer. Open de app om je grote b
 menu.goToFolderPlaceholder	Documenten/Rapporten
 emptyState.dropHintFiles	Je kunt ook bestanden hierheen slepen vanuit Bestanden of Foto's.
 emptyState.dropHintFinder	Je kunt ook bestanden hierheen slepen vanuit de Finder.
+login.stepServer	Server
+login.stepLogIn	Inloggen
+login.stepCode	Code

@@ -1395,3 +1395,6 @@ shareUpload.startedDeferred	Zapisano dla NextExplorer. Otwórz aplikację, aby p
 menu.goToFolderPlaceholder	Dokumenty/Raporty
 emptyState.dropHintFiles	Możesz też przeciągnąć tu pliki z aplikacji Pliki lub Zdjęcia.
 emptyState.dropHintFinder	Możesz też przeciągnąć tu pliki z Findera.
+login.stepServer	Serwer
+login.stepLogIn	Zaloguj się
+login.stepCode	Kod

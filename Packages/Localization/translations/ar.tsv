@@ -1467,3 +1467,6 @@ shareUpload.startedDeferred	تم الحفظ لـ NextExplorer. افتح التط
 menu.goToFolderPlaceholder	المستندات/التقارير
 emptyState.dropHintFiles	يمكنك أيضًا سحب الملفات إلى هنا من الملفات أو الصور.
 emptyState.dropHintFinder	يمكنك أيضًا سحب الملفات إلى هنا من Finder.
+login.stepServer	الخادم
+login.stepLogIn	تسجيل الدخول
+login.stepCode	الرمز

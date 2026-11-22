@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Enregistré pour NextExplorer. Ouvrez l'app pour env
 menu.goToFolderPlaceholder	Documents/Rapports
 emptyState.dropHintFiles	Vous pouvez aussi glisser des fichiers ici depuis Fichiers ou Photos.
 emptyState.dropHintFinder	Vous pouvez aussi glisser des fichiers ici depuis le Finder.
+login.stepServer	Serveur
+login.stepLogIn	Se connecter
+login.stepCode	Code
