@@ -129,7 +129,7 @@
                     MacInfoRow(L10n.Shared.metaDownloads, facts.downloads)
                     HStack {
                         Spacer()
-                        Button(L10n.Common.edit + "…") { store.send(.editTapped(share)) }
+                        Button(L10n.ellipsized(L10n.Common.edit)) { store.send(.editTapped(share)) }
                         Button(L10n.Common.delete, role: .destructive) { store.send(.deleteTapped(share)) }
                             .tint(Color.negativeText)
                             .accessibilityIdentifier(AccessibilityIdentifiers.Shared.deleteShare)

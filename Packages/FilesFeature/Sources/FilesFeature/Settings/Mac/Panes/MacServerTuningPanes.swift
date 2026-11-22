@@ -20,45 +20,26 @@
                 unavailableMessage: L10n.UploadSettings.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.loaded == nil,
-                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
                 MacFormGroup {
-                    MacFormRow {
-                        MacRowTitle(
-                            title: L10n.UploadSettings.chunkedEnable,
-                            subtitle: L10n.UploadSettings.chunkedEnableHelp
-                        )
-                    } control: {
-                        Toggle(
-                            L10n.UploadSettings.chunkedEnable,
-                            isOn: $store.draft.isChunkedEnabled.sending(\.chunkedChanged)
-                        )
-                        .labelsHidden()
-                    }
-                    MacFormRow {
-                        MacRowTitle(title: L10n.UploadSettings.chunkSize, subtitle: L10n.UploadSettings.chunkSizeHelp)
-                    } control: {
-                        MacStepper(
-                            label: L10n.UploadSettings.chunkSize,
-                            value: store.chunkSizeMiB,
-                            range: UploadSettings.minChunkSizeMiB ... store.maxChunkSizeMiB,
-                            step: 1
-                        ) { store.send(.chunkSizeChanged($0)) }
-                    }
-                    .disabled(!store.draft.isChunkedEnabled)
-                    MacFormRow {
-                        MacRowTitle(
-                            title: L10n.UploadSettings.autoFallback,
-                            subtitle: L10n.UploadSettings.autoFallbackHelp
-                        )
-                    } control: {
-                        Toggle(
-                            L10n.UploadSettings.autoFallback,
-                            isOn: $store.draft.isChunkedAutoFallback.sending(\.autoFallbackChanged)
-                        )
-                        .labelsHidden()
-                    }
+                    MacSwitchRow(
+                        L10n.UploadSettings.chunkedEnable,
+                        help: L10n.UploadSettings.chunkedEnableHelp,
+                        isOn: $store.draft.isChunkedEnabled.sending(\.chunkedChanged)
+                    )
+                    MacStepperRow(
+                        L10n.UploadSettings.chunkSize,
+                        help: L10n.UploadSettings.chunkSizeHelp,
+                        value: store.chunkSizeMiB,
+                        range: UploadSettings.minChunkSizeMiB ... store.maxChunkSizeMiB
+                    ) { store.send(.chunkSizeChanged($0)) }
+                        .disabled(!store.draft.isChunkedEnabled)
+                    MacSwitchRow(
+                        L10n.UploadSettings.autoFallback,
+                        help: L10n.UploadSettings.autoFallbackHelp,
+                        isOn: $store.draft.isChunkedAutoFallback.sending(\.autoFallbackChanged)
+                    )
                 }
                 if let error = store.errorMessage {
                     MacNote(error, kind: .error)
@@ -77,7 +58,6 @@
                 unavailableMessage: L10n.FfmpegSettings.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.loaded == nil,
-                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
                 VStack(alignment: .leading, spacing: .space8) {
@@ -124,24 +104,16 @@
                 unavailableMessage: L10n.SearchIndexSettings.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.loaded == nil,
-                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
                 VStack(alignment: .leading, spacing: .space8) {
                     MacFormGroup {
-                        MacFormRow {
-                            MacRowTitle(
-                                title: L10n.SearchIndexSettings.running,
-                                subtitle: L10n.SearchIndexSettings.runningHelp
-                            )
-                        } control: {
-                            Toggle(
-                                L10n.SearchIndexSettings.running,
-                                isOn: Binding(get: { store.isEnabled }, set: { store.send(.choiceChanged($0)) })
-                            )
-                            .labelsHidden()
-                            .disabled(store.isChoiceLocked)
-                        }
+                        MacSwitchRow(
+                            L10n.SearchIndexSettings.running,
+                            help: L10n.SearchIndexSettings.runningHelp,
+                            isOn: Binding(get: { store.isEnabled }, set: { store.send(.choiceChanged($0)) })
+                        )
+                        .disabled(store.isChoiceLocked)
                     }
                     if let lockedBy = store.lockedBy {
                         MacFormFootnote(L10n.SearchIndexSettings.locked(lockedBy))
@@ -178,7 +150,6 @@
                 unavailableMessage: L10n.FolderSizeSettings.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.loaded == nil,
-                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
                 VStack(alignment: .leading, spacing: .space8) {

@@ -49,19 +49,15 @@
                 }
             } below: {
                 MacFormGroup(L10n.UserDetail.sectionRoles) {
-                    MacFormRow {
-                        MacRowTitle(
-                            title: L10n.UserManagement.createGrantAdminToggle,
-                            subtitle: L10n.UserManagement.createGrantAdminSubtitle
-                        )
-                    } control: {
-                        Toggle(L10n.UserManagement.createGrantAdminToggle, isOn: Binding(
+                    MacSwitchRow(
+                        L10n.UserManagement.createGrantAdminToggle,
+                        help: L10n.UserManagement.createGrantAdminSubtitle,
+                        isOn: Binding(
                             get: { store.createSheet?.isAdmin ?? false },
                             set: { store.send(.createIsAdminChanged($0)) }
-                        ))
-                        .labelsHidden()
-                        .toggleStyle(.macSwitch)
-                    }
+                        )
+                    )
+                    .toggleStyle(.macSwitch)
                 }
             }
         }

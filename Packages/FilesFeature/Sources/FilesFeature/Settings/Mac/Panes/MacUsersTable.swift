@@ -52,7 +52,7 @@
                     }
                 }
             }
-            .padding(.horizontal, -.space12)
+            .macTableBleed()
         }
 
         private func sortHeader(_ option: UserManagementFeature.SortOption) -> some View {
@@ -132,7 +132,7 @@
         mutate(&state)
         return MacUsersTable(store: Store(initialState: state) { EmptyReducer() })
             .padding(.space32)
-            .frame(width: 760)
+            .previewCanvasWidth(.table)
             .background(Color.macCard)
     }
 

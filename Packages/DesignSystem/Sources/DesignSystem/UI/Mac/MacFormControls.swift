@@ -148,7 +148,7 @@
     #Preview("Field and popup") {
         HStack(spacing: .space8) {
             MacTextField("Search", text: .constant(""), prompt: "A name or a path")
-                .frame(width: 240)
+                .previewCanvasWidth(.control)
             MacPopup("Kind", valueLabel: "Any kind", selection: .constant(0)) {
                 Text(verbatim: "Any kind").tag(0)
                 Text(verbatim: "Uploaded").tag(1)

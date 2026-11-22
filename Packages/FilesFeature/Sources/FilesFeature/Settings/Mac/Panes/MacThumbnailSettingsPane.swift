@@ -36,12 +36,11 @@
 
         private var settingsGroup: some View {
             MacFormGroup {
-                MacFormRow {
-                    MacRowTitle(title: L10n.ThumbnailSettings.enable, subtitle: L10n.ThumbnailSettings.enableHelp)
-                } control: {
-                    Toggle(L10n.ThumbnailSettings.enable, isOn: $store.draft.isEnabled.sending(\.enabledChanged))
-                        .labelsHidden()
-                }
+                MacSwitchRow(
+                    L10n.ThumbnailSettings.enable,
+                    help: L10n.ThumbnailSettings.enableHelp,
+                    isOn: $store.draft.isEnabled.sending(\.enabledChanged)
+                )
                 Group {
                     MacFormRow {
                         MacRowTitle(title: L10n.ThumbnailSettings.quality, subtitle: L10n.ThumbnailSettings.qualityHelp)
@@ -62,14 +61,14 @@
                         }
                     }
                     .frame(minHeight: Metrics.qualityRowHeight)
-                    stepperRow(
+                    MacStepperRow(
                         L10n.ThumbnailSettings.maxDimension,
                         help: L10n.ThumbnailSettings.maxDimensionHelp,
                         value: store.draft.size,
                         range: ThumbnailSettings.sizeRange,
                         step: Metrics.sizeStep
                     ) { store.send(.sizeChanged($0)) }
-                    stepperRow(
+                    MacStepperRow(
                         L10n.ThumbnailSettings.concurrency,
                         help: L10n.ThumbnailSettings.concurrencyHelp,
                         value: store.draft.concurrency,
@@ -78,21 +77,6 @@
                     ) { store.send(.concurrencyChanged($0)) }
                 }
                 .disabled(!store.draft.isEnabled)
-            }
-        }
-
-        private func stepperRow(
-            _ title: String,
-            help: String,
-            value: Int,
-            range: ClosedRange<Int>,
-            step: Int,
-            onChange: @escaping (Int) -> Void
-        ) -> some View {
-            MacFormRow {
-                MacRowTitle(title: title, subtitle: help)
-            } control: {
-                MacStepper(label: title, value: value, range: range, step: step, onChange: onChange)
             }
         }
     }

@@ -107,6 +107,7 @@ struct APITokensView: View {
 }
 
 private struct APITokenRow: View {
+    @Dependency(\.date.now) private var now
     let token: APIToken
     let onRename: () -> Void
     let onRevoke: () -> Void
@@ -134,8 +135,7 @@ private struct APITokenRow: View {
     }
 
     private var expiryText: some View {
-        let now = Date()
-        return Text(token.expiryLine(now: now))
+        Text(token.expiryLine(now: now))
             .type(.body3(.regular), style: .link)
             .foregroundStyle(token.isExpired(now: now) ? Color.negativeText : Color.accentText)
             .multilineTextAlignment(.trailing)

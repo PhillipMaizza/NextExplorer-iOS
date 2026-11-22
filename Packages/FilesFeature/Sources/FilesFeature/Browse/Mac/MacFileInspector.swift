@@ -219,7 +219,7 @@
                     MacInfoRow(L10n.Permissions.sectionMode, Self.modeString(permissions.mode))
                     HStack {
                         Spacer()
-                        Button(L10n.Common.edit + "…", action: onEditPermissions)
+                        Button(L10n.ellipsized(L10n.Common.edit), action: onEditPermissions)
                     }
                 }
             }

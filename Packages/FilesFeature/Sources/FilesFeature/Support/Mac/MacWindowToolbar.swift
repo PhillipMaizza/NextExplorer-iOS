@@ -82,7 +82,7 @@
     #Preview("Upload, Refresh and Search") {
         NavigationStack {
             Text(verbatim: "Folder contents")
-                .frame(width: 600, height: 300)
+                .previewCanvas(.window)
                 .focusedSceneValue(\.uploadToVisibleFolder, UploadToVisibleFolderAction {})
                 .focusedSceneValue(\.refreshVisibleScreen, RefreshScreenAction(isRefreshing: false) {})
                 .focusedSceneValue(\.focusSearchField, FocusSearchAction {})

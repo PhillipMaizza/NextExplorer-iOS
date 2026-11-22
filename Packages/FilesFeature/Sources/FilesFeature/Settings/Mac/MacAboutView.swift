@@ -102,9 +102,10 @@
             VStack(spacing: .space8) {
                 if let onTip {
                     Button(action: onTip) {
-                        Text(L10n.Settings.creditsLikeApp).foregroundStyle(Color.secondaryText)
-                            + Text(verbatim: " ")
-                            + Text(L10n.Settings.creditsBuyCoffee).fontWeight(.semibold)
+                        HStack(spacing: .space4) {
+                            Text(L10n.Settings.creditsLikeApp).foregroundStyle(Color.secondaryText)
+                            Text(L10n.Settings.creditsBuyCoffee).fontWeight(.semibold)
+                        }
                     }
                     .buttonStyle(.macDS(.secondary, size: .small))
                 }
@@ -186,6 +187,6 @@
 
     #Preview("Licenses sheet") {
         MacLicensesSheet(onClose: {})
-            .frame(width: 760, height: 520)
+            .previewCanvas(.window)
     }
 #endif

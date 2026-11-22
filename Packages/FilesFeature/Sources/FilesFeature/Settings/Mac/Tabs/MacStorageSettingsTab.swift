@@ -113,15 +113,11 @@
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    MacFormRow {
-                        MacRowTitle(
-                            title: L10n.Offline.preferOfflineToggle,
-                            subtitle: L10n.Offline.preferOfflineSubtitle
-                        )
-                    } control: {
-                        Toggle(L10n.Offline.preferOfflineToggle, isOn: $shouldPreferOfflineMedia)
-                            .labelsHidden()
-                    }
+                    MacSwitchRow(
+                        L10n.Offline.preferOfflineToggle,
+                        help: L10n.Offline.preferOfflineSubtitle,
+                        isOn: $shouldPreferOfflineMedia
+                    )
                 }
                 downloadRow
                 if case let .failed(message) = progress.phase {
@@ -136,7 +132,7 @@
                         HStack(spacing: .space8) {
                             Button(L10n.Offline.resyncRow) { store.send(.resyncOfflineTapped) }
                                 .buttonStyle(.macDS(.secondary, size: .small))
-                            Button(L10n.Offline.removeRow + "…", role: .destructive) {
+                            Button(L10n.ellipsized(L10n.Offline.removeRow), role: .destructive) {
                                 store.send(.removeOfflineTapped)
                             }
                             .buttonStyle(.macDS(.secondary, size: .small))
@@ -157,7 +153,7 @@
             } else {
                 MacFormRow {
                     VStack(alignment: .leading, spacing: .space8) {
-                        Button(L10n.Offline.settingsRow + "…") { store.send(.offlineDownloadButtonTapped) }
+                        Button(L10n.ellipsized(L10n.Offline.settingsRow)) { store.send(.offlineDownloadButtonTapped) }
                             .buttonStyle(.macDS(.secondary, size: .small))
                         if progress.phase == .waitingForNetwork {
                             OfflineWaitingNote(

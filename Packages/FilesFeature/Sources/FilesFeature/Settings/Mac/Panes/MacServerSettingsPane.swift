@@ -33,7 +33,7 @@
                             Text(L10n.MacSettings.icon)
                         }
                     } control: {
-                        Button(L10n.ServerDetails.changeLogo + "…") { isChoosingIcon = true }
+                        Button(L10n.ellipsized(L10n.ServerDetails.changeLogo)) { isChoosingIcon = true }
                             .buttonStyle(.macDS(.secondary, size: .small))
                     }
                     .frame(minHeight: Metrics.iconRowHeight)

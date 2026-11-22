@@ -27,7 +27,6 @@
                 unavailableMessage: L10n.ActivityLog.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.events.isEmpty,
-                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
                 settingsGroup
@@ -42,10 +41,7 @@
 
         private var settingsGroup: some View {
             MacFormGroup {
-                MacFormRow(L10n.ActivityLog.enabled) {
-                    Toggle(L10n.ActivityLog.enabled, isOn: $store.isEnabledDraft.sending(\.enabledChanged))
-                        .labelsHidden()
-                }
+                MacSwitchRow(L10n.ActivityLog.enabled, isOn: $store.isEnabledDraft.sending(\.enabledChanged))
                 MacFormRow(L10n.ActivityLog.retention) {
                     MacTextField(
                         L10n.ActivityLog.retention,
@@ -140,7 +136,7 @@
                     }
                 }
             }
-            .padding(.horizontal, -.space12)
+            .macTableBleed()
         }
 
         private func emptyLine(_ text: String) -> some View {
