@@ -1,10 +1,6 @@
 #if os(macOS)
     import SwiftUI
 
-    private enum Constants {
-        static let iconSize: CGFloat = .iconSmall
-    }
-
     public struct MacNote: View {
         public enum Kind: Sendable {
             case error
@@ -23,10 +19,7 @@
         public var body: some View {
             HStack(alignment: .firstTextBaseline, spacing: .space8) {
                 icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    .alignmentGuide(.firstTextBaseline) { $0[.bottom] - .space2 }
+                    .type(.body3(.regular))
                     .foregroundStyle(tint)
                     .accessibilityHidden(true)
                 Text(text)
@@ -44,9 +37,9 @@
 
         private var icon: Image {
             switch kind {
-            case .error: IconKit.error
-            case .warning: IconKit.warning
-            case .info: IconKit.info
+            case .error: IconKit.errorFill
+            case .warning: IconKit.warningFill
+            case .info: IconKit.infoFill
             }
         }
 
