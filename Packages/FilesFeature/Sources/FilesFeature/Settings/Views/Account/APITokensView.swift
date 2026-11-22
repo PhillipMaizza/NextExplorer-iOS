@@ -58,46 +58,7 @@ struct APITokensView: View {
         .navigationTitle(L10n.ApiTokens.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .task { store.send(.task) }
-        .sheet(isPresented: Binding(get: { store.createForm != nil }, set: {
-            if !$0 {
-                store.send(.createCancelled)
-            }
-        })) {
-            APITokenCreateSheet(store: store)
-        }
-        .sheet(item: Binding(get: { store.issued }, set: {
-            if $0 == nil {
-                store.send(.issuedDismissed)
-            }
-        })) { issued in
-            APITokenIssuedSheet(issued: issued) { store.send(.issuedDismissed) }
-        }
-        .alert(L10n.ApiTokens.renameTitle, isPresented: Binding(get: { store.rename != nil }, set: {
-            if !$0 {
-                store.send(.renameCancelled)
-            }
-        })) {
-            TextField(
-                L10n.ApiTokens.fieldName,
-                text: Binding(get: { store.rename?.name ?? "" }, set: { store.send(.renameNameChanged($0)) })
-            )
-            Button(L10n.ApiTokens.renameSave) { store.send(.renameSubmitted) }
-                .disabled(!store.isRenameEnabled)
-            Button(L10n.Common.cancel, role: .cancel) { store.send(.renameCancelled) }
-        }
-        .dsAlert(isPresented: Binding(get: { store.tokenPendingRevoke != nil }, set: { _ in })) {
-            DSAlertSheet(
-                icon: IconKit.delete,
-                title: L10n.ApiTokens.revokeTitle,
-                message: L10n.ApiTokens.revokeMessage(store.tokenPendingRevoke?.name ?? ""),
-                confirmTitle: L10n.ApiTokens.revokeConfirm,
-                dismissTitle: L10n.Common.cancel,
-                role: .destructive,
-                closeAccessibilityLabel: L10n.Common.close,
-                onConfirm: { store.send(.revokeConfirmed) },
-                onDismiss: { store.send(.revokeCancelled) }
-            )
-        }
+        .apiTokensPresentations(store)
     }
 
     // MARK: - Loaded
@@ -155,7 +116,7 @@ private struct APITokenRow: View {
             HStack(alignment: .top, spacing: .space8) {
                 VStack(alignment: .leading, spacing: .space4) {
                     Text(token.name).type(.body2(.semibold), style: .primaryOnSurface)
-                    Text(scopeText).type(.body3(.regular), style: .secondary)
+                    Text(token.scope.title).type(.body3(.regular), style: .secondary)
                     ForEach(detailLines, id: \.self) { line in
                         Text(line).type(.body3(.regular), style: .secondary)
                     }
@@ -172,85 +133,16 @@ private struct APITokenRow: View {
         }
     }
 
-    /// On the right, in the accent color, so what lapses and when reads at a glance. A token that
-    /// has lapsed says so in the danger color instead.
     private var expiryText: some View {
-        let isExpired = APITokenDates.isExpired(token.expiresAt, now: Date())
-        return Text(expiryLine)
+        let now = Date()
+        return Text(token.expiryLine(now: now))
             .type(.body3(.regular), style: .link)
-            .foregroundStyle(isExpired ? Color.negativeText : Color.accentText)
+            .foregroundStyle(token.isExpired(now: now) ? Color.negativeText : Color.accentText)
             .multilineTextAlignment(.trailing)
     }
 
-    private var expiryLine: String {
-        guard let expires = token.expiresAt.flatMap({ APITokenDates.display($0) }) else {
-            return L10n.ApiTokens.neverExpires
-        }
-        return APITokenDates.isExpired(token.expiresAt, now: Date())
-            ? L10n.ApiTokens.expired(expires)
-            : L10n.ApiTokens
-                .expires(expires)
-    }
-
-    private var scopeText: String {
-        token.scope == .write ? L10n.ApiTokens.scopeWrite : L10n.ApiTokens.scopeRead
-    }
-
     private var detailLines: [String] {
-        var lines: [String] = []
-        if let created = APITokenDates.display(token.createdAt) {
-            lines.append(L10n.ApiTokens.created(created))
-        }
-        if let used = token.lastUsedAt.flatMap({ APITokenDates.display($0) }) {
-            if let ip = token.lastUsedIp, !ip.isEmpty {
-                lines.append(L10n.ApiTokens.lastUsedFrom(used, ip))
-            } else {
-                lines.append(L10n.ApiTokens.lastUsed(used))
-            }
-        } else {
-            lines.append(L10n.ApiTokens.neverUsed)
-        }
-        return lines
-    }
-}
-
-/// The only time the secret is on screen, so it cannot be swiped away by accident.
-private struct APITokenIssuedSheet: View {
-    let issued: IssuedAPIToken
-    let onDone: () -> Void
-    @State private var isCopied = false
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Metrics.sectionSpacing) {
-                    Text(L10n.ApiTokens.issuedIntro).type(.body3(.regular), style: .secondary)
-                    Card {
-                        Text(issued.secret)
-                            .type(.body2(.regular), style: .primaryOnSurface)
-                            .monospaced()
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    DSButton(isCopied ? L10n.ApiTokens.copiedToken : L10n.ApiTokens.copyToken, style: .secondary) {
-                        PlatformPasteboard.copy(issued.secret)
-                        isCopied = true
-                    }
-                    .formActionAlignment()
-                    DSButton(L10n.ApiTokens.issuedDone, style: .primary, action: onDone)
-                        .formActionAlignment()
-                }
-                .padding(.horizontal, Metrics.horizontalPadding)
-                .padding(.vertical, Metrics.sectionSpacing)
-            }
-            .backgroundGradient()
-            .navigationTitle(L10n.ApiTokens.issuedTitle)
-            .navigationBarTitleDisplayMode(.inline)
-        }
-        .interactiveDismissDisabled()
-        #if os(macOS)
-            .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
-        #endif
+        [token.createdLine, token.usageLine].compactMap(\.self)
     }
 }
 
