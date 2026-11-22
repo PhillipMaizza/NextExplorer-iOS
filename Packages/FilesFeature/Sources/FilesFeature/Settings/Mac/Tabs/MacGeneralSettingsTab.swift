@@ -2,6 +2,7 @@
     import AppStorageKeys
     import ComposableArchitecture
     import CoreModels
+    import DesignSystem
     import Localization
     import SwiftUI
 
@@ -38,36 +39,47 @@
             )
         }
 
+        private var languageLabel: String {
+            appLanguage.isEmpty ? L10n.Language.systemDefault : LocalizationOverride.displayName(for: appLanguage)
+        }
+
         var body: some View {
-            MacSettingsPane {
-                Section(L10n.Settings.sectionGeneral) {
-                    Toggle(
-                        L10n.Settings.toggleShowHiddenFiles,
-                        isOn: $store.preferences.shouldShowHiddenFiles.sending(\.setShowHiddenFiles)
-                    )
-                    .accessibilityLabel(L10n.Settings.toggleShowHiddenFiles)
-                    Toggle(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
-                        .accessibilityLabel(L10n.Settings.toggleShowExtensions)
+            MacFormPage {
+                VStack(alignment: .leading, spacing: .space8) {
+                    MacFormGroupTitle(L10n.Settings.rowAppearance)
+                    MacAppearanceTiles(selection: appearance)
                 }
-                Section(L10n.Settings.sectionDisplay) {
-                    Toggle(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
-                        .accessibilityLabel(L10n.Settings.toggleRenderHTML)
-                    Toggle(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
-                        .accessibilityLabel(L10n.Settings.toggleRenderMarkdown)
-                    Picker(L10n.Settings.rowAppearance, selection: appearance) {
-                        ForEach(AppearanceMode.allCases) { mode in
-                            Text(mode.title).tag(mode)
+                HStack(alignment: .top, spacing: .space24) {
+                    MacFormGroup(L10n.Settings.sectionGeneral) {
+                        MacFormRow(L10n.Settings.rowLanguage) {
+                            MacPopup(L10n.Settings.rowLanguage, valueLabel: languageLabel, selection: language) {
+                                Text(L10n.Language.systemDefault).tag("")
+                                Divider()
+                                ForEach(LocalizationOverride.supportedLanguages, id: \.self) { code in
+                                    Text(LocalizationOverride.displayName(for: code)).tag(code)
+                                }
+                            }
+                            .accessibilityIdentifier(AccessibilityIdentifiers.Settings.languagePicker)
                         }
                     }
-                    Picker(L10n.Settings.rowLanguage, selection: language) {
-                        Text(L10n.Language.systemDefault).tag("")
-                        Divider()
-                        ForEach(LocalizationOverride.supportedLanguages, id: \.self) { code in
-                            Text(LocalizationOverride.displayName(for: code)).tag(code)
-                        }
+                    .frame(maxWidth: .infinity)
+                    MacFormGroup(L10n.Settings.sectionDisplay) {
+                        switchRow(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
+                        switchRow(
+                            L10n.Settings.toggleShowHiddenFiles,
+                            isOn: $store.preferences.shouldShowHiddenFiles.sending(\.setShowHiddenFiles)
+                        )
+                        switchRow(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
+                        switchRow(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
                     }
-                    .accessibilityIdentifier(AccessibilityIdentifiers.Settings.languagePicker)
+                    .frame(maxWidth: .infinity)
                 }
+            }
+        }
+
+        private func switchRow(_ title: String, isOn: Binding<Bool>) -> some View {
+            MacFormRow(title) {
+                Toggle(title, isOn: isOn).labelsHidden()
             }
         }
     }
