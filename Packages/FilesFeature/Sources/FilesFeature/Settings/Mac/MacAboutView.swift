@@ -145,7 +145,7 @@
         }
     }
 
-    struct MacLicensesSheet: View {
+    private struct MacLicensesSheet: View {
         let onClose: () -> Void
 
         var body: some View {
