@@ -13,22 +13,39 @@
         static let groupedFormInset: CGFloat = .size20
     }
 
-    struct MacSettingsPaneCard<Content: View>: View {
+    struct MacSettingsPaneCard<Content: View, Tools: View>: View {
         let title: String
         let subtitle: String?
         @ViewBuilder let content: () -> Content
+        @ViewBuilder let tools: () -> Tools
+
+        init(
+            title: String,
+            subtitle: String?,
+            @ViewBuilder content: @escaping () -> Content,
+            @ViewBuilder tools: @escaping () -> Tools
+        ) {
+            self.title = title
+            self.subtitle = subtitle
+            self.content = content
+            self.tools = tools
+        }
 
         var body: some View {
             VStack(alignment: .leading, spacing: .zero) {
-                VStack(alignment: .leading, spacing: .space8) {
-                    Text(title)
-                        .type(.display)
-                        .accessibilityAddTraits(.isHeader)
-                    if let subtitle {
-                        Text(subtitle)
-                            .type(.body2(.regular), style: .secondary)
-                            .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: .space16) {
+                    VStack(alignment: .leading, spacing: .space8) {
+                        Text(title)
+                            .type(.display)
+                            .accessibilityAddTraits(.isHeader)
+                        if let subtitle {
+                            Text(subtitle)
+                                .type(.body2(.regular), style: .secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                     }
+                    Spacer(minLength: .zero)
+                    tools()
                 }
                 .padding(.horizontal, Metrics.headerInset)
                 .padding(.top, Metrics.headerTop)
@@ -38,6 +55,12 @@
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .macCard()
             .padding([.trailing, .bottom], Metrics.cardInset)
+        }
+    }
+
+    extension MacSettingsPaneCard where Tools == EmptyView {
+        init(title: String, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
+            self.init(title: title, subtitle: subtitle, content: content) { EmptyView() }
         }
     }
 
@@ -52,6 +75,7 @@
             }
             .formStyle(.grouped)
             .scrollContentBackground(.hidden)
+            .toggleStyle(.macSwitch)
             .font(Typography.TextType.body2(.regular).font())
             .padding(.horizontal, Metrics.groupedFormInset)
         }

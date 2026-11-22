@@ -6,6 +6,18 @@
     import Localization
     import SwiftUI
 
+    private enum Metrics {
+        static let searchWidth: CGFloat = 240
+        static let retentionWidth: CGFloat = 80
+        static let timeWidth: CGFloat = 100
+        static let actorWidth: CGFloat = 120
+        static let addressWidth: CGFloat = 140
+        static let outcomeWidth: CGFloat = 96
+        static let columnSpacing: CGFloat = 14
+        static let rowHeight: CGFloat = 40
+        static let dateStyle = Date.FormatStyle.dateTime.day().month(.abbreviated).hour().minute()
+    }
+
     /// The Activity Log pane: the switch and retention, the filters, the lines of the log, and
     /// emptying it.
     struct MacActivityLogPane: View {
@@ -17,23 +29,14 @@
                 unavailableMessage: L10n.ActivityLog.unavailable,
                 failureMessage: store.phase.errorMessage,
                 isLoadingFirstTime: store.phase == .loading && store.events.isEmpty,
-                save: MacAdminSave(
-                    title: L10n.ActivityLog.saveButton,
-                    isSaving: store.isSavingSettings,
-                    isEnabled: store.isSaveSettingsEnabled,
-                    action: { store.send(.saveSettingsTapped) }
-                ),
+                isFormPage: true,
                 onAppear: { store.send(.onAppear) }
             ) {
-                settingsSection
-                filtersSection
-                eventsSection
-                Section {
-                    Button(L10n.ActivityLog.clear, role: .destructive) { store.send(.clearTapped) }
-                        .disabled(store.clearPhase.isRunning)
-                }
+                settingsGroup
+                filtersRow
+                eventsTable
                 if let error = store.bannerError {
-                    Text(error).foregroundStyle(Color.negativeText)
+                    MacNote(error, kind: .error)
                 }
             }
             .confirmationDialog(
@@ -47,96 +50,174 @@
             }
         }
 
-        private var settingsSection: some View {
-            Section {
-                Toggle(isOn: $store.isEnabledDraft.sending(\.enabledChanged)) {
-                    MacRowTitle(title: L10n.ActivityLog.enabled, subtitle: L10n.ActivityLog.enabledHelp)
+        private var settingsGroup: some View {
+            MacFormGroup {
+                MacFormRow(L10n.ActivityLog.enabled) {
+                    Toggle(L10n.ActivityLog.enabled, isOn: $store.isEnabledDraft.sending(\.enabledChanged))
+                        .labelsHidden()
                 }
-                LabeledContent(L10n.ActivityLog.retention) {
-                    MacNumberStepper(
-                        label: L10n.ActivityLog.retention,
-                        value: Int(store.retentionText) ?? ActivitySettings.retentionRange.lowerBound,
-                        range: ActivitySettings.retentionRange,
-                        step: 1
-                    ) { store.send(.retentionChanged(String($0))) }
+                MacFormRow(L10n.ActivityLog.retention) {
+                    MacTextField(
+                        L10n.ActivityLog.retention,
+                        text: Binding(get: { store.retentionText }, set: { store.send(.retentionChanged($0)) })
+                    )
+                    .multilineTextAlignment(.trailing)
+                    .frame(width: Metrics.retentionWidth)
+                    .onSubmit { store.send(.saveSettingsTapped) }
+                    if store.isSavingSettings {
+                        MacSpinner()
+                    }
+                    Button(L10n.ActivityLog.saveButton) { store.send(.saveSettingsTapped) }
+                        .buttonStyle(.macDS(.primary, size: .small))
+                        .disabled(!store.isSaveSettingsEnabled)
                 }
                 if !store.isRetentionValid {
-                    Text(L10n.ActivityLog.retentionInvalid).foregroundStyle(Color.negativeText)
+                    MacFormRow(L10n.ActivityLog.retentionInvalid) { EmptyView() }
+                        .foregroundStyle(Color.negativeText)
                 }
+            }
+            .disabled(store.isSavingSettings)
+        }
+
+        private var actionLabel: String {
+            store.filter.action.map(ActivityActionLabel.title(for:)) ?? L10n.ActivityLog.anyAction
+        }
+
+        private var outcomeLabel: String {
+            switch store.filter.outcome {
+            case .none: L10n.ActivityLog.anyOutcome
+            case .ok: L10n.ActivityLog.outcomeOk
+            case .refused: L10n.ActivityLog.outcomeRefused
             }
         }
 
-        private var filtersSection: some View {
-            Section {
-                Picker(L10n.ActivityLog.filterAction, selection: $store.filter.action.sending(\.actionFilterChanged)) {
+        private var filtersRow: some View {
+            HStack(spacing: .space8) {
+                MacTextField(
+                    L10n.ActivityLog.searchPlaceholder,
+                    text: $store.filter.query.sending(\.queryChanged),
+                    prompt: L10n.ActivityLog.searchPlaceholder
+                )
+                .autocorrectionDisabled()
+                .onSubmit { store.send(.searchSubmitted) }
+                .frame(width: Metrics.searchWidth)
+                MacPopup(
+                    L10n.ActivityLog.filterAction,
+                    valueLabel: actionLabel,
+                    selection: $store.filter.action.sending(\.actionFilterChanged)
+                ) {
                     Text(L10n.ActivityLog.anyAction).tag(String?.none)
                     ForEach(store.actions, id: \.self) { action in
                         Text(ActivityActionLabel.title(for: action)).tag(String?.some(action))
                     }
                 }
-                Picker(
+                MacPopup(
                     L10n.ActivityLog.filterOutcome,
+                    valueLabel: outcomeLabel,
                     selection: $store.filter.outcome.sending(\.outcomeFilterChanged)
                 ) {
                     Text(L10n.ActivityLog.anyOutcome).tag(ActivityOutcome?.none)
                     Text(L10n.ActivityLog.outcomeOk).tag(ActivityOutcome?.some(.ok))
                     Text(L10n.ActivityLog.outcomeRefused).tag(ActivityOutcome?.some(.refused))
                 }
-                HStack(spacing: .space8) {
-                    TextField(
-                        L10n.ActivityLog.searchPlaceholder,
-                        text: $store.filter.query.sending(\.queryChanged),
-                        prompt: Text(L10n.ActivityLog.searchPlaceholder)
-                    )
-                    .labelsHidden()
-                    .textFieldStyle(.roundedBorder)
-                    .autocorrectionDisabled()
-                    .onSubmit { store.send(.searchSubmitted) }
-                    Button(L10n.ActivityLog.refresh) { store.send(.refreshTapped) }
-                }
+                Spacer(minLength: .zero)
+                Button(L10n.ActivityLog.refresh) { store.send(.refreshTapped) }
+                    .buttonStyle(.macDS(.secondary, size: .small))
+                    .fixedSize()
             }
         }
 
-        @ViewBuilder
-        private var eventsSection: some View {
-            if !store.isLogEnabled, store.events.isEmpty {
-                Section { Text(L10n.ActivityLog.off).foregroundStyle(.secondary) }
-            } else if store.events.isEmpty, store.phase == .loaded {
-                Section { Text(L10n.ActivityLog.none).foregroundStyle(.secondary) }
-            } else if !store.events.isEmpty {
-                Section {
-                    ForEach(store.events) { event in
-                        eventRow(event)
+        private var eventsTable: some View {
+            VStack(alignment: .leading, spacing: .zero) {
+                if !store.isLogEnabled, store.events.isEmpty {
+                    emptyLine(L10n.ActivityLog.off)
+                } else if store.events.isEmpty, store.phase == .loaded {
+                    emptyLine(L10n.ActivityLog.none)
+                } else {
+                    ForEach(Array(store.events.enumerated()), id: \.element.id) { index, event in
+                        MacActivityEventRow(event: event, isShaded: index.isMultiple(of: 2))
                     }
                     if store.canLoadMore {
-                        HStack {
-                            Spacer()
-                            Button(L10n.ActivityLog.more) { store.send(.loadMoreTapped) }
-                                .disabled(store.isLoadingMore)
+                        Button { store.send(.loadMoreTapped) } label: {
+                            Text(L10n.ActivityLog.more)
+                                .type(.body2(.semibold), style: .secondary)
+                                .padding(.horizontal, .space16)
+                                .padding(.vertical, .space8)
                         }
+                        .buttonStyle(.plain)
+                        .disabled(store.isLoadingMore)
                     }
                 }
             }
+            .padding(.horizontal, -.space12)
         }
 
-        private func eventRow(_ event: ActivityEvent) -> some View {
-            VStack(alignment: .leading, spacing: .space2) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(ActivityActionLabel.title(for: event.action)).fontWeight(.semibold)
-                    if event.outcome == .refused {
-                        RefusedTag()
-                    }
-                    Spacer()
-                    if let date = event.date {
-                        Text(date.formatted(date: .abbreviated, time: .standard)).foregroundStyle(.secondary)
-                    }
-                }
-                let details = [event.actor, event.target, event.ip.map { L10n.ActivityLog.fromAddress($0) }]
-                    .compactMap { $0 }
-                if !details.isEmpty {
-                    Text(ServerSettingsMetrics.joined(details)).font(.callout).foregroundStyle(.secondary)
-                }
+        private func emptyLine(_ text: String) -> some View {
+            Text(text)
+                .type(.body2(.regular), style: .secondary)
+                .padding(.horizontal, .space12)
+                .frame(height: Metrics.rowHeight)
+        }
+    }
+
+    struct MacActivityLogClearButton: View {
+        let store: StoreOf<ActivityLogFeature>
+
+        var body: some View {
+            if !store.isUnavailable, store.phase.errorMessage == nil {
+                Button(L10n.ActivityLog.clear, role: .destructive) { store.send(.clearTapped) }
+                    .buttonStyle(.macDS(.secondary))
+                    .disabled(store.clearPhase.isRunning)
             }
+        }
+    }
+
+    private struct MacActivityEventRow: View {
+        let event: ActivityEvent
+        let isShaded: Bool
+
+        private var summary: String {
+            ServerSettingsMetrics.joined([ActivityActionLabel.title(for: event.action), event.target].compactMap { $0 })
+        }
+
+        private var time: String {
+            guard let date = event.date else { return "" }
+            return Calendar.current.isDateInToday(date)
+                ? date.formatted(date: .omitted, time: .shortened)
+                : date.formatted(Metrics.dateStyle)
+        }
+
+        var body: some View {
+            HStack(spacing: Metrics.columnSpacing) {
+                Text(time)
+                    .type(.body2(.regular), style: .secondary)
+                    .frame(width: Metrics.timeWidth, alignment: .leading)
+                Text(event.actor ?? "")
+                    .type(.body2(.regular), style: .secondary)
+                    .frame(width: Metrics.actorWidth, alignment: .leading)
+                Text(summary)
+                    .type(.body2(.semibold))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text(event.ip ?? "")
+                    .type(.body3(.regular), style: .secondary)
+                    .monospaced()
+                    .frame(width: Metrics.addressWidth, alignment: .leading)
+                Group {
+                    switch event.outcome {
+                    case .ok: MacChip(text: L10n.ActivityLog.outcomeOk, tone: .green)
+                    case .refused: MacChip(text: L10n.ActivityLog.outcomeRefused, tone: .red)
+                    }
+                }
+                .frame(width: Metrics.outcomeWidth, alignment: .leading)
+            }
+            .lineLimit(1)
+            .padding(.horizontal, .space12)
+            .frame(height: Metrics.rowHeight)
+            .background(
+                RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
+                    .fill(isShaded ? Color.macRow : .clear)
+            )
+            .accessibilityElement(children: .combine)
         }
     }
 

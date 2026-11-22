@@ -5,7 +5,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let sidebarWidth: CGFloat = 240
+        static let sidebarWidth: CGFloat = 272
     }
 
     /// One page of the Mac Settings window's sidebar.
@@ -141,6 +141,8 @@
                 NavigationStack {
                     MacSettingsPaneCard(title: visibleSelection.title, subtitle: visibleSelection.subtitle) {
                         pane(visibleSelection)
+                    } tools: {
+                        headerTools(visibleSelection)
                     }
                     .navigationTitle(visibleSelection.title)
                     .toolbar(removing: .title)
@@ -194,6 +196,15 @@
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
+        }
+
+        @ViewBuilder
+        private func headerTools(_ category: MacSettingsCategory) -> some View {
+            if category == .activity,
+               let activityStore = store.scope(state: \.activityLog, action: \.activityLog.presented)
+            {
+                MacActivityLogClearButton(store: activityStore)
+            }
         }
 
         @ViewBuilder

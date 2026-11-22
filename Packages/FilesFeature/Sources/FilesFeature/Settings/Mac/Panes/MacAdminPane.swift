@@ -34,6 +34,7 @@
         var failureMessage: String?
         let isLoadingFirstTime: Bool
         var save: MacAdminSave?
+        var isFormPage = false
         let onAppear: () -> Void
         @ViewBuilder let content: () -> Content
 
@@ -66,8 +67,12 @@
         }
 
         private var form: some View {
-            MacSettingsPane {
-                content()
+            Group {
+                if isFormPage {
+                    MacFormPage(content: content)
+                } else {
+                    MacSettingsPane(content: content)
+                }
             }
             .disabled(save?.isSaving ?? false)
         }
