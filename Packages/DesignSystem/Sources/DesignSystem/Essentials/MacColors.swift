@@ -1,0 +1,23 @@
+#if os(macOS)
+    import SwiftUI
+
+    private enum Constants {
+        static let chromeButtonOpacity: Double = 0.055
+        static let chromeHoverOpacity: Double = 0.045
+        static let hairlineShadowOpacity: Double = 0.06
+    }
+
+    public extension Color {
+        static let macChrome = Color("MacChrome", bundle: .module)
+        static let macCard = Color("MacCard", bundle: .module)
+        static let macRow = Color("MacRow", bundle: .module)
+        static let macLine = Color("MacLine", bundle: .module)
+        static let macSegment = Color("MacSegment", bundle: .module)
+        static let macField = Color("MacField", bundle: .module)
+        static let macChromeText = Color("MacChromeText", bundle: .module)
+        static let macChromeSecondary = Color("MacChromeSecondary", bundle: .module)
+        static let macChromeButton = Color.macChromeText.opacity(Constants.chromeButtonOpacity)
+        static let macChromeHover = Color.macChromeText.opacity(Constants.chromeHoverOpacity)
+        static let macCardShadow = Color.black.opacity(Constants.hairlineShadowOpacity)
+    }
+#endif
