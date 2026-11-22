@@ -57,6 +57,21 @@ public enum LocalizationOverride {
         displayNames[code] ?? code
     }
 
+    static let flagRegions: [String: String] = [
+        "en": "US", "ar": "SA", "cs": "CZ", "da": "DK", "de": "DE", "el": "GR", "es": "ES", "fi": "FI",
+        "fr": "FR", "he": "IL", "hi": "IN", "hu": "HU", "id": "ID", "it": "IT", "ja": "JP", "ko": "KR",
+        "nb": "NO", "nl": "NL", "pl": "PL", "pt": "PT", "pt-BR": "BR", "ro": "RO", "ru": "RU", "sv": "SE",
+        "th": "TH", "tr": "TR", "uk": "UA", "vi": "VN", "zh-CN": "CN", "zh-TW": "TW",
+    ]
+
+    public static func flag(for code: String) -> String? {
+        guard let region = flagRegions[code] else { return nil }
+        let indicatorOffset: UInt32 = 0x1F1E6 - 0x41
+        return String(String.UnicodeScalarView(region.unicodeScalars.compactMap {
+            UnicodeScalar(indicatorOffset + $0.value)
+        }))
+    }
+
     private struct Override {
         var bundle: Bundle?
         var locale: Locale?

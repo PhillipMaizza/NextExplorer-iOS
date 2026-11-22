@@ -70,4 +70,12 @@ struct L10nTests {
         #expect(L10n.DownloadQueue.barTitleOne("movie.mkv") == "Downloading movie.mkv")
         #expect(L10n.DownloadQueue.savedMany(3) == "3 items saved to Downloads")
     }
+
+    @Test("every supported language has a flag, built from its region's indicator letters")
+    func everyLanguageHasAFlag() {
+        #expect(LocalizationOverride.supportedLanguages.allSatisfy { LocalizationOverride.flag(for: $0) != nil })
+        #expect(LocalizationOverride.flag(for: "de") == "\u{1F1E9}\u{1F1EA}")
+        #expect(LocalizationOverride.flag(for: "pt-BR") == "\u{1F1E7}\u{1F1F7}")
+        #expect(LocalizationOverride.flag(for: "xx") == nil)
+    }
 }
