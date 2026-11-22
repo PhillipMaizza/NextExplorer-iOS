@@ -17,12 +17,14 @@
             case green
             case red
             case gray
+            case amber
 
             var text: Color {
                 switch self {
                 case .green: .macTagGreen
                 case .red: .macTagRed
                 case .gray: .macTagGray
+                case .amber: .macTagAmber
                 }
             }
 
@@ -31,6 +33,7 @@
                 case .green: .macTagGreenFill
                 case .red: .macTagRedFill
                 case .gray: .macTagGrayFill
+                case .amber: .macTagAmberFill
                 }
             }
         }
@@ -95,6 +98,7 @@
             MacChip(text: L10n.ActivityLog.outcomeOk, tone: .green)
             MacChip(text: L10n.ActivityLog.outcomeRefused, tone: .red)
             MacChip(text: L10n.ServerTools.notUsed, tone: .gray)
+            MacChip(text: L10n.UserManagement.badgeAdmin, tone: .amber)
         }
         .padding()
     }
