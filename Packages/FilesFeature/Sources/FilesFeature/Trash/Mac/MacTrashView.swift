@@ -188,15 +188,7 @@
         }
 
         private func icon(for item: TrashItem) -> some View {
-            Group {
-                if item.isDirectory {
-                    MacTableFolderIcon(image: IconKit.folderFill, tint: Color.accent)
-                } else {
-                    FileTypeIcon(kind: TrashRowText.kind(item.name, isDirectory: false))
-                        .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
-                }
-            }
-            .accessibilityHidden(true)
+            MacItemIcon(name: item.name, isDirectory: item.isDirectory)
         }
 
         private var confirmationBinding: Binding<Bool> {

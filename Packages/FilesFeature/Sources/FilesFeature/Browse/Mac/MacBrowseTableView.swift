@@ -325,16 +325,7 @@
         }
 
         private func icon(for item: FileItem) -> some View {
-            // Decorative: the name and kind columns already say what the row is.
-            Group {
-                if item.isDirectory {
-                    MacTableFolderIcon(image: IconKit.folderFill, tint: Color.accent)
-                } else {
-                    FileTypeIcon(kind: item.kind)
-                        .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
-                }
-            }
-            .accessibilityHidden(true)
+            MacItemIcon(kind: item.kind, isDirectory: item.isDirectory)
         }
 
         /// The store owns the sort; the table only renders it and reports header clicks.

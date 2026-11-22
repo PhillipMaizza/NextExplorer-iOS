@@ -96,15 +96,7 @@
         }
 
         private func icon(for result: SearchResultItem) -> some View {
-            Group {
-                if result.isDirectory {
-                    MacTableFolderIcon(image: IconKit.folderFill, tint: Color.accent)
-                } else {
-                    FileTypeIcon(kind: (result.name as NSString).pathExtension.lowercased())
-                        .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
-                }
-            }
-            .accessibilityHidden(true)
+            MacItemIcon(name: result.name, isDirectory: result.isDirectory)
         }
     }
 

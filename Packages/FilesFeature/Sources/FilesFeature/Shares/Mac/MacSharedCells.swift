@@ -46,17 +46,8 @@
             .opacity(isExpired ? Metrics.expiredOpacity : 1)
         }
 
-        /// Decorative: the name already says what the item is.
         private var icon: some View {
-            Group {
-                if row.item.shares[0].isDirectory {
-                    MacTableFolderIcon(image: IconKit.folderFill, tint: Color.accent)
-                } else {
-                    FileTypeIcon(kind: (row.item.name as NSString).pathExtension)
-                        .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
-                }
-            }
-            .accessibilityHidden(true)
+            MacItemIcon(name: row.item.name, isDirectory: row.item.shares[0].isDirectory)
         }
     }
 
