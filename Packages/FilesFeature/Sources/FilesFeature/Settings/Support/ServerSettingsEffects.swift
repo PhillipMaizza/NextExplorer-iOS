@@ -3,6 +3,7 @@ import CoreModels
 import FilesClient
 import FolderPickerFeature
 import Foundation
+import SwiftUI
 
 extension DataPhase {
     /// A page that already shows its form stays on it while it reads again, so a reload never
@@ -21,10 +22,11 @@ extension Effect where Action: Sendable {
     static func api<Value: Sendable>(
         cancelID: some Hashable & Sendable,
         operation: @escaping @Sendable () async throws -> Value,
-        response: @escaping @Sendable (Result<Value, FilesClientError>) -> Action
+        response: @escaping @Sendable (Result<Value, FilesClientError>) -> Action,
+        animation: Animation? = nil
     ) -> Effect<Action> {
         .run { send in
-            try await send(response(apiResult(operation)))
+            try await send(response(apiResult(operation)), animation: animation)
         }
         .cancellable(id: cancelID, cancelInFlight: true)
     }

@@ -17,7 +17,6 @@
 
     private struct MacCheckbox: View {
         let configuration: ToggleStyleConfiguration
-        @Environment(\.isEnabled) private var isEnabled
 
         var body: some View {
             Button {
@@ -48,7 +47,7 @@
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .opacity(isEnabled ? 1 : MacOpacity.disabled)
+            .macDisabledDim()
             .accessibilityRepresentation {
                 Toggle(isOn: configuration.$isOn) { configuration.label }
             }

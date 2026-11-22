@@ -12,7 +12,6 @@
         private let options: [Value]
         private let label: (Value) -> String
         @Binding private var selection: Value
-        @Environment(\.isEnabled) private var isEnabled
 
         public init(
             _ title: String,
@@ -35,7 +34,7 @@
             .padding(Constants.inset)
             .background(Capsule().fill(Color.macSegment))
             .fixedSize()
-            .opacity(isEnabled ? 1 : MacOpacity.disabled)
+            .macDisabledDim()
             .accessibilityElement(children: .contain)
             .accessibilityLabel(title)
         }

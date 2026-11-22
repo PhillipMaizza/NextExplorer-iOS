@@ -11,21 +11,43 @@
         let onAppear: () -> Void
         @ViewBuilder let content: () -> Content
 
+        private enum Phase {
+            case unavailable
+            case failed
+            case loading
+            case loaded
+        }
+
+        private var phase: Phase {
+            if isUnavailable {
+                return .unavailable
+            }
+            if failureMessage != nil {
+                return .failed
+            }
+            return isLoadingFirstTime ? .loading : .loaded
+        }
+
         var body: some View {
             MacFormPage {
-                if isUnavailable {
-                    MacNote(unavailableMessage, kind: .info)
-                } else if let failureMessage {
-                    MacNote(failureMessage, kind: .error)
-                    Button(L10n.Common.retry, action: onAppear)
-                        .buttonStyle(.macDS(.secondary, size: .small))
-                } else if isLoadingFirstTime {
-                    MacSpinner()
-                        .frame(maxWidth: .infinity)
-                } else {
-                    content()
+                Group {
+                    switch phase {
+                    case .unavailable:
+                        MacNote(unavailableMessage, kind: .info)
+                    case .failed:
+                        MacNote(failureMessage ?? "", kind: .error)
+                        Button(L10n.Common.retry, action: onAppear)
+                            .buttonStyle(.macDS(.secondary, size: .small))
+                    case .loading:
+                        MacSpinner()
+                            .frame(maxWidth: .infinity)
+                    case .loaded:
+                        content()
+                    }
                 }
+                .transition(.opacity)
             }
+            .animation(DSMotion.stateFade, value: phase)
             .onAppear(perform: onAppear)
         }
     }

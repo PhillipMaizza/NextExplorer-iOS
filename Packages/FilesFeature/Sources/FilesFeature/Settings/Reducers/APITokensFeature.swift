@@ -1,8 +1,10 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FolderPickerFeature
 import Foundation
+import SwiftUI
 
 /// The signed in account's API tokens, mirroring the web client: a list, a form to make one, the
 /// secret shown once, a rename and a revoke. Every route is reached with a session, never with a
@@ -191,9 +193,18 @@ public struct APITokensFeature {
                 let password = state.isPasswordRequired ? form.password : nil
                 let filesClient = filesClient
                 return .run { send in
-                    try await send(.createResponse(apiResult {
-                        try await filesClient.createAPIToken(serverURL, name, form.scope, form.expiry.days, password)
-                    }))
+                    try await send(
+                        .createResponse(apiResult {
+                            try await filesClient.createAPIToken(
+                                serverURL,
+                                name,
+                                form.scope,
+                                form.expiry.days,
+                                password
+                            )
+                        }),
+                        animation: DSMotion.listDiff
+                    )
                 }
                 .cancellable(id: CancelID.action, cancelInFlight: true)
 
@@ -280,10 +291,13 @@ public struct APITokensFeature {
                 let serverURL = state.serverURL
                 let filesClient = filesClient
                 return .run { send in
-                    try await send(.revokeResponse(apiResult {
-                        try await filesClient.revokeAPIToken(serverURL, token.id)
-                        return token.id
-                    }))
+                    try await send(
+                        .revokeResponse(apiResult {
+                            try await filesClient.revokeAPIToken(serverURL, token.id)
+                            return token.id
+                        }),
+                        animation: DSMotion.listDiff
+                    )
                 }
                 .cancellable(id: CancelID.action, cancelInFlight: true)
 

@@ -15,7 +15,6 @@
         @Binding private var text: String
         private let prompt: String?
         @FocusState private var isFocused: Bool
-        @Environment(\.isEnabled) private var isEnabled
 
         public init(_ title: String, text: Binding<String>, prompt: String? = nil) {
             self.title = title
@@ -30,12 +29,12 @@
                 .type(.body2(.regular))
                 .focused($isFocused)
                 .padding(.horizontal, .space12)
-                .macFieldChrome(isFocused: isFocused, isEnabled: isEnabled)
+                .macFieldChrome(isFocused: isFocused)
         }
     }
 
     extension View {
-        func macFieldChrome(isFocused: Bool, isEnabled: Bool) -> some View {
+        func macFieldChrome(isFocused: Bool) -> some View {
             tint(Color.accent)
                 .frame(height: Constants.fieldHeight)
                 .background(Constants.shape.fill(Color.macField))
@@ -54,7 +53,7 @@
                     )
                 )
                 .focusEffectDisabled()
-                .opacity(isEnabled ? 1 : MacOpacity.disabled)
+                .macDisabledDim()
         }
     }
 
@@ -93,7 +92,6 @@
         private let valueLabel: String
         private let items: () -> Items
         private let shouldFillWidth: Bool
-        @Environment(\.isEnabled) private var isEnabled
 
         public init(
             _ title: String,
@@ -115,7 +113,7 @@
             .buttonStyle(.plain)
             .menuIndicator(.hidden)
             .fixedSize(horizontal: !shouldFillWidth, vertical: true)
-            .opacity(isEnabled ? 1 : MacOpacity.disabled)
+            .macDisabledDim()
             .accessibilityLabel(title)
             .accessibilityValue(valueLabel)
         }

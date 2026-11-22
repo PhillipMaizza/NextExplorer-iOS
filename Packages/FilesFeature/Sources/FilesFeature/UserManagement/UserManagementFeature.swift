@@ -583,10 +583,13 @@ public struct UserManagementFeature {
                 let serverURL = state.serverURL
                 let filesClient = filesClient
                 return .run { send in
-                    try await send(.deleteUserResponse(user.id, apiResult {
-                        try await filesClient.deleteUser(serverURL, user.id)
-                        return true
-                    }))
+                    try await send(
+                        .deleteUserResponse(user.id, apiResult {
+                            try await filesClient.deleteUser(serverURL, user.id)
+                            return true
+                        }),
+                        animation: DSMotion.listDiff
+                    )
                 }
                 .cancellable(id: CancelID.deleteUser, cancelInFlight: true)
 
@@ -641,9 +644,12 @@ public struct UserManagementFeature {
                 let serverURL = state.serverURL
                 let filesClient = filesClient
                 return .run { send in
-                    try await send(.createResponse(apiResult {
-                        try await filesClient.createUser(serverURL, request)
-                    }))
+                    try await send(
+                        .createResponse(apiResult {
+                            try await filesClient.createUser(serverURL, request)
+                        }),
+                        animation: DSMotion.listDiff
+                    )
                 }
                 .cancellable(id: CancelID.createUser, cancelInFlight: true)
 

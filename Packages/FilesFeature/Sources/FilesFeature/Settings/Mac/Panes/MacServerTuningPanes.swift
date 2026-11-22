@@ -130,8 +130,8 @@
                     checkedPaths: store.draftPaths,
                     newPath: $store.newPath.sending(\.newPathChanged),
                     isEnabled: store.isEnabled,
-                    onAdd: { store.send(.addPathTapped) },
-                    onToggle: { store.send(.pathToggled($0)) }
+                    onAdd: { store.send(.addPathTapped, animation: DSMotion.listDiff) },
+                    onToggle: { store.send(.pathToggled($0), animation: DSMotion.stateFade) }
                 )
                 if let error = store.errorMessage {
                     MacNote(error, kind: .error)
@@ -184,8 +184,8 @@
                     checkedPaths: store.draftPaths,
                     newPath: $store.newPath.sending(\.newPathChanged),
                     isEnabled: store.mode != .off,
-                    onAdd: { store.send(.addPathTapped) },
-                    onToggle: { store.send(.pathToggled($0)) }
+                    onAdd: { store.send(.addPathTapped, animation: DSMotion.listDiff) },
+                    onToggle: { store.send(.pathToggled($0), animation: DSMotion.stateFade) }
                 )
                 if let error = store.errorMessage {
                     MacNote(error, kind: .error)
