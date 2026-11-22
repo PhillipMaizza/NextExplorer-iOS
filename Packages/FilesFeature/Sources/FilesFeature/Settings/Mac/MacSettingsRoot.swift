@@ -211,7 +211,23 @@
             } else if category == .server,
                       let serverStore = store.scope(state: \.serverDetails, action: \.serverDetails.presented)
             {
-                MacServerUpdateButton(store: serverStore)
+                MacPaneSaveButton(
+                    title: L10n.ServerDetails.updateButton,
+                    isSaving: serverStore.isSaving,
+                    isEnabled: serverStore.isSaveEnabled
+                ) { serverStore.send(.updateTapped) }
+            } else if category == .thumbnails,
+                      let thumbnailStore = store.scope(
+                          state: \.thumbnailSettings,
+                          action: \.thumbnailSettings.presented
+                      ),
+                      !thumbnailStore.isUnavailable
+            {
+                MacPaneSaveButton(
+                    title: L10n.ThumbnailSettings.saveButton,
+                    isSaving: thumbnailStore.isSaving,
+                    isEnabled: thumbnailStore.isSaveEnabled
+                ) { thumbnailStore.send(.saveTapped) }
             } else if category == .activity,
                       let activityStore = store.scope(state: \.activityLog, action: \.activityLog.presented)
             {

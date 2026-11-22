@@ -194,6 +194,25 @@
         }
     }
 
+    struct MacPaneSaveButton: View {
+        let title: String
+        let isSaving: Bool
+        let isEnabled: Bool
+        let action: () -> Void
+
+        var body: some View {
+            HStack(spacing: Metrics.rowSpacing) {
+                if isSaving {
+                    MacSpinner()
+                }
+                Button(title, action: action)
+                    .buttonStyle(.macDS(.primary))
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(!isEnabled)
+            }
+        }
+    }
+
     extension View {
         func macSettingsSaveBar(
             _ title: String,

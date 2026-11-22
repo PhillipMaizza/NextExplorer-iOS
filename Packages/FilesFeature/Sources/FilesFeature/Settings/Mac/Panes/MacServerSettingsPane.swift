@@ -101,22 +101,6 @@
         }
     }
 
-    struct MacServerUpdateButton: View {
-        let store: StoreOf<ServerDetailsFeature>
-
-        var body: some View {
-            HStack(spacing: .space8) {
-                if store.isSaving {
-                    MacSpinner()
-                }
-                Button(L10n.ServerDetails.updateButton) { store.send(.updateTapped) }
-                    .buttonStyle(.macDS(.primary))
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(!store.isSaveEnabled)
-            }
-        }
-    }
-
     #Preview("Server") {
         MacServerSettingsPane(store: Store(initialState: ServerDetailsFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
