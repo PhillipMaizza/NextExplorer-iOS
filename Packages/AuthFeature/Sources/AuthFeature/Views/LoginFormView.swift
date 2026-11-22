@@ -45,6 +45,7 @@ public struct LoginFormView: View {
     /// Whether a successful sign in floods the screen with accent into the app. Off where the
     /// form is a dialog (the Mac Add Account sheet), which simply closes instead.
     private let shouldFloodIntoApp: Bool
+    private let hasStepsSidebar: Bool
     /// Submit button's rect in this view's own space: the seed for the sign in circle that
     /// floods the screen with accent, scaling the button itself.
     @State private var submitButtonRect: CGRect = .zero
@@ -71,17 +72,27 @@ public struct LoginFormView: View {
     @State private var isIdentifierFieldInvalid = false
     @State private var isPasswordFieldInvalid = false
 
-    public init(store: StoreOf<LoginFormFeature>, shouldAutoFocus: Bool = true, shouldFloodIntoApp: Bool = true) {
+    public init(
+        store: StoreOf<LoginFormFeature>,
+        shouldAutoFocus: Bool = true,
+        shouldFloodIntoApp: Bool = true,
+        hasStepsSidebar: Bool = true
+    ) {
         self.store = store
         self.shouldAutoFocus = shouldAutoFocus
         self.shouldFloodIntoApp = shouldFloodIntoApp
+        self.hasStepsSidebar = hasStepsSidebar
     }
 
     public var body: some View {
         ZStack {
-            cardWrappedPages
+            #if os(macOS)
+                MacLoginLayout(store: store, hasStepsSidebar: hasStepsSidebar) { pages }
+            #else
+                cardWrappedPages
+                    .background(loginBackground)
+            #endif
         }
-        .background(loginBackground)
         .coordinateSpace(.named(Constants.rootSpace))
         .overlay {
             if shouldFloodIntoApp, !reduceMotion, store.submitPhase == .success, submitButtonRect != .zero {
@@ -174,52 +185,54 @@ public struct LoginFormView: View {
         }
     }
 
-    /// Screen background. Regular width (the card layout) sits on a warm amber accent wash so
-    /// the white card floats on a brand gradient; compact keeps the neutral app gradient.
-    private var loginBackground: some View {
-        Group {
+    #if os(iOS)
+        /// Screen background. Regular width (the card layout) sits on a warm amber accent wash so
+        /// the white card floats on a brand gradient; compact keeps the neutral app gradient.
+        private var loginBackground: some View {
+            Group {
+                if horizontalSizeClass == .regular {
+                    LinearGradient(
+                        colors: [Constants.backgroundGradientTop, Constants.backgroundGradientBottom],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                } else {
+                    LinearGradient.backgroundPrimary
+                }
+            }
+            .ignoresSafeArea()
+        }
+
+        /// The two sliding pages. On regular width they float in a centered surface card over the
+        /// gradient; on compact they stay full bleed exactly as before.
+        @ViewBuilder
+        private var cardWrappedPages: some View {
             if horizontalSizeClass == .regular {
-                LinearGradient(
-                    colors: [Constants.backgroundGradientTop, Constants.backgroundGradientBottom],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
+                // Wrap the floating card in a keyboard aware ScrollView: with the fields inside the
+                // page's own scroll view, SwiftUI's keyboard avoidance only shifts that inner scroll,
+                // so a fixed height centered card keeps its lower half (the field + button) behind the
+                // keyboard in iPad landscape. This outer scroll can lift the whole card instead;
+                // `containerRelativeFrame` keeps it centered when there's room to spare.
+                ScrollView {
+                    styledCard
+                        .containerRelativeFrame(.vertical, alignment: .center)
+                }
+                .scrollBounceBehavior(.basedOnSize)
+                .scrollIndicators(.hidden)
             } else {
-                LinearGradient.backgroundPrimary
+                pages
             }
         }
-        .ignoresSafeArea()
-    }
 
-    /// The two sliding pages. On regular width they float in a centered surface card over the
-    /// gradient; on compact they stay full bleed exactly as before.
-    @ViewBuilder
-    private var cardWrappedPages: some View {
-        if horizontalSizeClass == .regular {
-            // Wrap the floating card in a keyboard aware ScrollView: with the fields inside the
-            // page's own scroll view, SwiftUI's keyboard avoidance only shifts that inner scroll,
-            // so a fixed height centered card keeps its lower half (the field + button) behind the
-            // keyboard in iPad landscape. This outer scroll can lift the whole card instead;
-            // `containerRelativeFrame` keeps it centered when there's room to spare.
-            ScrollView {
-                styledCard
-                    .containerRelativeFrame(.vertical, alignment: .center)
-            }
-            .scrollBounceBehavior(.basedOnSize)
-            .scrollIndicators(.hidden)
-        } else {
+        private var styledCard: some View {
             pages
+                .frame(maxWidth: Constants.cardWidth, maxHeight: Constants.cardMaxHeight)
+                .clipShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+                .elevation(.level16)
+                .frame(maxWidth: .infinity)
+                .padding(Constants.cardOuterPadding)
         }
-    }
-
-    private var styledCard: some View {
-        pages
-            .frame(maxWidth: Constants.cardWidth, maxHeight: Constants.cardMaxHeight)
-            .clipShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
-            .elevation(.level16)
-            .frame(maxWidth: .infinity)
-            .padding(Constants.cardOuterPadding)
-    }
+    #endif
 
     private var pages: some View {
         ZStack {

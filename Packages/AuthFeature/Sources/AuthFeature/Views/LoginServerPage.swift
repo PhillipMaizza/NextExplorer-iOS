@@ -9,6 +9,19 @@ private enum Constants {
     static let logoSize: CGFloat = .size96
     static let checkmarkSize: CGFloat = .iconSmall
     static let macButtonHiddenScale: CGFloat = 0.9
+    #if os(macOS)
+        static var idleButtonStyle: DSButtonStyle {
+            .primary
+        }
+
+        static let idleLabelColor: Color = .onAccent
+    #else
+        static var idleButtonStyle: DSButtonStyle {
+            .inverted
+        }
+
+        static let idleLabelColor: Color = .white
+    #endif
 }
 
 /// The sign in form's first page: the server's address, its scheme, a client certificate when
@@ -33,31 +46,7 @@ struct LoginServerPage: View {
             VStack(spacing: .space24) {
                 Spacer(minLength: .space48)
 
-                VStack(spacing: .zero) {
-                    IconKit.logo
-                        .resizable()
-                        .frame(width: Constants.logoSize, height: Constants.logoSize)
-                    Button {
-                        isServerInfoPresented = true
-                    } label: {
-                        // Inline `(i)` flowing right after the title text (`Text` image, so it
-                        // scales with the type and wraps with the sentence), the whole title
-                        // acting as the tap target.
-                        (
-                            Text(L10n.Login.serverQuestion)
-                                + Text(" ")
-                                + Text(IconKit.info)
-                                .font(Typography.TextType.body2(.regular).font())
-                                .foregroundColor(Color.secondaryDS)
-                        )
-                        .type(.headline3, style: .primaryOnSurface)
-                        .multilineTextAlignment(.center)
-                    }
-                    .buttonStyle(DSPressableButtonStyle())
-                    .accessibilityLabel(L10n.Login.serverQuestion)
-                    .accessibilityHint(L10n.Login.serverInfoAccessibility)
-                }
-                .padding(.horizontal, .space16)
+                header
 
                 VStack(spacing: .space24) {
                     DSSegmentedControl(
@@ -71,11 +60,15 @@ struct LoginServerPage: View {
                     // `http://` prefix flips it to http. See `LoginFormFeature.inferredScheme`.
                     TextField(
                         text: Binding(get: { store.host }, set: { store.send(.hostChanged($0)) }),
-                        prompt: Text(hostPlaceholder).foregroundColor(Color.secondaryDS)
+                        prompt: Text(hostPlaceholder).foregroundColor(Color.secondaryText)
                     ) {
                         EmptyView()
                     }
+                    #if os(macOS)
+                    .macLargeField(isFocused: isHostFocused)
+                    #else
                     .roundedFieldStyle(height: .size56)
+                    #endif
                     .type(.body1(.regular))
                     .tint(Color.accent)
                     .autocorrectionDisabled()
@@ -99,21 +92,7 @@ struct LoginServerPage: View {
                 }
                 .padding(.horizontal, .space24)
 
-                if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
-                    Text(errorMessage)
-                        .type(.body2(.semibold), style: .error)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, .space24)
-                        .transition(.opacity)
-                } else if let warning = missingPortWarning {
-                    Text(warning)
-                        .type(.body1(.semibold), style: .warning)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, .space24)
-                        .transition(.opacity)
-                }
+                message
 
                 if let prompt = store.certificatePrompt {
                     LoginCertificateButton(isRejected: prompt.isRejected) {
@@ -152,7 +131,9 @@ struct LoginServerPage: View {
                     }
                 #endif
 
-                LoginDiagnosticsButton(diagnostics: store.diagnostics)
+                #if os(iOS)
+                    LoginDiagnosticsButton(diagnostics: store.diagnostics)
+                #endif
 
                 Spacer(minLength: .space48)
             }
@@ -170,9 +151,78 @@ struct LoginServerPage: View {
         // Get the Local Network permission alert out of the way while the user is still
         // typing the address, not the moment they hit "Test connection".
         .onAppear { LocalNetworkPrimer.prime() }
-        .dsSheet(isPresented: $isServerInfoPresented) {
-            ServerInfoSheet(onClose: { isServerInfoPresented = false })
-        }
+        #if os(iOS)
+            .dsSheet(isPresented: $isServerInfoPresented) {
+                ServerInfoSheet(onClose: { isServerInfoPresented = false })
+            }
+        #endif
+    }
+
+    private var header: some View {
+        #if os(macOS)
+            Text(L10n.Login.serverQuestion)
+                .type(.headline1)
+                .accessibilityAddTraits(.isHeader)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, .space24)
+        #else
+            VStack(spacing: .zero) {
+                IconKit.logo
+                    .resizable()
+                    .frame(width: Constants.logoSize, height: Constants.logoSize)
+                Button {
+                    isServerInfoPresented = true
+                } label: {
+                    // Inline `(i)` flowing right after the title text (`Text` image, so it
+                    // scales with the type and wraps with the sentence), the whole title
+                    // acting as the tap target.
+                    (
+                        Text(L10n.Login.serverQuestion)
+                            + Text(" ")
+                            + Text(IconKit.info)
+                            .font(Typography.TextType.body2(.regular).font())
+                            .foregroundColor(Color.secondaryText)
+                    )
+                    .type(.headline3, style: .primaryOnSurface)
+                    .multilineTextAlignment(.center)
+                }
+                .buttonStyle(DSPressableButtonStyle())
+                .accessibilityLabel(L10n.Login.serverQuestion)
+                .accessibilityHint(L10n.Login.serverInfoAccessibility)
+            }
+            .padding(.horizontal, .space16)
+        #endif
+    }
+
+    @ViewBuilder
+    private var message: some View {
+        #if os(macOS)
+            if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
+                MacNote(errorMessage, kind: .error)
+                    .padding(.horizontal, .space24)
+                    .transition(.opacity)
+            } else if let warning = missingPortWarning {
+                MacNote(warning, kind: .info)
+                    .padding(.horizontal, .space24)
+                    .transition(.opacity)
+            }
+        #else
+            if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
+                Text(errorMessage)
+                    .type(.body2(.semibold), style: .error)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, .space24)
+                    .transition(.opacity)
+            } else if let warning = missingPortWarning {
+                Text(warning)
+                    .type(.body1(.semibold), style: .warning)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, .space24)
+                    .transition(.opacity)
+            }
+        #endif
     }
 
     private var testConnectionButton: some View {
@@ -182,7 +232,7 @@ struct LoginServerPage: View {
             isCollapsed: isCollapsed,
             style: {
                 switch store.connectionPhase {
-                case .idle, .testing: .inverted
+                case .idle, .testing: Constants.idleButtonStyle
                 case .success: .success
                 case .failure: .failure
                 }
@@ -202,9 +252,9 @@ struct LoginServerPage: View {
             case .idle:
                 Text(L10n.Login.testConnection)
                     .type(.label3)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Constants.idleLabelColor)
             case .testing:
-                DSSpinner(color: .white)
+                DSSpinner(color: Constants.idleLabelColor)
             case .success:
                 IconKit.checkmark
                     .resizable()
