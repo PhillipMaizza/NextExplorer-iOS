@@ -8,12 +8,12 @@
 
     public extension View {
         func macCard() -> some View {
-            background(
-                RoundedRectangle(cornerRadius: .radiusCard, style: .continuous)
-                    .fill(Color.macCard)
-                    .shadow(color: .macCardShadow, radius: Constants.shadowRadius, y: Constants.shadowOffset)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+            clipShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+                .background(
+                    RoundedRectangle(cornerRadius: .radiusCard, style: .continuous)
+                        .fill(Color.macCard)
+                        .shadow(color: .macCardShadow, radius: Constants.shadowRadius, y: Constants.shadowOffset)
+                )
         }
 
         func macChromeBackground() -> some View {

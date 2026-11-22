@@ -10,7 +10,6 @@
         static let hoverOpacity: Double = 0.06
         static let pressedOpacity: Double = 0.12
         static let disabledOpacity: Double = 0.4
-        static let invertedFillWhite: Double = 0.15
     }
 
     extension DSButtonSize {
@@ -33,14 +32,7 @@
 
     extension DSButtonStyle {
         var macFill: Color {
-            switch self {
-            case .primary: .accent
-            case .secondary: .macSegment
-            case .tertiary, .ghost, .outline: .clear
-            case .success: .positive
-            case .failure: .negative
-            case .inverted: Color(white: Constants.invertedFillWhite)
-            }
+            self == .secondary ? .macSegment : backgroundColor
         }
 
         func macForeground(isDestructive: Bool) -> Color {
