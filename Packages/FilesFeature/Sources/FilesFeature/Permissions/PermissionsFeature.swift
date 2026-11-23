@@ -21,6 +21,7 @@ public struct PermissionsFeature {
         /// Editable rights grid, seeded from `permissions` on each load.
         public var grid: [PermissionScope: Set<PermissionRight>] = [:]
         public var recursive = false
+        public var numericDraft = ""
         public var ownerDraft = ""
         public var groupDraft = ""
 
@@ -47,6 +48,10 @@ public struct PermissionsFeature {
             return octalString != original
         }
 
+        public var isDirty: Bool {
+            isModeDirty || isOwnershipDirty
+        }
+
         public var isOwnershipDirty: Bool {
             guard let permissions else { return false }
             let owner = ownerDraft.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -60,9 +65,11 @@ public struct PermissionsFeature {
         case onAppear
         case permissionsResponse(Result<FilePermissions, FilesClientError>)
         case toggle(PermissionScope, PermissionRight)
+        case numericChanged(String)
         case recursiveChanged(Bool)
         case ownerDraftChanged(String)
         case groupDraftChanged(String)
+        case saveTapped
         case applyModeTapped
         case modeResponse(Result<Bool, FilesClientError>)
         case applyOwnershipTapped
@@ -94,6 +101,7 @@ public struct PermissionsFeature {
                 state.phase = .loaded
                 state.permissions = permissions
                 state.grid = permissions.grid
+                state.numericDraft = permissions.octalString
                 state.recursive = false
                 state.ownerDraft = permissions.owner
                 state.groupDraft = permissions.group
@@ -111,7 +119,16 @@ public struct PermissionsFeature {
                     rights.insert(right)
                 }
                 state.grid[scope] = rights
+                state.numericDraft = state.octalString
                 state.actionError = nil
+                return .none
+
+            case let .numericChanged(text):
+                state.numericDraft = text
+                if let grid = FilePermissions.grid(fromOctal: text) {
+                    state.grid = grid
+                    state.actionError = nil
+                }
                 return .none
 
             case let .recursiveChanged(value):
@@ -127,6 +144,12 @@ public struct PermissionsFeature {
                 state.groupDraft = value
                 state.actionError = nil
                 return .none
+
+            case .saveTapped:
+                return .merge(
+                    state.isModeDirty ? .send(.applyModeTapped) : .none,
+                    state.isOwnershipDirty ? .send(.applyOwnershipTapped) : .none
+                )
 
             case .applyModeTapped:
                 guard state.isModeDirty, !state.isSavingMode else { return .none }

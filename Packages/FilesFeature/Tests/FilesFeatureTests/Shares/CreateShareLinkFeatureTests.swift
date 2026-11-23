@@ -113,6 +113,10 @@ struct CreateShareLinkFeatureTests {
         await store.send(.createTapped) {
             $0.errorMessage = L10n.CreateShare.errorPasswordRequired
         }
+        await store.send(.passwordChanged(TestAccount.password)) {
+            $0.password = TestAccount.password
+            $0.errorMessage = nil
+        }
     }
 
     @Test

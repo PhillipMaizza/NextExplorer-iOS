@@ -85,10 +85,7 @@
                 }
                 .sorted(using: sortOrder)
             table(rows)
-                .scrollContentBackground(.hidden)
-                // AppKit stripes the empty space below the rows at its default row height, which
-                // never lines up with the taller rows here.
-                .alternatingRowBackgrounds(.disabled)
+                .macBoardTable()
                 // The table's scroll view otherwise draws its header material up under the pinned title.
                 .clipped()
                 .allowsHitTesting(!isLoading)
@@ -126,7 +123,7 @@
             Table(rows, children: \.children, selection: $selection, sortOrder: $sortOrder) {
                 TableColumn(L10n.Sort.name, value: \.name) { row in
                     MacSharedNameCell(row: row, isExpired: !isLoading && isExpired(row))
-                        .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
+                        .macBoardTableCell()
                         .modifier(MacSharedPlaceholderCell(isActive: isLoading))
                         .opacity(opacity(for: row))
                 }

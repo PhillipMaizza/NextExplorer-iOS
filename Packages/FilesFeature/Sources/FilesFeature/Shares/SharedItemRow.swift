@@ -80,17 +80,11 @@ struct SharedItemRow: View {
     @ViewBuilder
     private var locationText: some View {
         if let location = item.location {
-            Text(Self.pathText(location))
+            Text(PathTrail.text(location))
                 .type(.body3(.regular), style: .secondary)
                 .lineLimit(1)
                 .truncationMode(.head)
         }
-    }
-
-    /// `Work/Roadmap` as `Work › Roadmap`, joined through the localized step format.
-    private static func pathText(_ location: String) -> String {
-        let parts = location.split(separator: "/").map(String.init)
-        return parts.dropFirst().reduce(parts.first ?? location) { L10n.Shared.pathStep($0, $1) }
     }
 
     /// The soonest countdown among the shares still live.

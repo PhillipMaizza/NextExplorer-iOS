@@ -197,19 +197,11 @@ struct PermissionsSheet: View {
     // MARK: Column/row labels
 
     private static var scopes: [(PermissionScope, String)] {
-        [
-            (.owner, L10n.Permissions.scopeOwner),
-            (.group, L10n.Permissions.scopeGroup),
-            (.others, L10n.Permissions.scopeOthers),
-        ]
+        PermissionScope.allCases.map { ($0, $0.title) }
     }
 
     private static var rights: [(PermissionRight, String)] {
-        [
-            (.read, L10n.Permissions.rightRead),
-            (.write, L10n.Permissions.rightWrite),
-            (.execute, L10n.Permissions.rightExecute),
-        ]
+        PermissionRight.allCases.map { ($0, $0.title) }
     }
 }
 

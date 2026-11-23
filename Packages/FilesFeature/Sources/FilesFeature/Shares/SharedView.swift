@@ -17,9 +17,6 @@ struct SharedView: View {
     @Bindable var store: StoreOf<SharedFeature>
     @State private var toastMessage: DSToastMessage?
     @State private var isSortSheetPresented = false
-    #if os(macOS)
-        @FocusState private var isSearchFocused: Bool
-    #endif
 
     /// Drives both the segmented control and the paged `TabView`. A tap on the control and a
     /// swipe between pages land on the same reducer action; `withAnimation` gives the tap the
@@ -53,7 +50,7 @@ struct SharedView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // The Mac picks the segment from a native control in the toolbar instead.
+                // The Mac picks the segment in its pane header instead.
                 #if os(iOS)
                     DSSegmentedControl(
                         options: SharedFeature.Segment.allCases,
@@ -66,6 +63,18 @@ struct SharedView: View {
                 #endif
 
                 #if os(macOS)
+                    MacPaneHeader(
+                        title: L10n.Shared.navigationTitle,
+                        inset: MacPaneInset.sectionHeader,
+                        bottom: MacPaneInset.listGap
+                    ) {
+                        MacSegmentedPicker(
+                            L10n.Shared.navigationTitle,
+                            options: SharedFeature.Segment.allCases,
+                            selection: segment,
+                            label: { $0.title }
+                        )
+                    }
                     MacSharedContent(store: store, onToast: { toastMessage = $0 })
                 #else
                     TabView(selection: segment) {
@@ -90,17 +99,7 @@ struct SharedView: View {
                     )
                 }
             #elseif os(macOS)
-                // A field of its own that filters the table in place, instead of the app wide
-                // search panel; ⌘F focuses it.
-                .searchable(
-                    text: $store.searchQuery.sending(\.searchQueryChanged),
-                    placement: .toolbar,
-                    prompt: L10n.Common.search
-                )
-                .searchFocused($isSearchFocused)
-                .focusedSceneValue(\.focusSearchField, FocusSearchAction(shouldShowToolbarButton: false) {
-                    isSearchFocused = true
-                })
+                .focusedSceneValue(\.macSearchText, $store.searchQuery.sending(\.searchQueryChanged))
             #endif
                 .safeAreaInset(edge: .bottom, spacing: 0) {
                     if case let .cached(fetchedAt) = store.dataSources[store.segment] ?? .live {
@@ -121,7 +120,6 @@ struct SharedView: View {
                     }
                 }
             #elseif os(macOS)
-                // The window toolbar draws the picker centered (`macWindowToolbar`).
                 .focusedSceneValue(\.sharedSegment, segment)
             #endif
                 .dsSheet(isPresented: $isSortSheetPresented) {

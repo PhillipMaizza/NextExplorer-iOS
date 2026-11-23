@@ -47,7 +47,7 @@
         }
 
         private var icon: some View {
-            MacItemIcon(name: row.item.name, isDirectory: row.item.shares[0].isDirectory)
+            MacItemTile(name: row.item.name, isDirectory: row.item.shares[0].isDirectory)
         }
     }
 

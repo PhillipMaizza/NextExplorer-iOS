@@ -52,6 +52,7 @@ struct PermissionsFeatureTests {
         state.phase = .loaded
         state.permissions = perms
         state.grid = perms.grid
+        state.numericDraft = perms.octalString
         state.ownerDraft = perms.owner
         state.groupDraft = perms.group
         return state
@@ -92,6 +93,7 @@ struct PermissionsFeatureTests {
             $0.phase = .loaded
             $0.permissions = perms
             $0.grid = [.owner: [.read, .write, .execute], .group: [.read, .execute], .others: [.read, .execute]]
+            $0.numericDraft = "755"
             $0.ownerDraft = TestAccount.username
             $0.groupDraft = "staff"
         }
@@ -118,13 +120,41 @@ struct PermissionsFeatureTests {
         let store = makeStore(loadedState(permissions()))
 
         // Dropping the group execute bit turns r-x into r--, so 755 becomes 745.
-        await store.send(.toggle(.group, .execute)) { $0.grid[.group] = [.read] }
+        await store.send(.toggle(.group, .execute)) {
+            $0.grid[.group] = [.read]
+            $0.numericDraft = "745"
+        }
         #expect(store.state.octalString == "745")
         #expect(store.state.isModeDirty)
 
-        await store.send(.toggle(.group, .execute)) { $0.grid[.group] = [.read, .execute] }
+        await store.send(.toggle(.group, .execute)) {
+            $0.grid[.group] = [.read, .execute]
+            $0.numericDraft = "755"
+        }
         #expect(store.state.octalString == "755")
         #expect(!store.state.isModeDirty)
+    }
+
+    @Test
+    func typingAValidNumericModeUpdatesTheGrid() async {
+        let store = makeStore(stateShowingAnError())
+
+        await store.send(.numericChanged("64")) { $0.numericDraft = "64" }
+        await store.send(.numericChanged("640")) {
+            $0.numericDraft = "640"
+            $0.grid = [.owner: [.read, .write], .group: [.read], .others: []]
+            $0.actionError = nil
+        }
+        #expect(store.state.isModeDirty)
+    }
+
+    @Test
+    func typingAnInvalidNumericModeLeavesTheGrid() async {
+        let store = makeStore(loadedState(permissions()))
+
+        await store.send(.numericChanged("798")) { $0.numericDraft = "798" }
+        await store.send(.numericChanged("7555")) { $0.numericDraft = "7555" }
+        #expect(store.state.octalString == "755")
     }
 
     private func stateShowingAnError() -> PermissionsFeature.State {
@@ -139,6 +169,7 @@ struct PermissionsFeatureTests {
 
         await store.send(.toggle(.others, .write)) {
             $0.grid[.others] = [.read, .write, .execute]
+            $0.numericDraft = "757"
             $0.actionError = nil
         }
     }
@@ -179,7 +210,10 @@ struct PermissionsFeatureTests {
         state.recursive = true
         let store = makeStore(state, fetch: { stuck }, chmod: {})
 
-        await store.send(.toggle(.others, .write)) { $0.grid[.others] = [.read, .write, .execute] }
+        await store.send(.toggle(.others, .write)) {
+            $0.grid[.others] = [.read, .write, .execute]
+            $0.numericDraft = "757"
+        }
         await store.send(.applyModeTapped) { $0.isSavingMode = true }
         await store.receive(\.modeResponse.success) { $0.isSavingMode = false }
         await store.receive(\.onAppear) { $0.phase = .loading }
@@ -187,6 +221,7 @@ struct PermissionsFeatureTests {
             $0.phase = .loaded
             $0.permissions = stuck
             $0.grid = [.owner: [.read, .write, .execute], .group: [.read, .execute], .others: [.read]]
+            $0.numericDraft = "754"
             $0.recursive = false
         }
 
@@ -200,9 +235,18 @@ struct PermissionsFeatureTests {
         state.recursive = true
         let store = makeStore(state, fetch: { permissions(mode: 0o100_644) }, chmod: {})
 
-        await store.send(.toggle(.owner, .execute)) { $0.grid[.owner] = [.read, .write] }
-        await store.send(.toggle(.group, .execute)) { $0.grid[.group] = [.read] }
-        await store.send(.toggle(.others, .execute)) { $0.grid[.others] = [.read] }
+        await store.send(.toggle(.owner, .execute)) {
+            $0.grid[.owner] = [.read, .write]
+            $0.numericDraft = "655"
+        }
+        await store.send(.toggle(.group, .execute)) {
+            $0.grid[.group] = [.read]
+            $0.numericDraft = "645"
+        }
+        await store.send(.toggle(.others, .execute)) {
+            $0.grid[.others] = [.read]
+            $0.numericDraft = "644"
+        }
         await store.send(.applyModeTapped) { $0.isSavingMode = true }
         await store.receive(\.modeResponse.success) { $0.isSavingMode = false }
         await store.receive(\.onAppear) { $0.phase = .loading }
@@ -210,6 +254,7 @@ struct PermissionsFeatureTests {
             $0.phase = .loaded
             $0.permissions = permissions(mode: 0o100_644)
             $0.grid = [.owner: [.read, .write], .group: [.read], .others: [.read]]
+            $0.numericDraft = "644"
             $0.recursive = false
         }
 
@@ -239,7 +284,10 @@ struct PermissionsFeatureTests {
     func aFailedChmodSurfacesTheMessageAndKeepsTheEditedGrid() async {
         let store = makeStore(loadedState(permissions()), chmod: { throw FilesClientError.server(statusCode: 403) })
 
-        await store.send(.toggle(.owner, .write)) { $0.grid[.owner] = [.read, .execute] }
+        await store.send(.toggle(.owner, .write)) {
+            $0.grid[.owner] = [.read, .execute]
+            $0.numericDraft = "555"
+        }
         await store.send(.applyModeTapped) { $0.isSavingMode = true }
         await store.receive(\.modeResponse.failure) {
             $0.isSavingMode = false
@@ -247,6 +295,26 @@ struct PermissionsFeatureTests {
         }
         #expect(store.state.grid[.owner] == [.read, .execute])
         #expect(chmodCalls.value == [ChmodCall(path: "Documents/report.pdf", mode: "555", isRecursive: false)])
+    }
+
+    @Test
+    func saveAppliesOnlyWhatChanged() async {
+        let store = makeStore(loadedState(permissions()), fetch: { permissions(mode: 0o100_745) }, chmod: {})
+
+        await store.send(.toggle(.group, .execute)) {
+            $0.grid[.group] = [.read]
+            $0.numericDraft = "745"
+        }
+        await store.send(.saveTapped)
+        await store.receive(\.applyModeTapped) { $0.isSavingMode = true }
+        await store.receive(\.modeResponse.success) { $0.isSavingMode = false }
+        await store.receive(\.onAppear) { $0.phase = .loading }
+        await store.receive(\.permissionsResponse.success) {
+            $0.phase = .loaded
+            $0.permissions = permissions(mode: 0o100_745)
+        }
+        #expect(chmodCalls.value == [ChmodCall(path: "Documents/report.pdf", mode: "745", isRecursive: false)])
+        #expect(chownCalls.value.isEmpty)
     }
 
     // MARK: Ownership

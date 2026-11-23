@@ -179,20 +179,24 @@ public struct CreateShareLinkFeature {
 
             case let .passwordEnabledChanged(isEnabled):
                 state.isPasswordEnabled = isEnabled
+                state.errorMessage = nil
                 return .none
 
             case let .passwordChanged(password):
                 state.password = password
+                state.errorMessage = nil
                 return .none
 
             case let .expiryEnabledChanged(isEnabled):
                 state.isExpiryEnabled = isEnabled
                 state.hasTouchedExpiry = true
+                state.errorMessage = nil
                 return .none
 
             case let .expiresAtChanged(date):
                 state.expiresAt = date
                 state.hasTouchedExpiry = true
+                state.errorMessage = nil
                 return .none
 
             case let .directLinkModeChanged(mode):
