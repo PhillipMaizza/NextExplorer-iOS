@@ -23,6 +23,9 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     /// The selection count shown in place of `title` while selecting (`nil` otherwise). It swaps in
     /// and out with the selection circles, in the same step and motion, not when select mode flips.
     var selectionTitle: String?
+    var subtitle: String?
+    var crumbs: [PathCrumb] = []
+    var onCrumbTapped: (PathCrumb) -> Void = { _ in }
     @Binding var searchText: String
     var prompt: String = L10n.Common.search
     /// Extra padding above the title. A screen whose nav bar carries no toolbar actions (e.g.
@@ -44,9 +47,6 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     @ViewBuilder var accessory: () -> Accessory
 
     @FocusState private var isFocused: Bool
-    #if os(macOS)
-        @Environment(\.openSpotlight) private var openSpotlight
-    #endif
     #if os(iOS)
         @Shared(.inMemory(SearchFocusRequest.key)) private var searchFocusRequests = 0
         @State private var isOnScreen = false
@@ -67,12 +67,19 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
 
     var body: some View {
         #if os(macOS)
-            // Like Finder, the Mac names the folder in the window title (`windowTitle`), so the
-            // content keeps only the accessory, if any, and the search lives in the toolbar.
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
+                MacPaneHeader(
+                    title: shownTitle,
+                    subtitle: subtitle,
+                    crumbs: crumbs,
+                    onCrumbTapped: onCrumbTapped,
+                    inset: MacPaneInset.sectionHeader,
+                    bottom: MacPaneInset.listGap
+                )
                 accessory()
             }
             .frame(maxWidth: .infinity)
+            .background(Color.macCard)
             .overlay(alignment: .bottom) {
                 if isSearchPending {
                     ProgressView()
@@ -83,11 +90,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                         .allowsHitTesting(false)
                 }
             }
-            // The window's toolbar search button reads this, like ⌘F: both open the search panel.
-            .focusedSceneValue(
-                \.focusSearchField,
-                shouldShowSearchField ? FocusSearchAction { openSpotlight?() } : nil
-            )
+            .focusedSceneValue(\.macSearchText, shouldShowSearchField ? $searchText : nil)
         #else
             header
                 .onAppear { isOnScreen = true }
@@ -195,6 +198,7 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
     init(
         title: String,
         selectionTitle: String? = nil,
+        subtitle: String? = nil,
         searchText: Binding<String>,
         prompt: String = L10n.Common.search,
         extraTopPadding: CGFloat = 0,
@@ -205,6 +209,7 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         self.init(
             title: title,
             selectionTitle: selectionTitle,
+            subtitle: subtitle,
             searchText: searchText,
             prompt: prompt,
             extraTopPadding: extraTopPadding,
@@ -216,36 +221,8 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
 }
 
 #if os(macOS)
-    /// The Mac toolbar's search: a magnifier opening the panel, shown while the screen has a search.
-    struct MacSearchButton: View {
-        let action: FocusSearchAction
-
-        var body: some View {
-            Button { action() } label: {
-                Label { Text(L10n.Common.search) } icon: { IconKit.search }
-            }
-            .help(L10n.Common.search)
-            .accessibilityIdentifier(AccessibilityIdentifiers.Search.field)
-        }
-    }
-
-    /// Opens the Mac search panel; set once on the main window so every screen can reach it.
-    struct OpenSpotlightAction {
-        let perform: () -> Void
-
-        func callAsFunction() {
-            perform()
-        }
-    }
-
-    extension EnvironmentValues {
-        @Entry var openSpotlight: OpenSpotlightAction?
-    }
-
     /// Focuses the visible screen's search field; published by `PinnedTitleSearchHeader`.
     public struct FocusSearchAction {
-        /// False when the screen draws its own search field in the toolbar.
-        var shouldShowToolbarButton = true
         let perform: () -> Void
 
         public func callAsFunction() {

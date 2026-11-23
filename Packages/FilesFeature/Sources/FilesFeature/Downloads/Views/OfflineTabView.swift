@@ -233,6 +233,7 @@ struct OfflineTabView: View {
                 PinnedTitleSearchHeader(
                     title: L10n.Tab.offline,
                     selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedCount) : nil,
+                    subtitle: L10n.Offline.footnote,
                     searchText: $store.searchQuery.sending(\.searchQueryChanged),
                     shouldFadeIntoContent: !isMacTable
                 )

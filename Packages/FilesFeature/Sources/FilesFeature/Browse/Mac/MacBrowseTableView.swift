@@ -8,20 +8,6 @@
     import Localization
     import SwiftUI
 
-    /// Column layout shared with `MacBrowseTableSkeleton`, so loading and loaded line up.
-    enum MacBrowseTableMetrics {
-        static let iconSize: CGFloat = .size20
-        /// Extra room above and below each row's content, for rows taller than AppKit's default.
-        static let rowVerticalPadding: CGFloat = .space4
-        static let badgeSize: CGFloat = .iconXSmall
-        /// Finder's look for rows staged by Cut.
-        static let cutRowOpacity: Double = 0.5
-        static let nameColumnMinWidth: CGFloat = 220
-        static let dateColumnWidth: CGFloat = 170
-        static let sizeColumnWidth: CGFloat = 90
-        static let kindColumnWidth: CGFloat = 90
-    }
-
     /// Browse's Mac only table: sortable columns on the store's own sort, double click to open, and the
     /// file actions menu of the list and grid. Rows arrive sorted by `BrowseFeature`, so a header click
     /// only forwards the new sort. Right click hands `contextMenu` the clicked rows, none for empty space.
@@ -38,6 +24,7 @@
         /// Favorited items, starred like the iOS rows.
         var favoriteItemIDs: Set<FileItem.ID> = []
         var folderSizes: [FileItem.ID: Int64] = [:]
+        var shouldShowThumbnails = false
         let onOpen: (FileItem) -> Void
         let keyboardActions: BrowseKeyboardActions
         let serverURL: URL
@@ -70,71 +57,55 @@
         /// The system Quick Look panel, showing a local copy fetched through the preview cache.
         @State private var quickLookPanel = MacQuickLookPanel()
         @State private var isQuickLooking = false
+        @State private var width = CGFloat.infinity
         @State private var quickLookTask: Task<Void, Never>?
 
         var body: some View {
+            let columns = MacBrowseTableColumns(width: width)
             Table(of: FileItem.self, selection: $selection, sortOrder: sortOrder) {
                 TableColumn(L10n.Sort.name, value: \.name) { item in
-                    HStack(spacing: .space8) {
-                        if isPersonalSpace(item) {
-                            MacTableFolderIcon(image: IconKit.person, tint: Color.accent)
-                        } else {
-                            icon(for: item)
-                        }
-                        if item.id == renamingItemID {
-                            MacInlineRenameField(
-                                originalName: item.name,
-                                onCommit: onRenameCommit,
-                                onCancel: onRenameCancel
-                            )
-                        } else {
-                            Text(isPersonalSpace(item) ? L10n.Browse.myFiles : item.name)
-                                .lineLimit(1)
-                                .truncationMode(.middle)
-                                // A cut row is only dimmed on screen; VoiceOver says so in words.
-                                // On the name alone, never the rename field, whose value is its text.
-                                .accessibilityValue(cutItemIDs.contains(item.id) ? L10n.Browse.actionCut : "")
-                        }
-                        if offlineItemIDs.contains(item.id) {
-                            MacTableFolderIcon(
-                                image: IconKit.availableOffline,
-                                tint: Color.accent,
-                                size: MacBrowseTableMetrics.badgeSize
-                            )
-                            .accessibilityLabel(L10n.Offline.badgeAvailable)
-                        }
-                        if favoriteItemIDs.contains(item.id) {
-                            MacTableFolderIcon(
-                                image: IconKit.starFill,
-                                tint: Color.accent,
-                                size: MacBrowseTableMetrics.badgeSize
-                            )
-                            .accessibilityLabel(L10n.Favorites.accessibilityBadge)
-                        }
-                    }
-                    .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
+                    MacBrowseNameCell(
+                        item: item,
+                        title: isPersonalSpace(item) ? L10n.Browse.myFiles : item.name,
+                        glyph: isPersonalSpace(item) ? IconKit.person : IconKit.folderFill,
+                        serverURL: shouldShowThumbnails ? serverURL : nil,
+                        isRenaming: item.id == renamingItemID,
+                        isCut: cutItemIDs.contains(item.id),
+                        isOffline: offlineItemIDs.contains(item.id),
+                        isFavorite: favoriteItemIDs.contains(item.id),
+                        onRenameCommit: onRenameCommit,
+                        onRenameCancel: onRenameCancel
+                    )
+                    .macBoardTableCell()
                     .opacity(opacity(for: item))
                 }
-                .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
-                TableColumn(L10n.Sort.dateModified, value: \.dateModified) { item in
-                    Text(isPersonalSpace(item) ? "" : dateFormat.string(from: item.dateModified, includeTime: true))
-                        .foregroundStyle(.secondary)
-                        .opacity(opacity(for: item))
+                .width(min: MacBrowseTableMetrics.nameColumnCompactWidth)
+                if columns.showsDate {
+                    TableColumn(L10n.Sort.dateModified, value: \.dateModified) { item in
+                        secondaryText(isPersonalSpace(item)
+                            ? ""
+                            : dateFormat.tableString(from: item.dateModified, now: .now))
+                            .opacity(opacity(for: item))
+                    }
+                    .width(MacBrowseTableMetrics.dateColumnWidth)
                 }
-                .width(MacBrowseTableMetrics.dateColumnWidth)
-                TableColumn(L10n.Sort.size, value: \.size) { item in
-                    Text(FileSizeFormat.string(for: item, folderSize: folderSizes[item.id]))
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                        .opacity(opacity(for: item))
+                if columns.showsSize {
+                    TableColumn(L10n.Sort.size, value: \.size) { item in
+                        secondaryText(isPersonalSpace(item)
+                            ? ""
+                            : FileSizeFormat.string(for: item, folderSize: folderSizes[item.id]))
+                            .monospacedDigit()
+                            .opacity(opacity(for: item))
+                    }
+                    .width(MacBrowseTableMetrics.sizeColumnWidth)
                 }
-                .width(MacBrowseTableMetrics.sizeColumnWidth)
-                TableColumn(L10n.Sort.kind, value: \.kind) { item in
-                    Text(item.isDirectory ? L10n.FileInfo.navigationTitleFolder : item.kind.uppercased())
-                        .foregroundStyle(.secondary)
-                        .opacity(opacity(for: item))
+                if columns.showsKind {
+                    TableColumn(L10n.Sort.kind, value: \.kind) { item in
+                        secondaryText(item.isDirectory ? L10n.FileInfo.navigationTitleFolder : item.kind.uppercased())
+                            .opacity(opacity(for: item))
+                    }
+                    .width(MacBrowseTableMetrics.kindColumnWidth)
                 }
-                .width(MacBrowseTableMetrics.kindColumnWidth)
             } rows: {
                 if let personalSpace {
                     TableRow(personalSpace)
@@ -204,11 +175,9 @@
                     target: scrollTargetID
                 )
             }
-            .scrollContentBackground(.hidden)
-            // AppKit stripes the empty space below the rows at its default row height, which
-            // never lines up with the taller rows here.
-            .alternatingRowBackgrounds(.disabled)
+            .macBoardTable()
             .backgroundGradient()
+            .macBrowseTableWidth($width)
             // The table's scroll view otherwise draws its header material up under the pinned title.
             .clipped()
             .focused($isFocused)
@@ -236,6 +205,10 @@
             // still coming down (the panel is not up yet).
             .onChange(of: selection) { _, newSelection in
                 guard isQuickLooking else { return }
+                guard !quickLookPanel.wasDismissed else {
+                    closeQuickLook()
+                    return
+                }
                 if newSelection.count == 1, let item = item(for: newSelection.first), !item.isDirectory {
                     quickLook(item)
                 } else {
@@ -324,8 +297,10 @@
             id.flatMap { items[id: $0] }
         }
 
-        private func icon(for item: FileItem) -> some View {
-            MacItemIcon(kind: item.kind, isDirectory: item.isDirectory)
+        private func secondaryText(_ text: String) -> some View {
+            Text(text)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
         }
 
         /// The store owns the sort; the table only renders it and reports header clicks.

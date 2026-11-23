@@ -132,6 +132,6 @@ struct BrowseSearchFooter: View {
     /// A search in a folder can be widened to everywhere, unless the term is too short for the
     /// server to search at all.
     private static func canOfferWiderSearch(_ store: StoreOf<BrowseFeature>) -> Bool {
-        store.canWidenSearch && !store.isSearchTermTooShort
+        store.canWidenSearch && !store.isSearchTermTooShort && store.displayedSearchResults?.isEmpty == false
     }
 }

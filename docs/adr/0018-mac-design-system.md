@@ -61,6 +61,11 @@ with blue selection is not possible natively.
   group are one `MacFormFootnote`. In an excluded paths list a removed path stays, struck through
   with Add beside it, until the pane is saved, so a removal can be taken back before it reaches
   the server.
+- File lists (Browse, Favorites, Offline, Trash, Shared, search results) are one native `Table`
+  look, by the owner's choice: the system header with sortable columns, system blue selection,
+  native separators and no zebra stripes, 44pt rows and 26pt tiles. Row height comes from the cell
+  content (`macBoardTableCell`), never from the table's `rowHeight` or `style`: SwiftUI resets
+  both on updates, and restyling it back redraws the whole table on every click.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
 `MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`, `MacFormControls`,

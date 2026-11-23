@@ -20,6 +20,7 @@ struct BrowseTabView: View {
                 .hidesSystemBackOnMac()
         }
         .platformAccentTint()
+        .instantPushOnMac(depth: store.path.count)
     }
 }
 

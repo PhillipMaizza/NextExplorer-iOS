@@ -21,6 +21,7 @@ struct BrowseNoResultsState: View {
             } actions: {
                 if store.canWidenSearch, !store.isSearchTermTooShort {
                     Button(L10n.Browse.searchEverywhere) { store.send(.searchScopeChanged(.everywhere)) }
+                        .buttonStyle(.macDS(.secondary, size: .small))
                 }
             }
         #else

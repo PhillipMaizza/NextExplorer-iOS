@@ -94,7 +94,7 @@
                             }
                         }
                     }
-                    .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
+                    .macBoardTableCell()
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
                 TableColumn(L10n.FileInfo.rowLocation) { row in
@@ -119,8 +119,7 @@
                     open(row)
                 }
             }
-            .scrollContentBackground(.hidden)
-            .alternatingRowBackgrounds(.disabled)
+            .macBoardTable()
             // The table's scroll view otherwise draws its header material up under the pinned title.
             .clipped()
             .focused($isFocused)
@@ -159,18 +158,15 @@
             Group {
                 switch row {
                 case let .pinned(usage) where usage.root.isDirectory:
-                    let favorite = favorites.first { $0.path == usage.root.path }
-                    MacTableFolderIcon(
-                        image: favorite.map { FavoriteIcon.symbol(for: $0.icon) } ?? IconKit.folderFill,
-                        tint: favorite.flatMap { FavoriteColor.resolve($0.color) } ?? Color.accent,
-                        isFilled: favorite.map { FavoriteIcon.isFilled($0.icon) } ?? true
-                    )
+                    if let favorite = favorites.first(where: { $0.path == usage.root.path }) {
+                        MacFavoriteTile(favorite: favorite)
+                    } else {
+                        MacItemTile(kind: usage.kind, isDirectory: true, size: MacBrowseTableMetrics.tileSize)
+                    }
                 case let .pinned(usage):
-                    FileTypeIcon(kind: usage.kind)
-                        .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
+                    MacItemTile(kind: usage.kind, isDirectory: false, size: MacBrowseTableMetrics.tileSize)
                 case let .saved(download):
-                    FileTypeIcon(kind: (download.fileName as NSString).pathExtension)
-                        .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
+                    MacItemTile(name: download.fileName, isDirectory: false)
                 }
             }
             .accessibilityHidden(true)

@@ -28,15 +28,15 @@ struct SearchStatusFooter: View {
                 Spacer(minLength: .space8)
                 if canShowMore {
                     Button(L10n.Browse.searchShowMore, action: onShowMore)
-                        .controlSize(.small)
+                        .buttonStyle(.macDS(.secondary, size: .small))
                 }
                 if let onSearchEverywhere {
                     Button(L10n.Browse.searchEverywhere, action: onSearchEverywhere)
-                        .controlSize(.small)
+                        .buttonStyle(.macDS(.secondary, size: .small))
                 }
                 if let onRetry {
                     Button(L10n.Common.retry, action: onRetry)
-                        .controlSize(.small)
+                        .buttonStyle(.macDS(.secondary, size: .small))
                 }
             }
             .padding(.horizontal, .space12)

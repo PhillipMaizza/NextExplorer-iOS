@@ -17,19 +17,14 @@
         let favorites: [Favorite]
 
         @State private var selection: Set<Favorite.ID> = []
+        @State private var sortOrder: [KeyPathComparator<Favorite>] = []
         @FocusState private var isFocused: Bool
 
         var body: some View {
-            Table(of: Favorite.self, selection: $selection) {
-                TableColumn(L10n.Sort.name) { favorite in
+            Table(of: Favorite.self, selection: $selection, sortOrder: $sortOrder) {
+                TableColumn(L10n.Sort.name, value: \.displayName) { favorite in
                     HStack(spacing: .space8) {
-                        MacTableFolderIcon(
-                            image: FavoriteIcon.symbol(for: favorite.icon),
-                            tint: FavoriteColor.resolve(favorite.color) ?? Color.accent,
-                            isFilled: FavoriteIcon.isFilled(favorite.icon)
-                        )
-                        // Decorative: a symbol's own name ("star", "house") is not the favorite's.
-                        .accessibilityHidden(true)
+                        MacFavoriteTile(favorite: favorite)
                         Text(favorite.displayName).lineLimit(1).truncationMode(.middle)
                         if store.offlineFavoriteIDs.contains(favorite.id) {
                             MacTableFolderIcon(
@@ -40,18 +35,18 @@
                             .accessibilityLabel(L10n.Offline.badgeAvailable)
                         }
                     }
-                    .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
+                    .macBoardTableCell()
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
-                TableColumn(L10n.FileInfo.rowLocation) { favorite in
-                    Text(favorite.path)
+                TableColumn(L10n.FileInfo.rowLocation, value: \.path) { favorite in
+                    Text(MacInspectorLocation.trail(parent: (favorite.path as NSString).deletingLastPathComponent))
                         .lineLimit(1)
                         .truncationMode(.head)
                         .foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.locationColumnMinWidth)
             } rows: {
-                ForEach(favorites) { favorite in
+                ForEach(sortOrder.isEmpty ? favorites : favorites.sorted(using: sortOrder)) { favorite in
                     // The app's own private drag type: a plain string would drop the id as text
                     // into other apps, and accept any text dragged in.
                     TableRow(favorite)
@@ -60,6 +55,7 @@
                             origin: .current(serverURL: store.serverURL, scope: store.cacheScope)
                         ))
                         .dropDestination(for: ServerItemReference.self) { references in
+                            guard sortOrder.isEmpty else { return }
                             let receiver = DragOrigin.current(serverURL: store.serverURL, scope: store.cacheScope)
                             move(references.first { $0.origin == receiver }?.id, onto: favorite.id)
                         }
@@ -75,8 +71,7 @@
                     store.send(.rowTapped(favorite))
                 }
             }
-            .scrollContentBackground(.hidden)
-            .alternatingRowBackgrounds(.disabled)
+            .macBoardTable()
             // The table's scroll view otherwise draws its header material up under the pinned title.
             .clipped()
             .focused($isFocused)
@@ -132,28 +127,7 @@
                     serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
                 )
             ) { FavoritesFeature() },
-            favorites: [
-                Favorite(
-                    id: "1",
-                    path: "/Documents/Projects",
-                    label: "Projects",
-                    icon: "folder",
-                    color: nil,
-                    position: 0,
-                    createdAt: Date(),
-                    updatedAt: Date()
-                ),
-                Favorite(
-                    id: "2",
-                    path: "/Photos/2026",
-                    label: nil,
-                    icon: "star",
-                    color: "blue",
-                    position: 1,
-                    createdAt: Date(),
-                    updatedAt: Date()
-                ),
-            ]
+            favorites: MacFavoritePreviewData.favorites
         )
         .previewCanvas(.table)
     }
