@@ -10,13 +10,10 @@
         // and squeezed the sidebar.
         static let nameColumnMinWidth: CGFloat = 160
         static let locationColumnMinWidth: CGFloat = 110
-        static let locationColumnIdealWidth: CGFloat = 180
-        static let deletedByColumnMinWidth: CGFloat = 70
-        static let deletedByColumnIdealWidth: CGFloat = 120
-        static let dateColumnMinWidth: CGFloat = 90
-        static let removedColumnMinWidth: CGFloat = 90
-        static let removedColumnIdealWidth: CGFloat = 130
-        static let sizeColumnMinWidth: CGFloat = 60
+        static let deletedByColumnWidth: CGFloat = 100
+        static let dateColumnWidth: CGFloat = 116
+        static let removedColumnWidth: CGFloat = 130
+        static let sizeColumnWidth: CGFloat = 70
         static let unavailableOpacity: Double = 0.5
     }
 
@@ -31,13 +28,17 @@
         var body: some View {
             NavigationStack {
                 content
-                    .navigationTitle(L10n.Trash.title)
-                    .navigationSubtitle(footnote)
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
+                    .safeAreaInset(edge: .top, spacing: .zero) {
+                        MacPaneHeader(
+                            title: L10n.Trash.title,
+                            subtitle: footnote.isEmpty ? nil : footnote,
+                            inset: MacPaneInset.sectionHeader,
+                            bottom: MacPaneInset.listGap
+                        ) {
                             Button(role: .destructive) { store.send(.emptyTrashTapped) } label: {
                                 Label { Text(L10n.Trash.emptyTrash) } icon: { IconKit.delete }
                             }
+                            .buttonStyle(.macDS(.secondary))
                             .disabled(store.items.isEmpty || store.isBusy)
                         }
                     }
@@ -93,36 +94,36 @@
                             .accessibilityLabel(L10n.Trash.sharesBadge)
                         }
                     }
-                    .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
+                    .macBoardTableCell()
                     .opacity(item.isAvailable ? 1 : Metrics.unavailableOpacity)
                 }
                 .width(min: Metrics.nameColumnMinWidth)
                 TableColumn(L10n.Trash.columnOriginalLocation) { item in
-                    Text(item.isAvailable ? TrashRowText.location(item) : L10n.Trash.unavailable)
+                    Text(item.isAvailable ? PathTrail.text(TrashRowText.location(item)) : L10n.Trash.unavailable)
                         .lineLimit(1)
                         .truncationMode(.head)
                         .foregroundStyle(.secondary)
                 }
-                .width(min: Metrics.locationColumnMinWidth, ideal: Metrics.locationColumnIdealWidth)
+                .width(min: Metrics.locationColumnMinWidth)
                 TableColumn(L10n.Trash.columnDeletedBy) { item in
                     Text(TrashRowText.deletedBy(item)).foregroundStyle(.secondary)
                 }
-                .width(min: Metrics.deletedByColumnMinWidth, ideal: Metrics.deletedByColumnIdealWidth)
+                .width(Metrics.deletedByColumnWidth)
                 TableColumn(L10n.Trash.columnDeletedOn, value: \.sortDeletedAt) { item in
                     Text(TrashRowText.deletedOn(item) ?? "").foregroundStyle(.secondary)
                 }
-                .width(min: Metrics.dateColumnMinWidth, ideal: MacBrowseTableMetrics.dateColumnWidth)
+                .width(Metrics.dateColumnWidth)
                 TableColumn(L10n.Trash.columnRemoved) { item in
                     Text(TrashRowText.removal(item, now: date.now, calendar: calendar) ?? "")
                         .foregroundStyle(.secondary)
                 }
-                .width(min: Metrics.removedColumnMinWidth, ideal: Metrics.removedColumnIdealWidth)
+                .width(min: Metrics.removedColumnWidth)
                 TableColumn(L10n.Sort.size, value: \.sortSize) { item in
                     Text(item.size.map(FileSizeFormat.string) ?? "")
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
-                .width(min: Metrics.sizeColumnMinWidth, ideal: MacBrowseTableMetrics.sizeColumnWidth)
+                .width(Metrics.sizeColumnWidth)
             }
             .contextMenu(forSelectionType: TrashItem.ID.self) { ids in
                 menu(for: ids)
@@ -133,8 +134,7 @@
                 }
             }
             .onDeleteCommand { store.send(.deletePermanentlyTapped(items(selection))) }
-            .scrollContentBackground(.hidden)
-            .alternatingRowBackgrounds(.disabled)
+            .macBoardTable()
             .clipped()
             .disabled(store.isBusy)
             .onChange(of: store.items) { _, items in selection.formIntersection(items.ids) }
@@ -188,7 +188,7 @@
         }
 
         private func icon(for item: TrashItem) -> some View {
-            MacItemIcon(name: item.name, isDirectory: item.isDirectory)
+            MacItemTile(name: item.name, isDirectory: item.isDirectory)
         }
 
         private var confirmationBinding: Binding<Bool> {

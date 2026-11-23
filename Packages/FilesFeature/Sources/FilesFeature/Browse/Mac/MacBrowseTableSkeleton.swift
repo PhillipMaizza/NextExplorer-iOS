@@ -8,34 +8,43 @@
     /// `MacBrowseTableView`, with redacted, shimmering rows, so the loaded table fades in without
     /// a layout jump. Non interactive.
     struct MacBrowseTableSkeleton: View {
+        @State private var width = CGFloat.infinity
+
         var body: some View {
+            let columns = MacBrowseTableColumns(width: width)
             Table(BrowseSkeletonView.placeholderItems) {
                 TableColumn(L10n.Sort.name) { item in
                     placeholder(
                         HStack(spacing: .space8) {
                             FileTypeIcon(kind: item.kind)
-                                .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
+                                .frame(width: MacBrowseTableMetrics.tileSize, height: MacBrowseTableMetrics.tileSize)
                             Text(item.name)
                         }
-                        .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
+                        .macBoardTableCell()
                     )
                 }
-                .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
-                TableColumn(L10n.Sort.dateModified) { item in
-                    placeholder(Text(item.dateModified, format: .dateTime))
+                .width(min: MacBrowseTableMetrics.nameColumnCompactWidth)
+                if columns.showsDate {
+                    TableColumn(L10n.Sort.dateModified) { item in
+                        placeholder(Text(item.dateModified, format: .dateTime))
+                    }
+                    .width(MacBrowseTableMetrics.dateColumnWidth)
                 }
-                .width(MacBrowseTableMetrics.dateColumnWidth)
-                TableColumn(L10n.Sort.size) { item in
-                    placeholder(Text(item.size, format: .byteCount(style: .file)))
+                if columns.showsSize {
+                    TableColumn(L10n.Sort.size) { item in
+                        placeholder(Text(item.size, format: .byteCount(style: .file)))
+                    }
+                    .width(MacBrowseTableMetrics.sizeColumnWidth)
                 }
-                .width(MacBrowseTableMetrics.sizeColumnWidth)
-                TableColumn(L10n.Sort.kind) { _ in
-                    placeholder(Text(verbatim: "MMMM"))
+                if columns.showsKind {
+                    TableColumn(L10n.Sort.kind) { _ in
+                        placeholder(Text(verbatim: "MMMM"))
+                    }
+                    .width(MacBrowseTableMetrics.kindColumnWidth)
                 }
-                .width(MacBrowseTableMetrics.kindColumnWidth)
             }
-            .scrollContentBackground(.hidden)
-            .alternatingRowBackgrounds(.disabled)
+            .macBrowseTableWidth($width)
+            .macBoardTable()
             // The table's scroll view otherwise draws its header material up under the pinned title.
             .clipped()
             .scrollDisabled(true)

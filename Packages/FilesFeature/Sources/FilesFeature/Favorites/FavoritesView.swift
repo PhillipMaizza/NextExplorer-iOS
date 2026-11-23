@@ -92,6 +92,7 @@ struct FavoritesView: View {
                 .hidesSystemBackOnMac()
         }
         .platformAccentTint()
+        .instantPushOnMac(depth: store.path.count)
     }
 
     private var rootContent: some View {
@@ -115,6 +116,10 @@ struct FavoritesView: View {
             PinnedTitleSearchHeader(
                 title: L10n.Favorites.navigationTitle,
                 selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : nil,
+                subtitle: store.displayedFavorites.isEmpty
+                    ? nil
+                    : L10n.Shared
+                        .itemCount(store.displayedFavorites.count),
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
                 shouldFadeIntoContent: !isMacTable,
                 isSearchPending: store.isSearchPending

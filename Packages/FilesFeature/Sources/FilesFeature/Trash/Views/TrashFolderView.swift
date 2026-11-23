@@ -13,8 +13,13 @@ struct TrashFolderView: View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundGradient()
+        #if os(macOS)
+            .safeAreaInset(edge: .top, spacing: .zero) { macHeader }
+            .navigationBarBackButtonHidden()
+        #else
             .navigationTitle(store.title)
             .toolbar { toolbar }
+        #endif
             // Its own: the trash list's chrome above it would show or hide these circles with the list's.
             .selectModeChrome(isSelecting: store.isSelecting)
             .task { store.send(.task) }
@@ -83,39 +88,65 @@ struct TrashFolderView: View {
         .accessibilityAction(named: L10n.Trash.restore) { store.send(.restoreTapped([entry])) }
     }
 
-    @ToolbarContentBuilder
-    private var toolbar: some ToolbarContent {
-        if store.canGoUp {
-            ToolbarItem(placement: .navigation) {
-                Button { store.send(.upTapped) } label: {
-                    Label { Text(L10n.Common.back) } icon: { IconKit.levelUp }
+    #if os(macOS)
+        private var macHeader: some View {
+            MacPaneHeader(title: store.title, inset: MacPaneInset.sectionHeader, bottom: MacPaneInset.listGap) {
+                if store.isSelecting {
+                    Button(L10n.Trash.restoreTo) { store.send(.restoreToTapped(store.selectedEntries)) }
+                        .buttonStyle(.macDS(.secondary))
+                        .disabled(store.selectedNames.isEmpty || store.restore.isRestoring)
+                    Button(L10n.Trash.restore) { store.send(.restoreTapped(store.selectedEntries)) }
+                        .buttonStyle(.macDS(.secondary))
+                        .disabled(store.selectedNames.isEmpty || store.restore.isRestoring)
+                } else {
+                    Button(L10n.Trash.restoreFolder) { store.send(.restoreFolderTapped) }
+                        .buttonStyle(.macDS(.secondary))
+                        .disabled(store.restore.isRestoring)
                 }
-            }
-        }
-        ToolbarItem(placement: .primaryAction) {
-            Menu {
                 Button(store.isSelecting ? L10n.Common.done : L10n.Common.select) {
                     store.send(.selectModeToggled)
                 }
-                .disabled(store.entries.isEmpty)
-                Button { store.send(.restoreFolderTapped) } label: {
-                    Label { Text(L10n.Trash.restoreFolder) } icon: { IconKit.restore }
-                }
-            } label: {
-                IconKit.moreOptions
+                .buttonStyle(.macDS(.secondary))
+                .disabled(store.entries.isEmpty || store.restore.isRestoring)
             }
-            .accessibilityLabel(L10n.Common.edit)
-            .disabled(store.restore.isRestoring)
         }
-        if store.isSelecting {
-            TrashSelectionToolbar(
-                isDisabled: store.selectedNames.isEmpty || store.restore.isRestoring,
-                onRestore: { store.send(.restoreTapped(store.selectedEntries)) },
-                onRestoreTo: { store.send(.restoreToTapped(store.selectedEntries)) },
-                onDelete: nil
-            )
+    #endif
+
+    #if os(iOS)
+        @ToolbarContentBuilder
+        private var toolbar: some ToolbarContent {
+            if store.canGoUp {
+                ToolbarItem(placement: .navigation) {
+                    Button { store.send(.upTapped) } label: {
+                        Label { Text(L10n.Common.back) } icon: { IconKit.levelUp }
+                    }
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button(store.isSelecting ? L10n.Common.done : L10n.Common.select) {
+                        store.send(.selectModeToggled)
+                    }
+                    .disabled(store.entries.isEmpty)
+                    Button { store.send(.restoreFolderTapped) } label: {
+                        Label { Text(L10n.Trash.restoreFolder) } icon: { IconKit.restore }
+                    }
+                } label: {
+                    IconKit.moreOptions
+                }
+                .accessibilityLabel(L10n.Common.edit)
+                .disabled(store.restore.isRestoring)
+            }
+            if store.isSelecting {
+                TrashSelectionToolbar(
+                    isDisabled: store.selectedNames.isEmpty || store.restore.isRestoring,
+                    onRestore: { store.send(.restoreTapped(store.selectedEntries)) },
+                    onRestoreTo: { store.send(.restoreToTapped(store.selectedEntries)) },
+                    onDelete: nil
+                )
+            }
         }
-    }
+    #endif
 
     private var textBinding: Binding<Bool> {
         Binding(get: { store.text.isPresented }, set: {

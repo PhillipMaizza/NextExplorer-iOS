@@ -47,7 +47,7 @@
                             .accessibilityLabel(L10n.Favorites.accessibilityBadge)
                         }
                     }
-                    .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
+                    .macBoardTableCell()
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
                 TableColumn(L10n.FileInfo.rowLocation) { result in
@@ -91,12 +91,11 @@
                 guard ids.count == 1, let result = results.first(where: { $0.id == ids.first }) else { return }
                 onOpen(result)
             })
-            .scrollContentBackground(.hidden)
-            .alternatingRowBackgrounds(.disabled)
+            .macBoardTable()
         }
 
         private func icon(for result: SearchResultItem) -> some View {
-            MacItemIcon(name: result.name, isDirectory: result.isDirectory)
+            MacItemTile(name: result.name, isDirectory: result.isDirectory)
         }
     }
 

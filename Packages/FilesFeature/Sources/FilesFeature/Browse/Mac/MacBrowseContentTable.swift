@@ -73,6 +73,7 @@
                 offlineItemIDs: store.offlineItemIDs,
                 favoriteItemIDs: store.favoritePaths,
                 folderSizes: store.folderSizes,
+                shouldShowThumbnails: store.preferences.shouldShowThumbnails,
                 onOpen: onOpen,
                 keyboardActions: BrowseKeyboardActions(
                     store: store,

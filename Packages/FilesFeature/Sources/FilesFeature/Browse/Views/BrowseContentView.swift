@@ -59,7 +59,6 @@ struct BrowseContentView: View {
 
     private var viewMode: BrowseViewMode {
         #if os(macOS)
-            // The Mac always shows the sortable column table.
             return .table
         #else
             let mode = BrowseViewMode(rawValue: viewModeRaw) ?? .list
@@ -132,7 +131,12 @@ struct BrowseContentView: View {
                 galleryCurrentItemID: $galleryCurrentItemID
             ))
         #if os(macOS)
-            .modifier(MacBrowseInspector(screen: store) { shareTarget = $0 })
+            .modifier(MacBrowseInspector(
+                screen: store,
+                onOpen: handleTap,
+                onShare: { shareTarget = $0 },
+                more: { MacInspectorMoreMenu(store: store, item: $0) { toastMessage = .failure($0) } }
+            ))
         #endif
     }
 
@@ -225,6 +229,9 @@ struct BrowseContentView: View {
             PinnedTitleSearchHeader(
                 title: displayTitle,
                 selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedItems.count) : nil,
+                subtitle: store.headerSubtitle,
+                crumbs: store.headerCrumbs,
+                onCrumbTapped: { store.send(.delegate(.openPath(path: $0.path, title: $0.title))) },
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
                 shouldFadeIntoContent: viewMode != .table,
                 isSearchPending: store.isSearchPending
