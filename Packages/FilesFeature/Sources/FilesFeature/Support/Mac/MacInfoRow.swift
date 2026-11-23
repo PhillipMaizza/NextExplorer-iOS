@@ -2,11 +2,6 @@
     import DesignSystem
     import SwiftUI
 
-    /// Sizes every Mac inspector column shares.
-    enum MacInspectorMetrics {
-        static let width: CGFloat = 300
-    }
-
     /// One label and value row in a Mac inspector's grouped form, the value selectable and
     /// trailing like Finder's Get Info.
     struct MacInfoRow: View {

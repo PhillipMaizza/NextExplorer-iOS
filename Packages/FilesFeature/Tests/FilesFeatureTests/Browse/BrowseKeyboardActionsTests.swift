@@ -153,4 +153,48 @@ struct BrowseKeyboardActionsTests {
             $0.infoItem = nil
         }
     }
+
+    @Test("Get Info with nothing selected shows this folder, and again closes it")
+    func getInfoWithNothingSelectedShowsTheFolder() async throws {
+        let usageGate = AsyncGate()
+        let store = makeStore(items: [first], selected: []) {
+            $0.date = .constant(MockDate.date)
+            $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.offline }
+            $0.filesClient.fetchUsage = { _, _ in
+                try await usageGate.wait()
+                throw FilesClientError.offline
+            }
+        }
+        let folder = try #require(store.state.folderItem(now: MockDate.date))
+        #expect(folder.id == TestFolder.docs)
+        #expect(folder.isDirectory)
+
+        await store.send(.infoSelectionTapped)
+        await store.receive(\.infoTapped) {
+            $0.infoItem = folder
+            $0.infoPhase = .loading
+        }
+        await store.receive(\.infoMetadataResponse.failure) {
+            $0.infoPhase = .failed(L10n.Error.offline)
+        }
+        usageGate.open()
+        await store.receive(\.infoUsageResponse.failure)
+
+        await store.send(.infoSelectionTapped)
+        await store.receive(\.infoDismissed) {
+            $0.infoItem = nil
+            $0.infoPhase = .idle
+        }
+    }
+
+    @Test("Show in Folder selects the row and scrolls to it, and ignores an item not in this folder")
+    func showInFolderSelectsAndScrollsToTheRow() async {
+        let store = makeStore(items: [first, second], selected: [first])
+
+        await store.send(.showInFolderTapped(second)) {
+            $0.selectedItemIDs = [second.id]
+            $0.scrollTargetID = second.id
+        }
+        await store.send(.showInFolderTapped(third))
+    }
 }

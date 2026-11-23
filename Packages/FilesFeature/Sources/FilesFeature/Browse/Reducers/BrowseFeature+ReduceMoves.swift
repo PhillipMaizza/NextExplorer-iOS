@@ -113,6 +113,30 @@ extension BrowseFeature {
             state.destinationPicker = DestinationPickerFeature.State(serverURL: state.serverURL, items: [item])
             return .none
 
+        case let .showInFolderTapped(item):
+            guard state.items[id: item.id] != nil else { return .none }
+            state.selectedItemIDs = [item.id]
+            state.scrollTargetID = item.id
+            return .none
+
+        case let .copyToTapped(item):
+            state.destinationPicker = DestinationPickerFeature.State(
+                serverURL: state.serverURL,
+                items: [item],
+                isCopy: true
+            )
+            return .none
+
+        case .copySelectionToTapped:
+            let items = state.selectedItems
+            guard !items.isEmpty else { return .none }
+            state.destinationPicker = DestinationPickerFeature.State(
+                serverURL: state.serverURL,
+                items: items,
+                isCopy: true
+            )
+            return .none
+
         case .bulkCopyTapped:
             let items = state.selectedItems
             guard !items.isEmpty else { return .none }
@@ -128,8 +152,7 @@ extension BrowseFeature {
             let items = state.selectedItems
             guard !items.isEmpty else { return .none }
             state.destinationPicker = DestinationPickerFeature.State(serverURL: state.serverURL, items: items)
-            state.isSelecting = false
-            state.selectedItemIDs = []
+            leaveSelectMode(&state)
             return .none
 
         case .clipboardCleared:
@@ -142,8 +165,12 @@ extension BrowseFeature {
         case let .tableSelectionChanged(ids):
             guard !state.isSelecting else { return .none }
             state.selectedItemIDs = ids
+            guard state.isInspectorOpen else { return .none }
+            if state.selectedItems.count > 1 {
+                return state.isInfoShowingSelection ? .none : showSelectionInfo(&state)
+            }
             // An open inspector follows the selection to the newly picked row.
-            guard state.infoItem != nil, ids.count == 1,
+            guard ids.count == 1,
                   let item = state.selectedItems.first, item.id != state.infoItem?.id
             else { return .none }
             return loadInfo(&state, item: item, settle: Constants.inspectorFollowDelay)
@@ -230,20 +257,30 @@ extension BrowseFeature {
             ))
 
         case .infoSelectionTapped:
+            let items = state.selectedItems
+            #if os(macOS)
+                guard !state.directoryPath.isEmpty else { return .none }
+                if items.count > 1 {
+                    return state.isInfoShowingSelection ? .send(.infoDismissed) : showSelectionInfo(&state)
+                }
+            #endif
+            guard let item = items.count == 1 ? items.first : items.isEmpty ? state.folderItem(now: date.now) : nil
+            else { return .none }
             // ⌘I toggles: pressing it again for the item already shown closes the inspector.
-            if state.infoItem != nil, state.infoItem?.id == state.selectedItems.first?.id {
+            if state.infoItem?.id == item.id {
                 return .send(.infoDismissed)
             }
-            let items = state.selectedItems
-            guard items.count == 1 else { return .none }
-            return .send(.infoTapped(items[0]))
+            return .send(.infoTapped(item))
 
         case let .destinationPicker(.presented(.delegate(.confirmed(destination)))):
             guard let picker = state.destinationPicker else { return .none }
             let items = picker.items
             state.destinationPicker = nil
             return runTransfer(&state, retry: TransferRetry(
-                items: items, destination: destination, operation: .move, shouldClearClipboard: false
+                items: items,
+                destination: destination,
+                operation: picker.purpose == .copy ? .copy : .move,
+                shouldClearClipboard: false
             ))
 
         case .destinationPicker(.presented(.delegate(.cancelled))):
@@ -323,5 +360,19 @@ extension BrowseFeature {
         default:
             return .none
         }
+    }
+}
+
+extension BrowseFeature.State {
+    func folderItem(now: Date) -> FileItem? {
+        let parts = directoryPath.split(separator: "/").map(String.init)
+        guard let name = parts.last else { return nil }
+        return FileItem(
+            name: name,
+            path: parts.dropLast().joined(separator: "/"),
+            dateModified: now,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
     }
 }

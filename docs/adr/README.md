@@ -27,3 +27,4 @@ refactor. Number it after the last one and keep it short. A record that stops ho
 | [0016](0016-code-comments-ratchet.md) | Code carries no comments; a ratchet holds the rest |
 | [0017](0017-search-answers-carry-their-term.md) | Search answers carry their term |
 | [0018](0018-mac-design-system.md) | The Mac wears the design system over native controls |
+| [0019](0019-mac-inspector-menu-and-back.md) | The inspector menu shows shortcuts it does not own; Back closes the inspector first |

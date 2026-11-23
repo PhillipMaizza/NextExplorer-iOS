@@ -31,6 +31,7 @@
         private var url: URL?
         private var onMove: (Int) -> Void = { _ in }
         private var onClose: () -> Void = {}
+        private var hasShown = false
 
         private static let upArrowKeyCode: UInt16 = 126
         private static let downArrowKeyCode: UInt16 = 125
@@ -46,6 +47,10 @@
         override init() {
             super.init()
             responder.owner = self
+        }
+
+        var wasDismissed: Bool {
+            hasShown && !isVisible
         }
 
         /// Something is to be shown, so this table asks for the panel.
@@ -68,6 +73,7 @@
             } else {
                 panel.makeKeyAndOrderFront(nil)
             }
+            hasShown = true
         }
 
         func attach(to panel: QLPreviewPanel) {
@@ -85,6 +91,7 @@
         /// shared panel by now. The panel holds its data source and delegate unretained, so they
         /// are cleared here too: a table that goes away must never leave the panel pointing at it.
         func close() {
+            hasShown = false
             guard QLPreviewPanel.sharedPreviewPanelExists(), let panel = QLPreviewPanel.shared(),
                   panel.dataSource as AnyObject? === self else { return }
             if panel.isVisible {

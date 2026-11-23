@@ -37,6 +37,54 @@ struct BrowseMoveAndUploadReviewTests {
         }
     }
 
+    @Test("Copy To presents the picker in copy mode, and confirming copies instead of moving")
+    func copyToRunsACopyTransfer() async {
+        let gate = AsyncGate()
+        let events = LockIsolated<[String]>([])
+        let store = BrowseFixtures.store(makeState()) {
+            $0.filesClient.browse = { _, path in
+                BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path)
+            }
+            $0.filesClient.transferItems = { _, items, destination, operation, _ in
+                events.withValue { $0.append("\(operation) \(items.map(\.id)) to \(destination)") }
+                try await gate.wait()
+                return BrowseFixtures.transferResult(items, to: destination)
+            }
+        }
+
+        await store.send(.copyToTapped(incoming)) {
+            $0.destinationPicker = DestinationPickerFeature.State(
+                serverURL: BrowseTestSupport.serverURL,
+                items: [incoming],
+                isCopy: true
+            )
+        }
+        #expect(store.state.destinationPicker?.purpose == .copy)
+        await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: TestFolder.archive))))) {
+            $0.destinationPicker = nil
+            $0.isPerformingFileAction = true
+            $0.transferProgress = 0
+            $0.pendingTransferRetry = BrowseFeature.TransferRetry(
+                items: [incoming], destination: TestFolder.archive, operation: .copy, shouldClearClipboard: false
+            )
+        }
+        await store.receive(\.transferConflictCheckResponse) {
+            $0.pendingTransferRetry?.resolution = .keepBoth
+        }
+        gate.open()
+        await store.receive(\.transferResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.transferProgress = nil
+            $0.pendingTransferRetry = nil
+            $0.transferSuccessMessage = L10n.Browse.transferCopied(1)
+            $0.$undoStack.withLock {
+                $0.record(FileUndoEntry(.created([BrowseFixtures.file(TestFile.aText, in: TestFolder.archive)])))
+            }
+        }
+        await store.receive(.delegate(.directoryContentsChanged))
+        #expect(events.value == ["copy [\"Inbox/a.txt\"] to Archive"])
+    }
+
     @Test("Bulk move presents the picker with the selection in listing order and leaves select mode")
     func bulkMovePresentsThePickerWithTheSelectionAndExitsSelectMode() async {
         let first = BrowseFixtures.file(TestFile.aText, in: TestFolder.documents)

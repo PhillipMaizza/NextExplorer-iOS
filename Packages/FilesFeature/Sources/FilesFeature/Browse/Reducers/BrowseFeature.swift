@@ -229,6 +229,11 @@ public struct BrowseFeature {
         /// The `GET /api/metadata/*` load lifecycle for the Get Info sheet; `infoErrorMessage` is
         /// derived from it.
         public var infoPhase: DataPhase = .idle
+        public var isInfoShowingSelection = false
+
+        public var isInspectorOpen: Bool {
+            infoItem != nil || isInfoShowingSelection
+        }
 
         public var infoErrorMessage: String? {
             infoPhase.errorMessage
@@ -586,6 +591,9 @@ public struct BrowseFeature {
         case uploadReview(PresentationAction<UploadReviewFeature.Action>)
         case copyTapped(FileItem)
         case moveTapped(FileItem)
+        case copyToTapped(FileItem)
+        case copySelectionToTapped
+        case showInFolderTapped(FileItem)
         case bulkCopyTapped
         case bulkMoveTapped
         case clipboardCleared
@@ -717,12 +725,17 @@ public struct BrowseFeature {
         // refresh) closes, rather than offering actions on a path that no longer exists.
         .onChange(of: \.items) { _, items in
             Reduce { state, _ in
-                guard let shown = state.infoItem, items[id: shown.id] == nil else { return .none }
-                state.infoItem = nil
-                state.infoMetadata = nil
-                state.infoUsage = nil
-                state.infoPhase = .idle
-                return .cancel(id: CancelID.info)
+                if state.isInfoShowingSelection {
+                    return settleSelectionInfo(&state)
+                }
+                guard let shown = state.infoItem, shown.id != state.directoryPath, items[id: shown.id] == nil
+                else { return .none }
+                return closeInfo(&state)
+            }
+        }
+        .onChange(of: \.selectedItemIDs) { _, _ in
+            Reduce { state, _ in
+                settleSelectionInfo(&state)
             }
         }
     }

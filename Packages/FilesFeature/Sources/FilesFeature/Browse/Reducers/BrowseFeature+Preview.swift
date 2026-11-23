@@ -7,7 +7,31 @@ import Foundation
 extension BrowseFeature {
     /// `settle` holds the requests back a moment, for an inspector following the selection: arrow
     /// keys skipping past rows then never ask the server for each one (a folder's size is a scan).
+    func closeInfo(_ state: inout State) -> Effect<Action> {
+        state.infoItem = nil
+        state.infoMetadata = nil
+        state.infoUsage = nil
+        state.infoPhase = .idle
+        state.isInfoShowingSelection = false
+        return .cancel(id: CancelID.info)
+    }
+
+    func showSelectionInfo(_ state: inout State) -> Effect<Action> {
+        let effect = closeInfo(&state)
+        state.isInfoShowingSelection = true
+        return effect
+    }
+
+    func settleSelectionInfo(_ state: inout State) -> Effect<Action> {
+        guard state.isInfoShowingSelection else { return .none }
+        let selected = state.selectedItems
+        guard selected.count < 2 else { return .none }
+        guard let item = selected.first ?? state.folderItem(now: date.now) else { return closeInfo(&state) }
+        return loadInfo(&state, item: item)
+    }
+
     func loadInfo(_ state: inout State, item: FileItem, settle: Duration? = nil) -> Effect<Action> {
+        state.isInfoShowingSelection = false
         state.infoItem = item
         state.infoMetadata = nil
         state.infoUsage = nil

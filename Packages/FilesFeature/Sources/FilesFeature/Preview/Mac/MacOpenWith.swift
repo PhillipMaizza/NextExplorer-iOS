@@ -73,10 +73,11 @@
         let item: FileItem
         let serverURL: URL
         let onFailure: (String) -> Void
+        var includesDefaultApp = true
 
         var body: some View {
             let apps = MacOpenWithApp.apps(forFileNamed: item.name)
-            if let preferred = apps.preferred {
+            if includesDefaultApp, let preferred = apps.preferred {
                 Button { model().open(with: nil) } label: {
                     Label { Text(L10n.OpenWith.openIn(preferred.name)) } icon: { preferred.icon }
                 }
