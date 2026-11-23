@@ -194,7 +194,7 @@ struct NextExplorerApp: App {
 
 #if os(macOS)
     private enum MacWindow {
-        static let minWidth: CGFloat = 760
+        static let minWidth: CGFloat = 800
         static let minHeight: CGFloat = 520
         static let defaultWidth: CGFloat = 1180
         static let defaultHeight: CGFloat = 780

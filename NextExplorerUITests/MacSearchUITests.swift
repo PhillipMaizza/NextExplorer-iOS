@@ -3,41 +3,37 @@
     import Localization
     import XCTest
 
-    /// The Mac search panel, opened from the toolbar's search icon, ⌘F or ⌘K, and the toolbar refresh.
+    /// The top bar search field (⌘F), the search panel (⌘K), and the toolbar refresh.
     final class MacSearchUITests: MacUITestCase {
         private func panelField(in app: XCUIApplication) -> XCUIElement {
             app.textFields[AccessibilityIdentifiers.Search.spotlightField]
         }
 
-        /// The toolbar's search icon opens the panel, in a pushed folder and at the root, where there
-        /// is no inline field.
-        func testTheSearchIconOpensThePanelInAFolderAndAtTheRoot() {
-            let app = launchApp()
-            openDocuments(in: app)
-            XCTAssertTrue(backButton(in: app).waitToAppear())
-            let icon = app.buttons[AccessibilityIdentifiers.Search.field].firstMatch
-            XCTAssertTrue(icon.waitToAppear(), "A folder's toolbar should show the search icon")
-            icon.click()
-            XCTAssertTrue(panelField(in: app).waitToAppear())
-            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
-            XCTAssertTrue(panelField(in: app).waitToVanish())
-
-            backButton(in: app).click()
-            XCTAssertTrue(backButton(in: app).waitToVanish())
-            icon.click()
-            XCTAssertTrue(panelField(in: app).waitToAppear(), "The search icon should open the search panel")
-            XCTAssertFalse(app.textFields[AccessibilityIdentifiers.Search.field].exists, "No inline search field")
-        }
-
-        /// ⌘F focuses the panel; typing, letting the search run between keys, keeps every keystroke,
-        /// and a folder found opens and loads like one opened from the table.
-        func testFindTypesIntoThePanelAndOpensAFolderFound() {
+        /// ⌘F focuses the top bar field, not the panel; typing searches in place and Escape clears it.
+        func testFindFocusesTheTopBarFieldAndSearchesInPlace() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
             focusWindow(app)
             app.typeKey(Constants.findKey, modifierFlags: .command)
+            let field = app.textFields[AccessibilityIdentifiers.Search.field].firstMatch
+            XCTAssertTrue(field.isFocused(within: UITestTimeout.standard), "⌘F should focus the top bar field")
+            XCTAssertFalse(panelField(in: app).exists, "⌘F should not open the search panel")
+
+            app.typeText(Fixture.folderAlt)
+            XCTAssertTrue(searchHit(in: app).waitToAppear(), "The results should show in place")
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+            XCTAssertTrue(searchHit(in: app).waitToVanish(), "Escape should clear the search")
+        }
+
+        /// ⌘K focuses the panel; typing, letting the search run between keys, keeps every keystroke,
+        /// and a folder found opens and loads like one opened from the table.
+        func testSpotlightTypesIntoThePanelAndOpensAFolderFound() {
+            let app = launchApp()
+            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
+            focusWindow(app)
+            app.typeKey(Constants.spotlightKey, modifierFlags: .command)
             let field = panelField(in: app)
-            XCTAssertTrue(field.isFocused(within: UITestTimeout.standard), "⌘F should open the panel")
+            XCTAssertTrue(field.isFocused(within: UITestTimeout.standard), "⌘K should open the panel")
 
             for (typed, character) in Fixture.folderAlt.enumerated() {
                 app.typeText(String(character))
@@ -64,7 +60,7 @@
         func testAFileFoundOpensItsFolderAndRefreshConfirmsTheSync() {
             let app = launchApp()
             openDocuments(in: app)
-            app.typeKey(Constants.findKey, modifierFlags: .command)
+            app.typeKey(Constants.spotlightKey, modifierFlags: .command)
             app.typeText(Fixture.fileSearchTerm)
 
             // The root copy, by the end of its row's label ("TXT, notes.txt, /"): the mocked tree also

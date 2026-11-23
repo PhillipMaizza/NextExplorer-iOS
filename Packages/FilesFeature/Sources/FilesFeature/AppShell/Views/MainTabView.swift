@@ -52,12 +52,14 @@ public struct MainTabView: View {
     /// Regular width (iPad) renders a `NavigationSplitView` sidebar; compact (iPhone, iPad
     /// narrow multitasking) keeps the bottom tab bar. Gated on size class, never device idiom.
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    /// Keep the sidebar open beside the detail in both orientations so the account header and
-    /// sections stay visible; the toolbar toggle still hides it on demand.
-    @State private var columnVisibility: NavigationSplitViewVisibility = .all
-    /// Where the sidebar ends, so the path bar floating over the split view keeps to the detail
-    /// column. The detail's own size is not reported again after a rotation; the sidebar's is.
-    @State private var sidebarTrailingEdge: CGFloat = 0
+    #if os(iOS)
+        /// Keep the sidebar open beside the detail in both orientations so the account header and
+        /// sections stay visible; the toolbar toggle still hides it on demand.
+        @State private var columnVisibility: NavigationSplitViewVisibility = .all
+        /// Where the sidebar ends, so the path bar floating over the split view keeps to the detail
+        /// column. The detail's own size is not reported again after a rotation; the sidebar's is.
+        @State private var sidebarTrailingEdge: CGFloat = 0
+    #endif
 
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store
@@ -213,68 +215,51 @@ public struct MainTabView: View {
 
     private var splitView: some View {
         #if os(macOS)
-            split { MacTabDetail(store: store) }
+            MacMainShell(store: store)
         #else
             perTabSplitView
         #endif
     }
 
-    @ViewBuilder
-    private var perTabSplitView: some View {
-        switch store.selectedTab {
-        case .browse:
-            split { BrowseTabView(store: store.scope(state: \.browse, action: \.browse)) }
-        case .favorites:
-            split { FavoritesView(store: store.scope(state: \.favorites, action: \.favorites)) }
-        case .shared:
-            split { SharedView(store: store.scope(state: \.shared, action: \.shared)) }
-        case .downloads:
-            split { OfflineTabView(
-                store: store.scope(state: \.downloads, action: \.downloads),
-                offlineStore: store.scope(state: \.offlineManage, action: \.offlineManage),
-                favorites: store.favorites.favorites
-            ) }
-        case .settings: split { SettingsView(store: store.scope(state: \.settings, action: \.settings)) }
-        case .trash: split { NavigationStack { TrashView(store: store.scope(state: \.trash, action: \.trash)) } }
+    #if os(iOS)
+        @ViewBuilder
+        private var perTabSplitView: some View {
+            switch store.selectedTab {
+            case .browse:
+                split { BrowseTabView(store: store.scope(state: \.browse, action: \.browse)) }
+            case .favorites:
+                split { FavoritesView(store: store.scope(state: \.favorites, action: \.favorites)) }
+            case .shared:
+                split { SharedView(store: store.scope(state: \.shared, action: \.shared)) }
+            case .downloads:
+                split { OfflineTabView(
+                    store: store.scope(state: \.downloads, action: \.downloads),
+                    offlineStore: store.scope(state: \.offlineManage, action: \.offlineManage),
+                    favorites: store.favorites.favorites
+                ) }
+            case .settings: split { SettingsView(store: store.scope(state: \.settings, action: \.settings)) }
+            case .trash: split { NavigationStack { TrashView(store: store.scope(state: \.trash, action: \.trash)) } }
+            }
         }
-    }
 
-    private func split(@ViewBuilder detail: () -> some View) -> some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
-            MainTabSidebar(store: store)
-                .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxX } action: {
-                    sidebarTrailingEdge = $0
-                }
-            #if os(macOS)
-                .modifier(MacSidebarToolbar(store: store, columnVisibility: $columnVisibility))
-                .navigationSplitViewColumnWidth(
-                    min: MacSidebarWidth.min,
-                    ideal: MacSidebarWidth.ideal,
-                    max: MacSidebarWidth.max
-                )
-            #endif
-        } detail: {
-            detail()
-                .environment(\.isSplitViewDetail, true)
-            #if os(macOS)
-                // Every tab's content and toolbar sit on the same surface, not only Browse's.
-                .backgroundGradient()
-            #endif
+        private func split(@ViewBuilder detail: () -> some View) -> some View {
+            NavigationSplitView(columnVisibility: $columnVisibility) {
+                MainTabSidebar(store: store)
+            } detail: {
+                detail()
+                    .environment(\.isSplitViewDetail, true)
+                    .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minX } action: {
+                        sidebarTrailingEdge = $0
+                    }
+            }
+            .overlay(alignment: .bottom) {
+                SplitDetailBreadcrumb(store: store)
+                    .padding(.leading, columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge))
+            }
+            .navigationSplitViewStyle(.balanced)
+            .platformAccentTint()
         }
-        .overlay(alignment: .bottom) {
-            SplitDetailBreadcrumb(store: store)
-                .padding(.leading, columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge))
-        }
-        .navigationSplitViewStyle(.balanced)
-        .platformAccentTint()
-        #if os(macOS)
-            .modifier(MacSplitChrome(
-                store: store,
-                sidebarInset: columnVisibility == .detailOnly ? 0 : max(0, sidebarTrailingEdge),
-                columnVisibility: $columnVisibility
-            ))
-        #endif
-    }
+    #endif
 
     private var tabs: some View {
         TabView(selection: Binding(

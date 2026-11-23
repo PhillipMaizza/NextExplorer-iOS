@@ -21,6 +21,8 @@
         @FocusedValue(\.printPreview) private var printPreview
         /// The visible section's toolbar refresh, so ⌘R spins and toasts like clicking it.
         @FocusedValue(\.refreshVisibleScreen) private var refreshVisibleScreen
+        @FocusedValue(\.toggleMacSidebar) private var toggleMacSidebar
+        @FocusedValue(\.closeMacInspector) private var closeMacInspector
         @FocusedValue(\.browseViewOptions) private var viewOptions
         /// Present while an image preview is on screen.
         @FocusedValue(\.previewZoom) private var previewZoom
@@ -36,7 +38,11 @@
         }
 
         var body: some Commands {
-            SidebarCommands()
+            CommandGroup(replacing: .sidebar) {
+                Button(L10n.Menu.toggleSidebar) { toggleMacSidebar?() }
+                    .keyboardShortcut("s", modifiers: [.command, .control])
+                    .disabled(toggleMacSidebar == nil)
+            }
             // About NextExplorer opens the app's own About window (credits and links).
             CommandGroup(replacing: .appInfo) {
                 Button(L10n.Menu.about) { openWindow(id: MacAboutView.windowID) }
@@ -73,6 +79,9 @@
                 Button(L10n.Browse.actionGetInfo) { fileActions?.getInfo() }
                     .keyboardShortcut("i")
                     .disabled(fileActions == nil)
+                Button(L10n.Menu.hideInspector) { closeMacInspector?() }
+                    .keyboardShortcut("i", modifiers: [.command, .control])
+                    .disabled(closeMacInspector == nil)
             }
             CommandGroup(replacing: .printItem) {
                 Button(L10n.OpenWith.print) { printPreview?() }

@@ -30,6 +30,24 @@ struct MainTabHistoryTests {
     }
 
     @Test
+    func backInTrashClimbsThenClosesTheDeletedFolder() async {
+        var state = MainTabFeature.State(serverURL: TestHost.serverURL, user: User.preview)
+        state.selectedTab = .trash
+        #expect(!state.canGoBack)
+
+        let deleted = TrashItem(id: "t2", name: "Photos", isDirectory: true)
+        state.trash.folder = TrashFolderFeature.State(serverURL: TestHost.serverURL, item: deleted)
+        #expect(state.canGoBack)
+
+        let store = TestStore(initialState: state) { MainTabFeature() }
+        await store.send(.backRequested)
+        await store.receive(\.trash.folder.dismiss) {
+            $0.trash.folder = nil
+        }
+        #expect(!store.state.canGoBack)
+    }
+
+    @Test
     func backClosesTheTrashBeforeLeavingAFolder() async {
         var state = BrowseTabFeature.State(serverURL: TestHost.serverURL)
         state.path.append(folder("docs"))

@@ -43,9 +43,12 @@ private enum Constants {
 }
 
 enum MacSidebarWidth {
-    static let min: CGFloat = 240
+    static let min: CGFloat = 220
     static let ideal: CGFloat = 280
     static let max: CGFloat = 360
+    static let handle: CGFloat = .space8
+    static let collapseThreshold: CGFloat = (MacSidebarRail.width + min) / 2
+    static let panelAppearScale: CGFloat = 0.96
 }
 
 /// The split view's sidebar on iPad and the Mac: the app's name, the sections, then the tip jar, help
@@ -55,6 +58,7 @@ struct MainTabSidebar: View {
     @Environment(\.openURL) private var openURL
     #if os(macOS)
         @Environment(\.openSettings) private var openSettings
+        @Environment(\.isMacAccountPanelShown) private var isAccountPanelShown
     #endif
 
     /// The tab bar's identifiers, so a sidebar row is the same destination to VoiceOver and UI tests.
@@ -205,7 +209,7 @@ struct MainTabSidebar: View {
                 settingsButton
             #else
                 // Settings has its own window (⌘,) on the Mac.
-                footerButton(L10n.Tab.settings, icon: IconKit.macSidebarSettings, shortcut: "\u{2318},") {
+                footerButton(L10n.Tab.settings, icon: IconKit.macSidebarSettings, shortcut: MacShortcutHint.settings) {
                     openSettings()
                 }
             #endif
@@ -248,11 +252,7 @@ struct MainTabSidebar: View {
         action: @escaping () -> Void
     ) -> some View {
         #if os(macOS)
-            MacSidebarRow(title: title, icon: icon, size: .regular, action: action) {
-                if let shortcut {
-                    MacKeyHint(shortcut)
-                }
-            }
+            MacSidebarRow(title: title, icon: icon, size: .regular, shortcut: shortcut, action: action)
         #else
             // The section rows' own label, height and inset, so both groups read as one list.
             Button(action: action) {
@@ -271,30 +271,34 @@ struct MainTabSidebar: View {
         #endif
     }
 
-    /// Signed in identity at the foot of the sidebar: avatar, name and server address. It opens the account
-    /// popover, for switching, adding and signing out without a trip to Settings.
-    private var sidebarProfile: some View {
-        SidebarAccountMenu(
-            store: store.scope(state: \.settings, action: \.settings),
-            onChangePassword: {
-                #if os(iOS)
-                    // Change Password is pushed inside Settings on iPad.
-                    store.send(.tabSelected(.settings))
-                #endif
-                store.send(.settings(.changePasswordButtonTapped))
-            },
-            revealSettings: {
-                #if os(iOS)
-                    store.send(.tabSelected(.settings))
-                #endif
-            }
-        ) {
-            #if os(macOS)
+    #if os(macOS)
+        private var sidebarProfile: some View {
+            Button { isAccountPanelShown.wrappedValue.toggle() } label: {
                 MacSidebarAccountLabel(
                     displayName: store.settings.activeAccount.displayName,
-                    server: store.settings.activeAccount.serverSubtitle
+                    server: store.settings.activeAccount.serverSubtitle,
+                    isOpen: isAccountPanelShown.wrappedValue
                 )
-            #else
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.Settings.sectionAccounts)
+            .accessibilityValue(store.settings.activeAccount.displayName)
+            .task { store.send(.settings(.signInStatusRequested)) }
+        }
+    #else
+        /// Signed in identity at the foot of the sidebar: avatar, name and server address. It opens the account
+        /// popover, for switching, adding and signing out without a trip to Settings.
+        private var sidebarProfile: some View {
+            SidebarAccountMenu(
+                store: store.scope(state: \.settings, action: \.settings),
+                onChangePassword: {
+                    store.send(.tabSelected(.settings))
+                    store.send(.settings(.changePasswordButtonTapped))
+                },
+                revealSettings: {
+                    store.send(.tabSelected(.settings))
+                }
+            ) {
                 HStack(spacing: .space8) {
                     profileSummary
                     IconKit.chevronUpDown
@@ -302,9 +306,9 @@ struct MainTabSidebar: View {
                         .padding(.trailing, Constants.chevronTrailingInset)
                 }
                 .contentShape(Rectangle())
-            #endif
+            }
         }
-    }
+    #endif
 
     #if os(iOS)
         private var profileSummary: some View {

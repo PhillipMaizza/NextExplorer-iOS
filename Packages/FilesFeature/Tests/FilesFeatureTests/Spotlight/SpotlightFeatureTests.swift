@@ -284,9 +284,9 @@ struct SpotlightFeatureTests {
         let store = TestStore(initialState: state) { SpotlightFeature() }
 
         #expect(store.state.displayed == [otherHit, folderHit, fileHit])
-        await store.send(.selectionMoved(.down)) { $0.activeIndex = 0 }
+        await store.send(.selectionMoved(.down)) { $0.activeIndex = 1 }
         await store.send(.submitted)
-        await store.receive(.delegate(.openResult(otherHit)))
+        await store.receive(.delegate(.openResult(folderHit)))
     }
 
     @Test("Without a connection the search answers from the device, never from the server")
@@ -354,7 +354,7 @@ struct SpotlightFeatureTests {
         await stopped.send(.showMoreTapped)
     }
 
-    @Test("Arrow keys wrap through the hits, down from nothing lands on the first, up on the last")
+    @Test("Arrow keys wrap through the hits, starting from the first, which Return already opens")
     func arrowKeysWrap() async {
         let clock = TestClock<Duration>()
         let store = store(
@@ -363,10 +363,10 @@ struct SpotlightFeatureTests {
             page: SearchPage(items: [])
         )
 
-        await store.send(.selectionMoved(.down)) { $0.activeIndex = 0 }
+        await store.send(.selectionMoved(.down)) { $0.activeIndex = 1 }
+        await store.send(.selectionMoved(.up)) { $0.activeIndex = 0 }
         await store.send(.selectionMoved(.up)) { $0.activeIndex = 2 }
         await store.send(.selectionMoved(.down)) { $0.activeIndex = 0 }
-        await store.send(.selectionMoved(.down)) { $0.activeIndex = 1 }
         await store.send(.highlighted(nil)) { $0.activeIndex = nil }
         await store.send(.selectionMoved(.up)) { $0.activeIndex = 2 }
     }

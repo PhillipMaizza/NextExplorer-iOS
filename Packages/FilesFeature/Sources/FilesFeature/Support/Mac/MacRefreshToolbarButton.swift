@@ -47,13 +47,10 @@
         let action: () -> Void
 
         var body: some View {
-            // A plain system glyph like Safari's reload; while it runs the button just dims
-            // instead of swapping in a spinner.
-            Button(action: action) {
-                Label { Text(L10n.Menu.refresh) } icon: { IconKit.retry }
-            }
-            .disabled(isRefreshing)
-            .help(L10n.Menu.refresh)
+            Button(action: action) { IconKit.macToolbarRefresh.macToolbarGlyph() }
+                .buttonStyle(.macToolbarCircle)
+                .disabled(isRefreshing)
+                .accessibilityLabelWithTooltip(L10n.Menu.refresh)
         }
     }
 
