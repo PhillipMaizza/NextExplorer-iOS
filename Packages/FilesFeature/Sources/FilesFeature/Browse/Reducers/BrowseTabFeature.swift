@@ -199,6 +199,7 @@ public struct BrowseTabFeature {
 
             case .goHome:
                 state.trash = nil
+                state.inspectorLeftOpenPaths = []
                 state.goHome()
                 return .none
 
@@ -304,6 +305,7 @@ public struct BrowseTabFeature {
 
             case let .navigateToDirectory(path, title):
                 state.forwardStack = []
+                state.inspectorLeftOpenPaths = []
                 BrowseNavigation.jump(to: path, title: title, serverURL: state.root.serverURL, stack: &state.path)
                 return .none
 
