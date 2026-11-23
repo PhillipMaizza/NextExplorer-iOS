@@ -14,12 +14,14 @@
         private let title: String
         @Binding private var text: String
         private let prompt: String?
+        private let isInvalid: Bool
         @FocusState private var isFocused: Bool
 
-        public init(_ title: String, text: Binding<String>, prompt: String? = nil) {
+        public init(_ title: String, text: Binding<String>, prompt: String? = nil, isInvalid: Bool = false) {
             self.title = title
             _text = text
             self.prompt = prompt
+            self.isInvalid = isInvalid
         }
 
         public var body: some View {
@@ -29,26 +31,27 @@
                 .type(.body2(.regular))
                 .focused($isFocused)
                 .padding(.horizontal, .space12)
-                .macFieldChrome(isFocused: isFocused)
+                .macFieldChrome(isFocused: isFocused, isInvalid: isInvalid)
         }
     }
 
     extension View {
-        func macFieldChrome(isFocused: Bool) -> some View {
-            tint(Color.accent)
+        func macFieldChrome(isFocused: Bool, isInvalid: Bool = false) -> some View {
+            let ring = isInvalid ? Color.negative : Color.accent
+            return tint(Color.accent)
                 .frame(height: Constants.fieldHeight)
                 .background(Constants.shape.fill(Color.macField))
                 .background(
                     Constants.shape
                         .stroke(
-                            Color.accent.opacity(Constants.focusHaloOpacity),
+                            ring.opacity(Constants.focusHaloOpacity),
                             lineWidth: Constants.focusHaloWidth
                         )
                         .opacity(isFocused ? 1 : 0)
                 )
                 .overlay(
                     Constants.shape.strokeBorder(
-                        isFocused ? Color.accent : .macLine,
+                        isInvalid || isFocused ? ring : .macLine,
                         lineWidth: .borderWidthHairline
                     )
                 )
@@ -119,6 +122,45 @@
         }
     }
 
+    public struct MacDatePopup: View {
+        private let title: String
+        @Binding private var date: Date
+        private let range: PartialRangeFrom<Date>
+        @State private var isPresented = false
+
+        public init(_ title: String, date: Binding<Date>, in range: PartialRangeFrom<Date>) {
+            self.title = title
+            _date = date
+            self.range = range
+        }
+
+        public var body: some View {
+            Button {
+                isPresented.toggle()
+            } label: {
+                MacPopupLabel(
+                    valueLabel: date.formatted(date: .abbreviated, time: .shortened),
+                    shouldFillWidth: false
+                )
+            }
+            .buttonStyle(.plain)
+            .fixedSize()
+            .accessibilityLabel(title)
+            .accessibilityValue(date.formatted(date: .long, time: .shortened))
+            .popover(isPresented: $isPresented, arrowEdge: .bottom) {
+                VStack(alignment: .leading, spacing: .space12) {
+                    DatePicker(title, selection: $date, in: range, displayedComponents: .date)
+                        .datePickerStyle(.graphical)
+                    DatePicker(title, selection: $date, in: range, displayedComponents: .hourAndMinute)
+                        .datePickerStyle(.stepperField)
+                }
+                .labelsHidden()
+                .tint(Color.accent)
+                .padding(.space16)
+            }
+        }
+    }
+
     private struct MacPopupLabel: View {
         let valueLabel: String
         let shouldFillWidth: Bool
@@ -141,6 +183,15 @@
             .overlay(Constants.shape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline))
             .contentShape(Constants.shape)
         }
+    }
+
+    #Preview("Date popup") {
+        MacDatePopup(
+            "Expires",
+            date: .constant(Date(timeIntervalSinceReferenceDate: 815_000_000)),
+            in: Date.distantPast...
+        )
+        .padding(.space24)
     }
 
     #Preview("Field and popup") {

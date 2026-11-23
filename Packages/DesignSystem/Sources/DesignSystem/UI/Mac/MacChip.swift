@@ -24,6 +24,13 @@
                 }
             }
 
+            var verticalPadding: CGFloat {
+                switch self {
+                case .regular: .space4
+                case .small: .space2
+                }
+            }
+
             var horizontalPadding: CGFloat {
                 switch self {
                 case .regular: .space8
@@ -63,6 +70,7 @@
         private let kind: Kind
         private var tone: Tone?
         private var size: Size = .regular
+        private var icon: Image?
 
         public init(
             text: String,
@@ -77,17 +85,27 @@
         }
 
         private var pill: some View {
-            Text(text)
-                .type(size.textType)
-                .lineLimit(1)
-                .padding(.horizontal, size.horizontalPadding)
-                .padding(.vertical, .space2)
+            HStack(spacing: .space4) {
+                if let icon {
+                    icon
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: .iconXSmall, height: .iconXSmall)
+                        .accessibilityHidden(true)
+                }
+                Text(text)
+                    .type(size.textType)
+                    .lineLimit(1)
+            }
+            .padding(.horizontal, size.horizontalPadding)
+            .padding(.vertical, size.verticalPadding)
         }
 
-        public init(text: String, tone: Tone, size: Size = .regular) {
+        public init(text: String, tone: Tone, size: Size = .regular, icon: Image? = nil) {
             self.init(text: text, kind: .pill)
             self.tone = tone
             self.size = size
+            self.icon = icon
         }
 
         public var body: some View {
@@ -121,6 +139,7 @@
             MacChip(text: L10n.ServerTools.notUsed, tone: .gray)
             MacChip(text: L10n.ServerTools.notUsed, tone: .amber, size: .small)
             MacChip(text: L10n.UserManagement.badgeAdmin, tone: .amber)
+            MacChip(text: L10n.Shared.anyoneWithLink, tone: .gray, icon: IconKit.web)
         }
         .padding()
     }
