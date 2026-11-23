@@ -113,6 +113,47 @@
         }
     }
 
+    public struct MacTableRowButton<Label: View>: View {
+        let isShaded: Bool
+        let isSelected: Bool
+        let action: () -> Void
+        @ViewBuilder let label: () -> Label
+
+        public init(
+            isShaded: Bool,
+            isSelected: Bool,
+            action: @escaping () -> Void,
+            @ViewBuilder label: @escaping () -> Label
+        ) {
+            self.isShaded = isShaded
+            self.isSelected = isSelected
+            self.action = action
+            self.label = label
+        }
+
+        public var body: some View {
+            Button(action: action) {
+                label()
+                    .lineLimit(1)
+                    .foregroundStyle(Color.macChromeText)
+                    .macTableRow(isShaded: isShaded, isSelected: isSelected)
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+        }
+    }
+
+    #Preview("Row buttons") {
+        VStack(spacing: .zero) {
+            MacTableRowButton(isShaded: false, isSelected: false, action: {}) { Text(verbatim: "Plain") }
+            MacTableRowButton(isShaded: true, isSelected: false, action: {}) { Text(verbatim: "Shaded") }
+            MacTableRowButton(isShaded: false, isSelected: true, action: {}) { Text(verbatim: "Selected") }
+        }
+        .padding(.space16)
+        .frame(width: 420)
+    }
+
     #Preview("Table") {
         VStack(spacing: .zero) {
             MacTableHeader {
