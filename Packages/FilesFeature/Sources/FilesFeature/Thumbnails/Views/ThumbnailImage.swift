@@ -85,6 +85,7 @@ struct ThumbnailImage: View {
     /// A grid tile's well: a picture covers it (cropped, a video frame with the play badge), first
     /// lines sit on a sheet, and a file with nothing to show takes the kind chip.
     var isGridWell = false
+    var fill = ThumbnailFill.fit
 
     /// The first lines of a text file, drawn as a small page.
     @State private var snippet: String?
@@ -146,9 +147,7 @@ struct ThumbnailImage: View {
                             }
                         }
                 } else {
-                    Image(platformImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
+                    ThumbnailPicture(image: uiImage, fill: fill)
                 }
             } else if hasResolved || isGridWell || fallbackKind != nil {
                 fallbackImage

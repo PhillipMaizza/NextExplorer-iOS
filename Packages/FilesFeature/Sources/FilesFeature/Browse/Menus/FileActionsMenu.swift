@@ -77,12 +77,14 @@ struct FileActionsMenu: View {
 
     @ViewBuilder
     private var aboutActions: some View {
-        Button {
-            store.send(.infoTapped(item))
-        } label: {
-            Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
+        if isGetInfoAvailable {
+            Button {
+                store.send(.infoTapped(item))
+            } label: {
+                Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
+            }
+            .tint(.primaryDS)
         }
-        .tint(.primaryDS)
         Button {
             store.send(.permissionsTapped(item))
         } label: {
@@ -244,6 +246,14 @@ struct FileActionsMenu: View {
 
     /// A top level location (root screen) that is the only one there: it has nowhere to be
     /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
+    private var isGetInfoAvailable: Bool {
+        #if os(macOS)
+            !store.directoryPath.isEmpty
+        #elseif os(iOS)
+            true
+        #endif
+    }
+
     private var isSoleRootLocation: Bool {
         store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1
     }

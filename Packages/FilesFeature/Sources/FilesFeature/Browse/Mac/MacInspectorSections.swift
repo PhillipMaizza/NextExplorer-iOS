@@ -4,30 +4,82 @@
     import Localization
     import SwiftUI
 
-    /// Get Info's Sharing section: the share links made for this item, each with Copy, and
-    /// Share… to make another.
+    private enum Metrics {
+        static let tileSize: CGFloat = 34
+        static let tileRadius: CGFloat = 10
+        static let tileGlyph: CGFloat = .iconSmall
+        static let tileFillOpacity: Double = 0.17
+        static let headerSpacing: CGFloat = 10
+    }
+
+    struct MacInspectorTile: View {
+        let icon: Image
+        var tint = Color.secondaryDS
+        var fill = Color.macSegment
+
+        var body: some View {
+            RoundedRectangle(cornerRadius: Metrics.tileRadius, style: .continuous)
+                .fill(fill)
+                .overlay {
+                    icon
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Metrics.tileGlyph, height: Metrics.tileGlyph)
+                        .foregroundStyle(tint)
+                }
+                .frame(width: Metrics.tileSize, height: Metrics.tileSize)
+                .accessibilityHidden(true)
+        }
+    }
+
     struct MacInspectorSharingSection: View {
         let shares: [Share]
         let serverURL: URL
         var onShare: (() -> Void)?
 
         var body: some View {
-            Section(L10n.FileInfo.sectionSharing) {
+            VStack(alignment: .leading, spacing: Metrics.headerSpacing) {
+                MacInspectorSectionHeader(
+                    title: L10n.FileInfo.sectionSharing,
+                    count: shares.isEmpty ? nil : shares.count,
+                    actionTitle: shares.isEmpty ? nil : L10n.FileInfo.newLink,
+                    action: onShare
+                )
                 if shares.isEmpty {
-                    Text(L10n.FileInfo.notShared).foregroundStyle(.secondary)
+                    HStack(spacing: .space12) {
+                        MacInspectorTile(icon: IconKit.link)
+                        Text(L10n.FileInfo.notShared).type(.body3(.regular), style: .secondary)
+                        Spacer(minLength: .zero)
+                        if let onShare {
+                            Button(L10n.FileInfo.createLink, action: onShare)
+                                .buttonStyle(.macDS(.primary, size: .small))
+                        }
+                    }
+                    .padding(.horizontal, .space16)
+                    .padding(.vertical, .space12)
+                    .macGroupedRows()
                 }
                 ForEach(shares) { share in
-                    LabeledContent {
-                        Button(L10n.Common.copy) { PlatformPasteboard.copy(share.shareLink(serverURL: serverURL)) }
-                    } label: {
-                        MacRowTitle(title: share.label ?? share.displayName, subtitle: subtitle(for: share))
+                    HStack(spacing: .space12) {
+                        MacInspectorTile(
+                            icon: IconKit.link,
+                            tint: Color.accentText,
+                            fill: Color.accent.opacity(Metrics.tileFillOpacity)
+                        )
+                        VStack(alignment: .leading, spacing: .space2) {
+                            Text(share.label ?? share.displayName).type(.body3(.regular)).lineLimit(1)
+                            Text(subtitle(for: share)).type(.caption(.regular), style: .secondary).lineLimit(1)
+                        }
+                        Spacer(minLength: .zero)
+                        Button { PlatformPasteboard.copy(share.shareLink(serverURL: serverURL)) } label: {
+                            IconKit.copy.foregroundStyle(Color.secondaryDS)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabelWithTooltip(L10n.Shared.copyLink)
                     }
-                }
-                if let onShare {
-                    HStack {
-                        Spacer()
-                        Button(L10n.ellipsized(L10n.Common.share), action: onShare)
-                    }
+                    .padding(.horizontal, .space16)
+                    .padding(.vertical, .space12)
+                    .macGroupedRows()
                 }
             }
         }
@@ -37,162 +89,93 @@
             if let expiresAt = share.expiresAt {
                 parts.append(expiresAt <= Date()
                     ? L10n.Shared.badgeExpired
-                    : expiresAt.formatted(
-                        date: .abbreviated,
-                        time: .omitted
-                    ))
+                    : expiresAt.formatted(date: .abbreviated, time: .omitted))
             }
-            return parts.joined(separator: " · ")
+            return parts.joined(separator: " \u{00B7} ")
         }
     }
 
-    /// Get Info's Versions section: the file's saved versions, newest first, each with a menu of
-    /// what the caller's rights allow, and Delete All Versions under them.
-    struct MacInspectorVersionsSection: View {
-        let model: MacVersionsModel
-        let history: FileVersionHistory
+    struct MacInspectorPermissionsSection: View {
+        let permissions: FilePermissions
+        let onEdit: () -> Void
 
         var body: some View {
-            Section {
-                if history.versions.isEmpty {
-                    Text(L10n.FileInfo.versionsNone).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: Metrics.headerSpacing) {
+                MacInspectorSectionHeader(
+                    title: L10n.Permissions.title,
+                    actionTitle: L10n.ellipsized(L10n.Common.edit),
+                    action: onEdit
+                )
+                MacInspectorGroup {
+                    MacInspectorRow(L10n.Permissions.fieldOwner, permissions.owner)
+                    MacInspectorRow(L10n.Permissions.fieldGroup, permissions.group)
                 }
-                ForEach(history.versions) { version in
-                    LabeledContent {
-                        HStack(spacing: .space4) {
-                            if version.isPinned {
-                                IconKit.pinFill
-                                    .foregroundStyle(.secondary)
-                                    .accessibilityLabel(L10n.FileInfo.versionKept)
-                            }
-                            actionsMenu(version)
+                Grid(horizontalSpacing: .space8, verticalSpacing: .space8) {
+                    GridRow {
+                        Text(modeText)
+                            .type(.caption(.semibold), style: .secondary)
+                            .monospaced()
+                            .lineLimit(1)
+                            .fixedSize()
+                            .gridColumnAlignment(.leading)
+                        ForEach(PermissionRight.allCases, id: \.self) { right in
+                            Text(right.title).type(.caption(.semibold), style: .secondary)
                         }
-                    } label: {
-                        MacRowTitle(
-                            title: version.label ?? MacVersionsModel.date(version.modifiedAt),
-                            subtitle: subtitle(for: version)
-                        )
+                    }
+                    ForEach(PermissionScope.allCases, id: \.self) { scope in
+                        GridRow {
+                            Text(scope.title).type(.body3(.regular))
+                            ForEach(PermissionRight.allCases, id: \.self) { right in
+                                mark(permissions.can(scope, right))
+                                    .frame(maxWidth: .infinity)
+                                    .accessibilityLabel(L10n.Common.pair(scope.title, right.title))
+                                    .accessibilityHidden(!permissions.can(scope, right))
+                            }
+                        }
                     }
                 }
-                if history.rights.canRemove, !history.versions.isEmpty {
-                    HStack {
-                        Spacer()
-                        Button(L10n.FileInfo.deleteAll, role: .destructive) { model.isConfirmingDeleteAll = true }
-                    }
-                }
-                if let errorMessage = model.errorMessage {
-                    Text(errorMessage).foregroundStyle(Color.negativeText)
-                } else if let statusMessage = model.statusMessage {
-                    Text(statusMessage).foregroundStyle(.secondary)
-                }
-            } header: {
-                Text(L10n.FileInfo.sectionVersions)
+                .padding(.horizontal, .space16)
+                .padding(.vertical, .space12)
+                .macGroupedRows()
             }
         }
 
-        private func actionsMenu(_ version: FileVersion) -> some View {
-            let isAvailable = version.isAvailable != false
-            return Menu {
-                if history.rights.canRestore {
-                    Button(L10n.FileInfo.versionRestore) { model.versionToRestore = version }
-                        .disabled(!isAvailable)
-                }
-                if model.canViewText {
-                    Button(L10n.FileInfo.versionViewText) { model.viewText(version) }
-                        .disabled(!isAvailable)
-                }
-                if history.rights.canDownload {
-                    Button(L10n.FileInfo.versionDownload) { model.download(version) }
-                        .disabled(!isAvailable)
-                    Button(L10n.FileInfo.versionSaveCopy) { model.saveCopy(version) }
-                        .disabled(!isAvailable)
-                    Button(L10n.FileInfo.versionReplace) { model.beginReplace(version) }
-                        .disabled(!isAvailable)
-                }
-                if history.rights.canRestore {
-                    Divider()
-                    Button(L10n.FileInfo.versionRename) { model.beginRename(version) }
-                    Button(version.isPinned ? L10n.FileInfo.versionUnpin : L10n.FileInfo.versionPin) {
-                        model.togglePin(version)
-                    }
-                }
-                if history.rights.canRemove {
-                    Divider()
-                    Button(L10n.FileInfo.versionDelete, role: .destructive) { model.versionToDelete = version }
-                }
-            } label: {
-                IconKit.moreOptions
-            }
-            .menuStyle(.borderlessButton)
-            .menuIndicator(.hidden)
-            .fixedSize()
-            .accessibilityLabel(L10n.FileInfo.versionActions)
+        private var modeText: String {
+            "\(FilePermissions.symbolicString(from: permissions.grid)) \u{00B7} \(permissions.octalString)"
         }
 
-        private func subtitle(for version: FileVersion) -> String {
-            var parts: [String] = []
-            if version.label != nil {
-                parts.append(MacVersionsModel.date(version.modifiedAt))
+        @ViewBuilder
+        private func mark(_ isAllowed: Bool) -> some View {
+            if isAllowed {
+                IconKit.checkmark
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.accentText)
+            } else {
+                IconKit.minus
+                    .foregroundStyle(Color.macLine)
             }
-            if let author = version.author?.label {
-                parts.append(author)
-            }
-            parts.append(FileSizeFormat.string(version.size))
-            return parts.joined(separator: " · ")
         }
     }
 
     #Preview("Sharing") {
-        Form {
-            MacInspectorSharingSection(
-                shares: [.previewCard(), .previewCard(target: .users, hasPassword: true)],
-                serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-                onShare: {}
-            )
-        }
-        .formStyle(.grouped)
-        .previewCanvas(.inspector)
+        MacInspectorSharingSection(
+            shares: [.previewCard(), .previewCard(target: .users, hasPassword: true)],
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            onShare: {}
+        )
+        .padding(MacInspectorMetrics.padding)
+        .frame(width: MacInspectorMetrics.width)
+        .background(Color.macCard)
     }
 
     #Preview("Not shared") {
-        Form {
-            MacInspectorSharingSection(
-                shares: [],
-                serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
-                onShare: {}
-            )
-        }
-        .formStyle(.grouped)
-        .previewCanvas(.inspector)
-    }
-
-    #Preview("Versions") {
-        let hour: TimeInterval = 3_600
-        let history = FileVersionHistory(
-            isEnabled: true,
-            versions: [
-                FileVersion(
-                    id: "v2",
-                    size: 18_400,
-                    modifiedAt: Date().addingTimeInterval(-hour * 3),
-                    capturedAt: Date().addingTimeInterval(-hour * 2)
-                ),
-                FileVersion(
-                    id: "v1",
-                    size: 16_100,
-                    modifiedAt: Date().addingTimeInterval(-hour * 50),
-                    capturedAt: Date().addingTimeInterval(-hour * 49),
-                    label: "Before edits",
-                    isPinned: true
-                ),
-            ],
-            totalBytes: 34_500,
-            rights: .init(canSee: true, canDownload: true, canRestore: true, canRemove: true)
+        MacInspectorSharingSection(
+            shares: [],
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            onShare: {}
         )
-        return Form {
-            MacInspectorVersionsSection(model: MacVersionsModel(), history: history)
-        }
-        .formStyle(.grouped)
-        .previewCanvas(.inspector)
+        .padding(MacInspectorMetrics.padding)
+        .frame(width: MacInspectorMetrics.width)
+        .background(Color.macCard)
     }
 #endif

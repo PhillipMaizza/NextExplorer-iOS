@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import Foundation
 import Localization
 
@@ -16,6 +17,7 @@ public struct BrowseTabFeature {
         public var forwardStack: [BrowseFeature.State] = []
         /// The trash, pushed over the root from its row or a delete's Open Trash.
         @Presents public var trash: TrashFeature.State?
+        var inspectorLeftOpenPaths: Set<String> = []
 
         public init(serverURL: URL) {
             root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
@@ -34,6 +36,24 @@ public struct BrowseTabFeature {
         var visibleFolder: BrowseFeature.State {
             path.last ?? root
         }
+
+        var backDestinationPath: String {
+            path.ids.dropLast().last.flatMap { path[id: $0]?.directoryPath } ?? root.directoryPath
+        }
+
+        var visibleInspector: VisibleInspector {
+            VisibleInspector(
+                screenID: path.ids.last,
+                directoryPath: visibleFolder.directoryPath,
+                isOpen: visibleFolder.isInspectorOpen
+            )
+        }
+    }
+
+    struct VisibleInspector: Equatable {
+        let screenID: StackElementID?
+        let directoryPath: String
+        let isOpen: Bool
     }
 
     public enum Action: Equatable, Sendable {
@@ -58,10 +78,12 @@ public struct BrowseTabFeature {
         case newFileInVisibleFolder
         /// Mac ⌘[: leave the visible folder for the screen under it.
         case goBack
+        case inspectorClosedForBack
         /// Mac ⌘↑: open the folder that contains the visible one.
         case goToEnclosingFolder
         /// Mac ⌘]: reopen the folder last left by going back.
         case goForward
+        case goHome
         /// A download landed: recompute the "available offline" badges on every live screen.
         case offlineAvailabilityChanged
         /// Files another app shared in, handed to the topmost screen.
@@ -95,6 +117,8 @@ public struct BrowseTabFeature {
         case selectAll
     }
 
+    @Dependency(\.continuousClock) var clock
+
     public init() {}
 
     public var body: some ReducerOf<Self> {
@@ -106,9 +130,25 @@ public struct BrowseTabFeature {
             case .goBack:
                 if state.trash != nil {
                     state.trash = nil
-                } else {
-                    state.goBack()
+                    return .none
                 }
+                #if os(macOS)
+                    if let id = state.path.ids.last, state.path[id: id]?.isInspectorOpen == true,
+                       !state.inspectorLeftOpenPaths.contains(state.backDestinationPath)
+                    {
+                        let clock = clock
+                        return .run { send in
+                            await send(.path(.element(id: id, action: .infoDismissed)), animation: DSMotion.quickFade)
+                            try await clock.sleep(for: .seconds(DSMotion.quickFadeDuration))
+                            await send(.inspectorClosedForBack)
+                        }
+                    }
+                #endif
+                state.goBack()
+                return .none
+
+            case .inspectorClosedForBack:
+                state.goBack()
                 return .none
 
             case .goToEnclosingFolder:
@@ -154,6 +194,11 @@ public struct BrowseTabFeature {
 
             case .goForward:
                 state.goForward()
+                return .none
+
+            case .goHome:
+                state.trash = nil
+                state.goHome()
                 return .none
 
             case let .path(.popFrom(id)):
@@ -298,6 +343,50 @@ public struct BrowseTabFeature {
         .ifLet(\.$trash, action: \.trash) {
             TrashFeature()
         }
+        .onChange(of: \.visibleInspector) { old, new in
+            Reduce { state, _ in
+                guard old.screenID != new.screenID else { return .none }
+                let isDeeper = new.directoryPath != old.directoryPath
+                    && (old.directoryPath.isEmpty || new.directoryPath.hasPrefix(old.directoryPath + "/"))
+                if isDeeper, old.isOpen {
+                    state.inspectorLeftOpenPaths.insert(old.directoryPath)
+                }
+                let wasLeftOpen = state.inspectorLeftOpenPaths.remove(new.directoryPath) != nil
+                return Self.carryInspector(state, from: old, to: new, isBackAllowed: wasLeftOpen)
+            }
+        }
+    }
+
+    private static func carryInspector(
+        _ state: State,
+        from old: VisibleInspector,
+        to new: VisibleInspector,
+        isBackAllowed: Bool
+    ) -> Effect<Action> {
+        #if os(macOS)
+            guard old.isOpen, !new.isOpen else { return .none }
+            var effects: [Effect<Action>] = []
+            if let cameFrom = state.visibleFolder.items[id: old.directoryPath] {
+                guard isBackAllowed else { return .none }
+                effects.append(sendToVisibleFolder(state, .tableSelectionChanged([cameFrom.id])))
+                effects.append(sendToVisibleFolder(state, .infoTapped(cameFrom)))
+            } else if let entered = ([state.root] + Array(state.path))
+                .lazy
+                .compactMap({ $0.items[id: new.directoryPath] })
+                .first
+            {
+                effects.append(sendToVisibleFolder(state, .infoTapped(entered)))
+            }
+            if new.screenID != nil, state.root.isInspectorOpen {
+                effects.append(.send(.root(.infoDismissed)))
+            }
+            for id in state.path.ids.dropLast() where state.path[id: id]?.isInspectorOpen == true {
+                effects.append(.send(.path(.element(id: id, action: .infoDismissed))))
+            }
+            return .concatenate(effects)
+        #else
+            return .none
+        #endif
     }
 
     private static func sendToVisibleFolder(_ state: State, _ action: BrowseFeature.Action) -> Effect<Action> {

@@ -301,6 +301,7 @@ struct BrowseFavoritesTests {
         let second = BrowseFixtures.folder("B")
         var state = favoritesLoadedState()
         state.items = [first, second]
+        state.isSelecting = true
         state.selectedItemIDs = [first.id, second.id]
         let store = BrowseFixtures.store(state) {
             $0.filesClient.addFavorite = { _, _ in throw FilesClientError.offline }

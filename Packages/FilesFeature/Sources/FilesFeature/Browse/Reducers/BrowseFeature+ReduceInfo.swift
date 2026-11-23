@@ -24,11 +24,7 @@ extension BrowseFeature {
             return .none
 
         case .infoDismissed:
-            state.infoItem = nil
-            state.infoMetadata = nil
-            state.infoUsage = nil
-            state.infoPhase = .idle
-            return .cancel(id: CancelID.info)
+            return closeInfo(&state)
 
         case let .infoMetadataResponse(.success(metadata)):
             state.infoPhase = .loaded

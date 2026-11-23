@@ -91,8 +91,7 @@ extension BrowseFeature {
             state.isBulkActionInFlight = false
             state.favoritePaths.formUnion(result.added)
             state.favoritePaths.subtract(result.removed)
-            state.isSelecting = false
-            state.selectedItemIDs = []
+            leaveSelectMode(&state)
             if result.failedCount > 0 {
                 state.fileActionErrorMessage = L10n.Browse.bulkFavoriteFailed(result.failedCount, result.totalCount)
             }
@@ -102,8 +101,7 @@ extension BrowseFeature {
         case .bulkDownloadTapped:
             let targets = state.selectedItems
             guard !targets.isEmpty else { return .none }
-            state.isSelecting = false
-            state.selectedItemIDs = []
+            leaveSelectMode(&state)
             #if os(macOS)
                 return startBulkDownload(&state, targets: Array(targets))
             #else
@@ -115,8 +113,7 @@ extension BrowseFeature {
         case .bulkOfflineTapped:
             let targets = state.selectedItems
             guard !targets.isEmpty else { return .none }
-            state.isSelecting = false
-            state.selectedItemIDs = []
+            leaveSelectMode(&state)
             let toPin = targets.filter { !state.offlineItemIDs.contains($0.id) }
             if !toPin.isEmpty {
                 state.offlineItemIDs.formUnion(toPin.map(\.id))
@@ -129,5 +126,12 @@ extension BrowseFeature {
         default:
             return .none
         }
+    }
+
+    func leaveSelectMode(_ state: inout State) {
+        if state.isSelecting {
+            state.selectedItemIDs = []
+        }
+        state.isSelecting = false
     }
 }

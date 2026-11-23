@@ -8,16 +8,13 @@
     import SwiftUI
 
     private enum Metrics {
-        static let iconSize: CGFloat = .size44
-        /// Matches `BrowseFeature`'s follow delay: rows skipped past with the arrow keys never
-        /// load their permissions or versions.
-        static let followDelay: Duration = .milliseconds(200)
+        static let separator = " \u{00B7} "
     }
 
     /// Get Info on the Mac: a trailing side panel instead of a sheet, so it can stay open
     /// while the selection moves (`BrowseFeature` reloads it for each newly selected row). Laid
     /// out like Finder's inspector, in native grouped sections.
-    struct MacFileInspector: View {
+    struct MacFileInspector<More: View>: View {
         let item: FileItem
         let metadata: FileMetadata?
         let usage: StorageUsage?
@@ -37,7 +34,12 @@
         var onShare: (() -> Void)?
         /// After a version is restored, so the listing picks up the restored file.
         var onRestored: () -> Void = {}
+        var onOpen: (() -> Void)?
+        var onRetry: () -> Void = {}
+        var shouldShowThumbnails = true
+        var showsMore = false
         let onClose: () -> Void
+        @ViewBuilder let more: () -> More
 
         @Dependency(\.filesClient) private var filesClient
         /// Owner, group and mode come from the permissions endpoint, which metadata leaves out.
@@ -51,44 +53,46 @@
         }
 
         var body: some View {
-            Form {
-                Section {
-                    header
-                }
-                if let errorMessage {
-                    Text(errorMessage).foregroundStyle(Color.negativeText)
-                } else if let metadata {
-                    details(metadata)
-                    if let isFavorite {
-                        Section {
-                            HStack {
-                                Spacer()
-                                Button(
-                                    isFavorite
-                                        ? L10n.Browse.actionRemoveFromFavorites
-                                        : L10n.Browse.actionAddToFavorites,
-                                    action: onToggleFavorite
-                                )
-                                .disabled(!isFavoriteToggleEnabled)
-                            }
+            ScrollView {
+                VStack(alignment: .leading, spacing: MacInspectorMetrics.sectionSpacing) {
+                    MacInspectorHeader(
+                        item: item,
+                        subtitle: headerSubtitle,
+                        serverURL: serverURL,
+                        badge: pictureBadge,
+                        shouldShowThumbnails: shouldShowThumbnails,
+                        onClose: onClose
+                    )
+                    MacInspectorQuickActions(actions: quickActions, showsMore: showsMore, more: more)
+                    if let errorMessage {
+                        VStack(alignment: .leading, spacing: .space8) {
+                            Text(errorMessage).type(.body3(.regular), style: .error)
+                            Button(L10n.Common.retry, action: onRetry)
+                                .buttonStyle(.macDS(.secondary, size: .small))
                         }
+                    } else if let metadata {
+                        details(metadata)
+                        if let shares {
+                            MacInspectorSharingSection(shares: shares, serverURL: serverURL, onShare: onShare)
+                        }
+                        if let history = versions.history, history.isEnabled || !history.versions.isEmpty {
+                            MacInspectorVersionsSection(model: versions, history: history, current: item)
+                        }
+                        if let permissions {
+                            MacInspectorPermissionsSection(permissions: permissions, onEdit: onEditPermissions)
+                        }
+                    } else {
+                        MacSpinner().frame(maxWidth: .infinity)
                     }
-                    if let shares {
-                        MacInspectorSharingSection(shares: shares, serverURL: serverURL, onShare: onShare)
-                    }
-                    if let history = versions.history, history.isEnabled || !history.versions.isEmpty {
-                        MacInspectorVersionsSection(model: versions, history: history)
-                    }
-                    permissionsSection
-                } else {
-                    MacSpinner().frame(maxWidth: .infinity)
                 }
+                .padding(MacInspectorMetrics.padding)
             }
-            .formStyle(.grouped)
-            .frame(width: MacInspectorMetrics.width)
+            .scrollIndicators(.never)
+            .defaultScrollAnchor(.top)
+            .id(item.id)
             .task(id: PermissionsLoad(path: item.id, isEditing: isEditingPermissions)) {
                 permissions = nil
-                try? await Task.sleep(for: Metrics.followDelay)
+                try? await Task.sleep(for: MacInspectorMetrics.followDelay)
                 guard !Task.isCancelled else { return }
                 let loaded = try? await filesClient.fetchPermissions(serverURL, item.id)
                 guard !Task.isCancelled else { return }
@@ -96,156 +100,147 @@
             }
             .task(id: item.id) {
                 versions.onFilesChanged = onRestored
-                await versions.load(item: item, serverURL: serverURL, settle: Metrics.followDelay)
+                await versions.load(item: item, serverURL: serverURL, settle: MacInspectorMetrics.followDelay)
             }
             .modifier(MacVersionsDialogs(model: versions))
         }
 
-        private var header: some View {
-            HStack(alignment: .top, spacing: .space12) {
-                Group {
-                    if item.isDirectory {
-                        IconKit.folderFill
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(Color.accent)
-                    } else {
-                        FileTypeIcon(kind: item.kind)
-                    }
-                }
-                .frame(width: Metrics.iconSize, height: Metrics.iconSize)
-                Text(item.name)
-                    .font(.headline)
-                    .lineLimit(3)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                // Close lives in the panel, not the window toolbar, so the inspector never adds
-                // toolbar items of its own.
-                Button(action: onClose) { IconKit.closeCircle }
-                    .buttonStyle(.borderless)
-                    .foregroundStyle(.secondary)
-                    .accessibilityLabelWithTooltip(L10n.Common.close)
-                    .keyboardShortcut(.cancelAction)
+        private var kindTitle: String {
+            item.isDirectory ? L10n.FileInfo.navigationTitleFolder : item.kind.uppercased()
+        }
+
+        private var headerSubtitle: String {
+            if item.isDirectory, let directory = metadata?.directory {
+                return [kindTitle, Self.bytes(directory.totalSize)].joined(separator: Metrics.separator)
             }
+            return item.isDirectory
+                ? kindTitle
+                : [kindTitle, Self.bytes(item.size)].joined(separator: Metrics.separator)
+        }
+
+        private var dimensions: String? {
+            if let width = metadata?.image?.width ?? metadata?.video?.width,
+               let height = metadata?.image?.height ?? metadata?.video?.height
+            {
+                return "\(width) \u{00D7} \(height)"
+            }
+            return nil
+        }
+
+        private var duration: String? {
+            metadata?.video?.duration.map { seconds in
+                Duration.seconds(seconds).formatted(.time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond))
+            }
+        }
+
+        private var pictureBadge: String? {
+            duration ?? dimensions
+        }
+
+        private var quickActions: [MacInspectorQuickAction] {
+            var actions: [MacInspectorQuickAction] = []
+            if let onOpen {
+                actions.append(MacInspectorQuickAction(
+                    id: .open,
+                    icon: IconKit.openInApp,
+                    title: L10n.Browse.open,
+                    action: onOpen
+                ))
+            }
+            if let onShare {
+                actions.append(MacInspectorQuickAction(
+                    id: .share,
+                    icon: IconKit.link,
+                    title: L10n.Common.share,
+                    action: onShare
+                ))
+            }
+            if let isFavorite {
+                actions.append(MacInspectorQuickAction(
+                    id: .favorite,
+                    icon: isFavorite ? IconKit.starFill : IconKit.star,
+                    title: L10n.FileInfo.quickFavorite,
+                    isOn: isFavorite,
+                    isEnabled: isFavoriteToggleEnabled,
+                    action: onToggleFavorite
+                ))
+            }
+            return actions
+        }
+
+        private func date(_ value: Date) -> String {
+            dateFormat.string(from: value, includeTime: shouldIncludeTime)
         }
 
         @ViewBuilder
         private func details(_ metadata: FileMetadata) -> some View {
-            Section {
-                MacInfoRow(
-                    L10n.FileInfo.rowKind,
-                    metadata.isDirectory ? L10n.FileInfo.navigationTitleFolder : metadata.kind.uppercased()
-                )
-                MacInfoRow(L10n.FileInfo.rowSize, Self.bytes(metadata.size))
-                MacInfoRow(L10n.FileInfo.rowLocation, metadata.path)
-                MacInfoRow(
-                    L10n.FileInfo.rowDateModified,
-                    dateFormat.string(from: metadata.dateModified, includeTime: shouldIncludeTime)
-                )
-                MacInfoRow(
-                    L10n.FileInfo.rowDateCreated,
-                    dateFormat.string(from: metadata.dateCreated, includeTime: shouldIncludeTime)
-                )
-            }
-            if let directory = metadata.directory {
-                Section {
-                    MacInfoRow(L10n.FileInfo.rowFiles, directory.fileCount.formatted())
-                    MacInfoRow(L10n.FileInfo.rowFolders, directory.dirCount.formatted())
-                    MacInfoRow(L10n.FileInfo.rowTotalSize, Self.bytes(directory.totalSize))
-                } footer: {
-                    if directory.isTruncated {
-                        Text(L10n.FileInfo.partialScan).font(.callout).foregroundStyle(.secondary)
-                    }
+            MacInspectorGroup {
+                if let directory = metadata.directory {
+                    MacInspectorRow(L10n.FileInfo.rowFiles, directory.fileCount.formatted())
+                    MacInspectorRow(L10n.FileInfo.rowFolders, directory.dirCount.formatted())
+                    MacInspectorRow(L10n.FileInfo.rowTotalSize, Self.bytes(directory.totalSize))
+                } else {
+                    MacInspectorRow(L10n.FileInfo.rowKind, kindTitle)
+                    MacInspectorRow(L10n.FileInfo.rowSize, Self.bytes(metadata.size))
                 }
-            }
-            if let usage, usage.isMeaningful {
-                Section(L10n.FileInfo.sectionServerDisk) {
-                    VStack(alignment: .leading, spacing: .space4) {
-                        ProgressView(value: usage.fraction)
-                        Text(L10n.FileInfo.diskFreeOf(Self.bytes(usage.free), Self.bytes(usage.capacity)))
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                    }
+                if let duration {
+                    MacInspectorRow(L10n.FileInfo.rowDuration, duration)
                 }
+                if let dimensions {
+                    MacInspectorRow(L10n.FileInfo.rowDimensions, dimensions)
+                }
+                MacInspectorRow(L10n.FileInfo.rowLocation, location, icon: IconKit.folderFill)
+                MacInspectorRow(L10n.FileInfo.rowDateModified, date(metadata.dateModified))
+                MacInspectorRow(L10n.FileInfo.rowDateCreated, date(metadata.dateCreated))
             }
-            if let image = metadata.image {
-                Section {
-                    if let width = image.width, let height = image.height {
-                        MacInfoRow(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
-                    }
+            if metadata.directory?.isTruncated == true {
+                Text(L10n.FileInfo.partialScan).type(.caption(.regular), style: .secondary)
+            }
+            if let image = metadata.image, image.cameraModel != nil || image.lensModel != nil
+                || image.software != nil || image.dateTaken != nil || image.gps != nil
+            {
+                MacInspectorGroup {
                     if let model = image.cameraModel {
-                        MacInfoRow(
+                        MacInspectorRow(
                             L10n.FileInfo.rowCamera,
                             [image.cameraMake, model].compactMap(\.self).joined(separator: " ")
                         )
                     }
                     if let lensModel = image.lensModel {
-                        MacInfoRow(L10n.FileInfo.rowLens, lensModel)
+                        MacInspectorRow(L10n.FileInfo.rowLens, lensModel)
                     }
                     if let software = image.software {
-                        MacInfoRow(L10n.FileInfo.rowSoftware, software)
+                        MacInspectorRow(L10n.FileInfo.rowSoftware, software)
                     }
                     if let dateTaken = image.dateTaken {
-                        MacInfoRow(
-                            L10n.FileInfo.rowDateTaken,
-                            dateFormat.string(from: dateTaken, includeTime: shouldIncludeTime)
-                        )
+                        MacInspectorRow(L10n.FileInfo.rowDateTaken, date(dateTaken))
                     }
                     if let gps = image.gps {
-                        MacInfoRow(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
+                        MacInspectorRow(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
                     }
                 }
             }
-            if let video = metadata.video {
-                Section {
-                    if let width = video.width, let height = video.height {
-                        MacInfoRow(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
+            if let usage, usage.isMeaningful {
+                VStack(alignment: .leading, spacing: .space8) {
+                    MacInspectorSectionHeader(title: L10n.FileInfo.sectionServerDisk)
+                    VStack(alignment: .leading, spacing: .space8) {
+                        MacProgressBar(value: usage.fraction)
+                        Text(L10n.FileInfo.diskFreeOf(Self.bytes(usage.free), Self.bytes(usage.capacity)))
+                            .type(.caption(.regular), style: .secondary)
                     }
-                    if let duration = video.duration {
-                        MacInfoRow(L10n.FileInfo.rowDuration, Self.durationFormatter.string(from: duration) ?? "-")
-                    }
-                }
-            }
-        }
-
-        /// Like Finder's Sharing & Permissions: who owns it and the mode, with Edit opening the
-        /// full Permissions dialog. Left out when the server doesn't report permissions.
-        @ViewBuilder
-        private var permissionsSection: some View {
-            if let permissions {
-                Section(L10n.Permissions.title) {
-                    MacInfoRow(L10n.Permissions.fieldOwner, permissions.owner)
-                    MacInfoRow(L10n.Permissions.fieldGroup, permissions.group)
-                    MacInfoRow(L10n.Permissions.sectionMode, Self.modeString(permissions.mode))
-                    HStack {
-                        Spacer()
-                        Button(L10n.ellipsized(L10n.Common.edit), action: onEditPermissions)
-                    }
+                    .padding(.space16)
+                    .macGroupedRows()
                 }
             }
         }
 
-        /// The Unix permission string and octal mode from a raw stat mode.
-        private static func modeString(_ mode: Int) -> String {
-            let bits = mode & 0o777
-            let symbols = ["r", "w", "x"]
-            let text = (0 ..< 9).map { index in
-                bits & (1 << (8 - index)) != 0 ? symbols[index % 3] : "-"
-            }.joined()
-            return "\(text) (\(String(bits, radix: 8)))"
+        private var location: String {
+            MacInspectorLocation.title(parent: MacInspectorLocation.parent(of: item))
         }
 
         private static func bytes(_ count: Int64) -> String {
             FileSizeFormat.string(count)
         }
-
-        private static let durationFormatter: DateComponentsFormatter = {
-            let formatter = DateComponentsFormatter()
-            formatter.allowedUnits = [.hour, .minute, .second]
-            formatter.unitsStyle = .positional
-            formatter.zeroFormattingBehavior = .dropLeading
-            return formatter
-        }()
     }
 
     private struct SharesLoad: Hashable {
@@ -261,9 +256,11 @@
     /// Get Info beside a Browse screen, as a plain side panel on each screen rather than
     /// SwiftUI's `.inspector` around the stack: wrapped around a `NavigationStack`, that stopped
     /// showing pushes past the third folder deep.
-    struct MacBrowseInspector: ViewModifier {
+    struct MacBrowseInspector<More: View>: ViewModifier {
         let screen: StoreOf<BrowseFeature>
-        var onShare: (FileItem) -> Void = { _ in }
+        let onOpen: (FileItem) -> Void
+        let onShare: (FileItem) -> Void
+        @ViewBuilder let more: (FileItem) -> More
 
         @Dependency(\.filesClient) private var filesClient
         /// Bumped whenever a share link is created or edited anywhere in the app.
@@ -282,8 +279,9 @@
         func body(content: Content) -> some View {
             HStack(spacing: 0) {
                 content
+                    .frame(maxWidth: .infinity)
+                    .clipped()
                 if let item = screen.infoItem {
-                    Divider()
                     MacFileInspector(
                         item: item,
                         metadata: screen.infoMetadata,
@@ -298,12 +296,30 @@
                         shares: shares(for: item),
                         onShare: (screen.access?.canShare ?? false) ? { onShare(item) } : nil,
                         onRestored: { screen.send(.refreshButtonTapped) },
-                        onClose: { screen.send(.infoDismissed) }
+                        onOpen: item.id == screen.directoryPath ? nil : { onOpen(item) },
+                        onRetry: { screen.send(.infoTapped(item)) },
+                        shouldShowThumbnails: screen.preferences.shouldShowThumbnails,
+                        showsMore: screen.items[id: item.id] != nil || item.id == screen.directoryPath,
+                        onClose: { screen.send(.infoDismissed) },
+                        more: { more(item) }
                     )
-                    .transition(.move(edge: .trailing))
+                    .macInspectorColumn()
+                } else if screen.isInfoShowingSelection {
+                    MacSelectionInspector(store: screen) { screen.send(.infoDismissed) }
+                        .macInspectorColumn()
                 }
             }
-            .animation(DSMotion.stateFade, value: screen.infoItem == nil)
+            .animation(DSMotion.stateFade, value: screen.isInspectorOpen)
+            .focusedSceneValue(
+                \.closeMacInspector,
+                screen.isInspectorOpen ? MacInspectorAction { screen.send(.infoDismissed) } : nil
+            )
+            .focusedSceneValue(
+                \.openMacInspector,
+                screen.isInspectorOpen || screen.directoryPath.isEmpty
+                    ? nil
+                    : MacInspectorAction { screen.send(.infoSelectionTapped) }
+            )
             .task(id: SharesLoad(isOpen: screen.infoItem != nil, revision: shareLinksRevision)) {
                 guard screen.infoItem != nil else { return }
                 let links = try? await filesClient.mySharedLinks(screen.serverURL)
@@ -317,7 +333,7 @@
         MacFileInspector(
             item: FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 2_400_000, kind: "pdf"),
             metadata: nil, usage: nil, errorMessage: nil,
-            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}
+            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}, more: { EmptyView() }
         )
     }
 
@@ -329,7 +345,7 @@
                 dateModified: Date(), dateCreated: Date().addingTimeInterval(-86_400)
             ),
             usage: nil, errorMessage: nil,
-            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}
+            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}, more: { EmptyView() }
         )
     }
 
@@ -337,7 +353,7 @@
         MacFileInspector(
             item: FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory"),
             metadata: nil, usage: nil, errorMessage: "Couldn't reach the server.",
-            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}
+            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}, more: { EmptyView() }
         )
     }
 #endif

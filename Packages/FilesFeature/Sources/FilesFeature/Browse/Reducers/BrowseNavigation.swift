@@ -18,6 +18,7 @@ enum BrowseNavigation {
         var screen = BrowseFeature.State(serverURL: serverURL, directoryPath: item.id, title: item.name)
         screen.isKeptOffline = isKeptOffline
         screen.isShowingCachePaint = opener?.createdFolderIDs.contains(item.id) ?? false
+        screen.isTrashAvailable = opener?.isTrashAvailable ?? false
         return screen
     }
 
@@ -88,6 +89,12 @@ extension BrowseHistoryState {
     mutating func recordPop(from id: StackElementID) {
         guard let start = path.ids.firstIndex(of: id) else { return }
         forwardStack.append(contentsOf: path.ids[start...].compactMap { path[id: $0] }.reversed())
+    }
+
+    mutating func goHome() {
+        guard let first = path.ids.first else { return }
+        recordPop(from: first)
+        path.removeAll()
     }
 
     /// Enclosing Folder (⌘↑): the folder that holds the visible one. Usually that is the screen
