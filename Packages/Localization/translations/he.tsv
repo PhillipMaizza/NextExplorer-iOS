@@ -104,6 +104,10 @@ browse.offlineBannerDetail	מוצג עותק שמור מ-%@
 browse.actionCopy	העתקה
 browse.destinationPickerMoveTitle	העברה אל…
 browse.destinationPickerConfirmMove	העבר לכאן
+browse.destinationPickerCopyTitle	העתקה אל…
+browse.destinationPickerConfirmCopy	העתק לכאן
+browse.actionMoveTo	העברה אל…
+browse.actionCopyTo	העתקה אל…
 browse.destinationPickerNoFolders	אין כאן תיקיות
 browse.destinationPickerLoadFailed	לא ניתן היה לטעון את התיקיות.
 browse.actionMove	העברה
@@ -614,6 +618,7 @@ fileInfo.rowDateTaken	תאריך צילום
 fileInfo.rowDuration	משך
 fileInfo.partialScan	נספרה סריקה חלקית: התיקייה הזו גדולה מאוד.
 permissions.title	הרשאות
+permissions.titleFor	הרשאות עבור “%@”
 permissions.sectionMode	מצב
 permissions.numericLabel	מספרי
 permissions.applyToEnclosed	החלה על פריטים בתוכה
@@ -748,7 +753,7 @@ login.plaintextWarning	החיבור הזה אינו מוצפן. הסיסמה ו�
 error.sessionExpired	תוקף הסשן שלכם פג. התחברו שוב.
 error.rateLimited	יותר מדי בקשות. נסו שוב בעוד רגע.
 error.network	לא ניתן להגיע לשרת.
-error.offline	אתם במצב לא מקוון. התחברו לאינטרנט ונסו שוב.
+error.offline	לא ניתן להגיע לשרת. בדקו את החיבור ונסו שוב.
 error.decoding	השרת השיב באופן בלתי צפוי.
 error.server	שגיאת שרת (%lld).
 error.forbidden	אין לכם הרשאה לבצע זאת.
@@ -956,6 +961,10 @@ appearance.light	בהיר
 appearance.dark	כהה
 browse.myFiles	הקבצים שלי
 browse.myFilesSubtitle	גלוי רק לכם
+browse.home	בית
+browse.noValue	--
+browse.today	היום
+browse.yesterday	אתמול
 downloadQueue.navigationTitle	תור הורדות
 downloadQueue.emptyList	אין הורדות בתהליך.
 downloadQueue.statusSaved	נשמר
@@ -970,6 +979,8 @@ downloadQueue.bytesOf	%1$@ מתוך %2$@
 downloadQueue.timeLeft	נותרו %@
 browse.sectionPersonal	אישי
 macSettings.addAccount	הוספת חשבון…
+macSettings.accountSettings	הגדרות חשבון
+macSettings.switchAccountHeader	החלפת חשבון
 macSettings.changePassword	שינוי סיסמה…
 macSettings.signOut	התנתקות…
 macSettings.switchAccount	מעבר לחשבון הזה
@@ -1001,6 +1012,10 @@ fileInfo.restoreMessage	הקובץ חוזר למצבו ב-%@. מה שהוא מכ
 fileInfo.restoreConfirm	שחזור
 fileInfo.sectionSharing	שיתוף
 fileInfo.notShared	אין קישורי שיתוף
+fileInfo.createLink	יצירת קישור
+fileInfo.newLink	קישור חדש
+fileInfo.versionCurrent	נוכחית
+fileInfo.quickFavorite	מועדף
 fileInfo.versionActions	פעולות גרסה
 fileInfo.versionDownload	הורדה…
 fileInfo.versionSaveCopy	שמירה כעותק
@@ -1032,6 +1047,7 @@ menu.quitTransfersTitle	לצאת מ-NextExplorer?
 menu.quitTransfersMessage	העלאות או הורדות עדיין מתבצעות. יציאה עכשיו תעצור אותן.
 menu.quitTransfersConfirm	יציאה
 menu.toggleSidebar	הצגה או הסתרה של סרגל הצד
+menu.hideInspector	הסתרת המפקח
 media.play	הפעלה
 media.pause	השהיה
 media.position	מיקום ההפעלה
@@ -1155,6 +1171,8 @@ trashSettings.environmentNote	ערכי ברירת המחדל מגיעים מ-TRA
 trashSettings.versionsEnvironmentNote	ערכי ברירת המחדל מגיעים מ-VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ו-VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	רענון
 browse.actionAvailableOffline	זמין במצב לא מקוון
+browse.actionKeepOffline	שמירה במצב לא מקוון
+browse.actionShowInFolder	הצגה בתיקייה
 browse.actionSaveToDevice	שמירה במכשיר
 previewToolbar.saveToDevice	שמירה במכשיר
 downloadQueue.savedToPhotos	נשמר בתמונות
@@ -1183,6 +1201,8 @@ shareUpload.nameLabel	שם הקובץ
 shareUpload.namesLabel	שמות הקבצים
 shareUpload.nameHint	השם שתחתיו הקובץ יועלה. הסיומת נשארת זהה.
 spotlight.placeholder	חיפוש קבצים ותיקיות
+spotlight.hintMove	ניווט
+spotlight.hintOpen	פתיחה
 trash.title	פח אשפה
 trash.moveToTrash	העברה לפח
 trash.deletePermanently	מחיקה לצמיתות
@@ -1308,3 +1328,14 @@ common.increase	הגדלה
 common.moreInfo	מידע נוסף
 versionedFiles.pathHeader	נתיב
 versionedFiles.versionsHeader	גרסאות
+fileInfo.sectionSelected	נבחרו
+fileInfo.selectionFootnote	שיתוף, גרסאות והרשאות מוצגים כשנבחר פריט אחד.
+fileInfo.moreSelected	עוד %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld תיקייה
+browse.folderCount#two	%lld תיקיות
+browse.folderCount#other	%lld תיקיות
+browse.fileCount#one	%lld קובץ
+browse.fileCount#two	%lld קבצים
+browse.fileCount#other	%lld קבצים
+browse.contentSummary	%1$@, %2$@

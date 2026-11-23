@@ -97,6 +97,10 @@ browse.offlineBannerDetail	%@ से सहेजी गई प्रति द�
 browse.actionCopy	कॉपी करें
 browse.destinationPickerMoveTitle	यहां ले जाएं…
 browse.destinationPickerConfirmMove	यहां ले जाएं
+browse.destinationPickerCopyTitle	यहां कॉपी करें…
+browse.destinationPickerConfirmCopy	यहां कॉपी करें
+browse.actionMoveTo	यहां ले जाएं…
+browse.actionCopyTo	यहां कॉपी करें…
 browse.destinationPickerNoFolders	यहां कोई फ़ोल्डर नहीं
 browse.destinationPickerLoadFailed	फ़ोल्डर लोड नहीं कर सके।
 browse.destinationPickerRecent	हाल के
@@ -403,6 +407,7 @@ fileInfo.rowDateTaken	लिए जाने की तिथि
 fileInfo.rowDuration	अवधि
 fileInfo.partialScan	आंशिक स्कैन गिना गया: यह फ़ोल्डर बहुत बड़ा है।
 permissions.title	अनुमतियां
+permissions.titleFor	“%@” की अनुमतियां
 permissions.sectionMode	मोड
 permissions.numericLabel	संख्यात्मक
 permissions.applyToEnclosed	संलग्न आइटम पर लागू करें
@@ -547,7 +552,7 @@ login.plaintextWarning	यह कनेक्शन एन्क्रिप्�
 error.sessionExpired	आपका सत्र समाप्त हो गया। फिर से साइन इन करें।
 error.rateLimited	बहुत अधिक अनुरोध। थोड़ी देर में पुनः प्रयास करें।
 error.network	सर्वर तक नहीं पहुंच सके।
-error.offline	आप ऑफ़लाइन हैं। इंटरनेट से कनेक्ट करें और पुनः प्रयास करें।
+error.offline	सर्वर तक नहीं पहुंच सके। अपना कनेक्शन जांचें और पुनः प्रयास करें।
 error.decoding	सर्वर ने अप्रत्याशित रूप से प्रतिक्रिया दी।
 error.server	सर्वर त्रुटि (%lld)।
 error.forbidden	आपके पास यह करने की अनुमति नहीं है।
@@ -697,6 +702,10 @@ appearance.light	लाइट
 appearance.dark	डार्क
 browse.myFiles	मेरी फ़ाइलें
 browse.myFilesSubtitle	सिर्फ़ आपको दिखाई देता है
+browse.home	होम
+browse.noValue	--
+browse.today	आज
+browse.yesterday	कल
 downloadQueue.navigationTitle	डाउनलोड कतार
 downloadQueue.emptyList	कोई डाउनलोड जारी नहीं है।
 downloadQueue.statusSaved	सहेजा गया
@@ -714,6 +723,8 @@ browse.downloadSavedTo	%@ में सहेजा गया
 browse.downloadSavedAllTo	%1$lld आइटम %2$@ में सहेजे गए
 macSettings.labelFormat	%@:
 macSettings.addAccount	खाता जोड़ें…
+macSettings.accountSettings	खाता सेटिंग्स
+macSettings.switchAccountHeader	खाता बदलें
 macSettings.changePassword	पासवर्ड बदलें…
 macSettings.signOut	साइन आउट करें…
 macSettings.switchAccount	इस खाते पर स्विच करें
@@ -744,6 +755,10 @@ fileInfo.restoreMessage	फ़ाइल %@ की स्थिति में �
 fileInfo.restoreConfirm	पुनर्स्थापित करें
 fileInfo.sectionSharing	साझाकरण
 fileInfo.notShared	कोई साझा लिंक नहीं
+fileInfo.createLink	लिंक बनाएं
+fileInfo.newLink	नया लिंक
+fileInfo.versionCurrent	वर्तमान
+fileInfo.quickFavorite	पसंदीदा
 fileInfo.versionActions	संस्करण कार्रवाइयाँ
 fileInfo.versionViewText	टेक्स्ट देखें
 fileInfo.versionTextTruncated	इस संस्करण का केवल शुरुआती हिस्सा दिखाया जा रहा है।
@@ -1190,6 +1205,8 @@ twoFactor.shareCodesButton	कोड साझा करें
 twoFactor.turnOffButton	बंद करें
 twoFactor.turnOnButton	चालू करें
 browse.actionAvailableOffline	ऑफ़लाइन उपलब्ध
+browse.actionKeepOffline	ऑफ़लाइन रखें
+browse.actionShowInFolder	फ़ोल्डर में दिखाएँ
 browse.actionSaveToDevice	डिवाइस में सहेजें
 previewToolbar.saveToDevice	डिवाइस में सहेजें
 downloadQueue.savedToPhotos	फ़ोटो में सहेजा गया
@@ -1218,6 +1235,8 @@ shareUpload.nameLabel	फ़ाइल का नाम
 shareUpload.namesLabel	फ़ाइलों के नाम
 shareUpload.nameHint	वह नाम जिससे फ़ाइल अपलोड होगी। एक्सटेंशन वही रहता है।
 spotlight.placeholder	फ़ाइलें और फ़ोल्डर खोजें
+spotlight.hintMove	चलें
+spotlight.hintOpen	खोलें
 trash.title	रीसायकल बिन
 trash.moveToTrash	रीसायकल बिन में ले जाएँ
 trash.deletePermanently	स्थायी रूप से हटाएँ
@@ -1328,6 +1347,7 @@ shareUpload.failureTooLarge#other	%lld फ़ाइलें अपलोड न
 shareUpload.startedDeferred	NextExplorer के लिए सहेजा गया। बड़ी फ़ाइलें अपलोड करने के लिए ऐप खोलें।
 menu.goToFolderPlaceholder	दस्तावेज़/रिपोर्ट
 menu.toggleSidebar	साइडबार दिखाएँ या छिपाएँ
+menu.hideInspector	इंस्पेक्टर छिपाएं
 emptyState.dropHintFiles	आप Files या Photos से भी फ़ाइलें यहाँ खींच सकते हैं।
 emptyState.dropHintFinder	आप Finder से भी फ़ाइलें यहाँ खींच सकते हैं।
 login.stepServer	सर्वर
@@ -1339,3 +1359,12 @@ common.increase	बढ़ाएँ
 common.moreInfo	अधिक जानकारी
 versionedFiles.pathHeader	पथ
 versionedFiles.versionsHeader	संस्करण
+fileInfo.sectionSelected	चयनित
+fileInfo.selectionFootnote	साझाकरण, संस्करण और अनुमतियाँ एक आइटम चुनने पर दिखाई देती हैं।
+fileInfo.moreSelected	%lld अन्य
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld फ़ोल्डर
+browse.folderCount#other	%lld फ़ोल्डर
+browse.fileCount#one	%lld फ़ाइल
+browse.fileCount#other	%lld फ़ाइलें
+browse.contentSummary	%1$@, %2$@

@@ -96,6 +96,8 @@ browse.actionExtract	Extract
 browse.actionCompress	Compress
 browse.actionDownload	Download
 browse.actionAvailableOffline	Available Offline
+browse.actionKeepOffline	Keep Offline
+browse.actionShowInFolder	Show in Folder
 browse.actionSaveToDevice	Save to Device
 browse.actionRemoveFromOffline	Remove from Offline
 browse.actionAddToFavorites	Add to Favorites
@@ -130,6 +132,10 @@ browse.offlineBannerDetail	Showing a saved copy from %@
 browse.actionCopy	Copy
 browse.destinationPickerMoveTitle	Move to…
 browse.destinationPickerConfirmMove	Move Here
+browse.destinationPickerCopyTitle	Copy to…
+browse.destinationPickerConfirmCopy	Copy Here
+browse.actionMoveTo	Move To…
+browse.actionCopyTo	Copy To…
 browse.destinationPickerNoFolders	No folders here
 browse.destinationPickerLoadFailed	Couldn't load folders.
 browse.destinationPickerRecent	Recent
@@ -695,6 +701,7 @@ fileInfo.partialScan	Counted a partial scan: this folder is very large.
 
 # ---- permissions ----
 permissions.title	Permissions
+permissions.titleFor	Permissions for “%@”
 permissions.sectionMode	Mode
 permissions.numericLabel	Numeric
 permissions.applyToEnclosed	Apply to enclosed items
@@ -863,7 +870,7 @@ login.plaintextWarning	This connection isn't encrypted. Your password and sessio
 error.sessionExpired	Your session expired. Sign in again.
 error.rateLimited	Too many requests. Try again shortly.
 error.network	Couldn't reach the server.
-error.offline	You're offline. Connect to the internet and try again.
+error.offline	Can't reach the server. Check your connection and try again.
 error.decoding	Server responded unexpectedly.
 error.server	Server error (%lld).
 error.forbidden	You don't have permission to do that.
@@ -1098,6 +1105,10 @@ appearance.light	Light
 appearance.dark	Dark
 browse.myFiles	My Files
 browse.myFilesSubtitle	Only visible to you
+browse.home	Home
+browse.noValue	--
+browse.today	Today
+browse.yesterday	Yesterday
 downloadQueue.navigationTitle	Download Queue
 downloadQueue.emptyList	No downloads in progress.
 downloadQueue.statusSaved	Saved
@@ -1117,6 +1128,8 @@ downloadQueue.timeLeft	%@ left
 browse.sectionPersonal	Personal
 macSettings.labelFormat	%@:
 macSettings.addAccount	Add Account…
+macSettings.accountSettings	Account Settings
+macSettings.switchAccountHeader	Switch Account
 macSettings.changePassword	Change Password…
 macSettings.signOut	Sign Out…
 macSettings.switchAccount	Switch to This Account
@@ -1147,6 +1160,10 @@ fileInfo.restoreMessage	The file goes back to how it was on %@. What it holds no
 fileInfo.restoreConfirm	Restore
 fileInfo.sectionSharing	Sharing
 fileInfo.notShared	No share links
+fileInfo.createLink	Create Link
+fileInfo.newLink	New Link
+fileInfo.versionCurrent	Current
+fileInfo.quickFavorite	Favorite
 fileInfo.versionActions	Version actions
 fileInfo.versionViewText	View Text
 fileInfo.versionTextTruncated	Showing the first part of this version.
@@ -1185,6 +1202,7 @@ menu.quitTransfersTitle	Quit NextExplorer?
 menu.quitTransfersMessage	Uploads or downloads are still in progress. Quitting now stops them.
 menu.quitTransfersConfirm	Quit
 menu.toggleSidebar	Show or Hide Sidebar
+menu.hideInspector	Hide Inspector
 media.play	Play
 media.pause	Pause
 media.position	Playback Position
@@ -1330,6 +1348,8 @@ shareUpload.nameLabel	File Name
 shareUpload.namesLabel	File Names
 shareUpload.nameHint	The name the file uploads under. Its extension stays the same.
 spotlight.placeholder	Search files and folders
+spotlight.hintMove	Move
+spotlight.hintOpen	Open
 # Trash: delete confirmations, the trash screen and its Mac table
 trash.title	Trash
 trash.moveToTrash	Move to Trash
@@ -1436,3 +1456,12 @@ serverTools.missingFormats	Cannot open: %@
 login.stepServer	Server
 login.stepLogIn	Log In
 login.stepCode	Code
+fileInfo.sectionSelected	Selected
+fileInfo.selectionFootnote	Sharing, versions and permissions are shown when one item is selected.
+fileInfo.moreSelected	%lld more
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld folder
+browse.folderCount#other	%lld folders
+browse.fileCount#one	%lld file
+browse.fileCount#other	%lld files
+browse.contentSummary	%1$@, %2$@

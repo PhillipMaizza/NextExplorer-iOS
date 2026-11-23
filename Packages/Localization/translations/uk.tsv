@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Показано збережену копію від
 browse.actionCopy	Копіювати
 browse.destinationPickerMoveTitle	Перемістити до…
 browse.destinationPickerConfirmMove	Перемістити сюди
+browse.destinationPickerCopyTitle	Копіювати до…
+browse.destinationPickerConfirmCopy	Копіювати сюди
+browse.actionMoveTo	Перемістити до…
+browse.actionCopyTo	Копіювати до…
 browse.destinationPickerNoFolders	Тут немає папок
 browse.destinationPickerLoadFailed	Не вдалося завантажити папки.
 browse.actionMove	Перемістити
@@ -625,6 +629,7 @@ fileInfo.rowDateTaken	Дата зйомки
 fileInfo.rowDuration	Тривалість
 fileInfo.partialScan	Підраховано частково: ця папка дуже велика.
 permissions.title	Дозволи
+permissions.titleFor	Дозволи для «%@»
 permissions.sectionMode	Режим
 permissions.numericLabel	Числовий
 permissions.applyToEnclosed	Застосувати до вкладених елементів
@@ -759,7 +764,7 @@ login.plaintextWarning	Це з’єднання не зашифроване. В�
 error.sessionExpired	Ваш сеанс завершився. Увійдіть знову.
 error.rateLimited	Забагато запитів. Спробуйте ще раз трохи згодом.
 error.network	Не вдалося зв’язатися із сервером.
-error.offline	Ви офлайн. Підключіться до інтернету й спробуйте ще раз.
+error.offline	Не вдається зв’язатися із сервером. Перевірте підключення й спробуйте ще раз.
 error.decoding	Сервер відповів несподівано.
 error.server	Помилка сервера (%lld).
 error.forbidden	У вас немає дозволу на цю дію.
@@ -967,6 +972,10 @@ appearance.light	Світлий
 appearance.dark	Темний
 browse.myFiles	Мої файли
 browse.myFilesSubtitle	Видно лише вам
+browse.home	Додому
+browse.noValue	--
+browse.today	Сьогодні
+browse.yesterday	Вчора
 downloadQueue.navigationTitle	Черга завантажень
 downloadQueue.emptyList	Немає завантажень у процесі.
 downloadQueue.statusSaved	Збережено
@@ -981,6 +990,8 @@ downloadQueue.bytesOf	%1$@ із %2$@
 downloadQueue.timeLeft	Залишилося: %@
 browse.sectionPersonal	Особисте
 macSettings.addAccount	Додати обліковий запис…
+macSettings.accountSettings	Налаштування облікового запису
+macSettings.switchAccountHeader	Змінити обліковий запис
 macSettings.changePassword	Змінити пароль…
 macSettings.signOut	Вийти…
 macSettings.switchAccount	Перемкнутися на цей обліковий запис
@@ -1013,6 +1024,10 @@ fileInfo.restoreMessage	Файл повернеться до стану на %@.
 fileInfo.restoreConfirm	Відновити
 fileInfo.sectionSharing	Спільний доступ
 fileInfo.notShared	Немає посилань для спільного доступу
+fileInfo.createLink	Створити посилання
+fileInfo.newLink	Нове посилання
+fileInfo.versionCurrent	Поточна
+fileInfo.quickFavorite	Обране
 fileInfo.versionActions	Дії з версією
 fileInfo.versionDownload	Завантажити…
 fileInfo.versionSaveCopy	Зберегти як копію
@@ -1044,6 +1059,7 @@ menu.quitTransfersTitle	Вийти з NextExplorer?
 menu.quitTransfersMessage	Вивантаження або завантаження ще тривають. Вихід зараз їх зупинить.
 menu.quitTransfersConfirm	Вийти
 menu.toggleSidebar	Показати або сховати бічну панель
+menu.hideInspector	Сховати інспектор
 media.play	Відтворити
 media.pause	Пауза
 media.position	Позиція відтворення
@@ -1173,6 +1189,8 @@ trashSettings.environmentNote	Типові значення беруться з 
 trashSettings.versionsEnvironmentNote	Типові значення беруться з VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE та VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Оновити
 browse.actionAvailableOffline	Доступно офлайн
+browse.actionKeepOffline	Зберегти офлайн
+browse.actionShowInFolder	Показати в папці
 browse.actionSaveToDevice	Зберегти на пристрій
 previewToolbar.saveToDevice	Зберегти на пристрій
 downloadQueue.savedToPhotos	Збережено у Фото
@@ -1201,6 +1219,8 @@ shareUpload.nameLabel	Назва файлу
 shareUpload.namesLabel	Назви файлів
 shareUpload.nameHint	Назва, з якою файл буде завантажено. Розширення не зміниться.
 spotlight.placeholder	Пошук файлів і папок
+spotlight.hintMove	Переміщення
+spotlight.hintOpen	Відкрити
 trash.title	Кошик
 trash.moveToTrash	Перемістити в кошик
 trash.deletePermanently	Видалити назавжди
@@ -1344,3 +1364,16 @@ common.increase	Збільшити
 common.moreInfo	Докладніше
 versionedFiles.pathHeader	Шлях
 versionedFiles.versionsHeader	Версії
+fileInfo.sectionSelected	Вибрано
+fileInfo.selectionFootnote	Спільний доступ, версії та дозволи показуються, коли вибрано один елемент.
+fileInfo.moreSelected	Ще: %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld папка
+browse.folderCount#few	%lld папки
+browse.folderCount#many	%lld папок
+browse.folderCount#other	%lld папки
+browse.fileCount#one	%lld файл
+browse.fileCount#few	%lld файли
+browse.fileCount#many	%lld файлів
+browse.fileCount#other	%lld файлу
+browse.contentSummary	%1$@, %2$@

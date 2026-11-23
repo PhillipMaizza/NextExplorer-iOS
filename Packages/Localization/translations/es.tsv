@@ -97,6 +97,10 @@ browse.offlineBannerDetail	Mostrando una copia guardada de %@
 browse.actionCopy	Copiar
 browse.destinationPickerMoveTitle	Mover a…
 browse.destinationPickerConfirmMove	Mover aquí
+browse.destinationPickerCopyTitle	Copiar a…
+browse.destinationPickerConfirmCopy	Copiar aquí
+browse.actionMoveTo	Mover a…
+browse.actionCopyTo	Copiar a…
 browse.destinationPickerNoFolders	No hay carpetas aquí
 browse.destinationPickerLoadFailed	No se pudieron cargar las carpetas.
 browse.destinationPickerRecent	Recientes
@@ -402,6 +406,7 @@ fileInfo.rowDateTaken	Fecha de captura
 fileInfo.rowDuration	Duración
 fileInfo.partialScan	Se contó un escaneo parcial: esta carpeta es muy grande.
 permissions.title	Permisos
+permissions.titleFor	Permisos de “%@”
 permissions.sectionMode	Modo
 permissions.numericLabel	Numérico
 permissions.applyToEnclosed	Aplicar a los elementos incluidos
@@ -546,7 +551,7 @@ login.plaintextWarning	Esta conexión no está cifrada. Tu contraseña y sesión
 error.sessionExpired	Tu sesión ha caducado. Inicia sesión de nuevo.
 error.rateLimited	Demasiadas solicitudes. Inténtalo de nuevo en breve.
 error.network	No se pudo conectar con el servidor.
-error.offline	Estás sin conexión. Conéctate a internet e inténtalo de nuevo.
+error.offline	No se puede conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.
 error.decoding	El servidor respondió de forma inesperada.
 error.server	Error del servidor (%lld).
 error.forbidden	No tienes permiso para hacer eso.
@@ -697,6 +702,10 @@ appearance.light	Claro
 appearance.dark	Oscuro
 browse.myFiles	Mis archivos
 browse.myFilesSubtitle	Solo visible para ti
+browse.home	Inicio
+browse.noValue	--
+browse.today	Hoy
+browse.yesterday	Ayer
 downloadQueue.navigationTitle	Cola de descargas
 downloadQueue.emptyList	No hay descargas en curso.
 downloadQueue.statusSaved	Guardado
@@ -714,6 +723,8 @@ browse.downloadSavedTo	Guardado en %@
 browse.downloadSavedAllTo	Se guardaron %1$lld elementos en %2$@
 macSettings.labelFormat	%@:
 macSettings.addAccount	Añadir cuenta…
+macSettings.accountSettings	Ajustes de la cuenta
+macSettings.switchAccountHeader	Cambiar de cuenta
 macSettings.changePassword	Cambiar contraseña…
 macSettings.signOut	Cerrar sesión…
 macSettings.switchAccount	Cambiar a esta cuenta
@@ -744,6 +755,10 @@ fileInfo.restoreMessage	El archivo vuelve a como estaba el %@. Su contenido actu
 fileInfo.restoreConfirm	Restaurar
 fileInfo.sectionSharing	Compartir
 fileInfo.notShared	No hay enlaces compartidos
+fileInfo.createLink	Crear enlace
+fileInfo.newLink	Nuevo enlace
+fileInfo.versionCurrent	Actual
+fileInfo.quickFavorite	Favorito
 fileInfo.versionActions	Acciones de versión
 fileInfo.versionViewText	Ver texto
 fileInfo.versionTextTruncated	Se muestra solo el principio de esta versión.
@@ -1190,6 +1205,8 @@ twoFactor.shareCodesButton	Compartir códigos
 twoFactor.turnOffButton	Desactivar
 twoFactor.turnOnButton	Activar
 browse.actionAvailableOffline	Disponible sin conexión
+browse.actionKeepOffline	Mantener sin conexión
+browse.actionShowInFolder	Mostrar en la carpeta
 browse.actionSaveToDevice	Guardar en el dispositivo
 previewToolbar.saveToDevice	Guardar en el dispositivo
 downloadQueue.savedToPhotos	Guardado en Fotos
@@ -1218,6 +1235,8 @@ shareUpload.nameLabel	Nombre del archivo
 shareUpload.namesLabel	Nombres de los archivos
 shareUpload.nameHint	El nombre con el que se sube el archivo. La extensión no cambia.
 spotlight.placeholder	Buscar archivos y carpetas
+spotlight.hintMove	Moverse
+spotlight.hintOpen	Abrir
 trash.title	Papelera
 trash.moveToTrash	Mover a la papelera
 trash.deletePermanently	Eliminar definitivamente
@@ -1328,6 +1347,7 @@ shareUpload.failureTooLarge#other	%lld archivos no se subieron. La conexión con
 shareUpload.startedDeferred	Guardado para NextExplorer. Abre la app para subir tus archivos grandes.
 menu.goToFolderPlaceholder	Documentos/Informes
 menu.toggleSidebar	Mostrar u ocultar barra lateral
+menu.hideInspector	Ocultar inspector
 emptyState.dropHintFiles	También puedes arrastrar archivos aquí desde Archivos o Fotos.
 emptyState.dropHintFinder	También puedes arrastrar archivos aquí desde el Finder.
 login.stepServer	Servidor
@@ -1339,3 +1359,12 @@ common.increase	Aumentar
 common.moreInfo	Más información
 versionedFiles.pathHeader	Ruta
 versionedFiles.versionsHeader	Versiones
+fileInfo.sectionSelected	Seleccionados
+fileInfo.selectionFootnote	El uso compartido, las versiones y los permisos se muestran al seleccionar un solo elemento.
+fileInfo.moreSelected	%lld más
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld carpeta
+browse.folderCount#other	%lld carpetas
+browse.fileCount#one	%lld archivo
+browse.fileCount#other	%lld archivos
+browse.contentSummary	%1$@, %2$@

@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Zobrazuje se uložená kopie z %@
 browse.actionCopy	Kopírovat
 browse.destinationPickerMoveTitle	Přesunout do…
 browse.destinationPickerConfirmMove	Přesunout sem
+browse.destinationPickerCopyTitle	Kopírovat do…
+browse.destinationPickerConfirmCopy	Kopírovat sem
+browse.actionMoveTo	Přesunout do…
+browse.actionCopyTo	Kopírovat do…
 browse.destinationPickerNoFolders	Žádné složky
 browse.destinationPickerLoadFailed	Složky se nepodařilo načíst.
 browse.actionMove	Přesunout
@@ -625,6 +629,7 @@ fileInfo.rowDateTaken	Datum pořízení
 fileInfo.rowDuration	Doba trvání
 fileInfo.partialScan	Spočítáno částečným skenováním: tato složka je velmi velká.
 permissions.title	Oprávnění
+permissions.titleFor	Oprávnění pro „%@“
 permissions.sectionMode	Režim
 permissions.numericLabel	Číselný
 permissions.applyToEnclosed	Použít na obsažené položky
@@ -759,7 +764,7 @@ login.plaintextWarning	Toto připojení není šifrované. Vaše heslo a relace 
 error.sessionExpired	Platnost vaší relace vypršela. Přihlaste se znovu.
 error.rateLimited	Příliš mnoho požadavků. Zkuste to za chvíli znovu.
 error.network	Server není dostupný.
-error.offline	Jste offline. Připojte se k internetu a zkuste to znovu.
+error.offline	Server není dostupný. Zkontrolujte připojení a zkuste to znovu.
 error.decoding	Server odpověděl neočekávaně.
 error.server	Chyba serveru (%lld).
 error.forbidden	K tomu nemáte oprávnění.
@@ -967,6 +972,10 @@ appearance.light	Světlý
 appearance.dark	Tmavý
 browse.myFiles	Moje soubory
 browse.myFilesSubtitle	Viditelné jen pro vás
+browse.home	Domů
+browse.noValue	--
+browse.today	Dnes
+browse.yesterday	Včera
 downloadQueue.navigationTitle	Fronta stahování
 downloadQueue.emptyList	Nic se právě nestahuje.
 downloadQueue.statusSaved	Uloženo
@@ -981,6 +990,8 @@ downloadQueue.bytesOf	%1$@ z %2$@
 downloadQueue.timeLeft	Zbývá: %@
 browse.sectionPersonal	Osobní
 macSettings.addAccount	Přidat účet…
+macSettings.accountSettings	Nastavení účtu
+macSettings.switchAccountHeader	Přepnout účet
 macSettings.changePassword	Změnit heslo…
 macSettings.signOut	Odhlásit se…
 macSettings.switchAccount	Přepnout na tento účet
@@ -1012,6 +1023,10 @@ fileInfo.restoreMessage	Soubor se vrátí do stavu z %@. To, co obsahuje nyní, 
 fileInfo.restoreConfirm	Obnovit
 fileInfo.sectionSharing	Sdílení
 fileInfo.notShared	Žádné odkazy ke sdílení
+fileInfo.createLink	Vytvořit odkaz
+fileInfo.newLink	Nový odkaz
+fileInfo.versionCurrent	Aktuální
+fileInfo.quickFavorite	Oblíbené
 fileInfo.versionActions	Akce s verzí
 fileInfo.versionDownload	Stáhnout…
 fileInfo.versionSaveCopy	Uložit jako kopii
@@ -1043,6 +1058,7 @@ menu.quitTransfersTitle	Ukončit NextExplorer?
 menu.quitTransfersMessage	Nahrávání nebo stahování stále probíhá. Ukončením ho zastavíte.
 menu.quitTransfersConfirm	Ukončit
 menu.toggleSidebar	Zobrazit nebo skrýt boční panel
+menu.hideInspector	Skrýt inspektor
 media.play	Přehrát
 media.pause	Pozastavit
 media.position	Pozice přehrávání
@@ -1172,6 +1188,8 @@ trashSettings.environmentNote	Výchozí hodnoty pocházejí z TRASH_ENABLED, TRA
 trashSettings.versionsEnvironmentNote	Výchozí hodnoty pocházejí z VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE a VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Obnovit
 browse.actionAvailableOffline	Dostupné offline
+browse.actionKeepOffline	Ponechat offline
+browse.actionShowInFolder	Zobrazit ve složce
 browse.actionSaveToDevice	Uložit do zařízení
 previewToolbar.saveToDevice	Uložit do zařízení
 downloadQueue.savedToPhotos	Uloženo do Fotek
@@ -1200,6 +1218,8 @@ shareUpload.nameLabel	Název souboru
 shareUpload.namesLabel	Názvy souborů
 shareUpload.nameHint	Název, pod kterým se soubor nahraje. Přípona zůstane stejná.
 spotlight.placeholder	Hledat soubory a složky
+spotlight.hintMove	Pohyb
+spotlight.hintOpen	Otevřít
 trash.title	Koš
 trash.moveToTrash	Přesunout do koše
 trash.deletePermanently	Smazat trvale
@@ -1343,3 +1363,16 @@ common.increase	Zvýšit
 common.moreInfo	Další informace
 versionedFiles.pathHeader	Cesta
 versionedFiles.versionsHeader	Verze
+fileInfo.sectionSelected	Vybráno
+fileInfo.selectionFootnote	Sdílení, verze a oprávnění se zobrazí, když vyberete jednu položku.
+fileInfo.moreSelected	Dalších: %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld složka
+browse.folderCount#few	%lld složky
+browse.folderCount#many	%lld složky
+browse.folderCount#other	%lld složek
+browse.fileCount#one	%lld soubor
+browse.fileCount#few	%lld soubory
+browse.fileCount#many	%lld souboru
+browse.fileCount#other	%lld souborů
+browse.contentSummary	%1$@, %2$@

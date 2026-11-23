@@ -97,6 +97,10 @@ browse.offlineBannerDetail	Wyświetlanie zapisanej kopii z %@
 browse.actionCopy	Kopiuj
 browse.destinationPickerMoveTitle	Przenieś do…
 browse.destinationPickerConfirmMove	Przenieś tutaj
+browse.destinationPickerCopyTitle	Kopiuj do…
+browse.destinationPickerConfirmCopy	Kopiuj tutaj
+browse.actionMoveTo	Przenieś do…
+browse.actionCopyTo	Kopiuj do…
 browse.destinationPickerNoFolders	Brak folderów tutaj
 browse.destinationPickerLoadFailed	Nie można wczytać folderów.
 browse.destinationPickerRecent	Ostatnie
@@ -425,6 +429,7 @@ fileInfo.rowDateTaken	Data wykonania
 fileInfo.rowDuration	Czas trwania
 fileInfo.partialScan	Policzono częściowe skanowanie: ten folder jest bardzo duży.
 permissions.title	Uprawnienia
+permissions.titleFor	Uprawnienia dla „%@”
 permissions.sectionMode	Tryb
 permissions.numericLabel	Numeryczny
 permissions.applyToEnclosed	Zastosuj do zawartych elementów
@@ -569,7 +574,7 @@ login.plaintextWarning	To połączenie nie jest szyfrowane. Twoje hasło i sesja
 error.sessionExpired	Twoja sesja wygasła. Zaloguj się ponownie.
 error.rateLimited	Zbyt wiele żądań. Spróbuj ponownie za chwilę.
 error.network	Nie można połączyć się z serwerem.
-error.offline	Jesteś offline. Połącz się z internetem i spróbuj ponownie.
+error.offline	Nie można połączyć się z serwerem. Sprawdź połączenie i spróbuj ponownie.
 error.decoding	Serwer odpowiedział nieoczekiwanie.
 error.server	Błąd serwera (%lld).
 error.forbidden	Nie masz uprawnień, aby to zrobić.
@@ -719,6 +724,10 @@ appearance.light	Jasny
 appearance.dark	Ciemny
 browse.myFiles	Moje pliki
 browse.myFilesSubtitle	Widoczne tylko dla Ciebie
+browse.home	Start
+browse.noValue	--
+browse.today	Dzisiaj
+browse.yesterday	Wczoraj
 downloadQueue.navigationTitle	Kolejka pobierania
 downloadQueue.emptyList	Brak trwających pobrań.
 downloadQueue.statusSaved	Zapisano
@@ -736,6 +745,8 @@ browse.downloadSavedTo	Zapisano w %@
 browse.downloadSavedAllTo	Zapisano %1$lld elementów w %2$@
 macSettings.labelFormat	%@:
 macSettings.addAccount	Dodaj konto…
+macSettings.accountSettings	Ustawienia konta
+macSettings.switchAccountHeader	Przełącz konto
 macSettings.changePassword	Zmień hasło…
 macSettings.signOut	Wyloguj…
 macSettings.switchAccount	Przełącz na to konto
@@ -768,6 +779,10 @@ fileInfo.restoreMessage	Plik wróci do stanu z %@. Jego obecna zawartość zosta
 fileInfo.restoreConfirm	Przywróć
 fileInfo.sectionSharing	Udostępnianie
 fileInfo.notShared	Brak linków udostępniania
+fileInfo.createLink	Utwórz link
+fileInfo.newLink	Nowy link
+fileInfo.versionCurrent	Bieżąca
+fileInfo.quickFavorite	Ulubione
 fileInfo.versionActions	Działania wersji
 fileInfo.versionViewText	Pokaż tekst
 fileInfo.versionTextTruncated	Wyświetlono tylko początek tej wersji.
@@ -1226,6 +1241,8 @@ twoFactor.shareCodesButton	Udostępnij kody
 twoFactor.turnOffButton	Wyłącz
 twoFactor.turnOnButton	Włącz
 browse.actionAvailableOffline	Dostępne offline
+browse.actionKeepOffline	Zachowaj offline
+browse.actionShowInFolder	Pokaż w folderze
 browse.actionSaveToDevice	Zapisz na urządzeniu
 previewToolbar.saveToDevice	Zapisz na urządzeniu
 downloadQueue.savedToPhotos	Zapisano w Zdjęciach
@@ -1254,6 +1271,8 @@ shareUpload.nameLabel	Nazwa pliku
 shareUpload.namesLabel	Nazwy plików
 shareUpload.nameHint	Nazwa, pod którą plik zostanie przesłany. Rozszerzenie pozostaje bez zmian.
 spotlight.placeholder	Szukaj plików i folderów
+spotlight.hintMove	Nawigacja
+spotlight.hintOpen	Otwórz
 trash.title	Kosz
 trash.moveToTrash	Przenieś do kosza
 trash.deletePermanently	Usuń trwale
@@ -1400,6 +1419,7 @@ shareUpload.failureTooLarge#other	%lld pliku nie zostało przesłane. Połączen
 shareUpload.startedDeferred	Zapisano dla NextExplorer. Otwórz aplikację, aby przesłać duże pliki.
 menu.goToFolderPlaceholder	Dokumenty/Raporty
 menu.toggleSidebar	Pokaż lub ukryj pasek boczny
+menu.hideInspector	Ukryj inspektora
 emptyState.dropHintFiles	Możesz też przeciągnąć tu pliki z aplikacji Pliki lub Zdjęcia.
 emptyState.dropHintFinder	Możesz też przeciągnąć tu pliki z Findera.
 login.stepServer	Serwer
@@ -1411,3 +1431,16 @@ common.increase	Zwiększ
 common.moreInfo	Więcej informacji
 versionedFiles.pathHeader	Ścieżka
 versionedFiles.versionsHeader	Wersje
+fileInfo.sectionSelected	Zaznaczone
+fileInfo.selectionFootnote	Udostępnianie, wersje i uprawnienia są widoczne po zaznaczeniu jednego elementu.
+fileInfo.moreSelected	%lld więcej
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld folder
+browse.folderCount#few	%lld foldery
+browse.folderCount#many	%lld folderów
+browse.folderCount#other	%lld folderu
+browse.fileCount#one	%lld plik
+browse.fileCount#few	%lld pliki
+browse.fileCount#many	%lld plików
+browse.fileCount#other	%lld pliku
+browse.contentSummary	%1$@, %2$@

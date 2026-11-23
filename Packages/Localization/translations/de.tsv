@@ -97,6 +97,10 @@ browse.offlineBannerDetail	Gesicherte Kopie von %@ wird angezeigt
 browse.actionCopy	Kopieren
 browse.destinationPickerMoveTitle	Bewegen nach…
 browse.destinationPickerConfirmMove	Hierher bewegen
+browse.destinationPickerCopyTitle	Kopieren nach…
+browse.destinationPickerConfirmCopy	Hierher kopieren
+browse.actionMoveTo	Bewegen nach…
+browse.actionCopyTo	Kopieren nach…
 browse.destinationPickerNoFolders	Keine Ordner hier
 browse.destinationPickerLoadFailed	Ordner konnten nicht geladen werden.
 browse.destinationPickerRecent	Zuletzt
@@ -403,6 +407,7 @@ fileInfo.rowDateTaken	Aufnahmedatum
 fileInfo.rowDuration	Dauer
 fileInfo.partialScan	Teilweiser Scan gezählt: Dieser Ordner ist sehr groß.
 permissions.title	Berechtigungen
+permissions.titleFor	Berechtigungen für „%@“
 permissions.sectionMode	Modus
 permissions.numericLabel	Numerisch
 permissions.applyToEnclosed	Auf enthaltene Objekte anwenden
@@ -547,7 +552,7 @@ login.plaintextWarning	Diese Verbindung ist nicht verschlüsselt. Dein Passwort 
 error.sessionExpired	Deine Sitzung ist abgelaufen. Melde dich erneut an.
 error.rateLimited	Zu viele Anfragen. Versuche es in Kürze erneut.
 error.network	Server konnte nicht erreicht werden.
-error.offline	Du bist offline. Verbinde dich mit dem Internet und versuche es erneut.
+error.offline	Server nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.
 error.decoding	Der Server hat unerwartet geantwortet.
 error.server	Serverfehler (%lld).
 error.forbidden	Du hast keine Berechtigung dafür.
@@ -697,6 +702,10 @@ appearance.light	Hell
 appearance.dark	Dunkel
 browse.myFiles	Meine Dateien
 browse.myFilesSubtitle	Nur für dich sichtbar
+browse.home	Start
+browse.noValue	--
+browse.today	Heute
+browse.yesterday	Gestern
 downloadQueue.navigationTitle	Download-Warteschlange
 downloadQueue.emptyList	Keine laufenden Downloads.
 downloadQueue.statusSaved	Gespeichert
@@ -714,6 +723,8 @@ browse.downloadSavedTo	Gesichert in %@
 browse.downloadSavedAllTo	%1$lld Objekte in %2$@ gesichert
 macSettings.labelFormat	%@:
 macSettings.addAccount	Account hinzufügen …
+macSettings.accountSettings	Accounteinstellungen
+macSettings.switchAccountHeader	Account wechseln
 macSettings.changePassword	Passwort ändern …
 macSettings.signOut	Abmelden …
 macSettings.switchAccount	Zu diesem Account wechseln
@@ -744,6 +755,10 @@ fileInfo.restoreMessage	Die Datei wird auf den Stand vom %@ zurückgesetzt. Der 
 fileInfo.restoreConfirm	Wiederherstellen
 fileInfo.sectionSharing	Freigabe
 fileInfo.notShared	Keine Freigabelinks
+fileInfo.createLink	Link erstellen
+fileInfo.newLink	Neuer Link
+fileInfo.versionCurrent	Aktuell
+fileInfo.quickFavorite	Favorit
 fileInfo.versionActions	Versionsaktionen
 fileInfo.versionViewText	Text ansehen
 fileInfo.versionTextTruncated	Es wird nur der Anfang dieser Version angezeigt.
@@ -1190,6 +1205,8 @@ twoFactor.shareCodesButton	Codes teilen
 twoFactor.turnOffButton	Ausschalten
 twoFactor.turnOnButton	Einschalten
 browse.actionAvailableOffline	Offline verfügbar
+browse.actionKeepOffline	Offline behalten
+browse.actionShowInFolder	Im Ordner zeigen
 browse.actionSaveToDevice	Auf Gerät sichern
 previewToolbar.saveToDevice	Auf Gerät sichern
 downloadQueue.savedToPhotos	In Fotos gesichert
@@ -1218,6 +1235,8 @@ shareUpload.nameLabel	Dateiname
 shareUpload.namesLabel	Dateinamen
 shareUpload.nameHint	Der Name, unter dem die Datei hochgeladen wird. Die Dateiendung bleibt gleich.
 spotlight.placeholder	Dateien und Ordner durchsuchen
+spotlight.hintMove	Bewegen
+spotlight.hintOpen	Öffnen
 trash.title	Papierkorb
 trash.moveToTrash	In den Papierkorb
 trash.deletePermanently	Endgültig löschen
@@ -1328,6 +1347,7 @@ shareUpload.failureTooLarge#other	%lld Dateien wurden nicht hochgeladen. Deine S
 shareUpload.startedDeferred	Für NextExplorer gesichert. Öffne die App, um deine großen Dateien hochzuladen.
 menu.goToFolderPlaceholder	Dokumente/Berichte
 menu.toggleSidebar	Seitenleiste einblenden oder ausblenden
+menu.hideInspector	Informationen ausblenden
 emptyState.dropHintFiles	Du kannst auch Dateien aus „Dateien“ oder „Fotos“ hierher ziehen.
 emptyState.dropHintFinder	Du kannst auch Dateien aus dem Finder hierher ziehen.
 login.stepServer	Server
@@ -1339,3 +1359,12 @@ common.increase	Erhöhen
 common.moreInfo	Weitere Infos
 versionedFiles.pathHeader	Pfad
 versionedFiles.versionsHeader	Versionen
+fileInfo.sectionSelected	Ausgewählt
+fileInfo.selectionFootnote	Freigaben, Versionen und Berechtigungen werden angezeigt, wenn ein Objekt ausgewählt ist.
+fileInfo.moreSelected	%lld weitere
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld Ordner
+browse.folderCount#other	%lld Ordner
+browse.fileCount#one	%lld Datei
+browse.fileCount#other	%lld Dateien
+browse.contentSummary	%1$@, %2$@

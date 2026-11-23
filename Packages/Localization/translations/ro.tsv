@@ -97,6 +97,10 @@ browse.offlineBannerDetail	Se afișează o copie salvată din %@
 browse.actionCopy	Copiază
 browse.destinationPickerMoveTitle	Mută în…
 browse.destinationPickerConfirmMove	Mută aici
+browse.destinationPickerCopyTitle	Copiază în…
+browse.destinationPickerConfirmCopy	Copiază aici
+browse.actionMoveTo	Mută în…
+browse.actionCopyTo	Copiază în…
 browse.destinationPickerNoFolders	Niciun dosar aici
 browse.destinationPickerLoadFailed	Nu s-au putut încărca dosarele.
 browse.destinationPickerRecent	Recente
@@ -414,6 +418,7 @@ fileInfo.rowDateTaken	Data capturii
 fileInfo.rowDuration	Durată
 fileInfo.partialScan	S-a numărat o scanare parțială: acest dosar este foarte mare.
 permissions.title	Permisiuni
+permissions.titleFor	Permisiuni pentru „%@”
 permissions.sectionMode	Mod
 permissions.numericLabel	Numeric
 permissions.applyToEnclosed	Aplică la elementele conținute
@@ -558,7 +563,7 @@ login.plaintextWarning	Această conexiune nu este criptată. Parola și sesiunea
 error.sessionExpired	Sesiunea ta a expirat. Conectează-te din nou.
 error.rateLimited	Prea multe cereri. Încearcă din nou în scurt timp.
 error.network	Nu s-a putut contacta serverul.
-error.offline	Ești offline. Conectează-te la internet și încearcă din nou.
+error.offline	Serverul nu poate fi accesat. Verifică conexiunea și încearcă din nou.
 error.decoding	Serverul a răspuns neașteptat.
 error.server	Eroare de server (%lld).
 error.forbidden	Nu ai permisiunea să faci asta.
@@ -708,6 +713,10 @@ appearance.light	Luminos
 appearance.dark	Întunecat
 browse.myFiles	Fișierele mele
 browse.myFilesSubtitle	Vizibil doar pentru tine
+browse.home	Acasă
+browse.noValue	--
+browse.today	Astăzi
+browse.yesterday	Ieri
 downloadQueue.navigationTitle	Coadă de descărcări
 downloadQueue.emptyList	Nicio descărcare în curs.
 downloadQueue.statusSaved	Salvat
@@ -725,6 +734,8 @@ browse.downloadSavedTo	Salvat în %@
 browse.downloadSavedAllTo	Salvate %1$lld elemente în %2$@
 macSettings.labelFormat	%@:
 macSettings.addAccount	Adaugă cont…
+macSettings.accountSettings	Setări cont
+macSettings.switchAccountHeader	Schimbă contul
 macSettings.changePassword	Schimbă parola…
 macSettings.signOut	Deconectare…
 macSettings.switchAccount	Comută la acest cont
@@ -756,6 +767,10 @@ fileInfo.restoreMessage	Fișierul revine la starea din %@. Conținutul actual es
 fileInfo.restoreConfirm	Restaurează
 fileInfo.sectionSharing	Partajare
 fileInfo.notShared	Niciun link de partajare
+fileInfo.createLink	Creează link
+fileInfo.newLink	Link nou
+fileInfo.versionCurrent	Curentă
+fileInfo.quickFavorite	Favorit
 fileInfo.versionActions	Acțiuni versiune
 fileInfo.versionViewText	Vezi textul
 fileInfo.versionTextTruncated	Se afișează doar începutul acestei versiuni.
@@ -1208,6 +1223,8 @@ twoFactor.shareCodesButton	Partajează codurile
 twoFactor.turnOffButton	Dezactivează
 twoFactor.turnOnButton	Activează
 browse.actionAvailableOffline	Disponibil offline
+browse.actionKeepOffline	Păstrează offline
+browse.actionShowInFolder	Arată în dosar
 browse.actionSaveToDevice	Salvează pe dispozitiv
 previewToolbar.saveToDevice	Salvează pe dispozitiv
 downloadQueue.savedToPhotos	Salvat în Fotografii
@@ -1236,6 +1253,8 @@ shareUpload.nameLabel	Numele fișierului
 shareUpload.namesLabel	Numele fișierelor
 shareUpload.nameHint	Numele sub care se încarcă fișierul. Extensia rămâne aceeași.
 spotlight.placeholder	Caută fișiere și foldere
+spotlight.hintMove	Navighează
+spotlight.hintOpen	Deschide
 trash.title	Coș de gunoi
 trash.moveToTrash	Mută în coșul de gunoi
 trash.deletePermanently	Șterge definitiv
@@ -1364,6 +1383,7 @@ shareUpload.failureTooLarge#other	%lld de fișiere nu au fost încărcate. Conex
 shareUpload.startedDeferred	Salvat pentru NextExplorer. Deschide aplicația pentru a încărca fișierele mari.
 menu.goToFolderPlaceholder	Documente/Rapoarte
 menu.toggleSidebar	Afișează sau ascunde bara laterală
+menu.hideInspector	Ascunde inspectorul
 emptyState.dropHintFiles	Poți trage aici fișiere și din Fișiere sau Poze.
 emptyState.dropHintFinder	Poți trage aici fișiere și din Finder.
 login.stepServer	Server
@@ -1375,3 +1395,14 @@ common.increase	Mărește
 common.moreInfo	Mai multe informații
 versionedFiles.pathHeader	Cale
 versionedFiles.versionsHeader	Versiuni
+fileInfo.sectionSelected	Selectate
+fileInfo.selectionFootnote	Partajarea, versiunile și permisiunile sunt afișate când este selectat un singur element.
+fileInfo.moreSelected	încă %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld dosar
+browse.folderCount#few	%lld dosare
+browse.folderCount#other	%lld de dosare
+browse.fileCount#one	%lld fișier
+browse.fileCount#few	%lld fișiere
+browse.fileCount#other	%lld de fișiere
+browse.contentSummary	%1$@, %2$@

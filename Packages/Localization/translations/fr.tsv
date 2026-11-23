@@ -97,6 +97,10 @@ browse.offlineBannerDetail	Affichage d'une copie enregistrée du %@
 browse.actionCopy	Copier
 browse.destinationPickerMoveTitle	Déplacer vers…
 browse.destinationPickerConfirmMove	Déplacer ici
+browse.destinationPickerCopyTitle	Copier vers…
+browse.destinationPickerConfirmCopy	Copier ici
+browse.actionMoveTo	Déplacer vers…
+browse.actionCopyTo	Copier vers…
 browse.destinationPickerNoFolders	Aucun dossier ici
 browse.destinationPickerLoadFailed	Impossible de charger les dossiers.
 browse.destinationPickerRecent	Récents
@@ -403,6 +407,7 @@ fileInfo.rowDateTaken	Date de prise de vue
 fileInfo.rowDuration	Durée
 fileInfo.partialScan	Analyse partielle prise en compte : ce dossier est très volumineux.
 permissions.title	Autorisations
+permissions.titleFor	Autorisations de « %@ »
 permissions.sectionMode	Mode
 permissions.numericLabel	Numérique
 permissions.applyToEnclosed	Appliquer aux éléments contenus
@@ -547,7 +552,7 @@ login.plaintextWarning	Cette connexion n'est pas chiffrée. Votre mot de passe e
 error.sessionExpired	Votre session a expiré. Reconnectez-vous.
 error.rateLimited	Trop de requêtes. Réessayez bientôt.
 error.network	Impossible de joindre le serveur.
-error.offline	Vous êtes hors ligne. Connectez-vous à Internet et réessayez.
+error.offline	Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.
 error.decoding	Réponse inattendue du serveur.
 error.server	Erreur du serveur (%lld).
 error.forbidden	Vous n'avez pas l'autorisation de faire cela.
@@ -697,6 +702,10 @@ appearance.light	Clair
 appearance.dark	Sombre
 browse.myFiles	Mes fichiers
 browse.myFilesSubtitle	Visible uniquement par vous
+browse.home	Accueil
+browse.noValue	--
+browse.today	Aujourd’hui
+browse.yesterday	Hier
 downloadQueue.navigationTitle	File de téléchargement
 downloadQueue.emptyList	Aucun téléchargement en cours.
 downloadQueue.statusSaved	Enregistré
@@ -714,6 +723,8 @@ browse.downloadSavedTo	Enregistré dans %@
 browse.downloadSavedAllTo	%1$lld éléments enregistrés dans %2$@
 macSettings.labelFormat	%@ :
 macSettings.addAccount	Ajouter un compte…
+macSettings.accountSettings	Réglages du compte
+macSettings.switchAccountHeader	Changer de compte
 macSettings.changePassword	Modifier le mot de passe…
 macSettings.signOut	Se déconnecter…
 macSettings.switchAccount	Passer à ce compte
@@ -744,6 +755,10 @@ fileInfo.restoreMessage	Le fichier revient à son état du %@. Son contenu actue
 fileInfo.restoreConfirm	Restaurer
 fileInfo.sectionSharing	Partage
 fileInfo.notShared	Aucun lien de partage
+fileInfo.createLink	Créer un lien
+fileInfo.newLink	Nouveau lien
+fileInfo.versionCurrent	Actuelle
+fileInfo.quickFavorite	Favori
 fileInfo.versionActions	Actions de version
 fileInfo.versionViewText	Afficher le texte
 fileInfo.versionTextTruncated	Seul le début de cette version est affiché.
@@ -1190,6 +1205,8 @@ twoFactor.shareCodesButton	Partager les codes
 twoFactor.turnOffButton	Désactiver
 twoFactor.turnOnButton	Activer
 browse.actionAvailableOffline	Disponible hors ligne
+browse.actionKeepOffline	Garder hors ligne
+browse.actionShowInFolder	Afficher dans le dossier
 browse.actionSaveToDevice	Enregistrer sur l’appareil
 previewToolbar.saveToDevice	Enregistrer sur l’appareil
 downloadQueue.savedToPhotos	Enregistré dans Photos
@@ -1218,6 +1235,8 @@ shareUpload.nameLabel	Nom du fichier
 shareUpload.namesLabel	Noms des fichiers
 shareUpload.nameHint	Le nom sous lequel le fichier est envoyé. L’extension reste la même.
 spotlight.placeholder	Rechercher des fichiers et des dossiers
+spotlight.hintMove	Naviguer
+spotlight.hintOpen	Ouvrir
 trash.title	Corbeille
 trash.moveToTrash	Mettre à la corbeille
 trash.deletePermanently	Supprimer définitivement
@@ -1328,6 +1347,7 @@ shareUpload.failureTooLarge#other	%lld fichiers n'ont pas été envoyés. La con
 shareUpload.startedDeferred	Enregistré pour NextExplorer. Ouvrez l'app pour envoyer vos gros fichiers.
 menu.goToFolderPlaceholder	Documents/Rapports
 menu.toggleSidebar	Afficher ou masquer la barre latérale
+menu.hideInspector	Masquer l’inspecteur
 emptyState.dropHintFiles	Vous pouvez aussi glisser des fichiers ici depuis Fichiers ou Photos.
 emptyState.dropHintFinder	Vous pouvez aussi glisser des fichiers ici depuis le Finder.
 login.stepServer	Serveur
@@ -1339,3 +1359,12 @@ common.increase	Augmenter
 common.moreInfo	Plus d’infos
 versionedFiles.pathHeader	Chemin
 versionedFiles.versionsHeader	Versions
+fileInfo.sectionSelected	Sélection
+fileInfo.selectionFootnote	Le partage, les versions et les autorisations s’affichent lorsqu’un seul élément est sélectionné.
+fileInfo.moreSelected	%lld de plus
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld dossier
+browse.folderCount#other	%lld dossiers
+browse.fileCount#one	%lld fichier
+browse.fileCount#other	%lld fichiers
+browse.contentSummary	%1$@, %2$@

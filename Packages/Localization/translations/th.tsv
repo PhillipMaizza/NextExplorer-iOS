@@ -104,6 +104,10 @@ browse.offlineBannerDetail	กำลังแสดงสำเนาที่�
 browse.actionCopy	คัดลอก
 browse.destinationPickerMoveTitle	ย้ายไปที่…
 browse.destinationPickerConfirmMove	ย้ายมาที่นี่
+browse.destinationPickerCopyTitle	คัดลอกไปที่…
+browse.destinationPickerConfirmCopy	คัดลอกมาที่นี่
+browse.actionMoveTo	ย้ายไปที่…
+browse.actionCopyTo	คัดลอกไปที่…
 browse.destinationPickerNoFolders	ไม่มีโฟลเดอร์ที่นี่
 browse.destinationPickerLoadFailed	ไม่สามารถโหลดโฟลเดอร์ได้
 browse.actionMove	ย้าย
@@ -592,6 +596,7 @@ fileInfo.rowDateTaken	วันที่ถ่าย
 fileInfo.rowDuration	ระยะเวลา
 fileInfo.partialScan	นับจากการสแกนบางส่วน: โฟลเดอร์นี้ใหญ่มาก
 permissions.title	สิทธิ์
+permissions.titleFor	สิทธิ์ของ “%@”
 permissions.sectionMode	โหมด
 permissions.numericLabel	ตัวเลข
 permissions.applyToEnclosed	ใช้กับรายการที่อยู่ข้างใน
@@ -726,7 +731,7 @@ login.plaintextWarning	การเชื่อมต่อนี้ไม่ไ
 error.sessionExpired	เซสชันของคุณหมดอายุ เข้าสู่ระบบอีกครั้ง
 error.rateLimited	คำขอมากเกินไป ลองอีกครั้งในอีกสักครู่
 error.network	ไม่สามารถติดต่อเซิร์ฟเวอร์ได้
-error.offline	คุณออฟไลน์อยู่ เชื่อมต่ออินเทอร์เน็ตแล้วลองอีกครั้ง
+error.offline	ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
 error.decoding	เซิร์ฟเวอร์ตอบกลับโดยไม่คาดคิด
 error.server	ข้อผิดพลาดของเซิร์ฟเวอร์ (%lld)
 error.forbidden	คุณไม่มีสิทธิ์ดำเนินการนั้น
@@ -934,6 +939,10 @@ appearance.light	สว่าง
 appearance.dark	มืด
 browse.myFiles	ไฟล์ของฉัน
 browse.myFilesSubtitle	มองเห็นได้เฉพาะคุณ
+browse.home	หน้าแรก
+browse.noValue	--
+browse.today	วันนี้
+browse.yesterday	เมื่อวาน
 downloadQueue.navigationTitle	คิวดาวน์โหลด
 downloadQueue.emptyList	ไม่มีการดาวน์โหลดที่กำลังดำเนินการ
 downloadQueue.statusSaved	บันทึกแล้ว
@@ -948,6 +957,8 @@ downloadQueue.bytesOf	%1$@ จาก %2$@
 downloadQueue.timeLeft	เหลืออีก %@
 browse.sectionPersonal	ส่วนตัว
 macSettings.addAccount	เพิ่มบัญชี…
+macSettings.accountSettings	การตั้งค่าบัญชี
+macSettings.switchAccountHeader	สลับบัญชี
 macSettings.changePassword	เปลี่ยนรหัสผ่าน…
 macSettings.signOut	ออกจากระบบ…
 macSettings.switchAccount	สลับไปใช้บัญชีนี้
@@ -977,6 +988,10 @@ fileInfo.restoreMessage	ไฟล์จะกลับไปเป็นเห�
 fileInfo.restoreConfirm	กู้คืน
 fileInfo.sectionSharing	การแชร์
 fileInfo.notShared	ไม่มีลิงก์แชร์
+fileInfo.createLink	สร้างลิงก์
+fileInfo.newLink	ลิงก์ใหม่
+fileInfo.versionCurrent	ปัจจุบัน
+fileInfo.quickFavorite	รายการโปรด
 fileInfo.versionActions	การดำเนินการของเวอร์ชัน
 fileInfo.versionDownload	ดาวน์โหลด…
 fileInfo.versionSaveCopy	บันทึกเป็นสำเนา
@@ -1008,6 +1023,7 @@ menu.quitTransfersTitle	ออกจาก NextExplorer หรือไม่
 menu.quitTransfersMessage	การอัปโหลดหรือการดาวน์โหลดยังดำเนินอยู่ การออกตอนนี้จะหยุดการทำงานเหล่านั้น
 menu.quitTransfersConfirm	ออก
 menu.toggleSidebar	แสดงหรือซ่อนแถบด้านข้าง
+menu.hideInspector	ซ่อนตัวตรวจสอบ
 media.play	เล่น
 media.pause	หยุดชั่วคราว
 media.position	ตำแหน่งการเล่น
@@ -1119,6 +1135,8 @@ trashSettings.environmentNote	ค่าเริ่มต้นมาจาก T
 trashSettings.versionsEnvironmentNote	ค่าเริ่มต้นมาจาก VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE และ VERSIONS_SESSION_CHECKPOINT_MINUTES
 versionedFiles.refresh	รีเฟรช
 browse.actionAvailableOffline	ใช้งานแบบออฟไลน์ได้
+browse.actionKeepOffline	เก็บไว้ใช้ออฟไลน์
+browse.actionShowInFolder	แสดงในโฟลเดอร์
 browse.actionSaveToDevice	บันทึกลงอุปกรณ์
 previewToolbar.saveToDevice	บันทึกลงอุปกรณ์
 downloadQueue.savedToPhotos	บันทึกลงในรูปภาพแล้ว
@@ -1147,6 +1165,8 @@ shareUpload.nameLabel	ชื่อไฟล์
 shareUpload.namesLabel	ชื่อไฟล์
 shareUpload.nameHint	ชื่อที่ใช้อัปโหลดไฟล์ นามสกุลไฟล์ยังคงเหมือนเดิม
 spotlight.placeholder	ค้นหาไฟล์และโฟลเดอร์
+spotlight.hintMove	เลื่อน
+spotlight.hintOpen	เปิด
 trash.title	ถังขยะ
 trash.moveToTrash	ย้ายไปที่ถังขยะ
 trash.deletePermanently	ลบถาวร
@@ -1234,3 +1254,10 @@ common.increase	เพิ่ม
 common.moreInfo	ข้อมูลเพิ่มเติม
 versionedFiles.pathHeader	เส้นทาง
 versionedFiles.versionsHeader	เวอร์ชัน
+fileInfo.sectionSelected	ที่เลือก
+fileInfo.selectionFootnote	การแชร์ เวอร์ชัน และสิทธิ์จะแสดงเมื่อเลือกรายการเดียว
+fileInfo.moreSelected	อีก %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#other	%lld โฟลเดอร์
+browse.fileCount#other	%lld ไฟล์
+browse.contentSummary	%1$@, %2$@

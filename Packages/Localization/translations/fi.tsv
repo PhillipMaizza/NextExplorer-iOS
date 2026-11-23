@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Näytetään tallennettu kopio ajalta %@
 browse.actionCopy	Kopioi
 browse.destinationPickerMoveTitle	Siirrä kohteeseen…
 browse.destinationPickerConfirmMove	Siirrä tänne
+browse.destinationPickerCopyTitle	Kopioi kohteeseen…
+browse.destinationPickerConfirmCopy	Kopioi tänne
+browse.actionMoveTo	Siirrä kohteeseen…
+browse.actionCopyTo	Kopioi kohteeseen…
 browse.destinationPickerNoFolders	Ei kansioita täällä
 browse.destinationPickerLoadFailed	Kansioita ei voitu ladata.
 browse.actionMove	Siirrä
@@ -603,6 +607,7 @@ fileInfo.rowDateTaken	Kuvauspäivä
 fileInfo.rowDuration	Kesto
 fileInfo.partialScan	Laskettu osittaisella skannauksella: tämä kansio on hyvin suuri.
 permissions.title	Käyttöoikeudet
+permissions.titleFor	Käyttöoikeudet: ”%@”
 permissions.sectionMode	Tila
 permissions.numericLabel	Numeerinen
 permissions.applyToEnclosed	Käytä sisällä oleviin kohteisiin
@@ -737,7 +742,7 @@ login.plaintextWarning	Tämä yhteys ei ole salattu. Salasanasi ja istuntosi lä
 error.sessionExpired	Istuntosi on vanhentunut. Kirjaudu uudelleen sisään.
 error.rateLimited	Liian monta pyyntöä. Yritä hetken kuluttua uudelleen.
 error.network	Palvelimeen ei saatu yhteyttä.
-error.offline	Olet offline-tilassa. Yhdistä internetiin ja yritä uudelleen.
+error.offline	Palvelimeen ei saada yhteyttä. Tarkista yhteys ja yritä uudelleen.
 error.decoding	Palvelin vastasi odottamattomasti.
 error.server	Palvelinvirhe (%lld).
 error.forbidden	Sinulla ei ole lupaa tehdä sitä.
@@ -945,6 +950,10 @@ appearance.light	Vaalea
 appearance.dark	Tumma
 browse.myFiles	Omat tiedostot
 browse.myFilesSubtitle	Näkyy vain sinulle
+browse.home	Koti
+browse.noValue	--
+browse.today	Tänään
+browse.yesterday	Eilen
 downloadQueue.navigationTitle	Latausjono
 downloadQueue.emptyList	Ei käynnissä olevia latauksia.
 downloadQueue.statusSaved	Tallennettu
@@ -959,6 +968,8 @@ downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	%@ jäljellä
 browse.sectionPersonal	Henkilökohtainen
 macSettings.addAccount	Lisää tili…
+macSettings.accountSettings	Tilin asetukset
+macSettings.switchAccountHeader	Vaihda tiliä
 macSettings.changePassword	Vaihda salasana…
 macSettings.signOut	Kirjaudu ulos…
 macSettings.switchAccount	Vaihda tähän tiliin
@@ -989,6 +1000,10 @@ fileInfo.restoreMessage	Tiedosto palautuu sellaiseksi kuin se oli %@. Sen nykyin
 fileInfo.restoreConfirm	Palauta
 fileInfo.sectionSharing	Jakaminen
 fileInfo.notShared	Ei jakolinkkejä
+fileInfo.createLink	Luo linkki
+fileInfo.newLink	Uusi linkki
+fileInfo.versionCurrent	Nykyinen
+fileInfo.quickFavorite	Suosikki
 fileInfo.versionActions	Version toiminnot
 fileInfo.versionDownload	Lataa…
 fileInfo.versionSaveCopy	Tallenna kopiona
@@ -1020,6 +1035,7 @@ menu.quitTransfersTitle	Lopetetaanko NextExplorer?
 menu.quitTransfersMessage	Lähetyksiä tai latauksia on yhä kesken. Lopettaminen nyt pysäyttää ne.
 menu.quitTransfersConfirm	Lopeta
 menu.toggleSidebar	Näytä tai kätke sivupalkki
+menu.hideInspector	Piilota tarkastaja
 media.play	Toista
 media.pause	Tauko
 media.position	Toiston kohta
@@ -1137,6 +1153,8 @@ trashSettings.environmentNote	Oletusarvot tulevat muuttujista TRASH_ENABLED, TRA
 trashSettings.versionsEnvironmentNote	Oletusarvot tulevat muuttujista VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ja VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Päivitä
 browse.actionAvailableOffline	Saatavilla offline-tilassa
+browse.actionKeepOffline	Pidä offline-tilassa
+browse.actionShowInFolder	Näytä kansiossa
 browse.actionSaveToDevice	Tallenna laitteelle
 previewToolbar.saveToDevice	Tallenna laitteelle
 downloadQueue.savedToPhotos	Tallennettu Kuviin
@@ -1165,6 +1183,8 @@ shareUpload.nameLabel	Tiedostonimi
 shareUpload.namesLabel	Tiedostonimet
 shareUpload.nameHint	Nimi, jolla tiedosto ladataan. Tiedostopääte pysyy samana.
 spotlight.placeholder	Hae tiedostoja ja kansioita
+spotlight.hintMove	Siirry
+spotlight.hintOpen	Avaa
 trash.title	Roskakori
 trash.moveToTrash	Siirrä roskakoriin
 trash.deletePermanently	Poista pysyvästi
@@ -1268,3 +1288,12 @@ common.increase	Lisää
 common.moreInfo	Lisätietoja
 versionedFiles.pathHeader	Polku
 versionedFiles.versionsHeader	Versiot
+fileInfo.sectionSelected	Valitut
+fileInfo.selectionFootnote	Jakaminen, versiot ja oikeudet näytetään, kun yksi kohde on valittuna.
+fileInfo.moreSelected	%lld lisää
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld kansio
+browse.folderCount#other	%lld kansiota
+browse.fileCount#one	%lld tiedosto
+browse.fileCount#other	%lld tiedostoa
+browse.contentSummary	%1$@, %2$@

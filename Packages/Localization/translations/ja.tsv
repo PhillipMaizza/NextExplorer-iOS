@@ -97,6 +97,10 @@ browse.offlineBannerDetail	%@ の保存済みコピーを表示中
 browse.actionCopy	コピー
 browse.destinationPickerMoveTitle	移動先…
 browse.destinationPickerConfirmMove	ここに移動
+browse.destinationPickerCopyTitle	コピー先…
+browse.destinationPickerConfirmCopy	ここにコピー
+browse.actionMoveTo	移動先…
+browse.actionCopyTo	コピー先…
 browse.destinationPickerNoFolders	ここにフォルダはありません
 browse.destinationPickerLoadFailed	フォルダを読み込めませんでした。
 browse.destinationPickerRecent	最近使った項目
@@ -392,6 +396,7 @@ fileInfo.rowDateTaken	撮影日
 fileInfo.rowDuration	再生時間
 fileInfo.partialScan	部分スキャンを集計しました: このフォルダは非常に大きいです。
 permissions.title	アクセス権
+permissions.titleFor	「%@」のアクセス権
 permissions.sectionMode	モード
 permissions.numericLabel	数値
 permissions.applyToEnclosed	内包する項目に適用
@@ -536,7 +541,7 @@ login.plaintextWarning	この接続は暗号化されていません。パスワ
 error.sessionExpired	セッションの有効期限が切れました。再度サインインしてください。
 error.rateLimited	リクエストが多すぎます。しばらくしてから再試行してください。
 error.network	サーバーに接続できませんでした。
-error.offline	オフラインです。インターネットに接続して再試行してください。
+error.offline	サーバに接続できません。接続を確認して再試行してください。
 error.decoding	サーバーから予期しない応答がありました。
 error.server	サーバーエラー (%lld)。
 error.forbidden	この操作を行う権限がありません。
@@ -686,6 +691,10 @@ appearance.light	ライト
 appearance.dark	ダーク
 browse.myFiles	マイファイル
 browse.myFilesSubtitle	あなただけに表示されます
+browse.home	ホーム
+browse.noValue	--
+browse.today	今日
+browse.yesterday	昨日
 downloadQueue.navigationTitle	ダウンロードキュー
 downloadQueue.emptyList	進行中のダウンロードはありません。
 downloadQueue.statusSaved	保存済み
@@ -703,6 +712,8 @@ browse.downloadSavedTo	%@ に保存しました
 browse.downloadSavedAllTo	%1$lld 件を %2$@ に保存しました
 macSettings.labelFormat	%@：
 macSettings.addAccount	アカウントを追加…
+macSettings.accountSettings	アカウント設定
+macSettings.switchAccountHeader	アカウントを切り替える
 macSettings.changePassword	パスワードを変更…
 macSettings.signOut	サインアウト…
 macSettings.switchAccount	このアカウントに切り替える
@@ -732,6 +743,10 @@ fileInfo.restoreMessage	ファイルは %@ の状態に戻ります。現在の�
 fileInfo.restoreConfirm	復元
 fileInfo.sectionSharing	共有
 fileInfo.notShared	共有リンクはありません
+fileInfo.createLink	リンクを作成
+fileInfo.newLink	新規リンク
+fileInfo.versionCurrent	現在
+fileInfo.quickFavorite	お気に入り
 fileInfo.versionActions	バージョンの操作
 fileInfo.versionViewText	テキストを表示
 fileInfo.versionTextTruncated	このバージョンの先頭部分のみ表示しています。
@@ -1172,6 +1187,8 @@ twoFactor.shareCodesButton	コードを共有
 twoFactor.turnOffButton	オフにする
 twoFactor.turnOnButton	オンにする
 browse.actionAvailableOffline	オフラインで利用可能
+browse.actionKeepOffline	オフラインで保持
+browse.actionShowInFolder	フォルダに表示
 browse.actionSaveToDevice	デバイスに保存
 previewToolbar.saveToDevice	デバイスに保存
 downloadQueue.savedToPhotos	写真に保存しました
@@ -1200,6 +1217,8 @@ shareUpload.nameLabel	ファイル名
 shareUpload.namesLabel	ファイル名
 shareUpload.nameHint	アップロード時のファイル名です。拡張子は変わりません。
 spotlight.placeholder	ファイルとフォルダを検索
+spotlight.hintMove	移動
+spotlight.hintOpen	開く
 trash.title	ゴミ箱
 trash.moveToTrash	ゴミ箱に移動
 trash.deletePermanently	完全に削除
@@ -1292,6 +1311,7 @@ shareUpload.failureTooLarge#other	%lld 個のファイルをアップロード�
 shareUpload.startedDeferred	NextExplorer 用に保存しました。アプリを開いて大きなファイルをアップロードしてください。
 menu.goToFolderPlaceholder	書類/レポート
 menu.toggleSidebar	サイドバーの表示を切り替える
+menu.hideInspector	インスペクタを隠す
 emptyState.dropHintFiles	「ファイル」や「写真」からファイルをここにドラッグすることもできます。
 emptyState.dropHintFinder	Finderからファイルをここにドラッグすることもできます。
 login.stepServer	サーバー
@@ -1303,3 +1323,10 @@ common.increase	増やす
 common.moreInfo	詳細情報
 versionedFiles.pathHeader	パス
 versionedFiles.versionsHeader	バージョン
+fileInfo.sectionSelected	選択中
+fileInfo.selectionFootnote	共有、バージョン、アクセス権は項目を1つ選択すると表示されます。
+fileInfo.moreSelected	ほか %lld 件
+fileInfo.dateRange	%1$@～%2$@
+browse.folderCount#other	%lld個のフォルダ
+browse.fileCount#other	%lld個のファイル
+browse.contentSummary	%1$@、%2$@

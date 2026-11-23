@@ -97,6 +97,10 @@ browse.offlineBannerDetail	Visar en sparad kopia från %@
 browse.actionCopy	Kopiera
 browse.destinationPickerMoveTitle	Flytta till…
 browse.destinationPickerConfirmMove	Flytta hit
+browse.destinationPickerCopyTitle	Kopiera till…
+browse.destinationPickerConfirmCopy	Kopiera hit
+browse.actionMoveTo	Flytta till…
+browse.actionCopyTo	Kopiera till…
 browse.destinationPickerNoFolders	Inga mappar här
 browse.destinationPickerLoadFailed	Det gick inte att läsa in mapparna.
 browse.destinationPickerRecent	Senaste
@@ -403,6 +407,7 @@ fileInfo.rowDateTaken	Tagen datum
 fileInfo.rowDuration	Längd
 fileInfo.partialScan	Räknade en delvis genomsökning: den här mappen är mycket stor.
 permissions.title	Behörigheter
+permissions.titleFor	Behörigheter för ”%@”
 permissions.sectionMode	Läge
 permissions.numericLabel	Numeriskt
 permissions.applyToEnclosed	Tillämpa på inneslutna objekt
@@ -547,7 +552,7 @@ login.plaintextWarning	Den här anslutningen är inte krypterad. Ditt lösenord 
 error.sessionExpired	Din session har gått ut. Logga in igen.
 error.rateLimited	För många förfrågningar. Försök igen strax.
 error.network	Det gick inte att nå servern.
-error.offline	Du är offline. Anslut till internet och försök igen.
+error.offline	Det går inte att nå servern. Kontrollera anslutningen och försök igen.
 error.decoding	Servern svarade oväntat.
 error.server	Serverfel (%lld).
 error.forbidden	Du har inte behörighet att göra det.
@@ -697,6 +702,10 @@ appearance.light	Ljust
 appearance.dark	Mörkt
 browse.myFiles	Mina filer
 browse.myFilesSubtitle	Syns bara för dig
+browse.home	Hem
+browse.noValue	--
+browse.today	Idag
+browse.yesterday	Igår
 downloadQueue.navigationTitle	Nedladdningskö
 downloadQueue.emptyList	Inga pågående nedladdningar.
 downloadQueue.statusSaved	Sparad
@@ -714,6 +723,8 @@ browse.downloadSavedTo	Sparad i %@
 browse.downloadSavedAllTo	Sparade %1$lld objekt i %2$@
 macSettings.labelFormat	%@:
 macSettings.addAccount	Lägg till konto…
+macSettings.accountSettings	Kontoinställningar
+macSettings.switchAccountHeader	Byt konto
 macSettings.changePassword	Ändra lösenord…
 macSettings.signOut	Logga ut…
 macSettings.switchAccount	Byt till det här kontot
@@ -744,6 +755,10 @@ fileInfo.restoreMessage	Filen återgår till hur den var %@. Det nuvarande inneh
 fileInfo.restoreConfirm	Återställ
 fileInfo.sectionSharing	Delning
 fileInfo.notShared	Inga delningslänkar
+fileInfo.createLink	Skapa länk
+fileInfo.newLink	Ny länk
+fileInfo.versionCurrent	Aktuell
+fileInfo.quickFavorite	Favorit
 fileInfo.versionActions	Versionsåtgärder
 fileInfo.versionViewText	Visa text
 fileInfo.versionTextTruncated	Bara början av den här versionen visas.
@@ -1190,6 +1205,8 @@ twoFactor.shareCodesButton	Dela koder
 twoFactor.turnOffButton	Slå av
 twoFactor.turnOnButton	Slå på
 browse.actionAvailableOffline	Tillgängligt offline
+browse.actionKeepOffline	Behåll offline
+browse.actionShowInFolder	Visa i mapp
 browse.actionSaveToDevice	Spara på enheten
 previewToolbar.saveToDevice	Spara på enheten
 downloadQueue.savedToPhotos	Sparad i Bilder
@@ -1218,6 +1235,8 @@ shareUpload.nameLabel	Filnamn
 shareUpload.namesLabel	Filnamn
 shareUpload.nameHint	Namnet som filen laddas upp med. Filändelsen förblir densamma.
 spotlight.placeholder	Sök efter filer och mappar
+spotlight.hintMove	Flytta
+spotlight.hintOpen	Öppna
 trash.title	Papperskorg
 trash.moveToTrash	Flytta till papperskorgen
 trash.deletePermanently	Radera permanent
@@ -1328,6 +1347,7 @@ shareUpload.failureTooLarge#other	%lld filer laddades inte upp. Anslutningen til
 shareUpload.startedDeferred	Sparat för NextExplorer. Öppna appen för att ladda upp dina stora filer.
 menu.goToFolderPlaceholder	Dokument/Rapporter
 menu.toggleSidebar	Visa eller göm sidofält
+menu.hideInspector	Göm inspektör
 emptyState.dropHintFiles	Du kan också dra filer hit från Filer eller Bilder.
 emptyState.dropHintFinder	Du kan också dra filer hit från Finder.
 login.stepServer	Server
@@ -1339,3 +1359,12 @@ common.increase	Öka
 common.moreInfo	Mer information
 versionedFiles.pathHeader	Sökväg
 versionedFiles.versionsHeader	Versioner
+fileInfo.sectionSelected	Markerade
+fileInfo.selectionFootnote	Delning, versioner och behörigheter visas när ett objekt är markerat.
+fileInfo.moreSelected	%lld till
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld mapp
+browse.folderCount#other	%lld mappar
+browse.fileCount#one	%lld fil
+browse.fileCount#other	%lld filer
+browse.contentSummary	%1$@, %2$@
