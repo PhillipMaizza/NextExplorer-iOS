@@ -33,9 +33,9 @@ public extension View {
     /// like a screen background normally would.
     func backgroundGradient() -> some View {
         #if os(macOS)
-            // Frosted like the window, and each screen paints its own: a navigation stack keeps the
-            // screens below the one on show alive, and a see through screen would show them.
-            macFrostedWindow()
+            // Each screen paints its own card surface: a navigation stack keeps the screens below
+            // the one on show alive, and a see through screen would show them.
+            background(Color.macCard.ignoresSafeArea())
         #else
             background(LinearGradient.backgroundPrimary.ignoresSafeArea())
         #endif

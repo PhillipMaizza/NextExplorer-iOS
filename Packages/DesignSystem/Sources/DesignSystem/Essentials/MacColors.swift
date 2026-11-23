@@ -22,7 +22,7 @@
         }
     }
 
-    extension View {
+    public extension View {
         func macDisabledDim() -> some View {
             modifier(MacDisabledDim())
         }

@@ -256,4 +256,17 @@ public enum PersonalSpace {
     public static func displayName(forSegment segment: String, isFirstSegment: Bool) -> String {
         isFirstSegment && segment == rootPath ? L10n.Browse.myFiles : segment
     }
+
+    public static func folderTitle(_ path: String) -> String {
+        let segments = path.split(separator: "/").map(String.init)
+        guard let last = segments.last else { return L10n.Browse.navigationTitle }
+        return displayName(forSegment: last, isFirstSegment: segments.count == 1)
+    }
+
+    public static func trail(_ path: String) -> String {
+        let names = path.split(separator: "/").enumerated().map { index, segment in
+            displayName(forSegment: String(segment), isFirstSegment: index == 0)
+        }
+        return PathTrail.text(names.joined(separator: "/"))
+    }
 }

@@ -7,9 +7,36 @@
         static let padding: CGFloat = .space24
         static let spacing: CGFloat = .space16
         static let messageSpacing: CGFloat = .space8
+        static let successBadgeSize: CGFloat = .size32
     }
 
     private typealias Metrics = MacFormSheetMetrics
+
+    public struct MacDialogHeading: View {
+        let title: String
+        let message: String?
+
+        public init(title: String, message: String?) {
+            self.title = title
+            self.message = message
+        }
+
+        public var body: some View {
+            VStack(alignment: .leading, spacing: Metrics.messageSpacing) {
+                Text(title).type(.headline4)
+                if let message {
+                    Text(message)
+                        .type(.body2(.regular), style: .secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    public enum MacFormSheetLayout {
+        case columns
+        case stacked
+    }
 
     /// A native Mac sheet around a form: its title, the labeled fields, any error, then Cancel
     /// (Esc) and the confirm button (Return) at the trailing edge.
@@ -26,7 +53,11 @@
         /// An extra button left of Cancel, such as "View in Shared".
         var secondaryTitle: String?
         var onSecondary: () -> Void = {}
+        var destructiveTitle: String?
+        var onDestructive: () -> Void = {}
         var width: CGFloat = Metrics.width
+        var layout = MacFormSheetLayout.columns
+        var isSuccess = false
         let onCancel: () -> Void
         let onConfirm: () -> Void
         @ViewBuilder let content: () -> Content
@@ -42,7 +73,11 @@
             cancelTitle: String? = L10n.Common.cancel,
             secondaryTitle: String? = nil,
             onSecondary: @escaping () -> Void = {},
+            destructiveTitle: String? = nil,
+            onDestructive: @escaping () -> Void = {},
             width: CGFloat = MacFormSheetMetrics.width,
+            layout: MacFormSheetLayout = .columns,
+            isSuccess: Bool = false,
             onCancel: @escaping () -> Void,
             onConfirm: @escaping () -> Void,
             @ViewBuilder content: @escaping () -> Content,
@@ -57,7 +92,11 @@
             self.cancelTitle = cancelTitle
             self.secondaryTitle = secondaryTitle
             self.onSecondary = onSecondary
+            self.destructiveTitle = destructiveTitle
+            self.onDestructive = onDestructive
             self.width = width
+            self.layout = layout
+            self.isSuccess = isSuccess
             self.onCancel = onCancel
             self.onConfirm = onConfirm
             self.content = content
@@ -66,18 +105,29 @@
 
         public var body: some View {
             VStack(alignment: .leading, spacing: Metrics.spacing) {
-                VStack(alignment: .leading, spacing: Metrics.messageSpacing) {
-                    Text(title).type(.headline4)
-                    if let message {
-                        Text(message)
-                            .type(.body2(.regular), style: .secondary)
-                            .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: .space12) {
+                    if isSuccess {
+                        IconKit.checkmark
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.white)
+                            .frame(width: Metrics.successBadgeSize, height: Metrics.successBadgeSize)
+                            .background(Circle().fill(Color.positive))
+                            .accessibilityHidden(true)
                     }
+                    MacDialogHeading(title: title, message: message)
                 }
-                Form {
-                    content()
+                switch layout {
+                case .columns:
+                    Form {
+                        content()
+                    }
+                    .formStyle(.columns)
+                case .stacked:
+                    VStack(alignment: .leading, spacing: Metrics.spacing) {
+                        content()
+                    }
+                    .toggleStyle(.macSwitch)
                 }
-                .formStyle(.columns)
                 below()
                 if let errorMessage {
                     Text(errorMessage).type(.body2(.regular), style: .error)
@@ -91,7 +141,12 @@
                     onSecondary: onSecondary,
                     onCancel: onCancel,
                     onConfirm: onConfirm
-                )
+                ) {
+                    if let destructiveTitle {
+                        Button(destructiveTitle, role: .destructive, action: onDestructive)
+                            .buttonStyle(.macDS(.secondary))
+                    }
+                }
             }
             .padding(Metrics.padding)
             .frame(width: width)
@@ -109,7 +164,11 @@
             cancelTitle: String? = L10n.Common.cancel,
             secondaryTitle: String? = nil,
             onSecondary: @escaping () -> Void = {},
+            destructiveTitle: String? = nil,
+            onDestructive: @escaping () -> Void = {},
             width: CGFloat = MacFormSheetMetrics.width,
+            layout: MacFormSheetLayout = .columns,
+            isSuccess: Bool = false,
             onCancel: @escaping () -> Void,
             onConfirm: @escaping () -> Void,
             @ViewBuilder content: @escaping () -> Content
@@ -124,7 +183,11 @@
                 cancelTitle: cancelTitle,
                 secondaryTitle: secondaryTitle,
                 onSecondary: onSecondary,
+                destructiveTitle: destructiveTitle,
+                onDestructive: onDestructive,
                 width: width,
+                layout: layout,
+                isSuccess: isSuccess,
                 onCancel: onCancel,
                 onConfirm: onConfirm,
                 content: content,
@@ -268,5 +331,14 @@
             TextField("Email:", text: .constant(""))
             SecureField("Password:", text: .constant(""))
         }
+    }
+
+    #Preview("Heading") {
+        VStack(alignment: .leading, spacing: .space16) {
+            MacDialogHeading(title: "Two factor authentication", message: "Scan the code with your authenticator app.")
+            MacDialogHeading(title: "Rename", message: nil)
+        }
+        .padding(.space24)
+        .frame(width: MacFormSheetMetrics.width)
     }
 #endif
