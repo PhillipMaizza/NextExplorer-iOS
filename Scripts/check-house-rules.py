@@ -53,6 +53,14 @@ PUNCTUATION_DASH = re.compile(r"[\u2014\u2013]|\s--?\s|\w--\w")
 # A MARK separator or a DocC list item opens with a dash that is markup, not punctuation.
 MARKUP_DASH = re.compile(r"^//[/!]?\s*(MARK:\s*-|-\s)")
 RAW_STRING = re.compile(r"\b(Text|Label|Button|navigationTitle|accessibilityLabel|help)\(\s*\"[^\"]*[A-Za-z]")
+DS_TOKEN_VALUES = r"(2|4|6|8|12|16|20|24|32|40|44|48|56|64|96|192)(\.0)?"
+TOKEN_LITERAL = re.compile(
+    r":\s*CGFloat\s*=\s*" + DS_TOKEN_VALUES + r"\s*$"
+    r"|\b(padding|spacing|cornerRadius|width|height|minWidth|maxWidth|minHeight|maxHeight|lineWidth|radius)"
+    r"\s*[:(]\s*(\.\w+\s*,\s*)?" + DS_TOKEN_VALUES + r"\s*[,)]"
+)
+SYMBOL_LITERAL = re.compile(r"\b(Image\(systemName|systemImage|NSImage\(systemSymbolName):\s*\"")
+ICON_CATALOG = "IconKit.swift"
 LOADING_FLAG = re.compile(r"\bvar\s+(isLoading|hasLoaded)\w*\b")
 BOOL_DECL = re.compile(r"\b(?:let|var)\s+(\w+)\s*:\s*Bool\b")
 BOOL_PREFIX = re.compile(
@@ -120,7 +128,7 @@ def comment_of(text):
 
 def first_preview_line(content):
     for number, text in enumerate(content.splitlines(), start=1):
-        if text.startswith("#Preview"):
+        if text.lstrip().startswith("#Preview"):
             return number
     return None
 
@@ -148,6 +156,10 @@ def check_lines(path, lines, content, denylist):
             code = text.split("//", 1)[0]
             if RAW_STRING.search(code) and not in_preview and not path.endswith("Previews.swift"):
                 findings.append(f"{where}: raw string, use L10n: {text.strip()}")
+            if TOKEN_LITERAL.search(code) and not in_preview:
+                findings.append(f"{where}: literal equal to a DS token, use the token: {text.strip()}")
+            if SYMBOL_LITERAL.search(code) and not in_preview and not path.endswith(ICON_CATALOG):
+                findings.append(f"{where}: symbol name literal, add it to IconKit: {text.strip()}")
             if LOADING_FLAG.search(code) and "{" not in code:
                 findings.append(f"{where}: stored loading flag, model a DataPhase")
             for name in BOOL_DECL.findall(code):
@@ -331,16 +343,40 @@ def check_change(diff_args, old_spec, new_spec, denylist):
     return findings, [path for path, (status, _) in statuses.items() if status != "D"]
 
 
+def check_worktree(paths, denylist):
+    """The working tree copies of `paths` against HEAD: what the editor hook runs after each save."""
+    findings = []
+    for given in paths:
+        file = pathlib.Path(given).resolve()
+        if not file.is_file() or ROOT not in file.parents:
+            continue
+        path = str(file.relative_to(ROOT))
+        new = file.read_text(errors="replace")
+        old = blob(f"HEAD:{path}")
+        if old is None:
+            lines = list(enumerate(new.splitlines(), start=1))
+        else:
+            lines = parse_diff(git("diff", "-U0", "--no-color", "HEAD", "--", path)).get(path, [])
+        findings += check_lines(path, lines, new, denylist)
+        findings += check_size(path, old, new)
+        if old is None:
+            findings += check_new_file(path, new)
+    return findings
+
+
 def main():
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--staged", action="store_true")
     group.add_argument("--base")
     group.add_argument("--commit-msg", dest="commit_msg")
+    group.add_argument("--files", nargs="+")
     args = parser.parse_args()
     denylist = read_denylist()
 
-    if args.commit_msg:
+    if args.files:
+        findings = check_worktree(args.files, denylist)
+    elif args.commit_msg:
         findings = check_commit_message(pathlib.Path(args.commit_msg).read_text(), denylist)
     elif args.staged:
         findings, changed = check_change(["--cached"], lambda p: f"HEAD:{p}", lambda p: f":{p}", denylist)
