@@ -56,8 +56,26 @@ class SourceRuleTests(unittest.TestCase):
     def test_a_raw_string_in_a_view_is_found(self):
         self.assertEqual(len(lines_of(SOURCE, 'Text("Hi")', 'Button("Go") {}', '.navigationTitle("Trash")')), 3)
 
+    def test_a_literal_equal_to_a_ds_token_is_found(self):
+        found = lines_of(SOURCE, "static let gap: CGFloat = 16", ".padding(48)", ".frame(width: 1, height: 24)", ".padding(.top, 8)")
+        self.assertEqual(len(found), 4)
+
+    def test_tokens_and_other_literals_pass(self):
+        self.assertEqual(
+            lines_of(SOURCE, "static let gap: CGFloat = .space16", "static let width: CGFloat = 340", "static let columns = 2", ".frame(width: 1)"),
+            [],
+        )
+
+    def test_a_symbol_name_outside_iconkit_is_found(self):
+        self.assertEqual(len(lines_of(SOURCE, 'Image(systemName: "trash")', 'Label(L10n.Trash.title, systemImage: "trash")')), 2)
+        self.assertEqual(lines_of("Packages/DesignSystem/Sources/DesignSystem/Essentials/IconKit.swift", 'Image(systemName: "trash")'), [])
+
+    def test_an_indented_preview_counts_as_a_preview(self):
+        content = "#if os(macOS)\n    struct A {}\n    #Preview {\n        Text(\"Hi\")\n    }\n#endif\n"
+        self.assertEqual(check.check_lines(SOURCE, [(4, '        Text("Hi")')], content, []), [])
+
     def test_localized_and_symbol_strings_pass(self):
-        self.assertEqual(lines_of(SOURCE, "Text(L10n.Trash.title)", 'Text(verbatim: "%")', 'Image(systemName: "trash")'), [])
+        self.assertEqual(lines_of(SOURCE, "Text(L10n.Trash.title)", 'Text(verbatim: "%")', "Image(IconKit.trash)"), [])
 
     def test_a_raw_string_in_a_preview_or_test_passes(self):
         content = "struct A {}\n#Preview {\n    Text(\"Hi\")\n}\n"
