@@ -65,15 +65,7 @@ struct LoginSecondFactorPage: View {
                     codeModeButton
 
                     if let errorMessage = store.errorMessage, !errorMessage.isEmpty {
-                        #if os(macOS)
-                            MacNote(errorMessage, kind: .error)
-                                .transition(.opacity)
-                        #else
-                            Text(errorMessage)
-                                .type(.body2(.semibold), style: .error)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .transition(.opacity)
-                        #endif
+                        LoginErrorNote(message: errorMessage)
                     }
 
                     #if os(iOS)

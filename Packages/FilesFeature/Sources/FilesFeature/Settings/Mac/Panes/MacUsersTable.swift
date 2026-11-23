@@ -85,7 +85,7 @@
         let onSelect: () -> Void
 
         var body: some View {
-            Button(action: onSelect) {
+            MacTableRowButton(isShaded: isShaded, isSelected: isSelected, action: onSelect) {
                 HStack(spacing: MacTableMetrics.columnSpacing) {
                     HStack(spacing: .space8) {
                         AvatarView(
@@ -113,13 +113,7 @@
                     }
                     .frame(width: Metrics.typeWidth, alignment: .leading)
                 }
-                .lineLimit(1)
-                .foregroundStyle(Color.macChromeText)
-                .macTableRow(isShaded: isShaded, isSelected: isSelected)
             }
-            .buttonStyle(.plain)
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(isSelected ? .isSelected : [])
         }
     }
 
