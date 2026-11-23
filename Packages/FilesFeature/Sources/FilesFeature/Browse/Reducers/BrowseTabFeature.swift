@@ -78,7 +78,7 @@ public struct BrowseTabFeature {
         case newFileInVisibleFolder
         /// Mac ⌘[: leave the visible folder for the screen under it.
         case goBack
-        case inspectorClosedForBack
+        case inspectorClosedForBack(StackElementID)
         /// Mac ⌘↑: open the folder that contains the visible one.
         case goToEnclosingFolder
         /// Mac ⌘]: reopen the folder last left by going back.
@@ -140,14 +140,15 @@ public struct BrowseTabFeature {
                         return .run { send in
                             await send(.path(.element(id: id, action: .infoDismissed)), animation: DSMotion.quickFade)
                             try await clock.sleep(for: .seconds(DSMotion.quickFadeDuration))
-                            await send(.inspectorClosedForBack)
+                            await send(.inspectorClosedForBack(id))
                         }
                     }
                 #endif
                 state.goBack()
                 return .none
 
-            case .inspectorClosedForBack:
+            case let .inspectorClosedForBack(id):
+                guard state.trash == nil, state.path.ids.last == id else { return .none }
                 state.goBack()
                 return .none
 
