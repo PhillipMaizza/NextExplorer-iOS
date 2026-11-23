@@ -23,8 +23,10 @@
                 isWorking: store.isImporting,
                 errorMessage: store.failure.map(\.message),
                 cancelTitle: L10n.Common.close,
-                secondaryTitle: secondaryTitle,
-                onSecondary: secondaryAction,
+                destructiveTitle: store.pendingFile == nil && store.installedSummary != nil
+                    ? L10n.ClientCertificate.remove
+                    : nil,
+                onDestructive: { store.send(.removeTapped) },
                 onCancel: { store.send(.closeTapped) },
                 onConfirm: confirmAction
             ) {
@@ -41,14 +43,21 @@
                 .padding(.bottom, Metrics.rowSpacing)
                 if let file = store.pendingFile {
                     LabeledContent(L10n.ClientCertificate.fileLabel) {
-                        Text(file.name).lineLimit(1).truncationMode(.middle)
+                        HStack(spacing: .space8) {
+                            Text(file.name).lineLimit(1).truncationMode(.middle)
+                            Spacer(minLength: .zero)
+                            Button(L10n.ClientCertificate.chooseAnother) { store.send(.chooseFileTapped) }
+                                .buttonStyle(.macDS(.secondary, size: .small))
+                        }
                     }
                     .padding(.bottom, Metrics.rowSpacing)
-                    SecureField(
-                        L10n.ClientCertificate.passwordLabel,
-                        text: $store.passphrase.sending(\.passphraseChanged),
-                        prompt: Text(L10n.ClientCertificate.passwordPrompt)
-                    )
+                    LabeledContent(L10n.ClientCertificate.passwordLabel) {
+                        MacSecureField(
+                            L10n.ClientCertificate.passwordLabel,
+                            text: $store.passphrase.sending(\.passphraseChanged),
+                            prompt: Text(L10n.ClientCertificate.passwordPrompt)
+                        )
+                    }
                 }
             }
         }
@@ -60,19 +69,8 @@
             return store.installedSummary == nil ? L10n.ClientCertificate.chooseFile : L10n.ClientCertificate.replace
         }
 
-        private var secondaryTitle: String? {
-            if store.pendingFile != nil {
-                return L10n.ClientCertificate.chooseAnother
-            }
-            return store.installedSummary == nil ? nil : L10n.ClientCertificate.remove
-        }
-
         private func confirmAction() {
             store.send(store.pendingFile == nil ? .chooseFileTapped : .installTapped)
-        }
-
-        private func secondaryAction() {
-            store.send(store.pendingFile == nil ? .removeTapped : .chooseFileTapped)
         }
     }
 

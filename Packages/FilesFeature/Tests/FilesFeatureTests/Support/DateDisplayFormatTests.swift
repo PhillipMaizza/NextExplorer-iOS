@@ -1,5 +1,6 @@
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
@@ -65,5 +66,25 @@ struct DateDisplayFormatTests {
         let withTime = DateDisplayFormat.dashYearMonthDay.string(from: date, includeTime: true)
         #expect(withTime.hasPrefix(dateOnly))
         #expect(withTime != dateOnly)
+    }
+
+    @Test
+    func tableStringShowsTheDateAloneBeforeYesterday() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .gmt
+        let format = DateDisplayFormat.dashYearMonthDay
+        #expect(format
+            .tableString(from: date, now: date.addingTimeInterval(2 * 86_400), calendar: calendar) == "2023-11-15")
+    }
+
+    @Test
+    func tableStringNamesTodayAndYesterdayWithTheTime() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .gmt
+        let format = DateDisplayFormat.dashYearMonthDay
+        let today = format.tableString(from: date, now: date, calendar: calendar)
+        let yesterday = format.tableString(from: date, now: date.addingTimeInterval(86_400), calendar: calendar)
+        #expect(today.hasPrefix("\(L10n.Browse.today), "))
+        #expect(yesterday.hasPrefix("\(L10n.Browse.yesterday), "))
     }
 }

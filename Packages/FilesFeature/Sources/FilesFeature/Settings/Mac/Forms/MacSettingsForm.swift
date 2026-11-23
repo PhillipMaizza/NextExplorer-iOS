@@ -4,64 +4,8 @@
     import SwiftUI
 
     private enum Metrics {
-        static let headerTop: CGFloat = .space32
         static let rowSpacing: CGFloat = .space8
         static let noteSpacing: CGFloat = .space2
-        static let cardInset: CGFloat = .space16
-        static let headerInset: CGFloat = .size40
-    }
-
-    struct MacSettingsPaneCard<Content: View, Tools: View>: View {
-        let title: String?
-        let subtitle: String?
-        @ViewBuilder let content: () -> Content
-        @ViewBuilder let tools: () -> Tools
-
-        init(
-            title: String?,
-            subtitle: String?,
-            @ViewBuilder content: @escaping () -> Content,
-            @ViewBuilder tools: @escaping () -> Tools
-        ) {
-            self.title = title
-            self.subtitle = subtitle
-            self.content = content
-            self.tools = tools
-        }
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: .zero) {
-                if let title {
-                    HStack(spacing: .space16) {
-                        VStack(alignment: .leading, spacing: .space8) {
-                            Text(title)
-                                .type(.display)
-                                .accessibilityAddTraits(.isHeader)
-                            if let subtitle {
-                                Text(subtitle)
-                                    .type(.body2(.regular), style: .secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        Spacer(minLength: .zero)
-                        tools()
-                    }
-                    .padding(.horizontal, Metrics.headerInset)
-                    .padding(.top, Metrics.headerTop)
-                }
-                content()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .macCard()
-            .padding([.trailing, .bottom], Metrics.cardInset)
-        }
-    }
-
-    extension MacSettingsPaneCard where Tools == EmptyView {
-        init(title: String?, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
-            self.init(title: title, subtitle: subtitle, content: content) { EmptyView() }
-        }
     }
 
     /// A row title with a secondary line under it, for grouped rows that need explaining.
@@ -143,31 +87,5 @@
         .padding()
         .previewCanvasWidth(.dialog)
         .background(Color.macCard)
-    }
-
-    #Preview("Pane card") {
-        MacSettingsPaneCard(title: "Thumbnails", subtitle: "Control how previews are generated.") {
-            MacFormPage {
-                MacFormGroup("General") {
-                    MacSwitchRow("Show Hidden Files", isOn: .constant(true))
-                }
-            }
-        } tools: {
-            MacPaneSaveButton(title: "Save Changes", isSaving: false, isEnabled: true) {}
-        }
-        .background(Color.macChrome)
-        .previewCanvas(.settingsPane)
-    }
-
-    #Preview("Pane card, no subtitle") {
-        MacSettingsPaneCard(title: "General", subtitle: nil) {
-            MacFormPage {
-                MacFormGroup("General") {
-                    MacSwitchRow("Show Hidden Files", isOn: .constant(true))
-                }
-            }
-        }
-        .background(Color.macChrome)
-        .previewCanvas(.settingsPane)
     }
 #endif

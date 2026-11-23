@@ -321,4 +321,11 @@ struct UploadSettingsFeatureTests {
             $0.errorMessage = L10n.Error.decoding
         }
     }
+
+    @Test("Chunk sizes offer the doublings up to the server ceiling plus the saved size")
+    func chunkSizeOptionsAreDoublingsPlusTheSavedSize() {
+        let state = loadedState(UploadSettings(isChunkedEnabled: true, chunkSizeBytes: 24 * mib), maxMiB: 64)
+
+        #expect(state.chunkSizeOptions == [1, 2, 4, 8, 16, 24, 32, 64])
+    }
 }

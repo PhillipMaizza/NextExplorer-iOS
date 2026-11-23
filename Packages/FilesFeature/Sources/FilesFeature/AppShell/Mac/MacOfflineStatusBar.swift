@@ -130,7 +130,7 @@
 
     #Preview("Failed") {
         MacOfflineStatusBarContent(
-            store: statusBarPreviewStore(.failed("You're offline. Connect to the internet and try again."))
+            store: statusBarPreviewStore(.failed("Can't reach the server. Check your connection and try again."))
         )
         .frame(width: 720)
     }

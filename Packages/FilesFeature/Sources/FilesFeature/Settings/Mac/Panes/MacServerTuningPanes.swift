@@ -28,13 +28,20 @@
                         help: L10n.UploadSettings.chunkedEnableHelp,
                         isOn: $store.draft.isChunkedEnabled.sending(\.chunkedChanged)
                     )
-                    MacStepperRow(
-                        L10n.UploadSettings.chunkSize,
-                        help: L10n.UploadSettings.chunkSizeHelp,
-                        value: store.chunkSizeMiB,
-                        range: UploadSettings.minChunkSizeMiB ... store.maxChunkSizeMiB
-                    ) { store.send(.chunkSizeChanged($0)) }
-                        .disabled(!store.draft.isChunkedEnabled)
+                    MacFormRow {
+                        MacRowTitle(title: L10n.UploadSettings.chunkSize, subtitle: L10n.UploadSettings.chunkSizeHelp)
+                    } control: {
+                        MacPopup(
+                            L10n.UploadSettings.chunkSize,
+                            valueLabel: L10n.UploadSettings.chunkSizeValue(store.chunkSizeMiB),
+                            selection: Binding(get: { store.chunkSizeMiB }, set: { store.send(.chunkSizeChanged($0)) })
+                        ) {
+                            ForEach(store.chunkSizeOptions, id: \.self) { mib in
+                                Text(L10n.UploadSettings.chunkSizeValue(mib)).tag(mib)
+                            }
+                        }
+                    }
+                    .disabled(!store.draft.isChunkedEnabled)
                     MacSwitchRow(
                         L10n.UploadSettings.autoFallback,
                         help: L10n.UploadSettings.autoFallbackHelp,

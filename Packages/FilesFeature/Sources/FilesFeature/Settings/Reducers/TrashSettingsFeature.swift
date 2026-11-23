@@ -112,6 +112,14 @@ public struct TrashSettingsFeature {
         public var zones: [TrashZone] = []
         public var zonesPhase: DataPhase = .idle
         public var zonesError: String?
+
+        var latestMaintenanceZone: TrashZone? {
+            zones
+                .compactMap { zone in zone.lastPass?.at.flatMap(ServerTimestamp.date(from:)).map { (zone, $0) } }
+                .max { $0.1 < $1.1 }?
+                .0
+        }
+
         public var verification: [TrashVerification]?
         public var isVerifying = false
         public var isMaintaining = false

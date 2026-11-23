@@ -17,8 +17,10 @@ struct UserManagementCreationTests: UserManagementTestSupport {
 
     @Test
     func creatingAUserSendsTheTrimmedRequestAndAppendsItToTheList() async {
-        let created = makeUser(id: "9")
-        let store = makeStore(loadedState([makeUser(id: "1", admin: true)]), createUser: { created })
+        let admin = makeUser(id: "1", admin: true)
+        let created = makeUser(id: "9", password: false)
+        let listed = makeUser(id: "9")
+        let store = makeStore(loadedState([admin]), users: { [admin, listed] }, createUser: { created })
 
         await store.send(.createUserTapped) { $0.createSheet = .init() }
         await store.send(.createEmailChanged("new@example.com")) { $0.createSheet?.email = "new@example.com" }
@@ -31,6 +33,7 @@ struct UserManagementCreationTests: UserManagementTestSupport {
             $0.users.append(created)
             $0.toast = L10n.UserManagement.toastUserCreated
         }
+        await receiveCreatedUserReload(store, created: created, listed: listed)
         #expect(calls.value == [.createUser(CreateUserRequest(
             email: "new@example.com",
             username: "newbie",
@@ -44,8 +47,9 @@ struct UserManagementCreationTests: UserManagementTestSupport {
         arguments: ["", TestValue.blank]
     )
     func aBlankUsernameIsOmitted(_ username: String) async {
-        let created = makeUser(id: "9")
-        let store = makeStore(loadedState([]), createUser: { created })
+        let created = makeUser(id: "9", password: false)
+        let listed = makeUser(id: "9")
+        let store = makeStore(loadedState([]), users: { [listed] }, createUser: { created })
 
         await store.send(.createUserTapped) { $0.createSheet = .init() }
         await store.send(.createEmailChanged("new@example.com")) { $0.createSheet?.email = "new@example.com" }
@@ -59,12 +63,32 @@ struct UserManagementCreationTests: UserManagementTestSupport {
             $0.users.append(created)
             $0.toast = L10n.UserManagement.toastUserCreated
         }
+        await receiveCreatedUserReload(store, created: created, listed: listed)
         #expect(calls.value == [.createUser(CreateUserRequest(
             email: "new@example.com",
             username: nil,
             password: "secret1",
             isAdmin: false
         ))])
+    }
+
+    private func receiveCreatedUserReload(
+        _ store: TestStoreOf<UserManagementFeature>,
+        created: User,
+        listed: User
+    ) async {
+        #if os(macOS)
+            await store.receive(\.userTapped) {
+                $0.detailUserID = created.id
+                $0.editDisplayName = created.displayName ?? ""
+                $0.editUsername = created.username
+                $0.editEmail = created.email ?? ""
+            }
+        #endif
+        await store.receive(\.usersResponse.success) {
+            $0.users[id: listed.id] = listed
+        }
+        #expect(store.state.users[id: created.id]?.hasLocalPassword == true)
     }
 
     struct CreateCase: Sendable {

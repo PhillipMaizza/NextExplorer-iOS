@@ -5,10 +5,6 @@
     import Localization
     import SwiftUI
 
-    private enum Metrics {
-        static let secretHeight: CGFloat = 42
-    }
-
     struct MacAPITokenCreateSheet: View {
         let store: StoreOf<APITokensFeature>
 
@@ -91,7 +87,6 @@
     struct MacAPITokenIssuedSheet: View {
         let issued: IssuedAPIToken
         let onDone: () -> Void
-        @State private var isCopied = false
 
         var body: some View {
             MacFormSheet(
@@ -102,25 +97,13 @@
                 onCancel: {},
                 onConfirm: onDone
             ) {
-                HStack(spacing: .space8) {
-                    Text(issued.secret)
-                        .type(.body3(.regular))
-                        .monospaced()
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Button(isCopied ? L10n.ApiTokens.copiedToken : L10n.ApiTokens.copyToken) {
-                        PlatformPasteboard.copy(issued.secret)
-                        isCopied = true
-                    }
-                    .buttonStyle(.macDS(.primary, size: .small))
-                    .fixedSize()
-                }
-                .padding(.leading, .space12)
-                .padding(.trailing, .space8)
-                .frame(height: Metrics.secretHeight)
-                .background(RoundedRectangle(cornerRadius: .radiusControl, style: .continuous).fill(Color.macRow))
+                MacCopyBox(
+                    issued.secret,
+                    isProminent: true,
+                    isMonospaced: true,
+                    copyTitle: L10n.ApiTokens.copyToken,
+                    copiedTitle: L10n.ApiTokens.copiedToken
+                )
             }
             .interactiveDismissDisabled()
         }

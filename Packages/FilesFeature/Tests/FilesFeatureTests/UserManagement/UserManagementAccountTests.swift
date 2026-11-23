@@ -23,8 +23,7 @@ struct UserManagementAccountTests: UserManagementTestSupport {
             username: "user2",
             email: "new@example.com",
             displayName: "Renamed",
-            roles: [],
-            authMethods: user.authMethods
+            roles: []
         )
         let store = makeStore(loadedState([user], detail: "2"), updateUser: { updated })
 
@@ -33,7 +32,14 @@ struct UserManagementAccountTests: UserManagementTestSupport {
         await store.send(.saveProfileTapped) { $0.isSavingProfile = true }
         await store.receive(\.profileResponse.success) {
             $0.isSavingProfile = false
-            $0.users[id: "2"] = updated
+            $0.users[id: "2"] = User(
+                id: "2",
+                username: "user2",
+                email: "new@example.com",
+                displayName: "Renamed",
+                roles: [],
+                authMethods: user.authMethods
+            )
             $0.editDisplayName = "Renamed"
             $0.editEmail = "new@example.com"
             $0.toast = L10n.UserManagement.toastProfileUpdated

@@ -49,6 +49,19 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
         return "\(dateText), \(Self.cache.timeFormatter.string(from: date))"
     }
 
+    public func tableString(from date: Date, now: Date, calendar: Calendar = .current) -> String {
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: now) ?? now
+        let day: String
+        if calendar.isDate(date, inSameDayAs: now) {
+            day = L10n.Browse.today
+        } else if calendar.isDate(date, inSameDayAs: yesterday) {
+            day = L10n.Browse.yesterday
+        } else {
+            return string(from: date)
+        }
+        return "\(day), \(Self.cache.timeFormatter.string(from: date))"
+    }
+
     private var dateFormatPattern: String? {
         switch self {
         case .system: nil

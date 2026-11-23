@@ -28,6 +28,12 @@ public struct UploadSettingsFeature {
             draft.chunkSizeMiB(maxMiB: maxChunkSizeMiB)
         }
 
+        var chunkSizeOptions: [Int] {
+            let doublings = sequence(first: UploadSettings.minChunkSizeMiB) { $0 * 2 }
+                .prefix { $0 <= maxChunkSizeMiB }
+            return Set(doublings + [chunkSizeMiB]).sorted()
+        }
+
         var isDirty: Bool {
             guard let loaded else { return false }
             return draft.isChunkedEnabled != loaded.isChunkedEnabled

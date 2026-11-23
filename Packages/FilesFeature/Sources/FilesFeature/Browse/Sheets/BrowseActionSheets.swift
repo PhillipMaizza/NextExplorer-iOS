@@ -216,6 +216,7 @@ struct BrowseListSheets: ViewModifier {
                             ? nil
                             : L10n.Browse.newFileTypeHint
                     },
+                    hint: L10n.Browse.newFileTypeHint,
                     shouldCapitalizeWords: false,
                     onConfirm: { store.send(.newFileConfirmed($0)) },
                     onCancel: { store.send(.newFileCancelled) }
