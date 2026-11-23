@@ -97,6 +97,10 @@ browse.offlineBannerDetail	%@의 저장된 사본을 표시하는 중
 browse.actionCopy	복사
 browse.destinationPickerMoveTitle	이동할 위치…
 browse.destinationPickerConfirmMove	여기로 이동
+browse.destinationPickerCopyTitle	복사할 위치…
+browse.destinationPickerConfirmCopy	여기로 복사
+browse.actionMoveTo	이동할 위치…
+browse.actionCopyTo	복사할 위치…
 browse.destinationPickerNoFolders	여기에 폴더가 없습니다
 browse.destinationPickerLoadFailed	폴더를 불러올 수 없습니다.
 browse.destinationPickerRecent	최근 항목
@@ -392,6 +396,7 @@ fileInfo.rowDateTaken	촬영한 날짜
 fileInfo.rowDuration	재생 시간
 fileInfo.partialScan	부분 스캔을 집계함: 이 폴더는 매우 큽니다.
 permissions.title	권한
+permissions.titleFor	“%@” 권한
 permissions.sectionMode	모드
 permissions.numericLabel	숫자
 permissions.applyToEnclosed	포함된 항목에 적용
@@ -536,7 +541,7 @@ login.plaintextWarning	이 연결은 암호화되지 않았습니다. 비밀번�
 error.sessionExpired	세션이 만료되었습니다. 다시 로그인하세요.
 error.rateLimited	요청이 너무 많습니다. 잠시 후 다시 시도하세요.
 error.network	서버에 연결할 수 없습니다.
-error.offline	오프라인 상태입니다. 인터넷에 연결하고 다시 시도하세요.
+error.offline	서버에 연결할 수 없습니다. 연결 상태를 확인하고 다시 시도하세요.
 error.decoding	서버가 예기치 않게 응답했습니다.
 error.server	서버 오류 (%lld).
 error.forbidden	이 작업을 수행할 권한이 없습니다.
@@ -686,6 +691,10 @@ appearance.light	라이트
 appearance.dark	다크
 browse.myFiles	내 파일
 browse.myFilesSubtitle	나만 볼 수 있음
+browse.home	홈
+browse.noValue	--
+browse.today	오늘
+browse.yesterday	어제
 downloadQueue.navigationTitle	다운로드 대기열
 downloadQueue.emptyList	진행 중인 다운로드가 없습니다.
 downloadQueue.statusSaved	저장됨
@@ -703,6 +712,8 @@ browse.downloadSavedTo	%@에 저장됨
 browse.downloadSavedAllTo	%1$lld개 항목을 %2$@에 저장함
 macSettings.labelFormat	%@:
 macSettings.addAccount	계정 추가…
+macSettings.accountSettings	계정 설정
+macSettings.switchAccountHeader	계정 전환
 macSettings.changePassword	암호 변경…
 macSettings.signOut	로그아웃…
 macSettings.switchAccount	이 계정으로 전환
@@ -732,6 +743,10 @@ fileInfo.restoreMessage	파일이 %@의 상태로 돌아갑니다. 현재 내용
 fileInfo.restoreConfirm	복원
 fileInfo.sectionSharing	공유
 fileInfo.notShared	공유 링크 없음
+fileInfo.createLink	링크 만들기
+fileInfo.newLink	새 링크
+fileInfo.versionCurrent	현재
+fileInfo.quickFavorite	즐겨찾기
 fileInfo.versionActions	버전 작업
 fileInfo.versionViewText	텍스트 보기
 fileInfo.versionTextTruncated	이 버전의 앞부분만 표시합니다.
@@ -1172,6 +1187,8 @@ twoFactor.shareCodesButton	코드 공유
 twoFactor.turnOffButton	끄기
 twoFactor.turnOnButton	켜기
 browse.actionAvailableOffline	오프라인 사용 가능
+browse.actionKeepOffline	오프라인으로 유지
+browse.actionShowInFolder	폴더에서 보기
 browse.actionSaveToDevice	기기에 저장
 previewToolbar.saveToDevice	기기에 저장
 downloadQueue.savedToPhotos	사진에 저장됨
@@ -1200,6 +1217,8 @@ shareUpload.nameLabel	파일 이름
 shareUpload.namesLabel	파일 이름
 shareUpload.nameHint	파일이 업로드될 때 사용할 이름입니다. 확장자는 그대로 유지됩니다.
 spotlight.placeholder	파일 및 폴더 검색
+spotlight.hintMove	이동
+spotlight.hintOpen	열기
 trash.title	휴지통
 trash.moveToTrash	휴지통으로 이동
 trash.deletePermanently	영구 삭제
@@ -1292,6 +1311,7 @@ shareUpload.failureTooLarge#other	파일 %lld개를 업로드하지 못했습니
 shareUpload.startedDeferred	NextExplorer용으로 저장했습니다. 앱을 열어 큰 파일을 업로드하세요.
 menu.goToFolderPlaceholder	문서/보고서
 menu.toggleSidebar	사이드바 보기 전환
+menu.hideInspector	속성 보기 숨기기
 emptyState.dropHintFiles	파일 또는 사진 앱에서 파일을 여기로 드래그할 수도 있습니다.
 emptyState.dropHintFinder	Finder에서 파일을 여기로 드래그할 수도 있습니다.
 login.stepServer	서버
@@ -1303,3 +1323,10 @@ common.increase	증가
 common.moreInfo	추가 정보
 versionedFiles.pathHeader	경로
 versionedFiles.versionsHeader	버전
+fileInfo.sectionSelected	선택됨
+fileInfo.selectionFootnote	공유, 버전 및 권한은 항목을 하나만 선택하면 표시됩니다.
+fileInfo.moreSelected	외 %lld개
+fileInfo.dateRange	%1$@~%2$@
+browse.folderCount#other	폴더 %lld개
+browse.fileCount#other	파일 %lld개
+browse.contentSummary	%1$@, %2$@

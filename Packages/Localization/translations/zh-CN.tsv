@@ -97,6 +97,10 @@ browse.offlineBannerDetail	正在显示来自 %@ 的已保存副本
 browse.actionCopy	拷贝
 browse.destinationPickerMoveTitle	移动到…
 browse.destinationPickerConfirmMove	移动到此处
+browse.destinationPickerCopyTitle	拷贝到…
+browse.destinationPickerConfirmCopy	拷贝到此处
+browse.actionMoveTo	移动到…
+browse.actionCopyTo	拷贝到…
 browse.destinationPickerNoFolders	此处没有文件夹
 browse.destinationPickerLoadFailed	无法加载文件夹。
 browse.destinationPickerRecent	最近使用
@@ -392,6 +396,7 @@ fileInfo.rowDateTaken	拍摄日期
 fileInfo.rowDuration	时长
 fileInfo.partialScan	已计入部分扫描：此文件夹非常大。
 permissions.title	权限
+permissions.titleFor	“%@”的权限
 permissions.sectionMode	模式
 permissions.numericLabel	数字
 permissions.applyToEnclosed	应用于所含项目
@@ -536,7 +541,7 @@ login.plaintextWarning	此连接未加密。您的密码和会话以明文形式
 error.sessionExpired	您的会话已过期。请重新登录。
 error.rateLimited	请求过多。请稍后重试。
 error.network	无法连接到服务器。
-error.offline	您已离线。请连接到互联网后重试。
+error.offline	无法连接服务器。请检查网络连接后重试。
 error.decoding	服务器响应异常。
 error.server	服务器错误 (%lld)。
 error.forbidden	您没有执行此操作的权限。
@@ -686,6 +691,10 @@ appearance.light	浅色
 appearance.dark	深色
 browse.myFiles	我的文件
 browse.myFilesSubtitle	仅你可见
+browse.home	主页
+browse.noValue	--
+browse.today	今天
+browse.yesterday	昨天
 downloadQueue.navigationTitle	下载队列
 downloadQueue.emptyList	没有进行中的下载。
 downloadQueue.statusSaved	已保存
@@ -703,6 +712,8 @@ browse.downloadSavedTo	已保存到 %@
 browse.downloadSavedAllTo	已将 %1$lld 项保存到 %2$@
 macSettings.labelFormat	%@：
 macSettings.addAccount	添加账户…
+macSettings.accountSettings	账户设置
+macSettings.switchAccountHeader	切换账户
 macSettings.changePassword	更改密码…
 macSettings.signOut	退出登录…
 macSettings.switchAccount	切换到此账户
@@ -732,6 +743,10 @@ fileInfo.restoreMessage	文件将恢复到 %@ 时的状态。当前内容会保�
 fileInfo.restoreConfirm	恢复
 fileInfo.sectionSharing	共享
 fileInfo.notShared	没有共享链接
+fileInfo.createLink	创建链接
+fileInfo.newLink	新链接
+fileInfo.versionCurrent	当前
+fileInfo.quickFavorite	收藏
 fileInfo.versionActions	版本操作
 fileInfo.versionViewText	查看文本
 fileInfo.versionTextTruncated	仅显示此版本的开头部分。
@@ -1172,6 +1187,8 @@ twoFactor.shareCodesButton	共享恢复码
 twoFactor.turnOffButton	关闭
 twoFactor.turnOnButton	开启
 browse.actionAvailableOffline	可离线使用
+browse.actionKeepOffline	保留离线副本
+browse.actionShowInFolder	在文件夹中显示
 browse.actionSaveToDevice	存储到设备
 previewToolbar.saveToDevice	存储到设备
 downloadQueue.savedToPhotos	已存储到“照片”
@@ -1200,6 +1217,8 @@ shareUpload.nameLabel	文件名
 shareUpload.namesLabel	文件名
 shareUpload.nameHint	上传时使用的文件名。扩展名保持不变。
 spotlight.placeholder	搜索文件和文件夹
+spotlight.hintMove	移动
+spotlight.hintOpen	打开
 trash.title	回收站
 trash.moveToTrash	移至回收站
 trash.deletePermanently	永久删除
@@ -1292,6 +1311,7 @@ shareUpload.failureTooLarge#other	%lld 个文件未能上传。 服务器连接�
 shareUpload.startedDeferred	已为 NextExplorer 保存。请打开应用上传大文件。
 menu.goToFolderPlaceholder	文稿/报告
 menu.toggleSidebar	显示或隐藏边栏
+menu.hideInspector	隐藏检查器
 emptyState.dropHintFiles	你也可以从“文件”或“照片”将文件拖到这里。
 emptyState.dropHintFinder	你也可以从“访达”将文件拖到这里。
 login.stepServer	服务器
@@ -1303,3 +1323,10 @@ common.increase	增加
 common.moreInfo	更多信息
 versionedFiles.pathHeader	路径
 versionedFiles.versionsHeader	版本
+fileInfo.sectionSelected	已选择
+fileInfo.selectionFootnote	选择单个项目时会显示共享、版本和权限。
+fileInfo.moreSelected	另外 %lld 个
+fileInfo.dateRange	%1$@至%2$@
+browse.folderCount#other	%lld 个文件夹
+browse.fileCount#other	%lld 个文件
+browse.contentSummary	%1$@，%2$@

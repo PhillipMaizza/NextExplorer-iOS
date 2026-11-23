@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Menampilkan salinan tersimpan dari %@
 browse.actionCopy	Salin
 browse.destinationPickerMoveTitle	Pindahkan ke…
 browse.destinationPickerConfirmMove	Pindahkan ke Sini
+browse.destinationPickerCopyTitle	Salin ke…
+browse.destinationPickerConfirmCopy	Salin ke Sini
+browse.actionMoveTo	Pindahkan ke…
+browse.actionCopyTo	Salin ke…
 browse.destinationPickerNoFolders	Tidak ada folder di sini
 browse.destinationPickerLoadFailed	Tidak dapat memuat folder.
 browse.actionMove	Pindahkan
@@ -592,6 +596,7 @@ fileInfo.rowDateTaken	Tanggal Pengambilan
 fileInfo.rowDuration	Durasi
 fileInfo.partialScan	Dihitung dari pemindaian parsial: folder ini sangat besar.
 permissions.title	Izin
+permissions.titleFor	Izin untuk “%@”
 permissions.sectionMode	Mode
 permissions.numericLabel	Numerik
 permissions.applyToEnclosed	Terapkan ke item di dalamnya
@@ -726,7 +731,7 @@ login.plaintextWarning	Koneksi ini tidak terenkripsi. Kata sandi dan sesi Anda d
 error.sessionExpired	Sesi Anda berakhir. Masuk lagi.
 error.rateLimited	Terlalu banyak permintaan. Coba lagi sebentar lagi.
 error.network	Tidak dapat menjangkau server.
-error.offline	Anda sedang offline. Hubungkan ke internet dan coba lagi.
+error.offline	Tidak dapat menjangkau server. Periksa koneksi Anda dan coba lagi.
 error.decoding	Server merespons secara tak terduga.
 error.server	Kesalahan server (%lld).
 error.forbidden	Anda tidak memiliki izin untuk melakukannya.
@@ -934,6 +939,10 @@ appearance.light	Terang
 appearance.dark	Gelap
 browse.myFiles	File Saya
 browse.myFilesSubtitle	Hanya terlihat oleh Anda
+browse.home	Beranda
+browse.noValue	--
+browse.today	Hari ini
+browse.yesterday	Kemarin
 downloadQueue.navigationTitle	Antrean Unduhan
 downloadQueue.emptyList	Tidak ada unduhan yang sedang berlangsung.
 downloadQueue.statusSaved	Tersimpan
@@ -948,6 +957,8 @@ downloadQueue.bytesOf	%1$@ dari %2$@
 downloadQueue.timeLeft	%@ lagi
 browse.sectionPersonal	Pribadi
 macSettings.addAccount	Tambah Akun…
+macSettings.accountSettings	Pengaturan Akun
+macSettings.switchAccountHeader	Ganti Akun
 macSettings.changePassword	Ubah Kata Sandi…
 macSettings.signOut	Keluar…
 macSettings.switchAccount	Beralih ke Akun Ini
@@ -977,6 +988,10 @@ fileInfo.restoreMessage	File kembali seperti pada %@. Isinya saat ini disimpan s
 fileInfo.restoreConfirm	Pulihkan
 fileInfo.sectionSharing	Berbagi
 fileInfo.notShared	Tidak ada tautan berbagi
+fileInfo.createLink	Buat Tautan
+fileInfo.newLink	Tautan Baru
+fileInfo.versionCurrent	Saat ini
+fileInfo.quickFavorite	Favorit
 fileInfo.versionActions	Tindakan versi
 fileInfo.versionDownload	Unduh…
 fileInfo.versionSaveCopy	Simpan sebagai Salinan
@@ -1008,6 +1023,7 @@ menu.quitTransfersTitle	Keluar dari NextExplorer?
 menu.quitTransfersMessage	Unggahan atau unduhan masih berlangsung. Keluar sekarang akan menghentikannya.
 menu.quitTransfersConfirm	Keluar
 menu.toggleSidebar	Tampilkan atau sembunyikan bar samping
+menu.hideInspector	Sembunyikan Inspektur
 media.play	Putar
 media.pause	Jeda
 media.position	Posisi Pemutaran
@@ -1119,6 +1135,8 @@ trashSettings.environmentNote	Nilai default berasal dari TRASH_ENABLED, TRASH_RE
 trashSettings.versionsEnvironmentNote	Nilai default berasal dari VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE dan VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Segarkan
 browse.actionAvailableOffline	Tersedia offline
+browse.actionKeepOffline	Simpan Offline
+browse.actionShowInFolder	Tampilkan di Folder
 browse.actionSaveToDevice	Simpan ke Perangkat
 previewToolbar.saveToDevice	Simpan ke Perangkat
 downloadQueue.savedToPhotos	Disimpan ke Foto
@@ -1147,6 +1165,8 @@ shareUpload.nameLabel	Nama File
 shareUpload.namesLabel	Nama File
 shareUpload.nameHint	Nama yang digunakan saat file diunggah. Ekstensinya tetap sama.
 spotlight.placeholder	Cari file dan folder
+spotlight.hintMove	Pindah
+spotlight.hintOpen	Buka
 trash.title	Sampah
 trash.moveToTrash	Pindahkan ke Sampah
 trash.deletePermanently	Hapus Permanen
@@ -1234,3 +1254,10 @@ common.increase	Tambah
 common.moreInfo	Info Lainnya
 versionedFiles.pathHeader	Jalur
 versionedFiles.versionsHeader	Versi
+fileInfo.sectionSelected	Dipilih
+fileInfo.selectionFootnote	Berbagi, versi, dan izin ditampilkan saat satu item dipilih.
+fileInfo.moreSelected	%lld lagi
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#other	%lld folder
+browse.fileCount#other	%lld file
+browse.contentSummary	%1$@, %2$@

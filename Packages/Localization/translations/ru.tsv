@@ -97,6 +97,10 @@ browse.offlineBannerDetail	Показана сохранённая копия о
 browse.actionCopy	Скопировать
 browse.destinationPickerMoveTitle	Переместить в…
 browse.destinationPickerConfirmMove	Переместить сюда
+browse.destinationPickerCopyTitle	Скопировать в…
+browse.destinationPickerConfirmCopy	Скопировать сюда
+browse.actionMoveTo	Переместить в…
+browse.actionCopyTo	Скопировать в…
 browse.destinationPickerNoFolders	Здесь нет папок
 browse.destinationPickerLoadFailed	Не удалось загрузить папки.
 browse.destinationPickerRecent	Недавние
@@ -425,6 +429,7 @@ fileInfo.rowDateTaken	Дата съёмки
 fileInfo.rowDuration	Длительность
 fileInfo.partialScan	Подсчитано частичное сканирование: эта папка очень большая.
 permissions.title	Права доступа
+permissions.titleFor	Права доступа к «%@»
 permissions.sectionMode	Режим
 permissions.numericLabel	Числовой
 permissions.applyToEnclosed	Применить к вложенным объектам
@@ -569,7 +574,7 @@ login.plaintextWarning	Это соединение не зашифровано. 
 error.sessionExpired	Ваша сессия истекла. Войдите снова.
 error.rateLimited	Слишком много запросов. Повторите попытку позже.
 error.network	Не удалось связаться с сервером.
-error.offline	Вы офлайн. Подключитесь к интернету и повторите попытку.
+error.offline	Не удаётся связаться с сервером. Проверьте подключение и повторите попытку.
 error.decoding	Сервер ответил неожиданно.
 error.server	Ошибка сервера (%lld).
 error.forbidden	У вас нет прав для этого действия.
@@ -719,6 +724,10 @@ appearance.light	Светлое
 appearance.dark	Тёмное
 browse.myFiles	Мои файлы
 browse.myFilesSubtitle	Видно только вам
+browse.home	Домой
+browse.noValue	--
+browse.today	Сегодня
+browse.yesterday	Вчера
 downloadQueue.navigationTitle	Очередь загрузок
 downloadQueue.emptyList	Нет активных загрузок.
 downloadQueue.statusSaved	Сохранено
@@ -736,6 +745,8 @@ browse.downloadSavedTo	Сохранено в %@
 browse.downloadSavedAllTo	Сохранено объектов: %1$lld в %2$@
 macSettings.labelFormat	%@:
 macSettings.addAccount	Добавить аккаунт…
+macSettings.accountSettings	Настройки аккаунта
+macSettings.switchAccountHeader	Сменить аккаунт
 macSettings.changePassword	Изменить пароль…
 macSettings.signOut	Выйти…
 macSettings.switchAccount	Переключиться на этот аккаунт
@@ -768,6 +779,10 @@ fileInfo.restoreMessage	Файл вернётся к состоянию на %@.
 fileInfo.restoreConfirm	Восстановить
 fileInfo.sectionSharing	Общий доступ
 fileInfo.notShared	Нет ссылок общего доступа
+fileInfo.createLink	Создать ссылку
+fileInfo.newLink	Новая ссылка
+fileInfo.versionCurrent	Текущая
+fileInfo.quickFavorite	Избранное
 fileInfo.versionActions	Действия с версией
 fileInfo.versionViewText	Показать текст
 fileInfo.versionTextTruncated	Показано только начало этой версии.
@@ -1226,6 +1241,8 @@ twoFactor.shareCodesButton	Поделиться кодами
 twoFactor.turnOffButton	Выключить
 twoFactor.turnOnButton	Включить
 browse.actionAvailableOffline	Доступно офлайн
+browse.actionKeepOffline	Сохранить офлайн
+browse.actionShowInFolder	Показать в папке
 browse.actionSaveToDevice	Сохранить на устройство
 previewToolbar.saveToDevice	Сохранить на устройство
 downloadQueue.savedToPhotos	Сохранено в Фото
@@ -1254,6 +1271,8 @@ shareUpload.nameLabel	Имя файла
 shareUpload.namesLabel	Имена файлов
 shareUpload.nameHint	Имя, под которым файл будет загружен. Расширение не изменится.
 spotlight.placeholder	Поиск файлов и папок
+spotlight.hintMove	Перемещение
+spotlight.hintOpen	Открыть
 trash.title	Корзина
 trash.moveToTrash	В корзину
 trash.deletePermanently	Удалить навсегда
@@ -1400,6 +1419,7 @@ shareUpload.failureTooLarge#other	%lld файла не загружено. Со�
 shareUpload.startedDeferred	Сохранено для NextExplorer. Откройте приложение, чтобы загрузить большие файлы.
 menu.goToFolderPlaceholder	Документы/Отчёты
 menu.toggleSidebar	Показать или скрыть боковое меню
+menu.hideInspector	Скрыть инспектор
 emptyState.dropHintFiles	Вы также можете перетащить сюда файлы из «Файлов» или «Фото».
 emptyState.dropHintFinder	Вы также можете перетащить сюда файлы из Finder.
 login.stepServer	Сервер
@@ -1411,3 +1431,16 @@ common.increase	Увеличить
 common.moreInfo	Подробнее
 versionedFiles.pathHeader	Путь
 versionedFiles.versionsHeader	Версии
+fileInfo.sectionSelected	Выбрано
+fileInfo.selectionFootnote	Общий доступ, версии и права показываются, когда выбран один объект.
+fileInfo.moreSelected	ещё %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld папка
+browse.folderCount#few	%lld папки
+browse.folderCount#many	%lld папок
+browse.folderCount#other	%lld папки
+browse.fileCount#one	%lld файл
+browse.fileCount#few	%lld файла
+browse.fileCount#many	%lld файлов
+browse.fileCount#other	%lld файла
+browse.contentSummary	%1$@, %2$@

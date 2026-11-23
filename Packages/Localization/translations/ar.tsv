@@ -97,6 +97,10 @@ browse.offlineBannerDetail	يتم عرض نسخة محفوظة من %@
 browse.actionCopy	نسخ
 browse.destinationPickerMoveTitle	نقل إلى…
 browse.destinationPickerConfirmMove	النقل إلى هنا
+browse.destinationPickerCopyTitle	نسخ إلى…
+browse.destinationPickerConfirmCopy	النسخ إلى هنا
+browse.actionMoveTo	نقل إلى…
+browse.actionCopyTo	نسخ إلى…
 browse.destinationPickerNoFolders	لا مجلدات هنا
 browse.destinationPickerLoadFailed	تعذّر تحميل المجلدات.
 browse.destinationPickerRecent	الأخيرة
@@ -447,6 +451,7 @@ fileInfo.rowDateTaken	تاريخ الالتقاط
 fileInfo.rowDuration	المدة
 fileInfo.partialScan	تم احتساب فحص جزئي: هذا المجلد كبير جدًا.
 permissions.title	الأذونات
+permissions.titleFor	أذونات “%@”
 permissions.sectionMode	الوضع
 permissions.numericLabel	رقمي
 permissions.applyToEnclosed	تطبيق على العناصر المضمّنة
@@ -591,7 +596,7 @@ login.plaintextWarning	هذا الاتصال غير مشفّر. تُرسل كل�
 error.sessionExpired	انتهت صلاحية جلستك. سجّل الدخول مرة أخرى.
 error.rateLimited	طلبات كثيرة جدًا. أعد المحاولة قريبًا.
 error.network	تعذّر الوصول إلى الخادم.
-error.offline	أنت غير متصل. اتصل بالإنترنت وأعد المحاولة.
+error.offline	تعذّر الوصول إلى الخادم. تحقق من اتصالك وأعد المحاولة.
 error.decoding	استجاب الخادم بشكل غير متوقع.
 error.server	خطأ في الخادم (%lld).
 error.forbidden	ليس لديك إذن للقيام بذلك.
@@ -741,6 +746,10 @@ appearance.light	فاتح
 appearance.dark	داكن
 browse.myFiles	ملفاتي
 browse.myFilesSubtitle	مرئي لك فقط
+browse.home	الرئيسية
+browse.noValue	--
+browse.today	اليوم
+browse.yesterday	أمس
 downloadQueue.navigationTitle	قائمة التنزيل
 downloadQueue.emptyList	لا توجد تنزيلات قيد التقدم.
 downloadQueue.statusSaved	تم الحفظ
@@ -758,6 +767,8 @@ browse.downloadSavedTo	تم الحفظ في %@
 browse.downloadSavedAllTo	تم حفظ %1$lld عنصر في %2$@
 macSettings.labelFormat	%@:
 macSettings.addAccount	إضافة حساب…
+macSettings.accountSettings	إعدادات الحساب
+macSettings.switchAccountHeader	تبديل الحساب
 macSettings.changePassword	تغيير كلمة المرور…
 macSettings.signOut	تسجيل الخروج…
 macSettings.switchAccount	التبديل إلى هذا الحساب
@@ -792,6 +803,10 @@ fileInfo.restoreMessage	يعود الملف إلى ما كان عليه في %@.
 fileInfo.restoreConfirm	استعادة
 fileInfo.sectionSharing	المشاركة
 fileInfo.notShared	لا توجد روابط مشاركة
+fileInfo.createLink	إنشاء رابط
+fileInfo.newLink	رابط جديد
+fileInfo.versionCurrent	الحالي
+fileInfo.quickFavorite	مفضلة
 fileInfo.versionActions	إجراءات الإصدار
 fileInfo.versionViewText	عرض النص
 fileInfo.versionTextTruncated	يُعرض الجزء الأول فقط من هذا الإصدار.
@@ -1262,6 +1277,8 @@ twoFactor.shareCodesButton	مشاركة الرموز
 twoFactor.turnOffButton	إيقاف
 twoFactor.turnOnButton	تشغيل
 browse.actionAvailableOffline	متاح دون اتصال
+browse.actionKeepOffline	الاحتفاظ دون اتصال
+browse.actionShowInFolder	إظهار في المجلد
 browse.actionSaveToDevice	حفظ على الجهاز
 previewToolbar.saveToDevice	حفظ على الجهاز
 downloadQueue.savedToPhotos	تم الحفظ في الصور
@@ -1290,6 +1307,8 @@ shareUpload.nameLabel	اسم الملف
 shareUpload.namesLabel	أسماء الملفات
 shareUpload.nameHint	الاسم الذي يُرفع به الملف. يبقى الامتداد كما هو.
 spotlight.placeholder	البحث في الملفات والمجلدات
+spotlight.hintMove	تنقل
+spotlight.hintOpen	فتح
 trash.title	سلة المحذوفات
 trash.moveToTrash	نقل إلى سلة المحذوفات
 trash.deletePermanently	حذف نهائي
@@ -1472,6 +1491,7 @@ shareUpload.failureTooLarge#other	لم يتم رفع %lld ملف. اتصال ا�
 shareUpload.startedDeferred	تم الحفظ لـ NextExplorer. افتح التطبيق لرفع ملفاتك الكبيرة.
 menu.goToFolderPlaceholder	المستندات/التقارير
 menu.toggleSidebar	إظهار أو إخفاء الشريط الجانبي
+menu.hideInspector	إخفاء المفتش
 emptyState.dropHintFiles	يمكنك أيضًا سحب الملفات إلى هنا من الملفات أو الصور.
 emptyState.dropHintFinder	يمكنك أيضًا سحب الملفات إلى هنا من Finder.
 login.stepServer	الخادم
@@ -1483,3 +1503,20 @@ common.increase	زيادة
 common.moreInfo	مزيد من المعلومات
 versionedFiles.pathHeader	المسار
 versionedFiles.versionsHeader	الإصدارات
+fileInfo.sectionSelected	المحدد
+fileInfo.selectionFootnote	تظهر المشاركة والإصدارات والأذونات عند تحديد عنصر واحد.
+fileInfo.moreSelected	%lld أخرى
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#zero	%lld مجلد
+browse.folderCount#one	%lld مجلد
+browse.folderCount#two	%lld مجلد
+browse.folderCount#few	%lld مجلدات
+browse.folderCount#many	%lld مجلدًا
+browse.folderCount#other	%lld مجلد
+browse.fileCount#zero	%lld ملف
+browse.fileCount#one	%lld ملف
+browse.fileCount#two	%lld ملف
+browse.fileCount#few	%lld ملفات
+browse.fileCount#many	%lld ملفًا
+browse.fileCount#other	%lld ملف
+browse.contentSummary	%1$@، %2$@

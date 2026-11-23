@@ -97,6 +97,10 @@ browse.offlineBannerDetail	Bewaarde kopie van %@ wordt getoond
 browse.actionCopy	Kopiëren
 browse.destinationPickerMoveTitle	Verplaatsen naar…
 browse.destinationPickerConfirmMove	Hierheen verplaatsen
+browse.destinationPickerCopyTitle	Kopiëren naar…
+browse.destinationPickerConfirmCopy	Hierheen kopiëren
+browse.actionMoveTo	Verplaatsen naar…
+browse.actionCopyTo	Kopiëren naar…
 browse.destinationPickerNoFolders	Geen mappen hier
 browse.destinationPickerLoadFailed	Kan de mappen niet laden.
 browse.destinationPickerRecent	Recent
@@ -403,6 +407,7 @@ fileInfo.rowDateTaken	Opnamedatum
 fileInfo.rowDuration	Duur
 fileInfo.partialScan	Gedeeltelijke scan geteld: deze map is erg groot.
 permissions.title	Rechten
+permissions.titleFor	Rechten voor “%@”
 permissions.sectionMode	Modus
 permissions.numericLabel	Numeriek
 permissions.applyToEnclosed	Toepassen op ingesloten items
@@ -547,7 +552,7 @@ login.plaintextWarning	Deze verbinding is niet versleuteld. Je wachtwoord en ses
 error.sessionExpired	Je sessie is verlopen. Meld je opnieuw aan.
 error.rateLimited	Te veel verzoeken. Probeer het zo dadelijk opnieuw.
 error.network	Kan de server niet bereiken.
-error.offline	Je bent offline. Maak verbinding met internet en probeer het opnieuw.
+error.offline	Kan de server niet bereiken. Controleer je verbinding en probeer het opnieuw.
 error.decoding	De server gaf een onverwacht antwoord.
 error.server	Serverfout (%lld).
 error.forbidden	Je hebt geen toestemming om dat te doen.
@@ -697,6 +702,10 @@ appearance.light	Licht
 appearance.dark	Donker
 browse.myFiles	Mijn bestanden
 browse.myFilesSubtitle	Alleen zichtbaar voor jou
+browse.home	Begin
+browse.noValue	--
+browse.today	Vandaag
+browse.yesterday	Gisteren
 downloadQueue.navigationTitle	Downloadwachtrij
 downloadQueue.emptyList	Geen downloads bezig.
 downloadQueue.statusSaved	Opgeslagen
@@ -714,6 +723,8 @@ browse.downloadSavedTo	Bewaard in %@
 browse.downloadSavedAllTo	%1$lld items bewaard in %2$@
 macSettings.labelFormat	%@:
 macSettings.addAccount	Account toevoegen…
+macSettings.accountSettings	Accountinstellingen
+macSettings.switchAccountHeader	Wissel van account
 macSettings.changePassword	Wachtwoord wijzigen…
 macSettings.signOut	Afmelden…
 macSettings.switchAccount	Naar dit account overschakelen
@@ -744,6 +755,10 @@ fileInfo.restoreMessage	Het bestand gaat terug naar hoe het was op %@. De huidig
 fileInfo.restoreConfirm	Zet terug
 fileInfo.sectionSharing	Delen
 fileInfo.notShared	Geen deellinks
+fileInfo.createLink	Link maken
+fileInfo.newLink	Nieuwe link
+fileInfo.versionCurrent	Huidig
+fileInfo.quickFavorite	Favoriet
 fileInfo.versionActions	Versieacties
 fileInfo.versionViewText	Tekst bekijken
 fileInfo.versionTextTruncated	Alleen het eerste deel van deze versie wordt getoond.
@@ -1190,6 +1205,8 @@ twoFactor.shareCodesButton	Codes delen
 twoFactor.turnOffButton	Uitschakelen
 twoFactor.turnOnButton	Inschakelen
 browse.actionAvailableOffline	Offline beschikbaar
+browse.actionKeepOffline	Offline bewaren
+browse.actionShowInFolder	Toon in map
 browse.actionSaveToDevice	Bewaar op apparaat
 previewToolbar.saveToDevice	Bewaar op apparaat
 downloadQueue.savedToPhotos	Bewaard in Foto’s
@@ -1218,6 +1235,8 @@ shareUpload.nameLabel	Bestandsnaam
 shareUpload.namesLabel	Bestandsnamen
 shareUpload.nameHint	De naam waaronder het bestand wordt geüpload. De extensie blijft hetzelfde.
 spotlight.placeholder	Bestanden en mappen zoeken
+spotlight.hintMove	Navigeren
+spotlight.hintOpen	Openen
 trash.title	Prullenbak
 trash.moveToTrash	Naar prullenbak verplaatsen
 trash.deletePermanently	Definitief verwijderen
@@ -1328,6 +1347,7 @@ shareUpload.failureTooLarge#other	%lld bestanden zijn niet geüpload. De verbind
 shareUpload.startedDeferred	Bewaard voor NextExplorer. Open de app om je grote bestanden te uploaden.
 menu.goToFolderPlaceholder	Documenten/Rapporten
 menu.toggleSidebar	Toon of verberg navigatiekolom
+menu.hideInspector	Verberg inspector
 emptyState.dropHintFiles	Je kunt ook bestanden hierheen slepen vanuit Bestanden of Foto's.
 emptyState.dropHintFinder	Je kunt ook bestanden hierheen slepen vanuit de Finder.
 login.stepServer	Server
@@ -1339,3 +1359,12 @@ common.increase	Verhogen
 common.moreInfo	Meer info
 versionedFiles.pathHeader	Pad
 versionedFiles.versionsHeader	Versies
+fileInfo.sectionSelected	Geselecteerd
+fileInfo.selectionFootnote	Delen, versies en rechten worden getoond als er één onderdeel is geselecteerd.
+fileInfo.moreSelected	nog %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld map
+browse.folderCount#other	%lld mappen
+browse.fileCount#one	%lld bestand
+browse.fileCount#other	%lld bestanden
+browse.contentSummary	%1$@, %2$@

@@ -97,6 +97,10 @@ browse.offlineBannerDetail	正在顯示來自 %@ 的已儲存副本
 browse.actionCopy	拷貝
 browse.destinationPickerMoveTitle	移動到…
 browse.destinationPickerConfirmMove	移動到此處
+browse.destinationPickerCopyTitle	拷貝到…
+browse.destinationPickerConfirmCopy	拷貝到此處
+browse.actionMoveTo	移動到…
+browse.actionCopyTo	拷貝到…
 browse.destinationPickerNoFolders	此處沒有檔案夾
 browse.destinationPickerLoadFailed	無法載入檔案夾。
 browse.destinationPickerRecent	最近使用
@@ -392,6 +396,7 @@ fileInfo.rowDateTaken	拍攝日期
 fileInfo.rowDuration	時間長度
 fileInfo.partialScan	已計入部分掃描：此檔案夾非常大。
 permissions.title	權限
+permissions.titleFor	「%@」的權限
 permissions.sectionMode	模式
 permissions.numericLabel	數字
 permissions.applyToEnclosed	套用至所含項目
@@ -536,7 +541,7 @@ login.plaintextWarning	此連線未加密。您的密碼和工作階段以明文
 error.sessionExpired	您的工作階段已過期。請重新登入。
 error.rateLimited	請求過多。請稍後重試。
 error.network	無法連線到伺服器。
-error.offline	您已離線。請連線到網際網路後重試。
+error.offline	無法連線到伺服器。請檢查網路連線後重試。
 error.decoding	伺服器回應異常。
 error.server	伺服器錯誤 (%lld)。
 error.forbidden	您沒有執行此操作的權限。
@@ -686,6 +691,10 @@ appearance.light	淺色
 appearance.dark	深色
 browse.myFiles	我的檔案
 browse.myFilesSubtitle	只有你看得到
+browse.home	首頁
+browse.noValue	--
+browse.today	今天
+browse.yesterday	昨天
 downloadQueue.navigationTitle	下載佇列
 downloadQueue.emptyList	沒有進行中的下載。
 downloadQueue.statusSaved	已儲存
@@ -703,6 +712,8 @@ browse.downloadSavedTo	已儲存到 %@
 browse.downloadSavedAllTo	已將 %1$lld 個項目儲存到 %2$@
 macSettings.labelFormat	%@：
 macSettings.addAccount	新增帳號…
+macSettings.accountSettings	帳號設定
+macSettings.switchAccountHeader	切換帳號
 macSettings.changePassword	更改密碼…
 macSettings.signOut	登出…
 macSettings.switchAccount	切換到此帳號
@@ -732,6 +743,10 @@ fileInfo.restoreMessage	檔案將回到 %@ 時的狀態。目前的內容會保�
 fileInfo.restoreConfirm	回復
 fileInfo.sectionSharing	共享
 fileInfo.notShared	沒有共享連結
+fileInfo.createLink	建立連結
+fileInfo.newLink	新連結
+fileInfo.versionCurrent	目前
+fileInfo.quickFavorite	收藏
 fileInfo.versionActions	版本操作
 fileInfo.versionViewText	檢視文字
 fileInfo.versionTextTruncated	僅顯示此版本的開頭部分。
@@ -1172,6 +1187,8 @@ twoFactor.shareCodesButton	共享復原碼
 twoFactor.turnOffButton	關閉
 twoFactor.turnOnButton	開啟
 browse.actionAvailableOffline	可離線使用
+browse.actionKeepOffline	保留離線副本
+browse.actionShowInFolder	在資料夾中顯示
 browse.actionSaveToDevice	儲存到裝置
 previewToolbar.saveToDevice	儲存到裝置
 downloadQueue.savedToPhotos	已儲存到「照片」
@@ -1200,6 +1217,8 @@ shareUpload.nameLabel	檔案名稱
 shareUpload.namesLabel	檔案名稱
 shareUpload.nameHint	上傳時使用的檔案名稱。副檔名維持不變。
 spotlight.placeholder	搜尋檔案和資料夾
+spotlight.hintMove	移動
+spotlight.hintOpen	打開
 trash.title	資源回收筒
 trash.moveToTrash	移至資源回收筒
 trash.deletePermanently	永久刪除
@@ -1292,6 +1311,7 @@ shareUpload.failureTooLarge#other	%lld 個檔案未能上傳。 伺服器連線�
 shareUpload.startedDeferred	已為 NextExplorer 儲存。請打開 App 上傳大型檔案。
 menu.goToFolderPlaceholder	文件/報告
 menu.toggleSidebar	顯示或隱藏側邊欄
+menu.hideInspector	隱藏檢閱器
 emptyState.dropHintFiles	你也可以從「檔案」或「照片」將檔案拖移到這裡。
 emptyState.dropHintFinder	你也可以從「Finder」將檔案拖移到這裡。
 login.stepServer	伺服器
@@ -1303,3 +1323,10 @@ common.increase	增加
 common.moreInfo	更多資訊
 versionedFiles.pathHeader	路徑
 versionedFiles.versionsHeader	版本
+fileInfo.sectionSelected	已選取
+fileInfo.selectionFootnote	選取單一項目時會顯示共享、版本和權限。
+fileInfo.moreSelected	另外 %lld 個
+fileInfo.dateRange	%1$@至%2$@
+browse.folderCount#other	%lld 個資料夾
+browse.fileCount#other	%lld 個檔案
+browse.contentSummary	%1$@，%2$@

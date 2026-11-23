@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Mentett másolat megjelenítése innen: %@
 browse.actionCopy	Másolás
 browse.destinationPickerMoveTitle	Áthelyezés ide…
 browse.destinationPickerConfirmMove	Áthelyezés ide
+browse.destinationPickerCopyTitle	Másolás ide…
+browse.destinationPickerConfirmCopy	Másolás ide
+browse.actionMoveTo	Áthelyezés ide…
+browse.actionCopyTo	Másolás ide…
 browse.destinationPickerNoFolders	Itt nincsenek mappák
 browse.destinationPickerLoadFailed	A mappákat nem sikerült betölteni.
 browse.actionMove	Áthelyezés
@@ -603,6 +607,7 @@ fileInfo.rowDateTaken	Készítés dátuma
 fileInfo.rowDuration	Időtartam
 fileInfo.partialScan	Részleges vizsgálat alapján számolva: ez a mappa nagyon nagy.
 permissions.title	Engedélyek
+permissions.titleFor	„%@” engedélyei
 permissions.sectionMode	Mód
 permissions.numericLabel	Numerikus
 permissions.applyToEnclosed	Alkalmazás a benne lévő elemekre
@@ -737,7 +742,7 @@ login.plaintextWarning	Ez a kapcsolat nincs titkosítva. A jelszava és a munkam
 error.sessionExpired	A munkamenet lejárt. Jelentkezzen be újra.
 error.rateLimited	Túl sok kérés. Próbálja újra egy kicsit később.
 error.network	A kiszolgáló nem érhető el.
-error.offline	Offline van. Csatlakozzon az internethez, és próbálja újra.
+error.offline	A szerver nem érhető el. Ellenőrizze a kapcsolatot, és próbálja újra.
 error.decoding	A kiszolgáló váratlan választ adott.
 error.server	Kiszolgálóhiba (%lld).
 error.forbidden	Nincs jogosultsága ehhez.
@@ -945,6 +950,10 @@ appearance.light	Világos
 appearance.dark	Sötét
 browse.myFiles	Fájljaim
 browse.myFilesSubtitle	Csak Ön látja
+browse.home	Kezdőlap
+browse.noValue	--
+browse.today	Ma
+browse.yesterday	Tegnap
 downloadQueue.navigationTitle	Letöltési sor
 downloadQueue.emptyList	Nincs folyamatban lévő letöltés.
 downloadQueue.statusSaved	Mentve
@@ -959,6 +968,8 @@ downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	%@ van hátra
 browse.sectionPersonal	Személyes
 macSettings.addAccount	Fiók hozzáadása…
+macSettings.accountSettings	Fiókbeállítások
+macSettings.switchAccountHeader	Fiókváltás
 macSettings.changePassword	Jelszó módosítása…
 macSettings.signOut	Kijelentkezés…
 macSettings.switchAccount	Váltás erre a fiókra
@@ -989,6 +1000,10 @@ fileInfo.restoreMessage	A fájl visszaáll arra az állapotra, amilyen ekkor vol
 fileInfo.restoreConfirm	Visszaállítás
 fileInfo.sectionSharing	Megosztás
 fileInfo.notShared	Nincsenek megosztási hivatkozások
+fileInfo.createLink	Hivatkozás létrehozása
+fileInfo.newLink	Új hivatkozás
+fileInfo.versionCurrent	Jelenlegi
+fileInfo.quickFavorite	Kedvenc
 fileInfo.versionActions	Verzióműveletek
 fileInfo.versionDownload	Letöltés…
 fileInfo.versionSaveCopy	Mentés másolatként
@@ -1020,6 +1035,7 @@ menu.quitTransfersTitle	Kilép a NextExplorerből?
 menu.quitTransfersMessage	Feltöltések vagy letöltések még folyamatban vannak. Ha most kilép, leállnak.
 menu.quitTransfersConfirm	Kilépés
 menu.toggleSidebar	Oldalsáv megjelenítése vagy elrejtése
+menu.hideInspector	Felügyelő elrejtése
 media.play	Lejátszás
 media.pause	Szünet
 media.position	Lejátszási pozíció
@@ -1137,6 +1153,8 @@ trashSettings.environmentNote	Az alapértékek a következőkből származnak: T
 trashSettings.versionsEnvironmentNote	Az alapértékek a következőkből származnak: VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE és VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Frissítés
 browse.actionAvailableOffline	Elérhető offline
+browse.actionKeepOffline	Megtartás offline
+browse.actionShowInFolder	Megjelenítés a mappában
 browse.actionSaveToDevice	Mentés az eszközre
 previewToolbar.saveToDevice	Mentés az eszközre
 downloadQueue.savedToPhotos	Mentve a Fotókba
@@ -1165,6 +1183,8 @@ shareUpload.nameLabel	Fájlnév
 shareUpload.namesLabel	Fájlnevek
 shareUpload.nameHint	A név, amelyen a fájl feltöltődik. A kiterjesztés nem változik.
 spotlight.placeholder	Fájlok és mappák keresése
+spotlight.hintMove	Mozgás
+spotlight.hintOpen	Megnyitás
 trash.title	Kuka
 trash.moveToTrash	Áthelyezés a kukába
 trash.deletePermanently	Végleges törlés
@@ -1268,3 +1288,12 @@ common.increase	Növelés
 common.moreInfo	További információ
 versionedFiles.pathHeader	Útvonal
 versionedFiles.versionsHeader	Verziók
+fileInfo.sectionSelected	Kijelölve
+fileInfo.selectionFootnote	A megosztás, a verziók és az engedélyek egyetlen elem kijelölésekor jelennek meg.
+fileInfo.moreSelected	még %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld mappa
+browse.folderCount#other	%lld mappa
+browse.fileCount#one	%lld fájl
+browse.fileCount#other	%lld fájl
+browse.contentSummary	%1$@, %2$@

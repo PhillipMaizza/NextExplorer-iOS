@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Viser en gemt kopi fra %@
 browse.actionCopy	Kopiér
 browse.destinationPickerMoveTitle	Flyt til…
 browse.destinationPickerConfirmMove	Flyt hertil
+browse.destinationPickerCopyTitle	Kopiér til…
+browse.destinationPickerConfirmCopy	Kopiér hertil
+browse.actionMoveTo	Flyt til…
+browse.actionCopyTo	Kopiér til…
 browse.destinationPickerNoFolders	Ingen mapper her
 browse.destinationPickerLoadFailed	Mapperne kunne ikke indlæses.
 browse.actionMove	Flyt
@@ -603,6 +607,7 @@ fileInfo.rowDateTaken	Optagelsesdato
 fileInfo.rowDuration	Varighed
 fileInfo.partialScan	Der blev talt ved en delvis scanning: denne mappe er meget stor.
 permissions.title	Tilladelser
+permissions.titleFor	Tilladelser for “%@”
 permissions.sectionMode	Tilstand
 permissions.numericLabel	Numerisk
 permissions.applyToEnclosed	Anvend på indeholdte emner
@@ -737,7 +742,7 @@ login.plaintextWarning	Denne forbindelse er ikke krypteret. Din adgangskode og s
 error.sessionExpired	Din session er udløbet. Log ind igen.
 error.rateLimited	For mange forespørgsler. Prøv igen om lidt.
 error.network	Serveren kunne ikke nås.
-error.offline	Du er offline. Opret forbindelse til internettet, og prøv igen.
+error.offline	Serveren kan ikke nås. Tjek din forbindelse, og prøv igen.
 error.decoding	Serveren svarede uventet.
 error.server	Serverfejl (%lld).
 error.forbidden	Du har ikke tilladelse til at gøre det.
@@ -945,6 +950,10 @@ appearance.light	Lys
 appearance.dark	Mørk
 browse.myFiles	Mine filer
 browse.myFilesSubtitle	Kun synlig for dig
+browse.home	Hjem
+browse.noValue	--
+browse.today	I dag
+browse.yesterday	I går
 downloadQueue.navigationTitle	Downloadkø
 downloadQueue.emptyList	Ingen downloads i gang.
 downloadQueue.statusSaved	Gemt
@@ -959,6 +968,8 @@ downloadQueue.bytesOf	%1$@ af %2$@
 downloadQueue.timeLeft	%@ tilbage
 browse.sectionPersonal	Personlig
 macSettings.addAccount	Tilføj konto…
+macSettings.accountSettings	Kontoindstillinger
+macSettings.switchAccountHeader	Skift konto
 macSettings.changePassword	Skift adgangskode…
 macSettings.signOut	Log ud…
 macSettings.switchAccount	Skift til denne konto
@@ -989,6 +1000,10 @@ fileInfo.restoreMessage	Filen vender tilbage til, som den var %@. Det, den indeh
 fileInfo.restoreConfirm	Gendan
 fileInfo.sectionSharing	Deling
 fileInfo.notShared	Ingen delingslinks
+fileInfo.createLink	Opret link
+fileInfo.newLink	Nyt link
+fileInfo.versionCurrent	Aktuel
+fileInfo.quickFavorite	Favorit
 fileInfo.versionActions	Versionshandlinger
 fileInfo.versionDownload	Hent…
 fileInfo.versionSaveCopy	Gem som kopi
@@ -1020,6 +1035,7 @@ menu.quitTransfersTitle	Afslut NextExplorer?
 menu.quitTransfersMessage	Uploads eller downloads er stadig i gang. Hvis du afslutter nu, stopper de.
 menu.quitTransfersConfirm	Afslut
 menu.toggleSidebar	Vis eller skjul indholdsoversigt
+menu.hideInspector	Skjul inspektør
 media.play	Afspil
 media.pause	Pause
 media.position	Afspilningsposition
@@ -1137,6 +1153,8 @@ trashSettings.environmentNote	Standardværdierne kommer fra TRASH_ENABLED, TRASH
 trashSettings.versionsEnvironmentNote	Standardværdierne kommer fra VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE og VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Opdater
 browse.actionAvailableOffline	Tilgængelig offline
+browse.actionKeepOffline	Behold offline
+browse.actionShowInFolder	Vis i mappe
 browse.actionSaveToDevice	Gem på enhed
 previewToolbar.saveToDevice	Gem på enhed
 downloadQueue.savedToPhotos	Gemt i Fotos
@@ -1165,6 +1183,8 @@ shareUpload.nameLabel	Filnavn
 shareUpload.namesLabel	Filnavne
 shareUpload.nameHint	Navnet, filen uploades med. Filtypenavnet forbliver det samme.
 spotlight.placeholder	Søg i filer og mapper
+spotlight.hintMove	Flyt
+spotlight.hintOpen	Åbn
 trash.title	Papirkurv
 trash.moveToTrash	Flyt til papirkurven
 trash.deletePermanently	Slet permanent
@@ -1268,3 +1288,12 @@ common.increase	Forøg
 common.moreInfo	Flere oplysninger
 versionedFiles.pathHeader	Sti
 versionedFiles.versionsHeader	Versioner
+fileInfo.sectionSelected	Valgte
+fileInfo.selectionFootnote	Deling, versioner og tilladelser vises, når ét emne er valgt.
+fileInfo.moreSelected	%lld mere
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld mappe
+browse.folderCount#other	%lld mapper
+browse.fileCount#one	%lld fil
+browse.fileCount#other	%lld filer
+browse.contentSummary	%1$@, %2$@

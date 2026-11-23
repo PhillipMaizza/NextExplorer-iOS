@@ -104,6 +104,10 @@ browse.offlineBannerDetail	%@ tarihli kayıtlı bir kopya gösteriliyor
 browse.actionCopy	Kopyala
 browse.destinationPickerMoveTitle	Şuraya taşı…
 browse.destinationPickerConfirmMove	Buraya Taşı
+browse.destinationPickerCopyTitle	Şuraya kopyala…
+browse.destinationPickerConfirmCopy	Buraya Kopyala
+browse.actionMoveTo	Şuraya taşı…
+browse.actionCopyTo	Şuraya kopyala…
 browse.destinationPickerNoFolders	Burada klasör yok
 browse.destinationPickerLoadFailed	Klasörler yüklenemedi.
 browse.actionMove	Taşı
@@ -603,6 +607,7 @@ fileInfo.rowDateTaken	Çekim Tarihi
 fileInfo.rowDuration	Süre
 fileInfo.partialScan	Kısmi tarama sayıldı: bu klasör çok büyük.
 permissions.title	İzinler
+permissions.titleFor	“%@” izinleri
 permissions.sectionMode	Mod
 permissions.numericLabel	Sayısal
 permissions.applyToEnclosed	İçindeki öğelere uygula
@@ -737,7 +742,7 @@ login.plaintextWarning	Bu bağlantı şifrelenmemiş. Parolanız ve oturumunuz y
 error.sessionExpired	Oturumunuzun süresi doldu. Yeniden oturum açın.
 error.rateLimited	Çok fazla istek. Kısa süre sonra tekrar deneyin.
 error.network	Sunucuya ulaşılamadı.
-error.offline	Çevrimdışısınız. İnternete bağlanıp tekrar deneyin.
+error.offline	Sunucuya ulaşılamıyor. Bağlantınızı kontrol edip tekrar deneyin.
 error.decoding	Sunucu beklenmedik şekilde yanıt verdi.
 error.server	Sunucu hatası (%lld).
 error.forbidden	Bunu yapmaya izniniz yok.
@@ -945,6 +950,10 @@ appearance.light	Açık
 appearance.dark	Koyu
 browse.myFiles	Dosyalarım
 browse.myFilesSubtitle	Yalnızca size görünür
+browse.home	Ana Sayfa
+browse.noValue	--
+browse.today	Bugün
+browse.yesterday	Dün
 downloadQueue.navigationTitle	İndirme Kuyruğu
 downloadQueue.emptyList	Devam eden indirme yok.
 downloadQueue.statusSaved	Kaydedildi
@@ -959,6 +968,8 @@ downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	%@ kaldı
 browse.sectionPersonal	Kişisel
 macSettings.addAccount	Hesap Ekle…
+macSettings.accountSettings	Hesap Ayarları
+macSettings.switchAccountHeader	Hesap Değiştir
 macSettings.changePassword	Parolayı Değiştir…
 macSettings.signOut	Oturumu Kapat…
 macSettings.switchAccount	Bu Hesaba Geç
@@ -989,6 +1000,10 @@ fileInfo.restoreMessage	Dosya, %@ tarihindeki haline döner. Şu anda içerdiği
 fileInfo.restoreConfirm	Geri Yükle
 fileInfo.sectionSharing	Paylaşım
 fileInfo.notShared	Paylaşım bağlantısı yok
+fileInfo.createLink	Bağlantı Oluştur
+fileInfo.newLink	Yeni Bağlantı
+fileInfo.versionCurrent	Geçerli
+fileInfo.quickFavorite	Favori
 fileInfo.versionActions	Sürüm eylemleri
 fileInfo.versionDownload	İndir…
 fileInfo.versionSaveCopy	Kopya Olarak Kaydet
@@ -1020,6 +1035,7 @@ menu.quitTransfersTitle	NextExplorer'dan çıkılsın mı?
 menu.quitTransfersMessage	Yüklemeler veya indirmeler hâlâ sürüyor. Şimdi çıkmak bunları durdurur.
 menu.quitTransfersConfirm	Çık
 menu.toggleSidebar	Kenar çubuğunu göster veya gizle
+menu.hideInspector	Denetçiyi Gizle
 media.play	Oynat
 media.pause	Duraklat
 media.position	Oynatma Konumu
@@ -1136,6 +1152,8 @@ trashSettings.environmentNote	Varsayılan değerler TRASH_ENABLED, TRASH_RETENTI
 trashSettings.versionsEnvironmentNote	Varsayılan değerler VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ve VERSIONS_SESSION_CHECKPOINT_MINUTES değişkenlerinden gelir.
 versionedFiles.refresh	Yenile
 browse.actionAvailableOffline	Çevrimdışı kullanılabilir
+browse.actionKeepOffline	Çevrimdışı Tut
+browse.actionShowInFolder	Klasörde Göster
 browse.actionSaveToDevice	Aygıta Kaydet
 previewToolbar.saveToDevice	Aygıta Kaydet
 downloadQueue.savedToPhotos	Fotoğraflar’a kaydedildi
@@ -1164,6 +1182,8 @@ shareUpload.nameLabel	Dosya Adı
 shareUpload.namesLabel	Dosya Adları
 shareUpload.nameHint	Dosyanın yükleneceği ad. Uzantı aynı kalır.
 spotlight.placeholder	Dosyalarda ve klasörlerde ara
+spotlight.hintMove	Gezin
+spotlight.hintOpen	Aç
 trash.title	Çöp Kutusu
 trash.moveToTrash	Çöp Kutusuna Taşı
 trash.deletePermanently	Kalıcı Olarak Sil
@@ -1267,3 +1287,12 @@ common.increase	Artır
 common.moreInfo	Daha Fazla Bilgi
 versionedFiles.pathHeader	Yol
 versionedFiles.versionsHeader	Sürümler
+fileInfo.sectionSelected	Seçilenler
+fileInfo.selectionFootnote	Paylaşım, sürümler ve izinler tek bir öğe seçildiğinde gösterilir.
+fileInfo.moreSelected	%lld tane daha
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld klasör
+browse.folderCount#other	%lld klasör
+browse.fileCount#one	%lld dosya
+browse.fileCount#other	%lld dosya
+browse.contentSummary	%1$@, %2$@

@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Đang hiển thị bản sao đã lưu từ %@
 browse.actionCopy	Sao chép
 browse.destinationPickerMoveTitle	Di chuyển đến…
 browse.destinationPickerConfirmMove	Di chuyển vào đây
+browse.destinationPickerCopyTitle	Sao chép đến…
+browse.destinationPickerConfirmCopy	Sao chép vào đây
+browse.actionMoveTo	Di chuyển đến…
+browse.actionCopyTo	Sao chép đến…
 browse.destinationPickerNoFolders	Không có thư mục nào ở đây
 browse.destinationPickerLoadFailed	Không thể tải các thư mục.
 browse.actionMove	Di chuyển
@@ -592,6 +596,7 @@ fileInfo.rowDateTaken	Ngày chụp
 fileInfo.rowDuration	Thời lượng
 fileInfo.partialScan	Đếm theo quét một phần: thư mục này rất lớn.
 permissions.title	Quyền
+permissions.titleFor	Quyền của “%@”
 permissions.sectionMode	Chế độ
 permissions.numericLabel	Dạng số
 permissions.applyToEnclosed	Áp dụng cho các mục bên trong
@@ -726,7 +731,7 @@ login.plaintextWarning	Kết nối này không được mã hóa. Mật khẩu v
 error.sessionExpired	Phiên của bạn đã hết hạn. Hãy đăng nhập lại.
 error.rateLimited	Quá nhiều yêu cầu. Hãy thử lại sau ít phút.
 error.network	Không thể kết nối đến máy chủ.
-error.offline	Bạn đang ngoại tuyến. Hãy kết nối internet và thử lại.
+error.offline	Không thể kết nối tới máy chủ. Hãy kiểm tra kết nối và thử lại.
 error.decoding	Máy chủ phản hồi bất ngờ.
 error.server	Lỗi máy chủ (%lld).
 error.forbidden	Bạn không có quyền thực hiện thao tác đó.
@@ -934,6 +939,10 @@ appearance.light	Sáng
 appearance.dark	Tối
 browse.myFiles	Tệp của tôi
 browse.myFilesSubtitle	Chỉ mình bạn thấy
+browse.home	Trang chủ
+browse.noValue	--
+browse.today	Hôm nay
+browse.yesterday	Hôm qua
 downloadQueue.navigationTitle	Hàng đợi tải xuống
 downloadQueue.emptyList	Không có tệp nào đang tải xuống.
 downloadQueue.statusSaved	Đã lưu
@@ -948,6 +957,8 @@ downloadQueue.bytesOf	%1$@ trên %2$@
 downloadQueue.timeLeft	Còn %@
 browse.sectionPersonal	Cá nhân
 macSettings.addAccount	Thêm tài khoản…
+macSettings.accountSettings	Cài đặt tài khoản
+macSettings.switchAccountHeader	Chuyển tài khoản
 macSettings.changePassword	Đổi mật khẩu…
 macSettings.signOut	Đăng xuất…
 macSettings.switchAccount	Chuyển sang tài khoản này
@@ -977,6 +988,10 @@ fileInfo.restoreMessage	Tệp sẽ quay về như lúc %@. Nội dung hiện t�
 fileInfo.restoreConfirm	Khôi phục
 fileInfo.sectionSharing	Chia sẻ
 fileInfo.notShared	Không có liên kết chia sẻ
+fileInfo.createLink	Tạo liên kết
+fileInfo.newLink	Liên kết mới
+fileInfo.versionCurrent	Hiện tại
+fileInfo.quickFavorite	Yêu thích
 fileInfo.versionActions	Thao tác phiên bản
 fileInfo.versionDownload	Tải xuống…
 fileInfo.versionSaveCopy	Lưu thành bản sao
@@ -1008,6 +1023,7 @@ menu.quitTransfersTitle	Thoát NextExplorer?
 menu.quitTransfersMessage	Các lượt tải lên hoặc tải xuống vẫn đang diễn ra. Thoát bây giờ sẽ dừng chúng.
 menu.quitTransfersConfirm	Thoát
 menu.toggleSidebar	Hiện hoặc ẩn thanh bên
+menu.hideInspector	Ẩn trình kiểm tra
 media.play	Phát
 media.pause	Tạm dừng
 media.position	Vị trí phát
@@ -1119,6 +1135,8 @@ trashSettings.environmentNote	Giá trị mặc định lấy từ TRASH_ENABLED,
 trashSettings.versionsEnvironmentNote	Giá trị mặc định lấy từ VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE và VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Làm mới
 browse.actionAvailableOffline	Có sẵn ngoại tuyến
+browse.actionKeepOffline	Giữ ngoại tuyến
+browse.actionShowInFolder	Hiện trong thư mục
 browse.actionSaveToDevice	Lưu vào thiết bị
 previewToolbar.saveToDevice	Lưu vào thiết bị
 downloadQueue.savedToPhotos	Đã lưu vào Ảnh
@@ -1147,6 +1165,8 @@ shareUpload.nameLabel	Tên tệp
 shareUpload.namesLabel	Tên tệp
 shareUpload.nameHint	Tên dùng khi tải tệp lên. Phần mở rộng giữ nguyên.
 spotlight.placeholder	Tìm tệp và thư mục
+spotlight.hintMove	Di chuyển
+spotlight.hintOpen	Mở
 trash.title	Thùng rác
 trash.moveToTrash	Chuyển vào thùng rác
 trash.deletePermanently	Xóa vĩnh viễn
@@ -1234,3 +1254,10 @@ common.increase	Tăng
 common.moreInfo	Thêm thông tin
 versionedFiles.pathHeader	Đường dẫn
 versionedFiles.versionsHeader	Phiên bản
+fileInfo.sectionSelected	Đã chọn
+fileInfo.selectionFootnote	Chia sẻ, phiên bản và quyền được hiển thị khi chọn một mục.
+fileInfo.moreSelected	Thêm %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#other	%lld thư mục
+browse.fileCount#other	%lld tệp
+browse.contentSummary	%1$@, %2$@

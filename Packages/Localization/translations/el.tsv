@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Εμφάνιση αποθηκευμένου αντι�
 browse.actionCopy	Αντιγραφή
 browse.destinationPickerMoveTitle	Μετακίνηση σε…
 browse.destinationPickerConfirmMove	Μετακίνηση εδώ
+browse.destinationPickerCopyTitle	Αντιγραφή σε…
+browse.destinationPickerConfirmCopy	Αντιγραφή εδώ
+browse.actionMoveTo	Μετακίνηση σε…
+browse.actionCopyTo	Αντιγραφή σε…
 browse.destinationPickerNoFolders	Δεν υπάρχουν φάκελοι εδώ
 browse.destinationPickerLoadFailed	Δεν ήταν δυνατή η φόρτωση των φακέλων.
 browse.actionMove	Μετακίνηση
@@ -603,6 +607,7 @@ fileInfo.rowDateTaken	Ημερομηνία λήψης
 fileInfo.rowDuration	Διάρκεια
 fileInfo.partialScan	Μετρήθηκε με μερική σάρωση: αυτός ο φάκελος είναι πολύ μεγάλος.
 permissions.title	Δικαιώματα
+permissions.titleFor	Δικαιώματα για «%@»
 permissions.sectionMode	Λειτουργία
 permissions.numericLabel	Αριθμητικό
 permissions.applyToEnclosed	Εφαρμογή στα περιεχόμενα στοιχεία
@@ -737,7 +742,7 @@ login.plaintextWarning	Αυτή η σύνδεση δεν είναι κρυπτο
 error.sessionExpired	Η συνεδρία σας έληξε. Συνδεθείτε ξανά.
 error.rateLimited	Πάρα πολλά αιτήματα. Δοκιμάστε ξανά σε λίγο.
 error.network	Δεν ήταν δυνατή η επικοινωνία με τον διακομιστή.
-error.offline	Είστε εκτός σύνδεσης. Συνδεθείτε στο διαδίκτυο και δοκιμάστε ξανά.
+error.offline	Ο διακομιστής δεν είναι προσβάσιμος. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.
 error.decoding	Ο διακομιστής απάντησε απροσδόκητα.
 error.server	Σφάλμα διακομιστή (%lld).
 error.forbidden	Δεν έχετε δικαίωμα να το κάνετε αυτό.
@@ -945,6 +950,10 @@ appearance.light	Φωτεινή
 appearance.dark	Σκοτεινή
 browse.myFiles	Τα αρχεία μου
 browse.myFilesSubtitle	Ορατό μόνο σε εσάς
+browse.home	Αρχική
+browse.noValue	--
+browse.today	Σήμερα
+browse.yesterday	Χθες
 downloadQueue.navigationTitle	Ουρά λήψεων
 downloadQueue.emptyList	Δεν υπάρχουν λήψεις σε εξέλιξη.
 downloadQueue.statusSaved	Αποθηκεύτηκε
@@ -959,6 +968,8 @@ downloadQueue.bytesOf	%1$@ από %2$@
 downloadQueue.timeLeft	Απομένουν %@
 browse.sectionPersonal	Προσωπικά
 macSettings.addAccount	Προσθήκη λογαριασμού…
+macSettings.accountSettings	Ρυθμίσεις λογαριασμού
+macSettings.switchAccountHeader	Εναλλαγή λογαριασμού
 macSettings.changePassword	Αλλαγή κωδικού πρόσβασης…
 macSettings.signOut	Αποσύνδεση…
 macSettings.switchAccount	Εναλλαγή σε αυτόν τον λογαριασμό
@@ -989,6 +1000,10 @@ fileInfo.restoreMessage	Το αρχείο επιστρέφει στην κατά
 fileInfo.restoreConfirm	Επαναφορά
 fileInfo.sectionSharing	Κοινοποίηση
 fileInfo.notShared	Κανένας σύνδεσμος κοινοποίησης
+fileInfo.createLink	Δημιουργία συνδέσμου
+fileInfo.newLink	Νέος σύνδεσμος
+fileInfo.versionCurrent	Τρέχουσα
+fileInfo.quickFavorite	Αγαπημένο
 fileInfo.versionActions	Ενέργειες έκδοσης
 fileInfo.versionDownload	Λήψη…
 fileInfo.versionSaveCopy	Αποθήκευση ως αντίγραφο
@@ -1020,6 +1035,7 @@ menu.quitTransfersTitle	Έξοδος από το NextExplorer;
 menu.quitTransfersMessage	Μεταφορτώσεις ή λήψεις βρίσκονται ακόμη σε εξέλιξη. Αν βγείτε τώρα, θα σταματήσουν.
 menu.quitTransfersConfirm	Έξοδος
 menu.toggleSidebar	Εμφάνιση ή απόκρυψη πλαϊνής στήλης
+menu.hideInspector	Απόκρυψη επιθεωρητή
 media.play	Αναπαραγωγή
 media.pause	Παύση
 media.position	Θέση αναπαραγωγής
@@ -1137,6 +1153,8 @@ trashSettings.environmentNote	Οι προεπιλογές προέρχονται
 trashSettings.versionsEnvironmentNote	Οι προεπιλογές προέρχονται από τα VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE και VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Ανανέωση
 browse.actionAvailableOffline	Διαθέσιμο εκτός σύνδεσης
+browse.actionKeepOffline	Διατήρηση εκτός σύνδεσης
+browse.actionShowInFolder	Εμφάνιση στον φάκελο
 browse.actionSaveToDevice	Αποθήκευση στη συσκευή
 previewToolbar.saveToDevice	Αποθήκευση στη συσκευή
 downloadQueue.savedToPhotos	Αποθηκεύτηκε στις Φωτογραφίες
@@ -1165,6 +1183,8 @@ shareUpload.nameLabel	Όνομα αρχείου
 shareUpload.namesLabel	Ονόματα αρχείων
 shareUpload.nameHint	Το όνομα με το οποίο ανεβαίνει το αρχείο. Η επέκταση μένει ίδια.
 spotlight.placeholder	Αναζήτηση αρχείων και φακέλων
+spotlight.hintMove	Μετακίνηση
+spotlight.hintOpen	Άνοιγμα
 trash.title	Κάδος απορριμμάτων
 trash.moveToTrash	Μεταφορά στον κάδο
 trash.deletePermanently	Οριστική διαγραφή
@@ -1268,3 +1288,12 @@ common.increase	Αύξηση
 common.moreInfo	Περισσότερες πληροφορίες
 versionedFiles.pathHeader	Διαδρομή
 versionedFiles.versionsHeader	Εκδόσεις
+fileInfo.sectionSelected	Επιλεγμένα
+fileInfo.selectionFootnote	Η κοινή χρήση, οι εκδόσεις και τα δικαιώματα εμφανίζονται όταν επιλέγετε ένα στοιχείο.
+fileInfo.moreSelected	Ακόμη %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld φάκελος
+browse.folderCount#other	%lld φάκελοι
+browse.fileCount#one	%lld αρχείο
+browse.fileCount#other	%lld αρχεία
+browse.contentSummary	%1$@, %2$@

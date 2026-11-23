@@ -104,6 +104,10 @@ browse.offlineBannerDetail	Viser en lagret kopi fra %@
 browse.actionCopy	Kopier
 browse.destinationPickerMoveTitle	Flytt til…
 browse.destinationPickerConfirmMove	Flytt hit
+browse.destinationPickerCopyTitle	Kopier til…
+browse.destinationPickerConfirmCopy	Kopier hit
+browse.actionMoveTo	Flytt til…
+browse.actionCopyTo	Kopier til…
 browse.destinationPickerNoFolders	Ingen mapper her
 browse.destinationPickerLoadFailed	Kunne ikke laste mappene.
 browse.actionMove	Flytt
@@ -603,6 +607,7 @@ fileInfo.rowDateTaken	Opptaksdato
 fileInfo.rowDuration	Varighet
 fileInfo.partialScan	Telt ved en delvis skanning: denne mappen er svært stor.
 permissions.title	Tillatelser
+permissions.titleFor	Tillatelser for «%@»
 permissions.sectionMode	Modus
 permissions.numericLabel	Numerisk
 permissions.applyToEnclosed	Bruk på elementer innenfor
@@ -737,7 +742,7 @@ login.plaintextWarning	Denne tilkoblingen er ikke kryptert. Passordet og økten 
 error.sessionExpired	Økten din har utløpt. Logg inn igjen.
 error.rateLimited	For mange forespørsler. Prøv igjen om litt.
 error.network	Fikk ikke kontakt med serveren.
-error.offline	Du er frakoblet. Koble til internett og prøv igjen.
+error.offline	Får ikke kontakt med serveren. Sjekk tilkoblingen og prøv igjen.
 error.decoding	Serveren svarte uventet.
 error.server	Serverfeil (%lld).
 error.forbidden	Du har ikke tillatelse til å gjøre det.
@@ -945,6 +950,10 @@ appearance.light	Lys
 appearance.dark	Mørk
 browse.myFiles	Mine filer
 browse.myFilesSubtitle	Bare synlig for deg
+browse.home	Hjem
+browse.noValue	--
+browse.today	I dag
+browse.yesterday	I går
 downloadQueue.navigationTitle	Nedlastingskø
 downloadQueue.emptyList	Ingen nedlastinger pågår.
 downloadQueue.statusSaved	Lagret
@@ -959,6 +968,8 @@ downloadQueue.bytesOf	%1$@ av %2$@
 downloadQueue.timeLeft	%@ igjen
 browse.sectionPersonal	Personlig
 macSettings.addAccount	Legg til konto…
+macSettings.accountSettings	Kontoinnstillinger
+macSettings.switchAccountHeader	Bytt konto
 macSettings.changePassword	Endre passord…
 macSettings.signOut	Logg ut…
 macSettings.switchAccount	Bytt til denne kontoen
@@ -989,6 +1000,10 @@ fileInfo.restoreMessage	Filen går tilbake til slik den var %@. Det den innehold
 fileInfo.restoreConfirm	Gjenopprett
 fileInfo.sectionSharing	Deling
 fileInfo.notShared	Ingen delingslenker
+fileInfo.createLink	Opprett lenke
+fileInfo.newLink	Ny lenke
+fileInfo.versionCurrent	Gjeldende
+fileInfo.quickFavorite	Favoritt
 fileInfo.versionActions	Versjonshandlinger
 fileInfo.versionDownload	Last ned…
 fileInfo.versionSaveCopy	Lagre som kopi
@@ -1020,6 +1035,7 @@ menu.quitTransfersTitle	Avslutte NextExplorer?
 menu.quitTransfersMessage	Opplastinger eller nedlastinger pågår fortsatt. Hvis du avslutter nå, stoppes de.
 menu.quitTransfersConfirm	Avslutt
 menu.toggleSidebar	Vis eller skjul sidepanel
+menu.hideInspector	Skjul inspektør
 media.play	Spill av
 media.pause	Pause
 media.position	Avspillingsposisjon
@@ -1137,6 +1153,8 @@ trashSettings.environmentNote	Standardverdiene kommer fra TRASH_ENABLED, TRASH_R
 trashSettings.versionsEnvironmentNote	Standardverdiene kommer fra VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE og VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Oppdater
 browse.actionAvailableOffline	Tilgjengelig frakoblet
+browse.actionKeepOffline	Behold frakoblet
+browse.actionShowInFolder	Vis i mappe
 browse.actionSaveToDevice	Arkiver på enheten
 previewToolbar.saveToDevice	Arkiver på enheten
 downloadQueue.savedToPhotos	Arkivert i Bilder
@@ -1165,6 +1183,8 @@ shareUpload.nameLabel	Filnavn
 shareUpload.namesLabel	Filnavn
 shareUpload.nameHint	Navnet filen lastes opp med. Filtypen forblir den samme.
 spotlight.placeholder	Søk i filer og mapper
+spotlight.hintMove	Flytt
+spotlight.hintOpen	Åpne
 trash.title	Papirkurv
 trash.moveToTrash	Flytt til papirkurven
 trash.deletePermanently	Slett permanent
@@ -1268,3 +1288,12 @@ common.increase	Øk
 common.moreInfo	Mer informasjon
 versionedFiles.pathHeader	Bane
 versionedFiles.versionsHeader	Versjoner
+fileInfo.sectionSelected	Valgt
+fileInfo.selectionFootnote	Deling, versjoner og tillatelser vises når ett objekt er valgt.
+fileInfo.moreSelected	%lld til
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld mappe
+browse.folderCount#other	%lld mapper
+browse.fileCount#one	%lld fil
+browse.fileCount#other	%lld filer
+browse.contentSummary	%1$@, %2$@

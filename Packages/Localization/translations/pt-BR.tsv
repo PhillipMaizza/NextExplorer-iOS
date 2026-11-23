@@ -106,6 +106,10 @@ browse.offlineBannerDetail	Mostrando uma cópia salva de %@
 browse.actionCopy	Copiar
 browse.destinationPickerMoveTitle	Mover para…
 browse.destinationPickerConfirmMove	Mover para cá
+browse.destinationPickerCopyTitle	Copiar para…
+browse.destinationPickerConfirmCopy	Copiar para cá
+browse.actionMoveTo	Mover para…
+browse.actionCopyTo	Copiar para…
 browse.destinationPickerNoFolders	Nenhuma pasta aqui
 browse.destinationPickerLoadFailed	Não foi possível carregar as pastas.
 browse.destinationPickerRecent	Recentes
@@ -616,6 +620,7 @@ fileInfo.rowDateTaken	Data de captura
 fileInfo.rowDuration	Duração
 fileInfo.partialScan	Contagem parcial: esta pasta é muito grande.
 permissions.title	Permissões
+permissions.titleFor	Permissões de “%@”
 permissions.sectionMode	Modo
 permissions.numericLabel	Numérico
 permissions.applyToEnclosed	Aplicar aos itens contidos
@@ -768,7 +773,7 @@ login.plaintextWarning	Esta conexão não é criptografada. Sua senha e sua sess
 error.sessionExpired	Sua sessão expirou. Entre novamente.
 error.rateLimited	Muitas solicitações. Tente novamente em breve.
 error.network	Não foi possível conectar ao servidor.
-error.offline	Você está offline. Conecte-se à internet e tente novamente.
+error.offline	Não foi possível acessar o servidor. Verifique sua conexão e tente novamente.
 error.decoding	O servidor respondeu de forma inesperada.
 error.server	Erro do servidor (%lld).
 error.forbidden	Você não tem permissão para fazer isso.
@@ -896,6 +901,10 @@ appearance.light	Claro
 appearance.dark	Escuro
 browse.myFiles	Meus Arquivos
 browse.myFilesSubtitle	Visível apenas para você
+browse.home	Início
+browse.noValue	--
+browse.today	Hoje
+browse.yesterday	Ontem
 downloadQueue.navigationTitle	Fila de downloads
 downloadQueue.emptyList	Nenhum download em andamento.
 downloadQueue.statusSaved	Salvo
@@ -911,6 +920,8 @@ downloadQueue.timeLeft	faltam %@
 browse.sectionPersonal	Pessoal
 macSettings.labelFormat	%@:
 macSettings.addAccount	Adicionar conta…
+macSettings.accountSettings	Configurações da conta
+macSettings.switchAccountHeader	Trocar de conta
 macSettings.changePassword	Alterar senha…
 macSettings.signOut	Sair…
 macSettings.switchAccount	Mudar para esta conta
@@ -941,6 +952,10 @@ fileInfo.restoreMessage	O arquivo volta a como estava em %@. O conteúdo atual �
 fileInfo.restoreConfirm	Restaurar
 fileInfo.sectionSharing	Compartilhando:
 fileInfo.notShared	Nenhum link compartilhado
+fileInfo.createLink	Criar link
+fileInfo.newLink	Novo link
+fileInfo.versionCurrent	Atual
+fileInfo.quickFavorite	Favorito
 fileInfo.versionActions	Ações da versão
 fileInfo.versionViewText	Ver texto
 fileInfo.versionTextTruncated	Mostrando apenas o início desta versão.
@@ -1185,6 +1200,8 @@ twoFactor.shareCodesButton	Compartilhar códigos
 twoFactor.turnOffButton	Desativar
 twoFactor.turnOnButton	Ativar
 browse.actionAvailableOffline	Disponível offline
+browse.actionKeepOffline	Manter offline
+browse.actionShowInFolder	Mostrar na pasta
 browse.actionSaveToDevice	Salvar no dispositivo
 previewToolbar.saveToDevice	Salvar no dispositivo
 downloadQueue.savedToPhotos	Salvo em Fotos
@@ -1213,6 +1230,8 @@ shareUpload.nameLabel	Nome do arquivo
 shareUpload.namesLabel	Nomes dos arquivos
 shareUpload.nameHint	O nome com que o arquivo é enviado. A extensão continua a mesma.
 spotlight.placeholder	Pesquisar arquivos e pastas
+spotlight.hintMove	Navegar
+spotlight.hintOpen	Abrir
 trash.title	Lixeira
 trash.moveToTrash	Mover para a lixeira
 trash.deletePermanently	Excluir permanentemente
@@ -1323,6 +1342,7 @@ shareUpload.failureTooLarge#other	%lld arquivos não foram enviados. A conexão 
 shareUpload.startedDeferred	Salvo para o NextExplorer. Abra o app para enviar os arquivos grandes.
 menu.goToFolderPlaceholder	Documentos/Relatórios
 menu.toggleSidebar	Mostrar ou ocultar barra lateral
+menu.hideInspector	Ocultar inspetor
 emptyState.dropHintFiles	Você também pode arrastar arquivos para cá do app Arquivos ou Fotos.
 emptyState.dropHintFinder	Você também pode arrastar arquivos para cá do Finder.
 login.stepServer	Servidor
@@ -1334,3 +1354,12 @@ common.increase	Aumentar
 common.moreInfo	Mais informações
 versionedFiles.pathHeader	Caminho
 versionedFiles.versionsHeader	Versões
+fileInfo.sectionSelected	Selecionados
+fileInfo.selectionFootnote	Compartilhamento, versões e permissões aparecem quando um único item está selecionado.
+fileInfo.moreSelected	mais %lld
+fileInfo.dateRange	%1$@ – %2$@
+browse.folderCount#one	%lld pasta
+browse.folderCount#other	%lld pastas
+browse.fileCount#one	%lld arquivo
+browse.fileCount#other	%lld arquivos
+browse.contentSummary	%1$@, %2$@
