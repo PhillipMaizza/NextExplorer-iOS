@@ -13,7 +13,7 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
     public let createdAt: Date?
     public let updatedAt: Date?
     /// Only populated by the admin `GET /api/users` list; empty for `/api/auth/me`.
-    public let authMethods: [AuthMethod]
+    public private(set) var authMethods: [AuthMethod]
     /// Only populated by the admin `GET /api/users` list: the end of an active sign in lock.
     public private(set) var lockedUntil: Date?
     /// Only populated by the admin `GET /api/users` list.
@@ -71,6 +71,15 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         case .twoFactor: user.isTwoFactorEnabled = false
         case .passkeys: break
         }
+        return user
+    }
+
+    public func withListFields(from listed: User?) -> User {
+        guard let listed else { return self }
+        var user = self
+        user.authMethods = listed.authMethods
+        user.lockedUntil = listed.lockedUntil
+        user.isTwoFactorEnabled = listed.isTwoFactorEnabled
         return user
     }
 

@@ -96,4 +96,22 @@ public struct FilePermissions: Decodable, Equatable, Sendable {
             return String(digit)
         }.joined()
     }
+
+    public static func grid(fromOctal text: String) -> [PermissionScope: Set<PermissionRight>]? {
+        guard text.count == 3, text.allSatisfy({ ("0" ... "7").contains($0) }), let bits = Int(text, radix: 8) else {
+            return nil
+        }
+        var result: [PermissionScope: Set<PermissionRight>] = [:]
+        for scope in PermissionScope.allCases {
+            result[scope] = Set(PermissionRight.allCases.filter { bits & ($0.bit << scope.shift) != 0 })
+        }
+        return result
+    }
+
+    public static func symbolicString(from grid: [PermissionScope: Set<PermissionRight>]) -> String {
+        let symbols: [PermissionRight: Character] = [.read: "r", .write: "w", .execute: "x"]
+        return String(PermissionScope.allCases.flatMap { scope in
+            PermissionRight.allCases.map { (grid[scope] ?? []).contains($0) ? symbols[$0] ?? "-" : "-" }
+        })
+    }
 }

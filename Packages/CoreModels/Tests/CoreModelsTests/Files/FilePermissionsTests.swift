@@ -50,4 +50,17 @@ struct FilePermissionsTests {
     private func make(mode: Int) -> FilePermissions {
         FilePermissions(path: "x", mode: mode, owner: "u", group: "g", uid: 0, gid: 0, isDirectory: false)
     }
+
+    @Test
+    func anOctalModeParsesIntoItsGridAndBack() {
+        let grid = FilePermissions.grid(fromOctal: "750")
+        #expect(grid == [.owner: [.read, .write, .execute], .group: [.read, .execute], .others: []])
+        #expect(grid.map(FilePermissions.octalString(from:)) == "750")
+        #expect(grid.map(FilePermissions.symbolicString(from:)) == "rwxr-x---")
+    }
+
+    @Test(arguments: ["", "75", "7555", "758", "7a5", "-75"])
+    func anInvalidOctalModeParsesToNothing(_ text: String) {
+        #expect(FilePermissions.grid(fromOctal: text) == nil)
+    }
 }
