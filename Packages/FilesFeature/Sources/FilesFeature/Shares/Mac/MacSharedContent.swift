@@ -53,13 +53,15 @@
                     )
                     .id(segment)
                 }
+                .frame(maxWidth: .infinity)
+                .clipped()
                 if let item {
-                    Divider()
                     MacSharedInspector(store: store, segment: segment, item: item, onToast: onToast)
-                        .transition(.move(edge: .trailing))
+                        .macInspectorColumn()
                 }
             }
             .animation(DSMotion.stateFade, value: item == nil)
+            .focusedSceneValue(\.closeMacInspector, item == nil ? nil : MacInspectorAction { selection = [] })
             .onChange(of: segment) { _, _ in selection = [] }
         }
     }

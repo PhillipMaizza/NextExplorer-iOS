@@ -6,104 +6,104 @@
     import SwiftUI
 
     private enum Metrics {
-        static let gridColumnWidth: CGFloat = 70
+        static let gridColumnWidth: CGFloat = 72
+        static let numericWidth: CGFloat = 84
     }
 
-    /// Permissions as a native Mac dialog: ownership fields with their own Apply, the
-    /// read / write / execute checkboxes with the octal mode, then Close and Apply Permissions.
+    /// Permissions as a native Mac dialog: owner and group, the read, write and execute checkboxes
+    /// with the numeric mode, then Save, which applies whichever of the two changed.
     struct MacPermissionsSheet: View {
         @Bindable var store: StoreOf<PermissionsFeature>
         @Environment(\.dismiss) private var dismiss
 
         var body: some View {
             MacFormSheet(
-                title: store.item.name,
-                confirmTitle: L10n.Permissions.applyPermissions,
-                isConfirmEnabled: store.isModeDirty,
+                title: L10n.Permissions.titleFor(store.item.name),
+                confirmTitle: L10n.Common.save,
+                isConfirmEnabled: store.isDirty,
                 isWorking: store.isSavingMode || store.isSavingOwnership,
                 errorMessage: store.actionError ?? store.phase.errorMessage,
-                cancelTitle: L10n.Common.close,
+                layout: .stacked,
                 onCancel: { dismiss() },
-                onConfirm: { store.send(.applyModeTapped) }
+                onConfirm: { store.send(.saveTapped) }
             ) {
                 if store.phase == .loading, store.permissions == nil {
                     MacSpinner().frame(maxWidth: .infinity)
                 } else if store.permissions == nil, store.phase.errorMessage != nil {
                     Button(L10n.Common.retry) { store.send(.onAppear) }
+                        .buttonStyle(.macDS(.secondary))
                 } else {
-                    ownershipRows
-                    modeRows
+                    ownership
+                    accessGrid
+                    numericRow
+                    if store.item.isDirectory {
+                        Toggle(L10n.Permissions.applyToEnclosed, isOn: $store.recursive.sending(\.recursiveChanged))
+                            .toggleStyle(.macCheckbox)
+                    }
                 }
             }
             .task { store.send(.onAppear) }
         }
 
-        @ViewBuilder
-        private var ownershipRows: some View {
-            MacSettingsRow(L10n.Permissions.fieldOwner) {
-                TextField(L10n.Permissions.fieldOwner, text: $store.ownerDraft.sending(\.ownerDraftChanged))
-                    .labelsHidden()
-                    .autocorrectionDisabled()
-            }
-            MacSettingsRow(L10n.Permissions.fieldGroup) {
-                TextField(L10n.Permissions.fieldGroup, text: $store.groupDraft.sending(\.groupDraftChanged))
-                    .labelsHidden()
-                    .autocorrectionDisabled()
-                MacSettingsNote(L10n.Permissions.ownershipNote)
-                Button(L10n.Permissions.applyOwnership) { store.send(.applyOwnershipTapped) }
-                    .disabled(!store.isOwnershipDirty || store.isSavingOwnership)
-            }
-        }
-
-        @ViewBuilder
-        private var modeRows: some View {
-            MacSettingsRow(L10n.Permissions.sectionMode) {
-                Grid(alignment: .leading, horizontalSpacing: .space12, verticalSpacing: .space8) {
+        private var accessGrid: some View {
+            Grid(horizontalSpacing: .zero, verticalSpacing: .space8) {
+                GridRow {
+                    Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
+                    ForEach(PermissionRight.allCases, id: \.self) { right in
+                        Text(right.title)
+                            .type(.caption(.semibold), style: .secondary)
+                            .frame(width: Metrics.gridColumnWidth)
+                    }
+                }
+                ForEach(PermissionScope.allCases, id: \.self) { scope in
                     GridRow {
-                        Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
-                        ForEach(Self.rights, id: \.0) { _, title in
-                            Text(title).foregroundStyle(.secondary).frame(width: Metrics.gridColumnWidth)
-                        }
-                    }
-                    ForEach(Self.scopes, id: \.0) { scope, title in
-                        GridRow {
-                            Text(title)
-                            ForEach(Self.rights, id: \.0) { right, rightTitle in
-                                Toggle(rightTitle, isOn: Binding(
-                                    get: { store.grid[scope]?.contains(right) ?? false },
-                                    set: { _ in store.send(.toggle(scope, right)) }
-                                ))
-                                .labelsHidden()
-                                .toggleStyle(.checkbox)
+                        Text(scope.title)
+                            .type(.body2(.regular))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        ForEach(PermissionRight.allCases, id: \.self) { right in
+                            Toggle(isOn: Binding(
+                                get: { store.grid[scope]?.contains(right) ?? false },
+                                set: { _ in store.send(.toggle(scope, right)) }
+                            )) { EmptyView() }
+                                .toggleStyle(.macCheckbox)
                                 .frame(width: Metrics.gridColumnWidth)
-                                .accessibilityLabel(L10n.Common.pair(title, rightTitle))
-                            }
+                                .accessibilityLabel(L10n.Common.pair(scope.title, right.title))
                         }
                     }
                 }
             }
-            MacSettingsRow(L10n.Permissions.numericLabel) {
-                Text(store.octalString).monospaced().textSelection(.enabled)
-                if store.item.isDirectory {
-                    Toggle(L10n.Permissions.applyToEnclosed, isOn: $store.recursive.sending(\.recursiveChanged))
-                }
+            .padding(.horizontal, .space16)
+            .padding(.vertical, .space12)
+            .macGroupedRows()
+        }
+
+        private var numericRow: some View {
+            HStack(spacing: .space8) {
+                Text(L10n.Permissions.numericLabel).type(.body3(.regular), style: .secondary)
+                MacTextField(
+                    L10n.Permissions.numericLabel,
+                    text: $store.numericDraft.sending(\.numericChanged)
+                )
+                .monospaced()
+                .multilineTextAlignment(.center)
+                .frame(width: Metrics.numericWidth)
+                Text(FilePermissions.symbolicString(from: store.grid))
+                    .type(.body3(.semibold), style: .secondary)
+                    .monospaced()
             }
         }
 
-        private static var scopes: [(PermissionScope, String)] {
-            [
-                (.owner, L10n.Permissions.scopeOwner),
-                (.group, L10n.Permissions.scopeGroup),
-                (.others, L10n.Permissions.scopeOthers),
-            ]
-        }
-
-        private static var rights: [(PermissionRight, String)] {
-            [
-                (.read, L10n.Permissions.rightRead),
-                (.write, L10n.Permissions.rightWrite),
-                (.execute, L10n.Permissions.rightExecute),
-            ]
+        private var ownership: some View {
+            HStack(spacing: .space12) {
+                MacLabeledField(L10n.Permissions.fieldOwner) {
+                    MacTextField(L10n.Permissions.fieldOwner, text: $store.ownerDraft.sending(\.ownerDraftChanged))
+                        .autocorrectionDisabled()
+                }
+                MacLabeledField(L10n.Permissions.fieldGroup) {
+                    MacTextField(L10n.Permissions.fieldGroup, text: $store.groupDraft.sending(\.groupDraftChanged))
+                        .autocorrectionDisabled()
+                }
+            }
         }
     }
 
@@ -111,7 +111,7 @@
     private func permissionsPreview(_ permissions: FilePermissions?, isDirectory: Bool = false) -> some View {
         let item = FileItem(
             name: isDirectory ? "Projects" : "report.pdf",
-            path: "",
+            path: "Files/Developer",
             dateModified: Date(),
             size: 1_024,
             kind: isDirectory ? "directory" : "pdf"
@@ -123,6 +123,7 @@
         if let permissions {
             state.permissions = permissions
             state.grid = permissions.grid
+            state.numericDraft = permissions.octalString
             state.ownerDraft = permissions.owner
             state.groupDraft = permissions.group
         }

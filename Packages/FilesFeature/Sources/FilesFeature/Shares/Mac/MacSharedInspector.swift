@@ -71,9 +71,9 @@
                 }
             }
             .formStyle(.grouped)
+            .scrollContentBackground(.hidden)
             // Neutral controls: the app accent stays on our own elements, only Delete reads red.
             .tint(Color.primaryDS)
-            .frame(width: MacInspectorMetrics.width)
         }
     }
 

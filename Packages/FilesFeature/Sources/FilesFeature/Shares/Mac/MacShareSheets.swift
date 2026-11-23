@@ -5,18 +5,12 @@
     import Localization
     import SwiftUI
 
-    private enum Metrics {
-        static let width: CGFloat = 540
-        static let copyFeedbackSeconds: Double = 2
-    }
-
     /// Create Share Link as a native Mac dialog: the form, then the created link with copy and
     /// share buttons.
     struct MacCreateShareLinkSheet: View {
         @Bindable var store: StoreOf<CreateShareLinkFeature>
         var onViewShares: (() -> Void)?
         @Environment(\.dismiss) private var dismiss
-        @State private var copied: URL?
 
         var body: some View {
             Group {
@@ -36,13 +30,14 @@
                 isConfirmEnabled: store.isCreateEnabled,
                 isWorking: store.isCreating,
                 errorMessage: store.errorMessage ?? store.usersPhase.errorMessage,
-                width: Metrics.width,
+                layout: .stacked,
                 onCancel: { dismiss() },
                 onConfirm: { store.send(.createTapped) }
             ) {
                 MacShareFormFields(
                     itemName: store.itemName,
-                    sourcePath: store.sourcePath,
+                    isDirectory: store.isDirectory,
+                    location: store.itemPath,
                     label: $store.label.sending(\.labelChanged),
                     accessMode: $store.accessMode.sending(\.accessModeChanged),
                     target: $store.target.sending(\.targetChanged),
@@ -70,58 +65,54 @@
                     dismiss()
                     onViewShares?()
                 },
-                width: Metrics.width,
+                layout: .stacked,
+                isSuccess: true,
                 onCancel: { dismiss() },
                 onConfirm: { dismiss() }
             ) {
-                Text(L10n.CreateShare.createdBanner).foregroundStyle(Color.positiveText)
-                    .padding(.bottom, .space8)
-                MacSettingsRow(L10n.CreateShare.sectionShareLink) {
-                    linkRow(created.shareUrl)
+                HStack(spacing: .space8) {
+                    MacCopyBox(created.shareUrl.absoluteString, icon: IconKit.link, isProminent: true)
+                    ShareLink(item: created.shareUrl) { IconKit.share }
+                        .buttonStyle(.macDS(.secondary))
+                        .accessibilityLabel(L10n.Common.share)
                 }
-                MacSettingsRow(created.share.isDirectory
+                summaryChips(created.share)
+                MacLabeledField(created.share.isDirectory
                     ? L10n.CreateShare.directFolderLink
                     : L10n.CreateShare.directFileLink)
                 {
-                    Picker(
-                        L10n.CreateShare.directLinkMode,
-                        selection: $store.directLinkMode.sending(\.directLinkModeChanged)
-                    ) {
-                        ForEach(DirectLinkMode.allCases) { Text($0.title).tag($0) }
-                    }
-                    .labelsHidden()
-                    .fixedSize()
-                    linkRow(directLink)
-                }
-                MacSettingsRow(L10n.CreateShare.summaryAccess) {
-                    Text(created.share.accessMode.title)
-                }
-                MacSettingsRow(L10n.CreateShare.summarySharedWith) {
-                    Text(created.share.sharingType == .anyone ? L10n.Shared.anyoneWithLink : recipientNames)
-                }
-                if created.share.hasPassword {
-                    MacSettingsRow(L10n.Common.password) { Text(L10n.CreateShare.summaryPasswordProtected) }
-                }
-                if let expiresAt = created.share.expiresAt {
-                    MacSettingsRow(L10n.CreateShare.summaryExpires) {
-                        Text(expiresAt.formatted(date: .abbreviated, time: .shortened))
+                    HStack(spacing: .space8) {
+                        MacPopup(
+                            L10n.CreateShare.directLinkMode,
+                            valueLabel: store.directLinkMode.title,
+                            selection: $store.directLinkMode.sending(\.directLinkModeChanged)
+                        ) {
+                            ForEach(DirectLinkMode.allCases) { Text($0.title).tag($0) }
+                        }
+                        .fixedSize()
+                        MacCopyBox(directLink.absoluteString)
                     }
                 }
             }
         }
 
-        /// The link itself, selectable, with Copy and the system share menu (AirDrop, Messages,
-        /// Mail) beside it.
-        private func linkRow(_ url: URL) -> some View {
-            HStack(spacing: .space8) {
-                Text(url.absoluteString)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Button(copied == url ? L10n.Common.copied : L10n.Common.copy) { copy(url) }
-                ShareLink(item: url) { IconKit.share }
-                    .accessibilityLabel(L10n.Common.share)
+        private func summaryChips(_ share: Share) -> some View {
+            DSFlowLayout(horizontalSpacing: .space8, verticalSpacing: .space8) {
+                MacChip(text: share.accessMode.title, tone: .gray, icon: share.accessMode.icon)
+                MacChip(text: share.sharingType.title, tone: .gray, icon: share.sharingType.icon)
+                if share.hasPassword {
+                    MacChip(text: L10n.CreateShare.summaryPasswordProtected, tone: .amber, icon: IconKit.lock)
+                }
+                if let expiresAt = share.expiresAt {
+                    MacChip(
+                        text: L10n.Common.pair(
+                            L10n.CreateShare.summaryExpires,
+                            expiresAt.formatted(date: .abbreviated, time: .omitted)
+                        ),
+                        tone: .amber,
+                        icon: IconKit.calendar
+                    )
+                }
             }
         }
 
@@ -130,17 +121,6 @@
                 .filter { store.selectedUserIDs.contains($0.id) }
                 .map { $0.displayName ?? $0.username }
             return names.isEmpty ? L10n.CreateShare.summarySpecificPeople : names.joined(separator: ", ")
-        }
-
-        private func copy(_ url: URL) {
-            PlatformPasteboard.copy(url.absoluteString)
-            copied = url
-            Task {
-                try? await Task.sleep(for: .seconds(Metrics.copyFeedbackSeconds))
-                if copied == url {
-                    copied = nil
-                }
-            }
         }
     }
 
@@ -157,13 +137,14 @@
                 isConfirmEnabled: store.isSaveEnabled,
                 isWorking: store.isSaving,
                 errorMessage: store.fieldError?.message ?? store.errorMessage ?? store.usersPhase.errorMessage,
-                width: Metrics.width,
+                layout: .stacked,
                 onCancel: { dismiss() },
                 onConfirm: { store.send(.saveTapped) }
             ) {
                 MacShareFormFields(
                     itemName: store.share.displayName,
-                    sourcePath: store.share.sourcePath,
+                    isDirectory: store.share.isDirectory,
+                    location: ((store.share.sourcePath ?? "") as NSString).deletingLastPathComponent,
                     label: $store.label.sending(\.labelChanged),
                     accessMode: $store.accessMode.sending(\.accessModeChanged),
                     target: $store.target.sending(\.targetChanged),
@@ -176,7 +157,9 @@
                     passwordPrompt: store.share.hasPassword ? L10n.EditShare.passwordKeepHint : L10n.Common.password,
                     isExpiryOn: $store.isExpiryEnabled.sending(\.expiryEnabledChanged),
                     expiresAt: $store.expiresAt.sending(\.expiresAtChanged)
-                )
+                ) {
+                    MacCopyBox(store.share.shareLink(serverURL: store.serverURL), icon: IconKit.link)
+                }
             }
             .task { store.send(.task) }
         }
@@ -190,6 +173,23 @@
             isDirectory: true,
             now: .now
         )) { CreateShareLinkFeature() } withDependencies: { $0.filesClient = .previewValue })
+    }
+
+    #Preview("Created") {
+        var state = CreateShareLinkFeature.State(
+            serverURL: sharedPreviewServerURL,
+            itemName: "Electricity",
+            itemPath: "Documents/Bills",
+            isDirectory: true,
+            now: .now
+        )
+        let link = sharedPreviewServerURL.appending(path: "share/toks5")
+        state.step = .created(CreatedShare(
+            share: .previewCard(hasPassword: true, expiresAt: Date().addingTimeInterval(86_400 * 7)),
+            shareUrl: link,
+            directFileUrl: link.appending(path: "file")
+        ))
+        return MacCreateShareLinkSheet(store: Store(initialState: state) { CreateShareLinkFeature() })
     }
 
     #Preview("Edit") {
