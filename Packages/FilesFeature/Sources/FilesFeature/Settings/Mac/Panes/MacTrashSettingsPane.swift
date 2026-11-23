@@ -240,7 +240,7 @@
         let store = Store(initialState: state) {
             EmptyReducer<TrashSettingsFeature.State, TrashSettingsFeature.Action>()
         }
-        return MacSettingsPaneCard(title: L10n.TrashSettings.navigationTitle, subtitle: nil) {
+        return MacPaneCard(title: L10n.TrashSettings.navigationTitle, subtitle: nil) {
             MacTrashSettingsPane(store: store)
         } tools: {
             MacTrashSettingsTools(store: store)

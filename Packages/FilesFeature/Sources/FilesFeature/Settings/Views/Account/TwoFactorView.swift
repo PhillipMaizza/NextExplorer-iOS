@@ -210,9 +210,10 @@ struct TwoFactorView: View {
 
 /// Draws `text` as a QR code. Built once, off the main thread, since Core Image is not free
 /// and the view redraws as the code is typed.
-private struct QRCodeView: View {
+struct QRCodeView: View {
     let text: String
     let accessibilityLabel: String
+    var size: CGFloat = Metrics.qrSize
     @State private var image: CGImage?
 
     var body: some View {
@@ -226,7 +227,7 @@ private struct QRCodeView: View {
                 ProgressView()
             }
         }
-        .frame(width: Metrics.qrSize, height: Metrics.qrSize)
+        .frame(width: size, height: size)
         .padding(Metrics.qrPadding)
         .background(RoundedRectangle(cornerRadius: Metrics.qrCornerRadius).fill(Color.white))
         .accessibilityLabel(accessibilityLabel)

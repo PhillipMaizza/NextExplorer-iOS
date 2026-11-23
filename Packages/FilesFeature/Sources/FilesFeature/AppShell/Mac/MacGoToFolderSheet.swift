@@ -15,11 +15,12 @@
                 title: L10n.Menu.goToFolderTitle,
                 confirmTitle: L10n.Menu.go,
                 isConfirmEnabled: !path.trimmingCharacters(in: .whitespaces).isEmpty,
+                layout: .stacked,
                 onCancel: onCancel,
                 onConfirm: { onGo(path) }
             ) {
-                TextField(L10n.Menu.goToFolderTitle, text: $path, prompt: Text(L10n.Menu.goToFolderPlaceholder))
-                    .labelsHidden()
+                MacTextField(L10n.Menu.goToFolderTitle, text: $path, prompt: L10n.Menu.goToFolderPlaceholder)
+                    .monospaced()
                     .autocorrectionDisabled()
                     .focused($isFocused)
                     .onSubmit { onGo(path) }

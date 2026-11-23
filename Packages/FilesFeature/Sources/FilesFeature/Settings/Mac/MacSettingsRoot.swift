@@ -1,4 +1,5 @@
 #if os(macOS)
+    import AppStorageKeys
     import ComposableArchitecture
     import DesignSystem
     import Localization
@@ -6,7 +7,6 @@
 
     private enum Metrics {
         static let sidebarWidth: CGFloat = 272
-        static let selectionKey = "macSettingsCategory"
     }
 
     /// One page of the Mac Settings window's sidebar.
@@ -118,11 +118,17 @@
     /// the app's own info.
     struct MacSettingsRoot: View {
         @Bindable var store: StoreOf<SettingsFeature>
-        @SceneStorage(Metrics.selectionKey) private var selection: MacSettingsCategory = .general
+        @AppStorage(AppStorageKeys.macSettingsPane) private var selection: MacSettingsCategory = .general
         @State private var isShowingLicenses = false
 
         private var visibleSelection: MacSettingsCategory {
             store.user.isAdmin || !MacSettingsCategory.admin.contains(selection) ? selection : .general
+        }
+
+        private func subtitle(for category: MacSettingsCategory) -> String? {
+            guard category == .trash else { return category.subtitle }
+            return store.trashSettings?.latestMaintenanceZone
+                .map { L10n.TrashSettings.lastPass(TrashSettingsView.lastPass(for: $0)) }
         }
 
         var body: some View {
@@ -145,7 +151,7 @@
                 .clipped()
                 .frame(width: Metrics.sidebarWidth)
                 NavigationStack {
-                    MacSettingsPaneCard(title: visibleSelection.headerTitle, subtitle: visibleSelection.subtitle) {
+                    MacPaneCard(title: visibleSelection.headerTitle, subtitle: subtitle(for: visibleSelection)) {
                         pane(visibleSelection)
                     } tools: {
                         MacSettingsHeaderTools(store: store, category: visibleSelection)
@@ -198,8 +204,6 @@
                 isSelected: category == visibleSelection
             ) {
                 selection = category
-            } trailing: {
-                EmptyView()
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)

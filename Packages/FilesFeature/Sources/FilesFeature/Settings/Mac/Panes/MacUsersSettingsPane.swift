@@ -72,7 +72,7 @@
                     message: store.userToGrantAdmin.map { L10n.UserDetail.grantAdminMessage($0.displayLabel) },
                     confirmTitle: L10n.UserDetail.roleGrantAdmin,
                     dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
+                    role: .standard,
                     closeAccessibilityLabel: L10n.Common.close,
                     onConfirm: { store.send(.grantAdminConfirmed) },
                     onDismiss: { store.send(.grantAdminCancelled) }

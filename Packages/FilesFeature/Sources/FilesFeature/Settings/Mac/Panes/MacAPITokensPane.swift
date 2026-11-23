@@ -186,7 +186,7 @@
         @MainActor
         static func pane(_ state: APITokensFeature.State) -> some View {
             let store = Store(initialState: state) { EmptyReducer<APITokensFeature.State, APITokensFeature.Action>() }
-            return MacSettingsPaneCard(title: L10n.ApiTokens.navigationTitle, subtitle: nil) {
+            return MacPaneCard(title: L10n.ApiTokens.navigationTitle, subtitle: nil) {
                 MacAPITokensPane(store: store)
             } tools: {
                 MacAPITokensNewButton(store: store)

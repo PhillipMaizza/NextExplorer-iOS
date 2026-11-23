@@ -485,7 +485,7 @@ public struct UserManagementFeature {
 
             case let .profileResponse(.success(user)):
                 state.isSavingProfile = false
-                state.users[id: user.id] = user
+                state.users[id: user.id] = user.withListFields(from: state.users[id: user.id])
                 seedProfileForm(&state, from: user)
                 state.toast = L10n.UserManagement.toastProfileUpdated
                 return .none
@@ -523,7 +523,7 @@ public struct UserManagementFeature {
 
             case let .rolesResponse(.success(user)):
                 state.isUpdatingRoles = false
-                state.users[id: user.id] = user
+                state.users[id: user.id] = user.withListFields(from: state.users[id: user.id])
                 state.toast = L10n.UserManagement.toastAdminGranted
                 return .none
 
@@ -657,7 +657,11 @@ public struct UserManagementFeature {
                 state.createSheet = nil
                 state.users.append(user)
                 state.toast = L10n.UserManagement.toastUserCreated
-                return .none
+                #if os(macOS)
+                    return .merge(reloadUsers(&state), .send(.userTapped(user.id)))
+                #else
+                    return reloadUsers(&state)
+                #endif
 
             case let .createResponse(.failure(error)):
                 state.createSheet?.isSubmitting = false

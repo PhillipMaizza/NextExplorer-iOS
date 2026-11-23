@@ -10,7 +10,7 @@
         @Environment(\.dismiss) private var dismiss
 
         var body: some View {
-            MacSettingsPaneCard(
+            MacPaneCard(
                 title: L10n.Offline.manageTitle,
                 subtitle: L10n.Offline.available(FileSizeFormat.string(store.totalBytes))
             ) {

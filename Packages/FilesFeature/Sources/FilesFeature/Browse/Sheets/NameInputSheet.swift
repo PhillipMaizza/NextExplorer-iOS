@@ -23,10 +23,12 @@ struct NameInputSheet: View {
     /// A rule on top of the file name rules, such as "an extension the editor opens" for a new
     /// file: returns why the trimmed name can't be used, or `nil`.
     let additionalRule: ((String) -> String?)?
+    let hint: String?
     let shouldCapitalizeWords: Bool
     let onConfirm: (String) -> Void
     let onCancel: () -> Void
 
+    private let isRenaming: Bool
     @State private var name: String
     @FocusState private var isFieldFocused: Bool
 
@@ -38,6 +40,7 @@ struct NameInputSheet: View {
         initialName: String = "",
         isBusy: Bool,
         additionalRule: ((String) -> String?)? = nil,
+        hint: String? = nil,
         shouldCapitalizeWords: Bool = true,
         onConfirm: @escaping (String) -> Void,
         onCancel: @escaping () -> Void
@@ -48,9 +51,11 @@ struct NameInputSheet: View {
         self.confirmTitle = confirmTitle
         self.isBusy = isBusy
         self.additionalRule = additionalRule
+        self.hint = hint
         self.shouldCapitalizeWords = shouldCapitalizeWords
         self.onConfirm = onConfirm
         self.onCancel = onCancel
+        isRenaming = !initialName.isEmpty
         _name = State(initialValue: initialName)
     }
 
@@ -63,7 +68,10 @@ struct NameInputSheet: View {
         if let error = FileNameValidation.errorMessage(forTrimmed: trimmedName) {
             return error
         }
-        return trimmedName.isEmpty ? nil : additionalRule?(trimmedName)
+        if trimmedName.isEmpty {
+            return isRenaming ? L10n.Favorites.editNameErrorEmpty : nil
+        }
+        return additionalRule?(trimmedName)
     }
 
     private var canSubmit: Bool {
@@ -89,12 +97,17 @@ struct NameInputSheet: View {
                 onCancel: onCancel,
                 onConfirm: submit
             ) {
-                TextField(placeholder, text: $name, prompt: Text(placeholder))
-                    .labelsHidden()
-                    .focused($isFieldFocused)
-                    .autocorrectionDisabled()
-                    .onSubmit(submit)
-                MacFieldError(message: validationError)
+                MacSettingsRow(L10n.Browse.renameNamePlaceholder) {
+                    MacTextField(placeholder, text: $name, prompt: placeholder, isInvalid: validationError != nil)
+                        .focused($isFieldFocused)
+                        .autocorrectionDisabled()
+                        .onSubmit(submit)
+                    if let validationError {
+                        MacFieldError(message: validationError)
+                    } else if let hint {
+                        Text(hint).type(.body3(.regular), style: .secondary)
+                    }
+                }
             }
             .task { isFieldFocused = true }
         }

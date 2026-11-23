@@ -145,4 +145,22 @@ struct TrashSettingsMaintenanceTests: TrashSettingsTestSupport {
     func anUnknownJournalKindShowsItsOwnName() {
         #expect(TrashEventLabel.text(for: TrashEvent(id: "1", kind: "something-new")) == "something-new")
     }
+
+    @Test("The subtitle's last maintenance is the newest pass by time, whatever its format")
+    func latestMaintenanceComparesTimesNotText() {
+        let wholeSecond = TrashZone(
+            id: "z1",
+            name: TestFolder.documents,
+            lastPass: TrashPass(at: ServerTimestamp.wholeSecondString(from: MockDate.date))
+        )
+        let halfSecondLater = TrashZone(
+            id: "z2",
+            name: TestFolder.photos,
+            lastPass: TrashPass(at: ServerTimestamp.string(from: MockDate.date.addingTimeInterval(0.5)))
+        )
+        var state = loadedState()
+        state.zones = [wholeSecond, halfSecondLater, TrashZone(id: "z3", name: TestFolder.inbox)]
+
+        #expect(state.latestMaintenanceZone?.id == halfSecondLater.id)
+    }
 }

@@ -78,15 +78,19 @@ struct AccountConfirmations: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(item: twoFactorSheet) { twoFactorStore in
-                NavigationStack {
-                    TwoFactorView(store: twoFactorStore)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button(L10n.Common.done) { store.send(.twoFactor(.dismiss)) }
+                #if os(macOS)
+                    MacTwoFactorSheet(store: twoFactorStore) { store.send(.twoFactor(.dismiss)) }
+                #else
+                    NavigationStack {
+                        TwoFactorView(store: twoFactorStore)
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button(L10n.Common.done) { store.send(.twoFactor(.dismiss)) }
+                                }
                             }
-                        }
-                }
-                .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
+                    }
+                    .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
+                #endif
             }
             .sheet(item: changePasswordSheet) { passwordStore in
                 #if os(macOS)

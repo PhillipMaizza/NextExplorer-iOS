@@ -5,124 +5,111 @@
     import SwiftUI
 
     private enum Metrics {
-        static let width: CGFloat = 560
-        static let tableHeight: CGFloat = 220
-        static let sizeColumnWidth: CGFloat = 90
+        static let listHeight: CGFloat = 168
+        static let tileSize: CGFloat = 22
+        static let rowHeight: CGFloat = .size32
     }
 
-    /// The upload review as a native Mac dialog: where the files go and how big they are, the
-    /// files in a table (remove with the minus button or Delete), then Add Files…, Cancel and
-    /// Upload.
+    /// The upload review as a Mac sheet: where the files go and their total size, the files in a
+    /// list box (each with its remove button), Add more files, then Cancel and Upload.
     struct MacUploadReviewSheet: View {
         let store: StoreOf<UploadReviewFeature>
         let title: String
         let isServerConnectionInsecure: Bool
         let onAddFiles: () -> Void
-        @State private var selection: Set<PickedFile.ID> = []
 
         var body: some View {
-            VStack(alignment: .leading, spacing: .space16) {
-                Text(title).font(.headline)
+            MacFormSheet(
+                title: title,
+                confirmTitle: L10n.Uploads.reviewUploadButton,
+                isConfirmEnabled: store.canUpload,
+                errorMessage: store.hasStagingFailed && store.files.isEmpty ? L10n.Uploads.stagingFailed : nil,
+                onCancel: { store.send(.cancelTapped) },
+                onConfirm: { store.send(.uploadTapped) }
+            ) {
+                MacSettingsRow(L10n.Uploads.reviewSectionPath) {
+                    MacPathField(
+                        path: store.hasDestination ? PersonalSpace.trail(store.destination) : nil,
+                        placeholder: L10n.Uploads.reviewChooseFolder
+                    ) { store.send(.pathTapped) }
+                }
+                MacSettingsRow(L10n.Uploads.reviewSectionSize) {
+                    Text(FileSizeFormat.string(store.totalSize)).monospacedDigit()
+                }
+                MacSettingsRow(L10n.Uploads.reviewSectionFiles) {
+                    filesBox
+                    Button(L10n.Uploads.reviewAddMore, action: onAddFiles)
+                        .buttonStyle(.macDS(.secondary, size: .small))
+                        .disabled(store.isPreparing)
+                }
+            } below: {
                 if isServerConnectionInsecure {
-                    notice(L10n.Uploads.reviewInsecureNetworkNotice)
+                    hint(L10n.Uploads.reviewInsecureNetworkNotice)
                 }
                 if store.skippedCount > 0 {
-                    notice(L10n.Uploads.stagingSkipped(store.skippedCount))
+                    hint(L10n.Uploads.stagingSkipped(store.skippedCount))
                 }
-                Form {
-                    MacSettingsRow(L10n.Uploads.reviewSectionPath) {
-                        MacPathField(
-                            path: store.hasDestination ? store.destination : nil,
-                            placeholder: L10n.Uploads.reviewChooseFolder
-                        ) { store.send(.pathTapped) }
-                    }
-                    MacSettingsRow(L10n.Uploads.reviewSectionSize) {
-                        Text(FileSizeFormat.string(store.totalSize))
-                            .monospacedDigit()
-                    }
+            }
+        }
+
+        private var filesBox: some View {
+            VStack(spacing: .zero) {
+                HStack {
+                    Text(L10n.Sort.name)
+                    Spacer(minLength: .space8)
+                    Text(L10n.Sort.size)
                 }
-                .formStyle(.columns)
-                VStack(spacing: 0) {
-                    filesTable
-                    Divider()
-                    HStack(spacing: 0) {
-                        MacTableBarButton(icon: IconKit.plus, label: L10n.Uploads.reviewAddMore) { onAddFiles() }
-                            .disabled(store.isPreparing)
-                        MacTableBarDivider()
-                        MacTableBarButton(icon: IconKit.minus, label: L10n.Common.remove) { removeSelection() }
-                            .disabled(selection.isEmpty)
-                        Spacer()
+                .type(.caption(.semibold), style: .secondary)
+                .macListRow(isSelected: false)
+                ScrollView {
+                    LazyVStack(spacing: .zero) {
+                        ForEach(store.files) { file in
+                            fileRow(file)
+                        }
                         if store.isPreparing {
-                            MacSpinner()
-                            Text(L10n.Uploads.reviewPreparing(store.preparingCount))
-                                .font(.callout)
-                                .foregroundStyle(.secondary)
-                                .padding(.horizontal, .space8)
+                            HStack(spacing: .space8) {
+                                DSSpinner(size: .small)
+                                Text(L10n.Uploads.reviewPreparing(store.preparingCount))
+                                    .type(.body2(.regular), style: .secondary)
+                                Spacer(minLength: .zero)
+                            }
+                            .macListRow(isSelected: false)
                         }
                     }
-                    .buttonStyle(.borderless)
-                    .padding(.horizontal, .space4)
-                    .padding(.vertical, .space2)
                 }
-                .border(Color(nsColor: .separatorColor))
-                if store.hasStagingFailed, store.files.isEmpty {
-                    Text(L10n.Uploads.stagingFailed).foregroundStyle(Color.negativeText)
-                }
-                MacDialogButtons(
-                    confirmTitle: L10n.Uploads.reviewUploadButton,
-                    isConfirmEnabled: store.canUpload,
-                    onCancel: { store.send(.cancelTapped) },
-                    onConfirm: { store.send(.uploadTapped) }
+            }
+            .frame(height: Metrics.listHeight, alignment: .top)
+            .macListBox()
+        }
+
+        private func fileRow(_ file: PickedFile) -> some View {
+            HStack(spacing: .space8) {
+                MacItemTile(
+                    kind: (file.fileName as NSString).pathExtension.lowercased(),
+                    isDirectory: false,
+                    size: Metrics.tileSize
                 )
-            }
-            .padding(.space24)
-            .frame(width: Metrics.width)
-        }
-
-        private var filesTable: some View {
-            Table(store.files, selection: $selection) {
-                TableColumn(L10n.Sort.name) { file in
-                    Label {
-                        Text(file.fileName).lineLimit(1).truncationMode(.middle)
-                    } icon: {
-                        Image(nsImage: MacFileTypeIcon.image(forFileName: file.fileName))
-                            .resizable()
-                            .frame(width: .iconSmall, height: .iconSmall)
-                            .accessibilityHidden(true)
-                    }
+                Text(file.fileName)
+                    .type(.body2(.regular))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                Spacer(minLength: .space8)
+                Text(FileSizeFormat.string(file.size))
+                    .type(.body3(.regular), style: .secondary)
+                    .monospacedDigit()
+                MacRowRemoveButton(label: L10n.Common.remove) {
+                    store.send(.removeFileTapped(id: file.id), animation: DSMotion.listDiff)
                 }
-                TableColumn(L10n.Sort.size) { file in
-                    Text(FileSizeFormat.string(file.size))
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                }
-                .width(Metrics.sizeColumnWidth)
             }
-            .contextMenu(forSelectionType: PickedFile.ID.self) { ids in
-                Button(role: .destructive) { remove(ids) } label: {
-                    Label { Text(L10n.Common.remove) } icon: { IconKit.delete }
-                }
-                .labelStyle(.titleAndIcon)
-            }
-            .onDeleteCommand { removeSelection() }
-            .frame(height: Metrics.tableHeight)
+            .foregroundStyle(Color.macChromeText)
+            .frame(minHeight: Metrics.rowHeight)
+            .macListRow(isSelected: false)
         }
 
-        private func notice(_ text: String) -> some View {
-            Label { Text(text) } icon: { IconKit.warning }
-                .font(.callout)
-                .foregroundStyle(.secondary)
-        }
-
-        private func removeSelection() {
-            remove(selection)
-            selection = []
-        }
-
-        private func remove(_ ids: Set<PickedFile.ID>) {
-            for id in ids {
-                store.send(.removeFileTapped(id: id), animation: DSMotion.listDiff)
-            }
+        private func hint(_ text: String) -> some View {
+            Text(text)
+                .type(.body3(.regular), style: .secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -130,7 +117,7 @@
     private func uploadReviewPreview(_ state: UploadReviewFeature.State, isInsecure: Bool = false) -> some View {
         MacUploadReviewSheet(
             store: Store(initialState: state) { UploadReviewFeature() },
-            title: "Upload 3 Items",
+            title: "Upload 3 files",
             isServerConnectionInsecure: isInsecure,
             onAddFiles: {}
         )
