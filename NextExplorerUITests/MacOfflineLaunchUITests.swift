@@ -12,7 +12,7 @@
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear(), "The saved listing shows, not the login")
             XCTAssertTrue(savedCopyNote(in: app).waitToAppear(), "It says it is a saved copy")
 
-            app.typeKey(Constants.findKey, modifierFlags: .command)
+            app.typeKey(Constants.spotlightKey, modifierFlags: .command)
             app.typeText(Fixture.fileSearchTerm)
             XCTAssertTrue(heading(L10n.Search.onDevice, in: app).waitToAppear(), "Found, as on the device")
             app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])

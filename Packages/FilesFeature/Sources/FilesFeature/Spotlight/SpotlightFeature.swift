@@ -157,7 +157,7 @@ public struct SpotlightFeature {
                 let count = state.displayed.count
                 guard count > 0 else { return .none }
                 switch direction {
-                case .down: state.activeIndex = ((state.activeIndex ?? -1) + 1) % count
+                case .down: state.activeIndex = ((state.activeIndex ?? 0) + 1) % count
                 case .up: state.activeIndex = ((state.activeIndex ?? 0) - 1 + count) % count
                 }
                 return .none

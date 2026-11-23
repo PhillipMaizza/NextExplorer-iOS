@@ -108,6 +108,7 @@ public struct MainTabFeature {
         case backRequested
         case enclosingFolderRequested
         case forwardRequested
+        case homeRequested
         case goToFolderPrompted
         case goToFolderDismissed
         case goToFolderRequested(String)
@@ -257,7 +258,10 @@ public struct MainTabFeature {
                     switch state.selectedTab {
                     case .browse: return .send(.browse(.goBack))
                     case .favorites: return .send(.favorites(.goBack))
-                    case .shared, .downloads, .settings, .trash: return .none
+                    case .trash:
+                        guard let folder = state.trash.folder else { return .none }
+                        return .send(.trash(.folder(folder.canGoUp ? .presented(.upTapped) : .dismiss)))
+                    case .shared, .downloads, .settings: return .none
                     }
 
                 case .forwardRequested:
@@ -266,6 +270,10 @@ public struct MainTabFeature {
                     case .favorites: return .send(.favorites(.goForward))
                     case .shared, .downloads, .settings, .trash: return .none
                     }
+
+                case .homeRequested:
+                    state.selectedTab = .browse
+                    return .send(.browse(.goHome))
 
                 case .goToFolderPrompted:
                     state.isGoToFolderPresented = true
@@ -705,8 +713,13 @@ extension MainTabFeature.State {
         switch selectedTab {
         case .browse: browse.canGoBackFromScreen
         case .favorites: favorites.canGoBack
-        case .shared, .downloads, .settings, .trash: false
+        case .trash: trash.folder != nil
+        case .shared, .downloads, .settings: false
         }
+    }
+
+    var canGoHome: Bool {
+        selectedTab != .browse || browse.canGoBackFromScreen
     }
 
     var canGoForward: Bool {

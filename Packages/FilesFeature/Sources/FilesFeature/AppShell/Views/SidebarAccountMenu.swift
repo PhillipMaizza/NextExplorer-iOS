@@ -4,86 +4,85 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum Metrics {
-    static let width: CGFloat = 320
-    static let avatarSize: CGFloat = .size32
-    static let rowSpacing: CGFloat = .space12
-    static let rowPadding: CGFloat = .space8
-    static let actionIconSize: CGFloat = .iconSmall
-    static let signOutHitSize: CGFloat = .size32
-    static let inactiveOpacity: Double = 0.5
-    static let hoverOpacity: Double = 0.08
-    static let shownOpacity: Double = 1
-    static let hiddenOpacity: Double = 0
-    static let serverMinimumScale: CGFloat = 0.7
-}
+#if os(iOS)
+    private enum Metrics {
+        static let width: CGFloat = 320
+        static let avatarSize: CGFloat = .size32
+        static let rowSpacing: CGFloat = .space12
+        static let rowPadding: CGFloat = .space8
+        static let actionIconSize: CGFloat = .iconSmall
+        static let signOutHitSize: CGFloat = .size32
+        static let inactiveOpacity: Double = 0.5
+        static let hoverOpacity: Double = 0.08
+        static let shownOpacity: Double = 1
+        static let hiddenOpacity: Double = 0
+        static let serverMinimumScale: CGFloat = 0.7
+    }
 
-/// The sidebar's profile header (iPad and Mac) opens this account popover, so switching, adding
-/// and signing out never needs a trip to Settings. Each account shows who (name) and where
-/// (server) on their own lines, like the Settings rows; the active one is shown in full
-/// strength, the others dimmed, switching on click and offering Sign Out on hover. Only emits `SettingsFeature`
-/// intent; the switch, add and remove work stays upstream.
-struct SidebarAccountMenu<Label: View>: View {
-    let store: StoreOf<SettingsFeature>
-    /// Change Password opens as a window sheet on the Mac, from whichever section is on screen.
-    let onChangePassword: () -> Void
-    /// Brings Settings on screen first, for an action whose confirmation lives there (iPad).
-    var revealSettings: () -> Void = {}
-    @ViewBuilder let label: () -> Label
+    /// The sidebar's profile header on iPad opens this account popover, so switching, adding
+    /// and signing out never needs a trip to Settings. Each account shows who (name) and where
+    /// (server) on their own lines, like the Settings rows; the active one is shown in full
+    /// strength, the others dimmed, switching on click and offering Sign Out on hover. Only emits `SettingsFeature`
+    /// intent; the switch, add and remove work stays upstream.
+    struct SidebarAccountMenu<Label: View>: View {
+        let store: StoreOf<SettingsFeature>
+        /// Change Password opens as a window sheet on the Mac, from whichever section is on screen.
+        let onChangePassword: () -> Void
+        /// Brings Settings on screen first, for an action whose confirmation lives there (iPad).
+        var revealSettings: () -> Void = {}
+        @ViewBuilder let label: () -> Label
 
-    @State private var isPresented = false
+        @State private var isPresented = false
 
-    var body: some View {
-        Button { isPresented.toggle() } label: {
-            label()
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(L10n.Settings.sectionAccounts)
-        // The label is the signed in identity; VoiceOver reads it as the button's value.
-        .accessibilityValue(store.activeAccount.displayName)
-        .popover(isPresented: $isPresented, arrowEdge: .bottom) {
-            AccountPopover(store: store, revealSettings: revealSettings) { action in
-                isPresented = false
-                action()
+        var body: some View {
+            Button { isPresented.toggle() } label: {
+                label()
             }
-            onChangePassword: {
-                isPresented = false
-                onChangePassword()
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.Settings.sectionAccounts)
+            // The label is the signed in identity; VoiceOver reads it as the button's value.
+            .accessibilityValue(store.activeAccount.displayName)
+            .popover(isPresented: $isPresented, arrowEdge: .bottom) {
+                AccountPopover(store: store, revealSettings: revealSettings) { action in
+                    isPresented = false
+                    action()
+                }
+                onChangePassword: {
+                    isPresented = false
+                    onChangePassword()
+                }
+                .presentationCompactAdaptation(.popover)
+                .task { store.send(.signInStatusRequested) }
             }
-            .presentationCompactAdaptation(.popover)
-            .task { store.send(.signInStatusRequested) }
         }
     }
-}
 
-private struct AccountPopover: View {
-    let store: StoreOf<SettingsFeature>
-    var revealSettings: () -> Void = {}
-    /// Closes the popover, then runs the action.
-    let dismissThen: (@escaping () -> Void) -> Void
-    let onChangePassword: () -> Void
+    private struct AccountPopover: View {
+        let store: StoreOf<SettingsFeature>
+        var revealSettings: () -> Void = {}
+        /// Closes the popover, then runs the action.
+        let dismissThen: (@escaping () -> Void) -> Void
+        let onChangePassword: () -> Void
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: .space4) {
-            ForEach(store.accountRows) { account in
-                AccountRow(
-                    account: account,
-                    onSwitch: { dismissThen { store.send(.switchAccountTapped(account.id)) } },
-                    onSignOut: {
-                        dismissThen {
-                            revealSettings()
-                            signOut(account)
+        var body: some View {
+            VStack(alignment: .leading, spacing: .space4) {
+                ForEach(store.accountRows) { account in
+                    AccountRow(
+                        account: account,
+                        onSwitch: { dismissThen { store.send(.switchAccountTapped(account.id)) } },
+                        onSignOut: {
+                            dismissThen {
+                                revealSettings()
+                                signOut(account)
+                            }
                         }
-                    }
-                )
-            }
-            Divider()
-                .padding(.vertical, .space4)
-            PopoverActionRow(title: L10n.Settings.addAccount, icon: IconKit.plus, tone: .accent) {
-                dismissThen { store.send(.addAccountTapped) }
-            }
-            #if os(iOS)
-                // The Mac keeps the second factor in its Settings window.
+                    )
+                }
+                Divider()
+                    .padding(.vertical, .space4)
+                PopoverActionRow(title: L10n.Settings.addAccount, icon: IconKit.plus, tone: .accent) {
+                    dismissThen { store.send(.addAccountTapped) }
+                }
                 if store.shouldShowTwoFactorRow {
                     PopoverActionRow(title: L10n.TwoFactor.navigationTitle, icon: IconKit.shield) {
                         dismissThen {
@@ -93,228 +92,220 @@ private struct AccountPopover: View {
                     }
                     .accessibilityIdentifier(AccessibilityIdentifiers.Settings.twoFactorRow)
                 }
-            #endif
-            if store.shouldShowPasswordRow {
-                PopoverActionRow(
-                    title: L10n.Settings.rowChangePassword,
-                    icon: IconKit.key,
-                    action: onChangePassword
-                )
-            }
-            PopoverActionRow(title: L10n.Settings.signOutButton, icon: IconKit.signOut, tone: .danger) {
-                dismissThen {
-                    revealSettings()
-                    store.send(.signOutButtonTapped)
-                }
-            }
-        }
-        .padding(.space8)
-        .frame(width: Metrics.width)
-    }
-
-    /// The active account goes through the full sign out confirmation; another one is only
-    /// dropped from this device, as its Settings row does.
-    private func signOut(_ account: AccountSummary) {
-        if account.isActive {
-            store.send(.signOutButtonTapped)
-        } else {
-            store.send(.removeAccountTapped(account))
-        }
-    }
-}
-
-/// One account: avatar, name above server, and Sign Out on hover for an inactive one. The
-/// active account reads as current through its bold name and full strength avatar.
-private struct AccountRow: View {
-    let account: AccountSummary
-    let onSwitch: () -> Void
-    let onSignOut: () -> Void
-    /// Keeps Sign Out showing without a hover or focus, for the previews of that state.
-    var isSignOutPinnedShown = false
-
-    private enum FocusTarget: Hashable {
-        case row, signOut
-    }
-
-    @State private var isHovered = false
-    @FocusState private var focusedTarget: FocusTarget?
-
-    /// Sign Out shows while the pointer is over the row or the keyboard is on the row or on the
-    /// button itself. Hidden, it is not focusable and not in the accessibility tree: VoiceOver
-    /// reaches it through the row's Sign Out action instead.
-    private var isSignOutShown: Bool {
-        #if os(iOS)
-            // A touch screen has no hover to reveal it.
-            true
-        #elseif os(macOS)
-            isSignOutPinnedShown || isHovered || focusedTarget != nil
-        #endif
-    }
-
-    var body: some View {
-        HStack(spacing: Metrics.rowSpacing) {
-            AvatarView(displayName: account.displayName, size: Metrics.avatarSize)
-                .opacity(account.isActive ? 1 : Metrics.inactiveOpacity)
-            VStack(alignment: .leading, spacing: .space2) {
-                Text(account.displayName)
-                    .type(
-                        .body2(account.isActive ? .bold : .regular),
-                        style: account.isActive ? .primaryOnSurface : .secondary
+                if store.shouldShowPasswordRow {
+                    PopoverActionRow(
+                        title: L10n.Settings.rowChangePassword,
+                        icon: IconKit.key,
+                        action: onChangePassword
                     )
-                    .lineLimit(1)
-                // Shrinks a long host to fit before falling back to truncating it.
-                if let server = account.serverSubtitle {
-                    Text(server)
-                        .type(.body3(.regular), style: .secondary)
+                }
+                PopoverActionRow(title: L10n.Settings.signOutButton, icon: IconKit.signOut, tone: .danger) {
+                    dismissThen {
+                        revealSettings()
+                        store.send(.signOutButtonTapped)
+                    }
+                }
+            }
+            .padding(.space8)
+            .frame(width: Metrics.width)
+        }
+
+        /// The active account goes through the full sign out confirmation; another one is only
+        /// dropped from this device, as its Settings row does.
+        private func signOut(_ account: AccountSummary) {
+            if account.isActive {
+                store.send(.signOutButtonTapped)
+            } else {
+                store.send(.removeAccountTapped(account))
+            }
+        }
+    }
+
+    /// One account: avatar, name above server, and Sign Out on hover for an inactive one. The
+    /// active account reads as current through its bold name and full strength avatar.
+    private struct AccountRow: View {
+        let account: AccountSummary
+        let onSwitch: () -> Void
+        let onSignOut: () -> Void
+
+        private enum FocusTarget: Hashable {
+            case row, signOut
+        }
+
+        @State private var isHovered = false
+        @FocusState private var focusedTarget: FocusTarget?
+
+        /// Sign Out shows while the pointer is over the row or the keyboard is on the row or on the
+        /// button itself. Hidden, it is not focusable and not in the accessibility tree: VoiceOver
+        /// reaches it through the row's Sign Out action instead.
+        private var isSignOutShown: Bool {
+            true
+        }
+
+        var body: some View {
+            HStack(spacing: Metrics.rowSpacing) {
+                AvatarView(displayName: account.displayName, size: Metrics.avatarSize)
+                    .opacity(account.isActive ? 1 : Metrics.inactiveOpacity)
+                VStack(alignment: .leading, spacing: .space2) {
+                    Text(account.displayName)
+                        .type(
+                            .body2(account.isActive ? .bold : .regular),
+                            style: account.isActive ? .primaryOnSurface : .secondary
+                        )
                         .lineLimit(1)
-                        .minimumScaleFactor(Metrics.serverMinimumScale)
-                        .truncationMode(.middle)
+                    // Shrinks a long host to fit before falling back to truncating it.
+                    if let server = account.serverSubtitle {
+                        Text(server)
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(Metrics.serverMinimumScale)
+                            .truncationMode(.middle)
+                    }
+                }
+                Spacer(minLength: 0)
+                if !account.isActive {
+                    Button(action: onSignOut) {
+                        IconKit.signOut
+                            .foregroundStyle(Color.negativeText)
+                            .frame(width: Metrics.signOutHitSize, height: Metrics.signOutHitSize)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .focusable(isSignOutShown)
+                    .focused($focusedTarget, equals: .signOut)
+                    .opacity(isSignOutShown ? Metrics.shownOpacity : Metrics.hiddenOpacity)
+                    .allowsHitTesting(isSignOutShown)
+                    .accessibilityHidden(true)
+                    .accessibilityLabelWithTooltip(L10n.Settings.accountSignOut)
                 }
             }
-            Spacer(minLength: 0)
-            if !account.isActive {
-                Button(action: onSignOut) {
-                    IconKit.signOut
-                        .foregroundStyle(Color.negativeText)
-                        .frame(width: Metrics.signOutHitSize, height: Metrics.signOutHitSize)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .focusable(isSignOutShown)
-                .focused($focusedTarget, equals: .signOut)
-                .opacity(isSignOutShown ? Metrics.shownOpacity : Metrics.hiddenOpacity)
-                .allowsHitTesting(isSignOutShown)
-                .accessibilityHidden(true)
-                .accessibilityLabelWithTooltip(L10n.Settings.accountSignOut)
-            }
-        }
-        .padding(Metrics.rowPadding)
-        .background(PopoverHoverFill(isShown: !account.isActive && isHovered))
-        .contentShape(Rectangle())
-        .onHover { isHovered = $0 }
-        .focusable(!account.isActive)
-        .focused($focusedTarget, equals: .row)
-        .onKeyPress(keys: [.return, .space]) { _ in
-            // Return and Space on the focused Sign Out button belong to the button, not to the row.
-            guard !account.isActive, focusedTarget != .signOut else { return .ignored }
-            onSwitch()
-            return .handled
-        }
-        .onTapGesture {
-            if !account.isActive {
+            .padding(Metrics.rowPadding)
+            .background(PopoverHoverFill(isShown: !account.isActive && isHovered))
+            .contentShape(Rectangle())
+            .onHover { isHovered = $0 }
+            .focusable(!account.isActive)
+            .focused($focusedTarget, equals: .row)
+            .onKeyPress(keys: [.return, .space]) { _ in
+                // Return and Space on the focused Sign Out button belong to the button, not to the row.
+                guard !account.isActive, focusedTarget != .signOut else { return .ignored }
                 onSwitch()
+                return .handled
             }
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(account.isActive
-            ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
-            : L10n.Common.pair(account.displayName, account.serverHost))
-            .accessibilityAddTraits(account.isActive ? .isSelected : .isButton)
-            // The tap gesture is pointer only; VoiceOver's press switches like a click does.
-            .accessibilityAction {
+            .onTapGesture {
                 if !account.isActive {
                     onSwitch()
                 }
             }
-            .accessibilityAction(named: L10n.Settings.accountSignOut, onSignOut)
-    }
-}
-
-/// An icon and title row in the popover's action list, highlighted on hover.
-private struct PopoverActionRow: View {
-    enum Tone {
-        case neutral, accent, danger
-
-        var textStyle: Typography.TextStyle {
-            switch self {
-            case .neutral: .primaryOnSurface
-            case .accent: .link
-            case .danger: .error
-            }
-        }
-
-        var iconColor: Color {
-            switch self {
-            case .neutral: .secondaryDS
-            case .accent: .accentText
-            case .danger: .negativeText
-            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(account.isActive
+                ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
+                : L10n.Common.pair(account.displayName, account.serverHost))
+                .accessibilityAddTraits(account.isActive ? .isSelected : .isButton)
+                // The tap gesture is pointer only; VoiceOver's press switches like a click does.
+                .accessibilityAction {
+                    if !account.isActive {
+                        onSwitch()
+                    }
+                }
+                .accessibilityAction(named: L10n.Settings.accountSignOut, onSignOut)
         }
     }
 
-    let title: String
-    let icon: Image
-    var tone: Tone = .neutral
-    let action: () -> Void
+    /// An icon and title row in the popover's action list, highlighted on hover.
+    private struct PopoverActionRow: View {
+        enum Tone {
+            case neutral, accent, danger
 
-    @State private var isHovered = false
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: Metrics.rowSpacing) {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Metrics.actionIconSize, height: Metrics.actionIconSize)
-                    .frame(width: Metrics.avatarSize)
-                Text(title).type(.body2(tone == .danger ? .semibold : .regular), style: tone.textStyle)
-                Spacer(minLength: 0)
+            var textStyle: Typography.TextStyle {
+                switch self {
+                case .neutral: .primaryOnSurface
+                case .accent: .link
+                case .danger: .error
+                }
             }
-            .foregroundStyle(tone.iconColor)
-            .padding(.horizontal, Metrics.rowPadding)
-            .padding(.vertical, .space8)
-            .background(PopoverHoverFill(isShown: isHovered))
-            .contentShape(Rectangle())
+
+            var iconColor: Color {
+                switch self {
+                case .neutral: .secondaryDS
+                case .accent: .accentText
+                case .danger: .negativeText
+                }
+            }
         }
-        .buttonStyle(.plain)
-        .onHover { isHovered = $0 }
+
+        let title: String
+        let icon: Image
+        var tone: Tone = .neutral
+        let action: () -> Void
+
+        @State private var isHovered = false
+
+        var body: some View {
+            Button(action: action) {
+                HStack(spacing: Metrics.rowSpacing) {
+                    icon
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Metrics.actionIconSize, height: Metrics.actionIconSize)
+                        .frame(width: Metrics.avatarSize)
+                    Text(title).type(.body2(tone == .danger ? .semibold : .regular), style: tone.textStyle)
+                    Spacer(minLength: 0)
+                }
+                .foregroundStyle(tone.iconColor)
+                .padding(.horizontal, Metrics.rowPadding)
+                .padding(.vertical, .space8)
+                .background(PopoverHoverFill(isShown: isHovered))
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .onHover { isHovered = $0 }
+        }
     }
-}
 
-private struct PopoverHoverFill: View {
-    let isShown: Bool
+    private struct PopoverHoverFill: View {
+        let isShown: Bool
 
-    var body: some View {
-        RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
-            .fill(isShown ? Color.primaryDS.opacity(Metrics.hoverOpacity) : Color.clear)
+        var body: some View {
+            RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
+                .fill(isShown ? Color.primaryDS.opacity(Metrics.hoverOpacity) : Color.clear)
+        }
     }
-}
 
-#Preview("Account popover") {
-    AccountPopover(
-        store: Store(
-            initialState: SettingsFeature.State(
-                serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                user: User.preview
-            )
-        ) { SettingsFeature() },
-        dismissThen: { $0() },
-        onChangePassword: {}
-    )
-}
-
-private enum PreviewFixture {
-    static let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
-    static let inactive = AccountSummary(
-        id: "preview-inactive",
-        username: "Sam Rivers",
-        serverURL: serverURL,
-        isActive: false
-    )
-    static let active = AccountSummary(
-        id: "preview-active",
-        username: "Jane Doe",
-        serverURL: serverURL,
-        isActive: true
-    )
-}
-
-#Preview("Account row, hovered or focused") {
-    VStack {
-        AccountRow(account: PreviewFixture.inactive, onSwitch: {}, onSignOut: {}, isSignOutPinnedShown: true)
-        AccountRow(account: PreviewFixture.inactive, onSwitch: {}, onSignOut: {})
-        AccountRow(account: PreviewFixture.active, onSwitch: {}, onSignOut: {})
+    #Preview("Account popover") {
+        AccountPopover(
+            store: Store(
+                initialState: SettingsFeature.State(
+                    serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+                    user: User.preview
+                )
+            ) { SettingsFeature() },
+            dismissThen: { $0() },
+            onChangePassword: {}
+        )
     }
-    .padding(.space8)
-    .frame(width: Metrics.width)
-}
+
+    private enum PreviewFixture {
+        static let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
+        static let inactive = AccountSummary(
+            id: "preview-inactive",
+            username: "Sam Rivers",
+            serverURL: serverURL,
+            isActive: false
+        )
+        static let active = AccountSummary(
+            id: "preview-active",
+            username: "Jane Doe",
+            serverURL: serverURL,
+            isActive: true
+        )
+    }
+
+    #Preview("Account rows") {
+        VStack {
+            AccountRow(account: PreviewFixture.inactive, onSwitch: {}, onSignOut: {})
+            AccountRow(account: PreviewFixture.active, onSwitch: {}, onSignOut: {})
+        }
+        .padding(.space8)
+        .frame(width: Metrics.width)
+    }
+#endif

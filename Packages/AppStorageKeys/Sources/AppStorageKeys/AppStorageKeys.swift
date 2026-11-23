@@ -38,6 +38,10 @@ public enum AppStorageKeys {
     public static let favoritesViewMode = "favoritesViewMode"
     public static let downloadsViewMode = "downloadsViewMode"
 
+    public static let macSidebarCompact = "macSidebarCompact"
+    public static let macSidebarWidth = "macSidebarWidth"
+    public static let macSettingsPane = "macSettingsCategory"
+
     /// Preferences reset to their defaults on sign out, so a new session on this device starts
     /// clean instead of inheriting the previous account's view modes and display choices.
     /// Device level chrome the user sets for themselves, not per account (appearance, language,

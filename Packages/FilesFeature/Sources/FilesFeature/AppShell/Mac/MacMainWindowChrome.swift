@@ -34,12 +34,6 @@
 
         func body(content: Content) -> some View {
             content
-                .overlay {
-                    if let spotlightStore = store.scope(state: \.spotlight, action: \.spotlight.presented) {
-                        SpotlightView(store: spotlightStore)
-                    }
-                }
-                .animation(DSMotion.stateFade, value: store.spotlight != nil)
                 .modifier(MacDockUploadStatus(
                     remaining: store.uploads.remainingCount,
                     progress: store.uploads.overallProgress

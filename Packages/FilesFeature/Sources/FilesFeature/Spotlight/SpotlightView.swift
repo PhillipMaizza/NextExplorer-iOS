@@ -9,20 +9,18 @@
     import SwiftUI
 
     private enum Constants {
-        static let panelWidth: CGFloat = 640
-        static let resultsMaxHeight: CGFloat = 360
-        static let topOffset: CGFloat = 96
-        static let scrimOpacity: Double = 0.18
-        static let shadowOpacity: Double = 0.28
-        static let shadowRadius: CGFloat = 28
-        static let shadowOffset: CGFloat = 12
-        static let borderOpacity: Double = 0.12
-        static let activeOpacity: Double = 0.1
-        static let fieldFont = Font.title2
+        static let panelWidth: CGFloat = 720
+        static let panelRadius: CGFloat = 22
+        static let rowRadius: CGFloat = .radiusControl
+        static let resultsMaxHeight: CGFloat = 400
+        static let topOffset: CGFloat = 76
+        static let fieldHeight: CGFloat = 62
+        static let scrimDarkOpacity: Double = 0.55
+        static let scrimLightOpacity: Double = 0.28
+        static let shadowOpacity: Double = 0.35
+        static let shadowRadius: CGFloat = 45
+        static let shadowOffset: CGFloat = 30
         static let zoomScale: CGFloat = 0.94
-        /// The panel's frost is darkened so the field and hits read clearly over any window.
-        static let panelDarkTint: Double = 0.5
-        static let panelLightTint: Double = 0.1
     }
 
     /// The Mac search panel: a frosted card floating over a dimmed window, like Spotlight. Only
@@ -32,11 +30,12 @@
         @FocusState private var isFieldFocused: Bool
         /// Where the pointer was at the last arrow key press.
         @State private var keyboardMouseLocation: CGPoint?
+        @State private var resultsHeight: CGFloat = .zero
         @Environment(\.colorScheme) private var colorScheme
 
         var body: some View {
             ZStack(alignment: .top) {
-                Color.black.opacity(Constants.scrimOpacity)
+                Color.black.opacity(colorScheme == .dark ? Constants.scrimDarkOpacity : Constants.scrimLightOpacity)
                     .ignoresSafeArea()
                     .onTapGesture { store.send(.closeRequested) }
                     .accessibilityHidden(true)
@@ -51,27 +50,23 @@
         }
 
         private var panelShape: RoundedRectangle {
-            RoundedRectangle(cornerRadius: .radiusLarge, style: .continuous)
+            RoundedRectangle(cornerRadius: Constants.panelRadius, style: .continuous)
         }
 
         private var panel: some View {
             VStack(spacing: 0) {
                 searchField
                 if hasBody {
-                    Divider()
+                    separator
                     resultsBody
                 }
+                separator
+                footer
             }
             .frame(width: Constants.panelWidth)
-            .background(.regularMaterial, in: panelShape)
-            .background(
-                Color.black.opacity(colorScheme == .dark ? Constants.panelDarkTint : Constants.panelLightTint),
-                in: panelShape
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: .radiusLarge, style: .continuous)
-                    .strokeBorder(Color.primaryDS.opacity(Constants.borderOpacity))
-            )
+            .background(Color.macCard, in: panelShape)
+            .clipShape(panelShape)
+            .overlay(panelShape.strokeBorder(Color.macLine))
             .shadow(
                 color: .black.opacity(Constants.shadowOpacity),
                 radius: Constants.shadowRadius,
@@ -87,7 +82,7 @@
                     ProgressView().controlSize(.small)
                         .frame(width: .iconMedium, height: .iconMedium)
                 } else {
-                    IconKit.search
+                    IconKit.macToolbarSearch
                         .resizable()
                         .scaledToFit()
                         .foregroundStyle(Color.secondaryDS)
@@ -97,7 +92,7 @@
                 TextField(L10n.Spotlight.placeholder, text: $store.query.sending(\.queryChanged))
                     .textFieldStyle(.plain)
                     .tint(Color.accent)
-                    .font(Constants.fieldFont)
+                    .type(.subtitle1)
                     .focused($isFieldFocused)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Search.spotlightField)
                     .onSubmit { store.send(.submitted) }
@@ -112,8 +107,8 @@
                         return .handled
                     }
             }
-            .padding(.horizontal, .space16)
-            .padding(.vertical, .space12)
+            .padding(.horizontal, .space24)
+            .frame(height: Constants.fieldHeight)
             // Focus lands once the field is in the window; setting it during the first layout is dropped.
             .task {
                 await Task.yield()
@@ -143,12 +138,41 @@
             }
         }
 
+        private var separator: some View {
+            Rectangle()
+                .fill(Color.macLine)
+                .frame(height: .borderWidthHairline)
+        }
+
+        private var footer: some View {
+            HStack(spacing: .space16) {
+                footerHint(MacShortcutHint.arrows, L10n.Spotlight.hintMove)
+                footerHint(MacShortcutHint.enter, L10n.Spotlight.hintOpen)
+                Spacer(minLength: .zero)
+                Button { store.send(.closeRequested) } label: {
+                    footerHint(MacShortcutHint.escape, L10n.Common.close)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, .space24)
+            .padding(.vertical, .space8)
+        }
+
+        private func footerHint(_ key: String, _ title: String) -> some View {
+            HStack(spacing: .space4) {
+                MacKeyHint(key)
+                Text(title).type(.caption(.regular), style: .secondary)
+            }
+            .accessibilityElement(children: .combine)
+        }
+
         private func sectionHeader(_ title: String) -> some View {
             Text(title)
-                .type(.caption(.bold), style: .secondary)
+                .type(.body3(.semibold), style: .secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, .space8)
-                .padding(.top, .space8)
+                .padding(.horizontal, .space12)
+                .padding(.top, .space12)
+                .padding(.bottom, .space4)
                 .accessibilityAddTraits(.isHeader)
         }
 
@@ -159,7 +183,7 @@
                     result: result,
                     serverURL: store.serverURL,
                     shouldShowThumbnails: store.preferences.shouldShowThumbnails,
-                    isActive: store.activeIndex == index,
+                    isActive: (store.activeIndex ?? 0) == index,
                     onHover: { isInside in
                         // Entering a row highlights it; leaving never clears, since the exit of the row
                         // left can land after the enter of the next and drop the highlight. A pointer
@@ -189,9 +213,11 @@
                                 }
                                 rows(sections.remote, startingAt: sections.onDevice.count)
                             }
-                            .padding(.space8)
+                            .padding(.horizontal, .space8)
+                            .padding(.vertical, .space8)
+                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { resultsHeight = $0 }
                         }
-                        .frame(maxHeight: Constants.resultsMaxHeight)
+                        .frame(height: min(resultsHeight, Constants.resultsMaxHeight))
                         .onChange(of: store.activeIndex) { _, index in
                             guard let index else { return }
                             withAnimation(DSMotion.stateFade) {
@@ -204,13 +230,19 @@
                     Text(statusText)
                         .type(.body3(.regular), style: .secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, .space16)
+                        .padding(.horizontal, .space24)
                         .padding(.vertical, .space12)
                 }
                 if store.canShowMore {
-                    Button(L10n.Browse.searchShowMore) { store.send(.showMoreTapped) }
-                        .buttonStyle(.link)
-                        .padding(.bottom, .space12)
+                    Button { store.send(.showMoreTapped) } label: {
+                        Text(L10n.Browse.searchShowMore)
+                            .type(.body3(.semibold), style: .secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, .space24)
+                            .padding(.bottom, .space12)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -224,18 +256,34 @@
         let onHover: (Bool) -> Void
         let onOpen: () -> Void
 
+        private var subtitle: String {
+            [searchResultLocation(result), searchResultRowLabel(result)]
+                .compactMap(\.self)
+                .joined(separator: " \u{00B7} ")
+        }
+
         var body: some View {
             Button(action: onOpen) {
-                SearchResultRow(
-                    result: result,
-                    serverURL: serverURL,
-                    shouldShowThumbnails: shouldShowThumbnails
-                )
-                .padding(.horizontal, .space8)
+                HStack(spacing: .space12) {
+                    FileRowView(
+                        name: result.name,
+                        isDirectory: result.isDirectory,
+                        subtitle: subtitle,
+                        kind: result.displayKind,
+                        thumbnailFile: result.thumbnailFile,
+                        serverURL: serverURL,
+                        shouldShowThumbnails: shouldShowThumbnails
+                    )
+                    if isActive {
+                        MacKeyHint(MacShortcutHint.enter)
+                            .accessibilityHidden(true)
+                    }
+                }
+                .padding(.horizontal, .space12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
-                        .fill(isActive ? Color.primaryDS.opacity(Constants.activeOpacity) : .clear)
+                    RoundedRectangle(cornerRadius: Constants.rowRadius, style: .continuous)
+                        .fill(isActive ? Color.macRow : .clear)
                 )
                 .contentShape(Rectangle())
             }

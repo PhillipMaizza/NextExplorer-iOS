@@ -9,3 +9,13 @@ extension View {
         #endif
     }
 }
+
+extension View {
+    func instantPushOnMac(depth: Int) -> some View {
+        #if os(macOS)
+            transaction(value: depth) { $0.disablesAnimations = true }
+        #else
+            self
+        #endif
+    }
+}
