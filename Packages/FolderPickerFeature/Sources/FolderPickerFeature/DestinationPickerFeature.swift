@@ -15,7 +15,7 @@ public struct DestinationPickerFeature {
         static let searchLimit = 50
     }
 
-    public enum Purpose: Equatable, Sendable { case move, upload, restore, replaceFile }
+    public enum Purpose: Equatable, Sendable { case move, copy, upload, restore, replaceFile }
 
     @ObservableState
     public struct State: Equatable, Sendable {
@@ -82,12 +82,14 @@ public struct DestinationPickerFeature {
         public var displayedFolders: IdentifiedArrayOf<FileItem> {
             let term = SearchTerm(searchQuery)
             guard term.isTooShort else { return folders }
-            return folders.filter { term.matches($0.name) }
+            return folders.filter { folder in
+                term.matches(PersonalSpace.displayName(forSegment: folder.name, isFirstSegment: folder.path.isEmpty))
+            }
         }
 
-        public init(serverURL: URL, items: [FileItem]) {
+        public init(serverURL: URL, items: [FileItem], isCopy: Bool = false) {
             self.serverURL = serverURL
-            purpose = .move
+            purpose = isCopy ? .copy : .move
             self.items = items
             // Start in the folder the items already sit in, so the common case (moving into a
             // sibling or a nearby folder) opens right where the user is, with the breadcrumb
@@ -132,6 +134,8 @@ public struct DestinationPickerFeature {
             switch purpose {
             case .move:
                 FileClipboard(items: items, operation: .move).canPaste(into: directoryPath, canWrite: true)
+            case .copy:
+                FileClipboard(items: items, operation: .copy).canPaste(into: directoryPath, canWrite: true)
             case .upload:
                 // `nil` while the folder's listing is still loading: confirm stays disabled
                 // until the server says uploads are allowed here.
@@ -148,6 +152,7 @@ public struct DestinationPickerFeature {
     public enum Action: Equatable, Sendable {
         case onAppear
         case foldersResponse(Result<BrowseResult, FilesClientError>)
+        case personalSpaceAvailable
         case searchQueryChanged(String)
         case searchResultsResponse(Result<[SearchResultItem], FilesClientError>, term: String)
         case searchResultTapped(SearchResultItem)
@@ -198,6 +203,12 @@ public struct DestinationPickerFeature {
                 state.selectedFilePath = state.pendingFileSelection.flatMap { state.folders[id: $0] }
                     .flatMap { $0.isDirectory ? nil : $0.id }
                 state.pendingFileSelection = nil
+                return .none
+
+            case .personalSpaceAvailable:
+                guard state.phase == .loaded, state.directoryPath.isEmpty, state.purpose != .replaceFile,
+                      state.folders[id: PersonalSpace.rootPath] == nil else { return .none }
+                state.folders.insert(Self.personalSpaceFolder, at: 0)
                 return .none
 
             case let .foldersResponse(.failure(error)):
@@ -341,6 +352,14 @@ public struct DestinationPickerFeature {
         lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
     }
 
+    static let personalSpaceFolder = FileItem(
+        name: PersonalSpace.rootPath,
+        path: "",
+        dateModified: .distantPast,
+        size: 0,
+        kind: FileItem.directoryKind
+    )
+
     private func load(_ state: inout State) -> Effect<Action> {
         state.phase = .loading
         state.searchPhase = .idle
@@ -354,6 +373,9 @@ public struct DestinationPickerFeature {
             .cancel(id: CancelID.search),
             .run { send in
                 try await send(.foldersResponse(apiResult { try await filesClient.browse(serverURL, directoryPath) }))
+                guard directoryPath.isEmpty,
+                      await (try? filesClient.serverFeatures(serverURL))?.isPersonalEnabled == true else { return }
+                await send(.personalSpaceAvailable)
             }
             .cancellable(id: CancelID.load, cancelInFlight: true)
         )

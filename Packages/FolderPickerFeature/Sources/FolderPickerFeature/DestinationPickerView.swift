@@ -23,12 +23,14 @@ public struct DestinationPickerView: View {
     }
 
     private var navigationTitle: String {
-        guard store.directoryPath.isEmpty else {
-            return (store.directoryPath as NSString).lastPathComponent
-        }
-        return switch store.purpose {
+        store.directoryPath.isEmpty ? purposeTitle : (store.directoryPath as NSString).lastPathComponent
+    }
+
+    private var purposeTitle: String {
+        switch store.purpose {
         case .upload: L10n.Uploads.destinationTitle
         case .move: L10n.Browse.destinationPickerMoveTitle
+        case .copy: L10n.Browse.destinationPickerCopyTitle
         case .restore: L10n.Trash.restoreTo
         case .replaceFile: L10n.Browse.destinationPickerReplaceTitle
         }
@@ -38,6 +40,7 @@ public struct DestinationPickerView: View {
         switch store.purpose {
         case .upload: L10n.Uploads.destinationConfirm
         case .move: L10n.Browse.destinationPickerConfirmMove
+        case .copy: L10n.Browse.destinationPickerConfirmCopy
         case .restore: L10n.Trash.restoreHere
         case .replaceFile: L10n.Browse.transferConflictReplace
         }
@@ -45,7 +48,7 @@ public struct DestinationPickerView: View {
 
     public var body: some View {
         #if os(macOS)
-            MacDestinationPickerSheet(store: store, title: navigationTitle, confirmTitle: confirmLabel)
+            MacDestinationPickerSheet(store: store, title: purposeTitle, confirmTitle: confirmLabel)
         #else
             NavigationStack { pickerBody }
         #endif
@@ -165,7 +168,10 @@ public struct DestinationPickerView: View {
                         Button {
                             store.send(.folderTapped(folder))
                         } label: {
-                            folderRow(folder.name, subtitle: nil)
+                            folderRow(
+                                PersonalSpace.displayName(forSegment: folder.name, isFirstSegment: folder.path.isEmpty),
+                                subtitle: nil
+                            )
                         }
                     }
                 }
