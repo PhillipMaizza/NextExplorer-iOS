@@ -138,6 +138,31 @@
             }
         }
 
+        @Test("A folder opened during the inspector fade stays open")
+        func aFolderOpenedDuringTheFadeStaysOpen() async {
+            var state = BrowseTabFeature.State(serverURL: serverURL)
+            state.root.items = [photos]
+            var pushed = BrowseNavigation.screen(for: photos, serverURL: serverURL)
+            pushed.infoItem = photos
+            pushed.infoPhase = .loaded
+            state.path.append(pushed)
+            let clock = TestClock()
+            let store = store(state, metadataGate: AsyncGate(), usageGate: AsyncGate(), clock: clock)
+            let inbox = BrowseFixtures.folder(TestFolder.inbox, in: photos.id)
+
+            await store.send(.goBack)
+            await store.receive(\.path[id: 0].infoDismissed) {
+                $0.path[id: 0]?.infoItem = nil
+                $0.path[id: 0]?.infoPhase = .idle
+            }
+            await store.send(.path(.element(id: 0, action: .delegate(.openFolder(inbox))))) {
+                $0.path.append(BrowseNavigation.screen(for: inbox, serverURL: serverURL, openedFrom: $0.path[id: 0]))
+            }
+            await clock.advance(by: .seconds(DSMotion.quickFadeDuration))
+            await store.receive(\.inspectorClosedForBack)
+            #expect(store.state.path.last?.directoryPath == inbox.id)
+        }
+
         @Test("Going back with the selection inspector open closes it first, then goes back")
         func goingBackClosesTheSelectionInspectorFirst() async {
             var state = BrowseTabFeature.State(serverURL: serverURL)

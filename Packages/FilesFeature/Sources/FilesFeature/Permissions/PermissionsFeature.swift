@@ -22,6 +22,7 @@ public struct PermissionsFeature {
         public var grid: [PermissionScope: Set<PermissionRight>] = [:]
         public var recursive = false
         public var numericDraft = ""
+        var shouldApplyOwnershipAfterMode = false
         public var ownerDraft = ""
         public var groupDraft = ""
 
@@ -146,10 +147,9 @@ public struct PermissionsFeature {
                 return .none
 
             case .saveTapped:
-                return .merge(
-                    state.isModeDirty ? .send(.applyModeTapped) : .none,
-                    state.isOwnershipDirty ? .send(.applyOwnershipTapped) : .none
-                )
+                guard state.isModeDirty else { return .send(.applyOwnershipTapped) }
+                state.shouldApplyOwnershipAfterMode = state.isOwnershipDirty
+                return .send(.applyModeTapped)
 
             case .applyModeTapped:
                 guard state.isModeDirty, !state.isSavingMode else { return .none }
@@ -170,10 +170,13 @@ public struct PermissionsFeature {
 
             case .modeResponse(.success):
                 state.isSavingMode = false
-                return .send(.onAppear)
+                guard state.shouldApplyOwnershipAfterMode else { return .send(.onAppear) }
+                state.shouldApplyOwnershipAfterMode = false
+                return .send(.applyOwnershipTapped)
 
             case let .modeResponse(.failure(error)):
                 state.isSavingMode = false
+                state.shouldApplyOwnershipAfterMode = false
                 state.actionError = error.userMessage
                 return .none
 

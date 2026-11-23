@@ -262,6 +262,32 @@ struct PermissionsFeatureTests {
     }
 
     @Test
+    func saveAppliesTheModeBeforeTheOwnershipSoAReloadNeverEatsTheOwnerDraft() async {
+        var state = loadedState(permissions())
+        state.grid[.owner] = [.read]
+        state.ownerDraft = TestUser.alice
+        let store = makeStore(state, fetch: { [self] in permissions() }, chmod: {}, chown: {})
+
+        await store.send(.saveTapped) { $0.shouldApplyOwnershipAfterMode = true }
+        await store.receive(\.applyModeTapped) { $0.isSavingMode = true }
+        await store.receive(\.modeResponse.success) {
+            $0.isSavingMode = false
+            $0.shouldApplyOwnershipAfterMode = false
+        }
+        await store.receive(\.applyOwnershipTapped) { $0.isSavingOwnership = true }
+        await store.receive(\.ownershipResponse.success) { $0.isSavingOwnership = false }
+        await store.receive(\.onAppear) { $0.phase = .loading }
+        await store.receive(\.permissionsResponse.success) {
+            $0.phase = .loaded
+            $0.grid = permissions().grid
+            $0.ownerDraft = TestAccount.username
+        }
+
+        #expect(chmodCalls.value == [ChmodCall(path: "Documents/report.pdf", mode: "455", isRecursive: false)])
+        #expect(chownCalls.value == [ChownCall(path: "Documents/report.pdf", owner: TestUser.alice, group: nil)])
+    }
+
+    @Test
     func applyModeDoesNothingWhenTheGridIsUnchanged() async {
         let store = makeStore(loadedState(permissions()), chmod: {})
 
