@@ -116,7 +116,7 @@
                 onConfirm: { store.send(.saveTapped) }
             ) {
                 MacShareFormFields(
-                    itemName: store.share.displayName,
+                    itemName: store.share.itemName,
                     isDirectory: store.share.isDirectory,
                     location: ((store.share.sourcePath ?? "") as NSString).deletingLastPathComponent,
                     label: $store.label.sending(\.labelChanged),
