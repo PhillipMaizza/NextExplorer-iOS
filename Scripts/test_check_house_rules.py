@@ -66,6 +66,10 @@ class SourceRuleTests(unittest.TestCase):
             [],
         )
 
+    def test_the_token_definitions_hold_their_literals(self):
+        spacing = "Packages/DesignSystem/Sources/DesignSystem/Essentials/Spacing.swift"
+        self.assertEqual(lines_of(spacing, "    static let space40: CGFloat = 40"), [])
+
     def test_a_symbol_name_outside_iconkit_is_found(self):
         self.assertEqual(len(lines_of(SOURCE, 'Image(systemName: "trash")', 'Label(L10n.Trash.title, systemImage: "trash")')), 2)
         self.assertEqual(lines_of("Packages/DesignSystem/Sources/DesignSystem/Essentials/IconKit.swift", 'Image(systemName: "trash")'), [])
