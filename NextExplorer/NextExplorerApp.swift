@@ -140,6 +140,7 @@ struct NextExplorerApp: App {
                 .environment(\.horizontalSizeClass, .regular)
                 .frame(minWidth: MacWindow.minWidth, minHeight: MacWindow.minHeight)
                 .macFrostedWindow()
+                .handlesExternalEvents(preferring: MacWindow.externalEvents, allowing: MacWindow.externalEvents)
             #endif
             #if DEBUG
             .disablesAnimationsUnderUITest()
@@ -200,6 +201,7 @@ struct NextExplorerApp: App {
         static let defaultHeight: CGFloat = 780
         static let folderWindowWidth: CGFloat = 960
         static let folderWindowHeight: CGFloat = 640
+        static let externalEvents: Set<String> = ["*"]
     }
 #endif
 
