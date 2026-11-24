@@ -108,7 +108,6 @@ public struct MainTabFeature {
         case backRequested
         case enclosingFolderRequested
         case forwardRequested
-        case homeRequested
         case goToFolderPrompted
         case goToFolderDismissed
         case goToFolderRequested(String)
@@ -258,9 +257,7 @@ public struct MainTabFeature {
                     switch state.selectedTab {
                     case .browse: return .send(.browse(.goBack))
                     case .favorites: return .send(.favorites(.goBack))
-                    case .trash:
-                        guard let folder = state.trash.folder else { return .none }
-                        return .send(.trash(.folder(folder.canGoUp ? .presented(.upTapped) : .dismiss)))
+                    case .trash: return Self.trashFolderUp(state)
                     case .shared, .downloads, .settings: return .none
                     }
 
@@ -270,10 +267,6 @@ public struct MainTabFeature {
                     case .favorites: return .send(.favorites(.goForward))
                     case .shared, .downloads, .settings, .trash: return .none
                     }
-
-                case .homeRequested:
-                    state.selectedTab = .browse
-                    return .send(.browse(.goHome))
 
                 case .goToFolderPrompted:
                     state.isGoToFolderPresented = true
@@ -322,7 +315,8 @@ public struct MainTabFeature {
                     switch state.selectedTab {
                     case .browse: return .send(.browse(.goToEnclosingFolder))
                     case .favorites: return .send(.favorites(.goToEnclosingFolder))
-                    case .shared, .downloads, .settings, .trash: return .none
+                    case .trash: return Self.trashFolderUp(state)
+                    case .shared, .downloads, .settings: return .none
                     }
 
                 case .sharedFilesArrived:
@@ -676,6 +670,11 @@ public struct MainTabFeature {
         }
     }
 
+    static func trashFolderUp(_ state: State) -> Effect<Action> {
+        guard let folder = state.trash.folder else { return .none }
+        return .send(.trash(.folder(folder.canGoUp ? .presented(.upTapped) : .dismiss)))
+    }
+
     static func refreshTrashIfLoaded(_ state: State) -> Effect<Action> {
         state.trash.phase.hasLoaded ? .send(.trash(.refreshPulled)) : .none
     }
@@ -718,8 +717,13 @@ extension MainTabFeature.State {
         }
     }
 
-    var canGoHome: Bool {
-        selectedTab != .browse || browse.canGoBackFromScreen
+    var canGoUp: Bool {
+        switch selectedTab {
+        case .browse: browse.trash == nil && browse.canGoBack
+        case .favorites: favorites.canGoBack
+        case .trash: trash.folder != nil
+        case .shared, .downloads, .settings: false
+        }
     }
 
     var canGoForward: Bool {

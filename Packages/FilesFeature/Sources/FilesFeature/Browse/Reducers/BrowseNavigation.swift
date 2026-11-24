@@ -23,7 +23,8 @@ enum BrowseNavigation {
     }
 
     /// Reset the stack and jump straight to an arbitrary path (e.g. a deep search result).
-    /// An empty path just clears back to the root.
+    /// An empty path just clears back to the root. A folder already open in the stack is popped
+    /// to as it is, since a fresh copy of it would never load.
     static func jump(
         to path: String,
         title: String,
@@ -31,8 +32,10 @@ enum BrowseNavigation {
         isKeptOffline: Bool = false,
         stack: inout StackState<BrowseFeature.State>
     ) {
-        // Already there: swapping in a fresh copy of the folder on screen leaves it never loaded.
-        guard stack.last?.directoryPath != path else { return }
+        if let open = stack.ids.last(where: { stack[id: $0]?.directoryPath == path }) {
+            stack.pop(to: open)
+            return
+        }
         stack.removeAll()
         guard !path.isEmpty else { return }
         var screen = BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: title)
@@ -89,12 +92,6 @@ extension BrowseHistoryState {
     mutating func recordPop(from id: StackElementID) {
         guard let start = path.ids.firstIndex(of: id) else { return }
         forwardStack.append(contentsOf: path.ids[start...].compactMap { path[id: $0] }.reversed())
-    }
-
-    mutating func goHome() {
-        guard let first = path.ids.first else { return }
-        recordPop(from: first)
-        path.removeAll()
     }
 
     /// Enclosing Folder (⌘↑): the folder that holds the visible one. Usually that is the screen

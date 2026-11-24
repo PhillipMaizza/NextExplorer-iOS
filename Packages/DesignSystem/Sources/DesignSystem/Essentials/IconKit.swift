@@ -30,7 +30,7 @@ public enum IconKit {
     public static let macToolbarSidebar = Image("macToolbarSidebar", bundle: .module).renderingMode(.template)
     public static let macToolbarBack = Image("macToolbarBack", bundle: .module).renderingMode(.template)
     public static let macToolbarForward = Image("macToolbarForward", bundle: .module).renderingMode(.template)
-    public static let macToolbarHome = Image("macToolbarHome", bundle: .module).renderingMode(.template)
+    public static let macToolbarUp = Image("macToolbarUp", bundle: .module).renderingMode(.template)
     public static let macToolbarSearch = Image("macToolbarSearch", bundle: .module).renderingMode(.template)
     public static let macToolbarRefresh = Image("macToolbarRefresh", bundle: .module).renderingMode(.template)
     public static let macToolbarUpload = Image("macToolbarUpload", bundle: .module).renderingMode(.template)

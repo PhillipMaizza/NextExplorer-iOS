@@ -138,22 +138,6 @@
             }
         }
 
-        @Test("Home forgets where the inspector was left open, so a later Back does not reopen it")
-        func homeForgetsWhereTheInspectorWasLeftOpen() async {
-            var state = BrowseTabFeature.State(serverURL: serverURL)
-            state.root.items = [photos]
-            state.inspectorLeftOpenPaths = ["", photos.id]
-            let pushed = BrowseNavigation.screen(for: photos, serverURL: serverURL)
-            state.path.append(pushed)
-            let store = store(state, metadataGate: AsyncGate(), usageGate: AsyncGate())
-
-            await store.send(.goHome) {
-                $0.forwardStack = [pushed]
-                $0.path.removeAll()
-                $0.inspectorLeftOpenPaths = []
-            }
-        }
-
         @Test("A folder opened during the inspector fade stays open")
         func aFolderOpenedDuringTheFadeStaysOpen() async {
             var state = BrowseTabFeature.State(serverURL: serverURL)

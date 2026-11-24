@@ -22,27 +22,16 @@ func selectSortToolbar(
     onCancel: @escaping () -> Void,
     onToggleViewMode: @escaping () -> Void,
     onTrash: (() -> Void)? = nil,
-    hasClipboardItems: Bool = false,
     @ViewBuilder extraMenuItems: () -> some View = { EmptyView() },
     @ViewBuilder clipboardMenu: () -> some View = { EmptyView() },
     @ViewBuilder sortMenu: () -> some View
 ) -> some ToolbarContent {
     #if os(macOS)
         // Mac file lists are tables that select natively, so there is no select mode and
-        // no view toggle; the toolbar keeps only sort and paste.
+        // no view toggle; the toolbar keeps only sort.
         ToolbarItemGroup(placement: .navigation) {
             sortMenu()
                 .labelStyle(.iconOnly)
-        }
-        ToolbarItemGroup(placement: .principal) {
-            if hasClipboardItems {
-                Menu {
-                    clipboardMenu()
-                } label: {
-                    IconKit.paste
-                }
-                .accessibilityLabelWithTooltip(L10n.Browse.actionPaste)
-            }
         }
     #else
         if isSelecting {

@@ -83,7 +83,6 @@ public struct BrowseTabFeature {
         case goToEnclosingFolder
         /// Mac ⌘]: reopen the folder last left by going back.
         case goForward
-        case goHome
         /// A download landed: recompute the "available offline" badges on every live screen.
         case offlineAvailabilityChanged
         /// Files another app shared in, handed to the topmost screen.
@@ -195,12 +194,6 @@ public struct BrowseTabFeature {
 
             case .goForward:
                 state.goForward()
-                return .none
-
-            case .goHome:
-                state.trash = nil
-                state.inspectorLeftOpenPaths = []
-                state.goHome()
                 return .none
 
             case let .path(.popFrom(id)):
