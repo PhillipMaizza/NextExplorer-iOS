@@ -137,6 +137,12 @@ favorites.editIconOutline	アウトライン
 favorites.editIconSolid	塗りつぶし
 favorites.editColorLabel	カラー
 favorites.editColorDefault	デフォルト
+favorites.editColorRed	レッド
+favorites.editColorOrange	オレンジ
+favorites.editColorYellow	イエロー
+favorites.editColorGreen	グリーン
+favorites.editColorBlue	ブルー
+favorites.editColorPurple	パープル
 favorites.editSave	保存
 favorites.reorderFailed	新しい並び順を保存できませんでした。
 favorites.removeConfirm#other	%lld 件のお気に入りを削除しますか？
@@ -240,6 +246,27 @@ shared.badgeExpired	期限切れ
 shared.emptyByMe	ファイルやフォルダを共有すると、そのリンクがここに表示されます。
 shared.emptyWithMe	他の人があなたと共有したリンクがここに表示されます。
 shared.noSearchMatches	「%@」に一致する共有はありません。
+shared.noSearchMatchesFiltered	ここには「%@」に一致するものがありません。すべてのリンクを検索するには「すべて」を選択してください。
+shared.searchPrompt	共有を検索
+shared.deleteLink	リンクを削除
+shared.links	リンク
+shared.quotedLabel	「%@」
+shared.limit	制限
+shared.link	リンク
+shared.direct	直接
+shared.directDownloadLink	直接ダウンロードリンク
+shared.directHint	共有ページを経由しません。ファイルの埋め込みやスクリプトに使えます。
+shared.directOpen	ブラウザで開く
+shared.directOpenDetail	ブラウザで表示できれば表示し、できなければダウンロードします
+shared.directDownloadDetail	常にファイルを保存します
+shared.directRawDetail	加工なしのバイト。スクリプトや埋め込み用
+shared.directZip	ZIPダウンロード
+shared.directZipDetail	フォルダ全体を1つのZIPファイルで
+shared.linkExpires	リンクの有効期限
+shared.tomorrow	明日
+shared.inSevenDays	7日後
+shared.inThirtyDays	30日後
+shared.endsOn	%@に終了
 shared.deleteTitle	共有リンクを削除しますか？
 shared.deleteMessage	リンクはすぐに機能しなくなります。ファイルやフォルダ自体には影響しません。
 shared.sharedByUnknown	誰か
@@ -248,8 +275,6 @@ shared.metaSharedBy	共有者
 shared.metaSharedWith	共有相手
 shared.anyoneWithLink	リンクを知っている全員
 shared.actionShareLink	リンクを共有
-shared.actionFolderLink	フォルダリンク
-shared.actionFileLink	ファイルリンク
 shared.moreRecipients	+%lld
 shared.copiedShareLink	共有リンクをコピーしました
 shared.copiedFolderZip	フォルダの ZIP リンクをコピーしました
@@ -259,6 +284,7 @@ createShare.titleCreated	共有を作成しました
 createShare.sectionLabel	ラベル
 createShare.sectionAccessMode	アクセスモード
 createShare.sectionWhoCanAccess	アクセスできる人
+createShare.addPeople	ユーザを追加
 createShare.sectionShareLink	共有リンク
 createShare.togglePasswordProtect	パスワードで保護
 createShare.toggleSetExpiration	有効期限を設定
@@ -775,8 +801,6 @@ menu.copyPath	パスをコピー
 menu.recentFolders	最近使ったフォルダ
 menu.clearRecent	メニューを消去
 common.loading	読み込み中…
-browse.quickLookUnavailable	このファイルの種類ではクイックルックを使用できません。
-browse.quickLookTooLarge	このファイルはクイックルックで表示するには大きすぎます。
 menu.zoomIn	拡大
 menu.zoomOut	縮小
 menu.zoomToFit	ウインドウに合わせる

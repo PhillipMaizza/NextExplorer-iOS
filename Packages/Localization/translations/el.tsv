@@ -146,6 +146,12 @@ favorites.editIconOutline	Περίγραμμα
 favorites.editIconSolid	Γεμάτο
 favorites.editColorLabel	Χρώμα
 favorites.editColorDefault	Προεπιλογή
+favorites.editColorRed	Κόκκινο
+favorites.editColorOrange	Πορτοκαλί
+favorites.editColorYellow	Κίτρινο
+favorites.editColorGreen	Πράσινο
+favorites.editColorBlue	Μπλε
+favorites.editColorPurple	Μωβ
 favorites.editSave	Αποθήκευση
 favorites.reorderFailed	Δεν ήταν δυνατή η αποθήκευση της νέας σειράς.
 favorites.removeConfirm#one	Αφαίρεση %lld αγαπημένου;
@@ -256,6 +262,27 @@ shared.badgeExpired	έληξε
 shared.emptyByMe	Κοινοποιήστε ένα αρχείο ή φάκελο για να δείτε εδώ τον σύνδεσμό του.
 shared.emptyWithMe	Οι σύνδεσμοι που κοινοποιούν σε εσάς άλλοι εμφανίζονται εδώ.
 shared.noSearchMatches	Καμία κοινοποίηση δεν ταιριάζει με «%@».
+shared.noSearchMatchesFiltered	Τίποτα εδώ δεν ταιριάζει με «%@». Επιλέξτε Όλα για αναζήτηση σε όλους τους συνδέσμους.
+shared.searchPrompt	Αναζήτηση κοινοποιήσεων
+shared.deleteLink	Διαγραφή συνδέσμου
+shared.links	Σύνδεσμοι
+shared.quotedLabel	«%@»
+shared.limit	Περιορισμός
+shared.link	Σύνδεσμος
+shared.direct	Άμεσος
+shared.directDownloadLink	Σύνδεσμος άμεσης λήψης
+shared.directHint	Παρακάμπτει τη σελίδα κοινής χρήσης. Για ενσωμάτωση του αρχείου ή χρήση σε σενάρια.
+shared.directOpen	Άνοιγμα στο πρόγραμμα περιήγησης
+shared.directOpenDetail	Το εμφανίζει αν μπορεί το πρόγραμμα περιήγησης, αλλιώς το κατεβάζει
+shared.directDownloadDetail	Αποθηκεύει πάντα το αρχείο
+shared.directRawDetail	Σκέτα bytes, για σενάρια και ενσωματώσεις
+shared.directZip	Λήψη ZIP
+shared.directZipDetail	Όλος ο φάκελος ως ένα αρχείο ZIP
+shared.linkExpires	Λήξη συνδέσμου
+shared.tomorrow	Αύριο
+shared.inSevenDays	Σε 7 ημέρες
+shared.inThirtyDays	Σε 30 ημέρες
+shared.endsOn	Λήγει %@
 shared.deleteTitle	Διαγραφή συνδέσμου κοινοποίησης;
 shared.deleteMessage	Ο σύνδεσμος σταματά να λειτουργεί αμέσως. Το ίδιο το αρχείο ή ο φάκελος δεν επηρεάζεται.
 shared.sharedByUnknown	Κάποιος
@@ -264,8 +291,6 @@ shared.metaSharedBy	Κοινοποιήθηκε από
 shared.metaSharedWith	Κοινοποιήθηκε σε
 shared.anyoneWithLink	Όποιος έχει τον σύνδεσμο
 shared.actionShareLink	Σύνδεσμος κοινοποίησης
-shared.actionFolderLink	Σύνδεσμος φακέλου
-shared.actionFileLink	Σύνδεσμος αρχείου
 shared.copiedShareLink	Ο σύνδεσμος κοινοποίησης αντιγράφηκε
 shared.copiedFolderZip	Ο σύνδεσμος ZIP του φακέλου αντιγράφηκε
 shared.copiedDirectFile	Ο άμεσος σύνδεσμος αρχείου αντιγράφηκε
@@ -274,6 +299,7 @@ createShare.titleCreated	Η κοινοποίηση δημιουργήθηκε
 createShare.sectionLabel	Ετικέτα
 createShare.sectionAccessMode	Λειτουργία πρόσβασης
 createShare.sectionWhoCanAccess	Ποιος έχει πρόσβαση
+createShare.addPeople	Προσθήκη ατόμων
 createShare.sectionShareLink	Σύνδεσμος κοινοποίησης
 createShare.togglePasswordProtect	Προστασία με κωδικό πρόσβασης
 createShare.toggleSetExpiration	Ορισμός ημερομηνίας λήξης
@@ -1026,8 +1052,6 @@ menu.copyPath	Αντιγραφή διαδρομής
 menu.recentFolders	Πρόσφατοι φάκελοι
 menu.clearRecent	Εκκαθάριση μενού
 common.loading	Φόρτωση…
-browse.quickLookUnavailable	Η Γρήγορη προβολή δεν είναι διαθέσιμη για αυτόν τον τύπο αρχείου.
-browse.quickLookTooLarge	Αυτό το αρχείο είναι πολύ μεγάλο για τη Γρήγορη προβολή.
 menu.zoomIn	Μεγέθυνση
 menu.zoomOut	Σμίκρυνση
 menu.zoomToFit	Προσαρμογή στο παράθυρο

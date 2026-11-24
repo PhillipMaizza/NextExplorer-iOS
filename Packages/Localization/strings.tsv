@@ -179,6 +179,12 @@ favorites.editIconOutline	Outline
 favorites.editIconSolid	Solid
 favorites.editColorLabel	Color
 favorites.editColorDefault	Default
+favorites.editColorRed	Red
+favorites.editColorOrange	Orange
+favorites.editColorYellow	Yellow
+favorites.editColorGreen	Green
+favorites.editColorBlue	Blue
+favorites.editColorPurple	Purple
 favorites.editSave	Save
 favorites.reorderFailed	Couldn't save the new order.
 favorites.removeConfirm#one	Remove %lld Favorite?
@@ -252,6 +258,27 @@ shared.badgeExpired	expired
 shared.emptyByMe	Share a file or folder to see its link here.
 shared.emptyWithMe	Links other people share with you show up here.
 shared.noSearchMatches	No shares match “%@”.
+shared.noSearchMatchesFiltered	Nothing here matches “%@”. Choose All to search every link.
+shared.searchPrompt	Search shares
+shared.deleteLink	Delete Link
+shared.links	Links
+shared.quotedLabel	“%@”
+shared.limit	Limit
+shared.link	Link
+shared.direct	Direct
+shared.directDownloadLink	Direct download link
+shared.directHint	Skips the share page. Use it to embed or script the file.
+shared.directOpen	Open in browser
+shared.directOpenDetail	Shows it if the browser can, else downloads
+shared.directDownloadDetail	Always saves the file
+shared.directRawDetail	Plain bytes, for scripts and embeds
+shared.directZip	ZIP download
+shared.directZipDetail	The whole folder as one ZIP file
+shared.linkExpires	Link Expires
+shared.tomorrow	Tomorrow
+shared.inSevenDays	In 7 days
+shared.inThirtyDays	In 30 days
+shared.endsOn	Ends %@
 shared.deleteTitle	Delete Share Link?
 shared.deleteMessage	The link stops working immediately. The file or folder itself isn't touched.
 shared.sharedByUnknown	Someone
@@ -260,8 +287,6 @@ shared.metaSharedBy	Shared by
 shared.metaSharedWith	Shared with
 shared.anyoneWithLink	Anyone with link
 shared.actionShareLink	Share link
-shared.actionFolderLink	Folder link
-shared.actionFileLink	File link
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Share link copied
 shared.copiedFolderZip	Folder ZIP link copied
@@ -320,6 +345,7 @@ createShare.titleCreated	Share Created
 createShare.sectionLabel	Label
 createShare.sectionAccessMode	Access Mode
 createShare.sectionWhoCanAccess	Who can access
+createShare.addPeople	Add people
 createShare.sectionShareLink	Share Link
 createShare.togglePasswordProtect	Password protect
 createShare.toggleSetExpiration	Set expiration date
@@ -1193,8 +1219,6 @@ menu.copyPath	Copy Path
 menu.recentFolders	Recent Folders
 menu.clearRecent	Clear Menu
 common.loading	Loading…
-browse.quickLookUnavailable	Quick Look isn't available for this file type.
-browse.quickLookTooLarge	This file is too large for Quick Look.
 menu.zoomIn	Zoom In
 menu.zoomOut	Zoom Out
 menu.zoomToFit	Zoom to Fit

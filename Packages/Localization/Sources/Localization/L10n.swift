@@ -203,8 +203,6 @@ public enum L10n {
         public static var progressDeleting: String { tr("browse.progressDeleting") }  // "Deleting…"
         public static var progressExtracting: String { tr("browse.progressExtracting") }  // "Extracting…"
         public static var progressMoving: String { tr("browse.progressMoving") }  // "Moving…"
-        public static var quickLookTooLarge: String { tr("browse.quickLookTooLarge") }  // "This file is too large for Quick Look."
-        public static var quickLookUnavailable: String { tr("browse.quickLookUnavailable") }  // "Quick Look isn't available for this file type."
         public static var renameNamePlaceholder: String { tr("browse.renameNamePlaceholder") }  // "Name"
         public static var renameTitle: String { tr("browse.renameTitle") }  // "Rename"
         public static var scopeEverywhere: String { tr("browse.scopeEverywhere") }  // "Everywhere"
@@ -318,6 +316,7 @@ public enum L10n {
         public static var syncCompleted: String { tr("common.syncCompleted") }  // "Sync completed"
     }
     public enum CreateShare {
+        public static var addPeople: String { tr("createShare.addPeople") }  // "Add people"
         public static var createdBanner: String { tr("createShare.createdBanner") }  // "Share link created successfully!"
         public static var directFileLink: String { tr("createShare.directFileLink") }  // "Direct file link"
         public static var directFolderLink: String { tr("createShare.directFolderLink") }  // "Direct folder ZIP link"
@@ -423,8 +422,14 @@ public enum L10n {
         public static var accessibilityBadge: String { tr("favorites.accessibilityBadge") }  // "Favorite"
         public static var actionEdit: String { tr("favorites.actionEdit") }  // "Edit"
         public static var actionRemoveFromFavorites: String { tr("favorites.actionRemoveFromFavorites") }  // "Remove from Favorites"
+        public static var editColorBlue: String { tr("favorites.editColorBlue") }  // "Blue"
         public static var editColorDefault: String { tr("favorites.editColorDefault") }  // "Default"
+        public static var editColorGreen: String { tr("favorites.editColorGreen") }  // "Green"
         public static var editColorLabel: String { tr("favorites.editColorLabel") }  // "Color"
+        public static var editColorOrange: String { tr("favorites.editColorOrange") }  // "Orange"
+        public static var editColorPurple: String { tr("favorites.editColorPurple") }  // "Purple"
+        public static var editColorRed: String { tr("favorites.editColorRed") }  // "Red"
+        public static var editColorYellow: String { tr("favorites.editColorYellow") }  // "Yellow"
         public static var editIconLabel: String { tr("favorites.editIconLabel") }  // "Icon"
         public static var editIconOutline: String { tr("favorites.editIconOutline") }  // "Outline"
         public static var editIconSolid: String { tr("favorites.editIconSolid") }  // "Solid"
@@ -945,8 +950,6 @@ public enum L10n {
         public static var uploadReady: String { tr("shareUpload.uploadReady") }  // "Upload Ready Files"
     }
     public enum Shared {
-        public static var actionFileLink: String { tr("shared.actionFileLink") }  // "File link"
-        public static var actionFolderLink: String { tr("shared.actionFolderLink") }  // "Folder link"
         public static var actionShareLink: String { tr("shared.actionShareLink") }  // "Share link"
         public static var anyoneWithLink: String { tr("shared.anyoneWithLink") }  // "Anyone with link"
         public static var badgeExpired: String { tr("shared.badgeExpired") }  // "expired"
@@ -960,11 +963,22 @@ public enum L10n {
         public static var copyLink: String { tr("shared.copyLink") }  // "Copy link"
         public static var copyShareLink: String { tr("shared.copyShareLink") }  // "Copy share link"
         public static func daysLeft(_ a0: CVarArg) -> String { tr("shared.daysLeft", a0) }
+        public static var deleteLink: String { tr("shared.deleteLink") }  // "Delete Link"
         public static var deleteMessage: String { tr("shared.deleteMessage") }
         public static var deleteTitle: String { tr("shared.deleteTitle") }  // "Delete Share Link?"
+        public static var direct: String { tr("shared.direct") }  // "Direct"
+        public static var directDownloadDetail: String { tr("shared.directDownloadDetail") }  // "Always saves the file"
+        public static var directDownloadLink: String { tr("shared.directDownloadLink") }  // "Direct download link"
+        public static var directHint: String { tr("shared.directHint") }  // "Skips the share page. Use it to embed or script the file."
+        public static var directOpen: String { tr("shared.directOpen") }  // "Open in browser"
+        public static var directOpenDetail: String { tr("shared.directOpenDetail") }  // "Shows it if the browser can, else downloads"
+        public static var directRawDetail: String { tr("shared.directRawDetail") }  // "Plain bytes, for scripts and embeds"
+        public static var directZip: String { tr("shared.directZip") }  // "ZIP download"
+        public static var directZipDetail: String { tr("shared.directZipDetail") }  // "The whole folder as one ZIP file"
         public static func downloadCount(_ a0: CVarArg) -> String { tr("shared.downloadCount", a0) }
         public static var emptyByMe: String { tr("shared.emptyByMe") }  // "Share a file or folder to see its link here."
         public static var emptyWithMe: String { tr("shared.emptyWithMe") }  // "Links other people share with you show up here."
+        public static func endsOn(_ a0: CVarArg) -> String { tr("shared.endsOn", a0) }
         public static func expiredFooter(_ a0: CVarArg) -> String { tr("shared.expiredFooter", a0) }
         public static func expiresUntil(_ a0: CVarArg) -> String { tr("shared.expiresUntil", a0) }
         public static var fileLinkOpensAs: String { tr("shared.fileLinkOpensAs") }  // "File link opens as"
@@ -972,7 +986,13 @@ public enum L10n {
         public static var filterAnyone: String { tr("shared.filterAnyone") }  // "Anyone"
         public static var folderLinkOpensAs: String { tr("shared.folderLinkOpensAs") }  // "Folder link opens as"
         public static func fromSharer(_ a0: CVarArg) -> String { tr("shared.fromSharer", a0) }
+        public static var inSevenDays: String { tr("shared.inSevenDays") }  // "In 7 days"
+        public static var inThirtyDays: String { tr("shared.inThirtyDays") }  // "In 30 days"
         public static func itemCount(_ a0: CVarArg) -> String { tr("shared.itemCount", a0) }
+        public static var limit: String { tr("shared.limit") }  // "Limit"
+        public static var link: String { tr("shared.link") }  // "Link"
+        public static var linkExpires: String { tr("shared.linkExpires") }  // "Link Expires"
+        public static var links: String { tr("shared.links") }  // "Links"
         public static var listFooter: String { tr("shared.listFooter") }
         public static var metaAccess: String { tr("shared.metaAccess") }  // "Access"
         public static var metaDownloads: String { tr("shared.metaDownloads") }  // "Downloads"
@@ -990,10 +1010,13 @@ public enum L10n {
         public static var neverExpires: String { tr("shared.neverExpires") }  // "never expires"
         public static var noAccountNeeded: String { tr("shared.noAccountNeeded") }  // "No account needed to open it"
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("shared.noSearchMatches", a0) }
+        public static func noSearchMatchesFiltered(_ a0: CVarArg) -> String { tr("shared.noSearchMatchesFiltered", a0) }
         public static func pathStep(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shared.pathStep", a0, a1) }
         public static var people: String { tr("shared.people") }  // "People"
         public static func peopleCount(_ a0: CVarArg) -> String { tr("shared.peopleCount", a0) }
         public static var publicLink: String { tr("shared.publicLink") }  // "Public link"
+        public static func quotedLabel(_ a0: CVarArg) -> String { tr("shared.quotedLabel", a0) }
+        public static var searchPrompt: String { tr("shared.searchPrompt") }  // "Search shares"
         public static var sectionExpired: String { tr("shared.sectionExpired") }  // "Expired"
         public static var segmentByMe: String { tr("shared.segmentByMe") }  // "By me"
         public static var segmentWithMe: String { tr("shared.segmentWithMe") }  // "With me"
@@ -1004,6 +1027,7 @@ public enum L10n {
         public static var showMore: String { tr("shared.showMore") }  // "Show More"
         public static var statusPassword: String { tr("shared.statusPassword") }  // "password"
         public static func statusStep(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shared.statusStep", a0, a1) }
+        public static var tomorrow: String { tr("shared.tomorrow") }  // "Tomorrow"
         public static var viewOnly: String { tr("shared.viewOnly") }  // "view only"
     }
     public enum Sort {

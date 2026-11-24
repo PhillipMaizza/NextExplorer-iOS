@@ -146,6 +146,12 @@ favorites.editIconOutline	Körvonal
 favorites.editIconSolid	Kitöltött
 favorites.editColorLabel	Szín
 favorites.editColorDefault	Alapértelmezett
+favorites.editColorRed	Piros
+favorites.editColorOrange	Narancs
+favorites.editColorYellow	Sárga
+favorites.editColorGreen	Zöld
+favorites.editColorBlue	Kék
+favorites.editColorPurple	Lila
 favorites.editSave	Mentés
 favorites.reorderFailed	Az új sorrendet nem sikerült menteni.
 favorites.removeConfirm#one	%lld kedvenc eltávolítása?
@@ -256,6 +262,27 @@ shared.badgeExpired	lejárt
 shared.emptyByMe	Ossza meg egy fájlt vagy mappát, hogy itt lássa a hivatkozását.
 shared.emptyWithMe	A mások által Önnel megosztott hivatkozások itt jelennek meg.
 shared.noSearchMatches	Egy megosztás sem felel meg a következőnek: „%@”.
+shared.noSearchMatchesFiltered	Itt semmi sem felel meg a következőnek: „%@”. Válaszd a Mind lehetőséget az összes link kereséséhez.
+shared.searchPrompt	Megosztások keresése
+shared.deleteLink	Hivatkozás törlése
+shared.links	Hivatkozások
+shared.quotedLabel	„%@”
+shared.limit	Korlátozás
+shared.link	Link
+shared.direct	Közvetlen
+shared.directDownloadLink	Közvetlen letöltési link
+shared.directHint	Kihagyja a megosztási oldalt. A fájl beágyazásához vagy szkriptekhez.
+shared.directOpen	Megnyitás böngészőben
+shared.directOpenDetail	Megjeleníti, ha a böngésző tudja, különben letölti
+shared.directDownloadDetail	Mindig menti a fájlt
+shared.directRawDetail	Nyers bájtok szkriptekhez és beágyazáshoz
+shared.directZip	ZIP letöltés
+shared.directZipDetail	Az egész mappa egyetlen ZIP-fájlban
+shared.linkExpires	Link lejárata
+shared.tomorrow	Holnap
+shared.inSevenDays	7 nap múlva
+shared.inThirtyDays	30 nap múlva
+shared.endsOn	Lejár: %@
 shared.deleteTitle	Törli a megosztási hivatkozást?
 shared.deleteMessage	A hivatkozás azonnal megszűnik működni. Magához a fájlhoz vagy mappához nem nyúlunk.
 shared.sharedByUnknown	Valaki
@@ -264,8 +291,6 @@ shared.metaSharedBy	Megosztotta
 shared.metaSharedWith	Megosztva vele
 shared.anyoneWithLink	Bárki, aki rendelkezik a hivatkozással
 shared.actionShareLink	Megosztási hivatkozás
-shared.actionFolderLink	Mappahivatkozás
-shared.actionFileLink	Fájlhivatkozás
 shared.copiedShareLink	A megosztási hivatkozás másolva
 shared.copiedFolderZip	A mappa ZIP-hivatkozása másolva
 shared.copiedDirectFile	A fájl közvetlen hivatkozása másolva
@@ -274,6 +299,7 @@ createShare.titleCreated	A megosztás létrejött
 createShare.sectionLabel	Címke
 createShare.sectionAccessMode	Hozzáférési mód
 createShare.sectionWhoCanAccess	Ki férhet hozzá
+createShare.addPeople	Személyek hozzáadása
 createShare.sectionShareLink	Megosztási hivatkozás
 createShare.togglePasswordProtect	Védelem jelszóval
 createShare.toggleSetExpiration	Lejárati dátum megadása
@@ -1026,8 +1052,6 @@ menu.copyPath	Elérési út másolása
 menu.recentFolders	Legutóbbi mappák
 menu.clearRecent	Menü törlése
 common.loading	Betöltés…
-browse.quickLookUnavailable	A Gyors megtekintés nem érhető el ehhez a fájltípushoz.
-browse.quickLookTooLarge	Ez a fájl túl nagy a Gyors megtekintéshez.
 menu.zoomIn	Nagyítás
 menu.zoomOut	Kicsinyítés
 menu.zoomToFit	Ablakhoz igazítás

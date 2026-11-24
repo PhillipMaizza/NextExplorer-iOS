@@ -142,6 +142,12 @@ favorites.editIconOutline	Viền
 favorites.editIconSolid	Đặc
 favorites.editColorLabel	Màu
 favorites.editColorDefault	Mặc định
+favorites.editColorRed	Đỏ
+favorites.editColorOrange	Cam
+favorites.editColorYellow	Vàng
+favorites.editColorGreen	Xanh lá
+favorites.editColorBlue	Xanh dương
+favorites.editColorPurple	Tím
 favorites.editSave	Lưu
 favorites.reorderFailed	Không thể lưu thứ tự mới.
 favorites.removeConfirm#other	Xóa %lld mục yêu thích?
@@ -245,6 +251,27 @@ shared.badgeExpired	đã hết hạn
 shared.emptyByMe	Hãy chia sẻ một tệp hoặc thư mục để xem liên kết của nó ở đây.
 shared.emptyWithMe	Các liên kết người khác chia sẻ với bạn sẽ hiển thị ở đây.
 shared.noSearchMatches	Không có mục chia sẻ nào khớp với “%@”.
+shared.noSearchMatchesFiltered	Không có mục nào ở đây khớp với “%@”. Chọn Tất cả để tìm trong mọi liên kết.
+shared.searchPrompt	Tìm mục chia sẻ
+shared.deleteLink	Xóa liên kết
+shared.links	Liên kết
+shared.quotedLabel	“%@”
+shared.limit	Giới hạn
+shared.link	Liên kết
+shared.direct	Trực tiếp
+shared.directDownloadLink	Liên kết tải xuống trực tiếp
+shared.directHint	Bỏ qua trang chia sẻ. Dùng để nhúng tệp hoặc dùng trong script.
+shared.directOpen	Mở trong trình duyệt
+shared.directOpenDetail	Hiển thị nếu trình duyệt mở được, nếu không thì tải xuống
+shared.directDownloadDetail	Luôn lưu tệp
+shared.directRawDetail	Byte thô, cho script và nhúng
+shared.directZip	Tải xuống ZIP
+shared.directZipDetail	Toàn bộ thư mục trong một tệp ZIP
+shared.linkExpires	Liên kết hết hạn
+shared.tomorrow	Ngày mai
+shared.inSevenDays	Sau 7 ngày
+shared.inThirtyDays	Sau 30 ngày
+shared.endsOn	Kết thúc %@
 shared.deleteTitle	Xóa liên kết chia sẻ?
 shared.deleteMessage	Liên kết sẽ ngừng hoạt động ngay lập tức. Bản thân tệp hoặc thư mục không bị ảnh hưởng.
 shared.sharedByUnknown	Ai đó
@@ -253,8 +280,6 @@ shared.metaSharedBy	Chia sẻ bởi
 shared.metaSharedWith	Chia sẻ với
 shared.anyoneWithLink	Bất kỳ ai có liên kết
 shared.actionShareLink	Liên kết chia sẻ
-shared.actionFolderLink	Liên kết thư mục
-shared.actionFileLink	Liên kết tệp
 shared.copiedShareLink	Đã sao chép liên kết chia sẻ
 shared.copiedFolderZip	Đã sao chép liên kết ZIP của thư mục
 shared.copiedDirectFile	Đã sao chép liên kết trực tiếp của tệp
@@ -263,6 +288,7 @@ createShare.titleCreated	Đã tạo chia sẻ
 createShare.sectionLabel	Nhãn
 createShare.sectionAccessMode	Chế độ truy cập
 createShare.sectionWhoCanAccess	Ai có thể truy cập
+createShare.addPeople	Thêm người
 createShare.sectionShareLink	Liên kết chia sẻ
 createShare.togglePasswordProtect	Bảo vệ bằng mật khẩu
 createShare.toggleSetExpiration	Đặt ngày hết hạn
@@ -1014,8 +1040,6 @@ menu.copyPath	Sao chép đường dẫn
 menu.recentFolders	Thư mục gần đây
 menu.clearRecent	Xóa menu
 common.loading	Đang tải…
-browse.quickLookUnavailable	Quick Look không khả dụng cho loại tệp này.
-browse.quickLookTooLarge	Tệp này quá lớn đối với Quick Look.
 menu.zoomIn	Phóng to
 menu.zoomOut	Thu nhỏ
 menu.zoomToFit	Vừa khít

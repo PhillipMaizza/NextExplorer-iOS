@@ -137,6 +137,12 @@ favorites.editIconOutline	轮廓
 favorites.editIconSolid	实心
 favorites.editColorLabel	颜色
 favorites.editColorDefault	默认
+favorites.editColorRed	红色
+favorites.editColorOrange	橙色
+favorites.editColorYellow	黄色
+favorites.editColorGreen	绿色
+favorites.editColorBlue	蓝色
+favorites.editColorPurple	紫色
 favorites.editSave	保存
 favorites.reorderFailed	无法保存新顺序。
 favorites.removeConfirm#other	移除 %lld 个收藏？
@@ -240,6 +246,27 @@ shared.badgeExpired	已过期
 shared.emptyByMe	共享文件或文件夹后即可在此处查看其链接。
 shared.emptyWithMe	他人与您共享的链接会显示在此处。
 shared.noSearchMatches	没有与“%@”匹配的共享。
+shared.noSearchMatchesFiltered	这里没有与“%@”匹配的内容。选择“全部”以搜索所有链接。
+shared.searchPrompt	搜索共享
+shared.deleteLink	删除链接
+shared.links	链接
+shared.quotedLabel	“%@”
+shared.limit	限制
+shared.link	链接
+shared.direct	直接
+shared.directDownloadLink	直接下载链接
+shared.directHint	跳过共享页面。用于嵌入文件或在脚本中使用。
+shared.directOpen	在浏览器中打开
+shared.directOpenDetail	浏览器能显示就显示，否则下载
+shared.directDownloadDetail	始终保存文件
+shared.directRawDetail	原始字节，用于脚本和嵌入
+shared.directZip	ZIP 下载
+shared.directZipDetail	整个文件夹打包为一个 ZIP 文件
+shared.linkExpires	链接到期
+shared.tomorrow	明天
+shared.inSevenDays	7 天后
+shared.inThirtyDays	30 天后
+shared.endsOn	%@ 结束
 shared.deleteTitle	删除共享链接？
 shared.deleteMessage	链接会立即停止工作。文件或文件夹本身不受影响。
 shared.sharedByUnknown	某人
@@ -248,8 +275,6 @@ shared.metaSharedBy	共享者
 shared.metaSharedWith	共享给
 shared.anyoneWithLink	任何拥有链接的人
 shared.actionShareLink	共享链接
-shared.actionFolderLink	文件夹链接
-shared.actionFileLink	文件链接
 shared.moreRecipients	+%lld
 shared.copiedShareLink	已拷贝共享链接
 shared.copiedFolderZip	已拷贝文件夹 ZIP 链接
@@ -259,6 +284,7 @@ createShare.titleCreated	已创建共享
 createShare.sectionLabel	标签
 createShare.sectionAccessMode	访问模式
 createShare.sectionWhoCanAccess	谁可以访问
+createShare.addPeople	添加用户
 createShare.sectionShareLink	共享链接
 createShare.togglePasswordProtect	密码保护
 createShare.toggleSetExpiration	设置到期日期
@@ -775,8 +801,6 @@ menu.copyPath	拷贝路径
 menu.recentFolders	最近使用的文件夹
 menu.clearRecent	清除菜单
 common.loading	正在载入…
-browse.quickLookUnavailable	此文件类型不支持快速查看。
-browse.quickLookTooLarge	此文件过大，无法快速查看。
 menu.zoomIn	放大
 menu.zoomOut	缩小
 menu.zoomToFit	缩放以适合窗口

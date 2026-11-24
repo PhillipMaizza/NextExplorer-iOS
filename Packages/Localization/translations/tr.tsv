@@ -146,6 +146,12 @@ favorites.editIconOutline	Anahat
 favorites.editIconSolid	Dolu
 favorites.editColorLabel	Renk
 favorites.editColorDefault	Varsayılan
+favorites.editColorRed	Kırmızı
+favorites.editColorOrange	Turuncu
+favorites.editColorYellow	Sarı
+favorites.editColorGreen	Yeşil
+favorites.editColorBlue	Mavi
+favorites.editColorPurple	Mor
 favorites.editSave	Kaydet
 favorites.reorderFailed	Yeni sıra kaydedilemedi.
 favorites.removeConfirm#one	%lld Favori Kaldırılsın mı?
@@ -256,6 +262,27 @@ shared.badgeExpired	süresi doldu
 shared.emptyByMe	Bağlantısını burada görmek için bir dosya veya klasör paylaşın.
 shared.emptyWithMe	Başkalarının sizinle paylaştığı bağlantılar burada görünür.
 shared.noSearchMatches	“%@” ile eşleşen paylaşım yok.
+shared.noSearchMatchesFiltered	Burada “%@” ile eşleşen bir şey yok. Tüm bağlantılarda aramak için Tümü’nü seçin.
+shared.searchPrompt	Paylaşımlarda ara
+shared.deleteLink	Bağlantıyı sil
+shared.links	Bağlantılar
+shared.quotedLabel	“%@”
+shared.limit	Sınırla
+shared.link	Bağlantı
+shared.direct	Doğrudan
+shared.directDownloadLink	Doğrudan indirme bağlantısı
+shared.directHint	Paylaşım sayfasını atlar. Dosyayı yerleştirmek veya betiklerde kullanmak için.
+shared.directOpen	Tarayıcıda aç
+shared.directOpenDetail	Tarayıcı açabiliyorsa gösterir, yoksa indirir
+shared.directDownloadDetail	Dosyayı her zaman kaydeder
+shared.directRawDetail	Ham baytlar, betikler ve yerleştirme için
+shared.directZip	ZIP indirme
+shared.directZipDetail	Klasörün tamamı tek bir ZIP dosyası olarak
+shared.linkExpires	Bağlantı Süresi
+shared.tomorrow	Yarın
+shared.inSevenDays	7 gün içinde
+shared.inThirtyDays	30 gün içinde
+shared.endsOn	Bitiş: %@
 shared.deleteTitle	Paylaşım Bağlantısı Silinsin mi?
 shared.deleteMessage	Bağlantı hemen çalışmayı durdurur. Dosya veya klasörün kendisine dokunulmaz.
 shared.sharedByUnknown	Biri
@@ -264,8 +291,6 @@ shared.metaSharedBy	Paylaşan
 shared.metaSharedWith	Paylaşılan kişi
 shared.anyoneWithLink	Bağlantıya sahip herkes
 shared.actionShareLink	Paylaşım bağlantısı
-shared.actionFolderLink	Klasör bağlantısı
-shared.actionFileLink	Dosya bağlantısı
 shared.copiedShareLink	Paylaşım bağlantısı kopyalandı
 shared.copiedFolderZip	Klasör ZIP bağlantısı kopyalandı
 shared.copiedDirectFile	Doğrudan dosya bağlantısı kopyalandı
@@ -274,6 +299,7 @@ createShare.titleCreated	Paylaşım Oluşturuldu
 createShare.sectionLabel	Etiket
 createShare.sectionAccessMode	Erişim Modu
 createShare.sectionWhoCanAccess	Kimler erişebilir
+createShare.addPeople	Kişi ekle
 createShare.sectionShareLink	Paylaşım Bağlantısı
 createShare.togglePasswordProtect	Parolayla koru
 createShare.toggleSetExpiration	Son kullanma tarihi belirle
@@ -1026,8 +1052,6 @@ menu.copyPath	Yolu Kopyala
 menu.recentFolders	Son Klasörler
 menu.clearRecent	Menüyü Temizle
 common.loading	Yükleniyor…
-browse.quickLookUnavailable	Bu dosya türü için Hızlı Bakış kullanılamıyor.
-browse.quickLookTooLarge	Bu dosya Hızlı Bakış için çok büyük.
 menu.zoomIn	Yakınlaştır
 menu.zoomOut	Uzaklaştır
 menu.zoomToFit	Sığacak Şekilde Yakınlaştır
@@ -1068,6 +1092,7 @@ clientCertificate.expiredWarning	Bu sertifikanın süresi doldu. Sunucu büyük 
 login.addClientCertificate	Sertifika Ekle
 login.manageClientCertificate	Sertifikayı Yönet
 settings.clientCertificate	İstemci Sertifikası
+settings.clientCertificateNone	Yok
 login.clientCertificateAdded	Sertifika eklendi
 login.usingClientCertificate	İstemci sertifikası kullanılıyor: %@
 login.changeClientCertificate	Değiştir
