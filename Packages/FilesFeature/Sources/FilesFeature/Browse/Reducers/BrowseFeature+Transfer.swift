@@ -40,6 +40,7 @@ extension BrowseFeature {
         state.isPerformingFileAction = true
         state.transferProgress = 0
         state.transferErrorMessage = nil
+        state.transferSuccessMessage = nil
         state.pendingTransferRetry = retry
         let serverURL = state.serverURL
         let filesClient = filesClient
@@ -69,6 +70,7 @@ extension BrowseFeature {
         state.isPerformingFileAction = true
         state.transferProgress = 0
         state.transferErrorMessage = nil
+        state.transferSuccessMessage = nil
         state.transferConflict = nil
         // Kept until the transfer confirms success, so the "Retry" action on a failure toast
         // always has the exact params to rerun.

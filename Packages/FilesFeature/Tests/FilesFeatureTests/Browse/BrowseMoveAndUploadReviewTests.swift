@@ -186,6 +186,37 @@ struct BrowseMoveAndUploadReviewTests {
         #expect(events.value == ["list Archive", "move [\"Inbox/a.txt\"] to Archive"])
     }
 
+    @Test("A second move with the same message raises its toast again")
+    func aRepeatedMoveMessageIsRaisedAgain() async {
+        var state = makeState()
+        state.transferSuccessMessage = L10n.Browse.transferMoved(1)
+        state.destinationPicker = DestinationPickerFeature.State(
+            serverURL: BrowseTestSupport.serverURL,
+            items: [incoming]
+        )
+        let gate = AsyncGate()
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.browse = { _, path in
+                BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path)
+            }
+            $0.filesClient.transferItems = { _, items, destination, _, _ in
+                try await gate.wait()
+                return BrowseFixtures.transferResult(items, to: destination)
+            }
+        }
+
+        await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: TestFolder.archive))))) {
+            $0.destinationPicker = nil
+            $0.isPerformingFileAction = true
+            $0.transferProgress = 0
+            $0.transferSuccessMessage = nil
+            $0.pendingTransferRetry = BrowseFeature.TransferRetry(
+                items: [incoming], destination: TestFolder.archive, operation: .move, shouldClearClipboard: false
+            )
+        }
+        await receiveMoveToArchive(store, moved: ["a.txt"], message: L10n.Browse.transferMoved(1), gate: gate)
+    }
+
     @Test("The move message reports how many items the server skipped")
     func moveViaPickerSuccessMessageReportsSkippedItems() async {
         let second = BrowseFixtures.file(TestFile.bText, in: TestFolder.inbox)

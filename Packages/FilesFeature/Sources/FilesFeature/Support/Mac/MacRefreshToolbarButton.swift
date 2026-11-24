@@ -6,7 +6,7 @@
     extension View {
         /// The Mac's stand in for pull to refresh, which a Mac list does not have: publishes the
         /// refresh the window's toolbar button (`macWindowToolbar`) and View › Refresh (⌘R) both
-        /// run, so either dims the button and toasts alike.
+        /// run, so either dims the button.
         func macToolbarRefresh(
             onRefresh: @escaping @Sendable () async -> Void,
             onFinished: @escaping () -> Void

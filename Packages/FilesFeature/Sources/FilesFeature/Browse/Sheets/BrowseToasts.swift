@@ -80,10 +80,12 @@ struct BrowseToastEvents: ViewModifier {
                     store.send(.delegate(.openTrashTapped))
                 }
             }
+        #if os(iOS)
             .onChange(of: store.clipboardStagedMessage) { _, newValue in
                 guard let newValue else { return }
                 toastMessage = .success(newValue)
             }
+        #endif
             .onChange(of: store.transferErrorMessage) { _, newValue in
                 guard let newValue else { return }
                 toastMessage = .failure(newValue, actionTitle: L10n.Common.retry) {

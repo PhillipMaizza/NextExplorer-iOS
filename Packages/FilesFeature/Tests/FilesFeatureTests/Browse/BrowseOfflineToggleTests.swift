@@ -275,8 +275,8 @@ struct BrowseOfflineToggleTests: OfflineDownloadsTestSupport {
             $0.isSelecting = false
             $0.selectedItemIDs = []
             $0.offlineRemoval = OfflineRemovalRequest(
-                paths: [tripsPhoto.id, nested.id],
-                names: [tripsPhoto.name, nested.name]
+                paths: [nested.id, tripsPhoto.id],
+                names: [nested.name, tripsPhoto.name]
             )
         }
     }
