@@ -342,4 +342,59 @@ struct SharedDetailTests {
         shared.searchQuery = Constants.noMatchQuery
         #expect(shared.noResultsMessage(for: .byMe) == L10n.Shared.noSearchMatches(Constants.noMatchQuery))
     }
+
+    @Test
+    func aRefreshLetsAFileShareFetchItsSizeAgain() async {
+        let file = roadmap("f", filePath: Constants.filePath)
+        var initial = state([file], detail: nil)
+        initial.requestedShareFileIDs = [file.id]
+        let store = TestStore(initialState: initial) { SharedFeature() } withDependencies: {
+            $0.filesClient.mySharedLinks = { _ in [file] }
+            $0.filesClient.shareableUsers = { _ in [] }
+        }
+
+        await store.send(.refreshRequested) {
+            $0.phases[.byMe] = .loading
+            $0.requestedShareFileIDs = []
+        }
+        await store.receive(\.sharesResponse) {
+            $0.phases[.byMe] = .loaded
+            $0.dataSources[.byMe] = .live
+        }
+        await store.receive(\.usersResponse)
+    }
+
+    @Test
+    func choosingAnAccessModeSavesInlineAndReportsAFailure() async {
+        let share = roadmap("a")
+        let failure = FilesClientError.server(statusCode: 403)
+        let gate = AsyncGate()
+        let store = TestStore(initialState: state([share])) { SharedFeature() } withDependencies: {
+            $0.date = .constant(MockDate.date)
+            $0.filesClient.updateShareLink = { _, _, _ in
+                try await gate.wait()
+                throw failure
+            }
+        }
+        var edit = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
+        edit.accessMode = .readwrite
+
+        await store.send(.accessModeChosen(share, .readonly))
+        await store.send(.accessModeChosen(share, .readwrite)) {
+            $0.editPopover = .inline
+            $0.editSheet = edit
+        }
+        await store.receive(\.editSheet.saveTapped) { $0.editSheet?.isSaving = true }
+        await store.send(.accessModeChosen(share, .readwrite))
+        gate.open()
+        await store.receive(\.editSheet.saveResponse.failure) {
+            $0.editSheet?.isSaving = false
+            $0.editSheet?.errorMessage = failure.userMessage
+            $0.actionErrorMessage = failure.userMessage
+        }
+        await store.receive(\.editPopoverDismissed) {
+            $0.editPopover = nil
+            $0.editSheet = nil
+        }
+    }
 }
