@@ -13,6 +13,7 @@ public struct AuthenticatedView: View {
 
     public var body: some View {
         MainTabView(store: store.scope(state: \.mainTab, action: \.mainTab))
+            .id(store.accountID)
     }
 }
 

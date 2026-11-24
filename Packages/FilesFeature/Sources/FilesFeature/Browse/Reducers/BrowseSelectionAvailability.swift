@@ -53,7 +53,7 @@ extension BrowseFeature.State {
     /// frame. A screen of device content offers nothing to add, also before its access lands, so
     /// its toolbar never shows the `+` only to take it away again.
     var canUploadHere: Bool {
-        access?.canUpload ?? !shouldShowDeviceContent
+        !directoryPath.isEmpty && (access?.canUpload ?? !shouldShowDeviceContent)
     }
 
     var canCreateFileHere: Bool {
