@@ -14,6 +14,27 @@ struct DSToastPresenterTests {
         #expect(presenter.visibleID == toast.id)
     }
 
+    @Test("setting the toast already on screen again changes nothing a view could observe")
+    func repeatedSetPublishesNothing() {
+        let presenter = DSToastPresenter()
+        let owner = TestID.uuid()
+        let toast = DSToastMessage.success("Copied")
+        let changed = ChangeFlag()
+        withObservationTracking {
+            presenter.set(toast, owner: owner)
+        } onChange: {
+            changed.value = true
+        }
+        withObservationTracking {
+            presenter.set(toast, owner: owner)
+            presenter.set(nil, owner: TestID.uuid())
+        } onChange: {
+            changed.value = true
+        }
+        presenter.set(toast, owner: owner)
+        #expect(!changed.value)
+    }
+
     @Test("a new toast waits for the current one to leave")
     func newToastWaitsForCurrent() async {
         let presenter = DSToastPresenter()
@@ -91,4 +112,8 @@ struct DSToastPresenterTests {
         presenter.set(nil, owner: owner)
         #expect(presenter.visibleID == nil)
     }
+}
+
+private final class ChangeFlag: @unchecked Sendable {
+    var value = false
 }
