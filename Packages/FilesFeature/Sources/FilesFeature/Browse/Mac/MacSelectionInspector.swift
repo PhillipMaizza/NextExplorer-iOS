@@ -40,9 +40,9 @@
                             MacInspectorRow(L10n.FileInfo.rowTotalSize, total)
                         }
                         if let location = location(items) {
-                            MacInspectorRow(L10n.FileInfo.rowLocation, location, icon: IconKit.folderFill)
+                            MacInspectorRow(L10n.FileInfo.rowWhere, location, icon: IconKit.folderFill)
                         }
-                        MacInspectorRow(L10n.FileInfo.rowDateModified, modifiedRange(items), valueLineLimit: 2)
+                        MacInspectorRow(L10n.FileInfo.rowModified, modifiedRange(items), valueLineLimit: 2)
                     }
                     selectedList(items)
                     Text(L10n.FileInfo.selectionFootnote)

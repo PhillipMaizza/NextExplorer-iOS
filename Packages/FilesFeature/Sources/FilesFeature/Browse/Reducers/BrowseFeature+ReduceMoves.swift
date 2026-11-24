@@ -165,15 +165,7 @@ extension BrowseFeature {
         case let .tableSelectionChanged(ids):
             guard !state.isSelecting else { return .none }
             state.selectedItemIDs = ids
-            guard state.isInspectorOpen else { return .none }
-            if state.selectedItems.count > 1 {
-                return state.isInfoShowingSelection ? .none : showSelectionInfo(&state)
-            }
-            // An open inspector follows the selection to the newly picked row.
-            guard ids.count == 1,
-                  let item = state.selectedItems.first, item.id != state.infoItem?.id
-            else { return .none }
-            return loadInfo(&state, item: item, settle: Constants.inspectorFollowDelay)
+            return .none
 
         case let .revealItemShown(id):
             guard state.revealItemID == id, let item = state.items[id: id] else { return .none }

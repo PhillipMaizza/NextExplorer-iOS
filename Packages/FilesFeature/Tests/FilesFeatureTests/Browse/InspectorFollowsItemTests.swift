@@ -24,6 +24,13 @@ struct InspectorFollowsItemTests {
         size: 1,
         kind: TestKind.text
     )
+    private let renamedNotes = FileItem(
+        name: "todo.txt",
+        path: TestFolder.docs,
+        dateModified: MockDate.date,
+        size: 1,
+        kind: TestKind.text
+    )
     private let renamed = FileItem(
         name: "final.pdf",
         path: TestFolder.docs,
@@ -106,19 +113,29 @@ struct InspectorFollowsItemTests {
     @Test("Renaming an item the inspector is not showing leaves the inspector alone")
     func renamingAnotherItemKeepsTheInspector() async {
         let store = makeStore(showing: report, among: [report, notes])
-        let renamedNotes = FileItem(
-            name: "todo.txt",
-            path: TestFolder.docs,
-            dateModified: MockDate.date,
-            size: 1,
-            kind: TestKind.text
-        )
 
         await store.send(.renameResponse(.success(BrowseFeature.RenameResult(
             originalID: TestPath.docsNotes,
             renamed: renamedNotes
         )))) {
             $0.items = [report, renamedNotes]
+            $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedNotes, previousName: TestFile.notes))] }
+        }
+    }
+
+    @Test("A selected row stays selected under its new name")
+    func aRenamedSelectionStaysSelected() async {
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
+        state.items = [report, notes]
+        state.selectedItemIDs = [report.id, notes.id]
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.renameResponse(.success(BrowseFeature.RenameResult(
+            originalID: notes.id,
+            renamed: renamedNotes
+        )))) {
+            $0.items = [report, renamedNotes]
+            $0.selectedItemIDs = [report.id, renamedNotes.id]
             $0.$undoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedNotes, previousName: TestFile.notes))] }
         }
     }
@@ -196,6 +213,42 @@ struct InspectorFollowsItemTests {
             $0.infoMetadata = metadata(of: draft)
         }
         #expect(fetched.value == ["Docs/draft.txt"])
+    }
+
+    @Test("An open inspector follows a folder the app selects itself, as a new folder")
+    func anOpenInspectorFollowsANewFolder() async {
+        let folder = FileItem(
+            name: TestFolder.archive,
+            path: TestFolder.docs,
+            dateModified: MockDate.date,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
+        let usage = StorageUsage(path: folder.id, size: 30, free: 70, total: 100)
+        let clock = TestClock()
+        let store = makeStore(showing: report, among: [report]) {
+            $0.continuousClock = clock
+            $0.filesClient.fetchMetadata = { _, _ in metadata(of: folder) }
+            $0.filesClient.fetchUsage = { _, _ in usage }
+        }
+
+        await store.send(.newFolderResponse(.success(folder))) {
+            $0.items = [report, folder]
+            $0.selectedItemIDs = [folder.id]
+            $0.scrollTargetID = folder.id
+            $0.$undoStack.withLock { $0 = [FileUndoEntry(.madeNew(folder))] }
+            $0.createdFolderIDs = [folder.id]
+            $0.infoItem = folder
+            $0.infoPhase = .loading
+        }
+        await clock.advance(by: BrowseFeature.Constants.inspectorFollowDelay)
+        await store.receive(\.infoMetadataResponse.success) {
+            $0.infoPhase = .loaded
+            $0.infoMetadata = metadata(of: folder)
+        }
+        await store.receive(\.infoUsageResponse.success) {
+            $0.infoUsage = usage
+        }
     }
 
     @Test("A closed inspector stays closed when the selection moves")

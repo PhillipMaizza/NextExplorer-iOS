@@ -97,6 +97,7 @@
 
     struct MacInspectorPermissionsSection: View {
         let permissions: FilePermissions
+        let isDirectory: Bool
         let onEdit: () -> Void
 
         var body: some View {
@@ -119,16 +120,19 @@
                             .fixedSize()
                             .gridColumnAlignment(.leading)
                         ForEach(PermissionRight.allCases, id: \.self) { right in
-                            Text(right.title).type(.caption(.semibold), style: .secondary)
+                            Text(right.macTitle(isDirectory: isDirectory)).type(.caption(.semibold), style: .secondary)
                         }
                     }
                     ForEach(PermissionScope.allCases, id: \.self) { scope in
                         GridRow {
-                            Text(scope.title).type(.body3(.regular))
+                            Text(scope.macTitle).type(.body3(.regular))
                             ForEach(PermissionRight.allCases, id: \.self) { right in
                                 mark(permissions.can(scope, right))
                                     .frame(maxWidth: .infinity)
-                                    .accessibilityLabel(L10n.Common.pair(scope.title, right.title))
+                                    .accessibilityLabel(L10n.Common.pair(
+                                        scope.macTitle,
+                                        right.macTitle(isDirectory: isDirectory)
+                                    ))
                                     .accessibilityHidden(!permissions.can(scope, right))
                             }
                         }

@@ -20,3 +20,18 @@ extension PermissionRight {
         }
     }
 }
+
+#if os(macOS)
+    extension PermissionScope {
+        var macTitle: String {
+            self == .others ? L10n.Permissions.scopeEveryone : title
+        }
+    }
+
+    extension PermissionRight {
+        func macTitle(isDirectory: Bool) -> String {
+            guard self == .execute else { return title }
+            return isDirectory ? L10n.Permissions.rightOpen : L10n.Permissions.rightRun
+        }
+    }
+#endif
