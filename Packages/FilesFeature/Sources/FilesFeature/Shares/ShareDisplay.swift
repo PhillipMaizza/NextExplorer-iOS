@@ -34,6 +34,49 @@ extension DirectLinkMode {
     }
 }
 
+enum DirectLinkChoice: Hashable, Identifiable {
+    case openInBrowser
+    case download
+    case raw
+    case zip
+
+    var id: Self {
+        self
+    }
+
+    var mode: DirectLinkMode {
+        switch self {
+        case .openInBrowser, .zip: .auto
+        case .download: .download
+        case .raw: .raw
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .openInBrowser: L10n.Shared.directOpen
+        case .download: L10n.Common.download
+        case .raw: L10n.DirectLinkMode.raw
+        case .zip: L10n.Shared.directZip
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .openInBrowser: L10n.Shared.directOpenDetail
+        case .download: L10n.Shared.directDownloadDetail
+        case .raw: L10n.Shared.directRawDetail
+        case .zip: L10n.Shared.directZipDetail
+        }
+    }
+}
+
+extension Share {
+    var directLinkChoices: [DirectLinkChoice] {
+        isDirectory ? [.zip] : [.openInBrowser, .download, .raw]
+    }
+}
+
 /// The two links a share hands out, as the web builds them: the share page and the direct
 /// file (or folder zip) endpoint.
 extension Share {
@@ -79,6 +122,24 @@ extension Share {
     /// The shared path without its leading or trailing slashes.
     var trimmedSourcePath: String? {
         sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+    }
+
+    var browsePath: String? {
+        guard let path = trimmedSourcePath, !path.isEmpty else { return nil }
+        return sourceSpace == PersonalSpace.rootPath ? "\(PersonalSpace.rootPath)/\(path)" : path
+    }
+
+    func fileItem(size: Int64 = 0, modified: Date? = nil) -> FileItem? {
+        guard !isDirectory, let path = browsePath else { return nil }
+        let kind = (path as NSString).pathExtension.lowercased()
+        return FileItem(
+            name: (path as NSString).lastPathComponent,
+            path: (path as NSString).deletingLastPathComponent,
+            dateModified: modified ?? updatedAt,
+            size: size,
+            kind: kind,
+            supportsThumbnail: FileItem.isImageKind(kind) || FileItem.isVideoKind(kind) || FileItem.isAudioKind(kind)
+        )
     }
 
     private static func origin(of serverURL: URL) -> String {

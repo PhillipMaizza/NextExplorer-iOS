@@ -14,19 +14,27 @@ struct SharedDetailTests {
     private enum Constants {
         static let path = "Work/Roadmap"
         static let itemID = "personal:Work/Roadmap"
+        static let filePath = "Work/brochure.pdf"
+        static let fileSize: Int64 = 2048
+        static let noMatchQuery = "zzzznomatch"
     }
 
     private let serverURL = TestHost.serverURL
 
     /// A By me link on the roadmap folder, `age` seconds after the mock date.
-    private func roadmap(_ id: String, users: [String]? = nil, age: TimeInterval = 0) -> Share {
+    private func roadmap(
+        _ id: String,
+        users: [String]? = nil,
+        age: TimeInterval = 0,
+        filePath: String? = nil
+    ) -> Share {
         Share(
             id: id,
             shareToken: "tok\(id)",
             ownerId: "me",
-            sourcePath: Constants.path,
+            sourcePath: filePath ?? Constants.path,
             sourceSpace: "personal",
-            isDirectory: true,
+            isDirectory: filePath == nil,
             accessMode: .readonly,
             sharingType: users == nil ? .anyone : .users,
             hasPassword: false,
@@ -234,5 +242,104 @@ struct SharedDetailTests {
             $0.actionErrorMessage = nil
             $0.actionSuccessMessage = nil
         }
+    }
+
+    @Test
+    func aPopoverEditOpensTheShareAndLimitStartsOnSpecificUsers() async {
+        let share = roadmap("a")
+        let store = TestStore(initialState: state([share])) { SharedFeature() } withDependencies: {
+            $0.date = .constant(MockDate.date)
+        }
+        var limited = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
+        limited.target = .users
+
+        await store.send(.editPopoverTapped(share, .password)) {
+            $0.editPopover = .password
+            $0.editSheet = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
+        }
+        await store.send(.editPopoverTapped(share, .limit)) {
+            $0.editPopover = .limit
+            $0.editSheet = limited
+        }
+        await store.send(.editPopoverDismissed) {
+            $0.editPopover = nil
+            $0.editSheet = nil
+        }
+    }
+
+    @Test
+    func aFileShareFetchesItsSizeOnceAndAFolderNever() async {
+        let file = roadmap("f", filePath: Constants.filePath)
+        let folder = roadmap("d")
+        let fetched = LockIsolated<[String]>([])
+        let store = TestStore(initialState: state([file, folder], detail: nil)) { SharedFeature() } withDependencies: {
+            $0.filesClient.fetchMetadata = { _, path in
+                fetched.withValue { $0.append(path) }
+                return FileMetadata(
+                    path: path,
+                    name: "brochure.pdf",
+                    kind: "pdf",
+                    size: Constants.fileSize,
+                    dateModified: MockDate.date,
+                    dateCreated: MockDate.date
+                )
+            }
+        }
+
+        await store.send(.shareFileNeeded(file)) {
+            $0.requestedShareFileIDs = [file.id]
+        }
+        await store.receive(\.shareFileResponse) {
+            $0.shareFiles[file.id] = file.fileItem(size: Constants.fileSize, modified: MockDate.date)
+        }
+        await store.send(.shareFileNeeded(file))
+        await store.send(.shareFileNeeded(folder))
+
+        #expect(fetched.value == ["personal/\(Constants.filePath)"])
+    }
+
+    @Test
+    func endingARenameWithoutAChangeLeavesWithoutSaving() async {
+        let share = roadmap("a")
+        let store = TestStore(initialState: state([share])) { SharedFeature() } withDependencies: {
+            $0.date = .constant(MockDate.date)
+        }
+
+        await store.send(.editPopoverTapped(share, .label)) {
+            $0.editPopover = .label
+            $0.editSheet = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
+        }
+        await store.send(.labelEditEnded)
+        await store.receive(\.editPopoverDismissed) {
+            $0.editPopover = nil
+            $0.editSheet = nil
+        }
+        await store.send(.labelEditEnded)
+    }
+
+    @Test
+    func searchFindsALinkByThePeopleItIsSharedWith() {
+        let recipient = Share.previewShareableUsers[0]
+        var shared = state([roadmap("a", users: [recipient.id]), roadmap("b", filePath: Constants.filePath)])
+        shared.userNames = [recipient.id: recipient.displayName ?? recipient.username]
+        shared.searchQuery = String((recipient.displayName ?? recipient.username).prefix(4))
+
+        #expect(shared.displayedShares.map(\.id) == ["a"])
+    }
+
+    @Test
+    func aSearchHiddenByTheFilterPointsBackToAll() {
+        let recipient = Share.previewShareableUsers[0]
+        var shared = state([roadmap("a", users: [recipient.id]), roadmap("b", filePath: Constants.filePath)])
+        shared.userNames = [recipient.id: recipient.displayName ?? recipient.username]
+        shared.filters[.byMe] = .people([recipient.id])
+        shared.searchQuery = Constants.filePath
+
+        #expect(shared.isSearchWithoutResults(for: .byMe))
+        #expect(shared.noResultsMessage(for: .byMe) == L10n.Shared.noSearchMatchesFiltered(Constants.filePath))
+
+        shared.filters[.byMe] = nil
+        shared.searchQuery = Constants.noMatchQuery
+        #expect(shared.noResultsMessage(for: .byMe) == L10n.Shared.noSearchMatches(Constants.noMatchQuery))
     }
 }

@@ -19,8 +19,18 @@ enum OfflineRelativeTime {
         return formatter
     }()
 
+    private static let shortFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .short
+        return formatter
+    }()
+
     static func string(from date: Date) -> String {
         formatter.localizedString(for: date, relativeTo: Date())
+    }
+
+    static func shortString(from date: Date) -> String {
+        shortFormatter.localizedString(for: date, relativeTo: Date())
     }
 }
 

@@ -13,6 +13,7 @@
 
     struct MacTopBarSearch: View {
         let text: Binding<String>?
+        var prompt = L10n.Spotlight.placeholder
         let openSpotlight: () -> Void
 
         @FocusState private var isFocused: Bool
@@ -41,7 +42,7 @@
                 TextField(
                     L10n.Common.search,
                     text: text,
-                    prompt: Text(L10n.Spotlight.placeholder)
+                    prompt: Text(prompt)
                         .foregroundStyle(Color.macChromeSecondary)
                 )
                 .textFieldStyle(.plain)
@@ -113,21 +114,28 @@
     #Preview("Search, idle") {
         MacTopBarSearch(text: .constant("")) {}
             .padding()
-            .frame(width: 520)
+            .previewCanvasWidth(.dialog)
             .background(Color.macChrome)
     }
 
     #Preview("Search, typed") {
         MacTopBarSearch(text: .constant("notes")) {}
             .padding()
-            .frame(width: 520)
+            .previewCanvasWidth(.dialog)
+            .background(Color.macChrome)
+    }
+
+    #Preview("Search, shares") {
+        MacTopBarSearch(text: .constant(""), prompt: L10n.Shared.searchPrompt) {}
+            .padding()
+            .previewCanvasWidth(.dialog)
             .background(Color.macChrome)
     }
 
     #Preview("Search, no field") {
         MacTopBarSearch(text: nil) {}
             .padding()
-            .frame(width: 520)
+            .previewCanvasWidth(.dialog)
             .background(Color.macChrome)
     }
 #endif

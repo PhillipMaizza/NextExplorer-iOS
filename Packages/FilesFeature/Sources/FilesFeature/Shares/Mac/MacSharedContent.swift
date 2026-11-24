@@ -8,9 +8,10 @@
     /// The Mac Shared screen under the toolbar: the people strip, the outline table and the
     /// inspector beside the selected item. The inspector follows the selection: selecting one row
     /// shows it, deselecting (empty space, ⌘ click or Escape) hides it.
-    struct MacSharedContent: View {
+    struct MacSharedContent<Header: View>: View {
         let store: StoreOf<SharedFeature>
         let onToast: (DSToastMessage) -> Void
+        @ViewBuilder let header: () -> Header
 
         @State private var selection: Set<MacSharedRow.ID> = []
 
@@ -31,10 +32,16 @@
             return store.state.item(for: SharedFeature.Detail(segment: segment, id: id.itemID))
         }
 
+        private var selectedShareID: Share.ID? {
+            guard selection.count == 1, case let .share(id, _) = selection.first else { return nil }
+            return id
+        }
+
         var body: some View {
             let item = inspectedItem
             HStack(spacing: 0) {
                 VStack(spacing: 0) {
+                    header()
                     if isRailShown {
                         SharedPeopleRail(
                             options: store.state.filterOptions(for: segment),
@@ -56,8 +63,15 @@
                 .frame(maxWidth: .infinity)
                 .clipped()
                 if let item {
-                    MacSharedInspector(store: store, segment: segment, item: item, onToast: onToast)
-                        .macInspectorColumn()
+                    MacSharedInspector(
+                        store: store,
+                        segment: segment,
+                        item: item,
+                        selectedShareID: selectedShareID,
+                        onSelectShare: { selection = [.share($0, item: item.id)] },
+                        onToast: onToast
+                    )
+                    .macInspectorColumn()
                 }
             }
             .animation(DSMotion.stateFade, value: item == nil)
@@ -85,8 +99,12 @@
         _ segment: SharedFeature.Segment,
         mutate: (inout SharedFeature.State) -> Void = { _ in }
     ) -> some View {
-        macSharedPreview(segment, mutate: mutate) { MacSharedContent(store: $0, onToast: { _ in }) }
-            .previewCanvas(.window)
+        macSharedPreview(segment, mutate: mutate) { store in
+            MacSharedContent(store: store, onToast: { _ in }) {
+                MacPaneHeader(title: L10n.Shared.navigationTitle, inset: MacPaneInset.sectionHeader)
+            }
+        }
+        .previewCanvas(.window)
     }
 
     #Preview("Content: by me") {

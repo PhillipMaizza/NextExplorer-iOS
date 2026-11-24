@@ -56,7 +56,10 @@
                 }
                 .padding(.leading, max(.zero, sidebarWidth - edgeInset))
                 .animation(DSMotion.controlMorph, value: isSidebarCompact)
-                MacTopBarSearch(text: searchText) { store.send(.spotlightOpened) }
+                MacTopBarSearch(
+                    text: searchText,
+                    prompt: actions.isShared ? L10n.Shared.searchPrompt : L10n.Spotlight.placeholder
+                ) { store.send(.spotlightOpened) }
                 HStack(spacing: MacToolbarMetrics.gap) {
                     if store.uploads.isBarVisible || store.downloadQueue.isBarVisible {
                         MacTransferActivityButton(store: store)

@@ -141,8 +141,11 @@ func sharedPreviewState(mutate: (inout SharedFeature.State) -> Void = { _ in }) 
     state.now = Date()
     state.userNames = Dictionary(uniqueKeysWithValues: Share.previewShareableUsers.map { (
         $0.id,
-        $0.displayName ?? $0.username
+        $0.displayLabel
     ) })
+    state.userEmails = Dictionary(uniqueKeysWithValues: Share.previewShareableUsers.compactMap { user in
+        user.email.map { (user.id, $0) }
+    })
     state.byMe = IdentifiedArray(uniqueElements: Share.previewSharedByMe)
     state.withMe = IdentifiedArray(uniqueElements: Share.previewSharedWithMe)
     state.phases = [.byMe: .loaded, .withMe: .loaded]

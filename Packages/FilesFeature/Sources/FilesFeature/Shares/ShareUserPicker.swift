@@ -33,9 +33,9 @@ struct ShareUserPicker: View {
                         store.send(.userToggled(user.id))
                     } label: {
                         HStack(spacing: .space12) {
-                            AvatarView(displayName: user.displayName ?? user.username, size: Constants.avatarSize)
+                            AvatarView(displayName: user.displayLabel, size: Constants.avatarSize)
                             VStack(alignment: .leading, spacing: .space2) {
-                                Text(user.displayName ?? user.username)
+                                Text(user.displayLabel)
                                     .type(.body3(.semibold), style: .primaryOnSurface)
                                     .lineLimit(1)
                                 if let email = user.email {

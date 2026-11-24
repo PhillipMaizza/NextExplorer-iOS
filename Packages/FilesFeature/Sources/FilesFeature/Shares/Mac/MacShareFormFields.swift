@@ -4,11 +4,6 @@
     import Localization
     import SwiftUI
 
-    private enum Metrics {
-        static let avatarSize: CGFloat = 22
-        static let userListMaxHeight: CGFloat = 180
-    }
-
     /// The fields Create Share Link and Edit Share have in common, stacked in a `MacFormSheet`:
     /// what is shared, its label, access, who can open it, password and expiry.
     struct MacShareFormFields<Link: View>: View {
@@ -56,7 +51,12 @@
                 ) { $0.title }
             }
             if target.wrappedValue == .users {
-                userPicker
+                MacShareUserPicker(
+                    users: users,
+                    selectedUserIDs: selectedUserIDs,
+                    usersPhase: usersPhase,
+                    onToggleUser: onToggleUser
+                )
             }
             MacFormGroup {
                 MacToggleOption(L10n.CreateShare.togglePasswordProtect, isOn: isPasswordOn) {
@@ -66,50 +66,6 @@
                     MacDatePopup(L10n.CreateShare.fieldExpires, date: expiresAt, in: Date()...)
                 }
             }
-        }
-
-        @ViewBuilder
-        private var userPicker: some View {
-            if usersPhase == .loading {
-                HStack(spacing: .space8) {
-                    MacSpinner()
-                    Text(L10n.CreateShare.loadingUsers).type(.body3(.regular), style: .secondary)
-                }
-            } else if users.isEmpty {
-                Text(L10n.CreateShare.noOtherUsers).type(.body3(.regular), style: .secondary)
-            } else {
-                ScrollView {
-                    MacFormRows {
-                        ForEach(users) { user in
-                            userRow(user)
-                        }
-                    }
-                }
-                .frame(maxHeight: Metrics.userListMaxHeight)
-                .fixedSize(horizontal: false, vertical: true)
-                .background(RoundedRectangle(cornerRadius: .radiusMedium, style: .continuous).fill(Color.macRow))
-                .clipShape(RoundedRectangle(cornerRadius: .radiusMedium, style: .continuous))
-            }
-        }
-
-        private func userRow(_ user: User) -> some View {
-            let name = user.displayName ?? user.username
-            return Toggle(isOn: Binding(
-                get: { selectedUserIDs.contains(user.id) },
-                set: { _ in onToggleUser(user.id) }
-            )) {
-                HStack(spacing: .space8) {
-                    AvatarView(displayName: name, size: Metrics.avatarSize, tint: Color.accent)
-                    Text(name).type(.body2(.regular)).lineLimit(1)
-                    Spacer(minLength: .space8)
-                    if let email = user.email {
-                        Text(email).type(.caption(.regular), style: .secondary).lineLimit(1)
-                    }
-                }
-            }
-            .toggleStyle(.macCheckbox)
-            .padding(.horizontal, .space16)
-            .padding(.vertical, .space8)
         }
     }
 

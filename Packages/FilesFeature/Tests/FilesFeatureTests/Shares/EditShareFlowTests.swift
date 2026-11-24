@@ -126,11 +126,13 @@ struct EditShareFlowTests {
             $0.date = .constant(fixedNow)
         }
 
+        #expect(store.state.isPasswordMissing)
         await store.send(.saveTapped) { $0.fieldError = .passwordRequired }
         await store.send(.newPasswordChanged(TestAccount.password)) {
             $0.newPassword = TestAccount.password
             $0.fieldError = nil
         }
+        #expect(!store.state.isPasswordMissing)
     }
 
     @Test

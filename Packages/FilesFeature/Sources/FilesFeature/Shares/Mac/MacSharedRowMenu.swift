@@ -19,18 +19,14 @@
                 } label: {
                     Label { Text(L10n.Shared.actionShareLink) } icon: { IconKit.shareLink }
                 }
-                Menu {
-                    ForEach(DirectLinkMode.allCases) { mode in
-                        Button(mode.title) {
-                            onToast(.success(share.copyDirectLink(serverURL: store.serverURL, mode: mode)))
-                        }
+                if share.directLinkChoices.count > 1 {
+                    Menu {
+                        directButtons
+                    } label: {
+                        Label { Text(L10n.Shared.direct) } icon: { IconKit.link }
                     }
-                } label: {
-                    Label {
-                        Text(share.isDirectory ? L10n.Shared.actionFolderLink : L10n.Shared.actionFileLink)
-                    } icon: {
-                        IconKit.link
-                    }
+                } else {
+                    directButtons
                 }
             } label: {
                 Label { Text(L10n.Common.copy) } icon: { IconKit.copy }
@@ -47,6 +43,17 @@
             }
             Button(role: .destructive) { store.send(.deleteTapped(share)) } label: {
                 Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
+            }
+        }
+
+        private var directButtons: some View {
+            ForEach(share.directLinkChoices) { choice in
+                Button {
+                    onToast(.success(share.copyDirectLink(serverURL: store.serverURL, mode: choice.mode)))
+                } label: {
+                    Text(choice.title)
+                    Text(choice.detail)
+                }
             }
         }
     }

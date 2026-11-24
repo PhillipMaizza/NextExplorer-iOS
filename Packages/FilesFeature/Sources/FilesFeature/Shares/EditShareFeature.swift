@@ -137,6 +137,10 @@ public struct EditShareFeature {
             hasEdits || isSaving
         }
 
+        var isPasswordMissing: Bool {
+            isPasswordEnabled && !share.hasPassword && newPassword.isEmpty
+        }
+
         var isSaveEnabled: Bool {
             guard !isSaving, hasChanges, !trimmedLabel.isEmpty else { return false }
             if target == .users {
@@ -170,6 +174,7 @@ public struct EditShareFeature {
         case wantsPasswordChanged(Bool)
         case newPasswordChanged(String)
         case expiryPresetTapped(ExpiryPreset)
+        case expiryDaysTapped(Int)
         case expiryEnabledChanged(Bool)
         case expiresAtChanged(Date)
         case userToggled(User.ID)
@@ -249,8 +254,16 @@ public struct EditShareFeature {
                 state.expiryPreset = preset
                 clear(.pastExpiration, in: &state)
                 if let component = preset.component,
-                   let presetDate = calendar.date(byAdding: component, value: 1, to: date.now)
+                   let presetDate = calendar.date(byAdding: component, value: 1, to: state.openedAt)
                 {
+                    state.expiresAt = presetDate
+                }
+                return .none
+
+            case let .expiryDaysTapped(days):
+                state.expiryPreset = .custom
+                clear(.pastExpiration, in: &state)
+                if let presetDate = calendar.date(byAdding: .day, value: days, to: state.openedAt) {
                     state.expiresAt = presetDate
                 }
                 return .none
@@ -282,7 +295,7 @@ public struct EditShareFeature {
 
             case .saveTapped:
                 guard state.isSaveEnabled else { return .none }
-                if state.isPasswordEnabled, !state.share.hasPassword, state.newPassword.isEmpty {
+                if state.isPasswordMissing {
                     state.fieldError = .passwordRequired
                     return .none
                 }

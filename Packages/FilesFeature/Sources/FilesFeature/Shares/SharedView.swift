@@ -63,19 +63,20 @@ struct SharedView: View {
                 #endif
 
                 #if os(macOS)
-                    MacPaneHeader(
-                        title: L10n.Shared.navigationTitle,
-                        inset: MacPaneInset.sectionHeader,
-                        bottom: MacPaneInset.listGap
-                    ) {
-                        MacSegmentedPicker(
-                            L10n.Shared.navigationTitle,
-                            options: SharedFeature.Segment.allCases,
-                            selection: segment,
-                            label: { $0.title }
-                        )
+                    MacSharedContent(store: store, onToast: { toastMessage = $0 }) {
+                        MacPaneHeader(
+                            title: L10n.Shared.navigationTitle,
+                            inset: MacPaneInset.sectionHeader,
+                            bottom: MacPaneInset.listGap
+                        ) {
+                            MacSegmentedPicker(
+                                L10n.Shared.navigationTitle,
+                                options: SharedFeature.Segment.allCases,
+                                selection: segment,
+                                label: { $0.title }
+                            )
+                        }
                     }
-                    MacSharedContent(store: store, onToast: { toastMessage = $0 })
                 #else
                     TabView(selection: segment) {
                         ForEach(SharedFeature.Segment.allCases, id: \.self) { pageSegment in

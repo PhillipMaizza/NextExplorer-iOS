@@ -17,10 +17,24 @@ struct SharedActionPresentations: ViewModifier {
         Binding(get: { store.deleteConfirmationShare != nil }, set: { _ in })
     }
 
+    #if os(macOS)
+        private var editSheetStore: Binding<StoreOf<EditShareFeature>?> {
+            Binding(
+                get: { store.editPopover == nil ? store.scope(state: \.editSheet, action: \.editSheet.presented) : nil
+                },
+                set: { newValue in
+                    if newValue == nil, store.editPopover == nil, store.editSheet != nil {
+                        store.send(.editSheet(.dismiss))
+                    }
+                }
+            )
+        }
+    #endif
+
     func body(content: Content) -> some View {
         content
         #if os(macOS)
-            .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
+            .dsSheet(item: editSheetStore) { editStore in
                 MacEditShareSheet(store: editStore)
             }
         #endif

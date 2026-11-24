@@ -75,13 +75,9 @@ struct SharedPeopleStack: View {
     private var avatars: some View {
         HStack(spacing: Constants.avatarOverlap) {
             ForEach(shownPeople) { person in
-                AvatarView(
-                    displayName: person.name,
-                    size: Constants.avatarSize,
-                    tint: Color.categorical(for: person.name)
-                )
-                .overlay(Circle().strokeBorder(ringColor, lineWidth: Constants.avatarRing))
-                .accessibilityLabel(person.name)
+                AvatarView.person(person.name, size: Constants.avatarSize)
+                    .overlay(Circle().strokeBorder(ringColor, lineWidth: Constants.avatarRing))
+                    .accessibilityLabel(person.name)
             }
             if hiddenCount > 0 {
                 AvatarLabel(
@@ -103,7 +99,7 @@ private func badgesPreview(expiry: SharedFeature.ExpiryNotice?) -> some View {
             id: "p",
             isAnyone: false,
             people: Share.previewShareableUsers.prefix(4).map {
-                SharedFeature.Person(id: $0.id, name: $0.displayName ?? $0.username)
+                SharedFeature.Person(id: $0.id, name: $0.displayLabel)
             },
             unnamedCount: 1,
             expiry: expiry

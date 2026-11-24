@@ -29,6 +29,10 @@ struct AvatarView: View {
         self.tint = tint
     }
 
+    static func person(_ name: String, size: CGFloat) -> AvatarView {
+        AvatarView(displayName: name, size: size, tint: Color.categorical(for: name))
+    }
+
     private var initials: String {
         let letters = displayName
             .split(separator: " ")
@@ -80,9 +84,18 @@ struct AvatarLabel: View {
         max(size, Constants.compactDiameter)
     }
 
+    private var textType: Typography.TextType {
+        guard size < Constants.compactDiameter else { return .body3(.bold) }
+        #if os(macOS)
+            return .body3(.bold)
+        #else
+            return .caption(.bold)
+        #endif
+    }
+
     var body: some View {
         Text(text)
-            .type(size < Constants.compactDiameter ? .caption(.bold) : .body3(.bold))
+            .type(textType)
             .foregroundStyle(color)
             .lineLimit(1)
             .minimumScaleFactor(Constants.minimumTextScale)
@@ -106,9 +119,5 @@ struct AvatarLabel: View {
         size: .iconLarge
     )
     .colorScheme(.light)
-    AvatarView(
-        displayName: "Lea Sato",
-        size: .iconMedium,
-        tint: Color.categorical(for: "Lea Sato")
-    )
+    AvatarView.person("Lea Sato", size: .iconMedium)
 }
