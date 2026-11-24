@@ -55,6 +55,7 @@ public struct FavoritesFeature {
         /// Lifecycle of the file search above: `.loading` on first run with no prior results,
         /// `.loaded` once merged results land, `.failed` when every favorite's search errored.
         public var searchPhase: DataPhase = .idle
+        public var selectedSearchCategories: Set<FileCategory> = []
         @Presents public var editSheet: FavoriteEditFeature.State?
         /// A `BrowseFeature` scoped to a search hit's parent folder, presented as a full screen
         /// preview cover over the results: so tapping a file result opens it directly (no visible
@@ -139,6 +140,20 @@ public struct FavoritesFeature {
         }
 
         public var displayedSearchResults: [SearchResultItem] {
+            let visible = visibleSearchResults
+            guard !selectedSearchCategories.isEmpty else { return visible }
+            return visible.filter { selectedSearchCategories.contains(BrowseFeature.State.category(of: $0)) }
+        }
+
+        public var availableSearchCategories: [FileCategory] {
+            FileCategory.present(in: visibleSearchResults)
+        }
+
+        public var searchCategoryCounts: [FileCategory: Int] {
+            FileCategory.counts(in: visibleSearchResults)
+        }
+
+        private var visibleSearchResults: [SearchResultItem] {
             guard let fileSearchResults else { return [] }
             return fileSearchResults.filter { shouldShowHiddenFiles || !isHiddenFileName($0.name) }
         }
@@ -175,6 +190,8 @@ public struct FavoritesFeature {
         case searchQueryChanged(String)
         case fileSearchResponse(Result<[SearchResultItem], FilesClientError>, term: String)
         case searchRetryTapped
+        case searchCategoryToggled(FileCategory)
+        case searchFilterCleared
         /// The results changed, or what is kept offline did: find which results are on the device.
         case computeSearchOnDevice
         case searchOnDeviceComputed(Set<String>)
@@ -449,6 +466,15 @@ public struct FavoritesFeature {
                     SearchTerm(state.searchQuery).ranked(results), id: \.id, uniquingIDsWith: { first, _ in first }
                 )
                 state.searchPhase = .loaded
+                state.selectedSearchCategories.formIntersection(state.availableSearchCategories)
+                return .none
+
+            case let .searchCategoryToggled(category):
+                state.selectedSearchCategories.formSymmetricDifference([category])
+                return .none
+
+            case .searchFilterCleared:
+                state.selectedSearchCategories = []
                 return .none
 
             case let .fileSearchResponse(.failure(error), _):
@@ -788,6 +814,7 @@ public struct FavoritesFeature {
         // A term too short to search is never sent.
         guard term.isSearchable else {
             state.fileSearchResults = nil
+            state.selectedSearchCategories = []
             state.searchPhase = .idle
             return .cancel(id: CancelID.search)
         }

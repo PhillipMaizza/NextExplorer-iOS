@@ -425,12 +425,18 @@ public struct BrowseFeature {
         /// order: the rows the filter sheet offers. Independent of the current selection, so
         /// toggling a category off doesn't make it vanish from the sheet.
         public var availableSearchCategories: [FileCategory] {
+            FileCategory.present(in: visibleSearchResults)
+        }
+
+        public var searchCategoryCounts: [FileCategory: Int] {
+            FileCategory.counts(in: visibleSearchResults)
+        }
+
+        private var visibleSearchResults: [SearchResultItem] {
             guard let searchResults else { return [] }
-            let visible = preferences.shouldShowHiddenFiles
-                ? searchResults
-                : searchResults.filter { !isHiddenFileName($0.name) }
-            let present = Set(visible.map(Self.category(of:)))
-            return FileCategory.allCases.filter(present.contains)
+            return preferences.shouldShowHiddenFiles
+                ? searchResults.elements
+                : searchResults.filter { !isHiddenFileName($0.name) }.elements
         }
 
         /// A search hit reports only `dir`/`file` for kind, so derive the extension from the name

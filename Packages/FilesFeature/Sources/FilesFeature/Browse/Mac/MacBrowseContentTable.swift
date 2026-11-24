@@ -37,11 +37,11 @@
             VStack(spacing: 0) {
                 MacSearchScopeBar(
                     availableCategories: store.availableSearchCategories,
+                    counts: store.searchCategoryCounts,
                     selectedCategories: store.selectedSearchCategories,
                     onToggle: { store.send(.searchCategoryToggled($0)) },
                     onShowAll: { store.send(.searchFilterCleared) }
                 )
-                Divider()
                 MacSearchResultsTable(
                     sections: store.searchResultSections,
                     favoritePaths: store.favoritePaths,
