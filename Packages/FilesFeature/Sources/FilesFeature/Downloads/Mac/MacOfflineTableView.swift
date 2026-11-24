@@ -124,7 +124,7 @@
             .clipped()
             .focused($isFocused)
             .focusEffectDisabled()
-            .onAppear { isFocused = true }
+            .focusedWhenOnTop($isFocused)
             .onKeyPress(.return) {
                 guard selection.count == 1, let row = row(for: selection.first, in: rows) else { return .ignored }
                 open(row)

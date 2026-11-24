@@ -178,7 +178,7 @@
             .clipped()
             .focused($isFocused)
             .focusEffectDisabled()
-            .onAppear { isFocused = true }
+            .focusedWhenOnTop($isFocused)
             .onChange(of: isPeeking) { _, isOpen in
                 isFocused = !isOpen
             }
@@ -213,6 +213,12 @@
             // While a name is being edited in place its field has focus inside the table, so the
             // Edit menu (⌘A, ⌘C, ⌘V, ⌘Z, ⌘⌫) must edit that text, not act on the files.
             .focusedValue(\.browseKeyboardActions, renamingItemID == nil ? keyboardActions : nil)
+            .focusedSceneValue(
+                \.duplicateBrowseSelection,
+                renamingItemID == nil && !selection.isEmpty
+                    ? FocusedMenuAction(perform: keyboardActions.duplicate)
+                    : nil
+            )
         }
 
         private func opacity(for item: FileItem) -> Double {

@@ -130,7 +130,7 @@
                 .accessibilityHidden(isLoading)
                 .focused($isFocused)
                 .focusEffectDisabled()
-                .onAppear { isFocused = true }
+                .focusedWhenOnTop($isFocused)
                 .onDeleteCommand {
                     if let share = ownShare(for: selection, in: rows) {
                         store.send(.deleteTapped(share))
