@@ -48,6 +48,10 @@ struct SharedShareFacts {
         Self.lastOpened(share.lastAccessedAt)
     }
 
+    var lastOpenedShort: String {
+        share.lastAccessedAt.map(OfflineRelativeTime.shortString(from:)) ?? L10n.Common.never
+    }
+
     var downloads: String {
         share.downloadCount.formatted()
     }

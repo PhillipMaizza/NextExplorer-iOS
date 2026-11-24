@@ -50,11 +50,7 @@ struct SharedPeopleCircles: View {
             ForEach(Array(shown.enumerated()), id: \.offset) { _, person in
                 if let person {
                     circle(
-                        AvatarView(
-                            displayName: person.name,
-                            size: Constants.circleSize,
-                            tint: Color.categorical(for: person.name)
-                        ),
+                        AvatarView.person(person.name, size: Constants.circleSize),
                         caption: Self.nameLines(of: person.name)
                     )
                     .accessibilityElement(children: .ignore)
@@ -141,7 +137,7 @@ private func peoplePreview(_ badge: SharedFeature.ShareBadge) -> some View {
         id: "p",
         isAnyone: false,
         people: Share.previewShareableUsers.prefix(6).map {
-            SharedFeature.Person(id: $0.id, name: $0.displayName ?? $0.username)
+            SharedFeature.Person(id: $0.id, name: $0.displayLabel)
         },
         unnamedCount: 2,
         expiry: nil

@@ -98,7 +98,7 @@ struct SharedSegmentList: View {
                 errorMessage: errorMessage,
                 emptyIcon: IconKit.shareLink,
                 emptyMessage: store.state.emptyMessage(for: segment),
-                noResultsMessage: L10n.Shared.noSearchMatches(store.searchQuery),
+                noResultsMessage: store.state.noResultsMessage(for: segment),
                 pullOffset: pullOffset,
                 onRetry: { store.send(.refreshRequested) }
             )
@@ -202,7 +202,7 @@ private func segmentListPreview(
     state.now = Date()
     state.userNames = Dictionary(uniqueKeysWithValues: Share.previewShareableUsers.map { (
         $0.id,
-        $0.displayName ?? $0.username
+        $0.displayLabel
     ) })
     mutate(&state)
     let store = Store(initialState: state) { SharedFeature() } withDependencies: {

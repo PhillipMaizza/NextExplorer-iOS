@@ -59,12 +59,12 @@
 
         private func row(_ user: User) -> some View {
             let isSelected = store.selectedUserIDs.contains(user.id)
-            let name = user.displayName ?? user.username
+            let name = user.displayLabel
             return Button {
                 store.send(.userToggled(user.id), animation: DSMotion.stateFade)
             } label: {
                 HStack(spacing: .space12) {
-                    AvatarView(displayName: name, size: Constants.avatarSize, tint: Color.categorical(for: name))
+                    AvatarView.person(name, size: Constants.avatarSize)
                     VStack(alignment: .leading, spacing: .space2) {
                         Text(name)
                             .type(.body2(.semibold), style: .primaryOnSurface)

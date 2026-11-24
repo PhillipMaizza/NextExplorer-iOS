@@ -161,7 +161,7 @@
                 Text(L10n.Common.none).type(.body2(.regular), style: .secondary)
             } else {
                 let people = store.selectedUsers.map {
-                    SharedFeature.Person(id: $0.id, name: $0.displayName ?? $0.username)
+                    SharedFeature.Person(id: $0.id, name: $0.displayLabel)
                 }
                 SharedPeopleStack(
                     badge: SharedFeature.ShareBadge(

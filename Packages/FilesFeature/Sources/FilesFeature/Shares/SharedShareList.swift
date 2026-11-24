@@ -106,34 +106,26 @@ private struct SharedShareListRow: View {
         } else if people.count < 2 {
             // One known face fills the slot; none yet falls back to a people glyph.
             if let person = people.first {
-                AvatarView(
-                    displayName: person.name,
-                    size: Constants.audienceSize,
-                    tint: Color.categorical(for: person.name)
-                )
+                AvatarView.person(person.name, size: Constants.audienceSize)
             } else {
                 SharedIconCircle(icon: IconKit.people)
             }
         } else {
             ZStack {
                 ForEach(Array(people.prefix(2).enumerated()), id: \.element.id) { index, person in
-                    AvatarView(
-                        displayName: person.name,
-                        size: Constants.pairAvatarSize,
-                        tint: Color.categorical(for: person.name)
-                    )
-                    .overlay(Circle().strokeBorder(Color.backgroundSecondary, lineWidth: Constants.pairAvatarRing))
-                    .frame(
-                        maxWidth: .infinity,
-                        maxHeight: .infinity,
-                        alignment: index == 0 ? .topLeading : .bottomTrailing
-                    )
-                    .offset(
-                        x: index == 0 ? 0 : Constants.pairAvatarOffset,
-                        y: index == 0
-                            ? 0
-                            : Constants.pairAvatarOffset
-                    )
+                    AvatarView.person(person.name, size: Constants.pairAvatarSize)
+                        .overlay(Circle().strokeBorder(Color.backgroundSecondary, lineWidth: Constants.pairAvatarRing))
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: .infinity,
+                            alignment: index == 0 ? .topLeading : .bottomTrailing
+                        )
+                        .offset(
+                            x: index == 0 ? 0 : Constants.pairAvatarOffset,
+                            y: index == 0
+                                ? 0
+                                : Constants.pairAvatarOffset
+                        )
                 }
             }
         }

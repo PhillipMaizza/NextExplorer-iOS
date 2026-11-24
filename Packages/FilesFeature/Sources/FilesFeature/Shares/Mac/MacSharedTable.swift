@@ -7,15 +7,14 @@
     import SwiftUI
 
     private enum Metrics {
-        static let nameColumnMinWidth: CGFloat = 200
-        static let audienceColumnMinWidth: CGFloat = 120
+        static let nameColumnMinWidth: CGFloat = 120
+        static let audienceColumnMinWidth: CGFloat = 80
         static let audienceColumnIdealWidth: CGFloat = 150
         static let sharerColumnMinWidth: CGFloat = 160
         static let sharerColumnIdealWidth: CGFloat = 220
-        static let dateColumnMinWidth: CGFloat = 100
+        static let dateColumnMinWidth: CGFloat = 80
         static let dateColumnIdealWidth: CGFloat = 120
-        static let downloadsColumnWidth: CGFloat = 80
-        static let deletingOpacity: Double = 0.4
+        static let downloadsColumnWidth: CGFloat = 72
     }
 
     /// One Shared segment as a Mac outline table grouped by item: an item with several shares opens
@@ -111,7 +110,7 @@
                         errorMessage: phase.errorMessage,
                         emptyIcon: IconKit.shareLink,
                         emptyMessage: store.state.emptyMessage(for: segment),
-                        noResultsMessage: L10n.Shared.noSearchMatches(store.searchQuery),
+                        noResultsMessage: store.state.noResultsMessage(for: segment),
                         pullOffset: 0,
                         onRetry: { store.send(.refreshRequested) }
                     )
@@ -120,60 +119,11 @@
         }
 
         private func table(_ rows: [MacSharedRow]) -> some View {
-            Table(rows, children: \.children, selection: $selection, sortOrder: $sortOrder) {
-                TableColumn(L10n.Sort.name, value: \.name) { row in
-                    MacSharedNameCell(row: row, isExpired: !isLoading && isExpired(row))
-                        .macBoardTableCell()
-                        .modifier(MacSharedPlaceholderCell(isActive: isLoading))
-                        .opacity(opacity(for: row))
-                }
-                .width(min: Metrics.nameColumnMinWidth)
-                if isByMe {
-                    TableColumn(L10n.Shared.metaSharedWith, value: \.recipientCount) { row in
-                        SharedAudienceBadgeRow(badges: badges(for: row), ringColor: Color.backgroundPrimary)
-                            .modifier(MacSharedPlaceholderCell(isActive: isLoading))
-                            .opacity(opacity(for: row))
-                    }
-                    .width(min: Metrics.audienceColumnMinWidth, ideal: Metrics.audienceColumnIdealWidth)
-                }
-                if !isByMe {
-                    TableColumn(L10n.Shared.metaSharedBy, value: \.sharer) { row in
-                        MacSharedSharerCell(name: row.sharer)
-                            .modifier(MacSharedPlaceholderCell(isActive: isLoading))
-                    }
-                    .width(min: Metrics.sharerColumnMinWidth, ideal: Metrics.sharerColumnIdealWidth)
-                }
-                TableColumn(L10n.Shared.metaExpires, value: \.expirySortDate) { row in
-                    let share = row.expiringShare
-                    MacSharedExpiryCell(
-                        expiresAt: share?.expiresAt,
-                        notice: isLoading ? nil : share.flatMap(store.state.expiryNotice(for:)),
-                        dateFormat: dateFormat
-                    )
-                    .modifier(MacSharedPlaceholderCell(isActive: isLoading))
-                    .opacity(opacity(for: row))
-                }
-                .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
-                if isByMe {
-                    TableColumn(L10n.Shared.metaLastOpened, value: \.lastOpenedSortDate) { row in
-                        secondaryText(
-                            SharedShareFacts.lastOpened(row.lastOpenedAt),
-                            for: row
-                        )
-                    }
-                    .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
-                    TableColumn(L10n.Shared.metaDownloads, value: \.downloadCount) { row in
-                        secondaryText(row.downloadCount.formatted(), for: row)
-                            .monospacedDigit()
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
-                    .width(Metrics.downloadsColumnWidth)
-                }
-                if !isByMe {
-                    TableColumn(L10n.Shared.metaReceived, value: \.createdAt) { row in
-                        secondaryText(dateFormat.string(from: row.createdAt), for: row)
-                    }
-                    .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
+            Group {
+                if rows.contains(where: { $0.children != nil }) {
+                    Table(rows, children: \.children, selection: $selection, sortOrder: $sortOrder) { columns }
+                } else {
+                    Table(rows, selection: $selection, sortOrder: $sortOrder) { columns }
                 }
             }
             .contextMenu(forSelectionType: MacSharedRow.ID.self) { ids in
@@ -183,7 +133,77 @@
                 }
             }
             // Escape deselects, which closes the inspector.
-            .onExitCommand { selection = [] }
+            .onExitCommand {
+                if store.editPopover != nil {
+                    store.send(.editPopoverDismissed)
+                } else {
+                    selection = []
+                }
+            }
+        }
+
+        @TableColumnBuilder<MacSharedRow, KeyPathComparator<MacSharedRow>>
+        private var columns: some TableColumnContent<MacSharedRow, KeyPathComparator<MacSharedRow>> {
+            TableColumn(L10n.Sort.name, value: \.name) { row in
+                MacSharedNameCell(
+                    row: row,
+                    serverURL: isByMe ? store.serverURL : nil,
+                    sizedFile: store.shareFiles[row.item.shares[0].id],
+                    onNeedsSize: { store.send(.shareFileNeeded(row.item.shares[0])) },
+                    isExpired: !isLoading && isExpired(row)
+                )
+                .macBoardTableCell()
+                .modifier(MacSharedPlaceholderCell(isActive: isLoading))
+                .opacity(opacity(for: row))
+            }
+            .width(min: Metrics.nameColumnMinWidth)
+            if isByMe {
+                TableColumn(L10n.Shared.metaSharedWith, value: \.recipientCount) { row in
+                    SharedAudienceBadgeRow(badges: badges(for: row), ringColor: Color.backgroundPrimary)
+                        .modifier(MacSharedPlaceholderCell(isActive: isLoading))
+                        .opacity(opacity(for: row))
+                }
+                .width(min: Metrics.audienceColumnMinWidth, ideal: Metrics.audienceColumnIdealWidth)
+            }
+            if !isByMe {
+                TableColumn(L10n.Shared.metaSharedBy, value: \.sharer) { row in
+                    MacSharedSharerCell(name: row.sharer)
+                        .modifier(MacSharedPlaceholderCell(isActive: isLoading))
+                }
+                .width(min: Metrics.sharerColumnMinWidth, ideal: Metrics.sharerColumnIdealWidth)
+            }
+            TableColumn(L10n.Shared.metaExpires, value: \.expirySortDate) { row in
+                let share = row.expiringShare
+                MacSharedExpiryCell(
+                    expiresAt: share?.expiresAt,
+                    notice: isLoading ? nil : share.flatMap(store.state.expiryNotice(for:)),
+                    dateFormat: dateFormat
+                )
+                .modifier(MacSharedPlaceholderCell(isActive: isLoading))
+                .opacity(opacity(for: row))
+            }
+            .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
+            if isByMe {
+                TableColumn(L10n.Shared.metaLastOpened, value: \.lastOpenedSortDate) { row in
+                    secondaryText(
+                        SharedShareFacts.lastOpened(row.lastOpenedAt),
+                        for: row
+                    )
+                }
+                .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
+                TableColumn(L10n.Shared.metaDownloads, value: \.downloadCount) { row in
+                    secondaryText(row.downloadCount.formatted(), for: row)
+                        .monospacedDigit()
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .width(Metrics.downloadsColumnWidth)
+            }
+            if !isByMe {
+                TableColumn(L10n.Shared.metaReceived, value: \.createdAt) { row in
+                    secondaryText(dateFormat.string(from: row.createdAt), for: row)
+                }
+                .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
+            }
         }
 
         private func secondaryText(_ text: String, for row: MacSharedRow) -> some View {
@@ -205,7 +225,7 @@
 
         private func opacity(for row: MacSharedRow) -> Double {
             let ids = row.child.map { [$0.id] } ?? row.item.shares.map(\.id)
-            return ids.allSatisfy(store.deletingIDs.contains) ? Metrics.deletingOpacity : 1
+            return ids.allSatisfy(store.deletingIDs.contains) ? SharedRowMetrics.deletingOpacity : 1
         }
 
         /// Nil while that share's delete is in flight, so it cannot be deleted or edited twice.

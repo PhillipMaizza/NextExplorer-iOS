@@ -241,7 +241,7 @@ struct CreateShareLinkSheet: View {
     private var recipientNames: String {
         let names = store.shareableUsers
             .filter { store.selectedUserIDs.contains($0.id) }
-            .map { $0.displayName ?? $0.username }
+            .map(\.displayLabel)
         return names.isEmpty ? L10n.CreateShare.summarySpecificPeople : names.joined(separator: ", ")
     }
 

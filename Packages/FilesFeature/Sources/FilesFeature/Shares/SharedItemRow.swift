@@ -4,6 +4,10 @@ import DesignSystem
 import Localization
 import SwiftUI
 
+enum SharedRowMetrics {
+    static let deletingOpacity: Double = 0.4
+}
+
 private enum Constants {
     static let iconSize: CGFloat = 36
     static let folderGlyphSize: CGFloat = 30
@@ -13,7 +17,6 @@ private enum Constants {
 
     static let sharerAvatarSize: CGFloat = 20
     static let expiredOpacity: Double = 0.45
-    static let deletingOpacity: Double = 0.4
 }
 
 /// One shared file or folder on the Shared list: icon, name and parent folder, who each share
@@ -48,13 +51,9 @@ struct SharedItemRow: View {
                     }
                     locationText
                     if !isByMe, let sharer = item.badges.first?.people.first {
-                        AvatarView(
-                            displayName: sharer.name,
-                            size: Constants.sharerAvatarSize,
-                            tint: Color.categorical(for: sharer.name)
-                        )
-                        .opacity(item.isExpired ? Constants.expiredOpacity : 1)
-                        .accessibilityLabel(sharer.name)
+                        AvatarView.person(sharer.name, size: Constants.sharerAvatarSize)
+                            .opacity(item.isExpired ? Constants.expiredOpacity : 1)
+                            .accessibilityLabel(sharer.name)
                     }
                     if let daysLeft {
                         Text(L10n.Shared.daysLeft(daysLeft))
@@ -73,7 +72,7 @@ struct SharedItemRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DSPressableButtonStyle())
-        .opacity(isDeleting ? Constants.deletingOpacity : 1)
+        .opacity(isDeleting ? SharedRowMetrics.deletingOpacity : 1)
         .disabled(isDeleting)
     }
 

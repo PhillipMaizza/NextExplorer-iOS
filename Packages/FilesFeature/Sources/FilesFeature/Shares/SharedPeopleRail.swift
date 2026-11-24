@@ -115,7 +115,7 @@ private struct SharedRailButton: View {
                     Circle().strokeBorder(Color.borderPrimary, lineWidth: .borderWidthHairline)
                 }
         case .people:
-            AvatarView(displayName: option.name, size: innerSize, tint: Color.categorical(for: option.name))
+            AvatarView.person(option.name, size: innerSize)
         }
     }
 

@@ -51,6 +51,15 @@ public struct SharedFeature {
     /// reloads without a manual pull to refresh.
     public static let revisionKey = "shareLinksRevision"
 
+    public enum EditPopover: Equatable, Sendable {
+        case limit
+        case expiry
+        case renew
+        case password
+        case label
+        case inline
+    }
+
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
@@ -76,6 +85,7 @@ public struct SharedFeature {
         public var deletingIDs: Set<Share.ID> = []
         /// The share being edited: a page pushed inside the detail sheet on iOS, a sheet on the Mac.
         @Presents public var editSheet: EditShareFeature.State?
+        public var editPopover: EditPopover?
         /// The item sheet opened from a row; Edit and Delete stack on top of it.
         public var detail: Detail?
         public var searchQuery = ""
@@ -86,6 +96,9 @@ public struct SharedFeature {
         /// `userId -> display name`, resolved from `GET /api/users/shareable` so a
         /// user specific share can name its recipients instead of just "Specific users".
         public var userNames: [String: String] = [:]
+        public var userEmails: [String: String] = [:]
+        public var shareFiles: [Share.ID: FileItem] = [:]
+        public var requestedShareFileIDs: Set<Share.ID> = []
         /// Ticked on a timer (`expiryTick`) so a link that expires, or whose day countdown
         /// changes, while the tab is open updates on its own. Starts at `.distantPast`, so nothing
         /// reads as expired until the view's `TimelineView` sends the first real `now`, which
@@ -121,6 +134,10 @@ public struct SharedFeature {
             segment == .byMe ? byMe : withMe
         }
 
+        private func peopleNames(of share: Share) -> [String] {
+            ([share.ownerId] + (share.permittedUserIds ?? [])).compactMap { userNames[$0] }
+        }
+
         public var isSearching: Bool {
             !searchQuery.isEmpty
         }
@@ -132,7 +149,11 @@ public struct SharedFeature {
         public func displayedShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             let term = SearchTerm(searchQuery)
             let base = isSearching
-                ? shares(for: segment).filter { term.matches($0.displayName) || term.matches($0.sourcePath ?? "") }
+                ? shares(for: segment).filter { share in
+                    term.matches(share.displayName)
+                        || term.matches(share.sourcePath ?? "")
+                        || peopleNames(of: share).contains { term.matches($0) }
+                }
                 : shares(for: segment)
             let sorted = base.sorted { lhs, rhs in
                 switch sortOption {
@@ -166,6 +187,12 @@ public struct SharedFeature {
             isSearching && !shares(for: segment).isEmpty && items(for: segment).isEmpty
         }
 
+        public func noResultsMessage(for segment: Segment) -> String {
+            filters[segment] != nil && !displayedShares(for: segment).isEmpty
+                ? L10n.Shared.noSearchMatchesFiltered(searchQuery)
+                : L10n.Shared.noSearchMatches(searchQuery)
+        }
+
         public func emptyMessage(for segment: Segment) -> String {
             segment == .byMe ? L10n.Shared.emptyByMe : L10n.Shared.emptyWithMe
         }
@@ -193,11 +220,17 @@ public struct SharedFeature {
         /// A segment's saved list read off the main actor to paint a first load.
         case cachedSharesPainted(Segment, [Share])
         case usersResponse([User])
+        case shareFileNeeded(Share)
+        case shareFileResponse(Share.ID, FileMetadata)
         case deleteTapped(Share)
         case deleteConfirmed
         case deleteCancelled
         case deleteResponse(Share.ID, Result<Bool, FilesClientError>)
         case editTapped(Share)
+        case editPopoverTapped(Share, EditPopover)
+        case editPopoverDismissed
+        case labelEditEnded
+        case accessModeChosen(Share, ShareAccessMode)
         case editSheet(PresentationAction<EditShareFeature.Action>)
         case actionToastShown
         case detailOpened(Segment, Item.ID)
@@ -338,7 +371,11 @@ public struct SharedFeature {
 
             case let .usersResponse(users):
                 state.userNames = Dictionary(
-                    users.map { ($0.id, $0.displayName ?? $0.username) },
+                    users.map { ($0.id, $0.displayLabel) },
+                    uniquingKeysWith: { first, _ in first }
+                )
+                state.userEmails = Dictionary(
+                    users.compactMap { user in user.email.map { (user.id, $0) } },
                     uniquingKeysWith: { first, _ in first }
                 )
                 state.sharesChanged()
@@ -377,13 +414,68 @@ public struct SharedFeature {
                 state.actionErrorMessage = error.userMessage
                 return .none
 
+            case let .shareFileNeeded(share):
+                guard !state.requestedShareFileIDs.contains(share.id),
+                      share.fileItem() != nil,
+                      let path = share.browsePath
+                else { return .none }
+                state.requestedShareFileIDs.insert(share.id)
+                let serverURL = state.serverURL
+                let filesClient = filesClient
+                return .run { send in
+                    if let metadata = try? await filesClient.fetchMetadata(serverURL, path) {
+                        await send(.shareFileResponse(share.id, metadata))
+                    }
+                }
+
+            case let .shareFileResponse(id, metadata):
+                guard let share = state.byMe[id: id] else { return .none }
+                state.shareFiles[id] = share.fileItem(size: metadata.size, modified: metadata.dateModified)
+                return .none
+
             case let .editTapped(share):
+                state.editPopover = nil
                 state.editSheet = EditShareFeature.State(serverURL: state.serverURL, share: share, now: date.now)
+                return .none
+
+            case let .editPopoverTapped(share, popover):
+                var edit = EditShareFeature.State(serverURL: state.serverURL, share: share, now: date.now)
+                if popover == .limit {
+                    edit.target = .users
+                }
+                state.editPopover = popover
+                state.editSheet = edit
+                return .none
+
+            case let .accessModeChosen(share, mode):
+                guard share.accessMode != mode, state.editPopover != .inline else { return .none }
+                var edit = EditShareFeature.State(serverURL: state.serverURL, share: share, now: date.now)
+                edit.accessMode = mode
+                state.editPopover = .inline
+                state.editSheet = edit
+                return .send(.editSheet(.presented(.saveTapped)))
+
+            case let .editSheet(.presented(.saveResponse(.failure(error))))
+                where state.editPopover == .inline || state.editPopover == .label:
+                state.actionErrorMessage = error.userMessage
+                return .send(.editPopoverDismissed)
+
+            case .labelEditEnded:
+                guard state.editPopover == .label, let edit = state.editSheet else { return .none }
+                if edit.hasChanges, !edit.trimmedLabel.isEmpty {
+                    return .send(.editSheet(.presented(.saveTapped)))
+                }
+                return .send(.editPopoverDismissed)
+
+            case .editPopoverDismissed:
+                state.editPopover = nil
+                state.editSheet = nil
                 return .none
 
             case let .editSheet(.presented(.delegate(.updated(share)))):
                 state.byMe[id: share.id] = share
                 state.editSheet = nil
+                state.editPopover = nil
                 state.actionSuccessMessage = L10n.EditShare.saved
                 state.sharesChanged()
                 return .none

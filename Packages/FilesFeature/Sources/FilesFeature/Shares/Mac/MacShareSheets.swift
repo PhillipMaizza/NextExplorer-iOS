@@ -76,51 +76,25 @@
                         .buttonStyle(.macDS(.secondary))
                         .accessibilityLabel(L10n.Common.share)
                 }
-                summaryChips(created.share)
+                MacShareSettingsChips(share: created.share)
+                MacLabeledField(L10n.CreateShare.summarySharedWith) {
+                    MacShareAudienceRow(target: created.share.sharingType, recipients: recipients)
+                }
                 MacLabeledField(created.share.isDirectory
                     ? L10n.CreateShare.directFolderLink
                     : L10n.CreateShare.directFileLink)
                 {
-                    HStack(spacing: .space8) {
-                        MacPopup(
-                            L10n.CreateShare.directLinkMode,
-                            valueLabel: store.directLinkMode.title,
-                            selection: $store.directLinkMode.sending(\.directLinkModeChanged)
-                        ) {
-                            ForEach(DirectLinkMode.allCases) { Text($0.title).tag($0) }
-                        }
-                        .fixedSize()
-                        MacCopyBox(directLink.absoluteString)
-                    }
-                }
-            }
-        }
-
-        private func summaryChips(_ share: Share) -> some View {
-            DSFlowLayout(horizontalSpacing: .space8, verticalSpacing: .space8) {
-                MacChip(text: share.accessMode.title, tone: .gray, icon: share.accessMode.icon)
-                MacChip(text: share.sharingType.title, tone: .gray, icon: share.sharingType.icon)
-                if share.hasPassword {
-                    MacChip(text: L10n.CreateShare.summaryPasswordProtected, tone: .amber, icon: IconKit.lock)
-                }
-                if let expiresAt = share.expiresAt {
-                    MacChip(
-                        text: L10n.Common.pair(
-                            L10n.CreateShare.summaryExpires,
-                            expiresAt.formatted(date: .abbreviated, time: .omitted)
-                        ),
-                        tone: .amber,
-                        icon: IconKit.calendar
+                    MacShareDirectLinkRow(
+                        share: created.share,
+                        link: directLink,
+                        mode: $store.directLinkMode.sending(\.directLinkModeChanged)
                     )
                 }
             }
         }
 
-        private var recipientNames: String {
-            let names = store.shareableUsers
-                .filter { store.selectedUserIDs.contains($0.id) }
-                .map { $0.displayName ?? $0.username }
-            return names.isEmpty ? L10n.CreateShare.summarySpecificPeople : names.joined(separator: ", ")
+        private var recipients: [User] {
+            store.shareableUsers.filter { store.selectedUserIDs.contains($0.id) }
         }
     }
 

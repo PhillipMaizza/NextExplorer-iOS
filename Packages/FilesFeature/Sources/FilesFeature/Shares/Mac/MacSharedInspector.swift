@@ -1,5 +1,4 @@
 #if os(macOS)
-    import AppStorageKeys
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
@@ -7,185 +6,174 @@
     import SwiftUI
 
     private enum Metrics {
-        static let iconSize: CGFloat = .size44
-        static let folderGlyphSize: CGFloat = .size40
-        static let audienceGlyphSize: CGFloat = .iconSmall
-        static let deletingOpacity: Double = 0.4
+        static let audienceIconWidth: CGFloat = .size24
+        static let tileSize: CGFloat = 52
         static let expiredOpacity: Double = 0.5
+        static let shareButtonSize: CGFloat = 34
     }
 
-    /// Get Info for a shared item: its icon and summary, then one grouped section per share. By me
-    /// shows who it reaches, its links, facts, Edit and Delete; With me who shared it and its facts.
     struct MacSharedInspector: View {
         let store: StoreOf<SharedFeature>
         let segment: SharedFeature.Segment
         let item: SharedFeature.Item
+        var selectedShareID: Share.ID?
+        var onSelectShare: (Share.ID) -> Void = { _ in }
         let onToast: (DSToastMessage) -> Void
+
+        private var previewItem: FileItem? {
+            share.flatMap { store.shareFiles[$0.id] }
+        }
+
+        private var isExpiredShare: Bool {
+            share.map { store.state.expiryNotice(for: $0) == .expired } ?? false
+        }
 
         private var isByMe: Bool {
             segment == .byMe
         }
 
+        private var share: Share? {
+            if let selectedShareID, let selected = item.shares.first(where: { $0.id == selectedShareID }) {
+                return selected
+            }
+            return item.shares.count == 1 ? item.shares.first : nil
+        }
+
         private var subtitle: String {
-            isByMe
-                ? SharedDetailHero.summary(of: item)
-                : L10n.Shared.fromSharer(store.state.sharedByLabel(for: item.shares[0]))
+            let label = share?.trimmedLabel.map { L10n.Shared.quotedLabel($0) }
+            let place = isByMe
+                ? MacInspectorLocation.trail(parent: item.location ?? "")
+                : L10n.Shared.fromSharer(store.state.sharedByLabel(for: share ?? item.shares[0]))
+            return ServerSettingsMetrics.joined([label, place].compactMap { $0 })
         }
 
         var body: some View {
-            Form {
-                Section {
-                    HStack(alignment: .top, spacing: .space12) {
-                        SharedItemIcon(
-                            share: item.shares[0],
-                            name: item.name,
-                            serverURL: store.serverURL,
+            ScrollView {
+                VStack(alignment: .leading, spacing: MacInspectorMetrics.sectionSpacing) {
+                    header
+                    if let share {
+                        MacShareDetail(
+                            store: store,
                             isByMe: isByMe,
-                            folderGlyphSize: Metrics.folderGlyphSize
+                            share: share,
+                            badge: item.badges.first { $0.id == share.id },
+                            onToast: onToast
                         )
-                        .frame(width: Metrics.iconSize, height: Metrics.iconSize)
-                        .opacity(item.isExpired ? Metrics.expiredOpacity : 1)
-                        .accessibilityHidden(true)
-                        VStack(alignment: .leading, spacing: .space2) {
-                            Text(item.name)
-                                .font(.headline)
-                                .lineLimit(3)
-                                .textSelection(.enabled)
-                            Text(subtitle)
-                                .font(.callout)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(3)
-                                .truncationMode(.middle)
-                        }
+                    } else {
+                        shareList
+                    }
+                }
+                .padding(MacInspectorMetrics.padding)
+                .background {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { store.send(.labelEditEnded) }
+                }
+            }
+            .scrollIndicators(.never)
+            .defaultScrollAnchor(.top)
+            .safeAreaInset(edge: .bottom, spacing: .zero) {
+                if isByMe, let share {
+                    Button(L10n.Shared.deleteLink) { store.send(.deleteTapped(share)) }
+                        .buttonStyle(.plain)
+                        .type(.body3(.semibold))
+                        .foregroundStyle(Color.negativeText)
+                        .disabled(store.deletingIDs.contains(share.id))
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-                ForEach(item.shares) { share in
-                    MacSharedShareCard(
-                        store: store,
-                        isByMe: isByMe,
-                        share: share,
-                        badge: item.badges.first { $0.id == share.id },
-                        onToast: onToast
-                    )
+                        .padding(MacInspectorMetrics.padding)
+                        .background(Color.macCard)
+                        .accessibilityIdentifier(AccessibilityIdentifiers.Shared.deleteShare)
                 }
             }
-            .formStyle(.grouped)
-            .scrollContentBackground(.hidden)
-            // Neutral controls: the app accent stays on our own elements, only Delete reads red.
-            .tint(Color.primaryDS)
-        }
-    }
-
-    /// One share in the inspector. By me: who it reaches with its label, the people, the copy
-    /// buttons (or Set a New Date once expired), the facts, then Edit and Delete. With me: who shared
-    /// it, the facts, and that only they can change it.
-    private struct MacSharedShareCard: View {
-        let store: StoreOf<SharedFeature>
-        let isByMe: Bool
-        let share: Share
-        let badge: SharedFeature.ShareBadge?
-        let onToast: (DSToastMessage) -> Void
-
-        @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
-        @State private var directLinkMode: DirectLinkMode = .auto
-
-        private var isDeleting: Bool {
-            store.deletingIDs.contains(share.id)
+            .id(share?.id ?? item.id)
         }
 
-        var body: some View {
-            let facts = SharedShareFacts(
-                share: share,
-                notice: store.state.expiryNotice(for: share),
-                dateFormat: DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
-            )
-            Section {
-                if isByMe {
-                    audience
-                    if let badge, !badge.isAnyone {
-                        SharedPeopleCircles(badge: badge)
+        private var header: some View {
+            Group {
+                if let previewItem, let kind = MacInspectorPreview.Kind(previewItem) {
+                    VStack(alignment: .leading, spacing: .space16) {
+                        MacInspectorPreview(item: previewItem, kind: kind, serverURL: store.serverURL)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: MacInspectorMetrics.pictureHeight)
+                            .background(Color.macRow)
+                            .clipShape(RoundedRectangle(cornerRadius: .radiusMedium, style: .continuous))
+                        HStack(alignment: .top, spacing: .space16) {
+                            titles
+                            shareButton
+                        }
                     }
-                    links(isExpired: facts.isExpired)
-                    Picker(facts.linkModeTitle, selection: $directLinkMode) {
-                        ForEach(DirectLinkMode.allCases) { Text($0.title).tag($0) }
-                    }
-                } else if let badge {
-                    SharedPeopleCircles(badge: badge)
-                }
-                MacInfoRow(L10n.Shared.metaAccess, share.accessMode.title)
-                MacInfoRow(L10n.Common.password, facts.password)
-                MacInfoRow(
-                    facts.expiresTitle,
-                    facts.expires,
-                    valueColor: facts.notice == nil ? nil : facts.expiresStyle.color
-                )
-                if !isByMe {
-                    MacInfoRow(L10n.Shared.metaLabel, facts.label)
-                }
-                MacInfoRow(isByMe ? L10n.Shared.metaShared : L10n.Shared.metaReceived, facts.created)
-                if isByMe {
-                    MacInfoRow(L10n.Shared.metaLastOpened, facts.lastOpened)
-                    MacInfoRow(L10n.Shared.metaDownloads, facts.downloads)
-                    HStack {
-                        Spacer()
-                        Button(L10n.ellipsized(L10n.Common.edit)) { store.send(.editTapped(share)) }
-                        Button(L10n.Common.delete, role: .destructive) { store.send(.deleteTapped(share)) }
-                            .tint(Color.negativeText)
-                            .accessibilityIdentifier(AccessibilityIdentifiers.Shared.deleteShare)
-                    }
-                }
-            } header: {
-                if !isByMe {
-                    Text(L10n.Shared.metaSharedBy)
-                }
-            } footer: {
-                if isByMe, let note = facts.expiredNote {
-                    Text(note).font(.callout).foregroundStyle(Color.negativeText)
-                } else if !isByMe {
-                    Text(L10n.Shared.controlsShare(store.state.sharedByLabel(for: share)))
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .opacity(isDeleting ? Metrics.deletingOpacity : 1)
-            .disabled(isDeleting)
-        }
-
-        private var audience: some View {
-            HStack(spacing: .space8) {
-                share.audienceIcon
-                    .resizable().scaledToFit()
-                    .foregroundStyle(.secondary)
-                    .frame(width: Metrics.audienceGlyphSize, height: Metrics.audienceGlyphSize)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: .space2) {
-                    Text(share.audienceTitle).fontWeight(.semibold)
-                    if let label = share.trimmedLabel {
-                        Text(label).font(.callout).foregroundStyle(.secondary)
+                } else {
+                    HStack(alignment: .center, spacing: .space16) {
+                        MacItemTile(name: item.name, isDirectory: item.shares[0].isDirectory, size: Metrics.tileSize)
+                            .opacity(item.isExpired ? Metrics.expiredOpacity : 1)
+                        titles
+                        shareButton
                     }
                 }
             }
-            .accessibilityElement(children: .combine)
+            .task(id: share?.id) {
+                if isByMe, let share {
+                    store.send(.shareFileNeeded(share))
+                }
+            }
+        }
+
+        private var titles: some View {
+            VStack(alignment: .leading, spacing: .space4) {
+                MacShareTitle(store: store, name: item.name, share: share, isEditable: isByMe && !isExpiredShare)
+                Text(subtitle)
+                    .type(.body3(.regular), style: .secondary)
+                    .lineLimit(2)
+                    .truncationMode(.middle)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
 
         @ViewBuilder
-        private func links(isExpired: Bool) -> some View {
-            if isExpired {
-                Button(L10n.Shared.setNewDate) { store.send(.editTapped(share)) }
-                    .frame(maxWidth: .infinity)
-            } else {
-                HStack(spacing: .space8) {
-                    Button {
-                        onToast(.success(share.copyShareLink(serverURL: store.serverURL)))
-                    } label: {
-                        Text(L10n.Shared.copyShareLink).frame(maxWidth: .infinity)
-                    }
-                    Button {
-                        onToast(.success(share.copyDirectLink(serverURL: store.serverURL, mode: directLinkMode)))
-                    } label: {
-                        Text(share.isDirectory ? L10n.Shared.copyFolderLink : L10n.Shared.copyFileLink)
-                            .frame(maxWidth: .infinity)
+        private var shareButton: some View {
+            if isByMe, let share, let url = URL(string: share.shareLink(serverURL: store.serverURL)) {
+                ShareLink(item: url) {
+                    IconKit.share
+                        .foregroundStyle(Color.primaryDS)
+                        .frame(width: Metrics.shareButtonSize, height: Metrics.shareButtonSize)
+                        .background(Circle().fill(Color.macRow))
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabelWithTooltip(L10n.Common.share)
+            }
+        }
+
+        private var shareList: some View {
+            VStack(alignment: .leading, spacing: .space12) {
+                MacInspectorSectionHeader(title: L10n.Shared.links, count: item.shares.count)
+                MacInspectorGroup {
+                    ForEach(item.shares) { share in
+                        Button { onSelectShare(share.id) } label: {
+                            HStack(spacing: .space12) {
+                                share.audienceIcon
+                                    .foregroundStyle(Color.macChromeSecondary)
+                                    .frame(width: Metrics.audienceIconWidth)
+                                    .accessibilityHidden(true)
+                                VStack(alignment: .leading, spacing: .space2) {
+                                    Text(share.audienceTitle)
+                                        .type(.body3(.semibold))
+                                        .lineLimit(1)
+                                    if let label = share.trimmedLabel {
+                                        Text(label)
+                                            .type(.caption(.regular), style: .secondary)
+                                            .lineLimit(1)
+                                    }
+                                }
+                                Spacer(minLength: .space8)
+                                IconKit.chevronRight
+                                    .foregroundStyle(Color.macChromeSecondary)
+                                    .accessibilityHidden(true)
+                            }
+                            .frame(minHeight: MacInspectorMetrics.rowHeight)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
@@ -196,11 +184,20 @@
     private func inspectorPreview(
         _ itemID: SharedFeature.Item.ID,
         segment: SharedFeature.Segment = .byMe,
+        shareID: Share.ID? = nil,
         mutate: (inout SharedFeature.State) -> Void = { _ in }
     ) -> some View {
         macSharedPreview(segment, mutate: mutate) { store in
             if let item = store.state.item(for: SharedFeature.Detail(segment: segment, id: itemID)) {
-                MacSharedInspector(store: store, segment: segment, item: item, onToast: { _ in })
+                MacSharedInspector(
+                    store: store,
+                    segment: segment,
+                    item: item,
+                    selectedShareID: shareID,
+                    onToast: { _ in }
+                )
+                .frame(width: MacInspectorMetrics.width)
+                .background(Color.macCard)
             }
         }
         .frame(height: PreviewCanvas.window.size.height)
@@ -208,6 +205,10 @@
 
     #Preview("Inspector: two shares") {
         inspectorPreview("personal:Work/Team Roadmap")
+    }
+
+    #Preview("Inspector: one of two shares") {
+        inspectorPreview("personal:Work/Team Roadmap", shareID: "s5")
     }
 
     #Preview("Inspector: expiring soon, dark") {

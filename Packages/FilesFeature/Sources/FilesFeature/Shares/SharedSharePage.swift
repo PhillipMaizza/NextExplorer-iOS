@@ -7,7 +7,6 @@ import SwiftUI
 
 private enum Constants {
     static let actionHeight: CGFloat = .size48
-    static let deletingOpacity: Double = 0.4
 }
 
 /// One share in the item sheet: the item, the copy split button, who it reaches, then its facts
@@ -137,7 +136,7 @@ struct SharedSharePage: View {
             }
         }
         .sharedSheetList()
-        .opacity(isDeleting ? Constants.deletingOpacity : 1)
+        .opacity(isDeleting ? SharedRowMetrics.deletingOpacity : 1)
         .disabled(isDeleting)
         .navigationTitle(isPushed ? item.name : "")
         .navigationBarTitleDisplayMode(.inline)

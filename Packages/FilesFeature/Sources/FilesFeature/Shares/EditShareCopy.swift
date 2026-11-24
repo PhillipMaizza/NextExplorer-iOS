@@ -64,8 +64,8 @@ extension ShareAccessMode {
 
     var icon: Image {
         switch self {
-        case .readonly: IconKit.eye
-        case .readwrite: IconKit.pencil
+        case .readonly: IconKit.eyeCircle
+        case .readwrite: IconKit.pencilCircle
         }
     }
 }

@@ -9,10 +9,14 @@ struct ShareLinkDisplayTests {
         static let token = "AbC123xyz0"
     }
 
-    private func share() -> Share {
+    private func share(
+        isDirectory: Bool = false,
+        sharingType: ShareTarget = .anyone,
+        hasPassword: Bool = false
+    ) -> Share {
         Share(
-            id: "s1", shareToken: Constants.token, ownerId: "u1", isDirectory: false, accessMode: .readonly,
-            sharingType: .anyone, hasPassword: false, createdAt: MockDate.date, updatedAt: MockDate.date
+            id: "s1", shareToken: Constants.token, ownerId: "u1", isDirectory: isDirectory, accessMode: .readonly,
+            sharingType: sharingType, hasPassword: hasPassword, createdAt: MockDate.date, updatedAt: MockDate.date
         )
     }
 
@@ -59,5 +63,18 @@ struct ShareLinkDisplayTests {
             share().directLink(serverURL: TestHost.serverURL, mode: testCase.mode)
                 == "\(TestHost.serverURLString)/api/share/\(Constants.token)/file\(testCase.expectedSuffix)"
         )
+    }
+
+    @Test
+    func aPublicFileOffersEveryDirectLinkAndAFolderOnlyItsZip() {
+        #expect(share().directLinkChoices == [.openInBrowser, .download, .raw])
+        #expect(share().directLinkChoices.map(\.mode) == [.auto, .download, .raw])
+        #expect(share(isDirectory: true).directLinkChoices == [.zip])
+    }
+
+    @Test
+    func aPasswordOrSpecificPeopleKeepTheDirectLink() {
+        #expect(share(hasPassword: true).directLinkChoices == [.openInBrowser, .download, .raw])
+        #expect(share(sharingType: .users).directLinkChoices == [.openInBrowser, .download, .raw])
     }
 }

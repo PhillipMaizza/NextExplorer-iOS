@@ -14,6 +14,9 @@
     /// label beside. Fades once expired.
     struct MacSharedNameCell: View {
         let row: MacSharedRow
+        var serverURL: URL?
+        var sizedFile: FileItem?
+        var onNeedsSize: () -> Void = {}
         let isExpired: Bool
 
         var body: some View {
@@ -46,8 +49,19 @@
             .opacity(isExpired ? Metrics.expiredOpacity : 1)
         }
 
+        @ViewBuilder
         private var icon: some View {
-            MacItemTile(name: row.item.name, isDirectory: row.item.shares[0].isDirectory)
+            if let serverURL {
+                MacShareFileTile(
+                    share: row.item.shares[0],
+                    name: row.item.name,
+                    serverURL: serverURL,
+                    sizedItem: sizedFile,
+                    onNeedsSize: onNeedsSize
+                )
+            } else {
+                MacItemTile(name: row.item.name, isDirectory: row.item.shares[0].isDirectory)
+            }
         }
     }
 
@@ -85,7 +99,7 @@
 
         var body: some View {
             HStack(spacing: .space8) {
-                AvatarView(displayName: name, size: Metrics.sharerAvatarSize, tint: Color.categorical(for: name))
+                AvatarView.person(name, size: Metrics.sharerAvatarSize)
                     .accessibilityHidden(true)
                 Text(name).lineLimit(1)
             }

@@ -168,4 +168,24 @@ struct EditShareFeatureTests {
             $0.errorMessage = FilesClientError.server(statusCode: 403).userMessage
         }
     }
+
+    @Test
+    func anExpiryShortcutCountsItsDaysFromWhenThePageOpened() async {
+        let store = TestStore(initialState: EditShareFeature.State(
+            serverURL: serverURL,
+            share: share(),
+            now: fixedNow
+        )) {
+            EditShareFeature()
+        } withDependencies: {
+            $0.date = .constant(fixedNow.addingTimeInterval(30))
+            $0.calendar = Calendar(identifier: .gregorian)
+        }
+
+        await store.send(.expiryDaysTapped(7)) {
+            $0.expiryPreset = .custom
+            $0.expiresAt = fixedNow.addingTimeInterval(7 * 24 * 60 * 60)
+        }
+        #expect(store.state.daysLeft == 7)
+    }
 }
