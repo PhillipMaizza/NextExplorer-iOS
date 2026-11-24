@@ -76,7 +76,7 @@
             .clipped()
             .focused($isFocused)
             .focusEffectDisabled()
-            .onAppear { isFocused = true }
+            .focusedWhenOnTop($isFocused)
             .onKeyPress(.return) {
                 guard selection.count == 1, let favorite = favorite(for: selection.first) else { return .ignored }
                 store.send(.rowTapped(favorite))
