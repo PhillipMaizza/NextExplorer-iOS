@@ -1,5 +1,6 @@
 #if os(macOS)
     import AppKit
+    import DesignSystem
     import SwiftUI
 
     private enum Constants {
@@ -26,6 +27,7 @@
             textView.drawsBackground = false
             textView.font = .monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
             textView.textColor = .labelColor
+            textView.insertionPointColor = NSColor(Color.accent)
             textView.isRichText = false
             textView.allowsUndo = true
             textView.isAutomaticQuoteSubstitutionEnabled = false

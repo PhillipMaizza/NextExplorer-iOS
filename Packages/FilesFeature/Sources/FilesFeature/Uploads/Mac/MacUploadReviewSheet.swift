@@ -48,6 +48,7 @@
                 }
                 if store.skippedCount > 0 {
                     hint(L10n.Uploads.stagingSkipped(store.skippedCount))
+                        .macDialogReveal()
                 }
             }
         }
@@ -74,8 +75,10 @@
                                 Spacer(minLength: .zero)
                             }
                             .macListRow(isSelected: false)
+                            .macDialogReveal()
                         }
                     }
+                    .animation(DSMotion.stateFade, value: store.files.count)
                 }
             }
             .frame(height: Metrics.listHeight, alignment: .top)

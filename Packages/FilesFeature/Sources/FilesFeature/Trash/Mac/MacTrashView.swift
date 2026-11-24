@@ -28,6 +28,7 @@
         var body: some View {
             NavigationStack {
                 content
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .safeAreaInset(edge: .top, spacing: .zero) {
                         MacPaneHeader(
                             title: L10n.Trash.title,

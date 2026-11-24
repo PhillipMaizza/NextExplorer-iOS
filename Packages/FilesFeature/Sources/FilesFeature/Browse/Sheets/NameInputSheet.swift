@@ -102,10 +102,12 @@ struct NameInputSheet: View {
                         .focused($isFieldFocused)
                         .autocorrectionDisabled()
                         .onSubmit(submit)
-                    if let validationError {
-                        MacFieldError(message: validationError)
-                    } else if let hint {
-                        Text(hint).type(.body3(.regular), style: .secondary)
+                    if let line = validationError ?? hint {
+                        Text(line)
+                            .type(.body3(.regular), style: validationError == nil ? .secondary : .error)
+                            .contentTransition(.opacity)
+                            .animation(DSMotion.stateFade, value: line)
+                            .macDialogReveal()
                     }
                 }
             }

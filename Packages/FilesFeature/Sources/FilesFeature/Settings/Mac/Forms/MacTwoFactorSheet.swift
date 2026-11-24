@@ -11,7 +11,6 @@
         static let statusIconSize: CGFloat = .size20
         static let qrSize: CGFloat = 108
         static let codeColumns = 2
-        static let copyButtonSize: CGFloat = .size24
     }
 
     struct MacTwoFactorSheet: View {
@@ -22,15 +21,19 @@
         var body: some View {
             VStack(alignment: .leading, spacing: Metrics.spacing) {
                 MacDialogHeading(title: title, message: message)
-                content
+                ZStack(alignment: .topLeading) {
+                    content
+                }
                 if let error = store.errorMessage {
                     MacNote(error, kind: .error)
+                        .macDialogReveal()
                 }
                 buttons
             }
             .padding(.space24)
             .frame(width: MacFormSheetMetrics.width)
             .animation(DSMotion.stateFade, value: store.phase)
+            .animation(DSMotion.stateFade, value: store.passwordPrompt?.action)
             .task { store.send(.task) }
         }
 
@@ -179,17 +182,8 @@
                     )
                     VStack(alignment: .leading, spacing: .space4) {
                         Text(L10n.TwoFactor.keyLabel).type(.body3(.semibold), style: .secondary)
-                        HStack(spacing: .space8) {
-                            Text(setup.secret)
-                                .type(.body2(.regular))
-                                .monospaced()
-                                .textSelection(.enabled)
-                            Button { PlatformPasteboard.copy(setup.secret) } label: {
-                                IconKit.copy
-                                    .frame(width: Metrics.copyButtonSize, height: Metrics.copyButtonSize)
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityLabelWithTooltip(L10n.TwoFactor.copyKeyAccessibilityLabel)
+                        MacCopyField(setup.secret, copyLabel: L10n.TwoFactor.copyKeyAccessibilityLabel) {
+                            PlatformPasteboard.copy(setup.secret)
                         }
                     }
                 }

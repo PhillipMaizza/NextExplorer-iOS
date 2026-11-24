@@ -1,5 +1,6 @@
 #if os(macOS)
     import CoreModels
+    import DesignSystem
     import Localization
     import SwiftUI
 
@@ -17,7 +18,7 @@
 
         /// Right after the context menu closes, focus bounces back to the table once; a loss
         /// this early takes focus back instead of ending the rename.
-        private static let focusSettleInterval: TimeInterval = 0.6
+        static let focusSettleInterval: TimeInterval = 0.6
 
         init(originalName: String, onCommit: @escaping (String) -> Void, onCancel: @escaping () -> Void) {
             self.originalName = originalName
@@ -29,7 +30,9 @@
         var body: some View {
             TextField(L10n.Browse.renameNamePlaceholder, text: $name)
                 .labelsHidden()
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
+                .padding(.horizontal, .space8)
+                .macFieldChrome(isFocused: isFocused, size: .compact)
                 .focused($isFocused)
                 .onAppear {
                     appearedAt = Date()

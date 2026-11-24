@@ -10,7 +10,7 @@
         static let iconSize: CGFloat = 88
         static let contentWidth: CGFloat = 520
         static let windowWidth: CGFloat = 600
-        static let settingsTopInset: CGFloat = .size56
+        static let settingsTopInset: CGFloat = .space48
     }
 
     /// The Mac's About NextExplorer window (app menu). It works signed out too, unlike the
@@ -42,7 +42,7 @@
                 MacAboutContent(onTip: onTip, onLicenses: onLicenses)
                     .padding(.top, Metrics.settingsTopInset)
                     .padding(.bottom, .space32)
-                    .padding(.horizontal, .size40)
+                    .padding(.horizontal, .space40)
                     .frame(maxWidth: .infinity)
             }
         }

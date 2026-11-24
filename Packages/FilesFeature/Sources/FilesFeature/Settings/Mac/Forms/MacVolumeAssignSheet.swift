@@ -101,13 +101,17 @@
                                     .buttonStyle(.macDS(.secondary, size: .small))
                             }
                             .macListRow(isSelected: false)
+                            .macDialogReveal()
                         }
                     }
+                    .animation(DSMotion.stateFade, value: listing?.current)
+                    .animation(DSMotion.quickFade, value: selectedPath)
                 }
                 .frame(height: Metrics.browserHeight)
                 .overlay {
                     if browsePhase == .loading, listing == nil {
                         MacSpinner()
+                            .macDialogReveal()
                     }
                 }
                 hairline

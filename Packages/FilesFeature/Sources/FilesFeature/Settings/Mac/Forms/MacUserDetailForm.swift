@@ -35,11 +35,7 @@
 
         private var header: some View {
             HStack(spacing: .space12) {
-                AvatarView(
-                    displayName: user.displayLabel,
-                    size: Metrics.avatarSize,
-                    tint: Color.categorical(for: user.displayLabel)
-                )
+                AvatarView.person(user.displayLabel, size: Metrics.avatarSize)
                 MacRowTitle(title: user.displayLabel, subtitle: user.email ?? "")
                 Spacer(minLength: .space16)
                 MacSegmentedPicker(

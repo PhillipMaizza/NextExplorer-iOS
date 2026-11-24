@@ -42,22 +42,25 @@
                 }
                 .padding(.bottom, Metrics.rowSpacing)
                 if let file = store.pendingFile {
-                    LabeledContent(L10n.ClientCertificate.fileLabel) {
-                        HStack(spacing: .space8) {
-                            Text(file.name).lineLimit(1).truncationMode(.middle)
-                            Spacer(minLength: .zero)
-                            Button(L10n.ClientCertificate.chooseAnother) { store.send(.chooseFileTapped) }
-                                .buttonStyle(.macDS(.secondary, size: .small))
+                    Group {
+                        LabeledContent(L10n.ClientCertificate.fileLabel) {
+                            HStack(spacing: .space8) {
+                                Text(file.name).lineLimit(1).truncationMode(.middle)
+                                Spacer(minLength: .zero)
+                                Button(L10n.ClientCertificate.chooseAnother) { store.send(.chooseFileTapped) }
+                                    .buttonStyle(.macDS(.secondary, size: .small))
+                            }
+                        }
+                        .padding(.bottom, Metrics.rowSpacing)
+                        LabeledContent(L10n.ClientCertificate.passwordLabel) {
+                            MacSecureField(
+                                L10n.ClientCertificate.passwordLabel,
+                                text: $store.passphrase.sending(\.passphraseChanged),
+                                prompt: Text(L10n.ClientCertificate.passwordPrompt)
+                            )
                         }
                     }
-                    .padding(.bottom, Metrics.rowSpacing)
-                    LabeledContent(L10n.ClientCertificate.passwordLabel) {
-                        MacSecureField(
-                            L10n.ClientCertificate.passwordLabel,
-                            text: $store.passphrase.sending(\.passphraseChanged),
-                            prompt: Text(L10n.ClientCertificate.passwordPrompt)
-                        )
-                    }
+                    .macDialogReveal()
                 }
             }
         }

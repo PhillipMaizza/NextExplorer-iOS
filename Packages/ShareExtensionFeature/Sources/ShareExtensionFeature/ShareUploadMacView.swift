@@ -33,18 +33,23 @@
                 header
                 if store.shouldShowNames {
                     ShareUploadNameFields(store: store)
+                        .macDialogReveal()
                 }
                 if store.credentials != nil, store.canChooseAccount || store.shouldShowDetails {
                     details
+                        .macDialogReveal()
                 }
                 if let notice {
                     ShareUploadMacNotice(notice: notice)
+                        .macDialogReveal()
                 }
                 if store.phase == .preparing || store.phase == .handingOff {
                     preparingProgress
+                        .macDialogReveal()
                 }
                 if !store.failures.isEmpty, store.phase == .partiallyPrepared || store.phase == .failed {
                     failureList
+                        .macDialogReveal()
                 }
                 buttons
             }
@@ -107,6 +112,7 @@
         private var preparingProgress: some View {
             VStack(alignment: .leading, spacing: .space4) {
                 ProgressView(value: store.preparationFraction)
+                    .animation(DSMotion.stateFade, value: store.preparationFraction)
                 Text(L10n.ShareUpload.keepOpen).font(.callout).foregroundStyle(.secondary)
             }
             .accessibilityElement(children: .combine)

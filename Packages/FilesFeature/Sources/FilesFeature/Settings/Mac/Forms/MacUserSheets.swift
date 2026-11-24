@@ -153,7 +153,9 @@
                     MacFieldError(message: confirmError)
                 }
                 if store.hasSucceeded {
-                    Text(L10n.ChangePassword.success).foregroundStyle(Color.positiveText)
+                    Text(L10n.ChangePassword.success)
+                        .foregroundStyle(Color.positiveText)
+                        .macDialogReveal()
                 }
             }
         }
