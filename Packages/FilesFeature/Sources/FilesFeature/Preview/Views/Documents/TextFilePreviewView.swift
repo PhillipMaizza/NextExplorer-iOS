@@ -33,6 +33,7 @@ struct TextFilePreviewView: View {
     @State private var savedToast: DSToastMessage?
     /// Closing with edits not yet saved: asking first, then (Save) closing once the save lands.
     @State private var closeFlow = CloseFlow.idle
+    @State private var isMoreOpen = false
 
     private enum CloseFlow: Equatable {
         case idle
@@ -115,7 +116,9 @@ struct TextFilePreviewView: View {
                 let shouldClose = closeFlow == .savingThenClosing
                 closeFlow = .idle
                 if errorMessage == nil {
-                    savedToast = .success(L10n.TextPreview.saved)
+                    #if os(iOS)
+                        savedToast = .success(L10n.TextPreview.saved)
+                    #endif
                     isEditing = false
                     if shouldClose {
                         onDismiss()
@@ -129,15 +132,12 @@ struct TextFilePreviewView: View {
             // A Mac sheet has no navigation toolbar: Close, Edit and Save sit in the preview bar,
             // and ⌘S saves while editing, like any Mac editor.
             editorBody
-                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .background(Color.macCard.ignoresSafeArea())
                 .macPreviewBar(title: fileName, onClose: requestClose) {
                     EmptyView()
                 } trailing: {
-                    if isHTML {
-                        openInBrowserButton
-                    }
-                    editToggleButton
-                        .keyboardShortcut(isEditing ? KeyboardShortcut("s") : nil)
+                    macEditButton
+                    macMoreButton
                 }
         #else
             NavigationStack {
@@ -160,35 +160,60 @@ struct TextFilePreviewView: View {
         #endif
     }
 
-    /// Leading nav bar item: toggles the Runestone editor between read only and editable; the
-    /// checkmark state saves on tap. Hidden until there's content to edit.
-    @ViewBuilder
-    private var editToggleButton: some View {
-        if isSaving {
-            DSSpinner()
-        } else if content != nil {
-            Button(action: toggleEditing) {
-                (isEditing ? IconKit.checkmark : IconKit.rename)
-                    .foregroundStyle(Color.primaryDS)
+    #if os(macOS)
+        @ViewBuilder
+        private var macEditButton: some View {
+            if isSaving {
+                DSSpinner(size: .small)
+            } else if content != nil {
+                Button(isEditing ? L10n.Common.save : L10n.Common.edit, action: toggleEditing)
+                    .buttonStyle(.macDS(.primary, size: .small))
+                    .keyboardShortcut(isEditing ? KeyboardShortcut("s") : nil)
             }
-            .accessibilityLabelWithTooltip(isEditing ? L10n.Common.save : L10n.Common.edit)
         }
-    }
 
-    /// Trailing nav bar item for `.html` files: hands the file's `/api/raw` URL to Safari.
-    /// The server has no rendered HTML endpoint, so Safari shows the source (and a login page
-    /// first if the server requires auth).
-    @ViewBuilder
-    private var openInBrowserButton: some View {
-        if let url = FilesClient.rawFileURL(serverURL: serverURL, item: item) {
-            Button {
-                openURL(url)
-            } label: {
-                IconKit.web.foregroundStyle(Color.primaryDS)
+        @ViewBuilder
+        private var macMoreButton: some View {
+            if isHTML, let url = FilesClient.rawFileURL(serverURL: serverURL, item: item) {
+                MacIconButton(IconKit.ellipsis, label: L10n.Common.more, isFilled: false) { isMoreOpen.toggle() }
+                    .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
+                        MacActionMenuPanel {
+                            MacActionMenuButton(L10n.Browse.actionOpenInBrowser, icon: IconKit.web) { openURL(url) }
+                        }
+                    }
             }
-            .accessibilityLabelWithTooltip(L10n.Browse.actionOpenInBrowser)
         }
-    }
+    #else
+        /// Leading nav bar item: toggles the Runestone editor between read only and editable; the
+        /// checkmark state saves on tap. Hidden until there's content to edit.
+        @ViewBuilder
+        private var editToggleButton: some View {
+            if isSaving {
+                DSSpinner()
+            } else if content != nil {
+                Button(action: toggleEditing) {
+                    (isEditing ? IconKit.checkmark : IconKit.rename)
+                        .foregroundStyle(Color.primaryDS)
+                }
+                .accessibilityLabelWithTooltip(isEditing ? L10n.Common.save : L10n.Common.edit)
+            }
+        }
+
+        /// Trailing nav bar item for `.html` files: hands the file's `/api/raw` URL to Safari.
+        /// The server has no rendered HTML endpoint, so Safari shows the source (and a login page
+        /// first if the server requires auth).
+        @ViewBuilder
+        private var openInBrowserButton: some View {
+            if let url = FilesClient.rawFileURL(serverURL: serverURL, item: item) {
+                Button {
+                    openURL(url)
+                } label: {
+                    IconKit.web.foregroundStyle(Color.primaryDS)
+                }
+                .accessibilityLabelWithTooltip(L10n.Browse.actionOpenInBrowser)
+            }
+        }
+    #endif
 
     private func toggleEditing() {
         // Saving updates `content` upstream, which refires the markdown render task above.
