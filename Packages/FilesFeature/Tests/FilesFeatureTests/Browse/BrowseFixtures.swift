@@ -103,6 +103,14 @@ enum BrowseFixtures {
         )
     }
 
+    static func onScreenTransferMessage(_ message: String) -> String? {
+        #if os(macOS)
+            nil
+        #elseif os(iOS)
+            message
+        #endif
+    }
+
     /// The transfer answer of a copy into the folder on screen, as the reducer applies it: the copies
     /// join the listing (unless `alreadyListed`, a name the folder held before) and are recorded for
     /// undo, and the listing waits for them to show up.
@@ -119,11 +127,13 @@ enum BrowseFixtures {
             $0.isPerformingFileAction = false
             $0.transferProgress = nil
             $0.pendingTransferRetry = nil
-            $0.transferSuccessMessage = message
+            $0.transferSuccessMessage = onScreenTransferMessage(message)
             for item in listed {
                 $0.items.append(item)
             }
             $0.$undoStack.withLock { $0.record(FileUndoEntry(.created(copies))) }
+            $0.selectedItemIDs = Set(copies.map(\.id))
+            $0.scrollTargetID = copies.first?.id
             $0.awaitedArrivalIDs = Set(copies.map(\.id))
             $0.arrivalChecksLeft = 3
             if clearsClipboard {

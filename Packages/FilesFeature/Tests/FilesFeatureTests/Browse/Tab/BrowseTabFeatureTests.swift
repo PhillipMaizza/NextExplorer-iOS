@@ -128,6 +128,17 @@ struct BrowseTabFeatureTests {
         await store.send(.navigateToDirectory(path: TestFolder.photos, title: TestFolder.photos))
     }
 
+    @Test("Navigating to a folder already open lower in the stack pops back to it, loaded as it was")
+    func navigatingToAnOpenParentPopsToIt() async {
+        var state = makeState(pushing: ["A", "A/B"])
+        state.path[id: state.path.ids[0]]?.phase = .loaded
+        let store = makeStore(state)
+
+        await store.send(.navigateToDirectory(path: "A", title: "A")) {
+            $0.path.removeLast()
+        }
+    }
+
     @Test("A search hit opens on top of the open folders, so Back returns to the previous one")
     func searchHitPushesOntoTheStack() async {
         let store = makeStore(makeState(pushing: ["A"]))
@@ -283,9 +294,12 @@ struct BrowseTabFeatureTests {
             $0.path[id: id]?.transferProgress = nil
             $0.path[id: id]?.pendingTransferRetry = nil
             $0.path[id: id]?.$clipboard.withLock { $0 = nil }
-            $0.path[id: id]?.transferSuccessMessage = L10n.Browse.transferCopied(1)
+            $0.path[id: id]?.transferSuccessMessage = BrowseFixtures
+                .onScreenTransferMessage(L10n.Browse.transferCopied(1))
             $0.path[id: id]?.items = [misc, copy]
             $0.path[id: id]?.$undoStack.withLock { $0 = [FileUndoEntry(.created([copy]))] }
+            $0.path[id: id]?.selectedItemIDs = [copy.id]
+            $0.path[id: id]?.scrollTargetID = copy.id
             $0.path[id: id]?.awaitedArrivalIDs = ["Docs/Misc (2)"]
             $0.path[id: id]?.arrivalChecksLeft = 3
         }

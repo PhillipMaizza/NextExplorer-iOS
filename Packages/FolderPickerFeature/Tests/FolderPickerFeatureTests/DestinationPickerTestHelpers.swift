@@ -21,6 +21,10 @@ extension DestinationPickerTestHelpers {
         FileItem(name: name, path: path, dateModified: MockDate.date, size: 0, kind: TestKind.text)
     }
 
+    nonisolated var shortSearchTerm: String {
+        "p"
+    }
+
     nonisolated func access() -> FileAccess {
         FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
     }

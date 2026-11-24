@@ -8,36 +8,6 @@ import SwiftUI
     import UIKit
 #endif
 
-/// Process wide in memory cache of decoded thumbnails, keyed by the thumbnail's own
-/// (content hashed) URL. Without it, every time a row scrolls back into view `ThumbnailImage`
-/// rereads the bytes off disk and rebuilds the `UIImage`: needless churn on a large grid.
-/// `NSCache` evicts itself under memory pressure.
-enum ThumbnailMemoryCache {
-    nonisolated(unsafe) static let shared: NSCache<NSURL, PlatformImage> = {
-        let cache = NSCache<NSURL, PlatformImage>()
-        cache.countLimit = 400
-        // Count alone doesn't bound bytes: 400 large decoded bitmaps is hundreds of MB. Cap
-        // total decoded cost too so the cache evicts by memory, not just entry count.
-        cache.totalCostLimit = 96 * 1024 * 1024
-        return cache
-    }()
-
-    static func decodedByteCost(of image: PlatformImage) -> Int {
-        guard let cgImage = image.cgImage else { return 0 }
-        return cgImage.bytesPerRow * cgImage.height
-    }
-
-    /// Drops every decoded thumbnail. The disk layer is content hashed and cleared with the
-    /// preview cache at each session boundary; this in memory copy is not user scoped, so it
-    /// is emptied at the same points so no decoded image outlives a sign out (rule #11).
-    static func removeAll() {
-        shared.removeAllObjects()
-        ThumbnailMisses.removeAll()
-        TextSnippetCache.removeAll()
-        Task { @MainActor in DocumentThumbnailStore.shared.removeAll() }
-    }
-}
-
 private enum Constants {
     /// How often a thumbnail the server is still making is asked for, and how long to wait between
     /// asks when the server doesn't say. About 40 seconds in all, enough for a long video.
@@ -91,6 +61,7 @@ struct ThumbnailImage: View {
     @State private var snippet: String?
     @State private var uiImage: PlatformImage?
     @State private var hasResolved = false
+    @State private var loadedKey: String?
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.thumbnailCache) private var thumbnailCache
     @Dependency(\.localThumbnailStore) private var localThumbnailStore
@@ -155,7 +126,13 @@ struct ThumbnailImage: View {
                 ThumbnailLoadingPlaceholder()
             }
         }
-        .task(id: "\(path)\u{0}\(signature)") {
+        .task(id: loadKey) {
+            if loadedKey != loadKey {
+                loadedKey = loadKey
+                uiImage = nil
+                snippet = nil
+                hasResolved = false
+            }
             guard uiImage == nil else { return }
             // Audio and text have no server thumbnail: the app reads the file's own tags or first lines.
             if fileItem.isAudio {
@@ -240,6 +217,10 @@ struct ThumbnailImage: View {
             uiImage = decoded ?? seeded
             hasResolved = true
         }
+    }
+
+    private var loadKey: String {
+        "\(path)\u{0}\(signature)"
     }
 
     /// The server's thumbnail URL for this file. While the server still makes it (a video's first

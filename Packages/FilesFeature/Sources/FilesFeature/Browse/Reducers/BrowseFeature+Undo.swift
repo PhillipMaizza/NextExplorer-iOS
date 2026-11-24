@@ -34,6 +34,8 @@ extension BrowseFeature {
             for pair in landed where state.items[id: pair.item.id] == nil {
                 state.items.append(pair.item)
             }
+            state.selectedItemIDs = Set(landed.map(\.item.id))
+            state.scrollTargetID = landed.first?.item.id
         }
 
         switch outcome.operation {

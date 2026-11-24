@@ -13,6 +13,7 @@
         static let height: CGFloat = 456
         static let minBoxHeight: CGFloat = 160
         static let rowHeight: CGFloat = .size32
+        static let backRowHeight: CGFloat = .size40
         static let rowInset: CGFloat = .space12
         static let tileSize: CGFloat = 22
     }
@@ -61,6 +62,11 @@
             }
             .task { store.send(.onAppear) }
             .onChange(of: selectedFolderID) { _, id in store.send(.rowSelected(id)) }
+            .onChange(of: selectedResultID) { _, id in store.send(.rowSelected(id)) }
+            .onChange(of: store.searchQuery) {
+                selectedFolderID = nil
+                selectedResultID = nil
+            }
             .onChange(of: store.directoryPath) { selectedFolderID = nil }
             .onChange(of: store.selectedFilePath) { _, path in
                 if let path {
@@ -129,22 +135,38 @@
         }
 
         private var backRow: some View {
-            HStack(spacing: .space8) {
-                Button { store.send(.breadcrumbTapped(path: parentPath)) } label: {
-                    IconKit.back.foregroundStyle(Color.macChromeSecondary)
+            HStack(spacing: .zero) {
+                if store.directoryPath.isEmpty {
+                    folderTitle
+                } else {
+                    Button { store.send(.breadcrumbTapped(path: parentPath)) } label: {
+                        HStack(spacing: .space4) {
+                            IconKit.back
+                                .imageScale(.small)
+                                .foregroundStyle(Color.macChromeSecondary)
+                            folderTitle
+                        }
+                        .padding(.leading, .space8)
+                        .padding(.trailing, .space12)
+                        .padding(.vertical, .space4)
+                        .background(Capsule().fill(Color.macSegment))
+                        .contentShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabelWithTooltip(L10n.Common.back)
                 }
-                .buttonStyle(.plain)
-                .disabled(store.directoryPath.isEmpty)
-                .accessibilityLabelWithTooltip(L10n.Common.back)
-                Text(PersonalSpace.folderTitle(store.directoryPath))
-                    .type(.body2(.bold))
-                    .lineLimit(1)
-                    .truncationMode(.middle)
                 Spacer(minLength: .zero)
             }
             .foregroundStyle(Color.macChromeText)
-            .padding(.horizontal, Metrics.rowInset)
-            .frame(height: Metrics.rowHeight)
+            .padding(.horizontal, .space8)
+            .frame(height: Metrics.backRowHeight)
+        }
+
+        private var folderTitle: some View {
+            Text(PersonalSpace.folderTitle(store.directoryPath))
+                .type(.body2(.bold))
+                .lineLimit(1)
+                .truncationMode(.middle)
         }
 
         private var parentPath: String {
@@ -198,7 +220,8 @@
                     name: result.name,
                     detail: result.path.isEmpty ? nil : PersonalSpace.trail(result.path),
                     isDirectory: result.isDirectory,
-                    showsChevron: false
+                    showsChevron: false,
+                    isSelected: result.id == selectedResultID
                 )
             }
         }
@@ -214,6 +237,7 @@
                     detail: nil,
                     isDirectory: folder.isDirectory,
                     showsChevron: folder.isDirectory,
+                    isSelected: folder.id == selectedFolderID,
                     glyph: folder.id == PersonalSpace.rootPath ? IconKit.person : IconKit.folderFill
                 )
             }
@@ -259,12 +283,14 @@
         let detail: String?
         let isDirectory: Bool
         let showsChevron: Bool
+        var isSelected = false
         var glyph = IconKit.folderFill
 
         var body: some View {
             HStack(spacing: .space8) {
                 if isDirectory {
                     MacFolderTile(size: Metrics.tileSize, glyph: glyph)
+                        .environment(\.backgroundProminence, isSelected ? .increased : .standard)
                 } else {
                     IconKit.document
                         .foregroundStyle(Color.macChromeSecondary)

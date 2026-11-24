@@ -477,8 +477,8 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
             }
         }
 
-        await store.send(.searchQueryChanged(Constants.shortTerm)) {
-            $0.searchQuery = Constants.shortTerm
+        await store.send(.searchQueryChanged(shortSearchTerm)) {
+            $0.searchQuery = shortSearchTerm
         }
         await clock.advance(by: FilesClient.searchDebounce)
 
@@ -525,7 +525,6 @@ extension DestinationPickerFeatureTests {
 }
 
 private enum Constants {
-    static let shortTerm = "p"
     static let searchTerm = "sum"
     static let longerSearchTerm = "summ"
     static let searchTermWithSpace = "sum "

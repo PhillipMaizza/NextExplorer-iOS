@@ -22,6 +22,7 @@
                 if isRenaming {
                     MacInlineRenameField(
                         originalName: item.name,
+                        isDirectory: item.isDirectory,
                         onCommit: onRenameCommit,
                         onCancel: onRenameCancel
                     )

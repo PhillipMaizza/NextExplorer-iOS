@@ -31,6 +31,8 @@ struct FileTypeIcon: View {
     let kind: String
     @Environment(\.colorScheme) private var colorScheme
 
+    static let cornerFraction = Constants.chipCornerFraction
+
     var body: some View {
         GeometryReader { proxy in
             let side = min(proxy.size.width, proxy.size.height)

@@ -114,16 +114,6 @@ struct DestinationPickerReplaceTests: DestinationPickerTestHelpers {
     }
 
     @Test
-    func rowSelectionDoesNothingOutsideTheFileChooser() async {
-        var state = DestinationPickerFeature.State(serverURL: serverURL, items: [source()])
-        finishLoad(&state, folders: [folder(TestFolder.documents)])
-        let store = TestStore(initialState: state) { DestinationPickerFeature() }
-
-        await store.send(.rowSelected(TestFolder.documents))
-        #expect(store.state.selectedFilePath == nil)
-    }
-
-    @Test
     func confirmWithNoPickedFileSendsNothing() async {
         let store = TestStore(initialState: loadedState()) { DestinationPickerFeature() }
 

@@ -138,6 +138,8 @@ struct BrowseFileOperationsTests {
             $0.isPerformingFileAction = false
             $0.isNewFolderSheetPresented = false
             $0.items = [existing, created]
+            $0.selectedItemIDs = [created.id]
+            $0.scrollTargetID = created.id
             $0.$undoStack.withLock { $0.record(FileUndoEntry(.madeNew(created))) }
             $0.createdFolderIDs = [created.id]
         }
@@ -178,6 +180,8 @@ struct BrowseFileOperationsTests {
         // revisit shows the folder, not the state before the create.
         await store.send(.newFolderResponse(.success(newFolder))) {
             $0.items = [existing, newFolder]
+            $0.selectedItemIDs = [newFolder.id]
+            $0.scrollTargetID = newFolder.id
             $0.$undoStack.withLock { $0.record(FileUndoEntry(.madeNew(newFolder))) }
             $0.createdFolderIDs = [newFolder.id]
         }
@@ -275,6 +279,8 @@ struct BrowseFileOperationsTests {
             $0.isPerformingFileAction = false
             $0.isNewFileSheetPresented = false
             $0.items = [created]
+            $0.selectedItemIDs = [created.id]
+            $0.scrollTargetID = created.id
             $0.$undoStack.withLock { $0.record(FileUndoEntry(.madeNew(created))) }
             $0.newlyCreatedFileID = created.id
         }
