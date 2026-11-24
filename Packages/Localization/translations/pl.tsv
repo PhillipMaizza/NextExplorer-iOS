@@ -149,6 +149,12 @@ favorites.editIconOutline	Kontur
 favorites.editIconSolid	Wypełniona
 favorites.editColorLabel	Kolor
 favorites.editColorDefault	Domyślny
+favorites.editColorRed	Czerwony
+favorites.editColorOrange	Pomarańczowy
+favorites.editColorYellow	Żółty
+favorites.editColorGreen	Zielony
+favorites.editColorBlue	Niebieski
+favorites.editColorPurple	Fioletowy
 favorites.editSave	Zapisz
 favorites.reorderFailed	Nie można zapisać nowej kolejności.
 favorites.removeConfirm#one	Usunąć %lld ulubiony?
@@ -273,6 +279,27 @@ shared.badgeExpired	wygasłe
 shared.emptyByMe	Udostępnij plik lub folder, aby zobaczyć jego link tutaj.
 shared.emptyWithMe	Linki udostępnione Ci przez innych pojawią się tutaj.
 shared.noSearchMatches	Żadne udostępnienie nie pasuje do „%@”.
+shared.noSearchMatchesFiltered	Nic tutaj nie pasuje do „%@”. Wybierz Wszystko, aby przeszukać wszystkie linki.
+shared.searchPrompt	Szukaj udostępnień
+shared.deleteLink	Usuń link
+shared.links	Linki
+shared.quotedLabel	„%@”
+shared.limit	Ogranicz
+shared.link	Link
+shared.direct	Bezpośredni
+shared.directDownloadLink	Bezpośredni link do pobrania
+shared.directHint	Pomija stronę udostępniania. Do osadzania pliku lub w skryptach.
+shared.directOpen	Otwórz w przeglądarce
+shared.directOpenDetail	Wyświetla, jeśli przeglądarka potrafi, inaczej pobiera
+shared.directDownloadDetail	Zawsze zapisuje plik
+shared.directRawDetail	Surowe bajty, do skryptów i osadzania
+shared.directZip	Pobieranie ZIP
+shared.directZipDetail	Cały folder jako jeden plik ZIP
+shared.linkExpires	Wygaśnięcie linku
+shared.tomorrow	Jutro
+shared.inSevenDays	Za 7 dni
+shared.inThirtyDays	Za 30 dni
+shared.endsOn	Kończy się %@
 shared.deleteTitle	Usunąć link do udostępniania?
 shared.deleteMessage	Link natychmiast przestaje działać. Sam plik ani folder nie zostaje naruszony.
 shared.sharedByUnknown	Ktoś
@@ -281,8 +308,6 @@ shared.metaSharedBy	Udostępnione przez
 shared.metaSharedWith	Udostępnione dla
 shared.anyoneWithLink	Każdy z linkiem
 shared.actionShareLink	Udostępnij link
-shared.actionFolderLink	Link do folderu
-shared.actionFileLink	Link do pliku
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Skopiowano link do udostępniania
 shared.copiedFolderZip	Skopiowano link ZIP folderu
@@ -292,6 +317,7 @@ createShare.titleCreated	Utworzono udostępnienie
 createShare.sectionLabel	Etykieta
 createShare.sectionAccessMode	Tryb dostępu
 createShare.sectionWhoCanAccess	Kto ma dostęp
+createShare.addPeople	Dodaj osoby
 createShare.sectionShareLink	Link do udostępniania
 createShare.togglePasswordProtect	Chroń hasłem
 createShare.toggleSetExpiration	Ustaw datę wygaśnięcia
@@ -811,8 +837,6 @@ menu.copyPath	Kopiuj ścieżkę
 menu.recentFolders	Ostatnie foldery
 menu.clearRecent	Wyczyść menu
 common.loading	Wczytywanie…
-browse.quickLookUnavailable	Szybki podgląd nie jest dostępny dla tego typu pliku.
-browse.quickLookTooLarge	Ten plik jest za duży na Szybki podgląd.
 menu.zoomIn	Powiększ
 menu.zoomOut	Pomniejsz
 menu.zoomToFit	Dopasuj do okna

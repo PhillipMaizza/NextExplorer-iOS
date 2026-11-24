@@ -154,6 +154,12 @@ favorites.editIconOutline	Obrys
 favorites.editIconSolid	Plná
 favorites.editColorLabel	Barva
 favorites.editColorDefault	Výchozí
+favorites.editColorRed	Červená
+favorites.editColorOrange	Oranžová
+favorites.editColorYellow	Žlutá
+favorites.editColorGreen	Zelená
+favorites.editColorBlue	Modrá
+favorites.editColorPurple	Fialová
 favorites.editSave	Uložit
 favorites.reorderFailed	Nové pořadí se nepodařilo uložit.
 favorites.removeConfirm#one	Odebrat oblíbené (%lld)?
@@ -278,6 +284,27 @@ shared.badgeExpired	platnost vypršela
 shared.emptyByMe	Nasdílejte soubor nebo složku a uvidíte zde jeho odkaz.
 shared.emptyWithMe	Odkazy, které s vámi sdílejí ostatní, se zobrazí zde.
 shared.noSearchMatches	Žádné sdílení neodpovídá „%@“.
+shared.noSearchMatchesFiltered	Nic zde neodpovídá „%@“. Vyberte Vše a hledejte ve všech odkazech.
+shared.searchPrompt	Hledat sdílení
+shared.deleteLink	Smazat odkaz
+shared.links	Odkazy
+shared.quotedLabel	„%@“
+shared.limit	Omezit
+shared.link	Odkaz
+shared.direct	Přímý
+shared.directDownloadLink	Přímý odkaz ke stažení
+shared.directHint	Přeskočí stránku sdílení. Hodí se pro vložení souboru nebo skripty.
+shared.directOpen	Otevřít v prohlížeči
+shared.directOpenDetail	Zobrazí ho, pokud to prohlížeč umí, jinak ho stáhne
+shared.directDownloadDetail	Soubor vždy uloží
+shared.directRawDetail	Čistá data pro skripty a vkládání
+shared.directZip	Stáhnout ZIP
+shared.directZipDetail	Celá složka jako jeden soubor ZIP
+shared.linkExpires	Platnost odkazu
+shared.tomorrow	Zítra
+shared.inSevenDays	Za 7 dní
+shared.inThirtyDays	Za 30 dní
+shared.endsOn	Končí %@
 shared.deleteTitle	Smazat odkaz ke sdílení?
 shared.deleteMessage	Odkaz okamžitě přestane fungovat. Samotného souboru ani složky se to netýká.
 shared.sharedByUnknown	Někdo
@@ -286,8 +313,6 @@ shared.metaSharedBy	Sdílí
 shared.metaSharedWith	Sdíleno s
 shared.anyoneWithLink	Kdokoli s odkazem
 shared.actionShareLink	Odkaz ke sdílení
-shared.actionFolderLink	Odkaz na složku
-shared.actionFileLink	Odkaz na soubor
 shared.copiedShareLink	Odkaz ke sdílení zkopírován
 shared.copiedFolderZip	Odkaz na ZIP složky zkopírován
 shared.copiedDirectFile	Přímý odkaz na soubor zkopírován
@@ -296,6 +321,7 @@ createShare.titleCreated	Sdílení vytvořeno
 createShare.sectionLabel	Popisek
 createShare.sectionAccessMode	Režim přístupu
 createShare.sectionWhoCanAccess	Kdo má přístup
+createShare.addPeople	Přidat lidi
 createShare.sectionShareLink	Odkaz ke sdílení
 createShare.togglePasswordProtect	Chránit heslem
 createShare.toggleSetExpiration	Nastavit datum vypršení
@@ -1049,8 +1075,6 @@ menu.copyPath	Kopírovat cestu
 menu.recentFolders	Nedávné složky
 menu.clearRecent	Vymazat nabídku
 common.loading	Načítání…
-browse.quickLookUnavailable	Rychlý náhled není pro tento typ souboru k dispozici.
-browse.quickLookTooLarge	Tento soubor je pro Rychlý náhled příliš velký.
 menu.zoomIn	Přiblížit
 menu.zoomOut	Oddálit
 menu.zoomToFit	Přizpůsobit velikosti

@@ -142,6 +142,12 @@ favorites.editIconOutline	เส้นขอบ
 favorites.editIconSolid	ทึบ
 favorites.editColorLabel	สี
 favorites.editColorDefault	ค่าเริ่มต้น
+favorites.editColorRed	แดง
+favorites.editColorOrange	ส้ม
+favorites.editColorYellow	เหลือง
+favorites.editColorGreen	เขียว
+favorites.editColorBlue	น้ำเงิน
+favorites.editColorPurple	ม่วง
 favorites.editSave	บันทึก
 favorites.reorderFailed	ไม่สามารถบันทึกลำดับใหม่ได้
 favorites.removeConfirm#other	นำรายการโปรดออก %lld รายการหรือไม่
@@ -245,6 +251,27 @@ shared.badgeExpired	หมดอายุแล้ว
 shared.emptyByMe	แชร์ไฟล์หรือโฟลเดอร์เพื่อดูลิงก์ที่นี่
 shared.emptyWithMe	ลิงก์ที่ผู้อื่นแชร์ให้คุณจะแสดงที่นี่
 shared.noSearchMatches	ไม่มีการแชร์ที่ตรงกับ “%@”
+shared.noSearchMatchesFiltered	ไม่มีรายการที่ตรงกับ “%@” ที่นี่ เลือกทั้งหมดเพื่อค้นหาในทุกลิงก์
+shared.searchPrompt	ค้นหารายการที่แชร์
+shared.deleteLink	ลบลิงก์
+shared.links	ลิงก์
+shared.quotedLabel	“%@”
+shared.limit	จำกัด
+shared.link	ลิงก์
+shared.direct	โดยตรง
+shared.directDownloadLink	ลิงก์ดาวน์โหลดโดยตรง
+shared.directHint	ข้ามหน้าการแชร์ ใช้สำหรับฝังไฟล์หรือใช้ในสคริปต์
+shared.directOpen	เปิดในเบราว์เซอร์
+shared.directOpenDetail	แสดงถ้าเบราว์เซอร์ทำได้ ไม่เช่นนั้นจะดาวน์โหลด
+shared.directDownloadDetail	บันทึกไฟล์เสมอ
+shared.directRawDetail	ไบต์ดิบ สำหรับสคริปต์และการฝัง
+shared.directZip	ดาวน์โหลด ZIP
+shared.directZipDetail	ทั้งโฟลเดอร์เป็นไฟล์ ZIP เดียว
+shared.linkExpires	ลิงก์หมดอายุ
+shared.tomorrow	พรุ่งนี้
+shared.inSevenDays	ใน 7 วัน
+shared.inThirtyDays	ใน 30 วัน
+shared.endsOn	สิ้นสุด %@
 shared.deleteTitle	ลบลิงก์แชร์หรือไม่
 shared.deleteMessage	ลิงก์จะหยุดทำงานทันที ตัวไฟล์หรือโฟลเดอร์จะไม่ได้รับผลกระทบ
 shared.sharedByUnknown	บางคน
@@ -253,8 +280,6 @@ shared.metaSharedBy	แชร์โดย
 shared.metaSharedWith	แชร์กับ
 shared.anyoneWithLink	ทุกคนที่มีลิงก์
 shared.actionShareLink	ลิงก์แชร์
-shared.actionFolderLink	ลิงก์โฟลเดอร์
-shared.actionFileLink	ลิงก์ไฟล์
 shared.copiedShareLink	คัดลอกลิงก์แชร์แล้ว
 shared.copiedFolderZip	คัดลอกลิงก์ ZIP ของโฟลเดอร์แล้ว
 shared.copiedDirectFile	คัดลอกลิงก์โดยตรงของไฟล์แล้ว
@@ -263,6 +288,7 @@ createShare.titleCreated	สร้างการแชร์แล้ว
 createShare.sectionLabel	ป้ายกำกับ
 createShare.sectionAccessMode	โหมดการเข้าถึง
 createShare.sectionWhoCanAccess	ใครเข้าถึงได้
+createShare.addPeople	เพิ่มผู้ใช้
 createShare.sectionShareLink	ลิงก์แชร์
 createShare.togglePasswordProtect	ป้องกันด้วยรหัสผ่าน
 createShare.toggleSetExpiration	ตั้งวันหมดอายุ
@@ -1014,8 +1040,6 @@ menu.copyPath	คัดลอกพาธ
 menu.recentFolders	โฟลเดอร์ล่าสุด
 menu.clearRecent	ล้างเมนู
 common.loading	กำลังโหลด…
-browse.quickLookUnavailable	ไม่มี Quick Look สำหรับไฟล์ชนิดนี้
-browse.quickLookTooLarge	ไฟล์นี้ใหญ่เกินไปสำหรับ Quick Look
 menu.zoomIn	ซูมเข้า
 menu.zoomOut	ซูมออก
 menu.zoomToFit	ซูมให้พอดี

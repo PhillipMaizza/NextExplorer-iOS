@@ -146,6 +146,12 @@ favorites.editIconOutline	Omriss
 favorites.editIconSolid	Fylt
 favorites.editColorLabel	Farge
 favorites.editColorDefault	Standard
+favorites.editColorRed	Rød
+favorites.editColorOrange	Oransje
+favorites.editColorYellow	Gul
+favorites.editColorGreen	Grønn
+favorites.editColorBlue	Blå
+favorites.editColorPurple	Lilla
 favorites.editSave	Lagre
 favorites.reorderFailed	Kunne ikke lagre den nye rekkefølgen.
 favorites.removeConfirm#one	Fjerne %lld favoritt?
@@ -256,6 +262,27 @@ shared.badgeExpired	utløpt
 shared.emptyByMe	Del en fil eller mappe for å se lenken her.
 shared.emptyWithMe	Lenker andre deler med deg, vises her.
 shared.noSearchMatches	Ingen delinger samsvarer med «%@».
+shared.noSearchMatchesFiltered	Ingenting her samsvarer med «%@». Velg Alle for å søke i alle lenker.
+shared.searchPrompt	Søk i delinger
+shared.deleteLink	Slett lenke
+shared.links	Lenker
+shared.quotedLabel	«%@»
+shared.limit	Begrens
+shared.link	Lenke
+shared.direct	Direkte
+shared.directDownloadLink	Direkte nedlastingslenke
+shared.directHint	Hopper over delingssiden. Bruk den til å bygge inn filen eller i skript.
+shared.directOpen	Åpne i nettleser
+shared.directOpenDetail	Viser den hvis nettleseren kan, ellers lastes den ned
+shared.directDownloadDetail	Lagrer alltid filen
+shared.directRawDetail	Rå byte, for skript og innebygging
+shared.directZip	ZIP-nedlasting
+shared.directZipDetail	Hele mappen som én ZIP-fil
+shared.linkExpires	Lenken utløper
+shared.tomorrow	I morgen
+shared.inSevenDays	Om 7 dager
+shared.inThirtyDays	Om 30 dager
+shared.endsOn	Slutter %@
 shared.deleteTitle	Slette delingslenken?
 shared.deleteMessage	Lenken slutter å virke umiddelbart. Selve filen eller mappen berøres ikke.
 shared.sharedByUnknown	Noen
@@ -264,8 +291,6 @@ shared.metaSharedBy	Delt av
 shared.metaSharedWith	Delt med
 shared.anyoneWithLink	Alle med lenken
 shared.actionShareLink	Delingslenke
-shared.actionFolderLink	Mappelenke
-shared.actionFileLink	Fillenke
 shared.copiedShareLink	Delingslenken er kopiert
 shared.copiedFolderZip	ZIP-lenken til mappen er kopiert
 shared.copiedDirectFile	Direkte fillenke er kopiert
@@ -274,6 +299,7 @@ createShare.titleCreated	Deling opprettet
 createShare.sectionLabel	Etikett
 createShare.sectionAccessMode	Tilgangsmodus
 createShare.sectionWhoCanAccess	Hvem har tilgang
+createShare.addPeople	Legg til personer
 createShare.sectionShareLink	Delingslenke
 createShare.togglePasswordProtect	Passordbeskytt
 createShare.toggleSetExpiration	Angi utløpsdato
@@ -1026,8 +1052,6 @@ menu.copyPath	Kopier sti
 menu.recentFolders	Nylige mapper
 menu.clearRecent	Tøm meny
 common.loading	Laster inn…
-browse.quickLookUnavailable	Quick Look er ikke tilgjengelig for denne filtypen.
-browse.quickLookTooLarge	Denne filen er for stor for Quick Look.
 menu.zoomIn	Zoom inn
 menu.zoomOut	Zoom ut
 menu.zoomToFit	Tilpass til vindu

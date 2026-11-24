@@ -145,6 +145,12 @@ favorites.editIconOutline	Contur
 favorites.editIconSolid	Plin
 favorites.editColorLabel	Culoare
 favorites.editColorDefault	Implicit
+favorites.editColorRed	Roșu
+favorites.editColorOrange	Portocaliu
+favorites.editColorYellow	Galben
+favorites.editColorGreen	Verde
+favorites.editColorBlue	Albastru
+favorites.editColorPurple	Mov
 favorites.editSave	Salvează
 favorites.reorderFailed	Nu s-a putut salva noua ordine.
 favorites.removeConfirm#one	Elimini %lld favorit?
@@ -262,6 +268,27 @@ shared.badgeExpired	expirat
 shared.emptyByMe	Partajează un fișier sau dosar pentru a-i vedea linkul aici.
 shared.emptyWithMe	Linkurile pe care alții le partajează cu tine apar aici.
 shared.noSearchMatches	Nicio partajare nu corespunde cu „%@”.
+shared.noSearchMatchesFiltered	Nimic de aici nu corespunde cu „%@”. Alege Toate pentru a căuta în toate linkurile.
+shared.searchPrompt	Caută partajări
+shared.deleteLink	Șterge linkul
+shared.links	Linkuri
+shared.quotedLabel	„%@”
+shared.limit	Limitează
+shared.link	Link
+shared.direct	Direct
+shared.directDownloadLink	Link de descărcare directă
+shared.directHint	Ocolește pagina de partajare. Folosește-l pentru a încorpora fișierul sau în scripturi.
+shared.directOpen	Deschide în browser
+shared.directOpenDetail	Îl afișează dacă browserul poate, altfel îl descarcă
+shared.directDownloadDetail	Salvează mereu fișierul
+shared.directRawDetail	Octeți bruți, pentru scripturi și încorporări
+shared.directZip	Descărcare ZIP
+shared.directZipDetail	Tot dosarul într-un singur fișier ZIP
+shared.linkExpires	Expirarea linkului
+shared.tomorrow	Mâine
+shared.inSevenDays	În 7 zile
+shared.inThirtyDays	În 30 de zile
+shared.endsOn	Se încheie pe %@
 shared.deleteTitle	Ștergi linkul de partajare?
 shared.deleteMessage	Linkul încetează să funcționeze imediat. Fișierul sau dosarul în sine nu este afectat.
 shared.sharedByUnknown	Cineva
@@ -270,8 +297,6 @@ shared.metaSharedBy	Partajat de
 shared.metaSharedWith	Partajat cu
 shared.anyoneWithLink	Oricine are linkul
 shared.actionShareLink	Partajează linkul
-shared.actionFolderLink	Link dosar
-shared.actionFileLink	Link fișier
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Link de partajare copiat
 shared.copiedFolderZip	Link ZIP al dosarului copiat
@@ -281,6 +306,7 @@ createShare.titleCreated	Partajare creată
 createShare.sectionLabel	Etichetă
 createShare.sectionAccessMode	Mod de acces
 createShare.sectionWhoCanAccess	Cine poate accesa
+createShare.addPeople	Adaugă persoane
 createShare.sectionShareLink	Link de partajare
 createShare.togglePasswordProtect	Protejează cu parolă
 createShare.toggleSetExpiration	Setează data de expirare
@@ -799,8 +825,6 @@ menu.copyPath	Copiază calea
 menu.recentFolders	Dosare recente
 menu.clearRecent	Golește meniul
 common.loading	Se încarcă…
-browse.quickLookUnavailable	Previzualizarea rapidă nu este disponibilă pentru acest tip de fișier.
-browse.quickLookTooLarge	Acest fișier este prea mare pentru previzualizarea rapidă.
 menu.zoomIn	Mărește
 menu.zoomOut	Micșorează
 menu.zoomToFit	Potrivește în fereastră

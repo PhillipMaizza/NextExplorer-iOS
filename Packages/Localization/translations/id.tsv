@@ -142,6 +142,12 @@ favorites.editIconOutline	Garis Tepi
 favorites.editIconSolid	Solid
 favorites.editColorLabel	Warna
 favorites.editColorDefault	Default
+favorites.editColorRed	Merah
+favorites.editColorOrange	Oranye
+favorites.editColorYellow	Kuning
+favorites.editColorGreen	Hijau
+favorites.editColorBlue	Biru
+favorites.editColorPurple	Ungu
 favorites.editSave	Simpan
 favorites.reorderFailed	Tidak dapat menyimpan urutan baru.
 favorites.removeConfirm#other	Hapus %lld Favorit?
@@ -245,6 +251,27 @@ shared.badgeExpired	kedaluwarsa
 shared.emptyByMe	Bagikan file atau folder untuk melihat tautannya di sini.
 shared.emptyWithMe	Tautan yang dibagikan orang lain kepada Anda muncul di sini.
 shared.noSearchMatches	Tidak ada berbagi yang cocok dengan “%@”.
+shared.noSearchMatchesFiltered	Tidak ada di sini yang cocok dengan “%@”. Pilih Semua untuk mencari di semua tautan.
+shared.searchPrompt	Cari berbagi
+shared.deleteLink	Hapus tautan
+shared.links	Tautan
+shared.quotedLabel	“%@”
+shared.limit	Batasi
+shared.link	Tautan
+shared.direct	Langsung
+shared.directDownloadLink	Tautan unduhan langsung
+shared.directHint	Melewati halaman berbagi. Gunakan untuk menyematkan file atau dalam skrip.
+shared.directOpen	Buka di browser
+shared.directOpenDetail	Menampilkannya jika browser bisa, jika tidak mengunduh
+shared.directDownloadDetail	Selalu menyimpan file
+shared.directRawDetail	Byte mentah, untuk skrip dan sematan
+shared.directZip	Unduhan ZIP
+shared.directZipDetail	Seluruh folder sebagai satu file ZIP
+shared.linkExpires	Tautan Kedaluwarsa
+shared.tomorrow	Besok
+shared.inSevenDays	Dalam 7 hari
+shared.inThirtyDays	Dalam 30 hari
+shared.endsOn	Berakhir %@
 shared.deleteTitle	Hapus Tautan Berbagi?
 shared.deleteMessage	Tautan langsung berhenti berfungsi. File atau folder itu sendiri tidak terpengaruh.
 shared.sharedByUnknown	Seseorang
@@ -253,8 +280,6 @@ shared.metaSharedBy	Dibagikan oleh
 shared.metaSharedWith	Dibagikan kepada
 shared.anyoneWithLink	Siapa saja dengan tautan
 shared.actionShareLink	Tautan berbagi
-shared.actionFolderLink	Tautan folder
-shared.actionFileLink	Tautan file
 shared.copiedShareLink	Tautan berbagi disalin
 shared.copiedFolderZip	Tautan ZIP folder disalin
 shared.copiedDirectFile	Tautan langsung file disalin
@@ -263,6 +288,7 @@ createShare.titleCreated	Berbagi Dibuat
 createShare.sectionLabel	Label
 createShare.sectionAccessMode	Mode Akses
 createShare.sectionWhoCanAccess	Siapa yang dapat mengakses
+createShare.addPeople	Tambahkan orang
 createShare.sectionShareLink	Tautan Berbagi
 createShare.togglePasswordProtect	Lindungi dengan kata sandi
 createShare.toggleSetExpiration	Atur tanggal kedaluwarsa
@@ -1014,8 +1040,6 @@ menu.copyPath	Salin Jalur
 menu.recentFolders	Folder Terbaru
 menu.clearRecent	Hapus Menu
 common.loading	Memuat…
-browse.quickLookUnavailable	Quick Look tidak tersedia untuk jenis file ini.
-browse.quickLookTooLarge	File ini terlalu besar untuk Quick Look.
 menu.zoomIn	Perbesar
 menu.zoomOut	Perkecil
 menu.zoomToFit	Sesuaikan Ukuran

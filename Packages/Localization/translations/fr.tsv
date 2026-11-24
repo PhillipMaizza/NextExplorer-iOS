@@ -141,6 +141,12 @@ favorites.editIconOutline	Contour
 favorites.editIconSolid	Plein
 favorites.editColorLabel	Couleur
 favorites.editColorDefault	Par défaut
+favorites.editColorRed	Rouge
+favorites.editColorOrange	Orange
+favorites.editColorYellow	Jaune
+favorites.editColorGreen	Vert
+favorites.editColorBlue	Bleu
+favorites.editColorPurple	Violet
 favorites.editSave	Enregistrer
 favorites.reorderFailed	Impossible d'enregistrer le nouvel ordre.
 favorites.removeConfirm#one	Retirer %lld favori ?
@@ -251,6 +257,27 @@ shared.badgeExpired	expiré
 shared.emptyByMe	Partagez un fichier ou un dossier pour voir son lien ici.
 shared.emptyWithMe	Les liens que d'autres partagent avec vous apparaissent ici.
 shared.noSearchMatches	Aucun partage ne correspond à « %@ ».
+shared.noSearchMatchesFiltered	Rien ici ne correspond à « %@ ». Choisissez Tout pour chercher dans tous les liens.
+shared.searchPrompt	Rechercher des partages
+shared.deleteLink	Supprimer le lien
+shared.links	Liens
+shared.quotedLabel	« %@ »
+shared.limit	Limiter
+shared.link	Lien
+shared.direct	Direct
+shared.directDownloadLink	Lien de téléchargement direct
+shared.directHint	Évite la page de partage. Pour intégrer le fichier ou l’utiliser dans un script.
+shared.directOpen	Ouvrir dans le navigateur
+shared.directOpenDetail	L’affiche si le navigateur le peut, sinon le télécharge
+shared.directDownloadDetail	Enregistre toujours le fichier
+shared.directRawDetail	Octets bruts, pour les scripts et les intégrations
+shared.directZip	Téléchargement ZIP
+shared.directZipDetail	Tout le dossier dans un seul fichier ZIP
+shared.linkExpires	Expiration du lien
+shared.tomorrow	Demain
+shared.inSevenDays	Dans 7 jours
+shared.inThirtyDays	Dans 30 jours
+shared.endsOn	Se termine le %@
 shared.deleteTitle	Supprimer le lien de partage ?
 shared.deleteMessage	Le lien cesse de fonctionner immédiatement. Le fichier ou le dossier lui-même n'est pas touché.
 shared.sharedByUnknown	Quelqu'un
@@ -259,8 +286,6 @@ shared.metaSharedBy	Partagé par
 shared.metaSharedWith	Partagé avec
 shared.anyoneWithLink	Toute personne disposant du lien
 shared.actionShareLink	Partager le lien
-shared.actionFolderLink	Lien du dossier
-shared.actionFileLink	Lien du fichier
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Lien de partage copié
 shared.copiedFolderZip	Lien ZIP du dossier copié
@@ -270,6 +295,7 @@ createShare.titleCreated	Partage créé
 createShare.sectionLabel	Libellé
 createShare.sectionAccessMode	Mode d'accès
 createShare.sectionWhoCanAccess	Qui peut accéder
+createShare.addPeople	Ajouter des personnes
 createShare.sectionShareLink	Lien de partage
 createShare.togglePasswordProtect	Protéger par mot de passe
 createShare.toggleSetExpiration	Définir une date d'expiration
@@ -787,8 +813,6 @@ menu.copyPath	Copier le chemin
 menu.recentFolders	Dossiers récents
 menu.clearRecent	Effacer le menu
 common.loading	Chargement…
-browse.quickLookUnavailable	Coup d’œil n’est pas disponible pour ce type de fichier.
-browse.quickLookTooLarge	Ce fichier est trop volumineux pour Coup d’œil.
 menu.zoomIn	Zoom avant
 menu.zoomOut	Zoom arrière
 menu.zoomToFit	Ajuster à la fenêtre

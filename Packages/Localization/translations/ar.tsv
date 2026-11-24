@@ -157,6 +157,12 @@ favorites.editIconOutline	محدد
 favorites.editIconSolid	ممتلئ
 favorites.editColorLabel	اللون
 favorites.editColorDefault	افتراضي
+favorites.editColorRed	أحمر
+favorites.editColorOrange	برتقالي
+favorites.editColorYellow	أصفر
+favorites.editColorGreen	أخضر
+favorites.editColorBlue	أزرق
+favorites.editColorPurple	بنفسجي
 favorites.editSave	حفظ
 favorites.reorderFailed	تعذّر حفظ الترتيب الجديد.
 favorites.removeConfirm#zero	إزالة %lld من المفضلة؟
@@ -229,6 +235,27 @@ shared.badgeExpired	منتهي
 shared.emptyByMe	شارك ملفًا أو مجلدًا لرؤية رابطه هنا.
 shared.emptyWithMe	تظهر هنا الروابط التي يشاركها الآخرون معك.
 shared.noSearchMatches	لا مشاركات تطابق ‏«%@».
+shared.noSearchMatchesFiltered	لا شيء هنا يطابق ‏«%@». اختر «الكل» للبحث في كل الروابط.
+shared.searchPrompt	البحث في المشاركات
+shared.deleteLink	حذف الرابط
+shared.links	الروابط
+shared.quotedLabel	«%@»
+shared.limit	تقييد
+shared.link	رابط
+shared.direct	مباشر
+shared.directDownloadLink	رابط التنزيل المباشر
+shared.directHint	يتخطى صفحة المشاركة. استخدمه لتضمين الملف أو استخدامه في برنامج نصي.
+shared.directOpen	فتح في المتصفح
+shared.directOpenDetail	يعرضه إن استطاع المتصفح، وإلا ينزّله
+shared.directDownloadDetail	يحفظ الملف دائمًا
+shared.directRawDetail	بايتات خام، للبرامج النصية والتضمين
+shared.directZip	تنزيل ZIP
+shared.directZipDetail	المجلد كاملًا في ملف ZIP واحد
+shared.linkExpires	انتهاء الرابط
+shared.tomorrow	غدًا
+shared.inSevenDays	خلال 7 أيام
+shared.inThirtyDays	خلال 30 يومًا
+shared.endsOn	ينتهي في %@
 shared.deleteTitle	حذف رابط المشاركة؟
 shared.deleteMessage	يتوقف الرابط عن العمل فورًا. لا يتأثر الملف أو المجلد نفسه.
 shared.sharedByUnknown	شخص ما
@@ -237,8 +264,6 @@ shared.metaSharedBy	تمت المشاركة بواسطة
 shared.metaSharedWith	تمت المشاركة مع
 shared.anyoneWithLink	أي شخص لديه الرابط
 shared.actionShareLink	مشاركة الرابط
-shared.actionFolderLink	رابط المجلد
-shared.actionFileLink	رابط الملف
 shared.moreRecipients	+%lld
 shared.filterAll	الكل
 shared.filterAnyone	أي شخص
@@ -314,6 +339,7 @@ createShare.titleCreated	تم إنشاء المشاركة
 createShare.sectionLabel	التسمية
 createShare.sectionAccessMode	وضع الوصول
 createShare.sectionWhoCanAccess	من يمكنه الوصول
+createShare.addPeople	إضافة أشخاص
 createShare.sectionShareLink	رابط المشاركة
 createShare.togglePasswordProtect	الحماية بكلمة سر
 createShare.toggleSetExpiration	تعيين تاريخ انتهاء الصلاحية
@@ -835,8 +861,6 @@ menu.copyPath	نسخ المسار
 menu.recentFolders	المجلدات الأخيرة
 menu.clearRecent	مسح القائمة
 common.loading	جارٍ التحميل…
-browse.quickLookUnavailable	المعاينة السريعة غير متاحة لهذا النوع من الملفات.
-browse.quickLookTooLarge	هذا الملف كبير جدًا على المعاينة السريعة.
 menu.zoomIn	تكبير
 menu.zoomOut	تصغير
 menu.zoomToFit	ملاءمة النافذة

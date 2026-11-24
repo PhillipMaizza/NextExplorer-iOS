@@ -141,6 +141,12 @@ favorites.editIconOutline	Kontur
 favorites.editIconSolid	Fylld
 favorites.editColorLabel	Färg
 favorites.editColorDefault	Standard
+favorites.editColorRed	Röd
+favorites.editColorOrange	Orange
+favorites.editColorYellow	Gul
+favorites.editColorGreen	Grön
+favorites.editColorBlue	Blå
+favorites.editColorPurple	Lila
 favorites.editSave	Spara
 favorites.reorderFailed	Det gick inte att spara den nya ordningen.
 favorites.removeConfirm#one	Ta bort %lld favorit?
@@ -251,6 +257,27 @@ shared.badgeExpired	utgången
 shared.emptyByMe	Dela en fil eller mapp för att se dess länk här.
 shared.emptyWithMe	Länkar som andra delar med dig visas här.
 shared.noSearchMatches	Inga delningar matchar ”%@”.
+shared.noSearchMatchesFiltered	Inget här matchar ”%@”. Välj Alla för att söka bland alla länkar.
+shared.searchPrompt	Sök bland delningar
+shared.deleteLink	Radera länk
+shared.links	Länkar
+shared.quotedLabel	”%@”
+shared.limit	Begränsa
+shared.link	Länk
+shared.direct	Direkt
+shared.directDownloadLink	Direkt nedladdningslänk
+shared.directHint	Hoppar över delningssidan. Använd den för att bädda in filen eller i skript.
+shared.directOpen	Öppna i webbläsare
+shared.directOpenDetail	Visar den om webbläsaren kan, annars hämtas den
+shared.directDownloadDetail	Sparar alltid filen
+shared.directRawDetail	Råa byte, för skript och inbäddning
+shared.directZip	ZIP-hämtning
+shared.directZipDetail	Hela mappen som en ZIP-fil
+shared.linkExpires	Länken upphör
+shared.tomorrow	I morgon
+shared.inSevenDays	Om 7 dagar
+shared.inThirtyDays	Om 30 dagar
+shared.endsOn	Upphör %@
 shared.deleteTitle	Radera delningslänk?
 shared.deleteMessage	Länken slutar fungera omedelbart. Själva filen eller mappen påverkas inte.
 shared.sharedByUnknown	Någon
@@ -259,8 +286,6 @@ shared.metaSharedBy	Delad av
 shared.metaSharedWith	Delad med
 shared.anyoneWithLink	Alla med länken
 shared.actionShareLink	Dela länk
-shared.actionFolderLink	Mapplänk
-shared.actionFileLink	Fillänk
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Delningslänk kopierad
 shared.copiedFolderZip	ZIP-länk för mapp kopierad
@@ -270,6 +295,7 @@ createShare.titleCreated	Delning skapad
 createShare.sectionLabel	Etikett
 createShare.sectionAccessMode	Åtkomstläge
 createShare.sectionWhoCanAccess	Vem kan komma åt
+createShare.addPeople	Lägg till personer
 createShare.sectionShareLink	Delningslänk
 createShare.togglePasswordProtect	Lösenordsskydda
 createShare.toggleSetExpiration	Ange utgångsdatum
@@ -787,8 +813,6 @@ menu.copyPath	Kopiera sökväg
 menu.recentFolders	Senaste mappar
 menu.clearRecent	Rensa menyn
 common.loading	Läser in…
-browse.quickLookUnavailable	Snabbtitt är inte tillgängligt för den här filtypen.
-browse.quickLookTooLarge	Filen är för stor för Snabbtitt.
 menu.zoomIn	Zooma in
 menu.zoomOut	Zooma ut
 menu.zoomToFit	Anpassa till fönster

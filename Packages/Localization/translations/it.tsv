@@ -141,6 +141,12 @@ favorites.editIconOutline	Contorno
 favorites.editIconSolid	Pieno
 favorites.editColorLabel	Colore
 favorites.editColorDefault	Predefinito
+favorites.editColorRed	Rosso
+favorites.editColorOrange	Arancione
+favorites.editColorYellow	Giallo
+favorites.editColorGreen	Verde
+favorites.editColorBlue	Blu
+favorites.editColorPurple	Viola
 favorites.editSave	Salva
 favorites.reorderFailed	Impossibile salvare il nuovo ordine.
 favorites.removeConfirm#one	Rimuovere %lld preferito?
@@ -251,6 +257,27 @@ shared.badgeExpired	scaduto
 shared.emptyByMe	Condividi un file o una cartella per vederne il link qui.
 shared.emptyWithMe	I link che altri condividono con te appaiono qui.
 shared.noSearchMatches	Nessun elemento condiviso corrisponde a “%@”.
+shared.noSearchMatchesFiltered	Nessun elemento qui corrisponde a “%@”. Scegli Tutti per cercare in tutti i link.
+shared.searchPrompt	Cerca condivisioni
+shared.deleteLink	Elimina link
+shared.links	Link
+shared.quotedLabel	«%@»
+shared.limit	Limita
+shared.link	Link
+shared.direct	Diretto
+shared.directDownloadLink	Link di download diretto
+shared.directHint	Salta la pagina di condivisione. Per incorporare il file o usarlo negli script.
+shared.directOpen	Apri nel browser
+shared.directOpenDetail	Lo mostra se il browser può, altrimenti lo scarica
+shared.directDownloadDetail	Salva sempre il file
+shared.directRawDetail	Byte grezzi, per script e incorporamenti
+shared.directZip	Download ZIP
+shared.directZipDetail	L’intera cartella in un unico file ZIP
+shared.linkExpires	Scadenza link
+shared.tomorrow	Domani
+shared.inSevenDays	Tra 7 giorni
+shared.inThirtyDays	Tra 30 giorni
+shared.endsOn	Termina il %@
 shared.deleteTitle	Eliminare il link di condivisione?
 shared.deleteMessage	Il link smette di funzionare immediatamente. Il file o la cartella non viene toccato.
 shared.sharedByUnknown	Qualcuno
@@ -259,8 +286,6 @@ shared.metaSharedBy	Condiviso da
 shared.metaSharedWith	Condiviso con
 shared.anyoneWithLink	Chiunque abbia il link
 shared.actionShareLink	Condividi link
-shared.actionFolderLink	Link cartella
-shared.actionFileLink	Link file
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Link di condivisione copiato
 shared.copiedFolderZip	Link ZIP della cartella copiato
@@ -270,6 +295,7 @@ createShare.titleCreated	Condivisione creata
 createShare.sectionLabel	Etichetta
 createShare.sectionAccessMode	Modalità di accesso
 createShare.sectionWhoCanAccess	Chi può accedere
+createShare.addPeople	Aggiungi persone
 createShare.sectionShareLink	Link di condivisione
 createShare.togglePasswordProtect	Proteggi con password
 createShare.toggleSetExpiration	Imposta data di scadenza
@@ -787,8 +813,6 @@ menu.copyPath	Copia percorso
 menu.recentFolders	Cartelle recenti
 menu.clearRecent	Cancella menu
 common.loading	Caricamento…
-browse.quickLookUnavailable	Quick Look non è disponibile per questo tipo di file.
-browse.quickLookTooLarge	Questo file è troppo grande per Quick Look.
 menu.zoomIn	Ingrandisci
 menu.zoomOut	Riduci
 menu.zoomToFit	Adatta alla finestra

@@ -150,6 +150,12 @@ favorites.editIconOutline	מתאר
 favorites.editIconSolid	מלא
 favorites.editColorLabel	צבע
 favorites.editColorDefault	ברירת מחדל
+favorites.editColorRed	אדום
+favorites.editColorOrange	כתום
+favorites.editColorYellow	צהוב
+favorites.editColorGreen	ירוק
+favorites.editColorBlue	כחול
+favorites.editColorPurple	סגול
 favorites.editSave	שמירה
 favorites.reorderFailed	לא ניתן היה לשמור את הסדר החדש.
 favorites.removeConfirm#one	להסיר %lld מועדף?
@@ -267,6 +273,27 @@ shared.badgeExpired	פג תוקף
 shared.emptyByMe	שתפו קובץ או תיקייה כדי לראות כאן את הקישור שלהם.
 shared.emptyWithMe	קישורים שאחרים משתפים איתכם יופיעו כאן.
 shared.noSearchMatches	אין שיתופים התואמים ל-“%@”.
+shared.noSearchMatchesFiltered	שום דבר כאן לא תואם ל-“%@”. בחרו הכול כדי לחפש בכל הקישורים.
+shared.searchPrompt	חיפוש שיתופים
+shared.deleteLink	מחיקת קישור
+shared.links	קישורים
+shared.quotedLabel	”%@“
+shared.limit	הגבלה
+shared.link	קישור
+shared.direct	ישיר
+shared.directDownloadLink	קישור הורדה ישיר
+shared.directHint	מדלג על דף השיתוף. להטמעת הקובץ או לשימוש בסקריפט.
+shared.directOpen	פתיחה בדפדפן
+shared.directOpenDetail	מציג אותו אם הדפדפן יכול, אחרת מוריד
+shared.directDownloadDetail	תמיד שומר את הקובץ
+shared.directRawDetail	בייטים גולמיים, לסקריפטים ולהטמעה
+shared.directZip	הורדת ZIP
+shared.directZipDetail	כל התיקייה כקובץ ZIP אחד
+shared.linkExpires	תפוגת הקישור
+shared.tomorrow	מחר
+shared.inSevenDays	בעוד 7 ימים
+shared.inThirtyDays	בעוד 30 ימים
+shared.endsOn	מסתיים ב־%@
 shared.deleteTitle	למחוק את קישור השיתוף?
 shared.deleteMessage	הקישור מפסיק לעבוד מיד. הקובץ או התיקייה עצמם לא ייפגעו.
 shared.sharedByUnknown	מישהו
@@ -275,8 +302,6 @@ shared.metaSharedBy	שותף על ידי
 shared.metaSharedWith	שותף עם
 shared.anyoneWithLink	כל מי שיש לו את הקישור
 shared.actionShareLink	קישור שיתוף
-shared.actionFolderLink	קישור לתיקייה
-shared.actionFileLink	קישור לקובץ
 shared.copiedShareLink	קישור השיתוף הועתק
 shared.copiedFolderZip	קישור ה-ZIP של התיקייה הועתק
 shared.copiedDirectFile	הקישור הישיר לקובץ הועתק
@@ -285,6 +310,7 @@ createShare.titleCreated	השיתוף נוצר
 createShare.sectionLabel	תווית
 createShare.sectionAccessMode	מצב גישה
 createShare.sectionWhoCanAccess	מי יכול לגשת
+createShare.addPeople	הוספת אנשים
 createShare.sectionShareLink	קישור שיתוף
 createShare.togglePasswordProtect	הגנה באמצעות סיסמה
 createShare.toggleSetExpiration	הגדרת תאריך תפוגה
@@ -1038,8 +1064,6 @@ menu.copyPath	העתקת נתיב
 menu.recentFolders	תיקיות אחרונות
 menu.clearRecent	ניקוי התפריט
 common.loading	טוען…
-browse.quickLookUnavailable	Quick Look אינו זמין לסוג קובץ זה.
-browse.quickLookTooLarge	הקובץ הזה גדול מדי עבור Quick Look.
 menu.zoomIn	הגדלה
 menu.zoomOut	הקטנה
 menu.zoomToFit	התאמה לחלון

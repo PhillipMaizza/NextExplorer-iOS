@@ -146,6 +146,12 @@ favorites.editIconOutline	Kontur
 favorites.editIconSolid	Fyldt
 favorites.editColorLabel	Farve
 favorites.editColorDefault	Standard
+favorites.editColorRed	Rød
+favorites.editColorOrange	Orange
+favorites.editColorYellow	Gul
+favorites.editColorGreen	Grøn
+favorites.editColorBlue	Blå
+favorites.editColorPurple	Lilla
 favorites.editSave	Gem
 favorites.reorderFailed	Den nye rækkefølge kunne ikke gemmes.
 favorites.removeConfirm#one	Fjern %lld favorit?
@@ -256,6 +262,27 @@ shared.badgeExpired	udløbet
 shared.emptyByMe	Del en fil eller mappe for at se dens link her.
 shared.emptyWithMe	Links, andre deler med dig, vises her.
 shared.noSearchMatches	Ingen delinger matcher “%@”.
+shared.noSearchMatchesFiltered	Intet her matcher “%@”. Vælg Alle for at søge i alle links.
+shared.searchPrompt	Søg i delinger
+shared.deleteLink	Slet link
+shared.links	Links
+shared.quotedLabel	“%@”
+shared.limit	Begræns
+shared.link	Link
+shared.direct	Direkte
+shared.directDownloadLink	Direkte downloadlink
+shared.directHint	Springer delingssiden over. Brug det til at indlejre filen eller bruge den i scripts.
+shared.directOpen	Åbn i browser
+shared.directOpenDetail	Viser den, hvis browseren kan, ellers hentes den
+shared.directDownloadDetail	Gemmer altid filen
+shared.directRawDetail	Rå bytes, til scripts og indlejring
+shared.directZip	ZIP-download
+shared.directZipDetail	Hele mappen som én ZIP-fil
+shared.linkExpires	Linket udløber
+shared.tomorrow	I morgen
+shared.inSevenDays	Om 7 dage
+shared.inThirtyDays	Om 30 dage
+shared.endsOn	Slutter %@
 shared.deleteTitle	Slet delingslink?
 shared.deleteMessage	Linket holder straks op med at virke. Selve filen eller mappen berøres ikke.
 shared.sharedByUnknown	Nogen
@@ -264,8 +291,6 @@ shared.metaSharedBy	Delt af
 shared.metaSharedWith	Delt med
 shared.anyoneWithLink	Alle med linket
 shared.actionShareLink	Delingslink
-shared.actionFolderLink	Mappelink
-shared.actionFileLink	Fillink
 shared.copiedShareLink	Delingslink kopieret
 shared.copiedFolderZip	Link til mappens ZIP kopieret
 shared.copiedDirectFile	Direkte fillink kopieret
@@ -274,6 +299,7 @@ createShare.titleCreated	Deling oprettet
 createShare.sectionLabel	Etiket
 createShare.sectionAccessMode	Adgangstilstand
 createShare.sectionWhoCanAccess	Hvem har adgang
+createShare.addPeople	Tilføj personer
 createShare.sectionShareLink	Delingslink
 createShare.togglePasswordProtect	Beskyt med adgangskode
 createShare.toggleSetExpiration	Angiv udløbsdato
@@ -1026,8 +1052,6 @@ menu.copyPath	Kopiér sti
 menu.recentFolders	Seneste mapper
 menu.clearRecent	Ryd menu
 common.loading	Indlæser…
-browse.quickLookUnavailable	Quick Look er ikke tilgængelig for denne filtype.
-browse.quickLookTooLarge	Denne fil er for stor til Quick Look.
 menu.zoomIn	Zoom ind
 menu.zoomOut	Zoom ud
 menu.zoomToFit	Tilpas til vindue

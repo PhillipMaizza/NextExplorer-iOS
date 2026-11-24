@@ -141,6 +141,12 @@ favorites.editIconOutline	रूपरेखा
 favorites.editIconSolid	ठोस
 favorites.editColorLabel	रंग
 favorites.editColorDefault	डिफ़ॉल्ट
+favorites.editColorRed	लाल
+favorites.editColorOrange	नारंगी
+favorites.editColorYellow	पीला
+favorites.editColorGreen	हरा
+favorites.editColorBlue	नीला
+favorites.editColorPurple	बैंगनी
 favorites.editSave	सहेजें
 favorites.reorderFailed	नया क्रम सहेज नहीं सके।
 favorites.removeConfirm#one	%lld पसंदीदा निकालें?
@@ -251,6 +257,27 @@ shared.badgeExpired	समाप्त
 shared.emptyByMe	इसका लिंक यहां देखने के लिए कोई फ़ाइल या फ़ोल्डर साझा करें।
 shared.emptyWithMe	अन्य लोग आपके साथ जो लिंक साझा करते हैं वे यहां दिखते हैं।
 shared.noSearchMatches	“%@” से कोई साझा मेल नहीं खाता।
+shared.noSearchMatchesFiltered	यहाँ “%@” से कुछ मेल नहीं खाता। सभी लिंक में खोजने के लिए सभी चुनें।
+shared.searchPrompt	शेयर खोजें
+shared.deleteLink	लिंक हटाएँ
+shared.links	लिंक
+shared.quotedLabel	“%@”
+shared.limit	सीमित करें
+shared.link	लिंक
+shared.direct	सीधा
+shared.directDownloadLink	सीधा डाउनलोड लिंक
+shared.directHint	शेयर पेज छोड़ देता है। फ़ाइल को एम्बेड करने या स्क्रिप्ट में इस्तेमाल करने के लिए।
+shared.directOpen	ब्राउज़र में खोलें
+shared.directOpenDetail	ब्राउज़र दिखा सके तो दिखाता है, नहीं तो डाउनलोड करता है
+shared.directDownloadDetail	फ़ाइल हमेशा सहेजता है
+shared.directRawDetail	सादे बाइट, स्क्रिप्ट और एम्बेड के लिए
+shared.directZip	ZIP डाउनलोड
+shared.directZipDetail	पूरा फ़ोल्डर एक ZIP फ़ाइल में
+shared.linkExpires	लिंक की समाप्ति
+shared.tomorrow	कल
+shared.inSevenDays	7 दिनों में
+shared.inThirtyDays	30 दिनों में
+shared.endsOn	%@ को समाप्त
 shared.deleteTitle	साझा लिंक हटाएं?
 shared.deleteMessage	लिंक तुरंत काम करना बंद कर देता है। फ़ाइल या फ़ोल्डर स्वयं प्रभावित नहीं होता।
 shared.sharedByUnknown	कोई
@@ -259,8 +286,6 @@ shared.metaSharedBy	साझाकर्ता
 shared.metaSharedWith	इनके साथ साझा
 shared.anyoneWithLink	लिंक वाला कोई भी व्यक्ति
 shared.actionShareLink	लिंक साझा करें
-shared.actionFolderLink	फ़ोल्डर लिंक
-shared.actionFileLink	फ़ाइल लिंक
 shared.moreRecipients	+%lld
 shared.copiedShareLink	साझा लिंक कॉपी किया गया
 shared.copiedFolderZip	फ़ोल्डर ZIP लिंक कॉपी किया गया
@@ -270,6 +295,7 @@ createShare.titleCreated	साझा बनाया गया
 createShare.sectionLabel	लेबल
 createShare.sectionAccessMode	एक्सेस मोड
 createShare.sectionWhoCanAccess	कौन एक्सेस कर सकता है
+createShare.addPeople	लोग जोड़ें
 createShare.sectionShareLink	साझा लिंक
 createShare.togglePasswordProtect	पासवर्ड से सुरक्षित करें
 createShare.toggleSetExpiration	समाप्ति तिथि सेट करें
@@ -787,8 +813,6 @@ menu.copyPath	पथ कॉपी करें
 menu.recentFolders	हाल के फ़ोल्डर
 menu.clearRecent	मेनू साफ़ करें
 common.loading	लोड हो रहा है…
-browse.quickLookUnavailable	इस फ़ाइल प्रकार के लिए क्विक लुक उपलब्ध नहीं है।
-browse.quickLookTooLarge	यह फ़ाइल क्विक लुक के लिए बहुत बड़ी है।
 menu.zoomIn	ज़ूम इन
 menu.zoomOut	ज़ूम आउट
 menu.zoomToFit	विंडो में फ़िट करें

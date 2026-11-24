@@ -146,6 +146,12 @@ favorites.editIconOutline	Ääriviiva
 favorites.editIconSolid	Täytetty
 favorites.editColorLabel	Väri
 favorites.editColorDefault	Oletus
+favorites.editColorRed	Punainen
+favorites.editColorOrange	Oranssi
+favorites.editColorYellow	Keltainen
+favorites.editColorGreen	Vihreä
+favorites.editColorBlue	Sininen
+favorites.editColorPurple	Violetti
 favorites.editSave	Tallenna
 favorites.reorderFailed	Uutta järjestystä ei voitu tallentaa.
 favorites.removeConfirm#one	Poistetaanko %lld suosikki?
@@ -256,6 +262,27 @@ shared.badgeExpired	vanhentunut
 shared.emptyByMe	Jaa tiedosto tai kansio nähdäksesi sen linkin täällä.
 shared.emptyWithMe	Muiden kanssasi jakamat linkit näkyvät täällä.
 shared.noSearchMatches	Mikään jako ei vastaa hakua “%@”.
+shared.noSearchMatchesFiltered	Mikään tässä ei vastaa hakua “%@”. Valitse Kaikki hakeaksesi kaikista linkeistä.
+shared.searchPrompt	Hae jakoja
+shared.deleteLink	Poista linkki
+shared.links	Linkit
+shared.quotedLabel	”%@”
+shared.limit	Rajoita
+shared.link	Linkki
+shared.direct	Suora
+shared.directDownloadLink	Suora latauslinkki
+shared.directHint	Ohittaa jakosivun. Käytä tiedoston upottamiseen tai skripteissä.
+shared.directOpen	Avaa selaimessa
+shared.directOpenDetail	Näyttää sen, jos selain osaa, muuten lataa
+shared.directDownloadDetail	Tallentaa tiedoston aina
+shared.directRawDetail	Pelkät tavut skripteille ja upotuksille
+shared.directZip	ZIP-lataus
+shared.directZipDetail	Koko kansio yhtenä ZIP-tiedostona
+shared.linkExpires	Linkki vanhenee
+shared.tomorrow	Huomenna
+shared.inSevenDays	7 päivän päästä
+shared.inThirtyDays	30 päivän päästä
+shared.endsOn	Päättyy %@
 shared.deleteTitle	Poistetaanko jakolinkki?
 shared.deleteMessage	Linkki lakkaa toimimasta heti. Itse tiedostoon tai kansioon ei kosketa.
 shared.sharedByUnknown	Joku
@@ -264,8 +291,6 @@ shared.metaSharedBy	Jakaja
 shared.metaSharedWith	Jaettu henkilölle
 shared.anyoneWithLink	Kuka tahansa, jolla on linkki
 shared.actionShareLink	Jakolinkki
-shared.actionFolderLink	Kansiolinkki
-shared.actionFileLink	Tiedostolinkki
 shared.copiedShareLink	Jakolinkki kopioitu
 shared.copiedFolderZip	Kansion ZIP-linkki kopioitu
 shared.copiedDirectFile	Suora tiedostolinkki kopioitu
@@ -274,6 +299,7 @@ createShare.titleCreated	Jako luotu
 createShare.sectionLabel	Nimike
 createShare.sectionAccessMode	Käyttötila
 createShare.sectionWhoCanAccess	Kenellä on pääsy
+createShare.addPeople	Lisää henkilöitä
 createShare.sectionShareLink	Jakolinkki
 createShare.togglePasswordProtect	Suojaa salasanalla
 createShare.toggleSetExpiration	Aseta vanhenemispäivä
@@ -1026,8 +1052,6 @@ menu.copyPath	Kopioi polku
 menu.recentFolders	Viimeisimmät kansiot
 menu.clearRecent	Tyhjennä valikko
 common.loading	Ladataan…
-browse.quickLookUnavailable	Pikakatselu ei ole käytettävissä tälle tiedostotyypille.
-browse.quickLookTooLarge	Tämä tiedosto on liian suuri pikakatseluun.
 menu.zoomIn	Lähennä
 menu.zoomOut	Loitonna
 menu.zoomToFit	Sovita ikkunaan

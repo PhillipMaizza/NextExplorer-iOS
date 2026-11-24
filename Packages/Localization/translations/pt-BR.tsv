@@ -151,6 +151,12 @@ favorites.editIconOutline	Contorno
 favorites.editIconSolid	Preenchido
 favorites.editColorLabel	Cor
 favorites.editColorDefault	Padrão
+favorites.editColorRed	Vermelho
+favorites.editColorOrange	Laranja
+favorites.editColorYellow	Amarelo
+favorites.editColorGreen	Verde
+favorites.editColorBlue	Azul
+favorites.editColorPurple	Roxo
 favorites.editSave	Salvar
 favorites.reorderFailed	Não foi possível salvar a nova ordem.
 favorites.removeConfirm#one	Remover %lld favorito?
@@ -262,6 +268,27 @@ shared.badgeExpired	Expirado
 shared.emptyByMe	Compartilhe um arquivo ou pasta para ver o link aqui.
 shared.emptyWithMe	Os links que outras pessoas compartilham com você aparecem aqui.
 shared.noSearchMatches	Nenhum compartilhamento corresponde a “%@”.
+shared.noSearchMatchesFiltered	Nada aqui corresponde a “%@”. Escolha Tudo para buscar em todos os links.
+shared.searchPrompt	Pesquisar compartilhamentos
+shared.deleteLink	Apagar link
+shared.links	Links
+shared.quotedLabel	“%@”
+shared.limit	Limitar
+shared.link	Link
+shared.direct	Direto
+shared.directDownloadLink	Link de download direto
+shared.directHint	Pula a página do compartilhamento. Use para incorporar o arquivo ou em scripts.
+shared.directOpen	Abrir no navegador
+shared.directOpenDetail	Mostra se o navegador conseguir; senão, baixa
+shared.directDownloadDetail	Sempre salva o arquivo
+shared.directRawDetail	Bytes puros, para scripts e incorporações
+shared.directZip	Download ZIP
+shared.directZipDetail	A pasta inteira em um único arquivo ZIP
+shared.linkExpires	Expiração do link
+shared.tomorrow	Amanhã
+shared.inSevenDays	Em 7 dias
+shared.inThirtyDays	Em 30 dias
+shared.endsOn	Termina em %@
 shared.deleteTitle	Excluir o link de compartilhamento?
 shared.deleteMessage	O link deixa de funcionar imediatamente. O arquivo ou a pasta em si não é afetado.
 shared.sharedByUnknown	Alguém
@@ -270,8 +297,6 @@ shared.metaSharedBy	Compartilhado por
 shared.metaSharedWith	Compartilhado com
 shared.anyoneWithLink	Qualquer pessoa com o link
 shared.actionShareLink	Link de compartilhamento
-shared.actionFolderLink	Link da pasta
-shared.actionFileLink	Link do arquivo
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Link de compartilhamento copiado
 shared.copiedFolderZip	Link ZIP da pasta copiado
@@ -281,6 +306,7 @@ createShare.titleCreated	Compartilhamento criado
 createShare.sectionLabel	Rótulo
 createShare.sectionAccessMode	Modo de Acesso
 createShare.sectionWhoCanAccess	Quem pode acessar
+createShare.addPeople	Adicionar pessoas
 createShare.sectionShareLink	Link de compartilhamento
 createShare.togglePasswordProtect	Proteger com senha
 createShare.toggleSetExpiration	Definir data de expiração
@@ -984,8 +1010,6 @@ menu.copyPath	Copiar caminho
 menu.recentFolders	Pastas recentes
 menu.clearRecent	Limpar menu
 common.loading	Carregando…
-browse.quickLookUnavailable	A Visualização Rápida não está disponível para este tipo de arquivo.
-browse.quickLookTooLarge	Este arquivo é grande demais para a Visualização Rápida.
 menu.zoomIn	Ampliar
 menu.zoomOut	Reduzir
 menu.zoomToFit	Ajustar à janela

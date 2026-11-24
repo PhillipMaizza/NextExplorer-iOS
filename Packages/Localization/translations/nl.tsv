@@ -141,6 +141,12 @@ favorites.editIconOutline	Omlijnd
 favorites.editIconSolid	Gevuld
 favorites.editColorLabel	Kleur
 favorites.editColorDefault	Standaard
+favorites.editColorRed	Rood
+favorites.editColorOrange	Oranje
+favorites.editColorYellow	Geel
+favorites.editColorGreen	Groen
+favorites.editColorBlue	Blauw
+favorites.editColorPurple	Paars
 favorites.editSave	Bewaren
 favorites.reorderFailed	Kan de nieuwe volgorde niet bewaren.
 favorites.removeConfirm#one	%lld favoriet verwijderen?
@@ -251,6 +257,27 @@ shared.badgeExpired	verlopen
 shared.emptyByMe	Deel een bestand of map om de link hier te zien.
 shared.emptyWithMe	Links die anderen met je delen verschijnen hier.
 shared.noSearchMatches	Geen gedeelde items komen overeen met “%@”.
+shared.noSearchMatchesFiltered	Niets hier komt overeen met “%@”. Kies Alles om in alle links te zoeken.
+shared.searchPrompt	Shares zoeken
+shared.deleteLink	Link verwijderen
+shared.links	Links
+shared.quotedLabel	‘%@’
+shared.limit	Beperken
+shared.link	Link
+shared.direct	Direct
+shared.directDownloadLink	Directe downloadlink
+shared.directHint	Slaat de deelpagina over. Gebruik het om het bestand in te sluiten of in scripts.
+shared.directOpen	Openen in browser
+shared.directOpenDetail	Toont het als de browser dat kan, anders downloaden
+shared.directDownloadDetail	Slaat het bestand altijd op
+shared.directRawDetail	Kale bytes, voor scripts en insluiten
+shared.directZip	ZIP-download
+shared.directZipDetail	De hele map als één ZIP-bestand
+shared.linkExpires	Link verloopt
+shared.tomorrow	Morgen
+shared.inSevenDays	Over 7 dagen
+shared.inThirtyDays	Over 30 dagen
+shared.endsOn	Eindigt op %@
 shared.deleteTitle	Deellink verwijderen?
 shared.deleteMessage	De link werkt onmiddellijk niet meer. Het bestand of de map zelf blijft ongemoeid.
 shared.sharedByUnknown	Iemand
@@ -259,8 +286,6 @@ shared.metaSharedBy	Gedeeld door
 shared.metaSharedWith	Gedeeld met
 shared.anyoneWithLink	Iedereen met de link
 shared.actionShareLink	Link delen
-shared.actionFolderLink	Maplink
-shared.actionFileLink	Bestandslink
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Deellink gekopieerd
 shared.copiedFolderZip	ZIP-link van map gekopieerd
@@ -270,6 +295,7 @@ createShare.titleCreated	Deellink aangemaakt
 createShare.sectionLabel	Label
 createShare.sectionAccessMode	Toegangsmodus
 createShare.sectionWhoCanAccess	Wie heeft toegang
+createShare.addPeople	Personen toevoegen
 createShare.sectionShareLink	Deellink
 createShare.togglePasswordProtect	Beveiligen met wachtwoord
 createShare.toggleSetExpiration	Vervaldatum instellen
@@ -787,8 +813,6 @@ menu.copyPath	Kopieer pad
 menu.recentFolders	Recente mappen
 menu.clearRecent	Wis menu
 common.loading	Laden…
-browse.quickLookUnavailable	Snelle weergave is niet beschikbaar voor dit bestandstype.
-browse.quickLookTooLarge	Dit bestand is te groot voor Snelle weergave.
 menu.zoomIn	Zoom in
 menu.zoomOut	Zoom uit
 menu.zoomToFit	Passend in venster

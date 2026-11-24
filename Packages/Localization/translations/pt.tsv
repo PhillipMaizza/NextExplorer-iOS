@@ -141,6 +141,12 @@ favorites.editIconOutline	Contorno
 favorites.editIconSolid	Preenchido
 favorites.editColorLabel	Cor
 favorites.editColorDefault	Predefinição
+favorites.editColorRed	Vermelho
+favorites.editColorOrange	Laranja
+favorites.editColorYellow	Amarelo
+favorites.editColorGreen	Verde
+favorites.editColorBlue	Azul
+favorites.editColorPurple	Roxo
 favorites.editSave	Guardar
 favorites.reorderFailed	Não foi possível guardar a nova ordem.
 favorites.removeConfirm#one	Remover %lld favorito?
@@ -251,6 +257,27 @@ shared.badgeExpired	expirado
 shared.emptyByMe	Partilhe um ficheiro ou pasta para ver a ligação aqui.
 shared.emptyWithMe	As ligações que outras pessoas partilham consigo aparecem aqui.
 shared.noSearchMatches	Nenhuma partilha corresponde a “%@”.
+shared.noSearchMatchesFiltered	Nada aqui corresponde a “%@”. Escolha Tudo para pesquisar em todas as ligações.
+shared.searchPrompt	Pesquisar partilhas
+shared.deleteLink	Eliminar ligação
+shared.links	Ligações
+shared.quotedLabel	«%@»
+shared.limit	Limitar
+shared.link	Ligação
+shared.direct	Direta
+shared.directDownloadLink	Ligação de transferência direta
+shared.directHint	Salta a página de partilha. Use-a para incorporar o ficheiro ou em scripts.
+shared.directOpen	Abrir no navegador
+shared.directOpenDetail	Mostra-o se o navegador conseguir; caso contrário, transfere-o
+shared.directDownloadDetail	Guarda sempre o ficheiro
+shared.directRawDetail	Bytes em bruto, para scripts e incorporações
+shared.directZip	Transferência ZIP
+shared.directZipDetail	A pasta inteira num único ficheiro ZIP
+shared.linkExpires	Expiração da ligação
+shared.tomorrow	Amanhã
+shared.inSevenDays	Daqui a 7 dias
+shared.inThirtyDays	Daqui a 30 dias
+shared.endsOn	Termina a %@
 shared.deleteTitle	Eliminar a ligação de partilha?
 shared.deleteMessage	A ligação deixa de funcionar de imediato. O ficheiro ou pasta em si não é afetado.
 shared.sharedByUnknown	Alguém
@@ -259,8 +286,6 @@ shared.metaSharedBy	Partilhado por
 shared.metaSharedWith	Partilhado com
 shared.anyoneWithLink	Qualquer pessoa com a ligação
 shared.actionShareLink	Partilhar ligação
-shared.actionFolderLink	Ligação da pasta
-shared.actionFileLink	Ligação do ficheiro
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Ligação de partilha copiada
 shared.copiedFolderZip	Ligação ZIP da pasta copiada
@@ -270,6 +295,7 @@ createShare.titleCreated	Partilha criada
 createShare.sectionLabel	Etiqueta
 createShare.sectionAccessMode	Modo de acesso
 createShare.sectionWhoCanAccess	Quem pode aceder
+createShare.addPeople	Adicionar pessoas
 createShare.sectionShareLink	Ligação de partilha
 createShare.togglePasswordProtect	Proteger com palavra-passe
 createShare.toggleSetExpiration	Definir data de validade
@@ -787,8 +813,6 @@ menu.copyPath	Copiar caminho
 menu.recentFolders	Pastas recentes
 menu.clearRecent	Limpar menu
 common.loading	A carregar…
-browse.quickLookUnavailable	A Visualização Rápida não está disponível para este tipo de ficheiro.
-browse.quickLookTooLarge	Este ficheiro é demasiado grande para a Visualização Rápida.
 menu.zoomIn	Ampliar
 menu.zoomOut	Reduzir
 menu.zoomToFit	Ajustar à janela

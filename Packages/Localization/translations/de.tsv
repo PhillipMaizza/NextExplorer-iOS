@@ -141,6 +141,12 @@ favorites.editIconOutline	Umriss
 favorites.editIconSolid	Gefüllt
 favorites.editColorLabel	Farbe
 favorites.editColorDefault	Standard
+favorites.editColorRed	Rot
+favorites.editColorOrange	Orange
+favorites.editColorYellow	Gelb
+favorites.editColorGreen	Grün
+favorites.editColorBlue	Blau
+favorites.editColorPurple	Lila
 favorites.editSave	Sichern
 favorites.reorderFailed	Neue Reihenfolge konnte nicht gesichert werden.
 favorites.removeConfirm#one	%lld Favorit entfernen?
@@ -251,6 +257,27 @@ shared.badgeExpired	abgelaufen
 shared.emptyByMe	Teile eine Datei oder einen Ordner, um den Link hier zu sehen.
 shared.emptyWithMe	Links, die andere mit dir teilen, erscheinen hier.
 shared.noSearchMatches	Keine Freigaben passen zu „%@“.
+shared.noSearchMatchesFiltered	Hier passt nichts zu „%@“. Wähle Alle, um alle Links zu durchsuchen.
+shared.searchPrompt	Freigaben durchsuchen
+shared.deleteLink	Link löschen
+shared.links	Links
+shared.quotedLabel	„%@“
+shared.limit	Einschränken
+shared.link	Link
+shared.direct	Direkt
+shared.directDownloadLink	Direkter Download-Link
+shared.directHint	Überspringt die Freigabeseite. Zum Einbetten der Datei oder für Skripte.
+shared.directOpen	Im Browser öffnen
+shared.directOpenDetail	Zeigt sie an, wenn der Browser kann, sonst Download
+shared.directDownloadDetail	Speichert die Datei immer
+shared.directRawDetail	Reine Bytes, für Skripte und Einbettungen
+shared.directZip	ZIP-Download
+shared.directZipDetail	Der ganze Ordner als eine ZIP-Datei
+shared.linkExpires	Link läuft ab
+shared.tomorrow	Morgen
+shared.inSevenDays	In 7 Tagen
+shared.inThirtyDays	In 30 Tagen
+shared.endsOn	Endet am %@
 shared.deleteTitle	Freigabelink löschen?
 shared.deleteMessage	Der Link funktioniert sofort nicht mehr. Die Datei oder der Ordner selbst wird nicht berührt.
 shared.sharedByUnknown	Jemand
@@ -259,8 +286,6 @@ shared.metaSharedBy	Geteilt von
 shared.metaSharedWith	Geteilt mit
 shared.anyoneWithLink	Jeder mit dem Link
 shared.actionShareLink	Link teilen
-shared.actionFolderLink	Ordnerlink
-shared.actionFileLink	Dateilink
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Freigabelink kopiert
 shared.copiedFolderZip	ZIP-Link des Ordners kopiert
@@ -270,6 +295,7 @@ createShare.titleCreated	Freigabe erstellt
 createShare.sectionLabel	Bezeichnung
 createShare.sectionAccessMode	Zugriffsmodus
 createShare.sectionWhoCanAccess	Wer kann zugreifen
+createShare.addPeople	Personen hinzufügen
 createShare.sectionShareLink	Freigabelink
 createShare.togglePasswordProtect	Mit Passwort schützen
 createShare.toggleSetExpiration	Ablaufdatum festlegen
@@ -787,8 +813,6 @@ menu.copyPath	Pfad kopieren
 menu.recentFolders	Benutzte Ordner
 menu.clearRecent	Menü löschen
 common.loading	Wird geladen…
-browse.quickLookUnavailable	Übersicht ist für diesen Dateityp nicht verfügbar.
-browse.quickLookTooLarge	Diese Datei ist zu groß für die Übersicht.
 menu.zoomIn	Vergrößern
 menu.zoomOut	Verkleinern
 menu.zoomToFit	An Fenster anpassen

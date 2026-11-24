@@ -154,6 +154,12 @@ favorites.editIconOutline	Контур
 favorites.editIconSolid	Заповнений
 favorites.editColorLabel	Колір
 favorites.editColorDefault	За замовчуванням
+favorites.editColorRed	Червоний
+favorites.editColorOrange	Помаранчевий
+favorites.editColorYellow	Жовтий
+favorites.editColorGreen	Зелений
+favorites.editColorBlue	Синій
+favorites.editColorPurple	Фіолетовий
 favorites.editSave	Зберегти
 favorites.reorderFailed	Не вдалося зберегти новий порядок.
 favorites.removeConfirm#one	Вилучити з обраного (%lld)?
@@ -278,6 +284,27 @@ shared.badgeExpired	термін дії минув
 shared.emptyByMe	Поділіться файлом або папкою, щоб побачити тут посилання.
 shared.emptyWithMe	Посилання, якими з вами діляться інші, з’являються тут.
 shared.noSearchMatches	Немає спільного доступу, що відповідав би “%@”.
+shared.noSearchMatchesFiltered	Тут немає збігів для “%@”. Виберіть «Усі», щоб шукати в усіх посиланнях.
+shared.searchPrompt	Пошук спільних ресурсів
+shared.deleteLink	Видалити посилання
+shared.links	Посилання
+shared.quotedLabel	«%@»
+shared.limit	Обмежити
+shared.link	Посилання
+shared.direct	Пряме
+shared.directDownloadLink	Пряме посилання для завантаження
+shared.directHint	Оминає сторінку спільного доступу. Для вбудовування файлу або скриптів.
+shared.directOpen	Відкрити в браузері
+shared.directOpenDetail	Показує, якщо браузер може, інакше завантажує
+shared.directDownloadDetail	Завжди зберігає файл
+shared.directRawDetail	Байти як є, для скриптів і вбудовування
+shared.directZip	Завантажити ZIP
+shared.directZipDetail	Уся папка одним ZIP-файлом
+shared.linkExpires	Термін дії посилання
+shared.tomorrow	Завтра
+shared.inSevenDays	Через 7 днів
+shared.inThirtyDays	Через 30 днів
+shared.endsOn	Закінчується %@
 shared.deleteTitle	Видалити посилання для спільного доступу?
 shared.deleteMessage	Посилання одразу перестане працювати. Сам файл чи папка не змінюються.
 shared.sharedByUnknown	Хтось
@@ -286,8 +313,6 @@ shared.metaSharedBy	Від кого
 shared.metaSharedWith	Кому
 shared.anyoneWithLink	Будь-хто з посиланням
 shared.actionShareLink	Посилання для спільного доступу
-shared.actionFolderLink	Посилання на папку
-shared.actionFileLink	Посилання на файл
 shared.copiedShareLink	Посилання для спільного доступу скопійовано
 shared.copiedFolderZip	Посилання на ZIP папки скопійовано
 shared.copiedDirectFile	Пряме посилання на файл скопійовано
@@ -296,6 +321,7 @@ createShare.titleCreated	Спільний доступ створено
 createShare.sectionLabel	Мітка
 createShare.sectionAccessMode	Режим доступу
 createShare.sectionWhoCanAccess	Хто має доступ
+createShare.addPeople	Додати людей
 createShare.sectionShareLink	Посилання для спільного доступу
 createShare.togglePasswordProtect	Захист паролем
 createShare.toggleSetExpiration	Встановити термін дії
@@ -1050,8 +1076,6 @@ menu.copyPath	Копіювати шлях
 menu.recentFolders	Нещодавні папки
 menu.clearRecent	Очистити меню
 common.loading	Завантаження…
-browse.quickLookUnavailable	Швидкий перегляд недоступний для цього типу файлів.
-browse.quickLookTooLarge	Цей файл завеликий для швидкого перегляду.
 menu.zoomIn	Збільшити
 menu.zoomOut	Зменшити
 menu.zoomToFit	Вмістити у вікно

@@ -149,6 +149,12 @@ favorites.editIconOutline	Контур
 favorites.editIconSolid	Заливка
 favorites.editColorLabel	Цвет
 favorites.editColorDefault	По умолчанию
+favorites.editColorRed	Красный
+favorites.editColorOrange	Оранжевый
+favorites.editColorYellow	Жёлтый
+favorites.editColorGreen	Зелёный
+favorites.editColorBlue	Синий
+favorites.editColorPurple	Фиолетовый
 favorites.editSave	Сохранить
 favorites.reorderFailed	Не удалось сохранить новый порядок.
 favorites.removeConfirm#one	Убрать из избранного: %lld?
@@ -273,6 +279,27 @@ shared.badgeExpired	истёк
 shared.emptyByMe	Откройте доступ к файлу или папке, чтобы увидеть ссылку здесь.
 shared.emptyWithMe	Ссылки, которыми с вами делятся другие, появятся здесь.
 shared.noSearchMatches	Нет совпадений для «%@».
+shared.noSearchMatchesFiltered	Здесь нет совпадений для «%@». Выберите «Все», чтобы искать по всем ссылкам.
+shared.searchPrompt	Поиск общих ресурсов
+shared.deleteLink	Удалить ссылку
+shared.links	Ссылки
+shared.quotedLabel	«%@»
+shared.limit	Ограничить
+shared.link	Ссылка
+shared.direct	Прямая
+shared.directDownloadLink	Прямая ссылка для скачивания
+shared.directHint	Минует страницу общего доступа. Для встраивания файла или скриптов.
+shared.directOpen	Открыть в браузере
+shared.directOpenDetail	Показывает, если браузер может, иначе скачивает
+shared.directDownloadDetail	Всегда сохраняет файл
+shared.directRawDetail	Байты как есть, для скриптов и встраивания
+shared.directZip	Скачать ZIP
+shared.directZipDetail	Вся папка одним ZIP-файлом
+shared.linkExpires	Срок действия ссылки
+shared.tomorrow	Завтра
+shared.inSevenDays	Через 7 дней
+shared.inThirtyDays	Через 30 дней
+shared.endsOn	Заканчивается %@
 shared.deleteTitle	Удалить ссылку доступа?
 shared.deleteMessage	Ссылка сразу перестанет работать. Сам файл или папка не затрагиваются.
 shared.sharedByUnknown	Кто-то
@@ -281,8 +308,6 @@ shared.metaSharedBy	Поделился
 shared.metaSharedWith	Доступ открыт
 shared.anyoneWithLink	Любой, у кого есть ссылка
 shared.actionShareLink	Поделиться ссылкой
-shared.actionFolderLink	Ссылка на папку
-shared.actionFileLink	Ссылка на файл
 shared.moreRecipients	+%lld
 shared.copiedShareLink	Ссылка доступа скопирована
 shared.copiedFolderZip	ZIP-ссылка на папку скопирована
@@ -292,6 +317,7 @@ createShare.titleCreated	Доступ создан
 createShare.sectionLabel	Метка
 createShare.sectionAccessMode	Режим доступа
 createShare.sectionWhoCanAccess	Кто имеет доступ
+createShare.addPeople	Добавить людей
 createShare.sectionShareLink	Ссылка доступа
 createShare.togglePasswordProtect	Защитить паролем
 createShare.toggleSetExpiration	Задать срок действия
@@ -811,8 +837,6 @@ menu.copyPath	Скопировать путь
 menu.recentFolders	Недавние папки
 menu.clearRecent	Очистить меню
 common.loading	Загрузка…
-browse.quickLookUnavailable	Быстрый просмотр недоступен для этого типа файлов.
-browse.quickLookTooLarge	Этот файл слишком велик для быстрого просмотра.
 menu.zoomIn	Увеличить
 menu.zoomOut	Уменьшить
 menu.zoomToFit	По размеру окна
