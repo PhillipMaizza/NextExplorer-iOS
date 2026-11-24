@@ -9,6 +9,8 @@
         static let chipHeight: CGFloat = 26
         static let addIcon: CGFloat = .iconXSmall
         static let removeGlyph: CGFloat = 9
+        static let visibleRows: CGFloat = 2.5
+        static let overflowFade: CGFloat = .space16
     }
 
     struct MacShareUserTokenField: View {
@@ -17,9 +19,14 @@
         let onToggleUser: (User.ID) -> Void
 
         @State private var isPickerOpen = false
+        @State private var contentHeight: CGFloat = .zero
 
         private var selectedUsers: [User] {
             users.filter { selectedUserIDs.contains($0.id) }
+        }
+
+        private var maxHeight: CGFloat {
+            Metrics.chipHeight * Metrics.visibleRows + .space4 * (Metrics.visibleRows + 1)
         }
 
         private var canAddMore: Bool {
@@ -27,14 +34,28 @@
         }
 
         var body: some View {
-            DSFlowLayout(horizontalSpacing: .space4, verticalSpacing: .space4) {
-                ForEach(selectedUsers) { chip($0) }
-                if canAddMore {
-                    addButton
+            ScrollView {
+                DSFlowLayout(horizontalSpacing: .space4, verticalSpacing: .space4) {
+                    ForEach(selectedUsers) { chip($0) }
+                    if canAddMore {
+                        addButton
+                    }
+                }
+                .padding(.space4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .onGeometryChange(for: CGFloat.self, of: \.size.height) { contentHeight = $0 }
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .frame(height: min(contentHeight, maxHeight))
+            .mask {
+                VStack(spacing: .zero) {
+                    Color.black
+                    if contentHeight > maxHeight {
+                        LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
+                            .frame(height: Metrics.overflowFade)
+                    }
                 }
             }
-            .padding(.space4)
-            .frame(maxWidth: .infinity, alignment: .leading)
             .macFieldChrome(isFocused: isPickerOpen, size: .flexible)
             .contentShape(Rectangle())
             .onTapGesture {

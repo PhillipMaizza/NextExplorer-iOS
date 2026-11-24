@@ -294,17 +294,10 @@ public extension SharedFeature.State {
         let ordered = shares.sorted { $0.createdAt < $1.createdAt }
         let first = ordered[0]
         let components = first.trimmedSourcePath?.split(separator: "/").map(String.init) ?? []
-        let name: String = if segment == .byMe, let leaf = components.last {
-            leaf
-        } else if let sourceName = first.sourceName, !sourceName.isEmpty {
-            sourceName
-        } else {
-            first.displayName
-        }
         let parent = components.dropLast().joined(separator: "/")
         return SharedFeature.Item(
             id: id,
-            name: name,
+            name: first.itemName,
             location: segment == .byMe && !parent.isEmpty ? parent : nil,
             shares: ordered,
             badges: ordered.map { badge(for: $0, segment: segment) },

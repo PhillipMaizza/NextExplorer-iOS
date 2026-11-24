@@ -124,6 +124,16 @@ extension Share {
         sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
     }
 
+    var itemName: String {
+        if let leaf = trimmedSourcePath?.split(separator: "/").last {
+            return String(leaf)
+        }
+        if let sourceName, !sourceName.isEmpty {
+            return sourceName
+        }
+        return displayName
+    }
+
     var browsePath: String? {
         guard let path = trimmedSourcePath, !path.isEmpty else { return nil }
         return sourceSpace == PersonalSpace.rootPath ? "\(PersonalSpace.rootPath)/\(path)" : path
