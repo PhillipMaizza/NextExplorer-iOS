@@ -6,7 +6,7 @@
 
     private enum Constants {
         static let windowPadding: CGFloat = .space16
-        static let cardPadding: CGFloat = .size40
+        static let cardPadding: CGFloat = .space40
         static let contentMaxWidth: CGFloat = MacFormSheetMetrics.width
     }
 
@@ -95,7 +95,7 @@
 
     #Preview("Header") {
         MacLoginPageHeader(host: "nextexplorer.example.com", title: L10n.Login.submit, onBack: {})
-            .padding(.size40)
+            .padding(.space40)
             .frame(width: 520)
             .macCard()
     }

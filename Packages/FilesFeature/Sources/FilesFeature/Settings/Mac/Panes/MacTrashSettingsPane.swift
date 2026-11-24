@@ -7,8 +7,8 @@
     import SwiftUI
 
     private enum Metrics {
-        static let sizeWidth: CGFloat = 96
-        static let columnSpacing: CGFloat = .size20
+        static let sizeWidth: CGFloat = .size96
+        static let columnSpacing: CGFloat = .space24
     }
 
     struct MacTrashSettingsPane: View {

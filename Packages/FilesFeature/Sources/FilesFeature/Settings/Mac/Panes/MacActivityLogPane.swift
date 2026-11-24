@@ -12,7 +12,7 @@
         static let timeWidth: CGFloat = 100
         static let actorWidth: CGFloat = 120
         static let addressWidth: CGFloat = 140
-        static let outcomeWidth: CGFloat = 96
+        static let outcomeWidth: CGFloat = .size96
         static let dateStyle = Date.FormatStyle.dateTime.day().month(.abbreviated).hour().minute()
     }
 

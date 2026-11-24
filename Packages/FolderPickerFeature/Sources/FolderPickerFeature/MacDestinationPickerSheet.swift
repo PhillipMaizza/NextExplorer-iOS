@@ -33,10 +33,13 @@
                 header
                 if store.showsRecentsSection {
                     recentsBox
+                        .macDialogReveal()
                 }
                 folderBox
                 if store.isSearchTermTooShort {
-                    Text(SearchHint.tooShort).type(.body3(.regular), style: .secondary)
+                    Text(SearchHint.tooShort)
+                        .type(.body3(.regular), style: .secondary)
+                        .macDialogReveal()
                 }
                 MacDialogButtons(
                     confirmTitle: confirmTitle,
@@ -47,6 +50,8 @@
             }
             .padding(Metrics.padding)
             .frame(width: MacFormSheetMetrics.width, height: Metrics.height)
+            .animation(DSMotion.stateFade, value: store.showsRecentsSection)
+            .animation(DSMotion.stateFade, value: store.showsSearchResults)
             .background {
                 Button(L10n.Browse.open, action: openSelection)
                     .keyboardShortcut(.downArrow, modifiers: .command)
@@ -70,6 +75,7 @@
                 Spacer(minLength: .space8)
                 if store.isRefiningSearch {
                     DSSpinner(size: .small)
+                        .macDialogReveal()
                 }
                 MacTextField(
                     L10n.Common.search,
@@ -111,9 +117,12 @@
             VStack(spacing: .zero) {
                 if !store.showsSearchResults {
                     backRow
+                        .macDialogReveal()
                 }
-                boxContent
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                ZStack(alignment: .top) {
+                    boxContent
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .frame(minHeight: Metrics.minBoxHeight, maxHeight: .infinity)
             .macListBox()
@@ -146,24 +155,36 @@
         private var boxContent: some View {
             if store.showsSearchResults {
                 if store.searchPhase == .loading, store.searchResults.isEmpty {
-                    MacSpinner().frame(maxHeight: .infinity)
+                    MacSpinner()
+                        .frame(maxHeight: .infinity)
+                        .macDialogReveal()
                 } else if let errorMessage = store.searchPhase.errorMessage {
                     messageRow(errorMessage, isError: true)
+                        .macDialogReveal()
                 } else if store.searchResults.isEmpty {
                     messageRow(L10n.EmptyState.noSearchMatches(store.searchQuery))
+                        .macDialogReveal()
                 } else {
                     searchResultsList
+                        .macDialogReveal()
                 }
             } else if store.phase == .loading, store.folders.isEmpty {
-                MacSpinner().frame(maxHeight: .infinity)
+                MacSpinner()
+                    .frame(maxHeight: .infinity)
+                    .macDialogReveal()
             } else if let errorMessage = store.phase.errorMessage {
                 messageRow(errorMessage, isError: true) { store.send(.retryTapped) }
+                    .macDialogReveal()
             } else if store.folders.isEmpty {
                 messageRow(L10n.Browse.destinationPickerNoFolders)
+                    .macDialogReveal()
             } else if store.displayedFolders.isEmpty {
                 messageRow(L10n.EmptyState.noSearchMatches(store.searchQuery))
+                    .macDialogReveal()
             } else {
                 foldersList
+                    .id(store.directoryPath)
+                    .macDialogReveal()
             }
         }
 

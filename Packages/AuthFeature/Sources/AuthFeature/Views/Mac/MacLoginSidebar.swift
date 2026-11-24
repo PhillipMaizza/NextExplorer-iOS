@@ -12,7 +12,7 @@
         static let stepBadgeSize: CGFloat = .size24
         static let checkSize: CGFloat = .iconXSmall
         static let linkIconSize: CGFloat = 18
-        static let topPadding: CGFloat = .size56
+        static let topPadding: CGFloat = .space48
     }
 
     struct MacLoginSidebar: View {

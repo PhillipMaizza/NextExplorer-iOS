@@ -198,11 +198,14 @@ struct LoginCredentialsPage: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .focused($focusedField, equals: .password)
-                .submitLabel(.go)
-                .onSubmit {
-                    guard isSubmitLocalEnabled, store.submitPhase == .idle else { return }
-                    submit(.continueButtonTapped)
-                }
+                #if os(macOS)
+                    .macAccentCaret(isFocused: focusedField == .password, isRevealed: store.isPasswordVisible)
+                #endif
+                    .submitLabel(.go)
+                    .onSubmit {
+                        guard isSubmitLocalEnabled, store.submitPhase == .idle else { return }
+                        submit(.continueButtonTapped)
+                    }
 
                 if focusedField == .password {
                     Button {

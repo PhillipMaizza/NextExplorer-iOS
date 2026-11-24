@@ -21,7 +21,9 @@
                 header
                 list
                 if isOverFreeSpace {
-                    Text(L10n.Offline.selectionInsufficientSpace).type(.body3(.regular), style: .error)
+                    Text(L10n.Offline.selectionInsufficientSpace)
+                        .type(.body3(.regular), style: .error)
+                        .macDialogReveal()
                 }
                 MacDialogButtons(
                     confirmTitle: L10n.Offline.selectionDownload,
@@ -74,6 +76,7 @@
                     LazyVStack(spacing: .zero) {
                         ForEach(store.items) { row($0) }
                     }
+                    .animation(DSMotion.stateFade, value: store.directoryPath)
                 }
                 .frame(height: Metrics.listHeight)
                 .overlay { overlay }
@@ -130,14 +133,18 @@
         private var overlay: some View {
             if store.phase == .loading, store.items.isEmpty {
                 MacSpinner()
+                    .macDialogReveal()
             } else if let errorMessage = store.phase.errorMessage {
                 VStack(spacing: .space8) {
                     Text(errorMessage).foregroundStyle(Color.macChromeSecondary)
                     Button(L10n.Common.retry) { store.send(.retryTapped) }
                         .buttonStyle(.macDS(.secondary, size: .small))
                 }
+                .macDialogReveal()
             } else if store.items.isEmpty, store.phase == .loaded {
-                Text(L10n.Offline.selectionEmpty).foregroundStyle(Color.macChromeSecondary)
+                Text(L10n.Offline.selectionEmpty)
+                    .foregroundStyle(Color.macChromeSecondary)
+                    .macDialogReveal()
             }
         }
 

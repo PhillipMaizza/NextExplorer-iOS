@@ -88,11 +88,7 @@
             MacTableRowButton(isShaded: isShaded, isSelected: isSelected, action: onSelect) {
                 HStack(spacing: MacTableMetrics.columnSpacing) {
                     HStack(spacing: .space8) {
-                        AvatarView(
-                            displayName: user.displayLabel,
-                            size: Metrics.avatarSize,
-                            tint: Color.categorical(for: user.displayLabel)
-                        )
+                        AvatarView.person(user.displayLabel, size: Metrics.avatarSize)
                         Text(user.displayLabel)
                             .type(.body2(.semibold))
                     }
