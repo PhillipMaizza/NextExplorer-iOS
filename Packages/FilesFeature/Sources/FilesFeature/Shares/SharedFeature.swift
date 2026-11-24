@@ -298,6 +298,7 @@ public struct SharedFeature {
 
             case .refreshRequested:
                 state.phases.removeAll()
+                state.requestedShareFileIDs.removeAll()
                 return .concatenate(load(&state, segment: state.segment), loadUsers(state))
 
             case let .sortOptionChanged(option):
