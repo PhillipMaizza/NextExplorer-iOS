@@ -31,18 +31,25 @@
             } label: {
                 Label { Text(L10n.Common.copy) } icon: { IconKit.copy }
             }
+            .tint(.primaryDS)
             // The system share menu: AirDrop, Messages, Mail and the rest.
             if let url = URL(string: share.shareLink(serverURL: store.serverURL)) {
                 ShareLink(item: url) {
                     Label { Text(L10n.Common.share) } icon: { IconKit.share }
                 }
+                .tint(.primaryDS)
             }
-            Divider()
-            Button { store.send(.editTapped(share)) } label: {
-                Label { Text(L10n.Common.edit) } icon: { IconKit.rename }
+            Section {
+                Button { store.send(.editTapped(share)) } label: {
+                    Label { Text(L10n.Common.edit) } icon: { IconKit.rename }
+                }
+                .tint(.primaryDS)
             }
-            Button(role: .destructive) { store.send(.deleteTapped(share)) } label: {
-                Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
+            Section {
+                Button(role: .destructive) { store.send(.deleteTapped(share)) } label: {
+                    Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
+                }
+                .tint(.negative)
             }
         }
 
