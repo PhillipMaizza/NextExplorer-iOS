@@ -7,14 +7,50 @@
     import SwiftUI
 
     private enum Metrics {
-        static let nameColumnMinWidth: CGFloat = 120
-        static let audienceColumnMinWidth: CGFloat = 80
-        static let audienceColumnIdealWidth: CGFloat = 150
-        static let sharerColumnMinWidth: CGFloat = 160
-        static let sharerColumnIdealWidth: CGFloat = 220
-        static let dateColumnMinWidth: CGFloat = 80
-        static let dateColumnIdealWidth: CGFloat = 120
-        static let downloadsColumnWidth: CGFloat = 72
+        static let audienceColumnWidth: CGFloat = .size96
+        static let sharerColumnWidth: CGFloat = 180
+        static let dateColumnWidth: CGFloat = 120
+        static let downloadsColumnWidth: CGFloat = .size96
+    }
+
+    struct MacSharedTableColumns: Equatable {
+        enum Column {
+            case audience
+            case sharer
+            case expires
+            case lastOpened
+            case downloads
+            case received
+        }
+
+        private let shown: Set<Column>
+
+        init(width: CGFloat, isByMe: Bool) {
+            let byPriority: [(Column, CGFloat)] = isByMe
+                ? [
+                    (.expires, Metrics.dateColumnWidth),
+                    (.audience, Metrics.audienceColumnWidth),
+                    (.lastOpened, Metrics.dateColumnWidth),
+                    (.downloads, Metrics.downloadsColumnWidth),
+                ]
+                : [
+                    (.sharer, Metrics.sharerColumnWidth),
+                    (.expires, Metrics.dateColumnWidth),
+                    (.received, Metrics.dateColumnWidth),
+                ]
+            var used = MacBrowseTableMetrics.nameColumnMinWidth
+            var shown: Set<Column> = []
+            for (column, columnWidth) in byPriority {
+                used += MacTableMetrics.columnSpacing + columnWidth
+                guard used <= width else { break }
+                shown.insert(column)
+            }
+            self.shown = shown
+        }
+
+        func shows(_ column: Column) -> Bool {
+            shown.contains(column)
+        }
     }
 
     /// One Shared segment as a Mac outline table grouped by item: an item with several shares opens
@@ -30,6 +66,7 @@
         @State private var sortOrder: [KeyPathComparator<MacSharedRow>]
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         @FocusState private var isFocused: Bool
+        @State private var width: CGFloat = .zero
 
         init(
             store: StoreOf<SharedFeature>,
@@ -85,6 +122,7 @@
                 .sorted(using: sortOrder)
             table(rows)
                 .macBoardTable()
+                .macBrowseTableWidth($width)
                 // The table's scroll view otherwise draws its header material up under the pinned title.
                 .clipped()
                 .allowsHitTesting(!isLoading)
@@ -144,6 +182,7 @@
 
         @TableColumnBuilder<MacSharedRow, KeyPathComparator<MacSharedRow>>
         private var columns: some TableColumnContent<MacSharedRow, KeyPathComparator<MacSharedRow>> {
+            let shown = MacSharedTableColumns(width: width, isByMe: isByMe)
             TableColumn(L10n.Sort.name, value: \.name) { row in
                 MacSharedNameCell(
                     row: row,
@@ -156,41 +195,45 @@
                 .modifier(MacSharedPlaceholderCell(isActive: isLoading))
                 .opacity(opacity(for: row))
             }
-            .width(min: Metrics.nameColumnMinWidth)
-            if isByMe {
+            .width(min: MacBrowseTableMetrics.nameColumnCompactWidth)
+            if shown.shows(.audience) {
                 TableColumn(L10n.Shared.metaSharedWith, value: \.recipientCount) { row in
                     SharedAudienceBadgeRow(badges: badges(for: row), ringColor: Color.backgroundPrimary)
                         .modifier(MacSharedPlaceholderCell(isActive: isLoading))
                         .opacity(opacity(for: row))
                 }
-                .width(min: Metrics.audienceColumnMinWidth, ideal: Metrics.audienceColumnIdealWidth)
+                .width(Metrics.audienceColumnWidth)
             }
-            if !isByMe {
+            if shown.shows(.sharer) {
                 TableColumn(L10n.Shared.metaSharedBy, value: \.sharer) { row in
                     MacSharedSharerCell(name: row.sharer)
                         .modifier(MacSharedPlaceholderCell(isActive: isLoading))
                 }
-                .width(min: Metrics.sharerColumnMinWidth, ideal: Metrics.sharerColumnIdealWidth)
+                .width(Metrics.sharerColumnWidth)
             }
-            TableColumn(L10n.Shared.metaExpires, value: \.expirySortDate) { row in
-                let share = row.expiringShare
-                MacSharedExpiryCell(
-                    expiresAt: share?.expiresAt,
-                    notice: isLoading ? nil : share.flatMap(store.state.expiryNotice(for:)),
-                    dateFormat: dateFormat
-                )
-                .modifier(MacSharedPlaceholderCell(isActive: isLoading))
-                .opacity(opacity(for: row))
+            if shown.shows(.expires) {
+                TableColumn(L10n.Shared.metaExpires, value: \.expirySortDate) { row in
+                    let share = row.expiringShare
+                    MacSharedExpiryCell(
+                        expiresAt: share?.expiresAt,
+                        notice: isLoading ? nil : share.flatMap(store.state.expiryNotice(for:)),
+                        dateFormat: dateFormat
+                    )
+                    .modifier(MacSharedPlaceholderCell(isActive: isLoading))
+                    .opacity(opacity(for: row))
+                }
+                .width(Metrics.dateColumnWidth)
             }
-            .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
-            if isByMe {
+            if shown.shows(.lastOpened) {
                 TableColumn(L10n.Shared.metaLastOpened, value: \.lastOpenedSortDate) { row in
                     secondaryText(
                         SharedShareFacts.lastOpened(row.lastOpenedAt),
                         for: row
                     )
                 }
-                .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
+                .width(Metrics.dateColumnWidth)
+            }
+            if shown.shows(.downloads) {
                 TableColumn(L10n.Shared.metaDownloads, value: \.downloadCount) { row in
                     secondaryText(row.downloadCount.formatted(), for: row)
                         .monospacedDigit()
@@ -198,11 +241,11 @@
                 }
                 .width(Metrics.downloadsColumnWidth)
             }
-            if !isByMe {
+            if shown.shows(.received) {
                 TableColumn(L10n.Shared.metaReceived, value: \.createdAt) { row in
                     secondaryText(dateFormat.string(from: row.createdAt), for: row)
                 }
-                .width(min: Metrics.dateColumnMinWidth, ideal: Metrics.dateColumnIdealWidth)
+                .width(Metrics.dateColumnWidth)
             }
         }
 
