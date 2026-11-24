@@ -5,7 +5,7 @@
     public enum MacFormSheetMetrics {
         public static let width: CGFloat = 480
         static let padding: CGFloat = .space24
-        static let spacing: CGFloat = .space16
+        public static let spacing: CGFloat = .space16
         static let messageSpacing: CGFloat = .space8
         static let successBadgeSize: CGFloat = .size32
     }
@@ -112,10 +112,12 @@
                             .foregroundStyle(Color.white)
                             .frame(width: Metrics.successBadgeSize, height: Metrics.successBadgeSize)
                             .background(Circle().fill(Color.positive))
+                            .macDialogPop()
                             .accessibilityHidden(true)
                     }
                     MacDialogHeading(title: title, message: message)
                 }
+                .animation(DSMotion.pop, value: isSuccess)
                 switch layout {
                 case .columns:
                     Form {
@@ -129,9 +131,7 @@
                     .toggleStyle(.macSwitch)
                 }
                 below()
-                if let errorMessage {
-                    Text(errorMessage).type(.body2(.regular), style: .error)
-                }
+                MacFieldError(message: errorMessage, textType: .body2(.regular))
                 MacDialogButtons(
                     confirmTitle: confirmTitle,
                     isConfirmEnabled: isConfirmEnabled,
@@ -199,15 +199,43 @@
     /// A field with its error underneath, for the rows of a `MacFormSheet`.
     public struct MacFieldError: View {
         let message: String?
+        var textType = Typography.TextType.body3(.regular)
 
         public init(message: String?) {
             self.message = message
         }
 
+        init(message: String?, textType: Typography.TextType) {
+            self.message = message
+            self.textType = textType
+        }
+
         public var body: some View {
             if let message {
-                Text(message).type(.body3(.regular), style: .error)
+                Text(message)
+                    .type(textType, style: .error)
+                    .contentTransition(.opacity)
+                    .animation(DSMotion.stateFade, value: message)
+                    .macDialogReveal()
             }
+        }
+    }
+
+    public extension View {
+        func macDialogReveal() -> some View {
+            transition(.opacity.animation(DSMotion.stateFade))
+        }
+
+        func macDialogPop() -> some View {
+            modifier(MacDialogPop())
+        }
+    }
+
+    private struct MacDialogPop: ViewModifier {
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+        func body(content: Content) -> some View {
+            content.transition(reduceMotion ? .opacity : .scale.combined(with: .opacity))
         }
     }
 
@@ -254,6 +282,7 @@
                 Spacer()
                 if isWorking {
                     MacSpinner()
+                        .macDialogPop()
                 }
                 if let secondaryTitle {
                     Button(secondaryTitle, action: onSecondary)
@@ -271,6 +300,7 @@
                         .disabled(!isConfirmEnabled || isWorking)
                 }
             }
+            .animation(DSMotion.quickFade, value: isWorking)
         }
     }
 

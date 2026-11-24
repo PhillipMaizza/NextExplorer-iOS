@@ -19,7 +19,7 @@
                 VStack(alignment: .leading, spacing: spacing) {
                     content()
                 }
-                .padding(.horizontal, .size40)
+                .padding(.horizontal, .space40)
                 .padding(.top, .space24)
                 .padding(.bottom, .space32)
                 .frame(maxWidth: .infinity, alignment: .leading)

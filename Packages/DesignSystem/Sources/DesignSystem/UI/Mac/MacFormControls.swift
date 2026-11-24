@@ -4,7 +4,9 @@
 
     private enum Constants {
         static let fieldHeight: CGFloat = 34
+        static let compactFieldHeight: CGFloat = 28
         static let popupHeight: CGFloat = .size32
+        static let calendarWidth: CGFloat = 280
         static let focusHaloWidth: CGFloat = 3
         static let focusHaloOpacity: Double = 0.32
         static let shape = RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
@@ -35,11 +37,26 @@
         }
     }
 
-    extension View {
-        func macFieldChrome(isFocused: Bool, isInvalid: Bool = false) -> some View {
+    public enum MacFieldSize {
+        case regular
+        case compact
+        case flexible
+
+        var height: CGFloat? {
+            switch self {
+            case .regular: Constants.fieldHeight
+            case .compact: Constants.compactFieldHeight
+            case .flexible: nil
+            }
+        }
+    }
+
+    public extension View {
+        func macFieldChrome(isFocused: Bool, isInvalid: Bool = false, size: MacFieldSize = .regular) -> some View {
             let ring = isInvalid ? Color.negative : Color.accent
             return tint(Color.accent)
-                .frame(height: Constants.fieldHeight)
+                .padding(.vertical, size == .flexible ? .space4 : .zero)
+                .frame(height: size.height)
                 .background(Constants.shape.fill(Color.macField))
                 .background(
                     Constants.shape
@@ -149,13 +166,13 @@
             .accessibilityValue(date.formatted(date: .long, time: .shortened))
             .popover(isPresented: $isPresented, arrowEdge: .bottom) {
                 VStack(alignment: .leading, spacing: .space12) {
-                    DatePicker(title, selection: $date, in: range, displayedComponents: .date)
-                        .datePickerStyle(.graphical)
+                    MacMonthCalendar(selection: $date, minimum: range.lowerBound)
                     DatePicker(title, selection: $date, in: range, displayedComponents: .hourAndMinute)
                         .datePickerStyle(.stepperField)
                 }
                 .labelsHidden()
                 .tint(Color.accent)
+                .frame(width: Constants.calendarWidth)
                 .padding(.space16)
             }
         }

@@ -16,6 +16,7 @@ public extension CGFloat {
     static let space24: CGFloat = 24
     /// 32pt
     static let space32: CGFloat = 32
+    static let space40: CGFloat = 40
     /// 48pt
     static let space48: CGFloat = 48
 }

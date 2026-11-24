@@ -3,10 +3,12 @@
     import SwiftUI
 
     private enum Metrics {
-        static let labelSpacing: CGFloat = .size6
+        static let labelSpacing: CGFloat = .space8
         static let boxHeight: CGFloat = 42
         static let prominentBoxHeight: CGFloat = .size48
         static let boxIconSize: CGFloat = .size16
+        static let compactBoxIconSize: CGFloat = 14
+        static let copiedHold: Duration = .milliseconds(1500)
         static let optionMinHeight: CGFloat = 46
     }
 
@@ -43,8 +45,6 @@
         var copyTitle = L10n.Common.copy
         var copiedTitle = L10n.Common.copied
 
-        @State private var isCopied = false
-
         public init(
             _ value: String,
             icon: Image? = nil,
@@ -67,7 +67,10 @@
                     icon
                         .resizable()
                         .scaledToFit()
-                        .frame(width: Metrics.boxIconSize, height: Metrics.boxIconSize)
+                        .frame(
+                            width: isProminent ? Metrics.boxIconSize : Metrics.compactBoxIconSize,
+                            height: isProminent ? Metrics.boxIconSize : Metrics.compactBoxIconSize
+                        )
                         .foregroundStyle(Color.secondaryText)
                         .accessibilityHidden(true)
                 }
@@ -78,18 +81,44 @@
                     .truncationMode(.middle)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Button(isCopied ? copiedTitle : copyTitle) {
-                    PlatformPasteboard.copy(value)
-                    isCopied = true
-                }
-                .buttonStyle(.macDS(isProminent ? .primary : .secondary, size: .small))
-                .fixedSize()
+                MacCopyButton(value, copyTitle: copyTitle, copiedTitle: copiedTitle)
             }
             .padding(.leading, isProminent ? .space16 : .space12)
             .padding(.trailing, .space8)
             .frame(height: isProminent ? Metrics.prominentBoxHeight : Metrics.boxHeight)
             .background(RoundedRectangle(cornerRadius: .radiusControl, style: .continuous).fill(Color.macRow))
+        }
+    }
+
+    public struct MacCopyButton: View {
+        let value: String
+        var copyTitle = L10n.Common.copy
+        var copiedTitle = L10n.Common.copied
+
+        @State private var isCopied = false
+
+        public init(
+            _ value: String,
+            copyTitle: String = L10n.Common.copy,
+            copiedTitle: String = L10n.Common.copied
+        ) {
+            self.value = value
+            self.copyTitle = copyTitle
+            self.copiedTitle = copiedTitle
+        }
+
+        public var body: some View {
+            Button(isCopied ? copiedTitle : copyTitle) {
+                PlatformPasteboard.copy(value)
+                withAnimation(DSMotion.controlMorph) { isCopied = true }
+            }
+            .buttonStyle(.macDS(isCopied ? .success : .primary, size: .small))
+            .fixedSize()
             .onChange(of: value) { isCopied = false }
+            .task(id: isCopied) {
+                guard isCopied, await (try? DSMotion.waitForStep(Metrics.copiedHold)) != nil else { return }
+                withAnimation(DSMotion.controlMorph) { isCopied = false }
+            }
         }
     }
 
@@ -133,6 +162,7 @@
                 }
             }
             .padding(.horizontal, .space16)
+            .clipped()
             .animation(DSMotion.stateFade, value: isOn.wrappedValue)
         }
     }

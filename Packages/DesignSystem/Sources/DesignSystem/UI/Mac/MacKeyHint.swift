@@ -15,7 +15,7 @@
                 .type(.caption(.semibold))
                 .monospacedDigit()
                 .foregroundStyle(isHighlighted ? Color.accentText : Color.macChromeSecondary)
-                .padding(.horizontal, .size6)
+                .padding(.horizontal, .space8)
                 .padding(.vertical, .space2)
                 .background(
                     RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)

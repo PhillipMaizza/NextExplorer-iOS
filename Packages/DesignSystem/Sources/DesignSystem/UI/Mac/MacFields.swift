@@ -44,7 +44,7 @@
             .padding(.leading, .space12)
             .padding(.trailing, .space8)
             .macFieldChrome(isFocused: isFocused)
-            .background(MacAccentCaret(isFocused: isFocused, isRevealed: isRevealed))
+            .macAccentCaret(isFocused: isFocused, isRevealed: isRevealed)
         }
 
         private var revealLabel: String {
@@ -100,6 +100,10 @@
     }
 
     public extension View {
+        func macAccentCaret(isFocused: Bool, isRevealed: Bool) -> some View {
+            background(MacAccentCaret(isFocused: isFocused, isRevealed: isRevealed))
+        }
+
         func macLargeField(isFocused: Bool, isInvalid: Bool = false) -> some View {
             textFieldStyle(.plain)
                 .type(.body1(.regular))
