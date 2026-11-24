@@ -61,7 +61,7 @@
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
             .accessibilityLabelWithTooltip(L10n.OpenWith.openWith)
-            .focusedSceneValue(\.printPreview, model.printKind == nil ? nil : PrintPreviewAction { model.print() })
+            .focusedSceneValue(\.printPreview, model.printKind == nil ? nil : FocusedMenuAction { model.print() })
             .modifier(MacOpenWithPresentation(model: model))
         }
     }

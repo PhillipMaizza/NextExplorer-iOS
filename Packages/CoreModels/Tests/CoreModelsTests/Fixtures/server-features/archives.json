@@ -1,0 +1,5 @@
+{
+  "archives": {
+    "extensions": ["7z", "ZIP", "rar", "tar"]
+  }
+}

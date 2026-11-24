@@ -142,7 +142,7 @@ struct BrowsePreviewRouter: View {
                     onDelete: bound(actions.onDelete)
                 )
             case .archive:
-                ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
+                EmptyView()
             case .image:
                 FileGalleryView(
                     items: store.displayedItems.filter { PreviewKind($0) == .image },

@@ -30,6 +30,7 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.open) } icon: { item.isDirectory ? IconKit.folder : IconKit.document }
             }
             .tint(.primaryDS)
+            .keyboardShortcut("o")
             if item.isDirectory {
                 Button {
                     openWindow(value: FolderWindowRoute(path: item.id, title: item.name))
@@ -57,41 +58,57 @@ struct FileActionsMenu: View {
         // otherwise cascade into the menu and color every icon/label gold instead of the
         // system's normal label color: only removals and Delete stand out, in red.
         // Device content offers only actions on kept files.
-        if !store.shouldShowDeviceContent {
-            Section { aboutActions }
-        }
+        Section { aboutActions }
         Section { editActions }
-        Section { sendActions }
-        Section { keepActions }
+        #if os(macOS)
+            Section {
+                sendActions
+                keepActions
+            }
+            if store.access?.canWrite ?? false {
+                Section { archiveActions }
+            }
+        #elseif os(iOS)
+            Section { sendActions }
+            Section { keepActions }
+        #endif
         if store.access?.canDelete ?? false {
             Section {
                 Button(role: .destructive) {
                     store.send(.deleteTapped(item))
                 } label: {
-                    Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                    Label { Text(L10n.Browse.actionDelete).foregroundStyle(Color.negativeText) } icon: { IconKit.delete
+                    }
                 }
                 .tint(.negative)
+                .macMenuShortcut(.delete)
             }
         }
     }
 
     @ViewBuilder
     private var aboutActions: some View {
-        if isGetInfoAvailable {
+        if isGetInfoAvailable, !store.shouldShowDeviceContent {
             Button {
                 store.send(.infoTapped(item))
             } label: {
                 Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
             }
             .tint(.primaryDS)
+            .macMenuShortcut("i")
         }
-        Button {
-            store.send(.permissionsTapped(item))
-        } label: {
-            Label { Text(L10n.Browse.actionPermissions) } icon: { IconKit.lock }
+        #if os(macOS)
+            renameAction
+        #endif
+        if !store.shouldShowDeviceContent {
+            Button {
+                store.send(.permissionsTapped(item))
+            } label: {
+                Label { Text(L10n.Browse.actionPermissions) } icon: { IconKit.lock }
+            }
+            .tint(.primaryDS)
         }
-        .tint(.primaryDS)
-        if item.isHTML {
+        if item.isHTML, !store.shouldShowDeviceContent {
             Button {
                 store.send(.openInBrowserTapped(item))
             } label: {
@@ -111,31 +128,12 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
         }
-        if store.access?.canWrite ?? false {
-            Button {
-                store.send(.renameTapped(item))
-            } label: {
-                Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
+        #if os(iOS)
+            renameAction
+            if store.access?.canWrite ?? false {
+                archiveActions
             }
-            .tint(.primaryDS)
-            // Extract only offers `.zip`: the server's own extract route 415s anything else
-            // ("Only .zip archives are supported"), `.rar` included despite this app being
-            // able to browse rar contents client side.
-            if item.kind.lowercased() == "zip" {
-                Button {
-                    store.send(.extractZipTapped(item))
-                } label: {
-                    Label { Text(L10n.Browse.actionExtract) } icon: { IconKit.extract }
-                }
-                .tint(.primaryDS)
-            }
-            Button {
-                store.send(.compressTapped(item))
-            } label: {
-                Label { Text(L10n.Browse.actionCompress) } icon: { IconKit.archiveDocument }
-            }
-            .tint(.primaryDS)
-        }
+        #endif
         // Copy needs no permission on this folder (the server checks the destination on
         // paste); move has to delete the original, so it mirrors the web client's
         // `canWrite && canDelete` gate. A lone root location has nowhere to go and can't be
@@ -147,6 +145,7 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
             }
             .tint(.primaryDS)
+            .macMenuShortcut("c")
             #if os(macOS)
                 if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
                     Button {
@@ -156,6 +155,7 @@ struct FileActionsMenu: View {
                         Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
                     }
                     .tint(.primaryDS)
+                    .keyboardShortcut("d")
                 }
                 // Stages the row for a move, as Command X does; Move still opens the picker.
                 if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
@@ -166,6 +166,7 @@ struct FileActionsMenu: View {
                         Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
                     }
                     .tint(.primaryDS)
+                    .keyboardShortcut("x")
                 }
             #endif
             if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
@@ -177,6 +178,37 @@ struct FileActionsMenu: View {
                 .tint(.primaryDS)
             }
         }
+    }
+
+    @ViewBuilder
+    private var renameAction: some View {
+        if store.access?.canWrite ?? false {
+            Button {
+                store.send(.renameTapped(item))
+            } label: {
+                Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
+            }
+            .tint(.primaryDS)
+            .macMenuShortcut(.return, modifiers: [])
+        }
+    }
+
+    @ViewBuilder
+    private var archiveActions: some View {
+        if store.state.canExtract(item) {
+            Button {
+                store.send(.extractTapped(item))
+            } label: {
+                Label { Text(L10n.Browse.actionExtract) } icon: { IconKit.extract }
+            }
+            .tint(.primaryDS)
+        }
+        Button {
+            store.send(.compressTapped(item))
+        } label: {
+            Label { Text(L10n.Browse.actionCompress) } icon: { IconKit.archiveDocument }
+        }
+        .tint(.primaryDS)
     }
 
     /// On device content only a kept file can be saved or shared, from its copy on the device.
@@ -215,8 +247,7 @@ struct FileActionsMenu: View {
         }
     }
 
-    /// Available Offline and Favorites, always their own group. Taking an item off either reads as a
-    /// removal: red, like Delete.
+    /// Available Offline and Favorites. Taking an item off either reads as a removal: red, like Delete.
     @ViewBuilder
     private var keepActions: some View {
         if store.access?.canDownload ?? false, !store.shouldShowDeviceContent || isKept {
@@ -289,4 +320,14 @@ private enum PreviewSample {
 
 #Preview("Folder kept offline and favorited") {
     PreviewSample.menu()
+}
+
+private extension View {
+    func macMenuShortcut(_ key: KeyEquivalent, modifiers: EventModifiers = .command) -> some View {
+        #if os(macOS)
+            keyboardShortcut(key, modifiers: modifiers)
+        #elseif os(iOS)
+            self
+        #endif
+    }
 }

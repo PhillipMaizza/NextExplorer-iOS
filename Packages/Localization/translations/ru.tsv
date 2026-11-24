@@ -443,6 +443,10 @@ fileInfo.rowSize	Размер
 fileInfo.rowLocation	Расположение
 fileInfo.rowDateModified	Дата изменения
 fileInfo.rowDateCreated	Дата создания
+fileInfo.rowContains	Содержит
+fileInfo.rowWhere	Расположение
+fileInfo.rowModified	Изменён
+fileInfo.rowCreated	Создан
 fileInfo.rowFiles	Файлы
 fileInfo.rowFolders	Папки
 fileInfo.rowTotalSize	Общий размер
@@ -471,10 +475,17 @@ permissions.scopeOthers	Остальные
 permissions.rightRead	Чтение
 permissions.rightWrite	Запись
 permissions.rightExecute	Выполнение
+permissions.rightOpen	Открыть
+permissions.rightRun	Запуск
+permissions.scopeEveryone	Все
 archive.emptyFolder	Эта папка пуста.
+archive.unreadable	Этот архив пуст или не может быть прочитан.
 archive.openFailed	Не удалось открыть этот файл.
 archive.openArchiveFailed	Не удалось открыть этот архив.
 archive.entryTooLarge	Этот объект слишком большой, чтобы его открыть.
+archive.passwordProtected	Этот архив защищён паролем.
+archive.tooManyEntries	В этом архиве слишком много объектов, чтобы его открыть.
+archive.entryEncrypted	Этот файл зашифрован, и его нельзя просмотреть.
 gallery.loadFailed	Не удалось загрузить это изображение.
 textPreview.saved	Сохранено
 textPreview.loadFailed	Не удалось загрузить этот файл. Проверьте соединение и повторите попытку.
@@ -662,7 +673,6 @@ login.serverInfoGuide	Открыть руководство по установ�
 login.ssoButton	Войти через SSO
 login.ssoOnlyNote	Этот сервер использует единый вход. Вы входите с учётной записью своей организации в защищённом окне.
 login.errorSso	Не удалось выполнить единый вход. Повторите попытку.
-common.syncCompleted	Синхронизация завершена
 settings.toggleShowTabLabels	Показывать подписи вкладок
 login.orDivider	или
 login.errorNoAuthMethods	На этом сервере не включены способы входа.
@@ -750,7 +760,6 @@ appearance.light	Светлое
 appearance.dark	Тёмное
 browse.myFiles	Мои файлы
 browse.myFilesSubtitle	Видно только вам
-browse.home	Домой
 browse.noValue	--
 browse.today	Сегодня
 browse.yesterday	Вчера
@@ -1298,6 +1307,7 @@ spotlight.placeholder	Поиск файлов и папок
 spotlight.hintMove	Перемещение
 spotlight.hintOpen	Открыть
 trash.title	Корзина
+trash.searchPrompt	Поиск в корзине
 trash.moveToTrash	В корзину
 trash.deletePermanently	Удалить навсегда
 trash.deleteMessage#one	Объект попадёт в корзину, где удалённые объекты хранятся (дней: %lld), чтобы их можно было восстановить.

@@ -420,6 +420,10 @@ fileInfo.rowSize	Tamaño
 fileInfo.rowLocation	Ubicación
 fileInfo.rowDateModified	Fecha de modificación
 fileInfo.rowDateCreated	Fecha de creación
+fileInfo.rowContains	Contiene
+fileInfo.rowWhere	Ubicación
+fileInfo.rowModified	Modificado
+fileInfo.rowCreated	Creado
 fileInfo.rowFiles	Archivos
 fileInfo.rowFolders	Carpetas
 fileInfo.rowTotalSize	Tamaño total
@@ -448,10 +452,17 @@ permissions.scopeOthers	Otros
 permissions.rightRead	Lectura
 permissions.rightWrite	Escritura
 permissions.rightExecute	Ejecución
+permissions.rightOpen	Abrir
+permissions.rightRun	Ejecutar
+permissions.scopeEveryone	Todos
 archive.emptyFolder	Esta carpeta está vacía.
+archive.unreadable	Este archivo comprimido está vacío o no se puede leer.
 archive.openFailed	No se pudo abrir este archivo.
 archive.openArchiveFailed	No se pudo abrir este comprimido.
 archive.entryTooLarge	Este elemento es demasiado grande para abrirlo.
+archive.passwordProtected	Este archivo comprimido está protegido con contraseña.
+archive.tooManyEntries	Este archivo comprimido contiene demasiados elementos para abrirlo.
+archive.entryEncrypted	Este archivo está cifrado y no se puede previsualizar.
 gallery.loadFailed	No se pudo cargar esta imagen.
 textPreview.saved	Guardado
 textPreview.loadFailed	No se pudo cargar este archivo. Comprueba tu conexión e inténtalo de nuevo.
@@ -640,7 +651,6 @@ login.serverInfoGuide	Abrir guía de configuración
 login.ssoButton	Iniciar sesión con SSO
 login.ssoOnlyNote	Este servidor usa inicio de sesión único. Inicias sesión con la cuenta de tu organización en una ventana segura.
 login.errorSso	El inicio de sesión único no se completó. Inténtalo de nuevo.
-common.syncCompleted	Sincronización completada
 settings.toggleShowTabLabels	Mostrar etiquetas de pestañas
 login.orDivider	o
 login.errorNoAuthMethods	Este servidor no tiene métodos de inicio de sesión habilitados.
@@ -728,7 +738,6 @@ appearance.light	Claro
 appearance.dark	Oscuro
 browse.myFiles	Mis archivos
 browse.myFilesSubtitle	Solo visible para ti
-browse.home	Inicio
 browse.noValue	--
 browse.today	Hoy
 browse.yesterday	Ayer
@@ -1262,6 +1271,7 @@ spotlight.placeholder	Buscar archivos y carpetas
 spotlight.hintMove	Moverse
 spotlight.hintOpen	Abrir
 trash.title	Papelera
+trash.searchPrompt	Buscar en la papelera
 trash.moveToTrash	Mover a la papelera
 trash.deletePermanently	Eliminar definitivamente
 trash.deleteMessage#one	Irá a la papelera, que conserva los elementos eliminados %lld día para poder restaurarlos.

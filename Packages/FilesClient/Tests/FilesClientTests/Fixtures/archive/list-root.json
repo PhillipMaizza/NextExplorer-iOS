@@ -1,0 +1,12 @@
+{
+  "path": "Files/archive.zip",
+  "name": "archive.zip",
+  "inside": "",
+  "entries": [
+    { "path": "Photos", "isDirectory": true, "size": null, "modified": null, "encrypted": false, "name": "Photos" },
+    { "path": "notes.txt", "isDirectory": false, "size": 71, "modified": "2026-09-03 18:30:33", "encrypted": true, "name": "notes.txt" },
+    { "path": "photo.jpg", "isDirectory": false, "size": 10264, "modified": "2026-09-03 18:30:33", "encrypted": false, "name": "photo.jpg" }
+  ],
+  "total": 4,
+  "outside": 0
+}

@@ -420,6 +420,10 @@ fileInfo.rowSize	Dimensione
 fileInfo.rowLocation	Posizione
 fileInfo.rowDateModified	Data di modifica
 fileInfo.rowDateCreated	Data di creazione
+fileInfo.rowContains	Contiene
+fileInfo.rowWhere	Posizione
+fileInfo.rowModified	Modificato
+fileInfo.rowCreated	Creato
 fileInfo.rowFiles	File
 fileInfo.rowFolders	Cartelle
 fileInfo.rowTotalSize	Dimensione totale
@@ -448,10 +452,17 @@ permissions.scopeOthers	Altri
 permissions.rightRead	Lettura
 permissions.rightWrite	Scrittura
 permissions.rightExecute	Esecuzione
+permissions.rightOpen	Apri
+permissions.rightRun	Esegui
+permissions.scopeEveryone	Tutti
 archive.emptyFolder	Questa cartella è vuota.
+archive.unreadable	Questo archivio è vuoto o non può essere letto.
 archive.openFailed	Impossibile aprire questo file.
 archive.openArchiveFailed	Impossibile aprire questo archivio.
 archive.entryTooLarge	Questo elemento è troppo grande per essere aperto.
+archive.passwordProtected	Questo archivio è protetto da password.
+archive.tooManyEntries	Questo archivio contiene troppi elementi per essere aperto.
+archive.entryEncrypted	Questo file è crittografato e non può essere visualizzato.
 gallery.loadFailed	Impossibile caricare questa immagine.
 textPreview.saved	Salvato
 textPreview.loadFailed	Impossibile caricare questo file. Controlla la connessione e riprova.
@@ -640,7 +651,6 @@ login.serverInfoGuide	Apri la guida alla configurazione
 login.ssoButton	Accedi con SSO
 login.ssoOnlyNote	Questo server usa l’accesso unico. Accedi con l’account della tua organizzazione in una finestra sicura.
 login.errorSso	L'accesso Single Sign-On non è andato a buon fine. Riprova.
-common.syncCompleted	Sincronizzazione completata
 settings.toggleShowTabLabels	Mostra etichette schede
 login.orDivider	o
 login.errorNoAuthMethods	Questo server non ha metodi di accesso abilitati.
@@ -728,7 +738,6 @@ appearance.light	Chiaro
 appearance.dark	Scuro
 browse.myFiles	I miei file
 browse.myFilesSubtitle	Visibile solo a te
-browse.home	Home
 browse.noValue	--
 browse.today	Oggi
 browse.yesterday	Ieri
@@ -1262,6 +1271,7 @@ spotlight.placeholder	Cerca file e cartelle
 spotlight.hintMove	Sposta
 spotlight.hintOpen	Apri
 trash.title	Cestino
+trash.searchPrompt	Cerca nel cestino
 trash.moveToTrash	Sposta nel cestino
 trash.deletePermanently	Elimina definitivamente
 trash.deleteMessage#one	Andrà nel cestino, che conserva gli elementi eliminati per %lld giorno così da poterli ripristinare.

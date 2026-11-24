@@ -197,6 +197,8 @@ extension BrowseFeature {
         case let .serverFeaturesResponse(features):
             state.isPersonalSpaceEnabled = features.isPersonalEnabled
             state.isTrashAvailable = features.trash != nil
+            let archiveExtensions = features.archiveExtensions ?? []
+            state.archiveExtensions = archiveExtensions
             let modeSaved = rememberFolderSizeMode(&state, features.folderSizeMode)
             let jsonCacheStore = jsonCacheStore
             let serverURL = state.serverURL
@@ -209,6 +211,13 @@ extension BrowseFeature {
                         serverURL: serverURL,
                         scope: cacheScope,
                         value: features.isPersonalEnabled
+                    )
+                    ListCache.save(
+                        jsonCacheStore,
+                        Self.archiveExtensionsCacheNamespace,
+                        serverURL: serverURL,
+                        scope: cacheScope,
+                        value: archiveExtensions
                     )
                 },
                 modeSaved,

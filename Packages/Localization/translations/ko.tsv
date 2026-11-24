@@ -410,6 +410,10 @@ fileInfo.rowSize	크기
 fileInfo.rowLocation	위치
 fileInfo.rowDateModified	수정한 날짜
 fileInfo.rowDateCreated	생성한 날짜
+fileInfo.rowContains	포함 항목
+fileInfo.rowWhere	위치
+fileInfo.rowModified	수정일
+fileInfo.rowCreated	생성일
 fileInfo.rowFiles	파일
 fileInfo.rowFolders	폴더
 fileInfo.rowTotalSize	전체 크기
@@ -438,10 +442,17 @@ permissions.scopeOthers	기타
 permissions.rightRead	읽기
 permissions.rightWrite	쓰기
 permissions.rightExecute	실행
+permissions.rightOpen	열기
+permissions.rightRun	실행
+permissions.scopeEveryone	모든 사용자
 archive.emptyFolder	이 폴더는 비어 있습니다.
+archive.unreadable	이 압축 파일은 비어 있거나 읽을 수 없습니다.
 archive.openFailed	이 파일을 열 수 없습니다.
 archive.openArchiveFailed	이 압축 파일을 열 수 없습니다.
 archive.entryTooLarge	이 항목은 너무 커서 열 수 없습니다.
+archive.passwordProtected	이 압축 파일은 암호로 보호되어 있습니다.
+archive.tooManyEntries	이 압축 파일에는 항목이 너무 많아 열 수 없습니다.
+archive.entryEncrypted	이 파일은 암호화되어 있어 미리 볼 수 없습니다.
 gallery.loadFailed	이 이미지를 불러올 수 없습니다.
 textPreview.saved	저장됨
 textPreview.loadFailed	이 파일을 불러올 수 없습니다. 연결을 확인하고 다시 시도하세요.
@@ -629,7 +640,6 @@ login.serverInfoGuide	설치 가이드 열기
 login.ssoButton	SSO로 로그인
 login.ssoOnlyNote	이 서버는 통합 로그인을 사용합니다. 보안 창에서 조직 계정으로 로그인합니다.
 login.errorSso	싱글 사인온을 완료하지 못했습니다. 다시 시도해 주세요.
-common.syncCompleted	동기화 완료
 settings.toggleShowTabLabels	탭 레이블 표시
 login.orDivider	또는
 login.errorNoAuthMethods	이 서버에는 사용 설정된 로그인 방법이 없습니다.
@@ -717,7 +727,6 @@ appearance.light	라이트
 appearance.dark	다크
 browse.myFiles	내 파일
 browse.myFilesSubtitle	나만 볼 수 있음
-browse.home	홈
 browse.noValue	--
 browse.today	오늘
 browse.yesterday	어제
@@ -1244,6 +1253,7 @@ spotlight.placeholder	파일 및 폴더 검색
 spotlight.hintMove	이동
 spotlight.hintOpen	열기
 trash.title	휴지통
+trash.searchPrompt	휴지통 검색
 trash.moveToTrash	휴지통으로 이동
 trash.deletePermanently	영구 삭제
 trash.deleteMessage#other	휴지통으로 이동하며, 휴지통은 삭제된 항목을 %lld일 동안 보관하므로 복원할 수 있습니다.

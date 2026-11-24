@@ -208,6 +208,13 @@ public extension FilesClient {
                 kind: "directory"
             )
         },
+        listArchive: { _, _, inside in
+            ArchiveListing(inside: inside, entries: [])
+        },
+        downloadArchiveEntry: { _, _, entryPath in
+            emptyStandIn(named: (entryPath as NSString).lastPathComponent, in: "Downloads-Preview")
+        },
+        extractArchiveEntries: { _, _, _ in [] },
         downloadRawFile: { _, item in
             emptyStandIn(named: item.name, in: "Downloads-Preview")
         },

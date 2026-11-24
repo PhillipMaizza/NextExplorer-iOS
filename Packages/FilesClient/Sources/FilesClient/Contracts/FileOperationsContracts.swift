@@ -46,6 +46,15 @@ extension FilesService {
         let item: FileItem
     }
 
+    struct ArchiveExtractBody: Encodable {
+        let path: String
+        let entries: [String]
+    }
+
+    struct ArchiveExtractEnvelope: Decodable {
+        let items: [FileItem]
+    }
+
     struct CompressItemBody: Encodable {
         struct Item: Encodable {
             let name: String

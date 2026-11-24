@@ -3,7 +3,6 @@ common.cancel	ביטול
 common.save	שמירה
 common.edit	עריכה
 common.retry	נסה שוב
-common.syncCompleted	הסנכרון הושלם
 common.delete	מחיקה
 common.remove	הסרה
 common.clear	ניקוי
@@ -632,6 +631,10 @@ fileInfo.rowSize	גודל
 fileInfo.rowLocation	מיקום
 fileInfo.rowDateModified	תאריך שינוי
 fileInfo.rowDateCreated	תאריך יצירה
+fileInfo.rowContains	מכיל
+fileInfo.rowWhere	מיקום
+fileInfo.rowModified	שונה
+fileInfo.rowCreated	נוצר
 fileInfo.rowFiles	קבצים
 fileInfo.rowFolders	תיקיות
 fileInfo.rowTotalSize	גודל כולל
@@ -660,10 +663,17 @@ permissions.scopeOthers	אחרים
 permissions.rightRead	קריאה
 permissions.rightWrite	כתיבה
 permissions.rightExecute	הרצה
+permissions.rightOpen	פתיחה
+permissions.rightRun	הפעלה
+permissions.scopeEveryone	כולם
 archive.emptyFolder	התיקייה הזו ריקה.
+archive.unreadable	הארכיון הזה ריק או שלא ניתן לקרוא אותו.
 archive.openFailed	לא ניתן היה לפתוח את הקובץ הזה.
 archive.openArchiveFailed	לא ניתן היה לפתוח את הארכיון הזה.
 archive.entryTooLarge	הפריט הזה גדול מדי לפתיחה.
+archive.passwordProtected	הארכיון הזה מוגן בסיסמה.
+archive.tooManyEntries	הארכיון הזה מכיל יותר מדי פריטים לפתיחה.
+archive.entryEncrypted	הקובץ הזה מוצפן ולא ניתן להציג אותו.
 gallery.loadFailed	לא ניתן היה לטעון את התמונה הזו.
 textPreview.saved	נשמר
 textPreview.loadFailed	לא ניתן היה לטעון את הקובץ הזה. בדקו את החיבור ונסו שוב.
@@ -987,7 +997,6 @@ appearance.light	בהיר
 appearance.dark	כהה
 browse.myFiles	הקבצים שלי
 browse.myFilesSubtitle	גלוי רק לכם
-browse.home	בית
 browse.noValue	--
 browse.today	היום
 browse.yesterday	אתמול
@@ -1228,6 +1237,7 @@ spotlight.placeholder	חיפוש קבצים ותיקיות
 spotlight.hintMove	ניווט
 spotlight.hintOpen	פתיחה
 trash.title	פח אשפה
+trash.searchPrompt	חיפוש באשפה
 trash.moveToTrash	העברה לפח
 trash.deletePermanently	מחיקה לצמיתות
 trash.deleteMessage#one	הפריט יעבור לפח, שמחזיק פריטים שנמחקו (ימים: %lld) כדי שאפשר יהיה לשחזר אותם.

@@ -120,9 +120,13 @@ public enum L10n {
     }
     public enum Archive {
         public static var emptyFolder: String { tr("archive.emptyFolder") }  // "This folder is empty."
+        public static var entryEncrypted: String { tr("archive.entryEncrypted") }  // "This file is encrypted and can't be previewed."
         public static var entryTooLarge: String { tr("archive.entryTooLarge") }  // "This item is too large to open."
         public static var openArchiveFailed: String { tr("archive.openArchiveFailed") }  // "Couldn't open this archive."
         public static var openFailed: String { tr("archive.openFailed") }  // "Couldn't open this file."
+        public static var passwordProtected: String { tr("archive.passwordProtected") }  // "This archive is protected by a password."
+        public static var tooManyEntries: String { tr("archive.tooManyEntries") }  // "This archive holds too many items to open."
+        public static var unreadable: String { tr("archive.unreadable") }  // "This archive is empty or can't be read."
     }
     public enum Browse {
         public static var actionAddToFavorites: String { tr("browse.actionAddToFavorites") }  // "Add to Favorites"
@@ -182,7 +186,6 @@ public enum L10n {
         public static func downloadSavedTo(_ a0: CVarArg) -> String { tr("browse.downloadSavedTo", a0) }
         public static func fileCount(_ a0: CVarArg) -> String { tr("browse.fileCount", a0) }
         public static func folderCount(_ a0: CVarArg) -> String { tr("browse.folderCount", a0) }
-        public static var home: String { tr("browse.home") }  // "Home"
         public static var locations: String { tr("browse.locations") }  // "Locations"
         public static var myFiles: String { tr("browse.myFiles") }  // "My Files"
         public static var myFilesSubtitle: String { tr("browse.myFilesSubtitle") }  // "Only visible to you"
@@ -313,7 +316,6 @@ public enum L10n {
         public static func selectedCount(_ a0: CVarArg) -> String { tr("common.selectedCount", a0) }
         public static var share: String { tr("common.share") }  // "Share"
         public static var sort: String { tr("common.sort") }  // "Sort"
-        public static var syncCompleted: String { tr("common.syncCompleted") }  // "Sync completed"
     }
     public enum CreateShare {
         public static var addPeople: String { tr("createShare.addPeople") }  // "Add people"
@@ -481,6 +483,8 @@ public enum L10n {
         public static func restoreMessage(_ a0: CVarArg) -> String { tr("fileInfo.restoreMessage", a0) }
         public static var restoreTitle: String { tr("fileInfo.restoreTitle") }  // "Restore this version?"
         public static var rowCamera: String { tr("fileInfo.rowCamera") }  // "Camera"
+        public static var rowContains: String { tr("fileInfo.rowContains") }  // "Contains"
+        public static var rowCreated: String { tr("fileInfo.rowCreated") }  // "Created"
         public static var rowDateCreated: String { tr("fileInfo.rowDateCreated") }  // "Date Created"
         public static var rowDateModified: String { tr("fileInfo.rowDateModified") }  // "Date Modified"
         public static var rowDateTaken: String { tr("fileInfo.rowDateTaken") }  // "Date Taken"
@@ -491,9 +495,11 @@ public enum L10n {
         public static var rowKind: String { tr("fileInfo.rowKind") }  // "Kind"
         public static var rowLens: String { tr("fileInfo.rowLens") }  // "Lens"
         public static var rowLocation: String { tr("fileInfo.rowLocation") }  // "Location"
+        public static var rowModified: String { tr("fileInfo.rowModified") }  // "Modified"
         public static var rowSize: String { tr("fileInfo.rowSize") }  // "Size"
         public static var rowSoftware: String { tr("fileInfo.rowSoftware") }  // "Software"
         public static var rowTotalSize: String { tr("fileInfo.rowTotalSize") }  // "Total Size"
+        public static var rowWhere: String { tr("fileInfo.rowWhere") }  // "Where"
         public static var sectionSelected: String { tr("fileInfo.sectionSelected") }  // "Selected"
         public static var sectionServerDisk: String { tr("fileInfo.sectionServerDisk") }  // "Server Disk"
         public static var sectionSharing: String { tr("fileInfo.sectionSharing") }  // "Sharing"
@@ -733,8 +739,11 @@ public enum L10n {
         public static var numericLabel: String { tr("permissions.numericLabel") }  // "Numeric"
         public static var ownershipNote: String { tr("permissions.ownershipNote") }
         public static var rightExecute: String { tr("permissions.rightExecute") }  // "Execute"
+        public static var rightOpen: String { tr("permissions.rightOpen") }  // "Open"
         public static var rightRead: String { tr("permissions.rightRead") }  // "Read"
+        public static var rightRun: String { tr("permissions.rightRun") }  // "Run"
         public static var rightWrite: String { tr("permissions.rightWrite") }  // "Write"
+        public static var scopeEveryone: String { tr("permissions.scopeEveryone") }  // "Everyone"
         public static var scopeGroup: String { tr("permissions.scopeGroup") }  // "Group"
         public static var scopeOthers: String { tr("permissions.scopeOthers") }  // "Others"
         public static var scopeOwner: String { tr("permissions.scopeOwner") }  // "Owner"
@@ -1162,6 +1171,7 @@ public enum L10n {
         public static var restoreTo: String { tr("trash.restoreTo") }  // "Restore To…"
         public static func restored(_ a0: CVarArg) -> String { tr("trash.restored", a0) }
         public static var restoring: String { tr("trash.restoring") }  // "Restoring…"
+        public static var searchPrompt: String { tr("trash.searchPrompt") }  // "Search Trash"
         public static var sharesBadge: String { tr("trash.sharesBadge") }  // "Shared"
         public static var sharesChooseElsewhere: String { tr("trash.sharesChooseElsewhere") }  // "Brought back, they will point to the new location."
         public static func sharesChooseMessage(_ a0: CVarArg) -> String { tr("trash.sharesChooseMessage", a0) }

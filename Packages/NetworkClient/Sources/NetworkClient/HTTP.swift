@@ -32,6 +32,7 @@ public struct HTTPStatus: RawRepresentable, Hashable, Sendable {
     public static let conflict = HTTPStatus(rawValue: 409)
     public static let gone = HTTPStatus(rawValue: 410)
     public static let payloadTooLarge = HTTPStatus(rawValue: 413)
+    public static let unprocessableContent = HTTPStatus(rawValue: 422)
     public static let locked = HTTPStatus(rawValue: 423)
     public static let tooManyRequests = HTTPStatus(rawValue: 429)
     public static let internalServerError = HTTPStatus(rawValue: 500)

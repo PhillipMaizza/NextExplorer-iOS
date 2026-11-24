@@ -88,17 +88,8 @@
         }
     }
 
-    /// ⌘P for the preview on screen, published by its Open With menu.
-    public struct PrintPreviewAction {
-        let perform: () -> Void
-
-        public func callAsFunction() {
-            perform()
-        }
-    }
-
     public extension FocusedValues {
-        @Entry var printPreview: PrintPreviewAction?
+        @Entry var printPreview: FocusedMenuAction?
     }
 
     /// Where Open With copies go: inside the preview cache folder, so Clear Cache and every

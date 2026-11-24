@@ -218,25 +218,31 @@ extension BrowseFeature {
             state.fileActionErrorMessage = error.userMessage
             return refetchAfterAmbiguousFailure(&state, error)
 
-        case let .extractZipTapped(item):
+        case let .extractTapped(item, entryPaths):
             guard !state.isPerformingFileAction else { return .none }
             state.isPerformingFileAction = true
             state.fileActionProgressMessage = L10n.Browse.progressExtracting
             let serverURL = state.serverURL
             let filesClient = filesClient
             return .run { send in
-                try await send(.extractZipResponse(apiResult { try await filesClient.extractZip(serverURL, item)
+                try await send(.extractResponse(apiResult {
+                    guard let entryPaths else { return try await [filesClient.extractZip(serverURL, item)] }
+                    return try await filesClient.extractArchiveEntries(serverURL, item, entryPaths)
                 }))
             }
 
-        case let .extractZipResponse(.success(extracted)):
+        case let .extractResponse(.success(extracted)):
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
-            state.items.append(extracted)
+            for item in extracted where state.items[id: item.id] == nil {
+                state.items.append(item)
+            }
+            state.selectedItemIDs = Set(extracted.map(\.id))
+            state.scrollTargetID = extracted.first?.id
             syncListingCache(state)
             return .none
 
-        case let .extractZipResponse(.failure(error)):
+        case let .extractResponse(.failure(error)):
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
             state.fileActionErrorMessage = error.userMessage

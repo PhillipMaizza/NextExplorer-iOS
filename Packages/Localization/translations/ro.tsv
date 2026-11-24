@@ -432,6 +432,10 @@ fileInfo.rowSize	Dimensiune
 fileInfo.rowLocation	Locație
 fileInfo.rowDateModified	Data modificării
 fileInfo.rowDateCreated	Data creării
+fileInfo.rowContains	Conține
+fileInfo.rowWhere	Locație
+fileInfo.rowModified	Modificat
+fileInfo.rowCreated	Creat
 fileInfo.rowFiles	Fișiere
 fileInfo.rowFolders	Dosare
 fileInfo.rowTotalSize	Dimensiune totală
@@ -460,10 +464,17 @@ permissions.scopeOthers	Alții
 permissions.rightRead	Citire
 permissions.rightWrite	Scriere
 permissions.rightExecute	Executare
+permissions.rightOpen	Deschide
+permissions.rightRun	Rulare
+permissions.scopeEveryone	Toată lumea
 archive.emptyFolder	Acest dosar este gol.
+archive.unreadable	Această arhivă este goală sau nu poate fi citită.
 archive.openFailed	Nu s-a putut deschide acest fișier.
 archive.openArchiveFailed	Nu s-a putut deschide această arhivă.
 archive.entryTooLarge	Acest element este prea mare pentru a fi deschis.
+archive.passwordProtected	Această arhivă este protejată cu parolă.
+archive.tooManyEntries	Această arhivă conține prea multe elemente pentru a fi deschisă.
+archive.entryEncrypted	Acest fișier este criptat și nu poate fi previzualizat.
 gallery.loadFailed	Nu s-a putut încărca această imagine.
 textPreview.saved	Salvat
 textPreview.loadFailed	Nu s-a putut încărca acest fișier. Verifică conexiunea și încearcă din nou.
@@ -651,7 +662,6 @@ login.serverInfoGuide	Deschide ghidul de configurare
 login.ssoButton	Autentificare cu SSO
 login.ssoOnlyNote	Acest server folosește autentificarea unică. Te conectezi cu contul organizației tale într-o fereastră securizată.
 login.errorSso	Autentificarea unică nu s-a finalizat. Încearcă din nou.
-common.syncCompleted	Sincronizare finalizată
 settings.toggleShowTabLabels	Afișează etichetele filelor
 login.orDivider	sau
 login.errorNoAuthMethods	Acest server nu are metode de conectare activate.
@@ -739,7 +749,6 @@ appearance.light	Luminos
 appearance.dark	Întunecat
 browse.myFiles	Fișierele mele
 browse.myFilesSubtitle	Vizibil doar pentru tine
-browse.home	Acasă
 browse.noValue	--
 browse.today	Astăzi
 browse.yesterday	Ieri
@@ -1280,6 +1289,7 @@ spotlight.placeholder	Caută fișiere și foldere
 spotlight.hintMove	Navighează
 spotlight.hintOpen	Deschide
 trash.title	Coș de gunoi
+trash.searchPrompt	Caută în coș
 trash.moveToTrash	Mută în coșul de gunoi
 trash.deletePermanently	Șterge definitiv
 trash.deleteMessage#one	Ajunge în coșul de gunoi, care păstrează elementele șterse (zile: %lld) ca să poată fi restaurate.

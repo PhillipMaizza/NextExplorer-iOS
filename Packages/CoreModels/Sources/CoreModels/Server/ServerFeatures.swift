@@ -23,6 +23,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
     /// `trash`: whether deleting goes to the trash and for how long it keeps things. `nil` on a server
     /// older than the trash, which has no trash to show.
     public let trash: TrashAvailability?
+    public let archiveExtensions: [String]?
 
     public init(
         isUserVolumesEnabled: Bool = false,
@@ -34,7 +35,8 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         searchIndexLockedBy: String? = nil,
         folderSizeMode: FolderSizeMode = .off,
         folderSizeLockedBy: String? = nil,
-        trash: TrashAvailability? = nil
+        trash: TrashAvailability? = nil,
+        archiveExtensions: [String]? = nil
     ) {
         self.isUserVolumesEnabled = isUserVolumesEnabled
         self.isVolumeUsageEnabled = isVolumeUsageEnabled
@@ -46,6 +48,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         self.folderSizeMode = folderSizeMode
         self.folderSizeLockedBy = folderSizeLockedBy
         self.trash = trash
+        self.archiveExtensions = archiveExtensions
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -57,6 +60,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         case search
         case folderSize
         case trash
+        case archives
     }
 
     private struct FlagSection: Decodable {
@@ -89,6 +93,10 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         let index: Index?
     }
 
+    private struct ArchivesSection: Decodable {
+        let extensions: [String]?
+    }
+
     private struct FolderSizeSection: Decodable {
         let mode: String?
         let lockedBy: String?
@@ -112,6 +120,8 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         folderSizeMode = folderSize?.mode.flatMap(FolderSizeMode.init(rawValue:)) ?? .off
         folderSizeLockedBy = folderSize?.lockedBy
         trash = try? container.decodeIfPresent(TrashAvailability.self, forKey: .trash)
+        archiveExtensions = (try? container.decodeIfPresent(ArchivesSection.self, forKey: .archives))?
+            .extensions?.map { $0.lowercased() }
     }
 }
 

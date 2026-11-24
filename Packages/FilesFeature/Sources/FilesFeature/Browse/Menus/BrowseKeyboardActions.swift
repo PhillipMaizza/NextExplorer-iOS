@@ -42,8 +42,18 @@
         }
     }
 
+    public struct FocusedMenuAction {
+        let perform: () -> Void
+
+        public func callAsFunction() {
+            perform()
+        }
+    }
+
     public extension FocusedValues {
         @Entry var browseKeyboardActions: BrowseKeyboardActions?
+        @Entry var duplicateBrowseSelection: FocusedMenuAction?
+        @Entry var archiveFolderBack: FocusedMenuAction?
         @Entry var browseViewOptions: BrowseViewOptions?
     }
 

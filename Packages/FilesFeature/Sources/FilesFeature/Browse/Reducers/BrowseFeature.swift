@@ -57,6 +57,7 @@ public struct BrowseFeature {
         public var isPersonalSpaceEnabled = false
         /// The server has a trash (any server since mid September 2026): the root offers a Trash row.
         public var isTrashAvailable = false
+        var archiveExtensions: [String] = []
         /// How far the server's folder size index goes, from its last features answer (kept on disk so
         /// a pushed folder knows without asking). Folder rows show a size only while this is not `.off`.
         public var folderSizeMode: FolderSizeMode = .off
@@ -452,6 +453,10 @@ public struct BrowseFeature {
                 jsonCacheStore, BrowseFeature.folderSizeModeCacheNamespace, serverURL: serverURL, scope: cacheScope,
                 as: FolderSizeMode.self
             )?.value ?? .off
+            archiveExtensions = ListCache.load(
+                jsonCacheStore, BrowseFeature.archiveExtensionsCacheNamespace, serverURL: serverURL, scope: cacheScope,
+                as: [String].self
+            )?.value ?? []
             if directoryPath.isEmpty {
                 isPersonalSpaceEnabled = ListCache.load(
                     jsonCacheStore, BrowseFeature.personalSpaceCacheNamespace, serverURL: serverURL, scope: cacheScope,
@@ -543,8 +548,8 @@ public struct BrowseFeature {
         case keptDeleteDismissed
         case deleteImpactResponse(Result<DeleteImpact, FilesClientError>)
         case deleteResponse(Result<DeleteResult, FilesClientError>)
-        case extractZipTapped(FileItem)
-        case extractZipResponse(Result<FileItem, FilesClientError>)
+        case extractTapped(FileItem, entryPaths: [String]? = nil)
+        case extractResponse(Result<[FileItem], FilesClientError>)
         case compressTapped(FileItem)
         case compressResponse(Result<FileItem, FilesClientError>)
         case downloadTapped(FileItem)
@@ -681,6 +686,7 @@ public struct BrowseFeature {
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     static let personalSpaceCacheNamespace = "personalSpace"
     static let folderSizeModeCacheNamespace = "folderSizeMode"
+    static let archiveExtensionsCacheNamespace = "archiveExtensions"
     @Dependency(\.continuousClock) var clock
     @Dependency(\.date) var date
     @Dependency(\.uploadStaging) var uploadStaging

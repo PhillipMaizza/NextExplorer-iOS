@@ -155,35 +155,63 @@ struct BrowseDeleteAndArchiveTests {
     // MARK: Extract and compress
 
     @Test("Extracting a zip adds the extracted folder beside it")
-    func extractZipTappedAddsTheExtractedFolderOnSuccess() async {
+    func extractZipAddsTheExtractedFolderOnSuccess() async {
         let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
         let extracted = BrowseFixtures.folder("bundle")
         let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive])) {
             $0.filesClient.extractZip = { _, _ in extracted }
         }
 
-        await store.send(.extractZipTapped(archive)) {
+        await store.send(.extractTapped(archive)) {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = "Extracting…"
         }
-        await store.receive(\.extractZipResponse.success) {
+        await store.receive(\.extractResponse.success) {
             $0.isPerformingFileAction = false
             $0.fileActionProgressMessage = nil
             $0.items = [archive, extracted]
+            $0.selectedItemIDs = [extracted.id]
+            $0.scrollTargetID = extracted.id
         }
     }
 
+    @Test("Entries picked inside an archive come out beside it through the archive route")
+    func pickedEntriesExtractBesideTheArchive() async {
+        let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
+        let extracted = BrowseFixtures.file(TestFile.notes)
+        let asked = LockIsolated<[String]>([])
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive])) {
+            $0.filesClient.extractArchiveEntries = { _, _, paths in
+                asked.setValue(paths)
+                return [extracted]
+            }
+        }
+
+        await store.send(.extractTapped(archive, entryPaths: [TestFile.notes])) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Extracting…"
+        }
+        await store.receive(\.extractResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.items = [archive, extracted]
+            $0.selectedItemIDs = [extracted.id]
+            $0.scrollTargetID = extracted.id
+        }
+        #expect(asked.value == [TestFile.notes])
+    }
+
     @Test("A failed extraction shows a readable message")
-    func extractZipTappedFailureSurfacesAReadableErrorMessage() async {
+    func extractFailureSurfacesAReadableErrorMessage() async {
         let store = BrowseFixtures.store {
             $0.filesClient.extractZip = { _, _ in throw FilesClientError.server(statusCode: 415) }
         }
 
-        await store.send(.extractZipTapped(BrowseFixtures.file(FilesFeatureTestValue.bundleName))) {
+        await store.send(.extractTapped(BrowseFixtures.file(FilesFeatureTestValue.bundleName))) {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = "Extracting…"
         }
-        await store.receive(\.extractZipResponse.failure) {
+        await store.receive(\.extractResponse.failure) {
             $0.isPerformingFileAction = false
             $0.fileActionProgressMessage = nil
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 415).userMessage
@@ -210,6 +238,8 @@ struct BrowseDeleteAndArchiveTests {
             $0.isPerformingFileAction = false
             $0.fileActionProgressMessage = nil
             $0.items = [folder, archive]
+            $0.selectedItemIDs = [archive.id]
+            $0.scrollTargetID = archive.id
             $0.phase = .loading
         }
         await store.receive(\.itemsResponse.success) {

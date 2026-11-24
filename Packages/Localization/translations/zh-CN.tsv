@@ -410,6 +410,10 @@ fileInfo.rowSize	大小
 fileInfo.rowLocation	位置
 fileInfo.rowDateModified	修改日期
 fileInfo.rowDateCreated	创建日期
+fileInfo.rowContains	包含
+fileInfo.rowWhere	位置
+fileInfo.rowModified	修改日期
+fileInfo.rowCreated	创建日期
 fileInfo.rowFiles	文件
 fileInfo.rowFolders	文件夹
 fileInfo.rowTotalSize	总大小
@@ -438,10 +442,17 @@ permissions.scopeOthers	其他
 permissions.rightRead	读取
 permissions.rightWrite	写入
 permissions.rightExecute	执行
+permissions.rightOpen	打开
+permissions.rightRun	运行
+permissions.scopeEveryone	所有人
 archive.emptyFolder	此文件夹为空。
+archive.unreadable	此压缩包为空或无法读取。
 archive.openFailed	无法打开此文件。
 archive.openArchiveFailed	无法打开此压缩包。
 archive.entryTooLarge	此项目过大，无法打开。
+archive.passwordProtected	此压缩包受密码保护。
+archive.tooManyEntries	此压缩包包含的项目过多，无法打开。
+archive.entryEncrypted	此文件已加密，无法预览。
 gallery.loadFailed	无法加载此图像。
 textPreview.saved	已保存
 textPreview.loadFailed	无法加载此文件。请检查连接后重试。
@@ -629,7 +640,6 @@ login.serverInfoGuide	打开安装指南
 login.ssoButton	使用 SSO 登录
 login.ssoOnlyNote	此服务器使用单点登录。你将在安全窗口中使用组织账户登录。
 login.errorSso	单点登录未完成。请重试。
-common.syncCompleted	同步完成
 settings.toggleShowTabLabels	显示标签栏文字
 login.orDivider	或
 login.errorNoAuthMethods	此服务器未启用任何登录方式。
@@ -717,7 +727,6 @@ appearance.light	浅色
 appearance.dark	深色
 browse.myFiles	我的文件
 browse.myFilesSubtitle	仅你可见
-browse.home	主页
 browse.noValue	--
 browse.today	今天
 browse.yesterday	昨天
@@ -1244,6 +1253,7 @@ spotlight.placeholder	搜索文件和文件夹
 spotlight.hintMove	移动
 spotlight.hintOpen	打开
 trash.title	回收站
+trash.searchPrompt	搜索废纸篓
 trash.moveToTrash	移至回收站
 trash.deletePermanently	永久删除
 trash.deleteMessage#other	它会进入回收站，回收站会将已删除项目保留 %lld 天，以便恢复。

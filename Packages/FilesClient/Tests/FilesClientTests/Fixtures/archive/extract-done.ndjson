@@ -1,0 +1,3 @@
+{"type":"start","name":"photo.jpg"}
+{"type":"progress","percent":100}
+{"type":"done","success":true,"item":{"name":"photo.jpg","path":"Files","kind":"jpg","size":10264,"dateModified":"2026-09-23T15:52:27.993Z"},"items":[{"name":"photo.jpg","path":"Files","kind":"jpg","size":10264,"dateModified":"2026-09-23T15:52:27.993Z"}]}

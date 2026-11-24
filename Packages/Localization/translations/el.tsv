@@ -3,7 +3,6 @@ common.cancel	Ακύρωση
 common.save	Αποθήκευση
 common.edit	Επεξεργασία
 common.retry	Δοκιμάστε ξανά
-common.syncCompleted	Ο συγχρονισμός ολοκληρώθηκε
 common.delete	Διαγραφή
 common.remove	Αφαίρεση
 common.clear	Εκκαθάριση
@@ -621,6 +620,10 @@ fileInfo.rowSize	Μέγεθος
 fileInfo.rowLocation	Θέση
 fileInfo.rowDateModified	Ημερομηνία τροποποίησης
 fileInfo.rowDateCreated	Ημερομηνία δημιουργίας
+fileInfo.rowContains	Περιέχει
+fileInfo.rowWhere	Θέση
+fileInfo.rowModified	Τροποποιήθηκε
+fileInfo.rowCreated	Δημιουργήθηκε
 fileInfo.rowFiles	Αρχεία
 fileInfo.rowFolders	Φάκελοι
 fileInfo.rowTotalSize	Συνολικό μέγεθος
@@ -649,10 +652,17 @@ permissions.scopeOthers	Άλλοι
 permissions.rightRead	Ανάγνωση
 permissions.rightWrite	Εγγραφή
 permissions.rightExecute	Εκτέλεση
+permissions.rightOpen	Άνοιγμα
+permissions.rightRun	Εκτέλεση
+permissions.scopeEveryone	Όλοι
 archive.emptyFolder	Αυτός ο φάκελος είναι κενός.
+archive.unreadable	Αυτό το αρχείο συμπίεσης είναι κενό ή δεν μπορεί να διαβαστεί.
 archive.openFailed	Δεν ήταν δυνατό το άνοιγμα αυτού του αρχείου.
 archive.openArchiveFailed	Δεν ήταν δυνατό το άνοιγμα αυτού του αρχείου συμπίεσης.
 archive.entryTooLarge	Αυτό το στοιχείο είναι πολύ μεγάλο για άνοιγμα.
+archive.passwordProtected	Αυτό το αρχείο συμπίεσης προστατεύεται με κωδικό.
+archive.tooManyEntries	Αυτό το αρχείο συμπίεσης περιέχει πάρα πολλά στοιχεία για να ανοίξει.
+archive.entryEncrypted	Αυτό το αρχείο είναι κρυπτογραφημένο και δεν μπορεί να προβληθεί.
 gallery.loadFailed	Δεν ήταν δυνατή η φόρτωση αυτής της εικόνας.
 textPreview.saved	Αποθηκεύτηκε
 textPreview.loadFailed	Δεν ήταν δυνατή η φόρτωση αυτού του αρχείου. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.
@@ -976,7 +986,6 @@ appearance.light	Φωτεινή
 appearance.dark	Σκοτεινή
 browse.myFiles	Τα αρχεία μου
 browse.myFilesSubtitle	Ορατό μόνο σε εσάς
-browse.home	Αρχική
 browse.noValue	--
 browse.today	Σήμερα
 browse.yesterday	Χθες
@@ -1210,6 +1219,7 @@ spotlight.placeholder	Αναζήτηση αρχείων και φακέλων
 spotlight.hintMove	Μετακίνηση
 spotlight.hintOpen	Άνοιγμα
 trash.title	Κάδος απορριμμάτων
+trash.searchPrompt	Αναζήτηση στον κάδο
 trash.moveToTrash	Μεταφορά στον κάδο
 trash.deletePermanently	Οριστική διαγραφή
 trash.deleteMessage#one	Θα πάει στον κάδο, που κρατά τα διαγραμμένα στοιχεία για %lld ημέρα ώστε να μπορούν να επανέλθουν.

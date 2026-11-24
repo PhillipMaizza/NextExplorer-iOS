@@ -3,7 +3,6 @@ common.cancel	Avbryt
 common.save	Lagre
 common.edit	Rediger
 common.retry	Prøv igjen
-common.syncCompleted	Synkroniseringen er fullført
 common.delete	Slett
 common.remove	Fjern
 common.clear	Tøm
@@ -621,6 +620,10 @@ fileInfo.rowSize	Størrelse
 fileInfo.rowLocation	Plassering
 fileInfo.rowDateModified	Endringsdato
 fileInfo.rowDateCreated	Opprettelsesdato
+fileInfo.rowContains	Inneholder
+fileInfo.rowWhere	Plassering
+fileInfo.rowModified	Endret
+fileInfo.rowCreated	Opprettet
 fileInfo.rowFiles	Filer
 fileInfo.rowFolders	Mapper
 fileInfo.rowTotalSize	Total størrelse
@@ -649,10 +652,17 @@ permissions.scopeOthers	Andre
 permissions.rightRead	Lese
 permissions.rightWrite	Skrive
 permissions.rightExecute	Kjøre
+permissions.rightOpen	Åpne
+permissions.rightRun	Kjør
+permissions.scopeEveryone	Alle
 archive.emptyFolder	Denne mappen er tom.
+archive.unreadable	Dette arkivet er tomt eller kan ikke leses.
 archive.openFailed	Kunne ikke åpne denne filen.
 archive.openArchiveFailed	Kunne ikke åpne dette arkivet.
 archive.entryTooLarge	Dette elementet er for stort til å åpnes.
+archive.passwordProtected	Dette arkivet er beskyttet med et passord.
+archive.tooManyEntries	Dette arkivet inneholder for mange elementer til å åpnes.
+archive.entryEncrypted	Denne filen er kryptert og kan ikke forhåndsvises.
 gallery.loadFailed	Kunne ikke laste dette bildet.
 textPreview.saved	Lagret
 textPreview.loadFailed	Kunne ikke laste denne filen. Sjekk tilkoblingen og prøv igjen.
@@ -976,7 +986,6 @@ appearance.light	Lys
 appearance.dark	Mørk
 browse.myFiles	Mine filer
 browse.myFilesSubtitle	Bare synlig for deg
-browse.home	Hjem
 browse.noValue	--
 browse.today	I dag
 browse.yesterday	I går
@@ -1210,6 +1219,7 @@ spotlight.placeholder	Søk i filer og mapper
 spotlight.hintMove	Flytt
 spotlight.hintOpen	Åpne
 trash.title	Papirkurv
+trash.searchPrompt	Søk i papirkurven
 trash.moveToTrash	Flytt til papirkurven
 trash.deletePermanently	Slett permanent
 trash.deleteMessage#one	Det havner i papirkurven, som tar vare på slettede elementer i %lld dag slik at de kan gjenopprettes.

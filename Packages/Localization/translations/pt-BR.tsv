@@ -3,7 +3,6 @@ common.cancel	Cancelar
 common.save	Salvar
 common.edit	Editar
 common.retry	Tentar novamente
-common.syncCompleted	Sincronização concluída
 common.delete	Excluir
 common.remove	Remover
 common.clear	Limpar
@@ -634,6 +633,10 @@ fileInfo.rowSize	Tamanho
 fileInfo.rowLocation	Localização
 fileInfo.rowDateModified	Data de modificação
 fileInfo.rowDateCreated	Data de criação
+fileInfo.rowContains	Contém
+fileInfo.rowWhere	Localização
+fileInfo.rowModified	Modificado
+fileInfo.rowCreated	Criado
 fileInfo.rowFiles	arquivos
 fileInfo.rowFolders	pastas
 fileInfo.rowTotalSize	Tamanho total
@@ -662,10 +665,17 @@ permissions.scopeOthers	Outros
 permissions.rightRead	Leitura
 permissions.rightWrite	Escrita
 permissions.rightExecute	Execução
+permissions.rightOpen	Abrir
+permissions.rightRun	Executar
+permissions.scopeEveryone	Todos
 archive.emptyFolder	Esta pasta está vazia.
+archive.unreadable	Este arquivo compactado está vazio ou não pode ser lido.
 archive.openFailed	Não foi possível abrir este arquivo.
 archive.openArchiveFailed	Não foi possível abrir este arquivo.
 archive.entryTooLarge	Este item é grande demais para abrir.
+archive.passwordProtected	Este arquivo compactado está protegido por senha.
+archive.tooManyEntries	Este arquivo compactado tem itens demais para ser aberto.
+archive.entryEncrypted	Este arquivo está criptografado e não pode ser visualizado.
 gallery.loadFailed	Não foi possível carregar esta imagem.
 textPreview.saved	Salvo
 textPreview.loadFailed	Não foi possível carregar este arquivo. Verifique a conexão e tente novamente.
@@ -927,7 +937,6 @@ appearance.light	Claro
 appearance.dark	Escuro
 browse.myFiles	Meus Arquivos
 browse.myFilesSubtitle	Visível apenas para você
-browse.home	Início
 browse.noValue	--
 browse.today	Hoje
 browse.yesterday	Ontem
@@ -1257,6 +1266,7 @@ spotlight.placeholder	Pesquisar arquivos e pastas
 spotlight.hintMove	Navegar
 spotlight.hintOpen	Abrir
 trash.title	Lixeira
+trash.searchPrompt	Buscar na lixeira
 trash.moveToTrash	Mover para a lixeira
 trash.deletePermanently	Excluir permanentemente
 trash.deleteMessage#one	Vai para a lixeira, que guarda os itens excluídos por %lld dia para que possam ser restaurados.

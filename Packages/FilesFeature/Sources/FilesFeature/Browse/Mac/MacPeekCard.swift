@@ -10,8 +10,9 @@
         static let margin: CGFloat = .space32
         static let radius: CGFloat = 22
         static let iconSize: CGFloat = .size40
-        static let buttonSize: CGFloat = .size40
         static let columns = 4
+        static let tileAspect: CGFloat = 4.0 / 3.0
+        static let dimmedOpacity: Double = 0.6
         static let previewWidth: CGFloat = 840
         static let previewHeight: CGFloat = 560
         static let shadowOpacity: Double = 0.35
@@ -40,14 +41,10 @@
         @FocusState private var isFocused: Bool
         @State private var isMoreOpen = false
 
-        private var shape: RoundedRectangle {
-            RoundedRectangle(cornerRadius: MacPeekMetrics.radius, style: .continuous)
-        }
-
         var body: some View {
             VStack(spacing: .zero) {
                 header
-                separator
+                MacPeekSeparator()
                 MacPeekContent(
                     item: item,
                     serverURL: serverURL,
@@ -55,18 +52,10 @@
                     shouldShowThumbnails: shouldShowThumbnails,
                     showsHiddenFiles: showsHiddenFiles
                 )
-                separator
+                MacPeekSeparator()
                 footer
             }
-            .frame(maxWidth: MacPeekMetrics.maxWidth, maxHeight: MacPeekMetrics.maxHeight)
-            .background(Color.macCard, in: shape)
-            .clipShape(shape)
-            .overlay(shape.strokeBorder(Color.macLine))
-            .shadow(
-                color: .black.opacity(MacPeekMetrics.shadowOpacity),
-                radius: MacPeekMetrics.shadowRadius,
-                y: MacPeekMetrics.shadowOffset
-            )
+            .macPeekCardChrome()
             .focusable()
             .focused($isFocused)
             .focusEffectDisabled()
@@ -87,7 +76,13 @@
                 onOpen()
                 return .handled
             }
-            .onExitCommand(perform: onClose)
+            .onExitCommand {
+                if isMoreOpen {
+                    isMoreOpen = false
+                } else {
+                    onClose()
+                }
+            }
             .accessibilityElement(children: .contain)
             .accessibilityAddTraits(.isModal)
             .accessibilityLabel(item.name)
@@ -115,13 +110,13 @@
                 Button(L10n.Browse.open, action: onOpen)
                     .buttonStyle(.macDS(.primary, size: .small))
                 if let onShare {
-                    circleButton(IconKit.link, label: L10n.Common.share, action: onShare)
+                    MacIconButton(IconKit.link, label: L10n.Common.share, action: onShare)
                 }
-                circleButton(IconKit.ellipsis, label: L10n.Common.more) { isMoreOpen.toggle() }
+                MacIconButton(IconKit.ellipsis, label: L10n.Common.more) { isMoreOpen.toggle() }
                     .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
                         MacActionMenuPanel(content: more)
                     }
-                circleButton(IconKit.close, label: L10n.Common.close, action: onClose)
+                MacIconButton(IconKit.close, label: L10n.Common.close, action: onClose)
             }
             .padding(.leading, .space24)
             .padding(.trailing, .space16)
@@ -134,41 +129,58 @@
                     .type(.caption(.regular), style: .secondary)
                     .monospacedDigit()
                 Spacer(minLength: .zero)
-                hint(MacShortcutHint.space, L10n.Common.close)
-                hint(MacShortcutHint.arrows, L10n.Spotlight.hintMove)
-                hint(MacShortcutHint.enter, L10n.Spotlight.hintOpen)
+                MacPeekHint(key: MacShortcutHint.space, title: L10n.Common.close)
+                MacPeekHint(key: MacShortcutHint.arrows, title: L10n.Spotlight.hintMove)
+                MacPeekHint(key: MacShortcutHint.enter, title: L10n.Spotlight.hintOpen)
             }
             .padding(.horizontal, .space24)
             .padding(.vertical, .space12)
         }
+    }
 
-        private var separator: some View {
+    struct MacPeekSeparator: View {
+        var body: some View {
             Rectangle()
                 .fill(Color.macLine)
                 .frame(height: .borderWidthHairline)
         }
+    }
 
-        private func hint(_ key: String, _ title: String) -> some View {
+    struct MacPeekHint: View {
+        let key: String
+        let title: String
+
+        var body: some View {
             HStack(spacing: .space4) {
                 MacKeyHint(key)
                 Text(title).type(.caption(.regular), style: .secondary)
             }
             .accessibilityElement(children: .combine)
         }
+    }
 
-        private func circleButton(_ icon: Image, label: String, action: @escaping () -> Void) -> some View {
-            Button(action: action) {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: .iconSmall, height: .iconSmall)
-                    .foregroundStyle(Color.primaryDS)
-                    .frame(width: MacPeekMetrics.buttonSize, height: MacPeekMetrics.buttonSize)
-                    .background(Circle().fill(Color.macSegment))
-                    .contentShape(Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabelWithTooltip(label)
+    private struct MacPeekCardChrome: ViewModifier {
+        private var shape: RoundedRectangle {
+            RoundedRectangle(cornerRadius: MacPeekMetrics.radius, style: .continuous)
+        }
+
+        func body(content: Content) -> some View {
+            content
+                .frame(maxWidth: MacPeekMetrics.maxWidth, maxHeight: MacPeekMetrics.maxHeight)
+                .background(Color.macCard, in: shape)
+                .clipShape(shape)
+                .overlay(shape.strokeBorder(Color.macLine))
+                .shadow(
+                    color: .black.opacity(MacPeekMetrics.shadowOpacity),
+                    radius: MacPeekMetrics.shadowRadius,
+                    y: MacPeekMetrics.shadowOffset
+                )
+        }
+    }
+
+    extension View {
+        func macPeekCardChrome() -> some View {
+            modifier(MacPeekCardChrome())
         }
     }
 

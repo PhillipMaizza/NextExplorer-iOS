@@ -3,7 +3,6 @@ common.cancel	Batal
 common.save	Simpan
 common.edit	Ubah
 common.retry	Coba Lagi
-common.syncCompleted	Sinkronisasi selesai
 common.delete	Hapus
 common.remove	Buang
 common.clear	Bersihkan
@@ -610,6 +609,10 @@ fileInfo.rowSize	Ukuran
 fileInfo.rowLocation	Lokasi
 fileInfo.rowDateModified	Tanggal Diubah
 fileInfo.rowDateCreated	Tanggal Dibuat
+fileInfo.rowContains	Berisi
+fileInfo.rowWhere	Lokasi
+fileInfo.rowModified	Diubah
+fileInfo.rowCreated	Dibuat
 fileInfo.rowFiles	File
 fileInfo.rowFolders	Folder
 fileInfo.rowTotalSize	Ukuran Total
@@ -638,10 +641,17 @@ permissions.scopeOthers	Lainnya
 permissions.rightRead	Baca
 permissions.rightWrite	Tulis
 permissions.rightExecute	Eksekusi
+permissions.rightOpen	Buka
+permissions.rightRun	Jalankan
+permissions.scopeEveryone	Semua orang
 archive.emptyFolder	Folder ini kosong.
+archive.unreadable	Arsip ini kosong atau tidak dapat dibaca.
 archive.openFailed	Tidak dapat membuka file ini.
 archive.openArchiveFailed	Tidak dapat membuka arsip ini.
 archive.entryTooLarge	Item ini terlalu besar untuk dibuka.
+archive.passwordProtected	Arsip ini dilindungi kata sandi.
+archive.tooManyEntries	Arsip ini berisi terlalu banyak item untuk dibuka.
+archive.entryEncrypted	File ini dienkripsi dan tidak dapat dipratinjau.
 gallery.loadFailed	Tidak dapat memuat gambar ini.
 textPreview.saved	Tersimpan
 textPreview.loadFailed	Tidak dapat memuat file ini. Periksa koneksi Anda dan coba lagi.
@@ -965,7 +975,6 @@ appearance.light	Terang
 appearance.dark	Gelap
 browse.myFiles	File Saya
 browse.myFilesSubtitle	Hanya terlihat oleh Anda
-browse.home	Beranda
 browse.noValue	--
 browse.today	Hari ini
 browse.yesterday	Kemarin
@@ -1192,6 +1201,7 @@ spotlight.placeholder	Cari file dan folder
 spotlight.hintMove	Pindah
 spotlight.hintOpen	Buka
 trash.title	Sampah
+trash.searchPrompt	Cari di sampah
 trash.moveToTrash	Pindahkan ke Sampah
 trash.deletePermanently	Hapus Permanen
 trash.deleteMessage#other	Item akan masuk ke sampah, yang menyimpan item terhapus selama %lld hari agar bisa dipulihkan.

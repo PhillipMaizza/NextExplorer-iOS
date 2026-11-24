@@ -421,6 +421,10 @@ fileInfo.rowSize	Storlek
 fileInfo.rowLocation	Plats
 fileInfo.rowDateModified	Ändringsdatum
 fileInfo.rowDateCreated	Skapad datum
+fileInfo.rowContains	Innehåller
+fileInfo.rowWhere	Plats
+fileInfo.rowModified	Ändrad
+fileInfo.rowCreated	Skapad
 fileInfo.rowFiles	Filer
 fileInfo.rowFolders	Mappar
 fileInfo.rowTotalSize	Total storlek
@@ -449,10 +453,17 @@ permissions.scopeOthers	Andra
 permissions.rightRead	Läs
 permissions.rightWrite	Skriv
 permissions.rightExecute	Kör
+permissions.rightOpen	Öppna
+permissions.rightRun	Kör
+permissions.scopeEveryone	Alla
 archive.emptyFolder	Den här mappen är tom.
+archive.unreadable	Det här arkivet är tomt eller kan inte läsas.
 archive.openFailed	Det gick inte att öppna den här filen.
 archive.openArchiveFailed	Det gick inte att öppna det här arkivet.
 archive.entryTooLarge	Det här objektet är för stort för att öppnas.
+archive.passwordProtected	Det här arkivet är skyddat med ett lösenord.
+archive.tooManyEntries	Det här arkivet innehåller för många objekt för att öppnas.
+archive.entryEncrypted	Den här filen är krypterad och kan inte förhandsvisas.
 gallery.loadFailed	Det gick inte att läsa in den här bilden.
 textPreview.saved	Sparad
 textPreview.loadFailed	Det gick inte att läsa in den här filen. Kontrollera anslutningen och försök igen.
@@ -640,7 +651,6 @@ login.serverInfoGuide	Öppna installationsguiden
 login.ssoButton	Logga in med SSO
 login.ssoOnlyNote	Den här servern använder enkel inloggning. Du loggar in med organisationens konto i ett säkert fönster.
 login.errorSso	Enkel inloggning slutfördes inte. Försök igen.
-common.syncCompleted	Synkronisering klar
 settings.toggleShowTabLabels	Visa fliketiketter
 login.orDivider	eller
 login.errorNoAuthMethods	Den här servern har inga inloggningsmetoder aktiverade.
@@ -728,7 +738,6 @@ appearance.light	Ljust
 appearance.dark	Mörkt
 browse.myFiles	Mina filer
 browse.myFilesSubtitle	Syns bara för dig
-browse.home	Hem
 browse.noValue	--
 browse.today	Idag
 browse.yesterday	Igår
@@ -1262,6 +1271,7 @@ spotlight.placeholder	Sök efter filer och mappar
 spotlight.hintMove	Flytta
 spotlight.hintOpen	Öppna
 trash.title	Papperskorg
+trash.searchPrompt	Sök i papperskorgen
 trash.moveToTrash	Flytta till papperskorgen
 trash.deletePermanently	Radera permanent
 trash.deleteMessage#one	Det hamnar i papperskorgen, som sparar raderade objekt i %lld dag så att de kan återställas.

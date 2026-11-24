@@ -18,6 +18,8 @@
         @FocusedValue(\.focusSearchField) private var focusSearchField
         /// Present while the file table has focus; otherwise the Edit menu edits text as usual.
         @FocusedValue(\.browseKeyboardActions) private var fileActions
+        @FocusedValue(\.duplicateBrowseSelection) private var duplicateSelection
+        @FocusedValue(\.archiveFolderBack) private var archiveFolderBack
         @FocusedValue(\.printPreview) private var printPreview
         /// The visible section's toolbar refresh, so ⌘R spins and toasts like clicking it.
         @FocusedValue(\.refreshVisibleScreen) private var refreshVisibleScreen
@@ -70,9 +72,15 @@
                     .keyboardShortcut(BrowseShortcut.newFile)
                     .disabled(createAvailability?.canCreateFile == false)
                 Divider()
-                Button(L10n.Browse.actionDuplicate) { fileActions?.duplicate() }
-                    .keyboardShortcut("d")
-                    .disabled(fileActions == nil)
+                Button(L10n.Browse.actionDuplicate) {
+                    if let duplicate = fileActions?.duplicate {
+                        duplicate()
+                    } else if !isSheetInFront {
+                        duplicateSelection?()
+                    }
+                }
+                .keyboardShortcut("d")
+                .disabled(fileActions == nil && duplicateSelection == nil)
                 Button(L10n.Browse.open) { fileActions?.open() }
                     .keyboardShortcut("o")
                     .disabled(fileActions == nil)
@@ -156,8 +164,14 @@
             }
             // Finder's Go menu: up a level, back, and the sidebar sections.
             CommandMenu(L10n.Menu.go) {
-                Button(L10n.Common.back) { sendToFrontWindow({ $0.back() }, otherwise: .backRequested) }
-                    .keyboardShortcut("[", modifiers: .command, localization: .withoutMirroring)
+                Button(L10n.Common.back) {
+                    if let archiveFolderBack {
+                        archiveFolderBack()
+                    } else {
+                        sendToFrontWindow({ $0.back() }, otherwise: .backRequested)
+                    }
+                }
+                .keyboardShortcut("[", modifiers: .command, localization: .withoutMirroring)
                 Button(L10n.Menu.forward) { sendToFrontWindow({ $0.forward() }, otherwise: .forwardRequested) }
                     .keyboardShortcut("]", modifiers: .command, localization: .withoutMirroring)
                 Button(L10n.Menu.enclosingFolder) { sendToFrontWindow(
@@ -253,11 +267,16 @@
             _ folderAction: (FolderWindowCommands) -> Void,
             otherwise action: MainTabFeature.Action
         ) {
+            guard !isSheetInFront else { return }
             if let folderWindow {
                 folderAction(folderWindow)
             } else {
                 send(action)
             }
+        }
+
+        private var isSheetInFront: Bool {
+            NSApp.keyWindow?.isSheet == true
         }
 
         private func send(_ action: MainTabFeature.Action) {

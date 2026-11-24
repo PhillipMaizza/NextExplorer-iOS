@@ -421,6 +421,10 @@ fileInfo.rowSize	Größe
 fileInfo.rowLocation	Ort
 fileInfo.rowDateModified	Änderungsdatum
 fileInfo.rowDateCreated	Erstellungsdatum
+fileInfo.rowContains	Enthält
+fileInfo.rowWhere	Ort
+fileInfo.rowModified	Geändert
+fileInfo.rowCreated	Erstellt
 fileInfo.rowFiles	Dateien
 fileInfo.rowFolders	Ordner
 fileInfo.rowTotalSize	Gesamtgröße
@@ -449,10 +453,17 @@ permissions.scopeOthers	Andere
 permissions.rightRead	Lesen
 permissions.rightWrite	Schreiben
 permissions.rightExecute	Ausführen
+permissions.rightOpen	Öffnen
+permissions.rightRun	Ausführen
+permissions.scopeEveryone	Alle
 archive.emptyFolder	Dieser Ordner ist leer.
+archive.unreadable	Dieses Archiv ist leer oder kann nicht gelesen werden.
 archive.openFailed	Diese Datei konnte nicht geöffnet werden.
 archive.openArchiveFailed	Dieses Archiv konnte nicht geöffnet werden.
 archive.entryTooLarge	Dieses Objekt ist zu groß, um es zu öffnen.
+archive.passwordProtected	Dieses Archiv ist mit einem Passwort geschützt.
+archive.tooManyEntries	Dieses Archiv enthält zu viele Objekte, um es zu öffnen.
+archive.entryEncrypted	Diese Datei ist verschlüsselt und kann nicht angezeigt werden.
 gallery.loadFailed	Dieses Bild konnte nicht geladen werden.
 textPreview.saved	Gesichert
 textPreview.loadFailed	Diese Datei konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.
@@ -640,7 +651,6 @@ login.serverInfoGuide	Einrichtungsanleitung öffnen
 login.ssoButton	Mit SSO anmelden
 login.ssoOnlyNote	Dieser Server nutzt Single Sign-on. Du meldest dich in einem sicheren Fenster mit dem Konto deiner Organisation an.
 login.errorSso	Single Sign-On wurde nicht abgeschlossen. Bitte versuche es erneut.
-common.syncCompleted	Synchronisierung abgeschlossen
 settings.toggleShowTabLabels	Tab-Beschriftungen anzeigen
 login.orDivider	oder
 login.errorNoAuthMethods	Für diesen Server sind keine Anmeldemethoden aktiviert.
@@ -728,7 +738,6 @@ appearance.light	Hell
 appearance.dark	Dunkel
 browse.myFiles	Meine Dateien
 browse.myFilesSubtitle	Nur für dich sichtbar
-browse.home	Start
 browse.noValue	--
 browse.today	Heute
 browse.yesterday	Gestern
@@ -1262,6 +1271,7 @@ spotlight.placeholder	Dateien und Ordner durchsuchen
 spotlight.hintMove	Bewegen
 spotlight.hintOpen	Öffnen
 trash.title	Papierkorb
+trash.searchPrompt	Papierkorb durchsuchen
 trash.moveToTrash	In den Papierkorb
 trash.deletePermanently	Endgültig löschen
 trash.deleteMessage#one	Es kommt in den Papierkorb, der gelöschte Objekte %lld Tag aufbewahrt, damit sie wiederhergestellt werden können.

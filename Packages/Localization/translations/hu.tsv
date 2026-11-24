@@ -3,7 +3,6 @@ common.cancel	Mégse
 common.save	Mentés
 common.edit	Szerkesztés
 common.retry	Próbálja újra
-common.syncCompleted	A szinkronizálás befejeződött
 common.delete	Törlés
 common.remove	Eltávolítás
 common.clear	Ürítés
@@ -621,6 +620,10 @@ fileInfo.rowSize	Méret
 fileInfo.rowLocation	Hely
 fileInfo.rowDateModified	Módosítás dátuma
 fileInfo.rowDateCreated	Létrehozás dátuma
+fileInfo.rowContains	Tartalom
+fileInfo.rowWhere	Hely
+fileInfo.rowModified	Módosítva
+fileInfo.rowCreated	Létrehozva
 fileInfo.rowFiles	Fájlok
 fileInfo.rowFolders	Mappák
 fileInfo.rowTotalSize	Teljes méret
@@ -649,10 +652,17 @@ permissions.scopeOthers	Mások
 permissions.rightRead	Olvasás
 permissions.rightWrite	Írás
 permissions.rightExecute	Végrehajtás
+permissions.rightOpen	Megnyitás
+permissions.rightRun	Futtatás
+permissions.scopeEveryone	Mindenki
 archive.emptyFolder	Ez a mappa üres.
+archive.unreadable	Ez az archívum üres, vagy nem olvasható.
 archive.openFailed	Ezt a fájlt nem sikerült megnyitni.
 archive.openArchiveFailed	Ezt az archívumot nem sikerült megnyitni.
 archive.entryTooLarge	Ez az elem túl nagy a megnyitáshoz.
+archive.passwordProtected	Ez az archívum jelszóval védett.
+archive.tooManyEntries	Ez az archívum túl sok elemet tartalmaz a megnyitáshoz.
+archive.entryEncrypted	Ez a fájl titkosított, és nem tekinthető meg.
 gallery.loadFailed	Ezt a képet nem sikerült betölteni.
 textPreview.saved	Mentve
 textPreview.loadFailed	Ezt a fájlt nem sikerült betölteni. Ellenőrizze a kapcsolatot, és próbálja újra.
@@ -976,7 +986,6 @@ appearance.light	Világos
 appearance.dark	Sötét
 browse.myFiles	Fájljaim
 browse.myFilesSubtitle	Csak Ön látja
-browse.home	Kezdőlap
 browse.noValue	--
 browse.today	Ma
 browse.yesterday	Tegnap
@@ -1210,6 +1219,7 @@ spotlight.placeholder	Fájlok és mappák keresése
 spotlight.hintMove	Mozgás
 spotlight.hintOpen	Megnyitás
 trash.title	Kuka
+trash.searchPrompt	Keresés a kukában
 trash.moveToTrash	Áthelyezés a kukába
 trash.deletePermanently	Végleges törlés
 trash.deleteMessage#one	A kukába kerül, amely %lld napig őrzi a törölt elemeket, hogy visszaállíthatók legyenek.

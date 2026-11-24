@@ -410,6 +410,10 @@ fileInfo.rowSize	大小
 fileInfo.rowLocation	位置
 fileInfo.rowDateModified	修改日期
 fileInfo.rowDateCreated	建立日期
+fileInfo.rowContains	包含
+fileInfo.rowWhere	位置
+fileInfo.rowModified	修改日期
+fileInfo.rowCreated	建立日期
 fileInfo.rowFiles	檔案
 fileInfo.rowFolders	檔案夾
 fileInfo.rowTotalSize	總大小
@@ -438,10 +442,17 @@ permissions.scopeOthers	其他
 permissions.rightRead	讀取
 permissions.rightWrite	寫入
 permissions.rightExecute	執行
+permissions.rightOpen	打開
+permissions.rightRun	執行
+permissions.scopeEveryone	所有人
 archive.emptyFolder	此檔案夾是空的。
+archive.unreadable	此壓縮檔是空的或無法讀取。
 archive.openFailed	無法打開此檔案。
 archive.openArchiveFailed	無法打開此壓縮檔。
 archive.entryTooLarge	此項目過大，無法打開。
+archive.passwordProtected	此壓縮檔受密碼保護。
+archive.tooManyEntries	此壓縮檔包含的項目過多，無法開啟。
+archive.entryEncrypted	此檔案已加密，無法預覽。
 gallery.loadFailed	無法載入此圖像。
 textPreview.saved	已儲存
 textPreview.loadFailed	無法載入此檔案。請檢查連線後重試。
@@ -629,7 +640,6 @@ login.serverInfoGuide	開啟安裝指南
 login.ssoButton	使用 SSO 登入
 login.ssoOnlyNote	此伺服器使用單一登入。你將在安全視窗中使用組織帳號登入。
 login.errorSso	單一登入未完成。請重試。
-common.syncCompleted	同步完成
 settings.toggleShowTabLabels	顯示分頁標籤
 login.orDivider	或
 login.errorNoAuthMethods	此伺服器未啟用任何登入方式。
@@ -717,7 +727,6 @@ appearance.light	淺色
 appearance.dark	深色
 browse.myFiles	我的檔案
 browse.myFilesSubtitle	只有你看得到
-browse.home	首頁
 browse.noValue	--
 browse.today	今天
 browse.yesterday	昨天
@@ -1244,6 +1253,7 @@ spotlight.placeholder	搜尋檔案和資料夾
 spotlight.hintMove	移動
 spotlight.hintOpen	打開
 trash.title	資源回收筒
+trash.searchPrompt	搜尋垃圾桶
 trash.moveToTrash	移至資源回收筒
 trash.deletePermanently	永久刪除
 trash.deleteMessage#other	它會移到資源回收筒，資源回收筒會將已刪除項目保留 %lld 天，以便回復。

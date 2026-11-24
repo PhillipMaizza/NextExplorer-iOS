@@ -421,6 +421,10 @@ fileInfo.rowSize	आकार
 fileInfo.rowLocation	स्थान
 fileInfo.rowDateModified	संशोधन तिथि
 fileInfo.rowDateCreated	निर्माण तिथि
+fileInfo.rowContains	सामग्री
+fileInfo.rowWhere	स्थान
+fileInfo.rowModified	संशोधित
+fileInfo.rowCreated	बनाया गया
 fileInfo.rowFiles	फ़ाइलें
 fileInfo.rowFolders	फ़ोल्डर
 fileInfo.rowTotalSize	कुल आकार
@@ -449,10 +453,17 @@ permissions.scopeOthers	अन्य
 permissions.rightRead	पढ़ें
 permissions.rightWrite	लिखें
 permissions.rightExecute	निष्पादित करें
+permissions.rightOpen	खोलें
+permissions.rightRun	चलाएँ
+permissions.scopeEveryone	सभी
 archive.emptyFolder	यह फ़ोल्डर खाली है।
+archive.unreadable	यह आर्काइव खाली है या पढ़ा नहीं जा सकता।
 archive.openFailed	यह फ़ाइल नहीं खोल सके।
 archive.openArchiveFailed	यह संग्रह नहीं खोल सके।
 archive.entryTooLarge	यह आइटम खोलने के लिए बहुत बड़ा है।
+archive.passwordProtected	यह आर्काइव पासवर्ड से सुरक्षित है।
+archive.tooManyEntries	इस आर्काइव में खोलने के लिए बहुत अधिक आइटम हैं।
+archive.entryEncrypted	यह फ़ाइल एन्क्रिप्टेड है और इसका पूर्वावलोकन नहीं किया जा सकता।
 gallery.loadFailed	यह छवि लोड नहीं कर सके।
 textPreview.saved	सहेजा गया
 textPreview.loadFailed	यह फ़ाइल लोड नहीं कर सके। अपना कनेक्शन जांचें और पुनः प्रयास करें।
@@ -640,7 +651,6 @@ login.serverInfoGuide	सेटअप गाइड खोलें
 login.ssoButton	SSO से साइन इन करें
 login.ssoOnlyNote	यह सर्वर सिंगल साइन-ऑन का उपयोग करता है। आप एक सुरक्षित विंडो में अपने संगठन के खाते से साइन इन करते हैं।
 login.errorSso	सिंगल साइन-ऑन पूरा नहीं हुआ। कृपया फिर से प्रयास करें।
-common.syncCompleted	सिंक पूरा हुआ
 settings.toggleShowTabLabels	टैब लेबल दिखाएं
 login.orDivider	या
 login.errorNoAuthMethods	इस सर्वर पर कोई साइन-इन विधि सक्षम नहीं है।
@@ -728,7 +738,6 @@ appearance.light	लाइट
 appearance.dark	डार्क
 browse.myFiles	मेरी फ़ाइलें
 browse.myFilesSubtitle	सिर्फ़ आपको दिखाई देता है
-browse.home	होम
 browse.noValue	--
 browse.today	आज
 browse.yesterday	कल
@@ -1262,6 +1271,7 @@ spotlight.placeholder	फ़ाइलें और फ़ोल्डर खो�
 spotlight.hintMove	चलें
 spotlight.hintOpen	खोलें
 trash.title	रीसायकल बिन
+trash.searchPrompt	ट्रैश में खोजें
 trash.moveToTrash	रीसायकल बिन में ले जाएँ
 trash.deletePermanently	स्थायी रूप से हटाएँ
 trash.deleteMessage#one	यह रीसायकल बिन में जाएगा, जो हटाए गए आइटम %lld दिन तक रखता है ताकि उन्हें पुनर्स्थापित किया जा सके।

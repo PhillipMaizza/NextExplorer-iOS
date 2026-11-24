@@ -410,6 +410,10 @@ fileInfo.rowSize	サイズ
 fileInfo.rowLocation	場所
 fileInfo.rowDateModified	変更日
 fileInfo.rowDateCreated	作成日
+fileInfo.rowContains	内容
+fileInfo.rowWhere	場所
+fileInfo.rowModified	変更日
+fileInfo.rowCreated	作成日
 fileInfo.rowFiles	ファイル
 fileInfo.rowFolders	フォルダ
 fileInfo.rowTotalSize	合計サイズ
@@ -438,10 +442,17 @@ permissions.scopeOthers	その他
 permissions.rightRead	読み出し
 permissions.rightWrite	書き込み
 permissions.rightExecute	実行
+permissions.rightOpen	開く
+permissions.rightRun	実行
+permissions.scopeEveryone	全員
 archive.emptyFolder	このフォルダは空です。
+archive.unreadable	このアーカイブは空か、読み取れません。
 archive.openFailed	このファイルを開けませんでした。
 archive.openArchiveFailed	このアーカイブを開けませんでした。
 archive.entryTooLarge	この項目は大きすぎて開けません。
+archive.passwordProtected	このアーカイブはパスワードで保護されています。
+archive.tooManyEntries	このアーカイブは項目が多すぎて開けません。
+archive.entryEncrypted	このファイルは暗号化されているためプレビューできません。
 gallery.loadFailed	この画像を読み込めませんでした。
 textPreview.saved	保存しました
 textPreview.loadFailed	このファイルを読み込めませんでした。接続を確認して再試行してください。
@@ -629,7 +640,6 @@ login.serverInfoGuide	セットアップガイドを開く
 login.ssoButton	SSO でサインイン
 login.ssoOnlyNote	このサーバはシングルサインオンを使用しています。安全なウインドウで組織のアカウントを使ってサインインします。
 login.errorSso	シングルサインオンを完了できませんでした。もう一度お試しください。
-common.syncCompleted	同期が完了しました
 settings.toggleShowTabLabels	タブラベルを表示
 login.orDivider	または
 login.errorNoAuthMethods	このサーバーでは有効なサインイン方法がありません。
@@ -717,7 +727,6 @@ appearance.light	ライト
 appearance.dark	ダーク
 browse.myFiles	マイファイル
 browse.myFilesSubtitle	あなただけに表示されます
-browse.home	ホーム
 browse.noValue	--
 browse.today	今日
 browse.yesterday	昨日
@@ -1244,6 +1253,7 @@ spotlight.placeholder	ファイルとフォルダを検索
 spotlight.hintMove	移動
 spotlight.hintOpen	開く
 trash.title	ゴミ箱
+trash.searchPrompt	ゴミ箱を検索
 trash.moveToTrash	ゴミ箱に移動
 trash.deletePermanently	完全に削除
 trash.deleteMessage#other	ゴミ箱に移動します。ゴミ箱は削除した項目を %lld 日間保管するので、復元できます。

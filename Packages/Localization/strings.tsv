@@ -8,7 +8,6 @@ common.increase	Increase
 common.save	Save
 common.edit	Edit
 common.retry	Try Again
-common.syncCompleted	Sync completed
 common.delete	Delete
 common.remove	Remove
 common.clear	Clear
@@ -713,6 +712,10 @@ fileInfo.rowSize	Size
 fileInfo.rowLocation	Location
 fileInfo.rowDateModified	Date Modified
 fileInfo.rowDateCreated	Date Created
+fileInfo.rowContains	Contains
+fileInfo.rowWhere	Where
+fileInfo.rowModified	Modified
+fileInfo.rowCreated	Created
 fileInfo.rowFiles	Files
 fileInfo.rowFolders	Folders
 fileInfo.rowTotalSize	Total Size
@@ -743,12 +746,19 @@ permissions.scopeOthers	Others
 permissions.rightRead	Read
 permissions.rightWrite	Write
 permissions.rightExecute	Execute
+permissions.rightOpen	Open
+permissions.rightRun	Run
+permissions.scopeEveryone	Everyone
 
 # ---- archive browser ----
 archive.emptyFolder	This folder is empty.
+archive.unreadable	This archive is empty or can't be read.
 archive.openFailed	Couldn't open this file.
 archive.openArchiveFailed	Couldn't open this archive.
 archive.entryTooLarge	This item is too large to open.
+archive.passwordProtected	This archive is protected by a password.
+archive.tooManyEntries	This archive holds too many items to open.
+archive.entryEncrypted	This file is encrypted and can't be previewed.
 
 # ---- image gallery / text preview ----
 gallery.loadFailed	Couldn't load this image.
@@ -1131,7 +1141,6 @@ appearance.light	Light
 appearance.dark	Dark
 browse.myFiles	My Files
 browse.myFilesSubtitle	Only visible to you
-browse.home	Home
 browse.noValue	--
 browse.today	Today
 browse.yesterday	Yesterday
@@ -1376,6 +1385,7 @@ spotlight.hintMove	Move
 spotlight.hintOpen	Open
 # Trash: delete confirmations, the trash screen and its Mac table
 trash.title	Trash
+trash.searchPrompt	Search Trash
 trash.moveToTrash	Move to Trash
 trash.deletePermanently	Delete Permanently
 trash.deleteMessage#one	It goes to the trash, which keeps deleted items for %lld day so they can be restored.
