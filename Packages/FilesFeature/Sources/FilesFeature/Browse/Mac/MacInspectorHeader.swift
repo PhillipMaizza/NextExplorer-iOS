@@ -62,7 +62,7 @@
 
         private var titles: some View {
             VStack(alignment: .leading, spacing: .space4) {
-                Text(item.name)
+                Text(PersonalSpace.displayName(forSegment: item.name, isFirstSegment: item.path.isEmpty))
                     .type(.headline4)
                     .lineLimit(3)
                     .textSelection(.enabled)
