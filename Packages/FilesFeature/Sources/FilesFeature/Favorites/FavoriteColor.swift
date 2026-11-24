@@ -1,3 +1,4 @@
+import Localization
 import SwiftUI
 
 /// The favorite colour swatches, mirroring `FavoriteEditDialog.vue`'s `COLOR_PALETTE`. The
@@ -7,6 +8,7 @@ enum FavoriteColor {
     struct Swatch: Identifiable, Equatable {
         let hex: String
         let fill: UInt32
+        let name: String
 
         var id: String {
             hex
@@ -18,12 +20,12 @@ enum FavoriteColor {
     }
 
     static let palette: [Swatch] = [
-        Swatch(hex: "#ff5e5a", fill: 0xFF5E5A),
-        Swatch(hex: "#ffb000", fill: 0xFFB000),
-        Swatch(hex: "#ffde00", fill: 0xFFDE00),
-        Swatch(hex: "#0bd336", fill: 0x0BD336),
-        Swatch(hex: "#009cff", fill: 0x009CFF),
-        Swatch(hex: "#d873fb", fill: 0xD873FB),
+        Swatch(hex: "#ff5e5a", fill: 0xFF5E5A, name: L10n.Favorites.editColorRed),
+        Swatch(hex: "#ffb000", fill: 0xFFB000, name: L10n.Favorites.editColorOrange),
+        Swatch(hex: "#ffde00", fill: 0xFFDE00, name: L10n.Favorites.editColorYellow),
+        Swatch(hex: "#0bd336", fill: 0x0BD336, name: L10n.Favorites.editColorGreen),
+        Swatch(hex: "#009cff", fill: 0x009CFF, name: L10n.Favorites.editColorBlue),
+        Swatch(hex: "#d873fb", fill: 0xD873FB, name: L10n.Favorites.editColorPurple),
     ]
 
     /// The colour a favorite's icon is tinted with. `nil` when no colour is set: the caller
