@@ -40,6 +40,13 @@ public struct TrashFolderFeature {
             !path.isEmpty
         }
 
+        var crumbs: [PathCrumb] {
+            let parts = path.split(separator: "/").map(String.init)
+            return [PathCrumb(title: item.name, path: "")] + parts.indices.map {
+                PathCrumb(title: parts[$0], path: parts[...$0].joined(separator: "/"))
+            }
+        }
+
         public var selectedEntries: [TrashEntry] {
             entries.filter { selectedNames.contains($0.id) }
         }
@@ -51,6 +58,7 @@ public struct TrashFolderFeature {
         case loadResponse(path: String, Result<TrashFolderListing, FilesClientError>)
         case entryTapped(TrashEntry)
         case upTapped
+        case crumbTapped(path: String)
         case selectModeToggled
         case selectionToggled(TrashEntry.ID)
         case restoreTapped([TrashEntry])
@@ -123,6 +131,11 @@ public struct TrashFolderFeature {
             case .upTapped:
                 guard state.canGoUp else { return .none }
                 state.path = state.path.split(separator: "/").dropLast().joined(separator: "/")
+                return load(&state)
+
+            case let .crumbTapped(path):
+                guard path != state.path else { return .none }
+                state.path = path
                 return load(&state)
 
             case let .textResponse(result):
