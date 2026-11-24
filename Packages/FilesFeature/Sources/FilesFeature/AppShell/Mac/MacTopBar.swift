@@ -40,6 +40,13 @@
         var searchText: Binding<String>?
         let actions: MacWindowActions
 
+        private var searchPrompt: String {
+            if actions.isShared {
+                return L10n.Shared.searchPrompt
+            }
+            return store.selectedTab == .trash ? L10n.Trash.searchPrompt : L10n.Spotlight.placeholder
+        }
+
         var body: some View {
             HStack(spacing: MacToolbarMetrics.gap) {
                 HStack(spacing: MacToolbarMetrics.gap) {
@@ -48,8 +55,10 @@
                         .disabled(!store.canGoBack)
                     button(IconKit.macToolbarForward, label: L10n.Menu.forward) { store.send(.forwardRequested) }
                         .disabled(!store.canGoForward)
-                    button(IconKit.macToolbarHome, label: L10n.Browse.home) { store.send(.homeRequested) }
-                        .disabled(!store.canGoHome)
+                    button(IconKit.macToolbarUp, label: L10n.Menu.enclosingFolder) {
+                        store.send(.enclosingFolderRequested)
+                    }
+                    .disabled(!store.canGoUp)
                     if let refresh {
                         MacRefreshToolbarButton(isRefreshing: refresh.isRefreshing) { refresh() }
                     }
@@ -58,7 +67,7 @@
                 .animation(DSMotion.controlMorph, value: isSidebarCompact)
                 MacTopBarSearch(
                     text: searchText,
-                    prompt: actions.isShared ? L10n.Shared.searchPrompt : L10n.Spotlight.placeholder
+                    prompt: searchPrompt
                 ) { store.send(.spotlightOpened) }
                 HStack(spacing: MacToolbarMetrics.gap) {
                     if store.uploads.isBarVisible || store.downloadQueue.isBarVisible {

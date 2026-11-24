@@ -38,6 +38,7 @@ struct MainTabHistoryTests {
         let deleted = TrashItem(id: "t2", name: "Photos", isDirectory: true)
         state.trash.folder = TrashFolderFeature.State(serverURL: TestHost.serverURL, item: deleted)
         #expect(state.canGoBack)
+        #expect(state.canGoUp)
 
         let store = TestStore(initialState: state) { MainTabFeature() }
         await store.send(.backRequested)
@@ -45,6 +46,7 @@ struct MainTabHistoryTests {
             $0.trash.folder = nil
         }
         #expect(!store.state.canGoBack)
+        #expect(!store.state.canGoUp)
     }
 
     @Test

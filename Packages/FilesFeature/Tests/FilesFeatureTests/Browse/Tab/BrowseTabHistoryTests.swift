@@ -88,22 +88,4 @@ struct BrowseTabHistoryTests {
             $0.forwardStack = []
         }
     }
-
-    @Test("Home clears every open folder, and Forward reopens them nearest first")
-    func homeClearsTheStackAndForwardReopensIt() async {
-        let store = makeStore(pushing: ["A", "A/B"])
-
-        await store.send(.goHome) {
-            $0.path.removeAll()
-            $0.forwardStack = [screen("A/B"), screen("A")]
-        }
-        await store.send(.goForward) {
-            $0.forwardStack = [screen("A/B")]
-            $0.path.append(screen("A"))
-        }
-        await store.send(.goHome) {
-            $0.path.removeAll()
-            $0.forwardStack = [screen("A/B"), screen("A")]
-        }
-    }
 }
