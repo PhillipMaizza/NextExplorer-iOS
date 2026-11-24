@@ -293,8 +293,7 @@ public extension SharedFeature.State {
     private func item(id: String, shares: [Share], segment: SharedFeature.Segment) -> SharedFeature.Item {
         let ordered = shares.sorted { $0.createdAt < $1.createdAt }
         let first = ordered[0]
-        let components = first.trimmedSourcePath?.split(separator: "/").map(String.init) ?? []
-        let parent = components.dropLast().joined(separator: "/")
+        let parent = first.itemLocation
         return SharedFeature.Item(
             id: id,
             name: first.itemName,

@@ -10,13 +10,15 @@ struct ShareLinkDisplayTests {
     }
 
     private func share(
+        sourcePath: String? = nil,
         isDirectory: Bool = false,
         sharingType: ShareTarget = .anyone,
         hasPassword: Bool = false
     ) -> Share {
         Share(
-            id: "s1", shareToken: Constants.token, ownerId: "u1", isDirectory: isDirectory, accessMode: .readonly,
-            sharingType: sharingType, hasPassword: hasPassword, createdAt: MockDate.date, updatedAt: MockDate.date
+            id: "s1", shareToken: Constants.token, ownerId: "u1", sourcePath: sourcePath, isDirectory: isDirectory,
+            accessMode: .readonly, sharingType: sharingType, hasPassword: hasPassword,
+            createdAt: MockDate.date, updatedAt: MockDate.date
         )
     }
 
@@ -76,5 +78,16 @@ struct ShareLinkDisplayTests {
     func aPasswordOrSpecificPeopleKeepTheDirectLink() {
         #expect(share(hasPassword: true).directLinkChoices == [.openInBrowser, .download, .raw])
         #expect(share(sharingType: .users).directLinkChoices == [.openInBrowser, .download, .raw])
+    }
+
+    @Test
+    func theItemNameAndLocationIgnoreSlashesAroundTheSharedPath() {
+        let nested = share(sourcePath: "/Company/Policies/Handbook.pdf/")
+        let atRoot = share(sourcePath: "/Handbook.pdf")
+
+        #expect(nested.itemName == "Handbook.pdf")
+        #expect(nested.itemLocation == "Company/Policies")
+        #expect(atRoot.itemName == "Handbook.pdf")
+        #expect(atRoot.itemLocation.isEmpty)
     }
 }

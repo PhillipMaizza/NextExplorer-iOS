@@ -118,7 +118,7 @@
                 MacShareFormFields(
                     itemName: store.share.itemName,
                     isDirectory: store.share.isDirectory,
-                    location: ((store.share.sourcePath ?? "") as NSString).deletingLastPathComponent,
+                    location: store.share.itemLocation,
                     label: $store.label.sending(\.labelChanged),
                     accessMode: $store.accessMode.sending(\.accessModeChanged),
                     target: $store.target.sending(\.targetChanged),
