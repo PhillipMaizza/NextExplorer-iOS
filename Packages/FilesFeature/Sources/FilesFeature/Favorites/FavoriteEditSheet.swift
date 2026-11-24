@@ -16,12 +16,6 @@ private enum Metrics {
     static let selectionLineWidth: CGFloat = 2.5
     static let swatchIdleBorderWidth: CGFloat = 1
     static let maxHeightFraction: CGFloat = 0.85
-    static let macIconCell: CGFloat = 30
-    static let macIconGlyph: CGFloat = 18
-    static let macIconCornerRadius: CGFloat = 6
-    static let macSelectedIconOpacity: Double = 0.18
-    static let macSwatch: CGFloat = 16
-    static let macSwatchRing: CGFloat = 1.5
 }
 
 /// Edit a favorite's name, icon and colour: the iOS counterpart of the web
@@ -32,105 +26,13 @@ struct FavoriteEditSheet: View {
 
     private let iconColumns = [GridItem(.adaptive(minimum: Metrics.iconColumnMin), spacing: .space8)]
 
-    private var tint: Color {
-        FavoriteColor.resolve(store.colorDraft) ?? .accent
-    }
-
     var body: some View {
         #if os(macOS)
-            macBody
+            MacFavoriteEditForm(store: store, onClose: onClose)
         #else
             phoneBody
         #endif
     }
-
-    #if os(macOS)
-        /// A native Mac dialog: name, a row of colour dots like Finder's tags, the outline or
-        /// solid style and a compact icon grid, then Cancel and Save.
-        private var macBody: some View {
-            MacFormSheet(
-                title: L10n.Favorites.editTitle,
-                confirmTitle: L10n.Favorites.editSave,
-                isConfirmEnabled: store.isSaveEnabled,
-                isWorking: store.isSaving,
-                errorMessage: store.errorMessage,
-                onCancel: onClose,
-                onConfirm: { store.send(.saveTapped) }
-            ) {
-                MacSettingsRow(L10n.Favorites.editNameLabel) {
-                    TextField(
-                        L10n.Favorites.editNameLabel,
-                        text: $store.nameDraft.sending(\.nameChanged),
-                        prompt: Text(verbatim: store.favorite.path)
-                    )
-                    .labelsHidden()
-                    .autocorrectionDisabled()
-                    MacFieldError(message: nameErrorText)
-                }
-                MacSettingsRow(L10n.Favorites.editColorLabel) {
-                    HStack(spacing: .space8) {
-                        macSwatch(Color.secondary, isSelected: store.colorDraft == nil) {
-                            store.send(.colorSelected(nil))
-                        }
-                        .accessibilityLabel(L10n.Favorites.editColorDefault)
-                        ForEach(FavoriteColor.palette) { swatch in
-                            macSwatch(swatch.color, isSelected: FavoriteColor.matches(store.colorDraft, swatch.hex)) {
-                                store.send(.colorSelected(swatch.hex))
-                            }
-                        }
-                    }
-                }
-                MacSettingsRow(L10n.Favorites.editIconLabel) {
-                    Picker(
-                        L10n.Favorites.editIconLabel,
-                        selection: $store.iconStyleDraft.sending(\.iconStyleSelected)
-                    ) {
-                        ForEach(FavoriteEditFeature.IconStyle.allCases, id: \.self) { Text(iconStyleLabel($0)).tag($0) }
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
-                    .fixedSize()
-                    LazyVGrid(
-                        columns: [GridItem(.adaptive(minimum: Metrics.macIconCell), spacing: .space4)],
-                        spacing: .space4
-                    ) {
-                        ForEach(FavoriteIcon.names, id: \.self) { name in
-                            Button { store.send(.iconSelected(name)) } label: {
-                                FavoriteIcon.symbol(for: name)
-                                    .resizable().scaledToFit()
-                                    .symbolVariant(iconVariant)
-                                    .foregroundStyle(store.iconDraft == name ? tint : Color.secondary)
-                                    .frame(width: Metrics.macIconGlyph, height: Metrics.macIconGlyph)
-                                    .frame(width: Metrics.macIconCell, height: Metrics.macIconCell)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: Metrics.macIconCornerRadius)
-                                            .fill(store.iconDraft == name
-                                                ? tint
-                                                    .opacity(Metrics.macSelectedIconOpacity)
-                                                : Color.clear)
-                                    )
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                }
-            }
-        }
-
-        private func macSwatch(_ color: Color, isSelected: Bool, action: @escaping () -> Void) -> some View {
-            Button(action: action) {
-                Circle()
-                    .fill(color)
-                    .frame(width: Metrics.macSwatch, height: Metrics.macSwatch)
-                    .padding(.space2)
-                    .overlay(Circle().strokeBorder(
-                        isSelected ? Color.primary : Color.clear,
-                        lineWidth: Metrics.macSwatchRing
-                    ))
-            }
-            .buttonStyle(.plain)
-        }
-    #endif
 
     private var phoneBody: some View {
         DSDynamicHeightSheet(maxHeightFraction: Metrics.maxHeightFraction) {
@@ -141,13 +43,13 @@ struct FavoriteEditSheet: View {
                     closeAccessibilityLabel: L10n.Common.close,
                     onClose: onClose
                 )
-                .environment(\.symbolVariants, iconVariant)
+                .environment(\.symbolVariants, store.iconVariant)
 
                 if let error = store.errorMessage {
                     DSErrorCard(error)
                 }
 
-                section(L10n.Favorites.editNameLabel, error: nameErrorText) {
+                section(L10n.Favorites.editNameLabel, error: store.nameErrorText) {
                     DSTextField(store.favorite.path, text: $store.nameDraft.sending(\.nameChanged))
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
@@ -161,7 +63,7 @@ struct FavoriteEditSheet: View {
                         DSSegmentedControl(
                             options: FavoriteEditFeature.IconStyle.allCases,
                             selection: $store.iconStyleDraft.sending(\.iconStyleSelected),
-                            label: iconStyleLabel
+                            label: \.title
                         )
                         iconGrid
                     }
@@ -176,24 +78,6 @@ struct FavoriteEditSheet: View {
                 }
                 .disabled(!store.isSaveEnabled)
             }
-        }
-    }
-
-    private var iconVariant: SymbolVariants {
-        store.iconStyleDraft == .solid ? .fill : .none
-    }
-
-    private var nameErrorText: String? {
-        switch store.nameError {
-        case .empty: L10n.Favorites.editNameErrorEmpty
-        case nil: nil
-        }
-    }
-
-    private func iconStyleLabel(_ style: FavoriteEditFeature.IconStyle) -> String {
-        switch style {
-        case .outline: L10n.Favorites.editIconOutline
-        case .solid: L10n.Favorites.editIconSolid
         }
     }
 
@@ -226,6 +110,7 @@ struct FavoriteEditSheet: View {
                 ) {
                     store.send(.colorSelected(swatch.hex))
                 }
+                .accessibilityLabel(swatch.name)
             }
         }
     }
@@ -268,13 +153,18 @@ struct FavoriteEditSheet: View {
                 } label: {
                     FavoriteIcon.symbol(for: name)
                         .resizable().scaledToFit()
-                        .symbolVariant(iconVariant)
-                        .foregroundStyle(store.iconDraft == name ? tint : Color.secondaryDS)
+                        .symbolVariant(store.iconVariant)
+                        .foregroundStyle(store.iconDraft == name ? store.tint : Color.secondaryDS)
                         .frame(width: Metrics.iconGlyph, height: Metrics.iconGlyph)
                         .frame(width: Metrics.iconCell, height: Metrics.iconCell)
                         .background(
                             RoundedRectangle(cornerRadius: .radiusControl)
-                                .strokeBorder(tint, lineWidth: store.iconDraft == name ? Metrics.selectionLineWidth : 0)
+                                .strokeBorder(
+                                    store.tint,
+                                    lineWidth: store.iconDraft == name
+                                        ? Metrics.selectionLineWidth
+                                        : 0
+                                )
                         )
                 }
                 .buttonStyle(DSPressableButtonStyle())
@@ -283,8 +173,34 @@ struct FavoriteEditSheet: View {
     }
 }
 
+extension FavoriteEditFeature.State {
+    var tint: Color {
+        FavoriteColor.resolve(colorDraft) ?? .accent
+    }
+
+    var iconVariant: SymbolVariants {
+        iconStyleDraft == .solid ? .fill : .none
+    }
+
+    var nameErrorText: String? {
+        switch nameError {
+        case .empty: L10n.Favorites.editNameErrorEmpty
+        case nil: nil
+        }
+    }
+}
+
+extension FavoriteEditFeature.IconStyle {
+    var title: String {
+        switch self {
+        case .outline: L10n.Favorites.editIconOutline
+        case .solid: L10n.Favorites.editIconSolid
+        }
+    }
+}
+
 @MainActor
-private func favoriteEditPreview(
+func favoriteEditPreview(
     icon: String = "outline:BriefcaseIcon",
     color: String? = "#009cff",
     _ mutate: @Sendable (inout FavoriteEditFeature.State) -> Void = { _ in }
