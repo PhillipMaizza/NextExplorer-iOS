@@ -118,6 +118,7 @@ enum CoreModelsFixture: String, FixtureFile {
 
     // MARK: server-features
 
+    case serverFeaturesArchives = "server-features/archives"
     case serverFeaturesEditorExtensions = "server-features/editor-extensions"
     case serverFeaturesPersonalEnabled = "server-features/personal-enabled"
     case serverFeaturesVolumeUsageEnabledUserVolumesDisabled = "server-features/volume-usage-enabled-user-volumes-disabled"

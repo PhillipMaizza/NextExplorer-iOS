@@ -3,7 +3,6 @@ common.cancel	Annuller
 common.save	Gem
 common.edit	Rediger
 common.retry	Prøv igen
-common.syncCompleted	Synkronisering fuldført
 common.delete	Slet
 common.remove	Fjern
 common.clear	Ryd
@@ -621,6 +620,10 @@ fileInfo.rowSize	Størrelse
 fileInfo.rowLocation	Placering
 fileInfo.rowDateModified	Ændringsdato
 fileInfo.rowDateCreated	Oprettelsesdato
+fileInfo.rowContains	Indeholder
+fileInfo.rowWhere	Placering
+fileInfo.rowModified	Ændret
+fileInfo.rowCreated	Oprettet
 fileInfo.rowFiles	Filer
 fileInfo.rowFolders	Mapper
 fileInfo.rowTotalSize	Samlet størrelse
@@ -649,10 +652,17 @@ permissions.scopeOthers	Andre
 permissions.rightRead	Læse
 permissions.rightWrite	Skrive
 permissions.rightExecute	Udføre
+permissions.rightOpen	Åbn
+permissions.rightRun	Kør
+permissions.scopeEveryone	Alle
 archive.emptyFolder	Denne mappe er tom.
+archive.unreadable	Dette arkiv er tomt eller kan ikke læses.
 archive.openFailed	Filen kunne ikke åbnes.
 archive.openArchiveFailed	Arkivet kunne ikke åbnes.
 archive.entryTooLarge	Dette emne er for stort til at åbne.
+archive.passwordProtected	Dette arkiv er beskyttet med en adgangskode.
+archive.tooManyEntries	Dette arkiv indeholder for mange emner til at blive åbnet.
+archive.entryEncrypted	Denne fil er krypteret og kan ikke vises.
 gallery.loadFailed	Billedet kunne ikke indlæses.
 textPreview.saved	Gemt
 textPreview.loadFailed	Filen kunne ikke indlæses. Tjek din forbindelse, og prøv igen.
@@ -976,7 +986,6 @@ appearance.light	Lys
 appearance.dark	Mørk
 browse.myFiles	Mine filer
 browse.myFilesSubtitle	Kun synlig for dig
-browse.home	Hjem
 browse.noValue	--
 browse.today	I dag
 browse.yesterday	I går
@@ -1210,6 +1219,7 @@ spotlight.placeholder	Søg i filer og mapper
 spotlight.hintMove	Flyt
 spotlight.hintOpen	Åbn
 trash.title	Papirkurv
+trash.searchPrompt	Søg i papirkurven
 trash.moveToTrash	Flyt til papirkurven
 trash.deletePermanently	Slet permanent
 trash.deleteMessage#one	Det havner i papirkurven, som gemmer slettede emner i %lld dag, så de kan gendannes.

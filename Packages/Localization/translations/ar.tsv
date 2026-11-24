@@ -465,6 +465,10 @@ fileInfo.rowSize	الحجم
 fileInfo.rowLocation	الموقع
 fileInfo.rowDateModified	تاريخ التعديل
 fileInfo.rowDateCreated	تاريخ الإنشاء
+fileInfo.rowContains	يحتوي على
+fileInfo.rowWhere	الموقع
+fileInfo.rowModified	تاريخ التعديل
+fileInfo.rowCreated	تاريخ الإنشاء
 fileInfo.rowFiles	الملفات
 fileInfo.rowFolders	المجلدات
 fileInfo.rowTotalSize	الحجم الإجمالي
@@ -493,10 +497,17 @@ permissions.scopeOthers	الآخرون
 permissions.rightRead	قراءة
 permissions.rightWrite	كتابة
 permissions.rightExecute	تنفيذ
+permissions.rightOpen	فتح
+permissions.rightRun	تشغيل
+permissions.scopeEveryone	الجميع
 archive.emptyFolder	هذا المجلد فارغ.
+archive.unreadable	هذا الأرشيف فارغ أو لا يمكن قراءته.
 archive.openFailed	تعذّر فتح هذا الملف.
 archive.openArchiveFailed	تعذّر فتح هذا الأرشيف.
 archive.entryTooLarge	هذا العنصر كبير جدًا بحيث لا يمكن فتحه.
+archive.passwordProtected	هذا الأرشيف محمي بكلمة مرور.
+archive.tooManyEntries	يحتوي هذا الأرشيف على عناصر كثيرة جدًا لفتحه.
+archive.entryEncrypted	هذا الملف مشفّر ولا يمكن معاينته.
 gallery.loadFailed	تعذّر تحميل هذه الصورة.
 textPreview.saved	تم الحفظ
 textPreview.loadFailed	تعذّر تحميل هذا الملف. تحقق من اتصالك وأعد المحاولة.
@@ -684,7 +695,6 @@ login.serverInfoGuide	فتح دليل الإعداد
 login.ssoButton	تسجيل الدخول عبر SSO
 login.ssoOnlyNote	يستخدم هذا الخادم تسجيل الدخول الموحّد. سجّل الدخول بحساب مؤسستك في نافذة آمنة.
 login.errorSso	لم تكتمل عملية الدخول الموحّد. يرجى المحاولة مرة أخرى.
-common.syncCompleted	اكتملت المزامنة
 settings.toggleShowTabLabels	إظهار تسميات علامات التبويب
 login.orDivider	أو
 login.errorNoAuthMethods	لا توجد طرق تسجيل دخول مفعّلة على هذا الخادم.
@@ -772,7 +782,6 @@ appearance.light	فاتح
 appearance.dark	داكن
 browse.myFiles	ملفاتي
 browse.myFilesSubtitle	مرئي لك فقط
-browse.home	الرئيسية
 browse.noValue	--
 browse.today	اليوم
 browse.yesterday	أمس
@@ -1334,6 +1343,7 @@ spotlight.placeholder	البحث في الملفات والمجلدات
 spotlight.hintMove	تنقل
 spotlight.hintOpen	فتح
 trash.title	سلة المحذوفات
+trash.searchPrompt	البحث في المهملات
 trash.moveToTrash	نقل إلى سلة المحذوفات
 trash.deletePermanently	حذف نهائي
 trash.deleteMessage#zero	سينتقل إلى سلة المحذوفات التي تحتفظ بالعناصر المحذوفة (عدد الأيام: %lld) ليمكن استعادتها.

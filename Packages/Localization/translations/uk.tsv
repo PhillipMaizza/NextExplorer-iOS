@@ -3,7 +3,6 @@ common.cancel	Скасувати
 common.save	Зберегти
 common.edit	Змінити
 common.retry	Спробувати ще раз
-common.syncCompleted	Синхронізацію завершено
 common.delete	Видалити
 common.remove	Вилучити
 common.clear	Очистити
@@ -643,6 +642,10 @@ fileInfo.rowSize	Розмір
 fileInfo.rowLocation	Розташування
 fileInfo.rowDateModified	Дата зміни
 fileInfo.rowDateCreated	Дата створення
+fileInfo.rowContains	Містить
+fileInfo.rowWhere	Розташування
+fileInfo.rowModified	Змінено
+fileInfo.rowCreated	Створено
 fileInfo.rowFiles	Файли
 fileInfo.rowFolders	Папки
 fileInfo.rowTotalSize	Загальний розмір
@@ -671,10 +674,17 @@ permissions.scopeOthers	Інші
 permissions.rightRead	Читання
 permissions.rightWrite	Запис
 permissions.rightExecute	Виконання
+permissions.rightOpen	Відкрити
+permissions.rightRun	Запуск
+permissions.scopeEveryone	Усі
 archive.emptyFolder	Ця папка порожня.
+archive.unreadable	Цей архів порожній або його не вдається прочитати.
 archive.openFailed	Не вдалося відкрити цей файл.
 archive.openArchiveFailed	Не вдалося відкрити цей архів.
 archive.entryTooLarge	Цей елемент завеликий для відкриття.
+archive.passwordProtected	Цей архів захищено паролем.
+archive.tooManyEntries	У цьому архіві забагато об'єктів, щоб його відкрити.
+archive.entryEncrypted	Цей файл зашифровано, і його не можна переглянути.
 gallery.loadFailed	Не вдалося завантажити це зображення.
 textPreview.saved	Збережено
 textPreview.loadFailed	Не вдалося завантажити цей файл. Перевірте з’єднання й спробуйте ще раз.
@@ -998,7 +1008,6 @@ appearance.light	Світлий
 appearance.dark	Темний
 browse.myFiles	Мої файли
 browse.myFilesSubtitle	Видно лише вам
-browse.home	Додому
 browse.noValue	--
 browse.today	Сьогодні
 browse.yesterday	Вчора
@@ -1246,6 +1255,7 @@ spotlight.placeholder	Пошук файлів і папок
 spotlight.hintMove	Переміщення
 spotlight.hintOpen	Відкрити
 trash.title	Кошик
+trash.searchPrompt	Пошук у кошику
 trash.moveToTrash	Перемістити в кошик
 trash.deletePermanently	Видалити назавжди
 trash.deleteMessage#one	Об’єкт потрапить до кошика, який зберігає видалене (днів: %lld), щоб його можна було відновити.

@@ -3,7 +3,6 @@ common.cancel	İptal
 common.save	Kaydet
 common.edit	Düzenle
 common.retry	Tekrar Dene
-common.syncCompleted	Eşitleme tamamlandı
 common.delete	Sil
 common.remove	Kaldır
 common.clear	Temizle
@@ -621,6 +620,10 @@ fileInfo.rowSize	Boyut
 fileInfo.rowLocation	Konum
 fileInfo.rowDateModified	Değiştirilme Tarihi
 fileInfo.rowDateCreated	Oluşturulma Tarihi
+fileInfo.rowContains	İçerik
+fileInfo.rowWhere	Konum
+fileInfo.rowModified	Değiştirilme
+fileInfo.rowCreated	Oluşturulma
 fileInfo.rowFiles	Dosyalar
 fileInfo.rowFolders	Klasörler
 fileInfo.rowTotalSize	Toplam Boyut
@@ -649,10 +652,17 @@ permissions.scopeOthers	Diğerleri
 permissions.rightRead	Okuma
 permissions.rightWrite	Yazma
 permissions.rightExecute	Çalıştırma
+permissions.rightOpen	Aç
+permissions.rightRun	Çalıştır
+permissions.scopeEveryone	Herkes
 archive.emptyFolder	Bu klasör boş.
+archive.unreadable	Bu arşiv boş veya okunamıyor.
 archive.openFailed	Bu dosya açılamadı.
 archive.openArchiveFailed	Bu arşiv açılamadı.
 archive.entryTooLarge	Bu öğe açmak için çok büyük.
+archive.passwordProtected	Bu arşiv parola ile korunuyor.
+archive.tooManyEntries	Bu arşiv açılamayacak kadar çok öğe içeriyor.
+archive.entryEncrypted	Bu dosya şifreli ve önizlenemiyor.
 gallery.loadFailed	Bu görsel yüklenemedi.
 textPreview.saved	Kaydedildi
 textPreview.loadFailed	Bu dosya yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin.
@@ -976,7 +986,6 @@ appearance.light	Açık
 appearance.dark	Koyu
 browse.myFiles	Dosyalarım
 browse.myFilesSubtitle	Yalnızca size görünür
-browse.home	Ana Sayfa
 browse.noValue	--
 browse.today	Bugün
 browse.yesterday	Dün
@@ -1210,6 +1219,7 @@ spotlight.placeholder	Dosyalarda ve klasörlerde ara
 spotlight.hintMove	Gezin
 spotlight.hintOpen	Aç
 trash.title	Çöp Kutusu
+trash.searchPrompt	Çöp kutusunda ara
 trash.moveToTrash	Çöp Kutusuna Taşı
 trash.deletePermanently	Kalıcı Olarak Sil
 trash.deleteMessage#one	Çöp kutusuna gider; çöp kutusu silinen öğeleri geri yüklenebilmeleri için %lld gün saklar.

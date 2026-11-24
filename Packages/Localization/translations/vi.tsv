@@ -3,7 +3,6 @@ common.cancel	Hủy
 common.save	Lưu
 common.edit	Sửa
 common.retry	Thử lại
-common.syncCompleted	Đã đồng bộ xong
 common.delete	Xóa
 common.remove	Gỡ
 common.clear	Xóa sạch
@@ -610,6 +609,10 @@ fileInfo.rowSize	Kích thước
 fileInfo.rowLocation	Vị trí
 fileInfo.rowDateModified	Ngày sửa đổi
 fileInfo.rowDateCreated	Ngày tạo
+fileInfo.rowContains	Chứa
+fileInfo.rowWhere	Vị trí
+fileInfo.rowModified	Đã sửa đổi
+fileInfo.rowCreated	Đã tạo
 fileInfo.rowFiles	Tệp
 fileInfo.rowFolders	Thư mục
 fileInfo.rowTotalSize	Tổng kích thước
@@ -638,10 +641,17 @@ permissions.scopeOthers	Người khác
 permissions.rightRead	Đọc
 permissions.rightWrite	Ghi
 permissions.rightExecute	Thực thi
+permissions.rightOpen	Mở
+permissions.rightRun	Chạy
+permissions.scopeEveryone	Mọi người
 archive.emptyFolder	Thư mục này trống.
+archive.unreadable	Tệp nén này trống hoặc không thể đọc được.
 archive.openFailed	Không thể mở tệp này.
 archive.openArchiveFailed	Không thể mở tệp lưu trữ này.
 archive.entryTooLarge	Mục này quá lớn để mở.
+archive.passwordProtected	Tệp nén này được bảo vệ bằng mật khẩu.
+archive.tooManyEntries	Tệp nén này chứa quá nhiều mục để mở.
+archive.entryEncrypted	Tệp này đã được mã hóa và không thể xem trước.
 gallery.loadFailed	Không thể tải ảnh này.
 textPreview.saved	Đã lưu
 textPreview.loadFailed	Không thể tải tệp này. Hãy kiểm tra kết nối và thử lại.
@@ -965,7 +975,6 @@ appearance.light	Sáng
 appearance.dark	Tối
 browse.myFiles	Tệp của tôi
 browse.myFilesSubtitle	Chỉ mình bạn thấy
-browse.home	Trang chủ
 browse.noValue	--
 browse.today	Hôm nay
 browse.yesterday	Hôm qua
@@ -1192,6 +1201,7 @@ spotlight.placeholder	Tìm tệp và thư mục
 spotlight.hintMove	Di chuyển
 spotlight.hintOpen	Mở
 trash.title	Thùng rác
+trash.searchPrompt	Tìm trong thùng rác
 trash.moveToTrash	Chuyển vào thùng rác
 trash.deletePermanently	Xóa vĩnh viễn
 trash.deleteMessage#other	Mục sẽ vào thùng rác, nơi giữ các mục đã xóa trong %lld ngày để có thể khôi phục.

@@ -207,11 +207,6 @@ struct BrowseContentView: View {
                 ? UploadToVisibleFolderAction { isFilesPickerPresented = true }
                 : nil
         )
-        .syncCompletedToast(
-            hasFinishedRefreshing: hasFinishedRefreshing,
-            isErrorFree: store.phase.errorMessage == nil,
-            extraBottomInset: bottomChromeClearance
-        )
         #endif
         .focusedSceneValue(\.browseCreateAvailability, store.createAvailability)
         .hapticFeedback(.success, trigger: hasFinishedRefreshing) { _, _ in store.phase.errorMessage == nil }
@@ -261,7 +256,6 @@ struct BrowseContentView: View {
                     }
                 },
                 onTrash: store.shouldShowTrashButton && !isSplitViewDetail ? { store.send(.trashTapped) } : nil,
-                hasClipboardItems: store.clipboard != nil && !store.directoryPath.isEmpty,
                 clipboardMenu: {
                     BrowseClipboardMenu(store: store, shouldKeepClipboard: shouldKeepClipboardAfterCopy)
                 }
@@ -331,11 +325,14 @@ struct BrowseContentView: View {
             BrowseSelectionToolbar(store: store) { shareTarget = $0 }
         }
         .modifier(BrowseListSheets(store: store, isSortSheetPresented: $isSortSheetPresented))
+        #if os(macOS)
+            .modifier(ArchivePeekPresenter(store: store))
+        #endif
     }
 
     private var previewPresentedBinding: Binding<Bool> {
         Binding(
-            get: { store.previewItem != nil && store.isPreviewContentReady },
+            get: { store.previewItem != nil && store.isPreviewContentReady && !store.isArchivePeek },
             set: {
                 if !$0 {
                     store.send(.previewDismissed)

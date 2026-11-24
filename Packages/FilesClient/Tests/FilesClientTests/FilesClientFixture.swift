@@ -84,6 +84,11 @@ enum FilesClientFixture: String, FixtureFile {
     case folderSizeErrorExcluded = "folder-size/error-excluded"
     case folderSizeRefreshAccepted = "folder-size/refresh-accepted"
 
+    // MARK: archive
+
+    case archiveListRoot = "archive/list-root"
+    case archiveExtractDone = "archive/extract-done"
+
     // MARK: item-mutation
 
     case itemMutationDeleteOutcomeMixed = "item-mutation/delete-outcome-mixed"
@@ -231,7 +236,7 @@ enum FilesClientFixture: String, FixtureFile {
         switch self {
         case .itemMutationNdjsonCompressDone, .itemMutationNdjsonCompressError, .itemMutationNdjsonDeleteDone,
              .itemMutationNdjsonExtractDone, .itemMutationNdjsonMoveDone, .itemMutationNdjsonMoveError,
-             .trashRestoreToDone, .trashRestoreToError:
+             .trashRestoreToDone, .trashRestoreToError, .archiveExtractDone:
             "ndjson"
         default:
             "json"

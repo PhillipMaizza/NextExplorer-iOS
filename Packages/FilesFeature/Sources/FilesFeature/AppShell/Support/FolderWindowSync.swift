@@ -32,7 +32,7 @@
             switch action {
             case .renameResponse(.success), .newFolderResponse(.success), .newFileResponse(.success),
                  .deleteResponse(.success),
-                 .bulkDeleteResponse(.success), .extractZipResponse(.success), .compressResponse(.success),
+                 .bulkDeleteResponse(.success), .extractResponse(.success), .compressResponse(.success),
                  .textSaveResponse(_, .success):
                 .folders([directoryPath])
             case .transferResponse(.success), .undoResponse(.success), .redoResponse(.success):

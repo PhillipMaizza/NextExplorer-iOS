@@ -70,6 +70,9 @@ enum APIPath {
     static let filesRecentDestinations = "api/files/recent-destinations"
     static let zipExtract = "api/files/zip/extract"
     static let zipCompress = "api/files/zip/compress"
+    static let archiveList = "api/archive/list"
+    static let archiveEntry = "api/archive/entry"
+    static let archiveExtract = "api/archive/extract"
 
     /// Trailing components appended to a parent route (`api/users/:id/<component>`).
     enum Component {
@@ -89,6 +92,8 @@ enum QueryKey {
     static let query = "q"
     static let path = "path"
     static let limit = "limit"
+    static let inside = "inside"
+    static let entry = "entry"
 }
 
 /// `multipart/form-data` field names.

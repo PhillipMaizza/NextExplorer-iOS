@@ -421,6 +421,10 @@ fileInfo.rowSize	Taille
 fileInfo.rowLocation	Emplacement
 fileInfo.rowDateModified	Date de modification
 fileInfo.rowDateCreated	Date de création
+fileInfo.rowContains	Contient
+fileInfo.rowWhere	Emplacement
+fileInfo.rowModified	Modifié
+fileInfo.rowCreated	Créé
 fileInfo.rowFiles	Fichiers
 fileInfo.rowFolders	Dossiers
 fileInfo.rowTotalSize	Taille totale
@@ -449,10 +453,17 @@ permissions.scopeOthers	Autres
 permissions.rightRead	Lecture
 permissions.rightWrite	Écriture
 permissions.rightExecute	Exécution
+permissions.rightOpen	Ouvrir
+permissions.rightRun	Exécuter
+permissions.scopeEveryone	Tout le monde
 archive.emptyFolder	Ce dossier est vide.
+archive.unreadable	Cette archive est vide ou illisible.
 archive.openFailed	Impossible d'ouvrir ce fichier.
 archive.openArchiveFailed	Impossible d'ouvrir cette archive.
 archive.entryTooLarge	Cet élément est trop volumineux pour être ouvert.
+archive.passwordProtected	Cette archive est protégée par un mot de passe.
+archive.tooManyEntries	Cette archive contient trop d'éléments pour être ouverte.
+archive.entryEncrypted	Ce fichier est chiffré et ne peut pas être prévisualisé.
 gallery.loadFailed	Impossible de charger cette image.
 textPreview.saved	Enregistré
 textPreview.loadFailed	Impossible de charger ce fichier. Vérifiez votre connexion et réessayez.
@@ -640,7 +651,6 @@ login.serverInfoGuide	Ouvrir le guide d'installation
 login.ssoButton	Se connecter avec le SSO
 login.ssoOnlyNote	Ce serveur utilise l’authentification unique. Vous vous connectez avec le compte de votre organisation dans une fenêtre sécurisée.
 login.errorSso	L'authentification unique n'a pas abouti. Veuillez réessayer.
-common.syncCompleted	Synchronisation terminée
 settings.toggleShowTabLabels	Afficher les libellés d'onglets
 login.orDivider	ou
 login.errorNoAuthMethods	Aucune méthode de connexion n'est activée sur ce serveur.
@@ -728,7 +738,6 @@ appearance.light	Clair
 appearance.dark	Sombre
 browse.myFiles	Mes fichiers
 browse.myFilesSubtitle	Visible uniquement par vous
-browse.home	Accueil
 browse.noValue	--
 browse.today	Aujourd’hui
 browse.yesterday	Hier
@@ -1262,6 +1271,7 @@ spotlight.placeholder	Rechercher des fichiers et des dossiers
 spotlight.hintMove	Naviguer
 spotlight.hintOpen	Ouvrir
 trash.title	Corbeille
+trash.searchPrompt	Rechercher dans la corbeille
 trash.moveToTrash	Mettre à la corbeille
 trash.deletePermanently	Supprimer définitivement
 trash.deleteMessage#one	Il ira dans la corbeille, qui conserve les éléments supprimés %lld jour pour pouvoir les restaurer.

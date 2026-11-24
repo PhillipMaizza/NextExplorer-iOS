@@ -23,11 +23,17 @@ extension BrowseFeature {
     }
 
     func settleSelectionInfo(_ state: inout State) -> Effect<Action> {
-        guard state.isInfoShowingSelection else { return .none }
+        guard state.isInspectorOpen, !state.isSelecting else { return .none }
         let selected = state.selectedItems
-        guard selected.count < 2 else { return .none }
-        guard let item = selected.first ?? state.folderItem(now: date.now) else { return closeInfo(&state) }
-        return loadInfo(&state, item: item)
+        if selected.count > 1 {
+            return state.isInfoShowingSelection ? .none : showSelectionInfo(&state)
+        }
+        if state.isInfoShowingSelection {
+            guard let item = selected.first ?? state.folderItem(now: date.now) else { return closeInfo(&state) }
+            return loadInfo(&state, item: item)
+        }
+        guard let item = selected.first, item.id != state.infoItem?.id else { return .none }
+        return loadInfo(&state, item: item, settle: Constants.inspectorFollowDelay)
     }
 
     func loadInfo(_ state: inout State, item: FileItem, settle: Duration? = nil) -> Effect<Action> {
@@ -144,6 +150,14 @@ extension BrowseFeature.State {
     }
 
     /// Whether the cover has what it needs to present: the gallery opens at once, but the file
+    func canExtractOnServer(_ item: FileItem) -> Bool {
+        archiveExtensions.contains(item.kind.lowercased())
+    }
+
+    func canExtract(_ item: FileItem) -> Bool {
+        canExtractOnServer(item) || item.isZip
+    }
+
     /// tapped as a document or text waits for its first fetch so the cover zooms in on content.
     var isPreviewContentReady: Bool {
         guard let item = previewItem else { return false }
@@ -168,5 +182,14 @@ extension BrowseFeature.State {
     func galleryItems(startingAt item: FileItem) -> [FileItem] {
         guard phase != .idle, !isPreviewOutsideListing else { return [item] }
         return Array(displayedItems.filter { !$0.isDirectory && !$0.isGoogleDocsPointer })
+    }
+
+    var isArchivePeek: Bool {
+        #if os(macOS)
+            guard let item = previewItem else { return false }
+            return PreviewKind(item) == .archive || canExtractOnServer(item)
+        #elseif os(iOS)
+            false
+        #endif
     }
 }

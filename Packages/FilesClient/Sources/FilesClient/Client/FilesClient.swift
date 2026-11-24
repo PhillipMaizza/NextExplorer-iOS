@@ -153,6 +153,15 @@ public struct FilesClient: Sendable {
     public var fetchTextContent: @Sendable (_ serverURL: URL, _ path: String) async throws -> String
     public var saveTextContent: @Sendable (_ serverURL: URL, _ path: String, _ content: String) async throws -> Void
     public var extractZip: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
+    public var listArchive: @Sendable (
+        _ serverURL: URL, _ archive: FileItem, _ inside: String
+    ) async throws -> ArchiveListing
+    public var downloadArchiveEntry: @Sendable (
+        _ serverURL: URL, _ archive: FileItem, _ entryPath: String
+    ) async throws -> URL
+    public var extractArchiveEntries: @Sendable (
+        _ serverURL: URL, _ archive: FileItem, _ entryPaths: [String]
+    ) async throws -> [FileItem]
     public var downloadRawFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     /// `downloadRawFile` over the low priority session, for document thumbnails while browsing. Same
     /// cache slot, so a later tap to open reuses whatever this downloaded.

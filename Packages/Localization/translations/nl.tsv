@@ -421,6 +421,10 @@ fileInfo.rowSize	Grootte
 fileInfo.rowLocation	Locatie
 fileInfo.rowDateModified	Wijzigingsdatum
 fileInfo.rowDateCreated	Aanmaakdatum
+fileInfo.rowContains	Bevat
+fileInfo.rowWhere	Locatie
+fileInfo.rowModified	Gewijzigd
+fileInfo.rowCreated	Aangemaakt
 fileInfo.rowFiles	Bestanden
 fileInfo.rowFolders	Mappen
 fileInfo.rowTotalSize	Totale grootte
@@ -449,10 +453,17 @@ permissions.scopeOthers	Anderen
 permissions.rightRead	Lezen
 permissions.rightWrite	Schrijven
 permissions.rightExecute	Uitvoeren
+permissions.rightOpen	Openen
+permissions.rightRun	Uitvoeren
+permissions.scopeEveryone	Iedereen
 archive.emptyFolder	Deze map is leeg.
+archive.unreadable	Dit archief is leeg of kan niet worden gelezen.
 archive.openFailed	Kan dit bestand niet openen.
 archive.openArchiveFailed	Kan dit archief niet openen.
 archive.entryTooLarge	Dit item is te groot om te openen.
+archive.passwordProtected	Dit archief is beveiligd met een wachtwoord.
+archive.tooManyEntries	Dit archief bevat te veel onderdelen om te openen.
+archive.entryEncrypted	Dit bestand is versleuteld en kan niet worden bekeken.
 gallery.loadFailed	Kan deze afbeelding niet laden.
 textPreview.saved	Bewaard
 textPreview.loadFailed	Kan dit bestand niet laden. Controleer je verbinding en probeer het opnieuw.
@@ -640,7 +651,6 @@ login.serverInfoGuide	Installatiegids openen
 login.ssoButton	Aanmelden met SSO
 login.ssoOnlyNote	Deze server gebruikt single sign-on. Je logt in met het account van je organisatie in een beveiligd venster.
 login.errorSso	Eenmalige aanmelding is niet voltooid. Probeer het opnieuw.
-common.syncCompleted	Synchronisatie voltooid
 settings.toggleShowTabLabels	Tabbladlabels tonen
 login.orDivider	of
 login.errorNoAuthMethods	Op deze server zijn geen aanmeldmethoden ingeschakeld.
@@ -728,7 +738,6 @@ appearance.light	Licht
 appearance.dark	Donker
 browse.myFiles	Mijn bestanden
 browse.myFilesSubtitle	Alleen zichtbaar voor jou
-browse.home	Begin
 browse.noValue	--
 browse.today	Vandaag
 browse.yesterday	Gisteren
@@ -1262,6 +1271,7 @@ spotlight.placeholder	Bestanden en mappen zoeken
 spotlight.hintMove	Navigeren
 spotlight.hintOpen	Openen
 trash.title	Prullenbak
+trash.searchPrompt	Zoeken in prullenmand
 trash.moveToTrash	Naar prullenbak verplaatsen
 trash.deletePermanently	Definitief verwijderen
 trash.deleteMessage#one	Het gaat naar de prullenbak, die verwijderde onderdelen %lld dag bewaart zodat ze teruggezet kunnen worden.

@@ -420,6 +420,10 @@ fileInfo.rowSize	Tamanho
 fileInfo.rowLocation	Localização
 fileInfo.rowDateModified	Data de modificação
 fileInfo.rowDateCreated	Data de criação
+fileInfo.rowContains	Contém
+fileInfo.rowWhere	Localização
+fileInfo.rowModified	Modificado
+fileInfo.rowCreated	Criado
 fileInfo.rowFiles	Ficheiros
 fileInfo.rowFolders	Pastas
 fileInfo.rowTotalSize	Tamanho total
@@ -448,10 +452,17 @@ permissions.scopeOthers	Outros
 permissions.rightRead	Leitura
 permissions.rightWrite	Escrita
 permissions.rightExecute	Execução
+permissions.rightOpen	Abrir
+permissions.rightRun	Executar
+permissions.scopeEveryone	Todos
 archive.emptyFolder	Esta pasta está vazia.
+archive.unreadable	Este arquivo está vazio ou não pode ser lido.
 archive.openFailed	Não foi possível abrir este ficheiro.
 archive.openArchiveFailed	Não foi possível abrir este arquivo.
 archive.entryTooLarge	Este item é demasiado grande para abrir.
+archive.passwordProtected	Este arquivo está protegido por palavra-passe.
+archive.tooManyEntries	Este arquivo contém demasiados itens para ser aberto.
+archive.entryEncrypted	Este ficheiro está encriptado e não pode ser pré-visualizado.
 gallery.loadFailed	Não foi possível carregar esta imagem.
 textPreview.saved	Guardado
 textPreview.loadFailed	Não foi possível carregar este ficheiro. Verifique a ligação e tente novamente.
@@ -640,7 +651,6 @@ login.serverInfoGuide	Abrir guia de configuração
 login.ssoButton	Iniciar sessão com SSO
 login.ssoOnlyNote	Este servidor utiliza início de sessão único. Inicia sessão com a conta da sua organização numa janela segura.
 login.errorSso	O início de sessão único não foi concluído. Tente novamente.
-common.syncCompleted	Sincronização concluída
 settings.toggleShowTabLabels	Mostrar rótulos das abas
 login.orDivider	ou
 login.errorNoAuthMethods	Este servidor não tem métodos de início de sessão ativados.
@@ -728,7 +738,6 @@ appearance.light	Claro
 appearance.dark	Escuro
 browse.myFiles	Os meus ficheiros
 browse.myFilesSubtitle	Visível apenas para si
-browse.home	Início
 browse.noValue	--
 browse.today	Hoje
 browse.yesterday	Ontem
@@ -1262,6 +1271,7 @@ spotlight.placeholder	Pesquisar ficheiros e pastas
 spotlight.hintMove	Navegar
 spotlight.hintOpen	Abrir
 trash.title	Reciclagem
+trash.searchPrompt	Pesquisar no lixo
 trash.moveToTrash	Mover para a reciclagem
 trash.deletePermanently	Eliminar definitivamente
 trash.deleteMessage#one	Vai para a reciclagem, que guarda os itens eliminados durante %lld dia para poderem ser restaurados.

@@ -3,7 +3,6 @@ common.cancel	Zrušit
 common.save	Uložit
 common.edit	Upravit
 common.retry	Zkusit znovu
-common.syncCompleted	Synchronizace dokončena
 common.delete	Smazat
 common.remove	Odebrat
 common.clear	Vymazat
@@ -643,6 +642,10 @@ fileInfo.rowSize	Velikost
 fileInfo.rowLocation	Umístění
 fileInfo.rowDateModified	Datum změny
 fileInfo.rowDateCreated	Datum vytvoření
+fileInfo.rowContains	Obsahuje
+fileInfo.rowWhere	Umístění
+fileInfo.rowModified	Změněno
+fileInfo.rowCreated	Vytvořeno
 fileInfo.rowFiles	Soubory
 fileInfo.rowFolders	Složky
 fileInfo.rowTotalSize	Celková velikost
@@ -671,10 +674,17 @@ permissions.scopeOthers	Ostatní
 permissions.rightRead	Čtení
 permissions.rightWrite	Zápis
 permissions.rightExecute	Spuštění
+permissions.rightOpen	Otevřít
+permissions.rightRun	Spustit
+permissions.scopeEveryone	Všichni
 archive.emptyFolder	Tato složka je prázdná.
+archive.unreadable	Tento archiv je prázdný nebo ho nelze přečíst.
 archive.openFailed	Tento soubor se nepodařilo otevřít.
 archive.openArchiveFailed	Tento archiv se nepodařilo otevřít.
 archive.entryTooLarge	Tato položka je příliš velká na otevření.
+archive.passwordProtected	Tento archiv je chráněn heslem.
+archive.tooManyEntries	Tento archiv obsahuje příliš mnoho položek na otevření.
+archive.entryEncrypted	Tento soubor je zašifrovaný a nelze jej zobrazit.
 gallery.loadFailed	Tento obrázek se nepodařilo načíst.
 textPreview.saved	Uloženo
 textPreview.loadFailed	Tento soubor se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.
@@ -998,7 +1008,6 @@ appearance.light	Světlý
 appearance.dark	Tmavý
 browse.myFiles	Moje soubory
 browse.myFilesSubtitle	Viditelné jen pro vás
-browse.home	Domů
 browse.noValue	--
 browse.today	Dnes
 browse.yesterday	Včera
@@ -1245,6 +1254,7 @@ spotlight.placeholder	Hledat soubory a složky
 spotlight.hintMove	Pohyb
 spotlight.hintOpen	Otevřít
 trash.title	Koš
+trash.searchPrompt	Hledat v koši
 trash.moveToTrash	Přesunout do koše
 trash.deletePermanently	Smazat trvale
 trash.deleteMessage#one	Přesune se do koše, který smazané položky uchovává (dní: %lld), aby šly obnovit.

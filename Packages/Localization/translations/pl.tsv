@@ -443,6 +443,10 @@ fileInfo.rowSize	Rozmiar
 fileInfo.rowLocation	Lokalizacja
 fileInfo.rowDateModified	Data modyfikacji
 fileInfo.rowDateCreated	Data utworzenia
+fileInfo.rowContains	Zawiera
+fileInfo.rowWhere	Lokalizacja
+fileInfo.rowModified	Zmodyfikowano
+fileInfo.rowCreated	Utworzono
 fileInfo.rowFiles	Pliki
 fileInfo.rowFolders	Foldery
 fileInfo.rowTotalSize	Całkowity rozmiar
@@ -471,10 +475,17 @@ permissions.scopeOthers	Inni
 permissions.rightRead	Odczyt
 permissions.rightWrite	Zapis
 permissions.rightExecute	Wykonanie
+permissions.rightOpen	Otwórz
+permissions.rightRun	Uruchom
+permissions.scopeEveryone	Wszyscy
 archive.emptyFolder	Ten folder jest pusty.
+archive.unreadable	To archiwum jest puste lub nie można go odczytać.
 archive.openFailed	Nie można otworzyć tego pliku.
 archive.openArchiveFailed	Nie można otworzyć tego archiwum.
 archive.entryTooLarge	Ten element jest za duży, aby go otworzyć.
+archive.passwordProtected	To archiwum jest chronione hasłem.
+archive.tooManyEntries	To archiwum zawiera zbyt wiele elementów, aby je otworzyć.
+archive.entryEncrypted	Ten plik jest zaszyfrowany i nie można wyświetlić jego podglądu.
 gallery.loadFailed	Nie można wczytać tego obrazu.
 textPreview.saved	Zapisano
 textPreview.loadFailed	Nie można wczytać tego pliku. Sprawdź połączenie i spróbuj ponownie.
@@ -662,7 +673,6 @@ login.serverInfoGuide	Otwórz przewodnik konfiguracji
 login.ssoButton	Zaloguj się przez SSO
 login.ssoOnlyNote	Ten serwer używa logowania jednokrotnego. Logujesz się kontem swojej organizacji w bezpiecznym oknie.
 login.errorSso	Logowanie jednokrotne nie powiodło się. Spróbuj ponownie.
-common.syncCompleted	Synchronizacja zakończona
 settings.toggleShowTabLabels	Pokaż etykiety kart
 login.orDivider	lub
 login.errorNoAuthMethods	Ten serwer nie ma włączonych metod logowania.
@@ -750,7 +760,6 @@ appearance.light	Jasny
 appearance.dark	Ciemny
 browse.myFiles	Moje pliki
 browse.myFilesSubtitle	Widoczne tylko dla Ciebie
-browse.home	Start
 browse.noValue	--
 browse.today	Dzisiaj
 browse.yesterday	Wczoraj
@@ -1298,6 +1307,7 @@ spotlight.placeholder	Szukaj plików i folderów
 spotlight.hintMove	Nawigacja
 spotlight.hintOpen	Otwórz
 trash.title	Kosz
+trash.searchPrompt	Szukaj w koszu
 trash.moveToTrash	Przenieś do kosza
 trash.deletePermanently	Usuń trwale
 trash.deleteMessage#one	Trafi do kosza, który przechowuje usunięte elementy (dni: %lld), aby można je było przywrócić.

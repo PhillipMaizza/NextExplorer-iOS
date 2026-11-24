@@ -3,7 +3,6 @@ common.cancel	ยกเลิก
 common.save	บันทึก
 common.edit	แก้ไข
 common.retry	ลองอีกครั้ง
-common.syncCompleted	ซิงค์เสร็จสิ้น
 common.delete	ลบ
 common.remove	นำออก
 common.clear	ล้าง
@@ -610,6 +609,10 @@ fileInfo.rowSize	ขนาด
 fileInfo.rowLocation	ตำแหน่งที่ตั้ง
 fileInfo.rowDateModified	วันที่แก้ไข
 fileInfo.rowDateCreated	วันที่สร้าง
+fileInfo.rowContains	ประกอบด้วย
+fileInfo.rowWhere	ตำแหน่งที่ตั้ง
+fileInfo.rowModified	แก้ไข
+fileInfo.rowCreated	สร้าง
 fileInfo.rowFiles	ไฟล์
 fileInfo.rowFolders	โฟลเดอร์
 fileInfo.rowTotalSize	ขนาดรวม
@@ -638,10 +641,17 @@ permissions.scopeOthers	อื่นๆ
 permissions.rightRead	อ่าน
 permissions.rightWrite	เขียน
 permissions.rightExecute	เรียกใช้
+permissions.rightOpen	เปิด
+permissions.rightRun	เรียกใช้
+permissions.scopeEveryone	ทุกคน
 archive.emptyFolder	โฟลเดอร์นี้ว่างเปล่า
+archive.unreadable	ไฟล์บีบอัดนี้ว่างเปล่าหรืออ่านไม่ได้
 archive.openFailed	ไม่สามารถเปิดไฟล์นี้ได้
 archive.openArchiveFailed	ไม่สามารถเปิดไฟล์เก็บถาวรนี้ได้
 archive.entryTooLarge	รายการนี้ใหญ่เกินไปที่จะเปิด
+archive.passwordProtected	ไฟล์บีบอัดนี้ได้รับการป้องกันด้วยรหัสผ่าน
+archive.tooManyEntries	ไฟล์บีบอัดนี้มีรายการมากเกินไปที่จะเปิด
+archive.entryEncrypted	ไฟล์นี้ถูกเข้ารหัสและไม่สามารถแสดงตัวอย่างได้
 gallery.loadFailed	ไม่สามารถโหลดรูปภาพนี้ได้
 textPreview.saved	บันทึกแล้ว
 textPreview.loadFailed	ไม่สามารถโหลดไฟล์นี้ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
@@ -965,7 +975,6 @@ appearance.light	สว่าง
 appearance.dark	มืด
 browse.myFiles	ไฟล์ของฉัน
 browse.myFilesSubtitle	มองเห็นได้เฉพาะคุณ
-browse.home	หน้าแรก
 browse.noValue	--
 browse.today	วันนี้
 browse.yesterday	เมื่อวาน
@@ -1192,6 +1201,7 @@ spotlight.placeholder	ค้นหาไฟล์และโฟลเดอร�
 spotlight.hintMove	เลื่อน
 spotlight.hintOpen	เปิด
 trash.title	ถังขยะ
+trash.searchPrompt	ค้นหาในถังขยะ
 trash.moveToTrash	ย้ายไปที่ถังขยะ
 trash.deletePermanently	ลบถาวร
 trash.deleteMessage#other	รายการจะไปที่ถังขยะ ซึ่งเก็บรายการที่ลบไว้ %lld วันเพื่อให้กู้คืนได้

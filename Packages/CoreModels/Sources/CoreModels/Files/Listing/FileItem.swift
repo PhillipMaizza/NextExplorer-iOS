@@ -109,7 +109,11 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// kinds (7z, tar, gz, bz2, xz, tgz) still get the folder style icon, but tapping them
     /// does nothing: no decoder for those, and the server has no listing only endpoint either.
     public var isBrowsableArchive: Bool {
-        lowercaseKind == "zip" || lowercaseKind == "rar"
+        isZip || lowercaseKind == "rar"
+    }
+
+    public var isZip: Bool {
+        lowercaseKind == "zip"
     }
 
     /// SVGs are `isImage` (the server's own `PREVIEWABLE_EXTENSIONS` treats them as one) but

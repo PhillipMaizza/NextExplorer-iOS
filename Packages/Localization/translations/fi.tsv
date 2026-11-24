@@ -3,7 +3,6 @@ common.cancel	Peruuta
 common.save	Tallenna
 common.edit	Muokkaa
 common.retry	Yritä uudelleen
-common.syncCompleted	Synkronointi valmis
 common.delete	Poista
 common.remove	Poista
 common.clear	Tyhjennä
@@ -621,6 +620,10 @@ fileInfo.rowSize	Koko
 fileInfo.rowLocation	Sijainti
 fileInfo.rowDateModified	Muokkauspäivä
 fileInfo.rowDateCreated	Luontipäivä
+fileInfo.rowContains	Sisältää
+fileInfo.rowWhere	Sijainti
+fileInfo.rowModified	Muokattu
+fileInfo.rowCreated	Luotu
 fileInfo.rowFiles	Tiedostot
 fileInfo.rowFolders	Kansiot
 fileInfo.rowTotalSize	Kokonaiskoko
@@ -649,10 +652,17 @@ permissions.scopeOthers	Muut
 permissions.rightRead	Luku
 permissions.rightWrite	Kirjoitus
 permissions.rightExecute	Suoritus
+permissions.rightOpen	Avaa
+permissions.rightRun	Suorita
+permissions.scopeEveryone	Kaikki
 archive.emptyFolder	Tämä kansio on tyhjä.
+archive.unreadable	Tämä arkisto on tyhjä tai sitä ei voi lukea.
 archive.openFailed	Tiedostoa ei voitu avata.
 archive.openArchiveFailed	Arkistoa ei voitu avata.
 archive.entryTooLarge	Tämä kohde on liian suuri avattavaksi.
+archive.passwordProtected	Tämä arkisto on suojattu salasanalla.
+archive.tooManyEntries	Tässä arkistossa on liian monta kohdetta avattavaksi.
+archive.entryEncrypted	Tämä tiedosto on salattu, eikä sitä voi esikatsella.
 gallery.loadFailed	Kuvaa ei voitu ladata.
 textPreview.saved	Tallennettu
 textPreview.loadFailed	Tiedostoa ei voitu ladata. Tarkista yhteytesi ja yritä uudelleen.
@@ -976,7 +986,6 @@ appearance.light	Vaalea
 appearance.dark	Tumma
 browse.myFiles	Omat tiedostot
 browse.myFilesSubtitle	Näkyy vain sinulle
-browse.home	Koti
 browse.noValue	--
 browse.today	Tänään
 browse.yesterday	Eilen
@@ -1210,6 +1219,7 @@ spotlight.placeholder	Hae tiedostoja ja kansioita
 spotlight.hintMove	Siirry
 spotlight.hintOpen	Avaa
 trash.title	Roskakori
+trash.searchPrompt	Hae roskakorista
 trash.moveToTrash	Siirrä roskakoriin
 trash.deletePermanently	Poista pysyvästi
 trash.deleteMessage#one	Se siirtyy roskakoriin, joka säilyttää poistettuja kohteita %lld päivän, jotta ne voi palauttaa.

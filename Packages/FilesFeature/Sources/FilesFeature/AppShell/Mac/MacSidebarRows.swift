@@ -228,6 +228,8 @@
         static let find = "\u{2318}F"
         static let escape = "esc"
         static let arrows = "\u{2191}\u{2193}"
+        static let sideArrows = "\u{2190}\u{2192}"
+        static let back = "\u{2318}["
         static let enter = "\u{21B5}"
         static let space = "space"
 
