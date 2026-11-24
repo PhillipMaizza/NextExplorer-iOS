@@ -66,6 +66,37 @@ struct TrashFolderFeatureTests {
         #expect(store.state.title == "Photos")
     }
 
+    @Test("Crumbs name the deleted folder and each subfolder, and a crumb jumps back to its level")
+    func crumbsJumpToTheirLevel() async {
+        let folder = folder
+        let summer = summer
+        var state = TrashFolderFeature.State(serverURL: TestHost.serverURL, item: folder)
+        state.path = "Summer/Day 1"
+        state.phase = .loaded
+        #expect(state.crumbs == [
+            PathCrumb(title: "Photos", path: ""),
+            PathCrumb(title: "Summer", path: "Summer"),
+            PathCrumb(title: "Day 1", path: "Summer/Day 1"),
+        ])
+        let store = TestStore(initialState: state) {
+            TrashFolderFeature()
+        } withDependencies: {
+            $0.filesClient.fetchTrashEntries = { _, _, path in
+                TrashFolderListing(item: folder, path: path, entries: [summer])
+            }
+        }
+
+        await store.send(.crumbTapped(path: "Summer/Day 1"))
+        await store.send(.crumbTapped(path: "")) {
+            $0.path = ""
+            $0.phase = .loading
+        }
+        await store.receive(\.loadResponse) {
+            $0.phase = .loaded
+            $0.entries = [summer]
+        }
+    }
+
     @Test("An answer for a folder no longer shown is dropped")
     func staleAnswerIsDropped() async {
         var state = TrashFolderFeature.State(serverURL: TestHost.serverURL, item: folder)

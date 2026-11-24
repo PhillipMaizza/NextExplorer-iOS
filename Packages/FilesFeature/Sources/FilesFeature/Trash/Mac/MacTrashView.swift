@@ -22,6 +22,7 @@
     struct MacTrashView: View {
         @Bindable var store: StoreOf<TrashFeature>
         @State private var selection: Set<TrashItem.ID> = []
+        @FocusState private var isFocused: Bool
         @Dependency(\.date) private var date
         @Dependency(\.calendar) private var calendar
 
@@ -47,7 +48,9 @@
                         TrashFolderView(store: folderStore)
                     }
             }
+            .instantPushOnMac(depth: store.folder == nil ? 0 : 1)
             .task { store.send(.task) }
+            .focusedSceneValue(\.macSearchText, $store.searchQuery.sending(\.searchQueryChanged))
             .modifier(TrashRestorePrompts(
                 store: store.scope(state: \.restore, action: \.restore),
                 screenNotice: store.notice
@@ -136,7 +139,11 @@
             }
             .onDeleteCommand { store.send(.deletePermanentlyTapped(items(selection))) }
             .macBoardTable()
+            .backgroundGradient()
             .clipped()
+            .focused($isFocused)
+            .focusEffectDisabled()
+            .focusedWhenOnTop($isFocused)
             .disabled(store.isBusy)
             .onChange(of: store.items) { _, items in selection.formIntersection(items.ids) }
         }

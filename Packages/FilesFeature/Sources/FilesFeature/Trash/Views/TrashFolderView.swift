@@ -8,6 +8,9 @@ import SwiftUI
 /// whole folder. Used on iPhone, iPad and the Mac.
 struct TrashFolderView: View {
     @Bindable var store: StoreOf<TrashFolderFeature>
+    #if os(macOS)
+        @Environment(\.dismiss) private var dismiss
+    #endif
 
     var body: some View {
         content
@@ -36,78 +39,82 @@ struct TrashFolderView: View {
         TrashPhaseContent(phase: store.phase, isEmpty: store.entries.isEmpty, onRetry: { store.send(.retryTapped) }) {
             EmptyStateView(icon: IconKit.folder, message: L10n.Trash.folderEmpty)
         } loaded: {
-            let entries = store.entries
-            DSGroupedList {
-                ForEach(entries) { entry in
-                    row(entry, isFirst: entry.id == entries.first?.id, isLast: entry.id == entries.last?.id)
+            #if os(macOS)
+                MacTrashFolderTable(store: store)
+            #elseif os(iOS)
+                let entries = store.entries
+                DSGroupedList {
+                    ForEach(entries) { entry in
+                        row(entry, isFirst: entry.id == entries.first?.id, isLast: entry.id == entries.last?.id)
+                    }
                 }
-            }
-            #if os(iOS)
-            .listStyle(.insetGrouped)
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
             #endif
-            .scrollContentBackground(.hidden)
         }
     }
 
-    private func row(_ entry: TrashEntry, isFirst: Bool, isLast: Bool) -> some View {
-        SelectableListRow(
-            selectionID: entry.id,
-            isSelecting: store.isSelecting,
-            isSelected: store.selectedNames.contains(entry.id),
-            isFirst: isFirst,
-            isLast: isLast,
-            onTap: { store.send(.entryTapped(entry)) }
-        ) {
-            FileRowView(
-                name: entry.name,
-                isDirectory: entry.isDirectory,
-                subtitle: entry.shareCount > 0 ? L10n.Trash.sharesBadge : nil,
-                kind: TrashRowText.kind(entry.name, isDirectory: entry.isDirectory),
-                dateModified: entry.modifiedAt,
-                size: entry.size
-            )
-        } trailingSwipe: {
-            if !store.isSelecting {
-                Button { store.send(.restoreTapped([entry])) } label: {
-                    IconKit.restore
+    #if os(iOS)
+        private func row(_ entry: TrashEntry, isFirst: Bool, isLast: Bool) -> some View {
+            SelectableListRow(
+                selectionID: entry.id,
+                isSelecting: store.isSelecting,
+                isSelected: store.selectedNames.contains(entry.id),
+                isFirst: isFirst,
+                isLast: isLast,
+                onTap: { store.send(.entryTapped(entry)) }
+            ) {
+                FileRowView(
+                    name: entry.name,
+                    isDirectory: entry.isDirectory,
+                    subtitle: entry.shareCount > 0 ? L10n.Trash.sharesBadge : nil,
+                    kind: TrashRowText.kind(entry.name, isDirectory: entry.isDirectory),
+                    dateModified: entry.modifiedAt,
+                    size: entry.size
+                )
+            } trailingSwipe: {
+                if !store.isSelecting {
+                    Button { store.send(.restoreTapped([entry])) } label: {
+                        IconKit.restore
+                    }
+                    .tint(.accent)
+                    .accessibilityLabel(L10n.Trash.restore)
                 }
-                .tint(.accent)
-                .accessibilityLabel(L10n.Trash.restore)
+            } contextMenu: {
+                if !store.isSelecting {
+                    Button { store.send(.restoreTapped([entry])) } label: {
+                        Label { Text(L10n.Trash.restore) } icon: { IconKit.restore }
+                    }
+                    Button { store.send(.restoreToTapped([entry])) } label: {
+                        Label { Text(L10n.Trash.restoreTo) } icon: { IconKit.restoreTo }
+                    }
+                }
             }
-        } contextMenu: {
-            if !store.isSelecting {
-                Button { store.send(.restoreTapped([entry])) } label: {
-                    Label { Text(L10n.Trash.restore) } icon: { IconKit.restore }
-                }
-                Button { store.send(.restoreToTapped([entry])) } label: {
-                    Label { Text(L10n.Trash.restoreTo) } icon: { IconKit.restoreTo }
-                }
-            }
+            .disabled(store.restore.isRestoring)
+            .accessibilityAction(named: L10n.Trash.restore) { store.send(.restoreTapped([entry])) }
         }
-        .disabled(store.restore.isRestoring)
-        .accessibilityAction(named: L10n.Trash.restore) { store.send(.restoreTapped([entry])) }
-    }
+    #endif
 
     #if os(macOS)
+        private static let trashListCrumb = PathCrumb(title: L10n.Trash.title, path: "/")
+
         private var macHeader: some View {
-            MacPaneHeader(title: store.title, inset: MacPaneInset.sectionHeader, bottom: MacPaneInset.listGap) {
-                if store.isSelecting {
-                    Button(L10n.Trash.restoreTo) { store.send(.restoreToTapped(store.selectedEntries)) }
-                        .buttonStyle(.macDS(.secondary))
-                        .disabled(store.selectedNames.isEmpty || store.restore.isRestoring)
-                    Button(L10n.Trash.restore) { store.send(.restoreTapped(store.selectedEntries)) }
-                        .buttonStyle(.macDS(.secondary))
-                        .disabled(store.selectedNames.isEmpty || store.restore.isRestoring)
-                } else {
-                    Button(L10n.Trash.restoreFolder) { store.send(.restoreFolderTapped) }
-                        .buttonStyle(.macDS(.secondary))
-                        .disabled(store.restore.isRestoring)
-                }
-                Button(store.isSelecting ? L10n.Common.done : L10n.Common.select) {
-                    store.send(.selectModeToggled)
-                }
-                .buttonStyle(.macDS(.secondary))
-                .disabled(store.entries.isEmpty || store.restore.isRestoring)
+            MacPaneHeader(
+                title: store.title,
+                crumbs: [Self.trashListCrumb] + store.crumbs,
+                onCrumbTapped: { crumb in
+                    if crumb == Self.trashListCrumb {
+                        dismiss()
+                    } else {
+                        store.send(.crumbTapped(path: crumb.path))
+                    }
+                },
+                inset: MacPaneInset.sectionHeader,
+                bottom: MacPaneInset.listGap
+            ) {
+                Button(L10n.Trash.restoreFolder) { store.send(.restoreFolderTapped) }
+                    .buttonStyle(.macDS(.secondary))
+                    .disabled(store.restore.isRestoring)
             }
         }
     #endif
