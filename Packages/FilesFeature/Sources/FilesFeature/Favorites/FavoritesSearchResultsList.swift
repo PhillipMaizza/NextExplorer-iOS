@@ -16,8 +16,43 @@ struct FavoritesSearchResultsList: View {
     var zoom: PreviewZoomContext?
 
     var body: some View {
+        content
+            .task(id: store.fileSearchResults?.ids.elements) {
+                store.send(.computeSearchOnDevice)
+            }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        #if os(macOS)
+            if phase == .loading {
+                MacBrowseTableSkeleton()
+            } else {
+                VStack(spacing: 0) {
+                    MacSearchScopeBar(
+                        availableCategories: store.availableSearchCategories,
+                        counts: store.searchCategoryCounts,
+                        selectedCategories: store.selectedSearchCategories,
+                        onToggle: { store.send(.searchCategoryToggled($0)) },
+                        onShowAll: { store.send(.searchFilterCleared) }
+                    )
+                    MacSearchResultsTable(
+                        sections: store.searchResultSections,
+                        favoritePaths: Set(store.favorites.map(\.path)),
+                        onOpen: { store.send(.searchResultTapped($0)) },
+                        onShowInFolder: { store.send(.searchResultEnclosingFolderTapped($0)) }
+                    )
+                }
+                .backgroundGradient()
+            }
+        #elseif os(iOS)
+            list
+        #endif
+    }
+
+    private var list: some View {
         let sections = store.searchResultSections
-        DSGroupedList {
+        return DSGroupedList {
             if phase == .loading {
                 SkeletonFileRows(entries: FavoritesSkeleton.entries)
             } else if sections.isSplit {
@@ -42,9 +77,6 @@ struct FavoritesSearchResultsList: View {
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        .task(id: store.fileSearchResults?.ids.elements) {
-            store.send(.computeSearchOnDevice)
-        }
     }
 
     private func rows(_ results: [SearchResultItem]) -> some View {

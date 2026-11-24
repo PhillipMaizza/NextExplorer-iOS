@@ -66,6 +66,15 @@ struct SearchFilterChips: View {
 }
 
 extension FileCategory {
+    static func counts(in results: [SearchResultItem]) -> [FileCategory: Int] {
+        Dictionary(results.map { (BrowseFeature.State.category(of: $0), 1) }, uniquingKeysWith: +)
+    }
+
+    static func present(in results: [SearchResultItem]) -> [FileCategory] {
+        let counts = counts(in: results)
+        return allCases.filter { counts[$0] != nil }
+    }
+
     var title: String {
         switch self {
         case .folder: L10n.Filter.folders

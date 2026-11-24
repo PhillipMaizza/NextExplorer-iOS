@@ -49,6 +49,34 @@ struct FavoritesSearchTests: FavoritesTestSupport {
         }
     }
 
+    @Test("The Kind filter counts each kind, narrows the results and drops a kind the next answer no longer has")
+    func kindFilterNarrowsResults() async {
+        let hit = hit
+        let photo = SearchResultItem(
+            name: Constants.photosInternet,
+            path: Constants.bills,
+            kind: SearchResultItem.fileKind
+        )
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.searchQuery = Constants.term
+        state.fileSearchResults = [hit, photo]
+        state.searchPhase = .loaded
+        #expect(state.availableSearchCategories == [.image, .document])
+        #expect(state.searchCategoryCounts == [.image: 1, .document: 1])
+        let store = TestStore(initialState: state) { FavoritesFeature() }
+
+        await store.send(.searchCategoryToggled(.image)) {
+            $0.selectedSearchCategories = [.image]
+        }
+        #expect(store.state.displayedSearchResults == [photo])
+
+        await store.send(.fileSearchResponse(.success([hit]), term: Constants.term)) {
+            $0.fileSearchResults = [hit]
+            $0.selectedSearchCategories = []
+        }
+        #expect(store.state.displayedSearchResults == [hit])
+    }
+
     @Test
     func searchQueryChangedFiltersDisplayedFavorites() async {
         let vacation = makeFavorite(id: "1", path: "Photos/Vacation")
