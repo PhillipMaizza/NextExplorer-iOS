@@ -30,6 +30,7 @@ public struct TrashFeature {
         @Presents public var folder: TrashFolderFeature.State?
         public var text: TrashTextPreview.State = .closed
         public var notice: TrashNotice?
+        public var searchQuery = ""
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
@@ -46,7 +47,11 @@ public struct TrashFeature {
 
         /// The items in the order the list shows them.
         public var displayedItems: [TrashItem] {
-            items.elements.sorted(by: sortOption, sortDirection)
+            let term = searchQuery.trimmingCharacters(in: .whitespaces)
+            let matches = term.isEmpty
+                ? items.elements
+                : items.elements.filter { $0.name.localizedStandardContains(term) }
+            return matches.sorted(by: sortOption, sortDirection)
         }
 
         public var isAllSelected: Bool {
@@ -72,6 +77,7 @@ public struct TrashFeature {
         case selectionSwept(Set<TrashItem.ID>)
         case sortOptionChanged(TrashSortOption)
         case sortDirectionChanged(BrowseFeature.SortDirection)
+        case searchQueryChanged(String)
         case restoreTapped([TrashItem])
         case restoreToTapped([TrashItem])
         case deletePermanentlyTapped([TrashItem])
@@ -154,6 +160,10 @@ public struct TrashFeature {
                     state.phase = .loaded
                     state.notice = TrashNotice.after(state.notice, text: error.userMessage, isFailure: true)
                 }
+                return .none
+
+            case let .searchQueryChanged(query):
+                state.searchQuery = query
                 return .none
 
             case let .itemTapped(item):
