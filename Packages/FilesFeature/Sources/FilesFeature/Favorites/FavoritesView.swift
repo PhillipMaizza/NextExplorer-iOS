@@ -29,10 +29,9 @@ struct FavoritesView: View {
         #endif
     }
 
-    /// The Mac lists favorites as a table once they load; the skeleton list stands in before.
     private var isMacTable: Bool {
         #if os(macOS)
-            listPhase != .loading
+            true
         #else
             false
         #endif
@@ -101,9 +100,13 @@ struct FavoritesView: View {
                 FavoritesSearchResultsList(store: store, phase: listPhase, pullOffset: $pullOffset, zoom: zoom)
             } else if isMacTable {
                 #if os(macOS)
-                    MacFavoritesTableView(store: store, favorites: store.displayedFavorites)
-                        .backgroundGradient()
-                        .transition(.opacity)
+                    if listPhase == .loading {
+                        MacBrowseTableSkeleton()
+                    } else {
+                        MacFavoritesTableView(store: store, favorites: store.displayedFavorites)
+                            .backgroundGradient()
+                            .transition(.opacity)
+                    }
                 #endif
             } else if viewMode == .list {
                 listContent
