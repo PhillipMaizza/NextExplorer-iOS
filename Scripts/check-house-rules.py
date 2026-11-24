@@ -139,6 +139,14 @@ def split_denylist(entries):
     return terms, tuple(entry[1:] for entry in entries if entry.startswith("!"))
 
 
+TOKEN_DEFINITIONS = "Packages/DesignSystem/Sources/DesignSystem/Essentials/"
+
+
+def is_token_definition(path):
+    """The design system files that define the tokens hold their values as literals."""
+    return path.startswith(TOKEN_DEFINITIONS)
+
+
 def check_lines(path, lines, content, denylist):
     findings = []
     preview_from = first_preview_line(content) if content is not None else None
@@ -156,7 +164,7 @@ def check_lines(path, lines, content, denylist):
             code = text.split("//", 1)[0]
             if RAW_STRING.search(code) and not in_preview and not path.endswith("Previews.swift"):
                 findings.append(f"{where}: raw string, use L10n: {text.strip()}")
-            if TOKEN_LITERAL.search(code) and not in_preview:
+            if TOKEN_LITERAL.search(code) and not in_preview and not is_token_definition(path):
                 findings.append(f"{where}: literal equal to a DS token, use the token: {text.strip()}")
             if SYMBOL_LITERAL.search(code) and not in_preview and not path.endswith(ICON_CATALOG):
                 findings.append(f"{where}: symbol name literal, add it to IconKit: {text.strip()}")

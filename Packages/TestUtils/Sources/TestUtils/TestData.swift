@@ -32,6 +32,7 @@ public enum TestFile {
     public static let cameraPhoto = "a.HEIC"
     public static let screenshot = "a.png"
     public static let cameraClip = "a.MOV"
+    public static let dotFile = ".env"
 }
 
 public enum TestAccount {
@@ -160,6 +161,7 @@ public enum TestUpload {
 }
 
 public enum TestPath {
+    public static let root = ""
     /// A folder two levels below the root.
     public static let filesDocuments = "Files/Documents"
     /// The Docs folder as a lowercase cache path.
