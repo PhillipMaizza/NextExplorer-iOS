@@ -175,7 +175,7 @@ extension BrowseFeature {
         var hasFavorited = false
         for itemID in result.removedIDs {
             state.items.remove(id: itemID)
-            if state.favoritePaths.remove(itemID) != nil {
+            if repointFavorites(&state, from: itemID, to: nil) {
                 hasFavorited = true
             }
         }
@@ -190,6 +190,16 @@ extension BrowseFeature {
             syncListingCache(state)
         }
         return hasFavorited ? .send(.delegate(.favoritesChanged)) : .none
+    }
+
+    func repointFavorites(_ state: inout State, from path: String, to newPath: String?) -> Bool {
+        let touched = state.favoritePaths.filter { $0 == path || $0.hasPrefix(path + "/") }
+        guard !touched.isEmpty else { return false }
+        state.favoritePaths.subtract(touched)
+        if let newPath {
+            state.favoritePaths.formUnion(touched.map { newPath + $0.dropFirst(path.count) })
+        }
+        return true
     }
 
     /// Every selected directory is toggled, mirroring the single item context menu action:

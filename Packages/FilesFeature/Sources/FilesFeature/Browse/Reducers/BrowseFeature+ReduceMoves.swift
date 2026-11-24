@@ -200,7 +200,7 @@ extension BrowseFeature {
             if entry.isRedoable {
                 state.$redoStack.withLock { $0.record(entry) }
             }
-            return .send(.delegate(.directoryContentsChanged))
+            return contentsChanged(by: entry)
 
         case .redoTapped:
             return redo(&state)
@@ -208,7 +208,7 @@ extension BrowseFeature {
         case let .redoResponse(.success(entry)):
             state.isPerformingFileAction = false
             state.$undoStack.withLock { $0.record(entry) }
-            return .send(.delegate(.directoryContentsChanged))
+            return contentsChanged(by: entry)
 
         case let .undoResponse(.failure(error)), let .redoResponse(.failure(error)):
             state.isPerformingFileAction = false
@@ -338,10 +338,23 @@ extension BrowseFeature {
             if outcome.shouldClearClipboard {
                 state.$clipboard.withLock { $0 = nil }
             }
-            state.transferSuccessMessage = Self.transferSuccessMessage(for: outcome)
+            #if os(macOS)
+                let isLandingOnScreen = Self.trimmedPath(outcome.result.destination) == state.directoryPath
+            #elseif os(iOS)
+                let isLandingOnScreen = false
+            #endif
+            if !isLandingOnScreen {
+                state.transferSuccessMessage = Self.transferSuccessMessage(for: outcome)
+            }
+            let movedFavorites = outcome.operation == .move
+                ? sources.map { repointFavorites(&state, from: $0.id, to: nil) }.contains(true)
+                : false
             applyTransfer(&state, outcome: outcome, sources: sources)
             awaitArrivals(&state, from: outcome.result)
-            return .send(.delegate(.directoryContentsChanged))
+            return .merge(
+                .send(.delegate(.directoryContentsChanged)),
+                movedFavorites ? .send(.delegate(.favoritesChanged)) : .none
+            )
 
         case let .transferResponse(.failure(error)):
             state.isPerformingFileAction = false
@@ -351,6 +364,25 @@ extension BrowseFeature {
 
         default:
             return .none
+        }
+    }
+}
+
+extension BrowseFeature {
+    func contentsChanged(by entry: FileUndoEntry) -> Effect<Action> {
+        .merge(
+            .send(.delegate(.directoryContentsChanged)),
+            entry.isFolderRelocation ? .send(.delegate(.favoritesChanged)) : .none
+        )
+    }
+}
+
+extension FileUndoEntry {
+    var isFolderRelocation: Bool {
+        switch kind {
+        case let .moved(items): items.contains { $0.item.isDirectory }
+        case let .renamed(item, _): item.isDirectory
+        case .created, .madeNew: false
         }
     }
 }

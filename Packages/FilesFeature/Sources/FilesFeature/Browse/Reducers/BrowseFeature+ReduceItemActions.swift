@@ -79,17 +79,25 @@ extension BrowseFeature {
                 state.items.remove(at: index)
                 state.items.insert(result.renamed, at: index)
             }
+            if state.selectedItemIDs.remove(result.originalID) != nil {
+                state.selectedItemIDs.insert(result.renamed.id)
+            }
             // A rename from a preview keeps the cover up: repoint it at the renamed item
             // so its title/actions follow.
             if state.previewItem?.id == result.originalID {
                 state.previewItem = result.renamed
             }
             syncListingCache(state)
+            let favoritesSync: Effect<Action> = repointFavorites(
+                &state,
+                from: result.originalID,
+                to: result.renamed.id
+            ) ? .send(.delegate(.favoritesChanged)) : .none
             // The Mac inspector follows the rename instead of showing the old path.
             if state.infoItem?.id == result.originalID {
-                return loadInfo(&state, item: result.renamed)
+                return .merge(loadInfo(&state, item: result.renamed), favoritesSync)
             }
-            return .none
+            return favoritesSync
 
         case let .renameResponse(.failure(error)):
             state.isPerformingFileAction = false
