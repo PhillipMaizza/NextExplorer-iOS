@@ -13,7 +13,7 @@ struct RemovableMenuButton: View {
 
     var body: some View {
         Button(role: isRemoval ? .destructive : nil, action: action) {
-            Label { Text(title) } icon: { icon }
+            Label { Text(title).foregroundStyle(isRemoval ? Color.negativeText : Color.primaryDS) } icon: { icon }
         }
         .tint(isRemoval ? Color.negativeText : Color.primaryDS)
     }

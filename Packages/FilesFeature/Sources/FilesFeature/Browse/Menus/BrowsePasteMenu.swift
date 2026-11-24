@@ -20,6 +20,9 @@ struct BrowsePasteMenu: View {
                 Label { Text(L10n.Browse.actionPasteHere) } icon: { IconKit.paste }
             }
             .disabled(!Self.canPaste(store))
+            #if os(macOS)
+                .keyboardShortcut(BrowseShortcut.paste)
+            #endif
             Button {
                 store.send(.clipboardCleared, animation: DSMotion.listDiff)
             } label: {
