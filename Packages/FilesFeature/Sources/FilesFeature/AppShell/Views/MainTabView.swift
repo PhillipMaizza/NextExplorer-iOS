@@ -5,9 +5,6 @@ import DesignSystem
 import FilesClient
 import Localization
 import SwiftUI
-#if os(macOS)
-    import AppKit
-#endif
 
 private enum Constants {
     /// Clearance so the floating upload bar rides above the tab bar rather than replacing it
@@ -130,34 +127,7 @@ public struct MainTabView: View {
                 onCancellation: { store.send(.deviceExportFinished(didSave: false)) }
             )
         #endif
-            .dsToast(Binding(
-                get: { uploadToastMessage },
-                set: {
-                    if $0 == nil {
-                        store.send(.dismissUploadToast)
-                    }
-                }
-            ), extraBottomInset: Constants.toastTabBarClearance)
-            .dsToast(Binding(
-                get: {
-                    store.downloadToast.map { message in
-                        #if os(macOS)
-                            // A Mac save lands in Finder, where the action reveals it.
-                            if let savedURL = store.lastSavedDownloadURL {
-                                return .success(message, actionTitle: L10n.Browse.showInFinder) {
-                                    NSWorkspace.shared.activateFileViewerSelecting([savedURL])
-                                }
-                            }
-                        #endif
-                        return .success(message)
-                    }
-                },
-                set: {
-                    if $0 == nil {
-                        store.send(.dismissDownloadToast)
-                    }
-                }
-            ), extraBottomInset: Constants.toastTabBarClearance)
+            .modifier(MainTabToasts(store: store, extraBottomInset: Constants.toastTabBarClearance))
             .featureToast(
                 error: store.settings.hasAccountChangeFailed ? L10n.Settings.accountChangeFailed : nil,
                 extraBottomInset: Constants.toastTabBarClearance
@@ -345,16 +315,6 @@ public struct MainTabView: View {
             guard horizontalSizeClass == .regular else { return 0 }
         #endif
         return store.splitBreadcrumbPath == nil ? 0 : Constants.breadcrumbClearance
-    }
-
-    private var uploadToastMessage: DSToastMessage? {
-        guard let toast = store.uploadToast else { return nil }
-        if let destination = toast.openDestination {
-            return .success(toast.message, actionTitle: L10n.Browse.open) {
-                store.send(.openUploadedLocation(destination))
-            }
-        }
-        return .success(toast.message)
     }
 }
 

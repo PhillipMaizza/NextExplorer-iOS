@@ -133,8 +133,8 @@ final class DSToastPresenter {
     static let shared = DSToastPresenter()
 
     private(set) var visibleID: String?
-    private var requests: [(owner: UUID, id: String)] = []
-    private(set) var swapTask: Task<Void, Never>?
+    @ObservationIgnored private var requests: [(owner: UUID, id: String)] = []
+    @ObservationIgnored private(set) var swapTask: Task<Void, Never>?
 
     func set(_ message: DSToastMessage?, owner: UUID) {
         requests.removeAll { $0.owner == owner }
