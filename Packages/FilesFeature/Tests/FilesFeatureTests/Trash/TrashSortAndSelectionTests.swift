@@ -41,6 +41,15 @@ struct TrashSortAndSelectionTests {
         #expect(store.state.displayedItems.map(\.id) == [small.id, big.id, undated.id])
     }
 
+    @Test("Searching keeps the items whose name holds the term, in the list's order")
+    func searchFiltersByName() async {
+        let store = store()
+        await store.send(.searchQueryChanged(" TXT ")) { $0.searchQuery = " TXT " }
+        #expect(store.state.displayedItems.map(\.id) == [small.id, undated.id])
+        await store.send(.searchQueryChanged("")) { $0.searchQuery = "" }
+        #expect(store.state.displayedItems.count == 3)
+    }
+
     @Test("A finger sweep selects what it crossed, never an id the trash does not hold")
     func sweepSelects() async {
         let store = store(isSelecting: true)
