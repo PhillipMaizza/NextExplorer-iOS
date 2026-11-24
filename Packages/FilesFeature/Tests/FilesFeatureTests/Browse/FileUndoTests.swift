@@ -86,9 +86,11 @@ struct FileUndoTests {
             $0.isPerformingFileAction = false
             $0.transferProgress = nil
             $0.pendingTransferRetry = nil
-            $0.transferSuccessMessage = L10n.Browse.transferCopied(1)
+            $0.transferSuccessMessage = BrowseFixtures.onScreenTransferMessage(L10n.Browse.transferCopied(1))
             $0.items = IdentifiedArray(uniqueElements: [misc, copy])
             $0.$undoStack.withLock { $0 = [FileUndoEntry(.created([copy]))] }
+            $0.selectedItemIDs = [copy.id]
+            $0.scrollTargetID = copy.id
             $0.awaitedArrivalIDs = ["Docs/Misc (2)"]
             $0.arrivalChecksLeft = 3
         }

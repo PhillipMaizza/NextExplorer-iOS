@@ -36,6 +36,7 @@ public struct DestinationPickerFeature {
         /// `.replaceFile` only: the file picked in the folder on screen. Folders are never picked,
         /// they are opened; changing folder clears it.
         public var selectedFilePath: String?
+        public var selectedFolderPath: String?
         /// `.replaceFile` only: a file found by search, picked once its folder has been listed.
         public var pendingFileSelection: String?
         public var phase: DataPhase = .idle
@@ -127,15 +128,19 @@ public struct DestinationPickerFeature {
             !navigationHistory.isEmpty
         }
 
+        public var transferDestination: String {
+            selectedFolderPath ?? directoryPath
+        }
+
         /// Whether the trailing confirm button is enabled for the folder currently shown.
         /// Move: `FileClipboard.canPaste` rules (never root, never the item's own parent or a
         /// folder nested in a staged item). Upload: any non-root folder the user can upload to.
         public var canConfirm: Bool {
             switch purpose {
             case .move:
-                FileClipboard(items: items, operation: .move).canPaste(into: directoryPath, canWrite: true)
+                FileClipboard(items: items, operation: .move).canPaste(into: transferDestination, canWrite: true)
             case .copy:
-                FileClipboard(items: items, operation: .copy).canPaste(into: directoryPath, canWrite: true)
+                FileClipboard(items: items, operation: .copy).canPaste(into: transferDestination, canWrite: true)
             case .upload:
                 // `nil` while the folder's listing is still loading: confirm stays disabled
                 // until the server says uploads are allowed here.
@@ -224,6 +229,7 @@ public struct DestinationPickerFeature {
                 let isNewTerm = SearchTerm(query) != SearchTerm(state.searchQuery)
                 state.searchQuery = query
                 guard isNewTerm else { return .none }
+                state.selectedFolderPath = nil
                 return search(&state)
 
             case let .searchResultsResponse(_, term) where term != SearchTerm(state.searchQuery).text:
@@ -288,8 +294,19 @@ public struct DestinationPickerFeature {
                 return load(&state)
 
             case let .rowSelected(id):
-                guard state.purpose == .replaceFile else { return .none }
-                state.selectedFilePath = id.flatMap { state.folders[id: $0] }.flatMap { $0.isDirectory ? nil : $0.id }
+                switch state.purpose {
+                case .replaceFile:
+                    state.selectedFilePath = id.flatMap { state.folders[id: $0] }
+                        .flatMap { $0.isDirectory ? nil : $0.id }
+                case .move, .copy:
+                    state.selectedFolderPath = id.flatMap { path in
+                        let isFolder = state.folders[id: path]?.isDirectory ?? state.searchResults[id: path]?
+                            .isDirectory
+                        return isFolder == true ? path : nil
+                    }
+                case .upload, .restore:
+                    break
+                }
                 return .none
 
             case .confirmTapped:
@@ -298,7 +315,12 @@ public struct DestinationPickerFeature {
                     guard let file = state.selectedFilePath else { return .none }
                     return .send(.delegate(.confirmed(destination: file)))
                 }
-                return .send(.delegate(.confirmed(destination: state.directoryPath)))
+                switch state.purpose {
+                case .move, .copy:
+                    return .send(.delegate(.confirmed(destination: state.transferDestination)))
+                case .upload, .restore, .replaceFile:
+                    return .send(.delegate(.confirmed(destination: state.directoryPath)))
+                }
 
             case .cancelTapped:
                 return .send(.delegate(.cancelled))
@@ -366,6 +388,7 @@ public struct DestinationPickerFeature {
         // Drop the previous folder's access so an upload confirm can't fire against stale info.
         state.currentAccess = nil
         state.selectedFilePath = nil
+        state.selectedFolderPath = nil
         let serverURL = state.serverURL
         let directoryPath = state.directoryPath
         let filesClient = filesClient

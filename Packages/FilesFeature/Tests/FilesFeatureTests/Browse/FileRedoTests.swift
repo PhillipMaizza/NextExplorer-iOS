@@ -169,6 +169,8 @@ struct FileRedoTests {
 
         await store.send(.newFolderResponse(.success(made))) {
             $0.items = [made]
+            $0.selectedItemIDs = [made.id]
+            $0.scrollTargetID = made.id
             $0.$undoStack.withLock { $0 = [FileUndoEntry(.madeNew(made))] }
             $0.$redoStack.withLock { $0 = [] }
             $0.createdFolderIDs = [made.id]

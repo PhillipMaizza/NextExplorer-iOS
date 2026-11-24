@@ -18,9 +18,15 @@
             self.tint = tint
         }
 
+        @Environment(\.backgroundProminence) private var prominence
+
         public var body: some View {
             RoundedRectangle(cornerRadius: size * Metrics.cornerFraction, style: .continuous)
                 .fill(tint.opacity(Metrics.fillOpacity))
+                .background(
+                    prominence == .increased ? Color.macCard : .clear,
+                    in: RoundedRectangle(cornerRadius: size * Metrics.cornerFraction, style: .continuous)
+                )
                 .overlay {
                     glyph
                         .resizable()

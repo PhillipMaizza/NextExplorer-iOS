@@ -33,6 +33,7 @@
         let isDirectory: Bool
         let size: CGFloat
         var folderGlyph = IconKit.folderFill
+        @Environment(\.backgroundProminence) private var prominence
 
         var body: some View {
             Group {
@@ -40,6 +41,13 @@
                     MacFolderTile(size: size, glyph: folderGlyph)
                 } else {
                     FileTypeIcon(kind: kind)
+                        .background(
+                            prominence == .increased ? Color.macCard : .clear,
+                            in: RoundedRectangle(
+                                cornerRadius: size * FileTypeIcon.cornerFraction,
+                                style: .continuous
+                            )
+                        )
                 }
             }
             .frame(width: size, height: size)

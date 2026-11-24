@@ -114,6 +114,8 @@ extension BrowseFeature {
             state.isPerformingFileAction = false
             state.isNewFolderSheetPresented = false
             state.items.append(folder)
+            state.selectedItemIDs = [folder.id]
+            state.scrollTargetID = folder.id
             recordUndo(&state, FileUndoEntry(.madeNew(folder)))
             syncListingCache(state)
             state.createdFolderIDs.insert(folder.id)
@@ -155,6 +157,8 @@ extension BrowseFeature {
             state.isPerformingFileAction = false
             state.isNewFileSheetPresented = false
             state.items.append(file)
+            state.selectedItemIDs = [file.id]
+            state.scrollTargetID = file.id
             recordUndo(&state, FileUndoEntry(.madeNew(file)))
             syncListingCache(state)
             // Straight into the editor: an empty file is only ever made to be written in. After
@@ -263,6 +267,8 @@ extension BrowseFeature {
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
             state.items.append(compressed)
+            state.selectedItemIDs = [compressed.id]
+            state.scrollTargetID = compressed.id
             syncListingCache(state)
             // Refetch so the new archive carries the same server metadata a normal listing
             // entry does and is browsable straight away, not only after a manual refresh.

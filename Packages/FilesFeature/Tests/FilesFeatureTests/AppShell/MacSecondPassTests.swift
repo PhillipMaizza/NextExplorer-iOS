@@ -124,8 +124,9 @@ import TestUtils
                 $0.isPerformingFileAction = false
                 $0.transferProgress = nil
                 $0.pendingTransferRetry = nil
-                $0.transferSuccessMessage = L10n.Browse.transferMoved(1)
                 $0.items = [alreadyHere, moved]
+                $0.selectedItemIDs = [moved.id]
+                $0.scrollTargetID = moved.id
                 $0.$undoStack.withLock {
                     $0 = [FileUndoEntry(.moved([FileUndoEntry.MovedItem(item: moved, originalParent: "Other")]))]
                 }

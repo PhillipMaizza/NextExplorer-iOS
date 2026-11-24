@@ -8,10 +8,12 @@
     /// or empty name cancels; an invalid one goes on so the screen can say why it was refused.
     struct MacInlineRenameField: View {
         let originalName: String
+        let isDirectory: Bool
         let onCommit: (String) -> Void
         let onCancel: () -> Void
 
         @State private var name: String
+        @State private var selection: TextSelection?
         @State private var isFinished = false
         @State private var appearedAt = Date()
         @FocusState private var isFocused: Bool
@@ -20,15 +22,21 @@
         /// this early takes focus back instead of ending the rename.
         static let focusSettleInterval: TimeInterval = 0.6
 
-        init(originalName: String, onCommit: @escaping (String) -> Void, onCancel: @escaping () -> Void) {
+        init(
+            originalName: String,
+            isDirectory: Bool,
+            onCommit: @escaping (String) -> Void,
+            onCancel: @escaping () -> Void
+        ) {
             self.originalName = originalName
+            self.isDirectory = isDirectory
             self.onCommit = onCommit
             self.onCancel = onCancel
             _name = State(initialValue: originalName)
         }
 
         var body: some View {
-            TextField(L10n.Browse.renameNamePlaceholder, text: $name)
+            TextField(L10n.Browse.renameNamePlaceholder, text: $name, selection: $selection)
                 .labelsHidden()
                 .textFieldStyle(.plain)
                 .padding(.horizontal, .space8)
@@ -44,13 +52,22 @@
                 .onSubmit { finish(commit: true) }
                 .onExitCommand { finish(commit: false) }
                 .onChange(of: isFocused) { _, focused in
-                    guard !focused else { return }
+                    guard !focused else {
+                        DispatchQueue.main.async { selection = TextSelection(range: stemRange) }
+                        return
+                    }
                     if Date().timeIntervalSince(appearedAt) < Self.focusSettleInterval {
                         isFocused = true
                     } else {
                         finish(commit: true)
                     }
                 }
+        }
+
+        private var stemRange: Range<String.Index> {
+            let stem = displayFileName(originalName, isDirectory: isDirectory, showExtension: false)
+            let end = name.index(name.startIndex, offsetBy: stem.count, limitedBy: name.endIndex) ?? name.endIndex
+            return name.startIndex ..< end
         }
 
         private func finish(commit: Bool) {
@@ -66,7 +83,7 @@
     }
 
     #Preview("Renaming") {
-        MacInlineRenameField(originalName: "report.pdf", onCommit: { _ in }, onCancel: {})
+        MacInlineRenameField(originalName: "report.pdf", isDirectory: false, onCommit: { _ in }, onCancel: {})
             .padding(.space16)
             .previewCanvasWidth(.control)
     }
