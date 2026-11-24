@@ -157,6 +157,19 @@ struct PermissionsFeatureTests {
         #expect(store.state.octalString == "755")
     }
 
+    @Test
+    func saveIsOffWhileTheNumericModeIsIncomplete() async {
+        let store = makeStore(loadedState(permissions()))
+
+        await store.send(.numericChanged("640")) {
+            $0.numericDraft = "640"
+            $0.grid = [.owner: [.read, .write], .group: [.read], .others: []]
+        }
+        #expect(store.state.isDirty)
+        await store.send(.numericChanged("64")) { $0.numericDraft = "64" }
+        #expect(!store.state.isDirty)
+    }
+
     private func stateShowingAnError() -> PermissionsFeature.State {
         var state = loadedState(permissions())
         state.actionError = TestValue.outdated

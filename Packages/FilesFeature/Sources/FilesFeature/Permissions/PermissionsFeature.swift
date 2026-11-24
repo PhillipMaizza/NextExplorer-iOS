@@ -50,7 +50,7 @@ public struct PermissionsFeature {
         }
 
         public var isDirty: Bool {
-            isModeDirty || isOwnershipDirty
+            (isModeDirty || isOwnershipDirty) && FilePermissions.grid(fromOctal: numericDraft) != nil
         }
 
         public var isOwnershipDirty: Bool {
