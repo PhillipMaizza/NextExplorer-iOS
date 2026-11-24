@@ -49,10 +49,9 @@ struct OfflineTabView: View {
         #endif
     }
 
-    /// The Mac lists the tab as a table once it loads, like Favorites; the skeleton list stands in before.
     private var isMacTable: Bool {
         #if os(macOS)
-            listPhase != .loading
+            true
         #else
             false
         #endif
@@ -207,16 +206,20 @@ struct OfflineTabView: View {
             Group {
                 if isMacTable {
                     #if os(macOS)
-                        MacOfflineTableView(
-                            store: store,
-                            offlineStore: offlineStore,
-                            pinned: displayedPinned,
-                            saved: store.displayedDownloads,
-                            favorites: favorites,
-                            onPreview: { previewedDownload = $0 }
-                        )
-                        .backgroundGradient()
-                        .transition(.opacity)
+                        if listPhase == .loading {
+                            MacBrowseTableSkeleton()
+                        } else {
+                            MacOfflineTableView(
+                                store: store,
+                                offlineStore: offlineStore,
+                                pinned: displayedPinned,
+                                saved: store.displayedDownloads,
+                                favorites: favorites,
+                                onPreview: { previewedDownload = $0 }
+                            )
+                            .backgroundGradient()
+                            .transition(.opacity)
+                        }
                     #endif
                 } else if viewMode == .list {
                     listContent
