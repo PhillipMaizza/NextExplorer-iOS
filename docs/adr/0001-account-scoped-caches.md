@@ -30,5 +30,9 @@ An empty scope is the legacy unscoped namespace; tests that never set a scope us
 on account boundaries (`markEveryAccountWiped`) make in flight downloads of the old account fail
 rather than land.
 
+The tab tree is keyed on the account inside `AuthenticatedView` (`.id(store.accountID)`). On the Mac the key on
+`AppView` alone did not remount it when an account was added, so Browse kept the old view over a fresh store,
+its folder task (keyed on the same root path) never ran, and the skeleton stayed up.
+
 Code: `CacheAccountScope`, `CacheLayout`, `DownloadAccountScope`, `LegacyCacheCleanup`,
 `RebuildableCaches`, `NetworkClient+Live`.

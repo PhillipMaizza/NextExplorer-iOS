@@ -38,4 +38,12 @@ struct BrowseSelectionGateTests {
         #expect(!state.canAddHere)
         #expect(!state.canUploadHere)
     }
+
+    @Test("The root holds no files of its own, so it offers no upload even when access allows one")
+    func theRootOffersNoUpload() {
+        var state = BrowseFixtures.state(TestPath.root)
+        state.access = BrowseTestSupport.fullAccess
+        #expect(!state.canUploadHere)
+        #expect(!state.canAddHere)
+    }
 }
