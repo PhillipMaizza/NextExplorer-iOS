@@ -4,6 +4,8 @@
     import Foundation
     #if os(iOS)
         import UIKit
+    #elseif os(macOS)
+        import AppKit
     #endif
 
     extension UITestSupport {
@@ -35,30 +37,29 @@
         /// a temporary folder, so a run shows what the gallery does with actual files.
         static func installGalleryFiles(into client: inout FilesClient) {
             client.fetchTextContent = { _, _ in galleryNotesText }
-            #if os(iOS)
-                client.previewFile = { _, item in try galleryFile(for: item) }
-                client.previewFileLowPriority = { _, item in try galleryFile(for: item) }
-            #endif
+            client.previewFile = { _, item in try galleryFile(for: item) }
+            client.previewFileLowPriority = { _, item in try galleryFile(for: item) }
+        }
+
+        private static let galleryFolder = FileManager.default.temporaryDirectory
+            .appendingPathComponent("UITestGallery", isDirectory: true)
+
+        private static func galleryFile(for item: FileItem) throws -> URL {
+            try FileManager.default.createDirectory(at: galleryFolder, withIntermediateDirectories: true)
+            let url = galleryFolder.appendingPathComponent(item.name)
+            if FileManager.default.fileExists(atPath: url.path) {
+                return url
+            }
+            let data: Data = switch item.kind.lowercased() {
+            case "pdf": galleryPDF(title: item.name)
+            case "jpg", "jpeg", "png": galleryPhoto(named: item.name)
+            default: Data()
+            }
+            try data.write(to: url)
+            return url
         }
 
         #if os(iOS)
-            private static let galleryFolder = FileManager.default.temporaryDirectory
-                .appendingPathComponent("UITestGallery", isDirectory: true)
-
-            private static func galleryFile(for item: FileItem) throws -> URL {
-                try FileManager.default.createDirectory(at: galleryFolder, withIntermediateDirectories: true)
-                let url = galleryFolder.appendingPathComponent(item.name)
-                if FileManager.default.fileExists(atPath: url.path) {
-                    return url
-                }
-                let data: Data = switch item.kind.lowercased() {
-                case "pdf": galleryPDF(title: item.name)
-                case "jpg", "jpeg", "png": galleryPhoto(named: item.name)
-                default: Data()
-                }
-                try data.write(to: url)
-                return url
-            }
 
             /// A landscape picture: a sky gradient, a sun and the file's name.
             private static func galleryPhoto(named name: String) -> Data {
@@ -107,6 +108,51 @@
                         (text as NSString).draw(in: page.insetBy(dx: 56, dy: 130), withAttributes: body)
                     }
                 }
+            }
+        #elseif os(macOS)
+            private static func galleryPhoto(named name: String) -> Data {
+                let size = NSSize(width: 1_600, height: 1_067)
+                let isSunset = name.hasPrefix("sunset")
+                let image = NSImage(size: size, flipped: false) { rect in
+                    let top = isSunset ? NSColor.systemIndigo : NSColor.systemTeal
+                    let bottom = isSunset ? NSColor.systemOrange : NSColor.systemGreen
+                    NSGradient(starting: bottom, ending: top)?.draw(in: rect, angle: 90)
+                    NSColor.systemYellow.setFill()
+                    NSBezierPath(ovalIn: NSRect(x: 1_050, y: 567, width: 280, height: 280)).fill()
+                    let attributes: [NSAttributedString.Key: Any] = [
+                        .font: NSFont.boldSystemFont(ofSize: 110),
+                        .foregroundColor: NSColor.white,
+                    ]
+                    (name as NSString).draw(at: NSPoint(x: 90, y: 140), withAttributes: attributes)
+                    return true
+                }
+                guard let tiff = image.tiffRepresentation,
+                      let bitmap = NSBitmapImageRep(data: tiff) else { return Data() }
+                return bitmap.representation(using: .jpeg, properties: [.compressionFactor: 0.85]) ?? Data()
+            }
+
+            private static func galleryPDF(title: String) -> Data {
+                var page = CGRect(x: 0, y: 0, width: 612, height: 792)
+                let paragraph = "The gallery pages through every file in a folder. "
+                    + "Photos decode in place, documents open in Quick Look, text reads back with highlighting, "
+                    + "videos play in their page, and a zip offers to open the archive browser."
+                let data = NSMutableData()
+                guard let consumer = CGDataConsumer(data: data as CFMutableData),
+                      let context = CGContext(consumer: consumer, mediaBox: &page, nil) else { return Data() }
+                for number in 1 ... 2 {
+                    context.beginPDFPage(nil)
+                    NSGraphicsContext.saveGraphicsState()
+                    NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+                    let heading: [NSAttributedString.Key: Any] = [.font: NSFont.boldSystemFont(ofSize: 30)]
+                    ("\(title) page \(number)" as NSString).draw(at: CGPoint(x: 56, y: 698), withAttributes: heading)
+                    let body: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: 16)]
+                    let text = Array(repeating: paragraph, count: 4).joined(separator: "\n\n")
+                    (text as NSString).draw(in: page.insetBy(dx: 56, dy: 130), withAttributes: body)
+                    NSGraphicsContext.restoreGraphicsState()
+                    context.endPDFPage()
+                }
+                context.closePDF()
+                return data as Data
             }
         #endif
     }

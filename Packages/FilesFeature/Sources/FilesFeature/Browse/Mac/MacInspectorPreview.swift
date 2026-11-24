@@ -8,7 +8,7 @@
 
     private enum Metrics {
         static let pictureMaxPixels: CGFloat = 1024
-        static let paperTopInset: CGFloat = .size20
+        static let paperTopInset: CGFloat = .space24
         static let paperSideInset: CGFloat = .space24
         static let paperRadius: CGFloat = .radiusSmall
         static let paperShadowRadius: CGFloat = 1.5

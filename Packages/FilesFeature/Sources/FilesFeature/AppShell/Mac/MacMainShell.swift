@@ -59,6 +59,7 @@
                 toggleSidebar: toggleSidebar
             ))
             .overlay(alignment: .bottomLeading) { accountPanel }
+            .macPeekHosting()
             .overlay {
                 if let spotlightStore = store.scope(state: \.spotlight, action: \.spotlight.presented) {
                     SpotlightView(store: spotlightStore)

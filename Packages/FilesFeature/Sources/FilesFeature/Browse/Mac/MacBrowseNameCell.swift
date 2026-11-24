@@ -18,7 +18,7 @@
 
         var body: some View {
             HStack(spacing: .space8) {
-                tile
+                MacFileTile(item: item, serverURL: serverURL, glyph: glyph)
                 if isRenaming {
                     MacInlineRenameField(
                         originalName: item.name,
@@ -47,53 +47,6 @@
                     )
                     .accessibilityLabel(L10n.Favorites.accessibilityBadge)
                 }
-            }
-        }
-    }
-
-    extension MacBrowseNameCell {
-        @ViewBuilder
-        private var tile: some View {
-            if let serverURL, !item.isDirectory, item.isImage || item.isVideo || item.isAudio {
-                ThumbnailImage(
-                    serverURL: serverURL,
-                    path: item.id,
-                    signature: item.cacheSignature,
-                    fallbackIcon: IconKit.document,
-                    fallbackKind: item.kind,
-                    iconTint: Color.secondaryDS,
-                    maxPixelDimension: MacBrowseTableMetrics.thumbnailMaxPixels,
-                    fileSize: item.size,
-                    modified: item.dateModified,
-                    fill: .crop
-                )
-                .frame(width: MacBrowseTableMetrics.tileSize, height: MacBrowseTableMetrics.tileSize)
-                .clipShape(RoundedRectangle(cornerRadius: MacBrowseTableMetrics.tileRadius, style: .continuous))
-                .overlay {
-                    if item.isVideo {
-                        IconKit.play
-                            .resizable()
-                            .scaledToFit()
-                            .frame(
-                                width: MacBrowseTableMetrics.playGlyphSize,
-                                height: MacBrowseTableMetrics.playGlyphSize
-                            )
-                            .foregroundStyle(.white)
-                            .shadow(radius: MacBrowseTableMetrics.playGlyphShadow)
-                    }
-                }
-            } else if let serverURL, DocumentThumbnailStore.isEligible(item) {
-                DocumentThumbnailImage(serverURL: serverURL, item: item) {
-                    MacItemTile(kind: item.kind, isDirectory: false, size: MacBrowseTableMetrics.tileSize)
-                }
-                .frame(width: MacBrowseTableMetrics.tileSize, height: MacBrowseTableMetrics.tileSize)
-            } else {
-                MacItemTile(
-                    kind: item.kind,
-                    isDirectory: item.isDirectory,
-                    size: MacBrowseTableMetrics.tileSize,
-                    folderGlyph: glyph
-                )
             }
         }
     }

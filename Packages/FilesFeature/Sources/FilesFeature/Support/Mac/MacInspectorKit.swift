@@ -128,12 +128,20 @@
         let value: String
         var icon: Image?
         var valueLineLimit = 1
+        var valueColor = Color.primaryDS
 
-        init(_ label: String, _ value: String, icon: Image? = nil, valueLineLimit: Int = 1) {
+        init(
+            _ label: String,
+            _ value: String,
+            icon: Image? = nil,
+            valueLineLimit: Int = 1,
+            valueColor: Color = Color.primaryDS
+        ) {
             self.label = label
             self.value = value
             self.icon = icon
             self.valueLineLimit = valueLineLimit
+            self.valueColor = valueColor
         }
 
         var body: some View {
@@ -147,7 +155,7 @@
                 }
                 Text(value)
                     .type(.body3(.regular))
-                    .foregroundStyle(Color.primaryDS)
+                    .foregroundStyle(valueColor)
                     .lineLimit(valueLineLimit)
                     .multilineTextAlignment(.trailing)
                     .truncationMode(.middle)
@@ -227,7 +235,7 @@
         }
 
         private func tile(icon: Image, title: String, isOn: Bool) -> some View {
-            VStack(spacing: .size6) {
+            VStack(spacing: .space8) {
                 icon
                     .resizable()
                     .scaledToFit()

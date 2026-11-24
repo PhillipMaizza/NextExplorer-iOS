@@ -73,16 +73,14 @@ final class DocumentThumbnailStore {
     /// kind's size cap. One rule for every list row and grid tile.
     nonisolated static func isEligible(_ item: FileItem) -> Bool {
         // A search hit reports no size, so nothing would hold its download to the cap.
-        guard item.size > 0 else {
+        guard item.size > 0, isDocumentKind(item) else {
             return false
         }
-        if item.isPDF {
-            return item.size <= Constants.maxPDFBytes
-        }
-        guard item.isOfficeDocument || Constants.quickLookKinds.contains(item.kind.lowercased()) else {
-            return false
-        }
-        return item.size <= Constants.maxQuickLookBytes
+        return item.size <= (item.isPDF ? Constants.maxPDFBytes : Constants.maxQuickLookBytes)
+    }
+
+    nonisolated static func isDocumentKind(_ item: FileItem) -> Bool {
+        item.isPDF || item.isOfficeDocument || Constants.quickLookKinds.contains(item.kind.lowercased())
     }
 
     /// Drops every entry and stops every load still running, so no drawn page outlives a session.
