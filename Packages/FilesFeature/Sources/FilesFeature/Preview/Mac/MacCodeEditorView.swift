@@ -6,6 +6,8 @@
     private enum Constants {
         /// Pause after the last keystroke before rehighlighting, so typing never waits on a parse.
         static let rehighlightDelay: Duration = .milliseconds(300)
+        static let lineHeightMultiple: CGFloat = 1.8
+        static let textInset = NSSize(width: .space12, height: .space24)
     }
 
     /// macOS counterpart of the Runestone backed editor: Runestone is UIKit only, so the Mac uses a
@@ -20,13 +22,22 @@
         var onEscape: (() -> Void)?
 
         func makeNSView(context: Context) -> NSScrollView {
-            let scrollView = NSTextView.scrollableTextView()
+            let scrollView = NSScrollView()
             scrollView.drawsBackground = false
-            guard let textView = scrollView.documentView as? NSTextView else { return scrollView }
+            scrollView.hasVerticalScroller = true
+            let textView = NSTextView(usingTextLayoutManager: false)
+            textView.autoresizingMask = .width
+            textView.isVerticallyResizable = true
+            textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude)
+            textView.textContainer?.widthTracksTextView = true
+            scrollView.documentView = textView
             textView.delegate = context.coordinator
             textView.drawsBackground = false
             textView.font = .monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
             textView.textColor = .labelColor
+            textView.textContainerInset = Constants.textInset
+            textView.defaultParagraphStyle = Self.paragraphStyle
+            textView.typingAttributes[.paragraphStyle] = Self.paragraphStyle
             textView.insertionPointColor = NSColor(Color.accent)
             textView.isRichText = false
             textView.allowsUndo = true
@@ -35,9 +46,14 @@
             textView.isAutomaticSpellingCorrectionEnabled = false
             textView.isEditable = isEditable
             textView.string = text
+            Self.applyBaseAttributes(to: textView)
+            let ruler = MacLineNumberRuler(textView: textView)
+            scrollView.verticalRulerView = ruler
+            scrollView.hasVerticalRuler = true
+            scrollView.rulersVisible = true
             context.coordinator.lastReportedText = text
             context.coordinator.onEscape = onEscape
-            context.coordinator.attach(textView, kind: kind)
+            context.coordinator.attach(textView, kind: kind, ruler: ruler)
             return scrollView
         }
 
@@ -48,7 +64,25 @@
             guard context.coordinator.lastReportedText != text else { return }
             context.coordinator.lastReportedText = text
             textView.string = text
+            Self.applyBaseAttributes(to: textView)
+            context.coordinator.ruler?.reloadLines()
             context.coordinator.highlight(after: nil)
+        }
+
+        private static let paragraphStyle: NSParagraphStyle = {
+            let style = NSMutableParagraphStyle()
+            style.lineHeightMultiple = Constants.lineHeightMultiple
+            return style
+        }()
+
+        private static func applyBaseAttributes(to textView: NSTextView) {
+            guard let storage = textView.textStorage else { return }
+            var attributes: [NSAttributedString.Key: Any] = [
+                .paragraphStyle: paragraphStyle,
+                .foregroundColor: NSColor.labelColor,
+            ]
+            attributes[.font] = textView.font
+            storage.addAttributes(attributes, range: NSRange(location: 0, length: storage.length))
         }
 
         func makeCoordinator() -> Coordinator {
@@ -66,6 +100,7 @@
             var lastReportedText: String
             var onEscape: (() -> Void)?
             private weak var textView: NSTextView?
+            private(set) weak var ruler: MacLineNumberRuler?
             private var language: MacSyntaxLanguage?
             private var highlightTask: Task<Void, Never>?
             /// Bumped per request so a slower parse of older text can't paint over newer text.
@@ -76,8 +111,9 @@
                 lastReportedText = text.wrappedValue
             }
 
-            func attach(_ textView: NSTextView, kind: String) {
+            func attach(_ textView: NSTextView, kind: String, ruler: MacLineNumberRuler) {
                 self.textView = textView
+                self.ruler = ruler
                 language = MacSyntaxLanguage.forKind(kind)
                 highlight(after: nil)
             }
@@ -92,6 +128,7 @@
                 guard let textView = notification.object as? NSTextView else { return }
                 lastReportedText = textView.string
                 text.wrappedValue = textView.string
+                ruler?.reloadLines()
                 highlight(after: Constants.rehighlightDelay)
             }
 

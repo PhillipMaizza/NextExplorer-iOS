@@ -14,25 +14,32 @@
 
         var body: some View {
             HStack(spacing: .space8) {
-                Button(action: onClose) {
-                    Label { Text(L10n.PreviewToolbar.close) } icon: { IconKit.close }
+                HStack(spacing: .space8) {
+                    MacIconButton(IconKit.close, label: L10n.PreviewToolbar.close, isFilled: false, action: onClose)
+                        .keyboardShortcut(.cancelAction)
+                    leading()
                 }
-                .keyboardShortcut(.cancelAction)
-                .help(L10n.PreviewToolbar.close)
-                leading()
-                Spacer(minLength: .space8)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 if let title {
-                    Text(title).font(.headline).lineLimit(1).truncationMode(.middle)
+                    Text(title)
+                        .type(.body1(.bold))
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .layoutPriority(1)
                 }
-                Spacer(minLength: .space8)
-                trailing()
+                HStack(spacing: .space8) {
+                    trailing()
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
-            .padding(.horizontal, .space12)
-            .padding(.vertical, .space8)
-            .background(.bar)
-            .overlay(alignment: .bottom) { Divider() }
+            .padding(.horizontal, .space16)
+            .padding(.vertical, .space12)
+            .background(Color.macCard)
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(Color.macLine)
+                    .frame(height: .borderWidthHairline)
+            }
         }
     }
 
@@ -56,6 +63,7 @@
                 EmptyView()
             } trailing: {
                 Button(L10n.Common.edit) {}
+                    .buttonStyle(.macDS(.primary, size: .small))
             }
             .previewCanvas(.dialog)
     }
