@@ -40,6 +40,7 @@ struct BrowseContentView: View {
     /// swipe morphs back to the visible image instead of the one first tapped. `nil` until the
     /// gallery reports a page, then the tapped item's id is used.
     @State private var galleryCurrentItemID: String?
+    @State private var isPeeking = false
     @Environment(\.isSplitViewDetail) private var isSplitViewDetail
     /// The screen's bottom safe area (the home indicator), part of the path bar's clearance.
     @State private var bottomSafeInset: CGFloat = 0
@@ -131,17 +132,16 @@ struct BrowseContentView: View {
                 galleryCurrentItemID: $galleryCurrentItemID
             ))
         #if os(macOS)
-            .modifier(MacBrowseInspector(
-                screen: store,
-                onOpen: handleTap,
-                onShare: { shareTarget = $0 },
-                more: { MacInspectorMoreMenu(store: store, item: $0) { toastMessage = .failure($0) } }
+            .modifier(MacBrowsePanels(
+                store: store,
+                isPeeking: $isPeeking,
+                shareTarget: $shareTarget,
+                toastMessage: $toastMessage,
+                onOpen: handleTap
             ))
         #endif
     }
 
-    /// Placeholder rows, cells or table rows in the current view mode, while a folder's first
-    /// listing or a search's first answer is on its way.
     @ViewBuilder
     private var loadingSkeleton: some View {
         if viewMode == .table {
@@ -165,7 +165,7 @@ struct BrowseContentView: View {
                         shouldKeepClipboard: shouldKeepClipboardAfterCopy,
                         isFilesPickerPresented: $isFilesPickerPresented,
                         onOpen: handleTap,
-                        onQuickLookUnavailable: { toastMessage = DSToastMessage(icon: IconKit.errorFill, text: $0) }
+                        isPeeking: $isPeeking
                     ) { fileActionsMenu(for: $0) }
                 #endif
             } else if viewMode != .grid {

@@ -45,8 +45,8 @@
         /// personal folders on. Its id is the `personal` path space, which is never a volume.
         var personalSpace: FileItem?
         var onOpenPersonalSpace: () -> Void = {}
-        /// Space on a file Quick Look can't show: the reason, for the screen's toast.
-        var onQuickLookUnavailable: (String) -> Void = { _ in }
+        var isPeeking = false
+        var onPeek: () -> Void = {}
         /// A row to scroll into view, such as the file a search opened this folder for.
         var scrollTargetID: FileItem.ID?
 
@@ -54,11 +54,7 @@
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         /// The table takes focus when a folder opens, so Cut, Copy and Paste reach it at once.
         @FocusState private var isFocused: Bool
-        /// The system Quick Look panel, showing a local copy fetched through the preview cache.
-        @State private var quickLookPanel = MacQuickLookPanel()
-        @State private var isQuickLooking = false
         @State private var width = CGFloat.infinity
-        @State private var quickLookTask: Task<Void, Never>?
 
         var body: some View {
             let columns = MacBrowseTableColumns(width: width)
@@ -183,39 +179,18 @@
             .focused($isFocused)
             .focusEffectDisabled()
             .onAppear { isFocused = true }
-            // The panel is the app's shared one; leaving the folder must not leave it showing a
-            // file from here, or a download running for it.
-            .onDisappear(perform: closeQuickLook)
-            // Finder conventions: Space toggles Quick Look on a file (and Get Info on a folder, which
-            // a double click opens), Return renames, Delete deletes; Edit menu Cut/Copy/Paste/Select
+            .onChange(of: isPeeking) { _, isOpen in
+                isFocused = !isOpen
+            }
+            // Finder conventions: Return renames, Delete deletes; Edit menu Cut/Copy/Paste/Select
             // All and ⌘I reach the selection through the focused value.
             .onKeyPress(.space) {
-                guard renamingItemID == nil, selection.count == 1,
-                      let item = item(for: selection.first) else { return .ignored }
-                if item.isDirectory {
-                    keyboardActions.getInfo()
-                } else if quickLookPanel.isVisible {
-                    closeQuickLook()
-                } else {
-                    quickLook(item)
+                guard renamingItemID == nil, selection.count == 1, item(for: selection.first) != nil else {
+                    return .ignored
                 }
+                onPeek()
                 return .handled
             }
-            // Like Finder, an open Quick Look follows the selection, also while its first file is
-            // still coming down (the panel is not up yet).
-            .onChange(of: selection) { _, newSelection in
-                guard isQuickLooking else { return }
-                guard !quickLookPanel.wasDismissed else {
-                    closeQuickLook()
-                    return
-                }
-                if newSelection.count == 1, let item = item(for: newSelection.first), !item.isDirectory {
-                    quickLook(item)
-                } else {
-                    closeQuickLook()
-                }
-            }
-            .background(MacQuickLookResponderAnchor(responder: quickLookPanel.responder))
             // Finder's ⌘↓ opens the selection. A key equivalent, since the table takes arrow
             // keys before `onKeyPress` sees them; live only while the table has focus.
             .background {
@@ -238,47 +213,6 @@
             // While a name is being edited in place its field has focus inside the table, so the
             // Edit menu (⌘A, ⌘C, ⌘V, ⌘Z, ⌘⌫) must edit that text, not act on the files.
             .focusedValue(\.browseKeyboardActions, renamingItemID == nil ? keyboardActions : nil)
-        }
-
-        private func quickLook(_ item: FileItem) {
-            if let reason = MacQuickLookPolicy.refusal(for: item, isSavedOffline: offlineItemIDs.contains(item.id)) {
-                closeQuickLook()
-                onQuickLookUnavailable(reason)
-                return
-            }
-            isQuickLooking = true
-            quickLookTask?.cancel()
-            quickLookTask = Task {
-                // The preview endpoint only serves the types the web app previews; anything else
-                // comes down whole, so Quick Look can show it too.
-                let url: URL? = if let preview = try? await filesClient.previewFile(serverURL, item) {
-                    preview
-                } else {
-                    try? await filesClient.downloadRawFile(serverURL, item)
-                }
-                guard let url, !Task.isCancelled, isQuickLooking else { return }
-                quickLookPanel.show(url, onMove: moveQuickLookSelection) {
-                    isQuickLooking = false
-                    quickLookTask?.cancel()
-                }
-            }
-        }
-
-        private func closeQuickLook() {
-            isQuickLooking = false
-            quickLookTask?.cancel()
-            quickLookTask = nil
-            quickLookPanel.close()
-        }
-
-        /// Up and Down in the Quick Look panel: select the previous or next file in the table,
-        /// skipping folders, and the panel follows the selection.
-        private func moveQuickLookSelection(by offset: Int) {
-            let files = items.filter { !$0.isDirectory }
-            guard let current = selection.first,
-                  let index = files.firstIndex(where: { $0.id == current }),
-                  files.indices.contains(index + offset) else { return }
-            selection = [files[index + offset].id]
         }
 
         private func opacity(for item: FileItem) -> Double {

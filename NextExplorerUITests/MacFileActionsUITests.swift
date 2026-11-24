@@ -3,7 +3,7 @@
     import Localization
     import XCTest
 
-    /// File actions on the Mac: menus, context menus, rename, delete, Quick Look and previews.
+    /// File actions on the Mac: menus, context menus, rename, delete, peek and previews.
     final class MacFileActionsUITests: MacUITestCase {
         /// In Documents: the File menu creates a folder; the file's right click menu starts with Open and
         /// renames in place; Return renames again, where ⌘A selects the name rather than every file;
@@ -60,26 +60,20 @@
             XCTAssertTrue(text(Fixture.file, in: app).waitToVanish(), "The confirmed file should leave the table")
         }
 
-        /// Space on a file toggles the system Quick Look panel, as in Finder, and several selected
-        /// rows offer Move and Download, which the Mac has no select mode for.
-        func testQuickLookTogglesAndSeveralRowsOfferMoveAndDownload() {
+        /// Space on a file toggles the peek card, as in Finder, and several selected rows offer
+        /// Move and Download, which the Mac has no select mode for.
+        func testPeekTogglesAndSeveralRowsOfferMoveAndDownload() {
             let app = launchApp()
             let file = text(Fixture.file, in: app)
             let image = text(Fixture.imageFile, in: app)
             XCTAssertTrue(file.waitToAppear())
             file.waitToBeHittable()
             file.click()
-            let windowsBefore = app.windows.count
+            let peek = app.descendants(matching: .any)[AccessibilityIdentifiers.Browse.peekCard]
             app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
-            XCTAssertTrue(
-                waitUntil(NSPredicate(format: "count > %d", windowsBefore), on: app.windows),
-                "Space should open Quick Look"
-            )
+            XCTAssertTrue(peek.waitToAppear(), "Space should open the peek")
             app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
-            XCTAssertTrue(
-                waitUntil(NSPredicate(format: "count == %d", windowsBefore), on: app.windows),
-                "Space again should close Quick Look"
-            )
+            XCTAssertTrue(peek.waitToVanish(), "Space again should close the peek")
 
             XCUIElement.perform(withKeyModifiers: .command) { image.click() }
             image.rightClick()

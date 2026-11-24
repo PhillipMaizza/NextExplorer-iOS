@@ -12,7 +12,7 @@
         let shouldKeepClipboard: Bool
         @Binding var isFilesPickerPresented: Bool
         let onOpen: (FileItem) -> Void
-        let onQuickLookUnavailable: (String) -> Void
+        @Binding var isPeeking: Bool
         @ViewBuilder let fileActions: (FileItem) -> FileActions
 
         /// The table row standing in for My Files; its id is the `personal` path it opens.
@@ -102,7 +102,8 @@
                 onRenameCancel: { store.send(.renameCancelled) },
                 personalSpace: store.shouldShowPersonalSpace ? Self.personalSpaceItem : nil,
                 onOpenPersonalSpace: { store.send(.personalSpaceTapped) },
-                onQuickLookUnavailable: onQuickLookUnavailable,
+                isPeeking: isPeeking,
+                onPeek: { isPeeking = true },
                 scrollTargetID: store.scrollTargetID
             )
             .focusedSceneValue(\.browseViewOptions, BrowseViewOptions(
@@ -120,7 +121,7 @@
             shouldKeepClipboard: true,
             isFilesPickerPresented: .constant(false),
             onOpen: { _ in },
-            onQuickLookUnavailable: { _ in },
+            isPeeking: .constant(false),
             fileActions: { _ in EmptyView() }
         )
         .frame(width: 640, height: 360)
@@ -134,7 +135,7 @@
             shouldKeepClipboard: true,
             isFilesPickerPresented: .constant(false),
             onOpen: { _ in },
-            onQuickLookUnavailable: { _ in },
+            isPeeking: .constant(false),
             fileActions: { _ in EmptyView() }
         )
         .frame(width: 640, height: 360)

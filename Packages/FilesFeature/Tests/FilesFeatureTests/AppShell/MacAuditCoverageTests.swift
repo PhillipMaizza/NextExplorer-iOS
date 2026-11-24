@@ -154,34 +154,6 @@ import TestUtils
             #expect(capped == ImageGalleryPage.maxDecodePixelDimension)
         }
 
-        @Test("The Quick Look responder joins and leaves the window chain")
-        func quickLookResponderJoinsAndLeavesTheWindowChain() {
-            let window = NSWindow(contentRect: .zero, styleMask: [.titled], backing: .buffered, defer: true)
-            let original = window.nextResponder
-            let first = MacQuickLookResponder()
-            let second = MacQuickLookResponder()
-
-            first.insert(into: window)
-            second.insert(into: window)
-            #expect(window.nextResponder === second)
-            #expect(second.nextResponder === first)
-
-            first.remove(from: window)
-            #expect(window.nextResponder === second)
-            #expect(second.nextResponder === original)
-            #expect(first.nextResponder == nil)
-
-            second.remove(from: window)
-            #expect(window.nextResponder === original)
-        }
-
-        @Test("Quick Look control is wanted only with a file to show")
-        func quickLookControlIsWantedOnlyWithAFileToShow() {
-            let panel = MacQuickLookPanel()
-            #expect(!panel.hasFileToShow)
-            #expect(panel.responder.owner === panel)
-        }
-
         @Test("Syntax highlighting stays the same once its queries are cached")
         func syntaxHighlightingStaysTheSameOnceItsQueriesAreCached() throws {
             let language = try #require(MacSyntaxLanguage.forKind("json"))

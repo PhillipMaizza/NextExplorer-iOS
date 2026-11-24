@@ -69,6 +69,7 @@
 
         public var body: some View {
             BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
+                .macPeekHosting()
                 .macWindowToolbar()
                 .windowTitle(store.browse.path.last?.title ?? store.browse.root.title)
                 .focusedSceneValue(\.folderWindowCommands, FolderWindowCommands(

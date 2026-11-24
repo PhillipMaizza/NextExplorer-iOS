@@ -402,15 +402,31 @@ import TestUtils
             #expect(zip.fileName == "Trip.zip")
         }
 
-        @Test("Space refuses archives and large files unless saved offline")
-        func spaceRefusesArchivesAndLargeFilesUnlessSavedOffline() {
-            let archive = FileItem(name: "backup.7z", path: "", dateModified: MockDate.date, size: 10, kind: "7z")
+        @Test("Peek summarizes archives, binaries and large downloads unless saved offline, never streams")
+        func peekSummarizesArchivesBinariesAndLargeDownloads() {
+            let tooLarge = MacPeekContent.Kind.byteLimit + 1
+            let archive = FileItem(name: TestFile.archive, path: "", dateModified: MockDate.date, size: 10, kind: "zip")
+            let binary = FileItem(name: "backup.7z", path: "", dateModified: MockDate.date, size: 10, kind: "7z")
             let movie = FileItem(
-                name: "movie.mp4",
+                name: TestFile.clip,
                 path: "",
                 dateModified: MockDate.date,
-                size: MacQuickLookPolicy.byteLimit + 1,
+                size: tooLarge,
                 kind: TestKind.video
+            )
+            let report = FileItem(
+                name: TestFile.report,
+                path: "",
+                dateModified: MockDate.date,
+                size: tooLarge,
+                kind: "pdf"
+            )
+            let folder = FileItem(
+                name: TestFolder.docs,
+                path: "",
+                dateModified: MockDate.date,
+                size: tooLarge,
+                kind: "directory"
             )
             let photo = FileItem(
                 name: TestFile.aPhoto,
@@ -420,10 +436,37 @@ import TestUtils
                 kind: TestKind.photo
             )
 
-            #expect(MacQuickLookPolicy.refusal(for: archive, isSavedOffline: false) == L10n.Browse.quickLookUnavailable)
-            #expect(MacQuickLookPolicy.refusal(for: movie, isSavedOffline: false) == L10n.Browse.quickLookTooLarge)
-            #expect(MacQuickLookPolicy.refusal(for: movie, isSavedOffline: true) == nil)
-            #expect(MacQuickLookPolicy.refusal(for: photo, isSavedOffline: false) == nil)
+            #expect(MacPeekContent.Kind(archive, isSavedOffline: false) == .summary)
+            #expect(MacPeekContent.Kind(binary, isSavedOffline: false) == .summary)
+            #expect(MacPeekContent.Kind(report, isSavedOffline: false) == .summary)
+            #expect(MacPeekContent.Kind(report, isSavedOffline: true) == .document)
+            #expect(MacPeekContent.Kind(movie, isSavedOffline: false) == .media)
+            #expect(MacPeekContent.Kind(folder, isSavedOffline: false) == .folder)
+            #expect(MacPeekContent.Kind(photo, isSavedOffline: false) == .image)
+        }
+
+        @Test("A folder peek lists folders first, hides dot files and counts what it leaves out")
+        func aFolderPeekListsFoldersFirstAndCountsWhatItLeavesOut() {
+            let files = (1 ... MacPeekFolder.shownCount + 1).map {
+                FileItem(name: "file \($0).txt", path: "", dateModified: MockDate.date, size: 1, kind: "txt")
+            }
+            let folder = FileItem(
+                name: TestFolder.docs,
+                path: "",
+                dateModified: MockDate.date,
+                size: 0,
+                kind: "directory"
+            )
+            let hidden = FileItem(name: TestFile.dotFile, path: "", dateModified: MockDate.date, size: 1, kind: "env")
+            let shown = MacPeekFolder.visible(files.reversed() + [hidden, folder], showsHiddenFiles: false)
+
+            #expect(shown.first == folder)
+            #expect(shown.dropFirst().first?.name == "file 1.txt")
+            #expect(!shown.contains(hidden))
+            #expect(MacPeekFolder.summary(shown) == L10n.Browse.contentSummary(
+                FolderContentSummary.text(for: shown) ?? "",
+                L10n.FileInfo.moreSelected(shown.count - MacPeekFolder.shownCount)
+            ))
         }
     }
 

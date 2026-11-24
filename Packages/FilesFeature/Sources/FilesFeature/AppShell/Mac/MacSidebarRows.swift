@@ -229,6 +229,7 @@
         static let escape = "esc"
         static let arrows = "\u{2191}\u{2193}"
         static let enter = "\u{21B5}"
+        static let space = "space"
 
         static func tab(_ number: Int) -> String {
             "\u{2318}\(number)"
