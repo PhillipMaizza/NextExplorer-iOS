@@ -25,12 +25,14 @@
                         Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
                     }
                     .tint(.primaryDS)
+                    .keyboardShortcut(BrowseShortcut.newFolder)
                 }
                 if !store.directoryPath.isEmpty, store.canCreateFileHere {
                     Button { store.send(.newFileTapped) } label: {
                         Label { Text(L10n.Browse.actionNewFile) } icon: { IconKit.newFile }
                     }
                     .tint(.primaryDS)
+                    .keyboardShortcut(BrowseShortcut.newFile)
                 }
                 if store.canUploadHere {
                     Button { isFilesPickerPresented = true } label: {
@@ -49,6 +51,7 @@
                         Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
                     }
                     .tint(.primaryDS)
+                    .keyboardShortcut("c")
                     if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
                         Button {
                             store.send(.tableSelectionChanged(ids))
@@ -57,6 +60,7 @@
                             Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
                         }
                         .tint(.primaryDS)
+                        .keyboardShortcut("d")
                     }
                     if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                         Button {
@@ -66,6 +70,7 @@
                             Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
                         }
                         .tint(.primaryDS)
+                        .keyboardShortcut("x")
                     }
                     if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                         Button {
@@ -88,9 +93,6 @@
                         }
                         .tint(.primaryDS)
                     }
-                }
-                // Available Offline and Favorites, always their own group; a removal is red.
-                Section {
                     if store.access?.canDownload ?? false {
                         let offlineAction = OfflineBulkAction.resolve(
                             selectedIDs: items.map(\.id),
@@ -127,8 +129,11 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.deleteSelectionTapped)
                         } label: {
-                            Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                            Label { Text(L10n.Browse.actionDelete).foregroundStyle(Color.negativeText) } icon: {
+                                IconKit.delete
+                            }
                         }
+                        .keyboardShortcut(.delete)
                     }
                 }
             }
