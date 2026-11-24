@@ -242,7 +242,7 @@
                     .frame(width: .iconSmall, height: .iconSmall)
                     .foregroundStyle(isOn ? Color.accentText : Color.primaryDS)
                 Text(title)
-                    .type(.caption(.semibold))
+                    .type(.body3(.semibold))
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity, minHeight: MacInspectorMetrics.tileHeight)

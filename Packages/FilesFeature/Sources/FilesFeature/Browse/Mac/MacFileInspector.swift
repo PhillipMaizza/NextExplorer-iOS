@@ -79,7 +79,11 @@
                             MacInspectorVersionsSection(model: versions, history: history, current: item)
                         }
                         if let permissions {
-                            MacInspectorPermissionsSection(permissions: permissions, onEdit: onEditPermissions)
+                            MacInspectorPermissionsSection(
+                                permissions: permissions,
+                                isDirectory: item.isDirectory,
+                                onEdit: onEditPermissions
+                            )
                         }
                     } else {
                         MacSpinner().frame(maxWidth: .infinity)
@@ -111,7 +115,8 @@
 
         private var headerSubtitle: String {
             if item.isDirectory, let directory = metadata?.directory {
-                return [kindTitle, Self.bytes(directory.totalSize)].joined(separator: Metrics.separator)
+                let count = Int64(directory.fileCount + directory.dirCount)
+                return [kindTitle, L10n.Shared.itemCount(count)].joined(separator: Metrics.separator)
             }
             return item.isDirectory
                 ? kindTitle
@@ -176,9 +181,12 @@
         private func details(_ metadata: FileMetadata) -> some View {
             MacInspectorGroup {
                 if let directory = metadata.directory {
-                    MacInspectorRow(L10n.FileInfo.rowFiles, directory.fileCount.formatted())
-                    MacInspectorRow(L10n.FileInfo.rowFolders, directory.dirCount.formatted())
-                    MacInspectorRow(L10n.FileInfo.rowTotalSize, Self.bytes(directory.totalSize))
+                    MacInspectorRow(
+                        L10n.FileInfo.rowContains,
+                        FolderContentSummary.text(folders: directory.dirCount, files: directory.fileCount)
+                            ?? L10n.Shared.itemCount(Int64(0))
+                    )
+                    MacInspectorRow(L10n.FileInfo.rowSize, Self.bytes(directory.totalSize))
                 } else {
                     MacInspectorRow(L10n.FileInfo.rowKind, kindTitle)
                     MacInspectorRow(L10n.FileInfo.rowSize, Self.bytes(metadata.size))
@@ -189,9 +197,9 @@
                 if let dimensions {
                     MacInspectorRow(L10n.FileInfo.rowDimensions, dimensions)
                 }
-                MacInspectorRow(L10n.FileInfo.rowLocation, location, icon: IconKit.folderFill)
-                MacInspectorRow(L10n.FileInfo.rowDateModified, date(metadata.dateModified))
-                MacInspectorRow(L10n.FileInfo.rowDateCreated, date(metadata.dateCreated))
+                MacInspectorRow(L10n.FileInfo.rowWhere, location, icon: IconKit.folderFill)
+                MacInspectorRow(L10n.FileInfo.rowModified, date(metadata.dateModified))
+                MacInspectorRow(L10n.FileInfo.rowCreated, date(metadata.dateCreated))
             }
             if metadata.directory?.isTruncated == true {
                 Text(L10n.FileInfo.partialScan).type(.caption(.regular), style: .secondary)

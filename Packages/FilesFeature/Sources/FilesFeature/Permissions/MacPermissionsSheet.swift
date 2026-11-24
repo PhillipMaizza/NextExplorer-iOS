@@ -50,14 +50,14 @@
                 GridRow {
                     Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
                     ForEach(PermissionRight.allCases, id: \.self) { right in
-                        Text(right.title)
+                        Text(right.macTitle(isDirectory: store.item.isDirectory))
                             .type(.caption(.semibold), style: .secondary)
                             .frame(width: Metrics.gridColumnWidth)
                     }
                 }
                 ForEach(PermissionScope.allCases, id: \.self) { scope in
                     GridRow {
-                        Text(scope.title)
+                        Text(scope.macTitle)
                             .type(.body2(.regular))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         ForEach(PermissionRight.allCases, id: \.self) { right in
@@ -67,7 +67,10 @@
                             )) { EmptyView() }
                                 .toggleStyle(.macCheckbox)
                                 .frame(width: Metrics.gridColumnWidth)
-                                .accessibilityLabel(L10n.Common.pair(scope.title, right.title))
+                                .accessibilityLabel(L10n.Common.pair(
+                                    scope.macTitle,
+                                    right.macTitle(isDirectory: store.item.isDirectory)
+                                ))
                         }
                     }
                 }

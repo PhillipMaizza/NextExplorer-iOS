@@ -165,7 +165,7 @@
             await store.send(.copySelectionToTapped) {
                 $0.destinationPicker = DestinationPickerFeature.State(
                     serverURL: BrowseTestSupport.serverURL,
-                    items: [report, notes],
+                    items: [notes, report],
                     isCopy: true
                 )
             }

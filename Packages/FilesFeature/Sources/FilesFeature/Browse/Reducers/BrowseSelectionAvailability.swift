@@ -69,10 +69,10 @@ extension BrowseFeature.State {
         canUploadHere || (!directoryPath.isEmpty && (canCreateFileHere || canCreateFolderHere))
     }
 
-    /// The selected items on screen, in listing order: every bulk action and count reads these, so a
+    /// The selected items on screen, in the order shown: every bulk action and count reads these, so a
     /// pick a setting has since hidden (hidden files turned off in another window) is never acted on.
     var selectedItems: [FileItem] {
-        filteredItems.filter { selectedItemIDs.contains($0.id) }
+        displayedItems.filter { selectedItemIDs.contains($0.id) }
     }
 
     /// The Mac's share menu needs a button to anchor to, so kept files are shared from iOS only.
