@@ -4,14 +4,14 @@
 
     private enum Constants {
         static let sliderWidth: CGFloat = 220
-        static let trackHeight: CGFloat = 6
+        static let trackHeight: CGFloat = .size6
         static let knobSize: CGFloat = 18
-        static let knobShadowRadius: CGFloat = 2
+        static let knobShadowRadius: CGFloat = .size2
         static let knobShadowOpacity: Double = 0.3
         static let stepperHeight: CGFloat = .size32
         static let stepperButtonWidth: CGFloat = 30
         static let stepperGlyph: CGFloat = 13
-        static let stepperValueWidth: CGFloat = 44
+        static let stepperValueWidth: CGFloat = .size44
         static let stepperShape = RoundedRectangle(cornerRadius: 9, style: .continuous)
     }
 
@@ -96,6 +96,7 @@
         private let range: ClosedRange<Int>
         private let step: Int
         private let onChange: (Int) -> Void
+        @FocusState private var isValueFocused: Bool
 
         public init(
             label: String,
@@ -127,6 +128,8 @@
                 .monospacedDigit()
                 .multilineTextAlignment(.center)
                 .tint(Color.accent)
+                .focused($isValueFocused)
+                .focusEffectDisabled()
                 .fixedSize()
                 .frame(minWidth: Constants.stepperValueWidth)
                 .padding(.horizontal, .space4)
@@ -136,7 +139,12 @@
             }
             .frame(height: Constants.stepperHeight)
             .background(Constants.stepperShape.fill(Color.macField))
-            .overlay(Constants.stepperShape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline))
+            .overlay(
+                Constants.stepperShape.strokeBorder(
+                    isValueFocused ? Color.accent : Color.macLine,
+                    lineWidth: .borderWidthHairline
+                )
+            )
             .clipShape(Constants.stepperShape)
             .macDisabledDim()
         }

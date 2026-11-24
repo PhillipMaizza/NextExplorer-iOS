@@ -3,7 +3,7 @@
 
     public struct MacProgressBar: View {
         private enum Metrics {
-            static let height: CGFloat = 6
+            static let height: CGFloat = .size6
             static let segmentFraction: CGFloat = 0.35
             static let loopDuration: Double = 1.1
         }

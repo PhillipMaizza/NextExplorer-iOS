@@ -18,6 +18,7 @@ public enum IconKit {
     public static let lock = Image(systemName: "lock")
     public static let eye = Image(systemName: "eye")
     public static let eyeSlash = Image(systemName: "eye.slash")
+    public static let eyeCircle = Image(systemName: "eye.circle")
     public static let person = Image(systemName: "person")
     public static let logo = Image("logo", bundle: .module)
 
@@ -38,6 +39,7 @@ public enum IconKit {
     public static let macSidebarHelp = Image("macSidebarHelp", bundle: .module).renderingMode(.template)
     public static let macSidebarCoffee = Image("macSidebarCoffee", bundle: .module).renderingMode(.template)
     public static let macLock = Image("macLock", bundle: .module).renderingMode(.template)
+    public static let macCopy = Image("macCopy", bundle: .module).renderingMode(.template)
     public static let tabBrowse = Image("tabBrowse", bundle: .module).renderingMode(.template)
     public static let tabBrowseFill = Image("tabBrowseFill", bundle: .module).renderingMode(.template)
     public static let tabFavorites = Image("tabFavorites", bundle: .module).renderingMode(.template)
@@ -125,6 +127,7 @@ public enum IconKit {
     public static let time = Image(systemName: "clock")
     public static let rename = Image(systemName: "square.and.pencil")
     public static let pencil = Image(systemName: "pencil")
+    public static let pencilCircle = Image(systemName: "pencil.circle")
     public static let haptics = Image(systemName: "waveform")
     /// Copies a file out of the app (Save to Device, Mac Download).
     public static let download = Image(systemName: "square.and.arrow.down")

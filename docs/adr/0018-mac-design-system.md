@@ -66,6 +66,28 @@ with blue selection is not possible natively.
   native separators and no zebra stripes, 44pt rows and 26pt tiles. Row height comes from the cell
   content (`macBoardTableCell`), never from the table's `rowHeight` or `style`: SwiftUI resets
   both on updates, and restyling it back redraws the whole table on every click.
+- The share inspector follows the file inspector's kit, by the owner's choice: the file's own
+  preview (or its tile), a title that turns into a field on click to rename the share, then the
+  share link in a selectable field with its copy button inside. The direct download link sits
+  behind a disclosure under it, with its mode (Open in browser, Download, Raw) picked right there,
+  because the mode only shapes the copied URL and never changes the share; it is offered only for
+  a public share without a password, where the server serves the file without the share page. Then
+  Downloads, Last opened and Shared tiles, Shared With (Change or Limit open the audience popover),
+  and Access, where Permission saves from its menu and Password and Expires open their own
+  popovers; an expired share is read only until it gets a new date. Delete Link stays pinned at
+  the bottom. The Shared table is flat unless an item has several shares, so its names line up
+  with Browse; an outline always reserves the disclosure gap.
+- Dialog motion: anything a dialog shows or hides as its state changes (errors, field errors,
+  spinners, loaded content, success notes, a form giving way to its result) fades with
+  `DSMotion.stateFade` through `macDialogReveal()`, a transition that carries its own animation, so
+  changes that arrive from reducer effects animate without wrapping the send. The fade is the same
+  in and out. Selection that moves (icon wells, swatches, segmented pills) slides with
+  `DSMotion.controlMorph`; the success badge pops in with `DSMotion.pop`. No move or scale on
+  anything that changes the sheet's height, because the sheet window resizes in one step. For the
+  same reason a swap that changes the sheet's height by more than a line (a loading spinner giving
+  way to the loaded form, a form giving way to its result) stays instant: faded, the taller state
+  draws clipped inside the old window until it snaps. Swaps inside a box of fixed height (the
+  destination picker, folder browsers) crossfade in place in a `ZStack`, never stacked.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
 `MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`, `MacFormControls`,
