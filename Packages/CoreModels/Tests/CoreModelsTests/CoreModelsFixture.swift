@@ -208,6 +208,9 @@ enum CoreModelsFixture: String, FixtureFile {
     // MARK: user-preferences
 
     case userPreferencesEmptyObject = "user-preferences/empty-object"
+    case userPreferencesFolderSorts = "user-preferences/folder-sorts"
+    case userPreferencesFolderSortsEmpty = "user-preferences/folder-sorts-empty"
+    case userPreferencesFolderSortsMalformed = "user-preferences/folder-sorts-malformed"
     case userPreferencesExplicitValues = "user-preferences/explicit-values"
     case userPreferencesPartialObject = "user-preferences/partial-object"
     case userPreferencesShareExpirationNull = "user-preferences/share-expiration-null"

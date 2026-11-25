@@ -1,0 +1,12 @@
+{
+  "showHiddenFiles": true,
+  "folderSorts": {
+    "Documents/Work": { "by": "dateModified", "order": "desc", "updatedAt": 1700000000000 },
+    "/Photos/2026/": { "by": "size", "order": "asc", "updatedAt": 1700000000001 },
+    "Media": { "by": "bitrate", "order": "asc", "updatedAt": 1700000000002 },
+    "Docs": { "by": "name", "order": "sideways" },
+    "Archive": { "by": "", "order": "asc" },
+    "Inbox": "name",
+    "/": { "by": "name", "order": "asc" }
+  }
+}

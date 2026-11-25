@@ -1406,3 +1406,6 @@ browse.folderCount#other	%lld carpetas
 browse.fileCount#one	%lld archivo
 browse.fileCount#other	%lld archivos
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Orden predeterminado
+settings.rowSortOrder	Orden
+settings.defaultSortFooter	Las carpetas que no has ordenado se abren en este orden. Una carpeta que ordenas conserva su propio orden en todos los dispositivos conectados a este servidor.

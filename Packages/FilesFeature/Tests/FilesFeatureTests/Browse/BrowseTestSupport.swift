@@ -41,6 +41,7 @@ extension DependencyValues {
             .browse = { _, path in BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path) }
         filesClient.favorites = { _ in [] }
         filesClient.serverFeatures = { _ in throw FilesClientError.offline }
+        filesClient.fetchPreferences = { _ in UserPreferences() }
     }
 
     /// Each listed folder answers with an empty read only listing once the test opens its gate, so

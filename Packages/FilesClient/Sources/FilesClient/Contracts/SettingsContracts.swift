@@ -14,6 +14,24 @@ extension FilesService {
         let user: [String: Bool]
     }
 
+    struct PatchFolderSortBody: Encodable {
+        struct User: Encodable {
+            let folderSort: FolderSortPatch
+        }
+
+        struct FolderSortPatch: Encodable {
+            let path: String
+            let sort: Sort
+        }
+
+        struct Sort: Encodable {
+            let by: String
+            let order: String
+        }
+
+        let user: User
+    }
+
     struct PatchBrandingBody: Encodable {
         struct Branding: Encodable {
             let appName: String

@@ -63,6 +63,7 @@ public extension FilesClient {
         volumes: { _ in Volume.previewVolumes },
         fetchPreferences: { _ in UserPreferences() },
         updatePreference: { _, _, _ in },
+        saveFolderSort: { _, _, sort in sort },
         fetchBranding: { _ in Branding(appName: "Rivendell Cloud", appLogoUrl: "/static/logos/custom-logo.png") },
         updateBranding: { _, appName, appLogoUrl in Branding(appName: appName, appLogoUrl: appLogoUrl) },
         uploadServerLogo: { _, _ in "/static/logos/custom-logo.png" },

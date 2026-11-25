@@ -1335,3 +1335,6 @@ browse.folderCount#other	%lld mappa
 browse.fileCount#one	%lld fájl
 browse.fileCount#other	%lld fájl
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Alapértelmezett rendezés
+settings.rowSortOrder	Sorrend
+settings.defaultSortFooter	A nem rendezett mappák ebben a sorrendben nyílnak meg. Az általad rendezett mappa megtartja saját sorrendjét minden, ehhez a szerverhez bejelentkezett eszközön.

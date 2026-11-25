@@ -41,6 +41,8 @@ public enum AppStorageKeys {
     public static let macSidebarCompact = "macSidebarCompact"
     public static let macSidebarWidth = "macSidebarWidth"
     public static let macSettingsPane = "macSettingsCategory"
+    public static let defaultSortOption = "defaultSortOption"
+    public static let defaultSortDirection = "defaultSortDirection"
 
     /// Preferences reset to their defaults on sign out, so a new session on this device starts
     /// clean instead of inheriting the previous account's view modes and display choices.
@@ -48,6 +50,7 @@ public enum AppStorageKeys {
     /// haptics), is deliberately left untouched.
     public static let sessionScopedKeys: [String] = [
         browseViewMode, favoritesViewMode, downloadsViewMode,
+        defaultSortOption, defaultSortDirection,
         thumbnailSize, showFilenameExtensions, showTabLabels,
         renderHTMLPages, renderMarkdownPages,
         keepClipboardAfterCopy,

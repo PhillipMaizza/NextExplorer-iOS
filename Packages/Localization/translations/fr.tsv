@@ -1406,3 +1406,6 @@ browse.folderCount#other	%lld dossiers
 browse.fileCount#one	%lld fichier
 browse.fileCount#other	%lld fichiers
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Tri par défaut
+settings.rowSortOrder	Ordre
+settings.defaultSortFooter	Les dossiers que vous n'avez pas triés s'ouvrent dans cet ordre. Un dossier que vous triez garde son propre ordre sur tous les appareils connectés à ce serveur.

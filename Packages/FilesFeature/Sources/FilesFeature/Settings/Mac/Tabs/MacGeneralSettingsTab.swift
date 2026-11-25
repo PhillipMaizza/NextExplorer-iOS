@@ -21,6 +21,9 @@
         @AppStorage(AppStorageKeys.appearanceOverrideSet) private var hasAppearanceOverride = false
         @AppStorage(AppStorageKeys.prefersDarkMode) private var isDarkAppearanceOverride = false
         @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
+        @AppStorage(AppStorageKeys.defaultSortOption) private var defaultSortOption = BrowseFeature.SortOption.name
+        @AppStorage(AppStorageKeys.defaultSortDirection) private var defaultSortDirection = BrowseFeature
+            .SortDirection.ascending
 
         private var appearance: Binding<AppearanceMode> {
             Binding(
@@ -108,6 +111,37 @@
                         MacSwitchRow(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
                     }
                     .frame(maxWidth: .infinity)
+                }
+                VStack(alignment: .leading, spacing: .space8) {
+                    MacFormGroup(L10n.Settings.rowDefaultSort) {
+                        MacFormRow {
+                            Text(L10n.Settings.rowDefaultSort)
+                        } control: {
+                            MacPopup(
+                                L10n.Settings.rowDefaultSort,
+                                valueLabel: defaultSortOption.title,
+                                selection: $defaultSortOption
+                            ) {
+                                ForEach(BrowseFeature.SortOption.allCases, id: \.self) { option in
+                                    Text(option.title).tag(option)
+                                }
+                            }
+                        }
+                        MacFormRow {
+                            Text(L10n.Settings.rowSortOrder)
+                        } control: {
+                            MacPopup(
+                                L10n.Settings.rowSortOrder,
+                                valueLabel: defaultSortDirection.title,
+                                selection: $defaultSortDirection
+                            ) {
+                                ForEach(BrowseFeature.SortDirection.allCases, id: \.self) { direction in
+                                    Text(direction.title).tag(direction)
+                                }
+                            }
+                        }
+                    }
+                    MacFormFootnote(L10n.Settings.defaultSortFooter)
                 }
             }
         }

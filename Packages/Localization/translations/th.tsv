@@ -1299,3 +1299,6 @@ fileInfo.dateRange	%1$@ – %2$@
 browse.folderCount#other	%lld โฟลเดอร์
 browse.fileCount#other	%lld ไฟล์
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	การเรียงเริ่มต้น
+settings.rowSortOrder	ลำดับ
+settings.defaultSortFooter	โฟลเดอร์ที่คุณยังไม่ได้เรียงจะเปิดตามลำดับนี้ โฟลเดอร์ที่คุณเรียงจะคงลำดับของตัวเองบนทุกอุปกรณ์ที่ลงชื่อเข้าใช้เซิร์ฟเวอร์นี้

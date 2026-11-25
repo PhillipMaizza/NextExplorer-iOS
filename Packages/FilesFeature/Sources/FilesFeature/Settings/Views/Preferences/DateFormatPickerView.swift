@@ -3,11 +3,6 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum Constants {
-    static let rowSpacing: CGFloat = .space2
-    static let checkmarkSize: CGFloat = .iconSmall
-}
-
 /// Pushed from Settings' "Date Format" row: every `DateDisplayFormat`, each showing today's
 /// date rendered in that format so the abbreviated pattern (`MM/DD/YYYY`, ...) is legible
 /// at a glance rather than requiring the user to decode it themselves.
@@ -24,34 +19,13 @@ struct DateFormatPickerView: View {
 
             Section {
                 ForEach(DateDisplayFormat.allCases) { format in
-                    Button {
+                    SettingsCheckRow(
+                        title: format.title,
+                        subtitle: format.example(includeTime: shouldIncludeTime),
+                        isSelected: format == selection
+                    ) {
                         selection = format
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: Constants.rowSpacing) {
-                                Text(format.title).type(.body1(.regular), style: .primaryOnSurface)
-                                Text(format.example(includeTime: shouldIncludeTime)).type(
-                                    .body3(.regular),
-                                    style: .secondary
-                                )
-                            }
-                            Spacer()
-                            if format == selection {
-                                IconKit.checkmark
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundStyle(Color.accent)
-                                    .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
-                                    .transition(.scale.combined(with: .opacity))
-                            }
-                        }
-                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
-                    .animation(
-                        DSMotion.pop,
-                        value: selection
-                    )
                 }
             }
             .listRowBackground(Color.backgroundSecondary)

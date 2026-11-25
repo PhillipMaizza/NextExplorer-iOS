@@ -1415,3 +1415,6 @@ browse.fileCount#few	%lld файли
 browse.fileCount#many	%lld файлів
 browse.fileCount#other	%lld файлу
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Сортування за замовчуванням
+settings.rowSortOrder	Порядок
+settings.defaultSortFooter	Теки, які ви не сортували, відкриваються в цьому порядку. Тека, яку ви відсортували, зберігає свій порядок на кожному пристрої, що увійшов на цей сервер.

@@ -105,6 +105,9 @@ public extension FilesClient {
             updatePreference: { serverURL, key, value in
                 try await service.updatePreference(serverURL: serverURL, key: key, value: value)
             },
+            saveFolderSort: { serverURL, path, sort in
+                try await service.saveFolderSort(serverURL: serverURL, path: path, sort: sort)
+            },
             fetchBranding: { serverURL in
                 try await service.fetchBranding(serverURL: serverURL)
             },

@@ -1406,3 +1406,6 @@ browse.folderCount#other	%lld cartelle
 browse.fileCount#one	%lld file
 browse.fileCount#other	%lld file
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Ordinamento predefinito
+settings.rowSortOrder	Ordine
+settings.defaultSortFooter	Le cartelle che non hai ordinato si aprono in questo ordine. Una cartella che ordini mantiene il proprio ordine su ogni dispositivo connesso a questo server.

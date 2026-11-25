@@ -1482,3 +1482,6 @@ browse.fileCount#few	%lld файла
 browse.fileCount#many	%lld файлов
 browse.fileCount#other	%lld файла
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Сортировка по умолчанию
+settings.rowSortOrder	Порядок
+settings.defaultSortFooter	Папки, которые вы не сортировали, открываются в этом порядке. Папка, которую вы отсортировали, сохраняет свой порядок на всех устройствах, вошедших на этот сервер.

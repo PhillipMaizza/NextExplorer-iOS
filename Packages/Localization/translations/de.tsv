@@ -1406,3 +1406,6 @@ browse.folderCount#other	%lld Ordner
 browse.fileCount#one	%lld Datei
 browse.fileCount#other	%lld Dateien
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Standardsortierung
+settings.rowSortOrder	Reihenfolge
+settings.defaultSortFooter	Ordner, die du nicht sortiert hast, öffnen sich in dieser Reihenfolge. Ein Ordner, den du sortierst, behält seine eigene Reihenfolge auf jedem Gerät, das bei diesem Server angemeldet ist.

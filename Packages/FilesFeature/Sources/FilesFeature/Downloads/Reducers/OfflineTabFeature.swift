@@ -60,7 +60,7 @@ public struct OfflineTabFeature {
         /// Current account's downloads scope, so the tab lists only this account's files.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// The Thumbnails setting, so pinned files draw theirs like Browse does.
-        @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
+        @Shared(.inMemory(UserPreferences.sharedKey)) public var preferences = UserPreferences()
 
         /// Where pinned folders open: the tab browses them like Browse does. Nil only in tests and
         /// previews that never open one.

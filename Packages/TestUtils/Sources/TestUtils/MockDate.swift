@@ -3,6 +3,7 @@ import Synchronization
 
 public enum MockDate {
     public static let date = Date(timeIntervalSince1970: 1_700_000_000)
+    public static let milliseconds = Int64(date.timeIntervalSince1970 * 1000)
 }
 
 public enum TestID {

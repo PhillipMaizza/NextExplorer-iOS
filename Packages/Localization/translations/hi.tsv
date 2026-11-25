@@ -1406,3 +1406,6 @@ browse.folderCount#other	%lld फ़ोल्डर
 browse.fileCount#one	%lld फ़ाइल
 browse.fileCount#other	%lld फ़ाइलें
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	डिफ़ॉल्ट क्रम
+settings.rowSortOrder	क्रम
+settings.defaultSortFooter	जिन फ़ोल्डरों को आपने क्रमबद्ध नहीं किया है, वे इसी क्रम में खुलते हैं। आपके द्वारा क्रमबद्ध किया गया फ़ोल्डर इस सर्वर में साइन इन हर डिवाइस पर अपना क्रम रखता है।

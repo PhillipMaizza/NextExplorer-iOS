@@ -1335,3 +1335,6 @@ browse.folderCount#other	%lld klasör
 browse.fileCount#one	%lld dosya
 browse.fileCount#other	%lld dosya
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Varsayılan Sıralama
+settings.rowSortOrder	Sıra
+settings.defaultSortFooter	Sıralamadığınız klasörler bu sırayla açılır. Sıraladığınız bir klasör, bu sunucuda oturum açmış her cihazda kendi sırasını korur.
