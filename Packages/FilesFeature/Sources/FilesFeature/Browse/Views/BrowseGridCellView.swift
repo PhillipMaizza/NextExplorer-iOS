@@ -38,6 +38,7 @@ struct GridCellView: View {
     /// the preview holds off until ready.
     var isOpening: Bool = false
     var isAvailableOffline: Bool = false
+    var isFolderWell = false
     /// Shown in place of an unknown size, as a list row does.
     private let dateModified: Date?
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
@@ -92,9 +93,11 @@ struct GridCellView: View {
         folderSize: Int64? = nil,
         matchedSource: PreviewMatchedSource? = nil,
         isOpening: Bool = false,
-        isAvailableOffline: Bool = false
+        isAvailableOffline: Bool = false,
+        isFolderWell: Bool = false
     ) {
         self.isAvailableOffline = isAvailableOffline
+        self.isFolderWell = isFolderWell
         name = item.name
         isDirectory = item.isDirectory
         self.isFavorite = isFavorite
@@ -151,7 +154,7 @@ struct GridCellView: View {
     }
 
     var body: some View {
-        if isDirectory {
+        if isDirectory, !isFolderWell {
             FolderGridTile(
                 name: displayName,
                 isHidden: isHidden,
@@ -196,7 +199,18 @@ struct GridCellView: View {
 
     @ViewBuilder
     private var picture: some View {
-        if isEligibleForThumbnail, let serverURL, let itemID {
+        if isDirectory {
+            GridWellSymbol(kind: "") { _ in
+                GeometryReader { proxy in
+                    #if os(macOS)
+                        MacFolderTile(size: min(proxy.size.width, proxy.size.height))
+                            .frame(width: proxy.size.width, height: proxy.size.height)
+                    #elseif os(iOS)
+                        folderIcon
+                    #endif
+                }
+            }
+        } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(
                 serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
                 iconTint: Color.secondaryDS,
@@ -219,6 +233,16 @@ struct GridCellView: View {
         GridCellView(name: "Documents", isDirectory: true, isFavorite: true, isAvailableOffline: true)
     }
     .frame(width: Constants.previewFolderWidth * 2 + .space12)
+    .padding(.space16)
+    .background(Color.backgroundPrimary)
+}
+
+#Preview("Folder in a well") {
+    GridCellView(
+        item: FileItem(name: "Invoices", path: "", dateModified: .distantPast, size: 0, kind: "directory"),
+        isFolderWell: true
+    )
+    .frame(width: Constants.previewFolderWidth)
     .padding(.space16)
     .background(Color.backgroundPrimary)
 }
