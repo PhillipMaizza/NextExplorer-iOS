@@ -124,7 +124,7 @@ public struct FavoriteEditFeature {
                 state.errorMessage = nil
                 let serverURL = state.serverURL
                 let id = state.favorite.id
-                let label = state.trimmedName
+                let label = state.trimmedName == state.favorite.folderName ? nil : state.trimmedName
                 let icon = state.iconToken
                 let color = state.colorDraft
                 let filesClient = filesClient

@@ -34,6 +34,10 @@ public struct Favorite: Codable, Equatable, Identifiable, Sendable {
 
     /// Falls back to the last path component when the user hasn't set a custom label.
     public var displayName: String {
-        label ?? path.split(separator: "/").last.map(String.init) ?? path
+        label ?? folderName
+    }
+
+    public var folderName: String {
+        path.split(separator: "/").last.map(String.init) ?? path
     }
 }

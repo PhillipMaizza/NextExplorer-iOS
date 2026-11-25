@@ -50,7 +50,7 @@ struct FavoriteEditSheet: View {
                 }
 
                 section(L10n.Favorites.editNameLabel, error: store.nameErrorText) {
-                    DSTextField(store.favorite.path, text: $store.nameDraft.sending(\.nameChanged))
+                    DSTextField(store.favorite.folderName, text: $store.nameDraft.sending(\.nameChanged))
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                         .submitLabel(.done)
