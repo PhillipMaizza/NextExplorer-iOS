@@ -1410,6 +1410,7 @@ lock.title	O NextExplorer está bloqueado
 lock.subtitle	Entre novamente para abrir seus arquivos.
 lock.signIn	Entrar
 lock.otherAccount	Essa é outra conta. Entre como %@ para desbloquear, ou saia.
+lock.status	Bloqueado
 requireSignIn.footer	Quando você sai do app, esta conta é bloqueada e a sessão termina. Para desbloquear é preciso entrar de novo, com sua chave de segurança se o seu login pedir uma.
 requireSignIn.sectionLock	Bloquear
 requireSignIn.appStart	Ao abrir o app

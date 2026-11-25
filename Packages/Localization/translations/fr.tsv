@@ -1415,6 +1415,7 @@ lock.title	NextExplorer est verrouillé
 lock.subtitle	Reconnectez-vous pour ouvrir vos fichiers.
 lock.signIn	Se connecter
 lock.otherAccount	C’est un autre compte. Connectez-vous en tant que %@ pour déverrouiller, ou déconnectez-vous.
+lock.status	Verrouillé
 requireSignIn.footer	Quand vous quittez l’app, ce compte se verrouille et sa session prend fin. Pour déverrouiller, il faut se reconnecter, avec votre clé de sécurité si votre connexion en demande une.
 requireSignIn.sectionLock	Verrouiller
 requireSignIn.appStart	Au démarrage de l’app

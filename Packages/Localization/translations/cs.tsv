@@ -1423,6 +1423,7 @@ lock.title	NextExplorer je zamčený
 lock.subtitle	Přihlaste se znovu a otevřete své soubory.
 lock.signIn	Přihlásit se
 lock.otherAccount	To je jiný účet. Přihlaste se jako %@ a odemkněte, nebo se odhlaste.
+lock.status	Zamčeno
 requireSignIn.footer	Když aplikaci opustíte, tento účet se zamkne a jeho relace skončí. Odemčení vyžaduje nové přihlášení, s bezpečnostním klíčem, pokud ho přihlášení žádá.
 requireSignIn.sectionLock	Zamknout
 requireSignIn.appStart	Při spuštění aplikace

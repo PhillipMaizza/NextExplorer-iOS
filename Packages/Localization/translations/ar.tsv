@@ -1567,6 +1567,7 @@ lock.title	NextExplorer مقفل
 lock.subtitle	سجّل الدخول مرة أخرى لفتح ملفاتك.
 lock.signIn	تسجيل الدخول
 lock.otherAccount	هذا حساب آخر. سجّل الدخول باسم %@ لفتح القفل، أو سجّل الخروج.
+lock.status	مقفل
 requireSignIn.footer	عند مغادرة التطبيق، يُقفل هذا الحساب وتنتهي جلسته. يتطلب فتح القفل تسجيل دخول جديدًا، باستخدام مفتاح الأمان إن طلبه تسجيل الدخول.
 requireSignIn.sectionLock	القفل
 requireSignIn.appStart	عند بدء التطبيق

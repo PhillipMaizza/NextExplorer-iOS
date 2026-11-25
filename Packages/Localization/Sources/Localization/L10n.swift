@@ -571,6 +571,7 @@ public enum L10n {
     public enum Lock {
         public static func otherAccount(_ a0: CVarArg) -> String { tr("lock.otherAccount", a0) }
         public static var signIn: String { tr("lock.signIn") }  // "Sign In"
+        public static var status: String { tr("lock.status") }  // "Locked"
         public static var subtitle: String { tr("lock.subtitle") }  // "Sign in again to open your files."
         public static var title: String { tr("lock.title") }  // "NextExplorer is locked"
     }

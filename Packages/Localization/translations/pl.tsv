@@ -1491,6 +1491,7 @@ lock.title	NextExplorer jest zablokowany
 lock.subtitle	Zaloguj się ponownie, aby otworzyć pliki.
 lock.signIn	Zaloguj się
 lock.otherAccount	To inne konto. Zaloguj się jako %@, aby odblokować, lub wyloguj się.
+lock.status	Zablokowane
 requireSignIn.footer	Gdy opuścisz aplikację, to konto zostanie zablokowane, a jego sesja zakończona. Odblokowanie wymaga ponownego logowania, z kluczem bezpieczeństwa, jeśli logowanie go wymaga.
 requireSignIn.sectionLock	Blokuj
 requireSignIn.appStart	Przy uruchomieniu aplikacji

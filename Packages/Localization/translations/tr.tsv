@@ -1344,6 +1344,7 @@ lock.title	NextExplorer kilitli
 lock.subtitle	Dosyalarını açmak için yeniden oturum aç.
 lock.signIn	Oturum Aç
 lock.otherAccount	Bu başka bir hesap. Kilidi açmak için %@ olarak oturum aç veya oturumu kapat.
+lock.status	Kilitli
 requireSignIn.footer	Uygulamadan çıktığında bu hesap kilitlenir ve oturumu sona erer. Kilidi açmak yeni bir oturum açma gerektirir; oturum açman istiyorsa güvenlik anahtarınla.
 requireSignIn.sectionLock	Kilitle
 requireSignIn.appStart	Uygulama açılınca

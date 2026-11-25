@@ -1377,6 +1377,7 @@ lock.title	NextExplorer 已鎖定
 lock.subtitle	請重新登入以開啟你的檔案。
 lock.signIn	登入
 lock.otherAccount	這是另一個帳號。請以 %@ 身分登入以解鎖，或登出。
+lock.status	已鎖定
 requireSignIn.footer	離開 App 後，此帳號會鎖定並結束工作階段。解鎖需要重新登入；若登入需要，也需使用你的安全金鑰。
 requireSignIn.sectionLock	鎖定
 requireSignIn.appStart	App 啟動時

@@ -1453,6 +1453,7 @@ lock.title	NextExplorer este blocat
 lock.subtitle	Autentifică-te din nou ca să îți deschizi fișierele.
 lock.signIn	Autentificare
 lock.otherAccount	Acesta este alt cont. Autentifică-te ca %@ pentru a debloca sau deconectează-te.
+lock.status	Blocat
 requireSignIn.footer	Când părăsești aplicația, acest cont se blochează și sesiunea se încheie. Deblocarea cere o nouă autentificare, cu cheia de securitate dacă autentificarea o cere.
 requireSignIn.sectionLock	Blocare
 requireSignIn.appStart	La pornirea aplicației

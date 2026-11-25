@@ -1377,6 +1377,7 @@ lock.title	NextExplorer 已锁定
 lock.subtitle	请重新登录以打开你的文件。
 lock.signIn	登录
 lock.otherAccount	这是另一个账户。请以 %@ 身份登录以解锁，或退出登录。
+lock.status	已锁定
 requireSignIn.footer	离开应用后，此账户会锁定并结束会话。解锁需要重新登录；如果登录需要，还需使用你的安全密钥。
 requireSignIn.sectionLock	锁定
 requireSignIn.appStart	应用启动时

@@ -1344,6 +1344,7 @@ lock.title	NextExplorer on lukittu
 lock.subtitle	Kirjaudu uudelleen avataksesi tiedostosi.
 lock.signIn	Kirjaudu
 lock.otherAccount	Tämä on eri tili. Kirjaudu tilillä %@ avataksesi lukituksen tai kirjaudu ulos.
+lock.status	Lukittu
 requireSignIn.footer	Kun poistut sovelluksesta, tili lukitaan ja sen istunto päättyy. Lukituksen avaaminen vaatii uuden kirjautumisen, suojausavaimella jos kirjautumisesi sitä pyytää.
 requireSignIn.sectionLock	Lukitse
 requireSignIn.appStart	Kun sovellus käynnistyy

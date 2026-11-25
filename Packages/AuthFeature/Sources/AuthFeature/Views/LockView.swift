@@ -6,12 +6,15 @@ import SwiftUI
 
 public struct LockView: View {
     @Bindable var store: StoreOf<LockFeature>
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #if os(iOS)
+        @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
 
     private enum Constants {
-        static let badgeSize: CGFloat = .size96
-        static let badgeFillOpacity: Double = 0.16
-        #if os(macOS)
+        #if os(iOS)
+            static let badgeSize: CGFloat = .size96
+            static let badgeFillOpacity: Double = 0.16
+        #elseif os(macOS)
             static let sheetWidth: CGFloat = 520
             static let sheetHeight: CGFloat = 640
             static let cancelTrailing: CGFloat = .space32
@@ -23,21 +26,17 @@ public struct LockView: View {
         self.store = store
     }
 
-    private var isCard: Bool {
-        #if os(macOS)
-            true
-        #elseif os(iOS)
-            horizontalSizeClass == .regular
-        #endif
-    }
-
     public var body: some View {
         Group {
-            if isCard {
-                card
-            } else {
-                fullScreen
-            }
+            #if os(macOS)
+                MacLockView(store: store) { actions }
+            #elseif os(iOS)
+                if horizontalSizeClass == .regular {
+                    card
+                } else {
+                    fullScreen
+                }
+            #endif
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(AccessibilityIdentifiers.Lock.screen)
@@ -62,72 +61,74 @@ public struct LockView: View {
         }
     }
 
-    private var fullScreen: some View {
-        VStack(spacing: .space24) {
-            Spacer()
-            header
-            account
-            Spacer()
-            actions
+    #if os(iOS)
+        private var fullScreen: some View {
+            VStack(spacing: .space24) {
+                Spacer()
+                header
+                account
+                Spacer()
+                actions
+            }
+            .padding(.horizontal, .space24)
+            .padding(.bottom, .space32)
+            .frame(maxWidth: .sheetCardMaxWidth)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .backgroundGradient()
         }
-        .padding(.horizontal, .space24)
-        .padding(.bottom, .space32)
-        .frame(maxWidth: .sheetCardMaxWidth)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .backgroundGradient()
-    }
 
-    private var card: some View {
-        ZStack {
-            LoginCardBackground()
-            ScrollView {
-                VStack(spacing: .space24) {
-                    header
-                    account
-                    actions
+        private var card: some View {
+            ZStack {
+                LoginCardBackground()
+                ScrollView {
+                    VStack(spacing: .space24) {
+                        header
+                        account
+                        actions
+                    }
+                    .padding(.space32)
+                    .background(DSSheetSurface(in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous)))
+                    .loginCard()
+                    .containerRelativeFrame(.vertical, alignment: .center)
                 }
-                .padding(.space32)
-                .background(DSSheetSurface(in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous)))
-                .loginCard()
-                .containerRelativeFrame(.vertical, alignment: .center)
+                .scrollBounceBehavior(.basedOnSize)
+                .scrollIndicators(.hidden)
             }
-            .scrollBounceBehavior(.basedOnSize)
-            .scrollIndicators(.hidden)
         }
-    }
 
-    private var account: some View {
-        VStack(spacing: .space12) {
-            LockAccountCard(account: store.account)
-            if let problem = store.problem {
-                Text(Self.message(for: problem, account: store.account))
-                    .type(.body2(.semibold), style: .error)
+        private var account: some View {
+            VStack(spacing: .space12) {
+                LockAccountCard(account: store.account)
+                if let problem = store.problem {
+                    Text(Self.message(for: problem, account: store.account))
+                        .type(.body2(.semibold), style: .error)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityIdentifier(AccessibilityIdentifiers.Lock.problem)
+                }
+            }
+        }
+
+        private var header: some View {
+            VStack(spacing: .space12) {
+                IconKit.lock
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: .iconLarge, height: .iconLarge)
+                    .foregroundStyle(Color.accentText)
+                    .frame(width: Constants.badgeSize, height: Constants.badgeSize)
+                    .background(Circle().fill(Color.accent.opacity(Constants.badgeFillOpacity)))
+                    .accessibilityHidden(true)
+                Text(L10n.Lock.title)
+                    .type(.headline3, style: .primaryOnSurface)
                     .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityIdentifier(AccessibilityIdentifiers.Lock.problem)
+                    .accessibilityAddTraits(.isHeader)
+                Text(L10n.Lock.subtitle)
+                    .type(.body2(.regular), style: .secondary)
+                    .multilineTextAlignment(.center)
             }
         }
-    }
-
-    private var header: some View {
-        VStack(spacing: .space12) {
-            IconKit.lock
-                .resizable()
-                .scaledToFit()
-                .frame(width: .iconLarge, height: .iconLarge)
-                .foregroundStyle(Color.accentText)
-                .frame(width: Constants.badgeSize, height: Constants.badgeSize)
-                .background(Circle().fill(Color.accent.opacity(Constants.badgeFillOpacity)))
-                .accessibilityHidden(true)
-            Text(L10n.Lock.title)
-                .type(.headline3, style: .primaryOnSurface)
-                .multilineTextAlignment(.center)
-                .accessibilityAddTraits(.isHeader)
-            Text(L10n.Lock.subtitle)
-                .type(.body2(.regular), style: .secondary)
-                .multilineTextAlignment(.center)
-        }
-    }
+    #endif
 
     private var actions: some View {
         VStack(spacing: .space8) {
@@ -136,14 +137,14 @@ public struct LockView: View {
                     L10n.Login.ssoButton,
                     icon: IconKit.person,
                     style: .primary,
-                    size: .large,
+                    size: Self.unlockButtonSize,
                     isLoading: store.ssoPhase == .signingIn
                 ) {
                     store.send(.ssoButtonTapped)
                 }
                 .accessibilityIdentifier(AccessibilityIdentifiers.Lock.unlockButton)
             } else {
-                DSButton(L10n.Lock.signIn, style: .primary, size: .large) {
+                DSButton(L10n.Lock.signIn, style: .primary, size: Self.unlockButtonSize) {
                     store.send(.signInButtonTapped)
                 }
                 .accessibilityIdentifier(AccessibilityIdentifiers.Lock.unlockButton)
@@ -154,6 +155,14 @@ public struct LockView: View {
             .accessibilityIdentifier(AccessibilityIdentifiers.Lock.signOutButton)
         }
         .disabled(store.isBusy)
+    }
+
+    private static var unlockButtonSize: DSButtonSize {
+        #if os(macOS)
+            .medium
+        #elseif os(iOS)
+            .large
+        #endif
     }
 
     private func signInSheet(_ loginStore: StoreOf<LoginFormFeature>) -> some View {

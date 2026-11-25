@@ -1377,6 +1377,7 @@ lock.title	NextExplorer はロックされています
 lock.subtitle	ファイルを開くにはもう一度サインインしてください。
 lock.signIn	サインイン
 lock.otherAccount	別のアカウントです。ロックを解除するには %@ としてサインインするか、サインアウトしてください。
+lock.status	ロック中
 requireSignIn.footer	アプリを離れると、このアカウントはロックされセッションが終了します。ロック解除には再度のサインインが必要です。サインインで求められる場合はセキュリティキーも使います。
 requireSignIn.sectionLock	ロック
 requireSignIn.appStart	アプリの起動時

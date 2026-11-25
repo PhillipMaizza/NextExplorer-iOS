@@ -1308,6 +1308,7 @@ lock.title	NextExplorer ถูกล็อก
 lock.subtitle	ลงชื่อเข้าใช้อีกครั้งเพื่อเปิดไฟล์ของคุณ
 lock.signIn	ลงชื่อเข้าใช้
 lock.otherAccount	นี่เป็นบัญชีอื่น ลงชื่อเข้าใช้เป็น %@ เพื่อปลดล็อก หรือออกจากระบบ
+lock.status	ล็อกอยู่
 requireSignIn.footer	เมื่อคุณออกจากแอป บัญชีนี้จะถูกล็อกและเซสชันจะสิ้นสุด การปลดล็อกต้องลงชื่อเข้าใช้ใหม่ พร้อมกุญแจความปลอดภัยหากการลงชื่อเข้าใช้ของคุณต้องการ
 requireSignIn.sectionLock	ล็อก
 requireSignIn.appStart	เมื่อเปิดแอป
