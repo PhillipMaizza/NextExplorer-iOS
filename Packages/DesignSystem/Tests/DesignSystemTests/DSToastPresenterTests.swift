@@ -112,6 +112,19 @@ struct DSToastPresenterTests {
         presenter.set(nil, owner: owner)
         #expect(presenter.visibleID == nil)
     }
+
+    @Test("the toasts waiting under the one on screen are counted, and the count drops as they clear")
+    func countsWaitingToasts() {
+        let presenter = DSToastPresenter()
+        let progressOwner = TestID.uuid()
+        let successOwner = TestID.uuid()
+        presenter.set(.progress("Compressing"), owner: progressOwner)
+        #expect(presenter.waitingCount == 0)
+        presenter.set(.success("Copied"), owner: successOwner)
+        #expect(presenter.waitingCount == 1)
+        presenter.set(nil, owner: progressOwner)
+        #expect(presenter.waitingCount == 0)
+    }
 }
 
 private final class ChangeFlag: @unchecked Sendable {

@@ -12,6 +12,17 @@ private enum Constants {
     static let darkBorderOpacity: Double = .opacityFaint
     static let iconSize: CGFloat = .iconSmall
     static let bottomInset: CGFloat = .space16
+    #if os(macOS)
+        static let alignment: Alignment = .bottomTrailing
+        static let entryEdge: Edge = .trailing
+        static let trailingInset: CGFloat = .space16
+        static let hasCloseButton = true
+    #else
+        static let alignment: Alignment = .bottom
+        static let entryEdge: Edge = .bottom
+        static let trailingInset: CGFloat = 0
+        static let hasCloseButton = false
+    #endif
     static let autoDismissDelay: Duration = .seconds(4.5)
     // How much of the surface color sits over the frosted glass: enough to keep the text legible,
     // little enough to let the glass through. Solid on the Mac, whose windows are already frosted.
@@ -30,6 +41,7 @@ public struct DSToastMessage: Equatable, Identifiable {
     public let id: String
     public let icon: Image?
     public let text: String
+    public let detail: String?
     public let tint: Color
     public let isPersistent: Bool
     /// Distinguishes a success confirmation from a warning: both are brief and
@@ -50,6 +62,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         id = UUID().uuidString
         self.icon = icon
         self.text = text
+        detail = nil
         tint = .negativeText
         isPersistent = false
         isSuccess = false
@@ -68,10 +81,16 @@ public struct DSToastMessage: Equatable, Identifiable {
     /// `action` add a trailing button (e.g. "Open"): omit both for a plain confirmation.
     public static func success(
         _ text: String,
+        detail: String? = nil,
         actionTitle: String? = nil,
         action: (() -> Void)? = nil
     ) -> DSToastMessage {
-        DSToastMessage(successText: text, actionTitle: actionTitle, action: action)
+        DSToastMessage(
+            successText: text,
+            detail: detail,
+            actionTitle: actionTitle,
+            action: action
+        )
     }
 
     /// A brief, auto dismissing failure toast (warning icon in `.negativeText`) with an
@@ -81,7 +100,11 @@ public struct DSToastMessage: Equatable, Identifiable {
         actionTitle: String? = nil,
         action: (() -> Void)? = nil
     ) -> DSToastMessage {
-        DSToastMessage(failureText: text, actionTitle: actionTitle, action: action)
+        DSToastMessage(
+            failureText: text,
+            actionTitle: actionTitle,
+            action: action
+        )
     }
 
     /// Keyed by its text, not a fresh id: callers rebuild it from state on every render, and a new
@@ -90,6 +113,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         id = Constants.progressIDPrefix + progressText
         icon = nil
         text = progressText
+        detail = nil
         tint = .tertiaryDS
         isPersistent = true
         isSuccess = false
@@ -97,10 +121,11 @@ public struct DSToastMessage: Equatable, Identifiable {
         action = nil
     }
 
-    private init(successText: String, actionTitle: String?, action: (() -> Void)?) {
+    private init(successText: String, detail: String?, actionTitle: String?, action: (() -> Void)?) {
         id = UUID().uuidString
         icon = IconKit.checkmarkCircleFill
         text = successText
+        self.detail = detail
         tint = .positiveText
         isPersistent = false
         isSuccess = true
@@ -112,6 +137,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         id = UUID().uuidString
         icon = IconKit.errorFill
         text = failureText
+        detail = nil
         tint = .negativeText
         isPersistent = false
         isSuccess = false
@@ -133,6 +159,7 @@ final class DSToastPresenter {
     static let shared = DSToastPresenter()
 
     private(set) var visibleID: String?
+    private(set) var waitingCount = 0
     @ObservationIgnored private var requests: [(owner: UUID, id: String)] = []
     @ObservationIgnored private(set) var swapTask: Task<Void, Never>?
 
@@ -140,6 +167,10 @@ final class DSToastPresenter {
         requests.removeAll { $0.owner == owner }
         if let message {
             requests.append((owner, message.id))
+        }
+        let waiting = max(requests.count - 1, 0)
+        if waiting != waitingCount {
+            waitingCount = waiting
         }
         let target = requests.last?.id
         guard target != visibleID else { return }
@@ -188,7 +219,7 @@ private struct DSToastOverlay: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: Constants.alignment) {
             // Keeps the overlay alive (and its lifecycle hooks firing) while nothing shows.
             Color.clear
                 .allowsHitTesting(false)
@@ -211,6 +242,40 @@ private struct DSToastOverlay: View {
     }
 
     private func toast(_ message: DSToastMessage) -> some View {
+        content(message)
+            .padding(.bottom, Constants.bottomInset + extraBottomInset)
+            .padding(.trailing, Constants.trailingInset)
+            .transition(.move(edge: Constants.entryEdge).combined(with: .opacity))
+            .accessibilityElement(children: message.action == nil && !Constants.hasCloseButton ? .combine : .contain)
+            .accessibilityAddTraits(message.action == nil && !Constants.hasCloseButton ? .isStaticText : [])
+            .task(id: message.id) {
+                AccessibilityNotification.Announcement(message.text).post()
+                guard !message.isPersistent, !(UITestEnvironment.isActive && message.action != nil) else { return }
+                try? await Task.sleep(for: Constants.autoDismissDelay)
+                guard !Task.isCancelled else { return }
+                self.message = nil
+            }
+    }
+
+    private func run(_ message: DSToastMessage) {
+        self.message = nil
+        message.action?()
+    }
+
+    private func content(_ message: DSToastMessage) -> some View {
+        #if os(macOS)
+            MacToastCard(
+                message: message,
+                waitingCount: presenter.waitingCount,
+                onAction: { run(message) },
+                onClose: { self.message = nil }
+            )
+        #else
+            capsule(message)
+        #endif
+    }
+
+    private func capsule(_ message: DSToastMessage) -> some View {
         HStack(spacing: Constants.spacing) {
             if let icon = message.icon {
                 icon
@@ -224,19 +289,16 @@ private struct DSToastOverlay: View {
             Text(message.text)
                 .type(.body2(.semibold))
                 .accessibilityIdentifier(AccessibilityIdentifiers.Toast.message)
-            if let actionTitle = message.actionTitle, let action = message.action {
+            if let actionTitle = message.actionTitle, message.action != nil {
                 // The toast has done its job once its button is used: it goes, then the action runs.
-                Button(actionTitle) {
-                    self.message = nil
-                    action()
-                }
-                .buttonStyle(DSPressableButtonStyle())
-                .type(.body3(.bold))
-                .foregroundStyle(Color.accentText)
-                .textCase(.uppercase)
-                .padding(.horizontal, Constants.actionHorizontalPadding)
-                .padding(.vertical, Constants.actionVerticalPadding)
-                .background(Capsule().fill(Color.accent.opacity(Constants.actionFillOpacity)))
+                Button(actionTitle) { run(message) }
+                    .buttonStyle(DSPressableButtonStyle())
+                    .type(.body3(.bold))
+                    .foregroundStyle(Color.accentText)
+                    .textCase(.uppercase)
+                    .padding(.horizontal, Constants.actionHorizontalPadding)
+                    .padding(.vertical, Constants.actionVerticalPadding)
+                    .background(Capsule().fill(Color.accent.opacity(Constants.actionFillOpacity)))
             }
         }
         .foregroundStyle(Color.primaryDS)
@@ -254,25 +316,6 @@ private struct DSToastOverlay: View {
                 }
                 .compositingGroup()
                 .elevation(.level4)
-        }
-        .padding(.bottom, Constants.bottomInset + extraBottomInset)
-        .transition(.move(edge: .bottom).combined(with: .opacity))
-        // One VoiceOver element, spoken as a status announcement the moment it appears, since a
-        // transient toast never receives focus on its own. With a button, the text and the button
-        // stay apart so the button can still be reached and pressed.
-        .accessibilityElement(children: message.action == nil ? .combine : .contain)
-        .accessibilityAddTraits(message.action == nil ? .isStaticText : [])
-        // Starts only once the toast is on screen, so time spent waiting for an earlier one
-        // to leave never shortens this one.
-        .task(id: message.id) {
-            AccessibilityNotification.Announcement(message.text).post()
-            // Under UI tests a toast with a button stays until it is used or replaced: the timer runs
-            // on the wall clock, which a test that is slow to reach the button would otherwise race.
-            guard !message.isPersistent, !(UITestEnvironment.isActive && message.action != nil) else { return }
-            try? await Task.sleep(for: Constants.autoDismissDelay)
-            // A toast swapped out early is cancelled here; clearing then would wipe its successor.
-            guard !Task.isCancelled else { return }
-            self.message = nil
         }
     }
 }

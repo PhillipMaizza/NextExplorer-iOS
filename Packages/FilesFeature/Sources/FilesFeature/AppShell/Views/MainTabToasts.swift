@@ -49,7 +49,11 @@ struct MainTabToasts: ViewModifier {
 
     private func uploadToastMessage(_ toast: MainTabFeature.UploadToast) -> DSToastMessage {
         guard let destination = toast.openDestination else { return .success(toast.message) }
-        return .success(toast.message, actionTitle: L10n.Browse.open) {
+        return .success(
+            toast.message,
+            detail: destination.split(separator: "/").last.map(String.init),
+            actionTitle: L10n.Browse.open
+        ) {
             store.send(.openUploadedLocation(destination))
         }
     }
