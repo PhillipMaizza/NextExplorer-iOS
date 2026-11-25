@@ -6,7 +6,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let locationColumnMinWidth: CGFloat = 200
+        static let locationColumnMinWidth: CGFloat = 120
     }
 
     /// Favorites as a Mac table, matching Browse's: name and location columns, double click to
