@@ -6,12 +6,7 @@
     import Localization
     import SwiftUI
 
-    private enum Metrics {
-        static let visibleLanguageRows = 4
-        static let flagWidth: CGFloat = .size20
-    }
-
-    /// The General pane: what the file tables show, and the app's appearance and language.
+    /// The General pane: appearance, language, default sort and what the file tables show.
     struct MacGeneralSettingsTab: View {
         @Bindable var store: StoreOf<SettingsFeature>
 
@@ -37,57 +32,21 @@
 
         /// Points the bundle at the new language before writing it, so the rebuild the write
         /// triggers already reads the new strings (see `LanguagePickerView`).
-        private func selectLanguage(_ code: String) {
-            LocalizationOverride.apply(code.isEmpty ? nil : code)
-            appLanguage = code
+        private var language: Binding<String> {
+            Binding(
+                get: { appLanguage },
+                set: { code in
+                    LocalizationOverride.apply(code.isEmpty ? nil : code)
+                    appLanguage = code
+                }
+            )
         }
 
-        private var languageList: some View {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    MacFormRows {
-                        languageRow(L10n.Language.systemDefault, code: "") {
-                            IconKit.web.foregroundStyle(Color.macChromeSecondary)
-                        }
-                        ForEach(LocalizationOverride.supportedLanguages, id: \.self) { code in
-                            languageRow(LocalizationOverride.displayName(for: code), code: code) {
-                                Text(LocalizationOverride.flag(for: code) ?? "")
-                            }
-                        }
-                    }
-                }
-                .frame(height: MacFormMetrics.height(ofRows: Metrics.visibleLanguageRows))
-                .onAppear { proxy.scrollTo(appLanguage, anchor: .center) }
-            }
-            .accessibilityIdentifier(AccessibilityIdentifiers.Settings.languagePicker)
-        }
-
-        private func languageRow(
-            _ title: String,
-            code: String,
-            @ViewBuilder leading: () -> some View
-        ) -> some View {
-            let isSelected = appLanguage == code
-            let leadingView = leading()
-            return Button { selectLanguage(code) } label: {
-                MacFormRow {
-                    HStack(spacing: .space12) {
-                        leadingView
-                            .frame(width: Metrics.flagWidth)
-                            .accessibilityHidden(true)
-                        Text(title)
-                    }
-                } control: {
-                    if isSelected {
-                        IconKit.checkmark
-                            .foregroundStyle(Color.accent)
-                    }
-                }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .id(code)
-            .accessibilityAddTraits(isSelected ? .isSelected : [])
+        private static func languageTitle(_ code: String) -> String {
+            let name = code.isEmpty ? L10n.Language.systemDefault : LocalizationOverride.displayName(for: code)
+            let flagCode = code.isEmpty ? LocalizationOverride.systemLanguage : code
+            guard let flag = LocalizationOverride.flag(for: flagCode) else { return name }
+            return "\(flag)  \(name)"
         }
 
         var body: some View {
@@ -96,52 +55,61 @@
                     MacFormGroupTitle(L10n.Settings.rowAppearance)
                     MacAppearanceTiles(selection: appearance)
                 }
-                HStack(alignment: .top, spacing: .space24) {
-                    MacFormGroup(L10n.Settings.rowLanguage) {
-                        languageList
-                    }
-                    .frame(maxWidth: .infinity)
-                    MacFormGroup(L10n.Settings.sectionDisplay) {
-                        MacSwitchRow(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
-                        MacSwitchRow(
-                            L10n.Settings.toggleShowHiddenFiles,
-                            isOn: $store.preferences.shouldShowHiddenFiles.sending(\.setShowHiddenFiles)
-                        )
-                        MacSwitchRow(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
-                        MacSwitchRow(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
-                    }
-                    .frame(maxWidth: .infinity)
+                MacFormGroup(L10n.Settings.sectionGeneral) {
+                    languageRow
+                    defaultSortRow
                 }
-                VStack(alignment: .leading, spacing: .space8) {
-                    MacFormGroup(L10n.Settings.rowDefaultSort) {
-                        MacFormRow {
-                            Text(L10n.Settings.rowDefaultSort)
-                        } control: {
-                            MacPopup(
-                                L10n.Settings.rowDefaultSort,
-                                valueLabel: defaultSortOption.title,
-                                selection: $defaultSortOption
-                            ) {
-                                ForEach(BrowseFeature.SortOption.allCases, id: \.self) { option in
-                                    Text(option.title).tag(option)
-                                }
-                            }
-                        }
-                        MacFormRow {
-                            Text(L10n.Settings.rowSortOrder)
-                        } control: {
-                            MacPopup(
-                                L10n.Settings.rowSortOrder,
-                                valueLabel: defaultSortDirection.title,
-                                selection: $defaultSortDirection
-                            ) {
-                                ForEach(BrowseFeature.SortDirection.allCases, id: \.self) { direction in
-                                    Text(direction.title).tag(direction)
-                                }
-                            }
+                MacFormGroup(L10n.Settings.sectionDisplay) {
+                    MacSwitchRow(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
+                    MacSwitchRow(
+                        L10n.Settings.toggleShowHiddenFiles,
+                        isOn: $store.preferences.shouldShowHiddenFiles.sending(\.setShowHiddenFiles)
+                    )
+                    MacSwitchRow(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
+                    MacSwitchRow(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
+                }
+            }
+        }
+
+        private var languageRow: some View {
+            MacFormRow(L10n.Settings.rowLanguage) {
+                MacPopup(
+                    L10n.Settings.rowLanguage,
+                    valueLabel: Self.languageTitle(appLanguage),
+                    selection: language
+                ) {
+                    Text(Self.languageTitle("")).tag("")
+                    ForEach(LocalizationOverride.supportedLanguages, id: \.self) { code in
+                        Text(Self.languageTitle(code)).tag(code)
+                    }
+                }
+                .accessibilityIdentifier(AccessibilityIdentifiers.Settings.languagePicker)
+            }
+        }
+
+        private var defaultSortRow: some View {
+            MacFormRow {
+                MacRowTitle(title: L10n.Settings.rowDefaultSort, subtitle: L10n.Settings.defaultSortFooter)
+            } control: {
+                HStack(spacing: .space8) {
+                    MacPopup(
+                        L10n.Settings.rowDefaultSort,
+                        valueLabel: defaultSortOption.title,
+                        selection: $defaultSortOption
+                    ) {
+                        ForEach(BrowseFeature.SortOption.allCases, id: \.self) { option in
+                            Text(option.title).tag(option)
                         }
                     }
-                    MacFormFootnote(L10n.Settings.defaultSortFooter)
+                    MacPopup(
+                        L10n.Settings.rowSortOrder,
+                        valueLabel: defaultSortDirection.title,
+                        selection: $defaultSortDirection
+                    ) {
+                        ForEach(BrowseFeature.SortDirection.allCases, id: \.self) { direction in
+                            Text(direction.title).tag(direction)
+                        }
+                    }
                 }
             }
         }

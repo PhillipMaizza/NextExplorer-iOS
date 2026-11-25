@@ -64,6 +64,11 @@ public enum LocalizationOverride {
         "th": "TH", "tr": "TR", "uk": "UA", "vi": "VN", "zh-CN": "CN", "zh-TW": "TW",
     ]
 
+    public static var systemLanguage: String {
+        Bundle.preferredLocalizations(from: supportedLanguages, forPreferences: Locale.preferredLanguages)
+            .first ?? supportedLanguages[0]
+    }
+
     public static func flag(for code: String) -> String? {
         guard let region = flagRegions[code] else { return nil }
         let indicatorOffset: UInt32 = 0x1F1E6 - 0x41
