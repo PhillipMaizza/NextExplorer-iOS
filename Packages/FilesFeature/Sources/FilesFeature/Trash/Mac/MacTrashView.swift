@@ -88,7 +88,7 @@
                 TableColumn(L10n.Sort.name, value: \.name) { item in
                     HStack(spacing: .space8) {
                         icon(for: item)
-                        Text(item.name).lineLimit(1).truncationMode(.middle)
+                        MacFileNameText(name: item.name, isDirectory: item.isDirectory)
                         if item.shareCount > 0 {
                             MacTableFolderIcon(
                                 image: IconKit.shareLink,

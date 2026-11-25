@@ -20,7 +20,7 @@
                 TableColumn(L10n.Sort.name) { entry in
                     HStack(spacing: .space8) {
                         MacItemTile(name: entry.name, isDirectory: entry.isDirectory)
-                        Text(entry.name).lineLimit(1).truncationMode(.middle)
+                        MacFileNameText(name: entry.name, isDirectory: entry.isDirectory)
                         if entry.shareCount > 0 {
                             MacTableFolderIcon(
                                 image: IconKit.shareLink,

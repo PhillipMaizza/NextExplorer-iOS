@@ -81,7 +81,7 @@
                 TableColumn(L10n.Sort.name, value: \.sortName) { row in
                     HStack(spacing: .space8) {
                         icon(for: row)
-                        Text(row.sortName).lineLimit(1).truncationMode(.middle)
+                        MacFileNameText(name: row.sortName, isDirectory: row.pinned?.root.isDirectory == true)
                         if row.pinned != nil {
                             MacTableFolderIcon(
                                 image: IconKit.availableOffline,
