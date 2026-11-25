@@ -144,8 +144,12 @@ extension Share {
     }
 
     func fileItem(size: Int64 = 0, modified: Date? = nil) -> FileItem? {
-        guard !isDirectory, let path = browsePath else { return nil }
-        let kind = (path as NSString).pathExtension.lowercased()
+        isDirectory ? nil : item(size: size, modified: modified)
+    }
+
+    func item(size: Int64 = 0, modified: Date? = nil) -> FileItem? {
+        guard let path = browsePath else { return nil }
+        let kind = isDirectory ? FileItem.directoryKind : (path as NSString).pathExtension.lowercased()
         return FileItem(
             name: (path as NSString).lastPathComponent,
             path: (path as NSString).deletingLastPathComponent,

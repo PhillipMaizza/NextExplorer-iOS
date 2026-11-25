@@ -32,10 +32,11 @@
         let isSavedOffline: Bool
         let shouldShowThumbnails: Bool
         let showsHiddenFiles: Bool
-        let onOpen: () -> Void
+        let onOpen: (() -> Void)?
         let onShare: (() -> Void)?
         let onStep: (Int) -> Void
         let onClose: () -> Void
+        var showsMore = true
         @ViewBuilder let more: () -> More
 
         @FocusState private var isFocused: Bool
@@ -75,6 +76,7 @@
                 return .handled
             }
             .onKeyPress(.return) {
+                guard let onOpen else { return .ignored }
                 onOpen()
                 return .handled
             }
@@ -109,15 +111,19 @@
                         .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                Button(L10n.Browse.open, action: onOpen)
-                    .buttonStyle(.macDS(.primary, size: .small))
+                if let onOpen {
+                    Button(L10n.Browse.open, action: onOpen)
+                        .buttonStyle(.macDS(.primary, size: .small))
+                }
                 if let onShare {
                     MacIconButton(IconKit.link, label: L10n.Common.share, action: onShare)
                 }
-                MacIconButton(IconKit.ellipsis, label: L10n.Common.more) { isMoreOpen.toggle() }
-                    .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
-                        MacActionMenuPanel(content: more)
-                    }
+                if showsMore {
+                    MacIconButton(IconKit.ellipsis, label: L10n.Common.more) { isMoreOpen.toggle() }
+                        .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
+                            MacActionMenuPanel(content: more)
+                        }
+                }
                 MacIconButton(IconKit.close, label: L10n.Common.close, action: onClose)
             }
             .padding(.leading, .space24)
@@ -133,7 +139,9 @@
                 Spacer(minLength: .zero)
                 MacPeekHint(key: MacShortcutHint.space, title: L10n.Common.close)
                 MacPeekHint(key: MacShortcutHint.arrows, title: L10n.Spotlight.hintMove)
-                MacPeekHint(key: MacShortcutHint.enter, title: L10n.Spotlight.hintOpen)
+                if onOpen != nil {
+                    MacPeekHint(key: MacShortcutHint.enter, title: L10n.Spotlight.hintOpen)
+                }
             }
             .padding(.horizontal, .space24)
             .padding(.vertical, .space12)

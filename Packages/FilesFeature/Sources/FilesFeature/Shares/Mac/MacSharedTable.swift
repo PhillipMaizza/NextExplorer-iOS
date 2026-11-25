@@ -67,6 +67,7 @@
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         @FocusState private var isFocused: Bool
         @State private var width: CGFloat = .zero
+        @State private var isPeeking = false
 
         init(
             store: StoreOf<SharedFeature>,
@@ -139,6 +140,23 @@
                 .onChange(of: Self.allIDs(of: rows)) { _, ids in
                     selection.formIntersection(ids)
                 }
+                .modifier(MacItemPeek(
+                    item: selection.count == 1 ? peekItem(for: selection.first, in: rows) : nil,
+                    items: rows.compactMap { peekItem(for: $0.id, in: rows) },
+                    isPeeking: $isPeeking,
+                    serverURL: store.serverURL,
+                    shouldShowThumbnails: true,
+                    showsHiddenFiles: false,
+                    size: { $0.isDirectory || $0.size == .zero ? nil : $0.size },
+                    onSelect: { item in
+                        guard let row = rows.first(where: { peekItem(for: $0.id, in: rows)?.id == item.id })
+                        else { return }
+                        selection = [row.id]
+                    },
+                    showsMore: false,
+                    isListFocused: $isFocused,
+                    more: { _ in EmptyView() }
+                ))
                 .syncRefreshFeedback(errorMessage: phase.errorMessage, shouldSignalErrorHaptic: false) {
                     await store.send(.refreshRequested).finish()
                 }
@@ -277,6 +295,12 @@
                   let share = Self.row(id, in: rows)?.share, !store.deletingIDs.contains(share.id)
             else { return nil }
             return share
+        }
+
+        private func peekItem(for id: MacSharedRow.ID?, in rows: [MacSharedRow]) -> FileItem? {
+            guard isByMe, !isLoading, let id, let row = Self.row(id, in: rows) else { return nil }
+            let share = row.item.shares[0]
+            return store.shareFiles[share.id] ?? share.item()
         }
 
         private static func row(_ id: MacSharedRow.ID, in rows: [MacSharedRow]) -> MacSharedRow? {

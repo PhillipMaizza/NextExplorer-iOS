@@ -12,12 +12,6 @@
         let onShare: (FileItem) -> Void
         @ViewBuilder let more: (FileItem) -> More
 
-        @Environment(MacPeekHost.self) private var host: MacPeekHost?
-
-        private var owner: ObjectIdentifier {
-            ObjectIdentifier(store)
-        }
-
         private var item: FileItem? {
             guard store.selectedItemIDs.count == 1, let id = store.selectedItemIDs.first else { return nil }
             return store.displayedItems.first { $0.id == id }
@@ -25,94 +19,108 @@
 
         func body(content: Content) -> some View {
             content
-                .onChange(of: isPeeking ? item?.id : nil, initial: true) { present() }
+                .modifier(MacItemPeek(
+                    item: item,
+                    items: store.displayedItems.elements,
+                    isPeeking: $isPeeking,
+                    serverURL: store.serverURL,
+                    shouldShowThumbnails: store.preferences.shouldShowThumbnails,
+                    showsHiddenFiles: store.preferences.shouldShowHiddenFiles,
+                    isSavedOffline: { store.offlineItemIDs.contains($0.id) },
+                    size: { $0.isDirectory ? store.folderSizes[$0.id] : $0.size },
+                    onSelect: { store.send(.tableSelectionChanged([$0.id])) },
+                    onOpen: onOpen,
+                    onShare: (store.access?.canShare ?? false) ? onShare : nil,
+                    more: more
+                ))
                 .onChange(of: store.directoryPath) { isPeeking = false }
+        }
+    }
+
+    struct MacItemPeek<More: View>: ViewModifier {
+        let item: FileItem?
+        let items: [FileItem]
+        @Binding var isPeeking: Bool
+        let serverURL: URL
+        let shouldShowThumbnails: Bool
+        let showsHiddenFiles: Bool
+        var isSavedOffline: (FileItem) -> Bool = { _ in false }
+        var size: (FileItem) -> Int64? = { $0.isDirectory ? nil : $0.size }
+        let onSelect: (FileItem) -> Void
+        var onOpen: ((FileItem) -> Void)?
+        var onShare: ((FileItem) -> Void)?
+        var showsMore = true
+        var isListFocused: FocusState<Bool>.Binding?
+        @ViewBuilder let more: (FileItem) -> More
+
+        @Environment(MacPeekHost.self) private var host: MacPeekHost?
+        @State private var owner = MacPeekOwner()
+
+        func body(content: Content) -> some View {
+            content
+                .onKeyPress(.space) {
+                    guard let isListFocused, isListFocused.wrappedValue, item != nil else { return .ignored }
+                    isPeeking = true
+                    return .handled
+                }
+                .onChange(of: isPeeking) { _, isOpen in
+                    isListFocused?.wrappedValue = !isOpen
+                }
+                .onChange(of: isPeeking ? item?.id : nil, initial: true) { present() }
                 .onDisappear {
                     isPeeking = false
-                    host?.hide(owner: owner)
+                    host?.hide(owner: ObjectIdentifier(owner))
                 }
         }
 
         private func present() {
             guard isPeeking, let item else {
                 isPeeking = false
-                host?.hide(owner: owner)
+                host?.hide(owner: ObjectIdentifier(owner))
                 return
             }
             host?.show(
-                MacPeekStoreCard(
-                    store: store,
+                MacPeekCard(
                     item: item,
-                    onOpen: {
-                        isPeeking = false
-                        onOpen(item)
+                    subtitle: subtitle(item),
+                    position: position(item),
+                    serverURL: serverURL,
+                    isSavedOffline: isSavedOffline(item),
+                    shouldShowThumbnails: shouldShowThumbnails,
+                    showsHiddenFiles: showsHiddenFiles,
+                    onOpen: onOpen.map { open in
+                        {
+                            isPeeking = false
+                            open(item)
+                        }
                     },
-                    onShare: { onShare(item) },
+                    onShare: onShare.map { share in { share(item) } },
+                    onStep: { step(from: item, by: $0) },
                     onClose: { isPeeking = false },
+                    showsMore: showsMore,
                     more: { more(item) }
                 ),
-                owner: owner
+                owner: ObjectIdentifier(owner)
             ) { isPeeking = false }
         }
-    }
 
-    struct MacPeekStoreCard<More: View>: View {
-        let store: StoreOf<BrowseFeature>
-        let item: FileItem
-        let onOpen: () -> Void
-        let onShare: () -> Void
-        let onClose: () -> Void
-        @ViewBuilder let more: () -> More
-
-        var body: some View {
-            MacPeekCard(
-                item: item,
-                subtitle: subtitle,
-                position: position,
-                serverURL: store.serverURL,
-                isSavedOffline: store.offlineItemIDs.contains(item.id),
-                shouldShowThumbnails: store.preferences.shouldShowThumbnails,
-                showsHiddenFiles: store.preferences.shouldShowHiddenFiles,
-                onOpen: onOpen,
-                onShare: (store.access?.canShare ?? false) ? onShare : nil,
-                onStep: step,
-                onClose: onClose,
-                more: more
-            )
-        }
-
-        private func step(by offset: Int) {
-            let items = store.displayedItems
+        private func step(from item: FileItem, by offset: Int) {
             guard let index = items.firstIndex(where: { $0.id == item.id }),
                   items.indices.contains(index + offset) else { return }
-            store.send(.tableSelectionChanged([items[index + offset].id]))
+            onSelect(items[index + offset])
         }
 
-        private var subtitle: String {
+        private func subtitle(_ item: FileItem) -> String {
             let kind = item.isDirectory ? L10n.FileInfo.navigationTitleFolder : item.previewTypeText
-            let size = item.isDirectory ? store.folderSizes[item.id] : item.size
-            return ([kind] + [size.map(FileSizeFormat.string)].compactMap(\.self))
+            return ([kind] + [size(item).map(FileSizeFormat.string)].compactMap(\.self))
                 .joined(separator: MacPeekMetrics.separator)
         }
 
-        private var position: String {
-            let items = store.displayedItems
+        private func position(_ item: FileItem) -> String {
             let index = items.firstIndex { $0.id == item.id } ?? .zero
             return L10n.PdfPreview.pageIndicator(index + 1, items.count)
         }
     }
 
-    #Preview("Store card") {
-        let item = browsePreviewItems.first { !$0.isDirectory } ?? browsePreviewItems[0]
-        MacPeekStoreCard(
-            store: Store(initialState: .preview(items: browsePreviewItems)) { BrowseFeature() },
-            item: item,
-            onOpen: {},
-            onShare: {},
-            onClose: {},
-            more: { EmptyView() }
-        )
-        .padding(MacPeekMetrics.margin)
-        .background(Color.macChrome)
-    }
+    final class MacPeekOwner {}
 #endif
