@@ -18,6 +18,7 @@
         @FocusedValue(\.focusSearchField) private var focusSearchField
         /// Present while the file table has focus; otherwise the Edit menu edits text as usual.
         @FocusedValue(\.browseKeyboardActions) private var fileActions
+        @FocusedValue(\.openMacInspector) private var openMacInspector
         @FocusedValue(\.duplicateBrowseSelection) private var duplicateSelection
         @FocusedValue(\.archiveFolderBack) private var archiveFolderBack
         @FocusedValue(\.printPreview) private var printPreview
@@ -84,9 +85,15 @@
                 Button(L10n.Browse.open) { fileActions?.open() }
                     .keyboardShortcut("o")
                     .disabled(fileActions == nil)
-                Button(L10n.Browse.actionGetInfo) { fileActions?.getInfo() }
-                    .keyboardShortcut("i")
-                    .disabled(fileActions == nil)
+                Button(L10n.Browse.actionGetInfo) {
+                    if let fileActions {
+                        fileActions.getInfo()
+                    } else {
+                        openMacInspector?()
+                    }
+                }
+                .keyboardShortcut("i")
+                .disabled(fileActions == nil && openMacInspector == nil)
                 Button(L10n.Menu.hideInspector) { closeMacInspector?() }
                     .keyboardShortcut("i", modifiers: [.command, .control])
                     .disabled(closeMacInspector == nil)

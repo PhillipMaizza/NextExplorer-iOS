@@ -11,6 +11,7 @@ public struct FavoritesFeature {
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
+        @Shared(.inMemory("userPreferences")) var preferences = UserPreferences()
         /// The account scope the saved list is filed under, captured when this state was created.
         let cacheScope: String
         public var favorites: IdentifiedArrayOf<Favorite> = []
@@ -161,6 +162,19 @@ public struct FavoritesFeature {
         /// Mirrors the browse preference so a hidden file inside a favorite doesn't surface in
         /// results unless the user opted in. Kept here so the reducer test can flip it.
         public var shouldShowHiddenFiles = false
+        public var tableSelection: Set<Favorite.ID> = []
+        public var infoItem: FileItem?
+        public var infoMetadata: FileMetadata?
+        public var infoUsage: StorageUsage?
+        public var infoPhase: DataPhase = .idle
+
+        public var infoErrorMessage: String? {
+            infoPhase.errorMessage
+        }
+
+        var infoFavorite: Favorite? {
+            infoItem.flatMap { item in favorites.first { $0.path == item.id } }
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -229,6 +243,12 @@ public struct FavoritesFeature {
         case refreshDirectory(path: String)
         /// A download landed: recompute the "available offline" badges on pushed folders.
         case offlineAvailabilityChanged
+        case tableSelectionChanged(Set<Favorite.ID>)
+        case infoSelectionTapped
+        case infoTapped(Favorite)
+        case infoDismissed
+        case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
+        case infoUsageResponse(Result<StorageUsage, FilesClientError>)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -255,8 +275,8 @@ public struct FavoritesFeature {
     /// Cache namespace for this tab's saved offline copy.
     static let cacheNamespace = "favorites"
 
-    private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability,
-                                           searchOnDevice
+    enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability,
+                                   searchOnDevice, info
     }
 
     private enum Constants {
@@ -268,6 +288,10 @@ public struct FavoritesFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .tableSelectionChanged, .infoSelectionTapped, .infoTapped, .infoDismissed,
+                 .infoMetadataResponse, .infoUsageResponse:
+                return reduceInfo(&state, action)
+
             case .goBack:
                 state.goBack()
                 return .none
@@ -400,9 +424,11 @@ public struct FavoritesFeature {
                 .cancellable(id: CancelID.remove(favorite.id), cancelInFlight: true)
 
             case let .removeResponse(id, .success):
+                let removedPath = state.favorites[id: id]?.path
                 state.favorites.remove(id: id)
                 syncCache(state)
-                return .none
+                guard let removedPath, removedPath == state.infoItem?.id else { return .none }
+                return closeInfo(&state)
 
             case let .removeResponse(_, .failure(error)):
                 state.actionErrorMessage = error.userMessage

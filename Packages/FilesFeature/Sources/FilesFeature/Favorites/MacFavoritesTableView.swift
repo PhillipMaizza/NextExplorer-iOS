@@ -86,6 +86,9 @@
             .onChange(of: favorites.map(\.id)) { _, ids in
                 selection.formIntersection(ids)
             }
+            .onChange(of: selection) { _, ids in
+                store.send(.tableSelectionChanged(ids))
+            }
         }
 
         private func favorite(for id: Favorite.ID?) -> Favorite? {
