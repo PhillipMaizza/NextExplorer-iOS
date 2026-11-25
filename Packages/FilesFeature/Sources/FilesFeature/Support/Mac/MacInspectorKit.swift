@@ -195,7 +195,7 @@
 
     struct MacInspectorQuickAction: Identifiable {
         enum Kind {
-            case open, share, favorite, download
+            case open, share, favorite, download, remove
         }
 
         let id: Kind
