@@ -234,6 +234,7 @@ extension SessionCredentials {
 #Preview("Checking the server") { ShareUploadView(store: .preview(.checking)) }
 #Preview("Partly prepared") { ShareUploadView(store: .preview(.partiallyPrepared)) }
 #Preview("Signed out") { ShareUploadView(store: .preview(.signedOut)) }
+#Preview("Locked") { ShareUploadView(store: .preview(.locked)) }
 #Preview("Session unreadable") { ShareUploadView(store: .preview(.sessionUnreadable)) }
 #Preview("Nothing to upload") { ShareUploadView(store: .preview(.nothingToUpload)) }
 #Preview("Failed") { ShareUploadView(store: .preview(.failed)) }
