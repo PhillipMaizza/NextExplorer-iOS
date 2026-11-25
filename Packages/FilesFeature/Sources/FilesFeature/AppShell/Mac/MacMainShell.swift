@@ -5,6 +5,10 @@
     import DesignSystem
     import SwiftUI
 
+    private enum Metrics {
+        static let contentMinWidth: CGFloat = 360
+    }
+
     struct MacMainShell: View {
         let store: StoreOf<MainTabFeature>
         @AppStorage(AppStorageKeys.macSidebarCompact) private var isSidebarCompact = false
@@ -13,9 +17,16 @@
         @State private var liveWidth: CGFloat?
         @State private var isAccountPanelShown = false
         @State private var isDisplayedCompact: Bool?
+        @State private var inspectorReserve: CGFloat = .zero
+        @State private var windowWidth: CGFloat = .zero
+        @State private var isSqueezedToRail = false
+
+        private var isSqueezed: Bool {
+            inspectorReserve > .zero && windowWidth - expandedWidth - inspectorReserve < Metrics.contentMinWidth
+        }
 
         private var isRailShown: Bool {
-            isDisplayedCompact ?? isSidebarCompact
+            isSqueezedToRail || (isDisplayedCompact ?? isSidebarCompact)
         }
 
         private var sidebarWidth: CGFloat {
@@ -23,7 +34,7 @@
         }
 
         private var detailInset: CGFloat {
-            isSidebarCompact ? MacSidebarRail.width : liveWidth ?? expandedWidth
+            isSidebarCompact || isSqueezedToRail ? MacSidebarRail.width : liveWidth ?? expandedWidth
         }
 
         var body: some View {
@@ -40,6 +51,12 @@
                     .overlay(alignment: .trailing) { resizeHandle }
             }
             .macChromeBackground()
+            .onGeometryChange(for: CGFloat.self, of: \.size.width) { windowWidth = $0 }
+            .onPreferenceChange(MacInspectorReserveKey.self) { inspectorReserve = $0 }
+            .onChange(of: isSqueezed) { _, squeezed in
+                isAccountPanelShown = false
+                withAnimation(DSMotion.controlMorph) { isSqueezedToRail = squeezed }
+            }
             .overlay(alignment: .bottom) {
                 SplitDetailBreadcrumb(store: store)
                     .padding(.leading, detailInset)
