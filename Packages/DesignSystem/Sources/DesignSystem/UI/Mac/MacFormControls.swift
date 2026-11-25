@@ -100,9 +100,19 @@
 
         public var body: some View {
             MacPopupMenu(title, valueLabel: valueLabel, shouldFillWidth: shouldFillWidth) {
-                Picker(title, selection: $selection) { options() }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
+                ForEach(subviews: options()) { option in
+                    if let value = option.containerValues.tag(for: Value.self) {
+                        Toggle(
+                            isOn: Binding(
+                                get: { selection == value },
+                                set: { _ in selection = value }
+                            )
+                        ) {
+                            option
+                        }
+                    }
+                }
+                .toggleStyle(.automatic)
             }
         }
     }
