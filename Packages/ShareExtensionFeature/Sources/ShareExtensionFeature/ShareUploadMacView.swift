@@ -16,8 +16,8 @@
         static let iconWidth: CGFloat = .size20
         static let rowPadding: CGFloat = .space12
         static let noticePadding: CGFloat = .space12
-        static let noticeOpacity: Double = 0.12
-        static let borderOpacity: Double = 0.5
+        static let noticeOpacity: Double = .opacityFaint
+        static let borderOpacity: Double = .opacityHalf
     }
 
     /// The Mac share sheet: the app mark and what is being sent, the account and folder in one

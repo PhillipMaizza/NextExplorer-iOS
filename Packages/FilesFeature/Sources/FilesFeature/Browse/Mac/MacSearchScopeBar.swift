@@ -6,7 +6,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let chipHeight: CGFloat = 26
+        static let chipHeight: CGFloat = .size24
         static let glyphSize: CGFloat = .size12
     }
 

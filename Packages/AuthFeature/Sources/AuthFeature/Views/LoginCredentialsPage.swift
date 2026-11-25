@@ -18,7 +18,7 @@ private enum Constants {
     /// focus before its frame settles, and a keyboard AutoFill made then silently fails.
     /// Waiting out the page transition avoids that.
     static let identifierAutoFocusDelay: Duration = .seconds(0.4)
-    static let dividerOpacity: Double = 0.35
+    static let dividerOpacity: Double = .opacityDim
 }
 
 /// The sign in form's second page: the server's name with a way back, then email and password,

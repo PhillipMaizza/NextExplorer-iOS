@@ -54,7 +54,7 @@ PUNCTUATION_DASH = re.compile(r"[\u2014\u2013]|\s--?\s|\w--\w")
 # A MARK separator or a DocC list item opens with a dash that is markup, not punctuation.
 MARKUP_DASH = re.compile(r"^//[/!]?\s*(MARK:\s*-|-\s)")
 RAW_STRING = re.compile(r"\b(Text|Label|Button|navigationTitle|accessibilityLabel|help)\(\s*\"[^\"]*[A-Za-z]")
-DS_TOKEN_VALUES = r"(2|4|6|8|12|16|20|24|32|40|44|48|56|64|96|192)(\.0)?"
+DS_TOKEN_VALUES = r"(2|4|6|8|12|16|18|20|24|32|36|40|44|48|56|64|72|96|192)(\.0)?"
 TOKEN_LITERAL = re.compile(
     r":\s*CGFloat\s*=\s*" + DS_TOKEN_VALUES + r"\s*$"
     r"|\b(padding|spacing|cornerRadius|width|height|minWidth|maxWidth|minHeight|maxHeight|lineWidth|radius)"

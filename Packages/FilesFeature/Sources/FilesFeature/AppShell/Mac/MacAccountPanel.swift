@@ -8,9 +8,9 @@
 
     private enum Metrics {
         static let width: CGFloat = 320
-        static let radius: CGFloat = 18
-        static let rowRadius: CGFloat = 10
-        static let rowHeight: CGFloat = 36
+        static let radius: CGFloat = .radiusMedium
+        static let rowRadius: CGFloat = .radiusSmall
+        static let rowHeight: CGFloat = .size36
         static let accountRowHeight: CGFloat = .size48
         static let headerAvatar: CGFloat = .size40
         static let rowAvatar: CGFloat = 28

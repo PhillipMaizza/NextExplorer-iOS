@@ -9,7 +9,7 @@
         static let width: CGFloat = 520
         static let listHeight: CGFloat = 280
         static let sizeColumnWidth: CGFloat = 90
-        static let alreadyOfflineOpacity: Double = 0.5
+        static let alreadyOfflineOpacity: Double = .opacityHalf
     }
 
     struct MacOfflineSelectionSheet: View {

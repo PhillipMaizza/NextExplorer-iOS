@@ -8,7 +8,7 @@
 
     private enum Constants {
         static let expiryAnchor = "expiry"
-        static let savingOpacity: Double = 0.5
+        static let savingOpacity: Double = .opacityHalf
     }
 
     /// Edit for one share, pushed inside the detail sheet on top of its share page. Save is the

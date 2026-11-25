@@ -311,10 +311,10 @@ private enum Constants {
     static let macMaxWidth: CGFloat = 400
     static let padColumns = 4
     static let macColumns = 2
-    static let tileMinHeight: CGFloat = 72
+    static let tileMinHeight: CGFloat = .size72
     static let tileIconSize: CGFloat = 20
-    static let pillMinHeight: CGFloat = 36
-    static let disabledOpacity: Double = 0.4
+    static let pillMinHeight: CGFloat = .size36
+    static let disabledOpacity: Double = .opacityDim
 }
 
 @MainActor

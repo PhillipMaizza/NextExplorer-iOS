@@ -14,7 +14,7 @@
         static let dateColumnWidth: CGFloat = 116
         static let removedColumnWidth: CGFloat = 130
         static let sizeColumnWidth: CGFloat = 70
-        static let unavailableOpacity: Double = 0.5
+        static let unavailableOpacity: Double = .opacityHalf
     }
 
     /// The trash as the Mac sidebar's Trash section: a table like Browse's, with the item actions on

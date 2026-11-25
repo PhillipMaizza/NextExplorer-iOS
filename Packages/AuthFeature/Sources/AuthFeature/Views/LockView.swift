@@ -13,7 +13,7 @@ public struct LockView: View {
     private enum Constants {
         #if os(iOS)
             static let badgeSize: CGFloat = .size96
-            static let badgeFillOpacity: Double = 0.16
+            static let badgeFillOpacity: Double = .opacityWash
         #elseif os(macOS)
             static let sheetWidth: CGFloat = 520
             static let sheetHeight: CGFloat = 640

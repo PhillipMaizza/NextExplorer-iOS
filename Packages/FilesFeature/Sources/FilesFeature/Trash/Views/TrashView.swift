@@ -6,7 +6,7 @@ import SwiftUI
 
 private enum Constants {
     /// An item whose volume is gone reads as out of reach.
-    static let unavailableOpacity: Double = 0.5
+    static let unavailableOpacity: Double = .opacityHalf
 }
 
 /// The trash on iPhone and iPad, pushed from the Browse root's Trash row: the Browse rows,

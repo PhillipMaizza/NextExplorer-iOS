@@ -21,7 +21,7 @@ enum UploadBarChrome {
     /// `MainTabView` from a `GeometryReader`. `fallbackHeight` is only the first frame stand in
     /// before that measurement lands, and the ceiling if measurement ever reads zero.
     static let heightKey = "uploadBarHeight"
-    static let fallbackHeight: CGFloat = 72
+    static let fallbackHeight: CGFloat = .size72
     /// Gap a list leaves between its last row and the floating bar.
     static let gap: CGFloat = .space16
 }

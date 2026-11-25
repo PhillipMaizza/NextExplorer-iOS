@@ -8,7 +8,7 @@ private enum Constants {
     static let iconFrame: CGFloat = .iconMedium
     static let chevronSize: CGFloat = .iconXSmall
     static let fullOpacity: Double = 1.0
-    static let halfOpacity: Double = 0.5
+    static let halfOpacity: Double = .opacityHalf
 }
 
 struct FileRowView: View {

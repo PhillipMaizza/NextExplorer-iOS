@@ -3,9 +3,9 @@
 
     public struct MacFolderTile: View {
         private enum Metrics {
-            static let cornerFraction: CGFloat = 0.28
+            static let cornerFraction: CGFloat = .tileCornerRatio
             static let glyphFraction: CGFloat = 0.52
-            static let fillOpacity: Double = 0.17
+            static let fillOpacity: Double = .opacityWash
         }
 
         let size: CGFloat

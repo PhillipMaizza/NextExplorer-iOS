@@ -5,7 +5,7 @@
     private enum Constants {
         static let sliderWidth: CGFloat = 220
         static let trackHeight: CGFloat = .size6
-        static let knobSize: CGFloat = 18
+        static let knobSize: CGFloat = .size18
         static let knobShadowRadius: CGFloat = .size2
         static let knobShadowOpacity: Double = 0.3
         static let stepperHeight: CGFloat = .size32

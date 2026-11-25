@@ -5,12 +5,12 @@
     import SwiftUI
 
     private enum Constants {
-        static let iconSize: CGFloat = 18
+        static let iconSize: CGFloat = .size18
         static let buttonSize: CGFloat = .size40
     }
 
     enum MacToolbarMetrics {
-        static let gap: CGFloat = 10
+        static let gap: CGFloat = .space8
     }
 
     struct MacToolbarCircleButtonStyle: ButtonStyle {

@@ -8,7 +8,7 @@
         static let height: CGFloat = .size40
         static let clearSize: CGFloat = .size24
         static let focusWidth: CGFloat = 3
-        static let focusOpacity: Double = 0.4
+        static let focusOpacity: Double = .opacityDim
     }
 
     struct MacTopBarSearch: View {

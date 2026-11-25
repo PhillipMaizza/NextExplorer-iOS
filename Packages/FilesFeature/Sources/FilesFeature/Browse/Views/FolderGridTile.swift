@@ -18,7 +18,7 @@ private enum Constants {
     static let trailingSpacing: CGFloat = .space4
     static let selectionSize: CGFloat = .size24
     static let selectionRingWidth: CGFloat = 3
-    static let hiddenOpacity: Double = 0.5
+    static let hiddenOpacity: Double = .opacityHalf
     static let fullOpacity: Double = 1
     static let previewWidth: CGFloat = 180
 }

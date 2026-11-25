@@ -4,7 +4,7 @@ private enum Constants {
     /// Fill switches colour as it crosses these (fraction *used*).
     static let cautionThreshold: Double = 0.7
     static let criticalThreshold: Double = 0.9
-    static let trackOpacity: Double = 0.35
+    static let trackOpacity: Double = .opacityDim
 }
 
 /// A slim capsule meter for "X of Y used" figures (server disk usage). `fraction` is clamped

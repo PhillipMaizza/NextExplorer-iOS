@@ -9,7 +9,7 @@ private enum Constants {
     static let iconSize: CGFloat = .iconSmall
     static let chevronSize: CGFloat = .iconXSmall
     static let dividerHeight: CGFloat = .size20
-    static let dividerOpacity: Double = 0.5
+    static let dividerOpacity: Double = .opacityHalf
 }
 
 /// The share page's main action, a split button on the surface fill: the main half copies the

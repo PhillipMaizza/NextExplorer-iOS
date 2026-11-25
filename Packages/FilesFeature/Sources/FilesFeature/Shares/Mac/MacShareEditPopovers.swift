@@ -7,7 +7,7 @@
 
     private enum Metrics {
         static let width: CGFloat = 350
-        static let offOpacity: Double = 0.5
+        static let offOpacity: Double = .opacityHalf
         static let endsDate = Date.FormatStyle.dateTime.weekday(.abbreviated).month(.abbreviated).day().year()
     }
 

@@ -10,7 +10,7 @@
     private enum Metrics {
         static let popoverWidth: CGFloat = 340
         static let ringSize: CGFloat = 16
-        static let ringLineWidth: CGFloat = 2.5
+        static let ringLineWidth: CGFloat = .borderWidthStrong
         /// The progress ring sits just outside the glyph.
         static let ringFrameSize: CGFloat = ringSize + .size6
     }

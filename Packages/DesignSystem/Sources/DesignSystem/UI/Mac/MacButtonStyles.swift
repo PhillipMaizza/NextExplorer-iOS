@@ -4,11 +4,11 @@
 
     private enum Constants {
         static let largeHeight: CGFloat = .size44
-        static let regularHeight: CGFloat = 36
+        static let regularHeight: CGFloat = .size36
         static let smallHeight: CGFloat = 28
         static let toolbarDiameter: CGFloat = .size40
         static let hoverOpacity: Double = 0.06
-        static let pressedOpacity: Double = 0.12
+        static let pressedOpacity: Double = .opacityFaint
     }
 
     extension DSButtonSize {

@@ -5,7 +5,7 @@
 
     private enum Metrics {
         static let tileHeight: CGFloat = .size96
-        static let selectedBorder: CGFloat = 3
+        static let selectedBorder: CGFloat = .borderWidthStrong
         static let sidebarFraction: CGFloat = 0.3
         static let shape = RoundedRectangle(cornerRadius: .radiusMedium, style: .continuous)
     }

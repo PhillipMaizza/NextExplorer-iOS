@@ -11,7 +11,7 @@
         static let iconColumns = 9
         static let iconCell: CGFloat = .size44
         static let iconGlyph: CGFloat = .size20
-        static let selectedOpacity: Double = 0.18
+        static let selectedOpacity: Double = .opacityWash
         static let selectedRing: CGFloat = 1.5
         static let swatch: CGFloat = .size24
         static let swatchRing: CGFloat = .size2

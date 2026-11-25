@@ -6,7 +6,7 @@ import SwiftUI
 private enum Constants {
     static let iconSize: CGFloat = .size64
     static let folderGlyphSize: CGFloat = .superIcon
-    static let expiredOpacity: Double = 0.5
+    static let expiredOpacity: Double = .opacityHalf
 }
 
 /// The top of the item sheet: the item's icon, a title and one line under it, centered. Sits in

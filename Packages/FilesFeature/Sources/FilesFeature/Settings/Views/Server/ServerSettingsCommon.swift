@@ -21,10 +21,10 @@ enum ServerSettingsMetrics {
     static let contentSpacing: CGFloat = .space32
     static let horizontalPadding: CGFloat = .space16
     static let rowSpacing: CGFloat = .space8
-    static let disabledOpacity: Double = 0.5
+    static let disabledOpacity: Double = .opacityHalf
     static let tagHorizontalPadding: CGFloat = .space8
     static let tagVerticalPadding: CGFloat = .space2
-    static let tagFillOpacity: Double = 0.15
+    static let tagFillOpacity: Double = .opacityWash
 
     /// Between the parts of a one line summary, such as a count and a size.
     static var detailSeparator: String {

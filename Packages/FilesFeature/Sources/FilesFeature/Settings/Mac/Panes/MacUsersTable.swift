@@ -7,7 +7,7 @@
 
     private enum Metrics {
         static let typeWidth: CGFloat = 110
-        static let avatarSize: CGFloat = 26
+        static let avatarSize: CGFloat = .size24
     }
 
     struct MacUsersTable: View {

@@ -76,7 +76,7 @@ public enum DSButtonSize: CaseIterable, Hashable {
 
 private enum Constants {
     static let loadingOpacity: Double = 0.7
-    static let disabledOpacity: Double = 0.4
+    static let disabledOpacity: Double = .opacityDim
     /// Fixed dark charcoal fill for `.inverted`, deliberately not theme adaptive.
     static let invertedFillWhite: Double = 0.15
     /// Press down feedback: a subtle scale down over this duration.

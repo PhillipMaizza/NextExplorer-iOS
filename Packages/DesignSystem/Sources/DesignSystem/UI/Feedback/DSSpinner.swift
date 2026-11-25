@@ -12,7 +12,7 @@ private enum Constants {
     static let largeDiameter: CGFloat = .iconLarge
 
     static let smallLineWidth: CGFloat = 2
-    static let regularLineWidth: CGFloat = 2.5
+    static let regularLineWidth: CGFloat = .borderWidthStrong
     static let largeLineWidth: CGFloat = 3.5
 }
 

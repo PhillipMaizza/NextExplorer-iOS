@@ -6,7 +6,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let gridColumnWidth: CGFloat = 72
+        static let gridColumnWidth: CGFloat = .size72
         static let numericWidth: CGFloat = 84
     }
 

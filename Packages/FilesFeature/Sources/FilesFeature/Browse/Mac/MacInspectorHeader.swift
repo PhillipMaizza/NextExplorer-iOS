@@ -5,8 +5,8 @@
 
     private enum Metrics {
         static let pictureRadius: CGFloat = .radiusMedium
-        static let pictureInset: CGFloat = 10
-        static let iconSize: CGFloat = 72
+        static let pictureInset: CGFloat = .space8
+        static let iconSize: CGFloat = .size72
     }
 
     struct MacInspectorHeader: View {

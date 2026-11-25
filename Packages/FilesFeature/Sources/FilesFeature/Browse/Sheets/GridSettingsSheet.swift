@@ -17,8 +17,8 @@
         /// One preview height for every size, so the three cards line up whatever their columns.
         static let miniHeight: CGFloat = .size40
         static let selectedBorderWidth: CGFloat = 2
-        static let selectedFillOpacity: Double = 0.12
-        static let idleCellOpacity: Double = 0.45
+        static let selectedFillOpacity: Double = .opacityFaint
+        static let idleCellOpacity: Double = .opacityDim
         static let horizontalPadding: CGFloat = .space24
         static let verticalPadding: CGFloat = .space24
     }

@@ -23,12 +23,14 @@ public extension CGFloat {
     static let size12: CGFloat = 12.0
     /// 16dp
     static let size16: CGFloat = 16.0
+    static let size18: CGFloat = 18.0
     /// 20dp
     static let size20: CGFloat = 20.0
     /// 24dp
     static let size24: CGFloat = 24.0
     /// 32dp
     static let size32: CGFloat = 32.0
+    static let size36: CGFloat = 36.0
     /// 40dp
     static let size40: CGFloat = 40.0
     /// 44dp
@@ -40,6 +42,7 @@ public extension CGFloat {
     /// 64dp
     static let size64: CGFloat = 64.0
     /// 72dp
+    static let size72: CGFloat = 72.0
     /// 96dp
     static let size96: CGFloat = 96.0
     static let size192: CGFloat = 192.0
@@ -48,6 +51,7 @@ public extension CGFloat {
     static let borderWidthHairline: CGFloat = 1.0
     /// 2pt: a focused field's accent border, thicker than the resting hairline.
     static let borderWidthFocused: CGFloat = 2.0
+    static let borderWidthStrong: CGFloat = 3.0
 
     /// 480pt, the widest a `dsSheet` card grows on iPhone Duo.
     static let sheetCardMaxWidth: CGFloat = 480.0

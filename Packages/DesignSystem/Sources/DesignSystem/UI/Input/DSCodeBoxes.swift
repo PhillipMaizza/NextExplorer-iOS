@@ -33,7 +33,7 @@ public struct DSCodeBoxes: View {
         static let macHiddenFieldOpacity: Double = 0.01
         static let idleBorderWidth: CGFloat = 1
         static let activeBorderWidth: CGFloat = 2
-        static let idleBorderOpacity: Double = 0.35
+        static let idleBorderOpacity: Double = .opacityDim
         #if os(macOS)
             static let alignment: Alignment = .leading
             static var boxFill: Color {

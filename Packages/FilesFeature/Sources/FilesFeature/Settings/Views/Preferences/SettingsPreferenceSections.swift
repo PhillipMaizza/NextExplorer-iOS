@@ -8,7 +8,7 @@ import SwiftUI
 private enum Constants {
     static let rowIconSize: CGFloat = .iconSmall
     static let fullOpacity: Double = 1.0
-    static let disabledOpacity: Double = 0.5
+    static let disabledOpacity: Double = .opacityHalf
 }
 
 /// View local settings search: hides individual preference rows, and whole sections once none

@@ -13,7 +13,7 @@ private enum Constants {
     static let playSize: CGFloat = 22
     static let playGlyphSize: CGFloat = 9
     static let playInset: CGFloat = .size6
-    static let playBackdropOpacity: Double = 0.5
+    static let playBackdropOpacity: Double = .opacityHalf
 }
 
 /// What a grid well shows when it is not a full picture: a page or a type icon, centred in one

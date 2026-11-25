@@ -4,7 +4,7 @@
 
     private enum Constants {
         static let washOpacity: Double = 0.25
-        static let pillWashOpacity: Double = 0.16
+        static let pillWashOpacity: Double = .opacityWash
     }
 
     public struct MacChip: View {

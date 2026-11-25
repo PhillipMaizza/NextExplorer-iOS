@@ -7,8 +7,8 @@
     enum MacInspectorMetrics {
         static let width: CGFloat = 340
         static let gap: CGFloat = .space12
-        static let padding: CGFloat = 22
-        static let sectionSpacing: CGFloat = 22
+        static let padding: CGFloat = .space24
+        static let sectionSpacing: CGFloat = .space24
         static let rowHeight: CGFloat = .size44
         static let tileHeight: CGFloat = 62
         static let closeSize: CGFloat = 30

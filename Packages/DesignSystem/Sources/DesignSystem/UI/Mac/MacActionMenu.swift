@@ -5,8 +5,8 @@
         static let width: CGFloat = 250
         static let padding: CGFloat = 5
         static let rowHeight: CGFloat = 28
-        static let rowRadius: CGFloat = 7
-        static let rowSpacing: CGFloat = 10
+        static let rowRadius: CGFloat = .radiusSmall
+        static let rowSpacing: CGFloat = .space8
         static let iconSize: CGFloat = 15
         static let chevronSize: CGFloat = 10
         static let dividerInset: CGFloat = .space8

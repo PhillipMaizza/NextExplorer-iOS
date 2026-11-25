@@ -8,8 +8,8 @@
     private enum Metrics {
         static let audienceIconWidth: CGFloat = .size24
         static let tileSize: CGFloat = 52
-        static let expiredOpacity: Double = 0.5
-        static let shareButtonSize: CGFloat = 34
+        static let expiredOpacity: Double = .opacityHalf
+        static let shareButtonSize: CGFloat = .size36
     }
 
     struct MacSharedInspector: View {

@@ -6,7 +6,7 @@
 
     private enum Metrics {
         static let chipAvatar: CGFloat = .size20
-        static let chipHeight: CGFloat = 26
+        static let chipHeight: CGFloat = .size24
         static let addIcon: CGFloat = .iconXSmall
         static let removeGlyph: CGFloat = 9
         static let visibleRows: CGFloat = 2.5

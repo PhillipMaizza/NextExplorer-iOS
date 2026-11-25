@@ -10,7 +10,7 @@
 
     private enum Constants {
         static let panelWidth: CGFloat = 720
-        static let panelRadius: CGFloat = 22
+        static let panelRadius: CGFloat = .radiusLarge
         static let rowRadius: CGFloat = .radiusControl
         static let resultsMaxHeight: CGFloat = 400
         static let topOffset: CGFloat = 76

@@ -5,18 +5,18 @@ import Localization
 import SwiftUI
 
 enum SharedRowMetrics {
-    static let deletingOpacity: Double = 0.4
+    static let deletingOpacity: Double = .opacityDim
 }
 
 private enum Constants {
-    static let iconSize: CGFloat = 36
+    static let iconSize: CGFloat = .size36
     static let folderGlyphSize: CGFloat = 30
     static var dividerInset: CGFloat {
         .space16 + iconSize + .space12
     }
 
     static let sharerAvatarSize: CGFloat = 20
-    static let expiredOpacity: Double = 0.45
+    static let expiredOpacity: Double = .opacityDim
 }
 
 /// One shared file or folder on the Shared list: icon, name and parent folder, who each share

@@ -63,7 +63,7 @@ struct AccessModeBadge: View {
             .foregroundStyle(tint)
             .padding(.horizontal, Metrics.badgeHorizontalPadding)
             .padding(.vertical, Metrics.badgeVerticalPadding)
-            .background(Capsule().fill(tint.opacity(0.15)))
+            .background(Capsule().fill(tint.opacity(.opacityWash)))
     }
 }
 

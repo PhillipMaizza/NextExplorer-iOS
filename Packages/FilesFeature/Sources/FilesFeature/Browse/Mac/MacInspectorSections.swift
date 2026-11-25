@@ -5,11 +5,11 @@
     import SwiftUI
 
     private enum Metrics {
-        static let tileSize: CGFloat = 34
-        static let tileRadius: CGFloat = 10
+        static let tileSize: CGFloat = .size36
+        static let tileRadius: CGFloat = .radiusSmall
         static let tileGlyph: CGFloat = .iconSmall
-        static let tileFillOpacity: Double = 0.17
-        static let headerSpacing: CGFloat = 10
+        static let tileFillOpacity: Double = .opacityWash
+        static let headerSpacing: CGFloat = .space8
     }
 
     struct MacInspectorTile: View {

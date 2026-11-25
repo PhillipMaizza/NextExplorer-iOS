@@ -5,7 +5,7 @@ private enum Constants {
     static let padding: CGFloat = .space16
     static let spacing: CGFloat = .space8
     static let iconSize: CGFloat = .iconSmall
-    static let fillAlpha: Double = 0.12
+    static let fillAlpha: Double = .opacityFaint
 }
 
 /// A full width inline error card: a leading warning icon and an error styled message on a

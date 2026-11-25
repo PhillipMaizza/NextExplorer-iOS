@@ -9,7 +9,7 @@ import SwiftUI
 /// iOS only. The Mac acknowledges a click natively (table selection, hover), so there these do
 /// nothing beyond what the content already does.
 private enum Constants {
-    static let flashOpacity: Double = 0.16
+    static let flashOpacity: Double = .opacityWash
     static let holdDuration: Duration = .milliseconds(90)
 }
 
