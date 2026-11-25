@@ -63,6 +63,20 @@
             }
         }
 
+        func addFile(named name: String, size: Int64, in path: String) {
+            locked {
+                let suffix = (name as NSString).pathExtension.lowercased()
+                let file = FileItem(
+                    name: freeName(name, in: path),
+                    path: path,
+                    dateModified: Date(),
+                    size: size,
+                    kind: suffix.isEmpty ? FileItem.unknownKind : suffix
+                )
+                folders[path, default: []].append(file)
+            }
+        }
+
         func rename(_ item: FileItem, to newName: String) -> FileItem {
             locked {
                 let renamed = Self.relocated(item, to: item.path, named: newName)
