@@ -19,18 +19,37 @@
     }
 
     struct MacBrowseTableColumns: Equatable {
-        let showsDate: Bool
-        let showsSize: Bool
-        let showsKind: Bool
+        private enum Column {
+            case date
+            case size
+            case kind
+        }
+
+        private let fit: MacTableColumnFit<Column>
 
         init(width: CGFloat) {
-            typealias Widths = MacBrowseTableMetrics
-            let gap = MacTableMetrics.columnSpacing
-            let withDate = Widths.nameColumnMinWidth + gap + Widths.dateColumnWidth
-            let withSize = withDate + gap + Widths.sizeColumnWidth
-            showsDate = width >= withDate
-            showsSize = width >= withSize
-            showsKind = width >= withSize + gap + Widths.kindColumnWidth
+            fit = MacTableColumnFit(
+                width: width,
+                nameWidth: MacBrowseTableMetrics.nameColumnMinWidth,
+                spacing: MacTableMetrics.columnSpacing,
+                byPriority: [
+                    (.date, MacBrowseTableMetrics.dateColumnWidth),
+                    (.size, MacBrowseTableMetrics.sizeColumnWidth),
+                    (.kind, MacBrowseTableMetrics.kindColumnWidth),
+                ]
+            )
+        }
+
+        var showsDate: Bool {
+            fit.shows(.date)
+        }
+
+        var showsSize: Bool {
+            fit.shows(.size)
+        }
+
+        var showsKind: Bool {
+            fit.shows(.kind)
         }
     }
 

@@ -7,7 +7,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let locationColumnMinWidth: CGFloat = 120
+        static let locationColumnMinWidth: CGFloat = 200
     }
 
     /// One row of the Offline table: an item kept offline, or a file saved by an earlier version.
@@ -58,6 +58,11 @@
     /// The Offline tab as a Mac table, matching Favorites and Browse: name, location and size
     /// columns, double click to open a folder or preview a saved file, the row actions on right
     /// click and Delete to remove. The selection is the table's own; there is no select mode on the Mac.
+    private enum Column {
+        case location
+        case size
+    }
+
     struct MacOfflineTableView: View {
         let store: StoreOf<OfflineTabFeature>
         let offlineStore: StoreOf<OfflineManageFeature>
@@ -71,6 +76,19 @@
         @State private var selection: Set<MacOfflineTableRow.ID> = []
         @FocusState private var isFocused: Bool
         @State private var isPeeking = false
+        @State private var width: CGFloat = .zero
+
+        private var columns: MacTableColumnFit<Column> {
+            MacTableColumnFit(
+                width: width,
+                nameWidth: MacBrowseTableMetrics.nameColumnMinWidth,
+                spacing: MacTableMetrics.columnSpacing,
+                byPriority: [
+                    (.size, MacBrowseTableMetrics.sizeColumnWidth),
+                    (.location, Metrics.locationColumnMinWidth),
+                ]
+            )
+        }
 
         private var rows: [MacOfflineTableRow] {
             pinned.map(MacOfflineTableRow.pinned) + saved.map(MacOfflineTableRow.saved)
@@ -98,19 +116,23 @@
                     .macBoardTableCell()
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
-                TableColumn(L10n.FileInfo.rowLocation) { row in
-                    Text(location(of: row))
-                        .lineLimit(1)
-                        .truncationMode(.head)
-                        .foregroundStyle(.secondary)
+                if columns.shows(.location) {
+                    TableColumn(L10n.FileInfo.rowLocation) { row in
+                        Text(location(of: row))
+                            .lineLimit(1)
+                            .truncationMode(.head)
+                            .foregroundStyle(.secondary)
+                    }
+                    .width(min: Metrics.locationColumnMinWidth)
                 }
-                .width(min: Metrics.locationColumnMinWidth)
-                TableColumn(L10n.Sort.size, value: \.sortSize) { row in
-                    Text(FileSizeFormat.string(row.sortSize))
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
+                if columns.shows(.size) {
+                    TableColumn(L10n.Sort.size, value: \.sortSize) { row in
+                        Text(FileSizeFormat.string(row.sortSize))
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                    .width(MacBrowseTableMetrics.sizeColumnWidth)
                 }
-                .width(MacBrowseTableMetrics.sizeColumnWidth)
             }
             .contextMenu(forSelectionType: MacOfflineTableRow.ID.self) { ids in
                 menu(for: ids)
@@ -121,6 +143,7 @@
                 }
             }
             .macBoardTable()
+            .macBrowseTableWidth($width)
             // The table's scroll view otherwise draws its header material up under the pinned title.
             .clipped()
             .focused($isFocused)
